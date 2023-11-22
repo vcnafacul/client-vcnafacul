@@ -1,0 +1,20 @@
+.ulComponent {
+    padding-inline-start: 0;
+    overflow: hidden;
+}
+
+.ulComponent li {
+    white-space: nowrap;
+    list-style-type: none;
+    color: #0b2747;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: border-bottom 400ms linear;
+    transition: font-weight 300ms linear;
+}
+
+.ulComponent li.chosen {
+    border-bottom: 3px solid #37d6b5;
+    font-weight: bold;
+    cursor: default;
+}
