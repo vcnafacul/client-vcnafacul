@@ -15,6 +15,6 @@ interface Slide {
     image?: React.FC<React.SVGProps<SVGSVGElement>> | string
 }
 
-export interface Hero {
+export interface HeroProps {
     slides: Slide[]
 }

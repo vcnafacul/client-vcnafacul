@@ -1,12 +1,12 @@
-import HeroImg1 from "../../assets/images/home/hero_student.svg";
-import HeroImg2 from "../../assets/images/home/hero_teacher.svg";
-import HeroImg3 from "../../assets/images/home/hero_cursinho.svg";
-import HeroImg4 from "../../assets/images/home/hero_sponsor.svg";
-import HeroBackgroundImg1 from "../../assets/images/home/about-us-background.png";
-import { Hero } from "./types";
-import { REGISTER_PATH } from "../../routes/path";
+import HeroImg1 from "../../../assets/images/home/hero_student.svg";
+import HeroImg2 from "../../../assets/images/home/hero_teacher.svg";
+import HeroImg3 from "../../../assets/images/home/hero_cursinho.svg";
+import HeroImg4 from "../../../assets/images/home/hero_sponsor.svg";
+import HeroBackgroundImg1 from "../../../assets/images/home/about-us-background.png";
+import { HeroProps } from "./types";
+import { REGISTER_PATH } from "../../../routes/path";
 
-export const hero: Hero = {
+export const hero: HeroProps = {
     slides: [
         {
             id: 1,

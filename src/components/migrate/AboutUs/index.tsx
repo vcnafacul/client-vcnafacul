@@ -1,10 +1,10 @@
 import { useState } from "react";
 import Youtube from "react-youtube";
-import { ReactComponent as SquarePink } from "../../assets/icons/square-pink.svg";
-import { ReactComponent as TabletImage } from "../../assets/icons/tablet.svg";
-import { ReactComponent as TriangleGreyBorder } from "../../assets/icons/triangle-grey-border.svg";
-import { ReactComponent as TriangleYellow } from "../../assets/icons/triangle-yellow.svg";
-import { ReactComponent as PlayIcon } from "../../assets/icons/play-circle.svg";
+import { ReactComponent as SquarePink } from "../../../assets/icons/square-pink.svg";
+import { ReactComponent as TabletImage } from "../../../assets/icons/tablet.svg";
+import { ReactComponent as TriangleGreyBorder } from "../../../assets/icons/triangle-grey-border.svg";
+import { ReactComponent as TriangleYellow } from "../../../assets/icons/triangle-yellow.svg";
+import { ReactComponent as PlayIcon } from "../../../assets/icons/play-circle.svg";
 
 import './styles.css'
 import { about_us } from "./data";

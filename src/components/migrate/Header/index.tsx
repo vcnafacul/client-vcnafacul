@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { HeaderProps } from "./types"
 import { Link } from "react-router-dom";
 
-import { ReactComponent as MenuIcon } from "../../assets/icons/menu.svg";
-import { ReactComponent as CloseIcon } from "../../assets/icons/close.svg";
-import { ReactComponent as LogoIcon } from "../../assets/images/home/logo.svg";
+import { ReactComponent as MenuIcon } from "../../../assets/icons/menu.svg";
+import { ReactComponent as CloseIcon } from "../../../assets/icons/close.svg";
+import { ReactComponent as LogoIcon } from "../../../assets/images/home/logo.svg";
 
 import Sign from "../Sign";
 import Logged from "../Logged";

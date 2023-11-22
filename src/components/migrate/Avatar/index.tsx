@@ -1,4 +1,4 @@
-import  { ReactComponent as UserIcon } from "../../assets/icons/user.svg";
+import  { ReactComponent as UserIcon } from "../../../assets/icons/user.svg";
 
 function Avatar(){
     return (

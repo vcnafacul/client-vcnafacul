@@ -1,18 +1,18 @@
-import homeSubjectArte from "../../assets/icons/home-subjects-arte.svg";
-import homeSubjectAtualidades from "../../assets/icons/home-subjects-atualidades.svg";
-import homeSubjectBiologia from "../../assets/icons/home-subjects-biologia.svg";
-import homeSubjectEspanhol from "../../assets/icons/home-subjects-espanhol.svg";
-import homeSubjectFilosofia from "../../assets/icons/home-subjects-filosofia.svg";
-import homeSubjectFisica from "../../assets/icons/home-subjects-fisica.svg";
-import homeSubjectGeografia from "../../assets/icons/home-subjects-geografia.svg";
-import homeSubjectGramatica from "../../assets/icons/home-subjects-gramatica.svg";
-import homeSubjectHistoria from "../../assets/icons/home-subjects-historia.svg";
-import homeSubjectIngles from "../../assets/icons/home-subjects-ingles.svg";
-import homeSubjectLeituraProdTextos from "../../assets/icons/home-subjects-leitura-prod-textos.svg";
-import homeSubjectLiteratura from "../../assets/icons/home-subjects-literatura.svg";
-import homeSubjectMatematica from "../../assets/icons/home-subjects-matematica.svg";
-import homeSubjectQuimica from "../../assets/icons/home-subjects-quimica.svg";
-import homeSubjectSociologia from "../../assets/icons/home-subjects-sociologia.svg";
+import homeSubjectArte from "../../../assets/icons/home-subjects-arte.svg";
+import homeSubjectAtualidades from "../../../assets/icons/home-subjects-atualidades.svg";
+import homeSubjectBiologia from "../../../assets/icons/home-subjects-biologia.svg";
+import homeSubjectEspanhol from "../../../assets/icons/home-subjects-espanhol.svg";
+import homeSubjectFilosofia from "../../../assets/icons/home-subjects-filosofia.svg";
+import homeSubjectFisica from "../../../assets/icons/home-subjects-fisica.svg";
+import homeSubjectGeografia from "../../../assets/icons/home-subjects-geografia.svg";
+import homeSubjectGramatica from "../../../assets/icons/home-subjects-gramatica.svg";
+import homeSubjectHistoria from "../../../assets/icons/home-subjects-historia.svg";
+import homeSubjectIngles from "../../../assets/icons/home-subjects-ingles.svg";
+import homeSubjectLeituraProdTextos from "../../../assets/icons/home-subjects-leitura-prod-textos.svg";
+import homeSubjectLiteratura from "../../../assets/icons/home-subjects-literatura.svg";
+import homeSubjectMatematica from "../../../assets/icons/home-subjects-matematica.svg";
+import homeSubjectQuimica from "../../../assets/icons/home-subjects-quimica.svg";
+import homeSubjectSociologia from "../../../assets/icons/home-subjects-sociologia.svg";
 import { ActionAreas } from "./types.ts";
 
 

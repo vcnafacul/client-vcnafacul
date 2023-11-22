@@ -2,7 +2,7 @@ import { Fragment } from 'react'
 import { Link } from "react-router-dom"
 import { Menu, Transition } from '@headlessui/react'
 import Avatar from "../Avatar"
-import { classNames } from '../../utils/className'
+import { classNames } from '../../../utils/className'
 
 interface NavigationProps {
     name: string;

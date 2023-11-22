@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { ItemMenu, SocialLink } from "../Header/types";
 
-import { ReactComponent as FacebookIcon} from '../../assets/icons/facebook.svg'
-import { ReactComponent as LinkedinIcon} from '../../assets/icons/linkedin.svg'
-import { ReactComponent as TwitterIcon} from '../../assets/icons/twitter.svg'
-import { ReactComponent as InstagramIcon} from '../../assets/icons/instagram.svg'
+import { ReactComponent as FacebookIcon} from "../../../assets/icons/facebook.svg"
+import { ReactComponent as LinkedinIcon} from "../../../assets/icons/linkedin.svg"
+import { ReactComponent as TwitterIcon} from "../../../assets/icons/twitter.svg"
+import { ReactComponent as InstagramIcon} from "../../../assets/icons/instagram.svg"
 
 interface ItensMenuProps {
     itemsMenu: ItemMenu[]

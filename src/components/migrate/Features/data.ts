@@ -1,8 +1,8 @@
-import feature1 from "../../assets/images/home/1-Plataforma personalizada - comp.png";
-import feature2 from "../../assets/images/home/2-Conteudos pre-vestibular - comp.png";
-import feature3 from "../../assets/images/home/3-Redaçoes corrigidas - comp.png";
-import feature4 from "../../assets/images/home/4-Exercicios e Simulados online - comp.png";
-import feature5 from "../../assets/images/home/5-Forum de duvidas - comp.png";
+import feature1 from "../../../assets/images/home/1-Plataforma personalizada - comp.png";
+import feature2 from "../../../assets/images/home/2-Conteudos pre-vestibular - comp.png";
+import feature3 from "../../../assets/images/home/3-Redaçoes corrigidas - comp.png";
+import feature4 from "../../../assets/images/home/4-Exercicios e Simulados online - comp.png";
+import feature5 from "../../../assets/images/home/5-Forum de duvidas - comp.png";
 import { FeatureData } from "./types";
 
 export const features : FeatureData = {
