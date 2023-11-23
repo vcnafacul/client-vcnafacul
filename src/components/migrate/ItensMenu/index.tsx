@@ -10,16 +10,16 @@ interface ItensMenuProps {
     itemsMenu: ItemMenu[]
     socialLinks: SocialLink;
     className: string;
+    solid: boolean;
 }
 
-function ItensMenu({ itemsMenu, socialLinks, className} : ItensMenuProps ) {
+function ItensMenu({ itemsMenu, socialLinks, className, solid} : ItensMenuProps ) {
     return (
         <div className={className}>
             {itemsMenu.map(link => (
                 <Link key={link.id} to={link.link}
-                className=" text-marine text-xl font-bold
-                    md:text-white md:text-base md:font-medium mb-12 md:mr-6"
-                    >
+                className={`text-marine text-xl font-bold ${solid ? 'md:text-marine' : 'md:text-white'} 
+                    md:text-base md:font-medium mb-12 md:mr-6`}>
                     {link.name}
                 </Link>
             ))}

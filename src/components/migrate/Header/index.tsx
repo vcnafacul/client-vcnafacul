@@ -34,7 +34,7 @@ function Header({ itemsMenu, socialLinks, solid } : HeaderProps) {
 
     return (
         <header className="container mx-auto">
-            <div className={`fixed top-0 left-0 w-full z-50 py-4 md:py-5 px-0 ${backgroundSolid ? 'bg-marine' : 'bg-transparent'} text-white`}>
+            <div className={`fixed top-0 left-0 w-full z-50 py-4 md:py-5 px-0 ${backgroundSolid ? 'bg-white' : 'bg-transparent'} text-white`}>
                 <div>
                     <div className="flex justify-between items-center mx-4 md:mx-auto md:max-w-6xl">
                         <div className="md:hidden">
@@ -50,12 +50,12 @@ function Header({ itemsMenu, socialLinks, solid } : HeaderProps) {
                         <Link to="#">
                             <div className="flex items-center">
                                 <LogoIcon />
-                                <div className="ml-2.5 text-lg md:text-xl">
+                                <div className={`ml-2.5 text-lg md:text-xl ${backgroundSolid ? 'text-marine' : 'text-white'}`}>
                                     você na <strong>facul</strong>
                                 </div>
                             </div>
                         </Link>
-                        <ItensMenu itemsMenu={itemsMenu} socialLinks={socialLinks} 
+                        <ItensMenu itemsMenu={itemsMenu} socialLinks={socialLinks} solid={backgroundSolid}
                             className={openMenu ? "z-50 md:hidden absolute top-16 left-0 h-screen w-screen" + 
                             " flex justify-center items-center flex-col bg-white" : "hidden md:inline"} />
                         {!token ?  <Sign solid={backgroundSolid} className="items-center"/>

@@ -1,6 +1,6 @@
 import Carousel from '../Carousel';
 import { backgroundGradients } from './data';
-import ButtonLink from '../ButtonLink';
+import BLink from '../../atoms/bLink';
 import { HeroProps } from './types';
 
 function Hero({ slides }: HeroProps){
@@ -21,7 +21,7 @@ function Hero({ slides }: HeroProps){
                         </div>
                         <div className='flex'>
                             {slide.links.map((link) => (
-                                <ButtonLink variant='tertiary' key={link.id} to={link.link}>{link.text}</ButtonLink>
+                                <BLink type='tertiary' key={link.id} to={link.link}>{link.text}</BLink>
                             ))}
                         </div>
                     </div>
