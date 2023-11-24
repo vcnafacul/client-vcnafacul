@@ -1,6 +1,6 @@
 import Carousel from '../Carousel';
 import { backgroundGradients } from './data';
-import BLink from '../../atoms/bLink';
+import BLink from '../../molecules/bLink';
 import { HeroProps } from './types';
 
 function Hero({ slides }: HeroProps){

@@ -3,7 +3,7 @@ import { SingProps } from "../Header/types"
 import { LOGIN_PATH, REGISTER_PATH } from '../../../routes/path'
 import  { ReactComponent as UserIcon } from "../../../assets/icons/user.svg";
 import MenuAvatar from '../MenuAvatar'
-import BLink from "../../atoms/bLink";
+import BLink from "../../molecules/bLink";
 
 const userNavigation = [
     { name: 'Cadastro', href: REGISTER_PATH },
@@ -13,12 +13,12 @@ const userNavigation = [
 function Sign({ solid, className }: SingProps){
     return (
         <div className={`flex ${className}`}>
-            <BLink to={userNavigation[0].href} type="tertiary" 
-                className={`border-none ${solid ? 'text-marine' : 'text-white'} hover:bg-inherit hover:text-current`}>
+            <BLink to={userNavigation[0].href} type="tertiary" size="small"
+                className={`border-none ${solid ? 'text-marine' : 'text-white'}`}>
                 {userNavigation[0].name}
             </BLink>
             <BLink to={userNavigation[1].href} type="primary" size="small"
-                className={`border-none hidden text-base bg-orange md:block rounded-sm hover:bg-orange hover:text-current`}>
+                className={`border-none hidden text-base md:block rounded-sm`}>
                     <UserIcon className="mr-3 ml-0"/>
                     {userNavigation[1].name}
             </BLink>
