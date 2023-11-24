@@ -1,7 +1,6 @@
 import { useState } from "react";
 import HighlightSelector from "../HighlightSelector"
-import SubTitle from "../SubTitle"
-import Title from "../Title"
+import Text from "../../atoms/text"
 import { features } from "./data"
 import './styles.css'
 import MobileDropdownDiv from "../MobileDropdownDiv";
@@ -16,8 +15,8 @@ function Features() {
     }
     return (
         <div className=" text-center h-[700px] overflow-hidden flex items-center flex-col">
-            <Title>{features.title}</Title>
-            <SubTitle>{features.subtitle}</SubTitle>
+            <Text size="secondary" className="mt-2">{features.title}</Text>
+            <Text size="tertiary">{features.subtitle}</Text>
             <div className="md:grid md:grid-cols-12 md:mx-16 flex w-full m-0 flex-col items-center">
                 <HighlightSelector className="flex-col justify-between"
                     items={features.feats.map(item => (item.title))}

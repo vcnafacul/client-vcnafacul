@@ -8,8 +8,7 @@ import { ReactComponent as PlayIcon } from "../../../assets/icons/play-circle.sv
 
 import './styles.css'
 import { about_us } from "./data";
-import Title from "../Title";
-import SubTitle from "../SubTitle";
+import Text from "../../atoms/text";
 
 function AboutUs(){
     const [videoComponent, setVideoComponent] = useState(<></>);
@@ -53,8 +52,8 @@ function AboutUs(){
                     </div>
                 </div>
                 <div>
-                    <Title>{about_us.title}</Title>
-                    <SubTitle>{about_us.subtitle}</SubTitle>
+                    <Text size="secondary" className="text-start">{about_us.title}</Text>
+                    <Text size="tertiary" className="text-start">{about_us.subtitle}</Text>
                 </div>
             </div>
         </div>

@@ -2,6 +2,7 @@ import Carousel from '../Carousel';
 import { backgroundGradients } from './data';
 import BLink from '../../molecules/bLink';
 import { HeroProps } from './types';
+import Text from '../../atoms/text';
 
 function Hero({ slides }: HeroProps){
 
@@ -16,12 +17,12 @@ function Hero({ slides }: HeroProps){
                     md:min-h-[600px] md:self-center'>
                     <div className='text-white sm:self-start md:w-full md:mb-28 md:self-center justify-start'>
                         <div className='md:transition duration-300 ease-out hover:translate-x-2.5 mx-10 md:mx-0'>
-                            <h2 className='text-4xl mb-6 leading-10 md:text-5xl md:mb-1.5 text-start font-bold md:leading-snug'>{slide.title}</h2>
-                            <p className='text-base md:text-xl leading-6 md:leading-9 mb-6 md:mb-14 text-start'>{slide.subtitle}</p>
+                            <Text size='primary' className='text-white md:text-left text-start mb-6'>{slide.title}</Text>
+                            <Text size='tertiary' className='text-white text-start'>{slide.subtitle}</Text>
                         </div>
                         <div className='flex'>
                             {slide.links.map((link) => (
-                                <BLink type='tertiary' key={link.id} to={link.link}>{link.text}</BLink>
+                                <BLink type='tertiary' hover key={link.id} to={link.link}>{link.text}</BLink>
                             ))}
                         </div>
                     </div>
