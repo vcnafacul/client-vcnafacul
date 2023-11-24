@@ -1,7 +1,9 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import './styles.css'
 import React from "react";
+import { Pagination } from 'swiper/modules';
+import './styles.css'
+import "swiper/css";
+import 'swiper/css/pagination';
 
 interface CarouselProps {
     className?: string;
@@ -12,12 +14,18 @@ interface CarouselProps {
     centeredSlides?: boolean;
     slidesPerGroupSkip?: number;
     grabCursor?: boolean;
+    dynamicBullets?: boolean;
+    pagination?: boolean;
 }
 
-function Carousel({className, childrens, slidesPerView, spaceBetween, loop, centeredSlides, slidesPerGroupSkip, grabCursor}: CarouselProps) {
+function Carousel({className, childrens, slidesPerView, spaceBetween, loop, centeredSlides, slidesPerGroupSkip, grabCursor, dynamicBullets, pagination}: CarouselProps) {
     return (
         <div className={className}>
             <Swiper className="mySwiper" 
+                pagination={{
+                    dynamicBullets: dynamicBullets ?? false,
+                }}
+                modules={ pagination ? [Pagination] : []}
                 slidesPerView={slidesPerView ?? 1}
                 spaceBetween={spaceBetween ?? 30}
                 loop={loop ?? true}

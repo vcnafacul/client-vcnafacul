@@ -14,7 +14,7 @@ img {
     grid-row: 1/2;
 }
 
-p {
-    grid-column: 7/12;
+.description {
+    grid-column:  6/12;
     grid-row: 2/3;
 }
