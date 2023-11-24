@@ -1,10 +1,9 @@
 import { useState } from "react"
-import HighlightSelector from "../HighlightSelector"
-import MobileDropdownDiv from "../MobileDropdownDiv"
 import Text from "../../atoms/text"
 import { actionAreas } from "./data"
 import Carousel from "../Carousel"
 import { CardItem } from "./types"
+import Selector from "../../molecules/selector"
 
 function ActionAreas() {
 
@@ -46,10 +45,7 @@ function ActionAreas() {
                     <Text size="secondary">{actionAreas.title}</Text>
                     <Text size="tertiary">{actionAreas.subtitle}</Text>
                 </div>
-                <HighlightSelector className="md:w-full flex justify-center" items={actionAreas.tabItems} fontSize="text-base" 
-                    changeItem={changeItem} justifyContent="justify-center" liMargin="m-0" />
-                <MobileDropdownDiv className="actionAreasMobileDropdown" 
-                    items={actionAreas.tabItems} changeItem={changeItem} />
+                <Selector tabItems={actionAreas.tabItems} changeItem={changeItem} />
                 {cardsItems()}
             </div>
         </div>

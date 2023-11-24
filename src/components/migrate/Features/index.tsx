@@ -1,9 +1,9 @@
 import { useState } from "react";
-import HighlightSelector from "../HighlightSelector"
+import HighlightSelector from "../../atoms/highlightSelector"
 import Text from "../../atoms/text"
 import { features } from "./data"
 import './styles.css'
-import MobileDropdownDiv from "../MobileDropdownDiv";
+import MobileDropdownDiv from "../../atoms/mobileDropdownDiv";
 import { ItemCard } from "../../../utils/types";
 
 function Features() {
