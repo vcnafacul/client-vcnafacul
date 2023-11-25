@@ -1,7 +1,7 @@
 
 import { LOGIN_PATH, REGISTER_PATH } from '../../../routes/path'
 import  { ReactComponent as UserIcon } from "../../../assets/icons/user.svg";
-import MenuAvatar from '../MenuAvatar'
+import MenuAvatar from '../../migrate/MenuAvatar'
 import BLink from "../../molecules/bLink";
 
 const userNavigation = [

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { ReactComponent as MenuIcon } from "../../../assets/icons/menu.svg";
 
-import Sign, { SingProps } from "../Sign";
+import Sign, { SingProps } from "../../organisms/sign";
 import Logged from "../Logged";
 import Logo from "../../molecules/logo";
 import { ItemMenu, SocialLink } from "../../../types/baseTemplate";
