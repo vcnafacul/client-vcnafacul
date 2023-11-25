@@ -32,7 +32,7 @@ function ActionAreas() {
         const childrens = CardTopics(actionAreas.cardItems[index])
         return <Carousel slidesPerView={3}
             childrens={childrens}
-            className="bg-white h-72 mt-6"
+            className="bg-white h-72 mt-6 container mx-auto"
             pagination
             dynamicBullets
         />
@@ -46,8 +46,8 @@ function ActionAreas() {
                     <Text size="tertiary">{actionAreas.subtitle}</Text>
                 </div>
                 <Selector tabItems={actionAreas.tabItems} changeItem={changeItem} />
-                {cardsItems()}
             </div>
+            {cardsItems()}
         </div>
     )
 }

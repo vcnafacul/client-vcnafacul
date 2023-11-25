@@ -1,5 +1,4 @@
 import { useState } from "react";
-import './styles.css'
 
 interface Props {
     items: string[];
@@ -11,7 +10,7 @@ interface Props {
     className?: string;
 }
 
-const MobileDropdownDiv = (props : Props) => {
+const HighlightSelectorMobile = (props : Props) => {
     const [activePosition, setActivePosition] = useState(0);
     const [showDropdown, setShowDropdown] = useState<boolean>(false);
 
@@ -52,8 +51,10 @@ const MobileDropdownDiv = (props : Props) => {
 
     
     return (
-        <div className="mobileDropdownDivStyle z-50 text-marine w-full relative text-lg">
-            {apparentItem()}
+        <div className="mobile text-marine text-lg">
+            <div className="w-full flex justify-center">
+                {apparentItem()}
+            </div>
             <ul 
                 className={`mobileDropdown ${showDropdown ? "visible" : "invisible"}`}>
                 <HiddenItems />
@@ -62,4 +63,4 @@ const MobileDropdownDiv = (props : Props) => {
     );
 };
 
-export default MobileDropdownDiv;
+export default HighlightSelectorMobile;

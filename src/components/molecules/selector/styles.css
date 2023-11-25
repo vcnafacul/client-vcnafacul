@@ -1,0 +1,114 @@
+.ulComponent {
+    padding-inline-start: 0;
+    overflow: hidden;
+}
+
+.ulComponent li {
+    white-space: nowrap;
+    list-style-type: none;
+    color: #0b2747;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: border-bottom 400ms linear;
+    transition: font-weight 300ms linear;
+    margin: 10px auto;
+}
+
+.ulComponent li.chosen {
+    border-bottom: 3px solid #37d6b5;
+    font-weight: bold;
+    cursor: default;
+}
+
+.actionAreasMobileDropdown::after {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 100px 100px;
+    border-color: transparent transparent #FFE53C transparent;
+    transform: rotate(180deg);
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+
+    @media (min-width: 1200px) {
+        border-width: 0 0 230px 230px;
+    }
+}
+
+.desktop {
+    display: flex;
+    @media (max-width: 1200px) {
+        display: none;
+    }
+}
+
+.mobile {
+    display: none;
+    @media (max-width: 1200px) {
+        display: block;
+        width: 100%;
+        
+    }
+}
+
+.mobile ul.invisible {
+
+    @media (max-width: 1200px) {
+        pointer-events: none;
+        opacity: 0;
+        max-height: 0;
+        margin: 0;  
+    }
+}
+
+.mobile ul.visible {
+
+    @media (max-width: 1200px) {
+        position: absolute;
+        font-size: 18px;
+        height: 171px;
+        width: 100%;
+        margin: 0;
+        display: flex;
+        padding-inline-start: 0;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        background: #f8f8f8;
+        backdrop-filter: blur(47px);
+        transition: opacity 200ms linear;
+        z-index: 10;
+    }
+}
+
+.mobile li {
+    list-style-type: none;
+    cursor: pointer;
+}
+
+.mobileDropdown {
+    overflow-y: hidden;
+}
+
+.chosenMobileItem {
+    display: inline-block;
+    border-bottom: 3px solid #37d6b5;
+    margin-bottom: 11px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.chosenMobileItem:after {
+    content: "";
+    border: solid #37d6b5;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 4px;
+    margin: 0 10px;
+    transition: transform 150ms linear;
+    vertical-align: middle;
+}

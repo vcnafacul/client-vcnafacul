@@ -1,4 +1,4 @@
-import { ItemCard } from "../../utils/types";
+import { ItemCard } from "../../../utils/types";
 
 export interface FeatureData {
     title: string;

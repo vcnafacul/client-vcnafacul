@@ -1,12 +1,7 @@
 ul.desktop {
     grid-column: 3/6;
     grid-row: 1/2;
-    display: flex;
     align-items: center;
-
-    @media (max-width: 1200px) {
-        display: none;
-    }
 }
 
 img {

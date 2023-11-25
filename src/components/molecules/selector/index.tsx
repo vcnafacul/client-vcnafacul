@@ -1,17 +1,34 @@
+import { VariantProps, tv } from "tailwind-variants";
 import HighlightSelector from "../../atoms/highlightSelector"
-import MobileDropdownDiv from "../../atoms/mobileDropdownDiv"
+import HighlightSelectorMobile from "../../atoms/highlightSelectorMobile"
+import './styles.css'
 
-interface SelectorProps {
+const selector = tv({
+    base: 'desktop ulComponent text-xl justify-around',
+    variants: {
+        align: {
+            horizontal: 'justify-center w-full',
+            vertial: 'flex-col justify-between'
+        },
+    },
+    defaultVariants: {
+        align: 'horizontal'
+    }
+})
+
+export type SelectorProps = VariantProps<typeof selector> & {
     tabItems: string[];
     changeItem: (index: number) => void;
+    className?: string;
 }
 
-function Selector({tabItems, changeItem} : SelectorProps){
+function Selector({tabItems, changeItem, align, className} : SelectorProps){
     return (
         <>
-            <HighlightSelector className="md:w-full flex justify-center" items={tabItems} fontSize="text-base" changeItem={changeItem} justifyContent="justify-center" liMargin="m-0" />
-            <MobileDropdownDiv className="actionAreasMobileDropdown" items={tabItems} changeItem={changeItem} />
+            <HighlightSelector className={selector({ align, className })} items={tabItems}  changeItem={changeItem}/>
+            <HighlightSelectorMobile className="actionAreasMobileDropdown" items={tabItems} changeItem={changeItem} />
         </>
+
     )
 }
 

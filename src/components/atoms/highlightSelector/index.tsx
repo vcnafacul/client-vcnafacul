@@ -1,17 +1,12 @@
 import { useState } from "react";
-import './styles.css'
 
 interface Props {
     items: string[];
     changeItem: (index: number) => void;
-    flexDirection?: string;
-    fontSize?: string;
-    justifyContent?: string;
-    liMargin?: string;
     className?: string;
 }
 
-function HighlightSelector ( {items, changeItem, flexDirection, fontSize, justifyContent, liMargin, className } : Props) {
+function HighlightSelector ( {items, changeItem, className } : Props) {
     const [activePosition, setActivePosition] = useState(0);
 
     function IElements() {
@@ -26,7 +21,7 @@ function HighlightSelector ( {items, changeItem, flexDirection, fontSize, justif
                             changeItem(index)
                             setActivePosition(index)
                         }}
-                        className={cssClass + className}
+                        className={cssClass}
                         tabIndex={index}
                     >
                         {item}
@@ -37,16 +32,7 @@ function HighlightSelector ( {items, changeItem, flexDirection, fontSize, justif
     }
 
     return (
-        <ul
-            className={`
-            desktop h-full ulComponent w-full
-            ${fontSize ?? 'text-2xl'} 
-            ${flexDirection ?? "flex-row"}
-            ${justifyContent ?? 'justify-around'}
-            ${liMargin ?? "m-2.5"}
-            ${className}
-            `}
-        >
+        <ul className={className}>
             <IElements />
         </ul>
         
