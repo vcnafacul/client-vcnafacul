@@ -1,7 +1,6 @@
-import { Fragment } from 'react'
+import React, { Fragment } from 'react'
 import { Link } from "react-router-dom"
 import { Menu, Transition } from '@headlessui/react'
-import Avatar from "../../molecules/avatar"
 import { classNames } from '../../../utils/className'
 
 interface NavigationProps {
@@ -9,17 +8,18 @@ interface NavigationProps {
     href: string;
 }
 
-interface MenuAvatarProps {
+interface DropdwonMenuProps {
     userNavigation: NavigationProps[]
+    children: React.ReactNode;
     className?: string;
 }
 
-function MenuAvatar({userNavigation, className} : MenuAvatarProps){
+function DropdwonMenu({userNavigation, children, className} : DropdwonMenuProps){
     return (
         <div className={className}>
             <Menu as="div" className="relative">
                 <Menu.Button>
-                    <Avatar />
+                    {children}
                 </Menu.Button>
                 <Transition
                     as={Fragment}
@@ -53,4 +53,4 @@ function MenuAvatar({userNavigation, className} : MenuAvatarProps){
     )
 }
 
-export default MenuAvatar
+export default DropdwonMenu

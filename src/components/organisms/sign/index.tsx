@@ -1,8 +1,9 @@
 
 import { LOGIN_PATH, REGISTER_PATH } from '../../../routes/path'
 import  { ReactComponent as UserIcon } from "../../../assets/icons/user.svg";
-import MenuAvatar from '../../migrate/MenuAvatar'
 import BLink from "../../molecules/bLink";
+import DropdwonMenu from '../../atoms/dropdownMenu';
+import Avatar from '../../molecules/avatar';
 
 const userNavigation = [
     { name: 'Cadastro', href: REGISTER_PATH },
@@ -26,7 +27,9 @@ function Sign({ solid, className }: SingProps){
                     <UserIcon className="mr-3 ml-0"/>
                     {userNavigation[1].name}
             </BLink>
-            <MenuAvatar userNavigation={userNavigation} className="md:hidden" />
+            <DropdwonMenu userNavigation={userNavigation} className="md:hidden">
+                <Avatar />
+            </DropdwonMenu>
         </div>
     )
 }

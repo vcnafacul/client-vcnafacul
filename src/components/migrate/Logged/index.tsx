@@ -1,4 +1,5 @@
-import MenuAvatar from "../MenuAvatar"
+import DropdwonMenu from "../../atoms/dropdownMenu"
+import Avatar from "../../molecules/avatar"
 
 const userNavigation = [
     { name: 'DashBoard', href: "#" },
@@ -12,7 +13,9 @@ function Logged(){
             <div>
                 Fernando
             </div>
-            <MenuAvatar userNavigation={userNavigation} />
+            <DropdwonMenu userNavigation={userNavigation}>
+                <Avatar />
+            </DropdwonMenu>
         </div>
     )
 }
