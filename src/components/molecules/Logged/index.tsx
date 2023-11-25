@@ -1,5 +1,5 @@
 import DropdwonMenu from "../../atoms/dropdownMenu"
-import Avatar from "../../molecules/avatar"
+import Avatar from "../avatar"
 
 const userNavigation = [
     { name: 'DashBoard', href: "#" },
