@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 
 import { ReactComponent as MenuIcon } from "../../../assets/icons/menu.svg";
 
-import Sign, { SingProps } from "../../organisms/sign";
-import Logged from "../Logged";
+import Sign, { SingProps } from "../sign";
+import Logged from "../../migrate/Logged";
 import Logo from "../../molecules/logo";
 import { ItemMenu, SocialLink } from "../../../types/baseTemplate";
-import MainMenu from "../../organisms/mainMenu";
+import MainMenu from "../mainMenu";
 
 
 export interface HeaderProps extends SingProps {

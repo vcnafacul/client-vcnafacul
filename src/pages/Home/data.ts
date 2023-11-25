@@ -1,5 +1,5 @@
-import { HeaderProps } from "../../components/migrate/Header";
-import { HeroProps } from "../../components/migrate/Hero";
+import { HeaderProps } from "../../components/organisms/header";
+import { HeroProps } from "../../components/organisms/hero";
 import { FooterProps } from "../../components/organisms/footer";
 import { REGISTER_PATH } from "../../routes/path";
 import HeroImg1 from "../../assets/images/home/hero_student.svg";

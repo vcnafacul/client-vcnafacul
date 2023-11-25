@@ -1,4 +1,4 @@
-import Carousel from '../Carousel';
+import Carousel from '../../migrate/Carousel';
 import BLink from '../../molecules/bLink';
 import Text from '../../atoms/text';
 import { Slide } from '../../../types/baseTemplate';

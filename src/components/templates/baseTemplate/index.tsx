@@ -1,6 +1,6 @@
 import React from "react";
-import Header, { HeaderProps } from "../../migrate/Header"
-import Hero, { HeroProps } from "../../migrate/Hero"
+import Header, { HeaderProps } from "../../organisms/header"
+import Hero, { HeroProps } from "../../organisms/hero"
 import Footer, { FooterProps } from "../../organisms/footer";
 
 export interface BaseTemplateProps{
