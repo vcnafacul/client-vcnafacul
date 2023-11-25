@@ -16,9 +16,9 @@ function Footer({sitemapLinks, pageLinks, slogan, email, socialLinks} : FooterPr
         <section className="bg-marine py-12 px-0 text-center text-base text-white md:text-left md:pt-14 md:pb-9">
             <div className="container mx-auto flex flex-col md:grid md:grid-cols-4 md:gap-4">
                 <Logo name text="Equidade. Oportunidade. Realização."/>
-                <MenuItem align="vertical" itemsMenu={pageLinks} />
-                <MenuItem align="vertical" itemsMenu={sitemapLinks} />
-                <FollowUs socialLinks={socialLinks}/>
+                <MenuItem align="vertical" itemsMenu={pageLinks} solid={false} />
+                <MenuItem align="vertical" itemsMenu={sitemapLinks} solid={false} />
+                <FollowUs socialLinks={socialLinks} solid={false}/>
             </div>
         </section>
     );
