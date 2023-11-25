@@ -1,7 +1,7 @@
 import { Fragment } from 'react'
 import { Link } from "react-router-dom"
 import { Menu, Transition } from '@headlessui/react'
-import Avatar from "../Avatar"
+import Avatar from "../../molecules/avatar"
 import { classNames } from '../../../utils/className'
 
 interface NavigationProps {
