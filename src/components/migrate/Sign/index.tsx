@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom"
 import { SingProps } from "../Header/types"
 import { LOGIN_PATH, REGISTER_PATH } from '../../../routes/path'
 import  { ReactComponent as UserIcon } from "../../../assets/icons/user.svg";

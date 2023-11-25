@@ -3,7 +3,7 @@ import Header from "../../migrate/Header"
 import { HeaderProps } from "../../migrate/Header/types"
 import Hero from "../../migrate/Hero"
 import { HeroProps } from "../../migrate/Hero/types";
-import Footer from "../../organisms/Footer";
+import Footer from "../../organisms/footer";
 
 export interface BaseTemplateProps{
     header: HeaderProps;
