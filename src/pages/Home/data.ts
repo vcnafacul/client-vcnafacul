@@ -1,12 +1,38 @@
 import { HeaderProps } from "../../components/organisms/header";
 import { HeroProps } from "../../components/organisms/hero";
 import { FooterProps } from "../../components/organisms/footer";
+import { FeaturesProps } from "../../components/organisms/features";
 import { REGISTER_PATH } from "../../routes/path";
+
 import HeroImg1 from "../../assets/images/home/hero_student.svg";
 import HeroImg2 from "../../assets/images/home/hero_teacher.svg";
 import HeroImg3 from "../../assets/images/home/hero_cursinho.svg";
 import HeroImg4 from "../../assets/images/home/hero_sponsor.svg";
 import HeroBackgroundImg1 from "../../assets/images/home/about-us-background.png";
+
+import feature1 from "../../assets/images/home/1-Plataforma personalizada - comp.png";
+import feature2 from "../../assets/images/home/2-Conteudos pre-vestibular - comp.png";
+import feature3 from "../../assets/images/home/3-Redaçoes corrigidas - comp.png";
+import feature4 from "../../assets/images/home/4-Exercicios e Simulados online - comp.png";
+import feature5 from "../../assets/images/home/5-Forum de duvidas - comp.png";
+
+import homeSubjectArte from "../../assets/icons/home-subjects-arte.svg";
+import homeSubjectAtualidades from "../../assets/icons/home-subjects-atualidades.svg";
+import homeSubjectBiologia from "../../assets/icons/home-subjects-biologia.svg";
+import homeSubjectEspanhol from "../../assets/icons/home-subjects-espanhol.svg";
+import homeSubjectFilosofia from "../../assets/icons/home-subjects-filosofia.svg";
+import homeSubjectFisica from "../../assets/icons/home-subjects-fisica.svg";
+import homeSubjectGeografia from "../../assets/icons/home-subjects-geografia.svg";
+import homeSubjectGramatica from "../../assets/icons/home-subjects-gramatica.svg";
+import homeSubjectHistoria from "../../assets/icons/home-subjects-historia.svg";
+import homeSubjectIngles from "../../assets/icons/home-subjects-ingles.svg";
+import homeSubjectLeituraProdTextos from "../../assets/icons/home-subjects-leitura-prod-textos.svg";
+import homeSubjectLiteratura from "../../assets/icons/home-subjects-literatura.svg";
+import homeSubjectMatematica from "../../assets/icons/home-subjects-matematica.svg";
+import homeSubjectQuimica from "../../assets/icons/home-subjects-quimica.svg";
+import homeSubjectSociologia from "../../assets/icons/home-subjects-sociologia.svg";
+import { ActionAreasProps } from "../../components/organisms/actionAreas";
+import { AboutUsProps } from "../../components/organisms/aboutUs";
 
 export const header: HeaderProps = {
     homeLink: "/",
@@ -123,4 +149,170 @@ export const footer: FooterProps = {
         linkedin: "https://www.linkedin.com/company/vcnafacul/",
         instagram: "https://www.instagram.com/vcnafacul/",
     },
+};
+
+export const features : FeaturesProps = {
+    title: 'O futuro do cursinho popular',
+    subtitle: 'Veja tudo o que você terá acesso na nossa plataforma!',
+    feats: [
+        {
+            id: 1,
+            title: "Plataforma personalizada",
+            subtitle: "Ao acessar a plataforma Você na Facul você terá um painel só seu, personalizado de acordo com seu perfil e seu progresso nos estudos! [EM BREVE]",
+            image: feature1,
+        },
+        {
+            id: 2,
+            title: "Conteúdos pré-vestibular",
+            subtitle:  "Você terá acesso aos melhores conteúdos pré-vestibular que existem hoje, que foram selecionados com carinho e organizados para você! [EM BREVE]",
+            image: feature2,
+        },
+        {
+            id: 3,
+            title: "Suas redações corrigidas",
+            subtitle: "Tá precisando melhorar nas redações? É só escrever quantas quiser e enviar pelo painel que um professor vai corrigir e dar sugestões de melhoria! [EM BREVE]",
+            image: feature3,
+        },
+        {
+            id: 4,
+            title: "Exercícios e Simulados online",
+            subtitle: "O Você na Facul disponibiliza simulados automáticos com questões reais para você praticar quantas vezes quiser! E o resultado sai na hora! [EM BREVE]",
+            image: feature4,
+        },
+        {
+            id: 5,
+            title: "Fórum de dúvidas",
+            subtitle: "Tá com dúvidas sobre os conteúdos? É só mandar uma mensagem no fórum de dúvidas que algum professor vai te ajudar com o maior prazer! [EM BREVE]",
+            image: feature5,
+        },
+    ]
+}
+
+
+export const actionAreas : ActionAreasProps = {
+    title: "Veja nossas áreas de ação",
+    subtitle: "Disciplinas divididas de forma a facilitar o estudo para o ENEM",
+    tabItems: ["Linguagens", "Ciências da natureza e matemática", "Ciências humanas"],
+    cardItems: [
+        {
+            id: 0,
+            items: [
+                {
+                    id: 1,
+                    image: homeSubjectLeituraProdTextos,
+                    title: "Leitura e Produção de Textos",
+                    subtitle: "",
+                },
+                {
+                    id: 2,
+                    image: homeSubjectGramatica,
+                    title: "Gramática",
+                    subtitle: "",
+                },
+                {
+                    id: 3,
+                    image: homeSubjectLiteratura,
+                    title: "Literatura",
+                    subtitle: "",
+                },
+                {
+                    id: 4,
+                    image: homeSubjectIngles,
+                    title: "Inglês",
+                    subtitle: "",
+                },
+                {
+                    id: 5,
+                    image: homeSubjectEspanhol,
+                    title: "Espanhol",
+                    subtitle: "",
+                },
+                {
+                    id: 6,
+                    image: homeSubjectArte,
+                    title: "Artes",
+                    subtitle: "",
+                },
+            ],
+        },
+        {
+            id: 1,
+            items: [
+                {
+                    id: 7,
+                    image: homeSubjectBiologia,
+                    title: "Biologia",
+                    subtitle: "",
+                },
+                {
+                    id: 8,
+                    image: homeSubjectFisica,
+                    title: "Física",
+                    subtitle: "",
+                },
+                {
+                    id: 9,
+                    image: homeSubjectQuimica,
+                    title: "Química",
+                    subtitle: "",
+                },
+                {
+                    id: 10,
+                    image: homeSubjectMatematica,
+                    title: "Matemática",
+                    subtitle: "",
+                },
+            ],
+        },
+        {
+            id: 2,
+            items: [
+                {
+                    id: 11,
+                    image: homeSubjectSociologia,
+                    title: "Sociologia",
+                    subtitle: "",
+                },
+                {
+                    id: 12,
+                    image: homeSubjectFilosofia,
+                    title: "Filosofia",
+                    subtitle: "",
+                },
+                {
+                    id: 13,
+                    image: homeSubjectHistoria,
+                    title: "História",
+                    subtitle: "",
+                },
+                {
+                    id: 14,
+                    image: homeSubjectGeografia,
+                    title: "Geografia",
+                    subtitle: "",
+                },
+                {
+                    id: 15,
+                    image: homeSubjectAtualidades,
+                    title: "Atualidades",
+                    subtitle: "",
+                },
+            ],
+        },
+    ],
+};
+
+
+export const about_us : AboutUsProps = {
+    title: "Quem somos?",
+    subtitle:
+        "Somos uma equipe de voluntários trabalhando por um bem maior: a *Educação*. Queremos que o ambiente universitário seja justo e igualitário, e que o desejo de ingressar no ensino superior não dependa de cor, gênero, orientação sexual ou classe social.",
+    cta: {
+        text: "Conheça nossa história",
+        link: "#",
+    },
+    video: {
+        thumbnail: "/src/assets/images/home/thumb-about-us.png",
+        videoID: "LiNm9JxvNOM",
+    }
 };

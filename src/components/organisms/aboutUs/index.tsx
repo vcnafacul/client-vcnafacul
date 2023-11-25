@@ -7,10 +7,26 @@ import { ReactComponent as TriangleYellow } from "../../../assets/icons/triangle
 import { ReactComponent as PlayIcon } from "../../../assets/icons/play-circle.svg";
 
 import './styles.css'
-import { about_us } from "./data";
 import Text from "../../atoms/text";
 
-function AboutUs(){
+interface Cta {
+    text: string;
+    link: string;
+}
+
+interface Video {
+    thumbnail: string;
+    videoID: string;
+}
+
+export interface AboutUsProps {
+    title: string;
+    subtitle: string,
+    cta: Cta,
+    video: Video
+}
+
+function AboutUs({title, subtitle, cta, video} : AboutUsProps){
     const [videoComponent, setVideoComponent] = useState(<></>);
 
     const videoOptions = {
@@ -26,7 +42,7 @@ function AboutUs(){
         setVideoComponent(
             <Youtube
                 className="video z-40 absolute "
-                videoId={about_us.video.videoID}
+                videoId={video.videoID}
                 opts={videoOptions}
             />
         );
@@ -43,7 +59,7 @@ function AboutUs(){
                     <div className="flex justify-center items-center bg-blue max-w-[640px] max-h-[390px]">
                         <div className="relative flex justify-center items-center w-96">
                             <TabletImage className="tablet absolute z-20 max-w-[640px] md:w-[640px]" />
-                            <img src={about_us.video.thumbnail} alt="" className="video relative z-30 md:max-w-[440px] sm:max-w-[320px] max-w-[80%]"/>
+                            <img src={video.thumbnail} alt="" className="video relative z-30 md:max-w-[440px] sm:max-w-[320px] max-w-[80%]"/>
                         </div>
                         <button className="absolute z-40 border-none cursor-pointer" onClick={handleClick}>
                             <PlayIcon className="z-30 bg-gray-900 rounded-full border-none cursor-pointer opacity-30 transition-opacity duration-200 ease-linear hover:opacity-100" />
@@ -52,8 +68,8 @@ function AboutUs(){
                     </div>
                 </div>
                 <div>
-                    <Text size="secondary" className="text-start">{about_us.title}</Text>
-                    <Text size="tertiary" className="text-start">{about_us.subtitle}</Text>
+                    <Text size="secondary" className="text-start">{title}</Text>
+                    <Text size="tertiary" className="text-start">{subtitle}</Text>
                 </div>
             </div>
         </div>

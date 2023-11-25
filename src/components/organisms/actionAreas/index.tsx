@@ -1,11 +1,28 @@
 import { useState } from "react"
 import Text from "../../atoms/text"
-import { actionAreas } from "./data"
-import Carousel from "../Carousel"
-import { CardItem } from "./types"
 import Selector from "../../molecules/selector"
+import Carousel from "../../molecules/carousel";
 
-function ActionAreas() {
+interface ItemCard {
+    id: number;
+    title: string;
+    subtitle?: string;
+    image: React.FC<React.SVGProps<SVGSVGElement>> | string;
+}
+
+interface CardItem {
+    id: number,
+    items: ItemCard[]
+}
+
+export interface ActionAreasProps{
+    title: string;
+    subtitle: string;
+    tabItems: string[];
+    cardItems: CardItem[]
+}
+
+function ActionAreas({title, subtitle, tabItems, cardItems} : ActionAreasProps) {
 
     const [index, setIndex]= useState<number>(2)
 
@@ -29,7 +46,7 @@ function ActionAreas() {
     })
 
     const cardsItems = () => {
-        const childrens = CardTopics(actionAreas.cardItems[index])
+        const childrens = CardTopics(cardItems[index])
         return <Carousel slidesPerView={3}
             childrens={childrens}
             className="bg-white h-72 mt-6 container mx-auto"
@@ -42,10 +59,10 @@ function ActionAreas() {
         <div className="bg-white">
             <div className="container mx-auto py-14 px-0 relative flex flex-col justify-start">
                 <div className="md:w-full flex justify-center items-center flex-col">
-                    <Text size="secondary">{actionAreas.title}</Text>
-                    <Text size="tertiary">{actionAreas.subtitle}</Text>
+                    <Text size="secondary">{title}</Text>
+                    <Text size="tertiary">{subtitle}</Text>
                 </div>
-                <Selector tabItems={actionAreas.tabItems} changeItem={changeItem} />
+                <Selector tabItems={tabItems} changeItem={changeItem} />
             </div>
             {cardsItems()}
         </div>
