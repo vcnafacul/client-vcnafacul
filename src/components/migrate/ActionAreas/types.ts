@@ -1,4 +1,5 @@
-import { ItemCard } from "../../utils/types";
+import { ItemCard } from "../../../utils/types";
+
 
 export interface CardItem {
     id: number,

@@ -46,7 +46,7 @@ function Header({ itemsMenu, socialLinks, solid } : HeaderProps) {
                             </div>
                             }
                         </div>
-                        <Logo solid={backgroundSolid} text />
+                        <Logo solid={backgroundSolid} name />
                         <ItensMenu itemsMenu={itemsMenu} socialLinks={socialLinks} solid={backgroundSolid}
                             className={openMenu ? "z-50 md:hidden absolute top-16 left-0 h-screen w-screen" + 
                             " flex justify-center items-center flex-col bg-white" : "hidden md:inline"} />

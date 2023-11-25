@@ -3,6 +3,7 @@ import Header from "../../migrate/Header"
 import { HeaderProps } from "../../migrate/Header/types"
 import Hero from "../../migrate/Hero"
 import { HeroProps } from "../../migrate/Hero/types";
+import Footer from "../../organisms/Footer";
 
 export interface BaseTemplateProps{
     header: HeaderProps;
@@ -17,7 +18,7 @@ function BaseTemplate({ header, hero, children, footer }: BaseTemplateProps){
             <Header {...header} />
             <Hero {...hero} />
             { children }
-            {/* <Footer {...footer}/> */}
+            <Footer />
         </div>
     )
 }
