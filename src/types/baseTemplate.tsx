@@ -35,13 +35,23 @@ export interface SocialLink {
     twitter?: string;
 }
 
-export interface SingProps {
-    solid: boolean;
-    className?: string;
+export interface LinkMenu {
+    id: number;
+    text: string;
+    link: string;
+    internal: boolean,
+    target?: string,
 }
 
-export interface HeaderProps extends SingProps {
-    itemsMenu: ItemMenu[]
-    homeLink?: string;
-    socialLinks: SocialLink;
+export interface Slide {
+    id: number;
+    title: string;
+    subtitle: string;
+    links: LinkMenu[];
+    background_image?: string;
+    image?: React.FC<React.SVGProps<SVGSVGElement>> | string;
+    backgroud_color: string;
 }
+
+
+

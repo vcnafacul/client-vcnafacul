@@ -1,14 +1,13 @@
 import AboutUs from "../../components/migrate/AboutUs"
 import ActionAreas from "../../components/migrate/ActionAreas"
 import Features from "../../components/migrate/Features"
-import { header } from "../../components/migrate/Header/data"
-import { hero } from "../../components/migrate/Hero/data"
 import Supporters from "../../components/migrate/Supporters"
 import BaseTemplate from "../../components/templates/baseTemplate"
+import { footer, header, hero } from "./data"
 
 function Home(){
     return (
-        <BaseTemplate header={header} hero={hero} footer={''}>
+        <BaseTemplate header={header} hero={hero} footer={footer}>
             <>
                 <AboutUs />
                 <Features />

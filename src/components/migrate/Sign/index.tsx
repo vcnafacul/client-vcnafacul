@@ -1,4 +1,4 @@
-import { SingProps } from "../Header/types"
+
 import { LOGIN_PATH, REGISTER_PATH } from '../../../routes/path'
 import  { ReactComponent as UserIcon } from "../../../assets/icons/user.svg";
 import MenuAvatar from '../MenuAvatar'
@@ -8,6 +8,11 @@ const userNavigation = [
     { name: 'Cadastro', href: REGISTER_PATH },
     { name: 'Login', href: LOGIN_PATH },
   ]
+
+export interface SingProps {
+    solid: boolean;
+    className?: string;
+}
 
 function Sign({ solid, className }: SingProps){
     return (

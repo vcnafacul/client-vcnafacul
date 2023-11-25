@@ -1,15 +1,13 @@
 import React from "react";
-import Header from "../../migrate/Header"
-import { HeaderProps } from "../../migrate/Header/types"
-import Hero from "../../migrate/Hero"
-import { HeroProps } from "../../migrate/Hero/types";
-import Footer from "../../organisms/footer";
+import Header, { HeaderProps } from "../../migrate/Header"
+import Hero, { HeroProps } from "../../migrate/Hero"
+import Footer, { FooterProps } from "../../organisms/footer";
 
 export interface BaseTemplateProps{
     header: HeaderProps;
     hero: HeroProps;
     children: React.ReactNode
-    footer: unknown
+    footer: FooterProps
 }
 
 function BaseTemplate({ header, hero, children, footer }: BaseTemplateProps){
@@ -18,7 +16,7 @@ function BaseTemplate({ header, hero, children, footer }: BaseTemplateProps){
             <Header {...header} />
             <Hero {...hero} />
             { children }
-            <Footer />
+            <Footer {...footer} />
         </div>
     )
 }

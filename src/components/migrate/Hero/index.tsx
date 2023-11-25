@@ -1,8 +1,11 @@
 import Carousel from '../Carousel';
-import { backgroundGradients } from './data';
 import BLink from '../../molecules/bLink';
-import { HeroProps } from './types';
 import Text from '../../atoms/text';
+import { Slide } from '../../../types/baseTemplate';
+
+export interface HeroProps {
+    slides: Slide[]
+}
 
 function Hero({ slides }: HeroProps){
 
@@ -10,7 +13,7 @@ function Hero({ slides }: HeroProps){
         <Carousel
             spaceBetween={0}
             childrens={slides.map((slide) => (
-            <div key={slide.id} style={{background: `${backgroundGradients[slide.id - 1]}`}} 
+            <div key={slide.id} style={{background: `${slide.backgroud_color}`}} 
                 className='min-h-[750px] sm:min-h-[480px] md:min-h-[600px] w-screen flex justify-center'>
                 <div className='container flex flex-col justify-start pt-24 min-h-screen box-border
                     sm:pt-20 sm:min-h-[430px] sm:flex-row sm:items-start sm:justify-between

@@ -19,7 +19,7 @@ function Logo({ solid, name, text }: LogoProps){
                     </div> : <></>}
                 </div>
             </Link>   
-            <p className="italic mx-0 mt-4 mb-12 md:mb-0">{text}</p>
+            {text ? <p className="italic mx-0 mt-4 mb-12 md:mb-0">{text}</p> : <></>}
         </div>
     )
 }
