@@ -5,7 +5,7 @@ import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <div className="font-raleway">
+    <div className="font-raleway overflow-y-auto scrollbar-hide h-screen">
       <App />
     </div>
   </React.StrictMode>,
