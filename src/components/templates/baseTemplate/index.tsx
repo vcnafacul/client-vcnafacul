@@ -1,16 +1,14 @@
 import React, { LegacyRef, useEffect, useRef, useState } from "react";
 import Header, { HeaderProps } from "../../organisms/header"
-import Hero, { HeroProps } from "../../organisms/hero"
 import Footer, { FooterProps } from "../../organisms/footer";
 
 export interface BaseTemplateProps{
     header: HeaderProps;
-    hero: HeroProps;
     children: React.ReactNode
     footer: FooterProps
 }
 
-function BaseTemplate({ header, hero, children, footer }: BaseTemplateProps){
+function BaseTemplate({ header, children, footer }: BaseTemplateProps){
     const [solid, setSolid] = useState(false);
     const scrollContainerRef = useRef<HTMLElement>(null);
 
@@ -36,7 +34,6 @@ function BaseTemplate({ header, hero, children, footer }: BaseTemplateProps){
     return (
         <div ref={scrollContainerRef as LegacyRef<HTMLDivElement>} className="flex flex-col overflow-y-auto scrollbar-hide h-screen">
             <Header itemsMenu={header.itemsMenu} socialLinks={header.socialLinks} solid={solid} />
-            <Hero {...hero} />
             { children }
             <Footer {...footer} />
         </div>
