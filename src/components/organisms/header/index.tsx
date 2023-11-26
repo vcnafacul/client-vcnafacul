@@ -14,14 +14,15 @@ export interface HeaderProps {
     homeLink?: string;
     socialLinks: SocialLink;
     solid: boolean;
+    className?: string;
 }
 
-function Header({ itemsMenu, socialLinks, solid } : HeaderProps) {
+function Header({ itemsMenu, socialLinks, solid, className } : HeaderProps) {
     const [openMenu, setOpenMenu] = useState(false);
     const token = ''
     return (
         <header className={`container mx-auto`}>
-            <div className={`fixed top-0 left-0 w-full z-50 py-4 md:py-5 px-0 text-white ${solid ? 'bg-white' : 'bg-transparent'}`}>
+            <div className={className}>
                 <div>
                     <div className="flex justify-between items-center mx-4 md:mx-auto md:max-w-6xl">
                         {openMenu ? <></> :

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Text from "../../atoms/text"
 import './styles.css'
-import { ItemCard } from "../../../utils/types";
 import Selector from "../../molecules/selector";
+import { ItemCard } from "../actionAreas";
 
 export interface FeaturesProps {
     title: string;

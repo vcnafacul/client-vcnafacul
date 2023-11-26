@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { ReactComponent as LogoIcon } from "../../../assets/images/home/logo.svg";
+import { HOME_PATH } from "../../../routes/path";
 
 interface LogoProps {
     solid?: boolean;
@@ -11,7 +12,7 @@ interface LogoProps {
 function Logo({ solid, name, text }: LogoProps){
     return (
         <div className="flex flex-col">
-            <Link to="#">
+            <Link to={HOME_PATH}>
                 <div className="flex items-center">
                     <LogoIcon />
                     { name ? <div className={`ml-2.5 text-lg md:text-xl ${solid ? 'text-marine' : 'text-white'}`}>

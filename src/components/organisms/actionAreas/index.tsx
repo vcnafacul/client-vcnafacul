@@ -3,7 +3,7 @@ import Text from "../../atoms/text"
 import Selector from "../../molecules/selector"
 import Carousel from "../../molecules/carousel";
 
-interface ItemCard {
+export interface ItemCard {
     id: number;
     title: string;
     subtitle?: string;
