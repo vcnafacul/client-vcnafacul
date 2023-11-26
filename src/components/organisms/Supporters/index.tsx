@@ -31,18 +31,18 @@ function Supporters({title, subtitle, tabItems, sponsors, volunteers} : Supporte
             </div>
             <Selector tabItems={tabItems} changeItem={() => {}}/>
             <div className="flex justify-around items-center flex-wrap">
-                {sponsors.map((sponsor) => (
-                    <a href={sponsor.link} target="_blank">
+                {sponsors.map((sponsor, index) => (
+                    <a key={index} href={sponsor.link} target="_blank">
                         <img className="sponsors_image" src={sponsor.image as string} alt={sponsor.alt}/>
                     </a>
                 ))}
             </div>
             <div className="flex justify-around items-center flex-wrap">
-                {volunteers.map((volunteer) => (
-                   <>
+                {volunteers.map((volunteer, index) => (
+                   <div key={index}>
                         <img className="sponsors_image" src={volunteer.image as string} alt={volunteer.alt}/>
                         <p>{volunteer.name}</p>
-                    </>
+                    </div>
                 ))}
             </div>
         </div>
