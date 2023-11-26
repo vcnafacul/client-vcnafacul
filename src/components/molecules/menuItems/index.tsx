@@ -6,12 +6,17 @@ const menuItem = tv({
     base: 'flex',
     variants: {
         align: {
-            horizontal: 'flex-row',
-            vertical: 'flex-col'
+            horizontal: 'flex-row md:mx-6',
+            vertical: 'flex-col mb-2'
         },
+        solid: {
+            true: 'text-marine',
+            false: 'text-white'
+        }
     },
     defaultVariants: {
-        align: 'horizontal'
+        align: 'horizontal',
+        solid: false
     }
 })
 
@@ -23,13 +28,11 @@ type MenuItemProps = VariantProps<typeof menuItem> & {
 
 function MenuItem({ align, itemsMenu, className, solid } : MenuItemProps) {
     return (
-        <div className={menuItem({ align, className })}>
+        <div className={menuItem({ align, solid, className })}>
             {itemsMenu.map(link => (
-                <Link 
-                    className={`text-xl font-bold md:text-base md:font-medium
-                    ${align === 'vertical' ? 'mb-2' : 'md:ml-10 md:mr-6'}
-                    ${solid ? 'text-marine' : 'text-white'}}`}
-                key={link.id} to={link.link}>{link.name}</Link>
+                <Link className="text-xl font-bold md:text-base md:font-medium mx-6 my-3"
+                    key={link.id} to={link.link}>{link.name}
+                </Link>
             ))}
         </div>
     )

@@ -18,9 +18,7 @@ export interface HeaderProps {
 
 function Header({ itemsMenu, socialLinks, solid } : HeaderProps) {
     const [openMenu, setOpenMenu] = useState(false);
-    
     const token = ''
-
     return (
         <header className={`container mx-auto`}>
             <div className={`fixed top-0 left-0 w-full z-50 py-4 md:py-5 px-0 text-white ${solid ? 'bg-white' : 'bg-transparent'}`}>
