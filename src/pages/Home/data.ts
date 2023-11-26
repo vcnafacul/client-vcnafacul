@@ -51,7 +51,8 @@ export const header: HeaderProps = {
         facebook: "https://www.facebook.com/vcnafacul/",
         linkedin: "https://www.linkedin.com/company/vcnafacul/",
         instagram: "https://www.instagram.com/vcnafacul/",
-    }
+    },
+    solid: false,
 };
 
 export const hero: HeroProps = {
