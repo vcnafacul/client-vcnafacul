@@ -24,7 +24,7 @@ export interface SupportersProps {
 
 function Supporters({title, subtitle, tabItems, sponsors, volunteers} : SupportersProps) {
     return (
-        <div id="supporters" className="supporters container mx-auto py-12 px-0 block overflow-x-hidden md:py-14">
+        <div id="supporters" className="container mx-auto py-12 px-0 md:py-14">
             <div className="mb-8">
                 <Text size="secondary">{title}</Text>
                 <Text size="tertiary">{subtitle}</Text>
