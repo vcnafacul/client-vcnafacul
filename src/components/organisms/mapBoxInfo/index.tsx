@@ -23,7 +23,7 @@ interface MapBoxInfoProps {
 
 function MapBoxInfo({ boxRef, geo, ctaLink } : MapBoxInfoProps){
     return (
-        <div ref={boxRef} className="absolute z-40 top-5 right-10 bg-white opacity-75 rounded-md p-5 flex items-center flex-col">
+        <div ref={boxRef} className="relative mb-10 mx-auto md:absolute z-40 top-5 md:right-10 bg-white opacity-75 rounded-md p-5 flex items-center flex-col">
             <Text className="flex justify-center items-center"><FaMapMarkerAlt color="red" size={30} /> Localiza Cursinho</Text>
             <Text size="quaternary">{geo?.name}</Text>
             <Text size="quaternary">
