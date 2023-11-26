@@ -15,7 +15,9 @@ function BaseTemplate({ header, children, footer, solid, className }: BaseTempla
     return (
         <div className={className}>
             <Header itemsMenu={header.itemsMenu} socialLinks={header.socialLinks} solid={solid} />
-            { children }
+            <div className="relative top-24">
+                { children }
+            </div>
             <Footer {...footer} />
         </div>
     )
