@@ -17,6 +17,7 @@ interface MapBoxProps{
     markers: MarkerPoint[];
     handleClickMarker?: (index: number) => void;
     className?: string;
+    zoom?: number
 }
 
 const DefaultIcon = L.icon({
@@ -27,12 +28,12 @@ const DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-function MapBox({markers, handleClickMarker, className} : MapBoxProps){
+function MapBox({markers, handleClickMarker, zoom, className} : MapBoxProps){
     const [mapCenter] = useState<LatLngTuple>([-21.4712828, -47.0439503]);
     
     return (
         <div className="relative">
-            <MapContainer center={mapCenter} zoom={12} scrollWheelZoom={false} 
+            <MapContainer center={mapCenter} zoom={zoom ?? 7} scrollWheelZoom={false} 
             className={className}>
                 <TileLayer
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
