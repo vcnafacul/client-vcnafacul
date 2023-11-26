@@ -3,7 +3,7 @@ import ActionAreas from "../../components/organisms/actionAreas"
 import Features from "../../components/organisms/features"
 import Map from "../../components/organisms/map"
 import Supporters from "../../components/organisms/Supporters"
-import BaseHeroTemplate from "../../components/templates/baseHeroTemplate"
+import BaseHeroTemplate from "../../components/templates/heroTemplate"
 import { about_us, actionAreas, features, footer, header, hero, supporters } from "./data"
 
 function Home(){
