@@ -3,7 +3,7 @@ import ActionAreas from "../../components/organisms/actionAreas"
 import Features from "../../components/organisms/features"
 import Supporters from "../../components/organisms/Supporters"
 import BaseTemplate from "../../components/templates/baseTemplate"
-import { about_us, actionAreas, features, footer, header, hero } from "./data"
+import { about_us, actionAreas, features, footer, header, hero, supporters } from "./data"
 
 function Home(){
     return (
@@ -12,7 +12,7 @@ function Home(){
                 <AboutUs {...about_us} />
                 <Features {...features}/>
                 <ActionAreas {...actionAreas}/>
-                <Supporters />
+                <Supporters {...supporters} />
             </>
         </BaseTemplate>
     )

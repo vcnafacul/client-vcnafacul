@@ -37,6 +37,6 @@ function HighlightSelector ( {items, changeItem, className } : Props) {
         </ul>
         
     );
-};
+}
 
 export default HighlightSelector;

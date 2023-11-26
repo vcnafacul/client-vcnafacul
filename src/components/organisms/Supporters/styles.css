@@ -1,17 +1,5 @@
-.supporters::after {
-    content: " ";
-    display: block;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 0 0 100px 100px;
-    border-color: transparent transparent #37D6B5 transparent;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-
-    @media (min-width: 1200px) {
-        border-width: 0 0 230px 230px;
-    }
+.sponsors_image {
+    max-width: 100%;
+    max-height: 200px;
+    margin: 0 40px;
 }

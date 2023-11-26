@@ -2,6 +2,10 @@ import { HeaderProps } from "../../components/organisms/header";
 import { HeroProps } from "../../components/organisms/hero";
 import { FooterProps } from "../../components/organisms/footer";
 import { FeaturesProps } from "../../components/organisms/features";
+import { ActionAreasProps } from "../../components/organisms/actionAreas";
+import { AboutUsProps } from "../../components/organisms/aboutUs";
+import { SupportersProps } from "../../components/organisms/Supporters";
+
 import { REGISTER_PATH } from "../../routes/path";
 
 import HeroImg1 from "../../assets/images/home/hero_student.svg";
@@ -31,8 +35,10 @@ import homeSubjectLiteratura from "../../assets/icons/home-subjects-literatura.s
 import homeSubjectMatematica from "../../assets/icons/home-subjects-matematica.svg";
 import homeSubjectQuimica from "../../assets/icons/home-subjects-quimica.svg";
 import homeSubjectSociologia from "../../assets/icons/home-subjects-sociologia.svg";
-import { ActionAreasProps } from "../../components/organisms/actionAreas";
-import { AboutUsProps } from "../../components/organisms/aboutUs";
+
+import raccoonLogo from "../../assets/images/home/Grupo 1706.svg";
+import hostingerLogo from "../../assets/images/home/1200px-Hostinger_logo_purple.svg@2x.png";
+import wikilabLogo from "../../assets/images/home/Logo_WikiLab.png";
 
 export const header: HeaderProps = {
     homeLink: "/",
@@ -315,4 +321,28 @@ export const about_us : AboutUsProps = {
         thumbnail: "/src/assets/images/home/thumb-about-us.png",
         videoID: "LiNm9JxvNOM",
     }
+};
+
+export const supporters : SupportersProps = {
+    title: 'Nossos apoiadores!',
+    subtitle: 'Pessoas e empresas que sonharam com a gente',
+    tabItems: ["Empresas" /*, "Voluntários"*/],
+    sponsors: [
+        {
+            image: raccoonLogo,
+            alt: "logo-raccoon",
+            link: "https://raccoon.ag/",
+        },
+        {
+            image: hostingerLogo,
+            alt: "logo-hostinger",
+            link: "https://www.hostinger.com.br/",
+        },
+        {
+            image: wikilabLogo,
+            alt: "logo-wikilab",
+            link: "https://coworkingsaocarlos.com/",
+        },
+    ],
+    volunteers: []
 };
