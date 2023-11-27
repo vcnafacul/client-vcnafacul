@@ -24,7 +24,7 @@ function Header({ itemsMenu, socialLinks, solid, className } : HeaderProps) {
         <header className={`container mx-auto`}>
             <div className={className}>
                 <div>
-                    <div className="flex justify-between items-center mx-4 md:mx-auto md:max-w-6xl">
+                    <div className="flex justify-between items-center mx-4 md:mx-auto md:max-w-6xl ">
                         {openMenu ? <></> :
                             <div onClick={() => setOpenMenu(true) }>
                                 <MenuIcon className={`${!solid ? 'fill-white' : 'fill-marine'}`} />

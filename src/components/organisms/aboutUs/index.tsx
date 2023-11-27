@@ -53,9 +53,9 @@ function AboutUs({title, subtitle, cta, video} : AboutUsProps){
             <span className="relative" id="about-id"></span>
             <div className="container mx-auto mt-10 mb-14 text-center sm:flex sm:justify-between sm:items-center sm:text-left sm:my-44">
                 <div className="relative mr-14 box-border py-10 pr-0 pl-5 mt-5 sm:pr-10 sm:pl-10 sm:mt-0 sm:min-w-[60%] md:pb-5 md:pl-16">
-                    <TriangleGreyBorder className="graphism triangle-border" />
-                    <TriangleYellow className="graphism triangle-yellow" />
-                    <SquarePink className="graphism square-pink" />
+                    <TriangleGreyBorder className="graphism-header triangle-border-header" />
+                    <TriangleYellow className="graphism-header triangle-yellow-header" />
+                    <SquarePink className="graphism-header square-pink-header" />
                     <div className="flex justify-center items-center bg-blue max-w-[640px] max-h-[390px]">
                         <div className="relative flex justify-center items-center w-96">
                             <TabletImage className="tablet absolute z-20 max-w-[640px] md:w-[640px]" />

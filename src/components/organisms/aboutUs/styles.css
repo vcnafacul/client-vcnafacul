@@ -1,19 +1,19 @@
-.graphism {
+.graphism-header {
     position: absolute;
 }
 
-.graphism.square-pink {
+.graphism-header.square-pink-header {
     width: 105px;
     height: 105px;
     top: 0;
     left: 24px;
 }
 
-.graphism.triangle-border {
+.graphism-header.triangle-border-header {
     display: none;
 }
 
-.graphism.triangle-yellow {
+.graphism-header.triangle-yellow-header {
     width: 100px;
     height: 100px;
     bottom: 0;
@@ -22,14 +22,14 @@
 }
 
 @media (min-width: 768px) {
-    .graphism.square-pink {
+    .graphism-header.square-pink {
         width: 193px;
         height: 193px;
         top: -60px;
         left: 0;
     }
 
-    .graphism.triangle-border {
+    .graphism-header.triangle-border-header {
         display: block;
         width: 100px;
         height: 100px;
@@ -38,7 +38,7 @@
         transform: rotate(225deg);
     }
 
-    .graphism.triangle-yellow {
+    .graphism-header.triangle-yellow-header {
         width: 140px;
         height: 140px;
         bottom: -10px;
@@ -47,13 +47,13 @@
 }
 
 @media (min-width: 1200px) {
-    .graphism.triangle-border {
+    .graphism-header.triangle-border-header {
         width: 115px;
         height: 115px;
         bottom: 20px;
     }
 
-    .graphism.triangle-yellow {
+    .graphism-header.triangle-yellow-header {
         width: 140px;
         height: 140px;
         bottom: -80px;
