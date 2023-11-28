@@ -11,7 +11,7 @@ function LoginForm(){
                 <Text size="quaternary" className="text-orange my-5">Entre com seu e-mail e senha para acessar a plataforma</Text>
                 <FormField label="E-mail" />
                 <FormField label="Senha" type="password" visibility={false} />
-                <Button onClick={() => console.log('Entrar')}>Entrar</Button>
+                <Button hover={true} onClick={() => console.log('Entrar')}>Entrar</Button>
                 <Link to='#' className="text-orange w-full mt-5 underline font-bold">Esqueci minha senha</Link>
             </div>
         </div>

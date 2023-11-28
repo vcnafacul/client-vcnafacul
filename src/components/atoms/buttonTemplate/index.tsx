@@ -4,7 +4,7 @@ import { VariantProps, tv } from "tailwind-variants";
 const getHoverClasses = (type: string, isHoverEnabled?: boolean) : string => {
     if (!isHoverEnabled) return "";
     return {
-        primary: "hover:bg-white hover:text-orange",
+        primary: "hover:opacity-75 duration-300",
         secondary: "hover:bg-orange hover:text-white",
         tertiary: "hover:bg-white hover:text-marine",
     }[type] || "";

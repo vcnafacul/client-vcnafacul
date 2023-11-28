@@ -6,13 +6,13 @@ export type ButtonProps = VariantProps<typeof buttonTemplate> & ComponentProps<'
     children: React.ReactNode;
     className?: string;
     hover?: boolean;
-    type?: string;
+    typeStyle?:  "primary" | "secondary" | "tertiary";
     size?: string;
 }
 
-function Button({children, type, size, hover, className, ...props} : ButtonProps){
+function Button({children, size, hover, className, typeStyle = 'primary', ...props} : ButtonProps){
     return (
-        <ButtonTemplate type={type} size={size} hover={hover} className={`${className} cursor-pointer w-full flex justify-center`} {...props}>
+        <ButtonTemplate type={typeStyle} size={size} hover={hover} className={`${className} cursor-pointer w-full flex justify-center`} {...props}>
                 {children}
         </ButtonTemplate>
     )
