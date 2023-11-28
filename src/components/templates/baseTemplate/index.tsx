@@ -32,18 +32,20 @@ export type BaseTemplateProps = VariantProps<typeof baseTemplate> & {
 
 function BaseTemplate({ header, children, footer, solid, position, headerShadow, className }: BaseTemplateProps){
     return (
-        <div className={className}>
-            <Header 
-                className={`${baseTemplate({ position, headerShadow })} ${solid ? 'bg-white' : 'bg-transparent'}`} 
-                itemsMenu={header.itemsMenu} 
-                socialLinks={header.socialLinks} 
-                solid={solid}
-                userNavigationSign={header.userNavigationSign}
-                userNavigationLogged={header.userNavigationLogged} />
-            <div className={`${position !== undefined ? '' : 'h-[calc(100vh-76px)]'}`}>
-                { children }
+        <div className="overflow-y-auto scrollbar-hide h-screen">
+            <div className={className}>
+                <Header 
+                    className={`${baseTemplate({ position, headerShadow })} ${solid ? 'bg-white' : 'bg-transparent'}`} 
+                    itemsMenu={header.itemsMenu} 
+                    socialLinks={header.socialLinks} 
+                    solid={solid}
+                    userNavigationSign={header.userNavigationSign}
+                    userNavigationLogged={header.userNavigationLogged} />
+                <div className={`${position !== undefined ? '' : 'h-[calc(100vh-76px)]'}`}>
+                    { children }
+                </div>
+                <Footer {...footer} />
             </div>
-            <Footer {...footer} />
         </div>
     )
 }

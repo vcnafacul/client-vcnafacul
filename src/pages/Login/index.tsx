@@ -9,15 +9,13 @@ import { loginForm } from "./data";
 
 function Login(){
     return (
-        <div className="overflow-y-auto scrollbar-hide h-screen">
-            <BaseTemplate header={header} footer={footer} solid={true} className="bg-white">
-                <div className="relative">
-                    <TriangleGreen className="graphism triangle-green"/>
-                    <TriangleYellow className="graphism triangle-yellow"/>
-                    <LoginForm {...loginForm} />
-                </div>
-            </BaseTemplate>
-        </div>
+        <BaseTemplate header={header} footer={footer} solid={true} className="bg-white">
+            <div className="relative">
+                <TriangleGreen className="graphism triangle-green"/>
+                <TriangleYellow className="graphism triangle-yellow"/>
+                <LoginForm {...loginForm} />
+            </div>
+        </BaseTemplate>
     )
 }
 
