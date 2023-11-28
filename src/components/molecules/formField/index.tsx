@@ -21,7 +21,7 @@ function FormField({label, type = "text", visibility = false} : FormFieldProps){
     }
 
     return (
-        <div className="flex flex-col w-full relative">
+        <div className="flex flex-col w-full relative justify-center items-center">
             <LabelInput label={label} />
             <Input type={visible ? "text" : type} />
             {type !== "password" ? 

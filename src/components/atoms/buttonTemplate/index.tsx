@@ -20,7 +20,7 @@ export const buttonTemplate = tv({
             tertiary: "text-white border-white",
         },
         size: {
-            base: 'px-2.5 py-2.5 md:px-7 md:py-3 ml-5 md:mb-4.5',
+            base: 'px-2.5 py-2.5 md:px-7 md:py-3 md:mx-2 md:mb-4.5',
             small: 'px-1 py-1 md:px-2 md:py-1'
         }
     },
