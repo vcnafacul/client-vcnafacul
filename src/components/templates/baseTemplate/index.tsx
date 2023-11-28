@@ -12,12 +12,12 @@ const baseTemplate = tv({
         },
         headerShadow: {
             true: 'shadow-lg',
-            false: ''
+            false: 'shadow-none'
         }
     },
     defaultVariants: {
         position: 'relative',
-        headerShadow: false
+        headerShadow: true
     }
 })
 
@@ -30,7 +30,7 @@ export type BaseTemplateProps = VariantProps<typeof baseTemplate> & {
     headerShadow?: boolean;
 }
 
-function BaseTemplate({ header, children, footer, solid, position, headerShadow = false, className }: BaseTemplateProps){
+function BaseTemplate({ header, children, footer, solid, position, headerShadow, className }: BaseTemplateProps){
     return (
         <div className={className}>
             <Header 

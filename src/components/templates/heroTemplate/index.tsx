@@ -39,7 +39,7 @@ function HeroTemplate({ header, hero, children, footer, headerPosition = 'fixed'
 
     return (
         <div ref={scrollContainerRef as LegacyRef<HTMLDivElement>} className="flex flex-col overflow-y-auto scrollbar-hide h-screen">
-            <BaseTemplate header={header} footer={footer} solid={solid} position={headerPosition} >
+            <BaseTemplate header={header} footer={footer} solid={solid} position={headerPosition} headerShadow={false}>
                 <Hero {...hero} />
                 { children }
             </BaseTemplate>
