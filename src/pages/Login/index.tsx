@@ -9,7 +9,7 @@ import LoginForm from "../../components/organisms/loginForm";
 function Login(){
     return (
         <div className="overflow-y-auto scrollbar-hide h-screen">
-            <BaseTemplate header={header} footer={footer} solid={true} position="relative" className="bg-white">
+            <BaseTemplate header={header} headerShadow footer={footer} solid={true} position="relative" className="bg-white">
                 <div className="relative h-[calc(100vh-76px)]">
                     <TriangleGreen className="graphism triangle-green"/>
                     <TriangleYellow className="graphism triangle-yellow"/>

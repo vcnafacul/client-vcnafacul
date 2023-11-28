@@ -21,7 +21,7 @@ function Header({ itemsMenu, socialLinks, solid, className } : HeaderProps) {
     const [openMenu, setOpenMenu] = useState(false);
     const token = ''
     return (
-        <header className={className + 'w-screen shadow-lg'}>
+        <header className={className + 'w-screen'}>
             <div className={`md:container mx-auto`}>
                 <div>
                     <div className="flex justify-between items-center mx-4 md:mx-auto md:max-w-6xl ">

@@ -9,10 +9,15 @@ const baseTemplate = tv({
         position: {
             fixed: 'fixed top-0 left-0',
             relative: 'relative'
+        },
+        headerShadow: {
+            true: 'shadow-lg',
+            false: ''
         }
     },
     defaultVariants: {
-        position: 'fixed'
+        position: 'fixed',
+        headerShadow: false
     }
 })
 
@@ -22,14 +27,15 @@ export type BaseTemplateProps = VariantProps<typeof baseTemplate> & {
     footer: FooterProps;
     solid: boolean;
     className?: string;
+    headerShadow?: boolean;
 }
 
-function BaseTemplate({ header, children, footer, solid, position, className }: BaseTemplateProps){
+function BaseTemplate({ header, children, footer, solid, position, headerShadow = false, className }: BaseTemplateProps){
     
     return (
         <div className={className}>
             <Header 
-                className={`${baseTemplate({ position })} ${solid ? 'bg-white' : 'bg-transparent'}`} 
+                className={`${baseTemplate({ position, headerShadow })} ${solid ? 'bg-white' : 'bg-transparent'}`} 
                 itemsMenu={header.itemsMenu} 
                 socialLinks={header.socialLinks} 
                 solid={solid} />
