@@ -16,7 +16,7 @@ const baseTemplate = tv({
         }
     },
     defaultVariants: {
-        position: 'fixed',
+        position: 'relative',
         headerShadow: false
     }
 })

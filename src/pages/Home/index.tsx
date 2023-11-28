@@ -8,7 +8,7 @@ import { about_us, actionAreas, features, footer, header, hero, supporters } fro
 
 function Home(){
     return (
-        <HeroTemplate header={header} hero={hero} footer={footer}>
+        <HeroTemplate header={header} hero={hero} footer={footer} headerPosition="fixed">
             <>
                 <AboutUs {...about_us} />
                 <Features {...features}/>

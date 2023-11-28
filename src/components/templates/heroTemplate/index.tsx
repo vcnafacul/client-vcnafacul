@@ -7,11 +7,12 @@ import BaseTemplate from "../baseTemplate";
 export interface HeroTemplateProps{
     header: HeaderProps;
     hero: HeroProps;
-    children: React.ReactNode
-    footer: FooterProps
+    children: React.ReactNode;
+    footer: FooterProps;
+    headerPosition?: 'fixed' | 'relative'
 }
 
-function HeroTemplate({ header, hero, children, footer }: HeroTemplateProps){
+function HeroTemplate({ header, hero, children, footer, headerPosition = 'fixed' }: HeroTemplateProps){
     
     const [solid, setSolid] = useState(false);
     const scrollContainerRef = useRef<HTMLElement>(null);
@@ -38,7 +39,7 @@ function HeroTemplate({ header, hero, children, footer }: HeroTemplateProps){
 
     return (
         <div ref={scrollContainerRef as LegacyRef<HTMLDivElement>} className="flex flex-col overflow-y-auto scrollbar-hide h-screen">
-            <BaseTemplate header={header} footer={footer} solid={solid} >
+            <BaseTemplate header={header} footer={footer} solid={solid} position={headerPosition} >
                 <Hero {...hero} />
                 { children }
             </BaseTemplate>
