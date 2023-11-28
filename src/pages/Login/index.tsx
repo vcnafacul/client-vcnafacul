@@ -5,6 +5,7 @@ import './styles.css'
 import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
 import { ReactComponent as TriangleYellow } from "../../assets/icons/triangle-yellow.svg";
 import LoginForm from "../../components/organisms/loginForm";
+import { loginForm } from "./data";
 
 function Login(){
     return (
@@ -13,7 +14,7 @@ function Login(){
                 <div className="relative">
                     <TriangleGreen className="graphism triangle-green"/>
                     <TriangleYellow className="graphism triangle-yellow"/>
-                    <LoginForm />
+                    <LoginForm {...loginForm} />
                 </div>
             </BaseTemplate>
         </div>
