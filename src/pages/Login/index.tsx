@@ -10,7 +10,7 @@ function Login(){
     return (
         <div className="overflow-y-auto scrollbar-hide h-screen">
             <BaseTemplate header={header} headerShadow footer={footer} solid={true} position="relative" className="bg-white">
-                <div className="relative h-[calc(100vh-76px)]">
+                <div className="relative">
                     <TriangleGreen className="graphism triangle-green"/>
                     <TriangleYellow className="graphism triangle-yellow"/>
                     <LoginForm />

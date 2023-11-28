@@ -31,7 +31,6 @@ export type BaseTemplateProps = VariantProps<typeof baseTemplate> & {
 }
 
 function BaseTemplate({ header, children, footer, solid, position, headerShadow = false, className }: BaseTemplateProps){
-    
     return (
         <div className={className}>
             <Header 
@@ -39,7 +38,9 @@ function BaseTemplate({ header, children, footer, solid, position, headerShadow 
                 itemsMenu={header.itemsMenu} 
                 socialLinks={header.socialLinks} 
                 solid={solid} />
-            { children }
+            <div className={`${position === undefined ? '' : 'h-[calc(100vh-76px)]'}`}>
+                { children }
+            </div>
             <Footer {...footer} />
         </div>
     )

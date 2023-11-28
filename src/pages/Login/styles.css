@@ -15,7 +15,7 @@
     width: 63px;
     height: 63px;
     right: 0;
-    bottom: 4px;
+    bottom: -12px;
     transform: rotate(180deg);
 }
 
@@ -30,6 +30,5 @@
     .graphism.triangle-yellow {
         width: 135px;
         height: 135px;
-        bottom: -0px;
     }
 }
