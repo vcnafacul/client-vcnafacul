@@ -21,13 +21,13 @@ function Header({ itemsMenu, socialLinks, solid, className } : HeaderProps) {
     const [openMenu, setOpenMenu] = useState(false);
     const token = ''
     return (
-        <header className={`container mx-auto`}>
-            <div className={className}>
+        <header className={className}>
+            <div className={`md:container mx-auto`}>
                 <div>
                     <div className="flex justify-between items-center mx-4 md:mx-auto md:max-w-6xl ">
                         {openMenu ? <></> :
                             <div onClick={() => setOpenMenu(true) }>
-                                <MenuIcon className={`${!solid ? 'fill-white' : 'fill-marine'}`} />
+                                <MenuIcon className={`${!solid ? 'fill-white' : 'fill-marine'} md:hidden`} />
                             </div>
                         }
                         <Logo solid={solid} name />
