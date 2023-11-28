@@ -5,8 +5,9 @@ import { ReactComponent as MenuIcon } from "../../../assets/icons/menu.svg";
 import Sign from "../sign";
 import Logged from "../../molecules/Logged";
 import Logo from "../../molecules/logo";
-import { ItemMenu, SocialLink } from "../../../types/baseTemplate";
 import MainMenu from "../mainMenu";
+import { ItemMenu } from "../../molecules/menuItems";
+import { SocialLink } from "../../molecules/followUs";
 
 
 export interface HeaderProps {

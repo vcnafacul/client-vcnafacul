@@ -1,7 +1,24 @@
 import Carousel from '../../molecules/carousel';
 import BLink from '../../molecules/bLink';
 import Text from '../../atoms/text';
-import { Slide } from '../../../types/baseTemplate';
+
+export interface LinkMenu {
+    id: number;
+    text: string;
+    link: string;
+    internal: boolean,
+    target?: '_blank' | '_self';
+}
+
+export interface Slide {
+    id: number;
+    title: string;
+    subtitle: string;
+    links: LinkMenu[];
+    background_image?: string;
+    image?: React.FC<React.SVGProps<SVGSVGElement>> | string;
+    backgroud_color: string;
+}
 
 export interface HeroProps {
     slides: Slide[]
@@ -25,7 +42,7 @@ function Hero({ slides }: HeroProps){
                         </div>
                         <div className='flex'>
                             {slide.links.map((link) => (
-                                <BLink type='tertiary' hover key={link.id} to={link.link}>{link.text}</BLink>
+                                <BLink type='tertiary' target={link.target} hover key={link.id} to={link.link}>{link.text}</BLink>
                             ))}
                         </div>
                     </div>

@@ -1,5 +1,4 @@
 import { VariantProps, tv } from "tailwind-variants"
-import { ItemMenu } from "../../../types/baseTemplate";
 import { Link } from "react-router-dom";
 
 const menuItem = tv({
@@ -19,6 +18,13 @@ const menuItem = tv({
         solid: false
     }
 })
+
+export interface ItemMenu {
+    id: number;
+    name: string;
+    link: string;
+    internal?: boolean;
+}
 
 type MenuItemProps = VariantProps<typeof menuItem> & {
     className?: string;

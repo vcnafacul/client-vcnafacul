@@ -1,6 +1,5 @@
-import { ItemMenu, SocialLink } from "../../../types/baseTemplate";
-import MenuItem from "../../molecules/menuItems";
-import FollowUs from "../../molecules/followUs";
+import MenuItem, { ItemMenu } from "../../molecules/menuItems";
+import FollowUs, { SocialLink } from "../../molecules/followUs";
 
 import { ReactComponent as CloseIcon } from "../../../assets/icons/close.svg";
 

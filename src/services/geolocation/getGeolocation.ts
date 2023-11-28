@@ -1,5 +1,5 @@
 import { geolocations } from "../urls";
-import { Geolocation } from "../../components/organisms/map/type"
+import { Geolocation } from "../../types/geolocation/geolocation"
 
 const getGeolocation = async () : Promise<Geolocation[]> => {
     try {

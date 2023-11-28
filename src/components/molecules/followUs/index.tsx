@@ -3,7 +3,13 @@ import { ReactComponent as FacebookIcon} from "../../../assets/icons/facebook.sv
 import { ReactComponent as LinkedinIcon} from "../../../assets/icons/linkedin.svg"
 import { ReactComponent as TwitterIcon} from "../../../assets/icons/twitter.svg"
 import { ReactComponent as InstagramIcon} from "../../../assets/icons/instagram.svg"
-import { SocialLink } from "../../../types/baseTemplate"
+
+export interface SocialLink {
+    facebook?: string;
+    linkedin?: string;
+    instagram?: string;
+    twitter?: string;
+}
 
 interface FollowUsProps {
     socialLinks: SocialLink;

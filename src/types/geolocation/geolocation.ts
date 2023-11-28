@@ -1,3 +1,5 @@
+import { StatusEnum } from "./statusEnum";
+
 export interface Geolocation {
     id: number,
     latitude: number;
@@ -30,9 +32,3 @@ export interface Geolocation {
     createdAt: string;
     updatedAt: string;
 }
-
-export enum StatusEnum {
-    Pending = 0,
-    Approved = 1,
-    Rejected = 2,
-  }

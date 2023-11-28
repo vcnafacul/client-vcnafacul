@@ -1,7 +1,6 @@
-import { ItemMenu, SocialLink } from "../../../types/baseTemplate";
 import Logo from "../../molecules/logo";
-import FollowUs from "../../molecules/followUs";
-import MenuItem from "../../molecules/menuItems";
+import FollowUs, { SocialLink } from "../../molecules/followUs";
+import MenuItem, { ItemMenu } from "../../molecules/menuItems";
 
 export interface FooterProps {
     sitemapLinks: ItemMenu[];
