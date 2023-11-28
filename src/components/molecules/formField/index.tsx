@@ -5,7 +5,7 @@ import LabelInput from "../../atoms/labelInput/input"
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { IoMdEye } from "react-icons/io";
 
-interface FormFieldProps{
+export interface FormFieldProps{
     label: string;
     type?: "text" | "password" | "number";
     visibility?: boolean;

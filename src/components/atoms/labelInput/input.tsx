@@ -4,7 +4,7 @@ interface LabelInputProps{
 
 function LabelInput({ label }: LabelInputProps){
     return (
-        <div className="absolute text-grey top-1 left-3 md:top-2 md:left-11 font-bold text-xs">
+        <div className="absolute text-grey top-2 left-[21px] font-bold text-xs">
             {label}
         </div>
     )
