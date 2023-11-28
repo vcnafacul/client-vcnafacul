@@ -7,10 +7,11 @@ export interface LoginFormProps {
     title: string;
     subtitle: string;
     forgot: string;
+    labelSubmit: string;
     formData: FormFieldProps[]
 }
 
-function LoginForm({ title, subtitle, forgot, formData } : LoginFormProps){
+function LoginForm({ title, subtitle, forgot, labelSubmit, formData } : LoginFormProps){
 
     const login = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -25,7 +26,7 @@ function LoginForm({ title, subtitle, forgot, formData } : LoginFormProps){
                 <Form 
                     className="w-full my-4"
                     formFields={formData} 
-                    labelSubmit="Entrar"
+                    labelSubmit={labelSubmit}
                     onSubmit={login}/>
                 <Link to='#' className="text-orange w-full mt-5 underline font-bold">{forgot}</Link>
             </div>
