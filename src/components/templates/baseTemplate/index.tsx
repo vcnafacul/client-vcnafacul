@@ -38,7 +38,7 @@ function BaseTemplate({ header, children, footer, solid, position, headerShadow 
                 itemsMenu={header.itemsMenu} 
                 socialLinks={header.socialLinks} 
                 solid={solid} />
-            <div className={`${position === undefined ? '' : 'h-[calc(100vh-76px)]'}`}>
+            <div className={`${position !== undefined ? '' : 'h-[calc(100vh-76px)]'}`}>
                 { children }
             </div>
             <Footer {...footer} />
