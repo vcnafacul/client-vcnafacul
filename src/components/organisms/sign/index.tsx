@@ -1,21 +1,15 @@
-
-import { LOGIN_PATH, REGISTER_PATH } from '../../../routes/path'
 import  { ReactComponent as UserIcon } from "../../../assets/icons/user.svg";
 import BLink from "../../molecules/bLink";
-import DropdwonMenu from '../../atoms/dropdownMenu';
+import DropdwonMenu, { NavigationProps } from '../../atoms/dropdownMenu';
 import Avatar from '../../molecules/avatar';
-
-const userNavigation = [
-    { name: 'Cadastro', href: REGISTER_PATH },
-    { name: 'Login', href: LOGIN_PATH },
-  ]
 
 export interface SingProps {
     solid: boolean;
     className?: string;
+    userNavigation: NavigationProps[]
 }
 
-function Sign({ solid, className }: SingProps){
+function Sign({ solid, className, userNavigation }: SingProps){
     return (
         <div className={`flex ${className}`}>
             <BLink to={userNavigation[0].href} type="tertiary" size="small"

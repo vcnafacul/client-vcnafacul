@@ -6,7 +6,7 @@ import { ActionAreasProps } from "../../components/organisms/actionAreas";
 import { AboutUsProps } from "../../components/organisms/aboutUs";
 import { SupportersProps } from "../../components/organisms/Supporters";
 
-import { REGISTER_PATH } from "../../routes/path";
+import { ACCOUNT_PATH, DASHBOARD, HOME_PATH, LOGIN_PATH, REGISTER_PATH } from "../../routes/path";
 
 import HeroImg1 from "../../assets/images/home/hero_student.svg";
 import HeroImg2 from "../../assets/images/home/hero_teacher.svg";
@@ -40,6 +40,17 @@ import raccoonLogo from "../../assets/images/home/Grupo 1706.svg";
 import hostingerLogo from "../../assets/images/home/1200px-Hostinger_logo_purple.svg@2x.png";
 import wikilabLogo from "../../assets/images/home/Logo_WikiLab.png";
 
+export const userNavigationSign = [
+    { name: 'Cadastro', href: REGISTER_PATH },
+    { name: 'Login', href: LOGIN_PATH },
+  ]
+
+export const userNavigationLogged = [
+    { name: 'DashBoard', href: DASHBOARD },
+    { name: 'Editar Perfil', href: ACCOUNT_PATH },
+    { name: 'Sair', href: HOME_PATH },
+]
+
 export const header: HeaderProps = {
     homeLink: "/",
     itemsMenu: [
@@ -52,8 +63,12 @@ export const header: HeaderProps = {
         linkedin: "https://www.linkedin.com/company/vcnafacul/",
         instagram: "https://www.instagram.com/vcnafacul/",
     },
+    userNavigationSign: userNavigationSign,
+    userNavigationLogged: userNavigationLogged,
     solid: false,
 };
+
+
 
 export const hero: HeroProps = {
     slides: [

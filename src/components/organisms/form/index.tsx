@@ -13,7 +13,7 @@ export type FormProps = ComponentProps<'form'> & {
 function Form({ formFields, labelSubmit, styleButton = "primary", sizeButton = "base", className, ...props } : FormProps){
    return (
     <form className={`${className} `} {...props}>
-        {formFields.map(f => <FormField label={f.label} type={f.type} visibility={f.visibility} />)}
+        {formFields.map((f, i) => <FormField key={i} label={f.label} type={f.type} visibility={f.visibility} />)}
         <Button typeStyle={styleButton} size={sizeButton} type="submit" >{labelSubmit}</Button>
     </form>
    )

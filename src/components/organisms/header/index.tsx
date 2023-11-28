@@ -8,6 +8,7 @@ import Logo from "../../molecules/logo";
 import MainMenu from "../mainMenu";
 import { ItemMenu } from "../../molecules/menuItems";
 import { SocialLink } from "../../molecules/followUs";
+import { NavigationProps } from "../../atoms/dropdownMenu";
 
 
 export interface HeaderProps {
@@ -16,9 +17,11 @@ export interface HeaderProps {
     socialLinks: SocialLink;
     solid: boolean;
     className?: string;
+    userNavigationSign: NavigationProps[]
+    userNavigationLogged: NavigationProps[]
 }
 
-function Header({ itemsMenu, socialLinks, solid, className } : HeaderProps) {
+function Header({ itemsMenu, socialLinks, solid, userNavigationSign, userNavigationLogged,  className } : HeaderProps) {
     const [openMenu, setOpenMenu] = useState(false);
     const token = ''
     return (
@@ -37,8 +40,8 @@ function Header({ itemsMenu, socialLinks, solid, className } : HeaderProps) {
                             setOpenMenu(false)
                         }}/>
                         {!token ?  
-                            <Sign solid={solid} className="items-center"/> :
-                            <Logged />
+                            <Sign userNavigation={userNavigationSign} solid={solid} className="items-center"/> :
+                            <Logged userNavigation={userNavigationLogged} userName="Fernando"/>
                         }
                     </div>
                 </div>

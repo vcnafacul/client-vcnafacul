@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import { Menu, Transition } from '@headlessui/react'
 import { classNames } from '../../../utils/className'
 
-interface NavigationProps {
+export interface NavigationProps {
     name: string;
     href: string;
 }

@@ -1,18 +1,15 @@
-import DropdwonMenu from "../../atoms/dropdownMenu"
+import DropdwonMenu, { NavigationProps } from "../../atoms/dropdownMenu"
 import Avatar from "../avatar"
 
-const userNavigation = [
-    { name: 'DashBoard', href: "#" },
-    { name: 'Editar Perfil', href: "#" },
-    { name: 'Sair', href: "#" },
-  ]
+interface LoggedProps {
+    userName: string;
+    userNavigation: NavigationProps[]
+}
 
-function Logged(){
+function Logged({userName, userNavigation} : LoggedProps){
     return (
         <div className="flex items-center">
-            <div>
-                Fernando
-            </div>
+            <div>{userName}</div>
             <DropdwonMenu userNavigation={userNavigation}>
                 <Avatar />
             </DropdwonMenu>
