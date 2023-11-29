@@ -21,8 +21,6 @@ type DasCardProps = VariantProps<typeof dashCard> & {
 }
 
 function DashCard({card, size, opened } : DasCardProps){
-    console.log(card.title)
-    console.log(size !== 'small' && opened)
  return (
     <div 
         className={`${dashCard({ size })} ${card.bg} ${size !== 'small' && !opened ? 'mt-4 rounded-t-md' : 'mt-0'}`}>
