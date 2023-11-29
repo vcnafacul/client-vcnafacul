@@ -23,7 +23,7 @@ interface MenuDashProps {
 }
 
 function MenuDash({ dashCardList } : MenuDashProps) {
-    const [opened, setOpened] = useState<number>(0)
+    const [opened, setOpened] = useState<number>(2)
     return (
         <div className="fixed top-[76px] right-0 bg-white shadow-md p-2 w-60 h-full">
         {dashCardList.map(card => (

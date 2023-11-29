@@ -6,7 +6,7 @@ const dashCard = tv({
     base: 'text-white py-3 px-2 flex items-center relative',
     variants: {
         size: {
-            big: 'flex-col justify-between h-32 mt-4',
+            big: 'flex-col justify-between h-32',
             small: 'flex-row justify-between gap-4 h-16 px-4'
         }
     },
@@ -28,8 +28,10 @@ function DashCard({card, size, opened } : DasCardProps){
             <div className={`${size !== 'small' ? 'flex justify-center w-full' : ''}`}>
                 {card.title}
             </div>
-            <IoChevronDownCircleSharp size={20} 
-            className={`${size !== 'small' ? 'absolute right-3 bottom-3' : ''}`} />
+            {opened ? 
+            <IoChevronDownCircleSharp size={20} className={`${size !== 'small' ? 'absolute right-3 bottom-3' : ''}`} /> : 
+            <IoChevronUpCircleSharp size={20} className={`${size !== 'small' ? 'absolute right-3 bottom-3' : ''}`} />}
+            
     </div>
     )
 }
