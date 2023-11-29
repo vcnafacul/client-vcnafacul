@@ -1,14 +1,17 @@
-import BaseTemplate from "../../components/templates/baseTemplate"
-import { footer } from "../Home/data"
-import { headerDash } from "./data"
+import DashTemplate from "../../components/templates/dashTemplate"
+import { dashCardList, headerDash } from "./data"
 
 function Dash(){
     return (
-        <BaseTemplate header={headerDash} footer={footer} solid >
-            <div>
-                Dash
+        <DashTemplate header={headerDash} dashCardList={dashCardList}>
+            <div className="w-96 h-96 bg-blue-400">
+                Dash 2aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                Dash 2aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                Dash 2aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                Dash 2aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                Dash 2aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
             </div>
-        </BaseTemplate>
+        </DashTemplate>
     )
 }
 

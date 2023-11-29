@@ -24,7 +24,7 @@ const baseTemplate = tv({
 export type BaseTemplateProps = VariantProps<typeof baseTemplate> & {
     header: HeaderProps;
     children: React.ReactNode;
-    footer: FooterProps;
+    footer?: FooterProps;
     solid: boolean;
     className?: string;
     headerShadow?: boolean;
@@ -44,7 +44,7 @@ function BaseTemplate({ header, children, footer, solid, position, headerShadow,
                 <div className={`${position !== undefined ? '' : 'h-[calc(100vh-76px)]'}`}>
                     { children }
                 </div>
-                <Footer {...footer} />
+                {footer ? <Footer {...footer} /> : <></>}
             </div>
         </div>
     )
