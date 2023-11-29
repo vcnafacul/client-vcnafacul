@@ -9,7 +9,7 @@ import { loginForm } from "./data";
 
 function Login(){
     return (
-        <BaseTemplate header={header} footer={footer} solid={true} className="bg-white">
+        <BaseTemplate header={header} footer={footer} solid={true} className="bg-white overflow-y-auto scrollbar-hide h-screen">
             <div className="relative">
                 <TriangleGreen className="graphism triangle-green"/>
                 <TriangleYellow className="graphism triangle-yellow"/>

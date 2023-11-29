@@ -12,7 +12,7 @@ export interface HeroTemplateProps{
     headerPosition?: 'fixed' | 'relative'
 }
 
-function HeroTemplate({ header, hero, children, footer, headerPosition = 'fixed' }: HeroTemplateProps){
+function HeroTemplate({ header, hero, children, footer, headerPosition = 'relative' }: HeroTemplateProps){
     
     const [solid, setSolid] = useState(false);
     const scrollContainerRef = useRef<HTMLElement>(null);
