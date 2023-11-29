@@ -1,3 +1,4 @@
+import { ComponentProps } from "react";
 import { VariantProps, tv } from "tailwind-variants"
 
 const input = tv({
@@ -19,14 +20,13 @@ const input = tv({
     }
 })
 
-export type InputProps = VariantProps<typeof input> & {
+export type InputProps = VariantProps<typeof input> & ComponentProps<'input'> & {
     className?: string;
-    type: string;
 }
 
-function Input({ erro, size, type, className } : InputProps){
+function Input({ erro, size, className, ...props } : InputProps){
     return (
-        <input className={input({ erro, size, className })} type={type} />
+        <input autoComplete="on" className={input({ erro, size, className })} {...props} />
     )
 }
 

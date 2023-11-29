@@ -6,7 +6,7 @@ export const loginForm : LoginFormProps = {
     forgot: "Esqueci minha senha",
     labelSubmit: "Entrar",
     formData: [
-        {label: 'E-mail'},
-        {label: 'Senha', type: 'password'}
+        { id: 'email', label: 'E-mail'},
+        {id: 'password',label: 'Senha', type: 'password'}
     ]
 }

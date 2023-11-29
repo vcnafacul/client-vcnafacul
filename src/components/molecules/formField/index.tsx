@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import Input from "../../atoms/input"
 import LabelInput from "../../atoms/labelInput/input"
@@ -5,13 +6,20 @@ import LabelInput from "../../atoms/labelInput/input"
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { IoMdEye } from "react-icons/io";
 
-export interface FormFieldProps{
+export interface FormFieldInput {
+    id: string;
     label: string;
     type?: "text" | "password" | "number";
     visibility?: boolean;
+    disabled?: boolean;
+    value?: any;
 }
 
-function FormField({label, type = "text", visibility = false} : FormFieldProps){
+export interface FormFieldProps  extends FormFieldInput {
+    handleOnChange: (event: React.InputHTMLAttributes<HTMLInputElement>) => void;
+}
+
+function FormField({id, label, type = "text", visibility = false, handleOnChange} : FormFieldProps){
     const [visible, setVisible] = useState<boolean>(visibility)
 
     function backgroundImageToggleVisibility(visible: boolean){
@@ -23,7 +31,10 @@ function FormField({label, type = "text", visibility = false} : FormFieldProps){
     return (
         <div className="flex flex-col w-full relative justify-center items-center">
             <LabelInput label={label} />
-            <Input type={visible ? "text" : type} />
+            <Input 
+                name={id}
+                type={visible ? "text" : type} 
+                onChange={handleOnChange} />
             {type !== "password" ? 
                 <></> : 
                 backgroundImageToggleVisibility(visible)}

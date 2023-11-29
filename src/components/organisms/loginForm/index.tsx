@@ -1,21 +1,31 @@
 import { Link } from "react-router-dom"
 import Text from "../../atoms/text"
-import { FormFieldProps } from "../../molecules/formField"
 import Form from "../form"
+import { useState } from "react";
+import { FormFieldInput } from "../../molecules/formField";
+import { createObjectFromFormFieldInput } from "../../../utils/createObject";
 
 export interface LoginFormProps {
     title: string;
     subtitle: string;
     forgot: string;
     labelSubmit: string;
-    formData: FormFieldProps[]
+    formData: FormFieldInput[]
 }
 
 function LoginForm({ title, subtitle, forgot, labelSubmit, formData } : LoginFormProps){
 
+    const [data, setData] = useState(createObjectFromFormFieldInput(formData)) 
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleInputChange = (event: any) => {
+        const { name, value } = event.target;
+        setData({ ...data, [name]: value });
+    };
+
     const login = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        console.log('Entrar')
+        console.log(data)
     }
 
     return (
@@ -27,6 +37,7 @@ function LoginForm({ title, subtitle, forgot, labelSubmit, formData } : LoginFor
                     className="w-full my-4"
                     formFields={formData} 
                     labelSubmit={labelSubmit}
+                    handleOnChange={handleInputChange}
                     onSubmit={login}/>
                 <Link to='#' className="text-orange w-full mt-5 underline font-bold">{forgot}</Link>
             </div>

@@ -1,19 +1,21 @@
 import { ComponentProps } from "react"
-import FormField, { FormFieldProps } from "../../molecules/formField"
+import FormField, { FormFieldInput } from "../../molecules/formField"
 import Button from "../../molecules/button";
 
 export type FormProps = ComponentProps<'form'> & {
-    formFields: FormFieldProps[]
+    formFields: FormFieldInput[]
     labelSubmit: string;
     styleButton?:  "primary" | "secondary" | "tertiary";
     sizeButton?: "base" | "small";
     className?: string;
+    handleOnChange: (event: React.InputHTMLAttributes<HTMLInputElement>) => void;
 }
 
-function Form({ formFields, labelSubmit, styleButton = "primary", sizeButton = "base", className, ...props } : FormProps){
+function Form({ formFields, labelSubmit, styleButton = "primary", sizeButton = "base", className, handleOnChange, ...props } : FormProps){
    return (
     <form className={`${className} `} {...props}>
-        {formFields.map((f, i) => <FormField key={i} label={f.label} type={f.type} visibility={f.visibility} />)}
+        {formFields.map((f, i) => 
+            <FormField id={f.id} key={i} label={f.label} type={f.type} visibility={f.visibility} handleOnChange={handleOnChange} />)}
         <Button typeStyle={styleButton} size={sizeButton} type="submit" >{labelSubmit}</Button>
     </form>
    )
