@@ -14,7 +14,9 @@ function DashTemplate({ header, children, dashCardList } : DashTemplateProps){
     return (
         <BaseTemplate header={header} solid position="fixed">
             <div className={`relative top-[76px]`}>
-                {children}
+                <div className="w-full md:w-[calc(100%-250px)]">
+                    {children}
+                </div>
                 <div className="fixed">
                     {dashCardList && dashCardList.length > 0 ? <MenuDash dashCardList={dashCardList}/> : <></>}
                 </div>
