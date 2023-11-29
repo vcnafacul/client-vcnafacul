@@ -4,8 +4,27 @@ import { BANK_QUESTION, DASHBOARD_GEOLOCATION, DASH_NEWS, ROLES } from "../../ro
 import BioExatasImg from "../../assets/images/dashboard/bioexatas.svg";
 import HumanasImg from "../../assets/images/dashboard/humanas.svg";
 import LinguagensImg from "../../assets/images/dashboard/linguagens.svg";
+
+import { ReactComponent as LPT } from "../../assets/icons/home-subjects-leitura-prod-textos.svg"
+import { ReactComponent as Gramatica } from "../../assets/icons/home-subjects-gramatica.svg"
+import { ReactComponent as Literatura } from "../../assets/icons/home-subjects-literatura.svg"
+import { ReactComponent as Ingles } from "../../assets/icons/home-subjects-ingles.svg"
+import { ReactComponent as Espanhol } from "../../assets/icons/home-subjects-espanhol.svg"
+
+import { ReactComponent as Biologia } from "../../assets/icons/home-subjects-biologia.svg"
+import { ReactComponent as Fisica } from "../../assets/icons/home-subjects-fisica.svg"
+import { ReactComponent as Quimica } from "../../assets/icons/home-subjects-quimica.svg"
+import { ReactComponent as Matematica } from "../../assets/icons/home-subjects-matematica.svg"
+
+
+import { ReactComponent as Historia } from "../../assets/icons/home-subjects-historia.svg"
+import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-geografia.svg"
+import { ReactComponent as Filosofia } from "../../assets/icons/home-subjects-filosofia.svg"
+import { ReactComponent as Sociologia } from "../../assets/icons/home-subjects-sociologia.svg"
+
+
 import { Roles } from "../../enums/roles/roles";
-import { DashCardMenu } from "../../components/organisms/menuDash";
+import { DashCardMenu } from "../../components/molecules/dashCard";
 
 export const headerDash: HeaderProps = {...header, itemsMenu: [
     { id: 1, name: "Forum", link: "#" },
@@ -23,11 +42,11 @@ export const dashCardList : DashCardMenu[] = [
         image: LinguagensImg,
         alt: "Linguagens",
         subMenuList: [
-            { icon: LinguagensImg, alt: "escrevendo", text: "LPT*", link: "#" },
-            { icon: LinguagensImg, alt: "abc", text: "Gramática", link: "#" },
-            { icon: LinguagensImg, alt: "livro", text: "Literatura", link: "#" },
-            { icon: LinguagensImg, alt: "balão de fala retangular", text: "Inglês", link: "#" },
-            { icon: LinguagensImg, alt: "balão de fala redondo", text: "Espanhol", link: "#" },
+            { icon: LPT, alt: "escrevendo", text: "LPT*", link: "#" },
+            { icon: Gramatica, alt: "abc", text: "Gramática", link: "#" },
+            { icon: Literatura, alt: "livro", text: "Literatura", link: "#" },
+            { icon: Ingles, alt: "balão de fala retangular", text: "Inglês", link: "#" },
+            { icon: Espanhol, alt: "balão de fala redondo", text: "Espanhol", link: "#" },
         ],
     },
     {
@@ -37,10 +56,10 @@ export const dashCardList : DashCardMenu[] = [
         image: BioExatasImg,
         alt: "BioExatas",
         subMenuList: [
-            { icon: BioExatasImg, alt: "molécula de DNA", text: "Biologia", link: "#" },
-            { icon: BioExatasImg, alt: "risco biológico", text: "Física", link: "#" },
-            { icon: BioExatasImg, alt: "calculadora", text: "Matemática", link: "#" },
-            { icon: BioExatasImg, alt: "dinheiro", text: "Financeira", link: "#" },
+            { icon: Biologia, alt: "molécula de DNA", text: "Biologia", link: "#" },
+            { icon: Fisica, alt: "risco biológico", text: "Física", link: "#" },
+            { icon: Quimica, alt: "quimica", text: "Quimica", link: "#" },
+            { icon: Matematica, alt: "calculadora", text: "Matemática", link: "#" },
         ],
     },
     {
@@ -50,10 +69,10 @@ export const dashCardList : DashCardMenu[] = [
         image: HumanasImg,
         alt: "Humanas",
         subMenuList: [
-            { icon: HumanasImg, alt: "relógio", text: "história", link: "#" },
-            { icon: HumanasImg, alt: "mapa", text: "geografia", link: "#" },
-            { icon: HumanasImg, alt: "pessoas", text: "filosofia", link: "#" },
-            { icon: HumanasImg, alt: "pessoas", text: "sociologia", link: "#" },
+            { icon: Historia, alt: "relógio", text: "história", link: "#" },
+            { icon: Geografia, alt: "mapa", text: "geografia", link: "#" },
+            { icon: Filosofia, alt: "pessoas", text: "filosofia", link: "#" },
+            { icon: Sociologia, alt: "pessoas", text: "sociologia", link: "#" },
         ],
     },
     {
@@ -64,28 +83,28 @@ export const dashCardList : DashCardMenu[] = [
         alt: "Admin",
         subMenuList: [
             {
-                icon: HumanasImg,
+                icon: Historia,
                 alt: "check mapa",
                 text: "Validação LC",
                 link: DASHBOARD_GEOLOCATION,
                 permission: Roles.validarCursinho,
             },
             { 
-                icon: HumanasImg, 
+                icon: Quimica, 
                 alt: "check", 
                 text: "Permissões", 
                 link: ROLES, 
                 permission: Roles.alterarPermissao
             },
             { 
-                icon: HumanasImg, 
+                icon: Gramatica, 
                 alt: "banco_de_questao", 
                 text: "Banco de Questão", 
                 link: BANK_QUESTION, 
                 permission: Roles.bancoQuestoes
             },
             { 
-                icon: HumanasImg, 
+                icon: Espanhol, 
                 alt: "dash_news", 
                 text: "Novidades", 
                 link: DASH_NEWS, 

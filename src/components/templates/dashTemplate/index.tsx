@@ -1,5 +1,6 @@
+import { DashCardMenu } from "../../molecules/dashCard";
 import { HeaderProps } from "../../organisms/header";
-import MenuDash, { DashCardMenu } from "../../organisms/menuDash";
+import MenuDash from "../../organisms/menuDash";
 import BaseTemplate from "../baseTemplate";
 
 interface DashTemplateProps {
