@@ -1,5 +1,5 @@
 import { HeaderProps } from "../../components/organisms/header";
-import {header}  from "../Home/data";
+import {header}  from "../home/data";
 import { BANK_QUESTION, DASHBOARD_GEOLOCATION, DASH_NEWS, ROLES } from "../../routes/path";
 import BioExatasImg from "../../assets/images/dashboard/bioexatas.svg";
 import HumanasImg from "../../assets/images/dashboard/humanas.svg";

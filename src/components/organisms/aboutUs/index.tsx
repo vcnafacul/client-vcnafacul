@@ -9,11 +9,6 @@ import { ReactComponent as PlayIcon } from "../../../assets/icons/play-circle.sv
 import './styles.css'
 import Text from "../../atoms/text";
 
-interface Cta {
-    text: string;
-    link: string;
-}
-
 interface Video {
     thumbnail: string;
     videoID: string;
@@ -22,11 +17,10 @@ interface Video {
 export interface AboutUsProps {
     title: string;
     subtitle: string,
-    cta: Cta,
     video: Video
 }
 
-function AboutUs({title, subtitle, cta, video} : AboutUsProps){
+function AboutUs({title, subtitle, video} : AboutUsProps){
     const [videoComponent, setVideoComponent] = useState(<></>);
 
     const videoOptions = {

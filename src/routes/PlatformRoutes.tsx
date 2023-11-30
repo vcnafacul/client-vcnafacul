@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 
-import Home from "../pages/Home";
-import Login from "../pages/Login";
+import Home from "../pages/home";
+import Login from "../pages/login";
 import { DASHBOARD, DASHBOARD_GEOLOCATION, HOME_PATH, LOGIN_PATH } from "./path";
 import Dash from "../pages/dash";
 import DashGeo from "../pages/dashGeo";

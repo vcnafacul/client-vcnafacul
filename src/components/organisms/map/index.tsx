@@ -1,5 +1,5 @@
 import MapBox from "../../molecules/mapBox"
-import { Geolocation } from "./type";
+import { Geolocation } from "../../../types/geolocation/geolocation";
 import { useEffect, useRef, useState } from "react";
 import getGeolocation from "../../../services/geolocation/getGeolocation";
 import MapBoxInfo from "../mapBoxInfo";

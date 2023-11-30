@@ -1,4 +1,4 @@
-import { Geolocation } from "../map/type";
+import { Geolocation } from "../../../types/geolocation/geolocation";
 import Text from "../../atoms/text";
 
 import {
