@@ -18,9 +18,9 @@ function DashCardTemplate({ header, dashCardList, title, filterList, cardlist}: 
             <div className="w-full flex justify-center flex-col py-4">
                 <div className="w-full flex items-center flex-col mt-4">
                     <Text size="secondary">{title}</Text>
-                    <div className="w-full flex justify-center gap-20">
+                    <div className="w-full flex justify-center items-center gap-20">
                         {filterList.map((filter, index) => (
-                            <div key={index}>{filter}</div>
+                            <div className="h-full" key={index}>{filter}</div>
                         ))}
                     </div>
                 </div>
