@@ -34,7 +34,7 @@ export const headerDash: HeaderProps = {...header, itemsMenu: [
 ],};
 
 
-export const dashCardList : DashCardMenu[] = [
+export const dashCardMenuItems : DashCardMenu[] = [
     {
         id: 1,
         bg: "bg-marine",
