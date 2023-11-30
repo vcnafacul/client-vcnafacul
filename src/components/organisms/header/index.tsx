@@ -9,6 +9,8 @@ import MainMenu from "../mainMenu";
 import { ItemMenu } from "../../molecules/menuItems";
 import { SocialLink } from "../../molecules/followUs";
 import { NavigationProps } from "../../atoms/dropdownMenu";
+import { useAuthStore } from "../../../store/auth";
+import { capitalize } from "../../../utils/capitalize";
 
 
 export interface HeaderProps {
@@ -23,7 +25,8 @@ export interface HeaderProps {
 
 function Header({ itemsMenu, socialLinks, solid, userNavigationSign, userNavigationLogged,  className } : HeaderProps) {
     const [openMenu, setOpenMenu] = useState(false);
-    const token = ''
+    const {  data: { token, user: { firstName } } } = useAuthStore()
+    
     return (
         <header className={className}>
             <div className={`md:container mx-auto`}>
@@ -41,7 +44,7 @@ function Header({ itemsMenu, socialLinks, solid, userNavigationSign, userNavigat
                         }}/>
                         {!token ?  
                             <Sign userNavigation={userNavigationSign} solid={solid} className="items-center"/> :
-                            <Logged userNavigation={userNavigationLogged} userName="Fernando"/>
+                            <Logged userNavigation={userNavigationLogged} userName={capitalize(firstName)} className={solid ? 'text-marine' : 'text-white'}/>
                         }
                     </div>
                 </div>

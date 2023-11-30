@@ -38,7 +38,6 @@ function FormField({id, label, type = "text", visibility = false, handleOnChange
             {type !== "password" ? 
                 <></> : 
                 backgroundImageToggleVisibility(visible)}
-                
         </div>
     )
 }

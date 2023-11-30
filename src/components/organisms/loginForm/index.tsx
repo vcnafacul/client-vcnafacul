@@ -4,6 +4,10 @@ import Form from "../form"
 import { useState } from "react";
 import { FormFieldInput } from "../../molecules/formField";
 import { createObjectFromFormFieldInput } from "../../../utils/createObject";
+import Login from "../../../services/auth/login";
+import { useAuthStore } from "../../../store/auth";
+import { useNavigate } from "react-router-dom";
+import { DASHBOARD } from "../../../routes/path";
 
 export interface LoginFormProps {
     title: string;
@@ -16,6 +20,9 @@ export interface LoginFormProps {
 function LoginForm({ title, subtitle, forgot, labelSubmit, formData } : LoginFormProps){
 
     const [data, setData] = useState(createObjectFromFormFieldInput(formData)) 
+    const { doAuth } = useAuthStore()
+    const navigate = useNavigate();
+    
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleInputChange = (event: any) => {
@@ -25,7 +32,18 @@ function LoginForm({ title, subtitle, forgot, labelSubmit, formData } : LoginFor
 
     const login = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        console.log(data)
+        Login(data.email as string, data.password as string)
+            .then(res => {
+                doAuth(res)
+                navigate(DASHBOARD);
+            })
+            .catch((e: Error) => {
+                console.log(e)
+                //setError({message: e.message})
+            })
+            .finally(() => {
+                //setLoading(false)
+            })
     }
 
     return (

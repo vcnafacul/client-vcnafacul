@@ -7,6 +7,6 @@ export const loginForm : LoginFormProps = {
     labelSubmit: "Entrar",
     formData: [
         { id: 'email', label: 'E-mail'},
-        {id: 'password',label: 'Senha', type: 'password'}
+        { id: 'password', label: 'Senha', type: 'password'}
     ]
 }

@@ -20,7 +20,8 @@
     "react-youtube": "^10.1.0",
     "swiper": "^11.0.3",
     "tailwind-scrollbar-hide": "^1.1.7",
-    "tailwind-variants": "^0.1.18"
+    "tailwind-variants": "^0.1.18",
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@svgr/rollup": "^8.1.0",
