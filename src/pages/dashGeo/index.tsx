@@ -30,7 +30,7 @@ function DashGeo(){
     }
 
     const cardGeo : CardDashProps[] = geolocation.map(geo => (
-            {id: geo.id, title: geo.name, status: geo.status, infos: 
+            {cardId: geo.id, title: geo.name, status: geo.status, infos: 
                 [
                     { field: 'Estado', value: geo.state},
                     { field: 'Cidade', value: geo.city},

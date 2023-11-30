@@ -27,7 +27,7 @@ function DashCardTemplate({ header, dashCardList, title, filterList, cardlist, o
                 </div>
                 <div className="flex flex-wrap gap-4 mt-20 mx-5">
                     {cardlist.map(card => (
-                        <CardDash onClick={() => onClickCard(card.id)} id={card.id} key={card.id} title={card.title} infos={card.infos} status={card.status} />
+                        <CardDash onClick={() => onClickCard(card.cardId)} cardId={card.cardId} key={card.id} title={card.title} infos={card.infos} status={card.status} />
                     ))}
                 </div>
             </div>
