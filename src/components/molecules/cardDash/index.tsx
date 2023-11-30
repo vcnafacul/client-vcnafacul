@@ -25,7 +25,7 @@ function CardDash({ title, status, infos = [], ...props }: CardDashProps) {
     };
 
     return (
-        <div className="w-72 bg-white shadow-md p-3 cursor-pointer flex flex-col rounded-md hover:-translate-y-1 duration-300" {...props}>
+        <div className="w-72 min-h-40 bg-white shadow-md p-3 cursor-pointer flex flex-col rounded-md hover:-translate-y-1 duration-300" {...props}>
             <span className="font-bold w-full text-center mb-2">{title}</span>
             {infos.map(info => (
                 <div className="flex gap-2">

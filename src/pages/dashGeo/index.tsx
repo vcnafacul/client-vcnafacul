@@ -13,7 +13,6 @@ import { formatDate } from "../../utils/date";
 
 function DashGeo(){
     const [status, setStatus] = useState<StatusEnum>(StatusEnum.Pending);
-    const [filter, setFilter] = useState<string>("")
     const [geolocation, setGeolocation] = useState<Geolocation[]>([]);
     const dataRef = useRef<Geolocation[]>([])
 
@@ -21,9 +20,13 @@ function DashGeo(){
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleInputChange = (event: any) => {
-        setFilter(event.target)
-        if(!event.target) setGeolocation(dataRef.current)
-        else setGeolocation(dataRef.current.filter(geo => geo.name.includes(filter) || geo.state.includes(filter) || geo.city.includes(filter) || geo.email.includes(filter)))
+        const filter = event.target.value.toLowerCase();
+        if(!filter) setGeolocation(dataRef.current)
+        else setGeolocation(dataRef.current.filter(geo => 
+        geo.name.toLowerCase().includes(filter) || 
+        geo.state.toLowerCase().includes(filter) || 
+        geo.city.toLowerCase().includes(filter) || 
+        geo.email.toLowerCase().includes(filter)))
     }
 
     const selectStatus = <Select 
