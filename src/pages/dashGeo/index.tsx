@@ -29,15 +29,6 @@ function DashGeo(){
         geo.email.toLowerCase().includes(filter)))
     }
 
-    const selectStatus = <Select 
-    options={dashGeo.options} 
-    defaultValue={status} 
-    setState={setStatus}
-    />
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const filterGeo = <Filter placeholder="nome | estado | cidade | email" filtrar={handleInputChange}/>
-
     const CardGeo : CardDashProps[] = geolocation.map(geo => (
             {title: geo.name, status: geo.status, infos: 
                 [
@@ -68,7 +59,9 @@ function DashGeo(){
             header={headerDash} 
             dashCardList={dashCardMenuItems}
             title={dashGeo.title}
-            filterList={[filterGeo, selectStatus]}
+            filterList={[
+                <Filter placeholder="nome | estado | cidade | email" filtrar={handleInputChange}/>, 
+                <Select  options={dashGeo.options}  defaultValue={status}  setState={setStatus} />]}
             cardlist={CardGeo} />
     )
 }
