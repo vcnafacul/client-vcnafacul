@@ -29,8 +29,8 @@ function DashGeo(){
         geo.email.toLowerCase().includes(filter)))
     }
 
-    const CardGeo : CardDashProps[] = geolocation.map(geo => (
-            {title: geo.name, status: geo.status, infos: 
+    const cardGeo : CardDashProps[] = geolocation.map(geo => (
+            {id: geo.id, title: geo.name, status: geo.status, infos: 
                 [
                     { field: 'Estado', value: geo.state},
                     { field: 'Cidade', value: geo.city},
@@ -62,7 +62,8 @@ function DashGeo(){
             filterList={[
                 <Filter placeholder="nome | estado | cidade | email" filtrar={handleInputChange}/>, 
                 <Select  options={dashGeo.options}  defaultValue={status}  setState={setStatus} />]}
-            cardlist={CardGeo} />
+            cardlist={cardGeo}
+            onClickCard={() => {}} />
     )
 }
 

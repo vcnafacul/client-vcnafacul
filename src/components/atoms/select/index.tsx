@@ -29,7 +29,7 @@ function Select({ options, disabled, defaultValue, setState } : SelectProps){
                 <option key={opt.id} value={opt.id}>{opt.name}</option>
                 ))}
             </select>
-            <TiArrowSortedDown className="absolute right-1 top-0 w-10 h-10 z-0 fill-marine group-hover:rotate-180 transition-all duration-200" />
+            <TiArrowSortedDown className="absolute right-1 top-0 w-10 h-10 z-0 fill-marine" />
         </div>
 
     )

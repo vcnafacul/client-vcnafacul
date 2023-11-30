@@ -8,11 +8,12 @@ interface DashCardTemplateProps {
     header: HeaderProps,
     dashCardList?: DashCardMenu[]
     title: string;
-    filterList: JSX.Element[]
-    cardlist: CardDashProps[]
+    filterList: JSX.Element[];
+    cardlist: CardDashProps[];
+    onClickCard: (id: number) => void;
 }
 
-function DashCardTemplate({ header, dashCardList, title, filterList, cardlist}: DashCardTemplateProps) {
+function DashCardTemplate({ header, dashCardList, title, filterList, cardlist, onClickCard}: DashCardTemplateProps) {
     return (
         <DashTemplate header={header} dashCardList={dashCardList}>
             <div className="w-full flex justify-center flex-col py-4">
@@ -25,8 +26,8 @@ function DashCardTemplate({ header, dashCardList, title, filterList, cardlist}: 
                     </div>
                 </div>
                 <div className="flex flex-wrap gap-4 mt-20 mx-5">
-                    {cardlist.map((card, index) => (
-                        <CardDash key={index} title={card.title} infos={card.infos} status={card.status} />
+                    {cardlist.map(card => (
+                        <CardDash onClick={() => onClickCard(card.id)} id={card.id} key={card.id} title={card.title} infos={card.infos} status={card.status} />
                     ))}
                 </div>
             </div>

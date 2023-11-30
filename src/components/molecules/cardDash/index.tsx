@@ -11,6 +11,7 @@ export interface InforCardDash {
 }
 
 export type CardDashProps = ComponentProps<'div'> & {
+    id: number;
     title: string;
     status: StatusEnum
     infos?: InforCardDash[]
@@ -25,7 +26,7 @@ function CardDash({ title, status, infos = [], ...props }: CardDashProps) {
     };
 
     return (
-        <div className="w-72 min-h-40 bg-white shadow-md p-3 cursor-pointer flex flex-col rounded-md hover:-translate-y-1 duration-300" {...props}>
+        <div className="relative w-72 min-h-40 bg-white shadow-md p-3 cursor-pointer flex flex-col rounded-md pb-8 hover:-translate-y-1 duration-300" {...props}>
             <span className="font-bold w-full text-center mb-2">{title}</span>
             {infos.map(info => (
                 <div className="flex gap-2">
@@ -33,7 +34,7 @@ function CardDash({ title, status, infos = [], ...props }: CardDashProps) {
                     <div>{info.value}</div>
                 </div>
             ))}
-            <div className="flex w-full justify-end">
+            <div className="absolute bottom-2 right-2">
                 {atualizaStatus(status)}
             </div>
         </div>
