@@ -9,7 +9,7 @@ export const roles_users = `${role}/users`
 
 export const geolocations = `${BASE_URL}/geo`
 export const validatedgeolocation = `${BASE_URL}/validatedgeolocation`
-export const listAllGeolocation = `${geolocations}`
+export const allGeolocation = `${geolocations}`
 
 export const simulado = `${BASE_URL}/simulado`
 export const questoes = `${simulado}/questoes`
