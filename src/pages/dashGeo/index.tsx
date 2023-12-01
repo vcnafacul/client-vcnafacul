@@ -8,28 +8,31 @@ import Filter from "../../components/atoms/filter";
 import { Geolocation } from "../../types/geolocation/geolocation";
 import { CardDashProps } from "../../components/molecules/cardDash";
 import { getAllGeolocation } from "../../services/geolocation/getAllGeolocation";
-import { useAuthStore } from "../../store/auth";
+/* import { useAuthStore } from "../../store/auth"; */
 import { formatDate } from "../../utils/date";
+import ModalEditDashGeo from "./modals/modalEditDashGeo";
 
 function DashGeo(){
     const [status, setStatus] = useState<StatusEnum>(StatusEnum.Pending);
-    const [geolocation, setGeolocation] = useState<Geolocation[]>([]);
+    const [geolocations, setGeolocations] = useState<Geolocation[]>([]);
+    const [geoSelect, setGeoSelect] = useState<Geolocation>();
+    const [openModal, setOpenModal] = useState<boolean>(false);
     const dataRef = useRef<Geolocation[]>([])
 
-    const { data: { token }} = useAuthStore()
+    /* const { data: { token }} = useAuthStore() */
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleInputChange = (event: any) => {
         const filter = event.target.value.toLowerCase();
-        if(!filter) setGeolocation(dataRef.current)
-        else setGeolocation(dataRef.current.filter(geo => 
+        if(!filter) setGeolocations(dataRef.current)
+        else setGeolocations(dataRef.current.filter(geo => 
         geo.name.toLowerCase().includes(filter) || 
         geo.state.toLowerCase().includes(filter) || 
         geo.city.toLowerCase().includes(filter) || 
         geo.email.toLowerCase().includes(filter)))
     }
 
-    const cardGeo : CardDashProps[] = geolocation.map(geo => (
+    const cardGeo : CardDashProps[] = geolocations.map(geo => (
             {cardId: geo.id, title: geo.name, status: geo.status, infos: 
                 [
                     { field: 'Estado', value: geo.state},
@@ -40,30 +43,44 @@ function DashGeo(){
             }
     ))
 
-    const getGeolocation = useCallback(async (status: StatusEnum) => {
+    const onClickCard = (cardId: number) => {
+        setGeoSelect(geolocations.find(geo => geo.id === cardId))
+        setOpenModal(true)
+    }
+
+    const ModalEdit = () => {
+        if(!openModal) return null
+        return <ModalEditDashGeo geo={geoSelect!} />
+        
+    }
+
+    const getGeolocations = useCallback(async (status: StatusEnum) => {
         getAllGeolocation(status)
             .then(res => { 
-                setGeolocation(res)
+                setGeolocations(res)
                 dataRef.current = res
             })
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            .catch(_ => setGeolocation([]))
+            .catch(_ => setGeolocations([]))
     }, []);
 
     useEffect(() => {
-        getGeolocation(status)
-    }, [status, getGeolocation])
+        getGeolocations(status)
+    }, [status, getGeolocations])
 
     return (
-        <DashCardTemplate 
-            header={headerDash} 
-            dashCardList={dashCardMenuItems}
-            title={dashGeo.title}
-            filterList={[
-                <Filter placeholder="nome | estado | cidade | email" filtrar={handleInputChange}/>, 
-                <Select  options={dashGeo.options}  defaultValue={status}  setState={setStatus} />]}
-            cardlist={cardGeo}
-            onClickCard={() => {}} />
+        <>
+            <DashCardTemplate 
+                header={headerDash} 
+                dashCardList={dashCardMenuItems}
+                title={dashGeo.title}
+                filterList={[
+                    <Filter placeholder="nome | estado | cidade | email" filtrar={handleInputChange}/>, 
+                    <Select  options={dashGeo.options}  defaultValue={status}  setState={setStatus} />]}
+                cardlist={cardGeo}
+                onClickCard={onClickCard} />
+            <ModalEdit />
+        </>
     )
 }
 
