@@ -7,17 +7,19 @@ const getHoverClasses = (type: string, isHoverEnabled?: boolean) : string => {
         primary: "hover:opacity-75 duration-300",
         secondary: "hover:bg-orange hover:text-white",
         tertiary: "hover:bg-white hover:text-marine",
+        quaternary: "hover:bg-gray-200 hover:text-marine",
     }[type] || "";
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const buttonTemplate = tv({
-    base: "inline-block border-2 font-bold transition-all duration-250 ease-in-out text-sm  md:text-base",
+    base: "inline-block border-2 font-bold transition-all duration-250 ease-in-out text-sm  md:text-base rounded-md",
     variants: {
         type: {
             primary: "text-white border-orange bg-orange",
             secondary: "text-orange border-orange bg-white",
             tertiary: "text-white border-white",
+            quaternary: "bg-white border-marine text-marine border-opacity-50"
         },
         size: {
             base: 'px-2.5 py-2.5',

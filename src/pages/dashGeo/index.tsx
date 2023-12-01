@@ -58,10 +58,16 @@ function DashGeo(){
         dataRef.current = updatedGeo
     }
 
+    const updateGeolocation = (geolocation: Geolocation) => {
+        setGeolocations(geolocations.map(geo => {
+            if(geo.id === geolocation.id) return geolocation
+            return geo
+        }))
+    }
+
     const ModalEdit = () => {
         if(!openModal) return null
-        return <ModalEditDashGeo geo={geoSelect!} handleClose={handleCloseModalEdit} updateStatus={updateStatus} />
-        
+        return <ModalEditDashGeo geo={geoSelect!} handleClose={handleCloseModalEdit} updateStatus={updateStatus} updateGeo={updateGeolocation} />
     }
 
     const getGeolocations = useCallback(async (status: StatusEnum) => {

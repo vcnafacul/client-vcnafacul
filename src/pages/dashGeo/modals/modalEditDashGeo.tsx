@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
 import Text from "../../../components/atoms/text";
 import ModalTemplate, { ModalProps } from "../../../components/templates/modalTemplate"
@@ -13,9 +15,10 @@ import {ReactComponent as StatusApproved } from "../../../assets/icons/statusApp
 import {ReactComponent as StatusPending } from "../../../assets/icons/statusPending.svg";
 import { Marker, useMapEvents } from "react-leaflet";
 import { LatLngTuple } from "leaflet";
-import { UpdateGeolocationStatus } from "../../../services/geolocation/updateGeolocation";
+import { UpdateGeolocation, UpdateGeolocationStatus } from "../../../services/geolocation/updateGeolocation";
 import { useAuthStore } from "../../../store/auth";
 import { ValidationGeolocation } from "../../../types/geolocation/validationGeolocation";
+import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
 
 interface BtnProps extends ButtonProps {
     status?: StatusEnum;
@@ -25,12 +28,15 @@ interface BtnProps extends ButtonProps {
 interface ModalEditDashGeoProps extends ModalProps {
     geo: Geolocation;
     updateStatus: (cardId: number) => void;
+    updateGeo: (geo: Geolocation) => void;
 }
 
-function ModalEditDashGeo({ geo, handleClose, updateStatus } : ModalEditDashGeoProps) {
+function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalEditDashGeoProps) {
     const [infos, setInfos] = useState<Geolocation>(geo)
     const [editing, setEditing] = useState<boolean>(false);
     const [selectedPosition, setSelectedPosition] = useState<number[]>([0, 0]);
+    const [refuse, setRefuse] = useState<boolean>(false);
+    const [messageRefused, setMessageRefused] = useState<string>("");
 
     const { data: { token } } = useAuthStore()
 
@@ -40,16 +46,23 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus } : ModalEditDashGeoP
         if (status == StatusEnum.Rejected) return <StatusRejected />;
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleInputChange = (event: any) => {
         const { name, value } = event.target;
         setInfos({ ...infos, [name]: value });
     };
 
-    const Validar = async (body: ValidationGeolocation) => {
+    const UpdateGeo = async (body: Geolocation) => {
+        handleClose()
+        UpdateGeolocation({ body, token })
+            .then(_ => {
+                updateGeo(infos)
+            })
+            .catch(_ => { console.log("Error....") })
+    };
+
+    const UpdateStatus = async (body: ValidationGeolocation) => {
         handleClose()
         UpdateGeolocationStatus({ body, token })
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             .then(_ => {
                 updateStatus(geo.id)
             })
@@ -60,8 +73,9 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus } : ModalEditDashGeoP
         const body = {
             geoId: geo.id,
             status: status,
+            refuseReason: messageRefused
         };
-        await Validar(body)
+        await UpdateStatus(body)
     };
 
     const formFieldInfos : FormFieldInput[] = [
@@ -102,10 +116,10 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus } : ModalEditDashGeoP
 
     const btns: BtnProps[] = [
         { children: "Aceitar", onClick: () => { update(StatusEnum.Approved); }, status: StatusEnum.Approved, className: 'bg-green2', editing: false},
-        { children: "Rejeitar", onClick: () => { update(StatusEnum.Rejected); }, status: StatusEnum.Rejected, className: 'bg-red', editing: false},
+        { children: "Rejeitar", onClick: () => { setRefuse(true); }, status: StatusEnum.Rejected, className: 'bg-red', editing: false},
         { children: "Editar", onClick: () => { setEditing(true)}, editing: false},
         { children: "Fechar", onClick: handleClose, editing: false},
-        { children: "Salvar", onClick: () => {}, editing: true},
+        { children: "Salvar", onClick: () => { UpdateGeo(infos); }, editing: true},
         { children: "Voltar", onClick: () => {setEditing(false)}, editing: true},
     ]
 
@@ -127,6 +141,21 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus } : ModalEditDashGeoP
         </div>
     )
 
+    const handleCloseModalRefused = () => { setRefuse(false) }
+
+    const ModalRefused = () => {
+        if(!refuse) return null;
+        return <ModalConfirmCancel 
+            message="Descreva o motivo da rejeição:"
+            handleCancel={handleCloseModalRefused}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            handleMessagerefused={(event: any) => { setMessageRefused(event.target.value); }}
+            handleConfirm={() => {
+                handleCloseModalRefused()
+                update(StatusEnum.Rejected)
+            }} />
+    }
+
     return (
         <ModalTemplate >
             <div className="absolute bg-white w-full md:w-fit max-h-[90vh] gap-4 p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 overflow-y-auto scrollbar-hide">
@@ -136,17 +165,17 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus } : ModalEditDashGeoP
                 </div>
                 <div className="col-span-2 sm:col-span-1">
                     <div className="flex flex-col">
-                        <Text size="secondary">Cadastrado Por</Text>
+                        <Text size="secondary" className="md:text-xl">Cadastrado Por</Text>
                         <Form formFields={FormFieldRegister} handleOnChange={handleInputChange} />
                     </div>
                     <div>
-                        <Text size="secondary">Última Edição Por</Text>
+                        <Text size="secondary" className="md:text-xl">Última Edição Por</Text>
                         <Form formFields={FormFieldUpdated} handleOnChange={handleInputChange} />
                     </div>
                 </div>
                 <div className="col-span-2 sm:col-span-3 md:col-span-2 px-4">
                     <Text size="secondary">Endereço do Cursinho</Text>
-                    <MapBox mapEvent={Event} className="h-80 border border-gray-300" zoom={11} markers={[]} />
+                    <MapBox mapEvent={Event} className="h-80 border border-gray-300 z-0" zoom={11} markers={[]} />
                     <div className="flex flex-col gap-2 my-4">
                         {btns.map((btn, index) => {
                             if(editing === btn.editing){
@@ -160,6 +189,7 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus } : ModalEditDashGeoP
                     </div>
                 </div>
             </div>
+            <ModalRefused />
         </ModalTemplate>
     )
 }

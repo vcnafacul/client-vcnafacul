@@ -5,7 +5,7 @@ export type ButtonProps =  ComponentProps<'button'> & {
     children: React.ReactNode;
     className?: string;
     hover?: boolean;
-    typeStyle?:  "primary" | "secondary" | "tertiary";
+    typeStyle?:  "primary" | "secondary" | "tertiary" | "quaternary";
     size?: "base" | "small";
 }
 
