@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import Text from "../../atoms/text"
-import Form from "../form"
+import FormSubmit from "../formSubmit"
 import { useState } from "react";
 import { FormFieldInput } from "../../molecules/formField";
 import { createObjectFromFormFieldInput } from "../../../utils/createObject";
@@ -51,7 +51,7 @@ function LoginForm({ title, subtitle, forgot, labelSubmit, formData } : LoginFor
             <div className="mt-20 max-w-[500px] flex flex-col items-center">
                 <Text size="secondary">{title}</Text>
                 <Text size="quaternary" className="text-orange my-5">{subtitle}</Text>
-                <Form 
+                <FormSubmit 
                     className="w-full my-4"
                     formFields={formData} 
                     labelSubmit={labelSubmit}

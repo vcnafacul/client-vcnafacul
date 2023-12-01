@@ -11,7 +11,7 @@ export type FormProps = ComponentProps<'form'> & {
     handleOnChange: (event: React.InputHTMLAttributes<HTMLInputElement>) => void;
 }
 
-function Form({ formFields, labelSubmit, styleButton = "primary", sizeButton = "base", className, handleOnChange, ...props } : FormProps){
+function FormSubmit({ formFields, labelSubmit, styleButton = "primary", sizeButton = "base", className, handleOnChange, ...props } : FormProps){
    return (
     <form className={`${className} `} {...props}>
         {formFields.map((f, i) => 
@@ -21,4 +21,4 @@ function Form({ formFields, labelSubmit, styleButton = "primary", sizeButton = "
    )
 }
 
-export default Form
+export default FormSubmit
