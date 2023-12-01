@@ -175,7 +175,7 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
                 </div>
                 <div className="col-span-2 sm:col-span-3 md:col-span-2 px-4">
                     <Text size="secondary">Endereço do Cursinho</Text>
-                    <MapBox mapEvent={Event} className="h-80 border border-gray-300 z-0" zoom={11} markers={[]} />
+                    <MapBox mapEvent={Event} className="h-80 border border-gray-300 z-0" zoom={11} markers={[{id: geo.id, lat: geo.latitude, lon: geo.longitude}]} />
                     <div className="flex flex-col gap-2 my-4">
                         {btns.map((btn, index) => {
                             if(editing === btn.editing){

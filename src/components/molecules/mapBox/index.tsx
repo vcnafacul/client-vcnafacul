@@ -20,6 +20,7 @@ interface MapBoxProps{
     zoom?: number;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mapEvent?: any;
+    center?: LatLngTuple;
 }
 
 const DefaultIcon = L.icon({
@@ -30,8 +31,9 @@ const DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-function MapBox({markers, handleClickMarker, zoom, className, mapEvent} : MapBoxProps){
-    const [mapCenter] = useState<LatLngTuple>([-21.4712828, -47.0439503]);
+function MapBox({markers, handleClickMarker, zoom, className, mapEvent, center} : MapBoxProps){
+    const centerPoint : LatLngTuple = center ? center : markers ? [markers[0].lat, markers[0].lon] :  [-21.4712828, -47.0439503]
+    const [mapCenter] = useState<LatLngTuple>(centerPoint);
     
     const MapEvent = mapEvent;
     return (
