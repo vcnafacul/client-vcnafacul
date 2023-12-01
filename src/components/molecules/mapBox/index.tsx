@@ -17,7 +17,9 @@ interface MapBoxProps{
     markers: MarkerPoint[];
     handleClickMarker?: (index: number) => void;
     className?: string;
-    zoom?: number
+    zoom?: number;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mapEvent?: any;
 }
 
 const DefaultIcon = L.icon({
@@ -28,9 +30,10 @@ const DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-function MapBox({markers, handleClickMarker, zoom, className} : MapBoxProps){
+function MapBox({markers, handleClickMarker, zoom, className, mapEvent} : MapBoxProps){
     const [mapCenter] = useState<LatLngTuple>([-21.4712828, -47.0439503]);
     
+    const MapEvent = mapEvent;
     return (
         <div className="relative">
             <MapContainer center={mapCenter} zoom={zoom ?? 7} scrollWheelZoom={false} 
@@ -48,6 +51,7 @@ function MapBox({markers, handleClickMarker, zoom, className} : MapBoxProps){
                         }}
                     ></Marker>
                 )}
+                {mapEvent ? <MapEvent /> : <></>}
             </MapContainer>
         </div>
     )

@@ -50,9 +50,17 @@ function DashGeo(){
 
     const handleCloseModalEdit = () => { setOpenModal(false) }
 
+    const updateStatus = (cardId: number) => {
+        const updatedGeo = geolocations.filter(geo => {
+            if(geo.id !== cardId) return geo
+        })
+        setGeolocations(updatedGeo)
+        dataRef.current = updatedGeo
+    }
+
     const ModalEdit = () => {
         if(!openModal) return null
-        return <ModalEditDashGeo geo={geoSelect!} handleClose={handleCloseModalEdit} />
+        return <ModalEditDashGeo geo={geoSelect!} handleClose={handleCloseModalEdit} updateStatus={updateStatus} />
         
     }
 
