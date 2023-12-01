@@ -48,9 +48,11 @@ function DashGeo(){
         setOpenModal(true)
     }
 
+    const handleCloseModalEdit = () => { setOpenModal(false) }
+
     const ModalEdit = () => {
         if(!openModal) return null
-        return <ModalEditDashGeo geo={geoSelect!} />
+        return <ModalEditDashGeo geo={geoSelect!} handleClose={handleCloseModalEdit} />
         
     }
 

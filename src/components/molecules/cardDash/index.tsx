@@ -19,7 +19,7 @@ export type CardDashProps = ComponentProps<'div'> & {
 
 function CardDash({ title, status, infos = [], ...props }: CardDashProps) {
 
-    const atualizaStatus = (status: StatusEnum) => {
+    const showStatus = (status: StatusEnum) => {
         if (status == StatusEnum.Pending) return <StatusPending />;
         if (status == StatusEnum.Approved) return <StatusApproved />;
         if (status == StatusEnum.Rejected) return <StatusRejected />;
@@ -35,7 +35,7 @@ function CardDash({ title, status, infos = [], ...props }: CardDashProps) {
                 </div>
             ))}
             <div className="absolute bottom-2 right-2">
-                {atualizaStatus(status)}
+                {showStatus(status)}
             </div>
         </div>
     )

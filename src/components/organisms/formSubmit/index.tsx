@@ -16,7 +16,7 @@ function FormSubmit({ formFields, labelSubmit, styleButton = "primary", sizeButt
     <form className={`${className} `} {...props}>
         {formFields.map((f, i) => 
             <FormField id={f.id} key={i} label={f.label} type={f.type} visibility={f.visibility} handleOnChange={handleOnChange} />)}
-        <Button typeStyle={styleButton} size={sizeButton} type="submit" >{labelSubmit}</Button>
+        <Button className="w-full" typeStyle={styleButton} size={sizeButton} type="submit" >{labelSubmit}</Button>
     </form>
    )
 }

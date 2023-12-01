@@ -10,12 +10,13 @@ interface DashCardTemplateProps {
     title: string;
     filterList: JSX.Element[];
     cardlist: CardDashProps[];
+    className?: string;
     onClickCard: (id: number) => void;
 }
 
-function DashCardTemplate({ header, dashCardList, title, filterList, cardlist, onClickCard}: DashCardTemplateProps) {
+function DashCardTemplate({ header, dashCardList, title, filterList, cardlist, className, onClickCard}: DashCardTemplateProps) {
     return (
-        <DashTemplate header={header} dashCardList={dashCardList}>
+        <DashTemplate header={header} dashCardList={dashCardList} className={className}>
             <div className="w-full flex justify-center flex-col py-4">
                 <div className="w-full flex items-center flex-col mt-4">
                     <Text size="secondary">{title}</Text>

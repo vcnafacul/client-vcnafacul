@@ -19,7 +19,7 @@ export interface FormFieldProps  extends FormFieldInput {
     handleOnChange: (event: React.InputHTMLAttributes<HTMLInputElement>) => void;
 }
 
-function FormField({id, label, type = "text", visibility = false, handleOnChange} : FormFieldProps){
+function FormField({id, label, type = "text", visibility = false, value, disabled, handleOnChange} : FormFieldProps){
     const [visible, setVisible] = useState<boolean>(visibility)
 
     function backgroundImageToggleVisibility(visible: boolean){
@@ -33,7 +33,9 @@ function FormField({id, label, type = "text", visibility = false, handleOnChange
             <LabelInput label={label} />
             <Input 
                 name={id}
-                type={visible ? "text" : type} 
+                type={visible ? "text" : type}
+                value={value} 
+                disabled={disabled ?? false}
                 onChange={handleOnChange} />
             {type !== "password" ? 
                 <></> : 

@@ -1,12 +1,16 @@
 import React from "react"
 
+export interface ModalProps {
+    handleClose: () => void;
+}
+
 interface ModalTemplateProps{
     children: React.ReactNode;
 }
 
 function ModalTemplate({ children } : ModalTemplateProps) {
     return (
-        <div className="absolute w-screen h-screen top-0 z-50 opacity-75 bg-black flex justify-center items-center">
+        <div className="fixed overflow-y-auto scrollbar-hide scrol w-screen h-screen top-0 z-50 bg-black bg-opacity-75 flex justify-center items-center">
             {children}
         </div>
     )

@@ -6,13 +6,14 @@ import BaseTemplate from "../baseTemplate";
 interface DashTemplateProps {
     header: HeaderProps;
     children: React.ReactNode;
-    dashCardList?: DashCardMenu[]
+    dashCardList?: DashCardMenu[];
+    className?: string;
 }
 
 
-function DashTemplate({ header, children, dashCardList } : DashTemplateProps){
+function DashTemplate({ header, children, dashCardList, className } : DashTemplateProps){
     return (
-        <BaseTemplate header={header} solid position="fixed">
+        <BaseTemplate header={header} className={className} solid position="fixed">
             <div className={`relative top-[76px]`}>
                 <div className="w-full md:w-[calc(100%-250px)]">
                     {children}
