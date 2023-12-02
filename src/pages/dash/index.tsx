@@ -1,9 +1,9 @@
 import DashTemplate from "../../components/templates/dashTemplate"
-import { dashCardMenuItems, headerDash } from "./data"
+import { headerDash } from "./data"
 
 function Dash(){
     return (
-        <DashTemplate header={headerDash} dashCardList={dashCardMenuItems}>
+        <DashTemplate header={headerDash} hasMenu>
             <div className="w-full flex justify-center">
                 <div className="w-96">
                     Dash

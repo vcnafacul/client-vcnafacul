@@ -1,12 +1,10 @@
 import Text from "../../atoms/text";
 import CardDash, { CardDashProps } from "../../molecules/cardDash";
-import { DashCardMenu } from "../../molecules/dashCard";
 import { HeaderProps } from "../../organisms/header"
 import DashTemplate from "../dashTemplate"
 
 interface DashCardTemplateProps {
     header: HeaderProps,
-    dashCardList?: DashCardMenu[]
     title: string;
     filterList: JSX.Element[];
     cardlist: CardDashProps[];
@@ -14,9 +12,9 @@ interface DashCardTemplateProps {
     onClickCard: (id: number) => void;
 }
 
-function DashCardTemplate({ header, dashCardList, title, filterList, cardlist, className, onClickCard}: DashCardTemplateProps) {
+function DashCardTemplate({ header, title, filterList, cardlist, className, onClickCard}: DashCardTemplateProps) {
     return (
-        <DashTemplate header={header} dashCardList={dashCardList} className={className}>
+        <DashTemplate header={header} hasMenu className={className}>
             <div className="w-full flex justify-center flex-col py-4">
                 <div className="w-full flex items-center flex-col mt-4">
                     <Text size="secondary">{title}</Text>

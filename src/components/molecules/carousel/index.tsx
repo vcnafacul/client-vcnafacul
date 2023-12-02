@@ -16,12 +16,14 @@ interface CarouselProps {
     grabCursor?: boolean;
     dynamicBullets?: boolean;
     pagination?: boolean;
+    breakpoints?: any;
 }
 
-function Carousel({className, childrens, slidesPerView, spaceBetween, loop, centeredSlides, slidesPerGroupSkip, grabCursor, dynamicBullets, pagination}: CarouselProps) {
+function Carousel({className, childrens, slidesPerView, spaceBetween, loop, centeredSlides, slidesPerGroupSkip, grabCursor, dynamicBullets, pagination, breakpoints}: CarouselProps) {
     return (
         <div className={className}>
-            <Swiper className="mySwiper" 
+            <Swiper className="mySwiper"
+                breakpoints={breakpoints ?? null}
                 pagination={{
                     dynamicBullets: dynamicBullets ?? false,
                 }}

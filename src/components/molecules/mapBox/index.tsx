@@ -32,7 +32,7 @@ const DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 function MapBox({markers, handleClickMarker, zoom, className, mapEvent, center} : MapBoxProps){
-    const centerPoint : LatLngTuple = center ? center : markers ? [markers[0].lat, markers[0].lon] :  [-21.4712828, -47.0439503]
+    const centerPoint : LatLngTuple = center ? center : markers.length > 0 ? [markers[0].lat, markers[0].lon] :  [-21.4712828, -47.0439503]
     const [mapCenter] = useState<LatLngTuple>(centerPoint);
     
     const MapEvent = mapEvent;

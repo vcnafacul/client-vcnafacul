@@ -1,0 +1,7 @@
+li.item-marker {
+    list-style-type: disc;
+}
+
+ul li.item-marker::marker {
+    color: #FF7600;
+  }
