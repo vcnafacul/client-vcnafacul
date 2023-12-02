@@ -32,7 +32,7 @@ export type BaseTemplateProps = VariantProps<typeof baseTemplate> & ComponentPro
 
 function BaseTemplate({ header, children, footer, solid, position, headerShadow, className }: BaseTemplateProps){
     return (
-        <div className={`${className} overflow-y-auto scrollbar-hide h-screen`}>
+        <div className={`${className} `}>
             <Header 
                 className={`${baseTemplate({ position, headerShadow })} ${solid ? 'bg-white' : 'bg-transparent'}`} 
                 itemsMenu={header.itemsMenu} 

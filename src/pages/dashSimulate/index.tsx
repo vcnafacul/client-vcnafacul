@@ -8,18 +8,21 @@ import './styles.css'
 
 import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
 import CarouselRef from "../../components/organisms/carouselRef"
+import { useNavigate } from "react-router-dom"
+import { SIMULADO } from "../../routes/path"
 
 function DashSimulate() {
+    const navigate = useNavigate()
     const cardsBook = simulateData.simulateCardsBook.map(card => {
             return (
-                <CardSimulate onClick={() => {}} title={card.title} icon={card.icon} className={card.className} color={card.color}>
+                <CardSimulate onClick={() => {navigate(SIMULADO)}} title={card.title} icon={card.icon} className={card.className} color={card.color}>
                     {card.subTitle}
                 </CardSimulate>
             )})
 
     const cardsDay = simulateData.simulateCardsDay.map(card => {
         return (
-            <CardSimulate key={card.id} onClick={() => {}} title={card.title} icon={card.icon} className={card.className} color={card.color}>
+            <CardSimulate key={card.id} onClick={() => {navigate(SIMULADO)}} title={card.title} icon={card.icon} className={card.className} color={card.color}>
                 <Ul childrens={card.item} />
             </CardSimulate>
         )})

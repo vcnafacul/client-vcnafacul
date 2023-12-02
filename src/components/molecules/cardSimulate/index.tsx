@@ -1,6 +1,7 @@
 import React from "react";
 import Text from "../../atoms/text";
 import Button from "../button";
+import IconArea from "../../atoms/iconArea";
 
 interface CardSimulateProps {
     icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
@@ -13,12 +14,9 @@ interface CardSimulateProps {
 }
 
 function CardSimulate({className, color, icon, title, children, onClick} : CardSimulateProps ){
-    const Icone = icon;
     return (
         <div className={`mt-8 relative w-96 pb-4 border-2 rounded-md ${className} text-marine mb-10`}>
-            <div className={`absolute -top-8 left-8 w-16 h-16 ${color} rounded-full flex justify-center items-center`}>
-                <Icone className="fill-white w-10 h-10" />
-            </div>
+            <IconArea icon={icon} className={`absolute -top-8 left-8 ${color}`} />
             <div className="mt-10 ml-10 flex flex-col items-start">
                 <Text size="secondary" className="font-bold">{title}</Text>
                 <div className="text-marine text-base">{children}</div>

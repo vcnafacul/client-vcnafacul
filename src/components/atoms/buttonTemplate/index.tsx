@@ -19,11 +19,13 @@ export const buttonTemplate = tv({
             primary: "text-white border-orange bg-orange",
             secondary: "text-orange border-orange bg-white",
             tertiary: "text-white border-white",
-            quaternary: "bg-white border-marine text-marine border-opacity-50"
+            quaternary: "bg-white border-marine text-marine border-opacity-50",
+            none: 'bg-transparent border-0'
         },
         size: {
             base: 'px-2.5 py-2.5',
-            small: 'px-1 py-1 md:px-2 md:py-1'
+            small: 'px-1 py-1 md:px-2 md:py-1',
+            none: 'p-0 m-0 w-fit h-fit'
         }
     },
     defaultVariants: {

@@ -2,11 +2,11 @@ import React, { ComponentProps } from "react";
 import ButtonTemplate from "../../atoms/buttonTemplate";
 
 export type ButtonProps =  ComponentProps<'button'> & {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     className?: string;
     hover?: boolean;
-    typeStyle?:  "primary" | "secondary" | "tertiary" | "quaternary";
-    size?: "base" | "small";
+    typeStyle?:  "primary" | "secondary" | "tertiary" | "quaternary" | "none";
+    size?: "base" | "small"  | "none";
 }
 
 function Button({children, size, hover, className, typeStyle = 'primary', ...props} : ButtonProps){
