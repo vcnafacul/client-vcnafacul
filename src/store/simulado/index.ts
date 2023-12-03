@@ -9,6 +9,16 @@ export enum Alternativa {
     E = 'E',
   }
 
+export interface Answer {
+    questao: string;
+    alternativaEstudante: Alternativa;
+}
+
+export interface AnswerSimulado {
+    idSimulado: string;
+    respostas: Answer[];
+}
+
 export interface Question {
     _id: string;
     imageId: string;
@@ -38,7 +48,7 @@ export interface Simulado {
 const initialSimulado : Simulado = {
     _id: "",
     title: "",
-    started: (new Date()).setHours((new Date()).getHours() + 3),
+    started: new Date(),
     finished: new Date(),
     nQuestion: 0,
     questions: [],

@@ -17,3 +17,14 @@ export const simulateData = {
         { label: "Questão não visualizada", className: "bg-lightGray border border-grey"},
      ]
 }
+
+export const radios = {
+   question: {
+      first: 'Sim',
+      second: 'Não, foi um problema na plataforma'
+   },
+   platform: {
+      first: 'Bug recorrente',
+      second: 'Bug esporádico'
+   }
+}

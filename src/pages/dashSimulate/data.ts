@@ -55,3 +55,18 @@ export const getTitle = (type: SimuladoDefaultEnum) => {
       return ""
   }
 }
+
+export const getIconByTitle = (title: string) => {
+  switch (title) {
+    case "Linguagens":
+      return Linguagens
+    case "Ciências da Natureza":
+      return BioExatas
+    case "Ciência Humanas":
+      return Humanas
+    case "Matemática":
+      return Matematica
+    default:
+      return ""
+  }
+}

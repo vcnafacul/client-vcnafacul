@@ -10,7 +10,7 @@ interface LegendsProps {
 }
 function Legends({legends} : LegendsProps) {
     return (
-        <div className="flex items-center gap-2 container mx-auto my-4">
+        <div className="flex items-center gap-2 container mx-4 sm:mx-auto my-4 flex-wrap">
             {legends.map((legend, index) => (
                 <LegendSimulate key={index} label={legend.label} className={legend.className} />
             ))}

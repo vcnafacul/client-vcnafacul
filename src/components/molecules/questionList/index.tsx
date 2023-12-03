@@ -9,9 +9,10 @@ interface QuestionProps {
 
 interface QuestionListProps {
     questions: QuestionProps[]
+    selectQuestion: (number: number) => void;
 }
 
-function QuestionList({ questions } : QuestionListProps) {
+function QuestionList({ questions, selectQuestion } : QuestionListProps) {
 
     const getStyle = (status: QuestionBoxStatus) => {
         if(status === QuestionBoxStatus.unsolved) return 'unsolved'
@@ -20,9 +21,9 @@ function QuestionList({ questions } : QuestionListProps) {
         return 'unread'
     }
     return (
-        <div className="container mx-auto flex flex-wrap">
+        <div className="container mx-4 sm:mx-auto flex flex-wrap">
             {questions.map(question => (
-                <QuestionBox key={question.id} number={question.number} status={getStyle(question.status)} />
+                <QuestionBox key={question.id} number={question.number + 1} status={getStyle(question.status)} onClick={() => { selectQuestion(question.number) }} />
             ))}
         </div>
     ) 

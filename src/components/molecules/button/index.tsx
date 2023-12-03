@@ -12,7 +12,7 @@ export type ButtonProps =  ComponentProps<'button'> & {
 function Button({children, size, hover, className, typeStyle = 'primary', ...props} : ButtonProps){
     return (
         <button {...props} className="w-full disabled:opacity-75 disabled:cursor-not-allowed">
-            <ButtonTemplate type={typeStyle} size={size} hover={hover} className={`${className} selection:w-full flex justify-center`}>
+            <ButtonTemplate type={typeStyle} size={size} hover={hover} className={`${className} selection:w-full flex justify-center items-center`}>
                 {children}
             </ButtonTemplate>
         </button>

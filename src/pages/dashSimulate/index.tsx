@@ -156,7 +156,7 @@ function DashSimulate() {
                         <div className="flex flex-col items-start mt-20 mb-20">
                             <Text size="primary" className="mb-1">{simulateData.titleBook}</Text>
                             <Text size="tertiary" className="text-xl">{simulateData.subTitleBook}</Text>
-                            <CarouselRef className="w-full"  childrens={cardsBook} breakpoints={breakpointsBook} />
+                            <CarouselRef className="w-full" childrens={cardsBook} breakpoints={breakpointsBook} />
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-10 gap-8">
                             <div className="flex flex-col items-start sm:col-span-1 md:col-span-3">

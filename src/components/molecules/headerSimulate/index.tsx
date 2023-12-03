@@ -14,7 +14,7 @@ function HeaderSimulate({ simulateName, onClick } : HeaderSimulateProps){
     return (
         <div className="bg-marine">
             <div className="container flex justify-between items-center flex-col md:flex-row mx-auto py-4">
-                <Text className="text-white m-0">Simulado do {simulateName}</Text>
+                <Text size="secondary" className="text-white m-0">Simulado {simulateName}</Text>
                 <div className="flex items-center gap-4">
                     <PiTimerBold className="w-20 h-10 fill-white" />
                     <CountdownTimer className="text-5xl font-black" />
