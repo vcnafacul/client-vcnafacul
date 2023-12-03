@@ -3,5 +3,5 @@ li.item-marker {
 }
 
 ul li.item-marker::marker {
-    color: #FF7600;
+    color: #535353;
   }

@@ -1,14 +1,15 @@
+import { ComponentProps } from 'react';
 import './styles.css'
 
-interface UlProps {
-    childrens: string[]
+type UlProps = ComponentProps<'ul'> & {
+    childrens: React.ReactNode[];
 }
 
-function Ul({childrens}: UlProps){
+function Ul({childrens, ...props}: UlProps){
     return (
-        <ul>
+        <ul {...props}>
             {childrens.map((children, index) => (
-                <li key={index} className="item-marker ml-4 text-start">{children}</li>
+                <li key={index} className="item-marker ml-4 text-start text-base">{children}</li>
             ))}
         </ul>
     )

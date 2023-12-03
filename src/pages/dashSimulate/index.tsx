@@ -3,26 +3,48 @@ import Ul from "../../components/atoms/ul"
 import CardSimulate from "../../components/molecules/cardSimulate"
 import DashTemplate from "../../components/templates/dashTemplate"
 import { headerDash } from "../dash/data"
-import { simulateData } from "./data"
+import { getTitle, simulateData } from "./data"
 import './styles.css'
 
 import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
 import CarouselRef from "../../components/organisms/carouselRef"
 import { useNavigate } from "react-router-dom"
+import { useCallback, useEffect, useState } from "react"
+import NewSimulate from "./modals/newSimulate"
+import { getSimuladoById } from "../../services/simulado/getSimuladoById"
+import { useAuthStore } from "../../store/auth"
+import { getSimuladosDefaults } from "../../services/simulado/getSimuladosDefaults"
+import { SimuladoDefault } from "../../types/simulado/simuladoDefault"
+import { SimuladoDefaultEnum } from "../../enums/simulado/simuladoDefaultEnum"
+import { useSimuladoStore } from "../../store/simulado"
 import { SIMULADO } from "../../routes/path"
 
 function DashSimulate() {
+    const [initialize, setInitialize]= useState<boolean>(false);
+    const [simulatesDefault, setSimulatseDefault] = useState<SimuladoDefault[]>()
+    const [type, setType] = useState<SimuladoDefaultEnum>()
+
+    const { data: { token }} = useAuthStore()
+    const { simuladoBegin } = useSimuladoStore()
     const navigate = useNavigate()
+    
+
+    const openModalNew = (type: SimuladoDefaultEnum) => {
+        setType(type)
+        console.log(simulatesDefault?.find(s => s.type === type)?.id)
+        setInitialize(true)
+    }
+
     const cardsBook = simulateData.simulateCardsBook.map(card => {
             return (
-                <CardSimulate onClick={() => {navigate(SIMULADO)}} title={card.title} icon={card.icon} className={card.className} color={card.color}>
+                <CardSimulate onClick={() => {openModalNew(card.tipo)}} title={card.title} icon={card.icon} className={card.className} color={card.color}>
                     {card.subTitle}
                 </CardSimulate>
             )})
 
     const cardsDay = simulateData.simulateCardsDay.map(card => {
         return (
-            <CardSimulate key={card.id} onClick={() => {navigate(SIMULADO)}} title={card.title} icon={card.icon} className={card.className} color={card.color}>
+            <CardSimulate key={card.id} onClick={() => {openModalNew(card.title)}} title={card.title} icon={card.icon} className={card.className} color={card.color}>
                 <Ul childrens={card.item} />
             </CardSimulate>
         )})
@@ -68,28 +90,71 @@ function DashSimulate() {
         },
       }
 
+    const getSimulate = useCallback( (id: string) => {
+        getSimuladoById(id, token)
+            .then(res => {
+                simuladoBegin(res)
+                navigate(SIMULADO)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    },[])
+
+    const ModalNewSimulate = () => {
+        if(!initialize) return null
+        return <NewSimulate title={getTitle(type!)} 
+        handleClose={() => { setInitialize(false) }}
+        initialize={() => { 
+            const id = simulatesDefault?.find(s => s.type === type)?.id
+            console.log(id!)
+            getSimulate(id!)
+         }}
+        />
+    }
+
+    useEffect(() => {
+        getSimuladosDefaults(token)
+            .then(res => {
+                setSimulatseDefault([
+                    {type: SimuladoDefaultEnum.Linguagens, id: res.Linguagens},
+                    {type: SimuladoDefaultEnum.BioExatas, id: res.CienciasDaNatureza},
+                    {type: SimuladoDefaultEnum.Humanas, id: res.CienciasHumanas},
+                    {type: SimuladoDefaultEnum.Matematica, id: res.Matematica},
+                    {type: SimuladoDefaultEnum.Enem1, id: res.Enem1},
+                    {type: SimuladoDefaultEnum.Enem2, id: res.Enem2},
+                ])
+            })
+            .catch(erro => {
+                console.error(erro)
+            }) 
+    }, [])
+
     return (
-        <DashTemplate header={headerDash} hasMenu>
-            <div className="relative">
-                <TriangleGreen className="absolute w-40 h-40 rotate-180 -top-36 left-96"/>
-                <div className="relative sm:mx-10">
-                    <div className="flex flex-col items-start mt-20 mb-20">
-                        <Text size="primary" className="mb-1">{simulateData.titleBook}</Text>
-                        <Text size="tertiary" className="text-xl">{simulateData.subTitleBook}</Text>
-                        <CarouselRef className="w-full"  childrens={cardsBook} breakpoints={breakpointsBook} />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-10 gap-8">
-                        <div className="flex flex-col items-start sm:col-span-1 md:col-span-3">
-                            <Text size="primary">{simulateData.titleDay}</Text>
-                            <Text size="tertiary" className="text-start text-xl mt-8">{simulateData.subTitleDay}</Text>
+        <>
+            <DashTemplate header={headerDash} hasMenu>
+                <div className="relative">
+                    <TriangleGreen className="absolute w-40 h-40 rotate-180 -top-36 left-96"/>
+                    <div className="relative sm:mx-10">
+                        <div className="flex flex-col items-start mt-20 mb-20">
+                            <Text size="primary" className="mb-1">{simulateData.titleBook}</Text>
+                            <Text size="tertiary" className="text-xl">{simulateData.subTitleBook}</Text>
+                            <CarouselRef className="w-full"  childrens={cardsBook} breakpoints={breakpointsBook} />
                         </div>
-                        <div className="sm:col-span-2 md:col-span-7 flex justify-center">
-                        <CarouselRef className="w-[448px] md:w-full " childrens={cardsDay} breakpoints={breakpointsDay} />
+                        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-10 gap-8">
+                            <div className="flex flex-col items-start sm:col-span-1 md:col-span-3">
+                                <Text size="primary">{simulateData.titleDay}</Text>
+                                <Text size="tertiary" className="text-start text-xl mt-8">{simulateData.subTitleDay}</Text>
+                            </div>
+                            <div className="sm:col-span-2 md:col-span-7 flex justify-center">
+                            <CarouselRef className="w-[448px] md:w-full " childrens={cardsDay} breakpoints={breakpointsDay} />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </DashTemplate>
+            </DashTemplate>
+            <ModalNewSimulate />
+        </>
     )
 }
 
