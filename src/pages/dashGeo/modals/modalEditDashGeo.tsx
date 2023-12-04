@@ -17,11 +17,7 @@ import { useAuthStore } from "../../../store/auth";
 import { ValidationGeolocation } from "../../../types/geolocation/validationGeolocation";
 import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
 import { getStatusIcon } from "../../../utils/getStatusIcon";
-
-interface BtnProps extends ButtonProps {
-    status?: StatusEnum;
-    editing: boolean;
-}
+import { BtnProps } from "../../../types/generic/btnProps";
 
 interface ModalEditDashGeoProps extends ModalProps {
     geo: Geolocation;
@@ -174,7 +170,7 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
                                 return <Button 
                                     disabled={geo.status === btn.status ?? false} 
                                     key={index} 
-                                    className={`${btn.className} "w-full border-none"`} 
+                                    className={`${btn.className} w-full border-none`} 
                                     onClick={btn.onClick}>{btn.children}</Button>
                             }
                         })}

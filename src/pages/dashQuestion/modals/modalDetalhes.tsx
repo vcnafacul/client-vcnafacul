@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import Text from "../../../components/atoms/text";
 import Button from "../../../components/molecules/button"
@@ -9,22 +10,29 @@ import { InfoQuestion } from "../../../types/question/infoQuestion";
 import { getStatusIcon } from "../../../utils/getStatusIcon";
 import { AreaEnem, ArrayCor, Edicao } from "../data";
 import ModalImage from "../../../components/atoms/modalImage";
+import { BtnProps } from "../../../types/generic/btnProps";
+import { StatusEnum } from "../../../types/generic/statusEnum";
+import { useAuthStore } from "../../../store/auth";
+import { updateStatus } from "../../../services/question/updateStatus";
+import { ConverteQuestiontoUpdateQuestion, UpdateQuestion } from "../../../dtos/question/updateQuestion";
 
 interface ModalDetalhesProps extends ModalProps {
     question: Question
     infos: InfoQuestion;
+    handleRemoveQuestion: (id: string) => void;
+    handleUpdateQuestion: (questionUpdate: UpdateQuestion) => void;
 }
 
-function ModalDetalhes({ question, infos, handleClose } : ModalDetalhesProps) {
-    const [ isEditing ] = useState<boolean>(true);
+function ModalDetalhes({ question, infos, handleClose, handleRemoveQuestion, handleUpdateQuestion } : ModalDetalhesProps) {
+    const [ isEditing, setIsEditing ] = useState<boolean>(false);
     const [newState, setNewState] = useState<Question>(question)
     const [photoOpen, setPhotoOpen] = useState<boolean>(false);
+
+    const { data: { token }} = useAuthStore()
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleInputChange = (event: any) => {
         const { name, value } = event.target;
-        console.log(name)
-        console.log(value)
         setNewState({ ...newState, [name]: value });
     };
 
@@ -60,10 +68,38 @@ function ModalDetalhes({ question, infos, handleClose } : ModalDetalhesProps) {
         {id: "alterativa5", type: "text", label: "Alternativa E:", value: newState.textoAlternativaE, disabled: !isEditing,}, 
     ]
 
+    
+
     const QuestionImageModal = () => {
         if(!photoOpen) return null
         return <ModalImage handleClose={() => setPhotoOpen(false) }  image={`https://api.vcnafacul.com.br/images/${newState.imageId}.png`} />
     }
+
+    const updateStatusQuestionService = (status: StatusEnum) => {
+        updateStatus(question._id, status, token)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .then(_ => {
+            handleRemoveQuestion(question._id)
+            handleClose()
+        }).catch((error: any) => {
+            console.error(error)
+        })
+    }
+
+    const handleSave = () => {
+        const updateQuestion = ConverteQuestiontoUpdateQuestion(newState)
+        handleUpdateQuestion(updateQuestion)
+        handleClose()
+    } 
+
+    const btns: BtnProps[] = [
+        { children: "Aceitar", onClick: () => { updateStatusQuestionService(StatusEnum.Approved) }, status: StatusEnum.Approved, className: 'bg-green2 col-span-1', editing: false},
+        { children: "Rejeitar", onClick: () => { updateStatusQuestionService(StatusEnum.Rejected) }, status: StatusEnum.Rejected, className: 'bg-red col-span-1', editing: false},
+        { children: "Editar", onClick: () => { setIsEditing(true) }, editing: false, className: 'col-span-2'},
+        { children: "Fechar", onClick: handleClose, editing: false, className: 'col-span-2'},
+        { children: "Salvar", onClick: () => { handleSave }, editing: true, className: 'col-span-2'},
+        { children: "Voltar", onClick: () => { setIsEditing(false)  }, editing: true, className: 'col-span-2'},
+    ]
 
     return (
         <>
@@ -79,7 +115,17 @@ function ModalDetalhes({ question, infos, handleClose } : ModalDetalhesProps) {
                 <div className="col-span-2">
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Imagem da Questão</Text>
                     <img className="max-h-96 bg-lightGray p-[1px] w-full mr-4 sm:m-0 cursor-pointer" src={`https://api.vcnafacul.com.br/images/${newState.imageId}.png`} onClick={() => setPhotoOpen(true)} />
-                    <Button onClick={handleClose}>Fechar</Button>
+                    <div className="grid grid-cols-2 gap-1">
+                        {btns.map(btn => {
+                            if(isEditing === btn.editing){
+                                return (
+                                    <div className={`${btn.className} rounded`}>
+                                        <Button onClick={btn.onClick} hover className={`${btn.className} w-full border-none`}>{btn.children}</Button>
+                                    </div>
+                                )
+                            }
+                        })}
+                    </div>
                 </div>
             </div>
             <QuestionImageModal />

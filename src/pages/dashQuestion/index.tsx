@@ -14,6 +14,8 @@ import Filter from "../../components/atoms/filter"
 import Select from "../../components/atoms/select"
 import ModalTabTemplate from "../../components/templates/modalTabTemplate"
 import ModalDetalhes from "./modals/modalDetalhes"
+import { updateQuestion } from "../../services/question/updateQuestion"
+import { UpdateQuestion } from "../../dtos/question/updateQuestion"
 
 function DashQuestion() {
     const [questions, setQuestions] = useState<Question[]>([])
@@ -48,7 +50,6 @@ function DashQuestion() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleInputChange = (event: any) => {
         const filter = event.target.value.toLowerCase();
-        console.log('teste')
         if(!filter) setQuestions(dataRef.current)
         else setQuestions(dataRef.current.filter(q => q._id.includes(filter) || q.textoQuestao.toLowerCase().includes(filter)))
     }
@@ -61,6 +62,28 @@ function DashQuestion() {
             setQuestions(questions.sort((a, b) => 
                 b.textoQuestao.toLocaleLowerCase().localeCompare(a.textoQuestao.toLocaleLowerCase())))
         }
+    }
+
+    const handleRemoveQuestion = (id: string) => {
+        const newQuestions = questions.filter(q => q._id != id)
+        setQuestions(newQuestions)
+    }
+
+    const handleUpdateQuestion = (questionUpdate: UpdateQuestion) => {
+        updateQuestion(questionUpdate, token)
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            .then(_ => {
+                const newQuestions = questions.map((question) => {
+                    if(question._id == questionUpdate._id){
+                        return questionUpdate
+                    }
+                    return question
+                });
+                setQuestions(newQuestions as Question[])
+            })
+            .catch(error => {
+                console.error(error)
+            });
     }
 
     const onClickCard = (cardId: number | string) => {
@@ -106,7 +129,10 @@ function DashQuestion() {
                     children: <ModalDetalhes 
                         question={questionSelect!} 
                         infos={infosQuestion} 
-                        handleClose={() => { setOpenModal(false) }} />}, 
+                        handleClose={() => { setOpenModal(false) }}
+                        handleRemoveQuestion={handleRemoveQuestion}
+                        handleUpdateQuestion={handleUpdateQuestion}
+                         />}, 
                 { label: "Historico", children: <>Teste 2</>}
             ]} />
     }
