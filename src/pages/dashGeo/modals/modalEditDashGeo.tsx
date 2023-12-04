@@ -8,17 +8,15 @@ import { FormFieldInput } from "../../../components/molecules/formField";
 import Form from "../../../components/organisms/form";
 import MapBox from "../../../components/molecules/mapBox";
 import Button, { ButtonProps } from "../../../components/molecules/button";
-import { StatusEnum } from "../../../types/geolocation/statusEnum";
+import { StatusEnum } from "../../../types/generic/statusEnum";
 
-import {ReactComponent as StatusRejected } from "../../../assets/icons/statusRejected.svg";
-import {ReactComponent as StatusApproved } from "../../../assets/icons/statusApproved.svg";
-import {ReactComponent as StatusPending } from "../../../assets/icons/statusPending.svg";
 import { Marker, useMapEvents } from "react-leaflet";
 import { LatLngTuple } from "leaflet";
 import { UpdateGeolocation, UpdateGeolocationStatus } from "../../../services/geolocation/updateGeolocation";
 import { useAuthStore } from "../../../store/auth";
 import { ValidationGeolocation } from "../../../types/geolocation/validationGeolocation";
 import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
+import { getStatusIcon } from "../../../utils/getStatusIcon";
 
 interface BtnProps extends ButtonProps {
     status?: StatusEnum;
@@ -39,12 +37,6 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
     const [messageRefused, setMessageRefused] = useState<string>("");
 
     const { data: { token } } = useAuthStore()
-
-    const showStatus = (status: StatusEnum) => {
-        if (status == StatusEnum.Pending) return <StatusPending />;
-        if (status == StatusEnum.Approved) return <StatusApproved />;
-        if (status == StatusEnum.Rejected) return <StatusRejected />;
-    };
 
     const handleInputChange = (event: any) => {
         const { name, value } = event.target;
@@ -160,17 +152,17 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
         <ModalTemplate >
             <div className="absolute bg-white w-full md:w-fit max-h-[90vh] gap-4 p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 overflow-y-auto scrollbar-hide">
                 <div className="col-span-2 sm:col-span-2 flex flex-col">
-                    <Text className="flex w-full justify-center gap-4 items-center" size="secondary">Informação do Cursinho {showStatus(geo.status)}</Text>
-                    <Form className="grid md:grid-cols-2 gap-x-4" formFields={formFieldInfos} handleOnChange={handleInputChange} />
+                    <Text className="flex w-full justify-center gap-4 items-center" size="secondary">Informação do Cursinho {getStatusIcon(geo.status)}</Text>
+                    <Form className="grid md:grid-cols-2 gap-4" formFields={formFieldInfos} handleOnChange={handleInputChange} />
                 </div>
                 <div className="col-span-2 sm:col-span-1">
                     <div className="flex flex-col">
                         <Text size="secondary" className="md:text-xl">Cadastrado Por</Text>
-                        <Form formFields={FormFieldRegister} handleOnChange={handleInputChange} />
+                        <Form className="flex flex-col gap-4" formFields={FormFieldRegister} handleOnChange={handleInputChange} />
                     </div>
                     <div>
                         <Text size="secondary" className="md:text-xl">Última Edição Por</Text>
-                        <Form formFields={FormFieldUpdated} handleOnChange={handleInputChange} />
+                        <Form className="flex flex-col gap-4" formFields={FormFieldUpdated} handleOnChange={handleInputChange} />
                     </div>
                 </div>
                 <div className="col-span-2 sm:col-span-3 md:col-span-2 px-4">

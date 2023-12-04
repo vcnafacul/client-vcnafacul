@@ -1,41 +1,36 @@
 import { ComponentProps } from "react"
-import { StatusEnum } from "../../../types/geolocation/statusEnum";
-
-import {ReactComponent as StatusRejected } from "../../../assets/icons/statusRejected.svg";
-import {ReactComponent as StatusApproved } from "../../../assets/icons/statusApproved.svg";
-import {ReactComponent as StatusPending } from "../../../assets/icons/statusPending.svg";
-
+import { StatusEnum } from "../../../types/generic/statusEnum";
+import { getStatusIcon } from "../../../utils/getStatusIcon";
 export interface InforCardDash {
     field: string;
     value: string;
 }
 
-export type CardDashProps = ComponentProps<'div'> & {
-    cardId: number;
+export interface CardDashInfo extends CardDash {
+    cardId: number | string;
+}
+
+export interface CardDash {
     title: string;
     status: StatusEnum
     infos?: InforCardDash[]
 }
 
-function CardDash({ title, status, infos = [], ...props }: CardDashProps) {
+export type CardDashProps = CardDash & ComponentProps<'div'>;
 
-    const showStatus = (status: StatusEnum) => {
-        if (status == StatusEnum.Pending) return <StatusPending />;
-        if (status == StatusEnum.Approved) return <StatusApproved />;
-        if (status == StatusEnum.Rejected) return <StatusRejected />;
-    };
+function CardDash({ title, status, infos = [], ...props }: CardDashProps) {
 
     return (
         <div className="relative w-72 min-h-40 bg-white shadow-md p-3 cursor-pointer flex flex-col rounded-md pb-8 hover:-translate-y-1 duration-300" {...props}>
             <span className="font-bold w-full text-center mb-2">{title}</span>
-            {infos.map(info => (
-                <div className="flex gap-2">
+            {infos.map((info, index) => (
+                <div key={index} className="flex gap-2">
                     <div className="font-bold">{info.field}:</div>
                     <div>{info.value}</div>
                 </div>
             ))}
             <div className="absolute bottom-2 right-2">
-                {showStatus(status)}
+                {getStatusIcon(status)}
             </div>
         </div>
     )

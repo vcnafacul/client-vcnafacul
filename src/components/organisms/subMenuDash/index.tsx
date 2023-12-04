@@ -9,7 +9,7 @@ function SubMenuDash({ subDashCardInfo }: DashSubCardPros){
     return (
         <div>
             {subDashCardInfo.map(subCardInfo => (
-                <SubDashCard subCardInfo={subCardInfo} />
+                <SubDashCard key={subCardInfo.text} subCardInfo={subCardInfo} />
             ))}
         </div>
     )

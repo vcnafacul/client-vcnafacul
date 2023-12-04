@@ -1,4 +1,4 @@
-import { StatusEnum } from "./statusEnum";
+import { StatusEnum } from "../generic/statusEnum";
 
 export interface Geolocation {
     id: number,

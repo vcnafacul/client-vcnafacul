@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import DashCardTemplate from "../../components/templates/dashCardTemplate" 
-import { StatusEnum } from "../../types/geolocation/statusEnum";
-import { dashCardMenuItems, headerDash } from "../dash/data"
+import { StatusEnum } from "../../types/generic/statusEnum";
+import { headerDash } from "../dash/data"
 import { dashGeo } from "./data"
 import Select from "../../components/atoms/select";
 import Filter from "../../components/atoms/filter";
 import { Geolocation } from "../../types/geolocation/geolocation";
-import { CardDashProps } from "../../components/molecules/cardDash";
+import { CardDashInfo } from "../../components/molecules/cardDash";
 import { getAllGeolocation } from "../../services/geolocation/getAllGeolocation";
 /* import { useAuthStore } from "../../store/auth"; */
 import { formatDate } from "../../utils/date";
@@ -32,7 +32,7 @@ function DashGeo(){
         geo.email.toLowerCase().includes(filter)))
     }
 
-    const cardGeo : CardDashProps[] = geolocations.map(geo => (
+    const cardGeo : CardDashInfo[] = geolocations.map(geo => (
             {cardId: geo.id, title: geo.name, status: geo.status, infos: 
                 [
                     { field: 'Estado', value: geo.state},
@@ -43,7 +43,7 @@ function DashGeo(){
             }
     ))
 
-    const onClickCard = (cardId: number) => {
+    const onClickCard = (cardId: number | string) => {
         setGeoSelect(geolocations.find(geo => geo.id === cardId))
         setOpenModal(true)
     }
@@ -88,7 +88,6 @@ function DashGeo(){
         <>
             <DashCardTemplate 
                 header={headerDash} 
-                dashCardList={dashCardMenuItems}
                 title={dashGeo.title}
                 filterList={[
                     <Filter placeholder="nome | estado | cidade | email" filtrar={handleInputChange}/>, 

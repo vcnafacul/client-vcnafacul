@@ -1,5 +1,5 @@
 import { Geolocation } from "../../types/geolocation/geolocation";
-import { StatusEnum } from "../../types/geolocation/statusEnum";
+import { StatusEnum } from "../../types/generic/statusEnum";
 import { allGeolocation } from "../urls"
 
 export async function getAllGeolocation(status: StatusEnum): Promise<Geolocation[]> {

@@ -18,6 +18,7 @@ function Form({ formFields, handleOnChange, ...props } : FormProps){
                     type={f.type} 
                     visibility={f.visibility} 
                     disabled={f.disabled}
+                    options={f.options}
                     handleOnChange={handleOnChange} />
                 )}
         </div>

@@ -6,7 +6,7 @@ import { ActionAreasProps } from "../../components/organisms/actionAreas";
 import { AboutUsProps } from "../../components/organisms/aboutUs";
 import { SupportersProps } from "../../components/organisms/Supporters";
 
-import { ACCOUNT_PATH, DASHBOARD, HOME_PATH, LOGIN_PATH, REGISTER_PATH } from "../../routes/path";
+import { ACCOUNT_PATH, DASH, HOME_PATH, LOGIN_PATH, REGISTER_PATH } from "../../routes/path";
 
 import HeroImg1 from "../../assets/images/home/hero_student.svg";
 import HeroImg2 from "../../assets/images/home/hero_teacher.svg";
@@ -46,7 +46,7 @@ export const userNavigationSign = [
   ]
 
 export const userNavigationLogged = [
-    { name: 'DashBoard', href: DASHBOARD },
+    { name: 'DashBoard', href: DASH },
     { name: 'Editar Perfil', href: ACCOUNT_PATH },
     { name: 'Sair', href: HOME_PATH },
 ]
@@ -327,10 +327,6 @@ export const about_us : AboutUsProps = {
     title: "Quem somos?",
     subtitle:
         "Somos uma equipe de voluntários trabalhando por um bem maior: a *Educação*. Queremos que o ambiente universitário seja justo e igualitário, e que o desejo de ingressar no ensino superior não dependa de cor, gênero, orientação sexual ou classe social.",
-    cta: {
-        text: "Conheça nossa história",
-        link: "#",
-    },
     video: {
         thumbnail: "/src/assets/images/home/thumb-about-us.png",
         videoID: "LiNm9JxvNOM",

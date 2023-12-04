@@ -1,5 +1,5 @@
 import Text from "../../atoms/text";
-import CardDash, { CardDashProps } from "../../molecules/cardDash";
+import CardDash, { CardDashInfo } from "../../molecules/cardDash";
 import { HeaderProps } from "../../organisms/header"
 import DashTemplate from "../dashTemplate"
 
@@ -7,9 +7,9 @@ interface DashCardTemplateProps {
     header: HeaderProps,
     title: string;
     filterList: JSX.Element[];
-    cardlist: CardDashProps[];
+    cardlist: CardDashInfo[];
     className?: string;
-    onClickCard: (id: number) => void;
+    onClickCard: (id: number | string) => void;
 }
 
 function DashCardTemplate({ header, title, filterList, cardlist, className, onClickCard}: DashCardTemplateProps) {
@@ -26,7 +26,7 @@ function DashCardTemplate({ header, title, filterList, cardlist, className, onCl
                 </div>
                 <div className="flex flex-wrap gap-4 mt-20 mx-5">
                     {cardlist.map(card => (
-                        <CardDash onClick={() => onClickCard(card.cardId)} cardId={card.cardId} key={card.id} title={card.title} infos={card.infos} status={card.status} />
+                        <CardDash onClick={() => onClickCard(card.cardId)} key={card.cardId} title={card.title} infos={card.infos} status={card.status} />
                     ))}
                 </div>
             </div>

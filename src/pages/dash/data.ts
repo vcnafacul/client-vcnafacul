@@ -1,6 +1,6 @@
 import { HeaderProps } from "../../components/organisms/header";
 import {header}  from "../home/data";
-import { BANK_QUESTION, DASHBOARD_GEOLOCATION, DASH_NEWS, DASH_SIMULADO, ROLES } from "../../routes/path";
+import { DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, DASH_SIMULADO, ROLES } from "../../routes/path";
 import BioExatasImg from "../../assets/images/dashboard/bioexatas.svg";
 import HumanasImg from "../../assets/images/dashboard/humanas.svg";
 import LinguagensImg from "../../assets/images/dashboard/linguagens.svg";
@@ -86,7 +86,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
                 icon: Historia,
                 alt: "check mapa",
                 text: "Validação LC",
-                link: DASHBOARD_GEOLOCATION,
+                link: DASH_GEOLOCATION,
                 permission: Roles.validarCursinho,
             },
             { 
@@ -100,7 +100,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
                 icon: Gramatica, 
                 alt: "banco_de_questao", 
                 text: "Banco de Questão", 
-                link: BANK_QUESTION, 
+                link: DASH_QUESTION, 
                 permission: Roles.bancoQuestoes
             },
             { 

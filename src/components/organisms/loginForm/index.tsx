@@ -7,7 +7,7 @@ import { createObjectFromFormFieldInput } from "../../../utils/createObject";
 import Login from "../../../services/auth/login";
 import { useAuthStore } from "../../../store/auth";
 import { useNavigate } from "react-router-dom";
-import { DASHBOARD } from "../../../routes/path";
+import { DASH } from "../../../routes/path";
 
 export interface LoginFormProps {
     title: string;
@@ -35,7 +35,7 @@ function LoginForm({ title, subtitle, forgot, labelSubmit, formData } : LoginFor
         Login(data.email as string, data.password as string)
             .then(res => {
                 doAuth(res)
-                navigate(DASHBOARD);
+                navigate(DASH);
             })
             .catch((e: Error) => {
                 console.log(e)

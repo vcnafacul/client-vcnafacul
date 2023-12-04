@@ -9,7 +9,7 @@ interface Option {
 
 type SelectProps = ComponentProps<'select'> & {
     options: Option[]
-    defaultValue: number;
+    defaultValue?: number;
     disabled?: boolean;
     setState: (value: number) => void;
 }
