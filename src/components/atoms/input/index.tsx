@@ -43,7 +43,7 @@ function Input({ erro, size, className, type, options, defaultValue, onChange, .
     else if(type === 'textarea') {
         return <textarea className={`${input({ erro, size, className })} min-h-[250px] overflow-y-auto scrollbar-hide`} defaultValue={defaultValue} onChange={onChange} />
     } 
-    return <input autoComplete="on" className={input({ erro, size, className })} onChange={onChange} {...props} />
+    return <input autoComplete="on" className={input({ erro, size, className })} type={type} onChange={onChange} {...props} />
 }
 
 export default Input

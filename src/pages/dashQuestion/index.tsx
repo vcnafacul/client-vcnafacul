@@ -48,8 +48,9 @@ function DashQuestion() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleInputChange = (event: any) => {
         const filter = event.target.value.toLowerCase();
+        console.log('teste')
         if(!filter) setQuestions(dataRef.current)
-        else setQuestions(dataRef.current.filter(q => q._id.includes(filter) || q.textoQuestao.includes(filter)))
+        else setQuestions(dataRef.current.filter(q => q._id.includes(filter) || q.textoQuestao.toLowerCase().includes(filter)))
     }
 
     const handleOrderChange = (opt: Order) => {

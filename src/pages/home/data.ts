@@ -6,7 +6,7 @@ import { ActionAreasProps } from "../../components/organisms/actionAreas";
 import { AboutUsProps } from "../../components/organisms/aboutUs";
 import { SupportersProps } from "../../components/organisms/Supporters";
 
-import { ACCOUNT_PATH, DASH, HOME_PATH, LOGIN_PATH, REGISTER_PATH } from "../../routes/path";
+import { ACCOUNT_PATH, DASH, LOGIN_PATH, LOGOFF_PATH, REGISTER_PATH } from "../../routes/path";
 
 import HeroImg1 from "../../assets/images/home/hero_student.svg";
 import HeroImg2 from "../../assets/images/home/hero_teacher.svg";
@@ -48,7 +48,7 @@ export const userNavigationSign = [
 export const userNavigationLogged = [
     { name: 'DashBoard', href: DASH },
     { name: 'Editar Perfil', href: ACCOUNT_PATH },
-    { name: 'Sair', href: HOME_PATH },
+    { name: 'Sair', href: LOGOFF_PATH },
 ]
 
 export const header: HeaderProps = {

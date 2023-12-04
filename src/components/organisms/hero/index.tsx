@@ -40,7 +40,7 @@ function Hero({ slides }: HeroProps){
                             <Text size='primary' className='text-white md:text-left text-start mb-6'>{slide.title}</Text>
                             <Text size='tertiary' className='text-white text-start'>{slide.subtitle}</Text>
                         </div>
-                        <div className='flex'>
+                        <div className='flex gap-4'>
                             {slide.links.map((link) => (
                                 <BLink type='tertiary' target={link.target} hover key={link.id} to={link.link}>{link.text}</BLink>
                             ))}

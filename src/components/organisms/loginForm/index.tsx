@@ -52,7 +52,7 @@ function LoginForm({ title, subtitle, forgot, labelSubmit, formData } : LoginFor
                 <Text size="secondary">{title}</Text>
                 <Text size="quaternary" className="text-orange my-5">{subtitle}</Text>
                 <FormSubmit 
-                    className="w-full my-4"
+                    className="w-full my-4 flex flex-col gap-4"
                     formFields={formData} 
                     labelSubmit={labelSubmit}
                     handleOnChange={handleInputChange}
