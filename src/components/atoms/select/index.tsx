@@ -2,13 +2,13 @@ import { ComponentProps } from "react"
 import { TiArrowSortedDown } from "react-icons/ti";
 import './styles.css'
 
-interface Option {
+export interface OptionProps {
     id: number,
     name: string;
 }
 
 type SelectProps = ComponentProps<'select'> & {
-    options: Option[]
+    options: OptionProps[]
     defaultValue?: number;
     disabled?: boolean;
     setState: (value: number) => void;

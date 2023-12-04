@@ -8,3 +8,8 @@ export const getStatusIcon = (status: StatusEnum) => {
     if (status == StatusEnum.Approved) return <StatusApproved />;
     if (status == StatusEnum.Rejected) return <StatusRejected />;
 };
+
+export const getStatusBool = (actived: boolean) => {
+    if(actived) return StatusEnum.Approved
+    return StatusEnum.Rejected;
+}
