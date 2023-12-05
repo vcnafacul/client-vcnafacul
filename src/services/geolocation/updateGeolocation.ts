@@ -9,17 +9,12 @@ interface UpdateGeolocationProps {
 }
 
 export async function UpdateGeolocation({ body, token}: UpdateGeolocationProps){
-    try {
-        const respose = await fetch(geolocations, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify(converteGeolocationUpdateDto(body)),
-        });
-        return await respose.json()
-    } catch (error) {
-        console.error(error)
-        return null;
-    }
+    const respose = await fetch(geolocations, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(converteGeolocationUpdateDto(body)),
+    });
+    return await respose.json()
 }
 
 export async function UpdateGeolocationStatus({ body, token}: UpdateGeolocationProps){

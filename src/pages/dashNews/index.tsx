@@ -14,6 +14,7 @@ import { formatDate } from "../../utils/date";
 import ModalEditNew from "./modals/modalEditNew";
 import Button from "../../components/molecules/button";
 import { createNews } from "../../services/news/createNews";
+import { toast } from "react-toastify";
 
 function DashNews() {
     const [news, setNews] = useState<News[]>([]);
@@ -60,8 +61,8 @@ function DashNews() {
                 news.push(res)
                 setNews(news)
             })
-            .catch(error => {
-                console.error(error)
+            .catch((error: Error) => {
+                toast.error(error.message)
             })
             .finally(() => {
                 setOpenModal(false)

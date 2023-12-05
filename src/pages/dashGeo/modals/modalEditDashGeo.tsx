@@ -18,6 +18,7 @@ import { ValidationGeolocation } from "../../../types/geolocation/validationGeol
 import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
 import { getStatusIcon } from "../../../utils/getStatusIcon";
 import { BtnProps } from "../../../types/generic/btnProps";
+import { toast } from "react-toastify";
 
 interface ModalEditDashGeoProps extends ModalProps {
     geo: Geolocation;
@@ -44,8 +45,9 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
         UpdateGeolocation({ body, token })
             .then(_ => {
                 updateGeo(infos)
+                toast.success(`Cursinho ${infos.name} atualizado com sucesso`) 
             })
-            .catch(_ => { console.log("Error....") })
+            .catch((error: Error) => { toast.error(error.message) })
     };
 
     const UpdateStatus = async (body: ValidationGeolocation) => {
