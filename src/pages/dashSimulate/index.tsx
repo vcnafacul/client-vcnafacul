@@ -18,6 +18,7 @@ import { SimuladoDefault } from "../../types/simulado/simuladoDefault"
 import { SimuladoDefaultEnum } from "../../enums/simulado/simuladoDefaultEnum"
 import { useSimuladoStore } from "../../store/simulado"
 import { SIMULADO } from "../../routes/path"
+import { toast } from "react-toastify"
 
 function DashSimulate() {
     const [initialize, setInitialize]= useState<boolean>(false);
@@ -112,9 +113,11 @@ function DashSimulate() {
             .then(res => {
                 simuladoBegin(res)
                 navigate(SIMULADO)
+                toast.success(`Iniciado Simulado ${res.title}`)
             })
-            .catch(error => {
-                console.log(error)
+            .catch((error: Error) => {
+                toast.error(`Erro ao buscar simulado ${id} - Error ${error.message}`)
+                setInitialize(false)
             })
     },[])
 
@@ -124,7 +127,6 @@ function DashSimulate() {
         handleClose={() => { setInitialize(false) }}
         initialize={() => { 
             const id = simulatesDefault?.find(s => s.type === type)?.id
-            console.log(id!)
             getSimulate(id!)
          }}
         />

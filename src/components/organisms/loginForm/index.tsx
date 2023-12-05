@@ -8,6 +8,7 @@ import Login from "../../../services/auth/login";
 import { useAuthStore } from "../../../store/auth";
 import { useNavigate } from "react-router-dom";
 import { DASH } from "../../../routes/path";
+import { toast } from "react-toastify";
 
 export interface LoginFormProps {
     title: string;
@@ -38,8 +39,7 @@ function LoginForm({ title, subtitle, forgot, labelSubmit, formData } : LoginFor
                 navigate(DASH);
             })
             .catch((e: Error) => {
-                console.log(e)
-                //setError({message: e.message})
+                toast.error(`Erro ao tentar fazer login - ${e.message}`)
             })
             .finally(() => {
                 //setLoading(false)

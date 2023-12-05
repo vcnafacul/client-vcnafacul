@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import Home from "../pages/home";
 import Login from "../pages/login";
@@ -29,6 +29,7 @@ export function PlatformRoutes() {
             <Route path={SIMULADO} element={<Simulate />} />
             <Route path={DASH_QUESTION} element={<DashQuestion />} />
             <Route path={DASH_NEWS} element={<DashNews />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );
 }

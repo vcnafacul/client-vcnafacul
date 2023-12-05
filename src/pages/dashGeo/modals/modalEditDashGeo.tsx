@@ -55,8 +55,10 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
         UpdateGeolocationStatus({ body, token })
             .then(_ => {
                 updateStatus(geo.id)
+                if(body.status === 1) toast.success(`Cursinho ${infos.name} atualizado com sucesso: Status - Aprovado`)
+                else toast.success(`Cursinho ${infos.name} atualizado com sucesso: Status - Reprovado`, { theme: `dark`}) 
             })
-            .catch(error =>  { console.log(error) } )
+            .catch((error: Error) =>  { toast.error(error.message) } )
     };
 
     const update = async (status: StatusEnum) => {

@@ -15,22 +15,23 @@ import Legends from "../../components/molecules/legends";
 import { simulateData } from "./data";
 import { getIconByTitle } from "../dashSimulate/data";
 import { ModalType } from "../../types/simulado/modalType";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { answerSimulado } from "../../services/simulado/answerSimulado";
 import { useNavigate } from "react-router-dom";
 import { DASH_SIMULADO } from "../../routes/path";
 import { useAuthStore } from "../../store/auth";
 import ModalInfo from "./modals/modalInfo";
 import ModalReportProblem from "./modals/ModalReportProblem";
+import { toast } from "react-toastify";
 
 function Simulate() {
     const { data, setActive, setAnswer, nextQuestion, confirm, priorQuestion, isFinish, setFinish } = useSimuladoStore()
+    const navigate = useNavigate()
     const [tryFinish, setTryFinish] = useState<boolean>(false)
     const [reportModal, setReportModal] = useState<boolean>(false)
     const [reportProblem, setReportProblem] = useState<boolean>(false)
     const [questionProblem, setQuestionProblem] = useState<boolean>(false)
 
-    const navigate = useNavigate()
     const { data: { token } }= useAuthStore()
 
     const questionSelect = data.questions[data.questionActive]
@@ -143,7 +144,15 @@ function Simulate() {
         return <ModalReportProblem questionProblem={questionProblem} idQuestion={questionSelect._id} numberQuestion={questionSelect.number + 1} handleClose={() => { setReportProblem(false) }} />
     }
 
-    return (
+    useEffect(() => {
+        if(data.questions.length === 0) {
+            navigate(DASH_SIMULADO)
+            toast.warn('Não há Simulado a serem respondido', { theme: 'dark'})
+        }
+    })
+    
+    if(data.questions.length > 0)
+        return (
         <>
             <DashTemplate header={headerDash}>
                 <div className="flex flex-col sm:mx-auto">
@@ -153,7 +162,7 @@ function Simulate() {
                     <Legends legends={simulateData.legends}/>
                     <div className="container mx-4 sm:mx-auto">
                         <div className="flex items-center gap-4">
-                            <div> <IconArea icon={getIconByTitle(questionSelect.enemArea) as React.FunctionComponent<React.SVGProps<SVGSVGElement>>} className="bg-marine" /> </div>
+                            <div> <IconArea icon={getIconByTitle(questionSelect.enemArea) as React.FunctionComponent<React.SVGProps<SVGSVGElement>> }  className="bg-marine" /> </div>
                             <Text className="m-0">{questionSelect.enemArea}</Text>
                             <Button typeStyle="none" size="none"><Report className="w-15 h-15" /></Button>
                         </div>

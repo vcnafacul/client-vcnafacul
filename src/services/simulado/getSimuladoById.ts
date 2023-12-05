@@ -18,30 +18,25 @@ function mapIQuestaoToQuestion(questao: IQuestao, index: number): Question {
   }
 
 export async function getSimuladoById(id: string, token: string ) {
-    try {
-        const response = await fetch(`${toAnswer}/${id}`,  {
-            method: "GET",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        })
-        if(response.status !== 200){
-            throw new Error(`Erro ao buscar simulado`)
-        }
-        const res: ISimuladoDTO = await response.json()
-        console.log(res)
-        const payload : Simulado = {
-            _id: res._id,
-            nQuestion: res.questoes.length,
-            questions: res.questoes.map(mapIQuestaoToQuestion),
-            title: res.nome,
-            started: res.inicio,
-            questionActive: 0,
-            duration: res.duracao,
-            finish: false,
-            finished: new Date()
-        }
-        return payload
-    } catch (error) {
-        console.error(error)
-        throw error
+    const response = await fetch(`${toAnswer}/${id}`,  {
+        method: "GET",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    })
+    if(response.status !== 200){
+        throw new Error(`Erro ao buscar simulado`)
     }
+    const res: ISimuladoDTO = await response.json()
+    if(res.questoes.length === 0) throw new Error("Numero de questoes inssuficiente")
+    const payload : Simulado = {
+        _id: res._id,
+        nQuestion: res.questoes.length,
+        questions: res.questoes.map(mapIQuestaoToQuestion),
+        title: res.nome,
+        started: res.inicio,
+        questionActive: 0,
+        duration: res.duracao,
+        finish: false,
+        finished: new Date()
+    }
+    return payload
 }

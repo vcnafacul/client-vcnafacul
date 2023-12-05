@@ -62,7 +62,7 @@ function DashNews() {
                 setNews(news)
             })
             .catch((error: Error) => {
-                toast.error(error.message)
+                toast.error(error.message, { theme: 'dark'})
             })
             .finally(() => {
                 setOpenModal(false)

@@ -20,7 +20,6 @@ interface CarouselProps {
 }
 
 function Carousel({className, childrens, slidesPerView, spaceBetween, loop, centeredSlides, slidesPerGroupSkip, grabCursor, dynamicBullets, pagination, breakpoints}: CarouselProps) {
-    console.log(childrens)
     return (
         <div className={className}>
             <Swiper className="mySwiper"
