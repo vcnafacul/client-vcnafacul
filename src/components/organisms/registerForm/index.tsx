@@ -7,6 +7,7 @@ import { useAuthStore } from "../../../store/auth";
 import { useNavigate } from "react-router-dom";
 import { DASH } from "../../../routes/path";
 import Button from "../../molecules/button";
+import { toast } from "react-toastify";
 
 export interface RegisterFormProps {
     title: string;
@@ -35,12 +36,8 @@ function RegisterForm({ title, subtitle, labelSubmit, formData } : RegisterFormP
                 doAuth(res)
                 navigate(DASH);
             })
-            .catch((e: Error) => {
-                console.log(e)
-                //setError({message: e.message})
-            })
-            .finally(() => {
-                //setLoading(false)
+            .catch((error: Error) => {
+                toast.error(error.message)
             })
     }
 

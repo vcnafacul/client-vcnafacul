@@ -5,7 +5,6 @@ import { jwtDecoded } from "./jwt";
 export function decoderUser(access_token: string){
     const decoded = jwtDecoded(access_token)
     const birthday = new Date(decoded.user.birthday.replace("Z", ""));
-    console.log(birthday)
     const monthBirthday = birthday.getMonth() + 1 < 10 ? `0${birthday.getMonth() + 1}` : birthday.getMonth();
     const dayBirthday = birthday.getDate() < 10 ? `0${birthday.getDate()}` : birthday.getDate();
     const payload : AuthProps = {

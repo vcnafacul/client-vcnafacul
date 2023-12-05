@@ -7,6 +7,7 @@ import { News } from "../../dtos/news/news"
 import { getNews } from "../../services/news/getNews"
 import Content from "../../components/atoms/content"
 import NewsCarousel from "../../components/organisms/newsCarousel"
+import { toast } from "react-toastify"
 
 function NewsPage(){
     const [news, setNews] = useState<News[]>([])
@@ -63,8 +64,8 @@ function NewsPage(){
           .then(res => {
             setNews(res)
           })
-          .catch(err => {
-            console.log(err)
+          .catch((error: Error) => {
+            toast.error(error.message)
           })
       }, [])
       

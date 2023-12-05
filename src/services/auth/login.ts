@@ -11,7 +11,6 @@ const Login = async (email: string, password: string) => {
     });
 
     const res = await response.json();
-    console.log(res)
     if (response.status === 409) {
         throw new Error("A senha informada está incorreta!");
     } else if (response.status === 404) {

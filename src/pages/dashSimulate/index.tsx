@@ -32,7 +32,6 @@ function DashSimulate() {
 
     const openModalNew = (type: SimuladoDefaultEnum) => {
         setType(type)
-        console.log(simulatesDefault?.find(s => s.type === type)?.id)
         setInitialize(true)
     }
 

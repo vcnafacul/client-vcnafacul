@@ -6,6 +6,7 @@ import Text from "../../atoms/text"
 import { ReactComponent as TriangleGreen } from "../../../assets/icons/triangle-green.svg";
 import { useNavigate } from "react-router-dom"
 import { NEWS } from "../../../routes/path"
+import { toast } from "react-toastify"
 
 function HomeNews(){
     const [news, setNews] = useState<News[]>([])
@@ -51,8 +52,8 @@ function HomeNews(){
           .then(res => {
             setNews(res)
           })
-          .catch(err => {
-            console.log(err)
+          .catch((error: Error) => {
+            toast.error(error.message)
           })
       }, [])
 

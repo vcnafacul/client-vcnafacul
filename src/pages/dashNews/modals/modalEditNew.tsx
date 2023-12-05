@@ -40,7 +40,6 @@ function ModalEditNew({ news, create, handleClose } : ModalEditNewProps){
         const file = e.target.files[0];
         if(file){
             setUploadFile(file);
-            console.log(file);
             const reader = new FileReader();
             reader.onload = (event: any) => {
                 const arrayBuffer = event.target.result;

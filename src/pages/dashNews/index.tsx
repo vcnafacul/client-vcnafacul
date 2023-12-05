@@ -26,7 +26,6 @@ function DashNews() {
 
     const handleInputChange = (event: any) => {
         const filter = event.target.value.toLowerCase();
-        console.log(filter)
         if(!filter) setNews(dataRef.current)
         else setNews(dataRef.current.filter(q => q.session.toLowerCase().includes(filter) || q.title.toLowerCase().includes(filter)))
     }
@@ -79,8 +78,8 @@ function DashNews() {
                 })
                 dataRef.current = res;
             })
-            .catch(err => {
-                console.log(err)
+            .catch((error: Error) => {
+                toast.error(error.message)
             })
     }, [])
 
