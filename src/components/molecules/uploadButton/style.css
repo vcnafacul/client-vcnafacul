@@ -1,0 +1,9 @@
+input::file-selector-button {
+font-weight: bold;
+color: #FF7600;
+padding: 0.5em;
+border: thin solid #FF7600;
+border-radius: 3px;
+background-color: white;
+margin-left: 10px;
+}

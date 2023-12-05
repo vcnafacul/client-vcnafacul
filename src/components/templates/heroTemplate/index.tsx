@@ -9,7 +9,7 @@ export interface HeroTemplateProps{
     hero: HeroProps;
     children: React.ReactNode;
     footer: FooterProps;
-    headerPosition?: 'fixed' | 'relative'
+    headerPosition?: 'fixed' | 'relative';
 }
 
 function HeroTemplate({ header, hero, children, footer, headerPosition = 'relative' }: HeroTemplateProps){

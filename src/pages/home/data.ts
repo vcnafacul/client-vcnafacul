@@ -68,8 +68,6 @@ export const header: HeaderProps = {
     solid: false,
 };
 
-
-
 export const hero: HeroProps = {
     slides: [
         {

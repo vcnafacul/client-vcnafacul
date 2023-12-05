@@ -21,17 +21,18 @@ export interface Slide {
 }
 
 export interface HeroProps {
-    slides: Slide[]
+    slides: Slide[];
+    className?: string;
 }
 
-function Hero({ slides }: HeroProps){
+function Hero({ slides, className }: HeroProps){
 
     return (
         <Carousel
             spaceBetween={0}
             childrens={slides.map((slide) => (
             <div key={slide.id} style={{background: `${slide.backgroud_color}`}} 
-                className='min-h-[750px] sm:min-h-[480px] md:min-h-[600px] w-screen flex justify-center'>
+                className={`${className} min-h-[750px] sm:min-h-[480px] md:min-h-[600px] w-screen flex justify-center`}>
                 <div className='container flex flex-col justify-start pt-24 min-h-screen box-border
                     sm:pt-20 sm:min-h-[430px] sm:flex-row sm:items-start sm:justify-between
                     md:min-h-[600px] md:self-center'>
