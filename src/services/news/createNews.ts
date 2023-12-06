@@ -11,6 +11,6 @@ export async function createNews(data: FormData, token: string): Promise<News>{
         body: data,
     });
     const response = await res.json()
-    if(res.status === 200) return response
+    if(res.status === 201) return response
     throw new Error(`Erro ao tentar criar novidades - ${response.message}`)
 }

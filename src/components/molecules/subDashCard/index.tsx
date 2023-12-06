@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 import { IoAddCircle } from "react-icons/io5";
+import { Roles } from "../../../enums/roles/roles";
 
 export interface SubDashCardInfo {
     icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
     alt: string;
     text: string;
     link: string;
-    permission?: string;
+    permission?: Roles;
 }
 
 interface SubDashCardPros{

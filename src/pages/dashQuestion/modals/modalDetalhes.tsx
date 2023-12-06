@@ -12,23 +12,19 @@ import { AreaEnem, ArrayCor, Edicao } from "../data";
 import ModalImage from "../../../components/atoms/modalImage";
 import { BtnProps } from "../../../types/generic/btnProps";
 import { StatusEnum } from "../../../types/generic/statusEnum";
-import { useAuthStore } from "../../../store/auth";
-import { updateStatus } from "../../../services/question/updateStatus";
 import { ConverteQuestiontoUpdateQuestion, UpdateQuestion } from "../../../dtos/question/updateQuestion";
 
 interface ModalDetalhesProps extends ModalProps {
     question: Question
     infos: InfoQuestion;
-    handleRemoveQuestion: (id: string) => void;
+    handleUpdateQuestionStatus: (status: StatusEnum) => void;
     handleUpdateQuestion: (questionUpdate: UpdateQuestion) => void;
 }
 
-function ModalDetalhes({ question, infos, handleClose, handleRemoveQuestion, handleUpdateQuestion } : ModalDetalhesProps) {
+function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatus, handleUpdateQuestion } : ModalDetalhesProps) {
     const [ isEditing, setIsEditing ] = useState<boolean>(false);
     const [newState, setNewState] = useState<Question>(question)
     const [photoOpen, setPhotoOpen] = useState<boolean>(false);
-
-    const { data: { token }} = useAuthStore()
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleInputChange = (event: any) => {
@@ -75,17 +71,6 @@ function ModalDetalhes({ question, infos, handleClose, handleRemoveQuestion, han
         return <ModalImage handleClose={() => setPhotoOpen(false) }  image={`https://api.vcnafacul.com.br/images/${newState.imageId}.png`} />
     }
 
-    const updateStatusQuestionService = (status: StatusEnum) => {
-        updateStatus(question._id, status, token)
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        .then(_ => {
-            handleRemoveQuestion(question._id)
-            handleClose()
-        }).catch((error: any) => {
-            console.error(error)
-        })
-    }
-
     const handleSave = () => {
         const updateQuestion = ConverteQuestiontoUpdateQuestion(newState)
         handleUpdateQuestion(updateQuestion)
@@ -93,8 +78,8 @@ function ModalDetalhes({ question, infos, handleClose, handleRemoveQuestion, han
     } 
 
     const btns: BtnProps[] = [
-        { children: "Aceitar", onClick: () => { updateStatusQuestionService(StatusEnum.Approved) }, status: StatusEnum.Approved, className: 'bg-green2 col-span-1', editing: false},
-        { children: "Rejeitar", onClick: () => { updateStatusQuestionService(StatusEnum.Rejected) }, status: StatusEnum.Rejected, className: 'bg-red col-span-1', editing: false},
+        { children: "Aceitar", onClick: () => { handleUpdateQuestionStatus(StatusEnum.Approved) }, status: StatusEnum.Approved, className: 'bg-green2 col-span-1', editing: false},
+        { children: "Rejeitar", onClick: () => { handleUpdateQuestionStatus(StatusEnum.Rejected) }, status: StatusEnum.Rejected, className: 'bg-red col-span-1', editing: false},
         { children: "Editar", onClick: () => { setIsEditing(true) }, editing: false, className: 'col-span-2'},
         { children: "Fechar", onClick: handleClose, editing: false, className: 'col-span-2'},
         { children: "Salvar", onClick: () => { handleSave }, editing: true, className: 'col-span-2'},

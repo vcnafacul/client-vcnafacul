@@ -16,6 +16,8 @@ import ModalTabTemplate from "../../components/templates/modalTabTemplate"
 import ModalDetalhes from "./modals/modalDetalhes"
 import { updateQuestion } from "../../services/question/updateQuestion"
 import { UpdateQuestion } from "../../dtos/question/updateQuestion"
+import { toast } from "react-toastify"
+import { updateStatus } from "../../services/question/updateStatus"
 
 function DashQuestion() {
     const [questions, setQuestions] = useState<Question[]>([])
@@ -80,10 +82,23 @@ function DashQuestion() {
                     return question
                 });
                 setQuestions(newQuestions as Question[])
+                toast.success(`Questao ${questionUpdate._id} atualizada com sucesso`)
             })
-            .catch(error => {
-                console.error(error)
+            .catch((error: Error) => {
+                toast.error(error.message)
             });
+    }
+
+    const handleUpdateQuestionStatus = (status: StatusEnum) => {
+        updateStatus(questionSelect!._id, status, token)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .then(_ => {
+            handleRemoveQuestion(questionSelect!._id)
+            setOpenModal(false)
+            toast.success(`Questão ${questionSelect!._id} atualizada com sucesso. Status: ${status === StatusEnum.Approved ? 'Aprovado' : 'Reprovado'} `)
+        }).catch((error: Error) => {
+            toast.error(error.message)
+        })
     }
 
     const onClickCard = (cardId: number | string) => {
@@ -130,7 +145,7 @@ function DashQuestion() {
                         question={questionSelect!} 
                         infos={infosQuestion} 
                         handleClose={() => { setOpenModal(false) }}
-                        handleRemoveQuestion={handleRemoveQuestion}
+                        handleUpdateQuestionStatus={handleUpdateQuestionStatus}
                         handleUpdateQuestion={handleUpdateQuestion}
                          />}, 
                 { label: "Historico", children: <>Teste 2</>}

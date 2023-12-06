@@ -12,9 +12,10 @@ import UploadButton from "../../../components/molecules/uploadButton"
 interface ModalEditNewProps extends ModalProps{
     news: News
     create: (session: string, title: string, file: any) => void;
+    deleteFunc: (id: number) => void;
 }
 
-function ModalEditNew({ news, create, handleClose } : ModalEditNewProps){
+function ModalEditNew({ news, create, deleteFunc, handleClose } : ModalEditNewProps){
     const [arrayBuffer, setArrayBufer] = useState<ArrayBuffer>();
     const [upload, setUpload] = useState<boolean>(news ? true : false);
 
@@ -56,6 +57,12 @@ function ModalEditNew({ news, create, handleClose } : ModalEditNewProps){
         }
     }
 
+    const deleteNew = () => {
+        if(news){
+            deleteFunc(news.id)
+        }
+    }
+
     return (
         <ModalTemplate>
             <div className="bg-white p-10 min-h-[70vh] max-h-[90vh] flex flex-col items-center">
@@ -70,9 +77,14 @@ function ModalEditNew({ news, create, handleClose } : ModalEditNewProps){
                 </div>
                 {news ? <></> : <UploadButton className="" onChange={handleFileUpload} />}
                 <div className="flex gap-4 w-full mt-4">
-                <Button 
+                {news ? 
+                    <Button 
+                    className="bg-red border-red" hover 
+                        onClick={deleteNew}>Deletar</Button> : 
+                    <Button 
                     className="bg-green2 border-green2" hover 
-                    onClick={createNew}>Salvar</Button>
+                        onClick={createNew}>Salvar</Button>}
+
                 <Button hover onClick={handleClose}>Cancelar</Button>
                 </div>
             </div>

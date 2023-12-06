@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import DashCardTemplate from "../../components/templates/dashCardTemplate"
@@ -15,6 +16,7 @@ import ModalEditNew from "./modals/modalEditNew";
 import Button from "../../components/molecules/button";
 import { createNews } from "../../services/news/createNews";
 import { toast } from "react-toastify";
+import { deleteNews } from "../../services/news/deleteNews";
 
 function DashNews() {
     const [news, setNews] = useState<News[]>([]);
@@ -59,12 +61,29 @@ function DashNews() {
             .then(res => {
                 news.push(res)
                 setNews(news)
+                setOpenModal(false)
+                toast.success(`Novidade ${res.title} criado com sucesso`, { theme: 'dark'})
             })
             .catch((error: Error) => {
                 toast.error(error.message, { theme: 'dark'})
             })
-            .finally(() => {
+    }
+
+    const deleteNew = (id: number) => {
+        deleteNews(id, token)
+            .then(_ => {
+                setNews(news.map(n => {
+                    if(n.id === id) {
+                        n.actived = false
+                        return n
+                    }
+                    return n
+                }))
                 setOpenModal(false)
+                toast.success(`Novidade ${newSelect?.title} deletada com sucesso`)
+            })
+            .catch((error: Error) => {
+                toast.error(`Error - ${error.message}`)
             })
     }
 
@@ -88,6 +107,7 @@ function DashNews() {
         return <ModalEditNew 
             news={newSelect!}
             create={create}
+            deleteFunc={deleteNew}
             handleClose={() => { setOpenModal(false) }} />
     }
     

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef, useState } from "react";
 import DashCardTemplate from "../../components/templates/dashCardTemplate" 
 import { StatusEnum } from "../../types/generic/statusEnum";
@@ -8,7 +9,6 @@ import Filter from "../../components/atoms/filter";
 import { Geolocation } from "../../types/geolocation/geolocation";
 import { CardDashInfo } from "../../components/molecules/cardDash";
 import { getAllGeolocation } from "../../services/geolocation/getAllGeolocation";
-/* import { useAuthStore } from "../../store/auth"; */
 import { formatDate } from "../../utils/date";
 import ModalEditDashGeo from "./modals/modalEditDashGeo";
 
@@ -19,9 +19,6 @@ function DashGeo(){
     const [openModal, setOpenModal] = useState<boolean>(false);
     const dataRef = useRef<Geolocation[]>([])
 
-    /* const { data: { token }} = useAuthStore() */
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleInputChange = (event: any) => {
         const filter = event.target.value.toLowerCase();
         if(!filter) setGeolocations(dataRef.current)
