@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link } from "react-router-dom"
 import Text from "../../atoms/text"
 import FormSubmit from "../formSubmit"
-import { useState } from "react";
 import { FormFieldInput } from "../../molecules/formField";
-import { createObjectFromFormFieldInput } from "../../../utils/createObject";
 import Login from "../../../services/auth/login";
 import { useAuthStore } from "../../../store/auth";
 import { useNavigate } from "react-router-dom";
@@ -19,30 +19,17 @@ export interface LoginFormProps {
 }
 
 function LoginForm({ title, subtitle, forgot, labelSubmit, formData } : LoginFormProps){
-
-    const [data, setData] = useState(createObjectFromFormFieldInput(formData)) 
     const { doAuth } = useAuthStore()
     const navigate = useNavigate();
     
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleInputChange = (event: any) => {
-        const { name, value } = event.target;
-        setData({ ...data, [name]: value });
-    };
-
-    const login = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        Login(data.email as string, data.password as string)
+    const login = (data: any) => {
+        Login(data.email, data.password)
             .then(res => {
                 doAuth(res)
                 navigate(DASH);
             })
             .catch((e: Error) => {
                 toast.error(`Erro ao tentar fazer login - ${e.message}`)
-            })
-            .finally(() => {
-                //setLoading(false)
             })
     }
 
@@ -55,8 +42,8 @@ function LoginForm({ title, subtitle, forgot, labelSubmit, formData } : LoginFor
                     className="w-full my-4 flex flex-col gap-4"
                     formFields={formData} 
                     labelSubmit={labelSubmit}
-                    handleOnChange={handleInputChange}
-                    onSubmit={login}/>
+                    onSubmit={login}
+                    />
                 <Link to='#' className="text-orange w-full mt-5 underline font-bold">{forgot}</Link>
             </div>
         </div>

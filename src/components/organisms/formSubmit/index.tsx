@@ -1,21 +1,23 @@
-import { ComponentProps } from "react"
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import FormField, { FormFieldInput } from "../../molecules/formField"
 import Button from "../../molecules/button";
+import { useForm } from 'react-hook-form';
 
-export type FormSubmitProps = ComponentProps<'form'> & {
+export type FormSubmitProps = {
     formFields: FormFieldInput[]
     labelSubmit: string;
     styleButton?:  "primary" | "secondary" | "tertiary";
     sizeButton?: "base" | "small";
     className?: string;
-    handleOnChange: (event: React.InputHTMLAttributes<HTMLInputElement>) => void;
+    onSubmit: (data: any) => void;
 }
 
-function FormSubmit({ formFields, labelSubmit, styleButton = "primary", sizeButton = "base", className, handleOnChange, ...props } : FormSubmitProps){
-   return (
-    <form className={`${className} `} {...props}>
+function FormSubmit({ formFields, labelSubmit, styleButton = "primary", sizeButton = "base", className, onSubmit, ...props } : FormSubmitProps){
+    const { register, handleSubmit } = useForm();
+    return (
+    <form onSubmit={handleSubmit(onSubmit)} className={`${className} `} {...props}>
         {formFields.map((f, i) => 
-            <FormField id={f.id} key={i} label={f.label} type={f.type} visibility={f.visibility} handleOnChange={handleOnChange} />)}
+            <FormField register={register} id={f.id} key={i} label={f.label} type={f.type} visibility={f.visibility} />)}
         <Button className="w-full" typeStyle={styleButton} size={sizeButton} type="submit" >{labelSubmit}</Button>
     </form>
    )

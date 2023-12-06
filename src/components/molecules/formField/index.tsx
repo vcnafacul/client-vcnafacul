@@ -5,6 +5,7 @@ import LabelInput from "../../atoms/labelInput/input"
 
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { IoMdEye } from "react-icons/io";
+import { UseFormRegister, FieldValues } from "react-hook-form";
 
 export interface FormFieldOption {
     value: any;
@@ -22,10 +23,11 @@ export interface FormFieldInput {
 }
 
 export interface FormFieldProps  extends FormFieldInput {
-    handleOnChange: (event: React.InputHTMLAttributes<HTMLInputElement>) => void;
+    // handleOnChange: (event: React.InputHTMLAttributes<HTMLInputElement>) => void;
+    register: UseFormRegister<FieldValues>;
 }
 
-function FormField({id, label, type = "text", visibility = false, value, disabled, options, handleOnChange} : FormFieldProps){
+function FormField({id, label, type = "text", visibility = false, value, disabled, options, register} : FormFieldProps){
     const [visible, setVisible] = useState<boolean>(visibility)
 
     function backgroundImageToggleVisibility(visible: boolean){
@@ -37,7 +39,6 @@ function FormField({id, label, type = "text", visibility = false, value, disable
     const commonProps = {
         name: id,
         disabled: disabled ?? false,
-        onChange: handleOnChange,
         value:value,
         type: visible ? "text" : type,
         options: options,
@@ -47,7 +48,7 @@ function FormField({id, label, type = "text", visibility = false, value, disable
     return (
         <div className="flex flex-col w-full relative justify-center items-center">
             <LabelInput label={label} />
-            <Input {...commonProps} />
+            <Input register={register} {...commonProps} />
             {type !== "password" ? 
                 <></> : 
                 backgroundImageToggleVisibility(visible)}

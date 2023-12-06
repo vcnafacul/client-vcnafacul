@@ -2,6 +2,7 @@
 import { ComponentProps } from "react";
 import { VariantProps, tv } from "tailwind-variants"
 import { FormFieldOption } from "../../molecules/formField";
+import { FieldValues, UseFormRegister } from 'react-hook-form';
 
 const input = tv({
     base: 'bg-white appearance-none box-border w-full rounded-lg border text-grey' + 
@@ -27,13 +28,14 @@ export type InputProps = VariantProps<typeof input> & ComponentProps<'input'> & 
     className?: string;
     options?: FormFieldOption[];
     defaultValue?: any;
-    onChange: (event: any) => void;
+    register: UseFormRegister<FieldValues>;
 }
 
-function Input({ erro, size, className, type, options, defaultValue, onChange, ...props } : InputProps){
+function Input({ erro, size, className, type, options, defaultValue, register, ...props } : InputProps){
+
     if(type === 'option') {
         return (
-            <select disabled={props.disabled} className={input({ erro, size, className })} defaultValue={defaultValue}>
+            <select {...register(props.name!)} disabled={props.disabled} className={input({ erro, size, className })} defaultValue={defaultValue}>
                 {options!.map((opt, index) => (
                     <option key={index} value={opt.value}>{opt.label}</option>
                     ))}
@@ -41,9 +43,9 @@ function Input({ erro, size, className, type, options, defaultValue, onChange, .
         )
     }
     else if(type === 'textarea') {
-        return <textarea className={`${input({ erro, size, className })} min-h-[250px] overflow-y-auto scrollbar-hide`} defaultValue={defaultValue} onChange={onChange} />
+        return <textarea {...register(props.name!)} className={`${input({ erro, size, className })} min-h-[250px] overflow-y-auto scrollbar-hide`} defaultValue={defaultValue} />
     } 
-    return <input autoComplete="on" className={input({ erro, size, className })} type={type} onChange={onChange} {...props} />
+    return <input {...register(props.name!)} autoComplete="on" className={input({ erro, size, className })} type={type} {...props} />
 }
 
 export default Input
