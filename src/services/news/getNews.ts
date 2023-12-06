@@ -1,9 +1,10 @@
 
 import { News } from "../../dtos/news/news";
+import fetchWrapper from "../../utils/fetchWrapper";
 import { news } from "../urls";
 
 export async function getNews(): Promise<News[]>{
-    const res = await fetch(news, {
+    const res = await fetchWrapper(news, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { GeolocationUpdateDto } from "../../dtos/geolocation/geolocationUpdateDto";
 import { Geolocation } from "../../types/geolocation/geolocation";
+import fetchWrapper from "../../utils/fetchWrapper";
 import { geolocations } from "../urls";
 
 interface UpdateGeolocationProps {
@@ -11,7 +12,7 @@ interface UpdateGeolocationProps {
 
 export async function UpdateGeolocation({ body, token}: UpdateGeolocationProps){
     try {
-        const response = await fetch(geolocations, {
+        const response = await fetchWrapper(geolocations, {
             method: "PUT",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify(converteGeolocationUpdateDto(body)),
@@ -34,7 +35,7 @@ export async function UpdateGeolocation({ body, token}: UpdateGeolocationProps){
 
 export async function UpdateGeolocationStatus({ body, token}: UpdateGeolocationProps){
     try {
-        const response = await fetch(`${geolocations}`, {
+        const response = await fetchWrapper(`${geolocations}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify(body),

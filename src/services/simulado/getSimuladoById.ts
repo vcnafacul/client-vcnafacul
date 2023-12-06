@@ -1,5 +1,6 @@
 import { IQuestao, ISimuladoDTO } from "../../dtos/simulado/simuladoDto";
 import { Question, Simulado } from "../../store/simulado";
+import fetchWrapper from "../../utils/fetchWrapper";
 import { toAnswer } from "../urls";
 
 function mapIQuestaoToQuestion(questao: IQuestao, index: number): Question {
@@ -18,7 +19,7 @@ function mapIQuestaoToQuestion(questao: IQuestao, index: number): Question {
   }
 
 export async function getSimuladoById(id: string, token: string ) {
-    const response = await fetch(`${toAnswer}/${id}`,  {
+    const response = await fetchWrapper(`${toAnswer}/${id}`,  {
         method: "GET",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     })

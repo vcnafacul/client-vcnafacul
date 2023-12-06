@@ -1,8 +1,9 @@
+import fetchWrapper from "../../utils/fetchWrapper";
 import { defaults } from "../urls";
 
 export async function getSimuladosDefaults(token: string) {
     try {
-        const response = await fetch(`${defaults}/`,  {
+        const response = await fetchWrapper(`${defaults}/`,  {
             method: "GET",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         })

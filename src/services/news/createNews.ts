@@ -1,9 +1,10 @@
 
 import { News } from "../../dtos/news/news";
+import fetchWrapper from "../../utils/fetchWrapper";
 import { news } from "../urls";
 
 export async function createNews(data: FormData, token: string): Promise<News>{
-    const res = await fetch(news, {
+    const res = await fetchWrapper(news, {
         method: "POST",
         headers: { 
             Authorization: `Bearer ${token}`,

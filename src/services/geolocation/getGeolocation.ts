@@ -1,9 +1,10 @@
 import { geolocations } from "../urls";
 import { Geolocation } from "../../types/geolocation/geolocation"
+import fetchWrapper from "../../utils/fetchWrapper";
 
 const getGeolocation = async () : Promise<Geolocation[]> => {
     try {
-        const response = await fetch(geolocations, {
+        const response = await fetchWrapper(geolocations, {
             headers: { "Content-Type": "application/json" },
         });
 

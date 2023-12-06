@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import mammoth from 'mammoth';
 import './content.css';
+import fetchWrapper from '../../../utils/fetchWrapper';
 
 interface ImageMessage {
   type: "image";
@@ -81,13 +82,13 @@ function Content({ docxFilePath, arrayBuffer, className }: ContentProps) {
           const htmlContent = await convertDocxToHtml(undefined, arrayBuffer);
           setHtmlContent(htmlContent as string);
         } else if (docxFilePath) {
-          const response = await fetch(docxFilePath);
+          const response = await fetchWrapper(docxFilePath);
           const blob = await response.blob();
           const htmlContent = await convertDocxToHtml(blob, undefined);
           setHtmlContent(htmlContent as string);
         }
       } catch (error) {
-        console.error('Error fetching or converting the .docx file:', error);
+        console.error('Error fetchWrappering or converting the .docx file:', error);
       }
     };
 

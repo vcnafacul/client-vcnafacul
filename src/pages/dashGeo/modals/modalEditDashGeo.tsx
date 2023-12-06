@@ -7,7 +7,7 @@ import { Geolocation } from "../../../types/geolocation/geolocation"
 import { FormFieldInput } from "../../../components/molecules/formField";
 import Form from "../../../components/organisms/form";
 import MapBox from "../../../components/molecules/mapBox";
-import Button, { ButtonProps } from "../../../components/molecules/button";
+import Button from "../../../components/molecules/button";
 import { StatusEnum } from "../../../types/generic/statusEnum";
 
 import { Marker, useMapEvents } from "react-leaflet";
