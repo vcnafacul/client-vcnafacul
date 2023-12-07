@@ -29,7 +29,7 @@ interface ModalEditDashGeoProps extends ModalProps {
 }
 
 function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalEditDashGeoProps) {
-    const { register, handleSubmit, watch, setFocus  } = useForm();
+    const { register, handleSubmit } = useForm();
     const [infos, setInfos] = useState<Geolocation>(geo)
     const [editing, setEditing] = useState<boolean>(false);
     const [selectedPosition, setSelectedPosition] = useState<number[]>([0, 0]);

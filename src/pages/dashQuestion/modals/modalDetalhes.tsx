@@ -13,6 +13,7 @@ import ModalImage from "../../../components/atoms/modalImage";
 import { BtnProps } from "../../../types/generic/btnProps";
 import { StatusEnum } from "../../../types/generic/statusEnum";
 import { ConverteQuestiontoUpdateQuestion, UpdateQuestion } from "../../../dtos/question/updateQuestion";
+import { useForm } from 'react-hook-form';
 
 interface ModalDetalhesProps extends ModalProps {
     question: Question
@@ -22,15 +23,12 @@ interface ModalDetalhesProps extends ModalProps {
 }
 
 function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatus, handleUpdateQuestion } : ModalDetalhesProps) {
+    const { register, handleSubmit } = useForm();
     const [ isEditing, setIsEditing ] = useState<boolean>(false);
     const [newState, setNewState] = useState<Question>(question)
     const [photoOpen, setPhotoOpen] = useState<boolean>(false);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleInputChange = (event: any) => {
-        const { name, value } = event.target;
-        setNewState({ ...newState, [name]: value });
-    };
+
 
     const exames : FormFieldOption[] = infos.exames.map(e => ({ label: e.nome, value: e._id }))
     exames.push({ label: '', value: ''})
@@ -42,7 +40,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     frentes.push({ label: '', value: ''})
 
     const listFieldClassification : FormFieldInput[]= [
-        {id: "id", type: "text", label: "ID da questão", value: newState._id, disabled: !isEditing,},
+        {id: "id", type: "text", label: "ID da questão", value: newState._id, disabled: true,},
         {id: "exame",  type: "option", label: "Exame:*", options: exames, value: newState.exame._id, disabled: !isEditing,},
         {id: "ano", type: "number", label: "Ano:*", value: newState.ano, disabled: !isEditing,},
         {id: "edicao", type: "text", label: "Edição:*", options: Edicao, value: newState.edicao, disabled: !isEditing,},
@@ -56,12 +54,12 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     ]
 
     const listFieldInfoQuestion : FormFieldInput[]= [
-        {id: "texto", type: "textarea", label: "Texto da questão:*", value: newState.textoQuestao, disabled: !isEditing,},
-        {id: "alterativa1", type: "text", label: "Alternativa A:", value: newState.textoAlternativaA, disabled: !isEditing,},
-        {id: "alterativa2", type: "text", label: "Alternativa B:", value: newState.textoAlternativaB, disabled: !isEditing,},
-        {id: "alterativa3", type: "text", label: "Alternativa C:", value: newState.textoAlternativaC, disabled: !isEditing,},
-        {id: "alterativa4", type: "text", label: "Alternativa D:", value: newState.textoAlternativaD, disabled: !isEditing,},
-        {id: "alterativa5", type: "text", label: "Alternativa E:", value: newState.textoAlternativaE, disabled: !isEditing,}, 
+        {id: "textoQuestao", type: "textarea", label: "Texto da questão:*", value: newState.textoQuestao, disabled: !isEditing,},
+        {id: "textoAlternativaA", type: "text", label: "Alternativa A:", value: newState.textoAlternativaA, disabled: !isEditing,},
+        {id: "textoAlternativaB", type: "text", label: "Alternativa B:", value: newState.textoAlternativaB, disabled: !isEditing,},
+        {id: "textoAlternativaC", type: "text", label: "Alternativa C:", value: newState.textoAlternativaC, disabled: !isEditing,},
+        {id: "textoAlternativaD", type: "text", label: "Alternativa D:", value: newState.textoAlternativaD, disabled: !isEditing,},
+        {id: "textoAlternativaE", type: "text", label: "Alternativa E:", value: newState.textoAlternativaE, disabled: !isEditing,}, 
     ]
 
     
@@ -71,31 +69,31 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         return <ModalImage handleClose={() => setPhotoOpen(false) }  image={`https://api.vcnafacul.com.br/images/${newState.imageId}.png`} />
     }
 
-    const handleSave = () => {
-        const updateQuestion = ConverteQuestiontoUpdateQuestion(newState)
-        handleUpdateQuestion(updateQuestion)
+    const handleSave = (data: any) => {
+        data['_id'] = question._id
+        handleUpdateQuestion(data)
         handleClose()
     } 
 
     const btns: BtnProps[] = [
-        { children: "Aceitar", onClick: () => { handleUpdateQuestionStatus(StatusEnum.Approved) }, status: StatusEnum.Approved, className: 'bg-green2 col-span-1', editing: false},
-        { children: "Rejeitar", onClick: () => { handleUpdateQuestionStatus(StatusEnum.Rejected) }, status: StatusEnum.Rejected, className: 'bg-red col-span-1', editing: false},
-        { children: "Editar", onClick: () => { setIsEditing(true) }, editing: false, className: 'col-span-2'},
-        { children: "Fechar", onClick: handleClose, editing: false, className: 'col-span-2'},
-        { children: "Salvar", onClick: () => { handleSave }, editing: true, className: 'col-span-2'},
-        { children: "Voltar", onClick: () => { setIsEditing(false)  }, editing: true, className: 'col-span-2'},
+        { children: "Aceitar", type: 'button', onClick: () => { handleUpdateQuestionStatus(StatusEnum.Approved) }, status: StatusEnum.Approved, className: 'bg-green2 col-span-1', editing: false},
+        { children: "Rejeitar", type: 'button', onClick: () => { handleUpdateQuestionStatus(StatusEnum.Rejected) }, status: StatusEnum.Rejected, className: 'bg-red col-span-1', editing: false},
+        { children: "Editar", type: 'button', onClick: () => { setIsEditing(true) }, editing: false, className: 'col-span-2'},
+        { children: "Fechar", type: 'button', onClick: handleClose, editing: false, className: 'col-span-2'},
+        { children: "Salvar", type: 'submit', editing: true, className: 'col-span-2'},
+        { children: "Voltar", type: 'button', onClick: () => { setIsEditing(false)  }, editing: true, className: 'col-span-2'},
     ]
 
     return (
         <>
-            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-7 gap-x-4">
+            <form onSubmit={handleSubmit(handleSave)} className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-7 gap-x-4">
                 <div className="col-span-2 flex flex-col">
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Informação do Cursinho {getStatusIcon(newState.status)}</Text>
-                    <Form className="grid grid-cols-1 gap-y-1 mb-1" formFields={listFieldClassification} handleOnChange={handleInputChange} />
+                    <Form className="grid grid-cols-1 gap-y-1 mb-1" formFields={listFieldClassification} register={register} />
                 </div>
                 <div className="col-span-3">
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Informações da Questão</Text>
-                    <Form className="grid grid-cols-1 gap-y-1 mb-1" formFields={listFieldInfoQuestion} handleOnChange={handleInputChange} />
+                    <Form className="grid grid-cols-1 gap-y-1 mb-1" formFields={listFieldInfoQuestion} register={register} />
                 </div>
                 <div className="col-span-2">
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Imagem da Questão</Text>
@@ -112,7 +110,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                         })}
                     </div>
                 </div>
-            </div>
+            </form>
             <QuestionImageModal />
         </>
     )

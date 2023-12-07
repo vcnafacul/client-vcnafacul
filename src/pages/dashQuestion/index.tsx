@@ -75,13 +75,13 @@ function DashQuestion() {
         updateQuestion(questionUpdate, token)
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             .then(_ => {
-                const newQuestions = questions.map((question) => {
-                    if(question._id == questionUpdate._id){
-                        return questionUpdate
-                    }
-                    return question
-                });
-                setQuestions(newQuestions as Question[])
+                // const newQuestions = questions.map((question) => {
+                //     if(question._id == questionUpdate._id){
+                //         return questionUpdate
+                //     }
+                //     return question
+                // });
+                // setQuestions(newQuestions as Question[])
                 toast.success(`Questao ${questionUpdate._id} atualizada com sucesso`)
             })
             .catch((error: Error) => {
