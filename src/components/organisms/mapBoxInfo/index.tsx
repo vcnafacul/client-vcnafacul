@@ -23,16 +23,16 @@ interface MapBoxInfoProps {
 
 function MapBoxInfo({ boxRef, geo, ctaLink } : MapBoxInfoProps){
     return (
-        <div ref={boxRef} className="relative mb-10 mx-auto md:absolute z-40 top-5 md:right-10 bg-white opacity-75 rounded-md p-5 flex items-center flex-col">
+        <div ref={boxRef} className="w-[600px] h-[530px] relative mb-10 mx-auto md:absolute z-40 top-5 md:right-10 bg-white opacity-75 rounded-md p-5 flex items-center justify-between flex-col">
             <Text className="flex justify-center items-center"><FaMapMarkerAlt color="red" size={30} /> Localiza Cursinho</Text>
-            <Text size="quaternary">{geo?.name}</Text>
-            <Text size="quaternary">
+            <Text size="quaternary" className="m-0">{geo?.name}</Text>
+            <Text size="quaternary" className="m-0">
                 {geo?.street} - {geo?.number},{" "}
                 {geo?.complement}
             </Text>
-            <Text size="quaternary"> {geo?.neighborhood}, {geo?.cep} </Text>
-            <Text size="quaternary"> {geo?.city} - {geo?.state} </Text>
-            <Text size="quaternary">{geo?.phone}</Text>
+            <Text size="quaternary" className="m-0"> {geo?.neighborhood}, {geo?.cep} </Text>
+            <Text size="quaternary" className="m-0"> {geo?.city} - {geo?.state} </Text>
+            <Text size="quaternary" className="m-0">{geo?.phone}</Text>
             <div className="flex justify-around w-96 mx-auto">
                 {geo?.whatsapp.length !== 0 && (
                     <a href={`https://api.whatsapp.com/send?phone=55${geo?.whatsapp}`} target="_blank" >
@@ -80,7 +80,7 @@ function MapBoxInfo({ boxRef, geo, ctaLink } : MapBoxInfoProps){
                     </a>
                 )}
             </div>
-            <Text size="tertiary" className="mt-5">Conhece um cursinho popular?</Text>
+            <Text size="tertiary" className="m-0 mt-5">Conhece um cursinho popular?</Text>
             <BLink className="w-80" to={ctaLink}>Cadastrar um Cursinho</BLink>
         </div>
     )

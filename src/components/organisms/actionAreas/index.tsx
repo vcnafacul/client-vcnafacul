@@ -38,8 +38,6 @@ function ActionAreas({title, subtitle, tabItems, cardItems} : ActionAreasProps) 
                 text-grey border border-grey cursor-pointer">
                     <div className="w-full flex justify-center">
                         <Icon className="mt-9 mb-4 max-w-[74px] h-[74px] fill-pink" />
-                        {/* <img className="mt-9 mb-4 max-w-[74px] h-[74px]"
-                            alt="languages" src={cardItem.image as string} /> */}
                     </div>
                     <h3 className="text-2xl text-marine text-center z-10 py-0 px-4" >{cardItem.title}</h3>
                 </div>
