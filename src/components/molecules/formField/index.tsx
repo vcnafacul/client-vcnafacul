@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { LegacyRef, useState } from "react";
 import Input from "../../atoms/input"
 import LabelInput from "../../atoms/labelInput/input"
 
@@ -15,7 +15,7 @@ export interface FormFieldOption {
 export interface FormFieldInput {
     id: string;
     label: string;
-    type?: "text" | "password" | "number" | "option" | "textarea";
+    type?: "text" | "password" | "number" | "option" | "textarea" | "date";
     visibility?: boolean;
     disabled?: boolean;
     value?: any;
@@ -23,11 +23,11 @@ export interface FormFieldInput {
 }
 
 export interface FormFieldProps  extends FormFieldInput {
-    // handleOnChange: (event: React.InputHTMLAttributes<HTMLInputElement>) => void;
     register: UseFormRegister<FieldValues>;
+    ref?: LegacyRef<HTMLInputElement>;
 }
 
-function FormField({id, label, type = "text", visibility = false, value, disabled, options, register} : FormFieldProps){
+function FormField({id, label, type = "text", visibility = false, value, disabled, options, register, ref} : FormFieldProps){
     const [visible, setVisible] = useState<boolean>(visibility)
 
     function backgroundImageToggleVisibility(visible: boolean){
@@ -48,7 +48,7 @@ function FormField({id, label, type = "text", visibility = false, value, disable
     return (
         <div className="flex flex-col w-full relative justify-center items-center">
             <LabelInput label={label} />
-            <Input register={register} {...commonProps} />
+            <Input ref={ref} register={register} {...commonProps} />
             {type !== "password" ? 
                 <></> : 
                 backgroundImageToggleVisibility(visible)}
