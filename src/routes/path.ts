@@ -15,4 +15,4 @@ export const DASH_NEWS = "/dashnews"
 
 export const SIMULADO = "/simulado/responder";
 export const NEWS = "/novidades"
-export const ROLES = "/permissoes"
+export const DASH_ROLES = "/permissoes"

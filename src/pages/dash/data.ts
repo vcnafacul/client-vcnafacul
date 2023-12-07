@@ -1,6 +1,6 @@
 import { HeaderProps } from "../../components/organisms/header";
 import {header}  from "../home/data";
-import { DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, DASH_SIMULADO, ROLES } from "../../routes/path";
+import { DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, DASH_SIMULADO, DASH_ROLES } from "../../routes/path";
 import BioExatasImg from "../../assets/images/dashboard/bioexatas.svg";
 import HumanasImg from "../../assets/images/dashboard/humanas.svg";
 import LinguagensImg from "../../assets/images/dashboard/linguagens.svg";
@@ -93,7 +93,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
                 icon: Quimica, 
                 alt: "check", 
                 text: "Permissões", 
-                link: ROLES, 
+                link: DASH_ROLES, 
                 permission: Roles.alterarPermissao
             },
             { 
