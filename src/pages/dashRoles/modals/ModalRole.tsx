@@ -8,8 +8,9 @@ import { useAuthStore } from "../../../store/auth"
 import { toast } from "react-toastify"
 import { Role } from "../../../types/roles/role"
 
-import {ReactComponent as StatusRejected } from "../../../assets/icons/statusApproved.svg";
+import {ReactComponent as StatusRejected } from "../../../assets/icons/statusRejected.svg";
 import {ReactComponent as StatusApproved } from "../../../assets/icons/statusApproved.svg";
+import Select from "../../../components/atoms/select"
 
 interface ModalRoleProps extends ModalProps {
     userRole: UserRole;
@@ -19,7 +20,7 @@ interface ModalRoleProps extends ModalProps {
 
 function ModalRole({userRole, handleClose, roles, updateUserRole} : ModalRoleProps) {
     const [newRole, setNewRole] = useState<number>(userRole.roleId)
-    const [roleInfo, setRoleInfo] = useState<RolesResponse>({} as RolesResponse)
+    const [roleInfo, setRoleInfo] = useState<RolesResponse | undefined>(undefined)
     const [isEditing, setIsEditing] = useState<boolean>(false);
 
     const { data: { token }} = useAuthStore()
@@ -27,14 +28,27 @@ function ModalRole({userRole, handleClose, roles, updateUserRole} : ModalRolePro
     const updateRole = async () => {
             const newUser : UserRole = {...userRole, roleId: newRole, roleName: roles.find(r => r.id == newRole)!.name}
             updateUserRole(newUser)
-        
+    }
+
+    const ShowRoleInfo = () => {
+        if(!roleInfo) return null
+        return roleInfo.permissoes.map(r => (
+            <div className="flex gap-4 items-center justify-end">
+                <span className="m-2 text-base text-marine font-normal">{r.name}</span>
+                {r.liberado ? <StatusApproved /> : <StatusRejected />}
+            </div>
+        ))
+    }
+
+    const cameBackRole = () => {
+        setIsEditing(false)
+        setNewRole(userRole.roleId)
     }
 
     useEffect(() => {
         getRole(newRole, token)
         .then(res => {
             setRoleInfo(res)
-            console.log(res)
         })
         .catch((error: Error) => {
             toast.error(error.message)
@@ -63,19 +77,17 @@ function ModalRole({userRole, handleClose, roles, updateUserRole} : ModalRolePro
                     </div>    
                     <div className="w-[400px]">
                         <Text size="secondary">Permissões</Text>
-                        {roleInfo.id !== undefined ? roleInfo.permissoes.map(r => (
-                            <div className="flex gap-4 items-center justify-end">
-                                <span className="m-2 text-base text-marine font-black">{r.name}</span>
-                                {r.liberado ? <StatusApproved /> : <StatusRejected />}
-                            </div>
-                        )) : <></>}
+                        {isEditing ? 
+                        <Select options={roles} defaultValue={userRole.roleId} setState={setNewRole} /> : 
+                        <Text size="tertiary" className="flex justify-end font-black text-marine m-0">{userRole.roleName}</Text>}
+                        <ShowRoleInfo />
                     </div>
                 </div>
                 <div className="flex gap-4 w-[400px] self-end">
                     {isEditing ? 
                     <Button typeStyle="primary" onClick={updateRole}>Salvar</Button> : 
                     <Button typeStyle="secondary" onClick={() => setIsEditing(true)}>Editar</Button>}
-                    <Button onClick={isEditing ? () => setIsEditing(false) : handleClose}>{isEditing ? 'Voltar' : 'Fechar'}</Button>
+                    <Button onClick={isEditing ? cameBackRole : handleClose}>{isEditing ? 'Voltar' : 'Fechar'}</Button>
                 </div>
             </div>
         </ModalTemplate>
