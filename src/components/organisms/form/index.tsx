@@ -1,25 +1,27 @@
 import { ComponentProps } from "react"
 import FormField, { FormFieldInput } from "../../molecules/formField"
+import { FieldValues, UseFormRegister } from "react-hook-form";
 
 export type FormProps = ComponentProps<'div'> & {
-    formFields: FormFieldInput[]
-    handleOnChange: (event: React.InputHTMLAttributes<HTMLInputElement>) => void;
+    formFields: FormFieldInput[];
+    register: UseFormRegister<FieldValues>;
 }
 
-function Form({ formFields, handleOnChange, ...props } : FormProps){
+function Form({ formFields, register, ...props } : FormProps){
    return (
         <div {...props}>
-            {formFields.map((f, i) => 
+            {formFields.map(fData => 
                 <FormField 
-                    id={f.id} 
-                    key={i} 
-                    label={f.label} 
-                    value={f.value} 
-                    type={f.type} 
-                    visibility={f.visibility} 
-                    disabled={f.disabled}
-                    options={f.options}
-                    handleOnChange={handleOnChange} />
+                    id={fData.id} 
+                    key={fData.id} 
+                    label={fData.label} 
+                    value={fData.value} 
+                    type={fData.type} 
+                    visibility={fData.visibility} 
+                    disabled={fData.disabled}
+                    options={fData.options}
+                    register={register}
+                     />
                 )}
         </div>
    )

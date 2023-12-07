@@ -34,7 +34,6 @@ export type InputProps = VariantProps<typeof input> & ComponentProps<'input'> & 
 function Input({ erro, size, className, type, options, defaultValue, register, ...props } : InputProps){
 
     if(type === 'option') {
-        console.log(options)
         return (
             <select {...register(props.name!)} disabled={props.disabled} className={input({ erro, size, className })} defaultValue={defaultValue}>
                 {options!.map((opt, index) => (
@@ -46,7 +45,7 @@ function Input({ erro, size, className, type, options, defaultValue, register, .
     else if(type === 'textarea') {
         return <textarea {...register(props.name!)} className={`${input({ erro, size, className })} min-h-[250px] overflow-y-auto scrollbar-hide`} defaultValue={defaultValue} />
     } 
-    return <input {...register(props.name!)} autoComplete="on" className={input({ erro, size, className })} type={type} {...props} />
+    return <input {...register(props.name!)} defaultValue={defaultValue} autoComplete="on" className={input({ erro, size, className })} type={type} {...props} />
 }
 
 export default Input

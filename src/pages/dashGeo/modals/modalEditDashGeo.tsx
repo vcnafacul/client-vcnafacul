@@ -19,6 +19,8 @@ import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel
 import { getStatusIcon } from "../../../utils/getStatusIcon";
 import { BtnProps } from "../../../types/generic/btnProps";
 import { toast } from "react-toastify";
+import { stateOptions } from "../../register/data";
+import { useForm } from 'react-hook-form';
 
 interface ModalEditDashGeoProps extends ModalProps {
     geo: Geolocation;
@@ -27,6 +29,7 @@ interface ModalEditDashGeoProps extends ModalProps {
 }
 
 function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalEditDashGeoProps) {
+    const { register, handleSubmit, watch, setFocus  } = useForm();
     const [infos, setInfos] = useState<Geolocation>(geo)
     const [editing, setEditing] = useState<boolean>(false);
     const [selectedPosition, setSelectedPosition] = useState<number[]>([0, 0]);
@@ -35,15 +38,11 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
 
     const { data: { token } } = useAuthStore()
 
-    const handleInputChange = (event: any) => {
-        const { name, value } = event.target;
-        setInfos({ ...infos, [name]: value });
-    };
-
-    const UpdateGeo = async (body: Geolocation) => {
+    const UpdateGeo = async (body: any) => {
+        body['id'] = geo.id
         handleClose()
         UpdateGeolocation({ body, token })
-            .then(_ => {
+            .then(_ => { 
                 updateGeo(infos)
                 toast.success(`Cursinho ${infos.name} atualizado com sucesso`) 
             })
@@ -71,25 +70,25 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
     };
 
     const formFieldInfos : FormFieldInput[] = [
-        {id: "name", type: "text", label: "Nome do Cursinho", value: infos["name"], disabled: !editing},
-        {id: "category", type: "text", label: "Tipo de Cursinho:", value: infos["category"], disabled: !editing},
-        {id: "cep", type: "text", label: "Cep:", value: infos["cep"], disabled: !editing},
-        {id: "street", type: "text", label: "Logradouro", value: infos["street"], disabled: !editing},
-        {id: "number", type: "text", label: "Numero", value: infos["number"], disabled: !editing},
-        {id: "complement", type: "text", label: "Complemento", value: infos["complement"], disabled: !editing},
-        {id: "neighborhood", type: "text", label: "Bairro", value: infos["neighborhood"], disabled: !editing},
-        {id: "city", type: "text", label: "Municipio", value: infos["city"], disabled: !editing},
-        {id: "state", type: "text", label: "Estado", value: infos["state"], disabled: !editing},
-        {id: "phone", type: "text", label: "Telefone", value: infos["phone"], disabled: !editing},
-        {id: "whatsapp", type: "text", label: "Whatsapp", value: infos["whatsapp"], disabled: !editing},
-        {id: "email", type: "text", label: "Email", value: infos["email"], disabled: !editing},
-        {id: "site", type: "text", label: "Site", value: infos["site"], disabled: !editing},
-        {id: "instagram", type: "text", label: "Instagram", value: infos["instagram"], disabled: !editing},
-        {id: "youtube", type: "text", label: "Youtube", value: infos["youtube"], disabled: !editing},
-        {id: "facebook", type: "text", label: "Facebook", value: infos["facebook"], disabled: !editing},
-        {id: "linkedin", type: "text", label: "Linkedin", value: infos["linkedin"], disabled: !editing},
-        {id: "twitter", type: "text", label: "Twitter", value: infos["twitter"], disabled: !editing},
-        {id: "tiktok", type: "text", label: "Tiktok", value: infos["tiktok"], disabled: !editing},
+        {id: "name", type: "text", label: "Nome do Cursinho", value: geo.name, disabled: !editing},
+        {id: "category", type: "text", label: "Tipo de Cursinho:", value: geo.category, disabled: !editing},
+        {id: "cep", type: "text", label: "Cep:", value: geo.cep, disabled: !editing},
+        {id: "street", type: "text", label: "Logradouro", value: geo.street, disabled: !editing},
+        {id: "number", type: "text", label: "Numero", value: geo.number, disabled: !editing},
+        {id: "complement", type: "text", label: "Complemento", value: geo.complement, disabled: !editing},
+        {id: "neighborhood", type: "text", label: "Bairro", value: geo.neighborhood, disabled: !editing},
+        {id: "city", type: "text", label: "Municipio", value: geo.city, disabled: !editing},
+        {id: "state", type: "option", label: "Estado",  options: stateOptions,  value: geo.state, disabled: !editing},
+        {id: "phone", type: "text", label: "Telefone", value: geo.phone, disabled: !editing},
+        {id: "whatsapp", type: "text", label: "Whatsapp", value: geo.whatsapp, disabled: !editing},
+        {id: "email", type: "text", label: "Email", value: geo.email, disabled: !editing},
+        {id: "site", type: "text", label: "Site", value: geo.site, disabled: !editing},
+        {id: "instagram", type: "text", label: "Instagram", value: geo.instagram, disabled: !editing},
+        {id: "youtube", type: "text", label: "Youtube", value: geo.youtube, disabled: !editing},
+        {id: "facebook", type: "text", label: "Facebook", value: geo.facebook, disabled: !editing},
+        {id: "linkedin", type: "text", label: "Linkedin", value: geo.linkedin, disabled: !editing},
+        {id: "twitter", type: "text", label: "Twitter", value: geo.twitter, disabled: !editing},
+        {id: "tiktok", type: "text", label: "Tiktok", value: geo.tiktok, disabled: !editing},
     ]
 
     const FormFieldRegister : FormFieldInput[] = [
@@ -107,12 +106,12 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
     ]
 
     const btns: BtnProps[] = [
-        { children: "Aceitar", onClick: () => { update(StatusEnum.Approved); }, status: StatusEnum.Approved, className: 'bg-green2', editing: false},
-        { children: "Rejeitar", onClick: () => { setRefuse(true); }, status: StatusEnum.Rejected, className: 'bg-red', editing: false},
-        { children: "Editar", onClick: () => { setEditing(true)}, editing: false},
-        { children: "Fechar", onClick: handleClose, editing: false},
-        { children: "Salvar", onClick: () => { UpdateGeo(infos); }, editing: true},
-        { children: "Voltar", onClick: () => {setEditing(false)}, editing: true},
+        { children: "Aceitar", type: 'button', onClick: () => { update(StatusEnum.Approved); }, status: StatusEnum.Approved, className: 'bg-green2', editing: false},
+        { children: "Rejeitar", type: 'button', onClick: () => { setRefuse(true); }, status: StatusEnum.Rejected, className: 'bg-red', editing: false},
+        { children: "Editar", type: 'button', onClick: () => { setEditing(true)}, editing: false},
+        { children: "Fechar", type: 'button', onClick: handleClose, editing: false},
+        { children: "Salvar", type:'submit', editing: true},
+        { children: "Voltar", type: 'button', onClick: () => {setEditing(false)}, editing: true},
     ]
 
     const MapEvents = () => {
@@ -150,37 +149,37 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
 
     return (
         <ModalTemplate >
-            <div className="absolute bg-white w-full md:w-fit max-h-[90vh] gap-4 p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 overflow-y-auto scrollbar-hide">
-                <div className="col-span-2 sm:col-span-2 flex flex-col">
-                    <Text className="flex w-full justify-center gap-4 items-center" size="secondary">Informação do Cursinho {getStatusIcon(geo.status)}</Text>
-                    <Form className="grid md:grid-cols-2 gap-4" formFields={formFieldInfos} handleOnChange={handleInputChange} />
-                </div>
-                <div className="col-span-2 sm:col-span-1">
-                    <div className="flex flex-col">
-                        <Text size="secondary" className="md:text-xl">Cadastrado Por</Text>
-                        <Form className="flex flex-col gap-4" formFields={FormFieldRegister} handleOnChange={handleInputChange} />
+                <form className="absolute bg-white w-full md:w-fit max-h-[90vh] gap-4 p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 overflow-y-auto scrollbar-hide" onSubmit={handleSubmit(UpdateGeo)}>
+                    <div className="col-span-2 sm:col-span-2 flex flex-col">
+                        <Text className="flex w-full justify-center gap-4 items-center" size="secondary">Informação do Cursinho {getStatusIcon(geo.status)}</Text>
+                        <Form className="grid md:grid-cols-2 gap-4" formFields={formFieldInfos} register={register} />
                     </div>
-                    <div>
-                        <Text size="secondary" className="md:text-xl">Última Edição Por</Text>
-                        <Form className="flex flex-col gap-4" formFields={FormFieldUpdated} handleOnChange={handleInputChange} />
+                    <div className="col-span-2 sm:col-span-1">
+                        <div className="flex flex-col">
+                            <Text size="secondary" className="md:text-xl">Cadastrado Por</Text>
+                            <Form className="flex flex-col gap-4" formFields={FormFieldRegister} register={register} />
+                        </div>
+                        <div>
+                            <Text size="secondary" className="md:text-xl">Última Edição Por</Text>
+                            <Form className="flex flex-col gap-4" formFields={FormFieldUpdated} register={register} />
+                        </div>
                     </div>
-                </div>
-                <div className="col-span-2 sm:col-span-3 md:col-span-2 px-4">
-                    <Text size="secondary">Endereço do Cursinho</Text>
-                    <MapBox mapEvent={Event} className="h-80 border border-gray-300 z-0" zoom={11} markers={[{id: geo.id, lat: geo.latitude, lon: geo.longitude}]} />
-                    <div className="flex flex-col gap-2 my-4">
-                        {btns.map((btn, index) => {
-                            if(editing === btn.editing){
-                                return <Button 
-                                    disabled={geo.status === btn.status ?? false} 
-                                    key={index} 
-                                    className={`${btn.className} w-full border-none`} 
-                                    onClick={btn.onClick}>{btn.children}</Button>
-                            }
-                        })}
+                    <div className="col-span-2 sm:col-span-3 md:col-span-2 px-4">
+                        <Text size="secondary">Endereço do Cursinho</Text>
+                        <MapBox mapEvent={Event} className="h-80 border border-gray-300 z-0" zoom={11} markers={[{id: geo.id, lat: geo.latitude, lon: geo.longitude}]} />
+                        <div className="flex flex-col gap-2 my-4">
+                            {btns.map((btn, index) => {
+                                if(editing === btn.editing){
+                                    return <Button 
+                                        disabled={geo.status === btn.status ?? false} 
+                                        key={index} 
+                                        className={`${btn.className} w-full border-none`} 
+                                        onClick={btn.onClick} type={btn.type}>{btn.children}</Button>
+                                }
+                            })}
+                        </div>
                     </div>
-                </div>
-            </div>
+                </form>
             <ModalRefused />
         </ModalTemplate>
     )

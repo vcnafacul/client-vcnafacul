@@ -39,7 +39,6 @@ function FormField({id, label, type = "text", visibility = false, value, disable
     const commonProps = {
         name: id,
         disabled: disabled ?? false,
-        value:value,
         type: visible ? "text" : type,
         options: options,
         defaultValue: value

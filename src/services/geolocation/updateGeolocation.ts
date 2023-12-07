@@ -11,6 +11,7 @@ interface UpdateGeolocationProps {
 }
 
 export async function UpdateGeolocation({ body, token}: UpdateGeolocationProps){
+    console.log(body)
     try {
         const response = await fetchWrapper(geolocations, {
             method: "PUT",
@@ -40,7 +41,8 @@ export async function UpdateGeolocationStatus({ body, token}: UpdateGeolocationP
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify(body),
         });
-        return await response.json()
+        const res = await response.json()
+        return res
     } catch (error: any) {
         throw new Error(`Erro Interno - Informar a Administracão - ${error.message}`)
     }
