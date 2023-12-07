@@ -7,7 +7,7 @@ export interface ItemCard {
     id: number;
     title: string;
     subtitle?: string;
-    image: React.FC<React.SVGProps<SVGSVGElement>> | string;
+    image: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | string;
 }
 
 interface CardItem {
@@ -31,13 +31,15 @@ function ActionAreas({title, subtitle, tabItems, cardItems} : ActionAreasProps) 
     }
 
     const CardTopics = (cardTopics: CardItem) => cardTopics.items.map((cardItem) => {
+        const Icon = cardItem.image;
         return (
             <div className="">
                 <div key={cardItem.id} className="my-0 mx-auto overflow-hidden w-[230px] h-[230px]
                 text-grey border border-grey cursor-pointer">
                     <div className="w-full flex justify-center">
-                        <img className="mt-9 mb-4 max-w-[74px] h-[74px]"
-                            alt="languages" src={cardItem.image as string} />
+                        <Icon className="mt-9 mb-4 max-w-[74px] h-[74px] fill-pink" />
+                        {/* <img className="mt-9 mb-4 max-w-[74px] h-[74px]"
+                            alt="languages" src={cardItem.image as string} /> */}
                     </div>
                     <h3 className="text-2xl text-marine text-center z-10 py-0 px-4" >{cardItem.title}</h3>
                 </div>

@@ -10,7 +10,7 @@ export interface FooterProps {
     socialLinks: SocialLink
 }
 
-function Footer({sitemapLinks, pageLinks, slogan, email, socialLinks} : FooterProps) {
+function Footer({sitemapLinks, pageLinks, socialLinks} : FooterProps) {
     return (
         <section className="bg-marine py-12 px-0 text-center text-base md:text-left md:pt-14 md:pb-9">
         <div className="container mx-auto flex flex-col md:grid md:grid-cols-4 md:gap-4">
