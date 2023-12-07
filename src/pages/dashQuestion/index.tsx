@@ -112,8 +112,8 @@ function DashQuestion() {
                 setQuestions(res)
                 dataRef.current = res
             })
-            .catch(erro => {
-                console.error(erro)
+            .catch((erro: Error) => {
+                toast.error(erro.message)
             })
     }, [token])
 
@@ -123,8 +123,8 @@ function DashQuestion() {
             .then((infos: any) => {
                 setInfosQuestion(infos)
             })
-            .catch((erro) => {
-                console.error(erro)
+            .catch((erro: Error) => {
+                toast.error(erro.message)
             })
     }, [])
 

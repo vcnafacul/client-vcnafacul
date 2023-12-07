@@ -12,9 +12,8 @@ export async function registerUser(data : UserRegister) {
     });
 
     const res = await response.json();
-    console.log(res)
     if(response.status === 201){
         return decoderUser(res.access_token)
     }
-    throw new Error(`Ops, ocorreu um problema na requisição. Tente novamente!. Message ${res.body}`);
+    throw new Error(`Ops, ocorreu um problema na requisição. Tente novamente!. Message ${res}`);
 }

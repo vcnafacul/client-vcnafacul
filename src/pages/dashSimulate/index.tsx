@@ -143,8 +143,8 @@ function DashSimulate() {
                     {type: SimuladoDefaultEnum.Enem2, id: res.Enem2},
                 ])
             })
-            .catch(erro => {
-                console.error(erro)
+            .catch((erro: Error) => {
+                toast.error(erro.message)
             }) 
     }, [])
 

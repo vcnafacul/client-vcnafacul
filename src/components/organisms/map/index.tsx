@@ -3,6 +3,7 @@ import { Geolocation } from "../../../types/geolocation/geolocation";
 import { useEffect, useRef, useState } from "react";
 import getGeolocation from "../../../services/geolocation/getGeolocation";
 import MapBoxInfo from "../mapBoxInfo";
+import { toast } from "react-toastify";
 
 
 function Map() {
@@ -28,7 +29,10 @@ function Map() {
                     })
                 )
             })
-        .catch(() => setMarkers([]))
+        .catch((error: Error) => {
+            toast.error(error.message)
+            setMarkers([])
+        })
     }, []);
 
     

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import mammoth from 'mammoth';
 import './content.css';
 import fetchWrapper from '../../../utils/fetchWrapper';
+import { toast } from 'react-toastify';
 
 interface ImageMessage {
   type: "image";
@@ -31,12 +32,7 @@ function Content({ docxFilePath, arrayBuffer, className }: ContentProps) {
   const convertDocxToHtml = async (docxBlob: Blob | undefined, arrayBuffer: ArrayBuffer | undefined) => {
     
     if (arrayBuffer) {
-      try {
-        return await convertBufferToHtml(arrayBuffer);
-      } catch (error) {
-        console.error('Error converting arrayBuffer to HTML:', error);
-        throw error;
-      }
+      return await convertBufferToHtml(arrayBuffer);
     } else if (docxBlob) {
       return new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
@@ -88,7 +84,7 @@ function Content({ docxFilePath, arrayBuffer, className }: ContentProps) {
           setHtmlContent(htmlContent as string);
         }
       } catch (error) {
-        console.error('Error fetchWrappering or converting the .docx file:', error);
+        toast.error(`Error fetchWrappering or converting the .docx file: ${error}`)
       }
     };
 

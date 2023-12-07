@@ -11,7 +11,6 @@ interface UpdateGeolocationProps {
 }
 
 export async function UpdateGeolocation({ body, token}: UpdateGeolocationProps){
-    console.log(body)
     try {
         const response = await fetchWrapper(geolocations, {
             method: "PUT",
@@ -25,7 +24,6 @@ export async function UpdateGeolocation({ body, token}: UpdateGeolocationProps){
         if(response.status === 400) {
             let messageErro = ""
             res.message.map((m: string) => messageErro =  messageErro.concat(m).concat("; "))
-            console.log(messageErro)
             throw new Error(messageErro)
         }
         return res
