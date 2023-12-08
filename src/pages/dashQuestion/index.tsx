@@ -9,7 +9,8 @@ import { getInfosQuestion } from "../../services/question/getInfosQuestion"
 import { InfoQuestion } from "../../types/question/infoQuestion"
 import { CardDashInfo } from "../../components/molecules/cardDash"
 import { formatDate } from "../../utils/date"
-import { Order, dashQuest, filters } from "./data"
+// import { Order, dashQuest, filters } from "./data"
+import { dashQuest } from "./data"
 import Filter from "../../components/atoms/filter"
 import Select from "../../components/atoms/select"
 import ModalTabTemplate from "../../components/templates/modalTabTemplate"
@@ -57,15 +58,15 @@ function DashQuestion() {
         else setQuestions(dataRef.current.filter(q => q._id.includes(filter) || q.textoQuestao.toLowerCase().includes(filter)))
     }
 
-    const handleOrderChange = (opt: Order) => {
-        if(opt === Order.Increasing) {
-            setQuestions(questions.sort((a, b) => 
-                a.textoQuestao.toLocaleLowerCase().localeCompare(b.textoQuestao.toLocaleLowerCase())))
-        }  else {
-            setQuestions(questions.sort((a, b) => 
-                b.textoQuestao.toLocaleLowerCase().localeCompare(a.textoQuestao.toLocaleLowerCase())))
-        }
-    }
+    // const handleOrderChange = (opt: Order) => {
+    //     if(opt === Order.Increasing) {
+    //         setQuestions(questions.sort((a, b) => 
+    //             a.textoQuestao.toLocaleLowerCase().localeCompare(b.textoQuestao.toLocaleLowerCase())))
+    //     }  else {
+    //         setQuestions(questions.sort((a, b) => 
+    //             b.textoQuestao.toLocaleLowerCase().localeCompare(a.textoQuestao.toLocaleLowerCase())))
+    //     }
+    // }
 
     const handleRemoveQuestion = (id: string) => {
         const newQuestions = questions.filter(q => q._id != id)
@@ -163,7 +164,7 @@ function DashQuestion() {
                 filterList={[
                     <Filter placeholder="id | texto" filtrar={handleInputChange}/>,
                     <Select options={dashQuest.options}  defaultValue={status}  setState={setStatus} />,
-                    <Select options={filters} defaultValue={Order.Increasing} setState={handleOrderChange} />
+                    // <Select options={filters} defaultValue={Order.Increasing} setState={handleOrderChange} />
                 ]} />
             <ModalEdit />
         </>
