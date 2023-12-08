@@ -14,8 +14,8 @@ export interface ModalConfirmCancelProps{
 function ModalConfirmCancel({ handleConfirm, handleCancel, confirmDisabled, text, children } : ModalConfirmCancelProps){
     return (
         <ModalTemplate>
-            <div className="bg-lightGray border p-4">
-            <Text size="quaternary" className="font-black">{text}</Text>
+            <div className="bg-lightGray border-2 border-marine p-8 md:max-w-[600px] rounded-2xl">
+            <Text size="tertiary" className="font-black">{text}</Text>
             {children}
             <div className="flex gap-2">
                 <Button disabled={confirmDisabled ?? false} size="small" typeStyle="quaternary" hover onClick={() => { handleConfirm() }}>Confirmar</Button>

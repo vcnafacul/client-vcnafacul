@@ -131,12 +131,13 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
         return null; // Não renderiza nada, apenas anexa eventos
       };
 
-    const Event = () => (
-        <div>
+    const Event = () => {
+        if(!editing) return null
+        return <>
             <MapEvents />
             <Marker position={selectedPosition as LatLngTuple} alt="novo"></Marker>
-        </div>
-    )
+        </>
+    }
 
     const ModalRefused = () => {
         if(!refuse) return null;
