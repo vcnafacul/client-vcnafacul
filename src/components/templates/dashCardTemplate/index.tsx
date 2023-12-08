@@ -18,7 +18,7 @@ function DashCardTemplate({ header, title, filterList, cardlist, className, onCl
             <div className="w-full flex justify-center flex-col py-4">
                 <div className="w-full flex items-center flex-col mt-4">
                     <Text size="secondary">{title}</Text>
-                    <div className="w-full flex flex-wrap justify-center items-center gap-x-4">
+                    <div className="flex flex-wrap justify-center items-center gap-x-4 fixed z-50 bg-gray-200 rounded-2xl bg-opacity-75 top-36 left-20 pr-4">
                         {filterList.map((filter, index) => (
                             <div className="h-full" key={index}>{filter}</div>
                         ))}

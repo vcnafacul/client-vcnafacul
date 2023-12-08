@@ -9,6 +9,7 @@ export async function updateStatus (id: string, status: StatusEnum, token: strin
         headers: { Authorization: `Bearer ${token}` },
     });
     if(res.status !== 200){
+        console.log(message)
         throw new Error('Erro ao editar status da questão!')
     }
     return true
