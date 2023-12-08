@@ -71,6 +71,21 @@ function Content({ docxFilePath, arrayBuffer, className }: ContentProps) {
     return processedHtml;
   }
 
+  function addTargetBlankToLinks(htmlString: string) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, 'text/html');
+    const links = doc.querySelectorAll('a');
+  
+    links.forEach(link => {
+      console.log(link)
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer'); // Boa prática para segurança
+    });
+  
+    return doc.body.innerHTML;
+  }
+  
+
   useEffect(() => {
     const loadDocx = async () => {
       try {
@@ -81,7 +96,8 @@ function Content({ docxFilePath, arrayBuffer, className }: ContentProps) {
           const response = await fetchWrapper(docxFilePath);
           const blob = await response.blob();
           const htmlContent = await convertDocxToHtml(blob, undefined);
-          setHtmlContent(htmlContent as string);
+          const htmlWithBlankTarget = addTargetBlankToLinks(htmlContent as string);
+          setHtmlContent(htmlWithBlankTarget);
         }
       } catch (error) {
         toast.error(`Error fetchWrappering or converting the .docx file: ${error}`)
