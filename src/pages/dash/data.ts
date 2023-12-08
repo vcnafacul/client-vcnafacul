@@ -1,6 +1,6 @@
 import { HeaderProps } from "../../components/organisms/header";
 import {header}  from "../home/data";
-import { DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, DASH_SIMULADO, DASH_ROLES } from "../../routes/path";
+import { DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, DASH_SIMULADO, DASH_ROLES, EM_BREVE } from "../../routes/path";
 import BioExatasImg from "../../assets/images/dashboard/bioexatas.svg";
 import HumanasImg from "../../assets/images/dashboard/humanas.svg";
 import LinguagensImg from "../../assets/images/dashboard/linguagens.svg";
@@ -42,11 +42,11 @@ export const dashCardMenuItems : DashCardMenu[] = [
         image: LinguagensImg,
         alt: "Linguagens",
         subMenuList: [
-            { icon: LPT, alt: "escrevendo", text: "LPT*", link: "#" },
-            { icon: Gramatica, alt: "abc", text: "Gramática", link: "#" },
-            { icon: Literatura, alt: "livro", text: "Literatura", link: "#" },
-            { icon: Ingles, alt: "balão de fala retangular", text: "Inglês", link: "#" },
-            { icon: Espanhol, alt: "balão de fala redondo", text: "Espanhol", link: "#" },
+            { icon: LPT, alt: "escrevendo", text: "LPT*", link: EM_BREVE },
+            { icon: Gramatica, alt: "abc", text: "Gramática", link: EM_BREVE },
+            { icon: Literatura, alt: "livro", text: "Literatura", link: EM_BREVE },
+            { icon: Ingles, alt: "balão de fala retangular", text: "Inglês", link: EM_BREVE },
+            { icon: Espanhol, alt: "balão de fala redondo", text: "Espanhol", link: EM_BREVE },
         ],
     },
     {
@@ -56,10 +56,10 @@ export const dashCardMenuItems : DashCardMenu[] = [
         image: BioExatasImg,
         alt: "BioExatas",
         subMenuList: [
-            { icon: Biologia, alt: "molécula de DNA", text: "Biologia", link: "#" },
-            { icon: Fisica, alt: "risco biológico", text: "Física", link: "#" },
-            { icon: Quimica, alt: "quimica", text: "Quimica", link: "#" },
-            { icon: Matematica, alt: "calculadora", text: "Matemática", link: "#" },
+            { icon: Biologia, alt: "molécula de DNA", text: "Biologia", link: EM_BREVE },
+            { icon: Fisica, alt: "risco biológico", text: "Física", link: EM_BREVE },
+            { icon: Quimica, alt: "quimica", text: "Quimica", link: EM_BREVE },
+            { icon: Matematica, alt: "calculadora", text: "Matemática", link: EM_BREVE },
         ],
     },
     {
@@ -69,10 +69,10 @@ export const dashCardMenuItems : DashCardMenu[] = [
         image: HumanasImg,
         alt: "Humanas",
         subMenuList: [
-            { icon: Historia, alt: "relógio", text: "história", link: "#" },
-            { icon: Geografia, alt: "mapa", text: "geografia", link: "#" },
-            { icon: Filosofia, alt: "pessoas", text: "filosofia", link: "#" },
-            { icon: Sociologia, alt: "pessoas", text: "sociologia", link: "#" },
+            { icon: Historia, alt: "relógio", text: "história", link: EM_BREVE },
+            { icon: Geografia, alt: "mapa", text: "geografia", link: EM_BREVE },
+            { icon: Filosofia, alt: "pessoas", text: "filosofia", link: EM_BREVE },
+            { icon: Sociologia, alt: "pessoas", text: "sociologia", link: EM_BREVE },
         ],
     },
     {

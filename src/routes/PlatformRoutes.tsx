@@ -2,7 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 import Home from "../pages/home";
 import Login from "../pages/login";
-import { DASH, DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, SIMULADO } from "./path";
+import { DASH, DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, EM_BREVE, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, SIMULADO } from "./path";
 import Dash from "../pages/dash";
 import DashGeo from "../pages/dashGeo";
 import Register from "../pages/register";
@@ -16,6 +16,7 @@ import { useAuthStore } from "../store/auth";
 import ProtectedRoute from "./protectedRoute";
 import { Roles } from "../enums/roles/roles";
 import DashRoles from "../pages/dashRoles";
+import EmBreve from "../pages/emBreve";
 
 
 export function PlatformRoutes() {
@@ -33,6 +34,7 @@ export function PlatformRoutes() {
             <Route path={DASH_SIMULADO} element={<DashSimulate />} />
             <Route path={SIMULADO} element={<Simulate />} />
             <Route path={NEWS} element={ <NewsPage />} />
+            <Route path={EM_BREVE} element={ <EmBreve />} />
 
 
             <Route path={DASH_GEOLOCATION} element={
