@@ -40,7 +40,6 @@ function DashRoles(){
 
     const updateUserRole = (userRole: UserRole) => {
         setOpenModal(false)
-        console.log(userRole)
         updateRole(userRole.userId, userRole.roleId, token)
             .then(_ => {
                 setUsersRole(usersRole.map(user => {

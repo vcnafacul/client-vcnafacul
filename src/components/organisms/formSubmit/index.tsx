@@ -16,8 +16,8 @@ function FormSubmit({ formFields, labelSubmit, styleButton = "primary", sizeButt
     const { register, handleSubmit } = useForm();
     return (
     <form onSubmit={handleSubmit(onSubmit)} className={`${className} `} {...props}>
-        {formFields.map((f, i) => 
-            <FormField register={register} id={f.id} key={i} label={f.label} type={f.type} visibility={f.visibility} />)}
+        {formFields.map((f) => 
+            <FormField register={register} id={f.id} key={f.id} label={f.label} type={f.type} visibility={f.visibility} />)}
         <Button className="w-full" typeStyle={styleButton} size={sizeButton} type="submit" >{labelSubmit}</Button>
     </form>
    )

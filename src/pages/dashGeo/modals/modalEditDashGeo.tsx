@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Text from "../../../components/atoms/text";
 import ModalTemplate, { ModalProps } from "../../../components/templates/modalTemplate"
 import { Geolocation } from "../../../types/geolocation/geolocation"
@@ -21,6 +21,7 @@ import { BtnProps } from "../../../types/generic/btnProps";
 import { toast } from "react-toastify";
 import { stateOptions } from "../../register/data";
 import { useForm } from 'react-hook-form';
+import ModalConfirmCancelMessage from "../../../components/organisms/modalConfirmCancelMessage";
 
 interface ModalEditDashGeoProps extends ModalProps {
     geo: Geolocation;
@@ -29,14 +30,19 @@ interface ModalEditDashGeoProps extends ModalProps {
 }
 
 function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalEditDashGeoProps) {
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit, watch, reset } = useForm();
     const [infos] = useState<Geolocation>(geo)
     const [editing, setEditing] = useState<boolean>(false);
     const [selectedPosition, setSelectedPosition] = useState<number[]>([0, 0]);
     const [refuse, setRefuse] = useState<boolean>(false);
-    const [messageRefused, setMessageRefused] = useState<string>("");
+    const [modified, setModified] = useState<boolean>(false);
+    const [comeBack, setComeback]= useState<boolean>(false);
 
     const { data: { token } } = useAuthStore()
+
+    const resetAsyncForm = useCallback(async () => {
+        reset(geo); // asynchronously reset your form values
+      }, [reset]);
 
     const UpdateGeo = async (body: any) => {
         body['id'] = geo.id
@@ -60,7 +66,7 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
             .catch((error: Error) =>  { toast.error(error.message) } )
     };
 
-    const update = async (status: StatusEnum) => {
+    const update = async (status: StatusEnum, messageRefused?: string) => {
         const body = {
             geoId: geo.id,
             status: status,
@@ -111,7 +117,7 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
         { children: "Editar", type: 'button', onClick: () => { setEditing(true)}, editing: false},
         { children: "Fechar", type: 'button', onClick: handleClose, editing: false},
         { children: "Salvar", type:'submit', editing: true},
-        { children: "Voltar", type: 'button', onClick: () => {setEditing(false)}, editing: true},
+        { children: "Voltar", type: 'button', onClick: () => { modified ? setComeback(true) : setEditing(false) }, editing: true},
     ]
 
     const MapEvents = () => {
@@ -132,20 +138,30 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
         </div>
     )
 
-    const handleCloseModalRefused = () => { setRefuse(false) }
-
     const ModalRefused = () => {
         if(!refuse) return null;
-        return <ModalConfirmCancel 
-            message="Descreva o motivo da rejeição:"
-            handleCancel={handleCloseModalRefused}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            handleMessagerefused={(event: any) => { setMessageRefused(event.target.value); }}
-            handleConfirm={() => {
-                handleCloseModalRefused()
-                update(StatusEnum.Rejected)
+        return <ModalConfirmCancelMessage 
+            text="Descreva o motivo da rejeição:"
+            handleCancel={() => { setRefuse(false) }}
+            handleConfirm={(message?: string) => {
+                setRefuse(false)
+                update(StatusEnum.Rejected, message!)
             }} />
     }
+
+    const ModalComeBack = () => {
+        if(comeBack && modified) return <ModalConfirmCancel
+                text="Suas alterações ainda não foram salvas. Se você sair agora, perderá todas as alterações. Deseja continuar?"
+                handleCancel={() => { setComeback(false) }}
+                handleConfirm={() => { setComeback(false); resetAsyncForm(); setModified(false); setEditing(false) }}
+            />
+        return null;
+    }
+
+    useEffect(() => {
+        const subscription = watch(() => { setModified(true) });
+        return () => subscription.unsubscribe();
+      }, [watch]);
 
     return (
         <ModalTemplate >
@@ -181,6 +197,7 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
                     </div>
                 </form>
             <ModalRefused />
+            <ModalComeBack />
         </ModalTemplate>
     )
 }

@@ -81,7 +81,7 @@ function MapBoxInfo({ boxRef, geo, ctaLink } : MapBoxInfoProps){
                 )}
             </div>
             <Text size="tertiary" className="m-0 mt-5">Conhece um cursinho popular?</Text>
-            <BLink className="w-80" to={ctaLink}>Cadastrar um Cursinho</BLink>
+            <BLink className="" to={ctaLink}>Cadastrar um Cursinho</BLink>
         </div>
     )
 }

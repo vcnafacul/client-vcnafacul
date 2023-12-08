@@ -32,8 +32,8 @@ function ModalRole({userRole, handleClose, roles, updateUserRole} : ModalRolePro
 
     const ShowRoleInfo = () => {
         if(!roleInfo) return null
-        return roleInfo.permissoes.map(r => (
-            <div className="flex gap-4 items-center justify-end">
+        return roleInfo.permissoes.map((r) => (
+            <div key={r.name} className="flex gap-4 items-center justify-end">
                 <span className="m-2 text-base text-marine font-normal">{r.name}</span>
                 {r.liberado ? <StatusApproved /> : <StatusRejected />}
             </div>

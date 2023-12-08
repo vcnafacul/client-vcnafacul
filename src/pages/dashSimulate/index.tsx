@@ -37,7 +37,7 @@ function DashSimulate() {
 
     const cardsBook = simulateData.simulateCardsBook.map(card => {
             return (
-                <CardSimulate onClick={() => {openModalNew(card.tipo)}} title={card.title} icon={card.icon} className={card.className} color={card.color}>
+                <CardSimulate key={card.id} onClick={() => {openModalNew(card.tipo)}} title={card.title} icon={card.icon} className={card.className} color={card.color}>
                     {card.subTitle}
                 </CardSimulate>
             )})

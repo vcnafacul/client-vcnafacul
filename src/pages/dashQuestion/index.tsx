@@ -18,6 +18,7 @@ import { updateQuestion } from "../../services/question/updateQuestion"
 import { UpdateQuestion } from "../../dtos/question/updateQuestion"
 import { toast } from "react-toastify"
 import { updateStatus } from "../../services/question/updateStatus"
+import { mergeObjects } from "../../utils/mergeObjects"
 
 function DashQuestion() {
     const [questions, setQuestions] = useState<Question[]>([])
@@ -75,13 +76,13 @@ function DashQuestion() {
         updateQuestion(questionUpdate, token)
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             .then(_ => {
-                // const newQuestions = questions.map((question) => {
-                //     if(question._id == questionUpdate._id){
-                //         return questionUpdate
-                //     }
-                //     return question
-                // });
-                // setQuestions(newQuestions as Question[])
+                const newQuestions = questions.map((question) => {
+                    if(question._id == questionUpdate._id){
+                        return mergeObjects(questionUpdate, question)
+                    }
+                    return question
+                });
+                setQuestions(newQuestions as Question[])
                 toast.success(`Questao ${questionUpdate._id} atualizada com sucesso`)
             })
             .catch((error: Error) => {
@@ -89,8 +90,8 @@ function DashQuestion() {
             });
     }
 
-    const handleUpdateQuestionStatus = (status: StatusEnum) => {
-        updateStatus(questionSelect!._id, status, token)
+    const handleUpdateQuestionStatus = (status: StatusEnum, message?: string) => {
+        updateStatus(questionSelect!._id, status, token, message)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .then(_ => {
             handleRemoveQuestion(questionSelect!._id)

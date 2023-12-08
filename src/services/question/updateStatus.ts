@@ -3,7 +3,7 @@ import { StatusEnum } from "../../types/generic/statusEnum";
 import fetchWrapper from "../../utils/fetchWrapper";
 import { questoes } from "../urls";
 
-export async function updateStatus (id: string, status: StatusEnum, token: string): Promise<boolean> {
+export async function updateStatus (id: string, status: StatusEnum, token: string, message?: string,): Promise<boolean> {
     const res = await fetchWrapper(`${questoes}/${id}/${status}`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },

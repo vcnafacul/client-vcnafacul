@@ -8,7 +8,6 @@ export async function updateRole(userId: number, roleId: number, token: string) 
         body: JSON.stringify({userId, roleId}),
     });
 
-    console.log(response)
     if(response.status === 304 || response.status === 200) {
         return true
     }

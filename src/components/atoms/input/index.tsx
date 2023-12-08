@@ -43,7 +43,7 @@ function Input({ erro, size, className, type, options, defaultValue, register, .
         )
     }
     else if(type === 'textarea') {
-        return <textarea {...register(props.name!)} className={`${input({ erro, size, className })} min-h-[250px] overflow-y-auto scrollbar-hide`} defaultValue={defaultValue} />
+        return <textarea {...register(props.name!)} className={`${input({ erro, size, className })} min-h-[250px] overflow-y-auto scrollbar-hide`} defaultValue={defaultValue} disabled={props.disabled} />
     } 
     return <input {...register(props.name!)} defaultValue={defaultValue} autoComplete="on" className={input({ erro, size, className })} type={type} {...props} />
 }

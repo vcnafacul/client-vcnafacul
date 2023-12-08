@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Text from "../../../components/atoms/text";
 import Button from "../../../components/molecules/button"
 import { FormFieldInput, FormFieldOption } from "../../../components/molecules/formField";
@@ -14,20 +14,27 @@ import { BtnProps } from "../../../types/generic/btnProps";
 import { StatusEnum } from "../../../types/generic/statusEnum";
 import { UpdateQuestion } from "../../../dtos/question/updateQuestion";
 import { useForm } from 'react-hook-form';
+import ModalConfirmCancelMessage from "../../../components/organisms/modalConfirmCancelMessage";
+import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
 
 interface ModalDetalhesProps extends ModalProps {
     question: Question
     infos: InfoQuestion;
-    handleUpdateQuestionStatus: (status: StatusEnum) => void;
+    handleUpdateQuestionStatus: (status: StatusEnum, message?: string) => void;
     handleUpdateQuestion: (questionUpdate: UpdateQuestion) => void;
 }
 
 function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatus, handleUpdateQuestion } : ModalDetalhesProps) {
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit, watch, reset } = useForm();
     const [ isEditing, setIsEditing ] = useState<boolean>(false);
     const [photoOpen, setPhotoOpen] = useState<boolean>(false);
+    const [refuse, setRefuse] = useState<boolean>(false);
+    const [modified, setModified] = useState<boolean>(false);
+    const [comeBack, setComeback]= useState<boolean>(false);
 
-
+    const resetAsyncForm = useCallback(async () => {
+        reset(question); // asynchronously reset your form values
+      }, [reset]);
 
     const exames : FormFieldOption[] = infos.exames.map(e => ({ label: e.nome, value: e._id }))
     exames.push({ label: '', value: ''})
@@ -76,12 +83,37 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
 
     const btns: BtnProps[] = [
         { children: "Aceitar", type: 'button', onClick: () => { handleUpdateQuestionStatus(StatusEnum.Approved) }, status: StatusEnum.Approved, className: 'bg-green2 col-span-1', editing: false},
-        { children: "Rejeitar", type: 'button', onClick: () => { handleUpdateQuestionStatus(StatusEnum.Rejected) }, status: StatusEnum.Rejected, className: 'bg-red col-span-1', editing: false},
+        { children: "Rejeitar", type: 'button', onClick: () => { setRefuse(true) }, status: StatusEnum.Rejected, className: 'bg-red col-span-1', editing: false},
         { children: "Editar", type: 'button', onClick: () => { setIsEditing(true) }, editing: false, className: 'col-span-2'},
         { children: "Fechar", type: 'button', onClick: handleClose, editing: false, className: 'col-span-2'},
         { children: "Salvar", type: 'submit', editing: true, className: 'col-span-2'},
-        { children: "Voltar", type: 'button', onClick: () => { setIsEditing(false)  }, editing: true, className: 'col-span-2'},
+        { children: "Voltar", type: 'button', onClick: () => { modified ? setComeback(true) : setIsEditing(false) }, editing: true, className: 'col-span-2'},
     ]
+
+    const ModalRefused = () => {
+        if(!refuse) return null;
+        return <ModalConfirmCancelMessage 
+            text="Descreva o motivo da rejeição:"
+            handleCancel={() => { setRefuse(false) }}
+            handleConfirm={(message?: string) => {
+                setRefuse(false)
+                handleUpdateQuestionStatus(StatusEnum.Rejected, message)
+            }} />
+    }
+
+    const ModalComeBack = () => {
+        if(comeBack && modified) return <ModalConfirmCancel
+        text="Suas alterações ainda não foram salvas. Se você sair agora, perderá todas as alterações. Deseja continuar?"
+        handleCancel={() => { setComeback(false) }}
+        handleConfirm={() => { setComeback(false); resetAsyncForm(); setModified(false); setIsEditing(false) }}
+    />
+        return null;
+    }
+
+    useEffect(() => {
+        const subscription = watch(() => { setModified(true) });
+        return () => subscription.unsubscribe();
+      }, [watch]);
 
     return (
         <>
@@ -102,7 +134,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                             if(isEditing === btn.editing){
                                 return (
                                     <div className={`${btn.className} rounded`}>
-                                        <Button onClick={btn.onClick} hover className={`${btn.className} w-full border-none`}>{btn.children}</Button>
+                                        <Button type={btn.type} onClick={btn.onClick} hover className={`${btn.className} w-full border-none`}>{btn.children}</Button>
                                     </div>
                                 )
                             }
@@ -111,6 +143,8 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                 </div>
             </form>
             <QuestionImageModal />
+            <ModalRefused />
+            <ModalComeBack />
         </>
     )
 }
