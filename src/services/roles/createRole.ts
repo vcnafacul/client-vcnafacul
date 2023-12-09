@@ -9,8 +9,7 @@ export async function createRole(newRole: CreateRoleDto, token: string) : Promis
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(newRole),
     });
-
-    if (response.status !== 200) {
+    if (response.status !== 201) {
         throw new Error("Erro ao buscar usuários");
     } else {
         return await response.json() as UserRole[]

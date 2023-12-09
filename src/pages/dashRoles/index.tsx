@@ -108,7 +108,7 @@ function DashRoles(){
                 filterList={[
                     <Filter placeholder="session | titulo" filtrar={handleInputChange}/>,
                     <Button onClick={() => { setUserRoleSelect(null); setnewRole(true)}} typeStyle="secondary" 
-                    className="text-7xl md:text-xl font-light rounded-full h-8 "><span className="text-4xl">+</span> Nova Permissão</Button>
+                    className="text-xl font-light rounded-full h-8 "><span className="text-4xl">+</span> Nova Permissão</Button>
                 ]}
             />
             <ShowUserRole />

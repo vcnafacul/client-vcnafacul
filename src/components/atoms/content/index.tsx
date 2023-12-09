@@ -77,7 +77,6 @@ function Content({ docxFilePath, arrayBuffer, className }: ContentProps) {
     const links = doc.querySelectorAll('a');
   
     links.forEach(link => {
-      console.log(link)
       link.setAttribute('target', '_blank');
       link.setAttribute('rel', 'noopener noreferrer'); // Boa prática para segurança
     });
