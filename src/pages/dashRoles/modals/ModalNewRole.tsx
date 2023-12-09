@@ -11,7 +11,6 @@ import Button from "../../../components/molecules/button";
 import { createRole } from "../../../services/roles/createRole";
 import { useAuthStore } from "../../../store/auth";
 import { toast } from "react-toastify";
-import { cnBase } from "tailwind-variants";
 
 interface ModalNewRoleProps {
     handleClose: () => void;

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import fetchWrapper from "../../utils/fetchWrapper";
 import { role } from "../urls";
 
 export interface Role {
@@ -16,7 +17,7 @@ export interface RolesResponse {
 
 export async function getRole(roleId: number, token: string) : Promise<RolesResponse>{
 
-    const response = await fetch(`${role}?id=${roleId}`, {
+    const response = await fetchWrapper(`${role}?id=${roleId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     });
