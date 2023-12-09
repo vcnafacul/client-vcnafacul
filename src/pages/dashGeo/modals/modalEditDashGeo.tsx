@@ -31,7 +31,6 @@ interface ModalEditDashGeoProps extends ModalProps {
 
 function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalEditDashGeoProps) {
     const { register, handleSubmit, watch, reset } = useForm();
-    const [infos] = useState<Geolocation>(geo)
     const [editing, setEditing] = useState<boolean>(false);
     const [selectedPosition, setSelectedPosition] = useState<number[]>([0, 0]);
     const [refuse, setRefuse] = useState<boolean>(false);
@@ -46,11 +45,15 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
 
     const UpdateGeo = async (body: any) => {
         body['id'] = geo.id
+        if(selectedPosition[0] !== 0){
+            body['latitude'] = selectedPosition[0]
+            body['longitude'] = selectedPosition[1]
+        }
         handleClose()
         UpdateGeolocation({ body, token })
             .then(_ => { 
-                updateGeo(infos)
-                toast.success(`Cursinho ${infos.name} atualizado com sucesso`) 
+                updateGeo(body)
+                toast.success(`Cursinho ${geo.name} atualizado com sucesso`) 
             })
             .catch((error: Error) => { toast.error(error.message) })
     };
@@ -60,8 +63,8 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
         UpdateGeolocationStatus({ body, token })
             .then(_ => {
                 updateStatus(geo.id)
-                if(body.status === 1) toast.success(`Cursinho ${infos.name} atualizado com sucesso: Status - Aprovado`)
-                else toast.success(`Cursinho ${infos.name} atualizado com sucesso: Status - Reprovado`, { theme: `dark`}) 
+                if(body.status === 1) toast.success(`Cursinho ${geo.name} atualizado com sucesso: Status - Aprovado`)
+                else toast.success(`Cursinho ${geo.name} atualizado com sucesso: Status - Reprovado`, { theme: `dark`}) 
             })
             .catch((error: Error) =>  { toast.error(error.message) } )
     };
@@ -98,17 +101,17 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo } : ModalE
     ]
 
     const FormFieldRegister : FormFieldInput[] = [
-        {id: "userFullname", type: "text", label: "Nome Completo", disabled: true, value: infos["userEmail"]},
-        {id: "userEmail", type: "text", label: "Email", disabled: true, value: infos["userEmail"]},
-        {id: "userPhone", type: "text", label: "Celular/Whatsapp", disabled: true, value: infos["userPhone"]},
-        {id: "userConnection", type: "text", label: "Relação com o Cursinho", disabled: true, value: infos["userConnection"]},
-        {id: "createdAt", type: "text", label: "Cadastrado em", disabled: true, value: infos["tiktok"]},
+        {id: "userFullname", type: "text", label: "Nome Completo", disabled: true, value: geo["userEmail"]},
+        {id: "userEmail", type: "text", label: "Email", disabled: true, value: geo["userEmail"]},
+        {id: "userPhone", type: "text", label: "Celular/Whatsapp", disabled: true, value: geo["userPhone"]},
+        {id: "userConnection", type: "text", label: "Relação com o Cursinho", disabled: true, value: geo["userConnection"]},
+        {id: "createdAt", type: "text", label: "Cadastrado em", disabled: true, value: geo["tiktok"]},
     ]
 
     const FormFieldUpdated : FormFieldInput[] = [
-        {id: "userFullname", type: "text", label: "Nome Completo", disabled: true, value: infos["userEmail"]},
-        {id: "userEmail", type: "text", label: "Email", disabled: true, value: infos["userEmail"]},
-        {id: "userPhone", type: "text", label: "Editado em", disabled: true, value: infos["userPhone"]},
+        {id: "userFullname", type: "text", label: "Nome Completo", disabled: true, value: geo["userEmail"]},
+        {id: "userEmail", type: "text", label: "Email", disabled: true, value: geo["userEmail"]},
+        {id: "userPhone", type: "text", label: "Editado em", disabled: true, value: geo["userPhone"]},
     ]
 
     const btns: BtnProps[] = [

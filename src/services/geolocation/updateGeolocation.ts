@@ -20,13 +20,12 @@ export async function UpdateGeolocation({ body, token}: UpdateGeolocationProps){
         if(response.status === 304){
             throw new Error("Cursinho não atualizado, não havia nenhuma modificacao realizada")
         }
-        const res = await response.json()
         if(response.status === 400) {
+            const res = await response.json()
             let messageErro = ""
             res.message.map((m: string) => messageErro =  messageErro.concat(m).concat("; "))
             throw new Error(messageErro)
         }
-        return res
     } catch (error: any) {
         throw new Error(`Error - ${error.message}`)
     }
@@ -58,5 +57,6 @@ const converteGeolocationUpdateDto = (geo: Geolocation): GeolocationUpdateDto =>
         }
     });
     
+    console.log(result)
     return result as GeolocationUpdateDto;
 }

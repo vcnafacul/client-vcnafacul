@@ -11,6 +11,7 @@ import { CardDashInfo } from "../../components/molecules/cardDash";
 import { getAllGeolocation } from "../../services/geolocation/getAllGeolocation";
 import { formatDate } from "../../utils/date";
 import ModalEditDashGeo from "./modals/modalEditDashGeo";
+import { mergeObjects } from "../../utils/mergeObjects";
 
 function DashGeo(){
     const [status, setStatus] = useState<StatusEnum>(StatusEnum.Pending);
@@ -57,7 +58,7 @@ function DashGeo(){
 
     const updateGeolocation = (geolocation: Geolocation) => {
         setGeolocations(geolocations.map(geo => {
-            if(geo.id === geolocation.id) return geolocation
+            if(geo.id === geolocation.id) return mergeObjects(geolocation, geo)
             return geo
         }))
     }
