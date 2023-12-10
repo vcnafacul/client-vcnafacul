@@ -38,7 +38,7 @@ function DashQuestion() {
     const { data: { token }} = useAuthStore()
 
     const cardQuestion : CardDashInfo[] = questions.map(question => (
-        {cardId: question._id, title: question._id, status: question.status, infos: 
+        {cardId: question._id, title: question.title, status: question.status, infos: 
             [
                 { field:"Id", value: question._id },
                 { field:"Exame", value: infosQuestion.exames.find(infos => infos._id === question.exame)?.nome ?? question.exame },

@@ -26,12 +26,12 @@ export interface UpdateQuestion {
 export const ConverteQuestiontoUpdateQuestion = (question: Question) : UpdateQuestion => {
     const update : UpdateQuestion = {
         _id: question._id,
-        exame: question.exame._id,
+        exame: question.exame,
         ano: question.ano,
         caderno: question.caderno,
         enemArea: question.enemArea,
-        frente1: question.frente1._id,
-        materia: question.materia._id,
+        frente1: question.frente1,
+        materia: question.materia,
         numero: question.numero,
         textoQuestao: question.textoQuestao,
         textoAlternativaA: question.textoAlternativaA,
@@ -44,11 +44,11 @@ export const ConverteQuestiontoUpdateQuestion = (question: Question) : UpdateQue
         edicao: question.edicao,
     }
     if(question.frente2){
-        update['frente2'] = question.frente2._id
+        update['frente2'] = question.frente2
     }
 
     if(question.frente3){
-        update['frente2'] = question.frente2._id
+        update['frente2'] = question.frente2
     }
 
     return update
