@@ -121,7 +121,7 @@ function DashNews() {
                     <Filter placeholder="session | titulo" filtrar={handleInputChange}/>,
                     <Select options={dashNews.options} setState={updateActive} />,
                     <Button onClick={() => { setNewSelect(null); setOpenModal(true)}} typeStyle="quaternary" 
-                    className="text-7xl md:text-7xl font-light rounded-full h-14 w-14">+</Button>
+                    className="text-xl font-light rounded-full h-8 "><span className="text-4xl">+</span> upload novidade</Button>
             ]} 
                 onClickCard={onClickCard} />
             <EditNews />
