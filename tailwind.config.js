@@ -1,4 +1,7 @@
 /** @type {import('tailwindcss').Config} */
+
+import TailwindScrollbarHide from 'tailwind-scrollbar-hide'
+
 export default {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
@@ -28,8 +31,9 @@ export default {
         lightGreen: "#8cc408",
         darkGreen: "#0f9b2c",
         green2: "#0F9B2C",
+        green3: '#8CC408',
         gray2: "#A6A6A6"
-      }
+      },
     },
     screens: {
       'sm': '768px',
@@ -37,6 +41,8 @@ export default {
     },
     
   },
-  plugins: [],
+  plugins: [
+    TailwindScrollbarHide
+  ],
 }
 

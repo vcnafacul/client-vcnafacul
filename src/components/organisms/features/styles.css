@@ -1,0 +1,15 @@
+ul.desktop {
+    grid-column: 3/6;
+    grid-row: 1/2;
+    align-items: center;
+}
+
+img {
+    grid-column: 6/12;
+    grid-row: 1/2;
+}
+
+.description {
+    grid-column:  6/12;
+    grid-row: 2/3;
+}

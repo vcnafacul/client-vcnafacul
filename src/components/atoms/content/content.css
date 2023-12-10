@@ -1,0 +1,50 @@
+/* content.css */
+.content img {
+    max-width: 400px;
+
+    @media (min-width: 1200px) {
+        max-width: 1000px;
+    }
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    margin: 25px 0px;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+
+    @media (min-width: 1200px){
+        margin: 25px auto;
+        width: 1200px;
+    }
+
+    @media (min-width: 1600px){
+        margin: 25px auto;
+        width: 1600px;
+    }
+}
+
+.content h1 {
+    padding: 20px 10px;
+}
+
+.content h2 {
+    padding: 10px 10px;
+}/* A */
+
+.content h3 {
+    padding: 10px 10px;
+}
+
+.content h4 {
+    padding: 10px 10px;
+}
+
+.content h5 {
+    padding: 10px 10px;
+}
+
+.content p {
+    padding: 2px 10px;
+}

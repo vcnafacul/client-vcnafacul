@@ -1,0 +1,55 @@
+ul.desktop {
+    display: none;
+
+    @media (min-width: 768px) {
+        display: flex;
+    }
+}
+
+div.mobileDropdown {
+    text-align: center;
+    font-size: 22px;
+
+    @media (min-width: 768px) {
+        display: none;
+    }
+}
+
+ul.mobileDropdown {
+    height: 120px;
+    z-index: 1;
+    width: 100vw;
+    font-size: 22px;
+
+    @media (min-width: 768px) {
+        left: 0;
+        width: 100%;
+    }
+}
+
+ul {
+    position: relative;
+    justify-content: space-around;
+    @media (max-width: 560px) {
+        font-size: 16px;
+    }
+    @media (max-width: 768px) {
+        width: 100vw;
+        left: -24px;
+    }
+    li {
+        margin-bottom: 0;
+        padding-bottom: 10px;
+    }
+    
+}
+
+ul::after {
+    content: " ";
+    width: 100%;
+    height: 1px;
+    position: absolute;
+    bottom: 1px;
+    z-index: -1;
+    background-color: #E0E0E0; /* Precisa usar variavel externa */
+}

@@ -1,0 +1,62 @@
+.graphism-header {
+    position: absolute;
+}
+
+.graphism-header.square-pink-header {
+    width: 105px;
+    height: 105px;
+    top: 0;
+    left: 24px;
+}
+
+.graphism-header.triangle-border-header {
+    display: none;
+}
+
+.graphism-header.triangle-yellow-header {
+    width: 100px;
+    height: 100px;
+    bottom: 0;
+    right: -20px;
+    transform: rotate(180deg);
+}
+
+@media (min-width: 768px) {
+    .graphism-header.square-pink {
+        width: 193px;
+        height: 193px;
+        top: -60px;
+        left: 0;
+    }
+
+    .graphism-header.triangle-border-header {
+        display: block;
+        width: 100px;
+        height: 100px;
+        bottom: 42px;
+        left: 24px;
+        transform: rotate(225deg);
+    }
+
+    .graphism-header.triangle-yellow-header {
+        width: 140px;
+        height: 140px;
+        bottom: -10px;
+        right: 20px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .graphism-header.triangle-border-header {
+        width: 115px;
+        height: 115px;
+        bottom: 20px;
+    }
+
+    .graphism-header.triangle-yellow-header {
+        width: 140px;
+        height: 140px;
+        bottom: -80px;
+        right: 0px;
+    }
+}

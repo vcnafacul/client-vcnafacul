@@ -1,0 +1,34 @@
+.graphism {
+    position: absolute;
+    z-index: 20;
+}
+
+.graphism.triangle-green {
+    width: 194px;
+    height: 194px;
+    left: -97px;
+    top: -50px;
+    transform: rotate(180deg);
+}
+
+.graphism.triangle-yellow {
+    width: 63px;
+    height: 63px;
+    right: 0;
+    bottom: -12px;
+    transform: rotate(180deg);
+}
+
+@media (min-width: 768px) {
+    .graphism.triangle-green {
+        width: 446px;
+        height: 446px;
+        left: -223px;
+        top: -110px;
+    }
+
+    .graphism.triangle-yellow {
+        width: 135px;
+        height: 135px;
+    }
+}
