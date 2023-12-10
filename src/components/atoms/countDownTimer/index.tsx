@@ -12,7 +12,8 @@ function CountdownTimer ({ className } : CountdownTimerProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     function getRemainingTime() {
       const targetDateTime = new Date(data.started);
-      targetDateTime.setHours(targetDateTime.getHours() + data.duration / 60);
+      targetDateTime.setHours(targetDateTime.getHours()  + Math.floor(data.duration / 60));
+      targetDateTime.setMinutes(targetDateTime.getMinutes() + data.duration - 60*Math.floor(data.duration / 60))
       const currentTime = new Date();
       return targetDateTime.getTime() - currentTime.getTime(); // Removido o Math.max
     }

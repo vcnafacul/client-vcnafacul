@@ -1,17 +1,9 @@
-import { Alternativa } from "../../store/simulado";
-
-export const alternativasData = [
-   { label: "A", alternative: Alternativa.A },
-   { label: "B", alternative: Alternativa.B },
-   { label: "C", alternative: Alternativa.C },
-   { label: "D", alternative: Alternativa.D },
-   { label: "E", alternative: Alternativa.E },
-]
+import { Alternatives } from "../../types/question/alternative"
 
 export const simulateData = {
     baseTitle: 'Simulado do',
     alternativeText: 'Selecione uma resposta',
-    alternativasData: alternativasData,
+    alternativasData: Alternatives,
      legends: [
         { label: "Questão atual", className: "bg-orange border border-orange"},
         { label: "Questão pulada", className: "bg-lightYellow border border-marine"},

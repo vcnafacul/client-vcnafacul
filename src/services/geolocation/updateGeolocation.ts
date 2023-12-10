@@ -57,6 +57,5 @@ const converteGeolocationUpdateDto = (geo: Geolocation): GeolocationUpdateDto =>
         }
     });
     
-    console.log(result)
     return result as GeolocationUpdateDto;
 }

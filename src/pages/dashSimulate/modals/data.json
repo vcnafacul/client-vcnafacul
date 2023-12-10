@@ -1,7 +1,7 @@
 {
     "Enem dia #1": {
         "nome": "1º dia do ENEM",
-        "tempo": 330,
+        "tempo": 300,
         "questoes": 90,
         "redacao": false,
         "areas": [
@@ -29,7 +29,7 @@
     },
     "Enem dia #2": {
         "nome": "2º dia do ENEM",
-        "tempo": 330,
+        "tempo": 300,
         "questoes": 90,
         "redacao": true,
         "areas": [
@@ -51,7 +51,7 @@
     },
     "Linguagens": {
         "nome": "Linguagens",
-        "tempo": 120,
+        "tempo": 150,
         "questoes": 45,
         "redacao": false,
         "areas": [
@@ -68,7 +68,7 @@
     },
     "Ciência Humanas": {
         "nome": "Ciência Humanas",
-        "tempo": 120,
+        "tempo": 150,
         "questoes": 45,
         "redacao": false,
         "areas": [
@@ -85,7 +85,7 @@
     },
     "Ciências da Natureza": {
         "nome": "Ciências da Natureza",
-        "tempo": 120,
+        "tempo": 150,
         "questoes": 45,
         "redacao": false,
         "areas": [
@@ -101,7 +101,7 @@
     },
     "Matemática": {
         "nome": "Matematica",
-        "tempo": 120,
+        "tempo": 150,
         "questoes": 45,
         "redacao": false,
         "areas": [

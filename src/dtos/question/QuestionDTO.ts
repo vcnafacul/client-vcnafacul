@@ -8,14 +8,14 @@ export interface ObjDefault {
 
 export interface QuestionDto {
     _id: string
-    exame: ObjDefault
+    exame: string
     ano: number
     caderno: string
     enemArea: string
-    frente1: ObjDefault
-    frente2: ObjDefault
-    frente3: ObjDefault
-    materia: ObjDefault
+    frente1: string
+    frente2: string
+    frente3: string
+    materia: string
     numero: number
     textoQuestao: string
     textoAlternativaA: string

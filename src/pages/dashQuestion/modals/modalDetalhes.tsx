@@ -16,6 +16,8 @@ import { UpdateQuestion } from "../../../dtos/question/updateQuestion";
 import { useForm } from 'react-hook-form';
 import ModalConfirmCancelMessage from "../../../components/organisms/modalConfirmCancelMessage";
 import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
+import { Alternatives } from "../../../types/question/alternative";
+import Alternative from "../../../components/atoms/alternative";
 
 interface ModalDetalhesProps extends ModalProps {
     question: Question
@@ -31,32 +33,31 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     const [refuse, setRefuse] = useState<boolean>(false);
     const [modified, setModified] = useState<boolean>(false);
     const [comeBack, setComeback]= useState<boolean>(false);
+    const [alternative, setAlternative] = useState<string>(question.alternativa)
 
     const resetAsyncForm = useCallback(async () => {
         reset(question); // asynchronously reset your form values
       }, [reset]);
 
     const exames : FormFieldOption[] = infos.exames.map(e => ({ label: e.nome, value: e._id }))
-    exames.push({ label: '', value: ''})
 
     const materias : FormFieldOption[] = infos.materias.map(m => ({ label: m.nome, value: m._id }))
-    materias.push({ label: '', value: ''})
 
     const frentes : FormFieldOption[] = infos.frentes.map(f => ({ label: f.nome, value: f._id }))
     frentes.push({ label: '', value: ''})
 
     const listFieldClassification : FormFieldInput[]= [
         {id: "id", type: "text", label: "ID da questão", value: question._id, disabled: true,},
-        {id: "exame",  type: "option", label: "Exame:*", options: exames, value: question.exame._id, disabled: !isEditing,},
+        {id: "exame",  type: "option", label: "Exame:*", options: exames, value: question.exame, disabled: !isEditing,},
         {id: "ano", type: "number", label: "Ano:*", value: question.ano, disabled: !isEditing,},
         {id: "edicao", type: "text", label: "Edição:*", options: Edicao, value: question.edicao, disabled: !isEditing,},
-        {id: "cor", type: "option", label: "Cor do Caderno:*", options: ArrayCor, value: question.caderno, disabled: !isEditing,},
+        {id: "caderno", type: "option", label: "Cor do Caderno:*", options: ArrayCor, value: question.caderno, disabled: !isEditing,},
         {id: "numero", type: "number", label: "Número da Questão do Caderno:*", value: question.numero, disabled: !isEditing,},
-        {id: "area", type: "option", label: "Área do Conhecimento:*", options: AreaEnem, value: question.enemArea, disabled: !isEditing,},
-        {id: "materia", type: "option", label: "Disciplina:*", options: materias, value: question.materia._id, disabled: !isEditing,},
-        {id: "frente1", type: "option", label: "Frente Principal:*", options: frentes, value: question.frente1._id, disabled: !isEditing,},
-        {id: "frente2", type: "option", label: "Frente Secundária", options: frentes, value: question.frente2 ? question.frente2._id : '', disabled: !isEditing,},
-        {id: "frente3", type: "option", label: "Frente Terciária", options: frentes, value: question.frente3 ? question.frente3._id : '', disabled: !isEditing,},
+        {id: "enemArea", type: "option", label: "Área do Conhecimento:*", options: AreaEnem, value: question.enemArea, disabled: !isEditing,},
+        {id: "materia", type: "option", label: "Disciplina:*", options: materias, value: question.materia, disabled: !isEditing,},
+        {id: "frente1", type: "option", label: "Frente Principal:*", options: frentes, value: question.frente1, disabled: !isEditing,},
+        {id: "frente2", type: "option", label: "Frente Secundária", options: frentes, value: question.frente2 ? question.frente2 : '', disabled: !isEditing,},
+        {id: "frente3", type: "option", label: "Frente Terciária", options: frentes, value: question.frente3 ? question.frente3 : '', disabled: !isEditing,},
     ]
 
     const listFieldInfoQuestion : FormFieldInput[]= [
@@ -77,6 +78,9 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
 
     const handleSave = (data: any) => {
         data['_id'] = question._id
+        if(alternative != question.alternativa) {
+            data['alternativa'] = alternative
+        }
         handleUpdateQuestion(data)
         handleClose()
     } 
@@ -125,6 +129,12 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                 <div className="col-span-3">
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Informações da Questão</Text>
                     <Form className="grid grid-cols-1 gap-y-1 mb-1" formFields={listFieldInfoQuestion} register={register} />
+                    <div className="flex gap-1">
+                        <Text size="secondary" className="text-orange w-60 text-start m-0">Selecione uma resposta</Text>
+                        {Alternatives.map(alt => (
+                            <Alternative key={alt.label} type="button" onClick={() => {setAlternative(alt.label)}} disabled={!isEditing} label={alt.label} select={alt.label === alternative} />
+                        ))}
+                    </div>
                 </div>
                 <div className="col-span-2">
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Imagem da Questão</Text>

@@ -1,13 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from 'zustand/middleware'
-
-export enum Alternativa {
-    A = 'A',
-    B = 'B',
-    C = 'C',
-    D = 'D',
-    E = 'E',
-  }
+import { Alternativa } from "../../types/question/alternative";
 
 export interface Answer {
     questao: string;

@@ -6,12 +6,15 @@ import { questoes } from "../urls";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function updateQuestion (questao: UpdateQuestion, token: string):Promise<any> {
     questao = fixQuestion(questao)
+    console.log(questao)
     const res = await fetchWrapper(questoes, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(questao)
     });
+    console.log(res)
     if(res.status !== 200){
+        console.log(await res.json())
         throw new Error(`Erro ao atualizar questão.`)
     }
 }

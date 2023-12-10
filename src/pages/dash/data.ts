@@ -42,11 +42,11 @@ export const dashCardMenuItems : DashCardMenu[] = [
         image: LinguagensImg,
         alt: "Linguagens",
         subMenuList: [
-            { icon: LPT, alt: "escrevendo", text: "LPT*", link: EM_BREVE },
-            { icon: Gramatica, alt: "abc", text: "Gramática", link: EM_BREVE },
-            { icon: Literatura, alt: "livro", text: "Literatura", link: EM_BREVE },
-            { icon: Ingles, alt: "balão de fala retangular", text: "Inglês", link: EM_BREVE },
-            { icon: Espanhol, alt: "balão de fala redondo", text: "Espanhol", link: EM_BREVE },
+            { icon: LPT, alt: "escrevendo", text: "LPT*", link: `${EM_BREVE}/LPT` },
+            { icon: Gramatica, alt: "abc", text: "Gramática", link: `${EM_BREVE}/Gramática` },
+            { icon: Literatura, alt: "livro", text: "Literatura", link: `${EM_BREVE}/Literatura` },
+            { icon: Ingles, alt: "balão de fala retangular", text: "Inglês", link: `${EM_BREVE}/Inglês` },
+            { icon: Espanhol, alt: "balão de fala redondo", text: "Espanhol", link: `${EM_BREVE}/Espanhol` },
         ],
     },
     {
@@ -56,10 +56,10 @@ export const dashCardMenuItems : DashCardMenu[] = [
         image: BioExatasImg,
         alt: "BioExatas",
         subMenuList: [
-            { icon: Biologia, alt: "molécula de DNA", text: "Biologia", link: EM_BREVE },
-            { icon: Fisica, alt: "risco biológico", text: "Física", link: EM_BREVE },
-            { icon: Quimica, alt: "quimica", text: "Quimica", link: EM_BREVE },
-            { icon: Matematica, alt: "calculadora", text: "Matemática", link: EM_BREVE },
+            { icon: Biologia, alt: "molécula de DNA", text: "Biologia", link: `${EM_BREVE}/Biologia` },
+            { icon: Fisica, alt: "risco biológico", text: "Física", link: `${EM_BREVE}/Física` },
+            { icon: Quimica, alt: "quimica", text: "Quimica", link: `${EM_BREVE}/Quimica` },
+            { icon: Matematica, alt: "calculadora", text: "Matemática", link: `${EM_BREVE}/Matemática` },
         ],
     },
     {
@@ -69,10 +69,10 @@ export const dashCardMenuItems : DashCardMenu[] = [
         image: HumanasImg,
         alt: "Humanas",
         subMenuList: [
-            { icon: Historia, alt: "relógio", text: "história", link: EM_BREVE },
-            { icon: Geografia, alt: "mapa", text: "geografia", link: EM_BREVE },
-            { icon: Filosofia, alt: "pessoas", text: "filosofia", link: EM_BREVE },
-            { icon: Sociologia, alt: "pessoas", text: "sociologia", link: EM_BREVE },
+            { icon: Historia, alt: "relógio", text: "História", link: `${EM_BREVE}/História` },
+            { icon: Geografia, alt: "mapa", text: "Geografia", link: `${EM_BREVE}/Geografia` },
+            { icon: Filosofia, alt: "pessoas", text: "Filosofia", link: `${EM_BREVE}/Filosofia` },
+            { icon: Sociologia, alt: "pessoas", text: "Sociologia", link: `${EM_BREVE}/Sociologia` },
         ],
     },
     {

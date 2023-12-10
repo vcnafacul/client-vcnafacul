@@ -41,11 +41,11 @@ function DashQuestion() {
         {cardId: question._id, title: question._id, status: question.status, infos: 
             [
                 { field:"Id", value: question._id },
-                { field:"Exame", value: question.exame.nome },
+                { field:"Exame", value: infosQuestion.exames.find(infos => infos._id === question.exame)?.nome ?? question.exame },
                 { field:"Edicao", value: question.edicao },
                 { field:"Ano", value: question.ano.toString()},
                 { field:"Área", value: question.enemArea},
-                { field:"Disciplina", value: question.materia.nome},
+                { field:"Disciplina", value: infosQuestion.materias.find(infos => infos._id === question.materia)?.nome ?? question.materia},
                 { field:"Ultima Atulizacao", value: question.updateAt ? formatDate(question.updateAt.toString()) : ""},
             ]
         }
@@ -57,16 +57,6 @@ function DashQuestion() {
         if(!filter) setQuestions(dataRef.current)
         else setQuestions(dataRef.current.filter(q => q._id.includes(filter) || q.textoQuestao.toLowerCase().includes(filter)))
     }
-
-    // const handleOrderChange = (opt: Order) => {
-    //     if(opt === Order.Increasing) {
-    //         setQuestions(questions.sort((a, b) => 
-    //             a.textoQuestao.toLocaleLowerCase().localeCompare(b.textoQuestao.toLocaleLowerCase())))
-    //     }  else {
-    //         setQuestions(questions.sort((a, b) => 
-    //             b.textoQuestao.toLocaleLowerCase().localeCompare(a.textoQuestao.toLocaleLowerCase())))
-    //     }
-    // }
 
     const handleRemoveQuestion = (id: string) => {
         const newQuestions = questions.filter(q => q._id != id)
@@ -129,6 +119,7 @@ function DashQuestion() {
                 toast.error(erro.message)
             })
     }, [])
+
 
     useEffect(() => {
         getQuestions(status)

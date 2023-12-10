@@ -34,7 +34,7 @@ export function PlatformRoutes() {
             <Route path={DASH_SIMULADO} element={<DashSimulate />} />
             <Route path={SIMULADO} element={<Simulate />} />
             <Route path={NEWS} element={ <NewsPage />} />
-            <Route path={EM_BREVE} element={ <EmBreve />} />
+            <Route path={`${EM_BREVE}/:nomeMateria`} element={ <EmBreve />} />
 
 
             <Route path={DASH_GEOLOCATION} element={

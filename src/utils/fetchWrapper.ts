@@ -7,10 +7,7 @@ const fetchWrapper = async (url: string, options?: any) => {
       window.location.href = LOGOFF_PATH;
     }
     const response = await fetch(url, options);
-      if (response.status === 403) {
-        window.location.href = LOGOFF_PATH;
-      }
-      return response;
+    return response;
   }
   
 export default fetchWrapper;

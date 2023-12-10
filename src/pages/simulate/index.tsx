@@ -180,7 +180,7 @@ function Simulate() {
                                 <Text size="secondary" className="text-orange w-60 text-start m-0">{simulateData.alternativeText}</Text>
                                 <div className="flex gap-4">
                                     {simulateData.alternativasData.map((alt, index) => (
-                                        <Alternative key={index} onClick={() => setAnswer(alt.alternative)} disabled={data.finish} label={alt.label} select={questionSelect.answered === alt.alternative} />
+                                        <Alternative key={index} onClick={() => setAnswer(alt.label)} disabled={data.finish} label={alt.label} select={questionSelect.answered === alt.label} />
 
                                     ))}
                                 </div>

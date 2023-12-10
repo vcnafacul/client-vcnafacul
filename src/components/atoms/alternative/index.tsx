@@ -1,6 +1,6 @@
 import { ComponentProps } from "react";
 import { VariantProps, tv } from "tailwind-variants";
-import { Alternativa } from "../../../store/simulado";
+import { Alternativa } from "../../../types/question/alternative";
 
 const alternative = tv({
     base: 'flex justify-center items-center text-xl text-marine font-bold border-none rounded w-12 h-12 cursor-pointer disabled:cursor-not-allowed',
