@@ -3,6 +3,8 @@ export interface CreateRoleDto {
     validarCursinho: boolean;
     alterarPermissao: boolean;
     criarSimulado: boolean;
-    bancoQuestoes: boolean;
+    visualizarQuestao: boolean;
+    criarQuestao: boolean;
+    validarQuestao: boolean;
     uploadNews: boolean;
 }

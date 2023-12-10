@@ -18,6 +18,8 @@ import ModalConfirmCancelMessage from "../../../components/organisms/modalConfir
 import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
 import { Alternatives } from "../../../types/question/alternative";
 import Alternative from "../../../components/atoms/alternative";
+import { useAuthStore } from "../../../store/auth";
+import { Roles } from "../../../enums/roles/roles";
 
 interface ModalDetalhesProps extends ModalProps {
     question: Question
@@ -35,6 +37,8 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     const [comeBack, setComeback]= useState<boolean>(false);
     const [alternative, setAlternative] = useState<string>(question.alternativa)
 
+    const { data: { permissao }} = useAuthStore();
+ 
     const resetAsyncForm = useCallback(async () => {
         reset(question); // asynchronously reset your form values
       }, [question, reset]);
@@ -69,7 +73,6 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         {id: "textoAlternativaE", type: "text", label: "Alternativa E:", value: question.textoAlternativaE, disabled: !isEditing,}, 
     ]
 
-    
 
     const QuestionImageModal = () => {
         if(!photoOpen) return null
@@ -86,11 +89,11 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     } 
 
     const btns: BtnProps[] = [
-        { children: "Aceitar", type: 'button', onClick: () => { handleUpdateQuestionStatus(StatusEnum.Approved) }, status: StatusEnum.Approved, className: 'bg-green2 col-span-1', editing: false},
-        { children: "Rejeitar", type: 'button', onClick: () => { setRefuse(true) }, status: StatusEnum.Rejected, className: 'bg-red col-span-1', editing: false},
-        { children: "Editar", type: 'button', onClick: () => { setIsEditing(true) }, editing: false, className: 'col-span-2'},
+        { children: "Aceitar", type: 'button', onClick: () => { handleUpdateQuestionStatus(StatusEnum.Approved) }, status: StatusEnum.Approved, className: 'bg-green2 col-span-1', editing: false, disabled: !permissao[Roles.validarQuestao]},
+        { children: "Rejeitar", type: 'button', onClick: () => { setRefuse(true) }, status: StatusEnum.Rejected, className: 'bg-red col-span-1', editing: false, disabled: !permissao[Roles.validarQuestao]},
+        { children: "Editar", type: 'button', onClick: () => { setIsEditing(true) }, editing: false, className: 'col-span-2', disabled: !permissao[Roles.validarQuestao]},
         { children: "Fechar", type: 'button', onClick: handleClose, editing: false, className: 'col-span-2'},
-        { children: "Salvar", type: 'submit', editing: true, className: 'col-span-2'},
+        { children: "Salvar", type: 'submit', editing: true, className: 'col-span-2', disabled: !permissao[Roles.validarQuestao]},
         { children: "Voltar", type: 'button', onClick: () => { modified ? setComeback(true) : setIsEditing(false) }, editing: true, className: 'col-span-2'},
     ]
 
@@ -140,11 +143,11 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Imagem da Questão</Text>
                     <img className="max-h-96 bg-lightGray p-[1px] w-full mr-4 sm:m-0 cursor-pointer" src={`https://api.vcnafacul.com.br/images/${question.imageId}.png`} onClick={() => setPhotoOpen(true)} />
                     <div className="grid grid-cols-2 gap-1">
-                        {btns.map(btn => {
+                        {btns.map((btn, index) => {
                             if(isEditing === btn.editing){
                                 return (
-                                    <div className={`${btn.className} rounded`}>
-                                        <Button type={btn.type} onClick={btn.onClick} hover className={`${btn.className} w-full border-none`}>{btn.children}</Button>
+                                    <div key={index} className={`${btn.className} rounded`}>
+                                        <Button disabled={btn.disabled} type={btn.type} onClick={btn.onClick} hover className={`${btn.className} w-full border-none`}>{btn.children}</Button>
                                     </div>
                                 )
                             }
