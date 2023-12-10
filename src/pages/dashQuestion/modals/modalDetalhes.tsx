@@ -37,7 +37,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
 
     const resetAsyncForm = useCallback(async () => {
         reset(question); // asynchronously reset your form values
-      }, [reset]);
+      }, [question, reset]);
 
     const exames : FormFieldOption[] = infos.exames.map(e => ({ label: e.nome, value: e._id }))
 
