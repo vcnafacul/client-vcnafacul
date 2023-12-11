@@ -20,12 +20,15 @@ import { UpdateQuestion } from "../../dtos/question/updateQuestion"
 import { toast } from "react-toastify"
 import { updateStatus } from "../../services/question/updateStatus"
 import { mergeObjects } from "../../utils/mergeObjects"
+import Button from "../../components/molecules/button"
+import { Roles } from "../../enums/roles/roles"
 
 function DashQuestion() {
     const [questions, setQuestions] = useState<Question[]>([])
     const [status, setStatus] = useState<StatusEnum>(StatusEnum.Pending);
-    const [openModal, setOpenModal] = useState<boolean>(false);
-    const [questionSelect, setQuestionSelect] = useState<Question>()
+    const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
+    const [openModalRegister, setOpenModalRegister] = useState<boolean>(false);
+    const [questionSelect, setQuestionSelect] = useState<Question | null>(null)
     const dataRef = useRef<Question[]>([])
 
     const [infosQuestion, setInfosQuestion] = useState<InfoQuestion>({
@@ -35,7 +38,7 @@ function DashQuestion() {
     } as InfoQuestion)
 
 
-    const { data: { token }} = useAuthStore()
+    const { data: { token, permissao }} = useAuthStore()
 
     const cardQuestion : CardDashInfo[] = questions.map(question => (
         {cardId: question._id, title: question.title, status: question.status, infos: 
@@ -63,6 +66,11 @@ function DashQuestion() {
         setQuestions(newQuestions)
     }
 
+    const handleAddQuestion = (questionUpdate: Question) => {
+        dataRef.current.push(questionUpdate)
+        setQuestions(dataRef.current)
+    }
+
     const handleUpdateQuestion = (questionUpdate: UpdateQuestion) => {
         updateQuestion(questionUpdate, token)
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -86,7 +94,7 @@ function DashQuestion() {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .then(_ => {
             handleRemoveQuestion(questionSelect!._id)
-            setOpenModal(false)
+            setOpenModalEdit(false)
             toast.success(`Questão ${questionSelect!._id} atualizada com sucesso. Status: ${status === StatusEnum.Approved ? 'Aprovado' : 'Reprovado'} `)
         }).catch((error: Error) => {
             toast.error(error.message)
@@ -94,8 +102,8 @@ function DashQuestion() {
     }
 
     const onClickCard = (cardId: number | string) => {
-        setQuestionSelect(questions.find(quest => quest._id === cardId))
-        setOpenModal(true)
+        setQuestionSelect(questions.find(quest => quest._id === cardId)!)
+        setOpenModalEdit(true)
     }
 
     const getQuestions = useCallback(async (status: StatusEnum) => {
@@ -130,18 +138,36 @@ function DashQuestion() {
     }, [getInfors])
 
     const ModalEdit = () => {
-        if(!openModal) return null
+        if(!openModalEdit) return null
         return <ModalTabTemplate 
             tabs={[
                 { label: "Detalhes", 
                     children: <ModalDetalhes 
                         question={questionSelect!} 
                         infos={infosQuestion} 
-                        handleClose={() => { setOpenModal(false) }}
+                        handleClose={() => { setOpenModalEdit(false) }}
                         handleUpdateQuestionStatus={handleUpdateQuestionStatus}
                         handleUpdateQuestion={handleUpdateQuestion}
+                        handleAddQuestion={handleAddQuestion}
                          />}, 
                 { label: "Historico", children: <>Teste 2</>}
+            ]} />
+    }
+
+    const ModalRegister = () => {
+        if(!openModalRegister) return null
+        return <ModalTabTemplate 
+            tabs={[
+                { label: "Cadastro de Questao", 
+                    children: <ModalDetalhes 
+                        question={undefined} 
+                        infos={infosQuestion} 
+                        handleClose={() => { setOpenModalRegister(false) }}
+                        handleUpdateQuestionStatus={handleUpdateQuestionStatus}
+                        handleUpdateQuestion={handleUpdateQuestion}
+                        handleAddQuestion={handleAddQuestion}
+                         />}, 
+                { label: "Cadastro de Prova", children: <>Teste 2</>}
             ]} />
     }
 
@@ -155,9 +181,12 @@ function DashQuestion() {
                 filterList={[
                     <Filter placeholder="id | texto" filtrar={handleInputChange}/>,
                     <Select options={dashQuest.options}  defaultValue={status}  setState={setStatus} />,
+                    <Button disabled={!permissao[Roles.criarQuestao]} onClick={() => { setQuestionSelect(null); setOpenModalRegister(true) }} typeStyle="quaternary" 
+                    className="text-xl font-light rounded-full h-8 "><span className="text-4xl">+</span>Cadastrar Questao</Button>
                     // <Select options={filters} defaultValue={Order.Increasing} setState={handleOrderChange} />
                 ]} />
             <ModalEdit />
+            <ModalRegister />
         </>
 
     )

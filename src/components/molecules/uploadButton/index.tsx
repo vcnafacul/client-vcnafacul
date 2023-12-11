@@ -8,8 +8,9 @@ interface UploadButtonProps extends ComponentProps<'input'> {
 
 function UploadButton({ onChange, ...props } : UploadButtonProps){
     return (
-        <div className="w-96">
-            <input className="bg-white" type="file" onChange={onChange} {...props} />
+        <div className="my-4">
+            <label className="border-2 border-orange px-4 py-3 text-orange rounded cursor-pointer" htmlFor="file">{props.placeholder}</label>
+            <input id='file' className="bg-white" type="file" onChange={onChange} {...props} style={{ display: 'none' }} />
         </div>
     )
 }
