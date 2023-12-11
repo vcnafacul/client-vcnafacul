@@ -102,14 +102,32 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         return <ModalImage handleClose={() => setPhotoOpen(false) }  image={`https://api.vcnafacul.com.br/images/${question?.imageId}.png`} />
     }
 
+    const handleUpdateClose = (data: any) => {
+        handleUpdateQuestion(data)
+        handleClose()
+    }
+
     const handleSave = (data: any) => {
        if(question){
             data['_id'] = question._id
             if(alternative != question.alternativa) {
                 data['alternativa'] = alternative
             }
-            handleUpdateQuestion(data)
-            handleClose()
+            if(uploadFile) {
+                const formData = new FormData()
+                formData.append('file', uploadFile)
+                uploadImage(formData, token)
+                    .then((res: string) => {
+                        data['imageId'] = res
+                        handleUpdateClose(data)
+                    })
+                    .catch((error: Error) => {
+                        toast.error(error.message)
+                    })
+            }
+            else {
+                handleUpdateClose(data)
+            }
        }
        else {
         if(!alternative){
@@ -155,9 +173,9 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         { children: "Aceitar", type: 'button', onClick: () => { handleUpdateQuestionStatus(StatusEnum.Approved) }, status: StatusEnum.Approved, className: 'bg-green2 col-span-1', editing: false, disabled: !permissao[Roles.validarQuestao]},
         { children: "Rejeitar", type: 'button', onClick: () => { setRefuse(true) }, status: StatusEnum.Rejected, className: 'bg-red col-span-1', editing: false, disabled: !permissao[Roles.validarQuestao]},
         { children: "Editar", type: 'button', onClick: () => { setIsEditing(true) }, editing: false, className: 'col-span-2', disabled: !permissao[Roles.validarQuestao]},
-        { children: "Voltar", type: 'button', onClick: () => { modified ? setComeback(true) : setIsEditing(false) }, editing: true, className: 'col-span-2'},
-        { children: "Salvar", type: 'submit', editing: true, className: 'col-span-2', disabled: !permissao[Roles.validarQuestao]},
         { children: "Fechar", type: 'button', onClick: handleClose, editing: false, className: 'col-span-2'},
+        { children: "Salvar", type: 'submit', editing: true, className: 'col-span-2', disabled: !permissao[Roles.validarQuestao]},
+        { children: "Voltar", type: 'button', onClick: () => { modified ? setComeback(true) : setIsEditing(false) }, editing: true, className: 'col-span-2'},
     ]
 
     const Buttons = () => {
@@ -223,7 +241,13 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                 <div className="col-span-2">
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Imagem da Questão</Text>
                     {question ? 
-                        <img className="max-h-96 bg-lightGray p-[1px] w-full mr-4 sm:m-0 cursor-pointer" src={`https://api.vcnafacul.com.br/images/${question?.imageId}.png`} onClick={() => setPhotoOpen(true)} /> : 
+                        <div>
+                            {imagePreview ? 
+                                <img src={imagePreview}/> : 
+                                <img className="max-h-96 bg-lightGray p-[1px] w-full mr-4 sm:m-0 cursor-pointer" src={`https://api.vcnafacul.com.br/images/${question?.imageId}.png`} onClick={() => setPhotoOpen(true)} />
+                                }
+                            {isEditing ? <UploadButton placeholder="Alterar imagem" onChange={handleImageChange} accept='.png' /> : <></>}
+                        </div> : 
                         <div className="">
                             <div className="border py-4 flex justify-center items-center h-1/2">
                                 {imagePreview ? <img src={imagePreview}/> : <Preview />}
