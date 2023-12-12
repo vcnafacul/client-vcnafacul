@@ -1,4 +1,5 @@
 import Carousel from "../../molecules/carousel"
+import { Pagination } from 'swiper/modules';
 
 interface CarouselRefProps{
     childrens: React.ReactNode[];
@@ -11,7 +12,7 @@ function CarouselRef({ childrens, breakpoints, className }: CarouselRefProps){
     
     return (
         <div className={`z-0 ${className}`}>
-            <Carousel className="" breakpoints={breakpoints} pagination dynamicBullets childrens={childrens} />
+            <Carousel className="" breakpoints={breakpoints} modules={[Pagination]} dynamicBullets childrens={childrens} />
         </div>
     )
 }
