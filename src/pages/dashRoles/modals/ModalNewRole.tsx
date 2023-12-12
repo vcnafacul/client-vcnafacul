@@ -4,7 +4,7 @@ import { useState } from "react"
 import Text from "../../../components/atoms/text"
 import ModalTemplate from "../../../components/templates/modalTemplate"
 import Filter from "../../../components/atoms/filter";
-import { Roles } from "../../../enums/roles/roles";
+import { RolesLabel } from "../../../enums/roles/roles";
 import { CreateRoleDto } from "../../../dtos/roles/createRole";
 import Toggle from "../../../components/atoms/toggle";
 import Button from "../../../components/molecules/button";
@@ -22,7 +22,9 @@ function ModalNewRole({handleClose} : ModalNewRoleProps) {
         validarCursinho: false,
         alterarPermissao: false,
         criarSimulado: false,
-        bancoQuestoes: true,
+        visualizarQuestao: false,
+        criarQuestao: false,
+        validarQuestao: false,
         uploadNews: false,
     })
 
@@ -47,10 +49,6 @@ function ModalNewRole({handleClose} : ModalNewRoleProps) {
             })
     }
 
-    const rolesArray = Object.keys(Roles)
-    .filter((key): key is keyof typeof Roles => key in Roles)
-    .map(key => Roles[key as keyof typeof Roles]);
-
     return (
         <ModalTemplate>
             <div className="bg-white p-4 rounded grid grid-cols-1 sm:grid-cols-2">
@@ -60,10 +58,10 @@ function ModalNewRole({handleClose} : ModalNewRoleProps) {
                 </div>
                 <div className="col-span-1 flex flex-col items-end">
                     <Text size="secondary">Permissões</Text>
-                    {rolesArray.map((role, index) => (
+                    {RolesLabel.map((role, index) => (
                         <div key={index} className="flex gap-2 items-center">
-                            <span className="m-0 text-xl font-black text-marine h-9">{role}</span>
-                            <div><Toggle name={role} checked={valueRoles[role]} handleCheck={handleCheckChange} /></div>
+                            <span className="m-0 text-xl font-black text-marine h-9">{role.label}</span>
+                            <div><Toggle name={role.value} checked={valueRoles[role.value]} handleCheck={handleCheckChange} /></div>
                         </div>
                     ))}
                     <div className="flex gap-4 w-full flex-col sm:flex-row">

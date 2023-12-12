@@ -8,6 +8,7 @@ import { getNews } from "../../services/news/getNews"
 import Content from "../../components/atoms/content"
 import NewsCarousel from "../../components/organisms/newsCarousel"
 import { toast } from "react-toastify"
+import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
 
 function NewsPage(){
     const [news, setNews] = useState<News[]>([])
@@ -36,22 +37,13 @@ function NewsPage(){
           slidesPerView: 2,
 
       },
-      530: {
-          slidesPerView: 2.4,
 
-      },
-      600: {
+      700: {
           slidesPerView: 3,
 
       },
-      750: {
-          slidesPerView: 3.5,
-      },
-      850: {
-          slidesPerView: 4,
-      },
       1000: {
-          slidesPerView: 4.5,
+          slidesPerView: 4,
       },
       1200: {
           slidesPerView: 5,
@@ -76,6 +68,7 @@ function NewsPage(){
                   {news.length == 0 ? null : news[indexSelect].session}
                 </div>
                 <Text size="secondary" className="text-grey font-normal">{news.length == 0 ? null : news[indexSelect].title}</Text>
+                <TriangleGreen className="absolute w-[500px] -right-[250px] bottom-0" />
                 <NewContent />
                 <NewsCarousel news={news} breakpoints={breakpoints} onClickCard={(index: number) => { setIndexSelect(index)}} />
             </div>

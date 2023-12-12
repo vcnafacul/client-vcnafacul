@@ -101,7 +101,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
                 alt: "banco_de_questao", 
                 text: "Banco de Questão", 
                 link: DASH_QUESTION, 
-                permission: Roles.bancoQuestoes
+                permission: Roles.visualizarQuestao
             },
             { 
                 icon: Espanhol, 

@@ -43,7 +43,7 @@ export function PlatformRoutes() {
                 </ProtectedRoute>} />
 
             <Route path={DASH_QUESTION} element={
-                <ProtectedRoute permission={data.permissao[Roles.bancoQuestoes]}>
+                <ProtectedRoute permission={data.permissao[Roles.visualizarQuestao]}>
                     <DashQuestion />
                 </ProtectedRoute>} />
 
