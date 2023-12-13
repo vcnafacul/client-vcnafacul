@@ -15,8 +15,10 @@ import NewsPage from "../pages/newsPage";
 import { useAuthStore } from "../store/auth";
 import ProtectedRoute from "./protectedRoute";
 import { Roles } from "../enums/roles/roles";
-import DashRoles from "../pages/dashRoles";
 import EmBreve from "../pages/emBreve";
+import DashTemplate from "../components/templates/dashTemplate";
+import { headerDash } from "../pages/dash/data";
+import DashRoles from "../pages/dashRoles";
 
 
 export function PlatformRoutes() {
@@ -30,32 +32,31 @@ export function PlatformRoutes() {
             <Route path={LOGIN_PATH} element={<Login />} />
             <Route path={LOGOFF_PATH} element={<Logout />} />
             <Route path={REGISTER_PATH} element={<Register />} />
-            <Route path={DASH} element={<Dash />} />
-            <Route path={DASH_SIMULADO} element={<DashSimulate />} />
             <Route path={SIMULADO} element={<Simulate />} />
             <Route path={NEWS} element={ <NewsPage />} />
-            <Route path={`${EM_BREVE}/:nomeMateria`} element={ <EmBreve />} />
 
+            <Route path="/dashboard" element={<DashTemplate header={headerDash} hasMenu />}>
+                <Route path={DASH} element={<Dash />} />
+                <Route path={DASH_SIMULADO} element={<DashSimulate />} />
+                <Route path={`${EM_BREVE}/:nomeMateria`} element={ <EmBreve />} />
+                <Route path={DASH_QUESTION} element={
+                    <ProtectedRoute permission={data.permissao[Roles.visualizarQuestao]}>
+                        <DashQuestion />
+                    </ProtectedRoute>} />
+                <Route path={DASH_GEOLOCATION} element={
+                    <ProtectedRoute permission={data.permissao[Roles.validarCursinho]}>
+                        <DashGeo />
+                    </ProtectedRoute>} />
+                <Route path={DASH_ROLES} element={
+                    <ProtectedRoute permission={data.permissao[Roles.alterarPermissao]}>
+                        <DashRoles />
+                    </ProtectedRoute>} />
 
-            <Route path={DASH_GEOLOCATION} element={
-                <ProtectedRoute permission={data.permissao[Roles.validarCursinho]}>
-                    <DashGeo />
-                </ProtectedRoute>} />
-
-            <Route path={DASH_QUESTION} element={
-                <ProtectedRoute permission={data.permissao[Roles.visualizarQuestao]}>
-                    <DashQuestion />
-                </ProtectedRoute>} />
-
-            <Route path={DASH_NEWS} element={
-                <ProtectedRoute permission={data.permissao[Roles.uploadNews]}>
-                    <DashNews />
-                </ProtectedRoute>} />
-
-            <Route path={DASH_ROLES} element={
-                <ProtectedRoute permission={data.permissao[Roles.alterarPermissao]}>
-                    <DashRoles />
-                </ProtectedRoute>} />
+                <Route path={DASH_NEWS} element={
+                    <ProtectedRoute permission={data.permissao[Roles.uploadNews]}>
+                        <DashNews />
+                    </ProtectedRoute>} />
+            </Route>
 
             <Route path="*" element={<Navigate to={data.token ? DASH : HOME_PATH} replace />} />
         </Routes>

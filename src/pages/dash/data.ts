@@ -86,28 +86,28 @@ export const dashCardMenuItems : DashCardMenu[] = [
                 icon: Historia,
                 alt: "check mapa",
                 text: "Validação LC",
-                link: DASH_GEOLOCATION,
+                link: `/dashboard/${DASH_GEOLOCATION}`,
                 permission: Roles.validarCursinho,
             },
             { 
                 icon: Quimica, 
                 alt: "check", 
                 text: "Permissões", 
-                link: DASH_ROLES, 
+                link: `/dashboard/${DASH_ROLES}`,
                 permission: Roles.alterarPermissao
             },
             { 
                 icon: Gramatica, 
                 alt: "banco_de_questao", 
                 text: "Banco de Questão", 
-                link: DASH_QUESTION, 
+                link: `/dashboard/${DASH_QUESTION}`, 
                 permission: Roles.visualizarQuestao
             },
             { 
                 icon: Espanhol, 
                 alt: "dash_news", 
                 text: "Novidades", 
-                link: DASH_NEWS, 
+                link: `/dashboard/${DASH_NEWS}`,
                 permission: Roles.uploadNews
             },
         ],

@@ -1,8 +1,6 @@
 import Text from "../../components/atoms/text"
 import Ul from "../../components/atoms/ul"
 import CardSimulate from "../../components/molecules/cardSimulate"
-import DashTemplate from "../../components/templates/dashTemplate"
-import { headerDash } from "../dash/data"
 import { getTitle, simulateData } from "./data"
 import './styles.css'
 
@@ -150,7 +148,6 @@ function DashSimulate() {
 
     return (
         <>
-            <DashTemplate header={headerDash} hasMenu>
                 <div className="relative">
                     <TriangleGreen className="absolute w-40 h-40 rotate-180 -top-36 left-96"/>
                     <div className="relative sm:mx-10">
@@ -170,7 +167,6 @@ function DashSimulate() {
                         </div>
                     </div>
                 </div>
-            </DashTemplate>
             <ModalNewSimulate />
         </>
     )
