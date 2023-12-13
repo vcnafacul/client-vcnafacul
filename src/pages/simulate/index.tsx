@@ -21,6 +21,7 @@ import { useAuthStore } from "../../store/auth";
 import ModalInfo from "./modals/modalInfo";
 import ModalReportProblem from "./modals/ModalReportProblem";
 import { toast } from "react-toastify";
+import ModalImage from "../../components/atoms/modalImage";
 
 function Simulate() {
     const { data, setActive, setAnswer, nextQuestion, confirm, priorQuestion, isFinish, setFinish } = useSimuladoStore()
@@ -29,6 +30,7 @@ function Simulate() {
     const [reportModal, setReportModal] = useState<boolean>(false)
     const [reportProblem, setReportProblem] = useState<boolean>(false)
     const [questionProblem, setQuestionProblem] = useState<boolean>(false)
+    const [photoOpen, setPhotoOpen] = useState<boolean>(false);
 
     const { data: { token } }= useAuthStore()
 
@@ -142,6 +144,11 @@ function Simulate() {
         return <ModalReportProblem questionProblem={questionProblem} idQuestion={questionSelect._id} numberQuestion={questionSelect.number + 1} handleClose={() => { setReportProblem(false) }} />
     }
 
+    const QuestionImageModal = () => {
+        if(!photoOpen) return null
+        return <ModalImage handleClose={() => setPhotoOpen(false) }  image={`https://api.vcnafacul.com.br/images/${questionSelect?.imageId}.png`} />
+    }
+
     useEffect(() => {
         if(data.questions.length === 0) {
             navigate(DASH_SIMULADO)
@@ -168,8 +175,8 @@ function Simulate() {
                                 <Text size="secondary" className="text-orange m-0">Questao {questionSelect.number + 1}</Text>
                                 <Report className="w-10 h-8" onClick={() => {setQuestionProblem(true); setReportProblem(true)}}/>
                             </div>
-                            <div className="w-full flex justify-center">
-                                <img className="max-w-5xl max-h-96 w-full mr-4 sm:m-0" src={`https://api.vcnafacul.com.br/images/${questionSelect.imageId}.png`} />
+                            <div onClick={() => setPhotoOpen(true) } className="w-full flex justify-center cursor-pointer">
+                                <img className="mr-4 sm:m-0" src={`https://api.vcnafacul.com.br/images/${questionSelect.imageId}.png`} />
                             </div>
                         </div>
                         <div className="flex justify-between flex-col md:flex-row gap-4">
@@ -192,6 +199,7 @@ function Simulate() {
                 </div>
             <FinishReport />
             <ReportProblem />
+            <QuestionImageModal />
         </>
     )
 }
