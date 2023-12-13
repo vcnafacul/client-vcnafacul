@@ -8,13 +8,13 @@ export const ACCOUNT_PATH = "/meu-perfil";
 export const LOGOFF_PATH = "/logoff";
 export const FORM_GEOLOCATION = "/geolocation";
 export const DASH = "/dashboard";
-export const DASH_GEOLOCATION = "/dashboard/localiza-cursinho";
-export const DASH_QUESTION = "/dashboard/banco-questoes"
-export const DASH_SIMULADO = "/simulado";
-export const DASH_NEWS = "/dashnews"
+export const DASH_GEOLOCATION = "localiza-cursinho";
+export const DASH_QUESTION = "banco-questoes"
+export const DASH_SIMULADO = "simulado";
+export const DASH_NEWS = "dashnews"
 
 export const SIMULADO = "/simulado/responder";
 export const NEWS = "/novidades"
-export const DASH_ROLES = "/permissoes"
+export const DASH_ROLES = "permissoes"
 
-export const EM_BREVE = "/breve"
+export const EM_BREVE = "breve"

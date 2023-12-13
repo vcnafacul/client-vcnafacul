@@ -1,9 +1,7 @@
 import IconArea from "../../components/atoms/iconArea";
 import HeaderSimulate from "../../components/molecules/headerSimulate";
 import QuestionList from "../../components/molecules/questionList";
-import DashTemplate from "../../components/templates/dashTemplate"
 import { QuestionBoxStatus } from "../../enums/simulado/questionBoxStatus";
-import { headerDash } from "../dash/data"
 
 import Text from "../../components/atoms/text";
 import Button from "../../components/molecules/button";
@@ -154,7 +152,6 @@ function Simulate() {
     if(data.questions.length > 0)
         return (
         <>
-            <DashTemplate header={headerDash}>
                 <div className="flex flex-col sm:mx-auto">
                     <HeaderSimulate simulateName={data.title} onClick={() => {setTryFinish(true)}}/>
                     <QuestionList selectQuestion={(number: number) => { setActive(number) }}
@@ -193,7 +190,6 @@ function Simulate() {
                         </div>
                     </div> 
                 </div>
-            </DashTemplate>
             <FinishReport />
             <ReportProblem />
         </>
