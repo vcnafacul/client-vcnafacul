@@ -5,7 +5,9 @@ export enum Roles {
     visualizarQuestao = "visualizarQuestao",
     criarQuestao = "criarQuestao",
     validarQuestao = "validarQuestao",
-    uploadNews = "uploadNews"
+    uploadNews = "uploadNews",
+    visualizarProvas = 'visualizarProvas',
+    cadastrarProvas = 'cadastrarProvas'
 }
 
 export const RolesLabel = [
@@ -16,4 +18,6 @@ export const RolesLabel = [
     { value: Roles.criarQuestao, label: 'Cadastrar Questões'},
     { value: Roles.validarQuestao, label: 'Validar Questões'},
     { value: Roles.uploadNews, label: 'Upload de Novidades'},
+    { value: Roles.visualizarProvas, label: 'Visualizar Provas'},
+    { value: Roles.cadastrarProvas, label: 'Cadastrar Provas'},
 ]

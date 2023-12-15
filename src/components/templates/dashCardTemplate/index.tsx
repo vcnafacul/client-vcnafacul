@@ -1,9 +1,7 @@
 import Text from "../../atoms/text";
 import CardDash, { CardDashInfo } from "../../molecules/cardDash";
-import { HeaderProps } from "../../organisms/header"
 
 interface DashCardTemplateProps {
-    header: HeaderProps,
     title: string;
     filterList: JSX.Element[];
     cardlist: CardDashInfo[];

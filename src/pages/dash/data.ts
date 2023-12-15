@@ -1,6 +1,6 @@
 import { HeaderProps } from "../../components/organisms/header";
 import {header}  from "../home/data";
-import { DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, DASH_SIMULADO, DASH_ROLES, EM_BREVE } from "../../routes/path";
+import { DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, DASH_SIMULADO, DASH_ROLES, EM_BREVE, DASH_PROVAS } from "../../routes/path";
 import BioExatasImg from "../../assets/images/dashboard/bioexatas.svg";
 import HumanasImg from "../../assets/images/dashboard/humanas.svg";
 import LinguagensImg from "../../assets/images/dashboard/linguagens.svg";
@@ -84,14 +84,14 @@ export const dashCardMenuItems : DashCardMenu[] = [
         subMenuList: [
             {
                 icon: Historia,
-                alt: "check mapa",
+                alt: "localiza cursinho",
                 text: "Validação LC",
                 link: `/dashboard/${DASH_GEOLOCATION}`,
                 permission: Roles.validarCursinho,
             },
             { 
                 icon: Quimica, 
-                alt: "check", 
+                alt: "permissoes", 
                 text: "Permissões", 
                 link: `/dashboard/${DASH_ROLES}`,
                 permission: Roles.alterarPermissao
@@ -108,6 +108,13 @@ export const dashCardMenuItems : DashCardMenu[] = [
                 alt: "dash_news", 
                 text: "Novidades", 
                 link: `/dashboard/${DASH_NEWS}`,
+                permission: Roles.uploadNews
+            },
+            { 
+                icon: Fisica, 
+                alt: "dash_provas", 
+                text: "Provas", 
+                link: `/dashboard/${DASH_PROVAS}`,
                 permission: Roles.uploadNews
             },
         ],

@@ -17,6 +17,7 @@ export const defaults = `${simulado}/default`
 export const toAnswer = `${simulado}/toanswer`
 export const answer = `${simulado}/answer`
 export const report = `${simulado}/report`
+export const prova = `${simulado}/prova`
 
 export const news = `${BASE_URL}/news`
 export const newsAll = `${news}/all`

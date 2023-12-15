@@ -8,7 +8,7 @@ import { ModalProps } from "../../../components/templates/modalTemplate"
 import { Question } from "../../../dtos/question/QuestionDTO"
 import { InfoQuestion } from "../../../types/question/infoQuestion";
 import { getStatusIcon } from "../../../utils/getStatusIcon";
-import { AreaEnem, ArrayCor, Edicao } from "../data";
+import { AreaEnem } from "../data";
 import ModalImage from "../../../components/atoms/modalImage";
 import { BtnProps } from "../../../types/generic/btnProps";
 import { StatusEnum } from "../../../types/generic/statusEnum";
@@ -46,6 +46,8 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     const [imagePreview, setImagePreview] = useState<any>(null);
     const [uploadFile, setUploadFile ] = useState<any>(null);
 
+    const prova = watch("prova")
+
     const previewImage = (file: any) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -67,7 +69,8 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         reset(question); // asynchronously reset your form values
       }, [question, reset]);
 
-    const exames : FormFieldOption[] = infos.exames.map(e => ({ label: e.nome, value: e._id }))
+    const provas : FormFieldOption[] = infos.provas.map(e => ({ label: e.nome, value: e._id }))
+    provas.push({ label: '', value: '' })
 
     const materias : FormFieldOption[] = infos.materias.map(m => ({ label: m.nome, value: m._id }))
 
@@ -75,10 +78,9 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     frentes.push({ label: '', value: undefined})
 
     const listFieldClassification : FormFieldInput[]= [
-        {id: "exame",  type: "option", label: "Exame:*", options: exames, value: question?.exame, disabled: !question ? false : !isEditing,},
-        {id: "ano", type: "number", label: "Ano:*", value: question?.ano, disabled: !question ? false : !isEditing,},
-        {id: "edicao", type: "text", label: "Edição:*", options: Edicao, value: question?.edicao ?? 'Regular', disabled: !question ? false : !isEditing,},
-        {id: "caderno", type: "option", label: "Cor do Caderno:*", options: ArrayCor, value: question?.caderno, disabled: !question ? false : !isEditing,},
+        {id: "prova",  type: "option", label: "Prova:*", options: provas, value: question?.prova ?? '', disabled: !question ? false : !isEditing,},
+        {id: "ano", type: "text", label: "Ano:*", value: infos.provas.find(p => p._id === prova)?.ano ?? '', disabled: true,},
+        {id: "edicao", type: "text", label: "Edição:*", value: infos.provas.find(p => p._id === prova)?.edicao.toString() ?? '', disabled: true,},
         {id: "numero", type: "number", label: "Número da Questão do Caderno:*", value: question?.numero, disabled: !question ? false : !isEditing,},
         {id: "enemArea", type: "option", label: "Área do Conhecimento:*", options: AreaEnem, value: question?.enemArea, disabled: !question ? false : !isEditing,},
         {id: "materia", type: "option", label: "Disciplina:*", options: materias, value: question?.materia, disabled: !question ? false : !isEditing,},
@@ -156,7 +158,6 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                             toast.success(`Cadastro realizado com sucesso. Id: ${res._id}`)
                         })
                         .catch((error: any) => {
-                            console.log(error.message)
                             error.message.map((m: string) => {
                                 toast.error(m, { theme: 'dark', autoClose: 3000,})
                             })
