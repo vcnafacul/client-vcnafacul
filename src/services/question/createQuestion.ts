@@ -6,7 +6,6 @@ import { questoes } from "../urls";
 export async function createQuestion (data: CreateQuestion, token: string): Promise<string> {
     data.ano = parseInt(data.ano as unknown as string)
     data.numero = parseInt(data.numero as unknown as string)
-    console.log(JSON.stringify(cleanObject(data)))
     const response = await fetchWrapper(questoes, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
