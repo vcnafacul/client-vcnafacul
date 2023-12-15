@@ -4,8 +4,6 @@ import { ReactComponent as Arrow } from '../../../assets/icons/arrow.svg'
 function PrevNextSwiper() {
     const swiper = useSwiper()
 
-    console.log(swiper)
-
     return (
         <div className='relative w-full flex justify-between  pr-8'>
             <Arrow onClick={() => { swiper.slidePrev() }} className="fill-grey w-10 rotate-180 cursor-pointer" />

@@ -4,7 +4,6 @@ import fetchWrapper from "../../utils/fetchWrapper";
 import { questoes } from "../urls";
 
 export async function updateStatus (id: string, status: StatusEnum, token: string, message?: string,): Promise<boolean> {
-    console.log(id)
     const response = await fetchWrapper(`${questoes}/${id}/${status}`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },

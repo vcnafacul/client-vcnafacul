@@ -54,7 +54,6 @@ function DashProva(){
     useEffect(() => {
         getProvas(token)
             .then(res => {
-                console.log(res)
                 setProvas(res)
                 dataRef.current = res;
             })
