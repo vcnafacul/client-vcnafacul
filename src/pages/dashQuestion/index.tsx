@@ -4,7 +4,6 @@ import { Question } from "../../dtos/question/QuestionDTO"
 import { getAllQuestions } from "../../services/question/getAllQuestion"
 import { useAuthStore } from "../../store/auth"
 import { StatusEnum } from "../../types/generic/statusEnum"
-import { headerDash } from "../dash/data"
 import { getInfosQuestion } from "../../services/question/getInfosQuestion"
 import { InfoQuestion } from "../../types/question/infoQuestion"
 import { CardDashInfo } from "../../components/molecules/cardDash"
@@ -32,7 +31,7 @@ function DashQuestion() {
     const dataRef = useRef<Question[]>([])
 
     const [infosQuestion, setInfosQuestion] = useState<InfoQuestion>({
-        exames: [],
+        provas: [],
         materias: [],
         frentes: []
     } as InfoQuestion)
@@ -44,9 +43,7 @@ function DashQuestion() {
         {cardId: question._id, title: question.title, status: question.status, infos: 
             [
                 { field:"Id", value: question._id },
-                { field:"Exame", value: infosQuestion.exames.find(infos => infos._id === question.exame)?.nome ?? question.exame },
-                { field:"Edicao", value: question.edicao },
-                { field:"Ano", value: question.ano.toString()},
+                { field:"Prova", value: infosQuestion.provas.find(infos => infos._id === question.prova)?.nome ?? question.prova },
                 { field:"Área", value: question.enemArea},
                 { field:"Disciplina", value: infosQuestion.materias.find(infos => infos._id === question.materia)?.nome ?? question.materia},
                 { field:"Ultima Atulizacao", value: question.updateAt ? formatDate(question.updateAt.toString()) : ""},
@@ -90,15 +87,20 @@ function DashQuestion() {
     }
 
     const handleUpdateQuestionStatus = (status: StatusEnum, message?: string) => {
-        updateStatus(questionSelect!._id, status, token, message)
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        .then(_ => {
-            handleRemoveQuestion(questionSelect!._id)
-            setOpenModalEdit(false)
-            toast.success(`Questão ${questionSelect!._id} atualizada com sucesso. Status: ${status === StatusEnum.Approved ? 'Aprovado' : 'Reprovado'} `)
-        }).catch((error: Error) => {
-            toast.error(error.message)
-        })
+        if(!questionSelect?.prova && status === StatusEnum.Approved) {
+            toast.info('Não é possível aprovar questões sem referenciar uma prova. Selecione uma prova, salve o cadastro e tente novamente')
+        }
+        else {
+            updateStatus(questionSelect!._id, status, token, message)
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            .then(_ => {
+                handleRemoveQuestion(questionSelect!._id)
+                setOpenModalEdit(false)
+                toast.success(`Questão ${questionSelect!._id} atualizada com sucesso. Status: ${status === StatusEnum.Approved ? 'Aprovado' : 'Reprovado'} `)
+            }).catch((error: Error) => {
+                toast.error(error.message)
+            })
+        }
     }
 
     const onClickCard = (cardId: number | string) => {
@@ -174,7 +176,6 @@ function DashQuestion() {
     return (
         <>
             <DashCardTemplate 
-                header={headerDash} 
                 cardlist={cardQuestion} 
                 onClickCard={onClickCard} 
                 title={dashQuest.title} 

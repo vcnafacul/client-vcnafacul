@@ -7,7 +7,6 @@ export async function uploadImage (data: FormData, token: string): Promise<strin
         headers: { Authorization: `Bearer ${token}` },
         body: data,
     });
-    console.log('uploadImage',response)
     if(response.status !== 201){
         throw new Error('Erro ao tentar fazer upload da imagem!')
     }

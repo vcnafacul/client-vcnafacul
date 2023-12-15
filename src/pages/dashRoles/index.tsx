@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useRef, useState } from "react"
 import DashCardTemplate from "../../components/templates/dashCardTemplate"
-import { headerDash } from "../dash/data"
 import { dashRoles } from "./data"
 import { getRoles } from "../../services/roles/getRoles"
 import { useAuthStore } from "../../store/auth"
@@ -100,8 +99,7 @@ function DashRoles(){
     
     return (
         <>
-            <DashCardTemplate 
-                header={headerDash}
+            <DashCardTemplate
                 cardlist={cardUserRole}
                 onClickCard={onClickCard}
                 title={dashRoles.title}
