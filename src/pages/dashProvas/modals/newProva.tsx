@@ -80,7 +80,7 @@ function NewProva({ handleClose, addProva} : NewProvaProps){
                 .then((res) => {
                     addProva(res)
                     const title = `${info.exame}_${info.ano}_${info.edicao}_${info.aplicacao}`
-                    toast.update(id, { render: `Prova ${title} criada com sucesso`, type: 'success', isLoading: true, autoClose: 5000,})
+                    toast.update(id, { render: `Prova ${title} criada com sucesso`, type: 'success', isLoading: false, autoClose: 5000,})
                     handleClose()
                 })
                 .catch((error: Error) => {

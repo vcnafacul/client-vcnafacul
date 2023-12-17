@@ -25,6 +25,7 @@ import { ReactComponent as Preview } from '../../../assets/icons/Icon-preview.sv
 import UploadButton from "../../../components/molecules/uploadButton";
 import { uploadImage } from "../../../services/question/uploadImage";
 import { createQuestion } from "../../../services/question/createQuestion";
+import BLink from "../../../components/molecules/bLink";
 
 interface ModalDetalhesProps extends ModalProps {
     question?: Question
@@ -45,6 +46,8 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
 
     const [imagePreview, setImagePreview] = useState<any>(null);
     const [uploadFile, setUploadFile ] = useState<any>(null);
+
+    const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
 
     const prova = watch("prova")
 
@@ -70,12 +73,12 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
       }, [question, reset]);
 
     const provas : FormFieldOption[] = infos.provas.map(e => ({ label: e.nome, value: e._id }))
-    provas.push({ label: '', value: '' })
+    provas.unshift({ label: '', value: '' })
 
     const materias : FormFieldOption[] = infos.materias.map(m => ({ label: m.nome, value: m._id }))
 
     const frentes : FormFieldOption[] = infos.frentes.map(f => ({ label: f.nome, value: f._id }))
-    frentes.push({ label: '', value: undefined})
+    frentes.unshift({ label: '', value: undefined})
 
     const listFieldClassification : FormFieldInput[]= [
         {id: "prova",  type: "option", label: "Prova:*", options: provas, value: question?.prova ?? '', disabled: !question ? false : !isEditing,},
@@ -217,6 +220,11 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         return null;
     }
 
+    const BDownloadProva = () => {
+        if(!prova) return null
+        return <BLink to={`${VITE_BASE_FTP}${infos.provas.find(p => p._id === prova)?.filename}`} target="_blank" className="flex" type="quaternary">Visualizar Prova</BLink>
+    }
+
     useEffect(() => {
         const subscription = watch(() => { setModified(true) });
         return () => subscription.unsubscribe();
@@ -243,19 +251,20 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Imagem da Questão</Text>
                     {question ? 
                         <div>
-                            {imagePreview ? 
-                                <img src={imagePreview}/> : 
+                            {imagePreview ? <img src={imagePreview}/> : 
                                 <img className="max-h-96 bg-lightGray p-[1px] w-full mr-4 sm:m-0 cursor-pointer" src={`https://api.vcnafacul.com.br/images/${question?.imageId}.png`} onClick={() => setPhotoOpen(true)} />
                                 }
                             {isEditing ? <UploadButton placeholder="Alterar imagem" onChange={handleImageChange} accept='.png' /> : <></>}
                         </div> : 
-                        <div className="">
+                        <div>
                             <div className="border py-4 flex justify-center items-center h-1/2">
-                                {imagePreview ? <img src={imagePreview}/> : <Preview />}
+                                {imagePreview ? <img src={imagePreview}/> : 
+                                <Preview />}
                             </div>
                             <UploadButton placeholder="Upload Imagem" onChange={handleImageChange} accept='.png' />
                         </div>
                     }
+                    <BDownloadProva />
                     <div className="grid grid-cols-2 gap-1 w-full">
                         <Buttons />
                     </div>
