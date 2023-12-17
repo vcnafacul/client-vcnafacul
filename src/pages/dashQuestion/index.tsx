@@ -33,7 +33,8 @@ function DashQuestion() {
     const [infosQuestion, setInfosQuestion] = useState<InfoQuestion>({
         provas: [],
         materias: [],
-        frentes: []
+        frentes: [],
+        exames: []
     } as InfoQuestion)
 
 
