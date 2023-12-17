@@ -232,12 +232,12 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
 
     return (
         <>
-            <form onSubmit={handleSubmit(handleSave)} className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-7 gap-x-4">
-                <div className="col-span-2 flex flex-col">
+            <form onSubmit={handleSubmit(handleSave)} className="grid grid-cols-1 md:grid-cols-7 gap-x-4">
+                <div className="col-span-1 md:col-span-2 flex flex-col">
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Informação do Cursinho {!question ? <></> : getStatusIcon(question.status)}</Text>
                     <Form className="grid grid-cols-1 gap-y-1 mb-1" formFields={listFieldClassification} register={register} />
                 </div>
-                <div className="col-span-3">
+                <div className="col-span-1 md:col-span-3">
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Informações da Questão</Text>
                     <Form className="grid grid-cols-1 gap-y-1 mb-1" formFields={listFieldInfoQuestion} register={register} />
                     <div className="flex gap-1 my-4">
@@ -247,7 +247,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                         ))}
                     </div>
                 </div>
-                <div className="col-span-2">
+                <div className="col-span-1 md:col-span-2">
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Imagem da Questão</Text>
                     {question ? 
                         <div>
