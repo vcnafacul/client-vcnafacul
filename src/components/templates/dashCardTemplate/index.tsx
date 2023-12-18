@@ -20,7 +20,7 @@ function DashCardTemplate({ title, filterList, cardlist, onClickCard}: DashCardT
                     ))}
                 </div>
             </div>
-            <div className="flex flex-wrap gap-4 mt-20 justify-center py-24 sm:py-16 md:py-8">
+            <div className="flex flex-wrap gap-4 mt-20 justify-center md:justify-start md:mx-10 py-24 sm:py-16 md:py-8">
                 {cardlist.map(card => (
                     <CardDash onClick={() => onClickCard(card.cardId)} key={card.cardId} title={card.title} infos={card.infos} status={card.status} />
                 ))}
