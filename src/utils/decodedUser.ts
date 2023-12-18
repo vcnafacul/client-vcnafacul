@@ -7,12 +7,13 @@ export function decoderUser(access_token: string){
     const birthday = new Date(decoded.user.birthday.replace("Z", ""));
     const monthBirthday = birthday.getMonth() + 1 < 10 ? `0${birthday.getMonth() + 1}` : birthday.getMonth();
     const dayBirthday = birthday.getDate() < 10 ? `0${birthday.getDate()}` : birthday.getDate();
+    console.log(decoded)
     const payload : AuthProps = {
         token: access_token,
         user: { 
             ...decoded.user, 
             birthday: `${dayBirthday}/${monthBirthday}/${birthday.getFullYear()}`,
-            state: decodeURIComponent(escape(decoded.user.state))
+            state: decodeURIComponent(decoded.user.state)
             },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         permissao: decoded.roles.reduce((obj: any, item: number) => {

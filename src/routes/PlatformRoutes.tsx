@@ -2,7 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 import Home from "../pages/home";
 import Login from "../pages/login";
-import { DASH, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, EM_BREVE, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, SIMULADO } from "./path";
+import { ACCOUNT_PATH, DASH, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, EM_BREVE, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, SIMULADO } from "./path";
 import Dash from "../pages/dash";
 import DashGeo from "../pages/dashGeo";
 import Register from "../pages/register";
@@ -20,6 +20,7 @@ import DashTemplate from "../components/templates/dashTemplate";
 import { headerDash } from "../pages/dash/data";
 import DashRoles from "../pages/dashRoles";
 import DashProva from "../pages/dashProvas";
+import Account from "../pages/account";
 
 
 export function PlatformRoutes() {
@@ -40,6 +41,7 @@ export function PlatformRoutes() {
                 <Route path={DASH} element={<Dash />} />
                 <Route path={DASH_SIMULADO} element={<DashSimulate />} />
                 <Route path={`${EM_BREVE}/:nomeMateria`} element={ <EmBreve />} />
+                <Route path={ACCOUNT_PATH} element={ <Account />} />
                 <Route path={DASH_QUESTION} element={
                     <ProtectedRoute permission={data.permissao[Roles.visualizarQuestao]}>
                         <DashQuestion />
