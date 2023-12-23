@@ -6,7 +6,7 @@ const text = tv({
     variants: {
         size: {
             primary: "text-4xl md:text-5xl leading-10 font-bold ",
-            secondary: "text-3xl leading-9 md:leading-6 font-bold ",
+            secondary: "text-3xl leading-9 md:leading-8 font-bold ",
             tertiary: "text-base md:text-xl leading-6 md:leading-9",
             quaternary: "text-sm md:text-lg leading-6 md:leading-9 mb-3"
         }

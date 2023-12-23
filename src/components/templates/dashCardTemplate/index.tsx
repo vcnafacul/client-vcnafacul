@@ -11,16 +11,16 @@ interface DashCardTemplateProps {
 
 function DashCardTemplate({ title, filterList, cardlist, onClickCard}: DashCardTemplateProps) {
     return (
-        <div className="w-full flex justify-center flex-col py-4">
+        <div className="w-full flex justify-center flex-col py-4 ">
             <div className="w-full flex items-center flex-col mt-4">
                 <Text className="self-center" size="secondary">{title}</Text>
-                <div className="flex flex-wrap justify-center items-center gap-2 z-[1] fixed bg-gray-300 rounded-2xl bg-opacity-75 p-2 mx-4 my-14 w-10/12 md:w-fit">
+                <div className="flex flex-wrap justify-center items-center gap-2 z-[1] bg-gray-200 rounded-2xl bg-opacity-75 p-2 mx-4 mt-14 w-10/12 md:w-fit">
                     {filterList.map((filter, index) => (
                         <div className="h-full" key={index}>{filter}</div>
                     ))}
                 </div>
             </div>
-            <div className="flex flex-wrap gap-4 mt-20 justify-center md:justify-start md:mx-10 py-24 sm:py-16 md:py-8">
+            <div className="flex flex-wrap gap-4 my-4 justify-center md:justify-start md:mx-10">
                 {cardlist.map(card => (
                     <CardDash onClick={() => onClickCard(card.cardId)} key={card.cardId} title={card.title} infos={card.infos} status={card.status} />
                 ))}

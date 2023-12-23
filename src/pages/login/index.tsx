@@ -6,8 +6,23 @@ import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-gre
 import { ReactComponent as TriangleYellow } from "../../assets/icons/triangle-yellow.svg";
 import LoginForm from "../../components/organisms/loginForm";
 import { loginForm } from "./data";
+import { useAuthStore } from "../../store/auth";
+import { useNavigate } from "react-router-dom";
+import { DASH } from "../../routes/path";
+import { useEffect } from "react";
 
 function Login(){
+
+    const { data: { token }} = useAuthStore()
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if(token) {
+            navigate(DASH)
+        }
+    },[navigate, token])
+
+
     return (
         <BaseTemplate header={header} footer={footer} solid={true} className="bg-white overflow-y-auto scrollbar-hide h-screen">
             <div className="relative">

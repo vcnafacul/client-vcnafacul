@@ -9,4 +9,8 @@ export interface CreateRoleDto {
     uploadNews: boolean;
     visualizarProvas: boolean;
     cadastrarProvas: boolean;
+    visualizarDemanda: boolean;
+    uploadDemanda: boolean;
+    validarDemanda: boolean;
+    gerenciadorDemanda: boolean;
 }

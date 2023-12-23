@@ -1,5 +1,5 @@
 import { ButtonProps } from "../../components/molecules/button";
-import { StatusEnum } from "./statusEnum";
+import { StatusEnum } from "../../enums/generic/statusEnum";
 
 export interface BtnProps extends ButtonProps {
     status?: StatusEnum;

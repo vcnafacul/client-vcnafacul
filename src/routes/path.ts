@@ -13,6 +13,7 @@ export const DASH_QUESTION = "dashquestoes"
 export const DASH_SIMULADO = "simulado";
 export const DASH_NEWS = "dashnews"
 export const DASH_PROVAS = "dashprovas"
+export const DASH_CONTENT = 'dash-content'
 
 export const SIMULADO = "/simulado/responder";
 export const NEWS = "/novidades"

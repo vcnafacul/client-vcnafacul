@@ -1,5 +1,5 @@
 import { FormFieldOption } from "../../components/molecules/formField";
-import { StatusEnum } from "../../types/generic/statusEnum";
+import { StatusEnum } from "../../enums/generic/statusEnum";
 
 export const dashQuest = {
     title: 'Banco de questao',

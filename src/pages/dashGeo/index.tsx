@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef, useState } from "react";
 import DashCardTemplate from "../../components/templates/dashCardTemplate" 
-import { StatusEnum } from "../../types/generic/statusEnum";
+import { StatusEnum } from "../../enums/generic/statusEnum";
 import { dashGeo } from "./data"
 import Select from "../../components/atoms/select";
 import Filter from "../../components/atoms/filter";

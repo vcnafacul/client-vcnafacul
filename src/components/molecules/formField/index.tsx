@@ -20,6 +20,8 @@ export interface FormFieldInput {
     disabled?: boolean;
     value?: any;
     options?: FormFieldOption[];
+    className?: string;
+    validation?: object;
 }
 
 export interface FormFieldProps  extends FormFieldInput {
@@ -27,7 +29,7 @@ export interface FormFieldProps  extends FormFieldInput {
     ref?: LegacyRef<HTMLInputElement>;
 }
 
-function FormField({id, label, type = "text", visibility = false, value, disabled, options, register, ref} : FormFieldProps){
+function FormField({id, label, type = "text", visibility = false, value, disabled, options, className, register, validation, ref} : FormFieldProps){
     const [visible, setVisible] = useState<boolean>(visibility)
 
     function backgroundImageToggleVisibility(visible: boolean){
@@ -41,11 +43,12 @@ function FormField({id, label, type = "text", visibility = false, value, disable
         disabled: disabled ?? false,
         type: visible ? "text" : type,
         options: options,
-        defaultValue: value
+        defaultValue: value,
+        validation: validation,
       };
 
     return (
-        <div className="flex flex-col w-full relative justify-center items-center">
+        <div className={`${className} flex flex-col w-full relative justify-center items-center`}>
             <LabelInput label={label} />
             <Input ref={ref} register={register} {...commonProps} />
             {type !== "password" ? 

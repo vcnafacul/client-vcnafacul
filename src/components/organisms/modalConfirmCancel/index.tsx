@@ -7,7 +7,7 @@ export interface ModalConfirmCancelProps{
     handleConfirm: (string?: string) => void;
     handleCancel: () => void;
     confirmDisabled?: boolean;
-    text: string;
+    text?: string;
     children?: React.ReactNode;
 }
 

@@ -8,7 +8,7 @@ import { FormFieldInput } from "../../../components/molecules/formField";
 import Form from "../../../components/organisms/form";
 import MapBox from "../../../components/molecules/mapBox";
 import Button from "../../../components/molecules/button";
-import { StatusEnum } from "../../../types/generic/statusEnum";
+import { StatusEnum } from "../../../enums/generic/statusEnum";
 
 import { Marker, useMapEvents } from "react-leaflet";
 import { LatLngTuple } from "leaflet";
