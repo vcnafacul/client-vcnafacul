@@ -19,7 +19,7 @@ function NewsPage(){
     const NewContent = () => {
       if(news.length > 0) {
         return (
-          <Content docxFilePath={`${VITE_BASE_FTP}${news[indexSelect].fileName}.docx`} />
+          <Content docxFilePath={`${VITE_BASE_FTP}${news[indexSelect].fileName}`} />
         )
       }
       return null

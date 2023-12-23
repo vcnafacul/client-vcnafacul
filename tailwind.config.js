@@ -38,8 +38,20 @@ export default {
     screens: {
       'sm': '768px',
       'md': '1200px',
+      'lg': '1400px'
     },
-    
+    keyframes: {
+      rotate: {
+        'from': { transform: 'rotate(0deg)' },
+        'to': { transform: 'rotate(360deg)' },
+      },
+    },
+    animation: {
+      rotate: 'rotate 60s linear infinite',
+    },
+    backgroundImage: {
+      'custom-gradient': 'linear-gradient(to right, #37D6B5, #8cc408, #8CC408, #FFE53C, #FF7600, #DA005A)',
+    },
   },
   plugins: [
     TailwindScrollbarHide

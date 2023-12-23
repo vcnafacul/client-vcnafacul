@@ -21,6 +21,8 @@ function Form({ formFields, register, ...props } : FormProps){
                     disabled={fData.disabled}
                     options={fData.options}
                     register={register}
+                    className={fData.className}
+                    validation={fData.validation}
                      />
                 )}
         </div>

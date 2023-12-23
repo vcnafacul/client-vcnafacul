@@ -10,7 +10,7 @@ import { toast } from "react-toastify"
 import { UserRole } from "../../types/roles/UserRole"
 import { getUsersRole } from "../../services/roles/getUsersRole"
 import { CardDashInfo } from "../../components/molecules/cardDash"
-import { StatusEnum } from "../../types/generic/statusEnum"
+import { StatusEnum } from "../../enums/generic/statusEnum"
 import ModalRole from "./modals/ModalRole"
 import { updateRole } from "../../services/roles/updateRole"
 import ModalNewRole from "./modals/ModalNewRole"
@@ -81,7 +81,7 @@ function DashRoles(){
                 setUsersRole([])
             })
 
-    }, [])
+    }, [token])
 
     const ShowUserRole = () => {
         if(!openModal) return null
@@ -105,7 +105,7 @@ function DashRoles(){
                 title={dashRoles.title}
                 filterList={[
                     <Filter placeholder="session | titulo" filtrar={handleInputChange}/>,
-                    <Button onClick={() => { setUserRoleSelect(null); setnewRole(true)}} typeStyle="secondary" 
+                    <Button onClick={() => { setUserRoleSelect(null); setnewRole(true)}} typeStyle="quaternary"
                     className="text-xl font-light rounded-full h-8 "><span className="text-4xl">+</span> Nova Permissão</Button>
                 ]}
             />

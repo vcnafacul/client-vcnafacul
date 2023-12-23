@@ -1,4 +1,4 @@
-import { StatusEnum } from "../../types/generic/statusEnum";
+import { StatusEnum } from "../../enums/generic/statusEnum";
 import { DateTime } from "luxon"
 
 export interface ObjDefault {

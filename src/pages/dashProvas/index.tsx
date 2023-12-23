@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import DashCardTemplate from "../../components/templates/dashCardTemplate";
 import { Prova } from "../../dtos/prova/prova";
 import { CardDashInfo } from "../../components/molecules/cardDash";
-import { StatusEnum } from "../../types/generic/statusEnum";
+import { StatusEnum } from "../../enums/generic/statusEnum";
 import { formatDate } from "../../utils/date";
 import { dashProva } from "./data";
 import { getProvas } from "../../services/prova/getProvas";

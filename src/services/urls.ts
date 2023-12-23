@@ -21,3 +21,12 @@ export const prova = `${simulado}/prova`
 
 export const news = `${BASE_URL}/news`
 export const newsAll = `${news}/all`
+
+export const frentes = `${BASE_URL}/frente`
+export const frentesByMateria = `${frentes}/materia`
+
+export const subject = `${BASE_URL}/subject`
+export const subjectsByFrente = `${subject}/frente`
+
+export const content = `${BASE_URL}/content`
+export const demand = `${content}/demand`

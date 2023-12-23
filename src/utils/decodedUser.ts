@@ -12,7 +12,7 @@ export function decoderUser(access_token: string){
         user: { 
             ...decoded.user, 
             birthday: `${dayBirthday}/${monthBirthday}/${birthday.getFullYear()}`,
-            state: decodeURIComponent(escape(decoded.user.state))
+            state: decodeURIComponent(decoded.user.state)
             },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         permissao: decoded.roles.reduce((obj: any, item: number) => {

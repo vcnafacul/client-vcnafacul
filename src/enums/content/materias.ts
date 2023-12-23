@@ -1,0 +1,15 @@
+export enum Materias {
+    LPT,
+    Gramatica,
+    Literatura,
+    Ingles,
+    Espanhol,
+    Biologia,
+    Fisica,
+    Quimica,
+    Matematica,
+    Historia,
+    Geografia,
+    Filosofia,
+    Soliologia,
+  }

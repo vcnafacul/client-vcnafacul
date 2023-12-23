@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import mammoth from 'mammoth';
 import './content.css';
@@ -58,8 +59,14 @@ function Content({ docxFilePath, arrayBuffer, className }: ContentProps) {
   };
 
   const convertBufferToHtml = async (arrayBuffer: ArrayBuffer): Promise<string> => {
-    const { value, messages } = await mammoth.convertToHtml({ arrayBuffer });
-
+    const options = {
+      styleMap: [
+        /* "p[style-name='Heading 1'] => h1:fresh",
+        "p[style-name='Heading 2'] => h2:fresh", */
+        // Adicione mapeamentos adicionais conforme necessário
+      ]
+    };
+    const { value, messages } = await mammoth.convertToHtml({ arrayBuffer }, options);
     const images: ImageMessage[] = (messages as Message[])
           .filter(isImageMessage);
     
@@ -83,6 +90,39 @@ function Content({ docxFilePath, arrayBuffer, className }: ContentProps) {
   
     return doc.body.innerHTML;
   }
+
+  const extractYoutubeVideoId = (youtubeUrl: string) => {
+    return youtubeUrl.replace('https://www.youtube.com/watch?v=', '')
+  }
+
+  const convertYoutubeLinksToIframes = (htmlString: string) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlString, 'text/html');
+    const links = doc.querySelectorAll('a[href*="youtube.com/watch"], a[href*="youtu.be/"]');
+  
+    links.forEach((link: any) => {
+      const videoId = extractYoutubeVideoId(link.getAttribute('href')!);
+      if (videoId) {
+        const iframe = createYoutubeIframe(videoId);
+        link.parentNode.replaceChild(iframe, link);
+      }
+    });
+  
+    return doc.body.innerHTML;
+  }
+
+  const createYoutubeIframe = (videoId: string) => {
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('width', '560');
+    iframe.setAttribute('height', '315');
+    iframe.setAttribute('src', `https://www.youtube.com/embed/${videoId}`);
+    iframe.setAttribute('title', 'YouTube video player');
+    iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+    iframe.setAttribute('allowfullscreen', 'true');
+    return iframe;
+  }
+  
   
 
   useEffect(() => {
@@ -90,13 +130,15 @@ function Content({ docxFilePath, arrayBuffer, className }: ContentProps) {
       try {
         if (arrayBuffer) {
           const htmlContent = await convertDocxToHtml(undefined, arrayBuffer);
-          setHtmlContent(htmlContent as string);
+          const htmlWithYoutubeIframes = convertYoutubeLinksToIframes(htmlContent!);
+          setHtmlContent(htmlWithYoutubeIframes.replace('&amp;t', '').replace('</a>', '</a> ') as string);
         } else if (docxFilePath) {
           const response = await fetchWrapper(docxFilePath);
           const blob = await response.blob();
           const htmlContent = await convertDocxToHtml(blob, undefined);
           const htmlWithBlankTarget = addTargetBlankToLinks(htmlContent as string);
-          setHtmlContent(htmlWithBlankTarget);
+          const htmlWithYoutubeIframes = convertYoutubeLinksToIframes(htmlWithBlankTarget!);
+          setHtmlContent(htmlWithYoutubeIframes as string);
         }
       } catch (error) {
         toast.error(`Error fetchWrappering or converting the .docx file: ${error}`)
@@ -106,7 +148,6 @@ function Content({ docxFilePath, arrayBuffer, className }: ContentProps) {
     loadDocx();
   }, []);
 
-  
 
   return (
     <div className={`${className} content`}>

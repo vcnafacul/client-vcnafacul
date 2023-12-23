@@ -1,6 +1,6 @@
 import { HeaderProps } from "../../components/organisms/header";
 import {header}  from "../home/data";
-import { DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, DASH_SIMULADO, DASH_ROLES, EM_BREVE, DASH_PROVAS } from "../../routes/path";
+import { DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, DASH_SIMULADO, DASH_ROLES, EM_BREVE, DASH_PROVAS, DASH_CONTENT, NEWS } from "../../routes/path";
 import BioExatasImg from "../../assets/images/dashboard/bioexatas.svg";
 import HumanasImg from "../../assets/images/dashboard/humanas.svg";
 import LinguagensImg from "../../assets/images/dashboard/linguagens.svg";
@@ -27,10 +27,8 @@ import { Roles } from "../../enums/roles/roles";
 import { DashCardMenu } from "../../components/molecules/dashCard";
 
 export const headerDash: HeaderProps = {...header, itemsMenu: [
-    { id: 1, name: "Forum", link: "#" },
+    { id: 1, name: "Novidades", link: NEWS },
     { id: 2,name: "Simulado", link: DASH_SIMULADO },
-    { id: 3,name: "Redações", link: "#" },
-    { id: 4,name: "Blog", link: "#" },
 ],};
 
 
@@ -115,7 +113,14 @@ export const dashCardMenuItems : DashCardMenu[] = [
                 alt: "dash_provas", 
                 text: "Provas", 
                 link: `/dashboard/${DASH_PROVAS}`,
-                permission: Roles.uploadNews
+                permission: Roles.visualizarProvas
+            },
+            { 
+                icon: Historia, 
+                alt: "dash_provas", 
+                text: "Conteúdos", 
+                link: `/dashboard/${DASH_CONTENT}`,
+                permission: Roles.visualizarDemanda
             },
         ],
     },

@@ -6,7 +6,7 @@ import { ActionAreasProps } from "../../components/organisms/actionAreas";
 import { AboutUsProps } from "../../components/organisms/aboutUs";
 import { SupportersProps } from "../../components/organisms/Supporters";
 
-import { ACCOUNT_PATH, DASH, LOGIN_PATH, LOGOFF_PATH, REGISTER_PATH } from "../../routes/path";
+import { ACCOUNT_PATH, DASH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH } from "../../routes/path";
 
 import HeroImg1 from "../../assets/images/home/hero_student.svg";
 import HeroImg2 from "../../assets/images/home/hero_teacher.svg";
@@ -57,6 +57,7 @@ export const header: HeaderProps = {
         { id: 1, name: "Quem Somos", link: "/#about-us" },
         { id: 2,name: "Localize um Cursinho", link: "/#map" },
         { id: 3,name: "Apoiadores", link: "/#supporters" },
+        { id: 4, name: "Novidades", link: NEWS },
     ],
     socialLinks: {
         facebook: "https://www.facebook.com/vcnafacul/",

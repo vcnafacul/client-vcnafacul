@@ -11,7 +11,7 @@ import { getStatusIcon } from "../../../utils/getStatusIcon";
 import { AreaEnem } from "../data";
 import ModalImage from "../../../components/atoms/modalImage";
 import { BtnProps } from "../../../types/generic/btnProps";
-import { StatusEnum } from "../../../types/generic/statusEnum";
+import { StatusEnum } from "../../../enums/generic/statusEnum";
 import { UpdateQuestion } from "../../../dtos/question/updateQuestion";
 import { useForm } from 'react-hook-form';
 import ModalConfirmCancelMessage from "../../../components/organisms/modalConfirmCancelMessage";

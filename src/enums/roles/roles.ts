@@ -7,7 +7,11 @@ export enum Roles {
     validarQuestao = "validarQuestao",
     uploadNews = "uploadNews",
     visualizarProvas = 'visualizarProvas',
-    cadastrarProvas = 'cadastrarProvas'
+    cadastrarProvas = 'cadastrarProvas',
+    visualizarDemanda = 'visualizarDemanda',
+    uploadDemanda = 'uploadDemanda',
+    validarDemanda = 'validarDemanda',
+    gerenciadorDemanda = 'gerenciadorDemanda'
 }
 
 export const RolesLabel = [
@@ -20,4 +24,8 @@ export const RolesLabel = [
     { value: Roles.uploadNews, label: 'Upload de Novidades'},
     { value: Roles.visualizarProvas, label: 'Visualizar Provas'},
     { value: Roles.cadastrarProvas, label: 'Cadastrar Provas'},
+    { value: Roles.visualizarDemanda, label: 'Visualizar Demandas'},
+    { value: Roles.uploadDemanda, label: 'Upload de Demandas'},
+    { value: Roles.validarDemanda, label: 'Validar Demandas'},
+    { value: Roles.gerenciadorDemanda, label: 'Gerenciar Demandas'},
 ]

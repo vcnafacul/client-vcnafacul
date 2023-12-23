@@ -1,5 +1,5 @@
 import { Geolocation } from "../../types/geolocation/geolocation";
-import { StatusEnum } from "../../types/generic/statusEnum";
+import { StatusEnum } from "../../enums/generic/statusEnum";
 import { allGeolocation } from "../urls"
 import fetchWrapper from "../../utils/fetchWrapper";
 

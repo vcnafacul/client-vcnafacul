@@ -27,7 +27,11 @@ function ModalNewRole({handleClose} : ModalNewRoleProps) {
         validarQuestao: false,
         uploadNews: false,
         visualizarProvas: false,
-        cadastrarProvas: false
+        cadastrarProvas: false,
+        visualizarDemanda: false,
+        uploadDemanda: false,
+        validarDemanda: false,
+        gerenciadorDemanda: false,
     })
 
     const { data: { token }} = useAuthStore()

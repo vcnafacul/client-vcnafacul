@@ -28,7 +28,7 @@ function ModalEditNew({ news, create, deleteFunc, handleClose } : ModalEditNewPr
 
     const MyContent = useCallback(() => {
         if(news){
-            return <Content className="" docxFilePath={`${VITE_BASE_FTP}${news.fileName}.docx`} />
+            return <Content className="" docxFilePath={`${VITE_BASE_FTP}${news.fileName}`} />
         }
         else if(upload){
             return <Content arrayBuffer={arrayBuffer} />
