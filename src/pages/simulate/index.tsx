@@ -11,7 +11,7 @@ import Alternative from "../../components/atoms/alternative";
 import { Answer, AnswerSimulado, useSimuladoStore } from "../../store/simulado";
 import Legends from "../../components/molecules/legends";
 import { simulateData } from "./data";
-import { getIconByTitle } from "../dashSimulate/data";
+import { getIconByTitle } from "../mainSimulate/data";
 import { ModalType } from "../../types/simulado/modalType";
 import { useEffect, useState } from "react";
 import { answerSimulado } from "../../services/simulado/answerSimulado";

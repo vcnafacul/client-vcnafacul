@@ -6,7 +6,7 @@ import { ACCOUNT_PATH, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PRO
 import Dash from "../pages/dash";
 import DashGeo from "../pages/dashGeo";
 import Register from "../pages/register";
-import DashSimulate from "../pages/dashSimulate";
+import DashSimulate from "../pages/mainSimulate";
 import Simulate from "../pages/simulate";
 import DashQuestion from "../pages/dashQuestion";
 import Logout from "../pages/logout";
