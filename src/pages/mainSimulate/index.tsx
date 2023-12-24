@@ -18,7 +18,7 @@ import { useSimuladoStore } from "../../store/simulado"
 import { SIMULADO } from "../../routes/path"
 import { toast } from "react-toastify"
 
-function DashSimulate() {
+function MainSimulate() {
     const [initialize, setInitialize]= useState<boolean>(false);
     const [simulatesDefault, setSimulatseDefault] = useState<SimuladoDefault[]>()
     const [type, setType] = useState<SimuladoDefaultEnum>()
@@ -172,4 +172,4 @@ function DashSimulate() {
     )
 }
 
-export default DashSimulate
+export default MainSimulate

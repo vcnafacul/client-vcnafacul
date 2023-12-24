@@ -16,12 +16,12 @@ import { ModalType } from "../../types/simulado/modalType";
 import { useEffect, useState } from "react";
 import { answerSimulado } from "../../services/simulado/answerSimulado";
 import { useNavigate } from "react-router-dom";
-import { DASH_SIMULADO } from "../../routes/path";
 import { useAuthStore } from "../../store/auth";
 import ModalInfo from "./modals/modalInfo";
 import ModalReportProblem from "./modals/ModalReportProblem";
 import { toast } from "react-toastify";
 import ModalImage from "../../components/atoms/modalImage";
+import { SIMULADO } from "../../routes/path";
 
 function Simulate() {
     const { data, setActive, setAnswer, nextQuestion, confirm, priorQuestion, isFinish, setFinish } = useSimuladoStore()
@@ -58,7 +58,7 @@ function Simulate() {
         }
         answerSimulado(body, token)
             .finally(() => {
-                navigate(DASH_SIMULADO)
+                navigate(SIMULADO)
             })
     }
 
@@ -151,7 +151,7 @@ function Simulate() {
 
     useEffect(() => {
         if(data.questions.length === 0) {
-            navigate(DASH_SIMULADO)
+            navigate(SIMULADO)
             toast.warn('Não há Simulado a serem respondido', { theme: 'dark'})
         }
     })
