@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "../pages/home";
 import Login from "../pages/login";
-import { ACCOUNT_PATH, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, EM_BREVE, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, SIMULADO, SIMULADO_RESPONDER } from "./path";
+import { ACCOUNT_PATH, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, EM_BREVE, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, SIMULADO, SIMULADO_RESPONDER } from "./path";
 import Dash from "../pages/dash";
 import DashGeo from "../pages/dashGeo";
 import Register from "../pages/register";
@@ -22,6 +22,7 @@ import DashContent from "../pages/dashContent";
 import ProtectedRoutePermission from "./protectedRoutePermission";
 import ProtectedRoute from "./protectedRoute";
 import MainSimulate from "../pages/mainSimulate";
+import DashSimulado from "../pages/dashSimulado";
 
 
 export function PlatformRoutes() {
@@ -73,6 +74,11 @@ export function PlatformRoutes() {
                 <Route path={DASH_CONTENT} element={
                     <ProtectedRoutePermission permission={data.permissao[Roles.visualizarDemanda]}>
                         <DashContent mtv={data.permissao[Roles.validarDemanda]}/>
+                    </ProtectedRoutePermission>} />
+
+                <Route path={DASH_SIMULADO} element={
+                    <ProtectedRoutePermission permission={data.permissao[Roles.criarSimulado]}>
+                        <DashSimulado />
                     </ProtectedRoutePermission>} />
             </Route>
 

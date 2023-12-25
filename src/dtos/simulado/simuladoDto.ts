@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 interface Obj {
     _id: string;
     nome: string;
@@ -13,6 +15,7 @@ export interface IRegra {
   
   export interface ITipoSimulado {
     nome: string
+    duracao: number
     quantidadeTotalQuestao: number
     regras: IRegra[]
   }
@@ -24,8 +27,8 @@ export interface IRegra {
     caderno: string
     enemArea: string
     frente1: Obj
-    frente2: Obj
-    frente3: Obj
+    frente2?: Obj
+    frente3?: Obj
     materia: Obj
     numero: number
     imageId: string
@@ -35,8 +38,11 @@ export interface IRegra {
     _id: string
     nome: string
     descricao: string
-    tipo: string
+    tipo: ITipoSimulado
     questoes: IQuestao[]
     inicio: Date,
     duracao: number,
+    createdAt: DateTime,
+    updatedAt: DateTime,
+    bloqueado: boolean,
   }

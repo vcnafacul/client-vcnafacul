@@ -25,7 +25,11 @@ function DashProva(){
     const { data: { token, permissao }} = useAuthStore()
 
     const cardProvas : CardDashInfo[] = provas.map(prova => (
-        {cardId: prova._id, title: prova.nome, status: StatusEnum.Approved, infos: 
+        {cardId: prova._id, title: prova.nome, 
+            status: prova.totalQuestao === prova.totalQuestaoValidadas ? StatusEnum.Approved : 
+                prova.totalQuestao === prova.totalQuestaoCadastradas ? StatusEnum.Pending : 
+                StatusEnum.Rejected, 
+            infos: 
             [
                 { field:"Total de Questões", value: prova.totalQuestao.toString() },
                 { field:"Total de Questões Cadastradas", value: prova.totalQuestaoCadastradas.toString()},
