@@ -49,8 +49,8 @@ function FormField({id, label, type = "text", visibility = false, value, disable
 
     return (
         <div className={`${className} flex flex-col w-full relative justify-center items-center`}>
-            <LabelInput label={label} />
             <Input ref={ref} register={register} {...commonProps} />
+            <LabelInput label={label} />
             {type !== "password" ? 
                 <></> : 
                 backgroundImageToggleVisibility(visible)}

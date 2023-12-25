@@ -14,10 +14,15 @@ import Filter from "../../components/atoms/filter";
 import Button from "../../components/molecules/button";
 import { Roles } from "../../enums/roles/roles";
 import NewProva from "./modals/newProva";
+import { getTipos } from "../../services/tipoSimulado/getTipos";
+import { ITipoSimulado } from "../../dtos/simulado/tipoSimulado";
 
 function DashProva(){
     const [provas, setProvas] = useState<Prova[]>([])
     const [provaSelected, setProvaSelected] = useState<Prova | null>(null)
+
+    const [tipoSimulado, setTipoSimulado] = useState<ITipoSimulado[]>()
+
     const [openNewProva, setOpenNewProva] = useState<boolean>(false);
     const [showProva, setShowProva] = useState<boolean>(false);
     const dataRef = useRef<Prova[]>([])
@@ -64,11 +69,19 @@ function DashProva(){
             .catch((erro: Error) => {
                 toast.error(erro.message)
             })
+
+        getTipos(token)
+            .then(res => {
+                setTipoSimulado(res)
+            })
+            .catch((erro: Error) => {
+                toast.error(erro.message)
+            })
     },[token])
 
     const ModalNewProva = () => {
         if(!openNewProva) return null
-        return <NewProva handleClose={() => setOpenNewProva(false)} addProva={addProva} />
+        return <NewProva tipos={tipoSimulado!} handleClose={() => setOpenNewProva(false)} addProva={addProva} />
     }
 
     const ModalShowProva = () => {

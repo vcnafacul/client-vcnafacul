@@ -26,9 +26,11 @@ export const demand = `${content}/demand`
 export const mssimulado = `${BASE_URL}/mssimulado`
 
 export const simulado = `${mssimulado}/simulado`
+export const tipos = `${simulado}/tipos`
 export const toAnswer = `${simulado}/toanswer`
 export const answer = `${simulado}/answer`
 export const report = `${simulado}/report`
+
 
 export const prova = `${mssimulado}/prova`
 export const questoes = `${mssimulado}/questoes`
