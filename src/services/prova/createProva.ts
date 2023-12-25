@@ -10,7 +10,6 @@ export async function createProva (data: FormData, token: string): Promise<Prova
     });
     if(response.status !== 201){
         const res = await response.json()
-        console.log(res)
         if(response.status === 403) {
             throw new Error(res.message)
         }

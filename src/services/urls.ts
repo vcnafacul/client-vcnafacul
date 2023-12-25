@@ -33,4 +33,5 @@ export const report = `${simulado}/report`
 
 
 export const prova = `${mssimulado}/prova`
+export const missing = `${prova}/missing`
 export const questoes = `${mssimulado}/questoes`

@@ -44,9 +44,7 @@ function NewProva({ handleClose, addProva, tipos} : NewProvaProps){
 
     const tiposOptions : FormFieldOption[] = []
     tiposOptions.push({ label: '', value: ''})
-    tipos.map(f => {
-        console.log(f.nome)
-        if(f.nome.includes('Enem')){
+    tipos.map(f => {        if(f.nome.includes('Enem')){
             tiposOptions.push({ label: f.nome, value: f._id }) 
         }
     })

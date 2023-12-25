@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
 import Text from "../../../components/atoms/text";
@@ -26,6 +27,9 @@ import UploadButton from "../../../components/molecules/uploadButton";
 import { uploadImage } from "../../../services/question/uploadImage";
 import { createQuestion } from "../../../services/question/createQuestion";
 import BLink from "../../../components/molecules/bLink";
+import { getMissingNumber } from "../../../services/prova/getMissingNumber";
+import { yupResolver } from "@hookform/resolvers/yup"
+import * as yup from "yup"
 
 interface ModalDetalhesProps extends ModalProps {
     question?: Question
@@ -36,13 +40,28 @@ interface ModalDetalhesProps extends ModalProps {
 }
 
 function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatus, handleUpdateQuestion, handleAddQuestion } : ModalDetalhesProps) {
-    const {register, handleSubmit, watch, reset } = useForm();
+    const schema = yup
+    .object()
+    .shape({
+        prova: yup.string().required('Prova é obrigatoria').typeError('Por favor, selecione uma prova'),
+        numero: yup.number().required('Número da questão é obrigatório').typeError('Por favor, insira um número válido'),
+        enemArea: yup.string().required('Área do Conhecimento é obrigatorio').typeError('Área do Conhecimento é obrigatorio'),
+        materia: yup.string().required('Materia é obrigatoria').typeError('Materia é obrigatoria'),
+        frente1: yup.string().required('A Frente Principal é obrigatorio').typeError('A Frente Principal é obrigatorio'),
+        textoQuestao: yup.string().required('Texto da questão é obrigatorio').typeError('Texto da questão é obrigatorio'),
+    })
+    .required()
+    
+    const {register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm({
+        resolver: yupResolver(schema),
+    });
     const [isEditing, setIsEditing ] = useState<boolean>(false);
     const [photoOpen, setPhotoOpen] = useState<boolean>(false);
     const [refuse, setRefuse] = useState<boolean>(false);
     const [modified, setModified] = useState<boolean>(false);
     const [comeBack, setComeback]= useState<boolean>(false);
     const [alternative, setAlternative] = useState<string | undefined>(question?.alternativa)
+    const [numberMissing, setNumberMissing] = useState<number[]>([])
 
     const [imagePreview, setImagePreview] = useState<any>(null);
     const [uploadFile, setUploadFile ] = useState<any>(null);
@@ -50,6 +69,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
 
     const prova = watch("prova")
+    const numero = watch("numero")
 
     const previewImage = (file: any) => {
         const reader = new FileReader();
@@ -80,11 +100,13 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     const frentes : FormFieldOption[] = infos.frentes.map(f => ({ label: f.nome, value: f._id }))
     frentes.unshift({ label: '', value: undefined})
 
+    const numberOption : FormFieldOption[] = numberMissing.map(n => ({ label: `${n}`, value: n}))
+
     const listFieldClassification : FormFieldInput[]= [
         {id: "prova",  type: "option", label: "Prova:*", options: provas, value: question?.prova ?? '', disabled: !question ? false : !isEditing,},
-        {id: "ano", type: "text", label: "Ano:*", value: infos.provas.find(p => p._id === prova)?.ano ?? '', disabled: true,},
-        {id: "edicao", type: "text", label: "Edição:*", value: infos.provas.find(p => p._id === prova)?.edicao.toString() ?? '', disabled: true,},
-        {id: "numero", type: "number", label: "Número da Questão do Caderno:*", value: question?.numero, disabled: !question ? false : !isEditing,},
+        {id: "ano", type: "text", label: "Ano:*", value: infos.provas.find(p => p._id === prova ?? question?.prova)?.ano, disabled: true,},
+        {id: "edicao", type: "text", label: "Edição:*", value: infos.provas.find(p => p._id === prova ?? question?.prova)?.edicao , disabled: true,},
+        {id: "numero", type: "option", label: "Número da Questão:*", options: numberOption, value: numero ?? question?.numero, disabled: !question ? false : !isEditing,},
         {id: "enemArea", type: "option", label: "Área do Conhecimento:*", options: AreaEnem, value: question?.enemArea, disabled: !question ? false : !isEditing,},
         {id: "materia", type: "option", label: "Disciplina:*", options: materias, value: question?.materia, disabled: !question ? false : !isEditing,},
         {id: "frente1", type: "option", label: "Frente Principal:*", options: frentes, value: question?.frente1, disabled: !question ? false : !isEditing,},
@@ -138,16 +160,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         if(!alternative){
             toast.warn("Faltou preencher a alternativa correta", { theme: 'dark'})
         }
-        if(!data['ano']){
-            toast.warn("Faltou preencher o ano da questão", { theme: 'dark'})
-        }
-        if(!data['textoQuestao']){
-            toast.warn("Faltou preencher o texto da questão", { theme: 'dark'})
-        }
-        if(!data['edicao']){
-            data['edicao'] = 'Regular'
-        }
-        if(alternative && data['ano'] && data['textoQuestao']) {
+        else {
             const formData = new FormData()
             formData.append('file', uploadFile)
             uploadImage(formData, token)
@@ -200,6 +213,24 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         </div>
     }
 
+    const getMissing = useCallback(async () => {
+        if(prova){
+            getMissingNumber(prova, token)
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                .then((res) => {
+                    setNumberMissing(res)
+                    setValue('numero', numero ?? question?.numero)
+                    
+                })
+                .catch((erro: Error) => {
+                    toast.error(erro.message)
+                })
+        }
+        else {
+            setNumberMissing([])
+        }
+    }, [numero, prova, token])
+
     const ModalRefused = () => {
         if(!refuse) return null;
         return <ModalConfirmCancelMessage 
@@ -220,6 +251,13 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         return null;
     }
 
+    useEffect(() => {
+        if(!prova && question?.prova){
+            setValue('prova', question.prova)
+        }
+        getMissing()
+    }, [getMissing, infos.provas, numero, prova, question, setValue])
+
     const BDownloadProva = () => {
         if(!prova) return null
         return <BLink to={`${VITE_BASE_FTP}${infos.provas.find(p => p._id === prova)?.filename}`} target="_blank" className="flex" type="quaternary">Visualizar Prova</BLink>
@@ -229,6 +267,17 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         const subscription = watch(() => { setModified(true) });
         return () => subscription.unsubscribe();
       }, [watch]);
+
+    useEffect(() => {
+        const isValid = Object.keys(errors).length === 0;
+
+        if (!isValid) {
+            // Se houver erros, exibe mensagens de erro
+            Object.values(errors).forEach((error) => {
+                toast.warn(error.message, { theme: 'dark' });
+            });
+        }
+    }, [errors])
 
     return (
         <>

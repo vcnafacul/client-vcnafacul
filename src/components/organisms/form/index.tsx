@@ -1,10 +1,11 @@
 import { ComponentProps } from "react"
 import FormField, { FormFieldInput } from "../../molecules/formField"
-import { FieldValues, UseFormRegister } from "react-hook-form";
+import { UseFormRegister } from "react-hook-form";
 
 export type FormProps = ComponentProps<'div'> & {
     formFields: FormFieldInput[];
-    register: UseFormRegister<FieldValues>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    register: UseFormRegister<any>;
 }
 
 function Form({ formFields, register, ...props } : FormProps){

@@ -12,7 +12,7 @@ export async function getAllQuestions(token: string, status: StatusEnum) : Promi
         const questoes : QuestionDto[] = await response.json()
         return questoes.map((questao: QuestionDto) => (
             {
-                title: `${questao._id} ${questao.numero} ${questao.numero}`,
+                title: `${questao._id} ${questao.numero}`,
                 ...questao
             }
         ))
