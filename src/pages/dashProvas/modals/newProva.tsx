@@ -14,13 +14,15 @@ import UploadButton from "../../../components/molecules/uploadButton"
 import { edicaoArray } from "../../../enums/prova/edicao"
 import { createProva } from "../../../services/prova/createProva"
 import { CreateProva, Prova } from "../../../dtos/prova/prova"
+import { ITipoSimulado } from "../../../dtos/simulado/tipoSimulado"
 
 interface NewProvaProps extends ModalProps {
     addProva: (data: Prova) => void;
+    tipos: ITipoSimulado[];
 }
 
-function NewProva({ handleClose, addProva} : NewProvaProps){
-    const {register, handleSubmit } = useForm();
+function NewProva({ handleClose, addProva, tipos} : NewProvaProps){
+    const {register, handleSubmit, watch } = useForm();
     const [ exames, setExames] = useState<ObjDefault[]>([])
     const { data: { token }} = useAuthStore()
     const [uploadFile, setUploadFile ] = useState(null);
@@ -40,9 +42,17 @@ function NewProva({ handleClose, addProva} : NewProvaProps){
     examesOptions.push({ label: '', value: ''})
     examesOptions = examesOptions.concat(exames.map(f => ({ label: f.nome, value: f._id })))
 
+    const tiposOptions : FormFieldOption[] = []
+    tiposOptions.push({ label: '', value: ''})
+    tipos.map(f => {        if(f.nome.includes('Enem')){
+            tiposOptions.push({ label: f.nome, value: f._id }) 
+        }
+    })
+
     const edicaoOption : FormFieldOption[] = edicaoArray.map(f => ({ label: f, value: f }))
 
     const handleFileUpload = (e: any) => {
+        setUploadFile(null)
         const file = e.target.files[0];
         if(file){
             setUploadFile(file);
@@ -55,11 +65,14 @@ function NewProva({ handleClose, addProva} : NewProvaProps){
 
     const listFieldProva : FormFieldInput[]= [
         {id: "exame", type: "option", options: examesOptions, value: '', label: "Exame", disabled: false},
+        {id: "tipo", type: "option", options: tiposOptions, value: '', label: "Tipo", disabled: false},
         {id: "edicao", type: "option", options: edicaoOption , label: "Edicao", disabled: false},
         {id: "ano", type: "number", label: "Ano de Realização", value: 2023, disabled: false},
         {id: "aplicacao", type: "number", label: "Aplicacao", value: 1, disabled: false},
-        {id: "totalQuestao", type: "number", label: "Total de Questôes", value: 90, disabled: false},
     ]
+
+    const exame = watch('exame')
+    const tipo = watch('tipo')
 
     const create = (data: any) => {
         if(!uploadFile){
@@ -71,10 +84,10 @@ function NewProva({ handleClose, addProva} : NewProvaProps){
             const fileName = Date.now();
             const formData = new FormData()
             formData.append('exame', info.exame)
+            formData.append('tipo', info.tipo)
             formData.append('edicao', info.edicao)
             formData.append('ano', info.ano.toString())
             formData.append('aplicacao', info.aplicacao.toString())
-            formData.append('totalQuestao', info.totalQuestao.toString())
             formData.append('file', uploadFile!, `${fileName}.pdf`)
             createProva(formData, token)
                 .then((res) => {
@@ -88,7 +101,7 @@ function NewProva({ handleClose, addProva} : NewProvaProps){
                 })
             }
     }
-    
+
     return (
         <ModalTemplate>
             <div className="p-4 bg-white rounded mx-4 w-full max-w-3xl">
@@ -97,7 +110,7 @@ function NewProva({ handleClose, addProva} : NewProvaProps){
                     <Form formFields={listFieldProva} register={register} className="flex flex-wrap gap-4" />
                     <UploadButton onChange={handleFileUpload} placeholder="Upload Prova" className="self-end" accept='.pdf'/>
                     <div className="flex gap-4">
-                        <Button hover>Criar</Button>
+                        <Button disabled={!exame || !tipo || !uploadFile} hover>Criar</Button>
                         <Button hover type="button" onClick={handleClose}>Fechar</Button>
                     </div>
                 </form>

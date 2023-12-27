@@ -1,12 +1,10 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-
 import Home from "../pages/home";
 import Login from "../pages/login";
-import { ACCOUNT_PATH, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, EM_BREVE, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, SIMULADO } from "./path";
+import { ACCOUNT_PATH, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, EM_BREVE, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, SIMULADO, SIMULADO_RESPONDER } from "./path";
 import Dash from "../pages/dash";
 import DashGeo from "../pages/dashGeo";
 import Register from "../pages/register";
-import DashSimulate from "../pages/dashSimulate";
 import Simulate from "../pages/simulate";
 import DashQuestion from "../pages/dashQuestion";
 import Logout from "../pages/logout";
@@ -23,6 +21,8 @@ import Account from "../pages/account";
 import DashContent from "../pages/dashContent";
 import ProtectedRoutePermission from "./protectedRoutePermission";
 import ProtectedRoute from "./protectedRoute";
+import MainSimulate from "../pages/mainSimulate";
+import DashSimulado from "../pages/dashSimulado";
 
 
 export function PlatformRoutes() {
@@ -36,7 +36,7 @@ export function PlatformRoutes() {
             <Route path={LOGIN_PATH} element={<Login />} />
             <Route path={LOGOFF_PATH} element={<Logout />} />
             <Route path={REGISTER_PATH} element={<Register />} />
-            <Route path={SIMULADO} element={<Simulate />} />
+            <Route path={SIMULADO_RESPONDER} element={<Simulate />} />
             <Route path={NEWS} element={ <NewsPage />} />
 
             <Route path="/dashboard" element={
@@ -45,7 +45,7 @@ export function PlatformRoutes() {
                 </ProtectedRoute>
             }>
                 <Route path={DASH} element={<Dash />} />
-                <Route path={DASH_SIMULADO} element={<DashSimulate />} />
+                <Route path={SIMULADO} element={<MainSimulate />} />
                 <Route path={`${EM_BREVE}/:nomeMateria`} element={ <EmBreve />} />
                 <Route path={ACCOUNT_PATH} element={ <Account />} />
                 <Route path={DASH_QUESTION} element={
@@ -74,6 +74,11 @@ export function PlatformRoutes() {
                 <Route path={DASH_CONTENT} element={
                     <ProtectedRoutePermission permission={data.permissao[Roles.visualizarDemanda]}>
                         <DashContent mtv={data.permissao[Roles.validarDemanda]}/>
+                    </ProtectedRoutePermission>} />
+
+                <Route path={DASH_SIMULADO} element={
+                    <ProtectedRoutePermission permission={data.permissao[Roles.criarSimulado]}>
+                        <DashSimulado />
                     </ProtectedRoutePermission>} />
             </Route>
 

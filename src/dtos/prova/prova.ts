@@ -20,6 +20,6 @@ export interface CreateProva {
     aplicacao: number;
     ano: number;
     exame: string;
-    totalQuestao: number;
     filename: string;
+    tipo: string;
 }

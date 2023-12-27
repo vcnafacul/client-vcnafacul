@@ -8,7 +8,6 @@ import { getInfosQuestion } from "../../services/question/getInfosQuestion"
 import { InfoQuestion } from "../../types/question/infoQuestion"
 import { CardDashInfo } from "../../components/molecules/cardDash"
 import { formatDate } from "../../utils/date"
-// import { Order, dashQuest, filters } from "./data"
 import { dashQuest } from "./data"
 import Filter from "../../components/atoms/filter"
 import Select from "../../components/atoms/select"
@@ -129,8 +128,7 @@ function DashQuestion() {
             .catch((erro: Error) => {
                 toast.error(erro.message)
             })
-    }, [])
-
+    }, [token])
 
     useEffect(() => {
         getQuestions(status)
