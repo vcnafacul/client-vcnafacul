@@ -13,5 +13,5 @@ export const MateriasLabel = [
     { value: Materias.Historia, label: 'História'},
     { value: Materias.Geografia, label: 'Geografia'},
     { value: Materias.Filosofia, label: 'Filosofia'},
-    { value: Materias.Soliologia, label: 'Sociologia'},
+    { value: Materias.Sociologia, label: 'Sociologia'},
 ]

@@ -28,7 +28,7 @@ function ValidatedDemand({ handleClose, demand, updateStatusDemand}: ValidatedDe
     const MyContent = useCallback(() => {
         if(demand.filename){
             return (
-                <div className="flex w-full border justify-center py-4 overflow-y-auto scrollbar-hide max-h-[40vh]">
+                <div className="flex w-full justify-center py-4 overflow-y-auto scrollbar-hide max-h-[40vh]">
                     <Content docxFilePath={`${VITE_BASE_FTP}${demand.filename}`} />
                 </div>
             )

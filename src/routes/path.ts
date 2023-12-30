@@ -21,4 +21,5 @@ export const DASH_SIMULADO = "dash-simulado";
 export const NEWS = "/novidades"
 export const DASH_ROLES = "permissoes"
 
-export const EM_BREVE = "breve"
+export const ESTUDO = "estudo"
+export const CONTENT = 'content'
