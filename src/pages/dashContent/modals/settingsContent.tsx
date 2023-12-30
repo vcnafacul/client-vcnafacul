@@ -9,10 +9,10 @@ import FormField, { FormFieldOption } from "../../../components/molecules/formFi
 import { MateriasLabel } from "../../../types/content/materiasLabel"
 import { useForm } from "react-hook-form"
 import { Materias } from "../../../enums/content/materias"
-import { getFrentes } from "../../../services/content/getFrentes"
+import { getFrenteLikeFormField } from "../../../services/content/getFrentes"
 import { toast } from "react-toastify"
 import { useAuthStore } from "../../../store/auth"
-import { getSubjects } from "../../../services/content/getSubjects"
+import { getSubjectsLikeFormField } from "../../../services/content/getSubjects"
 import { ReactComponent as EditIcon } from '../../../assets/icons/edit.svg'
 import { ReactComponent as Deleteicon } from '../../../assets/icons/delete.svg'
 import EditFrente from "./editFrente"
@@ -48,7 +48,7 @@ function SettingsContent({handleClose} : SettingsContentProps) {
     const materia = watch('materia')
 
     const getFrenteByMateria = useCallback(async (materia: Materias) => {
-        getFrentes(materia ? materia : Materias.LPT, token)
+        getFrenteLikeFormField(materia ? materia : Materias.LPT, token)
             .then(res => {
                 setFrentes(res)
                 if(res.length > 0) {
@@ -64,7 +64,7 @@ function SettingsContent({handleClose} : SettingsContentProps) {
     }, [setValue, token])
 
     const getSubjectByFrente = useCallback(async (frente: number) => {
-        getSubjects(frente, token)
+        getSubjectsLikeFormField(frente, token)
             .then(res => {
                 setSubjects(res)
                 if(res.length > 0) {

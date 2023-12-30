@@ -5,11 +5,11 @@ import Form from "../../../components/organisms/form"
 import ModalTemplate, { ModalProps } from "../../../components/templates/modalTemplate"
 import { MateriasLabel } from "../../../types/content/materiasLabel";
 import { useCallback, useEffect, useState } from "react";
-import { getFrentes } from "../../../services/content/getFrentes";
+import { getFrenteLikeFormField } from "../../../services/content/getFrentes";
 import { useAuthStore } from "../../../store/auth";
 import { Materias } from "../../../enums/content/materias";
 import { toast } from "react-toastify";
-import { getSubjects } from "../../../services/content/getSubjects";
+import { getSubjectsLikeFormField } from "../../../services/content/getSubjects";
 import { createContent } from "../../../services/content/createContent";
 import { ContentDtoInput } from "../../../dtos/content/contentDtoInput";
 
@@ -59,7 +59,7 @@ function NewDemand({ handleClose, addDemand } : NewDemandProps){
     }
 
     const getSubjectByFrente = useCallback(async (frente: number) => {
-        getSubjects(frente, token)
+        getSubjectsLikeFormField(frente, token)
             .then(res => {
                 setSubjects(res)
                 if(res.length > 0) {
@@ -74,7 +74,7 @@ function NewDemand({ handleClose, addDemand } : NewDemandProps){
     }, [setValue, token])
 
     const getFrenteByMateria = useCallback(async (materia: Materias) => {
-        getFrentes(materia ? materia : Materias.LPT, token)
+        getFrenteLikeFormField(materia ? materia : Materias.LPT, token)
             .then(res => {
                 setFrentes(res)
                 if(res.length > 0) {

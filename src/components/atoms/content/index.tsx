@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import mammoth from 'mammoth';
-import './content.css';
+// import './content.css';
 import fetchWrapper from '../../../utils/fetchWrapper';
 import { toast } from 'react-toastify';
 

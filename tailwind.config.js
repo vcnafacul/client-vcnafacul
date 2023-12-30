@@ -38,7 +38,8 @@ export default {
     screens: {
       'sm': '768px',
       'md': '1200px',
-      'lg': '1400px'
+      'lg': '1400px',
+      'xl': '1565px'
     },
     keyframes: {
       rotate: {

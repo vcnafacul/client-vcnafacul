@@ -1,0 +1,58 @@
+/* content.css */
+.content img {
+    max-width: 400px;
+
+    @media (min-width: 1200px) {
+        max-width: 1000px;
+    }
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    margin: 25px 10px;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    background-color: white;
+    box-shadow: 0px 0px 5px rgb(139, 139, 139);
+    border-radius: 15px;
+
+    @media (min-width: 1200px){
+        margin: 25px auto;
+        width: 1100px;
+    }
+
+   /*  @media (min-width: 1600px){
+        margin: 25px auto;
+        width: 1600px;
+    } */
+}
+
+.content h1 {
+    padding: 20px 0px 0px 0px;
+    font-size: 2rem;
+    border-bottom: 50px solid orange;
+    color: red;
+}
+
+.content h2 {
+    padding: 20px 0px 0px 0px;
+    font-size: 1.6rem;
+    border-bottom: 2px solid blue;
+}/* A */
+
+.content h3 {
+    padding: 20px 0px 0px 0px;
+}
+
+.content h4 {
+    padding: 20px 0px 0px 0px;
+}
+
+.content h5 {
+    padding: 20px 0px 0px 0px;
+}
+
+.content p {
+    padding: 20px 0px 0px 0px;
+}

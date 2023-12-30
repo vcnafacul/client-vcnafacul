@@ -11,5 +11,9 @@ export enum Materias {
     Historia,
     Geografia,
     Filosofia,
-    Soliologia,
+    Sociologia,
   }
+
+export function getMateriaString(valorEnum: Materias): string {
+    return Materias[valorEnum];
+}
