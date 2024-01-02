@@ -28,3 +28,7 @@ export interface FrenteDto {
     lenght: number;
     materia: Materias
 }
+
+export interface ContentDtoInputOrder extends ContentDtoInput {
+    next: number;
+}
