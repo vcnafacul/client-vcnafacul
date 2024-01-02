@@ -1,8 +1,7 @@
+import { User } from "../user/userRegister";
+
 export interface UserRole {
-    userId: number;
-    userName: string;
-    userEmail: string;
-    userPhone: string;
+    user: User;
     roleId: number;
     roleName: string;
 }

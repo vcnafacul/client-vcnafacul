@@ -90,8 +90,8 @@ export const dashCardMenuItems : DashCardMenu[] = [
             },
             { 
                 icon: Quimica, 
-                alt: "permissoes", 
-                text: "Permissões", 
+                alt: "usuarios", 
+                text: "Usuários", 
                 link: `/dashboard/${DASH_ROLES}`,
                 permission: Roles.alterarPermissao
             },

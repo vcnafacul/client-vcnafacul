@@ -18,7 +18,6 @@ function Subject(){
     const dataRef = useRef<ContentDtoInput[]>([])
     const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
 
-    console.log(contentSelected)
     const MyContent = useCallback(() => {
         if(contentSelected){
             return (

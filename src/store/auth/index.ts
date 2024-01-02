@@ -17,7 +17,11 @@ const initialUser = {
         phone: "",
         state: "",
         city: "",
-        lgpd: false
+        lgpd: false,
+        about: "",
+        collaborator: false,
+        collaboratorDescription: null,
+        collaboratorPhoto: undefined
     },
     token: "",
     permissao: {}
@@ -35,6 +39,9 @@ export type Auth = {
     city: string;
     about?: string;
     lgpd: boolean;
+    collaborator: boolean;
+    collaboratorDescription?: string | null;
+    collaboratorPhoto?: string | null;
 }
 
 export type AuthProps = {

@@ -45,13 +45,33 @@ function ActionAreas({title, subtitle, tabItems, cardItems} : ActionAreasProps) 
         );
     })
 
+    const breakpoints = {
+        1: {
+            slidesPerView: 1,
+        },
+        500: {
+            slidesPerView: 2,
+  
+        },
+        800: {
+            slidesPerView: 3,
+  
+        },
+        1100: {
+            slidesPerView: 4,
+  
+        },
+      }
+
     const cardsItems = () => {
         const childrens = CardTopics(cardItems[index])
-        return <Carousel slidesPerView={3}
+        return <Carousel
             childrens={childrens}
             className="bg-white h-72 mt-6 container mx-auto"
             pagination
             dynamicBullets
+            breakpoints={breakpoints}
+            centeredSlides={false}
         />
     };
 

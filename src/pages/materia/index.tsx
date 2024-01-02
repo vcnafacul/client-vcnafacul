@@ -57,7 +57,6 @@ function Materia(){
                             return (
                                 <SimpleCardColor name={subject.name}  key={subject.id} 
                                     onClick={() => {
-                                        console.log(`dashboard/${CONTENT}/${subject.name.replace(' ', '')}/${subject.id}`)
                                         navigate(`/dashboard/${CONTENT}/${subject.name.replace(' ', '')}/${subject.id}`)
                                     }}/>
                             )
