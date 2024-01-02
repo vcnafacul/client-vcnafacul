@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react"
 import Button from "../../../components/molecules/button"
 import ModalTemplate, { ModalProps } from "../../../components/templates/modalTemplate"
@@ -75,7 +76,10 @@ function ViewOrder({ handleClose, subjectId } : ViewOrderProps) {
             node2 = contents[position].id
         }
 
+        console.log(position)
+
         const body: ChangeOrderDTO = {
+            listId: subjectId,
             node1: demandSelected!.nodeId,
             node2: node2
         }

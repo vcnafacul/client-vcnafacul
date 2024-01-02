@@ -12,7 +12,7 @@ interface ChangeOrderProps extends ModalProps{
 }
 
 function ChangeOrder({ handleClose, demand, optionNumber, updateNode }: ChangeOrderProps){
-    const [position, setPosition] = useState<number>(demand.order)
+    const [position, setPosition] = useState<number>(optionNumber[0].id)
     return (
         <ModalTemplate>
             <div className="bg-white p-4 rounded">
