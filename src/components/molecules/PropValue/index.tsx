@@ -11,7 +11,7 @@ function PropValue({prop, value, className} : PropValueProps){
     return (
         <div className="flex gap-x-1 md:gap-4 flex-col sm:flex-row justify-start">
             <Text className={`font-black m-0 self-start ${className}`} size="quaternary">{prop}: </Text>
-            <Text className={`m-0 text-left ${className}`} size="quaternary">{value}</Text>
+            <Text className={`m-0 text-left flex items-center ${className}`} size="quaternary">{value}</Text>
         </div>
     )
 }

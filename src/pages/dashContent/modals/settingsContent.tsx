@@ -19,6 +19,8 @@ import EditFrente from "./editFrente"
 import EditSubject from "./editSubject"
 import { deleteSubject } from "../../../services/content/deleteSubject"
 import { deleteFrente } from "../../../services/content/deleteFrente"
+import { TbArrowsExchange } from "react-icons/tb";
+import ViewOrder from "./viewOrder"
 
 interface SettingsContentProps extends ModalProps {
 
@@ -39,6 +41,7 @@ function SettingsContent({handleClose} : SettingsContentProps) {
     const [openEditModalFrente, setOpenEditModalFrente]= useState<boolean>(false)
     const [openNewModalSubject, setOpenNewModalSubject]= useState<boolean>(false)
     const [openEditModalSubject, setOpenEditModalSubject]= useState<boolean>(false)
+    const [openModalViewOrder, setOpenModalViewOrder]= useState<boolean>(false)
     const [frentes, setFrentes ] = useState<FormFieldOptionDelete[]>([])
     const [frenteSelected, setFrenteSelected] = useState<FormFieldOptionDelete | null>()
     const [subjects, setSubjects] = useState<FormFieldOptionSubject[]>([])
@@ -129,6 +132,7 @@ function SettingsContent({handleClose} : SettingsContentProps) {
         <div key={index} className={`flex w-full justify-between px-2 py-1 rounded-md select-none ${index % 2 == 0 ? 'bg-gray-200' : 'bg-white'}`}>
             <span className="my-1 text-base font-semibold text-marine">{subject.label}</span>
             <div className="flex gap-2">
+                <TbArrowsExchange className="w-7 h-7 rotate-90 cursor-pointer" title="Alterar Order Conteúdos" onClick={() => { setSubjectSelected(subject); setOpenModalViewOrder(true) }} />
                 <EditIcon className="w-7 h-7 fill-marine cursor-pointer" onClick={() => { setSubjectSelected(subject); setOpenEditModalSubject(true)}} />
                 {subject.canDelete ? <Deleteicon className="w-6" onClick={() => { removeSubject(subject) }}/> : <></>}
             </div>
@@ -206,6 +210,13 @@ function SettingsContent({handleClose} : SettingsContentProps) {
             handleClose={() => setOpenEditModalSubject(false)} />
     }
 
+    const ViewOrderModal = () => {
+        if(!openModalViewOrder) return null
+        return <ViewOrder 
+        handleClose={() => { setOpenModalViewOrder(false) }}
+        subjectId={subjectSelected!.value} />
+    }
+
     useEffect(()=> {
         if(!materia){
             setValue('materia', MateriasLabel[0].value)
@@ -254,6 +265,7 @@ function SettingsContent({handleClose} : SettingsContentProps) {
             <NewModalSubject />
             <EditModalFrente />
             <EditModalSubject />
+            <ViewOrderModal />
         </>
     )
 }
