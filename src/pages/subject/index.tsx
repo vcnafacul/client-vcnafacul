@@ -43,19 +43,21 @@ function Subject(){
         },[id, token])
 
     return (
-        <div className="flex flex-col xl:flex-row gap-4 flex-wrap justify-center">
-            {contents.length > 0 ? <Text className="m-0 pt-4">{contents[0].subject.name}</Text> : <></>}
-            <div className="m-4 xl:mt-8 xl:mr-8 bg-white border shadow-md rounded-md flex gap-4 xl:flex-col h-fit flex-wrap w-fit">
-                {contents.map((content, index) => (
-                    <div key={index} onClick={() => { setContentSelected(content)}}
-                    className={`px-4 py-1 cursor-pointer transition-all duration-300 min-w-[120px]
-                    ${content.id === contentSelected?.id ? 'font-black bg-gray-200' : ''}`}>{index + 1} - {content.title}</div>
-                ))}
+            <div>
+                {contents.length > 0 ? <Text className="m-0 pt-4">{contents[0].subject.name}</Text> : <></>}
+                <div className="flex flex-col xl:flex-row gap-4 flex-wrap justify-center">
+                    <div className="m-4 xl:mt-8 xl:mr-8 bg-white border shadow-md rounded-md flex gap-4 xl:flex-col h-fit flex-wrap w-fit">
+                        {contents.map((content, index) => (
+                            <div key={index} onClick={() => { setContentSelected(content)}}
+                            className={`px-4 py-1 cursor-pointer transition-all duration-300 min-w-[120px]
+                            ${content.id === contentSelected?.id ? 'font-black bg-gray-200' : ''}`}>{index + 1} - {content.title}</div>
+                        ))}
+                    </div>
+                    <div className="px-4">
+                        <MyContent />
+                    </div>
+                </div>
             </div>
-            <div className="px-4">
-                <MyContent />
-            </div>
-        </div>
     )
 }
 
