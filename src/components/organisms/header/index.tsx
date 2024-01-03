@@ -26,17 +26,22 @@ export interface HeaderProps {
 function Header({ itemsMenu, socialLinks, solid, userNavigationSign, userNavigationLogged,  className } : HeaderProps) {
     const [openMenu, setOpenMenu] = useState(false);
     const {  data: { token, user: { firstName } } } = useAuthStore()
+
+    const MenuBugger = () => {
+        if(openMenu) return null
+        return (
+            <div onClick={() => setOpenMenu(true) } className="md:hidden">
+                <MenuIcon className={`${!solid ? 'fill-white' : 'fill-marine'}`} />
+            </div> 
+        )
+    }
     
     return (
         <header className={className}>
-            <div className={`md:container mx-auto`}>
+            <div className='md:container mx-auto'>
                 <div>
                     <div className="flex justify-between items-center mx-4 md:mx-auto md:max-w-6xl ">
-                        {openMenu ? <></> :
-                            <div onClick={() => setOpenMenu(true) }>
-                                <MenuIcon className={`${!solid ? 'fill-white' : 'fill-marine'} md:hidden`} />
-                            </div>
-                        }
+                        <MenuBugger />
                         <Logo solid={solid} name />
                         <MainMenu itemsMenu={itemsMenu} socialLinks={socialLinks} solid={solid} open={openMenu} 
                         handleClose={() =>{
