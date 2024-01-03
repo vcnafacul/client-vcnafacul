@@ -47,7 +47,7 @@ export const userNavigationSign = [
 
 export const userNavigationLogged = [
     { name: 'DashBoard', href: DASH },
-    { name: 'Editar Perfil', href: ACCOUNT_PATH },
+    { name: 'Editar Perfil', href: `/dashboard/${ACCOUNT_PATH}` },
     { name: 'Sair', href: LOGOFF_PATH },
 ]
 
