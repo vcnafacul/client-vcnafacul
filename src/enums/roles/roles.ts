@@ -11,7 +11,8 @@ export enum Roles {
     visualizarDemanda = 'visualizarDemanda',
     uploadDemanda = 'uploadDemanda',
     validarDemanda = 'validarDemanda',
-    gerenciadorDemanda = 'gerenciadorDemanda'
+    gerenciadorDemanda = 'gerenciadorDemanda',
+    report = 'report'
 }
 
 export const RolesLabel = [

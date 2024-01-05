@@ -22,6 +22,8 @@ import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-ge
 import { ReactComponent as Filosofia } from "../../assets/icons/home-subjects-filosofia.svg"
 import { ReactComponent as Sociologia } from "../../assets/icons/home-subjects-sociologia.svg"
 
+import { ReactComponent as Report } from '../../assets/icons/warning.svg'
+
 
 import { Roles } from "../../enums/roles/roles";
 import { DashCardMenu } from "../../components/molecules/dashCard";
@@ -129,6 +131,13 @@ export const dashCardMenuItems : DashCardMenu[] = [
                 text: "Simulado", 
                 link: `/dashboard/${DASH_SIMULADO}`,
                 permission: Roles.criarQuestao
+            },
+            { 
+                icon: Report, 
+                alt: "error_report", 
+                text: "Reportar Erro", 
+                link: `https://docs.google.com/document/d/1VFpGiW4LuooMdtOemtFEVbqHMesP0rTZ1fX8BFwG_2w/edit?usp=sharing`,
+                permission: Roles.report
             },
         ],
     },
