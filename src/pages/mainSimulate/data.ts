@@ -42,9 +42,9 @@ export const getTitle = (type: SimuladoDefaultEnum) => {
     case SimuladoDefaultEnum.Linguagens:
       return "Linguagens"
     case SimuladoDefaultEnum.Humanas:
-      return "Ciências da Natureza"
-    case SimuladoDefaultEnum.Natureza:
       return "Ciência Humanas"
+    case SimuladoDefaultEnum.Natureza:
+      return "Ciências da Natureza"
     case SimuladoDefaultEnum.Matematica:
       return "Matemática"
     case SimuladoDefaultEnum.Enem1:
