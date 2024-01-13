@@ -1,9 +1,10 @@
 import { HeaderProps } from "../../components/organisms/header";
 import {header}  from "../home/data";
 import { DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, SIMULADO, DASH_ROLES, DASH_PROVAS, DASH_CONTENT, NEWS, DASH_SIMULADO, ESTUDO, DASH } from "../../routes/path";
-import BioExatasImg from "../../assets/images/dashboard/bioexatas.svg";
-import HumanasImg from "../../assets/images/dashboard/humanas.svg";
-import LinguagensImg from "../../assets/images/dashboard/linguagens.svg";
+import { ReactComponent as NaturezaImg } from "../../assets/images/dashboard/natureza.svg";
+import { ReactComponent as HumanasImg } from "../../assets/images/dashboard/humanas.svg";
+import { ReactComponent as LinguagensImg } from "../../assets/images/dashboard/linguagens.svg";
+import { ReactComponent as MatematicaImg }from "../../assets/images/dashboard/matematica.svg";
 
 import { ReactComponent as LPT } from "../../assets/icons/home-subjects-leitura-prod-textos.svg"
 import { ReactComponent as Gramatica } from "../../assets/icons/home-subjects-gramatica.svg"
@@ -52,14 +53,13 @@ export const dashCardMenuItems : DashCardMenu[] = [
     {
         id: 2,
         bg: "bg-pink",
-        title: "BioExatas",
-        image: BioExatasImg,
-        alt: "BioExatas",
+        title: "Natureza",
+        image: NaturezaImg,
+        alt: "Natureza",
         subMenuList: [
             { icon: Biologia, alt: "molécula de DNA", text: "Biologia", link: `${ESTUDO}/${getMateriaString(Materias.Biologia)}` },
             { icon: Fisica, alt: "risco biológico", text: "Física", link: `${ESTUDO}/${getMateriaString(Materias.Fisica)}` },
             { icon: Quimica, alt: "quimica", text: "Quimica", link: `${ESTUDO}/${getMateriaString(Materias.Quimica)}` },
-            { icon: Matematica, alt: "calculadora", text: "Matemática", link: `${ESTUDO}/${getMateriaString(Materias.Matematica)}` },
         ],
     },
     {
@@ -77,6 +77,16 @@ export const dashCardMenuItems : DashCardMenu[] = [
     },
     {
         id: 4,
+        bg: "bg-purple",
+        title: "Matemática",
+        image: MatematicaImg,
+        alt: "Matemática",
+        subMenuList: [
+            { icon: Matematica, alt: "calculadora", text: "Matemática", link: `${ESTUDO}/${getMateriaString(Materias.Matematica)}` },
+        ],
+    },
+    {
+        id: 5,
         bg: "bg-orange",
         title: "Admin",
         image: HumanasImg,

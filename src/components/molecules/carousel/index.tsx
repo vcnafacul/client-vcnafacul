@@ -13,6 +13,7 @@ interface CarouselProps extends SwiperProps {
     slidesPerView?: number;
     spaceBetween?: number;
     loop?: boolean;
+    centerInsufficientSlides?: boolean;
     slidesPerGroupSkip?: number;
     grabCursor?: boolean;
     dynamicBullets?: boolean;
@@ -20,7 +21,6 @@ interface CarouselProps extends SwiperProps {
     arrow?: boolean;
     arrowClassName?: string;
     fillArrow?: string;
-    centerInsufficientSlides?: boolean;
 }
 
 function Carousel({className, childrens, slidesPerView, spaceBetween, loop, centerInsufficientSlides, slidesPerGroupSkip, grabCursor, dynamicBullets, breakpoints, arrowClassName, fillArrow, arrow = false, ...props}: CarouselProps) {

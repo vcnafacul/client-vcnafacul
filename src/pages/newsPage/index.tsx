@@ -31,13 +31,10 @@ function NewsPage(){
       },
       350: {
           slidesPerView: 1.5,
-
       },
       388: {
           slidesPerView: 2,
-
       },
-
       700: {
           slidesPerView: 3,
 

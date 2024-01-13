@@ -134,7 +134,7 @@ function MainSimulate() {
             .then(res => {
                 setSimulatseDefault([
                     {type: SimuladoDefaultEnum.Linguagens, id: res.Linguagens},
-                    {type: SimuladoDefaultEnum.BioExatas, id: res.CienciasDaNatureza},
+                    {type: SimuladoDefaultEnum.Natureza, id: res.CienciasDaNatureza},
                     {type: SimuladoDefaultEnum.Humanas, id: res.CienciasHumanas},
                     {type: SimuladoDefaultEnum.Matematica, id: res.Matematica},
                     {type: SimuladoDefaultEnum.Enem1, id: res.Enem1},

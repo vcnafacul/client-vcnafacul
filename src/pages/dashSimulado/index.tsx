@@ -30,7 +30,7 @@ function DashSimulado(){
         getSimulados(token)
             .then(res => {
                 setSimulados(res)
-                toast.update(id, { isLoading: false, autoClose: 1,})
+                toast.dismiss(id)
             })
             .catch((error: Error) => {
                 toast.update(id, {render: error.message, type: "error", isLoading: false, autoClose: 3000, });
