@@ -4,10 +4,10 @@ import HighlightSelectorMobile from "../../atoms/highlightSelectorMobile"
 import './styles.css'
 
 const selector = tv({
-    base: 'desktop ulComponent text-xl justify-around',
+    base: 'desktop ulComponent text-xl',
     variants: {
         align: {
-            horizontal: 'justify-center w-full',
+            horizontal: 'justify-center',
             vertial: 'flex-col justify-between'
         },
     },

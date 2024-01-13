@@ -157,9 +157,9 @@ export const footer: FooterProps = {
         { id: 2,name: "Politicas de Privacidade", link: "/Política de Privacidade.pdf" },
     ],
     pageLinks: [
-        { id: 1, name: "Quem Somos", link: "#" },
-        { id: 2, name: "Localiza Cursinho", link: "#" },
-        { id: 3, name: "Blog", link: "#" },
+        { id: 1, name: "Quem Somos", link: "/#about-us" },
+        { id: 2, name: "Localiza Cursinho", link: "/#map" },
+        { id: 3,name: "Apoiadores", link: "/#supporters" },
     ],
     slogan: "Equidade. Oportunidade. Realização.",
     email: "contato@vcnafacul.com.br",

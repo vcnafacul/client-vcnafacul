@@ -19,9 +19,11 @@ interface CarouselProps extends SwiperProps {
     dynamicBullets?: boolean;
     breakpoints?: any;
     arrow?: boolean;
+    arrowClassName?: string;
+    fillArrow?: string;
 }
 
-function Carousel({className, childrens, slidesPerView, spaceBetween, loop, centerInsufficientSlides, slidesPerGroupSkip, grabCursor, dynamicBullets, breakpoints, arrow = false, ...props}: CarouselProps) {
+function Carousel({className, childrens, slidesPerView, spaceBetween, loop, centerInsufficientSlides, slidesPerGroupSkip, grabCursor, dynamicBullets, breakpoints, arrowClassName, fillArrow, arrow = false, ...props}: CarouselProps) {
 
     return (
         <div className={className}>
@@ -31,16 +33,16 @@ function Carousel({className, childrens, slidesPerView, spaceBetween, loop, cent
                 pagination={{
                     dynamicBullets: dynamicBullets ?? false,
                 }}
+                centerInsufficientSlides={centerInsufficientSlides ?? true}
                 slidesPerView={slidesPerView ?? 1}
                 spaceBetween={spaceBetween ?? 30}
                 loop={loop ?? true}
-                centerInsufficientSlides={centerInsufficientSlides ?? true}
                 slidesPerGroupSkip={ slidesPerGroupSkip ?? 1}
                 grabCursor={grabCursor ?? false}>
                 {childrens.map((child, index) => (
                     <SwiperSlide key={index}>{child}</SwiperSlide>
-                ))}
-                {arrow ? <PrevNextSwiper /> : <></>}
+                    ))}
+                {arrow ? <PrevNextSwiper className={arrowClassName} fill={fillArrow} /> : <></>}
             </Swiper>
         </div>
     )

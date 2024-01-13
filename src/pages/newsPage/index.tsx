@@ -49,25 +49,9 @@ function NewsPage(){
 
 
     useEffect(() => {
-      const teste: News[] = [{
-        id: 30,
-        session: 'Dicas',
-        title: 'teste 1',
-        fileName: '1704927241119.docx',
-        createdAt: new Date(),
-        actived: true
-      }, {
-        id: 31,
-        session: 'Dicas',
-        title: 'teste 2',
-        fileName: '1704927241119.docx',
-        createdAt: new Date(),
-        actived: true
-      }]
         getNews()
           .then(res => {
-            setNews(teste)
-            // setNews(res)
+            setNews(res)
           })
           .catch((error: Error) => {
             toast.error(error.message)

@@ -3,6 +3,7 @@ import Text from "../../atoms/text"
 import Selector from "../../molecules/selector"
 import './styles.css'
 import Carousel from "../../molecules/carousel";
+import { Navigation, Pagination } from 'swiper/modules';
 
 interface Sponsor {
     image: React.FC<React.SVGProps<SVGSVGElement>> | string;
@@ -31,6 +32,8 @@ function Supporters({title, subtitle, tabItems, sponsors, volunteers} : Supporte
         setTab(tab)
     }
 
+    console.log('Renderizou')
+
     const breakpoints = {
         1: {
             slidesPerView: 1.5,
@@ -50,8 +53,10 @@ function Supporters({title, subtitle, tabItems, sponsors, volunteers} : Supporte
       }
 
     const CardVolunteers = (volunteers: Volunteer[]) => volunteers.map((volunteer, index) => (
-        <div key={index} className="flex flex-col items-center w-48 mt-10">
-            <img className="w-40 h-40 rounded-full" src={volunteer.image as string} alt={volunteer.alt}/>
+        <div key={index} className="flex flex-col items-center">
+            <div className="w-40 h-40">
+                <img className="rounded-full" src={volunteer.image as string} alt={volunteer.alt}/>
+            </div>
             <p className="font-base text-marine text-lg">{volunteer.name}</p>
             <p className="font-thin text-marine text-base">{volunteer.description.substring(0, 30) + `${volunteer.description.length > 30 ? ' ...' : ''}`}</p>
         </div>
@@ -65,11 +70,13 @@ function Supporters({title, subtitle, tabItems, sponsors, volunteers} : Supporte
             pagination
             dynamicBullets
             breakpoints={breakpoints}
+            modules={[Pagination, Navigation]}
         />
     };
 
     return (
-        <div id="supporters" className=" bg-white relative">
+        <div className=" bg-white relative">
+            <div className="relative h-10 bg-white" id="supporters" />
             <div className="py-12 px-0 md:py-14 ">
                 <div className="mb-8">
                     <Text size="secondary">{title}</Text>

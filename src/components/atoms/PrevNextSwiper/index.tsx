@@ -1,13 +1,19 @@
 import { useSwiper } from 'swiper/react'
 import { ReactComponent as Arrow } from '../../../assets/icons/arrow.svg'
 
-function PrevNextSwiper() {
-    const swiper = useSwiper()
+interface PrevNextSwiperProps {
+    className?: string;
+    fill?: string;
+}
 
+function PrevNextSwiper({ className, fill } : PrevNextSwiperProps) {
+    const swiper = useSwiper()
+    const arrowFill = fill === undefined ? 'fill-grey' : 'fill-white'
+    const classNameArrow = `w-10 cursor-pointer ${arrowFill}`
     return (
-        <div className='relative w-full flex justify-between  pr-8'>
-            <Arrow onClick={() => { swiper.slidePrev() }} className="fill-grey w-10 rotate-180 cursor-pointer" />
-            <Arrow onClick={() => { swiper.slideNext() }} className="fill-grey w-10 cursor-pointer"/>
+        <div className={`w-full flex justify-between pr-8 z-10 ${className}`}>
+            <Arrow onClick={() => { swiper.slidePrev() }} className={`rotate-180 ${classNameArrow}`} />
+            <Arrow onClick={() => { swiper.slideNext() }} className={classNameArrow}/>
         </div>
     )
 }
