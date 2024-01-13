@@ -1,7 +1,7 @@
 export enum SimuladoDefaultEnum {
     Linguagens,
     Humanas,
-    BioExatas,
+    Natureza,
     Matematica,
     Enem1,
     Enem2,
