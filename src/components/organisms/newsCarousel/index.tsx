@@ -22,7 +22,7 @@ function NewsCarousel({ news, breakpoints, onClickCard }: NewsCarouselProps){
     return (
         <div className="py-4 w-3/4 md:container mx-auto relative">
             <Carousel modules={[Pagination, Navigation]} arrow
-            dynamicBullets childrens={cardsNews} loop={false} breakpoints={breakpoints} slidesPerView={4} centeredSlides={false} />
+            dynamicBullets childrens={cardsNews} loop={false} breakpoints={breakpoints} slidesPerView={4} />
         </div>
     )
 }

@@ -31,13 +31,10 @@ function NewsPage(){
       },
       350: {
           slidesPerView: 1.5,
-
       },
       388: {
           slidesPerView: 2,
-
       },
-
       700: {
           slidesPerView: 3,
 
@@ -52,9 +49,25 @@ function NewsPage(){
 
 
     useEffect(() => {
+      const teste: News[] = [{
+        id: 30,
+        session: 'Dicas',
+        title: 'teste 1',
+        fileName: '1704927241119.docx',
+        createdAt: new Date(),
+        actived: true
+      }, {
+        id: 31,
+        session: 'Dicas',
+        title: 'teste 2',
+        fileName: '1704927241119.docx',
+        createdAt: new Date(),
+        actived: true
+      }]
         getNews()
           .then(res => {
-            setNews(res)
+            setNews(teste)
+            // setNews(res)
           })
           .catch((error: Error) => {
             toast.error(error.message)

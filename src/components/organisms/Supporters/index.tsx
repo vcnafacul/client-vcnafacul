@@ -65,7 +65,6 @@ function Supporters({title, subtitle, tabItems, sponsors, volunteers} : Supporte
             pagination
             dynamicBullets
             breakpoints={breakpoints}
-            centeredSlides={true}
         />
     };
 

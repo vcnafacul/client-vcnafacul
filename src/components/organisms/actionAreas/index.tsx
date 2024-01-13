@@ -71,7 +71,7 @@ function ActionAreas({title, subtitle, tabItems, cardItems} : ActionAreasProps) 
             pagination
             dynamicBullets
             breakpoints={breakpoints}
-            centeredSlides={false}
+            centerInsufficientSlides={false}
         />
     };
 
