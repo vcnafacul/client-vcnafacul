@@ -1,5 +1,4 @@
 import { VariantProps, tv } from "tailwind-variants"
-import { Link } from "react-router-dom";
 
 const menuItem = tv({
     base: 'flex',
