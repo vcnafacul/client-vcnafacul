@@ -13,7 +13,7 @@ interface CarouselProps extends SwiperProps {
     slidesPerView?: number;
     spaceBetween?: number;
     loop?: boolean;
-    centeredSlides?: boolean;
+    centerInsufficientSlides?: boolean;
     slidesPerGroupSkip?: number;
     grabCursor?: boolean;
     dynamicBullets?: boolean;
@@ -21,7 +21,7 @@ interface CarouselProps extends SwiperProps {
     arrow?: boolean;
 }
 
-function Carousel({className, childrens, slidesPerView, spaceBetween, loop, centeredSlides, slidesPerGroupSkip, grabCursor, dynamicBullets, breakpoints, arrow = false, ...props}: CarouselProps) {
+function Carousel({className, childrens, slidesPerView, spaceBetween, loop, centerInsufficientSlides, slidesPerGroupSkip, grabCursor, dynamicBullets, breakpoints, arrow = false, ...props}: CarouselProps) {
 
     return (
         <div className={className}>
@@ -34,8 +34,7 @@ function Carousel({className, childrens, slidesPerView, spaceBetween, loop, cent
                 slidesPerView={slidesPerView ?? 1}
                 spaceBetween={spaceBetween ?? 30}
                 loop={loop ?? true}
-                centeredSlides={centeredSlides ?? true}
-                
+                centerInsufficientSlides={centerInsufficientSlides ?? true}
                 slidesPerGroupSkip={ slidesPerGroupSkip ?? 1}
                 grabCursor={grabCursor ?? false}>
                 {childrens.map((child, index) => (
