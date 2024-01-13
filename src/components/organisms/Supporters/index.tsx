@@ -31,6 +31,8 @@ function Supporters({title, subtitle, tabItems, sponsors, volunteers} : Supporte
         setTab(tab)
     }
 
+    console.log('Renderizou')
+
     const breakpoints = {
         1: {
             slidesPerView: 1.5,
@@ -50,8 +52,10 @@ function Supporters({title, subtitle, tabItems, sponsors, volunteers} : Supporte
       }
 
     const CardVolunteers = (volunteers: Volunteer[]) => volunteers.map((volunteer, index) => (
-        <div key={index} className="flex flex-col items-center w-48 mt-10">
-            <img className="w-40 h-40 rounded-full" src={volunteer.image as string} alt={volunteer.alt}/>
+        <div key={index} className="flex flex-col items-center">
+            <div className="w-40 h-40">
+                <img className="rounded-full" src={volunteer.image as string} alt={volunteer.alt}/>
+            </div>
             <p className="font-base text-marine text-lg">{volunteer.name}</p>
             <p className="font-thin text-marine text-base">{volunteer.description.substring(0, 30) + `${volunteer.description.length > 30 ? ' ...' : ''}`}</p>
         </div>
@@ -65,7 +69,6 @@ function Supporters({title, subtitle, tabItems, sponsors, volunteers} : Supporte
             pagination
             dynamicBullets
             breakpoints={breakpoints}
-            centeredSlides={true}
         />
     };
 
