@@ -3,6 +3,7 @@ import Text from "../../atoms/text"
 import Selector from "../../molecules/selector"
 import './styles.css'
 import Carousel from "../../molecules/carousel";
+import { Navigation, Pagination } from 'swiper/modules';
 
 interface Sponsor {
     image: React.FC<React.SVGProps<SVGSVGElement>> | string;
@@ -69,11 +70,13 @@ function Supporters({title, subtitle, tabItems, sponsors, volunteers} : Supporte
             pagination
             dynamicBullets
             breakpoints={breakpoints}
+            modules={[Pagination, Navigation]}
         />
     };
 
     return (
-        <div id="supporters" className=" bg-white relative">
+        <div className=" bg-white relative">
+            <div className="relative h-10 bg-white" id="supporters" />
             <div className="py-12 px-0 md:py-14 ">
                 <div className="mb-8">
                     <Text size="secondary">{title}</Text>
