@@ -11,7 +11,7 @@
     cursor: pointer;
     transition: border-bottom 400ms linear;
     transition: font-weight 300ms linear;
-    margin: 10px auto;
+    margin: 10px 50px;
 }
 
 .ulComponent li.chosen {
