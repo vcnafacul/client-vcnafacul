@@ -21,7 +21,7 @@ export interface DashCardMenu {
     id: number;
     bg: string;
     title: string;
-    image: string;
+    image: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
     alt: string;
     subMenuList: SubDashCardInfo[]
 }
@@ -32,11 +32,13 @@ type DasCardProps = VariantProps<typeof dashCard> & ComponentProps<'div'> &{
 }
 
 function DashCard({card, size, opened, ...props } : DasCardProps){
+ const Icon = card.image;
  return (
     <>
         <div {...props}
             className={`${dashCard({ size })} ${card.bg} ${size !== 'small' && !opened ? 'mt-4 rounded-t-md' : 'mt-0'} cursor-pointer`}>
-                <img src={card.image} alt={card.alt} className={`select-none ${size !== 'small' ? 'w-14 h-14' : 'w-4 h-4'}`} />
+                {/* <img src={card.image} alt={card.alt} className={`select-none ${size !== 'small' ? 'w-14 h-14' : 'w-4 h-4'}`} /> */}
+                <Icon className={`select-none fill-white ${size !== 'small' ? 'w-14 h-14' : 'w-4 h-4'}`} />
                 <div className={`select-none ${size !== 'small' ? 'flex justify-center w-full' : ''}`}>
                     {card.title}
                 </div>
