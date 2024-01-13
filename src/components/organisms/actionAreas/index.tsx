@@ -2,6 +2,7 @@ import { useState } from "react"
 import Text from "../../atoms/text"
 import Selector from "../../molecules/selector"
 import Carousel from "../../molecules/carousel";
+import { Navigation, Pagination } from 'swiper/modules';
 
 export interface ItemCard {
     id: number;
@@ -35,7 +36,7 @@ function ActionAreas({title, subtitle, tabItems, cardItems} : ActionAreasProps) 
         return (
             <div className="">
                 <div key={cardItem.id} className="my-0 mx-auto overflow-hidden w-[230px] h-[230px]
-                text-grey border border-grey cursor-pointer">
+                text-grey border border-grey">
                     <div className="w-full flex justify-center">
                         <Icon className="mt-9 mb-4 max-w-[74px] h-[74px] fill-pink" />
                     </div>
@@ -68,6 +69,7 @@ function ActionAreas({title, subtitle, tabItems, cardItems} : ActionAreasProps) 
         return <Carousel
             childrens={childrens}
             className="bg-white h-72 mt-6 container mx-auto"
+            modules={[Pagination, Navigation]}
             pagination
             dynamicBullets
             breakpoints={breakpoints}
