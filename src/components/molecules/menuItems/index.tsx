@@ -36,9 +36,9 @@ function MenuItem({ align, itemsMenu, className, solid } : MenuItemProps) {
     return (
         <div className={menuItem({ align, solid, className })}>
             {itemsMenu.map(link => (
-                <Link className="text-xl font-bold md:text-base md:font-medium mx-6 my-3"
-                    key={link.id} to={link.link}>{link.name}
-                </Link>
+                <a className="text-xl font-bold md:text-base md:font-medium mx-6 my-3"
+                    key={link.id} href={link.link}>{link.name}
+                </a>
             ))}
         </div>
     )

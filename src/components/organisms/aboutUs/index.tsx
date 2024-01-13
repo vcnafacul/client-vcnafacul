@@ -44,7 +44,7 @@ function AboutUs({title, subtitle, video} : AboutUsProps){
 
     return (
         <div className="bg-white">
-            <span className="relative" id="about-id"></span>
+            <span className="relative" id="about-us"></span>
             <div className="container mx-auto mt-10 mb-14 text-center sm:flex sm:justify-between sm:items-center sm:text-left sm:my-44">
                 <div className="relative mr-14 box-border py-10 pr-0 pl-5 mt-5 sm:pr-10 sm:pl-10 sm:mt-0 sm:min-w-[60%] md:pb-5 md:pl-16">
                     <TriangleGreyBorder className="graphism-header triangle-border-header" />

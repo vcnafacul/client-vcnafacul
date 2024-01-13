@@ -1,6 +1,6 @@
 import { HeaderProps } from "../../components/organisms/header";
 import {header}  from "../home/data";
-import { DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, SIMULADO, DASH_ROLES, DASH_PROVAS, DASH_CONTENT, NEWS, DASH_SIMULADO, ESTUDO } from "../../routes/path";
+import { DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, SIMULADO, DASH_ROLES, DASH_PROVAS, DASH_CONTENT, NEWS, DASH_SIMULADO, ESTUDO, DASH } from "../../routes/path";
 import BioExatasImg from "../../assets/images/dashboard/bioexatas.svg";
 import HumanasImg from "../../assets/images/dashboard/humanas.svg";
 import LinguagensImg from "../../assets/images/dashboard/linguagens.svg";
@@ -31,9 +31,8 @@ import { Materias, getMateriaString } from "../../enums/content/materias";
 
 export const headerDash: HeaderProps = {...header, itemsMenu: [
     { id: 1, name: "Novidades", link: NEWS },
-    { id: 2,name: "Simulado", link: SIMULADO },
+    { id: 2,name: "Simulado", link: `${DASH}/${SIMULADO}` },
 ],};
-
 
 export const dashCardMenuItems : DashCardMenu[] = [
     {
