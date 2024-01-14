@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import getGeolocation from "../../../services/geolocation/getGeolocation";
 import MapBoxInfo from "../mapBoxInfo";
 import { toast } from "react-toastify";
+import { FORM_GEOLOCATION } from "../../../routes/path";
 
 
 function Map() {
@@ -45,7 +46,7 @@ function Map() {
                     lon: geo.longitude
                 }
             })} className="h-[60vh] z-30" handleClickMarker={handleClickMarker}/>
-            <MapBoxInfo boxRef={boxRef} geo={markers[markerActive]} ctaLink="#" />
+            <MapBoxInfo boxRef={boxRef} geo={markers[markerActive]} ctaLink={FORM_GEOLOCATION} />
         </div>
     )
 }

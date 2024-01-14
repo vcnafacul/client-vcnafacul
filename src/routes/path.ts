@@ -15,7 +15,7 @@ export const DASH_PROVAS = "dashprovas"
 export const DASH_CONTENT = 'dash-content'
 
 export const SIMULADO = "simulado";
-export const SIMULADO_RESPONDER = "/simulado/responder";
+export const SIMULADO_RESPONDER = "simulado/responder";
 export const DASH_SIMULADO = "dash-simulado";
 
 export const NEWS = "/novidades"

@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentProps } from "react"
 import FormField, { FormFieldInput } from "../../molecules/formField"
-import { UseFormRegister } from "react-hook-form";
+import { FieldErrors, UseFormRegister } from "react-hook-form";
 
 export type FormProps = ComponentProps<'div'> & {
     formFields: FormFieldInput[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     register: UseFormRegister<any>;
+    errors?: FieldErrors;
 }
 
-function Form({ formFields, register, ...props } : FormProps){
+function Form({ formFields, register, errors, ...props } : FormProps){
    return (
         <div {...props}>
             {formFields.map(fData => 
@@ -24,7 +25,8 @@ function Form({ formFields, register, ...props } : FormProps){
                     register={register}
                     className={fData.className}
                     validation={fData.validation}
-                     />
+                    error={errors && errors[fData.id] ? errors[fData.id] : null}
+                    />
                 )}
         </div>
    )

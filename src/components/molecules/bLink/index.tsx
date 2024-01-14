@@ -15,9 +15,11 @@ export type BLinkProps = VariantProps<typeof buttonTemplate> & {
 
 function BLink({to, children, type, size, hover, className, target = '_self', ...props} : BLinkProps){
     return (
-        <ButtonTemplate type={type} size={size} hover={hover} className={className} {...props}>
-            <Link className="flex justify-center items-center" target={target} to={to}>{children}</Link>
-        </ButtonTemplate>
+        <Link className="flex justify-center items-center" target={target} to={to}>
+            <ButtonTemplate type={type} size={size} hover={hover} className={className} {...props}>
+            {children}
+            </ButtonTemplate>
+        </Link>
     )
 }
 

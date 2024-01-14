@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "../pages/home";
 import Login from "../pages/login";
-import { ACCOUNT_PATH, CONTENT, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, ESTUDO, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, SIMULADO, SIMULADO_RESPONDER } from "./path";
+import { ACCOUNT_PATH, CONTENT, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, ESTUDO, FORM_GEOLOCATION, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, SIMULADO, SIMULADO_RESPONDER } from "./path";
 import Dash from "../pages/dash";
 import DashGeo from "../pages/dashGeo";
 import Register from "../pages/register";
@@ -24,6 +24,7 @@ import MainSimulate from "../pages/mainSimulate";
 import DashSimulado from "../pages/dashSimulado";
 import Materia from "../pages/materia";
 import Subject from "../pages/subject";
+import Geo from "../pages/Geo";
 
 
 export function PlatformRoutes() {
@@ -37,8 +38,8 @@ export function PlatformRoutes() {
             <Route path={LOGIN_PATH} element={<Login />} />
             <Route path={LOGOFF_PATH} element={<Logout />} />
             <Route path={REGISTER_PATH} element={<Register />} />
-            <Route path={SIMULADO_RESPONDER} element={<Simulate />} />
             <Route path={NEWS} element={ <NewsPage />} />
+            <Route path={FORM_GEOLOCATION} element={<Geo />}/>
 
             <Route path="/dashboard" element={
                 <ProtectedRoute>
@@ -47,6 +48,7 @@ export function PlatformRoutes() {
             }>
                 <Route path={DASH} element={<Dash />} />
                 <Route path={SIMULADO} element={<MainSimulate />} />
+                <Route path={SIMULADO_RESPONDER} element={<Simulate />} />
                 <Route path={`${ESTUDO}/:nomeMateria`} element={ <Materia />} />
                 <Route path={`${CONTENT}/:nameSubject/:id`} element={ <Subject />} />
                 <Route path={ACCOUNT_PATH} element={ <Account />} />

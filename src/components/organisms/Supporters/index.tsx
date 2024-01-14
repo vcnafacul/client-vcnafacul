@@ -31,9 +31,7 @@ function Supporters({title, subtitle, tabItems, sponsors, volunteers} : Supporte
     const changeTab = (tab: number) => {
         setTab(tab)
     }
-
-    console.log('Renderizou')
-
+    
     const breakpoints = {
         1: {
             slidesPerView: 1.5,

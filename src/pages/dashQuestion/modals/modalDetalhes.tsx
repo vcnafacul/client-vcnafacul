@@ -309,6 +309,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                             <div className="border py-4 flex justify-center items-center h-1/2">
                                 {imagePreview ? <img src={imagePreview}/> : 
                                 <Preview />}
+                                
                             </div>
                             <UploadButton placeholder="Upload Imagem" onChange={handleImageChange} accept='.png' />
                         </div>
