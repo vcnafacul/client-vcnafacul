@@ -5,7 +5,7 @@ import LabelInput from "../../atoms/labelInput/input"
 
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { IoMdEye } from "react-icons/io";
-import { UseFormRegister, FieldValues } from "react-hook-form";
+import { UseFormRegister, FieldValues, FieldError } from "react-hook-form";
 
 export interface FormFieldOption {
     value: any;
@@ -15,7 +15,7 @@ export interface FormFieldOption {
 export interface FormFieldInput {
     id: string;
     label: string;
-    type?: "text" | "password" | "number" | "option" | "textarea" | "date";
+    type?: "text" | "password" | "number" | "option" | "textarea" | "date" | "email";
     visibility?: boolean;
     disabled?: boolean;
     value?: any;
@@ -27,9 +27,10 @@ export interface FormFieldInput {
 export interface FormFieldProps  extends FormFieldInput {
     register: UseFormRegister<FieldValues>;
     ref?: LegacyRef<HTMLInputElement>;
+    error?: FieldError | any;
 }
 
-function FormField({id, label, type = "text", visibility = false, value, disabled, options, className, register, validation, ref} : FormFieldProps){
+function FormField({id, label, type = "text", visibility = false, value, disabled, options, className, register, validation, ref, error} : FormFieldProps){
     const [visible, setVisible] = useState<boolean>(visibility)
 
     function backgroundImageToggleVisibility(visible: boolean){
@@ -54,6 +55,7 @@ function FormField({id, label, type = "text", visibility = false, value, disable
             {type !== "password" ? 
                 <></> : 
                 backgroundImageToggleVisibility(visible)}
+            {error && <span className="w-full mt-1 text-red" role="alert">{error.message}</span>}
         </div>
     )
 }

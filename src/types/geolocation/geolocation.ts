@@ -1,7 +1,6 @@
 import { StatusEnum } from "../../enums/generic/statusEnum";
 
-export interface Geolocation {
-    id: number,
+export interface CreateGeolocation {
     latitude: number;
     longitude: number;
     name: string;
@@ -28,6 +27,10 @@ export interface Geolocation {
     userPhone: string;
     userConnection: string;
     userEmail: string;
+}
+
+export interface Geolocation extends CreateGeolocation {
+    id: number,
     status: StatusEnum
     createdAt: string;
     updatedAt: string;
