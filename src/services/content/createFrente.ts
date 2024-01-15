@@ -10,8 +10,8 @@ export async function createFrente(data: CreateFrenteDtoOutput, token: string): 
     });
     const res = await response.json()
     if(response.status !== 201){
-        if(response.status === 400) {
-            throw new Error(res)
+        if(response.status >= 400) {
+            throw res
         }
     }
     return res
