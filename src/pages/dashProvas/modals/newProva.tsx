@@ -11,7 +11,7 @@ import Form from "../../../components/organisms/form"
 import { useForm } from "react-hook-form"
 import Text from "../../../components/atoms/text"
 import UploadButton from "../../../components/molecules/uploadButton"
-import { edicaoArray } from "../../../enums/prova/edicao"
+import { Edicao, edicaoArray } from "../../../enums/prova/edicao"
 import { createProva } from "../../../services/prova/createProva"
 import { CreateProva, Prova } from "../../../dtos/prova/prova"
 import { ITipoSimulado } from "../../../dtos/simulado/tipoSimulado"
@@ -50,6 +50,8 @@ function NewProva({ handleClose, addProva, tipos} : NewProvaProps){
     })
 
     const edicaoOption : FormFieldOption[] = edicaoArray.map(f => ({ label: f, value: f }))
+    edicaoOption.push({ label: 'Reaplicação/PPL/2ªAplicação', value: 'Reaplicação/PPL2'})
+    edicaoOption.push({ label: 'Reaplicação/PPL/3ªAplicação', value: 'Reaplicação/PPL3'})
 
     const handleFileUpload = (e: any) => {
         setUploadFile(null)
@@ -68,7 +70,6 @@ function NewProva({ handleClose, addProva, tipos} : NewProvaProps){
         {id: "tipo", type: "option", options: tiposOptions, value: '', label: "Tipo", disabled: false},
         {id: "edicao", type: "option", options: edicaoOption , label: "Edicao", disabled: false},
         {id: "ano", type: "number", label: "Ano de Realização", value: 2023, disabled: false},
-        {id: "aplicacao", type: "number", label: "Aplicacao", value: 1, disabled: false},
     ]
 
     const exame = watch('exame')
@@ -81,6 +82,16 @@ function NewProva({ handleClose, addProva, tipos} : NewProvaProps){
         else {
             const id = toast.loading("Criando Prova ... ")
             const info = data as CreateProva
+            info.aplicacao = 1
+            if(info.edicao.includes('2')){
+                info.edicao = Edicao.Reaplicacao
+                info.aplicacao = 2
+            }
+            if(info.edicao.includes('3')){
+                info.edicao = Edicao.Reaplicacao
+                info.aplicacao = 3
+            }
+
             const fileName = Date.now();
             const formData = new FormData()
             formData.append('exame', info.exame)
@@ -89,6 +100,7 @@ function NewProva({ handleClose, addProva, tipos} : NewProvaProps){
             formData.append('ano', info.ano.toString())
             formData.append('aplicacao', info.aplicacao.toString())
             formData.append('file', uploadFile!, `${fileName}.pdf`)
+            console.log(info)
             createProva(formData, token)
                 .then((res) => {
                     addProva(res)
