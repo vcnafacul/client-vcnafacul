@@ -15,6 +15,7 @@ import { TbArrowsExchange } from "react-icons/tb";
 import { OptionProps } from "../../../components/atoms/select"
 import { ChangeOrderDTO } from "../../../dtos/content/changeOrder"
 import { changeOrderDemand } from "../../../services/content/changeOrderDemand"
+import { Insert } from "../../../enums/content/insert"
 
 interface ViewOrderProps extends ModalProps{
     subjectId: number
@@ -70,22 +71,18 @@ function ViewOrder({ handleClose, subjectId } : ViewOrderProps) {
     }
 
     const updateNode = (position: number) => {
-
-        let node2 = undefined
-        if(position !== 0) {
-            node2 = contents[position-1].id
-        }
-
+        const node2 = contents[position - 1].id
         const body: ChangeOrderDTO = {
             listId: subjectId,
             node1: demandSelected!.nodeId,
-            node2: node2
+            node2: node2,
+            where: contents.findIndex(cont => cont.id == demandSelected!.nodeId) > position - 1 ? Insert.Front : Insert.Back
         }
         changeOrderDemand(token, body)
             .then(_ => {
                 const objetoSelecionado = contents.find(obj => obj.id === demandSelected!.nodeId);
                 const listaAtualizada = contents.filter(obj => obj.id !== demandSelected!.nodeId);
-                listaAtualizada.splice(position , 0, objetoSelecionado!)
+                listaAtualizada.splice(position - 1 , 0, objetoSelecionado!)
                 setContents(listaAtualizada)
                 setOpenModal(false)
             })
