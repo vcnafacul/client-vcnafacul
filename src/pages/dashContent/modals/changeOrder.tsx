@@ -20,7 +20,7 @@ function ChangeOrder({ handleClose, demand, optionNumber, updateNode }: ChangeOr
                 <p>Selecione a nova posição</p>
                 <Select  options={optionNumber}  defaultValue={0}  setState={setPosition} />
                 <div className="flex gap-4 py-4">
-                <Button onClick={() => updateNode(position - 1)}>Salvar</Button>
+                <Button onClick={() => updateNode(position)}>Salvar</Button>
                 <Button onClick={handleClose}>Fechar</Button>
                 </div>
             </div>
