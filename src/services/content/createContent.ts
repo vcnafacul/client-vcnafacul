@@ -16,8 +16,8 @@ export async function createContent(data: CreateContentDto, token: string): Prom
     });
     const res = await response.json()
     if(response.status !== 201){
-        if(response.status === 400) {
-            throw new Error(res)
+        if(response.status >= 400) {
+            throw res
         }
     }
     return res
