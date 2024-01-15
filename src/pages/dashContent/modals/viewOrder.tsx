@@ -73,17 +73,14 @@ function ViewOrder({ handleClose, subjectId } : ViewOrderProps) {
 
         let node2 = undefined
         if(position !== 0) {
-            node2 = contents[position].id
+            node2 = contents[position-1].id
         }
-
-        console.log(position)
 
         const body: ChangeOrderDTO = {
             listId: subjectId,
             node1: demandSelected!.nodeId,
             node2: node2
         }
-        console.log(body)
         changeOrderDemand(token, body)
             .then(_ => {
                 const objetoSelecionado = contents.find(obj => obj.id === demandSelected!.nodeId);
