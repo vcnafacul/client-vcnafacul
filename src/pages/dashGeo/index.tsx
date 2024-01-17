@@ -85,6 +85,7 @@ function DashGeo(){
         <>
             <DashCardTemplate 
                 title={dashGeo.title}
+                onLoadMoreCard={() => { console.log('executou') }}
                 filterList={[
                     <Filter placeholder="nome | estado | cidade | email" filtrar={handleInputChange}/>, 
                     <Select  options={dashGeo.options}  defaultValue={status}  setState={setStatus} />]}

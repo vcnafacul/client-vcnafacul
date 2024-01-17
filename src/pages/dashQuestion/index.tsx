@@ -27,6 +27,7 @@ function DashQuestion() {
     const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
     const [openModalRegister, setOpenModalRegister] = useState<boolean>(false);
     const [questionSelect, setQuestionSelect] = useState<Question | null>(null)
+    const [page, setPage] = useState<number>(1)
     const dataRef = useRef<Question[]>([])
 
     const [infosQuestion, setInfosQuestion] = useState<InfoQuestion>({
@@ -40,7 +41,7 @@ function DashQuestion() {
     const { data: { token, permissao }} = useAuthStore()
 
     const cardQuestion : CardDashInfo[] = questions.map(question => (
-        {cardId: question._id, title: question.title, status: question.status, infos: 
+        {cardId: question._id, isLast: questions[questions.length - 1]._id === question._id , title: question.title, status: question.status, infos: 
             [
                 { field:"Id", value: question._id },
                 { field:"Prova", value: infosQuestion.provas.find(infos => infos._id === question.prova)?.nome ?? question.prova },
@@ -108,16 +109,18 @@ function DashQuestion() {
         setOpenModalEdit(true)
     }
 
-    const getQuestions = useCallback(async (status: StatusEnum) => {
-        getAllQuestions(token, status)
-            .then((res) => {
-                setQuestions(res)
+    const getQuestions = (status: StatusEnum, page: number) => {
+        console.log('getQuestion', page)
+        getAllQuestions(token, status, page)
+        .then((res) => {
+                setQuestions(questions.concat(res))
+                setPage(page)
                 dataRef.current = res
             })
             .catch((erro: Error) => {
                 toast.error(erro.message)
             })
-    }, [token])
+    }
 
     const getInfors = useCallback(async () => {
         getInfosQuestion(token)
@@ -131,8 +134,8 @@ function DashQuestion() {
     }, [token])
 
     useEffect(() => {
-        getQuestions(status)
-    },[status, getQuestions])
+        getQuestions(status, page)
+    },[status])
 
     useEffect(() => {
         getInfors()
@@ -145,7 +148,7 @@ function DashQuestion() {
                 { label: "Detalhes", 
                     children: <ModalDetalhes 
                         question={questionSelect!} 
-                        infos={infosQuestion} 
+                        infos={infosQuestion}
                         handleClose={() => { setOpenModalEdit(false) }}
                         handleUpdateQuestionStatus={handleUpdateQuestionStatus}
                         handleUpdateQuestion={handleUpdateQuestion}
@@ -171,13 +174,13 @@ function DashQuestion() {
                 { label: "Cadastro de Prova", children: <>Teste 2</>}
             ]} />
     }
-
     return (
         <>
             <DashCardTemplate 
                 cardlist={cardQuestion} 
                 onClickCard={onClickCard} 
                 title={dashQuest.title} 
+                onLoadMoreCard={() => { getQuestions(status, page + 1) }}
                 filterList={[
                     <Filter placeholder="id | texto" filtrar={handleInputChange}/>,
                     <Select options={dashQuest.options}  defaultValue={status}  setState={setStatus} />,
