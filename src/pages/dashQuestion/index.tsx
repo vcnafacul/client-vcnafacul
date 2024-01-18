@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useRef, useState } from "react"
 import DashCardTemplate from "../../components/templates/dashCardTemplate"
 import { Question } from "../../dtos/question/QuestionDTO"
@@ -30,6 +31,9 @@ function DashQuestion() {
     const [page, setPage] = useState<number>(1)
     const dataRef = useRef<Question[]>([])
 
+    const amountPageMax = 4;
+    const limit = 30;
+
     const [infosQuestion, setInfosQuestion] = useState<InfoQuestion>({
         provas: [],
         materias: [],
@@ -41,14 +45,16 @@ function DashQuestion() {
     const { data: { token, permissao }} = useAuthStore()
 
     const cardQuestion : CardDashInfo[] = questions.map(question => (
-        {cardId: question._id, isLast: questions[questions.length - 1]._id === question._id , title: question.title, status: question.status, infos: 
+        {cardId: question._id, title: question.title, status: question.status, infos: 
             [
                 { field:"Id", value: question._id },
                 { field:"Prova", value: infosQuestion.provas.find(infos => infos._id === question.prova)?.nome ?? question.prova },
                 { field:"Área", value: question.enemArea},
                 { field:"Disciplina", value: infosQuestion.materias.find(infos => infos._id === question.materia)?.nome ?? question.materia},
                 { field:"Ultima Atulizacao", value: question.updateAt ? formatDate(question.updateAt.toString()) : ""},
-            ]
+            ],
+            isLast: questions[questions.length - 1]._id === question._id,
+            isFirst: page > amountPageMax && questions[30]._id === question._id ? true : false
         }
     ))
 
@@ -109,17 +115,30 @@ function DashQuestion() {
         setOpenModalEdit(true)
     }
 
-    const getQuestions = (status: StatusEnum, page: number) => {
-        console.log('getQuestion', page)
-        getAllQuestions(token, status, page)
-        .then((res) => {
-                setQuestions(questions.concat(res))
-                setPage(page)
-                dataRef.current = res
-            })
-            .catch((erro: Error) => {
-                toast.error(erro.message)
-            })
+    const getQuestions = (status: StatusEnum, newPage: number) => {
+        if(newPage > 1 || questions.length === 0 || (newPage === 1 && page > amountPageMax)){
+            getAllQuestions(token, status, newPage, limit)
+            .then((res) => {
+                let newQuestions = questions;
+                if(page >= amountPageMax){
+                    const isDown = newPage - page > 0 
+                    if(isDown){
+                        newQuestions = newQuestions.slice(limit)
+                        newQuestions = newQuestions.concat(res);
+                    } else {
+                        newQuestions = newQuestions.slice(0, (amountPageMax*limit)-limit)
+                        newQuestions = res.concat(newQuestions)
+                    }
+                } else {
+                    newQuestions = newQuestions.concat(res);
+                }
+                setQuestions(newQuestions)
+                dataRef.current = newQuestions
+                })
+                .catch((erro: Error) => {
+                    toast.error(erro.message)
+                })
+        }
     }
 
     const getInfors = useCallback(async () => {
@@ -180,7 +199,7 @@ function DashQuestion() {
                 cardlist={cardQuestion} 
                 onClickCard={onClickCard} 
                 title={dashQuest.title} 
-                onLoadMoreCard={() => { getQuestions(status, page + 1) }}
+                onLoadMoreCard={(isDown: boolean) => { getQuestions(status, isDown ? page + 1 : page - amountPageMax); setPage(isDown ? page + 1 : page - 1) }}
                 filterList={[
                     <Filter placeholder="id | texto" filtrar={handleInputChange}/>,
                     <Select options={dashQuest.options}  defaultValue={status}  setState={setStatus} />,

@@ -105,7 +105,6 @@ function Account(){
     }
 
     useEffect(() => {
-        console.log('foi chamado')
         me(token)
             .then(res => {
                 setUserAccount(res)

@@ -100,7 +100,6 @@ function NewProva({ handleClose, addProva, tipos} : NewProvaProps){
             formData.append('ano', info.ano.toString())
             formData.append('aplicacao', info.aplicacao.toString())
             formData.append('file', uploadFile!, `${fileName}.pdf`)
-            console.log(info)
             createProva(formData, token)
                 .then((res) => {
                     addProva(res)

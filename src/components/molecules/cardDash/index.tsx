@@ -11,6 +11,7 @@ export interface InforCardDash {
 export interface CardDashInfo extends CardDash {
     cardId: number | string;
     isLast?: boolean;
+    isFirst?: boolean;
 }
 
 export interface CardDash {

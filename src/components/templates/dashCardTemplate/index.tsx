@@ -12,20 +12,18 @@ interface DashCardTemplateProps {
     cardlist: CardDashInfo[];
     className?: string;
     onClickCard: (id: number | string) => void;
-    onLoadMoreCard?: () => void;
-    isLast?: boolean;
+    onLoadMoreCard?: (isDown: boolean) => void;
 }
 
 function DashCardTemplate({ title, filterList, cardlist, onClickCard, onLoadMoreCard }: DashCardTemplateProps) {
-    const [lastCardRef, inView] = useInView({
-        triggerOnce: true,
-    });
+    const [firstCardRef, firstCardInView] = useInView();
+    const [lastCardRef, lastCardInView] = useInView();
+
     useEffect(() => {
-        if (inView && onLoadMoreCard && cardlist.length > 0) {
-            onLoadMoreCard()
-            console.log('executou')
+        if ((firstCardInView || lastCardInView ) && onLoadMoreCard && cardlist.length > 0) {
+            onLoadMoreCard(lastCardInView)
         }
-    }, [inView]);
+    }, [firstCardInView, lastCardInView]);
 
     return (
         <div className="overflow-y-auto scrollbar-hide h-screen bg-zinc-100">
@@ -39,8 +37,8 @@ function DashCardTemplate({ title, filterList, cardlist, onClickCard, onLoadMore
             </div>
             <div className="flex flex-wrap gap-4 my-4 justify-center md:justify-start md:mx-10">
                 {cardlist.map((card) => 
-                        <CardDash ref={ card.isLast ? lastCardRef : null}
-                            key={card.cardId} id={`${card.cardId}`} onClick={() => onClickCard(card.cardId)} title={card.title} infos={card.infos} status={card.status}  />)}
+                    <CardDash ref={ card.isLast ? lastCardRef : card.isFirst ? firstCardRef : null}
+                        key={card.cardId} id={`${card.cardId}`} onClick={() => onClickCard(card.cardId)} title={card.title} infos={card.infos} status={card.status}  />)}
             </div>
         </div>
     )
