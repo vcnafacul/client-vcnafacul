@@ -6,9 +6,7 @@ export async function removeImageProfileCollaborator(token: string) : Promise<bo
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
     });
-    console.log(response)
     const res = await response.json()
-    console.log(res)
     if(response.status !== 200){
         throw new Error('Erro ao tentar deletar imagem de usuário' + res.message)
     }

@@ -3,10 +3,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm } from 'react-hook-form';
 import { ReactComponent as LogoIcon } from '../../assets/images/home/logo.svg'
-import { Auth, useAuthStore } from '../../store/auth'
+import { Auth, AuthUpdate, Gender, useAuthStore } from '../../store/auth'
 import { FormFieldInput } from '../../components/molecules/formField';
 import Form from '../../components/organisms/form';
-import { optionsGender } from '../register/data';
+import { optionsGender, stateOptions } from '../register/data';
 import Button from '../../components/molecules/button';
 import Text from '../../components/atoms/text';
 import ImageProfile from '../../components/molecules/imageProfile';
@@ -16,16 +16,30 @@ import { changeImageProfileCollaborator } from '../../services/auth/changeImageP
 import ModalConfirmCancel from '../../components/organisms/modalConfirmCancel';
 import { removeImageProfileCollaborator } from '../../services/auth/removeImageProfileCollaborator';
 import { me } from '../../services/auth/me';
+import { yupResolver } from "@hookform/resolvers/yup"
+import * as yup from "yup"
+import { updateUser } from '../../services/auth/updateUser';
 
 function Account(){
-    const {register, handleSubmit } = useForm();
     const { data: {token}, updateAccount } = useAuthStore()
     const [tryDelete, setTryDelete] = useState<boolean>(false);
-
+    
     const [userAccount, setUserAccount] = useState<Auth>()
-
+    
     const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
     const [imagePreview, setImagePreview] = useState<any>(null);
+    
+    const schema = yup
+        .object()
+        .shape({
+            firstName: yup.string().required('Por favor, preencha seu nome'),
+            lastName: yup.string().required('Por favor, preencha seu sobrenome'),
+            birthday: yup.string().required('Por favor, insira uma data de nascimento'),
+            state: yup.string().required('Campo Obrigatório'),
+            city: yup.string().required('Por favor, preencha sua cidade'),
+            about: yup.string().required('Fale um pouco sobre você'),
+        })
+        .required()
 
     const listInfo : FormFieldInput[]= [
         {id: "firstName", type: "text", label: "Nome:", value: userAccount?.firstName},
@@ -33,10 +47,13 @@ function Account(){
         {id: "gender", type: 'option', options: optionsGender, label: "Gênero:", value: userAccount?.gender},
         {id: "birthday", type: "date", label: "Data de Nascimento:", value: userAccount?.birthday ? userAccount.birthday.split('T')[0] : ''},
         {id: "phone", type: "text", label: "Telefone:", value: userAccount?.phone}, 
-        {id: "state", type: "text", label: "Estado:", value: userAccount?.state},
+        {id: "state", type: 'option', label: "Estado:", value: userAccount?.state, options: stateOptions},
         {id: "city", type: "text", label: "Cidade:", value: userAccount?.city},
         {id: "about", type: "textarea", label: "Sobre mim:", value: userAccount?.about, className: `col-span-1 ${userAccount?.collaborator ? 'sm:col-span-2 md:col-span-3 lg:col-span-4': 'sm:col-span-2 md:col-span-4'}`},
     ]
+    const {register, handleSubmit, formState: { errors } } = useForm({
+        resolver: yupResolver(schema),
+      });
 
     const previewImage = (file: any) => {
         const reader = new FileReader();
@@ -93,6 +110,27 @@ function Account(){
         setTryDelete(false)
     }
 
+    const update = (data: any) => {
+        const authUpdate :AuthUpdate = {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            birthday:  data.birthday,
+            city:  data.city,
+            state:  data.state,
+            phone:  data.phone,
+            gender:  parseInt(data.gender) as Gender,
+            about:  data.about
+        }
+        const id = toast.loading("Atualizando Informações Usuário ... ")
+        updateUser(token, authUpdate)
+            .then(_ => {
+                toast.update(id, { render: `Atualização feita com sucesso`, type: 'success', isLoading: false, autoClose: 3000,})
+            })
+            .catch((error: Error) => {
+                toast.update(id, {render: error.message, type: "error", isLoading: false, autoClose: 3000, });
+            })
+    }
+
     const ModalDelete = () => {
         if(!tryDelete) return null
         return (
@@ -105,7 +143,6 @@ function Account(){
     }
 
     useEffect(() => {
-        console.log('foi chamado')
         me(token)
             .then(res => {
                 setUserAccount(res)
@@ -137,8 +174,8 @@ function Account(){
                         {/* {!change ? <></> : <div className='w-40'><Button typeStyle='secondary' size='small' className='mt-2' hover type='button' onClick={uploadingImagem}>Salvar</Button></div>} */}
                 </div> 
                 : <></>}
-                {userAccount ? <form onSubmit={handleSubmit(() => {})} className={`flex flex-col pb-10 w-full gap-4 ${userAccount?.collaborator ? 'md:col-span-3' : 'md:col-span-4'} md:col-start-1 md:row-start-1`}>
-                    <Form className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 ${userAccount?.collaborator ? '' : ' md:grid-cols-3'} gap-4`} formFields={listInfo} register={register} />
+                {userAccount ? <form onSubmit={handleSubmit(update)} className={`flex flex-col pb-10 w-full gap-4 ${userAccount?.collaborator ? 'md:col-span-3' : 'md:col-span-4'} md:col-start-1 md:row-start-1`}>
+                    <Form className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 ${userAccount?.collaborator ? '' : ' md:grid-cols-3'} gap-4`} formFields={listInfo} register={register} errors={errors}/>
                     <div className='w-60 self-start'><Button hover type='submit'>Atualizar</Button></div>
                 </form> : <></>}
             </div>
