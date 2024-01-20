@@ -5,28 +5,40 @@ import Button from "../../../components/molecules/button"
 import { FormFieldInput, FormFieldOption } from "../../../components/molecules/formField"
 import Form from "../../../components/organisms/form"
 import ModalTemplate, { ModalProps } from "../../../components/templates/modalTemplate"
-import { CreateFrenteDtoOutput } from "../../../dtos/content/frenteDto"
+import { CreateFrenteDtoOutput, UpdateFrenteDtoOutut } from "../../../dtos/content/frenteDto"
 import { toast } from "react-toastify"
 import { useAuthStore } from "../../../store/auth"
 import { createFrente } from "../../../services/content/createFrente"
 import PropValue from "../../../components/molecules/PropValue"
-import { FormFieldOptionDelete } from "./settingsContent"
+import { FormFieldOptionFrente } from "./settingsContent"
+import { yupResolver } from "@hookform/resolvers/yup"
+import * as yup from "yup"
+import { updateFrente } from "../../../services/content/updateFrente"
+import { useEffect } from "react"
 
 interface NewFrenteProps extends ModalProps {
-    materia: FormFieldOption
-    addFrente: (frente: FormFieldOptionDelete) => void;
+    materia: FormFieldOption;
+    frente?: FormFieldOptionFrente;
+    actionFrente: (frente: FormFieldOptionFrente) => void;
 }
 
-function NewFrente({ handleClose, materia, addFrente} : NewFrenteProps){
-    const {register, handleSubmit } = useForm();
+function NewFrente({ handleClose, materia, frente, actionFrente} : NewFrenteProps){
+
+    const schema = yup
+    .object()
+    .shape({
+        name: yup.string().required('Você precisa definir um Título')
+    })
+    .required()
+
+    const {register, handleSubmit, formState: { errors }, setValue } = useForm({
+        resolver: yupResolver(schema),
+      });
 
     const { data: { token }} = useAuthStore()
     
     const listFields : FormFieldInput[] = [
-        {id: 'name', type: 'text', label: 'Nome', className: 'col-span-2', validation: {
-            required: `Você precisa definir um Título`,
-            minLength: { value: 1}
-        }},
+        {id: 'name', type: 'text', label: 'Nome', className: 'col-span-2'},
     ]
 
     const create = (data: any) => {
@@ -38,22 +50,45 @@ function NewFrente({ handleClose, materia, addFrente} : NewFrenteProps){
         createFrente(body, token)
             .then(res => {
                 toast.update(id, { render: `Frente ${body.name} Criada`, type: 'success', isLoading: false, autoClose: 3000,})
-                addFrente({ label: body.name, value: res.id, canDelete: true })
+                actionFrente({ label: body.name, value: res.id, canDelete: true })
                 handleClose()
             })
             .catch((error: Error) => {
                 toast.update(id, {render: error.message, type: "error", isLoading: false, autoClose: 3000, });
             })
     }
+
+    const edit = (data: any) => {
+        const body : UpdateFrenteDtoOutut = {
+            name: data.name,
+            id: frente!.value
+        }
+        const id = toast.loading("Editando Frente ... ")
+        updateFrente(body, token)
+            .then(_ => {
+                toast.update(id, { render: `Frente Editada`, type: 'success', isLoading: false, autoClose: 3000,})
+                actionFrente({ label: body.name, value: frente!.value, canDelete: frente!.canDelete })
+                handleClose()
+            })
+            .catch((error: Error) => {
+                toast.update(id, {render: error.message, type: "error", isLoading: false, autoClose: 3000, });
+            })
+    }
+
+    useEffect(() => {
+        if(frente){
+            setValue('name', frente.label)
+        }
+    }, [frente, setValue])
     
     return (
         <ModalTemplate>
             <div className="bg-white p-4 rounded-md w-96">
-                <form onSubmit={handleSubmit(create)}>
+                <form onSubmit={handleSubmit(frente ? edit : create)}>
                     <PropValue prop="Materia" value={materia.label} />
-                    <Form className="flex flex-col gap-4 my-4" formFields={listFields} register={register}/>
+                    <Form className="flex flex-col gap-4 my-4" formFields={listFields} register={register} errors={errors}/>
                     <div className="flex gap-4 flex-wrap sm:flex-nowrap">
-                        <Button type="submit">Criar</Button>
+                        <Button type="submit">{frente ? 'Salvar' : 'Criar'}</Button>
                         <Button type="button" onClick={handleClose}>Fechar</Button>
                     </div>
                 </form>

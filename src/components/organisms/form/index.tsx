@@ -24,7 +24,6 @@ function Form({ formFields, register, errors, ...props } : FormProps){
                     options={fData.options}
                     register={register}
                     className={fData.className}
-                    validation={fData.validation}
                     error={errors && errors[fData.id] ? errors[fData.id] : null}
                     />
                 )}

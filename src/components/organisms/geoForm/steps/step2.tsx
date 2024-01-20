@@ -21,11 +21,11 @@ function Step2Geo({ title, subtitle, form, updateData, handleBack, dataGeo
 
   const {register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
-});
+  });
 
-function handleForm(data: any) {
-  updateData!(data)
-}
+  function handleForm(data: any) {
+    updateData!(data)
+  }
 
   return (
     <div className="z-20">
