@@ -20,8 +20,7 @@ export interface FormFieldInput {
     disabled?: boolean;
     value?: any;
     options?: FormFieldOption[];
-    className?: string;
-    validation?: object;
+    className?: string
 }
 
 export interface FormFieldProps  extends FormFieldInput {
@@ -30,7 +29,7 @@ export interface FormFieldProps  extends FormFieldInput {
     error?: FieldError | any;
 }
 
-function FormField({id, label, type = "text", visibility = false, value, disabled, options, className, register, validation, ref, error} : FormFieldProps){
+function FormField({id, label, type = "text", visibility = false, value, disabled, options, className, register, ref, error} : FormFieldProps){
     const [visible, setVisible] = useState<boolean>(visibility)
 
     function backgroundImageToggleVisibility(visible: boolean){
@@ -45,7 +44,6 @@ function FormField({id, label, type = "text", visibility = false, value, disable
         type: visible ? "text" : type,
         options: options,
         defaultValue: value,
-        validation: validation,
       };
 
     return (

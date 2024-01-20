@@ -29,13 +29,12 @@ export type InputProps = VariantProps<typeof input> & ComponentProps<'input'> & 
     options?: FormFieldOption[];
     defaultValue?: any;
     register: UseFormRegister<FieldValues>;
-    validation: object | undefined;
 }
 
-function Input({ erro, size, className, type, options, defaultValue, register, validation, ...props } : InputProps){
+function Input({ erro, size, className, type, options, defaultValue, register, ...props } : InputProps){
     if(type === 'option') {
         return (
-            <select {...register(props.name!, validation)} disabled={props.disabled} className={input({ erro, size, className })} defaultValue={defaultValue}>
+            <select {...register(props.name!)} disabled={props.disabled} className={input({ erro, size, className })} defaultValue={defaultValue}>
                 {options!.map((opt, index) => (
                     <option key={index} value={opt.value}>{opt.label}</option>
                     ))}
@@ -43,9 +42,9 @@ function Input({ erro, size, className, type, options, defaultValue, register, v
         )
     }
     else if(type === 'textarea') {
-        return <textarea {...register(props.name!, validation)} className={`${input({ erro, size, className })} min-h-[250px] overflow-y-auto scrollbar-hide`} defaultValue={defaultValue} disabled={props.disabled} />
+        return <textarea {...register(props.name!)} className={`${input({ erro, size, className })} min-h-[250px] overflow-y-auto scrollbar-hide`} defaultValue={defaultValue} disabled={props.disabled} />
     } 
-    return <input {...register(props.name!, validation)} defaultValue={defaultValue} autoComplete="on" className={input({ erro, size, className })} type={type} {...props} />
+    return <input {...register(props.name!)} defaultValue={defaultValue} autoComplete="on" className={input({ erro, size, className })} type={type} {...props} />
 }
 
 export default Input

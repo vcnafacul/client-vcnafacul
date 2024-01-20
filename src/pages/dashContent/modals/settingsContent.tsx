@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useCallback, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import Button from "../../../components/molecules/button"
 import ModalTemplate, { ModalProps } from "../../../components/templates/modalTemplate"
 import NewFrente from "./newFrente"
@@ -15,8 +16,6 @@ import { useAuthStore } from "../../../store/auth"
 import { getSubjectsLikeFormField } from "../../../services/content/getSubjects"
 import { ReactComponent as EditIcon } from '../../../assets/icons/edit.svg'
 import { ReactComponent as Deleteicon } from '../../../assets/icons/delete.svg'
-import EditFrente from "./editFrente"
-import EditSubject from "./editSubject"
 import { deleteSubject } from "../../../services/content/deleteSubject"
 import { deleteFrente } from "../../../services/content/deleteFrente"
 import { TbArrowsExchange } from "react-icons/tb";
@@ -26,62 +25,54 @@ interface SettingsContentProps extends ModalProps {
 
 }
 
-export interface FormFieldOptionDelete extends FormFieldOption {
+export interface FormFieldOptionFrente extends FormFieldOption {
     canDelete: boolean;
 }
 
-export interface FormFieldOptionSubject extends FormFieldOptionDelete {
+export interface FormFieldOptionSubject extends FormFieldOptionFrente {
     description: string;
 }
 
 function SettingsContent({handleClose} : SettingsContentProps) {
-    const { register, watch, setValue } = useForm();
+    const { register, watch } = useForm();
 
-    const [openNewModalFrente, setOpenNewModalFrente]= useState<boolean>(false)
-    const [openEditModalFrente, setOpenEditModalFrente]= useState<boolean>(false)
-    const [openNewModalSubject, setOpenNewModalSubject]= useState<boolean>(false)
-    const [openEditModalSubject, setOpenEditModalSubject]= useState<boolean>(false)
+    const [openModalFrente, setOpenModalFrente]= useState<boolean>(false)
+    const [openModalSubject, setOpenModalSubject]= useState<boolean>(false)
     const [openModalViewOrder, setOpenModalViewOrder]= useState<boolean>(false)
-    const [frentes, setFrentes ] = useState<FormFieldOptionDelete[]>([])
-    const [frenteSelected, setFrenteSelected] = useState<FormFieldOptionDelete | null>()
+    const [frentes, setFrentes ] = useState<FormFieldOptionFrente[]>([])
+    const [frenteSelected, setFrenteSelected] = useState<FormFieldOptionFrente | null>()
     const [subjects, setSubjects] = useState<FormFieldOptionSubject[]>([])
-    const [subjectSelected, setSubjectSelected] = useState<FormFieldOptionSubject>()
+    const [subjectSelected, setSubjectSelected] = useState<FormFieldOptionSubject | null>(null)
 
     const { data: { token }} = useAuthStore()
-    const materia = watch('materia')
+    const materia = watch('materia', Materias.LPT)
 
-    const getFrenteByMateria = useCallback(async (materia: Materias) => {
-        getFrenteLikeFormField(materia ? materia : Materias.LPT, token)
+    const getFrenteByMateria = (materia: Materias) => {
+        getFrenteLikeFormField(materia, token)
             .then(res => {
                 setFrentes(res)
                 if(res.length > 0) {
-                    setValue('frente', res[0].value)
-                    setFrenteSelected(res[0])
-                } else {
-                    setValue('frente', '')
+                    getSubjectByFrente(res[0])
                 }
             })
             .catch((error: Error) => {
                 toast.error(error.message)
             })
-    }, [setValue, token])
+    }
 
-    const getSubjectByFrente = useCallback(async (frente: number) => {
-        getSubjectsLikeFormField(frente, token)
+    const getSubjectByFrente = (frente: FormFieldOptionFrente = frenteSelected!) => {
+        if(frente){
+            getSubjectsLikeFormField(frente.value, token)
             .then(res => {
                 setSubjects(res)
-                if(res.length > 0) {
-                    setValue('subjectId', res[0].value)
-                } else {
-                    setValue('subjectId', '')
-                }
             })
             .catch((error: Error) => {
                 toast.error(error.message)
             })
-    }, [setValue, token])
+        }
+    }
 
-    const removeSubject = (subjectRemoved: FormFieldOptionDelete) => {
+    const removeSubject = (subjectRemoved: FormFieldOptionFrente) => {
         const idToast = toast.loading("Deletando Tema ... ")
         deleteSubject(subjectRemoved.value, token)
             .then(_ => { 
@@ -104,7 +95,7 @@ function SettingsContent({handleClose} : SettingsContentProps) {
             })
     }
 
-    const removeFrente = (frenteRemoved: FormFieldOptionDelete) => {
+    const removeFrente = (frenteRemoved: FormFieldOptionFrente) => {
         const idToast = toast.loading("Deletando Frente ... ")
         deleteFrente(frenteRemoved.value, token)
             .then(_ => { 
@@ -122,7 +113,7 @@ function SettingsContent({handleClose} : SettingsContentProps) {
         <div key={index} className={`flex w-full justify-between px-2 py-1 rounded-md select-none ${frente.value === frenteSelected?.value ? 'bg-blue-200' : index % 2 == 0 ? 'bg-gray-200' : 'bg-white' }`}>
             <span onClick={() => { setFrenteSelected(frente) }} className="my-1 text-base font-semibold text-marine cursor-pointer w-full">{frente.label}</span>
             <div className="flex gap-2">
-                <EditIcon className="w-7 h-7 fill-marine cursor-pointer" onClick={() => { setFrenteSelected(frente); setOpenEditModalFrente(true) }} />
+                <EditIcon className="w-7 h-7 fill-marine cursor-pointer" onClick={() => { setFrenteSelected(frente); setOpenModalFrente(true) }} />
                 {frente.canDelete ? <Deleteicon onClick={() => { removeFrente(frente) }} className="w-6 cursor-pointer"/> : <></>}
             </div>
         </div>
@@ -133,18 +124,18 @@ function SettingsContent({handleClose} : SettingsContentProps) {
             <span className="my-1 text-base font-semibold text-marine">{subject.label}</span>
             <div className="flex gap-2">
                 <TbArrowsExchange className="w-7 h-7 rotate-90 cursor-pointer" title="Alterar Order Conteúdos" onClick={() => { setSubjectSelected(subject); setOpenModalViewOrder(true) }} />
-                <EditIcon className="w-7 h-7 fill-marine cursor-pointer" onClick={() => { setSubjectSelected(subject); setOpenEditModalSubject(true)}} />
+                <EditIcon className="w-7 h-7 fill-marine cursor-pointer" onClick={() => { setSubjectSelected(subject); setOpenModalSubject(true)}} />
                 {subject.canDelete ? <Deleteicon className="w-6" onClick={() => { removeSubject(subject) }}/> : <></>}
             </div>
         </div>
     ))
 
-    const addFrente = (frente: FormFieldOptionDelete) => {
+    const addFrente = (frente: FormFieldOptionFrente) => {
         frentes.push(frente)
         setFrentes(frentes)
     }
 
-    const editFrente = (frenteUpdated: FormFieldOptionDelete) => {
+    const editFrente = (frenteUpdated: FormFieldOptionFrente) => {
         setFrentes(frentes.map(frente => {
             if(frente.value === frenteSelected?.value){
                 return frenteUpdated
@@ -175,39 +166,39 @@ function SettingsContent({handleClose} : SettingsContentProps) {
     }
 
     const NewModalFrente = () => {
-        if(!openNewModalFrente) return null
+        if(!openModalFrente) return null
         return <NewFrente 
         materia={MateriasLabel.find(m => m.value == materia)!}
-        addFrente={addFrente}
-        handleClose={() => setOpenNewModalFrente(false)} />
+        actionFrente={addFrente}
+        handleClose={() => setOpenModalFrente(false)} />
     }
 
     const EditModalFrente = () => {
-        if(!openEditModalFrente) return null
-        return <EditFrente 
+        if(!openModalFrente) return null
+        return <NewFrente 
             frente={frenteSelected!}  
             materia={MateriasLabel.find(m => m.value == materia)!} 
-            editFrente={editFrente}
-            handleClose={() => setOpenEditModalFrente(false)} />
+            actionFrente={editFrente}
+            handleClose={() => setOpenModalFrente(false)} />
     }
 
     const NewModalSubject = () => {
-        if(!openNewModalSubject || !frenteSelected || materia === undefined) return null
+        if(!openModalSubject || !frenteSelected || materia === undefined) return null
         return <NewSubject 
             materia={MateriasLabel.find(m => m.value == materia)!} 
             frente={frenteSelected} 
-            addSubject={addSubject}
-            handleClose={() => setOpenNewModalSubject(false)} />
+            actionSubject={addSubject}
+            handleClose={() => setOpenModalSubject(false)} />
     }
 
     const EditModalSubject = () => {
-        if(!openEditModalSubject || !frenteSelected || !materia) return null
-        return <EditSubject 
+        if(!openModalSubject || !frenteSelected || !materia || !subjectSelected) return null
+        return <NewSubject 
             materia={MateriasLabel.find(m => m.value == materia)!} 
             frente={frenteSelected}
             subject={subjectSelected!}
-            editSubject={editSubject}
-            handleClose={() => setOpenEditModalSubject(false)} />
+            actionSubject={editSubject}
+            handleClose={() => setOpenModalSubject(false)} />
     }
 
     const ViewOrderModal = () => {
@@ -218,18 +209,14 @@ function SettingsContent({handleClose} : SettingsContentProps) {
     }
 
     useEffect(()=> {
-        if(!materia){
-            setValue('materia', MateriasLabel[0].value)
-        }
         getFrenteByMateria(materia)
-    },[getFrenteByMateria, materia, setValue])
+    }, [materia])
 
     useEffect(() => {
         if(frenteSelected) {
-            getSubjectByFrente(frenteSelected?.value)
+            getSubjectByFrente()
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [getSubjectByFrente, materia, token, frenteSelected])
+    }, [token, frenteSelected])
 
     return (
         <>
@@ -241,7 +228,7 @@ function SettingsContent({handleClose} : SettingsContentProps) {
                             <FormField register={register} id={'materia'} type="option" label="Materia" options={MateriasLabel} value={MateriasLabel[0].value}/>
                         </div>
                         <div className="w-80 my-4 self-center">
-                            <Button className="bg-green2 border-green2" size="small" onClick={() => { setOpenNewModalFrente(true) }}>Criar Nova Frente</Button>
+                            <Button className="bg-green2 border-green2" size="small" onClick={() => { setOpenModalFrente(true); setFrenteSelected(null) }}>Criar Nova Frente</Button>
                         </div>
                         <div className="flex flex-col overflow-y-auto scrollbar-hide h-full border border-b-0 p-4 mb-4">
                             <Frentes />
@@ -250,7 +237,7 @@ function SettingsContent({handleClose} : SettingsContentProps) {
                     <div className="col-span-1 col-start-1 md:col-start-2 row-start-2 md:row-start-1 flex flex-col relative h-[30vh] md:h-[60vh]">
                         <div className=" h-20 flex justify-center items-center"><Text className="m-0" size="secondary">Temas</Text></div>
                         <div className="w-80 my-4 self-center">
-                            <Button disabled={!frenteSelected || materia === undefined} className="bg-green2 border-green2" size="small" onClick={() => { setOpenNewModalSubject(true) }}>Criar Novo Tema</Button>
+                            <Button disabled={!frenteSelected || materia === undefined} className="bg-green2 border-green2" size="small" onClick={() => { setOpenModalSubject(true); setSubjectSelected(null) }}>Criar Novo Tema</Button>
                         </div>
                         <div className="flex flex-col overflow-y-auto scrollbar-hide h-full border border-b-0 p-4 mb-4">
                             <Subjects />
@@ -263,8 +250,8 @@ function SettingsContent({handleClose} : SettingsContentProps) {
             </ModalTemplate>
             <NewModalFrente />
             <NewModalSubject />
-            <EditModalFrente />
             <EditModalSubject />
+            <EditModalFrente />
             <ViewOrderModal />
         </>
     )
