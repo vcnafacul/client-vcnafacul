@@ -87,8 +87,8 @@ function DashQuestion() {
     }
 
     const handleUpdateQuestionStatus = (status: StatusEnum, message?: string) => {
-        if(!questionSelect?.prova && status === StatusEnum.Approved) {
-            toast.info('Não é possível aprovar questões sem referenciar uma prova. Selecione uma prova, salve o cadastro e tente novamente')
+        if(!questionSelect?.prova) {
+            toast.info('Não é possível aprovar ou rejeitar questões sem referenciar uma prova. Selecione uma prova, salve o cadastro e tente novamente')
         }
         else {
             updateStatus(questionSelect!._id, status, token, message)

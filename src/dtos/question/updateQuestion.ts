@@ -2,8 +2,6 @@
 export interface CreateQuestion {
     _id: string
     exame: string
-    ano: number
-    caderno: string
     enemArea: string
     frente1: string
     frente2?: string
@@ -18,7 +16,6 @@ export interface CreateQuestion {
     textoAlternativaE: string
     alternativa: string
     imageId: string
-    edicao: string
 }
 export interface UpdateQuestion extends CreateQuestion {
     _id: string

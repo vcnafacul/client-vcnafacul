@@ -4,7 +4,6 @@ import fetchWrapper from "../../utils/fetchWrapper";
 import { questoes } from "../urls";
 
 export async function createQuestion (data: CreateQuestion, token: string): Promise<string> {
-    data.ano = parseInt(data.ano as unknown as string)
     data.numero = parseInt(data.numero as unknown as string)
     const response = await fetchWrapper(questoes, {
         method: "POST",

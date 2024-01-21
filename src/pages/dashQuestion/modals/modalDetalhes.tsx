@@ -38,8 +38,10 @@ interface ModalDetalhesProps extends ModalProps {
     handleUpdateQuestion: (questionUpdate: UpdateQuestion) => void;
     handleAddQuestion: (question: Question) => void;
 }
+let times = 0
 
 function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatus, handleUpdateQuestion, handleAddQuestion } : ModalDetalhesProps) {
+    console.log('renderizou', times++)
     const schema = yup
     .object()
     .shape({
@@ -48,11 +50,19 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         enemArea: yup.string().required('Área do Conhecimento é obrigatorio').typeError('Área do Conhecimento é obrigatorio'),
         materia: yup.string().required('Materia é obrigatoria').typeError('Materia é obrigatoria'),
         frente1: yup.string().required('A Frente Principal é obrigatorio').typeError('A Frente Principal é obrigatorio'),
+        frente2: yup.string(),
+        frente3: yup.string(),
         textoQuestao: yup.string().required('Texto da questão é obrigatorio').typeError('Texto da questão é obrigatorio'),
+        textoAlternativaA: yup.string(),
+        textoAlternativaB: yup.string(),
+        textoAlternativaC: yup.string(),
+        textoAlternativaD: yup.string(),
+        textoAlternativaE: yup.string(),
+        alternativa: yup.string(),
     })
     .required()
     
-    const {register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm({
+    const {register, handleSubmit, watch, reset, setValue } = useForm({
         resolver: yupResolver(schema),
     });
     const [isEditing, setIsEditing ] = useState<boolean>(false);
@@ -60,7 +70,6 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     const [refuse, setRefuse] = useState<boolean>(false);
     const [modified, setModified] = useState<boolean>(false);
     const [comeBack, setComeback]= useState<boolean>(false);
-    const [alternative, setAlternative] = useState<string | undefined>(question?.alternativa)
     const [numberMissing, setNumberMissing] = useState<number[]>([])
 
     const [imagePreview, setImagePreview] = useState<any>(null);
@@ -70,6 +79,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
 
     const prova = watch("prova")
     const numero = watch("numero")
+    const alternativa = watch("alternativa")
 
     const previewImage = (file: any) => {
         const reader = new FileReader();
@@ -137,9 +147,6 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     const handleSave = (data: any) => {
        if(question){
             data['_id'] = question._id
-            if(alternative != question.alternativa) {
-                data['alternativa'] = alternative
-            }
             if(uploadFile) {
                 const formData = new FormData()
                 formData.append('file', uploadFile)
@@ -157,32 +164,26 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
             }
        }
        else {
-        if(!alternative){
-            toast.warn("Faltou preencher a alternativa correta", { theme: 'dark'})
-        }
-        else {
-            const formData = new FormData()
-            formData.append('file', uploadFile)
-            uploadImage(formData, token)
-                .then((res: string) => {
-                    data['imageId'] = res
-                    data['alternativa'] = alternative
-                    createQuestion(data, token)
-                        .then((res: any) => {
-                            handleAddQuestion(res)
-                            handleClose()
-                            toast.success(`Cadastro realizado com sucesso. Id: ${res._id}`)
+        const formData = new FormData()
+        formData.append('file', uploadFile)
+        uploadImage(formData, token)
+            .then((res: string) => {
+                data['imageId'] = res
+                createQuestion(data, token)
+                    .then((res: any) => {
+                        handleAddQuestion(res)
+                        handleClose()
+                        toast.success(`Cadastro realizado com sucesso. Id: ${res._id}`)
+                    })
+                    .catch((error: any) => {
+                        error.message.map((m: string) => {
+                            toast.error(m, { theme: 'dark', autoClose: 3000,})
                         })
-                        .catch((error: any) => {
-                            error.message.map((m: string) => {
-                                toast.error(m, { theme: 'dark', autoClose: 3000,})
-                            })
-                        })
-                })
-                .catch((error: Error) => {
-                    toast.error(error.message)
-                })
-           }
+                    })
+            })
+            .catch((error: Error) => {
+                toast.error(error.message)
+            })
         }
     } 
 
@@ -218,9 +219,14 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
             getMissingNumber(prova, token)
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 .then((res) => {
-                    setNumberMissing(res)
-                    setValue('numero', numero ?? question?.numero)
-                    
+                    if(question?.numero && !res.includes(question.numero)){
+                        setNumberMissing([...res, question.numero])
+                        console.log(question.numero)
+                        setValue('numero', question.numero)
+                    } else {
+                        setNumberMissing(res)
+                        if(res.length > 0) setValue('numero', res[0])
+                    }
                 })
                 .catch((erro: Error) => {
                     toast.error(erro.message)
@@ -255,29 +261,28 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         if(!prova && question?.prova){
             setValue('prova', question.prova)
         }
+        if(question){
+            setValue('enemArea', question.enemArea)
+            setValue('materia', question.materia)
+            setValue('frente1', question.frente1)
+            setValue('frente2', question.frente2)
+            setValue('frente3', question.frente3)
+            setValue('numero', question.numero)
+            setValue('textoQuestao', question.textoQuestao)
+            setValue('textoAlternativaA', question.textoAlternativaA)
+            setValue('textoAlternativaB', question.textoAlternativaB)
+            setValue('textoAlternativaC', question.textoAlternativaC)
+            setValue('textoAlternativaD', question.textoAlternativaD)
+            setValue('textoAlternativaE', question.textoAlternativaE)
+            setValue('alternativa', question.alternativa)
+        }
         getMissing()
-    }, [getMissing, infos.provas, numero, prova, question, setValue])
+    }, [infos.provas, prova, setValue])
 
     const BDownloadProva = () => {
         if(!prova) return null
         return <BLink to={`${VITE_BASE_FTP}${infos.provas.find(p => p._id === prova)?.filename}`} target="_blank" className="flex" type="quaternary">Visualizar Prova</BLink>
     }
-
-    useEffect(() => {
-        const subscription = watch(() => { setModified(true) });
-        return () => subscription.unsubscribe();
-      }, [watch]);
-
-    useEffect(() => {
-        const isValid = Object.keys(errors).length === 0;
-
-        if (!isValid) {
-            // Se houver erros, exibe mensagens de erro
-            Object.values(errors).forEach((error) => {
-                toast.warn(error.message, { theme: 'dark' });
-            });
-        }
-    }, [errors])
 
     return (
         <>
@@ -292,7 +297,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                     <div className="flex gap-1 my-4">
                         <Text size="secondary" className="text-orange w-60 text-start m-0">Selecione uma resposta*</Text>
                         {Alternatives.map(alt => (
-                            <Alternative key={alt.label} type="button" onClick={() => {setAlternative(alt.label)}} disabled={!question ? false : !isEditing} label={alt.label} select={alt.label === alternative} />
+                            <Alternative key={alt.label} type="button" onClick={() => {setValue('alternativa', alt.label)}} disabled={!question ? false : !isEditing} label={alt.label} select={alt.label === alternativa} />
                         ))}
                     </div>
                 </div>
