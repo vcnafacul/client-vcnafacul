@@ -167,7 +167,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         formData.append('file', uploadFile as Blob)
         uploadImage(formData, token)
             .then((res: string) => {
-                data['imageId'] = res
+                data.imageId = res
                 createQuestion(data, token)
                     .then((res: Question) => {
                         handleAddQuestion(res)
