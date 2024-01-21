@@ -167,8 +167,7 @@ function DashQuestion() {
                         handleUpdateQuestionStatus={handleUpdateQuestionStatus}
                         handleUpdateQuestion={handleUpdateQuestion}
                         handleAddQuestion={handleAddQuestion}
-                         />}, 
-                { label: "Cadastro de Prova", children: <>Teste 2</>}
+                         />}
             ]} />
     }
 
