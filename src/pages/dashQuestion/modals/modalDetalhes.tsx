@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
 import Text from "../../../components/atoms/text";
 import Button from "../../../components/molecules/button"
@@ -13,7 +11,7 @@ import { AreaEnem } from "../data";
 import ModalImage from "../../../components/atoms/modalImage";
 import { BtnProps } from "../../../types/generic/btnProps";
 import { StatusEnum } from "../../../enums/generic/statusEnum";
-import { UpdateQuestion } from "../../../dtos/question/updateQuestion";
+import { CreateQuestion, UpdateQuestion } from "../../../dtos/question/updateQuestion";
 import { useForm } from 'react-hook-form';
 import ModalConfirmCancelMessage from "../../../components/organisms/modalConfirmCancelMessage";
 import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
@@ -46,7 +44,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     .object()
     .shape({
         prova: yup.string().required('Prova é obrigatoria').typeError('Por favor, selecione uma prova'),
-        numero: yup.number().required('Número da questão é obrigatório').typeError('Por favor, insira um número válido'),
+        numero: yup.number().min(1).required('Número da questão é obrigatório').typeError('Por favor, insira um número válido'),
         enemArea: yup.string().required('Área do Conhecimento é obrigatorio').typeError('Área do Conhecimento é obrigatorio'),
         materia: yup.string().required('Materia é obrigatoria').typeError('Materia é obrigatoria'),
         frente1: yup.string().required('A Frente Principal é obrigatorio').typeError('A Frente Principal é obrigatorio'),
@@ -58,11 +56,12 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         textoAlternativaC: yup.string(),
         textoAlternativaD: yup.string(),
         textoAlternativaE: yup.string(),
-        alternativa: yup.string(),
+        alternativa: yup.string().required(),
+        imaggeId: yup.string(),
     })
     .required()
     
-    const {register, handleSubmit, watch, reset, setValue } = useForm({
+    const {register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
     });
     const [isEditing, setIsEditing ] = useState<boolean>(false);
@@ -72,16 +71,15 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     const [comeBack, setComeback]= useState<boolean>(false);
     const [numberMissing, setNumberMissing] = useState<number[]>([])
 
-    const [imagePreview, setImagePreview] = useState<any>(null);
-    const [uploadFile, setUploadFile ] = useState<any>(null);
+    const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>(null);
+    const [uploadFile, setUploadFile ] = useState<Blob | null>(null);
 
     const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
 
     const prova = watch("prova")
-    const numero = watch("numero")
     const alternativa = watch("alternativa")
 
-    const previewImage = (file: any) => {
+    const previewImage = (file: Blob) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onloadend = () => {
@@ -89,9 +87,9 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         };
       };
 
-    const handleImageChange = (e: any) => {
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
-        const file = e.target.files[0];
+        const file : Blob = e.target.files![0];
         previewImage(file);
         setUploadFile(file)
       };
@@ -114,9 +112,9 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
 
     const listFieldClassification : FormFieldInput[]= [
         {id: "prova",  type: "option", label: "Prova:*", options: provas, value: question?.prova ?? '', disabled: !question ? false : !isEditing,},
-        {id: "ano", type: "text", label: "Ano:*", value: infos.provas.find(p => p._id === prova ?? question?.prova)?.ano, disabled: true,},
+        {id: "ano", type: "number", label: "Ano:*", value: infos.provas.find(p => p._id === prova ?? question?.prova)?.ano, disabled: true,},
         {id: "edicao", type: "text", label: "Edição:*", value: infos.provas.find(p => p._id === prova ?? question?.prova)?.edicao , disabled: true,},
-        {id: "numero", type: "option", label: "Número da Questão:*", options: numberOption, value: numero ?? question?.numero, disabled: !question ? false : !isEditing,},
+        {id: "numero", type: "option", label: "Número da Questão:*", options: numberOption, value: question?.numero ?? 0, disabled: !question ? false : !isEditing,},
         {id: "enemArea", type: "option", label: "Área do Conhecimento:*", options: AreaEnem, value: question?.enemArea, disabled: !question ? false : !isEditing,},
         {id: "materia", type: "option", label: "Disciplina:*", options: materias, value: question?.materia, disabled: !question ? false : !isEditing,},
         {id: "frente1", type: "option", label: "Frente Principal:*", options: frentes, value: question?.frente1, disabled: !question ? false : !isEditing,},
@@ -139,46 +137,45 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         return <ModalImage handleClose={() => setPhotoOpen(false) }  image={`https://api.vcnafacul.com.br/images/${question?.imageId}.png`} />
     }
 
-    const handleUpdateClose = (data: any) => {
+    const handleUpdateClose = (data: UpdateQuestion) => {
         handleUpdateQuestion(data)
         handleClose()
     }
 
-    const handleSave = (data: any) => {
-       if(question){
-            data['_id'] = question._id
+    const handleSave = (data: CreateQuestion) => {
+        const dataQuestion = data as UpdateQuestion
+        if(question){
+            dataQuestion._id = question._id
             if(uploadFile) {
                 const formData = new FormData()
                 formData.append('file', uploadFile)
                 uploadImage(formData, token)
                     .then((res: string) => {
-                        data['imageId'] = res
-                        handleUpdateClose(data)
+                        dataQuestion.imageId = res
+                        handleUpdateClose(dataQuestion)
                     })
                     .catch((error: Error) => {
                         toast.error(error.message)
                     })
             }
             else {
-                handleUpdateClose(data)
+                handleUpdateClose(dataQuestion)
             }
        }
        else {
         const formData = new FormData()
-        formData.append('file', uploadFile)
+        formData.append('file', uploadFile as Blob)
         uploadImage(formData, token)
             .then((res: string) => {
                 data['imageId'] = res
                 createQuestion(data, token)
-                    .then((res: any) => {
+                    .then((res: Question) => {
                         handleAddQuestion(res)
                         handleClose()
                         toast.success(`Cadastro realizado com sucesso. Id: ${res._id}`)
                     })
-                    .catch((error: any) => {
-                        error.message.map((m: string) => {
-                            toast.error(m, { theme: 'dark', autoClose: 3000,})
-                        })
+                    .catch((error: Error) => {
+                        toast.error(error.message)
                     })
             })
             .catch((error: Error) => {
@@ -217,7 +214,6 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     const getMissing = useCallback(async () => {
         if(prova){
             getMissingNumber(prova, token)
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 .then((res) => {
                     if(question?.numero && !res.includes(question.numero)){
                         setNumberMissing([...res, question.numero])
@@ -235,7 +231,8 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         else {
             setNumberMissing([])
         }
-    }, [numero, prova, token])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [prova, token])
 
     const ModalRefused = () => {
         if(!refuse) return null;
@@ -277,6 +274,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
             setValue('alternativa', question.alternativa)
         }
         getMissing()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [infos.provas, prova, setValue])
 
     const BDownloadProva = () => {
@@ -289,7 +287,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
             <form onSubmit={handleSubmit(handleSave)} className="grid grid-cols-1 md:grid-cols-7 gap-x-4">
                 <div className="col-span-1 md:col-span-2 flex flex-col">
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Informação do Cursinho {!question ? <></> : getStatusIcon(question.status)}</Text>
-                    <Form className="grid grid-cols-1 gap-y-1 mb-1" formFields={listFieldClassification} register={register} />
+                    <Form className="grid grid-cols-1 gap-y-1 mb-1" formFields={listFieldClassification} register={register} errors={errors} />
                 </div>
                 <div className="col-span-1 md:col-span-3">
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Informações da Questão</Text>
@@ -305,14 +303,14 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Imagem da Questão</Text>
                     {question ? 
                         <div>
-                            {imagePreview ? <img src={imagePreview}/> : 
+                            {imagePreview ? <img src={imagePreview as string}/> : 
                                 <img className="max-h-96 bg-lightGray p-[1px] w-full mr-4 sm:m-0 cursor-pointer" src={`https://api.vcnafacul.com.br/images/${question?.imageId}.png`} onClick={() => setPhotoOpen(true)} />
                                 }
                             {isEditing ? <UploadButton placeholder="Alterar imagem" onChange={handleImageChange} accept='.png' /> : <></>}
                         </div> : 
                         <div>
                             <div className="border py-4 flex justify-center items-center h-1/2">
-                                {imagePreview ? <img src={imagePreview}/> : 
+                                {imagePreview ? <img src={imagePreview as string}/> : 
                                 <Preview />}
                                 
                             </div>

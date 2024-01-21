@@ -1,7 +1,6 @@
 
 export interface CreateQuestion {
-    _id: string
-    exame: string
+    prova: string
     enemArea: string
     frente1: string
     frente2?: string
@@ -9,13 +8,13 @@ export interface CreateQuestion {
     materia: string
     numero: number
     textoQuestao: string
-    textoAlternativaA: string
-    textoAlternativaB: string
-    textoAlternativaC: string
-    textoAlternativaD: string
-    textoAlternativaE: string
+    textoAlternativaA?: string
+    textoAlternativaB?: string
+    textoAlternativaC?: string
+    textoAlternativaD?: string
+    textoAlternativaE?: string
     alternativa: string
-    imageId: string
+    imageId?: string
 }
 export interface UpdateQuestion extends CreateQuestion {
     _id: string
