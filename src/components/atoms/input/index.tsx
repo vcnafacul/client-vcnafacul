@@ -27,7 +27,7 @@ const input = tv({
 export type InputProps = VariantProps<typeof input> & ComponentProps<'input'> & {
     className?: string;
     options?: FormFieldOption[];
-    defaultValue?: any;
+    defaultValue?: string | number | readonly string[] | undefined;
     register: UseFormRegister<FieldValues>;
 }
 
