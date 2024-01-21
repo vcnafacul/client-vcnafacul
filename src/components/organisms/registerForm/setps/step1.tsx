@@ -1,6 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { StepProps } from ".."
 import FormField from "../../../molecules/formField";
 import { lowercaseLetterRegex, specialCaracteresRegex, uppercaseLetterRegex } from "../../../../pages/register/data";
@@ -12,9 +9,16 @@ import { useForm } from "react-hook-form";
 import { validNewEmail } from "../../../../services/auth/validNewEmail";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import { UserRegister } from "../../../../types/user/userRegister";
+
+interface UseRegisterStep1 {
+    email: string;
+    password: string;
+    password_confirmation: string;
+}
 
 interface Step1Props extends StepProps {
-    updateData: (data: any) => void;
+    updateData: (data: UserRegister) => void;
 }
 
 function Step1({ formData, updateData, dataUser } : Step1Props){
@@ -37,10 +41,10 @@ function Step1({ formData, updateData, dataUser } : Step1Props){
         resolver: yupResolver(schema),
     });
 
-    const continueRegister = (data: any) => {
+    const continueRegister = (data: UseRegisterStep1) => {
         validNewEmail(data.email)
-            .then(_ => {
-                updateData(data)
+            .then(() => {
+                updateData(data as UserRegister)
             })
             .catch((error: Error) => {
                 toast.info(error.message)
@@ -53,7 +57,8 @@ function Step1({ formData, updateData, dataUser } : Step1Props){
         if(dataUser.email){
             setValue('email', dataUser.email)
         }
-    }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [setValue])
     
     return (
         <form onSubmit={handleSubmit(continueRegister)} className="flex flex-col gap-4 w-full">

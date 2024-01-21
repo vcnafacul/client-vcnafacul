@@ -5,9 +5,20 @@ import { UserRegister } from "../../../../types/user/userRegister";
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { useForm } from "react-hook-form";
-import { useAuthStore } from "../../../../store/auth";
+import { Gender, useAuthStore } from "../../../../store/auth";
 import { toast } from "react-toastify";
 import Form from "../../form";
+
+interface UseRegisterStep2 {
+    firstName: string;
+    lastName: string;
+    phone: string;
+    birthday: string;
+    city: string;
+    lgpd: NonNullable<boolean>;
+    state: string;
+    gender: Gender;
+}
 
 interface Step2Props extends StepProps {
     dataUser: UserRegister,
@@ -24,9 +35,11 @@ function Step2({ formData, dataUser, next, back } : Step2Props){
             firstName: yup.string().required('Por favor, informe seu nome'),
             lastName: yup.string().required('Por favor, informe seu sobrenome'),
             phone: yup.string().required('campo obrigatório'),
-            birthday: yup.date().nullable().transform((curr, orig) => orig === '' ? null : curr)
+            gender: yup.number().required(),
+            birthday: yup.string().nullable().transform((curr, orig) => orig === '' ? null : curr)
                 .required('campo obrigatório'),
             city: yup.string().required('campo obrigatório'),
+            state: yup.string().required(),
             lgpd: yup.boolean()
             .oneOf([true], 'Você deve aceitar os termos e políticas')
             .required('Por favor, confirmação necessária')
@@ -37,9 +50,8 @@ function Step2({ formData, dataUser, next, back } : Step2Props){
         resolver: yupResolver(schema),
     });
   
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const registerSubmit = (data: any) => {
-        registerUser({...dataUser, ...data})
+    const registerSubmit = (data: UseRegisterStep2) => {
+        registerUser({...dataUser, ...(data as UserRegister)})
             .then(res => {
                 doAuth(res)
                 next()
