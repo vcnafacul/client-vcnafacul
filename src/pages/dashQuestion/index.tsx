@@ -151,7 +151,7 @@ function DashQuestion() {
                         handleUpdateQuestion={handleUpdateQuestion}
                         handleAddQuestion={handleAddQuestion}
                          />}, 
-                { label: "Historico", children: <>Teste 2</>}
+                // { label: "Historico", children: <>Teste 2</>}
             ]} />
     }
 
