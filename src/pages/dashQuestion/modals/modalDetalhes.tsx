@@ -36,10 +36,8 @@ interface ModalDetalhesProps extends ModalProps {
     handleUpdateQuestion: (questionUpdate: UpdateQuestion) => void;
     handleAddQuestion: (question: Question) => void;
 }
-let times = 0
 
 function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatus, handleUpdateQuestion, handleAddQuestion } : ModalDetalhesProps) {
-    console.log('renderizou', times++)
     const schema = yup
     .object()
     .shape({
@@ -217,7 +215,6 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                 .then((res) => {
                     if(question?.numero && !res.includes(question.numero)){
                         setNumberMissing([...res, question.numero])
-                        console.log(question.numero)
                         setValue('numero', question.numero)
                     } else {
                         setNumberMissing(res)
