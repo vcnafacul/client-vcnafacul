@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Text from "../../atoms/text"
 import { FormFieldInput } from "../../molecules/formField";
 import Step1 from "./setps/step1";
@@ -31,7 +30,7 @@ function RegisterForm({ title, titleSucess, formData } : RegisterFormProps){
         }
     }
 
-    const updateData = (oldData: any) => {
+    const updateData = (oldData: UserRegister) => {
         setDataUser({...dataUser, ...oldData})
         nextStep()
       }
