@@ -5,7 +5,7 @@ import LabelInput from "../../atoms/labelInput/input"
 
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { IoMdEye } from "react-icons/io";
-import { UseFormRegister, FieldValues, FieldError } from "react-hook-form";
+import { UseFormRegister, FieldError } from "react-hook-form";
 
 export interface FormFieldOption {
     value: any;
@@ -24,7 +24,7 @@ export interface FormFieldInput {
 }
 
 export interface FormFieldProps  extends FormFieldInput {
-    register: UseFormRegister<FieldValues>;
+    register: UseFormRegister<any>;
     ref?: LegacyRef<HTMLInputElement>;
     error?: FieldError | any;
 }
