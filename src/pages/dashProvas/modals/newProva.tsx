@@ -84,11 +84,11 @@ function NewProva({ handleClose, addProva, tipos} : NewProvaProps){
             const info = data as CreateProva
             info.aplicacao = 1
             if(info.edicao.includes('2')){
-                info.edicao = Edicao.Replicacao
+                info.edicao = Edicao.Reaplicacao
                 info.aplicacao = 2
             }
             if(info.edicao.includes('3')){
-                info.edicao = Edicao.Replicacao
+                info.edicao = Edicao.Reaplicacao
                 info.aplicacao = 3
             }
 
