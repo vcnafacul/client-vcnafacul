@@ -10,4 +10,5 @@ export async function validNewEmail(email: string): Promise<void> {
     if(response.status === 400){
         throw new Error(`Email Já existe`)
     }
+    throw new Error('Não foi possível validar seu email')
 }
