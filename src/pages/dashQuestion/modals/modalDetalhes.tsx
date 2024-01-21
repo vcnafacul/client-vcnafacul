@@ -44,7 +44,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     .object()
     .shape({
         prova: yup.string().required('Prova é obrigatoria').typeError('Por favor, selecione uma prova'),
-        numero: yup.number().required('Número da questão é obrigatório').typeError('Por favor, insira um número válido'),
+        numero: yup.number().min(1).required('Número da questão é obrigatório').typeError('Por favor, insira um número válido'),
         enemArea: yup.string().required('Área do Conhecimento é obrigatorio').typeError('Área do Conhecimento é obrigatorio'),
         materia: yup.string().required('Materia é obrigatoria').typeError('Materia é obrigatoria'),
         frente1: yup.string().required('A Frente Principal é obrigatorio').typeError('A Frente Principal é obrigatorio'),
@@ -69,7 +69,6 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
 
     const prova = watch("prova")
-    const numero = watch("numero")
 
     const previewImage = (file: any) => {
         const reader = new FileReader();
@@ -104,9 +103,9 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
 
     const listFieldClassification : FormFieldInput[]= [
         {id: "prova",  type: "option", label: "Prova:*", options: provas, value: question?.prova ?? '', disabled: !question ? false : !isEditing,},
-        {id: "ano", type: "text", label: "Ano:*", value: infos.provas.find(p => p._id === prova ?? question?.prova)?.ano, disabled: true,},
+        {id: "ano", type: "number", label: "Ano:*", value: infos.provas.find(p => p._id === prova ?? question?.prova)?.ano, disabled: true,},
         {id: "edicao", type: "text", label: "Edição:*", value: infos.provas.find(p => p._id === prova ?? question?.prova)?.edicao , disabled: true,},
-        {id: "numero", type: "option", label: "Número da Questão:*", options: numberOption, value: numero ?? question?.numero, disabled: !question ? false : !isEditing,},
+        {id: "numero", type: "option", label: "Número da Questão:*", options: numberOption, value: question?.numero ?? 0, disabled: !question ? false : !isEditing,},
         {id: "enemArea", type: "option", label: "Área do Conhecimento:*", options: AreaEnem, value: question?.enemArea, disabled: !question ? false : !isEditing,},
         {id: "materia", type: "option", label: "Disciplina:*", options: materias, value: question?.materia, disabled: !question ? false : !isEditing,},
         {id: "frente1", type: "option", label: "Frente Principal:*", options: frentes, value: question?.frente1, disabled: !question ? false : !isEditing,},
@@ -135,7 +134,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     }
 
     const handleSave = (data: any) => {
-       if(question){
+        if(question){
             data['_id'] = question._id
             if(alternative != question.alternativa) {
                 data['alternativa'] = alternative
@@ -155,11 +154,11 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
             else {
                 handleUpdateClose(data)
             }
-       }
-       else {
-        if(!alternative){
-            toast.warn("Faltou preencher a alternativa correta", { theme: 'dark'})
         }
+        else {
+            if(!alternative){
+                toast.warn("Faltou preencher a alternativa correta", { theme: 'dark'})
+            }
         else {
             const formData = new FormData()
             formData.append('file', uploadFile)
@@ -219,8 +218,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 .then((res) => {
                     setNumberMissing(res)
-                    setValue('numero', numero ?? question?.numero)
-                    
+                    setValue('numero', question?.numero ?? res[0] ?? 0)
                 })
                 .catch((erro: Error) => {
                     toast.error(erro.message)
@@ -229,7 +227,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         else {
             setNumberMissing([])
         }
-    }, [numero, prova, token])
+    }, [prova, token])
 
     const ModalRefused = () => {
         if(!refuse) return null;
@@ -256,7 +254,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
             setValue('prova', question.prova)
         }
         getMissing()
-    }, [getMissing, infos.provas, numero, prova, question, setValue])
+    }, [getMissing, infos.provas, prova, question, setValue])
 
     const BDownloadProva = () => {
         if(!prova) return null
@@ -284,7 +282,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
             <form onSubmit={handleSubmit(handleSave)} className="grid grid-cols-1 md:grid-cols-7 gap-x-4">
                 <div className="col-span-1 md:col-span-2 flex flex-col">
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Informação do Cursinho {!question ? <></> : getStatusIcon(question.status)}</Text>
-                    <Form className="grid grid-cols-1 gap-y-1 mb-1" formFields={listFieldClassification} register={register} />
+                    <Form className="grid grid-cols-1 gap-y-1 mb-1" formFields={listFieldClassification} register={register} errors={errors} />
                 </div>
                 <div className="col-span-1 md:col-span-3">
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Informações da Questão</Text>
