@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FrenteDto } from "../../dtos/content/contentDtoInput";
 import { Materias } from "../../enums/content/materias";
-import { FormFieldOptionDelete } from "../../pages/dashContent/modals/settingsContent";
+import { FormFieldOptionFrente } from "../../pages/dashContent/modals/settingsContent";
 import fetchWrapper from "../../utils/fetchWrapper";
 import { frentesByMateria } from "../urls";
 
@@ -17,7 +17,7 @@ export async function getFrentes ( materia: Materias, token: string): Promise<Fr
     return res
 }
 
-export async function getFrenteLikeFormField( materia: Materias, token: string): Promise<FormFieldOptionDelete[]> {
+export async function getFrenteLikeFormField( materia: Materias, token: string): Promise<FormFieldOptionFrente[]> {
     const frentes = await getFrentes(materia, token)
 
     const form = frentes.map((frente: any) => (
