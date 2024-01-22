@@ -160,25 +160,25 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                 handleUpdateClose(dataQuestion)
             }
        }
-       else {
-        const formData = new FormData()
-        formData.append('file', uploadFile as Blob)
-        uploadImage(formData, token)
-            .then((res: string) => {
-                data.imageId = res
-                createQuestion(data, token)
-                    .then((res: Question) => {
-                        handleAddQuestion(res)
-                        handleClose()
-                        toast.success(`Cadastro realizado com sucesso. Id: ${res._id}`)
-                    })
-                    .catch((error: Error) => {
-                        toast.error(error.message)
-                    })
-            })
-            .catch((error: Error) => {
-                toast.error(error.message)
-            })
+        else {
+            const formData = new FormData()
+            formData.append('file', uploadFile as Blob)
+            uploadImage(formData, token)
+                .then((res: string) => {
+                    data.imageId = res
+                    createQuestion(data, token)
+                        .then((res: Question) => {
+                            handleAddQuestion(res)
+                            handleClose()
+                            toast.success(`Cadastro realizado com sucesso. Id: ${res._id}`)
+                        })
+                        .catch((error: Error) => {
+                            toast.error(error.message)
+                        })
+                })
+                .catch((error: Error) => {
+                    toast.error(error.message)
+                })
         }
     } 
 
