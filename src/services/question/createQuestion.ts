@@ -1,3 +1,4 @@
+import { StatusCodes } from "http-status-codes";
 import { Question } from "../../dtos/question/QuestionDTO";
 import { CreateQuestion } from "../../dtos/question/updateQuestion";
 import { cleanObject } from "../../utils/cleanObjet";
@@ -11,9 +12,9 @@ export async function createQuestion (data: CreateQuestion, token: string): Prom
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(cleanObject(data)),
     });
-    if(response.status !== 201){
+    if(response.status !== StatusCodes.CREATED){
         let errorMessage = 'Erro ao tentar criar questão'
-        if(response.status >= 400) {
+        if(response.status >= StatusCodes.BAD_REQUEST) {
             errorMessage += (await response.json()).message as string
         }
         throw new Error(errorMessage)
