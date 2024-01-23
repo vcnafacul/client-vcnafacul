@@ -42,7 +42,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
     .object()
     .shape({
         prova: yup.string().required('Prova é obrigatoria').typeError('Por favor, selecione uma prova'),
-        numero: yup.number().min(1).required('Número da questão é obrigatório').typeError('Por favor, insira um número válido'),
+        numero: yup.number().required('Número da questão é obrigatório').typeError('Por favor, insira um número válido'),
         enemArea: yup.string().required('Área do Conhecimento é obrigatorio').typeError('Área do Conhecimento é obrigatorio'),
         materia: yup.string().required('Materia é obrigatoria').typeError('Materia é obrigatoria'),
         frente1: yup.string().required('A Frente Principal é obrigatorio').typeError('A Frente Principal é obrigatorio'),
@@ -112,7 +112,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         {id: "prova",  type: "option", label: "Prova:*", options: provas, value: question?.prova ?? '', disabled: !question ? false : !isEditing,},
         {id: "ano", type: "number", label: "Ano:*", value: infos.provas.find(p => p._id === prova ?? question?.prova)?.ano, disabled: true,},
         {id: "edicao", type: "text", label: "Edição:*", value: infos.provas.find(p => p._id === prova ?? question?.prova)?.edicao , disabled: true,},
-        {id: "numero", type: "option", label: "Número da Questão:*", options: numberOption, value: question?.numero ?? 0, disabled: !question ? false : !isEditing,},
+        {id: "numero", type: "option", label: "Número da Questão:*", options: numberOption, disabled: !question ? false : !isEditing,},
         {id: "enemArea", type: "option", label: "Área do Conhecimento:*", options: AreaEnem, value: question?.enemArea, disabled: !question ? false : !isEditing,},
         {id: "materia", type: "option", label: "Disciplina:*", options: materias, value: question?.materia, disabled: !question ? false : !isEditing,},
         {id: "frente1", type: "option", label: "Frente Principal:*", options: frentes, value: question?.frente1, disabled: !question ? false : !isEditing,},
@@ -213,20 +213,20 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         if(prova){
             getMissingNumber(prova, token)
                 .then((res) => {
-                    if(question?.numero && !res.includes(question.numero)){
-                        setNumberMissing([...res, question.numero])
-                        setValue('numero', question.numero)
+                    if(question?.prova && question?.numero && !res.includes(question.numero)){
+                        setNumberMissing([ question.numero, ...res])
                     } else {
                         setNumberMissing(res)
-                        if(res.length > 0) setValue('numero', res[0])
                     }
+                    setValue('numero', res[0])
                 })
                 .catch((erro: Error) => {
                     toast.error(erro.message)
                 })
         }
         else {
-            setNumberMissing([])
+            if(question) setNumberMissing([question.numero])
+            else setNumberMissing([])
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [prova, token])
@@ -261,7 +261,6 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
             setValue('frente1', question.frente1)
             setValue('frente2', question.frente2)
             setValue('frente3', question.frente3)
-            setValue('numero', question.numero)
             setValue('textoQuestao', question.textoQuestao)
             setValue('textoAlternativaA', question.textoAlternativaA)
             setValue('textoAlternativaB', question.textoAlternativaB)
