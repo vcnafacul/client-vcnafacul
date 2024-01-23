@@ -8,7 +8,7 @@ export async function updateUser(token: string, data: AuthUpdate): Promise<void>
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(data)
     });
-    console.log(response.status)
+
     if(response.status !== 200){
         throw new Error(`Erro ao buscar Infos Usuário`)
     }
