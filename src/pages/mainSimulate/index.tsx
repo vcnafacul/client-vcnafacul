@@ -148,7 +148,7 @@ function MainSimulate() {
         <>
                 <div className="relative">
                     <div className="relative sm:mx-10">
-                        <div className="flex flex-col items-start pt-28 mb-20">
+                        <div className="flex flex-col items-start pt-10 mb-20">
                             <Text size="primary" className="mb-1">{simulateData.titleBook}</Text>
                             <Text size="tertiary" className="text-xl">{simulateData.subTitleBook}</Text>
                             <CarouselRef className="w-full" childrens={cardsBook} breakpoints={breakpointsBook} />
