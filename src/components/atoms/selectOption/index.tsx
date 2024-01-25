@@ -1,16 +1,20 @@
 import { ComponentProps } from "react"
 import { TiArrowSortedDown } from "react-icons/ti";
 import './styles.css'
-import { OptionProps } from "../selectOption";
+
+export interface OptionProps {
+    id: number | string,
+    name: string;
+}
 
 type SelectProps = ComponentProps<'select'> & {
     options: OptionProps[]
-    defaultValue?: number;
+    defaultValue?: OptionProps;
     disabled?: boolean;
-    setState: (value: number) => void;
+    setState: (value: OptionProps) => void;
 }
 
-function Select({ options, disabled, defaultValue, setState } : SelectProps){
+export function SelectOption({ options, disabled, defaultValue, setState } : SelectProps){
     return (
         <>
         <div className="relative group">
@@ -18,10 +22,10 @@ function Select({ options, disabled, defaultValue, setState } : SelectProps){
             <select 
             className="remove-arrow w-full h-full text-lg font-black text-marine pl-4 pr-10 py-1 rounded-xl shadow-md z-50"
             disabled={disabled ?? false}
-            defaultValue={defaultValue} 
+            defaultValue={defaultValue?.id} 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            onChange={(e: any) => {
-                setState(Number(e.target.value));
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                setState(options.find(item => item.id === e.target.value)!);
             }}>
             {options.map(opt => (
                 <option key={opt.id} value={opt.id}>{opt.name}</option>
@@ -29,8 +33,5 @@ function Select({ options, disabled, defaultValue, setState } : SelectProps){
             </select>
         </div>
         </>
-
     )
 }
-
-export default Select

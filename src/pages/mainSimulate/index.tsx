@@ -1,49 +1,34 @@
 import Text from "../../components/atoms/text"
 import Ul from "../../components/atoms/ul"
 import CardSimulate from "../../components/molecules/cardSimulate"
-import { getTitle, simulateData } from "./data"
-import './styles.css'
-
 import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
+import { simulateData } from "./data"
 import CarouselRef from "../../components/organisms/carouselRef"
-import { useNavigate } from "react-router-dom"
-import { useCallback, useEffect, useState } from "react"
 import NewSimulate from "./modals/newSimulate"
-import { getSimuladoById } from "../../services/simulado/getSimuladoById"
-import { useAuthStore } from "../../store/auth"
-import { getSimuladosDefaults } from "../../services/simulado/getSimuladosDefaults"
-import { SimuladoDefault } from "../../types/simulado/simuladoDefault"
-import { SimuladoDefaultEnum } from "../../enums/simulado/simuladoDefaultEnum"
-import { useSimuladoStore } from "../../store/simulado"
-import { SIMULADO } from "../../routes/path"
-import { toast } from "react-toastify"
+import { useState } from "react"
+import { ICard } from "../../types/simulado/ISimulateData"
+import './styles.css'
 
 function MainSimulate() {
     const [initialize, setInitialize]= useState<boolean>(false);
-    const [simulatesDefault, setSimulatseDefault] = useState<SimuladoDefault[]>()
-    const [type, setType] = useState<SimuladoDefaultEnum>()
+    const [card, setCard] = useState<ICard>()
 
-    const { data: { token }} = useAuthStore()
-    const { simuladoBegin } = useSimuladoStore()
-    const navigate = useNavigate()
-    
-
-    const openModalNew = (type: SimuladoDefaultEnum) => {
-        setType(type)
+    const openModalNew = (card: ICard) => {
+        setCard(card)
         setInitialize(true)
     }
 
     const cardsBook = simulateData.simulateCardsBook.map(card => {
             return (
-                <CardSimulate key={card.id} onClick={() => {openModalNew(card.tipo)}} title={card.title} icon={card.icon} className={card.className} color={card.color}>
+                <CardSimulate key={card.id} onClick={() => {openModalNew(card)}} title={card.tipo} icon={card.icon} className={card.className} color={card.color}>
                     {card.subTitle}
                 </CardSimulate>
             )})
 
     const cardsDay = simulateData.simulateCardsDay.map(card => {
         return (
-            <CardSimulate key={card.id} onClick={() => {openModalNew(card.tipo)}} title={card.title} icon={card.icon} className={card.className} color={card.color}>
-                <Ul childrens={card.item} />
+            <CardSimulate key={card.id} onClick={() => {openModalNew(card)}} title={card.tipo} icon={card.icon} className={card.className} color={card.color}>
+                <Ul childrens={card.item!} />
             </CardSimulate>
         )})
 
@@ -105,46 +90,11 @@ function MainSimulate() {
         },
       }
 
-    const getSimulate = useCallback( (id: string) => {
-        getSimuladoById(id, token)
-            .then(res => {
-                simuladoBegin(res)
-                navigate(SIMULADO)
-                toast.success(`Iniciado Simulado ${res.title}`)
-            })
-            .catch((error: Error) => {
-                toast.error(`Erro ao buscar simulado ${id} - Error ${error.message}`)
-                setInitialize(false)
-            })
-    },[])
-
     const ModalNewSimulate = () => {
         if(!initialize) return null
-        return <NewSimulate title={getTitle(type!)} 
-        handleClose={() => { setInitialize(false) }}
-        initialize={() => { 
-            const id = simulatesDefault?.find(s => s.type === type)?.id
-            getSimulate(id!)
-         }}
-        />
+        return <NewSimulate title={card!.tipo} 
+        handleClose={() => { setInitialize(false) }} />
     }
-
-    useEffect(() => {
-        getSimuladosDefaults(token)
-            .then(res => {
-                setSimulatseDefault([
-                    {type: SimuladoDefaultEnum.Linguagens, id: res.Linguagens},
-                    {type: SimuladoDefaultEnum.Natureza, id: res.CienciasDaNatureza},
-                    {type: SimuladoDefaultEnum.Humanas, id: res.CienciasHumanas},
-                    {type: SimuladoDefaultEnum.Matematica, id: res.Matematica},
-                    {type: SimuladoDefaultEnum.Enem1, id: res.Enem1},
-                    {type: SimuladoDefaultEnum.Enem2, id: res.Enem2},
-                ])
-            })
-            .catch((erro: Error) => {
-                toast.error(erro.message)
-            }) 
-    }, [])
 
     return (
         <>
