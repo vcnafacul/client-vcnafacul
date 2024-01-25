@@ -1,5 +1,6 @@
 import { ReactComponent as HeroSvg } from '../../assets/images/dashboard/dashboard-hero.svg'
 import Text from '../../components/atoms/text'
+import { Subtitle, Welcome } from './data'
 
 function Dash(){
     return (
@@ -8,8 +9,8 @@ function Dash(){
                     <div className='flex flex-col md:flex-row items-center'>
                         <HeroSvg className='min-w-[500px] w-[30vw] max-w-5xl'/>
                         <div className='w-96'>
-                            <Text className='md:text-left'> Bem Vindos ao Você na Facul</Text>
-                            <Text className='md:text-left' size='tertiary'>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy</Text>
+                            <Text className='md:text-left'>{Welcome}</Text>
+                            <Text className='md:text-left' size='tertiary'>{Subtitle}</Text>
                         </div>
                     </div>
                 </div>
