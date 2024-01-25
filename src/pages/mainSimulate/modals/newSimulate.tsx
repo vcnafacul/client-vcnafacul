@@ -20,7 +20,6 @@ interface NewSimulateProps {
 }
 
 function NewSimulate({ handleClose, title } : NewSimulateProps ) {
-    console.log(title)
     const [availables, setAvailables] = useState<OptionProps[]>([])
     const [availableSelected, setAvailableSelected] = useState<OptionProps>({} as OptionProps)
     const navigate = useNavigate()
