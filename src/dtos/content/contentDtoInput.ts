@@ -25,7 +25,6 @@ export interface SubjectDto {
 export interface FrenteDto {
     id: number;
     name: string;
-    lenght: number;
     materia: Materias
 }
 
