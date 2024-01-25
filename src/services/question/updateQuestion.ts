@@ -18,7 +18,6 @@ export async function updateQuestion (questao: UpdateQuestion, token: string):Pr
 }
 
 const fixQuestion = (questao: UpdateQuestion) => {
-    if(questao.ano) questao.ano = parseInt(questao.ano as unknown as string)
     if(questao.numero) questao.numero = parseInt(questao.numero as unknown as string)
     return questao
 }

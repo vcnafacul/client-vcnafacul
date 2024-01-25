@@ -3,7 +3,7 @@ import { ComponentProps } from "react"
 import './style.css'
 
 interface UploadButtonProps extends ComponentProps<'input'> {
-    onChange: (event: any) => void;
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     className?: string;
 }
 

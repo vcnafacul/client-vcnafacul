@@ -50,8 +50,8 @@ function NewProva({ handleClose, addProva, tipos} : NewProvaProps){
     })
 
     const edicaoOption : FormFieldOption[] = edicaoArray.map(f => ({ label: f, value: f }))
-    edicaoOption.push({ label: 'Reaplicação/PPL/2ªAplicação', value: 'Reaplicação/PPL2'})
-    edicaoOption.push({ label: 'Reaplicação/PPL/3ªAplicação', value: 'Reaplicação/PPL3'})
+    edicaoOption.push({ label: '2ªAplicação', value: 'Reaplicação/PPL2'})
+    edicaoOption.push({ label: '3ªAplicação', value: 'Reaplicação/PPL3'})
 
     const handleFileUpload = (e: any) => {
         setUploadFile(null)
@@ -100,7 +100,6 @@ function NewProva({ handleClose, addProva, tipos} : NewProvaProps){
             formData.append('ano', info.ano.toString())
             formData.append('aplicacao', info.aplicacao.toString())
             formData.append('file', uploadFile!, `${fileName}.pdf`)
-            console.log(info)
             createProva(formData, token)
                 .then((res) => {
                     addProva(res)
