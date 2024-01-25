@@ -151,7 +151,7 @@ function DashQuestion() {
                         handleUpdateQuestion={handleUpdateQuestion}
                         handleAddQuestion={handleAddQuestion}
                          />}, 
-                { label: "Historico", children: <>Teste 2</>}
+                // { label: "Historico", children: <>Teste 2</>}
             ]} />
     }
 
@@ -167,8 +167,7 @@ function DashQuestion() {
                         handleUpdateQuestionStatus={handleUpdateQuestionStatus}
                         handleUpdateQuestion={handleUpdateQuestion}
                         handleAddQuestion={handleAddQuestion}
-                         />}, 
-                { label: "Cadastro de Prova", children: <>Teste 2</>}
+                         />}
             ]} />
     }
 
