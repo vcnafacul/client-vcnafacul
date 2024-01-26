@@ -23,18 +23,17 @@ function FollowUs({ socialLinks, solid, className } : FollowUsProps) {
             <div className="text-green font-bold text-base">
                 Siga nossas redes sociais
             </div>
-            <div className="w-12 h-0.5 bg-green my-4 mx-auto block"/>
-            <div className="flex">
-                <Link className="px-2" key={'socialLinks.facebook'} to={socialLinks.facebook || "#"}>
+            <div className="flex w-full justify-around py-8">
+                <Link key={'socialLinks.facebook'} to={socialLinks.facebook || "#"}>
                     <FacebookIcon className={`${solid ? 'fill-marine': 'fill-white'}`}/>
                 </Link>
-                <Link className="px-2" key={'socialLinks.linkedin'} to={socialLinks.linkedin || "#"}>
+               <Link key={'socialLinks.linkedin'} to={socialLinks.linkedin || "#"}>
                     <LinkedinIcon className={`${solid ? 'fill-marine': 'fill-white'}`}/>
                 </Link>
-                <Link className="px-2"  key={'socialLinks.twitter'} to={socialLinks.twitter || "#"}>
+               <Link key={'socialLinks.twitter'} to={socialLinks.twitter || "#"}>
                     <TwitterIcon className={`${solid ? 'fill-marine': 'fill-white'}`}/>
                 </Link>
-                <Link className="px-2"  key={'socialLinks.instagram'} to={socialLinks.instagram || "#"}>
+                <Link key={'socialLinks.instagram'} to={socialLinks.instagram || "#"}>
                     <InstagramIcon className={`${solid ? 'fill-marine': 'fill-white'}`}/>
                 </Link>
             </div>

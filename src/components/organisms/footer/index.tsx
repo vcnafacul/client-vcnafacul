@@ -17,7 +17,7 @@ function Footer({sitemapLinks, pageLinks, socialLinks} : FooterProps) {
             <Logo name text="Equidade. Oportunidade. Realização."/>
             <MenuItem align="vertical" itemsMenu={pageLinks} solid={false} />
             <MenuItem align="vertical" itemsMenu={sitemapLinks} solid={false} />
-            <FollowUs socialLinks={socialLinks} solid={false}/>
+            <FollowUs socialLinks={socialLinks} solid={false} className="w-52 flex flex-col items-center"/>
         </div>
         </section>
     );

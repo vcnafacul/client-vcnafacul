@@ -1,8 +1,8 @@
 import Text from "../../components/atoms/text"
 import Ul from "../../components/atoms/ul"
 import CardSimulate from "../../components/molecules/cardSimulate"
-import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
 import { simulateData } from "./data"
+import './styles.css'
 import CarouselRef from "../../components/organisms/carouselRef"
 import NewSimulate from "./modals/newSimulate"
 import { useState } from "react"
@@ -99,9 +99,8 @@ function MainSimulate() {
     return (
         <>
                 <div className="relative">
-                    <TriangleGreen className="absolute w-40 h-40 rotate-180 -top-36 left-96"/>
                     <div className="relative sm:mx-10">
-                        <div className="flex flex-col items-start mt-20 mb-20">
+                        <div className="flex flex-col items-start pt-10 mb-20">
                             <Text size="primary" className="mb-1">{simulateData.titleBook}</Text>
                             <Text size="tertiary" className="text-xl">{simulateData.subTitleBook}</Text>
                             <CarouselRef className="w-full" childrens={cardsBook} breakpoints={breakpointsBook} />
