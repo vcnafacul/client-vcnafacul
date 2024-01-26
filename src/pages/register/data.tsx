@@ -3,7 +3,6 @@ import { RegisterFormProps } from "../../components/organisms/registerForm";
 import { Gender } from "../../store/auth";
 
 export const stateOptions: FormFieldOption[] = [
-    { value: '', label: '' },
     { value: 'AC', label: 'Acre' },
     { value: 'AL', label: 'Alagoas' },
     { value: 'AP', label: 'Amapá' },
@@ -42,7 +41,6 @@ export const optionsGender: FormFieldOption[] = [
 export const registerForm : RegisterFormProps = {
     title: "Cadastre-se",
     titleSucess: "Seja bem-vinde ao Você na Facul!",
-    labelSubmit: "Continuar",
     formData: {
         step1 : [
             { id: 'email', label: 'E-mail'},
@@ -53,7 +51,7 @@ export const registerForm : RegisterFormProps = {
             {id: "firstName", label: "Nome"},
             {id: "lastName", label: "Sobrenome"},
             {id: "gender", label: "Gênero",  type: 'option', options: optionsGender},
-            {id: "birthday", type:"date", label: "Data de Nascimento"},
+            {id: "birthday", type:"date", label: "Data de Nascimento", value: '01/01/2022'},
             {id: "phone", label: "Telefone"},
             {id: "state", label: "Estado", type: 'option',  options: stateOptions},
             {id: "city", label: "Cidade"},
@@ -61,37 +59,6 @@ export const registerForm : RegisterFormProps = {
     }
 }
 
-export function uppercaseLetter(password: string) {
-    const uppercaseLetterRegex = /[A-Z]/g;
-    if (uppercaseLetterRegex.test(String(password))) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-export function lowercaseLetter(password: string) {
-    const lowercaseLetterRegex = /[a-z]/g;
-    if (lowercaseLetterRegex.test(String(password))) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-export function specialCaracteres(password: string) {
-    const specialCaracteresRegex = /[!@#$%^&*(),.?":{}|<>]/g;
-    if (specialCaracteresRegex.test(String(password))) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-export function lengthPassword(password: string) {
-    if (password && password.trim().length >= 8) {
-        return true;
-    } else {
-        return false;
-    }
-}
+export const uppercaseLetterRegex = /[A-Z]/;
+export const lowercaseLetterRegex = /[a-z]/;
+export const specialCaracteresRegex = /[!@#$%^&*(),.?":{}|<>]/;
