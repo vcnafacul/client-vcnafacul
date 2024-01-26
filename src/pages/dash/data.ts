@@ -151,3 +151,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
         ],
     },
 ];
+
+
+export const Welcome = 'Bem Vindos ao Você na Facul'
+export const Subtitle = 'Plataforma em construção!'
