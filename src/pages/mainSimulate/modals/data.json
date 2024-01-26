@@ -1,5 +1,5 @@
 {
-    "Enem dia #1": {
+    "Enem Dia 1": {
         "nome": "1º dia do ENEM",
         "tempo": 300,
         "questoes": 90,
@@ -27,7 +27,7 @@
             }
         ]
     },
-    "Enem dia #2": {
+    "Enem Dia 2": {
         "nome": "2º dia do ENEM",
         "tempo": 300,
         "questoes": 90,
@@ -66,7 +66,7 @@
             }
         ]
     },
-    "Ciência Humanas": {
+    "Ciências Humanas": {
         "nome": "Ciência Humanas",
         "tempo": 150,
         "questoes": 45,

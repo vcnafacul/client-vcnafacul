@@ -12,10 +12,10 @@ import { getStatusIcon } from "../../../utils/getStatusIcon"
 import { formatDate } from "../../../utils/date"
 import ChangeOrder from "./changeOrder"
 import { TbArrowsExchange } from "react-icons/tb";
-import { OptionProps } from "../../../components/atoms/select"
 import { ChangeOrderDTO } from "../../../dtos/content/changeOrder"
 import { changeOrderDemand } from "../../../services/content/changeOrderDemand"
 import { Insert } from "../../../enums/content/insert"
+import { OptionProps } from "../../../components/atoms/selectOption"
 
 interface ViewOrderProps extends ModalProps{
     subjectId: number

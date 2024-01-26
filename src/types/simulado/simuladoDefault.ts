@@ -1,7 +1,7 @@
-import { SimuladoDefaultEnum } from "../../enums/simulado/simuladoDefaultEnum";
+import { TipoSimulados } from "../../enums/simulado/tipoSimulados";
 
 export interface SimuladoDefault {
-    type: SimuladoDefaultEnum,
+    type: TipoSimulados,
     id: string;
 }
 

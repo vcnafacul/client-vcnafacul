@@ -9,9 +9,10 @@ import { formatDate } from "../../../utils/date"
 import { dashOnlyDemand } from "./data"
 import ShowDemand from "../modals/showDemand"
 import Filter from "../../../components/atoms/filter"
-import Select, { OptionProps } from "../../../components/atoms/select"
+import Select from "../../../components/atoms/select"
 import { MateriasLabel } from "../../../types/content/materiasLabel"
 import { Materias } from "../../../enums/content/materias"
+import { OptionProps } from "../../../components/atoms/selectOption"
 
 
 function OnlyDemand() {
@@ -23,7 +24,7 @@ function OnlyDemand() {
         mat.unshift({ id: -1 as Materias, name: 'Todos'})
         return mat
     })
-    const [materiaSelected, setMateriaSelected] = useState<number>(materias[0].id)
+    const [materiaSelected, setMateriaSelected] = useState<number>(materias[0].id as number)
     const dataRef = useRef<ContentDtoInput[]>([])
 
     const cardContent : CardDashInfo[] = demands.map(content => (

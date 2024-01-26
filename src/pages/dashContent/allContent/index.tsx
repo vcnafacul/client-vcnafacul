@@ -10,7 +10,7 @@ import { toast } from "react-toastify"
 import Filter from "../../../components/atoms/filter"
 import Button from "../../../components/molecules/button"
 import NewDemand from "../modals/newDemand"
-import Select, { OptionProps } from "../../../components/atoms/select"
+import Select from "../../../components/atoms/select"
 import { StatusEnum } from "../../../enums/generic/statusEnum"
 import { StatusContent } from "../../../enums/content/statusContent"
 import ValidatedDemand from "../modals/validatedDemand"
@@ -21,6 +21,7 @@ import SettingsContent from "../modals/settingsContent"
 import { Roles } from "../../../enums/roles/roles"
 import { MateriasLabel } from "../../../types/content/materiasLabel"
 import { Materias } from "../../../enums/content/materias"
+import { OptionProps } from "../../../components/atoms/selectOption"
 
 function AllContent() {
 
@@ -34,7 +35,7 @@ function AllContent() {
         mat.unshift({ id: -1 as Materias, name: 'Todos'})
         return mat
     })
-    const [materiaSelected, setMateriaSelected] = useState<number>(materias[0].id)
+    const [materiaSelected, setMateriaSelected] = useState<number>(materias[0].id as number)
     const [status, setStatus] = useState<StatusContent | StatusEnum>(StatusEnum.Approved);
     const dataRef = useRef<ContentDtoInput[]>([])
 
