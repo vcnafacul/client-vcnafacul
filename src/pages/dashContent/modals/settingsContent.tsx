@@ -62,7 +62,7 @@ function SettingsContent({handleClose} : SettingsContentProps) {
 
     const getSubjectByFrente = (frente: FormFieldOptionFrente = frenteSelected!) => {
         if(frente){
-            getSubjectsLikeFormField(frente.value, token)
+            getSubjectsLikeFormField(frente.value as number, token)
             .then(res => {
                 setSubjects(res)
             })
@@ -74,7 +74,7 @@ function SettingsContent({handleClose} : SettingsContentProps) {
 
     const removeSubject = (subjectRemoved: FormFieldOptionFrente) => {
         const idToast = toast.loading("Deletando Tema ... ")
-        deleteSubject(subjectRemoved.value, token)
+        deleteSubject(subjectRemoved.value as number, token)
             .then(_ => { 
                 toast.update(idToast, { render: `Tema ${subjectRemoved.label} Deletado`, type: 'success', isLoading: false, autoClose: 3000,})
                 const updatedSubject = subjects.filter(subject => {
@@ -97,7 +97,7 @@ function SettingsContent({handleClose} : SettingsContentProps) {
 
     const removeFrente = (frenteRemoved: FormFieldOptionFrente) => {
         const idToast = toast.loading("Deletando Frente ... ")
-        deleteFrente(frenteRemoved.value, token)
+        deleteFrente(frenteRemoved.value as number, token)
             .then(_ => { 
                 toast.update(idToast, { render: `Frente ${frenteRemoved.label} Deletada`, type: 'success', isLoading: false, autoClose: 3000,})
                 setFrentes(frentes.filter(frente => {
@@ -205,7 +205,7 @@ function SettingsContent({handleClose} : SettingsContentProps) {
         if(!openModalViewOrder) return null
         return <ViewOrder 
         handleClose={() => { setOpenModalViewOrder(false) }}
-        subjectId={subjectSelected!.value} />
+        subjectId={subjectSelected!.value as number} />
     }
 
     useEffect(()=> {

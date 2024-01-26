@@ -72,7 +72,7 @@ function NewDemand({ handleClose, addDemand } : NewDemandProps){
             .then(res => {
                 setSubjects(res)
                 if(res.length > 0) {
-                    setValue('subjectId', res[0].value)
+                    setValue('subjectId', res[0].value as number)
                 } else {
                     setValue('subjectId', null as unknown as number)
                 }
@@ -87,7 +87,7 @@ function NewDemand({ handleClose, addDemand } : NewDemandProps){
             .then(res => {
                 setFrentes(res)
                 if(res.length > 0) {
-                    getSubjectByFrente(res[0].value)
+                    getSubjectByFrente(res[0].value as number)
                     setValue('frente', res[0].value as number)
                 } else {
                     setValue('frente', null as unknown as number)

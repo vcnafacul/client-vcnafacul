@@ -44,7 +44,7 @@ function NewFrente({ handleClose, materia, frente, actionFrente} : NewFrenteProp
     const create = (data: any) => {
         const body : CreateFrenteDtoOutput = {
             name: data.name,
-            materia: parseInt(materia.value)
+            materia: parseInt(materia.value as string)
         }
         const id = toast.loading("Criando Frente ... ")
         createFrente(body, token)
@@ -61,7 +61,7 @@ function NewFrente({ handleClose, materia, frente, actionFrente} : NewFrenteProp
     const edit = (data: any) => {
         const body : UpdateFrenteDtoOutut = {
             name: data.name,
-            id: frente!.value
+            id: frente!.value as number
         }
         const id = toast.loading("Editando Frente ... ")
         updateFrente(body, token)

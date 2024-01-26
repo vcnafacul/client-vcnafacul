@@ -44,7 +44,7 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
     setValue('city', data.address.city_district)
     setValue('street', data.address.road)
     setValue('neighborhood', data.address.suburb)
-    setValue('state', stateOptions.find(opt => opt.label.includes(data.address.state))?.value)
+    setValue('state', stateOptions.find(opt => opt.label.includes(data.address.state))?.value as string)
   }
 
   const MapEvents = () => {

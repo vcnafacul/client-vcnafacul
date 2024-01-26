@@ -47,7 +47,7 @@ function NewSubject({ handleClose, materia, frente, subject, actionSubject } : N
 
     const create = (data: any) => {
         const body : CreateSubjectDtoOutput = {
-            frente: frente.value,
+            frente: frente.value as number,
             name: data.name,
             description: data.description
         }
@@ -65,7 +65,7 @@ function NewSubject({ handleClose, materia, frente, subject, actionSubject } : N
 
     const edit = (data: any) => {
         const body : UpdateSubjectDtoOutput = {
-            id: subject!.value,
+            id: subject!.value as number,
             name: data.name,
             description: data.description
         }
