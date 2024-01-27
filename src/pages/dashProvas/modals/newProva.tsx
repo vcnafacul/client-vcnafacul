@@ -49,7 +49,12 @@ function NewProva({ handleClose, addProva, tipos} : NewProvaProps){
         }
     })
 
-    const edicaoOption : FormFieldOption[] = edicaoArray.map(f => ({ label: f, value: f }))
+    const edicaoOption : FormFieldOption[] = edicaoArray.map(f => {
+        if(f === Edicao.Reaplicacao){
+            return { label: f, value: "Replicacao" }
+        }
+        return { label: f, value: f }
+    })
     edicaoOption.push({ label: '2ªAplicação', value: 'Reaplicação/PPL2'})
     edicaoOption.push({ label: '3ªAplicação', value: 'Reaplicação/PPL3'})
 
@@ -84,11 +89,11 @@ function NewProva({ handleClose, addProva, tipos} : NewProvaProps){
             const info = data as CreateProva
             info.aplicacao = 1
             if(info.edicao.includes('2')){
-                info.edicao = Edicao.Reaplicacao
+                info.edicao = Edicao.Regular
                 info.aplicacao = 2
             }
             if(info.edicao.includes('3')){
-                info.edicao = Edicao.Reaplicacao
+                info.edicao = Edicao.Regular
                 info.aplicacao = 3
             }
 
