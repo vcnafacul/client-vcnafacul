@@ -49,7 +49,12 @@ function NewProva({ handleClose, addProva, tipos} : NewProvaProps){
         }
     })
 
-    const edicaoOption : FormFieldOption[] = edicaoArray.map(f => ({ label: f, value: f }))
+    const edicaoOption : FormFieldOption[] = edicaoArray.map(f => {
+        if(f === Edicao.Reaplicacao){
+            return { label: f, value: "Replicacao" }
+        }
+        return { label: f, value: f }
+    })
     edicaoOption.push({ label: '2ªAplicação', value: 'Reaplicação/PPL2'})
     edicaoOption.push({ label: '3ªAplicação', value: 'Reaplicação/PPL3'})
 
