@@ -41,8 +41,8 @@ function NewSubject({ handleClose, materia, frente, subject, actionSubject } : N
     
 
     const listFields : FormFieldInput[] = [
-        {id: 'name', type: 'text', label: 'Nome', className: 'col-span-2'},
-        {id: 'description', type: 'textarea', label: 'Descrição', className: 'col-span-2'},
+        {id: 'name', type: 'text', label: 'Nome*', className: 'col-span-2'},
+        {id: 'description', type: 'textarea', label: 'Descrição*', className: 'col-span-2'},
     ]
 
     const create = (data: any) => {

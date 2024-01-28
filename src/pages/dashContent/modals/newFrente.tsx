@@ -38,7 +38,7 @@ function NewFrente({ handleClose, materia, frente, actionFrente} : NewFrenteProp
     const { data: { token }} = useAuthStore()
     
     const listFields : FormFieldInput[] = [
-        {id: 'name', type: 'text', label: 'Nome', className: 'col-span-2'},
+        {id: 'name', type: 'text', label: 'Nome*', className: 'col-span-2'},
     ]
 
     const create = (data: any) => {
