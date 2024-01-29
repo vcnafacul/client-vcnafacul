@@ -100,7 +100,7 @@ function OnlyDemand() {
                 cardlist={cardContent} 
                 title={dashOnlyDemand.title}
                 filterList={[
-                    <Filter placeholder="título | Tema | Frente | Descricão" filtrar={handleInputChange}/>,
+                    <Filter placeholder="título | Tema | Frente | Descrição" filtrar={handleInputChange}/>,
                     <Select options={materias}  defaultValue={materiaSelected}  setState={selectDemandByMateria} />,
                 ]} 
                 onClickCard={onClickCard} />

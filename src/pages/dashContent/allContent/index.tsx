@@ -151,7 +151,7 @@ function AllContent() {
                 cardlist={cardContent} 
                 title={dashAllContent.title}
                 filterList={[
-                    <Filter placeholder="título | Tema | Frente | Descricão" filtrar={handleInputChange}/>,
+                    <Filter placeholder="título | Tema | Frente | Descrição" filtrar={handleInputChange}/>,
                     <FilterSelect />,
                     <FilterManager />
                 ]} 

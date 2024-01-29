@@ -46,8 +46,8 @@ function NewDemand({ handleClose, addDemand } : NewDemandProps){
         {id: 'materia', type: 'option', options: MateriasLabel, label: 'Materia', className: 'col-span-1'},
         {id: 'frente', type: 'option', options: frentes, label: 'Frente', className: 'col-start-2 col-span-1'},
         {id: 'subjectId', type: 'option', options: subjects, label: 'Tema', className: 'col-start-2 col-span-1'},
-        {id: 'title', type: 'text', label: 'Título', className: 'col-span-2'},
-        {id: 'description', type: 'textarea', label: 'Descrição', className: 'col-span-2'}
+        {id: 'title', type: 'text', label: 'Título*', className: 'col-span-2'},
+        {id: 'description', type: 'textarea', label: 'Descrição*', className: 'col-span-2'}
     ]
 
     const materia = watch("materia")
