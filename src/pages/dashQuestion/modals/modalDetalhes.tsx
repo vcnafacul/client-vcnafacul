@@ -108,12 +108,20 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
 
     const numberOption : FormFieldOption[] = numberMissing.map(n => ({ label: `${n}`, value: n}))
 
+    const getEnemArea = () => {
+        const nameProva = infos.provas.find(p => p._id === prova ?? question?.prova)?.nome
+        if(nameProva) {
+            return AreaEnem.filter(a => a.day.includes(nameProva.slice(5, 10)))
+        }
+        return AreaEnem 
+    }
+
     const listFieldClassification : FormFieldInput[]= [
         {id: "prova",  type: "option", label: "Prova:*", options: provas, value: question?.prova ?? '', disabled: !question ? false : !isEditing,},
         {id: "ano", type: "number", label: "Ano:*", value: infos.provas.find(p => p._id === prova ?? question?.prova)?.ano, disabled: true,},
         {id: "edicao", type: "text", label: "Edição:*", value: infos.provas.find(p => p._id === prova ?? question?.prova)?.edicao , disabled: true,},
         {id: "numero", type: "option", label: "Número da Questão:*", options: numberOption, disabled: !question ? false : !isEditing,},
-        {id: "enemArea", type: "option", label: "Área do Conhecimento:*", options: AreaEnem, value: question?.enemArea, disabled: !question ? false : !isEditing,},
+        {id: "enemArea", type: "option", label: "Área do Conhecimento:*", options: getEnemArea(), value: question?.enemArea, disabled: !question ? false : !isEditing,},
         {id: "materia", type: "option", label: "Disciplina:*", options: materias, value: question?.materia, disabled: !question ? false : !isEditing,},
         {id: "frente1", type: "option", label: "Frente Principal:*", options: frentes, value: question?.frente1, disabled: !question ? false : !isEditing,},
         {id: "frente2", type: "option", label: "Frente Secundária", options: frentes, value: question?.frente2 ? question?.frente2 : '', disabled: !question ? false : !isEditing,},
@@ -218,7 +226,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                     } else {
                         setNumberMissing(res)
                     }
-                    setValue('numero', res[0])
+                    if(question?.prova === prova) setValue('numero', res[0])
                 })
                 .catch((erro: Error) => {
                     toast.error(erro.message)

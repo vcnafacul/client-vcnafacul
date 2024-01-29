@@ -74,7 +74,7 @@ function DashQuestion() {
             .then(_ => {
                 const newQuestions = questions.map((question) => {
                     if(question._id == questionUpdate._id){
-                        return mergeObjects(questionUpdate, question)
+                        return {...mergeObjects(questionUpdate, question), title: `${question._id} ${questionUpdate.numero}`} as Question
                     }
                     return question
                 });
