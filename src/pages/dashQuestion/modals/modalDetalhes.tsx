@@ -264,7 +264,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
             setValue('prova', question.prova)
         }
         if(question){
-            setValue('enemArea', question.enemArea)
+            setValue('enemArea', getEnemArea().find(q => q.label === question.enemArea)?.value as string ?? getEnemArea()[0].value as string)
             setValue('materia', question.materia)
             setValue('frente1', question.frente1)
             setValue('frente2', question.frente2)
