@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { getSimuladoById } from "../../../services/simulado/getSimuladoById";
 import { useSimuladoStore } from "../../../store/simulado";
 import { useNavigate } from "react-router-dom";
-import { SIMULADO } from "../../../routes/path";
+import { SIMULADO_RESPONDER } from "../../../routes/path";
 import { OptionProps, SelectOption } from "../../../components/atoms/selectOption";
 
 interface NewSimulateProps {
@@ -35,7 +35,7 @@ function NewSimulate({ handleClose, title } : NewSimulateProps ) {
         getSimuladoById(availableSelected.id as string, token)
             .then(res => {
                 simuladoBegin(res)
-                navigate(SIMULADO)
+                navigate(SIMULADO_RESPONDER)
                 toast.success(`Iniciado Simulado ${res.title}`)
             })
             .catch((error: Error) => {
