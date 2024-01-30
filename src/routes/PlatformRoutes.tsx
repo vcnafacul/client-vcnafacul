@@ -40,6 +40,11 @@ export function PlatformRoutes() {
             <Route path={REGISTER_PATH} element={<Register />} />
             <Route path={NEWS} element={ <NewsPage />} />
             <Route path={FORM_GEOLOCATION} element={<Geo />}/>
+            <Route path={SIMULADO_RESPONDER} element={
+                <ProtectedRoute>
+                    <Simulate />
+                </ProtectedRoute>
+            } />
 
             <Route path="/dashboard" element={
                 <ProtectedRoute>
@@ -48,7 +53,6 @@ export function PlatformRoutes() {
             }>
                 <Route path={DASH} element={<Dash />} />
                 <Route path={SIMULADO} element={<MainSimulate />} />
-                <Route path={SIMULADO_RESPONDER} element={<Simulate />} />
                 <Route path={`${ESTUDO}/:nomeMateria`} element={ <Materia />} />
                 <Route path={`${CONTENT}/:nameSubject/:id`} element={ <Subject />} />
                 <Route path={ACCOUNT_PATH} element={ <Account />} />
