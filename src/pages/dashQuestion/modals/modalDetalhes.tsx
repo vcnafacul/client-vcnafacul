@@ -226,7 +226,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                     } else {
                         setNumberMissing(res)
                     }
-                    if(question?.prova === prova) setValue('numero', res[0])
+                    setValue('numero', res[0])
                 })
                 .catch((erro: Error) => {
                     toast.error(erro.message)
