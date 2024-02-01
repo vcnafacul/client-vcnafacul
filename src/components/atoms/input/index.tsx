@@ -27,12 +27,11 @@ const input = tv({
 export type InputProps = VariantProps<typeof input> & ComponentProps<'input'> & {
     className?: string;
     options?: FormFieldOption[];
-    defaultValue?: any;
+    defaultValue?: string | number | readonly string[] | undefined;
     register: UseFormRegister<FieldValues>;
 }
 
 function Input({ erro, size, className, type, options, defaultValue, register, ...props } : InputProps){
-
     if(type === 'option') {
         return (
             <select {...register(props.name!)} disabled={props.disabled} className={input({ erro, size, className })} defaultValue={defaultValue}>

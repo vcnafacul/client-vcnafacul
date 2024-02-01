@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import DashCardTemplate from "../../components/templates/dashCardTemplate"
-import { headerDash } from "../dash/data"
 import { dashNews } from "./data"
 import { News } from "../../dtos/news/news";
 import { getAllNews } from "../../services/news/getAllNews";
@@ -113,8 +112,7 @@ function DashNews() {
     
     return (
         <>
-            <DashCardTemplate 
-                header={headerDash} 
+            <DashCardTemplate
                 cardlist={cardNews} 
                 title={dashNews.title} 
                 filterList={[

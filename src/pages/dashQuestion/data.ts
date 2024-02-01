@@ -1,5 +1,5 @@
 import { FormFieldOption } from "../../components/molecules/formField";
-import { StatusEnum } from "../../types/generic/statusEnum";
+import { StatusEnum } from "../../enums/generic/statusEnum";
 
 export const dashQuest = {
     title: 'Banco de questao',
@@ -20,21 +20,13 @@ export const filters = [
     {name: 'Decrescente', id: Order.Decreasing}
 ]
 
-export const ArrayCor : FormFieldOption[] = [
-    { label: 'Azul', value: 'Azul'},
-    { label: 'Rosa', value: 'Rosa'},
-    { label: 'Amarelo', value: 'Amarelo'},
-    { label: 'Cinza', value: 'Cinza'},
-    { label: 'Branco', value: 'Branco'},
-]
+interface AreaEnemFormFieldOption extends FormFieldOption {
+    day: string
+}
 
-export const AreaEnem : FormFieldOption[] = [
-    { label: 'Ciências Humanas', value: 'Ciências Humanas'},
-    { label: 'Linguagens', value: 'Linguagens'},
-    { label: 'Ciências da Natureza', value: 'Ciências da Natureza'},
-    { label: 'Matemática', value: 'Matemática'},
-]
-
-export const Edicao : FormFieldOption[] = [
-    { label: 'Regular', value: 'Regular'},
+export const AreaEnem : AreaEnemFormFieldOption[] = [
+    { day: 'Dia 1', label: 'Ciências Humanas', value: 'Ciências Humanas'},
+    { day: 'Dia 1', label: 'Linguagens', value: 'Linguagens'},
+    { day: 'Dia 2', label: 'Ciências da Natureza', value: 'Ciências da Natureza'},
+    { day: 'Dia 2', label: 'Matemática', value: 'Matemática'},
 ]

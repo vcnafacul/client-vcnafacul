@@ -28,7 +28,7 @@ function ModalEditNew({ news, create, deleteFunc, handleClose } : ModalEditNewPr
 
     const MyContent = useCallback(() => {
         if(news){
-            return <Content className="" docxFilePath={`${VITE_BASE_FTP}${news.fileName}.docx`} />
+            return <Content className="" docxFilePath={`${VITE_BASE_FTP}${news.fileName}`} />
         }
         else if(upload){
             return <Content arrayBuffer={arrayBuffer} />
@@ -75,7 +75,7 @@ function ModalEditNew({ news, create, deleteFunc, handleClose } : ModalEditNewPr
                 <div className="overflow-y-auto scrollbar-hide w-full max-h-[50vh] border my-4 p-4 relative">
                     <MyContent />
                 </div>
-                {news ? <></> : <UploadButton className="" onChange={handleFileUpload} />}
+                {news ? <></> : <UploadButton placeholder="Upload Novidades" onChange={handleFileUpload} />}
                 <div className="flex gap-4 w-full mt-4">
                 {news ? 
                     <Button 

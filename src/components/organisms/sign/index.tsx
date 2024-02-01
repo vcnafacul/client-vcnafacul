@@ -17,7 +17,7 @@ function Sign({ solid, className, userNavigation }: SingProps){
                 {userNavigation[0].name}
             </BLink>
             <BLink to={userNavigation[1].href} type="primary" size="small"
-                className={`border-none hidden text-base md:block rounded-sm`}>
+                className={`border-none hidden text-base md:flex md:justify-center md:items-center rounded-sm`}>
                     <UserIcon className="mr-3 ml-0"/>
                     {userNavigation[1].name}
             </BLink>

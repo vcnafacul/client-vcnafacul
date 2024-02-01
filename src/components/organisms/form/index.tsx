@@ -1,17 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentProps } from "react"
 import FormField, { FormFieldInput } from "../../molecules/formField"
-import { FieldValues, UseFormRegister } from "react-hook-form";
+import { FieldError, FieldErrors, UseFormRegister } from "react-hook-form";
 
 export type FormProps = ComponentProps<'div'> & {
     formFields: FormFieldInput[];
-    register: UseFormRegister<FieldValues>;
+    register: UseFormRegister<any>;
+    errors?: FieldErrors;
 }
 
-function Form({ formFields, register, ...props } : FormProps){
+function Form({ formFields, register, errors, ...props } : FormProps){
    return (
         <div {...props}>
             {formFields.map(fData => 
-                <FormField 
+                    <FormField 
                     id={fData.id} 
                     key={fData.id} 
                     label={fData.label} 
@@ -21,7 +23,9 @@ function Form({ formFields, register, ...props } : FormProps){
                     disabled={fData.disabled}
                     options={fData.options}
                     register={register}
-                     />
+                    className={fData.className}
+                    error={errors && errors[fData.id] ? errors[fData.id] as FieldError : undefined}
+                    />
                 )}
         </div>
    )

@@ -58,32 +58,15 @@ function ModalRole({userRole, handleClose, roles, updateUserRole} : ModalRolePro
     
     return (
         <ModalTemplate >
-            <div className="bg-white flex flex-col gap-4 p-4 rounded mx-4">
-                <div className="flex gap-x-4">
-                    <div className="flex flex-col items-start w-[400px]">
-                    <Text size="secondary">Informações do Usuário:</Text>
-                    <div className="flex gap-4">
-                        <Text size="tertiary" className="font-black m-0">Nome:</Text>
-                        <Text size="quaternary" className="m-0">{userRole.userName}</Text>
-                    </div>
-                    <div className="flex gap-4">
-                        <Text size="tertiary" className="font-black m-0">Email:</Text>
-                        <Text size="quaternary" className="m-0">{userRole.userEmail}</Text>
-                    </div>
-                    <div className="flex gap-4">
-                        <Text size="tertiary" className="font-black m-0">Telefone:</Text>
-                        <Text size="quaternary" className="m-0">{userRole.userPhone}</Text>
-                    </div>
-                    </div>    
-                    <div className="w-[400px]">
+            <div className="bg-white flex flex-col gap-4 p-4 rounded mx-4 w-96">
+                <div className="flex flex-col">
                         <Text size="secondary">Permissões</Text>
                         {isEditing ? 
                         <Select options={roles} defaultValue={userRole.roleId} setState={setNewRole} /> : 
                         <Text size="tertiary" className="flex justify-end font-black text-marine m-0">{userRole.roleName}</Text>}
                         <ShowRoleInfo />
-                    </div>
                 </div>
-                <div className="flex gap-4 w-[400px] self-end">
+                <div className="flex gap-4">
                     {isEditing ? 
                     <Button typeStyle="primary" onClick={updateRole}>Salvar</Button> : 
                     <Button typeStyle="secondary" onClick={() => setIsEditing(true)}>Editar</Button>}

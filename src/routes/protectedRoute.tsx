@@ -1,15 +1,18 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { DASH } from "./path";
+import { HOME_PATH } from "./path";
+import { useAuthStore } from "../store/auth";
 
-interface RouterLock {
-    permission: boolean;
+interface ProtectedRouteProps {
     children: React.ReactNode;
 }
 
-function ProtectedRoute({ permission, children } : RouterLock) {
-    if (!permission) {
-      return <Navigate to={DASH} replace />;
+function ProtectedRoute({ children } : ProtectedRouteProps) {
+
+  const { data: { token }} = useAuthStore()
+
+    if (!token) {
+      return <Navigate to={HOME_PATH} replace />;
     }
   
     return children;

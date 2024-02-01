@@ -17,24 +17,34 @@ const initialUser = {
         phone: "",
         state: "",
         city: "",
-        lgpd: false
+        lgpd: false,
+        about: "",
+        collaborator: false,
+        collaboratorDescription: null,
+        collaboratorPhoto: undefined
     },
     token: "",
     permissao: {}
 
 }
 
-export type Auth = {
+export type AuthUpdate = {
     firstName: string;
     lastName: string;
-    email: string;
     gender: Gender;
     birthday: string;
     phone: string;
     state: string;
     city: string;
     about?: string;
+}
+
+export type Auth = AuthUpdate & {
+    email: string;
     lgpd: boolean;
+    collaborator: boolean;
+    collaboratorDescription?: string | null;
+    collaboratorPhoto?: string | null;
 }
 
 export type AuthProps = {

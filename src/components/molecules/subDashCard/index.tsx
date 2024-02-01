@@ -11,13 +11,14 @@ export interface SubDashCardInfo {
 }
 
 interface SubDashCardPros{
-    subCardInfo: SubDashCardInfo
+    subCardInfo: SubDashCardInfo,
+    blank?: boolean,
 }
 
-function SubDashCard({ subCardInfo }: SubDashCardPros){
+function SubDashCard({ subCardInfo, blank }: SubDashCardPros){
     const Icon = subCardInfo.icon;
     return (
-        <Link to={subCardInfo.link} className="flex justify-between items-center gap-4 w-full h-14 px-4 border">
+        <Link to={subCardInfo.link} target={blank ? "_blank" : ''} className="flex justify-between items-center gap-4 w-full h-14 px-4 border">
             <div className="flex gap-4 justify-center items-center">
                 <Icon className="w-6 h-6 fill-grey"/>
                 {subCardInfo.text}

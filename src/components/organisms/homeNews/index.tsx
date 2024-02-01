@@ -25,26 +25,10 @@ function HomeNews(){
             slidesPerView: 2,
   
         },
-        530: {
-            slidesPerView: 2.4,
-  
-        },
-        600: {
+        700: {
             slidesPerView: 3,
   
-        },
-        730: {
-            slidesPerView: 3.5,
-        },
-        850: {
-            slidesPerView: 4,
-        },
-        1000: {
-            slidesPerView: 4,
-        },
-        1200: {
-            slidesPerView: 3,
-        },
+        }
       }
 
     useEffect(() => {
@@ -59,7 +43,7 @@ function HomeNews(){
 
     return (
         <div className="relative w-full">
-            <TriangleGreen className="absolute w-[500px] -right-[250px]" />
+            <TriangleGreen className="absolute w-[500px] -right-[250px] bottom-0" />
             <div className="grid grid-cols-4 container mx-auto gap-4">
             <div className="col-span-4 md:col-span-2">
                 <Text size="secondary">Não perca nossas novidades!</Text>

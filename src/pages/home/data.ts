@@ -6,7 +6,7 @@ import { ActionAreasProps } from "../../components/organisms/actionAreas";
 import { AboutUsProps } from "../../components/organisms/aboutUs";
 import { SupportersProps } from "../../components/organisms/Supporters";
 
-import { ACCOUNT_PATH, DASH, LOGIN_PATH, LOGOFF_PATH, REGISTER_PATH } from "../../routes/path";
+import { ACCOUNT_PATH, DASH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH } from "../../routes/path";
 
 import HeroImg1 from "../../assets/images/home/hero_student.svg";
 import HeroImg2 from "../../assets/images/home/hero_teacher.svg";
@@ -47,7 +47,7 @@ export const userNavigationSign = [
 
 export const userNavigationLogged = [
     { name: 'DashBoard', href: DASH },
-    { name: 'Editar Perfil', href: ACCOUNT_PATH },
+    { name: 'Editar Perfil', href: `/dashboard/${ACCOUNT_PATH}` },
     { name: 'Sair', href: LOGOFF_PATH },
 ]
 
@@ -57,6 +57,7 @@ export const header: HeaderProps = {
         { id: 1, name: "Quem Somos", link: "/#about-us" },
         { id: 2,name: "Localize um Cursinho", link: "/#map" },
         { id: 3,name: "Apoiadores", link: "/#supporters" },
+        { id: 4, name: "Novidades", link: NEWS },
     ],
     socialLinks: {
         facebook: "https://www.facebook.com/vcnafacul/",
@@ -156,9 +157,9 @@ export const footer: FooterProps = {
         { id: 2,name: "Politicas de Privacidade", link: "/Política de Privacidade.pdf" },
     ],
     pageLinks: [
-        { id: 1, name: "Quem Somos", link: "#" },
-        { id: 2, name: "Localiza Cursinho", link: "#" },
-        { id: 3, name: "Blog", link: "#" },
+        { id: 1, name: "Quem Somos", link: "/#about-us" },
+        { id: 2, name: "Localiza Cursinho", link: "/#map" },
+        { id: 3,name: "Apoiadores", link: "/#supporters" },
     ],
     slogan: "Equidade. Oportunidade. Realização.",
     email: "contato@vcnafacul.com.br",
@@ -334,7 +335,7 @@ export const about_us : AboutUsProps = {
 export const supporters : SupportersProps = {
     title: 'Nossos apoiadores!',
     subtitle: 'Pessoas e empresas que sonharam com a gente',
-    tabItems: ["Empresas" /*, "Voluntários"*/],
+    tabItems: ["Empresas" , "Voluntários"],
     sponsors: [
         {
             image: raccoonLogo,

@@ -23,7 +23,7 @@ function LoginForm({ title, subtitle, forgot, labelSubmit, formData } : LoginFor
     const navigate = useNavigate();
     
     const login = (data: any) => {
-        Login(data.email, data.password)
+        Login(data.email.toLowerCase(), data.password)
             .then(res => {
                 doAuth(res)
                 navigate(DASH);

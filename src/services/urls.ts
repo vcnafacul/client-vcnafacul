@@ -11,12 +11,28 @@ export const geolocations = `${BASE_URL}/geo`
 export const validatedgeolocation = `${BASE_URL}/validatedgeolocation`
 export const allGeolocation = `${geolocations}`
 
-export const simulado = `${BASE_URL}/simulado`
-export const questoes = `${simulado}/questoes`
-export const defaults = `${simulado}/default`
+export const news = `${BASE_URL}/news`
+export const newsAll = `${news}/all`
+
+export const frentes = `${BASE_URL}/frente`
+export const frentesByMateria = `${frentes}/materia`
+export const frentesByMateriaWithContent = `${frentes}/materiawithcontent`
+
+export const subject = `${BASE_URL}/subject`
+export const subjectsByFrente = `${subject}/frente`
+
+export const content = `${BASE_URL}/content`
+export const demand = `${content}/demand`
+
+export const mssimulado = `${BASE_URL}/mssimulado`
+
+export const simulado = `${mssimulado}/simulado`
+export const tipos = `${simulado}/tipos`
 export const toAnswer = `${simulado}/toanswer`
 export const answer = `${simulado}/answer`
 export const report = `${simulado}/report`
 
-export const news = `${BASE_URL}/news`
-export const newsAll = `${news}/all`
+
+export const prova = `${mssimulado}/prova`
+export const missing = `${prova}/missing`
+export const questoes = `${mssimulado}/questoes`

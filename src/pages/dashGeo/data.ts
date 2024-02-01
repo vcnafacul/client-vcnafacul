@@ -1,4 +1,4 @@
-import { StatusEnum } from "../../types/generic/statusEnum";
+import { StatusEnum } from "../../enums/generic/statusEnum";
 
 export const dashGeo = {
     title: 'Validação Localiza Cursinho',

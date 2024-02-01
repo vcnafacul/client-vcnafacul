@@ -1,6 +1,6 @@
 export enum EnemArea {
     Linguagem,
-    BioExatas,
+    Natureza,
     Humanas,
     Matematica,
 }

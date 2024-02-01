@@ -32,14 +32,28 @@ export default {
         darkGreen: "#0f9b2c",
         green2: "#0F9B2C",
         green3: '#8CC408',
-        gray2: "#A6A6A6"
+        gray2: "#A6A6A6",
+        purple: "#8A2BE2"
       },
     },
     screens: {
       'sm': '768px',
       'md': '1200px',
+      'lg': '1400px',
+      'xl': '1565px'
     },
-    
+    keyframes: {
+      rotate: {
+        'from': { transform: 'rotate(0deg)' },
+        'to': { transform: 'rotate(360deg)' },
+      },
+    },
+    animation: {
+      rotate: 'rotate 60s linear infinite',
+    },
+    backgroundImage: {
+      'custom-gradient': 'linear-gradient(to right, #37D6B5, #8cc408, #8CC408, #FFE53C, #FF7600, #DA005A)',
+    },
   },
   plugins: [
     TailwindScrollbarHide

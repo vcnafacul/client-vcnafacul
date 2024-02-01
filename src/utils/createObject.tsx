@@ -1,7 +1,7 @@
 import { FormFieldInput } from "../components/molecules/formField";
 
-export function createObjectFromFormFieldInput(fields: FormFieldInput[]): Record<string, string | number> {
-    const result: Record<string, string | number> = {};
+export function createObjectFromFormFieldInput(fields: FormFieldInput[]): Record<string, string | number | readonly string[] | undefined> {
+    const result: Record<string, string | number | readonly string[] | undefined> = {};
 
     fields.forEach(field => {
         if (field.type === 'text') {

@@ -1,4 +1,4 @@
-import { StatusEnum } from "../../types/generic/statusEnum";
+import { StatusEnum } from "../../enums/generic/statusEnum";
 import { DateTime } from "luxon"
 
 export interface ObjDefault {
@@ -8,9 +8,7 @@ export interface ObjDefault {
 
 export interface QuestionDto {
     _id: string
-    exame: string
-    ano: number
-    caderno: string
+    prova: string
     enemArea: string
     frente1: string
     frente2: string
@@ -26,7 +24,6 @@ export interface QuestionDto {
     alternativa: string
     imageId: string
     acertos: number
-    edicao: string
     quantidadeSimulado: number
     quantidadeResposta: number
     status: StatusEnum

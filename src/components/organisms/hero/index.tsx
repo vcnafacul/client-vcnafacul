@@ -1,6 +1,7 @@
 import Carousel from '../../molecules/carousel';
 import BLink from '../../molecules/bLink';
 import Text from '../../atoms/text';
+import { Navigation, Pagination } from 'swiper/modules';
 
 export interface LinkMenu {
     id: number;
@@ -28,8 +29,14 @@ export interface HeroProps {
 function Hero({ slides, className }: HeroProps){
 
     return (
-        <Carousel
+        <div className='relative'>
+            <Carousel
+            modules={[Pagination, Navigation]}
+            dynamicBullets
             spaceBetween={0}
+            arrow
+            arrowClassName='absolute bottom-5 px-8'
+            fillArrow='fill-white'
             childrens={slides.map((slide) => (
             <div key={slide.id} style={{background: `${slide.backgroud_color}`}} 
                 className={`${className} min-h-[750px] sm:min-h-[480px] md:min-h-[600px] w-screen flex justify-center`}>
@@ -53,7 +60,8 @@ function Hero({ slides, className }: HeroProps){
                     </div>
                 </div>
             </div>
-        ))}/>
+            ))}/>
+        </div>
     )
 }
 

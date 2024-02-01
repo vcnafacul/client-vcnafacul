@@ -4,7 +4,7 @@ import Footer, { FooterProps } from "../../organisms/footer";
 import { VariantProps, tv } from "tailwind-variants";
 
 const baseTemplate = tv({
-    base: "w-full z-50 py-4 md:py-5 px-0 text-white h-[76px]",
+    base: "w-full z-50 py-4 md:py-5 text-white h-[76px]",
     variants: {
         position: {
             fixed: 'fixed top-0 left-0',
@@ -32,7 +32,7 @@ export type BaseTemplateProps = VariantProps<typeof baseTemplate> & ComponentPro
 
 function BaseTemplate({ header, children, footer, solid, position, headerShadow, className }: BaseTemplateProps){
     return (
-        <div className={`${className} `}>
+        <div className={className}>
             <Header 
                 className={`${baseTemplate({ position, headerShadow })} ${solid ? 'bg-white' : 'bg-transparent'}`} 
                 itemsMenu={header.itemsMenu} 

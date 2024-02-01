@@ -21,7 +21,7 @@ function ModalTabTemplate({ tabs } : ModalTabTemplateProps) {
                         className={`${tab.label === tabs[tabSelect].label ? 'bg-white' : 'bg-lightGray'} px-4 py-1 cursor-pointer`}>{tab.label}</div>
                     ))}
                 </div>
-                <div className="bg-white max-w-7xl min-w-[1000px] max-h-[90vh] p-4 top-7 overflow-y-auto scrollbar-hide">
+                <div className="bg-white max-w-7xl min-w-[90vw] md:min-w-[1000px] max-h-[90vh] p-4 top-7 overflow-y-auto scrollbar-hide">
                     {tabs[tabSelect].children}
                 </div>
             </div>
