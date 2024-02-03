@@ -146,7 +146,21 @@ export const dashCardMenuItems : DashCardMenu[] = [
                 alt: "error_report", 
                 text: "Reportar Erro", 
                 link: `https://docs.google.com/document/d/1VFpGiW4LuooMdtOemtFEVbqHMesP0rTZ1fX8BFwG_2w/edit?usp=sharing`,
-                permissions: [Roles.criarQuestao]
+                permissions: [
+                    Roles.alterarPermissao,
+                    Roles.cadastrarProvas,
+                    Roles.criarQuestao,
+                    Roles.criarSimulado,
+                    Roles.gerenciadorDemanda,
+                    Roles.uploadDemanda,
+                    Roles.uploadNews,
+                    Roles.validarCursinho,
+                    Roles.validarDemanda,
+                    Roles.validarQuestao,
+                    Roles.visualizarDemanda,
+                    Roles.visualizarProvas,
+                    Roles.visualizarQuestao,
+                ]
             },
         ],
     },
