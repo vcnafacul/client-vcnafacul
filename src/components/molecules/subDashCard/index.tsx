@@ -7,7 +7,7 @@ export interface SubDashCardInfo {
     alt: string;
     text: string;
     link: string;
-    permission?: Roles;
+    permissions?: Roles[];
 }
 
 interface SubDashCardPros{

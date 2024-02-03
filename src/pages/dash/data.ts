@@ -97,56 +97,56 @@ export const dashCardMenuItems : DashCardMenu[] = [
                 alt: "localiza cursinho",
                 text: "Validação LC",
                 link: `/dashboard/${DASH_GEOLOCATION}`,
-                permission: Roles.validarCursinho,
+                permissions: [Roles.validarCursinho],
             },
             { 
                 icon: Quimica, 
                 alt: "usuarios", 
                 text: "Usuários", 
                 link: `/dashboard/${DASH_ROLES}`,
-                permission: Roles.alterarPermissao
+                permissions: [Roles.alterarPermissao]
             },
             { 
                 icon: Gramatica, 
                 alt: "banco_de_questao", 
                 text: "Banco de Questão", 
                 link: `/dashboard/${DASH_QUESTION}`, 
-                permission: Roles.visualizarQuestao
+                permissions: [Roles.visualizarQuestao]
             },
             { 
                 icon: Espanhol, 
                 alt: "dash_news", 
                 text: "Novidades", 
                 link: `/dashboard/${DASH_NEWS}`,
-                permission: Roles.uploadNews
+                permissions: [Roles.uploadNews]
             },
             { 
                 icon: Fisica, 
                 alt: "dash_provas", 
                 text: "Provas", 
                 link: `/dashboard/${DASH_PROVAS}`,
-                permission: Roles.visualizarProvas
+                permissions: [Roles.visualizarProvas]
             },
             { 
                 icon: Historia, 
                 alt: "dash_provas", 
                 text: "Conteúdos", 
                 link: `/dashboard/${DASH_CONTENT}`,
-                permission: Roles.visualizarDemanda
+                permissions: [Roles.visualizarDemanda]
             },
             { 
                 icon: Matematica, 
                 alt: "dash_simulado", 
                 text: "Simulado", 
                 link: `/dashboard/${DASH_SIMULADO}`,
-                permission: Roles.criarQuestao
+                permissions: [Roles.criarQuestao]
             },
             { 
                 icon: Report, 
                 alt: "error_report", 
                 text: "Reportar Erro", 
                 link: `https://docs.google.com/document/d/1VFpGiW4LuooMdtOemtFEVbqHMesP0rTZ1fX8BFwG_2w/edit?usp=sharing`,
-                permission: Roles.report
+                permissions: [Roles.criarQuestao]
             },
         ],
     },
