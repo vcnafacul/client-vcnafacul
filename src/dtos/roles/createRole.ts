@@ -13,5 +13,4 @@ export interface CreateRoleDto {
     uploadDemanda: boolean;
     validarDemanda: boolean;
     gerenciadorDemanda: boolean;
-    report: boolean;
 }
