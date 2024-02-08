@@ -7,7 +7,7 @@ import { FormFieldInput } from "../../molecules/formField";
 import Login from "../../../services/auth/login";
 import { useAuthStore } from "../../../store/auth";
 import { useNavigate } from "react-router-dom";
-import { DASH } from "../../../routes/path";
+import { DASH, FORGOT_PASSWORD_PATH } from "../../../routes/path";
 import { toast } from "react-toastify";
 
 export interface LoginFormProps {
@@ -44,7 +44,7 @@ function LoginForm({ title, subtitle, forgot, labelSubmit, formData } : LoginFor
                     labelSubmit={labelSubmit}
                     onSubmit={login}
                     />
-                <Link to='#' className="text-orange w-full mt-5 underline font-bold">{forgot}</Link>
+                <Link to={FORGOT_PASSWORD_PATH} className="text-orange w-full mt-5 underline font-bold">{forgot}</Link>
             </div>
         </div>
     )
