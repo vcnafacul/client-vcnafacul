@@ -1,6 +1,6 @@
 import BaseTemplate from "../../components/templates/baseTemplate"
 import { footer, header } from "../home/data"
-import './styles.css'
+import '../../styles/graphism.css'
 
 import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
 import { ReactComponent as TriangleYellow } from "../../assets/icons/triangle-yellow.svg";
