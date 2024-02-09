@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "../pages/home";
 import Login from "../pages/login";
-import { ACCOUNT_PATH, CONTENT, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, ESTUDO, FORM_GEOLOCATION, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, SIMULADO, SIMULADO_RESPONDER } from "./path";
+import { ACCOUNT_PATH, CONTENT, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, ESTUDO, FORGOT_PASSWORD_PATH, FORM_GEOLOCATION, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, SIMULADO, SIMULADO_RESPONDER } from "./path";
 import Dash from "../pages/dash";
 import DashGeo from "../pages/dashGeo";
 import Register from "../pages/register";
@@ -25,6 +25,7 @@ import DashSimulado from "../pages/dashSimulado";
 import Materia from "../pages/materia";
 import Subject from "../pages/subject";
 import Geo from "../pages/Geo";
+import Forgot from "../pages/forgot";
 
 
 export function PlatformRoutes() {
@@ -33,9 +34,10 @@ export function PlatformRoutes() {
 
     return (
         <Routes>
-            //Aluno tem acesso
+            {/* Aluno tem acesso */}
             <Route path={HOME_PATH} element={<Home />} />
             <Route path={LOGIN_PATH} element={<Login />} />
+            <Route path={FORGOT_PASSWORD_PATH} element={<Forgot />} />
             <Route path={LOGOFF_PATH} element={<Logout />} />
             <Route path={REGISTER_PATH} element={<Register />} />
             <Route path={NEWS} element={ <NewsPage />} />
