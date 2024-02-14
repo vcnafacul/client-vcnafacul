@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Carousel from '../../molecules/carousel';
-import BLink from '../../molecules/bLink';
-import Text from '../../atoms/text';
+import 'react-loading-skeleton/dist/skeleton.css';
 import { Navigation, Pagination } from 'swiper/modules';
-import 'react-loading-skeleton/dist/skeleton.css'
+import Text from '../../atoms/text';
+import BLink from '../../molecules/bLink';
+import Carousel from '../../molecules/carousel';
 
 export interface LinkMenu {
     id: number;
@@ -29,6 +29,7 @@ export interface HeroProps {
 }
 
 function Hero({ data, className }: HeroProps){
+
     return (
         <div className='relative'>
             <Carousel
@@ -58,7 +59,7 @@ function Hero({ data, className }: HeroProps){
                     </div>
                     <div className='relative max-w-80 w-full my-0 mx-auto sm:mt-1 sm:max-w-max sm:max-h-80
                     md:max-w-md  md:m-0 md:top-0'>
-                        {!slide.image ? null : <img src={`src/assets/images/home/${slide.image}`} alt={slide.title}/>} 
+                        {!slide.image ? null : <img src={slide.image} alt={slide.title}/>} 
                     </div>
                 </div>
             </div>
