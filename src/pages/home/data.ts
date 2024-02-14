@@ -70,7 +70,7 @@ export const header: HeaderProps = {
 };
 
 export const hero: HeroProps = {
-    slides: [
+    data: [
         {
             id: 1,
             title: "Nossa missão é ver VOCÊ NA FACUL!",

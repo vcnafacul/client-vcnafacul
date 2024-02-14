@@ -1,4 +1,5 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+const CMS_URL = import.meta.env.VITE_CMS_URL;
 
 export const userRoute = `${BASE_URL}/user`
 export const login = `${userRoute}/login`
@@ -37,3 +38,5 @@ export const report = `${simulado}/report`
 export const prova = `${mssimulado}/prova`
 export const missing = `${prova}/missing`
 export const questoes = `${mssimulado}/questoes`
+
+export const hero = `${CMS_URL}/items/Hero_Slides?fields=id,title,subtitle,image,backgroud_color,links.Hero_Button_id.*`
