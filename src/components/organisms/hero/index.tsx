@@ -3,6 +3,7 @@ import Carousel from '../../molecules/carousel';
 import BLink from '../../molecules/bLink';
 import Text from '../../atoms/text';
 import { Navigation, Pagination } from 'swiper/modules';
+import 'react-loading-skeleton/dist/skeleton.css'
 
 export interface LinkMenu {
     id: number;
@@ -49,7 +50,7 @@ function Hero({ data, className }: HeroProps){
                             <Text size='tertiary' className='text-white text-start'>{slide.subtitle}</Text>
                         </div>
                         <div className='flex gap-4'>
-                            
+
                             {slide.links.map((link: any) => (
                                 <BLink type='tertiary' target={link.Hero_Button_id.target} hover key={link.Hero_Button_id.id} to={link.Hero_Button_id.link}>{link.Hero_Button_id.text}</BLink>
                             ))}
