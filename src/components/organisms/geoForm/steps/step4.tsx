@@ -12,11 +12,11 @@ function Step4Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
   const schema = yup
   .object()
   .shape({
-    phone: yup.string().required('Por favor, insira um telefone válido'),
+    phone: yup.string(),
     email: yup.string()
       .email('Por favor, insira um email válido')
       .required('Email Obrigatório'),
-      whatsapp: yup.string().required('Por favor, insira um telefone válido')
+    whatsapp: yup.string(),
   })
   .required()
 
