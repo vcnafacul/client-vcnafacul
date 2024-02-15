@@ -29,7 +29,6 @@ export interface HeroProps {
 }
 
 function Hero({ data, className }: HeroProps){
-
     return (
         <div className='relative'>
             <Carousel
@@ -53,7 +52,7 @@ function Hero({ data, className }: HeroProps){
                         <div className='flex gap-4'>
 
                             {slide.links.map((link: any) => (
-                                <BLink type='tertiary' target={link.Hero_Button_id.target} hover key={link.Hero_Button_id.id} to={link.Hero_Button_id.link}>{link.Hero_Button_id.text}</BLink>
+                                <BLink type='tertiary' target={link.Home_Hero_Button_id.target} hover key={link.Home_Hero_Button_id.id} to={link.Home_Hero_Button_id.link}>{link.Home_Hero_Button_id.text}</BLink>
                             ))}
                         </div>
                     </div>

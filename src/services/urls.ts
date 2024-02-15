@@ -39,4 +39,7 @@ export const prova = `${mssimulado}/prova`
 export const missing = `${prova}/missing`
 export const questoes = `${mssimulado}/questoes`
 
-export const hero = `${CMS_URL}/items/Hero_Slides?fields=id,title,subtitle,image,backgroud_color,links.Hero_Button_id.*`
+export const hero = `${CMS_URL}/items/Home_Hero_Slides?fields=id,title,subtitle,image,backgroud_color,links.Home_Hero_Button_id.*`
+export const about_us = `${CMS_URL}/items/Home_About_Us`
+export const features = `${CMS_URL}/items/Home_Feature?fields=id,title,subtitle,items.Home_Features_Item_id.*`
+export const actions = `${CMS_URL}/items/Home_Action?fields=id,title,subtitle,areas.Home_Action_Area_id.*.Home_Action_Area_Item_id.*`

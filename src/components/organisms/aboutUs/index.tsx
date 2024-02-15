@@ -1,26 +1,22 @@
 import { useState } from "react";
 import Youtube from "react-youtube";
+import { ReactComponent as PlayIcon } from "../../../assets/icons/play-circle.svg";
 import { ReactComponent as SquarePink } from "../../../assets/icons/square-pink.svg";
 import { ReactComponent as TabletImage } from "../../../assets/icons/tablet.svg";
 import { ReactComponent as TriangleGreyBorder } from "../../../assets/icons/triangle-grey-border.svg";
 import { ReactComponent as TriangleYellow } from "../../../assets/icons/triangle-yellow.svg";
-import { ReactComponent as PlayIcon } from "../../../assets/icons/play-circle.svg";
 
-import './styles.css'
 import Text from "../../atoms/text";
+import './styles.css';
 
-interface Video {
+export interface AboutUsProps {
+    title: string;
+    description: string,
     thumbnail: string;
     videoID: string;
 }
 
-export interface AboutUsProps {
-    title: string;
-    subtitle: string,
-    video: Video
-}
-
-function AboutUs({title, subtitle, video} : AboutUsProps){
+function AboutUs({title, description, videoID, thumbnail} : AboutUsProps){
     const [videoComponent, setVideoComponent] = useState(<></>);
 
     const videoOptions = {
@@ -36,7 +32,7 @@ function AboutUs({title, subtitle, video} : AboutUsProps){
         setVideoComponent(
             <Youtube
                 className="video z-40 absolute "
-                videoId={video.videoID}
+                videoId={videoID}
                 opts={videoOptions}
             />
         );
@@ -53,7 +49,7 @@ function AboutUs({title, subtitle, video} : AboutUsProps){
                     <div className="flex justify-center items-center bg-blue max-w-[640px] max-h-[390px]">
                         <div className="relative flex justify-center items-center w-96">
                             <TabletImage className="tablet absolute z-20 max-w-[640px] md:w-[640px]" />
-                            <img src={video.thumbnail} alt="" className="video relative z-30 md:max-w-[440px] sm:max-w-[320px] max-w-[80%]"/>
+                            <img src={thumbnail} alt="" className="video relative z-30 md:max-w-[440px] sm:max-w-[320px] max-w-[80%]"/>
                         </div>
                         <button className="absolute z-40 border-none cursor-pointer" onClick={handleClick}>
                             <PlayIcon className="z-30 bg-gray-900 rounded-full border-none cursor-pointer opacity-30 transition-opacity duration-200 ease-linear hover:opacity-100" />
@@ -63,7 +59,7 @@ function AboutUs({title, subtitle, video} : AboutUsProps){
                 </div>
                 <div>
                     <Text size="secondary" className="text-start">{title}</Text>
-                    <Text size="tertiary" className="text-start">{subtitle}</Text>
+                    <Text size="tertiary" className="text-start">{description}</Text>
                 </div>
             </div>
         </div>
