@@ -1,9 +1,9 @@
-import { forgot } from "../urls";
+import { reset } from "../urls";
 
 export const ResetPassword = async (password: string, token: string) => {
     const data = { password };
-    
-    const response = await fetch(forgot, {
+
+    const response = await fetch(reset, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(data),
