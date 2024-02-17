@@ -32,7 +32,7 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
     })
     .required()
 
-    type Addres = InferType<typeof schema>
+    type Address = InferType<typeof schema>
 
     const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm({
       resolver: yupResolver(schema)
@@ -49,7 +49,7 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
         reset(formData);
     }, [dataGeo, reset]);
 
-    function handleForm(data: Addres) {
+    function handleForm(data: Address) {
       updateData!({...data, latitude: selectedPosition[0], longitude: selectedPosition[1]})
     }
 
