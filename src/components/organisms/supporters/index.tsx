@@ -1,9 +1,11 @@
 import { useState } from "react";
-import Text from "../../atoms/text"
-import Selector from "../../molecules/selector"
-import './styles.css'
-import Carousel from "../../molecules/carousel";
 import { Navigation, Pagination } from 'swiper/modules';
+import { useHomeContext } from "../../../context/homeContext";
+import Text from "../../atoms/text";
+import Carousel from "../../molecules/carousel";
+import Selector from "../../molecules/selector";
+import './styles.css';
+import SupportersSkeleton from "../supportersSkeleton";
 
 interface Sponsor {
     image: React.FC<React.SVGProps<SVGSVGElement>> | string;
@@ -18,15 +20,25 @@ export interface Volunteer {
     alt:  string;
 }
 
-export interface SupportersProps {
+interface SponsorProps {
+    Patrocinador_id: Sponsor
+}
+
+export interface SupportersSponsor {
     title: string;
     subtitle: string;
-    tabItems: string[];
-    sponsors: Sponsor[];
+    sponsors: SponsorProps[];
+}
+
+export interface SupportersProps extends SupportersSponsor {
     volunteers: Volunteer[];
 }
 
-function Supporters({title, subtitle, tabItems, sponsors, volunteers} : SupportersProps) {
+function Supporters() {
+
+    const { supporters, volunteers } = useHomeContext()
+
+    const tabItems = ['Empresas', 'Voluntários']
     const [tab, setTab] = useState<number>(0)
     const changeTab = (tab: number) => {
         setTab(tab)
@@ -72,32 +84,31 @@ function Supporters({title, subtitle, tabItems, sponsors, volunteers} : Supporte
         />
     };
 
-    return (
-        <div className=" bg-white relative">
-            <div className="relative h-10 bg-white" id="supporters" />
-            <div className="py-12 px-0 md:py-14 ">
-                <div className="mb-8">
-                    <Text size="secondary">{title}</Text>
-                    <Text size="tertiary">{subtitle}</Text>
-                </div>
-                {volunteers.length > 0 ? <Selector tabItems={tabItems} changeItem={changeTab}/> : <></>}
-                {tab === 0  ?
-                    <div className="flex justify-around items-center flex-wrap">
-                        {sponsors.map((sponsor, index) => (
-                            <a key={index} href={sponsor.link} target="_blank">
-                                <img className="sponsors_image" src={sponsor.image as string} alt={sponsor.alt}/>
-                            </a>
-                        ))}
-                    </div>
-                : <div className="flex justify-around items-center flex-wrap w-full">
-                        <Volunteers />
-                    </div>
-                }
-                
-                
+    if(!supporters || !volunteers) return <SupportersSkeleton />
+    return  <div className=" bg-white relative">
+        <div className="relative h-10 bg-white" id="supporters" />
+        <div className="py-12 px-0 md:py-14 ">
+            <div className="mb-8">
+                <Text size="secondary">{supporters!.title}</Text>
+                <Text size="tertiary">{supporters!.subtitle}</Text>
             </div>
-        </div>
-    )
+            {volunteers.length > 0 ? <Selector tabItems={tabItems} changeItem={changeTab}/> : <></>}
+            {tab === 0  ?
+                <div className="flex justify-around items-center flex-wrap">
+                    {supporters!.sponsors.map((sponsor, index) => (
+                        <a key={index} href={sponsor.Patrocinador_id.link} target="_blank">
+                            <img className="sponsors_image" src={sponsor.Patrocinador_id.image as string} alt={sponsor.Patrocinador_id.alt}/>
+                        </a>
+                    ))}
+                </div>
+            : <div className="flex justify-around items-center flex-wrap w-full">
+                    <Volunteers />
+                </div>
+            }
+
+            </div>
+        </div> 
+    
 }
 
 export default Supporters

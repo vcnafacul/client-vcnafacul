@@ -1,6 +1,4 @@
-import { HeaderProps } from "../../components/organisms/header";
-import {header}  from "../home/data";
-import { DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, SIMULADO, DASH_ROLES, DASH_PROVAS, DASH_CONTENT, NEWS, DASH_SIMULADO, ESTUDO, DASH } from "../../routes/path";
+import { DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, DASH_ROLES, DASH_PROVAS, DASH_CONTENT, DASH_SIMULADO, ESTUDO } from "../../routes/path";
 import { ReactComponent as NaturezaImg } from "../../assets/images/dashboard/natureza.svg";
 import { ReactComponent as HumanasImg } from "../../assets/images/dashboard/humanas.svg";
 import { ReactComponent as LinguagensImg } from "../../assets/images/dashboard/linguagens.svg";
@@ -30,10 +28,6 @@ import { Roles } from "../../enums/roles/roles";
 import { DashCardMenu } from "../../components/molecules/dashCard";
 import { Materias, getMateriaString } from "../../enums/content/materias";
 
-export const headerDash: HeaderProps = {...header, itemsMenu: [
-    { id: 1, name: "Novidades", link: NEWS },
-    { id: 2,name: "Simulado", link: `${DASH}/${SIMULADO}` },
-],};
 
 export const dashCardMenuItems : DashCardMenu[] = [
     {

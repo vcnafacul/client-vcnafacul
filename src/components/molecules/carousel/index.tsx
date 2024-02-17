@@ -9,7 +9,7 @@ import PrevNextSwiper from "../../atoms/PrevNextSwiper";
 
 interface CarouselProps extends SwiperProps {
     className?: string;
-    childrens: React.ReactNode[];
+    childrens?: React.ReactNode[];
     slidesPerView?: number;
     spaceBetween?: number;
     loop?: boolean;
@@ -39,7 +39,7 @@ function Carousel({className, childrens, slidesPerView, spaceBetween, loop, cent
                 loop={loop ?? true}
                 slidesPerGroupSkip={ slidesPerGroupSkip ?? 1}
                 grabCursor={grabCursor ?? false}>
-                {childrens.map((child, index) => (
+                {childrens?.map((child, index) => (
                     <SwiperSlide key={index}>{child}</SwiperSlide>
                     ))}
                 {arrow ? <PrevNextSwiper className={arrowClassName} fill={fillArrow} /> : <></>}

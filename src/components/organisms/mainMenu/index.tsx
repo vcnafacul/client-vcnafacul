@@ -1,11 +1,11 @@
-import MenuItem, { ItemMenu } from "../../molecules/menuItems";
-import FollowUs, { SocialLink } from "../../molecules/followUs";
+import MenuItem, { ItemMenuProps } from "../../molecules/menuItems";
+import FollowUs from "../../molecules/followUs";
 
 import { ReactComponent as CloseIcon } from "../../../assets/icons/close.svg";
 
 interface MainMenuProps {
-    itemsMenu: ItemMenu[]
-    socialLinks: SocialLink;
+    itemsMenu: ItemMenuProps[]
+    socialLinks: ItemMenuProps[];
     className?: string;
     solid: boolean;
     open: boolean;

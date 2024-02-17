@@ -4,6 +4,8 @@ import { Navigation, Pagination } from 'swiper/modules';
 import Text from '../../atoms/text';
 import BLink from '../../molecules/bLink';
 import Carousel from '../../molecules/carousel';
+import { HeroSkeleton } from '../heroSkeleton';
+import { useHeroContext } from '../../../context/heroContext';
 
 export interface LinkMenu {
     id: number;
@@ -24,11 +26,14 @@ export interface Slide {
 }
 
 export interface HeroProps {
-    data: Slide[];
     className?: string;
 }
 
-function Hero({ data, className }: HeroProps){
+function Hero({ className }: HeroProps){
+
+    const { heroSlides } = useHeroContext()
+
+    if(heroSlides?.length === 0) return <HeroSkeleton />
     return (
         <div className='relative'>
             <Carousel
@@ -38,7 +43,7 @@ function Hero({ data, className }: HeroProps){
             arrow
             arrowClassName='absolute bottom-5 px-8'
             fillArrow='fill-white'
-            childrens={data.map((slide) => (
+            childrens={heroSlides.map((slide) => (
             <div key={slide.id} style={{background: `${slide.backgroud_color}`}} 
                 className={`${className} min-h-[750px] sm:min-h-[480px] md:min-h-[600px] w-screen flex justify-center`}>
                 <div className='container flex flex-col justify-start pt-24 min-h-screen box-border

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import HeroTemplate from "../../components/templates/heroTemplate"
-import { footer, header } from "../home/data"
 import Text from "../../components/atoms/text"
 import { News } from "../../dtos/news/news"
 import { getNews } from "../../services/news/getNews"
@@ -58,7 +57,7 @@ function NewsPage(){
       }, [])
       
     return (
-        <HeroTemplate header={header} footer={footer} headerPosition="fixed">
+        <HeroTemplate headerPosition="fixed">
             <div className="relative flex items-center flex-col">
                 <div className="bg-white h-12 min-w-[400px] max-w-[500px] relative -top-7 z-50 text-center text-xl text-grey py-2">
                   {news.length == 0 ? null : news[indexSelect].session}

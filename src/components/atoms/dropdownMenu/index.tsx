@@ -2,14 +2,10 @@ import React, { Fragment } from 'react'
 import { Link } from "react-router-dom"
 import { Menu, Transition } from '@headlessui/react'
 import { classNames } from '../../../utils/className'
-
-export interface NavigationProps {
-    name: string;
-    href: string;
-}
+import { ItemMenuProps } from '../../molecules/menuItems';
 
 interface DropdwonMenuProps {
-    userNavigation: NavigationProps[]
+    userNavigation: ItemMenuProps[];
     children: React.ReactNode;
     className?: string;
 }
@@ -35,13 +31,13 @@ function DropdwonMenu({userNavigation, children, className} : DropdwonMenuProps)
                             <Menu.Item key={index}>
                             {({ active }) => (
                                 <Link
-                                to={item.href}
+                                to={item.Home_Menu_Item_id.link}
                                 className={classNames(
                                     active ? 'bg-gray-100' : '',
                                     'block px-4 py-2 text-sm text-gray-700'
                                 )}
                                 >
-                                {item.name}
+                                {item.Home_Menu_Item_id.name}
                                 </Link>
                             )}
                         </Menu.Item>

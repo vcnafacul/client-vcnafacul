@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Volunteer } from "../../components/organisms/Supporters";
+import { Volunteer } from "../../components/organisms/supporters";
 import fetchWrapper from "../../utils/fetchWrapper";
 import { userRoute } from "../urls";
 

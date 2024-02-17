@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigation, Pagination } from 'swiper/modules';
+import { useHomeContext } from "../../../context/homeContext";
 import Text from "../../atoms/text";
 import Carousel from "../../molecules/carousel";
 import Selector from "../../molecules/selector";
+import ActionAreasSkeleton from "../actionAreasSkeleton";
 
 export interface ItemCard {
     id: number;
@@ -30,25 +32,25 @@ export interface ActionProps{
     subtitle: string;
     areas: ActionAreasProps[]
 }
+function Action() {
 
-function Action({title, subtitle, areas} : ActionProps) {
-    const [action, setAction]= useState<ActionArea>(areas[0].Home_Action_Area_id)
+    const { actionAreas } = useHomeContext()
+
+    const [action, setAction]= useState<ActionArea | undefined>(actionAreas?.areas[0].Home_Action_Area_id)
 
     const changeItem = (index : number) => {
-        setAction(areas[index].Home_Action_Area_id)
+        setAction(actionAreas!.areas[index].Home_Action_Area_id)
     }
 
-    const CardTopics = (cardTopics: ActionArea) => cardTopics.Items.map((cardItem) => {
+    const CardTopics = (cardTopics: ActionArea | undefined) => cardTopics?.Items.map((cardItem) => {
 
         return (
-            <div className="">
-                <div key={cardItem.Home_Action_Area_Item_id.id} className="my-0 mx-auto overflow-hidden w-[230px] h-[230px]
+            <div key={cardItem.Home_Action_Area_Item_id.id} className="my-0 mx-auto overflow-hidden w-[230px] h-[230px]
                 text-grey border border-grey flex flex-col items-center justify-center">
-                    <div className="flex justify-center w-28 h-28">
-                        <img src={cardItem.Home_Action_Area_Item_id.image} />
-                    </div>
-                    <h3 className="text-2xl text-marine text-center z-10 py-0 px-4" >{cardItem.Home_Action_Area_Item_id.title}</h3>
+                <div className="flex justify-center w-28 h-28">
+                    <img src={cardItem.Home_Action_Area_Item_id.image} />
                 </div>
+                <h3 className="text-2xl text-marine text-center z-10 py-0 px-4" >{cardItem.Home_Action_Area_Item_id.title}</h3>
             </div>
         );
     })
@@ -84,14 +86,21 @@ function Action({title, subtitle, areas} : ActionProps) {
         />
     };
 
+    useEffect(() => {
+        if(actionAreas) {
+            setAction(actionAreas.areas[0].Home_Action_Area_id)
+        }
+    }, [actionAreas])
+
+    if(!actionAreas) return <ActionAreasSkeleton />
     return (
         <div className="bg-white">
             <div className="container mx-auto py-14 px-0 relative flex flex-col justify-start">
                 <div className="md:w-full flex justify-center items-center flex-col">
-                    <Text size="secondary">{title}</Text>
-                    <Text size="tertiary">{subtitle}</Text>
+                    <Text size="secondary">{actionAreas!.title}</Text>
+                    <Text size="tertiary">{actionAreas!.subtitle}</Text>
                 </div>
-                <Selector tabItems={areas.map(area => area.Home_Action_Area_id.title)} changeItem={changeItem} />
+                <Selector tabItems={actionAreas!.areas.map(area => area.Home_Action_Area_id.title)} changeItem={changeItem} />
             </div>
             {cardsItems()}
         </div>
