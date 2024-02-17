@@ -3,6 +3,7 @@ import Text from "../../../atoms/text"
 import { EachStepProps } from ".."
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
+import { InferType } from "yup"
 import { useForm } from "react-hook-form"
 import Button from "../../../molecules/button"
 import Form from "../../form"
@@ -31,6 +32,8 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
     })
     .required()
 
+    type Addres = InferType<typeof schema>
+
     const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm({
       resolver: yupResolver(schema)
     });
@@ -46,7 +49,7 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
         reset(formData);
     }, [dataGeo, reset]);
 
-    function handleForm(data: any) {
+    function handleForm(data: Addres) {
       updateData!({...data, latitude: selectedPosition[0], longitude: selectedPosition[1]})
     }
 
