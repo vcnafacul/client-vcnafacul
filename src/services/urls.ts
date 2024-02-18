@@ -4,6 +4,7 @@ const CMS_URL = import.meta.env.VITE_CMS_URL;
 export const userRoute = `${BASE_URL}/user`
 export const login = `${userRoute}/login`
 export const forgot = `${userRoute}/forgot`
+export const reset = `${userRoute}/reset`
 export const email_exist = `${userRoute}/hasemail`
 export const role = `${BASE_URL}/role`
 export const user_role = `${BASE_URL}/userrole`
