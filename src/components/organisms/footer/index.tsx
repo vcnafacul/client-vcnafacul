@@ -1,5 +1,5 @@
 import { useBaseTemplateContext } from "../../../context/baseTemplateContext";
-import FollowUs from "../../molecules/followUs";
+import FollowUs, { SocialLink } from "../../molecules/followUs";
 import Logo from "../../molecules/logo";
 import MenuItem, { ItemMenuProps } from "../../molecules/menuItems";
 import FooterSkeleton from "../footerSkeleton";
@@ -9,7 +9,7 @@ export interface FooterProps {
     pageLinks: ItemMenuProps[];
     slogan: string;
     email: string;
-    socialLinks: ItemMenuProps[];
+    socialLinks: SocialLink[];
 }
 
 function Footer() {
@@ -26,7 +26,7 @@ function Footer() {
                 </div>
                 <MenuItem align="vertical" itemsMenu={footer.pageLinks} solid={false} />
                 <MenuItem align="vertical" itemsMenu={footer.sitemapLinks} solid={false} />
-                <FollowUs socialLinks={footer.socialLinks} solid={false} className="w-52 flex flex-col items-center"/>
+                <FollowUs className="w-52 flex flex-col items-center"/>
             </div>
         </footer>
     );

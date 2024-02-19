@@ -2,7 +2,7 @@ import { VariantProps, tv } from "tailwind-variants";
 import { Link } from "react-router-dom";
 
 const menuItem = tv({
-    base: 'flex',
+    base: 'flex justify-center items-center',
     variants: {
         align: {
             horizontal: 'flex-row md:mx-6',

@@ -5,7 +5,7 @@ import { HeaderData } from "../components/organisms/header";
 
 // eslint-disable-next-line react-refresh/only-export-components
 const BaseTemplateContext = createContext<{
-    header?:HeaderData | null, 
+    header:HeaderData, 
     footer?: FooterProps | null } | null>(null)
 
 function useBaseTemplateContext() {

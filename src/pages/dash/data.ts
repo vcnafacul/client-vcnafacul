@@ -27,11 +27,11 @@ import { ReactComponent as Report } from '../../assets/icons/warning.svg';
 import { DashCardMenu } from "../../components/molecules/dashCard";
 import { Materias, getMateriaString } from "../../enums/content/materias";
 import { Roles } from "../../enums/roles/roles";
-import { HeaderProps } from "../../components/organisms/header";
 import { header } from "../home/data";
+import { HeaderData } from "../../components/organisms/header";
 
 
-export const headerDash: HeaderProps = { ...header, pageLinks: [
+export const headerDash: HeaderData = { ...header, pageLinks: [
     {Home_Menu_Item_id: { id: 1, name: "Novidades", link: NEWS, target: '_self' }},
     {Home_Menu_Item_id: { id: 2,name: "Simulado", link: `${DASH}/${SIMULADO}`, target: '_self' },},
 ],};

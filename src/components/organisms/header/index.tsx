@@ -10,14 +10,18 @@ import Logo from "../../molecules/logo";
 import { ItemMenuProps } from "../../molecules/menuItems";
 import MainMenu from "../mainMenu";
 import Sign from "../sign";
+import { SocialLink } from "../../molecules/followUs";
 
-export interface HeaderProps {
-    solid: boolean;
-    className?: string;
+export interface HeaderData {
     pageLinks: ItemMenuProps[]
-    socialLinks: ItemMenuProps[];
+    socialLinks: SocialLink[];
     userNavigationSign: ItemMenuProps[]
     userNavigationLogged: ItemMenuProps[]
+}
+
+interface HeaderProps {
+    solid: boolean;
+    className?: string;
 }
 
 function Header({ solid, className } : HeaderProps) {
@@ -40,15 +44,15 @@ function Header({ solid, className } : HeaderProps) {
             <div className='md:container mx-auto h-full flex items-center'>
                 <div className="flex w-full justify-between items-center mx-4 md:mx-auto md:max-w-6xl ">
                     <MenuBugger />
-                        <Logo solid={solid} name />
-                        <MainMenu itemsMenu={header.pageLinks} socialLinks={header.socialLinks} solid={solid} open={openMenu} 
+                    <Logo solid={solid} name />
+                    <MainMenu itemsMenu={header.pageLinks} socialLinks={header.socialLinks} solid={solid} open={openMenu} 
                         handleClose={() =>{
                             setOpenMenu(false)
                         }}/>
-                        {!token ?  
-                            <Sign userNavigation={header.userNavigationSign} solid={solid} className="items-center"/> :
-                            <Logged userNavigation={header.userNavigationLogged} userName={capitalize(firstName)} className={solid ? 'text-marine' : 'text-white'}/>
-                        }
+                    {!token ?  
+                        <Sign userNavigation={header.userNavigationSign} solid={solid} className="items-center"/> :
+                        <Logged userNavigation={header.userNavigationLogged} userName={capitalize(firstName)} className={solid ? 'text-marine' : 'text-white'}/>
+                    }
                 </div>   
             </div>
         </header>
