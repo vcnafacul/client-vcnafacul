@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "../pages/home";
 import Login from "../pages/login";
-import { ACCOUNT_PATH, CONTENT, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, ESTUDO, FORGOT_PASSWORD_PATH, FORM_GEOLOCATION, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, RESET_PASSWORD_PATH, SIMULADO, SIMULADO_RESPONDER } from "./path";
+import { ACCOUNT_PATH, CONTENT, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, ESTUDO, FORGOT_PASSWORD_PATH, FORM_GEOLOCATION, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, RESET_PASSWORD_PATH, SIMULADO, SIMULADO_RESPONDER, SIMULATE_METRICS } from "./path";
 import Dash from "../pages/dash";
 import DashGeo from "../pages/dashGeo";
 import Register from "../pages/register";
@@ -27,6 +27,7 @@ import Subject from "../pages/subject";
 import Geo from "../pages/Geo";
 import Forgot from "../pages/forgot";
 import { Reset } from "../pages/reset";
+import { SimulateMetrics } from "../pages/simuladoMetrics";
 
 
 export function PlatformRoutes() {
@@ -57,6 +58,9 @@ export function PlatformRoutes() {
             }>
                 <Route path={DASH} element={<Dash />} />
                 <Route path={SIMULADO} element={<MainSimulate />} />
+
+                <Route path={SIMULATE_METRICS} element={<SimulateMetrics /> } />
+
                 <Route path={`${ESTUDO}/:nomeMateria`} element={ <Materia />} />
                 <Route path={`${CONTENT}/:nameSubject/:id`} element={ <Subject />} />
                 <Route path={ACCOUNT_PATH} element={ <Account />} />
