@@ -1,7 +1,7 @@
 import { QuestionBoxStatus } from "../../../enums/simulado/questionBoxStatus"
 import QuestionBox from "../../atoms/questionBox"
 
-interface QuestionProps {
+export interface QuestionProps {
     number: number;
     status: QuestionBoxStatus;
     id: string | number;
@@ -21,7 +21,7 @@ function QuestionList({ questions, selectQuestion } : QuestionListProps) {
         return 'unread'
     }
     return (
-        <div className="container mx-4 sm:mx-auto flex flex-wrap">
+        <div className="flex flex-wrap">
             {questions.map(question => (
                 <QuestionBox key={question.id} number={question.number + 1} status={getStyle(question.status)} onClick={() => { selectQuestion(question.number) }} />
             ))}

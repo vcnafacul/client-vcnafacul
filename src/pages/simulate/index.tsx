@@ -1,27 +1,24 @@
-import IconArea from "../../components/atoms/iconArea";
 import HeaderSimulate from "../../components/molecules/headerSimulate";
-import QuestionList from "../../components/molecules/questionList";
 import { QuestionBoxStatus } from "../../enums/simulado/questionBoxStatus";
 
 import Text from "../../components/atoms/text";
 import Button from "../../components/molecules/button";
 
-import { ReactComponent as Report } from '../../assets/icons/warning.svg'
-import Alternative from "../../components/atoms/alternative";
-import { Answer, AnswerSimulado, useSimuladoStore } from "../../store/simulado";
-import Legends from "../../components/molecules/legends";
-import { simulateData } from "./data";
-import { getIconByTitle } from "../mainSimulate/data";
-import { ModalType } from "../../types/simulado/modalType";
 import { useEffect, useState } from "react";
-import { answerSimulado } from "../../services/simulado/answerSimulado";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../store/auth";
-import ModalInfo from "./modals/modalInfo";
-import ModalReportProblem from "./modals/ModalReportProblem";
 import { toast } from "react-toastify";
+import { ReactComponent as Report } from '../../assets/icons/warning.svg';
+import Alternative from "../../components/atoms/alternative";
 import ModalImage from "../../components/atoms/modalImage";
+import SimulateTemplate from "../../components/templates/simulateTemplate";
 import { SIMULADO } from "../../routes/path";
+import { answerSimulado } from "../../services/simulado/answerSimulado";
+import { useAuthStore } from "../../store/auth";
+import { Answer, AnswerSimulado, useSimuladoStore } from "../../store/simulado";
+import { ModalType } from "../../types/simulado/modalType";
+import { simulateData } from "./data";
+import ModalReportProblem from "./modals/ModalReportProblem";
+import ModalInfo from "./modals/modalInfo";
 
 function Simulate() {
     const { data, setActive, setAnswer, nextQuestion, confirm, priorQuestion, isFinish, setFinish } = useSimuladoStore()
@@ -159,44 +156,35 @@ function Simulate() {
     if(data.questions.length > 0)
         return (
         <>
-                <div className="flex flex-col sm:mx-auto">
+                <SimulateTemplate 
+                header={
                     <HeaderSimulate simulateName={data.title} onClick={() => {setTryFinish(true)}}/>
-                    <QuestionList selectQuestion={(number: number) => { setActive(number) }}
-                        questions={data.questions.map(quest => ({id: quest._id, number: quest.number, status: getStatus(quest.viewed, quest.solved, data.questionActive === quest.number)}))} />
-                    <Legends legends={simulateData.legends}/>
-                    <div className="container mx-4 sm:mx-auto">
-                        <div className="flex items-center gap-4">
-                            <div> <IconArea icon={getIconByTitle(questionSelect.enemArea) as React.FunctionComponent<React.SVGProps<SVGSVGElement>> }  className="bg-marine" /> </div>
-                            <Text className="m-0">{questionSelect.enemArea}</Text>
-                            <Button typeStyle="none" size="none"><Report className="w-15 h-15" /></Button>
-                        </div>
-                        <div className="flex my-8 flex-col items-start">
-                            <div className="flex justify-center items-center mb-8">
-                                <Text size="secondary" className="text-orange m-0">Questao {questionSelect.number + 1}</Text>
-                                <Report className="w-10 h-8" onClick={() => {setQuestionProblem(true); setReportProblem(true)}}/>
-                            </div>
-                            <div onClick={() => setPhotoOpen(true) } className="w-full flex justify-center cursor-pointer">
-                                <img className="mr-4 sm:m-0" src={`https://api.vcnafacul.com.br/images/${questionSelect.imageId}.png`} />
-                            </div>
-                        </div>
-                        <div className="flex justify-between flex-col md:flex-row gap-4">
-                            <div className="flex gap-4 justify-center items-center flex-wrap">
-                                <Text size="secondary" className="text-orange w-60 text-start m-0">{simulateData.alternativeText}</Text>
-                                <div className="flex gap-4">
-                                    {simulateData.alternativasData.map((alt, index) => (
-                                        <Alternative key={index} onClick={() => setAnswer(alt.label)} disabled={data.finish} label={alt.label} select={questionSelect.answered === alt.label} />
+                }
+                selectQuestion={(number: number) => { setActive(number) }}
+                questions={data.questions.map(quest => ({id: quest._id, number: quest.number, status: getStatus(quest.viewed, quest.solved, data.questionActive === quest.number)}))}
+                legends={simulateData.legends}
+                questionSelect={questionSelect}
+                setReportProblem={() => {setQuestionProblem(true); setReportProblem(true)}}
+                expandedPhoto={() => setPhotoOpen(true)}
+                alternative={
+                    <div className="flex gap-4 justify-center items-center flex-wrap">
+                        <Text size="secondary" className="text-orange w-60 text-start m-0">{simulateData.alternativeText}</Text>
+                        <div className="flex gap-4">
+                            {simulateData.alternativasData.map((alt, index) => (
+                                <Alternative key={index} onClick={() => setAnswer(alt.label)} disabled={data.finish} label={alt.label} select={questionSelect.answered === alt.label} />
 
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="flex gap-4 justify-center items-center flex-col sm:flex-row mx-auto">
-                                <Button onClick={priorQuestion} typeStyle="secondary" hover className="w-44">Voltar</Button>
-                                <Button onClick={nextQuestion} hover className="w-44">Pular</Button>
-                                <Button onClick={finalize} className="bg-green3 border-green3 w-44 hover:border-green2 hover:bg-green2 transition-all duration-300">Confirmar</Button>
-                            </div>
+                            ))}
                         </div>
-                    </div> 
-                </div>
+                    </div>
+                }
+                buttons={
+                    <div className="flex gap-4 justify-center items-center flex-col sm:flex-row">
+                        <Button onClick={priorQuestion} typeStyle="secondary" hover className="w-44">Voltar</Button>
+                        <Button onClick={nextQuestion} hover className="w-44">Pular</Button>
+                        <Button onClick={finalize} className="bg-green3 border-green3 w-44 hover:border-green2 hover:bg-green2 transition-all duration-300">Confirmar</Button>
+                    </div>
+                }
+                />
             <FinishReport />
             <ReportProblem />
             <QuestionImageModal />
