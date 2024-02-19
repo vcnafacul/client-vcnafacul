@@ -8,21 +8,16 @@ import { capitalize } from "../../../utils/capitalize";
 import Logged from "../../molecules/Logged";
 import Logo from "../../molecules/logo";
 import { ItemMenuProps } from "../../molecules/menuItems";
-import { HeaderSkeleton } from "../headerSkeleton";
 import MainMenu from "../mainMenu";
 import Sign from "../sign";
 
-
-export interface HeaderData {
+export interface HeaderProps {
+    solid: boolean;
+    className?: string;
     pageLinks: ItemMenuProps[]
     socialLinks: ItemMenuProps[];
     userNavigationSign: ItemMenuProps[]
     userNavigationLogged: ItemMenuProps[]
-}
-
-interface HeaderProps {
-    solid: boolean;
-    className?: string;
 }
 
 function Header({ solid, className } : HeaderProps) {
@@ -40,7 +35,6 @@ function Header({ solid, className } : HeaderProps) {
         )
     }
     
-    if(!header) return <HeaderSkeleton className={className}/>
     return (
         <header className={className}>
             <div className='md:container mx-auto'>

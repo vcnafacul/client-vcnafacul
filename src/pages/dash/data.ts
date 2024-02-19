@@ -1,33 +1,40 @@
-import { DASH_GEOLOCATION, DASH_NEWS, DASH_QUESTION, DASH_ROLES, DASH_PROVAS, DASH_CONTENT, DASH_SIMULADO, ESTUDO } from "../../routes/path";
-import { ReactComponent as NaturezaImg } from "../../assets/images/dashboard/natureza.svg";
 import { ReactComponent as HumanasImg } from "../../assets/images/dashboard/humanas.svg";
 import { ReactComponent as LinguagensImg } from "../../assets/images/dashboard/linguagens.svg";
-import { ReactComponent as MatematicaImg }from "../../assets/images/dashboard/matematica.svg";
+import { ReactComponent as MatematicaImg } from "../../assets/images/dashboard/matematica.svg";
+import { ReactComponent as NaturezaImg } from "../../assets/images/dashboard/natureza.svg";
+import { DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, ESTUDO, NEWS, SIMULADO } from "../../routes/path";
 
-import { ReactComponent as LPT } from "../../assets/icons/home-subjects-leitura-prod-textos.svg"
-import { ReactComponent as Gramatica } from "../../assets/icons/home-subjects-gramatica.svg"
-import { ReactComponent as Literatura } from "../../assets/icons/home-subjects-literatura.svg"
-import { ReactComponent as Ingles } from "../../assets/icons/home-subjects-ingles.svg"
-import { ReactComponent as Espanhol } from "../../assets/icons/home-subjects-espanhol.svg"
+import { ReactComponent as Espanhol } from "../../assets/icons/home-subjects-espanhol.svg";
+import { ReactComponent as Gramatica } from "../../assets/icons/home-subjects-gramatica.svg";
+import { ReactComponent as Ingles } from "../../assets/icons/home-subjects-ingles.svg";
+import { ReactComponent as LPT } from "../../assets/icons/home-subjects-leitura-prod-textos.svg";
+import { ReactComponent as Literatura } from "../../assets/icons/home-subjects-literatura.svg";
 
-import { ReactComponent as Biologia } from "../../assets/icons/home-subjects-biologia.svg"
-import { ReactComponent as Fisica } from "../../assets/icons/home-subjects-fisica.svg"
-import { ReactComponent as Quimica } from "../../assets/icons/home-subjects-quimica.svg"
-import { ReactComponent as Matematica } from "../../assets/icons/home-subjects-matematica.svg"
-
-
-import { ReactComponent as Historia } from "../../assets/icons/home-subjects-historia.svg"
-import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-geografia.svg"
-import { ReactComponent as Filosofia } from "../../assets/icons/home-subjects-filosofia.svg"
-import { ReactComponent as Sociologia } from "../../assets/icons/home-subjects-sociologia.svg"
-
-import { ReactComponent as Report } from '../../assets/icons/warning.svg'
+import { ReactComponent as Biologia } from "../../assets/icons/home-subjects-biologia.svg";
+import { ReactComponent as Fisica } from "../../assets/icons/home-subjects-fisica.svg";
+import { ReactComponent as Matematica } from "../../assets/icons/home-subjects-matematica.svg";
+import { ReactComponent as Quimica } from "../../assets/icons/home-subjects-quimica.svg";
 
 
-import { Roles } from "../../enums/roles/roles";
+import { ReactComponent as Filosofia } from "../../assets/icons/home-subjects-filosofia.svg";
+import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-geografia.svg";
+import { ReactComponent as Historia } from "../../assets/icons/home-subjects-historia.svg";
+import { ReactComponent as Sociologia } from "../../assets/icons/home-subjects-sociologia.svg";
+
+import { ReactComponent as Report } from '../../assets/icons/warning.svg';
+
+
 import { DashCardMenu } from "../../components/molecules/dashCard";
 import { Materias, getMateriaString } from "../../enums/content/materias";
+import { Roles } from "../../enums/roles/roles";
+import { HeaderProps } from "../../components/organisms/header";
+import { header } from "../home/data";
 
+
+export const headerDash: HeaderProps = { ...header, pageLinks: [
+    {Home_Menu_Item_id: { id: 1, name: "Novidades", link: NEWS, target: '_self' }},
+    {Home_Menu_Item_id: { id: 2,name: "Simulado", link: `${DASH}/${SIMULADO}`, target: '_self' },},
+],};
 
 export const dashCardMenuItems : DashCardMenu[] = [
     {
