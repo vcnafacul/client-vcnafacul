@@ -26,7 +26,7 @@ type DashTemplateProps = VariantProps<typeof dashTemplate> & {
 
 function DashTemplate({  className, hasMenu } : DashTemplateProps){
     return (
-        <BaseTemplateContext.Provider value={{ header: headerDash }}>
+        <BaseTemplateContext.Provider value={{ header: headerDash, hasFooter: false }}>
             <BaseTemplate  className={`overflow-y-auto scrollbar-hide h-screen ${className}`} solid position="fixed">
                 <div className={`relative top-[76px] h-[calc(100vh-76px)] w-[calc(100vw-40px)] bg-zinc-100 md:w-full`}>
                     <TriangleGreen className="rotate-180 absolute left-80 w-40" />

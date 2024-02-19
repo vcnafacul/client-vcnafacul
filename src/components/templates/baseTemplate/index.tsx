@@ -33,7 +33,7 @@ function BaseTemplate({  children, solid, position, headerShadow, className }: B
         <div className={className}>
             <Header solid={solid}
                 className={`${baseTemplate({ position, headerShadow })} ${solid ? 'bg-white' : 'bg-transparent'}`} />
-            <div className={`${position !== undefined ? '' : 'h-[calc(100vh-76px)]'}`}>
+            <div>
                 { children }
             </div>
             <Footer />

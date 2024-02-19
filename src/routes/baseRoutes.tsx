@@ -24,7 +24,7 @@ export function BaseRoutes() {
     }, [footer])
 
     return (
-        <BaseTemplateContext.Provider value={{ header, footer }}>
+        <BaseTemplateContext.Provider value={{ header, footer, hasFooter: true }}>
                 <Outlet />
         </BaseTemplateContext.Provider>
     );

@@ -14,8 +14,9 @@ export interface FooterProps {
 
 function Footer() {
 
-    const { footer } = useBaseTemplateContext()
-
+    const { footer, hasFooter } = useBaseTemplateContext()
+    
+    if(!hasFooter) return <></>
     if(!footer) return <FooterSkeleton />
     return (
         <footer className="bg-marine py-12 px-0 text-center text-base md:text-left md:pt-14 md:pb-9">
