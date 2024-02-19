@@ -37,10 +37,9 @@ function Header({ solid, className } : HeaderProps) {
     
     return (
         <header className={className}>
-            <div className='md:container mx-auto'>
-                <div>
-                    <div className="flex justify-between items-center mx-4 md:mx-auto md:max-w-6xl ">
-                        <MenuBugger />
+            <div className='md:container mx-auto h-full flex items-center'>
+                <div className="flex w-full justify-between items-center mx-4 md:mx-auto md:max-w-6xl ">
+                    <MenuBugger />
                         <Logo solid={solid} name />
                         <MainMenu itemsMenu={header.pageLinks} socialLinks={header.socialLinks} solid={solid} open={openMenu} 
                         handleClose={() =>{
@@ -50,8 +49,7 @@ function Header({ solid, className } : HeaderProps) {
                             <Sign userNavigation={header.userNavigationSign} solid={solid} className="items-center"/> :
                             <Logged userNavigation={header.userNavigationLogged} userName={capitalize(firstName)} className={solid ? 'text-marine' : 'text-white'}/>
                         }
-                    </div>
-                </div>
+                </div>   
             </div>
         </header>
     )
