@@ -45,7 +45,7 @@ function Map() {
                     lat: geo.latitude,
                     lon: geo.longitude
                 }
-            })} className="h-[60vh] z-30" handleClickMarker={handleClickMarker}/>
+            })} className="z-30 h-[530px]" handleClickMarker={handleClickMarker}/>
             <MapBoxInfo boxRef={boxRef} geo={markers[markerActive]} ctaLink={FORM_GEOLOCATION} />
         </div>
     )

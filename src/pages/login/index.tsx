@@ -1,5 +1,4 @@
 import BaseTemplate from "../../components/templates/baseTemplate"
-import { footer, header } from "../home/data"
 import '../../styles/graphism.css'
 
 import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
@@ -24,7 +23,7 @@ function Login(){
 
 
     return (
-        <BaseTemplate header={header} footer={footer} solid={true} className="bg-white overflow-y-auto scrollbar-hide h-screen">
+        <BaseTemplate solid={true} className="bg-white overflow-y-auto scrollbar-hide h-screen">
             <div className="relative">
                 <TriangleGreen className="graphism triangle-green"/>
                 <TriangleYellow className="graphism triangle-yellow"/>

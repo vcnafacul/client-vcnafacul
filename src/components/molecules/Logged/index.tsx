@@ -1,9 +1,10 @@
-import DropdwonMenu, { NavigationProps } from "../../atoms/dropdownMenu"
+import DropdwonMenu from "../../atoms/dropdownMenu"
 import Avatar from "../avatar"
+import { ItemMenuProps } from "../menuItems";
 
 interface LoggedProps {
     userName: string;
-    userNavigation: NavigationProps[]
+    userNavigation: ItemMenuProps[]
     className?: string;
 }
 
