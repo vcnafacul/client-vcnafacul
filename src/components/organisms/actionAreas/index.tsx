@@ -1,47 +1,56 @@
-import { useState } from "react"
-import Text from "../../atoms/text"
-import Selector from "../../molecules/selector"
-import Carousel from "../../molecules/carousel";
+import { useEffect, useState } from "react";
 import { Navigation, Pagination } from 'swiper/modules';
+import { useHomeContext } from "../../../context/homeContext";
+import Text from "../../atoms/text";
+import Carousel from "../../molecules/carousel";
+import Selector from "../../molecules/selector";
+import ActionAreasSkeleton from "../actionAreasSkeleton";
 
 export interface ItemCard {
     id: number;
     title: string;
     subtitle?: string;
-    image: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | string;
+    image: string;
 }
 
-interface CardItem {
-    id: number,
-    items: ItemCard[]
+interface ActionAreaItem {
+    Home_Action_Area_Item_id: ItemCard
 }
 
-export interface ActionAreasProps{
+interface ActionArea {
+    id: number;
+    title: string;
+    Items: ActionAreaItem[];
+}
+
+interface ActionAreasProps {
+    Home_Action_Area_id: ActionArea
+}
+
+export interface ActionProps{
     title: string;
     subtitle: string;
-    tabItems: string[];
-    cardItems: CardItem[]
+    areas: ActionAreasProps[]
 }
+function Action() {
 
-function ActionAreas({title, subtitle, tabItems, cardItems} : ActionAreasProps) {
+    const { actionAreas } = useHomeContext()
 
-    const [index, setIndex]= useState<number>(2)
+    const [action, setAction]= useState<ActionArea | undefined>(actionAreas?.areas[0].Home_Action_Area_id)
 
     const changeItem = (index : number) => {
-        setIndex(index)
+        setAction(actionAreas!.areas[index].Home_Action_Area_id)
     }
 
-    const CardTopics = (cardTopics: CardItem) => cardTopics.items.map((cardItem) => {
-        const Icon = cardItem.image;
+    const CardTopics = (cardTopics: ActionArea | undefined) => cardTopics?.Items.map((cardItem) => {
+
         return (
-            <div className="">
-                <div key={cardItem.id} className="my-0 mx-auto overflow-hidden w-[230px] h-[230px]
-                text-grey border border-grey">
-                    <div className="w-full flex justify-center">
-                        <Icon className="mt-9 mb-4 max-w-[74px] h-[74px] fill-pink" />
-                    </div>
-                    <h3 className="text-2xl text-marine text-center z-10 py-0 px-4" >{cardItem.title}</h3>
+            <div key={cardItem.Home_Action_Area_Item_id.id} className="my-0 mx-auto overflow-hidden w-[230px] h-[230px]
+                text-grey border border-grey flex flex-col items-center justify-center">
+                <div className="flex justify-center w-28 h-28">
+                    <img src={cardItem.Home_Action_Area_Item_id.image} />
                 </div>
+                <h3 className="text-2xl text-marine text-center z-10 py-0 px-4" >{cardItem.Home_Action_Area_Item_id.title}</h3>
             </div>
         );
     })
@@ -65,7 +74,7 @@ function ActionAreas({title, subtitle, tabItems, cardItems} : ActionAreasProps) 
       }
 
     const cardsItems = () => {
-        const childrens = CardTopics(cardItems[index])
+        const childrens = CardTopics(action)
         return <Carousel
             childrens={childrens}
             className="bg-white h-72 mt-6 container mx-auto"
@@ -77,18 +86,25 @@ function ActionAreas({title, subtitle, tabItems, cardItems} : ActionAreasProps) 
         />
     };
 
+    useEffect(() => {
+        if(actionAreas) {
+            setAction(actionAreas.areas[0].Home_Action_Area_id)
+        }
+    }, [actionAreas])
+
+    if(!actionAreas) return <ActionAreasSkeleton />
     return (
         <div className="bg-white">
             <div className="container mx-auto py-14 px-0 relative flex flex-col justify-start">
                 <div className="md:w-full flex justify-center items-center flex-col">
-                    <Text size="secondary">{title}</Text>
-                    <Text size="tertiary">{subtitle}</Text>
+                    <Text size="secondary">{actionAreas!.title}</Text>
+                    <Text size="tertiary">{actionAreas!.subtitle}</Text>
                 </div>
-                <Selector tabItems={tabItems} changeItem={changeItem} />
+                <Selector tabItems={actionAreas!.areas.map(area => area.Home_Action_Area_id.title)} changeItem={changeItem} />
             </div>
             {cardsItems()}
         </div>
     )
 }
 
-export default ActionAreas
+export default Action
