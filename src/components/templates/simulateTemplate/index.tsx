@@ -38,12 +38,11 @@ function SimulateTemplate({ header, selectQuestion, questions, legends, question
                 </div>
             </div>
             <div className="container mx-auto flex items-center flex-col max-w-6xl">
-                <QuestionList selectQuestion={selectQuestion}
-                        questions={questions} />
+                <QuestionList selectQuestion={selectQuestion} questions={questions} />
                 <Legends legends={legends}/>
                 <div className="flex justify-start w-full items-center">
                     <IconArea icon={getIconByTitle(questionSelect.enemArea) as React.FunctionComponent<React.SVGProps<SVGSVGElement>> }  className="bg-marine" />
-                    <Text className="m-0 w-full">{questionSelect.enemArea}</Text>
+                    <Text className="m-0 ">{questionSelect.enemArea}</Text>
                     {setReportProblem ? <Button onClick={setReportProblem} typeStyle="none" size="none"><Report className="w-12 h-12"/></Button> : <></>}
                 </div>
                 <div className="flex py-4 w-full">
