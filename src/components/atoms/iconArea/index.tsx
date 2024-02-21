@@ -6,8 +6,8 @@ interface IconAreaProps {
 function IconArea({ icon, className } : IconAreaProps) {
     const Icone = icon;
     return (
-        <div className={`w-24 rounded-full flex justify-center items-center ${className}`}>
-            <Icone className="fill-white w-9/12" />
+        <div className={`w-24 flex justify-center items-center`}>
+            <Icone className={`fill-white h-16 rounded-full m-2 p-2 ${className}`} />
         </div>
     )
 }

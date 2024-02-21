@@ -15,6 +15,7 @@ import { SIMULADO } from "../../routes/path";
 import { answerSimulado } from "../../services/simulado/answerSimulado";
 import { useAuthStore } from "../../store/auth";
 import { Answer, AnswerSimulado, useSimuladoStore } from "../../store/simulado";
+import { Alternatives } from "../../types/question/alternative";
 import { ModalType } from "../../types/simulado/modalType";
 import { simulateData } from "./data";
 import ModalReportProblem from "./modals/ModalReportProblem";
@@ -138,7 +139,7 @@ function Simulate() {
 
     const ReportProblem = () => {
         if(!reportProblem) return null
-        return <ModalReportProblem questionProblem={questionProblem} idQuestion={questionSelect._id} numberQuestion={questionSelect.number + 1} handleClose={() => { setReportProblem(false) }} />
+        return <ModalReportProblem questionProblem={questionProblem} idQuestion={questionSelect._id} numberQuestion={questionSelect.numero + 1} handleClose={() => { setReportProblem(false) }} />
     }
 
     const QuestionImageModal = () => {
@@ -161,7 +162,7 @@ function Simulate() {
                     <HeaderSimulate simulateName={data.title} onClick={() => {setTryFinish(true)}}/>
                 }
                 selectQuestion={(number: number) => { setActive(number) }}
-                questions={data.questions.map(quest => ({id: quest._id, number: quest.number, status: getStatus(quest.viewed, quest.solved, data.questionActive === quest.number)}))}
+                questions={data.questions.map(quest => ({id: quest._id, number: quest.numero, status: getStatus(quest.viewed, quest.solved, data.questionActive === quest.numero)}))}
                 legends={simulateData.legends}
                 questionSelect={questionSelect}
                 setReportProblem={() => {setQuestionProblem(true); setReportProblem(true)}}
@@ -170,7 +171,7 @@ function Simulate() {
                     <div className="flex gap-4 justify-center items-center flex-wrap">
                         <Text size="secondary" className="text-orange w-60 text-start m-0">{simulateData.alternativeText}</Text>
                         <div className="flex gap-4">
-                            {simulateData.alternativasData.map((alt, index) => (
+                            {Alternatives.map((alt, index) => (
                                 <Alternative key={index} onClick={() => setAnswer(alt.label)} disabled={data.finish} label={alt.label} select={questionSelect.answered === alt.label} />
 
                             ))}

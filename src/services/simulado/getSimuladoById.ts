@@ -12,7 +12,7 @@ function mapIQuestaoToQuestion(questao: IQuestao, index: number): Question {
       book: questao.caderno,
       enemArea: questao.enemArea,
       materia: questao.materia.nome, // Se a propriedade materia for { $oid: string }
-      number: index,
+      numero: index,
       solved: false,
       viewed: false
     };

@@ -20,7 +20,7 @@ import Materia from "../pages/materia";
 import NewsPage from "../pages/newsPage";
 import Register from "../pages/register";
 import { Reset } from "../pages/reset";
-import { SimulateMetrics } from "../pages/simuladoMetrics";
+import { SimulateMetrics } from "../pages/simuladoHistorico";
 import Simulate from "../pages/simulate";
 import Subject from "../pages/subject";
 import { useAuthStore } from "../store/auth";

@@ -1,6 +1,7 @@
 export enum QuestionBoxStatus {
-    unsolved,
-    solved,
-    active,
-    unread,
+    unsolved = 'unsolved',
+    solved = 'solved',
+    active = 'active',
+    isRight = 'isRight',
+    unread = 'unread'
   }
