@@ -8,6 +8,7 @@ import NewSimulate from "./modals/newSimulate"
 import { useState } from "react"
 import { ICard } from "../../types/simulado/ISimulateData"
 import './styles.css'
+import { HIstoricosMock } from "./mock"
 
 function MainSimulate() {
     const [initialize, setInitialize]= useState<boolean>(false);
@@ -118,13 +119,13 @@ function MainSimulate() {
                             <Text size="primary">Histórico de Simulados</Text>
                             <Text size="tertiary" className="text-xl">Veja aqui todos os simulados que você já realizou.</Text>
                             <div>
-                                {retornoDaApi.map((item, index) => {
+                                {HIstoricosMock.map((historico ) => {
                                     return (
-                                        <div>
-                                            <Text size="primary">{item.c}</Text>
-                                            <Text size="tertiary">{item.q}</Text>
-                                            <Text size="tertiary">{item.t}</Text>
-                                            <Text size="tertiary">{item.d}</Text>
+                                        <div className="flex items-start space-x-14 ">
+                                            <Text size="secondary">{historico.simulado.tipo.nome}</Text>
+                                            <Text size="tertiary">{historico.simulado.tipo.quantidadeTotalQuestao}</Text>
+                                            <Text size="tertiary">{historico.simulado.tipo.duracao}</Text>
+                                            <Text size="tertiary">{historico.aproveitamento.geral}</Text>
                                         </div>
                                     )
                                 
