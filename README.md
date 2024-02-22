@@ -25,3 +25,27 @@ If you are developing a production application, we recommend updating the config
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+## Installing Project in your Machine
+
+- Firstly, be certified that you already have node and yarn on your machine, to verify you should run these commands in your terminal.
+```bash
+
+$ node -v
+#you should expect something like v18.17.1
+
+$ yarn -v
+#you should expect something like 1.22.19
+```
+### Installation
+
+```bash
+$ yarn install
+```
+
+### Running the app
+
+```bash
+# development
+$ yarn dev
+```
