@@ -95,7 +95,7 @@ function MainSimulate() {
         return <NewSimulate title={card!.tipo} 
         handleClose={() => { setInitialize(false) }} />
     }
-    const retornoDaApi = [{c: 'lingagues', q: "45 questoe", t: "45 minutos", d: "15/10/2021"}, {c: 'matematica', q: "45 questoe", t: "45 minutos", d: "15/10/2021"}];
+
     return (
         <>
                 <div className="relative">
