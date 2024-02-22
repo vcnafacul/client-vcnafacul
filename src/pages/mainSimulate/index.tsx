@@ -122,10 +122,10 @@ function MainSimulate() {
                                 {HIstoricosMock.map((historico ) => {
                                     return (
                                         <div className="flex items-start space-x-14 ">
-                                            <Text size="secondary">{historico.simulado.tipo.nome}</Text>
-                                            <Text size="tertiary">{historico.simulado.tipo.quantidadeTotalQuestao}</Text>
-                                            <Text size="tertiary">{historico.simulado.tipo.duracao}</Text>
-                                            <Text size="tertiary">{historico.aproveitamento.geral}</Text>
+                                            <Text size="tertiary">Materia: {historico.simulado.tipo.nome}</Text>
+                                            <Text size="tertiary">Questões: {historico.simulado.tipo.quantidadeTotalQuestao}</Text>
+                                            <Text size="tertiary">Duração: {(Math.floor(historico.simulado.tipo.duracao/60))}:{historico.simulado.tipo.duracao % 60}H </Text>
+                                            <Text size="tertiary">Aproveitamento: {(historico.aproveitamento.geral*100).toFixed(1)}%</Text>
                                         </div>
                                     )
                                 
