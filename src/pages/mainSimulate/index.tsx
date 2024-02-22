@@ -95,7 +95,7 @@ function MainSimulate() {
         return <NewSimulate title={card!.tipo} 
         handleClose={() => { setInitialize(false) }} />
     }
-
+    const retornoDaApi = [{c: 'lingagues', q: "45 questoe", t: "45 minutos", d: "15/10/2021"}, {c: 'matematica', q: "45 questoe", t: "45 minutos", d: "15/10/2021"}];
     return (
         <>
                 <div className="relative">
@@ -112,6 +112,23 @@ function MainSimulate() {
                             </div>
                             <div className="sm:col-span-2 md:col-span-7 flex justify-center">
                             <CarouselRef className="w-[448px] md:w-full" childrens={cardsDay} breakpoints={breakpointsDay} />
+                            </div>
+                        </div>
+                        <div className="flex flex-col items-start pt-10 mb-20">
+                            <Text size="primary">Histórico de Simulados</Text>
+                            <Text size="tertiary" className="text-xl">Veja aqui todos os simulados que você já realizou.</Text>
+                            <div>
+                                {retornoDaApi.map((item, index) => {
+                                    return (
+                                        <div>
+                                            <Text size="primary">{item.c}</Text>
+                                            <Text size="tertiary">{item.q}</Text>
+                                            <Text size="tertiary">{item.t}</Text>
+                                            <Text size="tertiary">{item.d}</Text>
+                                        </div>
+                                    )
+                                
+                                })}
                             </div>
                         </div>
                     </div>
