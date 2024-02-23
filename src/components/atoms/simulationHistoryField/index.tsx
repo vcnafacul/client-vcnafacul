@@ -8,8 +8,8 @@ interface SimulationHistoryFieldProps {
 function SimulationHistoryField({field, value, invert, className} : SimulationHistoryFieldProps) {
     return ( 
         <div className={`flex gap-1 ${className}`}>
-            <div className={`${!invert ? '' : 'font-bold'}`}>{field}</div>
-            <div className={`${invert ? '' : 'font-bold'}`}>{value}</div>
+            <div className={`${!invert ? '' : 'font-bold'} text-base`}>{field}</div>
+            <div className={`${invert ? '' : 'font-bold'} text-base`}>{value}</div>
         </div>
      );
 }
