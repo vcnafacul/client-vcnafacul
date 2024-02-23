@@ -1,8 +1,12 @@
-import { HIstoricosMock } from "../../../pages/mainSimulate/mock";
+import { HistoricoDTO } from "../../../dtos/historico/HistoricoDTO";
 import Text from "../../atoms/text";
 import SimulationHistoryCard from "../../molecules/simulationHistoryCard";
 
-function SimulationHistory() {
+interface SimulationHistoryProps {
+    historical: HistoricoDTO[]
+}
+
+function SimulationHistory({ historical } : SimulationHistoryProps) {
     return ( 
         <div className="w-full px-4 my-10">
             <Text size="primary" className="text-start">Histórico de Simulados</Text>
@@ -10,7 +14,7 @@ function SimulationHistory() {
             <div className="relative ">
                 <div className="w-40 h-40 bg-green3 absolute right-0 -top-20 -z-10 rotate-45" />
                 <div className="border border-green3 bg-white">
-                    {HIstoricosMock.map((historico) => <SimulationHistoryCard historico={historico} />)}
+                    {historical.map((historico) => <SimulationHistoryCard historico={historico} />)}
                 </div>
             </div>
         </div>

@@ -9,7 +9,7 @@ export async function getAllHistoricoSimulado(token: string) : Promise<Historico
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     });
     if(response.status !== 200){
-        throw new Error('Erro ao buscar simulados disponíveis')
+        throw new Error('Erro ao buscar historico de simulados')
     }
     return await response.json()
 }

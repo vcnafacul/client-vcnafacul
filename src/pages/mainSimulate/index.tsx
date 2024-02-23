@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Text from "../../components/atoms/text"
 import Ul from "../../components/atoms/ul"
 import CardSimulate from "../../components/molecules/cardSimulate"
@@ -8,10 +8,17 @@ import { ICard } from "../../types/simulado/ISimulateData"
 import { breakpointsBook, breakpointsDay, simulateData } from "./data"
 import NewSimulate from "./modals/newSimulate"
 import './styles.css'
+import { HistoricoDTO } from "../../dtos/historico/HistoricoDTO"
+import { getAllHistoricoSimulado } from "../../services/historico/getAllHistoricoSimulado"
+import { useAuthStore } from "../../store/auth"
+import { toast } from "react-toastify"
 
 function MainSimulate() {
     const [initialize, setInitialize]= useState<boolean>(false);
     const [card, setCard] = useState<ICard>()
+    const [historical, setHistorical] = useState<HistoricoDTO[]>([])
+
+    const { data: { token } } = useAuthStore()
 
     const openModalNew = (card: ICard) => {
         setCard(card)
@@ -38,6 +45,16 @@ function MainSimulate() {
         handleClose={() => { setInitialize(false) }} />
     }
 
+    useEffect(() => {
+        getAllHistoricoSimulado(token)
+            .then(res => {
+                setHistorical(res)
+            })
+            .catch((error: Error) => {
+                toast.error(error.message)
+            })
+    }, [])
+
     return (
         <>
             <div className="relative pb-1">
@@ -56,7 +73,7 @@ function MainSimulate() {
                         <CarouselRef className="w-[448px] md:w-full" childrens={cardsDay} breakpoints={breakpointsDay} />
                         </div>
                     </div>
-                    <SimulationHistory />
+                    <SimulationHistory historical={historical} />
                 </div>
             </div>
             <ModalNewSimulate />
