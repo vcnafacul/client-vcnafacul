@@ -1,14 +1,16 @@
+import { useState } from "react"
 import Text from "../../components/atoms/text"
 import Ul from "../../components/atoms/ul"
 import CardSimulate from "../../components/molecules/cardSimulate"
-import { simulateData } from "./data"
-import './styles.css'
 import CarouselRef from "../../components/organisms/carouselRef"
-import NewSimulate from "./modals/newSimulate"
-import { useState } from "react"
 import { ICard } from "../../types/simulado/ISimulateData"
+import { simulateData } from "./data"
+import NewSimulate from "./modals/newSimulate"
 import './styles.css'
 import { HIstoricosMock } from "./mock"
+import { getFormatingTime } from '../../utils/getFormatingTime'
+import { getStatusIcon } from "../../utils/getStatusIcon"
+import { StatusEnum } from "../../enums/generic/statusEnum"
 
 function MainSimulate() {
     const [initialize, setInitialize]= useState<boolean>(false);
@@ -99,7 +101,7 @@ function MainSimulate() {
 
     return (
         <>
-                <div className="relative">
+                <div className="relative pb-1">
                     <div className="relative sm:mx-10">
                         <div className="flex flex-col items-start pt-10 mb-20">
                             <Text size="primary" className="mb-1">{simulateData.titleBook}</Text>
@@ -115,21 +117,36 @@ function MainSimulate() {
                             <CarouselRef className="w-[448px] md:w-full" childrens={cardsDay} breakpoints={breakpointsDay} />
                             </div>
                         </div>
-                        <div className="flex flex-col items-start pt-10 mb-20">
-                            <Text size="primary">Histórico de Simulados</Text>
-                            <Text size="tertiary" className="text-xl">Veja aqui todos os simulados que você já realizou.</Text>
-                            <div>
-                                {HIstoricosMock.map((historico ) => {
-                                    return (
-                                        <div className="flex items-start space-x-14 ">
-                                            <Text size="tertiary">Materia: {historico.simulado.tipo.nome}</Text>
-                                            <Text size="tertiary">Questões: {historico.simulado.tipo.quantidadeTotalQuestao}</Text>
-                                            <Text size="tertiary">Duração: {(Math.floor(historico.simulado.tipo.duracao/60))}:{historico.simulado.tipo.duracao % 60}H </Text>
-                                            <Text size="tertiary">Aproveitamento: {(historico.aproveitamento.geral*100).toFixed(1)}%</Text>
-                                        </div>
-                                    )
-                                
-                                })}
+                        <div className="w-full pr-20 my-10">
+                            <Text size="primary" className="text-start">Histórico de Simulados</Text>
+                            <Text size="tertiary" className="text-start text-gray-500">Veja aqui todos os simulados que você já realizou.</Text>
+                            <div className="relative">
+                                <div className="w-40 h-40 bg-green3 absolute right-0 -top-20 -z-10 rotate-45" />
+                                <div className="border border-green3 bg-white">
+                                    {HIstoricosMock.map((item) => {
+                                        return (
+                                            <div className="flex flex-wrap gap-4 bg-white p-4 m-2.5 shadow-md justify-between">
+                                                        <div className="flex min-w-[200px]">
+                                                            <div>Caderno:  </div>
+                                                            <div className="font-bold">{item.simulado.tipo.nome}</div>
+                                                        </div>
+                                                        <div className="flex gap-2 min-w-[120px]">
+                                                            <div className="font-bold">{item.simulado.tipo.quantidadeTotalQuestao} </div>
+                                                            <div>questões</div>
+                                                        </div>
+                                                        <div className="flex min-w-[120px]">
+                                                            <div>tempo:</div>
+                                                            <div className="font-bold">{getFormatingTime(item.tempoRealizado)}</div>
+                                                        </div>
+                                                        <div className="flex min-w-[200px]">
+                                                            <div>Aproveitamento:</div>
+                                                            <div className="font-bold">{(item.aproveitamento.geral * 100).toFixed(2)} %</div>
+                                                        </div>
+                                                        <div>{getStatusIcon(item.questoesRespondidas === item.simulado.tipo.quantidadeTotalQuestao ? StatusEnum.Approved : StatusEnum.Rejected)}</div>
+                                                    </div>
+                                            )
+                                        })}
+                                </div>
                             </div>
                         </div>
                     </div>
