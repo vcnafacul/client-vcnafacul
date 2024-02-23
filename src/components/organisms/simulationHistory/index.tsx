@@ -4,7 +4,7 @@ import SimulationHistoryCard from "../../molecules/simulationHistoryCard";
 
 function SimulationHistory() {
     return ( 
-        <div className="w-full px-4 sm:pr-20 my-10">
+        <div className="w-full px-4 md:pr-20 my-10">
             <Text size="primary" className="text-start">Histórico de Simulados</Text>
             <Text size="tertiary" className="text-start text-gray-500">Veja aqui todos os simulados que você já realizou.</Text>
             <div className="relative ">
