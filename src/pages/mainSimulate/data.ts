@@ -52,3 +52,61 @@ export const getIconByTitle = (title: string) => {
       return ""
   }
 }
+
+export const breakpointsBook = {
+  1: {
+      slidesPerView: 1,
+      loop: false
+  },
+  896: {
+      slidesPerView: 2,
+      centeredSlides: false,
+      loop: false
+  },
+  1120: {
+      slidesPerView: 2.2,
+      centeredSlides: false,
+      loop: false
+  },
+  1344: {
+      slidesPerView: 2.5,
+      centeredSlides: false,
+      loop: false
+  },
+  1568: {
+      slidesPerView: 3.1,
+      centeredSlides: false,
+      loop: false
+  },
+  1800: {
+      slidesPerView: 3.4,
+      centeredSlides: false,
+      loop: false
+  },
+  2277: {
+      slidesPerView: 4,
+      centeredSlides: false
+  },
+}
+
+export const breakpointsDay = {
+  1: {
+      slidesPerView: 1,
+      centeredSlides: true,
+      loop: false
+  },
+  1200: {
+      slidesPerView: 1.25,
+      centeredSlides: true,
+      loop: false
+  },
+  1300: {
+      slidesPerView: 1.5,
+      centeredSlides: true,
+      loop: false
+  },
+  1500: {
+      slidesPerView: 2,
+      centeredSlides: false,
+  },
+}
