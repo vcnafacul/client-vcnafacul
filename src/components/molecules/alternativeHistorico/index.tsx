@@ -1,7 +1,7 @@
+import { ReactComponent as Right } from '../../../assets/icons/statusApproved.svg';
+import { ReactComponent as Wrong } from '../../../assets/icons/statusRejected.svg';
 import { AnswerHistoricoDTO } from "../../../dtos/historico/historicoDTO";
 import Alternative, { AlternativeProps } from "../../atoms/alternative";
-import { ReactComponent as Right } from '../../../assets/icons/statusApproved.svg'
-import { ReactComponent as Wrong } from '../../../assets/icons/statusRejected.svg'
 
 interface AlternativeHistoricoProps extends AlternativeProps {
     answer: AnswerHistoricoDTO;

@@ -299,7 +299,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                     <div className="flex gap-1 my-4">
                         <Text size="secondary" className="text-orange w-60 text-start m-0">Selecione uma resposta*</Text>
                         {Alternatives.map(alt => (
-                            <Alternative key={alt.label} type="button" onClick={() => {setValue('alternativa', alt.label)}} disabled={!question ? false : !isEditing} label={alt.label} select={alt.label === alternativa} />
+                            <Alternative key={alt.label} onClick={() => {setValue('alternativa', alt.label)}} disabled={!question ? false : !isEditing} label={alt.label} select={alt.label === alternativa} />
                         ))}
                     </div>
                 </div>

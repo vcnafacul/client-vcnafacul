@@ -46,7 +46,7 @@ function DashQuestion() {
                 { field:"Prova", value: infosQuestion.provas.find(infos => infos._id === question.prova)?.nome ?? question.prova },
                 { field:"Área", value: question.enemArea},
                 { field:"Disciplina", value: infosQuestion.materias.find(infos => infos._id === question.materia)?.nome ?? question.materia},
-                { field:"Ultima Atulizacao", value: question.updateAt ? formatDate(question.updateAt.toString()) : ""},
+                { field:"Ultima Atulizacao", value: question.updatedAt ? formatDate(question.updatedAt.toString()) : ""},
             ]
         }
     ))

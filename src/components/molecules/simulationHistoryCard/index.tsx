@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { HistoricoDTO } from "../../../dtos/historico/HistoricoDTO";
+import { HistoricoDTO } from "../../../dtos/historico/historicoDTO";
 import { StatusEnum } from "../../../enums/generic/statusEnum";
 import { SIMULATE_METRICS } from "../../../routes/path";
 import { getFormatingTime } from "../../../utils/getFormatingTime";

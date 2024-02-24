@@ -1,4 +1,4 @@
-import { HistoricoDTO } from "../../../dtos/historico/HistoricoDTO";
+import { HistoricoDTO } from "../../../dtos/historico/historicoDTO";
 import Text from "../../atoms/text";
 import SimulationHistoryCard from "../../molecules/simulationHistoryCard";
 
