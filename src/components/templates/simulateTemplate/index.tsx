@@ -9,6 +9,7 @@ import Button from "../../molecules/button";
 import { ReactComponent as Report } from '../../../assets/icons/warning.svg'
 
 export interface QuestionTemplate {
+    _id: string;
     enemArea: string;
     imageId: string;
     numero: number;
