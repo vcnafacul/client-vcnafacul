@@ -14,8 +14,8 @@ export function HeaderSimulateHistorico() {
                     <Button >Voltar</Button>
                 </div>
             </div>
-            <div className="grid grid-cols-3 grid-rows-3 justify-center">
-                <div className="flex items-center flex-col col-start-1 row-start-2 row-span-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 grid-rows-3 justify-center">
+                <div className="flex items-center flex-col col-span-1 sm:col-start-1 sm:row-start-2 sm:row-span-2">
                     <div>
                         <FieldValueMetric field="Caderno" value="Linguagens" />
                         <FieldValueMetric field="Ano" value="2019" />
@@ -24,10 +24,11 @@ export function HeaderSimulateHistorico() {
                         <FieldValueMetric field="Status" value="Concluido" />
                     </div>
                 </div>
-                <Text size="secondary" className="text-white m-0 col-start-2">Aproveitamento</Text>
-                <div className="flex items-center flex-col col-span-1 col-start-2 row-start-2 row-span-2 relative">
-                    <div onMouseEnter={() => setShowDetails(true)}
-                        onMouseLeave={() => setShowDetails(false)}>
+                <Text size="secondary" className="text-white m-0 row-start-2 col-span-2 sm:row-start-1 sm:col-span-1 sm:col-start-2 flex justify-center items-center select-none">Aproveitamento</Text>
+                <div onMouseEnter={() => setShowDetails(true)}
+                    onMouseLeave={() => setShowDetails(false)}
+                    className="flex items-center flex-col col-span-2 row-start-3 sm:col-span-1 sm:col-start-2 sm:row-start-2 sm:row-span-2 relative">
+                    <div>
                         <FieldValueMetric field="Geral" value="49%" />
                         <FieldValueMetric field="Literatura" value="32%" />
                         <FieldValueMetric field="Leitura e Produção de Texto" value="50%" />
@@ -42,7 +43,7 @@ export function HeaderSimulateHistorico() {
                         <FieldValueMetric field="Inglê/Espanhol" value="70%" />
                     </div>
                 </div>
-                <div className="flex justify-center items-center col-span-1 col-start-3 row-start-2 row-span-2">
+                <div className="flex justify-center items-center col-span-1 sm:col-start-3 sm:row-start-2 sm:row-span-2">
                     <div>
                         <FieldValueMetric field="Acertos" value="22 questões" />
                         <FieldValueMetric field="Erradas" value="10 questões" />
