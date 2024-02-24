@@ -47,7 +47,7 @@ function SimulateTemplate({ header, selectQuestion, questions, legends, question
                     {setReportProblem ? <Button onClick={setReportProblem} typeStyle="none" size="none"><Report className="w-12 h-12"/></Button> : <></>}
                 </div>
                 <div className="flex py-4 w-full">
-                    <Text size="secondary" className="text-orange m-0">Questao {questionSelect.numero}</Text>
+                    <Text size="secondary" className="text-orange m-0">Questao {questions.find(q => q.id === questionSelect._id)!.number + 1}</Text>
                 </div>
                  
                 <div onClick={expandedPhoto} className="flex justify-center cursor-pointer my-4 p-8 bg-white rounded-lg">
