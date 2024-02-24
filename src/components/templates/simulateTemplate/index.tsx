@@ -54,7 +54,7 @@ function SimulateTemplate({ header, selectQuestion, questions, legends, question
                     {/* <img className="mr-4 sm:m-0" src={`${BASE_URL}/images/${questionSelect.imageId}.png`} /> */}
                     <img className="mr-4 sm:m-0" src={`https://api.vcnafacul.com.br/images/${questionSelect.imageId}.png`} />
                 </div>
-                <div className="flex flex-wrap justify-evenly my-4">
+                <div className="flex flex-wrap justify-evenly my-4 gap-4">
                     { alternative }
                     { buttons }
                 </div>
