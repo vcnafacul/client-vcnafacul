@@ -27,7 +27,6 @@ interface TipoSimuladoHistorico {
 }
 
 export interface QuestaoHistorico extends QuestionTemplate {
-    _id: string;
     materia: string;
     frente1: string;
     textoQuestao: string;
