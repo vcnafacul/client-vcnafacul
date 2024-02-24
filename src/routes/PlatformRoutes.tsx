@@ -67,7 +67,7 @@ export function PlatformRoutes() {
                 <Route path={DASH} element={<Dash />} />
                 <Route path={SIMULADO} element={<MainSimulate />} />
 
-                <Route path={`${SIMULATE_METRICS}:historicId`} element={<SimulateHistoric /> } />
+                <Route path={`${SIMULADO}${SIMULATE_METRICS}:historicId`} element={<SimulateHistoric /> } />
 
                 <Route path={`${ESTUDO}/:nomeMateria`} element={ <Materia />} />
                 <Route path={`${CONTENT}/:nameSubject/:id`} element={ <Subject />} />
