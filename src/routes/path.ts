@@ -16,7 +16,7 @@ export const DASH_CONTENT = 'dash-content'
 
 export const SIMULADO = "simulado";
 export const SIMULADO_RESPONDER = "/simulado/responder";
-export const SIMULATE_METRICS = "simulado/aproveitamento/:historicId";
+export const SIMULATE_METRICS = "simulado/aproveitamento/";
 export const DASH_SIMULADO = "dash-simulado";
 
 export const NEWS = "/novidades"

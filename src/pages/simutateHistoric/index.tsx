@@ -9,9 +9,9 @@ import { Alternatives } from "../../types/question/alternative";
 import { simulateMetricData } from "./data";
 import { HistoricoMock } from "./mock";
 
-export function SimulateHistorico() {
+export function SimulateHistoric() {
 
-    // const { historicId } = useParams();
+    const { historicId } = useParams();
 
     const [questionSelected] = useState<QuestaoHistorico>(HistoricoMock.simulado.questoes[3])
 
