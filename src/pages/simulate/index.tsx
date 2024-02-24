@@ -60,7 +60,7 @@ function Simulate() {
             })
     }
 
-    const finalize = () => {
+    const confirmQuestion = () => {
         confirm()
         isFinish()
         const solvedCount = 
@@ -182,7 +182,7 @@ function Simulate() {
                     <div className="flex gap-4 justify-center items-center flex-col sm:flex-row">
                         <Button onClick={priorQuestion} typeStyle="secondary" hover className="w-44">Voltar</Button>
                         <Button onClick={nextQuestion} hover className="w-44">Pular</Button>
-                        <Button onClick={finalize} className="bg-green3 border-green3 w-44 hover:border-green2 hover:bg-green2 transition-all duration-300">Confirmar</Button>
+                        <Button onClick={confirmQuestion} disabled={questionSelect.answered  === undefined} className="bg-green3 border-green3 w-44 hover:border-green2 hover:bg-green2 transition-all duration-300">Confirmar</Button>
                     </div>
                 }
                 />
