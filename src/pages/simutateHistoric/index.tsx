@@ -10,7 +10,6 @@ import { getHistoricoSimuladoById } from "../../services/historico/getHistoricoS
 import { useAuthStore } from "../../store/auth";
 import { Alternatives } from "../../types/question/alternative";
 import { simulateMetricData } from "./data";
-import { HistoricoMock } from "./mock";
 
 export function SimulateHistoric() {
     const { historicId } = useParams();
@@ -18,16 +17,17 @@ export function SimulateHistoric() {
 
     const { data: { token }} = useAuthStore()
 
-    const [questionSelected] = useState<QuestaoHistorico>(HistoricoMock.simulado.questoes[3])
+    const [questionSelected, setQuestionSelected] = useState<QuestaoHistorico | null>(null)
 
     const getStatus = (answer: AnswerHistoricoDTO) => {
-        if(!answer.alternativaEstudante) return QuestionBoxStatus.unread;
+        if(answer.questao === questionSelected?._id) return QuestionBoxStatus.active
+        else if(!answer.alternativaEstudante) return QuestionBoxStatus.unread;
         else if(answer.alternativaCorreta === answer.alternativaEstudante) return QuestionBoxStatus.isRight;
         return QuestionBoxStatus.solved;
     }
 
     const alternativeDiv = () => {
-        const resposta = HistoricoMock.respostas.find(r => r.questao === questionSelected._id)
+        const resposta = historic?.respostas.find(r => r.questao === questionSelected?._id)
         return (
             <div className="flex gap-4">
                 {Alternatives.map((alt, index) => (
@@ -47,6 +47,7 @@ export function SimulateHistoric() {
             getHistoricoSimuladoById(token, historicId)
                 .then(res => {
                     setHistoric(res)
+                    setQuestionSelected(res.simulado.questoes[0])
                 })
                 .catch((error: Error) => {
                     toast.error(error.message)
@@ -57,11 +58,11 @@ export function SimulateHistoric() {
     if(!historic) return <></>
     return ( 
         <SimulateTemplate
-            header={<HeaderSimulateHistorico />}
-            selectQuestion={() => {}}
+            header={<HeaderSimulateHistorico historic={historic} />}
+            selectQuestion={(index: number) => { setQuestionSelected(historic.simulado.questoes[index])}}
             questions={historic.simulado.questoes.map((q, index) => ({id: q._id, number: index, status: getStatus(historic.respostas.find(r => r.questao === q._id)!)}))}
             legends={simulateMetricData.legends}
-            questionSelect={questionSelected}
+            questionSelect={questionSelected!}
             alternative={alternativeDiv()}
             buttons={[]}
             expandedPhoto={() => {}}
