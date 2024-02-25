@@ -41,7 +41,7 @@ export function HeaderSimulateHistorico({ historic } : HeaderSimulateHistoricoPr
                 <div className="flex items-center flex-col col-span-2 row-start-3 sm:col-span-1 sm:col-start-2 sm:row-start-2 sm:row-span-2 relative">
                     <div onMouseEnter={() => setShowDetails(true)}
                     onMouseLeave={() => setShowDetails(false)}>
-                        <FieldValueMetric field="Geral" value="49%" />
+                        <FieldValueMetric field="Geral" value={`${(historic.aproveitamento.geral * 100).toFixed(2)}%`} />
                         {historic.aproveitamento.materias.map(m => (
                             <FieldValueMetric field={m.nome} value={`${(m.aproveitamento * 100).toFixed(2)}%`} />
                         ))}
