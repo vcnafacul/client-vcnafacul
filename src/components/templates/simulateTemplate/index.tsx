@@ -30,7 +30,6 @@ interface SimulateTemplateProps{
 function SimulateTemplate({ header, selectQuestion, questions, legends, questionSelect, setReportProblem, expandedPhoto, alternative, buttons } : SimulateTemplateProps) {
 
     const BASE_URL = import.meta.env.VITE_BASE_URL;
-    console.log(`${BASE_URL}/images/${questionSelect.imageId}.png`)
     return ( 
         <div className="flex flex-col pb-20">
             <div className="bg-marine my-8">
@@ -52,7 +51,7 @@ function SimulateTemplate({ header, selectQuestion, questions, legends, question
                  
                 <div onClick={expandedPhoto} className="flex justify-center cursor-pointer my-4 p-8 bg-white rounded-lg">
                     {/* <img className="mr-4 sm:m-0" src={`${BASE_URL}/images/${questionSelect.imageId}.png`} /> */}
-                    <img className="mr-4 sm:m-0" src={`https://api.vcnafacul.com.br/images/${questionSelect.imageId}.png`} />
+                    <img className="mr-4 sm:m-0" src={`${BASE_URL}/images/${questionSelect.imageId}.png`} />
                 </div>
                 <div className="flex flex-wrap justify-evenly my-4 gap-4">
                     { alternative }
