@@ -24,7 +24,7 @@ function QuestionBox({ number, status, ...props }: QuestionBoxProps) {
     return (
         <div className={questionBox({ status })} {...props}>
             {number}
-            {status == 'isRight' ? <div className="absolute -right-2 -bottom-2 w-0 h-0 border-transparent border-t-green2 border-8 -rotate-45" /> : <></>}
+            {status === 'isRight' ? <div className="absolute -right-2 -bottom-2 w-0 h-0 border-transparent border-t-green2 border-8 -rotate-45" /> : <></>}
         </div>
     ) 
 }
