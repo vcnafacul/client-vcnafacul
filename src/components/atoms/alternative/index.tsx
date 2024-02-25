@@ -9,10 +9,6 @@ const alternative = tv({
             true: 'bg-yellow',
             false: 'bg-lightGray'
         },
-        disabled: {
-            true: 'cursor-not-allowed',
-            false: 'cursor-pointer'
-        }
     },
     defaultVariants: {
         select: false,
@@ -24,17 +20,16 @@ export interface AlternativeBtn {
     alternative: Alternativa
 }
 
-export type AlternativeProps = VariantProps<typeof alternative> & ComponentProps<'div'> & {
+export type AlternativeProps = VariantProps<typeof alternative> & ComponentProps<'button'> & {
     label: string;
     className?: string;
-    disabled?: boolean;
 } 
 
-function Alternative({ label, select, disabled = false, className, ...props } : AlternativeProps){
+function Alternative({ label, select, className, ...props } : AlternativeProps){
     return (
-        <div className={alternative({ select, className, disabled })} {...props}>
+        <button className={alternative({ select, className })} {...props}>
             {label}
-        </div>
+        </button>
     )
 }
 
