@@ -1,16 +1,16 @@
 import { ReactComponent as Right } from '../../../assets/icons/statusApproved.svg';
 import { ReactComponent as Wrong } from '../../../assets/icons/statusRejected.svg';
 import { AnswerHistoricoDTO } from "../../../dtos/historico/historicoDTO";
-import Alternative, { AlternativeProps } from "../../atoms/alternative";
+import { Alternativa, Alternatives } from '../../../types/question/alternative';
+import Alternative from "../../atoms/alternative";
 
-interface AlternativeHistoricoProps extends AlternativeProps {
+interface AlternativeHistoricoProps {
     answer: AnswerHistoricoDTO;
 }
 
-export function AlternativeHistorico({ label, select, answer} : AlternativeHistoricoProps) {
+export function AlternativeHistorico({ answer} : AlternativeHistoricoProps) {
 
-
-    const status = () => {
+    const status = (label: Alternativa) => {
         if(label === answer.alternativaCorreta) {
             return <Right />
         }
@@ -19,11 +19,19 @@ export function AlternativeHistorico({ label, select, answer} : AlternativeHisto
     }
 
     return ( 
-        <div className="relative">
-            <Alternative disabled={true} label={label} select={select} />
-            <div className="absolute -right-1 -bottom-1">
-                {status()}
-            </div>
+        
+        <div className="flex gap-4">
+            {Alternatives.map((alt, index) => (
+                <div className="relative">
+                <Alternative key={index} disabled={true} label={alt.label} select={answer?.alternativaEstudante === alt.label} />
+                    <div className="absolute -right-1 -bottom-1">
+                        {status(alt.label)}
+                    </div>
+                </div>
+            ))}
         </div>
+
+
+            
      );
 }

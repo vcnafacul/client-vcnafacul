@@ -43,12 +43,12 @@ export function HeaderSimulateHistorico({ historic } : HeaderSimulateHistoricoPr
                     onMouseLeave={() => setShowDetails(false)}>
                         <FieldValueMetric field="Geral" value={`${(historic.aproveitamento.geral * 100).toFixed(2)}%`} />
                         {historic.aproveitamento.materias.map(m => (
-                            <FieldValueMetric field={m.nome} value={`${(m.aproveitamento * 100).toFixed(2)}%`} />
+                            <FieldValueMetric key={m.id} field={m.nome} value={`${(m.aproveitamento * 100).toFixed(2)}%`} />
                         ))}
                     </div>
                     <div className={`transition-opacity duration-300 ${showDetails ? 'opacity-100' : 'opacity-0'} absolute z-10 right-0 bottom-0 bg-marine p-4 rounded border border-white`}>
                         {historic.aproveitamento.frentes.map(f => (
-                                <FieldValueMetric field={f.nome} value={`${(f.aproveitamento * 100).toFixed(2)}%`} />
+                                <FieldValueMetric key={f.id} field={f.nome} value={`${(f.aproveitamento * 100).toFixed(2)}%`} />
                             ))}
                     </div>
                 </div>
