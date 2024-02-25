@@ -50,7 +50,6 @@ function SimulateTemplate({ header, selectQuestion, questions, legends, question
                 </div>
                  
                 <div onClick={expandedPhoto} className="flex justify-center cursor-pointer my-4 p-8 bg-white rounded-lg">
-                    {/* <img className="mr-4 sm:m-0" src={`${BASE_URL}/images/${questionSelect.imageId}.png`} /> */}
                     <img className="mr-4 sm:m-0" src={`${BASE_URL}/images/${questionSelect.imageId}.png`} />
                 </div>
                 <div className="flex flex-wrap justify-evenly my-4 gap-4">
