@@ -8,7 +8,6 @@ export async function getHistoricoSimuladoById(token: string, historicId: string
         method: "GET",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     });
-    console.log(`getHistoricoSimuladoById`, response.status)
     if(response.status !== 200){
         throw new Error(`Erro ao buscar historico de simulado ${historicId}`)
     }

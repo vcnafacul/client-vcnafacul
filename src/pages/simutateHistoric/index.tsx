@@ -43,7 +43,6 @@ export function SimulateHistoric() {
             toast.error('historico ID precisa ser diferente de nulo')
         }
         else {
-            console.log(historicId)
             getHistoricoSimuladoById(token, historicId)
                 .then(res => {
                     setHistoric(res)
