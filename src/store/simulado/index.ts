@@ -11,6 +11,7 @@ export interface Answer {
 export interface AnswerSimulado {
     idSimulado: string;
     respostas: Answer[];
+    tempoRealizado: number;
 }
 
 export interface Question extends QuestionTemplate {

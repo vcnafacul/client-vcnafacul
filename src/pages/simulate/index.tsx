@@ -50,11 +50,17 @@ function Simulate() {
                     alternativaEstudante: q.answered!
                 }
             })
+        const tempoRealizado = Math.floor(((data.finished.getTime() - data.started.getTime()) / (1000 * 60)))
         const body : AnswerSimulado = {
             idSimulado: data._id,
-            respostas: res
+            respostas: res,
+            tempoRealizado: tempoRealizado,
         }
+        
         answerSimulado(body, token)
+            .catch((error: Error) => {
+                toast.error(error.message)
+            })
             .finally(() => {
                 navigate(SIMULADO)
             })
@@ -93,7 +99,7 @@ function Simulate() {
             subTitle: "Reporte possíveis erros ou traga sugestões para a contínua melhoria da plataforma", 
             buttons: [
                 {
-                    onClick: Encerrar,
+                    onClick: () => Encerrar(),
                     children: "Confirmar e Enviar"
                 },
                 {

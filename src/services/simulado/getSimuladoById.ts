@@ -33,7 +33,7 @@ export async function getSimuladoById(id: string, token: string ) {
         nQuestion: res.questoes.length,
         questions: res.questoes.map(mapIQuestaoToQuestion),
         title: res.nome,
-        started: res.inicio,
+        started: new Date(res.inicio),
         questionActive: 0,
         duration: res.duracao,
         finish: false,
