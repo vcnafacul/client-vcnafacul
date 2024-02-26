@@ -20,7 +20,7 @@ import Materia from "../pages/materia";
 import NewsPage from "../pages/newsPage";
 import Register from "../pages/register";
 import { Reset } from "../pages/reset";
-import { SimulateHistoric } from "../pages/simulationHistory";
+import { SimulationHistory } from "../pages/simulationHistory";
 import Simulate from "../pages/simulate";
 import Subject from "../pages/subject";
 import { useAuthStore } from "../store/auth";
@@ -67,7 +67,7 @@ export function PlatformRoutes() {
                 <Route path={DASH} element={<Dash />} />
                 <Route path={SIMULADO} element={<MainSimulate />} />
 
-                <Route path={`${SIMULADO}${SIMULATE_METRICS}:historicId`} element={<SimulateHistoric /> } />
+                <Route path={`${SIMULADO}${SIMULATE_METRICS}:historicId`} element={<SimulationHistory /> } />
 
                 <Route path={`${ESTUDO}/:nomeMateria`} element={ <Materia />} />
                 <Route path={`${CONTENT}/:nameSubject/:id`} element={ <Subject />} />
