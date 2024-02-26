@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AlternativeHistorico } from "../../components/molecules/alternativeHistorico";
-import { HeaderSimulateHistorico } from "../../components/organisms/headerSimulateHistorico";
+import { SimulationHistoryHeader } from "../../components/organisms/simulationHistoryHeader";
 import SimulateTemplate from "../../components/templates/simulateTemplate";
 import { AnswerHistoricoDTO, HistoricoDTO, QuestaoHistorico } from "../../dtos/historico/historicoDTO";
 import { QuestionBoxStatus } from "../../enums/simulado/questionBoxStatus";
@@ -10,7 +10,7 @@ import { getHistoricoSimuladoById } from "../../services/historico/getHistoricoS
 import { useAuthStore } from "../../store/auth";
 import { simulateMetricData } from "./data";
 
-export function SimulateHistoric() {
+export function SimulationHistory() {
     const { historicId } = useParams();
     const [historic, setHistoric] = useState<HistoricoDTO | null>(null)
     const [answerSelected, setAnswerSelected] = useState<AnswerHistoricoDTO | null>(null)
@@ -53,7 +53,7 @@ export function SimulateHistoric() {
     if(!historic) return <></>
     return ( 
         <SimulateTemplate
-            header={<HeaderSimulateHistorico historic={historic} />}
+            header={<SimulationHistoryHeader historic={historic} />}
             selectQuestion={selectQuestion}
             questions={historic.simulado.questoes.map((q, index) => ({id: q._id, number: index, status: getStatus(historic.respostas.find(r => r.questao === q._id)!)}))}
             legends={simulateMetricData.legends}

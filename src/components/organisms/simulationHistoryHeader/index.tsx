@@ -7,11 +7,11 @@ import { FieldValueMetric } from "../../atoms/fieldValueMetric";
 import Text from "../../atoms/text";
 import Button from "../../molecules/button";
 
-interface HeaderSimulateHistoricoProps {
+interface SimulationHistoryHeaderProps {
     historic: HistoricoDTO
 }
 
-export function HeaderSimulateHistorico({ historic } : HeaderSimulateHistoricoProps) {
+export function SimulationHistoryHeader({ historic } : SimulationHistoryHeaderProps) {
     
     const [showDetails, setShowDetails] = useState<boolean>(false);
     const finished = historic.simulado.tipo.quantidadeTotalQuestao === historic.questoesRespondidas
