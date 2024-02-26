@@ -57,7 +57,7 @@ export function SimulationHistory() {
             selectQuestion={selectQuestion}
             questions={historic.simulado.questoes.map((q, index) => ({id: q._id, number: index, status: getStatus(historic.respostas.find(r => r.questao === q._id)!)}))}
             legends={simulateMetricData.legends}
-            questionSelect={questionSelected!}
+            questionSelected={questionSelected!}
             alternative={<AlternativeHistorico answer={answerSelected!} />}
             buttons={[]}
             expandedPhoto={() => {}}

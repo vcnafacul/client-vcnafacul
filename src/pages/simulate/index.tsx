@@ -32,7 +32,7 @@ function Simulate() {
 
     const { data: { token } }= useAuthStore()
 
-    const questionSelect = data.questions[data.questionActive]
+    const questionSelected = data.questions[data.questionActive]
 
     const getStatus = (viewed: boolean, resolved: boolean, actived: boolean) => {
         if(actived) return QuestionBoxStatus.active;
@@ -145,12 +145,12 @@ function Simulate() {
 
     const ReportProblem = () => {
         if(!reportProblem) return null
-        return <ModalReportProblem questionProblem={questionProblem} idQuestion={questionSelect._id} numberQuestion={questionSelect.numero + 1} handleClose={() => { setReportProblem(false) }} />
+        return <ModalReportProblem questionProblem={questionProblem} idQuestion={questionSelected._id} numberQuestion={questionSelected.numero + 1} handleClose={() => { setReportProblem(false) }} />
     }
 
     const QuestionImageModal = () => {
         if(!photoOpen) return null
-        return <ModalImage handleClose={() => setPhotoOpen(false) }  image={`https://api.vcnafacul.com.br/images/${questionSelect?.imageId}.png`} />
+        return <ModalImage handleClose={() => setPhotoOpen(false) }  image={`https://api.vcnafacul.com.br/images/${questionSelected?.imageId}.png`} />
     }
 
     useEffect(() => {
@@ -170,7 +170,7 @@ function Simulate() {
                 selectQuestion={(number: number) => { setActive(number) }}
                 questions={data.questions.map(quest => ({id: quest._id, number: quest.numero, status: getStatus(quest.viewed, quest.solved, data.questionActive === quest.numero)}))}
                 legends={simulateData.legends}
-                questionSelect={questionSelect}
+                questionSelected={questionSelected}
                 setReportProblem={() => {setQuestionProblem(true); setReportProblem(true)}}
                 expandedPhoto={() => setPhotoOpen(true)}
                 alternative={
@@ -178,7 +178,7 @@ function Simulate() {
                         <Text size="secondary" className="text-orange w-60 text-start m-0">{simulateData.alternativeText}</Text>
                         <div className="flex gap-4">
                             {Alternatives.map((alt, index) => (
-                                <Alternative key={index} onClick={() => setAnswer(alt.label)} disabled={data.finish} label={alt.label} select={questionSelect.answered === alt.label} />
+                                <Alternative key={index} onClick={() => setAnswer(alt.label)} disabled={data.finish} label={alt.label} select={questionSelected.answered === alt.label} />
 
                             ))}
                         </div>
@@ -188,7 +188,7 @@ function Simulate() {
                     <div className="flex gap-4 justify-center items-center flex-col sm:flex-row">
                         <Button onClick={priorQuestion} typeStyle="secondary" hover className="w-44">Voltar</Button>
                         <Button onClick={nextQuestion} hover className="w-44">Pular</Button>
-                        <Button onClick={confirmQuestion} disabled={questionSelect.answered  === undefined} className="bg-green3 border-green3 w-44 hover:border-green2 hover:bg-green2 transition-all duration-300">Confirmar</Button>
+                        <Button onClick={confirmQuestion} disabled={questionSelected.answered  === undefined} className="bg-green3 border-green3 w-44 hover:border-green2 hover:bg-green2 transition-all duration-300">Confirmar</Button>
                     </div>
                 }
                 />
