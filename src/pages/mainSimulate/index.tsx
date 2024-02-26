@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react"
+import { toast } from "react-toastify"
 import Text from "../../components/atoms/text"
 import Ul from "../../components/atoms/ul"
 import CardSimulate from "../../components/molecules/cardSimulate"
 import CarouselRef from "../../components/organisms/carouselRef"
 import SimulationHistory from "../../components/organisms/simulationHistory"
+import { HistoricoDTO } from "../../dtos/historico/historicoDTO"
+import { getAllHistoricoSimulado } from "../../services/historico/getAllHistoricoSimulado"
+import { useAuthStore } from "../../store/auth"
 import { ICard } from "../../types/simulado/ISimulateData"
 import { breakpointsBook, breakpointsDay, simulateData } from "./data"
 import NewSimulate from "./modals/newSimulate"
 import './styles.css'
-import { HistoricoDTO } from "../../dtos/historico/HistoricoDTO"
-import { getAllHistoricoSimulado } from "../../services/historico/getAllHistoricoSimulado"
-import { useAuthStore } from "../../store/auth"
-import { toast } from "react-toastify"
 
 function MainSimulate() {
     const [initialize, setInitialize]= useState<boolean>(false);

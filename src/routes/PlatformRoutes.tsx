@@ -20,14 +20,15 @@ import Materia from "../pages/materia";
 import NewsPage from "../pages/newsPage";
 import Register from "../pages/register";
 import { Reset } from "../pages/reset";
+import { SimulationHistory } from "../pages/simulationHistory";
 import Simulate from "../pages/simulate";
 import Subject from "../pages/subject";
 import { useAuthStore } from "../store/auth";
-import { ACCOUNT_PATH, CONTENT, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, ESTUDO, FORGOT_PASSWORD_PATH, FORM_GEOLOCATION, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, RESET_PASSWORD_PATH, SIMULADO, SIMULADO_RESPONDER } from "./path";
-import ProtectedRoute from "./protectedRoute";
-import ProtectedRoutePermission from "./protectedRoutePermission";
 import { BaseRoutes } from "./baseRoutes";
 import { HeroRoutes } from "./heroRoutes";
+import { ACCOUNT_PATH, CONTENT, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, ESTUDO, FORGOT_PASSWORD_PATH, FORM_GEOLOCATION, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, RESET_PASSWORD_PATH, SIMULADO, SIMULADO_RESPONDER, SIMULATE_METRICS } from "./path";
+import ProtectedRoute from "./protectedRoute";
+import ProtectedRoutePermission from "./protectedRoutePermission";
 
 
 export function PlatformRoutes() {
@@ -65,6 +66,9 @@ export function PlatformRoutes() {
             }>
                 <Route path={DASH} element={<Dash />} />
                 <Route path={SIMULADO} element={<MainSimulate />} />
+
+                <Route path={`${SIMULADO}${SIMULATE_METRICS}:historicId`} element={<SimulationHistory /> } />
+
                 <Route path={`${ESTUDO}/:nomeMateria`} element={ <Materia />} />
                 <Route path={`${CONTENT}/:nameSubject/:id`} element={ <Subject />} />
                 <Route path={ACCOUNT_PATH} element={ <Account />} />

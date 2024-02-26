@@ -53,6 +53,7 @@ export default {
     },
     backgroundImage: {
       'custom-gradient': 'linear-gradient(to right, #37D6B5, #8cc408, #8CC408, #FFE53C, #FF7600, #DA005A)',
+      'right-gradient': 'linear-gradient(to right, #FFFFFF, #FFFFFF, #0F9B2C, #0F9B2C)',
     },
   },
   plugins: [

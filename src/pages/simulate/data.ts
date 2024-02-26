@@ -1,9 +1,6 @@
-import { Alternatives } from "../../types/question/alternative"
-
 export const simulateData = {
     baseTitle: 'Simulado do',
     alternativeText: 'Selecione uma resposta',
-    alternativasData: Alternatives,
      legends: [
         { label: "Questão atual", className: "bg-orange border border-orange"},
         { label: "Questão pulada", className: "bg-lightYellow border border-marine"},

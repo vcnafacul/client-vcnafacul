@@ -1,4 +1,4 @@
-import { Question, QuestionDto } from "../../dtos/question/QuestionDTO"
+import { Question, QuestionDto } from "../../dtos/question/questionDTO"
 import { StatusEnum } from "../../enums/generic/statusEnum"
 import fetchWrapper from "../../utils/fetchWrapper"
 import { questoes } from "../urls"
