@@ -3,7 +3,7 @@ interface FieldValueMetricProps {
     value: string;
 }
 
-export function FieldValueMetric({ field, value } : FieldValueMetricProps) {
+export function FieldValueSimulationHistoryHeader({ field, value } : FieldValueMetricProps) {
     return ( 
         <div className="flex gap-1 select-none">
             <div className="text-white text-sm">{field}: </div>
