@@ -65,7 +65,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
     },
     {
         id: 3,
-        bg: "bg-lightGreen",
+        bg: "bg-green",
         title: "Humanas",
         image: HumanasImg,
         alt: "Humanas",
@@ -78,7 +78,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
     },
     {
         id: 4,
-        bg: "bg-purple",
+        bg: "bg-red",
         title: "Matemática",
         image: MatematicaImg,
         alt: "Matemática",
