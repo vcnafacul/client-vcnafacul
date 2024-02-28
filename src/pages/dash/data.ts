@@ -25,10 +25,10 @@ import { ReactComponent as Report } from '../../assets/icons/warning.svg';
 
 
 import { DashCardMenu } from "../../components/molecules/dashCard";
+import { HeaderData } from "../../components/organisms/header";
 import { Materias, getMateriaString } from "../../enums/content/materias";
 import { Roles } from "../../enums/roles/roles";
 import { header } from "../home/data";
-import { HeaderData } from "../../components/organisms/header";
 
 
 export const headerDash: HeaderData = { ...header, pageLinks: [
@@ -39,7 +39,7 @@ export const headerDash: HeaderData = { ...header, pageLinks: [
 export const dashCardMenuItems : DashCardMenu[] = [
     {
         id: 1,
-        bg: "bg-marine",
+        bg: "bg-pink",
         title: "Linguagens",
         image: LinguagensImg,
         alt: "Linguagens",
@@ -53,7 +53,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
     },
     {
         id: 2,
-        bg: "bg-pink",
+        bg: "bg-orange",
         title: "Natureza",
         image: NaturezaImg,
         alt: "Natureza",
@@ -65,7 +65,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
     },
     {
         id: 3,
-        bg: "bg-green",
+        bg: "bg-yellow",
         title: "Humanas",
         image: HumanasImg,
         alt: "Humanas",
@@ -78,7 +78,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
     },
     {
         id: 4,
-        bg: "bg-red",
+        bg: "bg-lightGreen",
         title: "Matemática",
         image: MatematicaImg,
         alt: "Matemática",
@@ -88,7 +88,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
     },
     {
         id: 5,
-        bg: "bg-orange",
+        bg: "bg-green3",
         title: "Admin",
         image: HumanasImg,
         alt: "Admin",

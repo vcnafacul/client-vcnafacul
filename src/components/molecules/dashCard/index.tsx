@@ -5,15 +5,16 @@ import SubMenuDash from "../../organisms/subMenuDash";
 import { SubDashCardInfo } from "../subDashCard";
 
 const dashCard = tv({
-    base: 'text-white py-3 px-2 flex items-center relative transition-all duration-200',
+    base: 'text-backgroundMarine py-3 px-2 flex items-center relative transition-all duration-200',
     variants: {
         size: {
             big: 'flex-col justify-between h-32',
             small: 'flex-row justify-between gap-4 h-16 px-4'
-        }
+        },
+        
     },
     defaultVariants: {
-        size: 'big'
+        size: 'big',
     }
 })
 
@@ -23,7 +24,7 @@ export interface DashCardMenu {
     title: string;
     image: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
     alt: string;
-    subMenuList: SubDashCardInfo[]
+    subMenuList: SubDashCardInfo[];
 }
 //criar logica para fechado e aberto no tv
 type DasCardProps = VariantProps<typeof dashCard> & ComponentProps<'div'> &{
@@ -37,7 +38,7 @@ function DashCard({card, size, opened, ...props } : DasCardProps){
     <>
         <div {...props}
             className={`${dashCard({ size })} ${card.bg} ${size !== 'small' && !opened ? 'mt-4 rounded-t-md' : 'mt-0'} cursor-pointer`}>
-                <Icon className={`select-none fill-white ${size !== 'small' ? 'w-14 h-14' : 'w-4 h-4'}`} />
+                <Icon className={`select-none fill-backgroundMarine ${size !== 'small' ? 'w-14 h-14' : 'w-4 h-4'}`} />
                 <div className={`select-none ${size !== 'small' ? 'flex justify-center w-full' : ''}`}>
                     {card.title}
                 </div>

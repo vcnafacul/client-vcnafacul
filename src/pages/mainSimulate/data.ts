@@ -1,7 +1,7 @@
-import  { ReactComponent as Linguagens } from "../../assets/images/dashboard/linguagens.svg";
-import  { ReactComponent as Natureza } from "../../assets/images/dashboard/natureza.svg";
-import  { ReactComponent as Humanas } from "../../assets/images/dashboard/humanas.svg";
-import  { ReactComponent as Matematica } from "../../assets/images/dashboard/matematica.svg";
+import { ReactComponent as Humanas } from "../../assets/images/dashboard/humanas.svg";
+import { ReactComponent as Linguagens } from "../../assets/images/dashboard/linguagens.svg";
+import { ReactComponent as Matematica } from "../../assets/images/dashboard/matematica.svg";
+import { ReactComponent as Natureza } from "../../assets/images/dashboard/natureza.svg";
 import { TipoSimulados } from "../../enums/simulado/tipoSimulados";
 import { ISimulateData } from "../../types/simulado/ISimulateData";
 
@@ -25,16 +25,16 @@ export const simulateData : ISimulateData = {
     titleBook: 'Simulado por Caderno',
     subTitleBook: 'Realize um simulado mais rapido contento apenas 45 questões de um das áreas do conhecimentro do ENEM.',
     simulateCardsBook : [
-        {id: 1, tipo: TipoSimulados.Linguagens, subTitle: textLinguagens,  icon: Linguagens, className: 'border-marine', color: 'bg-marine'},
-        {id: 2, tipo: TipoSimulados.Natureza, subTitle: textNatureza, icon: Natureza, className: 'border-pink', color: 'bg-pink'},
-        {id: 3, tipo: TipoSimulados.Humanas, subTitle: textHumanas, icon: Humanas, className: 'border-green', color: 'bg-green'},
-        {id: 4, tipo: TipoSimulados.Matematica, subTitle: textMatematica, icon: Matematica, className: 'border-red', color: 'bg-red'}
+        {id: 1, tipo: TipoSimulados.Linguagens, subTitle: textLinguagens,  icon: Linguagens, className: 'border-pink', color: 'bg-pink'},
+        {id: 2, tipo: TipoSimulados.Natureza, subTitle: textNatureza, icon: Natureza, className: 'border-orange', color: 'bg-orange'},
+        {id: 3, tipo: TipoSimulados.Humanas, subTitle: textHumanas, icon: Humanas, className: 'border-yellow', color: 'bg-yellow'},
+        {id: 4, tipo: TipoSimulados.Matematica, subTitle: textMatematica, icon: Matematica, className: 'border-lightGreen', color: 'bg-lightGreen'}
     ],
     titleDay: 'Simulado por Dia',
     subTitleDay: 'Realize um simulado contendo 90 questões assim como cada um dos dias do ENEM.',
     simulateCardsDay : [
-        {id: 5, tipo: TipoSimulados.Enem1, item: itemsEnem1, icon: Linguagens, className: 'border-orange', color: 'bg-orange'},
-        {id: 6, tipo: TipoSimulados.Enem2, item: itemsEnem2, icon: Natureza, className: 'border-orange', color: 'bg-orange'}
+        {id: 5, tipo: TipoSimulados.Enem1, item: itemsEnem1, icon: Linguagens, className: 'border-green2', color: 'bg-green2'},
+        {id: 6, tipo: TipoSimulados.Enem2, item: itemsEnem2, icon: Natureza, className: 'border-green2', color: 'bg-green2'}
     ],
 }
 
