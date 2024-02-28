@@ -12,8 +12,8 @@ function SubMenuDash({ subDashCardInfo }: DashSubCardPros){
     return (
         <div>
             {subDashCardInfo.map(subCardInfo => {
-                if(subCardInfo.permissions?.some(p => permissao[p])) 
-                    return <SubDashCard blank={subCardInfo.permissions?.length > 1} key={subCardInfo.text} subCardInfo={subCardInfo} />
+                if(!subCardInfo.permissions || subCardInfo.permissions?.some(p => permissao[p])) 
+                    return <SubDashCard blank={subCardInfo.text.includes('Reportar')} key={subCardInfo.text} subCardInfo={subCardInfo} />
                 return null
             })}
         </div>
