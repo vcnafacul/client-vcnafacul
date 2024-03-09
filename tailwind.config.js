@@ -31,7 +31,7 @@ export default {
         lightGreen: "#8cc408",
         darkGreen: "#0f9b2c",
         green2: "#0F9B2C",
-        green3: '#8CC408',
+        green3: "#19982B",
         gray2: "#A6A6A6",
         purple: "#8A2BE2"
       },

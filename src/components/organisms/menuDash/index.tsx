@@ -20,7 +20,10 @@ function MenuDash({ onMenuToggle} : MenuDashProps) {
             <MenuIcon className="w-8 mt-4 cursor-pointer md:hidden" onClick={onMenuToggle}/>
             <div className="flex flex-col w-60 overflow-y-scroll scrollbar-hide pb-4">
                 {dashCardMenuItems.map(card => (
-                    <DashCard onClick={() => { selectCard(card.id)}} key={card.id} card={card} opened={opened === card.id} size={`${opened === card.id || opened === 0 ? 'big' : 'small'}`} />
+                    <DashCard onClick={() => { selectCard(card.id)}} 
+                        key={card.id} card={card} 
+                        opened={opened === card.id} 
+                        size={`${opened === card.id || opened === 0 ? 'big' : 'small'}`}/>
                     ))}
             </div>
        </div>
