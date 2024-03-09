@@ -7,7 +7,7 @@ import { SubDashCardInfo } from "../subDashCard";
 const transition = 'transition-all duration-300'
 
 const dashCard = tv({
-    base: `text-backgroundMarine py-3 px-2 flex items-center relative ${transition}`,
+    base: `text-white font-bold text-base py-3 px-2 flex items-center relative ${transition}`,
     variants: {
         size: {
             big: 'flex-col justify-between h-32',
@@ -41,7 +41,7 @@ function DashCard({ card, size, opened, ...props }: DasCardProps) {
     <>
       <div {...props}
         className={`${dashCard({ size })} ${card.bg} ${size !== 'small' && !opened ? 'mt-4 rounded-t-md' : 'mt-0'} cursor-pointer`}>
-        <Icon className={`select-none fill-marine ${size !== 'small' ? 'mb-6 w-14 h-14' : 'w-4 h-4'} ${transition}`} />
+        <Icon className={`select-none fill-white ${size !== 'small' ? 'mb-6 w-14 h-14' : 'w-4 h-4'} ${transition}`} />
         <div className={`select-none ${size !== 'small' ? 'flex justify-center w-full' : 'my-4'}`}>{card.title}</div>
         <IoChevronUpCircleSharp size={20} className={`${size !== 'small' ? 'absolute right-4 bottom-4' : ''} ${opened ? 'rotate-180' : ''} ${transition}`} />
       </div>

@@ -39,7 +39,7 @@ export const headerDash: HeaderData = { ...header, pageLinks: [
 export const dashCardMenuItems : DashCardMenu[] = [
     {
         id: 1,
-        bg: "bg-pink",
+        bg: "bg-marine",
         title: "Linguagens",
         image: LinguagensImg,
         alt: "Linguagens",
@@ -53,7 +53,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
     },
     {
         id: 2,
-        bg: "bg-orange",
+        bg: "bg-pink",
         title: "Natureza",
         image: NaturezaImg,
         alt: "Natureza",
@@ -65,7 +65,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
     },
     {
         id: 3,
-        bg: "bg-yellow",
+        bg: "bg-lightGreen",
         title: "Humanas",
         image: HumanasImg,
         alt: "Humanas",
@@ -78,7 +78,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
     },
     {
         id: 4,
-        bg: "bg-lightGreen",
+        bg: "bg-orange",
         title: "Matemática",
         image: MatematicaImg,
         alt: "Matemática",
