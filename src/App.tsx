@@ -1,8 +1,8 @@
 import { BrowserRouter } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import { PlatformRoutes } from "./routes/PlatformRoutes";
 import "./styles/normalize.css";
-import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -18,9 +18,11 @@ function App() {
         draggable
         pauseOnHover
         theme="colored"
-        />
+      />
       <BrowserRouter>
-        <PlatformRoutes/>
+        <div className="w-screen h-screen">
+          <PlatformRoutes />
+        </div>
       </BrowserRouter>
     </>
   )

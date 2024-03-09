@@ -1,6 +1,6 @@
 import LegendSimulate from "../../atoms/LegendSimulate"
 
-interface Legend {
+export interface Legend {
     label: string;
     className: string;
 }

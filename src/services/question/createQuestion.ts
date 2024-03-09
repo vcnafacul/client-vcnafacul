@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { Question } from "../../dtos/question/QuestionDTO";
+import { Question } from "../../dtos/question/questionDTO";
 import { CreateQuestion } from "../../dtos/question/updateQuestion";
 import { cleanObject } from "../../utils/cleanObjet";
 import fetchWrapper from "../../utils/fetchWrapper";

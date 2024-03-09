@@ -1,7 +1,11 @@
-import Carousel from '../../molecules/carousel';
-import BLink from '../../molecules/bLink';
-import Text from '../../atoms/text';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import 'react-loading-skeleton/dist/skeleton.css';
 import { Navigation, Pagination } from 'swiper/modules';
+import Text from '../../atoms/text';
+import BLink from '../../molecules/bLink';
+import Carousel from '../../molecules/carousel';
+import { HeroSkeleton } from '../heroSkeleton';
+import { useHeroContext } from '../../../context/heroContext';
 
 export interface LinkMenu {
     id: number;
@@ -17,17 +21,19 @@ export interface Slide {
     subtitle: string;
     links: LinkMenu[];
     background_image?: string;
-    image?: React.FC<React.SVGProps<SVGSVGElement>> | string;
+    image?: string;
     backgroud_color: string;
 }
 
 export interface HeroProps {
-    slides: Slide[];
     className?: string;
 }
 
-function Hero({ slides, className }: HeroProps){
+function Hero({ className }: HeroProps){
 
+    const { heroSlides } = useHeroContext()
+
+    if(heroSlides?.length === 0) return <HeroSkeleton />
     return (
         <div className='relative'>
             <Carousel
@@ -37,7 +43,7 @@ function Hero({ slides, className }: HeroProps){
             arrow
             arrowClassName='absolute bottom-5 px-8'
             fillArrow='fill-white'
-            childrens={slides.map((slide) => (
+            childrens={heroSlides.map((slide) => (
             <div key={slide.id} style={{background: `${slide.backgroud_color}`}} 
                 className={`${className} min-h-[750px] sm:min-h-[480px] md:min-h-[600px] w-screen flex justify-center`}>
                 <div className='container flex flex-col justify-start pt-24 min-h-screen box-border
@@ -49,14 +55,15 @@ function Hero({ slides, className }: HeroProps){
                             <Text size='tertiary' className='text-white text-start'>{slide.subtitle}</Text>
                         </div>
                         <div className='flex gap-4'>
-                            {slide.links.map((link) => (
-                                <BLink type='tertiary' target={link.target} hover key={link.id} to={link.link}>{link.text}</BLink>
+
+                            {slide.links.map((link: any) => (
+                                <BLink type='tertiary' target={link.Home_Hero_Button_id.target} hover key={link.Home_Hero_Button_id.id} to={link.Home_Hero_Button_id.link}>{link.Home_Hero_Button_id.text}</BLink>
                             ))}
                         </div>
                     </div>
                     <div className='relative max-w-80 w-full my-0 mx-auto sm:mt-1 sm:max-w-max sm:max-h-80
                     md:max-w-md  md:m-0 md:top-0'>
-                        {!slide.image ? null : <img className="image" src={slide.image.toString()} alt={slide.title} />} 
+                        {!slide.image ? null : <img src={slide.image} alt={slide.title}/>} 
                     </div>
                 </div>
             </div>

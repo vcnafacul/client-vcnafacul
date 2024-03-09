@@ -1,30 +1,34 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import DashTemplate from "../components/templates/dashTemplate";
+import { Roles } from "../enums/roles/roles";
+import Geo from "../pages/Geo";
+import Account from "../pages/account";
+import Dash from "../pages/dash";
+import DashContent from "../pages/dashContent";
+import DashGeo from "../pages/dashGeo";
+import DashNews from "../pages/dashNews";
+import DashProva from "../pages/dashProvas";
+import DashQuestion from "../pages/dashQuestion";
+import DashRoles from "../pages/dashRoles";
+import DashSimulado from "../pages/dashSimulado";
+import Forgot from "../pages/forgot";
 import Home from "../pages/home";
 import Login from "../pages/login";
-import { ACCOUNT_PATH, CONTENT, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, ESTUDO, FORM_GEOLOCATION, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, SIMULADO, SIMULADO_RESPONDER } from "./path";
-import Dash from "../pages/dash";
-import DashGeo from "../pages/dashGeo";
-import Register from "../pages/register";
-import Simulate from "../pages/simulate";
-import DashQuestion from "../pages/dashQuestion";
 import Logout from "../pages/logout";
-import DashNews from "../pages/dashNews";
-import NewsPage from "../pages/newsPage";
-import { useAuthStore } from "../store/auth";
-import { Roles } from "../enums/roles/roles";
-import DashTemplate from "../components/templates/dashTemplate";
-import { headerDash } from "../pages/dash/data";
-import DashRoles from "../pages/dashRoles";
-import DashProva from "../pages/dashProvas";
-import Account from "../pages/account";
-import DashContent from "../pages/dashContent";
-import ProtectedRoutePermission from "./protectedRoutePermission";
-import ProtectedRoute from "./protectedRoute";
 import MainSimulate from "../pages/mainSimulate";
-import DashSimulado from "../pages/dashSimulado";
 import Materia from "../pages/materia";
+import NewsPage from "../pages/newsPage";
+import Register from "../pages/register";
+import { Reset } from "../pages/reset";
+import { SimulationHistory } from "../pages/simulationHistory";
+import Simulate from "../pages/simulate";
 import Subject from "../pages/subject";
-import Geo from "../pages/Geo";
+import { useAuthStore } from "../store/auth";
+import { BaseRoutes } from "./baseRoutes";
+import { HeroRoutes } from "./heroRoutes";
+import { ACCOUNT_PATH, CONTENT, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, ESTUDO, FORGOT_PASSWORD_PATH, FORM_GEOLOCATION, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, RESET_PASSWORD_PATH, SIMULADO, SIMULADO_RESPONDER, SIMULATE_METRICS } from "./path";
+import ProtectedRoute from "./protectedRoute";
+import ProtectedRoutePermission from "./protectedRoutePermission";
 
 
 export function PlatformRoutes() {
@@ -33,13 +37,22 @@ export function PlatformRoutes() {
 
     return (
         <Routes>
-            //Aluno tem acesso
-            <Route path={HOME_PATH} element={<Home />} />
-            <Route path={LOGIN_PATH} element={<Login />} />
-            <Route path={LOGOFF_PATH} element={<Logout />} />
-            <Route path={REGISTER_PATH} element={<Register />} />
-            <Route path={NEWS} element={ <NewsPage />} />
-            <Route path={FORM_GEOLOCATION} element={<Geo />}/>
+            {/* Aluno tem acesso */}
+            <Route element={<BaseRoutes />}>
+
+                <Route element={<HeroRoutes />}>
+                    <Route path={HOME_PATH} element={<Home />} />
+                    <Route path={NEWS} element={ <NewsPage />} />
+                </Route>
+
+                <Route path={LOGIN_PATH} element={<Login />} />
+                <Route path={FORGOT_PASSWORD_PATH} element={<Forgot />} />
+                <Route path={LOGOFF_PATH} element={<Logout />} />
+                <Route path={`${RESET_PASSWORD_PATH}`} element={<Reset />} />
+                <Route path={REGISTER_PATH} element={<Register />} />
+                <Route path={FORM_GEOLOCATION} element={<Geo />}/>
+            </Route>
+            
             <Route path={SIMULADO_RESPONDER} element={
                 <ProtectedRoute>
                     <Simulate />
@@ -48,11 +61,14 @@ export function PlatformRoutes() {
 
             <Route path="/dashboard" element={
                 <ProtectedRoute>
-                    <DashTemplate header={headerDash} hasMenu />
+                    <DashTemplate hasMenu />
                 </ProtectedRoute>
             }>
                 <Route path={DASH} element={<Dash />} />
                 <Route path={SIMULADO} element={<MainSimulate />} />
+
+                <Route path={`${SIMULADO}${SIMULATE_METRICS}:historicId`} element={<SimulationHistory /> } />
+
                 <Route path={`${ESTUDO}/:nomeMateria`} element={ <Materia />} />
                 <Route path={`${CONTENT}/:nameSubject/:id`} element={ <Subject />} />
                 <Route path={ACCOUNT_PATH} element={ <Account />} />

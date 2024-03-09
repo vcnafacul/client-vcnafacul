@@ -1,18 +1,12 @@
 import React, { LegacyRef, useEffect, useRef, useState } from "react";
-import { HeaderProps } from "../../organisms/header"
-import Hero, { HeroProps } from "../../organisms/hero"
-import  { FooterProps } from "../../organisms/footer";
+import Hero from "../../organisms/hero";
 import BaseTemplate from "../baseTemplate";
-
 export interface HeroTemplateProps{
-    header: HeaderProps;
-    hero: HeroProps;
     children: React.ReactNode;
-    footer: FooterProps;
     headerPosition?: 'fixed' | 'relative';
 }
 
-function HeroTemplate({ header, hero, children, footer, headerPosition = 'relative' }: HeroTemplateProps){
+function HeroTemplate({ children, headerPosition = 'relative' }: HeroTemplateProps){
     
     const [solid, setSolid] = useState(false);
     const scrollContainerRef = useRef<HTMLElement>(null);
@@ -37,10 +31,12 @@ function HeroTemplate({ header, hero, children, footer, headerPosition = 'relati
         };
     }, []);
 
+    
+
     return (
         <div ref={scrollContainerRef as LegacyRef<HTMLDivElement>} className="flex flex-col overflow-y-auto scrollbar-hide h-screen">
-            <BaseTemplate header={header} footer={footer} solid={solid} position={headerPosition} headerShadow={false}>
-                <Hero {...hero} />
+            <BaseTemplate solid={solid} position={headerPosition} headerShadow={false}>
+                <Hero />
                 { children }
             </BaseTemplate>
         </div>

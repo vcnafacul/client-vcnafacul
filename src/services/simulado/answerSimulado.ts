@@ -9,7 +9,7 @@ export async function answerSimulado(data: AnswerSimulado, token: string) {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(data),
     });
-    if(res.status !== 201){
+    if(res.status !== 204){
         throw new Error('Erro ao Responder Simulado')
     }
 }

@@ -31,7 +31,7 @@ export default {
         lightGreen: "#8cc408",
         darkGreen: "#0f9b2c",
         green2: "#0F9B2C",
-        green3: '#8CC408',
+        green3: "#19982B",
         gray2: "#A6A6A6",
         purple: "#8A2BE2"
       },
@@ -53,6 +53,7 @@ export default {
     },
     backgroundImage: {
       'custom-gradient': 'linear-gradient(to right, #37D6B5, #8cc408, #8CC408, #FFE53C, #FF7600, #DA005A)',
+      'right-gradient': 'linear-gradient(to right, #FFFFFF, #FFFFFF, #0F9B2C, #0F9B2C)',
     },
   },
   plugins: [

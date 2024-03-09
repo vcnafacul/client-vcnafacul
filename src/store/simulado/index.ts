@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { Alternativa } from "../../types/question/alternative";
+import { QuestionTemplate } from "../../components/templates/simulateTemplate";
 
 export interface Answer {
     questao: string;
@@ -10,17 +11,15 @@ export interface Answer {
 export interface AnswerSimulado {
     idSimulado: string;
     respostas: Answer[];
+    tempoRealizado: number;
 }
 
-export interface Question {
+export interface Question extends QuestionTemplate {
     _id: string;
-    imageId: string;
     exam: string;
     year: number;
     book: string;
-    enemArea: string;
     materia: string;
-    number: number;
     solved: boolean;
     answered?: Alternativa;
     viewed: boolean
@@ -52,20 +51,20 @@ const initialSimulado : Simulado = {
 
 function nextQuestionActive(question: Question[], active: number){
     for (let index = active + 1; index < question.length; index++) {
-        if(!question[index].solved) return question[index].number
+        if(!question[index].solved) return question[index].numero
     }
     for (let index = 0; index < active; index++) {
-        if(!question[index].solved) return question[index].number
+        if(!question[index].solved) return question[index].numero
     }
     return active + 1 >= question.length ? 0 : active + 1;
 }
 
 function priorQuestionActive(question: Question[], active: number){
     for (let index = active - 1; index > -1; index--) {
-        if(!question[index].solved) return question[index].number
+        if(!question[index].solved) return question[index].numero
     }
     for (let index = question.length - 1; index > active; index--) {
-        if(!question[index].solved) return question[index].number
+        if(!question[index].solved) return question[index].numero
     }
     return active - 1 < 0 ? question.length - 1 : active - 1;
 }

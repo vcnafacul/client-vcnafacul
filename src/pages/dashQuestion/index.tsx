@@ -1,25 +1,25 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import DashCardTemplate from "../../components/templates/dashCardTemplate"
-import { Question } from "../../dtos/question/QuestionDTO"
-import { getAllQuestions } from "../../services/question/getAllQuestion"
-import { useAuthStore } from "../../store/auth"
-import { StatusEnum } from "../../enums/generic/statusEnum"
-import { getInfosQuestion } from "../../services/question/getInfosQuestion"
-import { InfoQuestion } from "../../types/question/infoQuestion"
-import { CardDashInfo } from "../../components/molecules/cardDash"
-import { formatDate } from "../../utils/date"
-import { dashQuest } from "./data"
+import { toast } from "react-toastify"
 import Filter from "../../components/atoms/filter"
 import Select from "../../components/atoms/select"
-import ModalTabTemplate from "../../components/templates/modalTabTemplate"
-import ModalDetalhes from "./modals/modalDetalhes"
-import { updateQuestion } from "../../services/question/updateQuestion"
-import { UpdateQuestion } from "../../dtos/question/updateQuestion"
-import { toast } from "react-toastify"
-import { updateStatus } from "../../services/question/updateStatus"
-import { mergeObjects } from "../../utils/mergeObjects"
 import Button from "../../components/molecules/button"
+import { CardDashInfo } from "../../components/molecules/cardDash"
+import DashCardTemplate from "../../components/templates/dashCardTemplate"
+import ModalTabTemplate from "../../components/templates/modalTabTemplate"
+import { Question } from "../../dtos/question/questionDTO"
+import { UpdateQuestion } from "../../dtos/question/updateQuestion"
+import { StatusEnum } from "../../enums/generic/statusEnum"
 import { Roles } from "../../enums/roles/roles"
+import { getAllQuestions } from "../../services/question/getAllQuestion"
+import { getInfosQuestion } from "../../services/question/getInfosQuestion"
+import { updateQuestion } from "../../services/question/updateQuestion"
+import { updateStatus } from "../../services/question/updateStatus"
+import { useAuthStore } from "../../store/auth"
+import { InfoQuestion } from "../../types/question/infoQuestion"
+import { formatDate } from "../../utils/date"
+import { mergeObjects } from "../../utils/mergeObjects"
+import { dashQuest } from "./data"
+import ModalDetalhes from "./modals/modalDetalhes"
 
 function DashQuestion() {
     const [questions, setQuestions] = useState<Question[]>([])
@@ -46,7 +46,7 @@ function DashQuestion() {
                 { field:"Prova", value: infosQuestion.provas.find(infos => infos._id === question.prova)?.nome ?? question.prova },
                 { field:"Área", value: question.enemArea},
                 { field:"Disciplina", value: infosQuestion.materias.find(infos => infos._id === question.materia)?.nome ?? question.materia},
-                { field:"Ultima Atulizacao", value: question.updateAt ? formatDate(question.updateAt.toString()) : ""},
+                { field:"Ultima Atulizacao", value: question.updatedAt ? formatDate(question.updatedAt.toString()) : ""},
             ]
         }
     ))

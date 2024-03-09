@@ -1,33 +1,33 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useCallback, useEffect, useState } from "react";
+import { useForm } from 'react-hook-form';
+import { toast } from "react-toastify";
+import * as yup from "yup";
+import { ReactComponent as Preview } from '../../../assets/icons/Icon-preview.svg';
+import Alternative from "../../../components/atoms/alternative";
+import ModalImage from "../../../components/atoms/modalImage";
 import Text from "../../../components/atoms/text";
-import Button from "../../../components/molecules/button"
+import BLink from "../../../components/molecules/bLink";
+import Button from "../../../components/molecules/button";
 import { FormFieldInput, FormFieldOption } from "../../../components/molecules/formField";
+import UploadButton from "../../../components/molecules/uploadButton";
 import Form from "../../../components/organisms/form";
-import { ModalProps } from "../../../components/templates/modalTemplate"
-import { Question } from "../../../dtos/question/QuestionDTO"
+import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
+import ModalConfirmCancelMessage from "../../../components/organisms/modalConfirmCancelMessage";
+import { ModalProps } from "../../../components/templates/modalTemplate";
+import { Question } from "../../../dtos/question/questionDTO";
+import { CreateQuestion, UpdateQuestion } from "../../../dtos/question/updateQuestion";
+import { StatusEnum } from "../../../enums/generic/statusEnum";
+import { Roles } from "../../../enums/roles/roles";
+import { getMissingNumber } from "../../../services/prova/getMissingNumber";
+import { createQuestion } from "../../../services/question/createQuestion";
+import { uploadImage } from "../../../services/question/uploadImage";
+import { useAuthStore } from "../../../store/auth";
+import { BtnProps } from "../../../types/generic/btnProps";
+import { Alternatives } from "../../../types/question/alternative";
 import { InfoQuestion } from "../../../types/question/infoQuestion";
 import { getStatusIcon } from "../../../utils/getStatusIcon";
 import { AreaEnem } from "../data";
-import ModalImage from "../../../components/atoms/modalImage";
-import { BtnProps } from "../../../types/generic/btnProps";
-import { StatusEnum } from "../../../enums/generic/statusEnum";
-import { CreateQuestion, UpdateQuestion } from "../../../dtos/question/updateQuestion";
-import { useForm } from 'react-hook-form';
-import ModalConfirmCancelMessage from "../../../components/organisms/modalConfirmCancelMessage";
-import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
-import { Alternatives } from "../../../types/question/alternative";
-import Alternative from "../../../components/atoms/alternative";
-import { useAuthStore } from "../../../store/auth";
-import { Roles } from "../../../enums/roles/roles";
-import { toast } from "react-toastify";
-import { ReactComponent as Preview } from '../../../assets/icons/Icon-preview.svg'
-import UploadButton from "../../../components/molecules/uploadButton";
-import { uploadImage } from "../../../services/question/uploadImage";
-import { createQuestion } from "../../../services/question/createQuestion";
-import BLink from "../../../components/molecules/bLink";
-import { getMissingNumber } from "../../../services/prova/getMissingNumber";
-import { yupResolver } from "@hookform/resolvers/yup"
-import * as yup from "yup"
 
 interface ModalDetalhesProps extends ModalProps {
     question?: Question
@@ -299,7 +299,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                     <div className="flex gap-1 my-4">
                         <Text size="secondary" className="text-orange w-60 text-start m-0">Selecione uma resposta*</Text>
                         {Alternatives.map(alt => (
-                            <Alternative key={alt.label} type="button" onClick={() => {setValue('alternativa', alt.label)}} disabled={!question ? false : !isEditing} label={alt.label} select={alt.label === alternativa} />
+                            <Alternative key={alt.label} onClick={() => {setValue('alternativa', alt.label)}} disabled={!question ? false : !isEditing} label={alt.label} select={alt.label === alternativa} />
                         ))}
                     </div>
                 </div>

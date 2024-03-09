@@ -27,7 +27,7 @@ export interface QuestionDto {
     quantidadeSimulado: number
     quantidadeResposta: number
     status: StatusEnum
-    updateAt?: DateTime
+    updatedAt?: DateTime
 }
 
 export interface Question extends QuestionDto {

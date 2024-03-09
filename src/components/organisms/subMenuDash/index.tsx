@@ -1,4 +1,3 @@
-import { Roles } from "../../../enums/roles/roles"
 import { useAuthStore } from "../../../store/auth"
 import SubDashCard, { SubDashCardInfo } from "../../molecules/subDashCard"
 
@@ -13,9 +12,9 @@ function SubMenuDash({ subDashCardInfo }: DashSubCardPros){
     return (
         <div>
             {subDashCardInfo.map(subCardInfo => {
-                // if(subCardInfo.permission != undefined ? !permissao[subCardInfo.permission] : false) return null
-                if(subCardInfo.permission != undefined ? permissao[subCardInfo.permission] ? false : !(subCardInfo.permission === Roles.report) : false) return null
-                return <SubDashCard blank={subCardInfo.permission === Roles.report} key={subCardInfo.text} subCardInfo={subCardInfo} />
+                if(!subCardInfo.permissions || subCardInfo.permissions?.some(p => permissao[p])) 
+                    return <SubDashCard blank={subCardInfo.text.includes('Reportar')} key={subCardInfo.text} subCardInfo={subCardInfo} />
+                return null
             })}
         </div>
     )

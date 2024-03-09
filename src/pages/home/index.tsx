@@ -1,41 +1,99 @@
-import AboutUs from "../../components/organisms/aboutUs"
-import ActionAreas from "../../components/organisms/actionAreas"
-import Features from "../../components/organisms/features"
-import Map from "../../components/organisms/map"
-import Supporters, { Volunteer } from "../../components/organisms/Supporters"
-import HeroTemplate from "../../components/templates/heroTemplate"
-import { about_us, actionAreas, features, footer, header, hero, supporters } from "./data"
-import HomeNews from "../../components/organisms/homeNews"
 import { useEffect, useState } from "react"
-import { getVolunteers } from "../../services/auth/getVolunteers"
 import { toast } from "react-toastify"
+import AboutUs, { AboutUsProps } from "../../components/organisms/aboutUs"
+import ActionAreas, { ActionProps } from "../../components/organisms/actionAreas"
+import Features, { FeaturesProps } from "../../components/organisms/features"
+import HomeNews from "../../components/organisms/homeNews"
+import Map from "../../components/organisms/map"
+import Supporters, { SupportersSponsor, Volunteer } from "../../components/organisms/supporters/index.tsx"
+import HeroTemplate from "../../components/templates/heroTemplate"
+import { HomeContext } from "../../context/homeContext.tsx"
+import { getVolunteers } from "../../services/auth/getVolunteers.ts"
+import { getAboutUs } from "../../services/directus/home/about_us.ts"
+import { getActions } from "../../services/directus/home/actions.ts"
+import { getFeature } from "../../services/directus/home/features.ts"
+import { getSponsor } from "../../services/directus/home/sponsors.ts"
 
 function Home(){
-
+    const [ aboutUs, setAboutUs ] = useState<AboutUsProps | null>(null)
+    const [ features, setFeatures ] = useState<FeaturesProps | null>(null)
+    const [ actionAreas, setActionAreas ] = useState<ActionProps | null>(null)
+    const [ supporters, setSupporters ] = useState<SupportersSponsor | null>(null)
+    const [ volunteers, setVolunteers ] = useState<Volunteer[]>([])
     
-    const [volunteers, setVolunteers] = useState<Volunteer[]>([])
+    useEffect(() => {
+        if(!aboutUs) {
+            getAboutUs()
+            .then(res => {
+                setAboutUs(res)
+            })
+            .catch((error: Error) => {
+                toast.error(error.message)
+            })
+        }
+    }, [aboutUs])
 
     useEffect(() => {
-        getVolunteers()
+        if(!features) {
+            getFeature()
+            .then(res => {
+                setFeatures(res)
+            })
+                .catch((error: Error) => {
+                    toast.error(error.message)
+                })
+            }
+    }, [features])
+
+    useEffect(() => {
+        if(!actionAreas) {
+            getActions()
+            .then(res => {
+                setActionAreas(res)
+            })
+            .catch((error: Error) => {
+                toast.error(error.message)
+            })
+        }
+    }, [actionAreas])
+
+    useEffect(() => {
+        if(!supporters) {
+            getSponsor()
+            .then(res => {
+                setSupporters(res)
+            })
+            .catch((error: Error) => {
+                toast.error(error.message)
+            })
+        }
+    }, [supporters])
+
+    useEffect(() => {
+        if(volunteers.length === 0){
+            getVolunteers()
             .then(res => {
                 setVolunteers(res)
             })
             .catch((error: Error) => {
                 toast.error(error.message)
             })
-    }, [])
-      
+        }
+    }, [volunteers])
+
     return (
-        <HeroTemplate header={header} hero={hero} footer={footer} headerPosition="fixed" >
-            <>
-                <AboutUs {...about_us} />
-                <HomeNews />
-                <Features {...features}/>
-                <ActionAreas {...actionAreas}/>
-                <Supporters {...supporters} volunteers={volunteers} />
-                <Map />
-            </>
-        </HeroTemplate>
+        <HomeContext.Provider value={{ aboutUs, features, actionAreas, supporters, volunteers}} >
+            <HeroTemplate headerPosition="fixed">
+                <>
+                    <AboutUs  />
+                    <HomeNews />
+                    <Features />
+                    <ActionAreas />
+                    <Supporters />
+                    <Map />
+                </>
+            </HeroTemplate>
+        </HomeContext.Provider>
     )
 }
 
