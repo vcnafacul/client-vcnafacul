@@ -1,14 +1,16 @@
-import BaseTemplate from "../../components/templates/baseTemplate"
 import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
+import { ReactComponent as TriangleYellow } from "../../assets/icons/triangle-yellow.svg";
 import GeoForm from "../../components/organisms/geoForm";
+import BaseTemplate from "../../components/templates/baseTemplate";
 import { geoForm } from "./data";
 
 function Geo(){
   return (
-    <BaseTemplate  solid className="bg-white overflow-y-auto scrollbar-hide relative">
-      <div className="w-full flex justify-center">
+    <BaseTemplate solid className="bg-white overflow-y-auto scrollbar-hide h-screen ">
+      <div className="relative">
 
-        <TriangleGreen className="absolute -rotate-45 -left-28 -top-6 w-80"/>
+        <TriangleGreen className="graphism triangle-green"/>
+        <TriangleYellow className="graphism triangle-yellow"/>
         <GeoForm {...geoForm} />
       </div>
     </BaseTemplate>
