@@ -1,11 +1,10 @@
-import Text from "../../atoms/text"
+import { useState } from "react";
+import { UserRegister } from "../../../types/user/userRegister";
+import Text from "../../atoms/text";
 import { FormFieldInput } from "../../molecules/formField";
 import Step1 from "./setps/step1";
-import { useState } from "react";
 import Step2 from "./setps/step2";
-import Sucess from "./setps/sucess";
-import { UserRegister } from "../../../types/user/userRegister";
-
+import Success from "./setps/success";
 
 export interface StepProps {
     formData: FormFieldInput[];
@@ -13,14 +12,14 @@ export interface StepProps {
 }
 export interface RegisterFormProps {
     title: string;
-    titleSucess: string;
+    titleSuccess: string;
     formData: {
         step1: FormFieldInput[],
         step2: FormFieldInput[]
     }
 }
 
-function RegisterForm({ title, titleSucess, formData } : RegisterFormProps){
+function RegisterForm({ title, titleSuccess, formData } : RegisterFormProps){
     const [step, setStep] = useState<number>(1)
     const [dataUser, setDataUser] = useState<UserRegister>({} as UserRegister)
 
@@ -42,14 +41,14 @@ function RegisterForm({ title, titleSucess, formData } : RegisterFormProps){
             case 2:
                 return <Step2 formData={formData.step2} dataUser={dataUser} next={nextStep} back={() => setStep(1)} />
             default:
-                return <Sucess  />
+                return <Success  />
         }
     }
 
     return (
-        <div className="w-full h-[calc(100vh-88px)] flex justify-start items-center flex-col mx-auto">
+        <div className="flex flex-col items-center justify-start w-full min-h-[calc(100vh-88px)] mb-3 px-4 mx-auto">
              <div className="mt-10 max-w-[500px] flex flex-col items-center w-full gap-y-4">
-                {step < 3 ? <Text size="secondary">{title}</Text> : <Text>{titleSucess}</Text>}
+                {step < 3 ? <Text size="secondary">{title}</Text> : <Text>{titleSuccess}</Text>}
                 <StepNow />
             </div>
         </div>
