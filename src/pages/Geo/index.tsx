@@ -11,7 +11,7 @@ function Geo(){
 
         <TriangleGreen className="graphism triangle-green"/>
         <TriangleYellow className="graphism triangle-yellow"/>
-        <GeoForm {...geoForm} />
+        <GeoForm formData={geoForm.formData} />
       </div>
     </BaseTemplate>
   )

@@ -40,7 +40,7 @@ export const optionsGender: FormFieldOption[] = [
 
 export const registerForm : RegisterFormProps = {
     title: "Cadastre-se",
-    titleSucess: "Seja bem-vinde ao Você na Facul!",
+    titleSuccess: "Seja bem-vinde ao Você na Facul!",
     formData: {
         step1 : [
             { id: 'email', label: 'E-mail'},

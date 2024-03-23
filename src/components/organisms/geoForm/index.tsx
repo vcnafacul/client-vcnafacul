@@ -51,7 +51,7 @@ function GeoForm({ formData } : GeoFormProps){
   }
 
   const completeRegisterGeo = (oldData: any) => {
-    const id = toast.loading("Upload de Imagem de Perfil Colaborador ... ")
+    const id = toast.loading("Cadastrando o cursinho... ")
     const body = {...dataGeo, ...oldData}
     createGeolocation(body as CreateGeolocation)
       .then(_ => {

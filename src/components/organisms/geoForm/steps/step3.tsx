@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Text from "../../../atoms/text"
-import { EachStepProps } from ".."
 import { yupResolver } from "@hookform/resolvers/yup"
+import { LatLngTuple } from "leaflet"
+import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import { Marker, useMapEvents } from "react-leaflet"
+import { toast } from "react-toastify"
 import * as yup from "yup"
 import { InferType } from "yup"
-import { useForm } from "react-hook-form"
-import Button from "../../../molecules/button"
-import Form from "../../form"
-import MapBox from "../../../molecules/mapBox"
-import { Marker, useMapEvents } from "react-leaflet"
-import { useEffect, useState } from "react"
-import { LatLngTuple } from "leaflet"
-import { AddressResponse, getCepByLatAndLon } from "../../../../services/geolocation/getCepByLatAndLon"
+import { EachStepProps } from ".."
 import { stateOptions } from "../../../../pages/register/data"
+import { AddressResponse, getCepByLatAndLon } from "../../../../services/geolocation/getCepByLatAndLon"
 import { CreateGeolocation } from "../../../../types/geolocation/geolocation"
-import { toast } from "react-toastify"
+import Text from "../../../atoms/text"
+import Button from "../../../molecules/button"
+import MapBox from "../../../molecules/mapBox"
+import Form from "../../form"
 
 function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: EachStepProps){
 
@@ -71,7 +71,7 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
           .catch(error => { toast.error(`Não foi possível buscar as informações de endereço do ponto selecionado. ${error.message}`)})
         },
       });
-  
+
       return null; // Não renderiza nada, apenas anexa eventos
     };
 
@@ -83,8 +83,8 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
     }
 
     return (
-        <div className="z-20">
-            <Text>{title}</Text>
+        <div className="my-10 z-20">
+            <Text size="secondary">{title}</Text>
             <Text className="text-wrap mx-10" size="tertiary">{subtitle}</Text>
             <form className="w-full max-w-lg mx-auto" onSubmit={handleSubmit(handleForm)}>
                 <MapBox mapEvent={Event} className="h-80 border border-gray-300 z-0" zoom={15} markers={[]} />
