@@ -22,7 +22,7 @@ function Map() {
         getGeolocation()
             .then(res => {
                 setMarkers(
-                    res!.map((course : Geolocation) => {
+                    res!.data.map((course : Geolocation) => {
                         return {
                             ...course,
                             whatsapp: course.whatsapp.replace(/[^0-9]+/g, ""),

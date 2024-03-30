@@ -34,7 +34,7 @@ function HomeNews(){
     useEffect(() => {
         getNews()
           .then(res => {
-            setNews(res)
+            setNews(res.data)
           })
           .catch((error: Error) => {
             toast.error(error.message)

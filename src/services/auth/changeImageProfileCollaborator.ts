@@ -1,8 +1,8 @@
 import fetchWrapper from "../../utils/fetchWrapper";
-import { userRoute } from "../urls";
+import { user } from "../urls";
 
 export async function changeImageProfileCollaborator(data: FormData, token: string) : Promise<string> {
-    const response = await fetchWrapper(`${userRoute}/collaborator`, {
+    const response = await fetchWrapper(`${user}/collaborator`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: data,

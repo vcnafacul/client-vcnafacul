@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Volunteer } from "../../components/organisms/supporters";
 import fetchWrapper from "../../utils/fetchWrapper";
-import { userRoute } from "../urls";
+import { user } from "../urls";
 
 export async function getVolunteers (): Promise<Volunteer[]> {
-    const response = await fetchWrapper(`${userRoute}/volunteers`, {
+    const response = await fetchWrapper(`${user}/volunteers`, {
         method: "GET",
         headers: { "Content-Type": "application/json" }
     });
