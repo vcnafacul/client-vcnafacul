@@ -28,6 +28,7 @@ import { Alternatives } from "../../../types/question/alternative";
 import { InfoQuestion } from "../../../types/question/infoQuestion";
 import { getStatusIcon } from "../../../utils/getStatusIcon";
 import { AreaEnem } from "../data";
+import { Checkbox, CheckboxProps } from "../../../components/atoms/checkbox";
 
 interface ModalDetalhesProps extends ModalProps {
     question?: Question
@@ -36,6 +37,14 @@ interface ModalDetalhesProps extends ModalProps {
     handleUpdateQuestion: (questionUpdate: UpdateQuestion) => void;
     handleAddQuestion: (question: Question) => void;
 }
+
+const checkboxData: CheckboxProps[] = [
+    {name:"classProva", title:"Classiicação de Prova"},
+    {name:"classFrente" ,title:"Classificação de Disciplina e Frente"},
+    {name:"textoQuestao", title:"Texto da Questão/alternativas"},
+    {name:"imagem" ,title:"Imagem"},
+    {name:"alternativa" ,title:"Alternativa Correta"},
+]
 
 function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatus, handleUpdateQuestion, handleAddQuestion } : ModalDetalhesProps) {
     const schema = yup
@@ -58,7 +67,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         imaggeId: yup.string(),
     })
     .required()
-    
+
     const {register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
     });
@@ -93,7 +102,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
       };
 
     const { data: { permissao, token }} = useAuthStore();
- 
+
     const resetAsyncForm = useCallback(async () => {
         reset(question); // asynchronously reset your form values
       }, [question, reset]);
@@ -113,7 +122,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         if(nameProva) {
             return AreaEnem.filter(a => a.day.includes(nameProva.slice(5, 10)))
         }
-        return AreaEnem 
+        return AreaEnem
     }
 
     const listFieldClassification : FormFieldInput[]= [
@@ -134,7 +143,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         {id: "textoAlternativaB", type: "text", label: "Alternativa B:", value: question?.textoAlternativaB, disabled: !question ? false : !isEditing,},
         {id: "textoAlternativaC", type: "text", label: "Alternativa C:", value: question?.textoAlternativaC, disabled: !question ? false : !isEditing,},
         {id: "textoAlternativaD", type: "text", label: "Alternativa D:", value: question?.textoAlternativaD, disabled: !question ? false : !isEditing,},
-        {id: "textoAlternativaE", type: "text", label: "Alternativa E:", value: question?.textoAlternativaE, disabled: !question ? false : !isEditing,}, 
+        {id: "textoAlternativaE", type: "text", label: "Alternativa E:", value: question?.textoAlternativaE, disabled: !question ? false : !isEditing,},
     ]
 
 
@@ -188,7 +197,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                     toast.error(error.message)
                 })
         }
-    } 
+    }
 
     const btns: BtnProps[] = [
         { children: "Aceitar", type: 'button', onClick: () => { handleUpdateQuestionStatus(StatusEnum.Approved) }, status: StatusEnum.Approved, className: 'bg-green2 col-span-1', editing: false, disabled: !permissao[Roles.validarQuestao]},
@@ -241,7 +250,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
 
     const ModalRefused = () => {
         if(!refuse) return null;
-        return <ModalConfirmCancelMessage 
+        return <ModalConfirmCancelMessage
             text="Descreva o motivo da rejeição:"
             handleCancel={() => { setRefuse(false) }}
             handleConfirm={(message?: string) => {
@@ -305,24 +314,32 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
                 </div>
                 <div className="col-span-1 md:col-span-2">
                     <Text className="flex w-full justify-center gap-4 items-center" size="tertiary">Imagem da Questão</Text>
-                    {question ? 
+                    {question ?
                         <div>
-                            {imagePreview ? <img src={imagePreview as string}/> : 
+                            {imagePreview ? <img src={imagePreview as string}/> :
                                 <img className="max-h-96 bg-lightGray p-[1px] w-full mr-4 sm:m-0 cursor-pointer" src={`https://api.vcnafacul.com.br/images/${question?.imageId}.png`} onClick={() => setPhotoOpen(true)} />
                                 }
                             {isEditing ? <UploadButton placeholder="Alterar imagem" onChange={handleImageChange} accept='.png' /> : <></>}
-                        </div> : 
+                        </div> :
                         <div>
                             <div className="border py-4 flex justify-center items-center h-1/2">
-                                {imagePreview ? <img src={imagePreview as string}/> : 
+                                {imagePreview ? <img src={imagePreview as string}/> :
                                 <Preview />}
-                                
+
                             </div>
                             <UploadButton placeholder="Upload Imagem" onChange={handleImageChange} accept='.png' />
                         </div>
                     }
                     <BDownloadProva />
-                    <div className="grid grid-cols-2 gap-1 w-full">
+                    <div className="flex flex-col">
+                    <Text className="flex w-full justify-center gap-1 items-center" size="quaternary">Revisões necessarias:</Text>
+                    <ul className="flex flex-col">
+                        {checkboxData.map(({name,title})=> (
+                            <Checkbox name={name} title={title}/>
+                        ))}
+                    </ul>
+                    </div>
+                    <div className="grid bottom-0 grid-cols-2 gap-1 w-full">
                         <Buttons />
                     </div>
                 </div>
