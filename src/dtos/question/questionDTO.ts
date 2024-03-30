@@ -28,6 +28,11 @@ export interface QuestionDto {
     quantidadeResposta: number
     status: StatusEnum
     updatedAt?: DateTime
+    classificationExam?: boolean;
+    classificationDisciplineFront?: boolean;
+    textOrAlternatives?: boolean;
+    image?: boolean;
+    rightAnswer?: boolean;
 }
 
 export interface Question extends QuestionDto {

@@ -15,6 +15,11 @@ export interface CreateQuestion {
     textoAlternativaE?: string
     alternativa: string
     imageId?: string
+    classificationExam?: boolean;
+    classificationDisciplineFront?: boolean;
+    textOrAlternatives?: boolean;
+    image?: boolean;
+    rightAnswer?: boolean;
 }
 export interface UpdateQuestion extends CreateQuestion {
     _id: string
