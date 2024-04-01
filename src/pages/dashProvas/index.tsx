@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import Filter from "../../components/atoms/filter";
 import Button from "../../components/molecules/button";
 import { CardDash } from "../../components/molecules/cardDash";
 import DashCardTemplate from "../../components/templates/dashCardTemplate";
@@ -45,12 +44,6 @@ function DashProva(){
             ]
         }
     )
-
-    const handleInputChange = (event: any) => {
-        const filter = event.target.value.toLowerCase();
-        if(!filter) setProvas(dataRef.current)
-        else setProvas(dataRef.current.filter(q => q._id.includes(filter) || q.nome.toLowerCase().includes(filter)))
-    }
 
     const onClickCard = (id: string | number) => {
         setProvaSelected(provas.find(p => p._id === id)!)
@@ -105,7 +98,6 @@ function DashProva(){
             limitCardPerPage={limitCards}
             onClickCard={onClickCard} 
             filterList={[
-                <Filter placeholder="id | texto" filtrar={handleInputChange}/>,
                 <Button disabled={!permissao[Roles.cadastrarProvas]} onClick={() => { setProvaSelected(null); setOpenNewProva(true) }} typeStyle="quaternary" 
                     className="text-xl font-light rounded-full h-8 "><span className="text-4xl">+</span>Cadastrar Prova</Button>
             ]} />

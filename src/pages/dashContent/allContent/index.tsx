@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
-import Filter from "../../../components/atoms/filter"
 import Select from "../../../components/atoms/select"
 import Button from "../../../components/molecules/button"
 import DashCardTemplate from "../../../components/templates/dashCardTemplate"
@@ -39,11 +38,6 @@ function AllContent() {
     const [status, setStatus] = useState<StatusContent | StatusEnum>(StatusEnum.Approved);
     const dataRef = useRef<ContentDtoInput[]>([])
     const limitCards = 40;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleInputChange = (event: any) => {
-            event.target.value.toLowerCase();
-    }
 
     const selectDemandByMateria = (id: Materias) => {
         setMateriaSelected(id)
@@ -140,7 +134,6 @@ function AllContent() {
                 cardTransformation={cardTransformationContent}
                 onLoadMoreCard={getMoreCards}
                 filterList={[
-                    <Filter placeholder="título | Tema | Frente | Descrição" filtrar={handleInputChange}/>,
                     <FilterSelect />,
                     <FilterManager />
                 ]} 

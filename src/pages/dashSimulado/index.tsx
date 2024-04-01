@@ -43,7 +43,6 @@ function DashSimulado(){
         return await getSimulados(token, page, limitCards)
     }
 
-    console.log(simulados)
     return (
         <DashCardTemplate<ISimuladoDTO>
         entities={simulados}

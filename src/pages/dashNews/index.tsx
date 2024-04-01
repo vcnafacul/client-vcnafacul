@@ -1,22 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
-import DashCardTemplate from "../../components/templates/dashCardTemplate"
-import { dashNews } from "./data"
+import { toast } from "react-toastify";
+import Select from "../../components/atoms/select";
+import Button from "../../components/molecules/button";
+import { CardDash } from "../../components/molecules/cardDash";
+import DashCardTemplate from "../../components/templates/dashCardTemplate";
 import { News } from "../../dtos/news/news";
+import { createNews } from "../../services/news/createNews";
+import { deleteNews } from "../../services/news/deleteNews";
 import { getAllNews } from "../../services/news/getAllNews";
 import { useAuthStore } from "../../store/auth";
-import Select from "../../components/atoms/select";
-import Filter from "../../components/atoms/filter";
-import { CardDash, CardDashInfo } from "../../components/molecules/cardDash";
-import { getStatusBool } from "../../utils/getStatusIcon";
 import { formatDate } from "../../utils/date";
-import ModalEditNew from "./modals/modalEditNew";
-import Button from "../../components/molecules/button";
-import { createNews } from "../../services/news/createNews";
-import { toast } from "react-toastify";
-import { deleteNews } from "../../services/news/deleteNews";
+import { getStatusBool } from "../../utils/getStatusIcon";
 import { Paginate } from "../../utils/paginate";
+import { dashNews } from "./data";
+import ModalEditNew from "./modals/modalEditNew";
 
 function DashNews() {
     const [news, setNews] = useState<News[]>([]);
@@ -26,12 +25,6 @@ function DashNews() {
     const limitCards = 40;
     
     const { data: { token }} = useAuthStore()
-
-    const handleInputChange = (event: any) => {
-        const filter = event.target.value.toLowerCase();
-        if(!filter) setNews(dataRef.current)
-        else setNews(dataRef.current.filter(q => q.session.toLowerCase().includes(filter) || q.title.toLowerCase().includes(filter)))
-    }
 
     const cardTransformation = (n: News) : CardDash => (
         { id: n.id, title: n.title, status: getStatusBool(n.actived), infos: 
@@ -125,7 +118,6 @@ function DashNews() {
                 cardTransformation={cardTransformation}
                 onLoadMoreCard={getMoreCards}
                 filterList={[
-                    <Filter placeholder="session | titulo" filtrar={handleInputChange}/>,
                     <Select options={dashNews.options} setState={updateActive} />,
                     <Button onClick={() => { setNewSelect(null); setOpenModal(true)}} typeStyle="quaternary" 
                     className="text-xl font-light rounded-full h-8 "><span className="text-4xl">+</span> upload novidade</Button>

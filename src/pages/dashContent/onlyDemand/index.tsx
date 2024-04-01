@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
-import Filter from "../../../components/atoms/filter"
 import Select from "../../../components/atoms/select"
 import { OptionProps } from "../../../components/atoms/selectOption"
 import DashCardTemplate from "../../../components/templates/dashCardTemplate"
@@ -28,18 +27,6 @@ function OnlyDemand() {
     const dataRef = useRef<ContentDtoInput[]>([])
     const limitCards = 40
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleInputChange = (event: any) => {
-        const filter = event.target.value.toLowerCase();
-        if(!filter) setDemands(dataRef.current)
-        else setDemands(dataRef.current.filter(
-            q => q.title.toLowerCase().includes(filter) || 
-            q.description.toLowerCase().includes(filter) ||
-            q.subject.name.toLocaleLowerCase().includes(filter) ||
-            q.subject.frente.name.toLocaleLowerCase().includes(filter)||
-            q.subject.description.toLocaleLowerCase().includes(filter)
-        ))
-    }
 
     const selectDemandByMateria = (id: Materias) => {
         setMateriaSelected(id)
@@ -96,7 +83,6 @@ function OnlyDemand() {
                 cardTransformation={cardTransformationContent}
                 onLoadMoreCard={getMoreCards}
                 filterList={[
-                    <Filter placeholder="título | Tema | Frente | Descrição" filtrar={handleInputChange}/>,
                     <Select options={materias}  defaultValue={materiaSelected}  setState={selectDemandByMateria} />,
                 ]} 
                 onClickCard={onClickCard} />

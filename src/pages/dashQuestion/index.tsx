@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
-import Filter from "../../components/atoms/filter"
 import Select from "../../components/atoms/select"
 import Button from "../../components/molecules/button"
 import { CardDash } from "../../components/molecules/cardDash"
@@ -51,11 +50,6 @@ function DashQuestion() {
             ]
         }
     )
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleInputChange = (event: any) => {
-        event.target.value.toLowerCase();
-    }
 
     const handleRemoveQuestion = (id: string) => {
         const newQuestions = questions.filter(q => q._id != id)
@@ -177,7 +171,7 @@ function DashQuestion() {
 
     return (
         <>
-            <DashCardTemplate 
+            <DashCardTemplate<Question>
                 title={dashQuest.title} 
                 entities={questions} 
                 setEntities={setQuestions}
@@ -186,7 +180,6 @@ function DashQuestion() {
                 onClickCard={onClickCard} 
                 limitCardPerPage={limitCards}
                 filterList={[
-                    <Filter placeholder="id | texto" filtrar={handleInputChange}/>,
                     <Select options={dashQuest.options}  defaultValue={status}  setState={setStatus} />,
                     <Button disabled={!permissao[Roles.criarQuestao]} onClick={() => { setQuestionSelect(null); setOpenModalRegister(true) }} typeStyle="quaternary" 
                     className="text-xl font-light rounded-full h-8 "><span className="text-4xl">+</span>Cadastrar Questao</Button>

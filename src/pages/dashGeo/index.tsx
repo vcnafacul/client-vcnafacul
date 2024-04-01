@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
-import Filter from "../../components/atoms/filter";
 import Select from "../../components/atoms/select";
+import { CardDash } from "../../components/molecules/cardDash";
 import DashCardTemplate from "../../components/templates/dashCardTemplate";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { getAllGeolocation } from "../../services/geolocation/getAllGeolocation";
@@ -11,7 +11,6 @@ import { mergeObjects } from "../../utils/mergeObjects";
 import { Paginate } from "../../utils/paginate";
 import { dashGeo } from "./data";
 import ModalEditDashGeo from "./modals/modalEditDashGeo";
-import { CardDash } from "../../components/molecules/cardDash";
 
 function DashGeo(){
     const [status, setStatus] = useState<StatusEnum>(StatusEnum.Pending);
@@ -19,12 +18,6 @@ function DashGeo(){
     const [geoSelect, setGeoSelect] = useState<Geolocation>();
     const [openModal, setOpenModal] = useState<boolean>(false);
     const limitCards = 40;
-
-    const handleInputChange = (event: any) => {
-        // const filter = 
-            event.target.value.toLowerCase();
-        //Ajustar o filter quando clicar enter
-    }
 
     const cardTransformation = (geo: Geolocation) : CardDash => (
         {id: geo.id, title: geo.name, status: geo.status, infos: 
@@ -90,7 +83,6 @@ function DashGeo(){
                 onLoadMoreCard={getMoreCards}
                 limitCardPerPage={limitCards}
                 filterList={[
-                    <Filter placeholder="nome | estado | cidade | email" filtrar={handleInputChange}/>, 
                     <Select  options={dashGeo.options}  defaultValue={status}  setState={setStatus} />]}
                 onClickCard={onClickCard}
                 
