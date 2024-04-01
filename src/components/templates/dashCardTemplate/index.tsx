@@ -41,16 +41,15 @@ function DashCardTemplate<T>({ title, filterList, onClickCard, onLoadMoreCard,
         }
         else if (firstCardInView && !top) {
                 setPage(page - 1)
-                console.log(`up`)
                 if(page - limitPages === 1) setTop(true)
                 onLoadMoreCard!(page - limitPages).then(res => {
-                    setEntities([...res.data, ...entities.slice(3 * limitCardPerPage)])
+                    setEntities([...res.data, ...entities.slice(0, 3 * limitCardPerPage)])
             })
             }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [firstCardInView, lastCardInView]);
 
-    const gapBeforeLast = 2
+    const gapBeforeLast = Math.floor(limitCardPerPage * 0.25)
     const indexLastCardInView = entities.length - gapBeforeLast
     return (
         <div className={`w-full flex justify-center flex-col py-4`}>
