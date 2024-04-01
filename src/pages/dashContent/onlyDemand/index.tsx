@@ -1,18 +1,18 @@
-import { useState, useRef, useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
-import { CardDashInfo } from "../../../components/molecules/cardDash"
-import DashCardTemplate from "../../../components/templates/dashCardTemplate"
-import { ContentDtoInput } from "../../../dtos/content/contentDtoInput"
-import { getDemands } from "../../../services/content/getDemands"
-import { useAuthStore } from "../../../store/auth"
-import { formatDate } from "../../../utils/date"
-import { dashOnlyDemand } from "./data"
-import ShowDemand from "../modals/showDemand"
 import Filter from "../../../components/atoms/filter"
 import Select from "../../../components/atoms/select"
-import { MateriasLabel } from "../../../types/content/materiasLabel"
-import { Materias } from "../../../enums/content/materias"
 import { OptionProps } from "../../../components/atoms/selectOption"
+import DashCardTemplate from "../../../components/templates/dashCardTemplate"
+import { ContentDtoInput } from "../../../dtos/content/contentDtoInput"
+import { Materias } from "../../../enums/content/materias"
+import { getDemands } from "../../../services/content/getDemands"
+import { useAuthStore } from "../../../store/auth"
+import { MateriasLabel } from "../../../types/content/materiasLabel"
+import { Paginate } from "../../../utils/paginate"
+import { cardTransformationContent } from "../data"
+import ShowDemand from "../modals/showDemand"
+import { dashOnlyDemand } from "./data"
 
 
 function OnlyDemand() {
@@ -26,17 +26,7 @@ function OnlyDemand() {
     })
     const [materiaSelected, setMateriaSelected] = useState<number>(materias[0].id as number)
     const dataRef = useRef<ContentDtoInput[]>([])
-
-    const cardContent : CardDashInfo[] = demands.map(content => (
-        {cardId: content.id, title: content.title, status: content.status, infos: 
-            [
-                { field:"Frente", value: content.subject.frente.name },
-                { field:"Tema", value: content.subject.name },
-                { field:"Descrição", value: content.description.substring(0, 20) + "..." },
-                { field:"Cadastrado em ", value: content.createdAt ? formatDate(content.createdAt.toString()) : ""},
-            ]
-        }
-    ))
+    const limitCards = 40
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleInputChange = (event: any) => {
@@ -73,19 +63,6 @@ function OnlyDemand() {
         setOpenShowModal(true)
     }
 
-    useEffect(() => {
-        const id = toast.loading("Buscando Demandas ... ")
-        getDemands(token)
-            .then(res => {
-                setDemands(res)
-                dataRef.current = res;
-                toast.update(id, { render: 'Demandas ok ... ', type: 'success', isLoading: false, autoClose: 3000,})
-            })
-            .catch((error: Error) => {
-                toast.update(id, {render: error.message, type: "error", isLoading: false, autoClose: 3000, });
-            })
-    },[token])
-
     const ShowModalDemand = () => {
         if(!openShowModal) return null
         return <ShowDemand 
@@ -93,12 +70,31 @@ function OnlyDemand() {
         updateStatusDemand={handleRemoveDemand}
         handleClose={() => setOpenShowModal(false)}/>
     }
+
+    useEffect(() => {
+        const id = toast.loading("Buscando Demandas ... ")
+        getDemands(token, 1, limitCards)
+            .then(res => {
+                setDemands(res.data)
+                toast.update(id, { render: 'Demandas ok ... ', type: 'success', isLoading: false, autoClose: 3000,})
+            })
+            .catch((error: Error) => {
+                toast.update(id, {render: error.message, type: "error", isLoading: false, autoClose: 3000, });
+            })
+    },[token])
+
+    const getMoreCards = async ( page: number) : Promise<Paginate<ContentDtoInput>> => {
+        return await getDemands(token, page, limitCards)
+    }
     
     return (
         <>
             <DashCardTemplate 
-                cardlist={cardContent} 
                 title={dashOnlyDemand.title}
+                entities={demands}
+                setEntities={setDemands} 
+                cardTransformation={cardTransformationContent}
+                onLoadMoreCard={getMoreCards}
                 filterList={[
                     <Filter placeholder="título | Tema | Frente | Descrição" filtrar={handleInputChange}/>,
                     <Select options={materias}  defaultValue={materiaSelected}  setState={selectDemandByMateria} />,

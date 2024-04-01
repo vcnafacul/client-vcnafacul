@@ -3,7 +3,7 @@ import { toast } from "react-toastify"
 import Filter from "../../components/atoms/filter"
 import Select from "../../components/atoms/select"
 import Button from "../../components/molecules/button"
-import { CardDashInfo } from "../../components/molecules/cardDash"
+import { CardDash } from "../../components/molecules/cardDash"
 import DashCardTemplate from "../../components/templates/dashCardTemplate"
 import ModalTabTemplate from "../../components/templates/modalTabTemplate"
 import { Question } from "../../dtos/question/questionDTO"
@@ -18,6 +18,7 @@ import { useAuthStore } from "../../store/auth"
 import { InfoQuestion } from "../../types/question/infoQuestion"
 import { formatDate } from "../../utils/date"
 import { mergeObjects } from "../../utils/mergeObjects"
+import { Paginate } from "../../utils/paginate"
 import { dashQuest } from "./data"
 import ModalDetalhes from "./modals/modalDetalhes"
 
@@ -28,6 +29,7 @@ function DashQuestion() {
     const [openModalRegister, setOpenModalRegister] = useState<boolean>(false);
     const [questionSelect, setQuestionSelect] = useState<Question | null>(null)
     const dataRef = useRef<Question[]>([])
+    const limitCards = 40;
 
     const [infosQuestion, setInfosQuestion] = useState<InfoQuestion>({
         provas: [],
@@ -36,11 +38,10 @@ function DashQuestion() {
         exames: []
     } as InfoQuestion)
 
-
     const { data: { token, permissao }} = useAuthStore()
 
-    const cardQuestion : CardDashInfo[] = questions.map(question => (
-        {cardId: question._id, title: question.title, status: question.status, infos: 
+    const cardTransformation = (question: Question) : CardDash => (
+        {id: question._id, title: question.title, status: question.status, infos: 
             [
                 { field:"Id", value: question._id },
                 { field:"Prova", value: infosQuestion.provas.find(infos => infos._id === question.prova)?.nome ?? question.prova },
@@ -49,13 +50,11 @@ function DashQuestion() {
                 { field:"Ultima Atulizacao", value: question.updatedAt ? formatDate(question.updatedAt.toString()) : ""},
             ]
         }
-    ))
+    )
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleInputChange = (event: any) => {
-        const filter = event.target.value.toLowerCase();
-        if(!filter) setQuestions(dataRef.current)
-        else setQuestions(dataRef.current.filter(q => q._id.includes(filter) || q.textoQuestao.toLowerCase().includes(filter)))
+        event.target.value.toLowerCase();
     }
 
     const handleRemoveQuestion = (id: string) => {
@@ -108,11 +107,11 @@ function DashQuestion() {
         setOpenModalEdit(true)
     }
 
-    const getQuestions = useCallback(async (status: StatusEnum) => {
-        getAllQuestions(token, status)
+    const getQuestions = useCallback(async (status: StatusEnum, page: number, limit: number) => {
+        getAllQuestions(token, status, page, limit)
             .then((res) => {
-                setQuestions(res)
-                dataRef.current = res
+                console.log(res)
+                setQuestions(res.data)
             })
             .catch((erro: Error) => {
                 toast.error(erro.message)
@@ -131,7 +130,7 @@ function DashQuestion() {
     }, [token])
 
     useEffect(() => {
-        getQuestions(status)
+        getQuestions(status, 1, limitCards)
     },[status, getQuestions])
 
     useEffect(() => {
@@ -171,12 +170,21 @@ function DashQuestion() {
             ]} />
     }
 
+    const getMoreCards = async ( page: number) : Promise<Paginate<Question>> => {
+        toast.success(page)
+        return await getAllQuestions(token, status, page, limitCards)
+    }
+
     return (
         <>
             <DashCardTemplate 
-                cardlist={cardQuestion} 
-                onClickCard={onClickCard} 
                 title={dashQuest.title} 
+                entities={questions} 
+                setEntities={setQuestions}
+                cardTransformation={cardTransformation}
+                onLoadMoreCard={getMoreCards}
+                onClickCard={onClickCard} 
+                limitCardPerPage={limitCards}
                 filterList={[
                     <Filter placeholder="id | texto" filtrar={handleInputChange}/>,
                     <Select options={dashQuest.options}  defaultValue={status}  setState={setStatus} />,

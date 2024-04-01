@@ -2,11 +2,13 @@
 import { ContentDtoInput, ContentDtoInputOrder } from "../../dtos/content/contentDtoInput";
 import { StatusContent } from "../../enums/content/statusContent";
 import fetchWrapper from "../../utils/fetchWrapper";
+import { Paginate } from "../../utils/paginate";
 import { content } from "../urls";
 
-export async function getContent (token: string, status: StatusContent, subjectId?: number): Promise<ContentDtoInput[]> {
+export async function getContent (token: string, status: StatusContent, subjectId?: number, 
+    page: number = 1, limit: number = 40): Promise<Paginate<ContentDtoInput>> {
     const subject = subjectId ? `&subjectId=${subjectId}` : ''
-    const response = await fetchWrapper(`${content}?status=${status}${subject}`, {
+    const response = await fetchWrapper(`${content}?status=${status}${subject}&page=${page}&limit=${limit}`, {
         method: "GET",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
     });
