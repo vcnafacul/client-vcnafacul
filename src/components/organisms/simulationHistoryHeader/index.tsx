@@ -19,8 +19,8 @@ export function SimulationHistoryHeader({ historic } : SimulationHistoryHeaderPr
         <div className="my-6">
             <div className="flex items-center justify-around my-4">
                 <Text className="text-white w-fit m-0">Simulado do Enem</Text>
-                <div className="w-40">
-                    <Button >Voltar</Button>
+                <div>
+                    <Button className="w-24" onClick={() => window.history.back()}>Voltar</Button>
                 </div>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 grid-rows-3 justify-center">
