@@ -25,10 +25,10 @@ import { ReactComponent as Report } from '../../assets/icons/warning.svg';
 
 
 import { DashCardMenu } from "../../components/molecules/dashCard";
+import { HeaderData } from "../../components/organisms/header";
 import { Materias, getMateriaString } from "../../enums/content/materias";
 import { Roles } from "../../enums/roles/roles";
 import { header } from "../home/data";
-import { HeaderData } from "../../components/organisms/header";
 
 
 export const headerDash: HeaderData = { ...header, pageLinks: [
@@ -78,7 +78,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
     },
     {
         id: 4,
-        bg: "bg-purple",
+        bg: "bg-orange",
         title: "Matemática",
         image: MatematicaImg,
         alt: "Matemática",
@@ -88,7 +88,7 @@ export const dashCardMenuItems : DashCardMenu[] = [
     },
     {
         id: 5,
-        bg: "bg-orange",
+        bg: "bg-green3",
         title: "Admin",
         image: HumanasImg,
         alt: "Admin",
