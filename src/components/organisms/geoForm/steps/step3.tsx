@@ -68,10 +68,9 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
         setSelectedPosition([lat, lng])
         getCepByLatAndLon(lat, lng)
           .then(res => { setAddress(res) })
-          .catch(error => { toast.error(`Não foi possível buscar as informações de endereço do ponto selecionado. ${error.message}`) })
-      },
-    });
-
+          .catch(error => { toast.error(`Não foi possível buscar as informações de endereço do ponto selecionado. ${error.message}`)})
+        },
+      });
     return null; // Não renderiza nada, apenas anexa eventos
   };
 
@@ -85,8 +84,8 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
   }
 
   return (
-    <div className="z-20">
-      <Text>{title}</Text>
+    <div className="my-10 z-20">
+      <Text size="secondary">{title}</Text>
       <Text className="text-wrap mx-10" size="tertiary">{subtitle}</Text>
       <form className="w-full max-w-lg mx-auto" onSubmit={handleSubmit(handleForm)}>
         <MapBox
@@ -106,6 +105,5 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
       </form>
     </div>
   )
-}
 
 export default Step3Geo
