@@ -105,5 +105,6 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
       </form>
     </div>
   )
+}
 
 export default Step3Geo
