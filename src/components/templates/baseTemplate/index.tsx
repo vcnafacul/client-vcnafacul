@@ -1,7 +1,7 @@
 import React, { ComponentProps } from "react";
-import Header from "../../organisms/header"
-import Footer from "../../organisms/footer";
 import { VariantProps, tv } from "tailwind-variants";
+import Footer from "../../organisms/footer";
+import Header from "../../organisms/header";
 
 const baseTemplate = tv({
     base: "w-full z-50  text-white h-[76px]",
@@ -29,16 +29,20 @@ export type BaseTemplateProps = VariantProps<typeof baseTemplate> & ComponentPro
 }
 
 function BaseTemplate({  children, solid, position, headerShadow, className }: BaseTemplateProps){
-    return (
-        <div className={className}>
-            <Header solid={solid}
-                className={`${baseTemplate({ position, headerShadow })} ${solid ? 'bg-white' : 'bg-transparent'}`} />
-            <div>
-                { children }
-            </div>
-            <Footer />
+  return (
+    <div className={className}>
+      <div className="min-h-screen w-screen">
+          <Header
+          solid={solid}
+          className={`${baseTemplate({ position, headerShadow })} ${solid ? 'bg-white' : 'bg-transparent'}`}
+        />
+        <div>
+          { children }
         </div>
-    )
+      </div>
+      <Footer />
+    </div>
+  )
 }
 
 export default BaseTemplate

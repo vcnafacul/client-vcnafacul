@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
+import { toast } from "react-toastify";
+import { createGeolocation } from "../../../services/geolocation/createGeolocation";
+import { CreateGeolocation } from "../../../types/geolocation/geolocation";
 import { FormFieldInput } from "../../molecules/formField";
 import Step1Geo from "./steps/step1";
 import Step2Geo from "./steps/step2";
@@ -8,9 +11,6 @@ import Step3Geo from "./steps/step3";
 import Step4Geo from "./steps/step4";
 import Step5Geo from "./steps/step5";
 import Step6Geo from "./steps/step6";
-import { CreateGeolocation } from "../../../types/geolocation/geolocation";
-import { createGeolocation } from "../../../services/geolocation/createGeolocation";
-import { toast } from "react-toastify";
 
 export interface StepProps {
   title: string;
@@ -51,7 +51,7 @@ function GeoForm({ formData } : GeoFormProps){
   }
 
   const completeRegisterGeo = (oldData: any) => {
-    const id = toast.loading("Upload de Imagem de Perfil Colaborador ... ")
+    const id = toast.loading("Cadastrando o cursinho... ")
     const body = {...dataGeo, ...oldData}
     createGeolocation(body as CreateGeolocation)
       .then(_ => {
@@ -74,14 +74,14 @@ function GeoForm({ formData } : GeoFormProps){
       case 5:
         return <Step5Geo {...formData.step5} updateData={completeRegisterGeo} handleBack={back} dataGeo={dataGeo} />
       case 6:
-          return <Step6Geo {...formData.step6} />
+        return <Step6Geo {...formData.step6} />
       default:
         return <Step1Geo {...formData.step1} updateData={updateData} dataGeo={dataGeo} />
     }
   }
 
   return (
-    <div className="my-10">
+    <div className="flex flex-col items-center justify-start w-full min-h-[calc(100vh-88px)] mb-3 px-4 mx-auto">
       <StepCurrently step={stepCurrently} />
     </div>
   )
