@@ -1,27 +1,26 @@
 import { useEffect, useRef, useState } from "react"
-import { ContentDtoInput } from "../../../dtos/content/contentDtoInput"
-import { formatDate } from "../../../utils/date"
-import { CardDashInfo } from "../../../components/molecules/cardDash"
-import { useAuthStore } from "../../../store/auth"
-import DashCardTemplate from "../../../components/templates/dashCardTemplate"
-import { dashAllContent } from "./data"
-import { getContent } from "../../../services/content/getContent"
 import { toast } from "react-toastify"
-import Filter from "../../../components/atoms/filter"
-import Button from "../../../components/molecules/button"
-import NewDemand from "../modals/newDemand"
 import Select from "../../../components/atoms/select"
-import { StatusEnum } from "../../../enums/generic/statusEnum"
+import Button from "../../../components/molecules/button"
+import DashCardTemplate from "../../../components/templates/dashCardTemplate"
+import { ContentDtoInput } from "../../../dtos/content/contentDtoInput"
 import { StatusContent } from "../../../enums/content/statusContent"
-import ValidatedDemand from "../modals/validatedDemand"
+import { StatusEnum } from "../../../enums/generic/statusEnum"
+import { getContent } from "../../../services/content/getContent"
+import { useAuthStore } from "../../../store/auth"
+import NewDemand from "../modals/newDemand"
 import ShowDemand from "../modals/showDemand"
+import ValidatedDemand from "../modals/validatedDemand"
+import { dashAllContent } from "./data"
 
 import { ReactComponent as SettingIcon } from '../../../assets/icons/setting.svg'
-import SettingsContent from "../modals/settingsContent"
+import { OptionProps } from "../../../components/atoms/selectOption"
+import { Materias } from "../../../enums/content/materias"
 import { Roles } from "../../../enums/roles/roles"
 import { MateriasLabel } from "../../../types/content/materiasLabel"
-import { Materias } from "../../../enums/content/materias"
-import { OptionProps } from "../../../components/atoms/selectOption"
+import { Paginate } from "../../../utils/paginate"
+import { cardTransformationContent } from "../data"
+import SettingsContent from "../modals/settingsContent"
 
 function AllContent() {
 
@@ -38,30 +37,7 @@ function AllContent() {
     const [materiaSelected, setMateriaSelected] = useState<number>(materias[0].id as number)
     const [status, setStatus] = useState<StatusContent | StatusEnum>(StatusEnum.Approved);
     const dataRef = useRef<ContentDtoInput[]>([])
-
-    const cardContent : CardDashInfo[] = demands.map(content => (
-        {cardId: content.id, title: content.title, status: content.status, infos: 
-            [
-                { field:"Frente", value: content.subject.frente.name },
-                { field:"Tema", value: content.subject.name },
-                { field:"Descrição", value: content.description.substring(0, 20) + "..." },
-                { field:"Cadastrado em ", value: content.createdAt ? formatDate(content.createdAt.toString()) : ""},
-            ]
-        }
-    ))
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleInputChange = (event: any) => {
-        const filter = event.target.value.toLowerCase();
-        if(!filter) setDemands(dataRef.current)
-        else setDemands(dataRef.current.filter(
-            q => q.title.toLowerCase().includes(filter) || 
-            q.description.toLowerCase().includes(filter) ||
-            q.subject.name.toLocaleLowerCase().includes(filter) ||
-            q.subject.frente.name.toLocaleLowerCase().includes(filter)||
-            q.subject.description.toLocaleLowerCase().includes(filter)
-        ))
-    }
+    const limitCards = 40;
 
     const selectDemandByMateria = (id: Materias) => {
         setMateriaSelected(id)
@@ -89,17 +65,6 @@ function AllContent() {
         const newContent = demands.filter(q => q.id != id)
         setDemands(newContent)
     }
-
-    useEffect(() => {
-    getContent(token, status as StatusContent)
-        .then(res => {
-            setDemands(res)
-            dataRef.current = res;
-        })
-        .catch((error: Error) => {
-            toast.error(error.message);
-        })
-    },[token, status])
 
     const ValidatedModalDemand = () => {
         if(!openShowModal) return null
@@ -144,14 +109,31 @@ function AllContent() {
             </div>
         )
     }
+
+    useEffect(() => {
+        getContent(token, status as StatusContent, undefined, 1, limitCards)
+            .then(res => {
+                setDemands(res.data)
+                dataRef.current = res.data;
+            })
+            .catch((error: Error) => {
+                toast.error(error.message);
+            })
+        },[token, status])
+    
+    const getMoreCards = async ( page: number) : Promise<Paginate<ContentDtoInput>> => {
+        return await getContent(token, status as StatusContent, undefined, page, limitCards)
+    }
     
     return (
         <>
             <DashCardTemplate 
-                cardlist={cardContent} 
                 title={dashAllContent.title}
+                entities={demands}
+                setEntities={setDemands} 
+                cardTransformation={cardTransformationContent}
+                onLoadMoreCard={getMoreCards}
                 filterList={[
-                    <Filter placeholder="título | Tema | Frente | Descrição" filtrar={handleInputChange}/>,
                     <FilterSelect />,
                     <FilterManager />
                 ]} 

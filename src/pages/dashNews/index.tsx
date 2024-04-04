@@ -1,45 +1,40 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
-import DashCardTemplate from "../../components/templates/dashCardTemplate"
-import { dashNews } from "./data"
+import { toast } from "react-toastify";
+import Select from "../../components/atoms/select";
+import Button from "../../components/molecules/button";
+import { CardDash } from "../../components/molecules/cardDash";
+import DashCardTemplate from "../../components/templates/dashCardTemplate";
 import { News } from "../../dtos/news/news";
+import { createNews } from "../../services/news/createNews";
+import { deleteNews } from "../../services/news/deleteNews";
 import { getAllNews } from "../../services/news/getAllNews";
 import { useAuthStore } from "../../store/auth";
-import Select from "../../components/atoms/select";
-import Filter from "../../components/atoms/filter";
-import { CardDashInfo } from "../../components/molecules/cardDash";
-import { getStatusBool } from "../../utils/getStatusIcon";
 import { formatDate } from "../../utils/date";
+import { getStatusBool } from "../../utils/getStatusIcon";
+import { Paginate } from "../../utils/paginate";
+import { dashNews } from "./data";
 import ModalEditNew from "./modals/modalEditNew";
-import Button from "../../components/molecules/button";
-import { createNews } from "../../services/news/createNews";
-import { toast } from "react-toastify";
-import { deleteNews } from "../../services/news/deleteNews";
 
 function DashNews() {
     const [news, setNews] = useState<News[]>([]);
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [newSelect, setNewSelect] = useState<News | null>();
     const dataRef = useRef<News[]>([])
+    const limitCards = 40;
     
     const { data: { token }} = useAuthStore()
 
-    const handleInputChange = (event: any) => {
-        const filter = event.target.value.toLowerCase();
-        if(!filter) setNews(dataRef.current)
-        else setNews(dataRef.current.filter(q => q.session.toLowerCase().includes(filter) || q.title.toLowerCase().includes(filter)))
-    }
-
-    const cardNews : CardDashInfo[] = news.map(n => (
-        { cardId: n.id, title: n.title, status: getStatusBool(n.actived), infos: 
+    const cardTransformation = (n: News) : CardDash => (
+        { id: n.id, title: n.title, status: getStatusBool(n.actived), infos: 
             [
                 { field:"Session", value: n.session },
                 { field:"Título", value: n.title },
                 { field:"Criado em", value: n.createdAt ? formatDate(n.createdAt.toString()) : "" },
             ]
         }
-    ))
+    )
 
     const updateActive = (active: number) => {
         setNews(dataRef.current.filter(n => n.actived == !!active))
@@ -87,19 +82,23 @@ function DashNews() {
     }
 
     useEffect(() => {
-        getAllNews(token)
+        getAllNews(token, 1, limitCards)
             .then(res => {
-                setNews(res)
+                setNews(res.data)
                 const uniqueSessions = new Set<string>();
-                res.map((r) => {
+                res.data.map((r) => {
                     uniqueSessions.add(r.session)
                 })
-                dataRef.current = res;
+                dataRef.current = res.data;
             })
             .catch((error: Error) => {
                 toast.error(error.message)
             })
     }, [])
+
+    const getMoreCards = async ( page: number) : Promise<Paginate<News>> => {
+        return await getAllNews(token, page, limitCards)
+    }
 
     const EditNews = () => {
         if(!openModal) return null
@@ -112,11 +111,13 @@ function DashNews() {
     
     return (
         <>
-            <DashCardTemplate
-                cardlist={cardNews} 
+            <DashCardTemplate<News>
                 title={dashNews.title} 
+                entities={news}
+                setEntities={setNews}
+                cardTransformation={cardTransformation}
+                onLoadMoreCard={getMoreCards}
                 filterList={[
-                    <Filter placeholder="session | titulo" filtrar={handleInputChange}/>,
                     <Select options={dashNews.options} setState={updateActive} />,
                     <Button onClick={() => { setNewSelect(null); setOpenModal(true)}} typeStyle="quaternary" 
                     className="text-xl font-light rounded-full h-8 "><span className="text-4xl">+</span> upload novidade</Button>

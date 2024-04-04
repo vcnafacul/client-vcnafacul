@@ -1,4 +1,4 @@
-import { StatusEnum } from "../../enums/generic/statusEnum";
+import { CardDash } from "../../components/molecules/cardDash";
 
 export interface CreateGeolocation {
     latitude: number;
@@ -29,9 +29,7 @@ export interface CreateGeolocation {
     userEmail: string;
 }
 
-export interface Geolocation extends CreateGeolocation {
-    id: number,
-    status: StatusEnum
+export interface Geolocation extends CreateGeolocation, CardDash {
     createdAt: string;
     updatedAt: string;
 }

@@ -1,12 +1,13 @@
-import { Geolocation } from "../../types/geolocation/geolocation";
 import { StatusEnum } from "../../enums/generic/statusEnum";
-import { allGeolocation } from "../urls"
+import { Geolocation } from "../../types/geolocation/geolocation";
 import fetchWrapper from "../../utils/fetchWrapper";
+import { Paginate } from "../../utils/paginate";
+import { allGeolocation } from "../urls";
 
-export async function getAllGeolocation(status: StatusEnum): Promise<Geolocation[]> {
-    const url = `${allGeolocation}?offset=0&limit=40&status=${status}`;
+export async function getAllGeolocation(status: StatusEnum, page: number = 1, limit: number = 40): Promise<Paginate<Geolocation>> {
+    const url = `${allGeolocation}?page=${page}&limit=${limit}&status=${status}`;
     const res = await fetchWrapper(url, {
         headers: { "Content-Type": "application/json" },
     });
-    return await res.json() as Geolocation[]  
+    return await res.json() 
 }

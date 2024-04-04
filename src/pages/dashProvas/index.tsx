@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
+import Button from "../../components/molecules/button";
+import { CardDash } from "../../components/molecules/cardDash";
 import DashCardTemplate from "../../components/templates/dashCardTemplate";
 import { Prova } from "../../dtos/prova/prova";
-import { CardDashInfo } from "../../components/molecules/cardDash";
-import { StatusEnum } from "../../enums/generic/statusEnum";
-import { formatDate } from "../../utils/date";
-import { dashProva } from "./data";
-import { getProvas } from "../../services/prova/getProvas";
-import { useAuthStore } from "../../store/auth";
-import { toast } from "react-toastify";
-import ShowProva from "./modals/showProva";
-import Filter from "../../components/atoms/filter";
-import Button from "../../components/molecules/button";
-import { Roles } from "../../enums/roles/roles";
-import NewProva from "./modals/newProva";
-import { getTipos } from "../../services/tipoSimulado/getTipos";
 import { ITipoSimulado } from "../../dtos/simulado/tipoSimulado";
+import { StatusEnum } from "../../enums/generic/statusEnum";
+import { Roles } from "../../enums/roles/roles";
+import { getProvas } from "../../services/prova/getProvas";
+import { getTipos } from "../../services/tipoSimulado/getTipos";
+import { useAuthStore } from "../../store/auth";
+import { formatDate } from "../../utils/date";
+import { Paginate } from "../../utils/paginate";
+import { dashProva } from "./data";
+import NewProva from "./modals/newProva";
+import ShowProva from "./modals/showProva";
 
 function DashProva(){
     const [provas, setProvas] = useState<Prova[]>([])
@@ -26,11 +26,12 @@ function DashProva(){
     const [openNewProva, setOpenNewProva] = useState<boolean>(false);
     const [showProva, setShowProva] = useState<boolean>(false);
     const dataRef = useRef<Prova[]>([])
+    const limitCards = 40;
 
     const { data: { token, permissao }} = useAuthStore()
 
-    const cardProvas : CardDashInfo[] = provas.map(prova => (
-        {cardId: prova._id, title: prova.nome, 
+    const cardTransformation = (prova: Prova) : CardDash => (
+        {id: prova._id, title: prova.nome, 
             status: prova.totalQuestao === prova.totalQuestaoValidadas ? StatusEnum.Approved : 
                 prova.totalQuestao === prova.totalQuestaoCadastradas ? StatusEnum.Pending : 
                 StatusEnum.Rejected, 
@@ -42,13 +43,7 @@ function DashProva(){
                 { field:"Cadastrado em ", value: prova.createdAt ? formatDate(prova.createdAt.toString()) : ""},
             ]
         }
-    ))
-
-    const handleInputChange = (event: any) => {
-        const filter = event.target.value.toLowerCase();
-        if(!filter) setProvas(dataRef.current)
-        else setProvas(dataRef.current.filter(q => q._id.includes(filter) || q.nome.toLowerCase().includes(filter)))
-    }
+    )
 
     const onClickCard = (id: string | number) => {
         setProvaSelected(provas.find(p => p._id === id)!)
@@ -60,11 +55,20 @@ function DashProva(){
         setProvas(dataRef.current)
     }
 
+    const ModalNewProva = () => {
+        if(!openNewProva) return null
+        return <NewProva tipos={tipoSimulado!} handleClose={() => setOpenNewProva(false)} addProva={addProva} />
+    }
+
+    const ModalShowProva = () => {
+        if(!showProva) return null
+        return <ShowProva prova={provaSelected!} handleClose={() => { setShowProva(false)}} />
+    }
+
     useEffect(() => {
-        getProvas(token)
+        getProvas(token, 1, limitCards)
             .then(res => {
-                setProvas(res)
-                dataRef.current = res;
+                setProvas(res.data)
             })
             .catch((erro: Error) => {
                 toast.error(erro.message)
@@ -79,25 +83,21 @@ function DashProva(){
             })
     },[token])
 
-    const ModalNewProva = () => {
-        if(!openNewProva) return null
-        return <NewProva tipos={tipoSimulado!} handleClose={() => setOpenNewProva(false)} addProva={addProva} />
+    const getMoreCards = async ( page: number) : Promise<Paginate<Prova>> => {
+        return await getProvas(token, page, limitCards)
     }
-
-    const ModalShowProva = () => {
-        if(!showProva) return null
-        return <ShowProva prova={provaSelected!} handleClose={() => { setShowProva(false)}} />
-    }
-
 
     return (
         <>
-        <DashCardTemplate 
-            cardlist={cardProvas} 
-            onClickCard={onClickCard} 
+        <DashCardTemplate<Prova>
             title={dashProva.title} 
+            entities={provas}
+            setEntities={setProvas}
+            cardTransformation={cardTransformation}
+            onLoadMoreCard={getMoreCards}
+            limitCardPerPage={limitCards}
+            onClickCard={onClickCard} 
             filterList={[
-                <Filter placeholder="id | texto" filtrar={handleInputChange}/>,
                 <Button disabled={!permissao[Roles.cadastrarProvas]} onClick={() => { setProvaSelected(null); setOpenNewProva(true) }} typeStyle="quaternary" 
                     className="text-xl font-light rounded-full h-8 "><span className="text-4xl">+</span>Cadastrar Prova</Button>
             ]} />
