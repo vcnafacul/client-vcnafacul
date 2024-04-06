@@ -76,7 +76,7 @@ function DashProva(){
 
         getTipos(token)
             .then(res => {
-                setTipoSimulado(res)
+                setTipoSimulado(res.data)
             })
             .catch((erro: Error) => {
                 toast.error(erro.message)
