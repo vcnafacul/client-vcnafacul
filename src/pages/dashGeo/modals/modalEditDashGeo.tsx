@@ -62,7 +62,7 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo }: ModalEd
     handleClose()
     UpdateGeolocationStatus({ body, token })
       .then(_ => {
-        updateStatus(geo.id)
+        updateStatus(geo.id as number)
         if (body.status === 1) toast.success(`Cursinho ${geo.name} atualizado com sucesso: Status - Aprovado`)
         else toast.success(`Cursinho ${geo.name} atualizado com sucesso: Status - Reprovado`, { theme: `dark` })
       })
@@ -70,8 +70,8 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo }: ModalEd
   };
 
   const update = async (status: StatusEnum, messageRefused?: string) => {
-    const body = {
-      geoId: geo.id,
+    const body : ValidationGeolocation = {
+      geoId: geo.id as number,
       status: status,
       refuseReason: messageRefused
     };
@@ -195,7 +195,7 @@ function ModalEditDashGeo({ geo, handleClose, updateStatus, updateGeo }: ModalEd
             className="h-80 border border-gray-300 z-0"
             zoom={11}
             center={[geo.latitude, geo.longitude]}
-            markers={[{ id: geo.id, lat: geo.latitude, lon: geo.longitude }]}
+            markers={[{ id: geo.id as number, lat: geo.latitude, lon: geo.longitude }]}
             mapEvent={<Event />}
           />
           <div className="flex flex-col gap-2 my-4">
