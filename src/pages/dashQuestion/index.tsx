@@ -165,7 +165,6 @@ function DashQuestion() {
     }
 
     const getMoreCards = async ( page: number) : Promise<Paginate<Question>> => {
-        toast.success(page)
         return await getAllQuestions(token, status, page, limitCards)
     }
 
