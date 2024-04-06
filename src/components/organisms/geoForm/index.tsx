@@ -63,6 +63,11 @@ function GeoForm({ formData } : GeoFormProps){
       })
   }
 
+  const resetForm = () => {
+    setStepCurrently(1)
+    setDataGeo({} as CreateGeolocation)
+  }
+
   const StepCurrently = ({ step } : { step: number}) => {
     switch (step) {
       case 2:
@@ -74,7 +79,7 @@ function GeoForm({ formData } : GeoFormProps){
       case 5:
         return <Step5Geo {...formData.step5} updateData={completeRegisterGeo} handleBack={back} dataGeo={dataGeo} />
       case 6:
-        return <Step6Geo {...formData.step6} />
+        return <Step6Geo {...formData.step6} reset={resetForm} />
       default:
         return <Step1Geo {...formData.step1} updateData={updateData} dataGeo={dataGeo} />
     }
