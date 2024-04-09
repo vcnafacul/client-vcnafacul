@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { toast } from "react-toastify"
-import Select from "../../components/atoms/select"
-import Button from "../../components/molecules/button"
+import { FilterProps } from "../../components/atoms/filter"
+import { SelectProps } from "../../components/atoms/select"
+import { ButtonProps } from "../../components/molecules/button"
 import { CardDash } from "../../components/molecules/cardDash"
 import DashCardTemplate from "../../components/templates/dashCardTemplate"
 import ModalTabTemplate from "../../components/templates/modalTabTemplate"
+import { DashCardContext } from "../../context/dashCardContext"
 import { Question } from "../../dtos/question/questionDTO"
 import { UpdateQuestion } from "../../dtos/question/updateQuestion"
 import { StatusEnum } from "../../enums/generic/statusEnum"
@@ -20,14 +22,24 @@ import { mergeObjects } from "../../utils/mergeObjects"
 import { Paginate } from "../../utils/paginate"
 import { dashQuest } from "./data"
 import ModalDetalhes from "./modals/modalDetalhes"
+import { EnemArea } from "../../types/question/enemArea"
 
 function DashQuestion() {
     const [questions, setQuestions] = useState<Question[]>([])
+
+    //filters
     const [status, setStatus] = useState<StatusEnum>(StatusEnum.Pending);
+    const [materia, setMateria] = useState<string>('')
+    const [frente, setFrente] = useState<string>('')
+    const [prova, setProva] = useState<string>('')
+    const [enemArea, setEnemArea] = useState<string>('')
+    const [filterText, setFilterText] = useState<string>('');
+    const [enterText, setEnterText] = useState<string>('');
+
+
     const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
     const [openModalRegister, setOpenModalRegister] = useState<boolean>(false);
     const [questionSelect, setQuestionSelect] = useState<Question | null>(null)
-    const dataRef = useRef<Question[]>([])
     const limitCards = 40;
 
     const [infosQuestion, setInfosQuestion] = useState<InfoQuestion>({
@@ -56,15 +68,13 @@ function DashQuestion() {
         setQuestions(newQuestions)
     }
 
-    const handleAddQuestion = (questionUpdate: Question) => {
-        dataRef.current.push(questionUpdate)
-        setQuestions(dataRef.current)
+    const handleAddQuestion = (question: Question) => {
+        setQuestions([...questions, question])
     }
 
     const handleUpdateQuestion = (questionUpdate: UpdateQuestion) => {
         updateQuestion(questionUpdate, token)
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            .then(_ => {
+            .then(() => {
                 const newQuestions = questions.map((question) => {
                     if(question._id == questionUpdate._id){
                         return {...mergeObjects(questionUpdate, question), title: `${question._id} ${questionUpdate.numero}`} as Question
@@ -85,8 +95,7 @@ function DashQuestion() {
         }
         else {
             updateStatus(questionSelect!._id, status, token, message)
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            .then(_ => {
+            .then(() => {
                 handleRemoveQuestion(questionSelect!._id)
                 setOpenModalEdit(false)
                 toast.success(`Questão ${questionSelect!._id} atualizada com sucesso. Status: ${status === StatusEnum.Approved ? 'Aprovado' : 'Reprovado'} `)
@@ -101,16 +110,16 @@ function DashQuestion() {
         setOpenModalEdit(true)
     }
 
-    const getQuestions = useCallback(async (status: StatusEnum, page: number, limit: number) => {
-        getAllQuestions(token, status, page, limit)
+    const getQuestions = useCallback(async (status: StatusEnum, page: number, limit: number, 
+        materia: string, frente: string, prova: string, enemArea: string) => {
+        getAllQuestions(token, status, enterText, page, limit, materia, frente, prova, enemArea)
             .then((res) => {
-                console.log(res)
                 setQuestions(res.data)
             })
             .catch((erro: Error) => {
                 toast.error(erro.message)
             })
-    }, [token])
+    }, [token, enterText])
 
     const getInfors = useCallback(async () => {
         getInfosQuestion(token)
@@ -122,14 +131,6 @@ function DashQuestion() {
                 toast.error(erro.message)
             })
     }, [token])
-
-    useEffect(() => {
-        getQuestions(status, 1, limitCards)
-    },[status, getQuestions])
-
-    useEffect(() => {
-        getInfors()
-    }, [getInfors])
 
     const ModalEdit = () => {
         if(!openModalEdit) return null
@@ -165,29 +166,50 @@ function DashQuestion() {
     }
 
     const getMoreCards = async ( page: number) : Promise<Paginate<Question>> => {
-        return await getAllQuestions(token, status, page, limitCards)
+        return await getAllQuestions(token, status, enterText, page, limitCards, materia, frente, prova, enemArea)
     }
 
+    const filterProps : FilterProps = {
+        filtrar: (e: React.ChangeEvent<HTMLInputElement>) => setFilterText(e.target.value.toLowerCase()),
+        placeholder:"texto questão", 
+        defaultValue:filterText,
+        keyDown:() => setEnterText(filterText)
+    } 
+
+    useEffect(() => {
+        getQuestions(status, 1, limitCards, materia, frente, prova, enemArea)
+    },[status, getQuestions, materia, frente, prova, enemArea])
+
+    useEffect(() => {
+        getInfors()
+    }, [getInfors])
+
+    const materiasOption = [{ id: '', name: 'Disciplinas'}, ...infosQuestion.materias.map(m => ({ id: m._id, name: m.nome }))]
+    const frentesOption = [{ id: '', name: 'Frentes'}, ...infosQuestion.frentes.map(f => ({ id: f._id, name: f.nome }))]
+    const provasOption = [{ id: '', name: 'Provas'}, ...infosQuestion.provas.map(p => ({ id: p._id, name: p.nome }))]
+    const EnemAreaOption = [{ id: '', name: 'Área do Enem'}, ...EnemArea.map(p => ({ id: p, name: p }))]
+
+    const selectFiltes: SelectProps[] = [
+        { options: dashQuest.options,  defaultValue: status,  setState: setStatus },
+        { options: materiasOption,  defaultValue: materia,  setState: setMateria },
+        { options: frentesOption,  defaultValue: frente,  setState: setFrente },
+        { options: provasOption,  defaultValue: prova,  setState: setProva },
+        { options: EnemAreaOption,  defaultValue: enemArea,  setState: setEnemArea },
+    ]
+
+    const buttons : ButtonProps[] = [
+        { disabled: !permissao[Roles.criarQuestao], onClick: () => { setQuestionSelect(null); setOpenModalRegister(true) },
+            typeStyle: "quaternary", className:"text-xl font-light rounded-full h-8", children: 'Cadastrar Questao'
+        }
+    ]
     return (
-        <>
-            <DashCardTemplate<Question>
-                title={dashQuest.title} 
-                entities={questions} 
-                setEntities={setQuestions}
-                cardTransformation={cardTransformation}
-                onLoadMoreCard={getMoreCards}
-                onClickCard={onClickCard} 
-                limitCardPerPage={limitCards}
-                filterList={[
-                    <Select options={dashQuest.options}  defaultValue={status}  setState={setStatus} />,
-                    <Button disabled={!permissao[Roles.criarQuestao]} onClick={() => { setQuestionSelect(null); setOpenModalRegister(true) }} typeStyle="quaternary" 
-                    className="text-xl font-light rounded-full h-8 "><span className="text-4xl">+</span>Cadastrar Questao</Button>
-                    // <Select options={filters} defaultValue={Order.Increasing} setState={handleOrderChange} />
-                ]} />
+        <DashCardContext.Provider value={{ title: dashQuest.title, entities: questions, 
+            setEntities: setQuestions, onClickCard, getMoreCards, cardTransformation, 
+            limitCards, filterProps, selectFiltes, buttons }}>
+            <DashCardTemplate />
             <ModalEdit />
             <ModalRegister />
-        </>
-
+        </DashCardContext.Provider>
     )
 }
 

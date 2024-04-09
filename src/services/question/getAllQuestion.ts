@@ -4,9 +4,11 @@ import fetchWrapper from "../../utils/fetchWrapper"
 import { Paginate } from "../../utils/paginate"
 import { questoes } from "../urls"
 
-export async function getAllQuestions(token: string, status: StatusEnum, 
-    page: number = 1, limit: number = 40) : Promise<Paginate<Question>> {
-    const response = await fetchWrapper(`${questoes}?status=${status}&page=${page}&limit=${limit}`,  {
+export async function getAllQuestions(token: string, status: StatusEnum, text: string = '',
+    page: number = 1, limit: number = 40, materia: string = '', frente: string = '', 
+    prova: string = '', enemArea: string = '') : Promise<Paginate<Question>> {
+    const response = await fetchWrapper(`${questoes}?status=${status}&page=${page}&limit=${limit}
+    &text=${text}&materia=${materia}&frente=${frente}&prova=${prova}&enemArea=${enemArea}`,  {
         method: "GET",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     })
@@ -24,6 +26,5 @@ export async function getAllQuestions(token: string, status: StatusEnum,
             totalItems: questoes.totalItems
         }
     }
-    console.log(response)
     throw new Error(`Erro ao tentar recuperar questões - Pagina ${page}`)
 }
