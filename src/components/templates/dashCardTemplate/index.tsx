@@ -51,14 +51,18 @@ function DashCardTemplate({ customFilter } : Props ) {
         <div className={`w-full flex justify-center flex-col py-4`}>
             <div className="w-full flex items-center flex-col mt-4">
                 <Text className="self-center" size="secondary">{title}</Text>
-                <div className="flex flex-wrap justify-center items-center gap-2 z-[1] bg-gray-200 rounded-2xl bg-opacity-75 p-2 mx-4 mt-14 w-10/12 md:w-fit">
-                    {filterProps && <Filter {...filterProps} keyDown={() => { setPage(1); filterProps.keyDown!() }} />}
-                    {selectFiltes?.map((select, index) => {
-                        return <Select className="h-full" key={index} {...select}
-                        setState={(value) => { setPage(1); select.setState(value)}} />
-                    })}
-                    {buttons?.map((button, index) => <Button key={index} {...button} />)}
-                    {customFilter?.map(filter => <> { filter }</>)}
+                <div className="flex flex-wrap flex-col justify-center items-center gap-2 z-[1] bg-gray-200 rounded-2xl bg-opacity-75 p-2 mx-4 mt-14 w-10/12 md:w-fit">
+                    <div className="flex">
+                        {filterProps && <Filter {...filterProps} keyDown={() => { setPage(1); filterProps.keyDown!() }} />}
+                        {buttons?.map((button, index) => <Button key={index} {...button}><span className="text-sm font-black">{button.children}</span></Button>)}
+                    </div>
+                    <div className="flex gap-4 flex-wrap justify-center">
+                        {selectFiltes?.map((select, index) => {
+                            return <Select className="h-full" key={index} {...select}
+                            setState={(value) => { setPage(1); select.setState(value)}} />
+                        })}
+                    </div>
+                    {customFilter?.map((filter, index) => <div key={index}> { filter }</div>)}
                 </div>
             </div>
             <div className="flex flex-wrap gap-4 my-4 justify-center md:justify-start md:mx-10 pb-10">

@@ -14,7 +14,7 @@ export type SelectProps = ComponentProps<'select'> & {
 function Select({ options, disabled, defaultValue, setState } : SelectProps){
     return (
         <>
-        <div className="relative group">
+        <div className="relative group w-60">
             <TiArrowSortedDown className="absolute select-none right-1 top-0 w-10 h-10 fill-marine" />
             <select 
             className="remove-arrow w-full h-full text-lg font-black text-marine pl-4 pr-10 py-1 rounded-xl shadow-md z-50"
