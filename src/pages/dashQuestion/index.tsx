@@ -199,7 +199,7 @@ function DashQuestion() {
 
     const buttons : ButtonProps[] = [
         { disabled: !permissao[Roles.criarQuestao], onClick: () => { setQuestionSelect(null); setOpenModalRegister(true) },
-            typeStyle: "quaternary", className:"text-xl font-light rounded-full h-10", children: 'Cadastrar Questao'
+            typeStyle: "quaternary", className:"text-sm md:text-base font-light rounded-full h-10", children: 'Cadastrar Questao'
         }
     ]
     return (

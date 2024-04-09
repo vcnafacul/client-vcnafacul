@@ -54,7 +54,7 @@ function DashCardTemplate({ customFilter } : Props ) {
                 <div className="flex flex-wrap flex-col justify-center items-center gap-2 z-[1] bg-gray-200 rounded-2xl bg-opacity-75 p-2 mx-4 mt-14 w-10/12 md:w-fit">
                     <div className="flex">
                         {filterProps && <Filter {...filterProps} keyDown={() => { setPage(1); filterProps.keyDown!() }} />}
-                        {buttons?.map((button, index) => <Button key={index} {...button}><span className="text-sm font-black">{button.children}</span></Button>)}
+                        {buttons?.map((button, index) => <Button key={index} {...button} />)}
                     </div>
                     <div className="flex gap-4 flex-wrap justify-center">
                         {selectFiltes?.map((select, index) => {
