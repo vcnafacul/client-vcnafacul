@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
-import Select from "../../../components/atoms/select"
+import { SelectProps } from "../../../components/atoms/select"
 import { OptionProps } from "../../../components/atoms/selectOption"
 import DashCardTemplate from "../../../components/templates/dashCardTemplate"
+import { DashCardContext } from "../../../context/dashCardContext"
 import { ContentDtoInput } from "../../../dtos/content/contentDtoInput"
 import { Materias } from "../../../enums/content/materias"
 import { getDemands } from "../../../services/content/getDemands"
@@ -73,21 +74,20 @@ function OnlyDemand() {
     const getMoreCards = async ( page: number) : Promise<Paginate<ContentDtoInput>> => {
         return await getDemands(token, page, limitCards)
     }
+
+    const selectFiltes: SelectProps[] = [
+        { options: materias,  defaultValue: materiaSelected,  setState: selectDemandByMateria },
+    ]
+    
     
     return (
-        <>
-            <DashCardTemplate 
-                title={dashOnlyDemand.title}
-                entities={demands}
-                setEntities={setDemands} 
-                cardTransformation={cardTransformationContent}
-                onLoadMoreCard={getMoreCards}
-                filterList={[
-                    <Select options={materias}  defaultValue={materiaSelected}  setState={selectDemandByMateria} />,
-                ]} 
-                onClickCard={onClickCard} />
+        <DashCardContext.Provider value={{
+            title: dashOnlyDemand.title, entities: demands,
+            setEntities: setDemands, onClickCard, getMoreCards, 
+            cardTransformation: cardTransformationContent, limitCards, selectFiltes }}>
+            <DashCardTemplate />
             <ShowModalDemand />
-        </>
+        </DashCardContext.Provider>
     )
 }
 

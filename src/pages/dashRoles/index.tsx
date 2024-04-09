@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
-import Button from "../../components/molecules/button"
+import { ButtonProps } from "../../components/molecules/button"
 import { CardDash } from "../../components/molecules/cardDash"
 import DashCardTemplate from "../../components/templates/dashCardTemplate"
+import { DashCardContext } from "../../context/dashCardContext"
 import { StatusEnum } from "../../enums/generic/statusEnum"
 import { getRoles } from "../../services/roles/getRoles"
 import { getUsersRole } from "../../services/roles/getUsersRole"
@@ -48,7 +47,7 @@ function DashRoles(){
     const updateUserRole = (userRole: UserRole) => {
         setUserRoleModal(false)
         updateRole(userRole.user.id, userRole.roleId, token)
-            .then(_ => {
+            .then(() => {
                 setUsersRole(usersRole.map(ur => {
                     if(ur.user.id === userRole.user.id) {
                         userRole.user.updatedAt = new Date()
@@ -121,26 +120,23 @@ function DashRoles(){
         handleClose={() => setUserModal(false)}
          />
     }
+
+    const buttons : ButtonProps[] = [
+        { onClick: () => { setUserRoleSelect(null); setnewRole(true)},
+            typeStyle: "quaternary", className:"text-xl font-light rounded-full h-8", children: 'Nova Permissão'
+        }
+    ]
     
     return (
-        <>
-            <DashCardTemplate<UserRole>
-                title={dashRoles.title}
-                entities={usersRole}
-                setEntities={setUsersRole}
-                cardTransformation={cardTransformation}
-                onClickCard={onClickCard}
-                onLoadMoreCard={getMoreCards}
-                filterList={[
-                    <Button onClick={() => { setUserRoleSelect(null); setnewRole(true)}} typeStyle="quaternary"
-                    className="text-xl font-light rounded-full h-8 "><span className="text-4xl">+</span> Nova Permissão</Button>
-                ]}
-                limitCardPerPage={limitCards}
-            />
+        <DashCardContext.Provider value={{ title: dashRoles.title, entities: usersRole, 
+            setEntities: setUsersRole, onClickCard, getMoreCards, cardTransformation, limitCards, buttons }}>
+            <DashCardTemplate />
             <ShowUserModal />
             <ShowUserRole />
             <ShowNewRole />
-        </>
+        </DashCardContext.Provider>
+            
+        
     )
 }
 

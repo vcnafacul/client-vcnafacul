@@ -2,10 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import Select from "../../components/atoms/select";
-import Button from "../../components/molecules/button";
+import { SelectProps } from "../../components/atoms/select";
+import { ButtonProps } from "../../components/molecules/button";
 import { CardDash } from "../../components/molecules/cardDash";
 import DashCardTemplate from "../../components/templates/dashCardTemplate";
+import { DashCardContext } from "../../context/dashCardContext";
 import { News } from "../../dtos/news/news";
 import { createNews } from "../../services/news/createNews";
 import { deleteNews } from "../../services/news/deleteNews";
@@ -108,23 +109,26 @@ function DashNews() {
             deleteFunc={deleteNew}
             handleClose={() => { setOpenModal(false) }} />
     }
+
+    const selectFiltes: SelectProps[] = [
+        { options: dashNews.options,  setState: updateActive },
+    ]
+
+    const buttons : ButtonProps[] = [
+        { onClick: () => { setNewSelect(null); setOpenModal(true)},
+            typeStyle: "quaternary", className:"text-xl font-light rounded-full h-8", children: 'Upload Novidade'
+        }
+    ]
     
     return (
-        <>
-            <DashCardTemplate<News>
-                title={dashNews.title} 
-                entities={news}
-                setEntities={setNews}
-                cardTransformation={cardTransformation}
-                onLoadMoreCard={getMoreCards}
-                filterList={[
-                    <Select options={dashNews.options} setState={updateActive} />,
-                    <Button onClick={() => { setNewSelect(null); setOpenModal(true)}} typeStyle="quaternary" 
-                    className="text-xl font-light rounded-full h-8 "><span className="text-4xl">+</span> upload novidade</Button>
-            ]} 
-                onClickCard={onClickCard} />
+        <DashCardContext.Provider value={{ title: dashNews.title, entities: news, 
+            setEntities: setNews, onClickCard, getMoreCards, cardTransformation, limitCards, 
+            selectFiltes, buttons }}>
+            <DashCardTemplate />
             <EditNews />
-        </>
+        </DashCardContext.Provider>
+            
+
     )
 }
 

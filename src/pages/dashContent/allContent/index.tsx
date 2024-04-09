@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
-import Select from "../../../components/atoms/select"
+import { SelectProps } from "../../../components/atoms/select"
 import Button from "../../../components/molecules/button"
 import DashCardTemplate from "../../../components/templates/dashCardTemplate"
 import { ContentDtoInput } from "../../../dtos/content/contentDtoInput"
@@ -15,6 +15,7 @@ import { dashAllContent } from "./data"
 
 import { ReactComponent as SettingIcon } from '../../../assets/icons/setting.svg'
 import { OptionProps } from "../../../components/atoms/selectOption"
+import { DashCardContext } from "../../../context/dashCardContext"
 import { Materias } from "../../../enums/content/materias"
 import { Roles } from "../../../enums/roles/roles"
 import { MateriasLabel } from "../../../types/content/materiasLabel"
@@ -101,15 +102,6 @@ function AllContent() {
         )
     }
 
-    const FilterSelect = () => {
-        return (
-            <div className="flex gap-1 justify-center flex-wrap sm:flex-nowrap">
-                <Select options={materias}  defaultValue={materiaSelected}  setState={selectDemandByMateria} />,
-                {permissao[Roles.validarCursinho] ? <Select options={dashAllContent.options}  defaultValue={status}  setState={setStatus} /> : <></>}
-            </div>
-        )
-    }
-
     useEffect(() => {
         getContent(token, status as StatusContent, undefined, 1, limitCards)
             .then(res => {
@@ -124,24 +116,25 @@ function AllContent() {
     const getMoreCards = async ( page: number) : Promise<Paginate<ContentDtoInput>> => {
         return await getContent(token, status as StatusContent, undefined, page, limitCards)
     }
+
+    const selectFiltes: SelectProps[] = [
+        { options: materias,  defaultValue: materiaSelected,  setState: selectDemandByMateria },
+        { options: dashAllContent.options,  defaultValue: status,  setState: setStatus, disabled: !permissao[Roles.validarDemanda] },
+    ]
     
     return (
-        <>
+        <DashCardContext.Provider value={{
+            title: dashAllContent.title, entities: demands,
+            setEntities: setDemands, onClickCard, getMoreCards, 
+            cardTransformation: cardTransformationContent, limitCards, selectFiltes }}>
             <DashCardTemplate 
-                title={dashAllContent.title}
-                entities={demands}
-                setEntities={setDemands} 
-                cardTransformation={cardTransformationContent}
-                onLoadMoreCard={getMoreCards}
-                filterList={[
-                    <FilterSelect />,
+                customFilter={[
                     <FilterManager />
-                ]} 
-                onClickCard={onClickCard} />
+                ]} />
             <ValidatedModalDemand />
             <NewModalDemand />
             <SettingsModal />
-    </>
+        </DashCardContext.Provider>  
     )
 }
 

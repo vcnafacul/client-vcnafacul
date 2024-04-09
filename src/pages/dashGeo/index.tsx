@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
-import Select from "../../components/atoms/select";
+import { SelectProps } from "../../components/atoms/select";
 import { CardDash } from "../../components/molecules/cardDash";
 import DashCardTemplate from "../../components/templates/dashCardTemplate";
+import { DashCardContext } from "../../context/dashCardContext";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { getAllGeolocation } from "../../services/geolocation/getAllGeolocation";
 import { Geolocation } from "../../types/geolocation/geolocation";
@@ -69,26 +70,21 @@ function DashGeo(){
         return await getAllGeolocation(status, page, limitCards)
     }
 
+    const selectFiltes: SelectProps[] = [
+        { options: dashGeo.options,  defaultValue: status,  setState: setStatus },
+    ]
+
     useEffect(() => {
         getGeolocations(status)
     }, [status, getGeolocations])
 
     return (
-        <>
-            <DashCardTemplate<Geolocation>
-                title={dashGeo.title}
-                entities={geolocations}
-                setEntities={setGeolocations}
-                cardTransformation={cardTransformation}
-                onLoadMoreCard={getMoreCards}
-                limitCardPerPage={limitCards}
-                filterList={[
-                    <Select  options={dashGeo.options}  defaultValue={status}  setState={setStatus} />]}
-                onClickCard={onClickCard}
-                
-                />
+        <DashCardContext.Provider value={{ title: dashGeo.title, entities: geolocations, 
+            setEntities: setGeolocations, onClickCard, getMoreCards, cardTransformation, limitCards, 
+            selectFiltes }}>
+            <DashCardTemplate />
             <ModalEdit />
-        </>
+        </DashCardContext.Provider>    
     )
 }
 
