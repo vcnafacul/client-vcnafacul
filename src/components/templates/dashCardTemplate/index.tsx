@@ -7,9 +7,11 @@ import Text from "../../atoms/text";
 import Button from "../../molecules/button";
 import { CardDashComponent } from "../../molecules/cardDash";
 
+interface Props {
+    customFilter?: JSX.Element[]
+}
 
-
-function DashCardTemplate() {
+function DashCardTemplate({ customFilter } : Props ) {
     const [firstCardRef, firstCardInView ] = useInView()
     const [lastCardRef, lastCardInView] = useInView();
     const [botton, setBotton] = useState<boolean>(false);
@@ -56,6 +58,7 @@ function DashCardTemplate() {
                         setState={(value) => { setPage(1); select.setState(value)}} />
                     })}
                     {buttons?.map((button, index) => <Button key={index} {...button} />)}
+                    {customFilter?.map(filter => <> { filter }</>)}
                 </div>
             </div>
             <div className="flex flex-wrap gap-4 my-4 justify-center md:justify-start md:mx-10 pb-10">
