@@ -1,13 +1,14 @@
-import { ComponentProps } from "react"
+import { ComponentProps } from "react";
 import { TiArrowSortedDown } from "react-icons/ti";
-import './styles.css'
 import { OptionProps } from "../selectOption";
+import './styles.css';
 
-type SelectProps = ComponentProps<'select'> & {
+export type SelectProps = ComponentProps<'select'> & {
     options: OptionProps[]
-    defaultValue?: number;
+    defaultValue?: number | string;
     disabled?: boolean;
-    setState: (value: number) => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setState: (value: any) => void;
 }
 
 function Select({ options, disabled, defaultValue, setState } : SelectProps){
@@ -21,7 +22,7 @@ function Select({ options, disabled, defaultValue, setState } : SelectProps){
             defaultValue={defaultValue} 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onChange={(e: any) => {
-                setState(Number(e.target.value));
+                setState(e.target.value);
             }}>
             {options.map(opt => (
                 <option key={opt.id} value={opt.id}>{opt.name}</option>
