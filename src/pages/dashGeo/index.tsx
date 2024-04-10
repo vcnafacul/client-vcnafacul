@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
+import { FilterProps } from "../../components/atoms/filter";
 import { SelectProps } from "../../components/atoms/select";
 import { CardDash } from "../../components/molecules/cardDash";
 import DashCardTemplate from "../../components/templates/dashCardTemplate";
@@ -18,6 +19,8 @@ function DashGeo(){
     const [geolocations, setGeolocations] = useState<Geolocation[]>([]);
     const [geoSelect, setGeoSelect] = useState<Geolocation>();
     const [openModal, setOpenModal] = useState<boolean>(false);
+    const [filterText, setFilterText] = useState<string>('');
+    const [enterText, setEnterText] = useState<string>('');
     const limitCards = 40;
 
     const cardTransformation = (geo: Geolocation) : CardDash => (
@@ -57,8 +60,8 @@ function DashGeo(){
         return <ModalEditDashGeo geo={geoSelect!} handleClose={handleCloseModalEdit} updateStatus={updateStatus} updateGeo={updateGeolocation} />
     }
 
-    const getGeolocations = useCallback(async (status: StatusEnum) => {
-        getAllGeolocation(status, 1, limitCards)
+    const getGeolocations = useCallback(async (status: StatusEnum, text: string) => {
+        getAllGeolocation(status, 1, limitCards, text)
             .then(res => { 
                 setGeolocations(res.data)
             })
@@ -74,14 +77,21 @@ function DashGeo(){
         { options: dashGeo.options,  defaultValue: status,  setState: setStatus },
     ]
 
+    const filterProps : FilterProps = {
+        filtrar: (e: React.ChangeEvent<HTMLInputElement>) => setFilterText(e.target.value.toLowerCase()),
+        placeholder:"nome | estado | cidade | email | categoria", 
+        defaultValue:filterText,
+        keyDown:() => setEnterText(filterText)
+    } 
+
     useEffect(() => {
-        getGeolocations(status)
-    }, [status, getGeolocations])
+        getGeolocations(status, enterText)
+    }, [status, getGeolocations, enterText])
 
     return (
         <DashCardContext.Provider value={{ title: dashGeo.title, entities: geolocations, 
             setEntities: setGeolocations, onClickCard, getMoreCards, cardTransformation, limitCards, 
-            selectFiltes }}>
+            selectFiltes, filterProps }}>
             <DashCardTemplate />
             <ModalEdit />
         </DashCardContext.Provider>    
