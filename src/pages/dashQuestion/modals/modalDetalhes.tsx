@@ -120,7 +120,7 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         {id: "prova",  type: "option", label: "Prova:*", options: provas, value: question?.prova ?? '', disabled: !question ? false : !isEditing,},
         {id: "ano", type: "number", label: "Ano:*", value: infos.provas.find(p => p._id === prova ?? question?.prova)?.ano, disabled: true,},
         {id: "edicao", type: "text", label: "Edição:*", value: infos.provas.find(p => p._id === prova ?? question?.prova)?.edicao , disabled: true,},
-        {id: "numero", type: "option", label: "Número da Questão:*", options: numberOption, disabled: !question ? false : !isEditing,},
+        {id: "numero", type: "option", label: "Número da Questão:*", options: numberOption, disabled: !question ? false : !isEditing, value: question?.numero},
         {id: "enemArea", type: "option", label: "Área do Conhecimento:*", options: getEnemArea(), value: question?.enemArea, disabled: !question ? false : !isEditing,},
         {id: "materia", type: "option", label: "Disciplina:*", options: materias, value: question?.materia, disabled: !question ? false : !isEditing,},
         {id: "frente1", type: "option", label: "Frente Principal:*", options: frentes, value: question?.frente1, disabled: !question ? false : !isEditing,},
@@ -221,12 +221,18 @@ function ModalDetalhes({ question, infos, handleClose, handleUpdateQuestionStatu
         if(prova){
             getMissingNumber(prova, token)
                 .then((res) => {
-                    if(question?.prova && question?.numero && !res.includes(question.numero)){
-                        setNumberMissing([ question.numero, ...res])
-                    } else {
+                    if(question?.numero && res.includes(question.numero)) {
                         setNumberMissing(res)
+                        setValue('numero', question.numero)
                     }
-                    setValue('numero', res[0])
+                    else if(question?.numero && !res.includes(question.numero) && (prova === question.prova)) {
+                        setNumberMissing([ question.numero, ...res])
+                        setValue('numero', question.numero)
+                    }
+                    else {
+                        setNumberMissing(res)
+                        setValue('numero', res[0])
+                    }
                 })
                 .catch((erro: Error) => {
                     toast.error(erro.message)
