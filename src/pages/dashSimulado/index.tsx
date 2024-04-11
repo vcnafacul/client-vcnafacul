@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { CardDash } from "../../components/molecules/cardDash"
 import DashCardTemplate from "../../components/templates/dashCardTemplate"
+import { DashCardContext } from "../../context/dashCardContext"
 import { ISimuladoDTO } from "../../dtos/simulado/simuladoDto"
 import { StatusEnum } from "../../enums/generic/statusEnum"
 import { getSimulados } from "../../services/simulado/getSimulados"
@@ -44,16 +45,11 @@ function DashSimulado(){
     }
 
     return (
-        <DashCardTemplate<ISimuladoDTO>
-        entities={simulados}
-        setEntities={setSimulados}
-        cardTransformation={cardTransformation}
-        onLoadMoreCard={getMoreCards}
-        limitCardPerPage={limitCards}
-        title="Simulados"
-        filterList={[]}
-        onClickCard={() => {}}
-            />
+        <DashCardContext.Provider value={{ title: "Simulados", entities: simulados, 
+            setEntities: setSimulados, onClickCard: () => {}, getMoreCards, cardTransformation, limitCards}}>
+            <DashCardTemplate />
+        </DashCardContext.Provider>
+        
     )
 }
 

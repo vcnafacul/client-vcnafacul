@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import Button from "../../components/molecules/button";
+import { ButtonProps } from "../../components/molecules/button";
 import { CardDash } from "../../components/molecules/cardDash";
 import DashCardTemplate from "../../components/templates/dashCardTemplate";
+import { DashCardContext } from "../../context/dashCardContext";
 import { Prova } from "../../dtos/prova/prova";
 import { ITipoSimulado } from "../../dtos/simulado/tipoSimulado";
 import { StatusEnum } from "../../enums/generic/statusEnum";
@@ -17,7 +17,7 @@ import { dashProva } from "./data";
 import NewProva from "./modals/newProva";
 import ShowProva from "./modals/showProva";
 
-function DashProva(){
+function DashProva() {
     const [provas, setProvas] = useState<Prova[]>([])
     const [provaSelected, setProvaSelected] = useState<Prova | null>(null)
 
@@ -87,23 +87,20 @@ function DashProva(){
         return await getProvas(token, page, limitCards)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const buttons : ButtonProps[] = [
+        { disabled: !permissao[Roles.cadastrarProvas], onClick: () => { setProvaSelected(null); setOpenNewProva(true) },
+            typeStyle: "quaternary", className:"text-xl font-light rounded-full h-8", children: 'Cadastrar Prova'
+        }
+    ]
+
     return (
-        <>
-        <DashCardTemplate<Prova>
-            title={dashProva.title} 
-            entities={provas}
-            setEntities={setProvas}
-            cardTransformation={cardTransformation}
-            onLoadMoreCard={getMoreCards}
-            limitCardPerPage={limitCards}
-            onClickCard={onClickCard} 
-            filterList={[
-                <Button disabled={!permissao[Roles.cadastrarProvas]} onClick={() => { setProvaSelected(null); setOpenNewProva(true) }} typeStyle="quaternary" 
-                    className="text-xl font-light rounded-full h-8 "><span className="text-4xl">+</span>Cadastrar Prova</Button>
-            ]} />
-        <ModalNewProva />
-        <ModalShowProva />
-        </>
+        <DashCardContext.Provider value={{ title: dashProva.title, entities: provas, 
+            setEntities: setProvas, onClickCard, getMoreCards, cardTransformation, limitCards, buttons}}>
+            <DashCardTemplate />
+            <ModalNewProva />
+            <ModalShowProva />
+        </DashCardContext.Provider>
     )
 }
 

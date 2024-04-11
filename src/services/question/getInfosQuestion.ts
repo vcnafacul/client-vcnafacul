@@ -9,6 +9,5 @@ export async function getInfosQuestion(token: string) {
     if(response.status === 200) {
         return await response.json()
     }
-    console.log(response)
     throw new Error(`${response.status} - Erro ao buscar infos`)
 }

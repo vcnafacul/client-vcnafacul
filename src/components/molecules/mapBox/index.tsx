@@ -6,6 +6,7 @@ import leaflet from 'leaflet';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export interface MarkerPoint {
   id: number;
@@ -40,8 +41,8 @@ function MapBox({ markers, handleClickMarker, zoom = 7, className, mapEvent, cen
     navigator.geolocation.getCurrentPosition(position => {
       const { latitude, longitude } = position.coords;
       setInitialPosition([latitude, longitude]);
-    }, (error) => {
-      console.log({ error })
+    }, () => {
+      toast.info("Não foi possível determinar sua localização")
       setInitialPosition([-21.4638407, -47.0065925]);
     })
   }, []);

@@ -1,0 +1,1 @@
+export const EnemArea = ['Ciências Humanas', 'Linguagens', 'Ciências da Natureza', 'Matemática']
