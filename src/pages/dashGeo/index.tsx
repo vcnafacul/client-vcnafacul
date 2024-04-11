@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
 import { FilterProps } from "../../components/atoms/filter";
 import { SelectProps } from "../../components/atoms/select";
@@ -78,8 +77,7 @@ function DashGeo() {
         .then((res) => {
           setGeolocations(res.data);
         })
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        .catch((_) => setGeolocations([]));
+        .catch(() => setGeolocations([]));
     },
     []
   );
