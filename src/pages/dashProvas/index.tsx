@@ -16,6 +16,7 @@ import { Paginate } from "../../utils/paginate";
 import { dashProva } from "./data";
 import NewProva from "./modals/newProva";
 import ShowProva from "./modals/showProva";
+import ModalTemplate from "../../components/templates/modalTemplate";
 
 function DashProva() {
     const [provas, setProvas] = useState<Prova[]>([])
@@ -56,13 +57,15 @@ function DashProva() {
     }
 
     const ModalNewProva = () => {
-        if(!openNewProva) return null
-        return <NewProva tipos={tipoSimulado!} handleClose={() => setOpenNewProva(false)} addProva={addProva} />
+        return <ModalTemplate handleClose={() => setOpenNewProva(false)} isOpen={openNewProva} outSideClose>
+            <NewProva tipos={tipoSimulado!} addProva={addProva} handleClose={() => setOpenNewProva(false)} />
+        </ModalTemplate>
     }
 
     const ModalShowProva = () => {
-        if(!showProva) return null
-        return <ShowProva prova={provaSelected!} handleClose={() => { setShowProva(false)}} />
+        return <ModalTemplate handleClose={() => { setShowProva(false)}} isOpen={showProva} outSideClose>
+            <ShowProva prova={provaSelected!} />
+        </ModalTemplate>
     }
 
     useEffect(() => {

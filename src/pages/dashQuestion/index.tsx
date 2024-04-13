@@ -16,13 +16,13 @@ import { getInfosQuestion } from "../../services/question/getInfosQuestion";
 import { updateQuestion } from "../../services/question/updateQuestion";
 import { updateStatus } from "../../services/question/updateStatus";
 import { useAuthStore } from "../../store/auth";
+import { EnemArea } from "../../types/question/enemArea";
 import { InfoQuestion } from "../../types/question/infoQuestion";
 import { formatDate } from "../../utils/date";
 import { mergeObjects } from "../../utils/mergeObjects";
 import { Paginate } from "../../utils/paginate";
 import { dashQuest } from "./data";
 import ModalDetalhes from "./modals/modalDetalhes";
-import { EnemArea } from "../../types/question/enemArea";
 
 function DashQuestion() {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -179,9 +179,9 @@ function DashQuestion() {
   }, [token]);
 
   const ModalEdit = () => {
-    if (!openModalEdit) return null;
     return (
       <ModalTabTemplate
+        isOpen={openModalEdit}
         tabs={[
           {
             label: "Detalhes",
@@ -197,17 +197,17 @@ function DashQuestion() {
                 handleAddQuestion={handleAddQuestion}
               />
             ),
+            handleClose: () => { setOpenModalEdit(false); },
           },
-          // { label: "Historico", children: <>Teste 2</>}
         ]}
       />
     );
   };
 
   const ModalRegister = () => {
-    if (!openModalRegister) return null;
     return (
       <ModalTabTemplate
+        isOpen={openModalRegister}
         tabs={[
           {
             label: "Cadastro de Questao",
@@ -223,6 +223,7 @@ function DashQuestion() {
                 handleAddQuestion={handleAddQuestion}
               />
             ),
+            handleClose: () => { setOpenModalRegister(false); },
           },
         ]}
       />
