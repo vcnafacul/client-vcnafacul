@@ -28,7 +28,6 @@ export function SelectOption({
           className="remove-arrow w-full h-full text-lg font-black text-marine pl-4 pr-10 py-1 rounded-xl shadow-md z-50"
           disabled={disabled ?? false}
           defaultValue={defaultValue?.id}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
             setState(options.find((item) => item.id === e.target.value)!);
           }}
