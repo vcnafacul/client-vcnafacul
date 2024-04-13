@@ -19,9 +19,8 @@ function Select({ options, disabled, defaultValue, setState } : SelectProps){
             <select 
             className="remove-arrow text-center w-full h-full text-lg font-black text-marine pl-4 pr-10 py-1 rounded-xl shadow-md z-50"
             disabled={disabled ?? false}
-            defaultValue={defaultValue} 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            onChange={(e: any) => {
+            defaultValue={defaultValue}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                 setState(e.target.value);
             }}>
             {options.map(opt => (
