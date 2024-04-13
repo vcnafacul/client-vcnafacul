@@ -99,7 +99,7 @@ function NewDemand({ handleClose, addDemand }: NewDemandProps) {
           isLoading: false,
           autoClose: 3000,
         });
-        handleClose();
+        handleClose!();
       })
       .catch((error: Error) => {
         toast.update(id, {

@@ -89,7 +89,7 @@ function NewSubject({
           canDelete: true,
           value: res.id,
         });
-        handleClose();
+        handleClose!();
       })
       .catch((error: Error) => {
         toast.update(id, {
@@ -122,7 +122,7 @@ function NewSubject({
           value: body.id,
           canDelete: subject!.canDelete,
         });
-        handleClose();
+        handleClose!();
       })
       .catch((error: Error) => {
         toast.update(id, {

@@ -54,7 +54,7 @@ function ValidatedDemand({
           isLoading: false,
           autoClose: 3000,
         });
-        handleClose();
+        handleClose!();
       })
       .catch((error: Error) => {
         toast.update(id, {
@@ -77,7 +77,7 @@ function ValidatedDemand({
           isLoading: false,
           autoClose: 3000,
         });
-        handleClose();
+        handleClose!();
       })
       .catch((error: Error) => {
         toast.update(id, {

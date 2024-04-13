@@ -73,7 +73,7 @@ function NewFrente({
           autoClose: 3000,
         });
         actionFrente({ label: body.name, value: res.id, canDelete: true });
-        handleClose();
+        handleClose!();
       })
       .catch((error: Error) => {
         toast.update(id, {
@@ -104,7 +104,7 @@ function NewFrente({
           value: frente!.value,
           canDelete: frente!.canDelete,
         });
-        handleClose();
+        handleClose!();
       })
       .catch((error: Error) => {
         toast.update(id, {

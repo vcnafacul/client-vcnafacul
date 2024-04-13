@@ -65,7 +65,6 @@ function DashGeo() {
       <ModalTemplate handleClose={handleCloseModalEdit} outSideClose isOpen={openModal}>
         <ModalEditDashGeo
         geo={geoSelect!}
-        handleClose={handleCloseModalEdit}
         updateStatus={updateStatus}
         updateGeo={updateGeolocation}
         />

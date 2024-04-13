@@ -3,7 +3,7 @@ import { IoMdClose } from "react-icons/io";
 import OutsideClickHandler from "react-outside-click-handler";
 
 export interface ModalProps {
-  handleClose: () => void;
+  handleClose?: () => void;
 }
 
 interface ModalTemplateProps extends ComponentProps<"div"> {
@@ -27,7 +27,7 @@ function ModalTemplate({
           onClick={handleClose}
           className="self-end cursor-pointer w-5 h-5"
         />
-        {children}
+        {React.cloneElement(children as React.ReactElement, { handleClose })}
       </div>
     );
   };

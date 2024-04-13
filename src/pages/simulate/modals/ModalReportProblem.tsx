@@ -46,7 +46,7 @@ function ModalReportProblem({
         }] - ${message}`,
       };
       reportSimulado(body, token).finally(() => {
-        handleClose();
+        handleClose!();
       });
     }
   };

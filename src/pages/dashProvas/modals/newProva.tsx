@@ -10,6 +10,7 @@ import {
 } from "../../../components/molecules/formField";
 import UploadButton from "../../../components/molecules/uploadButton";
 import Form from "../../../components/organisms/form";
+import { ModalProps } from "../../../components/templates/modalTemplate";
 import { CreateProva, Prova } from "../../../dtos/prova/prova";
 import { ObjDefault } from "../../../dtos/question/questionDTO";
 import { ITipoSimulado } from "../../../dtos/simulado/tipoSimulado";
@@ -18,10 +19,9 @@ import { createProva } from "../../../services/prova/createProva";
 import { getInfosQuestion } from "../../../services/question/getInfosQuestion";
 import { useAuthStore } from "../../../store/auth";
 
-interface NewProvaProps {
+interface NewProvaProps extends ModalProps {
   addProva: (data: Prova) => void;
   tipos: ITipoSimulado[];
-  handleClose: () => void;
 }
 
 function NewProva({ addProva, tipos, handleClose }: NewProvaProps) {
@@ -148,7 +148,7 @@ function NewProva({ addProva, tipos, handleClose }: NewProvaProps) {
             isLoading: false,
             autoClose: 3000,
           });
-          handleClose();
+          handleClose!();
         })
         .catch((error: Error) => {
           toast.update(id, {

@@ -59,7 +59,6 @@ function ModalEditDashGeo({
       body["latitude"] = selectedPosition[0];
       body["longitude"] = selectedPosition[1];
     }
-    handleClose();
     UpdateGeolocation({ body, token })
       .then((_) => {
         updateGeo(body);
@@ -71,7 +70,7 @@ function ModalEditDashGeo({
   };
 
   const UpdateStatus = async (body: ValidationGeolocation) => {
-    handleClose();
+    handleClose!();
     UpdateGeolocationStatus({ body, token })
       .then((_) => {
         updateStatus(geo.id as number);

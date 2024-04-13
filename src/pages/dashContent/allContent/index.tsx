@@ -84,7 +84,6 @@ function AllContent() {
       return <ModalTemplate handleClose={() => setOpenShowModal(false)} isOpen={openShowModal && demandSelected?.status === StatusContent.Pending_Upload}>
                 <ShowDemand
             demand={demandSelected!}
-            handleClose={() => setOpenShowModal(false)}
             updateStatusDemand={handleRemoveDemand}
             />
         </ModalTemplate>
@@ -95,7 +94,6 @@ function AllContent() {
         <ValidatedDemand
         demand={demandSelected!}
         updateStatusDemand={handleRemoveDemand}
-        handleClose={() => setOpenShowModal(false)}
       />
     </ModalTemplate>
   };

@@ -272,7 +272,6 @@ function SettingsContent() {
       <NewFrente
         materia={MateriasLabel.find((m) => m.value == materia)!}
         actionFrente={addFrente}
-        handleClose={() => setOpenModalFrente(false)}
       />
     </ModalTemplate>
   };
@@ -287,7 +286,6 @@ function SettingsContent() {
           frente={frenteSelected!}
           materia={MateriasLabel.find((m) => m.value == materia)!}
           actionFrente={editFrente}
-          handleClose={() => setOpenModalFrente(false)}
         />
       </ModalTemplate>
     );
@@ -301,7 +299,6 @@ function SettingsContent() {
         materia={MateriasLabel.find((m) => m.value == materia)!}
         frente={frenteSelected!}
         actionSubject={addSubject}
-        handleClose={() => setOpenModalSubject(false)}
       />
     </ModalTemplate>
   };
@@ -314,7 +311,6 @@ function SettingsContent() {
         frente={frenteSelected!}
         subject={subjectSelected!}
         actionSubject={editSubject}
-        handleClose={() => setOpenModalSubject(false)}
       />
     </ModalTemplate>
   };

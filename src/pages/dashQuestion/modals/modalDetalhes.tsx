@@ -308,7 +308,7 @@ function ModalDetalhes({
 
   const handleUpdateClose = (data: UpdateQuestion) => {
     handleUpdateQuestion(data);
-    handleClose();
+    handleClose!();
   };
 
   const handleSave = (data: CreateQuestion) => {
@@ -338,7 +338,7 @@ function ModalDetalhes({
           createQuestion(data, token)
             .then((res: Question) => {
               handleAddQuestion(res);
-              handleClose();
+              handleClose!();
               toast.success(`Cadastro realizado com sucesso. Id: ${res._id}`);
             })
             .catch((error: Error) => {

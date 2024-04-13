@@ -82,7 +82,7 @@ function ShowDemand({
           isLoading: false,
           autoClose: 3000,
         });
-        handleClose();
+        handleClose!();
       })
       .catch((error: Error) => {
         toast.update(id, {
@@ -124,7 +124,7 @@ function ShowDemand({
           isLoading: false,
           autoClose: 3000,
         });
-        handleClose();
+        handleClose!();
       })
       .catch((error: Error) => {
         toast.update(id, {

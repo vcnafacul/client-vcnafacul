@@ -13,7 +13,7 @@ export interface ModalConfirmCancelProps extends ModalProps{
 
 function ModalConfirmCancel({ handleConfirm, confirmDisabled, text, children, handleClose, isOpen } : ModalConfirmCancelProps){
     return (
-        <ModalTemplate isOpen={isOpen} handleClose={handleClose}>
+        <ModalTemplate isOpen={isOpen} handleClose={handleClose!}>
             <div className="px-4 md:max-w-[600px] rounded-2xl">
             <Text size="tertiary" className="font-black">{text}</Text>
             {children}

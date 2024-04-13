@@ -14,7 +14,7 @@ interface ModalTabTemplateProps {
 function ModalTabTemplate({ tabs, isOpen }: ModalTabTemplateProps) {
   const [indexTabSelect, setIndexTabSelect] = useState<number>(0);
 
-  return <ModalTemplate handleClose={tabs[indexTabSelect].handleClose} outSideClose isOpen={isOpen}>
+  return <ModalTemplate handleClose={tabs[indexTabSelect].handleClose!} outSideClose isOpen={isOpen}>
     <div className="relative">
         <div className="flex -top-7 left-0 z-0">
             {tabs.map((tab, index) => (
