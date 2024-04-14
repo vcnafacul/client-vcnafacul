@@ -56,39 +56,21 @@ function ModalDetalhes({
   const schema = yup
     .object()
     .shape({
-      prova: yup
-        .string()
-        .required("Prova é obrigatoria")
-        .typeError("Por favor, selecione uma prova"),
-      numero: yup
-        .number()
-        .required("Número da questão é obrigatório")
-        .typeError("Por favor, insira um número válido"),
-      enemArea: yup
-        .string()
-        .required("Área do Conhecimento é obrigatorio")
-        .typeError("Área do Conhecimento é obrigatorio"),
-      materia: yup
-        .string()
-        .required("Materia é obrigatoria")
-        .typeError("Materia é obrigatoria"),
-      frente1: yup
-        .string()
-        .required("A Frente Principal é obrigatorio")
-        .typeError("A Frente Principal é obrigatorio"),
-      frente2: yup.string(),
-      frente3: yup.string(),
-      textoQuestao: yup
-        .string()
-        .required("Texto da questão é obrigatorio")
-        .typeError("Texto da questão é obrigatorio"),
-      textoAlternativaA: yup.string(),
-      textoAlternativaB: yup.string(),
-      textoAlternativaC: yup.string(),
-      textoAlternativaD: yup.string(),
-      textoAlternativaE: yup.string(),
-      alternativa: yup.string().required(),
-      imaggeId: yup.string(),
+        prova: yup.string().required('Prova é obrigatoria').typeError('Por favor, selecione uma prova'),
+        numero: yup.number().required('Número da questão é obrigatório').typeError('Por favor, insira um número válido'),
+        enemArea: yup.string().required('Área do Conhecimento é obrigatorio').typeError('Área do Conhecimento é obrigatorio'),
+        materia: yup.string().required('Materia é obrigatoria').typeError('Materia é obrigatoria'),
+        frente1: yup.string().required('A Frente Principal é obrigatorio').typeError('A Frente Principal é obrigatorio'),
+        frente2: yup.string().nullable(),
+        frente3: yup.string().nullable(),
+        textoQuestao: yup.string().required('Texto da questão é obrigatorio').typeError('Texto da questão é obrigatorio'),
+        textoAlternativaA: yup.string(),
+        textoAlternativaB: yup.string(),
+        textoAlternativaC: yup.string(),
+        textoAlternativaD: yup.string(),
+        textoAlternativaE: yup.string(),
+        alternativa: yup.string().required(),
+        imaggeId: yup.string(),
     })
     .required();
 
