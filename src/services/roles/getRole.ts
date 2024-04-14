@@ -17,7 +17,7 @@ export interface RolesResponse {
 
 export async function getRole(roleId: number, token: string) : Promise<RolesResponse>{
 
-    const response = await fetchWrapper(`${role}?id=${roleId}`, {
+    const response = await fetchWrapper(`${role}/${roleId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     });
