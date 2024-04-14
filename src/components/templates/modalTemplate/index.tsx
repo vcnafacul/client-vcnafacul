@@ -1,19 +1,58 @@
-import React, { ComponentProps } from "react"
+import React, { ComponentProps } from "react";
+import { IoMdClose } from "react-icons/io";
+import OutsideClickHandler from "react-outside-click-handler";
 
 export interface ModalProps {
-    handleClose: () => void;
+  handleClose?: () => void;
 }
 
-interface ModalTemplateProps extends ComponentProps<'div'> {
-    children: React.ReactNode;
+interface ModalTemplateProps extends ComponentProps<"div"> {
+  children: React.ReactNode;
+  outSideClose?: boolean;
+  isOpen: boolean;
+  handleClose: () => void;
 }
 
-function ModalTemplate({ children, ...props } : ModalTemplateProps) {
+function ModalTemplate({
+  children,
+  handleClose,
+  outSideClose = false,
+  isOpen,
+  ...props
+}: ModalTemplateProps) {
+  const ModalChildren = () => {
     return (
-        <div className="fixed overflow-y-auto scrollbar-hide scrol w-screen h-screen top-0 left-0 z-50 bg-black bg-opacity-30 flex justify-center items-center" {...props}>
-            {children}
-        </div>
-    )
+      <div className="flex flex-col bg-white w-fit p-4 rounded-md">
+        <IoMdClose
+          onClick={handleClose}
+          className="self-end cursor-pointer w-5 h-5"
+        />
+        {React.cloneElement(children as React.ReactElement, { handleClose })}
+      </div>
+    );
+  };
+
+  return !isOpen ? null : (
+    <div
+      className="fixed top-0 left-0 z-50 bg-black bg-opacity-30 w-screen h-screen overflow-y-auto 
+        scrollbar-hide"
+      {...props}
+    >
+      <div className="w-full h-full flex justify-center items-center">
+        {outSideClose ? (
+          <OutsideClickHandler
+            onOutsideClick={() => {
+              handleClose!();
+            }}
+          >
+            <ModalChildren />
+          </OutsideClickHandler>
+        ) : (
+          <ModalChildren />
+        )}
+      </div>
+    </div>
+  );
 }
 
-export default ModalTemplate
+export default ModalTemplate;

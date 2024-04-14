@@ -1,14 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import ModalConfirmCancel, { ModalConfirmCancelProps } from "../modalConfirmCancel";
+import ModalConfirmCancel, {
+  ModalConfirmCancelProps,
+} from "../modalConfirmCancel";
 
-function ModalConfirmCancelMessage({ handleConfirm, handleCancel, text} : ModalConfirmCancelProps) {
-    const [message, setMessage] = useState<string>("");
-    return (    
-        <ModalConfirmCancel handleConfirm={() => { handleConfirm(message) }} handleCancel={handleCancel} text={text} confirmDisabled={!message}>
-            <textarea onChange={(event: any) => { setMessage(event.target.value) }} className="p-2 w-full mb-4 border border-marine border-opacity-50 h-full min-h-[100px]" />
-        </ModalConfirmCancel>
-    )
+function ModalConfirmCancelMessage({
+  handleConfirm,
+  text,
+  isOpen,
+  handleClose,
+}: ModalConfirmCancelProps) {
+  const [message, setMessage] = useState<string>("");
+  return (
+    <ModalConfirmCancel
+      isOpen={isOpen}
+      handleClose={handleClose}
+      handleConfirm={() => {
+        handleConfirm(message);
+      }}
+      text={text}
+      confirmDisabled={!message}
+    >
+      <textarea
+        onChange={(event: any) => {
+          setMessage(event.target.value);
+        }}
+        className="p-2 w-full mb-4 border border-lightGray border-opacity-90 h-full min-h-[100px]"
+      />
+    </ModalConfirmCancel>
+  );
 }
 
-export default ModalConfirmCancelMessage
+export default ModalConfirmCancelMessage;
