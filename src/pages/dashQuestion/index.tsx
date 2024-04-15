@@ -92,15 +92,21 @@ function DashQuestion() {
   const handleUpdateQuestion = (questionUpdate: UpdateQuestion) => {
     updateQuestion(questionUpdate, token)
       .then(() => {
+        const oldQuestion = questions
+          .find(q => q._id === questionUpdate._id);
+        
+          const newQuestion = {
+            ...mergeObjects(questionUpdate, oldQuestion),
+            title: `${oldQuestion!._id} ${questionUpdate.numero}`,
+          } as Question;
+        
         const newQuestions = questions.map((question) => {
           if (question._id == questionUpdate._id) {
-            return {
-              ...mergeObjects(questionUpdate, question),
-              title: `${question._id} ${questionUpdate.numero}`,
-            } as Question;
+            return newQuestion
           }
           return question;
         });
+        setQuestionSelect(newQuestion);
         setQuestions(newQuestions as Question[]);
         toast.success(`Questao ${questionUpdate._id} atualizada com sucesso`);
       })

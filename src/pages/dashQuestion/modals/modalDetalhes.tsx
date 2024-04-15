@@ -290,7 +290,6 @@ function ModalDetalhes({
 
   const handleUpdateClose = (data: UpdateQuestion) => {
     handleUpdateQuestion(data);
-    handleClose!();
   };
 
   const handleSave = (data: CreateQuestion) => {
