@@ -7,6 +7,7 @@ import { CreateGeolocation } from "../../../../types/geolocation/geolocation";
 import Text from "../../../atoms/text";
 import Button from "../../../molecules/button";
 import Form from "../../form";
+import { regex } from "../data";
 
 function Step4Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: EachStepProps){
   const schema = yup
@@ -15,6 +16,7 @@ function Step4Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
     phone: yup.string(),
     email: yup.string()
       .email('Por favor, insira um email válido')
+      .matches(regex, { message: "Email Inválido" })
       .required('Email Obrigatório'),
     whatsapp: yup.string(),
   })
