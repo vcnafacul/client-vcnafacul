@@ -217,6 +217,7 @@ function ModalDetalhes({
       label: "Número da Questão:*",
       options: numberOption,
       disabled: !question ? false : !isEditing,
+      value: question?.numero,
     },
     {
       id: "enemArea",
@@ -460,16 +461,20 @@ function ModalDetalhes({
     if (prova) {
       getMissingNumber(prova, token)
         .then((res) => {
-          if (
-            question?.prova &&
+          if (question?.numero && res.includes(question.numero)) {
+            setNumberMissing(res);
+            setValue("numero", question.numero);
+          } else if (
             question?.numero &&
-            !res.includes(question.numero)
+            !res.includes(question.numero) &&
+            prova === question.prova
           ) {
             setNumberMissing([question.numero, ...res]);
+            setValue("numero", question.numero);
           } else {
             setNumberMissing(res);
+            setValue("numero", res[0]);
           }
-          setValue("numero", res[0]);
         })
         .catch((erro: Error) => {
           toast.error(erro.message);
