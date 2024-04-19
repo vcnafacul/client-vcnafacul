@@ -56,21 +56,39 @@ function ModalDetalhes({
   const schema = yup
     .object()
     .shape({
-        prova: yup.string().required('Prova é obrigatoria').typeError('Por favor, selecione uma prova'),
-        numero: yup.number().required('Número da questão é obrigatório').typeError('Por favor, insira um número válido'),
-        enemArea: yup.string().required('Área do Conhecimento é obrigatorio').typeError('Área do Conhecimento é obrigatorio'),
-        materia: yup.string().required('Materia é obrigatoria').typeError('Materia é obrigatoria'),
-        frente1: yup.string().required('A Frente Principal é obrigatorio').typeError('A Frente Principal é obrigatorio'),
-        frente2: yup.string().nullable(),
-        frente3: yup.string().nullable(),
-        textoQuestao: yup.string().required('Texto da questão é obrigatorio').typeError('Texto da questão é obrigatorio'),
-        textoAlternativaA: yup.string(),
-        textoAlternativaB: yup.string(),
-        textoAlternativaC: yup.string(),
-        textoAlternativaD: yup.string(),
-        textoAlternativaE: yup.string(),
-        alternativa: yup.string().required(),
-        imaggeId: yup.string(),
+      prova: yup
+        .string()
+        .required("Prova é obrigatoria")
+        .typeError("Por favor, selecione uma prova"),
+      numero: yup
+        .number()
+        .required("Número da questão é obrigatório")
+        .typeError("Por favor, insira um número válido"),
+      enemArea: yup
+        .string()
+        .required("Área do Conhecimento é obrigatorio")
+        .typeError("Área do Conhecimento é obrigatorio"),
+      materia: yup
+        .string()
+        .required("Materia é obrigatoria")
+        .typeError("Materia é obrigatoria"),
+      frente1: yup
+        .string()
+        .required("A Frente Principal é obrigatorio")
+        .typeError("A Frente Principal é obrigatorio"),
+      frente2: yup.string().nullable(),
+      frente3: yup.string().nullable(),
+      textoQuestao: yup
+        .string()
+        .required("Texto da questão é obrigatorio")
+        .typeError("Texto da questão é obrigatorio"),
+      textoAlternativaA: yup.string(),
+      textoAlternativaB: yup.string(),
+      textoAlternativaC: yup.string(),
+      textoAlternativaD: yup.string(),
+      textoAlternativaE: yup.string(),
+      alternativa: yup.string().required(),
+      imaggeId: yup.string(),
     })
     .required();
 
@@ -100,6 +118,7 @@ function ModalDetalhes({
 
   const prova = watch("prova");
   const alternativa = watch("alternativa");
+  const materia = watch("materia");
 
   const previewImage = (file: Blob) => {
     const reader = new FileReader();
@@ -135,11 +154,23 @@ function ModalDetalhes({
     value: m._id,
   }));
 
-  const frentes: FormFieldOption[] = infos.frentes.map((f) => ({
+  const frentesBymateria = infos.frentes.filter((f) =>
+    materia ? f.materia === materia : true
+  );
+  const mainFrente: FormFieldOption[] =
+    frentesBymateria.map(
+      (f) =>
+        ({
+          label: f.nome,
+          value: f._id,
+        } as FormFieldOption)
+    ) || [];
+
+  const OptionalFrentes: FormFieldOption[] = infos.frentes.map((f) => ({
     label: f.nome,
     value: f._id,
   }));
-  frentes.unshift({ label: "", value: undefined });
+  OptionalFrentes.unshift({ label: "", value: undefined });
 
   const numberOption: FormFieldOption[] = numberMissing.map((n) => ({
     label: `${n}`,
@@ -207,7 +238,7 @@ function ModalDetalhes({
       id: "frente1",
       type: "option",
       label: "Frente Principal:*",
-      options: frentes,
+      options: mainFrente,
       value: question?.frente1,
       disabled: !question ? false : !isEditing,
     },
@@ -215,7 +246,7 @@ function ModalDetalhes({
       id: "frente2",
       type: "option",
       label: "Frente Secundária",
-      options: frentes,
+      options: OptionalFrentes,
       value: question?.frente2 ? question?.frente2 : "",
       disabled: !question ? false : !isEditing,
     },
@@ -223,7 +254,7 @@ function ModalDetalhes({
       id: "frente3",
       type: "option",
       label: "Frente Terciária",
-      options: frentes,
+      options: OptionalFrentes,
       value: question?.frente3 ? question?.frente3 : "",
       disabled: !question ? false : !isEditing,
     },
