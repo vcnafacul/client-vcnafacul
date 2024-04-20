@@ -1,9 +1,9 @@
 import { Auth } from "../../store/auth";
 import fetchWrapper from "../../utils/fetchWrapper";
-import { userRoute } from "../urls";
+import { user } from "../urls";
 
 export async function me(token: string): Promise<Auth> {
-    const response = await fetchWrapper(`${userRoute}/me`, {
+    const response = await fetchWrapper(`${user}/me`, {
         method: "GET",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
     });

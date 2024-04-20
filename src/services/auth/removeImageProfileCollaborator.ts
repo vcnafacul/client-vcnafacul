@@ -1,8 +1,8 @@
 import fetchWrapper from "../../utils/fetchWrapper";
-import { userRoute } from "../urls";
+import { user } from "../urls";
 
 export async function removeImageProfileCollaborator(token: string) : Promise<boolean> {
-    const response = await fetchWrapper(`${userRoute}/collaborator`, {
+    const response = await fetchWrapper(`${user}/collaborator`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
     });

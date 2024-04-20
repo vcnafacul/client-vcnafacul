@@ -1,9 +1,9 @@
 import { StatusCodes } from "http-status-codes";
 import fetchWrapper from "../../utils/fetchWrapper";
-import { userRoute } from "../urls";
+import { user } from "../urls";
 
 export async function validNewEmail(email: string): Promise<void> {
-    const response = await fetchWrapper(`${userRoute}/hasemail`, {
+    const response = await fetchWrapper(`${user}/hasemail`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email })

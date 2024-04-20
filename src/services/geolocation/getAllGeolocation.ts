@@ -1,12 +1,18 @@
-import { Geolocation } from "../../types/geolocation/geolocation";
 import { StatusEnum } from "../../enums/generic/statusEnum";
-import { allGeolocation } from "../urls"
+import { Geolocation } from "../../types/geolocation/geolocation";
 import fetchWrapper from "../../utils/fetchWrapper";
+import { Paginate } from "../../utils/paginate";
+import { allGeolocation } from "../urls";
 
-export async function getAllGeolocation(status: StatusEnum): Promise<Geolocation[]> {
-    const url = `${allGeolocation}?offset=0&limit=40&status=${status}`;
-    const res = await fetchWrapper(url, {
+export async function getAllGeolocation(status: StatusEnum, 
+    page: number = 1, limit: number = 40, text: string = ''): Promise<Paginate<Geolocation>> {
+        
+    const url = new URL(allGeolocation);
+    const params : Record<string, string | number> = { status, text, page, limit }
+    Object.keys(params).forEach(key => url.searchParams.append(key, params[key].toString()))
+
+    const res = await fetchWrapper(url.toString(), {
         headers: { "Content-Type": "application/json" },
     });
-    return await res.json() as Geolocation[]  
+    return await res.json() 
 }

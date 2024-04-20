@@ -32,17 +32,18 @@ export async function UpdateGeolocation({ body, token}: UpdateGeolocationProps){
 }
 
 export async function UpdateGeolocationStatus({ body, token}: UpdateGeolocationProps){
-    try {
-        const response = await fetchWrapper(`${geolocations}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify(body),
-        });
+    const response = await fetchWrapper(`${geolocations}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(body),
+    });
+    if(response.status !== 200) {
         const res = await response.json()
-        return res
-    } catch (error: any) {
-        throw new Error(`Erro Interno - Informar a Administracão - ${error.message}`)
+        let messageErro = ""
+        res.message.map((m: string) => messageErro =  messageErro.concat(m).concat("; "))
+        throw new Error(messageErro)
     }
+        
     
 }
 

@@ -3,8 +3,8 @@ export interface CreateQuestion {
     prova: string
     enemArea: string
     frente1: string
-    frente2?: string
-    frente3?: string
+    frente2?: string | null
+    frente3?: string | null
     materia: string
     numero: number
     textoQuestao: string

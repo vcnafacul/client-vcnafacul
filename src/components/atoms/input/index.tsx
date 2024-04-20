@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentProps } from "react";
-import { VariantProps, tv } from "tailwind-variants"
+import { VariantProps, tv } from "tailwind-variants";
 import { FormFieldOption } from "../../molecules/formField";
 import { FieldValues, UseFormRegister } from 'react-hook-form';
 
@@ -36,7 +36,7 @@ function Input({ erro, size, className, type, options, defaultValue, register, .
         return (
             <select {...register(props.name!)} disabled={props.disabled} className={input({ erro, size, className })} defaultValue={defaultValue}>
                 {options!.map((opt, index) => (
-                    <option key={index} value={opt.value}>{opt.label}</option>
+                    <option selected={opt.value === defaultValue} key={index} value={opt.value}>{opt.label}</option>
                     ))}
             </select>
         )
