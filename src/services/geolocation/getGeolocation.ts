@@ -3,12 +3,13 @@ import fetchWrapper from "../../utils/fetchWrapper";
 import { Paginate } from "../../utils/paginate";
 import { geolocations } from "../urls";
 
-const getGeolocation = async (page:number = 1, limit:number = 30) : Promise<Paginate<Geolocation>> => {
-    const response = await fetchWrapper(`${geolocations}?page=${page}&limit=${limit}`, {
+export async function getGeolocation() : Promise<Paginate<Geolocation>> {
+
+    const res = await fetchWrapper(`${geolocations}?page=1&limit=1000&status=1&text=`, {
         headers: { "Content-Type": "application/json" },
     });
-    
-    if(response.status !== 200) {
+
+    if(res.status !== 200) {
         return {
             data: [] as Geolocation[],
             page: 1,
@@ -16,7 +17,8 @@ const getGeolocation = async (page:number = 1, limit:number = 30) : Promise<Pagi
             totalItems: 0
         }
     }
-    return await response.json()
+
+    return await res.json()
 }
 
-export default getGeolocation 
+export default getGeolocation
