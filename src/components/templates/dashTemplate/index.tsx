@@ -38,7 +38,7 @@ function DashTemplate({  className, hasMenu } : DashTemplateProps){
         <BaseTemplateContext.Provider value={{ header: headerDash, hasFooter: false }}>
             <BaseTemplate  className={`overflow-y-clip scrollbar-hide h-full w-full ${className}`} solid position="fixed">
                 <div className={`relative top-[76px] h-[calc(100vh-76px)] w-full flex flex-row`}>
-                    <div className={`mr-16 ${dashTemplate({ hasMenu })}`}>
+                    <div className={`mr-16 md:mr-0 ${dashTemplate({ hasMenu })}`}>
                         <Outlet />
                     </div>
 
