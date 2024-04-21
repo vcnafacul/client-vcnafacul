@@ -355,7 +355,7 @@ function ModalDetalhes({
     },
     {
       name: "reported",
-      title: "Alternativa Correta",
+      title: "Report",
       checked: reported,
       disabled: !question ? false : !isEditing,
     },
