@@ -15,9 +15,9 @@ import { useAuthStore } from "../../../store/auth";
 import { useSimuladoStore } from "../../../store/simulado";
 import { dataModalNew } from "./data";
 import data from "./data.json";
+import { ModalProps } from "../../../components/templates/modalTemplate";
 
-interface NewSimulateProps {
-  handleClose: () => void;
+interface NewSimulateProps extends ModalProps {
   title: string;
 }
 
