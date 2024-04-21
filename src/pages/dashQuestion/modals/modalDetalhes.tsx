@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import * as yup from "yup";
 import { ReactComponent as Preview } from "../../../assets/icons/Icon-preview.svg";
 import Alternative from "../../../components/atoms/alternative";
+import { Checkbox, CheckboxProps } from "../../../components/atoms/checkbox";
 import ModalImage from "../../../components/atoms/modalImage";
 import Text from "../../../components/atoms/text";
 import BLink from "../../../components/molecules/bLink";
@@ -88,7 +89,13 @@ function ModalDetalhes({
       textoAlternativaD: yup.string(),
       textoAlternativaE: yup.string(),
       alternativa: yup.string().required(),
-      imaggeId: yup.string(),
+      imageId: yup.string(),
+      provaClassification: yup.bool(),
+      subjectClassification: yup.bool(),
+      textClassification: yup.bool(),
+      imageClassfication: yup.bool(),
+      alternativeClassfication: yup.bool(),
+      reported: yup.bool(),
     })
     .required();
 
@@ -119,6 +126,15 @@ function ModalDetalhes({
   const prova = watch("prova");
   const alternativa = watch("alternativa");
   const materia = watch("materia");
+
+  const provaClassification = watch("provaClassification");
+  const subjectClassification = watch("subjectClassification");
+  const textClassification = watch("textClassification");
+  const imageClassfication = watch("imageClassfication");
+  const alternativeClassfication = watch("alternativeClassfication");
+  const reported = watch("reported");
+
+  console.log(textClassification);
 
   const previewImage = (file: Blob) => {
     const reader = new FileReader();
@@ -302,6 +318,45 @@ function ModalDetalhes({
       type: "text",
       label: "Alternativa E:",
       value: question?.textoAlternativaE,
+      disabled: !question ? false : !isEditing,
+    },
+  ];
+
+  const checkboxData: CheckboxProps[] = [
+    {
+      name: "provaClassification",
+      title: "Classiicação de Prova",
+      checked: provaClassification,
+      disabled: !question ? false : !isEditing,
+    },
+    {
+      name: "subjectClassification",
+      title: "Classificação de Disciplina e Frente",
+      checked: subjectClassification,
+      disabled: !question ? false : !isEditing,
+    },
+    {
+      name: "textClassification",
+      title: "Texto da Questão/alternativas",
+      checked: textClassification,
+      disabled: !question ? false : !isEditing,
+    },
+    {
+      name: "imageClassfication",
+      title: "Imagem",
+      checked: imageClassfication,
+      disabled: !question ? false : !isEditing,
+    },
+    {
+      name: "alternativeClassfication",
+      title: "Alternativa Correta",
+      checked: alternativeClassfication,
+      disabled: !question ? false : !isEditing,
+    },
+    {
+      name: "reported",
+      title: "Alternativa Correta",
+      checked: reported,
       disabled: !question ? false : !isEditing,
     },
   ];
@@ -541,6 +596,12 @@ function ModalDetalhes({
       setValue("textoAlternativaD", question.textoAlternativaD);
       setValue("textoAlternativaE", question.textoAlternativaE);
       setValue("alternativa", question.alternativa);
+      setValue("provaClassification", question.provaClassification);
+      setValue("subjectClassification", question.subjectClassification);
+      setValue("textClassification", question.textClassification);
+      setValue("imageClassfication", question.imageClassfication);
+      setValue("alternativeClassfication", question.alternativeClassfication);
+      setValue("reported", question.reported);
     }
     getMissing();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -665,6 +726,15 @@ function ModalDetalhes({
             </div>
           )}
           <BDownloadProva />
+          <Text
+            className="flex w-full justify-center gap-4 items-center"
+            size="tertiary"
+          >
+            Revisões necessárias
+          </Text>
+          {checkboxData.map((check) => (
+            <Checkbox key={check.name} {...check} setValue={setValue} />
+          ))}
           <div className="grid grid-cols-2 gap-1 w-full">
             <Buttons />
           </div>
