@@ -18,6 +18,7 @@ function ModalConfirmCancel({ handleConfirm, confirmDisabled, text, children, ha
             <Text size="tertiary" className="font-black">{text}</Text>
             {children}
             <div className="flex gap-2">
+                <Button disabled={confirmDisabled ?? false} size="small" typeStyle="quaternary" hover onClick={() => { handleClose!() }}>Cancel</Button>
                 <Button disabled={confirmDisabled ?? false} size="small" typeStyle="quaternary" hover onClick={() => { handleConfirm() }}>Confirmar</Button>
             </div>
             </div>

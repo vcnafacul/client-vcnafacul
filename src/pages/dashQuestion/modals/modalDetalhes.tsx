@@ -1,6 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { IoMdTrash } from "react-icons/io";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 import { ReactComponent as Preview } from "../../../assets/icons/Icon-preview.svg";
@@ -30,6 +31,7 @@ import { StatusEnum } from "../../../enums/generic/statusEnum";
 import { Roles } from "../../../enums/roles/roles";
 import { getMissingNumber } from "../../../services/prova/getMissingNumber";
 import { createQuestion } from "../../../services/question/createQuestion";
+import { deleteQuestion } from "../../../services/question/deleteQuestion";
 import { uploadImage } from "../../../services/question/uploadImage";
 import { useAuthStore } from "../../../store/auth";
 import { BtnProps } from "../../../types/generic/btnProps";
@@ -115,6 +117,7 @@ function ModalDetalhes({
   const [modified, setModified] = useState<boolean>(false);
   const [comeBack, setComeback] = useState<boolean>(false);
   const [numberMissing, setNumberMissing] = useState<number[]>([]);
+  const [tryDelete, setTryDelete] = useState<boolean>(false);
 
   const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>(
     null
@@ -419,6 +422,17 @@ function ModalDetalhes({
     }
   };
 
+  const handleDelete = () => {
+    deleteQuestion(question!._id, token)
+      .then(() => {
+        handleClose!();
+        toast.success(`Questão ${question?._id} deletada com sucess`);
+      })
+      .catch((erro: Error) => {
+        toast.error(`Erro ao deletar questão ${erro.message}`);
+      });
+  };
+
   const btns: BtnProps[] = [
     {
       children: "Aceitar",
@@ -570,6 +584,21 @@ function ModalDetalhes({
           resetAsyncForm();
           setModified(false);
           setIsEditing(false);
+        }}
+      />
+    );
+  };
+
+  const ModalDeleteQuestion = () => {
+    return (
+      <ModalConfirmCancel
+        isOpen={tryDelete}
+        handleClose={() => {
+          setTryDelete(false);
+        }}
+        text="Ao confirmar a ação, a questão será excluida e não haverá volta. Deseja continuar?"
+        handleConfirm={() => {
+          handleDelete();
         }}
       />
     );
@@ -740,9 +769,18 @@ function ModalDetalhes({
           </div>
         </div>
       </form>
+      <div
+        className={`flex justify-end cursor-pointer my-4 md:my-0 ${
+          !question && "hidden"
+        }`}
+        onClick={() => setTryDelete(true)}
+      >
+        <IoMdTrash className="w-10 h-10 fill-white bg-redError p-1 rounded shadow shadow-zinc-300" />
+      </div>
       <QuestionImageModal />
       <ModalRefused />
       <ModalComeBack />
+      <ModalDeleteQuestion />
     </>
   );
 }
