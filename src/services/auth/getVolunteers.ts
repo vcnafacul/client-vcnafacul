@@ -15,7 +15,7 @@ export async function getVolunteers (): Promise<Volunteer[]> {
     const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
     const volunteers : Volunteer[] = res.map(volunteer => ({
         name: volunteer.firstName  + ' ' + volunteer.lastName,
-        image: `${VITE_FTP_PROFILE}/${volunteer.collaboratorPhoto}`,
+        image: `${VITE_FTP_PROFILE}${volunteer.collaboratorPhoto}`,
         description: volunteer.collaboratorDescription,
         alt: `foto colaborador ${volunteer.lastName}`
     }))

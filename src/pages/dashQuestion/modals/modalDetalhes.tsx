@@ -1,10 +1,12 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { IoMdTrash } from "react-icons/io";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 import { ReactComponent as Preview } from "../../../assets/icons/Icon-preview.svg";
 import Alternative from "../../../components/atoms/alternative";
+import { Checkbox, CheckboxProps } from "../../../components/atoms/checkbox";
 import ModalImage from "../../../components/atoms/modalImage";
 import Text from "../../../components/atoms/text";
 import BLink from "../../../components/molecules/bLink";
@@ -29,6 +31,7 @@ import { StatusEnum } from "../../../enums/generic/statusEnum";
 import { Roles } from "../../../enums/roles/roles";
 import { getMissingNumber } from "../../../services/prova/getMissingNumber";
 import { createQuestion } from "../../../services/question/createQuestion";
+import { deleteQuestion } from "../../../services/question/deleteQuestion";
 import { uploadImage } from "../../../services/question/uploadImage";
 import { useAuthStore } from "../../../store/auth";
 import { BtnProps } from "../../../types/generic/btnProps";
@@ -88,7 +91,13 @@ function ModalDetalhes({
       textoAlternativaD: yup.string(),
       textoAlternativaE: yup.string(),
       alternativa: yup.string().required(),
-      imaggeId: yup.string(),
+      imageId: yup.string(),
+      provaClassification: yup.bool(),
+      subjectClassification: yup.bool(),
+      textClassification: yup.bool(),
+      imageClassfication: yup.bool(),
+      alternativeClassfication: yup.bool(),
+      reported: yup.bool(),
     })
     .required();
 
@@ -108,6 +117,7 @@ function ModalDetalhes({
   const [modified, setModified] = useState<boolean>(false);
   const [comeBack, setComeback] = useState<boolean>(false);
   const [numberMissing, setNumberMissing] = useState<number[]>([]);
+  const [tryDelete, setTryDelete] = useState<boolean>(false);
 
   const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>(
     null
@@ -119,6 +129,15 @@ function ModalDetalhes({
   const prova = watch("prova");
   const alternativa = watch("alternativa");
   const materia = watch("materia");
+
+  const provaClassification = watch("provaClassification");
+  const subjectClassification = watch("subjectClassification");
+  const textClassification = watch("textClassification");
+  const imageClassfication = watch("imageClassfication");
+  const alternativeClassfication = watch("alternativeClassfication");
+  const reported = watch("reported");
+
+  console.log(textClassification);
 
   const previewImage = (file: Blob) => {
     const reader = new FileReader();
@@ -306,6 +325,45 @@ function ModalDetalhes({
     },
   ];
 
+  const checkboxData: CheckboxProps[] = [
+    {
+      name: "provaClassification",
+      title: "Classiicação de Prova",
+      checked: provaClassification,
+      disabled: !question ? false : !isEditing,
+    },
+    {
+      name: "subjectClassification",
+      title: "Classificação de Disciplina e Frente",
+      checked: subjectClassification,
+      disabled: !question ? false : !isEditing,
+    },
+    {
+      name: "textClassification",
+      title: "Texto da Questão/alternativas",
+      checked: textClassification,
+      disabled: !question ? false : !isEditing,
+    },
+    {
+      name: "imageClassfication",
+      title: "Imagem",
+      checked: imageClassfication,
+      disabled: !question ? false : !isEditing,
+    },
+    {
+      name: "alternativeClassfication",
+      title: "Alternativa Correta",
+      checked: alternativeClassfication,
+      disabled: !question ? false : !isEditing,
+    },
+    {
+      name: "reported",
+      title: "Report",
+      checked: reported,
+      disabled: !question ? false : !isEditing,
+    },
+  ];
+
   const QuestionImageModal = () => {
     return (
       <ModalTemplate
@@ -362,6 +420,17 @@ function ModalDetalhes({
           toast.error(error.message);
         });
     }
+  };
+
+  const handleDelete = () => {
+    deleteQuestion(question!._id, token)
+      .then(() => {
+        handleClose!();
+        toast.success(`Questão ${question?._id} deletada com sucess`);
+      })
+      .catch((erro: Error) => {
+        toast.error(`Erro ao deletar questão ${erro.message}`);
+      });
   };
 
   const btns: BtnProps[] = [
@@ -520,6 +589,21 @@ function ModalDetalhes({
     );
   };
 
+  const ModalDeleteQuestion = () => {
+    return (
+      <ModalConfirmCancel
+        isOpen={tryDelete}
+        handleClose={() => {
+          setTryDelete(false);
+        }}
+        text="Ao confirmar a ação, a questão será excluida e não haverá volta. Deseja continuar?"
+        handleConfirm={() => {
+          handleDelete();
+        }}
+      />
+    );
+  };
+
   useEffect(() => {
     if (!prova && question?.prova) {
       setValue("prova", question.prova);
@@ -541,6 +625,12 @@ function ModalDetalhes({
       setValue("textoAlternativaD", question.textoAlternativaD);
       setValue("textoAlternativaE", question.textoAlternativaE);
       setValue("alternativa", question.alternativa);
+      setValue("provaClassification", question.provaClassification);
+      setValue("subjectClassification", question.subjectClassification);
+      setValue("textClassification", question.textClassification);
+      setValue("imageClassfication", question.imageClassfication);
+      setValue("alternativeClassfication", question.alternativeClassfication);
+      setValue("reported", question.reported);
     }
     getMissing();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -665,14 +755,32 @@ function ModalDetalhes({
             </div>
           )}
           <BDownloadProva />
+          <Text
+            className="flex w-full justify-center gap-4 items-center"
+            size="tertiary"
+          >
+            Revisões necessárias
+          </Text>
+          {checkboxData.map((check) => (
+            <Checkbox key={check.name} {...check} setValue={setValue} />
+          ))}
           <div className="grid grid-cols-2 gap-1 w-full">
             <Buttons />
           </div>
         </div>
       </form>
+      <div
+        className={`flex justify-end cursor-pointer my-4 md:my-0 ${
+          !question && "hidden"
+        }`}
+        onClick={() => setTryDelete(true)}
+      >
+        <IoMdTrash className="w-10 h-10 fill-white bg-redError p-1 rounded shadow shadow-zinc-300" />
+      </div>
       <QuestionImageModal />
       <ModalRefused />
       <ModalComeBack />
+      <ModalDeleteQuestion />
     </>
   );
 }
