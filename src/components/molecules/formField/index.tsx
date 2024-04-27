@@ -42,7 +42,7 @@ function FormField<T extends FieldValues>({id, label, type = "text", visibility 
         disabled: disabled ?? false,
         type: visible ? "text" : type,
         options: options,
-        defaultValue: value,
+        value: value,
       };
 
     return (

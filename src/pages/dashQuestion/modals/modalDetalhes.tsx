@@ -137,8 +137,6 @@ function ModalDetalhes({
   const alternativeClassfication = watch("alternativeClassfication");
   const reported = watch("reported");
 
-  console.log(textClassification);
-
   const previewImage = (file: Blob) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -634,7 +632,7 @@ function ModalDetalhes({
     }
     getMissing();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [infos.provas, prova, setValue]);
+  }, [infos.provas, prova]);
 
   const BDownloadProva = () => {
     if (!prova) return null;
