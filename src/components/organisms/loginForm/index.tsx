@@ -29,7 +29,7 @@ function LoginForm({ title, subtitle, forgot, labelSubmit, formData } : LoginFor
                 navigate(DASH);
             })
             .catch((e: Error) => {
-                toast.error(`Erro ao tentar fazer login - ${e.message}`)
+                toast.error(`Erro ao tentar fazer login - ${e.message}`, { autoClose: 10000 })
             })
     }
 

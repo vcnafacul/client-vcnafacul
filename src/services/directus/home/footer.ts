@@ -9,6 +9,6 @@ export async function getFooter(): Promise<FooterProps> {
     })
     return (await response.json()).data
   } catch (error) {
-    throw Error('Não foi possível recuperar seção Novas Funcionalidades')
+    throw Error('Não foi possível recuperar seção Footer')
   }
 }

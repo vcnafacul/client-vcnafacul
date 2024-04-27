@@ -22,9 +22,9 @@ export const geoForm : GeoFormProps = {
         title: 'Dados Pessoais',
         subtitle: 'Nos conte um pouco sobre você e sua relação com o cursinho que está cadastrando',
         form: [
-          {id: "userFullName", label: "Nome Completo"},
-          {id: 'userEmail', label: 'E-mail', type: 'email'},
-          {id: "userPhone", label: "Telefone"},
+          {id: "userFullName", label: "Nome Completo*"},
+          {id: 'userEmail', label: 'E-mail*', type: 'email'},
+          {id: "userPhone", label: "Telefone*"},
           {id: "userConnection", label: "Relaçao com o cursinho cadastrado:*",  type: 'option', options: occupation},
         ]
       },
