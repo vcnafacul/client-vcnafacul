@@ -32,6 +32,12 @@ export interface QuestionDto {
   quantidadeResposta: number;
   status: StatusEnum;
   updatedAt?: DateTime;
+  provaClassification: boolean;
+  subjectClassification: boolean;
+  textClassification: boolean;
+  imageClassfication: boolean;
+  alternativeClassfication: boolean;
+  reported: boolean;
 }
 
 export interface Question extends QuestionDto {
