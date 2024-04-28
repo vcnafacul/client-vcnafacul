@@ -54,7 +54,7 @@ function Step1Geo({
         <Form
           className="flex flex-col gap-4 my-4 w-full"
           formFields={form.map((f) => {
-            f.value = dataGeo![f.id as keyof CreateGeolocation] || "";
+            f.defaultValue = dataGeo![f.id as keyof CreateGeolocation] || "";
             return f;
           })}
           register={register}
