@@ -767,14 +767,16 @@ function ModalDetalhes({
           </div>
         </div>
       </form>
-      <div
-        className={`flex justify-end cursor-pointer my-4 md:my-0 ${
-          !question && "hidden"
-        }`}
-        onClick={() => setTryDelete(true)}
-      >
-        <IoMdTrash className="w-10 h-10 fill-white bg-redError p-1 rounded shadow shadow-zinc-300" />
-      </div>
+      {permissao.validarQuestao && (
+        <div
+          className={`flex justify-end cursor-pointer my-4 md:my-0 ${
+            !question && "hidden"
+          }`}
+          onClick={() => setTryDelete(true)}
+        >
+          <IoMdTrash className="w-10 h-10 fill-white bg-redError p-1 rounded shadow shadow-zinc-300" />
+        </div>
+      )}
       <QuestionImageModal />
       <ModalRefused />
       <ModalComeBack />
