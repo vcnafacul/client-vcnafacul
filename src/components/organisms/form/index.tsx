@@ -18,6 +18,7 @@ function Form({ formFields, register, errors, ...props } : FormProps){
                     key={fData.id} 
                     label={fData.label} 
                     value={fData.value} 
+                    defaultValue={fData.defaultValue}
                     type={fData.type} 
                     visibility={fData.visibility} 
                     disabled={fData.disabled}

@@ -36,7 +36,7 @@ function Step4Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
       <Text className="text-wrap mx-10" size="tertiary">{subtitle}</Text>
       <form className="w-full max-w-lg mx-auto" onSubmit={handleSubmit(handleForm)}>
       <Form className="flex flex-col gap-4 my-4 w-full" formFields={form.map(f => {
-          f.value = dataGeo![f.id as keyof CreateGeolocation]  || ''
+          f.defaultValue = dataGeo![f.id as keyof CreateGeolocation]  || ''
           return f
         })} register={register} errors={errors} />
         <div className="flex gap-4">
