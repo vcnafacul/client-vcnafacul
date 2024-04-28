@@ -767,7 +767,7 @@ function ModalDetalhes({
           </div>
         </div>
       </form>
-      {permissao.validarQuestao && (
+      {permissao.validarQuestao && question && question.status !== 1 && (
         <div
           className={`flex justify-end cursor-pointer my-4 md:my-0 ${
             !question && "hidden"
