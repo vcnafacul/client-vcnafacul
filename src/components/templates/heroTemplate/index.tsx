@@ -34,7 +34,7 @@ function HeroTemplate({ children, headerPosition = 'relative' }: HeroTemplatePro
     
 
     return (
-        <div ref={scrollContainerRef as LegacyRef<HTMLDivElement>} className="flex flex-col overflow-y-auto scrollbar-hide h-screen">
+        <div ref={scrollContainerRef as LegacyRef<HTMLDivElement>} className="flex flex-col overflow-y-auto scrollbar-hide h-screen overflow-x-hidden">
             <BaseTemplate solid={solid} position={headerPosition} headerShadow={false}>
                 <Hero />
                 { children }

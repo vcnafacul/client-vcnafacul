@@ -43,7 +43,7 @@ function HomeNews(){
 
     return (
         <div className="relative w-full">
-            <TriangleGreen className="absolute w-[500px] -right-[250px] bottom-0" />
+            <TriangleGreen className="absolute w-[500px] rotate-[135deg] bottom-0 -right-[162px]" />
             <div className="grid grid-cols-4 container mx-auto gap-4">
             <div className="col-span-4 md:col-span-2">
                 <Text size="secondary">Não perca nossas novidades!</Text>
