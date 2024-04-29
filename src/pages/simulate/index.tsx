@@ -177,14 +177,18 @@ function Simulate() {
   const ReportProblem = () => {
     if (!reportProblem) return null;
     return (
-      <ModalReportProblem
-        questionProblem={questionProblem}
-        idQuestion={questionSelected._id}
-        numberQuestion={questionSelected.numero + 1}
+      <ModalTemplate
+        isOpen={reportProblem}
         handleClose={() => {
           setReportProblem(false);
         }}
-      />
+      >
+        <ModalReportProblem
+          questionProblem={questionProblem}
+          idQuestion={questionSelected._id}
+          numberQuestion={questionSelected.numero + 1}
+        />
+      </ModalTemplate>
     );
   };
 
