@@ -51,7 +51,7 @@ export const registerForm : RegisterFormProps = {
             {id: "firstName", label: "Nome"},
             {id: "lastName", label: "Sobrenome"},
             {id: "gender", label: "Gênero",  type: 'option', options: optionsGender},
-            {id: "birthday", type:"date", label: "Data de Nascimento", value: '01/01/2022'},
+            {id: "birthday", type:"date", label: "Data de Nascimento", defaultValue: '01/01/2022'},
             {id: "phone", label: "Telefone"},
             {id: "state", label: "Estado", type: 'option',  options: stateOptions},
             {id: "city", label: "Cidade"},
