@@ -70,7 +70,7 @@ function Account() {
       id: "birthday",
       type: "date",
       label: "Data de Nascimento:",
-      value: userAccount?.birthday ? userAccount.birthday.split("T")[0] : "",
+      defaultValue: userAccount?.birthday ? userAccount.birthday.split("T")[0] : "",
     },
     {
       id: "phone",
