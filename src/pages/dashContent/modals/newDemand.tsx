@@ -131,7 +131,7 @@ function NewDemand({ handleClose, addDemand }: NewDemandProps) {
 
   const getFrenteByMateria = useCallback(
     async (materia: Materias) => {
-      getFrenteLikeFormField(materia ? materia : Materias.LPT, token)
+      getFrenteLikeFormField(materia ? materia : Materias.LinguaPortuguesa, token)
         .then((res) => {
           setFrentes(res);
           if (res.length > 0) {
