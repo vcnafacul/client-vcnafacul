@@ -92,7 +92,7 @@ export function PlatformRoutes() {
                     </ProtectedRoutePermission>} />
 
                 <Route path={DASH_PROVAS} element={
-                    <ProtectedRoutePermission permission={data.permissao[Roles.alterarPermissao]}>
+                    <ProtectedRoutePermission permission={data.permissao[Roles.visualizarProvas]}>
                         <DashProva />
                     </ProtectedRoutePermission>} />
 
@@ -105,7 +105,7 @@ export function PlatformRoutes() {
                     <ProtectedRoutePermission permission={data.permissao[Roles.criarSimulado]}>
                         <DashSimulado />
                     </ProtectedRoutePermission>} />
-            </Route>
+                </Route>
 
             <Route path="*" element={<Navigate to={data.token ? DASH : HOME_PATH} replace />} />
         </Routes>
