@@ -129,6 +129,7 @@ function ModalDetalhes({
   const prova = watch("prova");
   const alternativa = watch("alternativa");
   const materia = watch("materia");
+  const enemArea = watch("enemArea");
 
   const provaClassification = watch("provaClassification");
   const subjectClassification = watch("subjectClassification");
@@ -166,7 +167,11 @@ function ModalDetalhes({
   }));
   provas.unshift({ label: "", value: "" });
 
-  const materias: FormFieldOption[] = infos.materias.map((m) => ({
+  const matetiasByEnemArea = infos.materias.filter((m) =>
+    enemArea ? m.enemArea === enemArea : true
+  );
+
+  const materias: FormFieldOption[] = matetiasByEnemArea.map((m) => ({
     label: m.nome,
     value: m._id,
   }));
@@ -633,6 +638,16 @@ function ModalDetalhes({
     getMissing();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [infos.provas, prova]);
+
+  useEffect(() => {
+    setValue("materia", materias[0].value as string);
+
+    const frente = infos.frentes.find(
+      (f) => f.materia === (materias[0].value as string)
+    );
+    setValue("frente1", frente?._id as string);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enemArea]);
 
   const BDownloadProva = () => {
     if (!prova) return null;
