@@ -16,23 +16,24 @@ import {
   SIMULADO,
 } from "../../routes/path";
 
+import { ReactComponent as Artes } from "../../assets/icons/home-subjects-arte.svg";
 import { ReactComponent as Espanhol } from "../../assets/icons/home-subjects-espanhol.svg";
 import { ReactComponent as Gramatica } from "../../assets/icons/home-subjects-gramatica.svg";
-import { ReactComponent as LPT } from "../../assets/icons/home-subjects-leitura-prod-textos.svg";
-import { ReactComponent as Literatura } from "../../assets/icons/home-subjects-literatura.svg";
+import { ReactComponent as Ingles } from "../../assets/icons/home-subjects-ingles.svg";
 
 import { ReactComponent as Biologia } from "../../assets/icons/home-subjects-biologia.svg";
 import { ReactComponent as Fisica } from "../../assets/icons/home-subjects-fisica.svg";
 import { ReactComponent as Matematica } from "../../assets/icons/home-subjects-matematica.svg";
 import { ReactComponent as Quimica } from "../../assets/icons/home-subjects-quimica.svg";
 
+import { ReactComponent as Atualidades } from "../../assets/icons/home-subjects-atualidades.svg";
 import { ReactComponent as Filosofia } from "../../assets/icons/home-subjects-filosofia.svg";
 import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-geografia.svg";
 import { ReactComponent as Historia } from "../../assets/icons/home-subjects-historia.svg";
 import { ReactComponent as Sociologia } from "../../assets/icons/home-subjects-sociologia.svg";
 
 import { ReactComponent as Report } from "../../assets/icons/warning.svg";
-
+ 
 import { DashCardMenu } from "../../components/molecules/dashCard";
 import { HeaderData } from "../../components/organisms/header";
 import { Materias, getMateriaString } from "../../enums/content/materias";
@@ -75,19 +76,19 @@ export const dashCardMenuItems: DashCardMenu[] = [
     alt: "Linguagens",
     subMenuList: [
       {
-        icon: LPT,
+        icon: Gramatica,
         alt: "língua portuguesa",
         text: getMaterialLabel(Materias.LinguaPortuguesa),
         link: `${ESTUDO}/${getMateriaString(Materias.LinguaPortuguesa)}`,
       },
       {
-        icon: Gramatica,
+        icon: Ingles,
         alt: "língua estrangeira",
         text: getMaterialLabel(Materias.LinguaEstrangeira),
         link: `${ESTUDO}/${getMateriaString(Materias.LinguaEstrangeira)}`,
       },
       {
-        icon: Literatura,
+        icon: Artes,
         alt: "artes",
         text: getMaterialLabel(Materias.Artes),
         link: `${ESTUDO}/${getMateriaString(Materias.Artes)}`,
@@ -153,7 +154,7 @@ export const dashCardMenuItems: DashCardMenu[] = [
         link: `${ESTUDO}/${getMateriaString(Materias.Sociologia)}`,
       },
       {
-        icon: Sociologia,
+        icon: Atualidades,
         alt: "atualidades",
         text: getMaterialLabel(Materias.Atualidades),
         link: `${ESTUDO}/${getMateriaString(Materias.Atualidades)}`,
