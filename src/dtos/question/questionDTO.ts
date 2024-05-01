@@ -10,6 +10,10 @@ export interface FrenteObjDefault extends ObjDefault {
   materia: string;
 }
 
+export interface MateriaObjDefault extends ObjDefault {
+  enemArea: string;
+}
+
 export interface QuestionDto {
   _id: string;
   prova: string;
