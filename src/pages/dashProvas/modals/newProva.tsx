@@ -106,7 +106,7 @@ function NewProva({ addProva, tipos, handleClose }: NewProvaProps) {
       id: "ano",
       type: "number",
       label: "Ano de Realização",
-      value: 2023,
+      defaultValue: 2023,
       disabled: false,
     },
   ];
