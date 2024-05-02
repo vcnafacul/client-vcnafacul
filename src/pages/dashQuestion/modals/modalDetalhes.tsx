@@ -62,7 +62,8 @@ function ModalDetalhes({
       prova: yup
         .string()
         .required("Prova é obrigatoria")
-        .typeError("Por favor, selecione uma prova"),
+        .typeError("Por favor, selecione uma prova")
+        .default(question?.prova),
       numero: yup
         .number()
         .required("Número da questão é obrigatório")
@@ -640,12 +641,14 @@ function ModalDetalhes({
   }, [infos.provas, prova]);
 
   useEffect(() => {
-    setValue("materia", materias[0].value as string);
+    if (modified) {
+      setValue("materia", materias[0].value as string);
 
-    const frente = infos.frentes.find(
-      (f) => f.materia === (materias[0].value as string)
-    );
-    setValue("frente1", frente?._id as string);
+      const frente = infos.frentes.find(
+        (f) => f.materia === (materias[0].value as string)
+      );
+      setValue("frente1", frente?._id as string);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enemArea]);
 
