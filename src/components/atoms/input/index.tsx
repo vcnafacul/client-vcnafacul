@@ -34,7 +34,7 @@ export type InputProps = VariantProps<typeof input> & ComponentProps<'input'> & 
 function Input({ erro, size, className, type, options, defaultValue, register, ...props } : InputProps){
     if(type === 'option') {
         return (
-            <select {...register(props.name!)} disabled={props.disabled} className={input({ erro, size, className })} value={defaultValue}>
+            <select {...register(props.name!)} disabled={props.disabled} className={input({ erro, size, className })} defaultValue={defaultValue}>
                 {options!.map((opt, index) => (
                     <option selected={opt.value === defaultValue} key={index} value={opt.value}>{opt.label}</option>
                     ))}

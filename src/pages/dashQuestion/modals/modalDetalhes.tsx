@@ -38,7 +38,6 @@ import { BtnProps } from "../../../types/generic/btnProps";
 import { Alternatives } from "../../../types/question/alternative";
 import { InfoQuestion } from "../../../types/question/infoQuestion";
 import { getStatusIcon } from "../../../utils/getStatusIcon";
-import { AreaEnem } from "../data";
 
 interface ModalDetalhesProps extends ModalProps {
   question?: Question;
@@ -71,34 +70,39 @@ function ModalDetalhes({
       enemArea: yup
         .string()
         .required("Área do Conhecimento é obrigatorio")
-        .typeError("Área do Conhecimento é obrigatorio"),
+        .typeError("Área do Conhecimento é obrigatorio")
+        .default(question?.enemArea),
       materia: yup
         .string()
-        .required("Materia é obrigatoria")
-        .typeError("Materia é obrigatoria"),
+        .typeError("Materia é obrigatoria")
+        .default(question?.materia),
       frente1: yup
         .string()
-        .required("A Frente Principal é obrigatorio")
-        .typeError("A Frente Principal é obrigatorio"),
-      frente2: yup.string().nullable(),
-      frente3: yup.string().nullable(),
+        .typeError("A Frente Principal é obrigatorio")
+        .default(question?.frente1),
+      frente2: yup.string().nullable().default(question?.frente2),
+      frente3: yup.string().nullable().default(question?.frente3),
       textoQuestao: yup
         .string()
-        .required("Texto da questão é obrigatorio")
-        .typeError("Texto da questão é obrigatorio"),
-      textoAlternativaA: yup.string(),
-      textoAlternativaB: yup.string(),
-      textoAlternativaC: yup.string(),
-      textoAlternativaD: yup.string(),
-      textoAlternativaE: yup.string(),
-      alternativa: yup.string().required(),
-      imageId: yup.string(),
-      provaClassification: yup.bool(),
-      subjectClassification: yup.bool(),
-      textClassification: yup.bool(),
-      imageClassfication: yup.bool(),
-      alternativeClassfication: yup.bool(),
-      reported: yup.bool(),
+        .typeError("Texto da questão é obrigatorio")
+        .default(question?.textoQuestao),
+      textoAlternativaA: yup.string().default(question?.textoAlternativaA),
+      textoAlternativaB: yup.string().default(question?.textoAlternativaA),
+      textoAlternativaC: yup.string().default(question?.textoAlternativaA),
+      textoAlternativaD: yup.string().default(question?.textoAlternativaA),
+      textoAlternativaE: yup.string().default(question?.textoAlternativaA),
+      alternativa: yup.string().required().default(question?.alternativa),
+      imageId: yup.string().default(question?.imageId),
+      provaClassification: yup.bool().default(question?.provaClassification),
+      subjectClassification: yup
+        .bool()
+        .default(question?.subjectClassification),
+      textClassification: yup.bool().default(question?.textClassification),
+      imageClassfication: yup.bool().default(question?.imageClassfication),
+      alternativeClassfication: yup
+        .bool()
+        .default(question?.alternativeClassfication),
+      reported: yup.bool().default(question?.reported),
     })
     .required();
 
@@ -127,17 +131,18 @@ function ModalDetalhes({
 
   const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
 
+  //WATCHERS
   const prova = watch("prova");
   const alternativa = watch("alternativa");
   const materia = watch("materia");
   const enemArea = watch("enemArea");
-
   const provaClassification = watch("provaClassification");
   const subjectClassification = watch("subjectClassification");
   const textClassification = watch("textClassification");
   const imageClassfication = watch("imageClassfication");
   const alternativeClassfication = watch("alternativeClassfication");
   const reported = watch("reported");
+  //END WATCHERS
 
   const previewImage = (file: Blob) => {
     const reader = new FileReader();
@@ -176,10 +181,12 @@ function ModalDetalhes({
     label: m.nome,
     value: m._id,
   }));
+  materias.unshift({ label: "", value: undefined });
 
   const frentesBymateria = infos.frentes.filter((f) =>
     materia ? f.materia === materia : true
   );
+
   const mainFrente: FormFieldOption[] =
     frentesBymateria.map(
       (f) =>
@@ -188,6 +195,7 @@ function ModalDetalhes({
           value: f._id,
         } as FormFieldOption)
     ) || [];
+  mainFrente.unshift({ label: "", value: undefined });
 
   const OptionalFrentes: FormFieldOption[] = infos.frentes.map((f) => ({
     label: f.nome,
@@ -200,14 +208,14 @@ function ModalDetalhes({
     value: n,
   }));
 
-  const getEnemArea = () => {
-    const nameProva = infos.provas.find(
+  const getEnemArea = (): FormFieldOption[] => {
+    const enemArea = infos.provas.find(
       (p) => p._id === prova ?? question?.prova
-    )?.nome;
-    if (nameProva) {
-      return AreaEnem.filter((a) => a.day.includes(nameProva.slice(5, 10)));
+    )?.enemAreas;
+    if (enemArea) {
+      return enemArea.map((e) => ({ label: e, value: e }));
     }
-    return AreaEnem;
+    return [];
   };
 
   const listFieldClassification: FormFieldInput[] = [
@@ -241,6 +249,7 @@ function ModalDetalhes({
       options: numberOption,
       disabled: !question ? false : !isEditing,
       value: question?.numero,
+      defaultValue: question?.numero,
     },
     {
       id: "enemArea",
@@ -388,6 +397,13 @@ function ModalDetalhes({
 
   const handleSave = (data: CreateQuestion) => {
     const dataQuestion = data as UpdateQuestion;
+    console.log(dataQuestion);
+    if (!dataQuestion.materia || !dataQuestion.frente1) {
+      dataQuestion.subjectClassification = true;
+    }
+    if (!dataQuestion.textoQuestao) {
+      dataQuestion.textClassification = true;
+    }
     if (question) {
       dataQuestion._id = question._id;
       if (uploadFile) {
@@ -536,6 +552,7 @@ function ModalDetalhes({
         .then((res) => {
           if (question?.numero && res.includes(question.numero)) {
             setNumberMissing(res);
+            console.log(`entrou aqui ${question.numero}`);
             setValue("numero", question.numero);
           } else if (
             question?.numero &&
@@ -612,12 +629,12 @@ function ModalDetalhes({
     if (!prova && question?.prova) {
       setValue("prova", question.prova);
     }
+    setValue(
+      "enemArea",
+      (getEnemArea().find((q) => q.label === question?.enemArea)
+        ?.value as string) ?? undefined
+    );
     if (question) {
-      setValue(
-        "enemArea",
-        (getEnemArea().find((q) => q.label === question.enemArea)
-          ?.value as string) ?? (getEnemArea()[0].value as string)
-      );
       setValue("materia", question.materia);
       setValue("frente1", question.frente1);
       setValue("frente2", question.frente2);
@@ -637,6 +654,7 @@ function ModalDetalhes({
       setValue("reported", question.reported);
     }
     getMissing();
+    if (!modified) reset(question);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [infos.provas, prova]);
 
@@ -710,7 +728,7 @@ function ModalDetalhes({
           />
           <div className="flex gap-1 my-4">
             <Text size="secondary" className="text-orange w-60 text-start m-0">
-              Selecione uma resposta*
+              Resposta Correta*
             </Text>
             {Alternatives.map((alt) => (
               <Alternative

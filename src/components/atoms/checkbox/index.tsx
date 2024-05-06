@@ -21,8 +21,6 @@ export function Checkbox({ name, title, checked, setValue, disabled }: Props) {
         disabled
           ? () => {}
           : () => {
-              console.log(name);
-              console.log(!checked);
               setValue(name, !checked);
             }
       }
