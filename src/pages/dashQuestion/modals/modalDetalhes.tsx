@@ -498,7 +498,7 @@ function ModalDetalhes({
       type: "submit",
       editing: true,
       className: "col-span-2",
-      disabled: !permissao[Roles.validarQuestao],
+      disabled: !modified,
     },
     {
       children: "Voltar",
