@@ -80,6 +80,11 @@ function DashRoles() {
     setUsersRole(newUserRole);
   };
 
+  const handleNewRole = (role: Role) => {
+    const newRoles = [...roles, role];
+    setRoles(newRoles);
+  }
+
   useEffect(() => {
     getRoles(token)
       .then((res) => {
@@ -131,7 +136,7 @@ function DashRoles() {
   const ShowNewRole = () => {
     return (
       <ModalTemplate isOpen={newRole} handleClose={() => setnewRole(false)}>
-        <ModalNewRole />
+        <ModalNewRole handleNewRole={handleNewRole} />
       </ModalTemplate>
     );
   };
