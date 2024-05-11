@@ -45,6 +45,7 @@ interface ModalDetalhesProps extends ModalProps {
   handleUpdateQuestionStatus: (status: StatusEnum, message?: string) => void;
   handleUpdateQuestion: (questionUpdate: UpdateQuestion) => void;
   handleAddQuestion: (question: Question) => void;
+  handleRemoveQuestion: (id: string) => void;
 }
 
 function ModalDetalhes({
@@ -54,6 +55,7 @@ function ModalDetalhes({
   handleUpdateQuestionStatus,
   handleUpdateQuestion,
   handleAddQuestion,
+  handleRemoveQuestion,
 }: ModalDetalhesProps) {
   const schema = yup
     .object()
@@ -446,6 +448,7 @@ function ModalDetalhes({
     deleteQuestion(question!._id, token)
       .then(() => {
         handleClose!();
+        handleRemoveQuestion(question!._id);
         toast.success(`Questão ${question?._id} deletada com sucess`);
       })
       .catch((erro: Error) => {
