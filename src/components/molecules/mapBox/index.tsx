@@ -42,7 +42,6 @@ function MapBox({ markers, handleClickMarker, zoom = 7, className, mapEvent, cen
       const { latitude, longitude } = position.coords;
       setInitialPosition([latitude, longitude]);
     }, () => {
-      toast.info("Não foi possível determinar sua localização")
       setInitialPosition([-21.4638407, -47.0065925]);
     })
   }, []);
