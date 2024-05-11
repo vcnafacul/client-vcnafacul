@@ -80,10 +80,13 @@ function DashQuestion() {
     ],
   });
 
-  const handleRemoveQuestion = useCallback((id: string) => {
-    const newQuestions = questions.filter((q) => q._id != id);
-    setQuestions(newQuestions);
-  }, [questions]);
+  const handleRemoveQuestion = useCallback(
+    (id: string) => {
+      const newQuestions = questions.filter((q) => q._id !== id);
+      setQuestions(newQuestions);
+    },
+    [questions]
+  );
 
   const handleAddQuestion = (question: Question) => {
     setQuestions([...questions, question]);
@@ -203,6 +206,7 @@ function DashQuestion() {
                 handleUpdateQuestionStatus={handleUpdateQuestionStatus}
                 handleUpdateQuestion={handleUpdateQuestion}
                 handleAddQuestion={handleAddQuestion}
+                handleRemoveQuestion={handleRemoveQuestion}
               />
             ),
             handleClose: () => {
@@ -231,6 +235,7 @@ function DashQuestion() {
                 handleUpdateQuestionStatus={handleUpdateQuestionStatus}
                 handleUpdateQuestion={handleUpdateQuestion}
                 handleAddQuestion={handleAddQuestion}
+                handleRemoveQuestion={handleRemoveQuestion}
               />
             ),
             handleClose: () => {
