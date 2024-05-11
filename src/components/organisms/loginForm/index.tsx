@@ -32,12 +32,7 @@ function LoginForm({
     Login(data.email.toLowerCase(), data.password)
       .then((res) => {
         doAuth(res);
-        toast.update(id, {
-          render: `✔`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
+        toast.dismiss(id);
         navigate(DASH);
       })
       .catch((e: Error) => {
