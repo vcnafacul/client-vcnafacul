@@ -80,10 +80,10 @@ function DashQuestion() {
     ],
   });
 
-  const handleRemoveQuestion = (id: string) => {
+  const handleRemoveQuestion = useCallback((id: string) => {
     const newQuestions = questions.filter((q) => q._id != id);
     setQuestions(newQuestions);
-  };
+  }, [questions]);
 
   const handleAddQuestion = (question: Question) => {
     setQuestions([...questions, question]);
@@ -92,17 +92,16 @@ function DashQuestion() {
   const handleUpdateQuestion = (questionUpdate: UpdateQuestion) => {
     updateQuestion(questionUpdate, token)
       .then(() => {
-        const oldQuestion = questions
-          .find(q => q._id === questionUpdate._id);
-        
-          const newQuestion = {
-            ...mergeObjects(questionUpdate, oldQuestion),
-            title: `${oldQuestion!._id} ${questionUpdate.numero}`,
-          } as Question;
-        
+        const oldQuestion = questions.find((q) => q._id === questionUpdate._id);
+
+        const newQuestion = {
+          ...mergeObjects(questionUpdate, oldQuestion),
+          title: `${oldQuestion!._id} ${questionUpdate.numero}`,
+        } as Question;
+
         const newQuestions = questions.map((question) => {
           if (question._id == questionUpdate._id) {
-            return newQuestion
+            return newQuestion;
           }
           return question;
         });
@@ -115,27 +114,30 @@ function DashQuestion() {
       });
   };
 
-  const handleUpdateQuestionStatus = (status: StatusEnum, message?: string) => {
-    if (!questionSelect?.prova) {
-      toast.info(
-        "Não é possível aprovar ou rejeitar questões sem referenciar uma prova. Selecione uma prova, salve o cadastro e tente novamente"
-      );
-    } else {
-      updateStatus(questionSelect!._id, status, token, message)
-        .then(() => {
-          handleRemoveQuestion(questionSelect!._id);
-          setOpenModalEdit(false);
-          toast.success(
-            `Questão ${questionSelect!._id} atualizada com sucesso. Status: ${
-              status === StatusEnum.Approved ? "Aprovado" : "Reprovado"
-            } `
-          );
-        })
-        .catch((error: Error) => {
-          toast.error(error.message);
-        });
-    }
-  };
+  const handleUpdateQuestionStatus = useCallback(
+    (status: StatusEnum, message?: string) => {
+      if (!questionSelect?.prova) {
+        toast.info(
+          "Não é possível aprovar ou rejeitar questões sem referenciar uma prova. Selecione uma prova, salve o cadastro e tente novamente"
+        );
+      } else {
+        updateStatus(questionSelect!._id, status, token, message)
+          .then(() => {
+            handleRemoveQuestion(questionSelect!._id);
+            setOpenModalEdit(false);
+            toast.success(
+              `Questão ${questionSelect!._id} atualizada com sucesso. Status: ${
+                status === StatusEnum.Approved ? "Aprovado" : "Reprovado"
+              } `
+            );
+          })
+          .catch((error: Error) => {
+            toast.error(error.message);
+          });
+      }
+    },
+    [handleRemoveQuestion, questionSelect, token]
+  );
 
   const onClickCard = (cardId: number | string) => {
     setQuestionSelect(questions.find((quest) => quest._id === cardId)!);
@@ -203,7 +205,9 @@ function DashQuestion() {
                 handleAddQuestion={handleAddQuestion}
               />
             ),
-            handleClose: () => { setOpenModalEdit(false); },
+            handleClose: () => {
+              setOpenModalEdit(false);
+            },
           },
         ]}
       />
@@ -229,7 +233,9 @@ function DashQuestion() {
                 handleAddQuestion={handleAddQuestion}
               />
             ),
-            handleClose: () => { setOpenModalRegister(false); },
+            handleClose: () => {
+              setOpenModalRegister(false);
+            },
           },
         ]}
       />

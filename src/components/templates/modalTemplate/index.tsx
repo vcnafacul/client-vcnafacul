@@ -20,17 +20,6 @@ function ModalTemplate({
   isOpen,
   ...props
 }: ModalTemplateProps) {
-  const ModalChildren = () => {
-    return (
-      <div className="flex flex-col bg-white w-fit p-4 rounded-md">
-        <IoMdClose
-          onClick={handleClose}
-          className="self-end cursor-pointer w-5 h-5"
-        />
-        {React.cloneElement(children as React.ReactElement, { handleClose })}
-      </div>
-    );
-  };
 
   return !isOpen ? null : (
     <div
@@ -45,10 +34,26 @@ function ModalTemplate({
               handleClose!();
             }}
           >
-            <ModalChildren />
+            <div className="flex flex-col bg-white w-fit p-4 rounded-md">
+              <IoMdClose
+                onClick={handleClose}
+                className="self-end cursor-pointer w-5 h-5"
+              />
+              {React.cloneElement(children as React.ReactElement, {
+                handleClose,
+              })}
+            </div>
           </OutsideClickHandler>
         ) : (
-          <ModalChildren />
+          <div className="flex flex-col bg-white w-fit p-4 rounded-md">
+            <IoMdClose
+              onClick={handleClose}
+              className="self-end cursor-pointer w-5 h-5"
+            />
+            {React.cloneElement(children as React.ReactElement, {
+              handleClose,
+            })}
+          </div>
         )}
       </div>
     </div>
