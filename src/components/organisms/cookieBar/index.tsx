@@ -29,10 +29,10 @@ export function CookieBar() {
   };
 
   return (
-    <div className={`w-full bottom-4 z-50 ${isInvisible ? "hidden" : "fixed"}`}>
-      <div className="flex flex-col gap-4 p-4 mx-10 bg-gray-100 rounded shadow-md ">
+    <div className={`mx-4 sm:mx-0 sm:max-w-5xl right-0 bottom-4 z-50 ${isInvisible ? "hidden" : "fixed"}`}>
+      <div className="flex flex-col gap-4 py-2 bg-gray-100 rounded shadow-md sm:p-4 sm:mx-10 ">
         <div className="flex">
-          <span className="mx-10 text-base italic">
+          <span className="mx-4 italic sm:text-base sm:mx-10 ">
             "Nós utilizamos cookies e outras tecnologias semelhantes para
             melhorar sua experiência em nossos serviços, personalizar nossa
             publicidade e recomendar conteúdo de seu interesse. Ao utilizar
@@ -46,8 +46,8 @@ export function CookieBar() {
             "
           </span>
         </div>
-        <div className="flex items-center justify-end gap-4">
-          <div className="w-60">
+        <div className="flex items-center justify-end gap-4 mx-4">
+          <div className="w-32 md:w-60">
             <Button
               onClick={() => {
                 setLgpdStatus("rejected");
@@ -56,7 +56,7 @@ export function CookieBar() {
               <span className="flex justify-center w-full">Rejeitar</span>
             </Button>
           </div>
-          <div className="w-60">
+          <div className="w-32 md:w-60">
             <Button
               onClick={() => {
                 setLgpdStatus("accepted");
