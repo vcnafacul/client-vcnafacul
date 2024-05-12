@@ -279,11 +279,15 @@ function DashQuestion() {
 
   const materiasOption = [
     { id: "", name: "Disciplinas" },
-    ...infosQuestion.materias.map((m) => ({ id: m._id, name: m.nome })),
+    ...infosQuestion.materias
+      .map((m) => ({ id: m._id, name: m.nome }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
   ];
   const frentesOption = [
     { id: "", name: "Frentes" },
-    ...infosQuestion.frentes.map((f) => ({ id: f._id, name: f.nome })),
+    ...infosQuestion.frentes
+      .map((f) => ({ id: f._id, name: f.nome }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
   ];
   const provasOption = [
     { id: "", name: "Provas" },
@@ -291,7 +295,9 @@ function DashQuestion() {
   ];
   const EnemAreaOption = [
     { id: "", name: "Área do Enem" },
-    ...EnemArea.map((p) => ({ id: p, name: p })),
+    ...EnemArea.map((p) => ({ id: p, name: p })).sort((a, b) =>
+      a.name.localeCompare(b.name)
+    ),
   ];
 
   const selectFiltes: SelectProps[] = [
