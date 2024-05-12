@@ -13,6 +13,7 @@ import { Roles } from "../../../enums/roles/roles";
 import { deleteDemand } from "../../../services/content/deleteDemand";
 import { uploadFileDemand } from "../../../services/content/uploadFileDemand";
 import { useAuthStore } from "../../../store/auth";
+import { getMateriaString } from "../../../enums/content/materias";
 
 interface ShowDemandProps extends ModalProps {
   demand: ContentDtoInput;
@@ -61,7 +62,7 @@ function ShowDemand({
     return (
       <div className="flex justify-center p-4">
         <DocxIcon className="w-28 h-28" />
-        <span className="h-fit border-2 border-blue-400 px-2 pt-1 rounded-t-2xl rounded-r-2xl">
+        <span className="px-2 pt-1 border-2 border-blue-400 h-fit rounded-t-2xl rounded-r-2xl">
           Eu sou o docxinho, seu amiguinho
         </span>
       </div>
@@ -173,10 +174,11 @@ function ShowDemand({
   return (
     <>
       <>
-        <div className="bg-white p-4 rounded w-11/12 absolute top-4 sm:relative">
+        <div className="absolute w-11/12 p-4 bg-white rounded top-4 sm:relative">
           <Text size="secondary" className="">
             {demand.title}
           </Text>
+          <PropValue prop="Materia" value={getMateriaString(demand.subject.frente.materia)} />
           <PropValue prop="Frente" value={demand.subject.frente.name} />
           <div className="flex flex-col">
             <PropValue prop="Tema" value={demand.subject.name} />

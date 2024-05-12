@@ -128,7 +128,7 @@ function AllContent() {
             setOpenNewModalDemand(true);
           }}
           typeStyle="quaternary"
-          className="text-xl font-light rounded-full h-8 "
+          className="h-8 text-xl font-light rounded-full "
         >
           <span className="text-4xl">+</span>Nova Demanda
         </Button>
@@ -137,14 +137,14 @@ function AllContent() {
           onClick={() => {
             setSettings(true);
           }}
-          className="w-10 h-10 fill-marine opacity-75 hover:opacity-100 cursor-pointer transition-all duration-300"
+          className="w-10 h-10 transition-all duration-300 opacity-75 cursor-pointer fill-marine hover:opacity-100"
         />
       </div>
     );
   };
 
   useEffect(() => {
-    getContent(token, status as StatusContent, undefined, 1, limitCards)
+    getContent(token, status as StatusContent, materiaSelected, 1, limitCards)
       .then((res) => {
         setDemands(res.data);
         dataRef.current = res.data;
@@ -152,7 +152,7 @@ function AllContent() {
       .catch((error: Error) => {
         toast.error(error.message);
       });
-  }, [token, status]);
+  }, [token, status, materiaSelected]);
 
   const getMoreCards = async (
     page: number
@@ -160,7 +160,7 @@ function AllContent() {
     return await getContent(
       token,
       status as StatusContent,
-      undefined,
+      materiaSelected,
       page,
       limitCards
     );
