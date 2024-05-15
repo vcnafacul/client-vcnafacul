@@ -49,20 +49,18 @@ function Hero({ className }: HeroProps){
                 <div className='container flex flex-col justify-start pt-24 min-h-screen box-border
                     sm:pt-20 sm:min-h-[430px] sm:flex-row sm:items-start sm:justify-between
                     md:min-h-[600px] md:self-center'>
-                    <div className='text-white sm:self-start md:w-full md:mb-28 md:self-center justify-start'>
+                    <div className='justify-start text-white sm:self-start md:w-full md:mb-28 md:self-center'>
                         <div className='md:transition duration-300 ease-out hover:translate-x-2.5 mx-10 md:mx-0'>
-                            <Text size='primary' className='text-white md:text-left text-start mb-6'>{slide.title}</Text>
+                            <Text size='primary' className='mb-6 text-white md:text-left text-start'>{slide.title}</Text>
                             <Text size='tertiary' className='text-white text-start'>{slide.subtitle}</Text>
                         </div>
-                        <div className='flex gap-4'>
-
+                        <div className='flex gap-4 w-96'>
                             {slide.links.map((link: any) => (
                                 <BLink type='tertiary' target={link.Home_Hero_Button_id.target} hover key={link.Home_Hero_Button_id.id} to={link.Home_Hero_Button_id.link}>{link.Home_Hero_Button_id.text}</BLink>
                             ))}
                         </div>
                     </div>
-                    <div className='relative max-w-80 w-full my-0 mx-auto sm:mt-1 sm:max-w-max sm:max-h-80
-                    md:max-w-md  md:m-0 md:top-0'>
+                    <div className='relative w-full mx-auto my-0 max-w-80 sm:mt-1 sm:max-w-max sm:max-h-80 md:max-w-md md:m-0 md:top-0'>
                         {!slide.image ? null : <img src={slide.image} alt={slide.title}/>} 
                     </div>
                 </div>

@@ -141,8 +141,8 @@ function DashNews() {
         setOpenModal(true);
       },
       typeStyle: "quaternary",
-      className: "text-xl font-light rounded-full h-8",
-      children: "Upload Novidade",
+      size: "small",
+      children: "Criar Novidade",
     },
   ];
 

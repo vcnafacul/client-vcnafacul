@@ -6,31 +6,28 @@ export type ButtonProps = ComponentProps<"button"> & {
   className?: string;
   hover?: boolean;
   typeStyle?: "primary" | "secondary" | "tertiary" | "quaternary" | "none";
-  size?: "base" | "small" | "none";
+  size?: "base" | "small";
 };
 
 function Button({
   children,
-  size,
   hover,
+  size = "base",
   className,
   typeStyle = "primary",
   ...props
 }: ButtonProps) {
   return (
-    <button
-      {...props}
-      className="cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed w-full"
+    <ButtonTemplate
+      typeStyle={typeStyle}
+      size={size}
+      hover={props.disabled ? false : hover}
+      className={className}
     >
-      <ButtonTemplate
-        type={typeStyle}
-        size={size}
-        hover={props.disabled ? false : hover}
-        className={`${className} selection:w-full flex justify-center items-center`}
-      >
+      <button {...props} className="relative w-full h-full">
         {children}
-      </ButtonTemplate>
-    </button>
+      </button>
+    </ButtonTemplate>
   );
 }
 

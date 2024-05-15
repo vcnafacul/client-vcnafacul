@@ -124,7 +124,8 @@ function Simulate() {
           type: "secondary",
           children: (
             <>
-              Reportar problema <Report className="w-6 h-6 group-hover:h-10" />
+              <span>Reportar problema </span>
+              <Report className="absolute top-0.5 w-10 h-10 right-2" />
             </>
           ),
         },

@@ -83,7 +83,7 @@ function DashRoles() {
   const handleNewRole = (role: Role) => {
     const newRoles = [...roles, role];
     setRoles(newRoles);
-  }
+  };
 
   useEffect(() => {
     getRoles(token)
@@ -164,7 +164,7 @@ function DashRoles() {
         setnewRole(true);
       },
       typeStyle: "quaternary",
-      className: "text-xl font-light rounded-full h-8",
+      size: "small",
       children: "Nova Permissão",
     },
   ];
