@@ -1,100 +1,131 @@
-import { useEffect, useState } from "react"
-import { toast } from "react-toastify"
-import AboutUs, { AboutUsProps } from "../../components/organisms/aboutUs"
-import ActionAreas, { ActionProps } from "../../components/organisms/actionAreas"
-import Features, { FeaturesProps } from "../../components/organisms/features"
-import HomeNews from "../../components/organisms/homeNews"
-import Map from "../../components/organisms/map"
-import Supporters, { SupportersSponsor, Volunteer } from "../../components/organisms/supporters/index.tsx"
-import HeroTemplate from "../../components/templates/heroTemplate"
-import { HomeContext } from "../../context/homeContext.tsx"
-import { getVolunteers } from "../../services/auth/getVolunteers.ts"
-import { getAboutUs } from "../../services/directus/home/about_us.ts"
-import { getActions } from "../../services/directus/home/actions.ts"
-import { getFeature } from "../../services/directus/home/features.ts"
-import { getSponsor } from "../../services/directus/home/sponsors.ts"
+import { useEffect } from "react";
+import { toast } from "react-toastify";
+import AboutUs from "../../components/organisms/aboutUs";
+import ActionAreas from "../../components/organisms/actionAreas";
+import Features from "../../components/organisms/features";
+import HomeNews from "../../components/organisms/homeNews";
+import Map from "../../components/organisms/map";
+import Supporters from "../../components/organisms/supporters/index.tsx";
+import HeroTemplate from "../../components/templates/heroTemplate";
+import { HomeContext } from "../../context/homeContext.tsx";
+import { getVolunteers } from "../../services/auth/getVolunteers.ts";
+import { getAboutUs } from "../../services/directus/home/about_us.ts";
+import { getActions } from "../../services/directus/home/actions.ts";
+import { getFeature } from "../../services/directus/home/features.ts";
+import { getSponsor } from "../../services/directus/home/sponsors.ts";
+import { useHomeStore } from "../../store/home/index.ts";
 
-function Home(){
-    const [ aboutUs, setAboutUs ] = useState<AboutUsProps | null>(null)
-    const [ features, setFeatures ] = useState<FeaturesProps | null>(null)
-    const [ actionAreas, setActionAreas ] = useState<ActionProps | null>(null)
-    const [ supporters, setSupporters ] = useState<SupportersSponsor | null>(null)
-    const [ volunteers, setVolunteers ] = useState<Volunteer[]>([])
-    
-    useEffect(() => {
-        if(!aboutUs) {
-            getAboutUs()
-            .then(res => {
-                setAboutUs(res)
-            })
-            .catch((error: Error) => {
-                toast.error(error.message)
-            })
-        }
-    }, [aboutUs])
+function Home() {
+  const {
+    aboutUs,
+    setAboutUs,
+    features,
+    setFeatures,
+    actionAreas,
+    setActionAreas,
+    supporters,
+    setSupporters,
+    volunteers,
+    setVolunteers,
+  } = useHomeStore();
 
-    useEffect(() => {
-        if(!features) {
-            getFeature()
-            .then(res => {
-                setFeatures(res)
-            })
-                .catch((error: Error) => {
-                    toast.error(error.message)
-                })
-            }
-    }, [features])
+  useEffect(() => {
+    if (
+      !aboutUs.data ||
+      aboutUs.updatedHero < new Date(new Date().getTime() - 3600 * 8)
+    ) {
+      getAboutUs()
+        .then((res) => {
+          setAboutUs(res);
+        })
+        .catch((error: Error) => {
+          toast.error(error.message);
+        });
+    }
+  }, [aboutUs, setAboutUs]);
 
-    useEffect(() => {
-        if(!actionAreas) {
-            getActions()
-            .then(res => {
-                setActionAreas(res)
-            })
-            .catch((error: Error) => {
-                toast.error(error.message)
-            })
-        }
-    }, [actionAreas])
+  useEffect(() => {
+    if (
+      !features.data ||
+      features.updatedHero < new Date(new Date().getTime() - 3600 * 8)
+    ) {
+      getFeature()
+        .then((res) => {
+          setFeatures(res);
+        })
+        .catch((error: Error) => {
+          toast.error(error.message);
+        });
+    }
+  }, [features.data, setFeatures]);
 
-    useEffect(() => {
-        if(!supporters) {
-            getSponsor()
-            .then(res => {
-                setSupporters(res)
-            })
-            .catch((error: Error) => {
-                toast.error(error.message)
-            })
-        }
-    }, [supporters])
+  useEffect(() => {
+    if (
+      !actionAreas.data ||
+      actionAreas.updatedHero < new Date(new Date().getTime() - 3600 * 8)
+    ) {
+      getActions()
+        .then((res) => {
+          setActionAreas(res);
+        })
+        .catch((error: Error) => {
+          toast.error(error.message);
+        });
+    }
+  }, [actionAreas, setActionAreas]);
 
-    useEffect(() => {
-        if(volunteers.length === 0){
-            getVolunteers()
-            .then(res => {
-                setVolunteers(res)
-            })
-            .catch((error: Error) => {
-                toast.error(error.message)
-            })
-        }
-    }, [volunteers])
+  useEffect(() => {
+    if (
+      !supporters.data ||
+      supporters.updatedHero < new Date(new Date().getTime() - 3600 * 8)
+    ) {
+      getSponsor()
+        .then((res) => {
+          setSupporters(res);
+        })
+        .catch((error: Error) => {
+          toast.error(error.message);
+        });
+    }
+  }, [supporters, setSupporters]);
 
-    return (
-        <HomeContext.Provider value={{ aboutUs, features, actionAreas, supporters, volunteers}} >
-            <HeroTemplate headerPosition="fixed">
-                <>
-                    <AboutUs  />
-                    <HomeNews />
-                    <Features />
-                    <ActionAreas />
-                    <Supporters />
-                    <Map />
-                </>
-            </HeroTemplate>
-        </HomeContext.Provider>
-    )
+  useEffect(() => {
+    if (
+      volunteers.data.length === 0 ||
+      volunteers.updatedHero < new Date(new Date().getTime() - 3600 * 8)
+    ) {
+      getVolunteers()
+        .then((res) => {
+          setVolunteers(res);
+        })
+        .catch((error: Error) => {
+          toast.error(error.message);
+        });
+    }
+  }, [volunteers, setVolunteers]);
+
+  return (
+    <HomeContext.Provider
+      value={{
+        aboutUs: aboutUs.data,
+        features: features.data,
+        actionAreas: actionAreas.data,
+        supporters: supporters.data,
+        volunteers: volunteers.data,
+      }}
+    >
+      <HeroTemplate headerPosition="fixed">
+        <>
+          <AboutUs />
+          <HomeNews />
+          <Features />
+          <ActionAreas />
+          <Supporters />
+          <Map />
+        </>
+      </HeroTemplate>
+    </HomeContext.Provider>
+  );
 }
 
-export default Home
+export default Home;
