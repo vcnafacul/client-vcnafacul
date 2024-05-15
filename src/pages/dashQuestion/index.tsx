@@ -316,7 +316,7 @@ function DashQuestion() {
         setOpenModalRegister(true);
       },
       typeStyle: "quaternary",
-      className: "text-sm md:text-base font-light rounded-full h-10",
+      size: "small",
       children: "Cadastrar Questao",
     },
   ];
