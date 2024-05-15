@@ -37,7 +37,7 @@ function SimulateTemplate({ header, selectQuestion, questions, legends, question
                     { header }
                 </div>
             </div>
-            <div className="container flex flex-col items-center max-w-6xl mx-auto">
+            <div className="container flex flex-col items-center max-w-6xl mx-auto px-4">
                 <QuestionList selectQuestion={selectQuestion} questions={questions} />
                 <Legends legends={legends}/>
                 <div className="flex items-center justify-start w-full">
