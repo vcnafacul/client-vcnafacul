@@ -32,27 +32,27 @@ function SimulateTemplate({ header, selectQuestion, questions, legends, question
     const BASE_URL = import.meta.env.VITE_BASE_URL;
     return ( 
         <div className="flex flex-col pb-20">
-            <div className="bg-marine my-8">
+            <div className="my-8 bg-marine">
                 <div className="container mx-auto">
                     { header }
                 </div>
             </div>
-            <div className="container mx-auto flex items-center flex-col max-w-6xl">
+            <div className="container flex flex-col items-center max-w-6xl mx-auto">
                 <QuestionList selectQuestion={selectQuestion} questions={questions} />
                 <Legends legends={legends}/>
-                <div className="flex justify-start w-full items-center">
+                <div className="flex items-center justify-start w-full">
                     <IconArea icon={getIconByTitle(questionSelected.enemArea) as React.FunctionComponent<React.SVGProps<SVGSVGElement>> }  className="bg-marine" />
                     <Text className="m-0 ">{questionSelected.enemArea}</Text>
-                    {setReportProblem ? <Button onClick={setReportProblem} typeStyle="none" size="none"><Report className="w-12 h-12"/></Button> : <></>}
+                    {setReportProblem ? <Button onClick={setReportProblem} typeStyle="none"><Report className="w-12 h-12"/></Button> : <></>}
                 </div>
-                <div className="flex py-4 w-full">
-                    <Text size="secondary" className="text-orange m-0">Questao {questions.find(q => q.id === questionSelected._id)!.number + 1}</Text>
+                <div className="flex w-full py-4">
+                    <Text size="secondary" className="m-0 text-orange">Questao {questions.find(q => q.id === questionSelected._id)!.number + 1}</Text>
                 </div>
                  
-                <div onClick={expandedPhoto} className="flex justify-center cursor-pointer my-4 p-8 bg-white rounded-lg">
+                <div onClick={expandedPhoto} className="flex justify-center p-8 my-4 bg-white rounded-lg cursor-pointer">
                     <img className="mr-4 sm:m-0" src={`${BASE_URL}/images/${questionSelected.imageId}.png`} />
                 </div>
-                <div className="flex flex-wrap justify-evenly my-4 gap-4">
+                <div className="flex flex-wrap gap-4 my-4 justify-evenly">
                     { alternative }
                     { buttons }
                 </div>

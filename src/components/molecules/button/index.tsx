@@ -24,7 +24,7 @@ function Button({
       hover={props.disabled ? false : hover}
       className={className}
     >
-      <button {...props} className="w-full h-full">
+      <button {...props} className="relative w-full h-full">
         {children}
       </button>
     </ButtonTemplate>
