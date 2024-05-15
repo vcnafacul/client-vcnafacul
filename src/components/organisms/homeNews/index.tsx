@@ -1,60 +1,70 @@
-import { useState, useEffect } from "react"
-import { News } from "../../../dtos/news/news"
-import { getNews } from "../../../services/news/getNews"
-import NewsCarousel from "../newsCarousel"
-import Text from "../../atoms/text"
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { ReactComponent as TriangleGreen } from "../../../assets/icons/triangle-green.svg";
-import { useNavigate } from "react-router-dom"
-import { NEWS } from "../../../routes/path"
-import { toast } from "react-toastify"
+import { NEWS } from "../../../routes/path";
+import { getNews } from "../../../services/news/getNews";
+import { useHomeStore } from "../../../store/home";
+import Text from "../../atoms/text";
+import NewsCarousel from "../newsCarousel";
 
-function HomeNews(){
-    const [news, setNews] = useState<News[]>([])
+function HomeNews() {
+  const { news, setNews } = useHomeStore();
 
-    const navigate = useNavigate()
+  const navigate = useNavigate();
 
-    const breakpoints = {
-        1: {
-            slidesPerView: 1,
-        },
-        350: {
-            slidesPerView: 1.5,
-  
-        },
-        388: {
-            slidesPerView: 2,
-  
-        },
-        700: {
-            slidesPerView: 3,
-  
-        }
-      }
+  const breakpoints = {
+    1: {
+      slidesPerView: 1,
+    },
+    350: {
+      slidesPerView: 1.5,
+    },
+    388: {
+      slidesPerView: 2,
+    },
+    700: {
+      slidesPerView: 3,
+    },
+  };
 
-    useEffect(() => {
-        getNews()
-          .then(res => {
-            setNews(res.data)
-          })
-          .catch((error: Error) => {
-            toast.error(error.message)
-          })
-      }, [])
+  useEffect(() => {
+    if (
+      news.data.length === 0 ||
+      news.updatedHero < new Date(new Date().getTime() - 3600 * 8)
+    ) {
+      getNews()
+        .then((res) => {
+          setNews(res.data);
+        })
+        .catch((error: Error) => {
+          toast.error(error.message);
+        });
+    }
+  }, []);
 
-    return (
-        <div className="relative w-full">
-            <TriangleGreen className="absolute w-[500px] rotate-[135deg] bottom-0 -right-[162px]" />
-            <div className="grid grid-cols-4 container mx-auto gap-4">
-            <div className="col-span-4 md:col-span-2">
-                <Text size="secondary">Não perca nossas novidades!</Text>
-                <Text size="tertiary">Fique ligado nas ultimas noticias e nossas novas funcionalidades</Text>
-            </div>
-            <div className="col-span-4 md:col-span-2 mx-4">
-                <NewsCarousel news={news} breakpoints={breakpoints} onClickCard={() => { navigate(NEWS) }} />
-            </div>
-            </div>
+  return (
+    <div className="relative w-full">
+      <TriangleGreen className="absolute w-[500px] rotate-[135deg] bottom-0 -right-[162px]" />
+      <div className="container grid grid-cols-4 gap-4 mx-auto">
+        <div className="col-span-4 md:col-span-2">
+          <Text size="secondary">Não perca nossas novidades!</Text>
+          <Text size="tertiary">
+            Fique ligado nas ultimas noticias e nossas novas funcionalidades
+          </Text>
         </div>
-    )
+        <div className="col-span-4 mx-4 md:col-span-2">
+          <NewsCarousel
+            news={news.data}
+            breakpoints={breakpoints}
+            onClickCard={() => {
+              navigate(NEWS);
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default HomeNews
+export default HomeNews;

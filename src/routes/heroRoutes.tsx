@@ -1,29 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Slide } from "../components/organisms/hero";
 import { HeroContext } from "../context/heroContext";
 import { getHeroSlides } from "../services/directus/home/hero";
+import { useHomeStore } from "../store/home";
 
 export function HeroRoutes() {
+  const { hero, setHero } = useHomeStore();
 
-    const [ heroSlides, SetHeroSlides ] = useState<Slide[]>([]) 
-    
-    useEffect(() => {
-        if(heroSlides.length === 0){
-            getHeroSlides()
-            .then(res => {
-                SetHeroSlides(res)
-            })
-            .catch((error: Error) => {
-                toast.error(error.message)
-            })
-        }
-    }, [heroSlides.length])
-    
-    return (     
-        <HeroContext.Provider value={{ heroSlides }} >
-            <Outlet />
-        </HeroContext.Provider>
-    );
+  useEffect(() => {
+    if (
+      hero.data.length === 0 ||
+      hero.updatedHero < new Date(new Date().getTime() - 3600 * 8)
+    ) {
+      getHeroSlides()
+        .then((res) => {
+          setHero(res);
+        })
+        .catch((error: Error) => {
+          toast.error(error.message);
+        });
+    }
+  }, [hero.data.length]);
+
+  return (
+    <HeroContext.Provider value={{ heroSlides: hero.data }}>
+      <Outlet />
+    </HeroContext.Provider>
+  );
 }
