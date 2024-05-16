@@ -5,7 +5,14 @@ export type ButtonProps = ComponentProps<"button"> & {
   children?: React.ReactNode;
   className?: string;
   hover?: boolean;
-  typeStyle?: "primary" | "secondary" | "tertiary" | "quaternary" | "none";
+  typeStyle?:
+    | "primary"
+    | "secondary"
+    | "tertiary"
+    | "quaternary"
+    | "accepted"
+    | "refused"
+    | "none";
   size?: "base" | "small";
 };
 
@@ -14,7 +21,7 @@ function Button({
   hover,
   size = "base",
   className,
-  typeStyle = "primary",
+  typeStyle,
   ...props
 }: ButtonProps) {
   return (
@@ -23,8 +30,12 @@ function Button({
       size={size}
       hover={props.disabled ? false : hover}
       className={className}
+      disabled={props.disabled}
     >
-      <button {...props} className="relative w-full h-full">
+      <button
+        {...props}
+        className="relative w-full h-full bg-transparent disabled:cursor-not-allowed"
+      >
         {children}
       </button>
     </ButtonTemplate>

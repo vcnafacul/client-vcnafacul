@@ -18,6 +18,8 @@ export const buttonTemplate = tv({
   base: "flex justify-center items-center border-2 font-bold transition-all duration-250 ease-in-out text-sm md:text-base rounded-md group gap-1",
   variants: {
     typeStyle: {
+      accepted: "bg-green3 text-white",
+      refused: "bg-red text-white",
       primary: "text-white border-orange bg-orange",
       secondary: "text-orange border-orange bg-white",
       tertiary: "text-white border-white",
@@ -28,10 +30,15 @@ export const buttonTemplate = tv({
       base: "w-full h-12 ",
       small: "w-fit h-fit px-2 py-1",
     },
+    disabled: {
+      true: "cursor-not-allowed opacity-30",
+      false: "",
+    },
   },
   defaultVariants: {
     typeStyle: "primary",
     size: "base",
+    disabled: false,
   },
 });
 
@@ -40,6 +47,7 @@ export type ButtonTemplateProps = VariantProps<typeof buttonTemplate> &
     children: React.ReactNode;
     className?: string;
     hover?: boolean;
+    disabled?: boolean;
   };
 
 function ButtonTemplate({
@@ -48,11 +56,13 @@ function ButtonTemplate({
   size,
   hover,
   className,
+  disabled,
   ...props
 }: ButtonTemplateProps) {
   const hoverClasses = getHoverClasses(typeStyle as string, hover);
   const buttonClasses =
-    buttonTemplate({ typeStyle, size, className }) + ` ${hoverClasses}`;
+    buttonTemplate({ typeStyle, size, disabled, className }) +
+    ` ${hoverClasses}`;
   return (
     <div className={buttonClasses} {...props}>
       {children}
