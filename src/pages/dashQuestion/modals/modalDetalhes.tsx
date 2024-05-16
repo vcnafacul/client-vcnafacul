@@ -464,9 +464,11 @@ function ModalDetalhes({
         handleUpdateQuestionStatus(StatusEnum.Approved);
       },
       status: StatusEnum.Approved,
-      className: "bg-green2 col-span-1",
+      typeStyle: "accepted",
       editing: false,
-      disabled: !permissao[Roles.validarQuestao],
+      disabled:
+        !permissao[Roles.validarQuestao] ||
+        question?.status === StatusEnum.Approved,
     },
     {
       children: "Rejeitar",
@@ -475,9 +477,11 @@ function ModalDetalhes({
         setRefuse(true);
       },
       status: StatusEnum.Rejected,
-      className: "bg-red col-span-1",
       editing: false,
-      disabled: !permissao[Roles.validarQuestao],
+      typeStyle: "refused",
+      disabled:
+        !permissao[Roles.validarQuestao] ||
+        question?.status === StatusEnum.Rejected,
     },
     {
       children: "Editar",
@@ -524,6 +528,7 @@ function ModalDetalhes({
                 disabled={btn.disabled}
                 type={btn.type}
                 onClick={btn.onClick}
+                typeStyle={btn.typeStyle}
                 hover
                 className={`${btn.className} w-full border-none`}
               >
