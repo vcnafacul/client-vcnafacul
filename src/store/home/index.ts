@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { AboutUsProps } from "../../components/organisms/aboutUs";
@@ -15,39 +16,39 @@ import { Geolocation } from "../../types/geolocation/geolocation";
 export type HomeState = {
   hero: {
     data: Slide[];
-    updatedHero: Date;
+    updatedHero: DateTime;
   };
   footer: {
     data: FooterProps | null;
-    updatedHero: Date;
+    updatedHero: DateTime;
   };
   aboutUs: {
     data: AboutUsProps | null;
-    updatedHero: Date;
+    updatedHero: DateTime;
   };
   features: {
     data: FeaturesProps | null;
-    updatedHero: Date;
+    updatedHero: DateTime;
   };
   actionAreas: {
     data: ActionProps | null;
-    updatedHero: Date;
+    updatedHero: DateTime;
   };
   supporters: {
     data: SupportersSponsor | null;
-    updatedHero: Date;
+    updatedHero: DateTime;
   };
   volunteers: {
     data: Volunteer[];
-    updatedHero: Date;
+    updatedHero: DateTime;
   };
   markers: {
     data: Geolocation[];
-    updatedHero: Date;
+    updatedHero: DateTime;
   };
   news: {
     data: News[];
-    updatedHero: Date;
+    updatedHero: DateTime;
   };
   setHero: (hero: Slide[]) => void;
   setFooter: (footer: FooterProps) => void;
@@ -65,56 +66,60 @@ export const useHomeStore = create<HomeState>()(
     (set) => ({
       hero: {
         data: [],
-        updatedHero: new Date(),
+        updatedHero: DateTime.now(),
       },
       footer: {
         data: null,
-        updatedHero: new Date(),
+        updatedHero: DateTime.now(),
       },
       aboutUs: {
         data: null,
-        updatedHero: new Date(),
+        updatedHero: DateTime.now(),
       },
       features: {
         data: null,
-        updatedHero: new Date(),
+        updatedHero: DateTime.now(),
       },
       actionAreas: {
         data: null,
-        updatedHero: new Date(),
+        updatedHero: DateTime.now(),
       },
       supporters: {
         data: null,
-        updatedHero: new Date(),
+        updatedHero: DateTime.now(),
       },
       volunteers: {
         data: [],
-        updatedHero: new Date(),
+        updatedHero: DateTime.now(),
       },
       markers: {
         data: [],
-        updatedHero: new Date(),
+        updatedHero: DateTime.now(),
       },
       news: {
         data: [],
-        updatedHero: new Date(),
+        updatedHero: DateTime.now(),
       },
-      setHero: (hero) => set({ hero: { data: hero, updatedHero: new Date() } }),
+      setHero: (hero) =>
+        set({ hero: { data: hero, updatedHero: DateTime.now() } }),
       setFooter: (footer) =>
-        set({ footer: { data: footer, updatedHero: new Date() } }),
+        set({ footer: { data: footer, updatedHero: DateTime.now() } }),
       setAboutUs: (aboutUs) =>
-        set({ aboutUs: { data: aboutUs, updatedHero: new Date() } }),
+        set({ aboutUs: { data: aboutUs, updatedHero: DateTime.now() } }),
       setFeatures: (features) =>
-        set({ features: { data: features, updatedHero: new Date() } }),
+        set({ features: { data: features, updatedHero: DateTime.now() } }),
       setActionAreas: (actionAreas) =>
-        set({ actionAreas: { data: actionAreas, updatedHero: new Date() } }),
+        set({
+          actionAreas: { data: actionAreas, updatedHero: DateTime.now() },
+        }),
       setSupporters: (supporters) =>
-        set({ supporters: { data: supporters, updatedHero: new Date() } }),
+        set({ supporters: { data: supporters, updatedHero: DateTime.now() } }),
       setVolunteers: (volunteers) =>
-        set({ volunteers: { data: volunteers, updatedHero: new Date() } }),
+        set({ volunteers: { data: volunteers, updatedHero: DateTime.now() } }),
       setMarkers: (markers) =>
-        set({ markers: { data: markers, updatedHero: new Date() } }),
-      setNews: (news) => set({ news: { data: news, updatedHero: new Date() } }),
+        set({ markers: { data: markers, updatedHero: DateTime.now() } }),
+      setNews: (news) =>
+        set({ news: { data: news, updatedHero: DateTime.now() } }),
     }),
     {
       name: "cms",

@@ -5,15 +5,13 @@ import { BaseTemplateContext } from "../context/baseTemplateContext";
 import { header } from "../pages/home/data";
 import { getFooter } from "../services/directus/home/footer";
 import { useHomeStore } from "../store/home";
+import { DiffTime } from "../utils/diffTime";
 
 export function BaseRoutes() {
   const { footer, setFooter } = useHomeStore();
 
   useEffect(() => {
-    if (
-      !footer.data ||
-      footer.updatedHero < new Date(new Date().getTime() - 3600 * 8)
-    ) {
+    if (!footer.data || DiffTime(footer.updatedHero, 8)) {
       getFooter()
         .then((res) => {
           setFooter(res);

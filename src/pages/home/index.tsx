@@ -14,6 +14,7 @@ import { getActions } from "../../services/directus/home/actions.ts";
 import { getFeature } from "../../services/directus/home/features.ts";
 import { getSponsor } from "../../services/directus/home/sponsors.ts";
 import { useHomeStore } from "../../store/home/index.ts";
+import { DiffTime } from "../../utils/diffTime.ts";
 
 function Home() {
   const {
@@ -30,10 +31,7 @@ function Home() {
   } = useHomeStore();
 
   useEffect(() => {
-    if (
-      !aboutUs.data ||
-      aboutUs.updatedHero < new Date(new Date().getTime() - 3600 * 8)
-    ) {
+    if (!aboutUs.data || DiffTime(aboutUs.updatedHero, 8)) {
       getAboutUs()
         .then((res) => {
           setAboutUs(res);
@@ -45,10 +43,7 @@ function Home() {
   }, [aboutUs, setAboutUs]);
 
   useEffect(() => {
-    if (
-      !features.data ||
-      features.updatedHero < new Date(new Date().getTime() - 3600 * 8)
-    ) {
+    if (!features.data || DiffTime(features.updatedHero, 8)) {
       getFeature()
         .then((res) => {
           setFeatures(res);
@@ -60,10 +55,7 @@ function Home() {
   }, [features.data, setFeatures]);
 
   useEffect(() => {
-    if (
-      !actionAreas.data ||
-      actionAreas.updatedHero < new Date(new Date().getTime() - 3600 * 8)
-    ) {
+    if (!actionAreas.data || DiffTime(actionAreas.updatedHero, 8)) {
       getActions()
         .then((res) => {
           setActionAreas(res);
@@ -75,10 +67,7 @@ function Home() {
   }, [actionAreas, setActionAreas]);
 
   useEffect(() => {
-    if (
-      !supporters.data ||
-      supporters.updatedHero < new Date(new Date().getTime() - 3600 * 8)
-    ) {
+    if (!supporters.data || DiffTime(supporters.updatedHero, 8)) {
       getSponsor()
         .then((res) => {
           setSupporters(res);
@@ -90,10 +79,7 @@ function Home() {
   }, [supporters, setSupporters]);
 
   useEffect(() => {
-    if (
-      volunteers.data.length === 0 ||
-      volunteers.updatedHero < new Date(new Date().getTime() - 3600 * 8)
-    ) {
+    if (volunteers.data.length === 0 || DiffTime(volunteers.updatedHero, 8)) {
       getVolunteers()
         .then((res) => {
           setVolunteers(res);
