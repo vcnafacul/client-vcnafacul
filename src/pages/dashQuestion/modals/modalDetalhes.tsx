@@ -7,6 +7,7 @@ import * as yup from "yup";
 import { ReactComponent as Preview } from "../../../assets/icons/Icon-preview.svg";
 import Alternative from "../../../components/atoms/alternative";
 import { Checkbox, CheckboxProps } from "../../../components/atoms/checkbox";
+import { ImagePreview } from "../../../components/atoms/imagePreview";
 import ModalImage from "../../../components/atoms/modalImage";
 import Text from "../../../components/atoms/text";
 import BLink from "../../../components/molecules/bLink";
@@ -762,7 +763,7 @@ function ModalDetalhes({
           {question ? (
             <div>
               {imagePreview ? (
-                <img src={imagePreview as string} />
+                <ImagePreview imagePreview={imagePreview} />
               ) : (
                 <img
                   className="max-h-96 bg-lightGray p-[1px] w-full mr-4 sm:m-0 cursor-pointer"
@@ -784,7 +785,7 @@ function ModalDetalhes({
             <div>
               <div className="border py-4 flex justify-center items-center h-1/2">
                 {imagePreview ? (
-                  <img src={imagePreview as string} />
+                  <ImagePreview imagePreview={imagePreview} />
                 ) : (
                   <Preview />
                 )}
