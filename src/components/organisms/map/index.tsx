@@ -4,6 +4,7 @@ import { FORM_GEOLOCATION } from "../../../routes/path";
 import getGeolocation from "../../../services/geolocation/getGeolocation";
 import { useHomeStore } from "../../../store/home";
 import { Geolocation } from "../../../types/geolocation/geolocation";
+import { DiffTime } from "../../../utils/diffTime";
 import MapBox from "../../molecules/mapBox";
 import MapBoxInfo from "../mapBoxInfo";
 
@@ -19,10 +20,7 @@ function Map() {
   }
 
   useEffect(() => {
-    if (
-      markers.data.length === 0 ||
-      markers.updatedHero < new Date(new Date().getTime() - 3600 * 8)
-    ) {
+    if (markers.data.length === 0 || DiffTime(markers.updatedHero, 8)) {
       getGeolocation()
         .then((res) => {
           setMarkers(

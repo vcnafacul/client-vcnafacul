@@ -5,6 +5,7 @@ import { ReactComponent as TriangleGreen } from "../../../assets/icons/triangle-
 import { NEWS } from "../../../routes/path";
 import { getNews } from "../../../services/news/getNews";
 import { useHomeStore } from "../../../store/home";
+import { DiffTime } from "../../../utils/diffTime";
 import Text from "../../atoms/text";
 import NewsCarousel from "../newsCarousel";
 
@@ -29,10 +30,7 @@ function HomeNews() {
   };
 
   useEffect(() => {
-    if (
-      news.data.length === 0 ||
-      news.updatedHero < new Date(new Date().getTime() - 3600 * 8)
-    ) {
+    if (news.data.length === 0 || DiffTime(news.updatedHero, 8)) {
       getNews()
         .then((res) => {
           setNews(res.data);
