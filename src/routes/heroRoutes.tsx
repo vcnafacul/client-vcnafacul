@@ -10,7 +10,7 @@ export function HeroRoutes() {
   const { hero, setHero } = useHomeStore();
 
   useEffect(() => {
-    if (hero.data.length === 0 || DiffTime(hero.updatedHero, 8)) {
+    if (hero.data.length === 0 || DiffTime(hero.updated, 8)) {
       getHeroSlides()
         .then((res) => {
           setHero(res);
@@ -19,7 +19,7 @@ export function HeroRoutes() {
           toast.error(error.message);
         });
     }
-  }, [hero.data.length]);
+  }, []);
 
   return (
     <HeroContext.Provider value={{ heroSlides: hero.data }}>

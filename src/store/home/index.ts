@@ -1,4 +1,3 @@
-import { DateTime } from "luxon";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { AboutUsProps } from "../../components/organisms/aboutUs";
@@ -16,39 +15,39 @@ import { Geolocation } from "../../types/geolocation/geolocation";
 export type HomeState = {
   hero: {
     data: Slide[];
-    updatedHero: DateTime;
+    updated: number;
   };
   footer: {
     data: FooterProps | null;
-    updatedHero: DateTime;
+    updated: number;
   };
   aboutUs: {
     data: AboutUsProps | null;
-    updatedHero: DateTime;
+    updated: number;
   };
   features: {
     data: FeaturesProps | null;
-    updatedHero: DateTime;
+    updated: number;
   };
   actionAreas: {
     data: ActionProps | null;
-    updatedHero: DateTime;
+    updated: number;
   };
   supporters: {
     data: SupportersSponsor | null;
-    updatedHero: DateTime;
+    updated: number;
   };
   volunteers: {
     data: Volunteer[];
-    updatedHero: DateTime;
+    updated: number;
   };
   markers: {
     data: Geolocation[];
-    updatedHero: DateTime;
+    updated: number;
   };
   news: {
     data: News[];
-    updatedHero: DateTime;
+    updated: number;
   };
   setHero: (hero: Slide[]) => void;
   setFooter: (footer: FooterProps) => void;
@@ -66,60 +65,64 @@ export const useHomeStore = create<HomeState>()(
     (set) => ({
       hero: {
         data: [],
-        updatedHero: DateTime.now(),
+        updated: new Date().getTime(),
       },
       footer: {
         data: null,
-        updatedHero: DateTime.now(),
+        updated: new Date().getTime(),
       },
       aboutUs: {
         data: null,
-        updatedHero: DateTime.now(),
+        updated: new Date().getTime(),
       },
       features: {
         data: null,
-        updatedHero: DateTime.now(),
+        updated: new Date().getTime(),
       },
       actionAreas: {
         data: null,
-        updatedHero: DateTime.now(),
+        updated: new Date().getTime(),
       },
       supporters: {
         data: null,
-        updatedHero: DateTime.now(),
+        updated: new Date().getTime(),
       },
       volunteers: {
         data: [],
-        updatedHero: DateTime.now(),
+        updated: new Date().getTime(),
       },
       markers: {
         data: [],
-        updatedHero: DateTime.now(),
+        updated: new Date().getTime(),
       },
       news: {
         data: [],
-        updatedHero: DateTime.now(),
+        updated: new Date().getTime(),
       },
       setHero: (hero) =>
-        set({ hero: { data: hero, updatedHero: DateTime.now() } }),
+        set({ hero: { data: hero, updated: new Date().getTime() } }),
       setFooter: (footer) =>
-        set({ footer: { data: footer, updatedHero: DateTime.now() } }),
+        set({ footer: { data: footer, updated: new Date().getTime() } }),
       setAboutUs: (aboutUs) =>
-        set({ aboutUs: { data: aboutUs, updatedHero: DateTime.now() } }),
+        set({ aboutUs: { data: aboutUs, updated: new Date().getTime() } }),
       setFeatures: (features) =>
-        set({ features: { data: features, updatedHero: DateTime.now() } }),
+        set({ features: { data: features, updated: new Date().getTime() } }),
       setActionAreas: (actionAreas) =>
         set({
-          actionAreas: { data: actionAreas, updatedHero: DateTime.now() },
+          actionAreas: { data: actionAreas, updated: new Date().getTime() },
         }),
       setSupporters: (supporters) =>
-        set({ supporters: { data: supporters, updatedHero: DateTime.now() } }),
+        set({
+          supporters: { data: supporters, updated: new Date().getTime() },
+        }),
       setVolunteers: (volunteers) =>
-        set({ volunteers: { data: volunteers, updatedHero: DateTime.now() } }),
+        set({
+          volunteers: { data: volunteers, updated: new Date().getTime() },
+        }),
       setMarkers: (markers) =>
-        set({ markers: { data: markers, updatedHero: DateTime.now() } }),
+        set({ markers: { data: markers, updated: new Date().getTime() } }),
       setNews: (news) =>
-        set({ news: { data: news, updatedHero: DateTime.now() } }),
+        set({ news: { data: news, updated: new Date().getTime() } }),
     }),
     {
       name: "cms",

@@ -31,7 +31,7 @@ function Home() {
   } = useHomeStore();
 
   useEffect(() => {
-    if (!aboutUs.data || DiffTime(aboutUs.updatedHero, 8)) {
+    if (!aboutUs.data || DiffTime(aboutUs.updated, 8)) {
       getAboutUs()
         .then((res) => {
           setAboutUs(res);
@@ -40,10 +40,11 @@ function Home() {
           toast.error(error.message);
         });
     }
-  }, [aboutUs, setAboutUs]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    if (!features.data || DiffTime(features.updatedHero, 8)) {
+    if (!features.data || DiffTime(features.updated, 8)) {
       getFeature()
         .then((res) => {
           setFeatures(res);
@@ -52,10 +53,11 @@ function Home() {
           toast.error(error.message);
         });
     }
-  }, [features.data, setFeatures]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    if (!actionAreas.data || DiffTime(actionAreas.updatedHero, 8)) {
+    if (!actionAreas.data || DiffTime(actionAreas.updated, 8)) {
       getActions()
         .then((res) => {
           setActionAreas(res);
@@ -64,10 +66,11 @@ function Home() {
           toast.error(error.message);
         });
     }
-  }, [actionAreas, setActionAreas]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    if (!supporters.data || DiffTime(supporters.updatedHero, 8)) {
+    if (!supporters.data || DiffTime(supporters.updated, 8)) {
       getSponsor()
         .then((res) => {
           setSupporters(res);
@@ -76,10 +79,11 @@ function Home() {
           toast.error(error.message);
         });
     }
-  }, [supporters, setSupporters]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    if (volunteers.data.length === 0 || DiffTime(volunteers.updatedHero, 8)) {
+    if (volunteers.data.length === 0 || DiffTime(volunteers.updated, 8)) {
       getVolunteers()
         .then((res) => {
           setVolunteers(res);
@@ -88,7 +92,8 @@ function Home() {
           toast.error(error.message);
         });
     }
-  }, [volunteers, setVolunteers]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <HomeContext.Provider

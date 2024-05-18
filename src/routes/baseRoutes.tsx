@@ -11,7 +11,7 @@ export function BaseRoutes() {
   const { footer, setFooter } = useHomeStore();
 
   useEffect(() => {
-    if (!footer.data || DiffTime(footer.updatedHero, 8)) {
+    if (!footer.data || DiffTime(footer.updated, 8)) {
       getFooter()
         .then((res) => {
           setFooter(res);
@@ -20,7 +20,8 @@ export function BaseRoutes() {
           toast.error(error.message);
         });
     }
-  }, [footer.data]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BaseTemplateContext.Provider

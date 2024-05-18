@@ -20,7 +20,7 @@ function Map() {
   }
 
   useEffect(() => {
-    if (markers.data.length === 0 || DiffTime(markers.updatedHero, 8)) {
+    if (markers.data.length === 0 || DiffTime(markers.updated, 8)) {
       getGeolocation()
         .then((res) => {
           setMarkers(
@@ -37,6 +37,7 @@ function Map() {
           setMarkers([]);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

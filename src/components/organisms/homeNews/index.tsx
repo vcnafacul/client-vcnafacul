@@ -30,7 +30,7 @@ function HomeNews() {
   };
 
   useEffect(() => {
-    if (news.data.length === 0 || DiffTime(news.updatedHero, 8)) {
+    if (news.data.length === 0 || DiffTime(news.updated, 8)) {
       getNews()
         .then((res) => {
           setNews(res.data);
@@ -39,6 +39,7 @@ function HomeNews() {
           toast.error(error.message);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
