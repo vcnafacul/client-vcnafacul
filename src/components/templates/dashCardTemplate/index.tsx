@@ -61,8 +61,8 @@ function DashCardTemplate({ customFilter }: Props) {
         <Text className="self-center" size="secondary">
           {title}
         </Text>
-        <div className="flex flex-wrap flex-col justify-center items-center gap-2 z-[1] bg-gray-200 rounded-2xl bg-opacity-75 p-2 mx-4 mt-14 w-10/12 md:w-fit relative">
-          <div className="flex items-center justify-center w-full">
+        <div className="flex flex-wrap flex-col justify-center items-center gap-2 z-[1] bg-gray-200 rounded-2xl bg-opacity-75 p-2 mt-14 w-10/12 md:w-fit relative">
+          <div className="flex flex-wrap items-center md:justify-start justify-center gap-4 w-full mb-4">
             {filterProps && (
               <Filter
                 {...filterProps}
@@ -72,6 +72,12 @@ function DashCardTemplate({ customFilter }: Props) {
                 }}
               />
             )}
+            {buttons?.map((button, index) => (
+              <Button key={index} {...button} />
+            ))}
+            {customFilter?.map((filter, index) => (
+              <div key={index}> {filter}</div>
+            ))}
           </div>
           <div className="flex flex-wrap justify-center gap-4">
             {selectFiltes?.map((select, index) => {
@@ -87,14 +93,6 @@ function DashCardTemplate({ customFilter }: Props) {
                 />
               );
             })}
-          </div>
-          <div className="flex justify-center flex-wrap items-center gap-4 py-4">
-            {buttons?.map((button, index) => (
-              <Button key={index} {...button} />
-            ))}
-            {customFilter?.map((filter, index) => (
-              <div key={index}> {filter}</div>
-            ))}
           </div>
         </div>
       </div>

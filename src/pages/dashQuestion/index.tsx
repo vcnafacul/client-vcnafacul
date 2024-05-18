@@ -341,7 +341,7 @@ function DashQuestion() {
       typeStyle: "quaternary",
       size: "small",
       children: "Cadastrar Questao",
-      className: "sm:absolute right-4 bottom-4",
+      className: "md:absolute right-4 top-6",
     },
   ];
   return (
