@@ -271,7 +271,8 @@ function DashQuestion() {
 
   useEffect(() => {
     getQuestions(status, 1, limitCards, materia, frente, prova, enemArea);
-  }, [status, getQuestions, materia, frente, prova, enemArea]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     getInfors();
@@ -312,12 +313,35 @@ function DashQuestion() {
     {
       disabled: !permissao[Roles.criarQuestao],
       onClick: () => {
+        setMateria(materiasOption[0].id);
+        setFrente(frentesOption[0].id);
+        setProva(provasOption[0].id);
+        setEnemArea(EnemAreaOption[0].id);
+        setStatus(StatusEnum.Pending);
+      },
+      typeStyle: "quaternary",
+      size: "small",
+      children: "Limpar Filtro",
+    },
+    {
+      disabled: !permissao[Roles.criarQuestao],
+      onClick: () => {
+        getQuestions(status, 1, limitCards, materia, frente, prova, enemArea);
+      },
+      typeStyle: "quaternary",
+      size: "small",
+      children: "Aplicar Filtro",
+    },
+    {
+      disabled: !permissao[Roles.criarQuestao],
+      onClick: () => {
         setQuestionSelect(null);
         setOpenModalRegister(true);
       },
       typeStyle: "quaternary",
       size: "small",
       children: "Cadastrar Questao",
+      className: "sm:absolute right-4 bottom-4",
     },
   ];
   return (

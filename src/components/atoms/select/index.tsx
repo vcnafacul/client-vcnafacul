@@ -19,10 +19,12 @@ function Select({ options, disabled, defaultValue, setState } : SelectProps){
             <select 
             className="remove-arrow text-center w-full h-full text-lg font-black text-marine pl-4 pr-10 py-1 rounded-xl shadow-md z-50"
             disabled={disabled ?? false}
+            value={defaultValue}
             defaultValue={defaultValue}
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                 setState(e.target.value);
-            }}>
+            }}
+            >
             {options.map(opt => (
                 <option key={opt.id} value={opt.id}>{opt.name}</option>
                 ))}

@@ -12,10 +12,10 @@ interface SimulationHistoryHeaderProps {
 }
 
 export function SimulationHistoryHeader({ historic } : SimulationHistoryHeaderProps) {
-    
+
     const [showDetails, setShowDetails] = useState<boolean>(false);
     const finished = historic.simulado.tipo.quantidadeTotalQuestao === historic.questoesRespondidas
-    return ( 
+    return (
         <div className="my-6">
             <div className="flex items-center justify-around my-4">
                 <Text className="text-white w-fit m-0">Simulado do Enem</Text>
@@ -27,7 +27,7 @@ export function SimulationHistoryHeader({ historic } : SimulationHistoryHeaderPr
                 <div className="flex items-center flex-col col-span-1 sm:col-start-1 sm:row-start-2 sm:row-span-2">
                     <div>
                         <FieldValue field="Caderno" value={historic.simulado.tipo.nome} />
-                        <FieldValue field="Ano" value="2019" />
+                        <FieldValue field="Ano" value={`${historic.ano}`} />
                         <FieldValue field="Quantidade" value={`${historic.simulado.tipo.quantidadeTotalQuestao} questões`} />
                         <FieldValue field="Tempo" value={getFormatingTime(historic.tempoRealizado)} />
                         <div className="text-white flex gap-1">
