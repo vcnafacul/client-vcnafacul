@@ -53,6 +53,7 @@ interface SimuladoHistoricoDTO {
 export interface HistoricoDTO {
     _id: string;
     usuario: number;
+    ano: number;
     simulado: SimuladoHistoricoDTO;
     respostas: AnswerHistoricoDTO[];
     tempoRealizado: number;
