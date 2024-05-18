@@ -7,7 +7,10 @@ import Legends, { Legend } from "../../molecules/legends";
 import QuestionList, { QuestionProps } from "../../molecules/questionList";
 
 import { ReactComponent as Report } from "../../../assets/icons/warning.svg";
-import { getColorEnemArea } from "../../../utils/colorEnemArea";
+import {
+  getColorEnemArea,
+  getTextColorEnemArea,
+} from "../../../utils/colorEnemArea";
 
 export interface QuestionTemplate {
   _id: string;
@@ -55,12 +58,12 @@ function SimulateTemplate({
                 questionSelected.enemArea
               ) as React.FunctionComponent<React.SVGProps<SVGSVGElement>>
             }
-            className={`bg-${getColorEnemArea(questionSelected.enemArea)}`}
+            className={`${getColorEnemArea(questionSelected.enemArea)}`}
           />
           <Text
-            className={`text-${getColorEnemArea(
+            className={`${getTextColorEnemArea(
               questionSelected.enemArea
-            )} mx-4 mb-0 w-full`}
+            )} mx-4 mb-0 whitespace-nowrap w-fit`}
           >
             {questionSelected.enemArea}
           </Text>

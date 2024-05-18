@@ -47,8 +47,8 @@ function SimulationHistoryCard({ historico }: SimulationHistoryCardProps) {
         <ToolTip>
           {historico.questoesRespondidas ===
           historico.simulado.tipo.quantidadeTotalQuestao
-            ? "Finalizado"
-            : "Incompleto"}
+            ? "Simulado Completo"
+            : "Simulado Incompleto"}
         </ToolTip>
       </div>
     </Link>
