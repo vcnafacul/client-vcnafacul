@@ -5,6 +5,7 @@ function Success(){
 
     const texts = [
         "Seu pré-cadastro foi realizado com sucesso!",
+        "Acesse seu email para confirmar o ser cadastro",
         "Queremos te acompanhar na sua jornada de estudos em direção a Universidade.",
         "Estamos construindo a nossa plataforma! Aguarde!",
         "Assim que a primeira funcionalidade estiver pronta nós vamos te avisar para que você seja um dos primeiros a testá-la!"]

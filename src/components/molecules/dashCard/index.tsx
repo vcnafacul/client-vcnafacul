@@ -1,8 +1,9 @@
-import { ComponentProps } from "react";
+import { ComponentProps, useEffect, useState } from "react";
 import { IoChevronUpCircleSharp } from "react-icons/io5";
 import { VariantProps, tv } from "tailwind-variants";
 import SubMenuDash from "../../organisms/subMenuDash";
 import { SubDashCardInfo } from "../subDashCard";
+import { useAuthStore } from "../../../store/auth";
 
 const transition = 'transition-all duration-300'
 
@@ -36,9 +37,21 @@ type DasCardProps = VariantProps<typeof dashCard> & ComponentProps<'div'> & {
 }
 
 function DashCard({ card, size, opened, ...props }: DasCardProps) {
+  const [appearsAdminDashcard, setAppearsAdminDashcard] = useState(false)
+  const { data: { permissao }} = useAuthStore()
   const Icon = card.image;
+  useEffect(() => {
+    const newSubMenus = !!card.subMenuList.find(subCardInfo => {
+      if(!subCardInfo.permissions || subCardInfo.permissions?.some(p => permissao[p]))
+        return true;
+      return false
+    });
+    setAppearsAdminDashcard(newSubMenus)
+  }, [card.subMenuList, permissao]);
+  
   return (
-    <>
+    appearsAdminDashcard && (
+      <>
       <div {...props}
         className={`${dashCard({ size })} ${card.bg} ${size !== 'small' && !opened ? 'mt-4 rounded-t-md' : 'mt-0'} cursor-pointer`}>
         <Icon className={`select-none fill-white ${size !== 'small' ? 'mb-6 w-14 h-14' : 'w-4 h-4'} ${transition}`} />
@@ -47,6 +60,7 @@ function DashCard({ card, size, opened, ...props }: DasCardProps) {
       </div>
       {opened ? <SubMenuDash subDashCardInfo={card.subMenuList} /> : <></>}
     </>
+    )
   )
 }
 

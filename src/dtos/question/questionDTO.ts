@@ -10,6 +10,10 @@ export interface FrenteObjDefault extends ObjDefault {
   materia: string;
 }
 
+export interface MateriaObjDefault extends ObjDefault {
+  enemArea: string;
+}
+
 export interface QuestionDto {
   _id: string;
   prova: string;
@@ -32,6 +36,12 @@ export interface QuestionDto {
   quantidadeResposta: number;
   status: StatusEnum;
   updatedAt?: DateTime;
+  provaClassification: boolean;
+  subjectClassification: boolean;
+  textClassification: boolean;
+  imageClassfication: boolean;
+  alternativeClassfication: boolean;
+  reported: boolean;
 }
 
 export interface Question extends QuestionDto {

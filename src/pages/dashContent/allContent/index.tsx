@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { SelectProps } from "../../../components/atoms/select";
-import Button from "../../../components/molecules/button";
+import { ButtonProps } from "../../../components/molecules/button";
 import DashCardTemplate from "../../../components/templates/dashCardTemplate";
 import { ContentDtoInput } from "../../../dtos/content/contentDtoInput";
 import { StatusContent } from "../../../enums/content/statusContent";
@@ -81,21 +81,37 @@ function AllContent() {
   };
 
   const ShowDemandModal = () => {
-      return <ModalTemplate handleClose={() => setOpenShowModal(false)} isOpen={openShowModal && demandSelected?.status === StatusContent.Pending_Upload}>
-                <ShowDemand
-            demand={demandSelected!}
-            updateStatusDemand={handleRemoveDemand}
-            />
-        </ModalTemplate>
-    };
+    return (
+      <ModalTemplate
+        handleClose={() => setOpenShowModal(false)}
+        isOpen={
+          openShowModal &&
+          demandSelected?.status === StatusContent.Pending_Upload
+        }
+      >
+        <ShowDemand
+          demand={demandSelected!}
+          updateStatusDemand={handleRemoveDemand}
+        />
+      </ModalTemplate>
+    );
+  };
 
   const ValidatedModalDemand = () => {
-    return <ModalTemplate handleClose={() => setOpenShowModal(false)} isOpen={openShowModal && demandSelected?.status !== StatusContent.Pending_Upload}>
+    return (
+      <ModalTemplate
+        handleClose={() => setOpenShowModal(false)}
+        isOpen={
+          openShowModal &&
+          demandSelected?.status !== StatusContent.Pending_Upload
+        }
+      >
         <ValidatedDemand
-        demand={demandSelected!}
-        updateStatusDemand={handleRemoveDemand}
-      />
-    </ModalTemplate>
+          demand={demandSelected!}
+          updateStatusDemand={handleRemoveDemand}
+        />
+      </ModalTemplate>
+    );
   };
 
   const NewModalDemand = () => {
@@ -113,38 +129,34 @@ function AllContent() {
   };
 
   const SettingsModal = () => {
-    return <ModalTemplate isOpen={settings} handleClose={() => { setSettings(false); }}>
-         <SettingsContent />
-    </ModalTemplate>
+    return (
+      <ModalTemplate
+        isOpen={settings}
+        handleClose={() => {
+          setSettings(false);
+        }}
+      >
+        <SettingsContent />
+      </ModalTemplate>
+    );
   };
 
   const FilterManager = () => {
     if (!permissao[Roles.gerenciadorDemanda]) return null;
     return (
       <div className="flex">
-        <Button
-          onClick={() => {
-            setDemandSelected(null);
-            setOpenNewModalDemand(true);
-          }}
-          typeStyle="quaternary"
-          className="text-xl font-light rounded-full h-8 "
-        >
-          <span className="text-4xl">+</span>Nova Demanda
-        </Button>
-        ,
         <SettingIcon
           onClick={() => {
             setSettings(true);
           }}
-          className="w-10 h-10 fill-marine opacity-75 hover:opacity-100 cursor-pointer transition-all duration-300"
+          className="w-10 h-10 transition-all duration-300 opacity-75 cursor-pointer fill-marine hover:opacity-100"
         />
       </div>
     );
   };
 
   useEffect(() => {
-    getContent(token, status as StatusContent, undefined, 1, limitCards)
+    getContent(token, status as StatusContent, materiaSelected, 1, limitCards)
       .then((res) => {
         setDemands(res.data);
         dataRef.current = res.data;
@@ -152,7 +164,7 @@ function AllContent() {
       .catch((error: Error) => {
         toast.error(error.message);
       });
-  }, [token, status]);
+  }, [token, status, materiaSelected]);
 
   const getMoreCards = async (
     page: number
@@ -160,11 +172,23 @@ function AllContent() {
     return await getContent(
       token,
       status as StatusContent,
-      undefined,
+      materiaSelected,
       page,
       limitCards
     );
   };
+
+  const buttons: ButtonProps[] = [
+    {
+      onClick: () => {
+        setDemandSelected(null);
+        setOpenNewModalDemand(true);
+      },
+      typeStyle: "quaternary",
+      size: "small",
+      children: "Nova Demanda",
+    },
+  ];
 
   const selectFiltes: SelectProps[] = [
     {
@@ -191,6 +215,7 @@ function AllContent() {
         cardTransformation: cardTransformationContent,
         limitCards,
         selectFiltes,
+        buttons,
       }}
     >
       <DashCardTemplate customFilter={[<FilterManager />]} />

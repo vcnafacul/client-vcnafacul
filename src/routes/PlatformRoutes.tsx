@@ -26,9 +26,10 @@ import Subject from "../pages/subject";
 import { useAuthStore } from "../store/auth";
 import { BaseRoutes } from "./baseRoutes";
 import { HeroRoutes } from "./heroRoutes";
-import { ACCOUNT_PATH, CONTENT, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, ESTUDO, FORGOT_PASSWORD_PATH, FORM_GEOLOCATION, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, RESET_PASSWORD_PATH, SIMULADO, SIMULADO_RESPONDER, SIMULATE_METRICS } from "./path";
+import { ACCOUNT_PATH, CONFIRM_EMAIL, CONTENT, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, ESTUDO, FORGOT_PASSWORD_PATH, FORM_GEOLOCATION, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, RESET_PASSWORD_PATH, SIMULADO, SIMULADO_RESPONDER, SIMULATE_METRICS } from "./path";
 import ProtectedRoute from "./protectedRoute";
 import ProtectedRoutePermission from "./protectedRoutePermission";
+import { ConfirmEmailPage } from "../pages/confirmEmail";
 
 
 export function PlatformRoutes() {
@@ -38,8 +39,8 @@ export function PlatformRoutes() {
     return (
         <Routes>
             {/* Aluno tem acesso */}
+            <Route element={<ConfirmEmailPage />} path={CONFIRM_EMAIL} />
             <Route element={<BaseRoutes />}>
-
                 <Route element={<HeroRoutes />}>
                     <Route path={HOME_PATH} element={<Home />} />
                     <Route path={NEWS} element={ <NewsPage />} />
@@ -48,7 +49,7 @@ export function PlatformRoutes() {
                 <Route path={LOGIN_PATH} element={<Login />} />
                 <Route path={FORGOT_PASSWORD_PATH} element={<Forgot />} />
                 <Route path={LOGOFF_PATH} element={<Logout />} />
-                <Route path={`${RESET_PASSWORD_PATH}`} element={<Reset />} />
+                <Route path={RESET_PASSWORD_PATH} element={<Reset />} />
                 <Route path={REGISTER_PATH} element={<Register />} />
                 <Route path={FORM_GEOLOCATION} element={<Geo />}/>
             </Route>
@@ -91,7 +92,7 @@ export function PlatformRoutes() {
                     </ProtectedRoutePermission>} />
 
                 <Route path={DASH_PROVAS} element={
-                    <ProtectedRoutePermission permission={data.permissao[Roles.alterarPermissao]}>
+                    <ProtectedRoutePermission permission={data.permissao[Roles.visualizarProvas]}>
                         <DashProva />
                     </ProtectedRoutePermission>} />
 
@@ -104,7 +105,7 @@ export function PlatformRoutes() {
                     <ProtectedRoutePermission permission={data.permissao[Roles.criarSimulado]}>
                         <DashSimulado />
                     </ProtectedRoutePermission>} />
-            </Route>
+                </Route>
 
             <Route path="*" element={<Navigate to={data.token ? DASH : HOME_PATH} replace />} />
         </Routes>

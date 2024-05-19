@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ButtonProps } from "../../components/molecules/button";
 import { CardDash } from "../../components/molecules/cardDash";
@@ -26,7 +26,6 @@ function DashProva() {
 
   const [openNewProva, setOpenNewProva] = useState<boolean>(false);
   const [showProva, setShowProva] = useState<boolean>(false);
-  const dataRef = useRef<Prova[]>([]);
   const limitCards = 40;
 
   const {
@@ -65,8 +64,8 @@ function DashProva() {
   };
 
   const addProva = (data: Prova) => {
-    dataRef.current.push(data);
-    setProvas(dataRef.current);
+    const newProvas = [...provas, data];
+    setProvas(newProvas);
   };
 
   const ModalNewProva = () => {
@@ -126,8 +125,8 @@ function DashProva() {
         setOpenNewProva(true);
       },
       typeStyle: "quaternary",
-      className: "text-xl font-light rounded-full h-8",
-      children: "Cadastrar Prova",
+      size: "small",
+      children: "Nova Prova",
     },
   ];
 

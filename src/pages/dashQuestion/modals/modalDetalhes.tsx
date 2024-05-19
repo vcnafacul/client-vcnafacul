@@ -1,10 +1,13 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { IoMdTrash } from "react-icons/io";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 import { ReactComponent as Preview } from "../../../assets/icons/Icon-preview.svg";
 import Alternative from "../../../components/atoms/alternative";
+import { Checkbox, CheckboxProps } from "../../../components/atoms/checkbox";
+import { ImagePreview } from "../../../components/atoms/imagePreview";
 import ModalImage from "../../../components/atoms/modalImage";
 import Text from "../../../components/atoms/text";
 import BLink from "../../../components/molecules/bLink";
@@ -29,13 +32,13 @@ import { StatusEnum } from "../../../enums/generic/statusEnum";
 import { Roles } from "../../../enums/roles/roles";
 import { getMissingNumber } from "../../../services/prova/getMissingNumber";
 import { createQuestion } from "../../../services/question/createQuestion";
+import { deleteQuestion } from "../../../services/question/deleteQuestion";
 import { uploadImage } from "../../../services/question/uploadImage";
 import { useAuthStore } from "../../../store/auth";
 import { BtnProps } from "../../../types/generic/btnProps";
 import { Alternatives } from "../../../types/question/alternative";
 import { InfoQuestion } from "../../../types/question/infoQuestion";
 import { getStatusIcon } from "../../../utils/getStatusIcon";
-import { AreaEnem } from "../data";
 
 interface ModalDetalhesProps extends ModalProps {
   question?: Question;
@@ -43,6 +46,7 @@ interface ModalDetalhesProps extends ModalProps {
   handleUpdateQuestionStatus: (status: StatusEnum, message?: string) => void;
   handleUpdateQuestion: (questionUpdate: UpdateQuestion) => void;
   handleAddQuestion: (question: Question) => void;
+  handleRemoveQuestion: (id: string) => void;
 }
 
 function ModalDetalhes({
@@ -52,6 +56,7 @@ function ModalDetalhes({
   handleUpdateQuestionStatus,
   handleUpdateQuestion,
   handleAddQuestion,
+  handleRemoveQuestion,
 }: ModalDetalhesProps) {
   const schema = yup
     .object()
@@ -59,7 +64,8 @@ function ModalDetalhes({
       prova: yup
         .string()
         .required("Prova é obrigatoria")
-        .typeError("Por favor, selecione uma prova"),
+        .typeError("Por favor, selecione uma prova")
+        .default(question?.prova),
       numero: yup
         .number()
         .required("Número da questão é obrigatório")
@@ -67,28 +73,39 @@ function ModalDetalhes({
       enemArea: yup
         .string()
         .required("Área do Conhecimento é obrigatorio")
-        .typeError("Área do Conhecimento é obrigatorio"),
+        .typeError("Área do Conhecimento é obrigatorio")
+        .default(question?.enemArea),
       materia: yup
         .string()
-        .required("Materia é obrigatoria")
-        .typeError("Materia é obrigatoria"),
+        .typeError("Materia é obrigatoria")
+        .default(question?.materia),
       frente1: yup
         .string()
-        .required("A Frente Principal é obrigatorio")
-        .typeError("A Frente Principal é obrigatorio"),
-      frente2: yup.string().nullable(),
-      frente3: yup.string().nullable(),
+        .typeError("A Frente Principal é obrigatorio")
+        .default(question?.frente1),
+      frente2: yup.string().nullable().default(question?.frente2),
+      frente3: yup.string().nullable().default(question?.frente3),
       textoQuestao: yup
         .string()
-        .required("Texto da questão é obrigatorio")
-        .typeError("Texto da questão é obrigatorio"),
-      textoAlternativaA: yup.string(),
-      textoAlternativaB: yup.string(),
-      textoAlternativaC: yup.string(),
-      textoAlternativaD: yup.string(),
-      textoAlternativaE: yup.string(),
-      alternativa: yup.string().required(),
-      imaggeId: yup.string(),
+        .typeError("Texto da questão é obrigatorio")
+        .default(question?.textoQuestao),
+      textoAlternativaA: yup.string().default(question?.textoAlternativaA),
+      textoAlternativaB: yup.string().default(question?.textoAlternativaA),
+      textoAlternativaC: yup.string().default(question?.textoAlternativaA),
+      textoAlternativaD: yup.string().default(question?.textoAlternativaA),
+      textoAlternativaE: yup.string().default(question?.textoAlternativaA),
+      alternativa: yup.string().required().default(question?.alternativa),
+      imageId: yup.string().default(question?.imageId),
+      provaClassification: yup.bool().default(question?.provaClassification),
+      subjectClassification: yup
+        .bool()
+        .default(question?.subjectClassification),
+      textClassification: yup.bool().default(question?.textClassification),
+      imageClassfication: yup.bool().default(question?.imageClassfication),
+      alternativeClassfication: yup
+        .bool()
+        .default(question?.alternativeClassfication),
+      reported: yup.bool().default(question?.reported),
     })
     .required();
 
@@ -108,6 +125,7 @@ function ModalDetalhes({
   const [modified, setModified] = useState<boolean>(false);
   const [comeBack, setComeback] = useState<boolean>(false);
   const [numberMissing, setNumberMissing] = useState<number[]>([]);
+  const [tryDelete, setTryDelete] = useState<boolean>(false);
 
   const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>(
     null
@@ -116,9 +134,18 @@ function ModalDetalhes({
 
   const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
 
+  //WATCHERS
   const prova = watch("prova");
   const alternativa = watch("alternativa");
   const materia = watch("materia");
+  const enemArea = watch("enemArea");
+  const provaClassification = watch("provaClassification");
+  const subjectClassification = watch("subjectClassification");
+  const textClassification = watch("textClassification");
+  const imageClassfication = watch("imageClassfication");
+  const alternativeClassfication = watch("alternativeClassfication");
+  const reported = watch("reported");
+  //END WATCHERS
 
   const previewImage = (file: Blob) => {
     const reader = new FileReader();
@@ -149,14 +176,20 @@ function ModalDetalhes({
   }));
   provas.unshift({ label: "", value: "" });
 
-  const materias: FormFieldOption[] = infos.materias.map((m) => ({
+  const matetiasByEnemArea = infos.materias.filter((m) =>
+    enemArea ? m.enemArea === enemArea : true
+  );
+
+  const materias: FormFieldOption[] = matetiasByEnemArea.map((m) => ({
     label: m.nome,
     value: m._id,
   }));
+  materias.unshift({ label: "", value: undefined });
 
   const frentesBymateria = infos.frentes.filter((f) =>
     materia ? f.materia === materia : true
   );
+
   const mainFrente: FormFieldOption[] =
     frentesBymateria.map(
       (f) =>
@@ -165,6 +198,7 @@ function ModalDetalhes({
           value: f._id,
         } as FormFieldOption)
     ) || [];
+  mainFrente.unshift({ label: "", value: undefined });
 
   const OptionalFrentes: FormFieldOption[] = infos.frentes.map((f) => ({
     label: f.nome,
@@ -177,14 +211,14 @@ function ModalDetalhes({
     value: n,
   }));
 
-  const getEnemArea = () => {
-    const nameProva = infos.provas.find(
+  const getEnemArea = (): FormFieldOption[] => {
+    const enemArea = infos.provas.find(
       (p) => p._id === prova ?? question?.prova
-    )?.nome;
-    if (nameProva) {
-      return AreaEnem.filter((a) => a.day.includes(nameProva.slice(5, 10)));
+    )?.enemAreas;
+    if (enemArea) {
+      return enemArea.map((e) => ({ label: e, value: e }));
     }
-    return AreaEnem;
+    return [];
   };
 
   const listFieldClassification: FormFieldInput[] = [
@@ -218,6 +252,7 @@ function ModalDetalhes({
       options: numberOption,
       disabled: !question ? false : !isEditing,
       value: question?.numero,
+      defaultValue: question?.numero,
     },
     {
       id: "enemArea",
@@ -306,6 +341,45 @@ function ModalDetalhes({
     },
   ];
 
+  const checkboxData: CheckboxProps[] = [
+    {
+      name: "provaClassification",
+      title: "Classiicação de Prova",
+      checked: provaClassification,
+      disabled: !question ? false : !isEditing,
+    },
+    {
+      name: "subjectClassification",
+      title: "Classificação de Disciplina e Frente",
+      checked: subjectClassification,
+      disabled: !question ? false : !isEditing,
+    },
+    {
+      name: "textClassification",
+      title: "Texto da Questão/alternativas",
+      checked: textClassification,
+      disabled: !question ? false : !isEditing,
+    },
+    {
+      name: "imageClassfication",
+      title: "Imagem",
+      checked: imageClassfication,
+      disabled: !question ? false : !isEditing,
+    },
+    {
+      name: "alternativeClassfication",
+      title: "Alternativa Correta",
+      checked: alternativeClassfication,
+      disabled: !question ? false : !isEditing,
+    },
+    {
+      name: "reported",
+      title: "Report",
+      checked: reported,
+      disabled: !question ? false : !isEditing,
+    },
+  ];
+
   const QuestionImageModal = () => {
     return (
       <ModalTemplate
@@ -326,6 +400,12 @@ function ModalDetalhes({
 
   const handleSave = (data: CreateQuestion) => {
     const dataQuestion = data as UpdateQuestion;
+    if (!dataQuestion.materia || !dataQuestion.frente1) {
+      dataQuestion.subjectClassification = true;
+    }
+    if (!dataQuestion.textoQuestao) {
+      dataQuestion.textClassification = true;
+    }
     if (question) {
       dataQuestion._id = question._id;
       if (uploadFile) {
@@ -364,6 +444,18 @@ function ModalDetalhes({
     }
   };
 
+  const handleDelete = () => {
+    deleteQuestion(question!._id, token)
+      .then(() => {
+        handleClose!();
+        handleRemoveQuestion(question!._id);
+        toast.success(`Questão ${question?._id} deletada com sucess`);
+      })
+      .catch((erro: Error) => {
+        toast.error(`Erro ao deletar questão ${erro.message}`);
+      });
+  };
+
   const btns: BtnProps[] = [
     {
       children: "Aceitar",
@@ -372,9 +464,11 @@ function ModalDetalhes({
         handleUpdateQuestionStatus(StatusEnum.Approved);
       },
       status: StatusEnum.Approved,
-      className: "bg-green2 col-span-1",
+      typeStyle: "accepted",
       editing: false,
-      disabled: !permissao[Roles.validarQuestao],
+      disabled:
+        !permissao[Roles.validarQuestao] ||
+        question?.status === StatusEnum.Approved,
     },
     {
       children: "Rejeitar",
@@ -383,9 +477,11 @@ function ModalDetalhes({
         setRefuse(true);
       },
       status: StatusEnum.Rejected,
-      className: "bg-red col-span-1",
       editing: false,
-      disabled: !permissao[Roles.validarQuestao],
+      typeStyle: "refused",
+      disabled:
+        !permissao[Roles.validarQuestao] ||
+        question?.status === StatusEnum.Rejected,
     },
     {
       children: "Editar",
@@ -409,7 +505,7 @@ function ModalDetalhes({
       type: "submit",
       editing: true,
       className: "col-span-2",
-      disabled: !permissao[Roles.validarQuestao],
+      disabled: !modified,
     },
     {
       children: "Voltar",
@@ -432,6 +528,7 @@ function ModalDetalhes({
                 disabled={btn.disabled}
                 type={btn.type}
                 onClick={btn.onClick}
+                typeStyle={btn.typeStyle}
                 hover
                 className={`${btn.className} w-full border-none`}
               >
@@ -520,16 +617,31 @@ function ModalDetalhes({
     );
   };
 
+  const ModalDeleteQuestion = () => {
+    return (
+      <ModalConfirmCancel
+        isOpen={tryDelete}
+        handleClose={() => {
+          setTryDelete(false);
+        }}
+        text="Ao confirmar a ação, a questão será excluida e não haverá volta. Deseja continuar?"
+        handleConfirm={() => {
+          handleDelete();
+        }}
+      />
+    );
+  };
+
   useEffect(() => {
     if (!prova && question?.prova) {
       setValue("prova", question.prova);
     }
+    setValue(
+      "enemArea",
+      (getEnemArea().find((q) => q.label === question?.enemArea)
+        ?.value as string) ?? undefined
+    );
     if (question) {
-      setValue(
-        "enemArea",
-        (getEnemArea().find((q) => q.label === question.enemArea)
-          ?.value as string) ?? (getEnemArea()[0].value as string)
-      );
       setValue("materia", question.materia);
       setValue("frente1", question.frente1);
       setValue("frente2", question.frente2);
@@ -541,10 +653,29 @@ function ModalDetalhes({
       setValue("textoAlternativaD", question.textoAlternativaD);
       setValue("textoAlternativaE", question.textoAlternativaE);
       setValue("alternativa", question.alternativa);
+      setValue("provaClassification", question.provaClassification);
+      setValue("subjectClassification", question.subjectClassification);
+      setValue("textClassification", question.textClassification);
+      setValue("imageClassfication", question.imageClassfication);
+      setValue("alternativeClassfication", question.alternativeClassfication);
+      setValue("reported", question.reported);
     }
     getMissing();
+    if (!modified) reset(question);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [infos.provas, prova, setValue]);
+  }, [infos.provas, prova]);
+
+  useEffect(() => {
+    if (modified) {
+      setValue("materia", materias[0].value as string);
+
+      const frente = infos.frentes.find(
+        (f) => f.materia === (materias[0].value as string)
+      );
+      setValue("frente1", frente?._id as string);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enemArea]);
 
   const BDownloadProva = () => {
     if (!prova) return null;
@@ -604,7 +735,7 @@ function ModalDetalhes({
           />
           <div className="flex gap-1 my-4">
             <Text size="secondary" className="text-orange w-60 text-start m-0">
-              Selecione uma resposta*
+              Resposta Correta*
             </Text>
             {Alternatives.map((alt) => (
               <Alternative
@@ -630,7 +761,7 @@ function ModalDetalhes({
           {question ? (
             <div>
               {imagePreview ? (
-                <img src={imagePreview as string} />
+                <ImagePreview imagePreview={imagePreview} />
               ) : (
                 <img
                   className="max-h-96 bg-lightGray p-[1px] w-full mr-4 sm:m-0 cursor-pointer"
@@ -652,7 +783,7 @@ function ModalDetalhes({
             <div>
               <div className="border py-4 flex justify-center items-center h-1/2">
                 {imagePreview ? (
-                  <img src={imagePreview as string} />
+                  <ImagePreview imagePreview={imagePreview} />
                 ) : (
                   <Preview />
                 )}
@@ -665,14 +796,34 @@ function ModalDetalhes({
             </div>
           )}
           <BDownloadProva />
+          <Text
+            className="flex w-full justify-center gap-4 items-center"
+            size="tertiary"
+          >
+            Revisões necessárias
+          </Text>
+          {checkboxData.map((check) => (
+            <Checkbox key={check.name} {...check} setValue={setValue} />
+          ))}
           <div className="grid grid-cols-2 gap-1 w-full">
             <Buttons />
           </div>
         </div>
       </form>
+      {permissao.validarQuestao && question && question.status !== 1 && (
+        <div
+          className={`flex justify-end cursor-pointer my-4 md:my-0 ${
+            !question && "hidden"
+          }`}
+          onClick={() => setTryDelete(true)}
+        >
+          <IoMdTrash className="w-10 h-10 fill-white bg-redError p-1 rounded shadow shadow-zinc-300" />
+        </div>
+      )}
       <QuestionImageModal />
       <ModalRefused />
       <ModalComeBack />
+      <ModalDeleteQuestion />
     </>
   );
 }

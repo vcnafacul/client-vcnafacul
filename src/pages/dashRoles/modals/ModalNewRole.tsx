@@ -6,12 +6,18 @@ import Filter from "../../../components/atoms/filter";
 import Text from "../../../components/atoms/text";
 import Toggle from "../../../components/atoms/toggle";
 import Button from "../../../components/molecules/button";
+import { ModalProps } from "../../../components/templates/modalTemplate";
 import { CreateRoleDto } from "../../../dtos/roles/createRole";
 import { RolesLabel } from "../../../enums/roles/roles";
 import { createRole } from "../../../services/roles/createRole";
 import { useAuthStore } from "../../../store/auth";
+import { Role } from "../../../types/roles/role";
 
-function ModalNewRole() {
+interface ModalNewRole extends ModalProps {
+  handleNewRole: (role: Role) => void;
+}
+
+function ModalNewRole({ handleNewRole, handleClose }: ModalNewRole) {
   const [valueRoles, setValueRoles] = useState<CreateRoleDto>({
     name: "",
     validarCursinho: false,
@@ -43,7 +49,9 @@ function ModalNewRole() {
 
   const handleSave = () => {
     createRole(valueRoles, token)
-      .then((_) => {
+      .then((role) => {
+        handleNewRole({ name: role.name, id: role.id });
+        handleClose!();
         toast.success(`Permissão ${valueRoles.name} criado com sucesso`);
       })
       .catch((_) => {

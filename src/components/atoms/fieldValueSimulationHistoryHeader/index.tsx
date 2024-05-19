@@ -5,9 +5,9 @@ interface FieldValueMetricProps {
 
 export function FieldValueSimulationHistoryHeader({ field, value } : FieldValueMetricProps) {
     return ( 
-        <div className="flex gap-1 select-none">
-            <div className="text-white text-sm">{field}: </div>
-            <div className="text-white text-sm font-bold">{value}</div>
+        <div className="flex items-center gap-1 select-none">
+            <div className="text-white text-lg">{field}: </div>
+            <div className="text-white text-lg font-bold">{value}</div>
         </div>
      );
 }

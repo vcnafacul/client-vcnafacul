@@ -80,10 +80,13 @@ function DashQuestion() {
     ],
   });
 
-  const handleRemoveQuestion = (id: string) => {
-    const newQuestions = questions.filter((q) => q._id != id);
-    setQuestions(newQuestions);
-  };
+  const handleRemoveQuestion = useCallback(
+    (id: string) => {
+      const newQuestions = questions.filter((q) => q._id !== id);
+      setQuestions(newQuestions);
+    },
+    [questions]
+  );
 
   const handleAddQuestion = (question: Question) => {
     setQuestions([...questions, question]);
@@ -92,17 +95,16 @@ function DashQuestion() {
   const handleUpdateQuestion = (questionUpdate: UpdateQuestion) => {
     updateQuestion(questionUpdate, token)
       .then(() => {
-        const oldQuestion = questions
-          .find(q => q._id === questionUpdate._id);
-        
-          const newQuestion = {
-            ...mergeObjects(questionUpdate, oldQuestion),
-            title: `${oldQuestion!._id} ${questionUpdate.numero}`,
-          } as Question;
-        
+        const oldQuestion = questions.find((q) => q._id === questionUpdate._id);
+
+        const newQuestion = {
+          ...mergeObjects(questionUpdate, oldQuestion),
+          title: `${oldQuestion!._id} ${questionUpdate.numero}`,
+        } as Question;
+
         const newQuestions = questions.map((question) => {
           if (question._id == questionUpdate._id) {
-            return newQuestion
+            return newQuestion;
           }
           return question;
         });
@@ -115,27 +117,30 @@ function DashQuestion() {
       });
   };
 
-  const handleUpdateQuestionStatus = (status: StatusEnum, message?: string) => {
-    if (!questionSelect?.prova) {
-      toast.info(
-        "Não é possível aprovar ou rejeitar questões sem referenciar uma prova. Selecione uma prova, salve o cadastro e tente novamente"
-      );
-    } else {
-      updateStatus(questionSelect!._id, status, token, message)
-        .then(() => {
-          handleRemoveQuestion(questionSelect!._id);
-          setOpenModalEdit(false);
-          toast.success(
-            `Questão ${questionSelect!._id} atualizada com sucesso. Status: ${
-              status === StatusEnum.Approved ? "Aprovado" : "Reprovado"
-            } `
-          );
-        })
-        .catch((error: Error) => {
-          toast.error(error.message);
-        });
-    }
-  };
+  const handleUpdateQuestionStatus = useCallback(
+    (status: StatusEnum, message?: string) => {
+      if (!questionSelect?.prova) {
+        toast.info(
+          "Não é possível aprovar ou rejeitar questões sem referenciar uma prova. Selecione uma prova, salve o cadastro e tente novamente"
+        );
+      } else {
+        updateStatus(questionSelect!._id, status, token, message)
+          .then(() => {
+            handleRemoveQuestion(questionSelect!._id);
+            setOpenModalEdit(false);
+            toast.success(
+              `Questão ${questionSelect!._id} atualizada com sucesso. Status: ${
+                status === StatusEnum.Approved ? "Aprovado" : "Reprovado"
+              } `
+            );
+          })
+          .catch((error: Error) => {
+            toast.error(error.message);
+          });
+      }
+    },
+    [handleRemoveQuestion, questionSelect, token]
+  );
 
   const onClickCard = (cardId: number | string) => {
     setQuestionSelect(questions.find((quest) => quest._id === cardId)!);
@@ -201,9 +206,12 @@ function DashQuestion() {
                 handleUpdateQuestionStatus={handleUpdateQuestionStatus}
                 handleUpdateQuestion={handleUpdateQuestion}
                 handleAddQuestion={handleAddQuestion}
+                handleRemoveQuestion={handleRemoveQuestion}
               />
             ),
-            handleClose: () => { setOpenModalEdit(false); },
+            handleClose: () => {
+              setOpenModalEdit(false);
+            },
           },
         ]}
       />
@@ -227,9 +235,12 @@ function DashQuestion() {
                 handleUpdateQuestionStatus={handleUpdateQuestionStatus}
                 handleUpdateQuestion={handleUpdateQuestion}
                 handleAddQuestion={handleAddQuestion}
+                handleRemoveQuestion={handleRemoveQuestion}
               />
             ),
-            handleClose: () => { setOpenModalRegister(false); },
+            handleClose: () => {
+              setOpenModalRegister(false);
+            },
           },
         ]}
       />
@@ -260,7 +271,8 @@ function DashQuestion() {
 
   useEffect(() => {
     getQuestions(status, 1, limitCards, materia, frente, prova, enemArea);
-  }, [status, getQuestions, materia, frente, prova, enemArea]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     getInfors();
@@ -268,11 +280,15 @@ function DashQuestion() {
 
   const materiasOption = [
     { id: "", name: "Disciplinas" },
-    ...infosQuestion.materias.map((m) => ({ id: m._id, name: m.nome })),
+    ...infosQuestion.materias
+      .map((m) => ({ id: m._id, name: m.nome }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
   ];
   const frentesOption = [
     { id: "", name: "Frentes" },
-    ...infosQuestion.frentes.map((f) => ({ id: f._id, name: f.nome })),
+    ...infosQuestion.frentes
+      .map((f) => ({ id: f._id, name: f.nome }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
   ];
   const provasOption = [
     { id: "", name: "Provas" },
@@ -280,7 +296,9 @@ function DashQuestion() {
   ];
   const EnemAreaOption = [
     { id: "", name: "Área do Enem" },
-    ...EnemArea.map((p) => ({ id: p, name: p })),
+    ...EnemArea.map((p) => ({ id: p, name: p })).sort((a, b) =>
+      a.name.localeCompare(b.name)
+    ),
   ];
 
   const selectFiltes: SelectProps[] = [
@@ -295,12 +313,35 @@ function DashQuestion() {
     {
       disabled: !permissao[Roles.criarQuestao],
       onClick: () => {
+        setMateria(materiasOption[0].id);
+        setFrente(frentesOption[0].id);
+        setProva(provasOption[0].id);
+        setEnemArea(EnemAreaOption[0].id);
+        setStatus(StatusEnum.Pending);
+      },
+      typeStyle: "quaternary",
+      size: "small",
+      children: "Limpar Filtro",
+    },
+    {
+      disabled: !permissao[Roles.criarQuestao],
+      onClick: () => {
+        getQuestions(status, 1, limitCards, materia, frente, prova, enemArea);
+      },
+      typeStyle: "quaternary",
+      size: "small",
+      children: "Aplicar Filtro",
+    },
+    {
+      disabled: !permissao[Roles.criarQuestao],
+      onClick: () => {
         setQuestionSelect(null);
         setOpenModalRegister(true);
       },
       typeStyle: "quaternary",
-      className: "text-sm md:text-base font-light rounded-full h-10",
+      size: "small",
       children: "Cadastrar Questao",
+      className: "md:absolute right-4 top-6",
     },
   ];
   return (

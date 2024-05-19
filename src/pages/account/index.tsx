@@ -51,46 +51,53 @@ function Account() {
       id: "firstName",
       type: "text",
       label: "Nome:",
-      value: userAccount?.firstName,
+      defaultValue: userAccount?.firstName,
     },
     {
       id: "lastName",
       type: "text",
       label: "Sobrenome:",
-      value: userAccount?.lastName,
+      defaultValue: userAccount?.lastName,
     },
     {
       id: "gender",
       type: "option",
       options: optionsGender,
       label: "Gênero:",
-      value: userAccount?.gender,
+      defaultValue: userAccount?.gender,
     },
     {
       id: "birthday",
       type: "date",
       label: "Data de Nascimento:",
-      value: userAccount?.birthday ? userAccount.birthday.split("T")[0] : "",
+      defaultValue: userAccount?.birthday
+        ? userAccount.birthday.split("T")[0]
+        : "",
     },
     {
       id: "phone",
       type: "text",
       label: "Telefone:",
-      value: userAccount?.phone,
+      defaultValue: userAccount?.phone,
     },
     {
       id: "state",
       type: "option",
       label: "Estado:",
-      value: userAccount?.state,
+      defaultValue: userAccount?.state,
       options: stateOptions,
     },
-    { id: "city", type: "text", label: "Cidade:", value: userAccount?.city },
+    {
+      id: "city",
+      type: "text",
+      label: "Cidade:",
+      defaultValue: userAccount?.city,
+    },
     {
       id: "about",
       type: "textarea",
       label: "Sobre mim:",
-      value: userAccount?.about,
+      defaultValue: userAccount?.about,
       className: `col-span-1 ${
         userAccount?.collaborator
           ? "sm:col-span-2 md:col-span-3 lg:col-span-4"

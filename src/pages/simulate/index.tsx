@@ -12,7 +12,7 @@ import Alternative from "../../components/atoms/alternative";
 import ModalImage from "../../components/atoms/modalImage";
 import ModalTemplate from "../../components/templates/modalTemplate";
 import SimulateTemplate from "../../components/templates/simulateTemplate";
-import { SIMULADO } from "../../routes/path";
+import { DASH, SIMULADO } from "../../routes/path";
 import { answerSimulado } from "../../services/simulado/answerSimulado";
 import { useAuthStore } from "../../store/auth";
 import { Answer, AnswerSimulado, useSimuladoStore } from "../../store/simulado";
@@ -76,7 +76,7 @@ function Simulate() {
         toast.error(error.message);
       })
       .finally(() => {
-        navigate(SIMULADO);
+        navigate(`${DASH}/${SIMULADO}`);
       });
   };
 
@@ -124,7 +124,8 @@ function Simulate() {
           type: "secondary",
           children: (
             <>
-              Reportar problema <Report className="w-6 h-6 group-hover:h-10" />
+              <span>Reportar problema </span>
+              <Report className="absolute top-0.5 w-10 h-10 right-2" />
             </>
           ),
         },
@@ -142,7 +143,7 @@ function Simulate() {
           children: (
             <>
               Reportar questão{" "}
-              <Report className="w-6 h-6 group-hover:h-8 transition-all duration-300" />
+              <Report className="w-6 h-6 transition-all duration-300 group-hover:h-8" />
             </>
           ),
         },
@@ -155,7 +156,7 @@ function Simulate() {
           children: (
             <>
               Bug na plataforma{" "}
-              <Report className="w-6 h-6 group-hover:h-8 transition-all duration-300" />
+              <Report className="w-6 h-6 transition-all duration-300 group-hover:h-8" />
             </>
           ),
         },
@@ -177,14 +178,18 @@ function Simulate() {
   const ReportProblem = () => {
     if (!reportProblem) return null;
     return (
-      <ModalReportProblem
-        questionProblem={questionProblem}
-        idQuestion={questionSelected._id}
-        numberQuestion={questionSelected.numero + 1}
+      <ModalTemplate
+        isOpen={reportProblem}
         handleClose={() => {
           setReportProblem(false);
         }}
-      />
+      >
+        <ModalReportProblem
+          questionProblem={questionProblem}
+          idQuestion={questionSelected._id}
+          numberQuestion={questionSelected.numero + 1}
+        />
+      </ModalTemplate>
     );
   };
 
@@ -237,10 +242,10 @@ function Simulate() {
           }}
           expandedPhoto={() => setPhotoOpen(true)}
           alternative={
-            <div className="flex gap-4 justify-center items-center flex-wrap">
+            <div className="flex flex-wrap items-center justify-center gap-4">
               <Text
                 size="secondary"
-                className="text-orange w-60 text-start m-0"
+                className="m-0 text-orange w-60 text-start"
               >
                 {simulateData.alternativeText}
               </Text>
@@ -258,7 +263,7 @@ function Simulate() {
             </div>
           }
           buttons={
-            <div className="flex gap-4 justify-center items-center flex-col sm:flex-row">
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button
                 onClick={priorQuestion}
                 typeStyle="secondary"
@@ -273,7 +278,7 @@ function Simulate() {
               <Button
                 onClick={confirmQuestion}
                 disabled={questionSelected.answered === undefined}
-                className="bg-lightGreen border-lightGreen w-44 hover:border-green2 hover:bg-green2 transition-all duration-300"
+                className="transition-all duration-300 bg-lightGreen border-lightGreen w-44 hover:border-green2 hover:bg-green2"
               >
                 Confirmar
               </Button>

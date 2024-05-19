@@ -47,7 +47,7 @@ function SettingsContent() {
   const {
     data: { token },
   } = useAuthStore();
-  const materia = watch("materia", Materias.LPT);
+  const materia = watch("materia", Materias.LinguaPortuguesa);
 
   const getFrenteByMateria = (materia: Materias) => {
     getFrenteLikeFormField(materia, token)
@@ -266,14 +266,17 @@ function SettingsContent() {
   };
 
   const NewModalFrente = () => {
-    return <ModalTemplate
-      isOpen={openModalFrente && frenteSelected === null}
-        handleClose={() => setOpenModalFrente(false)}>
-      <NewFrente
-        materia={MateriasLabel.find((m) => m.value == materia)!}
-        actionFrente={addFrente}
-      />
-    </ModalTemplate>
+    return (
+      <ModalTemplate
+        isOpen={openModalFrente && frenteSelected === null}
+        handleClose={() => setOpenModalFrente(false)}
+      >
+        <NewFrente
+          materia={MateriasLabel.find((m) => m.value == materia)!}
+          actionFrente={addFrente}
+        />
+      </ModalTemplate>
+    );
   };
 
   const EditModalFrente = () => {
@@ -292,38 +295,52 @@ function SettingsContent() {
   };
 
   const NewModalSubject = () => {
-    const open = openModalSubject && frenteSelected !== undefined && materia !== undefined
-    return <ModalTemplate isOpen={open} 
-      handleClose={() => setOpenModalSubject(false)}>
-      <NewSubject
-        materia={MateriasLabel.find((m) => m.value == materia)!}
-        frente={frenteSelected!}
-        actionSubject={addSubject}
-      />
-    </ModalTemplate>
+    const open =
+      openModalSubject && frenteSelected !== undefined && materia !== undefined;
+    return (
+      <ModalTemplate
+        isOpen={open}
+        handleClose={() => setOpenModalSubject(false)}
+      >
+        <NewSubject
+          materia={MateriasLabel.find((m) => m.value == materia)!}
+          frente={frenteSelected!}
+          actionSubject={addSubject}
+        />
+      </ModalTemplate>
+    );
   };
 
   const EditModalSubject = () => {
-    const open: boolean = openModalSubject && frenteSelected && materia && subjectSelected
-    return <ModalTemplate isOpen={open} handleClose={() => setOpenModalSubject(false)}>
-      <NewSubject
-        materia={MateriasLabel.find((m) => m.value == materia)!}
-        frente={frenteSelected!}
-        subject={subjectSelected!}
-        actionSubject={editSubject}
-      />
-    </ModalTemplate>
+    const open: boolean =
+      openModalSubject && frenteSelected && materia && subjectSelected;
+    return (
+      <ModalTemplate
+        isOpen={open}
+        handleClose={() => setOpenModalSubject(false)}
+      >
+        <NewSubject
+          materia={MateriasLabel.find((m) => m.value == materia)!}
+          frente={frenteSelected!}
+          subject={subjectSelected!}
+          actionSubject={editSubject}
+        />
+      </ModalTemplate>
+    );
   };
 
   const ViewOrderModal = () => {
     if (!openModalViewOrder) return null;
-    return <ModalTemplate isOpen={openModalViewOrder} handleClose={() => {
-      setOpenModalViewOrder(false);
-    }}>
-      <ViewOrder
-        subjectId={subjectSelected!.value as number}
-      />
-    </ModalTemplate>
+    return (
+      <ModalTemplate
+        isOpen={openModalViewOrder}
+        handleClose={() => {
+          setOpenModalViewOrder(false);
+        }}
+      >
+        <ViewOrder subjectId={subjectSelected!.value as number} />
+      </ModalTemplate>
+    );
   };
 
   useEffect(() => {

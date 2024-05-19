@@ -80,6 +80,11 @@ function DashRoles() {
     setUsersRole(newUserRole);
   };
 
+  const handleNewRole = (role: Role) => {
+    const newRoles = [...roles, role];
+    setRoles(newRoles);
+  };
+
   useEffect(() => {
     getRoles(token)
       .then((res) => {
@@ -131,7 +136,7 @@ function DashRoles() {
   const ShowNewRole = () => {
     return (
       <ModalTemplate isOpen={newRole} handleClose={() => setnewRole(false)}>
-        <ModalNewRole />
+        <ModalNewRole handleNewRole={handleNewRole} />
       </ModalTemplate>
     );
   };
@@ -159,7 +164,7 @@ function DashRoles() {
         setnewRole(true);
       },
       typeStyle: "quaternary",
-      className: "text-xl font-light rounded-full h-8",
+      size: "small",
       children: "Nova Permissão",
     },
   ];

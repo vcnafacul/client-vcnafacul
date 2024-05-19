@@ -1,6 +1,7 @@
 import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
+import { CookieBar } from "./components/organisms/cookieBar";
 import { PlatformRoutes } from "./routes/PlatformRoutes";
 import "./styles/normalize.css";
 
@@ -21,11 +22,12 @@ function App() {
       />
       <BrowserRouter>
         <div className="w-screen h-screen">
+          <CookieBar />
           <PlatformRoutes />
         </div>
       </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

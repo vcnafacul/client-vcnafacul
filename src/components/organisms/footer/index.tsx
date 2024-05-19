@@ -5,31 +5,36 @@ import MenuItem, { ItemMenuProps } from "../../molecules/menuItems";
 import FooterSkeleton from "../footerSkeleton";
 
 export interface FooterProps {
-    sitemapLinks: ItemMenuProps[];
-    pageLinks: ItemMenuProps[];
-    slogan: string;
-    email: string;
-    socialLinks: SocialLink[];
+  sitemapLinks: ItemMenuProps[];
+  pageLinks: ItemMenuProps[];
+  slogan: string;
+  contact: string;
+  socialLinks: SocialLink[];
 }
 
 function Footer() {
+  const { footer, hasFooter } = useBaseTemplateContext();
 
-    const { footer, hasFooter } = useBaseTemplateContext()
-    
-    if(!hasFooter) return <></>
-    if(!footer) return <FooterSkeleton />
-    return (
-        <footer className="bg-marine py-12 px-0 text-center text-base md:text-left md:pt-14 md:pb-9">
-            <div className="container mx-auto flex flex-col md:grid md:grid-cols-4 md:gap-4">
-                <div>
-                    <Logo name text={footer.slogan}/>
-                    <span>{footer.email}</span>
-                </div>
-                <MenuItem align="vertical" itemsMenu={footer.pageLinks} solid={false} />
-                <MenuItem align="vertical" itemsMenu={footer.sitemapLinks} solid={false} />
-                <FollowUs className="w-52 flex flex-col items-center"/>
-            </div>
-        </footer>
-    );
+  if (!hasFooter) return <></>;
+  if (!footer) return <FooterSkeleton />;
+  return (
+    <footer className="flex justify-center items-center py-10 text-base text-center bg-marine md:text-left md:pt-14 md:pb-9">
+      <div className="container flex flex-col justify-center items-center mx-auto md:grid md:grid-cols-4 md:gap-4">
+        <div>
+          <Logo name text={footer.slogan} />
+          <div className="mt-1 mb-10 md:mb-0 font-black text-white">
+            {footer.contact}
+          </div>
+        </div>
+        <MenuItem align="vertical" itemsMenu={footer.pageLinks} solid={false} />
+        <MenuItem
+          align="vertical"
+          itemsMenu={footer.sitemapLinks}
+          solid={false}
+        />
+        <FollowUs className="flex flex-col items-center w-52" />
+      </div>
+    </footer>
+  );
 }
 export default Footer;

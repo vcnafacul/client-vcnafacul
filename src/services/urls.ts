@@ -5,6 +5,7 @@ export const user = `${BASE_URL}/user`
 export const login = `${user}/login`
 export const forgot = `${user}/forgot`
 export const reset = `${user}/reset`
+export const confirmemail = `${user}/confirmemail`
 export const email_exist = `${user}/hasemail`
 export const role = `${BASE_URL}/role`
 export const user_role = `${BASE_URL}/userrole`

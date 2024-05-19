@@ -5,7 +5,7 @@ import { Subtitle, Welcome } from './data';
 
 function Dash() {
   return (
-     <div className=" relative min-h-[calc(100vh-76px)] flex items-end justify-center">
+     <div className=" relative min-h-[calc(100vh-76px)] flex items-center justify-center">
         <TriangleGreen className="rotate-180 absolute top-0 left-80 w-40" />
         <div className='flex flex-col gap-4 items-center justify-center md:flex-row'>
           <HeroSvg className='min-w-[500px] w-[30vw] max-w-5xl mt-24' />
