@@ -22,7 +22,7 @@ export function AlternativeHistorico({ answer} : AlternativeHistoricoProps) {
         
         <div className="flex gap-4">
             {Alternatives.map((alt, index) => (
-                <div className="relative">
+                <div key={index} className="relative">
                 <Alternative key={index} disabled={true} label={alt.label} select={answer?.alternativaEstudante === alt.label} />
                     <div className="absolute -right-1 -bottom-1">
                         {status(alt.label)}
