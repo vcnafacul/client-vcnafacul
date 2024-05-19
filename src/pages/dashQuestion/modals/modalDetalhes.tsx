@@ -400,7 +400,6 @@ function ModalDetalhes({
 
   const handleSave = (data: CreateQuestion) => {
     const dataQuestion = data as UpdateQuestion;
-    console.log(dataQuestion);
     if (!dataQuestion.materia || !dataQuestion.frente1) {
       dataQuestion.subjectClassification = true;
     }
@@ -561,7 +560,6 @@ function ModalDetalhes({
         .then((res) => {
           if (question?.numero && res.includes(question.numero)) {
             setNumberMissing(res);
-            console.log(`entrou aqui ${question.numero}`);
             setValue("numero", question.numero);
           } else if (
             question?.numero &&
