@@ -23,13 +23,12 @@ interface Props {
   dataBar: {
     [x: string]: number;
   }[];
-  labelHover: {
+  labelHover?: {
     [x: string]: object;
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function BarChart({ dataBar, labelHover }: Props) {
+export function BarChart({ dataBar }: Props) {
   const data = {
     labels: dataBar.map((d) => Object.keys(d)[0]),
     datasets: [
