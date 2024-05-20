@@ -20,7 +20,7 @@ export interface RegisterFormProps {
 }
 
 function RegisterForm({ title, titleSuccess, formData } : RegisterFormProps){
-    const [step, setStep] = useState<number>(1)
+    const [step, setStep] = useState<number>(2)
     const [dataUser, setDataUser] = useState<UserRegister>({} as UserRegister)
 
     const nextStep = () => {
@@ -46,7 +46,7 @@ function RegisterForm({ title, titleSuccess, formData } : RegisterFormProps){
     }
 
     return (
-        <div className="flex flex-col items-center justify-start w-full min-h-[calc(100vh-88px)] mb-3 px-4 mx-auto">
+        <div className="flex flex-col items-center justify-center w-full min-h-[calc(100vh-88px)] mb-3 px-4 mx-auto py-10">
              <div className="mt-10 max-w-[500px] flex flex-col items-center w-full gap-y-4">
                 {step < 3 ? <Text size="secondary">{title}</Text> : <Text>{titleSuccess}</Text>}
                 <StepNow />
