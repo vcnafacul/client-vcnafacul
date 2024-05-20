@@ -34,7 +34,6 @@ function DashQuestion() {
   const [prova, setProva] = useState<string>("");
   const [enemArea, setEnemArea] = useState<string>("");
   const [filterText, setFilterText] = useState<string>("");
-  const [enterText, setEnterText] = useState<string>("");
 
   const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
   const [openModalRegister, setOpenModalRegister] = useState<boolean>(false);
@@ -160,7 +159,7 @@ function DashQuestion() {
       getAllQuestions(
         token,
         status,
-        enterText,
+        filterText,
         page,
         limit,
         materia,
@@ -175,7 +174,7 @@ function DashQuestion() {
           toast.error(erro.message);
         });
     },
-    [token, enterText]
+    [token, filterText]
   );
 
   const getInfors = useCallback(async () => {
@@ -251,7 +250,7 @@ function DashQuestion() {
     return await getAllQuestions(
       token,
       status,
-      enterText,
+      filterText,
       page,
       limitCards,
       materia,
@@ -266,7 +265,7 @@ function DashQuestion() {
       setFilterText(e.target.value.toLowerCase()),
     placeholder: "texto questão",
     defaultValue: filterText,
-    keyDown: () => setEnterText(filterText),
+    keyDown: () => getQuestions(status, 1, limitCards, materia, frente, prova, enemArea),
   };
 
   useEffect(() => {
