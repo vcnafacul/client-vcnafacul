@@ -95,7 +95,7 @@ function Supporters() {
 
   if (!supporters || !volunteers) return <SupportersSkeleton />;
   return (
-    <div className=" bg-white relative">
+    <div className=" bg-white relative px-2">
       <div className="relative h-10 bg-white" id="supporters" />
       <div className="py-12 px-0 md:py-14 ">
         <div className="mb-8">
