@@ -65,7 +65,7 @@ function Hero({ className }: HeroProps) {
                     {slide.subtitle}
                   </Text>
                 </div>
-                <div className="flex gap-4 px-2 min-w-80">
+                <div className="flex gap-4 px-2 min-w-80 max-w-lg">
                   {slide.links.map((link: any) => (
                     <BLink
                       type="tertiary"
