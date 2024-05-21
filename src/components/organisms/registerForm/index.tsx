@@ -20,7 +20,7 @@ export interface RegisterFormProps {
 }
 
 function RegisterForm({ title, titleSuccess, formData } : RegisterFormProps){
-    const [step, setStep] = useState<number>(2)
+    const [step, setStep] = useState<number>(1)
     const [dataUser, setDataUser] = useState<UserRegister>({} as UserRegister)
 
     const nextStep = () => {
