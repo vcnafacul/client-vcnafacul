@@ -19,7 +19,6 @@ import { useAuthStore } from "../../store/auth";
 import { EnemArea } from "../../types/question/enemArea";
 import { InfoQuestion } from "../../types/question/infoQuestion";
 import { formatDate } from "../../utils/date";
-import { mergeObjects } from "../../utils/mergeObjects";
 import { Paginate } from "../../utils/paginate";
 import { dashQuest } from "./data";
 import ModalDetalhes from "./modals/modalDetalhes";
@@ -94,20 +93,13 @@ function DashQuestion() {
   const handleUpdateQuestion = (questionUpdate: UpdateQuestion) => {
     updateQuestion(questionUpdate, token)
       .then(() => {
-        const oldQuestion = questions.find((q) => q._id === questionUpdate._id);
-
-        const newQuestion = {
-          ...mergeObjects(questionUpdate, oldQuestion),
-          title: `${oldQuestion!._id} ${questionUpdate.numero}`,
-        } as Question;
-
         const newQuestions = questions.map((question) => {
           if (question._id == questionUpdate._id) {
-            return newQuestion;
+            return questionUpdate;
           }
           return question;
         });
-        setQuestionSelect(newQuestion);
+        setQuestionSelect(questionUpdate as Question);
         setQuestions(newQuestions as Question[]);
         toast.success(`Questao ${questionUpdate._id} atualizada com sucesso`);
       })
@@ -265,7 +257,8 @@ function DashQuestion() {
       setFilterText(e.target.value.toLowerCase()),
     placeholder: "texto questão",
     defaultValue: filterText,
-    keyDown: () => getQuestions(status, 1, limitCards, materia, frente, prova, enemArea),
+    keyDown: () =>
+      getQuestions(status, 1, limitCards, materia, frente, prova, enemArea),
   };
 
   useEffect(() => {

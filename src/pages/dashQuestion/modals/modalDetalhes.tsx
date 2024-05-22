@@ -759,12 +759,12 @@ function ModalDetalhes({
             Imagem da Questão
           </Text>
           {question ? (
-            <div>
+            <div className="border p-1 m-1 flex justify-center items-center h-60">
               {imagePreview ? (
                 <ImagePreview imagePreview={imagePreview} />
               ) : (
                 <img
-                  className="max-h-96 bg-lightGray p-[1px] w-full mr-4 sm:m-0 cursor-pointer"
+                  className="max-h-60 p-[1px] mr-4 sm:m-0 cursor-pointer"
                   src={`https://api.vcnafacul.com.br/images/${question?.imageId}.png`}
                   onClick={() => setPhotoOpen(true)}
                 />
@@ -785,7 +785,9 @@ function ModalDetalhes({
                 {imagePreview ? (
                   <ImagePreview imagePreview={imagePreview} />
                 ) : (
-                  <Preview />
+                  <div className="h-60 flex justify-center items-center">
+                    <Preview className="h-32 w-32" />
+                  </div>
                 )}
               </div>
               <UploadButton
