@@ -96,7 +96,7 @@ function Action() {
 
   if (!actionAreas) return <ActionAreasSkeleton />;
   return (
-    <div className="bg-white">
+    <div className="bg-white px-2">
       <div className="container relative flex flex-col justify-start px-0 mx-auto py-14">
         <div className="flex flex-col items-center justify-center md:w-full">
           <Text size="secondary">{actionAreas!.title}</Text>

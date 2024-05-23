@@ -19,7 +19,6 @@ import { useAuthStore } from "../../store/auth";
 import { EnemArea } from "../../types/question/enemArea";
 import { InfoQuestion } from "../../types/question/infoQuestion";
 import { formatDate } from "../../utils/date";
-import { mergeObjects } from "../../utils/mergeObjects";
 import { Paginate } from "../../utils/paginate";
 import { dashQuest } from "./data";
 import ModalDetalhes from "./modals/modalDetalhes";
@@ -34,7 +33,6 @@ function DashQuestion() {
   const [prova, setProva] = useState<string>("");
   const [enemArea, setEnemArea] = useState<string>("");
   const [filterText, setFilterText] = useState<string>("");
-  const [enterText, setEnterText] = useState<string>("");
 
   const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
   const [openModalRegister, setOpenModalRegister] = useState<boolean>(false);
@@ -95,20 +93,13 @@ function DashQuestion() {
   const handleUpdateQuestion = (questionUpdate: UpdateQuestion) => {
     updateQuestion(questionUpdate, token)
       .then(() => {
-        const oldQuestion = questions.find((q) => q._id === questionUpdate._id);
-
-        const newQuestion = {
-          ...mergeObjects(questionUpdate, oldQuestion),
-          title: `${oldQuestion!._id} ${questionUpdate.numero}`,
-        } as Question;
-
         const newQuestions = questions.map((question) => {
           if (question._id == questionUpdate._id) {
-            return newQuestion;
+            return questionUpdate;
           }
           return question;
         });
-        setQuestionSelect(newQuestion);
+        setQuestionSelect(questionUpdate as Question);
         setQuestions(newQuestions as Question[]);
         toast.success(`Questao ${questionUpdate._id} atualizada com sucesso`);
       })
@@ -160,7 +151,7 @@ function DashQuestion() {
       getAllQuestions(
         token,
         status,
-        enterText,
+        filterText,
         page,
         limit,
         materia,
@@ -175,7 +166,7 @@ function DashQuestion() {
           toast.error(erro.message);
         });
     },
-    [token, enterText]
+    [token, filterText]
   );
 
   const getInfors = useCallback(async () => {
@@ -251,7 +242,7 @@ function DashQuestion() {
     return await getAllQuestions(
       token,
       status,
-      enterText,
+      filterText,
       page,
       limitCards,
       materia,
@@ -266,7 +257,8 @@ function DashQuestion() {
       setFilterText(e.target.value.toLowerCase()),
     placeholder: "texto questão",
     defaultValue: filterText,
-    keyDown: () => setEnterText(filterText),
+    keyDown: () =>
+      getQuestions(status, 1, limitCards, materia, frente, prova, enemArea),
   };
 
   useEffect(() => {

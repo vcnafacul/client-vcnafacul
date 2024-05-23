@@ -5,9 +5,9 @@ interface ModalImageProps {
 function ModalImage({ image }: ModalImageProps) {
   return (
     <img
-        className="md:min-h-[75vh] md:max-h-[85vh] w-full md:w-fit max-w-[90%]"
-        src={image}
-      />
+      className="md:min-h-[45vh] md:max-h-[65vh] w-full md:w-fit max-w-[90%]"
+      src={image}
+    />
   );
 }
 
