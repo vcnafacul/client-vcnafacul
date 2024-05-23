@@ -753,22 +753,24 @@ function ModalDetalhes({
         </div>
         <div className="col-span-1 md:col-span-2">
           <Text
-            className="flex w-full justify-center gap-4 items-center"
+            className="flex w-full justify-center gap-4 items-center flex-col"
             size="tertiary"
           >
             Imagem da Questão
           </Text>
           {question ? (
-            <div className="border p-1 m-1 flex justify-center items-center h-60">
-              {imagePreview ? (
-                <ImagePreview imagePreview={imagePreview} />
-              ) : (
-                <img
-                  className="max-h-60 p-[1px] mr-4 sm:m-0 cursor-pointer"
-                  src={`https://api.vcnafacul.com.br/images/${question?.imageId}.png`}
-                  onClick={() => setPhotoOpen(true)}
-                />
-              )}
+            <div className="p-1 m-1 flex-col">
+              <div className="flex justify-center items-center border py-2">
+                {imagePreview ? (
+                  <ImagePreview imagePreview={imagePreview} />
+                ) : (
+                  <img
+                    className="max-h-52 p-[1px] mr-4 sm:m-0 cursor-pointer"
+                    src={`https://api.vcnafacul.com.br/images/${question?.imageId}.png`}
+                    onClick={() => setPhotoOpen(true)}
+                  />
+                )}
+              </div>
               {isEditing ? (
                 <UploadButton
                   placeholder="Alterar imagem"
@@ -799,7 +801,7 @@ function ModalDetalhes({
           )}
           <BDownloadProva />
           <Text
-            className="flex w-full justify-center gap-4 items-center"
+            className="flex w-full justify-center gap-4 items-center" 
             size="tertiary"
           >
             Revisões necessárias
