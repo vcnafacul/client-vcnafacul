@@ -33,6 +33,7 @@ function DashQuestion() {
   const [prova, setProva] = useState<string>("");
   const [enemArea, setEnemArea] = useState<string>("");
   const [filterText, setFilterText] = useState<string>("");
+  const [totalItems, setTotalItems] = useState<number>(0);
 
   const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
   const [openModalRegister, setOpenModalRegister] = useState<boolean>(false);
@@ -161,6 +162,7 @@ function DashQuestion() {
       )
         .then((res) => {
           setQuestions(res.data);
+          setTotalItems(res.totalItems);
         })
         .catch((erro: Error) => {
           toast.error(erro.message);
@@ -248,7 +250,7 @@ function DashQuestion() {
       materia,
       frente,
       prova,
-      enemArea
+      enemArea,
     );
   };
 
@@ -349,6 +351,7 @@ function DashQuestion() {
         filterProps,
         selectFiltes,
         buttons,
+        totalItems
       }}
     >
       <DashCardTemplate />
