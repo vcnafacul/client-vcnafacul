@@ -1,3 +1,4 @@
+import { ReactComponent as AdminImg } from "../../assets/images/dashboard/Admin.svg";
 import { ReactComponent as HumanasImg } from "../../assets/images/dashboard/humanas.svg";
 import { ReactComponent as LinguagensImg } from "../../assets/images/dashboard/linguagens.svg";
 import { ReactComponent as MatematicaImg } from "../../assets/images/dashboard/matematica.svg";
@@ -33,7 +34,7 @@ import { ReactComponent as Historia } from "../../assets/icons/home-subjects-his
 import { ReactComponent as Sociologia } from "../../assets/icons/home-subjects-sociologia.svg";
 
 import { ReactComponent as Report } from "../../assets/icons/warning.svg";
- 
+
 import { DashCardMenu } from "../../components/molecules/dashCard";
 import { HeaderData } from "../../components/organisms/header";
 import { Materias, getMateriaString } from "../../enums/content/materias";
@@ -180,7 +181,7 @@ export const dashCardMenuItems: DashCardMenu[] = [
     id: 5,
     bg: "bg-green3",
     title: "Admin",
-    image: HumanasImg,
+    image: AdminImg,
     alt: "Admin",
     subMenuList: [
       {
