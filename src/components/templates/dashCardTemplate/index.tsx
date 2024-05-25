@@ -28,6 +28,7 @@ function DashCardTemplate({ customFilter }: Props) {
     filterProps,
     selectFiltes,
     buttons,
+    totalItems,
   } = useDashCardContext();
 
   useEffect(() => {
@@ -61,7 +62,7 @@ function DashCardTemplate({ customFilter }: Props) {
         <Text className="self-center" size="secondary">
           {title}
         </Text>
-        <div className="flex flex-wrap flex-col justify-center items-center gap-2 z-[1] bg-gray-200 rounded-2xl bg-opacity-75 p-2 mt-14 w-10/12 md:w-fit relative">
+        <div className="relative md:fixed flex flex-wrap flex-col justify-center items-center gap-2 z-[1] bg-gray-200 rounded-2xl bg-opacity-95 p-2 mt-14 w-10/12 md:w-fit ">
           <div className="flex flex-wrap items-center md:justify-start justify-center gap-4 w-full mb-4">
             {filterProps && (
               <Filter
@@ -78,6 +79,11 @@ function DashCardTemplate({ customFilter }: Props) {
             {customFilter?.map((filter, index) => (
               <div key={index}> {filter}</div>
             ))}
+            {totalItems && (
+              <Text className="m-0" size="quaternary">
+                Total de Registros: {totalItems}
+              </Text>
+            )}
           </div>
           <div className="flex flex-wrap justify-center gap-4">
             {selectFiltes?.map((select, index) => {
@@ -96,7 +102,7 @@ function DashCardTemplate({ customFilter }: Props) {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap justify-center gap-4 pb-10 my-4 md:justify-start md:mx-10">
+      <div className="md:mt-52 flex flex-wrap justify-center gap-4 pb-10 my-4 md:mx-10">
         {entities.map((entity, index) => {
           let ref = null;
           if (entities.length >= limitCards) {
