@@ -27,7 +27,7 @@ function DashQuestion() {
   const [questions, setQuestions] = useState<Question[]>([]);
 
   //filters
-  const [status, setStatus] = useState<StatusEnum>(StatusEnum.Pending);
+  const [status, setStatus] = useState<StatusEnum>(StatusEnum.All);
   const [materia, setMateria] = useState<string>("");
   const [frente, setFrente] = useState<string>("");
   const [prova, setProva] = useState<string>("");
@@ -158,7 +158,7 @@ function DashQuestion() {
         materia,
         frente,
         prova,
-        enemArea
+        enemArea,
       )
         .then((res) => {
           setQuestions(res.data);
@@ -311,7 +311,7 @@ function DashQuestion() {
         setFrente(frentesOption[0].id);
         setProva(provasOption[0].id);
         setEnemArea(EnemAreaOption[0].id);
-        setStatus(StatusEnum.Pending);
+        setStatus(StatusEnum.All);
       },
       typeStyle: "quaternary",
       size: "small",
