@@ -63,7 +63,7 @@ function SimulateTemplate({
           <Text
             className={`${getTextColorEnemArea(
               questionSelected.enemArea
-            )} mx-4 mb-0 whitespace-nowrap w-fit`}
+            )} mx-4 mb-0 sm:whitespace-nowrap w-fit`}
           >
             {questionSelected.enemArea}
           </Text>
