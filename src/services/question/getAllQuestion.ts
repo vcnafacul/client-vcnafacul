@@ -31,7 +31,7 @@ export async function getAllQuestions(
   Object.keys(params).forEach((key) =>
     url.searchParams.append(key, params[key].toString())
   );
-  console.log(url.toString());
+
   const response = await fetchWrapper(url.toString(), {
     method: "GET",
     headers: {

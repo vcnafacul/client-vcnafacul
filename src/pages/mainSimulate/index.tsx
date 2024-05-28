@@ -76,9 +76,9 @@ function MainSimulate() {
   };
 
   useEffect(() => {
-    getAllHistoricoSimulado(token)
+    getAllHistoricoSimulado(token, 1, 5)
       .then((res) => {
-        setHistorical(res);
+        setHistorical(res.data);
       })
       .catch((error: Error) => {
         toast.error(error.message);
@@ -89,7 +89,7 @@ function MainSimulate() {
     <>
       <div className="relative pb-1">
         <div className="relative sm:mx-10">
-          <div className="flex flex-col items-start pt-10 mb-20">
+          <div className="flex flex-col items-start pt-10 mb-20 mx-4 sm:mx-0">
             <Text size="primary" className="mb-1">
               {simulateData.titleBook}
             </Text>
@@ -102,7 +102,7 @@ function MainSimulate() {
               breakpoints={breakpointsBook}
             />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-10 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-10 gap-8 mx-4">
             <div className="flex flex-col items-start sm:col-span-1 md:col-span-3">
               <Text size="primary">{simulateData.titleDay}</Text>
               <Text size="tertiary" className="text-start text-xl mt-8">
@@ -111,7 +111,7 @@ function MainSimulate() {
             </div>
             <div className="sm:col-span-2 md:col-span-7 flex justify-center">
               <CarouselRef
-                className="w-[448px] md:w-full"
+                className="max-w-[95%] mx-4 sm:mx-0 sm:w-[448px] md:w-full"
                 childrens={cardsDay}
                 breakpoints={breakpointsDay}
               />

@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import { QuestionTemplate } from "../../components/templates/simulateTemplate";
 import { Alternativa } from "../../types/question/alternative";
 
@@ -62,4 +63,5 @@ export interface HistoricoDTO {
   tempoRealizado: number;
   questoesRespondidas: number;
   aproveitamento: AproveitamentoDTO;
+  createdAt: DateTime;
 }
