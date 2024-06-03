@@ -14,6 +14,7 @@
     "@hookform/resolvers": "^3.3.2",
     "@nivo/bar": "^0.87.0",
     "@nivo/core": "^0.87.0",
+    "@nivo/line": "^0.87.0",
     "@nivo/pie": "^0.87.0",
     "@nivo/radar": "^0.87.0",
     "@nivo/sunburst": "^0.87.0",

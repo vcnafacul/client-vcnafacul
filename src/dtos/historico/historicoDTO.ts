@@ -18,7 +18,7 @@ interface MateriaPerformance extends PerformanceSpecific {
   frentes: PerformanceSpecific[];
 }
 
-interface AproveitamentoDTO {
+export interface AproveitamentoDTO {
   geral: number;
   materias: MateriaPerformance[];
 }

@@ -2,20 +2,27 @@ import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { MyResponsiveLine } from "../../components/atoms/lineChart";
 import { CardDash } from "../../components/molecules/cardDash";
 import DashCardTemplate from "../../components/templates/dashCardTemplate";
 import { DashCardContext } from "../../context/dashCardContext";
+import { AproveitamentoHitoriesDTO } from "../../dtos/historico/getPerformanceDTO";
 import { HistoricoDTO } from "../../dtos/historico/historicoDTO";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { DASH, SIMULADO, SIMULATE_METRICS } from "../../routes/path";
 import { getAllHistoricoSimulado } from "../../services/historico/getAllHistoricoSimulado";
+import { getPerformance } from "../../services/historico/getPerformance";
 import { useAuthStore } from "../../store/auth";
+import { DateRelative } from "../../utils/dateRelative";
 import { getFormatingTime } from "../../utils/getFormatingTime";
 import { Paginate } from "../../utils/paginate";
 import { dashHistories } from "./data";
 
 export function SimulationHistories() {
   const [historical, setHistorical] = useState<HistoricoDTO[]>([]);
+  const [aproveitamento, setAproveitamento] = useState<
+    AproveitamentoHitoriesDTO | undefined
+  >(undefined);
   const {
     data: { token },
   } = useAuthStore();
@@ -54,6 +61,50 @@ export function SimulationHistories() {
     navigate(`${DASH}/${SIMULADO}${SIMULATE_METRICS}${cardId}`);
   };
 
+  const HeaderDashHistories = () => {
+    return (
+      <div className="py-4 flex items-center sm:flex-col-reverse md:flex-row justify-center flex-wrap gap-4 pl-4 w-full">
+        <div className="flex gap-4 flex-col w-full h-full items-center">
+          <div className="bg-white border border-t-0 shadow p-2 rounded h-52 sm:h-80 w-11/12">
+            <MyResponsiveLine
+              data={[
+                {
+                  id: "aproveitamento",
+                  data:
+                    aproveitamento?.historicos.map((p) => ({
+                      x: DateRelative(p.createdAt.toString()),
+                      y: p.performance.geral * 100,
+                      color: "rgba(0, 0, 0, 0.5)",
+                    })) || [],
+                },
+              ]}
+              legendX="Data"
+              legendY="Aproveitamento (%)"
+            />
+          </div>
+        </div>
+        {/* <div
+          className="relative hidden sm:flex flex-col justify-center 
+        items-center border border-gray-50 rounded shadow p-1 h-[500px] w-[700px]"
+        >
+          <h1 className="absolute font-black text-base text-marine top-2 left-2 z-10">
+            Frentes
+          </h1>
+          <RadarChart
+            data={
+              aproveitamento?.performanceMateriaFrente.frentes.map((m) => ({
+                materia: m.nome,
+                aproveitamento: m.aproveitamento * 100,
+              })) || []
+            }
+            scheme="pink_yellowGreen"
+            fill="#000"
+          />
+        </div> */}
+      </div>
+    );
+  };
+
   useEffect(() => {
     getAllHistoricoSimulado(token, 1, limitCards)
       .then((res) => {
@@ -62,22 +113,29 @@ export function SimulationHistories() {
       .catch((error: Error) => {
         toast.error(error.message);
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [token]);
+
+  useEffect(() => {
+    getPerformance(token)
+      .then((res) => {
+        setAproveitamento(res);
+      })
+      .catch((error: Error) => {
+        toast.error(error.message);
+      });
+  }, [token]);
 
   const getMoreCards = async (
     page: number
   ): Promise<Paginate<HistoricoDTO>> => {
-    return await getAllHistoricoSimulado(token, page, limitCards);
+    return {
+      data: [],
+      limit: 0,
+      page: 0,
+      totalItems: 0,
+    };
+    // return await getAllHistoricoSimulado(token, page, limitCards);
   };
-
-  const HeaderDashHistories = () => {
-    return (
-      <div className="py-4 flex justify-center">
-        
-      </div>
-    )
-  }
 
   return (
     <div>
@@ -92,7 +150,7 @@ export function SimulationHistories() {
           limitCards,
         }}
       >
-        <DashCardTemplate headerDash={HeaderDashHistories()}/>
+        <DashCardTemplate headerDash={HeaderDashHistories()} />
       </DashCardContext.Provider>
     </div>
   );
