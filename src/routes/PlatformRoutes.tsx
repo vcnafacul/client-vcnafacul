@@ -26,10 +26,11 @@ import Subject from "../pages/subject";
 import { useAuthStore } from "../store/auth";
 import { BaseRoutes } from "./baseRoutes";
 import { HeroRoutes } from "./heroRoutes";
-import { ACCOUNT_PATH, CONFIRM_EMAIL, CONTENT, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, ESTUDO, FORGOT_PASSWORD_PATH, FORM_GEOLOCATION, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, RESET_PASSWORD_PATH, SIMULADO, SIMULADO_RESPONDER, SIMULATE_METRICS } from "./path";
+import { ACCOUNT_PATH, CONFIRM_EMAIL, CONTENT, DASH, DASH_CONTENT, DASH_GEOLOCATION, DASH_NEWS, DASH_PROVAS, DASH_QUESTION, DASH_ROLES, DASH_SIMULADO, ESTUDO, FORGOT_PASSWORD_PATH, FORM_GEOLOCATION, HOME_PATH, LOGIN_PATH, LOGOFF_PATH, NEWS, REGISTER_PATH, RESET_PASSWORD_PATH, SIMULADO, SIMULADO_HISTORIES, SIMULADO_RESPONDER, SIMULATE_METRICS } from "./path";
 import ProtectedRoute from "./protectedRoute";
 import ProtectedRoutePermission from "./protectedRoutePermission";
 import { ConfirmEmailPage } from "../pages/confirmEmail";
+import { SimulationHistories } from "../pages/simulationHistories";
 
 
 export function PlatformRoutes() {
@@ -67,6 +68,7 @@ export function PlatformRoutes() {
             }>
                 <Route path={DASH} element={<Dash />} />
                 <Route path={SIMULADO} element={<MainSimulate />} />
+                <Route path={SIMULADO_HISTORIES} element={<SimulationHistories />} />
 
                 <Route path={`${SIMULADO}${SIMULATE_METRICS}:historicId`} element={<SimulationHistory /> } />
 

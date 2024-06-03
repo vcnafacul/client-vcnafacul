@@ -16,7 +16,7 @@ interface CardSimulateProps {
 
 function CardSimulate({className, color, icon, title, children, onClick, disabled} : CardSimulateProps ){
     return (
-        <div className={`mt-8 relative w-96  pb-4 border-2 rounded-md ${className} text-marine mb-10 select-none`}>
+        <div className={`mt-8 relative max-w-[400px] sm:w-80 md:w-96 pb-4 border-2 rounded-md ${className} text-marine mb-10 select-none`}>
             <div className="absolute -top-8 left-8 ">
                 <IconArea icon={icon} className={`${color} fill-white`} />
             </div>

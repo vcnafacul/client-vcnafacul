@@ -3,9 +3,9 @@ import { HistoricoDTO } from "../../../dtos/historico/historicoDTO";
 import { StatusEnum } from "../../../enums/generic/statusEnum";
 import { getFormatingTime } from "../../../utils/getFormatingTime";
 import { getStatusIcon } from "../../../utils/getStatusIcon";
-import { BarChart } from "../../atoms/barChart";
 import { FieldValueSimulationHistoryHeader as FieldValue } from "../../atoms/fieldValueSimulationHistoryHeader";
 import { PieChart } from "../../atoms/pieChart";
+import { RadarChart } from "../../atoms/radarChart";
 import Text from "../../atoms/text";
 import Button from "../../molecules/button";
 
@@ -23,33 +23,12 @@ export function SimulationHistoryHeader({
     historic.questoesRespondidas;
 
   const data = historic.aproveitamento.materias.map((m) => ({
-    [m.nome]: parseFloat((m.aproveitamento * 100).toFixed(0)),
+    materia: m.nome,
+    aproveitamento: parseFloat((m.aproveitamento * 100).toFixed(0)),
+    frentes: m.frentes.map((f) => ({
+      name: f.nome,
+    })),
   }));
-
-  const frenteAproveitamento = historic.aproveitamento.materias.reduce(
-    (
-      acc: {
-        [x: string]: object;
-      },
-      m
-    ) => {
-      const frentes = m.frentes.reduce(
-        (
-          frenteAcc: {
-            [x: string]: number;
-          },
-          f
-        ) => {
-          frenteAcc[f.nome] = f.aproveitamento;
-          return frenteAcc;
-        },
-        {}
-      );
-      acc[m.nome] = frentes;
-      return acc;
-    },
-    {}
-  );
 
   const acertos = [
     {
@@ -81,8 +60,8 @@ export function SimulationHistoryHeader({
   }, []);
 
   return (
-    <div className="my-6 h-full">
-      <div className="flex items-center justify-around my-4">
+    <div className="my-6 h-full overflow-x-hidden">
+      <div className="flex items-center justify-around my-4 ">
         <Text className="text-white w-fit m-0">Simulado do Enem</Text>
         <div>
           <Button className="w-24" onClick={() => window.history.back()}>
@@ -92,7 +71,7 @@ export function SimulationHistoryHeader({
       </div>
       <div className="flex flex-col sm:flex-row px-2 w-full h-full items-center sm:items-start md:items-center">
         <div className="flex items-start justify-center flex-col w-full h-full sm:mt-14 md:mt-0">
-          <div className="flex flex-col items-start gap-1 whitespace-nowrap flex-wrap">
+          <div className="flex flex-col items-start gap-1 whitespace-nowrap flex-wrap ml-4">
             <FieldValue field="Caderno" value={historic.simulado.tipo.nome} />
             <FieldValue field="Ano" value={`${historic.ano}`} />
             <FieldValue
@@ -115,18 +94,15 @@ export function SimulationHistoryHeader({
           </div>
         </div>
         <div>
-          <Text
-            className="text-white flex justify-center items-center select-none"
-            size="secondary"
-          >
+          <h1 className="text-white text-xl py-4 font-black flex justify-center items-center select-none">
             Aproveitamento Geral{" "}
             {(historic.aproveitamento.geral * 100).toFixed(0)}%
-          </Text>
-          <div className="flex flex-col md:flex-row">
-            <div className="flex justify-center pl-4 py-2 h-60">
-              <BarChart dataBar={data} labelHover={frenteAproveitamento} />
+          </h1>
+          <div className="flex flex-col md:flex-row ">
+            <div className="flex justify-center pl-4 py-2 h-80 sm:h-72 md:min-w-[370px]">
+              <RadarChart data={data} />
             </div>
-            <div className="p-2 min-w-[500px]">
+            <div className="p-2 h-60 min-w-[400px]">
               <PieChart data={dataPie} />
             </div>
           </div>

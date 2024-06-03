@@ -9,9 +9,10 @@ import { CardDashComponent } from "../../molecules/cardDash";
 
 interface Props {
   customFilter?: JSX.Element[];
+  headerDash?: JSX.Element | undefined;
 }
 
-function DashCardTemplate({ customFilter }: Props) {
+function DashCardTemplate({ customFilter, headerDash }: Props) {
   const [firstCardRef, firstCardInView] = useInView();
   const [lastCardRef, lastCardInView] = useInView();
   const [botton, setBotton] = useState<boolean>(false);
@@ -57,12 +58,16 @@ function DashCardTemplate({ customFilter }: Props) {
   const indexLastCardInView = entities.length - gapBeforeLast;
 
   return (
-    <div className={`w-full flex justify-center flex-col py-4`}>
+    <div className="w-full flex flex-col py-4">
       <div className="flex flex-col items-center w-full mt-4">
         <Text className="self-center" size="secondary">
           {title}
         </Text>
-        <div className="relative md:fixed flex flex-wrap flex-col justify-center items-center gap-2 z-[1] bg-gray-200 rounded-2xl bg-opacity-95 p-2 mt-14 w-10/12 md:w-fit ">
+        <div
+          className={`relative md:fixed flex flex-wrap flex-col justify-center items-center gap-2 z-[1] rounded-2xl bg-opacity-95 p-2 w-10/12 md:w-fit ${
+            filterProps || buttons || totalItems ? "bg-gray-200 mt-14" : ""
+          }`}
+        >
           <div className="relative flex flex-wrap items-center md:justify-start justify-center gap-4 w-full mb-4">
             {filterProps && (
               <Filter
@@ -104,7 +109,12 @@ function DashCardTemplate({ customFilter }: Props) {
           </div>
         </div>
       </div>
-      <div className="md:mt-52 flex flex-wrap justify-center gap-4 pb-10 my-4 md:mx-10">
+      {headerDash}
+      <div
+        className={`${
+          !filterProps && !buttons ? "mt-0" : "md:mt-52"
+        } flex flex-wrap justify-center gap-4 pb-10 my-4 md:mx-10`}
+      >
         {entities.map((entity, index) => {
           let ref = null;
           if (entities.length >= limitCards) {

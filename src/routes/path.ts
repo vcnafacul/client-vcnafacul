@@ -18,6 +18,7 @@ export const SIMULADO = "simulado/";
 export const SIMULADO_RESPONDER = "/simulado/responder";
 export const SIMULATE_METRICS = "aproveitamento/";
 export const DASH_SIMULADO = "dash-simulado";
+export const SIMULADO_HISTORIES = `${SIMULADO}historico/`;
 
 export const NEWS = "/novidades";
 export const DASH_ROLES = "permissoes";
