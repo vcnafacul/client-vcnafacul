@@ -65,23 +65,25 @@ export function SimulationHistories() {
     return (
       <div className="py-4 flex items-center sm:flex-col-reverse md:flex-row justify-center flex-wrap gap-4 pl-4 w-full">
         <div className="flex gap-4 flex-col w-full h-full items-center">
-          <div className="bg-white border border-t-0 shadow p-2 rounded h-52 sm:h-80 w-11/12">
-            <MyResponsiveLine
-              data={[
-                {
-                  id: "aproveitamento",
-                  data:
-                    aproveitamento?.historicos.map((p) => ({
-                      x: DateRelative(p.createdAt.toString()),
-                      y: p.performance.geral * 100,
-                      color: "rgba(0, 0, 0, 0.5)",
-                    })) || [],
-                },
-              ]}
-              legendX="Data"
-              legendY="Aproveitamento (%)"
-            />
-          </div>
+          {aproveitamento && aproveitamento.historicos.length > 0 && (
+            <div className="bg-white border border-t-0 shadow p-2 rounded h-52 sm:h-80 w-11/12">
+              <MyResponsiveLine
+                data={[
+                  {
+                    id: "aproveitamento",
+                    data:
+                      aproveitamento?.historicos.map((p) => ({
+                        x: DateRelative(p.createdAt.toString()),
+                        y: p.performance.geral * 100,
+                        color: "rgba(0, 0, 0, 0.5)",
+                      })) || [],
+                  },
+                ]}
+                legendX="Data"
+                legendY="Aproveitamento (%)"
+              />
+            </div>
+          )}
         </div>
         {/* <div
           className="relative hidden sm:flex flex-col justify-center 
@@ -126,7 +128,8 @@ export function SimulationHistories() {
   }, [token]);
 
   const getMoreCards = async (
-    page: number
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _page: number
   ): Promise<Paginate<HistoricoDTO>> => {
     return {
       data: [],
