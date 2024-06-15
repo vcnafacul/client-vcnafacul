@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ContentDtoInput } from "../../dtos/content/contentDtoInput";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { StatusContent } from "../../enums/content/statusContent";
@@ -8,15 +8,23 @@ import { getContentOrder } from "../../services/content/getContent";
 import { toast } from "react-toastify";
 import ContentSubject from "../../components/molecules/contentSubjects";
 import Text from "../../components/atoms/text";
+import Button from "../../components/molecules/button";
+import { DASH, ESTUDO } from "../../routes/path";
+import { MateriasLabel } from "../../types/content/materiasLabel";
 
 function Subject(){
     const { id } = useParams();
     const { data: { token }} = useAuthStore()
 
     const [contents, setContent] = useState<ContentDtoInput[]>([])
+    const [nomeMateria, setNomeMateria] = useState<string>('')
     const [contentSelected, setContentSelected] = useState<ContentDtoInput>()
     const dataRef = useRef<ContentDtoInput[]>([])
     const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
+
+    function removeAccentsAndSpecialChars(input: string): string {
+        return input.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9 ]/g, "");
+    }
 
     const MyContent = useCallback(() => {
         if(contentSelected){
@@ -32,6 +40,9 @@ function Subject(){
         getContentOrder(token, StatusEnum.Approved as unknown as StatusContent, parseInt(id!))
             .then(res => {
                 setContent(res)
+                const idMateria = res[0].subject.frente.materia;
+                const nomeMateria = removeAccentsAndSpecialChars(MateriasLabel.find(materia => materia.value === idMateria)!.label);
+                setNomeMateria(nomeMateria)
                 dataRef.current = res;
                 if(res.length > 0) {
                     setContentSelected(res[0])
@@ -41,10 +52,19 @@ function Subject(){
                 toast.error(error.message);
             })
         },[id, token])
+        const navigate = useNavigate();
 
     return (
-            <div>
-                {contents.length > 0 ? <Text className="m-0 pt-4">{contents[0].subject.name}</Text> : <></>}
+        <div>
+            <div className="relative flex flex-col-reverse items-center gap-2 mt-4 sm:mt-0">
+                    {contents.length > 0 ? <Text className="m-0 pt-4">{contents[0].subject.name}</Text> : <></>}
+                    {nomeMateria && (
+                    <div>
+                        <Button className="w-24 h-10 sm:absolute top-4 right-4" onClick={() => navigate(`${DASH}/${ESTUDO}/${nomeMateria}`)}>
+                            Voltar
+                        </Button>
+                    </div>)}
+                    </div>
                 <div className="flex flex-col xl:flex-row gap-4 flex-wrap justify-center">
                     <div className="m-4 xl:mt-8 xl:mr-8 bg-white border shadow-md rounded-md flex gap-4 xl:flex-col h-fit flex-wrap w-fit">
                         {contents.map((content, index) => (

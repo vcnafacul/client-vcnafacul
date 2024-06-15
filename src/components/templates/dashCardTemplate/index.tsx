@@ -6,6 +6,8 @@ import Select from "../../atoms/select";
 import Text from "../../atoms/text";
 import Button from "../../molecules/button";
 import { CardDashComponent } from "../../molecules/cardDash";
+import { DASH, SIMULADO } from "../../../routes/path";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   customFilter?: JSX.Element[];
@@ -56,13 +58,21 @@ function DashCardTemplate({ customFilter, headerDash }: Props) {
 
   const gapBeforeLast = Math.floor(limitCards * 0.25);
   const indexLastCardInView = entities.length - gapBeforeLast;
+  const navigate = useNavigate();
 
   return (
     <div className="w-full flex flex-col py-4">
-      <div className="flex flex-col items-center w-full mt-4">
-        <Text className="self-center" size="secondary">
-          {title}
-        </Text>
+      <div className="relative flex flex-col items-center w-full mt-4">
+        <div className=" flex flex-col-reverse items-center gap-2 mt-4 sm:mt-0">
+          <Text className="self-center" size="secondary">
+            {title}
+          </Text>
+          <div>
+              <Button className="w-24 h-10 sm:absolute right-4" onClick={() => navigate(`${DASH}/${SIMULADO}`)}>
+                  Voltar
+              </Button>
+          </div>
+        </div>
         <div
           className={`relative md:fixed flex flex-wrap flex-col justify-center items-center gap-2 z-[1] rounded-2xl bg-opacity-95 p-2 w-10/12 md:w-fit ${
             filterProps || buttons || totalItems ? "bg-gray-200 mt-14" : ""
