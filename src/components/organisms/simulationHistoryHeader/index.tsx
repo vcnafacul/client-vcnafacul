@@ -8,6 +8,8 @@ import { PieChart } from "../../atoms/pieChart";
 import { RadarChart } from "../../atoms/radarChart";
 import Text from "../../atoms/text";
 import Button from "../../molecules/button";
+import { DASH, SIMULADO_HISTORIES } from "../../../routes/path";
+import { useNavigate } from "react-router-dom";
 
 interface SimulationHistoryHeaderProps {
   historic: HistoricoDTO;
@@ -16,6 +18,7 @@ interface SimulationHistoryHeaderProps {
 export function SimulationHistoryHeader({
   historic,
 }: SimulationHistoryHeaderProps) {
+  const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [dataPie, setDataPie] = useState<any[]>([]);
   const finished =
@@ -64,7 +67,7 @@ export function SimulationHistoryHeader({
       <div className="flex items-center justify-around my-4 ">
         <Text className="text-white w-fit m-0">Simulado do Enem</Text>
         <div>
-          <Button className="w-24" onClick={() => window.history.back()}>
+          <Button className="w-24" onClick={() => navigate(`${DASH}/${SIMULADO_HISTORIES}`)}>
             Voltar
           </Button>
         </div>
