@@ -1,7 +1,9 @@
+import { StatusEnum } from "../../enums/generic/statusEnum";
+
 export const dashNews = {
-    title: 'Conteúdo Novidades',
-    options: [
-        { name: 'Aprovado', id: 1},
-        { name: 'Reprovado', id: 0},
-    ]
-}
+  title: "Conteúdo Novidades",
+  options: [
+    { name: "Aprovado", id: StatusEnum.Approved },
+    { name: "Reprovado", id: StatusEnum.Rejected },
+  ],
+};
