@@ -13,6 +13,7 @@ import MapBoxInfo from "../mapBoxInfo";
 import MapBoxInfoUnivPublic from "../mapBoxInfo/MapBoxInfoUnivPublic";
 import MapBoxInfoGeo from "../mapBoxInfo/mapBoxInfoGeo";
 import { CheckMapFilter } from "../../atoms/checkMapFilter";
+import { checkMapFilter } from "../../../pages/home/data";
 
 function Map() {
   const [markerActive, setMarkerActive] = useState<number>(0);
@@ -124,18 +125,15 @@ function Map() {
       />
       <div className="absolute top-4 right-4 sm:left-14 sm:right-auto z-40 bg-grey bg-opacity-70 max-w-80 rounded-sm p-2 flex flex-col">
         <h3 className="self-center text-white font-black">Localizar:</h3>
-        <CheckMapFilter
-          label="Cursinhos Populares"
-          color="fill-blue-600"
-          checked={filterMarkers.includes(TypeMarker.geo)}
-          onClick={() => handleFilterMarkers(TypeMarker.geo)}
-        />
-        <CheckMapFilter
-          label="Universidades P[ublicas"
-          color="fill-red"
-          checked={filterMarkers.includes(TypeMarker.univPublic)}
-          onClick={() => handleFilterMarkers(TypeMarker.univPublic)}
-        />
+        {checkMapFilter.map((filter) => (
+          <CheckMapFilter
+            key={filter.id}
+            label={filter.name}
+            color={filter.color}
+            checked={filterMarkers.includes(filter.type)}
+            onClick={() => handleFilterMarkers(filter.type)}
+          />
+        ))}
       </div>
     </div>
   );

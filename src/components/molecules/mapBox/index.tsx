@@ -63,7 +63,7 @@ function MapBox({
                   position={[mark.lat, mark.lon]}
                   icon={leaflet.divIcon({
                     className: "w-8 h-8",
-                    html: renderToStaticMarkup(<PointIcon className={`${mark.type === TypeMarker.geo ? "fill-blue-600" : "fill-red"} h-8`} />),
+                    html: renderToStaticMarkup(<PointIcon className={`${mark.type === TypeMarker.geo ? "fill-blueGeo" : "fill-red"} h-8`} />),
                   })}
                   eventHandlers={{
                     click: () =>
