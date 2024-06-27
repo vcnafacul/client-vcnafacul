@@ -10,7 +10,7 @@ import {
   Volunteer,
 } from "../../components/organisms/supporters";
 import { News } from "../../dtos/news/news";
-import { Geolocation } from "../../types/geolocation/geolocation";
+import { Marker } from "../../types/map/marker";
 
 export type HomeState = {
   hero: {
@@ -42,7 +42,7 @@ export type HomeState = {
     updated: number;
   };
   markers: {
-    data: Geolocation[];
+    data: Marker[];
     updated: number;
   };
   news: {
@@ -56,7 +56,7 @@ export type HomeState = {
   setActionAreas: (actionAreas: ActionProps) => void;
   setSupporters: (supporters: SupportersSponsor) => void;
   setVolunteers: (volunteers: Volunteer[]) => void;
-  setMarkers: (markers: Geolocation[]) => void;
+  setMarkers: (markers: Marker[]) => void;
   setNews: (news: News[]) => void;
 };
 

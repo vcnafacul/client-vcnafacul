@@ -48,3 +48,4 @@ export const actions = `${CMS_URL}/items/Home_Action?fields=id,title,subtitle,ar
 export const sponsors = `${CMS_URL}/items/Home_Supporters?fields=id,title,subtitle,sponsors.Patrocinador_id.*`
 export const footer = `${CMS_URL}/items/Home_Footer?fields=id,slogan,contact,pageLinks.Home_Menu_Item_id.*,sitemapLinks.Home_Menu_Item_id.*,socialLinks.Home_Menu_Item_id.*`
 export const header = (id: number) => `${CMS_URL}/items/Headers/${id}?fields=id,pageLinks.Home_Menu_Item_id.*,userNavigationSign.Home_Menu_Item_id.*,socialLinks.Home_Menu_Item_id.*,userNavigationLogged.Home_Menu_Item_id.*`
+export const university = `${CMS_URL}/items/Universidade`

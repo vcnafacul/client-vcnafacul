@@ -3,15 +3,10 @@ import "leaflet/dist/leaflet.css";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
 
 import leaflet from "leaflet";
-import icon from "leaflet/dist/images/marker-icon.png";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import { useEffect, useState } from "react";
-
-export interface MarkerPoint {
-  id: number;
-  lat: number;
-  lon: number;
-}
+import { renderToStaticMarkup } from 'react-dom/server';
+import { ReactComponent as PointIcon } from "../../../assets/images/home/univ_public.svg";
+import { MarkerPoint, TypeMarker } from "../../../types/map/marker";
 
 interface MapBoxProps {
   markers: MarkerPoint[];
@@ -21,14 +16,6 @@ interface MapBoxProps {
   center?: LatLngTuple;
   mapEvent?: JSX.Element;
 }
-
-const DefaultIcon = leaflet.icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow,
-  iconAnchor: [12, 41],
-});
-
-leaflet.Marker.prototype.options.icon = DefaultIcon;
 
 function MapBox({
   markers,
@@ -51,7 +38,7 @@ function MapBox({
       }
     );
   }, []);
-
+  
   return (
     <div className="relative">
       {initialPosition && (
@@ -69,16 +56,22 @@ function MapBox({
             (
               mark,
               index //alterar index para o id
-            ) => (
-              <Marker
-                key={mark.id}
-                position={[mark.lat, mark.lon]}
-                eventHandlers={{
-                  click: () =>
-                    handleClickMarker ? handleClickMarker(index) : null,
-                }}
-              />
-            )
+            ) => {
+              return (
+                <Marker
+                  key={mark.id}
+                  position={[mark.lat, mark.lon]}
+                  icon={leaflet.divIcon({
+                    className: "w-8 h-8",
+                    html: renderToStaticMarkup(<PointIcon className={`${mark.type === TypeMarker.geo ? "fill-blueGeo" : "fill-red"} h-7`} />),
+                  })}
+                  eventHandlers={{
+                    click: () =>
+                      handleClickMarker ? handleClickMarker(index) : null,
+                  }}
+                />
+              );
+            }
           )}
           {mapEvent ?? <></>}
         </MapContainer>
