@@ -51,7 +51,5 @@ export async function getAllQuestions(
       totalItems: questoes.totalItems,
     };
   }
-  const res = await response.json();
-  console.log(res);
   throw new Error(`Erro ao tentar recuperar questões - Pagina ${page}`);
 }

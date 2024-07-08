@@ -6,6 +6,7 @@ import { ReactComponent as FacebookIcon} from "../../assets/icons/facebook.svg"
 import { ReactComponent as LinkedinIcon} from "../../assets/icons/linkedin.svg"
 import { ReactComponent as TwitterIcon} from "../../assets/icons/twitter.svg"
 import { ReactComponent as InstagramIcon} from "../../assets/icons/instagram.svg"
+import { TypeMarker } from '../../types/map/marker';
 
 export const userNavigationSign : ItemMenuProps[] = [
     { Home_Menu_Item_id: {
@@ -47,3 +48,8 @@ export const header: HeaderData = {
     userNavigationSign: userNavigationSign,
     userNavigationLogged: userNavigationLogged,
 };
+
+export const checkMapFilter = [
+    { id: 1, name: "Cursinhos Populares", type: TypeMarker.geo, color: "fill-blueGeo" },
+    { id: 2, name: "Universidades Públicas", type: TypeMarker.univPublic, color: "fill-red" },
+];

@@ -33,7 +33,8 @@ export default {
         green2: "#0F9B2C",
         green3: "#19982B",
         gray2: "#A6A6A6",
-        purple: "#8A2BE2"
+        purple: "#8A2BE2",
+        blueGeo: "#4D8CCB"
       },
     },
     screens: {
