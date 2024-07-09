@@ -25,6 +25,7 @@ import { BtnProps } from "../../../types/generic/btnProps";
 import { ValidationGeolocation } from "../../../types/geolocation/validationGeolocation";
 import { getStatusIcon } from "../../../utils/getStatusIcon";
 import { stateOptions } from "../../register/data";
+import { TypeMarker } from "../../../types/map/marker";
 
 interface ModalEditDashGeoProps extends ModalProps {
   geo: Geolocation;
@@ -456,7 +457,7 @@ function ModalEditDashGeo({
             zoom={11}
             center={[geo.latitude, geo.longitude]}
             markers={[
-              { id: geo.id as number, lat: geo.latitude, lon: geo.longitude },
+              { id: geo.id as number, lat: geo.latitude, lon: geo.longitude, type: TypeMarker.geo },
             ]}
             mapEvent={<Event />}
           />
