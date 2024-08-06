@@ -1,6 +1,7 @@
 import React, { ComponentProps } from "react";
 import { IoMdClose } from "react-icons/io";
 import OutsideClickHandler from "react-outside-click-handler";
+import { TabModal } from "../modalTabTemplate";
 
 export interface ModalProps {
   handleClose?: () => void;
@@ -10,6 +11,9 @@ interface ModalTemplateProps extends ComponentProps<"div"> {
   children: React.ReactNode;
   outSideClose?: boolean;
   isOpen: boolean;
+  tabs?: TabModal[];
+  indexTabSelect?: number;
+  setIndexTabSelect?: React.Dispatch<React.SetStateAction<number>>;
   handleClose: () => void;
 }
 
@@ -18,6 +22,9 @@ function ModalTemplate({
   handleClose,
   outSideClose = false,
   isOpen,
+  tabs,
+  indexTabSelect,
+  setIndexTabSelect,
   ...props
 }: ModalTemplateProps) {
 
@@ -27,14 +34,22 @@ function ModalTemplate({
         scrollbar-hide"
       {...props}
     >
-      <div className="w-full h-full flex justify-center items-center">
+      <div className="w-full h-full flex  justify-center items-center">
         {outSideClose ? (
           <OutsideClickHandler
             onOutsideClick={() => {
               handleClose!();
             }}
           >
-            <div className="flex flex-col bg-white w-fit p-4 rounded-md">
+            {tabs ? (
+              <div className="flex -top-7 left-0 z-0">
+              {tabs.map((tab, index) => (
+                  <div onClick={() => setIndexTabSelect!(index)} key={index}
+                  className={`${tab.label === tabs[indexTabSelect!].label ? 'bg-white' : 'bg-lightGray'} px-4 py-1 cursor-pointer text-marine font-black`}>{tab.label}</div>
+              ))}
+          </div>
+            ) : null}
+            <div className="flex flex-col w-fit bg-white rounded-r-md rounded-b-md p-2">
               <IoMdClose
                 onClick={handleClose}
                 className="self-end cursor-pointer w-5 h-5"
