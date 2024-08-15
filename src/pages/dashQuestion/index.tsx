@@ -22,6 +22,7 @@ import { formatDate } from "../../utils/date";
 import { Paginate } from "../../utils/paginate";
 import { dashQuest } from "./data";
 import ModalDetalhes from "./modals/modalDetalhes";
+import ModalHistorico from "./modals/modalHistorico";
 
 function DashQuestion() {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -200,6 +201,20 @@ function DashQuestion() {
                 handleUpdateQuestion={handleUpdateQuestion}
                 handleAddQuestion={handleAddQuestion}
                 handleRemoveQuestion={handleRemoveQuestion}
+              />
+            ),
+            handleClose: () => {
+              setOpenModalEdit(false);
+            },
+          },
+          {
+            label: "Historico",
+            children: (
+              <ModalHistorico
+                handleClose={() => {
+                  setOpenModalEdit(false);
+                }}
+                id={questionSelect?._id ?? ""}
               />
             ),
             handleClose: () => {
