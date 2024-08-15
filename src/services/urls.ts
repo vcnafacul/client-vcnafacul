@@ -40,6 +40,9 @@ export const prova = `${mssimulado}/prova`
 export const missing = `${prova}/missing`
 export const questoes = `${mssimulado}/questoes`
 export const historico = `${mssimulado}/historico`
+export const auditLog = `${BASE_URL}/auditlog`
+export const auditLogMs = `${BASE_URL}/auditlog/ms`
+export const historyQuestion = `${mssimulado}/questoes/history`
 
 export const hero = `${CMS_URL}/items/Home_Hero_Slides?fields=id,title,subtitle,image,backgroud_color,links.Home_Hero_Button_id.*`
 export const about_us = `${CMS_URL}/items/Home_About_Us`
