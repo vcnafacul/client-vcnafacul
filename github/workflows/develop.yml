@@ -1,0 +1,53 @@
+name: vCnafacul
+
+on:
+  pull_request: 
+    branches: ["develop", "main"]
+    types: [opened, synchronize, reopened, closed]
+
+jobs:
+  CI:
+    if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize' || github.event.action == 'reopened')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Iniciando CI
+        run: echo "Iniciando CI"
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 20.x
+      - name: Install depends
+        run: yarn
+      - name: Build app vCnafacul
+        run: yarn build
+
+  PUSH:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Iniciando CI
+        run: echo "Iniciando PUSH"
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 20.x
+      - name: Install depends
+        run: yarn
+      - name: Build app vCnafacul
+        run: yarn build
+      - name: Build Image
+        run: docker build -t vcnafacul -f web.dockerfile .
+      - name: Set Docker Tag
+        id: set_tag
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            echo "TAG=latest" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "TAG=stable" >> $GITHUB_ENV
+          fi
+      - name: Tag and Push Image
+        run: |
+          docker tag vcnafacul vcnafacul/web:${{ env.TAG }}
+          docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker push vcnafacul/web:${{ env.TAG }}
