@@ -40,27 +40,25 @@ function ModalHistorico({ id }: ModalHistoricoProps) {
   console.log(history);
 
   const HistoryComponent = () => {
-    return history.history &&
+    return (
+      history.history &&
       history.history.map((log, index) => (
         <div
           key={index}
           className="p-1 my-1 bg-slate-100 border-2 border-gray-300 rounded"
         >
-          {
-            Object.entries(JSON.parse(log.changes)).map(
-              ([key, value]) => (
-                <div className="flex gap-4">
-                  <div className="font-bold">{key}:</div>
-                  <div className="text-slate-500 font-medium">
-                    {value as string}
-                  </div>
-                </div>
-              )
-            )
-          }
+          {Object.entries(JSON.parse(log.changes)).map(([key, value]) => (
+            <div className="flex gap-4">
+              <div className="font-bold">{key}:</div>
+              <div className="text-slate-500 font-medium">
+                {value as string}
+              </div>
+            </div>
+          ))}
         </div>
       ))
-  }
+    );
+  };
 
   return (
     <div>
@@ -132,7 +130,6 @@ function ModalHistorico({ id }: ModalHistoricoProps) {
         </Text>
         <HistoryComponent />
       </div>
-      
     </div>
   );
 }
