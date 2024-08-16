@@ -1,19 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { checkMapFilter } from "../../../pages/home/data";
 import { FORM_GEOLOCATION } from "../../../routes/path";
-import { getUniversities } from "../../../services/directus/home/university";
 import getGeolocation from "../../../services/geolocation/getGeolocation";
 import { useHomeStore } from "../../../store/home";
 import { Geolocation } from "../../../types/geolocation/geolocation";
 import { TypeMarker } from "../../../types/map/marker";
 import { University } from "../../../types/university/university";
 import { DiffTime } from "../../../utils/diffTime";
+import { CheckMapFilter } from "../../atoms/checkMapFilter";
 import MapBox from "../../molecules/mapBox";
 import MapBoxInfo from "../mapBoxInfo";
 import MapBoxInfoUnivPublic from "../mapBoxInfo/MapBoxInfoUnivPublic";
 import MapBoxInfoGeo from "../mapBoxInfo/mapBoxInfoGeo";
-import { CheckMapFilter } from "../../atoms/checkMapFilter";
-import { checkMapFilter } from "../../../pages/home/data";
 
 function Map() {
   const [markerActive, setMarkerActive] = useState<number>(0);
@@ -68,32 +67,33 @@ function Map() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    const UnivMarkerCache = markers.data.filter(
-      (m) => m.type === TypeMarker.univPublic
-    );
-    if (UnivMarkerCache.length === 0 || DiffTime(markers.updated, 8)) {
-      const geoMarkers = markers.data.filter((m) => m.type === TypeMarker.geo);
-      getUniversities()
-        .then((res) => {
-          const UnivMarker = res.map((course: University) => {
-            return {
-              id: `${course.id} ${TypeMarker.univPublic}`,
-              lat: course.latitude,
-              lon: course.longitude,
-              type: TypeMarker.univPublic,
-              infos: course,
-            };
-          });
-          const newMarkers = [...geoMarkers, ...UnivMarker];
-          setMarkers(newMarkers);
-        })
-        .catch((error: Error) => {
-          toast.error(error.message);
-          setMarkers(geoMarkers);
-        });
-    }
-  }, []);
+  // useEffect(() => {
+  //   const UnivMarkerCache = markers.data.filter(
+  //     (m) => m.type === TypeMarker.univPublic
+  //   );
+  //   if (UnivMarkerCache.length === 0 || DiffTime(markers.updated, 8)) {
+  //     const geoMarkers = markers.data.filter((m) => m.type === TypeMarker.geo);
+  //     // getUniversities()
+  //     //   .then((res) => {
+  //     //     const UnivMarker = res.map((course: University) => {
+  //     //       return {
+  //     //         id: `${course.id} ${TypeMarker.univPublic}`,
+  //     //         lat: course.latitude,
+  //     //         lon: course.longitude,
+  //     //         type: TypeMarker.univPublic,
+  //     //         infos: course,
+  //     //       };
+  //     //     });
+  //     //     const newMarkers = [...geoMarkers, ...UnivMarker];
+  //     //     setMarkers(newMarkers);
+  //     //   })
+  //     //   .catch((error: Error) => {
+  //     //     toast.error(error.message);
+  //     //     setMarkers(geoMarkers);
+  //     //   });
+  //     setMarkers(geoMarkers);
+  //   }
+  // }, []);
 
   return (
     <div id="map" className="relative w-full">
