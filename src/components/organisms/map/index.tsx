@@ -67,34 +67,6 @@ function Map() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // useEffect(() => {
-  //   const UnivMarkerCache = markers.data.filter(
-  //     (m) => m.type === TypeMarker.univPublic
-  //   );
-  //   if (UnivMarkerCache.length === 0 || DiffTime(markers.updated, 8)) {
-  //     const geoMarkers = markers.data.filter((m) => m.type === TypeMarker.geo);
-  //     // getUniversities()
-  //     //   .then((res) => {
-  //     //     const UnivMarker = res.map((course: University) => {
-  //     //       return {
-  //     //         id: `${course.id} ${TypeMarker.univPublic}`,
-  //     //         lat: course.latitude,
-  //     //         lon: course.longitude,
-  //     //         type: TypeMarker.univPublic,
-  //     //         infos: course,
-  //     //       };
-  //     //     });
-  //     //     const newMarkers = [...geoMarkers, ...UnivMarker];
-  //     //     setMarkers(newMarkers);
-  //     //   })
-  //     //   .catch((error: Error) => {
-  //     //     toast.error(error.message);
-  //     //     setMarkers(geoMarkers);
-  //     //   });
-  //     setMarkers(geoMarkers);
-  //   }
-  // }, []);
-
   return (
     <div id="map" className="relative w-full">
       <MapBox
