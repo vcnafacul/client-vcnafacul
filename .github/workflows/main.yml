@@ -6,8 +6,23 @@ on:
     types: [opened, synchronize, reopened, closed]
 
 jobs:
-  CI:
+  BUILD:
     if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize' || github.event.action == 'reopened')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Iniciando CI
+        run: echo "Iniciando CI"
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 20.x
+      - name: Install depends
+        run: yarn
+      - name: Build app vCnafacul
+        run: yarn build
+  CI:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
