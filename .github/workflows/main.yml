@@ -2,7 +2,7 @@ name: vCnafacul
 
 on:
   pull_request: 
-    branches: ["develop"]
+    branches: ["main"]
     types: [opened, synchronize, reopened, closed]
 
 jobs:
@@ -24,8 +24,8 @@ jobs:
       - name: Build Image
         run: docker build -t vcnafacul -f web.dockerfile .
       - name: docker tags
-        run: docker tag vcnafacul vcnafacul/web:latest
+        run: docker tag vcnafacul vcnafacul/web:stable
       - name: docker login
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Image Push
-        run: docker push vcnafacul/web:latest
+        run: docker push vcnafacul/web:stable
