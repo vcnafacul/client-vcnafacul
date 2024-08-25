@@ -23,16 +23,14 @@ jobs:
         run: yarn build
       - name: Build Image
         run: docker build -t vcnafacul -f web.dockerfile .
-      - name: Set Docker Tag
+      - name: Tag and Push Image
         id: set_tag
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
-            echo "TAG=latest" >> $GITHUB_ENV
-          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "TAG=stable" >> $GITHUB_ENV
-          fi
-      - name: Tag and Push Image
-        run: |
-          docker tag vcnafacul vcnafacul/web:${{ env.TAG }}
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker push vcnafacul/web:${{ env.TAG }}
+          if [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            docker tag vcnafacul vcnafacul/web:latest
+            docker push vcnafacul/web:latest
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            docker tag vcnafacul vcnafacul/web:stable
+            docker push vcnafacul/web:stable
+          fi
