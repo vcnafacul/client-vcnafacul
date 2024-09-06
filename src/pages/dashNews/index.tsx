@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { SelectProps } from "../../components/atoms/select";
 import { ButtonProps } from "../../components/molecules/button";
@@ -9,6 +9,7 @@ import DashCardTemplate from "../../components/templates/dashCardTemplate";
 import ModalTemplate from "../../components/templates/modalTemplate";
 import { DashCardContext } from "../../context/dashCardContext";
 import { News } from "../../dtos/news/news";
+import { StatusEnum } from "../../enums/generic/statusEnum";
 import { createNews } from "../../services/news/createNews";
 import { deleteNews } from "../../services/news/deleteNews";
 import { getAllNews } from "../../services/news/getAllNews";
@@ -23,7 +24,7 @@ function DashNews() {
   const [news, setNews] = useState<News[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [newSelect, setNewSelect] = useState<News | null>();
-  const dataRef = useRef<News[]>([]);
+  const [status, setStatus] = useState<StatusEnum>(StatusEnum.Approved);
   const limitCards = 40;
 
   const {
@@ -43,10 +44,6 @@ function DashNews() {
       },
     ],
   });
-
-  const updateActive = (active: number) => {
-    setNews(dataRef.current.filter((n) => n.actived == !!active));
-  };
 
   const onClickCard = (cardId: number | string) => {
     setNewSelect(news.find((n) => n.id === cardId));
@@ -94,22 +91,21 @@ function DashNews() {
   };
 
   useEffect(() => {
-    getAllNews(token, 1, limitCards)
+    getAllNews(token, 1, limitCards, status)
       .then((res) => {
         setNews(res.data);
         const uniqueSessions = new Set<string>();
         res.data.map((r) => {
           uniqueSessions.add(r.session);
         });
-        dataRef.current = res.data;
       })
       .catch((error: Error) => {
         toast.error(error.message);
       });
-  }, []);
+  }, [status]);
 
   const getMoreCards = async (page: number): Promise<Paginate<News>> => {
-    return await getAllNews(token, page, limitCards);
+    return await getAllNews(token, page, limitCards, status);
   };
 
   const EditNews = () => {
@@ -131,7 +127,7 @@ function DashNews() {
   };
 
   const selectFiltes: SelectProps[] = [
-    { options: dashNews.options, setState: updateActive },
+    { options: dashNews.options, setState: setStatus, defaultValue: status },
   ];
 
   const buttons: ButtonProps[] = [

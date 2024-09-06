@@ -22,17 +22,19 @@ import { formatDate } from "../../utils/date";
 import { Paginate } from "../../utils/paginate";
 import { dashQuest } from "./data";
 import ModalDetalhes from "./modals/modalDetalhes";
+import ModalHistorico from "./modals/modalHistorico";
 
 function DashQuestion() {
   const [questions, setQuestions] = useState<Question[]>([]);
 
   //filters
-  const [status, setStatus] = useState<StatusEnum>(StatusEnum.Pending);
+  const [status, setStatus] = useState<StatusEnum>(StatusEnum.All);
   const [materia, setMateria] = useState<string>("");
   const [frente, setFrente] = useState<string>("");
   const [prova, setProva] = useState<string>("");
   const [enemArea, setEnemArea] = useState<string>("");
   const [filterText, setFilterText] = useState<string>("");
+  const [totalItems, setTotalItems] = useState<number>(0);
 
   const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
   const [openModalRegister, setOpenModalRegister] = useState<boolean>(false);
@@ -157,10 +159,11 @@ function DashQuestion() {
         materia,
         frente,
         prova,
-        enemArea
+        enemArea,
       )
         .then((res) => {
           setQuestions(res.data);
+          setTotalItems(res.totalItems);
         })
         .catch((erro: Error) => {
           toast.error(erro.message);
@@ -198,6 +201,20 @@ function DashQuestion() {
                 handleUpdateQuestion={handleUpdateQuestion}
                 handleAddQuestion={handleAddQuestion}
                 handleRemoveQuestion={handleRemoveQuestion}
+              />
+            ),
+            handleClose: () => {
+              setOpenModalEdit(false);
+            },
+          },
+          {
+            label: "Historico",
+            children: (
+              <ModalHistorico
+                handleClose={() => {
+                  setOpenModalEdit(false);
+                }}
+                id={questionSelect?._id ?? ""}
               />
             ),
             handleClose: () => {
@@ -248,7 +265,7 @@ function DashQuestion() {
       materia,
       frente,
       prova,
-      enemArea
+      enemArea,
     );
   };
 
@@ -309,7 +326,7 @@ function DashQuestion() {
         setFrente(frentesOption[0].id);
         setProva(provasOption[0].id);
         setEnemArea(EnemAreaOption[0].id);
-        setStatus(StatusEnum.Pending);
+        setStatus(StatusEnum.All);
       },
       typeStyle: "quaternary",
       size: "small",
@@ -349,6 +366,7 @@ function DashQuestion() {
         filterProps,
         selectFiltes,
         buttons,
+        totalItems
       }}
     >
       <DashCardTemplate />

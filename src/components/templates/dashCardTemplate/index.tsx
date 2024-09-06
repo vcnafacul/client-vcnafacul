@@ -6,12 +6,15 @@ import Select from "../../atoms/select";
 import Text from "../../atoms/text";
 import Button from "../../molecules/button";
 import { CardDashComponent } from "../../molecules/cardDash";
+import { DASH, SIMULADO } from "../../../routes/path";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   customFilter?: JSX.Element[];
+  headerDash?: JSX.Element | undefined;
 }
 
-function DashCardTemplate({ customFilter }: Props) {
+function DashCardTemplate({ customFilter, headerDash }: Props) {
   const [firstCardRef, firstCardInView] = useInView();
   const [lastCardRef, lastCardInView] = useInView();
   const [botton, setBotton] = useState<boolean>(false);
@@ -28,6 +31,7 @@ function DashCardTemplate({ customFilter }: Props) {
     filterProps,
     selectFiltes,
     buttons,
+    totalItems,
   } = useDashCardContext();
 
   useEffect(() => {
@@ -54,15 +58,27 @@ function DashCardTemplate({ customFilter }: Props) {
 
   const gapBeforeLast = Math.floor(limitCards * 0.25);
   const indexLastCardInView = entities.length - gapBeforeLast;
+  const navigate = useNavigate();
 
   return (
-    <div className={`w-full flex justify-center flex-col py-4`}>
-      <div className="flex flex-col items-center w-full mt-4">
-        <Text className="self-center" size="secondary">
-          {title}
-        </Text>
-        <div className="flex flex-wrap flex-col justify-center items-center gap-2 z-[1] bg-gray-200 rounded-2xl bg-opacity-75 p-2 mt-14 w-10/12 md:w-fit relative">
-          <div className="flex flex-wrap items-center md:justify-start justify-center gap-4 w-full mb-4">
+    <div className="w-full flex flex-col py-4">
+      <div className="relative flex flex-col items-center w-full mt-4">
+        <div className=" flex flex-col-reverse items-center gap-2 mt-4 sm:mt-0">
+          <Text className="self-center" size="secondary">
+            {title}
+          </Text>
+          <div>
+              <Button className="w-24 h-10 sm:absolute right-4" onClick={() => navigate(`${DASH}/${SIMULADO}`)}>
+                  Voltar
+              </Button>
+          </div>
+        </div>
+        <div
+          className={`relative md:fixed flex flex-wrap flex-col justify-center items-center gap-2 z-[1] rounded-2xl bg-opacity-95 p-2 w-10/12 md:w-fit ${
+            filterProps || buttons || totalItems ? "bg-gray-200 mt-14" : ""
+          }`}
+        >
+          <div className="relative flex flex-wrap items-center md:justify-start justify-center gap-4 w-full mb-4">
             {filterProps && (
               <Filter
                 {...filterProps}
@@ -72,12 +88,19 @@ function DashCardTemplate({ customFilter }: Props) {
                 }}
               />
             )}
-            {buttons?.map((button, index) => (
-              <Button key={index} {...button} />
-            ))}
-            {customFilter?.map((filter, index) => (
-              <div key={index}> {filter}</div>
-            ))}
+            <div className="flex gap-4 flex-wrap justify-center">
+              {buttons?.map((button, index) => (
+                <Button key={index} {...button} />
+              ))}
+              {customFilter?.map((filter, index) => (
+                <div key={index}> {filter}</div>
+              ))}
+              {totalItems && (
+                <span className="m-0 md:absolute left-4 top-16 font-bold text-marine text-base">
+                  Total de Registros: {totalItems}
+                </span>
+              )}
+            </div>
           </div>
           <div className="flex flex-wrap justify-center gap-4">
             {selectFiltes?.map((select, index) => {
@@ -96,7 +119,12 @@ function DashCardTemplate({ customFilter }: Props) {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap justify-center gap-4 pb-10 my-4 md:justify-start md:mx-10">
+      {headerDash}
+      <div
+        className={`${
+          !filterProps && !buttons ? "mt-0" : "md:mt-52"
+        } flex flex-wrap justify-center gap-4 pb-10 my-4 md:mx-10`}
+      >
         {entities.map((entity, index) => {
           let ref = null;
           if (entities.length >= limitCards) {

@@ -18,6 +18,7 @@ export interface DashCardContextProps<T = any> {
   filterProps?: FilterProps,
   selectFiltes?: SelectProps[];
   buttons?: ButtonProps[]
+  totalItems?: number
 }
 
 const DashCardContext = createContext<DashCardContextProps | null >(null)

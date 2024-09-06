@@ -12,8 +12,9 @@ export async function createQuestion (data: CreateQuestion, token: string): Prom
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(cleanObject(data)),
     });
+
     if(response.status !== StatusCodes.CREATED){
-        let errorMessage = 'Erro ao tentar criar questão'
+        let errorMessage = 'Erro ao tentar criar questão - '
         if(response.status >= StatusCodes.BAD_REQUEST) {
             errorMessage += (await response.json()).message as string
         }

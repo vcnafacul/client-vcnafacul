@@ -10,7 +10,7 @@ export interface ItemCard {
   id: number;
   title: string;
   subtitle?: string;
-  image: string;
+  image: React.FC<React.SVGProps<SVGSVGElement>> | string;
 }
 
 interface ActionAreaItem {
@@ -20,7 +20,7 @@ interface ActionAreaItem {
 interface ActionArea {
   id: number;
   title: string;
-  Items: ActionAreaItem[];
+  items: ActionAreaItem[];
 }
 
 interface ActionAreasProps {
@@ -44,7 +44,7 @@ function Action() {
   };
 
   const CardTopics = (cardTopics: ActionArea | undefined) =>
-    cardTopics?.Items.map((cardItem) => {
+    cardTopics?.items.map((cardItem) => {
       return (
         <div
           key={cardItem.Home_Action_Area_Item_id.id}
@@ -52,7 +52,11 @@ function Action() {
                 text-grey border border-grey flex flex-col items-center justify-center"
         >
           <div className="flex justify-center w-28 h-28">
-            <img src={cardItem.Home_Action_Area_Item_id.image} />
+            {
+              typeof cardItem.Home_Action_Area_Item_id.image === 'string' ? 
+              <img src={cardItem.Home_Action_Area_Item_id.image as string} /> : 
+              <cardItem.Home_Action_Area_Item_id.image />
+            }
           </div>
           <h3 className="z-10 px-4 py-0 text-2xl text-center text-marine">
             {cardItem.Home_Action_Area_Item_id.title}
