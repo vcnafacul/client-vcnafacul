@@ -69,12 +69,12 @@ function Hero({ className }: HeroProps) {
                   {slide.links.map((link: any) => (
                     <BLink
                       type="tertiary"
-                      target={link.Home_Hero_Button_id.target}
+                      target={link.target}
                       hover
-                      key={link.Home_Hero_Button_id.id}
-                      to={link.Home_Hero_Button_id.link}
+                      key={link.id}
+                      to={link.link}
                     >
-                      {link.Home_Hero_Button_id.text}
+                      {link.text}
                     </BLink>
                   ))}
                 </div>
