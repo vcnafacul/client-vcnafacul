@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  ms-simulado:
+    image: vcnafacul/simulado:latest
+    env_file:
+      - .env.qa
+    restart: always
+    networks:
+      - vcnafacul-network
+
+  api-vcnafacul:
+    image: vcnafacul/api:latest
+    env_file:
+      - .env.qa
+    restart: always
+    depends_on:
+      - ms-simulado
+    networks:
+      - vcnafacul-network
+  
+  web-vcnafacul:
+    image: vcnafacul/web:latest
+    ports:
+      - 5173:80
+    env_file:
+      - .env.qa
+    restart: always
+    depends_on:
+      - api-vcnafacul
+    networks:
+      - vcnafacul-network
+  
+
+networks:
+  vcnafacul-network:
+    driver: bridge
