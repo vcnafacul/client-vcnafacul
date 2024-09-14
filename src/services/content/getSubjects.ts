@@ -3,7 +3,7 @@ import { FormFieldOptionSubject } from "../../pages/dashContent/modals/settingsC
 import fetchWrapper from "../../utils/fetchWrapper";
 import { subjectsByFrente } from "../urls";
 
-export async function getSubjects ( frenteId: number, token: string): Promise<SubjectDto[]> {
+export async function getSubjects ( frenteId: string, token: string): Promise<SubjectDto[]> {
     const response = await fetchWrapper(`${subjectsByFrente}/${frenteId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
@@ -16,7 +16,7 @@ export async function getSubjects ( frenteId: number, token: string): Promise<Su
 }
 
 
-export async function getSubjectsLikeFormField( frenteId: number, token: string): Promise<FormFieldOptionSubject[]> {
+export async function getSubjectsLikeFormField( frenteId: string, token: string): Promise<FormFieldOptionSubject[]> {
     const subjects = await getSubjects(frenteId, token)
 
     const form : FormFieldOptionSubject[] = subjects.map((subject: SubjectDto) => (

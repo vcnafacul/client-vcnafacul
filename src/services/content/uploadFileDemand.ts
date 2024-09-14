@@ -3,7 +3,7 @@ import fetchWrapper from "../../utils/fetchWrapper";
 import { content } from "../urls";
 
 
-export async function uploadFileDemand(id: number, data: FormData, token: string) : Promise<boolean>{
+export async function uploadFileDemand(id: string, data: FormData, token: string) : Promise<boolean>{
     const response = await fetchWrapper(`${content}/upload/${id}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },

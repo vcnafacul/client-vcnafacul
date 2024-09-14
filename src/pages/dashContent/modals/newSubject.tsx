@@ -70,7 +70,7 @@ function NewSubject({
 
   const create = (data: any) => {
     const body: CreateSubjectDtoOutput = {
-      frente: frente.value as number,
+      frente: frente.value as string,
       name: data.name,
       description: data.description,
     };
@@ -103,7 +103,7 @@ function NewSubject({
 
   const edit = (data: any) => {
     const body: UpdateSubjectDtoOutput = {
-      id: subject!.value as number,
+      id: subject!.value as string,
       name: data.name,
       description: data.description,
     };

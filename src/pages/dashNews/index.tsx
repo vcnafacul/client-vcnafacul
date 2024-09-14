@@ -70,7 +70,7 @@ function DashNews() {
       });
   };
 
-  const deleteNew = (id: number) => {
+  const deleteNew = (id: string) => {
     deleteNews(id, token)
       .then((_) => {
         setNews(

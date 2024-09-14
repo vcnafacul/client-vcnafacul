@@ -1,15 +1,15 @@
 export interface CreateSubjectDtoOutput {
-    frente: number;
+    frente: string;
     name: string;
     description: string;
 }
 
 export interface CreateSubjectDtoInput extends CreateSubjectDtoOutput {
-    id: number;
+    id: string;
 }
 
 export interface UpdateSubjectDtoOutput {
-    id: number;
+    id: string;
     name: string;
     description: string;
 }

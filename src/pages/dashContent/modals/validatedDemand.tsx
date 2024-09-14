@@ -17,7 +17,7 @@ import { useAuthStore } from "../../../store/auth";
 
 interface ValidatedDemandProps extends ModalProps {
   demand: ContentDtoInput;
-  updateStatusDemand: (id: number) => void;
+  updateStatusDemand: (id: string) => void;
 }
 
 function ValidatedDemand({

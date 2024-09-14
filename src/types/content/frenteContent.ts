@@ -1,13 +1,13 @@
 import { Materias } from "../../enums/content/materias";
 
 export interface Subject {
-    id: number;
+    id: string;
     name: string;
     description: string;
 }
 
 export interface Frente {
-    id: number;
+    id: string;
     name: string;
     materia: Materias,
     subject: Subject[]

@@ -15,12 +15,12 @@ import { getStatusIcon } from "../../../utils/getStatusIcon";
 import ChangeOrder from "./changeOrder";
 
 interface ViewOrderProps {
-  subjectId: number;
+  subjectId: string;
 }
 
 export interface DemandSelected {
   title: string;
-  nodeId: number;
+  nodeId: string;
   order: number;
 }
 

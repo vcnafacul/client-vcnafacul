@@ -88,7 +88,7 @@ function NewFrente({
   const edit = (data: any) => {
     const body: UpdateFrenteDtoOutut = {
       name: data.name,
-      id: frente!.value as number,
+      id: frente!.value as string,
     };
     const id = toast.loading("Editando Frente ... ");
     updateFrente(body, token)

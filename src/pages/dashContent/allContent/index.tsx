@@ -75,7 +75,7 @@ function AllContent() {
     setDemands(dataRef.current);
   };
 
-  const handleRemoveDemand = (id: number) => {
+  const handleRemoveDemand = (id: string) => {
     const newContent = demands.filter((q) => q.id != id);
     setDemands(newContent);
   };

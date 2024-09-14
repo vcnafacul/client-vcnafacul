@@ -44,7 +44,7 @@ function DashGeo() {
     setOpenModal(false);
   };
 
-  const updateStatus = (cardId: number) => {
+  const updateStatus = (cardId: string) => {
     const updatedGeo = geolocations.filter((geo) => {
       if (geo.id !== cardId) return geo;
     });

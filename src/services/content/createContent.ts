@@ -7,7 +7,7 @@ export async function createContent(data: CreateContentDto, token: string): Prom
     const body: CreateContentDto = {
         title: data.title,
         description: data.description,
-        subjectId: parseInt(data.subjectId as unknown as string)
+        subjectId: data.subjectId
     }
     const response = await fetchWrapper(content, {
         method: "POST",
