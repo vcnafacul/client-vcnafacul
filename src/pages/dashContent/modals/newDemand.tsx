@@ -34,8 +34,8 @@ function NewDemand({ handleClose, addDemand }: NewDemandProps) {
     .object()
     .shape({
       materia: yup.number().required(),
-      frente: yup.number().required("Frente é obrigatória"),
-      subjectId: yup.number().required("Tema é Obrigatório"),
+      frente: yup.string().required("Frente é obrigatória"),
+      subjectId: yup.string().required("Tema é Obrigatório"),
       title: yup.string().required("Você precisa definir um Título"),
       description: yup
         .string()
@@ -112,14 +112,14 @@ function NewDemand({ handleClose, addDemand }: NewDemandProps) {
   };
 
   const getSubjectByFrente = useCallback(
-    async (frente: number) => {
+    async (frente: string) => {
       getSubjectsLikeFormField(frente, token)
         .then((res) => {
           setSubjects(res);
           if (res.length > 0) {
-            setValue("subjectId", res[0].value as number);
+            setValue("subjectId", res[0].value as string);
           } else {
-            setValue("subjectId", null as unknown as number);
+            setValue("subjectId", null as unknown as string);
           }
         })
         .catch((error: Error) => {
@@ -135,12 +135,12 @@ function NewDemand({ handleClose, addDemand }: NewDemandProps) {
         .then((res) => {
           setFrentes(res);
           if (res.length > 0) {
-            getSubjectByFrente(res[0].value as number);
-            setValue("frente", res[0].value as number);
+            getSubjectByFrente(res[0].value as string);
+            setValue("frente", res[0].value as string);
           } else {
-            setValue("frente", null as unknown as number);
+            setValue("frente", null as unknown as string);
           }
-          setValue("subjectId", null as unknown as number);
+          setValue("subjectId", null as unknown as string);
         })
         .catch((error: Error) => {
           toast.error(error.message);

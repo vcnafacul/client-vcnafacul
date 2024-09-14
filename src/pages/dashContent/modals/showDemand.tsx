@@ -17,7 +17,7 @@ import { getMateriaString } from "../../../enums/content/materias";
 
 interface ShowDemandProps extends ModalProps {
   demand: ContentDtoInput;
-  updateStatusDemand: (id: number) => void;
+  updateStatusDemand: (id: string) => void;
 }
 
 function ShowDemand({

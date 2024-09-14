@@ -1,5 +1,5 @@
 export interface University {
-    id: number;
+    id: string;
     latitude: number;
     longitude: number;
     name: string;

@@ -37,7 +37,7 @@ function Subject(){
     }, [contentSelected])
 
     useEffect(() => {
-        getContentOrder(token, StatusEnum.Approved as unknown as StatusContent, parseInt(id!))
+        getContentOrder(token, StatusEnum.Approved as unknown as StatusContent, id)
             .then(res => {
                 setContent(res)
                 const idMateria = res[0].subject.frente.materia;

@@ -4,7 +4,7 @@ import fetchWrapper from "../../utils/fetchWrapper";
 import { content } from "../urls";
 
 
-export async function updateStatus(id: number, status: StatusContent | StatusEnum, token: string) : Promise<boolean>{
+export async function updateStatus(id: string, status: StatusContent | StatusEnum, token: string) : Promise<boolean>{
     const response = await fetchWrapper(`${content}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },

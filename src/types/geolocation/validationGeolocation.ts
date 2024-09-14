@@ -1,7 +1,7 @@
 import { StatusEnum } from "../../enums/generic/statusEnum";
 
 export interface ValidationGeolocation {
-    geoId: number;
+    geoId: string;
     status: StatusEnum;
     refuseReason?: string;
 }

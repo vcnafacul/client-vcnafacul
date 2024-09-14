@@ -2,7 +2,7 @@ import fetchWrapper from "../../utils/fetchWrapper";
 import { content } from "../urls";
 
 
-export async function resetDemand(id: number,  token: string) : Promise<boolean>{
+export async function resetDemand(id: string,  token: string) : Promise<boolean>{
     const response = await fetchWrapper(`${content}/reset/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },

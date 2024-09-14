@@ -3,7 +3,7 @@ import fetchWrapper from "../../utils/fetchWrapper";
 import { content } from "../urls";
 
 export async function deleteDemand
- ( id: number, token: string): Promise<void> {
+ ( id: string, token: string): Promise<void> {
     const response = await fetchWrapper(`${content}/${id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }

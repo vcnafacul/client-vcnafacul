@@ -11,7 +11,7 @@ import { News } from "../../../dtos/news/news";
 interface ModalEditNewProps {
   news: News;
   create: (session: string, title: string, file: any) => void;
-  deleteFunc: (id: number) => void;
+  deleteFunc: (id: string) => void;
 }
 
 function ModalEditNew({ news, create, deleteFunc }: ModalEditNewProps) {
