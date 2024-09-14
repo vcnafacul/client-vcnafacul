@@ -42,7 +42,7 @@ function DashRoles() {
     ],
   });
 
-  const onClickCard = (userId: number | string) => {
+  const onClickCard = (userId: string) => {
     setUserRoleSelect(usersRole.find((user) => user.user.id === userId));
     setUserModal(true);
   };
