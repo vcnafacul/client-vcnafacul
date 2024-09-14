@@ -35,7 +35,7 @@ export async function getContent(
 export async function getContentOrder(
   token: string,
   status?: StatusContent,
-  subjectId?: number
+  subjectId?: string
 ): Promise<ContentDtoInputOrder[]> {
   const subject = subjectId ? `&subjectId=${subjectId}` : "";
   const statusQuery = status ? `status=${status}` : "";

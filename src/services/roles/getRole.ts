@@ -8,14 +8,14 @@ export interface Role {
 }
 
 export interface RolesResponse {
-    id: number,
+    id: string,
     name: string,
     created_at: string,
     updated_at: string
     permissoes: Role[]
 }
 
-export async function getRole(roleId: number, token: string) : Promise<RolesResponse>{
+export async function getRole(roleId: string, token: string) : Promise<RolesResponse>{
 
     const response = await fetchWrapper(`${role}/${roleId}`, {
         method: "GET",

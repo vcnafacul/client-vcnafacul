@@ -11,7 +11,7 @@ export interface DashCardContextProps<T = any> {
   title: string,
   entities: T[];
   setEntities: Dispatch<SetStateAction<T[]>>;
-  onClickCard: (id: number | string) => void,
+  onClickCard: (id: string) => void,
   getMoreCards: (page: number) => Promise<Paginate<T>>,
   cardTransformation: (entity: T) => CardDash,
   limitCards: number,

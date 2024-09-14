@@ -6,7 +6,7 @@ export type UserRegister = Auth & {
 }
 
 export type User = Auth & {
-    id: number;
+    id: string;
     createdAt: Date;
     updatedAt: Date;
     deletedAt: Date;

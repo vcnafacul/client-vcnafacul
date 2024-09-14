@@ -6,10 +6,10 @@ export interface CreateFrenteDtoOutput {
 }
 
 export interface CreateFrenteDtoInput extends CreateFrenteDtoOutput {
-    id: number;
+    id: string;
 }
 
 export interface UpdateFrenteDtoOutut {
-    id: number;
+    id: string;
     name: string;
 }

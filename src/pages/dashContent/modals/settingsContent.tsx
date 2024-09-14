@@ -66,7 +66,7 @@ function SettingsContent() {
     frente: FormFieldOptionFrente = frenteSelected!
   ) => {
     if (frente) {
-      getSubjectsLikeFormField(frente.value as number, token)
+      getSubjectsLikeFormField(frente.value as string, token)
         .then((res) => {
           setSubjects(res);
         })
@@ -78,7 +78,7 @@ function SettingsContent() {
 
   const removeSubject = (subjectRemoved: FormFieldOptionFrente) => {
     const idToast = toast.loading("Deletando Tema ... ");
-    deleteSubject(subjectRemoved.value as number, token)
+    deleteSubject(subjectRemoved.value as string, token)
       .then((_) => {
         toast.update(idToast, {
           render: `Tema ${subjectRemoved.label} Deletado`,
@@ -117,7 +117,7 @@ function SettingsContent() {
 
   const removeFrente = (frenteRemoved: FormFieldOptionFrente) => {
     const idToast = toast.loading("Deletando Frente ... ");
-    deleteFrente(frenteRemoved.value as number, token)
+    deleteFrente(frenteRemoved.value as string, token)
       .then((_) => {
         toast.update(idToast, {
           render: `Frente ${frenteRemoved.label} Deletada`,
@@ -338,7 +338,7 @@ function SettingsContent() {
           setOpenModalViewOrder(false);
         }}
       >
-        <ViewOrder subjectId={subjectSelected!.value as number} />
+        <ViewOrder subjectId={subjectSelected!.value as string} />
       </ModalTemplate>
     );
   };

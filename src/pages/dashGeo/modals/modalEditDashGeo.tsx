@@ -29,7 +29,7 @@ import { TypeMarker } from "../../../types/map/marker";
 
 interface ModalEditDashGeoProps extends ModalProps {
   geo: Geolocation;
-  updateStatus: (cardId: number) => void;
+  updateStatus: (cardId: string) => void;
   updateGeo: (geo: Geolocation) => void;
 }
 
@@ -74,7 +74,7 @@ function ModalEditDashGeo({
     handleClose!();
     UpdateGeolocationStatus({ body, token })
       .then((_) => {
-        updateStatus(geo.id as number);
+        updateStatus(geo.id);
         if (body.status === 1)
           toast.success(
             `Cursinho ${geo.name} atualizado com sucesso: Status - Aprovado`
@@ -92,7 +92,7 @@ function ModalEditDashGeo({
 
   const update = async (status: StatusEnum, messageRefused?: string) => {
     const body: ValidationGeolocation = {
-      geoId: geo.id as number,
+      geoId: geo.id,
       status: status,
       refuseReason: messageRefused,
     };
@@ -457,7 +457,7 @@ function ModalEditDashGeo({
             zoom={11}
             center={[geo.latitude, geo.longitude]}
             markers={[
-              { id: geo.id as number, lat: geo.latitude, lon: geo.longitude, type: TypeMarker.geo },
+              { id: geo.id, lat: geo.latitude, lon: geo.longitude, type: TypeMarker.geo },
             ]}
             mapEvent={<Event />}
           />

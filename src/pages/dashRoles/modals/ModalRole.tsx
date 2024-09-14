@@ -18,7 +18,7 @@ interface ModalRoleProps {
 }
 
 function ModalRole({ userRole, roles, updateUserRole }: ModalRoleProps) {
-  const [newRole, setNewRole] = useState<number>(userRole.roleId);
+  const [newRole, setNewRole] = useState<string>(userRole.roleId);
   const [roleInfo, setRoleInfo] = useState<RolesResponse | undefined>(
     undefined
   );

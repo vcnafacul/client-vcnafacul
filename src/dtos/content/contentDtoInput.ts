@@ -4,7 +4,7 @@ import { StatusEnum } from "../../enums/generic/statusEnum";
 import { Materias } from "../../enums/content/materias";
 
 export interface ContentDtoInput {
-    id: number;
+    id: string;
     filename?: string;
     status: StatusContent | StatusEnum;
     title: string;
@@ -15,7 +15,7 @@ export interface ContentDtoInput {
 }
 
 export interface SubjectDto {
-    id: number;
+    id: string;
     name: string;
     lenght: number;
     description: string;
@@ -23,11 +23,11 @@ export interface SubjectDto {
 }
 
 export interface FrenteDto {
-    id: number;
+    id: string;
     name: string;
     materia: Materias
 }
 
 export interface ContentDtoInputOrder extends ContentDtoInput {
-    next: number;
+    next: string;
 }

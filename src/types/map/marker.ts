@@ -4,7 +4,7 @@ export enum TypeMarker {
 }
 
 export interface MarkerPoint {
-  id: number | string;
+  id: string;
   lat: number;
   lon: number;
   type: TypeMarker;

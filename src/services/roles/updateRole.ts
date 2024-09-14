@@ -2,7 +2,7 @@ import fetchWrapper from "../../utils/fetchWrapper";
 import { user_role } from "../urls";
 
 
-export async function updateRole(userId: number, roleId: number, token: string) : Promise<boolean>{
+export async function updateRole(userId: string, roleId: string, token: string) : Promise<boolean>{
     const response = await fetchWrapper(user_role, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },

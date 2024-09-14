@@ -1,6 +1,6 @@
 export interface HistoryQuestion {
   user: {
-    id: number;
+    id: string;
     name: string;
     email: string;
   };
@@ -9,7 +9,7 @@ export interface HistoryQuestion {
 }
 
 export interface AuditLogMS {
-  user: { id: number; name: string; email: string };
+  user: { id: string; name: string; email: string };
   entityId: string;
   changes: string;
   entityType: string;

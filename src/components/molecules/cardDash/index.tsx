@@ -14,7 +14,7 @@ export interface CardDashProps<T = any> extends ComponentProps<"div"> {
 }
 
 export interface CardDash {
-  id: number | string;
+  id: string;
   title: string;
   status: StatusContent | StatusEnum;
   infos?: InforCardDash[];

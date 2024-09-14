@@ -2,7 +2,7 @@
 import fetchWrapper from "../../utils/fetchWrapper";
 import { subject } from "../urls";
 
-export async function deleteSubject ( id: number, token: string): Promise<void> {
+export async function deleteSubject ( id: string, token: string): Promise<void> {
     const response = await fetchWrapper(`${subject}/${id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }

@@ -56,7 +56,7 @@ interface SimuladoHistoricoDTO {
 
 export interface HistoricoDTO {
   _id: string;
-  usuario: number;
+  usuario: string;
   ano: number;
   simulado: SimuladoHistoricoDTO;
   respostas: AnswerHistoricoDTO[];

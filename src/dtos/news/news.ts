@@ -1,5 +1,5 @@
 export interface News {
-    id: number;
+    id: string;
     session: string;
     title: string;
     fileName: string;
