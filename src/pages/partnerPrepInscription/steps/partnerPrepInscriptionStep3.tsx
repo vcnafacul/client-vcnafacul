@@ -2,6 +2,7 @@ import Text from "@/components/atoms/text";
 import Button from "@/components/molecules/button";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { StudentInscriptionDTO } from "@/dtos/student/studentInscriptionDTO";
+import { stateOptions } from "@/pages/register/data";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -85,24 +86,39 @@ export function PartnerPrepInscriptionStep3({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("phone", e.target.value)}
       />
-      <InputFactory
-        id="rg"
-        label="RG do Responsável"
-        type="text"
-        defaultValue={currentData?.legalGuardian?.rg}
-        error={errors.rg}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("rg", e.target.value)}
-      />
-      <InputFactory
-        id="uf"
-        label="UF do RG do Responsável"
-        type="text"
-        defaultValue={currentData?.legalGuardian?.uf}
-        error={errors.uf}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("uf", e.target.value)}
-      />
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <InputFactory
+            id="rg"
+            label="RG do Responsável"
+            type="text"
+            defaultValue={currentData?.legalGuardian?.rg}
+            error={errors.rg}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onChange={(e: any) => setValue("rg", e.target.value)}
+          />
+        </div>
+        <div className="w-24">
+          <InputFactory
+            id="uf"
+            label="UF"
+            type="select"
+            options={
+              stateOptions.map((state) => ({
+                label: state.value,
+                value: state.value,
+              })) as {
+                label: string;
+                value: string;
+              }[]
+            }
+            defaultValue={currentData?.legalGuardian?.uf}
+            error={errors.uf}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onChange={(e: any) => setValue("uf", e.target.value)}
+          />
+        </div>
+      </div>
       <InputFactory
         id="cpf"
         label="CPF do responsável*"
