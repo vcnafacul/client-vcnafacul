@@ -40,7 +40,7 @@ function Header({ solid, className } : HeaderProps) {
     }
     
     return (
-        <header className={className}>
+        <header className={className} id="header">
             <div className='md:container mx-auto h-full flex items-center'>
                 <div className="flex w-full justify-between items-center mx-4 md:mx-auto md:max-w-6xl ">
                     <MenuBugger />

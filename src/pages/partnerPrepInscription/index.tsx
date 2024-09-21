@@ -2,7 +2,7 @@ import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
 import Text from "@/components/atoms/text";
 import Button from "@/components/molecules/button";
 import { StudentInscriptionDTO } from "@/dtos/student/studentInscriptionDTO";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BaseTemplate from "../../components/templates/baseTemplate";
 import { formInscription, SocioeconomicAnswer } from "./data";
 import { PartnerPrepInscriptionStep1 } from "./steps/partnerPrepInscriptionStep1";
@@ -157,13 +157,21 @@ export function PartnerPrepInscription() {
         return <Button onClick={backStep}>Voltar</Button>;
     }
   };
+
+  useEffect(() => {
+    const element = document.getElementById("header");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [stepCurrently]);
+
   return (
     <div className="fixed">
       <BaseTemplate
         solid
-        className="overflow-y-auto scrollbar-hide h-screen overflow-x-hidden"
+        className="overflow-y-auto h-screen overflow-x-hidden"
       >
-        <div className="flex flex-col justify-center items-center mt-16 gap-8">
+        <div className="flex flex-col justify-center items-center py-8 gap-8">
           <StepperCircle steps={steps} />
           <div className="w-11/12 sm:w-[500px]">
             <Text size="secondary">
