@@ -35,7 +35,7 @@ jobs:
       - name: Install depends
         run: yarn
       - name: Build app vCnafacul
-        run: yarn build
+        run: yarn build:development
       - name: Build Image
         run: docker build -t vcnafacul -f web.dockerfile .
       - name: docker tags
