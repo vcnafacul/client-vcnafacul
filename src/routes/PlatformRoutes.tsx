@@ -93,9 +93,7 @@ export function PlatformRoutes() {
       <Route
         path={PARTNET_PREP}
         element={
-          // <ProtectedRoute>
           <BaseRoutes />
-          //</ProtectedRoute>
         }
       >
         <Route

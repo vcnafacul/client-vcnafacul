@@ -44,10 +44,7 @@ export function PartnerPrepInscriptionStep1({
         .string()
         .default(currentData?.birthday)
         .required("Por favor, preencha a sua data de nascimento"),
-      uf: yup
-        .string()
-        .default(currentData?.uf)
-        .required("Por favor, preencha o seu estado"),
+      uf: yup.string().default(currentData?.uf).required("Requerido"),
       rg: yup
         .string()
         .default(currentData?.rg)
