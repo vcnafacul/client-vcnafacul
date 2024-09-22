@@ -215,14 +215,6 @@ export function PartnerPrepInscription() {
             updateSocioeconomic={updateSocioeconomic}
           />
         );
-      case -2:
-        return (
-          <div>
-            <div className="relative">
-              <LoginForm {...loginForm} />
-            </div>
-          </div>
-        );
       default:
         return <Button onClick={backStep}>Voltar</Button>;
     }
