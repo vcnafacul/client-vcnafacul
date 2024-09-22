@@ -1,7 +1,7 @@
 import Text from "@/components/atoms/text";
 import Button from "@/components/molecules/button";
 import { InputFactory } from "@/components/organisms/inputFactory";
-import { StudentInscriptionDTO } from "@/dtos/student/studentInscriptionDTO";
+import { LegalGuardianDTO } from "@/dtos/student/studentInscriptionDTO";
 import { stateOptions } from "@/pages/register/data";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
@@ -33,7 +33,7 @@ export function PartnerPrepInscriptionStep3({
       uf: yup
         .string()
         .default(currentData?.legalGuardian?.uf)
-        .required("Por favor, preencha o uf do rg do seu responsável"),
+        .required("Requerido"),
       cpf: yup
         .string()
         .default(currentData?.legalGuardian?.cpf)
@@ -59,7 +59,8 @@ export function PartnerPrepInscriptionStep3({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function handleForm(data: Partial<StudentInscriptionDTO>) {
+  function handleForm(data: LegalGuardianDTO) {
+    console.log(data);
     updateData!(data);
   }
   return (
@@ -115,7 +116,7 @@ export function PartnerPrepInscriptionStep3({
             defaultValue={currentData?.legalGuardian?.uf}
             error={errors.uf}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            onChange={(e: any) => setValue("uf", e.target.value)}
+            onValueChange={(value: string) => setValue("uf", value)}
           />
         </div>
       </div>

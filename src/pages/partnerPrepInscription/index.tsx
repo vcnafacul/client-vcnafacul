@@ -1,8 +1,16 @@
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
 import Text from "@/components/atoms/text";
 import Button from "@/components/molecules/button";
-import { StudentInscriptionDTO } from "@/dtos/student/studentInscriptionDTO";
+import {
+  LegalGuardianDTO,
+  StudentInscriptionDTO,
+} from "@/dtos/student/studentInscriptionDTO";
+import { me } from "@/services/auth/me";
+import { hasActiveInscription } from "@/services/prepCourse/hasActiveInscription";
+import { useAuthStore } from "@/store/auth";
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import BaseTemplate from "../../components/templates/baseTemplate";
 import { formInscription, SocioeconomicAnswer } from "./data";
 import { PartnerPrepInscriptionStep1 } from "./steps/partnerPrepInscriptionStep1";
@@ -15,7 +23,9 @@ export interface StepProps {
 }
 
 export interface EachStepProps extends StepProps {
-  updateData?: (data: Partial<StudentInscriptionDTO>) => void;
+  updateData?: (
+    data: Partial<StudentInscriptionDTO> | LegalGuardianDTO
+  ) => void;
   handleBack?: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateSocioeconomic?: (data: SocioeconomicAnswer[]) => void;
@@ -23,17 +33,24 @@ export interface EachStepProps extends StepProps {
 }
 
 export function PartnerPrepInscription() {
-  const [stepCurrently, setStepCurrently] = useState<number>(3);
+  const [firstTime, setFirstTime] = useState<boolean>(true);
+  const [stepCurrently, setStepCurrently] = useState<number>(0);
   const [dataStudent, setDataStudent] = useState<StudentInscriptionDTO>(
     {} as StudentInscriptionDTO
   );
 
+  const { hashPrepCourse } = useParams();
+  const {
+    data: { token },
+  } = useAuthStore();
+  const navigate = useNavigate();
+
   const backStep = () => {
-    if (stepCurrently > 0) {
+    if (stepCurrently > 1) {
       if (
         dataStudent?.birthday &&
         !isMinor(dataStudent?.birthday) &&
-        stepCurrently == 3
+        stepCurrently == 4
       ) {
         setStepCurrently(stepCurrently - 2);
         return;
@@ -42,17 +59,37 @@ export function PartnerPrepInscription() {
     }
   };
 
-  const updateData = (oldData: Partial<StudentInscriptionDTO>) => {
-    const newData = { ...dataStudent, ...oldData };
+  const updateData = (
+    data: Partial<StudentInscriptionDTO> | LegalGuardianDTO
+  ) => {
+    const newData = { ...dataStudent, ...data };
     setDataStudent(newData);
     if (
       newData?.birthday &&
       !isMinor(newData?.birthday) &&
-      stepCurrently == 1
+      stepCurrently == 2
     ) {
       setStepCurrently(stepCurrently + 2);
       return;
     }
+    setStepCurrently(stepCurrently + 1);
+  };
+
+  const updateDataGuardian = (
+    data: Partial<StudentInscriptionDTO> | LegalGuardianDTO
+  ) => {
+    const getData = data as LegalGuardianDTO;
+    setDataStudent({
+      ...dataStudent,
+      legalGuardian: {
+        ...dataStudent.legalGuardian,
+        fullName: getData.fullName,
+        rg: getData.rg,
+        uf: getData.uf,
+        cpf: getData.cpf,
+        phone: getData.phone,
+      },
+    });
     setStepCurrently(stepCurrently + 1);
   };
 
@@ -84,10 +121,6 @@ export function PartnerPrepInscription() {
   const steps: StepCicle[] = [
     {
       name: formInscription.steps.step1,
-      status: stepCurrently == 0 ? "current" : "complete",
-    },
-    {
-      name: formInscription.steps.step2,
       status:
         stepCurrently < 1
           ? "upcoming"
@@ -96,7 +129,7 @@ export function PartnerPrepInscription() {
           : "complete",
     },
     {
-      name: formInscription.steps.step3,
+      name: formInscription.steps.step2,
       status:
         stepCurrently < 2
           ? "upcoming"
@@ -105,7 +138,7 @@ export function PartnerPrepInscription() {
           : "complete",
     },
     {
-      name: formInscription.steps.step4,
+      name: formInscription.steps.step3,
       status:
         stepCurrently < 3
           ? "upcoming"
@@ -113,11 +146,34 @@ export function PartnerPrepInscription() {
           ? "current"
           : "complete",
     },
+    {
+      name: formInscription.steps.step4,
+      status:
+        stepCurrently < 4
+          ? "upcoming"
+          : stepCurrently == 4
+          ? "current"
+          : "complete",
+    },
   ];
 
   const StepCurrently = ({ step }: { step: number }) => {
     switch (step) {
+      case -1:
+        return (
+          <div>
+            <Text size="secondary">Erro ao carregar formulário</Text>;
+            <Button onClick={() => navigate("/")}>Voltar para Home</Button>
+          </div>
+        );
       case 0:
+        return (
+          <div>
+            <Text size="secondary">{hashPrepCourse}</Text>
+            <Button onClick={() => setStepCurrently(1)}>Iniciar</Button>
+          </div>
+        );
+      case 1:
         return (
           <PartnerPrepInscriptionStep1
             description={formInscription.steps.step1}
@@ -126,7 +182,7 @@ export function PartnerPrepInscription() {
             updateData={updateData}
           />
         );
-      case 1:
+      case 2:
         return (
           <PartnerPrepInscriptionStep2
             description={formInscription.steps.step2}
@@ -135,16 +191,16 @@ export function PartnerPrepInscription() {
             updateData={updateData}
           />
         );
-      case 2:
+      case 3:
         return (
           <PartnerPrepInscriptionStep3
             description={formInscription.steps.step3}
             currentData={dataStudent}
             handleBack={backStep}
-            updateData={updateData}
+            updateData={updateDataGuardian}
           />
         );
-      case 3:
+      case 4:
         return (
           <PartnerPrepInscriptionStep4
             description={formInscription.steps.step4}
@@ -163,6 +219,57 @@ export function PartnerPrepInscription() {
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+  }, [stepCurrently]);
+
+  useEffect(() => {
+    if (stepCurrently === 0) {
+      if (!hashPrepCourse || !token) navigate("/");
+      hasActiveInscription(hashPrepCourse as string, token)
+        .then((res: boolean) => {
+          if (res) {
+            setDataStudent({
+              ...dataStudent,
+              partnerPrepCourse: hashPrepCourse as string,
+            });
+          } else {
+            setStepCurrently(-1);
+          }
+        })
+        .catch(() => {
+          setStepCurrently(-1);
+        });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (firstTime && stepCurrently === 1) {
+      me(token)
+        .then((res) => {
+          setDataStudent({
+            ...dataStudent,
+            firstName: res.firstName,
+            lastName: res.lastName,
+            socialname: res.socialName,
+            whatsapp: res.phone,
+            birthday: res.birthday,
+            userId: res.id,
+            street: res.street || "",
+            number: res.number || 0,
+            complement: res.complement || "",
+            neighborhood: res.neighborhood || "",
+            postalCode: res.postalCode || "",
+            city: res.city,
+            state: res.state,
+            email: res.email,
+          });
+          setFirstTime(false);
+        })
+        .catch(() => {
+          toast.error("Erro ao buscar informações do usuário");
+          setStepCurrently(-1);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stepCurrently]);
 
   return (

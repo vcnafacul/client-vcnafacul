@@ -24,7 +24,7 @@ export interface StudentInscriptionDTO {
   socioeconomic: SocioeconomicAnswer[];
 }
 
-interface LegalGuardianDTO {
+export interface LegalGuardianDTO {
   fullName: string;
   rg: string;
   uf: string;

@@ -52,3 +52,5 @@ export const sponsors = `${CMS_URL}/items/Home_Supporters?fields=id,title,subtit
 export const footer = `${CMS_URL}/items/Home_Footer?fields=id,slogan,contact,pageLinks.Home_Menu_Item_id.*,sitemapLinks.Home_Menu_Item_id.*,socialLinks.Home_Menu_Item_id.*`
 export const header = (id: number) => `${CMS_URL}/items/Headers/${id}?fields=id,pageLinks.Home_Menu_Item_id.*,userNavigationSign.Home_Menu_Item_id.*,socialLinks.Home_Menu_Item_id.*,userNavigationLogged.Home_Menu_Item_id.*`
 export const university = `${CMS_URL}/items/Universidade`
+
+export const prepCourse = (id: string) => `${BASE_URL}/partner-prep-course/${id}/has-active-inscription`

@@ -63,11 +63,11 @@ export function PlatformRoutes() {
             } />
 
             <Route path={PARTNET_PREP} element={
-                // <ProtectedRoute>
+                <ProtectedRoute>
                     <BaseRoutes />
-                //</ProtectedRoute>
+                </ProtectedRoute>
             }>
-                <Route path={PARTNER_PREP_INSCRIPTION} element={<PartnerPrepInscription />} />
+                <Route path={`${PARTNER_PREP_INSCRIPTION}/:hashPrepCourse`} element={<PartnerPrepInscription />} />
             </Route>
 
             <Route path="/dashboard" element={
