@@ -1,17 +1,22 @@
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
 import Text from "@/components/atoms/text";
 import Button from "@/components/molecules/button";
+import LoginForm from "@/components/organisms/loginForm";
 import {
   LegalGuardianDTO,
   StudentInscriptionDTO,
 } from "@/dtos/student/studentInscriptionDTO";
-import { me } from "@/services/auth/me";
 import { hasActiveInscription } from "@/services/prepCourse/hasActiveInscription";
+import { getUserInfo } from "@/services/prepCourse/student/getUserInfo";
 import { useAuthStore } from "@/store/auth";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
+import { ReactComponent as TriangleYellow } from "../../assets/icons/triangle-yellow.svg";
 import BaseTemplate from "../../components/templates/baseTemplate";
+import "../../styles/graphism.css";
+import { loginForm } from "../login/data";
 import { formInscription, SocioeconomicAnswer } from "./data";
 import { PartnerPrepInscriptionStep1 } from "./steps/partnerPrepInscriptionStep1";
 import { PartnerPrepInscriptionStep2 } from "./steps/partnerPrepInscriptionStep2";
@@ -33,6 +38,11 @@ export interface EachStepProps extends StepProps {
 }
 
 export function PartnerPrepInscription() {
+  const {
+    data: { token },
+  } = useAuthStore();
+  const navigate = useNavigate();
+
   const [firstTime, setFirstTime] = useState<boolean>(true);
   const [stepCurrently, setStepCurrently] = useState<number>(0);
   const [dataStudent, setDataStudent] = useState<StudentInscriptionDTO>(
@@ -40,10 +50,6 @@ export function PartnerPrepInscription() {
   );
 
   const { hashPrepCourse } = useParams();
-  const {
-    data: { token },
-  } = useAuthStore();
-  const navigate = useNavigate();
 
   const backStep = () => {
     if (stepCurrently > 1) {
@@ -209,6 +215,14 @@ export function PartnerPrepInscription() {
             updateSocioeconomic={updateSocioeconomic}
           />
         );
+      case -2:
+        return (
+          <div>
+            <div className="relative">
+              <LoginForm {...loginForm} />
+            </div>
+          </div>
+        );
       default:
         return <Button onClick={backStep}>Voltar</Button>;
     }
@@ -222,7 +236,9 @@ export function PartnerPrepInscription() {
   }, [stepCurrently]);
 
   useEffect(() => {
-    if (stepCurrently === 0) {
+    if (!token) {
+      setStepCurrently(-2);
+    } else if (stepCurrently === 0) {
       if (!hashPrepCourse || !token) navigate("/");
       hasActiveInscription(hashPrepCourse as string, token)
         .then((res: boolean) => {
@@ -243,7 +259,7 @@ export function PartnerPrepInscription() {
 
   useEffect(() => {
     if (firstTime && stepCurrently === 1) {
-      me(token)
+      getUserInfo(hashPrepCourse as string, token)
         .then((res) => {
           setDataStudent({
             ...dataStudent,
@@ -264,8 +280,8 @@ export function PartnerPrepInscription() {
           });
           setFirstTime(false);
         })
-        .catch(() => {
-          toast.error("Erro ao buscar informações do usuário");
+        .catch((res) => {
+          toast.error(res.message);
           setStepCurrently(-1);
         });
     }
@@ -278,15 +294,26 @@ export function PartnerPrepInscription() {
         solid
         className="overflow-y-auto h-screen overflow-x-hidden"
       >
-        <div className="flex flex-col justify-center items-center py-8 gap-8">
-          <StepperCircle steps={steps} />
-          <div className="w-11/12 sm:w-[500px]">
-            <Text size="secondary">
-              Formulário de Inscrição Cursinho UFSCar
-            </Text>
-            <StepCurrently step={stepCurrently} />
+        {stepCurrently > -2 ? (
+          <div className="flex flex-col justify-center items-center py-8 gap-8">
+            <StepperCircle steps={steps} />
+            <div className="w-11/12 sm:w-[500px]">
+              <Text size="secondary">
+                Formulário de Inscrição Cursinho UFSCar
+              </Text>
+              <StepCurrently step={stepCurrently} />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="relative">
+            <TriangleGreen className="graphism triangle-green" />
+            <TriangleYellow className="graphism triangle-yellow" />
+            <LoginForm
+              {...loginForm}
+              onLogin={() => window.location.reload()}
+            />
+          </div>
+        )}
       </BaseTemplate>
     </div>
   );
