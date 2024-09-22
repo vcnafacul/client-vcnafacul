@@ -1,6 +1,6 @@
-import { AuthUpdate } from "@/store/auth";
+import { Auth } from "@/store/auth";
 
-export type UserMe = AuthUpdate & {
+export type UserMe = Auth & {
   id: string;
   socialName?: string;
   email: string;
