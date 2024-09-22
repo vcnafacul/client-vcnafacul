@@ -8,6 +8,7 @@ import {
 } from "@/dtos/student/studentInscriptionDTO";
 import { hasActiveInscription } from "@/services/prepCourse/hasActiveInscription";
 import { getUserInfo } from "@/services/prepCourse/student/getUserInfo";
+import { completeInscriptionStudent } from "@/services/prepCourse/student/inscription";
 import { useAuthStore } from "@/store/auth";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -99,8 +100,16 @@ export function PartnerPrepInscription() {
     setStepCurrently(stepCurrently + 1);
   };
 
-  const updateSocioeconomic = (data: SocioeconomicAnswer[]) => {
+  const completeInscription = (data: SocioeconomicAnswer[]) => {
     setDataStudent({ ...dataStudent, socioeconomic: data });
+    completeInscriptionStudent(dataStudent, token)
+      .then(() => {
+        toast.success("Inscrição realizada com sucesso!");
+        setStepCurrently(5); // Redirect to success page
+      })
+      .catch((res) => {
+        toast.error(res.message);
+      });
   };
 
   const isMinor = (birthday: string) => {
@@ -212,7 +221,7 @@ export function PartnerPrepInscription() {
             description={formInscription.steps.step4}
             currentData={dataStudent}
             handleBack={backStep}
-            updateSocioeconomic={updateSocioeconomic}
+            updateSocioeconomic={completeInscription}
           />
         );
       default:
