@@ -26,7 +26,7 @@ export default function StepperCircle({ steps }: StepsProps) {
         {steps.map((step, stepIdx) => (
           <TooltipProvider key={step.name} delayDuration={0}>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger className="cursor-default">
                 <li
                   key={step.name}
                   className={classNames(
@@ -42,7 +42,7 @@ export default function StepperCircle({ steps }: StepsProps) {
                       >
                         <div className="h-0.5 w-full bg-orange" />
                       </div>
-                      <div className="relative flex h-5 w-5 items-center justify-center rounded-full bg-orange">
+                      <div className="relative flex h-5 w-5 items-center justify-center rounded-full bg-orange ">
                         <CheckIcon
                           aria-hidden="true"
                           className="h-4 w-4 text-white"
