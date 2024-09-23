@@ -15,6 +15,7 @@ export interface LoginFormProps {
   forgot: string;
   labelSubmit: string;
   formData: FormFieldInput[];
+  register?: string;
   onLogin?: (data: any) => void;
 }
 
@@ -25,6 +26,7 @@ function LoginForm({
   labelSubmit,
   formData,
   onLogin,
+  register,
 }: LoginFormProps) {
   const { doAuth } = useAuthStore();
   const navigate = useNavigate();
@@ -61,12 +63,20 @@ function LoginForm({
           labelSubmit={labelSubmit}
           onSubmit={login}
         />
-        <Link
-          to={FORGOT_PASSWORD_PATH}
-          className="text-orange w-full mt-5 underline font-bold"
-        >
-          {forgot}
-        </Link>
+        <div className="flex justify-between w-full">
+          <Link
+            to={FORGOT_PASSWORD_PATH}
+            className="text-orange w-full mt-5 underline font-bold"
+          >
+            {forgot}
+          </Link>
+          <Link
+            to={FORGOT_PASSWORD_PATH}
+            className="text-orange w-52 mt-5 underline font-bold"
+          >
+            {register}
+          </Link>
+        </div>
       </div>
     </div>
   );

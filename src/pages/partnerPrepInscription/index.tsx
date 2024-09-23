@@ -2,6 +2,7 @@ import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
 import Text from "@/components/atoms/text";
 import Button from "@/components/molecules/button";
 import LoginForm from "@/components/organisms/loginForm";
+import RegisterForm from "@/components/organisms/registerForm";
 import {
   LegalGuardianDTO,
   StudentInscriptionDTO,
@@ -9,7 +10,9 @@ import {
 import { hasActiveInscription } from "@/services/prepCourse/hasActiveInscription";
 import { getUserInfo } from "@/services/prepCourse/student/getUserInfo";
 import { completeInscriptionStudent } from "@/services/prepCourse/student/inscription";
+import { registerUserFlowStudent } from "@/services/prepCourse/student/registerUserFlowStudent";
 import { useAuthStore } from "@/store/auth";
+import { UserRegister } from "@/types/user/userRegister";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -18,6 +21,7 @@ import { ReactComponent as TriangleYellow } from "../../assets/icons/triangle-ye
 import BaseTemplate from "../../components/templates/baseTemplate";
 import "../../styles/graphism.css";
 import { loginForm } from "../login/data";
+import { registerForm } from "../register/data";
 import { formInscription, SocioeconomicAnswer } from "./data";
 import { PartnerPrepInscriptionStep1 } from "./steps/partnerPrepInscriptionStep1";
 import { PartnerPrepInscriptionStep2 } from "./steps/partnerPrepInscriptionStep2";
@@ -45,7 +49,7 @@ export function PartnerPrepInscription() {
   const navigate = useNavigate();
 
   const [firstTime, setFirstTime] = useState<boolean>(true);
-  const [stepCurrently, setStepCurrently] = useState<number>(0);
+  const [stepCurrently, setStepCurrently] = useState<number>(-3);
   const [dataStudent, setDataStudent] = useState<StudentInscriptionDTO>(
     {} as StudentInscriptionDTO
   );
@@ -228,6 +232,16 @@ export function PartnerPrepInscription() {
     }
   };
 
+  const onRegister = async (data: UserRegister) => {
+    registerUserFlowStudent(data)
+      .then(() => {
+        toast.success("Cadastro realizado com sucesso");
+      })
+      .catch((error: Error) => {
+        toast.error(error.message);
+      });
+  };
+
   useEffect(() => {
     const element = document.getElementById("header");
     if (element) {
@@ -294,7 +308,27 @@ export function PartnerPrepInscription() {
         solid
         className="overflow-y-auto h-screen overflow-x-hidden"
       >
-        {stepCurrently > -2 ? (
+        {stepCurrently === -3 ? (
+          <div className="relative py-4">
+            <TriangleGreen className="graphism triangle-green" />
+            <TriangleYellow className="graphism triangle-yellow" />
+            <RegisterForm
+              formData={registerForm.formData}
+              title={registerForm.title}
+              titleSuccess={registerForm.titleSuccess}
+              onRegister={onRegister}
+            />
+          </div>
+        ) : stepCurrently === -2 ? (
+          <div className="relative">
+            <TriangleGreen className="graphism triangle-green" />
+            <TriangleYellow className="graphism triangle-yellow" />
+            <LoginForm
+              {...loginForm}
+              onLogin={() => window.location.reload()}
+            />
+          </div>
+        ) : (
           <div className="flex flex-col justify-center items-center py-8 gap-8">
             <StepperCircle steps={steps} />
             <div className="w-11/12 sm:w-[500px]">
@@ -303,15 +337,6 @@ export function PartnerPrepInscription() {
               </Text>
               <StepCurrently step={stepCurrently} />
             </div>
-          </div>
-        ) : (
-          <div className="relative">
-            <TriangleGreen className="graphism triangle-green" />
-            <TriangleYellow className="graphism triangle-yellow" />
-            <LoginForm
-              {...loginForm}
-              onLogin={() => window.location.reload()}
-            />
           </div>
         )}
       </BaseTemplate>
