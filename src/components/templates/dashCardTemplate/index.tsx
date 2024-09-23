@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { useDashCardContext } from "../../../context/dashCardContext";
 import Filter from "../../atoms/filter";
@@ -6,15 +6,14 @@ import Select from "../../atoms/select";
 import Text from "../../atoms/text";
 import Button from "../../molecules/button";
 import { CardDashComponent } from "../../molecules/cardDash";
-import { DASH, SIMULADO } from "../../../routes/path";
-import { useNavigate } from "react-router-dom";
 
 interface Props {
   customFilter?: JSX.Element[];
   headerDash?: JSX.Element | undefined;
+  backButton?: React.ReactNode;  
 }
 
-function DashCardTemplate({ customFilter, headerDash }: Props) {
+function DashCardTemplate({ customFilter, headerDash, backButton }: Props) {
   const [firstCardRef, firstCardInView] = useInView();
   const [lastCardRef, lastCardInView] = useInView();
   const [botton, setBotton] = useState<boolean>(false);
@@ -58,7 +57,6 @@ function DashCardTemplate({ customFilter, headerDash }: Props) {
 
   const gapBeforeLast = Math.floor(limitCards * 0.25);
   const indexLastCardInView = entities.length - gapBeforeLast;
-  const navigate = useNavigate();
 
   return (
     <div className="w-full flex flex-col py-4">
@@ -67,11 +65,7 @@ function DashCardTemplate({ customFilter, headerDash }: Props) {
           <Text className="self-center" size="secondary">
             {title}
           </Text>
-          <div>
-              <Button className="w-24 h-10 sm:absolute right-4" onClick={() => navigate(`${DASH}/${SIMULADO}`)}>
-                  Voltar
-              </Button>
-          </div>
+          {backButton}
         </div>
         <div
           className={`relative md:fixed flex flex-wrap flex-col justify-center items-center gap-2 z-[1] rounded-2xl bg-opacity-95 p-2 w-10/12 md:w-fit ${
@@ -143,5 +137,7 @@ function DashCardTemplate({ customFilter, headerDash }: Props) {
     </div>
   );
 }
+
+DashCardTemplate.BackButton = Button
 
 export default DashCardTemplate;
