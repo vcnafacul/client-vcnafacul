@@ -25,3 +25,5 @@ export const DASH_ROLES = "permissoes";
 
 export const ESTUDO = "estudo";
 export const CONTENT = "content";
+export const PARTNET_PREP = "cursinho/";
+export const PARTNER_PREP_INSCRIPTION = "inscricao";

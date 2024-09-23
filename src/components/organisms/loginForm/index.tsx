@@ -15,6 +15,7 @@ export interface LoginFormProps {
   forgot: string;
   labelSubmit: string;
   formData: FormFieldInput[];
+  onLogin?: (data: any) => void;
 }
 
 function LoginForm({
@@ -23,6 +24,7 @@ function LoginForm({
   forgot,
   labelSubmit,
   formData,
+  onLogin,
 }: LoginFormProps) {
   const { doAuth } = useAuthStore();
   const navigate = useNavigate();
@@ -33,7 +35,8 @@ function LoginForm({
       .then((res) => {
         doAuth(res);
         toast.dismiss(id);
-        navigate(DASH);
+        if (onLogin) onLogin(res);
+        else navigate(DASH);
       })
       .catch((e: Error) => {
         toast.update(id, {

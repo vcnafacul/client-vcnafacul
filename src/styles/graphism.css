@@ -15,7 +15,7 @@
     width: 63px;
     height: 63px;
     right: 0;
-    bottom: 0px;
+    bottom: -12px;
     transform: rotate(180deg);
 }
 
