@@ -18,7 +18,8 @@ import { ReactComponent as TriangleYellow } from "../../assets/icons/triangle-ye
 import BaseTemplate from "../../components/templates/baseTemplate";
 import "../../styles/graphism.css";
 import { loginForm } from "../login/data";
-import { formInscription, SocioeconomicAnswer } from "./data";
+import { SocioeconomicAnswer, stepDescriptions, textoParceria } from "./data";
+import { PartnerPrepInscriptionStep0 } from "./steps/partnerPrepInscriptionStep0";
 import { PartnerPrepInscriptionStep1 } from "./steps/partnerPrepInscriptionStep1";
 import { PartnerPrepInscriptionStep2 } from "./steps/partnerPrepInscriptionStep2";
 import { PartnerPrepInscriptionStep3 } from "./steps/partnerPrepInscriptionStep3";
@@ -49,6 +50,7 @@ export function PartnerPrepInscription() {
   const [dataStudent, setDataStudent] = useState<StudentInscriptionDTO>(
     {} as StudentInscriptionDTO
   );
+  const [prepCourseName, setPrepCourseName] = useState<string>("");
 
   const { hashPrepCourse } = useParams();
 
@@ -134,7 +136,7 @@ export function PartnerPrepInscription() {
 
   const steps: StepCicle[] = [
     {
-      name: formInscription.steps.step1,
+      name: stepDescriptions.step1,
       status:
         stepCurrently < 1
           ? "upcoming"
@@ -143,7 +145,7 @@ export function PartnerPrepInscription() {
           : "complete",
     },
     {
-      name: formInscription.steps.step2,
+      name: stepDescriptions.step2,
       status:
         stepCurrently < 2
           ? "upcoming"
@@ -152,7 +154,7 @@ export function PartnerPrepInscription() {
           : "complete",
     },
     {
-      name: formInscription.steps.step3,
+      name: stepDescriptions.step3,
       status:
         stepCurrently < 3
           ? "upcoming"
@@ -161,7 +163,7 @@ export function PartnerPrepInscription() {
           : "complete",
     },
     {
-      name: formInscription.steps.step4,
+      name: stepDescriptions.step4,
       status:
         stepCurrently < 4
           ? "upcoming"
@@ -182,15 +184,15 @@ export function PartnerPrepInscription() {
         );
       case 0:
         return (
-          <div>
-            <Text size="secondary">{hashPrepCourse}</Text>
-            <Button onClick={() => setStepCurrently(1)}>Iniciar</Button>
-          </div>
+          <PartnerPrepInscriptionStep0
+            description={textoParceria}
+            start={() => setStepCurrently(1)}
+          />
         );
       case 1:
         return (
           <PartnerPrepInscriptionStep1
-            description={formInscription.steps.step1}
+            description={stepDescriptions.step1}
             currentData={dataStudent}
             handleBack={backStep}
             updateData={updateData}
@@ -199,7 +201,7 @@ export function PartnerPrepInscription() {
       case 2:
         return (
           <PartnerPrepInscriptionStep2
-            description={formInscription.steps.step2}
+            description={stepDescriptions.step2}
             currentData={dataStudent}
             handleBack={backStep}
             updateData={updateData}
@@ -208,7 +210,7 @@ export function PartnerPrepInscription() {
       case 3:
         return (
           <PartnerPrepInscriptionStep3
-            description={formInscription.steps.step3}
+            description={stepDescriptions.step3}
             currentData={dataStudent}
             handleBack={backStep}
             updateData={updateDataGuardian}
@@ -217,7 +219,7 @@ export function PartnerPrepInscription() {
       case 4:
         return (
           <PartnerPrepInscriptionStep4
-            description={formInscription.steps.step4}
+            description={stepDescriptions.step4}
             currentData={dataStudent}
             handleBack={backStep}
             updateSocioeconomic={completeInscription}
@@ -241,8 +243,8 @@ export function PartnerPrepInscription() {
     } else if (stepCurrently === 0) {
       if (!hashPrepCourse || !token) navigate("/");
       hasActiveInscription(hashPrepCourse as string, token)
-        .then((res: boolean) => {
-          if (res) {
+        .then((res) => {
+          if (res.hasActiveInscription) {
             setDataStudent({
               ...dataStudent,
               partnerPrepCourse: hashPrepCourse as string,
@@ -250,6 +252,7 @@ export function PartnerPrepInscription() {
           } else {
             setStepCurrently(-1);
           }
+          setPrepCourseName(res.prepCourseName.toUpperCase().includes("CURSINHO") ? res.prepCourseName : `Cursinho ${res.prepCourseName}`);
         })
         .catch(() => {
           setStepCurrently(-1);
@@ -297,10 +300,12 @@ export function PartnerPrepInscription() {
         {stepCurrently > -2 ? (
           <div className="flex flex-col justify-center items-center py-8 gap-8">
             <StepperCircle steps={steps} />
-            <div className="w-11/12 sm:w-[500px]">
-              <Text size="secondary">
-                Formulário de Inscrição Cursinho UFSCar
-              </Text>
+            <Text>{`Formulário de Inscrição ${prepCourseName}`}</Text>
+            <div
+              className={`w-11/12 ${
+                stepCurrently === 0 ? "max-w-6xl" : "sm:w-[500px]"
+              }`}
+            >
               <StepCurrently step={stepCurrently} />
             </div>
           </div>

@@ -40,7 +40,7 @@ export function PartnerPrepInscriptionStep1({
         .string()
         .default(currentData?.whatsapp)
         .required("Por favor, preencha o seu whatsapp"),
-        urgencyPhone: yup
+      urgencyPhone: yup
         .string()
         .default(currentData?.urgencyPhone)
         .required("Por favor, preencha um telefone de emergência"),
