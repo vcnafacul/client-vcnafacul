@@ -153,7 +153,14 @@ export function SimulationHistories() {
           limitCards,
         }}
       >
-        <DashCardTemplate headerDash={HeaderDashHistories()} />
+        <DashCardTemplate 
+          headerDash={HeaderDashHistories()}
+          backButton={
+            <DashCardTemplate.BackButton className="w-24 h-10 sm:absolute right-4" onClick={() => navigate(`${DASH}/${SIMULADO}`)}>
+              Voltar
+            </DashCardTemplate.BackButton>
+          } 
+        />
       </DashCardContext.Provider>
     </div>
   );
