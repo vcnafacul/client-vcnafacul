@@ -40,6 +40,10 @@ export function PartnerPrepInscriptionStep1({
         .string()
         .default(currentData?.whatsapp)
         .required("Por favor, preencha o seu whatsapp"),
+        urgencyPhone: yup
+        .string()
+        .default(currentData?.urgencyPhone)
+        .required("Por favor, preencha um telefone de emergência"),
       birthday: yup
         .string()
         .default(currentData?.birthday)
@@ -92,6 +96,7 @@ export function PartnerPrepInscriptionStep1({
     register("rg");
     register("cpf");
     register("uf");
+    register("urgencyPhone");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -164,6 +169,15 @@ export function PartnerPrepInscriptionStep1({
         defaultValue={currentData?.whatsapp}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("whatsapp", e.target.value)}
+      />
+      <InputFactory
+        id="urgencyPhone"
+        label="Telefone para Emergências*"
+        type="text"
+        error={errors.urgencyPhone}
+        defaultValue={currentData?.urgencyPhone}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onChange={(e: any) => setValue("urgencyPhone", e.target.value)}
       />
       <InputFactory
         id="birthday"
