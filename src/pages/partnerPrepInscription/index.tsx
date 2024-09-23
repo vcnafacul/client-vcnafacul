@@ -101,8 +101,7 @@ export function PartnerPrepInscription() {
   };
 
   const completeInscription = (data: SocioeconomicAnswer[]) => {
-    setDataStudent({ ...dataStudent, socioeconomic: data });
-    completeInscriptionStudent(dataStudent, token)
+    completeInscriptionStudent({ ...dataStudent, socioeconomic: data }, token)
       .then(() => {
         toast.success("Inscrição realizada com sucesso!");
         setStepCurrently(5); // Redirect to success page
