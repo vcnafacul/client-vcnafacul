@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   ms-simulado:
+    container_name: ms-simulado
     image: vcnafacul/simulado:latest
     env_file:
       - .env.qa
@@ -9,7 +10,10 @@ services:
       - vcnafacul-network
 
   api-vcnafacul:
+    container_name: api-vcnafacul
     image: vcnafacul/api:latest
+    ports:
+      - 3333:3333
     env_file:
       - .env.qa
     restart: always
@@ -19,11 +23,10 @@ services:
       - vcnafacul-network
   
   web-vcnafacul:
+    container_name: web-vcnafacul
     image: vcnafacul/web:latest
     ports:
       - 5173:80
-    env_file:
-      - .env.qa
     restart: always
     depends_on:
       - api-vcnafacul
