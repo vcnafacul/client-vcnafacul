@@ -252,7 +252,7 @@ export function PartnerPrepInscriptionStep4({
       moradia_banheiro: yup
         .string()
         .required("Por favor, preencha a quantidade de banheiros"),
-      eletrodomesticos: yup.string(),
+      eletrodomesticos: yup.array().of(yup.string()),
       tv: yup.string(),
       pc: yup.string(),
       tv_pago: yup.string().when("tv", {
@@ -260,7 +260,10 @@ export function PartnerPrepInscriptionStep4({
         then: () => yup.string().required("Por favor, preencha se a TV é paga"),
         otherwise: () => yup.string().notRequired(),
       }),
-      streaming: yup.string().required("Por favor, preencha se tem streaming"),
+      streaming: yup
+        .array()
+        .of(yup.string())
+        .required("Por favor, preencha se tem streaming"),
       streaming_input: yup.string().when("streaming", {
         is: (value: string) => value && value.includes("Outros"),
         then: () => yup.string().required("Por favor, preencha o streaming"),
@@ -571,16 +574,6 @@ export function PartnerPrepInscriptionStep4({
     { length: 100 },
     (_, i) => new Date().getFullYear() + 2 - i
   ).map((year) => year.toString());
-
-  // const LeaveFormModal = () => {
-  //   return leaveForm ? <AlertDialogUI
-  //   title="Tem certeza que deseja voltar?"
-  //   description="Se você deixar o formulário, perderá todas as informações já preenchidas"
-  //   onCancel={() => setLeaveForm(false)}
-  //   onConfirm={handleBack!}
-  // /> : null;
-  // };
-
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
@@ -1045,11 +1038,13 @@ export function PartnerPrepInscriptionStep4({
       <InputFactory
         id="eletrodomesticos"
         label={eletrodomésticosQuestion}
-        type="select"
+        type="checkbox"
         error={errors.eletrodomesticos}
-        options={convertToOptions(eletrodomésticosOptions)}
+        checkboxs={eletrodomésticosOptions}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => setValue("eletrodomesticos", value)}
+        onCheckedChange={(value: string[]) =>
+          setValue("eletrodomesticos", value)
+        }
       />
       <InputFactory
         id="tv"
@@ -1089,11 +1084,11 @@ export function PartnerPrepInscriptionStep4({
       <InputFactory
         id="streaming"
         label={streamingQuestion}
-        type="select"
+        type="checkbox"
         error={errors.streaming}
-        options={convertToOptions(streamingOptions)}
+        checkboxs={streamingOptions}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => {
+        onCheckedChange={(value: string[]) => {
           if (value.includes("Outros")) {
             setHasStreamingInfo(false);
           } else {
@@ -1136,7 +1131,9 @@ export function PartnerPrepInscriptionStep4({
           error={errors.internet_velocidade}
           options={convertToOptions(internetVelocidadeOptions)}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("internet_velocidade", e.target.value)}
+          onValueChange={(value: string) =>
+            setValue("internet_velocidade", value)
+          }
         />
       )}
 
@@ -1237,7 +1234,9 @@ export function PartnerPrepInscriptionStep4({
           onConfirm={handleBack!}
         >
           <AlertDialogTrigger className="w-full">
-            <div className="bg-orange w-full h-full flex justify-center items-center text-white font-bold rounded-md">Voltar</div>
+            <div className="bg-orange w-full h-full flex justify-center items-center text-white font-bold rounded-md">
+              Voltar
+            </div>
           </AlertDialogTrigger>
         </AlertDialogUI>
         <Button type="submit">Finalizar</Button>
