@@ -5,6 +5,7 @@ import {
   LegalGuardianDTO,
   StudentInscriptionDTO,
 } from "@/dtos/student/studentInscriptionDTO";
+import { StepsInscriptionStudent } from "@/enums/prepCourse/stepInscriptionStudent";
 import { hasActiveInscription } from "@/services/prepCourse/hasActiveInscription";
 import { getUserInfo } from "@/services/prepCourse/student/getUserInfo";
 import { completeInscriptionStudent } from "@/services/prepCourse/student/inscription";
@@ -34,18 +35,6 @@ export interface EachStepProps extends StepProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateSocioeconomic?: (data: SocioeconomicAnswer[]) => void;
   currentData?: Partial<StudentInscriptionDTO>;
-}
-
-enum StepsInscriptionStudent {
-  RegisterUser = -3,
-  Login = -2,
-  Error = -1,
-  Presentation = 0,
-  PersonalInformation = 1,
-  Address = 2,
-  LegalGuardian = 3,
-  Socioeconomic = 4,
-  Success = 5,
 }
 
 export function PartnerPrepInscription() {
