@@ -2,7 +2,6 @@ import Text from "@/components/atoms/text";
 // import Button from "@/components/molecules/button";
 import Button from "@/components/molecules/button";
 import { InputFactory } from "@/components/organisms/inputFactory";
-import { Checkbox } from "@/components/ui/checkbox";
 import { StudentInscriptionDTO } from "@/dtos/student/studentInscriptionDTO";
 import { stateOptions } from "@/pages/register/data";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -16,7 +15,6 @@ export function PartnerPrepInscriptionStep1({
   updateData,
   currentData,
 }: EachStepProps) {
-  const [haveNewEmail, setHaveNewEmail] = useState<boolean>(true);
   const [cpf, setCPF] = useState<string>(currentData?.cpf || "");
 
   const schema = yup
@@ -40,7 +38,7 @@ export function PartnerPrepInscriptionStep1({
         .string()
         .default(currentData?.whatsapp)
         .required("Por favor, preencha o seu whatsapp"),
-        urgencyPhone: yup
+      urgencyPhone: yup
         .string()
         .default(currentData?.urgencyPhone)
         .required("Por favor, preencha um telefone de emergência"),
@@ -140,27 +138,12 @@ export function PartnerPrepInscriptionStep1({
         id="email"
         label="Email*"
         type="email"
-        disabled={haveNewEmail}
-        value={haveNewEmail ? currentData?.email : undefined}
-        error={errors.email}
+        disabled={true}
+        value={currentData?.email}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("email", e.target.value)}
+        className="bg-gray-200 tracking-wider"
       />
-      <div className="flex gap-2 m-2">
-        <Checkbox
-          checked={haveNewEmail}
-          onCheckedChange={(isCheck) => {
-            if (isCheck) {
-              setValue("email", "fernando@gmail.com");
-            }
-            setHaveNewEmail(isCheck as boolean);
-          }}
-          className="h-4 w-4 flex justify-center items-center border-grey border-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-white data-[state=checked]:text-green2"
-        />
-        <label className="text-sm text-grey">
-          Usar o mesmo email do cadastro?
-        </label>
-      </div>
       <InputFactory
         id="whatsapp"
         label="WhatsApp*"

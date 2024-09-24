@@ -17,15 +17,13 @@ export interface RegisterFormProps {
     step1: FormFieldInput[];
     step2: FormFieldInput[];
   };
+}
+
+interface Props extends RegisterFormProps {
   onRegister: (data: UserRegister) => Promise<void>;
 }
 
-function RegisterForm({
-  title,
-  titleSuccess,
-  formData,
-  onRegister,
-}: RegisterFormProps) {
+function RegisterForm({ title, titleSuccess, formData, onRegister }: Props) {
   const [step, setStep] = useState<number>(1);
   const [dataUser, setDataUser] = useState<UserRegister>({} as UserRegister);
 

@@ -7,6 +7,7 @@ import {
   LegalGuardianDTO,
   StudentInscriptionDTO,
 } from "@/dtos/student/studentInscriptionDTO";
+import { FORGOT_PASSWORD_PATH } from "@/routes/path";
 import { hasActiveInscription } from "@/services/prepCourse/hasActiveInscription";
 import { getUserInfo } from "@/services/prepCourse/student/getUserInfo";
 import { completeInscriptionStudent } from "@/services/prepCourse/student/inscription";
@@ -14,7 +15,7 @@ import { registerUserFlowStudent } from "@/services/prepCourse/student/registerU
 import { useAuthStore } from "@/store/auth";
 import { UserRegister } from "@/types/user/userRegister";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
 import { ReactComponent as TriangleYellow } from "../../assets/icons/triangle-yellow.svg";
@@ -42,6 +43,18 @@ export interface EachStepProps extends StepProps {
   currentData?: Partial<StudentInscriptionDTO>;
 }
 
+enum StepsInscriptionStudent {
+  RegisterUser = -3,
+  Login = -2,
+  Error = -1,
+  Presentation = 0,
+  PersonalInformation = 1,
+  Address = 2,
+  LegalGuardian = 3,
+  Socioeconomic = 4,
+  Success = 5,
+}
+
 export function PartnerPrepInscription() {
   const {
     data: { token },
@@ -49,7 +62,9 @@ export function PartnerPrepInscription() {
   const navigate = useNavigate();
 
   const [firstTime, setFirstTime] = useState<boolean>(true);
-  const [stepCurrently, setStepCurrently] = useState<number>(-3);
+  const [stepCurrently, setStepCurrently] = useState<StepsInscriptionStudent>(
+    StepsInscriptionStudent.Login
+  );
   const [dataStudent, setDataStudent] = useState<StudentInscriptionDTO>(
     {} as StudentInscriptionDTO
   );
@@ -57,13 +72,13 @@ export function PartnerPrepInscription() {
   const { hashPrepCourse } = useParams();
 
   const backStep = () => {
-    if (stepCurrently > 1) {
+    if (stepCurrently > StepsInscriptionStudent.Presentation) {
       if (
         dataStudent?.birthday &&
         !isMinor(dataStudent?.birthday) &&
-        stepCurrently == 4
+        stepCurrently == StepsInscriptionStudent.Socioeconomic
       ) {
-        setStepCurrently(stepCurrently - 2);
+        setStepCurrently(StepsInscriptionStudent.Address);
         return;
       }
       setStepCurrently(stepCurrently - 1);
@@ -78,9 +93,9 @@ export function PartnerPrepInscription() {
     if (
       newData?.birthday &&
       !isMinor(newData?.birthday) &&
-      stepCurrently == 2
+      stepCurrently == StepsInscriptionStudent.Address
     ) {
-      setStepCurrently(stepCurrently + 2);
+      setStepCurrently(StepsInscriptionStudent.Socioeconomic);
       return;
     }
     setStepCurrently(stepCurrently + 1);
@@ -108,7 +123,7 @@ export function PartnerPrepInscription() {
     completeInscriptionStudent({ ...dataStudent, socioeconomic: data }, token)
       .then(() => {
         toast.success("Inscrição realizada com sucesso!");
-        setStepCurrently(5); // Redirect to success page
+        setStepCurrently(StepsInscriptionStudent.Success); // Redirect to success page
       })
       .catch((res) => {
         toast.error(res.message);
@@ -177,21 +192,59 @@ export function PartnerPrepInscription() {
 
   const StepCurrently = ({ step }: { step: number }) => {
     switch (step) {
-      case -1:
+      case StepsInscriptionStudent.RegisterUser:
+        return (
+          <div>
+            <TriangleGreen className="graphism triangle-green" />
+            <TriangleYellow className="graphism triangle-yellow" />
+            <RegisterForm
+              formData={registerForm.formData}
+              title={registerForm.title}
+              titleSuccess={registerForm.titleSuccess}
+              onRegister={onRegister}
+            />
+          </div>
+        );
+      case StepsInscriptionStudent.Login:
+        return (
+          <div>
+            <TriangleGreen className="graphism triangle-green" />
+            <TriangleYellow className="graphism triangle-yellow" />
+            <LoginForm
+              {...loginForm}
+              onLogin={() => window.location.reload()}
+            />
+            <div className="flex mx-auto px-4 justify-between max-w-[500px] w-full">
+              <Link
+                to={FORGOT_PASSWORD_PATH}
+                className="text-orange w-fit underline font-bold"
+              >
+                Esqueci minha senha
+              </Link>
+              <div
+                onClick={() => setStepCurrently(-3)}
+                className="text-orange w-fit underline font-bold cursor-pointer"
+              >
+                Não possuo cadastro
+              </div>
+            </div>
+          </div>
+        );
+      case StepsInscriptionStudent.Error:
         return (
           <div>
             <Text size="secondary">Erro ao carregar formulário</Text>;
             <Button onClick={() => navigate("/")}>Voltar para Home</Button>
           </div>
         );
-      case 0:
+      case StepsInscriptionStudent.Presentation:
         return (
           <div>
             <Text size="secondary">{hashPrepCourse}</Text>
             <Button onClick={() => setStepCurrently(1)}>Iniciar</Button>
           </div>
         );
-      case 1:
+      case StepsInscriptionStudent.PersonalInformation:
         return (
           <PartnerPrepInscriptionStep1
             description={formInscription.steps.step1}
@@ -200,7 +253,7 @@ export function PartnerPrepInscription() {
             updateData={updateData}
           />
         );
-      case 2:
+      case StepsInscriptionStudent.Address:
         return (
           <PartnerPrepInscriptionStep2
             description={formInscription.steps.step2}
@@ -209,7 +262,7 @@ export function PartnerPrepInscription() {
             updateData={updateData}
           />
         );
-      case 3:
+      case StepsInscriptionStudent.LegalGuardian:
         return (
           <PartnerPrepInscriptionStep3
             description={formInscription.steps.step3}
@@ -218,7 +271,7 @@ export function PartnerPrepInscription() {
             updateData={updateDataGuardian}
           />
         );
-      case 4:
+      case StepsInscriptionStudent.Socioeconomic:
         return (
           <PartnerPrepInscriptionStep4
             description={formInscription.steps.step4}
@@ -233,12 +286,23 @@ export function PartnerPrepInscription() {
   };
 
   const onRegister = async (data: UserRegister) => {
-    registerUserFlowStudent(data)
+    const id = toast.loading("Cadastrando ... ");
+    registerUserFlowStudent(data, hashPrepCourse as string)
       .then(() => {
-        toast.success("Cadastro realizado com sucesso");
+        toast.update(id, {
+          render: "Cadastro realizado com sucesso",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
       })
       .catch((error: Error) => {
-        toast.error(error.message);
+        toast.update(id, {
+          render: error.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
       });
   };
 
@@ -251,8 +315,14 @@ export function PartnerPrepInscription() {
 
   useEffect(() => {
     if (!token) {
-      setStepCurrently(-2);
-    } else if (stepCurrently === 0) {
+      setStepCurrently(StepsInscriptionStudent.Login);
+    } else {
+      setStepCurrently(StepsInscriptionStudent.Presentation);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (stepCurrently === 0) {
       if (!hashPrepCourse || !token) navigate("/");
       hasActiveInscription(hashPrepCourse as string, token)
         .then((res: boolean) => {
@@ -306,28 +376,10 @@ export function PartnerPrepInscription() {
     <div className="fixed">
       <BaseTemplate
         solid
-        className="overflow-y-auto h-screen overflow-x-hidden"
+        className="overflow-y-auto h-screen overflow-x-hidden relative"
       >
-        {stepCurrently === -3 ? (
-          <div className="relative py-4">
-            <TriangleGreen className="graphism triangle-green" />
-            <TriangleYellow className="graphism triangle-yellow" />
-            <RegisterForm
-              formData={registerForm.formData}
-              title={registerForm.title}
-              titleSuccess={registerForm.titleSuccess}
-              onRegister={onRegister}
-            />
-          </div>
-        ) : stepCurrently === -2 ? (
-          <div className="relative">
-            <TriangleGreen className="graphism triangle-green" />
-            <TriangleYellow className="graphism triangle-yellow" />
-            <LoginForm
-              {...loginForm}
-              onLogin={() => window.location.reload()}
-            />
-          </div>
+        {stepCurrently < StepsInscriptionStudent.Error ? (
+          <StepCurrently step={stepCurrently} />
         ) : (
           <div className="flex flex-col justify-center items-center py-8 gap-8">
             <StepperCircle steps={steps} />

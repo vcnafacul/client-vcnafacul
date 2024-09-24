@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { DASH, FORGOT_PASSWORD_PATH } from "../../../routes/path";
+import { DASH } from "../../../routes/path";
 import Login from "../../../services/auth/login";
 import { useAuthStore } from "../../../store/auth";
 import Text from "../../atoms/text";
@@ -12,21 +12,17 @@ import FormSubmit from "../formSubmit";
 export interface LoginFormProps {
   title: string;
   subtitle: string;
-  forgot: string;
   labelSubmit: string;
   formData: FormFieldInput[];
-  register?: string;
   onLogin?: (data: any) => void;
 }
 
 function LoginForm({
   title,
   subtitle,
-  forgot,
   labelSubmit,
   formData,
   onLogin,
-  register,
 }: LoginFormProps) {
   const { doAuth } = useAuthStore();
   const navigate = useNavigate();
@@ -51,7 +47,7 @@ function LoginForm({
   };
 
   return (
-    <div className="w-full h-[calc(100vh-88px)] flex justify-start items-center flex-col mx-auto">
+    <div className="w-full flex justify-start items-center flex-col mx-auto">
       <div className="mt-20 max-w-[500px] flex flex-col items-center">
         <Text size="secondary">{title}</Text>
         <Text size="quaternary" className="text-orange my-5">
@@ -63,20 +59,6 @@ function LoginForm({
           labelSubmit={labelSubmit}
           onSubmit={login}
         />
-        <div className="flex justify-between w-full">
-          <Link
-            to={FORGOT_PASSWORD_PATH}
-            className="text-orange w-full mt-5 underline font-bold"
-          >
-            {forgot}
-          </Link>
-          <Link
-            to={FORGOT_PASSWORD_PATH}
-            className="text-orange w-52 mt-5 underline font-bold"
-          >
-            {register}
-          </Link>
-        </div>
       </div>
     </div>
   );
