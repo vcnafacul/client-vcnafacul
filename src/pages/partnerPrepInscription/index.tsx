@@ -1,33 +1,26 @@
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
 import Text from "@/components/atoms/text";
 import Button from "@/components/molecules/button";
-import LoginForm from "@/components/organisms/loginForm";
-import RegisterForm from "@/components/organisms/registerForm";
 import {
   LegalGuardianDTO,
   StudentInscriptionDTO,
 } from "@/dtos/student/studentInscriptionDTO";
-import { FORGOT_PASSWORD_PATH } from "@/routes/path";
 import { hasActiveInscription } from "@/services/prepCourse/hasActiveInscription";
 import { getUserInfo } from "@/services/prepCourse/student/getUserInfo";
 import { completeInscriptionStudent } from "@/services/prepCourse/student/inscription";
-import { registerUserFlowStudent } from "@/services/prepCourse/student/registerUserFlowStudent";
 import { useAuthStore } from "@/store/auth";
-import { UserRegister } from "@/types/user/userRegister";
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
-import { ReactComponent as TriangleYellow } from "../../assets/icons/triangle-yellow.svg";
 import BaseTemplate from "../../components/templates/baseTemplate";
 import "../../styles/graphism.css";
-import { loginForm } from "../login/data";
-import { registerForm } from "../register/data";
 import { formInscription, SocioeconomicAnswer } from "./data";
 import { PartnerPrepInscriptionStep1 } from "./steps/partnerPrepInscriptionStep1";
 import { PartnerPrepInscriptionStep2 } from "./steps/partnerPrepInscriptionStep2";
 import { PartnerPrepInscriptionStep3 } from "./steps/partnerPrepInscriptionStep3";
 import { PartnerPrepInscriptionStep4 } from "./steps/partnerPrepInscriptionStep4";
+import { PartnerPrepInscriptionStepLogin } from "./steps/partnerPrepInscriptionStepLogin";
+import { PartnerPrepInscriptionStepRegister } from "./steps/partnerPrepInscriptionStepRegister";
 
 export interface StepProps {
   description: string;
@@ -194,41 +187,17 @@ export function PartnerPrepInscription() {
     switch (step) {
       case StepsInscriptionStudent.RegisterUser:
         return (
-          <div>
-            <TriangleGreen className="graphism triangle-green" />
-            <TriangleYellow className="graphism triangle-yellow" />
-            <RegisterForm
-              formData={registerForm.formData}
-              title={registerForm.title}
-              titleSuccess={registerForm.titleSuccess}
-              onRegister={onRegister}
-            />
-          </div>
+          <PartnerPrepInscriptionStepRegister
+            hashPrepCourse={hashPrepCourse as string}
+          />
         );
       case StepsInscriptionStudent.Login:
         return (
-          <div>
-            <TriangleGreen className="graphism triangle-green" />
-            <TriangleYellow className="graphism triangle-yellow" />
-            <LoginForm
-              {...loginForm}
-              onLogin={() => window.location.reload()}
-            />
-            <div className="flex mx-auto px-4 justify-between max-w-[500px] w-full">
-              <Link
-                to={FORGOT_PASSWORD_PATH}
-                className="text-orange w-fit underline font-bold"
-              >
-                Esqueci minha senha
-              </Link>
-              <div
-                onClick={() => setStepCurrently(-3)}
-                className="text-orange w-fit underline font-bold cursor-pointer"
-              >
-                Não possuo cadastro
-              </div>
-            </div>
-          </div>
+          <PartnerPrepInscriptionStepLogin
+            setStepCurrently={() =>
+              setStepCurrently(StepsInscriptionStudent.RegisterUser)
+            }
+          />
         );
       case StepsInscriptionStudent.Error:
         return (
@@ -285,27 +254,6 @@ export function PartnerPrepInscription() {
     }
   };
 
-  const onRegister = async (data: UserRegister) => {
-    const id = toast.loading("Cadastrando ... ");
-    registerUserFlowStudent(data, hashPrepCourse as string)
-      .then(() => {
-        toast.update(id, {
-          render: "Cadastro realizado com sucesso",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
-  };
-
   useEffect(() => {
     const element = document.getElementById("header");
     if (element) {
@@ -332,11 +280,11 @@ export function PartnerPrepInscription() {
               partnerPrepCourse: hashPrepCourse as string,
             });
           } else {
-            setStepCurrently(-1);
+            setStepCurrently(StepsInscriptionStudent.Error);
           }
         })
         .catch(() => {
-          setStepCurrently(-1);
+          setStepCurrently(StepsInscriptionStudent.Error);
         });
     }
   }, []);
@@ -366,7 +314,7 @@ export function PartnerPrepInscription() {
         })
         .catch((res) => {
           toast.error(res.message);
-          setStepCurrently(-1);
+          setStepCurrently(StepsInscriptionStudent.Error);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
