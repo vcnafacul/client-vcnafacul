@@ -53,6 +53,7 @@ export function PartnerPrepInscription() {
     {} as StudentInscriptionDTO
   );
   const [prepCourseName, setPrepCourseName] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("")
 
   const { hashPrepCourse } = useParams();
 
@@ -193,9 +194,9 @@ export function PartnerPrepInscription() {
         );
       case StepsInscriptionStudent.Error:
         return (
-          <div>
-            <Text size="secondary">Erro ao carregar formulário</Text>;
-            <Button onClick={() => navigate("/")}>Voltar para Home</Button>
+          <div className="flex flex-col items-center gap-4">
+            <span className="text-lg text-center">{errorMessage}</span>;
+            <BLink to={DASH}>Página Inicial</BLink>
           </div>
         );
       case StepsInscriptionStudent.Presentation:
@@ -274,11 +275,18 @@ export function PartnerPrepInscription() {
             setStepCurrently(StepsInscriptionStudent.Presentation);
           } else {
             setStepCurrently(StepsInscriptionStudent.Error);
+            if(res.prepCourseName) {
+              setErrorMessage("Inscrições Fechadas");
+            } else {
+              setErrorMessage("O Cursinho selecionado não foi encontrado. Verifique os dados informados e tente novamente.");
+            }
+            
           }
           setPrepCourseName(res.prepCourseName.toUpperCase().includes("CURSINHO") ? res.prepCourseName : `Cursinho ${res.prepCourseName}`);
         })
         .catch(() => {
           setStepCurrently(StepsInscriptionStudent.Error);
+          setErrorMessage("O Cursinho selecionado não foi encontrado. Verifique os dados informados e tente novamente.");
         });
     }
   }, []);
