@@ -1,10 +1,15 @@
 import fetchWrapper from "../../utils/fetchWrapper";
 import { prepCourse } from "../urls";
 
+interface HasActiveInscriptionResponse {
+  hasActiveInscription: boolean;
+  prepCourseName: string;
+}
+
 export async function hasActiveInscription(
   idPrepCourse: string,
   token: string
-): Promise<boolean> {
+): Promise<HasActiveInscriptionResponse> {
   const response = await fetchWrapper(prepCourse(idPrepCourse), {
     method: "GET",
     headers: {
@@ -19,5 +24,5 @@ export async function hasActiveInscription(
       throw res;
     }
   }
-  return res;
+  return res as HasActiveInscriptionResponse;
 }

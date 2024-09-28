@@ -1,11 +1,13 @@
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
 import Text from "@/components/atoms/text";
+import BLink from "@/components/molecules/bLink";
 import Button from "@/components/molecules/button";
 import {
   LegalGuardianDTO,
   StudentInscriptionDTO,
 } from "@/dtos/student/studentInscriptionDTO";
 import { StepsInscriptionStudent } from "@/enums/prepCourse/stepInscriptionStudent";
+import { DASH } from "@/routes/path";
 import { hasActiveInscription } from "@/services/prepCourse/hasActiveInscription";
 import { getUserInfo } from "@/services/prepCourse/student/getUserInfo";
 import { completeInscriptionStudent } from "@/services/prepCourse/student/inscription";
@@ -15,13 +17,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import BaseTemplate from "../../components/templates/baseTemplate";
 import "../../styles/graphism.css";
-import { formInscription, SocioeconomicAnswer } from "./data";
+import { SocioeconomicAnswer, stepDescriptions, textoParceria } from "./data";
+import { PartnerPrepInscriptionStep0 } from "./steps/partnerPrepInscriptionStep0";
 import { PartnerPrepInscriptionStep1 } from "./steps/partnerPrepInscriptionStep1";
 import { PartnerPrepInscriptionStep2 } from "./steps/partnerPrepInscriptionStep2";
 import { PartnerPrepInscriptionStep3 } from "./steps/partnerPrepInscriptionStep3";
 import { PartnerPrepInscriptionStep4 } from "./steps/partnerPrepInscriptionStep4";
 import { PartnerPrepInscriptionStepLogin } from "./steps/partnerPrepInscriptionStepLogin";
 import { PartnerPrepInscriptionStepRegister } from "./steps/partnerPrepInscriptionStepRegister";
+import { PartnerPrepInscriptionStepSucess } from "./steps/partnerPrepInscriptionStepSucess";
 
 export interface StepProps {
   description: string;
@@ -45,11 +49,13 @@ export function PartnerPrepInscription() {
 
   const [firstTime, setFirstTime] = useState<boolean>(true);
   const [stepCurrently, setStepCurrently] = useState<StepsInscriptionStudent>(
-    StepsInscriptionStudent.Login
+    StepsInscriptionStudent.Blank
   );
   const [dataStudent, setDataStudent] = useState<StudentInscriptionDTO>(
     {} as StudentInscriptionDTO
   );
+  const [prepCourseName, setPrepCourseName] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("")
 
   const { hashPrepCourse } = useParams();
 
@@ -135,38 +141,38 @@ export function PartnerPrepInscription() {
 
   const steps: StepCicle[] = [
     {
-      name: formInscription.steps.step1,
+      name: stepDescriptions.step1,
       status:
-        stepCurrently < 1
+        stepCurrently < StepsInscriptionStudent.PersonalInformation
           ? "upcoming"
-          : stepCurrently == 1
+          : stepCurrently == StepsInscriptionStudent.PersonalInformation
           ? "current"
           : "complete",
     },
     {
-      name: formInscription.steps.step2,
+      name: stepDescriptions.step2,
       status:
-        stepCurrently < 2
+        stepCurrently < StepsInscriptionStudent.Address
           ? "upcoming"
-          : stepCurrently == 2
+          : stepCurrently == StepsInscriptionStudent.Address
           ? "current"
           : "complete",
     },
     {
-      name: formInscription.steps.step3,
+      name: stepDescriptions.step3,
       status:
-        stepCurrently < 3
+        stepCurrently <  StepsInscriptionStudent.LegalGuardian
           ? "upcoming"
-          : stepCurrently == 3
+          : stepCurrently == StepsInscriptionStudent.LegalGuardian
           ? "current"
           : "complete",
     },
     {
-      name: formInscription.steps.step4,
+      name: stepDescriptions.step4,
       status:
-        stepCurrently < 4
+        stepCurrently < StepsInscriptionStudent.Socioeconomic
           ? "upcoming"
-          : stepCurrently == 4
+          : stepCurrently == StepsInscriptionStudent.Socioeconomic
           ? "current"
           : "complete",
     },
@@ -190,22 +196,22 @@ export function PartnerPrepInscription() {
         );
       case StepsInscriptionStudent.Error:
         return (
-          <div>
-            <Text size="secondary">Erro ao carregar formulário</Text>;
-            <Button onClick={() => navigate("/")}>Voltar para Home</Button>
+          <div className="flex flex-col items-center gap-4">
+            <span className="text-lg text-center">{errorMessage}</span>;
+            <BLink to={DASH}>Página Inicial</BLink>
           </div>
         );
       case StepsInscriptionStudent.Presentation:
         return (
-          <div>
-            <Text size="secondary">{hashPrepCourse}</Text>
-            <Button onClick={() => setStepCurrently(1)}>Iniciar</Button>
-          </div>
+          <PartnerPrepInscriptionStep0
+            description={textoParceria}
+            start={() => setStepCurrently(StepsInscriptionStudent.PersonalInformation)}
+          />
         );
       case StepsInscriptionStudent.PersonalInformation:
         return (
           <PartnerPrepInscriptionStep1
-            description={formInscription.steps.step1}
+            description={stepDescriptions.step1}
             currentData={dataStudent}
             handleBack={backStep}
             updateData={updateData}
@@ -214,7 +220,7 @@ export function PartnerPrepInscription() {
       case StepsInscriptionStudent.Address:
         return (
           <PartnerPrepInscriptionStep2
-            description={formInscription.steps.step2}
+            description={stepDescriptions.step2}
             currentData={dataStudent}
             handleBack={backStep}
             updateData={updateData}
@@ -223,7 +229,7 @@ export function PartnerPrepInscription() {
       case StepsInscriptionStudent.LegalGuardian:
         return (
           <PartnerPrepInscriptionStep3
-            description={formInscription.steps.step3}
+            description={stepDescriptions.step3}
             currentData={dataStudent}
             handleBack={backStep}
             updateData={updateDataGuardian}
@@ -232,12 +238,16 @@ export function PartnerPrepInscription() {
       case StepsInscriptionStudent.Socioeconomic:
         return (
           <PartnerPrepInscriptionStep4
-            description={formInscription.steps.step4}
+            description={stepDescriptions.step4}
             currentData={dataStudent}
             handleBack={backStep}
             updateSocioeconomic={completeInscription}
           />
         );
+      case StepsInscriptionStudent.Success:
+        return (
+          <PartnerPrepInscriptionStepSucess />
+        )
       default:
         return <Button onClick={backStep}>Voltar</Button>;
     }
@@ -254,26 +264,29 @@ export function PartnerPrepInscription() {
     if (!token) {
       setStepCurrently(StepsInscriptionStudent.Login);
     } else {
-      setStepCurrently(StepsInscriptionStudent.Presentation);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (stepCurrently === 0) {
-      if (!hashPrepCourse || !token) navigate("/");
+      if (!hashPrepCourse ) navigate("/");
       hasActiveInscription(hashPrepCourse as string, token)
-        .then((res: boolean) => {
-          if (res) {
+        .then((res) => {
+          if (res.hasActiveInscription) {
             setDataStudent({
               ...dataStudent,
               partnerPrepCourse: hashPrepCourse as string,
             });
+            setStepCurrently(StepsInscriptionStudent.Presentation);
           } else {
             setStepCurrently(StepsInscriptionStudent.Error);
+            if(res.prepCourseName) {
+              setErrorMessage("Inscrições Fechadas");
+            } else {
+              setErrorMessage("O Cursinho selecionado não foi encontrado. Verifique os dados informados e tente novamente.");
+            }
+            
           }
+          setPrepCourseName(res.prepCourseName.toUpperCase().includes("CURSINHO") ? res.prepCourseName : `Cursinho ${res.prepCourseName}`);
         })
         .catch(() => {
           setStepCurrently(StepsInscriptionStudent.Error);
+          setErrorMessage("O Cursinho selecionado não foi encontrado. Verifique os dados informados e tente novamente.");
         });
     }
   }, []);
@@ -309,6 +322,8 @@ export function PartnerPrepInscription() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stepCurrently]);
 
+  if(stepCurrently === StepsInscriptionStudent.Blank) return <></>;
+
   return (
     <div className="fixed">
       <BaseTemplate
@@ -320,10 +335,12 @@ export function PartnerPrepInscription() {
         ) : (
           <div className="flex flex-col justify-center items-center py-8 gap-8">
             <StepperCircle steps={steps} />
-            <div className="w-11/12 sm:w-[500px]">
-              <Text size="secondary">
-                Formulário de Inscrição Cursinho UFSCar
-              </Text>
+            <Text>{`Formulário de Inscrição ${prepCourseName}`}</Text>
+            <div
+              className={`w-11/12 ${
+                stepCurrently === StepsInscriptionStudent.Presentation ? "max-w-6xl" : "sm:w-[500px]"
+              }`}
+            >
               <StepCurrently step={stepCurrently} />
             </div>
           </div>
