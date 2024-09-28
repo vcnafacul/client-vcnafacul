@@ -1,5 +1,24 @@
 #!/bin/bash
 
+# Variável para controlar a exclusão de imagens
+REMOVE_IMAGES=true
+
+# Função para processar flags
+process_flags() {
+    while [[ "$1" != "" ]]; do
+        case "$1" in
+            --no-rmi)
+                REMOVE_IMAGES=false
+                ;;
+            *)
+                echo "Opção inválida: $1"
+                exit 1
+                ;;
+        esac
+        shift
+    done
+}
+
 # Função para checar se o Docker está instalado
 check_docker() {
     if ! command -v docker &> /dev/null; then
@@ -46,12 +65,22 @@ manage_containers_images() {
     echo "Excluindo containers antigos..."
     docker rm -f web-vcnafacul api-vcnafacul ms-vcnafacul
 
-    echo "Excluindo imagens antigas..."
-    docker rmi -f vcnafacul/web vcnafacul/api vcnafacul/simulado
+     if [ "$REMOVE_IMAGES" = true ]; then
+        echo "Excluindo imagens antigas..."
+        docker rmi -f vcnafacul/web vcnafacul/api vcnafacul/simulado
+
+        echo "Buildando aplicação..."
+        npm run build:development
+    else
+        echo "Preservando as imagens."
+    fi
 
     echo "Buildando nova imagem e subindo containers..."
     docker-compose up
 }
+
+# Processando as flags passadas ao script
+process_flags "$@"
 
 # Checando se o Docker está instalado e instalando se necessário
 check_docker
