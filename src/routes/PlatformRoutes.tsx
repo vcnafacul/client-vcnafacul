@@ -48,8 +48,8 @@ import {
   LOGIN_PATH,
   LOGOFF_PATH,
   NEWS,
+  PARTNER_PREP,
   PARTNER_PREP_INSCRIPTION,
-  PARTNET_PREP,
   REGISTER_PATH,
   RESET_PASSWORD_PATH,
   SIMULADO,
@@ -90,12 +90,7 @@ export function PlatformRoutes() {
         }
       />
 
-      <Route
-        path={PARTNET_PREP}
-        element={
-          <BaseRoutes />
-        }
-      >
+      <Route path={PARTNER_PREP} element={<BaseRoutes />}>
         <Route
           path={`${PARTNER_PREP_INSCRIPTION}/:hashPrepCourse`}
           element={<PartnerPrepInscription />}

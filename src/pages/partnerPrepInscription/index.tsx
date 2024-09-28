@@ -1,11 +1,11 @@
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
 import Text from "@/components/atoms/text";
 import Button from "@/components/molecules/button";
-import LoginForm from "@/components/organisms/loginForm";
 import {
   LegalGuardianDTO,
   StudentInscriptionDTO,
 } from "@/dtos/student/studentInscriptionDTO";
+import { StepsInscriptionStudent } from "@/enums/prepCourse/stepInscriptionStudent";
 import { hasActiveInscription } from "@/services/prepCourse/hasActiveInscription";
 import { getUserInfo } from "@/services/prepCourse/student/getUserInfo";
 import { completeInscriptionStudent } from "@/services/prepCourse/student/inscription";
@@ -13,16 +13,15 @@ import { useAuthStore } from "@/store/auth";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
-import { ReactComponent as TriangleYellow } from "../../assets/icons/triangle-yellow.svg";
 import BaseTemplate from "../../components/templates/baseTemplate";
 import "../../styles/graphism.css";
-import { loginForm } from "../login/data";
 import { formInscription, SocioeconomicAnswer } from "./data";
 import { PartnerPrepInscriptionStep1 } from "./steps/partnerPrepInscriptionStep1";
 import { PartnerPrepInscriptionStep2 } from "./steps/partnerPrepInscriptionStep2";
 import { PartnerPrepInscriptionStep3 } from "./steps/partnerPrepInscriptionStep3";
 import { PartnerPrepInscriptionStep4 } from "./steps/partnerPrepInscriptionStep4";
+import { PartnerPrepInscriptionStepLogin } from "./steps/partnerPrepInscriptionStepLogin";
+import { PartnerPrepInscriptionStepRegister } from "./steps/partnerPrepInscriptionStepRegister";
 
 export interface StepProps {
   description: string;
@@ -45,7 +44,9 @@ export function PartnerPrepInscription() {
   const navigate = useNavigate();
 
   const [firstTime, setFirstTime] = useState<boolean>(true);
-  const [stepCurrently, setStepCurrently] = useState<number>(0);
+  const [stepCurrently, setStepCurrently] = useState<StepsInscriptionStudent>(
+    StepsInscriptionStudent.Login
+  );
   const [dataStudent, setDataStudent] = useState<StudentInscriptionDTO>(
     {} as StudentInscriptionDTO
   );
@@ -53,13 +54,13 @@ export function PartnerPrepInscription() {
   const { hashPrepCourse } = useParams();
 
   const backStep = () => {
-    if (stepCurrently > 1) {
+    if (stepCurrently > StepsInscriptionStudent.Presentation) {
       if (
         dataStudent?.birthday &&
         !isMinor(dataStudent?.birthday) &&
-        stepCurrently == 4
+        stepCurrently == StepsInscriptionStudent.Socioeconomic
       ) {
-        setStepCurrently(stepCurrently - 2);
+        setStepCurrently(StepsInscriptionStudent.Address);
         return;
       }
       setStepCurrently(stepCurrently - 1);
@@ -74,9 +75,9 @@ export function PartnerPrepInscription() {
     if (
       newData?.birthday &&
       !isMinor(newData?.birthday) &&
-      stepCurrently == 2
+      stepCurrently == StepsInscriptionStudent.Address
     ) {
-      setStepCurrently(stepCurrently + 2);
+      setStepCurrently(StepsInscriptionStudent.Socioeconomic);
       return;
     }
     setStepCurrently(stepCurrently + 1);
@@ -104,7 +105,7 @@ export function PartnerPrepInscription() {
     completeInscriptionStudent({ ...dataStudent, socioeconomic: data }, token)
       .then(() => {
         toast.success("Inscrição realizada com sucesso!");
-        setStepCurrently(5); // Redirect to success page
+        setStepCurrently(StepsInscriptionStudent.Success); // Redirect to success page
       })
       .catch((res) => {
         toast.error(res.message);
@@ -173,21 +174,35 @@ export function PartnerPrepInscription() {
 
   const StepCurrently = ({ step }: { step: number }) => {
     switch (step) {
-      case -1:
+      case StepsInscriptionStudent.RegisterUser:
+        return (
+          <PartnerPrepInscriptionStepRegister
+            hashPrepCourse={hashPrepCourse as string}
+          />
+        );
+      case StepsInscriptionStudent.Login:
+        return (
+          <PartnerPrepInscriptionStepLogin
+            setStepCurrently={() =>
+              setStepCurrently(StepsInscriptionStudent.RegisterUser)
+            }
+          />
+        );
+      case StepsInscriptionStudent.Error:
         return (
           <div>
             <Text size="secondary">Erro ao carregar formulário</Text>;
             <Button onClick={() => navigate("/")}>Voltar para Home</Button>
           </div>
         );
-      case 0:
+      case StepsInscriptionStudent.Presentation:
         return (
           <div>
             <Text size="secondary">{hashPrepCourse}</Text>
             <Button onClick={() => setStepCurrently(1)}>Iniciar</Button>
           </div>
         );
-      case 1:
+      case StepsInscriptionStudent.PersonalInformation:
         return (
           <PartnerPrepInscriptionStep1
             description={formInscription.steps.step1}
@@ -196,7 +211,7 @@ export function PartnerPrepInscription() {
             updateData={updateData}
           />
         );
-      case 2:
+      case StepsInscriptionStudent.Address:
         return (
           <PartnerPrepInscriptionStep2
             description={formInscription.steps.step2}
@@ -205,7 +220,7 @@ export function PartnerPrepInscription() {
             updateData={updateData}
           />
         );
-      case 3:
+      case StepsInscriptionStudent.LegalGuardian:
         return (
           <PartnerPrepInscriptionStep3
             description={formInscription.steps.step3}
@@ -214,7 +229,7 @@ export function PartnerPrepInscription() {
             updateData={updateDataGuardian}
           />
         );
-      case 4:
+      case StepsInscriptionStudent.Socioeconomic:
         return (
           <PartnerPrepInscriptionStep4
             description={formInscription.steps.step4}
@@ -237,8 +252,14 @@ export function PartnerPrepInscription() {
 
   useEffect(() => {
     if (!token) {
-      setStepCurrently(-2);
-    } else if (stepCurrently === 0) {
+      setStepCurrently(StepsInscriptionStudent.Login);
+    } else {
+      setStepCurrently(StepsInscriptionStudent.Presentation);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (stepCurrently === 0) {
       if (!hashPrepCourse || !token) navigate("/");
       hasActiveInscription(hashPrepCourse as string, token)
         .then((res: boolean) => {
@@ -248,11 +269,11 @@ export function PartnerPrepInscription() {
               partnerPrepCourse: hashPrepCourse as string,
             });
           } else {
-            setStepCurrently(-1);
+            setStepCurrently(StepsInscriptionStudent.Error);
           }
         })
         .catch(() => {
-          setStepCurrently(-1);
+          setStepCurrently(StepsInscriptionStudent.Error);
         });
     }
   }, []);
@@ -282,7 +303,7 @@ export function PartnerPrepInscription() {
         })
         .catch((res) => {
           toast.error(res.message);
-          setStepCurrently(-1);
+          setStepCurrently(StepsInscriptionStudent.Error);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -292,9 +313,11 @@ export function PartnerPrepInscription() {
     <div className="fixed">
       <BaseTemplate
         solid
-        className="overflow-y-auto h-screen overflow-x-hidden"
+        className="overflow-y-auto h-screen overflow-x-hidden relative"
       >
-        {stepCurrently > -2 ? (
+        {stepCurrently < StepsInscriptionStudent.Error ? (
+          <StepCurrently step={stepCurrently} />
+        ) : (
           <div className="flex flex-col justify-center items-center py-8 gap-8">
             <StepperCircle steps={steps} />
             <div className="w-11/12 sm:w-[500px]">
@@ -303,15 +326,6 @@ export function PartnerPrepInscription() {
               </Text>
               <StepCurrently step={stepCurrently} />
             </div>
-          </div>
-        ) : (
-          <div className="relative">
-            <TriangleGreen className="graphism triangle-green" />
-            <TriangleYellow className="graphism triangle-yellow" />
-            <LoginForm
-              {...loginForm}
-              onLogin={() => window.location.reload()}
-            />
           </div>
         )}
       </BaseTemplate>

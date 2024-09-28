@@ -1,10 +1,23 @@
+import { registerUser } from "@/services/auth/registerUser";
 import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
 import { ReactComponent as TriangleYellow } from "../../assets/icons/triangle-yellow.svg";
 import RegisterForm from "../../components/organisms/registerForm";
 import BaseTemplate from "../../components/templates/baseTemplate";
 import { registerForm } from "./data";
+import { UserRegister } from "@/types/user/userRegister";
+import { toast } from "react-toastify";
 
 function Register() {
+  const onRegister = async (data: UserRegister) => {
+    registerUser(data)
+      .then(() => {
+        toast.success("Cadastro realizado com sucesso");
+      })
+      .catch((error: Error) => {
+        toast.error(error.message);
+      });
+  };
+  
   return (
     <BaseTemplate
       solid
@@ -17,8 +30,8 @@ function Register() {
           formData={registerForm.formData}
           title={registerForm.title}
           titleSuccess={registerForm.titleSuccess}
+          onRegister={onRegister}
         />
-        {/* register form */}
       </div>
     </BaseTemplate>
   );
