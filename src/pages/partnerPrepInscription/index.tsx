@@ -1,11 +1,13 @@
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
 import Text from "@/components/atoms/text";
+import BLink from "@/components/molecules/bLink";
 import Button from "@/components/molecules/button";
 import {
   LegalGuardianDTO,
   StudentInscriptionDTO,
 } from "@/dtos/student/studentInscriptionDTO";
 import { StepsInscriptionStudent } from "@/enums/prepCourse/stepInscriptionStudent";
+import { DASH } from "@/routes/path";
 import { hasActiveInscription } from "@/services/prepCourse/hasActiveInscription";
 import { getUserInfo } from "@/services/prepCourse/student/getUserInfo";
 import { completeInscriptionStudent } from "@/services/prepCourse/student/inscription";
@@ -15,15 +17,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import BaseTemplate from "../../components/templates/baseTemplate";
 import "../../styles/graphism.css";
-import { loginForm } from "../login/data";
-import { PartnerPrepInscriptionStep0 } from "./steps/partnerPrepInscriptionStep0";
 import { SocioeconomicAnswer, stepDescriptions, textoParceria } from "./data";
+import { PartnerPrepInscriptionStep0 } from "./steps/partnerPrepInscriptionStep0";
 import { PartnerPrepInscriptionStep1 } from "./steps/partnerPrepInscriptionStep1";
 import { PartnerPrepInscriptionStep2 } from "./steps/partnerPrepInscriptionStep2";
 import { PartnerPrepInscriptionStep3 } from "./steps/partnerPrepInscriptionStep3";
 import { PartnerPrepInscriptionStep4 } from "./steps/partnerPrepInscriptionStep4";
 import { PartnerPrepInscriptionStepLogin } from "./steps/partnerPrepInscriptionStepLogin";
 import { PartnerPrepInscriptionStepRegister } from "./steps/partnerPrepInscriptionStepRegister";
+import { PartnerPrepInscriptionStepSucess } from "./steps/partnerPrepInscriptionStepSucess";
 
 export interface StepProps {
   description: string;
@@ -47,7 +49,7 @@ export function PartnerPrepInscription() {
 
   const [firstTime, setFirstTime] = useState<boolean>(true);
   const [stepCurrently, setStepCurrently] = useState<StepsInscriptionStudent>(
-    StepsInscriptionStudent.Login
+    StepsInscriptionStudent.Blank
   );
   const [dataStudent, setDataStudent] = useState<StudentInscriptionDTO>(
     {} as StudentInscriptionDTO
@@ -203,7 +205,7 @@ export function PartnerPrepInscription() {
         return (
           <PartnerPrepInscriptionStep0
             description={textoParceria}
-            start={() => setStepCurrently(1)}
+            start={() => setStepCurrently(StepsInscriptionStudent.PersonalInformation)}
           />
         );
       case StepsInscriptionStudent.PersonalInformation:
@@ -242,6 +244,10 @@ export function PartnerPrepInscription() {
             updateSocioeconomic={completeInscription}
           />
         );
+      case StepsInscriptionStudent.Success:
+        return (
+          <PartnerPrepInscriptionStepSucess />
+        )
       default:
         return <Button onClick={backStep}>Voltar</Button>;
     }
@@ -258,13 +264,7 @@ export function PartnerPrepInscription() {
     if (!token) {
       setStepCurrently(StepsInscriptionStudent.Login);
     } else {
-      setStepCurrently(StepsInscriptionStudent.Presentation);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (stepCurrently === 0) {
-      if (!hashPrepCourse || !token) navigate("/");
+      if (!hashPrepCourse ) navigate("/");
       hasActiveInscription(hashPrepCourse as string, token)
         .then((res) => {
           if (res.hasActiveInscription) {
@@ -321,6 +321,8 @@ export function PartnerPrepInscription() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stepCurrently]);
+
+  if(stepCurrently === StepsInscriptionStudent.Blank) return <></>;
 
   return (
     <div className="fixed">
