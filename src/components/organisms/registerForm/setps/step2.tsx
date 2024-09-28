@@ -1,9 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import * as yup from "yup";
 import { StepProps } from "..";
-import { registerUser } from "../../../../services/auth/registerUser";
 import { Gender } from "../../../../store/auth";
 import { UserRegister } from "../../../../types/user/userRegister";
 import Button from "../../../molecules/button";
@@ -24,9 +22,10 @@ interface Step2Props extends StepProps {
   dataUser: UserRegister;
   next: () => void;
   back: () => void;
+  onRegister: (data: UserRegister) => Promise<void>;
 }
 
-function Step2({ formData, dataUser, next, back }: Step2Props) {
+function Step2({ formData, dataUser, next, back, onRegister }: Step2Props) {
   const schema = yup
     .object()
     .shape({
@@ -57,14 +56,9 @@ function Step2({ formData, dataUser, next, back }: Step2Props) {
   });
 
   const registerSubmit = (data: UseRegisterStep2) => {
-    registerUser({ ...dataUser, ...(data as UserRegister) })
-      .then(() => {
-        next();
-        toast.success("Cadastro realizado com sucesso");
-      })
-      .catch((error: Error) => {
-        toast.error(error.message);
-      });
+    onRegister({ ...dataUser, ...(data as UserRegister) }).then(() => {
+      next();
+    });
   };
 
   return (

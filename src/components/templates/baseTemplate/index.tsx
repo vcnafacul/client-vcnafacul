@@ -31,12 +31,12 @@ export type BaseTemplateProps = VariantProps<typeof baseTemplate> & ComponentPro
 function BaseTemplate({  children, solid, position, headerShadow, className }: BaseTemplateProps){
   return (
     <div className={className}>
-      <div className="min-h-screen w-screen">
+      <div className="min-h-screen w-screen flex flex-col">
           <Header
           solid={solid}
           className={`${baseTemplate({ position, headerShadow })} ${solid ? 'bg-white' : 'bg-transparent'}`}
         />
-        <div>
+        <div className="flex-1">
           { children }
         </div>
       </div>
