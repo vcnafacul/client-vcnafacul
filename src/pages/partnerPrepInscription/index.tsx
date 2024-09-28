@@ -140,36 +140,36 @@ export function PartnerPrepInscription() {
     {
       name: stepDescriptions.step1,
       status:
-        stepCurrently < 1
+        stepCurrently < StepsInscriptionStudent.PersonalInformation
           ? "upcoming"
-          : stepCurrently == 1
+          : stepCurrently == StepsInscriptionStudent.PersonalInformation
           ? "current"
           : "complete",
     },
     {
       name: stepDescriptions.step2,
       status:
-        stepCurrently < 2
+        stepCurrently < StepsInscriptionStudent.Address
           ? "upcoming"
-          : stepCurrently == 2
+          : stepCurrently == StepsInscriptionStudent.Address
           ? "current"
           : "complete",
     },
     {
       name: stepDescriptions.step3,
       status:
-        stepCurrently < 3
+        stepCurrently <  StepsInscriptionStudent.LegalGuardian
           ? "upcoming"
-          : stepCurrently == 3
+          : stepCurrently == StepsInscriptionStudent.LegalGuardian
           ? "current"
           : "complete",
     },
     {
       name: stepDescriptions.step4,
       status:
-        stepCurrently < 4
+        stepCurrently < StepsInscriptionStudent.Socioeconomic
           ? "upcoming"
-          : stepCurrently == 4
+          : stepCurrently == StepsInscriptionStudent.Socioeconomic
           ? "current"
           : "complete",
     },
@@ -271,6 +271,7 @@ export function PartnerPrepInscription() {
               ...dataStudent,
               partnerPrepCourse: hashPrepCourse as string,
             });
+            setStepCurrently(StepsInscriptionStudent.Presentation);
           } else {
             setStepCurrently(StepsInscriptionStudent.Error);
           }
@@ -327,7 +328,7 @@ export function PartnerPrepInscription() {
             <Text>{`Formulário de Inscrição ${prepCourseName}`}</Text>
             <div
               className={`w-11/12 ${
-                stepCurrently === 0 ? "max-w-6xl" : "sm:w-[500px]"
+                stepCurrently === StepsInscriptionStudent.Presentation ? "max-w-6xl" : "sm:w-[500px]"
               }`}
             >
               <StepCurrently step={stepCurrently} />
