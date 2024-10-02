@@ -14,6 +14,7 @@ import {
   DASH_SIMULADO,
   ESTUDO,
   NEWS,
+  PARTNER_PREP_INSCRIPTION,
   SIMULADO,
 } from "../../routes/path";
 
@@ -253,6 +254,21 @@ export const dashCardMenuItems: DashCardMenu[] = [
           Roles.visualizarProvas,
           Roles.visualizarQuestao,
         ],
+      },
+    ],
+  },
+  {
+    id: 6,
+    bg: "bg-red",
+    title: "Cursinho",
+    image: AdminImg,
+    alt: "Cursinho",
+    subMenuList: [
+      {
+        icon: Report,
+        alt: "inscricao",
+        text: "Inscrições",
+        link: `/dashboard/${PARTNER_PREP_INSCRIPTION}`,
       },
     ],
   },

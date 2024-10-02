@@ -117,7 +117,7 @@ function DashCardTemplate({ customFilter, headerDash, backButton }: Props) {
       <div
         className={`${
           !filterProps && !buttons ? "mt-0" : "md:mt-52"
-        } flex flex-wrap justify-center gap-4 pb-10 my-4 md:mx-10`}
+        } flex flex-wrap justify-center gap-4 pb-10 my-4 md:mx-10 `}
       >
         {entities.map((entity, index) => {
           let ref = null;
