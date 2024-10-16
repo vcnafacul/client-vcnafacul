@@ -24,9 +24,7 @@ services:
   
   web-vcnafacul:
     container_name: web-vcnafacul
-    build:
-      context: .
-      dockerfile: web.dockerfile
+    image: vcnafacul/web:latest
     ports:
       - 5173:80
     restart: always
