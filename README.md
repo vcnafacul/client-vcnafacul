@@ -15,7 +15,8 @@
  <p>Somos uma equipe de voluntários trabalhando por um bem maior: a *Educação*. Queremos que o ambiente universitário seja justo e igualitário, e que o desejo de ingressar no ensino superior não dependa de cor, gênero, orientação sexual ou classe social.</p>
 
 <h2>Ambiente</h2>
-<div style="margin: 0 32px;">
+<div>
+   <h5>Desenvolvimento</h5>
    <p>Para rodar o projeto em ambiente de <strong>Desenvolvimento</strong>, siga os passos abaixo:</p>
    <ol>
       <li>Clone o repositório</li>
@@ -25,13 +26,14 @@
       <li>Abra o navegador e acesse <code>http://localhost:5173</code></li>
       <li>Para fins de login, clone o repositório de backend em <a href="https://github.com/vcnafacul/api-vcnafacul" style="text-decoration: none;"><code>api-vcnafacul</code></a></li>
    </ol>
+   <h5>Homologação</h5>
    <p>Para rodar o projeto em ambiente de <strong>Homologação</strong> ...</p>
    <ul>
       <li>Se seu sistema for windows, necessário instalar Docker Desktop</li>
       <li>Para os demais sistemas ou utilizando o <strong>
          Windows Subsystem for Linux</strong> <code>wsl</code>, o docker é necessário, mas caso não possua, será instalado durante o processo de subida da aplicação.</li>
    </ul>
-   <div style="margin: 0 32px;">
+   <div>
       <p>Processo de Up do ambiente de homologação</p>
       <ol>
          <li>Verifique se existe o arquivo <code>.env.qa</code>, caso não, crie um a partir de <code>.env.qa.example</code> e preencha as informações pertinentes</li>
