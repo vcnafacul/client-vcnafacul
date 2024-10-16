@@ -8,8 +8,8 @@
    <img alt="Quantidade de linguagens utilizadas" src="https://img.shields.io/github/languages/count/dev-vcnafacul/client-vcnafacul">
    <img alt="Tamanho do repositório" src="https://img.shields.io/github/repo-size/dev-vcnafacul/client-vcnafacul?color=blue">
    <img alt="Licença" src="https://img.shields.io/github/license/dev-vcnafacul/client-vcnafacul?color=inactive">
-   <img alt="Github issues" src="https://img.shields.io/github/issues/dev-vcnafacul/client-vcnafacul" />
-   <img alt="Github pull requests" src="https://img.shields.io/github/issues-pr/dev-vcnafacul/client-vcnafacul" />
+   <a href="https://github.com/vcnafacul/client-vcnafacul/issues"><img alt="Github issues" src="https://img.shields.io/github/issues/dev-vcnafacul/client-vcnafacul" /></a>
+   <a href="https://github.com/vcnafacul/client-vcnafacul/pulls"><img alt="Github pull requests" src="https://img.shields.io/github/issues-pr/dev-vcnafacul/client-vcnafacul" /></a>
  </p>
 
  <h2>Descrição</h2>
