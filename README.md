@@ -1,6 +1,7 @@
 <div align="center" id="top"> 
    <a href="https://vcnafacul.com.br" target="_blank"><img src="src/assets/vcnafacul.png" alt="Logo"></a>
 </div>
+
 <h1 align="center">Frontend Você na Facul</h1>
 <p align="center">
    <img alt="Principal linguagem do projeto" src="https://img.shields.io/github/languages/top/dev-vcnafacul/client-vcnafacul">
@@ -12,7 +13,8 @@
  </p>
 
  <h2>Descrição</h2>
- <p>Somos uma equipe de voluntários trabalhando por um bem maior: a *Educação*. Queremos que o ambiente universitário seja justo e igualitário, e que o desejo de ingressar no ensino superior não dependa de cor, gênero, orientação sexual ou classe social.</p>
+ <p>Somos uma equipe de voluntários trabalhando por um bem maior: a EDUCAÇÃO. Queremos que o ambiente universitário seja justo e igualitário, e que o desejo de ingressar no ensino superior não dependa de cor, gênero, orientação sexual ou classe social.
+</p>
 
 <h2>Ambiente</h2>
 <div>
@@ -61,7 +63,7 @@
    <li><img align="center" alt="Logo Zustand" height="20" width="40" src="https://user-images.githubusercontent.com/958486/218346783-72be5ae3-b953-4dd7-b239-788a882fdad6.svg"><a href="https://zustand-demo.pmnd.rs/">Zustand</a></li>
 </ul>
 
-<h2>Principais yecnologias nos demais projetos</h2>
+<h2>Principais tecnologias nos demais projetos</h2>
 <ul>
    <li><img align="center" alt="Logo Nest" height="20" width="40" src="https://raw.githubusercontent.com/devicons/devicon/ca28c779441053191ff11710fe24a9e6c23690d6/icons/nestjs/nestjs-original.svg"><a href="https://nestjs.com/">Nest JS</a></li>
    <li><img align="center" alt="Logo Postgresql" height="20" width="40" src="https://raw.githubusercontent.com/devicons/devicon/ca28c779441053191ff11710fe24a9e6c23690d6/icons/postgresql/postgresql-original.svg"><a href="https://www.postgresql.org/">Postgresql</a></li>
@@ -75,3 +77,11 @@
    <li><img align="center" alt="Logo Flutter" height="20" width="40" src="https://raw.githubusercontent.com/devicons/devicon/ca28c779441053191ff11710fe24a9e6c23690d6/icons/flutter/flutter-original.svg"><a href="https://flutter.dev/">Flutter</a></li>
    <li><img align="center" alt="Logo Android" height="20" width="40" src="https://raw.githubusercontent.com/devicons/devicon/ca28c779441053191ff11710fe24a9e6c23690d6/icons/android/android-original.svg"><a href="https://developer.android.com/studio?gad_source=1&gclid=Cj0KCQjwyL24BhCtARIsALo0fSCm5HC_WNjMLeSGsHUKnDvYUvNm9x7AwLrVOCATI_eQU-l-ssdlUm8aApfWEALw_wcB&gclsrc=aw.ds&hl=pt-br">Android Studio</a></li>
 </ul>
+
+## Contribuição
+
+Sinta-se à vontade para abrir uma issue ou um pull request caso queira contribuir. Toda ajuda é bem-vinda!
+
+## Contato
+
+Se tiver alguma dúvida, entre em contato através do nosso site [Você na Facul](https://vcnafacul.com.br).
