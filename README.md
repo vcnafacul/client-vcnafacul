@@ -52,7 +52,7 @@
    </div>
 </div>
 
-<h2>Princiáis tecnologias neste projeto</h2>
+<h2>Principais tecnologias neste projeto</h2>
 <ul>
    <li><img align="center" alt="Logo React" height="20" width="40" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original.svg"><a href="https://react.dev/">React</a></li>
    <li><img align="center" alt="Logo Typescript" height="20" width="40" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-plain.svg"><a href="https://www.typescriptlang.org/">Typescript</a></li>
@@ -61,7 +61,7 @@
    <li><img align="center" alt="Logo Zustand" height="20" width="40" src="https://user-images.githubusercontent.com/958486/218346783-72be5ae3-b953-4dd7-b239-788a882fdad6.svg"><a href="https://zustand-demo.pmnd.rs/">Zustand</a></li>
 </ul>
 
-<h2>Princiáis yecnologias nos demais projetos</h2>
+<h2>Principais yecnologias nos demais projetos</h2>
 <ul>
    <li><img align="center" alt="Logo Nest" height="20" width="40" src="https://raw.githubusercontent.com/devicons/devicon/ca28c779441053191ff11710fe24a9e6c23690d6/icons/nestjs/nestjs-original.svg"><a href="https://nestjs.com/">Nest JS</a></li>
    <li><img align="center" alt="Logo Postgresql" height="20" width="40" src="https://raw.githubusercontent.com/devicons/devicon/ca28c779441053191ff11710fe24a9e6c23690d6/icons/postgresql/postgresql-original.svg"><a href="https://www.postgresql.org/">Postgresql</a></li>
