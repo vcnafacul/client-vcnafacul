@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { CookieBar } from "./components/organisms/cookieBar";
 import { PlatformRoutes } from "./routes/PlatformRoutes";
 import "./styles/normalize.css";
+import { PrimeReactProvider } from 'primereact/api';
 
 function App() {
   return (
@@ -21,10 +22,12 @@ function App() {
         theme="colored"
       />
       <BrowserRouter>
+      <PrimeReactProvider>
         <div className="w-screen h-screen">
           <CookieBar />
           <PlatformRoutes />
         </div>
+      </PrimeReactProvider>
       </BrowserRouter>
     </>
   );

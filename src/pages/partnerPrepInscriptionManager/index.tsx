@@ -32,8 +32,8 @@ export function PartnerPrepInscriptionManager() {
       updatedAt: new Date(),
     },
   ]);
-  const [openModal, setOpenModal] = useState(false);
-  const [inscriptionSelected, setInscriptionSelected] = useState<Inscription>();
+  const [openModal, setOpenModal] = useState(true);
+  const [inscriptionSelected, setInscriptionSelected] = useState<Inscription>(inscriptions[0]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getMoreCards = async (page: number): Promise<Paginate<Inscription>> => {
