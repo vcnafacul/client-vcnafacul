@@ -22,6 +22,7 @@ FROM nginx:1.27-alpine
 
 # Copiar os arquivos da pasta buildada (dist) para a pasta padrão do nginx
 COPY --from=build /app/dist /usr/share/nginx/html
+COPY ./default.conf /etc/nginx/conf.d
 
 # Expor a porta 80 para acessar a aplicação via HTTP
 EXPOSE 80
