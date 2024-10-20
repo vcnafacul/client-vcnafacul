@@ -16,6 +16,7 @@ export const validatedgeolocation = `${BASE_URL}/validatedgeolocation`;
 export const allGeolocation = `${geolocations}`;
 
 export const news = `${BASE_URL}/news`;
+export const newsAll = `${BASE_URL}/news/all`;
 
 export const frentes = `${BASE_URL}/frente`;
 export const frentesByMateria = `${frentes}/materia`;
