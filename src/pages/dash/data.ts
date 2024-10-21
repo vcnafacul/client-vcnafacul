@@ -269,6 +269,7 @@ export const dashCardMenuItems: DashCardMenu[] = [
         alt: "inscricao",
         text: "Inscrições",
         link: `/dashboard/${PARTNER_PREP_INSCRIPTION}`,
+        permissions: [Roles.gerenciarInscricoesCursinhoParceiro],
       },
     ],
   },
