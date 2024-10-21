@@ -2280,6 +2280,11 @@ add@^2.0.6:
   resolved "https://registry.yarnpkg.com/add/-/add-2.0.6.tgz#248f0a9f6e5a528ef2295dbeec30532130ae2235"
   integrity sha512-j5QzrmsokwWWp6kUcJQySpbG+xfOBqqKnup3OIk1pz+kB/80SLorZ9V8zHFLO92Lcd+hbvq8bT+zOGoPkmBV0Q==
 
+adler-32@~1.3.0:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/adler-32/-/adler-32-1.3.1.tgz#1dbf0b36dda0012189a32b3679061932df1821e2"
+  integrity sha512-ynZ4w/nUUv5rrsR8UUGoe1VC9hZj6V5hU9Qw1HlMDJGEJw5S7TfTErWTjMys6M7vr0YWcPqs3qAr4ss0nDfP+A==
+
 airbnb-prop-types@^2.15.0:
   version "2.16.0"
   resolved "https://registry.npmjs.org/airbnb-prop-types/-/airbnb-prop-types-2.16.0.tgz"
@@ -2523,6 +2528,14 @@ caniuse-lite@^1.0.30001538, caniuse-lite@^1.0.30001541:
   resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001617.tgz"
   integrity sha512-mLyjzNI9I+Pix8zwcrpxEbGlfqOkF9kM3ptzmKNw5tizSyYwMe+nGLTqMK9cO+0E+Bh6TsBxNAaHWEM8xwSsmA==
 
+cfb@~1.2.1:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/cfb/-/cfb-1.2.2.tgz#94e687628c700e5155436dac05f74e08df23bc44"
+  integrity sha512-KfdUZsSOw19/ObEWasvBP/Ac4reZvAGauZhs6S/gqNhXhI7cKwvlH7ulj+dOEYnca4bm4SGo8C1bTAQvnTjgQA==
+  dependencies:
+    adler-32 "~1.3.0"
+    crc-32 "~1.2.0"
+
 chalk@^2.4.2:
   version "2.4.2"
   resolved "https://registry.npmjs.org/chalk/-/chalk-2.4.2.tgz"
@@ -2588,6 +2601,11 @@ clsx@^2.1.1:
   version "2.1.1"
   resolved "https://registry.npmjs.org/clsx/-/clsx-2.1.1.tgz"
   integrity sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==
+
+codepage@~1.15.0:
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/codepage/-/codepage-1.15.0.tgz#2e00519024b39424ec66eeb3ec07227e692618ab"
+  integrity sha512-3g6NUTPd/YtuuGrhMnOMRjFc+LJw/bnMp3+0r/Wcz3IXUuCosKRJvMphm5+Q+bvTVGcJJuRvVLuYba+WojaFaA==
 
 color-convert@^1.9.0:
   version "1.9.3"
@@ -2659,6 +2677,11 @@ cosmiconfig@^8.1.3:
     js-yaml "^4.1.0"
     parse-json "^5.2.0"
     path-type "^4.0.0"
+
+crc-32@~1.2.0, crc-32@~1.2.1:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/crc-32/-/crc-32-1.2.2.tgz#3cad35a934b8bf71f25ca524b6da51fb7eace2ff"
+  integrity sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==
 
 cross-spawn@^7.0.2:
   version "7.0.3"
@@ -3351,6 +3374,11 @@ for-each@^0.3.3:
   integrity sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==
   dependencies:
     is-callable "^1.1.3"
+
+frac@~1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/frac/-/frac-1.1.2.tgz#3d74f7f6478c88a1b5020306d747dc6313c74d0b"
+  integrity sha512-w/XBfkibaTl3YDqASwfDUqkna4Z2p9cFSr1aHDt0WoMTECnRfBOv2WArlZILlqgWlmdIlALXGpM2AOhEk5W3IA==
 
 fraction.js@^4.3.6:
   version "4.3.7"
@@ -4723,6 +4751,13 @@ sprintf-js@~1.0.2:
   resolved "https://registry.npmjs.org/sprintf-js/-/sprintf-js-1.0.3.tgz"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
+ssf@~0.11.2:
+  version "0.11.2"
+  resolved "https://registry.yarnpkg.com/ssf/-/ssf-0.11.2.tgz#0b99698b237548d088fc43cdf2b70c1a7512c06c"
+  integrity sha512-+idbmIXoYET47hH+d7dfm2epdOMUDjqcB4648sTZ+t2JwoyBFL/insLfB/racrDmsKB3diwsDA696pZMieAC5g==
+  dependencies:
+    frac "~1.1.2"
+
 string.prototype.trim@^1.2.9:
   version "1.2.9"
   resolved "https://registry.npmjs.org/string.prototype.trim/-/string.prototype.trim-1.2.9.tgz"
@@ -5124,10 +5159,33 @@ which@^2.0.1:
   dependencies:
     isexe "^2.0.0"
 
+wmf@~1.0.1:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/wmf/-/wmf-1.0.2.tgz#7d19d621071a08c2bdc6b7e688a9c435298cc2da"
+  integrity sha512-/p9K7bEh0Dj6WbXg4JG0xvLQmIadrner1bi45VMJTfnbVHsc7yIajZyoSoK60/dtVBs12Fm6WkUI5/3WAVsNMw==
+
+word@~0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/word/-/word-0.3.0.tgz#8542157e4f8e849f4a363a288992d47612db9961"
+  integrity sha512-OELeY0Q61OXpdUfTp+oweA/vtLVg5VDOXh+3he3PNzLGG/y0oylSOC1xRVj0+l4vQ3tj/bB1HVHv1ocXkQceFA==
+
 wrappy@1:
   version "1.0.2"
   resolved "https://registry.npmjs.org/wrappy/-/wrappy-1.0.2.tgz"
   integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
+
+xlsx@^0.18.5:
+  version "0.18.5"
+  resolved "https://registry.yarnpkg.com/xlsx/-/xlsx-0.18.5.tgz#16711b9113c848076b8a177022799ad356eba7d0"
+  integrity sha512-dmg3LCjBPHZnQp5/F/+nnTa+miPJxUXB6vtk42YjBBKayDNagxGEeIdWApkYPOf3Z3pm3k62Knjzp7lMeTEtFQ==
+  dependencies:
+    adler-32 "~1.3.0"
+    cfb "~1.2.1"
+    codepage "~1.15.0"
+    crc-32 "~1.2.1"
+    ssf "~0.11.2"
+    wmf "~1.0.1"
+    word "~0.3.0"
 
 xmlbuilder@^10.0.0:
   version "10.1.1"

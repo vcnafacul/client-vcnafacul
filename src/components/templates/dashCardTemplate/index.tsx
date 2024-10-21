@@ -10,10 +10,18 @@ import { CardDashComponent } from "../../molecules/cardDash";
 interface Props {
   customFilter?: JSX.Element[];
   headerDash?: JSX.Element | undefined;
-  backButton?: React.ReactNode;  
+  backButton?: React.ReactNode;
+  classNameFilter?: string;
+  className?: string;
 }
 
-function DashCardTemplate({ customFilter, headerDash, backButton }: Props) {
+function DashCardTemplate({
+  customFilter,
+  headerDash,
+  backButton,
+  classNameFilter,
+  className,
+}: Props) {
   const [firstCardRef, firstCardInView] = useInView();
   const [lastCardRef, lastCardInView] = useInView();
   const [botton, setBotton] = useState<boolean>(false);
@@ -70,9 +78,11 @@ function DashCardTemplate({ customFilter, headerDash, backButton }: Props) {
         <div
           className={`relative md:fixed flex flex-wrap flex-col justify-center items-center gap-2 z-[1] rounded-2xl bg-opacity-95 p-2 w-10/12 md:w-fit ${
             filterProps || buttons || totalItems ? "bg-gray-200 mt-14" : ""
-          }`}
+          } ${classNameFilter}`}
         >
-          <div className="relative flex flex-wrap items-center md:justify-start justify-center gap-4 w-full mb-4">
+          <div
+            className={`relative flex flex-wrap items-center md:justify-start justify-center gap-4 w-full mb-4 `}
+          >
             {filterProps && (
               <Filter
                 {...filterProps}
@@ -116,8 +126,8 @@ function DashCardTemplate({ customFilter, headerDash, backButton }: Props) {
       {headerDash}
       <div
         className={`${
-          !filterProps && !buttons ? "mt-0" : "md:mt-52"
-        } flex flex-wrap justify-center gap-4 pb-10 my-4 md:mx-10 `}
+          className || (!filterProps && !buttons) ? "mt-0" : "md:mt-52"
+        } flex flex-wrap justify-center gap-4 pb-10 my-4 md:mx-10 ${className}`}
       >
         {entities.map((entity, index) => {
           let ref = null;
@@ -138,6 +148,6 @@ function DashCardTemplate({ customFilter, headerDash, backButton }: Props) {
   );
 }
 
-DashCardTemplate.BackButton = Button
+DashCardTemplate.BackButton = Button;
 
 export default DashCardTemplate;

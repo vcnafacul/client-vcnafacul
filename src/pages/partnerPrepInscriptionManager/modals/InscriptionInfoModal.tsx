@@ -1,95 +1,247 @@
 import { ReactComponent as TrashIcon } from "@/assets/icons/trash.svg";
 import Button from "@/components/molecules/button";
+import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import ModalMessage from "@/components/organisms/modalMessage";
 import ModalTemplate from "@/components/templates/modalTemplate";
+import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
+import { useAuthStore } from "@/store/auth";
+import { usePrepCourseStore } from "@/store/prepCourse";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
-import { MdOutlineFileDownload } from "react-icons/md";
-import { FaRegCopy } from "react-icons/fa6";
+import { StudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
+import { formatDate } from "@/utils/date";
 import { useState } from "react";
-import { Calendar } from "primereact/calendar";
+import { FaRegCopy } from "react-icons/fa6";
+import { MdOutlineFileDownload } from "react-icons/md";
+import * as XLSX from "xlsx";
+import { dataInscription } from "../data";
+import {
+  InscriptionInfoCreateEditModal,
+  InscriptionOutput,
+} from "./InscriptionInfoEditModal";
 
 interface InscriptionInfoModalProps {
   isOpen: boolean;
   handleClose: () => void;
-  inscription?: Inscription;
+  inscription?: Inscription | undefined;
+  canEdit?: boolean;
+  handleEdit: (data: InscriptionOutput) => Promise<void>;
+  handleDelete: () => Promise<void>;
 }
 
 export function InscriptionInfoModal({
   isOpen,
   handleClose,
   inscription,
+  handleEdit,
+  handleDelete,
+  canEdit = true,
 }: InscriptionInfoModalProps) {
-  const [dates, setDates] = useState<Date[] | null>(null);
+  const [inscriptionSelected, setInscriptionSelected] = useState<
+    Inscription | undefined
+  >(inscription);
+  const [openModalEdit, setOpenModalEdit] = useState(false);
+  const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [openModalNotAllowEdit, setOpenModalNotAllowEdit] = useState(false);
+
+  const {
+    data: { token },
+  } = useAuthStore();
+  const { data } = usePrepCourseStore();
+
+  const ModalDelete = () => {
+    return (
+      <ModalConfirmCancel
+        isOpen={openModalDelete}
+        handleClose={() => {
+          setOpenModalDelete(false);
+        }}
+        text="Deseja realmente excluir o processo seletivo?"
+        handleConfirm={() => {
+          handleDelete().then(() => {
+            setOpenModalDelete(false);
+            handleClose();
+          });
+        }}
+      >
+        <p>
+          Ao excluir o processo seletivo todas as inscrições realizadas setão
+          perdidas.
+        </p>
+      </ModalConfirmCancel>
+    );
+  };
+
+  const ModalNotAllowEdit = () => {
+    return (
+      <ModalMessage
+        isOpen={openModalNotAllowEdit}
+        handleClose={() => {
+          setOpenModalNotAllowEdit(false);
+        }}
+        text=""
+      >
+        <p>
+          Não é possível editar este processo seletivo pois já existe um
+          processo seletivo ativo
+        </p>
+      </ModalMessage>
+    );
+  };
+
+  const myHandleEdit = (data: InscriptionOutput) => {
+    handleEdit(data).then(() => {
+      setInscriptionSelected({
+        ...inscriptionSelected!,
+        name: data.name,
+        description: data.description,
+        openingsCount: data.openingsCount,
+        startDate: data.range[0],
+        endDate: data.range[1],
+      });
+      setOpenModalEdit(false);
+    });
+  };
+
+  const ModalEdit = () => {
+    return openModalEdit ? (
+      <InscriptionInfoCreateEditModal
+        isOpen={openModalEdit}
+        inscription={inscriptionSelected!}
+        handleClose={() => setOpenModalEdit(false)}
+        onCreateEdit={myHandleEdit}
+      />
+    ) : null;
+  };
+
+  const onEdit = () => {
+    if (canEdit) {
+      setOpenModalEdit(true);
+    } else {
+      setOpenModalNotAllowEdit(true);
+    }
+  };
+
+  const getUniqueQuestions = (data: StudentCourseFull[]) => {
+    const questions = new Set<string>();
+
+    data.forEach((student) => {
+      student.socioeconomic.forEach((socioItem) => {
+        questions.add(socioItem.question);
+      });
+    });
+
+    return Array.from(questions); // Converte o Set para array
+  };
+
+  const flattenData = (data: StudentCourseFull[], questions: string[]) => {
+    return data.map((student) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const flattenedItem: any = { ...student };
+
+      // Preenche as respostas socioeconômicas
+      questions.forEach((question) => {
+        // Encontra a resposta para a pergunta atual
+        const socioItem = student.socioeconomic.find(
+          (item) => item.question === question
+        );
+
+        // Se a pergunta tiver uma resposta, coloca-a na coluna, senão deixa vazio
+        flattenedItem[question] = socioItem ? socioItem.answer : "";
+      });
+
+      // Remover o campo "socioeconomic" original se não quiser mantê-lo
+      delete flattenedItem.socioeconomic;
+
+      return flattenedItem;
+    });
+  };
+
+  const exportToExcel = () => {
+    console.log("exporting to excel");
+    getSubscribers(token, inscriptionSelected!.id!).then((data) => {
+      const uniqueQuestions = getUniqueQuestions(data);
+
+      const flattenedData = flattenData(data, uniqueQuestions);
+
+      const worksheet = XLSX.utils.json_to_sheet(flattenedData);
+
+      // Cria um novo workbook e adiciona a planilha
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Dados");
+
+      // Gera o arquivo Excel e faz o download
+      XLSX.writeFile(workbook, `${Date.now()}.xlsx`);
+    });
+    // Cria uma nova planilha a partir dos dados
+  };
+  const linkPrepCourse = `${window.location.hostname}:${window.location.port}/cursinho/inscricao/${data.id}`;
+
   return (
     <ModalTemplate isOpen={isOpen} handleClose={handleClose}>
-      <div className=" max-w-2xl flex flex-col gap-4">
+      <div className=" max-w-2xl min-w-[400px] sm:min-w-[550px] flex flex-col gap-4">
         <h1 className="text-left text-marine text-3xl font-black">
-          Processo Seletivo
+          {dataInscription.inscription}
         </h1>
-        <h3 className="font-black text-xl text-marine">Cursinho UFSCar</h3>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ac
-          molestie ipsum. Morbi bibendum pellentesque purus ac tempus. Sed ipsum
-          velit, consectetur sit amet ipsum at, blandit commodo metus.
-          Suspendisse potenti. Vestibulum ante ipsum primis in faucibus orci
-          luctus et ultrices posuere cubilia curae; In blandit convallis erat,
-          et tempor nisi iaculis nec. Integer malesuada ut diam nec gravida.
-          Duis et risus libero. Praesent dignissim orci a tellus pharetra, sed
-          interdum nisi iaculis. Donec ultricies nisl at urna pretium feugiat
-          dapibus at nisi. In eu vulputate nibh. Mauris non facilisis quam, et
-          aliquam orci. Aenean augue enim, auctor eget interdum a, ullamcorper
-          eu metus. Aliquam laoreet hendrerit lacus quis lacinia. Sed posuere
-          enim vel odio ullamcorper condimentum. Aliquam at feugiat nisi, at
-          commodo orci.
-        </p>
+        <h3 className="font-black text-xl text-marine">
+          {inscriptionSelected?.name}
+        </h3>
+        <p>{inscriptionSelected?.description}</p>
         <h3 className="font-black text-xl text-marine">Data</h3>
         <div className="flex gap-4">
           <p>
-            <strong>Início:</strong> DD/MM/AAAA
+            <strong>Início:</strong>
+            {inscriptionSelected?.startDate
+              ? formatDate(inscriptionSelected?.startDate.toString())
+              : ""}
           </p>
           <p>
-            <strong>Final:</strong> DD/MM/AAAA
+            <strong>Final:</strong>
+            {inscriptionSelected?.startDate
+              ? formatDate(inscriptionSelected?.endDate.toString())
+              : ""}
           </p>
-          <Calendar
-            value={dates}
-            onChange={(e) => setDates(e.value as Date[] | null)}
-            selectionMode="range"
-            readOnlyInput
-            hideOnRangeSelection
-          />
-          teste
         </div>
         <h3 className="font-black text-xl text-marine">Número de Vagas</h3>
         <div className="flex gap-4">
           <p>
-            <strong>Incritos:</strong> 000
+            <strong>Incritos:</strong> {inscriptionSelected?.subscribersCount}
           </p>
           <p>
-            <strong>Vagas:</strong> 000
+            <strong>Vagas:</strong> {inscriptionSelected?.openingsCount}
           </p>
         </div>
-        <div className="flex gap-1.5 items-center justify-end">
+        <div
+          className="flex gap-1.5 items-center justify-end cursor-pointer"
+          onClick={() => navigator.clipboard.writeText(linkPrepCourse)}
+        >
           <p className="font-medium">Link de inscrição</p>
           <FaRegCopy />
         </div>
         <div className="flex justify-between">
-          <Button className="h-8 w-36 ">
+          <Button className="h-8 w-36" onClick={() => exportToExcel()}>
             <div className="flex justify-center gap-1.5">
               <MdOutlineFileDownload />
               <p className="text-sm w-fit">Lista de Alunos</p>
             </div>
           </Button>
           <div className="flex flex-1 justify-end gap-4">
-            <Button className="w-24 h-8 bg-red border-red">
+            <Button
+              className="w-24 h-8 bg-red border-red"
+              onClick={() => setOpenModalDelete(true)}
+            >
               <div className="flex justify-center gap-1.5">
                 <TrashIcon />
                 <p className="text-sm w-fit">Deletar</p>
               </div>
             </Button>
-            <Button typeStyle="secondary" className="w-24 h-8">
+            <Button typeStyle="secondary" className="w-24 h-8" onClick={onEdit}>
               Editar
             </Button>
           </div>
         </div>
+        <ModalEdit />
+        <ModalDelete />
+        <ModalNotAllowEdit />
       </div>
     </ModalTemplate>
   );

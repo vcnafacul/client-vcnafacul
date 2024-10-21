@@ -1,3 +1,5 @@
 export const dataInscription = {
-    title: "Gerenciamento de Inscrições",
+    inscription: 'Processos Seletivos',
+    title: "Gerenciamento de Processos Seletivos",
+
 }

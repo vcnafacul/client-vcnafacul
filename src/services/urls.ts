@@ -59,3 +59,6 @@ export const prepCourse = (id: string) =>
 export const studentCourse = `${BASE_URL}/student-course`;
 export const get_user_info = (idPrepCourse: string) =>
   `${studentCourse}/get-user-info/${idPrepCourse}`;
+
+export const inscriptionCourse = `${BASE_URL}/inscription-course`;
+export const subscribers = `${inscriptionCourse}/subscribers`;
