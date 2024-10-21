@@ -129,6 +129,14 @@ export function PartnerPrepInscriptionManager() {
               : ins
           )
         );
+        setInscriptionSelected({
+          ...inscriptionSelected!,
+          name: data.name,
+          openingsCount: data.openingsCount,
+          description: data.description,
+          startDate: data.range[0],
+          endDate: data.range[1],
+        });
       })
       .catch((error) => {
         toast.error(error.message);

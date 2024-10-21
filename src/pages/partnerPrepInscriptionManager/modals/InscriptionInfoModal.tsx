@@ -55,7 +55,7 @@ export function InscriptionInfoModal({
         handleClose={() => {
           setOpenModalDelete(false);
         }}
-        text="Deseja realmente excluir o processo seletivo?"
+        text={dataInscription.warningDeleteTitle}
         handleConfirm={() => {
           handleDelete().then(() => {
             setOpenModalDelete(false);
@@ -63,10 +63,7 @@ export function InscriptionInfoModal({
           });
         }}
       >
-        <p>
-          Ao excluir o processo seletivo todas as inscrições realizadas setão
-          perdidas.
-        </p>
+        <p>{dataInscription.warningDelete}</p>
       </ModalConfirmCancel>
     );
   };
@@ -80,10 +77,7 @@ export function InscriptionInfoModal({
         }}
         text=""
       >
-        <p>
-          Não é possível editar este processo seletivo pois já existe um
-          processo seletivo ativo
-        </p>
+        <p>{dataInscription.messageNotAllowEdit}</p>
       </ModalMessage>
     );
   };
@@ -201,7 +195,9 @@ export function InscriptionInfoModal({
               : ""}
           </p>
         </div>
-        <h3 className="font-black text-xl text-marine">Número de Vagas</h3>
+        <h3 className="font-black text-xl text-marine">
+          {dataInscription.openingText}
+        </h3>
         <div className="flex gap-4">
           <p>
             <strong>Incritos:</strong> {inscriptionSelected?.subscribersCount}
