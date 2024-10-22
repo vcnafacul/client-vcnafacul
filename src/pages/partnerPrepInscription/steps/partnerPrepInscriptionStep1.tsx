@@ -32,7 +32,7 @@ export function PartnerPrepInscriptionStep1({
         .string()
         .default(currentData?.lastName)
         .required("Por favor, preencha o seu sobrenome"),
-      socialname: yup.string().default(currentData?.socialname),
+      socialName: yup.string().default(currentData?.socialName),
       email: yup
         .string()
         .email()
@@ -94,7 +94,7 @@ export function PartnerPrepInscriptionStep1({
   useEffect(() => {
     register("firstName");
     register("lastName");
-    register("socialname");
+    register("socialName");
     register("email");
     register("whatsapp");
     register("birthday");
@@ -133,13 +133,13 @@ export function PartnerPrepInscriptionStep1({
         onChange={(e: any) => setValue("lastName", e.target.value)}
       />
       <InputFactory
-        id="socialname"
+        id="socialName"
         label="Nome Social"
         type="text"
-        defaultValue={currentData?.socialname}
-        error={errors.socialname}
+        defaultValue={currentData?.socialName}
+        error={errors.socialName}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("socialname", e.target.value)}
+        onChange={(e: any) => setValue("socialName", e.target.value)}
       />
       <InputFactory
         id="email"
