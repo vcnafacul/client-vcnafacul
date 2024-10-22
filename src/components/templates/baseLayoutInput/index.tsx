@@ -24,7 +24,7 @@ export function BaseLayoutInput({
   return (
     <div className="relative mb-4">
       <label
-        className="absolute top-1 left-3 text-xs text-grey font-semibold"
+        className="absolute p-1 top-0 left-3 text-xs text-grey font-semibold"
         htmlFor={id}
       >
         {label}

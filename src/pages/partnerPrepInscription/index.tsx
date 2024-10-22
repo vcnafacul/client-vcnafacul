@@ -118,7 +118,7 @@ export function PartnerPrepInscription() {
       });
   };
 
-  const isMinor = (birthday: string) => {
+  const isMinor = (birthday: Date) => {
     const age = calculateAge(new Date(birthday));
     return age < 18;
   };
@@ -301,7 +301,7 @@ export function PartnerPrepInscription() {
             lastName: res.lastName,
             socialname: res.socialName,
             whatsapp: res.phone,
-            birthday: res.birthday,
+            birthday: new Date(res.birthday),
             userId: res.id,
             street: res.street || "",
             number: res.number || 0,

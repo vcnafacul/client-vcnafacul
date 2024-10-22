@@ -16,6 +16,7 @@ export const validatedgeolocation = `${BASE_URL}/validatedgeolocation`;
 export const allGeolocation = `${geolocations}`;
 
 export const news = `${BASE_URL}/news`;
+export const newsAll = `${BASE_URL}/news/all`;
 
 export const frentes = `${BASE_URL}/frente`;
 export const frentesByMateria = `${frentes}/materia`;
@@ -58,3 +59,6 @@ export const prepCourse = (id: string) =>
 export const studentCourse = `${BASE_URL}/student-course`;
 export const get_user_info = (idPrepCourse: string) =>
   `${studentCourse}/get-user-info/${idPrepCourse}`;
+
+export const inscriptionCourse = `${BASE_URL}/inscription-course`;
+export const subscribers = `${inscriptionCourse}/subscribers`;
