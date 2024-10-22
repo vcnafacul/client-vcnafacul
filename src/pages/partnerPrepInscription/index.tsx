@@ -299,7 +299,7 @@ export function PartnerPrepInscription() {
             ...dataStudent,
             firstName: res.firstName,
             lastName: res.lastName,
-            socialname: res.socialName,
+            socialName: res.socialName,
             whatsapp: res.phone,
             birthday: new Date(res.birthday),
             userId: res.id,

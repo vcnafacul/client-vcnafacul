@@ -4,7 +4,7 @@ export interface StudentInscriptionDTO {
   userId: string;
   firstName: string;
   lastName: string;
-  socialname?: string | undefined;
+  socialName?: string | undefined;
   whatsapp: string;
   birthday: Date;
   email: string;

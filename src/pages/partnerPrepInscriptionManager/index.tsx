@@ -37,8 +37,9 @@ export function PartnerPrepInscriptionManager() {
 
   const { setPrepCourse } = usePrepCourseStore();
 
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const getMoreCards = async (page: number): Promise<Paginate<Inscription>> => {
+  const getMoreCards = async (): Promise<Paginate<Inscription>> => {
     return {
       data: [],
       page: 0,
