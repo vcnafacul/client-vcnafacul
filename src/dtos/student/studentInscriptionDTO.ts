@@ -6,7 +6,7 @@ export interface StudentInscriptionDTO {
   lastName: string;
   socialname?: string | undefined;
   whatsapp: string;
-  birthday: string;
+  birthday: Date;
   email: string;
   rg: string;
   uf: string;

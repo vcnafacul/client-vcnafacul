@@ -5,10 +5,15 @@ import { InputFactory } from "@/components/organisms/inputFactory";
 import { StudentInscriptionDTO } from "@/dtos/student/studentInscriptionDTO";
 import { stateOptions } from "@/pages/register/data";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { addLocale } from "primereact/api";
+import { Calendar } from "primereact/calendar";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { EachStepProps } from "..";
+import { ptBr } from "../data";
+
+addLocale("pt-br", { ...ptBr["pt-br"] });
 
 export function PartnerPrepInscriptionStep1({
   description,
@@ -16,7 +21,6 @@ export function PartnerPrepInscriptionStep1({
   currentData,
 }: EachStepProps) {
   const [cpf, setCPF] = useState<string>(currentData?.cpf || "");
-
   const schema = yup
     .object()
     .shape({
@@ -43,8 +47,10 @@ export function PartnerPrepInscriptionStep1({
         .default(currentData?.urgencyPhone)
         .required("Por favor, preencha um telefone de emergência"),
       birthday: yup
-        .string()
-        .default(currentData?.birthday)
+        .date()
+        .default(
+          currentData?.birthday ? new Date(currentData?.birthday) : new Date()
+        )
         .required("Por favor, preencha a sua data de nascimento"),
       uf: yup.string().default(currentData?.uf).required("Requerido"),
       rg: yup
@@ -63,6 +69,7 @@ export function PartnerPrepInscriptionStep1({
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -162,15 +169,37 @@ export function PartnerPrepInscriptionStep1({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("urgencyPhone", e.target.value)}
       />
-      <InputFactory
-        id="birthday"
-        label="Data de Nascimento*"
-        type="date"
-        error={errors.birthday}
-        defaultValue={currentData?.birthday}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("birthday", e.target.value)}
-      />
+      <div className="card flex justify-content-center h-16 border hover:border-orange pt-4 pl-4 rounded-md relative mb-4  row-start-3 col-start-1">
+        <label
+          className="absolute top-1 left-3 text-xs text-grey font-semibold"
+          htmlFor="date"
+        >
+          Data de Nascimento*
+        </label>
+        <Controller
+          name="birthday"
+          control={control}
+          defaultValue={currentData?.birthday || new Date()}
+          render={({ field }) => (
+            <Calendar
+              id="birthday"
+              dateFormat="dd/mm/yy"
+              value={field.value}
+              onChange={(e) => field.onChange(e.value)}
+              selectionMode="single"
+              className="focus-visible:ring-orange"
+              readOnlyInput
+              hideOnRangeSelection
+              locale="pt-br"
+            />
+          )}
+        />
+        {errors.birthday && (
+          <p className="absolute text-red text-xs mt-1 -bottom-5 left-0">
+            {errors.birthday.message}
+          </p>
+        )}
+      </div>
       <div className="flex gap-4">
         <div className="flex-1">
           <InputFactory
