@@ -1,4 +1,4 @@
-import { InscriptionOutput } from "@/pages/partnerPrepInscriptionManager/modals/InscriptionInfoEditModal";
+import { InscriptionOutput } from "@/pages/partnerPrepInscriptionManager/modals/InscriptionInfoCreateEditModal";
 import { inscriptionCourse } from "@/services/urls";
 import fetchWrapper from "@/utils/fetchWrapper";
 

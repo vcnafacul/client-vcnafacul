@@ -1,4 +1,4 @@
-import { InscriptionOutput } from "@/pages/partnerPrepInscriptionManager/modals/InscriptionInfoEditModal";
+import { InscriptionOutput } from "@/pages/partnerPrepInscriptionManager/modals/InscriptionInfoCreateEditModal";
 import { inscriptionCourse } from "@/services/urls";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import fetchWrapper from "@/utils/fetchWrapper";
@@ -21,7 +21,7 @@ export async function createInscription(
       expectedOpening: inscription.openingsCount,
     }),
   });
-  if(response.status === 400) {
+  if (response.status === 400) {
     const res = await response.json();
     throw new Error(res.message);
   }

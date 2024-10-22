@@ -16,7 +16,7 @@ import { dataInscription } from "../data";
 import {
   InscriptionInfoCreateEditModal,
   InscriptionOutput,
-} from "./InscriptionInfoEditModal";
+} from "./InscriptionInfoCreateEditModal";
 
 import * as XLSX from "xlsx";
 

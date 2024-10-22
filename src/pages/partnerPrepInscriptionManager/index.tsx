@@ -18,7 +18,7 @@ import { dataInscription } from "./data";
 import {
   InscriptionInfoCreateEditModal,
   InscriptionOutput,
-} from "./modals/InscriptionInfoEditModal";
+} from "./modals/InscriptionInfoCreateEditModal";
 import { InscriptionInfoModal } from "./modals/InscriptionInfoModal";
 
 export function PartnerPrepInscriptionManager() {

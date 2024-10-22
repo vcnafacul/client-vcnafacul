@@ -38,6 +38,7 @@ export function InscriptionInfoCreateEditModal({
         .required("Campo obrigatório"),
       openingsCount: yup
         .number()
+        .min(1, "O número de vagas deve ser maior que 0")
         .default(inscription?.openingsCount)
         .required("Campo obrigatório"),
       description: yup.string().default(inscription?.description),
