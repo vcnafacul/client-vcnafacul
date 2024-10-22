@@ -12,12 +12,13 @@ import { formatDate } from "@/utils/date";
 import { useState } from "react";
 import { FaRegCopy } from "react-icons/fa6";
 import { MdOutlineFileDownload } from "react-icons/md";
-import * as XLSX from "xlsx";
 import { dataInscription } from "../data";
 import {
   InscriptionInfoCreateEditModal,
   InscriptionOutput,
 } from "./InscriptionInfoEditModal";
+
+import * as XLSX from "xlsx";
 
 interface InscriptionInfoModalProps {
   isOpen: boolean;
@@ -116,15 +117,18 @@ export function InscriptionInfoModal({
   };
 
   const getUniqueQuestions = (data: StudentCourseFull[]) => {
-    const questions = new Set<string>();
+    const questions: string[] = [];
 
     data.forEach((student) => {
       student.socioeconomic.forEach((socioItem) => {
-        questions.add(socioItem.question);
+        // Só adiciona a pergunta se ela ainda não foi incluída
+        if (!questions.includes(socioItem.question)) {
+          questions.push(socioItem.question);
+        }
       });
     });
-
-    return Array.from(questions); // Converte o Set para array
+    console.log(questions);
+    return questions;
   };
 
   const flattenData = (data: StudentCourseFull[], questions: string[]) => {
@@ -140,7 +144,18 @@ export function InscriptionInfoModal({
         );
 
         // Se a pergunta tiver uma resposta, coloca-a na coluna, senão deixa vazio
-        flattenedItem[question] = socioItem ? socioItem.answer : "";
+        if (!socioItem) flattenedItem[question] = "";
+        else {
+          const answer =
+            typeof socioItem.answer === "object"
+              ? socioItem.answer.join(", ")
+              : socioItem.answer;
+          console.log(question);
+          console.log(answer);
+          flattenedItem[question] = flattenedItem[question]
+            ? `${flattenedItem[question]}, ${answer}`
+            : answer;
+        }
       });
 
       // Remover o campo "socioeconomic" original se não quiser mantê-lo
@@ -154,8 +169,8 @@ export function InscriptionInfoModal({
     console.log("exporting to excel");
     getSubscribers(token, inscriptionSelected!.id!).then((data) => {
       const uniqueQuestions = getUniqueQuestions(data);
-
       const flattenedData = flattenData(data, uniqueQuestions);
+      console.log(flattenedData);
 
       const worksheet = XLSX.utils.json_to_sheet(flattenedData);
 

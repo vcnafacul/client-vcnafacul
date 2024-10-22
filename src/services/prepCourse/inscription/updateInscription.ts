@@ -23,6 +23,7 @@ export async function updateInscription(
     }),
   });
   if (response.status !== 200) {
-    throw new Error("Erro ao tentar atualizar inscrição");
+    const res = await response.json();
+    throw new Error(res.message);
   }
 }

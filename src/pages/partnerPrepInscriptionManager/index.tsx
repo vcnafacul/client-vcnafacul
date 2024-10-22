@@ -2,6 +2,7 @@ import { ButtonProps } from "@/components/molecules/button";
 import { CardDash } from "@/components/molecules/cardDash";
 import DashCardTemplate from "@/components/templates/dashCardTemplate";
 import { DashCardContext } from "@/context/dashCardContext";
+import { StatusEnum } from "@/enums/generic/statusEnum";
 import { createInscription } from "@/services/prepCourse/inscription/createInscription";
 import { deleteInscription } from "@/services/prepCourse/inscription/deleteInscription";
 import { getAllInscription } from "@/services/prepCourse/inscription/getAllInscription";
@@ -24,6 +25,7 @@ export function PartnerPrepInscriptionManager() {
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [openModalCreate, setOpenModalCreate] = useState(false);
+  const [editSucess, setEditSucess] = useState(false);
   const [inscriptionSelected, setInscriptionSelected] = useState<
     Inscription | undefined
   >(undefined);
@@ -92,13 +94,24 @@ export function PartnerPrepInscriptionManager() {
   ];
 
   const handleCreate = async (data: InscriptionOutput) => {
+    const id = toast.loading("Criando Processo Seletivo...");
     createInscription(token, data)
-      .then((res) => {
-        setInscriptions([...inscriptions, res]);
-        setOpenModalCreate(false);
+      .then(() => {
+        toast.update(id, {
+          render: `Processo Seletivo ${data.name} criado com sucesso`,
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        window.location.reload();
       })
-      .catch((error) => {
-        toast.error(error.message);
+      .catch((e) => {
+        toast.update(id, {
+          render: e.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
       });
   };
 
@@ -113,22 +126,9 @@ export function PartnerPrepInscriptionManager() {
   };
 
   const handleEdit = async (data: InscriptionOutput) => {
+    const id = toast.loading("Atualizando Processo Seletivo...");
     updateInscription(token, data)
       .then(() => {
-        setInscriptions(
-          inscriptions.map((ins) =>
-            ins.id === data.id
-              ? {
-                  ...ins,
-                  name: data.name,
-                  openingsCount: data.openingsCount,
-                  description: data.description,
-                  startDate: data.range[0],
-                  endDate: data.range[1],
-                }
-              : ins
-          )
-        );
         setInscriptionSelected({
           ...inscriptionSelected!,
           name: data.name,
@@ -137,14 +137,28 @@ export function PartnerPrepInscriptionManager() {
           startDate: data.range[0],
           endDate: data.range[1],
         });
+        toast.update(id, {
+          render: `Processo Seletivo ${data.name} atualizado com sucesso`,
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        setEditSucess(true);
       })
-      .catch((error) => {
-        toast.error(error.message);
+      .catch((e) => {
+        toast.update(id, {
+          render: e.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
       });
   };
 
   const canEditFunction = () => {
-    const activedInscription = inscriptions.find((item) => item.actived);
+    const activedInscription = inscriptions.find(
+      (item) => item.actived === StatusEnum.Approved
+    );
 
     if (!activedInscription) {
       return true;
@@ -172,7 +186,13 @@ export function PartnerPrepInscriptionManager() {
     return openModal ? (
       <InscriptionInfoModal
         isOpen={openModal}
-        handleClose={() => setOpenModal(false)}
+        handleClose={() => {
+          setOpenModal(false);
+          if (editSucess) {
+            window.location.reload();
+            setEditSucess(false);
+          }
+        }}
         inscription={inscriptionSelected}
         handleEdit={handleEdit}
         canEdit={canEditFunction()}
