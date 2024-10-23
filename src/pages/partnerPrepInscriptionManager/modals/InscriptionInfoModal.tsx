@@ -19,6 +19,7 @@ import {
 } from "./InscriptionInfoCreateEditModal";
 
 import * as XLSX from "xlsx";
+import { questions } from "@/pages/partnerPrepInscription/data";
 
 interface InscriptionInfoModalProps {
   isOpen: boolean;
@@ -116,21 +117,6 @@ export function InscriptionInfoModal({
     }
   };
 
-  const getUniqueQuestions = (data: StudentCourseFull[]) => {
-    const questions: string[] = [];
-
-    data.forEach((student) => {
-      student.socioeconomic.forEach((socioItem) => {
-        // Só adiciona a pergunta se ela ainda não foi incluída
-        if (!questions.includes(socioItem.question)) {
-          questions.push(socioItem.question);
-        }
-      });
-    });
-    console.log(questions);
-    return questions;
-  };
-
   const flattenData = (data: StudentCourseFull[], questions: string[]) => {
     return data.map((student) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -166,10 +152,8 @@ export function InscriptionInfoModal({
   };
 
   const exportToExcel = () => {
-    console.log("exporting to excel");
     getSubscribers(token, inscriptionSelected!.id!).then((data) => {
-      const uniqueQuestions = getUniqueQuestions(data);
-      const flattenedData = flattenData(data, uniqueQuestions);
+      const flattenedData = flattenData(data, questions);
       console.log(flattenedData);
 
       const worksheet = XLSX.utils.json_to_sheet(flattenedData);
