@@ -111,7 +111,7 @@ export function PartnerPrepInscriptionStep1({
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
-      className="w-full flex flex-col gap-2 mt-8 mb-16"
+      className="w-full flex flex-col gap-4 md:gap-2 mt-8 mb-16"
     >
       <Text size="tertiary">{description}</Text>
       <InputFactory
