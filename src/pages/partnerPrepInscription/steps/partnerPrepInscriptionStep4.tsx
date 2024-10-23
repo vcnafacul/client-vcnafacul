@@ -1087,6 +1087,7 @@ export function PartnerPrepInscriptionStep4({
         type="checkbox"
         error={errors.streaming}
         checkboxs={streamingOptions}
+        propCleanRest="Não possuo"
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onCheckedChange={(value: string[]) => {
           if (value.includes("Outros")) {
