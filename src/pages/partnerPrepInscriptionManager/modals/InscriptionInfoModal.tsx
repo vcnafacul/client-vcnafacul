@@ -18,7 +18,9 @@ import {
   InscriptionOutput,
 } from "./InscriptionInfoCreateEditModal";
 
+import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
+import { questions } from "@/pages/partnerPrepInscription/data";
 
 interface InscriptionInfoModalProps {
   isOpen: boolean;
@@ -116,21 +118,6 @@ export function InscriptionInfoModal({
     }
   };
 
-  const getUniqueQuestions = (data: StudentCourseFull[]) => {
-    const questions: string[] = [];
-
-    data.forEach((student) => {
-      student.socioeconomic.forEach((socioItem) => {
-        // Só adiciona a pergunta se ela ainda não foi incluída
-        if (!questions.includes(socioItem.question)) {
-          questions.push(socioItem.question);
-        }
-      });
-    });
-    console.log(questions);
-    return questions;
-  };
-
   const flattenData = (data: StudentCourseFull[], questions: string[]) => {
     return data.map((student) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -166,10 +153,8 @@ export function InscriptionInfoModal({
   };
 
   const exportToExcel = () => {
-    console.log("exporting to excel");
     getSubscribers(token, inscriptionSelected!.id!).then((data) => {
-      const uniqueQuestions = getUniqueQuestions(data);
-      const flattenedData = flattenData(data, uniqueQuestions);
+      const flattenedData = flattenData(data, questions);
       console.log(flattenedData);
 
       const worksheet = XLSX.utils.json_to_sheet(flattenedData);
@@ -183,11 +168,26 @@ export function InscriptionInfoModal({
     });
     // Cria uma nova planilha a partir dos dados
   };
-  const linkPrepCourse = `${window.location.hostname}:${window.location.port}/cursinho/inscricao/${data.id}`;
+  const clipboard = () => {
+    console.log("clipboard");
+    const linkPrepCourse = `${
+      import.meta.env.VITE_APP_BASE_URL
+    }/cursinho/inscricao/${data.id}`;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(linkPrepCourse)
+        .then(() => {
+          toast.info("Link copiado com sucesso!");
+        })
+        .catch(() => {
+          toast.error("Erro ao copiar link!");
+        });
+    }
+  };
 
   return (
     <ModalTemplate isOpen={isOpen} handleClose={handleClose}>
-      <div className=" max-w-2xl min-w-[400px] sm:min-w-[550px] flex flex-col gap-4">
+      <div className=" max-w-2xl min-w-[90%] sm:min-w-[550px] flex flex-col gap-4">
         <h1 className="text-left text-marine text-3xl font-black">
           {dataInscription.inscription}
         </h1>
@@ -223,12 +223,12 @@ export function InscriptionInfoModal({
         </div>
         <div
           className="flex gap-1.5 items-center justify-end cursor-pointer"
-          onClick={() => navigator.clipboard.writeText(linkPrepCourse)}
+          onClick={clipboard}
         >
           <p className="font-medium">Link de inscrição</p>
           <FaRegCopy />
         </div>
-        <div className="flex justify-between">
+        <div className="flex flex-col-reverse items-center gap-4 sm:flex-row">
           <Button className="h-8 w-36" onClick={() => exportToExcel()}>
             <div className="flex justify-center gap-1.5">
               <MdOutlineFileDownload />
