@@ -33,7 +33,7 @@ function ModalTemplate({
         scrollbar-hide"
       {...props}
     >
-      <div className="w-full h-full flex  justify-center items-center">
+      <div className="w-full h-full flex  justify-center items-center p-4">
         {outSideClose ? (
           <OutsideClickHandler
             onOutsideClick={() => {
@@ -57,10 +57,10 @@ function ModalTemplate({
                 ))}
               </div>
             ) : null}
-            <div className="relative flex flex-col w-fit bg-white rounded-r-md rounded-b-md p-2">
+            <div className="p-8 relative flex flex-col w-fit bg-white rounded-r-md rounded-b-md p-2">
               <IoMdClose
                 onClick={handleClose}
-                className="self-end mt-5 md:mt-0 cursor-pointer w-5 h-5"
+                className="self-end md:mt-0 cursor-pointer w-5 h-5"
               />
               {React.cloneElement(children as React.ReactElement, {
                 handleClose,

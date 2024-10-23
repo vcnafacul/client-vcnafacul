@@ -2,7 +2,7 @@ import { News } from "../../dtos/news/news";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import fetchWrapper from "../../utils/fetchWrapper";
 import { Paginate } from "../../utils/paginate";
-import { news } from "../urls";
+import { newsAll } from "../urls";
 
 export async function getAllNews(
   token: string,
@@ -11,7 +11,7 @@ export async function getAllNews(
   status: StatusEnum
 ): Promise<Paginate<News>> {
   const res = await fetchWrapper(
-    `${news}?page=${page}&limit=${limit}&status=${status}`,
+    `${newsAll}?page=${page}&limit=${limit}&status=${status}`,
     {
       method: "GET",
       headers: {

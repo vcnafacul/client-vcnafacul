@@ -21,16 +21,16 @@ function ModalConfirmCancel({
 }: ModalConfirmCancelProps) {
   return (
     <ModalTemplate isOpen={isOpen} handleClose={handleClose!}>
-      <div className="px-4 md:max-w-[600px] rounded-2xl">
-        <Text size="tertiary" className="font-black">
+      <div className="px-4 md:max-w-[700px] rounded-2xl flex flex-col gap-4">
+        <Text size="secondary" className="font-black m-0 text-start">
           {text}
         </Text>
         {children}
-        <div className="flex gap-2">
+        <div className="flex gap-2 justify-end">
           <Button
             disabled={confirmDisabled ?? false}
             size="small"
-            typeStyle="quaternary"
+            typeStyle="secondary"
             hover
             onClick={() => {
               handleClose!();
@@ -41,7 +41,7 @@ function ModalConfirmCancel({
           <Button
             disabled={confirmDisabled ?? false}
             size="small"
-            typeStyle="quaternary"
+            typeStyle="primary"
             hover
             onClick={() => {
               handleConfirm();
