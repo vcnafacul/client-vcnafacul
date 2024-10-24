@@ -25,7 +25,6 @@ export function PartnerPrepInscriptionManager() {
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [openModalCreate, setOpenModalCreate] = useState(false);
-  const [editSucess, setEditSucess] = useState(false);
   const [inscriptionSelected, setInscriptionSelected] = useState<
     Inscription | undefined
   >(undefined);
