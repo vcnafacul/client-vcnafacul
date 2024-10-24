@@ -22,6 +22,30 @@ export function PartnerPrepInscriptionStep1({
   currentData,
 }: EachStepProps) {
   const [cpf, setCPF] = useState<string>(currentData?.cpf || "");
+
+  const applyPhoneMask = (value?: string) => {
+    // Remove tudo que não for número
+    value = value?.replace(/\D/g, "") || "";
+
+    // Aplica a máscara (99) 99999-9999
+    if (value.length > 10) {
+      value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+    } else if (value.length > 5) {
+      value = value.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+    } else if (value.length > 2) {
+      value = value.replace(/^(\d{2})(\d{0,5})/, "($1) $2");
+    } else {
+      value = value.replace(/^(\d*)/, "($1");
+    }
+    return value;
+  };
+  const [whatsapp, setWhatsapp] = useState<string>(
+    applyPhoneMask(currentData?.whatsapp) || ""
+  );
+  const [phone, setPhone] = useState<string>(
+    applyPhoneMask(currentData?.urgencyPhone) || ""
+  );
+
   const schema = yup
     .object()
     .shape({
@@ -33,7 +57,7 @@ export function PartnerPrepInscriptionStep1({
         .string()
         .default(currentData?.lastName)
         .required("Por favor, preencha o seu sobrenome"),
-      socialName: yup.string().default(currentData?.socialName),
+      socialName: yup.string().default(currentData?.socialName || ""),
       email: yup
         .string()
         .email()
@@ -41,12 +65,14 @@ export function PartnerPrepInscriptionStep1({
         .required("Por favor, preencha o seu email"),
       whatsapp: yup
         .string()
-        .default(currentData?.whatsapp)
-        .required("Por favor, preencha o seu whatsapp"),
+        .default(applyPhoneMask(currentData?.whatsapp))
+        .required("Por favor, preencha o seu whatsapp")
+        .min(11, "Número inválido"),
       urgencyPhone: yup
         .string()
-        .default(currentData?.urgencyPhone)
-        .required("Por favor, preencha um telefone de emergência"),
+        .default(applyPhoneMask(currentData?.urgencyPhone))
+        .required("Por favor, preencha um telefone de emergência")
+        .min(11, "Número inválido"),
       birthday: yup
         .date()
         .default(
@@ -157,18 +183,26 @@ export function PartnerPrepInscriptionStep1({
         label="WhatsApp*"
         type="text"
         error={errors.whatsapp}
-        defaultValue={currentData?.whatsapp}
+        value={whatsapp}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("whatsapp", e.target.value)}
+        onChange={(e: any) => {
+          const value = applyPhoneMask(e.target.value);
+          setWhatsapp(value);
+          setValue("whatsapp", value);
+        }}
       />
       <InputFactory
         id="urgencyPhone"
         label="Telefone para Emergências*"
         type="text"
         error={errors.urgencyPhone}
-        defaultValue={currentData?.urgencyPhone}
+        value={phone}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("urgencyPhone", e.target.value)}
+        onChange={(e: any) => {
+          const value = applyPhoneMask(e.target.value);
+          setPhone(value);
+          setValue("urgencyPhone", value);
+        }}
       />
       <div className="card flex justify-content-center h-16 border hover:border-orange pt-4 pl-4 rounded-md relative mb-4  row-start-3 col-start-1">
         <label
