@@ -37,7 +37,6 @@ export function PartnerPrepInscriptionStepRegister({ hashPrepCourse }: Props) {
       <TriangleGreen className="graphism triangle-green" />
       <TriangleYellow className="graphism triangle-yellow" />
       <RegisterForm
-        formData={registerForm.formData}
         title={registerForm.title}
         titleSuccess={registerForm.titleSuccess}
         onRegister={onRegister}
