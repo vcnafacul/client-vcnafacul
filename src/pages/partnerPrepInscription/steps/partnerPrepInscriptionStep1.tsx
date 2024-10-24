@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Text from "@/components/atoms/text";
 // import Button from "@/components/molecules/button";
 import Button from "@/components/molecules/button";
@@ -111,7 +112,7 @@ export function PartnerPrepInscriptionStep1({
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
-      className="w-full flex flex-col gap-4 md:gap-2 mt-8 mb-16"
+      className="w-full flex flex-col gap-4 sm:gap-4 md:gap-2 mt-8 mb-16"
     >
       <Text size="tertiary">{description}</Text>
       <InputFactory
@@ -229,7 +230,9 @@ export function PartnerPrepInscriptionStep1({
             }
             error={errors.uf}
             defaultValue={currentData?.uf}
-            onValueChange={(value: string) => setValue("uf", value)}
+            onChange={(e: any) => {
+              setValue("uf", e.value);
+            }}
           />
         </div>
       </div>

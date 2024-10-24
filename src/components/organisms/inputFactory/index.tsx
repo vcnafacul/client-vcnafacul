@@ -10,7 +10,7 @@ import {
 } from "@/components/templates/baseLayoutInput";
 import { InputProps } from "@/components/ui/input";
 import { CheckboxProps } from "@radix-ui/react-checkbox";
-import { SelectProps } from "@radix-ui/react-select";
+import { DropdownProps } from "primereact/dropdown";
 
 type InputFactoryProps = (
   | InputCheckBoxProps
@@ -37,10 +37,12 @@ export function InputFactory({
   switch (type) {
     case "select":
       inputElement = (
-        <InputSelect
-          {...(props as SelectProps)}
-          options={(props as InputSelectProps).options}
-        />
+        <div
+          className="card flex justify-content-center h-16 pt-8 pl-2 border border-input rounded-md 
+      text-xs shadow-sm disabled:opacity-50"
+        >
+          <InputSelect {...(props as DropdownProps)} />
+        </div>
       );
       break;
     case "checkbox":

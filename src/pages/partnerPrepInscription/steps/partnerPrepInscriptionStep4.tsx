@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
 import Text from "@/components/atoms/text";
 import Button from "@/components/molecules/button";
@@ -124,23 +125,34 @@ export function PartnerPrepInscriptionStep4({
       fundamentalMedio: yup
         .string()
         .required("Por favor, preencha a escolaridade"),
-      ano_conclusao: yup
-        .string()
-        .required("Por favor, preencha o ano de conclusão do ensino médio"),
-      tipo_curso: yup.string().required("Por favor, preencha o tipo de curso"),
-      curso_universitario: yup
-        .string()
-        .required("Por favor, preencha o curso universitário"),
+      ano_conclusao: yup.string().when([], {
+        is: () => notfinishedSchool,
+        then: () => yup.string().notRequired(),
+        otherwise: () =>
+          yup.string().required("Por favor, preencha o ano de conclusão"),
+      }),
+      tipo_curso: yup.string().when([], {
+        is: () => notfinishedSchool,
+        then: () => yup.string().notRequired(),
+        otherwise: () =>
+          yup.string().required("Por favor, preencha o tipo de curso"),
+      }),
+      curso_universitario: yup.string().when([], {
+        is: () => notfinishedSchool,
+        then: () => yup.string().notRequired(),
+        otherwise: () =>
+          yup.string().required("Por favor, preencha se está cursando"),
+      }),
       inscrituicao: yup.string().when("curso_universitario", {
-        is: (value: string) => value !== "Não",
+        is: (value: string) => notfinishedSchool || value !== "Não",
         then: () => yup.string().required("Por favor, preencha a instituição"),
         otherwise: () => yup.string().notRequired(),
       }),
       inscrituicao_input: yup.string().when("inscrituicao", {
-        is: (value: string) => value === "Outra",
-        then: () =>
+        is: (value: string) => notfinishedSchool || value !== "Outra",
+        then: () => yup.string().notRequired(),
+        otherwise: () =>
           yup.string().required("Por favor, preencha o nome da instituição"),
-        otherwise: () => yup.string().notRequired(),
       }),
       raca: yup.string().required("Por favor, preencha sua cor/raça"),
       raca_input: yup.string().when("raca", {
@@ -586,21 +598,8 @@ export function PartnerPrepInscriptionStep4({
         label={fundamentalMedioQuestion}
         type="select"
         error={errors.fundamentalMedio}
-        // defaultValue={currentData?.legalGuardian?.fullName}
         options={convertToOptions(fundamentalMedioOptions)}
-        onValueChange={(value: string) => setValue("fundamentalMedio", value)}
-      />
-      <InputFactory
-        id="ano_conclusao"
-        label={anoConclusaoQuestion}
-        type="select"
-        error={errors.ano_conclusao}
-        // defaultValue={currentData?.legalGuardian?.fullName}
-        options={convertToOptions(opt_ano_conslusao)}
-        disabled={notfinishedSchool}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
-        onValueChange={(value: string) => setValue("ano_conclusao", value)}
+        onChange={(e: any) => setValue("fundamentalMedio", e.value)}
       />
       <div className="flex gap-2 m-2">
         <Checkbox
@@ -615,13 +614,24 @@ export function PartnerPrepInscriptionStep4({
         </label>
       </div>
       <InputFactory
+        id="ano_conclusao"
+        label={anoConclusaoQuestion}
+        type="select"
+        error={errors.ano_conclusao}
+        // defaultValue={currentData?.legalGuardian?.fullName}
+        options={convertToOptions(opt_ano_conslusao)}
+        disabled={notfinishedSchool}
+        onChange={(e: any) => setValue("ano_conclusao", e.value)}
+      />
+
+      <InputFactory
         id="tipo_curso"
         label={tipoCursoQuestion}
         type="select"
         error={errors.tipo_curso}
         options={convertToOptions(tipoCursoOptions)}
         disabled={notfinishedSchool}
-        onValueChange={(value: string) => setValue("tipo_curso", value)}
+        onChange={(e: any) => setValue("tipo_curso", e.value)}
       />
       <InputFactory
         id="curso_universitario"
@@ -630,13 +640,13 @@ export function PartnerPrepInscriptionStep4({
         error={errors.curso_universitario}
         options={convertToOptions(cursoUniversitarioOptions)}
         disabled={notfinishedSchool}
-        onValueChange={(value: string) => {
-          if (value === "Não") {
+        onChange={(e: any) => {
+          if (e.value === "Não") {
             setAlreadyStartedCourse(false);
           } else {
             setAlreadyStartedCourse(true);
           }
-          setValue("curso_universitario", value);
+          setValue("curso_universitario", e.value);
         }}
       />
       {alreadyStartedCourse && (
@@ -647,13 +657,13 @@ export function PartnerPrepInscriptionStep4({
           error={errors.inscrituicao}
           options={convertToOptions(instituicoesOptions)}
           disabled={notfinishedSchool}
-          onValueChange={(value: string) => {
-            if (value === "Outra") {
+          onChange={(e: any) => {
+            if (e.value === "Outra") {
               setCollegeInList(false);
             } else {
               setCollegeInList(true);
             }
-            setValue("inscrituicao", value);
+            setValue("inscrituicao", e.value);
           }}
         />
       )}
@@ -662,6 +672,7 @@ export function PartnerPrepInscriptionStep4({
         <InputFactory
           id="inscrituicao_input"
           label={instituicoesQuestion}
+          disabled={notfinishedSchool}
           type="text"
           error={errors.inscrituicao_input}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -675,13 +686,13 @@ export function PartnerPrepInscriptionStep4({
         error={errors.raca}
         options={convertToOptions(racaOptions)}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => {
-          if (value && value.includes("Outros")) {
+        onChange={(e: any) => {
+          if (e.value && e.value.includes("Outros")) {
             setHasRacaInfo(false);
           } else {
             setHasRacaInfo(true);
           }
-          setValue("raca", value);
+          setValue("raca", e.value);
         }}
       />
       {!hasRacaInfo && (
@@ -702,13 +713,13 @@ export function PartnerPrepInscriptionStep4({
         error={errors.etnico_racial}
         options={convertToOptions(etnicoRacialOptions)}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => {
-          if (value && value.includes("Outros")) {
+        onChange={(e: any) => {
+          if (e.value && e.value.includes("Outros")) {
             setHasEtinicoRacialInfo(false);
           } else {
             setHasEtinicoRacialInfo(true);
           }
-          setValue("etnico_racial", value);
+          setValue("etnico_racial", e.value);
         }}
       />
       {!hasEtinicoRacialInfo && (
@@ -729,13 +740,13 @@ export function PartnerPrepInscriptionStep4({
         error={errors.deficiencia}
         options={convertToOptions(deficienciaOptions)}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => {
-          if (value && value.includes("Outros")) {
+        onChange={(e: any) => {
+          if (e.value && e.value.includes("Outros")) {
             setHasDeficienciaInfo(false);
           } else {
             setHasDeficienciaInfo(true);
           }
-          setValue("deficiencia", value);
+          setValue("deficiencia", e.value);
         }}
       />
       {!hasDeficienciaInfo && (
@@ -754,7 +765,7 @@ export function PartnerPrepInscriptionStep4({
         type="select"
         error={errors.estado_civil}
         options={convertToOptions(civilOptions)}
-        onValueChange={(value: string) => setValue("estado_civil", value)}
+        onChange={(e: any) => setValue("estado_civil", e.value)}
       />
       <InputFactory
         id="filhos"
@@ -762,13 +773,13 @@ export function PartnerPrepInscriptionStep4({
         type="select"
         error={errors.filhos}
         options={convertToOptions(filhosOptions)}
-        onValueChange={(value: string) => {
-          if (value.includes("Sim")) {
+        onChange={(e: any) => {
+          if (e.value.includes("Sim")) {
             setHasFilhosInfo(true);
           } else {
             setHasFilhosInfo(false);
           }
-          setValue("filhos", value);
+          setValue("filhos", e.value);
         }}
       />
       {hasFilhosInfo && (
@@ -779,9 +790,7 @@ export function PartnerPrepInscriptionStep4({
             type="select"
             error={errors.filhos_quantidade}
             options={convertToOptions(filhosQuantidadeOptions)}
-            onValueChange={(value: string) =>
-              setValue("filhos_quantidade", value)
-            }
+            onChange={(e: any) => setValue("filhos_quantidade", e.value)}
           />
           <InputFactory
             id="filhos_residencia"
@@ -789,9 +798,7 @@ export function PartnerPrepInscriptionStep4({
             type="select"
             error={errors.filhos_residencia}
             options={convertToOptions(simNaoOptions)}
-            onValueChange={(value: string) =>
-              setValue("filhos_residencia", value)
-            }
+            onChange={(e: any) => setValue("filhos_residencia", e.value)}
           />
         </>
       )}
@@ -802,13 +809,13 @@ export function PartnerPrepInscriptionStep4({
         type="select"
         error={errors.pessoas_residencia}
         options={convertToOptions(pessoasQuantidadeOptions)}
-        onValueChange={(value: string) => {
-          if (value === "1") {
+        onChange={(e: any) => {
+          if (e.value === "1") {
             setLiveAlone(true);
           } else {
             setLiveAlone(false);
           }
-          setValue("pessoas_residencia", value);
+          setValue("pessoas_residencia", e.value);
         }}
       />
       {!liveAlone && (
@@ -818,9 +825,7 @@ export function PartnerPrepInscriptionStep4({
           type="select"
           error={errors.adultos_resisdencia}
           options={convertToOptions(adultosQuantidadeOptions)}
-          onValueChange={(value: string) =>
-            setValue("adultos_resisdencia", value)
-          }
+          onChange={(e: any) => setValue("adultos_resisdencia", e.value)}
         />
       )}
       <InputFactory
@@ -829,9 +834,9 @@ export function PartnerPrepInscriptionStep4({
         type="select"
         error={errors.pessoas_emprego}
         options={convertToOptions(pessoaEmpregoOptions)}
-        onValueChange={(value: string) => {
-          setHowManyAdultsWork(value);
-          setValue("pessoas_emprego", value);
+        onChange={(e: any) => {
+          setHowManyAdultsWork(e.value);
+          setValue("pessoas_emprego", e.value);
         }}
       />
       <InputFactory
@@ -844,13 +849,13 @@ export function PartnerPrepInscriptionStep4({
             ? empregoOptions
             : empregoOptions.concat("Não")
         )}
-        onValueChange={(value: string) => {
-          if (value.includes("Sim")) {
+        onChange={(e: any) => {
+          if (e.value.includes("Sim")) {
             setHasProfession(true);
           } else {
             setHasProfession(false);
           }
-          setValue("tem_emprego", value);
+          setValue("tem_emprego", e.value);
         }}
       />
       {hasProfession && (
@@ -869,8 +874,8 @@ export function PartnerPrepInscriptionStep4({
             type="select"
             error={errors.dependente}
             options={convertToOptions(simNaoOptions)}
-            onValueChange={(value: string) => {
-              setValue("dependente", value);
+            onChange={(e: any) => {
+              setValue("dependente", e.value);
             }}
           />
         </>
@@ -881,13 +886,13 @@ export function PartnerPrepInscriptionStep4({
         type="select"
         error={errors.situacao_casa}
         options={convertToOptions(situacaoCasaOptions)}
-        onValueChange={(value: string) => {
-          if (["Mora sozinho(a)", "Mora com amigos(as)"].includes(value)) {
+        onChange={(e: any) => {
+          if (["Mora sozinho(a)", "Mora com amigos(as)"].includes(e.value)) {
             setHomeSituation(false);
           } else {
             setHomeSituation(true);
           }
-          setValue("situacao_casa", value);
+          setValue("situacao_casa", e.value);
         }}
       />
       <InputFactory
@@ -896,8 +901,8 @@ export function PartnerPrepInscriptionStep4({
         type="select"
         error={errors.dependente_renda}
         options={convertToOptions(simNaoOptions)}
-        onValueChange={(value: string) => {
-          setValue("dependente_renda", value);
+        onChange={(e: any) => {
+          setValue("dependente_renda", e.value);
         }}
       />
       <InputFactory
@@ -914,8 +919,8 @@ export function PartnerPrepInscriptionStep4({
         type="select"
         error={errors.mae_escolaridade}
         options={convertToOptions(responsavelEscolaridadeOptions)}
-        onValueChange={(value: string) => {
-          setValue("mae_escolaridade", value);
+        onChange={(e: any) => {
+          setValue("mae_escolaridade", e.value);
         }}
       />
       <InputFactory
@@ -948,8 +953,8 @@ export function PartnerPrepInscriptionStep4({
         type="select"
         error={errors.pai_escolaridade}
         options={convertToOptions(responsavelEscolaridadeOptions)}
-        onValueChange={(value: string) => {
-          setValue("pai_escolaridade", value);
+        onChange={(e: any) => {
+          setValue("pai_escolaridade", e.value);
         }}
       />
       <InputFactory
@@ -976,7 +981,7 @@ export function PartnerPrepInscriptionStep4({
           error={errors.renda_familiar}
           options={convertToOptions(rendaFamiliarOptions)}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onValueChange={(value: string) => setValue("renda_familiar", value)}
+          onChange={(e: any) => setValue("renda_familiar", e.value)}
         />
       )}
       {!homeSituation && (
@@ -987,7 +992,7 @@ export function PartnerPrepInscriptionStep4({
           error={errors.renda_solo}
           options={convertToOptions(rendaFamiliarOptions)}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onValueChange={(value: string) => setValue("renda_solo", value)}
+          onChange={(e: any) => setValue("renda_solo", e.value)}
         />
       )}
       <InputFactory
@@ -997,13 +1002,13 @@ export function PartnerPrepInscriptionStep4({
         error={errors.moradia_situacao}
         options={convertToOptions(moradiaSituacaoOptions)}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => {
-          if (value.includes("Outra")) {
+        onChange={(e: any) => {
+          if (e.value.includes("Outra")) {
             setHousingSituation(true);
           } else {
             setHousingSituation(false);
           }
-          setValue("moradia_situacao", value);
+          setValue("moradia_situacao", e.value);
         }}
       />
       {housingSituation && (
@@ -1025,7 +1030,7 @@ export function PartnerPrepInscriptionStep4({
         error={errors.moradia_comodo}
         options={convertToOptions(Array.from({ length: 10 }, (_, i) => i + 1))}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => setValue("moradia_comodo", value)}
+        onChange={(e: any) => setValue("moradia_comodo", e.value)}
       />
       <InputFactory
         id="moradia_banheiro"
@@ -1034,7 +1039,7 @@ export function PartnerPrepInscriptionStep4({
         error={errors.moradia_banheiro}
         options={convertToOptions(Array.from({ length: 10 }, (_, i) => i + 1))}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => setValue("moradia_banheiro", value)}
+        onChange={(e: any) => setValue("moradia_banheiro", e.value)}
       />
       <InputFactory
         id="eletrodomesticos"
@@ -1054,8 +1059,8 @@ export function PartnerPrepInscriptionStep4({
         error={errors.tv}
         options={convertToOptions(tvPcOptions)}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => {
-          if (!value.includes("Não possuo")) {
+        onChange={(e: any) => {
+          if (!e.value.includes("Não possuo")) {
             setHasTv(true);
           } else {
             setHasTv(false);
@@ -1070,7 +1075,7 @@ export function PartnerPrepInscriptionStep4({
           error={errors.tv_pago}
           options={convertToOptions(simNaoOptions)}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onValueChange={(value: string) => setValue("tv_pago", value)}
+          onChange={(e: any) => setValue("tv_pago", e.value)}
         />
       )}
       <InputFactory
@@ -1080,7 +1085,7 @@ export function PartnerPrepInscriptionStep4({
         error={errors.pc}
         options={convertToOptions(tvPcOptions)}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => setValue("pc", value)}
+        onChange={(e: any) => setValue("pc", e.value)}
       />
       <InputFactory
         id="streaming"
@@ -1116,13 +1121,13 @@ export function PartnerPrepInscriptionStep4({
         error={errors.internet}
         options={convertToOptions(internetOptions)}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => {
-          if (value.includes("Não")) {
+        onChange={(e: any) => {
+          if (e.value.includes("Não")) {
             setHasInternetInfo(false);
           } else {
             setHasInternetInfo(true);
           }
-          setValue("internet", value);
+          setValue("internet", e.value);
         }}
       />
       {hasInternetInfo && (
@@ -1133,9 +1138,7 @@ export function PartnerPrepInscriptionStep4({
           error={errors.internet_velocidade}
           options={convertToOptions(internetVelocidadeOptions)}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onValueChange={(value: string) =>
-            setValue("internet_velocidade", value)
-          }
+          onChange={(e: any) => setValue("internet_velocidade", e.value)}
         />
       )}
 
@@ -1146,13 +1149,13 @@ export function PartnerPrepInscriptionStep4({
         error={errors.internet_celular}
         options={convertToOptions(internetCelularOptions)}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => {
-          if (value.includes("Não")) {
+        onChange={(e: any) => {
+          if (e.value.includes("Não")) {
             setHasInternetPhoneInfo(false);
           } else {
             setHasInternetPhoneInfo(true);
           }
-          setValue("internet_celular", value);
+          setValue("internet_celular", e.value);
         }}
       />
       {hasInternetPhonerInfo && (
@@ -1163,13 +1166,13 @@ export function PartnerPrepInscriptionStep4({
           error={errors.internet_celular_plano}
           options={convertToOptions(internetCelularPlanoOptions)}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onValueChange={(value: string) => {
-            if (value.includes("Outros")) {
+          onChange={(e: any) => {
+            if (e.value.includes("Outros")) {
               setHasPhonePlanInfo(false);
             } else {
               setHasPhonePlanInfo(true);
             }
-            setValue("internet_celular_plano", value);
+            setValue("internet_celular_plano", e.value);
           }}
         />
       )}
@@ -1192,7 +1195,7 @@ export function PartnerPrepInscriptionStep4({
         error={errors.energia_eletrica}
         options={convertToOptions(energiaEletricaAguaOptions)}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => setValue("energia_eletrica", value)}
+        onChange={(e: any) => setValue("energia_eletrica", e.value)}
       />
       <InputFactory
         id="agua_encanada"
@@ -1201,7 +1204,7 @@ export function PartnerPrepInscriptionStep4({
         error={errors.agua_encanada}
         options={convertToOptions(energiaEletricaAguaOptions)}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => setValue("agua_encanada", value)}
+        onChange={(e: any) => setValue("agua_encanada", e.value)}
       />
       <InputFactory
         id="transporte"
@@ -1210,13 +1213,13 @@ export function PartnerPrepInscriptionStep4({
         error={errors.transporte}
         options={convertToOptions(transporteOptions)}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => {
-          if (value.includes("Outros")) {
+        onChange={(e: any) => {
+          if (e.value.includes("Outros")) {
             setHasTransportInfo(false);
           } else {
             setHasTransportInfo(true);
           }
-          setValue("transporte", value);
+          setValue("transporte", e.value);
         }}
       />
       {!hasTransportInfo && (
@@ -1236,7 +1239,7 @@ export function PartnerPrepInscriptionStep4({
           onConfirm={handleBack!}
         >
           <AlertDialogTrigger className="w-full">
-            <div className="bg-orange w-full h-full flex justify-center items-center text-white font-bold rounded-md">
+            <div className="bg-orange w-full h-full min-h-[44px] flex justify-center items-center text-white font-bold rounded-md">
               Voltar
             </div>
           </AlertDialogTrigger>
