@@ -55,7 +55,7 @@ export function PartnerPrepInscription() {
     {} as StudentInscriptionDTO
   );
   const [prepCourseName, setPrepCourseName] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("")
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const { hashPrepCourse } = useParams();
 
@@ -108,13 +108,14 @@ export function PartnerPrepInscription() {
   };
 
   const completeInscription = (data: SocioeconomicAnswer[]) => {
+    const id = toast.loading("Finalizando Inscrição ...");
     completeInscriptionStudent({ ...dataStudent, socioeconomic: data }, token)
       .then(() => {
-        toast.success("Inscrição realizada com sucesso!");
+        toast.dismiss(id);
         setStepCurrently(StepsInscriptionStudent.Success); // Redirect to success page
       })
       .catch((res) => {
-        toast.error(res.message);
+        toast.update(id, { render: res.message, type: "error", isLoading: false });
       });
   };
 
@@ -161,7 +162,7 @@ export function PartnerPrepInscription() {
     {
       name: stepDescriptions.step3,
       status:
-        stepCurrently <  StepsInscriptionStudent.LegalGuardian
+        stepCurrently < StepsInscriptionStudent.LegalGuardian
           ? "upcoming"
           : stepCurrently == StepsInscriptionStudent.LegalGuardian
           ? "current"
@@ -205,7 +206,9 @@ export function PartnerPrepInscription() {
         return (
           <PartnerPrepInscriptionStep0
             description={textoParceria}
-            start={() => setStepCurrently(StepsInscriptionStudent.PersonalInformation)}
+            start={() =>
+              setStepCurrently(StepsInscriptionStudent.PersonalInformation)
+            }
           />
         );
       case StepsInscriptionStudent.PersonalInformation:
@@ -245,9 +248,7 @@ export function PartnerPrepInscription() {
           />
         );
       case StepsInscriptionStudent.Success:
-        return (
-          <PartnerPrepInscriptionStepSucess />
-        )
+        return <PartnerPrepInscriptionStepSucess />;
       default:
         return <Button onClick={backStep}>Voltar</Button>;
     }
@@ -264,7 +265,7 @@ export function PartnerPrepInscription() {
     if (!token) {
       setStepCurrently(StepsInscriptionStudent.Login);
     } else {
-      if (!hashPrepCourse ) navigate("/");
+      if (!hashPrepCourse) navigate("/");
       hasActiveInscription(hashPrepCourse as string, token)
         .then((res) => {
           if (res.hasActiveInscription) {
@@ -275,18 +276,25 @@ export function PartnerPrepInscription() {
             setStepCurrently(StepsInscriptionStudent.Presentation);
           } else {
             setStepCurrently(StepsInscriptionStudent.Error);
-            if(res.prepCourseName) {
+            if (res.prepCourseName) {
               setErrorMessage("Inscrições Fechadas");
             } else {
-              setErrorMessage("O Cursinho selecionado não foi encontrado. Verifique os dados informados e tente novamente.");
+              setErrorMessage(
+                "O Cursinho selecionado não foi encontrado. Verifique os dados informados e tente novamente."
+              );
             }
-            
           }
-          setPrepCourseName(res.prepCourseName.toUpperCase().includes("CURSINHO") ? res.prepCourseName : `Cursinho ${res.prepCourseName}`);
+          setPrepCourseName(
+            res.prepCourseName.toUpperCase().includes("CURSINHO")
+              ? res.prepCourseName
+              : `Cursinho ${res.prepCourseName}`
+          );
         })
         .catch(() => {
           setStepCurrently(StepsInscriptionStudent.Error);
-          setErrorMessage("O Cursinho selecionado não foi encontrado. Verifique os dados informados e tente novamente.");
+          setErrorMessage(
+            "O Cursinho selecionado não foi encontrado. Verifique os dados informados e tente novamente."
+          );
         });
     }
   }, []);
@@ -322,7 +330,7 @@ export function PartnerPrepInscription() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stepCurrently]);
 
-  if(stepCurrently === StepsInscriptionStudent.Blank) return <></>;
+  if (stepCurrently === StepsInscriptionStudent.Blank) return <></>;
 
   return (
     <div className="fixed">
@@ -338,7 +346,9 @@ export function PartnerPrepInscription() {
             <Text>{`Formulário de Inscrição ${prepCourseName}`}</Text>
             <div
               className={`w-11/12 ${
-                stepCurrently === StepsInscriptionStudent.Presentation ? "max-w-6xl" : "sm:w-[500px]"
+                stepCurrently === StepsInscriptionStudent.Presentation
+                  ? "max-w-6xl"
+                  : "sm:w-[500px]"
               }`}
             >
               <StepCurrently step={stepCurrently} />
