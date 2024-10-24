@@ -41,31 +41,6 @@ export const optionsGender: FormFieldOption[] = [
 export const registerForm: RegisterFormProps = {
   title: "Cadastre-se",
   titleSuccess: "Seja bem-vinde ao Você na Facul!",
-  formData: {
-    step1: [
-      { id: "email", label: "E-mail" },
-      { id: "password", label: "Senha", type: "password" },
-      {
-        id: "password_confirmation",
-        label: "Confirmar Senha",
-        type: "password",
-      },
-    ],
-    step2: [
-      { id: "firstName", label: "Nome" },
-      { id: "lastName", label: "Sobrenome" },
-      { id: "gender", label: "Gênero", type: "option", options: optionsGender },
-      {
-        id: "birthday",
-        type: "date",
-        label: "Data de Nascimento",
-        defaultValue: "01/01/2022",
-      },
-      { id: "phone", label: "Telefone" },
-      { id: "state", label: "Estado", type: "option", options: stateOptions },
-      { id: "city", label: "Cidade" },
-    ],
-  },
 };
 
 export const uppercaseLetterRegex = /[A-Z]/;

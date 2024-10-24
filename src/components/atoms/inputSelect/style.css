@@ -1,7 +1,7 @@
 .dropdown-text-small .p-dropdown-label {
   font-size: 14px;
   display: flex;
-  padding: 0;
+  padding: 0 0 10px 10px;
   margin: 0;
 }
 

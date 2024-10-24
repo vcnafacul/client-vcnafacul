@@ -21,7 +21,8 @@ export interface FormFieldInput {
     | "option"
     | "textarea"
     | "date"
-    | "email";
+    | "email"
+    | "select";
   visibility?: boolean;
   disabled?: boolean;
   value?: string | number | readonly string[] | undefined;
