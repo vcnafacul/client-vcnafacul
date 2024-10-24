@@ -104,7 +104,8 @@ export function PartnerPrepInscriptionManager() {
           isLoading: false,
           autoClose: 3000,
         });
-        window.location.reload();
+        setOpenModalCreate(false);
+        fetchInscriptions();
       })
       .catch((e) => {
         toast.update(id, {
@@ -144,7 +145,7 @@ export function PartnerPrepInscriptionManager() {
           isLoading: false,
           autoClose: 3000,
         });
-        setEditSucess(true);
+        fetchInscriptions();
       })
       .catch((e) => {
         toast.update(id, {
@@ -189,10 +190,6 @@ export function PartnerPrepInscriptionManager() {
         isOpen={openModal}
         handleClose={() => {
           setOpenModal(false);
-          if (editSucess) {
-            window.location.reload();
-            setEditSucess(false);
-          }
         }}
         inscription={inscriptionSelected}
         handleEdit={handleEdit}
@@ -202,8 +199,9 @@ export function PartnerPrepInscriptionManager() {
     ) : null;
   };
 
-  useEffect(() => {
-    getAllInscription(token, 1, limitCards).then((res) => {
+  const fetchInscriptions = async () => {
+    try {
+      const res = await getAllInscription(token, 1, limitCards);
       setInscriptions(res.data);
       if (res.data.length > 0) {
         setPrepCourse({
@@ -211,7 +209,13 @@ export function PartnerPrepInscriptionManager() {
           prepCourseName: res.data[0].partnerPrepCourseName,
         });
       }
-    });
+    } catch (e) {
+      console.error("Erro ao buscar inscrições", e);
+    }
+  };
+
+  useEffect(() => {
+    fetchInscriptions();
   }, []);
 
   return (
