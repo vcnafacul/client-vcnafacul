@@ -134,7 +134,7 @@ export function PartnerPrepInscriptionStep2({
         defaultValue={currentData?.state}
         options={stateOptions as { value: string; label: string }[]}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onValueChange={(value: string) => setValue("state", value)}
+        onChange={(e: any) => setValue("state", e.value)}
       />
 
       <div className="flex flex-col sm:flex-row gap-4">
