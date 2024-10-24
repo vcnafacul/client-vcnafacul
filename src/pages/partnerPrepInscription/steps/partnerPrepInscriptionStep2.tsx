@@ -14,7 +14,7 @@ export function PartnerPrepInscriptionStep2({
   description,
   updateData,
   currentData,
-  handleBack
+  handleBack,
 }: EachStepProps) {
   const schema = yup
     .object()
@@ -69,7 +69,7 @@ export function PartnerPrepInscriptionStep2({
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
-      className="w-full flex flex-col gap-2 mt-8 mb-16"
+      className="w-full flex flex-col gap-4 md:gap-2 mt-8 mb-16"
     >
       <Text size="tertiary">{description}</Text>
       <InputFactory
@@ -138,8 +138,10 @@ export function PartnerPrepInscriptionStep2({
       />
 
       <div className="flex flex-col sm:flex-row gap-4">
-      <Button type="button" onClick={handleBack}>Voltar</Button>
-      <Button type="submit">Continuar</Button>
+        <Button type="button" onClick={handleBack}>
+          Voltar
+        </Button>
+        <Button type="submit">Continuar</Button>
       </div>
     </form>
   );

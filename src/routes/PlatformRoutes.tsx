@@ -1,3 +1,4 @@
+import { PartnerPrepInscriptionManager } from "@/pages/partnerPrepInscriptionManager";
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashTemplate from "../components/templates/dashTemplate";
 import { Roles } from "../enums/roles/roles";
@@ -105,6 +106,10 @@ export function PlatformRoutes() {
           </ProtectedRoute>
         }
       >
+        <Route
+          path={PARTNER_PREP_INSCRIPTION}
+          element={<PartnerPrepInscriptionManager />}
+        />
         <Route path={DASH} element={<Dash />} />
         <Route path={SIMULADO} element={<MainSimulate />} />
         <Route path={SIMULADO_HISTORIES} element={<SimulationHistories />} />

@@ -51,15 +51,15 @@ function DashCard({ card, size, opened, ...props }: DasCardProps) {
   
   return (
     appearsAdminDashcard && (
-      <>
-      <div {...props}
-        className={`${dashCard({ size })} ${card.bg} ${size !== 'small' && !opened ? 'mt-4 rounded-t-md' : 'mt-0'} cursor-pointer`}>
-        <Icon className={`select-none fill-white ${size !== 'small' ? 'w-16 h-16' : 'w-7 h-7'} ${transition}`} />
-        <div className={`select-none ${size !== 'small' ? 'flex justify-center w-full' : 'my-4'}`}>{card.title}</div>
-        <IoChevronUpCircleSharp size={20} className={`${size !== 'small' ? 'absolute right-4 bottom-4' : ''} ${opened ? 'rotate-180' : ''} ${transition}`} />
+      <div>
+        <div {...props}
+          className={`${dashCard({ size })} ${card.bg} ${size !== 'small' && !opened ? 'mt-4 rounded-t-md' : 'mt-0'} cursor-pointer`}>
+          <Icon className={`select-none fill-white ${size !== 'small' ? 'w-16 h-16' : 'w-7 h-7'} ${transition}`} />
+          <div className={`select-none ${size !== 'small' ? 'flex justify-center w-full' : 'my-4'}`}>{card.title}</div>
+          <IoChevronUpCircleSharp size={20} className={`${size !== 'small' ? 'absolute right-4 bottom-4' : ''} ${opened ? 'rotate-180' : ''} ${transition}`} />
+        </div>
+        {opened ? <SubMenuDash subDashCardInfo={card.subMenuList} /> : <></>}
       </div>
-      {opened ? <SubMenuDash subDashCardInfo={card.subMenuList} /> : <></>}
-    </>
     )
   )
 }

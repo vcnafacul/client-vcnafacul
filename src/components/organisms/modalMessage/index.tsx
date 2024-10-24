@@ -3,22 +3,18 @@ import Text from "../../atoms/text";
 import Button from "../../molecules/button";
 import ModalTemplate, { ModalProps } from "../../templates/modalTemplate";
 
-export interface ModalConfirmCancelProps extends ModalProps {
-  handleConfirm: (string?: string) => void;
-  confirmDisabled?: boolean;
+export interface ModalMessageProps extends ModalProps {
   text?: string;
   children?: React.ReactNode;
   isOpen: boolean;
 }
 
-function ModalConfirmCancel({
-  handleConfirm,
-  confirmDisabled,
+function ModalMessage({
   text,
   children,
   handleClose,
   isOpen,
-}: ModalConfirmCancelProps) {
+}: ModalMessageProps) {
   return (
     <ModalTemplate isOpen={isOpen} handleClose={handleClose!}>
       <div className="px-4 md:max-w-[700px] rounded-2xl flex flex-col gap-4">
@@ -28,23 +24,11 @@ function ModalConfirmCancel({
         {children}
         <div className="flex gap-2 justify-end">
           <Button
-            disabled={confirmDisabled ?? false}
-            size="small"
-            typeStyle="secondary"
-            hover
-            onClick={() => {
-              handleClose!();
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            disabled={confirmDisabled ?? false}
             size="small"
             typeStyle="primary"
             hover
             onClick={() => {
-              handleConfirm();
+              handleClose!();
             }}
           >
             Confirmar
@@ -55,4 +39,4 @@ function ModalConfirmCancel({
   );
 }
 
-export default ModalConfirmCancel;
+export default ModalMessage;

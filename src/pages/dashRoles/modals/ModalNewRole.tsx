@@ -33,6 +33,7 @@ function ModalNewRole({ handleNewRole, handleClose }: ModalNewRole) {
     uploadDemanda: false,
     validarDemanda: false,
     gerenciadorDemanda: false,
+    gerenciarInscricoesCursinhoParceiro: false,
   });
 
   const {

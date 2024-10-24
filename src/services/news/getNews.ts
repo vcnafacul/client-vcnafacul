@@ -4,8 +4,8 @@ import fetchWrapper from "../../utils/fetchWrapper";
 import { Paginate } from "../../utils/paginate";
 import { news } from "../urls";
 
-export async function getNews(page: number = 1, limit: number = 3): Promise<Paginate<News>>{
-    const res = await fetchWrapper(`${news}?page=${page}&limit=${limit}`, {
+export async function getNews(): Promise<Paginate<News>>{
+    const res = await fetchWrapper(news, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });
