@@ -6,7 +6,6 @@ export async function updateInscription(
   token: string,
   inscription: InscriptionOutput
 ): Promise<void> {
-  console.log(inscription);
   const response = await fetchWrapper(inscriptionCourse, {
     method: "PATCH",
     headers: {

@@ -60,7 +60,6 @@ export function PartnerPrepInscriptionStep3({
   }, []);
 
   function handleForm(data: LegalGuardianDTO) {
-    console.log(data);
     updateData!(data);
   }
   return (

@@ -67,7 +67,6 @@ export function InscriptionInfoCreateEditModal({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const resolver = (data: any) => {
-    console.log(data);
     onCreateEdit({ ...data, id: inscription?.id });
   };
 
