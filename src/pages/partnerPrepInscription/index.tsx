@@ -46,8 +46,6 @@ export function PartnerPrepInscription() {
     data: { token },
   } = useAuthStore();
   const navigate = useNavigate();
-
-  const [firstTime, setFirstTime] = useState<boolean>(true);
   const [stepCurrently, setStepCurrently] = useState<StepsInscriptionStudent>(
     StepsInscriptionStudent.Blank
   );
@@ -115,7 +113,11 @@ export function PartnerPrepInscription() {
         setStepCurrently(StepsInscriptionStudent.Success); // Redirect to success page
       })
       .catch((res) => {
-        toast.update(id, { render: res.message, type: "error", isLoading: false });
+        toast.update(id, {
+          render: res.message,
+          type: "error",
+          isLoading: false,
+        });
       });
   };
 
@@ -198,7 +200,7 @@ export function PartnerPrepInscription() {
       case StepsInscriptionStudent.Error:
         return (
           <div className="flex flex-col items-center gap-4">
-            <span className="text-lg text-center">{errorMessage}</span>;
+            <span className="text-lg text-center">{errorMessage}</span>
             <BLink to={DASH}>Página Inicial</BLink>
           </div>
         );
@@ -268,67 +270,48 @@ export function PartnerPrepInscription() {
       if (!hashPrepCourse) navigate("/");
       hasActiveInscription(hashPrepCourse as string, token)
         .then((res) => {
-          if (res.hasActiveInscription) {
-            setDataStudent({
-              ...dataStudent,
-              partnerPrepCourse: hashPrepCourse as string,
-            });
-            setStepCurrently(StepsInscriptionStudent.Presentation);
-          } else {
-            setStepCurrently(StepsInscriptionStudent.Error);
-            if (res.prepCourseName) {
-              setErrorMessage("Inscrições Fechadas");
-            } else {
-              setErrorMessage(
-                "O Cursinho selecionado não foi encontrado. Verifique os dados informados e tente novamente."
-              );
-            }
-          }
+          setDataStudent({
+            ...dataStudent,
+            partnerPrepCourse: hashPrepCourse as string,
+          });
           setPrepCourseName(
             res.prepCourseName.toUpperCase().includes("CURSINHO")
               ? res.prepCourseName
               : `Cursinho ${res.prepCourseName}`
           );
+
+          getUserInfo(hashPrepCourse as string, token)
+            .then((res) => {
+              setDataStudent({
+                ...dataStudent,
+                firstName: res.firstName,
+                lastName: res.lastName,
+                socialName: res.socialName,
+                whatsapp: res.phone,
+                birthday: new Date(res.birthday),
+                userId: res.id,
+                street: res.street || "",
+                number: res.number || 0,
+                complement: res.complement || "",
+                neighborhood: res.neighborhood || "",
+                postalCode: res.postalCode || "",
+                city: res.city,
+                state: res.state,
+                email: res.email,
+              });
+              setStepCurrently(StepsInscriptionStudent.Presentation);
+            })
+            .catch((res) => {
+              setStepCurrently(StepsInscriptionStudent.Error);
+              setErrorMessage(res.message);
+            });
         })
-        .catch(() => {
+        .catch((res) => {
           setStepCurrently(StepsInscriptionStudent.Error);
-          setErrorMessage(
-            "O Cursinho selecionado não foi encontrado. Verifique os dados informados e tente novamente."
-          );
+          setErrorMessage(res.message);
         });
     }
   }, []);
-
-  useEffect(() => {
-    if (firstTime && stepCurrently === 1) {
-      getUserInfo(hashPrepCourse as string, token)
-        .then((res) => {
-          setDataStudent({
-            ...dataStudent,
-            firstName: res.firstName,
-            lastName: res.lastName,
-            socialName: res.socialName,
-            whatsapp: res.phone,
-            birthday: new Date(res.birthday),
-            userId: res.id,
-            street: res.street || "",
-            number: res.number || 0,
-            complement: res.complement || "",
-            neighborhood: res.neighborhood || "",
-            postalCode: res.postalCode || "",
-            city: res.city,
-            state: res.state,
-            email: res.email,
-          });
-          setFirstTime(false);
-        })
-        .catch((res) => {
-          toast.error(res.message);
-          setStepCurrently(StepsInscriptionStudent.Error);
-        });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stepCurrently]);
 
   if (stepCurrently === StepsInscriptionStudent.Blank) return <></>;
 

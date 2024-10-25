@@ -38,8 +38,8 @@ export function InputFactory({
     case "select":
       inputElement = (
         <div
-          className="card flex justify-content-center h-16 pt-8 pl-2 border border-input rounded-md 
-      text-xs shadow-sm disabled:opacity-50"
+          className={`card flex justify-content-center h-16 pt-8 pl-2 border border-input rounded-md 
+      text-xs shadow-sm disabled:opacity-50 ${(props as DropdownProps).className}`}
         >
           <InputSelect {...(props as DropdownProps)} />
         </div>
@@ -59,8 +59,8 @@ export function InputFactory({
       inputElement = (
         <div className=" border p-2 w-full outline-orange rounded-md">
           <textarea
-            className="mt-4 w-full outline-orange rounded-md overflow-y-auto 
-        scrollbar-hide"
+            className="mt-4 w-full outline-none rounded-md overflow-y-auto 
+        scrollbar-hide resize-none"
             rows={10}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             {...(props as any)}

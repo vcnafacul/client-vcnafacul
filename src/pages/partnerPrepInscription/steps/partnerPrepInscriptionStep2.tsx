@@ -5,7 +5,7 @@ import { InputFactory } from "@/components/organisms/inputFactory";
 import { StudentInscriptionDTO } from "@/dtos/student/studentInscriptionDTO";
 import { stateOptions } from "@/pages/register/data";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { EachStepProps } from "..";
@@ -16,18 +16,40 @@ export function PartnerPrepInscriptionStep2({
   currentData,
   handleBack,
 }: EachStepProps) {
+  const applyCepMask = (value?: string) => {
+    // Remove tudo que não for número
+    value = value?.replace(/\D/g, "") || "";
+
+    // Aplica a máscara 99999-999
+    if (value.length > 5) {
+      value = value.replace(/^(\d{5})(\d{0,3}).*/, "$1-$2");
+    } else {
+      value = value.replace(/^(\d{0,5})/, "$1");
+    }
+
+    return value;
+  };
+
+  const [postalCode, setPostalCode] = useState<string>(
+    applyCepMask(currentData?.postalCode) || ""
+  );
+
   const schema = yup
     .object()
     .shape({
       postalCode: yup
         .string()
-        .default(currentData?.postalCode)
+        .default(postalCode)
         .required("Por favor, preencha o seu CEP"),
       street: yup
         .string()
         .default(currentData?.street)
         .required("Por favor, preencha o nome da sua rua"),
-      number: yup.number().default(currentData?.number),
+      number: yup
+        .number()
+        .default(currentData?.number)
+        .min(1, "Número inválido")
+        .required("Por favor, preencha o número da sua casa"),
       complement: yup.string().default(currentData?.complement),
       neighborhood: yup
         .string()
@@ -77,9 +99,13 @@ export function PartnerPrepInscriptionStep2({
         label="CEP*"
         type="text"
         error={errors.postalCode}
-        defaultValue={currentData?.postalCode}
+        value={postalCode}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("postalCode", e.target.value)}
+        onChange={(e: any) => {
+          const value = applyCepMask(e.target.value);
+          setPostalCode(value);
+          setValue("postalCode", value);
+        }}
       />
       <InputFactory
         id="street"
@@ -93,11 +119,13 @@ export function PartnerPrepInscriptionStep2({
       <InputFactory
         id="number"
         label="Número"
-        type="text"
+        type="number"
         defaultValue={currentData?.number}
         error={errors.number}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("number", e.target.value)}
+        onChange={(e: any) =>
+          setValue("number", e.target.value ? parseInt(e.target.value) : 0)
+        }
       />
       <InputFactory
         id="complement"

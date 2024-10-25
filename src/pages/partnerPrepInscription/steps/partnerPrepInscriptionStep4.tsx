@@ -107,7 +107,6 @@ export function PartnerPrepInscriptionStep4({
   const [hasDeficienciaInfo, setHasDeficienciaInfo] = useState<boolean>(true);
   const [hasFilhosInfo, setHasFilhosInfo] = useState<boolean>(false);
   const [liveAlone, setLiveAlone] = useState<boolean>(true);
-  const [howManyAdultsWork, setHowManyAdultsWork] = useState<string>("1");
   const [hasProfession, setHasProfession] = useState<boolean>(false);
   const [homeSituation, setHomeSituation] = useState<boolean>(false);
   const [housingSituation, setHousingSituation] = useState<boolean>(false);
@@ -144,9 +143,10 @@ export function PartnerPrepInscriptionStep4({
           yup.string().required("Por favor, preencha se está cursando"),
       }),
       inscrituicao: yup.string().when("curso_universitario", {
-        is: (value: string) => notfinishedSchool || value !== "Não",
-        then: () => yup.string().required("Por favor, preencha a instituição"),
-        otherwise: () => yup.string().notRequired(),
+        is: (value: string) => notfinishedSchool || value === "Não",
+        then: () => yup.string().notRequired(),
+        otherwise: () =>
+          yup.string().required("Por favor, preencha a instituição"),
       }),
       inscrituicao_input: yup.string().when("inscrituicao", {
         is: (value: string) => notfinishedSchool || value !== "Outra",
@@ -213,7 +213,12 @@ export function PartnerPrepInscriptionStep4({
         then: () => yup.string().required("Por favor, preencha a profissão"),
         otherwise: () => yup.string().notRequired(),
       }),
-      dependente: yup.string().required("Por favor, preencha se é dependente"),
+      dependente: yup.string().when("tem_emprego", {
+        is: (value: string) => value && value.includes("Sim"),
+        then: () =>
+          yup.string().required("Por favor, preencha se tem dependentes"),
+        otherwise: () => yup.string().notRequired(),
+      }),
       situacao_casa: yup
         .string()
         .required("Por favor, preencha a situação da casa"),
@@ -267,8 +272,8 @@ export function PartnerPrepInscriptionStep4({
       eletrodomesticos: yup.array().of(yup.string()),
       tv: yup.string(),
       pc: yup.string(),
-      tv_pago: yup.string().when("tv", {
-        is: (value: string) => value && !value.includes("Não possuo"),
+      tv_pago: yup.string().when([], {
+        is: () => hasTv,
         then: () => yup.string().required("Por favor, preencha se a TV é paga"),
         otherwise: () => yup.string().notRequired(),
       }),
@@ -587,6 +592,10 @@ export function PartnerPrepInscriptionStep4({
     (_, i) => new Date().getFullYear() + 2 - i
   ).map((year) => year.toString());
 
+  const hasErrors = Object.keys(errors).length > 0;
+  const errorFields = Object.keys(errors);
+  errorFields.map((field) => console.log(field, (errors as any)[field]));
+
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
@@ -606,6 +615,13 @@ export function PartnerPrepInscriptionStep4({
           checked={notfinishedSchool}
           onCheckedChange={(isCheck) => {
             setNotFinishedSchool(isCheck as boolean);
+            if (isCheck) {
+              setValue("ano_conclusao", undefined);
+              setValue("tipo_curso", undefined);
+              setValue("curso_universitario", undefined);
+              setValue("inscrituicao", undefined);
+              setValue("inscrituicao_input", undefined);
+            }
           }}
           className="h-4 w-4 flex justify-center items-center border-grey border-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-white data-[state=checked]:text-green2"
         />
@@ -613,72 +629,79 @@ export function PartnerPrepInscriptionStep4({
           Nunca conclui o ensino médio
         </label>
       </div>
-      <InputFactory
-        id="ano_conclusao"
-        label={anoConclusaoQuestion}
-        type="select"
-        error={errors.ano_conclusao}
-        // defaultValue={currentData?.legalGuardian?.fullName}
-        options={convertToOptions(opt_ano_conslusao)}
-        disabled={notfinishedSchool}
-        onChange={(e: any) => setValue("ano_conclusao", e.value)}
-      />
+      {!notfinishedSchool && (
+        <>
+          <InputFactory
+            id="ano_conclusao"
+            label={anoConclusaoQuestion}
+            type="select"
+            error={errors.ano_conclusao}
+            // defaultValue={currentData?.legalGuardian?.fullName}
+            options={convertToOptions(opt_ano_conslusao)}
+            disabled={notfinishedSchool}
+            onChange={(e: any) => setValue("ano_conclusao", e.value)}
+          />
 
-      <InputFactory
-        id="tipo_curso"
-        label={tipoCursoQuestion}
-        type="select"
-        error={errors.tipo_curso}
-        options={convertToOptions(tipoCursoOptions)}
-        disabled={notfinishedSchool}
-        onChange={(e: any) => setValue("tipo_curso", e.value)}
-      />
-      <InputFactory
-        id="curso_universitario"
-        label={cursoUniversitarioQuestion}
-        type="select"
-        error={errors.curso_universitario}
-        options={convertToOptions(cursoUniversitarioOptions)}
-        disabled={notfinishedSchool}
-        onChange={(e: any) => {
-          if (e.value === "Não") {
-            setAlreadyStartedCourse(false);
-          } else {
-            setAlreadyStartedCourse(true);
-          }
-          setValue("curso_universitario", e.value);
-        }}
-      />
-      {alreadyStartedCourse && (
-        <InputFactory
-          id="inscrituicao"
-          label={instituicoesQuestion}
-          type="select"
-          error={errors.inscrituicao}
-          options={convertToOptions(instituicoesOptions)}
-          disabled={notfinishedSchool}
-          onChange={(e: any) => {
-            if (e.value === "Outra") {
-              setCollegeInList(false);
-            } else {
-              setCollegeInList(true);
-            }
-            setValue("inscrituicao", e.value);
-          }}
-        />
+          <InputFactory
+            id="tipo_curso"
+            label={tipoCursoQuestion}
+            type="select"
+            error={errors.tipo_curso}
+            options={convertToOptions(tipoCursoOptions)}
+            disabled={notfinishedSchool}
+            onChange={(e: any) => setValue("tipo_curso", e.value)}
+          />
+          <InputFactory
+            id="curso_universitario"
+            label={cursoUniversitarioQuestion}
+            type="select"
+            error={errors.curso_universitario}
+            options={convertToOptions(cursoUniversitarioOptions)}
+            disabled={notfinishedSchool}
+            onChange={(e: any) => {
+              if (e.value === "Não") {
+                setAlreadyStartedCourse(false);
+              } else {
+                setAlreadyStartedCourse(true);
+              }
+              setValue("curso_universitario", e.value);
+            }}
+          />
+          {alreadyStartedCourse && (
+            <InputFactory
+              id="inscrituicao"
+              label={instituicoesQuestion}
+              type="select"
+              error={errors.inscrituicao}
+              options={convertToOptions(instituicoesOptions)}
+              disabled={notfinishedSchool}
+              onChange={(e: any) => {
+                if (e.value === "Outra") {
+                  setCollegeInList(false);
+                } else {
+                  setCollegeInList(true);
+                  setValue("inscrituicao_input", undefined);
+                }
+                setValue("inscrituicao", e.value);
+              }}
+            />
+          )}
+          {!collegeInList && (
+            <InputFactory
+              id="inscrituicao_input"
+              label={instituicoesQuestion}
+              disabled={notfinishedSchool}
+              type="text"
+              error={errors.inscrituicao_input}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onChange={(e: any) =>
+                setValue("inscrituicao_input", e.target.value)
+              }
+            />
+          )}
+        </>
       )}
 
-      {!collegeInList && (
-        <InputFactory
-          id="inscrituicao_input"
-          label={instituicoesQuestion}
-          disabled={notfinishedSchool}
-          type="text"
-          error={errors.inscrituicao_input}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("inscrituicao_input", e.target.value)}
-        />
-      )}
       <InputFactory
         id="raca"
         label={racaQuestion}
@@ -691,6 +714,7 @@ export function PartnerPrepInscriptionStep4({
             setHasRacaInfo(false);
           } else {
             setHasRacaInfo(true);
+            setValue("raca_input", undefined);
           }
           setValue("raca", e.value);
         }}
@@ -718,6 +742,7 @@ export function PartnerPrepInscriptionStep4({
             setHasEtinicoRacialInfo(false);
           } else {
             setHasEtinicoRacialInfo(true);
+            setValue("etnico_racial_input", undefined);
           }
           setValue("etnico_racial", e.value);
         }}
@@ -739,12 +764,14 @@ export function PartnerPrepInscriptionStep4({
         type="select"
         error={errors.deficiencia}
         options={convertToOptions(deficienciaOptions)}
+        className="h-20 pt-12"
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => {
           if (e.value && e.value.includes("Outros")) {
             setHasDeficienciaInfo(false);
           } else {
             setHasDeficienciaInfo(true);
+            setValue("deficiencia_input", undefined);
           }
           setValue("deficiencia", e.value);
         }}
@@ -778,6 +805,8 @@ export function PartnerPrepInscriptionStep4({
             setHasFilhosInfo(true);
           } else {
             setHasFilhosInfo(false);
+            setValue("filhos_quantidade", undefined);
+            setValue("filhos_residencia", undefined);
           }
           setValue("filhos", e.value);
         }}
@@ -812,6 +841,7 @@ export function PartnerPrepInscriptionStep4({
         onChange={(e: any) => {
           if (e.value === "1") {
             setLiveAlone(true);
+            setValue("adultos_resisdencia", undefined);
           } else {
             setLiveAlone(false);
           }
@@ -830,12 +860,12 @@ export function PartnerPrepInscriptionStep4({
       )}
       <InputFactory
         id="pessoas_emprego"
+        className="h-20 pt-12"
         label={pessoaEmpregoQuestion}
         type="select"
         error={errors.pessoas_emprego}
         options={convertToOptions(pessoaEmpregoOptions)}
         onChange={(e: any) => {
-          setHowManyAdultsWork(e.value);
           setValue("pessoas_emprego", e.value);
         }}
       />
@@ -844,11 +874,7 @@ export function PartnerPrepInscriptionStep4({
         label={empregoQuestion}
         type="select"
         error={errors.tem_emprego}
-        options={convertToOptions(
-          howManyAdultsWork.includes("1")
-            ? empregoOptions
-            : empregoOptions.concat("Não")
-        )}
+        options={convertToOptions(empregoOptions)}
         onChange={(e: any) => {
           if (e.value.includes("Sim")) {
             setHasProfession(true);
@@ -1007,6 +1033,7 @@ export function PartnerPrepInscriptionStep4({
             setHousingSituation(true);
           } else {
             setHousingSituation(false);
+            setValue("moradia_situacao_input", undefined);
           }
           setValue("moradia_situacao", e.value);
         }}
@@ -1025,6 +1052,7 @@ export function PartnerPrepInscriptionStep4({
       )}
       <InputFactory
         id="moradia_comodo"
+        className="h-20 pt-12"
         label={moradiaComodoQuestion}
         type="select"
         error={errors.moradia_comodo}
@@ -1064,6 +1092,7 @@ export function PartnerPrepInscriptionStep4({
             setHasTv(true);
           } else {
             setHasTv(false);
+            setValue("tv_pago", undefined);
           }
         }}
       />
@@ -1124,6 +1153,7 @@ export function PartnerPrepInscriptionStep4({
         onChange={(e: any) => {
           if (e.value.includes("Não")) {
             setHasInternetInfo(false);
+            setValue("internet_velocidade", undefined);
           } else {
             setHasInternetInfo(true);
           }
@@ -1133,6 +1163,7 @@ export function PartnerPrepInscriptionStep4({
       {hasInternetInfo && (
         <InputFactory
           id="internet_velocidade"
+          className="h-20 pt-12"
           label={internetVelocidadeQuestion}
           type="select"
           error={errors.internet_velocidade}
@@ -1152,6 +1183,7 @@ export function PartnerPrepInscriptionStep4({
         onChange={(e: any) => {
           if (e.value.includes("Não")) {
             setHasInternetPhoneInfo(false);
+            setValue("internet_celular_plano", undefined);
           } else {
             setHasInternetPhoneInfo(true);
           }
@@ -1161,6 +1193,7 @@ export function PartnerPrepInscriptionStep4({
       {hasInternetPhonerInfo && (
         <InputFactory
           id="internet_celular_plano"
+          className="h-20 pt-12"
           label={internetCelularPlanoQuestion}
           type="select"
           error={errors.internet_celular_plano}
@@ -1171,6 +1204,7 @@ export function PartnerPrepInscriptionStep4({
               setHasPhonePlanInfo(false);
             } else {
               setHasPhonePlanInfo(true);
+              setValue("internet_celular_plano_input", undefined);
             }
             setValue("internet_celular_plano", e.value);
           }}
@@ -1179,6 +1213,7 @@ export function PartnerPrepInscriptionStep4({
       {!hasPhonePlanInfo && (
         <InputFactory
           id="internet_celular_plano_input"
+          className="h-20 pt-12"
           label={internetCelularPlanoQuestion}
           type="text"
           error={errors.internet_celular_plano_input}
@@ -1190,6 +1225,7 @@ export function PartnerPrepInscriptionStep4({
       )}
       <InputFactory
         id="energia_eletrica"
+        className="h-20 pt-12"
         label={energiaEletricaQuestion}
         type="select"
         error={errors.energia_eletrica}
@@ -1199,6 +1235,7 @@ export function PartnerPrepInscriptionStep4({
       />
       <InputFactory
         id="agua_encanada"
+        className="h-20 pt-12"
         label={aguaQuestion}
         type="select"
         error={errors.agua_encanada}
@@ -1208,6 +1245,7 @@ export function PartnerPrepInscriptionStep4({
       />
       <InputFactory
         id="transporte"
+        className="h-20 pt-12"
         label={transporteQuestion}
         type="select"
         error={errors.transporte}
@@ -1218,6 +1256,7 @@ export function PartnerPrepInscriptionStep4({
             setHasTransportInfo(false);
           } else {
             setHasTransportInfo(true);
+            setValue("transporte_input", undefined);
           }
           setValue("transporte", e.value);
         }}
@@ -1231,6 +1270,11 @@ export function PartnerPrepInscriptionStep4({
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           onChange={(e: any) => setValue("transporte_input", e.target.value)}
         />
+      )}
+      {hasErrors && (
+        <p className="text-sm text-redError font-semibold text-end">
+          Por favor, preencha todos os campos obrigatórios
+        </p>
       )}
       <div className="flex flex-col sm:flex-row gap-4">
         <AlertDialogUI
