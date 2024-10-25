@@ -30,7 +30,7 @@ export async function getSubscribers(
       lastName: student.user.lastName,
       socialName: student.user.socialName,
       birthday: student.user.birthday,
-      gender: student.user.gender === 0 ? "Feminino" :  student.user.gender === 1 ? "Masculino" : "Outro",
+      gender: student.user.gender === 0 ? "Masculino" :  student.user.gender === 1 ? "Feminino" : "Outro",
       phone: student.user.phone,
       neighborhood: student.user.neighborhood,
       street: student.user.street,
