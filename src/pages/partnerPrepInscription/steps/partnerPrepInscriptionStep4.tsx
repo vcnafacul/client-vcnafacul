@@ -764,6 +764,7 @@ export function PartnerPrepInscriptionStep4({
         type="select"
         error={errors.deficiencia}
         options={convertToOptions(deficienciaOptions)}
+        className="h-20 pt-12"
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => {
           if (e.value && e.value.includes("Outros")) {
@@ -859,6 +860,7 @@ export function PartnerPrepInscriptionStep4({
       )}
       <InputFactory
         id="pessoas_emprego"
+        className="h-20 pt-12"
         label={pessoaEmpregoQuestion}
         type="select"
         error={errors.pessoas_emprego}
@@ -1050,6 +1052,7 @@ export function PartnerPrepInscriptionStep4({
       )}
       <InputFactory
         id="moradia_comodo"
+        className="h-20 pt-12"
         label={moradiaComodoQuestion}
         type="select"
         error={errors.moradia_comodo}
@@ -1160,6 +1163,7 @@ export function PartnerPrepInscriptionStep4({
       {hasInternetInfo && (
         <InputFactory
           id="internet_velocidade"
+          className="h-20 pt-12"
           label={internetVelocidadeQuestion}
           type="select"
           error={errors.internet_velocidade}
@@ -1189,6 +1193,7 @@ export function PartnerPrepInscriptionStep4({
       {hasInternetPhonerInfo && (
         <InputFactory
           id="internet_celular_plano"
+          className="h-20 pt-12"
           label={internetCelularPlanoQuestion}
           type="select"
           error={errors.internet_celular_plano}
@@ -1208,6 +1213,7 @@ export function PartnerPrepInscriptionStep4({
       {!hasPhonePlanInfo && (
         <InputFactory
           id="internet_celular_plano_input"
+          className="h-20 pt-12"
           label={internetCelularPlanoQuestion}
           type="text"
           error={errors.internet_celular_plano_input}
@@ -1219,6 +1225,7 @@ export function PartnerPrepInscriptionStep4({
       )}
       <InputFactory
         id="energia_eletrica"
+        className="h-20 pt-12"
         label={energiaEletricaQuestion}
         type="select"
         error={errors.energia_eletrica}
@@ -1228,6 +1235,7 @@ export function PartnerPrepInscriptionStep4({
       />
       <InputFactory
         id="agua_encanada"
+        className="h-20 pt-12"
         label={aguaQuestion}
         type="select"
         error={errors.agua_encanada}
@@ -1237,6 +1245,7 @@ export function PartnerPrepInscriptionStep4({
       />
       <InputFactory
         id="transporte"
+        className="h-20 pt-12"
         label={transporteQuestion}
         type="select"
         error={errors.transporte}
