@@ -46,8 +46,6 @@ export function PartnerPrepInscription() {
     data: { token },
   } = useAuthStore();
   const navigate = useNavigate();
-
-  const [firstTime, setFirstTime] = useState<boolean>(true);
   const [stepCurrently, setStepCurrently] = useState<StepsInscriptionStudent>(
     StepsInscriptionStudent.Blank
   );
@@ -301,7 +299,6 @@ export function PartnerPrepInscription() {
                 state: res.state,
                 email: res.email,
               });
-              setFirstTime(false);
               setStepCurrently(StepsInscriptionStudent.Presentation);
             })
             .catch((res) => {
