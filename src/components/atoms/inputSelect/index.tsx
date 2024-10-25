@@ -8,12 +8,12 @@ export interface InputSelectProps extends DropdownProps {
 }
 
 export function InputSelect({ ...props }: InputSelectProps) {
-  const [value, setValue] = useState<any>(null);
+  const [value, setValue] = useState<any>(props.defaultValue);
 
   const handleOnChange = (e: any) => {
     props.onChange!(e);
     setValue(e.value);
-  }
+  };
 
   return (
     <Dropdown
@@ -21,6 +21,7 @@ export function InputSelect({ ...props }: InputSelectProps) {
       optionLabel="label"
       optionValue="value"
       value={value}
+      defaultValue={value}
       onChange={handleOnChange}
       className="w-full flex ring-0 items-center 
       bg-transparent dropdown-text-small custom-dropdown"
