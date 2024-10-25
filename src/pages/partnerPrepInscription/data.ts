@@ -158,6 +158,7 @@ export const empregoOptions = [
   "Sim, eventualmente",
   "Sim, regularmente, em tempo parcial",
   "Sim, regularmente, em tempo integral",
+  "Não"
 ];
 
 export const profissaoQuestion =
