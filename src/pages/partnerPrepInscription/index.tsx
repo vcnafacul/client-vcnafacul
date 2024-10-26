@@ -256,6 +256,8 @@ export function PartnerPrepInscription() {
     }
   };
 
+  console.log("dataStudent", dataStudent);
+
   useEffect(() => {
     const element = document.getElementById("header");
     if (element) {
@@ -284,6 +286,7 @@ export function PartnerPrepInscription() {
             .then((res) => {
               setDataStudent({
                 ...dataStudent,
+                partnerPrepCourse: hashPrepCourse as string,
                 firstName: res.firstName,
                 lastName: res.lastName,
                 socialName: res.socialName,

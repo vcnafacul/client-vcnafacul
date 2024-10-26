@@ -137,8 +137,6 @@ export function InscriptionInfoModal({
             typeof socioItem.answer === "object"
               ? socioItem.answer.join(", ")
               : socioItem.answer;
-          console.log(question);
-          console.log(answer);
           flattenedItem[question] = flattenedItem[question]
             ? `${flattenedItem[question]}, ${answer}`
             : answer;
@@ -155,7 +153,6 @@ export function InscriptionInfoModal({
   const exportToExcel = () => {
     getSubscribers(token, inscriptionSelected!.id!).then((data) => {
       const flattenedData = flattenData(data, questions);
-      console.log(flattenedData);
 
       const worksheet = XLSX.utils.json_to_sheet(flattenedData);
 
@@ -169,7 +166,6 @@ export function InscriptionInfoModal({
     // Cria uma nova planilha a partir dos dados
   };
   const clipboard = () => {
-    console.log("clipboard");
     const linkPrepCourse = `${
       import.meta.env.VITE_APP_BASE_URL
     }/cursinho/inscricao/${data.id}`;

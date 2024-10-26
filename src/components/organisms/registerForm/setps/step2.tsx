@@ -4,6 +4,7 @@ import { optionsGender, stateOptions } from "@/pages/register/data";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import * as yup from "yup";
 import { StepProps } from "..";
 import { Gender } from "../../../../store/auth";
@@ -62,9 +63,26 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
   });
 
   const registerSubmit = (data: UseRegisterStep2) => {
-    onRegister({ ...dataUser, ...(data as UserRegister) }).then(() => {
-      next();
-    });
+    data.birthday = new Date(data.birthday).toISOString();
+    const id = toast.loading("Cadastrando ... ");
+    onRegister({ ...dataUser, ...(data as UserRegister) })
+      .then(() => {
+        toast.update(id, {
+          render: "Cadastro realizado com sucesso",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        next();
+      })
+      .catch((error: Error) => {
+        toast.update(id, {
+          render: error.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      });
   };
 
   useEffect(() => {
