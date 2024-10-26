@@ -46,8 +46,6 @@ export function PartnerPrepInscription() {
     data: { token },
   } = useAuthStore();
   const navigate = useNavigate();
-
-  const [firstTime, setFirstTime] = useState<boolean>(true);
   const [stepCurrently, setStepCurrently] = useState<StepsInscriptionStudent>(
     StepsInscriptionStudent.Blank
   );
@@ -55,7 +53,7 @@ export function PartnerPrepInscription() {
     {} as StudentInscriptionDTO
   );
   const [prepCourseName, setPrepCourseName] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("")
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const { hashPrepCourse } = useParams();
 
@@ -108,13 +106,18 @@ export function PartnerPrepInscription() {
   };
 
   const completeInscription = (data: SocioeconomicAnswer[]) => {
+    const id = toast.loading("Finalizando Inscrição ...");
     completeInscriptionStudent({ ...dataStudent, socioeconomic: data }, token)
       .then(() => {
-        toast.success("Inscrição realizada com sucesso!");
+        toast.dismiss(id);
         setStepCurrently(StepsInscriptionStudent.Success); // Redirect to success page
       })
       .catch((res) => {
-        toast.error(res.message);
+        toast.update(id, {
+          render: res.message,
+          type: "error",
+          isLoading: false,
+        });
       });
   };
 
@@ -161,7 +164,7 @@ export function PartnerPrepInscription() {
     {
       name: stepDescriptions.step3,
       status:
-        stepCurrently <  StepsInscriptionStudent.LegalGuardian
+        stepCurrently < StepsInscriptionStudent.LegalGuardian
           ? "upcoming"
           : stepCurrently == StepsInscriptionStudent.LegalGuardian
           ? "current"
@@ -197,7 +200,7 @@ export function PartnerPrepInscription() {
       case StepsInscriptionStudent.Error:
         return (
           <div className="flex flex-col items-center gap-4">
-            <span className="text-lg text-center">{errorMessage}</span>;
+            <span className="text-lg text-center">{errorMessage}</span>
             <BLink to={DASH}>Página Inicial</BLink>
           </div>
         );
@@ -205,7 +208,9 @@ export function PartnerPrepInscription() {
         return (
           <PartnerPrepInscriptionStep0
             description={textoParceria}
-            start={() => setStepCurrently(StepsInscriptionStudent.PersonalInformation)}
+            start={() =>
+              setStepCurrently(StepsInscriptionStudent.PersonalInformation)
+            }
           />
         );
       case StepsInscriptionStudent.PersonalInformation:
@@ -245,13 +250,13 @@ export function PartnerPrepInscription() {
           />
         );
       case StepsInscriptionStudent.Success:
-        return (
-          <PartnerPrepInscriptionStepSucess />
-        )
+        return <PartnerPrepInscriptionStepSucess />;
       default:
         return <Button onClick={backStep}>Voltar</Button>;
     }
   };
+
+  console.log("dataStudent", dataStudent);
 
   useEffect(() => {
     const element = document.getElementById("header");
@@ -264,65 +269,54 @@ export function PartnerPrepInscription() {
     if (!token) {
       setStepCurrently(StepsInscriptionStudent.Login);
     } else {
-      if (!hashPrepCourse ) navigate("/");
+      if (!hashPrepCourse) navigate("/");
       hasActiveInscription(hashPrepCourse as string, token)
         .then((res) => {
-          if (res.hasActiveInscription) {
-            setDataStudent({
-              ...dataStudent,
-              partnerPrepCourse: hashPrepCourse as string,
+          setDataStudent({
+            ...dataStudent,
+            partnerPrepCourse: hashPrepCourse as string,
+          });
+          setPrepCourseName(
+            res.prepCourseName.toUpperCase().includes("CURSINHO")
+              ? res.prepCourseName
+              : `Cursinho ${res.prepCourseName}`
+          );
+
+          getUserInfo(hashPrepCourse as string, token)
+            .then((res) => {
+              setDataStudent({
+                ...dataStudent,
+                partnerPrepCourse: hashPrepCourse as string,
+                firstName: res.firstName,
+                lastName: res.lastName,
+                socialName: res.socialName,
+                whatsapp: res.phone,
+                birthday: new Date(res.birthday),
+                userId: res.id,
+                street: res.street || "",
+                number: res.number || 0,
+                complement: res.complement || "",
+                neighborhood: res.neighborhood || "",
+                postalCode: res.postalCode || "",
+                city: res.city,
+                state: res.state,
+                email: res.email,
+              });
+              setStepCurrently(StepsInscriptionStudent.Presentation);
+            })
+            .catch((res) => {
+              setStepCurrently(StepsInscriptionStudent.Error);
+              setErrorMessage(res.message);
             });
-            setStepCurrently(StepsInscriptionStudent.Presentation);
-          } else {
-            setStepCurrently(StepsInscriptionStudent.Error);
-            if(res.prepCourseName) {
-              setErrorMessage("Inscrições Fechadas");
-            } else {
-              setErrorMessage("O Cursinho selecionado não foi encontrado. Verifique os dados informados e tente novamente.");
-            }
-            
-          }
-          setPrepCourseName(res.prepCourseName.toUpperCase().includes("CURSINHO") ? res.prepCourseName : `Cursinho ${res.prepCourseName}`);
         })
-        .catch(() => {
+        .catch((res) => {
           setStepCurrently(StepsInscriptionStudent.Error);
-          setErrorMessage("O Cursinho selecionado não foi encontrado. Verifique os dados informados e tente novamente.");
+          setErrorMessage(res.message);
         });
     }
   }, []);
 
-  useEffect(() => {
-    if (firstTime && stepCurrently === 1) {
-      getUserInfo(hashPrepCourse as string, token)
-        .then((res) => {
-          setDataStudent({
-            ...dataStudent,
-            firstName: res.firstName,
-            lastName: res.lastName,
-            socialName: res.socialName,
-            whatsapp: res.phone,
-            birthday: new Date(res.birthday),
-            userId: res.id,
-            street: res.street || "",
-            number: res.number || 0,
-            complement: res.complement || "",
-            neighborhood: res.neighborhood || "",
-            postalCode: res.postalCode || "",
-            city: res.city,
-            state: res.state,
-            email: res.email,
-          });
-          setFirstTime(false);
-        })
-        .catch((res) => {
-          toast.error(res.message);
-          setStepCurrently(StepsInscriptionStudent.Error);
-        });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stepCurrently]);
-
-  if(stepCurrently === StepsInscriptionStudent.Blank) return <></>;
+  if (stepCurrently === StepsInscriptionStudent.Blank) return <></>;
 
   return (
     <div className="fixed">
@@ -338,7 +332,9 @@ export function PartnerPrepInscription() {
             <Text>{`Formulário de Inscrição ${prepCourseName}`}</Text>
             <div
               className={`w-11/12 ${
-                stepCurrently === StepsInscriptionStudent.Presentation ? "max-w-6xl" : "sm:w-[500px]"
+                stepCurrently === StepsInscriptionStudent.Presentation
+                  ? "max-w-6xl"
+                  : "sm:w-[500px]"
               }`}
             >
               <StepCurrently step={stepCurrently} />

@@ -1,31 +1,30 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { SelectProps } from "@radix-ui/react-select";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Dropdown, DropdownProps } from "primereact/dropdown";
+import { useState } from "react";
+import "./style.css";
 
-export interface InputSelectProps extends SelectProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  options: { label: any; value: any }[];
+export interface InputSelectProps extends DropdownProps {
   className?: string;
 }
 
-export function InputSelect({ options, ...props }: InputSelectProps) {
+export function InputSelect({ ...props }: InputSelectProps) {
+  const [value, setValue] = useState<any>(props.defaultValue);
+
+  const handleOnChange = (e: any) => {
+    props.onChange!(e);
+    setValue(e.value);
+  };
+
   return (
-    <Select {...props}>
-      <SelectTrigger className={`h-16 pt-4 items-end ${props.className}`}>
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        {options.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
-            {option.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <Dropdown
+      {...props}
+      optionLabel="label"
+      optionValue="value"
+      value={value}
+      defaultValue={value}
+      onChange={handleOnChange}
+      className="w-full flex ring-0 items-center 
+      bg-transparent dropdown-text-small custom-dropdown"
+    />
   );
 }

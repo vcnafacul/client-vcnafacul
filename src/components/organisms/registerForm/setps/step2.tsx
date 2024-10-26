@@ -1,11 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import ControlCalendar from "@/components/atoms/controlCalendar";
+import { optionsGender, stateOptions } from "@/pages/register/data";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import * as yup from "yup";
 import { StepProps } from "..";
 import { Gender } from "../../../../store/auth";
 import { UserRegister } from "../../../../types/user/userRegister";
 import Button from "../../../molecules/button";
-import Form from "../../form";
+import { InputFactory } from "../../inputFactory";
 
 interface UseRegisterStep2 {
   firstName: string;
@@ -25,7 +30,7 @@ interface Step2Props extends StepProps {
   onRegister: (data: UserRegister) => Promise<void>;
 }
 
-function Step2({ formData, dataUser, next, back, onRegister }: Step2Props) {
+function Step2({ dataUser, next, back, onRegister }: Step2Props) {
   const schema = yup
     .object()
     .shape({
@@ -50,24 +55,96 @@ function Step2({ formData, dataUser, next, back, onRegister }: Step2Props) {
   const {
     register,
     handleSubmit,
+    setValue,
+    control,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
 
   const registerSubmit = (data: UseRegisterStep2) => {
-    onRegister({ ...dataUser, ...(data as UserRegister) }).then(() => {
-      next();
-    });
+    data.birthday = new Date(data.birthday).toISOString();
+    const id = toast.loading("Cadastrando ... ");
+    onRegister({ ...dataUser, ...(data as UserRegister) })
+      .then(() => {
+        toast.update(id, {
+          render: "Cadastro realizado com sucesso",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        next();
+      })
+      .catch((error: Error) => {
+        toast.update(id, {
+          render: error.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      });
   };
 
+  useEffect(() => {
+    register("firstName");
+    register("lastName");
+    register("phone");
+    register("gender");
+    register("birthday");
+    register("city");
+    register("state");
+    register("lgpd");
+  }, []);
+
   return (
-    <form onSubmit={handleSubmit(registerSubmit)} className="w-full">
-      <Form
-        className="flex flex-col gap-4"
-        register={register}
-        formFields={formData}
-        errors={errors}
+    <form
+      onSubmit={handleSubmit(registerSubmit)}
+      className="w-full flex flex-col gap-4"
+    >
+      <InputFactory
+        id="firstName"
+        label="Nome"
+        type="text"
+        error={errors.firstName}
+        onChange={(e: any) => setValue("firstName", e.target.value)}
+      />
+      <InputFactory
+        id="lastName"
+        label="SobreNome"
+        type="text"
+        error={errors.lastName}
+        onChange={(e: any) => setValue("lastName", e.target.value)}
+      />
+      <InputFactory
+        id="gender"
+        label="Genero"
+        type="select"
+        options={optionsGender}
+        error={errors.gender}
+        onChange={(e: any) => setValue("gender", e.target.value)}
+      />
+      <ControlCalendar control={control} label="Data de Nascimento" />
+      <InputFactory
+        id="phone"
+        label="Telefone"
+        type="text"
+        error={errors.phone}
+        onChange={(e: any) => setValue("phone", e.target.value)}
+      />
+      <InputFactory
+        id="city"
+        label="Cidade"
+        type="text"
+        error={errors.city}
+        onChange={(e: any) => setValue("city", e.target.value)}
+      />
+      <InputFactory
+        id="state"
+        label="Estado"
+        type="select"
+        options={stateOptions}
+        error={errors.state}
+        onChange={(e: any) => setValue("state", e.target.value)}
       />
       <div className="flex w-full gap-2 justify-center my-2">
         <input type="checkbox" {...register("lgpd")} />

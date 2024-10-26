@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Button from "@/components/molecules/button";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import ModalTemplate from "@/components/templates/modalTemplate";
@@ -66,7 +67,6 @@ export function InscriptionInfoCreateEditModal({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const resolver = (data: any) => {
-    console.log(data);
     onCreateEdit({ ...data, id: inscription?.id });
   };
 
@@ -94,7 +94,7 @@ export function InscriptionInfoCreateEditModal({
               type="text"
               defaultValue={inscription?.name}
               error={errors.name}
-              onChange={(e) => setValue("name", e.target.value)}
+              onChange={(e: any) => setValue("name", e.target.value)}
             />
           </div>
           <div className="card flex justify-content-center h-16 border pt-4 pl-4 rounded-md relative mb-4  row-start-3 col-start-1">
@@ -137,7 +137,7 @@ export function InscriptionInfoCreateEditModal({
               type="number"
               defaultValue={inscription?.openingsCount}
               error={errors.openingsCount}
-              onChange={(e) =>
+              onChange={(e: any) =>
                 setValue("openingsCount", parseInt(e.target.value))
               }
             />
@@ -148,7 +148,7 @@ export function InscriptionInfoCreateEditModal({
               label="Descrição"
               type="textarea"
               defaultValue={inscription?.description}
-              onChange={(e) => setValue("description", e.target.value)}
+              onChange={(e: any) => setValue("description", e.target.value)}
             />
           </div>
           <div className="flex gap-4 justify-end col-span-2">

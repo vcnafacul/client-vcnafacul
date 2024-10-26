@@ -94,15 +94,20 @@ manage_containers_images() {
     docker rmi -f vcnafacul/web vcnafacul/api vcnafacul/simulado
 
     echo "Buildando nova imagem e subindo containers..."
-    docker-compose up
+    
+    # Verifica se o docker-compose existe, se não usa docker compose
+    if command -v docker-compose &> /dev/null
+    then
+        docker-compose up -d
+    else
+        docker compose up -d
+    fi
 }
 
 # Checando o sistema operacional e agindo conforme necessário
 check_os
 
-# Gerenciando containers e imagens (se não for Windows)
-if [[ "$OSTYPE" != "win32" && "$OSTYPE" != "msys" && "$OSTYPE" != "cygwin" ]]; then
-    manage_containers_images
-fi
+manage_containers_images
+
 
 echo "Script concluído."

@@ -1,0 +1,42 @@
+.dropdown-text-small .p-dropdown-label {
+  font-size: 14px;
+  display: flex;
+  padding: 0 0 10px 10px;
+  margin: 0;
+}
+
+.p-dropdown-item {
+  white-space: normal; /* Permite que o texto faça wrap */
+  word-break: break-word; /* Quebra palavras longas */
+  display: block; /* Garante que o texto ocupe o espaço completo */
+  overflow-wrap: break-word; /* Adicional para garantir que longas palavras quebrem */
+  max-width: 100%; /* Garante que o item respeite a largura do dropdown */
+  padding: 10px;
+}
+
+/* Largura padrão para telas grandes */
+.p-dropdown-panel {
+  width: 500px;
+}
+
+/* Para telas médias (ex: tablets) */
+@media (max-width: 1024px) {
+  .p-dropdown-panel {
+    width: 400px;
+  }
+}
+
+/* Para telas pequenas (ex: smartphones em modo paisagem) */
+@media (max-width: 768px) {
+  .p-dropdown-panel {
+    width: 300px;
+  }
+}
+
+/* Para telas muito pequenas (ex: smartphones em modo retrato) */
+@media (max-width: 480px) {
+  .p-dropdown-panel {
+    width: 100%; /* O dropdown ocupará toda a largura disponível da tela */
+    max-width: 95%; /* Define uma largura máxima de 95% da tela para evitar que fique muito próximo das bordas */
+  }
+}

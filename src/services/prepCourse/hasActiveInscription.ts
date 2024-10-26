@@ -19,10 +19,11 @@ export async function hasActiveInscription(
   });
 
   const res = await response.json();
-  if (response.status !== 201) {
+  if (response.status !== 200) {
     if (response.status >= 400) {
       throw res;
     }
+    throw new Error("An error occurred");
   }
   return res as HasActiveInscriptionResponse;
 }

@@ -60,7 +60,6 @@ export function PartnerPrepInscriptionStep3({
   }, []);
 
   function handleForm(data: LegalGuardianDTO) {
-    console.log(data);
     updateData!(data);
   }
   return (
@@ -116,7 +115,7 @@ export function PartnerPrepInscriptionStep3({
             defaultValue={currentData?.legalGuardian?.uf}
             error={errors.uf}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            onValueChange={(value: string) => setValue("uf", value)}
+            onChange={(e: any) => setValue("uf", e.value)}
           />
         </div>
       </div>
