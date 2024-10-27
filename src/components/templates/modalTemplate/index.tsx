@@ -33,7 +33,7 @@ function ModalTemplate({
         scrollbar-hide"
       {...props}
     >
-      <div className="w-full h-full flex  justify-center items-center p-4">
+      <div className="w-full h-full flex justify-center items-center p-1">
         {outSideClose ? (
           <OutsideClickHandler
             onOutsideClick={() => {
@@ -50,14 +50,14 @@ function ModalTemplate({
                       tab.label === tabs[indexTabSelect!].label
                         ? "bg-white"
                         : "bg-lightGray"
-                    } px-4 py-1 cursor-pointer text-marine font-black`}
+                    } px-4 py-0 cursor-pointer text-marine font-black`}
                   >
                     {tab.label}
                   </div>
                 ))}
               </div>
             ) : null}
-            <div className="p-8 relative flex flex-col w-fit bg-white rounded-r-md rounded-b-md p-2">
+            <div className="p-4 relative flex flex-col w-fit bg-white rounded-r-md rounded-b-md">
               <IoMdClose
                 onClick={handleClose}
                 className="self-end md:mt-0 cursor-pointer w-5 h-5"

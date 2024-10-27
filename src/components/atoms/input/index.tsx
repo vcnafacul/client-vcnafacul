@@ -69,7 +69,7 @@ function Input({
           erro,
           size,
           className,
-        })} min-h-[250px] overflow-y-auto scrollbar-hide`}
+        })} min-h-[200px] overflow-y-auto scrollbar-hide`}
         defaultValue={defaultValue}
         disabled={props.disabled}
       />
