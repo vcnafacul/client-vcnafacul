@@ -545,7 +545,7 @@ export function PartnerPrepInscriptionStep4({
       });
     }
     answers.push({ question: internetQuestion, answer: data.internet });
-    if (!hasInternetInfo) {
+    if (hasInternetInfo) {
       answers.push({
         question: internetVelocidadeQuestion,
         answer: data.internet_velocidade,
