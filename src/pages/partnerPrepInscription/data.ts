@@ -212,7 +212,7 @@ export const paiOuResposavelProfissaoQuestion =
   "Profissão atual do seu pai ou responsável";
 
 export const paiOuResposavelProfissaoVidaQuestion =
-  "Profissão que o pai ou responsável exerceu a maior parte da vida*;
+  "Profissão que o pai ou responsável exerceu a maior parte da vida";
 
 export const rendaFamiliarQuestion =
   "Qual é o valor aproximado da soma da renda de todas as pessoas da família?*";
