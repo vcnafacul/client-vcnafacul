@@ -146,13 +146,19 @@ export function InscriptionInfoModal({
       // Remover o campo "socioeconomic" original se não quiser mantê-lo
       delete flattenedItem.socioeconomic;
 
-      return flattenedItem;
+      return flattenedItem as StudentCourseFull;
     });
   };
 
   const exportToExcel = () => {
     getSubscribers(token, inscriptionSelected!.id!).then((data) => {
       const flattenedData = flattenData(data, questions);
+
+      flattenedData.sort((a, b) => {
+        if (a.createdAt < b.createdAt) return -1;
+        if (a.createdAt > b.createdAt) return 1;
+        return 0;
+      });
 
       const worksheet = XLSX.utils.json_to_sheet(flattenedData);
 

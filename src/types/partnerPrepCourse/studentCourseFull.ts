@@ -27,7 +27,7 @@ export interface StudentCourseFullDTO {
 }
 
 export interface StudentCourseFull {
-  createdAt: string;
+  createdAt: Date;
   email: string;
   cpf: string;
   rg: string;

@@ -19,7 +19,7 @@ export async function getSubscribers(
   if (response.status === 200) {
     const data: StudentCourseFullDTO[] = await response.json();
     return data.map((student) => ({
-      createdAt: student.createdAt,
+      createdAt: new Date(student.createdAt),
       email: student.email,
       cpf: student.cpf,
       rg: student.rg,
