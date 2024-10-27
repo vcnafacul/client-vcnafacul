@@ -12,20 +12,22 @@ import { InputProps } from "@/components/ui/input";
 import { CheckboxProps } from "@radix-ui/react-checkbox";
 import { DropdownProps } from "primereact/dropdown";
 
+export type InputFactoryType =
+  | "text"
+  | "email"
+  | "password"
+  | "checkbox"
+  | "select"
+  | "date"
+  | "textarea"
+  | "number";
+
 type InputFactoryProps = (
   | InputCheckBoxProps
   | InputProps
   | InputSelectProps
 ) & {
-  type:
-    | "text"
-    | "email"
-    | "password"
-    | "checkbox"
-    | "select"
-    | "date"
-    | "textarea"
-    | "number";
+  type: InputFactoryType;
 } & BaseLayoutInputPros;
 export function InputFactory({
   label,
@@ -39,7 +41,9 @@ export function InputFactory({
       inputElement = (
         <div
           className={`card flex justify-content-center h-16 pt-8 pl-2 border border-input rounded-md 
-      text-xs shadow-sm disabled:opacity-50 ${(props as DropdownProps).className}`}
+      text-xs shadow-sm disabled:opacity-50 ${
+        (props as DropdownProps).className
+      }`}
         >
           <InputSelect {...(props as DropdownProps)} />
         </div>
