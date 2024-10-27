@@ -1,3 +1,4 @@
+import { ModalTabsTemplate } from "@/components/templates/modalTabsTemplate/index.tsx";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FilterProps } from "../../components/atoms/filter";
@@ -21,8 +22,8 @@ import { InfoQuestion } from "../../types/question/infoQuestion";
 import { formatDate } from "../../utils/date";
 import { Paginate } from "../../utils/paginate";
 import { dashQuest } from "./data";
+import ModalCreateEdit from "./modals/modalCreateEdit.tsx";
 import ModalDetalhes from "./modals/modalDetalhes";
-import ModalHistorico from "./modals/modalHistorico";
 
 function DashQuestion() {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -159,11 +160,13 @@ function DashQuestion() {
         materia,
         frente,
         prova,
-        enemArea,
+        enemArea
       )
         .then((res) => {
           setQuestions(res.data);
           setTotalItems(res.totalItems);
+          setQuestionSelect(res.data[0]);
+          setOpenModalEdit(true);
         })
         .catch((erro: Error) => {
           toast.error(erro.message);
@@ -184,42 +187,32 @@ function DashQuestion() {
   }, [token]);
 
   const ModalEdit = () => {
-    return (
-      <ModalTabTemplate
-        isOpen={openModalEdit}
+    return !openModalEdit ? null : (
+      <ModalTabsTemplate
         tabs={[
           {
             label: "Detalhes",
             children: (
-              <ModalDetalhes
-                question={questionSelect!}
-                infos={infosQuestion}
-                handleClose={() => {
-                  setOpenModalEdit(false);
-                }}
-                handleUpdateQuestionStatus={handleUpdateQuestionStatus}
-                handleUpdateQuestion={handleUpdateQuestion}
-                handleAddQuestion={handleAddQuestion}
-                handleRemoveQuestion={handleRemoveQuestion}
-              />
+              <div className="md:w-[90vw] h-[760px] px-4 py-2 bg-white rounded-md">
+                <ModalCreateEdit
+                  question={questionSelect!}
+                  infos={infosQuestion}
+                  handleClose={() => {
+                    setOpenModalEdit(false);
+                  }}
+                  handleUpdateQuestionStatus={handleUpdateQuestionStatus}
+                  handleUpdateQuestion={handleUpdateQuestion}
+                  handleAddQuestion={handleAddQuestion}
+                  handleRemoveQuestion={handleRemoveQuestion}
+                />
+              </div>
             ),
-            handleClose: () => {
-              setOpenModalEdit(false);
-            },
           },
           {
             label: "Historico",
             children: (
-              <ModalHistorico
-                handleClose={() => {
-                  setOpenModalEdit(false);
-                }}
-                id={questionSelect?._id ?? ""}
-              />
+              <div className="w-[90vw] h-[760px] bg-white rounded-md"></div>
             ),
-            handleClose: () => {
-              setOpenModalEdit(false);
-            },
           },
         ]}
       />
@@ -265,7 +258,7 @@ function DashQuestion() {
       materia,
       frente,
       prova,
-      enemArea,
+      enemArea
     );
   };
 
@@ -366,7 +359,7 @@ function DashQuestion() {
         filterProps,
         selectFiltes,
         buttons,
-        totalItems
+        totalItems,
       }}
     >
       <DashCardTemplate />

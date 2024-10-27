@@ -14,15 +14,24 @@ interface ModalTabTemplateProps {
 function ModalTabTemplate({ tabs, isOpen }: ModalTabTemplateProps) {
   const [indexTabSelect, setIndexTabSelect] = useState<number>(0);
 
-  return <div>
-    <ModalTemplate handleClose={tabs[indexTabSelect].handleClose!} outSideClose isOpen={isOpen} tabs={tabs} indexTabSelect={indexTabSelect} setIndexTabSelect={setIndexTabSelect}>
-    <div className="relative min-h-screen md:min-h-[90vh] w-screen md:w-fit">
-        <div className="bg-white max-w-7xl min-w-[90vw] md:min-w-[1000px] max-h-[90vh] p-4 top-7 overflow-y-auto scrollbar-hide">
+  return (
+    <div>
+      <ModalTemplate
+        handleClose={tabs[indexTabSelect].handleClose!}
+        outSideClose
+        isOpen={isOpen}
+        tabs={tabs}
+        indexTabSelect={indexTabSelect}
+        setIndexTabSelect={setIndexTabSelect}
+      >
+        <div className="relative bg-red min-h-screen md:min-h-[90vh] w-screen md:w-fit">
+          <div className="bg-white max-w-7xl min-w-[90vw] md:min-w-[1000px] max-h-[90vh] p-4 top-7 overflow-y-auto scrollbar-hide">
             {tabs[indexTabSelect].children}
+          </div>
         </div>
+      </ModalTemplate>
     </div>
-  </ModalTemplate>
-  </div>
+  );
 }
 
 export default ModalTabTemplate;

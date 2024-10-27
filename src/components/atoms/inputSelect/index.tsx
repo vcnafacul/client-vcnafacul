@@ -12,6 +12,7 @@ export function InputSelect({ ...props }: InputSelectProps) {
 
   const handleOnChange = (e: any) => {
     props.onChange!(e);
+    console.log(e.value);
     setValue(e.value);
   };
 
