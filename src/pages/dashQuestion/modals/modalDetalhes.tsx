@@ -234,14 +234,14 @@ function ModalDetalhes({
       id: "ano",
       type: "number",
       label: "Ano:*",
-      value: infos.provas.find((p) => p._id === prova ?? question?.prova)?.ano,
+      defaultValue: infos.provas.find((p) => p._id === prova ?? question?.prova)?.ano,
       disabled: true,
     },
     {
       id: "edicao",
       type: "text",
       label: "Edição:*",
-      value: infos.provas.find((p) => p._id === prova ?? question?.prova)
+      defaultValue: infos.provas.find((p) => p._id === prova ?? question?.prova)
         ?.edicao,
       disabled: true,
     },
@@ -711,8 +711,8 @@ function ModalDetalhes({
             className="flex w-full justify-center gap-4 items-center"
             size="tertiary"
           >
-            Informação do Cursinho{" "}
             {!question ? <></> : getStatusIcon(question.status)}
+            Classificação
           </Text>
           <Form
             className="grid grid-cols-1 gap-y-1 mb-1"
