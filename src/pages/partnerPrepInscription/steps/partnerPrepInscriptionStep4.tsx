@@ -626,7 +626,7 @@ export function PartnerPrepInscriptionStep4({
           className="h-4 w-4 flex justify-center items-center border-grey border-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-white data-[state=checked]:text-green2"
         />
         <label className="text-sm text-grey">
-          Nunca conclui o ensino médio
+          Parei os estudos e ainda não conclui o ensino médio
         </label>
       </div>
       {!notfinishedSchool && (
