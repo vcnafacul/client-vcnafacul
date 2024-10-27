@@ -51,7 +51,7 @@ function RegisterForm({ title, titleSuccess, onRegister }: Props) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full min-h-[calc(100vh-88px)] mb-3 px-4 mx-auto py-10">
+    <div className="flex flex-col items-center justify-start w-full min-h-[calc(100vh-88px)] mb-3 px-4 mx-auto py-10">
       <div className="mt-10 max-w-[500px] flex flex-col items-center w-full gap-y-4">
         {step < 3 ? (
           <Text size="secondary">{title}</Text>
