@@ -510,14 +510,15 @@ export function PartnerPrepInscriptionStep4({
     } else {
       answers.push({ question: rendaSoloQuestion, answer: data.renda_solo });
     }
-    answers.push({
-      question: moradiaSituacaoQuestion,
-      answer: data.moradia_situacao,
-    });
     if (housingSituation) {
       answers.push({
         question: moradiaSituacaoQuestion,
         answer: data.moradia_situacao_input,
+      });
+    } else {
+      answers.push({
+        question: moradiaSituacaoQuestion,
+        answer: data.moradia_situacao,
       });
     }
     answers.push({
