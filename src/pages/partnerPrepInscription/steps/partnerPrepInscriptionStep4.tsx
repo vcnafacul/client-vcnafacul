@@ -880,6 +880,8 @@ export function PartnerPrepInscriptionStep4({
             setHasProfession(true);
           } else {
             setHasProfession(false);
+            setValue("profissao", undefined);
+            setValue("dependente", undefined);
           }
           setValue("tem_emprego", e.value);
         }}
