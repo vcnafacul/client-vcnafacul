@@ -3,8 +3,9 @@ import Button from "@/components/molecules/button";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { LegalGuardianDTO } from "@/dtos/student/studentInscriptionDTO";
 import { stateOptions } from "@/pages/register/data";
+import { phoneMask } from "@/utils/phoneMask";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { validateCPF } from "validations-br";
 import * as yup from "yup";
@@ -16,6 +17,10 @@ export function PartnerPrepInscriptionStep3({
   currentData,
   handleBack,
 }: EachStepProps) {
+  const [phone, setPhone] = useState<string>(
+    phoneMask(currentData?.urgencyPhone) || ""
+  );
+
   const schema = yup
     .object()
     .shape({
@@ -25,7 +30,7 @@ export function PartnerPrepInscriptionStep3({
         .required("Por favor, preencha o nome do seu responsável"),
       phone: yup
         .string()
-        .default(currentData?.legalGuardian?.phone)
+        .default(phoneMask(currentData?.legalGuardian?.phone))
         .required("Por favor, preencha o telefone do seu responsável"),
       rg: yup
         .string()
@@ -90,9 +95,13 @@ export function PartnerPrepInscriptionStep3({
         label="Telefone do Responsável*"
         type="text"
         error={errors.phone}
-        defaultValue={currentData?.legalGuardian?.phone}
+        defaultValue={phone}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("phone", e.target.value)}
+        onChange={(e: any) => {
+          const value = phoneMask(e.target.value);
+          setPhone(value);
+          setValue("phone", value);
+        }}
       />
       <div className="flex gap-4">
         <div className="flex-1">
