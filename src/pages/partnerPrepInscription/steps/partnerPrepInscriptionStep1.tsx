@@ -10,6 +10,7 @@ import { addLocale } from "primereact/api";
 import { Calendar } from "primereact/calendar";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { validateCPF } from "validations-br";
 import * as yup from "yup";
 import { EachStepProps } from "..";
 import { ptBr } from "../data";
@@ -88,7 +89,8 @@ export function PartnerPrepInscriptionStep1({
         .string()
         .default(currentData?.cpf)
         .required("Por favor, preencha o seu CPF")
-        .matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF inválido"),
+        .matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF inválido")
+        .test("cpf", "CPF inválido", (value) => validateCPF(value)),
     })
     .required();
 

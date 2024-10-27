@@ -6,6 +6,7 @@ import { stateOptions } from "@/pages/register/data";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { validateCPF } from "validations-br";
 import * as yup from "yup";
 import { EachStepProps } from "..";
 
@@ -37,7 +38,14 @@ export function PartnerPrepInscriptionStep3({
       cpf: yup
         .string()
         .default(currentData?.legalGuardian?.cpf)
-        .required("Por favor, preencha o cpf do seu responsável"),
+        .required("Por favor, preencha o cpf do seu responsável")
+        .matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF inválido")
+        .test("cpf", "CPF inválido", (value) => validateCPF(value || ""))
+        .test(
+          "cpf",
+          "O CPF do representante legal deve ser diferente do seu CPF",
+          (value) => value !== currentData?.cpf
+        ), // eslint-disable-line
     })
     .required();
 
