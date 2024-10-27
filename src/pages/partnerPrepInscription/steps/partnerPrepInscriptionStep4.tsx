@@ -461,7 +461,7 @@ export function PartnerPrepInscriptionStep4({
       question: pessoaEmpregoQuestion,
       answer: data.pessoas_emprego,
     });
-    answers.push({ question: empregoQuestion, answer: data.profissao });
+    answers.push({ question: empregoQuestion, answer: data.tem_emprego });
     if (hasProfession) {
       answers.push({ question: profissaoQuestion, answer: data.profissao });
       answers.push({ question: dependenteQuestion, answer: data.dependente });
