@@ -461,7 +461,7 @@ export function PartnerPrepInscriptionStep4({
       question: pessoaEmpregoQuestion,
       answer: data.pessoas_emprego,
     });
-    answers.push({ question: empregoQuestion, answer: data.profissao });
+    answers.push({ question: empregoQuestion, answer: data.tem_emprego });
     if (hasProfession) {
       answers.push({ question: profissaoQuestion, answer: data.profissao });
       answers.push({ question: dependenteQuestion, answer: data.dependente });
@@ -510,14 +510,15 @@ export function PartnerPrepInscriptionStep4({
     } else {
       answers.push({ question: rendaSoloQuestion, answer: data.renda_solo });
     }
-    answers.push({
-      question: moradiaSituacaoQuestion,
-      answer: data.moradia_situacao,
-    });
     if (housingSituation) {
       answers.push({
         question: moradiaSituacaoQuestion,
         answer: data.moradia_situacao_input,
+      });
+    } else {
+      answers.push({
+        question: moradiaSituacaoQuestion,
+        answer: data.moradia_situacao,
       });
     }
     answers.push({
@@ -545,7 +546,7 @@ export function PartnerPrepInscriptionStep4({
       });
     }
     answers.push({ question: internetQuestion, answer: data.internet });
-    if (!hasInternetInfo) {
+    if (hasInternetInfo) {
       answers.push({
         question: internetVelocidadeQuestion,
         answer: data.internet_velocidade,
@@ -626,7 +627,7 @@ export function PartnerPrepInscriptionStep4({
           className="h-4 w-4 flex justify-center items-center border-grey border-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-white data-[state=checked]:text-green2"
         />
         <label className="text-sm text-grey">
-          Nunca conclui o ensino médio
+          Parei os estudos e ainda não conclui o ensino médio
         </label>
       </div>
       {!notfinishedSchool && (
@@ -880,6 +881,8 @@ export function PartnerPrepInscriptionStep4({
             setHasProfession(true);
           } else {
             setHasProfession(false);
+            setValue("profissao", undefined);
+            setValue("dependente", undefined);
           }
           setValue("tem_emprego", e.value);
         }}
@@ -1094,6 +1097,7 @@ export function PartnerPrepInscriptionStep4({
             setHasTv(false);
             setValue("tv_pago", undefined);
           }
+          setValue("tv", e.value);
         }}
       />
       {hasTv && (

@@ -58,11 +58,12 @@ function DashGeo() {
         return geo;
       })
     );
+    setGeoSelect(geolocation);
   };
 
   const ModalEdit = () => {
     return (
-      <ModalTemplate handleClose={handleCloseModalEdit} outSideClose isOpen={openModal}>
+      <ModalTemplate handleClose={handleCloseModalEdit} isOpen={openModal}>
         <ModalEditDashGeo
         geo={geoSelect!}
         updateStatus={updateStatus}

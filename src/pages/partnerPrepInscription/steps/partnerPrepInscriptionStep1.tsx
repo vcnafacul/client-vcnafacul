@@ -5,11 +5,13 @@ import Button from "@/components/molecules/button";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { StudentInscriptionDTO } from "@/dtos/student/studentInscriptionDTO";
 import { stateOptions } from "@/pages/register/data";
+import { phoneMask } from "@/utils/phoneMask";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { addLocale } from "primereact/api";
 import { Calendar } from "primereact/calendar";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { validateCPF } from "validations-br";
 import * as yup from "yup";
 import { EachStepProps } from "..";
 import { ptBr } from "../data";
@@ -23,27 +25,11 @@ export function PartnerPrepInscriptionStep1({
 }: EachStepProps) {
   const [cpf, setCPF] = useState<string>(currentData?.cpf || "");
 
-  const applyPhoneMask = (value?: string) => {
-    // Remove tudo que não for número
-    value = value?.replace(/\D/g, "") || "";
-
-    // Aplica a máscara (99) 99999-9999
-    if (value.length > 10) {
-      value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
-    } else if (value.length > 5) {
-      value = value.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
-    } else if (value.length > 2) {
-      value = value.replace(/^(\d{2})(\d{0,5})/, "($1) $2");
-    } else {
-      value = value.replace(/^(\d*)/, "($1");
-    }
-    return value;
-  };
   const [whatsapp, setWhatsapp] = useState<string>(
-    applyPhoneMask(currentData?.whatsapp) || ""
+    phoneMask(currentData?.whatsapp) || ""
   );
   const [phone, setPhone] = useState<string>(
-    applyPhoneMask(currentData?.urgencyPhone) || ""
+    phoneMask(currentData?.urgencyPhone) || ""
   );
 
   const schema = yup
@@ -65,14 +51,17 @@ export function PartnerPrepInscriptionStep1({
         .required("Por favor, preencha o seu email"),
       whatsapp: yup
         .string()
-        .default(applyPhoneMask(currentData?.whatsapp))
+        .default(phoneMask(currentData?.whatsapp))
         .required("Por favor, preencha o seu whatsapp")
         .min(11, "Número inválido"),
       urgencyPhone: yup
         .string()
-        .default(applyPhoneMask(currentData?.urgencyPhone))
-        .required("Por favor, preencha um telefone de emergência")
-        .min(11, "Número inválido"),
+        .default(phoneMask(currentData?.urgencyPhone))
+        .test(
+          "urgencyPhone",
+          "O Telefone de emergência não pode ser igual ao whatsapp",
+          (value) => value !== whatsapp
+        ),
       birthday: yup
         .date()
         .default(
@@ -88,7 +77,8 @@ export function PartnerPrepInscriptionStep1({
         .string()
         .default(currentData?.cpf)
         .required("Por favor, preencha o seu CPF")
-        .matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF inválido"),
+        .matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF inválido")
+        .test("cpf", "CPF inválido", (value) => validateCPF(value)),
     })
     .required();
 
@@ -186,7 +176,7 @@ export function PartnerPrepInscriptionStep1({
         value={whatsapp}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => {
-          const value = applyPhoneMask(e.target.value);
+          const value = phoneMask(e.target.value);
           setWhatsapp(value);
           setValue("whatsapp", value);
         }}
@@ -199,7 +189,7 @@ export function PartnerPrepInscriptionStep1({
         value={phone}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => {
-          const value = applyPhoneMask(e.target.value);
+          const value = phoneMask(e.target.value);
           setPhone(value);
           setValue("urgencyPhone", value);
         }}

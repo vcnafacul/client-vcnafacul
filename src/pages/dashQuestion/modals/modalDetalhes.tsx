@@ -234,14 +234,15 @@ function ModalDetalhes({
       id: "ano",
       type: "number",
       label: "Ano:*",
-      value: infos.provas.find((p) => p._id === prova ?? question?.prova)?.ano,
+      defaultValue: infos.provas.find((p) => p._id === prova ?? question?.prova)
+        ?.ano,
       disabled: true,
     },
     {
       id: "edicao",
       type: "text",
       label: "Edição:*",
-      value: infos.provas.find((p) => p._id === prova ?? question?.prova)
+      defaultValue: infos.provas.find((p) => p._id === prova ?? question?.prova)
         ?.edicao,
       disabled: true,
     },
@@ -711,8 +712,8 @@ function ModalDetalhes({
             className="flex w-full justify-center gap-4 items-center"
             size="tertiary"
           >
-            Informação do Cursinho{" "}
             {!question ? <></> : getStatusIcon(question.status)}
+            Classificação
           </Text>
           <Form
             className="grid grid-cols-1 gap-y-1 mb-1"
@@ -801,7 +802,7 @@ function ModalDetalhes({
           )}
           <BDownloadProva />
           <Text
-            className="flex w-full justify-center gap-4 items-center" 
+            className="flex w-full justify-center gap-4 items-center"
             size="tertiary"
           >
             Revisões necessárias
@@ -812,18 +813,18 @@ function ModalDetalhes({
           <div className="grid grid-cols-2 gap-1 w-full">
             <Buttons />
           </div>
+          {permissao.validarQuestao && question && question.status !== 1 && (
+            <div
+              className={`flex justify-end cursor-pointer my-4 md:my-4 ${
+                !question && "hidden"
+              }`}
+              onClick={() => setTryDelete(true)}
+            >
+              <IoMdTrash className="w-10 h-10 fill-white bg-redError p-1 rounded shadow shadow-zinc-300" />
+            </div>
+          )}
         </div>
       </form>
-      {permissao.validarQuestao && question && question.status !== 1 && (
-        <div
-          className={`flex justify-end cursor-pointer my-4 md:my-0 ${
-            !question && "hidden"
-          }`}
-          onClick={() => setTryDelete(true)}
-        >
-          <IoMdTrash className="w-10 h-10 fill-white bg-redError p-1 rounded shadow shadow-zinc-300" />
-        </div>
-      )}
       <QuestionImageModal />
       <ModalRefused />
       <ModalComeBack />

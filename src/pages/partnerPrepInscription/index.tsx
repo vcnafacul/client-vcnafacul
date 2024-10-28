@@ -267,7 +267,7 @@ export function PartnerPrepInscription() {
 
   useEffect(() => {
     if (!token) {
-      setStepCurrently(StepsInscriptionStudent.Login);
+      setStepCurrently(StepsInscriptionStudent.RegisterUser);
     } else {
       if (!hashPrepCourse) navigate("/");
       hasActiveInscription(hashPrepCourse as string, token)

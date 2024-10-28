@@ -154,6 +154,12 @@ export function InscriptionInfoModal({
     getSubscribers(token, inscriptionSelected!.id!).then((data) => {
       const flattenedData = flattenData(data, questions);
 
+      flattenedData.sort((a, b) => {
+        if (a.createdAt < b.createdAt) return -1;
+        if (a.createdAt > b.createdAt) return 1;
+        return 0;
+      });
+
       const worksheet = XLSX.utils.json_to_sheet(flattenedData);
 
       // Cria um novo workbook e adiciona a planilha
