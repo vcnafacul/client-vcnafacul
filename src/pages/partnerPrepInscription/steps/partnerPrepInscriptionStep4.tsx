@@ -1097,6 +1097,7 @@ export function PartnerPrepInscriptionStep4({
             setHasTv(false);
             setValue("tv_pago", undefined);
           }
+          setValue("tv", e.value);
         }}
       />
       {hasTv && (
