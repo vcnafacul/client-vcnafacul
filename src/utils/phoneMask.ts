@@ -12,5 +12,6 @@ export const phoneMask = (value?: string) => {
   } else {
     value = value.replace(/^(\d*)/, "($1");
   }
+  if(value.length === 1) return "";
   return value;
 };

@@ -57,8 +57,11 @@ export function PartnerPrepInscriptionStep1({
       urgencyPhone: yup
         .string()
         .default(phoneMask(currentData?.urgencyPhone))
-        .required("Por favor, preencha um telefone de emergência")
-        .min(11, "Número inválido"),
+        .test(
+          "urgencyPhone",
+          "O Telefone de emergência não pode ser igual ao whatsapp",
+          (value) => value !== whatsapp
+        ),
       birthday: yup
         .date()
         .default(
