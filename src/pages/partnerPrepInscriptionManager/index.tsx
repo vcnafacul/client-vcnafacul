@@ -36,7 +36,6 @@ export function PartnerPrepInscriptionManager() {
 
   const { setPrepCourse } = usePrepCourseStore();
 
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getMoreCards = async (): Promise<Paginate<Inscription>> => {
     return {
@@ -49,7 +48,7 @@ export function PartnerPrepInscriptionManager() {
 
   const cardTransformation = (inscription: Inscription): CardDash => ({
     id: inscription.id,
-    title: inscription.id,
+    title: inscription.name,
     status: inscription.actived,
     infos: [
       {
@@ -67,6 +66,10 @@ export function PartnerPrepInscriptionManager() {
         value: inscription.endDate
           ? formatDate(inscription.endDate.toString())
           : "",
+      },
+      {
+        field: "Inscritos",
+        value: inscription.subscribersCount.toString(),
       },
       {
         field: "Criado em",
@@ -201,6 +204,9 @@ export function PartnerPrepInscriptionManager() {
   const fetchInscriptions = async () => {
     try {
       const res = await getAllInscription(token, 1, limitCards);
+      res.data.sort((a, b) => {
+        return a.startDate < b.startDate ? -1 : 1;
+      });
       setInscriptions(res.data);
       if (res.data.length > 0) {
         setPrepCourse({
