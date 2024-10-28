@@ -146,7 +146,7 @@ export function InscriptionInfoModal({
       // Remover o campo "socioeconomic" original se não quiser mantê-lo
       delete flattenedItem.socioeconomic;
 
-      return flattenedItem as StudentCourseFull;
+      return flattenedItem;
     });
   };
 
