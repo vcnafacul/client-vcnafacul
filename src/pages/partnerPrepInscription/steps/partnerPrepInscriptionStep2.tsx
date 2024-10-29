@@ -40,7 +40,8 @@ export function PartnerPrepInscriptionStep2({
       postalCode: yup
         .string()
         .default(postalCode)
-        .required("Por favor, preencha o seu CEP"),
+        .required("Por favor, preencha o seu CEP")
+        .min(9, "CEP inválido"),
       street: yup
         .string()
         .default(currentData?.street)
