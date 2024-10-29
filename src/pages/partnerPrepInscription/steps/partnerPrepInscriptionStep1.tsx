@@ -139,6 +139,7 @@ export function PartnerPrepInscriptionStep1({
         defaultValue={currentData?.firstName}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("firstName", e.target.value)}
+        maxLength={50}
       />
       <InputFactory
         id="lastName"
@@ -148,6 +149,7 @@ export function PartnerPrepInscriptionStep1({
         defaultValue={currentData?.lastName}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("lastName", e.target.value)}
+        maxLength={100}
       />
       <InputFactory
         id="socialName"
@@ -157,6 +159,7 @@ export function PartnerPrepInscriptionStep1({
         error={errors.socialName}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("socialName", e.target.value)}
+        maxLength={50}
       />
       <InputFactory
         id="email"
@@ -167,6 +170,7 @@ export function PartnerPrepInscriptionStep1({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("email", e.target.value)}
         className="bg-gray-200 tracking-wider"
+        maxLength={100}
       />
       <InputFactory
         id="whatsapp"
@@ -235,7 +239,8 @@ export function PartnerPrepInscriptionStep1({
             defaultValue={currentData?.rg}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onChange={(e: any) => setValue("rg", e.target.value)}
-            className="w-full flex flex-1 "
+            className="w-full flex flex-1"
+            maxLength={15}
           />
         </div>
         <div className="w-24">
