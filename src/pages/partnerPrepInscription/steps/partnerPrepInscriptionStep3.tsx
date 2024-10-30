@@ -11,12 +11,17 @@ import { validateCPF } from "validations-br";
 import * as yup from "yup";
 import { EachStepProps } from "..";
 
+interface PartnerPrepInscriptionStep3Props extends EachStepProps {
+  isMinor: boolean;
+}
+
 export function PartnerPrepInscriptionStep3({
   description,
   updateData,
   currentData,
   handleBack,
-}: EachStepProps) {
+  isMinor,
+}: PartnerPrepInscriptionStep3Props) {
   const [phone, setPhone] = useState<string>(
     phoneMask(currentData?.urgencyPhone) || ""
   );
@@ -27,23 +32,45 @@ export function PartnerPrepInscriptionStep3({
       fullName: yup
         .string()
         .default(currentData?.legalGuardian?.fullName)
-        .required("Por favor, preencha o nome do seu responsável"),
+        .when([], {
+          is: () => isMinor,
+          then: () =>
+            yup
+              .string()
+              .required("Por favor, preencha o nome do seu responsável"),
+          otherwise: () => yup.string().notRequired(),
+        }),
       phone: yup
         .string()
         .default(phoneMask(currentData?.legalGuardian?.phone))
-        .required("Por favor, preencha o telefone do seu responsável"),
-      rg: yup
-        .string()
-        .default(currentData?.legalGuardian?.rg)
-        .required("Por favor, preencha o rg do seu responsável"),
+        .when([], {
+          is: () => isMinor,
+          then: () =>
+            yup
+              .string()
+              .required("Por favor, preencha o telefone do seu responsável"),
+          otherwise: () => yup.string().notRequired(),
+        }),
+      rg: yup.string().default(currentData?.legalGuardian?.rg),
       uf: yup
         .string()
         .default(currentData?.legalGuardian?.uf)
-        .required("Requerido"),
+        .when("rg", {
+          is: (value: string) => isMinor && value.length > 0,
+          then: () => yup.string().required("Requerido"),
+          otherwise: () => yup.string().notRequired(),
+        }),
       cpf: yup
         .string()
         .default(currentData?.legalGuardian?.cpf)
-        .required("Por favor, preencha o cpf do seu responsável")
+        .when([], {
+          is: () => isMinor,
+          then: () =>
+            yup
+              .string()
+              .required("Por favor, preencha o cpf do seu responsável"),
+          otherwise: () => yup.string().notRequired(),
+        })
         .matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF inválido")
         .test("cpf", "CPF inválido", (value) => validateCPF(value || ""))
         .test(

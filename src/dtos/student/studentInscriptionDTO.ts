@@ -20,14 +20,14 @@ export interface StudentInscriptionDTO {
   city: string;
   state: string;
   partnerPrepCourse: string;
-  legalGuardian: LegalGuardianDTO;
+  legalGuardian?: LegalGuardianDTO;
   socioeconomic: SocioeconomicAnswer[];
 }
 
 export interface LegalGuardianDTO {
-  fullName: string;
-  rg: string;
-  uf: string;
-  cpf: string;
-  phone: string;
+  fullName?: string | undefined;
+  rg?: string | undefined;
+  uf?: string | undefined;
+  cpf?: string | undefined;
+  phone?: string | undefined;
 }

@@ -47,7 +47,7 @@ export function PartnerPrepInscription() {
   } = useAuthStore();
   const navigate = useNavigate();
   const [stepCurrently, setStepCurrently] = useState<StepsInscriptionStudent>(
-    StepsInscriptionStudent.Blank
+    StepsInscriptionStudent.Socioeconomic
   );
   const [dataStudent, setDataStudent] = useState<StudentInscriptionDTO>(
     {} as StudentInscriptionDTO
@@ -238,6 +238,7 @@ export function PartnerPrepInscription() {
             currentData={dataStudent}
             handleBack={backStep}
             updateData={updateDataGuardian}
+            isMinor={isMinor(dataStudent.birthday)}
           />
         );
       case StepsInscriptionStudent.Socioeconomic:
@@ -300,7 +301,7 @@ export function PartnerPrepInscription() {
                 state: res.state,
                 email: res.email,
               });
-              setStepCurrently(StepsInscriptionStudent.Presentation);
+              setStepCurrently(StepsInscriptionStudent.Socioeconomic);
             })
             .catch((res) => {
               setStepCurrently(StepsInscriptionStudent.Error);
