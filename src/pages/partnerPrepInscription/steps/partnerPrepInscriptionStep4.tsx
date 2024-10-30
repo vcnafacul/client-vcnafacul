@@ -594,9 +594,7 @@ export function PartnerPrepInscriptionStep4({
   ).map((year) => year.toString());
 
   const hasErrors = Object.keys(errors).length > 0;
-
   
-
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
