@@ -372,6 +372,20 @@ export const transporteOptions = [
   "Outros",
 ];
 
+export const parentescoOptions = [
+  "Mãe",
+  "Pai",
+  "Avó",
+  "Avô",
+  "Tia",
+  "Tio",
+  "Irmã",
+  "Irmão",
+  "Prima",
+  "Primo",
+  "Outro",
+];
+
 export const questions = [
   fundamentalMedioQuestion,
   anoConclusaoQuestion,
