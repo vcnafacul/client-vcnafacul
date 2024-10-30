@@ -69,11 +69,15 @@ export function PartnerPrepInscriptionStep1({
           currentData?.birthday ? new Date(currentData?.birthday) : new Date()
         )
         .required("Por favor, preencha a sua data de nascimento"),
-      uf: yup.string().default(currentData?.uf).required("Requerido"),
-      rg: yup
+      rg: yup.string().default(currentData?.rg),
+      uf: yup
         .string()
-        .default(currentData?.rg)
-        .required("Por favor, preencha o seu RG"),
+        .default(currentData?.uf)
+        .when("rg", {
+          is: (value: string) => value.length === 0,
+          then: () => yup.string().notRequired(),
+          otherwise: () => yup.string().required("Requerido"),
+        }),
       cpf: yup
         .string()
         .default(currentData?.cpf)
@@ -124,6 +128,9 @@ export function PartnerPrepInscriptionStep1({
   }, []);
 
   function handleForm(data: Partial<StudentInscriptionDTO>) {
+    if (data.rg?.length === 0) {
+      data.uf = "";
+    }
     updateData!(data);
   }
   return (
@@ -218,7 +225,6 @@ export function PartnerPrepInscriptionStep1({
               onChange={(e) => field.onChange(e.value)}
               selectionMode="single"
               className="focus-visible:ring-none w-full h-14 bg-transparent"
-              
               locale="pt-br"
               showIcon
             />
