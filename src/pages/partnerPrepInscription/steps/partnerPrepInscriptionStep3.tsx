@@ -27,7 +27,6 @@ export function PartnerPrepInscriptionStep3({
     phoneMask(currentData?.urgencyPhone) || ""
   );
   const [fRelationOther, setFRelationOther] = useState<boolean>(false);
-  console.log(currentData);
 
   const schema = yup
     .object()
@@ -55,7 +54,7 @@ export function PartnerPrepInscriptionStep3({
           otherwise: () => yup.string().notRequired(),
         }),
       family_relationship_input: yup.string().when([], {
-        is: (value: string) => isMinor && value === "Outro",
+        is: () => fRelationOther,
         then: () =>
           yup
             .string()
@@ -131,9 +130,9 @@ export function PartnerPrepInscriptionStep3({
     if (fRelationOther) {
       data.family_relationship = getValues("family_relationship_input");
     }
-    // console.log(data);
     updateData!(data);
   }
+
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
