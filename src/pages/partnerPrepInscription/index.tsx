@@ -100,6 +100,7 @@ export function PartnerPrepInscription() {
         uf: getData.uf,
         cpf: getData.cpf,
         phone: getData.phone,
+        family_relationship: getData.family_relationship,
       },
     });
     setStepCurrently(stepCurrently + 1);
@@ -117,6 +118,7 @@ export function PartnerPrepInscription() {
           render: res.message,
           type: "error",
           isLoading: false,
+          autoClose: 5000,
         });
       });
   };

@@ -26,6 +26,7 @@ export interface StudentInscriptionDTO {
 
 export interface LegalGuardianDTO {
   fullName?: string | undefined;
+  family_relationship?: string | undefined;
   rg?: string | undefined;
   uf?: string | undefined;
   cpf?: string | undefined;

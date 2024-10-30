@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { validateCPF } from "validations-br";
 import * as yup from "yup";
 import { EachStepProps } from "..";
+import { parentescoOptions } from "../data";
 
 interface PartnerPrepInscriptionStep3Props extends EachStepProps {
   isMinor: boolean;
@@ -25,6 +26,8 @@ export function PartnerPrepInscriptionStep3({
   const [phone, setPhone] = useState<string>(
     phoneMask(currentData?.urgencyPhone) || ""
   );
+  const [fRelationOther, setFRelationOther] = useState<boolean>(false);
+  console.log(currentData);
 
   const schema = yup
     .object()
@@ -38,6 +41,25 @@ export function PartnerPrepInscriptionStep3({
             yup
               .string()
               .required("Por favor, preencha o nome do seu responsável"),
+          otherwise: () => yup.string().notRequired(),
+        }),
+      family_relationship: yup
+        .string()
+        .default(currentData?.legalGuardian?.family_relationship)
+        .when([], {
+          is: () => isMinor,
+          then: () =>
+            yup
+              .string()
+              .required("Por favor, preencha o vinculo com o guardião legal"),
+          otherwise: () => yup.string().notRequired(),
+        }),
+      family_relationship_input: yup.string().when([], {
+        is: (value: string) => isMinor && value === "Outro",
+        then: () =>
+          yup
+            .string()
+            .required("Por favor, preencha o vinculo com o guardião legal"),
           otherwise: () => yup.string().notRequired(),
         }),
       phone: yup
@@ -56,28 +78,21 @@ export function PartnerPrepInscriptionStep3({
         .string()
         .default(currentData?.legalGuardian?.uf)
         .when("rg", {
-          is: (value: string) => isMinor && value.length > 0,
+          is: (value: string) => isMinor && value && value.length > 0,
           then: () => yup.string().required("Requerido"),
           otherwise: () => yup.string().notRequired(),
         }),
       cpf: yup
         .string()
         .default(currentData?.legalGuardian?.cpf)
-        .when([], {
-          is: () => isMinor,
-          then: () =>
-            yup
-              .string()
-              .required("Por favor, preencha o cpf do seu responsável"),
-          otherwise: () => yup.string().notRequired(),
-        })
         .matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF inválido")
         .test("cpf", "CPF inválido", (value) => validateCPF(value || ""))
         .test(
           "cpf",
           "O CPF do representante legal deve ser diferente do seu CPF",
           (value) => value !== currentData?.cpf
-        ), // eslint-disable-line
+        )
+        .test("cpf", "Por favor, preencha o CPF do responsável", () => isMinor),
     })
     .required();
 
@@ -85,6 +100,7 @@ export function PartnerPrepInscriptionStep3({
     register,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -92,14 +108,30 @@ export function PartnerPrepInscriptionStep3({
 
   useEffect(() => {
     register("fullName");
+    register("family_relationship");
     register("phone");
     register("rg");
     register("uf");
     register("cpf");
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    setValue("fullName", currentData?.legalGuardian?.fullName);
+    setValue(
+      "family_relationship",
+      currentData?.legalGuardian?.family_relationship
+    );
+
+    setValue("phone", phoneMask(currentData?.legalGuardian?.phone || ""));
+    setPhone(phoneMask(currentData?.legalGuardian?.phone || ""));
+    setValue("rg", currentData?.legalGuardian?.rg);
+    setValue("uf", currentData?.legalGuardian?.uf);
+    setValue("cpf", currentData?.legalGuardian?.cpf);
   }, []);
 
   function handleForm(data: LegalGuardianDTO) {
+    if (fRelationOther) {
+      data.family_relationship = getValues("family_relationship_input");
+    }
+    // console.log(data);
     updateData!(data);
   }
   return (
@@ -117,6 +149,39 @@ export function PartnerPrepInscriptionStep3({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("fullName", e.target.value)}
       />
+      <InputFactory
+        id="family_relationship"
+        label="Parentesco*"
+        type="select"
+        options={parentescoOptions.map((parentesco) => ({
+          label: parentesco,
+          value: parentesco,
+        }))}
+        error={errors.family_relationship}
+        defaultValue={currentData?.legalGuardian?.family_relationship}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onChange={(e: any) => {
+          const value = e.target.value;
+          console.log(value);
+          setValue("family_relationship", value);
+          setFRelationOther(value === "Outro");
+          if (value !== "Outro") {
+            setValue("family_relationship_input", undefined);
+          }
+        }}
+      />
+      {fRelationOther && (
+        <InputFactory
+          id="family_relationship_input"
+          label="Parentesco*"
+          type="text"
+          error={errors.family_relationship_input}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => {
+            setValue("family_relationship_input", e.target.value);
+          }}
+        />
+      )}
       <InputFactory
         id="phone"
         label="Telefone do Responsável*"
