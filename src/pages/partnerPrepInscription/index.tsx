@@ -256,8 +256,6 @@ export function PartnerPrepInscription() {
     }
   };
 
-  console.log("dataStudent", dataStudent);
-
   useEffect(() => {
     const element = document.getElementById("header");
     if (element) {
