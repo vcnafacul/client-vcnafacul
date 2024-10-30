@@ -15,6 +15,7 @@ import { validateCPF } from "validations-br";
 import * as yup from "yup";
 import { EachStepProps } from "..";
 import { ptBr } from "../data";
+import "./styles.css";
 
 addLocale("pt-br", { ...ptBr["pt-br"] });
 
@@ -198,7 +199,7 @@ export function PartnerPrepInscriptionStep1({
           setValue("urgencyPhone", value);
         }}
       />
-      <div className="card flex justify-content-center h-16 border hover:border-orange pt-4 pl-4 rounded-md relative mb-4  row-start-3 col-start-1">
+      <div className="card flex justify-content-center h-16 border hover:border-orange pt-4 pl-4 rounded-md relative mb-4 row-start-3 col-start-1 z-10">
         <label
           className="absolute top-1 left-3 text-xs text-grey font-semibold"
           htmlFor="date"
@@ -216,10 +217,10 @@ export function PartnerPrepInscriptionStep1({
               value={field.value}
               onChange={(e) => field.onChange(e.value)}
               selectionMode="single"
-              className="focus-visible:ring-orange"
-              readOnlyInput
-              hideOnRangeSelection
+              className="focus-visible:ring-none w-full h-14 bg-transparent"
+              
               locale="pt-br"
+              showIcon
             />
           )}
         />

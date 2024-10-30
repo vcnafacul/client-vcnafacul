@@ -1,0 +1,42 @@
+.p-dropdown:not(.p-disabled).p-focus {
+  box-shadow: none;
+}
+
+.p-calendar {
+  background-color: none;
+}
+
+.p-datepicker {
+  padding: 5px;
+  border-radius: 15px;
+  border: 1px solid #b6b6b6;
+  margin-left: 10px;
+}
+
+.p-datepicker-title {
+  font-size: 1.2em;
+  border: 1px solid #a7a7a7;
+  padding: 0 5px;
+  border-radius: 8px;
+  box-shadow: 1px 1px #d9d9d9;
+}
+
+.p-link {
+  color: #007bff;
+  padding: 0 5px;
+  text-decoration: none;
+}
+
+.p-calendar-w-btn:not(.p-disabled).p-inputwrapper-focus {
+  box-shadow: none;
+}
+
+.p-highlight {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+.p-datepicker-calendar-container table tbody tr span:hover {
+  background-color: #a7a7a728;
+  color: #007bff;
+}
