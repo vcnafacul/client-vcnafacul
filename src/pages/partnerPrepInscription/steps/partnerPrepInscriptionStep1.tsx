@@ -74,7 +74,7 @@ export function PartnerPrepInscriptionStep1({
         .string()
         .default(currentData?.uf)
         .when("rg", {
-          is: (value: string) => value.length === 0,
+          is: (value: string) => !value || value.length === 0,
           then: () => yup.string().notRequired(),
           otherwise: () => yup.string().required("Requerido"),
         }),

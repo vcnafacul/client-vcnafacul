@@ -60,8 +60,8 @@ export function PartnerPrepInscriptionStep3({
           yup
             .string()
             .required("Por favor, preencha o vinculo com o guardião legal"),
-          otherwise: () => yup.string().notRequired(),
-        }),
+        otherwise: () => yup.string().notRequired(),
+      }),
       phone: yup
         .string()
         .default(phoneMask(currentData?.legalGuardian?.phone))
@@ -187,7 +187,7 @@ export function PartnerPrepInscriptionStep3({
         label="Telefone do Responsável*"
         type="text"
         error={errors.phone}
-        defaultValue={phone}
+        value={phone}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => {
           const value = phoneMask(e.target.value);
