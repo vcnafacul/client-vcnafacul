@@ -37,6 +37,7 @@ function Home() {
         actionAreas: actionAreas,
         supporters: supporters,
         volunteers: volunteers.data,
+        prepCourse: supporters.prepCourse,
       }}
     >
       <HeroTemplate headerPosition="fixed">

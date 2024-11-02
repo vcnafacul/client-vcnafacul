@@ -112,39 +112,6 @@ function Step1({ updateData, dataUser }: Step1Props) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("password", e.target.value)}
       />
-      <div className="flex gap-4 w-full text-sm">
-        <div className="font-thin text-xs"> Sua senha deve conter:</div>
-        <div className="flex flex-col text-sm">
-          <SpanValidate
-            valid={
-              password !== undefined && uppercaseLetterRegex.test(password)
-            }
-          >
-            Letra Maiúscula
-          </SpanValidate>
-          <SpanValidate
-            valid={
-              password !== undefined && specialCaracteresRegex.test(password)
-            }
-          >
-            Caractere Especial
-          </SpanValidate>
-        </div>
-        <div className="flex flex-col text-sm">
-          <SpanValidate
-            valid={
-              password !== undefined && lowercaseLetterRegex.test(password)
-            }
-          >
-            Letra Minúscula
-          </SpanValidate>
-          <SpanValidate
-            valid={password !== undefined && password.trim().length >= 8}
-          >
-            Pelo menos 8 Caracteres
-          </SpanValidate>
-        </div>
-      </div>
       <InputFactory
         id="password_confirmation"
         label="Confirmar Senha"
@@ -153,6 +120,41 @@ function Step1({ updateData, dataUser }: Step1Props) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("password_confirmation", e.target.value)}
       />
+      <div className="flex gap-4 w-full text-sm justify-between">
+        <div className="font-thin text-xs"> Sua senha deve conter:</div>
+        <div className="flex flex-col sm:flex-row sm:gap-4">
+          <div className="flex flex-col text-sm items-end sm:items-start">
+            <SpanValidate
+              valid={
+                password !== undefined && uppercaseLetterRegex.test(password)
+              }
+            >
+              Letra Maiúscula
+            </SpanValidate>
+            <SpanValidate
+              valid={
+                password !== undefined && specialCaracteresRegex.test(password)
+              }
+            >
+              Caractere Especial
+            </SpanValidate>
+          </div>
+          <div className="flex flex-col text-sm items-end sm:items-start">
+            <SpanValidate
+              valid={
+                password !== undefined && lowercaseLetterRegex.test(password)
+              }
+            >
+              Letra Minúscula
+            </SpanValidate>
+            <SpanValidate
+              valid={password !== undefined && password.trim().length >= 8}
+            >
+              Pelo menos 8 Caracteres
+            </SpanValidate>
+          </div>
+        </div>
+      </div>
       <Button type="submit">Continuar</Button>
     </form>
   );

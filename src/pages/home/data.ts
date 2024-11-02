@@ -55,6 +55,8 @@ import hostingerLogo from "../../assets/images/home/1200px-Hostinger_logo_purple
 import raccoonLogo from "../../assets/images/home/Grupo 1706.svg";
 import wikilabLogo from "../../assets/images/home/Logo_WikiLab.png";
 import { SupportersProps } from "../../components/organisms/supporters";
+import UFSCarLogo from "../../assets/images/home/UFSCar.png";
+import tumble from '../../assets/images/home/thumb-about-us.png';
 
 export const userNavigationSign: ItemMenuProps[] = [
   {
@@ -565,7 +567,7 @@ export const about_us: AboutUsProps = {
   title: "Quem somos?",
   description:
     "Somos uma equipe de voluntários trabalhando por um bem maior: a *Educação*. Queremos que o ambiente universitário seja justo e igualitário, e que o desejo de ingressar no ensino superior não dependa de cor, gênero, orientação sexual ou classe social.",
-  thumbnail: "/src/assets/images/home/thumb-about-us.png",
+  thumbnail: tumble,
   videoID: "LiNm9JxvNOM",
 };
 
@@ -596,4 +598,11 @@ export const supporters: SupportersProps = {
     },
   ],
   volunteers: [],
+  prepCourse: [
+    {
+      image: UFSCarLogo,
+      alt: "logo-ufscar",
+      link: "https://cursinho.faiufscar.com/#/",
+    },
+  ],
 };

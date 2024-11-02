@@ -110,7 +110,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
       />
       <InputFactory
         id="lastName"
-        label="SobreNome"
+        label="Sobrenome"
         type="text"
         error={errors.lastName}
         onChange={(e: any) => setValue("lastName", e.target.value)}
