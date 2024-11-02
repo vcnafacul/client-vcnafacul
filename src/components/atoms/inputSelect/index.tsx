@@ -24,7 +24,7 @@ export function InputSelect({ ...props }: InputSelectProps) {
       defaultValue={value}
       onChange={handleOnChange}
       className="w-full flex ring-0 items-center 
-      bg-transparent dropdown-text-small custom-dropdown"
+      bg-transparent dropdown-text-small"
     />
   );
 }
