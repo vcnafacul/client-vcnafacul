@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { checkMapFilter } from "../../../pages/home/data";
+// import { checkMapFilter } from "../../../pages/home/data";
 import { FORM_GEOLOCATION } from "../../../routes/path";
 import getGeolocation from "../../../services/geolocation/getGeolocation";
 import { useHomeStore } from "../../../store/home";
@@ -8,7 +8,7 @@ import { Geolocation } from "../../../types/geolocation/geolocation";
 import { TypeMarker } from "../../../types/map/marker";
 import { University } from "../../../types/university/university";
 import { DiffTime } from "../../../utils/diffTime";
-import { CheckMapFilter } from "../../atoms/checkMapFilter";
+// import { CheckMapFilter } from "../../atoms/checkMapFilter";
 import MapBox from "../../molecules/mapBox";
 import MapBoxInfo from "../mapBoxInfo";
 import MapBoxInfoUnivPublic from "../mapBoxInfo/MapBoxInfoUnivPublic";
@@ -17,7 +17,7 @@ import MapBoxInfoGeo from "../mapBoxInfo/mapBoxInfoGeo";
 function Map() {
   const [markerActive, setMarkerActive] = useState<number>(0);
   const boxRef = useRef<HTMLDivElement>(null);
-  const [filterMarkers, setFilterMarkers] = useState<TypeMarker[]>([
+  const [filterMarkers] = useState<TypeMarker[]>([
     TypeMarker.geo,
     TypeMarker.univPublic,
   ]);
@@ -29,13 +29,13 @@ function Map() {
     setMarkerActive(index);
   }
 
-  function handleFilterMarkers(type: TypeMarker) {
-    if (filterMarkers.includes(type)) {
-      setFilterMarkers((prev) => prev.filter((marker) => marker !== type));
-    } else {
-      setFilterMarkers((prev) => [...prev, type]);
-    }
-  }
+  // function handleFilterMarkers(type: TypeMarker) {
+  //   if (filterMarkers.includes(type)) {
+  //     setFilterMarkers((prev) => prev.filter((marker) => marker !== type));
+  //   } else {
+  //     setFilterMarkers((prev) => [...prev, type]);
+  //   }
+  // }
 
   useEffect(() => {
     const geoMarkersCache = markers.data.filter(
@@ -95,7 +95,7 @@ function Map() {
           )
         }
       />
-      <div className="absolute top-4 right-4 sm:left-14 sm:right-auto z-40 bg-grey bg-opacity-70 max-w-80 rounded-sm p-2 flex flex-col">
+      {/* <div className="absolute top-4 right-4 sm:left-14 sm:right-auto z-40 bg-grey bg-opacity-70 max-w-80 rounded-sm p-2 flex flex-col">
         <h3 className="self-center text-white font-black">Localizar:</h3>
         {checkMapFilter.map((filter) => (
           <CheckMapFilter
@@ -106,7 +106,7 @@ function Map() {
             onClick={() => handleFilterMarkers(filter.type)}
           />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }
