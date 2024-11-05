@@ -155,8 +155,8 @@ export function InscriptionInfoModal({
       const flattenedData = flattenData(data, questions);
 
       flattenedData.sort((a, b) => {
-        if (a.createdAt < b.createdAt) return -1;
-        if (a.createdAt > b.createdAt) return 1;
+        if (a.cadastrado_em < b.cadastrado_em) return -1;
+        if (a.cadastrado_em > b.cadastrado_em) return 1;
         return 0;
       });
 
