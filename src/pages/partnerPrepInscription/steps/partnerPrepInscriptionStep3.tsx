@@ -27,6 +27,22 @@ export function PartnerPrepInscriptionStep3({
     phoneMask(currentData?.urgencyPhone) || ""
   );
   const [fRelationOther, setFRelationOther] = useState<boolean>(false);
+  const [cpf, setCPF] = useState<string>(currentData?.cpf || "");
+
+  const handleCPFChange = (cpf: string) => {
+    let value = cpf.replace(/\D/g, ""); // Remove tudo que não for número
+
+    // Aplica a máscara de CPF: 123.456.789-00
+    if (value.length > 9) {
+      value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");
+    } else if (value.length > 6) {
+      value = value.replace(/^(\d{3})(\d{3})(\d{0,3})$/, "$1.$2.$3");
+    } else if (value.length > 3) {
+      value = value.replace(/^(\d{3})(\d{0,3})$/, "$1.$2");
+    }
+    setCPF(value);
+    setValue("cpf", value); // Atualiza o valor no react-hook-form
+  };
 
   const schema = yup
     .object()
@@ -130,6 +146,9 @@ export function PartnerPrepInscriptionStep3({
     if (fRelationOther) {
       data.family_relationship = getValues("family_relationship_input");
     }
+    if (data.rg?.length === 0) {
+      data.uf = undefined;
+    }
     updateData!(data);
   }
 
@@ -232,9 +251,9 @@ export function PartnerPrepInscriptionStep3({
         label="CPF do responsável*"
         type="text"
         error={errors.cpf}
-        defaultValue={currentData?.legalGuardian?.cpf}
+        value={cpf}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("cpf", e.target.value)}
+        onChange={(e: any) => handleCPFChange(e.target.value)}
       />
       <div className="flex flex-col sm:flex-row gap-4">
         <Button type="button" onClick={handleBack}>

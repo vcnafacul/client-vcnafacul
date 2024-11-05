@@ -129,7 +129,7 @@ export function PartnerPrepInscriptionStep1({
 
   function handleForm(data: Partial<StudentInscriptionDTO>) {
     if (data.rg?.length === 0) {
-      data.uf = "";
+      data.uf = undefined;
     }
     updateData!(data);
   }
