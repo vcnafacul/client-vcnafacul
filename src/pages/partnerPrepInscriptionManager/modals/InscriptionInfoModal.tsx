@@ -18,9 +18,9 @@ import {
   InscriptionOutput,
 } from "./InscriptionInfoCreateEditModal";
 
+import { questions } from "@/pages/partnerPrepInscription/data";
 import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
-import { questions } from "@/pages/partnerPrepInscription/data";
 
 interface InscriptionInfoModalProps {
   isOpen: boolean;
@@ -151,24 +151,35 @@ export function InscriptionInfoModal({
   };
 
   const exportToExcel = () => {
-    getSubscribers(token, inscriptionSelected!.id!).then((data) => {
-      const flattenedData = flattenData(data, questions);
+    const id = toast.loading("Exportando lista de alunos...");
+    getSubscribers(token, inscriptionSelected!.id!)
+      .then((data) => {
+        const flattenedData = flattenData(data, questions);
 
-      flattenedData.sort((a, b) => {
-        if (a.cadastrado_em < b.cadastrado_em) return -1;
-        if (a.cadastrado_em > b.cadastrado_em) return 1;
-        return 0;
+        flattenedData.sort((a, b) => {
+          if (a.cadastrado_em < b.cadastrado_em) return -1;
+          if (a.cadastrado_em > b.cadastrado_em) return 1;
+          return 0;
+        });
+
+        const worksheet = XLSX.utils.json_to_sheet(flattenedData);
+
+        // Cria um novo workbook e adiciona a planilha
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Dados");
+
+        // Gera o arquivo Excel e faz o download
+        toast.dismiss(id);
+        XLSX.writeFile(workbook, `${Date.now()}.xlsx`);
+      })
+      .catch(() => {
+        toast.update(id, {
+          render: "Erro ao exportar lista de alunos",
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
       });
-
-      const worksheet = XLSX.utils.json_to_sheet(flattenedData);
-
-      // Cria um novo workbook e adiciona a planilha
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Dados");
-
-      // Gera o arquivo Excel e faz o download
-      XLSX.writeFile(workbook, `${Date.now()}.xlsx`);
-    });
     // Cria uma nova planilha a partir dos dados
   };
   const clipboard = () => {
