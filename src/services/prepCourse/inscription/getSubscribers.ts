@@ -39,14 +39,15 @@ export async function getSubscribers(
       CEP: student.user.postalCode,
       cidade: student.user.city,
       estado: student.user.state,
-      nome_guardiao_legal: student.legalGuardian.fullName,
-      telefone_guardiao_legal: student.legalGuardian.phone,
-      rg_guardiao_legal: student.legalGuardian.rg || "",
-      uf_guardiao_legal: student.legalGuardian.uf || "",
-      cpf_guardiao_legal: student.legalGuardian.cpf,
-      parentesco_guardiao_legal: student.legalGuardian.family_relationship,
+      nome_guardiao_legal: student.legalGuardian?.fullName || "",
+      telefone_guardiao_legal: student.legalGuardian?.phone || "",
+      rg_guardiao_legal: student.legalGuardian?.rg || "",
+      uf_guardiao_legal: student.legalGuardian?.uf || "",
+      cpf_guardiao_legal: student.legalGuardian?.cpf || "",
+      parentesco_guardiao_legal: student.legalGuardian?.family_relationship || "",
       socioeconomic: JSON.parse(student.socioeconomic),
     }));
   }
+  
   throw new Error(`Erro ao tentar estudantes inscritos`);
 }
