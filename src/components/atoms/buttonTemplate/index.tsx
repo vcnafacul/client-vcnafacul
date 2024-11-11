@@ -15,7 +15,7 @@ const getHoverClasses = (type: string, isHoverEnabled?: boolean): string => {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const buttonTemplate = tv({
-  base: "flex justify-center items-center border-2 font-bold transition-all duration-250 ease-in-out text-sm md:text-base rounded-md group gap-1",
+  base: "flex justify-center items-center border-2 font-bold transition-all duration-250 ease-in-out text-sm md:text-base rounded-md group gap-1 cursor-pointer",
   variants: {
     typeStyle: {
       accepted: "bg-green3 text-white",

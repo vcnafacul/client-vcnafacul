@@ -1,4 +1,4 @@
-import React, { ComponentProps } from "react";
+import React, { ComponentProps, MouseEventHandler } from "react";
 import ButtonTemplate from "../../atoms/buttonTemplate";
 
 export type ButtonProps = ComponentProps<"button"> & {
@@ -31,6 +31,7 @@ function Button({
       hover={props.disabled ? false : hover}
       className={className}
       disabled={props.disabled}
+      onClick={props.onClick as MouseEventHandler<HTMLDivElement> | undefined}
     >
       <button
         {...props}

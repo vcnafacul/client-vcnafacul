@@ -7,7 +7,7 @@ export default function AcceptInvite() {
       <FaCheckDouble className="w-20 h-20 fill-green" />
       <div>
         <Text size="secondary" className="m-0">
-          Parabens, convite aceito.
+          Parabéns, convite aceito.
         </Text>
         <Text size="tertiary">
           Você será deslogado e redirecionado para a página de login.
