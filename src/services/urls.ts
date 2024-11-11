@@ -62,3 +62,5 @@ export const get_user_info = (idPrepCourse: string) =>
 
 export const inscriptionCourse = `${BASE_URL}/inscription-course`;
 export const subscribers = `${inscriptionCourse}/subscribers`;
+export const inviteMember = `${BASE_URL}/partner-prep-course/invite-members`;
+export const inviteMemberAccept = `${BASE_URL}/partner-prep-course/invite-members-accept`;
