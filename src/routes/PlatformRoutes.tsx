@@ -46,6 +46,7 @@ import {
   FORGOT_PASSWORD_PATH,
   FORM_GEOLOCATION,
   HOME_PATH,
+  INVITE_MEMBER,
   LOGIN_PATH,
   LOGOFF_PATH,
   NEWS,
@@ -60,6 +61,7 @@ import {
 } from "./path";
 import ProtectedRoute from "./protectedRoute";
 import ProtectedRoutePermission from "./protectedRoutePermission";
+import InviteMemberProcessing from "@/pages/inviteMemberProcessing";
 
 export function PlatformRoutes() {
   const { data } = useAuthStore();
@@ -80,6 +82,7 @@ export function PlatformRoutes() {
         <Route path={RESET_PASSWORD_PATH} element={<Reset />} />
         <Route path={REGISTER_PATH} element={<Register />} />
         <Route path={FORM_GEOLOCATION} element={<Geo />} />
+        <Route path={INVITE_MEMBER} element={<InviteMemberProcessing />} />
       </Route>
 
       <Route
