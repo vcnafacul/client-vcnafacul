@@ -30,7 +30,7 @@ export function PartnerPrepInscriptionManager() {
     Inscription | undefined
   >(undefined);
   const limitCards = 40;
-  const [openInviteModal, setOpenInviteModal] = useState(true);
+  const [openInviteModal, setOpenInviteModal] = useState(false);
 
   const {
     data: { token },
