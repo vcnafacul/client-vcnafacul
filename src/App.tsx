@@ -5,6 +5,7 @@ import { CookieBar } from "./components/organisms/cookieBar";
 import { PlatformRoutes } from "./routes/PlatformRoutes";
 import "./styles/normalize.css";
 
+
 function App() {
   return (
     <>

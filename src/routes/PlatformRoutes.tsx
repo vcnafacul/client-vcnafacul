@@ -62,6 +62,7 @@ import {
 import ProtectedRoute from "./protectedRoute";
 import ProtectedRoutePermission from "./protectedRoutePermission";
 import InviteMemberProcessing from "@/pages/inviteMemberProcessing";
+import { PartnerPrepInscritionStudentManager } from "@/pages/partnerPrepInscritionStudentManager";
 
 export function PlatformRoutes() {
   const { data } = useAuthStore();
@@ -112,6 +113,10 @@ export function PlatformRoutes() {
         <Route
           path={PARTNER_PREP_INSCRIPTION}
           element={<PartnerPrepInscriptionManager />}
+        />
+        <Route
+          path={`${PARTNER_PREP_INSCRIPTION}/:inscriptionId`}
+          element={<PartnerPrepInscritionStudentManager />}
         />
         <Route path={DASH} element={<Dash />} />
         <Route path={SIMULADO} element={<MainSimulate />} />

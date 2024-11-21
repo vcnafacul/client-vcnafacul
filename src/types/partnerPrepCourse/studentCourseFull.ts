@@ -1,57 +1,25 @@
+import { StatusEnum } from "@/enums/generic/statusEnum";
 import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
+import { Gender } from "@/store/auth";
 
-export interface StudentCourseFullDTO {
-  createdAt: string;
-  email: string;
-  cpf: string;
-  rg: string;
-  uf: string;
-  urgencyPhone: string;
-  socioeconomic: string;
-  whatsapp: string;
-  legalGuardian: {
-    fullName: string;
-    phone: string;
-    rg?: string;
-    uf?: string;
-    cpf: string;
-    family_relationship: string;
-  }
-  user: {
-    firstName: string;
-    lastName: string;
-    socialName: string;
-    birthday: string;
-    gender: number;
-    phone: string;
-    neighborhood: string;
-    street: string;
-    number: string;
-    complement: string;
-    postalCode: string;
-    city: string;
-    state: string;
-  };
-}
-
-export interface StudentCourseFull {
+interface StudentCourseFull {
+  id: string;
   cadastrado_em: Date;
+  convocado_em: Date;
   email: string;
   cpf: string;
   rg: string;
   uf: string;
   telefone_emergencia: string;
-  socioeconomic: SocioeconomicAnswer[];
   whatsapp: string;
   nome: string;
   sobrenome: string;
   nome_social: string;
-  data_nascimento: string;
-  genero: string;
+  data_nascimento: Date;
   telefone: string;
   bairro: string;
   rua: string;
-  numero: string;
+  numero: number;
   complemento: string;
   CEP: string;
   cidade: string;
@@ -62,4 +30,26 @@ export interface StudentCourseFull {
   uf_guardiao_legal: string;
   cpf_guardiao_legal: string;
   parentesco_guardiao_legal: string;
+}
+
+export interface StudentCourseFullDtoInput extends StudentCourseFull {
+  genero: Gender;
+  deferido: StatusEnum;
+  socioeconomic: string;
+  isento: boolean;
+  matriculado: boolean;
+  convocado: boolean;
+  convocado_antes: boolean;
+  lista_de_espera: boolean;
+}
+
+export interface XLSXStudentCourseFull extends StudentCourseFull {
+  genero: string;
+  deferido: string;
+  socioeconomic: SocioeconomicAnswer[];
+  isento: string;
+  matriculado: string;
+  convocado: string;
+  convocado_antes: string;
+  lista_de_espera: string;
 }

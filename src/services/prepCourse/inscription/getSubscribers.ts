@@ -1,14 +1,16 @@
+import { StatusEnum } from "@/enums/generic/statusEnum";
 import { subscribers } from "@/services/urls";
+import { Gender } from "@/store/auth";
 import {
-  StudentCourseFull,
-  StudentCourseFullDTO,
+  StudentCourseFullDtoInput,
+  XLSXStudentCourseFull,
 } from "@/types/partnerPrepCourse/studentCourseFull";
 import fetchWrapper from "@/utils/fetchWrapper";
 
 export async function getSubscribers(
   token: string,
   inscriptionId: string
-): Promise<StudentCourseFull[]> {
+): Promise<XLSXStudentCourseFull[]> {
   const response = await fetchWrapper(`${subscribers}/${inscriptionId}`, {
     method: "GET",
     headers: {
@@ -17,37 +19,36 @@ export async function getSubscribers(
     },
   });
   if (response.status === 200) {
-    const data: StudentCourseFullDTO[] = await response.json();
+    const data: StudentCourseFullDtoInput[] = await response.json();
     return data.map((student) => ({
-      cadastrado_em: new Date(student.createdAt),
-      email: student.email,
-      cpf: student.cpf,
-      rg: student.rg,
-      uf: student.uf,
-      telefone_emergencia: student.urgencyPhone,
-      whatsapp: student.whatsapp,
-      nome: student.user.firstName,
-      sobrenome: student.user.lastName,
-      nome_social: student.user.socialName,
-      data_nascimento: student.user.birthday,
-      genero: student.user.gender === 0 ? "Masculino" :  student.user.gender === 1 ? "Feminino" : "Outro",
-      telefone: student.user.phone,
-      bairro: student.user.neighborhood,
-      rua: student.user.street,
-      numero: student.user.number,
-      complemento: student.user.complement,
-      CEP: student.user.postalCode,
-      cidade: student.user.city,
-      estado: student.user.state,
-      nome_guardiao_legal: student.legalGuardian?.fullName || "",
-      telefone_guardiao_legal: student.legalGuardian?.phone || "",
-      rg_guardiao_legal: student.legalGuardian?.rg || "",
-      uf_guardiao_legal: student.legalGuardian?.uf || "",
-      cpf_guardiao_legal: student.legalGuardian?.cpf || "",
-      parentesco_guardiao_legal: student.legalGuardian?.family_relationship || "",
+      ...student,
+      genero:
+        student.genero === Gender.Male
+          ? "Masculino"
+          : student.genero === Gender.Female
+          ? "Feminino"
+          : "Outro",
+      deferido:
+        student.deferido === StatusEnum.Approved
+          ? "Deferido"
+          : student.deferido === StatusEnum.Rejected
+          ? "Indeferido"
+          : "Pendente de análise",
+      isento: student.isento ? "Sim" : "Não",
+      matriculado: student.matriculado ? "Sim" : "Não",
+      convocado: student.convocado ? "Sim" : "Não",
+      convocado_antes: student.convocado_antes ? "Sim" : "Não",
+      lista_de_espera: student.lista_de_espera ? "Sim" : "Não",
+      cadastrado_em: new Date(student.cadastrado_em),
+      nome_guardiao_legal: student.nome_guardiao_legal || "",
+      telefone_guardiao_legal: student.telefone_guardiao_legal || "",
+      rg_guardiao_legal: student.rg_guardiao_legal || "",
+      uf_guardiao_legal: student.uf_guardiao_legal || "",
+      cpf_guardiao_legal: student.cpf_guardiao_legal || "",
+      parentesco_guardiao_legal: student.parentesco_guardiao_legal || "",
       socioeconomic: JSON.parse(student.socioeconomic),
     }));
   }
-  
+
   throw new Error(`Erro ao tentar estudantes inscritos`);
 }
