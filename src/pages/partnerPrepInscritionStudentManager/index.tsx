@@ -175,7 +175,8 @@ export function PartnerPrepInscritionStudentManager() {
       renderCell: (params) => (
         <div className="flex justify-center items-center gap-2 h-8 flex-wrap">
           {params.row.isento === "Sim" &&
-            params.row.deferido === "Deferido" && (
+            params.row.deferido === "Deferido" &&
+            params.row.matriculado === "Não" && (
               <ActionButton
                 titleAlert="Tem certeza que deseja torna esse aluno pagante?"
                 onConfirm={() => handleIsFreeInfo(params.row.id, false)}
@@ -185,7 +186,8 @@ export function PartnerPrepInscritionStudentManager() {
               </ActionButton>
             )}
           {params.row.isento === "Não" &&
-            params.row.deferido === "Deferido" && (
+            params.row.deferido === "Deferido" &&
+            params.row.matriculado === "Não" && (
               <ActionButton
                 titleAlert="Tem certeza que deseja torna esse aluno isento?"
                 onConfirm={() => handleIsFreeInfo(params.row.id, true)}
@@ -195,7 +197,8 @@ export function PartnerPrepInscritionStudentManager() {
               </ActionButton>
             )}
           {params.row.deferido === "Deferido" &&
-            params.row.matriculado !== "Sim" && (
+            params.row.matriculado !== "Sim" &&
+            params.row.matriculado === "Não" && (
               <ActionButton
                 titleAlert={`Confirme a ${
                   params.row.convocado === "Não" ? "adição" : "remoção"
@@ -219,7 +222,7 @@ export function PartnerPrepInscritionStudentManager() {
                 )}
               </ActionButton>
             )}
-          {params.row.deferido === "Deferido" && (
+          {params.row.deferido === "Deferido" && params.row.matriculado === "Não" && (
             <ActionButton
               titleAlert={`${
                 params.row.lista_de_espera === "Sim" ? "Remover" : "Adicionar"
@@ -246,7 +249,7 @@ export function PartnerPrepInscritionStudentManager() {
               )}
             </ActionButton>
           )}
-          {params.row.deferido !== "Deferido" && (
+          {params.row.deferido !== "Deferido" && params.row.matriculado === "Não" && (
             <ActionButton
               titleAlert={`Deferir ${params.row.nome} ${params.row.sobrenome}`}
               descriptionAlert={`Realizar o deferimento de  ${params.row.nome} ${params.row.sobrenome}`}
@@ -258,7 +261,7 @@ export function PartnerPrepInscritionStudentManager() {
               <FaCheck className="h-6 w-6 fill-green3 opacity-60 hover:opacity-100" />
             </ActionButton>
           )}
-          {params.row.deferido !== "Indeferido" && (
+          {params.row.deferido !== "Indeferido" && params.row.matriculado === "Não" && (
             <ActionButton
               titleAlert={`${params.row.nome} ${params.row.sobrenome}`}
               descriptionAlert={`Realizar o indeferimento de  ${params.row.nome} ${params.row.sobrenome}`}
