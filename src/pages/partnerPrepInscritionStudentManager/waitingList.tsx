@@ -7,13 +7,13 @@ import { sendEmailWaitingList } from "@/services/prepCourse/inscription/sendEmai
 import { useAuthStore } from "@/store/auth";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { format } from "date-fns";
-import pdfMake from "pdfmake/build/pdfmake.js";
-import pdfFonts from "pdfmake/build/vfs_fonts.js";
 import { useEffect, useState } from "react";
 import { FaFilePdf } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
 import { toast } from "react-toastify";
 
+import pdfMake from "pdfmake/build/pdfmake.js";
+import pdfFonts from "pdfmake/build/vfs_fonts.js";
 pdfMake.vfs = pdfFonts as unknown as { [file: string]: string };
 
 interface Props {

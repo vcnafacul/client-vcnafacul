@@ -6,7 +6,7 @@ import Button from "@/components/molecules/button";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { updateWaitingListInfo } from "@/services/prepCourse/inscription/updateWaitingList";
 import { updateApplicationStatus } from "@/services/prepCourse/student/updateApplicationStatus";
-import { updateEnrolledInfo } from "@/services/prepCourse/student/updateEnrolledInfo";
+import { updateSelectEnrolledInfo } from "@/services/prepCourse/student/updateEnrolledInfo";
 import { updateIsFreeInfo } from "@/services/prepCourse/student/updateIsFreeInfo";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import Paper from "@mui/material/Paper";
@@ -14,11 +14,12 @@ import Paper from "@mui/material/Paper";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { useEffect, useState } from "react";
-import { FaCheck, FaClipboardList } from "react-icons/fa";
+import { FaCheck, FaSyncAlt } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
 import { LiaCoinsSolid } from "react-icons/lia";
-import { MdOutlineMoneyOffCsred } from "react-icons/md";
+import { MdOutlineMoneyOffCsred, MdPlaylistRemove } from "react-icons/md";
 import { PiListChecksFill } from "react-icons/pi";
+import { RiFileListFill, RiFileListLine } from "react-icons/ri";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ActionButton } from "./actionsButton";
@@ -115,6 +116,7 @@ export function PartnerPrepInscritionStudentManager() {
             return {
               ...stu,
               lista_de_espera: insert ? "Sim" : "Não",
+              convocado: insert ? "Não" : stu.convocado,
             };
           }
           return stu;
@@ -132,17 +134,17 @@ export function PartnerPrepInscritionStudentManager() {
       });
   };
 
-  const handleEnrolledInfo = (studentId: string, enrolled: boolean) => {
+  const handleSelectEnrolledInfo = (studentId: string, selected: boolean) => {
     const id = toast.loading(
-      `${enrolled ? "Removendo da" : "Inserindo na"} lista de convocação ...`
+      `${!selected ? "Removendo da" : "Inserindo na"} lista de convocação ...`
     );
-    updateEnrolledInfo(studentId, enrolled, token)
+    updateSelectEnrolledInfo(studentId, selected, token)
       .then(() => {
         const newStudent = students.map((stu) => {
           if (stu.id === studentId) {
             return {
               ...stu,
-              convocado: enrolled ? "Sim" : "Não",
+              convocado: selected ? "Sim" : "Não",
               lista_de_espera: "Não",
               deferido: "Deferido",
             };
@@ -192,26 +194,31 @@ export function PartnerPrepInscritionStudentManager() {
                 <MdOutlineMoneyOffCsred className="h-6 w-6 fill-green2 opacity-60 hover:opacity-100" />
               </ActionButton>
             )}
-          {params.row.deferido === "Deferido" && (
-            <ActionButton
-              titleAlert={`Confirme a ${
-                params.row.convocado === "Não" ? "adição" : "remoção"
-              } de ${params.row.nome} ${
-                params.row.sobrenome
-              } da lista de convocação`}
-              onConfirm={() =>
-                handleEnrolledInfo(
-                  params.row.id,
-                  params.row.convocado === "Não"
-                )
-              }
-              tooltipTitle={`${
-                params.row.convocado === "Não" ? "Add" : "Remover"
-              } da lista de convocação`}
-            >
-              <PiListChecksFill className="h-6 w-6 fill-lime-600 opacity-60 hover:opacity-100" />
-            </ActionButton>
-          )}
+          {params.row.deferido === "Deferido" &&
+            params.row.matriculado !== "Sim" && (
+              <ActionButton
+                titleAlert={`Confirme a ${
+                  params.row.convocado === "Não" ? "adição" : "remoção"
+                } de ${params.row.nome} ${
+                  params.row.sobrenome
+                } da lista de convocação`}
+                onConfirm={() =>
+                  handleSelectEnrolledInfo(
+                    params.row.id,
+                    params.row.convocado === "Não"
+                  )
+                }
+                tooltipTitle={`${
+                  params.row.convocado === "Não" ? "Add" : "Remover"
+                } da lista de convocação`}
+              >
+                {params.row.convocado === "Não" ? (
+                  <PiListChecksFill className="h-6 w-6 fill-lime-600 opacity-60 hover:opacity-100" />
+                ) : (
+                  <MdPlaylistRemove className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
+                )}
+              </ActionButton>
+            )}
           {params.row.deferido === "Deferido" && (
             <ActionButton
               titleAlert={`${
@@ -232,7 +239,11 @@ export function PartnerPrepInscritionStudentManager() {
                 params.row.lista_de_espera === "Não" ? "Add" : "Remover"
               } da lista de espera`}
             >
-              <FaClipboardList className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
+              {params.row.lista_de_espera === "Não" ? (
+                <RiFileListFill className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
+              ) : (
+                <RiFileListLine className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
+              )}
             </ActionButton>
           )}
           {params.row.deferido !== "Deferido" && (
@@ -368,7 +379,7 @@ export function PartnerPrepInscritionStudentManager() {
     ) : null;
   };
 
-  useEffect(() => {
+  const updateSubscribers = () => {
     if (inscriptionId) {
       const id = toast.loading("Carregando Lista de Alunos...");
       getSubscribers(token, inscriptionId)
@@ -385,6 +396,10 @@ export function PartnerPrepInscritionStudentManager() {
           });
         });
     }
+  };
+
+  useEffect(() => {
+    updateSubscribers();
   }, []);
 
   return (
@@ -413,6 +428,10 @@ export function PartnerPrepInscritionStudentManager() {
                 </AlertDialogTrigger>
               </AlertDialogUI>
             </div>
+            <FaSyncAlt
+              className="h-7 w-7 p-0.5 fill-gray-500 hover:fill-marine cursor-pointer hover:animate-rotate5"
+              onClick={() => updateSubscribers()}
+            />
           </div>
         </div>
       </div>

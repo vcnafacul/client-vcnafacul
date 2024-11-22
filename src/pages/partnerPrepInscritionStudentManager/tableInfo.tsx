@@ -1,12 +1,13 @@
 import PropValue from "@/components/molecules/PropValue";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
-import { FaCheck, FaClipboardList } from "react-icons/fa";
+import { BsPersonVcard } from "react-icons/bs";
+import { FaCheck } from "react-icons/fa";
 import {
   MdOutlineMoneyOffCsred,
   MdOutlinePendingActions,
 } from "react-icons/md";
 import { PiListChecksFill } from "react-icons/pi";
-import { BsPersonVcard } from "react-icons/bs";
+import { RiFileListFill } from "react-icons/ri";
 
 interface Props {
   students: XLSXStudentCourseFull[];
@@ -38,7 +39,7 @@ export function TableInfo({ students }: Props) {
         />
       </div>
       <div className="flex gap-1">
-        <FaClipboardList className="h-6 w-6 fill-marine" />
+        <RiFileListFill className="h-6 w-6 fill-marine" />
         <PropValue
           className="md:text-base"
           prop="Lista de Espera"
@@ -49,7 +50,7 @@ export function TableInfo({ students }: Props) {
         />
       </div>
       <div className="flex gap-1">
-      <BsPersonVcard className="h-6 w-6 fill-pink"/>
+        <BsPersonVcard className="h-6 w-6 fill-pink" />
         <PropValue
           className="md:text-base"
           prop="Matriculados"

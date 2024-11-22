@@ -1,11 +1,11 @@
 import { studentCourse } from "@/services/urls";
 
-export async function updateEnrolledInfo(
+export async function updateSelectEnrolledInfo(
   idStudentCourse: string,
   enrolled: boolean,
   token: string
 ) {
-  const response = await fetch(`${studentCourse}/update-enrolled`, {
+  const response = await fetch(`${studentCourse}/update-select-enrolled`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
