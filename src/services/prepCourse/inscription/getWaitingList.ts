@@ -5,6 +5,7 @@ export async function getWaitingListInfo(
   token: string
 ): Promise<
   {
+    id: string;
     position: number;
     name: string;
   }[]

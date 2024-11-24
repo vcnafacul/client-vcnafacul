@@ -8,12 +8,15 @@ import { useAuthStore } from "@/store/auth";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
+import { CgReorder } from "react-icons/cg";
 import { FaFilePdf } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
 import { toast } from "react-toastify";
 
+import { updateOrderWaitingListInfo } from "@/services/prepCourse/inscription/updateOrderWaitingList";
 import pdfMake from "pdfmake/build/pdfmake.js";
 import pdfFonts from "pdfmake/build/vfs_fonts.js";
+import WaitingListEdit from "./waitingListEdit";
 pdfMake.vfs = pdfFonts as unknown as { [file: string]: string };
 
 interface Props {
@@ -23,6 +26,7 @@ interface Props {
 }
 
 interface Student {
+  id: string;
   position: number;
   name: string;
 }
@@ -32,6 +36,7 @@ export function WaitingList(props: Props) {
     data: { token },
   } = useAuthStore();
   const [students, setStudents] = useState<Student[]>([]);
+  const [openEdit, setOpenEdit] = useState<boolean>(false);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function convertStudentsToTableData(students: Student[]): any[] {
@@ -84,24 +89,61 @@ export function WaitingList(props: Props) {
 
   const handleEmailWaitingList = () => {
     const id = toast.loading("Enviando Email Lista de Espera Altualizada ...");
-    sendEmailWaitingList(props.inscriptionId, token).then(() => {
-      toast.update(id, {
-        render: "Email enviado com sucesso",
+    sendEmailWaitingList(props.inscriptionId, token)
+      .then(() => {
+        toast.update(id, {
+          render: "Email enviado com sucesso",
           type: "success",
           isLoading: false,
           autoClose: 5000,
+        });
       })
-    }).catch(() => {
-      toast.update(id, {
-        render: "Erro ao enviar email",
+      .catch(() => {
+        toast.update(id, {
+          render: "Erro ao enviar email",
           type: "error",
           isLoading: false,
           autoClose: 5000,
-      })
-    })
-  }
+        });
+      });
+  };
 
-  useEffect(() => {
+  const updateOrder = (studentsId: string[]) => {
+    const id = toast.loading("Atualizando Order Lista de Espera ...");
+    updateOrderWaitingListInfo(props.inscriptionId, studentsId, token)
+      .then(() => {
+        toast.update(id, {
+          render: "Atualizada com sucesso",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
+        getWaitingList();
+        setOpenEdit(false);
+      })
+      .catch(() => {
+        toast.update(id, {
+          render: "Erro ao enviar email",
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      });
+  };
+
+  const ModalEditWailtingList = () => {
+    return openEdit ? (
+      <WaitingListEdit
+        isOpen={openEdit}
+        handleClose={() => setOpenEdit(false)}
+        inscriptionId={props.inscriptionId}
+        students={students}
+        updateOder={updateOrder}
+      />
+    ) : null;
+  };
+
+  const getWaitingList = () => {
     getWaitingListInfo(props.inscriptionId, token)
       .then((res) => {
         setStudents(res);
@@ -109,60 +151,77 @@ export function WaitingList(props: Props) {
       .catch(() => {
         toast.error("Erro ao buscar lista de espera");
       });
+  };
+
+  useEffect(() => {
+    getWaitingList();
   }, []);
 
   return (
-    <ModalTemplate {...props}>
-      <div className="w-full overflow-y-auto scrollbar-hide flex flex-col gap-4">
-        <Text size="secondary">Lista de Espera</Text>
-        <table className="min-w-full divide-y divide-gray-300">
-          <thead>
-            <tr>
-              <th>Posição</th>
-              <th>Nome Completo</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white">
-            {students.map((stu) => (
-              <tr key={stu.position} className="even:bg-gray-200">
-                <td className="text-center">{stu.position}</td>
-                <td
-                  className={`whitespace-nowrap text-sm font-medium p-2 text-center`}
-                >
-                  {stu.name}
-                </td>
+    <>
+      <ModalTemplate {...props}>
+        <div className="w-full overflow-y-auto scrollbar-hide flex flex-col gap-4">
+          <Text size="secondary">Lista de Espera</Text>
+          <table className="min-w-full divide-y divide-gray-300">
+            <thead>
+              <tr>
+                <th>Posição</th>
+                <th>Nome Completo</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="flex justify-between gap-4">
-          <Button
-            size="small"
-            typeStyle="refused"
-            onClick={() => downloadPDF()}
-          >
-            <FaFilePdf className="h-5 w-10" />
-          </Button>
-          <AlertDialogUI
-            title="Lista de Espera Atualizada"
-            description="Enviar email com lista de espera atualizada para os estudantes"
-            onConfirm={() => handleEmailWaitingList()}
-          >
-            <AlertDialogTrigger>
-              <Button
-                size="small"
-                typeStyle="primary"
-                className="w-full border-zinc-200"
-              >
-                <div className="flex justify-center">
-                  <MdEmail className="h-5 w-10" />
-                  <p className="text-sm">Enviar Lista de Espera Atualizada</p>
-                </div>
-              </Button>
-            </AlertDialogTrigger>
-          </AlertDialogUI>
+            </thead>
+            <tbody className="bg-white">
+              {students.map((stu) => (
+                <tr key={stu.id} className="even:bg-gray-200">
+                  <td className="text-center">{stu.position}</td>
+                  <td className="whitespace-nowrap text-sm font-medium p-2 text-center">
+                    {stu.name}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="flex justify-between gap-4">
+            <Button
+              size="small"
+              typeStyle="refused"
+              onClick={() => downloadPDF()}
+            >
+              <FaFilePdf className="h-6 w-10" />
+            </Button>
+            <Button
+              size="small"
+              typeStyle="primary"
+              onClick={() => setOpenEdit(true)}
+            >
+              <div className="flex items-center">
+                <CgReorder className="h-6 w-10" />
+                <p className="text-sm leading-3">Editar Ordem</p>
+              </div>
+            </Button>
+            <AlertDialogUI
+              title="Lista de Espera Atualizada"
+              description="Enviar email com lista de espera atualizada para os estudantes"
+              onConfirm={() => handleEmailWaitingList()}
+            >
+              <AlertDialogTrigger>
+                <Button
+                  size="small"
+                  typeStyle="accepted"
+                  className="w-full border-zinc-200"
+                >
+                  <div className="flex justify-center items-center">
+                    <MdEmail className="h-6 w-10" />
+                    <p className="text-sm leading-3">
+                      Enviar Lista de Espera Atualizada
+                    </p>
+                  </div>
+                </Button>
+              </AlertDialogTrigger>
+            </AlertDialogUI>
+          </div>
         </div>
-      </div>
-    </ModalTemplate>
+      </ModalTemplate>
+      <ModalEditWailtingList />
+    </>
   );
 }

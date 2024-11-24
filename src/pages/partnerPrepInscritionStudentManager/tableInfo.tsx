@@ -1,4 +1,5 @@
 import PropValue from "@/components/molecules/PropValue";
+import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { BsPersonVcard } from "react-icons/bs";
 import { FaCheck } from "react-icons/fa";
@@ -33,7 +34,7 @@ export function TableInfo({ students }: Props) {
           className="md:text-base"
           prop="A Convocar"
           value={students.reduce((acc, item) => {
-            if (item.convocado === "Sim") return acc + 1;
+            if (item.convocar === "Sim") return acc + 1;
             return acc;
           }, 0)}
         />
@@ -55,7 +56,7 @@ export function TableInfo({ students }: Props) {
           className="md:text-base"
           prop="Matriculados"
           value={students.reduce((acc, item) => {
-            if (item.matriculado === "Sim") return acc + 1;
+            if (item.status === StatusApplication.Enrolled) return acc + 1;
             return acc;
           }, 0)}
         />
@@ -64,9 +65,9 @@ export function TableInfo({ students }: Props) {
         <FaCheck className="h-6 w-6 fill-green3" />
         <PropValue
           className="md:text-base"
-          prop="Deferidos"
+          prop="Declarou Interesse"
           value={students.reduce((acc, item) => {
-            if (item.deferido === "Deferido") return acc + 1;
+            if (item.status === StatusApplication.DeclaredInterest) return acc + 1;
             return acc;
           }, 0)}
         />
@@ -75,9 +76,9 @@ export function TableInfo({ students }: Props) {
         <MdOutlinePendingActions className="h-6 w-6 fill-orange" />
         <PropValue
           className="md:text-base"
-          prop="Pendente de Análise"
+          prop="Em Análise"
           value={students.reduce((acc, item) => {
-            if (item.deferido === "Pendente de análise") return acc + 1;
+            if (item.status === StatusApplication.UnderReview) return acc + 1;
             return acc;
           }, 0)}
         />

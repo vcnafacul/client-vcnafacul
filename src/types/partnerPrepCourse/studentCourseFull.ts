@@ -1,15 +1,16 @@
-import { StatusEnum } from "@/enums/generic/statusEnum";
+import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
-import { Gender } from "@/store/auth";
 
 interface StudentCourseFull {
   id: string;
   cadastrado_em: Date;
-  convocado_em: Date;
+  data_convocacao: Date | null;
+  data_limite_convocacao: Date | null;
   email: string;
   cpf: string;
   rg: string;
   uf: string;
+  status: StatusApplication;
   telefone_emergencia: string;
   whatsapp: string;
   nome: string;
@@ -30,26 +31,16 @@ interface StudentCourseFull {
   uf_guardiao_legal: string;
   cpf_guardiao_legal: string;
   parentesco_guardiao_legal: string;
+  genero: string;
+  isento: string;
+  convocar: string;
+  lista_de_espera: string;
 }
 
 export interface StudentCourseFullDtoInput extends StudentCourseFull {
-  genero: Gender;
-  deferido: StatusEnum;
   socioeconomic: string;
-  isento: boolean;
-  matriculado: boolean;
-  convocado: boolean;
-  convocado_antes: boolean;
-  lista_de_espera: boolean;
 }
 
 export interface XLSXStudentCourseFull extends StudentCourseFull {
-  genero: string;
-  deferido: string;
   socioeconomic: SocioeconomicAnswer[];
-  isento: string;
-  matriculado: string;
-  convocado: string;
-  convocado_antes: string;
-  lista_de_espera: string;
 }

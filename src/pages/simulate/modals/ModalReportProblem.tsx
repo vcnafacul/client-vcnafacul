@@ -117,11 +117,11 @@ function ModalReportProblem({
           onChange={(event: any) => setMessage(`${event.target.value}`)}
         />
         <div className="max-w-3xl flex mx-auto gap-4 mt-4">
-          <Button hover typeStyle="secondary" onClick={handleClose}>
+          <Button typeStyle="secondary" onClick={handleClose}>
             {" "}
             Cancelar{" "}
           </Button>
-          <Button disabled={message.length <= 0} hover onClick={sendReport}>
+          <Button disabled={message.length <= 0} onClick={sendReport}>
             {" "}
             Reportar{" "}
           </Button>

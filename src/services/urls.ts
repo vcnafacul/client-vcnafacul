@@ -65,5 +65,6 @@ export const subscribers = `${inscriptionCourse}/subscribers`;
 export const inviteMember = `${BASE_URL}/partner-prep-course/invite-members`;
 export const inviteMemberAccept = `${BASE_URL}/partner-prep-course/invite-members-accept`;
 export const updateWaitingList = `${inscriptionCourse}/update-waiting-list`;
+export const updateOrderWaitingList = `${inscriptionCourse}/update-order-waiting-list`;
 export const getWaitingList = `${inscriptionCourse}/waiting-list`;
 export const sendWaitingList = `${inscriptionCourse}/send-waiting-list`;
