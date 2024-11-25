@@ -1,4 +1,7 @@
+import { ConfirmEnrolled } from "@/pages/confirmEnrolled";
+import InviteMemberProcessing from "@/pages/inviteMemberProcessing";
 import { PartnerPrepInscriptionManager } from "@/pages/partnerPrepInscriptionManager";
+import { PartnerPrepInscritionStudentManager } from "@/pages/partnerPrepInscritionStudentManager";
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashTemplate from "../components/templates/dashTemplate";
 import { Roles } from "../enums/roles/roles";
@@ -42,6 +45,7 @@ import {
   DASH_QUESTION,
   DASH_ROLES,
   DASH_SIMULADO,
+  DECLARED_INTEREST,
   ESTUDO,
   FORGOT_PASSWORD_PATH,
   FORM_GEOLOCATION,
@@ -61,8 +65,6 @@ import {
 } from "./path";
 import ProtectedRoute from "./protectedRoute";
 import ProtectedRoutePermission from "./protectedRoutePermission";
-import InviteMemberProcessing from "@/pages/inviteMemberProcessing";
-import { PartnerPrepInscritionStudentManager } from "@/pages/partnerPrepInscritionStudentManager";
 
 export function PlatformRoutes() {
   const { data } = useAuthStore();
@@ -84,6 +86,7 @@ export function PlatformRoutes() {
         <Route path={REGISTER_PATH} element={<Register />} />
         <Route path={FORM_GEOLOCATION} element={<Geo />} />
         <Route path={INVITE_MEMBER} element={<InviteMemberProcessing />} />
+        <Route path={DECLARED_INTEREST} element={<ConfirmEnrolled />} />
       </Route>
 
       <Route
