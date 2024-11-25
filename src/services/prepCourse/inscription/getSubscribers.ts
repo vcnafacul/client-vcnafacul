@@ -18,7 +18,6 @@ export async function getSubscribers(
   });
   if (response.status === 200) {
     const data: StudentCourseFullDtoInput[] = await response.json();
-    console.log(data);
     return data.map((student) => ({
       ...student,
       cadastrado_em: new Date(student.cadastrado_em),
