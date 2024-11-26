@@ -3,13 +3,19 @@ import { ResponsivePie } from "@nivo/pie";
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any[];
+  textColor?: string;
+  enableLinkLabels?: boolean;
 }
 
-export function PieChart({ data }: Props) {
+export function PieChart({
+  data,
+  textColor = "#fff",
+  enableLinkLabels = true,
+}: Props) {
   return (
     <ResponsivePie
       data={data}
-      margin={{ top: 20, right: 0, bottom: 10, left: 0 }}
+      margin={{ top: 20, right: 0, bottom: 20, left: 0 }}
       innerRadius={0.7}
       padAngle={1}
       cornerRadius={5}
@@ -20,9 +26,11 @@ export function PieChart({ data }: Props) {
         from: "color",
         modifiers: [["darker", 3]],
       }}
-      arcLinkLabelsSkipAngle={1}
-      arcLinkLabelsTextColor="#FFF"
+      arcLinkLabelsSkipAngle={4}
+      arcLinkLabelsTextColor={textColor}
       arcLinkLabelsThickness={2}
+      enableArcLinkLabels={enableLinkLabels}
+      arcLabelsRadiusOffset={0.4}
       arcLinkLabelsColor={{ from: "color" }}
       arcLabelsSkipAngle={1}
       arcLabelsTextColor={{

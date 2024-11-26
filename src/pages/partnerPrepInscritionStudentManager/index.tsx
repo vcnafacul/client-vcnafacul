@@ -11,9 +11,12 @@ import Paper from "@mui/material/Paper";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { confirmEnrolled } from "@/services/prepCourse/student/confirmEnrolled";
 import { scheduleEnrolled } from "@/services/prepCourse/student/scheduleEnrolled";
+import { IconButton } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { FaCheck, FaSyncAlt } from "react-icons/fa";
+import { IoEyeSharp } from "react-icons/io5";
 import { LiaCoinsSolid } from "react-icons/lia";
 import { MdOutlineMoneyOffCsred, MdPlaylistRemove } from "react-icons/md";
 import { PiListChecksFill } from "react-icons/pi";
@@ -21,6 +24,8 @@ import { RiFileListFill, RiFileListLine } from "react-icons/ri";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ActionButton } from "./actionsButton";
+import { Details } from "./modal/details";
+import { Statistic } from "./modal/statistic";
 import { ScheduleCallEnrolle } from "./scheduleCallEnrolled";
 import { TableInfo } from "./tableInfo";
 import { WaitingList } from "./waitingList";
@@ -36,6 +41,11 @@ export function PartnerPrepInscritionStudentManager() {
   const [openWaitingList, setOpenWaitingList] = useState<boolean>(false);
   const [openScheduleEnrolled, setOpenScheduleEnrolled] =
     useState<boolean>(false);
+  const [openModalDetaild, setOpenModalDetaild] = useState<boolean>(false);
+  const [openModalStatistic, setOpenModalStatistic] = useState<boolean>(false);
+  const [studentSelected, setStudentSelected] = useState<
+    XLSXStudentCourseFull | undefined
+  >(undefined);
 
   const {
     data: { token },
@@ -169,6 +179,37 @@ export function PartnerPrepInscritionStudentManager() {
     });
   };
 
+  function shouldProcessApplication(
+    status: StatusApplication,
+    startDate: Date
+  ): boolean {
+    const currentDate = new Date();
+    if (
+      status === StatusApplication.CalledForEnrollment &&
+      currentDate >= startDate
+    ) {
+      return false;
+    }
+
+    if (
+      [
+        StatusApplication.Enrolled,
+        StatusApplication.DeclaredInterest,
+        StatusApplication.EnrollmentCancelled,
+      ].includes(status)
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  const handleModalDetaild = (id: string) => {
+    const student = students.find((student) => student.id === id);
+    setStudentSelected(student!);
+    setOpenModalDetaild(true);
+  };
+
   const columns: GridColDef[] = [
     {
       field: "actions",
@@ -179,8 +220,16 @@ export function PartnerPrepInscritionStudentManager() {
       align: "center",
       renderCell: (params) => (
         <div className="flex justify-center items-center gap-2 h-8 flex-wrap">
+          <Tooltip title="Visualizar">
+            <IconButton onClick={() => handleModalDetaild(params.row.id)}>
+              <IoEyeSharp className="h-6 w-6 fill-gray-500 opacity-60 hover:opacity-100" />
+            </IconButton>
+          </Tooltip>
           {params.row.isento === "Sim" &&
-            params.row.status === StatusApplication.UnderReview && (
+            shouldProcessApplication(
+              params.row.status,
+              params.row.data_convocacao
+            ) && (
               <ActionButton
                 titleAlert="Tem certeza que deseja torna esse aluno pagante?"
                 onConfirm={() => handleIsFreeInfo(params.row.id, false)}
@@ -190,7 +239,10 @@ export function PartnerPrepInscritionStudentManager() {
               </ActionButton>
             )}
           {params.row.isento === "Não" &&
-            params.row.status === StatusApplication.UnderReview && (
+            shouldProcessApplication(
+              params.row.status,
+              params.row.data_convocacao
+            ) && (
               <ActionButton
                 titleAlert="Tem certeza que deseja torna esse aluno isento?"
                 onConfirm={() => handleIsFreeInfo(params.row.id, true)}
@@ -199,7 +251,10 @@ export function PartnerPrepInscritionStudentManager() {
                 <MdOutlineMoneyOffCsred className="h-6 w-6 fill-green2 opacity-60 hover:opacity-100" />
               </ActionButton>
             )}
-          {params.row.status === StatusApplication.UnderReview && (
+          {shouldProcessApplication(
+            params.row.status,
+            params.row.data_convocacao
+          ) && (
             <ActionButton
               titleAlert={`Confirme a ${
                 params.row.convocar === Bool.No ? "adição" : "remoção"
@@ -223,7 +278,10 @@ export function PartnerPrepInscritionStudentManager() {
               )}
             </ActionButton>
           )}
-          {params.row.status === StatusApplication.UnderReview && (
+          {shouldProcessApplication(
+            params.row.status,
+            params.row.data_convocacao
+          ) && (
             <ActionButton
               titleAlert={`${
                 params.row.lista_de_espera === Bool.Yes
@@ -273,6 +331,7 @@ export function PartnerPrepInscritionStudentManager() {
       headerName: "CPF",
       width: 120,
     },
+    { field: "status", headerName: "Status", width: 200 },
     {
       field: "isento",
       headerName: "Isento",
@@ -311,56 +370,10 @@ export function PartnerPrepInscritionStudentManager() {
       width: 120,
       type: "date",
     },
-    { field: "status", headerName: "Status", width: 150 },
+
+    { field: "nome_social", headerName: "Nome Social", width: 100 },
     { field: "nome", headerName: "Nome", width: 100 },
     { field: "sobrenome", headerName: "Sobrenome", width: 150 },
-    { field: "nome_social", headerName: "Nome Social", width: 100 },
-    {
-      field: "data_nascimento",
-      headerName: "Data de Nascimento",
-      width: 150,
-      align: "center",
-      renderCell: (params) => new Date(params.value).toLocaleDateString(),
-    },
-    { field: "genero", headerName: "Gênero", width: 100 },
-    { field: "telefone", headerName: "Telefone", width: 150 },
-    { field: "bairro", headerName: "Bairro", width: 150 },
-    { field: "rua", headerName: "Rua", width: 150 },
-    { field: "numero", headerName: "Número", width: 70 },
-    { field: "complemento", headerName: "Complemento", width: 150 },
-    { field: "CEP", headerName: "CEP", width: 100 },
-    { field: "cidade", headerName: "Cidade", width: 150 },
-    { field: "estado", headerName: "Estado", width: 100 },
-    {
-      field: "nome_guardiao_legal",
-      headerName: "Nome do Guardião Legal",
-      width: 200,
-    },
-    {
-      field: "telefone_guardiao_legal",
-      headerName: "Telefone do Guardião Legal",
-      width: 150,
-    },
-    {
-      field: "rg_guardiao_legal",
-      headerName: "RG do Guardião Legal",
-      width: 150,
-    },
-    {
-      field: "uf_guardiao_legal",
-      headerName: "UF do Guardião Legal",
-      width: 50,
-    },
-    {
-      field: "cpf_guardiao_legal",
-      headerName: "CPF do Guardião Legal",
-      width: 150,
-    },
-    {
-      field: "parentesco_guardiao_legal",
-      headerName: "Parentesco do Guardião Legal",
-      width: 110,
-    },
   ];
   const paginationModel = { page: 0, pageSize: 10 };
 
@@ -384,12 +397,34 @@ export function PartnerPrepInscritionStudentManager() {
     ) : null;
   };
 
+  const ModalDetails = () => {
+    return openModalDetaild ? (
+      <Details
+        handleClose={() => setOpenModalDetaild(false)}
+        student={studentSelected!}
+      />
+    ) : null;
+  };
+
+  const ModalStatistic = () => {
+    return openModalStatistic ? (
+      <Statistic
+        handleClose={() => setOpenModalStatistic(false)}
+        geral={students.map((student) => student.socioeconomic)}
+        enrolleds={students
+          .filter((student) => student.status === StatusApplication.Enrolled)
+          .map((student) => student.socioeconomic)}
+      />
+    ) : null;
+  };
+
   const subscribers = () => {
     if (inscriptionId) {
       const id = toast.loading("Carregando Lista de Alunos...");
       getSubscribers(token, inscriptionId)
         .then((data) => {
           setStudents(data);
+          setStudentSelected(data[0]);
           toast.dismiss(id);
         })
         .catch(() => {
@@ -416,6 +451,14 @@ export function PartnerPrepInscritionStudentManager() {
         <div className="h-full w-full flex pb-2 flex-col sm:flex-row gap-2 sm:gap-0">
           <TableInfo students={students} />
           <div className="items-end flex flex-wrap gap-1 justify-end flex-1">
+            <Button
+              size="small"
+              className="border-none"
+              typeStyle="refused"
+              onClick={() => setOpenModalStatistic(true)}
+            >
+              <p className="text-sm">Estatisticas</p>
+            </Button>
             <Button
               size="small"
               className="border-none"
@@ -454,6 +497,8 @@ export function PartnerPrepInscritionStudentManager() {
       </Paper>
       <ModalWaitingList />
       <ScheduleEnrolled />
+      <ModalDetails />
+      <ModalStatistic />
     </div>
   );
 }
