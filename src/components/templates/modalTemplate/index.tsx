@@ -29,7 +29,7 @@ function ModalTemplate({
 }: ModalTemplateProps) {
   return !isOpen ? null : (
     <div
-      className="fixed top-0 left-0 z-50 bg-black bg-opacity-30 w-screen h-screen overflow-y-auto 
+      className="absolute -top-[76px] left-0 z-50 bg-black/50 w-screen h-screen overflow-y-auto 
         scrollbar-hide"
       {...props}
     >

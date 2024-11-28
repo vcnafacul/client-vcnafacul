@@ -159,7 +159,7 @@ function DashQuestion() {
         materia,
         frente,
         prova,
-        enemArea,
+        enemArea
       )
         .then((res) => {
           setQuestions(res.data);
@@ -186,10 +186,12 @@ function DashQuestion() {
   const ModalEdit = () => {
     return (
       <ModalTabTemplate
+        className="w-full h-[93vh] md:w-screen md:max-w-6xl p-4 overflow-y-auto scrollbar-hide"
         isOpen={openModalEdit}
         tabs={[
           {
             label: "Detalhes",
+            id: "detalhes",
             children: (
               <ModalDetalhes
                 question={questionSelect!}
@@ -209,6 +211,7 @@ function DashQuestion() {
           },
           {
             label: "Historico",
+            id: "historico",
             children: (
               <ModalHistorico
                 handleClose={() => {
@@ -229,10 +232,12 @@ function DashQuestion() {
   const ModalRegister = () => {
     return (
       <ModalTabTemplate
+        className="w-full h-[93vh] md:w-screen md:max-w-6xl p-4 overflow-y-auto scrollbar-hide"
         isOpen={openModalRegister}
         tabs={[
           {
             label: "Cadastro de Questao",
+            id: "cadastro",
             children: (
               <ModalDetalhes
                 question={undefined}
@@ -265,7 +270,7 @@ function DashQuestion() {
       materia,
       frente,
       prova,
-      enemArea,
+      enemArea
     );
   };
 
@@ -366,7 +371,7 @@ function DashQuestion() {
         filterProps,
         selectFiltes,
         buttons,
-        totalItems
+        totalItems,
       }}
     >
       <DashCardTemplate />
