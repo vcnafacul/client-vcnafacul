@@ -9,7 +9,9 @@ import {
   FormFieldOption,
 } from "../../../components/molecules/formField";
 import Form from "../../../components/organisms/form";
-import { ModalProps } from "../../../components/templates/modalTemplate";
+import ModalTemplate, {
+  ModalProps,
+} from "../../../components/templates/modalTemplate";
 import { ContentDtoInput } from "../../../dtos/content/contentDtoInput";
 import { Materias } from "../../../enums/content/materias";
 import { createContent } from "../../../services/content/createContent";
@@ -20,9 +22,10 @@ import { MateriasLabel } from "../../../types/content/materiasLabel";
 
 interface NewDemandProps extends ModalProps {
   addDemand: (data: ContentDtoInput) => void;
+  isOpen: boolean;
 }
 
-function NewDemand({ handleClose, addDemand }: NewDemandProps) {
+function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
   const [frentes, setFrentes] = useState<FormFieldOption[]>([]);
   const [subjects, setSubjects] = useState<FormFieldOption[]>([]);
 
@@ -131,7 +134,10 @@ function NewDemand({ handleClose, addDemand }: NewDemandProps) {
 
   const getFrenteByMateria = useCallback(
     async (materia: Materias) => {
-      getFrenteLikeFormField(materia ? materia : Materias.LinguaPortuguesa, token)
+      getFrenteLikeFormField(
+        materia ? materia : Materias.LinguaPortuguesa,
+        token
+      )
         .then((res) => {
           setFrentes(res);
           if (res.length > 0) {
@@ -160,7 +166,11 @@ function NewDemand({ handleClose, addDemand }: NewDemandProps) {
   }, [getSubjectByFrente, materia, frente, token]);
 
   return (
-    <>
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose!}
+      className="bg-white w-full max-w-6xl p-4 rounded-md"
+    >
       <div className="bg-white p-4 rounded max-w-7xl">
         <form onSubmit={handleSubmit(create)} className="flex flex-col gap-4">
           <Form
@@ -177,7 +187,7 @@ function NewDemand({ handleClose, addDemand }: NewDemandProps) {
           </div>
         </form>
       </div>
-    </>
+    </ModalTemplate>
   );
 }
 

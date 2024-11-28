@@ -6,7 +6,9 @@ import Filter from "../../../components/atoms/filter";
 import Text from "../../../components/atoms/text";
 import Toggle from "../../../components/atoms/toggle";
 import Button from "../../../components/molecules/button";
-import { ModalProps } from "../../../components/templates/modalTemplate";
+import ModalTemplate, {
+  ModalProps,
+} from "../../../components/templates/modalTemplate";
 import { CreateRoleDto } from "../../../dtos/roles/createRole";
 import { RolesLabel } from "../../../enums/roles/roles";
 import { createRole } from "../../../services/roles/createRole";
@@ -15,9 +17,10 @@ import { Role } from "../../../types/roles/role";
 
 interface ModalNewRole extends ModalProps {
   handleNewRole: (role: Role) => void;
+  isOpen: boolean;
 }
 
-function ModalNewRole({ handleNewRole, handleClose }: ModalNewRole) {
+function ModalNewRole({ handleNewRole, handleClose, isOpen }: ModalNewRole) {
   const [valueRoles, setValueRoles] = useState<CreateRoleDto>({
     name: "",
     validarCursinho: false,
@@ -61,8 +64,13 @@ function ModalNewRole({ handleNewRole, handleClose }: ModalNewRole) {
   };
 
   return (
-    <>
-      <div className="bg-white p-4 rounded grid grid-cols-1 sm:grid-cols-2">
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose!}
+      outSideClose
+      className="bg-white rounded-md p-2"
+    >
+      <div className="p-4 rounded grid grid-cols-1 sm:grid-cols-2">
         <div className="col-span-1 flex flex-col items-start">
           <Text size="secondary">Criar Novo Perfil de Usuario</Text>
           <Filter
@@ -100,7 +108,7 @@ function ModalNewRole({ handleNewRole, handleClose }: ModalNewRole) {
           </div>
         </div>
       </div>
-    </>
+    </ModalTemplate>
   );
 }
 

@@ -7,6 +7,7 @@ import { useAuthStore } from "../../../store/auth";
 import { UserRole } from "../../../types/roles/UserRole";
 import { Role } from "../../../types/roles/role";
 
+import ModalTemplate from "@/components/templates/modalTemplate";
 import { ReactComponent as StatusApproved } from "../../../assets/icons/statusApproved.svg";
 import { ReactComponent as StatusRejected } from "../../../assets/icons/statusRejected.svg";
 import Select from "../../../components/atoms/select";
@@ -15,9 +16,17 @@ interface ModalRoleProps {
   userRole: UserRole;
   roles: Role[];
   updateUserRole: (user: UserRole) => void;
+  handleClose: () => void;
+  isOpen: boolean;
 }
 
-function ModalRole({ userRole, roles, updateUserRole }: ModalRoleProps) {
+function ModalRole({
+  userRole,
+  roles,
+  updateUserRole,
+  isOpen,
+  handleClose,
+}: ModalRoleProps) {
   const [newRole, setNewRole] = useState<string>(userRole.roleId);
   const [roleInfo, setRoleInfo] = useState<RolesResponse | undefined>(
     undefined
@@ -64,8 +73,12 @@ function ModalRole({ userRole, roles, updateUserRole }: ModalRoleProps) {
   }, [newRole, token]);
 
   return (
-    <>
-      <div className="bg-white flex flex-col gap-4 p-4 rounded mx-4 w-96">
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose}
+      className="bg-white rounded-md p-2"
+    >
+      <div className="flex flex-col gap-4 p-4  mx-4 w-96">
         <div className="flex flex-col">
           <Text size="secondary">Permissões</Text>
           {isEditing ? (
@@ -97,7 +110,7 @@ function ModalRole({ userRole, roles, updateUserRole }: ModalRoleProps) {
           {isEditing ? <Button onClick={cameBackRole}>Voltar</Button> : null}
         </div>
       </div>
-    </>
+    </ModalTemplate>
   );
 }
 

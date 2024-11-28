@@ -3,7 +3,6 @@ import { toast } from "react-toastify";
 import { ButtonProps } from "../../components/molecules/button";
 import { CardDash } from "../../components/molecules/cardDash";
 import DashCardTemplate from "../../components/templates/dashCardTemplate";
-import ModalTemplate from "../../components/templates/modalTemplate";
 import { DashCardContext } from "../../context/dashCardContext";
 import { Prova } from "../../dtos/prova/prova";
 import { ITipoSimulado } from "../../dtos/simulado/tipoSimulado";
@@ -69,28 +68,25 @@ function DashProva() {
   };
 
   const ModalNewProva = () => {
-    return (
-      <ModalTemplate
+    return !openNewProva ? null : (
+      <NewProva
+        tipos={tipoSimulado!}
+        addProva={addProva}
         handleClose={() => setOpenNewProva(false)}
         isOpen={openNewProva}
-        outSideClose
-      >
-        <NewProva tipos={tipoSimulado!} addProva={addProva} />
-      </ModalTemplate>
+      />
     );
   };
 
   const ModalShowProva = () => {
-    return (
-      <ModalTemplate
+    return !showProva ? null : (
+      <ShowProva
+        prova={provaSelected!}
         handleClose={() => {
           setShowProva(false);
         }}
         isOpen={showProva}
-        outSideClose
-      >
-        <ShowProva prova={provaSelected!} />
-      </ModalTemplate>
+      />
     );
   };
 

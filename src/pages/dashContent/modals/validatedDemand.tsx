@@ -7,7 +7,9 @@ import PropValue from "../../../components/molecules/PropValue";
 import BLink from "../../../components/molecules/bLink";
 import Button from "../../../components/molecules/button";
 import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
-import { ModalProps } from "../../../components/templates/modalTemplate";
+import ModalTemplate, {
+  ModalProps,
+} from "../../../components/templates/modalTemplate";
 import { ContentDtoInput } from "../../../dtos/content/contentDtoInput";
 import { StatusContent } from "../../../enums/content/statusContent";
 import { StatusEnum } from "../../../enums/generic/statusEnum";
@@ -18,11 +20,13 @@ import { useAuthStore } from "../../../store/auth";
 interface ValidatedDemandProps extends ModalProps {
   demand: ContentDtoInput;
   updateStatusDemand: (id: string) => void;
+  isOpen: boolean;
 }
 
 function ValidatedDemand({
   handleClose,
   demand,
+  isOpen,
   updateStatusDemand,
 }: ValidatedDemandProps) {
   const [tryReset, setTryReset] = useState<boolean>(false);
@@ -111,7 +115,11 @@ function ValidatedDemand({
   };
 
   return (
-    <>
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose!}
+      className="bg-white w-full max-w-6xl p-4"
+    >
       <>
         <div className="bg-white py-4 px-8 rounded max-w-7xl w-11/12">
           <div className="flex flex-wrap gap-4 mb-4">
@@ -155,7 +163,7 @@ function ValidatedDemand({
         </div>
       </>
       <ConfirmReset />
-    </>
+    </ModalTemplate>
   );
 }
 

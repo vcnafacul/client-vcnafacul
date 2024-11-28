@@ -186,7 +186,7 @@ function DashQuestion() {
   const ModalEdit = () => {
     return (
       <ModalTabTemplate
-        className="w-full h-[93vh] md:w-screen md:max-w-6xl p-4 overflow-y-auto scrollbar-hide"
+        className="w-full min-h-[56vh] max-h-[93vh] md:w-screen md:max-w-6xl p-4 overflow-y-auto scrollbar-hide"
         isOpen={openModalEdit}
         tabs={[
           {

@@ -15,7 +15,6 @@ import { dashAllContent } from "./data";
 
 import { ReactComponent as SettingIcon } from "../../../assets/icons/setting.svg";
 import { OptionProps } from "../../../components/atoms/selectOption";
-import ModalTemplate from "../../../components/templates/modalTemplate";
 import { DashCardContext } from "../../../context/dashCardContext";
 import { Materias } from "../../../enums/content/materias";
 import { Roles } from "../../../enums/roles/roles";
@@ -81,63 +80,51 @@ function AllContent() {
   };
 
   const ShowDemandModal = () => {
-    return (
-      <ModalTemplate
+    return openShowModal &&
+      demandSelected?.status === StatusContent.Pending_Upload ? (
+      <ShowDemand
         handleClose={() => setOpenShowModal(false)}
         isOpen={
           openShowModal &&
           demandSelected?.status === StatusContent.Pending_Upload
         }
-      >
-        <ShowDemand
-          demand={demandSelected!}
-          updateStatusDemand={handleRemoveDemand}
-        />
-      </ModalTemplate>
-    );
+        demand={demandSelected!}
+        updateStatusDemand={handleRemoveDemand}
+      />
+    ) : null;
   };
 
   const ValidatedModalDemand = () => {
-    return (
-      <ModalTemplate
+    const open =
+      openShowModal && demandSelected?.status !== StatusContent.Pending_Upload;
+    return open ? (
+      <ValidatedDemand
+        demand={demandSelected!}
+        updateStatusDemand={handleRemoveDemand}
         handleClose={() => setOpenShowModal(false)}
-        isOpen={
-          openShowModal &&
-          demandSelected?.status !== StatusContent.Pending_Upload
-        }
-      >
-        <ValidatedDemand
-          demand={demandSelected!}
-          updateStatusDemand={handleRemoveDemand}
-        />
-      </ModalTemplate>
-    );
+        isOpen={open}
+      />
+    ) : null;
   };
 
   const NewModalDemand = () => {
-    return (
-      <ModalTemplate
-        isOpen={openNewModalDemand}
+    return !openNewModalDemand ? null : (
+      <NewDemand
+        addDemand={addDemand}
         handleClose={() => setOpenNewModalDemand(false)}
-      >
-        <NewDemand
-          addDemand={addDemand}
-          handleClose={() => setOpenNewModalDemand(false)}
-        />
-      </ModalTemplate>
+        isOpen={openNewModalDemand}
+      />
     );
   };
 
   const SettingsModal = () => {
-    return (
-      <ModalTemplate
+    return !settings ? null : (
+      <SettingsContent
         isOpen={settings}
         handleClose={() => {
           setSettings(false);
         }}
-      >
-        <SettingsContent />
-      </ModalTemplate>
+      />
     );
   };
 

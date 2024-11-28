@@ -8,7 +8,9 @@ import Button from "@/components/molecules/button";
 import MapBox from "@/components/molecules/mapBox";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
-import { ModalProps } from "@/components/templates/modalTemplate";
+import ModalTemplate, {
+  ModalProps,
+} from "@/components/templates/modalTemplate";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import {
   UpdateGeolocation,
@@ -39,11 +41,13 @@ interface ModalEditDashGeoProps extends ModalProps {
   geo: Geolocation;
   updateStatus: (cardId: string) => void;
   updateGeo: (geo: Geolocation) => void;
+  isOpen: boolean;
 }
 
 function ModalEditDashGeo({
   geo,
   handleClose,
+  isOpen,
   updateStatus,
   updateGeo,
 }: ModalEditDashGeoProps) {
@@ -242,8 +246,9 @@ function ModalEditDashGeo({
   };
 
   const ModalRefused = () => {
-    return (
+    return !refuse ? null : (
       <ModalConfirmCancelMessage
+        className=" w-full max-w-[500px] bg-white p-4 rounded-md"
         isOpen={refuse}
         text="Descreva o motivo da rejeição:"
         handleClose={() => {
@@ -260,6 +265,7 @@ function ModalEditDashGeo({
   const ModalComeBack = () => {
     return (
       <ModalConfirmCancel
+        className=" w-full max-w-[500px] bg-white p-4 rounded-md"
         isOpen={comeBack && modified}
         text="Suas alterações ainda não foram salvas. Se você sair agora, perderá todas as alterações. Deseja continuar?"
         handleClose={() => {
@@ -310,10 +316,18 @@ function ModalEditDashGeo({
     register("twitter");
   }, []);
 
+  const className =
+    "p-4 relative flex flex-col w-fit min-h-[56vh] max-h-[93vh] bg-white rounded-r-md rounded-b-md";
+
   return (
-    <>
+    <ModalTemplate
+      handleClose={handleClose!}
+      isOpen={isOpen}
+      outSideClose
+      className={className}
+    >
       <form
-        className="bg-white w-[90vw] max-h-[85vh] overflow-y-auto scrollbar-hide 
+        className="bg-white w-full max-w-6xl h-full overflow-y-auto scrollbar-hide 
         grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 md:grid-rows-3 gap-x-4"
         onSubmit={handleSubmit(UpdateGeo)}
       >
@@ -386,7 +400,7 @@ function ModalEditDashGeo({
       </form>
       <ModalRefused />
       <ModalComeBack />
-    </>
+    </ModalTemplate>
   );
 }
 export default ModalEditDashGeo;
