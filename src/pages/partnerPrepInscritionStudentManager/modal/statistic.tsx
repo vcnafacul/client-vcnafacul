@@ -1,4 +1,4 @@
-import { PieChart } from "@/components/atoms/pieChart";
+import { PieChartMui } from "@/components/atoms/pieChartMui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   anoConclusaoQuestion,
@@ -42,8 +42,6 @@ export function Statistic({ geral, enrolleds, handleClose }: Props) {
     possibleAnswers: string[]
   ) {
     // Gera uma cor aleatória no formato hsl
-    const generateRandomHslColor = () =>
-      `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`;
 
     // Contagem das ocorrências de cada resposta
     const counts = possibleAnswers.reduce((acc, answer) => {
@@ -57,7 +55,6 @@ export function Statistic({ geral, enrolleds, handleClose }: Props) {
         id: answer,
         label: answer,
         value: counts[answer] || 0, // Valor correspondente à contagem
-        color: generateRandomHslColor(),
       }))
       .filter((item) => item.value > 0); // Filtra respostas com valor 0
   }
@@ -118,45 +115,41 @@ export function Statistic({ geral, enrolleds, handleClose }: Props) {
     );
 
     return (
-      <div className="text-gray-700 flex gap-4 flex-wrap w-[1200px] justify-center overflow-y-auto scrollbar-hide">
-        <div className="flex flex-col gap-1 w-full">
+      <div className="text-gray-700 flex gap-4 flex-wrap w-full max-w-8xl justify-center overflow-y-auto scrollbar-hide">
+        <div className="flex flex-col gap-1">
           <span className="font-medium">{fundamentalMedioQuestion}</span>
-          <div className="h-[350px] w-full">
-            <PieChart data={fundamentalMedioAnswers} textColor="#000" />
+          <div className="h-[300px] w-fit">
+            <PieChartMui data={fundamentalMedioAnswers} width={900} />
           </div>
         </div>
-        <div className="flex flex-col gap-1 w-full">
+        <div className="flex flex-col gap-1">
           <span className="font-medium">{anoConclusaoQuestion}</span>
-          <div className="h-[350px] w-full">
-            <PieChart data={anoConclusaoAnswers} textColor="#000" />
+          <div className="h-[300px] w-fit ">
+            <PieChartMui data={anoConclusaoAnswers} width={400} />
           </div>
         </div>
-        <div className="flex flex-col gap-1 items-start w-full">
+        <div className="flex flex-col gap-1">
           <span className="font-medium">{tipoCursoQuestion}</span>
-          <div className="h-[350px] w-full">
-            <PieChart data={tipoCursoAnswers} textColor="#000" />
+          <div className="h-[300px] w-fit">
+            <PieChartMui data={tipoCursoAnswers} width={630} />
           </div>
         </div>
-        <div className="flex flex-col gap-1 items-start w-full">
+        <div className="flex flex-col gap-1">
           <span className="font-medium">{racaQuestion}</span>
-          <div className="h-[350px] w-full">
-            <PieChart data={racaAnswers} textColor="#000" />
+          <div className="h-[300px] w-fit">
+            <PieChartMui data={racaAnswers}  />
           </div>
         </div>
-        <div className="flex flex-col gap-1 items-start w-full">
+        <div className="flex flex-col gap-1">
           <span className="font-medium">{empregoQuestion}</span>
-          <div className="h-[350px] w-full">
-            <PieChart data={empregoAnswers} textColor="#000" />
+          <div className="h-[300px] w-fit">
+            <PieChartMui data={empregoAnswers} width={610} />
           </div>
         </div>
-        <div className="flex flex-col gap-1 items-start w-full">
+        <div className="flex flex-col gap-1">
           <span className="font-medium">{rendaFamiliarQuestion}</span>
-          <div className="h-[350px] w-full">
-            <PieChart
-              data={rendaFamiliarAnswers}
-              textColor="#000"
-              enableLinkLabels={false}
-            />
+          <div className="h-[350px] w-fit">
+            <PieChartMui data={rendaFamiliarAnswers} width={840} />
           </div>
         </div>
       </div>
@@ -166,8 +159,8 @@ export function Statistic({ geral, enrolleds, handleClose }: Props) {
   return (
     <div className="absolute w-screen h-screen bg-black/60 z-50 -top-[76px] left-0 flex justify-center items-center">
       <div className="w-full h-full flex justify-center items-center md:py-4">
-        <Tabs defaultValue="details" className="max-w-6xl h-[80vh]">
-        <TabsList className="grid w-full grid-cols-2">
+        <Tabs defaultValue="details" className="w-full max-w-7xl h-[80vh]">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="details">Todos os Alunos</TabsTrigger>
             <TabsTrigger value="enrolled">Matriculados</TabsTrigger>
           </TabsList>
