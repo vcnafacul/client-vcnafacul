@@ -10,13 +10,15 @@ import Paper from "@mui/material/Paper";
 
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { confirmEnrolled } from "@/services/prepCourse/student/confirmEnrolled";
+import { rejectStudent } from "@/services/prepCourse/student/rejectStudent";
+import { resetStudent } from "@/services/prepCourse/student/resetStudent";
 import { scheduleEnrolled } from "@/services/prepCourse/student/scheduleEnrolled";
 import { IconButton } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
-import { FaCheck, FaSyncAlt } from "react-icons/fa";
-import { IoEyeSharp } from "react-icons/io5";
+import { FaCheck, FaSyncAlt, FaWindowClose } from "react-icons/fa";
+import { IoClose, IoEyeSharp } from "react-icons/io5";
 import { LiaCoinsSolid } from "react-icons/lia";
 import { MdOutlineMoneyOffCsred, MdPlaylistRemove } from "react-icons/md";
 import { PiListChecksFill } from "react-icons/pi";
@@ -127,6 +129,39 @@ export function PartnerPrepInscritionStudentManager() {
               ...stu,
               convocar: selected ? Bool.Yes : Bool.No,
               lista_de_espera: Bool.No,
+              status: StatusApplication.UnderReview,
+              data_convocacao: null,
+              data_limite_convocacao: null,
+            };
+          }
+          return stu;
+        });
+        setStudents(newStudent);
+        toast.dismiss(id);
+      })
+      .catch(() => {
+        toast.update(id, {
+          render: "Erro ao atualizar informações",
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      });
+  };
+
+  const handleResetStudent = (studentId: string) => {
+    const id = toast.loading("Resetando Informações...");
+    resetStudent(studentId, token)
+      .then(() => {
+        const newStudent = students.map((stu) => {
+          if (stu.id === studentId) {
+            return {
+              ...stu,
+              convocar: Bool.No,
+              lista_de_espera: Bool.No,
+              status: StatusApplication.UnderReview,
+              data_convocacao: null,
+              data_limite_convocacao: null,
             };
           }
           return stu;
@@ -196,6 +231,7 @@ export function PartnerPrepInscritionStudentManager() {
         StatusApplication.Enrolled,
         StatusApplication.DeclaredInterest,
         StatusApplication.EnrollmentCancelled,
+        StatusApplication.Rejected,
       ].includes(status)
     ) {
       return false;
@@ -204,17 +240,56 @@ export function PartnerPrepInscritionStudentManager() {
     return true;
   }
 
+  const handleIndeferir = (studentId: string) => {
+    const id = toast.loading("Indeferir Matrícula...");
+    rejectStudent(studentId, token)
+      .then(() => {
+        const newStudent = students.map((stu) => {
+          if (stu.id === studentId) {
+            return {
+              ...stu,
+              status: StatusApplication.Rejected,
+            };
+          }
+          return stu;
+        });
+        setStudents(newStudent);
+        toast.dismiss(id);
+      })
+      .catch((err) => {
+        toast.update(id, {
+          render: err.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      });
+  };
+
   const handleModalDetaild = (id: string) => {
     const student = students.find((student) => student.id === id);
     setStudentSelected(student!);
     setOpenModalDetaild(true);
   };
 
+  function mascararCPF(cpf: string) {
+    // Certifique-se de que o CPF seja uma string
+    cpf = cpf.toString().replace(/\D/g, ""); // Remove qualquer caractere não numérico
+
+    if (cpf.length !== 11) {
+      throw new Error("CPF inválido. O CPF deve conter 11 dígitos.");
+    }
+
+    // Formata e mascara o CPF
+    return cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "***.***.$3-$4");
+  }
+
   const columns: GridColDef[] = [
     {
       field: "actions",
       headerName: "Ações",
-      width: 210,
+      flex: 1,
+      minWidth: 260,
       disableColumnMenu: true,
       sortable: false,
       align: "center",
@@ -322,6 +397,25 @@ export function PartnerPrepInscritionStudentManager() {
               <FaCheck className="h-6 w-6 fill-green3 opacity-60 hover:opacity-100" />
             </ActionButton>
           )}
+          {params.row.status === StatusApplication.DeclaredInterest && (
+            <ActionButton
+              titleAlert={`Infererir ${params.row.nome} ${params.row.sobrenome}`}
+              descriptionAlert={`Infererir confirmação de matrícula de  ${params.row.nome} ${params.row.sobrenome}`}
+              onConfirm={() => {
+                handleIndeferir(params.row.id);
+              }}
+              tooltipTitle="Infererir"
+            >
+              <IoClose className="h-6 w-6 fill-redError/60 hover:fill-redError" />
+            </ActionButton>
+          )}
+          <ActionButton
+            titleAlert="Deseja resetar as informações do aluno?"
+            onConfirm={() => handleResetStudent(params.row.id)}
+            tooltipTitle="Resetar"
+          >
+            <FaWindowClose className="h-6 w-6 fill-red/50 hover:fill-red" />
+          </ActionButton>
         </div>
       ),
     },
@@ -329,13 +423,15 @@ export function PartnerPrepInscritionStudentManager() {
     {
       field: "cpf",
       headerName: "CPF",
-      width: 120,
+      flex: 1,
+      minWidth: 120,
+      valueGetter: (params) => mascararCPF(params),
     },
     { field: "status", headerName: "Status", width: 200 },
     {
       field: "isento",
       headerName: "Isento",
-      width: 60,
+      flex: 1,
       display: "flex",
       align: "center",
     },
@@ -343,7 +439,7 @@ export function PartnerPrepInscritionStudentManager() {
       field: "lista_de_espera",
       headerName: "L. Espera",
       description: "Lista de Espera",
-      width: 100,
+      flex: 1,
       display: "text",
       align: "center",
     },
@@ -351,7 +447,7 @@ export function PartnerPrepInscritionStudentManager() {
       field: "convocar",
       headerName: "L. Convoc",
       description: "Lista de Convocação",
-      width: 100,
+      flex: 1,
       display: "flex",
       align: "center",
       filterable: false,
@@ -360,20 +456,20 @@ export function PartnerPrepInscritionStudentManager() {
       field: "data_convocacao",
       headerName: "Data Conv",
       description: "Data de Convocação para Matrícula",
-      width: 120,
+      flex: 1,
       type: "date",
     },
     {
       field: "data_limite_convocacao",
       headerName: "Prazo M.",
       description: "Prazo Confirmação Matrícula",
-      width: 120,
+      flex: 1,
       type: "date",
     },
 
-    { field: "nome_social", headerName: "Nome Social", width: 100 },
-    { field: "nome", headerName: "Nome", width: 100 },
-    { field: "sobrenome", headerName: "Sobrenome", width: 150 },
+    { field: "nome_social", headerName: "Nome Social", flex: 1 },
+    { field: "nome", headerName: "Nome", flex: 1 },
+    { field: "sobrenome", headerName: "Sobrenome", flex: 1 },
   ];
   const paginationModel = { page: 0, pageSize: 10 };
 
