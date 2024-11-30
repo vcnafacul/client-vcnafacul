@@ -20,9 +20,7 @@ import UploadButton from "../../../components/molecules/uploadButton";
 import Form from "../../../components/organisms/form";
 import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
 import ModalConfirmCancelMessage from "../../../components/organisms/modalConfirmCancelMessage";
-import ModalTemplate, {
-  ModalProps,
-} from "../../../components/templates/modalTemplate";
+import { ModalProps } from "../../../components/templates/modalTemplate";
 import { Question } from "../../../dtos/question/questionDTO";
 import {
   CreateQuestion,
@@ -384,16 +382,12 @@ function ModalDetalhes({
   ];
 
   const QuestionImageModal = () => {
-    return (
-      <ModalTemplate
+    return !photoOpen ? null : (
+      <ModalImage
         isOpen={photoOpen}
         handleClose={() => setPhotoOpen(false)}
-        outSideClose
-      >
-        <ModalImage
-          image={`https://api.vcnafacul.com.br/images/${question?.imageId}.png`}
-        />
-      </ModalTemplate>
+        image={`https://api.vcnafacul.com.br/images/${question?.imageId}.png`}
+      />
     );
   };
 
@@ -598,6 +592,7 @@ function ModalDetalhes({
           setRefuse(false);
           handleUpdateQuestionStatus(StatusEnum.Rejected, message);
         }}
+        className="bg-white p-2 rounded-md"
       />
     );
   };
@@ -616,6 +611,7 @@ function ModalDetalhes({
           setModified(false);
           setIsEditing(false);
         }}
+        className="bg-white p-2 rounded-md"
       />
     );
   };
@@ -631,6 +627,7 @@ function ModalDetalhes({
         handleConfirm={() => {
           handleDelete();
         }}
+        className="bg-white p-2 rounded-md"
       />
     );
   };
