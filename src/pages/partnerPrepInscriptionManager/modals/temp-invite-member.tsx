@@ -60,7 +60,7 @@ export function TempInviteMember(props: TempInviteMemberProps) {
   TempInviteMember;
 
   return (
-    <ModalTemplate {...props}>
+    <ModalTemplate {...props} className="bg-white p-4 rounded-md">
       <div className="w-96">
         <h2 className="text-base font-bold text-marine">
           Insira o email do usuário que deseja convidar como membro do seu

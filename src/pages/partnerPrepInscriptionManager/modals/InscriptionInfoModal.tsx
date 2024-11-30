@@ -70,6 +70,7 @@ export function InscriptionInfoModal({
             handleClose();
           });
         }}
+        className="bg-white p-2 rounded-md"
       >
         <p>{dataInscription.warningDelete}</p>
       </ModalConfirmCancel>
@@ -205,7 +206,7 @@ export function InscriptionInfoModal({
   };
 
   return (
-    <ModalTemplate isOpen={isOpen} handleClose={handleClose}>
+    <ModalTemplate isOpen={isOpen} handleClose={handleClose} className="bg-white p-4 rounded-md">
       <div className=" max-w-2xl min-w-[90%] sm:min-w-[550px] flex flex-col gap-4">
         <h1 className="text-left text-marine text-3xl font-black">
           {dataInscription.inscription}

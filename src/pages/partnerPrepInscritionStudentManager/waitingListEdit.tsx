@@ -69,7 +69,7 @@ function WaitingListEdit(props: Props) {
   };
 
   return (
-    <ModalTemplate {...props}>
+    <ModalTemplate {...props} className="bg-white p-4 rounded-md">
       <div className="w-full overflow-y-auto scrollbar-hide flex flex-col gap-4">
         <Text size="secondary">Lista de Espera</Text>
         <DndProvider backend={HTML5Backend}>

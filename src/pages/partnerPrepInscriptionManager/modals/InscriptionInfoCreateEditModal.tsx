@@ -78,7 +78,7 @@ export function InscriptionInfoCreateEditModal({
   }, []);
 
   return (
-    <ModalTemplate isOpen={isOpen} handleClose={handleClose}>
+    <ModalTemplate isOpen={isOpen} handleClose={handleClose} className="bg-white p-2 rounded-md">
       <div className="w-96 sm:min-w-[585px] flex flex-col gap-1">
         <h1 className="text-left text-marine text-3xl font-black">
           Processo Seletivo

@@ -45,7 +45,7 @@ export function ScheduleCallEnrolle(props: Props) {
   }, []);
 
   return (
-    <ModalTemplate {...props}>
+    <ModalTemplate {...props} className="bg-white p-4 rounded-md">
       <div className="px-4">
         <Text size="secondary">Programar Convocação </Text>
         <form onSubmit={handleSubmit(scheduleEnrolled)}>
