@@ -1,5 +1,4 @@
 import { pieArcLabelClasses, PieChart } from "@mui/x-charts";
-import './styles.css';
 
 interface Props {
   data: {
