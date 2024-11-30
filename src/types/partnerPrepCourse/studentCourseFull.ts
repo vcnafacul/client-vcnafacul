@@ -1,57 +1,26 @@
+import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
 
-export interface StudentCourseFullDTO {
-  createdAt: string;
-  email: string;
-  cpf: string;
-  rg: string;
-  uf: string;
-  urgencyPhone: string;
-  socioeconomic: string;
-  whatsapp: string;
-  legalGuardian: {
-    fullName: string;
-    phone: string;
-    rg?: string;
-    uf?: string;
-    cpf: string;
-    family_relationship: string;
-  }
-  user: {
-    firstName: string;
-    lastName: string;
-    socialName: string;
-    birthday: string;
-    gender: number;
-    phone: string;
-    neighborhood: string;
-    street: string;
-    number: string;
-    complement: string;
-    postalCode: string;
-    city: string;
-    state: string;
-  };
-}
-
-export interface StudentCourseFull {
+interface StudentCourseFull {
+  id: string;
   cadastrado_em: Date;
+  data_convocacao: Date | null;
+  data_limite_convocacao: Date | null;
   email: string;
   cpf: string;
   rg: string;
   uf: string;
+  status: StatusApplication;
   telefone_emergencia: string;
-  socioeconomic: SocioeconomicAnswer[];
   whatsapp: string;
   nome: string;
   sobrenome: string;
   nome_social: string;
-  data_nascimento: string;
-  genero: string;
+  data_nascimento: Date;
   telefone: string;
   bairro: string;
   rua: string;
-  numero: string;
+  numero: number;
   complemento: string;
   CEP: string;
   cidade: string;
@@ -62,4 +31,16 @@ export interface StudentCourseFull {
   uf_guardiao_legal: string;
   cpf_guardiao_legal: string;
   parentesco_guardiao_legal: string;
+  genero: string;
+  isento: string;
+  convocar: string;
+  lista_de_espera: string;
+}
+
+export interface StudentCourseFullDtoInput extends StudentCourseFull {
+  socioeconomic: string;
+}
+
+export interface XLSXStudentCourseFull extends StudentCourseFull {
+  socioeconomic: SocioeconomicAnswer[];
 }

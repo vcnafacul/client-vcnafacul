@@ -121,7 +121,7 @@ function ModalEditNew({
         )}
         <div className="flex gap-4 w-full mt-4">
           {news ? (
-            <Button className="bg-red border-red" hover onClick={deleteNew}>
+            <Button className="bg-red border-red" onClick={deleteNew}>
               Deletar
             </Button>
           ) : (

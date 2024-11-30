@@ -146,7 +146,7 @@ function ShowUserInfo({
           </div>
         </div>
         <div className="flex gap-4 py-2">
-          <Button hover onClick={openUpdateRole}>
+          <Button onClick={openUpdateRole}>
             Editar Permissão
           </Button>
         </div>
