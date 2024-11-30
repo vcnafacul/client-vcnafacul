@@ -9,6 +9,7 @@ function ModalConfirmCancelMessage({
   text,
   isOpen,
   handleClose,
+  className,
 }: ModalConfirmCancelProps) {
   const [message, setMessage] = useState<string>("");
   return (
@@ -20,6 +21,7 @@ function ModalConfirmCancelMessage({
       }}
       text={text}
       confirmDisabled={!message}
+      className={className}
     >
       <textarea
         onChange={(event: any) => {

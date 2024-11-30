@@ -9,6 +9,7 @@ export interface ModalConfirmCancelProps extends ModalProps {
   text?: string;
   children?: React.ReactNode;
   isOpen: boolean;
+  className?: string;
 }
 
 function ModalConfirmCancel({
@@ -18,11 +19,16 @@ function ModalConfirmCancel({
   children,
   handleClose,
   isOpen,
+  className,
 }: ModalConfirmCancelProps) {
   return (
-    <ModalTemplate isOpen={isOpen} handleClose={handleClose!}>
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose!}
+      className={className}
+    >
       <div className="px-4 md:max-w-[700px] rounded-2xl flex flex-col gap-4">
-        <Text size="secondary" className="font-black m-0 text-start">
+        <Text size="tertiary" className="font-black m-0 text-start">
           {text}
         </Text>
         {children}

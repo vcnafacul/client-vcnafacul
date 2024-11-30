@@ -16,7 +16,7 @@ function ModalMessage({
   isOpen,
 }: ModalMessageProps) {
   return (
-    <ModalTemplate isOpen={isOpen} handleClose={handleClose!}>
+    <ModalTemplate isOpen={isOpen} handleClose={handleClose!} className="bg-white p-4 rounded-md">
       <div className="px-4 md:max-w-[700px] rounded-2xl flex flex-col gap-4">
         <Text size="secondary" className="font-black m-0 text-start">
           {text}

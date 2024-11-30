@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import ModalTemplate from "../../../components/templates/modalTemplate";
 import { useCallback, useState } from "react";
 import { ReactComponent as IconPreview } from "../../../assets/icons/Icon-preview.svg";
 import Content from "../../../components/atoms/content";
@@ -12,9 +13,17 @@ interface ModalEditNewProps {
   news: News;
   create: (session: string, title: string, file: any) => void;
   deleteFunc: (id: string) => void;
+  isOpen: boolean;
+  handleClose: () => void;
 }
 
-function ModalEditNew({ news, create, deleteFunc }: ModalEditNewProps) {
+function ModalEditNew({
+  news,
+  create,
+  deleteFunc,
+  isOpen,
+  handleClose,
+}: ModalEditNewProps) {
   const [arrayBuffer, setArrayBufer] = useState<ArrayBuffer>();
   const [upload, setUpload] = useState<boolean>(news ? true : false);
 
@@ -67,8 +76,14 @@ function ModalEditNew({ news, create, deleteFunc }: ModalEditNewProps) {
   };
 
   return (
-    <>
-      <div className="bg-white p-10  max-h-[90vh] flex flex-col items-center">
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose}
+      outSideClose
+      className="w-full max-w-6xl bg-white p-4 rounded-md"
+    >
+      
+      <div className="p-10 max-h-[90vh] w-full flex flex-col items-center">
         <Text size="secondary">Informações Básicas</Text>
         <div className="flex gap-4">
           <Filter
@@ -120,7 +135,7 @@ function ModalEditNew({ news, create, deleteFunc }: ModalEditNewProps) {
           )}
         </div>
       </div>
-    </>
+    </ModalTemplate>
   );
 }
 

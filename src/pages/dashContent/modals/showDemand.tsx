@@ -7,22 +7,26 @@ import PropValue from "../../../components/molecules/PropValue";
 import Button from "../../../components/molecules/button";
 import UploadButton from "../../../components/molecules/uploadButton";
 import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
-import { ModalProps } from "../../../components/templates/modalTemplate";
+import ModalTemplate, {
+  ModalProps,
+} from "../../../components/templates/modalTemplate";
 import { ContentDtoInput } from "../../../dtos/content/contentDtoInput";
+import { getMateriaString } from "../../../enums/content/materias";
 import { Roles } from "../../../enums/roles/roles";
 import { deleteDemand } from "../../../services/content/deleteDemand";
 import { uploadFileDemand } from "../../../services/content/uploadFileDemand";
 import { useAuthStore } from "../../../store/auth";
-import { getMateriaString } from "../../../enums/content/materias";
 
 interface ShowDemandProps extends ModalProps {
   demand: ContentDtoInput;
   updateStatusDemand: (id: string) => void;
+  isOpen: boolean;
 }
 
 function ShowDemand({
   demand,
   handleClose,
+  isOpen,
   updateStatusDemand,
 }: ShowDemandProps) {
   const [tryUpload, setTryUpload] = useState<boolean>(false);
@@ -172,13 +176,20 @@ function ShowDemand({
   };
 
   return (
-    <>
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose!}
+      className="bg-white w-full max-w-6xl p-4"
+    >
       <>
-        <div className="absolute w-11/12 p-4 bg-white rounded top-4 sm:relative">
+        <div className=" sm:relative">
           <Text size="secondary" className="">
             {demand.title}
           </Text>
-          <PropValue prop="Materia" value={getMateriaString(demand.subject.frente.materia)} />
+          <PropValue
+            prop="Materia"
+            value={getMateriaString(demand.subject.frente.materia)}
+          />
           <PropValue prop="Frente" value={demand.subject.frente.name} />
           <div className="flex flex-col">
             <PropValue prop="Tema" value={demand.subject.name} />
@@ -203,7 +214,7 @@ function ShowDemand({
       </>
       <ModalTryUpload />
       <ModalTryDelete />
-    </>
+    </ModalTemplate>
   );
 }
 

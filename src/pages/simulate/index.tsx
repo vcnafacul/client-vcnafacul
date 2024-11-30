@@ -10,7 +10,6 @@ import { toast } from "react-toastify";
 import { ReactComponent as Report } from "../../assets/icons/warning.svg";
 import Alternative from "../../components/atoms/alternative";
 import ModalImage from "../../components/atoms/modalImage";
-import ModalTemplate from "../../components/templates/modalTemplate";
 import SimulateTemplate from "../../components/templates/simulateTemplate";
 import { DASH, SIMULADO } from "../../routes/path";
 import { answerSimulado } from "../../services/simulado/answerSimulado";
@@ -39,7 +38,7 @@ function Simulate() {
   const [reportProblem, setReportProblem] = useState<boolean>(false);
   const [questionProblem, setQuestionProblem] = useState<boolean>(false);
   const [photoOpen, setPhotoOpen] = useState<boolean>(false);
-
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
   const {
     data: { token },
   } = useAuthStore();
@@ -123,10 +122,10 @@ function Simulate() {
           onClick: () => setReportModal(true),
           type: "secondary",
           children: (
-            <>
-              <span>Reportar problema </span>
-              <Report className="absolute top-0.5 w-10 h-10 right-2" />
-            </>
+            <div className="flex items-center gap-2">
+              <span>Reportar problema</span>
+              <Report className="w-6 h-6" />
+            </div>
           ),
         },
       ],
@@ -141,10 +140,10 @@ function Simulate() {
           onClick: () => setTryFinish(false),
           type: "secondary",
           children: (
-            <>
-              Reportar questão{" "}
-              <Report className="w-6 h-6 transition-all duration-300 group-hover:h-8" />
-            </>
+            <div className="flex items-center gap-2 justify-center">
+              <span>Reportar problema</span>
+              <Report className="w-6 h-6 transition-all duration-300" />
+            </div>
           ),
         },
         {
@@ -154,15 +153,17 @@ function Simulate() {
           },
           type: "secondary",
           children: (
-            <>
-              Bug na plataforma{" "}
+            <div className="flex items-center gap-2 justify-center">
+              <span>Reportar questão</span>
               <Report className="w-6 h-6 transition-all duration-300 group-hover:h-8" />
-            </>
+            </div>
           ),
         },
         {
           onClick: () => setReportModal(false),
-          children: "Voltar",
+          children: (
+            <span>Voltar</span>
+          ),
         },
       ],
     },
@@ -176,30 +177,26 @@ function Simulate() {
   };
 
   const ReportProblem = () => {
-    if (!reportProblem) return null;
-    return (
-      <ModalTemplate
+    return !reportProblem ? null : (
+      <ModalReportProblem
         isOpen={reportProblem}
         handleClose={() => {
           setReportProblem(false);
         }}
-      >
-        <ModalReportProblem
-          questionProblem={questionProblem}
-          idQuestion={questionSelected._id}
-          numberQuestion={questionSelected.numero + 1}
-        />
-      </ModalTemplate>
+        questionProblem={questionProblem}
+        idQuestion={questionSelected._id}
+        numberQuestion={questionSelected.numero + 1}
+      />
     );
   };
 
   const QuestionImageModal = () => {
-    return (
-      <ModalTemplate isOpen={photoOpen} handleClose={() => setPhotoOpen(false)}>
-        <ModalImage
-          image={`https://api.vcnafacul.com.br/images/${questionSelected?.imageId}.png`}
-        />
-      </ModalTemplate>
+    return !photoOpen ? null : (
+      <ModalImage
+        isOpen={photoOpen}
+        handleClose={() => setPhotoOpen(false)}
+        image={`${BASE_URL}/images/${questionSelected?.imageId}.png`}
+      />
     );
   };
 

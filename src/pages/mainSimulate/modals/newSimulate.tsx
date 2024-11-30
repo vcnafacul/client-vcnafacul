@@ -8,6 +8,9 @@ import {
 import Text from "../../../components/atoms/text";
 import Ul from "../../../components/atoms/ul";
 import Button from "../../../components/molecules/button";
+import ModalTemplate, {
+  ModalProps,
+} from "../../../components/templates/modalTemplate";
 import { SIMULADO_RESPONDER } from "../../../routes/path";
 import { getAvailable } from "../../../services/simulado/getAvailable";
 import { getSimuladoById } from "../../../services/simulado/getSimuladoById";
@@ -15,13 +18,13 @@ import { useAuthStore } from "../../../store/auth";
 import { useSimuladoStore } from "../../../store/simulado";
 import { dataModalNew } from "./data";
 import data from "./data.json";
-import { ModalProps } from "../../../components/templates/modalTemplate";
 
 interface NewSimulateProps extends ModalProps {
   title: string;
+  isOpen: boolean;
 }
 
-function NewSimulate({ handleClose, title }: NewSimulateProps) {
+function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
   const [availables, setAvailables] = useState<OptionProps[]>([]);
   const [availableSelected, setAvailableSelected] = useState<OptionProps>(
     {} as OptionProps
@@ -74,10 +77,14 @@ function NewSimulate({ handleClose, title }: NewSimulateProps) {
   }, [getAvailables]);
 
   return (
-    <>
-      <div className="bg-white px-20 pt-20 pb-10 rounded-sm ">
-        <div className="flex items-center justify-between gap-4">
-          <Text className="text-left" size="secondary">
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose!}
+      className="bg-white p-2 rounded-md"
+    >
+      <div className="bg-white p-2 rounded-sm max-h-[90vh] overflow-y-auto scrollbar-hide">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+          <Text className="text-left m-0" size="secondary">
             Simulado {title}
           </Text>
           <SelectOption options={availables} setState={setAvailableSelected} />
@@ -125,7 +132,7 @@ function NewSimulate({ handleClose, title }: NewSimulateProps) {
           </div>
         </div>
       </div>
-    </>
+    </ModalTemplate>
   );
 }
 

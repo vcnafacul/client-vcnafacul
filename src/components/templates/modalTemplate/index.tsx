@@ -1,7 +1,6 @@
 import React, { ComponentProps } from "react";
 import { IoMdClose } from "react-icons/io";
 import OutsideClickHandler from "react-outside-click-handler";
-import { TabModal } from "../modalTabTemplate";
 
 export interface ModalProps {
   handleClose?: () => void;
@@ -11,10 +10,8 @@ interface ModalTemplateProps extends ComponentProps<"div"> {
   children: React.ReactNode;
   outSideClose?: boolean;
   isOpen: boolean;
-  tabs?: TabModal[];
-  indexTabSelect?: number;
-  setIndexTabSelect?: React.Dispatch<React.SetStateAction<number>>;
   handleClose: () => void;
+  className?: string;
 }
 
 function ModalTemplate({
@@ -22,14 +19,12 @@ function ModalTemplate({
   handleClose,
   outSideClose = false,
   isOpen,
-  tabs,
-  indexTabSelect,
-  setIndexTabSelect,
+  className,
   ...props
 }: ModalTemplateProps) {
   return !isOpen ? null : (
     <div
-      className="fixed top-0 left-0 z-50 bg-black bg-opacity-30 w-screen h-screen overflow-y-auto 
+      className="fixed top-0 left-0 z-50 bg-black/50 w-screen h-screen overflow-y-auto 
         scrollbar-hide"
       {...props}
     >
@@ -40,62 +35,26 @@ function ModalTemplate({
               handleClose!();
             }}
           >
-            {tabs ? (
-              <div className="flex top-0 md:left-0 md:z-0 z-50 absolute md:relative">
-                {tabs.map((tab, index) => (
-                  <div
-                    onClick={() => setIndexTabSelect!(index)}
-                    key={index}
-                    className={`${
-                      tab.label === tabs[indexTabSelect!].label
-                        ? "bg-white"
-                        : "bg-lightGray"
-                    } px-4 py-0 cursor-pointer text-marine font-black`}
-                  >
-                    {tab.label}
-                  </div>
-                ))}
+            <div className={className}>
+              <div className="flex justify-end">
+                <IoMdClose
+                  onClick={handleClose}
+                  className="self-end md:mt-0 cursor-pointer w-6 h-6"
+                />
               </div>
-            ) : null}
-            <div className="p-4 relative flex flex-col w-fit bg-white rounded-r-md rounded-b-md max-h-[95vh]">
-              <IoMdClose
-                onClick={handleClose}
-                className="self-end md:mt-0 cursor-pointer w-5 h-5"
-              />
-              {React.cloneElement(children as React.ReactElement, {
-                handleClose,
-              })}
+              {children}
             </div>
           </OutsideClickHandler>
         ) : (
-          <>
-            {tabs ? (
-              <div className="flex -top-7 left-0 z-0">
-                {tabs.map((tab, index) => (
-                  <div
-                    onClick={() => setIndexTabSelect!(index)}
-                    key={index}
-                    className={`${
-                      tab.label === tabs[indexTabSelect!].label
-                        ? "bg-white"
-                        : "bg-lightGray"
-                    } px-4 py-1 cursor-pointer text-marine font-black`}
-                  >
-                    {tab.label}
-                  </div>
-                ))}
-              </div>
-            ) : null}
-            <div className="flex flex-col bg-white w-fit p-4 rounded-md max-h-[95vh] md:mr-64">
+          <div className={className}>
+            <div className="flex justify-end">
               <IoMdClose
                 onClick={handleClose}
-                className="self-end cursor-pointer w-5 h-5"
+                className="self-end md:mt-0 cursor-pointer w-6 h-6"
               />
-              {React.cloneElement(children as React.ReactElement, {
-                handleClose,
-              })}
             </div>
-          </>
+            {children}
+          </div>
         )}
       </div>
     </div>

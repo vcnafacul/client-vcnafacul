@@ -20,9 +20,7 @@ import UploadButton from "../../../components/molecules/uploadButton";
 import Form from "../../../components/organisms/form";
 import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
 import ModalConfirmCancelMessage from "../../../components/organisms/modalConfirmCancelMessage";
-import ModalTemplate, {
-  ModalProps,
-} from "../../../components/templates/modalTemplate";
+import { ModalProps } from "../../../components/templates/modalTemplate";
 import { Question } from "../../../dtos/question/questionDTO";
 import {
   CreateQuestion,
@@ -212,8 +210,8 @@ function ModalDetalhes({
   }));
 
   const getEnemArea = (): FormFieldOption[] => {
-    const enemArea = infos.provas.find(
-      (p) => p._id === prova ?? question?.prova
+    const enemArea = infos.provas.find((p) =>
+      prova ? p._id === prova : question?.prova
     )?.enemAreas;
     if (enemArea) {
       return enemArea.map((e) => ({ label: e, value: e }));
@@ -234,16 +232,18 @@ function ModalDetalhes({
       id: "ano",
       type: "number",
       label: "Ano:*",
-      defaultValue: infos.provas.find((p) => p._id === prova ?? question?.prova)
-        ?.ano,
+      defaultValue: infos.provas.find((p) =>
+        prova ? p._id === prova : question?.prova
+      )?.ano,
       disabled: true,
     },
     {
       id: "edicao",
       type: "text",
       label: "Edição:*",
-      defaultValue: infos.provas.find((p) => p._id === prova ?? question?.prova)
-        ?.edicao,
+      defaultValue: infos.provas.find((p) =>
+        prova ? p._id === prova : question?.prova
+      )?.edicao,
       disabled: true,
     },
     {
@@ -382,16 +382,12 @@ function ModalDetalhes({
   ];
 
   const QuestionImageModal = () => {
-    return (
-      <ModalTemplate
+    return !photoOpen ? null : (
+      <ModalImage
         isOpen={photoOpen}
         handleClose={() => setPhotoOpen(false)}
-        outSideClose
-      >
-        <ModalImage
-          image={`https://api.vcnafacul.com.br/images/${question?.imageId}.png`}
-        />
-      </ModalTemplate>
+        image={`https://api.vcnafacul.com.br/images/${question?.imageId}.png`}
+      />
     );
   };
 
@@ -596,6 +592,7 @@ function ModalDetalhes({
           setRefuse(false);
           handleUpdateQuestionStatus(StatusEnum.Rejected, message);
         }}
+        className="bg-white p-2 rounded-md"
       />
     );
   };
@@ -614,6 +611,7 @@ function ModalDetalhes({
           setModified(false);
           setIsEditing(false);
         }}
+        className="bg-white p-2 rounded-md"
       />
     );
   };
@@ -629,6 +627,7 @@ function ModalDetalhes({
         handleConfirm={() => {
           handleDelete();
         }}
+        className="bg-white p-2 rounded-md"
       />
     );
   };
@@ -702,21 +701,21 @@ function ModalDetalhes({
   }, [watch]);
 
   return (
-    <>
+    <div className="h-full flex justify-center items-center">
       <form
         onSubmit={handleSubmit(handleSave)}
         className="grid grid-cols-1 md:grid-cols-7 gap-x-4"
       >
         <div className="col-span-1 md:col-span-2 flex flex-col">
           <Text
-            className="flex w-full justify-center gap-4 items-center"
+            className="flex w-full justify-center items-center"
             size="tertiary"
           >
             {!question ? <></> : getStatusIcon(question.status)}
             Classificação
           </Text>
           <Form
-            className="grid grid-cols-1 gap-y-1 mb-1"
+            className="grid grid-cols-1 gap-y-1 md:gap-y-2 mb-1"
             formFields={listFieldClassification}
             register={register}
             errors={errors}
@@ -724,17 +723,17 @@ function ModalDetalhes({
         </div>
         <div className="col-span-1 md:col-span-3">
           <Text
-            className="flex w-full justify-center gap-4 items-center"
+            className="flex w-full justify-center items-center"
             size="tertiary"
           >
             Informações da Questão
           </Text>
           <Form
-            className="grid grid-cols-1 gap-y-1 mb-1"
+            className="grid grid-cols-1 gap-y-1"
             formFields={listFieldInfoQuestion}
             register={register}
           />
-          <div className="flex gap-1 my-4">
+          <div className="flex gap-1 mt-4">
             <Text size="secondary" className="text-orange w-60 text-start m-0">
               Resposta Correta*
             </Text>
@@ -829,7 +828,7 @@ function ModalDetalhes({
       <ModalRefused />
       <ModalComeBack />
       <ModalDeleteQuestion />
-    </>
+    </div>
   );
 }
 
