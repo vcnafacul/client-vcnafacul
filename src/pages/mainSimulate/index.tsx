@@ -5,7 +5,6 @@ import Ul from "../../components/atoms/ul";
 import CardSimulate from "../../components/molecules/cardSimulate";
 import CarouselRef from "../../components/organisms/carouselRef";
 import SimulationHistory from "../../components/organisms/simulationHistory";
-import ModalTemplate from "../../components/templates/modalTemplate";
 import { HistoricoDTO } from "../../dtos/historico/historicoDTO";
 import { getAllHistoricoSimulado } from "../../services/historico/getAllHistoricoSimulado";
 import { useAuthStore } from "../../store/auth";
@@ -63,15 +62,14 @@ function MainSimulate() {
   });
 
   const ModalNewSimulate = () => {
-    return (
-      <ModalTemplate
+    return !initialize ? null : (
+      <NewSimulate
+        title={card?.tipo || ""}
         isOpen={initialize}
         handleClose={() => {
           setInitialize(false);
         }}
-      >
-        <NewSimulate title={card?.tipo || ""} />
-      </ModalTemplate>
+      />
     );
   };
 
