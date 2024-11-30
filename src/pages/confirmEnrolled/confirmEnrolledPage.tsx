@@ -16,7 +16,8 @@ export function ConfirmEnrolledPage() {
   const getToken = (queryString.parse(location.search).token as string) || "";
   const [processing, setProcessing] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-  let decoded = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let decoded: any = null;
   let expired = true;
   if (getToken) {
     decoded = jwtDecoded(getToken);
@@ -29,7 +30,7 @@ export function ConfirmEnrolledPage() {
 
   useEffect(() => {
     if (!expired) {
-      declaredInterest(decoded.user.id, token)
+      declaredInterest(decoded.user.id as string, token)
         .then(() => {
           setProcessing(false);
         })

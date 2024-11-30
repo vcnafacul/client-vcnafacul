@@ -1,3 +1,4 @@
+import BarChartMui from "@/components/atoms/barChartMui";
 import { PieChartMui } from "@/components/atoms/pieChartMui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -16,9 +17,14 @@ import {
 } from "@/pages/partnerPrepInscription/data";
 import { IoMdClose } from "react-icons/io";
 
+interface StudentsInfo {
+  forms: SocioeconomicAnswer[][];
+  isFree: boolean[];
+}
+
 interface Props {
-  geral: SocioeconomicAnswer[][]; // Dados gerais
-  enrolleds: SocioeconomicAnswer[][]; // Dados dos matriculados
+  geral: StudentsInfo; // Dados gerais
+  enrolleds: StudentsInfo; // Dados dos matriculados
   handleClose: () => void;
 }
 
@@ -78,9 +84,9 @@ export function Statistic({ geral, enrolleds, handleClose }: Props) {
   };
 
   // Função para renderizar os gráficos de pizza para uma aba específica
-  function RenderPieCharts({ forms }: { forms: SocioeconomicAnswer[][] }) {
+  function RenderPieCharts({ data }: { data: StudentsInfo }) {
     const fundamentalMedioAnswers = transformAnswersToPieChartData(
-      getAnswersForQuestion(forms, fundamentalMedioQuestion),
+      getAnswersForQuestion(data.forms, fundamentalMedioQuestion),
       fundamentalMedioOptions
     );
 
@@ -90,32 +96,59 @@ export function Statistic({ geral, enrolleds, handleClose }: Props) {
     ).map((year) => year.toString());
 
     const anoConclusaoAnswers = transformAnswersToPieChartData(
-      processAnswers(getAnswersForQuestion(forms, anoConclusaoQuestion), 2020),
+      processAnswers(
+        getAnswersForQuestion(data.forms, anoConclusaoQuestion),
+        2020
+      ),
       [...opt_ano_conslusao, "Até 2020"]
     );
 
     const tipoCursoAnswers = transformAnswersToPieChartData(
-      processAnswers(getAnswersForQuestion(forms, tipoCursoQuestion), 2020),
+      getAnswersForQuestion(data.forms, tipoCursoQuestion),
       tipoCursoOptions
     );
 
     const racaAnswers = transformAnswersToPieChartData(
-      processAnswers(getAnswersForQuestion(forms, racaQuestion), 2020),
+      getAnswersForQuestion(data.forms, racaQuestion),
       racaOptions
     );
 
     const empregoAnswers = transformAnswersToPieChartData(
-      processAnswers(getAnswersForQuestion(forms, empregoQuestion), 2020),
+      getAnswersForQuestion(data.forms, empregoQuestion),
       empregoOptions
     );
 
     const rendaFamiliarAnswers = transformAnswersToPieChartData(
-      processAnswers(getAnswersForQuestion(forms, rendaFamiliarQuestion), 2020),
+      getAnswersForQuestion(data.forms, rendaFamiliarQuestion),
       rendaFamiliarOptions
     );
+    const isentoAnswers = [
+      {
+        id: "Sim",
+        label: "Sim",
+        value: data.isFree.filter((isFree) => isFree).length,
+      },
+      {
+        id: "Nao",
+        label: "Nao",
+        value: data.isFree.filter((isFree) => !isFree).length,
+      },
+    ];
 
     return (
-      <div className="text-gray-700 flex gap-4 flex-wrap w-full max-w-8xl justify-center overflow-y-auto scrollbar-hide">
+      <div className="text-gray-700 flex gap-8 flex-wrap w-full justify-center overflow-y-auto scrollbar-hide">
+        <div className="flex flex-col gap-1">
+          <span className="font-medium">{rendaFamiliarQuestion}</span>
+          <div className="h-[350px] w-full">
+            <BarChartMui data={rendaFamiliarAnswers} />
+          </div>
+        </div>
+        <div className="flex flex-col gap-1">
+          <span className="font-medium">{anoConclusaoQuestion}</span>
+          <div className="h-[350px] w-full">
+            <BarChartMui data={anoConclusaoAnswers} color="#D35400" />
+          </div>
+        </div>
         <div className="flex flex-col gap-1">
           <span className="font-medium">{fundamentalMedioQuestion}</span>
           <div className="h-[300px] w-fit">
@@ -131,13 +164,13 @@ export function Statistic({ geral, enrolleds, handleClose }: Props) {
         <div className="flex flex-col gap-1">
           <span className="font-medium">{tipoCursoQuestion}</span>
           <div className="h-[300px] w-fit">
-            <PieChartMui data={tipoCursoAnswers} width={630} />
+            <PieChartMui data={tipoCursoAnswers} width={660} />
           </div>
         </div>
         <div className="flex flex-col gap-1">
           <span className="font-medium">{racaQuestion}</span>
           <div className="h-[300px] w-fit">
-            <PieChartMui data={racaAnswers}  />
+            <PieChartMui data={racaAnswers} />
           </div>
         </div>
         <div className="flex flex-col gap-1">
@@ -147,9 +180,9 @@ export function Statistic({ geral, enrolleds, handleClose }: Props) {
           </div>
         </div>
         <div className="flex flex-col gap-1">
-          <span className="font-medium">{rendaFamiliarQuestion}</span>
-          <div className="h-[350px] w-fit">
-            <PieChartMui data={rendaFamiliarAnswers} width={840} />
+          <span className="font-medium">Relação em Isento e Pagantes</span>
+          <div className="h-[300px] w-fit">
+            <PieChartMui data={isentoAnswers} width={400} />
           </div>
         </div>
       </div>
@@ -159,19 +192,19 @@ export function Statistic({ geral, enrolleds, handleClose }: Props) {
   return (
     <div className="absolute w-screen h-screen bg-black/60 z-50 -top-[76px] left-0 flex justify-center items-center">
       <div className="w-full h-full flex justify-center items-center md:py-4">
-        <Tabs defaultValue="details" className="w-full max-w-7xl h-[80vh]">
+        <Tabs defaultValue="details" className="w-full max-w-[90vw] h-[80vh]">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="details">Todos os Alunos</TabsTrigger>
             <TabsTrigger value="enrolled">Matriculados</TabsTrigger>
           </TabsList>
           <TabsContent value="details" className="h-full">
             <ModalContent onClose={handleClose}>
-              <RenderPieCharts forms={geral} />
+              <RenderPieCharts data={geral} />
             </ModalContent>
           </TabsContent>
           <TabsContent value="enrolled" className="h-full">
             <ModalContent onClose={handleClose}>
-              <RenderPieCharts forms={enrolleds} />
+              <RenderPieCharts data={enrolleds} />
             </ModalContent>
           </TabsContent>
         </Tabs>

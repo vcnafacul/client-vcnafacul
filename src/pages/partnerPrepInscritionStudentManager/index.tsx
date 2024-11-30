@@ -409,13 +409,18 @@ export function PartnerPrepInscritionStudentManager() {
               <IoClose className="h-6 w-6 fill-redError/60 hover:fill-redError" />
             </ActionButton>
           )}
-          <ActionButton
-            titleAlert="Deseja resetar as informações do aluno?"
-            onConfirm={() => handleResetStudent(params.row.id)}
-            tooltipTitle="Resetar"
-          >
-            <FaWindowClose className="h-6 w-6 fill-red/50 hover:fill-red" />
-          </ActionButton>
+          {shouldProcessApplication(
+            params.row.status,
+            params.row.data_convocacao
+          ) && (
+            <ActionButton
+              titleAlert="Deseja resetar as informações do aluno?"
+              onConfirm={() => handleResetStudent(params.row.id)}
+              tooltipTitle="Resetar"
+            >
+              <FaWindowClose className="h-6 w-6 fill-red/50 hover:fill-red" />
+            </ActionButton>
+          )}
         </div>
       ),
     },
@@ -506,10 +511,18 @@ export function PartnerPrepInscritionStudentManager() {
     return openModalStatistic ? (
       <Statistic
         handleClose={() => setOpenModalStatistic(false)}
-        geral={students.map((student) => student.socioeconomic)}
-        enrolleds={students
-          .filter((student) => student.status === StatusApplication.Enrolled)
-          .map((student) => student.socioeconomic)}
+        geral={{
+          forms: students.map((student) => student.socioeconomic),
+          isFree: students.map((student) => student.isento === Bool.Yes),
+        }}
+        enrolleds={{
+          forms: students
+            .filter((student) => student.status === StatusApplication.Enrolled)
+            .map((student) => student.socioeconomic),
+          isFree: students
+            .filter((student) => student.status === StatusApplication.Enrolled)
+            .map((student) => student.isento === Bool.Yes),
+        }}
       />
     ) : null;
   };
