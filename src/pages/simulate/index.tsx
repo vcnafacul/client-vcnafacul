@@ -62,7 +62,7 @@ function Simulate() {
         };
       });
     const tempoRealizado = Math.floor(
-      (data.finished.getTime() - data.started.getTime()) / (1000 * 60)
+      ((new Date(data.finished)).getTime() - (new Date(data.started)).getTime()) / (1000 * 60)
     );
     const body: AnswerSimulado = {
       idSimulado: data._id,
@@ -161,9 +161,7 @@ function Simulate() {
         },
         {
           onClick: () => setReportModal(false),
-          children: (
-            <span>Voltar</span>
-          ),
+          children: <span>Voltar</span>,
         },
       ],
     },
