@@ -267,12 +267,11 @@ function Simulate() {
               <Button
                 onClick={priorQuestion}
                 typeStyle="secondary"
-                hover
                 className="w-44"
               >
                 Voltar
               </Button>
-              <Button onClick={nextQuestion} hover className="w-44">
+              <Button onClick={nextQuestion} className="w-44">
                 Pular
               </Button>
               <Button

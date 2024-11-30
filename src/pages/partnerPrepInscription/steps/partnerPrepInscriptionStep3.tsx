@@ -180,7 +180,6 @@ export function PartnerPrepInscriptionStep3({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => {
           const value = e.target.value;
-          console.log(value);
           setValue("family_relationship", value);
           setFRelationOther(value === "Outro");
           if (value !== "Outro") {

@@ -57,7 +57,7 @@ function ModalTemplate({
                 ))}
               </div>
             ) : null}
-            <div className="p-4 relative flex flex-col w-fit bg-white rounded-r-md rounded-b-md">
+            <div className="p-4 relative flex flex-col w-fit bg-white rounded-r-md rounded-b-md max-h-[95vh]">
               <IoMdClose
                 onClick={handleClose}
                 className="self-end md:mt-0 cursor-pointer w-5 h-5"
@@ -86,7 +86,7 @@ function ModalTemplate({
                 ))}
               </div>
             ) : null}
-            <div className="flex flex-col bg-white w-fit p-4 rounded-md">
+            <div className="flex flex-col bg-white w-fit p-4 rounded-md max-h-[95vh] md:mr-64">
               <IoMdClose
                 onClick={handleClose}
                 className="self-end cursor-pointer w-5 h-5"

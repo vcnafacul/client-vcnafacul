@@ -112,7 +112,7 @@ function NewSimulate({ handleClose, title }: NewSimulateProps) {
         </Text>
         <div className="flex justify-end">
           <div className="flex max-w-[500px] w-full gap-4">
-            <Button typeStyle="secondary" hover onClick={handleClose}>
+            <Button typeStyle="secondary" onClick={handleClose}>
               Então volto mais tarde!
             </Button>
             <Button
