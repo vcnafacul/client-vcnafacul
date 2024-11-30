@@ -35,6 +35,7 @@ function Button({
     >
       <button
         {...props}
+        onClick={() => {}}
         className="relative w-full h-full bg-transparent disabled:cursor-not-allowed"
       >
         {children}
