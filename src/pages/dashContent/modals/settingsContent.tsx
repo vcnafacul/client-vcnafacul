@@ -31,7 +31,12 @@ export interface FormFieldOptionSubject extends FormFieldOptionFrente {
   description: string;
 }
 
-function SettingsContent() {
+interface Props {
+  isOpen: boolean;
+  handleClose: () => void;
+}
+
+function SettingsContent({ isOpen, handleClose }: Props) {
   const { register, watch } = useForm();
 
   const [openModalFrente, setOpenModalFrente] = useState<boolean>(false);
@@ -354,7 +359,11 @@ function SettingsContent() {
   }, [token, frenteSelected]);
 
   return (
-    <>
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose!}
+      className="bg-white w-fit p-4 rounded-md"
+    >
       <div className="w-[90vw] sm:max-w-7xl p-4 grid grid-cols-1 md:grid-cols-2 relative gap-x-4">
         <div className="col-span-1 col-start-1 row-start-1 flex flex-col relative h-[30vh] md:h-[60vh]">
           <div className="flex gap-4  justify-center items-center h-16">
@@ -416,7 +425,7 @@ function SettingsContent() {
       <EditModalSubject />
       <EditModalFrente />
       <ViewOrderModal />
-    </>
+    </ModalTemplate>
   );
 }
 

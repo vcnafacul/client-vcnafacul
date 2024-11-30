@@ -3,7 +3,9 @@ import { useState } from "react";
 import RadioButton from "../../../components/atoms/radioButton";
 import Text from "../../../components/atoms/text";
 import Button from "../../../components/molecules/button";
-import { ModalProps } from "../../../components/templates/modalTemplate";
+import ModalTemplate, {
+  ModalProps,
+} from "../../../components/templates/modalTemplate";
 import { ReportDTO } from "../../../dtos/audit/reportDto";
 import { ReportEntity } from "../../../enums/audit/reportEntity";
 import { reportSimulado } from "../../../services/simulado/reportSimulado";
@@ -14,10 +16,12 @@ interface ModalReportProblemProps extends ModalProps {
   questionProblem: boolean;
   numberQuestion?: number;
   idQuestion?: string;
+  isOpen: boolean;
 }
 
 function ModalReportProblem({
   handleClose,
+  isOpen,
   questionProblem,
   numberQuestion,
   idQuestion,
@@ -102,7 +106,11 @@ function ModalReportProblem({
   };
 
   return (
-    <>
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose!}
+      className="bg-white p-4 rounded-md"
+    >
       <div className="bg-white max-w-5xl p-10 rounded">
         <Text size="secondary" className="text-start">
           Ocorreu algum problema?
@@ -117,17 +125,17 @@ function ModalReportProblem({
           onChange={(event: any) => setMessage(`${event.target.value}`)}
         />
         <div className="max-w-3xl flex mx-auto gap-4 mt-4">
-          <Button hover typeStyle="secondary" onClick={handleClose}>
+          <Button typeStyle="secondary" onClick={handleClose}>
             {" "}
             Cancelar{" "}
           </Button>
-          <Button disabled={message.length <= 0} hover onClick={sendReport}>
+          <Button disabled={message.length <= 0} onClick={sendReport}>
             {" "}
             Reportar{" "}
           </Button>
         </div>
       </div>
-    </>
+    </ModalTemplate>
   );
 }
 

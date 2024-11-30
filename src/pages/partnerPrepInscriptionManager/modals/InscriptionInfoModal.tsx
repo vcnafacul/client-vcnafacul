@@ -3,11 +3,12 @@ import Button from "@/components/molecules/button";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ModalMessage from "@/components/organisms/modalMessage";
 import ModalTemplate from "@/components/templates/modalTemplate";
+import * as ShadcnButton from "@/components/ui/button";
 import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
 import { useAuthStore } from "@/store/auth";
 import { usePrepCourseStore } from "@/store/prepCourse";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
-import { StudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
+import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { formatDate } from "@/utils/date";
 import { useState } from "react";
 import { FaRegCopy } from "react-icons/fa6";
@@ -18,9 +19,13 @@ import {
   InscriptionOutput,
 } from "./InscriptionInfoCreateEditModal";
 
+import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
+import BLink from "@/components/molecules/bLink";
+import { StatusEnum } from "@/enums/generic/statusEnum";
+import { questions } from "@/pages/partnerPrepInscription/data";
+import { DASH, PARTNER_PREP_INSCRIPTION } from "@/routes/path";
 import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
-import { questions } from "@/pages/partnerPrepInscription/data";
 
 interface InscriptionInfoModalProps {
   isOpen: boolean;
@@ -65,6 +70,7 @@ export function InscriptionInfoModal({
             handleClose();
           });
         }}
+        className="bg-white p-2 rounded-md"
       >
         <p>{dataInscription.warningDelete}</p>
       </ModalConfirmCancel>
@@ -118,7 +124,7 @@ export function InscriptionInfoModal({
     }
   };
 
-  const flattenData = (data: StudentCourseFull[], questions: string[]) => {
+  const flattenData = (data: XLSXStudentCourseFull[], questions: string[]) => {
     return data.map((student) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const flattenedItem: any = { ...student };
@@ -127,7 +133,8 @@ export function InscriptionInfoModal({
       questions.forEach((question) => {
         // Encontra a resposta para a pergunta atual
         const socioItem = student.socioeconomic.find(
-          (item) => item.question === question
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (item: any) => item.question === question
         );
 
         // Se a pergunta tiver uma resposta, coloca-a na coluna, senão deixa vazio
@@ -151,24 +158,35 @@ export function InscriptionInfoModal({
   };
 
   const exportToExcel = () => {
-    getSubscribers(token, inscriptionSelected!.id!).then((data) => {
-      const flattenedData = flattenData(data, questions);
+    const id = toast.loading("Exportando lista de alunos...");
+    getSubscribers(token, inscriptionSelected!.id!)
+      .then((data) => {
+        const flattenedData = flattenData(data, questions);
 
-      flattenedData.sort((a, b) => {
-        if (a.createdAt < b.createdAt) return -1;
-        if (a.createdAt > b.createdAt) return 1;
-        return 0;
+        flattenedData.sort((a, b) => {
+          if (a.cadastrado_em < b.cadastrado_em) return -1;
+          if (a.cadastrado_em > b.cadastrado_em) return 1;
+          return 0;
+        });
+
+        const worksheet = XLSX.utils.json_to_sheet(flattenedData);
+
+        // Cria um novo workbook e adiciona a planilha
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Dados");
+
+        // Gera o arquivo Excel e faz o download
+        toast.dismiss(id);
+        XLSX.writeFile(workbook, `${Date.now()}.xlsx`);
+      })
+      .catch(() => {
+        toast.update(id, {
+          render: "Erro ao exportar lista de alunos",
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
       });
-
-      const worksheet = XLSX.utils.json_to_sheet(flattenedData);
-
-      // Cria um novo workbook e adiciona a planilha
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Dados");
-
-      // Gera o arquivo Excel e faz o download
-      XLSX.writeFile(workbook, `${Date.now()}.xlsx`);
-    });
     // Cria uma nova planilha a partir dos dados
   };
   const clipboard = () => {
@@ -188,7 +206,7 @@ export function InscriptionInfoModal({
   };
 
   return (
-    <ModalTemplate isOpen={isOpen} handleClose={handleClose}>
+    <ModalTemplate isOpen={isOpen} handleClose={handleClose} className="bg-white p-4 rounded-md">
       <div className=" max-w-2xl min-w-[90%] sm:min-w-[550px] flex flex-col gap-4">
         <h1 className="text-left text-marine text-3xl font-black">
           {dataInscription.inscription}
@@ -230,17 +248,30 @@ export function InscriptionInfoModal({
           <p className="font-medium">Link de inscrição</p>
           <FaRegCopy />
         </div>
-        <div className="flex flex-col-reverse items-center gap-4 sm:flex-row">
-          <Button className="h-8 w-36" onClick={() => exportToExcel()}>
-            <div className="flex justify-center gap-1.5">
-              <MdOutlineFileDownload />
-              <p className="text-sm w-fit">Lista de Alunos</p>
-            </div>
-          </Button>
+        <div className="flex flex-col-reverse items-center gap-4 sm:flex-row relative">
+          <ShadcnTooltip content="Download Lista de Alunos">
+            <ShadcnButton.Button
+              className="bg-orange hover:bg-orange/60 h-8"
+              onClick={() => exportToExcel()}
+            >
+              <MdOutlineFileDownload className="w-6 h-6" />
+            </ShadcnButton.Button>
+          </ShadcnTooltip>
+          {inscriptionSelected?.actived === StatusEnum.Rejected && (
+            <BLink
+              className="h-8 w-36 bg-green2 border-none hover:bg-green2/60"
+              to={`${DASH}/${PARTNER_PREP_INSCRIPTION}/${inscriptionSelected?.id}`}
+            >
+              <div className="flex justify-center gap-1.5">
+                <p className="text-sm w-fit">Lista de Alunos</p>
+              </div>
+            </BLink>
+          )}
           <div className="flex flex-1 justify-end gap-4">
             <Button
-              className="w-24 h-8 bg-red border-red"
+              className="w-24 h-8 bg-red border-none hover:bg-red/60 "
               onClick={() => setOpenModalDelete(true)}
+              disabled={inscriptionSelected!.subscribersCount > 0}
             >
               <div className="flex justify-center gap-1.5">
                 <TrashIcon />

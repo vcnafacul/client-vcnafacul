@@ -7,7 +7,7 @@ import Selector from "../../molecules/selector";
 import SupportersSkeleton from "../supportersSkeleton";
 import "./styles.css";
 
-interface Sponsor {
+export interface Sponsor {
   image: React.FC<React.SVGProps<SVGSVGElement>> | string;
   alt: string;
   link: string;
@@ -32,12 +32,13 @@ export interface SupportersSponsor {
 
 export interface SupportersProps extends SupportersSponsor {
   volunteers: Volunteer[];
+  prepCourse: Sponsor[];
 }
 
 function Supporters() {
-  const { supporters, volunteers } = useHomeContext();
+  const { supporters, volunteers, prepCourse } = useHomeContext();
 
-  const tabItems = ["Empresas", "Voluntários"];
+  const tabItems = ["Empresas", "Voluntários", "Cursinho Parceiro"];
   const [tab, setTab] = useState<number>(0);
   const changeTab = (tab: number) => {
     setTab(tab);
@@ -123,10 +124,24 @@ function Supporters() {
               </a>
             ))}
           </div>
-        ) : (
+        ) : tab == 1 ? (
           <div className="flex justify-around items-center flex-wrap w-full">
             <Volunteers />
           </div>
+        ) : (
+          prepCourse.length > 0 && (
+            <div className="flex justify-around items-center flex-wrap">
+              {prepCourse.map((sponsor, index) => (
+                <a key={index} href={sponsor.link} target="_blank">
+                  <img
+                    className="sponsors_image my-1 mx-0"
+                    src={sponsor.image as string}
+                    alt="Cursinho Parceiro"
+                  />
+                </a>
+              ))}
+            </div>
+          )
         )}
       </div>
     </div>

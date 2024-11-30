@@ -1,4 +1,5 @@
 /* eslint-disable use-isnan */
+import ModalTemplate from "@/components/templates/modalTemplate";
 import Text from "../../../components/atoms/text";
 import PropValue from "../../../components/molecules/PropValue";
 import BLink from "../../../components/molecules/bLink";
@@ -6,9 +7,11 @@ import { Prova } from "../../../dtos/prova/prova";
 
 interface ShowProvaProps {
   prova: Prova;
+  isOpen: boolean;
+  handleClose: () => void;
 }
 
-function ShowProva({ prova }: ShowProvaProps) {
+function ShowProva({ prova, isOpen, handleClose }: ShowProvaProps) {
   const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
   const percentCadastradas =
     (prova.totalQuestaoCadastradas / prova.totalQuestao) * 100;
@@ -16,8 +19,13 @@ function ShowProva({ prova }: ShowProvaProps) {
     (prova.totalQuestaoValidadas / prova.totalQuestaoCadastradas) * 100;
 
   return (
-    <>
-      <div className="bg-white p-10 flex flex-col items-start rounded-lg">
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose}
+      outSideClose
+      className="w-full rounded-md bg-white p-4"
+    >
+      <div className="flex flex-col items-start">
         <Text>{prova.nome}</Text>
         <PropValue prop="Edição" value={prova.edicao} />
         <PropValue prop="Ano" value={prova.ano.toString()} />
@@ -45,7 +53,7 @@ function ShowProva({ prova }: ShowProvaProps) {
           </BLink>
         </div>
       </div>
-    </>
+    </ModalTemplate>
   );
 }
 

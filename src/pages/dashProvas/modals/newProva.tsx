@@ -10,7 +10,9 @@ import {
 } from "../../../components/molecules/formField";
 import UploadButton from "../../../components/molecules/uploadButton";
 import Form from "../../../components/organisms/form";
-import { ModalProps } from "../../../components/templates/modalTemplate";
+import ModalTemplate, {
+  ModalProps,
+} from "../../../components/templates/modalTemplate";
 import { CreateProva, Prova } from "../../../dtos/prova/prova";
 import { ObjDefault } from "../../../dtos/question/questionDTO";
 import { ITipoSimulado } from "../../../dtos/simulado/tipoSimulado";
@@ -22,9 +24,10 @@ import { useAuthStore } from "../../../store/auth";
 interface NewProvaProps extends ModalProps {
   addProva: (data: Prova) => void;
   tipos: ITipoSimulado[];
+  isOpen: boolean;
 }
 
-function NewProva({ addProva, tipos, handleClose }: NewProvaProps) {
+function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
   const { register, handleSubmit, watch } = useForm();
   const [exames, setExames] = useState<ObjDefault[]>([]);
   const {
@@ -162,8 +165,13 @@ function NewProva({ addProva, tipos, handleClose }: NewProvaProps) {
   };
 
   return (
-    <>
-      <div className="p-4 bg-white rounded mx-4 w-full max-w-3xl">
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose!}
+      outSideClose
+      className="bg-white rounded-md p-4"
+    >
+      <div className="w-full">
         <Text>Cadastro de Prova</Text>
         <form
           className="flex flex-col w-full gap-4"
@@ -187,7 +195,7 @@ function NewProva({ addProva, tipos, handleClose }: NewProvaProps) {
           </div>
         </form>
       </div>
-    </>
+    </ModalTemplate>
   );
 }
 

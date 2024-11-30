@@ -15,6 +15,7 @@ import { validateCPF } from "validations-br";
 import * as yup from "yup";
 import { EachStepProps } from "..";
 import { ptBr } from "../data";
+import "./styles.css";
 
 addLocale("pt-br", { ...ptBr["pt-br"] });
 
@@ -68,11 +69,15 @@ export function PartnerPrepInscriptionStep1({
           currentData?.birthday ? new Date(currentData?.birthday) : new Date()
         )
         .required("Por favor, preencha a sua data de nascimento"),
-      uf: yup.string().default(currentData?.uf).required("Requerido"),
-      rg: yup
+      rg: yup.string().default(currentData?.rg),
+      uf: yup
         .string()
-        .default(currentData?.rg)
-        .required("Por favor, preencha o seu RG"),
+        .default(currentData?.uf)
+        .when("rg", {
+          is: (value: string) => !value || value.length === 0,
+          then: () => yup.string().notRequired(),
+          otherwise: () => yup.string().required("Requerido"),
+        }),
       cpf: yup
         .string()
         .default(currentData?.cpf)
@@ -123,6 +128,9 @@ export function PartnerPrepInscriptionStep1({
   }, []);
 
   function handleForm(data: Partial<StudentInscriptionDTO>) {
+    if (data.rg?.length === 0) {
+      data.uf = undefined;
+    }
     updateData!(data);
   }
   return (
@@ -139,6 +147,7 @@ export function PartnerPrepInscriptionStep1({
         defaultValue={currentData?.firstName}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("firstName", e.target.value)}
+        maxLength={50}
       />
       <InputFactory
         id="lastName"
@@ -148,6 +157,7 @@ export function PartnerPrepInscriptionStep1({
         defaultValue={currentData?.lastName}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("lastName", e.target.value)}
+        maxLength={100}
       />
       <InputFactory
         id="socialName"
@@ -157,6 +167,7 @@ export function PartnerPrepInscriptionStep1({
         error={errors.socialName}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("socialName", e.target.value)}
+        maxLength={50}
       />
       <InputFactory
         id="email"
@@ -167,6 +178,7 @@ export function PartnerPrepInscriptionStep1({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("email", e.target.value)}
         className="bg-gray-200 tracking-wider"
+        maxLength={100}
       />
       <InputFactory
         id="whatsapp"
@@ -194,7 +206,7 @@ export function PartnerPrepInscriptionStep1({
           setValue("urgencyPhone", value);
         }}
       />
-      <div className="card flex justify-content-center h-16 border hover:border-orange pt-4 pl-4 rounded-md relative mb-4  row-start-3 col-start-1">
+      <div className="card flex justify-content-center h-16 border hover:border-orange pt-4 pl-4 rounded-md relative mb-4 row-start-3 col-start-1 z-10">
         <label
           className="absolute top-1 left-3 text-xs text-grey font-semibold"
           htmlFor="date"
@@ -212,10 +224,9 @@ export function PartnerPrepInscriptionStep1({
               value={field.value}
               onChange={(e) => field.onChange(e.value)}
               selectionMode="single"
-              className="focus-visible:ring-orange"
-              readOnlyInput
-              hideOnRangeSelection
+              className="focus-visible:ring-none w-full h-14 bg-transparent"
               locale="pt-br"
+              showIcon
             />
           )}
         />
@@ -235,7 +246,8 @@ export function PartnerPrepInscriptionStep1({
             defaultValue={currentData?.rg}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onChange={(e: any) => setValue("rg", e.target.value)}
-            className="w-full flex flex-1 "
+            className="w-full flex flex-1"
+            maxLength={15}
           />
         </div>
         <div className="w-24">

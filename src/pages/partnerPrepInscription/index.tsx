@@ -100,6 +100,7 @@ export function PartnerPrepInscription() {
         uf: getData.uf,
         cpf: getData.cpf,
         phone: getData.phone,
+        family_relationship: getData.family_relationship,
       },
     });
     setStepCurrently(stepCurrently + 1);
@@ -117,6 +118,7 @@ export function PartnerPrepInscription() {
           render: res.message,
           type: "error",
           isLoading: false,
+          autoClose: 5000,
         });
       });
   };
@@ -238,6 +240,7 @@ export function PartnerPrepInscription() {
             currentData={dataStudent}
             handleBack={backStep}
             updateData={updateDataGuardian}
+            isMinor={isMinor(dataStudent.birthday)}
           />
         );
       case StepsInscriptionStudent.Socioeconomic:
@@ -255,8 +258,6 @@ export function PartnerPrepInscription() {
         return <Button onClick={backStep}>Voltar</Button>;
     }
   };
-
-  console.log("dataStudent", dataStudent);
 
   useEffect(() => {
     const element = document.getElementById("header");

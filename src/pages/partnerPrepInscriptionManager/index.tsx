@@ -20,6 +20,7 @@ import {
   InscriptionOutput,
 } from "./modals/InscriptionInfoCreateEditModal";
 import { InscriptionInfoModal } from "./modals/InscriptionInfoModal";
+import { TempInviteMember } from "./modals/temp-invite-member";
 
 export function PartnerPrepInscriptionManager() {
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
@@ -29,6 +30,7 @@ export function PartnerPrepInscriptionManager() {
     Inscription | undefined
   >(undefined);
   const limitCards = 40;
+  const [openInviteModal, setOpenInviteModal] = useState(false);
 
   const {
     data: { token },
@@ -94,6 +96,15 @@ export function PartnerPrepInscriptionManager() {
       size: "small",
       children: "Novo",
     },
+    {
+      // disabled: !permissao[Roles.criarQuestao],
+      onClick: () => {
+        setOpenInviteModal(true);
+      },
+      typeStyle: "quaternary",
+      size: "small",
+      children: "Convite Membros",
+    },
   ];
 
   const handleCreate = async (data: InscriptionOutput) => {
@@ -125,6 +136,15 @@ export function PartnerPrepInscriptionManager() {
         isOpen={openModalCreate}
         handleClose={() => setOpenModalCreate(false)}
         onCreateEdit={handleCreate}
+      />
+    ) : null;
+  };
+
+  const ModalInviteMember = () => {
+    return openInviteModal ? (
+      <TempInviteMember
+        isOpen={openInviteModal}
+        handleClose={() => setOpenInviteModal(false)}
       />
     ) : null;
   };
@@ -242,6 +262,7 @@ export function PartnerPrepInscriptionManager() {
       />
       <ModalInfo />
       <ModalCreate />
+      <ModalInviteMember />
     </DashCardContext.Provider>
   );
 }

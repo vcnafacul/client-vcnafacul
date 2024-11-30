@@ -10,6 +10,8 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { EachStepProps } from "..";
 
+const BRASIL_API = import.meta.env.VITE_BRASIL_API_URL;
+
 export function PartnerPrepInscriptionStep2({
   description,
   updateData,
@@ -33,6 +35,12 @@ export function PartnerPrepInscriptionStep2({
   const [postalCode, setPostalCode] = useState<string>(
     applyCepMask(currentData?.postalCode) || ""
   );
+  const [street, setStreet] = useState<string>(currentData?.street || "");
+  const [neighborhood, setNeighborhood] = useState<string>(
+    currentData?.neighborhood || ""
+  );
+  const [city, setCity] = useState<string>(currentData?.city || "");
+  const [state, setState] = useState<string>(currentData?.state || "");
 
   const schema = yup
     .object()
@@ -40,7 +48,8 @@ export function PartnerPrepInscriptionStep2({
       postalCode: yup
         .string()
         .default(postalCode)
-        .required("Por favor, preencha o seu CEP"),
+        .required("Por favor, preencha o seu CEP")
+        .min(9, "CEP inválido"),
       street: yup
         .string()
         .default(currentData?.street)
@@ -75,6 +84,28 @@ export function PartnerPrepInscriptionStep2({
     resolver: yupResolver(schema),
   });
 
+  const getCepInfo = async (cep: string) => {
+    const response = await fetch(`${BRASIL_API}/cep/v2/${cep}`);
+    const data = await response.json();
+    return data;
+  };
+
+  const setCEP = async (cep: string) => {
+    setPostalCode(cep);
+    if (cep.length === 9) {
+      const cepInfo = await getCepInfo(cep);
+      console.log(cepInfo);
+      setValue("street", cepInfo.street);
+      setStreet(cepInfo.street);
+      setValue("neighborhood", cepInfo.neighborhood);
+      setNeighborhood(cepInfo.neighborhood);
+      setValue("state", cepInfo.state);
+      setState(cepInfo.state);
+      setValue("city", cepInfo.city);
+      setCity(cepInfo.city);
+    }
+  };
+
   useEffect(() => {
     register("postalCode");
     register("street");
@@ -103,7 +134,7 @@ export function PartnerPrepInscriptionStep2({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => {
           const value = applyCepMask(e.target.value);
-          setPostalCode(value);
+          setCEP(value);
           setValue("postalCode", value);
         }}
       />
@@ -112,9 +143,14 @@ export function PartnerPrepInscriptionStep2({
         label="Rua*"
         type="text"
         error={errors.street}
-        defaultValue={currentData?.street}
+        value={street}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("street", e.target.value)}
+        onChange={(e: any) => {
+          const value = e.target.value;
+          setStreet(value);
+          setValue("street", value);
+        }}
+        maxLength={100}
       />
       <InputFactory
         id="number"
@@ -141,28 +177,43 @@ export function PartnerPrepInscriptionStep2({
         label="Bairro*"
         type="text"
         error={errors.neighborhood}
-        defaultValue={currentData?.neighborhood}
+        value={neighborhood}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("neighborhood", e.target.value)}
-      />
-      <InputFactory
-        id="city"
-        label="Cidade*"
-        type="text"
-        error={errors.city}
-        defaultValue={currentData?.city}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("city", e.target.value)}
+        onChange={(e: any) => {
+          const value = e.target.value;
+          setNeighborhood(value);
+          setValue("neighborhood", value);
+        }}
+        maxLength={50}
       />
       <InputFactory
         id="state"
         label="Estado*"
         type="select"
         error={errors.state}
-        defaultValue={currentData?.state}
+        value={state}
+        defaultValue={state}
         options={stateOptions as { value: string; label: string }[]}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("state", e.value)}
+        onChange={(e: any) => {
+          const value = e.value;
+          setState(value);
+          setValue("state", value);
+        }}
+      />
+      <InputFactory
+        id="city"
+        label="Cidade*"
+        type="text"
+        error={errors.city}
+        value={city}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onChange={(e: any) => {
+          const value = e.target.value;
+          setCity(value);
+          setValue("city", value);
+        }}
+        maxLength={50}
       />
 
       <div className="flex flex-col sm:flex-row gap-4">

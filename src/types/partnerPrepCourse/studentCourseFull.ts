@@ -1,51 +1,46 @@
+import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
 
-export interface StudentCourseFullDTO {
-  createdAt: string;
+interface StudentCourseFull {
+  id: string;
+  cadastrado_em: Date;
+  data_convocacao: Date | null;
+  data_limite_convocacao: Date | null;
   email: string;
   cpf: string;
   rg: string;
   uf: string;
-  urgencyPhone: string;
-  socioeconomic: string;
+  status: StatusApplication;
+  telefone_emergencia: string;
   whatsapp: string;
-  user: {
-    firstName: string;
-    lastName: string;
-    socialName: string;
-    birthday: string;
-    gender: number;
-    phone: string;
-    neighborhood: string;
-    street: string;
-    number: string;
-    complement: string;
-    postalCode: string;
-    city: string;
-    state: string;
-  };
+  nome: string;
+  sobrenome: string;
+  nome_social: string;
+  data_nascimento: Date;
+  telefone: string;
+  bairro: string;
+  rua: string;
+  numero: number;
+  complemento: string;
+  CEP: string;
+  cidade: string;
+  estado: string;
+  nome_guardiao_legal: string;
+  telefone_guardiao_legal: string;
+  rg_guardiao_legal: string;
+  uf_guardiao_legal: string;
+  cpf_guardiao_legal: string;
+  parentesco_guardiao_legal: string;
+  genero: string;
+  isento: string;
+  convocar: string;
+  lista_de_espera: string;
 }
 
-export interface StudentCourseFull {
-  createdAt: Date;
-  email: string;
-  cpf: string;
-  rg: string;
-  uf: string;
-  urgencyPhone: string;
+export interface StudentCourseFullDtoInput extends StudentCourseFull {
+  socioeconomic: string;
+}
+
+export interface XLSXStudentCourseFull extends StudentCourseFull {
   socioeconomic: SocioeconomicAnswer[];
-  whatsapp: string;
-  firstName: string;
-  lastName: string;
-  socialName: string;
-  birthday: string;
-  gender: string;
-  phone: string;
-  neighborhood: string;
-  street: string;
-  number: string;
-  complement: string;
-  postalCode: string;
-  city: string;
-  state: string;
 }

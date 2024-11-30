@@ -1,4 +1,7 @@
+import { ConfirmEnrolled } from "@/pages/confirmEnrolled";
+import InviteMemberProcessing from "@/pages/inviteMemberProcessing";
 import { PartnerPrepInscriptionManager } from "@/pages/partnerPrepInscriptionManager";
+import { PartnerPrepInscritionStudentManager } from "@/pages/partnerPrepInscritionStudentManager";
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashTemplate from "../components/templates/dashTemplate";
 import { Roles } from "../enums/roles/roles";
@@ -42,10 +45,12 @@ import {
   DASH_QUESTION,
   DASH_ROLES,
   DASH_SIMULADO,
+  DECLARED_INTEREST,
   ESTUDO,
   FORGOT_PASSWORD_PATH,
   FORM_GEOLOCATION,
   HOME_PATH,
+  INVITE_MEMBER,
   LOGIN_PATH,
   LOGOFF_PATH,
   NEWS,
@@ -80,6 +85,8 @@ export function PlatformRoutes() {
         <Route path={RESET_PASSWORD_PATH} element={<Reset />} />
         <Route path={REGISTER_PATH} element={<Register />} />
         <Route path={FORM_GEOLOCATION} element={<Geo />} />
+        <Route path={INVITE_MEMBER} element={<InviteMemberProcessing />} />
+        <Route path={DECLARED_INTEREST} element={<ConfirmEnrolled />} />
       </Route>
 
       <Route
@@ -109,6 +116,10 @@ export function PlatformRoutes() {
         <Route
           path={PARTNER_PREP_INSCRIPTION}
           element={<PartnerPrepInscriptionManager />}
+        />
+        <Route
+          path={`${PARTNER_PREP_INSCRIPTION}/:inscriptionId`}
+          element={<PartnerPrepInscritionStudentManager />}
         />
         <Route path={DASH} element={<Dash />} />
         <Route path={SIMULADO} element={<MainSimulate />} />

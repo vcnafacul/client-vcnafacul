@@ -12,7 +12,6 @@ import { mergeObjects } from "../../utils/mergeObjects";
 import { Paginate } from "../../utils/paginate";
 import { dashGeo } from "./data";
 import ModalEditDashGeo from "./modals/modalEditDashGeo";
-import ModalTemplate from "../../components/templates/modalTemplate";
 
 function DashGeo() {
   const [status, setStatus] = useState<StatusEnum>(StatusEnum.Pending);
@@ -62,14 +61,14 @@ function DashGeo() {
   };
 
   const ModalEdit = () => {
-    return (
-      <ModalTemplate handleClose={handleCloseModalEdit} isOpen={openModal}>
-        <ModalEditDashGeo
+    return !openModal ? null : (
+      <ModalEditDashGeo
         geo={geoSelect!}
         updateStatus={updateStatus}
         updateGeo={updateGeolocation}
-        />
-      </ModalTemplate>
+        handleClose={handleCloseModalEdit}
+        isOpen={openModal}
+      />
     );
   };
 

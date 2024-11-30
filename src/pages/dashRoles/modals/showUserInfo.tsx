@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import ModalTemplate from "@/components/templates/modalTemplate";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Toggle from "../../../components/atoms/toggle";
@@ -14,9 +15,17 @@ interface ShowUserInfoProps {
   ur: UserRole;
   openUpdateRole: () => void;
   updateUser: (ur: UserRole) => void;
+  isOpen: boolean;
+  handleClose: () => void;
 }
 
-function ShowUserInfo({ ur, openUpdateRole, updateUser }: ShowUserInfoProps) {
+function ShowUserInfo({
+  ur,
+  openUpdateRole,
+  updateUser,
+  isOpen,
+  handleClose,
+}: ShowUserInfoProps) {
   const [collaborator, setCollaborator] = useState<boolean>(
     ur.user.collaborator
   );
@@ -53,8 +62,12 @@ function ShowUserInfo({ ur, openUpdateRole, updateUser }: ShowUserInfoProps) {
   };
 
   return (
-    <>
-      <div className="bg-white p-4 rounded md:min-w-[700px] overflow-y-auto scrollbar-hide h-4/5 sm:h-fit">
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose}
+      className="bg-white p-2 rounded-md"
+    >
+      <div className=" p-4 rounded md:min-w-[700px] overflow-y-auto scrollbar-hide h-4/5 sm:h-fit">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 ">
           <PropValue
             prop="Name"
@@ -133,12 +146,12 @@ function ShowUserInfo({ ur, openUpdateRole, updateUser }: ShowUserInfoProps) {
           </div>
         </div>
         <div className="flex gap-4 py-2">
-          <Button hover onClick={openUpdateRole}>
+          <Button onClick={openUpdateRole}>
             Editar Permissão
           </Button>
         </div>
       </div>
-    </>
+    </ModalTemplate>
   );
 }
 

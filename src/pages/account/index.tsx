@@ -256,7 +256,7 @@ function Account() {
                 onChange={handleImageChange}
                 src={imagePreview}
               />
-              {/* {!change ? <></> : <div className='w-40'><Button typeStyle='secondary' size='small' className='mt-2' hover type='button' onClick={uploadingImagem}>Salvar</Button></div>} */}
+              {/* {!change ? <></> : <div className='w-40'><Button typeStyle='secondary' size='small' className='mt-2' type='button' onClick={uploadingImagem}>Salvar</Button></div>} */}
             </div>
           ) : (
             <></>
@@ -277,7 +277,7 @@ function Account() {
                 errors={errors}
               />
               <div className="w-60 self-start">
-                <Button hover type="submit">
+                <Button type="submit">
                   Atualizar
                 </Button>
               </div>

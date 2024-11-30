@@ -53,7 +53,7 @@ function AboutUs(){
                     <div className="flex justify-center items-center bg-blue max-w-[640px] max-h-[390px]">
                         <div className="relative flex justify-center items-center w-96">
                             <TabletImage className="tablet absolute z-20 max-w-[640px] md:w-[640px]" />
-                            <img src={aboutUs!.thumbnail} alt="" className="video relative z-30 md:max-w-[440px] sm:max-w-[320px] max-w-[80%]"/>
+                            <img src={aboutUs!.thumbnail} alt="thumbnail" className="video relative z-30 md:max-w-[440px] sm:max-w-[320px] max-w-[80%]"/>
                         </div>
                         <button className="absolute z-40 border-none cursor-pointer" onClick={handleClick}>
                             <PlayIcon className="z-30 bg-gray-900 rounded-full border-none cursor-pointer opacity-30 transition-opacity duration-200 ease-linear hover:opacity-100" />

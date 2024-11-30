@@ -1,14 +1,14 @@
 import { subscribers } from "@/services/urls";
 import {
-  StudentCourseFull,
-  StudentCourseFullDTO,
+  StudentCourseFullDtoInput,
+  XLSXStudentCourseFull,
 } from "@/types/partnerPrepCourse/studentCourseFull";
 import fetchWrapper from "@/utils/fetchWrapper";
 
 export async function getSubscribers(
   token: string,
   inscriptionId: string
-): Promise<StudentCourseFull[]> {
+): Promise<XLSXStudentCourseFull[]> {
   const response = await fetchWrapper(`${subscribers}/${inscriptionId}`, {
     method: "GET",
     headers: {
@@ -17,30 +17,19 @@ export async function getSubscribers(
     },
   });
   if (response.status === 200) {
-    const data: StudentCourseFullDTO[] = await response.json();
+    const data: StudentCourseFullDtoInput[] = await response.json();
     return data.map((student) => ({
-      createdAt: new Date(student.createdAt),
-      email: student.email,
-      cpf: student.cpf,
-      rg: student.rg,
-      uf: student.uf,
-      urgencyPhone: student.urgencyPhone,
-      whatsapp: student.whatsapp,
-      firstName: student.user.firstName,
-      lastName: student.user.lastName,
-      socialName: student.user.socialName,
-      birthday: student.user.birthday,
-      gender: student.user.gender === 0 ? "Masculino" :  student.user.gender === 1 ? "Feminino" : "Outro",
-      phone: student.user.phone,
-      neighborhood: student.user.neighborhood,
-      street: student.user.street,
-      number: student.user.number,
-      complement: student.user.complement,
-      postalCode: student.user.postalCode,
-      city: student.user.city,
-      state: student.user.state,
+      ...student,
+      cadastrado_em: new Date(student.cadastrado_em),
+      data_convocacao: student.data_convocacao
+        ? new Date(student.data_convocacao)
+        : null,
+      data_limite_convocacao: student.data_limite_convocacao
+        ? new Date(student.data_limite_convocacao)
+        : null,
       socioeconomic: JSON.parse(student.socioeconomic),
     }));
   }
+
   throw new Error(`Erro ao tentar estudantes inscritos`);
 }

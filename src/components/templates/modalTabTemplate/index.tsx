@@ -1,7 +1,8 @@
-import { useState } from "react";
-import ModalTemplate, { ModalProps } from "../modalTemplate";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ModalProps } from "../modalTemplate";
 
 export interface TabModal extends ModalProps {
+  id: string;
   label: string;
   children: React.ReactNode;
 }
@@ -9,20 +10,34 @@ export interface TabModal extends ModalProps {
 interface ModalTabTemplateProps {
   tabs: TabModal[];
   isOpen: boolean;
+  className?: string;
 }
 
-function ModalTabTemplate({ tabs, isOpen }: ModalTabTemplateProps) {
-  const [indexTabSelect, setIndexTabSelect] = useState<number>(0);
-
-  return <div>
-    <ModalTemplate handleClose={tabs[indexTabSelect].handleClose!} outSideClose isOpen={isOpen} tabs={tabs} indexTabSelect={indexTabSelect} setIndexTabSelect={setIndexTabSelect}>
-    <div className="relative min-h-screen md:min-h-[80vh] w-[90vw] md:w-fit">
-        <div className="bg-white max-w-7xl min-w-[90vw] md:min-w-[1000px] max-h-[80vh] p-1 top-7 overflow-y-auto scrollbar-hide">
-            {tabs[indexTabSelect].children}
-        </div>
+function ModalTabTemplate({ tabs, isOpen, className }: ModalTabTemplateProps) {
+  return !isOpen ? null : (
+    <div className="fixed top-0 left-0 z-50 bg-black/50 w-screen h-screen flex justify-center items-center">
+      <div className="w-full h-full flex justify-center items-center">
+        <Tabs defaultValue={tabs[0].id}>
+          <TabsList className="grid w-full grid-cols-2">
+            {tabs.map((tab) => (
+              <TabsTrigger key={tab.id} value={tab.id}>
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {tabs.map((tab) => (
+            <TabsContent
+              className={`bg-white p-4 rounded-md ${className}`}
+              key={tab.id}
+              value={tab.id}
+            >
+              {tab.children}
+            </TabsContent>
+          ))}
+        </Tabs>
+      </div>
     </div>
-  </ModalTemplate>
-  </div>
+  );
 }
 
 export default ModalTabTemplate;

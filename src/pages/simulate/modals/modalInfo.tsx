@@ -15,11 +15,12 @@ function ModalInfo({ modal }: ModalInfoProps) {
             <Text size="tertiary" className="text-start">
               {modal.subTitle}
             </Text>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap justify-between gap-4">
               {modal.buttons.map((btn, index) => (
                 <Button
                   key={index}
-                  hover
+                  size="small"
+                  className="w-fit min-w-[150px]"
                   typeStyle={btn.type}
                   onClick={btn.onClick}
                 >
