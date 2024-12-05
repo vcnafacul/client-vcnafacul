@@ -9,10 +9,13 @@ import { TypeMarker } from "../../../types/map/marker";
 import { University } from "../../../types/university/university";
 import { DiffTime } from "../../../utils/diffTime";
 // import { CheckMapFilter } from "../../atoms/checkMapFilter";
+import { TypeProblem } from "@/enums/audit/typeProblem";
+import { ReactComponent as Report } from "../../../assets/icons/warning.svg";
 import MapBox from "../../molecules/mapBox";
 import MapBoxInfo from "../mapBoxInfo";
 import MapBoxInfoUnivPublic from "../mapBoxInfo/MapBoxInfoUnivPublic";
 import MapBoxInfoGeo from "../mapBoxInfo/mapBoxInfoGeo";
+import ReportLC from "./modal/report";
 
 function Map() {
   const [markerActive, setMarkerActive] = useState<number>(0);
@@ -22,6 +25,7 @@ function Map() {
     TypeMarker.univPublic,
   ]);
   const { markers, setMarkers } = useHomeStore();
+  const [report, setReport] = useState(false);
 
   function handleClickMarker(index: number) {
     if (boxRef === null) return;
@@ -37,6 +41,28 @@ function Map() {
   //   }
   // }
 
+  const ModalReport = () => {
+    return !report ? null : (
+      <ReportLC
+        entityId={markers.data[markerActive].id}
+        type={
+          markers.data[markerActive].type === TypeMarker.geo
+            ? TypeProblem.GEO
+            : TypeProblem.COLLEGE
+        }
+        isOpen={report}
+        handleClose={() => setReport(false)}
+        entityName={
+          (
+            markers.data[markerActive].infos as {
+              name: string;
+            }
+          ).name
+        }
+      />
+    );
+  };
+
   useEffect(() => {
     const geoMarkersCache = markers.data.filter(
       (m) => m.type === TypeMarker.geo
@@ -49,7 +75,7 @@ function Map() {
         .then((res) => {
           const geoMarkers = res.data.map((course: Geolocation) => {
             return {
-              id: `${course.id} ${TypeMarker.geo}`,
+              id: `${course.id}`,
               lat: course.latitude,
               lon: course.longitude,
               type: TypeMarker.geo,
@@ -83,16 +109,26 @@ function Map() {
       <MapBoxInfo
         boxRef={boxRef}
         boxInfo={
-          markers.data[markerActive]?.type === TypeMarker.geo ? (
-            <MapBoxInfoGeo
-              geo={markers.data[markerActive]?.infos as Geolocation}
-              ctaLink={FORM_GEOLOCATION}
+          <div
+            className="md:w-[600px] h-fit relative mb-10 mx-auto md:absolute z-40 
+          top-5 md:right-10 bg-white opacity-75 rounded-md p-5 flex items-center 
+          justify-between flex-col"
+          >
+            {markers.data[markerActive]?.type === TypeMarker.geo ? (
+              <MapBoxInfoGeo
+                geo={markers.data[markerActive]?.infos as Geolocation}
+                ctaLink={FORM_GEOLOCATION}
+              />
+            ) : (
+              <MapBoxInfoUnivPublic
+                univPublic={markers.data[markerActive]?.infos as University}
+              />
+            )}
+            <Report
+              className="w-10 h-10 absolute top-2 right-4 md:bottom-4 md:top-auto cursor-pointer"
+              onClick={() => setReport(true)}
             />
-          ) : (
-            <MapBoxInfoUnivPublic
-              univPublic={markers.data[markerActive]?.infos as University}
-            />
-          )
+          </div>
         }
       />
       {/* <div className="absolute top-4 right-4 sm:left-14 sm:right-auto z-40 bg-grey bg-opacity-70 max-w-80 rounded-sm p-2 flex flex-col">
@@ -107,6 +143,7 @@ function Map() {
           />
         ))}
       </div> */}
+      <ModalReport />
     </div>
   );
 }
