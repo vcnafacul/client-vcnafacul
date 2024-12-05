@@ -2,7 +2,6 @@ import fetchWrapper from "../../utils/fetchWrapper";
 import { geolocations } from "../urls";
 
 export interface ReportMapHome {
-  entity: string;
   entityId: string;
   message: string;
   address: boolean;

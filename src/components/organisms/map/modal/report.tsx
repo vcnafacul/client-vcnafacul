@@ -45,7 +45,6 @@ function ReportLC({
     if (message.length > 0) {
       // setError(false)
       const body: ReportMapHome = {
-        entity: type,
         updatedBy: email,
         entityId: entityId,
         message: `${message} - Problema encontrato em ${
