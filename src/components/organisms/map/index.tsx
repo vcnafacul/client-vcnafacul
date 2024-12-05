@@ -40,7 +40,6 @@ function Map() {
   //     setFilterMarkers((prev) => [...prev, type]);
   //   }
   // }
-  console.log(markers);
 
   const ModalReport = () => {
     return !report ? null : (
