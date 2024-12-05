@@ -90,7 +90,7 @@ export function PartnerPrepInscritionStudentManager() {
 
   const handleWaitingList = (studentId: string, insert: boolean) => {
     const id = toast.loading(
-      `${insert ? "Removendo da" : "Inserindo na"} lista de espera ...`
+      `${!insert ? "Removendo da" : "Inserindo na"} lista de espera ...`
     );
     updateWaitingListInfo(inscriptionId!, studentId, insert, token)
       .then(() => {
