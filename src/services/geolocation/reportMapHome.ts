@@ -8,6 +8,7 @@ export interface ReportMapHome {
   address: boolean;
   contact: boolean;
   other: boolean;
+  updatedBy?: string;
 }
 
 export async function reportMapHome(

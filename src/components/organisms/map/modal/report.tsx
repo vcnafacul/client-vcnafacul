@@ -10,6 +10,7 @@ import {
   reportMapHome,
   ReportMapHome,
 } from "@/services/geolocation/reportMapHome";
+import { useAuthStore } from "@/store/auth";
 import { Checkbox } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -34,11 +35,18 @@ function ReportLC({
   const [contactProblem, setContactProblem] = useState<boolean>(false);
   const [otherProblem, setOtherProblem] = useState<boolean>(false);
 
+  const {
+    data: {
+      user: { email },
+    },
+  } = useAuthStore();
+
   const sendReport = () => {
     if (message.length > 0) {
       // setError(false)
       const body: ReportMapHome = {
         entity: type,
+        updatedBy: email,
         entityId: entityId,
         message: `${message} - Problema encontrato em ${
           selectedOption === 0 ? type : "Plataforma"
