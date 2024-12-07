@@ -128,7 +128,8 @@ export function InscriptionInfoModal({
     return data.map((student) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const flattenedItem: any = { ...student };
-
+      delete flattenedItem.logs;
+      delete flattenedItem.documents;
       // Preenche as respostas socioeconômicas
       questions.forEach((question) => {
         // Encontra a resposta para a pergunta atual
