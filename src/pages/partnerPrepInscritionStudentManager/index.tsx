@@ -276,7 +276,7 @@ export function PartnerPrepInscritionStudentManager() {
           handleIndeferir(studentSelected!.id, message!)
         }
         text={`Por favor, informe o motivo da indéferência da matricula de ${studentSelected?.nome} ${studentSelected?.sobrenome}`}
-        className="bg-white p-4 rounded-md"
+        className="bg-white p-4 rounded-md w-[512px]"
       />
     );
   };

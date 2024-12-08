@@ -40,6 +40,7 @@ function ModalConfirmCancel({
             onClick={() => {
               handleClose!();
             }}
+            className="w-24 border"
           >
             Cancel
           </Button>
@@ -50,6 +51,7 @@ function ModalConfirmCancel({
             onClick={() => {
               handleConfirm();
             }}
+            className="w-24 border"
           >
             Confirmar
           </Button>
