@@ -1,3 +1,4 @@
+import { ShadcnTable } from "@/components/atoms/shadcnTable";
 import Text from "@/components/atoms/text";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export function Details({ student, handleClose }: Props) {
+  console.log(student);
   const formatAnswer = (
     answer: string | number | boolean | string[] | number[]
   ): string => {
@@ -61,9 +63,10 @@ export function Details({ student, handleClose }: Props) {
     <div className="absolute w-screen h-screen -top-[76px] left-0 flex justify-center items-center">
       <div className="w-full h-full bg-black/60 z-50 flex justify-center items-center md:py-4">
         <Tabs defaultValue="details" className="w-11/12 h-[80vh]">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="details">Detalhes</TabsTrigger>
             <TabsTrigger value="form">Formulário</TabsTrigger>
+            <TabsTrigger value="logs">Logs</TabsTrigger>
           </TabsList>
           <TabsContent value="details" className="h-full">
             <ModalContent onClose={handleClose}>
@@ -81,6 +84,18 @@ export function Details({ student, handleClose }: Props) {
                   value={formatAnswer(question.answer)}
                 />
               ))}
+            </ModalContent>
+          </TabsContent>
+          <TabsContent value="logs" className="h-full">
+            <ModalContent onClose={handleClose}>
+              <ShadcnTable
+                headers={["Data", "Status", "Descrição"]}
+                cells={student.logs?.map((log) => ([
+                  format(log.createdAt, "dd/MM/yyyy HH:mm:ss"),
+                  log.applicationStatus,
+                  log.description,
+                ])) || []}
+              />
             </ModalContent>
           </TabsContent>
         </Tabs>

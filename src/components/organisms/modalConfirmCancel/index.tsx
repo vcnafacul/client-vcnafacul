@@ -26,6 +26,7 @@ function ModalConfirmCancel({
       isOpen={isOpen}
       handleClose={handleClose!}
       className={className}
+
     >
       <div className="px-4 md:max-w-[700px] rounded-2xl flex flex-col gap-4">
         <Text size="tertiary" className="font-black m-0 text-start">
@@ -34,13 +35,12 @@ function ModalConfirmCancel({
         {children}
         <div className="flex gap-2 justify-end">
           <Button
-            disabled={confirmDisabled ?? false}
             size="small"
             typeStyle="secondary"
-            hover
             onClick={() => {
               handleClose!();
             }}
+            className="w-24 border"
           >
             Cancel
           </Button>
@@ -48,10 +48,10 @@ function ModalConfirmCancel({
             disabled={confirmDisabled ?? false}
             size="small"
             typeStyle="primary"
-            hover
             onClick={() => {
               handleConfirm();
             }}
+            className="w-24 border"
           >
             Confirmar
           </Button>

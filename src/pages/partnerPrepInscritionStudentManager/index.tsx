@@ -1,19 +1,18 @@
-import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
-import { useAuthStore } from "@/store/auth";
-
 import Button from "@/components/molecules/button";
-import { updateWaitingListInfo } from "@/services/prepCourse/inscription/updateWaitingList";
-import { updateSelectEnrolledInfo } from "@/services/prepCourse/student/updateEnrolledInfo";
-import { updateIsFreeInfo } from "@/services/prepCourse/student/updateIsFreeInfo";
-import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
-import Paper from "@mui/material/Paper";
-
+import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
+import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
+import { updateWaitingListInfo } from "@/services/prepCourse/inscription/updateWaitingList";
 import { confirmEnrolled } from "@/services/prepCourse/student/confirmEnrolled";
 import { rejectStudent } from "@/services/prepCourse/student/rejectStudent";
 import { resetStudent } from "@/services/prepCourse/student/resetStudent";
 import { scheduleEnrolled } from "@/services/prepCourse/student/scheduleEnrolled";
+import { updateSelectEnrolledInfo } from "@/services/prepCourse/student/updateEnrolledInfo";
+import { updateIsFreeInfo } from "@/services/prepCourse/student/updateIsFreeInfo";
+import { useAuthStore } from "@/store/auth";
+import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { IconButton } from "@mui/material";
+import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
@@ -48,6 +47,7 @@ export function PartnerPrepInscritionStudentManager() {
   const [studentSelected, setStudentSelected] = useState<
     XLSXStudentCourseFull | undefined
   >(undefined);
+  const [openModalReject, setOpenModalReject] = useState<boolean>(false);
 
   const {
     data: { token },
@@ -216,8 +216,15 @@ export function PartnerPrepInscritionStudentManager() {
 
   function shouldProcessApplication(
     status: StatusApplication,
-    startDate: Date
+    startDate: Date,
+    custonsStatusReject?: StatusApplication[]
   ): boolean {
+    const listStatus = custonsStatusReject || [
+      StatusApplication.Enrolled,
+      StatusApplication.DeclaredInterest,
+      StatusApplication.EnrollmentCancelled,
+      StatusApplication.Rejected,
+    ];
     const currentDate = new Date();
     if (
       status === StatusApplication.CalledForEnrollment &&
@@ -226,23 +233,16 @@ export function PartnerPrepInscritionStudentManager() {
       return false;
     }
 
-    if (
-      [
-        StatusApplication.Enrolled,
-        StatusApplication.DeclaredInterest,
-        StatusApplication.EnrollmentCancelled,
-        StatusApplication.Rejected,
-      ].includes(status)
-    ) {
+    if (listStatus.includes(status)) {
       return false;
     }
 
     return true;
   }
 
-  const handleIndeferir = (studentId: string) => {
+  const handleIndeferir = (studentId: string, reason: string) => {
     const id = toast.loading("Indeferir Matrícula...");
-    rejectStudent(studentId, token)
+    rejectStudent(studentId, reason, token)
       .then(() => {
         const newStudent = students.map((stu) => {
           if (stu.id === studentId) {
@@ -255,6 +255,7 @@ export function PartnerPrepInscritionStudentManager() {
         });
         setStudents(newStudent);
         toast.dismiss(id);
+        setOpenModalReject(false);
       })
       .catch((err) => {
         toast.update(id, {
@@ -264,6 +265,20 @@ export function PartnerPrepInscritionStudentManager() {
           autoClose: 5000,
         });
       });
+  };
+
+  const ModalReject = () => {
+    return !openModalReject ? null : (
+      <ModalConfirmCancelMessage
+        isOpen={openModalReject}
+        handleClose={() => setOpenModalReject(false)}
+        handleConfirm={(message) =>
+          handleIndeferir(studentSelected!.id, message!)
+        }
+        text={`Por favor, informe o motivo da indéferência da matricula de ${studentSelected?.nome} ${studentSelected?.sobrenome}`}
+        className="bg-white p-4 rounded-md w-[512px]"
+      />
+    );
   };
 
   const handleModalDetaild = (id: string) => {
@@ -289,7 +304,7 @@ export function PartnerPrepInscritionStudentManager() {
       field: "actions",
       headerName: "Ações",
       flex: 1,
-      minWidth: 260,
+      minWidth: 300,
       disableColumnMenu: true,
       sortable: false,
       align: "center",
@@ -397,21 +412,27 @@ export function PartnerPrepInscritionStudentManager() {
               <FaCheck className="h-6 w-6 fill-green3 opacity-60 hover:opacity-100" />
             </ActionButton>
           )}
-          {params.row.status === StatusApplication.DeclaredInterest && (
-            <ActionButton
-              titleAlert={`Infererir ${params.row.nome} ${params.row.sobrenome}`}
-              descriptionAlert={`Infererir confirmação de matrícula de  ${params.row.nome} ${params.row.sobrenome}`}
-              onConfirm={() => {
-                handleIndeferir(params.row.id);
-              }}
-              tooltipTitle="Infererir"
-            >
-              <IoClose className="h-6 w-6 fill-redError/60 hover:fill-redError" />
-            </ActionButton>
+          {(params.row.status === StatusApplication.DeclaredInterest ||
+            params.row.status === StatusApplication.MissedDeadline ||
+            params.row.status === StatusApplication.UnderReview) && (
+            <Tooltip title="Indeferir">
+              <IconButton>
+                <IoClose
+                  onClick={() => {
+                    setStudentSelected(
+                      students.find((student) => student.id === params.row.id)!
+                    );
+                    setOpenModalReject(true);
+                  }}
+                  className="h-6 w-6 fill-redError/60 hover:fill-redError cursor-pointer"
+                />
+              </IconButton>
+            </Tooltip>
           )}
           {shouldProcessApplication(
             params.row.status,
-            params.row.data_convocacao
+            params.row.data_convocacao,
+            [StatusApplication.Enrolled, StatusApplication.DeclaredInterest]
           ) && (
             <ActionButton
               titleAlert="Deseja resetar as informações do aluno?"
@@ -608,6 +629,7 @@ export function PartnerPrepInscritionStudentManager() {
       <ScheduleEnrolled />
       <ModalDetails />
       <ModalStatistic />
+      <ModalReject />
     </div>
   );
 }
