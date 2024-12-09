@@ -1,21 +1,16 @@
-import Text from "@/components/atoms/text";
 import BaseTemplate from "@/components/templates/baseTemplate";
-import { declaredInterest } from "@/services/prepCourse/student/declaredInterest";
-import { useAuthStore } from "@/store/auth";
+import { verifyDeclaredInterest } from "@/services/prepCourse/student/verifyDeclaredInterest";
 import { jwtDecoded } from "@/utils/jwt";
 import queryString from "query-string";
 import { useEffect, useState } from "react";
-import { BiSolidErrorAlt } from "react-icons/bi";
-import { FaCheckDouble } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
-import { MoonLoader } from "react-spinners";
 import ConfirmEnrolledExpiredMessage from "./confirmEnrolledMessage";
+import DeclareInterest from "./declareInterest";
 
 export function ConfirmEnrolledPage() {
   const location = useLocation();
   const getToken = (queryString.parse(location.search).token as string) || "";
-  const [processing, setProcessing] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
+  const [declaredInterest, setDeclaredInterest] = useState(true);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let decoded: any = null;
   let expired = true;
@@ -23,25 +18,15 @@ export function ConfirmEnrolledPage() {
     decoded = jwtDecoded(getToken);
     expired = decoded.exp * 1000 < Date.now();
   }
-
-  const {
-    data: { token },
-  } = useAuthStore();
+  const studentId = decoded.user.id as string;
 
   useEffect(() => {
-    if (!expired) {
-      declaredInterest(decoded.user.id as string, token)
-        .then(() => {
-          setProcessing(false);
-        })
-        .catch((e) => {
-          setError(e.message);
-          setProcessing(false);
-        });
+    if (getToken) {
+      verifyDeclaredInterest(studentId, getToken).then((res) => {
+        setDeclaredInterest(res);
+      });
     }
   }, []);
-
-  console.log("teste", expired);
 
   return (
     <BaseTemplate
@@ -54,37 +39,18 @@ export function ConfirmEnrolledPage() {
           encerrado. Caso tenha dúvidas ou deseje mais informações, entre em
           contato com nossa equipe de suporte.
         </ConfirmEnrolledExpiredMessage>
-      ) : processing ? (
+      ) : !declaredInterest ? (
         <ConfirmEnrolledExpiredMessage>
-          <div className="flex flex-col justify-center items-center">
-            <Text className="w-96" size="secondary">
-              Aguarde enquando a declaração de interesse é processada
-            </Text>
-            <MoonLoader color="#FF7600" size={60} speedMultiplier={0.4} />
-          </div>
-        </ConfirmEnrolledExpiredMessage>
-      ) : error ? (
-        <ConfirmEnrolledExpiredMessage>
-          <div className="flex flex-col justify-center items-center gap-4">
-            <BiSolidErrorAlt className="w-20 h-20 fill-redError" />
-            {error}
-          </div>
+          Você ja declarou interesse nesta vaga.
         </ConfirmEnrolledExpiredMessage>
       ) : (
-        <ConfirmEnrolledExpiredMessage>
-          <div className="flex flex-col justify-center items-center gap-4">
-            <FaCheckDouble className="w-20 h-20 fill-green" />
-            <div>
-              <Text size="secondary" className="m-0">
-                Parabéns, declaração de interesse aceita.
-              </Text>
-              <Text size="tertiary">
-                Agora é com a gente. Logo mais o cursinho entrará em contato com
-                você para mais informações
-              </Text>
-            </div>
-          </div>
-        </ConfirmEnrolledExpiredMessage>
+        <div className="flex flex-col items-center min-h-[calc(100vh-76px)] w-full">
+          <DeclareInterest
+            isFree={true}
+            queryToken={getToken}
+            studentId={studentId}
+          />
+        </div>
       )}
     </BaseTemplate>
   );
