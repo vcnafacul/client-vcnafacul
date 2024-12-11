@@ -28,12 +28,12 @@ export const AlertDialogUI = ({
       {children}
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogTitle className="text-marine">{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm}>Confirmar</AlertDialogAction>
+          <AlertDialogCancel className="border border-orange text-orange hover:bg-orange hover:border-orange/20 hover:text-white">Cancelar</AlertDialogCancel>
+          <AlertDialogAction className="bg-orange text-white hover:bg-orange/80" onClick={onConfirm}>Confirmar</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

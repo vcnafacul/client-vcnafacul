@@ -1,6 +1,21 @@
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
 
+interface Documents {
+  key: string;
+  name: string;
+  createdAt: Date;
+}
+
+interface LogStudent {
+  id: string;
+  studentId: string;
+  applicationStatus: StatusApplication;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface StudentCourseFull {
   id: string;
   cadastrado_em: Date;
@@ -39,8 +54,12 @@ interface StudentCourseFull {
 
 export interface StudentCourseFullDtoInput extends StudentCourseFull {
   socioeconomic: string;
+  logs: LogStudent[];
+  documents: Documents[];
 }
 
 export interface XLSXStudentCourseFull extends StudentCourseFull {
   socioeconomic: SocioeconomicAnswer[];
+  logs: LogStudent[];
+  documents: Documents[];
 }

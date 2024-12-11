@@ -77,7 +77,7 @@ function DashCardTemplate({
         </div>
         <div
           className={`relative md:fixed flex flex-wrap flex-col justify-center items-center gap-2 z-[1] rounded-2xl bg-opacity-95 p-2 w-10/12 md:w-fit ${
-            filterProps || buttons || totalItems ? "bg-gray-200 mt-14" : ""
+            filterProps || buttons || totalItems ? "bg-gray-200/90 mt-14" : ""
           } ${classNameFilter}`}
         >
           <div

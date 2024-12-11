@@ -1,8 +1,11 @@
+import { ShadcnTable } from "@/components/atoms/shadcnTable";
 import Text from "@/components/atoms/text";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { format } from "date-fns";
+import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { VisualizerDocuments } from "./visualizerDocuments";
 
 interface Props {
   handleClose: () => void;
@@ -10,6 +13,8 @@ interface Props {
 }
 
 export function Details({ student, handleClose }: Props) {
+  const [openModalDocuments, setOpenModalDocuments] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
   const formatAnswer = (
     answer: string | number | boolean | string[] | number[]
   ): string => {
@@ -57,35 +62,86 @@ export function Details({ student, handleClose }: Props) {
     { label: "Parentesco", value: student.parentesco_guardiao_legal },
   ];
 
+  const ModalVisualizeDocument = () => {
+    return !openModalDocuments ? null : (
+      <VisualizerDocuments
+        isOpen={openModalDocuments}
+        handleClose={() => setOpenModalDocuments(false)}
+        fileKey={selectedDocument!}
+      />
+    );
+  };
+
   return (
-    <div className="absolute w-screen h-screen -top-[76px] left-0 flex justify-center items-center">
-      <div className="w-full h-full bg-black/60 z-50 flex justify-center items-center md:py-4">
-        <Tabs defaultValue="details" className="w-11/12 h-[80vh]">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="details">Detalhes</TabsTrigger>
-            <TabsTrigger value="form">Formulário</TabsTrigger>
-          </TabsList>
-          <TabsContent value="details" className="h-full">
-            <ModalContent onClose={handleClose}>
-              <Section title="Informações pessoais" fields={personalInfo} />
-              <Section title="Endereço" fields={addressInfo} />
-              <Section title="Guardião Legal" fields={guardianInfo} />
-            </ModalContent>
-          </TabsContent>
-          <TabsContent value="form" className="h-full">
-            <ModalContent onClose={handleClose}>
-              {student.socioeconomic.map((question) => (
-                <Field
-                  key={question.question}
-                  label={question.question}
-                  value={formatAnswer(question.answer)}
+    <>
+      <div className="absolute w-screen h-screen -top-[76px] left-0 flex justify-center items-center">
+        <div className="w-full h-full bg-black/60 z-50 flex justify-center items-center md:py-4">
+          <Tabs defaultValue="details" className="w-11/12 h-[80vh]">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="details">Detalhes</TabsTrigger>
+              <TabsTrigger value="form">Formulário</TabsTrigger>
+              <TabsTrigger value="documents">Documentos</TabsTrigger>
+              <TabsTrigger value="logs">Logs</TabsTrigger>
+            </TabsList>
+            <TabsContent value="details" className="h-full">
+              <ModalContent onClose={handleClose}>
+                <Section title="Informações pessoais" fields={personalInfo} />
+                <Section title="Endereço" fields={addressInfo} />
+                <Section title="Guardião Legal" fields={guardianInfo} />
+              </ModalContent>
+            </TabsContent>
+            <TabsContent value="form" className="h-full">
+              <ModalContent onClose={handleClose}>
+                {student.socioeconomic.map((question) => (
+                  <Field
+                    key={question.question}
+                    label={question.question}
+                    value={formatAnswer(question.answer)}
+                  />
+                ))}
+              </ModalContent>
+            </TabsContent>
+            <TabsContent value="documents" className="h-full">
+              <ModalContent onClose={handleClose}>
+                <ShadcnTable
+                  headers={["File", "Created At", "Ação"]}
+                  cells={
+                    student.documents?.map((doc) => [
+                      doc.name,
+                      format(doc.createdAt, "dd/MM/yyyy HH:mm:ss"),
+                      <button
+                        onClick={() => {
+                          console.log(doc);
+                          setSelectedDocument(doc.key);
+                          setOpenModalDocuments(true);
+                        }}
+                      >
+                        Visualizar
+                      </button>,
+                    ]) || []
+                  }
                 />
-              ))}
-            </ModalContent>
-          </TabsContent>
-        </Tabs>
+              </ModalContent>
+            </TabsContent>
+            <TabsContent value="logs" className="h-full">
+              <ModalContent onClose={handleClose}>
+                <ShadcnTable
+                  headers={["Data", "Status", "Descrição"]}
+                  cells={
+                    student.logs?.map((log) => [
+                      format(log.createdAt, "dd/MM/yyyy HH:mm:ss"),
+                      log.applicationStatus,
+                      log.description,
+                    ]) || []
+                  }
+                />
+              </ModalContent>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
-    </div>
+      <ModalVisualizeDocument />
+    </>
   );
 }
 

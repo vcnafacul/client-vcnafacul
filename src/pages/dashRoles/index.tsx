@@ -1,3 +1,4 @@
+import { FilterProps } from "@/components/atoms/filter";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { ButtonProps } from "../../components/molecules/button";
@@ -24,6 +25,7 @@ function DashRoles() {
   const [userModal, setUserModal] = useState<boolean>(false);
   const [userRoleModal, setUserRoleModal] = useState<boolean>(false);
   const [newRole, setnewRole] = useState<boolean>(false);
+  const [filterText, setFilterText] = useState<string>("");
   const dataRef = useRef<UserRole[]>([]);
   const limitCards = 40;
 
@@ -84,17 +86,8 @@ function DashRoles() {
     setRoles(newRoles);
   };
 
-  useEffect(() => {
-    getRoles(token)
-      .then((res) => {
-        setRoles(res.data);
-      })
-      .catch((error: Error) => {
-        toast.error(error.message);
-        setRoles([]);
-      });
-
-    getUsersRole(token, 1, limitCards)
+  const getUsers = () => {
+    getUsersRole(token, 1, limitCards, filterText)
       .then((res) => {
         setUsersRole(
           res.data.sort((a, b) =>
@@ -107,10 +100,23 @@ function DashRoles() {
         toast.error(error.message);
         setUsersRole([]);
       });
+  };
+
+  useEffect(() => {
+    getRoles(token)
+      .then((res) => {
+        setRoles(res.data);
+      })
+      .catch((error: Error) => {
+        toast.error(error.message);
+        setRoles([]);
+      });
+
+    getUsers();
   }, [token]);
 
   const getMoreCards = async (page: number): Promise<Paginate<UserRole>> => {
-    return await getUsersRole(token, page, limitCards);
+    return await getUsersRole(token, page, limitCards, filterText);
   };
 
   const ShowUserRole = () => {
@@ -163,6 +169,14 @@ function DashRoles() {
     },
   ];
 
+  const filterProps: FilterProps = {
+    filtrar: (e: React.ChangeEvent<HTMLInputElement>) =>
+      setFilterText(e.target.value.toLowerCase()),
+    placeholder: "Busque um usuário",
+    defaultValue: filterText,
+    keyDown: () => getUsers(),
+  };
+
   return (
     <DashCardContext.Provider
       value={{
@@ -174,6 +188,7 @@ function DashRoles() {
         cardTransformation,
         limitCards,
         buttons,
+        filterProps,
       }}
     >
       <DashCardTemplate />
