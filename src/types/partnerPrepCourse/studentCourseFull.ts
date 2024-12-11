@@ -4,6 +4,7 @@ import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
 interface Documents {
   key: string;
   name: string;
+  createdAt: Date;
 }
 
 interface LogStudent {
