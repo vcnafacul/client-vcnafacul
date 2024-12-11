@@ -69,5 +69,6 @@ export const updateOrderWaitingList = `${inscriptionCourse}/update-order-waiting
 export const getWaitingList = `${inscriptionCourse}/waiting-list`;
 export const sendWaitingList = `${inscriptionCourse}/send-waiting-list`;
 export const uploadDocuments = `${studentCourse}/upload`;
+export const getDocument = `${studentCourse}/document`;
 export const uploadProfilePhoto = `${studentCourse}/profile-photo`;
 export const declaredInterest = `${studentCourse}/declared-interest`;
