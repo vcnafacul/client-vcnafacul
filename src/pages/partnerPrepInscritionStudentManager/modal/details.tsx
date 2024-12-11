@@ -11,7 +11,7 @@ interface Props {
 }
 
 export function Details({ student, handleClose }: Props) {
-  console.log(student);
+
   const formatAnswer = (
     answer: string | number | boolean | string[] | number[]
   ): string => {

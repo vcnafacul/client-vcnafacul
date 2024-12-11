@@ -18,7 +18,6 @@ export async function uploadDocs(
     },
     body: formData, // Corpo da requisição com os arquivos
   });
-  console.log(response);
 
   // Verificação do status da resposta
   if (response.status !== 201) {
