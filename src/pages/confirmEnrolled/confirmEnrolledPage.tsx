@@ -16,7 +16,7 @@ export function ConfirmEnrolledPage() {
   let expired = true;
   if (getToken) {
     decoded = jwtDecoded(getToken);
-    expired = decoded.exp * 1000 < Date.now();
+    expired = decoded.exp * 1000 > Date.now();
   }
   const studentId = decoded.user.id as string;
 
@@ -39,7 +39,7 @@ export function ConfirmEnrolledPage() {
           encerrado. Caso tenha dúvidas ou deseje mais informações, entre em
           contato com nossa equipe de suporte.
         </ConfirmEnrolledExpiredMessage>
-      ) : !declaredInterest ? (
+      ) : declaredInterest ? (
         <ConfirmEnrolledExpiredMessage>
           Você ja declarou interesse nesta vaga.
         </ConfirmEnrolledExpiredMessage>
