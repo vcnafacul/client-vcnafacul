@@ -94,7 +94,7 @@ export function PartnerPrepInscriptionStep2({
     setPostalCode(cep);
     if (cep.length === 9) {
       const cepInfo = await getCepInfo(cep);
-      console.log(cepInfo);
+
       setValue("street", cepInfo.street);
       setStreet(cepInfo.street);
       setValue("neighborhood", cepInfo.neighborhood);

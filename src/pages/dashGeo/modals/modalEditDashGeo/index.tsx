@@ -282,7 +282,6 @@ function ModalEditDashGeo({
   };
 
   useEffect(() => {
-    console.log("reset");
     reset();
   }, [reset]);
 
