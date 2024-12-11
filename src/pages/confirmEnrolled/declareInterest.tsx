@@ -36,7 +36,7 @@ export default function DeclareInterest({
     const id = toast.loading(
       "Aguarde enquanto processando a declaração de interesse..."
     );
-    declaredInterest(studentId, token)
+    declaredInterest(studentId, areaInterest, selectedCursos, token)
       .then(() => {
         toast.update(id, {
           render: "Declaração de interesse feita com sucesso!",
