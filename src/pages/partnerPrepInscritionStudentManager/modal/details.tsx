@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { VisualizerDocuments } from "./visualizerDocuments";
+import { VisualizerProfilePhotos } from "./visualizerPhoto";
 
 interface Props {
   handleClose: () => void;
@@ -14,6 +15,7 @@ interface Props {
 
 export function Details({ student, handleClose }: Props) {
   const [openModalDocuments, setOpenModalDocuments] = useState(false);
+  const [openModalProfilePhoto, setOpenModalProfilePhoto] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
   const formatAnswer = (
     answer: string | number | boolean | string[] | number[]
@@ -72,6 +74,44 @@ export function Details({ student, handleClose }: Props) {
     );
   };
 
+  const ModalVisualizeProfilePhoto = () => {
+    return !openModalProfilePhoto && !student.photo ? null : (
+      <VisualizerProfilePhotos
+        isOpen={openModalProfilePhoto}
+        handleClose={() => setOpenModalProfilePhoto(false)}
+        fileKey={student.photo}
+      />
+    );
+  };
+
+  const cellDocuments = () => {
+    const documents =
+      student.documents?.map((doc) => [
+        doc.name,
+        format(doc.createdAt, "dd/MM/yyyy HH:mm:ss"),
+        <button
+          onClick={() => {
+            setSelectedDocument(doc.key);
+            setOpenModalDocuments(true);
+          }}
+        >
+          Visualizar
+        </button>,
+      ]) || [];
+    const photo = [
+      "Foto Carteirinha",
+      format(student.documents[0].createdAt, "dd/MM/yyyy HH:mm:ss"),
+      <button
+        onClick={() => {
+          setOpenModalProfilePhoto(true);
+        }}
+      >
+        Visualizar
+      </button>,
+    ];
+    return [...documents, photo];
+  };
+
   return (
     <>
       <div className="absolute w-screen h-screen -top-[76px] left-0 flex justify-center items-center">
@@ -105,21 +145,7 @@ export function Details({ student, handleClose }: Props) {
               <ModalContent onClose={handleClose}>
                 <ShadcnTable
                   headers={["File", "Created At", "Ação"]}
-                  cells={
-                    student.documents?.map((doc) => [
-                      doc.name,
-                      format(doc.createdAt, "dd/MM/yyyy HH:mm:ss"),
-                      <button
-                        onClick={() => {
-                          console.log(doc);
-                          setSelectedDocument(doc.key);
-                          setOpenModalDocuments(true);
-                        }}
-                      >
-                        Visualizar
-                      </button>,
-                    ]) || []
-                  }
+                  cells={cellDocuments()}
                 />
               </ModalContent>
             </TabsContent>
@@ -141,6 +167,7 @@ export function Details({ student, handleClose }: Props) {
         </div>
       </div>
       <ModalVisualizeDocument />
+      <ModalVisualizeProfilePhoto />
     </>
   );
 }
