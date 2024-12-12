@@ -98,9 +98,9 @@ export function Details({ student, handleClose }: Props) {
           Visualizar
         </button>,
       ]) || [];
-    const photo = [
+    const photo = !student.photo ? [] : [
       "Foto Carteirinha",
-      format(student.documents[0].createdAt, "dd/MM/yyyy HH:mm:ss"),
+      "",
       <button
         onClick={() => {
           setOpenModalProfilePhoto(true);
