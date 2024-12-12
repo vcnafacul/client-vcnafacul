@@ -180,7 +180,7 @@ export function PartnerPrepInscritionStudentManager() {
   };
 
   const handleScheduleEnrolled = (datas: Date[]) => {
-    const id = toast.loading("Progrmando Convocação");
+    const id = toast.loading("Programando Convocação");
     scheduleEnrolled(inscriptionId!, datas[0], datas[1], token)
       .then(() => {
         subscribers();

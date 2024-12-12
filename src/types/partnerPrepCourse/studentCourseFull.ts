@@ -50,6 +50,7 @@ interface StudentCourseFull {
   isento: string;
   convocar: string;
   lista_de_espera: string;
+  photo:string;
 }
 
 export interface StudentCourseFullDtoInput extends StudentCourseFull {
