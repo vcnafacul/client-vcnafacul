@@ -19,8 +19,8 @@ interface LogStudent {
 interface StudentCourseFull {
   id: string;
   cadastrado_em: Date;
-  data_convocacao: Date | null;
-  data_limite_convocacao: Date | null;
+  data_convocacao: string | null;
+  data_limite_convocacao: string | null;
   email: string;
   cpf: string;
   rg: string;

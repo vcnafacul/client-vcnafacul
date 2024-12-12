@@ -483,14 +483,12 @@ export function PartnerPrepInscritionStudentManager() {
       headerName: "Data Conv",
       description: "Data de Convocação para Matrícula",
       flex: 1,
-      type: "date",
     },
     {
       field: "data_limite_convocacao",
       headerName: "Prazo M.",
       description: "Prazo Confirmação Matrícula",
       flex: 1,
-      type: "date",
     },
 
     { field: "nome_social", headerName: "Nome Social", flex: 1 },

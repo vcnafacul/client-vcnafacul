@@ -4,6 +4,8 @@ import {
   XLSXStudentCourseFull,
 } from "@/types/partnerPrepCourse/studentCourseFull";
 import fetchWrapper from "@/utils/fetchWrapper";
+import { formatInTimeZone } from "date-fns-tz";
+import { ptBR } from "date-fns/locale";
 
 export async function getSubscribers(
   token: string,
@@ -18,17 +20,37 @@ export async function getSubscribers(
   });
   if (response.status === 200) {
     const data: StudentCourseFullDtoInput[] = await response.json();
-    return data.map((student) => ({
-      ...student,
-      cadastrado_em: new Date(student.cadastrado_em),
-      data_convocacao: student.data_convocacao
-        ? new Date(student.data_convocacao)
-        : null,
-      data_limite_convocacao: student.data_limite_convocacao
-        ? new Date(student.data_limite_convocacao)
-        : null,
-      socioeconomic: JSON.parse(student.socioeconomic),
-    }));
+
+    return data.map((student) => {
+      const formattedDateEnrolled = student.data_convocacao
+        ? formatInTimeZone(
+            student.data_convocacao.split("T")[0],
+            "America/Sao_Paulo",
+            "dd/MM/yyyy",
+            {
+              locale: ptBR,
+            }
+          )
+        : null;
+      const formattedDateLimit = student.data_limite_convocacao
+        ? formatInTimeZone(
+            student.data_limite_convocacao.split("T")[0],
+            "America/Sao_Paulo",
+            "dd/MM/yyyy",
+            {
+              locale: ptBR,
+            }
+          )
+        : null;
+
+      return {
+        ...student,
+        cadastrado_em: new Date(student.cadastrado_em),
+        data_convocacao: formattedDateEnrolled,
+        data_limite_convocacao: formattedDateLimit,
+        socioeconomic: JSON.parse(student.socioeconomic),
+      };
+    });
   }
 
   throw new Error(`Erro ao tentar estudantes inscritos`);
