@@ -16,12 +16,12 @@ export function ConfirmEnrolledPage() {
   let expired = true;
   if (getToken) {
     decoded = jwtDecoded(getToken);
-    expired = decoded.exp * 1000 > Date.now();
+    expired = decoded.exp * 1000 < Date.now();
   }
   const studentId = decoded.user.id as string;
 
   useEffect(() => {
-    if (getToken) {
+    if (getToken && !expired) {
       verifyDeclaredInterest(studentId, getToken).then((res) => {
         setDeclaredInterest(res);
       });
