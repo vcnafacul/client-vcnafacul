@@ -39,7 +39,7 @@ export function ConfirmEnrolledPage() {
           encerrado. Caso tenha dúvidas ou deseje mais informações, entre em
           contato com nossa equipe de suporte.
         </ConfirmEnrolledExpiredMessage>
-      ) : !declaredInterest ? (
+      ) : declaredInterest ? (
         <ConfirmEnrolledExpiredMessage>
           Você ja declarou interesse nesta vaga.
         </ConfirmEnrolledExpiredMessage>
