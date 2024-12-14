@@ -10,7 +10,7 @@ import DeclareInterest from "./declareInterest";
 export function ConfirmEnrolledPage() {
   const location = useLocation();
   const getToken = (queryString.parse(location.search).token as string) || "";
-  const [declaredInterest, setDeclaredInterest] = useState(true);
+  const [declaredInterest, setDeclaredInterest] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let decoded: any = null;
   let expired = true;
@@ -21,7 +21,7 @@ export function ConfirmEnrolledPage() {
   const studentId = decoded.user.id as string;
 
   useEffect(() => {
-    if (getToken && !expired) {
+    if (getToken) {
       verifyDeclaredInterest(studentId, getToken).then((res) => {
         setDeclaredInterest(res);
       });
