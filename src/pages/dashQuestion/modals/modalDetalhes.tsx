@@ -345,7 +345,7 @@ function ModalDetalhes({
   const checkboxData: CheckboxProps[] = [
     {
       name: "provaClassification",
-      title: "Classiicação de Prova",
+            title: "Classificação de Prova",
       checked: provaClassification,
       disabled: !question ? false : !isEditing,
     },
