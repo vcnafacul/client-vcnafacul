@@ -24,6 +24,7 @@ export function PieChartMui({ data, width = 400 }: Props) {
     "#EB984E", // Laranja Pastel
     "#D35400", // Laranja Profundo
     "#BA4A00", // Laranja Escuro
+    "#F43535", // Vermelho Claro
   ];
   return (
     <PieChart

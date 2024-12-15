@@ -18,17 +18,19 @@ export async function getSubscribers(
   });
   if (response.status === 200) {
     const data: StudentCourseFullDtoInput[] = await response.json();
-    return data.map((student) => ({
-      ...student,
-      cadastrado_em: new Date(student.cadastrado_em),
-      data_convocacao: student.data_convocacao
-        ? new Date(student.data_convocacao)
-        : null,
-      data_limite_convocacao: student.data_limite_convocacao
-        ? new Date(student.data_limite_convocacao)
-        : null,
-      socioeconomic: JSON.parse(student.socioeconomic),
-    }));
+    return data.map((student) => {
+      return {
+        ...student,
+        cadastrado_em: new Date(student.cadastrado_em),
+        data_convocacao: student.data_convocacao
+          ? new Date(student.data_convocacao!.split("Z")[0])
+          : null,
+        data_limite_convocacao: student.data_limite_convocacao
+          ? new Date(student.data_limite_convocacao!.split("Z")[0])
+          : null,
+        socioeconomic: JSON.parse(student.socioeconomic),
+      };
+    });
   }
 
   throw new Error(`Erro ao tentar estudantes inscritos`);

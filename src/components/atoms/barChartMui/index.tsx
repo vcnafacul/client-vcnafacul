@@ -9,7 +9,7 @@ interface Props {
   color?: string
 }
 
-export default function BarChartMui({ data, color = "#48C9B0" }: Props) {
+export default function BarChartMui({ data, color = "#F43535" }: Props) {
 
   return (
     <BarChart

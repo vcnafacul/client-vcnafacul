@@ -117,7 +117,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
       />
       <InputFactory
         id="gender"
-        label="Genero"
+        label="Gênero"
         type="select"
         options={optionsGender}
         error={errors.gender}

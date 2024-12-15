@@ -10,13 +10,13 @@ import DeclareInterest from "./declareInterest";
 export function ConfirmEnrolledPage() {
   const location = useLocation();
   const getToken = (queryString.parse(location.search).token as string) || "";
-  const [declaredInterest, setDeclaredInterest] = useState(true);
+  const [declaredInterest, setDeclaredInterest] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let decoded: any = null;
   let expired = true;
   if (getToken) {
     decoded = jwtDecoded(getToken);
-    expired = decoded.exp * 1000 > Date.now();
+    expired = decoded.exp * 1000 < Date.now();
   }
   const studentId = decoded.user.id as string;
 
