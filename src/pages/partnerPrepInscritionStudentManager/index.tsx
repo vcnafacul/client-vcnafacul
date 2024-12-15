@@ -15,7 +15,7 @@ import { IconButton } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FaCheck, FaSyncAlt, FaWindowClose } from "react-icons/fa";
 import { IoClose, IoEyeSharp } from "react-icons/io5";
 import { LiaCoinsSolid } from "react-icons/lia";
@@ -56,9 +56,9 @@ export function PartnerPrepInscritionStudentManager() {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSelectionChange = (selectionModel: any) => {
+  const handleSelectionChange = useCallback((selectionModel: any) => {
     setSelectedRows(selectionModel);
-  };
+  }, []);
 
   const handleIsFreeInfo = (studentId: string, isFree: boolean) => {
     const id = toast.loading("Atualizando informações...");
@@ -216,7 +216,7 @@ export function PartnerPrepInscritionStudentManager() {
 
   function shouldProcessApplication(
     status: StatusApplication,
-    startDate: Date,
+    startDate: Date | null,
     custonsStatusReject?: StatusApplication[]
   ): boolean {
     const listStatus = custonsStatusReject || [
@@ -228,6 +228,7 @@ export function PartnerPrepInscritionStudentManager() {
     const currentDate = new Date();
     if (
       status === StatusApplication.CalledForEnrollment &&
+      startDate &&
       currentDate >= startDate
     ) {
       return false;
@@ -483,12 +484,14 @@ export function PartnerPrepInscritionStudentManager() {
       headerName: "Data Conv",
       description: "Data de Convocação para Matrícula",
       flex: 1,
+      type: "date",
     },
     {
       field: "data_limite_convocacao",
       headerName: "Prazo M.",
       description: "Prazo Confirmação Matrícula",
       flex: 1,
+      type: "date",
     },
 
     { field: "nome_social", headerName: "Nome Social", flex: 1 },

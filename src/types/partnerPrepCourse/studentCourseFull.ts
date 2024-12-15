@@ -19,8 +19,6 @@ interface LogStudent {
 interface StudentCourseFull {
   id: string;
   cadastrado_em: Date;
-  data_convocacao: string | null;
-  data_limite_convocacao: string | null;
   email: string;
   cpf: string;
   rg: string;
@@ -57,10 +55,14 @@ export interface StudentCourseFullDtoInput extends StudentCourseFull {
   socioeconomic: string;
   logs: LogStudent[];
   documents: Documents[];
+  data_convocacao: string | null;
+  data_limite_convocacao: string | null;
 }
 
 export interface XLSXStudentCourseFull extends StudentCourseFull {
   socioeconomic: SocioeconomicAnswer[];
   logs: LogStudent[];
   documents: Documents[];
+  data_convocacao: Date | null;
+  data_limite_convocacao: Date | null;
 }
