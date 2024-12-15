@@ -65,6 +65,8 @@ export function Statistic({ geral, enrolleds, handleClose }: Props) {
       .filter((item) => item.value > 0); // Filtra respostas com valor 0
   }
 
+  const thresholdYear = (new Date()).getFullYear() - 10;
+  const thresholdYearString =  `Até ${thresholdYear}`;
   // Função que processa as respostas, ajustando os valores conforme a necessidade
   const processAnswers = (
     answers: (string | string[] | number | number[] | boolean)[],
@@ -77,14 +79,14 @@ export function Statistic({ geral, enrolleds, handleClose }: Props) {
         !isNaN(Number(answer)) &&
         Number(answer) <= thresholdYear
       ) {
-        return "Até 2020";
+        return thresholdYearString;
       }
       return answer;
     });
   };
 
   // Função para renderizar os gráficos de pizza para uma aba específica
-  function RenderPieCharts({ data }: { data: StudentsInfo }) {
+  function RenderCharts({ data }: { data: StudentsInfo }) {
     const fundamentalMedioAnswers = transformAnswersToPieChartData(
       getAnswersForQuestion(data.forms, fundamentalMedioQuestion),
       fundamentalMedioOptions
@@ -98,9 +100,9 @@ export function Statistic({ geral, enrolleds, handleClose }: Props) {
     const anoConclusaoAnswers = transformAnswersToPieChartData(
       processAnswers(
         getAnswersForQuestion(data.forms, anoConclusaoQuestion),
-        2020
+        thresholdYear
       ),
-      [...opt_ano_conslusao, "Até 2020"]
+      [...opt_ano_conslusao, thresholdYearString]
     );
 
     const tipoCursoAnswers = transformAnswersToPieChartData(
@@ -140,25 +142,19 @@ export function Statistic({ geral, enrolleds, handleClose }: Props) {
         <div className="flex flex-col gap-1">
           <span className="font-medium">{rendaFamiliarQuestion}</span>
           <div className="h-[350px] w-full">
-            <BarChartMui data={rendaFamiliarAnswers} />
+            <BarChartMui data={rendaFamiliarAnswers}/>
           </div>
         </div>
         <div className="flex flex-col gap-1">
           <span className="font-medium">{anoConclusaoQuestion}</span>
           <div className="h-[350px] w-full">
-            <BarChartMui data={anoConclusaoAnswers} color="#D35400" />
+            <BarChartMui data={anoConclusaoAnswers} color="#48C9B0" />
           </div>
         </div>
         <div className="flex flex-col gap-1">
           <span className="font-medium">{fundamentalMedioQuestion}</span>
           <div className="h-[300px] w-fit">
             <PieChartMui data={fundamentalMedioAnswers} width={900} />
-          </div>
-        </div>
-        <div className="flex flex-col gap-1">
-          <span className="font-medium">{anoConclusaoQuestion}</span>
-          <div className="h-[300px] w-fit ">
-            <PieChartMui data={anoConclusaoAnswers} width={400} />
           </div>
         </div>
         <div className="flex flex-col gap-1">
@@ -199,12 +195,12 @@ export function Statistic({ geral, enrolleds, handleClose }: Props) {
           </TabsList>
           <TabsContent value="details" className="h-full">
             <ModalContent onClose={handleClose}>
-              <RenderPieCharts data={geral} />
+              <RenderCharts data={geral} />
             </ModalContent>
           </TabsContent>
           <TabsContent value="enrolled" className="h-full">
             <ModalContent onClose={handleClose}>
-              <RenderPieCharts data={enrolleds} />
+              <RenderCharts data={enrolleds} />
             </ModalContent>
           </TabsContent>
         </Tabs>

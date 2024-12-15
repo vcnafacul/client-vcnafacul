@@ -1,12 +1,12 @@
 import { ShadcnTable } from "@/components/atoms/shadcnTable";
 import Text from "@/components/atoms/text";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getDocuments } from "@/services/prepCourse/student/getDocuments";
+import { getProfilePhoto } from "@/services/prepCourse/student/getProfilePhoto";
+import { useAuthStore } from "@/store/auth";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { format } from "date-fns";
-import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
-import { VisualizerDocuments } from "./visualizerDocuments";
-import { VisualizerProfilePhotos } from "./visualizerPhoto";
 
 interface Props {
   handleClose: () => void;
@@ -14,9 +14,6 @@ interface Props {
 }
 
 export function Details({ student, handleClose }: Props) {
-  const [openModalDocuments, setOpenModalDocuments] = useState(false);
-  const [openModalProfilePhoto, setOpenModalProfilePhoto] = useState(false);
-  const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
   const formatAnswer = (
     answer: string | number | boolean | string[] | number[]
   ): string => {
@@ -26,6 +23,10 @@ export function Details({ student, handleClose }: Props) {
     if (Array.isArray(answer)) return answer.join(", ");
     return "";
   };
+
+  const {
+    data: { token },
+  } = useAuthStore();
 
   const personalInfo = [
     {
@@ -64,24 +65,63 @@ export function Details({ student, handleClose }: Props) {
     { label: "Parentesco", value: student.parentesco_guardiao_legal },
   ];
 
-  const ModalVisualizeDocument = () => {
-    return !openModalDocuments ? null : (
-      <VisualizerDocuments
-        isOpen={openModalDocuments}
-        handleClose={() => setOpenModalDocuments(false)}
-        fileKey={selectedDocument!}
-      />
-    );
+  const handleDownloadDocument = async (key: string) => {
+    try {
+      const blob = await getDocuments(key, token);
+
+      // Determinar a extensão do arquivo
+      let extension = "";
+      if (!key.match(/\.(png|jpeg|jpg|pdf)$/i)) {
+        const mimeType = blob.type; // Exemplo: "image/png", "application/pdf"
+        extension = mimeType.split("/")[1]; // Pega a parte após a barra (ex: "png", "pdf")
+      }
+
+      const fileName = extension ? `${key}.${extension}` : key;
+
+      // Criar o link para download
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      return blob;
+    } catch (error) {
+      console.error("Erro ao buscar o arquivo:", error);
+    }
   };
 
-  const ModalVisualizeProfilePhoto = () => {
-    return !openModalProfilePhoto && !student.photo ? null : (
-      <VisualizerProfilePhotos
-        isOpen={openModalProfilePhoto}
-        handleClose={() => setOpenModalProfilePhoto(false)}
-        fileKey={student.photo}
-      />
-    );
+  const handleDownloadPhoto = async (key: string) => {
+    try {
+      const blob = await getProfilePhoto(key, token);
+
+      // Determinar a extensão do arquivo
+      let extension = "";
+      if (!key.match(/\.(png|jpeg|jpg)$/i)) {
+        const mimeType = blob.type;
+        extension = mimeType.split("/")[1];
+      }
+      
+      const fileName = extension ? `${key}.${extension}` : key;
+      console.log(fileName);
+
+      // Criar o link para download
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      return blob;
+    } catch (error) {
+      console.error("Erro ao buscar o arquivo:", error);
+    }
   };
 
   const cellDocuments = () => {
@@ -89,26 +129,19 @@ export function Details({ student, handleClose }: Props) {
       student.documents?.map((doc) => [
         doc.name,
         format(doc.createdAt, "dd/MM/yyyy HH:mm:ss"),
-        <button
-          onClick={() => {
-            setSelectedDocument(doc.key);
-            setOpenModalDocuments(true);
-          }}
-        >
-          Visualizar
+        <button onClick={() => handleDownloadDocument(doc.key)}>
+          Download
         </button>,
       ]) || [];
-    const photo = !student.photo ? [] : [
-      "Foto Carteirinha",
-      "",
-      <button
-        onClick={() => {
-          setOpenModalProfilePhoto(true);
-        }}
-      >
-        Visualizar
-      </button>,
-    ];
+    const photo = !student.photo
+      ? []
+      : [
+          "Foto Carteirinha",
+          "",
+          <button onClick={() => handleDownloadPhoto(student.photo)}>
+            Download
+          </button>,
+        ];
     return [...documents, photo];
   };
 
@@ -154,11 +187,17 @@ export function Details({ student, handleClose }: Props) {
                 <ShadcnTable
                   headers={["Data", "Status", "Descrição"]}
                   cells={
-                    student.logs?.map((log) => [
-                      format(log.createdAt, "dd/MM/yyyy HH:mm:ss"),
-                      log.applicationStatus,
-                      log.description,
-                    ]) || []
+                    student.logs
+                      .sort(
+                        (a, b) =>
+                          new Date(b.createdAt).getTime() -
+                          new Date(a.createdAt).getTime()
+                      )
+                      ?.map((log) => [
+                        format(log.createdAt, "dd/MM/yyyy HH:mm:ss"),
+                        log.applicationStatus,
+                        log.description,
+                      ]) || []
                   }
                 />
               </ModalContent>
@@ -166,8 +205,6 @@ export function Details({ student, handleClose }: Props) {
           </Tabs>
         </div>
       </div>
-      <ModalVisualizeDocument />
-      <ModalVisualizeProfilePhoto />
     </>
   );
 }

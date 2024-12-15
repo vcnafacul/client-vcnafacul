@@ -10,6 +10,7 @@ import SendDocuments from "./steps/sendDocuments";
 import SendPhoto from "./steps/sendPhoto";
 import SendQuest from "./steps/sendQuest";
 import { Steps } from "./steps/steps";
+import SuccessStep from "./steps/successStep";
 
 interface Props {
   isFree: boolean;
@@ -26,17 +27,17 @@ export default function DeclareInterest({
   const [uploadedPhoto, setUploadedPhoto] = useState<File | null>(null);
   const [areaInterest, setAreaInterest] = useState<string[]>([]);
   const [selectedCursos, setSelectedCursos] = useState<string[]>([]);
-  const [step, setStep] = useState<Steps>(Steps.Documents);
+  const [step, setStep] = useState<Steps>(Steps.Sucess);
 
   const {
     data: { token },
   } = useAuthStore();
 
-  const handleDeclaredInterest = () => {
+  const handleDeclaredInterest = async () => {
     const id = toast.loading(
       "Aguarde enquanto processando a declaração de interesse..."
     );
-    declaredInterest(studentId, areaInterest, selectedCursos, token)
+    await declaredInterest(studentId, areaInterest, selectedCursos, token)
       .then(() => {
         toast.update(id, {
           render: "Declaração de interesse feita com sucesso!",
@@ -55,9 +56,9 @@ export default function DeclareInterest({
       });
   };
 
-  const handleUploadDocs = () => {
+  const handleUploadDocs = async () => {
     const id = toast.loading("Enviando documentos...");
-    uploadDocs(uploadedFiles, queryToken)
+    await uploadDocs(uploadedFiles, queryToken)
       .then(() => {
         toast.update(id, {
           render: "Documentos enviados com sucesso!",
@@ -76,9 +77,9 @@ export default function DeclareInterest({
       });
   };
 
-  const handleUploadPhoto = () => {
+  const handleUploadPhoto = async () => {
     const id = toast.loading("Enviando foto...");
-    uploadPhoto(uploadedPhoto as File, queryToken)
+    await uploadPhoto(uploadedPhoto as File, queryToken)
       .then(() => {
         toast.update(id, {
           render: "Foto para carteirinha enviadas com sucesso!",
@@ -99,12 +100,14 @@ export default function DeclareInterest({
 
   const handleSubmit = async () => {
     if (uploadedFiles.length > 0) {
-      handleUploadDocs();
+      await handleUploadDocs();
     }
     if (uploadedPhoto) {
-      handleUploadPhoto();
+      await handleUploadPhoto();
     }
-    handleDeclaredInterest();
+    await handleDeclaredInterest();
+
+    setStep(Steps.Sucess);
   };
 
   const StepsComponent = () => {
@@ -152,7 +155,7 @@ export default function DeclareInterest({
           />
         );
       default:
-        return null;
+        return <SuccessStep />;
     }
   };
 
@@ -172,7 +175,12 @@ export default function DeclareInterest({
     },
     {
       name: Steps.Quest,
-      status: step == Steps.Quest ? "current" : "upcoming",
+      status:
+        step == Steps.Quest
+          ? "current"
+          : step === Steps.Sucess
+          ? "complete"
+          : "upcoming",
     },
   ];
 

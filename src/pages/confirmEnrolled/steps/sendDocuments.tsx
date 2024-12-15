@@ -105,7 +105,7 @@ export default function SendDocuments({ isFree, onSubmit, files }: Props) {
           {isDragActive ? (
             <p className="text-blue-500">Solte os arquivos aqui...</p>
           ) : (
-            <p className="text-gray-500 flex gap-1 justify-center">
+            <p className="text-gray-500 flex gap-1 justify-center flex-col">
               <span>
                 Arraste e solte os arquivos aqui, ou clique para selecionar.
               </span>
