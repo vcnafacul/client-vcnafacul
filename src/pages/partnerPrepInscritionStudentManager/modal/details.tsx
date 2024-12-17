@@ -49,7 +49,7 @@ export function Details({ student, handleClose }: Props) {
   const addressInfo = [
     { label: "CEP", value: student.CEP },
     { label: "Rua", value: student.rua },
-    { label: "Numero", value: student.numero.toString() },
+    { label: "Numero", value: student.numero?.toString() },
     { label: "Complemento", value: student.complemento },
     { label: "Bairro", value: student.bairro },
     { label: "Cidade", value: student.cidade },
