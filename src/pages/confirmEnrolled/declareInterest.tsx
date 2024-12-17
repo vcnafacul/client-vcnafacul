@@ -27,7 +27,7 @@ export default function DeclareInterest({
   const [uploadedPhoto, setUploadedPhoto] = useState<File | null>(null);
   const [areaInterest, setAreaInterest] = useState<string[]>([]);
   const [selectedCursos, setSelectedCursos] = useState<string[]>([]);
-  const [step, setStep] = useState<Steps>(Steps.Sucess);
+  const [step, setStep] = useState<Steps>(Steps.Documents);
 
   const {
     data: { token },
