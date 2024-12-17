@@ -27,6 +27,9 @@ export interface CreateGeolocation {
     userPhone: string;
     userConnection: string;
     userEmail: string;
+    reportAddress: boolean;
+    reportContact: boolean;
+    reportOther: boolean;
 }
 
 export interface Geolocation extends CreateGeolocation, CardDash {
