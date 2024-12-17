@@ -32,4 +32,7 @@ export interface CreateGeolocation {
 export interface Geolocation extends CreateGeolocation, CardDash {
     createdAt: string;
     updatedAt: string;
+    reportAddress: boolean;
+    reportContact: boolean;
+    reportOther: boolean;
 }
