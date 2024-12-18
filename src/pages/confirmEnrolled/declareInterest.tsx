@@ -33,7 +33,7 @@ export default function DeclareInterest({
     data: { token },
   } = useAuthStore();
 
-  const handleDeclaredInterest = async () => {
+  const handleDeclaredInterest = async (areaInterest: string[], selectedCursos: string[]) => {
     const id = toast.loading(
       "Aguarde enquanto processando a declaração de interesse..."
     );
@@ -45,6 +45,7 @@ export default function DeclareInterest({
           isLoading: false,
           autoClose: 3000,
         });
+        setStep(Steps.Sucess);
       })
       .catch((e) => {
         toast.update(id, {
@@ -98,16 +99,14 @@ export default function DeclareInterest({
       });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (areaInterest: string[], selectedCursos: string[]) => {
     if (uploadedFiles.length > 0) {
       await handleUploadDocs();
     }
-    if (uploadedPhoto) {
+    if (!uploadedPhoto) {
       await handleUploadPhoto();
     }
-    await handleDeclaredInterest();
-
-    setStep(Steps.Sucess);
+    await handleDeclaredInterest(areaInterest, selectedCursos);
   };
 
   const StepsComponent = () => {
@@ -141,9 +140,7 @@ export default function DeclareInterest({
         return (
           <SendQuest
             onSubmit={(areas: string[], cursos: string[]) => {
-              setAreaInterest(areas);
-              setSelectedCursos(cursos);
-              handleSubmit();
+              handleSubmit(areas, cursos);
             }}
             back={(areas: string[], cursos: string[]) => {
               setStep(Steps.Photo);
