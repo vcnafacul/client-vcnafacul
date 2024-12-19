@@ -13,6 +13,7 @@ import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import { formatDate } from "@/utils/date";
 import { Paginate } from "@/utils/paginate";
 import { useEffect, useState } from "react";
+import { MoonLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { dataInscription } from "./data";
 import {
@@ -23,6 +24,7 @@ import { InscriptionInfoModal } from "./modals/InscriptionInfoModal";
 import { TempInviteMember } from "./modals/temp-invite-member";
 
 export function PartnerPrepInscriptionManager() {
+  const [processing, setProcessing] = useState<boolean>(true);
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [openModalCreate, setOpenModalCreate] = useState(false);
@@ -53,10 +55,6 @@ export function PartnerPrepInscriptionManager() {
     title: inscription.name,
     status: inscription.actived,
     infos: [
-      {
-        field: "Nome",
-        value: inscription.name,
-      },
       {
         field: "Inicia",
         value: inscription.startDate
@@ -222,6 +220,7 @@ export function PartnerPrepInscriptionManager() {
   };
 
   const fetchInscriptions = async () => {
+    setProcessing(true);
     try {
       const res = await getAllInscription(token, 1, limitCards);
       res.data.sort((a, b) => {
@@ -234,6 +233,7 @@ export function PartnerPrepInscriptionManager() {
           prepCourseName: res.data[0].partnerPrepCourseName,
         });
       }
+      setProcessing(false);
     } catch (e) {
       console.error("Erro ao buscar inscrições", e);
     }
@@ -256,13 +256,21 @@ export function PartnerPrepInscriptionManager() {
         buttons,
       }}
     >
-      <DashCardTemplate
-        classNameFilter="md:w-9/12 bg-white h-20"
-        className="md:mt-24"
-      />
-      <ModalInfo />
-      <ModalCreate />
-      <ModalInviteMember />
+      {processing ? (
+        <div className="w-full h-full flex justify-center pt-40">
+          <MoonLoader color="#FF7600" size={60} speedMultiplier={0.4} />
+        </div>
+      ) : (
+        <>
+          <DashCardTemplate
+            classNameFilter="md:w-9/12 bg-white h-20"
+            className="md:mt-24"
+          />
+          <ModalInfo />
+          <ModalCreate />
+          <ModalInviteMember />
+        </>
+      )}
     </DashCardContext.Provider>
   );
 }

@@ -34,6 +34,7 @@ import { PrepCourseInfo } from "./Fields/prepCourseInfo";
 import { PrepCourseRegistred } from "./Fields/prepCourseRegistred";
 import { PrepCourseUpdated } from "./Fields/prepCourseUpdated";
 
+import { Checkbox, CheckboxProps } from "@/components/atoms/checkbox";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
@@ -94,6 +95,9 @@ function ModalEditDashGeo({
     youtube: yup.string().default(geo.youtube),
     linkedin: yup.string().default(geo.linkedin),
     twitter: yup.string().default(geo.twitter),
+    reportAddress: yup.bool().default(geo.reportAddress),
+    reportContact: yup.bool().default(geo.reportContact),
+    reportOther: yup.bool().default(geo.reportOther),
   });
 
   const {
@@ -106,6 +110,10 @@ function ModalEditDashGeo({
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  const reportAddress = watch("reportAddress");
+  const reportContact = watch("reportContact");
+  const reportOther = watch("reportOther");
 
   const {
     data: { token },
@@ -221,6 +229,27 @@ function ModalEditDashGeo({
     },
   ];
 
+  const checkboxData: CheckboxProps[] = [
+    {
+      name: "reportAddress",
+      title: "Endereço",
+      checked: reportAddress,
+      disabled: !geo ? false : !editing,
+    },
+    {
+      name: "reportContact",
+      title: "Redes Sociais e Contatos",
+      checked: reportContact,
+      disabled: !geo ? false : !editing,
+    },
+    {
+      name: "reportOther",
+      title: "Outros",
+      checked: reportOther,
+      disabled: !geo ? false : !editing,
+    },
+  ];
+
   const MapEvents = () => {
     useMapEvents({
       click: (e) => {
@@ -313,7 +342,39 @@ function ModalEditDashGeo({
     register("youtube");
     register("linkedin");
     register("twitter");
+    register("reportAddress");
+    register("reportContact");
+    register("reportOther");
   }, []);
+
+  useEffect(() => {
+    if (geo) {
+      setValue("id", geo.id);
+      setValue("longitude", geo.longitude);
+      setValue("latitude", geo.latitude);
+      setValue("name", geo.name);
+      setValue("category", geo.category);
+      setValue("cep", geo.cep);
+      setValue("street", geo.street);
+      setValue("number", geo.number);
+      setValue("complement", geo.complement);
+      setValue("neighborhood", geo.neighborhood);
+      setValue("city", geo.city);
+      setValue("state", geo.state);
+      setValue("phone", geo.phone);
+      setValue("whatsapp", geo.whatsapp);
+      setValue("email", geo.email);
+      setValue("site", geo.site);
+      setValue("instagram", geo.instagram);
+      setValue("facebook", geo.facebook);
+      setValue("youtube", geo.youtube);
+      setValue("linkedin", geo.linkedin);
+      setValue("twitter", geo.twitter);
+      setValue("reportAddress", geo.reportAddress);
+      setValue("reportContact", geo.reportContact);
+      setValue("reportOther", geo.reportOther);
+    }
+  }, [geo]);
 
   const className =
     "p-4 relative flex flex-col w-fit min-h-[56vh] max-h-[93vh] bg-white rounded-r-md rounded-b-md";
@@ -378,6 +439,15 @@ function ModalEditDashGeo({
             ]}
             mapEvent={<Event />}
           />
+          <Text
+            className="flex w-full justify-center gap-4 items-center"
+            size="tertiary"
+          >
+            Revisões necessárias
+          </Text>
+          {checkboxData.map((check) => (
+            <Checkbox key={check.name} {...check} setValue={setValue} />
+          ))}
           <div className="flex flex-col gap-2 my-4">
             {btns.map((btn, index) => {
               if (editing === btn.editing) {

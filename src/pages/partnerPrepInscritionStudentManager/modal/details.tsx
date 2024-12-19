@@ -49,7 +49,7 @@ export function Details({ student, handleClose }: Props) {
   const addressInfo = [
     { label: "CEP", value: student.CEP },
     { label: "Rua", value: student.rua },
-    { label: "Numero", value: student.numero.toString() },
+    { label: "Numero", value: student.numero?.toString() },
     { label: "Complemento", value: student.complemento },
     { label: "Bairro", value: student.bairro },
     { label: "Cidade", value: student.cidade },
@@ -128,7 +128,8 @@ export function Details({ student, handleClose }: Props) {
     const documents =
       student.documents?.map((doc) => [
         doc.name,
-        format(doc.createdAt, "dd/MM/yyyy HH:mm:ss"),
+        format(doc.createdAt, "dd/MM/yyyy HH:mm"),
+        format(doc.expiredAt, "dd/MM/yyyy HH:mm"),
         <button onClick={() => handleDownloadDocument(doc.key)}>
           Download
         </button>,
@@ -136,7 +137,8 @@ export function Details({ student, handleClose }: Props) {
     const photo = !student.photo
       ? []
       : [
-          "Foto Carteirinha",
+          `Foto Carteirinha ${student.photo}`,
+          "",
           "",
           <button onClick={() => handleDownloadPhoto(student.photo)}>
             Download
@@ -177,7 +179,7 @@ export function Details({ student, handleClose }: Props) {
             <TabsContent value="documents" className="h-full">
               <ModalContent onClose={handleClose}>
                 <ShadcnTable
-                  headers={["File", "Created At", "Ação"]}
+                  headers={["File", "Enviado em", "Expiração", "Ação"]}
                   cells={cellDocuments()}
                 />
               </ModalContent>

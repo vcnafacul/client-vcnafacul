@@ -34,11 +34,11 @@ export const CardDashComponent = forwardRef<HTMLDivElement, CardDashProps>(
         flex flex-col rounded-md hover:-translate-y-1 duration-300"
         {...props}
       >
-        <span className="font-bold w-full text-center m-2">{card.title}</span>
+        <span className="font-bold w-full text-center whitespace-pre-wrap my-2 overflow-x-hidden">{card.title}</span>
         {card.infos?.map((info, index) => (
           <div key={index} className="flex gap-2">
             <div className="font-bold">{info.field}:</div>
-            <div>{info.value}</div>
+            <div className="whitespace-pre-wrap">{info.value}</div>
           </div>
         ))}
         <div className="absolute bottom-2 right-2">
