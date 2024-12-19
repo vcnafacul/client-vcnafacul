@@ -10,6 +10,7 @@ interface Props {
   back: (areas: string[], cursos: string[]) => void;
   selectedCourse: string[];
   selectedField: string[];
+  processing: boolean;
 }
 
 export default function SendQuest({
@@ -17,12 +18,12 @@ export default function SendQuest({
   back,
   selectedCourse,
   selectedField,
+  processing
 }: Props) {
   const [areaInterest, setAreaInterest] = useState<string[]>(selectedField);
   const [selectedCursos, setSelectedCursos] =
     useState<string[]>(selectedCourse);
   const [selectedCurso, setSelectedCurso] = useState<string>("");
-  const [processing, setProcessing] = useState<boolean>(false);
 
   const handleSelectCurso = (e: any) => {
     const curso = e.target.value as string;
@@ -38,12 +39,8 @@ export default function SendQuest({
     );
   };
 
-  const handleSubmit = async () => {
-    setProcessing(true);
-    await onSubmit(areaInterest, selectedCursos)
-      .finally(() => {
-        setProcessing(false);
-      });
+  const handleSubmit = () => {
+    onSubmit(areaInterest, selectedCursos)
   };
 
   const handleBack = () => {
@@ -132,6 +129,7 @@ export default function SendQuest({
         <button
           className="mt-8 px-6 py-3 text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
           onClick={handleBack}
+          disabled={processing}
         >
           Voltar
         </button>

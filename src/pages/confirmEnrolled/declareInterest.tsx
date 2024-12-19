@@ -30,6 +30,7 @@ export default function DeclareInterest({
   const [step, setStep] = useState<Steps>(Steps.Documents);
   const [sendDocSucess, setSendDocSucess] = useState<boolean>(false);
   const [sendPhotoSucess, setSendPhotoSucess] = useState<boolean>(false);
+  const [processing, setProcessing] = useState<boolean>(false);
 
   const {
     data: { token },
@@ -110,13 +111,15 @@ export default function DeclareInterest({
     areaInterest: string[],
     selectedCursos: string[]
   ) => {
+    setProcessing(true);
     if (uploadedFiles.length > 0 && !sendDocSucess) {
       await handleUploadDocs();
     }
-    if (!uploadedPhoto && !sendPhotoSucess) {
+    if (!uploadedPhoto && sendPhotoSucess) {
       await handleUploadPhoto();
     }
     await handleDeclaredInterest(areaInterest, selectedCursos);
+    setProcessing(false);
   };
 
   const StepsComponent = () => {
@@ -159,6 +162,7 @@ export default function DeclareInterest({
             }}
             selectedField={areaInterest}
             selectedCourse={selectedCursos}
+            processing={processing}
           />
         );
       default:
