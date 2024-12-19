@@ -204,6 +204,7 @@ export function PartnerPrepInscriptionStep2({
         error={errors.complement}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("complement", e.target.value)}
+        maxLength={200}
       />
       <InputFactory
         id="neighborhood"
