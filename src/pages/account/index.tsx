@@ -37,6 +37,7 @@ function Account() {
     .shape({
       firstName: yup.string().required("Por favor, preencha seu nome"),
       lastName: yup.string().required("Por favor, preencha seu sobrenome"),
+      socialName: yup.string(),
       birthday: yup
         .string()
         .required("Por favor, insira uma data de nascimento"),
@@ -58,6 +59,12 @@ function Account() {
       type: "text",
       label: "Sobrenome:",
       defaultValue: userAccount?.lastName,
+    },
+    {
+      id: "socialName",
+      type: "text",
+      label: "Nome Social:",
+      defaultValue: userAccount?.socialName,
     },
     {
       id: "gender",
