@@ -115,7 +115,7 @@ export default function DeclareInterest({
     if (uploadedFiles.length > 0 && !sendDocSucess) {
       await handleUploadDocs();
     }
-    if (!uploadedPhoto && sendPhotoSucess) {
+    if (!uploadedPhoto && !sendPhotoSucess) {
       await handleUploadPhoto();
     }
     await handleDeclaredInterest(areaInterest, selectedCursos);
