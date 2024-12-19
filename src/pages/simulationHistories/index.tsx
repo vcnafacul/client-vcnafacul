@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -48,7 +49,12 @@ export function SimulationHistories() {
         field: "Questoes Respondidas",
         value: historico.questoesRespondidas.toString(),
       },
-      { field: "Realizado", value: historico.createdAt?.toString() },
+      {
+        field: "Realizado",
+        value: historico.createdAt
+          ? format(historico.createdAt?.toString(), "dd/MM/yyyy HH:mm")
+          : "",
+      },
       { field: "Tempo", value: getFormatingTime(historico.tempoRealizado) },
       {
         field: "Aproveitamento",
@@ -153,13 +159,16 @@ export function SimulationHistories() {
           limitCards,
         }}
       >
-        <DashCardTemplate 
+        <DashCardTemplate
           headerDash={HeaderDashHistories()}
           backButton={
-            <DashCardTemplate.BackButton className="w-24 h-10 sm:absolute right-4" onClick={() => navigate(`${DASH}/${SIMULADO}`)}>
+            <DashCardTemplate.BackButton
+              className="w-24 h-10 sm:absolute right-4"
+              onClick={() => navigate(`${DASH}/${SIMULADO}`)}
+            >
               Voltar
             </DashCardTemplate.BackButton>
-          } 
+          }
         />
       </DashCardContext.Provider>
     </div>
