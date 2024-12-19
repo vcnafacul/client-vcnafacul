@@ -32,10 +32,8 @@ export interface StepProps {
 }
 
 export interface EachStepProps extends StepProps {
-  updateData?: (
-    data: Partial<StudentInscriptionDTO> | LegalGuardianDTO
-  ) => void;
-  handleBack?: () => void;
+  
+  handleBack?: (data?: Partial<StudentInscriptionDTO> | LegalGuardianDTO) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateSocioeconomic?: (data: SocioeconomicAnswer[]) => void;
   currentData?: Partial<StudentInscriptionDTO>;
@@ -57,7 +55,13 @@ export function PartnerPrepInscription() {
 
   const { hashPrepCourse } = useParams();
 
-  const backStep = () => {
+  const backStep = (data?: Partial<StudentInscriptionDTO>) => {
+    let newData = { ...dataStudent };
+    if (data) {
+      newData = { ...dataStudent, ...data };
+    }
+    console.log("data", data);
+    setDataStudent(newData);
     if (stepCurrently > StepsInscriptionStudent.Presentation) {
       if (
         dataStudent?.birthday &&
@@ -72,7 +76,7 @@ export function PartnerPrepInscription() {
   };
 
   const updateData = (
-    data: Partial<StudentInscriptionDTO> | LegalGuardianDTO
+    data: Partial<StudentInscriptionDTO>
   ) => {
     const newData = { ...dataStudent, ...data };
     setDataStudent(newData);
@@ -88,7 +92,7 @@ export function PartnerPrepInscription() {
   };
 
   const updateDataGuardian = (
-    data: Partial<StudentInscriptionDTO> | LegalGuardianDTO
+    data: LegalGuardianDTO
   ) => {
     const getData = data as LegalGuardianDTO;
     setDataStudent({
@@ -255,7 +259,7 @@ export function PartnerPrepInscription() {
       case StepsInscriptionStudent.Success:
         return <PartnerPrepInscriptionStepSucess />;
       default:
-        return <Button onClick={backStep}>Voltar</Button>;
+        return <Button onClick={() => backStep()}>Voltar</Button>;
     }
   };
 
