@@ -12,12 +12,16 @@ import { EachStepProps } from "..";
 
 const BRASIL_API = import.meta.env.VITE_BRASIL_API_URL;
 
+interface PartnerPrepInscriptionStep2Props extends EachStepProps {
+  updateData?: (data: Partial<StudentInscriptionDTO>) => void;
+}
+
 export function PartnerPrepInscriptionStep2({
   description,
   updateData,
   currentData,
   handleBack,
-}: EachStepProps) {
+}: PartnerPrepInscriptionStep2Props) {
   const applyCepMask = (value?: string) => {
     // Remove tudo que não for número
     value = value?.replace(/\D/g, "") || "";
@@ -79,6 +83,7 @@ export function PartnerPrepInscriptionStep2({
     register,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -116,9 +121,37 @@ export function PartnerPrepInscriptionStep2({
     register("state");
   }, []);
 
+  useEffect(() => {
+    if(currentData) {
+      setValue("postalCode", currentData.postalCode || "");
+      setValue("street", currentData.street|| "");
+      setValue("number", currentData.number || 0);
+      setValue("complement", currentData.complement|| "");
+      setValue("neighborhood", currentData.neighborhood|| "");
+      setValue("city", currentData.city|| "");
+      setValue("state", currentData.state|| "");
+    }
+  }, []);
+
   function handleForm(data: Partial<StudentInscriptionDTO>) {
     updateData!(data);
   }
+
+  function handleBackForm() {
+    if (handleBack) {
+      handleBack({
+        ...currentData,
+        postalCode: getValues("postalCode"),
+        street: getValues("street"),
+        number: getValues("number"),
+        complement: getValues("complement"),
+        neighborhood: getValues("neighborhood"),
+        city: getValues("city"),
+        state: getValues("state"),
+      });
+    }
+  }
+
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
@@ -217,7 +250,7 @@ export function PartnerPrepInscriptionStep2({
       />
 
       <div className="flex flex-col sm:flex-row gap-4">
-        <Button type="button" onClick={handleBack}>
+        <Button type="button" onClick={handleBackForm}>
           Voltar
         </Button>
         <Button type="submit">Continuar</Button>
