@@ -5,6 +5,7 @@ interface Documents {
   key: string;
   name: string;
   createdAt: Date;
+  expiredAt: Date;
 }
 
 interface LogStudent {
