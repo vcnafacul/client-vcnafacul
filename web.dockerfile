@@ -1,11 +1,12 @@
 # Etapa 1: Build da aplicação usando Node.js
-FROM node:20.18 as build
+FROM node:20.17 as build
 
 # Definir o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
 # Copiar o arquivo package.json e package-lock.json para o contêiner
 COPY package.json ./
+COPY yarn.lock ./
 
 # Instalar dependências
 RUN yarn
@@ -15,7 +16,7 @@ COPY . .
 
 
 # Build da aplicação
-RUN yarn build:qa
+RUN yarn build:development
 
 # Etapa 2: Configurar o Nginx com os arquivos buildados
 FROM nginx:1.27-alpine
