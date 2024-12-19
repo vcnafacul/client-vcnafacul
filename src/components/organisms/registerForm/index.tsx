@@ -46,7 +46,7 @@ function RegisterForm({ title, titleSuccess, onRegister }: Props) {
           />
         );
       default:
-        return <Success />;
+        return <Success email={dataUser.email} />;
     }
   };
 

@@ -30,6 +30,7 @@ const initialUser = {
 export type AuthUpdate = {
   firstName: string;
   lastName: string;
+  socialName?: string;
   gender: Gender;
   birthday: string;
   phone: string;

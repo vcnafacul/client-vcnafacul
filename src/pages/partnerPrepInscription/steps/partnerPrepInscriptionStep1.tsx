@@ -127,6 +127,21 @@ export function PartnerPrepInscriptionStep1({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (currentData) {
+      setValue("firstName", currentData.firstName || "");
+      setValue("lastName", currentData.lastName || "");
+      setValue("socialName", currentData.socialName || "");
+      setValue("email", currentData.email || "");
+      setValue("whatsapp", phoneMask(currentData.whatsapp) || "");
+      setValue("urgencyPhone", phoneMask(currentData.urgencyPhone) || "");
+      setValue("birthday", currentData.birthday || new Date());
+      setValue("rg", currentData.rg || "");
+      setValue("cpf", currentData.cpf || "");
+      setValue("uf", currentData?.uf || "");
+    }
+  }, [currentData]);
+
   function handleForm(data: Partial<StudentInscriptionDTO>) {
     if (data.rg?.length === 0) {
       data.uf = undefined;
