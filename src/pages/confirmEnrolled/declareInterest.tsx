@@ -28,12 +28,17 @@ export default function DeclareInterest({
   const [areaInterest, setAreaInterest] = useState<string[]>([]);
   const [selectedCursos, setSelectedCursos] = useState<string[]>([]);
   const [step, setStep] = useState<Steps>(Steps.Documents);
+  const [sendDocSucess, setSendDocSucess] = useState<boolean>(false);
+  const [sendPhotoSucess, setSendPhotoSucess] = useState<boolean>(false);
 
   const {
     data: { token },
   } = useAuthStore();
 
-  const handleDeclaredInterest = async (areaInterest: string[], selectedCursos: string[]) => {
+  const handleDeclaredInterest = async (
+    areaInterest: string[],
+    selectedCursos: string[]
+  ) => {
     const id = toast.loading(
       "Aguarde enquanto processando a declaração de interesse..."
     );
@@ -67,6 +72,7 @@ export default function DeclareInterest({
           isLoading: false,
           autoClose: 3000,
         });
+        setSendDocSucess(true);
       })
       .catch((e) => {
         toast.update(id, {
@@ -88,6 +94,7 @@ export default function DeclareInterest({
           isLoading: false,
           autoClose: 3000,
         });
+        setSendPhotoSucess(true);
       })
       .catch((e) => {
         toast.update(id, {
@@ -99,11 +106,14 @@ export default function DeclareInterest({
       });
   };
 
-  const handleSubmit = async (areaInterest: string[], selectedCursos: string[]) => {
-    if (uploadedFiles.length > 0) {
+  const handleSubmit = async (
+    areaInterest: string[],
+    selectedCursos: string[]
+  ) => {
+    if (uploadedFiles.length > 0 && !sendDocSucess) {
       await handleUploadDocs();
     }
-    if (!uploadedPhoto) {
+    if (!uploadedPhoto && !sendPhotoSucess) {
       await handleUploadPhoto();
     }
     await handleDeclaredInterest(areaInterest, selectedCursos);
@@ -139,7 +149,7 @@ export default function DeclareInterest({
       case Steps.Quest:
         return (
           <SendQuest
-            onSubmit={(areas: string[], cursos: string[]) => {
+            onSubmit={async (areas: string[], cursos: string[]) => {
               handleSubmit(areas, cursos);
             }}
             back={(areas: string[], cursos: string[]) => {
