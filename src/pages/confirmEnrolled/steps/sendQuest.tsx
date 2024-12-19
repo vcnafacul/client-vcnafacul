@@ -6,10 +6,11 @@ import { IoCloseSharp } from "react-icons/io5";
 import { areas } from "../area";
 
 interface Props {
-  onSubmit: (areas: string[], cursos: string[]) => void;
+  onSubmit: (areas: string[], cursos: string[]) => Promise<void>;
   back: (areas: string[], cursos: string[]) => void;
   selectedCourse: string[];
   selectedField: string[];
+  processing: boolean;
 }
 
 export default function SendQuest({
@@ -17,9 +18,11 @@ export default function SendQuest({
   back,
   selectedCourse,
   selectedField,
+  processing
 }: Props) {
   const [areaInterest, setAreaInterest] = useState<string[]>(selectedField);
-  const [selectedCursos, setSelectedCursos] = useState<string[]>(selectedCourse);
+  const [selectedCursos, setSelectedCursos] =
+    useState<string[]>(selectedCourse);
   const [selectedCurso, setSelectedCurso] = useState<string>("");
 
   const handleSelectCurso = (e: any) => {
@@ -37,7 +40,7 @@ export default function SendQuest({
   };
 
   const handleSubmit = () => {
-    onSubmit(areaInterest, selectedCursos);
+    onSubmit(areaInterest, selectedCursos)
   };
 
   const handleBack = () => {
@@ -52,7 +55,8 @@ export default function SendQuest({
           Áreas de Interesse
         </h3>
         <p className="text-gray-600 text-sm">
-          Nos ajude a entender melhor suas expectativas. Assinale abaixo as áreas onde acredita ter mais dificuldades.
+          Nos ajude a entender melhor suas expectativas. Assinale abaixo as
+          áreas onde acredita ter mais dificuldades.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {areas.map((area, index) => (
@@ -101,7 +105,10 @@ export default function SendQuest({
             {selectedCursos.length > 0 ? (
               <ul className="space-y-2">
                 {selectedCursos.map((curso, index) => (
-                  <li key={index} className="flex items-center justify-between p-1 bg-gray-50 shadow-md">
+                  <li
+                    key={index}
+                    className="flex items-center justify-between p-1 bg-gray-50 shadow-md"
+                  >
                     <span className="text-gray-700">{curso}</span>
                     <IoCloseSharp
                       className="text-red-600 w-6 h-6 cursor-pointer"
@@ -117,19 +124,21 @@ export default function SendQuest({
         </div>
       </section>
 
-     {/* Botão de envio */}
-     <div className="w-full flex justify-end gap-4">
+      {/* Botão de envio */}
+      <div className="w-full flex justify-end gap-4">
         <button
           className="mt-8 px-6 py-3 text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
           onClick={handleBack}
+          disabled={processing}
         >
           Voltar
         </button>
         <button
           className="mt-8 px-6 py-3  text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
           onClick={handleSubmit}
+          disabled={processing}
         >
-          Enviar Dados
+          {processing ? "Enviando..." : "Enviar"}
         </button>
       </div>
     </div>

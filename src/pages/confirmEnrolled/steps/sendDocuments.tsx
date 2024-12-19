@@ -92,6 +92,9 @@ export default function SendDocuments({ isFree, onSubmit, files }: Props) {
               <span className="font-semibold">manual do candidato</span> no site
               do cursinho.
             </li>
+            <li>
+              Os tipos de arquivos aceitos são: JPEG, PNG e PDF.
+            </li>
           </ul>
         </div>
 
