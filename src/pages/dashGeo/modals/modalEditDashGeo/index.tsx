@@ -98,6 +98,8 @@ function ModalEditDashGeo({
     reportAddress: yup.bool().default(geo.reportAddress),
     reportContact: yup.bool().default(geo.reportContact),
     reportOther: yup.bool().default(geo.reportOther),
+    campus: yup.string().default(geo.campus),
+    type: yup.number().default(geo.type),
   });
 
   const {
@@ -129,6 +131,7 @@ function ModalEditDashGeo({
     UpdateGeolocation({ body, token })
       .then((_) => {
         updateGeo(body);
+        console.log(body);
         toast.update(id, {
           render: `Cursinho ${body.name} atualizado com sucesso`,
           type: `success`,
@@ -345,6 +348,7 @@ function ModalEditDashGeo({
     register("reportAddress");
     register("reportContact");
     register("reportOther");
+    register("campus");
   }, []);
 
   useEffect(() => {
@@ -373,6 +377,7 @@ function ModalEditDashGeo({
       setValue("reportAddress", geo.reportAddress);
       setValue("reportContact", geo.reportContact);
       setValue("reportOther", geo.reportOther);
+      setValue("campus", geo.campus);
     }
   }, [geo]);
 

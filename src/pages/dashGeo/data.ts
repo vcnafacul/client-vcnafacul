@@ -21,6 +21,11 @@ export const prepCourseInfo = {
         type: "text",
         label: "Tipo de Cursinho:",
     },
+    campus: {
+        id: "campus",
+        type: "text",
+        label: "Campus:",
+    },
     cep: {
         id: "cep",
         type: "text",
