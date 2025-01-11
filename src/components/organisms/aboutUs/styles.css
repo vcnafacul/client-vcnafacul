@@ -1,9 +1,9 @@
 .graphism-header {
-    position: absolute;
+    position: static;
 }
 
 .graphism-header.square-pink-header {
-    width: 105px;
+    width: 150px;
     height: 105px;
     top: 0;
     left: 24px;
