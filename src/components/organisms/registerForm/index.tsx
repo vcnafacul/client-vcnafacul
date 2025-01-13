@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { UserRegister } from "../../../types/user/userRegister";
 import Text from "../../atoms/text";
 import Step1 from "./setps/step1";
@@ -41,7 +41,6 @@ function RegisterForm({ title, titleSuccess, onRegister }: Props) {
 
   const handleRegister = (success: boolean) => {
     setRegistrationSuccess(success);
-    console.log(success)
     if (success) {
       nextStep();
     } else {

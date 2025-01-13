@@ -31,7 +31,7 @@ interface Step2Props extends StepProps {
   onRegister: (data: UserRegister) => Promise<void>;  
 }
 
-function Step2({ dataUser, next, back, onRegister, handleRegister }: Step2Props) {
+function Step2({ dataUser, back, onRegister, handleRegister }: Step2Props) {
   const schema = yup
     .object()
     .shape({
