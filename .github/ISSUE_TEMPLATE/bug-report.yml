@@ -1,0 +1,71 @@
+name: 🐞 Reportar Bug
+description: Informe um erro ou comportamento inesperado no Você na Facul.
+labels: ['Bug', 'Triagem']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Muito obrigado por ajudar a melhorar o nosso projeto
+        **Observação:** Se você não tem certeza sobre um ponto ou se isso é uma dúvida, considere usar [nosso board de discussão](https://github.com/orgs/vcnafacul/discussions) para perguntar ou obter ajuda!
+  - type: checkboxes
+    attributes:
+      label: Já existe alguma outra issue sobre esse erro?
+      description: Por favor, verifique se já existe outra issue relatando o mesmo erro.
+      options:
+        - label: Eu verifiquei se já existia alguma issue sobre o erro.
+          required: true
+  - type: textarea
+    id: error-description
+    attributes:
+      label: Descrição do Erro
+      description: |
+        Uma descrição clara e concisa sobre o erro ou comportamento inesperado.
+      placeholder: |
+        Eu estava tentando fazer X quando ocorreu o erro Y.
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Passos para Reproduzir
+      description: |
+        Explique os passos exatos para reproduzir o erro. Quanto mais detalhado, melhor.
+      placeholder: |
+        1. Abra o aplicativo  
+        2. Clique em "X"  
+        3. Veja o erro ocorrer
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Comportamento Esperado
+      description: |
+        Descreva como você esperava que o sistema se comportasse ao realizar os passos acima.
+    validations:
+      required: false
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Comportamento Real
+      description: |
+        Descreva o comportamento real do sistema quando o erro ocorreu.
+    validations:
+      required: false
+  - type: textarea
+    id: resources
+    attributes:
+      label: Recursos Adicionais
+      description: |
+        Adicione qualquer contexto adicional, links ou capturas de tela sobre o erro aqui.
+        Dica: Você pode anexar imagens ou arquivos de log clicando nesta área para destacá-los e depois arrastando os arquivos para dentro.
+    validations:
+      required: false
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: Ao enviar esta issue, você concorda em seguir nosso [Código de Conduta](https://github.com/vcnafacul/.github/blob/CODE_OF_CONDUCT/CODE_OF_CONDUCT.md)
+      options:
+        - label: Li o Código de Conduta e entendo minhas responsabilidades como membro da comunidade Você na Facul
+          required: true
