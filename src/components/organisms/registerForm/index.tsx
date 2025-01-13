@@ -6,8 +6,8 @@ import Step2 from "./setps/step2";
 import Success from "./setps/success";
 
 enum FormStep {
-  FORM_LOGIN = 1,
-  FORM_USER_DATA = 2,
+  STEP_EMAIL_PASSWORD = 1,
+  STEP_USER_DATA = 2,
   SUCCESS_MESSAGE = 3
 }
 
@@ -24,9 +24,8 @@ interface Props extends RegisterFormProps {
 }
 
 function RegisterForm({ title, titleSuccess, onRegister }: Props) {
-  const [step, setStep] = useState<number>(FormStep.FORM_LOGIN);
+  const [step, setStep] = useState<number>(FormStep.STEP_EMAIL_PASSWORD);
   const [dataUser, setDataUser] = useState<UserRegister>({} as UserRegister);
-  const [registrationSuccess, setRegistrationSuccess] = useState<boolean>(false);
 
   const nextStep = () => {
     if (step < FormStep.SUCCESS_MESSAGE) {
@@ -39,41 +38,21 @@ function RegisterForm({ title, titleSuccess, onRegister }: Props) {
     nextStep();
   };
 
-  const handleRegister = (success: boolean) => {
-    setRegistrationSuccess(success);
-    if (success) {
-      nextStep();
-    } else {
-      setStep(FormStep.FORM_USER_DATA);
-    }
-  }
-
   const StepNow = () => {
     switch (step) {
-      case FormStep.FORM_LOGIN:
+      case FormStep.STEP_EMAIL_PASSWORD:
         return <Step1 updateData={updateData} dataUser={dataUser} />;
-      case FormStep.FORM_USER_DATA:
+      case FormStep.STEP_USER_DATA:
         return (
           <Step2
             onRegister={onRegister}
             dataUser={dataUser}
             next={nextStep}
-            back={() => setStep(FormStep.FORM_LOGIN)}
-            handleRegister={handleRegister}
+            back={() => setStep(FormStep.STEP_EMAIL_PASSWORD)}
           />
         );        
       default:
-        return registrationSuccess ? (
-          <Success email={dataUser.email} />
-        ) : (
-          <Step2
-            onRegister={onRegister}
-            dataUser={dataUser}
-            next={nextStep}
-            back={() => setStep(FormStep.FORM_LOGIN)}
-            handleRegister={handleRegister}
-          />
-        )
+        return <Success email={dataUser.email} />
     }
   };
 
