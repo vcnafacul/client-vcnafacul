@@ -27,10 +27,11 @@ interface Step2Props extends StepProps {
   dataUser: UserRegister;
   next: () => void;
   back: () => void;
-  onRegister: (data: UserRegister) => Promise<void>;
+  handleRegister: (success: boolean) => void;
+  onRegister: (data: UserRegister) => Promise<void>;  
 }
 
-function Step2({ dataUser, next, back, onRegister }: Step2Props) {
+function Step2({ dataUser, next, back, onRegister, handleRegister }: Step2Props) {
   const schema = yup
     .object()
     .shape({
@@ -74,7 +75,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
           isLoading: false,
           autoClose: 3000,
         });
-        next();
+        handleRegister(true);
       })
       .catch((error: Error) => {
         toast.update(id, {
@@ -83,6 +84,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
           isLoading: false,
           autoClose: 3000,
         });
+        handleRegister(false);
       });
   };
 

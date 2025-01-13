@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UserRegister } from "../../../types/user/userRegister";
 import Text from "../../atoms/text";
 import Step1 from "./setps/step1";
 import Step2 from "./setps/step2";
 import Success from "./setps/success";
+
+enum FormStep {
+  FORM_LOGIN = 1,
+  FORM_USER_DATA = 2,
+  SUCCESS_MESSAGE = 3
+}
 
 export interface StepProps {
   dataUser: UserRegister;
@@ -18,11 +24,12 @@ interface Props extends RegisterFormProps {
 }
 
 function RegisterForm({ title, titleSuccess, onRegister }: Props) {
-  const [step, setStep] = useState<number>(1);
+  const [step, setStep] = useState<number>(FormStep.FORM_LOGIN);
   const [dataUser, setDataUser] = useState<UserRegister>({} as UserRegister);
+  const [registrationSuccess, setRegistrationSuccess] = useState<boolean>(false);
 
   const nextStep = () => {
-    if (step < 3) {
+    if (step < FormStep.SUCCESS_MESSAGE) {
       setStep(step + 1);
     }
   };
@@ -32,21 +39,42 @@ function RegisterForm({ title, titleSuccess, onRegister }: Props) {
     nextStep();
   };
 
+  const handleRegister = (success: boolean) => {
+    setRegistrationSuccess(success);
+    console.log(success)
+    if (success) {
+      nextStep();
+    } else {
+      setStep(FormStep.FORM_USER_DATA);
+    }
+  }
+
   const StepNow = () => {
     switch (step) {
-      case 1:
+      case FormStep.FORM_LOGIN:
         return <Step1 updateData={updateData} dataUser={dataUser} />;
-      case 2:
+      case FormStep.FORM_USER_DATA:
         return (
           <Step2
             onRegister={onRegister}
             dataUser={dataUser}
             next={nextStep}
-            back={() => setStep(1)}
+            back={() => setStep(FormStep.FORM_LOGIN)}
+            handleRegister={handleRegister}
           />
-        );
+        );        
       default:
-        return <Success email={dataUser.email} />;
+        return registrationSuccess ? (
+          <Success email={dataUser.email} />
+        ) : (
+          <Step2
+            onRegister={onRegister}
+            dataUser={dataUser}
+            next={nextStep}
+            back={() => setStep(FormStep.FORM_LOGIN)}
+            handleRegister={handleRegister}
+          />
+        )
     }
   };
 
