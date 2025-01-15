@@ -50,7 +50,7 @@ function RegisterForm({ title, titleSuccess, onRegister }: Props) {
             next={nextStep}
             back={() => setStep(FormStep.STEP_EMAIL_PASSWORD)}
           />
-        );        
+        );
       default:
         return <Success email={dataUser.email} />
     }
@@ -65,6 +65,11 @@ function RegisterForm({ title, titleSuccess, onRegister }: Props) {
           <Text>{titleSuccess}</Text>
         )}
         <StepNow />
+        <Text size="quaternary" className="text-sm md:text-base text-zinc-600 leading-7 md:leading-7">
+          Se não encontrar o e-mail de confirmação, verifique a caixa de spam. Caso não tenha recebido, entre em contato pelo e-mail: <a className="text-green" href="https://mail.google.com/mail/?view=cm&fs=1&to=contato@vcnafacul.com.br&su=Não%20recebi%20o%20e-mail%20de%20confirmação&body=Olá,%20não%20recebi%20o%20e-mail%20de%20confirmação.%20Poderiam%20verificar%20por%20favor?" target="_blank">
+            contato@vcnafacul.com.br
+          </a>
+        </Text>
       </div>
     </div>
   );
