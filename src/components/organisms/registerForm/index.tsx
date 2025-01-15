@@ -5,6 +5,12 @@ import Step1 from "./setps/step1";
 import Step2 from "./setps/step2";
 import Success from "./setps/success";
 
+enum FormStep {
+  STEP_EMAIL_PASSWORD = 1,
+  STEP_USER_DATA = 2,
+  SUCCESS_MESSAGE = 3
+}
+
 export interface StepProps {
   dataUser: UserRegister;
 }
@@ -18,11 +24,11 @@ interface Props extends RegisterFormProps {
 }
 
 function RegisterForm({ title, titleSuccess, onRegister }: Props) {
-  const [step, setStep] = useState<number>(1);
+  const [step, setStep] = useState<number>(FormStep.STEP_EMAIL_PASSWORD);
   const [dataUser, setDataUser] = useState<UserRegister>({} as UserRegister);
 
   const nextStep = () => {
-    if (step < 3) {
+    if (step < FormStep.SUCCESS_MESSAGE) {
       setStep(step + 1);
     }
   };
@@ -34,19 +40,19 @@ function RegisterForm({ title, titleSuccess, onRegister }: Props) {
 
   const StepNow = () => {
     switch (step) {
-      case 1:
+      case FormStep.STEP_EMAIL_PASSWORD:
         return <Step1 updateData={updateData} dataUser={dataUser} />;
-      case 2:
+      case FormStep.STEP_USER_DATA:
         return (
           <Step2
             onRegister={onRegister}
             dataUser={dataUser}
             next={nextStep}
-            back={() => setStep(1)}
+            back={() => setStep(FormStep.STEP_EMAIL_PASSWORD)}
           />
-        );
+        );        
       default:
-        return <Success email={dataUser.email} />;
+        return <Success email={dataUser.email} />
     }
   };
 
