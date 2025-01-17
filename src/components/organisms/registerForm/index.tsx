@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { UserRegister } from "../../../types/user/userRegister";
 import Text from "../../atoms/text";
-import { textContact } from "@/pages/register/data";
 import Step1 from "./setps/step1";
 import Step2 from "./setps/step2";
 import Success from "./setps/success";
@@ -66,10 +65,6 @@ function RegisterForm({ title, titleSuccess, onRegister }: Props) {
           <Text>{titleSuccess}</Text>
         )}
         <StepNow />
-        <Text size="quaternary" className="text-sm md:text-base text-zinc-600 leading-7 md:leading-7">
-          {textContact.text}
-          <a className="text-green" href={textContact.linkToMakeContactOnGmail} target="_blank" rel="noopener noreferrer"> {textContact.email}</a>
-        </Text>
       </div>
     </div>
   );

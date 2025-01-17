@@ -52,3 +52,5 @@ export const textContact: { text: string, email: string, linkToMakeContactOnGmai
   email: "contato@vcnafacul.com.br",
   linkToMakeContactOnGmail: "https://mail.google.com/mail/?view=cm&fs=1&to=contato@vcnafacul.com.br&su=Não%20recebi%20o%20e-mail%20de%20confirmação&body=Olá,%20não%20recebi%20o%20e-mail%20de%20confirmação.%20Poderiam%20verificar%20por%20favor?"
 }
+
+export const tagLinkToMakeContactOnGmail = (<a className="text-green" href={textContact.linkToMakeContactOnGmail} target="_blank" rel="noopener noreferrer">{textContact.email}</a>)
