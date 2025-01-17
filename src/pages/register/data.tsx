@@ -46,3 +46,9 @@ export const registerForm: RegisterFormProps = {
 export const uppercaseLetterRegex = /[A-Z]/;
 export const lowercaseLetterRegex = /[a-z]/;
 export const specialCaracteresRegex = /[!@#$%^&*(),.?":{}|<>]/;
+
+export const textContact: { text: string, email: string, linkToMakeContactOnGmail: string } = {
+  text: "Se não encontrar o e-mail de confirmação, verifique a caixa de spam. Caso não tenha recebido, entre em contato pelo e-mail:",
+  email: "contato@vcnafacul.com.br",
+  linkToMakeContactOnGmail: "https://mail.google.com/mail/?view=cm&fs=1&to=contato@vcnafacul.com.br&su=Não%20recebi%20o%20e-mail%20de%20confirmação&body=Olá,%20não%20recebi%20o%20e-mail%20de%20confirmação.%20Poderiam%20verificar%20por%20favor?"
+}

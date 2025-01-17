@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { UserRegister } from "../../../types/user/userRegister";
 import Text from "../../atoms/text";
+import { textContact } from "@/pages/register/data";
 import Step1 from "./setps/step1";
 import Step2 from "./setps/step2";
 import Success from "./setps/success";
@@ -66,9 +67,8 @@ function RegisterForm({ title, titleSuccess, onRegister }: Props) {
         )}
         <StepNow />
         <Text size="quaternary" className="text-sm md:text-base text-zinc-600 leading-7 md:leading-7">
-          Se não encontrar o e-mail de confirmação, verifique a caixa de spam. Caso não tenha recebido, entre em contato pelo e-mail: <a className="text-green" href="https://mail.google.com/mail/?view=cm&fs=1&to=contato@vcnafacul.com.br&su=Não%20recebi%20o%20e-mail%20de%20confirmação&body=Olá,%20não%20recebi%20o%20e-mail%20de%20confirmação.%20Poderiam%20verificar%20por%20favor?" target="_blank">
-            contato@vcnafacul.com.br
-          </a>
+          {textContact.text}
+          <a className="text-green" href={textContact.linkToMakeContactOnGmail} target="_blank" rel="noopener noreferrer"> {textContact.email}</a>
         </Text>
       </div>
     </div>
