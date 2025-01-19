@@ -32,6 +32,7 @@ import { Statistic } from "./modal/statistic";
 import { ScheduleCallEnrolle } from "./scheduleCallEnrolled";
 import { TableInfo } from "./tableInfo";
 import { WaitingList } from "./waitingList";
+import { capitalizeWords } from "@/utils/capitalizeWords";
 
 enum Bool {
   Yes = "Sim",
@@ -278,7 +279,7 @@ export function PartnerPrepInscritionStudentManager() {
         handleConfirm={(message) =>
           handleIndeferir(studentSelected!.id, message!)
         }
-        text={`Por favor, informe o motivo da indéferência da matricula de ${studentSelected?.nome} ${studentSelected?.sobrenome}`}
+        text={`Por favor, informe o motivo do indeferimento da matrícula de ${capitalizeWords(studentSelected?.nome + " " + studentSelected?.sobrenome)}.`}
         className="bg-white p-4 rounded-md w-[512px]"
       />
     );
