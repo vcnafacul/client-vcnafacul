@@ -90,7 +90,7 @@ export function InscriptionInfoCreateEditModal({
           <div className="row-start-1 col-start-1">
             <InputFactory
               id="name"
-              label="Nome do Cursinho"
+              label="Titulo"
               type="text"
               defaultValue={inscription?.name}
               error={errors.name}

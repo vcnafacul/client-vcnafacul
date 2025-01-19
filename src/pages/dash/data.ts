@@ -238,7 +238,7 @@ export const dashCardMenuItems: DashCardMenu[] = [
         icon: Report,
         alt: "error_report",
         text: "Reportar Erro",
-        link: `https://docs.google.com/document/d/1VFpGiW4LuooMdtOemtFEVbqHMesP0rTZ1fX8BFwG_2w/edit?usp=sharing`,
+        link: `https://github.com/orgs/vcnafacul/discussions/new?category=problemas`,
         permissions: [
           Roles.alterarPermissao,
           Roles.cadastrarProvas,
@@ -266,8 +266,8 @@ export const dashCardMenuItems: DashCardMenu[] = [
     subMenuList: [
       {
         icon: Report,
-        alt: "inscricao",
-        text: "Inscrições",
+        alt: "processos seletivos",
+        text: "Processos Seletivos",
         link: `/dashboard/${PARTNER_PREP_INSCRIPTION}`,
         permissions: [Roles.gerenciarInscricoesCursinhoParceiro],
       },
