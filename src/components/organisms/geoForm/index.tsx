@@ -36,7 +36,7 @@ export interface GeoFormProps {
 }
 
 function GeoForm({ formData } : GeoFormProps){
-  const [stepCurrently, setStepCurrently] = useState<number>(1)
+  const [stepCurrently, setStepCurrently] = useState<number>(3)
   const [dataGeo, setDataGeo]= useState<CreateGeolocation>({} as CreateGeolocation)
 
   const updateData = (oldData: any) => {
