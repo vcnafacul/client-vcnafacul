@@ -29,3 +29,4 @@ export const PARTNER_PREP = "cursinho/";
 export const PARTNER_PREP_INSCRIPTION = "inscricao";
 export const INVITE_MEMBER = "convidar-membro";
 export const DECLARED_INTEREST = "declarar-interesse";
+export const MANAGER_COLLABORATOR = "colaboradores";

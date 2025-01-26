@@ -12,7 +12,8 @@ export enum Roles {
   uploadDemanda = "uploadDemanda",
   validarDemanda = "validarDemanda",
   gerenciadorDemanda = "gerenciadorDemanda",
-  gerenciarInscricoesCursinhoParceiro = "gerenciarInscricoesCursinhoParceiro",
+  gerenciarProcessoSeletivo = "gerenciarProcessoSeletivo",
+  gerenciarColaboradores = "gerenciarColaboradores",
 }
 
 export const RolesLabel = [
@@ -30,7 +31,11 @@ export const RolesLabel = [
   { value: Roles.validarDemanda, label: "Validar Demandas" },
   { value: Roles.gerenciadorDemanda, label: "Gerenciar Demandas" },
   {
-    value: Roles.gerenciarInscricoesCursinhoParceiro,
-    label: "Gerenciar Inscrições de Cursinho Parceiro",
+    value: Roles.gerenciarProcessoSeletivo,
+    label: "Gerenciar Processos Seletivos",
+  },
+  {
+    value: Roles.gerenciarColaboradores,
+    label: "Gerenciar Colaboradores",
   },
 ];
