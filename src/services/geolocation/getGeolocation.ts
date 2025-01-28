@@ -8,7 +8,6 @@ export async function getGeolocation() : Promise<Paginate<Geolocation>> {
     const res = await fetchWrapper(`${geolocations}?page=1&limit=1000&status=1&text=`, {
         headers: { "Content-Type": "application/json" },
     });
-
     if(res.status !== 200) {
         return {
             data: [] as Geolocation[],
