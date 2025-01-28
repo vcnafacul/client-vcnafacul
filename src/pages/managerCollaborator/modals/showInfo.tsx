@@ -1,8 +1,9 @@
-import Button from "@/components/molecules/button";
+import Toggle from "@/components/atoms/toggle";
 import PropValue from "@/components/molecules/PropValue";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { Collaborator } from "@/types/partnerPrepCourse/collaborator";
 import { formatDate } from "@/utils/date";
+import { useState } from "react";
 
 interface ModalProps {
   handleClose: () => void;
@@ -11,6 +12,7 @@ interface ModalProps {
 }
 
 export function ShowInfo({ collaborator, handleClose, isOpen }: ModalProps) {
+  const [actived, setActived] = useState<boolean>(collaborator.actived);
   return (
     <ModalTemplate
       isOpen={isOpen}
@@ -35,19 +37,26 @@ export function ShowInfo({ collaborator, handleClose, isOpen }: ModalProps) {
           <div className="col-span-1 sm:col-span-2">
             <PropValue prop="Descrição" value={collaborator.description} />
           </div>
-          <div className="col-span-1 sm:col-span-2 bg-zinc-200 p-2 rounded shadow-md shadow-zinc-300">
+          <div className="sm:col-start-2 md:justify-self-end">
             <PropValue
-              prop="Criado em"
-              value={formatDate(collaborator.createdAt.toString())}
-            />
-            <PropValue
-              prop="Ultima Atualização"
-              value={formatDate(collaborator.updatedAt.toString())}
+              prop="Ativo"
+              value={
+                <Toggle
+                  name="ativo"
+                  checked={actived}
+                  handleCheck={() => {
+                    setActived(!actived);
+                  }}
+                />
+              }
             />
           </div>
-        </div>
-        <div className="flex gap-4 py-2">
-          <Button onClick={() => {}}>Editar Permissão</Button>
+          <div className="col-span-1 sm:col-span-2 bg-zinc-200 p-2 rounded shadow-md shadow-zinc-300">
+            <PropValue
+              prop="Ultimo Acesso"
+              value={formatDate(collaborator.lastAccess?.toString())}
+            />
+          </div>
         </div>
       </div>
     </ModalTemplate>
