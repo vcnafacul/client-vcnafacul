@@ -13,6 +13,7 @@ import { ShowInfo } from "./modals/showInfo";
 import { TempInviteMember } from "./modals/temp-invite-member";
 import { changeActive } from "@/services/prepCourse/collaborator/change-active";
 import { changeDescription } from "@/services/prepCourse/collaborator/change-description";
+import { phoneMask } from "@/utils/phoneMask";
 
 export default function ManagerCollaborator() {
   const [collaborator, setCollaborator] = useState<Collaborator[]>([]);
@@ -31,11 +32,11 @@ export default function ManagerCollaborator() {
     title: cl.user.firstName + " " + cl.user.lastName,
     status: cl.actived ? StatusEnum.Approved : StatusEnum.Rejected,
     infos: [
-      { field: "Email", value: cl.user.email },
-      { field: "Telefone", value: cl.user.phone },
+      { field: "Email", value: cl.user.email.slice(0, 25) + " ..."},
+      { field: "Telefone", value: phoneMask(cl.user.phone) },
       {
-        field: "Ultimo Acesso",
-        value: cl.lastAccess ? cl.lastAccess.toISOString() : "",
+        field: "Descrição",
+        value: cl.description.slice(0, 20) + " ...",
       },
     ],
   });
