@@ -19,6 +19,7 @@ import Form from "../../form";
 function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: EachStepProps) {
   const [selectedPosition, setSelectedPosition] = useState<number[]>([dataGeo?.latitude || 0, dataGeo?.longitude || 0]);
   const [useCep, setUseCep] = useState(false);
+  const [clicou, setClicou] = useState(false);
 
   const schema = yup
     .object()
@@ -71,8 +72,8 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
     setValue("neighborhood", data.neighborhood || "");
     setValue("city", data.city || "");
     setValue("state", data.state || "");
-      if (!useCep) {
-        setSelectedPosition ([parseInt(data.cordinates.latitude) , parseInt(data.cordinates.longitude)])
+      if (!useCep && data.location?.coordinates?.latitude && data.location?.coordinates?.longetide ) {
+        setSelectedPosition ([parseInt(data.location.coordinates.latitude) , parseInt(data.location.coordinates.longitude)])
       }
   };
 
@@ -88,15 +89,17 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
   };
 
   useEffect(() => {
-    if ( cep && cep.length === 8) {
-      const data = fetchAddressByCep(cep);
-      setAddressFromCep(data);
+    if (!clicou && cep && cep.length === 8) {
+      fetchAddressByCep(cep)
+        .then(data => setAddressFromCep(data));
     }
+    setClicou(false)
   }, [cep]);
 
   const MapEvents = () => {
     useMapEvents({
       click: (e) => {
+        setClicou(true)
         const { lat, lng } = e.latlng;
         setSelectedPosition([lat, lng]);
 
