@@ -31,7 +31,7 @@ function PermissionsList({
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      {permissions.map((perm) => (
+      {permissions.filter((p) => p.name != "base").map((perm) => (
         <div
           key={perm.name}
           className="flex items-center justify-between bg-gray-100 p-2 rounded-md shadow"

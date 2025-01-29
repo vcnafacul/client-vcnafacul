@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ShowInfo } from "./modals/showInfo";
 import { TempInviteMember } from "./modals/temp-invite-member";
+import { changeActive } from "@/services/prepCourse/collaborator/change-active";
+import { changeDescription } from "@/services/prepCourse/collaborator/change-description";
 
 export default function ManagerCollaborator() {
   const [collaborator, setCollaborator] = useState<Collaborator[]>([]);
@@ -76,8 +78,36 @@ export default function ManagerCollaborator() {
         isOpen={openShowInfo}
         handleClose={() => setOpenShowInfo(false)}
         collaborator={collaboratorSelected!}
+        handleActive={handleChangeActive}
+        handleDescription={handleDescription}
       />
     ) : null;
+  };
+
+  const handleChangeActive = async (id: string) => {
+    changeActive(token, id).then(() => {
+      const collaboratorAux = collaborator.map((c) => {
+        if (c.id === id) {
+          setCollaboratorSelected({ ...c, actived: !c.actived })
+          return { ...c, actived: !c.actived };
+        }
+        return c;
+      })
+      setCollaborator(collaboratorAux)
+    })
+  };
+
+  const handleDescription = async (id: string, description: string) => {
+    changeDescription(token, id, description).then(() => {
+      const collaboratorAux = collaborator.map((c) => {
+        if (c.id === id) {
+          setCollaboratorSelected({ ...c, description })
+          return { ...c, description };
+        }
+        return c;
+      })
+      setCollaborator(collaboratorAux)
+    })
   };
 
   useEffect(() => {
