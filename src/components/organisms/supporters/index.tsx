@@ -18,6 +18,7 @@ export interface Volunteer {
   name: string;
   description: string;
   alt: string;
+  actived: boolean;
 }
 
 interface SponsorProps {
@@ -67,7 +68,7 @@ function Supporters() {
       <div key={index} className="flex flex-col items-center mb-8">
         <div className="w-40 h-40 mb-2">
           <img
-            className="rounded-full object-cover"
+            className={`rounded-full object-cover ${volunteer.actived ? "" : "grayscale"}`}
             src={volunteer.image as string}
             alt={volunteer.alt}
           />
