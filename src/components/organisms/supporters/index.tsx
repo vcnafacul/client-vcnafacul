@@ -64,10 +64,10 @@ function Supporters() {
 
   const CardVolunteers = (volunteers: Volunteer[]) =>
     volunteers.map((volunteer, index) => (
-      <div key={index} className="flex flex-col items-center">
-        <div className="w-40 h-40">
+      <div key={index} className="flex flex-col items-center mb-8">
+        <div className="w-40 h-40 mb-2">
           <img
-            className="rounded-full"
+            className="rounded-full object-cover"
             src={volunteer.image as string}
             alt={volunteer.alt}
           />
