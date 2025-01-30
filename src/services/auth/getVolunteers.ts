@@ -15,11 +15,11 @@ export async function getVolunteers(): Promise<Volunteer[]> {
   if (response.status !== 200) {
     throw new Error(`Erro ao buscar Voluntários`);
   }
-  const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
   const volunteers: Volunteer[] = res.map((col) => ({
     ...col,
-    image: `${VITE_FTP_PROFILE}${col.image}`,
+    image: col.image,
     alt: `foto colaborador ${col.name}`,
   }));
+  console.log(volunteers);
   return volunteers;
 }
