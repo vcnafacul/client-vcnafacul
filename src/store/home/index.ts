@@ -13,6 +13,7 @@ export type HomeState = {
     updated: number;
   };
   setMarkers: (markers: Marker[]) => void;
+  setNews: (news: News[]) => void;
 };
 
 export const useHomeStore = create<HomeState>()(
