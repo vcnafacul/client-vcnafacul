@@ -74,8 +74,8 @@ function Supporters() {
         </div>
         <p className="font-base text-marine text-lg">{volunteer.name}</p>
         <p className="font-thin text-marine text-base">
-          {volunteer.description.substring(0, 30) +
-            `${volunteer.description.length > 30 ? " ..." : ""}`}
+          {volunteer.description?.substring(0, 30) +
+            `${volunteer.description?.length > 30 ? " ..." : ""}`}
         </p>
       </div>
     ));
