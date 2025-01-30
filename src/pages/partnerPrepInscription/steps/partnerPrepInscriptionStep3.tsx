@@ -137,7 +137,6 @@ export function PartnerPrepInscriptionStep3({
   }, []);
 
   useEffect(() => {
-    console.log(currentData?.legalGuardian?.phone)
     if (currentData) {
       setValue("fullName", currentData?.legalGuardian?.fullName);
       setValue(
