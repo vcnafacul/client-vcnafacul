@@ -1,9 +1,9 @@
 import fetchWrapper from "../../utils/fetchWrapper";
-import { user } from "../urls";
+import { collaborator } from "../urls";
 
 export async function changeImageProfileCollaborator(data: FormData, token: string) : Promise<string> {
-    const response = await fetchWrapper(`${user}/collaborator`, {
-        method: "POST",
+    const response = await fetchWrapper(`${collaborator}/photo`, {
+        method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },
         body: data,
     });

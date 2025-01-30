@@ -71,16 +71,6 @@ function DashRoles() {
       });
   };
 
-  const updateUserLocal = (ur: UserRole) => {
-    const newUserRole = usersRole.map((user) => {
-      if (user.user.id === ur.user.id) {
-        return ur;
-      }
-      return user;
-    });
-    setUsersRole(newUserRole);
-  };
-
   const handleNewRole = (role: Role) => {
     const newRoles = [...roles, role];
     setRoles(newRoles);
@@ -151,7 +141,6 @@ function DashRoles() {
         isOpen={userModal}
         handleClose={() => setUserModal(false)}
         ur={userRoleSelect!}
-        updateUser={updateUserLocal}
         openUpdateRole={() => setUserRoleModal(true)}
       />
     );

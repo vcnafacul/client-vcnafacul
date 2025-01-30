@@ -14,7 +14,6 @@ export async function getProfilePhoto(key: string, token: string): Promise<Blob>
   if (response.status !== 200) {
     throw new Error("Erro ao buscar o arquivo");
   }
-  console.log(contentType);
   // Decodificar o buffer Base64 e criar um Blob
   const binaryString = atob(buffer); // Decodificar Base64
   const binaryData = new Uint8Array(binaryString.length);

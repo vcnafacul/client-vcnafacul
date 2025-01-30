@@ -18,6 +18,7 @@ export interface Volunteer {
   name: string;
   description: string;
   alt: string;
+  actived: boolean;
 }
 
 interface SponsorProps {
@@ -43,6 +44,7 @@ function Supporters() {
   const changeTab = (tab: number) => {
     setTab(tab);
   };
+  const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
 
   const breakpoints = {
     1: {
@@ -63,19 +65,21 @@ function Supporters() {
   };
 
   const CardVolunteers = (volunteers: Volunteer[]) =>
-    volunteers.map((volunteer, index) => (
-      <div key={index} className="flex flex-col items-center">
-        <div className="w-40 h-40">
+    volunteers.filter((volunteer) => volunteer.image).map((volunteer, index) => (
+      <div key={index} className="flex flex-col items-center mb-8 select-none">
+        <div className="w-40 h-40 mb-2">
           <img
-            className="rounded-full"
-            src={volunteer.image as string}
+            className={`rounded-full object-cover ${
+              volunteer.actived ? "" : "grayscale"
+            }`}
+            src={`${VITE_FTP_PROFILE}/${volunteer.image}`}
             alt={volunteer.alt}
           />
         </div>
         <p className="font-base text-marine text-lg">{volunteer.name}</p>
         <p className="font-thin text-marine text-base">
-          {volunteer.description.substring(0, 30) +
-            `${volunteer.description.length > 30 ? " ..." : ""}`}
+          {volunteer.description?.substring(0, 30) +
+            `${volunteer.description?.length > 30 ? " ..." : ""}`}
         </p>
       </div>
     ));
