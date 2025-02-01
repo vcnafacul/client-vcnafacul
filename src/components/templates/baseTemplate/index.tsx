@@ -34,7 +34,7 @@ function BaseTemplate({  children, solid, position, headerShadow, className }: B
       <div className="min-h-screen w-screen flex flex-col">
           <Header
           solid={solid}
-          className={`${baseTemplate({ position, headerShadow })} ${solid ? 'bg-white' : 'bg-transparent'}`}
+          className={`${baseTemplate({ position, headerShadow })} ${solid ? 'bg-white' : 'bg-transparent'} px-2`}
         />
         <div className="flex-1">
           { children }
