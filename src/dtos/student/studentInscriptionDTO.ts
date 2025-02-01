@@ -32,3 +32,10 @@ export interface LegalGuardianDTO {
   cpf?: string | undefined;
   phone?: string | undefined;
 }
+
+export interface DataInscription {
+  name: string;
+  description: string;
+  startDate: Date;
+  endDate: Date;
+}

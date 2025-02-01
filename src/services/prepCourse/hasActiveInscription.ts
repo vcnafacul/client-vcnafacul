@@ -4,6 +4,12 @@ import { prepCourse } from "../urls";
 interface HasActiveInscriptionResponse {
   hasActiveInscription: boolean;
   prepCourseName: string;
+  inscription: {
+    name: string;
+    description: string;
+    startDate: Date;
+    endDate: Date;
+  }
 }
 
 export async function hasActiveInscription(
