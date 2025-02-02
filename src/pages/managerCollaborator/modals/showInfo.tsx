@@ -38,13 +38,15 @@ export function ShowInfo({
     >
       <div className="p-4 rounded-md overflow-y-auto scrollbar-hide h-4/5 sm:h-fit">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
-          <div>
-            <img
-              className="w-40 h-40 rounded-full object-cover shadow-md"
-              src={VITE_FTP_PROFILE + collaborator.photo}
-              alt={collaborator.user.firstName}
-            />
-          </div>
+          {collaborator.photo && (
+            <div className="w-56 h-40">
+              <img
+                className="rounded-full object-cover shadow-md"
+                src={VITE_FTP_PROFILE + collaborator.photo}
+                alt={collaborator.user.firstName}
+              />
+            </div>
+          )}
           <div className="flex flex-col gap-2 w-full">
             <div className="bg-zinc-800 p-2 rounded shadow-md">
               <PropValue
