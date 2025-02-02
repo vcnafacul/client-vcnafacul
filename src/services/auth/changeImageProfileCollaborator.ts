@@ -8,7 +8,7 @@ export async function changeImageProfileCollaborator(data: FormData, token: stri
         body: data,
     });
     const res = await response.text()
-    if(response.status !== 201){
+    if(response.status !== 200){
         throw new Error('Erro ao atulizar informacões')
     }
     return res
