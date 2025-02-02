@@ -73,3 +73,4 @@ export const getDocument = `${studentCourse}/document`;
 export const uploadProfilePhoto = `${studentCourse}/profile-photo`;
 export const getProfilePhotos = `${studentCourse}/profile-photo`;
 export const declaredInterest = `${studentCourse}/declared-interest`;
+export const collaborator = `${BASE_URL}/collaborator`;

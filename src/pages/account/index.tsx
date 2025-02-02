@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { UserMe } from "@/types/user/userMe";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -17,7 +18,7 @@ import { changeImageProfileCollaborator } from "../../services/auth/changeImageP
 import { me } from "../../services/auth/me";
 import { removeImageProfileCollaborator } from "../../services/auth/removeImageProfileCollaborator";
 import { updateUser } from "../../services/auth/updateUser";
-import { Auth, AuthUpdate, Gender, useAuthStore } from "../../store/auth";
+import { AuthUpdate, Gender, useAuthStore } from "../../store/auth";
 import { optionsGender, stateOptions } from "../register/data";
 
 function Account() {
@@ -27,7 +28,7 @@ function Account() {
   } = useAuthStore();
   const [tryDelete, setTryDelete] = useState<boolean>(false);
 
-  const [userAccount, setUserAccount] = useState<Auth>();
+  const [userAccount, setUserAccount] = useState<UserMe>();
 
   const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
   const [imagePreview, setImagePreview] = useState<any>(null);
@@ -37,6 +38,7 @@ function Account() {
     .shape({
       firstName: yup.string().required("Por favor, preencha seu nome"),
       lastName: yup.string().required("Por favor, preencha seu sobrenome"),
+      socialName: yup.string(),
       birthday: yup
         .string()
         .required("Por favor, insira uma data de nascimento"),
@@ -58,6 +60,12 @@ function Account() {
       type: "text",
       label: "Sobrenome:",
       defaultValue: userAccount?.lastName,
+    },
+    {
+      id: "socialName",
+      type: "text",
+      label: "Nome Social:",
+      defaultValue: userAccount?.socialName,
     },
     {
       id: "gender",
@@ -128,7 +136,6 @@ function Account() {
       toast.warn("O arquivo pode ter no máximo 1mb", { theme: "dark" });
     } else {
       previewImage(file);
-      uploadingImagem(file);
     }
   };
 
@@ -144,7 +151,8 @@ function Account() {
           isLoading: false,
           autoClose: 3000,
         });
-        updateAccount({ ...userAccount!, collaboratorPhoto: fileName });
+        setUserAccount({ ...userAccount!, collaboratorPhoto: fileName });
+        updateAccount({ ...userAccount! });
       })
       .catch((error: Error) => {
         toast.update(id, {
@@ -161,7 +169,7 @@ function Account() {
       removeImageProfileCollaborator(token)
         .then((res) => {
           if (res) {
-            updateAccount({ ...userAccount!, collaboratorPhoto: null });
+            updateAccount({ ...userAccount! });
           } else {
             toast.error("Não foi possível remover sua imagem");
           }
@@ -204,6 +212,9 @@ function Account() {
           autoClose: 3000,
         });
       });
+    if (imagePreview) {
+      uploadingImagem(imagePreview);
+    }
   };
 
   const ModalDelete = () => {
@@ -233,6 +244,7 @@ function Account() {
   return (
     <>
       <div className="pb-20 bg-zinc-100 flex flex-col">
+        {/* Cabeçalho com imagem e nome do usuário */}
         <div className="bg-custom-gradient py-1 px-4 flex items-center rounded-bl-3xl">
           <LogoIcon className="bg-white w-28 h-28 z-0 animate-rotate rounded-full p-1 border border-green2" />
           <div className="flex flex-col items-end">
@@ -242,31 +254,30 @@ function Account() {
             <span className="text-white text-xl">{userAccount?.lastName}</span>
           </div>
         </div>
+
+        {/* Seção de título */}
         <Text className="self-start mx-10 pt-4" size="secondary">
           Meus Dados
         </Text>
-        <div className=" ml-4 sm:mr-4 grid grid-cols-1 md:grid-cols-4 pr-6 sm:pr-0">
-          {userAccount?.collaborator ? (
-            <div className="m-4 flex flex-col items-center rounded-full md:col-span-1 md:col-start-4">
-              <Text size="tertiary">Imagem Profile Colaborador</Text>
-              <ImageProfile
-                deleteImage={() => {
-                  setTryDelete(true);
-                }}
-                onChange={handleImageChange}
-                src={imagePreview}
-              />
-              {/* {!change ? <></> : <div className='w-40'><Button typeStyle='secondary' size='small' className='mt-2' type='button' onClick={uploadingImagem}>Salvar</Button></div>} */}
-            </div>
-          ) : (
-            <></>
-          )}
-          {userAccount ? (
+
+        {/* Exibição de colaborador */}
+        {userAccount?.collaborator && (
+          <div className="flex flex-col items-center">
+            <span>{userAccount?.collaboratorDescription}</span>
+            <ImageProfile
+              deleteImage={() => setTryDelete(true)}
+              onChange={handleImageChange}
+              src={imagePreview}
+            />
+          </div>
+        )}
+
+        {/* Formulário de atualização */}
+        {userAccount && (
+          <div className="ml-4 sm:mr-4 grid grid-cols-1 md:grid-cols-3 pr-6 sm:pr-0">
             <form
               onSubmit={handleSubmit(update)}
-              className={`flex flex-col pb-10 w-full gap-4 ${
-                userAccount?.collaborator ? "md:col-span-3" : "md:col-span-4"
-              } md:col-start-1 md:row-start-1`}
+              className="flex flex-col pb-10 w-full gap-4 md:col-span-3"
             >
               <Form
                 className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 ${
@@ -277,16 +288,13 @@ function Account() {
                 errors={errors}
               />
               <div className="w-60 self-start">
-                <Button type="submit">
-                  Atualizar
-                </Button>
+                <Button type="submit">Atualizar</Button>
               </div>
             </form>
-          ) : (
-            <></>
-          )}
-        </div>
+          </div>
+        )}
       </div>
+
       <ModalDelete />
     </>
   );

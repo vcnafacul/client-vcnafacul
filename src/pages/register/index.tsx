@@ -9,12 +9,13 @@ import { toast } from "react-toastify";
 
 function Register() {
   const onRegister = async (data: UserRegister) => {
-    registerUser(data)
+    return registerUser(data)
       .then(() => {
         toast.success("Cadastro realizado com sucesso");
       })
       .catch((error: Error) => {
         toast.error(error.message);
+        throw error;
       });
   };
   

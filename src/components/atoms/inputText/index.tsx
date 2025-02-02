@@ -20,7 +20,7 @@ export function InputText({ ...props }: InputProps) {
   }
 
   return (
-    <>
+    <div className="w-full">
       <Input
         {...props}
         className={`h-16 pt-4 focus-visible:ring-orange ${props.className}`}
@@ -35,6 +35,6 @@ export function InputText({ ...props }: InputProps) {
         }
       />
       {props.type !== "password" ? <></> : backgroundImageToggleVisibility(visible)}
-    </>
+    </div>
   );
 }

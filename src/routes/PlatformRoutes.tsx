@@ -53,6 +53,7 @@ import {
   INVITE_MEMBER,
   LOGIN_PATH,
   LOGOFF_PATH,
+  MANAGER_COLLABORATOR,
   NEWS,
   PARTNER_PREP,
   PARTNER_PREP_INSCRIPTION,
@@ -65,6 +66,7 @@ import {
 } from "./path";
 import ProtectedRoute from "./protectedRoute";
 import ProtectedRoutePermission from "./protectedRoutePermission";
+import ManagerCollaborator from "@/pages/managerCollaborator";
 
 export function PlatformRoutes() {
   const { data } = useAuthStore();
@@ -116,6 +118,10 @@ export function PlatformRoutes() {
         <Route
           path={PARTNER_PREP_INSCRIPTION}
           element={<PartnerPrepInscriptionManager />}
+        />
+        <Route
+          path={MANAGER_COLLABORATOR}
+          element={<ManagerCollaborator />}
         />
         <Route
           path={`${PARTNER_PREP_INSCRIPTION}/:inscriptionId`}

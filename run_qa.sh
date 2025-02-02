@@ -105,6 +105,9 @@ manage_containers_images() {
 }
 
 # Checando o sistema operacional e agindo conforme necessário
+
+git pull
+
 check_os
 
 manage_containers_images

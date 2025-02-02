@@ -18,6 +18,7 @@ function NewsPage() {
     if (news.length > 0) {
       return (
         <Content
+        className="bg-white/0"
           docxFilePath={`${VITE_BASE_FTP}${news[indexSelect].fileName}`}
         />
       );
@@ -72,8 +73,8 @@ function NewsPage() {
         <Text size="secondary" className="text-grey font-normal">
           {news.length == 0 ? null : news[indexSelect].title}
         </Text>
-        <TriangleGreen className="absolute w-[500px] -right-[250px] bottom-0" />
         <NewContent />
+        <TriangleGreen className="absolute w-[500px] -right-[250px] bottom-0 -z-10" />
       </div>
     </HeroTemplate>
   );

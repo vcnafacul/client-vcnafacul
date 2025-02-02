@@ -200,10 +200,11 @@ export default function DeclareInterest({
       {/* Mensagem inicial */}
       <div className="text-center">
         <h1 className="text-2xl font-bold text-gray-800">
-          Declaração de interesse na matrícula
+          Pré-Matrícula: Declaração de Interesse
         </h1>
         <p className="text-gray-600 mt-2 text-lg">
-          {isFree ? (
+          {
+            step != Steps.Sucess && (isFree ? (
             <>
               Parabéns pela isenção! 🎉 Não se esqueça de enviar as informações
               necessárias para concluir sua inscrição.
@@ -213,7 +214,8 @@ export default function DeclareInterest({
               Olá caro estudante, para declarar interesse na matrícula,
               precisamos de algumas informações a mais.
             </>
-          )}
+          ))
+          }
         </p>
       </div>
       <StepperCircle steps={stepsCircle} />

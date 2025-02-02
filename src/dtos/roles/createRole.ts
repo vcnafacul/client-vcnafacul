@@ -13,5 +13,6 @@ export interface CreateRoleDto {
     uploadDemanda: boolean;
     validarDemanda: boolean;
     gerenciadorDemanda: boolean;
-    gerenciarInscricoesCursinhoParceiro: boolean;
+    gerenciarProcessoSeletivo: boolean;
+    gerenciarColaboradores: boolean;
 }

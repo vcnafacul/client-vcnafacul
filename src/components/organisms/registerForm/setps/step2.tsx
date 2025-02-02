@@ -27,7 +27,7 @@ interface Step2Props extends StepProps {
   dataUser: UserRegister;
   next: () => void;
   back: () => void;
-  onRegister: (data: UserRegister) => Promise<void>;
+  onRegister: (data: UserRegister) => Promise<void>;  
 }
 
 function Step2({ dataUser, next, back, onRegister }: Step2Props) {
@@ -36,6 +36,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
     .shape({
       firstName: yup.string().required("Por favor, informe seu nome"),
       lastName: yup.string().required("Por favor, informe seu sobrenome"),
+      socialName: yup.string(),
       phone: yup.string().required("campo obrigatório"),
       gender: yup.number().required(),
       birthday: yup
@@ -73,7 +74,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
           isLoading: false,
           autoClose: 3000,
         });
-        next();
+        next()
       })
       .catch((error: Error) => {
         toast.update(id, {
@@ -88,6 +89,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
   useEffect(() => {
     register("firstName");
     register("lastName");
+    register("socialName");
     register("phone");
     register("gender");
     register("birthday");
@@ -114,6 +116,13 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
         type="text"
         error={errors.lastName}
         onChange={(e: any) => setValue("lastName", e.target.value)}
+      />
+      <InputFactory
+        id="socialName"
+        label="Nome Social"
+        type="text"
+        error={errors.socialName}
+        onChange={(e: any) => setValue("socialName", e.target.value)}
       />
       <InputFactory
         id="gender"

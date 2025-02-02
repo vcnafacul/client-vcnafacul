@@ -54,9 +54,9 @@ import { ReactComponent as homeSubjectSociologia } from "../../assets/icons/home
 import hostingerLogo from "../../assets/images/home/1200px-Hostinger_logo_purple.svg@2x.png";
 import raccoonLogo from "../../assets/images/home/Grupo 1706.svg";
 import wikilabLogo from "../../assets/images/home/Logo_WikiLab.png";
-import { SupportersProps } from "../../components/organisms/supporters";
 import UFSCarLogo from "../../assets/images/home/UFSCar.png";
-import tumble from '../../assets/images/home/thumb-about-us.png';
+import tumble from "../../assets/images/home/thumb-about-us.png";
+import { SupportersProps } from "../../components/organisms/supporters";
 
 export const userNavigationSign: ItemMenuProps[] = [
   {
@@ -606,3 +606,22 @@ export const supporters: SupportersProps = {
     },
   ],
 };
+
+export const report = [
+  {
+    Home_Menu_Item_id: {
+      id: 1,
+      name: "Encontrei um Problema",
+      link: "https://github.com/orgs/vcnafacul/discussions/new?category=problemas",
+      target: "_blank",
+    },
+  },
+  {
+    Home_Menu_Item_id: {
+      id: 1,
+      name: "Tenho uma ideia",
+      link: "https://github.com/orgs/vcnafacul/discussions/new?category=ideas",
+      target: "_blank",
+    },
+  },
+];

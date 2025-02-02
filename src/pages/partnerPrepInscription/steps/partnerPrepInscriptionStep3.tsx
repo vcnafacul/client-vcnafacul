@@ -1,7 +1,10 @@
 import Text from "@/components/atoms/text";
 import Button from "@/components/molecules/button";
 import { InputFactory } from "@/components/organisms/inputFactory";
-import { LegalGuardianDTO } from "@/dtos/student/studentInscriptionDTO";
+import {
+  LegalGuardianDTO,
+  StudentInscriptionDTO,
+} from "@/dtos/student/studentInscriptionDTO";
 import { stateOptions } from "@/pages/register/data";
 import { phoneMask } from "@/utils/phoneMask";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -14,6 +17,7 @@ import { parentescoOptions } from "../data";
 
 interface PartnerPrepInscriptionStep3Props extends EachStepProps {
   isMinor: boolean;
+  updateData?: (data: LegalGuardianDTO) => void;
 }
 
 export function PartnerPrepInscriptionStep3({
@@ -23,11 +27,12 @@ export function PartnerPrepInscriptionStep3({
   handleBack,
   isMinor,
 }: PartnerPrepInscriptionStep3Props) {
+  console.log(currentData);
   const [phone, setPhone] = useState<string>(
-    phoneMask(currentData?.urgencyPhone) || ""
+    phoneMask(currentData?.legalGuardian?.phone) || ""
   );
   const [fRelationOther, setFRelationOther] = useState<boolean>(false);
-  const [cpf, setCPF] = useState<string>(currentData?.cpf || "");
+  const [cpf, setCPF] = useState<string>(currentData?.legalGuardian?.cpf || "");
 
   const handleCPFChange = (cpf: string) => {
     let value = cpf.replace(/\D/g, ""); // Remove tudo que não for número
@@ -129,18 +134,21 @@ export function PartnerPrepInscriptionStep3({
     register("uf");
     register("cpf");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    setValue("fullName", currentData?.legalGuardian?.fullName);
-    setValue(
-      "family_relationship",
-      currentData?.legalGuardian?.family_relationship
-    );
-
-    setValue("phone", phoneMask(currentData?.legalGuardian?.phone || ""));
-    setPhone(phoneMask(currentData?.legalGuardian?.phone || ""));
-    setValue("rg", currentData?.legalGuardian?.rg);
-    setValue("uf", currentData?.legalGuardian?.uf);
-    setValue("cpf", currentData?.legalGuardian?.cpf);
   }, []);
+
+  useEffect(() => {
+    if (currentData) {
+      setValue("fullName", currentData?.legalGuardian?.fullName);
+      setValue(
+        "family_relationship",
+        currentData?.legalGuardian?.family_relationship
+      );
+      setValue("phone", phoneMask(currentData?.legalGuardian?.phone));
+      setValue("rg", currentData?.legalGuardian?.rg);
+      setValue("uf", currentData?.legalGuardian?.uf);
+      setValue("cpf", currentData?.legalGuardian?.cpf);
+    }
+  }, [currentData]);
 
   function handleForm(data: LegalGuardianDTO) {
     if (fRelationOther) {
@@ -150,6 +158,20 @@ export function PartnerPrepInscriptionStep3({
       data.uf = undefined;
     }
     updateData!(data);
+  }
+
+  function handleBackStep() {
+    handleBack!({
+      ...currentData,
+      legalGuardian: {
+        fullName: getValues("fullName"),
+        family_relationship: getValues("family_relationship"),
+        phone: getValues("phone"),
+        rg: getValues("rg"),
+        uf: getValues("uf"),
+        cpf: getValues("cpf"),
+      },
+    } as Partial<StudentInscriptionDTO>);
   }
 
   return (
@@ -255,7 +277,7 @@ export function PartnerPrepInscriptionStep3({
         onChange={(e: any) => handleCPFChange(e.target.value)}
       />
       <div className="flex flex-col sm:flex-row gap-4">
-        <Button type="button" onClick={handleBack}>
+        <Button type="button" onClick={handleBackStep}>
           Voltar
         </Button>
         <Button type="submit">Continuar</Button>

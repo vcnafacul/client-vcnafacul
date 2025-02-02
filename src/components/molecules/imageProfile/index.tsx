@@ -14,7 +14,7 @@ function ImageProfile({src, onChange, deleteImage} : DropdwonMenuProps){
        <>
         <div className='relative m-4'>
             <div className='border border-zinc-600 rounded-full'>
-                {src ? <img className='w-40 h-40 rounded-full relative ' src={src} /> : 
+                {src ? <img className='w-40 h-40 rounded-full relative object-cover' src={src} /> : 
                 <div className='w-40 h-40 rounded-full bg-zinc-300 flex justify-center items-center'>
                     <PreviewIcon className='w-20 h-20' /></div>}
             </div>

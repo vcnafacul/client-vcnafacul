@@ -19,11 +19,17 @@ import "./styles.css";
 
 addLocale("pt-br", { ...ptBr["pt-br"] });
 
+interface PartnerPrepInscriptionStep1Props extends EachStepProps {
+  updateData?: (
+      data: Partial<StudentInscriptionDTO>
+    ) => void;
+}
+
 export function PartnerPrepInscriptionStep1({
   description,
   updateData,
   currentData,
-}: EachStepProps) {
+}: PartnerPrepInscriptionStep1Props) {
   const [cpf, setCPF] = useState<string>(currentData?.cpf || "");
 
   const [whatsapp, setWhatsapp] = useState<string>(
@@ -126,6 +132,21 @@ export function PartnerPrepInscriptionStep1({
     register("urgencyPhone");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (currentData) {
+      setValue("firstName", currentData.firstName || "");
+      setValue("lastName", currentData.lastName || "");
+      setValue("socialName", currentData.socialName || "");
+      setValue("email", currentData.email || "");
+      setValue("whatsapp", phoneMask(currentData.whatsapp) || "");
+      setValue("urgencyPhone", phoneMask(currentData.urgencyPhone) || "");
+      setValue("birthday", currentData.birthday || new Date());
+      setValue("rg", currentData.rg || "");
+      setValue("cpf", currentData.cpf || "");
+      setValue("uf", currentData?.uf || "");
+    }
+  }, [currentData]);
 
   function handleForm(data: Partial<StudentInscriptionDTO>) {
     if (data.rg?.length === 0) {
