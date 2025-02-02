@@ -32,6 +32,7 @@ function Account() {
 
   const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
   const [imagePreview, setImagePreview] = useState<any>(null);
+  const [file, setFile] = useState<any>(null);
 
   const schema = yup
     .object()
@@ -136,6 +137,7 @@ function Account() {
       toast.warn("O arquivo pode ter no máximo 1mb", { theme: "dark" });
     } else {
       previewImage(file);
+      setFile(file);
     }
   };
 
@@ -212,8 +214,8 @@ function Account() {
           autoClose: 3000,
         });
       });
-    if (imagePreview) {
-      uploadingImagem(imagePreview);
+    if (file) {
+      uploadingImagem(file);
     }
   };
 
