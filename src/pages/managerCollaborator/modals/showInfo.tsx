@@ -28,28 +28,41 @@ export function ShowInfo({
     collaborator.description
   );
   const [loading, setLoading] = useState<string>("Atualizar");
+  const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
 
   return (
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white p-2 rounded-md"
+      className="bg-white p-4 rounded-md"
     >
-      <div className=" p-4 rounded md:min-w-[700px] overflow-y-auto scrollbar-hide h-4/5 sm:h-fit">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 ">
-          <PropValue
-            prop="Name"
-            value={`${collaborator.user.firstName} ${collaborator.user.lastName}`}
-          />
-          <div className="bg-zinc-800 p-2 rounded shadow-md shadow-gray-300">
-            <PropValue
-              prop="Permissão"
-              value={"Ajustar"}
-              className="text-white"
+      <div className="p-4 rounded-md overflow-y-auto scrollbar-hide h-4/5 sm:h-fit">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
+          <div>
+            <img
+              className="w-40 h-40 rounded-full object-cover shadow-md"
+              src={VITE_FTP_PROFILE + collaborator.photo}
+              alt={collaborator.user.firstName}
             />
           </div>
-          <PropValue prop="Email" value={collaborator.user.email} />
-          <PropValue prop="Telefone" value={collaborator.user.phone} />
+          <div className="flex flex-col gap-2 w-full">
+            <div className="bg-zinc-800 p-2 rounded shadow-md">
+              <PropValue
+                prop="Permissão"
+                value="Ajustar"
+                className="text-white"
+              />
+            </div>
+            <PropValue
+              prop="Nome"
+              value={`${collaborator.user.firstName} ${collaborator.user.lastName}`}
+            />
+            <PropValue prop="Email" value={collaborator.user.email} />
+            <PropValue prop="Telefone" value={collaborator.user.phone} />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
           <div className="sm:col-start-2 md:justify-self-end">
             <PropValue
               prop="Ativo"
@@ -59,9 +72,7 @@ export function ShowInfo({
                   checked={actived}
                   handleCheck={() => {
                     handleActive(collaborator.id)
-                      .then(() => {
-                        setActived(!actived);
-                      })
+                      .then(() => setActived(!actived))
                       .catch((e) => toast.error(e.message));
                   }}
                 />
@@ -75,8 +86,9 @@ export function ShowInfo({
               type="text"
               value={description}
               className="h-12 flex-1"
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onChange={(e: any) => setDescription(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setDescription(e.target.value)
+              }
             />
             <Button
               onClick={() => {
@@ -93,7 +105,7 @@ export function ShowInfo({
           </div>
           <div className="col-span-1 sm:col-span-2 bg-zinc-200 p-2 rounded shadow-md shadow-zinc-300">
             <PropValue
-              prop="Ultimo Acesso"
+              prop="Último Acesso"
               value={formatDate(collaborator.lastAccess?.toString())}
             />
           </div>
