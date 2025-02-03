@@ -49,10 +49,10 @@ export default function SendQuest({
 
   return (
     <div className="max-w-5xl w-full mx-auto p-6 space-y-8 bg-white shadow-md rounded-lg">
-      {/* Áreas de Interesse */}
+      {/* Áreas com mais dificuldades */}
       <section className="space-y-4">
         <h3 className="text-lg font-semibold text-emerald-600 border-l-4 border-emerald-500 pl-4">
-          Áreas de Interesse
+          Áreas com mais dificuldades
         </h3>
         <p className="text-gray-600 text-sm">
           Nos ajude a entender melhor suas expectativas. Assinale abaixo as
