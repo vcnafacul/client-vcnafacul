@@ -1,24 +1,38 @@
-import { studentCourse } from "@/services/urls";
+import { declaredInterest as url } from "@/services/urls";
 
 export async function declaredInterest(
-  studentId: string,
+  files: File[], // Lista de arquivos a serem enviados
+  photo: File, // Foto da carteirinha
   areaInterest: string[],
-  selectedCourses: string[],
-  token: string
+  selectedCursos: string[],
+  token: string // Token de autenticação
 ) {
-  const response = await fetch(`${studentCourse}/declared-interest`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ studentId, areaInterest, selectedCourses }),
+  // Criação de FormData para anexar os arquivos
+  const formData = new FormData();
+  files.forEach((file) => {
+    formData.append("files", file);
   });
-  if (response.status === 500) {
+
+  formData.append("photo", photo);
+
+  areaInterest.forEach((interest) => {
+    formData.append("areaInterest", interest);
+  });
+
+  selectedCursos.forEach((course) => {
+    formData.append("selectedCourses", course);
+  });
+  // Envio da requisição
+  const response = await fetch(url, {
+    method: "PATCH", // Método HTTP para upload
+    headers: {
+      Authorization: `Bearer ${token}`, // Cabeçalho com o token JWT
+    },
+    body: formData, // Corpo da requisição com os arquivos
+  });
+
+  // Verificação do status da resposta
+  if (response.status !== 200) {
     throw new Error(`Ops, ocorreu um problema na requisição. Tente novamente!`);
-  }
-  if ([400, 404].includes(response.status)) {
-    const res = await response.json();
-    throw new Error(res.message);
   }
 }
