@@ -8,9 +8,7 @@ import Button from "@/components/molecules/button";
 import MapBox from "@/components/molecules/mapBox";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
-import ModalTemplate, {
-  ModalProps,
-} from "@/components/templates/modalTemplate";
+import { ModalProps } from "@/components/templates/modalTemplate";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import {
   UpdateGeolocation,
@@ -25,14 +23,8 @@ import { LatLngTuple } from "leaflet";
 import { useForm } from "react-hook-form";
 import { Marker, useMapEvents } from "react-leaflet";
 import { toast } from "react-toastify";
-import {
-  prepCourseInfo,
-  prepCourseRegistred,
-  prepCourseUpdated,
-} from "../../data";
+import { prepCourseInfo } from "../../data";
 import { PrepCourseInfo } from "./Fields/prepCourseInfo";
-import { PrepCourseRegistred } from "./Fields/prepCourseRegistred";
-import { PrepCourseUpdated } from "./Fields/prepCourseUpdated";
 
 import { Checkbox, CheckboxProps } from "@/components/atoms/checkbox";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -48,7 +40,6 @@ interface ModalEditDashGeoProps extends ModalProps {
 function ModalEditDashGeo({
   geo,
   handleClose,
-  isOpen,
   updateStatus,
   updateGeo,
 }: ModalEditDashGeoProps) {
@@ -376,23 +367,14 @@ function ModalEditDashGeo({
     }
   }, [geo]);
 
-  const className =
-    "p-4 relative flex flex-col w-fit min-h-[56vh] max-h-[93vh] bg-white rounded-r-md rounded-b-md";
-
   return (
-    <ModalTemplate
-      handleClose={handleClose!}
-      isOpen={isOpen}
-      outSideClose
-      className={className}
-    >
+    <div >
       <form
-        className="bg-white w-full max-w-6xl h-full overflow-y-auto scrollbar-hide 
-        grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 md:grid-rows-3 gap-x-4"
+        className="flex flex-col md:flex-row gap-4 "
         onSubmit={handleSubmit(UpdateGeo)}
       >
+        <div className="w-full">
         <input {...register("id")} className="hidden" />
-        <div className="h-full col-span-1 row-start-1 sm:col-span-2">
           <Text
             className="flex w-full justify-center gap-4 
             items-center"
@@ -409,21 +391,7 @@ function ModalEditDashGeo({
           />
           <div className="bg-red"></div>
         </div>
-        <div className="flex flex-col gap-4 sm:flex-row w-[90vw] md:flex-col md:w-full">
-          <div className="flex-1">
-            <Text size="secondary" className="md:text-xl">
-              Cadastrado Por
-            </Text>
-            <PrepCourseRegistred form={prepCourseRegistred} geo={geo} />
-          </div>
-          <div className="flex-1">
-            <Text size="secondary" className="md:text-xl">
-              Última Edição Por
-            </Text>
-            <PrepCourseUpdated form={prepCourseUpdated} geo={geo} />
-          </div>
-        </div>
-        <div className="sm:col-span-2 sm:row-start-3 md:col-span-1 md:row-start-1 md:col-start-4">
+        <div className="max-w-[30vw] w-full">
           <Text size="secondary">Endereço do Cursinho</Text>
           <MapBox
             className="h-80 border border-gray-300 z-0"
@@ -469,7 +437,7 @@ function ModalEditDashGeo({
       </form>
       <ModalRefused />
       <ModalComeBack />
-    </ModalTemplate>
+    </div>
   );
 }
 export default ModalEditDashGeo;
