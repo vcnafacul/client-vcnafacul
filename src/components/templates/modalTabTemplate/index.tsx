@@ -15,8 +15,8 @@ interface ModalTabTemplateProps {
 
 function ModalTabTemplate({ tabs, isOpen, className }: ModalTabTemplateProps) {
   return !isOpen ? null : (
-    <div className="fixed top-0 left-0 z-50 bg-black/50 w-screen h-screen flex justify-center items-center">
-      <div className="w-full h-full flex justify-center items-center">
+    <div className="fixed top-0 left-0 z-50 bg-black/50 w-screen h-screen flex justify-center items-center overflow-y-auto scrollbar-hide">
+      <div className="w-full h-full flex justify-center items-center ">
         <Tabs defaultValue={tabs[0].id}>
           <TabsList className="grid w-full grid-cols-2">
             {tabs.map((tab) => (

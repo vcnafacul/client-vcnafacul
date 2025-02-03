@@ -14,7 +14,7 @@ export default function SendPhoto({ onSubmit, back, photo }: Props) {
   const [photoError, setPhotoError] = useState<string | null>(null); // Erro ao carregar a foto
 
   const handlePreview = (file: File) => {
-    const maxSizeInMB = 1;
+    const maxSizeInMB = 2;
     if (file.size > maxSizeInMB * 1024 * 1024) {
       setPhotoError(`O arquivo excede o tamanho máximo de ${maxSizeInMB}MB.`);
       setPhotoPreview(null);
@@ -92,7 +92,7 @@ export default function SendPhoto({ onSubmit, back, photo }: Props) {
             </div>
           )}
           {photoError && (
-            <p className="text-red-500 text-sm mt-2">{photoError}</p>
+            <p className="text-red font-semibold text-sm mt-2">{photoError}</p>
           )}
         </div>
       </div>

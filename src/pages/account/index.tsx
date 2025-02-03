@@ -32,6 +32,8 @@ function Account() {
 
   const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
   const [imagePreview, setImagePreview] = useState<any>(null);
+  const [file, setFile] = useState<any>(null);
+  const [sended, setSended] = useState<boolean>(false);
 
   const schema = yup
     .object()
@@ -136,14 +138,15 @@ function Account() {
       toast.warn("O arquivo pode ter no máximo 1mb", { theme: "dark" });
     } else {
       previewImage(file);
+      setFile(file);
     }
   };
 
-  const uploadingImagem = (file: any) => {
+  const uploadingImagem = async (file: any) => {
     const id = toast.loading("Upload de Imagem de Perfil Colaborador ... ");
     const formData = new FormData();
     formData.append("file", file!);
-    changeImageProfileCollaborator(formData, token)
+    await changeImageProfileCollaborator(formData, token)
       .then((fileName) => {
         toast.update(id, {
           render: `Upload feito com sucesso`,
@@ -183,20 +186,10 @@ function Account() {
     setTryDelete(false);
   };
 
-  const update = (data: any) => {
-    const authUpdate: AuthUpdate = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      birthday: data.birthday,
-      city: data.city,
-      state: data.state,
-      phone: data.phone,
-      gender: parseInt(data.gender) as Gender,
-      about: data.about,
-    };
+  const updateData = (authUpdate: AuthUpdate) => {
     const id = toast.loading("Atualizando Informações Usuário ... ");
     updateUser(token, authUpdate)
-      .then((_) => {
+      .then(async (_) => {
         toast.update(id, {
           render: `Atualização feita com sucesso`,
           type: "success",
@@ -211,9 +204,30 @@ function Account() {
           isLoading: false,
           autoClose: 3000,
         });
+      })
+      .finally(() => {
+        setSended(false);
       });
-    if (imagePreview) {
-      uploadingImagem(imagePreview);
+  }
+
+  const update = (data: any) => {
+    setSended(true);
+    const authUpdate: AuthUpdate = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      birthday: data.birthday,
+      city: data.city,
+      state: data.state,
+      phone: data.phone,
+      gender: parseInt(data.gender) as Gender,
+      about: data.about,
+    };
+    if (file) {
+      uploadingImagem(file).then(() => {
+        updateData(authUpdate);
+      });
+    } else {
+      updateData(authUpdate);
     }
   };
 
@@ -287,8 +301,10 @@ function Account() {
                 register={register}
                 errors={errors}
               />
-              <div className="w-60 self-start">
-                <Button type="submit">Atualizar</Button>
+              <div className="self-end">
+                <Button disabled={sended} type="submit" size="small">
+                  Salvar
+                </Button>
               </div>
             </form>
           </div>
