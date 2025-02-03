@@ -20,7 +20,7 @@ export function InputText({ ...props }: InputProps) {
   }
 
   return (
-    <div className="w-full">
+    <div className="relative">
       <Input
         {...props}
         className={`h-16 pt-4 focus-visible:ring-orange ${props.className}`}

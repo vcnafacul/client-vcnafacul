@@ -18,7 +18,7 @@ interface Props {
 export function PrepCourseInfo({ form, setValue, errors, edit, geo }: Props) {
   return (
     <div
-      className="flex flex-col flex-wrap w-full 
+      className="grid grid-cols-1 sm:grid-cols-2 items-center 
       h-full sm:h-[729px] gap-x-4 px-1"
     >
       <InputFactory

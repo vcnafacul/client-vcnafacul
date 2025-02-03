@@ -1,3 +1,5 @@
+import { ShadcnTable } from "@/components/atoms/shadcnTable";
+import ModalTabTemplate from "@/components/templates/modalTabTemplate";
 import { useCallback, useEffect, useState } from "react";
 import { FilterProps } from "../../components/atoms/filter";
 import { SelectProps } from "../../components/atoms/select";
@@ -62,12 +64,46 @@ function DashGeo() {
 
   const ModalEdit = () => {
     return !openModal ? null : (
-      <ModalEditDashGeo
-        geo={geoSelect!}
-        updateStatus={updateStatus}
-        updateGeo={updateGeolocation}
-        handleClose={handleCloseModalEdit}
+      <ModalTabTemplate
         isOpen={openModal}
+        className="p-8 rounded-md  relative h-[90vh] w-[90vw] overflow-y-auto scrollbar-hide"
+        tabs={[
+          {
+            label: "Detalhes",
+            id: "detalhes",
+            children: (
+              <ModalEditDashGeo
+                geo={geoSelect!}
+                updateStatus={updateStatus}
+                updateGeo={updateGeolocation}
+                isOpen={openModal}
+                handleClose={handleCloseModalEdit}
+              />
+            ),
+            handleClose: handleCloseModalEdit,
+          },
+          {
+            label: "Historico",
+            id: "historico",
+            children: (
+              <div>
+                <ShadcnTable
+                  headers={["Data", "Status", "Descrição", "Usuario", "Email"]}
+                  cells={
+                    geoSelect!.logs?.map((log) => [
+                      formatDate(log?.createdAt?.toString()),
+                      log?.status,
+                      log?.description,
+                      log?.user?.firstName + " " + log?.user?.lastName,
+                      log?.user?.email,
+                    ]) || []
+                  }
+                />
+              </div>
+            ),
+            handleClose: handleCloseModalEdit,
+          },
+        ]}
       />
     );
   };
@@ -76,6 +112,7 @@ function DashGeo() {
     async (status: StatusEnum, text: string) => {
       getAllGeolocation(status, 1, limitCards, text)
         .then((res) => {
+          console.log(res);
           setGeolocations(res.data);
         })
         .catch(() => setGeolocations([]));
