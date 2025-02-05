@@ -7,10 +7,12 @@ import { confirmEnrolled } from "@/services/prepCourse/student/confirmEnrolled";
 import { rejectStudent } from "@/services/prepCourse/student/rejectStudent";
 import { resetStudent } from "@/services/prepCourse/student/resetStudent";
 import { scheduleEnrolled } from "@/services/prepCourse/student/scheduleEnrolled";
+import { sendEmailDeclarationInterest } from "@/services/prepCourse/student/sendEmailDeclarationInterest";
 import { updateSelectEnrolledInfo } from "@/services/prepCourse/student/updateEnrolledInfo";
 import { updateIsFreeInfo } from "@/services/prepCourse/student/updateIsFreeInfo";
 import { useAuthStore } from "@/store/auth";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
+import { capitalizeWords } from "@/utils/capitalizeWords";
 import { IconButton } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
@@ -19,7 +21,7 @@ import { useCallback, useEffect, useState } from "react";
 import { BsEnvelopeArrowDownFill, BsEnvelopeArrowUpFill } from "react-icons/bs";
 import { FaCheck, FaSyncAlt } from "react-icons/fa";
 import { IoClose, IoEyeSharp } from "react-icons/io5";
-import { MdTimerOff } from "react-icons/md";
+import { MdEmail, MdTimerOff } from "react-icons/md";
 import { PiTimerFill } from "react-icons/pi";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -32,7 +34,6 @@ import { Statistic } from "./modal/statistic";
 import { ScheduleCallEnrolle } from "./scheduleCallEnrolled";
 import { TableInfo } from "./tableInfo";
 import { WaitingList } from "./waitingList";
-import { capitalizeWords } from "@/utils/capitalizeWords";
 
 enum Bool {
   Yes = "Sim",
@@ -217,6 +218,27 @@ export function PartnerPrepInscritionStudentManager() {
     });
   };
 
+  const handleSendEmailDeclaredInterest = (studentId: string) => {
+    const id = toast.loading("Enviando Email...");
+    sendEmailDeclarationInterest(studentId, token)
+      .then(() => {
+        toast.update(id, {
+          render: "Email enviado com sucesso",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      })
+      .catch((err) => {
+        toast.update(id, {
+          render: err.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      });
+  };
+
   function shouldProcessApplication(
     status: StatusApplication,
     startDate: Date | null,
@@ -279,7 +301,9 @@ export function PartnerPrepInscritionStudentManager() {
         handleConfirm={(message) =>
           handleIndeferir(studentSelected!.id, message!)
         }
-        text={`Por favor, informe o motivo do indeferimento da matrícula de ${capitalizeWords(studentSelected?.nome + " " + studentSelected?.sobrenome)}.`}
+        text={`Por favor, informe o motivo do indeferimento da matrícula de ${capitalizeWords(
+          studentSelected?.nome + " " + studentSelected?.sobrenome
+        )}.`}
         className="bg-white p-4 rounded-md w-[512px]"
       />
     );
@@ -446,6 +470,21 @@ export function PartnerPrepInscritionStudentManager() {
               <Reset className="h-6 w-6 fill-red/70 hover:fill-red" />
             </ActionButton>
           )}
+          {params.row.status === StatusApplication.CalledForEnrollment &&
+            !params.row.sended_email_recently &&
+            params.row.data_convocacao &&
+             new Date() >= params.row.data_convocacao && (
+              <ActionButton
+                titleAlert={`Confirmação de Matrícula ${params.row.nome} ${params.row.sobrenome}`}
+                descriptionAlert={`Realizar a  confirmação de matrícula de  ${params.row.nome} ${params.row.sobrenome}`}
+                onConfirm={() => {
+                  handleSendEmailDeclaredInterest(params.row.id);
+                }}
+                tooltipTitle="Reenviar email de convocação"
+              >
+                <MdEmail className="h-6 w-6 fill-sky-500 opacity-60 hover:opacity-100" />
+              </ActionButton>
+            )}
         </div>
       ),
     },

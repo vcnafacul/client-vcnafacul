@@ -20,6 +20,5 @@ export async function getVolunteers(): Promise<Volunteer[]> {
     image: col.image,
     alt: `foto colaborador ${col.name}`,
   }));
-  console.log(volunteers);
   return volunteers;
 }

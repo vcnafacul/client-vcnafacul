@@ -58,6 +58,7 @@ export interface StudentCourseFullDtoInput extends StudentCourseFull {
   documents: Documents[];
   data_convocacao: string | null;
   data_limite_convocacao: string | null;
+  sended_email_recently: boolean;
 }
 
 export interface XLSXStudentCourseFull extends StudentCourseFull {
