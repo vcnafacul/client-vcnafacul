@@ -81,6 +81,9 @@ function Supporters() {
           {volunteer.description?.substring(0, 30) +
             `${volunteer.description?.length > 30 ? " ..." : ""}`}
         </p>
+          <p className="font-thin text-marine text-base">
+            {`${volunteer.actived ? "" : "Ex-membro"}`}
+          </p>
       </div>
     ));
 
