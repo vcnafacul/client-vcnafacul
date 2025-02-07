@@ -1,6 +1,5 @@
 import React, { ComponentProps } from "react";
 import { IoMdClose } from "react-icons/io";
-import OutsideClickHandler from "react-outside-click-handler";
 
 export interface ModalProps {
   handleClose?: () => void;
@@ -8,7 +7,6 @@ export interface ModalProps {
 
 interface ModalTemplateProps extends ComponentProps<"div"> {
   children: React.ReactNode;
-  outSideClose?: boolean;
   isOpen: boolean;
   handleClose: () => void;
   className?: string;
@@ -17,7 +15,6 @@ interface ModalTemplateProps extends ComponentProps<"div"> {
 function ModalTemplate({
   children,
   handleClose,
-  outSideClose = false,
   isOpen,
   className,
   ...props
@@ -29,33 +26,15 @@ function ModalTemplate({
       {...props}
     >
       <div className="w-full h-full flex justify-center items-center p-1">
-        {outSideClose ? (
-          <OutsideClickHandler
-            onOutsideClick={() => {
-              handleClose!();
-            }}
-          >
-            <div className={className}>
-              <div className="flex justify-end">
-                <IoMdClose
-                  onClick={handleClose}
-                  className="self-end md:mt-0 cursor-pointer w-6 h-6"
-                />
-              </div>
-              {children}
-            </div>
-          </OutsideClickHandler>
-        ) : (
-          <div className={className}>
-            <div className="flex justify-end">
-              <IoMdClose
-                onClick={handleClose}
-                className="self-end md:mt-0 cursor-pointer w-6 h-6"
-              />
-            </div>
-            {children}
+        <div className={className}>
+          <div className="flex justify-end">
+            <IoMdClose
+              onClick={handleClose}
+              className="self-end md:mt-0 cursor-pointer w-6 h-6"
+            />
           </div>
-        )}
+          {children}
+        </div>
       </div>
     </div>
   );
