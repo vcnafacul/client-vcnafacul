@@ -79,7 +79,6 @@ function ModalEditNew({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      outSideClose
       className="w-full max-w-6xl bg-white p-4 rounded-md"
     >
       

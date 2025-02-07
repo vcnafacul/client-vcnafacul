@@ -168,7 +168,6 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose!}
-      outSideClose
       className="bg-white rounded-md p-4"
     >
       <div className="w-full">

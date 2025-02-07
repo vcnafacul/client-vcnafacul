@@ -22,7 +22,6 @@ function ShowProva({ prova, isOpen, handleClose }: ShowProvaProps) {
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      outSideClose
       className="w-full rounded-md bg-white p-4"
     >
       <div className="flex flex-col items-start">
