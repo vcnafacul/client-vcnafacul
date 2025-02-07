@@ -573,7 +573,7 @@ export const about_us: AboutUsProps = {
 
 export const supporters: SupportersProps = {
   title: "Nossos apoiadores!",
-  subtitle: "Pessoas e empresas que sonharam com a gente",
+  subtitle: "Pessoas, cursinhos e empresas que sonham com a gente",
   sponsors: [
     {
       Patrocinador_id: {
