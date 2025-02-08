@@ -111,6 +111,7 @@ function Action() {
             (area) => area.Home_Action_Area_id.title
           )}
           changeItem={changeItem}
+          activetab={0}
         />
       </div>
       {cardsItems()}
