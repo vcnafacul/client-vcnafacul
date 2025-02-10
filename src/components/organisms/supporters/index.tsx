@@ -117,7 +117,7 @@ function Supporters() {
           <Text size="tertiary">{supporters!.subtitle}</Text>
         </div>
         {volunteers.length > 0 ? (
-          <Selector tabItems={tabItems} changeItem={changeTab} activetab={tab} />
+          <Selector tabItems={tabItems} changeItem={changeTab} activeTab={tab} />
         ) : (
           <></>
         )}
