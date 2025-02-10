@@ -46,7 +46,7 @@ function Features() {
           tabItems={features?.items.map(
             (item) => item.Home_Features_Item_id.title
           )}
-          activetab={0}
+          activeTab={0}
         />
         <img
           className="object-cover object-center flex-grow-0 w-full max-w-[653px] md:h-auto 

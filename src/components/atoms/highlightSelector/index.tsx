@@ -4,11 +4,11 @@ interface Props {
     items: string[];
     changeItem: (index: number) => void;
     className?: string;
-    activetab: number;
+    activeTab: number;
 }
 
-function HighlightSelector ( {items, changeItem, className, activetab } : Props) {
-    const [activePosition, setActivePosition] = useState(activetab);
+function HighlightSelector ( {items, changeItem, className, activeTab } : Props) {
+    const [activePosition, setActivePosition] = useState(activeTab);
 
     function IElements() {
         let cssClass = null;
