@@ -50,7 +50,7 @@ function RegisterForm({ title, titleSuccess, onRegister }: Props) {
             next={nextStep}
             back={() => setStep(FormStep.STEP_EMAIL_PASSWORD)}
           />
-        );        
+        );
       default:
         return <Success email={dataUser.email} />
     }
