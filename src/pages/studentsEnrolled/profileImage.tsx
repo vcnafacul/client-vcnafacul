@@ -1,4 +1,3 @@
-import imageSrc from "@/assets/08b4ed7d-9b91-4ca2-a4bb-990c601e56cb.jpg";
 import { getProfilePhoto } from "@/services/prepCourse/student/getProfilePhoto";
 import { useAuthStore } from "@/store/auth";
 import { useEffect, useState } from "react";
@@ -35,9 +34,13 @@ const ProfileImage = ({ photo }: { photo: string }) => {
   }, []);
 
   return (
-    <div className="w-52 h-72 rounded-lg overflow-hidden object-cover">
+    <div className="w-52 h-72 rounded-lg overflow-hidden">
       {imageSrc ? (
-        <img src={imageSrc} alt="Foto de perfil" />
+        <img
+          src={imageSrc}
+          alt="Foto de perfil"
+          className="w-full h-full object-cover"
+        />
       ) : (
         <p>Carregando...</p>
       )}
