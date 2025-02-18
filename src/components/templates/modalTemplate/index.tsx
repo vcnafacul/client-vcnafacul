@@ -21,7 +21,7 @@ function ModalTemplate({
 }: ModalTemplateProps) {
   return !isOpen ? null : (
     <div
-      className="fixed top-0 left-0 z-50 bg-black/80 w-screen h-screen overflow-y-auto 
+      className="fixed top-0 left-0 z-50 bg-black/65 w-screen h-screen overflow-y-auto 
         scrollbar-hide"
       {...props}
     >

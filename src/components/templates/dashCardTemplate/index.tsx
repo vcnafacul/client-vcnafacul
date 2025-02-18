@@ -67,7 +67,7 @@ function DashCardTemplate({
   const indexLastCardInView = entities.length - gapBeforeLast;
 
   return (
-    <div className="w-full flex flex-col py-4">
+    <div className="w-full flex flex-col py-4 select-none">
       <div className="relative flex flex-col items-center w-full mt-4">
         <div className=" flex flex-col-reverse items-center gap-2 mt-4 sm:mt-0">
           <Text className="self-center" size="secondary">

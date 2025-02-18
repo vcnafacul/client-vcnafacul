@@ -1,5 +1,8 @@
 import { ConfirmEnrolled } from "@/pages/confirmEnrolled";
 import InviteMemberProcessing from "@/pages/inviteMemberProcessing";
+import ManagerCollaborator from "@/pages/managerCollaborator";
+import { PartnerClass } from "@/pages/partnerClass";
+import { PartnerClassWithStudents } from "@/pages/partnerClassWithStudents";
 import { PartnerPrepInscriptionManager } from "@/pages/partnerPrepInscriptionManager";
 import { PartnerPrepInscritionStudentManager } from "@/pages/partnerPrepInscritionStudentManager";
 import { Navigate, Route, Routes } from "react-router-dom";
@@ -55,6 +58,8 @@ import {
   LOGOFF_PATH,
   MANAGER_COLLABORATOR,
   NEWS,
+  PARTNER_CLASS,
+  PARTNER_CLASS_STUDENTS,
   PARTNER_PREP,
   PARTNER_PREP_INSCRIPTION,
   REGISTER_PATH,
@@ -66,7 +71,7 @@ import {
 } from "./path";
 import ProtectedRoute from "./protectedRoute";
 import ProtectedRoutePermission from "./protectedRoutePermission";
-import ManagerCollaborator from "@/pages/managerCollaborator";
+import { StudentsEnrolled } from "@/pages/studentsEnrolled";
 
 export function PlatformRoutes() {
   const { data } = useAuthStore();
@@ -119,13 +124,19 @@ export function PlatformRoutes() {
           path={PARTNER_PREP_INSCRIPTION}
           element={<PartnerPrepInscriptionManager />}
         />
-        <Route
-          path={MANAGER_COLLABORATOR}
-          element={<ManagerCollaborator />}
-        />
+        <Route path={MANAGER_COLLABORATOR} element={<ManagerCollaborator />} />
+        <Route path={PARTNER_CLASS} element={<PartnerClass />} />
         <Route
           path={`${PARTNER_PREP_INSCRIPTION}/:inscriptionId`}
           element={<PartnerPrepInscritionStudentManager />}
+        />
+        <Route
+          path={`${PARTNER_CLASS}/:hashPrepCourse`}
+          element={<PartnerClassWithStudents />}
+        />
+        <Route
+          path={PARTNER_CLASS_STUDENTS}
+          element={<StudentsEnrolled />}
         />
         <Route path={DASH} element={<Dash />} />
         <Route path={SIMULADO} element={<MainSimulate />} />

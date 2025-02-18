@@ -10,6 +10,7 @@ export interface BaseLayoutInputPros {
         (FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined)[]
       >
     | undefined;
+  rows?: number;
 }
 
 export function BaseLayoutInput({

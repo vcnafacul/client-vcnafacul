@@ -27,7 +27,7 @@ export function SimulationHistories() {
   const {
     data: { token },
   } = useAuthStore();
-  const limitCards = 40;
+  const limitCards = 100;
 
   const navigate = useNavigate();
 

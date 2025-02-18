@@ -27,7 +27,7 @@ function DashRoles() {
   const [newRole, setnewRole] = useState<boolean>(false);
   const [filterText, setFilterText] = useState<string>("");
   const dataRef = useRef<UserRole[]>([]);
-  const limitCards = 40;
+  const limitCards = 100;
 
   const {
     data: { token },

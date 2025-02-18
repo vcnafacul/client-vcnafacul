@@ -14,6 +14,7 @@ export enum Roles {
   gerenciadorDemanda = "gerenciadorDemanda",
   gerenciarProcessoSeletivo = "gerenciarProcessoSeletivo",
   gerenciarColaboradores = "gerenciarColaboradores",
+  gerenciarTurmas = "gerenciarTurmas",
 }
 
 export const RolesLabel = [
@@ -38,4 +39,5 @@ export const RolesLabel = [
     value: Roles.gerenciarColaboradores,
     label: "Gerenciar Colaboradores",
   },
+  { value: Roles.gerenciarTurmas, label: "Gerenciar Turmas" },
 ];
