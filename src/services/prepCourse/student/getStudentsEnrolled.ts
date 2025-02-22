@@ -48,9 +48,9 @@ export async function getStudentsEnrolled(
         birthday: new Date(student.birthday),
         age: calculeAge(new Date(student.birthday)),
       })),
-      page: res.page,
-      limit: res.limit,
-      totalItems: res.totalItems,
+      page: res.students.page,
+      limit: res.students.limit,
+      totalItems: res.students.totalItems,
     },
   };
 }

@@ -1,4 +1,5 @@
 import Text from "@/components/atoms/text";
+import Button from "@/components/molecules/button";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
@@ -13,25 +14,29 @@ import { IconButton } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
-import { FaCheck } from "react-icons/fa";
+import { useCallback, useEffect, useState } from "react";
+import { FaAddressCard, FaCheck } from "react-icons/fa";
 import { IoClose, IoEyeSharp } from "react-icons/io5";
 import { MdClass } from "react-icons/md";
 import { toast } from "react-toastify";
 import { InfoStudentEnrolledModal } from "./modals/infoStudentEnrolledModal";
+import { PrinterStudentCards } from "./modals/printerStudentCards";
 import { UpdateStudentClassModal } from "./modals/updateStudentClassModal";
 
 export function StudentsEnrolled() {
   const [name, setName] = useState<string>("");
   const [students, setStudents] = useState<StudentsDtoOutput[]>([]);
   const [limit, setLimit] = useState<number>(100);
+  const [totalItems, setTotalItems] = useState<number>(100);
   const [openModalInfo, setOpenModalInfo] = useState(false);
   const [openModalReject, setOpenModalReject] = useState(false);
   const [confirmEnrolled, setConfirmEnrolled] = useState(false);
   const [openUpdateClass, setOpenUpdateClass] = useState(false);
+  const [openStudentCards, setOpenStudentCards] = useState(false);
   const [studentSelected, setStudentSelected] = useState<StudentsDtoOutput>(
     {} as StudentsDtoOutput
   );
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   const {
     data: { token },
@@ -51,6 +56,8 @@ export function StudentsEnrolled() {
     getStudentsEnrolled(token, page, limit)
       .then((res) => {
         setName(res.name);
+        console.log(res.students);
+        setTotalItems(res.students.totalItems);
         setStudents(res.students.data);
       })
       .catch((err) => {
@@ -207,6 +214,16 @@ export function StudentsEnrolled() {
     ) : null;
   };
 
+  const ModalStudentCards = () => {
+    return openStudentCards ? (
+      <PrinterStudentCards
+        isOpen={openStudentCards}
+        handleClose={() => setOpenStudentCards(false)}
+        entities={students.filter((s) => selectedRows.includes(s.id))}
+      />
+    ) : null;
+  };
+
   const columns: GridColDef[] = [
     {
       field: "actions",
@@ -290,8 +307,8 @@ export function StudentsEnrolled() {
     {
       field: "class",
       headerName: "Turma",
-      minWidth: 270,
-      flex: 1,
+      minWidth: 100,
+      width: 100,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       valueGetter: (params) => (params as any).name || "Sem Turma",
     },
@@ -299,13 +316,11 @@ export function StudentsEnrolled() {
       field: "email",
       headerName: "Email",
       minWidth: 270,
-      flex: 1,
     },
     {
       field: "name",
       headerName: "Nome",
       minWidth: 200,
-      flex: 1,
     },
     {
       field: "applicationStatus",
@@ -333,24 +348,46 @@ export function StudentsEnrolled() {
     getEnrolle(1, limit);
   }, [limit]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleSelectionChange = useCallback((selectionModel: any) => {
+    setSelectedRows(selectionModel);
+  }, []);
+
   return (
     <div className="flex flex-col justify-center items-center pt-4 gap-4">
       <div className="w-full px-4">
         <h1 className="text-3xl font-bold text-center text-marine">{name}</h1>
       </div>
+      <div className="w-full px-4">
+        <Button
+          onClick={() => setOpenStudentCards(true)}
+          size="small"
+          className="bg-red border-none flex gap-2 items-center hover:bg-red"
+          disabled={selectedRows.length === 0}
+        >
+          <div className="flex gap-2 items-center justify-center">
+            <FaAddressCard className="w-5 h-5" /> Carteirinhas
+          </div>
+        </Button>
+      </div>
       <Paper sx={{ height: "100%", width: "100%" }}>
         <DataGrid
           rows={students}
           columns={columns}
-          rowCount={students.length}
+          rowCount={totalItems}
           paginationMode="server"
           initialState={{ pagination: { paginationModel } }}
           rowHeight={40}
           disableRowSelectionOnClick
+          checkboxSelection
+          rowSelectionModel={selectedRows}
+          onRowSelectionModelChange={handleSelectionChange}
           pageSizeOptions={[5, 10, 15, 30, 50, 100]}
-          onPaginationModelChange={(newPageSize) =>
-            setLimit(newPageSize.pageSize)
-          }
+          onPaginationModelChange={(newPageSize) => {
+            console.log(newPageSize);
+            setLimit(newPageSize.pageSize);
+            getEnrolle(newPageSize.page + 1, newPageSize.pageSize);
+          }}
           sx={{ border: 0 }}
         />
       </Paper>
@@ -358,6 +395,7 @@ export function StudentsEnrolled() {
       <ModalReject />
       <ModalConfirm />
       <ModalUpdateClass />
+      <ModalStudentCards />
     </div>
   );
 }

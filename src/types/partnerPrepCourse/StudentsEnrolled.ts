@@ -10,6 +10,7 @@ export interface GetEnrolledDtoOutput {
 export interface StudentsDtoOutput {
   id: string;
   name: string;
+  socialName?: string;
   email: string;
   whatsapp: string;
   urgencyPhone?: string;

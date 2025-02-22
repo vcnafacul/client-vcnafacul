@@ -1,9 +1,12 @@
-import logo from "@/assets/images/logo_carteirinha.png";
-import univ from "@/assets/images/UFSCar-f440d2791.png";
+import PhotoEditor from "@/components/atoms/photoEditor";
+import { StudentCard } from "@/components/molecules/studentCard";
 import ModalTemplate from "@/components/templates/modalTemplate";
+import { getProfilePhoto } from "@/services/prepCourse/student/getProfilePhoto";
+import { uploadProfileImage } from "@/services/prepCourse/student/uploadProfileImage";
+import { useAuthStore } from "@/store/auth";
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
-import { formatDate } from "@/utils/date";
-import ProfileImage from "../profileImage";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 interface InfoStudentEnrolledModalProps {
   isOpen: boolean;
@@ -16,63 +19,92 @@ export function InfoStudentEnrolledModal({
   handleClose,
   entity,
 }: InfoStudentEnrolledModalProps) {
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [photoEditorOpen, setPhotoEditorOpen] = useState(false);
+  const [photo, setPhoto] = useState<File | null>(null);
+
+  const {
+    data: { token },
+  } = useAuthStore();
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        const blob = await getProfilePhoto(entity.photo, token);
+        const url = URL.createObjectURL(blob);
+        setImageSrc(url);
+      } catch (error) {
+        console.error("Erro ao carregar a imagem:", error);
+      }
+    };
+
+    if (entity.photo) {
+      fetchImage();
+    }
+
+    // Cleanup para evitar vazamento de memória
+    return () => {
+      if (imageSrc) {
+        URL.revokeObjectURL(imageSrc);
+      }
+    };
+  }, []);
+
+  const handleUploadProfileImage = async (file: File) => {
+    const id = toast.loading("Atualizando foto...");
+    uploadProfileImage(file, entity.id, token)
+      .then(() => {
+        toast.update(id, {
+          render: `Foto atualizada`,
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        handleClose();
+      })
+      .catch(() => {
+        toast.update(id, {
+          render: `Erro ao atualizar foto`,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      })
+      .finally(() => {
+        setPhotoEditorOpen(false);
+      });
+  };
+
+  const ModalPhotoEditor = () => {
+    return photoEditorOpen ? (
+      <PhotoEditor
+        isOpen={photoEditorOpen}
+        photo={photo ? URL.createObjectURL(photo) : ""}
+        onConfirm={handleUploadProfileImage}
+        handleClose={() => {
+          setPhotoEditorOpen(false);
+        }}
+      />
+    ) : null;
+  };
+
   return (
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white pt-2 pr-2 rounded-md border-2 border-marine"
+      className="bg-white rounded-md p-1"
     >
-      <div
-        className="flex flex-col sm:flex-wrap w-[90vw] sm:w-[733px] 
-    h-[calc(100vh-100px)] sm:h-[462px] gap-4 relative px-4 
-      overflow-y-auto scrollbar-hide justify-around sm:justify-normal"
-      >
-        {/* Imagem de Perfil */}
-        <div className="flex flex-col items-center sm:block">
-          <ProfileImage photo={entity.photo} />
-        </div>
-
-        {/* Informações do Estudante */}
-        <div className="flex flex-col gap-4 w-full sm:w-[470px]">
-          <div className="flex justify-center mb-4">
-            <span className="text-2xl text-center sm:text-left">
-              Estudante Pré-Vestibular
-            </span>
-          </div>
-          {[
-            { label: "Nome", value: entity.name },
-            { label: "Email", value: entity.email },
-            {
-              label: "Número de Matrícula / Turma",
-              value: `${entity.cod_enrolled} - ${
-                entity.class?.name || "Não atribuída"
-              }`,
-            },
-            {
-              label: "WhatsApp / Emergência",
-              value: `${entity.whatsapp} / ${entity.urgencyPhone}`,
-            },
-            {
-              label: "Validade",
-              value: formatDate(entity.class?.endDate?.toString()),
-            },
-          ].map((item, index) => (
-            <div key={index}>
-              <p className="font-bold text-xl">{item.label}</p>
-              <p className="text-lg">{item.value}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Logos */}
-        <div
-          className="flex flex-wrap justify-between items-center sm:items-end 
-          w-full mt-4 sm:absolute sm:bottom-4 px-4"
-        >
-          <img className="h-32 sm:h-44" src={univ} alt="Logo da UFSCar" />
-          <img className="h-12 sm:h-12 sm:pr-4" src={logo} alt="Logo" />
-        </div>
+      <div className="p-6 pt-1">
+        <StudentCard
+          entity={entity}
+          imageSrc={imageSrc}
+          onChangePhoto={(file: File) => {
+            setPhoto(file);
+            setPhotoEditorOpen(true);
+          }}
+        />
       </div>
+      <ModalPhotoEditor />
     </ModalTemplate>
   );
 }
