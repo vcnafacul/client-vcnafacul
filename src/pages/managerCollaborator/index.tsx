@@ -3,17 +3,17 @@ import { CardDash } from "@/components/molecules/cardDash";
 import DashCardTemplate from "@/components/templates/dashCardTemplate";
 import { DashCardContext } from "@/context/dashCardContext";
 import { StatusEnum } from "@/enums/generic/statusEnum";
+import { changeActive } from "@/services/prepCourse/collaborator/change-active";
+import { changeDescription } from "@/services/prepCourse/collaborator/change-description";
 import { getCollaborator } from "@/services/prepCourse/collaborator/get-collaborator";
 import { useAuthStore } from "@/store/auth";
 import { Collaborator } from "@/types/partnerPrepCourse/collaborator";
 import { Paginate } from "@/utils/paginate";
+import { phoneMask } from "@/utils/phoneMask";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ShowInfo } from "./modals/showInfo";
 import { TempInviteMember } from "./modals/temp-invite-member";
-import { changeActive } from "@/services/prepCourse/collaborator/change-active";
-import { changeDescription } from "@/services/prepCourse/collaborator/change-description";
-import { phoneMask } from "@/utils/phoneMask";
 
 export default function ManagerCollaborator() {
   const [collaborator, setCollaborator] = useState<Collaborator[]>([]);
@@ -21,7 +21,7 @@ export default function ManagerCollaborator() {
   const [openShowInfo, setOpenShowInfo] = useState(false);
   const [collaboratorSelected, setCollaboratorSelected] =
     useState<Collaborator | null>(null);
-  const limitCards = 40;
+  const limitCards = 100;
 
   const {
     data: { token },
@@ -32,7 +32,7 @@ export default function ManagerCollaborator() {
     title: cl.user.firstName + " " + cl.user.lastName,
     status: cl.actived ? StatusEnum.Approved : StatusEnum.Rejected,
     infos: [
-      { field: "Email", value: cl.user.email.slice(0, 25) + " ..."},
+      { field: "Email", value: cl.user.email.slice(0, 25) + " ..." },
       { field: "Telefone", value: phoneMask(cl.user.phone) },
       {
         field: "Descrição",
@@ -89,26 +89,26 @@ export default function ManagerCollaborator() {
     changeActive(token, id).then(() => {
       const collaboratorAux = collaborator.map((c) => {
         if (c.id === id) {
-          setCollaboratorSelected({ ...c, actived: !c.actived })
+          setCollaboratorSelected({ ...c, actived: !c.actived });
           return { ...c, actived: !c.actived };
         }
         return c;
-      })
-      setCollaborator(collaboratorAux)
-    })
+      });
+      setCollaborator(collaboratorAux);
+    });
   };
 
   const handleDescription = async (id: string, description: string) => {
     changeDescription(token, id, description).then(() => {
       const collaboratorAux = collaborator.map((c) => {
         if (c.id === id) {
-          setCollaboratorSelected({ ...c, description })
+          setCollaboratorSelected({ ...c, description });
           return { ...c, description };
         }
         return c;
-      })
-      setCollaborator(collaboratorAux)
-    })
+      });
+      setCollaborator(collaboratorAux);
+    });
   };
 
   useEffect(() => {

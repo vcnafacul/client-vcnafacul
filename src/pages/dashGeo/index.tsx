@@ -22,7 +22,7 @@ function DashGeo() {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [filterText, setFilterText] = useState<string>("");
   const [enterText, setEnterText] = useState<string>("");
-  const limitCards = 40;
+  const limitCards = 100;
 
   const cardTransformation = (geo: Geolocation): CardDash => ({
     id: geo.id,

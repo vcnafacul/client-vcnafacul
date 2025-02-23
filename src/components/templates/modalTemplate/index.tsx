@@ -10,6 +10,7 @@ interface ModalTemplateProps extends ComponentProps<"div"> {
   isOpen: boolean;
   handleClose: () => void;
   className?: string;
+  closer?: boolean;
 }
 
 function ModalTemplate({
@@ -17,21 +18,24 @@ function ModalTemplate({
   handleClose,
   isOpen,
   className,
+  closer = true,
   ...props
 }: ModalTemplateProps) {
   return !isOpen ? null : (
     <div
-      className="fixed top-0 left-0 z-50 bg-black/80 w-screen h-screen overflow-y-auto 
+      className="fixed top-0 left-0 z-50 bg-black/65 w-screen h-screen overflow-y-auto 
         scrollbar-hide"
       {...props}
     >
       <div className="w-full h-full flex justify-center items-center p-1">
         <div className={className}>
           <div className="flex justify-end">
-            <IoMdClose
-              onClick={handleClose}
-              className="self-end md:mt-0 cursor-pointer w-6 h-6"
-            />
+            {closer && (
+              <IoMdClose
+                onClick={handleClose}
+                className="self-end md:mt-0 cursor-pointer w-6 h-6"
+              />
+            )}
           </div>
           {children}
         </div>

@@ -30,7 +30,7 @@ function OnlyDemand() {
     materias[0].id as number
   );
   const dataRef = useRef<ContentDtoInput[]>([]);
-  const limitCards = 40;
+  const limitCards = 100;
 
   const selectDemandByMateria = (id: Materias) => {
     setMateriaSelected(id);

@@ -40,6 +40,7 @@ function ModalNewRole({
     gerenciadorDemanda: false,
     gerenciarProcessoSeletivo: false,
     gerenciarColaboradores: false,
+    gerenciarTurmas: false,
   });
 
   const {
