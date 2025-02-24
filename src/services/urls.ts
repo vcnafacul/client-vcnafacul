@@ -53,16 +53,18 @@ export const header = (id: number) =>
   `${CMS_URL}/items/Headers/${id}?fields=id,pageLinks.Home_Menu_Item_id.*,userNavigationSign.Home_Menu_Item_id.*,socialLinks.Home_Menu_Item_id.*,userNavigationLogged.Home_Menu_Item_id.*`;
 export const university = `${CMS_URL}/items/Universidade`;
 
+export const partnerPrepCourse = `${BASE_URL}/partner-prep-course`;
+
 export const prepCourse = (id: string) =>
-  `${BASE_URL}/partner-prep-course/${id}/has-active-inscription`;
+  `${partnerPrepCourse}/${id}/has-active-inscription`;
 export const studentCourse = `${BASE_URL}/student-course`;
 export const get_user_info = (idPrepCourse: string) =>
   `${studentCourse}/get-user-info/${idPrepCourse}`;
 
 export const inscriptionCourse = `${BASE_URL}/inscription-course`;
 export const subscribers = `${inscriptionCourse}/subscribers`;
-export const inviteMember = `${BASE_URL}/partner-prep-course/invite-members`;
-export const inviteMemberAccept = `${BASE_URL}/partner-prep-course/invite-members-accept`;
+export const inviteMember = `${partnerPrepCourse}/invite-members`;
+export const inviteMemberAccept = `${partnerPrepCourse}/invite-members-accept`;
 export const updateWaitingList = `${inscriptionCourse}/update-waiting-list`;
 export const updateOrderWaitingList = `${inscriptionCourse}/update-order-waiting-list`;
 export const getWaitingList = `${inscriptionCourse}/waiting-list`;

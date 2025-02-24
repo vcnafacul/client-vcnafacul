@@ -5,6 +5,7 @@ import { getProfilePhoto } from "@/services/prepCourse/student/getProfilePhoto";
 import { uploadProfileImage } from "@/services/prepCourse/student/uploadProfileImage";
 import { useAuthStore } from "@/store/auth";
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
+import heic2any from "heic2any";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -31,8 +32,18 @@ export function InfoStudentEnrolledModal({
     const fetchImage = async () => {
       try {
         const blob = await getProfilePhoto(entity.photo, token);
-        const url = URL.createObjectURL(blob);
-        setImageSrc(url);
+        const fileType = blob.type; // Tipo MIME do arquivo
+
+        if (fileType === "image/heic" || fileType === "image/heif") {
+          // Se for HEIC, converte para JPEG
+          const convertedBlob = await heic2any({ blob, toType: "image/jpeg" });
+          const convertedUrl = URL.createObjectURL(convertedBlob as Blob);
+          setImageSrc(convertedUrl);
+        } else {
+          // Se não for HEIC, usa a imagem normal
+          const url = URL.createObjectURL(blob);
+          setImageSrc(url);
+        }
       } catch (error) {
         console.error("Erro ao carregar a imagem:", error);
       }
@@ -48,7 +59,7 @@ export function InfoStudentEnrolledModal({
         URL.revokeObjectURL(imageSrc);
       }
     };
-  }, []);
+  }, [entity.photo, token]);
 
   const handleUploadProfileImage = async (file: File) => {
     const id = toast.loading("Atualizando foto...");
