@@ -272,7 +272,7 @@ export const dashCardMenuItems: DashCardMenu[] = [
       {
         icon: PiUsersFourBold,
         alt: "matriculados",
-        text: "Matriculados",
+        text: "Estudantes",
         link: `/dashboard/${PARTNER_CLASS_STUDENTS}`,
         permissions: [Roles.gerenciarEstudantes],
       },
