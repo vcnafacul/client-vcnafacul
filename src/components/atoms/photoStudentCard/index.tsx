@@ -55,6 +55,3 @@ const PhotoStudentCard = ({ photo, onChangePhoto }: PhotoStudentCardProps) => {
 };
 
 export default PhotoStudentCard;
-function heic2any(arg0: { blob: any; toType: string }) {
-  throw new Error("Function not implemented.");
-}
