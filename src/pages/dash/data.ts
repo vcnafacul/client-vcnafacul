@@ -274,7 +274,7 @@ export const dashCardMenuItems: DashCardMenu[] = [
         alt: "matriculados",
         text: "Matriculados",
         link: `/dashboard/${PARTNER_CLASS_STUDENTS}`,
-        permissions: [Roles.gerenciarTurmas],
+        permissions: [Roles.gerenciarEstudantes],
       },
     ],
   },
