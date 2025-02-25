@@ -10,6 +10,7 @@ export interface BaseLayoutInputPros {
         (FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined)[]
       >
     | undefined;
+  rows?: number;
 }
 
 export function BaseLayoutInput({
@@ -22,7 +23,7 @@ export function BaseLayoutInput({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (error?.message as any)?.message || error?.message || undefined;
   return (
-    <div className="relative mb-4">
+    <div className="relative mb-4 w-full">
       <label
         className="absolute p-1 top-0 left-3 text-xs text-grey font-semibold"
         htmlFor={id}

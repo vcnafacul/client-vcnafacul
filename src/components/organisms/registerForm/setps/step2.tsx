@@ -27,7 +27,7 @@ interface Step2Props extends StepProps {
   dataUser: UserRegister;
   next: () => void;
   back: () => void;
-  onRegister: (data: UserRegister) => Promise<void>;
+  onRegister: (data: UserRegister) => Promise<void>;  
 }
 
 function Step2({ dataUser, next, back, onRegister }: Step2Props) {
@@ -74,7 +74,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
           isLoading: false,
           autoClose: 3000,
         });
-        next();
+        next()
       })
       .catch((error: Error) => {
         toast.update(id, {

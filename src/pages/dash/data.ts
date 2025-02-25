@@ -13,7 +13,10 @@ import {
   DASH_ROLES,
   DASH_SIMULADO,
   ESTUDO,
+  MANAGER_COLLABORATOR,
   NEWS,
+  PARTNER_CLASS,
+  PARTNER_CLASS_STUDENTS,
   PARTNER_PREP_INSCRIPTION,
   SIMULADO,
 } from "../../routes/path";
@@ -34,7 +37,9 @@ import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-ge
 import { ReactComponent as Historia } from "../../assets/icons/home-subjects-historia.svg";
 import { ReactComponent as Sociologia } from "../../assets/icons/home-subjects-sociologia.svg";
 
-import { ReactComponent as Report } from "../../assets/icons/warning.svg";
+import { BiSolidSchool } from "react-icons/bi";
+import { FaPeopleGroup } from "react-icons/fa6";
+import { PiStudentFill, PiUsersFourBold } from "react-icons/pi";
 
 import { DashCardMenu } from "../../components/molecules/dashCard";
 import { HeaderData } from "../../components/organisms/header";
@@ -234,27 +239,6 @@ export const dashCardMenuItems: DashCardMenu[] = [
         link: `/dashboard/${DASH_SIMULADO}`,
         permissions: [Roles.criarQuestao],
       },
-      {
-        icon: Report,
-        alt: "error_report",
-        text: "Reportar Erro",
-        link: `https://docs.google.com/document/d/1VFpGiW4LuooMdtOemtFEVbqHMesP0rTZ1fX8BFwG_2w/edit?usp=sharing`,
-        permissions: [
-          Roles.alterarPermissao,
-          Roles.cadastrarProvas,
-          Roles.criarQuestao,
-          Roles.criarSimulado,
-          Roles.gerenciadorDemanda,
-          Roles.uploadDemanda,
-          Roles.uploadNews,
-          Roles.validarCursinho,
-          Roles.validarDemanda,
-          Roles.validarQuestao,
-          Roles.visualizarDemanda,
-          Roles.visualizarProvas,
-          Roles.visualizarQuestao,
-        ],
-      },
     ],
   },
   {
@@ -265,11 +249,32 @@ export const dashCardMenuItems: DashCardMenu[] = [
     alt: "Cursinho",
     subMenuList: [
       {
-        icon: Report,
-        alt: "inscricao",
-        text: "Inscrições",
+        icon: PiStudentFill,
+        alt: "processos seletivos",
+        text: "Processos Seletivos",
         link: `/dashboard/${PARTNER_PREP_INSCRIPTION}`,
-        permissions: [Roles.gerenciarInscricoesCursinhoParceiro],
+        permissions: [Roles.gerenciarProcessoSeletivo],
+      },
+      {
+        icon: FaPeopleGroup,
+        alt: "colaboradores",
+        text: "Colaboradores",
+        link: `/dashboard/${MANAGER_COLLABORATOR}`,
+        permissions: [Roles.gerenciarColaboradores],
+      },
+      {
+        icon: BiSolidSchool,
+        alt: "turmas",
+        text: "Turmas",
+        link: `/dashboard/${PARTNER_CLASS}`,
+        permissions: [Roles.gerenciarTurmas],
+      },
+      {
+        icon: PiUsersFourBold,
+        alt: "matriculados",
+        text: "Matriculados",
+        link: `/dashboard/${PARTNER_CLASS_STUDENTS}`,
+        permissions: [Roles.gerenciarTurmas],
       },
     ],
   },

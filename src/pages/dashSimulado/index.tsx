@@ -15,7 +15,7 @@ function DashSimulado() {
   const {
     data: { token },
   } = useAuthStore();
-  const limitCards = 40;
+  const limitCards = 100;
 
   const cardTransformation = (simulado: ISimuladoDTO): CardDash => ({
     id: simulado._id,

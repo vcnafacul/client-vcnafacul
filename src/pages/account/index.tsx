@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { UserMe } from "@/types/user/userMe";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -17,7 +18,7 @@ import { changeImageProfileCollaborator } from "../../services/auth/changeImageP
 import { me } from "../../services/auth/me";
 import { removeImageProfileCollaborator } from "../../services/auth/removeImageProfileCollaborator";
 import { updateUser } from "../../services/auth/updateUser";
-import { Auth, AuthUpdate, Gender, useAuthStore } from "../../store/auth";
+import { AuthUpdate, Gender, useAuthStore } from "../../store/auth";
 import { optionsGender, stateOptions } from "../register/data";
 
 function Account() {
@@ -27,10 +28,12 @@ function Account() {
   } = useAuthStore();
   const [tryDelete, setTryDelete] = useState<boolean>(false);
 
-  const [userAccount, setUserAccount] = useState<Auth>();
+  const [userAccount, setUserAccount] = useState<UserMe>();
 
   const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
   const [imagePreview, setImagePreview] = useState<any>(null);
+  const [file, setFile] = useState<any>(null);
+  const [sended, setSended] = useState<boolean>(false);
 
   const schema = yup
     .object()
@@ -135,15 +138,15 @@ function Account() {
       toast.warn("O arquivo pode ter no máximo 1mb", { theme: "dark" });
     } else {
       previewImage(file);
-      uploadingImagem(file);
+      setFile(file);
     }
   };
 
-  const uploadingImagem = (file: any) => {
+  const uploadingImagem = async (file: any) => {
     const id = toast.loading("Upload de Imagem de Perfil Colaborador ... ");
     const formData = new FormData();
     formData.append("file", file!);
-    changeImageProfileCollaborator(formData, token)
+    await changeImageProfileCollaborator(formData, token)
       .then((fileName) => {
         toast.update(id, {
           render: `Upload feito com sucesso`,
@@ -151,7 +154,8 @@ function Account() {
           isLoading: false,
           autoClose: 3000,
         });
-        updateAccount({ ...userAccount!, collaboratorPhoto: fileName });
+        setUserAccount({ ...userAccount!, collaboratorPhoto: fileName });
+        updateAccount({ ...userAccount! });
       })
       .catch((error: Error) => {
         toast.update(id, {
@@ -168,7 +172,7 @@ function Account() {
       removeImageProfileCollaborator(token)
         .then((res) => {
           if (res) {
-            updateAccount({ ...userAccount!, collaboratorPhoto: null });
+            updateAccount({ ...userAccount! });
           } else {
             toast.error("Não foi possível remover sua imagem");
           }
@@ -182,20 +186,10 @@ function Account() {
     setTryDelete(false);
   };
 
-  const update = (data: any) => {
-    const authUpdate: AuthUpdate = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      birthday: data.birthday,
-      city: data.city,
-      state: data.state,
-      phone: data.phone,
-      gender: parseInt(data.gender) as Gender,
-      about: data.about,
-    };
+  const updateData = (authUpdate: AuthUpdate) => {
     const id = toast.loading("Atualizando Informações Usuário ... ");
     updateUser(token, authUpdate)
-      .then((_) => {
+      .then(async (_) => {
         toast.update(id, {
           render: `Atualização feita com sucesso`,
           type: "success",
@@ -210,7 +204,31 @@ function Account() {
           isLoading: false,
           autoClose: 3000,
         });
+      })
+      .finally(() => {
+        setSended(false);
       });
+  }
+
+  const update = (data: any) => {
+    setSended(true);
+    const authUpdate: AuthUpdate = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      birthday: data.birthday,
+      city: data.city,
+      state: data.state,
+      phone: data.phone,
+      gender: parseInt(data.gender) as Gender,
+      about: data.about,
+    };
+    if (file) {
+      uploadingImagem(file).then(() => {
+        updateData(authUpdate);
+      });
+    } else {
+      updateData(authUpdate);
+    }
   };
 
   const ModalDelete = () => {
@@ -240,6 +258,7 @@ function Account() {
   return (
     <>
       <div className="pb-20 bg-zinc-100 flex flex-col">
+        {/* Cabeçalho com imagem e nome do usuário */}
         <div className="bg-custom-gradient py-1 px-4 flex items-center rounded-bl-3xl">
           <LogoIcon className="bg-white w-28 h-28 z-0 animate-rotate rounded-full p-1 border border-green2" />
           <div className="flex flex-col items-end">
@@ -249,31 +268,30 @@ function Account() {
             <span className="text-white text-xl">{userAccount?.lastName}</span>
           </div>
         </div>
+
+        {/* Seção de título */}
         <Text className="self-start mx-10 pt-4" size="secondary">
           Meus Dados
         </Text>
-        <div className=" ml-4 sm:mr-4 grid grid-cols-1 md:grid-cols-4 pr-6 sm:pr-0">
-          {userAccount?.collaborator ? (
-            <div className="m-4 flex flex-col items-center rounded-full md:col-span-1 md:col-start-4">
-              <Text size="tertiary">Imagem Profile Colaborador</Text>
-              <ImageProfile
-                deleteImage={() => {
-                  setTryDelete(true);
-                }}
-                onChange={handleImageChange}
-                src={imagePreview}
-              />
-              {/* {!change ? <></> : <div className='w-40'><Button typeStyle='secondary' size='small' className='mt-2' type='button' onClick={uploadingImagem}>Salvar</Button></div>} */}
-            </div>
-          ) : (
-            <></>
-          )}
-          {userAccount ? (
+
+        {/* Exibição de colaborador */}
+        {userAccount?.collaborator && (
+          <div className="flex flex-col items-center">
+            <span>{userAccount?.collaboratorDescription}</span>
+            <ImageProfile
+              deleteImage={() => setTryDelete(true)}
+              onChange={handleImageChange}
+              src={imagePreview}
+            />
+          </div>
+        )}
+
+        {/* Formulário de atualização */}
+        {userAccount && (
+          <div className="ml-4 sm:mr-4 grid grid-cols-1 md:grid-cols-3 pr-6 sm:pr-0">
             <form
               onSubmit={handleSubmit(update)}
-              className={`flex flex-col pb-10 w-full gap-4 ${
-                userAccount?.collaborator ? "md:col-span-3" : "md:col-span-4"
-              } md:col-start-1 md:row-start-1`}
+              className="flex flex-col pb-10 w-full gap-4 md:col-span-3"
             >
               <Form
                 className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 ${
@@ -283,17 +301,16 @@ function Account() {
                 register={register}
                 errors={errors}
               />
-              <div className="w-60 self-start">
-                <Button type="submit">
-                  Atualizar
+              <div className="self-end">
+                <Button disabled={sended} type="submit" size="small">
+                  Salvar
                 </Button>
               </div>
             </form>
-          ) : (
-            <></>
-          )}
-        </div>
+          </div>
+        )}
       </div>
+
       <ModalDelete />
     </>
   );

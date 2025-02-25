@@ -7,23 +7,27 @@ import { confirmEnrolled } from "@/services/prepCourse/student/confirmEnrolled";
 import { rejectStudent } from "@/services/prepCourse/student/rejectStudent";
 import { resetStudent } from "@/services/prepCourse/student/resetStudent";
 import { scheduleEnrolled } from "@/services/prepCourse/student/scheduleEnrolled";
+import { sendEmailDeclarationInterest } from "@/services/prepCourse/student/sendEmailDeclarationInterest";
 import { updateSelectEnrolledInfo } from "@/services/prepCourse/student/updateEnrolledInfo";
 import { updateIsFreeInfo } from "@/services/prepCourse/student/updateIsFreeInfo";
 import { useAuthStore } from "@/store/auth";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
+import { capitalizeWords } from "@/utils/capitalizeWords";
 import { IconButton } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useCallback, useEffect, useState } from "react";
-import { FaCheck, FaSyncAlt, FaWindowClose } from "react-icons/fa";
+import { BsEnvelopeArrowDownFill, BsEnvelopeArrowUpFill } from "react-icons/bs";
+import { FaCheck, FaSyncAlt } from "react-icons/fa";
 import { IoClose, IoEyeSharp } from "react-icons/io5";
-import { LiaCoinsSolid } from "react-icons/lia";
-import { MdOutlineMoneyOffCsred, MdPlaylistRemove } from "react-icons/md";
-import { PiListChecksFill } from "react-icons/pi";
-import { RiFileListFill, RiFileListLine } from "react-icons/ri";
+import { MdEmail, MdTimerOff } from "react-icons/md";
+import { PiTimerFill } from "react-icons/pi";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ReactComponent as IsentoIcon } from "../../assets/icons/partnerPrepCourse/pagante_add_dk.svg";
+import { ReactComponent as PaganteIcon } from "../../assets/icons/partnerPrepCourse/pagante_remover_dk.svg";
+import { ReactComponent as Reset } from "../../assets/icons/partnerPrepCourse/reset_dk.svg";
 import { ActionButton } from "./actionsButton";
 import { Details } from "./modal/details";
 import { Statistic } from "./modal/statistic";
@@ -214,6 +218,27 @@ export function PartnerPrepInscritionStudentManager() {
     });
   };
 
+  const handleSendEmailDeclaredInterest = (studentId: string) => {
+    const id = toast.loading("Enviando Email...");
+    sendEmailDeclarationInterest(studentId, token)
+      .then(() => {
+        toast.update(id, {
+          render: "Email enviado com sucesso",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      })
+      .catch((err) => {
+        toast.update(id, {
+          render: err.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      });
+  };
+
   function shouldProcessApplication(
     status: StatusApplication,
     startDate: Date | null,
@@ -276,7 +301,9 @@ export function PartnerPrepInscritionStudentManager() {
         handleConfirm={(message) =>
           handleIndeferir(studentSelected!.id, message!)
         }
-        text={`Por favor, informe o motivo da indéferência da matricula de ${studentSelected?.nome} ${studentSelected?.sobrenome}`}
+        text={`Por favor, informe o motivo do indeferimento da matrícula de ${capitalizeWords(
+          studentSelected?.nome + " " + studentSelected?.sobrenome
+        )}.`}
         className="bg-white p-4 rounded-md w-[512px]"
       />
     );
@@ -326,7 +353,7 @@ export function PartnerPrepInscritionStudentManager() {
                 onConfirm={() => handleIsFreeInfo(params.row.id, false)}
                 tooltipTitle="Tornar Pagante"
               >
-                <LiaCoinsSolid className="h-6 w-6 fill-amber-600 opacity-60 hover:opacity-100" />
+                <IsentoIcon className="h-6 w-6 fill-darkGreen opacity-60 hover:opacity-100" />
               </ActionButton>
             )}
           {params.row.isento === "Não" &&
@@ -339,7 +366,7 @@ export function PartnerPrepInscritionStudentManager() {
                 onConfirm={() => handleIsFreeInfo(params.row.id, true)}
                 tooltipTitle="Dar Isenção"
               >
-                <MdOutlineMoneyOffCsred className="h-6 w-6 fill-green2 opacity-60 hover:opacity-100" />
+                <PaganteIcon className="h-6 w-6 fill-redError opacity-60 hover:opacity-100" />
               </ActionButton>
             )}
           {shouldProcessApplication(
@@ -363,9 +390,9 @@ export function PartnerPrepInscritionStudentManager() {
               } da lista de convocação`}
             >
               {params.row.convocar === Bool.No ? (
-                <PiListChecksFill className="h-6 w-6 fill-lime-600 opacity-60 hover:opacity-100" />
+                <BsEnvelopeArrowUpFill className="h-6 w-6 fill-lime-600 opacity-60 hover:opacity-100" />
               ) : (
-                <MdPlaylistRemove className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
+                <BsEnvelopeArrowDownFill className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
               )}
             </ActionButton>
           )}
@@ -395,9 +422,9 @@ export function PartnerPrepInscritionStudentManager() {
               } da lista de espera`}
             >
               {params.row.lista_de_espera === Bool.No ? (
-                <RiFileListFill className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
+                <PiTimerFill className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
               ) : (
-                <RiFileListLine className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
+                <MdTimerOff className="h-6 w-6 fill-orange opacity-60 hover:opacity-100" />
               )}
             </ActionButton>
           )}
@@ -440,9 +467,24 @@ export function PartnerPrepInscritionStudentManager() {
               onConfirm={() => handleResetStudent(params.row.id)}
               tooltipTitle="Resetar"
             >
-              <FaWindowClose className="h-6 w-6 fill-red/50 hover:fill-red" />
+              <Reset className="h-6 w-6 fill-red/70 hover:fill-red" />
             </ActionButton>
           )}
+          {params.row.status === StatusApplication.CalledForEnrollment &&
+            !params.row.sended_email_recently &&
+            params.row.data_convocacao &&
+             new Date() >= params.row.data_convocacao && (
+              <ActionButton
+                titleAlert={`Confirmação de Matrícula ${params.row.nome} ${params.row.sobrenome}`}
+                descriptionAlert={`Realizar a  confirmação de matrícula de  ${params.row.nome} ${params.row.sobrenome}`}
+                onConfirm={() => {
+                  handleSendEmailDeclaredInterest(params.row.id);
+                }}
+                tooltipTitle="Reenviar email de convocação"
+              >
+                <MdEmail className="h-6 w-6 fill-sky-500 opacity-60 hover:opacity-100" />
+              </ActionButton>
+            )}
         </div>
       ),
     },

@@ -1,7 +1,7 @@
 import { UserRole } from "../../types/roles/UserRole";
 import fetchWrapper from "../../utils/fetchWrapper";
 import { Paginate } from "../../utils/paginate";
-import { user_role } from "../urls";
+import { user } from "../urls";
 
 export async function getUsersRole(
   token: string,
@@ -10,7 +10,7 @@ export async function getUsersRole(
   name: string = ""
 ): Promise<Paginate<UserRole>> {
   const response = await fetchWrapper(
-    `${user_role}/user?page=${page}&limit=${limit}&name=${name}`,
+    `${user}?page=${page}&limit=${limit}&name=${name}`,
     {
       method: "GET",
       headers: {

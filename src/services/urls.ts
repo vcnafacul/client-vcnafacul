@@ -8,7 +8,6 @@ export const reset = `${user}/reset`;
 export const confirmemail = `${user}/confirmemail`;
 export const email_exist = `${user}/hasemail`;
 export const role = `${BASE_URL}/role`;
-export const user_role = `${BASE_URL}/userrole`;
 export const roles_users = `${role}/users`;
 
 export const geolocations = `${BASE_URL}/geo`;
@@ -73,3 +72,7 @@ export const getDocument = `${studentCourse}/document`;
 export const uploadProfilePhoto = `${studentCourse}/profile-photo`;
 export const getProfilePhotos = `${studentCourse}/profile-photo`;
 export const declaredInterest = `${studentCourse}/declared-interest`;
+export const enrolled = `${studentCourse}/enrolled`;
+export const uploadPhotoProfile = `${studentCourse}/profile-image`;
+export const collaborator = `${BASE_URL}/collaborator`;
+export const classes = `${BASE_URL}/class`;

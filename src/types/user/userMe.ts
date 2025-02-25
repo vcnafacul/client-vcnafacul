@@ -9,4 +9,7 @@ export type UserMe = Auth & {
   complement?: string;
   neighborhood?: string;
   postalCode?: string;
+  collaborator: boolean;
+  collaboratorDescription?: string | null;
+  collaboratorPhoto?: string | null;
 };

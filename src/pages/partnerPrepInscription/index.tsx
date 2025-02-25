@@ -3,6 +3,7 @@ import Text from "@/components/atoms/text";
 import BLink from "@/components/molecules/bLink";
 import Button from "@/components/molecules/button";
 import {
+  DataInscription,
   LegalGuardianDTO,
   StudentInscriptionDTO,
 } from "@/dtos/student/studentInscriptionDTO";
@@ -50,6 +51,8 @@ export function PartnerPrepInscription() {
   const [dataStudent, setDataStudent] = useState<StudentInscriptionDTO>(
     {} as StudentInscriptionDTO
   );
+  const [dataInscription, setDataInscription] =
+    useState<DataInscription | null>(null);
   const [prepCourseName, setPrepCourseName] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
 
@@ -60,7 +63,6 @@ export function PartnerPrepInscription() {
     if (data) {
       newData = { ...dataStudent, ...data };
     }
-    console.log("data", data);
     setDataStudent(newData);
     if (stepCurrently > StepsInscriptionStudent.Presentation) {
       if (
@@ -217,6 +219,7 @@ export function PartnerPrepInscription() {
             start={() =>
               setStepCurrently(StepsInscriptionStudent.PersonalInformation)
             }
+            inscription={dataInscription!}
           />
         );
       case StepsInscriptionStudent.PersonalInformation:
@@ -281,6 +284,7 @@ export function PartnerPrepInscription() {
             ...dataStudent,
             partnerPrepCourse: hashPrepCourse as string,
           });
+          setDataInscription(res.inscription);
           setPrepCourseName(
             res.prepCourseName.toUpperCase().includes("CURSINHO")
               ? res.prepCourseName
@@ -334,7 +338,7 @@ export function PartnerPrepInscription() {
         ) : (
           <div className="flex flex-col justify-center items-center py-8 gap-8">
             <StepperCircle steps={steps} />
-            <Text>{`Formulário de Inscrição ${prepCourseName}`}</Text>
+            <Text className="text-center" size="secondary">{`Formulário de Inscrição ${prepCourseName}`}</Text>
             <div
               className={`w-11/12 ${
                 stepCurrently === StepsInscriptionStudent.Presentation

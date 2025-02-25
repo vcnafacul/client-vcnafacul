@@ -27,7 +27,7 @@ function DashRoles() {
   const [newRole, setnewRole] = useState<boolean>(false);
   const [filterText, setFilterText] = useState<string>("");
   const dataRef = useRef<UserRole[]>([]);
-  const limitCards = 40;
+  const limitCards = 100;
 
   const {
     data: { token },
@@ -69,16 +69,6 @@ function DashRoles() {
       .catch((error: Error) => {
         toast.error(`${error.message} - Usuário ${userRole.user.firstName}`);
       });
-  };
-
-  const updateUserLocal = (ur: UserRole) => {
-    const newUserRole = usersRole.map((user) => {
-      if (user.user.id === ur.user.id) {
-        return ur;
-      }
-      return user;
-    });
-    setUsersRole(newUserRole);
   };
 
   const handleNewRole = (role: Role) => {
@@ -151,7 +141,6 @@ function DashRoles() {
         isOpen={userModal}
         handleClose={() => setUserModal(false)}
         ur={userRoleSelect!}
-        updateUser={updateUserLocal}
         openUpdateRole={() => setUserRoleModal(true)}
       />
     );

@@ -38,7 +38,9 @@ function ModalNewRole({
     uploadDemanda: false,
     validarDemanda: false,
     gerenciadorDemanda: false,
-    gerenciarInscricoesCursinhoParceiro: false,
+    gerenciarProcessoSeletivo: false,
+    gerenciarColaboradores: false,
+    gerenciarTurmas: false,
   });
 
   const {

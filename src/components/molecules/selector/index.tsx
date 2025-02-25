@@ -20,12 +20,13 @@ export type SelectorProps = VariantProps<typeof selector> & {
     tabItems: string[];
     changeItem: (index: number) => void;
     className?: string;
+    activeTab: number;
 }
 
-function Selector({tabItems, changeItem, align, className} : SelectorProps){
+function Selector({tabItems, changeItem, align, className, activeTab} : SelectorProps){
     return (
         <>
-            <HighlightSelector className={selector({ align, className })} items={tabItems}  changeItem={changeItem}/>
+            <HighlightSelector className={selector({ align, className })} items={tabItems}  changeItem={changeItem} activeTab={activeTab}/>
             <HighlightSelectorMobile className="actionAreasMobileDropdown" items={tabItems} changeItem={changeItem} />
         </>
     )
