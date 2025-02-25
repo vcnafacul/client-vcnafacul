@@ -26,7 +26,7 @@ import { UpdateStudentClassModal } from "./modals/updateStudentClassModal";
 export function StudentsEnrolled() {
   const [name, setName] = useState<string>("");
   const [students, setStudents] = useState<StudentsDtoOutput[]>([]);
-  const [limit, setLimit] = useState<number>(100);
+  const [limit, setLimit] = useState<number>(15);
   const [totalItems, setTotalItems] = useState<number>(100);
   const [openModalInfo, setOpenModalInfo] = useState(false);
   const [openModalReject, setOpenModalReject] = useState(false);
@@ -49,8 +49,6 @@ export function StudentsEnrolled() {
       setOpenModalInfo(true);
     }
   };
-
-  const paginationModel = { page: 0, pageSize: limit };
 
   const getEnrolle = async (page: number, limit: number) => {
     getStudentsEnrolled(token, page, limit)
@@ -321,6 +319,7 @@ export function StudentsEnrolled() {
       field: "name",
       headerName: "Nome",
       minWidth: 200,
+      flex: 1,
     },
     {
       field: "applicationStatus",
@@ -353,6 +352,8 @@ export function StudentsEnrolled() {
     setSelectedRows(selectionModel);
   }, []);
 
+  const paginationModel = { page: 0, pageSize: limit };
+
   return (
     <div className="flex flex-col justify-center items-center pt-4 gap-4">
       <div className="w-full px-4">
@@ -384,7 +385,6 @@ export function StudentsEnrolled() {
           onRowSelectionModelChange={handleSelectionChange}
           pageSizeOptions={[5, 10, 15, 30, 50, 100]}
           onPaginationModelChange={(newPageSize) => {
-            console.log(newPageSize);
             setLimit(newPageSize.pageSize);
             getEnrolle(newPageSize.page + 1, newPageSize.pageSize);
           }}

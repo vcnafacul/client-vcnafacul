@@ -3,6 +3,7 @@ import ModalTemplate from "@/components/templates/modalTemplate";
 import { getProfilePhoto } from "@/services/prepCourse/student/getProfilePhoto";
 import { useAuthStore } from "@/store/auth";
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
+import heic2any from "heic2any";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useEffect, useState } from "react";
@@ -91,7 +92,6 @@ export function PrinterStudentCards({
   useEffect(() => {
     new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
       if (!shouldGeneratePDF) return;
-
       generatePDF()
         .then(() => {
           toast.update(id!, {
@@ -118,6 +118,7 @@ export function PrinterStudentCards({
 
   useEffect(() => {
     const newPhotoMap = new Map<string, string>();
+    const id = toast.loading("Carregando fotos...");
     const fetchAllPhotos = async () => {
       setIsLoading(true);
       try {
@@ -125,18 +126,39 @@ export function PrinterStudentCards({
           if (entity.photo) {
             try {
               const blob = await getProfilePhoto(entity.photo, token);
-              const url = URL.createObjectURL(blob);
-              newPhotoMap.set(entity.photo, url);
+              const fileType = blob.type; // Tipo MIME do arquivo
+              if (fileType === "image/heic" || fileType === "image/heif") {
+                // Se for HEIC, converte para JPEG
+                const convertedBlob = await heic2any({
+                  blob,
+                  toType: "image/jpeg",
+                });
+                const convertedUrl = URL.createObjectURL(convertedBlob as Blob);
+                newPhotoMap.set(entity.photo, convertedUrl);
+              } else {
+                // Se não for HEIC, usa a imagem normal
+                const url = URL.createObjectURL(blob);
+                newPhotoMap.set(entity.photo, url);
+              }
             } catch (error) {
               console.error("Erro ao carregar a imagem:", error);
             }
           }
+          toast.update(id, {
+            render: `Carregando fotos... ${Math.floor(
+              (newPhotoMap.size / entities.length) * 100
+            )}%`,
+            type: "info",
+            isLoading: true,
+            autoClose: false,
+          });
         }
         setPhotos(newPhotoMap);
       } catch (error) {
         console.error("Erro ao carregar todas as imagens:", error);
       } finally {
         setIsLoading(false);
+        toast.dismiss(id);
       }
     };
     setIsLoading(false);
@@ -183,30 +205,6 @@ export function PrinterStudentCards({
         </div>
       ) : (
         <div className="flex justify-center flex-wrap gap-4">
-          {entities.map((entity) => (
-            <div className="bg-white p-2 shadow-lg" key={entity.id}>
-              <StudentCard
-                entity={entity}
-                imageSrc={photos.get(entity.photo) || null}
-              />
-            </div>
-          ))}
-          {entities.map((entity) => (
-            <div className="bg-white p-2 shadow-lg" key={entity.id}>
-              <StudentCard
-                entity={entity}
-                imageSrc={photos.get(entity.photo) || null}
-              />
-            </div>
-          ))}
-          {entities.map((entity) => (
-            <div className="bg-white p-2 shadow-lg" key={entity.id}>
-              <StudentCard
-                entity={entity}
-                imageSrc={photos.get(entity.photo) || null}
-              />
-            </div>
-          ))}
           {entities.map((entity) => (
             <div className="bg-white p-2 shadow-lg" key={entity.id}>
               <StudentCard

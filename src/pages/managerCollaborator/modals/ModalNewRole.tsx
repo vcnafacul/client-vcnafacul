@@ -1,7 +1,9 @@
 import { PermissionsList } from "@/components/atoms/permissionList";
-import Toggle from "@/components/atoms/toggle";
-import { createRole } from "@/services/roles/createRole";
-import { useState } from "react";
+import { EditRoleDto } from "@/dtos/roles/editRole";
+import { createRole } from "@/services/prepCourse/createRole";
+import { getBaseRoles } from "@/services/prepCourse/getBaseRole";
+import { Role } from "@/types/roles/role";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Filter from "../../../components/atoms/filter";
 import Text from "../../../components/atoms/text";
@@ -12,18 +14,21 @@ import ModalTemplate, {
 import { CreateRoleDto } from "../../../dtos/roles/createRole";
 import { RolesLabel } from "../../../enums/roles/roles";
 import { useAuthStore } from "../../../store/auth";
-import { Role } from "../../../types/roles/role";
 
 interface ModalNewRoleProps extends ModalProps {
-  handleNewRole: (role: Role) => void;
   isOpen: boolean;
+  handleNewRole: (role: Role) => void;
 }
 
 function ModalNewRole({
-  handleNewRole,
   handleClose,
   isOpen,
+  handleNewRole,
 }: ModalNewRoleProps) {
+  const [baseRoles, setBaseRoles] = useState<EditRoleDto[]>([]);
+  const [baseRoleSelected, setBaseRoleSelected] = useState<EditRoleDto | null>(
+    null
+  );
   const [newRole, setNewRole] = useState<CreateRoleDto>({
     name: "",
     base: false,
@@ -61,8 +66,8 @@ function ModalNewRole({
 
   const saveNewRole = () => {
     createRole(newRole, token)
-      .then((role) => {
-        handleNewRole({ name: role.name, id: role.id });
+      .then((res) => {
+        handleNewRole({ id: res.id, name: res.name } as Role);
         handleClose!();
         toast.success(`Perfil "${newRole.name}" criado com sucesso!`);
       })
@@ -70,6 +75,19 @@ function ModalNewRole({
         toast.error(`Erro ao criar o perfil "${newRole.name}".`);
       });
   };
+
+  useEffect(() => {
+    getBaseRoles(token)
+      .then((res) => {
+        if (res.length > 0) {
+          setBaseRoleSelected(res[0]);
+        }
+        setBaseRoles(res);
+      })
+      .catch(() => {
+        toast.error("Erro ao buscar os perfis base");
+      });
+  }, []);
 
   return (
     <ModalTemplate
@@ -90,25 +108,32 @@ function ModalNewRole({
               search={false}
               className="bg-gray-200 rounded-md w-full sm:flex-1"
             />
-            <div className="flex items-center gap-4 w-full sm:w-auto">
-              <Toggle
-                name="base"
-                checked={newRole["base"]}
-                handleCheck={handleToggleChange}
-              />
-              <span className="text-base font-medium text-marine">
-                Perfil Base
-              </span>
-            </div>
           </div>
+          <select
+            className="remove-arrow w-full h-full text-lg font-black text-marine pl-4 pr-10 py-1 rounded-xl shadow-md z-50"
+            id="demo-simple-select"
+            value={baseRoleSelected?.id}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+              setBaseRoleSelected(
+                baseRoles.find((item) => item.id === e.target.value)!
+              );
+            }}
+          >
+            {baseRoles.map((role) => (
+              <option key={role.id} value={role.id}>
+                {role.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Permissões */}
         <PermissionsList
           title="Permissões do Projeto"
           roles={RolesLabel.filter((role) => role.isProjectPermission)}
-          seletedRole={newRole}
+          seletedRole={baseRoleSelected}
           handleToggleChange={handleToggleChange}
+          disabled
         />
         <div className="border-b border-gray-200 pt-3 mb-3" />
         <PermissionsList
@@ -121,15 +146,15 @@ function ModalNewRole({
 
       {/* Botões */}
       <div className="flex flex-col sm:flex-row justify-end gap-4 mt-6">
+        <Button typeStyle="primary" onClick={handleClose}>
+          Cancelar
+        </Button>
         <Button
           typeStyle="secondary"
           disabled={!newRole.name.trim()}
           onClick={saveNewRole}
         >
           Salvar
-        </Button>
-        <Button typeStyle="primary" onClick={handleClose}>
-          Cancelar
         </Button>
       </div>
     </ModalTemplate>

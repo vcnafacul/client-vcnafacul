@@ -15,29 +15,99 @@ export enum Roles {
   gerenciarProcessoSeletivo = "gerenciarProcessoSeletivo",
   gerenciarColaboradores = "gerenciarColaboradores",
   gerenciarTurmas = "gerenciarTurmas",
+  gerenciarEstudantes = "gerenciarEstudantes",
+  gerenciarPermissoesCursinho = "gerenciarPermissoesCursinho",
 }
 
 export const RolesLabel = [
-  { value: Roles.validarCursinho, label: "Validar Cursinho" },
-  { value: Roles.alterarPermissao, label: "Alterar Permissões" },
-  { value: Roles.criarSimulado, label: "Visualizar Simulados" },
-  { value: Roles.visualizarQuestao, label: "Visualizar Questões" },
-  { value: Roles.criarQuestao, label: "Cadastrar Questões" },
-  { value: Roles.validarQuestao, label: "Validar Questões" },
-  { value: Roles.uploadNews, label: "Upload de Novidades" },
-  { value: Roles.visualizarProvas, label: "Visualizar Provas" },
-  { value: Roles.cadastrarProvas, label: "Cadastrar Provas" },
-  { value: Roles.visualizarDemanda, label: "Visualizar Demandas" },
-  { value: Roles.uploadDemanda, label: "Upload de Demandas" },
-  { value: Roles.validarDemanda, label: "Validar Demandas" },
-  { value: Roles.gerenciadorDemanda, label: "Gerenciar Demandas" },
+  {
+    value: Roles.validarCursinho,
+    label: "Validar Cursinho",
+    isProjectPermission: true,
+  },
+  {
+    value: Roles.alterarPermissao,
+    label: "Alterar Permissões",
+    isProjectPermission: true,
+  },
+  {
+    value: Roles.criarSimulado,
+    label: "Visualizar Simulados",
+    isProjectPermission: true,
+  },
+  {
+    value: Roles.visualizarQuestao,
+    label: "Visualizar Questões",
+    isProjectPermission: true,
+  },
+  {
+    value: Roles.criarQuestao,
+    label: "Cadastrar Questões",
+    isProjectPermission: true,
+  },
+  {
+    value: Roles.validarQuestao,
+    label: "Validar Questões",
+    isProjectPermission: true,
+  },
+  {
+    value: Roles.uploadNews,
+    label: "Upload de Novidades",
+    isProjectPermission: true,
+  },
+  {
+    value: Roles.visualizarProvas,
+    label: "Visualizar Provas",
+    isProjectPermission: true,
+  },
+  {
+    value: Roles.cadastrarProvas,
+    label: "Cadastrar Provas",
+    isProjectPermission: true,
+  },
+  {
+    value: Roles.visualizarDemanda,
+    label: "Visualizar Demandas",
+    isProjectPermission: true,
+  },
+  {
+    value: Roles.uploadDemanda,
+    label: "Upload de Demandas",
+    isProjectPermission: true,
+  },
+  {
+    value: Roles.validarDemanda,
+    label: "Validar Demandas",
+    isProjectPermission: true,
+  },
+  {
+    value: Roles.gerenciadorDemanda,
+    label: "Gerenciar Demandas",
+    isProjectPermission: true,
+  },
   {
     value: Roles.gerenciarProcessoSeletivo,
     label: "Gerenciar Processos Seletivos",
+    isProjectPermission: false,
   },
   {
     value: Roles.gerenciarColaboradores,
     label: "Gerenciar Colaboradores",
+    isProjectPermission: false,
   },
-  { value: Roles.gerenciarTurmas, label: "Gerenciar Turmas" },
+  {
+    value: Roles.gerenciarTurmas,
+    label: "Gerenciar Turmas",
+    isProjectPermission: false,
+  },
+  {
+    value: Roles.gerenciarEstudantes,
+    label: "Gerenciar Estudantes",
+    isProjectPermission: false,
+  },
+  {
+    value: Roles.gerenciarPermissoesCursinho,
+    label: "Gerenciar Permissões do Cursinho",
+    isProjectPermission: false,
+  },
 ];

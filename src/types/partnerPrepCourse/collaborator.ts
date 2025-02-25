@@ -13,5 +13,9 @@ export interface Collaborator {
     socialName: string;
     email: string;
     phone: string;
+    role: {
+      id: string;
+      name: string;
+    };
   };
 }

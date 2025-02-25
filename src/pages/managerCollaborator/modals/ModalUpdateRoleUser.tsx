@@ -4,7 +4,6 @@ import Text from "../../../components/atoms/text";
 import Button from "../../../components/molecules/button";
 import { RolesResponse, getRole } from "../../../services/roles/getRole";
 import { useAuthStore } from "../../../store/auth";
-import { UserRole } from "../../../types/roles/UserRole";
 import { Role } from "../../../types/roles/role";
 
 import ModalTemplate from "@/components/templates/modalTemplate";
@@ -13,9 +12,9 @@ import { ReactComponent as StatusRejected } from "../../../assets/icons/statusRe
 import Select from "../../../components/atoms/select";
 
 interface ModalRoleProps {
-  userRole: UserRole;
   roles: Role[];
-  updateUserRole: (user: UserRole) => void;
+  role: Role;
+  updateUserRole: (roleId: string) => void;
   handleClose: () => void;
   isOpen: boolean;
 }
@@ -52,36 +51,31 @@ function PermissionsList({
   );
 }
 
-function ModalRole({
-  userRole,
+function ModalUpdateRoleUser({
   roles,
+  role,
   updateUserRole,
   isOpen,
   handleClose,
 }: ModalRoleProps) {
-  const [newRole, setNewRole] = useState<string>(userRole.roleId);
   const [roleInfo, setRoleInfo] = useState<RolesResponse | undefined>(
     undefined
   );
+  const first: Role | undefined = roles.find((r) => r.id === role.id);
+  const [newRole, setNewRole] = useState<string>(first?.id ?? roles[0].id);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-
   const {
     data: { token },
   } = useAuthStore();
 
   const updateRole = async () => {
-    const newUser: UserRole = {
-      ...userRole,
-      roleId: newRole,
-      roleName: roles.find((r) => r.id === newRole)!.name,
-    };
-    updateUserRole(newUser);
+    updateUserRole(newRole);
     setIsEditing(false);
   };
 
   const cameBackRole = () => {
     setIsEditing(false);
-    setNewRole(userRole.roleId);
+    setNewRole(role.id);
   };
 
   useEffect(() => {
@@ -110,13 +104,13 @@ function ModalRole({
             <div className="flex justify-center mb-4">
               <Select
                 options={roles}
-                defaultValue={userRole.roleId}
+                defaultValue={newRole}
                 setState={setNewRole}
               />
             </div>
           ) : (
             <Text size="tertiary" className="text-marine font-black mb-4">
-              {userRole.roleName}
+              {roles.find((r) => r.id === newRole)?.name}
             </Text>
           )}
           <PermissionsList permissions={roleInfo?.permissoes || []} />
@@ -133,7 +127,11 @@ function ModalRole({
               </Button>
             </>
           ) : (
-            <Button typeStyle="secondary" onClick={() => setIsEditing(true)}>
+            <Button
+              typeStyle="secondary"
+              onClick={() => setIsEditing(true)}
+              disabled={roles.length === 0}
+            >
               Editar
             </Button>
           )}
@@ -143,4 +141,4 @@ function ModalRole({
   );
 }
 
-export default ModalRole;
+export default ModalUpdateRoleUser;
