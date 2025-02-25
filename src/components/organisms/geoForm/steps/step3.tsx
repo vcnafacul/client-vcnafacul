@@ -15,6 +15,7 @@ import Text from "../../../atoms/text";
 import Button from "../../../molecules/button";
 import MapBox from "../../../molecules/mapBox";
 import Form from "../../form";
+import { useMap } from "react-leaflet";
 
 function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: EachStepProps) {
   const [selectedPosition, setSelectedPosition] = useState<number[]>([dataGeo?.latitude || 0, dataGeo?.longitude || 0]);
@@ -72,7 +73,7 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
     setValue("neighborhood", data.neighborhood || "");
     setValue("city", data.city || "");
     setValue("state", data.state || "");
-      if (!useCep && data.location?.coordinates?.latitude && data.location?.coordinates?.longetide ) {
+      if (!useCep && data.location?.coordinates?.latitude && data.location?.coordinates?.longitude ) {
         setSelectedPosition ([parseInt(data.location.coordinates.latitude) , parseInt(data.location.coordinates.longitude)])
       }
   };
@@ -120,11 +121,23 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
     return null;
   };
 
+  const CenterMap = ({ position }: { position: LatLngTuple }) => {
+    const map = useMap();
+    useEffect(() => {
+      if (position[0] !== 0 && position[1] !== 0) {
+        map.setView(position, map.getZoom()); // Atualiza a visualização do mapa para o novo ponto
+      }
+    }, [position, map]);
+  
+    return null;
+  };
+
   const Event = () => {
     return (
       <>
         <MapEvents />
         <Marker position={selectedPosition as LatLngTuple} alt="novo"></Marker>
+        <CenterMap position={selectedPosition as LatLngTuple} />
       </>
     );
   };
