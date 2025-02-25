@@ -191,6 +191,10 @@ export default function ManagerCollaborator() {
         handleActive={handleChangeActive}
         handleDescription={handleDescription}
         openUpdateRole={() => {
+          if (roles.length === 0) {
+            toast.error("Não há funções cadastradas");
+            return;
+          }
           setUserRoleModal(true);
         }}
       />
