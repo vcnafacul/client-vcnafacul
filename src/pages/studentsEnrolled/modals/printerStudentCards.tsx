@@ -92,7 +92,6 @@ export function PrinterStudentCards({
   useEffect(() => {
     new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
       if (!shouldGeneratePDF) return;
-
       generatePDF()
         .then(() => {
           toast.update(id!, {
@@ -119,6 +118,7 @@ export function PrinterStudentCards({
 
   useEffect(() => {
     const newPhotoMap = new Map<string, string>();
+    const id = toast.loading("Carregando fotos...");
     const fetchAllPhotos = async () => {
       setIsLoading(true);
       try {
@@ -144,12 +144,21 @@ export function PrinterStudentCards({
               console.error("Erro ao carregar a imagem:", error);
             }
           }
+          toast.update(id, {
+            render: `Carregando fotos... ${Math.floor(
+              (newPhotoMap.size / entities.length) * 100
+            )}%`,
+            type: "info",
+            isLoading: true,
+            autoClose: false,
+          });
         }
         setPhotos(newPhotoMap);
       } catch (error) {
         console.error("Erro ao carregar todas as imagens:", error);
       } finally {
         setIsLoading(false);
+        toast.dismiss(id);
       }
     };
     setIsLoading(false);
