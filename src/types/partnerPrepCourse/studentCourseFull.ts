@@ -50,6 +50,8 @@ export interface StudentCourseFull {
   convocar: string;
   lista_de_espera: string;
   photo:string;
+  areas_de_interesse?: string;
+  cursos_selecionados?: string;
 }
 
 export interface StudentCourseFullDtoInput extends StudentCourseFull {
