@@ -33,8 +33,9 @@ export function InputFactory({
   label,
   type,
   error,
+  isCheckbox = false,
   ...props
-}: InputFactoryProps) {
+}: InputFactoryProps & {isCheckBOX?: boolean}) {
   let inputElement;
   switch (type) {
     case "select":
@@ -77,7 +78,7 @@ export function InputFactory({
       break;
   }
   return (
-    <BaseLayoutInput id={props.id} label={label} error={error}>
+    <BaseLayoutInput id={props.id} label={label} error={error} isCheckbox={isCheckbox}>
       {inputElement}
     </BaseLayoutInput>
   );

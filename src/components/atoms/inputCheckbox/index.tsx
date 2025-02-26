@@ -43,7 +43,7 @@ export function InputCheckBox({
   };
 
   return (
-    <div className="pt-8 flex flex-col gap-2">
+    <div className="flex flex-col gap-2">
       {checkboxs.map((value, key) => (
         <div className="flex gap-2" key={key}>
           <Checkbox

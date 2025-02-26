@@ -110,9 +110,9 @@ function Account() {
       defaultValue: userAccount?.about,
       className: `col-span-1 ${
         userAccount?.collaborator
-          ? "sm:col-span-2 md:col-span-3 lg:col-span-4"
-          : "sm:col-span-2 md:col-span-4"
-      }`,
+        ? "sm:col-span-2 md:col-span-3 lg:col-span-4"
+        : "sm:col-span-2 md:col-span-4"
+        }`,
     },
   ];
   const {
@@ -215,6 +215,7 @@ function Account() {
     const authUpdate: AuthUpdate = {
       firstName: data.firstName,
       lastName: data.lastName,
+      socialName: data.socialName,
       birthday: data.birthday,
       city: data.city,
       state: data.state,
@@ -296,7 +297,7 @@ function Account() {
               <Form
                 className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 ${
                   userAccount?.collaborator ? "" : " md:grid-cols-3"
-                } gap-4`}
+                  } gap-4`}
                 formFields={listInfo}
                 register={register}
                 errors={errors}
