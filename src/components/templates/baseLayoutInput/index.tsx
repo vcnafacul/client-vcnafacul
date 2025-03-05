@@ -10,7 +10,8 @@ export interface BaseLayoutInputPros {
         (FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined)[]
       >
     | undefined;
-    isCheckbox?: boolean;
+  isCheckbox?: boolean;
+  rows?: number;
 }
 
 export function BaseLayoutInput({

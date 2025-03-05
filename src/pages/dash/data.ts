@@ -15,6 +15,8 @@ import {
   ESTUDO,
   MANAGER_COLLABORATOR,
   NEWS,
+  PARTNER_CLASS,
+  PARTNER_CLASS_STUDENTS,
   PARTNER_PREP_INSCRIPTION,
   SIMULADO,
 } from "../../routes/path";
@@ -35,7 +37,9 @@ import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-ge
 import { ReactComponent as Historia } from "../../assets/icons/home-subjects-historia.svg";
 import { ReactComponent as Sociologia } from "../../assets/icons/home-subjects-sociologia.svg";
 
-import { ReactComponent as Report } from "../../assets/icons/warning.svg";
+import { BiSolidSchool } from "react-icons/bi";
+import { FaPeopleGroup } from "react-icons/fa6";
+import { PiStudentFill, PiUsersFourBold } from "react-icons/pi";
 
 import { DashCardMenu } from "../../components/molecules/dashCard";
 import { HeaderData } from "../../components/organisms/header";
@@ -245,18 +249,32 @@ export const dashCardMenuItems: DashCardMenu[] = [
     alt: "Cursinho",
     subMenuList: [
       {
-        icon: Report,
+        icon: PiStudentFill,
         alt: "processos seletivos",
         text: "Processos Seletivos",
         link: `/dashboard/${PARTNER_PREP_INSCRIPTION}`,
         permissions: [Roles.gerenciarProcessoSeletivo],
       },
       {
-        icon: Report,
+        icon: FaPeopleGroup,
         alt: "colaboradores",
         text: "Colaboradores",
         link: `/dashboard/${MANAGER_COLLABORATOR}`,
         permissions: [Roles.gerenciarColaboradores],
+      },
+      {
+        icon: BiSolidSchool,
+        alt: "turmas",
+        text: "Turmas",
+        link: `/dashboard/${PARTNER_CLASS}`,
+        permissions: [Roles.gerenciarTurmas],
+      },
+      {
+        icon: PiUsersFourBold,
+        alt: "matriculados",
+        text: "Estudantes",
+        link: `/dashboard/${PARTNER_CLASS_STUDENTS}`,
+        permissions: [Roles.gerenciarEstudantes],
       },
     ],
   },

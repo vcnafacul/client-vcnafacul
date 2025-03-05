@@ -24,7 +24,7 @@ function DashNews() {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [newSelect, setNewSelect] = useState<News | null>();
   const [status, setStatus] = useState<StatusEnum>(StatusEnum.Approved);
-  const limitCards = 40;
+  const limitCards = 100;
 
   const {
     data: { token },
