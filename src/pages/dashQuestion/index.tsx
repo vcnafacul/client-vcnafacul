@@ -39,7 +39,7 @@ function DashQuestion() {
   const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
   const [openModalRegister, setOpenModalRegister] = useState<boolean>(false);
   const [questionSelect, setQuestionSelect] = useState<Question | null>(null);
-  const limitCards = 40;
+  const limitCards = 100;
 
   const [infosQuestion, setInfosQuestion] = useState<InfoQuestion>({
     provas: [],
