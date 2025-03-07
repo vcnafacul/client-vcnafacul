@@ -17,6 +17,8 @@ export interface CreateRoleDto {
   gerenciarProcessoSeletivo: boolean;
   gerenciarColaboradores: boolean;
   gerenciarTurmas: boolean;
+  visualizarTurmas: boolean;
   gerenciarEstudantes: boolean;
+  visualizarEstudantes: boolean;
   gerenciarPermissoesCursinho: boolean;
 }

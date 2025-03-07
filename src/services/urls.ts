@@ -78,3 +78,6 @@ export const enrolled = `${studentCourse}/enrolled`;
 export const uploadPhotoProfile = `${studentCourse}/profile-image`;
 export const collaborator = `${BASE_URL}/collaborator`;
 export const classes = `${BASE_URL}/class`;
+
+export const attendanceRecord = `${BASE_URL}/attendance-record`;
+export const studentAttendance = `${BASE_URL}/student-attendance`;

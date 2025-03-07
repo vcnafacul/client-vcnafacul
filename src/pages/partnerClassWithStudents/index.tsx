@@ -1,12 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import Button from "@/components/molecules/button";
 import { getClassById } from "@/services/prepCourse/class/getClassById";
 import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
 import { ClassStudent } from "@/types/partnerPrepCourse/classStudent";
+import { IconButton, Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { AttendanceHistoryModal } from "./modals/attendanceHistoryModal";
+import { AttendanceRecordByStudentModal } from "./modals/attendanceRecordByStudentModal";
+import { IoEyeSharp } from "react-icons/io5";
 
 export function PartnerClassWithStudents() {
   const { hashPrepCourse } = useParams();
@@ -14,12 +19,39 @@ export function PartnerClassWithStudents() {
     {} as ClassEntity
   );
   const [students, setStudents] = useState<ClassStudent[]>([]);
+  const [studentSelected, setStudentSelected] = useState<ClassStudent>(
+    {} as ClassStudent
+  );
+  const [openHistory, setOpenHistory] = useState(false);
+  const [openRecord, setOpenRecord] = useState(false);
 
   const {
     data: { token },
   } = useAuthStore();
 
   const columns: GridColDef[] = [
+    {
+      field: "actions",
+      headerName: "Ações",
+      disableColumnMenu: true,
+      sortable: false,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <div className="flex gap-2 justify-center">
+          <Tooltip title="Visualizar">
+            <IconButton
+              onClick={() => {
+                setStudentSelected(params.row);
+                setOpenRecord(true);
+              }}
+            >
+              <IoEyeSharp className="h-6 w-6 fill-gray-500 hover:fill-marine opacity-60 hover:opacity-100" />
+            </IconButton>
+          </Tooltip>
+        </div>
+      ),
+    },
     {
       field: "cod_enrolled",
       headerName: "Nº de matrricula",
@@ -53,7 +85,28 @@ export function PartnerClassWithStudents() {
     },
   ];
 
-  const paginationModel = { page: 0, pageSize: 10 };
+  const paginationModel = { page: 0, pageSize: 40 };
+
+  const ModalAttendanceHistory = () => {
+    return !openHistory ? null : (
+      <AttendanceHistoryModal
+        isOpen={openHistory}
+        handleClose={() => setOpenHistory(false)}
+        classId={hashPrepCourse!}
+      />
+    );
+  };
+
+  const ModalAttendanceRecordByStudent = () => {
+    return !openRecord ? null : (
+      <AttendanceRecordByStudentModal
+        isOpen={openRecord}
+        handleClose={() => setOpenRecord(false)}
+        classId={hashPrepCourse!}
+        studentId={studentSelected.id}
+      />
+    );
+  };
 
   useEffect(() => {
     getClassById(token, hashPrepCourse!)
@@ -73,6 +126,15 @@ export function PartnerClassWithStudents() {
           {classEntity?.name}
         </h1>
       </div>
+      <div className="p-4 my-4 flex gap-2 flex-start bg-gray-50 w-full">
+        <Button
+          typeStyle="refused"
+          size="small"
+          onClick={() => setOpenHistory(true)}
+        >
+          Registros de Frequência
+        </Button>
+      </div>
       <Paper sx={{ height: "100%", width: "100%" }}>
         <DataGrid
           rows={students}
@@ -84,6 +146,8 @@ export function PartnerClassWithStudents() {
           sx={{ border: 0 }}
         />
       </Paper>
+      <ModalAttendanceHistory />
+      <ModalAttendanceRecordByStudent />
     </div>
   );
 }
