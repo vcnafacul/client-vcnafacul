@@ -15,7 +15,9 @@ export enum Roles {
   gerenciarProcessoSeletivo = "gerenciarProcessoSeletivo",
   gerenciarColaboradores = "gerenciarColaboradores",
   gerenciarTurmas = "gerenciarTurmas",
+  visualizarTurmas = "visualizarTurmas",
   gerenciarEstudantes = "gerenciarEstudantes",
+  visualizarEstudantes = "visualizarEstudantes",
   gerenciarPermissoesCursinho = "gerenciarPermissoesCursinho",
 }
 
@@ -101,8 +103,18 @@ export const RolesLabel = [
     isProjectPermission: false,
   },
   {
+    value: Roles.visualizarTurmas,
+    label: "Visualizar Turmas",
+    isProjectPermission: false,
+  },
+  {
     value: Roles.gerenciarEstudantes,
     label: "Gerenciar Estudantes",
+    isProjectPermission: false,
+  },
+  {
+    value: Roles.visualizarEstudantes,
+    label: "Visualizar Estudantes",
     isProjectPermission: false,
   },
   {

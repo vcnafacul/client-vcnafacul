@@ -48,7 +48,9 @@ function ModalNewRole({
     gerenciarProcessoSeletivo: false,
     gerenciarColaboradores: false,
     gerenciarTurmas: false,
+    visualizarTurmas: false,
     gerenciarEstudantes: false,
+    visualizarEstudantes: false,
     gerenciarPermissoesCursinho: false,
   });
 
