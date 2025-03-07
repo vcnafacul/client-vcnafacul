@@ -218,6 +218,7 @@ export function AttendanceHistoryModal({
           rows={attendanceHistory}
           columns={columns}
           rowCount={totalItems}
+          paginationMode="server"
           initialState={{ pagination: { paginationModel } }}
           rowHeight={40}
           columnHeaderHeight={30}

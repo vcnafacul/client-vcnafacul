@@ -5,6 +5,7 @@ import { AttendanceRecordByStudent } from "@/types/partnerPrepCourse/attendanceR
 import Paper from "@mui/material/Paper";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 interface AttendanceRecordProps {
   isOpen: boolean;
@@ -22,6 +23,8 @@ export function AttendanceRecordByStudentModal({
   const [attendances, setAttendances] = useState<AttendanceRecordByStudent[]>(
     []
   );
+  const [totalItems, setTotalItems] = useState<number>(0);
+  const limit = 10;
 
   const {
     data: { token },
@@ -61,40 +64,60 @@ export function AttendanceRecordByStudentModal({
       minWidth: 200,
     },
   ];
-  const paginationModel = { page: 0, pageSize: 10 };
+  const paginationModel = { page: 0, pageSize: limit };
+
+  const handleGetAttendances = async (page: number, limit: number) => {
+    getAttendanceRecordByStudentId(token, page, limit, classId, studentId)
+      .then((res) => {
+        const data: AttendanceRecordByStudent[] = res.data.map((s) => ({
+          id: s.id,
+          registeredAt: s.registeredAt,
+          present: s.studentAttendance[0].present ? "Presente" : "Ausente",
+          justification: s.studentAttendance[0]?.justification,
+        }));
+        setAttendances(data);
+        setTotalItems(res.totalItems);
+      })
+      .catch((err) => {
+        toast.error(err.message);
+      });
+  };
 
   useEffect(() => {
-    getAttendanceRecordByStudentId(token, classId, studentId).then((res) => {
-      const data: AttendanceRecordByStudent[] = res.map((s) => ({
-        id: s.id,
-        registeredAt: s.registeredAt,
-        present:
-          s.studentAttendance.length > 0
-            ? s.studentAttendance[0].present
-              ? "Presente"
-              : "Ausente"
-            : "Sem Registro",
-        justification: s.studentAttendance[0]?.justification,
-      }));
-      setAttendances(data);
-    });
+    handleGetAttendances(paginationModel.page + 1, paginationModel.pageSize);
   }, []);
+
+  const percent =
+    (attendances.filter((a) => a.present === "Presente").length /
+      attendances.length) *
+      100 || 0;
 
   return (
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white p-4 rounded-md w-[90vw] h-[90vh] sm:h-[600px]"
+      className="bg-white p-4 pb-1 rounded-md w-[90vw] h-[90vh] sm:h-[621px]"
     >
-      <Paper sx={{ height: "95%", width: "100%" }}>
+      <div className="flex flex-col p-2 pt-0">
+        <h1 className="text-2xl font-bold">Registro de Presença</h1>
+        <div>
+          <span className="font-medium">Aproveitamento:</span>
+          <span className="px-2">{percent.toFixed(2)}%</span>
+        </div>
+      </div>
+      <Paper sx={{ height: "85%", width: "100%" }}>
         <DataGrid
           rows={attendances}
           columns={columns}
-          rowCount={attendances.length}
+          rowCount={totalItems}
+          paginationMode="server"
           initialState={{ pagination: { paginationModel } }}
-          rowHeight={43}
+          rowHeight={40}
           disableRowSelectionOnClick
           sx={{ border: 0 }}
+          onPaginationModelChange={(newPageSize) => {
+            handleGetAttendances(newPageSize.page + 1, newPageSize.pageSize);
+          }}
         />
       </Paper>
     </ModalTemplate>
