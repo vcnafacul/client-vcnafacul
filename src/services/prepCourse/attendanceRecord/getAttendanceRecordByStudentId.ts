@@ -1,7 +1,30 @@
 import { attendanceRecord } from "@/services/urls";
-import { AttendanceRecord } from "@/types/partnerPrepCourse/attendanceRecord";
 import fetchWrapper from "@/utils/fetchWrapper";
 import { Paginate } from "@/utils/paginate";
+
+interface AttendanceRecord {
+  id: string;
+  classId: string;
+  registeredAt: Date;
+  studentAttendance: StudentAttendance[];
+  registeredBy: {
+    name: string;
+    email: string;
+  }
+  createdAt: Date;
+}
+
+interface StudentAttendance {
+  id: string;
+  present: boolean;
+  justification?: {
+    justification: string
+  };
+  student: {
+    name: string;
+    cod_enrolled: string;
+  }
+}
 
 export async function getAttendanceRecordByStudentId(token: string, page: number, limit: number, id: string, studentId: string): Promise<Paginate<AttendanceRecord>> {
   const url = new URL(`${attendanceRecord}/student`);
@@ -30,6 +53,5 @@ export async function getAttendanceRecordByStudentId(token: string, page: number
     }
     throw new Error("Ocoorreu um erro inesperado");
   }
-  console.log(res);
   return res;
 }

@@ -73,7 +73,7 @@ export function AttendanceRecordByStudentModal({
           id: s.id,
           registeredAt: s.registeredAt,
           present: s.studentAttendance[0].present ? "Presente" : "Ausente",
-          justification: s.studentAttendance[0]?.justification,
+          justification: s.studentAttendance[0]?.justification?.justification,
         }));
         setAttendances(data);
         setTotalItems(res.totalItems);
