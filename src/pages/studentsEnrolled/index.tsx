@@ -55,12 +55,11 @@ export function StudentsEnrolled() {
     getStudentsEnrolled(token, page, limit)
       .then((res) => {
         setName(res.name);
-        console.log(res.students);
         setTotalItems(res.students.totalItems);
         setStudents(res.students.data);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.message);
       });
   };
 
@@ -353,7 +352,13 @@ export function StudentsEnrolled() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelectionChange = useCallback((selectionModel: any) => {
-    setSelectedRows(selectionModel);
+    if (selectionModel.length <= 20) {
+      setSelectedRows(selectionModel as string[]);
+    } else {
+      toast.warn("Selecione no máximo 20 estudantes", {
+        theme: "dark",
+      });
+    }
   }, []);
 
   const paginationModel = { page: 0, pageSize: limit };
@@ -393,6 +398,10 @@ export function StudentsEnrolled() {
             getEnrolle(newPageSize.page + 1, newPageSize.pageSize);
           }}
           sx={{ border: 0 }}
+          isRowSelectable={(params) =>
+            params.row.applicationStatus === StatusApplication.Enrolled &&
+            params.row.class.id !== undefined
+          }
         />
       </Paper>
       <ModalInfo />

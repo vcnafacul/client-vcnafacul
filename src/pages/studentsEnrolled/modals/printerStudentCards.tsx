@@ -26,7 +26,7 @@ export function PrinterStudentCards({
   const [photos, setPhotos] = useState<Map<string, string>>(new Map());
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [shouldGeneratePDF, setShouldGeneratePDF] = useState(false);
-  const [id, setId] = useState<Id>();
+  const [toastId, setToastId] = useState<Id>();
 
   const {
     data: { token },
@@ -47,12 +47,21 @@ export function PrinterStudentCards({
     const cardHeight = 50;
     let xPos = margin;
     let yPos = margin;
-    const images = await Promise.all(
-      Array.from(cards).map(async (card) => {
-        const canvas = await html2canvas(card as HTMLElement, { scale: 2 });
-        return canvas.toDataURL("image/png");
-      })
-    );
+    const chunkSize = 5; // Processa 5 elementos por vez
+    const cardElements = Array.from(cards);
+    const images: string[] = [];
+
+    for (let i = 0; i < cardElements.length; i += chunkSize) {
+      const chunk = cardElements.slice(i, i + chunkSize);
+      const chunkImages = await Promise.all(
+        chunk.map(async (card) => {
+          const canvas = await html2canvas(card as HTMLElement, { scale: 2 });
+          console.log(canvas);
+          return canvas.toDataURL("image/png");
+        })
+      );
+      images.push(...chunkImages);
+    }
     images.forEach((imgData) => {
       pdf.addImage(imgData, "PNG", xPos, yPos, cardWidth, cardHeight);
       if (xPos === margin) {
@@ -77,7 +86,7 @@ export function PrinterStudentCards({
     if (isGeneratingPDF) return;
 
     const id = toast.loading("Gerando PDF...");
-    setId(id); // Salvar o ID do toast
+    setToastId(id); // Salvar o ID do toast
     setIsGeneratingPDF(true);
     setShouldGeneratePDF(true); // Disparar o efeito que gera o PDF
 
@@ -94,7 +103,7 @@ export function PrinterStudentCards({
       if (!shouldGeneratePDF) return;
       generatePDF()
         .then(() => {
-          toast.update(id!, {
+          toast.update(toastId!, {
             render: "PDF gerado com sucesso!",
             type: "success",
             isLoading: false,
@@ -102,7 +111,7 @@ export function PrinterStudentCards({
           });
         })
         .catch((error) => {
-          toast.update(id!, {
+          toast.update(toastId!, {
             render: "Erro ao gerar PDF: " + error.message,
             type: "error",
             isLoading: false,
@@ -122,37 +131,33 @@ export function PrinterStudentCards({
     const fetchAllPhotos = async () => {
       setIsLoading(true);
       try {
-        for (const entity of entities) {
-          if (entity.photo) {
+        const fetchPhotos = entities
+          .filter((entity) => entity.photo)
+          .map(async (entity) => {
             try {
               const blob = await getProfilePhoto(entity.photo, token);
-              const fileType = blob.type; // Tipo MIME do arquivo
-              if (fileType === "image/heic" || fileType === "image/heif") {
-                // Se for HEIC, converte para JPEG
-                const convertedBlob = await heic2any({
-                  blob,
-                  toType: "image/jpeg",
-                });
-                const convertedUrl = URL.createObjectURL(convertedBlob as Blob);
-                newPhotoMap.set(entity.photo, convertedUrl);
-              } else {
-                // Se não for HEIC, usa a imagem normal
-                const url = URL.createObjectURL(blob);
-                newPhotoMap.set(entity.photo, url);
-              }
+              const fileType = blob.type;
+              const convertedBlob =
+                fileType === "image/heic" || fileType === "image/heif"
+                  ? ((await heic2any({ blob, toType: "image/jpeg" })) as Blob)
+                  : blob;
+              return {
+                id: entity.photo,
+                url: URL.createObjectURL(convertedBlob),
+              };
             } catch (error) {
               console.error("Erro ao carregar a imagem:", error);
+              return null;
             }
-          }
-          toast.update(id, {
-            render: `Carregando fotos... ${Math.floor(
-              (newPhotoMap.size / entities.length) * 100
-            )}%`,
-            type: "info",
-            isLoading: true,
-            autoClose: false,
           });
-        }
+
+        const results = await Promise.allSettled(fetchPhotos);
+
+        results.forEach((result) => {
+          if (result.status === "fulfilled" && result.value) {
+            newPhotoMap.set(result.value.id, result.value.url);
+          }
+        });
         setPhotos(newPhotoMap);
       } catch (error) {
         console.error("Erro ao carregar todas as imagens:", error);

@@ -10,7 +10,6 @@ export async function getRoles(token: string): Promise<Role[]> {
       Authorization: `Bearer ${token}`,
     },
   });
-  console.log(response); 
   if (response.status === 200) {
     return await response.json();
   } else {
