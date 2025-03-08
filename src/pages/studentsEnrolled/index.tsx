@@ -55,12 +55,11 @@ export function StudentsEnrolled() {
     getStudentsEnrolled(token, page, limit)
       .then((res) => {
         setName(res.name);
-        console.log(res.students);
         setTotalItems(res.students.totalItems);
         setStudents(res.students.data);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.message);
       });
   };
 

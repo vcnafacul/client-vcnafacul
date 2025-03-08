@@ -12,7 +12,6 @@ export async function createAttendanceRecord(token: string, classId: string, dat
   });
 
   const res = await response.json();
-  console.log(res);
   if (response.status !== 201) {
     if (response.status >= 400) {
       throw res;
