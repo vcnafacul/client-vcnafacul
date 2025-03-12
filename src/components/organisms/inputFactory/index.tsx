@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   InputCheckBox,
   InputCheckBoxProps,
@@ -33,8 +34,9 @@ export function InputFactory({
   label,
   type,
   error,
+  isCheckbox = false,
   ...props
-}: InputFactoryProps) {
+}: InputFactoryProps & {isCheckBOX?: boolean}) {
   let inputElement;
   switch (type) {
     case "select":
@@ -63,10 +65,9 @@ export function InputFactory({
       inputElement = (
         <div className=" border p-2 w-full outline-orange rounded-md">
           <textarea
-            className="mt-4 w-full outline-none rounded-md overflow-y-auto 
-        scrollbar-hide resize-none"
-            rows={10}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            className={`mt-4 w-full outline-none rounded-md overflow-y-auto 
+        scrollbar-hide resize-none ${(props as any).className }`}
+            rows={(props as any).rows || 10}
             {...(props as any)}
           />
         </div>
@@ -77,7 +78,7 @@ export function InputFactory({
       break;
   }
   return (
-    <BaseLayoutInput id={props.id} label={label} error={error}>
+    <BaseLayoutInput id={props.id} label={label} error={error} isCheckbox={isCheckbox}>
       {inputElement}
     </BaseLayoutInput>
   );

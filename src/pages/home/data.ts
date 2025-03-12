@@ -57,6 +57,7 @@ import wikilabLogo from "../../assets/images/home/Logo_WikiLab.png";
 import UFSCarLogo from "../../assets/images/home/UFSCar.png";
 import tumble from "../../assets/images/home/thumb-about-us.png";
 import { SupportersProps } from "../../components/organisms/supporters";
+import  JaquelineRibeiro from "../../assets/images/home/JaquelineRibeiro3.png";
 
 export const userNavigationSign: ItemMenuProps[] = [
   {
@@ -89,7 +90,7 @@ export const userNavigationLogged: ItemMenuProps[] = [
   {
     Home_Menu_Item_id: {
       id: 2,
-      name: "Editar Perfil",
+      name: "Perfil",
       link: `/dashboard/${ACCOUNT_PATH}`,
       target: "_self",
     },
@@ -573,7 +574,7 @@ export const about_us: AboutUsProps = {
 
 export const supporters: SupportersProps = {
   title: "Nossos apoiadores!",
-  subtitle: "Pessoas e empresas que sonharam com a gente",
+  subtitle: "Pessoas, cursinhos e empresas que sonham com a gente",
   sponsors: [
     {
       Patrocinador_id: {
@@ -594,6 +595,13 @@ export const supporters: SupportersProps = {
         image: wikilabLogo,
         alt: "logo-wikilab",
         link: "https://coworkingsaocarlos.com/",
+      },
+    },
+    {
+      Patrocinador_id: {
+        image: JaquelineRibeiro,
+        alt: "logo-jaquelineribeiro",
+        link: "https://wa.me/55016981160654",
       },
     },
   ],

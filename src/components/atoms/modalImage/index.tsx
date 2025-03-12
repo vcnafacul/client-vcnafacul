@@ -11,7 +11,6 @@ function ModalImage({ image, isOpen, handleClose }: ModalImageProps) {
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      outSideClose
       className="bg-white p-2 rounded-md"
     >
       <img

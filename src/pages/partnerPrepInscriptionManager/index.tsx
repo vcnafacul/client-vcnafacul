@@ -30,7 +30,7 @@ export function PartnerPrepInscriptionManager() {
   const [inscriptionSelected, setInscriptionSelected] = useState<
     Inscription | undefined
   >(undefined);
-  const limitCards = 40;
+  const limitCards = 100;
 
   const {
     data: { token },

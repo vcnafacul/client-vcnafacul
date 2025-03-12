@@ -36,11 +36,17 @@ export interface SupportersProps extends SupportersSponsor {
   prepCourse: Sponsor[];
 }
 
+enum TabItems {
+  Empresas,
+  Voluntarios,
+  Cursinho_Parceiro,
+}
+
 function Supporters() {
   const { supporters, volunteers, prepCourse } = useHomeContext();
 
   const tabItems = ["Empresas", "Voluntários", "Cursinho Parceiro"];
-  const [tab, setTab] = useState<number>(0);
+  const [tab, setTab] = useState<TabItems>(TabItems.Voluntarios);
   const changeTab = (tab: number) => {
     setTab(tab);
   };
@@ -81,6 +87,9 @@ function Supporters() {
           {volunteer.description?.substring(0, 30) +
             `${volunteer.description?.length > 30 ? " ..." : ""}`}
         </p>
+          <p className="font-thin text-marine text-base">
+            {`${volunteer.actived ? "" : "Ex-membro"}`}
+          </p>
       </div>
     ));
 
@@ -108,11 +117,11 @@ function Supporters() {
           <Text size="tertiary">{supporters!.subtitle}</Text>
         </div>
         {volunteers.length > 0 ? (
-          <Selector tabItems={tabItems} changeItem={changeTab} />
+          <Selector tabItems={tabItems} changeItem={changeTab} activeTab={tab} />
         ) : (
           <></>
         )}
-        {tab === 0 ? (
+        {tab === TabItems.Empresas ? (
           <div className="flex justify-around items-center flex-wrap">
             {supporters!.sponsors.map((sponsor, index) => (
               <a
@@ -128,7 +137,7 @@ function Supporters() {
               </a>
             ))}
           </div>
-        ) : tab == 1 ? (
+        ) : tab == TabItems.Voluntarios ? (
           <div className="flex justify-around items-center flex-wrap w-full">
             <Volunteers />
           </div>

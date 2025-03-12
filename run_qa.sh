@@ -88,7 +88,7 @@ install_docker_mac() {
 # Função para gerenciar containers e imagens (Linux/Mac)
 manage_containers_images() {
     echo "Excluindo containers antigos..."
-    docker rm -f web-vcnafacul api-vcnafacul ms-vcnafacul
+    docker rm -f web-vcnafacul api-vcnafacul ms-simulado
 
     echo "Excluindo imagens antigas..."
     docker rmi -f vcnafacul/web vcnafacul/api vcnafacul/simulado
