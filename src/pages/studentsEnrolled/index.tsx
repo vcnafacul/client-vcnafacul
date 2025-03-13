@@ -14,7 +14,15 @@ import { capitalizeWords } from "@/utils/capitalizeWords";
 import { IconButton } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  getGridDateOperators,
+  getGridStringOperators,
+  GridColDef,
+  GridFilterItem,
+  GridSortModel,
+} from "@mui/x-data-grid";
+import debounce from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { FaAddressCard, FaCheck } from "react-icons/fa";
 import { IoClose, IoEyeSharp } from "react-icons/io5";
@@ -38,6 +46,8 @@ export function StudentsEnrolled() {
     {} as StudentsDtoOutput
   );
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [filter, setFilter] = useState<GridFilterItem | undefined>(undefined);
+  const [sort, setSort] = useState<GridSortModel | undefined>(undefined);
 
   const {
     data: { token, permissao },
@@ -51,8 +61,13 @@ export function StudentsEnrolled() {
     }
   };
 
-  const getEnrolle = async (page: number, limit: number) => {
-    getStudentsEnrolled(token, page, limit)
+  const getEnrolle = async (
+    page: number,
+    limit: number,
+    filters?: GridFilterItem,
+    sortModel?: GridSortModel
+  ) => {
+    getStudentsEnrolled(token, page, limit, filters, sortModel)
       .then((res) => {
         setName(res.name);
         setTotalItems(res.students.totalItems);
@@ -61,6 +76,21 @@ export function StudentsEnrolled() {
       .catch((err) => {
         toast.error(err.message);
       });
+  };
+
+  const debouncedFilter = useCallback(
+    debounce.debounce(
+      (value: GridFilterItem) => getEnrolle(1, limit, value, sort),
+      1000
+    ),
+    []
+  );
+
+  const handleFilterChange = (filterModel: GridFilterItem) => {
+    if (filterModel && filterModel.value !== undefined) {
+      setFilter(filterModel);
+      debouncedFilter(filterModel);
+    }
   };
 
   const handleCancelEnrollment = (reason: string) => {
@@ -304,6 +334,9 @@ export function StudentsEnrolled() {
       width: 150,
       align: "center",
       headerAlign: "center",
+      filterOperators: getGridStringOperators().filter(({ value }) =>
+        ["contains"].includes(value)
+      ),
     },
     {
       field: "class",
@@ -317,10 +350,19 @@ export function StudentsEnrolled() {
       field: "email",
       headerName: "Email",
       minWidth: 270,
+      filterOperators: getGridStringOperators().filter(({ value }) =>
+        ["contains"].includes(value)
+      ),
     },
     {
       field: "name",
       headerName: "Nome",
+      minWidth: 200,
+      flex: 1,
+    },
+    {
+      field: "socialName",
+      headerName: "Nome Social",
       minWidth: 200,
       flex: 1,
     },
@@ -337,6 +379,9 @@ export function StudentsEnrolled() {
       minWidth: 100,
       maxWidth: 120,
       type: "date",
+      filterOperators: getGridDateOperators().filter(({ value }) =>
+        ["is", "after", "before"].includes(value)
+      ),
     },
     {
       field: "age",
@@ -394,14 +439,39 @@ export function StudentsEnrolled() {
           onRowSelectionModelChange={handleSelectionChange}
           pageSizeOptions={[5, 10, 15, 30, 50, 100]}
           onPaginationModelChange={(newPageSize) => {
+            console.log(newPageSize);
             setLimit(newPageSize.pageSize);
-            getEnrolle(newPageSize.page + 1, newPageSize.pageSize);
+            getEnrolle(
+              newPageSize.page + 1,
+              newPageSize.pageSize,
+              filter,
+              sort
+            );
           }}
           sx={{ border: 0 }}
           isRowSelectable={(params) =>
             params.row.applicationStatus === StatusApplication.Enrolled &&
             params.row.class.id !== undefined
           }
+          onFilterModelChange={(filterModel) => {
+            if (
+              filterModel &&
+              filterModel.items.length > 0 &&
+              !["age", "name"].includes(filterModel.items[0].field)
+            ) {
+              handleFilterChange(filterModel.items[0]);
+            }
+          }}
+          onSortModelChange={(sortModel) => {
+            if (
+              sortModel &&
+              sortModel.length > 0 &&
+              !["age", "name"].includes(sortModel[0].field)
+            ) {
+              setSort(sortModel);
+              getEnrolle(1, limit, filter, sortModel);
+            }
+          }}
         />
       </Paper>
       <ModalInfo />
