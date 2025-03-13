@@ -9,6 +9,7 @@ import { dataClass } from "../data";
 import BLink from "@/components/molecules/bLink";
 import { ClassEntityOutput } from "@/dtos/classes/classOutput";
 import { Roles } from "@/enums/roles/roles";
+import { cn } from "@/lib/utils";
 import { DASH, PARTNER_CLASS } from "@/routes/path";
 import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
@@ -21,6 +22,12 @@ interface ClassInfoModalProps {
   handleEdit: (data: ClassEntityOutput) => Promise<void>;
   handleDelete: () => Promise<void>;
 }
+
+const isClassDeletionDisabled = (selectedClass: ClassEntity) => {
+  const hasStudents = selectedClass.number_students > 0;
+
+  return hasStudents;
+};
 
 export function ClassInfoModal({
   isOpen,
@@ -124,7 +131,8 @@ export function ClassInfoModal({
           {permissao[Roles.gerenciarTurmas] && (
             <div className="flex flex-1 justify-end gap-4">
               <Button
-                className="w-24 h-8 bg-red border-none hover:bg-red/60 "
+                disabled={isClassDeletionDisabled(entitySelected)}
+                className={cn("w-24 h-8 border-none bg-red hover:bg-red/60", `${isClassDeletionDisabled(entitySelected) && ' bg-gray-600 cursor-not-allowed hover:bg-gray-600/60'}`)}
                 onClick={() => setOpenModalDelete(true)}
               >
                 <div className="flex justify-center gap-1.5">
