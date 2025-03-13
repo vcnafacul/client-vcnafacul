@@ -3,6 +3,7 @@ import Button from "@/components/molecules/button";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
+import { Roles } from "@/enums/roles/roles";
 import { enrollmentCancelled } from "@/services/prepCourse/student/enrollment-cancelled";
 import { getStudentsEnrolled } from "@/services/prepCourse/student/getStudentsEnrolled";
 import { reactiveEnrolled } from "@/services/prepCourse/student/reactive-enrolled";
@@ -39,7 +40,7 @@ export function StudentsEnrolled() {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   const {
-    data: { token },
+    data: { token, permissao },
   } = useAuthStore();
 
   const handleModalDetaild = (id: string) => {
@@ -54,12 +55,11 @@ export function StudentsEnrolled() {
     getStudentsEnrolled(token, page, limit)
       .then((res) => {
         setName(res.name);
-        console.log(res.students);
         setTotalItems(res.students.totalItems);
         setStudents(res.students.data);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.message);
       });
   };
 
@@ -238,8 +238,46 @@ export function StudentsEnrolled() {
               <IoEyeSharp className="h-6 w-6 fill-gray-500 opacity-60 hover:opacity-100" />
             </IconButton>
           </Tooltip>
-          {params.row.applicationStatus === StatusApplication.Enrolled ? (
-            <Tooltip title="Cancelar matrícula">
+          {permissao[Roles.gerenciarEstudantes] &&
+            (params.row.applicationStatus === StatusApplication.Enrolled ? (
+              <Tooltip title="Cancelar matrícula">
+                <IconButton
+                  onClick={() => {
+                    const student = students.find(
+                      (student) => student.id === params.row.id
+                    );
+                    if (!student) {
+                      alert("Estudante não encontrado");
+                    } else {
+                      setStudentSelected(student);
+                      setOpenModalReject(true);
+                    }
+                  }}
+                >
+                  <IoClose className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title="Reativar matrícula">
+                <IconButton
+                  onClick={() => {
+                    const student = students.find(
+                      (student) => student.id === params.row.id
+                    );
+                    if (!student) {
+                      alert("Estudante não encontrado");
+                    } else {
+                      setStudentSelected(student);
+                      setConfirmEnrolled(true);
+                    }
+                  }}
+                >
+                  <FaCheck className="h-6 w-6 fill-green2 opacity-60 hover:opacity-100" />
+                </IconButton>
+              </Tooltip>
+            ))}
+          {permissao[Roles.gerenciarTurmas] && (
+            <Tooltip title="Alterar Turma">
               <IconButton
                 onClick={() => {
                   const student = students.find(
@@ -249,49 +287,14 @@ export function StudentsEnrolled() {
                     alert("Estudante não encontrado");
                   } else {
                     setStudentSelected(student);
-                    setOpenModalReject(true);
+                    setOpenUpdateClass(true);
                   }
                 }}
               >
-                <IoClose className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
-              </IconButton>
-            </Tooltip>
-          ) : (
-            <Tooltip title="Reativar matrícula">
-              <IconButton
-                onClick={() => {
-                  const student = students.find(
-                    (student) => student.id === params.row.id
-                  );
-                  if (!student) {
-                    alert("Estudante não encontrado");
-                  } else {
-                    setStudentSelected(student);
-                    setConfirmEnrolled(true);
-                  }
-                }}
-              >
-                <FaCheck className="h-6 w-6 fill-green2 opacity-60 hover:opacity-100" />
+                <MdClass className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
               </IconButton>
             </Tooltip>
           )}
-          <Tooltip title="Alterar Turma">
-            <IconButton
-              onClick={() => {
-                const student = students.find(
-                  (student) => student.id === params.row.id
-                );
-                if (!student) {
-                  alert("Estudante não encontrado");
-                } else {
-                  setStudentSelected(student);
-                  setOpenUpdateClass(true);
-                }
-              }}
-            >
-              <MdClass className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
-            </IconButton>
-          </Tooltip>
         </div>
       ),
     },
@@ -349,7 +352,13 @@ export function StudentsEnrolled() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelectionChange = useCallback((selectionModel: any) => {
-    setSelectedRows(selectionModel);
+    if (selectionModel.length <= 20) {
+      setSelectedRows(selectionModel as string[]);
+    } else {
+      toast.warn("Selecione no máximo 20 estudantes", {
+        theme: "dark",
+      });
+    }
   }, []);
 
   const paginationModel = { page: 0, pageSize: limit };
@@ -389,6 +398,10 @@ export function StudentsEnrolled() {
             getEnrolle(newPageSize.page + 1, newPageSize.pageSize);
           }}
           sx={{ border: 0 }}
+          isRowSelectable={(params) =>
+            params.row.applicationStatus === StatusApplication.Enrolled &&
+            params.row.class.id !== undefined
+          }
         />
       </Paper>
       <ModalInfo />

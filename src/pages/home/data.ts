@@ -90,7 +90,7 @@ export const userNavigationLogged: ItemMenuProps[] = [
   {
     Home_Menu_Item_id: {
       id: 2,
-      name: "Editar Perfil",
+      name: "Perfil",
       link: `/dashboard/${ACCOUNT_PATH}`,
       target: "_self",
     },

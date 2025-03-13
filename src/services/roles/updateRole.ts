@@ -14,7 +14,6 @@ export async function updateRole(
     },
     body: JSON.stringify(role),
   });
-  console.log(response);
   if (response.status === 500) {
     throw new Error("Erro ao editar role");
   } else if (response.status === 400 || response.status === 404) {
