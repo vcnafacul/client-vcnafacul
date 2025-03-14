@@ -36,7 +36,10 @@
 /* Para telas muito pequenas (ex: smartphones em modo retrato) */
 @media (max-width: 480px) {
   .p-dropdown-panel {
-    width: 100%; /* O dropdown ocupará toda a largura disponível da tela */
-    max-width: 95%; /* Define uma largura máxima de 95% da tela para evitar que fique muito próximo das bordas */
+    min-width: unset !important;
+    max-width: calc(100% - 30px);
+    width: auto !important;
+    left: 15px !important;
+    right: 15px !important;
   }
 }
