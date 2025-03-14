@@ -21,7 +21,6 @@ import {
 
 import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
 import BLink from "@/components/molecules/bLink";
-import { StatusEnum } from "@/enums/generic/statusEnum";
 import { questions } from "@/pages/partnerPrepInscription/data";
 import { DASH, PARTNER_PREP_INSCRIPTION } from "@/routes/path";
 import { toast } from "react-toastify";
@@ -207,7 +206,11 @@ export function InscriptionInfoModal({
   };
 
   return (
-    <ModalTemplate isOpen={isOpen} handleClose={handleClose} className="bg-white p-4 rounded-md">
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose}
+      className="bg-white p-4 rounded-md"
+    >
       <div className=" max-w-2xl min-w-[90%] sm:min-w-[550px] flex flex-col gap-4">
         <h1 className="text-left text-marine text-3xl font-black">
           {dataInscription.inscription}
@@ -258,16 +261,14 @@ export function InscriptionInfoModal({
               <MdOutlineFileDownload className="w-6 h-6" />
             </ShadcnButton.Button>
           </ShadcnTooltip>
-          {inscriptionSelected?.actived === StatusEnum.Rejected && (
-            <BLink
-              className="h-8 w-36 bg-green2 border-none hover:bg-green2/60"
-              to={`${DASH}/${PARTNER_PREP_INSCRIPTION}/${inscriptionSelected?.id}`}
-            >
-              <div className="flex justify-center gap-1.5">
-                <p className="text-sm w-fit">Lista de Alunos</p>
-              </div>
-            </BLink>
-          )}
+          <BLink
+            className="h-8 w-36 bg-green2 border-none hover:bg-green2/60"
+            to={`${DASH}/${PARTNER_PREP_INSCRIPTION}/${inscriptionSelected?.id}`}
+          >
+            <div className="flex justify-center gap-1.5">
+              <p className="text-sm w-fit">Lista de Alunos</p>
+            </div>
+          </BLink>
           <div className="flex flex-1 justify-end gap-4">
             <Button
               className="w-24 h-8 bg-red border-none hover:bg-red/60 "
