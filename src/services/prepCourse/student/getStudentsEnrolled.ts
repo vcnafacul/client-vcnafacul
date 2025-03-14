@@ -3,6 +3,7 @@ import { enrolled } from "@/services/urls";
 import { GetEnrolledDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
 import { calculeAge } from "@/utils/calculateAge";
 import fetchWrapper from "@/utils/fetchWrapper";
+import { GridFilterItem, GridSortModel } from "@mui/x-data-grid";
 
 const nothasActiveInscription = "No active inscription course";
 const alreadyInscribed = "User already inscribed";
@@ -10,14 +11,29 @@ const alreadyInscribed = "User already inscribed";
 export async function getStudentsEnrolled(
   token: string,
   page: number,
-  limit: number
+  limit: number,
+  filters?: GridFilterItem,
+  sortModel?: GridSortModel
 ): Promise<GetEnrolledDtoOutput> {
   const url = new URL(enrolled);
-
   const params: Record<string, string | number> = {
     page,
     limit,
   };
+
+  console.log(filters?.operator);
+
+  if(filters){
+    params["filter[field]"] = filters.field;
+    params["filter[value]"] = filters.value;
+    params["filter[operator]"] = filters.operator;
+  }
+
+  if (sortModel && sortModel.length > 0) {
+    params["sort[field]"] = sortModel[0].field;
+    params["sort[order]"] = sortModel[0].sort as string;
+  }
+
   Object.keys(params).forEach((key) =>
     url.searchParams.append(key, params[key].toString())
   );
