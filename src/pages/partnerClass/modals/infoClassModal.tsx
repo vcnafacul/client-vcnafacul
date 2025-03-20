@@ -10,6 +10,7 @@ import BLink from "@/components/molecules/bLink";
 import { ClassEntityOutput } from "@/dtos/classes/classOutput";
 import { Roles } from "@/enums/roles/roles";
 import { cn } from "@/lib/utils";
+import { useClassDeletion } from "@/pages/partnerClass/modals/useClassDeletion";
 import { DASH, PARTNER_CLASS } from "@/routes/path";
 import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
@@ -23,12 +24,6 @@ interface ClassInfoModalProps {
   handleDelete: () => Promise<void>;
 }
 
-const isClassDeletionDisabled = (selectedClass: ClassEntity) => {
-  const hasStudents = selectedClass.number_students > 0;
-
-  return hasStudents;
-};
-
 export function ClassInfoModal({
   isOpen,
   handleClose,
@@ -41,8 +36,10 @@ export function ClassInfoModal({
   const [openModalDelete, setOpenModalDelete] = useState(false);
 
   const {
-    data: { permissao },
+    data: { permissao, token },
   } = useAuthStore();
+
+  const { isDeletionDisabled, isLoading } = useClassDeletion(entitySelected,token);
 
   const ModalDelete = () => {
     return (
@@ -131,8 +128,9 @@ export function ClassInfoModal({
           {permissao[Roles.gerenciarTurmas] && (
             <div className="flex flex-1 justify-end gap-4">
               <Button
-                disabled={isClassDeletionDisabled(entitySelected)}
-                className={cn("w-24 h-8 border-none bg-red hover:bg-red/60", `${isClassDeletionDisabled(entitySelected) && ' bg-gray-600 cursor-not-allowed hover:bg-gray-600/60'}`)}
+                hover
+                disabled={isDeletionDisabled || isLoading}
+                className={cn("w-24 h-8 border-none bg-red hover:bg-red/60", `${(isDeletionDisabled || isLoading) && ' bg-gray-600 cursor-not-allowed hover:bg-gray-600/60'}`)}
                 onClick={() => setOpenModalDelete(true)}
               >
                 <div className="flex justify-center gap-1.5">
