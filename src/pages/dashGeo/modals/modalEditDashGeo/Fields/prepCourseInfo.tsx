@@ -5,6 +5,7 @@ import {
 } from "@/components/organisms/inputFactory";
 import { prepCourseInfoType } from "@/pages/dashGeo/data";
 import { Geolocation } from "@/types/geolocation/geolocation";
+import { TypeMarker } from "@/types/map/marker";
 import { FieldErrors, UseFormSetValue } from "react-hook-form";
 
 interface Props {
@@ -30,15 +31,27 @@ export function PrepCourseInfo({ form, setValue, errors, edit, geo }: Props) {
         disabled={!edit}
         defaultValue={geo.name}
       />
-      <InputFactory
-        id={form.category.label}
-        label={form.category.label}
-        type={form.category.type as InputFactoryType}
-        onChange={(e: any) => setValue("category", e.target.value)}
-        error={errors.category}
-        disabled={!edit}
-        defaultValue={geo.category}
-      />
+      {geo.type === TypeMarker.univPublic ? (
+        <InputFactory
+          id={form.campus.label}
+          label={form.campus.label}
+          type={form.campus.type as InputFactoryType}
+          onChange={(e: any) => setValue("campus", e.target.value)}
+          error={errors.campus}
+          disabled={!edit}
+          defaultValue={geo.campus}
+        />
+      ) : (
+        <InputFactory
+          id={form.category.label}
+          label={form.category.label}
+          type={form.category.type as InputFactoryType}
+          onChange={(e: any) => setValue("category", e.target.value)}
+          error={errors.category}
+          disabled={!edit}
+          defaultValue={geo.category}
+        />
+      )}
       <InputFactory
         id={form.cep.label}
         label={form.cep.label}
