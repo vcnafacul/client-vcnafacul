@@ -14,7 +14,7 @@ export const prepCourseInfo = {
     name: {
         id: "name",
         type: "text",
-        label: "Nome do Cursinho",
+        label: "Nome",
     },
     category: {
         id: "category",
