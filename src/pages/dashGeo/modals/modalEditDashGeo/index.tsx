@@ -122,7 +122,6 @@ function ModalEditDashGeo({
     UpdateGeolocation({ body, token })
       .then((_) => {
         updateGeo(body);
-        console.log(body);
         toast.update(id, {
           render: `Cursinho ${body.name} atualizado com sucesso`,
           type: `success`,
