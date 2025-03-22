@@ -32,7 +32,7 @@ export function PartnerPrepInscriptionStep3({
     phoneMask(currentData?.legalGuardian?.phone) || ""
   );
   const [fRelationOther, setFRelationOther] = useState<boolean>(false);
-  const [cpf, setCPF] = useState<string>(currentData?.cpf || "");
+  const [cpf, setCPF] = useState<string>(currentData?.legalGuardian?.cpf || "");
 
   const handleCPFChange = (cpf: string) => {
     let value = cpf.replace(/\D/g, ""); // Remove tudo que não for número
@@ -137,7 +137,6 @@ export function PartnerPrepInscriptionStep3({
   }, []);
 
   useEffect(() => {
-    console.log(currentData?.legalGuardian?.phone)
     if (currentData) {
       setValue("fullName", currentData?.legalGuardian?.fullName);
       setValue(

@@ -1,23 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Volunteer } from "../../components/organisms/supporters";
 import fetchWrapper from "../../utils/fetchWrapper";
-import { user } from "../urls";
+import { collaborator } from "../urls";
 
-export async function getVolunteers (): Promise<Volunteer[]> {
-    const response = await fetchWrapper(`${user}/volunteers`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" }
-    });
-    const res : any[] = await response.json()
-    if(response.status !== 200){
-        throw new Error(`Erro ao buscar Voluntários`)
+export async function getVolunteers(): Promise<Volunteer[]> {
+  const response = await fetchWrapper(
+    `${collaborator}/${import.meta.env.VITE_VCNAFACUL_ID}/prepCourse`,
+    {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
     }
-    const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
-    const volunteers : Volunteer[] = res.map(volunteer => ({
-        name: volunteer.firstName  + ' ' + volunteer.lastName,
-        image: `${VITE_FTP_PROFILE}${volunteer.collaboratorPhoto}`,
-        description: volunteer.collaboratorDescription,
-        alt: `foto colaborador ${volunteer.lastName}`
-    }))
-    return volunteers
+  );
+  const res: any[] = await response.json();
+  if (response.status !== 200) {
+    throw new Error(`Erro ao buscar Voluntários`);
+  }
+  const volunteers: Volunteer[] = res.map((col) => ({
+    ...col,
+    image: col.image,
+    alt: `foto colaborador ${col.name}`,
+  }));
+  return volunteers;
 }

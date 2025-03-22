@@ -38,4 +38,27 @@ export interface Geolocation extends CreateGeolocation, CardDash {
   reportAddress: boolean;
   reportContact: boolean;
   reportOther: boolean;
+  logs: LogsGeo[];
+}
+
+interface LogsGeo {
+  id: string;
+  geoId: string;
+  userId?: string;
+  status: StatusLogGeo;
+  description: string;
+  createdAt: Date;
+  user?: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+}
+
+export enum StatusLogGeo {
+  Created = "Criado",
+  Changed = "Modificado",
+  StautsChanged = "Status Modificado",
+  Deletado = "Deletado",
+  Partner = "Parceiria",
 }

@@ -1,15 +1,16 @@
+import { PermissionsList } from "@/components/atoms/permissionList";
+import Toggle from "@/components/atoms/toggle";
+import { createRole } from "@/services/roles/createRole";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Filter from "../../../components/atoms/filter";
 import Text from "../../../components/atoms/text";
-import Toggle from "../../../components/atoms/toggle";
 import Button from "../../../components/molecules/button";
 import ModalTemplate, {
   ModalProps,
 } from "../../../components/templates/modalTemplate";
 import { CreateRoleDto } from "../../../dtos/roles/createRole";
 import { RolesLabel } from "../../../enums/roles/roles";
-import { createRole } from "../../../services/roles/createRole";
 import { useAuthStore } from "../../../store/auth";
 import { Role } from "../../../types/roles/role";
 
@@ -25,6 +26,7 @@ function ModalNewRole({
 }: ModalNewRoleProps) {
   const [newRole, setNewRole] = useState<CreateRoleDto>({
     name: "",
+    base: false,
     validarCursinho: false,
     alterarPermissao: false,
     criarSimulado: false,
@@ -38,7 +40,13 @@ function ModalNewRole({
     uploadDemanda: false,
     validarDemanda: false,
     gerenciadorDemanda: false,
-    gerenciarInscricoesCursinhoParceiro: false,
+    gerenciarProcessoSeletivo: false,
+    gerenciarColaboradores: false,
+    gerenciarTurmas: false,
+    visualizarTurmas: false,
+    gerenciarEstudantes: false,
+    visualizarEstudantes: false,
+    gerenciarPermissoesCursinho: false,
   });
 
   const {
@@ -69,45 +77,48 @@ function ModalNewRole({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose!}
-      className="bg-white rounded-md p-4 "
+      className="bg-white rounded-md p-4"
     >
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 h-fit max-h-[70vh] overflow-y-auto scrollbar-hide">
+      <div className="w-[90vw] h-fit max-h-[70vh] overflow-y-auto scrollbar-hide">
         {/* Nome do Perfil */}
         <div className="flex flex-col gap-4">
           <Text size="secondary" className="font-bold text-marine">
             Nome do Perfil
           </Text>
-          <Filter
-            placeholder="Digite o nome do novo perfil"
-            filtrar={handleInputChange}
-            search={false}
-            className="bg-gray-200 rounded-md"
-          />
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 flex-wrap w-full">
+            <Filter
+              placeholder="Digite o nome do novo perfil"
+              filtrar={handleInputChange}
+              search={false}
+              className="bg-gray-200 rounded-md w-full sm:flex-1"
+            />
+            <div className="flex items-center gap-4 w-full sm:w-auto">
+              <Toggle
+                name="base"
+                checked={newRole["base"]}
+                handleCheck={handleToggleChange}
+              />
+              <span className="text-base font-medium text-marine">
+                Perfil Base
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Permissões */}
-        <div className="flex flex-col gap-4">
-          <Text size="secondary" className="font-bold text-marine">
-            Permissões
-          </Text>
-          <div className="flex flex-col gap-2">
-            {RolesLabel.map((role, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between gap-4"
-              >
-                <span className="text-base font-medium text-marine">
-                  {role.label}
-                </span>
-                <Toggle
-                  name={role.value}
-                  checked={newRole[role.value]}
-                  handleCheck={handleToggleChange}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
+        <PermissionsList
+          title="Permissões do Projeto"
+          roles={RolesLabel.filter((role) => role.isProjectPermission)}
+          seletedRole={newRole}
+          handleToggleChange={handleToggleChange}
+        />
+        <div className="border-b border-gray-200 pt-3 mb-3" />
+        <PermissionsList
+          title="Permissões do Cursinho"
+          roles={RolesLabel.filter((role) => !role.isProjectPermission)}
+          seletedRole={newRole}
+          handleToggleChange={handleToggleChange}
+        />
       </div>
 
       {/* Botões */}

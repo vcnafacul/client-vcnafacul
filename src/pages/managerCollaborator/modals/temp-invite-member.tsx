@@ -62,9 +62,8 @@ export function TempInviteMember(props: TempInviteMemberProps) {
   return (
     <ModalTemplate {...props} className="bg-white p-4 rounded-md">
       <div className="w-96">
-        <h2 className="text-base font-bold text-marine">
-          Insira o email do usuário que deseja convidar como membro do seu
-          cursinho
+        <h2 className="text-base text-center font-bold text-marine">
+        Digite o e-mail do usuário para convidá-lo como colaborador do cursinho.
         </h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <input

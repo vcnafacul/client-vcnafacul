@@ -8,7 +8,7 @@ interface Documents {
   expiredAt: Date;
 }
 
-interface LogStudent {
+export interface LogStudent {
   id: string;
   studentId: string;
   applicationStatus: StatusApplication;
@@ -17,7 +17,7 @@ interface LogStudent {
   updatedAt: Date;
 }
 
-interface StudentCourseFull {
+export interface StudentCourseFull {
   id: string;
   cadastrado_em: Date;
   email: string;
@@ -50,6 +50,8 @@ interface StudentCourseFull {
   convocar: string;
   lista_de_espera: string;
   photo:string;
+  areas_de_interesse?: string;
+  cursos_selecionados?: string;
 }
 
 export interface StudentCourseFullDtoInput extends StudentCourseFull {
@@ -58,6 +60,7 @@ export interface StudentCourseFullDtoInput extends StudentCourseFull {
   documents: Documents[];
   data_convocacao: string | null;
   data_limite_convocacao: string | null;
+  sended_email_recently: boolean;
 }
 
 export interface XLSXStudentCourseFull extends StudentCourseFull {

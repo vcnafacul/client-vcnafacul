@@ -18,6 +18,7 @@ export interface Volunteer {
   name: string;
   description: string;
   alt: string;
+  actived: boolean;
 }
 
 interface SponsorProps {
@@ -35,14 +36,21 @@ export interface SupportersProps extends SupportersSponsor {
   prepCourse: Sponsor[];
 }
 
+enum TabItems {
+  Empresas,
+  Voluntarios,
+  Cursinho_Parceiro,
+}
+
 function Supporters() {
   const { supporters, volunteers, prepCourse } = useHomeContext();
 
   const tabItems = ["Empresas", "Voluntários", "Cursinho Parceiro"];
-  const [tab, setTab] = useState<number>(0);
+  const [tab, setTab] = useState<TabItems>(TabItems.Voluntarios);
   const changeTab = (tab: number) => {
     setTab(tab);
   };
+  const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
 
   const breakpoints = {
     1: {
@@ -63,20 +71,25 @@ function Supporters() {
   };
 
   const CardVolunteers = (volunteers: Volunteer[]) =>
-    volunteers.map((volunteer, index) => (
-      <div key={index} className="flex flex-col items-center">
-        <div className="w-40 h-40">
+    volunteers.filter((volunteer) => volunteer.image).map((volunteer, index) => (
+      <div key={index} className="flex flex-col items-center mb-8 select-none">
+        <div className="w-40 h-40 mb-2">
           <img
-            className="rounded-full"
-            src={volunteer.image as string}
+            className={`rounded-full object-cover ${
+              volunteer.actived ? "" : "grayscale"
+            }`}
+            src={`${VITE_FTP_PROFILE}/${volunteer.image}`}
             alt={volunteer.alt}
           />
         </div>
         <p className="font-base text-marine text-lg">{volunteer.name}</p>
         <p className="font-thin text-marine text-base">
-          {volunteer.description.substring(0, 30) +
-            `${volunteer.description.length > 30 ? " ..." : ""}`}
+          {volunteer.description?.substring(0, 30) +
+            `${volunteer.description?.length > 30 ? " ..." : ""}`}
         </p>
+          <p className="font-thin text-marine text-base">
+            {`${volunteer.actived ? "" : "Ex-membro"}`}
+          </p>
       </div>
     ));
 
@@ -104,11 +117,11 @@ function Supporters() {
           <Text size="tertiary">{supporters!.subtitle}</Text>
         </div>
         {volunteers.length > 0 ? (
-          <Selector tabItems={tabItems} changeItem={changeTab} />
+          <Selector tabItems={tabItems} changeItem={changeTab} activeTab={tab} />
         ) : (
           <></>
         )}
-        {tab === 0 ? (
+        {tab === TabItems.Empresas ? (
           <div className="flex justify-around items-center flex-wrap">
             {supporters!.sponsors.map((sponsor, index) => (
               <a
@@ -124,7 +137,7 @@ function Supporters() {
               </a>
             ))}
           </div>
-        ) : tab == 1 ? (
+        ) : tab == TabItems.Voluntarios ? (
           <div className="flex justify-around items-center flex-wrap w-full">
             <Volunteers />
           </div>

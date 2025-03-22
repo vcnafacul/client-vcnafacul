@@ -229,24 +229,6 @@ function ModalDetalhes({
       disabled: !question ? false : !isEditing,
     },
     {
-      id: "ano",
-      type: "number",
-      label: "Ano:*",
-      defaultValue: infos.provas.find((p) =>
-        prova ? p._id === prova : question?.prova
-      )?.ano,
-      disabled: true,
-    },
-    {
-      id: "edicao",
-      type: "text",
-      label: "Edição:*",
-      defaultValue: infos.provas.find((p) =>
-        prova ? p._id === prova : question?.prova
-      )?.edicao,
-      disabled: true,
-    },
-    {
       id: "numero",
       type: "option",
       label: "Número da Questão:*",

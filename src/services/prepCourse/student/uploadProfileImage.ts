@@ -1,18 +1,18 @@
-import { uploadDocuments } from "@/services/urls";
+import { uploadPhotoProfile as url } from "@/services/urls";
 
-export async function uploadDocs(
-  files: File[], // Lista de arquivos a serem enviados
+export async function uploadProfileImage(
+  photo: File, // Foto da carteirinha
+  studentId: string,
   token: string // Token de autenticação
 ) {
   // Criação de FormData para anexar os arquivos
   const formData = new FormData();
-  files.forEach((file) => {
-    formData.append("files", file);
-  });
+  formData.append("file", photo);
+  formData.append("studentId", studentId);
 
   // Envio da requisição
-  const response = await fetch(uploadDocuments, {
-    method: "POST", // Método HTTP para upload
+  const response = await fetch(url, {
+    method: "PATCH", // Método HTTP para upload
     headers: {
       Authorization: `Bearer ${token}`, // Cabeçalho com o token JWT
     },
@@ -20,7 +20,7 @@ export async function uploadDocs(
   });
 
   // Verificação do status da resposta
-  if (response.status !== 201) {
+  if (response.status !== 200) {
     throw new Error(`Ops, ocorreu um problema na requisição. Tente novamente!`);
   }
 }

@@ -8,12 +8,13 @@ import { DashCardContext } from "../../context/dashCardContext";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { getRoles } from "../../services/roles/getRoles";
 import { getUsersRole } from "../../services/roles/getUsersRole";
-import { updateRole } from "../../services/roles/updateRole";
+import { updateUserRole } from "../../services/roles/updateUserRole";
 import { useAuthStore } from "../../store/auth";
 import { UserRole } from "../../types/roles/UserRole";
 import { Role } from "../../types/roles/role";
 import { Paginate } from "../../utils/paginate";
 import { dashRoles } from "./data";
+import ModalEditRole from "./modals/ModalEditRole";
 import ModalNewRole from "./modals/ModalNewRole";
 import ModalRole from "./modals/ModalRole";
 import ShowUserInfo from "./modals/showUserInfo";
@@ -25,9 +26,10 @@ function DashRoles() {
   const [userModal, setUserModal] = useState<boolean>(false);
   const [userRoleModal, setUserRoleModal] = useState<boolean>(false);
   const [newRole, setnewRole] = useState<boolean>(false);
+  const [editRole, setEditRole] = useState<boolean>(false);
   const [filterText, setFilterText] = useState<string>("");
   const dataRef = useRef<UserRole[]>([]);
-  const limitCards = 40;
+  const limitCards = 100;
 
   const {
     data: { token },
@@ -48,9 +50,9 @@ function DashRoles() {
     setUserModal(true);
   };
 
-  const updateUserRole = (userRole: UserRole) => {
+  const handleUpdateUserRole = (userRole: UserRole) => {
     setUserRoleModal(false);
-    updateRole(userRole.user.id, userRole.roleId, token)
+    updateUserRole(userRole.user.id, userRole.roleId, token)
       .then(() => {
         setUsersRole(
           usersRole.map((ur) => {
@@ -69,16 +71,6 @@ function DashRoles() {
       .catch((error: Error) => {
         toast.error(`${error.message} - Usuário ${userRole.user.firstName}`);
       });
-  };
-
-  const updateUserLocal = (ur: UserRole) => {
-    const newUserRole = usersRole.map((user) => {
-      if (user.user.id === ur.user.id) {
-        return ur;
-      }
-      return user;
-    });
-    setUsersRole(newUserRole);
   };
 
   const handleNewRole = (role: Role) => {
@@ -127,7 +119,7 @@ function DashRoles() {
             return r;
           }
         })}
-        updateUserRole={updateUserRole}
+        updateUserRole={handleUpdateUserRole}
         userRole={userRoleSelect!}
         isOpen={userRoleModal}
         handleClose={() => setUserRoleModal(false)}
@@ -145,13 +137,18 @@ function DashRoles() {
     );
   };
 
+  const ShowEditRole = () => {
+    return !editRole ? null : (
+      <ModalEditRole isOpen={editRole} handleClose={() => setEditRole(false)} />
+    );
+  };
+
   const ShowUserModal = () => {
     return !userModal ? null : (
       <ShowUserInfo
         isOpen={userModal}
         handleClose={() => setUserModal(false)}
         ur={userRoleSelect!}
-        updateUser={updateUserLocal}
         openUpdateRole={() => setUserRoleModal(true)}
       />
     );
@@ -166,6 +163,14 @@ function DashRoles() {
       typeStyle: "quaternary",
       size: "small",
       children: "Nova Permissão",
+    },
+    {
+      onClick: () => {
+        setEditRole(true);
+      },
+      typeStyle: "primary",
+      size: "small",
+      children: "Editar Permissões",
     },
   ];
 
@@ -195,6 +200,7 @@ function DashRoles() {
       <ShowUserModal />
       <ShowUserRole />
       <ShowNewRole />
+      <ShowEditRole />
     </DashCardContext.Provider>
   );
 }
