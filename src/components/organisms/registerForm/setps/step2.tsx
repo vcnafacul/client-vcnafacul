@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ControlCalendar from "@/components/atoms/controlCalendar";
-import { optionsGender, stateOptions } from "@/pages/register/data";
+import {
+  optionsGender,
+  socialNameCheckbox,
+  stateOptions,
+} from "@/pages/register/data";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -68,8 +72,8 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
     defaultValues: {
       firstName: "",
       socialName: "",
-      lastName: ""
-    }
+      lastName: "",
+    },
   });
 
   const firstName = watch("firstName");
@@ -79,7 +83,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
   const getDisplayName = () => {
     const nameToUse = isCheckboxChecked && socialName ? socialName : firstName;
     return `${nameToUse} ${lastName}`.trim();
-  }
+  };
 
   const registerSubmit = (data: UseRegisterStep2) => {
     if (!isCheckboxChecked) {
@@ -95,7 +99,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
           isLoading: false,
           autoClose: 3000,
         });
-        next()
+        next();
       })
       .catch((error: Error) => {
         toast.update(id, {
@@ -131,20 +135,32 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
         error={errors.firstName}
         onChange={(e: any) => setValue("firstName", e.target.value)}
       />
-      <InputFactory id="socialNameCheckbox"
-        label={
-          <>
-            Desejo utilizar o nome social. O nome social é o nome pelo qual uma pessoa se identifica e é reconhecida socialmente, em vez do nome de registro civil. <a href="https://www.trf4.jus.br/trf4/controlador.php?acao=pagina_visualizar&id_pagina=2207" target="_blank" className="text-blue-600 underline hover:text-blue-800 focus:outline focus:ring-2 focus:ring-blue-500">Saiba mais aqui.</a>
-          </>
-        }
-        type="checkbox"
-        checkboxs={[""]}
-        onCheckedChange={(values: string[]) => {
-          setIsCheckboxChecked(values.length > 0);
-        }
-        }
-        isCheckbox
-      />
+      <div className="flex flex-col w-full items-start justify-start">
+        <InputFactory
+          id="socialNameCheckbox"
+          label=""
+          type="checkbox"
+          checkboxs={[
+            <>
+              <span className="text-sm font-extrabold pb-2 text-gray-500">
+                Desejo utilizar o Nome Social: {" "}
+              </span>
+              {socialNameCheckbox} {" "}
+              <a
+                href="https://www.trf4.jus.br/trf4/controlador.php?acao=pagina_visualizar&id_pagina=2207"
+                target="_blank"
+                className="text-blue-600 underline hover:text-blue-800 focus:outline focus:ring-2 focus:ring-blue-500"
+              >
+                Saiba mais aqui.
+              </a>
+            </>,
+          ]}
+          onCheckedChange={(values: string[]) => {
+            setIsCheckboxChecked(values.length > 0);
+          }}
+          isCheckbox
+        />
+      </div>
       <InputFactory
         id="socialName"
         label="Nome Social"
@@ -160,7 +176,8 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
         error={errors.lastName}
         onChange={(e: any) => setValue("lastName", e.target.value)}
       />
-      <span className="text-xs text-grey font-semibold mb-4">Esta é uma pré-visualização do nome que será utilizado na plataforma:{" "}
+      <span className="text-xs text-grey font-semibold mb-4">
+        Esta é uma pré-visualização do nome que será utilizado na plataforma:{" "}
         {getDisplayName()}
       </span>
       <InputFactory
