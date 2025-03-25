@@ -3,6 +3,7 @@ import { Auth } from "@/store/auth";
 export type UserMe = Auth & {
   id: string;
   socialName?: string;
+  useSocialName: boolean;
   email: string;
   street?: string;
   number?: number;

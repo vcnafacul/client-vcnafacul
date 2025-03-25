@@ -30,6 +30,7 @@ export interface StudentCourseFull {
   nome: string;
   sobrenome: string;
   nome_social: string;
+  usar_nome_social: boolean;
   data_nascimento: Date;
   telefone: string;
   bairro: string;
