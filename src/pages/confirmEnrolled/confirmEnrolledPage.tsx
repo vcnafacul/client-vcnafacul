@@ -12,16 +12,15 @@ export function ConfirmEnrolledPage() {
   const getToken = (queryString.parse(location.search).token as string) || "";
   const [declaredInterest, setDeclaredInterest] = useState(false);
   const [error, setError] = useState<string>("");
-  const [isFree, setIsFree] = useState<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let decoded: any = null;
   let expired = true;
   if (getToken) {
     decoded = jwtDecoded(getToken);
     expired = decoded.exp * 1000 < Date.now();
-    setIsFree(decoded.isFree);
   }
   const studentId = decoded.user.id as string;
+  const isFree = decoded.user.isFree;
 
   useEffect(() => {
     if (getToken) {
@@ -51,9 +50,7 @@ export function ConfirmEnrolledPage() {
           Você ja declarou interesse nesta vaga.
         </ConfirmEnrolledExpiredMessage>
       ) : error ? (
-        <ConfirmEnrolledExpiredMessage>
-          {error}
-        </ConfirmEnrolledExpiredMessage>
+        <ConfirmEnrolledExpiredMessage>{error}</ConfirmEnrolledExpiredMessage>
       ) : (
         <div className="flex flex-col items-center min-h-[calc(100vh-76px)] w-full">
           <DeclareInterest
