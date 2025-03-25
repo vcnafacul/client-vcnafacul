@@ -29,7 +29,6 @@ export interface CollaboratorColumns {
   updatedAt: Date;
   userId: string;
   name: string;
-  socialName: string;
   email: string;
   phone: string;
   role: {
@@ -263,8 +262,7 @@ export default function ManagerCollaborator() {
             createdAt: col.createdAt,
             updatedAt: col.updatedAt,
             userId: col.user.id,
-            name: col.user.firstName + " " + col.user.lastName,
-            socialName: col.user.socialName + " " + col.user.lastName,
+            name: col.user.name,
             email: col.user.email,
             phone: col.user.phone,
             role: {

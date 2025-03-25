@@ -361,12 +361,6 @@ export function StudentsEnrolled() {
       flex: 1,
     },
     {
-      field: "socialName",
-      headerName: "Nome Social",
-      minWidth: 200,
-      flex: 1,
-    },
-    {
       field: "applicationStatus",
       headerName: "Status",
       minWidth: 100,

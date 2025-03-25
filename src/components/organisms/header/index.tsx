@@ -2,6 +2,8 @@ import { useState } from "react";
 
 import { ReactComponent as MenuIcon } from "../../../assets/icons/menu.svg";
 
+import DropdwonMenu from "@/components/atoms/dropdownMenu";
+import { report } from "@/pages/home/data";
 import { ReactComponent as Reporticon } from "../../../assets/icons/warning.svg";
 import { useBaseTemplateContext } from "../../../context/baseTemplateContext";
 import { useAuthStore } from "../../../store/auth";
@@ -12,8 +14,6 @@ import Logo from "../../molecules/logo";
 import { ItemMenuProps } from "../../molecules/menuItems";
 import MainMenu from "../mainMenu";
 import Sign from "../sign";
-import DropdwonMenu from "@/components/atoms/dropdownMenu";
-import { report } from "@/pages/home/data";
 
 export interface HeaderData {
   pageLinks: ItemMenuProps[];
@@ -32,7 +32,7 @@ function Header({ solid, className }: HeaderProps) {
   const {
     data: {
       token,
-      user: { firstName },
+      user: { firstName, socialName, useSocialName },
     },
   } = useAuthStore();
 
@@ -71,14 +71,12 @@ function Header({ solid, className }: HeaderProps) {
           ) : (
             <Logged
               userNavigation={header.userNavigationLogged}
-              userName={capitalize(firstName)}
+              userName={capitalize(useSocialName ? socialName! : firstName)}
               className={solid ? "text-marine" : "text-white"}
             />
           )}
         </div>
-        <DropdwonMenu
-          userNavigation={report}
-        >
+        <DropdwonMenu userNavigation={report}>
           <Reporticon className="hidden sm:block w-8 h-8" />
         </DropdwonMenu>
       </div>

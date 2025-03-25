@@ -3,7 +3,8 @@ import { useState } from "react";
 import { CheckboxProps } from "../checkbox";
 
 export interface InputCheckBoxProps {
-  checkboxs: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  checkboxs: any[];
   onCheckedChange: (value: string[]) => void;
   propCleanRest?: string;
 }

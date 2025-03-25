@@ -8,9 +8,7 @@ export interface Collaborator {
   updatedAt: Date;
   user: {
     id: string;
-    firstName: string;
-    lastName: string;
-    socialName: string;
+    name: string;
     email: string;
     phone: string;
     role: {
