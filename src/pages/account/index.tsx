@@ -27,7 +27,6 @@ function Account() {
   const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
   const [imagePreview, setImagePreview] = useState<any>(null);
   const [file, setFile] = useState<any>(null);
-  const [sended, setSended] = useState<boolean>(false);
 
   const previewImage = (file: any) => {
     const reader = new FileReader();
@@ -113,13 +112,9 @@ function Account() {
           autoClose: 3000,
         });
       })
-      .finally(() => {
-        setSended(false);
-      });
   };
 
   const update = (data: any) => {
-    setSended(true);
     const authUpdate: AuthUpdate = {
       firstName: data.firstName,
       lastName: data.lastName,
