@@ -35,48 +35,58 @@ export function PrinterStudentCards({
   const generatePDF = async () => {
     const cards = document.querySelectorAll(".student-card");
     if (!cards.length) return;
+
     const pdf = new jsPDF({
       orientation: "portrait",
       unit: "mm",
       format: "a4",
     });
-    const pageWidth = 210;
-    const pageHeight = 297;
-    const margin = 7;
-    const cardWidth = (pageWidth - margin * 3) / 2;
-    const cardHeight = 50;
-    let xPos = margin;
-    let yPos = margin;
-    const chunkSize = 5; // Processa 5 elementos por vez
-    const cardElements = Array.from(cards);
-    const images: string[] = [];
 
+    const cardWidth = 85.6;
+    const cardHeight = 53.98;
+    const horizontalSpacing = 12.93; // Espaço entre os cards e margens laterais
+    const verticalSpacing = 4.52; // Espaço entre os cards e margens verticais
+
+    const images: string[] = [];
+    const cardElements = Array.from(cards);
+
+    // Render cards to images
+    const chunkSize = 5;
     for (let i = 0; i < cardElements.length; i += chunkSize) {
       const chunk = cardElements.slice(i, i + chunkSize);
       const chunkImages = await Promise.all(
         chunk.map(async (card) => {
           const canvas = await html2canvas(card as HTMLElement, { scale: 2 });
-          console.log(canvas);
           return canvas.toDataURL("image/png");
         })
       );
       images.push(...chunkImages);
     }
-    images.forEach((imgData) => {
+
+    let xPos = horizontalSpacing;
+    let yPos = verticalSpacing;
+    let cardsInCurrentPage = 0;
+
+    images.forEach((imgData, index) => {
       pdf.addImage(imgData, "PNG", xPos, yPos, cardWidth, cardHeight);
-      if (xPos === margin) {
-        xPos += cardWidth + margin;
+
+      if (xPos === horizontalSpacing) {
+        xPos += cardWidth + horizontalSpacing; // Vai para segunda coluna
       } else {
-        xPos = margin;
-        yPos += cardHeight + margin;
+        xPos = horizontalSpacing; // Volta pra primeira coluna
+        yPos += cardHeight + verticalSpacing; // Vai pra próxima linha
       }
-      if (yPos + cardHeight > pageHeight - margin) {
+
+      cardsInCurrentPage++;
+
+      if (cardsInCurrentPage === 10 && index < images.length - 1) {
         pdf.addPage();
-        xPos = margin;
-        yPos = margin;
+        xPos = horizontalSpacing;
+        yPos = verticalSpacing;
+        cardsInCurrentPage = 0;
       }
     });
-    // Gerar URL do PDF para visualização
+
     const pdfBlob = pdf.output("blob");
     const url = URL.createObjectURL(pdfBlob);
     setPdfUrl(url);
