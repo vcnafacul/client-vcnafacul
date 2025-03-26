@@ -117,7 +117,6 @@ function DashGeo() {
     async (status: StatusEnum, text: string) => {
       getAllGeolocation(status, 1, limitCards, text)
         .then((res) => {
-          console.log(res);
           setGeolocations(res.data);
         })
         .catch(() => setGeolocations([]));

@@ -21,7 +21,6 @@ export async function getClassById(
     throw new Error("Erro ao tentar deletar turma");
   }
   const res = await response.json();
-  console.log(res);
   return {
     ...res,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
