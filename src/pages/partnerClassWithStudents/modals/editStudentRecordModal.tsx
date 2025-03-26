@@ -18,7 +18,7 @@ export function EditStudentRecordModal({
   currentPresent,
   handleConfirm,
 }: AttendanceRecordProps) {
-  const [present, setPresent] = useState(currentPresent);
+  const [present, setPresent] = useState<boolean>(currentPresent ? true : false);
   const [message, setMessage] = useState("");
 
   const handleToggleChange = () => {
