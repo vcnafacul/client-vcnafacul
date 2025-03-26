@@ -27,7 +27,6 @@ export function PartnerPrepInscriptionStep3({
   handleBack,
   isMinor,
 }: PartnerPrepInscriptionStep3Props) {
-  console.log(currentData);
   const [phone, setPhone] = useState<string>(
     phoneMask(currentData?.legalGuardian?.phone) || ""
   );

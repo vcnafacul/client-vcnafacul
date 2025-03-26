@@ -123,7 +123,6 @@ function ModalEditDashGeo({
   } = useAuthStore();
 
   const UpdateGeo = async (body: any) => {
-    console.log(body);
     body["id"] = geo.id;
     if (selectedPosition[0] !== 0) {
       body["latitude"] = selectedPosition[0];

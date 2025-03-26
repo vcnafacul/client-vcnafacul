@@ -7,6 +7,7 @@ import {
   AuditLogMS,
   HistoryQuestion,
 } from "../../../types/question/historyQuestion";
+import { toast } from "react-toastify";
 
 interface ModalHistoricoProps extends ModalProps {
   id: string;
@@ -33,11 +34,10 @@ function ModalHistorico({ id }: ModalHistoricoProps) {
         );
       })
       .catch((error) => {
-        console.log(error);
+        toast.error(error.message);
       });
   }, []);
 
-  console.log(history);
 
   const HistoryComponent = () => {
     return (

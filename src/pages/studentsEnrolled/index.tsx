@@ -433,7 +433,6 @@ export function StudentsEnrolled() {
           onRowSelectionModelChange={handleSelectionChange}
           pageSizeOptions={[5, 10, 15, 30, 50, 100]}
           onPaginationModelChange={(newPageSize) => {
-            console.log(newPageSize);
             setLimit(newPageSize.pageSize);
             getEnrolle(
               newPageSize.page + 1,

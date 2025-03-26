@@ -82,7 +82,6 @@ export function AccountForm({ update, userAccount }: AccountFormProps) {
   return (
     <form
       onSubmit={handleSubmit((data: any) => {
-        console.log(data);
         update({
           ...data,
           useSocialName: isCheckboxChecked,
