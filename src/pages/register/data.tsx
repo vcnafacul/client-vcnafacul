@@ -46,3 +46,6 @@ export const registerForm: RegisterFormProps = {
 export const uppercaseLetterRegex = /[A-Z]/;
 export const lowercaseLetterRegex = /[a-z]/;
 export const specialCaracteresRegex = /[!@#$%^&*(),.?":{}|<>]/;
+
+export const socialNameCheckbox =
+  "O nome social é destinado a pessoas trans, travestis ou não binárias que preferem ser identificadas por um nome diferente do registrado oficialmente. Ele existe para garantir respeito à identidade de gênero e evitar situações constrangedoras.";

@@ -3,8 +3,6 @@ import univ from "@/assets/images/UFSCar-f440d2791.png";
 import ProfileImage from "@/components/atoms/photoStudentCard";
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
 import { formatDate } from "@/utils/date";
-import { Checkbox } from "@mui/material";
-import { useState } from "react";
 
 interface InfoStudentEnrolledModalProps {
   entity: StudentsDtoOutput;
@@ -17,7 +15,6 @@ export function StudentCard({
   onChangePhoto,
   imageSrc,
 }: InfoStudentEnrolledModalProps) {
-  const [socialName, setSocialName] = useState<boolean>(false);
   return (
     <>
       <div className="bg-white pt-2 pr-2 rounded-md border-2 border-marine student-card">
@@ -41,7 +38,7 @@ export function StudentCard({
             {[
               {
                 label: "Nome",
-                value: !socialName ? entity.name : entity.socialName,
+                value: entity.name,
               },
               {
                 label: "Número de Matrícula",
@@ -72,15 +69,6 @@ export function StudentCard({
             <img className="h-12 sm:h-12 sm:pr-4" src={logo} alt="Logo" />
           </div>
         </div>
-      </div>
-      <div>
-        <Checkbox
-          checked={socialName}
-          onChange={() => setSocialName(!socialName)}
-          inputProps={{ "aria-label": "controlled" }}
-          color="primary"
-        />
-        <label>Mostrar Nome Social</label>
       </div>
     </>
   );

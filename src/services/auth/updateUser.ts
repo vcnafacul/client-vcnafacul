@@ -10,6 +10,6 @@ export async function updateUser(token: string, data: AuthUpdate): Promise<void>
     });
 
     if(response.status !== 200){
-        throw new Error(`Erro ao buscar Infos Usuário`)
+        throw new Error(`Erro ao atualizar informações do Usuário`)
     }
 }

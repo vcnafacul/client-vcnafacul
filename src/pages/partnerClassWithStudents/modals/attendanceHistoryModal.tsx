@@ -99,7 +99,6 @@ export function AttendanceHistoryModal({
         new Date(item.registeredAt).getMonth() === new Date().getMonth() &&
         new Date(item.registeredAt).getFullYear() === new Date().getFullYear()
     );
-    console.log(hasRecordToday);
     if (hasRecordToday) {
       setOpenNewModal(true);
     } else {

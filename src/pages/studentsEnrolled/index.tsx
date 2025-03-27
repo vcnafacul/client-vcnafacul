@@ -361,12 +361,6 @@ export function StudentsEnrolled() {
       flex: 1,
     },
     {
-      field: "socialName",
-      headerName: "Nome Social",
-      minWidth: 200,
-      flex: 1,
-    },
-    {
       field: "applicationStatus",
       headerName: "Status",
       minWidth: 100,
@@ -439,7 +433,6 @@ export function StudentsEnrolled() {
           onRowSelectionModelChange={handleSelectionChange}
           pageSizeOptions={[5, 10, 15, 30, 50, 100]}
           onPaginationModelChange={(newPageSize) => {
-            console.log(newPageSize);
             setLimit(newPageSize.pageSize);
             getEnrolle(
               newPageSize.page + 1,

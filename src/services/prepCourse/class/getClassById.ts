@@ -27,12 +27,12 @@ export async function getClassById(
     students: res.students.map((student: any) => {
       return {
         id: student.id,
-        name: student.user.firstName + " " + student.user.lastName,
-        email: student.user.email,
+        name: student.name,
+        email: student.email,
         applicationStatus: student.applicationStatus,
         cod_enrolled: student.cod_enrolled,
-        photo: student.user.photo,
-        birthday: new Date(student.user.birthday),
+        photo: student.photo,
+        birthday: new Date(student.birthday),
         logs: [],
         createdAt: student.createdAt,
         updatedAt: student.updatedAt,

@@ -473,7 +473,7 @@ export function PartnerPrepInscritionStudentManager() {
           {params.row.status === StatusApplication.CalledForEnrollment &&
             !params.row.sended_email_recently &&
             params.row.data_convocacao &&
-             new Date() >= params.row.data_convocacao && (
+            new Date() >= params.row.data_convocacao && (
               <ActionButton
                 titleAlert={`Confirmação de Matrícula ${params.row.nome} ${params.row.sobrenome}`}
                 descriptionAlert={`Realizar a  confirmação de matrícula de  ${params.row.nome} ${params.row.sobrenome}`}
@@ -535,8 +535,6 @@ export function PartnerPrepInscritionStudentManager() {
       flex: 1,
       type: "date",
     },
-
-    { field: "nome_social", headerName: "Nome Social", flex: 1 },
     { field: "nome", headerName: "Nome", flex: 1 },
     { field: "sobrenome", headerName: "Sobrenome", flex: 1 },
   ];
@@ -596,7 +594,16 @@ export function PartnerPrepInscritionStudentManager() {
       const id = toast.loading("Carregando Lista de Alunos...");
       getSubscribers(token, inscriptionId)
         .then((data) => {
-          setStudents(data);
+          setStudents(
+            data.map((student) => {
+              return {
+                ...student,
+                nome: student.usar_nome_social
+                  ? student.nome_social
+                  : student.nome,
+              };
+            })
+          );
           setStudentSelected(data[0]);
           toast.dismiss(id);
         })

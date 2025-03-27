@@ -1,4 +1,5 @@
 import { CardDash } from "../../components/molecules/cardDash";
+import { TypeMarker } from "../map/marker";
 
 export interface CreateGeolocation {
   latitude: number;
@@ -27,6 +28,8 @@ export interface CreateGeolocation {
   userPhone: string;
   userConnection: string;
   userEmail: string;
+  campus?: string;
+  type: TypeMarker;
 }
 
 export interface Geolocation extends CreateGeolocation, CardDash {

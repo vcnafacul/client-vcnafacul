@@ -21,8 +21,6 @@ export async function getStudentsEnrolled(
     limit,
   };
 
-  console.log(filters?.operator);
-
   if(filters){
     params["filter[field]"] = filters.field;
     params["filter[value]"] = filters.value;

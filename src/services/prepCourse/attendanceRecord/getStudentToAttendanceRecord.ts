@@ -18,15 +18,5 @@ export async function getStudentsToAttendanceRecord(token: string, id: string): 
     }
     throw new Error("An error occurred");
   }
-  return {
-    id: res.id,
-    name: res.name,
-    year: res.year,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    students: res.students.map((s: any) => ({
-      id: s.id,
-      name: s.user.firstName + " " + s.user.lastName,
-      cod_enrolled: s.cod_enrolled,
-    }))
-  };
+  return res;
 }

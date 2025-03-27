@@ -12,6 +12,7 @@ import { useParams } from "react-router-dom";
 import { AttendanceHistoryModal } from "./modals/attendanceHistoryModal";
 import { AttendanceRecordByStudentModal } from "./modals/attendanceRecordByStudentModal";
 import { IoEyeSharp } from "react-icons/io5";
+import { toast } from "react-toastify";
 
 export function PartnerClassWithStudents() {
   const { hashPrepCourse } = useParams();
@@ -115,7 +116,7 @@ export function PartnerClassWithStudents() {
         setStudents(res.students);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.message);
       });
   }, []);
 
