@@ -136,30 +136,30 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
         onChange={(e: any) => setValue("firstName", e.target.value)}
       />
       <div className="flex flex-col w-full items-start justify-start">
-        <InputFactory
-          id="socialNameCheckbox"
-          label=""
-          type="checkbox"
-          checkboxs={[
-            <>
-              <span className="text-sm font-extrabold pb-2 text-gray-500">
-                Desejo utilizar o Nome Social: {" "}
-              </span>
-              {socialNameCheckbox} {" "}
-              <a
-                href="https://www.trf4.jus.br/trf4/controlador.php?acao=pagina_visualizar&id_pagina=2207"
-                target="_blank"
-                className="text-blue-600 underline hover:text-blue-800 focus:outline focus:ring-2 focus:ring-blue-500"
-              >
-                Saiba mais aqui.
-              </a>
-            </>,
-          ]}
-          onCheckedChange={(values: string[]) => {
-            setIsCheckboxChecked(values.length > 0);
-          }}
-          isCheckbox
-        />
+        <div>
+          <InputFactory
+            id="socialNameCheckbox"
+            label=""
+            type="checkbox"
+            checkboxs={["Desejo utilizar o Nome Social"]}
+            onCheckedChange={(values: string[]) => {
+              console.log(values);
+              setIsCheckboxChecked(values.length > 0);
+            }}
+            isCheckbox
+          />
+        </div>
+        <div className="text-sm text-gray-500">
+          <span className="text-sm font-extrabold pb-2 text-gray-500"></span>
+          {socialNameCheckbox}{" "}
+          <a
+            href="https://www.trf4.jus.br/trf4/controlador.php?acao=pagina_visualizar&id_pagina=2207"
+            target="_blank"
+            className="text-blue-600 underline hover:text-blue-800 focus:outline focus:ring-2 focus:ring-blue-500"
+          >
+            Saiba mais aqui.
+          </a>
+        </div>
       </div>
       <InputFactory
         id="socialName"
