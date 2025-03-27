@@ -9,6 +9,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Calendar } from "primereact/calendar";
 
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 interface AttendanceRecordProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export function NewAttendanceRecordModal({
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [date, setDate] = useState<Date>(new Date());
   const [students, setStudents] = useState<StudentToAttendanceRecord[]>([]);
+  const [registring, setRegistering] = useState<boolean>(false);
 
   const {
     data: {
@@ -46,19 +48,39 @@ export function NewAttendanceRecordModal({
   }, []);
 
   const handleCreateAttendancerecord = () => {
-    createAttendanceRecord(token, classId, date, selectedRows).then(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (res: any) => {
-        handleNewAttendanceRecord({
-          id: res.id,
-          createdAt: res.createdAt,
-          updatedAt: res.updatedAt,
-          registeredAt: res.registeredAt,
-          registeredBy: firstName + " " + lastName,
+    setRegistering(true);
+    const id = toast.loading("Registrando presença...");
+    createAttendanceRecord(token, classId, date, selectedRows)
+      .then(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (res: any) => {
+          handleNewAttendanceRecord({
+            id: res.id,
+            createdAt: res.createdAt,
+            updatedAt: res.updatedAt,
+            registeredAt: res.registeredAt,
+            registeredBy: firstName + " " + lastName,
+          });
+          handleClose();
+          toast.update(id, {
+            render: "Presença registrada com sucesso!",
+            type: "success",
+            isLoading: false,
+            autoClose: 3000,
+          });
+        }
+      )
+      .catch((err) => {
+        toast.update(id, {
+          render: err.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
         });
-        handleClose();
-      }
-    );
+      })
+      .finally(() => {
+        setRegistering(false);
+      });
   };
 
   const paginationModel = { page: 0, pageSize: 10 };
@@ -124,7 +146,9 @@ export function NewAttendanceRecordModal({
         <button
           type="button"
           onClick={handleCreateAttendancerecord}
-          className="bg-marine hover:opacity-90 text-white font-bold py-2 px-4 rounded w-full"
+          className="bg-marine hover:opacity-90 text-white font-bold py-2 px-4 rounded w-full 
+            disabled:bg-opacity-75 disabled:cursor-not-allowed"
+          disabled={registring}
         >
           Confirmar
         </button>

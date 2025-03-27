@@ -38,7 +38,6 @@ export function AttendanceRecordModal({
     const id = toast.loading("Atualizando Presença...");
     updateRegisterStudent(token, studentSelected!.id!, reason, present)
       .then(() => {
-        toast.dismiss(id);
         setOpenModalEdit(false);
         const newStudents = students.map((student) => {
           if (student.id === studentSelected!.id) {
@@ -51,6 +50,12 @@ export function AttendanceRecordModal({
           return student;
         });
         setStudents(newStudents);
+        toast.update(id, {
+          render: "Presença atualizada com sucesso!",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        })
       })
       .catch((err) => {
         toast.update(id, {
