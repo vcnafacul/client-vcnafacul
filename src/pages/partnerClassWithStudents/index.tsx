@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import logo from "@/assets/images/logo_carteirinha.png";
 import Button from "@/components/molecules/button";
+import { Roles } from "@/enums/roles/roles";
 import { getClassById } from "@/services/prepCourse/class/getClassById";
 import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
 import { ClassStudent } from "@/types/partnerPrepCourse/classStudent";
 import { downloadPDF } from "@/utils/get-pdf";
+import { getBase64FromImageUrl } from "@/utils/getBase64FromImageUrl";
 import { IconButton, Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -31,7 +34,7 @@ export function PartnerClassWithStudents() {
   const [openRecord, setOpenRecord] = useState(false);
 
   const {
-    data: { token },
+    data: { token, permissao },
   } = useAuthStore();
 
   const columns: GridColDef[] = [
@@ -124,7 +127,8 @@ export function PartnerClassWithStudents() {
       });
   }, []);
 
-  const downloadPDFClass = () => {
+  const downloadPDFClass = async () => {
+    const logoBase64 = await getBase64FromImageUrl(logo);
     const rows = students.map((student) => [
       { text: student.cod_enrolled, style: "tableCell" },
       { text: student.name, style: "tableCell" },
@@ -143,6 +147,12 @@ export function PartnerClassWithStudents() {
           style: "header",
           marginBottom: 20,
           fontSize: 12,
+        },
+        {
+          image: logoBase64,
+          width: 150,
+          alignment: "center",
+          absolutePosition: { x: 400, y: 40 },
         },
         {
           table: {
@@ -166,13 +176,15 @@ export function PartnerClassWithStudents() {
         </h1>
       </div>
       <div className="p-4 my-4 flex gap-2 flex-start bg-gray-50 w-full">
-        <Button
-          typeStyle="refused"
-          size="small"
-          onClick={() => setOpenHistory(true)}
-        >
-          Registros de Frequência
-        </Button>
+        {permissao[Roles.gerenciarTurmas] && (
+          <Button
+            typeStyle="refused"
+            size="small"
+            onClick={() => setOpenHistory(true)}
+          >
+            Registros de Frequência
+          </Button>
+        )}
         <Button
           typeStyle="primary"
           size="small"
