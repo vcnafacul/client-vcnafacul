@@ -4,15 +4,19 @@ import { getClassById } from "@/services/prepCourse/class/getClassById";
 import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
 import { ClassStudent } from "@/types/partnerPrepCourse/classStudent";
+import { downloadPDF } from "@/utils/get-pdf";
 import { IconButton, Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { format } from "date-fns";
+import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { useEffect, useState } from "react";
+import { IoEyeSharp } from "react-icons/io5";
+import { MdOutlineFileDownload } from "react-icons/md";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { AttendanceHistoryModal } from "./modals/attendanceHistoryModal";
 import { AttendanceRecordByStudentModal } from "./modals/attendanceRecordByStudentModal";
-import { IoEyeSharp } from "react-icons/io5";
-import { toast } from "react-toastify";
 
 export function PartnerClassWithStudents() {
   const { hashPrepCourse } = useParams();
@@ -113,12 +117,46 @@ export function PartnerClassWithStudents() {
     getClassById(token, hashPrepCourse!)
       .then((res) => {
         setClassEntity(res);
-        setStudents(res.students);
+        setStudents(res.students.sort((a, b) => a.name.localeCompare(b.name)));
       })
       .catch((err) => {
         toast.error(err.message);
       });
   }, []);
+
+  const downloadPDFClass = () => {
+    const rows = students.map((student) => [
+      { text: student.cod_enrolled, style: "tableCell" },
+      { text: student.name, style: "tableCell" },
+      { text: student.email, style: "tableCell" },
+    ]);
+
+    const data: TDocumentDefinitions = {
+      content: [
+        {
+          text: `${classEntity?.name} - Lista de Estudantes`,
+          style: "header",
+          fontSize: 16,
+        },
+        {
+          text: `Data de criação da lista: ${format(new Date(), "dd/MM/yyyy")}`,
+          style: "header",
+          marginBottom: 20,
+          fontSize: 12,
+        },
+        {
+          table: {
+            body: [["Nº de matricula", "Nome", "Email"], ...rows],
+            heights: 20,
+            widths: "*",
+          },
+          layout: "lightHorizontalLines",
+          alignment: "center", // Centraliza horizontalmente
+        },
+      ],
+    };
+    downloadPDF(data, classEntity?.name);
+  };
 
   return (
     <div className="flex flex-col justify-center items-center pt-4">
@@ -134,6 +172,17 @@ export function PartnerClassWithStudents() {
           onClick={() => setOpenHistory(true)}
         >
           Registros de Frequência
+        </Button>
+        <Button
+          typeStyle="primary"
+          size="small"
+          onClick={downloadPDFClass}
+          className="border-gray-200"
+        >
+          <div className="flex items-center justify-center gap-2">
+            <MdOutlineFileDownload className="h-5 w-5 fill-white" />
+            Lista de alunos
+          </div>
         </Button>
       </div>
       <Paper sx={{ height: "100%", width: "100%" }}>
