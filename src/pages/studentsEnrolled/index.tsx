@@ -67,14 +67,21 @@ export function StudentsEnrolled() {
     filters?: GridFilterItem,
     sortModel?: GridSortModel
   ) => {
+    const id = toast.loading("Buscando alunos matriculados...");
     getStudentsEnrolled(token, page, limit, filters, sortModel)
       .then((res) => {
         setName(res.name);
         setTotalItems(res.students.totalItems);
         setStudents(res.students.data);
+        toast.dismiss(id);
       })
       .catch((err) => {
-        toast.error(err.message);
+        toast.update(id, {
+          render: err.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
       });
   };
 
@@ -407,18 +414,20 @@ export function StudentsEnrolled() {
       <div className="w-full px-4">
         <h1 className="text-3xl font-bold text-center text-marine">{name}</h1>
       </div>
-      <div className="w-full px-4">
-        <Button
-          onClick={() => setOpenStudentCards(true)}
-          size="small"
-          className="bg-red border-none flex gap-2 items-center hover:bg-red"
-          disabled={selectedRows.length === 0}
-        >
-          <div className="flex gap-2 items-center justify-center">
-            <FaAddressCard className="w-5 h-5" /> Carteirinhas
-          </div>
-        </Button>
-      </div>
+      {permissao[Roles.gerenciarEstudantes] && (
+        <div className="w-full px-4">
+          <Button
+            onClick={() => setOpenStudentCards(true)}
+            size="small"
+            className="bg-red border-none flex gap-2 items-center hover:bg-red"
+            disabled={selectedRows.length === 0}
+          >
+            <div className="flex gap-2 items-center justify-center">
+              <FaAddressCard className="w-5 h-5" /> Carteirinhas
+            </div>
+          </Button>
+        </div>
+      )}
       <Paper sx={{ height: "100%", width: "100%" }}>
         <DataGrid
           rows={students}
@@ -428,7 +437,7 @@ export function StudentsEnrolled() {
           initialState={{ pagination: { paginationModel } }}
           rowHeight={40}
           disableRowSelectionOnClick
-          checkboxSelection
+          checkboxSelection={permissao[Roles.gerenciarEstudantes]}
           rowSelectionModel={selectedRows}
           onRowSelectionModelChange={handleSelectionChange}
           pageSizeOptions={[5, 10, 15, 30, 50, 100]}
