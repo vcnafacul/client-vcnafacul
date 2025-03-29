@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigation, Pagination } from "swiper/modules";
 import { useHomeContext } from "../../../context/homeContext";
 import Text from "../../atoms/text";
 import Carousel from "../../molecules/carousel";
 import Selector from "../../molecules/selector";
 import SupportersSkeleton from "../supportersSkeleton";
-import "./styles.css";
 
 export interface Sponsor {
   image: React.FC<React.SVGProps<SVGSVGElement>> | string;
@@ -101,8 +100,8 @@ function Supporters() {
       ));
 
   const Volunteers = () => {
-    if(volunteers.length === 0) {
-      return <SupportersSkeleton />
+    if (volunteers.length === 0) {
+      return <SupportersSkeleton />;
     }
     const childrens = CardVolunteers(volunteers);
     return (
@@ -125,13 +124,18 @@ function Supporters() {
           key={index}
           href={sponsor.Patrocinador_id.link}
           target="_blank"
-          className="flex justify-center items-center h-96"
+          className="flex justify-center items-center h-80"
         >
-          <div className="flex flex-col items-center justify-center mb-8 select-none w-full">
+          <div className="flex flex-col items-center py-6 justify-center select-none w-full h-full">
             <img
-              className="max-w-full max-h-full object-contain sponsors_image"
               src={sponsor.Patrocinador_id.image as string}
               alt={sponsor.Patrocinador_id.alt}
+              style={{
+                width: "100%",
+                maxWidth: "500px",
+                height: "100%",
+                objectFit: "contain",
+              }}
             />
           </div>
         </a>
@@ -162,11 +166,19 @@ function Supporters() {
             slidesPerView: 3.1,
           },
         }}
-        spaceBetween={120}
+        spaceBetween={60}
         modules={[Pagination, Navigation]}
       />
     );
   };
+
+  useEffect(() => {
+    if (volunteers.length === 0) {
+      setTab(TabItems.Empresas);
+    } else {
+      setTab(TabItems.Voluntarios);
+    }
+  }, [volunteers]);
 
   if (!supporters || !volunteers) return <SupportersSkeleton />;
   return (
@@ -179,20 +191,20 @@ function Supporters() {
         </div>
         <Selector tabItems={tabItems} changeItem={changeTab} activeTab={tab} />
         {tab === TabItems.Empresas ? (
-          <div className="flex justify-around items-center flex-wrap h-96">
+          <div className="flex justify-around items-center">
             <Empresas />
           </div>
         ) : tab == TabItems.Voluntarios ? (
-          <div className="flex justify-around items-center flex-wrap w-full h-96">
+          <div className="flex justify-around items-center w-full h-80">
             <Volunteers />
           </div>
         ) : (
           prepCourse.length > 0 && (
-            <div className="flex justify-around items-center flex-wrap h-96">
+            <div className="flex justify-around items-center h-80 w-full">
               {prepCourse.map((sponsor, index) => (
                 <a key={index} href={sponsor.link} target="_blank">
                   <img
-                    className="h-96 my-1 mx-0"
+                    className="h-80 my-1 mx-0"
                     src={sponsor.image as string}
                     alt="Cursinho Parceiro"
                   />
