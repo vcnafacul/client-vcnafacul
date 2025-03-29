@@ -117,13 +117,20 @@ export function PartnerClassWithStudents() {
   };
 
   useEffect(() => {
+    const id = toast.loading("Carregando alunos...");
     getClassById(token, hashPrepCourse!)
       .then((res) => {
         setClassEntity(res);
         setStudents(res.students.sort((a, b) => a.name.localeCompare(b.name)));
+        toast.dismiss(id);
       })
       .catch((err) => {
-        toast.error(err.message);
+        toast.update(id, {
+          render: err.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
       });
   }, []);
 
