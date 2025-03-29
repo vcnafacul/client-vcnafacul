@@ -1,18 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import logo from "@/assets/images/logo_carteirinha.png";
 import Button from "@/components/molecules/button";
+import { Roles } from "@/enums/roles/roles";
 import { getClassById } from "@/services/prepCourse/class/getClassById";
 import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
 import { ClassStudent } from "@/types/partnerPrepCourse/classStudent";
+import { downloadPDF } from "@/utils/get-pdf";
+import { getBase64FromImageUrl } from "@/utils/getBase64FromImageUrl";
 import { IconButton, Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { format } from "date-fns";
+import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { useEffect, useState } from "react";
+import { IoEyeSharp } from "react-icons/io5";
+import { MdOutlineFileDownload } from "react-icons/md";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { AttendanceHistoryModal } from "./modals/attendanceHistoryModal";
 import { AttendanceRecordByStudentModal } from "./modals/attendanceRecordByStudentModal";
-import { IoEyeSharp } from "react-icons/io5";
-import { toast } from "react-toastify";
 
 export function PartnerClassWithStudents() {
   const { hashPrepCourse } = useParams();
@@ -27,7 +34,7 @@ export function PartnerClassWithStudents() {
   const [openRecord, setOpenRecord] = useState(false);
 
   const {
-    data: { token },
+    data: { token, permissao },
   } = useAuthStore();
 
   const columns: GridColDef[] = [
@@ -110,15 +117,62 @@ export function PartnerClassWithStudents() {
   };
 
   useEffect(() => {
+    const id = toast.loading("Carregando alunos...");
     getClassById(token, hashPrepCourse!)
       .then((res) => {
         setClassEntity(res);
-        setStudents(res.students);
+        setStudents(res.students.sort((a, b) => a.name.localeCompare(b.name)));
+        toast.dismiss(id);
       })
       .catch((err) => {
-        toast.error(err.message);
+        toast.update(id, {
+          render: err.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
       });
   }, []);
+
+  const downloadPDFClass = async () => {
+    const logoBase64 = await getBase64FromImageUrl(logo);
+    const rows = students.map((student) => [
+      { text: student.cod_enrolled, style: "tableCell" },
+      { text: student.name, style: "tableCell" },
+      { text: student.email, style: "tableCell" },
+    ]);
+
+    const data: TDocumentDefinitions = {
+      content: [
+        {
+          text: `${classEntity?.name} - Lista de Estudantes`,
+          style: "header",
+          fontSize: 16,
+        },
+        {
+          text: `Data de criação da lista: ${format(new Date(), "dd/MM/yyyy")}`,
+          style: "header",
+          marginBottom: 20,
+          fontSize: 12,
+        },
+        {
+          image: logoBase64,
+          width: 150,
+          alignment: "center",
+          absolutePosition: { x: 400, y: 40 },
+        },
+        {
+          table: {
+            body: [["Nº de matricula", "Nome", "Email"], ...rows],
+            heights: 20,
+          },
+          layout: "lightHorizontalLines",
+          alignment: "center", // Centraliza horizontalmente
+        },
+      ],
+    };
+    downloadPDF(data, classEntity?.name);
+  };
 
   return (
     <div className="flex flex-col justify-center items-center pt-4">
@@ -128,12 +182,25 @@ export function PartnerClassWithStudents() {
         </h1>
       </div>
       <div className="p-4 my-4 flex gap-2 flex-start bg-gray-50 w-full">
+        {permissao[Roles.gerenciarTurmas] && (
+          <Button
+            typeStyle="refused"
+            size="small"
+            onClick={() => setOpenHistory(true)}
+          >
+            Registros de Frequência
+          </Button>
+        )}
         <Button
-          typeStyle="refused"
+          typeStyle="primary"
           size="small"
-          onClick={() => setOpenHistory(true)}
+          onClick={downloadPDFClass}
+          className="border-gray-200"
         >
-          Registros de Frequência
+          <div className="flex items-center justify-center gap-2">
+            <MdOutlineFileDownload className="h-5 w-5 fill-white" />
+            Lista de alunos
+          </div>
         </Button>
       </div>
       <Paper sx={{ height: "100%", width: "100%" }}>

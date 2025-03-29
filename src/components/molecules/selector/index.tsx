@@ -27,7 +27,7 @@ function Selector({tabItems, changeItem, align, className, activeTab} : Selector
     return (
         <>
             <HighlightSelector className={selector({ align, className })} items={tabItems}  changeItem={changeItem} activeTab={activeTab}/>
-            <HighlightSelectorMobile className="actionAreasMobileDropdown" items={tabItems} changeItem={changeItem} />
+            <HighlightSelectorMobile className="actionAreasMobileDropdown" items={tabItems} changeItem={changeItem} activeTab={activeTab} />
         </>
     )
 }

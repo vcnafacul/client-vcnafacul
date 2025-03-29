@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigation, Pagination } from "swiper/modules";
 import { useHomeContext } from "../../../context/homeContext";
 import Text from "../../atoms/text";
 import Carousel from "../../molecules/carousel";
 import Selector from "../../molecules/selector";
 import SupportersSkeleton from "../supportersSkeleton";
-import "./styles.css";
 
 export interface Sponsor {
   image: React.FC<React.SVGProps<SVGSVGElement>> | string;
@@ -46,7 +45,9 @@ function Supporters() {
   const { supporters, volunteers, prepCourse } = useHomeContext();
 
   const tabItems = ["Empresas", "Voluntários", "Cursinho Parceiro"];
-  const [tab, setTab] = useState<TabItems>(TabItems.Voluntarios);
+  const [tab, setTab] = useState<TabItems>(
+    volunteers.length === 0 ? TabItems.Empresas : TabItems.Voluntarios
+  );
   const changeTab = (tab: number) => {
     setTab(tab);
   };
@@ -71,29 +72,37 @@ function Supporters() {
   };
 
   const CardVolunteers = (volunteers: Volunteer[]) =>
-    volunteers.filter((volunteer) => volunteer.image).map((volunteer, index) => (
-      <div key={index} className="flex flex-col items-center mb-8 select-none">
-        <div className="w-40 h-40 mb-2">
-          <img
-            className={`rounded-full object-cover ${
-              volunteer.actived ? "" : "grayscale"
-            }`}
-            src={`${VITE_FTP_PROFILE}/${volunteer.image}`}
-            alt={volunteer.alt}
-          />
-        </div>
-        <p className="font-base text-marine text-lg">{volunteer.name}</p>
-        <p className="font-thin text-marine text-base">
-          {volunteer.description?.substring(0, 30) +
-            `${volunteer.description?.length > 30 ? " ..." : ""}`}
-        </p>
+    volunteers
+      .filter((volunteer) => volunteer.image)
+      .map((volunteer, index) => (
+        <div
+          key={index}
+          className="flex flex-col items-center mb-8 select-none"
+        >
+          <div className="w-40 h-40 mb-2">
+            <img
+              className={`rounded-full object-cover ${
+                volunteer.actived ? "" : "grayscale"
+              }`}
+              src={`${VITE_FTP_PROFILE}/${volunteer.image}`}
+              alt={volunteer.alt}
+            />
+          </div>
+          <p className="font-base text-marine text-lg">{volunteer.name}</p>
+          <p className="font-thin text-marine text-base">
+            {volunteer.description?.substring(0, 30) +
+              `${volunteer.description?.length > 30 ? " ..." : ""}`}
+          </p>
           <p className="font-thin text-marine text-base">
             {`${volunteer.actived ? "" : "Ex-membro"}`}
           </p>
-      </div>
-    ));
+        </div>
+      ));
 
   const Volunteers = () => {
+    if (volunteers.length === 0) {
+      return <SupportersSkeleton />;
+    }
     const childrens = CardVolunteers(volunteers);
     return (
       <Carousel
@@ -107,47 +116,95 @@ function Supporters() {
     );
   };
 
+  const CardSupporters = (supporters: SponsorProps[]) =>
+    supporters
+      .filter((sponsor) => sponsor.Patrocinador_id.image)
+      .map((sponsor, index) => (
+        <a
+          key={index}
+          href={sponsor.Patrocinador_id.link}
+          target="_blank"
+          className="flex justify-center items-center h-80"
+        >
+          <div className="flex flex-col items-center py-6 justify-center select-none w-full h-full">
+            <img
+              src={sponsor.Patrocinador_id.image as string}
+              alt={sponsor.Patrocinador_id.alt}
+              style={{
+                width: "100%",
+                maxWidth: "500px",
+                height: "100%",
+                objectFit: "contain",
+              }}
+            />
+          </div>
+        </a>
+      ));
+
+  const Empresas = () => {
+    const childrens = CardSupporters(supporters?.sponsors || []);
+    return (
+      <Carousel
+        childrens={childrens}
+        className="bg-white w-[95vw] h-full flex justify-center items-center"
+        pagination
+        dynamicBullets
+        breakpoints={{
+          1: {
+            slidesPerView: 1,
+          },
+          600: {
+            slidesPerView: 2,
+          },
+          1000: {
+            slidesPerView: 3,
+          },
+          1500: {
+            slidesPerView: 3,
+          },
+          1600: {
+            slidesPerView: 3.1,
+          },
+        }}
+        spaceBetween={60}
+        modules={[Pagination, Navigation]}
+      />
+    );
+  };
+
+  useEffect(() => {
+    if (volunteers.length === 0) {
+      setTab(TabItems.Empresas);
+    } else {
+      setTab(TabItems.Voluntarios);
+    }
+  }, [volunteers]);
+
   if (!supporters || !volunteers) return <SupportersSkeleton />;
   return (
     <div className=" bg-white relative px-2">
       <div className="relative h-10 bg-white" id="supporters" />
-      <div className="py-12 px-0 md:py-14 ">
+      <div className="py-12 px-0 md:py-14">
         <div className="mb-8">
           <Text size="secondary">{supporters!.title}</Text>
           <Text size="tertiary">{supporters!.subtitle}</Text>
         </div>
-        {volunteers.length > 0 ? (
-          <Selector tabItems={tabItems} changeItem={changeTab} activeTab={tab} />
-        ) : (
-          <></>
-        )}
+        <Selector tabItems={tabItems} changeItem={changeTab} activeTab={tab} />
         {tab === TabItems.Empresas ? (
-          <div className="flex justify-around items-center flex-wrap">
-            {supporters!.sponsors.map((sponsor, index) => (
-              <a
-                key={index}
-                href={sponsor.Patrocinador_id.link}
-                target="_blank"
-              >
-                <img
-                  className="sponsors_image my-1 mx-0"
-                  src={sponsor.Patrocinador_id.image as string}
-                  alt={sponsor.Patrocinador_id.alt}
-                />
-              </a>
-            ))}
+          <div className="flex justify-around items-center">
+            <Empresas />
           </div>
         ) : tab == TabItems.Voluntarios ? (
-          <div className="flex justify-around items-center flex-wrap w-full">
+          <div className="flex justify-around items-center w-full h-80">
             <Volunteers />
           </div>
         ) : (
           prepCourse.length > 0 && (
-            <div className="flex justify-around items-center flex-wrap">
+            <div className="flex justify-around items-center h-80 w-full">
               {prepCourse.map((sponsor, index) => (
                 <a key={index} href={sponsor.link} target="_blank">
                   <img
-                    className="sponsors_image my-1 mx-0"
+                    className="h-80 my-1 mx-0"
                     src={sponsor.image as string}
                     alt="Cursinho Parceiro"
                   />
