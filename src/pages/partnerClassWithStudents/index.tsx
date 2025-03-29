@@ -158,7 +158,6 @@ export function PartnerClassWithStudents() {
           table: {
             body: [["Nº de matricula", "Nome", "Email"], ...rows],
             heights: 20,
-            widths: "*",
           },
           layout: "lightHorizontalLines",
           alignment: "center", // Centraliza horizontalmente
