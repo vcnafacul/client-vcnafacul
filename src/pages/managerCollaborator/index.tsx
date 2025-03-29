@@ -136,6 +136,7 @@ export default function ManagerCollaborator() {
   };
 
   const handleUpdateUserRole = (roleId: string) => {
+    const id = toast.loading("Atualizando permissão...");
     setUserRoleModal(false);
     updateUserRole(collaboratorSelected!.userId, roleId, token)
       .then(() => {
@@ -159,12 +160,20 @@ export default function ManagerCollaborator() {
           return c;
         });
         setCollaborator(updateCollaborator);
-        toast.success(
-          `Atualização da permissão do usuário  ${collaboratorSelected?.name} feita com sucesso`
-        );
+        toast.update(id, {
+          render: "Permissão atualizada com sucesso!",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
       })
       .catch((error: Error) => {
-        toast.error(`${error.message} - Usuário ${collaboratorSelected?.name}`);
+        toast.update(id, {
+          render: error.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
       });
   };
 
