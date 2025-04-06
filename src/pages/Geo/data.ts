@@ -40,13 +40,13 @@ export const geoForm : GeoFormProps = {
         title: 'Endereço do Cursinho',
         subtitle: 'Precisamos saber o maior número de informações possível sobre este cursinho.',
         form: [
-          {id: "cep", label: "CEP*", disabled: true},
-          {id: "street", label: "Logradouro*",  disabled: true},
+          {id: "cep", label: "CEP*"},
+          {id: "street", label: "Logradouro*"},
           {id: "number", label: "Número*"},
           {id: "complement", label: "Complemento"},
-          {id: "neighborhood", label: "Bairro*",  disabled: true},
-          {id: "city", label: "Município*",  disabled: true},
-          {id: "state", label: "Estado*", type: 'option',  options: stateOptions,  disabled: true},
+          {id: "neighborhood", label: "Bairro*"},
+          {id: "city", label: "Município*"},
+          {id: "state", label: "Estado*", type: 'option',  options: stateOptions},
         ]
       },
       step4 : {
