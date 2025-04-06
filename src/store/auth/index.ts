@@ -19,6 +19,7 @@ const initialUser = {
     city: "",
     lgpd: false,
     about: "",
+    useSocialName: false,
   },
   token: "",
   permissao: {},
@@ -34,6 +35,7 @@ export type AuthUpdate = {
   state: string;
   city: string;
   about?: string;
+  useSocialName: boolean;
 };
 
 export type Auth = AuthUpdate & {

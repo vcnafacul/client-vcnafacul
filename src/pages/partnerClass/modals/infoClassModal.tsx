@@ -8,7 +8,9 @@ import { dataClass } from "../data";
 
 import BLink from "@/components/molecules/bLink";
 import { ClassEntityOutput } from "@/dtos/classes/classOutput";
+import { Roles } from "@/enums/roles/roles";
 import { DASH, PARTNER_CLASS } from "@/routes/path";
+import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
 import { ClassCreateEditModal } from "./classCreateEditModal";
 
@@ -30,6 +32,10 @@ export function ClassInfoModal({
   const [entitySelected, setEntitySelected] = useState<ClassEntity>(entity);
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
+
+  const {
+    data: { permissao },
+  } = useAuthStore();
 
   const ModalDelete = () => {
     return (
@@ -115,24 +121,26 @@ export function ClassInfoModal({
               <p className="text-sm w-fit">Lista de Alunos</p>
             </div>
           </BLink>
-          <div className="flex flex-1 justify-end gap-4">
-            <Button
-              className="w-24 h-8 bg-red border-none hover:bg-red/60 "
-              onClick={() => setOpenModalDelete(true)}
-            >
-              <div className="flex justify-center gap-1.5">
-                <TrashIcon />
-                <p className="text-sm w-fit">Deletar</p>
-              </div>
-            </Button>
-            <Button
-              typeStyle="secondary"
-              className="w-24 h-8"
-              onClick={() => setOpenModalEdit(true)}
-            >
-              Editar
-            </Button>
-          </div>
+          {permissao[Roles.gerenciarTurmas] && (
+            <div className="flex flex-1 justify-end gap-4">
+              <Button
+                className="w-24 h-8 bg-red border-none hover:bg-red/60 "
+                onClick={() => setOpenModalDelete(true)}
+              >
+                <div className="flex justify-center gap-1.5">
+                  <TrashIcon />
+                  <p className="text-sm w-fit">Deletar</p>
+                </div>
+              </Button>
+              <Button
+                typeStyle="secondary"
+                className="w-24 h-8"
+                onClick={() => setOpenModalEdit(true)}
+              >
+                Editar
+              </Button>
+            </div>
+          )}
         </div>
         <ModalEdit />
         <ModalDelete />

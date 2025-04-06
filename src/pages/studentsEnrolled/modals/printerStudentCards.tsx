@@ -3,6 +3,7 @@ import ModalTemplate from "@/components/templates/modalTemplate";
 import { getProfilePhoto } from "@/services/prepCourse/student/getProfilePhoto";
 import { useAuthStore } from "@/store/auth";
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
+import heic2any from "heic2any";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useEffect, useState } from "react";
@@ -25,7 +26,7 @@ export function PrinterStudentCards({
   const [photos, setPhotos] = useState<Map<string, string>>(new Map());
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [shouldGeneratePDF, setShouldGeneratePDF] = useState(false);
-  const [id, setId] = useState<Id>();
+  const [toastId, setToastId] = useState<Id>();
 
   const {
     data: { token },
@@ -34,39 +35,58 @@ export function PrinterStudentCards({
   const generatePDF = async () => {
     const cards = document.querySelectorAll(".student-card");
     if (!cards.length) return;
+
     const pdf = new jsPDF({
       orientation: "portrait",
       unit: "mm",
       format: "a4",
     });
-    const pageWidth = 210;
-    const pageHeight = 297;
-    const margin = 7;
-    const cardWidth = (pageWidth - margin * 3) / 2;
-    const cardHeight = 50;
-    let xPos = margin;
-    let yPos = margin;
-    const images = await Promise.all(
-      Array.from(cards).map(async (card) => {
-        const canvas = await html2canvas(card as HTMLElement, { scale: 2 });
-        return canvas.toDataURL("image/png");
-      })
-    );
-    images.forEach((imgData) => {
+
+    const cardWidth = 85.6;
+    const cardHeight = 53.98;
+    const horizontalSpacing = 12.93; // Espaço entre os cards e margens laterais
+    const verticalSpacing = 4.52; // Espaço entre os cards e margens verticais
+
+    const images: string[] = [];
+    const cardElements = Array.from(cards);
+
+    // Render cards to images
+    const chunkSize = 5;
+    for (let i = 0; i < cardElements.length; i += chunkSize) {
+      const chunk = cardElements.slice(i, i + chunkSize);
+      const chunkImages = await Promise.all(
+        chunk.map(async (card) => {
+          const canvas = await html2canvas(card as HTMLElement, { scale: 2 });
+          return canvas.toDataURL("image/png");
+        })
+      );
+      images.push(...chunkImages);
+    }
+
+    let xPos = horizontalSpacing;
+    let yPos = verticalSpacing;
+    let cardsInCurrentPage = 0;
+
+    images.forEach((imgData, index) => {
       pdf.addImage(imgData, "PNG", xPos, yPos, cardWidth, cardHeight);
-      if (xPos === margin) {
-        xPos += cardWidth + margin;
+
+      if (xPos === horizontalSpacing) {
+        xPos += cardWidth + horizontalSpacing; // Vai para segunda coluna
       } else {
-        xPos = margin;
-        yPos += cardHeight + margin;
+        xPos = horizontalSpacing; // Volta pra primeira coluna
+        yPos += cardHeight + verticalSpacing; // Vai pra próxima linha
       }
-      if (yPos + cardHeight > pageHeight - margin) {
+
+      cardsInCurrentPage++;
+
+      if (cardsInCurrentPage === 10 && index < images.length - 1) {
         pdf.addPage();
-        xPos = margin;
-        yPos = margin;
+        xPos = horizontalSpacing;
+        yPos = verticalSpacing;
+        cardsInCurrentPage = 0;
       }
     });
-    // Gerar URL do PDF para visualização
+
     const pdfBlob = pdf.output("blob");
     const url = URL.createObjectURL(pdfBlob);
     setPdfUrl(url);
@@ -76,7 +96,7 @@ export function PrinterStudentCards({
     if (isGeneratingPDF) return;
 
     const id = toast.loading("Gerando PDF...");
-    setId(id); // Salvar o ID do toast
+    setToastId(id); // Salvar o ID do toast
     setIsGeneratingPDF(true);
     setShouldGeneratePDF(true); // Disparar o efeito que gera o PDF
 
@@ -91,10 +111,9 @@ export function PrinterStudentCards({
   useEffect(() => {
     new Promise((resolve) => setTimeout(resolve, 2000)).then(() => {
       if (!shouldGeneratePDF) return;
-
       generatePDF()
         .then(() => {
-          toast.update(id!, {
+          toast.update(toastId!, {
             render: "PDF gerado com sucesso!",
             type: "success",
             isLoading: false,
@@ -102,7 +121,7 @@ export function PrinterStudentCards({
           });
         })
         .catch((error) => {
-          toast.update(id!, {
+          toast.update(toastId!, {
             render: "Erro ao gerar PDF: " + error.message,
             type: "error",
             isLoading: false,
@@ -118,25 +137,43 @@ export function PrinterStudentCards({
 
   useEffect(() => {
     const newPhotoMap = new Map<string, string>();
+    const id = toast.loading("Carregando fotos...");
     const fetchAllPhotos = async () => {
       setIsLoading(true);
       try {
-        for (const entity of entities) {
-          if (entity.photo) {
+        const fetchPhotos = entities
+          .filter((entity) => entity.photo)
+          .map(async (entity) => {
             try {
               const blob = await getProfilePhoto(entity.photo, token);
-              const url = URL.createObjectURL(blob);
-              newPhotoMap.set(entity.photo, url);
+              const fileType = blob.type;
+              const convertedBlob =
+                fileType === "image/heic" || fileType === "image/heif"
+                  ? ((await heic2any({ blob, toType: "image/jpeg" })) as Blob)
+                  : blob;
+              return {
+                id: entity.photo,
+                url: URL.createObjectURL(convertedBlob),
+              };
             } catch (error) {
               console.error("Erro ao carregar a imagem:", error);
+              return null;
             }
+          });
+
+        const results = await Promise.allSettled(fetchPhotos);
+
+        results.forEach((result) => {
+          if (result.status === "fulfilled" && result.value) {
+            newPhotoMap.set(result.value.id, result.value.url);
           }
-        }
+        });
         setPhotos(newPhotoMap);
       } catch (error) {
         console.error("Erro ao carregar todas as imagens:", error);
       } finally {
         setIsLoading(false);
+        toast.dismiss(id);
       }
     };
     setIsLoading(false);
@@ -183,30 +220,6 @@ export function PrinterStudentCards({
         </div>
       ) : (
         <div className="flex justify-center flex-wrap gap-4">
-          {entities.map((entity) => (
-            <div className="bg-white p-2 shadow-lg" key={entity.id}>
-              <StudentCard
-                entity={entity}
-                imageSrc={photos.get(entity.photo) || null}
-              />
-            </div>
-          ))}
-          {entities.map((entity) => (
-            <div className="bg-white p-2 shadow-lg" key={entity.id}>
-              <StudentCard
-                entity={entity}
-                imageSrc={photos.get(entity.photo) || null}
-              />
-            </div>
-          ))}
-          {entities.map((entity) => (
-            <div className="bg-white p-2 shadow-lg" key={entity.id}>
-              <StudentCard
-                entity={entity}
-                imageSrc={photos.get(entity.photo) || null}
-              />
-            </div>
-          ))}
           {entities.map((entity) => (
             <div className="bg-white p-2 shadow-lg" key={entity.id}>
               <StudentCard

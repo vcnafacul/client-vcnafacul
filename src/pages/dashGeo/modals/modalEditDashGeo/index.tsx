@@ -63,7 +63,11 @@ function ModalEditDashGeo({
     category: yup
       .string()
       .default(geo.category)
-      .required("Categoria é obrigatória"),
+      .when("type", {
+        is: (value: TypeMarker) => value == TypeMarker.geo,
+        then: () => yup.string().required("Categoria é obrigatória"),
+        otherwise: () => yup.string().notRequired(),
+      }),
     cep: yup.string().default(geo.cep).required("CEP é obrigatório"),
     street: yup
       .string()
@@ -77,18 +81,27 @@ function ModalEditDashGeo({
       .required("Bairro é obrigatório"),
     city: yup.string().default(geo.city).required("Cidade é obrigatória"),
     state: yup.string().default(geo.state).required("Estado é obrigatório"),
-    phone: yup.string().default(geo.phone),
-    whatsapp: yup.string().default(geo.whatsapp),
+    phone: yup.string().default(geo.phone).nullable(),
+    whatsapp: yup.string().default(geo.whatsapp).nullable(),
     email: yup.string().default(geo.email).email("Email inválido"),
-    site: yup.string().default(geo.site),
-    instagram: yup.string().default(geo.instagram),
-    facebook: yup.string().default(geo.facebook),
-    youtube: yup.string().default(geo.youtube),
-    linkedin: yup.string().default(geo.linkedin),
-    twitter: yup.string().default(geo.twitter),
+    site: yup.string().default(geo.site).nullable(),
+    instagram: yup.string().default(geo.instagram).nullable(),
+    facebook: yup.string().default(geo.facebook).nullable(),
+    youtube: yup.string().default(geo.youtube).nullable(),
+    linkedin: yup.string().default(geo.linkedin).nullable(),
+    twitter: yup.string().default(geo.twitter).nullable(),
     reportAddress: yup.bool().default(geo.reportAddress),
     reportContact: yup.bool().default(geo.reportContact),
     reportOther: yup.bool().default(geo.reportOther),
+    campus: yup
+      .string()
+      .default(geo.campus)
+      .when("type", {
+        is: (value: TypeMarker) => value == TypeMarker.univPublic,
+        then: () => yup.string().required("Campus é obrigatória"),
+        otherwise: () => yup.string().notRequired(),
+      }),
+    type: yup.number().default(geo.type),
   });
 
   const {
@@ -101,7 +114,6 @@ function ModalEditDashGeo({
   } = useForm({
     resolver: yupResolver(schema),
   });
-
   const reportAddress = watch("reportAddress");
   const reportContact = watch("reportContact");
   const reportOther = watch("reportOther");
@@ -336,6 +348,7 @@ function ModalEditDashGeo({
     register("reportAddress");
     register("reportContact");
     register("reportOther");
+    register("campus");
   }, []);
 
   useEffect(() => {
@@ -364,17 +377,18 @@ function ModalEditDashGeo({
       setValue("reportAddress", geo.reportAddress);
       setValue("reportContact", geo.reportContact);
       setValue("reportOther", geo.reportOther);
+      setValue("campus", geo.campus);
     }
   }, [geo]);
 
   return (
-    <div >
+    <div>
       <form
         className="flex flex-col md:flex-row gap-4 "
         onSubmit={handleSubmit(UpdateGeo)}
       >
         <div className="w-full">
-        <input {...register("id")} className="hidden" />
+          <input {...register("id")} className="hidden" />
           <Text
             className="flex w-full justify-center gap-4 
             items-center"

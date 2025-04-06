@@ -13,7 +13,6 @@ export function PartnerPrepInscriptionStep0({
   description,
   inscription,
 }: PartnerPrepInscriptionStep0Props) {
-  console.log(inscription);
   return (
     <div className="flex flex-col gap-4">
       <div className="w-full p-4 bg-fuchsia-50 border-l-4 border-fuchsia-500 rounded-md my-4">

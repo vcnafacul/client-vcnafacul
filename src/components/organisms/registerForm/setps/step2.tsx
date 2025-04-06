@@ -1,8 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ControlCalendar from "@/components/atoms/controlCalendar";
-import { optionsGender, stateOptions } from "@/pages/register/data";
+import {
+  optionsGender,
+  socialNameCheckbox,
+  stateOptions,
+} from "@/pages/register/data";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as yup from "yup";
@@ -15,6 +19,7 @@ import { InputFactory } from "../../inputFactory";
 interface UseRegisterStep2 {
   firstName: string;
   lastName: string;
+  socialName?: string;
   phone: string;
   birthday: string;
   city: string;
@@ -27,10 +32,12 @@ interface Step2Props extends StepProps {
   dataUser: UserRegister;
   next: () => void;
   back: () => void;
-  onRegister: (data: UserRegister) => Promise<void>;  
+  onRegister: (data: UserRegister) => Promise<void>;
 }
 
 function Step2({ dataUser, next, back, onRegister }: Step2Props) {
+  const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+
   const schema = yup
     .object()
     .shape({
@@ -57,13 +64,31 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
     register,
     handleSubmit,
     setValue,
+    watch,
     control,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: {
+      firstName: "",
+      socialName: "",
+      lastName: "",
+    },
   });
 
+  const firstName = watch("firstName");
+  const socialName = watch("socialName");
+  const lastName = watch("lastName");
+
+  const getDisplayName = () => {
+    const nameToUse = isCheckboxChecked && socialName ? socialName : firstName;
+    return `${nameToUse} ${lastName}`.trim();
+  };
+
   const registerSubmit = (data: UseRegisterStep2) => {
+    if (!isCheckboxChecked) {
+      data.socialName = "";
+    }
     data.birthday = new Date(data.birthday).toISOString();
     const id = toast.loading("Cadastrando ... ");
     onRegister({ ...dataUser, ...(data as UserRegister) })
@@ -74,7 +99,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
           isLoading: false,
           autoClose: 3000,
         });
-        next()
+        next();
       })
       .catch((error: Error) => {
         toast.update(id, {
@@ -110,6 +135,40 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
         error={errors.firstName}
         onChange={(e: any) => setValue("firstName", e.target.value)}
       />
+      <div className="flex flex-col w-full items-start justify-start">
+        <div>
+          <InputFactory
+            id="socialNameCheckbox"
+            label=""
+            type="checkbox"
+            checkboxs={["Desejo utilizar o Nome Social"]}
+            onCheckedChange={(values: string[]) => {
+              console.log(values);
+              setIsCheckboxChecked(values.length > 0);
+            }}
+            isCheckbox
+          />
+        </div>
+        <div className="text-sm text-gray-500">
+          <span className="text-sm font-extrabold pb-2 text-gray-500"></span>
+          {socialNameCheckbox}{" "}
+          <a
+            href="https://www.trf4.jus.br/trf4/controlador.php?acao=pagina_visualizar&id_pagina=2207"
+            target="_blank"
+            className="text-blue-600 underline hover:text-blue-800 focus:outline focus:ring-2 focus:ring-blue-500"
+          >
+            Saiba mais aqui.
+          </a>
+        </div>
+      </div>
+      <InputFactory
+        id="socialName"
+        label="Nome Social"
+        type="text"
+        disabled={!isCheckboxChecked}
+        error={errors.socialName}
+        onChange={(e: any) => setValue("socialName", e.target.value)}
+      />
       <InputFactory
         id="lastName"
         label="Sobrenome"
@@ -117,13 +176,10 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
         error={errors.lastName}
         onChange={(e: any) => setValue("lastName", e.target.value)}
       />
-      <InputFactory
-        id="socialName"
-        label="Nome Social"
-        type="text"
-        error={errors.socialName}
-        onChange={(e: any) => setValue("socialName", e.target.value)}
-      />
+      <span className="text-xs text-grey font-semibold mb-4">
+        Esta é uma pré-visualização do nome que será utilizado na plataforma:{" "}
+        {getDisplayName()}
+      </span>
       <InputFactory
         id="gender"
         label="Gênero"

@@ -20,6 +20,7 @@ export function ConfirmEnrolledPage() {
     expired = decoded.exp * 1000 < Date.now();
   }
   const studentId = decoded.user.id as string;
+  const isFree = decoded.user.isFree;
 
   useEffect(() => {
     if (getToken) {
@@ -49,13 +50,11 @@ export function ConfirmEnrolledPage() {
           Você ja declarou interesse nesta vaga.
         </ConfirmEnrolledExpiredMessage>
       ) : error ? (
-        <ConfirmEnrolledExpiredMessage>
-          {error}
-        </ConfirmEnrolledExpiredMessage>
+        <ConfirmEnrolledExpiredMessage>{error}</ConfirmEnrolledExpiredMessage>
       ) : (
         <div className="flex flex-col items-center min-h-[calc(100vh-76px)] w-full">
           <DeclareInterest
-            isFree={true}
+            isFree={isFree}
             queryToken={getToken}
             studentId={studentId}
           />

@@ -44,7 +44,7 @@ function MapBoxInfoGeo({ geo, ctaLink }: MapBoxInfoProps) {
         {geo?.phone}
       </Text>
       <div className="flex justify-around mx-auto w-96">
-        {geo?.whatsapp.length !== 0 && (
+        {geo?.whatsapp?.length !== 0 && (
           <a
             href={`https://api.whatsapp.com/send?phone=55${geo?.whatsapp}`}
             target="_blank"
@@ -57,37 +57,37 @@ function MapBoxInfoGeo({ geo, ctaLink }: MapBoxInfoProps) {
             <FaEnvelopeSquare color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.site.length !== 0 && (
+        {geo?.site?.length !== 0 && (
           <a href={geo?.site} target="_blank" rel="noreferrer">
             <MdOutlineTravelExplore color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.linkedin.length !== 0 && (
+        {geo?.linkedin?.length !== 0 && (
           <a href={geo?.linkedin} target="_blank" rel="noreferrer">
             <FaLinkedin color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.youtube.length !== 0 && (
+        {geo?.youtube?.length !== 0 && (
           <a href={geo?.youtube} target="_blank" rel="noreferrer">
             <FaYoutubeSquare color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.facebook.length !== 0 && (
+        {geo?.facebook?.length !== 0 && (
           <a href={geo?.facebook} target="_blank" rel="noreferrer">
             <FaFacebookSquare color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.instagram.length !== 0 && (
+        {geo?.instagram?.length !== 0 && (
           <a href={geo?.instagram} target="_blank" rel="noreferrer">
             <FaInstagramSquare color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.twitter.length !== 0 && (
+        {geo?.twitter?.length !== 0 && (
           <a href={geo?.twitter} target="_blank" rel="noreferrer">
             <FaTwitterSquare color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.tiktok.length !== 0 && (
+        {geo?.tiktok?.length !== 0 && (
           <a href={geo?.tiktok} target="_blank" rel="noreferrer">
             <FaTiktok color={"#707070"} size={30} />
           </a>

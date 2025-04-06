@@ -30,6 +30,7 @@ export interface StudentCourseFull {
   nome: string;
   sobrenome: string;
   nome_social: string;
+  usar_nome_social: boolean;
   data_nascimento: Date;
   telefone: string;
   bairro: string;
@@ -50,6 +51,8 @@ export interface StudentCourseFull {
   convocar: string;
   lista_de_espera: string;
   photo:string;
+  areas_de_interesse?: string;
+  cursos_selecionados?: string;
 }
 
 export interface StudentCourseFullDtoInput extends StudentCourseFull {

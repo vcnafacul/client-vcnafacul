@@ -3,7 +3,8 @@ import { useState } from "react";
 import { CheckboxProps } from "../checkbox";
 
 export interface InputCheckBoxProps {
-  checkboxs: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  checkboxs: any[];
   onCheckedChange: (value: string[]) => void;
   propCleanRest?: string;
 }
@@ -43,7 +44,7 @@ export function InputCheckBox({
   };
 
   return (
-    <div className="pt-8 flex flex-col gap-2">
+    <div className="flex flex-col gap-2">
       {checkboxs.map((value, key) => (
         <div className="flex gap-2" key={key}>
           <Checkbox

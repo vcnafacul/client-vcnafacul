@@ -3,6 +3,7 @@ import Button from "@/components/molecules/button";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
+import { Roles } from "@/enums/roles/roles";
 import { enrollmentCancelled } from "@/services/prepCourse/student/enrollment-cancelled";
 import { getStudentsEnrolled } from "@/services/prepCourse/student/getStudentsEnrolled";
 import { reactiveEnrolled } from "@/services/prepCourse/student/reactive-enrolled";
@@ -13,7 +14,15 @@ import { capitalizeWords } from "@/utils/capitalizeWords";
 import { IconButton } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  getGridDateOperators,
+  getGridStringOperators,
+  GridColDef,
+  GridFilterItem,
+  GridSortModel,
+} from "@mui/x-data-grid";
+import debounce from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { FaAddressCard, FaCheck } from "react-icons/fa";
 import { IoClose, IoEyeSharp } from "react-icons/io5";
@@ -26,7 +35,7 @@ import { UpdateStudentClassModal } from "./modals/updateStudentClassModal";
 export function StudentsEnrolled() {
   const [name, setName] = useState<string>("");
   const [students, setStudents] = useState<StudentsDtoOutput[]>([]);
-  const [limit, setLimit] = useState<number>(100);
+  const [limit, setLimit] = useState<number>(15);
   const [totalItems, setTotalItems] = useState<number>(100);
   const [openModalInfo, setOpenModalInfo] = useState(false);
   const [openModalReject, setOpenModalReject] = useState(false);
@@ -37,9 +46,11 @@ export function StudentsEnrolled() {
     {} as StudentsDtoOutput
   );
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [filter, setFilter] = useState<GridFilterItem | undefined>(undefined);
+  const [sort, setSort] = useState<GridSortModel | undefined>(undefined);
 
   const {
-    data: { token },
+    data: { token, permissao },
   } = useAuthStore();
 
   const handleModalDetaild = (id: string) => {
@@ -50,19 +61,43 @@ export function StudentsEnrolled() {
     }
   };
 
-  const paginationModel = { page: 0, pageSize: limit };
-
-  const getEnrolle = async (page: number, limit: number) => {
-    getStudentsEnrolled(token, page, limit)
+  const getEnrolle = async (
+    page: number,
+    limit: number,
+    filters?: GridFilterItem,
+    sortModel?: GridSortModel
+  ) => {
+    const id = toast.loading("Buscando alunos matriculados...");
+    getStudentsEnrolled(token, page, limit, filters, sortModel)
       .then((res) => {
         setName(res.name);
-        console.log(res.students);
         setTotalItems(res.students.totalItems);
         setStudents(res.students.data);
+        toast.dismiss(id);
       })
       .catch((err) => {
-        console.log(err);
+        toast.update(id, {
+          render: err.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
       });
+  };
+
+  const debouncedFilter = useCallback(
+    debounce.debounce(
+      (value: GridFilterItem) => getEnrolle(1, limit, value, sort),
+      1000
+    ),
+    []
+  );
+
+  const handleFilterChange = (filterModel: GridFilterItem) => {
+    if (filterModel && filterModel.value !== undefined) {
+      setFilter(filterModel);
+      debouncedFilter(filterModel);
+    }
   };
 
   const handleCancelEnrollment = (reason: string) => {
@@ -240,8 +275,46 @@ export function StudentsEnrolled() {
               <IoEyeSharp className="h-6 w-6 fill-gray-500 opacity-60 hover:opacity-100" />
             </IconButton>
           </Tooltip>
-          {params.row.applicationStatus === StatusApplication.Enrolled ? (
-            <Tooltip title="Cancelar matrícula">
+          {permissao[Roles.gerenciarEstudantes] &&
+            (params.row.applicationStatus === StatusApplication.Enrolled ? (
+              <Tooltip title="Cancelar matrícula">
+                <IconButton
+                  onClick={() => {
+                    const student = students.find(
+                      (student) => student.id === params.row.id
+                    );
+                    if (!student) {
+                      alert("Estudante não encontrado");
+                    } else {
+                      setStudentSelected(student);
+                      setOpenModalReject(true);
+                    }
+                  }}
+                >
+                  <IoClose className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title="Reativar matrícula">
+                <IconButton
+                  onClick={() => {
+                    const student = students.find(
+                      (student) => student.id === params.row.id
+                    );
+                    if (!student) {
+                      alert("Estudante não encontrado");
+                    } else {
+                      setStudentSelected(student);
+                      setConfirmEnrolled(true);
+                    }
+                  }}
+                >
+                  <FaCheck className="h-6 w-6 fill-green2 opacity-60 hover:opacity-100" />
+                </IconButton>
+              </Tooltip>
+            ))}
+          {permissao[Roles.gerenciarTurmas] && (
+            <Tooltip title="Alterar Turma">
               <IconButton
                 onClick={() => {
                   const student = students.find(
@@ -251,49 +324,14 @@ export function StudentsEnrolled() {
                     alert("Estudante não encontrado");
                   } else {
                     setStudentSelected(student);
-                    setOpenModalReject(true);
+                    setOpenUpdateClass(true);
                   }
                 }}
               >
-                <IoClose className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
-              </IconButton>
-            </Tooltip>
-          ) : (
-            <Tooltip title="Reativar matrícula">
-              <IconButton
-                onClick={() => {
-                  const student = students.find(
-                    (student) => student.id === params.row.id
-                  );
-                  if (!student) {
-                    alert("Estudante não encontrado");
-                  } else {
-                    setStudentSelected(student);
-                    setConfirmEnrolled(true);
-                  }
-                }}
-              >
-                <FaCheck className="h-6 w-6 fill-green2 opacity-60 hover:opacity-100" />
+                <MdClass className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
               </IconButton>
             </Tooltip>
           )}
-          <Tooltip title="Alterar Turma">
-            <IconButton
-              onClick={() => {
-                const student = students.find(
-                  (student) => student.id === params.row.id
-                );
-                if (!student) {
-                  alert("Estudante não encontrado");
-                } else {
-                  setStudentSelected(student);
-                  setOpenUpdateClass(true);
-                }
-              }}
-            >
-              <MdClass className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
-            </IconButton>
-          </Tooltip>
         </div>
       ),
     },
@@ -303,6 +341,9 @@ export function StudentsEnrolled() {
       width: 150,
       align: "center",
       headerAlign: "center",
+      filterOperators: getGridStringOperators().filter(({ value }) =>
+        ["contains"].includes(value)
+      ),
     },
     {
       field: "class",
@@ -316,11 +357,15 @@ export function StudentsEnrolled() {
       field: "email",
       headerName: "Email",
       minWidth: 270,
+      filterOperators: getGridStringOperators().filter(({ value }) =>
+        ["contains"].includes(value)
+      ),
     },
     {
       field: "name",
       headerName: "Nome",
       minWidth: 200,
+      flex: 1,
     },
     {
       field: "applicationStatus",
@@ -335,6 +380,9 @@ export function StudentsEnrolled() {
       minWidth: 100,
       maxWidth: 120,
       type: "date",
+      filterOperators: getGridDateOperators().filter(({ value }) =>
+        ["is", "after", "before"].includes(value)
+      ),
     },
     {
       field: "age",
@@ -350,26 +398,36 @@ export function StudentsEnrolled() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelectionChange = useCallback((selectionModel: any) => {
-    setSelectedRows(selectionModel);
+    if (selectionModel.length <= 20) {
+      setSelectedRows(selectionModel as string[]);
+    } else {
+      toast.warn("Selecione no máximo 20 estudantes", {
+        theme: "dark",
+      });
+    }
   }, []);
+
+  const paginationModel = { page: 0, pageSize: limit };
 
   return (
     <div className="flex flex-col justify-center items-center pt-4 gap-4">
       <div className="w-full px-4">
         <h1 className="text-3xl font-bold text-center text-marine">{name}</h1>
       </div>
-      <div className="w-full px-4">
-        <Button
-          onClick={() => setOpenStudentCards(true)}
-          size="small"
-          className="bg-red border-none flex gap-2 items-center hover:bg-red"
-          disabled={selectedRows.length === 0}
-        >
-          <div className="flex gap-2 items-center justify-center">
-            <FaAddressCard className="w-5 h-5" /> Carteirinhas
-          </div>
-        </Button>
-      </div>
+      {permissao[Roles.gerenciarEstudantes] && (
+        <div className="w-full px-4">
+          <Button
+            onClick={() => setOpenStudentCards(true)}
+            size="small"
+            className="bg-red border-none flex gap-2 items-center hover:bg-red"
+            disabled={selectedRows.length === 0}
+          >
+            <div className="flex gap-2 items-center justify-center">
+              <FaAddressCard className="w-5 h-5" /> Carteirinhas
+            </div>
+          </Button>
+        </div>
+      )}
       <Paper sx={{ height: "100%", width: "100%" }}>
         <DataGrid
           rows={students}
@@ -379,16 +437,43 @@ export function StudentsEnrolled() {
           initialState={{ pagination: { paginationModel } }}
           rowHeight={40}
           disableRowSelectionOnClick
-          checkboxSelection
+          checkboxSelection={permissao[Roles.gerenciarEstudantes]}
           rowSelectionModel={selectedRows}
           onRowSelectionModelChange={handleSelectionChange}
           pageSizeOptions={[5, 10, 15, 30, 50, 100]}
           onPaginationModelChange={(newPageSize) => {
-            console.log(newPageSize);
             setLimit(newPageSize.pageSize);
-            getEnrolle(newPageSize.page + 1, newPageSize.pageSize);
+            getEnrolle(
+              newPageSize.page + 1,
+              newPageSize.pageSize,
+              filter,
+              sort
+            );
           }}
           sx={{ border: 0 }}
+          isRowSelectable={(params) =>
+            params.row.applicationStatus === StatusApplication.Enrolled &&
+            params.row.class.id !== undefined
+          }
+          onFilterModelChange={(filterModel) => {
+            if (
+              filterModel &&
+              filterModel.items.length > 0 &&
+              !["age", "name"].includes(filterModel.items[0].field)
+            ) {
+              handleFilterChange(filterModel.items[0]);
+            }
+          }}
+          onSortModelChange={(sortModel) => {
+            if (
+              sortModel &&
+              sortModel.length > 0 &&
+              !["age", "name"].includes(sortModel[0].field)
+            ) {
+              setSort(sortModel);
+              getEnrolle(1, limit, filter, sortModel);
+            }
+          }}
         />
       </Paper>
       <ModalInfo />

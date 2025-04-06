@@ -1,4 +1,6 @@
 import ProfileDefault from "@/assets/images/profile_carteirinha.png";
+import { Roles } from "@/enums/roles/roles";
+import { useAuthStore } from "@/store/auth";
 import { Camera } from "lucide-react";
 import { useRef } from "react";
 
@@ -9,6 +11,9 @@ interface PhotoStudentCardProps {
 
 const PhotoStudentCard = ({ photo, onChangePhoto }: PhotoStudentCardProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const {
+    data: { permissao },
+  } = useAuthStore();
 
   const handleClick = () => {
     if (fileInputRef.current) {
@@ -33,12 +38,14 @@ const PhotoStudentCard = ({ photo, onChangePhoto }: PhotoStudentCardProps) => {
       {onChangePhoto && (
         <>
           {/* Ícone de câmera sobre a imagem */}
-          <button
-            onClick={handleClick}
-            className="absolute bottom-2 right-2 bg-black/50 p-2 rounded-full hover:bg-black/70 transition"
-          >
-            <Camera className="text-white w-6 h-6" />
-          </button>
+          {permissao[Roles.gerenciarEstudantes] && (
+            <button
+              onClick={handleClick}
+              className="absolute bottom-2 right-2 bg-black/50 p-2 rounded-full hover:bg-black/70 transition"
+            >
+              <Camera className="text-white w-6 h-6" />
+            </button>
+          )}
 
           {/* Input de arquivo invisível */}
           <input

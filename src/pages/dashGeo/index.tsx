@@ -1,3 +1,4 @@
+import { TypeMarker } from "@/types/map/marker";
 import { ShadcnTable } from "@/components/atoms/shadcnTable";
 import ModalTabTemplate from "@/components/templates/modalTabTemplate";
 import { useCallback, useEffect, useState } from "react";
@@ -29,6 +30,10 @@ function DashGeo() {
     title: geo.name,
     status: geo.status,
     infos: [
+      {
+        field: "Tipo",
+        value: geo.type === TypeMarker.geo ? "Cursinho" : "Universidade",
+      },
       { field: "Estado", value: geo.state },
       { field: "Cidade", value: geo.city },
       { field: "Data de Cadastro", value: formatDate(geo.createdAt) },
@@ -112,7 +117,6 @@ function DashGeo() {
     async (status: StatusEnum, text: string) => {
       getAllGeolocation(status, 1, limitCards, text)
         .then((res) => {
-          console.log(res);
           setGeolocations(res.data);
         })
         .catch(() => setGeolocations([]));
