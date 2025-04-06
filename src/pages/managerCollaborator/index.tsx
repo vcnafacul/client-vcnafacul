@@ -246,16 +246,32 @@ export default function ManagerCollaborator() {
   };
 
   const handleDescription = async (id: string, description: string) => {
-    changeDescription(token, id, description).then(() => {
-      const collaboratorAux = collaborator.map((c) => {
-        if (c.id === id) {
-          setCollaboratorSelected({ ...c, description });
-          return { ...c, description };
-        }
-        return c;
+    const _id = toast.loading("Alterando informação de colaborador...");
+    changeDescription(token, id, description)
+      .then(() => {
+        const collaboratorAux = collaborator.map((c) => {
+          if (c.id === id) {
+            setCollaboratorSelected({ ...c, description });
+            return { ...c, description };
+          }
+          return c;
+        });
+        setCollaborator(collaboratorAux);
+        toast.update(_id, {
+          render: "Informação alterada com sucesso!",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      })
+      .catch((error: Error) => {
+        toast.update(_id, {
+          render: error.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
       });
-      setCollaborator(collaboratorAux);
-    });
   };
 
   useEffect(() => {
