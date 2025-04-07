@@ -1,4 +1,4 @@
-import { getQuestionImage } from "@/services/prepCourse/student/getQuestionImage";
+import { getQuestionImage } from "@/services/question/getQuestionImage";
 import { yupResolver } from "@hookform/resolvers/yup";
 import heic2any from "heic2any";
 import { useCallback, useEffect, useState } from "react";
@@ -671,11 +671,10 @@ function ModalDetalhes({
   }, [enemArea]);
 
   useEffect(() => {
+    const id = toast.loading("Carregando imagem ...");
     const fetchImage = async () => {
-      console.log(question?.imageId);
       if (question?.imageId) {
         try {
-          console.log(question?.imageId);
           const blob = await getQuestionImage(question.imageId, token);
           const fileType = blob.type; // Tipo MIME do arquivo
 
@@ -692,9 +691,14 @@ function ModalDetalhes({
             const url = URL.createObjectURL(blob);
             setImageSrc(url);
           }
+          toast.dismiss(id);
         } catch (error) {
-          console.log(error);
-          toast.error(`Erro ao carregar a imagem: ${error}`);
+          toast.update(id, {
+            render: "Erro ao carregar imagem",
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+          });
         }
       }
     };
