@@ -154,7 +154,7 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
             checked={useCep}
             onChange={(e) => setUseCep(e.target.checked)}
           />
-          <label>Buscar endereço pelo CEP</label>
+          <label>Definir localização manualmente</label>
         </div>
         <Form className="flex flex-col gap-4 my-4 w-full" formFields={form.map((f) => {
           f.defaultValue = dataGeo![f.id as keyof CreateGeolocation] || "";
