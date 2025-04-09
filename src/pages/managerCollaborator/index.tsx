@@ -110,7 +110,7 @@ export default function ManagerCollaborator() {
     },
     {
       field: "actived",
-      headerName: "Nome",
+      headerName: "Status",
       width: 150,
       align: "center",
       headerAlign: "center",
