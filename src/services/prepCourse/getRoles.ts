@@ -1,8 +1,8 @@
-import { Role } from "../../types/roles/role";
+import { EditRoleDto } from "@/dtos/roles/editRole";
 import fetchWrapper from "../../utils/fetchWrapper";
 import { partnerPrepCourse } from "../urls";
 
-export async function getRoles(token: string): Promise<Role[]> {
+export async function getRoles(token: string): Promise<EditRoleDto[]> {
   const response = await fetchWrapper(`${partnerPrepCourse}/role`, {
     method: "GET",
     headers: {

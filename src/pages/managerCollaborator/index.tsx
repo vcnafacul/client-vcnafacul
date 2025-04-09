@@ -14,6 +14,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { IoEyeSharp } from "react-icons/io5";
 import { toast } from "react-toastify";
+import ModalEditRole from "./modals/ModalEditRole";
 import ModalNewRole from "./modals/ModalNewRole";
 import ModalUpdateRoleUser from "./modals/ModalUpdateRoleUser";
 import { ShowInfo } from "./modals/showInfo";
@@ -42,6 +43,7 @@ export default function ManagerCollaborator() {
   const [openInviteModal, setOpenInviteModal] = useState(false);
   const [openShowInfo, setOpenShowInfo] = useState(false);
   const [openNewRole, setOpenNewRole] = useState(false);
+  const [openEditRole, setOpenEditRole] = useState(false);
   const [userRoleModal, setUserRoleModal] = useState(false);
   const [collaboratorSelected, setCollaboratorSelected] =
     useState<CollaboratorColumns | null>(null);
@@ -232,6 +234,15 @@ export default function ManagerCollaborator() {
     ) : null;
   };
 
+  const ModalShowEditRole = () => {
+    return openEditRole ? (
+      <ModalEditRole
+        isOpen={openEditRole}
+        handleClose={() => setOpenEditRole(false)}
+      />
+    ) : null;
+  };
+
   const handleChangeActive = async (id: string) => {
     changeActive(token, id).then(() => {
       const collaboratorAux = collaborator.map((c) => {
@@ -338,6 +349,14 @@ export default function ManagerCollaborator() {
         >
           Nova Função
         </Button>
+        <Button
+          onClick={() => setOpenEditRole(true)}
+          size="small"
+          typeStyle="primary"
+          className="w-fit mx-4"
+        >
+          Editar Função
+        </Button>
       </div>
       <Paper sx={{ height: "100%", width: "100%" }}>
         <DataGrid
@@ -359,6 +378,7 @@ export default function ManagerCollaborator() {
       <ModalShowInfo />
       <ModalShowNewRole />
       <ShowUserRole />
+      <ModalShowEditRole />
     </div>
   );
 }
