@@ -61,7 +61,7 @@ export function ShowInfo({
             </div>
             <PropValue
               prop="Nome"
-              value={`${collaborator.name} ${collaborator.name}`}
+              value={collaborator.name}
             />
             <PropValue prop="Email" value={collaborator.email} />
             <PropValue prop="Telefone" value={phoneMask(collaborator.phone)} />
