@@ -41,7 +41,7 @@ function DashRoles() {
     infos: [
       { field: "Email", value: ur.user.email },
       { field: "Telefone", value: ur.user.phone },
-      { field: "Permissao", value: ur.roleName },
+      { field: "Função", value: ur.roleName },
     ],
   });
 
@@ -162,7 +162,7 @@ function DashRoles() {
       },
       typeStyle: "quaternary",
       size: "small",
-      children: "Nova Permissão",
+      children: "Nova Função",
     },
     {
       onClick: () => {
@@ -170,7 +170,7 @@ function DashRoles() {
       },
       typeStyle: "primary",
       size: "small",
-      children: "Editar Permissões",
+      children: "Editar Funções",
     },
   ];
 
