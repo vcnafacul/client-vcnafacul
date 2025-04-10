@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import logo from "@/assets/images/logo_carteirinha.png";
 import Button from "@/components/molecules/button";
+import { Bool } from "@/enums/bool";
 import { Roles } from "@/enums/roles/roles";
 import { getClassById } from "@/services/prepCourse/class/getClassById";
 import { useAuthStore } from "@/store/auth";
@@ -14,6 +15,8 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { format } from "date-fns";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { useEffect, useState } from "react";
+import { FaListCheck } from "react-icons/fa6";
+import { GoGraph } from "react-icons/go";
 import { IoEyeSharp } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { useParams } from "react-router-dom";
@@ -21,7 +24,6 @@ import { toast } from "react-toastify";
 import { AttendanceHistoryModal } from "./modals/attendanceHistoryModal";
 import { AttendanceRecordByStudentModal } from "./modals/attendanceRecordByStudentModal";
 import { StatisticModal } from "./modals/statistic";
-import { Bool } from "@/enums/bool";
 
 export function PartnerClassWithStudents() {
   const { hashPrepCourse } = useParams();
@@ -201,12 +203,15 @@ export function PartnerClassWithStudents() {
       <div className="p-4 my-4 flex gap-2 flex-start bg-gray-50 w-full">
         {permissao[Roles.gerenciarTurmas] && (
           <Button
-            typeStyle="refused"
+            typeStyle="accepted"
             size="small"
             onClick={() => setOpenHistory(true)}
             className="border-none"
           >
-            Registros de Frequência
+            <div className="flex items-center justify-center gap-2">
+              <FaListCheck />
+              Registros de Frequência
+            </div>
           </Button>
         )}
         <Button
@@ -221,13 +226,16 @@ export function PartnerClassWithStudents() {
           </div>
         </Button>
         <Button
-              size="small"
-              className="border-none"
-              typeStyle="refused"
-              onClick={() => setOpenModalStatistic(true)}
-            >
-              <p className="">Estatisticas</p>
-            </Button>
+          size="small"
+          className="border-none"
+          typeStyle="refused"
+          onClick={() => setOpenModalStatistic(true)}
+        >
+          <div className="flex gap-2 items-center justify-center">
+            <GoGraph />
+            <p className="">Estatisticas</p>
+          </div>
+        </Button>
       </div>
       <Paper sx={{ height: "100%", width: "100%" }}>
         <DataGrid
