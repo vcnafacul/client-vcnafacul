@@ -1,5 +1,6 @@
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { LogStudent } from "./studentCourseFull";
+import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
 
 export interface ClassStudent {
   id: string;
@@ -12,4 +13,8 @@ export interface ClassStudent {
   logs: LogStudent[];
   createdAt: Date;
   updatedAt: Date;
+  socioeconomic: SocioeconomicAnswer[];
+  isFree: string;
+  areaInterest: string[];
+  selectedCourses: string[];
 }
