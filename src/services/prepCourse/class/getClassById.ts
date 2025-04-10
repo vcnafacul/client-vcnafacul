@@ -36,6 +36,10 @@ export async function getClassById(
         logs: [],
         createdAt: student.createdAt,
         updatedAt: student.updatedAt,
+        socioeconomic: JSON.parse(student.socioeconomic),
+        isFree: student.isFree,
+        areaInterest: JSON.parse(student.areaInterest),
+        selectedCourses: JSON.parse(student.selectedCourses),
       };
     }),
   };

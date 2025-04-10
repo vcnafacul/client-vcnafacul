@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import logo from "@/assets/images/logo_carteirinha.png";
 import Button from "@/components/molecules/button";
+import { Bool } from "@/enums/bool";
 import { Roles } from "@/enums/roles/roles";
 import { getClassById } from "@/services/prepCourse/class/getClassById";
 import { useAuthStore } from "@/store/auth";
@@ -14,12 +15,15 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { format } from "date-fns";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { useEffect, useState } from "react";
+import { FaListCheck } from "react-icons/fa6";
+import { GoGraph } from "react-icons/go";
 import { IoEyeSharp } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AttendanceHistoryModal } from "./modals/attendanceHistoryModal";
 import { AttendanceRecordByStudentModal } from "./modals/attendanceRecordByStudentModal";
+import { StatisticModal } from "./modals/statistic";
 
 export function PartnerClassWithStudents() {
   const { hashPrepCourse } = useParams();
@@ -32,6 +36,8 @@ export function PartnerClassWithStudents() {
   );
   const [openHistory, setOpenHistory] = useState(false);
   const [openRecord, setOpenRecord] = useState(false);
+
+  const [openModalStatistic, setOpenModalStatistic] = useState<boolean>(false);
 
   const {
     data: { token, permissao },
@@ -116,6 +122,19 @@ export function PartnerClassWithStudents() {
     );
   };
 
+  const ModalStatistic = () => {
+    return !openModalStatistic ? null : (
+      <StatisticModal
+        isOpen={openModalStatistic}
+        handleClose={() => setOpenModalStatistic(false)}
+        data={{
+          forms: students.map((student) => student.socioeconomic),
+          isFree: students.map((student) => student.isFree === Bool.Yes),
+        }}
+      />
+    );
+  };
+
   useEffect(() => {
     const id = toast.loading("Carregando alunos...");
     getClassById(token, hashPrepCourse!)
@@ -184,22 +203,37 @@ export function PartnerClassWithStudents() {
       <div className="p-4 my-4 flex gap-2 flex-start bg-gray-50 w-full">
         {permissao[Roles.gerenciarTurmas] && (
           <Button
-            typeStyle="refused"
+            typeStyle="accepted"
             size="small"
             onClick={() => setOpenHistory(true)}
+            className="border-none"
           >
-            Registros de Frequência
+            <div className="flex items-center justify-center gap-2">
+              <FaListCheck />
+              Registros de Frequência
+            </div>
           </Button>
         )}
         <Button
           typeStyle="primary"
           size="small"
           onClick={downloadPDFClass}
-          className="border-gray-200"
+          className="border-none"
         >
           <div className="flex items-center justify-center gap-2">
             <MdOutlineFileDownload className="h-5 w-5 fill-white" />
             Lista de alunos
+          </div>
+        </Button>
+        <Button
+          size="small"
+          className="border-none"
+          typeStyle="refused"
+          onClick={() => setOpenModalStatistic(true)}
+        >
+          <div className="flex gap-2 items-center justify-center">
+            <GoGraph />
+            <p className="">Estatisticas</p>
           </div>
         </Button>
       </div>
@@ -216,6 +250,7 @@ export function PartnerClassWithStudents() {
       </Paper>
       <ModalAttendanceHistory />
       <ModalAttendanceRecordByStudent />
+      <ModalStatistic />
     </div>
   );
 }
