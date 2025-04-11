@@ -26,7 +26,7 @@ import { AttendanceRecordByStudentModal } from "./modals/attendanceRecordByStude
 import { StatisticModal } from "./modals/statistic";
 
 export function PartnerClassWithStudents() {
-  const { hashPrepCourse } = useParams();
+  const { hashClassId } = useParams();
   const [classEntity, setClassEntity] = useState<ClassEntity>(
     {} as ClassEntity
   );
@@ -106,7 +106,7 @@ export function PartnerClassWithStudents() {
       <AttendanceHistoryModal
         isOpen={openHistory}
         handleClose={() => setOpenHistory(false)}
-        classId={hashPrepCourse!}
+        classId={hashClassId!}
       />
     );
   };
@@ -116,7 +116,7 @@ export function PartnerClassWithStudents() {
       <AttendanceRecordByStudentModal
         isOpen={openRecord}
         handleClose={() => setOpenRecord(false)}
-        classId={hashPrepCourse!}
+        classId={hashClassId!}
         studentId={studentSelected.id}
       />
     );
@@ -137,7 +137,7 @@ export function PartnerClassWithStudents() {
 
   useEffect(() => {
     const id = toast.loading("Carregando alunos...");
-    getClassById(token, hashPrepCourse!)
+    getClassById(token, hashClassId!)
       .then((res) => {
         setClassEntity(res);
         setStudents(res.students.sort((a, b) => a.name.localeCompare(b.name)));

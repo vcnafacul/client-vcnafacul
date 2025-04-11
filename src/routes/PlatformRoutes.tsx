@@ -5,6 +5,7 @@ import { PartnerClass } from "@/pages/partnerClass";
 import { PartnerClassWithStudents } from "@/pages/partnerClassWithStudents";
 import { PartnerPrepInscriptionManager } from "@/pages/partnerPrepInscriptionManager";
 import { PartnerPrepInscritionStudentManager } from "@/pages/partnerPrepInscritionStudentManager";
+import { StudentsEnrolled } from "@/pages/studentsEnrolled";
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashTemplate from "../components/templates/dashTemplate";
 import { Roles } from "../enums/roles/roles";
@@ -71,7 +72,6 @@ import {
 } from "./path";
 import ProtectedRoute from "./protectedRoute";
 import ProtectedRoutePermission from "./protectedRoutePermission";
-import { StudentsEnrolled } from "@/pages/studentsEnrolled";
 
 export function PlatformRoutes() {
   const { data } = useAuthStore();
@@ -131,13 +131,10 @@ export function PlatformRoutes() {
           element={<PartnerPrepInscritionStudentManager />}
         />
         <Route
-          path={`${PARTNER_CLASS}/:hashPrepCourse`}
+          path={`${PARTNER_CLASS}/:hashClassId`}
           element={<PartnerClassWithStudents />}
         />
-        <Route
-          path={PARTNER_CLASS_STUDENTS}
-          element={<StudentsEnrolled />}
-        />
+        <Route path={PARTNER_CLASS_STUDENTS} element={<StudentsEnrolled />} />
         <Route path={DASH} element={<Dash />} />
         <Route path={SIMULADO} element={<MainSimulate />} />
         <Route path={SIMULADO_HISTORIES} element={<SimulationHistories />} />
