@@ -10,11 +10,13 @@ import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
+import { FaRegListAlt } from "react-icons/fa";
 import { IoClose, IoEyeSharp } from "react-icons/io5";
+import { MdPlaylistAddCircle } from "react-icons/md";
 import { toast } from "react-toastify";
 import { AttendanceRecordModal } from "./attendanceRecordModal";
+import AttendanceRecordSummaryModal from "./attendanceRecordSummaryModal";
 import { NewAttendanceRecordModal } from "./newAttendanceRecordModal";
-
 interface AttendanceHistoryProps {
   isOpen: boolean;
   handleClose: () => void;
@@ -36,8 +38,8 @@ export function AttendanceHistoryModal({
   const [openNewAttendanceRecord, setOpenNewAttendanceRecord] =
     useState<boolean>(false);
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
-  const [openNewModal, setOpenNewModal] = useState<boolean>(false);
   const [totalItems, setTotalItems] = useState<number>(100);
+  const [summary, setSummary] = useState<boolean>(false);
   const limit = 10;
 
   const {
@@ -77,35 +79,6 @@ export function AttendanceHistoryModal({
     );
   };
 
-  const ModalConfirmNewRecord = () => {
-    return !openNewModal ? null : (
-      <ModalConfirmCancel
-        isOpen={openNewModal}
-        handleClose={() => setOpenNewModal(false)}
-        handleConfirm={() => {
-          setOpenNewAttendanceRecord(true);
-          setOpenNewModal(false);
-        }}
-        text="Já existe um registro de hoje, deseja criar um novo?"
-        className="bg-white p-4 rounded-md w-[512px]"
-      />
-    );
-  };
-
-  const handleOpenNewRecord = () => {
-    const hasRecordToday = attendanceHistory.some(
-      (item) =>
-        new Date(item.registeredAt).getDate() === new Date().getDate() &&
-        new Date(item.registeredAt).getMonth() === new Date().getMonth() &&
-        new Date(item.registeredAt).getFullYear() === new Date().getFullYear()
-    );
-    if (hasRecordToday) {
-      setOpenNewModal(true);
-    } else {
-      setOpenNewAttendanceRecord(true);
-    }
-  };
-
   const columns: GridColDef[] = [
     {
       field: "actions",
@@ -135,26 +108,22 @@ export function AttendanceHistoryModal({
       ),
     },
     {
-      field: "registeredAt",
-      headerName: "Registrado em",
-      flex: 1,
-      align: "right",
-      headerAlign: "right",
-      renderCell: (params) => {
-        const date = new Date(params.row.registeredAt);
-        return (
-          date.toLocaleDateString("pt-BR") +
-          " " +
-          date.toLocaleTimeString("pt-BR")
-        );
-      },
-    },
-    {
       field: "registeredBy",
       headerName: "Registrado por",
       flex: 1,
       align: "right",
       headerAlign: "right",
+    },
+    {
+      field: "registeredAt",
+      headerName: "Registrado em",
+      width: 150,
+      align: "right",
+      headerAlign: "right",
+      renderCell: (params) => {
+        const date = new Date(params.row.registeredAt);
+        return date.toLocaleDateString("pt-BR");
+      },
     },
   ];
 
@@ -183,6 +152,16 @@ export function AttendanceHistoryModal({
     );
   };
 
+  const ModalAttendanceRecordSummary = () => {
+    return !summary ? null : (
+      <AttendanceRecordSummaryModal
+        isOpen={summary}
+        handleClose={() => setSummary(false)}
+        classId={classId}
+      />
+    );
+  };
+
   const getAttendanceHistory = async (page: number, limit: number) => {
     getAttendanceRecord(token, page, limit, classId)
       .then((res) => {
@@ -204,12 +183,24 @@ export function AttendanceHistoryModal({
       handleClose={handleClose}
       className="bg-white p-4 rounded-md h-[584px] w-[95vw] sm:w-[600px]"
     >
-      <div>
+      <div className="flex gap-2">
         <button
-          onClick={handleOpenNewRecord}
+          onClick={() => setOpenNewAttendanceRecord(true)}
           className="px-4 py-1.5 mb-1 text-white bg-marine rounded-md hover:opacity-90"
         >
-          Novo Registro
+          <div className="flex items-center gap-2 justify-center">
+            <MdPlaylistAddCircle className="w-5 h-5" />
+            Novo Registro
+          </div>
+        </button>
+        <button
+          onClick={() => setSummary(true)}
+          className="px-4 py-1.5 mb-1 text-white bg-marine rounded-md hover:opacity-90"
+        >
+          <div className="flex items-center gap-2 justify-center">
+            <FaRegListAlt />
+            Relatório
+          </div>
         </button>
       </div>
       <Paper sx={{ height: "88%", width: "100%" }} className="border">
@@ -231,7 +222,7 @@ export function AttendanceHistoryModal({
       <ModalAttendanceRecord />
       <ModalNewAttendanceRecord />
       <ModalConfirmDelete />
-      <ModalConfirmNewRecord />
+      <ModalAttendanceRecordSummary />
     </ModalTemplate>
   );
 }
