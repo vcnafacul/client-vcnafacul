@@ -143,7 +143,6 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
             type="checkbox"
             checkboxs={["Desejo utilizar o Nome Social"]}
             onCheckedChange={(values: string[]) => {
-              console.log(values);
               setIsCheckboxChecked(values.length > 0);
             }}
             isCheckbox

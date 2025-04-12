@@ -19,6 +19,5 @@ export async function getSummary(classId: string, startDate: Date, endDate: Date
     }
     throw new Error("An error occurred");
   }
-  console.log(res);
   return res;
 }

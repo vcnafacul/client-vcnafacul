@@ -107,7 +107,7 @@ export function PlatformRoutes() {
 
       <Route path={PARTNER_PREP} element={<BaseRoutes />}>
         <Route
-          path={`${PARTNER_PREP_INSCRIPTION}/:hashPrepCourse`}
+          path={`${PARTNER_PREP_INSCRIPTION}/:hashInscriptionId`}
           element={<PartnerPrepInscription />}
         />
       </Route>

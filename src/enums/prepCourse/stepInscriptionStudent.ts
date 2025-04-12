@@ -1,4 +1,5 @@
 export enum StepsInscriptionStudent {
+  PendingOrRejected = -4,
   RegisterUser = -3,
   Login = -2,
   Error = -1,

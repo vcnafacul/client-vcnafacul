@@ -6,7 +6,6 @@ import ModalTemplate from "@/components/templates/modalTemplate";
 import * as ShadcnButton from "@/components/ui/button";
 import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
 import { useAuthStore } from "@/store/auth";
-import { usePrepCourseStore } from "@/store/prepCourse";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { formatDate } from "@/utils/date";
@@ -53,7 +52,6 @@ export function InscriptionInfoModal({
   const {
     data: { token },
   } = useAuthStore();
-  const { data } = usePrepCourseStore();
 
   const ModalDelete = () => {
     return (
@@ -192,7 +190,7 @@ export function InscriptionInfoModal({
   const clipboard = () => {
     const linkPrepCourse = `${
       import.meta.env.VITE_APP_BASE_URL
-    }/cursinho/inscricao/${data.id}`;
+    }/cursinho/inscricao/${inscriptionSelected!.id}`;
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard
         .writeText(linkPrepCourse)

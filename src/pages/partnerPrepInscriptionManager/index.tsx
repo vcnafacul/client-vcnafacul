@@ -8,7 +8,6 @@ import { deleteInscription } from "@/services/prepCourse/inscription/deleteInscr
 import { getAllInscription } from "@/services/prepCourse/inscription/getAllInscription";
 import { updateInscription } from "@/services/prepCourse/inscription/updateInscription";
 import { useAuthStore } from "@/store/auth";
-import { usePrepCourseStore } from "@/store/prepCourse";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import { formatDate } from "@/utils/date";
 import { Paginate } from "@/utils/paginate";
@@ -35,8 +34,6 @@ export function PartnerPrepInscriptionManager() {
   const {
     data: { token },
   } = useAuthStore();
-
-  const { setPrepCourse } = usePrepCourseStore();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getMoreCards = async (): Promise<Paginate<Inscription>> => {
@@ -207,12 +204,6 @@ export function PartnerPrepInscriptionManager() {
         return a.startDate < b.startDate ? -1 : 1;
       });
       setInscriptions(res.data);
-      if (res.data.length > 0) {
-        setPrepCourse({
-          id: res.data[0].partnerPrepCourseId,
-          prepCourseName: res.data[0].partnerPrepCourseName,
-        });
-      }
       setProcessing(false);
     } catch (e) {
       console.error("Erro ao buscar inscrições", e);

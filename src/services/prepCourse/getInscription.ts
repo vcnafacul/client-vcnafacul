@@ -1,22 +1,23 @@
+import { StatusEnum } from "@/enums/generic/statusEnum";
 import fetchWrapper from "../../utils/fetchWrapper";
-import { prepCourse } from "../urls";
+import { inscriptionCourse } from "../urls";
 
 interface HasActiveInscriptionResponse {
-  hasActiveInscription: boolean;
   prepCourseName: string;
   inscription: {
     name: string;
     description: string;
     startDate: Date;
     endDate: Date;
+    status: StatusEnum;
   }
 }
 
-export async function hasActiveInscription(
-  idPrepCourse: string,
+export async function getInscription(
+  inscritionId: string,
   token: string
 ): Promise<HasActiveInscriptionResponse> {
-  const response = await fetchWrapper(prepCourse(idPrepCourse), {
+  const response = await fetchWrapper(`${inscriptionCourse}/to-inscription/${inscritionId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
