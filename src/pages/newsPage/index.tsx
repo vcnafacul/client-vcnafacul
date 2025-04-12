@@ -11,19 +11,26 @@ import { getNews } from "../../services/news/getNews";
 function NewsPage() {
   const [news, setNews] = useState<News[]>([]);
   const [indexSelect, setIndexSelect] = useState<number>(0);
-
   const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
 
   const NewContent = () => {
-    if (news.length > 0) {
+    if (!news[indexSelect]?.fileName) {
       return (
-        <Content
-        className="bg-white/0"
-          docxFilePath={`${VITE_BASE_FTP}${news[indexSelect].fileName}`}
-        />
+        <div className="min-h-[750px] w-full bg-gray-100 animate-pulse rounded-md">
+          <p className="text-center pt-10 text-gray-400">
+            Carregando documento...
+          </p>
+        </div>
       );
     }
-    return null;
+
+    return (
+      <Content
+        key={`${VITE_BASE_FTP}${news[indexSelect].fileName}`} // força remount para novo doc
+        className="bg-white/0 min-h-[750px]"
+        docxFilePath={`${VITE_BASE_FTP}${news[indexSelect].fileName}`}
+      />
+    );
   };
 
   const breakpoints = {

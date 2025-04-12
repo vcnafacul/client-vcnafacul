@@ -54,14 +54,14 @@ export function ShowInfo({
           <div className="flex flex-col gap-2 w-full">
             <div className="bg-zinc-800 p-2 rounded shadow-black shadow-md">
               <PropValue
-                prop="Permissão"
+                prop="Função"
                 value={collaborator.role.name}
                 className="text-white"
               />
             </div>
             <PropValue
               prop="Nome"
-              value={`${collaborator.name} ${collaborator.name}`}
+              value={collaborator.name}
             />
             <PropValue prop="Email" value={collaborator.email} />
             <PropValue prop="Telefone" value={phoneMask(collaborator.phone)} />
@@ -117,7 +117,7 @@ export function ShowInfo({
           </div>
         </div>
           <div className="flex gap-4 py-2">
-            <Button onClick={openUpdateRole} typeStyle="refused">Editar Permissão</Button>
+            <Button onClick={openUpdateRole} typeStyle="refused">Editar Função</Button>
           </div>
       </div>
     </ModalTemplate>

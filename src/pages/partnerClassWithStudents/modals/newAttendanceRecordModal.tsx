@@ -136,11 +136,11 @@ export function NewAttendanceRecordModal({
             id="range"
             dateFormat="dd/mm/yy"
             value={date}
-            showTime
             onChange={(e) => setDate(e.value as Date)}
             className="focus-visible:ring-orange rounded-md w-full"
             readOnlyInput
             hideOnRangeSelection
+            maxDate={new Date()}
           />
         </div>
         <button

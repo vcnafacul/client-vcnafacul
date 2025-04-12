@@ -34,11 +34,7 @@ import { Statistic } from "./modal/statistic";
 import { ScheduleCallEnrolle } from "./scheduleCallEnrolled";
 import { TableInfo } from "./tableInfo";
 import { WaitingList } from "./waitingList";
-
-enum Bool {
-  Yes = "Sim",
-  No = "Não",
-}
+import { Bool } from "@/enums/bool";
 
 export function PartnerPrepInscritionStudentManager() {
   const { inscriptionId } = useParams();

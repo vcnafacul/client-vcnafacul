@@ -2,9 +2,10 @@ export interface AddressResponse {
   address: {
     road: string;
     state: string;
-    city_district: string;
+    city: string;
     postcode: string;
     suburb: string;
+    town: string;
   };
 
 }

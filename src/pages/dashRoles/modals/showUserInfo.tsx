@@ -31,7 +31,7 @@ function ShowUserInfo({
           />
           <div className="bg-zinc-800 p-2 rounded shadow-md shadow-gray-300">
             <PropValue
-              prop="Permissão"
+              prop="Função"
               value={ur.roleName}
               className="text-white"
             />
@@ -67,7 +67,7 @@ function ShowUserInfo({
           </div>
         </div>
         <div className="flex gap-4 py-2">
-          <Button onClick={openUpdateRole}>Editar Permissão</Button>
+          <Button onClick={openUpdateRole}>Editar Funções</Button>
         </div>
       </div>
     </ModalTemplate>
