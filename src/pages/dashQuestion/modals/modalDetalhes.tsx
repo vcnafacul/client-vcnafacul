@@ -671,9 +671,9 @@ function ModalDetalhes({
   }, [enemArea]);
 
   useEffect(() => {
-    const id = toast.loading("Carregando imagem ...");
     const fetchImage = async () => {
       if (question?.imageId) {
+        const id = toast.loading("Carregando imagem ...");
         try {
           const blob = await getQuestionImage(question.imageId, token);
           const fileType = blob.type; // Tipo MIME do arquivo
