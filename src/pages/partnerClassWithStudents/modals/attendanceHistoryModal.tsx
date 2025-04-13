@@ -193,15 +193,17 @@ export function AttendanceHistoryModal({
             Novo Registro
           </div>
         </button>
-        <button
-          onClick={() => setSummary(true)}
-          className="px-4 py-1.5 mb-1 text-white bg-marine rounded-md hover:opacity-90"
-        >
-          <div className="flex items-center gap-2 justify-center">
-            <FaRegListAlt />
-            Relatório
-          </div>
-        </button>
+        {permissao[Roles.gerenciarTurmas] && (
+          <button
+            onClick={() => setSummary(true)}
+            className="px-4 py-1.5 mb-1 text-white bg-marine rounded-md hover:opacity-90"
+          >
+            <div className="flex items-center gap-2 justify-center">
+              <FaRegListAlt />
+              Relatório
+            </div>
+          </button>
+        )}
       </div>
       <Paper sx={{ height: "88%", width: "100%" }} className="border">
         <DataGrid

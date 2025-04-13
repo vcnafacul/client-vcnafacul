@@ -74,7 +74,7 @@ function Step3Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
     setValue("city", data.city || "");
     setValue("state", data.state || "");
       if (!useCep && data.location?.coordinates?.latitude && data.location?.coordinates?.longitude ) {
-        setSelectedPosition ([parseInt(data.location.coordinates.latitude) , parseInt(data.location.coordinates.longitude)])
+        setSelectedPosition ([parseFloat(data.location.coordinates.latitude) , parseFloat(data.location.coordinates.longitude)])
       }
   };
 

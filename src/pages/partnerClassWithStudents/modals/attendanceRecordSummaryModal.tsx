@@ -231,10 +231,17 @@ export default function AttendanceRecordSummaryModal({
       },
     };
 
-    const fileName = `relatorio_frequencia_${summary.class.name.replace(
-      " ",
-      "_"
-    )}_${start}_${end}.pdf`;
+    const normalize = (text: string) =>
+      text
+        .normalize("NFD") // Remove acentos
+        .replace(/[\u0300-\u036f]/g, "") // Remove caracteres combinados
+        .replace(/[^a-zA-Z0-9]/g, "-") // Substitui caracteres especiais por hífen
+        .replace(/-+/g, "-") // Remove múltiplos hífens seguidos
+        .toLowerCase();
+
+    const fileName = `relatorio-frequencia-${normalize(
+      summary.class.name
+    )}-${format(startDate, "yyyy-MM-dd")}-${format(endDate, "yyyy-MM-dd")}`;
 
     downloadPDF(docDefinition, fileName);
   };
