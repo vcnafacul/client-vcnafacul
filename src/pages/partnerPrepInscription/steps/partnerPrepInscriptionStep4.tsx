@@ -654,6 +654,7 @@ export function PartnerPrepInscriptionStep4({
             id="curso_universitario"
             label={cursoUniversitarioQuestion}
             type="select"
+            className="h-20 pt-[40px]"
             error={errors.curso_universitario}
             options={convertToOptions(cursoUniversitarioOptions)}
             disabled={notfinishedSchool}
@@ -1080,6 +1081,7 @@ export function PartnerPrepInscriptionStep4({
         onCheckedChange={(value: string[]) =>
           setValue("eletrodomesticos", value)
         }
+        isCheckbox
       />
       <InputFactory
         id="tv"
@@ -1134,6 +1136,7 @@ export function PartnerPrepInscriptionStep4({
           }
           setValue("streaming", value);
         }}
+        isCheckbox
       />
       {!hasStreamingInfo && (
         <InputFactory

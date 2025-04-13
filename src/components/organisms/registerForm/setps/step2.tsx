@@ -145,7 +145,6 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
             onCheckedChange={(values: string[]) => {
               setIsCheckboxChecked(values.length > 0);
             }}
-            isCheckbox
           />
         </div>
         <div className="text-sm text-gray-500">
