@@ -1,6 +1,5 @@
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
 import Text from "@/components/atoms/text";
-import BLink from "@/components/molecules/bLink";
 import Button from "@/components/molecules/button";
 import {
   DataInscription,
@@ -9,7 +8,6 @@ import {
 } from "@/dtos/student/studentInscriptionDTO";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { StepsInscriptionStudent } from "@/enums/prepCourse/stepInscriptionStudent";
-import { DASH } from "@/routes/path";
 import { getInscription } from "@/services/prepCourse/getInscription";
 import { getUserInfo } from "@/services/prepCourse/student/getUserInfo";
 import { completeInscriptionStudent } from "@/services/prepCourse/student/inscription";
@@ -25,6 +23,7 @@ import { PartnerPrepInscriptionStep1 } from "./steps/partnerPrepInscriptionStep1
 import { PartnerPrepInscriptionStep2 } from "./steps/partnerPrepInscriptionStep2";
 import { PartnerPrepInscriptionStep3 } from "./steps/partnerPrepInscriptionStep3";
 import { PartnerPrepInscriptionStep4 } from "./steps/partnerPrepInscriptionStep4";
+import { PartnerPrepInscriptionStepError } from "./steps/partnerPrepInscriptionStepError";
 import { PartnerPrepInscriptionStepLogin } from "./steps/partnerPrepInscriptionStepLogin";
 import PartnerPrepInscriptionStepPedingOrRejected from "./steps/partnerPrepInscriptionStepPedingOrRejected";
 import { PartnerPrepInscriptionStepRegister } from "./steps/partnerPrepInscriptionStepRegister";
@@ -212,12 +211,7 @@ export function PartnerPrepInscription() {
           />
         );
       case StepsInscriptionStudent.Error:
-        return (
-          <div className="flex flex-col items-center gap-4">
-            <span className="text-lg text-center">{errorMessage}</span>
-            <BLink to={DASH}>Página Inicial</BLink>
-          </div>
-        );
+        return <PartnerPrepInscriptionStepError message={errorMessage} />;
       case StepsInscriptionStudent.Presentation:
         return (
           <PartnerPrepInscriptionStep0
@@ -290,6 +284,7 @@ export function PartnerPrepInscription() {
             ...dataStudent,
             inscriptionId: hashInscriptionId as string,
           });
+          console.log(res);
           setDataInscription(res.inscription);
           setPrepCourseName(
             res.prepCourseName.toUpperCase().includes("CURSINHO")
