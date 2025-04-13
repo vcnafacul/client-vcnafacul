@@ -93,7 +93,7 @@ export function PlatformRoutes() {
         <Route path={REGISTER_PATH} element={<Register />} />
         <Route path={FORM_GEOLOCATION} element={<Geo />} />
         <Route path={INVITE_MEMBER} element={<InviteMemberProcessing />} />
-        <Route path={DECLARED_INTEREST} element={<ConfirmEnrolled />} />
+        <Route path={`${DECLARED_INTEREST}/:inscriptionId`} element={<ConfirmEnrolled />} />
       </Route>
 
       <Route

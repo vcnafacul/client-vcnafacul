@@ -6,9 +6,10 @@ interface Props {
   onSubmit: (file: File) => void;
   back: (file: File | null) => void;
   photo: File | null;
+  requestDocuments: boolean;
 }
 
-export default function SendPhoto({ onSubmit, back, photo }: Props) {
+export default function SendPhoto({ onSubmit, back, photo, requestDocuments }: Props) {
   const [uploadedFiles, setUploadedFiles] = useState<File | null>(photo);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null); // Preview da foto
   const [photoError, setPhotoError] = useState<string | null>(null); // Erro ao carregar a foto
@@ -99,12 +100,14 @@ export default function SendPhoto({ onSubmit, back, photo }: Props) {
 
       {/* Botão de envio */}
       <div className="w-full flex justify-end gap-4">
-        <button
-          className="mt-8 px-6 py-3 text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
-          onClick={handleBack}
-        >
-          Voltar
-        </button>
+        {requestDocuments && (
+          <button
+            className="mt-8 px-6 py-3  text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
+            onClick={handleBack}
+          >
+            Voltar
+          </button>
+        )}
         <button
           className="mt-8 px-6 py-3  text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
           onClick={handleSubmit}
