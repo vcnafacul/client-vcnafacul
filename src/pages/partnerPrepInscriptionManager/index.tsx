@@ -2,7 +2,6 @@ import { ButtonProps } from "@/components/molecules/button";
 import { CardDash } from "@/components/molecules/cardDash";
 import DashCardTemplate from "@/components/templates/dashCardTemplate";
 import { DashCardContext } from "@/context/dashCardContext";
-import { StatusEnum } from "@/enums/generic/statusEnum";
 import { createInscription } from "@/services/prepCourse/inscription/createInscription";
 import { deleteInscription } from "@/services/prepCourse/inscription/deleteInscription";
 import { getAllInscription } from "@/services/prepCourse/inscription/getAllInscription";
@@ -155,20 +154,6 @@ export function PartnerPrepInscriptionManager() {
       });
   };
 
-  const canEditFunction = () => {
-    const activedInscription = inscriptions.find(
-      (item) => item.actived === StatusEnum.Approved
-    );
-
-    if (!activedInscription) {
-      return true;
-    }
-    if (activedInscription.id === inscriptionSelected?.id) {
-      return true;
-    }
-    return false;
-  };
-
   const handleDelete = async () => {
     deleteInscription(token, inscriptionSelected!.id)
       .then(() => {
@@ -191,7 +176,6 @@ export function PartnerPrepInscriptionManager() {
         }}
         inscription={inscriptionSelected}
         handleEdit={handleEdit}
-        canEdit={canEditFunction()}
         handleDelete={handleDelete}
       />
     ) : null;

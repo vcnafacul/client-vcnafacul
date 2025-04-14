@@ -1,7 +1,6 @@
 import { ReactComponent as TrashIcon } from "@/assets/icons/trash.svg";
 import Button from "@/components/molecules/button";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
-import ModalMessage from "@/components/organisms/modalMessage";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import * as ShadcnButton from "@/components/ui/button";
 import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
@@ -9,11 +8,11 @@ import { useAuthStore } from "@/store/auth";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { formatDate } from "@/utils/date";
+import { FileText, FileX } from "lucide-react";
 import { useState } from "react";
 import { FaRegCopy } from "react-icons/fa6";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { dataInscription } from "../data";
-import { FileText, FileX } from "lucide-react";
 import {
   InscriptionInfoCreateEditModal,
   InscriptionOutput,
@@ -41,14 +40,12 @@ export function InscriptionInfoModal({
   inscription,
   handleEdit,
   handleDelete,
-  canEdit = true,
 }: InscriptionInfoModalProps) {
   const [inscriptionSelected, setInscriptionSelected] = useState<
     Inscription | undefined
   >(inscription);
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
-  const [openModalNotAllowEdit, setOpenModalNotAllowEdit] = useState(false);
 
   const {
     data: { token },
@@ -72,20 +69,6 @@ export function InscriptionInfoModal({
       >
         <p>{dataInscription.warningDelete}</p>
       </ModalConfirmCancel>
-    );
-  };
-
-  const ModalNotAllowEdit = () => {
-    return (
-      <ModalMessage
-        isOpen={openModalNotAllowEdit}
-        handleClose={() => {
-          setOpenModalNotAllowEdit(false);
-        }}
-        text=""
-      >
-        <p>{dataInscription.messageNotAllowEdit}</p>
-      </ModalMessage>
     );
   };
 
@@ -113,14 +96,6 @@ export function InscriptionInfoModal({
         onCreateEdit={myHandleEdit}
       />
     ) : null;
-  };
-
-  const onEdit = () => {
-    if (canEdit) {
-      setOpenModalEdit(true);
-    } else {
-      setOpenModalNotAllowEdit(true);
-    }
   };
 
   const flattenData = (data: XLSXStudentCourseFull[], questions: string[]) => {
@@ -300,14 +275,17 @@ export function InscriptionInfoModal({
                 <p className="text-sm w-fit">Deletar</p>
               </div>
             </Button>
-            <Button typeStyle="secondary" className="w-24 h-8" onClick={onEdit}>
+            <Button
+              typeStyle="secondary"
+              className="w-24 h-8"
+              onClick={() => setOpenModalEdit(true)}
+            >
               Editar
             </Button>
           </div>
         </div>
         <ModalEdit />
         <ModalDelete />
-        <ModalNotAllowEdit />
       </div>
     </ModalTemplate>
   );
