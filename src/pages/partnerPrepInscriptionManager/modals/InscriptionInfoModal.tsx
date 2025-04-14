@@ -13,6 +13,7 @@ import { useState } from "react";
 import { FaRegCopy } from "react-icons/fa6";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { dataInscription } from "../data";
+import { FileText, FileX } from "lucide-react";
 import {
   InscriptionInfoCreateEditModal,
   InscriptionOutput,
@@ -97,6 +98,7 @@ export function InscriptionInfoModal({
         openingsCount: data.openingsCount,
         startDate: data.range[0],
         endDate: data.range[1],
+        requestDocuments: data.requestDocuments,
       });
       setOpenModalEdit(false);
     });
@@ -235,13 +237,34 @@ export function InscriptionInfoModal({
         <h3 className="font-black text-xl text-marine">
           {dataInscription.openingText}
         </h3>
-        <div className="flex gap-4">
-          <p>
-            <strong>Incritos:</strong> {inscriptionSelected?.subscribersCount}
-          </p>
-          <p>
-            <strong>Vagas:</strong> {inscriptionSelected?.openingsCount}
-          </p>
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-4">
+            <p>
+              <strong>Incritos:</strong> {inscriptionSelected?.subscribersCount}
+            </p>
+            <p>
+              <strong>Vagas:</strong> {inscriptionSelected?.openingsCount}
+            </p>
+          </div>
+          <div className="sm:col-span-2 flex items-center gap-3 py-2 px-3 rounded-md bg-gray-50">
+            {inscriptionSelected?.requestDocuments ? (
+              <>
+                <FileText className="w-5 h-5 text-green-600" />
+                <span className="text-sm text-gray-800">
+                  Este processo seletivo <strong>exigirá</strong> envio de
+                  documentos dos candidatos.
+                </span>
+              </>
+            ) : (
+              <>
+                <FileX className="w-5 h-5 text-gray-500" />
+                <span className="text-sm text-gray-800">
+                  Este processo seletivo <strong>não exigirá</strong> envio de
+                  documentos dos candidatos.
+                </span>
+              </>
+            )}
+          </div>
         </div>
         <div
           className="flex gap-1.5 items-center justify-end cursor-pointer"

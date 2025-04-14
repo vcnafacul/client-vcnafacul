@@ -67,15 +67,13 @@ export default function DeclareInterest({
 
   const handleSubmit = (areaInterest: string[], selectedCursos: string[]) => {
     setProcessing(true);
-    if (uploadedFiles.length > 0) {
-      handleDeclaredInterest(areaInterest, selectedCursos)
-        .then(() => {
-          setStep(Steps.Sucess);
-        })
-        .finally(() => {
-          setProcessing(false);
-        });
-    }
+    handleDeclaredInterest(areaInterest, selectedCursos)
+      .then(() => {
+        setStep(Steps.Sucess);
+      })
+      .finally(() => {
+        setProcessing(false);
+      });
   };
 
   const StepsComponent = () => {
@@ -102,7 +100,7 @@ export default function DeclareInterest({
               setUploadedPhoto(file);
               setStep(Steps.Documents);
             }}
-            photo={uploadedPhoto}
+            oldPhoto={uploadedPhoto}
             requestDocuments={requestDocuments}
           />
         );
@@ -127,30 +125,33 @@ export default function DeclareInterest({
     }
   };
 
-  const stepsCircle: StepCicle[] = [
-    {
+  const stepsCircle: StepCicle[] = [];
+
+  if (requestDocuments) {
+    stepsCircle.push({
       name: Steps.Documents,
       status: step == Steps.Documents ? "current" : "complete",
-    },
-    {
-      name: Steps.Photo,
-      status:
-        step === Steps.Documents
-          ? "upcoming"
-          : step === Steps.Photo
-          ? "current"
-          : "complete",
-    },
-    {
-      name: Steps.Quest,
-      status:
-        step == Steps.Quest
-          ? "current"
-          : step === Steps.Sucess
-          ? "complete"
-          : "upcoming",
-    },
-  ];
+    });
+  }
+
+  stepsCircle.push({
+    name: Steps.Photo,
+    status:
+      step === Steps.Documents
+        ? "upcoming"
+        : step === Steps.Photo
+        ? "current"
+        : "complete",
+  });
+  stepsCircle.push({
+    name: Steps.Quest,
+    status:
+      step == Steps.Quest
+        ? "current"
+        : step === Steps.Sucess
+        ? "complete"
+        : "upcoming",
+  });
 
   return (
     <div className="flex flex-col items-center p-6 w-full gap-8">

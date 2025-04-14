@@ -135,6 +135,7 @@ export function PartnerPrepInscriptionManager() {
           description: data.description,
           startDate: data.range[0],
           endDate: data.range[1],
+          requestDocuments: data.requestDocuments,
         });
         toast.update(id, {
           render: `Processo Seletivo ${data.name} atualizado com sucesso`,
