@@ -4,7 +4,7 @@ export async function confirmEnrolled(studentId: string, token: string) {
   const response = await fetch(
     `${studentCourse}/confirm-enrolled/${studentId}`,
     {
-      method: "GET",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
