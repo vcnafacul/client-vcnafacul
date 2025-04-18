@@ -5,6 +5,7 @@ export async function declaredInterest(
   photo: File, // Foto da carteirinha
   areaInterest: string[],
   selectedCursos: string[],
+  studentId: string,
   token: string // Token de autenticação
 ) {
   // Criação de FormData para anexar os arquivos
@@ -22,6 +23,8 @@ export async function declaredInterest(
   selectedCursos.forEach((course) => {
     formData.append("selectedCourses", course);
   });
+
+  formData.append("studentId", studentId);
   // Envio da requisição
   const response = await fetch(url, {
     method: "PATCH", // Método HTTP para upload

@@ -2,13 +2,11 @@ import { ButtonProps } from "@/components/molecules/button";
 import { CardDash } from "@/components/molecules/cardDash";
 import DashCardTemplate from "@/components/templates/dashCardTemplate";
 import { DashCardContext } from "@/context/dashCardContext";
-import { StatusEnum } from "@/enums/generic/statusEnum";
 import { createInscription } from "@/services/prepCourse/inscription/createInscription";
 import { deleteInscription } from "@/services/prepCourse/inscription/deleteInscription";
 import { getAllInscription } from "@/services/prepCourse/inscription/getAllInscription";
 import { updateInscription } from "@/services/prepCourse/inscription/updateInscription";
 import { useAuthStore } from "@/store/auth";
-import { usePrepCourseStore } from "@/store/prepCourse";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import { formatDate } from "@/utils/date";
 import { Paginate } from "@/utils/paginate";
@@ -35,8 +33,6 @@ export function PartnerPrepInscriptionManager() {
   const {
     data: { token },
   } = useAuthStore();
-
-  const { setPrepCourse } = usePrepCourseStore();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getMoreCards = async (): Promise<Paginate<Inscription>> => {
@@ -138,6 +134,7 @@ export function PartnerPrepInscriptionManager() {
           description: data.description,
           startDate: data.range[0],
           endDate: data.range[1],
+          requestDocuments: data.requestDocuments,
         });
         toast.update(id, {
           render: `Processo Seletivo ${data.name} atualizado com sucesso`,
@@ -155,20 +152,6 @@ export function PartnerPrepInscriptionManager() {
           autoClose: 3000,
         });
       });
-  };
-
-  const canEditFunction = () => {
-    const activedInscription = inscriptions.find(
-      (item) => item.actived === StatusEnum.Approved
-    );
-
-    if (!activedInscription) {
-      return true;
-    }
-    if (activedInscription.id === inscriptionSelected?.id) {
-      return true;
-    }
-    return false;
   };
 
   const handleDelete = async () => {
@@ -193,7 +176,6 @@ export function PartnerPrepInscriptionManager() {
         }}
         inscription={inscriptionSelected}
         handleEdit={handleEdit}
-        canEdit={canEditFunction()}
         handleDelete={handleDelete}
       />
     ) : null;
@@ -207,12 +189,6 @@ export function PartnerPrepInscriptionManager() {
         return a.startDate < b.startDate ? -1 : 1;
       });
       setInscriptions(res.data);
-      if (res.data.length > 0) {
-        setPrepCourse({
-          id: res.data[0].partnerPrepCourseId,
-          prepCourseName: res.data[0].partnerPrepCourseName,
-        });
-      }
       setProcessing(false);
     } catch (e) {
       console.error("Erro ao buscar inscrições", e);

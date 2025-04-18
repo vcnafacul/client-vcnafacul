@@ -91,6 +91,7 @@ import {
   tvPcOptions,
   tvQuestion,
 } from "../data";
+import ConfirmSubscription from "../modals/confirmSubscription";
 
 export function PartnerPrepInscriptionStep4({
   description,
@@ -117,6 +118,9 @@ export function PartnerPrepInscriptionStep4({
     useState<boolean>(false);
   const [hasPhonePlanInfo, setHasPhonePlanInfo] = useState<boolean>(true);
   const [hasTransportInfo, setHasTransportInfo] = useState<boolean>(true);
+  const [confirmSubscription, setConfirmSubscription] =
+    useState<boolean>(false);
+  const [answers, setAnswers] = useState<SocioeconomicAnswer[]>([]);
 
   const schema = yup
     .object()
@@ -576,7 +580,9 @@ export function PartnerPrepInscriptionStep4({
         answer: data.transporte_input,
       });
     }
-    updateSocioeconomic!(answers);
+    setAnswers(answers);
+    setConfirmSubscription(true);
+    // updateSocioeconomic!(answers);
   }
 
   const convertToOptions = (options: string[] | number[]) => {
@@ -594,704 +600,731 @@ export function PartnerPrepInscriptionStep4({
   ).map((year) => year.toString());
 
   const hasErrors = Object.keys(errors).length > 0;
-  
-  return (
-    <form
-      onSubmit={handleSubmit(handleForm)}
-      className="w-full flex flex-col gap-4 md:gap-2 mt-8 mb-16"
-    >
-      <Text size="tertiary">{description}</Text>
-      <InputFactory
-        id="escolaridade"
-        label={fundamentalMedioQuestion}
-        type="select"
-        error={errors.fundamentalMedio}
-        options={convertToOptions(fundamentalMedioOptions)}
-        onChange={(e: any) => setValue("fundamentalMedio", e.value)}
-      />
-      <div className="flex gap-2 m-2">
-        <Checkbox
-          checked={notfinishedSchool}
-          onCheckedChange={(isCheck) => {
-            setNotFinishedSchool(isCheck as boolean);
-            if (isCheck) {
-              setValue("ano_conclusao", undefined);
-              setValue("tipo_curso", undefined);
-              setValue("curso_universitario", undefined);
-              setValue("inscrituicao", undefined);
-              setValue("inscrituicao_input", undefined);
-            }
-          }}
-          className="h-4 w-4 flex justify-center items-center border-grey border-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-white data-[state=checked]:text-green2"
-        />
-        <label className="text-sm text-grey">
-          Parei os estudos e ainda não conclui o ensino médio
-        </label>
-      </div>
-      {!notfinishedSchool && (
-        <>
-          <InputFactory
-            id="ano_conclusao"
-            label={anoConclusaoQuestion}
-            type="select"
-            error={errors.ano_conclusao}
-            // defaultValue={currentData?.legalGuardian?.fullName}
-            options={convertToOptions(opt_ano_conslusao)}
-            disabled={notfinishedSchool}
-            onChange={(e: any) => setValue("ano_conclusao", e.value)}
-          />
 
-          <InputFactory
-            id="tipo_curso"
-            label={tipoCursoQuestion}
-            type="select"
-            error={errors.tipo_curso}
-            options={convertToOptions(tipoCursoOptions)}
-            disabled={notfinishedSchool}
-            onChange={(e: any) => setValue("tipo_curso", e.value)}
-          />
-          <InputFactory
-            id="curso_universitario"
-            label={cursoUniversitarioQuestion}
-            type="select"
-            error={errors.curso_universitario}
-            options={convertToOptions(cursoUniversitarioOptions)}
-            disabled={notfinishedSchool}
-            onChange={(e: any) => {
-              if (e.value === "Não") {
-                setAlreadyStartedCourse(false);
-              } else {
-                setAlreadyStartedCourse(true);
+  const ModalConfirmSubscription = () => {
+    return !confirmSubscription ? null : (
+      <ConfirmSubscription
+        isOpen={confirmSubscription}
+        handleClose={() => {
+          setConfirmSubscription(false);
+        }}
+        handleConfirm={() => {
+          setConfirmSubscription(false);
+          updateSocioeconomic!(answers);
+        }}
+      />
+    );
+  };
+
+  return (
+    <>
+      <form
+        onSubmit={handleSubmit(handleForm)}
+        className="w-full flex flex-col gap-4 md:gap-2 mt-8 mb-16"
+      >
+        <Text size="tertiary">{description}</Text>
+        <InputFactory
+          id="escolaridade"
+          label={fundamentalMedioQuestion}
+          type="select"
+          error={errors.fundamentalMedio}
+          options={convertToOptions(fundamentalMedioOptions)}
+          onChange={(e: any) => setValue("fundamentalMedio", e.value)}
+        />
+        <div className="flex gap-2 m-2">
+          <Checkbox
+            checked={notfinishedSchool}
+            onCheckedChange={(isCheck) => {
+              setNotFinishedSchool(isCheck as boolean);
+              if (isCheck) {
+                setValue("ano_conclusao", undefined);
+                setValue("tipo_curso", undefined);
+                setValue("curso_universitario", undefined);
+                setValue("inscrituicao", undefined);
+                setValue("inscrituicao_input", undefined);
               }
-              setValue("curso_universitario", e.value);
             }}
+            className="h-4 w-4 flex justify-center items-center border-grey border-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-white data-[state=checked]:text-green2"
           />
-          {alreadyStartedCourse && (
+          <label className="text-sm text-grey">
+            Parei os estudos e ainda não conclui o ensino médio
+          </label>
+        </div>
+        {!notfinishedSchool && (
+          <>
             <InputFactory
-              id="inscrituicao"
-              label={instituicoesQuestion}
+              id="ano_conclusao"
+              label={anoConclusaoQuestion}
               type="select"
-              error={errors.inscrituicao}
-              options={convertToOptions(instituicoesOptions)}
+              error={errors.ano_conclusao}
+              // defaultValue={currentData?.legalGuardian?.fullName}
+              options={convertToOptions(opt_ano_conslusao)}
+              disabled={notfinishedSchool}
+              onChange={(e: any) => setValue("ano_conclusao", e.value)}
+            />
+
+            <InputFactory
+              id="tipo_curso"
+              label={tipoCursoQuestion}
+              type="select"
+              error={errors.tipo_curso}
+              options={convertToOptions(tipoCursoOptions)}
+              disabled={notfinishedSchool}
+              onChange={(e: any) => setValue("tipo_curso", e.value)}
+            />
+            <InputFactory
+              id="curso_universitario"
+              label={cursoUniversitarioQuestion}
+              type="select"
+              className="h-20 pt-[40px]"
+              error={errors.curso_universitario}
+              options={convertToOptions(cursoUniversitarioOptions)}
               disabled={notfinishedSchool}
               onChange={(e: any) => {
-                if (e.value === "Outra") {
-                  setCollegeInList(false);
+                if (e.value === "Não") {
+                  setAlreadyStartedCourse(false);
                 } else {
-                  setCollegeInList(true);
-                  setValue("inscrituicao_input", undefined);
+                  setAlreadyStartedCourse(true);
                 }
-                setValue("inscrituicao", e.value);
+                setValue("curso_universitario", e.value);
               }}
             />
-          )}
-          {!collegeInList && (
-            <InputFactory
-              id="inscrituicao_input"
-              label={instituicoesQuestion}
-              disabled={notfinishedSchool}
-              type="text"
-              error={errors.inscrituicao_input}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onChange={(e: any) =>
-                setValue("inscrituicao_input", e.target.value)
-              }
-            />
-          )}
-        </>
-      )}
+            {alreadyStartedCourse && (
+              <InputFactory
+                id="inscrituicao"
+                label={instituicoesQuestion}
+                type="select"
+                error={errors.inscrituicao}
+                options={convertToOptions(instituicoesOptions)}
+                disabled={notfinishedSchool}
+                onChange={(e: any) => {
+                  if (e.value === "Outra") {
+                    setCollegeInList(false);
+                  } else {
+                    setCollegeInList(true);
+                    setValue("inscrituicao_input", undefined);
+                  }
+                  setValue("inscrituicao", e.value);
+                }}
+              />
+            )}
+            {!collegeInList && (
+              <InputFactory
+                id="inscrituicao_input"
+                label={instituicoesQuestion}
+                disabled={notfinishedSchool}
+                type="text"
+                error={errors.inscrituicao_input}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                onChange={(e: any) =>
+                  setValue("inscrituicao_input", e.target.value)
+                }
+              />
+            )}
+          </>
+        )}
 
-      <InputFactory
-        id="raca"
-        label={racaQuestion}
-        type="select"
-        error={errors.raca}
-        options={convertToOptions(racaOptions)}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => {
-          if (e.value && e.value.includes("Outros")) {
-            setHasRacaInfo(false);
-          } else {
-            setHasRacaInfo(true);
-            setValue("raca_input", undefined);
-          }
-          setValue("raca", e.value);
-        }}
-      />
-      {!hasRacaInfo && (
         <InputFactory
-          id="raca_input"
-          label={racaInputQuestion}
-          type="text"
-          error={errors.raca_input}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("raca_input", e.target.value)}
-        />
-      )}
-
-      <InputFactory
-        id="etnico_racial"
-        label={etnicoRacialQuestion}
-        type="select"
-        error={errors.etnico_racial}
-        options={convertToOptions(etnicoRacialOptions)}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => {
-          if (e.value && e.value.includes("Outros")) {
-            setHasEtinicoRacialInfo(false);
-          } else {
-            setHasEtinicoRacialInfo(true);
-            setValue("etnico_racial_input", undefined);
-          }
-          setValue("etnico_racial", e.value);
-        }}
-      />
-      {!hasEtinicoRacialInfo && (
-        <InputFactory
-          id="etnico_racial_input"
-          label={etnicoRacialInputQuestion}
-          type="text"
-          error={errors.etnico_racial_input}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("etnico_racial_input", e.target.value)}
-        />
-      )}
-
-      <InputFactory
-        id="deficiencia"
-        label={deficienciaQuestion}
-        type="select"
-        error={errors.deficiencia}
-        options={convertToOptions(deficienciaOptions)}
-        className="h-20 pt-12"
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => {
-          if (e.value && e.value.includes("Outros")) {
-            setHasDeficienciaInfo(false);
-          } else {
-            setHasDeficienciaInfo(true);
-            setValue("deficiencia_input", undefined);
-          }
-          setValue("deficiencia", e.value);
-        }}
-      />
-      {!hasDeficienciaInfo && (
-        <InputFactory
-          id="deficiencia_input"
-          label={deficienciaInputQuestion}
-          type="text"
-          error={errors.deficiencia_input}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("deficiencia_input", e.target.value)}
-        />
-      )}
-      <InputFactory
-        id="estado_civil"
-        label={civilQuestion}
-        type="select"
-        error={errors.estado_civil}
-        options={convertToOptions(civilOptions)}
-        onChange={(e: any) => setValue("estado_civil", e.value)}
-      />
-      <InputFactory
-        id="filhos"
-        label={filhosQuestion}
-        type="select"
-        error={errors.filhos}
-        options={convertToOptions(filhosOptions)}
-        onChange={(e: any) => {
-          if (e.value.includes("Sim")) {
-            setHasFilhosInfo(true);
-          } else {
-            setHasFilhosInfo(false);
-            setValue("filhos_quantidade", undefined);
-            setValue("filhos_residencia", undefined);
-          }
-          setValue("filhos", e.value);
-        }}
-      />
-      {hasFilhosInfo && (
-        <>
-          <InputFactory
-            id="filhos_quantidade"
-            label={filhosQuantidadeQuestion}
-            type="select"
-            error={errors.filhos_quantidade}
-            options={convertToOptions(filhosQuantidadeOptions)}
-            onChange={(e: any) => setValue("filhos_quantidade", e.value)}
-          />
-          <InputFactory
-            id="filhos_residencia"
-            label={filhosResidencia}
-            type="select"
-            error={errors.filhos_residencia}
-            options={convertToOptions(simNaoOptions)}
-            onChange={(e: any) => setValue("filhos_residencia", e.value)}
-          />
-        </>
-      )}
-
-      <InputFactory
-        id="pessoas_residencia"
-        label={pessoasQuantidadeCasa}
-        type="select"
-        error={errors.pessoas_residencia}
-        options={convertToOptions(pessoasQuantidadeOptions)}
-        onChange={(e: any) => {
-          if (e.value === "1") {
-            setLiveAlone(true);
-            setValue("adultos_resisdencia", undefined);
-          } else {
-            setLiveAlone(false);
-          }
-          setValue("pessoas_residencia", e.value);
-        }}
-      />
-      {!liveAlone && (
-        <InputFactory
-          id="adultos_resisdencia"
-          label={adultosQuantidadeCasa}
+          id="raca"
+          label={racaQuestion}
           type="select"
-          error={errors.adultos_resisdencia}
-          options={convertToOptions(adultosQuantidadeOptions)}
-          onChange={(e: any) => setValue("adultos_resisdencia", e.value)}
+          error={errors.raca}
+          options={convertToOptions(racaOptions)}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => {
+            if (e.value && e.value.includes("Outros")) {
+              setHasRacaInfo(false);
+            } else {
+              setHasRacaInfo(true);
+              setValue("raca_input", undefined);
+            }
+            setValue("raca", e.value);
+          }}
         />
-      )}
-      <InputFactory
-        id="pessoas_emprego"
-        className="h-20 pt-12"
-        label={pessoaEmpregoQuestion}
-        type="select"
-        error={errors.pessoas_emprego}
-        options={convertToOptions(pessoaEmpregoOptions)}
-        onChange={(e: any) => {
-          setValue("pessoas_emprego", e.value);
-        }}
-      />
-      <InputFactory
-        id="tem_emprego"
-        label={empregoQuestion}
-        type="select"
-        error={errors.tem_emprego}
-        options={convertToOptions(empregoOptions)}
-        onChange={(e: any) => {
-          if (e.value.includes("Sim")) {
-            setHasProfession(true);
-          } else {
-            setHasProfession(false);
-            setValue("profissao", undefined);
-            setValue("dependente", undefined);
-          }
-          setValue("tem_emprego", e.value);
-        }}
-      />
-      {hasProfession && (
-        <>
+        {!hasRacaInfo && (
           <InputFactory
-            id="profissao"
-            label={profissaoQuestion}
+            id="raca_input"
+            label={racaInputQuestion}
             type="text"
-            error={errors.profissao}
+            error={errors.raca_input}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            onChange={(e: any) => setValue("profissao", e.target.value)}
+            onChange={(e: any) => setValue("raca_input", e.target.value)}
           />
+        )}
+
+        <InputFactory
+          id="etnico_racial"
+          label={etnicoRacialQuestion}
+          type="select"
+          error={errors.etnico_racial}
+          options={convertToOptions(etnicoRacialOptions)}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => {
+            if (e.value && e.value.includes("Outros")) {
+              setHasEtinicoRacialInfo(false);
+            } else {
+              setHasEtinicoRacialInfo(true);
+              setValue("etnico_racial_input", undefined);
+            }
+            setValue("etnico_racial", e.value);
+          }}
+        />
+        {!hasEtinicoRacialInfo && (
           <InputFactory
-            id="dependente"
-            label={dependenteQuestion}
+            id="etnico_racial_input"
+            label={etnicoRacialInputQuestion}
+            type="text"
+            error={errors.etnico_racial_input}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onChange={(e: any) =>
+              setValue("etnico_racial_input", e.target.value)
+            }
+          />
+        )}
+
+        <InputFactory
+          id="deficiencia"
+          label={deficienciaQuestion}
+          type="select"
+          error={errors.deficiencia}
+          options={convertToOptions(deficienciaOptions)}
+          className="h-20 pt-12"
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => {
+            if (e.value && e.value.includes("Outros")) {
+              setHasDeficienciaInfo(false);
+            } else {
+              setHasDeficienciaInfo(true);
+              setValue("deficiencia_input", undefined);
+            }
+            setValue("deficiencia", e.value);
+          }}
+        />
+        {!hasDeficienciaInfo && (
+          <InputFactory
+            id="deficiencia_input"
+            label={deficienciaInputQuestion}
+            type="text"
+            error={errors.deficiencia_input}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onChange={(e: any) => setValue("deficiencia_input", e.target.value)}
+          />
+        )}
+        <InputFactory
+          id="estado_civil"
+          label={civilQuestion}
+          type="select"
+          error={errors.estado_civil}
+          options={convertToOptions(civilOptions)}
+          onChange={(e: any) => setValue("estado_civil", e.value)}
+        />
+        <InputFactory
+          id="filhos"
+          label={filhosQuestion}
+          type="select"
+          error={errors.filhos}
+          options={convertToOptions(filhosOptions)}
+          onChange={(e: any) => {
+            if (e.value.includes("Sim")) {
+              setHasFilhosInfo(true);
+            } else {
+              setHasFilhosInfo(false);
+              setValue("filhos_quantidade", undefined);
+              setValue("filhos_residencia", undefined);
+            }
+            setValue("filhos", e.value);
+          }}
+        />
+        {hasFilhosInfo && (
+          <>
+            <InputFactory
+              id="filhos_quantidade"
+              label={filhosQuantidadeQuestion}
+              type="select"
+              error={errors.filhos_quantidade}
+              options={convertToOptions(filhosQuantidadeOptions)}
+              onChange={(e: any) => setValue("filhos_quantidade", e.value)}
+            />
+            <InputFactory
+              id="filhos_residencia"
+              label={filhosResidencia}
+              type="select"
+              error={errors.filhos_residencia}
+              options={convertToOptions(simNaoOptions)}
+              onChange={(e: any) => setValue("filhos_residencia", e.value)}
+            />
+          </>
+        )}
+
+        <InputFactory
+          id="pessoas_residencia"
+          label={pessoasQuantidadeCasa}
+          type="select"
+          error={errors.pessoas_residencia}
+          options={convertToOptions(pessoasQuantidadeOptions)}
+          onChange={(e: any) => {
+            if (e.value === "1") {
+              setLiveAlone(true);
+              setValue("adultos_resisdencia", undefined);
+            } else {
+              setLiveAlone(false);
+            }
+            setValue("pessoas_residencia", e.value);
+          }}
+        />
+        {!liveAlone && (
+          <InputFactory
+            id="adultos_resisdencia"
+            label={adultosQuantidadeCasa}
             type="select"
-            error={errors.dependente}
+            error={errors.adultos_resisdencia}
+            options={convertToOptions(adultosQuantidadeOptions)}
+            onChange={(e: any) => setValue("adultos_resisdencia", e.value)}
+          />
+        )}
+        <InputFactory
+          id="pessoas_emprego"
+          className="h-20 pt-12"
+          label={pessoaEmpregoQuestion}
+          type="select"
+          error={errors.pessoas_emprego}
+          options={convertToOptions(pessoaEmpregoOptions)}
+          onChange={(e: any) => {
+            setValue("pessoas_emprego", e.value);
+          }}
+        />
+        <InputFactory
+          id="tem_emprego"
+          label={empregoQuestion}
+          type="select"
+          error={errors.tem_emprego}
+          options={convertToOptions(empregoOptions)}
+          onChange={(e: any) => {
+            if (e.value.includes("Sim")) {
+              setHasProfession(true);
+            } else {
+              setHasProfession(false);
+              setValue("profissao", undefined);
+              setValue("dependente", undefined);
+            }
+            setValue("tem_emprego", e.value);
+          }}
+        />
+        {hasProfession && (
+          <>
+            <InputFactory
+              id="profissao"
+              label={profissaoQuestion}
+              type="text"
+              error={errors.profissao}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onChange={(e: any) => setValue("profissao", e.target.value)}
+            />
+            <InputFactory
+              id="dependente"
+              label={dependenteQuestion}
+              type="select"
+              error={errors.dependente}
+              options={convertToOptions(simNaoOptions)}
+              onChange={(e: any) => {
+                setValue("dependente", e.value);
+              }}
+            />
+          </>
+        )}
+        <InputFactory
+          id="situacao_casa"
+          label={situacaoCasaQuestion}
+          type="select"
+          error={errors.situacao_casa}
+          options={convertToOptions(situacaoCasaOptions)}
+          onChange={(e: any) => {
+            if (["Mora sozinho(a)", "Mora com amigos(as)"].includes(e.value)) {
+              setHomeSituation(false);
+            } else {
+              setHomeSituation(true);
+            }
+            setValue("situacao_casa", e.value);
+          }}
+        />
+        <InputFactory
+          id="dependente_renda"
+          label={dependenteFinanceiroQuestion}
+          type="select"
+          error={errors.dependente_renda}
+          options={convertToOptions(simNaoOptions)}
+          onChange={(e: any) => {
+            setValue("dependente_renda", e.value);
+          }}
+        />
+        <InputFactory
+          id="mae_nome"
+          label={maeOuResponsavelQuestion}
+          type="text"
+          error={errors.mae_nome}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("mae_nome", e.target.value)}
+        />
+        <InputFactory
+          id="mae_escolaridade"
+          label={maeOuResponsavelEscolaridadeQuestion}
+          type="select"
+          error={errors.mae_escolaridade}
+          options={convertToOptions(responsavelEscolaridadeOptions)}
+          onChange={(e: any) => {
+            setValue("mae_escolaridade", e.value);
+          }}
+        />
+        <InputFactory
+          id="mae_profissao"
+          label={maeOuResposavelProfissaoQuestion}
+          type="text"
+          error={errors.mae_profissao}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("mae_profissao", e.target.value)}
+        />
+        <InputFactory
+          id="mae_profissao_vida"
+          label={maeOuResposavelProfissaoVidaQuestion}
+          type="text"
+          error={errors.mae_profissao_vida}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("mae_profissao_vida", e.target.value)}
+        />
+        <InputFactory
+          id="pai_nome"
+          label={paiOuResponsavelQuestion}
+          type="text"
+          error={errors.pai_nome}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("pai_nome", e.target.value)}
+        />
+        <InputFactory
+          id="pai_escolaridade"
+          label={paiOuResponsavelEscolaridadeQuestion}
+          type="select"
+          error={errors.pai_escolaridade}
+          options={convertToOptions(responsavelEscolaridadeOptions)}
+          onChange={(e: any) => {
+            setValue("pai_escolaridade", e.value);
+          }}
+        />
+        <InputFactory
+          id="pai_profissao"
+          label={paiOuResposavelProfissaoQuestion}
+          type="text"
+          error={errors.pai_profissao}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("pai_profissao", e.target.value)}
+        />
+        <InputFactory
+          id="pai_profissao_vida"
+          label={paiOuResposavelProfissaoVidaQuestion}
+          type="text"
+          error={errors.pai_profissao_vida}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("pai_profissao_vida", e.target.value)}
+        />
+        {homeSituation && (
+          <InputFactory
+            id="renda_familiar"
+            label={rendaFamiliarQuestion}
+            type="select"
+            error={errors.renda_familiar}
+            options={convertToOptions(rendaFamiliarOptions)}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onChange={(e: any) => setValue("renda_familiar", e.value)}
+          />
+        )}
+        {!homeSituation && (
+          <InputFactory
+            id="renda_solo"
+            label={rendaSoloQuestion}
+            type="select"
+            error={errors.renda_solo}
+            options={convertToOptions(rendaFamiliarOptions)}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onChange={(e: any) => setValue("renda_solo", e.value)}
+          />
+        )}
+        <InputFactory
+          id="moradia_situacao"
+          label={moradiaSituacaoQuestion}
+          type="select"
+          error={errors.moradia_situacao}
+          options={convertToOptions(moradiaSituacaoOptions)}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => {
+            if (e.value.includes("Outra")) {
+              setHousingSituation(true);
+            } else {
+              setHousingSituation(false);
+              setValue("moradia_situacao_input", undefined);
+            }
+            setValue("moradia_situacao", e.value);
+          }}
+        />
+        {housingSituation && (
+          <InputFactory
+            id="moradia_situacao_input"
+            label={moradiaSituacaoQuestion}
+            type="text"
+            error={errors.moradia_situacao_input}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onChange={(e: any) =>
+              setValue("moradia_situacao_input", e.target.value)
+            }
+          />
+        )}
+        <InputFactory
+          id="moradia_comodo"
+          className="h-20 pt-12"
+          label={moradiaComodoQuestion}
+          type="select"
+          error={errors.moradia_comodo}
+          options={convertToOptions(
+            Array.from({ length: 10 }, (_, i) => i + 1)
+          )}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("moradia_comodo", e.value)}
+        />
+        <InputFactory
+          id="moradia_banheiro"
+          label={moradiaBanheiroQuestion}
+          type="select"
+          error={errors.moradia_banheiro}
+          options={convertToOptions(
+            Array.from({ length: 10 }, (_, i) => i + 1)
+          )}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("moradia_banheiro", e.value)}
+        />
+        <InputFactory
+          id="eletrodomesticos"
+          label={eletrodomésticosQuestion}
+          type="checkbox"
+          error={errors.eletrodomesticos}
+          checkboxs={eletrodomésticosOptions}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onCheckedChange={(value: string[]) =>
+            setValue("eletrodomesticos", value)
+          }
+          isCheckbox
+        />
+        <InputFactory
+          id="tv"
+          label={tvQuestion}
+          type="select"
+          error={errors.tv}
+          options={convertToOptions(tvPcOptions)}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => {
+            if (!e.value.includes("Não possuo")) {
+              setHasTv(true);
+            } else {
+              setHasTv(false);
+              setValue("tv_pago", undefined);
+            }
+            setValue("tv", e.value);
+          }}
+        />
+        {hasTv && (
+          <InputFactory
+            id="tv_pago"
+            label={tvPagoQuestion}
+            type="select"
+            error={errors.tv_pago}
             options={convertToOptions(simNaoOptions)}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onChange={(e: any) => setValue("tv_pago", e.value)}
+          />
+        )}
+        <InputFactory
+          id="pc"
+          label={pcQuestion}
+          type="select"
+          error={errors.pc}
+          options={convertToOptions(tvPcOptions)}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("pc", e.value)}
+        />
+        <InputFactory
+          id="streaming"
+          label={streamingQuestion}
+          type="checkbox"
+          error={errors.streaming}
+          checkboxs={streamingOptions}
+          propCleanRest="Não possuo"
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onCheckedChange={(value: string[]) => {
+            if (value.includes("Outros")) {
+              setHasStreamingInfo(false);
+            } else {
+              setHasStreamingInfo(true);
+            }
+            setValue("streaming", value);
+          }}
+          isCheckbox
+        />
+        {!hasStreamingInfo && (
+          <InputFactory
+            id="streaming_input"
+            label={streamingInputQuestion}
+            type="text"
+            error={errors.streaming_input}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onChange={(e: any) => setValue("streaming_input", e.target.value)}
+          />
+        )}
+        <InputFactory
+          id="internet"
+          label={internetQuestion}
+          type="select"
+          error={errors.internet}
+          options={convertToOptions(internetOptions)}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => {
+            if (e.value.includes("Não")) {
+              setHasInternetInfo(false);
+              setValue("internet_velocidade", undefined);
+            } else {
+              setHasInternetInfo(true);
+            }
+            setValue("internet", e.value);
+          }}
+        />
+        {hasInternetInfo && (
+          <InputFactory
+            id="internet_velocidade"
+            className="h-20 pt-12"
+            label={internetVelocidadeQuestion}
+            type="select"
+            error={errors.internet_velocidade}
+            options={convertToOptions(internetVelocidadeOptions)}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onChange={(e: any) => setValue("internet_velocidade", e.value)}
+          />
+        )}
+
+        <InputFactory
+          id="internet_celular"
+          label={internetCelularQuestion}
+          type="select"
+          error={errors.internet_celular}
+          options={convertToOptions(internetCelularOptions)}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => {
+            if (e.value.includes("Não")) {
+              setHasInternetPhoneInfo(false);
+              setValue("internet_celular_plano", undefined);
+            } else {
+              setHasInternetPhoneInfo(true);
+            }
+            setValue("internet_celular", e.value);
+          }}
+        />
+        {hasInternetPhonerInfo && (
+          <InputFactory
+            id="internet_celular_plano"
+            className="h-20 pt-12"
+            label={internetCelularPlanoQuestion}
+            type="select"
+            error={errors.internet_celular_plano}
+            options={convertToOptions(internetCelularPlanoOptions)}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onChange={(e: any) => {
-              setValue("dependente", e.value);
+              if (e.value.includes("Outros")) {
+                setHasPhonePlanInfo(false);
+              } else {
+                setHasPhonePlanInfo(true);
+                setValue("internet_celular_plano_input", undefined);
+              }
+              setValue("internet_celular_plano", e.value);
             }}
           />
-        </>
-      )}
-      <InputFactory
-        id="situacao_casa"
-        label={situacaoCasaQuestion}
-        type="select"
-        error={errors.situacao_casa}
-        options={convertToOptions(situacaoCasaOptions)}
-        onChange={(e: any) => {
-          if (["Mora sozinho(a)", "Mora com amigos(as)"].includes(e.value)) {
-            setHomeSituation(false);
-          } else {
-            setHomeSituation(true);
-          }
-          setValue("situacao_casa", e.value);
-        }}
-      />
-      <InputFactory
-        id="dependente_renda"
-        label={dependenteFinanceiroQuestion}
-        type="select"
-        error={errors.dependente_renda}
-        options={convertToOptions(simNaoOptions)}
-        onChange={(e: any) => {
-          setValue("dependente_renda", e.value);
-        }}
-      />
-      <InputFactory
-        id="mae_nome"
-        label={maeOuResponsavelQuestion}
-        type="text"
-        error={errors.mae_nome}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("mae_nome", e.target.value)}
-      />
-      <InputFactory
-        id="mae_escolaridade"
-        label={maeOuResponsavelEscolaridadeQuestion}
-        type="select"
-        error={errors.mae_escolaridade}
-        options={convertToOptions(responsavelEscolaridadeOptions)}
-        onChange={(e: any) => {
-          setValue("mae_escolaridade", e.value);
-        }}
-      />
-      <InputFactory
-        id="mae_profissao"
-        label={maeOuResposavelProfissaoQuestion}
-        type="text"
-        error={errors.mae_profissao}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("mae_profissao", e.target.value)}
-      />
-      <InputFactory
-        id="mae_profissao_vida"
-        label={maeOuResposavelProfissaoVidaQuestion}
-        type="text"
-        error={errors.mae_profissao_vida}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("mae_profissao_vida", e.target.value)}
-      />
-      <InputFactory
-        id="pai_nome"
-        label={paiOuResponsavelQuestion}
-        type="text"
-        error={errors.pai_nome}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("pai_nome", e.target.value)}
-      />
-      <InputFactory
-        id="pai_escolaridade"
-        label={paiOuResponsavelEscolaridadeQuestion}
-        type="select"
-        error={errors.pai_escolaridade}
-        options={convertToOptions(responsavelEscolaridadeOptions)}
-        onChange={(e: any) => {
-          setValue("pai_escolaridade", e.value);
-        }}
-      />
-      <InputFactory
-        id="pai_profissao"
-        label={paiOuResposavelProfissaoQuestion}
-        type="text"
-        error={errors.pai_profissao}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("pai_profissao", e.target.value)}
-      />
-      <InputFactory
-        id="pai_profissao_vida"
-        label={paiOuResposavelProfissaoVidaQuestion}
-        type="text"
-        error={errors.pai_profissao_vida}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("pai_profissao_vida", e.target.value)}
-      />
-      {homeSituation && (
+        )}
+        {!hasPhonePlanInfo && (
+          <InputFactory
+            id="internet_celular_plano_input"
+            className="h-20 pt-12"
+            label={internetCelularPlanoQuestion}
+            type="text"
+            error={errors.internet_celular_plano_input}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onChange={(e: any) =>
+              setValue("internet_celular_plano_input", e.target.value)
+            }
+          />
+        )}
         <InputFactory
-          id="renda_familiar"
-          label={rendaFamiliarQuestion}
-          type="select"
-          error={errors.renda_familiar}
-          options={convertToOptions(rendaFamiliarOptions)}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("renda_familiar", e.value)}
-        />
-      )}
-      {!homeSituation && (
-        <InputFactory
-          id="renda_solo"
-          label={rendaSoloQuestion}
-          type="select"
-          error={errors.renda_solo}
-          options={convertToOptions(rendaFamiliarOptions)}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("renda_solo", e.value)}
-        />
-      )}
-      <InputFactory
-        id="moradia_situacao"
-        label={moradiaSituacaoQuestion}
-        type="select"
-        error={errors.moradia_situacao}
-        options={convertToOptions(moradiaSituacaoOptions)}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => {
-          if (e.value.includes("Outra")) {
-            setHousingSituation(true);
-          } else {
-            setHousingSituation(false);
-            setValue("moradia_situacao_input", undefined);
-          }
-          setValue("moradia_situacao", e.value);
-        }}
-      />
-      {housingSituation && (
-        <InputFactory
-          id="moradia_situacao_input"
-          label={moradiaSituacaoQuestion}
-          type="text"
-          error={errors.moradia_situacao_input}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) =>
-            setValue("moradia_situacao_input", e.target.value)
-          }
-        />
-      )}
-      <InputFactory
-        id="moradia_comodo"
-        className="h-20 pt-12"
-        label={moradiaComodoQuestion}
-        type="select"
-        error={errors.moradia_comodo}
-        options={convertToOptions(Array.from({ length: 10 }, (_, i) => i + 1))}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("moradia_comodo", e.value)}
-      />
-      <InputFactory
-        id="moradia_banheiro"
-        label={moradiaBanheiroQuestion}
-        type="select"
-        error={errors.moradia_banheiro}
-        options={convertToOptions(Array.from({ length: 10 }, (_, i) => i + 1))}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("moradia_banheiro", e.value)}
-      />
-      <InputFactory
-        id="eletrodomesticos"
-        label={eletrodomésticosQuestion}
-        type="checkbox"
-        error={errors.eletrodomesticos}
-        checkboxs={eletrodomésticosOptions}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onCheckedChange={(value: string[]) =>
-          setValue("eletrodomesticos", value)
-        }
-      />
-      <InputFactory
-        id="tv"
-        label={tvQuestion}
-        type="select"
-        error={errors.tv}
-        options={convertToOptions(tvPcOptions)}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => {
-          if (!e.value.includes("Não possuo")) {
-            setHasTv(true);
-          } else {
-            setHasTv(false);
-            setValue("tv_pago", undefined);
-          }
-          setValue("tv", e.value);
-        }}
-      />
-      {hasTv && (
-        <InputFactory
-          id="tv_pago"
-          label={tvPagoQuestion}
-          type="select"
-          error={errors.tv_pago}
-          options={convertToOptions(simNaoOptions)}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("tv_pago", e.value)}
-        />
-      )}
-      <InputFactory
-        id="pc"
-        label={pcQuestion}
-        type="select"
-        error={errors.pc}
-        options={convertToOptions(tvPcOptions)}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("pc", e.value)}
-      />
-      <InputFactory
-        id="streaming"
-        label={streamingQuestion}
-        type="checkbox"
-        error={errors.streaming}
-        checkboxs={streamingOptions}
-        propCleanRest="Não possuo"
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onCheckedChange={(value: string[]) => {
-          if (value.includes("Outros")) {
-            setHasStreamingInfo(false);
-          } else {
-            setHasStreamingInfo(true);
-          }
-          setValue("streaming", value);
-        }}
-      />
-      {!hasStreamingInfo && (
-        <InputFactory
-          id="streaming_input"
-          label={streamingInputQuestion}
-          type="text"
-          error={errors.streaming_input}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("streaming_input", e.target.value)}
-        />
-      )}
-      <InputFactory
-        id="internet"
-        label={internetQuestion}
-        type="select"
-        error={errors.internet}
-        options={convertToOptions(internetOptions)}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => {
-          if (e.value.includes("Não")) {
-            setHasInternetInfo(false);
-            setValue("internet_velocidade", undefined);
-          } else {
-            setHasInternetInfo(true);
-          }
-          setValue("internet", e.value);
-        }}
-      />
-      {hasInternetInfo && (
-        <InputFactory
-          id="internet_velocidade"
+          id="energia_eletrica"
           className="h-20 pt-12"
-          label={internetVelocidadeQuestion}
+          label={energiaEletricaQuestion}
           type="select"
-          error={errors.internet_velocidade}
-          options={convertToOptions(internetVelocidadeOptions)}
+          error={errors.energia_eletrica}
+          options={convertToOptions(energiaEletricaAguaOptions)}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("internet_velocidade", e.value)}
+          onChange={(e: any) => setValue("energia_eletrica", e.value)}
         />
-      )}
-
-      <InputFactory
-        id="internet_celular"
-        label={internetCelularQuestion}
-        type="select"
-        error={errors.internet_celular}
-        options={convertToOptions(internetCelularOptions)}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => {
-          if (e.value.includes("Não")) {
-            setHasInternetPhoneInfo(false);
-            setValue("internet_celular_plano", undefined);
-          } else {
-            setHasInternetPhoneInfo(true);
-          }
-          setValue("internet_celular", e.value);
-        }}
-      />
-      {hasInternetPhonerInfo && (
         <InputFactory
-          id="internet_celular_plano"
+          id="agua_encanada"
           className="h-20 pt-12"
-          label={internetCelularPlanoQuestion}
+          label={aguaQuestion}
           type="select"
-          error={errors.internet_celular_plano}
-          options={convertToOptions(internetCelularPlanoOptions)}
+          error={errors.agua_encanada}
+          options={convertToOptions(energiaEletricaAguaOptions)}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("agua_encanada", e.value)}
+        />
+        <InputFactory
+          id="transporte"
+          className="h-20 pt-12"
+          label={transporteQuestion}
+          type="select"
+          error={errors.transporte}
+          options={convertToOptions(transporteOptions)}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           onChange={(e: any) => {
             if (e.value.includes("Outros")) {
-              setHasPhonePlanInfo(false);
+              setHasTransportInfo(false);
             } else {
-              setHasPhonePlanInfo(true);
-              setValue("internet_celular_plano_input", undefined);
+              setHasTransportInfo(true);
+              setValue("transporte_input", undefined);
             }
-            setValue("internet_celular_plano", e.value);
+            setValue("transporte", e.value);
           }}
         />
-      )}
-      {!hasPhonePlanInfo && (
-        <InputFactory
-          id="internet_celular_plano_input"
-          className="h-20 pt-12"
-          label={internetCelularPlanoQuestion}
-          type="text"
-          error={errors.internet_celular_plano_input}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) =>
-            setValue("internet_celular_plano_input", e.target.value)
-          }
-        />
-      )}
-      <InputFactory
-        id="energia_eletrica"
-        className="h-20 pt-12"
-        label={energiaEletricaQuestion}
-        type="select"
-        error={errors.energia_eletrica}
-        options={convertToOptions(energiaEletricaAguaOptions)}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("energia_eletrica", e.value)}
-      />
-      <InputFactory
-        id="agua_encanada"
-        className="h-20 pt-12"
-        label={aguaQuestion}
-        type="select"
-        error={errors.agua_encanada}
-        options={convertToOptions(energiaEletricaAguaOptions)}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("agua_encanada", e.value)}
-      />
-      <InputFactory
-        id="transporte"
-        className="h-20 pt-12"
-        label={transporteQuestion}
-        type="select"
-        error={errors.transporte}
-        options={convertToOptions(transporteOptions)}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => {
-          if (e.value.includes("Outros")) {
-            setHasTransportInfo(false);
-          } else {
-            setHasTransportInfo(true);
-            setValue("transporte_input", undefined);
-          }
-          setValue("transporte", e.value);
-        }}
-      />
-      {!hasTransportInfo && (
-        <InputFactory
-          id="transporte_input"
-          label={transporteInputQuestion}
-          type="text"
-          error={errors.transporte_input}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("transporte_input", e.target.value)}
-        />
-      )}
-      {hasErrors && (
-        <p className="text-sm text-redError font-semibold text-end">
-          Por favor, preencha todos os campos obrigatórios
-        </p>
-      )}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <AlertDialogUI
-          title="Tem certeza que deseja voltar?"
-          description="Se você deixar o formulário, perderá todas as informações já preenchidas"
-          onConfirm={handleBack!}
-        >
-          <AlertDialogTrigger className="w-full">
-            <div className="bg-orange w-full h-full min-h-[44px] flex justify-center items-center text-white font-bold rounded-md">
-              Voltar
-            </div>
-          </AlertDialogTrigger>
-        </AlertDialogUI>
-        <Button type="submit">Finalizar</Button>
-      </div>
-    </form>
+        {!hasTransportInfo && (
+          <InputFactory
+            id="transporte_input"
+            label={transporteInputQuestion}
+            type="text"
+            error={errors.transporte_input}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onChange={(e: any) => setValue("transporte_input", e.target.value)}
+          />
+        )}
+        {hasErrors && (
+          <p className="text-sm text-redError font-semibold text-end">
+            Por favor, preencha todos os campos obrigatórios
+          </p>
+        )}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <AlertDialogUI
+            title="Tem certeza que deseja voltar?"
+            description="Se você deixar o formulário, perderá todas as informações já preenchidas"
+            onConfirm={handleBack!}
+          >
+            <AlertDialogTrigger className="w-full">
+              <div className="bg-orange w-full h-full min-h-[44px] flex justify-center items-center text-white font-bold rounded-md">
+                Voltar
+              </div>
+            </AlertDialogTrigger>
+          </AlertDialogUI>
+          <Button type="submit">Confirmar</Button>
+        </div>
+      </form>
+      <ModalConfirmSubscription />
+    </>
   );
 }

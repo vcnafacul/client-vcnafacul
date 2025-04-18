@@ -1,55 +1,70 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import PhotoEditor from "@/components/atoms/photoEditor";
+import { useState } from "react";
 import { toast } from "react-toastify";
 
 interface Props {
   onSubmit: (file: File) => void;
   back: (file: File | null) => void;
-  photo: File | null;
+  oldPhoto: File | null;
+  requestDocuments: boolean;
 }
 
-export default function SendPhoto({ onSubmit, back, photo }: Props) {
-  const [uploadedFiles, setUploadedFiles] = useState<File | null>(photo);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null); // Preview da foto
+export default function SendPhoto({
+  onSubmit,
+  back,
+  oldPhoto,
+  requestDocuments,
+}: Props) {
+  const [photo, setPhoto] = useState<File | null>(oldPhoto);
+  const [photoPreview, setPhotoPreview] = useState<File | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null); // Erro ao carregar a foto
+  const [photoEditorOpen, setPhotoEditorOpen] = useState(false);
 
   const handlePreview = (file: File) => {
     const maxSizeInMB = 2;
     if (file.size > maxSizeInMB * 1024 * 1024) {
       setPhotoError(`O arquivo excede o tamanho máximo de ${maxSizeInMB}MB.`);
-      setPhotoPreview(null);
-      setUploadedFiles(null);
+      setPhoto(null);
     } else {
       setPhotoError(null);
-      setPhotoPreview(URL.createObjectURL(file));
-      setUploadedFiles(file);
+      setPhoto(file);
+      setPhotoEditorOpen(false);
     }
   };
 
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      handlePreview(file);
+      setPhotoPreview(file);
+      setPhotoEditorOpen(true);
     }
   };
 
-  useEffect(() => {
-    if (photo) {
-      handlePreview(photo);
-    }
-  }, []);
-
   const handleSubmit = async () => {
-    if (!uploadedFiles) {
+    if (!photo) {
       toast.error("Por favor, selecione uma imagem");
       return;
     }
 
-    onSubmit(uploadedFiles);
+    onSubmit(photo);
   };
 
   const handleBack = () => {
-    back(uploadedFiles);
+    back(photo);
+  };
+
+  const ModalPhotoEditor = () => {
+    return photoEditorOpen ? (
+      <PhotoEditor
+        isOpen={photoEditorOpen}
+        photo={URL.createObjectURL(photoPreview!)}
+        onConfirm={handlePreview}
+        handleClose={() => {
+          setPhotoEditorOpen(false);
+        }}
+      />
+    ) : null;
   };
 
   return (
@@ -82,10 +97,10 @@ export default function SendPhoto({ onSubmit, back, photo }: Props) {
           file:rounded-full file:border-0 file:text-sm file:font-semibold
           file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
           />
-          {photoPreview && (
+          {photo && (
             <div className="mt-4 w-32 h-40 border rounded-md overflow-hidden">
               <img
-                src={photoPreview}
+                src={URL.createObjectURL(photo)}
                 alt="Foto para carteirinha"
                 className="object-cover w-full h-full"
               />
@@ -99,12 +114,14 @@ export default function SendPhoto({ onSubmit, back, photo }: Props) {
 
       {/* Botão de envio */}
       <div className="w-full flex justify-end gap-4">
-        <button
-          className="mt-8 px-6 py-3 text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
-          onClick={handleBack}
-        >
-          Voltar
-        </button>
+        {requestDocuments && (
+          <button
+            className="mt-8 px-6 py-3  text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
+            onClick={handleBack}
+          >
+            Voltar
+          </button>
+        )}
         <button
           className="mt-8 px-6 py-3  text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
           onClick={handleSubmit}
@@ -112,6 +129,8 @@ export default function SendPhoto({ onSubmit, back, photo }: Props) {
           Continuar
         </button>
       </div>
+
+      <ModalPhotoEditor />
     </div>
   );
 }

@@ -20,7 +20,7 @@ export function InputText({ ...props }: InputProps) {
   }
 
   return (
-    <div className="relative">
+    <div>
       <Input
         {...props}
         className={`h-16 pt-4 focus-visible:ring-orange ${props.className}`}

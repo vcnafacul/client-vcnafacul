@@ -93,7 +93,7 @@ export function PlatformRoutes() {
         <Route path={REGISTER_PATH} element={<Register />} />
         <Route path={FORM_GEOLOCATION} element={<Geo />} />
         <Route path={INVITE_MEMBER} element={<InviteMemberProcessing />} />
-        <Route path={DECLARED_INTEREST} element={<ConfirmEnrolled />} />
+        <Route path={`${DECLARED_INTEREST}/:inscriptionId`} element={<ConfirmEnrolled />} />
       </Route>
 
       <Route
@@ -107,7 +107,7 @@ export function PlatformRoutes() {
 
       <Route path={PARTNER_PREP} element={<BaseRoutes />}>
         <Route
-          path={`${PARTNER_PREP_INSCRIPTION}/:hashPrepCourse`}
+          path={`${PARTNER_PREP_INSCRIPTION}/:hashInscriptionId`}
           element={<PartnerPrepInscription />}
         />
       </Route>

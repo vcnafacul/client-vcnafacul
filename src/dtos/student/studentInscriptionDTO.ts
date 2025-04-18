@@ -1,3 +1,4 @@
+import { StatusEnum } from "@/enums/generic/statusEnum";
 import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
 
 export interface StudentInscriptionDTO {
@@ -19,7 +20,7 @@ export interface StudentInscriptionDTO {
   neighborhood: string;
   city: string;
   state: string;
-  partnerPrepCourse: string;
+  inscriptionId: string;
   legalGuardian?: LegalGuardianDTO;
   socioeconomic: SocioeconomicAnswer[];
 }
@@ -38,4 +39,5 @@ export interface DataInscription {
   description: string;
   startDate: Date;
   endDate: Date;
+  status: StatusEnum;
 }

@@ -1,15 +1,14 @@
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
 import Text from "@/components/atoms/text";
-import BLink from "@/components/molecules/bLink";
 import Button from "@/components/molecules/button";
 import {
   DataInscription,
   LegalGuardianDTO,
   StudentInscriptionDTO,
 } from "@/dtos/student/studentInscriptionDTO";
+import { StatusEnum } from "@/enums/generic/statusEnum";
 import { StepsInscriptionStudent } from "@/enums/prepCourse/stepInscriptionStudent";
-import { DASH } from "@/routes/path";
-import { hasActiveInscription } from "@/services/prepCourse/hasActiveInscription";
+import { getInscription } from "@/services/prepCourse/getInscription";
 import { getUserInfo } from "@/services/prepCourse/student/getUserInfo";
 import { completeInscriptionStudent } from "@/services/prepCourse/student/inscription";
 import { useAuthStore } from "@/store/auth";
@@ -24,7 +23,9 @@ import { PartnerPrepInscriptionStep1 } from "./steps/partnerPrepInscriptionStep1
 import { PartnerPrepInscriptionStep2 } from "./steps/partnerPrepInscriptionStep2";
 import { PartnerPrepInscriptionStep3 } from "./steps/partnerPrepInscriptionStep3";
 import { PartnerPrepInscriptionStep4 } from "./steps/partnerPrepInscriptionStep4";
+import { PartnerPrepInscriptionStepError } from "./steps/partnerPrepInscriptionStepError";
 import { PartnerPrepInscriptionStepLogin } from "./steps/partnerPrepInscriptionStepLogin";
+import PartnerPrepInscriptionStepPedingOrRejected from "./steps/partnerPrepInscriptionStepPedingOrRejected";
 import { PartnerPrepInscriptionStepRegister } from "./steps/partnerPrepInscriptionStepRegister";
 import { PartnerPrepInscriptionStepSucess } from "./steps/partnerPrepInscriptionStepSucess";
 
@@ -33,8 +34,9 @@ export interface StepProps {
 }
 
 export interface EachStepProps extends StepProps {
-  
-  handleBack?: (data?: Partial<StudentInscriptionDTO> | LegalGuardianDTO) => void;
+  handleBack?: (
+    data?: Partial<StudentInscriptionDTO> | LegalGuardianDTO
+  ) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateSocioeconomic?: (data: SocioeconomicAnswer[]) => void;
   currentData?: Partial<StudentInscriptionDTO>;
@@ -56,7 +58,7 @@ export function PartnerPrepInscription() {
   const [prepCourseName, setPrepCourseName] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-  const { hashPrepCourse } = useParams();
+  const { hashInscriptionId } = useParams();
 
   const backStep = (data?: Partial<StudentInscriptionDTO>) => {
     let newData = { ...dataStudent };
@@ -77,9 +79,7 @@ export function PartnerPrepInscription() {
     }
   };
 
-  const updateData = (
-    data: Partial<StudentInscriptionDTO>
-  ) => {
+  const updateData = (data: Partial<StudentInscriptionDTO>) => {
     const newData = { ...dataStudent, ...data };
     setDataStudent(newData);
     if (
@@ -93,9 +93,7 @@ export function PartnerPrepInscription() {
     setStepCurrently(stepCurrently + 1);
   };
 
-  const updateDataGuardian = (
-    data: LegalGuardianDTO
-  ) => {
+  const updateDataGuardian = (data: LegalGuardianDTO) => {
     const getData = data as LegalGuardianDTO;
     setDataStudent({
       ...dataStudent,
@@ -191,10 +189,17 @@ export function PartnerPrepInscription() {
 
   const StepCurrently = ({ step }: { step: number }) => {
     switch (step) {
+      case StepsInscriptionStudent.PendingOrRejected:
+        return (
+          <PartnerPrepInscriptionStepPedingOrRejected
+            inscription={dataInscription!}
+            prepCourseName={prepCourseName}
+          />
+        );
       case StepsInscriptionStudent.RegisterUser:
         return (
           <PartnerPrepInscriptionStepRegister
-            hashPrepCourse={hashPrepCourse as string}
+            inscriptionId={hashInscriptionId as string}
           />
         );
       case StepsInscriptionStudent.Login:
@@ -206,12 +211,7 @@ export function PartnerPrepInscription() {
           />
         );
       case StepsInscriptionStudent.Error:
-        return (
-          <div className="flex flex-col items-center gap-4">
-            <span className="text-lg text-center">{errorMessage}</span>
-            <BLink to={DASH}>Página Inicial</BLink>
-          </div>
-        );
+        return <PartnerPrepInscriptionStepError message={errorMessage} />;
       case StepsInscriptionStudent.Presentation:
         return (
           <PartnerPrepInscriptionStep0
@@ -277,46 +277,23 @@ export function PartnerPrepInscription() {
     if (!token) {
       setStepCurrently(StepsInscriptionStudent.RegisterUser);
     } else {
-      if (!hashPrepCourse) navigate("/");
-      hasActiveInscription(hashPrepCourse as string, token)
+      if (!hashInscriptionId) navigate("/");
+      getInscription(hashInscriptionId as string, token)
         .then((res) => {
           setDataStudent({
             ...dataStudent,
-            partnerPrepCourse: hashPrepCourse as string,
+            inscriptionId: hashInscriptionId as string,
           });
+          console.log(res);
           setDataInscription(res.inscription);
           setPrepCourseName(
             res.prepCourseName.toUpperCase().includes("CURSINHO")
               ? res.prepCourseName
               : `Cursinho ${res.prepCourseName}`
           );
-
-          getUserInfo(hashPrepCourse as string, token)
-            .then((res) => {
-              setDataStudent({
-                ...dataStudent,
-                partnerPrepCourse: hashPrepCourse as string,
-                firstName: res.firstName,
-                lastName: res.lastName,
-                socialName: res.socialName,
-                whatsapp: res.phone,
-                birthday: new Date(res.birthday),
-                userId: res.id,
-                street: res.street || "",
-                number: res.number || 0,
-                complement: res.complement || "",
-                neighborhood: res.neighborhood || "",
-                postalCode: res.postalCode || "",
-                city: res.city,
-                state: res.state,
-                email: res.email,
-              });
-              setStepCurrently(StepsInscriptionStudent.Presentation);
-            })
-            .catch((res) => {
-              setStepCurrently(StepsInscriptionStudent.Error);
-              setErrorMessage(res.message);
-            });
+          if (res.inscription.status !== StatusEnum.Approved) {
+            setStepCurrently(StepsInscriptionStudent.PendingOrRejected);
+          }
         })
         .catch((res) => {
           setStepCurrently(StepsInscriptionStudent.Error);
@@ -324,6 +301,38 @@ export function PartnerPrepInscription() {
         });
     }
   }, []);
+
+  useEffect(() => {
+    if (dataInscription && dataInscription.status === StatusEnum.Approved) {
+      getUserInfo(hashInscriptionId as string, token)
+        .then((res) => {
+          setDataStudent({
+            ...dataStudent,
+            inscriptionId: hashInscriptionId as string,
+            firstName: res.firstName,
+            lastName: res.lastName,
+            socialName: res.socialName,
+            whatsapp: res.phone,
+            birthday: new Date(res.birthday),
+            userId: res.id,
+            street: res.street || "",
+            number: res.number || 0,
+            complement: res.complement || "",
+            neighborhood: res.neighborhood || "",
+            postalCode: res.postalCode || "",
+            city: res.city,
+            state: res.state,
+            email: res.email,
+          });
+          setStepCurrently(StepsInscriptionStudent.Presentation);
+        })
+        .catch((res) => {
+          setStepCurrently(StepsInscriptionStudent.Error);
+          setErrorMessage(res.message);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataInscription]);
 
   if (stepCurrently === StepsInscriptionStudent.Blank) return <></>;
 
@@ -338,7 +347,10 @@ export function PartnerPrepInscription() {
         ) : (
           <div className="flex flex-col justify-center items-center py-8 gap-8">
             <StepperCircle steps={steps} />
-            <Text className="text-center" size="secondary">{`Formulário de Inscrição ${prepCourseName}`}</Text>
+            <Text
+              className="text-center"
+              size="secondary"
+            >{`Formulário de Inscrição ${prepCourseName}`}</Text>
             <div
               className={`w-11/12 ${
                 stepCurrently === StepsInscriptionStudent.Presentation
