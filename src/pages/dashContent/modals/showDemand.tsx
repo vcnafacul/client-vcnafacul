@@ -1,7 +1,7 @@
+import DocxPreview from "@/components/atoms/docxPreview";
 import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import { ReactComponent as DocxIcon } from "../../../assets/icons/docx.svg";
-import Content from "../../../components/atoms/content";
 import Text from "../../../components/atoms/text";
 import PropValue from "../../../components/molecules/PropValue";
 import Button from "../../../components/molecules/button";
@@ -61,7 +61,7 @@ function ShowDemand({
 
   const MyContent = useCallback(() => {
     if (upload) {
-      return <Content className="" arrayBuffer={arrayBuffer} />;
+      return <DocxPreview arrayBuffer={arrayBuffer!} />;
     }
     return (
       <div className="flex justify-center p-4">
@@ -105,6 +105,7 @@ function ShowDemand({
         isOpen={tryUpload}
         handleClose={() => setTryUpload(false)}
         handleConfirm={upFile}
+        className="bg-white p-4 rounded-md"
       >
         <div>
           <Text className="m-0" size="secondary">

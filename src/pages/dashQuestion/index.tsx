@@ -327,6 +327,16 @@ function DashQuestion() {
     {
       disabled: !permissao[Roles.criarQuestao],
       onClick: () => {
+        setQuestionSelect(null);
+        setOpenModalRegister(true);
+      },
+      typeStyle: "quaternary",
+      size: "small",
+      children: "Cadastrar Questao",
+    },
+    {
+      disabled: !permissao[Roles.criarQuestao],
+      onClick: () => {
         setMateria(materiasOption[0].id);
         setFrente(frentesOption[0].id);
         setProva(provasOption[0].id);
@@ -345,17 +355,6 @@ function DashQuestion() {
       typeStyle: "quaternary",
       size: "small",
       children: "Aplicar Filtro",
-    },
-    {
-      disabled: !permissao[Roles.criarQuestao],
-      onClick: () => {
-        setQuestionSelect(null);
-        setOpenModalRegister(true);
-      },
-      typeStyle: "quaternary",
-      size: "small",
-      children: "Cadastrar Questao",
-      className: "md:absolute right-4 top-6",
     },
   ];
   return (

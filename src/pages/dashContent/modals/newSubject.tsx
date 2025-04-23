@@ -12,7 +12,9 @@ import {
   FormFieldOption,
 } from "../../../components/molecules/formField";
 import Form from "../../../components/organisms/form";
-import { ModalProps } from "../../../components/templates/modalTemplate";
+import ModalTemplate, {
+  ModalProps,
+} from "../../../components/templates/modalTemplate";
 import {
   CreateSubjectDtoOutput,
   UpdateSubjectDtoOutput,
@@ -27,6 +29,7 @@ interface NewSubjectProps extends ModalProps {
   frente: FormFieldOption;
   subject?: FormFieldOptionSubject;
   actionSubject: (subject: FormFieldOptionSubject) => void;
+  isOpen: boolean;
 }
 
 function NewSubject({
@@ -35,6 +38,7 @@ function NewSubject({
   frente,
   subject,
   actionSubject,
+  isOpen,
 }: NewSubjectProps) {
   const schema = yup
     .object()
@@ -142,26 +146,28 @@ function NewSubject({
   }, [setValue, subject]);
 
   return (
-    <>
-      <div className="bg-white p-4 rounded-md max-w-4xl w-full">
-        <PropValue prop="Materia" value={materia.label} />
-        <PropValue prop="Frente" value={frente.label} />
-        <form onSubmit={handleSubmit(subject ? edit : create)}>
-          <Form
-            className="flex flex-col gap-4 my-4"
-            formFields={listFields}
-            register={register}
-            errors={errors}
-          />
-          <div className="flex gap-4 flex-wrap sm:flex-nowrap">
-            <Button type="submit">{subject ? "Salvar" : "Criar"}</Button>
-            <Button type="button" onClick={handleClose}>
-              Fechar
-            </Button>
-          </div>
-        </form>
-      </div>
-    </>
+    <ModalTemplate
+      className="bg-white p-4 rounded-md max-w-4xl w-full"
+      handleClose={handleClose!}
+      isOpen={isOpen}
+    >
+      <PropValue prop="Materia" value={materia.label} />
+      <PropValue prop="Frente" value={frente.label} />
+      <form onSubmit={handleSubmit(subject ? edit : create)}>
+        <Form
+          className="flex flex-col gap-4 my-4"
+          formFields={listFields}
+          register={register}
+          errors={errors}
+        />
+        <div className="flex gap-4 flex-wrap sm:flex-nowrap">
+          <Button type="submit">{subject ? "Salvar" : "Criar"}</Button>
+          <Button type="button" onClick={handleClose}>
+            Fechar
+          </Button>
+        </div>
+      </form>
+    </ModalTemplate>
   );
 }
 

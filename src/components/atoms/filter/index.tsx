@@ -16,7 +16,7 @@ function Filter ({ filtrar, placeholder, className, search = true, defaultValue,
         <div className={`${className} relative  m-4`}>
             <input 
                 disabled={disabled} 
-                className="w-full h-10 px-4 rounded-md outline-none bg-gray-100" 
+                className="w-full h-10 px-4 rounded-md outline-none shadow-md" 
                 placeholder={placeholder} 
                 onChange={filtrar} 
                 defaultValue={defaultValue}

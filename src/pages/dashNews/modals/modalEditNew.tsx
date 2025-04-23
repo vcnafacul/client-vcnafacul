@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import DocxPreview from "@/components/atoms/docxPreview";
+import NewContent from "@/pages/newsPage/newContent";
 import { useCallback, useState } from "react";
-import Content from "../../../components/atoms/content";
 import Filter from "../../../components/atoms/filter";
 import Text from "../../../components/atoms/text";
 import Button from "../../../components/molecules/button";
@@ -35,14 +36,9 @@ function ModalEditNew({
 
   const MyContent = useCallback(() => {
     if (news) {
-      return (
-        <Content
-          className=""
-          docxFilePath={`${VITE_BASE_FTP}${news.fileName}`}
-        />
-      );
+      return <NewContent fileName={`${VITE_BASE_FTP}${news.fileName}`} />;
     } else if (upload && arrayBuffer) {
-      return <Content arrayBuffer={arrayBuffer} />;
+      return <DocxPreview arrayBuffer={arrayBuffer} />;
     }
 
     return (

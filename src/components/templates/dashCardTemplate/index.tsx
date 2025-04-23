@@ -3,13 +3,12 @@ import { useInView } from "react-intersection-observer";
 import { useDashCardContext } from "../../../context/dashCardContext";
 import Filter from "../../atoms/filter";
 import Select from "../../atoms/select";
-import Text from "../../atoms/text";
 import Button from "../../molecules/button";
 import { CardDashComponent } from "../../molecules/cardDash";
 
 interface Props {
   customFilter?: JSX.Element[];
-  headerDash?: JSX.Element | undefined;
+  headerDash?: JSX.Element;
   backButton?: React.ReactNode;
   classNameFilter?: string;
   className?: string;
@@ -19,16 +18,9 @@ function DashCardTemplate({
   customFilter,
   headerDash,
   backButton,
-  classNameFilter,
-  className,
+  classNameFilter = "",
+  className = "",
 }: Props) {
-  const [firstCardRef, firstCardInView] = useInView();
-  const [lastCardRef, lastCardInView] = useInView();
-  const [botton, setBotton] = useState<boolean>(false);
-  const [top, setTop] = useState<boolean>(true);
-  const [page, setPage] = useState<number>(1);
-  const limitPages = 4;
-
   const {
     title,
     entities,
@@ -41,107 +33,115 @@ function DashCardTemplate({
     totalItems,
   } = useDashCardContext();
 
+  const [page, setPage] = useState(1);
+  const [bottomReached, setBottomReached] = useState(false);
+  const [firstCardRef, firstCardInView] = useInView();
+  const [lastCardRef, lastCardInView] = useInView();
+
+  const limitPages = 4;
+
   useEffect(() => {
-    if (lastCardInView && !botton && entities.length > 0) {
-      setPage(page + 1);
-      getMoreCards!(page + 1).then((res) => {
+    if (lastCardInView && !bottomReached && entities.length > 0) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      getMoreCards?.(nextPage).then((res) => {
         if (entities.length === 4 * limitCards) {
           setEntities([...entities.slice(limitCards), ...res.data]);
-        } else setEntities([...entities, ...res.data]);
-        setBotton(!res);
+        } else {
+          setEntities([...entities, ...res.data]);
+        }
+        setBottomReached(!res);
       });
-      if (page + 1 > limitPages) {
-        setTop(false);
-      }
-    } else if (firstCardInView && !top) {
-      setPage(page - 1);
-      if (page - limitPages === 1) setTop(true);
-      getMoreCards!(page - limitPages).then((res) => {
+    }
+
+    if (firstCardInView && page > limitPages) {
+      const previousPage = page - 1;
+      setPage(previousPage);
+      getMoreCards?.(previousPage - limitPages).then((res) => {
         setEntities([...res.data, ...entities.slice(0, 3 * limitCards)]);
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstCardInView, lastCardInView]);
 
-  const gapBeforeLast = Math.floor(limitCards * 0.25);
-  const indexLastCardInView = entities.length - gapBeforeLast;
-
   return (
-    <div className="w-full flex flex-col py-4 select-none">
-      <div className="relative flex flex-col items-center w-full mt-4">
-        <div className=" flex flex-col-reverse items-center gap-2 mt-4 sm:mt-0">
-          <Text className="self-center" size="secondary">
-            {title}
-          </Text>
+    <div className="w-full flex flex-col items-center py-8 bg-stone-100 min-h-[calc(100vh-76px)]">
+      {/* Title + Voltar */}
+      <div className="w-full max-w-7xl px-4 flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+        <div className="flex items-center gap-3">
           {backButton}
+          <h1 className="text-3xl font-black text-marine">{title}</h1>
         </div>
-        <div
-          className={`relative md:fixed flex flex-wrap flex-col justify-center items-center gap-2 z-[1] rounded-2xl bg-opacity-95 p-2 w-10/12 md:w-fit ${
-            filterProps || buttons || totalItems ? "bg-gray-200/90 mt-14" : ""
-          } ${classNameFilter}`}
-        >
-          <div
-            className={`relative flex flex-wrap items-center md:justify-start justify-center gap-4 w-full mb-4 `}
-          >
-            {filterProps && (
-              <Filter
-                {...filterProps}
-                keyDown={() => {
+        {totalItems !== undefined && (
+          <span className="text-sm text-gray-600 font-medium">
+            Total de registros: {totalItems}
+          </span>
+        )}
+      </div>
+
+      {/* Filtros e controles */}
+      <div
+        className={`rounded-xl  w-full max-w-7xl flex flex-col gap-4 ${classNameFilter}`}
+      >
+        <div>
+          {filterProps && (
+            <Filter
+              {...filterProps}
+              keyDown={() => {
+                setPage(1);
+                filterProps.keyDown?.();
+              }}
+            />
+          )}
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-4 px-4">
+          <div className="flex flex-wrap gap-3">
+            {buttons?.map((button, index) => (
+              <Button key={index} {...button} />
+            ))}
+            {customFilter?.map((filter, index) => (
+              <div key={index}>{filter}</div>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {selectFiltes?.map((select, index) => (
+              <Select
+                key={index}
+                {...select}
+                className="min-w-[140px]"
+                setState={(value) => {
                   setPage(1);
-                  filterProps.keyDown!();
+                  select.setState(value);
                 }}
               />
-            )}
-            <div className="flex gap-4 flex-wrap justify-center">
-              {buttons?.map((button, index) => (
-                <Button key={index} {...button} />
-              ))}
-              {customFilter?.map((filter, index) => (
-                <div key={index}> {filter}</div>
-              ))}
-              {totalItems && (
-                <span className="m-0 md:absolute left-4 top-16 font-bold text-marine text-base">
-                  Total de Registros: {totalItems}
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="flex flex-wrap justify-center gap-4">
-            {selectFiltes?.map((select, index) => {
-              return (
-                <Select
-                  className="h-full"
-                  key={index}
-                  {...select}
-                  setState={(value) => {
-                    setPage(1);
-                    select.setState(value);
-                  }}
-                />
-              );
-            })}
+            ))}
           </div>
         </div>
       </div>
-      {headerDash}
+
+      {/* Header customizado */}
+      {headerDash && (
+        <div className="w-full max-w-7xl mt-6 px-4">{headerDash}</div>
+      )}
+
+      {/* Cards */}
       <div
-        className={`${
-          className || (!filterProps && !buttons) ? "mt-0" : "md:mt-52"
-        } flex flex-wrap justify-center gap-4 pb-10 my-4 md:mx-10 ${className}`}
+        className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-7xl mt-10 px-4 ${className}`}
       >
         {entities.map((entity, index) => {
-          let ref = null;
-          if (entities.length >= limitCards) {
-            if (index === indexLastCardInView) ref = lastCardRef;
-            else {
-              if (
-                (botton || (limitCards * 4 === entities.length && !top)) &&
-                index === limitCards
-              )
-                ref = firstCardRef;
-            }
-          }
-          return <CardDashComponent ref={ref} key={index} entity={entity} />;
+          const isLastCard =
+            index === entities.length - Math.floor(limitCards * 0.25);
+          const isFirstCard =
+            index === limitCards && entities.length >= limitCards * 4;
+          const ref = isLastCard
+            ? lastCardRef
+            : isFirstCard
+            ? firstCardRef
+            : undefined;
+
+          return <CardDashComponent key={index} ref={ref} entity={entity} />;
         })}
       </div>
     </div>

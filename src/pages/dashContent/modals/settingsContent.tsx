@@ -271,67 +271,55 @@ function SettingsContent({ isOpen, handleClose }: Props) {
   };
 
   const NewModalFrente = () => {
-    return (
-      <ModalTemplate
+    return openModalFrente && frenteSelected === null ? (
+      <NewFrente
         isOpen={openModalFrente && frenteSelected === null}
+        materia={MateriasLabel.find((m) => m.value == materia)!}
+        actionFrente={addFrente}
         handleClose={() => setOpenModalFrente(false)}
-      >
-        <NewFrente
-          materia={MateriasLabel.find((m) => m.value == materia)!}
-          actionFrente={addFrente}
-        />
-      </ModalTemplate>
-    );
+      />
+    ) : null;
   };
 
   const EditModalFrente = () => {
-    return (
-      <ModalTemplate
+    return openModalFrente && frenteSelected !== null ? (
+      <NewFrente
+        frente={frenteSelected!}
+        materia={MateriasLabel.find((m) => m.value == materia)!}
+        actionFrente={editFrente}
         isOpen={openModalFrente && frenteSelected !== null}
         handleClose={() => setOpenModalFrente(false)}
-      >
-        <NewFrente
-          frente={frenteSelected!}
-          materia={MateriasLabel.find((m) => m.value == materia)!}
-          actionFrente={editFrente}
-        />
-      </ModalTemplate>
-    );
+      />
+    ) : null;
   };
 
   const NewModalSubject = () => {
     const open =
       openModalSubject && frenteSelected !== undefined && materia !== undefined;
-    return (
-      <ModalTemplate
+    return open ? (
+      <NewSubject
+        materia={MateriasLabel.find((m) => m.value == materia)!}
+        frente={frenteSelected!}
+        actionSubject={addSubject}
         isOpen={open}
         handleClose={() => setOpenModalSubject(false)}
-      >
-        <NewSubject
-          materia={MateriasLabel.find((m) => m.value == materia)!}
-          frente={frenteSelected!}
-          actionSubject={addSubject}
-        />
-      </ModalTemplate>
-    );
+      />
+    ) : null;
   };
 
   const EditModalSubject = () => {
     const open: boolean =
       openModalSubject && frenteSelected && materia && subjectSelected;
-    return (
-      <ModalTemplate
+    return open ? (
+      <NewSubject
+        materia={MateriasLabel.find((m) => m.value == materia)!}
+        frente={frenteSelected!}
+        subject={subjectSelected!}
+        actionSubject={editSubject}
         isOpen={open}
         handleClose={() => setOpenModalSubject(false)}
-      >
-        <NewSubject
-          materia={MateriasLabel.find((m) => m.value == materia)!}
-          frente={frenteSelected!}
-          subject={subjectSelected!}
-          actionSubject={editSubject}
-        />
-      </ModalTemplate>
-    );
+      />
+    ) : null;
   };
 
   const ViewOrderModal = () => {

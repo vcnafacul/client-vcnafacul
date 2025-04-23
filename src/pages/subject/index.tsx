@@ -1,84 +1,112 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import DocxPreview from "@/components/atoms/docxPreview";
+import { getFile } from "@/services/content/getFile";
+import { ArrowLeft } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ContentDtoInput } from "../../dtos/content/contentDtoInput";
-import { StatusEnum } from "../../enums/generic/statusEnum";
-import { StatusContent } from "../../enums/content/statusContent";
-import { useAuthStore } from "../../store/auth";
-import { getContentOrder } from "../../services/content/getContent";
 import { toast } from "react-toastify";
-import ContentSubject from "../../components/molecules/contentSubjects";
-import Text from "../../components/atoms/text";
-import Button from "../../components/molecules/button";
+import { ContentDtoInput } from "../../dtos/content/contentDtoInput";
+import { StatusContent } from "../../enums/content/statusContent";
+import { StatusEnum } from "../../enums/generic/statusEnum";
 import { DASH, ESTUDO } from "../../routes/path";
+import { getContentOrder } from "../../services/content/getContent";
+import { useAuthStore } from "../../store/auth";
 import { MateriasLabel } from "../../types/content/materiasLabel";
 
-function Subject(){
-    const { id } = useParams();
-    const { data: { token }} = useAuthStore()
+function Subject() {
+  const { id } = useParams();
+  const {
+    data: { token },
+  } = useAuthStore();
 
-    const [contents, setContent] = useState<ContentDtoInput[]>([])
-    const [nomeMateria, setNomeMateria] = useState<string>('')
-    const [contentSelected, setContentSelected] = useState<ContentDtoInput>()
-    const dataRef = useRef<ContentDtoInput[]>([])
-    const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
+  const [contents, setContents] = useState<ContentDtoInput[]>([]);
+  const [nomeMateria, setNomeMateria] = useState("");
+  const [contentSelected, setContentSelected] = useState<ContentDtoInput>();
+  const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer>();
+  const dataRef = useRef<ContentDtoInput[]>([]);
+  const navigate = useNavigate();
 
-    function removeAccentsAndSpecialChars(input: string): string {
-        return input.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9 ]/g, "");
+  useEffect(() => {
+    if (contentSelected) {
+      getFile(contentSelected.file!.id, token).then((res) => {
+        res.arrayBuffer().then(setArrayBuffer);
+      });
     }
+  }, [contentSelected, token]);
 
-    const MyContent = useCallback(() => {
-        if(contentSelected){
-            return (
-                <ContentSubject docxFilePath={`${VITE_BASE_FTP}${contentSelected.filename}`} />
-            )
-        }
-        return null
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [contentSelected])
+  useEffect(() => {
+    getContentOrder(token, StatusEnum.Approved as unknown as StatusContent, id)
+      .then((res) => {
+        setContents(res);
+        const idMateria = res[0].subject.frente.materia;
+        const nomeMateria =
+          MateriasLabel.find((m) => m.value === idMateria)?.label || "";
+        setNomeMateria(
+          nomeMateria
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-zA-Z0-9 ]/g, "")
+        );
+        dataRef.current = res;
+        if (res.length > 0) setContentSelected(res[0]);
+      })
+      .catch((err) => toast.error(err.message));
+  }, [id, token]);
 
-    useEffect(() => {
-        getContentOrder(token, StatusEnum.Approved as unknown as StatusContent, id)
-            .then(res => {
-                setContent(res)
-                const idMateria = res[0].subject.frente.materia;
-                const nomeMateria = removeAccentsAndSpecialChars(MateriasLabel.find(materia => materia.value === idMateria)!.label);
-                setNomeMateria(nomeMateria)
-                dataRef.current = res;
-                if(res.length > 0) {
-                    setContentSelected(res[0])
-                }
-            })
-            .catch((error: Error) => {
-                toast.error(error.message);
-            })
-        },[id, token])
-        const navigate = useNavigate();
+  return (
+    <div className="min-h-screen bg-gray-100 py-6 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6 flex-wrap gap-2">
+          <h1 className="text-2xl font-bold text-gray-800">
+            {contents[0]?.subject.name}
+          </h1>
+          <button
+            className="text-gray-600 hover:text-black flex items-center gap-2 px-2 py-1"
+            onClick={() => navigate(`${DASH}/${ESTUDO}/${nomeMateria}`)}
+          >
+            <ArrowLeft size={18} />
+            <span className="text-sm">Voltar</span>
+          </button>
+        </div>
 
-    return (
-        <div>
-            <div className="relative flex flex-col-reverse items-center gap-2 mt-4 sm:mt-0">
-                    {contents.length > 0 ? <Text className="m-0 pt-4">{contents[0].subject.name}</Text> : <></>}
-                    {nomeMateria && (
-                    <div>
-                        <Button className="w-24 h-10 sm:absolute top-4 right-4" onClick={() => navigate(`${DASH}/${ESTUDO}/${nomeMateria}`)}>
-                            Voltar
-                        </Button>
-                    </div>)}
-                    </div>
-                <div className="flex flex-col xl:flex-row gap-4 flex-wrap justify-center">
-                    <div className="m-4 xl:mt-8 xl:mr-8 bg-white border shadow-md rounded-md flex gap-4 xl:flex-col h-fit flex-wrap w-fit">
-                        {contents.map((content, index) => (
-                            <div key={index} onClick={() => { setContentSelected(content)}}
-                            className={`px-4 py-1 cursor-pointer transition-all duration-300 min-w-[120px]
-                            ${content.id === contentSelected?.id ? 'font-black bg-gray-200' : ''}`}>{index + 1} - {content.title}</div>
-                        ))}
-                    </div>
-                    <div className="px-4">
-                        <MyContent />
-                    </div>
+        {/* Layout */}
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Menu lateral */}
+          <aside className="bg-white shadow-md rounded-lg p-4 w-full lg:w-80 flex-shrink-0">
+            <h2 className="text-lg font-semibold text-gray-700 mb-3">
+              Conteúdos
+            </h2>
+            <nav className="space-y-2">
+              {contents.map((content, index) => (
+                <div
+                  key={index}
+                  onClick={() => setContentSelected(content)}
+                  className={`cursor-pointer px-4 py-2 rounded transition-all ${
+                    content.id === contentSelected?.id
+                      ? "bg-gray-200 font-semibold"
+                      : "hover:bg-gray-50"
+                  }`}
+                >
+                  {index + 1} - {content.title}
                 </div>
-            </div>
-    )
+              ))}
+            </nav>
+          </aside>
+
+          {/* Preview do conteúdo */}
+          <section className="bg-white shadow-md rounded-lg p-4 flex-1 overflow-x-auto">
+            {contentSelected && arrayBuffer ? (
+              <DocxPreview arrayBuffer={arrayBuffer} />
+            ) : (
+              <p className="text-gray-600">
+                Selecione um conteúdo para visualizar.
+              </p>
+            )}
+          </section>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default Subject
+export default Subject;

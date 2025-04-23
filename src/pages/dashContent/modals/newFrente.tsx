@@ -12,7 +12,9 @@ import {
   FormFieldOption,
 } from "../../../components/molecules/formField";
 import Form from "../../../components/organisms/form";
-import { ModalProps } from "../../../components/templates/modalTemplate";
+import ModalTemplate, {
+  ModalProps,
+} from "../../../components/templates/modalTemplate";
 import {
   CreateFrenteDtoOutput,
   UpdateFrenteDtoOutut,
@@ -26,6 +28,7 @@ interface NewFrenteProps extends ModalProps {
   materia: FormFieldOption;
   frente?: FormFieldOptionFrente;
   actionFrente: (frente: FormFieldOptionFrente) => void;
+  isOpen: boolean;
 }
 
 function NewFrente({
@@ -33,6 +36,7 @@ function NewFrente({
   materia,
   frente,
   actionFrente,
+  isOpen,
 }: NewFrenteProps) {
   const schema = yup
     .object()
@@ -123,22 +127,24 @@ function NewFrente({
   }, [frente, setValue]);
 
   return (
-    <>
-      <div className="bg-white p-4 rounded-md w-96">
-        <form onSubmit={handleSubmit(frente ? edit : create)}>
-          <PropValue prop="Materia" value={materia.label} />
-          <Form
-            className="flex flex-col gap-4 my-4"
-            formFields={listFields}
-            register={register}
-            errors={errors}
-          />
-          <div className="flex gap-4 flex-wrap sm:flex-nowrap">
-            <Button type="submit">{frente ? "Salvar" : "Criar"}</Button>
-          </div>
-        </form>
-      </div>
-    </>
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose!}
+      className="bg-white w-full max-w-6xl p-4 rounded-md"
+    >
+      <form onSubmit={handleSubmit(frente ? edit : create)}>
+        <PropValue prop="Materia" value={materia.label} />
+        <Form
+          className="flex flex-col gap-4 my-4"
+          formFields={listFields}
+          register={register}
+          errors={errors}
+        />
+        <div className="flex gap-4 flex-wrap sm:flex-nowrap">
+          <Button type="submit">{frente ? "Salvar" : "Criar"}</Button>
+        </div>
+      </form>
+    </ModalTemplate>
   );
 }
 

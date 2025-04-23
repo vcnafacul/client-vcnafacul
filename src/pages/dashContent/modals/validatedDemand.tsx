@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useCallback, useState } from "react";
+import DocxPreview from "@/components/atoms/docxPreview";
+import { getFile } from "@/services/content/getFile";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import Content from "../../../components/atoms/content";
 import Text from "../../../components/atoms/text";
 import PropValue from "../../../components/molecules/PropValue";
-import BLink from "../../../components/molecules/bLink";
 import Button from "../../../components/molecules/button";
 import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
 import ModalTemplate, {
@@ -30,22 +30,23 @@ function ValidatedDemand({
   updateStatusDemand,
 }: ValidatedDemandProps) {
   const [tryReset, setTryReset] = useState<boolean>(false);
-  const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
+  const [blob, setBlob] = useState<Blob | null>(null);
+  const [arrayBuffer, setArrayBufer] = useState<ArrayBuffer>();
 
   const {
     data: { token },
   } = useAuthStore();
   const MyContent = useCallback(() => {
-    if (demand.filename) {
+    if (demand.file?.id && arrayBuffer) {
       return (
-        <div className="flex w-full justify-center py-4 overflow-y-auto scrollbar-hide max-h-[40vh]">
-          <Content docxFilePath={`${VITE_BASE_FTP}${demand.filename}`} />
+        <div className="flex w-full justify-center py-4 overflow-y-auto scrollbar-hide max-h-[70vh] shadow-md p-4 m-4">
+          <DocxPreview arrayBuffer={arrayBuffer} />
         </div>
       );
     }
     return null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [arrayBuffer]);
 
   const updateStatusContent = (status: StatusContent | StatusEnum) => {
     const id = toast.loading("Atualizando Status ... ");
@@ -100,6 +101,7 @@ function ValidatedDemand({
         handleClose={() => setTryReset(false)}
         handleConfirm={reset}
         text={""}
+        className="bg-white p-4 rounded-md"
       >
         <div>
           <Text className="m-0" size="secondary">
@@ -114,6 +116,55 @@ function ValidatedDemand({
     );
   };
 
+  const handleDownload = async () => {
+    if (demand.file?.id && blob) {
+      const id = toast.loading("Baixando arquivo ...");
+      try {
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = demand.file?.originalName || "arquivo.docx"; // Nome do arquivo
+        document.body.appendChild(link);
+        link.click();
+
+        // Limpeza
+        link.remove();
+        window.URL.revokeObjectURL(url);
+        toast.dismiss(id);
+      } catch (error) {
+        toast.update(id, {
+          render: "Erro baixar documento",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      }
+    }
+  };
+
+  useEffect(() => {
+    const fetchFile = async () => {
+      if (demand.file?.id) {
+        const id = toast.loading("Carregando documento ...");
+        try {
+          const blob = await getFile(demand.file!.id, token);
+          setBlob(blob);
+          setArrayBufer(await blob.arrayBuffer());
+          toast.dismiss(id);
+        } catch (error) {
+          toast.update(id, {
+            render: "Erro ao baixar documento",
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+          });
+        }
+      }
+    };
+    fetchFile();
+  }, []);
+
   return (
     <ModalTemplate
       isOpen={isOpen}
@@ -126,17 +177,18 @@ function ValidatedDemand({
             <PropValue value={demand.title} prop="Titulo" />
             <PropValue value={demand.subject.frente.name} prop="Frente" />
             <PropValue value={demand.subject.name} prop="Tema" />
-            <PropValue value={demand.description} prop="Descrição" />
           </div>
+          <span className="flex items-center gap-2">{demand.description}</span>
+          {demand.file?.id && (
+            <Button
+              size="small"
+              className="w-fit mt-4"
+              onClick={handleDownload}
+            >
+              Download
+            </Button>
+          )}
           <MyContent />
-          <BLink
-            size="small"
-            type="quaternary"
-            className="w-fit mt-4"
-            to={`${VITE_BASE_FTP}${demand.filename}`}
-          >
-            Download
-          </BLink>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 py-4">
             <Button
               disabled={demand.status === StatusEnum.Approved}
