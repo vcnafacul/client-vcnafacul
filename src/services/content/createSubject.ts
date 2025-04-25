@@ -2,7 +2,7 @@ import { CreateSubjectDtoInput, CreateSubjectDtoOutput } from "../../dtos/conten
 import fetchWrapper from "../../utils/fetchWrapper";
 import { subject } from "../urls";
 
-export async function createSubject(data: CreateSubjectDtoOutput, token: string): Promise<CreateSubjectDtoInput> {
+export async function createSubject(data: CreateSubjectDtoInput, token: string): Promise<CreateSubjectDtoOutput> {
     const response = await fetchWrapper(subject, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },

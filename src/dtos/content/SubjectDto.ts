@@ -1,14 +1,14 @@
-export interface CreateSubjectDtoOutput {
+export interface CreateSubjectDtoInput {
     frente: string;
     name: string;
     description: string;
 }
 
-export interface CreateSubjectDtoInput extends CreateSubjectDtoOutput {
+export interface CreateSubjectDtoOutput extends CreateSubjectDtoInput {
     id: string;
 }
 
-export interface UpdateSubjectDtoOutput {
+export interface UpdateSubjectDto {
     id: string;
     name: string;
     description: string;

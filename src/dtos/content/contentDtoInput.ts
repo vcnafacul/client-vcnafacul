@@ -23,12 +23,15 @@ export interface SubjectDto {
     lenght: number;
     description: string;
     frente: FrenteDto
+    createdAt: Date;
 }
 
 export interface FrenteDto {
     id: string;
     name: string;
-    materia: Materias
+    materia: Materias,
+    lenght: number
+    createdAt: Date;
 }
 
 export interface ContentDtoInputOrder extends ContentDtoInput {

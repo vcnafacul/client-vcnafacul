@@ -206,7 +206,7 @@ export function PlatformRoutes() {
             <ProtectedRoutePermission
               permission={data.permissao[Roles.visualizarDemanda]}
             >
-              <DashContent mtv={data.permissao[Roles.validarDemanda]} />
+              <DashContent />
             </ProtectedRoutePermission>
           }
         />

@@ -65,7 +65,7 @@ function Materia() {
           Temas disponíveis:
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {frenteSelected.subject.map((subject) => (
+          {frenteSelected.subjects.map((subject) => (
             <div
               key={subject.id}
               onClick={() =>

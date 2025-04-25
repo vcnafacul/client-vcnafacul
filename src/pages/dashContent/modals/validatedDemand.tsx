@@ -1,156 +1,49 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import DocxPreview from "@/components/atoms/docxPreview";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ContentDtoInput } from "@/dtos/content/contentDtoInput";
+import { StatusContent } from "@/enums/content/statusContent";
+import { StatusEnum } from "@/enums/generic/statusEnum";
+import { Roles } from "@/enums/roles/roles";
 import { getFile } from "@/services/content/getFile";
-import { useCallback, useEffect, useState } from "react";
+import { resetDemand } from "@/services/content/resetDemand";
+import { updateStatus } from "@/services/content/updateStatus";
+import { useAuthStore } from "@/store/auth";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import Text from "../../../components/atoms/text";
-import PropValue from "../../../components/molecules/PropValue";
-import Button from "../../../components/molecules/button";
-import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
-import ModalTemplate, {
-  ModalProps,
-} from "../../../components/templates/modalTemplate";
-import { ContentDtoInput } from "../../../dtos/content/contentDtoInput";
-import { StatusContent } from "../../../enums/content/statusContent";
-import { StatusEnum } from "../../../enums/generic/statusEnum";
-import { resetDemand } from "../../../services/content/resetDemand";
-import { updateStatus } from "../../../services/content/updateStatus";
-import { useAuthStore } from "../../../store/auth";
 
-interface ValidatedDemandProps extends ModalProps {
+interface ValidatedDemandProps {
   demand: ContentDtoInput;
   updateStatusDemand: (id: string) => void;
   isOpen: boolean;
+  handleClose: () => void;
 }
 
-function ValidatedDemand({
-  handleClose,
+export default function ValidatedDemand({
   demand,
-  isOpen,
   updateStatusDemand,
+  isOpen,
+  handleClose,
 }: ValidatedDemandProps) {
-  const [tryReset, setTryReset] = useState<boolean>(false);
   const [blob, setBlob] = useState<Blob | null>(null);
-  const [arrayBuffer, setArrayBufer] = useState<ArrayBuffer>();
+  const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer>();
+  const [showPreview, setShowPreview] = useState(false);
 
   const {
-    data: { token },
+    data: { token, permissao },
   } = useAuthStore();
-  const MyContent = useCallback(() => {
-    if (demand.file?.id && arrayBuffer) {
-      return (
-        <div className="flex w-full justify-center py-4 overflow-y-auto scrollbar-hide max-h-[70vh] shadow-md p-4 m-4">
-          <DocxPreview arrayBuffer={arrayBuffer} />
-        </div>
-      );
-    }
-    return null;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [arrayBuffer]);
-
-  const updateStatusContent = (status: StatusContent | StatusEnum) => {
-    const id = toast.loading("Atualizando Status ... ");
-    updateStatus(demand.id, status, token)
-      .then((_) => {
-        updateStatusDemand(demand.id);
-        toast.update(id, {
-          render: `Status Atualizado`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        handleClose!();
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
-  };
-
-  const reset = () => {
-    const id = toast.loading("Resetando Demanda ... ");
-    resetDemand(demand.id, token)
-      .then((_) => {
-        updateStatusDemand(demand.id);
-        toast.update(id, {
-          render: `Resetado`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        handleClose!();
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
-  };
-
-  const ConfirmReset = () => {
-    return (
-      <ModalConfirmCancel
-        isOpen={tryReset}
-        handleClose={() => setTryReset(false)}
-        handleConfirm={reset}
-        text={""}
-        className="bg-white p-4 rounded-md"
-      >
-        <div>
-          <Text className="m-0" size="secondary">
-            Tem certeza ?
-          </Text>
-          <Text size="quaternary">
-            Se continuar agora, o arquivo será apagado e o conteúdo voltará a
-            Pendente Upload
-          </Text>
-        </div>
-      </ModalConfirmCancel>
-    );
-  };
-
-  const handleDownload = async () => {
-    if (demand.file?.id && blob) {
-      const id = toast.loading("Baixando arquivo ...");
-      try {
-        const url = window.URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = demand.file?.originalName || "arquivo.docx"; // Nome do arquivo
-        document.body.appendChild(link);
-        link.click();
-
-        // Limpeza
-        link.remove();
-        window.URL.revokeObjectURL(url);
-        toast.dismiss(id);
-      } catch (error) {
-        toast.update(id, {
-          render: "Erro baixar documento",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      }
-    }
-  };
 
   useEffect(() => {
     const fetchFile = async () => {
       if (demand.file?.id) {
         const id = toast.loading("Carregando documento ...");
         try {
-          const blob = await getFile(demand.file!.id, token);
+          const blob = await getFile(demand.file.id, token);
           setBlob(blob);
-          setArrayBufer(await blob.arrayBuffer());
+          setArrayBuffer(await blob.arrayBuffer());
           toast.dismiss(id);
         } catch (error) {
           toast.update(id, {
@@ -163,60 +56,151 @@ function ValidatedDemand({
       }
     };
     fetchFile();
-  }, []);
+  }, [demand.file?.id, token]);
+
+  const handleDownload = async () => {
+    if (blob) {
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = demand.file?.originalName || "arquivo.docx";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    }
+  };
+
+  const handleUpdateStatus = async (status: StatusEnum | StatusContent) => {
+    const id = toast.loading("Atualizando status...");
+    try {
+      await updateStatus(demand.id, status, token);
+      updateStatusDemand(demand.id);
+      toast.update(id, {
+        render: "Status atualizado com sucesso",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      handleClose();
+    } catch (error: any) {
+      toast.update(id, {
+        render: error.message,
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const handleReset = async () => {
+    const id = toast.loading("Resetando demanda...");
+    try {
+      await resetDemand(demand.id, token);
+      updateStatusDemand(demand.id);
+      toast.update(id, {
+        render: "Demanda resetada",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      handleClose();
+    } catch (error: any) {
+      toast.update(id, {
+        render: error.message,
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      className="bg-white w-full max-w-6xl p-4"
-    >
-      <>
-        <div className="bg-white py-4 px-8 rounded max-w-7xl w-11/12">
-          <div className="flex flex-wrap gap-4 mb-4">
-            <PropValue value={demand.title} prop="Titulo" />
-            <PropValue value={demand.subject.frente.name} prop="Frente" />
-            <PropValue value={demand.subject.name} prop="Tema" />
-          </div>
-          <span className="flex items-center gap-2">{demand.description}</span>
-          {demand.file?.id && (
-            <Button
-              size="small"
-              className="w-fit mt-4"
-              onClick={handleDownload}
-            >
-              Download
-            </Button>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-5xl p-6">
+        <Card className="border-none shadow-none">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-marine">
+              Validação da Demanda
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm font-black text-marine">Título:</p>
+                <p>{demand.title}</p>
+              </div>
+              <div>
+                <p className="text-sm font-black text-marine">Frente:</p>
+                <p>{demand.subject.frente.name}</p>
+              </div>
+              <div>
+                <p className="text-sm font-black text-marine">Tema:</p>
+                <p>{demand.subject.name}</p>
+              </div>
+            </div>
+            <div>
+              <p className="text-sm font-medium">{demand.description}</p>
+            </div>
+
+            {demand.file?.id && (
+              <div className="flex gap-2 mt-4">
+                <Button variant="outline" onClick={handleDownload}>
+                  Download
+                </Button>
+                <Button
+                  className="bg-marine hover:bg-marine/80"
+                  onClick={() => setShowPreview(true)}
+                >
+                  Visualizar
+                </Button>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+              <Button
+                variant="default"
+                className="bg-green2 hover:bg-green2/80"
+                onClick={() => handleUpdateStatus(StatusEnum.Approved)}
+                disabled={
+                  !permissao[Roles.validarDemanda] ||
+                  demand.status === StatusEnum.Approved
+                }
+              >
+                Aprovar
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => handleUpdateStatus(StatusEnum.Rejected)}
+                disabled={
+                  !permissao[Roles.validarDemanda] ||
+                  demand.status === StatusEnum.Rejected
+                }
+              >
+                Rejeitar
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleReset}
+                disabled={!permissao[Roles.validarDemanda]}
+              >
+                Resetar
+              </Button>
+              <Button onClick={handleClose}>Fechar</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </DialogContent>
+
+      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+        <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto p-6">
+          {arrayBuffer && (
+            <ScrollArea className="h-[70vh]">
+              <DocxPreview arrayBuffer={arrayBuffer} />
+            </ScrollArea>
           )}
-          <MyContent />
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 py-4">
-            <Button
-              disabled={demand.status === StatusEnum.Approved}
-              className="bg-green2 border-green2"
-              onClick={() => updateStatusContent(StatusEnum.Approved)}
-            >
-              Aprovar
-            </Button>
-            <Button
-              disabled={demand.status === StatusEnum.Rejected}
-              className="bg-red border-red"
-              onClick={() => updateStatusContent(StatusEnum.Rejected)}
-            >
-              Rejeitar
-            </Button>
-            <Button
-              className="bg-grey border-grey"
-              onClick={() => setTryReset(true)}
-            >
-              Resetar
-            </Button>
-            <Button onClick={handleClose}>Fechar</Button>
-          </div>
-        </div>
-      </>
-      <ConfirmReset />
-    </ModalTemplate>
+        </DialogContent>
+      </Dialog>
+    </Dialog>
   );
 }
-
-export default ValidatedDemand;
