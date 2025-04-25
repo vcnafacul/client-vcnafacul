@@ -8,7 +8,6 @@ import { StatusContent } from "../../../enums/content/statusContent";
 import { StatusEnum } from "../../../enums/generic/statusEnum";
 import { getContent } from "../../../services/content/getContent";
 import { useAuthStore } from "../../../store/auth";
-import NewDemand from "../modals/newDemand";
 import ShowDemand from "../modals/showDemand";
 import ValidatedDemand from "../modals/validatedDemand";
 import { dashAllContent } from "./data";
@@ -21,7 +20,8 @@ import { Roles } from "../../../enums/roles/roles";
 import { MateriasLabel } from "../../../types/content/materiasLabel";
 import { Paginate } from "../../../utils/paginate";
 import { cardTransformationContent } from "../data";
-import SettingsContent from "../modals/settingsContent";
+import NewDemand from "../modals/newDemand";
+import SettingsFrente from "../modals/settingsFrente";
 
 function AllContent() {
   const [openShowModal, setOpenShowModal] = useState<boolean>(false);
@@ -43,7 +43,7 @@ function AllContent() {
     materias[0].id as number
   );
   const [status, setStatus] = useState<StatusContent | StatusEnum>(
-    StatusEnum.Approved
+    StatusContent.Pending_Upload
   );
   const dataRef = useRef<ContentDtoInput[]>([]);
   const limitCards = 100;
@@ -119,7 +119,7 @@ function AllContent() {
 
   const SettingsModal = () => {
     return !settings ? null : (
-      <SettingsContent
+      <SettingsFrente
         isOpen={settings}
         handleClose={() => {
           setSettings(false);

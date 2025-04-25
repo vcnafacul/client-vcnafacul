@@ -1,20 +1,17 @@
-import AllContent from "./allContent"
-import OnlyDemand from "./onlyDemand"
+import { Roles } from "@/enums/roles/roles";
+import { useAuthStore } from "@/store/auth";
+import AllContent from "./allContent";
+import OnlyDemand from "./onlyDemand";
 
-interface DashContentProps{
-    mtv: boolean //more than visualizer
+function DashContent() {
+  const {
+    data: { permissao },
+  } = useAuthStore();
+
+  if (permissao[Roles.validarDemanda]) {
+    return <AllContent />;
+  }
+  return <OnlyDemand />;
 }
 
-function DashContent({mtv} : DashContentProps) {
-
-    if(mtv){
-        return (
-            <AllContent />
-        )
-    }
-    return (
-        <OnlyDemand />
-    )
-}
-
-export default DashContent
+export default DashContent;

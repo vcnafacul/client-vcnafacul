@@ -1,22 +1,24 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { InputFactory } from "@/components/organisms/inputFactory";
+import { Button } from "@/components/ui/button";
+import { Materias } from "@/enums/content/materias";
+import { getFrentes } from "@/services/content/getFrentes";
+import { getSubjects } from "@/services/content/getSubjects";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useCallback, useEffect, useState } from "react";
+import { Save, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import Button from "../../../components/molecules/button";
-import {
-  FormFieldInput,
-  FormFieldOption,
-} from "../../../components/molecules/formField";
-import Form from "../../../components/organisms/form";
 import ModalTemplate, {
   ModalProps,
 } from "../../../components/templates/modalTemplate";
-import { ContentDtoInput } from "../../../dtos/content/contentDtoInput";
-import { Materias } from "../../../enums/content/materias";
+import {
+  ContentDtoInput,
+  FrenteDto,
+  SubjectDto,
+} from "../../../dtos/content/contentDtoInput";
 import { createContent } from "../../../services/content/createContent";
-import { getFrenteLikeFormField } from "../../../services/content/getFrentes";
-import { getSubjectsLikeFormField } from "../../../services/content/getSubjects";
 import { useAuthStore } from "../../../store/auth";
 import { MateriasLabel } from "../../../types/content/materiasLabel";
 
@@ -26,8 +28,8 @@ interface NewDemandProps extends ModalProps {
 }
 
 function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
-  const [frentes, setFrentes] = useState<FormFieldOption[]>([]);
-  const [subjects, setSubjects] = useState<FormFieldOption[]>([]);
+  const [frentes, setFrentes] = useState<FrenteDto[]>([]);
+  const [subjects, setSubjects] = useState<SubjectDto[]>([]);
 
   const {
     data: { token },
@@ -56,36 +58,13 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
     resolver: yupResolver(schema),
   });
 
-  const listFields: FormFieldInput[] = [
-    {
-      id: "materia",
-      type: "option",
-      options: MateriasLabel,
-      label: "Materia",
-      className: "col-span-1",
-    },
-    {
-      id: "frente",
-      type: "option",
-      options: frentes,
-      label: "Frente",
-      className: "col-start-2 col-span-1",
-    },
-    {
-      id: "subjectId",
-      type: "option",
-      options: subjects,
-      label: "Tema",
-      className: "col-start-2 col-span-1",
-    },
-    { id: "title", type: "text", label: "Título*", className: "col-span-2" },
-    {
-      id: "description",
-      type: "textarea",
-      label: "Descrição*",
-      className: "col-span-2",
-    },
-  ];
+  useEffect(() => {
+    register("materia");
+    register("frente");
+    register("subjectId");
+    register("title");
+    register("description");
+  }, []);
 
   const materia = watch("materia");
   const frente = watch("frente");
@@ -114,75 +93,100 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
       });
   };
 
-  const getSubjectByFrente = useCallback(
-    async (frente: string) => {
-      getSubjectsLikeFormField(frente, token)
-        .then((res) => {
-          setSubjects(res);
-          if (res.length > 0) {
-            setValue("subjectId", res[0].value as string);
-          } else {
-            setValue("subjectId", null as unknown as string);
-          }
-        })
-        .catch((error: Error) => {
-          toast.error(error.message);
-        });
-    },
-    [setValue, token]
-  );
-
-  const getFrenteByMateria = useCallback(
-    async (materia: Materias) => {
-      getFrenteLikeFormField(
-        materia ? materia : Materias.LinguaPortuguesa,
-        token
-      )
+  useEffect(() => {
+    const getFrenteByMateria = async (materia: Materias) => {
+      getFrentes(materia ? materia : Materias.LinguaPortuguesa, token)
         .then((res) => {
           setFrentes(res);
-          if (res.length > 0) {
-            getSubjectByFrente(res[0].value as string);
-            setValue("frente", res[0].value as string);
-          } else {
-            setValue("frente", null as unknown as string);
-          }
-          setValue("subjectId", null as unknown as string);
         })
         .catch((error: Error) => {
           toast.error(error.message);
         });
-    },
-    [getSubjectByFrente, setValue, token]
-  );
-
-  useEffect(() => {
+    };
     getFrenteByMateria(materia as Materias);
-  }, [getFrenteByMateria, materia, token]);
+  }, [materia, token]);
 
   useEffect(() => {
+    const getSubjectByFrente = async (frente: string) => {
+      getSubjects(frente, token)
+        .then((res) => {
+          setSubjects(res);
+        })
+        .catch((error: Error) => {
+          toast.error(error.message);
+        });
+    };
     if (frente) {
       getSubjectByFrente(frente);
     }
-  }, [getSubjectByFrente, materia, frente, token]);
+  }, [materia, frente, token]);
 
   return (
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose!}
-      className="bg-white w-full max-w-6xl p-4 rounded-md"
+      className="bg-white w-full max-w-[90vw] p-6 rounded-2xl shadow-lg"
     >
-      <div className="bg-white p-4 rounded max-w-7xl">
-        <form onSubmit={handleSubmit(create)} className="flex flex-col gap-4">
-          <Form
-            className="grid grid-cols-2 gap-1 mb-1"
-            formFields={listFields}
-            register={register}
-            errors={errors}
-          />
-          <div className="flex gap-4 col-span-2">
-            <Button type="submit">Salvar</Button>
-            <Button type="button" onClick={handleClose}>
-              Fechar
+      <div className="bg-white p-6 rounded-lg">
+        <form onSubmit={handleSubmit(create)} className="flex flex-col gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <InputFactory
+              id="materia"
+              type="select"
+              label="Matéria"
+              error={errors.materia}
+              options={MateriasLabel}
+              defaultValue={Materias.LinguaPortuguesa}
+              onChange={(e: any) => setValue("materia", e.target.value)}
+            />
+            <InputFactory
+              id="frente"
+              type="select"
+              label="Frente"
+              error={errors.frente}
+              options={frentes.map((f) => ({ label: f.name, value: f.id }))}
+              onChange={(e: any) => setValue("frente", e.target.value)}
+            />
+            <InputFactory
+              id="subjectId"
+              type="select"
+              label="Tema"
+              error={errors.subjectId}
+              options={subjects.map((s) => ({ label: s.name, value: s.id }))}
+              onChange={(e: any) => setValue("subjectId", e.target.value)}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
+            <InputFactory
+              id="title"
+              type="text"
+              label="Título*"
+              placeholder="Digite um Título"
+              error={errors.title}
+              onChange={(e: any) => setValue("title", e.target.value)}
+            />
+            <InputFactory
+              id="description"
+              type="textarea"
+              label="Descrição*"
+              placeholder="Digite uma descrição"
+              error={errors.description}
+              onChange={(e: any) => setValue("description", e.target.value)}
+            />
+          </div>
+
+          <div className="flex justify-end gap-4 mt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleClose}
+              className="flex items-center gap-2"
+            >
+              <X size={18} /> Fechar
+            </Button>
+            <Button type="submit" className="flex items-center gap-2">
+              <Save size={18} /> Salvar
             </Button>
           </div>
         </form>

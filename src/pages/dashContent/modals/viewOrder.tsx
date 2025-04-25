@@ -16,6 +16,8 @@ import ChangeOrder from "./changeOrder";
 
 interface ViewOrderProps {
   subjectId: string;
+  isOpen: boolean;
+  handleClose: () => void;
 }
 
 export interface DemandSelected {
@@ -24,7 +26,7 @@ export interface DemandSelected {
   order: number;
 }
 
-function ViewOrder({ subjectId }: ViewOrderProps) {
+function ViewOrder({ subjectId, isOpen, handleClose }: ViewOrderProps) {
   const [contents, setContents] = useState<ContentDtoInputOrder[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [demandSelected, setDemandSelected] = useState<DemandSelected>();
@@ -128,19 +130,18 @@ function ViewOrder({ subjectId }: ViewOrderProps) {
   };
 
   return (
-    <>
-      <>
-        <div className="bg-white py-2 px-4 rounded">
-          {contents.length > 0 ? (
-            <Text size="secondary">{contents[0].subject.name}</Text>
-          ) : (
-            <></>
-          )}
-          <Contents />
-        </div>
-      </>
+    <ModalTemplate isOpen={isOpen} handleClose={handleClose} className="bg-white p-2 rounded-md">
+      <div className="bg-white py-2 px-4 rounded">
+        {contents.length > 0 ? (
+          <Text size="secondary">{contents[0].subject.name}</Text>
+        ) : (
+          <></>
+        )}
+        <Contents />
+      </div>
+
       <ModalChengeOrder />
-    </>
+    </ModalTemplate>
   );
 }
 

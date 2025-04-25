@@ -1,11 +1,14 @@
 import { DateTime } from "luxon";
+import { Materias } from "../../enums/content/materias";
 import { StatusContent } from "../../enums/content/statusContent";
 import { StatusEnum } from "../../enums/generic/statusEnum";
-import { Materias } from "../../enums/content/materias";
 
 export interface ContentDtoInput {
     id: string;
-    filename?: string;
+    file?: {
+        id: string;
+        originalName: string;
+    };
     status: StatusContent | StatusEnum;
     title: string;
     description: string;
@@ -20,12 +23,15 @@ export interface SubjectDto {
     lenght: number;
     description: string;
     frente: FrenteDto
+    createdAt: Date;
 }
 
 export interface FrenteDto {
     id: string;
     name: string;
-    materia: Materias
+    materia: Materias,
+    lenght: number
+    createdAt: Date;
 }
 
 export interface ContentDtoInputOrder extends ContentDtoInput {

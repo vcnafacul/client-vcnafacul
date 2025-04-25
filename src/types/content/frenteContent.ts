@@ -10,5 +10,5 @@ export interface Frente {
     id: string;
     name: string;
     materia: Materias,
-    subject: Subject[]
+    subjects: Subject[]
 }

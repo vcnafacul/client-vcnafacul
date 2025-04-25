@@ -1,8 +1,8 @@
-import { UpdateFrenteDtoOutut } from "../../dtos/content/frenteDto";
+import { UpdateFrenteDto } from "../../dtos/content/frenteDto";
 import fetchWrapper from "../../utils/fetchWrapper";
-import {  frentes } from "../urls";
+import { frentes } from "../urls";
 
-export async function updateFrente(data: UpdateFrenteDtoOutut, token: string): Promise<void> {
+export async function updateFrente(data: UpdateFrenteDto, token: string): Promise<void> {
     const response = await fetchWrapper(frentes, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
