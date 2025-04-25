@@ -75,7 +75,7 @@ export function AttendanceRecordByStudentModal({
           present: s.studentAttendance[0].present ? "Presente" : "Ausente",
           justification: s.studentAttendance[0]?.justification?.justification,
         }));
-        setAttendances(data);
+        setAttendances(data.sort((a, b) => b.registeredAt > a.registeredAt ? 1 : -1));
         setTotalItems(res.totalItems);
       })
       .catch((err) => {
@@ -87,11 +87,6 @@ export function AttendanceRecordByStudentModal({
     handleGetAttendances(paginationModel.page + 1, paginationModel.pageSize);
   }, []);
 
-  const percent =
-    (attendances.filter((a) => a.present === "Presente").length /
-      attendances.length) *
-      100 || 0;
-
   return (
     <ModalTemplate
       isOpen={isOpen}
@@ -100,10 +95,6 @@ export function AttendanceRecordByStudentModal({
     >
       <div className="flex flex-col p-2 pt-0">
         <h1 className="text-2xl font-bold">Registro de Presença</h1>
-        <div>
-          <span className="font-medium">Aproveitamento:</span>
-          <span className="px-2">{percent.toFixed(2)}%</span>
-        </div>
       </div>
       <Paper sx={{ height: "85%", width: "100%" }}>
         <DataGrid
