@@ -245,6 +245,8 @@ export function PartnerPrepInscritionStudentManager() {
       StatusApplication.DeclaredInterest,
       StatusApplication.EnrollmentCancelled,
       StatusApplication.Rejected,
+      StatusApplication.MissedDeadline,
+      StatusApplication.EnrollmentNotConfirmed,
     ];
     const currentDate = new Date();
     if (
