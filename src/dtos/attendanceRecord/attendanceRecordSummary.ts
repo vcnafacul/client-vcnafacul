@@ -4,7 +4,7 @@ export interface AttendanceRecordItem {
   total: number
   presentCount: number
 }
-export interface AttendanceRecordSummary {
+export interface AttendanceRecordSummaryByDate {
   class: {
     name: string;
     year: number;
@@ -13,4 +13,20 @@ export interface AttendanceRecordSummary {
   endDate: Date;
   classReport: AttendanceRecordItem[];
   generalReport: AttendanceRecordItem[];
+}
+
+export interface AttendanceRecordSummaryByStudent {
+  class: {
+    name: string;
+    year: string;
+  };
+  startDate: Date;
+  endDate: Date;
+  report: {
+    studentName: string;
+    codEnrolled: string;
+    totalClassRecords: number;
+    studentRecords: number;
+    presencePercentage: number;
+  }[];
 }
