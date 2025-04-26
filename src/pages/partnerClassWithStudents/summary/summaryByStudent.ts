@@ -25,7 +25,7 @@ export const summaryByStudent = async (summary: AttendanceRecordSummaryByStudent
   // 2. Linhas dos estudantes
   summary.report.forEach((student) => {
     tableBody.push([
-      { text: student.studentName || "-", style: "tableCell",},
+      { text: student.useSocialName ? student.name : student.socialName || "-", style: "tableCell",},
       { text: student.codEnrolled || "-", style: "tableCell",},
       { text: student.totalClassRecords.toString(), style: "tableCell",},
       { text: student.studentRecords.toString(), style: "tableCell",},

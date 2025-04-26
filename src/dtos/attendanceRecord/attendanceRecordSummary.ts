@@ -23,7 +23,9 @@ export interface AttendanceRecordSummaryByStudent {
   startDate: Date;
   endDate: Date;
   report: {
-    studentName: string;
+    name: string;
+    socialName: string;
+    useSocialName: boolean;
     codEnrolled: string;
     totalClassRecords: number;
     studentRecords: number;
