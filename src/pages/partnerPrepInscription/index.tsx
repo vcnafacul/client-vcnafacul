@@ -284,7 +284,6 @@ export function PartnerPrepInscription() {
             ...dataStudent,
             inscriptionId: hashInscriptionId as string,
           });
-          console.log(res);
           setDataInscription(res.inscription);
           setPrepCourseName(
             res.prepCourseName.toUpperCase().includes("CURSINHO")

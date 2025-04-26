@@ -11,7 +11,7 @@ import ModalTemplate from "../../../components/templates/modalTemplate";
 import { deleteSubject } from "../../../services/content/deleteSubject";
 import { getSubjects } from "../../../services/content/getSubjects";
 import { useAuthStore } from "../../../store/auth";
-import { SubjectPanel } from "./subjectPanel";
+import { PanelSubject } from "./panelSubject";
 
 interface Props {
   isOpen: boolean;
@@ -70,6 +70,7 @@ function SettingsSubject({ isOpen, handleClose, frente, updateSizeFrente }: Prop
           frente: frente,
           lenght: 0,
           createdAt: new Date(),
+          contents: [],
         };
         const newSubjects: SubjectDto[] = [...subjects, newSubject];
         setSubjects(newSubjects);
@@ -107,6 +108,7 @@ function SettingsSubject({ isOpen, handleClose, frente, updateSizeFrente }: Prop
               ...newSubject,
               lenght: subject.lenght,
               createdAt: subject.createdAt,
+              contents: subject.contents,
             };
           }
           return subject;
@@ -128,7 +130,6 @@ function SettingsSubject({ isOpen, handleClose, frente, updateSizeFrente }: Prop
       if (_frente) {
         getSubjects(_frente.id, token)
           .then((res) => {
-            console.log(res);
             setSubjects(res);
           })
           .catch((error: Error) => {
@@ -150,7 +151,7 @@ function SettingsSubject({ isOpen, handleClose, frente, updateSizeFrente }: Prop
           {frente.name}
         </span>
         <div className="h-full">
-          <SubjectPanel
+          <PanelSubject
             subjects={subjects}
             frente={frente}
             onCreate={handleCreate}

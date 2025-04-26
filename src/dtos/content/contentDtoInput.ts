@@ -24,6 +24,12 @@ export interface SubjectDto {
     description: string;
     frente: FrenteDto
     createdAt: Date;
+    contents: {
+            id: string;
+            status: StatusContent | StatusEnum;
+            title: string;
+        }[]
+    
 }
 
 export interface FrenteDto {
@@ -32,6 +38,10 @@ export interface FrenteDto {
     materia: Materias,
     lenght: number
     createdAt: Date;
+    subjects: {
+        id: string;
+        name: string;
+    }[]
 }
 
 export interface ContentDtoInputOrder extends ContentDtoInput {

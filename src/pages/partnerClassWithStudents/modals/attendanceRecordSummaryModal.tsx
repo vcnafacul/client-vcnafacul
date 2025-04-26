@@ -90,7 +90,6 @@ export default function AttendanceRecordSummaryModal({
         token
       )
         .then((summary) => {
-          console.log(summary);
           summaryByStudent(summary);
           toast.dismiss(id);
         })

@@ -14,7 +14,7 @@ import { deleteFrente } from "../../../services/content/deleteFrente";
 import { getFrentes } from "../../../services/content/getFrentes";
 import { useAuthStore } from "../../../store/auth";
 import { MateriasLabel } from "../../../types/content/materiasLabel";
-import { FrentePanel } from "./frentePanel";
+import { PanelFrente } from "./panelFrente";
 
 interface Props {
   isOpen: boolean;
@@ -73,6 +73,7 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
           materia: materiaSelected,
           lenght: 0,
           createdAt: new Date(),
+          subjects: [],
         };
         const newFrentes: FrenteDto[] = [...frentes, newFrente];
         setFrentes(newFrentes);
@@ -108,6 +109,7 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
               ...newFrente,
               lenght: frente.lenght,
               createdAt: frente.createdAt,
+              subjects: frente.subjects,
             };
           }
           return frente;
@@ -170,7 +172,7 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
 
         {/* Painel Frentes e Temas */}
         <div className="h-full">
-          <FrentePanel
+          <PanelFrente
             frentes={frentes}
             updateSizeFrente={updateSizeFrente}
             materia={materiaSelected}
