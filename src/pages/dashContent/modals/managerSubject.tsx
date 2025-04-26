@@ -1,12 +1,11 @@
+import { InputFactory } from "@/components/organisms/inputFactory";
+import { Button } from "@/components/ui/button";
 import { FrenteDto, SubjectDto } from "@/dtos/content/contentDtoInput";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import PropValue from "../../../components/molecules/PropValue";
-import Button from "../../../components/molecules/button";
-import { FormFieldInput } from "../../../components/molecules/formField";
-import Form from "../../../components/organisms/form";
 import ModalTemplate, {
   ModalProps,
 } from "../../../components/templates/modalTemplate";
@@ -49,15 +48,10 @@ function ManagerSubject({
     resolver: yupResolver(schema),
   });
 
-  const listFields: FormFieldInput[] = [
-    { id: "name", type: "text", label: "Nome*", className: "col-span-2" },
-    {
-      id: "description",
-      type: "textarea",
-      label: "Descrição*",
-      className: "col-span-2",
-    },
-  ];
+  useEffect(() => {
+    register("name");
+    register("description");
+  }, []);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const create = (data: any) => {
@@ -93,17 +87,35 @@ function ManagerSubject({
       isOpen={isOpen}
     >
       <PropValue prop="Frente" value={frente.name} />
-      <form onSubmit={handleSubmit(subject ? edit : create)}>
-        <Form
-          className="flex flex-col gap-4 my-4"
-          formFields={listFields}
-          register={register}
-          errors={errors}
+      <form
+        onSubmit={handleSubmit(subject ? edit : create)}
+        className="flex flex-col py-4"
+      >
+        <InputFactory
+          id="name"
+          type="text"
+          label="Nome*"
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("name", e.target.value)}
+          error={errors.name}
+          className="col-span-2"
         />
-        <div className="flex gap-4 flex-wrap sm:flex-nowrap">
-          <Button type="submit">{subject ? "Salvar" : "Criar"}</Button>
-          <Button type="button" onClick={handleClose}>
-            Fechar
+        <InputFactory
+          id="description"
+          type="textarea"
+          label="Descrição*"
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("name", e.target.value)}
+          error={errors.name}
+          className="col-span-2"
+        />
+        <div className="flex justify-end gap-4">
+          <Button
+            variant="default"
+            className="bg-orange hover:bg-orange/80"
+            type="submit"
+          >
+            {subject ? "Salvar" : "Criar"}
           </Button>
         </div>
       </form>

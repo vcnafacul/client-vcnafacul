@@ -1,3 +1,5 @@
+import { InputFactory } from "@/components/organisms/inputFactory";
+import { Button } from "@/components/ui/button";
 import { FrenteDto } from "@/dtos/content/contentDtoInput";
 import { Materias } from "@/enums/content/materias";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -5,12 +7,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import PropValue from "../../../components/molecules/PropValue";
-import Button from "../../../components/molecules/button";
-import {
-  FormFieldInput,
-  FormFieldOption,
-} from "../../../components/molecules/formField";
-import Form from "../../../components/organisms/form";
+import { FormFieldOption } from "../../../components/molecules/formField";
 import ModalTemplate, {
   ModalProps,
 } from "../../../components/templates/modalTemplate";
@@ -51,9 +48,9 @@ function ManagerFrente({
     resolver: yupResolver(schema),
   });
 
-  const listFields: FormFieldInput[] = [
-    { id: "name", type: "text", label: "Nome*", className: "col-span-2" },
-  ];
+  useEffect(() => {
+    register("name");
+  }, [register]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const create = (data: any) => {
@@ -83,18 +80,30 @@ function ManagerFrente({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose!}
-      className="bg-white w-full max-w-6xl p-4 rounded-md"
+      className="bg-white w-full max-w-xl p-4 rounded-md"
     >
-      <form onSubmit={handleSubmit(frente ? edit : create)}>
+      <form
+        onSubmit={handleSubmit(frente ? edit : create)}
+        className="flex flex-col gap-4"
+      >
         <PropValue prop="Materia" value={materia.label} />
-        <Form
-          className="flex flex-col gap-4 my-4"
-          formFields={listFields}
-          register={register}
-          errors={errors}
+        <InputFactory
+          id="name"
+          type="text"
+          label="Nome"
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("name", e.target.value)}
+          error={errors.name}
+          defaultValue={frente?.name}
         />
-        <div className="flex gap-4 flex-wrap sm:flex-nowrap">
-          <Button type="submit">{frente ? "Salvar" : "Criar"}</Button>
+        <div className="flex justify-end">
+          <Button
+            variant="default"
+            className="bg-orange hover:bg-orange/80"
+            type="submit"
+          >
+            {frente ? "Salvar" : "Criar"}
+          </Button>
         </div>
       </form>
     </ModalTemplate>

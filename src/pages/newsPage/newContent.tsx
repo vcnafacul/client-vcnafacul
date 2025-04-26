@@ -18,7 +18,6 @@ export default function NewContent({ fileName }: NewContentProps) {
       try {
         const response = await fetchWrapper(fileName);
         const buffer = await response.arrayBuffer();
-        console.log("[DEBUG] arrayBuffer carregado", buffer);
         setArrayBuffer(buffer);
       } catch (err) {
         console.error("[ERRO] Falha ao carregar o arquivo DOCX:", err);
