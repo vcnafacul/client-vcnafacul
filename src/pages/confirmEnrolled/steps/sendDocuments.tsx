@@ -16,10 +16,22 @@ export default function SendDocuments({ isFree, onSubmit, files }: Props) {
     const validFiles = acceptedFiles.filter((file: File) =>
       ["image/jpeg", "image/png", "application/pdf"].includes(file.type)
     );
+    if (validFiles.length === 0 || validFiles.length !== acceptedFiles.length) {
+      {
+        toast.warning(
+          "Formato de arquivo inválido. Aceitamos apenas imagens JPEG, PNG ou PDFs",
+          {
+            theme: "dark",
+          }
+        );
+      }
+    }
     if (uploadedFiles.length < 10) {
       setUploadedFiles((prev: File[]) => [...prev, ...validFiles]);
     } else {
-      toast.error("Limite de arquivos alcançado!");
+      toast.error("Limite de arquivos alcançado!", {
+        theme: "dark",
+      });
     }
   };
 
@@ -37,7 +49,10 @@ export default function SendDocuments({ isFree, onSubmit, files }: Props) {
     maxFiles: 10,
     onDropRejected: () => {
       toast.error(
-        "Arquivo rejeitado! Tamanho máximo 2MB e limite de 10 arquivos."
+        "Arquivo rejeitado! Tamanho máximo 2MB e limite de 10 arquivos.",
+        {
+          theme: "dark",
+        }
       );
     },
   });
@@ -92,9 +107,7 @@ export default function SendDocuments({ isFree, onSubmit, files }: Props) {
               <span className="font-semibold">manual do candidato</span> no site
               do cursinho.
             </li>
-            <li>
-              Os tipos de arquivos aceitos são: JPEG, PNG e PDF.
-            </li>
+            <li>Os tipos de arquivos aceitos são: JPEG, PNG e PDF.</li>
           </ul>
         </div>
 
