@@ -17,6 +17,7 @@ import { MdDeleteForever, MdModeEdit } from "react-icons/md";
 import { toast } from "react-toastify";
 import ManagerSubject from "./managerSubject";
 import OrderEditContent from "./orderEditContent";
+import { StatusContent } from "@/enums/content/statusContent";
 
 interface Props {
   subjects: SubjectDto[];
@@ -99,6 +100,22 @@ export function PanelSubject({
       },
     },
     {
+      field: "pending_upload",
+      headerName: "Pendentes Upload",
+      align: "center",
+      headerAlign: "center",
+      width: 100,
+      renderCell: (params) => {
+        const contents: {
+          id: string;
+          status: number;
+        }[] = params.row.contents || [];
+        return (
+          contents.filter((c) => c.status === StatusContent.Pending_Upload).length || 0
+        );
+      },
+    },
+    {
       field: "rejected",
       headerName: "Reprovadas",
       align: "center",
@@ -128,7 +145,7 @@ export function PanelSubject({
       headerName: "Ações",
       align: "center",
       headerAlign: "center",
-      width: 100,
+      width: 150,
       renderCell: (params) => (
         <div className="flex gap-2 justify-center">
           <Tooltip title="Editar tema">

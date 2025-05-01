@@ -36,6 +36,10 @@ export default function ValidatedDemand({
     data: { token, permissao },
   } = useAuthStore();
 
+  const canReview: boolean =
+    permissao[Roles.validarDemanda] &&
+    demand.status !== StatusContent.Pending_Upload;
+
   useEffect(() => {
     const fetchFile = async () => {
       if (demand.file?.id) {
@@ -121,15 +125,11 @@ export default function ValidatedDemand({
         <Card className="border-none shadow-none">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-marine">
-              Validação da Demanda
+              {demand.title}
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm font-black text-marine">Título:</p>
-                <p>{demand.title}</p>
-              </div>
               <div>
                 <p className="text-sm font-black text-marine">Frente:</p>
                 <p>{demand.subject.frente.name}</p>
@@ -157,36 +157,29 @@ export default function ValidatedDemand({
               </div>
             )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-4">
               <Button
                 variant="default"
                 className="bg-green2 hover:bg-green2/80"
                 onClick={() => handleUpdateStatus(StatusEnum.Approved)}
-                disabled={
-                  !permissao[Roles.validarDemanda] ||
-                  demand.status === StatusEnum.Approved
-                }
+                disabled={!canReview || demand.status === StatusEnum.Approved}
               >
                 Aprovar
               </Button>
               <Button
                 variant="destructive"
                 onClick={() => handleUpdateStatus(StatusEnum.Rejected)}
-                disabled={
-                  !permissao[Roles.validarDemanda] ||
-                  demand.status === StatusEnum.Rejected
-                }
+                disabled={!canReview || demand.status === StatusEnum.Rejected}
               >
                 Rejeitar
               </Button>
               <Button
                 variant="outline"
                 onClick={handleReset}
-                disabled={!permissao[Roles.validarDemanda]}
+                disabled={!canReview}
               >
                 Resetar
               </Button>
-              <Button onClick={handleClose}>Fechar</Button>
             </div>
           </CardContent>
         </Card>

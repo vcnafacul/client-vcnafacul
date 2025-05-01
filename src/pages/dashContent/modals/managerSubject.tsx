@@ -53,8 +53,11 @@ function ManagerSubject({
     register("description");
   }, []);
 
+  console.log(errors);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const create = (data: any) => {
+    console.log(data);
     const body: CreateSubjectDtoInput = {
       name: data.name,
       description: data.description,
@@ -105,9 +108,9 @@ function ManagerSubject({
           type="textarea"
           label="Descrição*"
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("name", e.target.value)}
-          error={errors.name}
-          className="col-span-2"
+          onChange={(e: any) => setValue("description", e.target.value)}
+          error={errors.description}
+          className="col-span-2 w-full outline-none pt-4"
         />
         <div className="flex justify-end gap-4">
           <Button
