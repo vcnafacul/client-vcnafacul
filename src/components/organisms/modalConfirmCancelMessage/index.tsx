@@ -27,7 +27,7 @@ function ModalConfirmCancelMessage({
         onChange={(event: any) => {
           setMessage(event.target.value);
         }}
-        className="p-2 w-full mb-4 border border-gray-400 rounded h-full min-h-[100px]"
+        className="p-2 w-full border border-gray-400 rounded h-full min-h-[100px] resize-none"
       />
     </ModalConfirmCancel>
   );
