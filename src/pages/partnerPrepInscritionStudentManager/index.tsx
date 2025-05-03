@@ -1,5 +1,6 @@
 import Button from "@/components/molecules/button";
 import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
+import { Bool } from "@/enums/bool";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
 import { updateWaitingListInfo } from "@/services/prepCourse/inscription/updateWaitingList";
@@ -34,7 +35,6 @@ import { Statistic } from "./modal/statistic";
 import { ScheduleCallEnrolle } from "./scheduleCallEnrolled";
 import { TableInfo } from "./tableInfo";
 import { WaitingList } from "./waitingList";
-import { Bool } from "@/enums/bool";
 
 export function PartnerPrepInscritionStudentManager() {
   const { inscriptionId } = useParams();
@@ -313,18 +313,6 @@ export function PartnerPrepInscritionStudentManager() {
     setOpenModalDetaild(true);
   };
 
-  function mascararCPF(cpf: string) {
-    // Certifique-se de que o CPF seja uma string
-    cpf = cpf.toString().replace(/\D/g, ""); // Remove qualquer caractere não numérico
-
-    if (cpf.length !== 11) {
-      throw new Error("CPF inválido. O CPF deve conter 11 dígitos.");
-    }
-
-    // Formata e mascara o CPF
-    return cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "***.***.$3-$4");
-  }
-
   const columns: GridColDef[] = [
     {
       field: "actions",
@@ -492,7 +480,6 @@ export function PartnerPrepInscritionStudentManager() {
       headerName: "CPF",
       flex: 1,
       minWidth: 120,
-      valueGetter: (params) => mascararCPF(params),
     },
     { field: "status", headerName: "Status", width: 200 },
     {
