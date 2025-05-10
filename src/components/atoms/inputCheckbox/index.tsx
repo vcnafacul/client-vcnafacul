@@ -7,6 +7,7 @@ export interface InputCheckBoxProps {
   checkboxs: any[];
   onCheckedChange: (value: string[]) => void;
   propCleanRest?: string;
+  defaultValue?: string[];
 }
 
 export function InputCheckBox({
@@ -15,7 +16,7 @@ export function InputCheckBox({
   propCleanRest,
   ...props
 }: InputCheckBoxProps) {
-  const [checked, setChecked] = useState<string[]>([]);
+  const [checked, setChecked] = useState<string[]>(props.defaultValue || []);
 
   const onChecked = (value: string) => {
     if (propCleanRest) {
@@ -36,8 +37,7 @@ export function InputCheckBox({
       if (checked.includes(propCleanRest)) {
         if (value === propCleanRest) {
           return false;
-        }
-        else return true
+        } else return true;
       }
     }
     return false;

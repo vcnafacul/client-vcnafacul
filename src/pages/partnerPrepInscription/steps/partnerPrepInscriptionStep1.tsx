@@ -29,7 +29,7 @@ export function PartnerPrepInscriptionStep1({
   currentData,
 }: PartnerPrepInscriptionStep1Props) {
   const [cpf, setCPF] = useState<string>(currentData?.cpf || "");
-  const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+  const [isCheckboxChecked, setIsCheckboxChecked] = useState<boolean>(currentData?.socialName !== "");
 
   const [whatsapp, setWhatsapp] = useState<string>(
     phoneMask(currentData?.whatsapp) || ""
@@ -200,6 +200,8 @@ export function PartnerPrepInscriptionStep1({
             label=""
             type="checkbox"
             checkboxs={["Desejo utilizar o Nome Social"]}
+            defaultValue={currentData?.socialName ? ["Desejo utilizar o Nome Social"] : []}
+            error={errors.socialName}
             onCheckedChange={(values: string[]) => {
               setIsCheckboxChecked(values.length > 0);
             }}

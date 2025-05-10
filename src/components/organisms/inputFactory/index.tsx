@@ -58,6 +58,7 @@ export function InputFactory({
           checkboxs={(props as InputCheckBoxProps).checkboxs}
           onCheckedChange={(props as InputCheckBoxProps).onCheckedChange}
           propCleanRest={(props as InputCheckBoxProps).propCleanRest}
+          defaultValue={(props as InputCheckBoxProps).defaultValue}
         />
       );
       break;
