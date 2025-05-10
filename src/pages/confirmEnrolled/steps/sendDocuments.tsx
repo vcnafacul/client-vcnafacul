@@ -22,15 +22,27 @@ export default function SendDocuments({ isFree, onSubmit, files }: Props) {
           "Formato de arquivo inválido. Aceitamos apenas imagens JPEG, PNG ou PDFs",
           {
             theme: "dark",
+            autoClose: 10000,
           }
         );
       }
     }
-    if (uploadedFiles.length < 10) {
-      setUploadedFiles((prev: File[]) => [...prev, ...validFiles]);
+    if (uploadedFiles.length <= 10) {
+      setUploadedFiles((prev: File[]) => {
+        const newFiles = [...prev, ...validFiles];
+        if (newFiles.length > 10) {
+          toast.error("Limite de arquivos alcançado!", {
+            theme: "dark",
+            autoClose: 10000,
+          });
+          return uploadedFiles;
+        }
+        return newFiles;
+      });
     } else {
       toast.error("Limite de arquivos alcançado!", {
         theme: "dark",
+        autoClose: 10000,
       });
     }
   };
