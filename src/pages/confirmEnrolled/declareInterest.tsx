@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
 import { declaredInterest } from "@/services/prepCourse/student/declaredInterest";
+import { useAuthStore } from "@/store/auth";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import SendDocuments from "./steps/sendDocuments";
@@ -11,17 +12,27 @@ import SuccessStep from "./steps/successStep";
 
 interface Props {
   isFree: boolean;
-  queryToken: string;
   studentId: string;
+  requestDocuments: boolean;
 }
 
-export default function DeclareInterest({ isFree, queryToken }: Props) {
+export default function DeclareInterest({
+  isFree,
+  studentId,
+  requestDocuments,
+}: Props) {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [uploadedPhoto, setUploadedPhoto] = useState<File | null>(null);
   const [areaInterest, setAreaInterest] = useState<string[]>([]);
   const [selectedCursos, setSelectedCursos] = useState<string[]>([]);
-  const [step, setStep] = useState<Steps>(Steps.Documents);
+  const [step, setStep] = useState<Steps>(
+    requestDocuments ? Steps.Documents : Steps.Photo
+  );
   const [processing, setProcessing] = useState<boolean>(false);
+
+  const {
+    data: { token },
+  } = useAuthStore();
 
   const handleDeclaredInterest = async (
     areaInterest: string[],
@@ -33,7 +44,8 @@ export default function DeclareInterest({ isFree, queryToken }: Props) {
       uploadedPhoto as File,
       areaInterest,
       selectedCursos,
-      queryToken
+      studentId,
+      token
     )
       .then(() => {
         toast.update(id, {
@@ -55,15 +67,13 @@ export default function DeclareInterest({ isFree, queryToken }: Props) {
 
   const handleSubmit = (areaInterest: string[], selectedCursos: string[]) => {
     setProcessing(true);
-    if (uploadedFiles.length > 0) {
-      handleDeclaredInterest(areaInterest, selectedCursos)
-        .then(() => {
-          setStep(Steps.Sucess);
-        })
-        .finally(() => {
-          setProcessing(false);
-        });
-    }
+    handleDeclaredInterest(areaInterest, selectedCursos)
+      .then(() => {
+        setStep(Steps.Sucess);
+      })
+      .finally(() => {
+        setProcessing(false);
+      });
   };
 
   const StepsComponent = () => {
@@ -90,7 +100,8 @@ export default function DeclareInterest({ isFree, queryToken }: Props) {
               setUploadedPhoto(file);
               setStep(Steps.Documents);
             }}
-            photo={uploadedPhoto}
+            oldPhoto={uploadedPhoto}
+            requestDocuments={requestDocuments}
           />
         );
       case Steps.Quest:
@@ -114,30 +125,33 @@ export default function DeclareInterest({ isFree, queryToken }: Props) {
     }
   };
 
-  const stepsCircle: StepCicle[] = [
-    {
+  const stepsCircle: StepCicle[] = [];
+
+  if (requestDocuments) {
+    stepsCircle.push({
       name: Steps.Documents,
       status: step == Steps.Documents ? "current" : "complete",
-    },
-    {
-      name: Steps.Photo,
-      status:
-        step === Steps.Documents
-          ? "upcoming"
-          : step === Steps.Photo
-          ? "current"
-          : "complete",
-    },
-    {
-      name: Steps.Quest,
-      status:
-        step == Steps.Quest
-          ? "current"
-          : step === Steps.Sucess
-          ? "complete"
-          : "upcoming",
-    },
-  ];
+    });
+  }
+
+  stepsCircle.push({
+    name: Steps.Photo,
+    status:
+      step === Steps.Documents
+        ? "upcoming"
+        : step === Steps.Photo
+        ? "current"
+        : "complete",
+  });
+  stepsCircle.push({
+    name: Steps.Quest,
+    status:
+      step == Steps.Quest
+        ? "current"
+        : step === Steps.Sucess
+        ? "complete"
+        : "upcoming",
+  });
 
   return (
     <div className="flex flex-col items-center p-6 w-full gap-8">

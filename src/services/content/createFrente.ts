@@ -2,7 +2,7 @@ import { CreateFrenteDtoInput, CreateFrenteDtoOutput } from "../../dtos/content/
 import fetchWrapper from "../../utils/fetchWrapper";
 import {  frentes } from "../urls";
 
-export async function createFrente(data: CreateFrenteDtoOutput, token: string): Promise<CreateFrenteDtoInput> {
+export async function createFrente(data: CreateFrenteDtoInput, token: string): Promise<CreateFrenteDtoOutput> {
     const response = await fetchWrapper(frentes, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },

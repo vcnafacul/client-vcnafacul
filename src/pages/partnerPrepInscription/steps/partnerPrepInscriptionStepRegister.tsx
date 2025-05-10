@@ -7,12 +7,12 @@ import { ReactComponent as TriangleYellow } from "../../../assets/icons/triangle
 import "../../../styles/graphism.css";
 
 interface Props {
-  hashPrepCourse: string;
+  inscriptionId: string;
 }
 
-export function PartnerPrepInscriptionStepRegister({ hashPrepCourse }: Props) {
+export function PartnerPrepInscriptionStepRegister({ inscriptionId }: Props) {
   const onRegister = async (data: UserRegister) => {
-    registerUserFlowStudent(data, hashPrepCourse as string);
+    registerUserFlowStudent(data, inscriptionId as string);
   };
   return (
     <div>

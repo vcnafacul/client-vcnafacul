@@ -694,7 +694,7 @@ function ModalDetalhes({
           toast.dismiss(id);
         } catch (error) {
           toast.update(id, {
-            render: "Erro ao carregar imagem",
+            render: "Erro ao baixar documento",
             type: "error",
             isLoading: false,
             autoClose: 3000,

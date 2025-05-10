@@ -36,7 +36,7 @@ export function InputFactory({
   error,
   isCheckbox = false,
   ...props
-}: InputFactoryProps & {isCheckBOX?: boolean}) {
+}: InputFactoryProps & { isCheckBOX?: boolean }) {
   let inputElement;
   switch (type) {
     case "select":
@@ -58,15 +58,16 @@ export function InputFactory({
           checkboxs={(props as InputCheckBoxProps).checkboxs}
           onCheckedChange={(props as InputCheckBoxProps).onCheckedChange}
           propCleanRest={(props as InputCheckBoxProps).propCleanRest}
+          defaultValue={(props as InputCheckBoxProps).defaultValue}
         />
       );
       break;
     case "textarea":
       inputElement = (
-        <div className=" border p-2 w-full outline-orange rounded-md">
+        <div className="border p-2 w-full focus-within:border-orange rounded-md">
           <textarea
-            className={`mt-4 w-full outline-none rounded-md overflow-y-auto 
-        scrollbar-hide resize-none ${(props as any).className }`}
+            className={`mt-4 w-full outline-none rounded-md overflow-y-auto
+    scrollbar-hide resize-none ${(props as any).className}`}
             rows={(props as any).rows || 10}
             {...(props as any)}
           />
@@ -78,7 +79,12 @@ export function InputFactory({
       break;
   }
   return (
-    <BaseLayoutInput id={props.id} label={label} error={error} isCheckbox={isCheckbox}>
+    <BaseLayoutInput
+      id={props.id}
+      label={label}
+      error={error}
+      isCheckbox={isCheckbox}
+    >
       {inputElement}
     </BaseLayoutInput>
   );

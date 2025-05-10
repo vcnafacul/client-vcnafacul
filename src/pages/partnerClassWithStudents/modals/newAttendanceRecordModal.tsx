@@ -108,7 +108,7 @@ export function NewAttendanceRecordModal({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white p-2 sm:p-6 rounded-md w-[90vw] sm:w-[700px] h-[650px] flex flex-col gap-4"
+      className="bg-white p-2 sm:p-6 rounded-md w-[90vw] sm:w-[700px] h-[670px] flex flex-col gap-4"
     >
       <Paper sx={{ height: "85%", width: "100%" }}>
         <DataGrid

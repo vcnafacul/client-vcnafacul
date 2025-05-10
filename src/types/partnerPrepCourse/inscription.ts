@@ -13,4 +13,5 @@ export interface Inscription {
     updatedAt: Date;
     partnerPrepCourseId: string;
     partnerPrepCourseName: string;
+    requestDocuments: boolean;
 }

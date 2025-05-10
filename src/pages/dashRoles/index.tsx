@@ -82,7 +82,7 @@ function DashRoles() {
     getUsersRole(token, 1, limitCards, filterText)
       .then((res) => {
         setUsersRole(
-          res.data.sort((a, b) =>
+          res.data?.sort((a, b) =>
             a.user.firstName.localeCompare(b.user.firstName)
           )
         );
