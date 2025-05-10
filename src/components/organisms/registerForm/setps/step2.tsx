@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ControlCalendar from "@/components/atoms/controlCalendar";
 import {
+  linkSocialName,
   optionsGender,
   socialNameCheckbox,
   stateOptions,
@@ -151,7 +152,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
           <span className="text-sm font-extrabold pb-2 text-gray-500"></span>
           {socialNameCheckbox}{" "}
           <a
-            href="https://www.trf4.jus.br/trf4/controlador.php?acao=pagina_visualizar&id_pagina=2207"
+            href={linkSocialName}
             target="_blank"
             className="text-blue-600 underline hover:text-blue-800 focus:outline focus:ring-2 focus:ring-blue-500"
           >
