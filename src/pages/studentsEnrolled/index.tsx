@@ -362,6 +362,22 @@ export function StudentsEnrolled() {
       ),
     },
     {
+      field: "whatsapp",
+      headerName: "Telefone",
+      minWidth: 150,
+      filterOperators: getGridStringOperators().filter(({ value }) =>
+        ["contains"].includes(value)
+      ),
+    },
+    {
+      field: "cpf",
+      headerName: "CPF",
+      minWidth: 150,
+      filterOperators: getGridStringOperators().filter(({ value }) =>
+        ["contains"].includes(value)
+      ),
+    },
+    {
       field: "name",
       headerName: "Nome",
       minWidth: 200,
