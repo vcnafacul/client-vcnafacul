@@ -14,14 +14,12 @@ import { toast } from "react-toastify";
 interface AttendanceRecordProps {
   isOpen: boolean;
   handleClose: () => void;
-  classId: string;
   studentId: string;
 }
 
 export function AttendanceRecordByStudentModal({
   isOpen,
   handleClose,
-  classId,
   studentId,
 }: AttendanceRecordProps) {
   const [attendances, setAttendances] = useState<AttendanceRecordByStudent[]>(
