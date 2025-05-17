@@ -116,7 +116,6 @@ export function PartnerClassWithStudents() {
       <AttendanceRecordByStudentModal
         isOpen={openRecord}
         handleClose={() => setOpenRecord(false)}
-        classId={hashClassId!}
         studentId={studentSelected.id}
       />
     );

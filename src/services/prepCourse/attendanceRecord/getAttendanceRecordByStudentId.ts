@@ -4,7 +4,10 @@ import { Paginate } from "@/utils/paginate";
 
 interface AttendanceRecord {
   id: string;
-  classId: string;
+  class: {
+    id: string;
+    name: string;
+  };
   registeredAt: Date;
   studentAttendance: StudentAttendance[];
   registeredBy: {
@@ -26,13 +29,12 @@ interface StudentAttendance {
   }
 }
 
-export async function getAttendanceRecordByStudentId(token: string, page: number, limit: number, id: string, studentId: string): Promise<Paginate<AttendanceRecord>> {
+export async function getAttendanceRecordByStudentId(token: string, page: number, limit: number, studentId: string): Promise<Paginate<AttendanceRecord>> {
   const url = new URL(`${attendanceRecord}/student`);
   const params: Record<string, string | number> = {
     page,
     limit
   };
-  params.id = id;
   params.studentId = studentId;
   Object.keys(params).forEach((key) =>
     url.searchParams.append(key, params[key].toString())
@@ -47,6 +49,7 @@ export async function getAttendanceRecordByStudentId(token: string, page: number
   });
 
   const res : Paginate<AttendanceRecord> = await response.json();
+  console.log(res);
   if (response.status !== 200) {
     if (response.status >= 400) {
       throw res;
