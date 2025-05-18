@@ -90,7 +90,7 @@ function ModalEditDashGeo({
   const cep = watch("cep");
 
   const {
-    data: { token, user },
+    data: { user },
   } = useAuthStore();
 
   // Ao digitar cep
