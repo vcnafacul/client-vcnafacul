@@ -416,7 +416,7 @@ function ModalEditDashGeo({
                 id: geo.id,
                 lat: geo.latitude,
                 lon: geo.longitude,
-                type: TypeMarker.geo,
+                type: geo.type,
               },
             ]}
             mapEvent={<Event />}
