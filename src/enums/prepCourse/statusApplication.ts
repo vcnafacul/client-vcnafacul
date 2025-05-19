@@ -1,7 +1,7 @@
 export enum StatusApplication {
   UnderReview = "Em Análise",
   Rejected = "Indeferido",
-  Enrolled = "Matrículado",
+  Enrolled = "Matriculado",
   DeclaredInterest = "Declarou Interesse",
   CalledForEnrollment = "Convocado para matrícula",
   MissedDeadline = "Não declarou interesse",
