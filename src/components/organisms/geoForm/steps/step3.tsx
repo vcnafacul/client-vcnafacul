@@ -9,13 +9,13 @@ import { toast } from "react-toastify";
 import * as yup from "yup";
 import { InferType } from "yup";
 import { EachStepProps } from "..";
+import { ReactComponent as PointIcon } from "../../../../assets/images/home/univ_public.svg";
 import { stateOptions } from "../../../../pages/register/data";
 import {
   AddressResponse,
   getCepByLatAndLon,
 } from "../../../../services/geolocation/getCepByLatAndLon";
 import { CreateGeolocation } from "../../../../types/geolocation/geolocation";
-import { ReactComponent as PointIcon } from "../../../assets/images/home/univ_public.svg";
 import Text from "../../../atoms/text";
 import Button from "../../../molecules/button";
 import MapBox from "../../../molecules/mapBox";
@@ -181,7 +181,14 @@ function Step3Geo({
     return (
       <>
         <MapEvents />
-        <Marker position={selectedPosition as LatLngTuple} alt="novo"></Marker>
+        <Marker
+          position={selectedPosition as LatLngTuple}
+          alt="novo"
+          icon={leaflet.divIcon({
+            className: "w-8 h-8",
+            html: renderToStaticMarkup(<PointIcon className="fill-red h-8" />),
+          })}
+        ></Marker>
         <CenterMap position={selectedPosition as LatLngTuple} />
       </>
     );

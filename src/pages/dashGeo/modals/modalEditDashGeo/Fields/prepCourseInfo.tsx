@@ -32,15 +32,26 @@ export function PrepCourseInfo({ form, setValue, errors, edit, geo }: Props) {
         defaultValue={geo.name}
       />
       {geo.type === TypeMarker.univPublic ? (
-        <InputFactory
-          id={form.campus.label}
-          label={form.campus.label}
-          type={form.campus.type as InputFactoryType}
-          onChange={(e: any) => setValue("campus", e.target.value)}
-          error={errors.campus}
-          disabled={!edit}
-          defaultValue={geo.campus}
-        />
+        <>
+          <InputFactory
+            id={form.alias.label}
+            label={form.alias.label}
+            type={form.alias.type as InputFactoryType}
+            onChange={(e: any) => setValue("alias", e.target.value)}
+            error={errors.alias}
+            disabled={!edit}
+            defaultValue={geo.alias}
+          />
+          <InputFactory
+            id={form.campus.label}
+            label={form.campus.label}
+            type={form.campus.type as InputFactoryType}
+            onChange={(e: any) => setValue("campus", e.target.value)}
+            error={errors.campus}
+            disabled={!edit}
+            defaultValue={geo.campus}
+          />
+        </>
       ) : (
         <InputFactory
           id={form.category.label}
@@ -60,6 +71,7 @@ export function PrepCourseInfo({ form, setValue, errors, edit, geo }: Props) {
         error={errors.cep}
         disabled={!edit}
         defaultValue={geo.cep}
+        value={geo.cep}
       />
       <InputFactory
         id={form.street.label}
