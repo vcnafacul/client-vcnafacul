@@ -85,7 +85,7 @@ function DashGeo() {
           createGeolocation({
             ...geo,
           } as CreateGeolocation)
-            .then(() => {
+            .then((res) => {
               toast.update(id, {
                 render: `Universidade ${geo.name} criada com sucesso`,
                 type: `success`,
@@ -94,6 +94,7 @@ function DashGeo() {
                 autoClose: 3000,
               });
               setOpenModalCreate(false);
+              setGeolocations([res, ...geolocations]);
             })
             .catch((error: Error) => {
               toast.update(id, {
