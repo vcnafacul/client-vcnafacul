@@ -21,8 +21,11 @@ import {
   getCepByLatAndLon,
 } from "@/services/geolocation/getCepByLatAndLon";
 import { yupResolver } from "@hookform/resolvers/yup";
+import leaflet from "leaflet";
+import { renderToStaticMarkup } from "react-dom/server";
 import { toast } from "react-toastify";
 import * as yup from "yup";
+import { ReactComponent as PointIcon } from "../../../assets/images/home/univ_public.svg";
 import { prepCourseInfo } from "../data";
 import { PrepCourseInfo } from "./modalEditDashGeo/Fields/prepCourseInfo";
 
@@ -142,7 +145,6 @@ function ModalEditDashGeo({
 
   useEffect(() => {
     if (!clicked && cep && cep.length === 8) {
-      console.log(cep);
       fetchAddressByCep(cep).then((data) => setAddressFromCep(data));
     }
     setClicked(false);
@@ -212,7 +214,14 @@ function ModalEditDashGeo({
     return (
       <>
         <MapEvents />
-        <Marker position={selectedPosition as LatLngTuple} alt="novo"></Marker>
+        <Marker
+          position={selectedPosition as LatLngTuple}
+          alt="novo"
+          icon={leaflet.divIcon({
+            className: "w-8 h-8",
+            html: renderToStaticMarkup(<PointIcon className="fill-red h-7" />),
+          })}
+        ></Marker>
         <CenterMap position={selectedPosition as LatLngTuple} />
       </>
     );
