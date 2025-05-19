@@ -45,12 +45,17 @@ function DashCardTemplate({
       const nextPage = page + 1;
       setPage(nextPage);
       getMoreCards?.(nextPage).then((res) => {
+        const newItems = res?.data ?? [];
+
         if (entities.length === 4 * limitCards) {
-          setEntities([...entities.slice(limitCards), ...res.data]);
+          setEntities([...entities.slice(limitCards), ...newItems]);
         } else {
-          setEntities([...entities, ...res.data]);
+          setEntities([...entities, ...newItems]);
         }
-        setBottomReached(!res);
+
+        if (newItems.length < limitCards) {
+          setBottomReached(true);
+        }
       });
     }
 
@@ -58,9 +63,11 @@ function DashCardTemplate({
       const previousPage = page - 1;
       setPage(previousPage);
       getMoreCards?.(previousPage - limitPages).then((res) => {
-        setEntities([...res.data, ...entities.slice(0, 3 * limitCards)]);
+        const newItems = res?.data ?? [];
+        setEntities([...newItems, ...entities.slice(0, 3 * limitCards)]);
       });
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [firstCardInView, lastCardInView]);
 
@@ -81,7 +88,7 @@ function DashCardTemplate({
 
       {/* Filtros e controles */}
       <div
-        className={`rounded-xl  w-full max-w-7xl flex flex-col gap-4 ${classNameFilter}`}
+        className={`rounded-xl w-full max-w-7xl flex flex-col gap-4 ${classNameFilter}`}
       >
         <div>
           {filterProps && (
@@ -89,6 +96,7 @@ function DashCardTemplate({
               {...filterProps}
               keyDown={() => {
                 setPage(1);
+                setBottomReached(false); // resetar fim da lista ao aplicar novo filtro
                 filterProps.keyDown?.();
               }}
             />
@@ -113,6 +121,7 @@ function DashCardTemplate({
                 className="min-w-[140px]"
                 setState={(value) => {
                   setPage(1);
+                  setBottomReached(false); // resetar ao aplicar novo select
                   select.setState(value);
                 }}
               />

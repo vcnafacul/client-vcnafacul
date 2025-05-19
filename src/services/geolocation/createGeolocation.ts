@@ -1,7 +1,7 @@
-import { CreateGeolocation } from "../../types/geolocation/geolocation";
+import { CreateGeolocation, Geolocation } from "../../types/geolocation/geolocation";
 import { geolocations } from "../urls";
 
-export async function createGeolocation(data: CreateGeolocation) {
+export async function createGeolocation(data: CreateGeolocation) : Promise<Geolocation> {
   const response = await fetch(geolocations, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

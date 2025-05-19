@@ -4,6 +4,7 @@ import ModalTabTemplate from "@/components/templates/modalTabTemplate";
 import { createGeolocation } from "@/services/geolocation/createGeolocation";
 import { TypeMarker } from "@/types/map/marker";
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { FilterProps } from "../../components/atoms/filter";
 import { SelectProps } from "../../components/atoms/select";
 import { CardDash } from "../../components/molecules/cardDash";
@@ -80,11 +81,30 @@ function DashGeo() {
         isOpen={openModalCreate}
         handleClose={() => setOpenModalCreate(false)}
         createGeo={(geo: Geolocation) => {
+          const id = toast.loading("Criando Universidade...");
           createGeolocation({
             ...geo,
-          } as CreateGeolocation).then(() => {
-            setOpenModalCreate(false);
-          });
+          } as CreateGeolocation)
+            .then((res) => {
+              toast.update(id, {
+                render: `Universidade ${geo.name} criada com sucesso`,
+                type: `success`,
+                theme: `dark`,
+                isLoading: false,
+                autoClose: 3000,
+              });
+              setOpenModalCreate(false);
+              setGeolocations([res, ...geolocations]);
+            })
+            .catch((error: Error) => {
+              toast.update(id, {
+                render: error.message,
+                type: `error`,
+                theme: `dark`,
+                isLoading: false,
+                autoClose: 3000,
+              });
+            });
         }}
         type={TypeMarker.univPublic}
       />

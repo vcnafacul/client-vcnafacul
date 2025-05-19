@@ -74,7 +74,7 @@ function ModalEditDashGeo({
       .default(geo.street)
       .required("Logradouro é obrigatório"),
     number: yup.string().default(geo.number).required("Número é obrigatório"),
-    complement: yup.string().default(geo.complement),
+    complement: yup.string().default(geo.complement).nullable(),
     neighborhood: yup
       .string()
       .default(geo.neighborhood)

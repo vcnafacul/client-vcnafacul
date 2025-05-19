@@ -16,13 +16,17 @@ import { useForm } from "react-hook-form";
 import { Marker, useMap, useMapEvents } from "react-leaflet";
 
 import { stateOptions } from "@/pages/register/data";
+import { fetchAddressByCep } from "@/services/geolocation/fetchAddressByCep";
 import {
   AddressResponse,
   getCepByLatAndLon,
 } from "@/services/geolocation/getCepByLatAndLon";
 import { yupResolver } from "@hookform/resolvers/yup";
+import leaflet from "leaflet";
+import { renderToStaticMarkup } from "react-dom/server";
 import { toast } from "react-toastify";
 import * as yup from "yup";
+import { ReactComponent as PointIcon } from "../../../assets/images/home/univ_public.svg";
 import { prepCourseInfo } from "../data";
 import { PrepCourseInfo } from "./modalEditDashGeo/Fields/prepCourseInfo";
 
@@ -68,12 +72,17 @@ function ModalEditDashGeo({
     youtube: yup.string().nullable(),
     linkedin: yup.string().nullable(),
     twitter: yup.string().nullable(),
+    type: yup.number().default(type),
     campus: yup.string().when("type", {
       is: (value: TypeMarker) => value == TypeMarker.univPublic,
       then: () => yup.string().required("Campus é obrigatória"),
       otherwise: () => yup.string().notRequired(),
     }),
-    type: yup.number().default(type),
+    alias: yup.string().when("type", {
+      is: (value: TypeMarker) => value == TypeMarker.univPublic,
+      then: () => yup.string().required("Sigla é obrigatória"),
+      otherwise: () => yup.string().notRequired(),
+    }),
   });
 
   const {
@@ -116,34 +125,25 @@ function ModalEditDashGeo({
       data.location?.coordinates?.latitude &&
       data.location?.coordinates?.longitude
     ) {
-      setSelectedPosition([
-        parseFloat(data.location.coordinates.latitude),
-        parseFloat(data.location.coordinates.longitude),
-      ]);
+      const latitude = parseFloat(data.location.coordinates.latitude);
+      const longitude = parseFloat(data.location.coordinates.longitude);
+      setSelectedPosition([latitude, longitude]);
       newGeo = {
         ...geo,
-        latitude: parseFloat(data.location.coordinates.latitude),
-        longitude: parseFloat(data.location.coordinates.longitude),
+        latitude,
+        longitude,
       };
     }
     setGeo(newGeo);
   };
-  const fetchAddressByCep = async (cep: string) => {
-    try {
-      const response = await fetch(
-        `https://brasilapi.com.br/api/cep/v2/${cep}`
-      );
-      if (!response.ok) throw new Error("CEP não encontrado.");
-      return await response.json();
-    } catch (error: any) {
-      toast.error(error.message || "Erro ao buscar endereço pelo CEP.");
-    }
-  };
 
   useEffect(() => {
     if (!clicked && cep && cep.length === 8) {
-      console.log(cep);
-      fetchAddressByCep(cep).then((data) => setAddressFromCep(data));
+      fetchAddressByCep(cep)
+        .then((data) => setAddressFromCep(data))
+        .catch((err) => {
+          toast.error(err.message || "Erro ao buscar endereço pelo CEP.");
+        });
     }
     setClicked(false);
   }, [cep]);
@@ -162,6 +162,8 @@ function ModalEditDashGeo({
     setValue("street", street);
     setValue("neighborhood", neighborhood);
     setValue("state", state);
+
+    console.log(cep);
 
     setGeo({
       ...geo,
@@ -183,7 +185,6 @@ function ModalEditDashGeo({
         if (!useCep) {
           getCepByLatAndLon(lat, lng)
             .then((res) => {
-              console.log(res);
               setAddressFromMap(res);
             })
             .catch((error) => {
@@ -212,7 +213,14 @@ function ModalEditDashGeo({
     return (
       <>
         <MapEvents />
-        <Marker position={selectedPosition as LatLngTuple} alt="novo"></Marker>
+        <Marker
+          position={selectedPosition as LatLngTuple}
+          alt="novo"
+          icon={leaflet.divIcon({
+            className: "w-8 h-8",
+            html: renderToStaticMarkup(<PointIcon className="fill-red h-8" />),
+          })}
+        ></Marker>
         <CenterMap position={selectedPosition as LatLngTuple} />
       </>
     );
@@ -242,6 +250,7 @@ function ModalEditDashGeo({
     register("linkedin");
     register("twitter");
     register("campus");
+    register("alias");
   }, []);
 
   const handleCreate = async (body: any) => {
@@ -260,6 +269,14 @@ function ModalEditDashGeo({
     } as Geolocation);
   };
 
+  const mySetValue = (field: any, value: any) => {
+    setValue(field, value);
+    setGeo({
+      ...geo,
+      [field]: value,
+    });
+  };
+
   return (
     <ModalTemplate
       isOpen={isOpen}
@@ -267,7 +284,7 @@ function ModalEditDashGeo({
       className="p-8 rounded-md relative w-[90vw] h-fit max-h-[95vh] overflow-y-auto scrollbar-hide bg-white"
     >
       <form
-        className="flex flex-col md:flex-row gap-4"
+        className="flex flex-col md:flex-row gap-4 mb-10"
         onSubmit={handleSubmit(handleCreate)}
       >
         <div className="w-full">
@@ -279,7 +296,7 @@ function ModalEditDashGeo({
           </Text>
           <PrepCourseInfo
             form={prepCourseInfo}
-            setValue={setValue}
+            setValue={mySetValue}
             errors={errors}
             edit={true}
             geo={geo}
