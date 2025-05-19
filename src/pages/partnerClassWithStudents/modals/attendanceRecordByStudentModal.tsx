@@ -179,6 +179,7 @@ export function AttendanceRecordByStudentModal({
         <h1 className="text-2xl font-bold">Registro de Presença</h1>
         <Button
           onClick={() => setOpenModalJustification(true)}
+          disabled={selectedRows.length === 0}
           className="bg-orange/70 hover:bg-orange font-black"
         >
           Aplicar Justificativa
