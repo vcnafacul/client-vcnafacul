@@ -4,21 +4,21 @@ import { ReactComponent as LinguagensImg } from "../../assets/images/dashboard/l
 import { ReactComponent as MatematicaImg } from "../../assets/images/dashboard/matematica.svg";
 import { ReactComponent as NaturezaImg } from "../../assets/images/dashboard/natureza.svg";
 import {
-  DASH,
-  DASH_CONTENT,
-  DASH_GEOLOCATION,
-  DASH_NEWS,
-  DASH_PROVAS,
-  DASH_QUESTION,
-  DASH_ROLES,
-  DASH_SIMULADO,
-  ESTUDO,
-  MANAGER_COLLABORATOR,
-  NEWS,
-  PARTNER_CLASS,
-  PARTNER_CLASS_STUDENTS,
-  PARTNER_PREP_INSCRIPTION,
-  SIMULADO,
+    DASH,
+    DASH_CONTENT,
+    DASH_GEOLOCATION,
+    DASH_NEWS,
+    DASH_PROVAS,
+    DASH_QUESTION,
+    DASH_ROLES,
+    DASH_SIMULADO,
+    ESTUDO,
+    MANAGER_COLLABORATOR,
+    NEWS,
+    PARTNER_CLASS,
+    PARTNER_CLASS_STUDENTS,
+    PARTNER_PREP_INSCRIPTION,
+    SIMULADO,
 } from "../../routes/path";
 
 import { ReactComponent as Artes } from "../../assets/icons/home-subjects-arte.svg";
@@ -281,5 +281,5 @@ export const dashCardMenuItems: DashCardMenu[] = [
   },
 ];
 
-export const Welcome = "Bem Vindos ao Você na Facul";
+export const Welcome = "Bem-vindos ao Você na Facul";
 export const Subtitle = "Plataforma em construção!";
