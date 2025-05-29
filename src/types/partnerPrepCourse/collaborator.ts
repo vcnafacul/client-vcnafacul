@@ -3,7 +3,6 @@ export interface Collaborator {
   photo: string;
   description: string;
   actived: boolean;
-  lastAccess: Date;
   createdAt: Date;
   updatedAt: Date;
   user: {
@@ -15,5 +14,6 @@ export interface Collaborator {
       id: string;
       name: string;
     };
+    lastAccess: Date;
   };
 }
