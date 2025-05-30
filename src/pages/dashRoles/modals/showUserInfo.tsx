@@ -54,7 +54,7 @@ function ShowUserInfo({
             />
             <PropValue
               prop="Ultima Atualização"
-              value={formatDate(ur.user.updatedAt.toString())}
+              value={formatDate(ur.user.updatedAt.toString(), "dd/MM/yyyy HH:mm")}
             />
             {ur.user.deletedAt ? (
               <PropValue

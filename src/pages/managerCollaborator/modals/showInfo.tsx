@@ -112,7 +112,7 @@ export function ShowInfo({
           <div className="col-span-1 sm:col-span-2 bg-zinc-200 p-2 rounded shadow-md shadow-zinc-300">
             <PropValue
               prop="Último Acesso"
-              value={formatDate(collaborator.lastAccess?.toString())}
+              value={formatDate(collaborator.lastAccess?.toString(), "dd/MM/yyyy HH:mm")}
             />
           </div>
         </div>

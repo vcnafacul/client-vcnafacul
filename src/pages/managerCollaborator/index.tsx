@@ -294,7 +294,7 @@ export default function ManagerCollaborator() {
             photo: col.photo,
             description: col.description,
             actived: col.actived,
-            lastAccess: col.lastAccess,
+            lastAccess: col.user.lastAccess,
             createdAt: col.createdAt,
             updatedAt: col.updatedAt,
             userId: col.user.id,

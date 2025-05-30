@@ -9,5 +9,6 @@ export type User = Auth & {
     id: string;
     createdAt: Date;
     updatedAt: Date;
+    lastAccess: Date;
     deletedAt: Date;
 }
