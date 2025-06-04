@@ -5,7 +5,6 @@ import { toBrazilStartOfDayISOString } from "@/utils/toBrazilISOString";
 export async function createAttendanceRecord(token: string, classId: string, date: Date, studentIds: string[] ): Promise<void> {
   const dateBR = toBrazilStartOfDayISOString(date);
   const body = JSON.stringify({ classId, date: dateBR, studentIds });
-  console.log(body);
   const response = await fetchWrapper(attendanceRecord, {
     method: "POST",
     headers: {
