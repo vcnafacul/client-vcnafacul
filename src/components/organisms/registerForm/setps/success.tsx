@@ -1,3 +1,4 @@
+import { textContact } from "@/pages/register/data";
 import { FaCheckDouble } from "react-icons/fa";
 import Text from "../../../atoms/text";
 
@@ -21,6 +22,13 @@ function Success({ email }: Props) {
           {text}
         </Text>
       ))}
+      <Text
+        size="quaternary"
+        className="mt-3 md:mt-3 text-sm md:text-base text-zinc-600 leading-7 md:leading-7"
+      >
+        <div>{textContact.text}</div>
+        <span>{textContact.email}</span>
+      </Text>
     </div>
   );
 }
