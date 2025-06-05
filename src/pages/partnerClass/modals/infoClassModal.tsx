@@ -126,6 +126,7 @@ export function ClassInfoModal({
               <Button
                 className="w-24 h-8 bg-red border-none hover:bg-red/60 "
                 onClick={() => setOpenModalDelete(true)}
+                disabled={entitySelected?.number_students > 0}
               >
                 <div className="flex justify-center gap-1.5">
                   <TrashIcon />
