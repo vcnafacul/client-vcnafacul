@@ -1,5 +1,5 @@
+import { textContact } from "@/pages/register/data";
 import { FaCheckDouble } from "react-icons/fa";
-import { tagLinkToMakeContactOnGmail, textContact } from "@/pages/register/data";
 import Text from "../../../atoms/text";
 
 interface Props {
@@ -22,8 +22,12 @@ function Success({ email }: Props) {
           {text}
         </Text>
       ))}
-      <Text size="quaternary" className="mt-3 md:mt-3 text-sm md:text-base text-zinc-600 leading-7 md:leading-7">
-        {textContact.text} {tagLinkToMakeContactOnGmail}
+      <Text
+        size="quaternary"
+        className="mt-3 md:mt-3 text-sm md:text-base text-zinc-600 leading-7 md:leading-7"
+      >
+        <div>{textContact.text}</div>
+        <span>{textContact.email}</span>
       </Text>
     </div>
   );

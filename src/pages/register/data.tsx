@@ -53,7 +53,6 @@ export const textContact: { text: string, email: string, linkToMakeContactOnGmai
   linkToMakeContactOnGmail: "https://mail.google.com/mail/?view=cm&fs=1&to=contato@vcnafacul.com.br&su=Não%20recebi%20o%20e-mail%20de%20confirmação&body=Olá,%20não%20recebi%20o%20e-mail%20de%20confirmação.%20Poderiam%20verificar%20por%20favor?"
 }
 
-export const tagLinkToMakeContactOnGmail = (<a className="text-green" href={textContact.linkToMakeContactOnGmail} target="_blank" rel="noopener noreferrer">{textContact.email}</a>)
 export const socialNameCheckbox =
   "O nome social é destinado a pessoas trans, travestis ou não binárias que preferem ser identificadas por um nome diferente do registrado oficialmente. Ele existe para garantir respeito à identidade de gênero e evitar situações constrangedoras.";
 
