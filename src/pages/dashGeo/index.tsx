@@ -115,7 +115,7 @@ function DashGeo() {
     return !openModal ? null : (
       <ModalTabTemplate
         isOpen={openModal}
-        className="p-8 rounded-md  relative h-[90vh] w-[90vw] overflow-y-auto scrollbar-hide"
+        className="px-8 py-4 rounded-md  relative h-[90vh] w-[90vw] overflow-y-auto scrollbar-hide"
         tabs={[
           {
             label: "Detalhes",
