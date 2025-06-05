@@ -15,7 +15,7 @@ import Step6Geo from "./steps/step6";
 export interface StepProps {
   title: string;
   subtitle: string;
-  form: FormFieldInput[]
+  form: FormFieldInput[];
 }
 
 export interface EachStepProps extends StepProps {
@@ -26,70 +26,120 @@ export interface EachStepProps extends StepProps {
 
 export interface GeoFormProps {
   formData: {
-      step1: StepProps,
-      step2: StepProps,
-      step3: StepProps,
-      step4: StepProps,
-      step5: StepProps,
-      step6: StepProps,
-  }
+    step1: StepProps;
+    step2: StepProps;
+    step3: StepProps;
+    step4: StepProps;
+    step5: StepProps;
+    step6: StepProps;
+  };
 }
 
-function GeoForm({ formData } : GeoFormProps){
-  const [stepCurrently, setStepCurrently] = useState<number>(1)
-  const [dataGeo, setDataGeo]= useState<CreateGeolocation>({} as CreateGeolocation)
+enum Step {
+  PersonalData,
+  CourseData,
+  Address,
+  Contact,
+  SocialMedia,
+  Finish,
+}
+
+function GeoForm({ formData }: GeoFormProps) {
+  const [stepCurrently, setStepCurrently] = useState<number>(Step.PersonalData);
+  const [dataGeo, setDataGeo] = useState<CreateGeolocation>(
+    {} as CreateGeolocation
+  );
 
   const updateData = (oldData: any) => {
-    setDataGeo({...dataGeo, ...oldData})
-    setStepCurrently(stepCurrently + 1)
-  }
+    setDataGeo({ ...dataGeo, ...oldData });
+    setStepCurrently(stepCurrently + 1);
+  };
 
   const back = () => {
-    if(stepCurrently > 0) {
-      setStepCurrently(stepCurrently - 1)
+    if (stepCurrently > 0) {
+      setStepCurrently(stepCurrently - 1);
     }
-  }
+  };
 
   const completeRegisterGeo = (oldData: any) => {
-    const id = toast.loading("Cadastrando o cursinho... ")
-    const body = {...dataGeo, ...oldData}
+    const id = toast.loading("Cadastrando o cursinho... ");
+    const body = { ...dataGeo, ...oldData };
     createGeolocation(body as CreateGeolocation)
-      .then(_ => {
-        toast.dismiss(id)
-        setStepCurrently(6)
+      .then((_) => {
+        toast.dismiss(id);
+        setStepCurrently(Step.Finish);
       })
       .catch((error: Error) => {
-        toast.update(id, {render: error.message, type: "error", isLoading: false, autoClose: 3000, });
-      })
-  }
+        toast.update(id, {
+          render: error.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      });
+  };
 
   const resetForm = () => {
-    setStepCurrently(1)
-    setDataGeo({} as CreateGeolocation)
-  }
+    setStepCurrently(Step.PersonalData);
+    setDataGeo({} as CreateGeolocation);
+  };
 
-  const StepCurrently = ({ step } : { step: number}) => {
+  const StepCurrently = ({ step }: { step: number }) => {
     switch (step) {
-      case 2:
-        return <Step2Geo {...formData.step2} updateData={updateData} handleBack={back} dataGeo={dataGeo} />
-      case 3:
-        return <Step3Geo {...formData.step3} updateData={updateData} handleBack={back} dataGeo={dataGeo} />
-      case 4:
-        return <Step4Geo {...formData.step4} updateData={updateData} handleBack={back} dataGeo={dataGeo} />
-      case 5:
-        return <Step5Geo {...formData.step5} updateData={completeRegisterGeo} handleBack={back} dataGeo={dataGeo} />
-      case 6:
-        return <Step6Geo {...formData.step6} reset={resetForm} />
+      case Step.CourseData:
+        return (
+          <Step2Geo
+            {...formData.step2}
+            updateData={updateData}
+            handleBack={back}
+            dataGeo={dataGeo}
+          />
+        );
+      case Step.Address:
+        return (
+          <Step3Geo
+            {...formData.step3}
+            updateData={updateData}
+            handleBack={back}
+            dataGeo={dataGeo}
+          />
+        );
+      case Step.Contact:
+        return (
+          <Step4Geo
+            {...formData.step4}
+            updateData={updateData}
+            handleBack={back}
+            dataGeo={dataGeo}
+          />
+        );
+      case Step.SocialMedia:
+        return (
+          <Step5Geo
+            {...formData.step5}
+            updateData={completeRegisterGeo}
+            handleBack={back}
+            dataGeo={dataGeo}
+          />
+        );
+      case Step.Finish:
+        return <Step6Geo {...formData.step6} reset={resetForm} />;
       default:
-        return <Step1Geo {...formData.step1} updateData={updateData} dataGeo={dataGeo} />
+        return (
+          <Step1Geo
+            {...formData.step1}
+            updateData={updateData}
+            dataGeo={dataGeo}
+          />
+        );
     }
-  }
+  };
 
   return (
     <div className="flex flex-col items-center justify-start w-full min-h-[calc(100vh-88px)] mb-3 px-4 mx-auto">
       <StepCurrently step={stepCurrently} />
     </div>
-  )
+  );
 }
 
-export default GeoForm
+export default GeoForm;

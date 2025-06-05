@@ -4,18 +4,21 @@ import { ReactComponent as LinguagensImg } from "../../assets/images/dashboard/l
 import { ReactComponent as MatematicaImg } from "../../assets/images/dashboard/matematica.svg";
 import { ReactComponent as NaturezaImg } from "../../assets/images/dashboard/natureza.svg";
 import {
-  DASH,
-  DASH_CONTENT,
-  DASH_GEOLOCATION,
-  DASH_NEWS,
-  DASH_PROVAS,
-  DASH_QUESTION,
-  DASH_ROLES,
-  DASH_SIMULADO,
-  ESTUDO,
-  NEWS,
-  PARTNER_PREP_INSCRIPTION,
-  SIMULADO,
+    DASH,
+    DASH_CONTENT,
+    DASH_GEOLOCATION,
+    DASH_NEWS,
+    DASH_PROVAS,
+    DASH_QUESTION,
+    DASH_ROLES,
+    DASH_SIMULADO,
+    ESTUDO,
+    MANAGER_COLLABORATOR,
+    NEWS,
+    PARTNER_CLASS,
+    PARTNER_CLASS_STUDENTS,
+    PARTNER_PREP_INSCRIPTION,
+    SIMULADO,
 } from "../../routes/path";
 
 import { ReactComponent as Artes } from "../../assets/icons/home-subjects-arte.svg";
@@ -34,7 +37,9 @@ import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-ge
 import { ReactComponent as Historia } from "../../assets/icons/home-subjects-historia.svg";
 import { ReactComponent as Sociologia } from "../../assets/icons/home-subjects-sociologia.svg";
 
-import { ReactComponent as Report } from "../../assets/icons/warning.svg";
+import { BiSolidSchool } from "react-icons/bi";
+import { FaPeopleGroup } from "react-icons/fa6";
+import { PiStudentFill, PiUsersFourBold } from "react-icons/pi";
 
 import { DashCardMenu } from "../../components/molecules/dashCard";
 import { HeaderData } from "../../components/organisms/header";
@@ -70,6 +75,102 @@ const getMaterialLabel = (value: Materias) => {
 };
 
 export const dashCardMenuItems: DashCardMenu[] = [
+  {
+    id: 6,
+    bg: "bg-red",
+    title: "Cursinho",
+    image: AdminImg,
+    alt: "Cursinho",
+    subMenuList: [
+      {
+        icon: PiStudentFill,
+        alt: "processos seletivos",
+        text: "Processos Seletivos",
+        link: `/dashboard/${PARTNER_PREP_INSCRIPTION}`,
+        permissions: [Roles.gerenciarProcessoSeletivo],
+      },
+      {
+        icon: FaPeopleGroup,
+        alt: "colaboradores",
+        text: "Colaboradores",
+        link: `/dashboard/${MANAGER_COLLABORATOR}`,
+        permissions: [Roles.gerenciarColaboradores],
+      },
+      {
+        icon: BiSolidSchool,
+        alt: "turmas",
+        text: "Turmas",
+        link: `/dashboard/${PARTNER_CLASS}`,
+        permissions: [Roles.visualizarTurmas],
+      },
+      {
+        icon: PiUsersFourBold,
+        alt: "matriculados",
+        text: "Estudantes",
+        link: `/dashboard/${PARTNER_CLASS_STUDENTS}`,
+        permissions: [Roles.visualizarEstudantes],
+      },
+    ],
+  },
+  {
+    id: 5,
+    bg: "bg-green3",
+    title: "Admin",
+    image: AdminImg,
+    alt: "Admin",
+    subMenuList: [
+      {
+        icon: Historia,
+        alt: "localiza cursinho",
+        text: "Validação LC",
+        link: `/dashboard/${DASH_GEOLOCATION}`,
+        permissions: [Roles.validarCursinho],
+      },
+      {
+        icon: Quimica,
+        alt: "usuarios",
+        text: "Usuários",
+        link: `/dashboard/${DASH_ROLES}`,
+        permissions: [Roles.alterarPermissao],
+      },
+      {
+        icon: Gramatica,
+        alt: "banco_de_questao",
+        text: "Banco de Questão",
+        link: `/dashboard/${DASH_QUESTION}`,
+        permissions: [Roles.visualizarQuestao],
+      },
+      {
+        icon: Espanhol,
+        alt: "dash_news",
+        text: "Novidades",
+        link: `/dashboard/${DASH_NEWS}`,
+        permissions: [Roles.uploadNews],
+      },
+      {
+        icon: Fisica,
+        alt: "dash_provas",
+        text: "Provas",
+        link: `/dashboard/${DASH_PROVAS}`,
+        permissions: [Roles.visualizarProvas],
+      },
+      {
+        icon: Historia,
+        alt: "dash_provas",
+        text: "Conteúdos",
+        link: `/dashboard/${DASH_CONTENT}`,
+        permissions: [Roles.visualizarDemanda],
+      },
+      {
+        icon: Matematica,
+        alt: "dash_simulado",
+        text: "Simulado",
+        link: `/dashboard/${DASH_SIMULADO}`,
+        permissions: [Roles.criarQuestao],
+      },
+    ],
+  },
+
   {
     id: 1,
     bg: "bg-marine",
@@ -178,102 +279,7 @@ export const dashCardMenuItems: DashCardMenu[] = [
       },
     ],
   },
-  {
-    id: 5,
-    bg: "bg-green3",
-    title: "Admin",
-    image: AdminImg,
-    alt: "Admin",
-    subMenuList: [
-      {
-        icon: Historia,
-        alt: "localiza cursinho",
-        text: "Validação LC",
-        link: `/dashboard/${DASH_GEOLOCATION}`,
-        permissions: [Roles.validarCursinho],
-      },
-      {
-        icon: Quimica,
-        alt: "usuarios",
-        text: "Usuários",
-        link: `/dashboard/${DASH_ROLES}`,
-        permissions: [Roles.alterarPermissao],
-      },
-      {
-        icon: Gramatica,
-        alt: "banco_de_questao",
-        text: "Banco de Questão",
-        link: `/dashboard/${DASH_QUESTION}`,
-        permissions: [Roles.visualizarQuestao],
-      },
-      {
-        icon: Espanhol,
-        alt: "dash_news",
-        text: "Novidades",
-        link: `/dashboard/${DASH_NEWS}`,
-        permissions: [Roles.uploadNews],
-      },
-      {
-        icon: Fisica,
-        alt: "dash_provas",
-        text: "Provas",
-        link: `/dashboard/${DASH_PROVAS}`,
-        permissions: [Roles.visualizarProvas],
-      },
-      {
-        icon: Historia,
-        alt: "dash_provas",
-        text: "Conteúdos",
-        link: `/dashboard/${DASH_CONTENT}`,
-        permissions: [Roles.visualizarDemanda],
-      },
-      {
-        icon: Matematica,
-        alt: "dash_simulado",
-        text: "Simulado",
-        link: `/dashboard/${DASH_SIMULADO}`,
-        permissions: [Roles.criarQuestao],
-      },
-      {
-        icon: Report,
-        alt: "error_report",
-        text: "Reportar Erro",
-        link: `https://docs.google.com/document/d/1VFpGiW4LuooMdtOemtFEVbqHMesP0rTZ1fX8BFwG_2w/edit?usp=sharing`,
-        permissions: [
-          Roles.alterarPermissao,
-          Roles.cadastrarProvas,
-          Roles.criarQuestao,
-          Roles.criarSimulado,
-          Roles.gerenciadorDemanda,
-          Roles.uploadDemanda,
-          Roles.uploadNews,
-          Roles.validarCursinho,
-          Roles.validarDemanda,
-          Roles.validarQuestao,
-          Roles.visualizarDemanda,
-          Roles.visualizarProvas,
-          Roles.visualizarQuestao,
-        ],
-      },
-    ],
-  },
-  {
-    id: 6,
-    bg: "bg-red",
-    title: "Cursinho",
-    image: AdminImg,
-    alt: "Cursinho",
-    subMenuList: [
-      {
-        icon: Report,
-        alt: "inscricao",
-        text: "Inscrições",
-        link: `/dashboard/${PARTNER_PREP_INSCRIPTION}`,
-        permissions: [Roles.gerenciarInscricoesCursinhoParceiro],
-      },
-    ],
-  },
 ];
 
-export const Welcome = "Bem Vindos ao Você na Facul";
+export const Welcome = "Bem-vindos ao Você na Facul";
 export const Subtitle = "Plataforma em construção!";

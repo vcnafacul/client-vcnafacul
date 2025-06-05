@@ -106,7 +106,6 @@ export function Details({ student, handleClose }: Props) {
       }
       
       const fileName = extension ? `${key}.${extension}` : key;
-      console.log(fileName);
 
       // Criar o link para download
       const url = URL.createObjectURL(blob);

@@ -13,10 +13,10 @@ export interface FilterProps {
 
 function Filter ({ filtrar, placeholder, className, search = true, defaultValue, disabled, keyDown } : FilterProps) {
     return (
-        <div className={`${className} relative w-11/12 sm:w-96 m-4`}>
+        <div className={`${className} relative  m-4`}>
             <input 
                 disabled={disabled} 
-                className="w-full h-10 px-4 rounded-md outline-none" 
+                className="w-full h-10 px-4 rounded-md outline-none shadow-md" 
                 placeholder={placeholder} 
                 onChange={filtrar} 
                 defaultValue={defaultValue}

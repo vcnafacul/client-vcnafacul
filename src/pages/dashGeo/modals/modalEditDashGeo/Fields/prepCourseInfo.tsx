@@ -5,6 +5,7 @@ import {
 } from "@/components/organisms/inputFactory";
 import { prepCourseInfoType } from "@/pages/dashGeo/data";
 import { Geolocation } from "@/types/geolocation/geolocation";
+import { TypeMarker } from "@/types/map/marker";
 import { FieldErrors, UseFormSetValue } from "react-hook-form";
 
 interface Props {
@@ -18,7 +19,7 @@ interface Props {
 export function PrepCourseInfo({ form, setValue, errors, edit, geo }: Props) {
   return (
     <div
-      className="flex flex-col flex-wrap w-full 
+      className="grid grid-cols-1 sm:grid-cols-2 items-center 
       h-full sm:h-[729px] gap-x-4 px-1"
     >
       <InputFactory
@@ -30,15 +31,38 @@ export function PrepCourseInfo({ form, setValue, errors, edit, geo }: Props) {
         disabled={!edit}
         defaultValue={geo.name}
       />
-      <InputFactory
-        id={form.category.label}
-        label={form.category.label}
-        type={form.category.type as InputFactoryType}
-        onChange={(e: any) => setValue("category", e.target.value)}
-        error={errors.category}
-        disabled={!edit}
-        defaultValue={geo.category}
-      />
+      {geo.type === TypeMarker.univPublic ? (
+        <>
+          <InputFactory
+            id={form.alias.label}
+            label={form.alias.label}
+            type={form.alias.type as InputFactoryType}
+            onChange={(e: any) => setValue("alias", e.target.value)}
+            error={errors.alias}
+            disabled={!edit}
+            defaultValue={geo.alias}
+          />
+          <InputFactory
+            id={form.campus.label}
+            label={form.campus.label}
+            type={form.campus.type as InputFactoryType}
+            onChange={(e: any) => setValue("campus", e.target.value)}
+            error={errors.campus}
+            disabled={!edit}
+            defaultValue={geo.campus}
+          />
+        </>
+      ) : (
+        <InputFactory
+          id={form.category.label}
+          label={form.category.label}
+          type={form.category.type as InputFactoryType}
+          onChange={(e: any) => setValue("category", e.target.value)}
+          error={errors.category}
+          disabled={!edit}
+          defaultValue={geo.category}
+        />
+      )}
       <InputFactory
         id={form.cep.label}
         label={form.cep.label}
@@ -47,6 +71,7 @@ export function PrepCourseInfo({ form, setValue, errors, edit, geo }: Props) {
         error={errors.cep}
         disabled={!edit}
         defaultValue={geo.cep}
+        value={geo.cep}
       />
       <InputFactory
         id={form.street.label}

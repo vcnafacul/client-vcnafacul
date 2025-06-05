@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
 import { declaredInterest } from "@/services/prepCourse/student/declaredInterest";
-import { uploadDocs } from "@/services/prepCourse/student/uploadDocs";
-import { uploadPhoto } from "@/services/prepCourse/student/uploadPhoto";
 import { useAuthStore } from "@/store/auth";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -14,22 +12,22 @@ import SuccessStep from "./steps/successStep";
 
 interface Props {
   isFree: boolean;
-  queryToken: string;
   studentId: string;
+  requestDocuments: boolean;
 }
 
 export default function DeclareInterest({
   isFree,
-  queryToken,
   studentId,
+  requestDocuments,
 }: Props) {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [uploadedPhoto, setUploadedPhoto] = useState<File | null>(null);
   const [areaInterest, setAreaInterest] = useState<string[]>([]);
   const [selectedCursos, setSelectedCursos] = useState<string[]>([]);
-  const [step, setStep] = useState<Steps>(Steps.Documents);
-  const [sendDocSucess, setSendDocSucess] = useState<boolean>(false);
-  const [sendPhotoSucess, setSendPhotoSucess] = useState<boolean>(false);
+  const [step, setStep] = useState<Steps>(
+    requestDocuments ? Steps.Documents : Steps.Photo
+  );
   const [processing, setProcessing] = useState<boolean>(false);
 
   const {
@@ -40,86 +38,42 @@ export default function DeclareInterest({
     areaInterest: string[],
     selectedCursos: string[]
   ) => {
-    const id = toast.loading(
-      "Aguarde enquanto processando a declaração de interesse..."
-    );
-    await declaredInterest(studentId, areaInterest, selectedCursos, token)
+    const id = toast.loading("Declarando interesse...");
+    await declaredInterest(
+      uploadedFiles,
+      uploadedPhoto as File,
+      areaInterest,
+      selectedCursos,
+      studentId,
+      token
+    )
       .then(() => {
         toast.update(id, {
-          render: "Declaração de interesse feita com sucesso!",
+          render: "Declaração de interesse enviadas com sucesso!",
           type: "success",
           isLoading: false,
           autoClose: 3000,
         });
+      })
+      .catch((e) => {
+        toast.update(id, {
+          render: e.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      });
+  };
+
+  const handleSubmit = (areaInterest: string[], selectedCursos: string[]) => {
+    setProcessing(true);
+    handleDeclaredInterest(areaInterest, selectedCursos)
+      .then(() => {
         setStep(Steps.Sucess);
       })
-      .catch((e) => {
-        toast.update(id, {
-          render: e.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
+      .finally(() => {
+        setProcessing(false);
       });
-  };
-
-  const handleUploadDocs = async () => {
-    const id = toast.loading("Enviando documentos...");
-    await uploadDocs(uploadedFiles, queryToken)
-      .then(() => {
-        toast.update(id, {
-          render: "Documentos enviados com sucesso!",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        setSendDocSucess(true);
-      })
-      .catch((e) => {
-        toast.update(id, {
-          render: e.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
-  };
-
-  const handleUploadPhoto = async () => {
-    const id = toast.loading("Enviando foto...");
-    await uploadPhoto(uploadedPhoto as File, queryToken)
-      .then(() => {
-        toast.update(id, {
-          render: "Foto para carteirinha enviadas com sucesso!",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        setSendPhotoSucess(true);
-      })
-      .catch((e) => {
-        toast.update(id, {
-          render: e.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
-  };
-
-  const handleSubmit = async (
-    areaInterest: string[],
-    selectedCursos: string[]
-  ) => {
-    setProcessing(true);
-    if (uploadedFiles.length > 0 && !sendDocSucess) {
-      await handleUploadDocs();
-    }
-    if (!uploadedPhoto && !sendPhotoSucess) {
-      await handleUploadPhoto();
-    }
-    await handleDeclaredInterest(areaInterest, selectedCursos);
-    setProcessing(false);
   };
 
   const StepsComponent = () => {
@@ -146,7 +100,8 @@ export default function DeclareInterest({
               setUploadedPhoto(file);
               setStep(Steps.Documents);
             }}
-            photo={uploadedPhoto}
+            oldPhoto={uploadedPhoto}
+            requestDocuments={requestDocuments}
           />
         );
       case Steps.Quest:
@@ -170,50 +125,54 @@ export default function DeclareInterest({
     }
   };
 
-  const stepsCircle: StepCicle[] = [
-    {
+  const stepsCircle: StepCicle[] = [];
+
+  if (requestDocuments) {
+    stepsCircle.push({
       name: Steps.Documents,
       status: step == Steps.Documents ? "current" : "complete",
-    },
-    {
-      name: Steps.Photo,
-      status:
-        step === Steps.Documents
-          ? "upcoming"
-          : step === Steps.Photo
-          ? "current"
-          : "complete",
-    },
-    {
-      name: Steps.Quest,
-      status:
-        step == Steps.Quest
-          ? "current"
-          : step === Steps.Sucess
-          ? "complete"
-          : "upcoming",
-    },
-  ];
+    });
+  }
+
+  stepsCircle.push({
+    name: Steps.Photo,
+    status:
+      step === Steps.Documents
+        ? "upcoming"
+        : step === Steps.Photo
+        ? "current"
+        : "complete",
+  });
+  stepsCircle.push({
+    name: Steps.Quest,
+    status:
+      step == Steps.Quest
+        ? "current"
+        : step === Steps.Sucess
+        ? "complete"
+        : "upcoming",
+  });
 
   return (
     <div className="flex flex-col items-center p-6 w-full gap-8">
       {/* Mensagem inicial */}
       <div className="text-center">
         <h1 className="text-2xl font-bold text-gray-800">
-          Declaração de interesse na matrícula
+          Pré-Matrícula: Declaração de Interesse
         </h1>
         <p className="text-gray-600 mt-2 text-lg">
-          {isFree ? (
-            <>
-              Parabéns pela isenção! 🎉 Não se esqueça de enviar as informações
-              necessárias para concluir sua inscrição.
-            </>
-          ) : (
-            <>
-              Olá caro estudante, para declarar interesse na matrícula,
-              precisamos de algumas informações a mais.
-            </>
-          )}
+          {step != Steps.Sucess &&
+            (isFree ? (
+              <>
+                Parabéns pela isenção! 🎉 Não se esqueça de enviar as
+                informações necessárias para concluir sua inscrição.
+              </>
+            ) : (
+              <>
+                Olá caro estudante, para declarar interesse na matrícula,
+                precisamos de algumas informações a mais.
+              </>
+            ))}
         </p>
       </div>
       <StepperCircle steps={stepsCircle} />

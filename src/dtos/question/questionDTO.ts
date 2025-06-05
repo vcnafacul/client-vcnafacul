@@ -24,6 +24,7 @@ export interface QuestionDto {
   materia: string;
   numero: number;
   textoQuestao: string;
+  pergunta: string;
   textoAlternativaA: string;
   textoAlternativaB: string;
   textoAlternativaC: string;

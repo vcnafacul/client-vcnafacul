@@ -39,7 +39,7 @@ function DashQuestion() {
   const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
   const [openModalRegister, setOpenModalRegister] = useState<boolean>(false);
   const [questionSelect, setQuestionSelect] = useState<Question | null>(null);
-  const limitCards = 40;
+  const limitCards = 100;
 
   const [infosQuestion, setInfosQuestion] = useState<InfoQuestion>({
     provas: [],
@@ -61,18 +61,29 @@ function DashQuestion() {
       {
         field: "Prova",
         value:
-          infosQuestion.provas.find((infos) => infos._id === question.prova)
-            ?.nome ?? question.prova,
+          typeof question.prova === "string"
+            ? infosQuestion.provas.find((infos) => infos._id === question.prova)
+                ?.nome ?? question.prova
+            : question.prova ?? JSON.stringify(question.prova),
       },
-      { field: "Área", value: question.enemArea },
+      {
+        field: "Área",
+        value:
+          typeof question.enemArea === "string"
+            ? question.enemArea
+            : JSON.stringify(question.enemArea),
+      },
       {
         field: "Disciplina",
         value:
-          infosQuestion.materias.find((infos) => infos._id === question.materia)
-            ?.nome ?? question.materia,
+          typeof question.materia === "string"
+            ? infosQuestion.materias.find(
+                (infos) => infos._id === question.materia
+              )?.nome ?? question.materia
+            : question.materia ?? JSON.stringify(question.materia),
       },
       {
-        field: "Ultima Atulizacao",
+        field: "Ultima Atualização",
         value: question.updatedAt
           ? formatDate(question.updatedAt.toString())
           : "",
@@ -327,6 +338,16 @@ function DashQuestion() {
     {
       disabled: !permissao[Roles.criarQuestao],
       onClick: () => {
+        setQuestionSelect(null);
+        setOpenModalRegister(true);
+      },
+      typeStyle: "quaternary",
+      size: "small",
+      children: "Cadastrar Questao",
+    },
+    {
+      disabled: !permissao[Roles.criarQuestao],
+      onClick: () => {
         setMateria(materiasOption[0].id);
         setFrente(frentesOption[0].id);
         setProva(provasOption[0].id);
@@ -345,17 +366,6 @@ function DashQuestion() {
       typeStyle: "quaternary",
       size: "small",
       children: "Aplicar Filtro",
-    },
-    {
-      disabled: !permissao[Roles.criarQuestao],
-      onClick: () => {
-        setQuestionSelect(null);
-        setOpenModalRegister(true);
-      },
-      typeStyle: "quaternary",
-      size: "small",
-      children: "Cadastrar Questao",
-      className: "md:absolute right-4 top-6",
     },
   ];
   return (

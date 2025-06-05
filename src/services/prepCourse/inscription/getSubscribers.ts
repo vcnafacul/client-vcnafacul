@@ -19,6 +19,21 @@ export async function getSubscribers(
   if (response.status === 200) {
     const data: StudentCourseFullDtoInput[] = await response.json();
     return data.map((student) => {
+      const log = student.logs
+        .filter((log) => log.description === "Email de convocação enviado")
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )[0];
+
+      const logDate: Date | undefined = log?.createdAt
+        ? new Date(log?.createdAt)
+        : undefined;
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
+      const sended_email_recently: boolean =
+        logDate != undefined && logDate.getTime() > oneHourAgo.getTime();
+
       return {
         ...student,
         cadastrado_em: new Date(student.cadastrado_em),
@@ -29,6 +44,7 @@ export async function getSubscribers(
           ? new Date(student.data_limite_convocacao!.split("Z")[0])
           : null,
         socioeconomic: JSON.parse(student.socioeconomic),
+        sended_email_recently: sended_email_recently,
       };
     });
   }

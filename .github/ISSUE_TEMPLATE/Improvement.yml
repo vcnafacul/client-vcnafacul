@@ -56,7 +56,7 @@ body:
     id: terms
     attributes:
       label: Code of Conduct
-      description: Ao enviar esta issue, você concorda em seguir nosso [Código de Conduta](https://github.com/vcnafacul/.github/blob/CODE_OF_CONDUCT/CODE_OF_CONDUCT.md)
+      description: Ao enviar esta issue, você concorda em seguir nosso ![Código de Conduta](https://github.com/vcnafacul/.github/blob/19e931bf4756c6a562d0ef82a9561b0ff1006d6f/CODE_OF_CONDUCT.md)
       options:
         - label: Li o Código de Conduta e entendo minhas responsabilidades como membro da comunidade Você na Facul
           required: true

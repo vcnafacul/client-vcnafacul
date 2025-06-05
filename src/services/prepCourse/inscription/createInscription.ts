@@ -19,6 +19,7 @@ export async function createInscription(
       startDate: inscription.range[0],
       endDate: inscription.range[1],
       expectedOpening: inscription.openingsCount,
+      requestDocuments: inscription.requestDocuments,
     }),
   });
   if (response.status === 400) {

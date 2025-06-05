@@ -25,7 +25,7 @@ function DashProva() {
 
   const [openNewProva, setOpenNewProva] = useState<boolean>(false);
   const [showProva, setShowProva] = useState<boolean>(false);
-  const limitCards = 40;
+  const limitCards = 500;
 
   const {
     data: { token, permissao },

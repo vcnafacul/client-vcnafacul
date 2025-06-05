@@ -1,18 +1,18 @@
-import { useCallback, useState } from "react";
+import DocxPreview from "@/components/atoms/docxPreview";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { MateriasLabel } from "@/types/content/materiasLabel";
+import { Save, Trash2, UploadCloud, X } from "lucide-react";
+import { useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { ReactComponent as DocxIcon } from "../../../assets/icons/docx.svg";
-import Content from "../../../components/atoms/content";
 import Text from "../../../components/atoms/text";
-import PropValue from "../../../components/molecules/PropValue";
-import Button from "../../../components/molecules/button";
-import UploadButton from "../../../components/molecules/uploadButton";
 import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
 import ModalTemplate, {
   ModalProps,
 } from "../../../components/templates/modalTemplate";
 import { ContentDtoInput } from "../../../dtos/content/contentDtoInput";
-import { getMateriaString } from "../../../enums/content/materias";
-import { Roles } from "../../../enums/roles/roles";
 import { deleteDemand } from "../../../services/content/deleteDemand";
 import { uploadFileDemand } from "../../../services/content/uploadFileDemand";
 import { useAuthStore } from "../../../store/auth";
@@ -29,52 +29,52 @@ function ShowDemand({
   isOpen,
   updateStatusDemand,
 }: ShowDemandProps) {
-  const [tryUpload, setTryUpload] = useState<boolean>(false);
   const [tryDelete, setTryDelete] = useState<boolean>(false);
-  const [upload, setUpload] = useState<boolean>(false);
   const [arrayBuffer, setArrayBufer] = useState<ArrayBuffer>();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [uploadFile, setUploadFile] = useState<any>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [modalPreview, setModalPreview] = useState<boolean>(false);
+
+  function handleUploadClick() {
+    fileInputRef.current?.click();
+  }
+
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      setUploadFile(file);
+      if (file) {
+        setUploadFile(file);
+        const reader = new FileReader();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        reader.onload = (event: any) => {
+          const arrayBuffer = event.target.result;
+          setArrayBufer(arrayBuffer);
+        };
+        reader.readAsArrayBuffer(file);
+      }
+    }
+  }
 
   const {
-    data: { permissao, token },
+    data: { token },
   } = useAuthStore();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleFileUpload = (e: any) => {
-    setUploadFile(null);
-    setArrayBufer(undefined);
-    setUpload(false);
-    const file = e.target.files[0];
-    if (file) {
-      setUploadFile(file);
-      const reader = new FileReader();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      reader.onload = (event: any) => {
-        const arrayBuffer = event.target.result;
-        setUpload(true);
-        setArrayBufer(arrayBuffer);
-      };
-      reader.readAsArrayBuffer(file);
-    }
+  const ModalDocxPreview = () => {
+    return !modalPreview ? null : (
+      <ModalTemplate
+        isOpen={modalPreview}
+        handleClose={() => setModalPreview(false)}
+        title="Pré-visualização do documento"
+        className="bg-white p-4 rounded-md h-full max-h-[90vh] min-h-[600px] overflow-y-auto scrollbar-hide"
+      >
+        <DocxPreview arrayBuffer={arrayBuffer!} />
+      </ModalTemplate>
+    );
   };
 
-  const MyContent = useCallback(() => {
-    if (upload) {
-      return <Content className="" arrayBuffer={arrayBuffer} />;
-    }
-    return (
-      <div className="flex justify-center p-4">
-        <DocxIcon className="w-28 h-28" />
-        <span className="px-2 pt-1 border-2 border-blue-400 h-fit rounded-t-2xl rounded-r-2xl">
-          Eu sou o docxinho, seu amiguinho
-        </span>
-      </div>
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [upload]);
-
-  const upFile = () => {
+  const handleUploadFile = () => {
     const id = toast.loading("Upload File Demanda ... ");
     const formData = new FormData();
     formData.append("file", uploadFile);
@@ -97,25 +97,6 @@ function ShowDemand({
           autoClose: 3000,
         });
       });
-  };
-
-  const ModalTryUpload = () => {
-    return (
-      <ModalConfirmCancel
-        isOpen={tryUpload}
-        handleClose={() => setTryUpload(false)}
-        handleConfirm={upFile}
-      >
-        <div>
-          <Text className="m-0" size="secondary">
-            Tem certeza ?
-          </Text>
-          <Text size="quaternary">
-            Ao fazer o upload você não podera alterar mais as informações
-          </Text>
-        </div>
-      </ModalConfirmCancel>
-    );
   };
 
   const removeDemand = () => {
@@ -147,6 +128,7 @@ function ShowDemand({
         isOpen={tryDelete}
         handleClose={() => setTryDelete(false)}
         handleConfirm={removeDemand}
+        className="bg-white p-8 rounded-md"
       >
         <div>
           <Text size="secondary">
@@ -157,62 +139,110 @@ function ShowDemand({
     );
   };
 
-  const Buttons = () => {
-    return (
-      <div className="flex gap-4">
-        <Button disabled={!uploadFile} onClick={() => setTryUpload(true)}>
-          Salvar
-        </Button>
-        {permissao[Roles.gerenciadorDemanda] ? (
-          <Button className="bg-red" onClick={() => setTryDelete(true)}>
-            Excluir
-          </Button>
-        ) : (
-          <></>
-        )}
-        <Button onClick={handleClose}>Fechar</Button>
-      </div>
-    );
-  };
-
   return (
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose!}
-      className="bg-white w-full max-w-6xl p-4"
+      className="bg-white w-full max-w-6xl p-4 rounded-md"
     >
-      <>
-        <div className=" sm:relative">
-          <Text size="secondary" className="">
+      <Card className="border-none shadow-none">
+        <CardHeader>
+          <CardTitle className="text-center text-3xl text-marine">
+            Visualizar Demanda
+          </CardTitle>
+          <p className="text-muted-foreground text-center text-xl">
             {demand.title}
-          </Text>
-          <PropValue
-            prop="Materia"
-            value={getMateriaString(demand.subject.frente.materia)}
-          />
-          <PropValue prop="Frente" value={demand.subject.frente.name} />
-          <div className="flex flex-col">
-            <PropValue prop="Tema" value={demand.subject.name} />
-            <span className="self-end">{demand.subject.description}</span>
-          </div>
-          <div className="p-4">
-            <span>{demand.description}</span>
+          </p>
+        </CardHeader>
+
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              value={
+                MateriasLabel.find(
+                  (m) => m.value === demand.subject.frente.materia
+                )?.label
+              }
+              readOnly
+              placeholder="Matéria"
+            />
+            <Input
+              value={demand.subject.frente.name}
+              readOnly
+              placeholder="Frente"
+            />
+            <Input
+              value={demand.subject.name}
+              readOnly
+              placeholder="Tema"
+              className="col-span-2"
+            />
           </div>
 
-          {permissao[Roles.uploadDemanda] ? (
-            <>
-              <div className="overflow-y-auto scrollbar-hide w-full max-h-[50vh] border relative">
-                <MyContent />
-              </div>
-              <UploadButton placeholder="Upload" onChange={handleFileUpload} />
-            </>
-          ) : (
-            <></>
-          )}
-          <Buttons />
-        </div>
-      </>
-      <ModalTryUpload />
+          <div>
+            <Textarea
+              value={demand.description}
+              readOnly
+              placeholder="Descrição"
+              className="resize-none h-32"
+            />
+          </div>
+
+          <div
+            className="border-2 border-dashed border-muted rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/50 transition"
+            onClick={handleUploadClick}
+          >
+            {uploadFile ? (
+              <>
+                <UploadCloud className="h-10 w-10 text-primary mb-2" />
+                <p className="font-medium">{uploadFile.name}</p>
+              </>
+            ) : (
+              <>
+                <UploadCloud className="h-10 w-10 text-muted-foreground mb-2" />
+                <p className="text-muted-foreground">
+                  Clique para fazer upload de um documento
+                </p>
+              </>
+            )}
+            <input
+              type="file"
+              accept=".docx"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="hidden"
+            />
+          </div>
+          {uploadFile &&
+            uploadFile.type ===
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
+              <Button onClick={() => setModalPreview(true)} className="mt-4">
+                Visualizar Preview
+              </Button>
+            )}
+          <div className="flex justify-end space-x-4 pt-4">
+            <Button
+              variant="default"
+              className="w-36"
+              onClick={handleUploadFile}
+              disabled={!uploadFile}
+            >
+              <Save className="mr-2 h-4 w-4" /> Salvar
+            </Button>
+            <Button
+              variant="destructive"
+              className="w-36"
+              onClick={() => setTryDelete(true)}
+            >
+              <Trash2 className="mr-2 h-4 w-4" /> Excluir
+            </Button>
+            <Button variant="outline" className="w-36" onClick={handleClose}>
+              <X className="mr-2 h-4 w-4" /> Fechar
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      <ModalDocxPreview />
       <ModalTryDelete />
     </ModalTemplate>
   );

@@ -1,4 +1,6 @@
+import { getQuestionImage } from "@/services/question/getQuestionImage";
 import { yupResolver } from "@hookform/resolvers/yup";
+import heic2any from "heic2any";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoMdTrash } from "react-icons/io";
@@ -87,6 +89,7 @@ function ModalDetalhes({
         .string()
         .typeError("Texto da questão é obrigatorio")
         .default(question?.textoQuestao),
+      pergunta: yup.string().default(question?.pergunta),
       textoAlternativaA: yup.string().default(question?.textoAlternativaA),
       textoAlternativaB: yup.string().default(question?.textoAlternativaA),
       textoAlternativaC: yup.string().default(question?.textoAlternativaA),
@@ -124,6 +127,7 @@ function ModalDetalhes({
   const [comeBack, setComeback] = useState<boolean>(false);
   const [numberMissing, setNumberMissing] = useState<number[]>([]);
   const [tryDelete, setTryDelete] = useState<boolean>(false);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
 
   const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>(
     null
@@ -229,24 +233,6 @@ function ModalDetalhes({
       disabled: !question ? false : !isEditing,
     },
     {
-      id: "ano",
-      type: "number",
-      label: "Ano:*",
-      defaultValue: infos.provas.find((p) =>
-        prova ? p._id === prova : question?.prova
-      )?.ano,
-      disabled: true,
-    },
-    {
-      id: "edicao",
-      type: "text",
-      label: "Edição:*",
-      defaultValue: infos.provas.find((p) =>
-        prova ? p._id === prova : question?.prova
-      )?.edicao,
-      disabled: true,
-    },
-    {
       id: "numero",
       type: "option",
       label: "Número da Questão:*",
@@ -306,6 +292,13 @@ function ModalDetalhes({
       disabled: !question ? false : !isEditing,
     },
     {
+      id: "pergunta",
+      type: "text",
+      label: "Pergunta:*",
+      value: question?.pergunta,
+      disabled: !question ? false : !isEditing,
+    },
+    {
       id: "textoAlternativaA",
       type: "text",
       label: "Alternativa A:",
@@ -345,7 +338,7 @@ function ModalDetalhes({
   const checkboxData: CheckboxProps[] = [
     {
       name: "provaClassification",
-            title: "Classificação de Prova",
+      title: "Classificação de Prova",
       checked: provaClassification,
       disabled: !question ? false : !isEditing,
     },
@@ -677,6 +670,41 @@ function ModalDetalhes({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enemArea]);
 
+  useEffect(() => {
+    const fetchImage = async () => {
+      if (question?.imageId) {
+        const id = toast.loading("Carregando imagem ...");
+        try {
+          const blob = await getQuestionImage(question.imageId, token);
+          const fileType = blob.type; // Tipo MIME do arquivo
+
+          if (fileType === "image/heic" || fileType === "image/heif") {
+            // Se for HEIC, converte para PNG
+            const convertedBlob = await heic2any({
+              blob,
+              toType: "image/png",
+            });
+            const convertedUrl = URL.createObjectURL(convertedBlob as Blob);
+            setImageSrc(convertedUrl);
+          } else {
+            // Se não for HEIC, usa a imagem normal
+            const url = URL.createObjectURL(blob);
+            setImageSrc(url);
+          }
+          toast.dismiss(id);
+        } catch (error) {
+          toast.update(id, {
+            render: "Erro ao baixar documento",
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+          });
+        }
+      }
+    };
+    fetchImage();
+  }, []);
+
   const BDownloadProva = () => {
     if (!prova) return null;
     return (
@@ -764,11 +792,13 @@ function ModalDetalhes({
                 {imagePreview ? (
                   <ImagePreview imagePreview={imagePreview} />
                 ) : (
-                  <img
-                    className="max-h-52 p-[1px] mr-4 sm:m-0 cursor-pointer"
-                    src={`https://api.vcnafacul.com.br/images/${question?.imageId}.png`}
-                    onClick={() => setPhotoOpen(true)}
-                  />
+                  imageSrc && (
+                    <img
+                      className="max-h-52 p-[1px] mr-4 sm:m-0 cursor-pointer"
+                      src={imageSrc}
+                      onClick={() => setPhotoOpen(true)}
+                    />
+                  )
                 )}
               </div>
               {isEditing ? (

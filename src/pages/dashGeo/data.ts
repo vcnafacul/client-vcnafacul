@@ -14,12 +14,22 @@ export const prepCourseInfo = {
     name: {
         id: "name",
         type: "text",
-        label: "Nome do Cursinho",
+        label: "Nome",
     },
     category: {
         id: "category",
         type: "text",
         label: "Tipo de Cursinho:",
+    },
+    campus: {
+        id: "campus",
+        type: "text",
+        label: "Campus:",
+    },
+    alias: {
+        id: "alias",
+        type: "text",
+        label: "Sigla:",
     },
     cep: {
         id: "cep",

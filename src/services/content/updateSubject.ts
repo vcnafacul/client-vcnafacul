@@ -1,8 +1,8 @@
-import { UpdateSubjectDtoOutput } from "../../dtos/content/SubjectDto";
+import { UpdateSubjectDto } from "../../dtos/content/SubjectDto";
 import fetchWrapper from "../../utils/fetchWrapper";
-import {  subject } from "../urls";
+import { subject } from "../urls";
 
-export async function updateSubject(data: UpdateSubjectDtoOutput, token: string): Promise<void> {
+export async function updateSubject(data: UpdateSubjectDto, token: string): Promise<void> {
     const response = await fetchWrapper(subject, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },

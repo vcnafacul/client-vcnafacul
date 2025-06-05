@@ -1,30 +1,17 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
-import Content from "../../components/atoms/content";
 import Text from "../../components/atoms/text";
 import NewsCarousel from "../../components/organisms/newsCarousel";
 import HeroTemplate from "../../components/templates/heroTemplate";
 import { News } from "../../dtos/news/news";
 import { getNews } from "../../services/news/getNews";
+import NewContent from "./newContent";
 
 function NewsPage() {
   const [news, setNews] = useState<News[]>([]);
   const [indexSelect, setIndexSelect] = useState<number>(0);
-
   const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
-
-  const NewContent = () => {
-    if (news.length > 0) {
-      return (
-        <Content
-        className="bg-white/0"
-          docxFilePath={`${VITE_BASE_FTP}${news[indexSelect].fileName}`}
-        />
-      );
-    }
-    return null;
-  };
 
   const breakpoints = {
     1: {
@@ -73,7 +60,13 @@ function NewsPage() {
         <Text size="secondary" className="text-grey font-normal">
           {news.length == 0 ? null : news[indexSelect].title}
         </Text>
-        <NewContent />
+        <NewContent
+          fileName={
+            news.length == 0
+              ? ""
+              : `${VITE_BASE_FTP}${news[indexSelect].fileName}`
+          }
+        />
         <TriangleGreen className="absolute w-[500px] -right-[250px] bottom-0 -z-10" />
       </div>
     </HeroTemplate>

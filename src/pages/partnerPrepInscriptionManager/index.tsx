@@ -2,13 +2,11 @@ import { ButtonProps } from "@/components/molecules/button";
 import { CardDash } from "@/components/molecules/cardDash";
 import DashCardTemplate from "@/components/templates/dashCardTemplate";
 import { DashCardContext } from "@/context/dashCardContext";
-import { StatusEnum } from "@/enums/generic/statusEnum";
 import { createInscription } from "@/services/prepCourse/inscription/createInscription";
 import { deleteInscription } from "@/services/prepCourse/inscription/deleteInscription";
 import { getAllInscription } from "@/services/prepCourse/inscription/getAllInscription";
 import { updateInscription } from "@/services/prepCourse/inscription/updateInscription";
 import { useAuthStore } from "@/store/auth";
-import { usePrepCourseStore } from "@/store/prepCourse";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import { formatDate } from "@/utils/date";
 import { Paginate } from "@/utils/paginate";
@@ -21,7 +19,6 @@ import {
   InscriptionOutput,
 } from "./modals/InscriptionInfoCreateEditModal";
 import { InscriptionInfoModal } from "./modals/InscriptionInfoModal";
-import { TempInviteMember } from "./modals/temp-invite-member";
 
 export function PartnerPrepInscriptionManager() {
   const [processing, setProcessing] = useState<boolean>(true);
@@ -31,14 +28,11 @@ export function PartnerPrepInscriptionManager() {
   const [inscriptionSelected, setInscriptionSelected] = useState<
     Inscription | undefined
   >(undefined);
-  const limitCards = 40;
-  const [openInviteModal, setOpenInviteModal] = useState(false);
+  const limitCards = 100;
 
   const {
     data: { token },
   } = useAuthStore();
-
-  const { setPrepCourse } = usePrepCourseStore();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getMoreCards = async (): Promise<Paginate<Inscription>> => {
@@ -94,15 +88,6 @@ export function PartnerPrepInscriptionManager() {
       size: "small",
       children: "Novo",
     },
-    {
-      // disabled: !permissao[Roles.criarQuestao],
-      onClick: () => {
-        setOpenInviteModal(true);
-      },
-      typeStyle: "quaternary",
-      size: "small",
-      children: "Convite Membros",
-    },
   ];
 
   const handleCreate = async (data: InscriptionOutput) => {
@@ -138,15 +123,6 @@ export function PartnerPrepInscriptionManager() {
     ) : null;
   };
 
-  const ModalInviteMember = () => {
-    return openInviteModal ? (
-      <TempInviteMember
-        isOpen={openInviteModal}
-        handleClose={() => setOpenInviteModal(false)}
-      />
-    ) : null;
-  };
-
   const handleEdit = async (data: InscriptionOutput) => {
     const id = toast.loading("Atualizando Processo Seletivo...");
     updateInscription(token, data)
@@ -158,6 +134,7 @@ export function PartnerPrepInscriptionManager() {
           description: data.description,
           startDate: data.range[0],
           endDate: data.range[1],
+          requestDocuments: data.requestDocuments,
         });
         toast.update(id, {
           render: `Processo Seletivo ${data.name} atualizado com sucesso`,
@@ -175,20 +152,6 @@ export function PartnerPrepInscriptionManager() {
           autoClose: 3000,
         });
       });
-  };
-
-  const canEditFunction = () => {
-    const activedInscription = inscriptions.find(
-      (item) => item.actived === StatusEnum.Approved
-    );
-
-    if (!activedInscription) {
-      return true;
-    }
-    if (activedInscription.id === inscriptionSelected?.id) {
-      return true;
-    }
-    return false;
   };
 
   const handleDelete = async () => {
@@ -213,7 +176,6 @@ export function PartnerPrepInscriptionManager() {
         }}
         inscription={inscriptionSelected}
         handleEdit={handleEdit}
-        canEdit={canEditFunction()}
         handleDelete={handleDelete}
       />
     ) : null;
@@ -227,12 +189,6 @@ export function PartnerPrepInscriptionManager() {
         return a.startDate < b.startDate ? -1 : 1;
       });
       setInscriptions(res.data);
-      if (res.data.length > 0) {
-        setPrepCourse({
-          id: res.data[0].partnerPrepCourseId,
-          prepCourseName: res.data[0].partnerPrepCourseName,
-        });
-      }
       setProcessing(false);
     } catch (e) {
       console.error("Erro ao buscar inscrições", e);
@@ -268,7 +224,6 @@ export function PartnerPrepInscriptionManager() {
           />
           <ModalInfo />
           <ModalCreate />
-          <ModalInviteMember />
         </>
       )}
     </DashCardContext.Provider>

@@ -8,9 +8,7 @@ import Button from "@/components/molecules/button";
 import MapBox from "@/components/molecules/mapBox";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
-import ModalTemplate, {
-  ModalProps,
-} from "@/components/templates/modalTemplate";
+import { ModalProps } from "@/components/templates/modalTemplate";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import {
   UpdateGeolocation,
@@ -25,14 +23,8 @@ import { LatLngTuple } from "leaflet";
 import { useForm } from "react-hook-form";
 import { Marker, useMapEvents } from "react-leaflet";
 import { toast } from "react-toastify";
-import {
-  prepCourseInfo,
-  prepCourseRegistred,
-  prepCourseUpdated,
-} from "../../data";
+import { prepCourseInfo } from "../../data";
 import { PrepCourseInfo } from "./Fields/prepCourseInfo";
-import { PrepCourseRegistred } from "./Fields/prepCourseRegistred";
-import { PrepCourseUpdated } from "./Fields/prepCourseUpdated";
 
 import { Checkbox, CheckboxProps } from "@/components/atoms/checkbox";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -48,7 +40,6 @@ interface ModalEditDashGeoProps extends ModalProps {
 function ModalEditDashGeo({
   geo,
   handleClose,
-  isOpen,
   updateStatus,
   updateGeo,
 }: ModalEditDashGeoProps) {
@@ -72,32 +63,45 @@ function ModalEditDashGeo({
     category: yup
       .string()
       .default(geo.category)
-      .required("Categoria é obrigatória"),
+      .when("type", {
+        is: (value: TypeMarker) => value == TypeMarker.geo,
+        then: () => yup.string().required("Categoria é obrigatória"),
+        otherwise: () => yup.string().notRequired(),
+      }),
     cep: yup.string().default(geo.cep).required("CEP é obrigatório"),
     street: yup
       .string()
       .default(geo.street)
       .required("Logradouro é obrigatório"),
     number: yup.string().default(geo.number).required("Número é obrigatório"),
-    complement: yup.string().default(geo.complement),
+    complement: yup.string().default(geo.complement).nullable(),
     neighborhood: yup
       .string()
       .default(geo.neighborhood)
       .required("Bairro é obrigatório"),
     city: yup.string().default(geo.city).required("Cidade é obrigatória"),
     state: yup.string().default(geo.state).required("Estado é obrigatório"),
-    phone: yup.string().default(geo.phone),
-    whatsapp: yup.string().default(geo.whatsapp),
+    phone: yup.string().default(geo.phone).nullable(),
+    whatsapp: yup.string().default(geo.whatsapp).nullable(),
     email: yup.string().default(geo.email).email("Email inválido"),
-    site: yup.string().default(geo.site),
-    instagram: yup.string().default(geo.instagram),
-    facebook: yup.string().default(geo.facebook),
-    youtube: yup.string().default(geo.youtube),
-    linkedin: yup.string().default(geo.linkedin),
-    twitter: yup.string().default(geo.twitter),
+    site: yup.string().default(geo.site).nullable(),
+    instagram: yup.string().default(geo.instagram).nullable(),
+    facebook: yup.string().default(geo.facebook).nullable(),
+    youtube: yup.string().default(geo.youtube).nullable(),
+    linkedin: yup.string().default(geo.linkedin).nullable(),
+    twitter: yup.string().default(geo.twitter).nullable(),
     reportAddress: yup.bool().default(geo.reportAddress),
     reportContact: yup.bool().default(geo.reportContact),
     reportOther: yup.bool().default(geo.reportOther),
+    campus: yup
+      .string()
+      .default(geo.campus)
+      .when("type", {
+        is: (value: TypeMarker) => value == TypeMarker.univPublic,
+        then: () => yup.string().required("Campus é obrigatória"),
+        otherwise: () => yup.string().notRequired(),
+      }),
+    type: yup.number().default(geo.type),
   });
 
   const {
@@ -110,7 +114,6 @@ function ModalEditDashGeo({
   } = useForm({
     resolver: yupResolver(schema),
   });
-
   const reportAddress = watch("reportAddress");
   const reportContact = watch("reportContact");
   const reportOther = watch("reportOther");
@@ -345,6 +348,7 @@ function ModalEditDashGeo({
     register("reportAddress");
     register("reportContact");
     register("reportOther");
+    register("campus");
   }, []);
 
   useEffect(() => {
@@ -373,26 +377,18 @@ function ModalEditDashGeo({
       setValue("reportAddress", geo.reportAddress);
       setValue("reportContact", geo.reportContact);
       setValue("reportOther", geo.reportOther);
+      setValue("campus", geo.campus);
     }
   }, [geo]);
 
-  const className =
-    "p-4 relative flex flex-col w-fit min-h-[56vh] max-h-[93vh] bg-white rounded-r-md rounded-b-md";
-
   return (
-    <ModalTemplate
-      handleClose={handleClose!}
-      isOpen={isOpen}
-      outSideClose
-      className={className}
-    >
+    <div>
       <form
-        className="bg-white w-full max-w-6xl h-full overflow-y-auto scrollbar-hide 
-        grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 md:grid-rows-3 gap-x-4"
+        className="flex flex-col md:flex-row gap-4 "
         onSubmit={handleSubmit(UpdateGeo)}
       >
-        <input {...register("id")} className="hidden" />
-        <div className="h-full col-span-1 row-start-1 sm:col-span-2">
+        <div className="w-full">
+          <input {...register("id")} className="hidden" />
           <Text
             className="flex w-full justify-center gap-4 
             items-center"
@@ -409,21 +405,7 @@ function ModalEditDashGeo({
           />
           <div className="bg-red"></div>
         </div>
-        <div className="flex flex-col gap-4 sm:flex-row w-[90vw] md:flex-col md:w-full">
-          <div className="flex-1">
-            <Text size="secondary" className="md:text-xl">
-              Cadastrado Por
-            </Text>
-            <PrepCourseRegistred form={prepCourseRegistred} geo={geo} />
-          </div>
-          <div className="flex-1">
-            <Text size="secondary" className="md:text-xl">
-              Última Edição Por
-            </Text>
-            <PrepCourseUpdated form={prepCourseUpdated} geo={geo} />
-          </div>
-        </div>
-        <div className="sm:col-span-2 sm:row-start-3 md:col-span-1 md:row-start-1 md:col-start-4">
+        <div className="max-w-[30vw] w-full">
           <Text size="secondary">Endereço do Cursinho</Text>
           <MapBox
             className="h-80 border border-gray-300 z-0"
@@ -434,7 +416,7 @@ function ModalEditDashGeo({
                 id: geo.id,
                 lat: geo.latitude,
                 lon: geo.longitude,
-                type: TypeMarker.geo,
+                type: geo.type,
               },
             ]}
             mapEvent={<Event />}
@@ -469,7 +451,7 @@ function ModalEditDashGeo({
       </form>
       <ModalRefused />
       <ModalComeBack />
-    </ModalTemplate>
+    </div>
   );
 }
 export default ModalEditDashGeo;

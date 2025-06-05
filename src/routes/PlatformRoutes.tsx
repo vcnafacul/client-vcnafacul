@@ -1,7 +1,11 @@
 import { ConfirmEnrolled } from "@/pages/confirmEnrolled";
 import InviteMemberProcessing from "@/pages/inviteMemberProcessing";
+import ManagerCollaborator from "@/pages/managerCollaborator";
+import { PartnerClass } from "@/pages/partnerClass";
+import { PartnerClassWithStudents } from "@/pages/partnerClassWithStudents";
 import { PartnerPrepInscriptionManager } from "@/pages/partnerPrepInscriptionManager";
 import { PartnerPrepInscritionStudentManager } from "@/pages/partnerPrepInscritionStudentManager";
+import { StudentsEnrolled } from "@/pages/studentsEnrolled";
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashTemplate from "../components/templates/dashTemplate";
 import { Roles } from "../enums/roles/roles";
@@ -53,7 +57,10 @@ import {
   INVITE_MEMBER,
   LOGIN_PATH,
   LOGOFF_PATH,
+  MANAGER_COLLABORATOR,
   NEWS,
+  PARTNER_CLASS,
+  PARTNER_CLASS_STUDENTS,
   PARTNER_PREP,
   PARTNER_PREP_INSCRIPTION,
   REGISTER_PATH,
@@ -86,7 +93,7 @@ export function PlatformRoutes() {
         <Route path={REGISTER_PATH} element={<Register />} />
         <Route path={FORM_GEOLOCATION} element={<Geo />} />
         <Route path={INVITE_MEMBER} element={<InviteMemberProcessing />} />
-        <Route path={DECLARED_INTEREST} element={<ConfirmEnrolled />} />
+        <Route path={`${DECLARED_INTEREST}/:inscriptionId`} element={<ConfirmEnrolled />} />
       </Route>
 
       <Route
@@ -100,7 +107,7 @@ export function PlatformRoutes() {
 
       <Route path={PARTNER_PREP} element={<BaseRoutes />}>
         <Route
-          path={`${PARTNER_PREP_INSCRIPTION}/:hashPrepCourse`}
+          path={`${PARTNER_PREP_INSCRIPTION}/:hashInscriptionId`}
           element={<PartnerPrepInscription />}
         />
       </Route>
@@ -117,10 +124,17 @@ export function PlatformRoutes() {
           path={PARTNER_PREP_INSCRIPTION}
           element={<PartnerPrepInscriptionManager />}
         />
+        <Route path={MANAGER_COLLABORATOR} element={<ManagerCollaborator />} />
+        <Route path={PARTNER_CLASS} element={<PartnerClass />} />
         <Route
           path={`${PARTNER_PREP_INSCRIPTION}/:inscriptionId`}
           element={<PartnerPrepInscritionStudentManager />}
         />
+        <Route
+          path={`${PARTNER_CLASS}/:hashClassId`}
+          element={<PartnerClassWithStudents />}
+        />
+        <Route path={PARTNER_CLASS_STUDENTS} element={<StudentsEnrolled />} />
         <Route path={DASH} element={<Dash />} />
         <Route path={SIMULADO} element={<MainSimulate />} />
         <Route path={SIMULADO_HISTORIES} element={<SimulationHistories />} />
@@ -192,7 +206,7 @@ export function PlatformRoutes() {
             <ProtectedRoutePermission
               permission={data.permissao[Roles.visualizarDemanda]}
             >
-              <DashContent mtv={data.permissao[Roles.validarDemanda]} />
+              <DashContent />
             </ProtectedRoutePermission>
           }
         />

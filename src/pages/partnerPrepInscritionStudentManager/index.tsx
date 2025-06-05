@@ -1,5 +1,6 @@
 import Button from "@/components/molecules/button";
 import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
+import { Bool } from "@/enums/bool";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
 import { updateWaitingListInfo } from "@/services/prepCourse/inscription/updateWaitingList";
@@ -7,34 +8,33 @@ import { confirmEnrolled } from "@/services/prepCourse/student/confirmEnrolled";
 import { rejectStudent } from "@/services/prepCourse/student/rejectStudent";
 import { resetStudent } from "@/services/prepCourse/student/resetStudent";
 import { scheduleEnrolled } from "@/services/prepCourse/student/scheduleEnrolled";
+import { sendEmailDeclarationInterest } from "@/services/prepCourse/student/sendEmailDeclarationInterest";
 import { updateSelectEnrolledInfo } from "@/services/prepCourse/student/updateEnrolledInfo";
 import { updateIsFreeInfo } from "@/services/prepCourse/student/updateIsFreeInfo";
 import { useAuthStore } from "@/store/auth";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
+import { capitalizeWords } from "@/utils/capitalizeWords";
 import { IconButton } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useCallback, useEffect, useState } from "react";
-import { FaCheck, FaSyncAlt, FaWindowClose } from "react-icons/fa";
+import { BsEnvelopeArrowDownFill, BsEnvelopeArrowUpFill } from "react-icons/bs";
+import { FaCheck, FaSyncAlt } from "react-icons/fa";
 import { IoClose, IoEyeSharp } from "react-icons/io5";
-import { LiaCoinsSolid } from "react-icons/lia";
-import { MdOutlineMoneyOffCsred, MdPlaylistRemove } from "react-icons/md";
-import { PiListChecksFill } from "react-icons/pi";
-import { RiFileListFill, RiFileListLine } from "react-icons/ri";
+import { MdEmail, MdTimerOff } from "react-icons/md";
+import { PiTimerFill } from "react-icons/pi";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ReactComponent as IsentoIcon } from "../../assets/icons/partnerPrepCourse/pagante_add_dk.svg";
+import { ReactComponent as PaganteIcon } from "../../assets/icons/partnerPrepCourse/pagante_remover_dk.svg";
+import { ReactComponent as Reset } from "../../assets/icons/partnerPrepCourse/reset_dk.svg";
 import { ActionButton } from "./actionsButton";
 import { Details } from "./modal/details";
 import { Statistic } from "./modal/statistic";
 import { ScheduleCallEnrolle } from "./scheduleCallEnrolled";
 import { TableInfo } from "./tableInfo";
 import { WaitingList } from "./waitingList";
-
-enum Bool {
-  Yes = "Sim",
-  No = "Não",
-}
 
 export function PartnerPrepInscritionStudentManager() {
   const { inscriptionId } = useParams();
@@ -214,6 +214,27 @@ export function PartnerPrepInscritionStudentManager() {
     });
   };
 
+  const handleSendEmailDeclaredInterest = (studentId: string) => {
+    const id = toast.loading("Enviando Email...");
+    sendEmailDeclarationInterest(studentId, token)
+      .then(() => {
+        toast.update(id, {
+          render: "Email enviado com sucesso",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      })
+      .catch((err) => {
+        toast.update(id, {
+          render: err.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      });
+  };
+
   function shouldProcessApplication(
     status: StatusApplication,
     startDate: Date | null,
@@ -224,6 +245,8 @@ export function PartnerPrepInscritionStudentManager() {
       StatusApplication.DeclaredInterest,
       StatusApplication.EnrollmentCancelled,
       StatusApplication.Rejected,
+      StatusApplication.MissedDeadline,
+      StatusApplication.EnrollmentNotConfirmed,
     ];
     const currentDate = new Date();
     if (
@@ -276,7 +299,9 @@ export function PartnerPrepInscritionStudentManager() {
         handleConfirm={(message) =>
           handleIndeferir(studentSelected!.id, message!)
         }
-        text={`Por favor, informe o motivo da indéferência da matricula de ${studentSelected?.nome} ${studentSelected?.sobrenome}`}
+        text={`Por favor, informe o motivo do indeferimento da matrícula de ${capitalizeWords(
+          studentSelected?.nome + " " + studentSelected?.sobrenome
+        )}.`}
         className="bg-white p-4 rounded-md w-[512px]"
       />
     );
@@ -287,18 +312,6 @@ export function PartnerPrepInscritionStudentManager() {
     setStudentSelected(student!);
     setOpenModalDetaild(true);
   };
-
-  function mascararCPF(cpf: string) {
-    // Certifique-se de que o CPF seja uma string
-    cpf = cpf.toString().replace(/\D/g, ""); // Remove qualquer caractere não numérico
-
-    if (cpf.length !== 11) {
-      throw new Error("CPF inválido. O CPF deve conter 11 dígitos.");
-    }
-
-    // Formata e mascara o CPF
-    return cpf.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "***.***.$3-$4");
-  }
 
   const columns: GridColDef[] = [
     {
@@ -326,7 +339,7 @@ export function PartnerPrepInscritionStudentManager() {
                 onConfirm={() => handleIsFreeInfo(params.row.id, false)}
                 tooltipTitle="Tornar Pagante"
               >
-                <LiaCoinsSolid className="h-6 w-6 fill-amber-600 opacity-60 hover:opacity-100" />
+                <IsentoIcon className="h-6 w-6 fill-darkGreen opacity-60 hover:opacity-100" />
               </ActionButton>
             )}
           {params.row.isento === "Não" &&
@@ -339,7 +352,7 @@ export function PartnerPrepInscritionStudentManager() {
                 onConfirm={() => handleIsFreeInfo(params.row.id, true)}
                 tooltipTitle="Dar Isenção"
               >
-                <MdOutlineMoneyOffCsred className="h-6 w-6 fill-green2 opacity-60 hover:opacity-100" />
+                <PaganteIcon className="h-6 w-6 fill-redError opacity-60 hover:opacity-100" />
               </ActionButton>
             )}
           {shouldProcessApplication(
@@ -363,9 +376,9 @@ export function PartnerPrepInscritionStudentManager() {
               } da lista de convocação`}
             >
               {params.row.convocar === Bool.No ? (
-                <PiListChecksFill className="h-6 w-6 fill-lime-600 opacity-60 hover:opacity-100" />
+                <BsEnvelopeArrowUpFill className="h-6 w-6 fill-lime-600 opacity-60 hover:opacity-100" />
               ) : (
-                <MdPlaylistRemove className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
+                <BsEnvelopeArrowDownFill className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
               )}
             </ActionButton>
           )}
@@ -395,9 +408,9 @@ export function PartnerPrepInscritionStudentManager() {
               } da lista de espera`}
             >
               {params.row.lista_de_espera === Bool.No ? (
-                <RiFileListFill className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
+                <PiTimerFill className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
               ) : (
-                <RiFileListLine className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
+                <MdTimerOff className="h-6 w-6 fill-orange opacity-60 hover:opacity-100" />
               )}
             </ActionButton>
           )}
@@ -440,9 +453,24 @@ export function PartnerPrepInscritionStudentManager() {
               onConfirm={() => handleResetStudent(params.row.id)}
               tooltipTitle="Resetar"
             >
-              <FaWindowClose className="h-6 w-6 fill-red/50 hover:fill-red" />
+              <Reset className="h-6 w-6 fill-red/70 hover:fill-red" />
             </ActionButton>
           )}
+          {params.row.status === StatusApplication.CalledForEnrollment &&
+            !params.row.sended_email_recently &&
+            params.row.data_convocacao &&
+            new Date() >= params.row.data_convocacao && (
+              <ActionButton
+                titleAlert={`Confirmação de Matrícula ${params.row.nome} ${params.row.sobrenome}`}
+                descriptionAlert={`Realizar a  confirmação de matrícula de  ${params.row.nome} ${params.row.sobrenome}`}
+                onConfirm={() => {
+                  handleSendEmailDeclaredInterest(params.row.id);
+                }}
+                tooltipTitle="Reenviar email de convocação"
+              >
+                <MdEmail className="h-6 w-6 fill-sky-500 opacity-60 hover:opacity-100" />
+              </ActionButton>
+            )}
         </div>
       ),
     },
@@ -452,7 +480,6 @@ export function PartnerPrepInscritionStudentManager() {
       headerName: "CPF",
       flex: 1,
       minWidth: 120,
-      valueGetter: (params) => mascararCPF(params),
     },
     { field: "status", headerName: "Status", width: 200 },
     {
@@ -493,8 +520,6 @@ export function PartnerPrepInscritionStudentManager() {
       flex: 1,
       type: "date",
     },
-
-    { field: "nome_social", headerName: "Nome Social", flex: 1 },
     { field: "nome", headerName: "Nome", flex: 1 },
     { field: "sobrenome", headerName: "Sobrenome", flex: 1 },
   ];
@@ -554,7 +579,16 @@ export function PartnerPrepInscritionStudentManager() {
       const id = toast.loading("Carregando Lista de Alunos...");
       getSubscribers(token, inscriptionId)
         .then((data) => {
-          setStudents(data);
+          setStudents(
+            data.map((student) => {
+              return {
+                ...student,
+                nome: student.usar_nome_social
+                  ? student.nome_social
+                  : student.nome,
+              };
+            })
+          );
           setStudentSelected(data[0]);
           toast.dismiss(id);
         })

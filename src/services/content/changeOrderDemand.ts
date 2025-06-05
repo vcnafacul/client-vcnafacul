@@ -10,6 +10,6 @@ export async function changeOrderDemand (token: string, body: ChangeOrderDTO){
     });
     if(response.status !== 200){
         const res = await response.json()
-        throw new Error(`Erro ao buscar Conteúdos Cadastradas em Ordem ${res.message}`)
+        throw new Error(`Erro ao tentar alterar orderm conteúdos - ${res.message}`)
     }
 }

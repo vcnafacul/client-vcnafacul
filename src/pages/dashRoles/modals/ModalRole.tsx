@@ -31,19 +31,23 @@ function PermissionsList({
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      {permissions.map((perm) => (
-        <div
-          key={perm.name}
-          className="flex items-center justify-between bg-gray-100 p-2 rounded-md shadow"
-        >
-          <span className="text-base text-marine font-medium">{perm.name}</span>
-          {perm.liberado ? (
-            <StatusApproved className="text-green-500" />
-          ) : (
-            <StatusRejected className="text-red-500" />
-          )}
-        </div>
-      ))}
+      {permissions
+        .filter((p) => p.name != "base")
+        .map((perm) => (
+          <div
+            key={perm.name}
+            className="flex items-center justify-between bg-gray-100 p-2 rounded-md shadow"
+          >
+            <span className="text-base text-marine font-medium">
+              {perm.name}
+            </span>
+            {perm.liberado ? (
+              <StatusApproved className="text-green-500" />
+            ) : (
+              <StatusRejected className="text-red-500" />
+            )}
+          </div>
+        ))}
     </div>
   );
 }

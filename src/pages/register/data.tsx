@@ -54,3 +54,8 @@ export const textContact: { text: string, email: string, linkToMakeContactOnGmai
 }
 
 export const tagLinkToMakeContactOnGmail = (<a className="text-green" href={textContact.linkToMakeContactOnGmail} target="_blank" rel="noopener noreferrer">{textContact.email}</a>)
+export const socialNameCheckbox =
+  "O nome social é destinado a pessoas trans, travestis ou não binárias que preferem ser identificadas por um nome diferente do registrado oficialmente. Ele existe para garantir respeito à identidade de gênero e evitar situações constrangedoras.";
+
+export const linkSocialName =
+  "https://www.trf4.jus.br/trf4/controlador.php?acao=pagina_visualizar&id_pagina=2207";

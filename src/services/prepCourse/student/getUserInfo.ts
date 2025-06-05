@@ -6,10 +6,10 @@ const nothasActiveInscription = "No active inscription course";
 const alreadyInscribed = "User already inscribed";
 
 export async function getUserInfo(
-  idPrepCourse: string,
+  inscriptionId: string,
   token: string
 ): Promise<UserMe> {
-  const response = await fetchWrapper(get_user_info(idPrepCourse), {
+  const response = await fetchWrapper(get_user_info(inscriptionId), {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

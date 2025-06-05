@@ -8,6 +8,8 @@ import { Calendar } from "primereact/calendar";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 export interface InscriptionOutput {
   id: string;
@@ -15,6 +17,7 @@ export interface InscriptionOutput {
   openingsCount: number;
   description: string;
   range: Date[];
+  requestDocuments: boolean;
 }
 
 interface InscriptionInfoModalProps {
@@ -33,25 +36,18 @@ export function InscriptionInfoCreateEditModal({
   const schema = yup
     .object()
     .shape({
-      name: yup
-        .string()
-        .default(inscription?.name)
-        .required("Campo obrigatório"),
+      name: yup.string().required("Campo obrigatório"),
       openingsCount: yup
         .number()
         .min(1, "O número de vagas deve ser maior que 0")
-        .default(inscription?.openingsCount)
         .required("Campo obrigatório"),
-      description: yup.string().default(inscription?.description),
+      description: yup.string(),
       range: yup
         .array()
         .of(yup.date().required("Data obrigatória"))
-        .default([
-          inscription?.startDate || new Date(),
-          inscription?.endDate || new Date(),
-        ])
         .length(2, "Selecione um intervalo de datas válido")
-        .required("Campo obrigatório"), // Validando o array de datas com duas posições
+        .required("Campo obrigatório"),
+      requestDocuments: yup.boolean().default(false),
     })
     .required();
 
@@ -60,12 +56,22 @@ export function InscriptionInfoCreateEditModal({
     handleSubmit,
     setValue,
     control,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: {
+      name: inscription?.name || "",
+      openingsCount: inscription?.openingsCount || 1,
+      description: inscription?.description || "",
+      range: [
+        inscription?.startDate ? new Date(inscription.startDate) : new Date(),
+        inscription?.endDate ? new Date(inscription.endDate) : new Date(),
+      ],
+      requestDocuments: inscription?.requestDocuments ?? false,
+    },
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const resolver = (data: any) => {
     onCreateEdit({ ...data, id: inscription?.id });
   };
@@ -75,74 +81,34 @@ export function InscriptionInfoCreateEditModal({
     register("openingsCount");
     register("description");
     register("range");
+    register("requestDocuments");
   }, []);
 
   return (
-    <ModalTemplate isOpen={isOpen} handleClose={handleClose} className="bg-white p-2 rounded-md">
-      <div className="w-96 sm:min-w-[585px] flex flex-col gap-1">
-        <h1 className="text-left text-marine text-3xl font-black">
-          Processo Seletivo
-        </h1>
-        <form
-          className="sm:grid grid-cols-2 grid-rows-3 gap-x-4"
-          onSubmit={handleSubmit(resolver)}
-        >
-          <div className="row-start-1 col-start-1">
-            <InputFactory
-              id="name"
-              label="Nome do Cursinho"
-              type="text"
-              defaultValue={inscription?.name}
-              error={errors.name}
-              onChange={(e: any) => setValue("name", e.target.value)}
-            />
-          </div>
-          <div className="card flex justify-content-center h-16 border pt-4 pl-4 rounded-md relative mb-4  row-start-3 col-start-1">
-            <label
-              className="absolute top-1 left-3 text-xs text-grey font-semibold"
-              htmlFor="date"
-            >
-              Inicio - Fim
-            </label>
-            <Controller
-              name="range"
-              control={control}
-              defaultValue={[
-                new Date(inscription?.startDate || new Date()),
-                new Date(inscription?.endDate || new Date()),
-              ]}
-              render={({ field }) => (
-                <Calendar
-                  id="range"
-                  dateFormat="dd/mm/yy"
-                  value={field.value}
-                  onChange={(e) => field.onChange(e.value)}
-                  selectionMode="range"
-                  className="focus-visible:ring-orange"
-                  readOnlyInput
-                  hideOnRangeSelection
-                />
-              )}
-            />
-            {errors.range && (
-              <p className="absolute text-red text-xs mt-1 -bottom-5 left-0">
-                {errors.range.message}
-              </p>
-            )}
-          </div>
-          <div className="row-start-2 col-start-1">
-            <InputFactory
-              id="openingsCount"
-              label="Numero de Vagas"
-              type="number"
-              defaultValue={inscription?.openingsCount}
-              error={errors.openingsCount}
-              onChange={(e: any) =>
-                setValue("openingsCount", parseInt(e.target.value))
-              }
-            />
-          </div>
-          <div className="row-span-3 row-start-1 col-start-2">
+    <ModalTemplate isOpen={isOpen} handleClose={handleClose} className="bg-white p-6 rounded-md">
+      <div className="sm:min-w-[640px] flex flex-col gap-6">
+        <h1 className="text-marine text-2xl font-bold">Processo Seletivo</h1>
+
+        <form className="grid grid-cols-1 sm:grid-cols-2 gap-6" onSubmit={handleSubmit(resolver)}>
+          <InputFactory
+            id="name"
+            label="Título"
+            type="text"
+            defaultValue={inscription?.name}
+            error={errors.name}
+            onChange={(e: any) => setValue("name", e.target.value)}
+          />
+
+          <InputFactory
+            id="openingsCount"
+            label="Número de Vagas"
+            type="number"
+            defaultValue={inscription?.openingsCount}
+            error={errors.openingsCount}
+            onChange={(e: any) => setValue("openingsCount", parseInt(e.target.value))}
+          />
+
+          <div className="sm:col-span-2">
             <InputFactory
               id="description"
               label="Descrição"
@@ -151,15 +117,46 @@ export function InscriptionInfoCreateEditModal({
               onChange={(e: any) => setValue("description", e.target.value)}
             />
           </div>
-          <div className="flex gap-4 justify-end col-span-2">
-            <Button
-              typeStyle="secondary"
-              className="w-24 h-8"
-              onClick={handleClose}
-            >
+
+          <div className="sm:col-span-2">
+            <Label htmlFor="range" className="text-sm text-gray-700 font-semibold block mb-1">
+              Período de Inscrição
+            </Label>
+            <Controller
+              name="range"
+              control={control}
+              render={({ field }) => (
+                <Calendar
+                  id="range"
+                  dateFormat="dd/mm/yy"
+                  value={field.value}
+                  onChange={(e) => field.onChange(e.value)}
+                  selectionMode="range"
+                  readOnlyInput
+                  hideOnRangeSelection
+                  className="w-full"
+                />
+              )}
+            />
+            {errors.range && <p className="text-red text-xs mt-1">{errors.range.message}</p>}
+          </div>
+
+          <div className="sm:col-span-2 flex items-center gap-2">
+            <Checkbox
+              id="requestDocuments"
+              checked={watch("requestDocuments")}
+              onCheckedChange={(checked) => setValue("requestDocuments", !!checked)}
+            />
+            <Label htmlFor="requestDocuments" className="text-sm text-gray-700">
+              Este processo seletivo exigirá envio de documentos dos candidatos
+            </Label>
+          </div>
+
+          <div className="flex justify-end gap-4 sm:col-span-2 mt-2">
+            <Button typeStyle="secondary" className="w-24 h-9" onClick={handleClose}>
               Cancelar
             </Button>
-            <Button typeStyle="primary" className="w-24 h-8" type="submit">
+            <Button typeStyle="primary" className="w-24 h-9" type="submit">
               Salvar
             </Button>
           </div>

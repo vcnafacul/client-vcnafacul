@@ -1,0 +1,52 @@
+/* Estilo base do container do documento */
+.docx-container {
+  background: white !important;
+  overflow-x: auto;
+  border-radius: 5px !important;
+  padding: 1rem;
+}
+
+/* Tipografia e layout geral */
+.docx-preview {
+  font-family: "Times New Roman", serif;
+  line-height: 1.6;
+  font-size: 1rem;
+  color: #333;
+}
+
+/* Remove sombras e padding indesejado */
+.docx-wrapper {
+  background-color: white !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.docx-wrapper section {
+  box-shadow: none !important;
+  padding: 30px !important;
+}
+
+/* Centraliza parágrafos com iframes (ex: YouTube) */
+.docx-container p:has(iframe) {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+/* Container de imagem: garante centralização e comportamento adequado */
+.docx-container div:has(img),
+.docx-container span:has(img),
+.docx-container p:has(img) {
+  padding: 0.5rem 0.5rem !important;
+}
+
+/* Imagens: mantém proporção correta e evita distorções */
+.docx-container img {
+  max-width: 100% !important;
+  height: auto !important;
+  aspect-ratio: auto !important;
+  display: block !important;
+  margin: 0 auto;
+  object-fit: contain;
+  padding: 0.5rem 0;
+}

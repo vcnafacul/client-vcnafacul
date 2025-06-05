@@ -1,5 +1,4 @@
 import { SubjectDto } from "../../dtos/content/contentDtoInput";
-import { FormFieldOptionSubject } from "../../pages/dashContent/modals/settingsContent";
 import fetchWrapper from "../../utils/fetchWrapper";
 import { subjectsByFrente } from "../urls";
 
@@ -13,14 +12,4 @@ export async function getSubjects ( frenteId: string, token: string): Promise<Su
         throw new Error(`Erro ao buscar Conteúdos Cadastradas ${res.message}`)
     }
     return res
-}
-
-
-export async function getSubjectsLikeFormField( frenteId: string, token: string): Promise<FormFieldOptionSubject[]> {
-    const subjects = await getSubjects(frenteId, token)
-
-    const form : FormFieldOptionSubject[] = subjects.map((subject: SubjectDto) => (
-        { value: subject.id, label: subject.name, canDelete: subject.lenght === 0, description: subject.description}
-    ))
-    return form
 }
