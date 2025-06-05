@@ -49,7 +49,6 @@ export async function getAttendanceRecordByStudentId(token: string, page: number
   });
 
   const res : Paginate<AttendanceRecord> = await response.json();
-  console.log(res);
   if (response.status !== 200) {
     if (response.status >= 400) {
       throw res;

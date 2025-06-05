@@ -1,14 +1,17 @@
 import { attendanceRecord } from "@/services/urls";
 import fetchWrapper from "@/utils/fetchWrapper";
+import { toBrazilStartOfDayISOString } from "@/utils/toBrazilISOString";
 
 export async function createAttendanceRecord(token: string, classId: string, date: Date, studentIds: string[] ): Promise<void> {
+  const dateBR = toBrazilStartOfDayISOString(date);
+  const body = JSON.stringify({ classId, date: dateBR, studentIds });
   const response = await fetchWrapper(attendanceRecord, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ classId, date, studentIds }),
+    body,
   });
 
   const res = await response.json();

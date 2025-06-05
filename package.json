@@ -51,7 +51,7 @@
     "leaflet": "^1.9.4",
     "lodash": "^4.17.21",
     "lucide-react": "^0.441.0",
-    "luxon": "^3.4.4",
+    "luxon": "^3.6.1",
     "mammoth": "^1.6.0",
     "pdfmake": "^0.2.15",
     "primereact": "^10.8.4",
