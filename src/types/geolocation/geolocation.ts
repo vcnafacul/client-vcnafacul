@@ -30,6 +30,7 @@ export interface CreateGeolocation {
   userEmail: string;
   campus?: string;
   type: TypeMarker;
+  alias?: string;
 }
 
 export interface Geolocation extends CreateGeolocation, CardDash {

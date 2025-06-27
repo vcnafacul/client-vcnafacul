@@ -61,18 +61,29 @@ function DashQuestion() {
       {
         field: "Prova",
         value:
-          infosQuestion.provas.find((infos) => infos._id === question.prova)
-            ?.nome ?? question.prova,
+          typeof question.prova === "string"
+            ? infosQuestion.provas.find((infos) => infos._id === question.prova)
+                ?.nome ?? question.prova
+            : question.prova ?? JSON.stringify(question.prova),
       },
-      { field: "Área", value: question.enemArea },
+      {
+        field: "Área",
+        value:
+          typeof question.enemArea === "string"
+            ? question.enemArea
+            : JSON.stringify(question.enemArea),
+      },
       {
         field: "Disciplina",
         value:
-          infosQuestion.materias.find((infos) => infos._id === question.materia)
-            ?.nome ?? question.materia,
+          typeof question.materia === "string"
+            ? infosQuestion.materias.find(
+                (infos) => infos._id === question.materia
+              )?.nome ?? question.materia
+            : question.materia ?? JSON.stringify(question.materia),
       },
       {
-        field: "Ultima Atulizacao",
+        field: "Ultima Atualização",
         value: question.updatedAt
           ? formatDate(question.updatedAt.toString())
           : "",

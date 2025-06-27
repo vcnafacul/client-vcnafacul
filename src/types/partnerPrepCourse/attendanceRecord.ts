@@ -34,6 +34,7 @@ export interface AttendanceRecordByStudent {
   registeredAt: Date;
   present: string;
   justification?: string;
+  className: string;
 }
 
 

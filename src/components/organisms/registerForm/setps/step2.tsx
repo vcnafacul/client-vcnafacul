@@ -51,7 +51,23 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
         .string()
         .nullable()
         .transform((curr, orig) => (orig === "" ? null : curr))
-        .required("campo obrigatório"),
+        .required("Campo obrigatório")
+        .test("age", "Você deve ter no mínimo 14 anos", (value) => {
+          if (!value) return false;
+          const today = new Date();
+          const birthDate = new Date(value);
+          const age = today.getFullYear() - birthDate.getFullYear();
+          const monthDiff = today.getMonth() - birthDate.getMonth();
+          const dayDiff = today.getDate() - birthDate.getDate();
+
+          if (
+            age > 14 ||
+            (age === 14 && (monthDiff > 0 || (monthDiff === 0 && dayDiff >= 0)))
+          ) {
+            return true;
+          }
+          return false;
+        }),
       city: yup.string().required("campo obrigatório"),
       state: yup.string().required(),
       lgpd: yup
@@ -187,7 +203,11 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
         error={errors.gender}
         onChange={(e: any) => setValue("gender", e.target.value)}
       />
-      <ControlCalendar control={control} label="Data de Nascimento" />
+      <ControlCalendar
+        control={control}
+        label="Data de Nascimento"
+        error={errors.birthday}
+      />
       <InputFactory
         id="phone"
         label="Telefone"

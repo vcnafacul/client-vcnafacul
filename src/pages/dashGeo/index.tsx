@@ -1,7 +1,10 @@
-import { TypeMarker } from "@/types/map/marker";
 import { ShadcnTable } from "@/components/atoms/shadcnTable";
+import { ButtonProps } from "@/components/molecules/button";
 import ModalTabTemplate from "@/components/templates/modalTabTemplate";
+import { createGeolocation } from "@/services/geolocation/createGeolocation";
+import { TypeMarker } from "@/types/map/marker";
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { FilterProps } from "../../components/atoms/filter";
 import { SelectProps } from "../../components/atoms/select";
 import { CardDash } from "../../components/molecules/cardDash";
@@ -9,11 +12,15 @@ import DashCardTemplate from "../../components/templates/dashCardTemplate";
 import { DashCardContext } from "../../context/dashCardContext";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { getAllGeolocation } from "../../services/geolocation/getAllGeolocation";
-import { Geolocation } from "../../types/geolocation/geolocation";
+import {
+  CreateGeolocation,
+  Geolocation,
+} from "../../types/geolocation/geolocation";
 import { formatDate } from "../../utils/date";
 import { mergeObjects } from "../../utils/mergeObjects";
 import { Paginate } from "../../utils/paginate";
 import { dashGeo } from "./data";
+import ModalCreateDashGeo from "./modals/modalCreateDashGeo";
 import ModalEditDashGeo from "./modals/modalEditDashGeo";
 
 function DashGeo() {
@@ -21,6 +28,7 @@ function DashGeo() {
   const [geolocations, setGeolocations] = useState<Geolocation[]>([]);
   const [geoSelect, setGeoSelect] = useState<Geolocation>();
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openModalCreate, setOpenModalCreate] = useState<boolean>(false);
   const [filterText, setFilterText] = useState<string>("");
   const [enterText, setEnterText] = useState<string>("");
   const limitCards = 100;
@@ -67,11 +75,47 @@ function DashGeo() {
     setGeoSelect(geolocation);
   };
 
+  const ModalCreate = () => {
+    return !openModalCreate ? null : (
+      <ModalCreateDashGeo
+        isOpen={openModalCreate}
+        handleClose={() => setOpenModalCreate(false)}
+        createGeo={(geo: Geolocation) => {
+          const id = toast.loading("Criando Universidade...");
+          createGeolocation({
+            ...geo,
+          } as CreateGeolocation)
+            .then((res) => {
+              toast.update(id, {
+                render: `Universidade ${geo.name} criada com sucesso`,
+                type: `success`,
+                theme: `dark`,
+                isLoading: false,
+                autoClose: 3000,
+              });
+              setOpenModalCreate(false);
+              setGeolocations([res, ...geolocations]);
+            })
+            .catch((error: Error) => {
+              toast.update(id, {
+                render: error.message,
+                type: `error`,
+                theme: `dark`,
+                isLoading: false,
+                autoClose: 3000,
+              });
+            });
+        }}
+        type={TypeMarker.univPublic}
+      />
+    );
+  };
+
   const ModalEdit = () => {
     return !openModal ? null : (
       <ModalTabTemplate
         isOpen={openModal}
-        className="p-8 rounded-md  relative h-[90vh] w-[90vw] overflow-y-auto scrollbar-hide"
+        className="px-8 py-4 rounded-md  relative h-[90vh] w-[90vw] overflow-y-auto scrollbar-hide"
         tabs={[
           {
             label: "Detalhes",
@@ -144,6 +188,17 @@ function DashGeo() {
     getGeolocations(status, enterText);
   }, [status, getGeolocations, enterText]);
 
+  const buttons: ButtonProps[] = [
+    {
+      onClick: () => {
+        setOpenModalCreate(true);
+      },
+      typeStyle: "quaternary",
+      size: "small",
+      children: "Criar Universidade",
+    },
+  ];
+
   return (
     <DashCardContext.Provider
       value={{
@@ -156,10 +211,12 @@ function DashGeo() {
         limitCards,
         selectFiltes,
         filterProps,
+        buttons,
       }}
     >
       <DashCardTemplate />
       <ModalEdit />
+      <ModalCreate />
     </DashCardContext.Provider>
   );
 }

@@ -74,7 +74,7 @@ function ModalEditDashGeo({
       .default(geo.street)
       .required("Logradouro é obrigatório"),
     number: yup.string().default(geo.number).required("Número é obrigatório"),
-    complement: yup.string().default(geo.complement),
+    complement: yup.string().default(geo.complement).nullable(),
     neighborhood: yup
       .string()
       .default(geo.neighborhood)
@@ -416,7 +416,7 @@ function ModalEditDashGeo({
                 id: geo.id,
                 lat: geo.latitude,
                 lon: geo.longitude,
-                type: TypeMarker.geo,
+                type: geo.type,
               },
             ]}
             mapEvent={<Event />}

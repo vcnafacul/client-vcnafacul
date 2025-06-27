@@ -4,7 +4,11 @@ import Text from "@/components/atoms/text";
 import Button from "@/components/molecules/button";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { StudentInscriptionDTO } from "@/dtos/student/studentInscriptionDTO";
-import { linkSocialName, socialNameCheckbox, stateOptions } from "@/pages/register/data";
+import {
+  linkSocialName,
+  socialNameCheckbox,
+  stateOptions,
+} from "@/pages/register/data";
 import { phoneMask } from "@/utils/phoneMask";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { addLocale } from "primereact/api";
@@ -29,7 +33,9 @@ export function PartnerPrepInscriptionStep1({
   currentData,
 }: PartnerPrepInscriptionStep1Props) {
   const [cpf, setCPF] = useState<string>(currentData?.cpf || "");
-  const [isCheckboxChecked, setIsCheckboxChecked] = useState<boolean>(currentData?.socialName !== "");
+  const [isCheckboxChecked, setIsCheckboxChecked] = useState<boolean>(
+    currentData?.socialName !== ""
+  );
 
   const [whatsapp, setWhatsapp] = useState<string>(
     phoneMask(currentData?.whatsapp) || ""
@@ -97,10 +103,20 @@ export function PartnerPrepInscriptionStep1({
     handleSubmit,
     setValue,
     control,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  const firstName = watch("firstName");
+  const socialName = watch("socialName");
+  const lastName = watch("lastName");
+
+  const getDisplayName = () => {
+    const nameToUse = isCheckboxChecked && socialName ? socialName : firstName;
+    return `${nameToUse} ${lastName}`.trim();
+  };
 
   // Função para aplicar máscara de CPF
   const handleCPFChange = (cpf: string) => {
@@ -200,7 +216,9 @@ export function PartnerPrepInscriptionStep1({
             label=""
             type="checkbox"
             checkboxs={["Desejo utilizar o Nome Social"]}
-            defaultValue={currentData?.socialName ? ["Desejo utilizar o Nome Social"] : []}
+            defaultValue={
+              currentData?.socialName ? ["Desejo utilizar o Nome Social"] : []
+            }
             error={errors.socialName}
             onCheckedChange={(values: string[]) => {
               setIsCheckboxChecked(values.length > 0);
@@ -219,6 +237,10 @@ export function PartnerPrepInscriptionStep1({
           </a>
         </div>
       </div>
+      <span className="text-xs text-grey font-semibold mb-4">
+        Esta é uma pré-visualização do nome que será utilizado na plataforma:{" "}
+        {getDisplayName()}
+      </span>
       <InputFactory
         id="email"
         label="Email*"

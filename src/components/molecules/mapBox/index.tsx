@@ -4,7 +4,7 @@ import { MapContainer, Marker, TileLayer } from "react-leaflet";
 
 import leaflet from "leaflet";
 import { useEffect, useState } from "react";
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from "react-dom/server";
 import { ReactComponent as PointIcon } from "../../../assets/images/home/univ_public.svg";
 import { MarkerPoint, TypeMarker } from "../../../types/map/marker";
 
@@ -38,9 +38,9 @@ function MapBox({
       }
     );
   }, []);
-  
+
   return (
-    <div className="relative">
+    <div className="relative h-fit">
       {initialPosition && (
         <MapContainer
           center={center ?? initialPosition}
@@ -63,7 +63,15 @@ function MapBox({
                   position={[mark.lat, mark.lon]}
                   icon={leaflet.divIcon({
                     className: "w-8 h-8",
-                    html: renderToStaticMarkup(<PointIcon className={`${mark.type === TypeMarker.geo ? "fill-blueGeo" : "fill-red"} h-7`} />),
+                    html: renderToStaticMarkup(
+                      <PointIcon
+                        className={`${
+                          mark.type === TypeMarker.geo
+                            ? "fill-blueGeo"
+                            : "fill-red"
+                        } h-7`}
+                      />
+                    ),
                   })}
                   eventHandlers={{
                     click: () =>

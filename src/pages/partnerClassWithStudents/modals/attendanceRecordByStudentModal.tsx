@@ -14,14 +14,12 @@ import { toast } from "react-toastify";
 interface AttendanceRecordProps {
   isOpen: boolean;
   handleClose: () => void;
-  classId: string;
   studentId: string;
 }
 
 export function AttendanceRecordByStudentModal({
   isOpen,
   handleClose,
-  classId,
   studentId,
 }: AttendanceRecordProps) {
   const [attendances, setAttendances] = useState<AttendanceRecordByStudent[]>(
@@ -51,6 +49,15 @@ export function AttendanceRecordByStudentModal({
       },
     },
     {
+      field: "className",
+      headerName: "Turma",
+      align: "center",
+      headerAlign: "center",
+      minWidth: 200,
+      filterable: false,
+      sortable: false,
+    },
+    {
       field: "present",
       headerName: "Presença",
       align: "center",
@@ -73,13 +80,14 @@ export function AttendanceRecordByStudentModal({
   const paginationModel = { page: 0, pageSize: limit };
 
   const handleGetAttendances = async (page: number, limit: number) => {
-    getAttendanceRecordByStudentId(token, page, limit, classId, studentId)
+    getAttendanceRecordByStudentId(token, page, limit, studentId)
       .then((res) => {
         const data: AttendanceRecordByStudent[] = res.data.map((s) => ({
           id: s.id,
           registeredAt: s.registeredAt,
           present: s.studentAttendance[0].present ? "Presente" : "Ausente",
           justification: s.studentAttendance[0]?.justification?.justification,
+          className: s.class.name,
         }));
         setAttendances(
           data.sort((a, b) => (b.registeredAt > a.registeredAt ? 1 : -1))
@@ -106,7 +114,9 @@ export function AttendanceRecordByStudentModal({
         );
 
         // Adiciona os novos selecionados
-        const added = newSelection.filter((id: string) => !prevSelection.includes(id));
+        const added = newSelection.filter(
+          (id: string) => !prevSelection.includes(id)
+        );
 
         return [
           ...prevSelection.filter((id) => !removed.includes(id)),
@@ -169,6 +179,7 @@ export function AttendanceRecordByStudentModal({
         <h1 className="text-2xl font-bold">Registro de Presença</h1>
         <Button
           onClick={() => setOpenModalJustification(true)}
+          disabled={selectedRows.length === 0}
           className="bg-orange/70 hover:bg-orange font-black"
         >
           Aplicar Justificativa
