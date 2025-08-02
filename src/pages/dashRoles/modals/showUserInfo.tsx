@@ -17,13 +17,14 @@ function ShowUserInfo({
   isOpen,
   handleClose,
 }: ShowUserInfoProps) {
+  const dataAntiga = (new Date('1900-01-02T00:00:00Z')).toString();
   return (
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
       className="bg-white p-2 rounded-md"
     >
-      <div className=" p-4 rounded md:min-w-[700px] overflow-y-auto scrollbar-hide h-4/5 sm:h-fit">
+      <div className=" p-4 rounded md:min-w-[700px] max-w-[900px] overflow-y-auto scrollbar-hide h-4/5 sm:h-fit">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 ">
           <PropValue
             prop="Name"
@@ -53,8 +54,12 @@ function ShowUserInfo({
               value={formatDate(ur.user.createdAt.toString())}
             />
             <PropValue
-              prop="Ultima Atualização"
+              prop="Última Atualização em"
               value={formatDate(ur.user.updatedAt.toString(), "dd/MM/yyyy HH:mm")}
+            />
+            <PropValue
+              prop="Último Acesso em"
+              value={formatDate(ur.user.lastAccess ? ur.user.lastAccess.toString() : dataAntiga, "dd/MM/yyyy HH:mm")}
             />
             {ur.user.deletedAt ? (
               <PropValue
