@@ -24,7 +24,7 @@ function ShowUserInfo({
       handleClose={handleClose}
       className="bg-white p-2 rounded-md"
     >
-      <div className=" p-4 rounded md:min-w-[700px] overflow-y-auto scrollbar-hide h-4/5 sm:h-fit">
+      <div className=" p-4 rounded md:min-w-[700px] max-w-[900px] overflow-y-auto scrollbar-hide h-4/5 sm:h-fit">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 ">
           <PropValue
             prop="Name"
