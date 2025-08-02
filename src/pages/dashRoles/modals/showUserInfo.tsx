@@ -17,6 +17,7 @@ function ShowUserInfo({
   isOpen,
   handleClose,
 }: ShowUserInfoProps) {
+  const dataAntiga = (new Date('1900-01-02T00:00:00Z')).toString();
   return (
     <ModalTemplate
       isOpen={isOpen}
@@ -53,8 +54,12 @@ function ShowUserInfo({
               value={formatDate(ur.user.createdAt.toString())}
             />
             <PropValue
-              prop="Ultima Atualização"
+              prop="Última Atualização em"
               value={formatDate(ur.user.updatedAt.toString(), "dd/MM/yyyy HH:mm")}
+            />
+            <PropValue
+              prop="Último Acesso em"
+              value={formatDate(ur.user.lastAccess ? ur.user.lastAccess.toString() : dataAntiga, "dd/MM/yyyy HH:mm")}
             />
             {ur.user.deletedAt ? (
               <PropValue
