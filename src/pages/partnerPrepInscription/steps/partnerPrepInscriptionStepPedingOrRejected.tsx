@@ -29,6 +29,8 @@ export default function PartnerPrepInscriptionStepPedingOrRejected({
 
   const isBeforeStart =
     inscription.status === StatusEnum.Pending && now < start;
+  
+  const isRejectBeforeEnd = inscription.status === StatusEnum.Rejected && now < end;
 
   const Icon = isBeforeStart ? Clock : XCircle;
   const iconColor = isBeforeStart ? "text-yellow-600" : "text-red-600";
@@ -54,13 +56,18 @@ export default function PartnerPrepInscriptionStepPedingOrRejected({
             <span className={`font-medium ${dateColor}`}>{formattedStart}</span>
             .
           </>
-        ) : (
+        ) : (isRejectBeforeEnd ? (
+            <>
+            O processo seletivo para o cursinho{" "}
+            <strong>{prepCourseName}</strong> foi encerrado.
+          </>) : 
+      (
           <>
             O período de inscrições para o cursinho{" "}
             <strong>{prepCourseName}</strong> foi encerrado. A data final foi:{" "}
             <span className={`font-medium ${dateColor}`}>{formattedEnd}</span>.
           </>
-        )}
+        ))}
       </p>
 
       <div>
