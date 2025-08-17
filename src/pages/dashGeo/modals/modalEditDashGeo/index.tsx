@@ -368,7 +368,7 @@ function ModalEditDashGeo({
       const longitude = parseFloat(data.location.coordinates.longitude);
       setSelectedPosition([latitude, longitude]);
       newGeo = {
-        ...geo,
+        ...newGeo,
         latitude,
         longitude,
       };
@@ -391,6 +391,7 @@ function ModalEditDashGeo({
           setModified(false);
           setEditing(false);
           setSelectedPosition([rawGeo.latitude, rawGeo.longitude]);
+          setGeo(rawGeo);
         }}
       />
     );
