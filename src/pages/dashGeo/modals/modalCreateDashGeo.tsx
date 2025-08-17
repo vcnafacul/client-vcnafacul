@@ -163,8 +163,6 @@ function ModalEditDashGeo({
     setValue("neighborhood", neighborhood);
     setValue("state", state);
 
-    console.log(cep);
-
     setGeo({
       ...geo,
       cep,

@@ -27,6 +27,7 @@ import { prepCourseInfo } from "../../data";
 import { PrepCourseInfo } from "./Fields/prepCourseInfo";
 
 import { Checkbox, CheckboxProps } from "@/components/atoms/checkbox";
+import { stateOptions } from "@/pages/register/data";
 import { fetchAddressByCep } from "@/services/geolocation/fetchAddressByCep";
 import {
   AddressResponse,
@@ -266,6 +267,31 @@ function ModalEditDashGeo({
       disabled: !geo ? false : !editing,
     },
   ];
+
+  const setAddressFromMap = (data: AddressResponse) => {
+    const cep = data.address.postcode.replace("-", "") || "";
+    const city = data.address.city || data.address.town || "";
+    const street = data.address.road || "";
+    const neighborhood = data.address.suburb || "";
+    const state = stateOptions.find((opt) =>
+      opt.label.includes(data.address.state)
+    )?.value as string;
+
+    setValue("cep", cep);
+    setValue("city", city);
+    setValue("street", street);
+    setValue("neighborhood", neighborhood);
+    setValue("state", state);
+
+    setGeo({
+      ...geo,
+      cep,
+      city,
+      street,
+      neighborhood,
+      state,
+    });
+  };
 
   const MapEvents = () => {
     useMapEvents({
@@ -569,6 +595,3 @@ function ModalEditDashGeo({
   );
 }
 export default ModalEditDashGeo;
-function setAddressFromMap(res: AddressResponse) {
-  throw new Error("Function not implemented.");
-}
