@@ -14,7 +14,7 @@ interface MapBoxProps {
   className?: string;
   zoom?: number;
   center?: LatLngTuple;
-  mapEvent?: JSX.Element;
+  mapEvent?: JSX.Element | null;
 }
 
 function MapBox({
@@ -72,6 +72,7 @@ function MapBox({
                         } h-7`}
                       />
                     ),
+                    iconAnchor: [16, 32], // <-- Aqui está o ajuste
                   })}
                   eventHandlers={{
                     click: () =>

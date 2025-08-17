@@ -19,35 +19,49 @@ import { BtnProps } from "@/types/generic/btnProps";
 import { ValidationGeolocation } from "@/types/geolocation/validationGeolocation";
 import { TypeMarker } from "@/types/map/marker";
 import { getStatusIcon } from "@/utils/getStatusIcon";
-import { LatLngTuple } from "leaflet";
+import leaflet, { LatLngTuple } from "leaflet";
 import { useForm } from "react-hook-form";
-import { Marker, useMapEvents } from "react-leaflet";
+import { Marker, useMap, useMapEvents } from "react-leaflet";
 import { toast } from "react-toastify";
 import { prepCourseInfo } from "../../data";
 import { PrepCourseInfo } from "./Fields/prepCourseInfo";
 
 import { Checkbox, CheckboxProps } from "@/components/atoms/checkbox";
+import { stateOptions } from "@/pages/register/data";
+import { fetchAddressByCep } from "@/services/geolocation/fetchAddressByCep";
+import {
+  AddressResponse,
+  getCepByLatAndLon,
+} from "@/services/geolocation/getCepByLatAndLon";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { renderToStaticMarkup } from "react-dom/server";
 import * as yup from "yup";
+import { ReactComponent as PointIcon } from "../../../../assets/images/home/univ_public.svg";
 
 interface ModalEditDashGeoProps extends ModalProps {
-  geo: Geolocation;
+  rawGeo: Geolocation;
   updateStatus: (cardId: string) => void;
   updateGeo: (geo: Geolocation) => void;
   isOpen: boolean;
 }
 
 function ModalEditDashGeo({
-  geo,
+  rawGeo,
   handleClose,
   updateStatus,
   updateGeo,
 }: ModalEditDashGeoProps) {
   const [editing, setEditing] = useState<boolean>(false);
-  const [selectedPosition, setSelectedPosition] = useState<number[]>([0, 0]);
+  const [selectedPosition, setSelectedPosition] = useState<number[]>([
+    rawGeo.latitude,
+    rawGeo.longitude,
+  ]);
   const [refuse, setRefuse] = useState<boolean>(false);
   const [modified, setModified] = useState<boolean>(false);
   const [comeBack, setComeback] = useState<boolean>(false);
+  const [useCep, setUseCep] = useState<boolean>(false);
+  const [clicked, setClicked] = useState<boolean>(false);
+  const [geo, setGeo] = useState<Geolocation>(rawGeo);
 
   const schema = yup.object().shape({
     id: yup.string().default(geo.id),
@@ -117,6 +131,7 @@ function ModalEditDashGeo({
   const reportAddress = watch("reportAddress");
   const reportContact = watch("reportContact");
   const reportOther = watch("reportOther");
+  const cep = watch("cep");
 
   const {
     data: { token },
@@ -253,26 +268,85 @@ function ModalEditDashGeo({
     },
   ];
 
+  const setAddressFromMap = (data: AddressResponse) => {
+    const cep = data.address.postcode.replace("-", "") || "";
+    const city = data.address.city || data.address.town || "";
+    const street = data.address.road || "";
+    const neighborhood = data.address.suburb || "";
+    const state = stateOptions.find((opt) =>
+      opt.label.includes(data.address.state)
+    )?.value as string;
+
+    setValue("cep", cep);
+    setValue("city", city);
+    setValue("street", street);
+    setValue("neighborhood", neighborhood);
+    setValue("state", state);
+
+    setGeo({
+      ...geo,
+      cep,
+      city,
+      street,
+      neighborhood,
+      state,
+    });
+  };
+
   const MapEvents = () => {
     useMapEvents({
       click: (e) => {
+        setClicked(true);
         const { lat, lng } = e.latlng;
         setSelectedPosition([lat, lng]);
+
+        if (!useCep) {
+          getCepByLatAndLon(lat, lng)
+            .then((res) => {
+              setAddressFromMap(res);
+            })
+            .catch((error) => {
+              toast.error(
+                `Não foi possível buscar as informações do ponto selecionado. ${error.message}`
+              );
+            });
+        }
       },
     });
 
     return null; // Não renderiza nada, apenas anexa eventos
   };
 
-  const Event = () => {
-    if (!editing) {
-      return <></>;
-    }
+  const CenterMap = ({ position }: { position: LatLngTuple }) => {
+    const map = useMap();
+    useEffect(() => {
+      if (position[0] !== 0 && position[1] !== 0) {
+        map.setView(position, map.getZoom()); // Atualiza a visualização do mapa para o novo ponto
+      }
+    }, [position, map]);
 
+    return null;
+  };
+
+  const Event = () => {
+    if (!editing) return null;
     return (
       <>
         <MapEvents />
-        <Marker position={selectedPosition as LatLngTuple} alt="novo"></Marker>
+        <Marker
+          position={selectedPosition as LatLngTuple}
+          alt="novo"
+          icon={leaflet.divIcon({
+            className: "w-8 h-8",
+            html: renderToStaticMarkup(
+              <div className="relative">
+                <PointIcon className="fill-sky-600 absolute  h-8" />
+              </div>
+            ),
+            iconAnchor: [16, 32], // <-- Aqui está o ajuste
+          })}
+        ></Marker>
+        <CenterMap position={selectedPosition as LatLngTuple} />
       </>
     );
   };
@@ -294,6 +368,40 @@ function ModalEditDashGeo({
     );
   };
 
+  const setAddressFromCep = (data: any) => {
+    const street = data.street || "";
+    const neighborhood = data.neighborhood || "";
+    const city = data.city || "";
+    const state = data.state || "";
+    setValue("street", street);
+    setValue("neighborhood", neighborhood);
+    setValue("city", city);
+    setValue("state", state);
+    let newGeo = {
+      ...geo,
+      cep: cep,
+      street: street,
+      neighborhood: neighborhood,
+      city: city,
+      state: state,
+    };
+    if (
+      !useCep &&
+      data.location?.coordinates?.latitude &&
+      data.location?.coordinates?.longitude
+    ) {
+      const latitude = parseFloat(data.location.coordinates.latitude);
+      const longitude = parseFloat(data.location.coordinates.longitude);
+      setSelectedPosition([latitude, longitude]);
+      newGeo = {
+        ...newGeo,
+        latitude,
+        longitude,
+      };
+    }
+    setGeo(newGeo);
+  };
+
   const ModalComeBack = () => {
     return (
       <ModalConfirmCancel
@@ -308,6 +416,8 @@ function ModalEditDashGeo({
           setComeback(false);
           setModified(false);
           setEditing(false);
+          setSelectedPosition([rawGeo.latitude, rawGeo.longitude]);
+          setGeo(rawGeo);
         }}
       />
     );
@@ -381,6 +491,17 @@ function ModalEditDashGeo({
     }
   }, [geo]);
 
+  useEffect(() => {
+    if (!clicked && cep && cep.length === 8) {
+      fetchAddressByCep(cep)
+        .then((data) => setAddressFromCep(data))
+        .catch((err) => {
+          toast.error(err.message || "Erro ao buscar endereço pelo CEP.");
+        });
+    }
+    setClicked(false);
+  }, [cep]);
+
   return (
     <div>
       <form
@@ -401,7 +522,11 @@ function ModalEditDashGeo({
             setValue={setValue}
             errors={errors}
             edit={editing}
-            geo={geo}
+            geo={{
+              ...geo,
+              latitude: selectedPosition[0],
+              longitude: selectedPosition[1],
+            }}
           />
           <div className="bg-red"></div>
         </div>
@@ -409,18 +534,33 @@ function ModalEditDashGeo({
           <Text size="secondary">Endereço do Cursinho</Text>
           <MapBox
             className="h-80 border border-gray-300 z-0"
-            zoom={14}
-            center={[geo.latitude, geo.longitude]}
+            zoom={16}
+            center={[selectedPosition[0], selectedPosition[1]]}
             markers={[
               {
-                id: geo.id,
-                lat: geo.latitude,
-                lon: geo.longitude,
-                type: geo.type,
+                id: rawGeo.id,
+                lat: rawGeo.latitude,
+                lon: rawGeo.longitude,
+                type: rawGeo.type,
               },
             ]}
             mapEvent={<Event />}
           />
+          <div className="flex justify-between">
+            <div className="flex items-center justify-start gap-4">
+              <input
+                type="checkbox"
+                checked={useCep}
+                onChange={(e) => setUseCep(e.target.checked)}
+              />
+              <label>Definir localização manualmente</label>
+            </div>
+            <div className="flex flex-col">
+              <span>lat: {selectedPosition[0]}</span>
+              <span>lon: {selectedPosition[1]}</span>
+            </div>
+          </div>
+
           <Text
             className="flex w-full justify-center gap-4 items-center"
             size="tertiary"

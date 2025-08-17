@@ -122,7 +122,7 @@ function DashGeo() {
             id: "detalhes",
             children: (
               <ModalEditDashGeo
-                geo={geoSelect!}
+                rawGeo={geoSelect!}
                 updateStatus={updateStatus}
                 updateGeo={updateGeolocation}
                 isOpen={openModal}
