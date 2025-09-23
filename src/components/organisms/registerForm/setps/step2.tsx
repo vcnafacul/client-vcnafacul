@@ -237,7 +237,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
           <a
             className="font-black text-grey"
             onClick={(e) => e.stopPropagation()}
-            href="/Termos%20de%20Uso.pdf"
+            href="/docs/Termos%20de%20Uso.pdf"
             target="_blank"
           >
             termos de uso
@@ -246,7 +246,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
           <a
             className="font-black text-grey"
             onClick={(e) => e.stopPropagation()}
-            href="/Pol%C3%ADtica%20de%20Privacidade.pdf"
+            href="/docs/Pol%C3%ADtica%20de%20Privacidade.pdf"
             target="_blank"
           >
             políticas de privacidade
