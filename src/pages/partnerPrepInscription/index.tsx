@@ -57,6 +57,7 @@ export function PartnerPrepInscription() {
     useState<DataInscription | null>(null);
   const [prepCourseName, setPrepCourseName] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [partnerId, setPartnerId] = useState<string>("");
 
   const { hashInscriptionId } = useParams();
 
@@ -220,6 +221,7 @@ export function PartnerPrepInscription() {
               setStepCurrently(StepsInscriptionStudent.PersonalInformation)
             }
             inscription={dataInscription!}
+            partnerId={partnerId!}
           />
         );
       case StepsInscriptionStudent.PersonalInformation:
@@ -280,6 +282,7 @@ export function PartnerPrepInscription() {
       if (!hashInscriptionId) navigate("/");
       getInscription(hashInscriptionId as string, token)
         .then((res) => {
+          setPartnerId(res.prepCourseId);
           setDataStudent({
             ...dataStudent,
             inscriptionId: hashInscriptionId as string,
