@@ -55,7 +55,9 @@ export function PartnerPrepInscription() {
   );
   const [dataInscription, setDataInscription] =
     useState<DataInscription | null>(null);
-  const [prepCourseName, setPrepCourseName] = useState<string>("");
+  const [prepCourse, setPrepCourse] = useState<{ name: string; email: string }>(
+    { name: "", email: "" }
+  );
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [partnerId, setPartnerId] = useState<string>("");
 
@@ -194,7 +196,7 @@ export function PartnerPrepInscription() {
         return (
           <PartnerPrepInscriptionStepPedingOrRejected
             inscription={dataInscription!}
-            prepCourseName={prepCourseName}
+            prepCourseName={prepCourse.name}
           />
         );
       case StepsInscriptionStudent.RegisterUser:
@@ -288,11 +290,12 @@ export function PartnerPrepInscription() {
             inscriptionId: hashInscriptionId as string,
           });
           setDataInscription(res.inscription);
-          setPrepCourseName(
-            res.prepCourseName.toUpperCase().includes("CURSINHO")
+          setPrepCourse({
+            name: res.prepCourseName.toUpperCase().includes("CURSINHO")
               ? res.prepCourseName
-              : `Cursinho ${res.prepCourseName}`
-          );
+              : `Cursinho ${res.prepCourseName}`,
+            email: res.prepCourseEmail,
+          });
           if (res.inscription.status !== StatusEnum.Approved) {
             setStepCurrently(StepsInscriptionStudent.PendingOrRejected);
           }
@@ -352,7 +355,7 @@ export function PartnerPrepInscription() {
             <Text
               className="text-center"
               size="secondary"
-            >{`Formulário de Inscrição ${prepCourseName}`}</Text>
+            >{`Formulário de Inscrição ${prepCourse.name}`}</Text>
             <div
               className={`w-11/12 ${
                 stepCurrently === StepsInscriptionStudent.Presentation

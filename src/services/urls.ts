@@ -8,10 +8,14 @@ export const confirmemail = `${user}/confirmemail`;
 export const email_exist = `${user}/hasemail`;
 export const role = `${BASE_URL}/role`;
 export const roles_users = `${role}/users`;
+export const user_aggregate = `${user}/aggregate`;
+export const user_aggregate_role = `${user}/aggregate-role`;
+export const user_aggregate_last_access = `${user}/aggregate-last-access`;
 
 export const geolocations = `${BASE_URL}/geo`;
 export const validatedgeolocation = `${BASE_URL}/validatedgeolocation`;
 export const allGeolocation = `${geolocations}`;
+export const geolocation_summary = `${geolocations}/summary`;
 
 export const news = `${BASE_URL}/news`;
 export const newsAll = `${BASE_URL}/news/all`;

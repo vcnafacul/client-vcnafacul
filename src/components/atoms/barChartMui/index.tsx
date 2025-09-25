@@ -1,16 +1,18 @@
 import { BarChart } from "@mui/x-charts/BarChart";
 
-interface Props {
+export interface BarChartMuiProps {
   data: {
     id: string;
     value: number;
     label: string;
   }[];
-  color?: string
+  color?: string;
 }
 
-export default function BarChartMui({ data, color = "#F43535" }: Props) {
-
+export default function BarChartMui({
+  data,
+  color = "#F43535",
+}: BarChartMuiProps) {
   return (
     <BarChart
       xAxis={[
@@ -29,7 +31,7 @@ export default function BarChartMui({ data, color = "#F43535" }: Props) {
       slotProps={{
         legend: {
           hidden: true,
-        }
+        },
       }}
       colors={[color]}
     />
