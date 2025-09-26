@@ -1,7 +1,7 @@
 import { BarChartMuiProps } from "@/components/atoms/barChartMui";
 import BarChartWithFilter from "@/components/atoms/barChartMuiFilter";
 import LineChartMui, {
-    LineChartMuiProps,
+  LineChartMuiProps,
 } from "@/components/atoms/lineChartMui";
 import { Period } from "@/enums/analytics/period";
 import { aggregateUserByLastAccess } from "@/services/analytics/user/aggregateLUserByLastAccess";
@@ -9,10 +9,10 @@ import { aggregateUserByPeriod } from "@/services/analytics/user/aggregateUserBy
 import { aggregateUserByRole } from "@/services/analytics/user/aggregateUserByRole";
 import { useAuthStore } from "@/store/auth";
 import {
-    AppBar,
-    Box,
-    Toolbar,
-    Typography
+  AppBar,
+  Box,
+  Toolbar,
+  Typography
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState } from "react";
@@ -69,8 +69,6 @@ function AnalyticsUsers({ period }: { period: Period }) {
       });
     });
   }, [period, token]);
-
-  console.log(dataUserRole);
 
   return (
     <>

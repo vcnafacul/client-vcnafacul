@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import AnalyticsContent from "./content";
 import AnalyticsGeolocation from "./geolocation";
 import AnalyticsUsers from "./users";
 
@@ -39,6 +40,7 @@ function Analytics() {
     </AppBar>
     <AnalyticsUsers period={period} />
     <AnalyticsGeolocation />
+    <AnalyticsContent />
   </div>
 }
 
