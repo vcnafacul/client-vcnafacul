@@ -91,13 +91,18 @@ function AnalyticsUsers({ period }: { period: Period }) {
             />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 12, md: 12 }}>
             <LineChartMui
               {...dataUserLAstAccess}
               title="Ultimo acesso dos usuarios"
+              height={320}
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 12 }}>
-            <LineChartMui {...dataUserActive} title="Usuários Ativos e Total" />
+            <LineChartMui 
+              {...dataUserActive} 
+              title="Usuários Ativos e Total" 
+              height={320}
+            />
           </Grid>
         </Grid>
       </Box>
