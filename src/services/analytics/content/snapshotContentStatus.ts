@@ -1,9 +1,8 @@
-import { content_stats_by_frente } from "@/services/urls";
+import { content_snapshot_status } from "@/services/urls";
 import fetchWrapper from "@/utils/fetchWrapper";
 
-export interface ContentSummary {
-  materia: number;
-  frente: string;
+export interface SnapshotContentStatus {
+  snapshot_date: Date;
   pendentes: number;
   aprovados: number;
   reprovados: number;
@@ -11,10 +10,10 @@ export interface ContentSummary {
   total: number;
 }
 
-export async function getContentSummary(
+export async function getContentSnapshotContentStatus(
   token: string
-): Promise<ContentSummary[]> {
-  const response = await fetchWrapper(content_stats_by_frente, {
+): Promise<SnapshotContentStatus[]> {
+  const response = await fetchWrapper(content_snapshot_status, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

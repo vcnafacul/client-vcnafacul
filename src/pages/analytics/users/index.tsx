@@ -85,7 +85,10 @@ function AnalyticsUsers({ period }: { period: Period }) {
       <Box p={2}>
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, md: 6 }}>
-            <LineChartMui {...dataUserActive} title="Usuários Ativos e Total" />
+            <BarChartWithFilter
+              data={dataUserRole.data}
+              title="Usuários por Perfil"
+            />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <LineChartMui
@@ -93,11 +96,8 @@ function AnalyticsUsers({ period }: { period: Period }) {
               title="Ultimo acesso dos usuarios"
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <BarChartWithFilter
-              data={dataUserRole.data}
-              title="Usuários por Perfil"
-            />
+          <Grid size={{ xs: 12, md: 12 }}>
+            <LineChartMui {...dataUserActive} title="Usuários Ativos e Total" />
           </Grid>
         </Grid>
       </Box>

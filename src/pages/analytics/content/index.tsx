@@ -12,19 +12,23 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import { ContentSummary, getContentSummary } from "@/services/analytics/content/summary";
+import LineChartMui, { LineChartMuiProps } from "@/components/atoms/lineChartMui";
+import { getContentSnapshotContentStatus } from "@/services/analytics/content/snapshotContentStatus";
+import { ContentStatsByFrente, getContentSummary } from "@/services/analytics/content/statsByFrente";
 import { useAuthStore } from "@/store/auth";
+import { AppBar, Toolbar } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import { useEffect, useState } from 'react';
 import { toast } from "react-toastify";
 
 type GroupedData = {
   materia: string | number;
-  frentes: ContentSummary[];
+  frentes: ContentStatsByFrente[];
 };
 
 // função para agrupar os dados por matéria
-function groupByMateria(data: ContentSummary[]): GroupedData[] {
-  const grouped: Record<string, ContentSummary[]> = {};
+function groupByMateria(data: ContentStatsByFrente[]): GroupedData[] {
+  const grouped: Record<string, ContentStatsByFrente[]> = {};
 
   data.forEach((item) => {
     if (!grouped[item.materia]) {
@@ -39,7 +43,7 @@ function groupByMateria(data: ContentSummary[]): GroupedData[] {
   }));
 }
 
-function aggregateMateria(frentes: ContentSummary[]) {
+function aggregateMateria(frentes: ContentStatsByFrente[]) {
   return frentes.reduce(
     (acc, f) => {
       acc.pendentes_upload += Number(f.pendentes_upload);
@@ -127,7 +131,12 @@ function Row({ row }: { row: GroupedData }) {
 export function AnalyticsContent() {
 
     const { data: { token } } = useAuthStore();
-    const [contentSummary, setContentSummary] = useState<ContentSummary[]>([] as ContentSummary[]);
+  const [contentSummary, setContentSummary] = useState<ContentStatsByFrente[]>([] as ContentStatsByFrente[]);
+  
+  const [dataContentStatus, setDataContentStatus] = useState<LineChartMuiProps>({
+    xAxis: [],
+    series: [],
+  });
     
     useEffect(() => {
         getContentSummary(token)
@@ -138,31 +147,67 @@ export function AnalyticsContent() {
                 toast.error(err.message);
             })
     }, [])
+
+    useEffect(() => {
+        getContentSnapshotContentStatus(token)
+          .then((res) => {
+            const xAxis = res.map((r) => r.snapshot_date.toString()); 
+            const series = [
+              { label: "Pendentes Upload", data: res.map((r) => r.pendentes_upload) },
+              { label: "Pendentes", data: res.map((r) => r.pendentes) },
+              { label: "Aprovados", data: res.map((r) => r.aprovados) },
+              { label: "Reprovados", data: res.map((r) => r.reprovados) },
+              { label: "Total", data: res.map((r) => r.total) },
+            ];
+            console.log(xAxis, series);
+              setDataContentStatus({ xAxis, series, title: "Status de Conteúdos Diário" });
+            })
+    }, [])
         
   const grouped = groupByMateria(contentSummary);
 
   return (
-    <TableContainer component={Paper} className="px-4">
-      <Table aria-label="collapsible table">
-        <TableHead>
-            <TableRow>
-                <TableCell />
-                <TableCell>Matéria</TableCell>
-                <TableCell align="right">Qtd. Frentes</TableCell>
-                <TableCell align="right">Pend. Upload</TableCell>
-                <TableCell align="right">Pendentes</TableCell>
-                <TableCell align="right">Aprovados</TableCell>
-                <TableCell align="right">Reprovados</TableCell>
-                <TableCell align="right">Total</TableCell>
-            </TableRow>
-            </TableHead>
-        <TableBody>
-          {grouped.map((row) => (
-            <Row key={row.materia} row={row} />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <>
+    {/* Header */}
+      <AppBar position="static" color="transparent" elevation={0}>
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography variant="h5" fontWeight="bold" className="text-marine">
+            Conteúdos
+          </Typography>
+        </Toolbar>
+      </AppBar>
+    <Box p={2}>
+        <Grid container spacing={2}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <TableContainer component={Paper} className="px-4">
+            <Table aria-label="collapsible table">
+              <TableHead>
+                  <TableRow>
+                      <TableCell />
+                      <TableCell>Matéria</TableCell>
+                      <TableCell align="right">Qtd. Frentes</TableCell>
+                      <TableCell align="right">Pend. Upload</TableCell>
+                      <TableCell align="right">Pendentes</TableCell>
+                      <TableCell align="right">Aprovados</TableCell>
+                      <TableCell align="right">Reprovados</TableCell>
+                      <TableCell align="right">Total</TableCell>
+                  </TableRow>
+                  </TableHead>
+              <TableBody>
+                {grouped.map((row) => (
+                  <Row key={row.materia} row={row} />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+            <LineChartMui {...dataContentStatus} />
+        </Grid>
+      </Grid>
+      
+      </Box>
+    </>
   );
 }
 

@@ -30,6 +30,7 @@ export const subjectsByFrente = `${subject}/frente`;
 export const content = `${BASE_URL}/content`;
 export const demand = `${content}/demand`;
 export const content_stats_by_frente = `${content}/stats-by-frente`;
+export const content_snapshot_status = `${content}/snapshot-content-status`;
 
 export const mssimulado = `${BASE_URL}/mssimulado`;
 
