@@ -27,7 +27,7 @@ function AnalyticsGeolocation() {
     {/* Header */}
       <AppBar position="static" color="transparent" elevation={0}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography variant="h5" fontWeight="bold" className="text-marine">
+          <Typography variant="h4" fontWeight="bold" className="text-marine">
             Cursinho
           </Typography>
         </Toolbar>
@@ -60,7 +60,7 @@ function AnalyticsGeolocation() {
         {/* Header */}
       <AppBar position="static" color="transparent" elevation={0}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography variant="h5" fontWeight="bold" className="text-marine">
+          <Typography variant="h4" fontWeight="bold" className="text-marine">
             Universidade
           </Typography>
         </Toolbar>

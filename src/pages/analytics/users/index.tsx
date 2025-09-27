@@ -75,7 +75,7 @@ function AnalyticsUsers({ period }: { period: Period }) {
       {/* Header */}
       <AppBar position="static" color="transparent" elevation={0}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography variant="h5" fontWeight="bold" className="text-marine">
+          <Typography variant="h4" fontWeight="bold" className="text-marine">
             Usuários
           </Typography>
         </Toolbar>
