@@ -159,7 +159,6 @@ export function AnalyticsContent() {
               { label: "Reprovados", data: res.map((r) => r.reprovados) },
               { label: "Total", data: res.map((r) => r.total) },
             ];
-            console.log(xAxis, series);
               setDataContentStatus({ xAxis, series, title: "Status de Conteúdos Diário" });
             })
     }, [])
@@ -176,36 +175,35 @@ export function AnalyticsContent() {
           </Typography>
         </Toolbar>
       </AppBar>
-    <Box p={2}>
+      <Box p={2}>
         <Grid container spacing={2}>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <TableContainer component={Paper} className="px-4">
-            <Table aria-label="collapsible table">
-              <TableHead>
-                  <TableRow>
-                      <TableCell />
-                      <TableCell>Matéria</TableCell>
-                      <TableCell align="right">Qtd. Frentes</TableCell>
-                      <TableCell align="right">Pend. Upload</TableCell>
-                      <TableCell align="right">Pendentes</TableCell>
-                      <TableCell align="right">Aprovados</TableCell>
-                      <TableCell align="right">Reprovados</TableCell>
-                      <TableCell align="right">Total</TableCell>
-                  </TableRow>
-                  </TableHead>
-              <TableBody>
-                {grouped.map((row) => (
-                  <Row key={row.materia} row={row} />
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TableContainer component={Paper} className="px-4">
+              <Table aria-label="collapsible table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell />
+                        <TableCell>Matéria</TableCell>
+                        <TableCell align="right">Qtd. Frentes</TableCell>
+                        <TableCell align="right">Pend. Upload</TableCell>
+                        <TableCell align="right">Pendentes</TableCell>
+                        <TableCell align="right">Aprovados</TableCell>
+                        <TableCell align="right">Reprovados</TableCell>
+                        <TableCell align="right">Total</TableCell>
+                    </TableRow>
+                    </TableHead>
+                <TableBody>
+                  {grouped.map((row) => (
+                    <Row key={row.materia} row={row} />
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+              <LineChartMui {...dataContentStatus} />
+          </Grid>
         </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-            <LineChartMui {...dataContentStatus} />
-        </Grid>
-      </Grid>
-      
       </Box>
     </>
   );

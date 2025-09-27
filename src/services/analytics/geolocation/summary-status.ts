@@ -1,17 +1,23 @@
-import { geolocation_summary } from "@/services/urls";
+import { geo_summary_status } from "@/services/urls";
 import fetchWrapper from "@/utils/fetchWrapper";
 
 export interface GeolocationSummary {
-  geoTotal: number;
-  geoPending: number;
-  geoApproved: number;
-  geoRejected: number;
+  approvedUniversities: number;
+  pendingUniversities: number;
+  rejectedUniversities: number;
+  withReportUniversities: number;
+  totalUniversities: number;
+  approvedCourses: number;
+  pendingCourses: number;
+  rejectedCourses: number;
+  withReportCourses: number;
+  totalCourses: number;
 }
 
 export async function geolocationSummary(
   token: string
 ): Promise<GeolocationSummary> {
-  const response = await fetchWrapper(geolocation_summary, {
+  const response = await fetchWrapper(geo_summary_status, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

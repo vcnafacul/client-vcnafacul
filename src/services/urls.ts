@@ -15,7 +15,7 @@ export const user_aggregate_last_access = `${user}/aggregate-last-access`;
 export const geolocations = `${BASE_URL}/geo`;
 export const validatedgeolocation = `${BASE_URL}/validatedgeolocation`;
 export const allGeolocation = `${geolocations}`;
-export const geolocation_summary = `${geolocations}/summary`;
+export const geo_summary_status = `${geolocations}/summary-status`;
 
 export const news = `${BASE_URL}/news`;
 export const newsAll = `${BASE_URL}/news/all`;
@@ -47,6 +47,10 @@ export const historico = `${mssimulado}/historico`;
 export const auditLog = `${BASE_URL}/auditlog`;
 export const auditLogMs = `${BASE_URL}/auditlog/ms`;
 export const historyQuestion = `${mssimulado}/questoes/history`;
+export const question_summary = `${mssimulado}/questoes/summary`;
+export const prova_summary = `${mssimulado}/prova/summary`;
+export const historicoByPeriod = `${historico}/aggregate-by-period`;
+export const historicoByPeriodAndType = `${historico}/aggregate-by-period-and-type`;
 
 export const partnerPrepCourse = `${BASE_URL}/partner-prep-course`;
 

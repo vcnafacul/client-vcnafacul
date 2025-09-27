@@ -10,13 +10,16 @@ import {
 import { useState } from "react";
 import AnalyticsContent from "./content";
 import AnalyticsGeolocation from "./geolocation";
+import AnalyticsQuestion from "./question";
+import AnalyticsSimulado from "./simulado";
 import AnalyticsUsers from "./users";
 
 function Analytics() {
-    const [period, setPeriod] = useState<Period>(Period.month);
-  
-  return <div>
-     {/* Header */}
+  const [period, setPeriod] = useState<Period>(Period.month);
+
+  return (
+    <div>
+      {/* Header */}
       <AppBar position="static" color="transparent" elevation={0}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Typography variant="h3" fontWeight="bold" className="text-marine">
@@ -37,11 +40,14 @@ function Analytics() {
             </Select>
           </Box>
         </Toolbar>
-    </AppBar>
-    <AnalyticsUsers period={period} />
-    <AnalyticsGeolocation />
-    <AnalyticsContent />
-  </div>
+      </AppBar>
+      <AnalyticsUsers period={period} />
+      <AnalyticsGeolocation />
+      <AnalyticsContent />
+      <AnalyticsQuestion />
+      <AnalyticsSimulado period={period} />
+    </div>
+  );
 }
 
 export default Analytics;

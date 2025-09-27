@@ -53,7 +53,6 @@ function ManagerSubject({
     register("description");
   }, []);
 
-  console.log(errors);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const create = (data: any) => {
