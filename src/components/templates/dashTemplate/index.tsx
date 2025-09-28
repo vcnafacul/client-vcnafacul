@@ -33,7 +33,6 @@ function DashTemplate({ className, hasMenu }: DashTemplateProps) {
             <div
               className={`z-20 h-[calc(100vh-76px)] absolute md:relative md:right-0 transition-all duration-200`}
             >
-              {/* {hasMenu ? <MenuDash onMenuToggle={() => setIsMenuOpened(!isMenuOpened)} /> : <></>} */}
               {hasMenu ? <SidebarDash /> : <></>}
             </div>
           </div>
