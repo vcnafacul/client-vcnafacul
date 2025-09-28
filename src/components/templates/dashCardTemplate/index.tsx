@@ -72,7 +72,7 @@ function DashCardTemplate({
   }, [firstCardInView, lastCardInView]);
 
   return (
-    <div className="w-full flex flex-col items-center py-8 bg-stone-100 min-h-[calc(100vh-76px)]">
+    <div className="w-full flex flex-col items-center py-8 bg-stone-50 min-h-[calc(100vh-76px)]">
       {/* Title + Voltar */}
       <div className="w-full max-w-7xl px-4 flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <div className="flex items-center gap-3">
