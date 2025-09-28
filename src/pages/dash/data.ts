@@ -20,6 +20,7 @@ import {
   PARTNER_CLASS_STUDENTS,
   PARTNER_PREP_INSCRIPTION,
   SIMULADO,
+  VCNAFACUL_FORM,
 } from "../../routes/path";
 
 import { ReactComponent as Artes } from "../../assets/icons/home-subjects-arte.svg";
@@ -43,6 +44,7 @@ import { BiSolidSchool } from "react-icons/bi";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { PiStudentFill, PiUsersFourBold } from "react-icons/pi";
 
+import { FaWpforms } from "react-icons/fa";
 import { DashCardMenu } from "../../components/molecules/dashCard";
 import { HeaderData } from "../../components/organisms/header";
 import { Materias, getMateriaString } from "../../enums/content/materias";
@@ -175,7 +177,14 @@ export const dashCardMenuItems: DashCardMenu[] = [
         alt: "dash_analytics",
         text: "Monitoramento",
         link: `/dashboard/${DASH_ANALYTICS}`,
-        permissions: [Roles.criarQuestao],
+        permissions: [Roles.alterarPermissao],
+      },
+      {
+        icon: FaWpforms ,
+        alt: "form_vcnafacul",
+        text: "Formulário VCNAFACUL",
+        link: `/dashboard/${VCNAFACUL_FORM}`,
+        permissions: [Roles.alterarPermissao],
       },
     ],
   },

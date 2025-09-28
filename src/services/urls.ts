@@ -81,3 +81,6 @@ export const classes = `${BASE_URL}/class`;
 
 export const attendanceRecord = `${BASE_URL}/attendance-record`;
 export const studentAttendance = `${BASE_URL}/student-attendance`;
+
+export const vcnafaculForm = `${BASE_URL}/vcnafacul-form`;
+export const vcnafaculFormGetForms = `${vcnafaculForm}/v1/form`;

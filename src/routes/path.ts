@@ -33,3 +33,5 @@ export const DECLARED_INTEREST = "declarar-interesse";
 export const MANAGER_COLLABORATOR = "colaboradores";
 export const PARTNER_CLASS = "turmas";
 export const PARTNER_CLASS_STUDENTS = "alunos";
+
+export const VCNAFACUL_FORM = "vcnafacul-form";

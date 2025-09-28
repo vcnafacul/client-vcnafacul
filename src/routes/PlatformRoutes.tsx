@@ -7,6 +7,7 @@ import { PartnerClassWithStudents } from "@/pages/partnerClassWithStudents";
 import { PartnerPrepInscriptionManager } from "@/pages/partnerPrepInscriptionManager";
 import { PartnerPrepInscritionStudentManager } from "@/pages/partnerPrepInscritionStudentManager";
 import { StudentsEnrolled } from "@/pages/studentsEnrolled";
+import VcnafaculFormPage from "@/pages/vcnafaculForm";
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashTemplate from "../components/templates/dashTemplate";
 import { Roles } from "../enums/roles/roles";
@@ -71,6 +72,7 @@ import {
   SIMULADO_HISTORIES,
   SIMULADO_RESPONDER,
   SIMULATE_METRICS,
+  VCNAFACUL_FORM,
 } from "./path";
 import ProtectedRoute from "./protectedRoute";
 import ProtectedRoutePermission from "./protectedRoutePermission";
@@ -157,12 +159,19 @@ export function PlatformRoutes() {
           path={DASH_QUESTION}
           element={
             <ProtectedRoutePermission
-              permission={data.permissao[Roles.visualizarQuestao]}
+            permission={data.permissao[Roles.visualizarQuestao]}
             >
               <DashQuestion />
             </ProtectedRoutePermission>
           }
         />
+        <Route path={VCNAFACUL_FORM} element={
+          <ProtectedRoutePermission
+            permission={data.permissao[Roles.alterarPermissao]}
+          >
+            <VcnafaculFormPage />
+          </ProtectedRoutePermission>
+        } />
         <Route
           path={DASH_GEOLOCATION}
           element={
