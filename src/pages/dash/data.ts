@@ -4,21 +4,22 @@ import { ReactComponent as LinguagensImg } from "../../assets/images/dashboard/l
 import { ReactComponent as MatematicaImg } from "../../assets/images/dashboard/matematica.svg";
 import { ReactComponent as NaturezaImg } from "../../assets/images/dashboard/natureza.svg";
 import {
-    DASH,
-    DASH_CONTENT,
-    DASH_GEOLOCATION,
-    DASH_NEWS,
-    DASH_PROVAS,
-    DASH_QUESTION,
-    DASH_ROLES,
-    DASH_SIMULADO,
-    ESTUDO,
-    MANAGER_COLLABORATOR,
-    NEWS,
-    PARTNER_CLASS,
-    PARTNER_CLASS_STUDENTS,
-    PARTNER_PREP_INSCRIPTION,
-    SIMULADO,
+  DASH,
+  DASH_ANALYTICS,
+  DASH_CONTENT,
+  DASH_GEOLOCATION,
+  DASH_NEWS,
+  DASH_PROVAS,
+  DASH_QUESTION,
+  DASH_ROLES,
+  DASH_SIMULADO,
+  ESTUDO,
+  MANAGER_COLLABORATOR,
+  NEWS,
+  PARTNER_CLASS,
+  PARTNER_CLASS_STUDENTS,
+  PARTNER_PREP_INSCRIPTION,
+  SIMULADO,
 } from "../../routes/path";
 
 import { ReactComponent as Artes } from "../../assets/icons/home-subjects-arte.svg";
@@ -31,6 +32,7 @@ import { ReactComponent as Fisica } from "../../assets/icons/home-subjects-fisic
 import { ReactComponent as Matematica } from "../../assets/icons/home-subjects-matematica.svg";
 import { ReactComponent as Quimica } from "../../assets/icons/home-subjects-quimica.svg";
 
+import { GoGraph } from "react-icons/go";
 import { ReactComponent as Atualidades } from "../../assets/icons/home-subjects-atualidades.svg";
 import { ReactComponent as Filosofia } from "../../assets/icons/home-subjects-filosofia.svg";
 import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-geografia.svg";
@@ -166,6 +168,13 @@ export const dashCardMenuItems: DashCardMenu[] = [
         alt: "dash_simulado",
         text: "Simulado",
         link: `/dashboard/${DASH_SIMULADO}`,
+        permissions: [Roles.criarQuestao],
+      },
+      {
+        icon: GoGraph,
+        alt: "dash_analytics",
+        text: "Monitoramento",
+        link: `/dashboard/${DASH_ANALYTICS}`,
         permissions: [Roles.criarQuestao],
       },
     ],

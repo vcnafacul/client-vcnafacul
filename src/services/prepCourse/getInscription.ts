@@ -5,8 +5,10 @@ import { inscriptionCourse } from "../urls";
 interface HasActiveInscriptionResponse {
   prepCourseId: string;
   prepCourseName: string;
+  prepCourseEmail: string;
   inscription: {
     name: string;
+    email: string;
     description: string;
     startDate: Date;
     endDate: Date;

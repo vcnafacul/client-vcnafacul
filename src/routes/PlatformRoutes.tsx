@@ -1,3 +1,4 @@
+import Analytics from "@/pages/analytics";
 import { ConfirmEnrolled } from "@/pages/confirmEnrolled";
 import InviteMemberProcessing from "@/pages/inviteMemberProcessing";
 import ManagerCollaborator from "@/pages/managerCollaborator";
@@ -42,6 +43,7 @@ import {
   CONFIRM_EMAIL,
   CONTENT,
   DASH,
+  DASH_ANALYTICS,
   DASH_CONTENT,
   DASH_GEOLOCATION,
   DASH_NEWS,
@@ -79,13 +81,13 @@ export function PlatformRoutes() {
   return (
     <Routes>
       {/* Aluno tem acesso */}
+
       <Route element={<ConfirmEmailPage />} path={CONFIRM_EMAIL} />
       <Route element={<BaseRoutes />}>
         <Route element={<HeroRoutes />}>
           <Route path={HOME_PATH} element={<Home />} />
           <Route path={NEWS} element={<NewsPage />} />
         </Route>
-
         <Route path={LOGIN_PATH} element={<Login />} />
         <Route path={FORGOT_PASSWORD_PATH} element={<Forgot />} />
         <Route path={LOGOFF_PATH} element={<Logout />} />
@@ -93,7 +95,10 @@ export function PlatformRoutes() {
         <Route path={REGISTER_PATH} element={<Register />} />
         <Route path={FORM_GEOLOCATION} element={<Geo />} />
         <Route path={INVITE_MEMBER} element={<InviteMemberProcessing />} />
-        <Route path={`${DECLARED_INTEREST}/:inscriptionId`} element={<ConfirmEnrolled />} />
+        <Route
+          path={`${DECLARED_INTEREST}/:inscriptionId`}
+          element={<ConfirmEnrolled />}
+        />
       </Route>
 
       <Route
@@ -120,6 +125,7 @@ export function PlatformRoutes() {
           </ProtectedRoute>
         }
       >
+        <Route path={DASH_ANALYTICS} element={<Analytics />} />
         <Route
           path={PARTNER_PREP_INSCRIPTION}
           element={<PartnerPrepInscriptionManager />}
