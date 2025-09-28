@@ -48,14 +48,14 @@ export default function LineChartMui({
           ]}
           series={series.map((s) => ({
             ...s,
-            curve: "bumpX",
+            curve: "linear",
             showMark: false,
           }))}
           width={undefined}
           height={undefined}
           grid={{ horizontal: true }}
           slotProps={{
-            legend: { position: { vertical: "top" } },
+            legend: { position: { vertical: "top", horizontal: "right" } },
           }}
         />
       </Box>
