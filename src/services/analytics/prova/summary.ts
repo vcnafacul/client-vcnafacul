@@ -17,7 +17,7 @@ export async function provaSummary(
   });
     const res = await response.json();
   if (response.status !== 200) {
-    throw new Error(`Erro ao buscar informações de monitoramento de geolocation`);
+    throw new Error(`Erro ao buscar informações de monitoramento de provas`);
   }
 
   return res;
