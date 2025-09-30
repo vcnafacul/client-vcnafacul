@@ -1,11 +1,27 @@
-export interface partnerPrepCourse {
-    _id: string;
+export interface PartnerPrepCourse {
+  id: string;
+  geo: {
+    id: string;
     name: string;
-    description: string;
-    startDate: Date;
-    endDate: Date;
-    actived: string;
-    partnerPrepCourse: string;
-    createdAt: string;
-    updatedAt: string;
+    category: string;
+    street: string;
+    number: string;
+    complement: string;
+    neighborhood: string;
+    city: string;
+    state: string;
+    phone: string;
+  };
+  representative: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+  };
+  logo: string;
+  thumbnail: string;
+  number_students: number;
+  number_members: number;
+  createdAt: string;
+  updatedAt: string;
 }

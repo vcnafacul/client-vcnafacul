@@ -137,7 +137,7 @@ function DashCardTemplate({
 
       {/* Cards */}
       <div
-        className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-7xl mt-10 px-4 ${className}`}
+        className={`flex flex-wrap gap-6 justify-start w-full max-w-7xl mt-10 px-4 ${className}`}
       >
         {entities.map((entity, index) => {
           const isLastCard =

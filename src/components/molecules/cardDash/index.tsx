@@ -18,23 +18,31 @@ export interface CardDash {
   title: string;
   status: StatusContent | StatusEnum;
   infos?: InforCardDash[];
+  className?: string;
+  logo?: string;
 }
 
 export const CardDashComponent = forwardRef<HTMLDivElement, CardDashProps>(
   ({ entity, ...props }: CardDashProps, ref) => {
     const { cardTransformation, onClickCard } = useDashCardContext();
     const card = cardTransformation(entity);
-
     return (
       <div
         ref={ref}
         onClick={() => onClickCard(card.id)}
-        className="relative w-72 truncate bg-white drop-shadow-xl shadow-xl p-2 cursor-pointer
+        className={`relative w-72 truncate bg-white drop-shadow-xl shadow-xl p-2 cursor-pointer
         border border-gray-100 border-t-0
-        flex flex-col rounded-md hover:-translate-y-1 duration-300"
+        flex flex-col rounded-md hover:-translate-y-1 duration-300 ${card.className}`}
         {...props}
       >
-        <span className="font-bold w-full text-center whitespace-pre-wrap my-2 overflow-x-hidden">{card.title}</span>
+        <div className="flex items-center justify-center gap-4">
+          {card.logo && (
+            <img src={card.logo} alt={card.title} className="w-16 h-16" />
+          )}
+          <span className="font-bold text-center whitespace-pre-wrap my-2 overflow-x-hidden">
+            {card.title}
+          </span>
+        </div>
         {card.infos?.map((info, index) => (
           <div key={index} className="flex gap-2">
             <div className="font-bold">{info.field}:</div>

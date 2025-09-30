@@ -6,6 +6,7 @@ import { PartnerClass } from "@/pages/partnerClass";
 import { PartnerClassWithStudents } from "@/pages/partnerClassWithStudents";
 import { PartnerPrepInscriptionManager } from "@/pages/partnerPrepInscriptionManager";
 import { PartnerPrepInscritionStudentManager } from "@/pages/partnerPrepInscritionStudentManager";
+import PartnerPrepManager from "@/pages/partnerPrepManager";
 import { StudentsEnrolled } from "@/pages/studentsEnrolled";
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashTemplate from "../components/templates/dashTemplate";
@@ -65,6 +66,7 @@ import {
   PARTNER_CLASS_STUDENTS,
   PARTNER_PREP,
   PARTNER_PREP_INSCRIPTION,
+  PARTNER_PREP_MANAGER,
   REGISTER_PATH,
   RESET_PASSWORD_PATH,
   SIMULADO,
@@ -224,6 +226,16 @@ export function PlatformRoutes() {
               permission={data.permissao[Roles.criarSimulado]}
             >
               <DashSimulado />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={PARTNER_PREP_MANAGER}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.alterarPermissao]}
+            >
+              <PartnerPrepManager />
             </ProtectedRoutePermission>
           }
         />
