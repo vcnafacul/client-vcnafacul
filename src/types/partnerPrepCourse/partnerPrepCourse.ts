@@ -19,6 +19,7 @@ export interface PartnerPrepCourse {
     phone: string;
   };
   logo: string;
+  agreement: string;
   thumbnail: string;
   number_students: number;
   number_members: number;

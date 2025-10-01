@@ -1,15 +1,15 @@
 import { partnerPrepCourse } from "@/services/urls";
 import fetchWrapper from "@/utils/fetchWrapper";
 
-export async function changeLogo(
+export async function changeAgreement(
   token: string,
   id: string,
-  logo: File
+  agreement: File
 ): Promise<string> {
-  const url = new URL(`${partnerPrepCourse}/logo/${id}`);
+  const url = new URL(`${partnerPrepCourse}/agreement/${id}`);
 
   const formData = new FormData();
-  formData.append("logo", logo);
+  formData.append("agreement", agreement);
   const res = await fetchWrapper(url.toString(), {
     method: "POST",
     headers: {
@@ -18,10 +18,10 @@ export async function changeLogo(
     body: formData,
   });
   if (res.status !== 201) {
-    throw new Error("Erro ao atualizar o logo");
+    throw new Error("Erro ao atualizar o contrato");
   }
 
   return await res.text();
 }
 
-export default changeLogo;
+export default changeAgreement;
