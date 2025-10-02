@@ -19,6 +19,7 @@ import {
   PARTNER_CLASS,
   PARTNER_CLASS_STUDENTS,
   PARTNER_PREP_INSCRIPTION,
+  PARTNER_PREP_MANAGER,
   SIMULADO,
 } from "../../routes/path";
 
@@ -43,6 +44,7 @@ import { BiSolidSchool } from "react-icons/bi";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { PiStudentFill, PiUsersFourBold } from "react-icons/pi";
 
+import { IoSchool } from "react-icons/io5";
 import { DashCardMenu } from "../../components/molecules/dashCard";
 import { HeaderData } from "../../components/organisms/header";
 import { Materias, getMateriaString } from "../../enums/content/materias";
@@ -176,6 +178,13 @@ export const dashCardMenuItems: DashCardMenu[] = [
         text: "Monitoramento",
         link: `/dashboard/${DASH_ANALYTICS}`,
         permissions: [Roles.criarQuestao],
+      },
+      {
+        icon: IoSchool,
+        alt: "dash_analytics",
+        text: "Gerenciamento de Cursinho",
+        link: `/dashboard/${PARTNER_PREP_MANAGER}`,
+        permissions: [Roles.alterarPermissao],
       },
     ],
   },
