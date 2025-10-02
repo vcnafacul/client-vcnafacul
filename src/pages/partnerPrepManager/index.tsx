@@ -8,6 +8,7 @@ import { useAuthStore } from "@/store/auth";
 import { PartnerPrepCourse } from "@/types/partnerPrepCourse/partnerPrepCourse";
 import { Paginate } from "@/utils/paginate";
 import { useEffect, useState } from "react";
+import { BiPlusCircle } from "react-icons/bi";
 import { ModalCreatePrepCourse } from "./modals/ModalCreatePrepCourse";
 import { ModalShowPrepCourse } from "./modals/ModalShowPrepCourse";
 
@@ -88,9 +89,13 @@ export default function PartnerPrepManager() {
       onClick: () => {
         setOpenCreatePrepCourse(true);
       },
-      typeStyle: "quaternary",
+      typeStyle: "accepted",
       size: "small",
-      children: "+ Cadastrar Cursinho",
+      children: (
+        <div className="flex items-center gap-2">
+          <BiPlusCircle className="w-5 h-5" /> Cadastrar Cursinho
+        </div>
+      ),
     },
   ];
 
