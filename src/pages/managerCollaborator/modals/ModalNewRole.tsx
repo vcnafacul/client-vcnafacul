@@ -32,6 +32,7 @@ function ModalNewRole({
   const [newRole, setNewRole] = useState<CreateRoleDto>({
     name: "",
     base: false,
+    roleBase: "",
     validarCursinho: false,
     alterarPermissao: false,
     criarSimulado: false,
@@ -67,7 +68,7 @@ function ModalNewRole({
   };
 
   const saveNewRole = () => {
-    createRole(newRole, token)
+    createRole({ ...newRole, roleBase: baseRoleSelected?.id }, token)
       .then((res) => {
         handleNewRole({ id: res.id, name: res.name } as Role);
         handleClose!();

@@ -1,6 +1,7 @@
 export interface CreateRoleDto {
   name: string;
   base: boolean;
+  roleBase?: string;
   validarCursinho: boolean;
   alterarPermissao: boolean;
   criarSimulado: boolean;
