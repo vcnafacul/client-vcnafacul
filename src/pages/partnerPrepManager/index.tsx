@@ -1,3 +1,4 @@
+import { ButtonProps } from "@/components/molecules/button";
 import { CardDash } from "@/components/molecules/cardDash";
 import DashCardTemplate from "@/components/templates/dashCardTemplate";
 import { DashCardContext } from "@/context/dashCardContext";
@@ -7,6 +8,7 @@ import { useAuthStore } from "@/store/auth";
 import { PartnerPrepCourse } from "@/types/partnerPrepCourse/partnerPrepCourse";
 import { Paginate } from "@/utils/paginate";
 import { useEffect, useState } from "react";
+import { ModalCreatePrepCourse } from "./modals/ModalCreatePrepCourse";
 import { ModalShowPrepCourse } from "./modals/ModalShowPrepCourse";
 
 export default function PartnerPrepManager() {
@@ -18,6 +20,8 @@ export default function PartnerPrepManager() {
   const [entitySelected, setEntitySelected] =
     useState<PartnerPrepCourse | null>(null);
   const [openPrepCourse, setOpenPrepCourse] = useState<boolean>(false);
+  const [openCreatePrepCourse, setOpenCreatePrepCourse] =
+    useState<boolean>(false);
 
   const limitCards = 100;
 
@@ -66,6 +70,30 @@ export default function PartnerPrepManager() {
     ) : null;
   };
 
+  const CreatePrepCourse = () => {
+    return openCreatePrepCourse ? (
+      <ModalCreatePrepCourse
+        isOpen={openCreatePrepCourse}
+        handleClose={() => setOpenCreatePrepCourse(false)}
+        onSuccess={() => {
+          setOpenCreatePrepCourse(false);
+          getMoreCards(1);
+        }}
+      />
+    ) : null;
+  };
+
+  const buttons: ButtonProps[] = [
+    {
+      onClick: () => {
+        setOpenCreatePrepCourse(true);
+      },
+      typeStyle: "quaternary",
+      size: "small",
+      children: "+ Cadastrar Cursinho",
+    },
+  ];
+
   return (
     <DashCardContext.Provider
       value={{
@@ -76,10 +104,12 @@ export default function PartnerPrepManager() {
         getMoreCards,
         cardTransformation,
         limitCards,
+        buttons,
       }}
     >
       <DashCardTemplate />
       <ShowPrepCourse />
+      <CreatePrepCourse />
     </DashCardContext.Provider>
   );
 }
