@@ -1,5 +1,15 @@
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { ModalProps } from "@/components/templates/modalTemplate";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { changeAgreement } from "@/services/prepCourse/prepCourse/changeAgreement";
 import { changeLogo } from "@/services/prepCourse/prepCourse/changeLogo";
@@ -44,6 +54,9 @@ export const ModalPrepCoursePrincipal = ({
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
+  const [showForceUpdateModal, setShowForceUpdateModal] =
+    useState<boolean>(false);
+  const [pendingUser, setPendingUser] = useState<SearchUser | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const agreementInputRef = useRef<HTMLInputElement>(null);
@@ -390,13 +403,91 @@ export const ModalPrepCoursePrincipal = ({
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
+      // Verificar se é o erro específico de representante já cadastrado como colaborador
+      if (
+        error.message &&
+        error.message.includes("Representante já cadastrado")
+      ) {
+        toast.update(id, {
+          render: "",
+          type: "error",
+          isLoading: false,
+          autoClose: 0,
+        });
+        // Armazenar o usuário pendente e mostrar modal de confirmação
+        setPendingUser(selectedUser);
+        setShowForceUpdateModal(true);
+      } else {
+        toast.update(id, {
+          render: `Erro ao atualizar representante. ${error.message}`,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        console.error(error);
+      }
+    }
+  };
+
+  // Função para forçar atualização do representante
+  const handleForceUpdate = async () => {
+    if (!pendingUser) {
+      return;
+    }
+
+    const id = toast.loading("Forçando atualização do representante...");
+    try {
+      await updateRepresentative(token, prepCourse.id, pendingUser.id, true);
+
       toast.update(id, {
-        render: "Erro ao atualizar representante. Tente novamente.",
+        render: "Representante atualizado com sucesso!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+
+      // Atualizar o prepCourse com o novo representante
+      prepCourse.representative = {
+        ...prepCourse.representative,
+        id: pendingUser.id,
+        name: pendingUser.name,
+        email: pendingUser.email,
+        phone: pendingUser.phone,
+      };
+
+      // Atualizar o formData com os novos valores
+      setFormData((prev) => ({
+        ...prev,
+        coordinator: pendingUser.name,
+        coordinatorEmail: pendingUser.email,
+        coordinatorPhone: pendingUser.phone,
+      }));
+
+      // Fechar modo de edição
+      setEditable(false);
+
+      // Limpar seleção
+      setSelectedUser(null);
+      setSearchResults([]);
+      setShowDropdown(false);
+
+      // Fechar modal e limpar usuário pendente
+      setShowForceUpdateModal(false);
+      setPendingUser(null);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.update(id, {
+        render: `Erro ao forçar atualização do representante. ${error.message}`,
         type: "error",
         isLoading: false,
         autoClose: 3000,
       });
-      console.error("Erro ao atualizar representante:", error);
+      console.error(error);
+
+      // Fechar modal mesmo em caso de erro
+      setShowForceUpdateModal(false);
+      setPendingUser(null);
     }
   };
 
@@ -667,6 +758,41 @@ export const ModalPrepCoursePrincipal = ({
         onChange={handleAgreementFileChange}
         style={{ display: "none" }}
       />
+
+      {/* Modal de confirmação para forçar atualização */}
+      <AlertDialog
+        open={showForceUpdateModal}
+        onOpenChange={setShowForceUpdateModal}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-marine">
+              Representante já é colaborador
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Este usuário já está cadastrado como colaborador. Deseja forçar a
+              atualização para representante?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              className="border border-orange text-orange hover:bg-orange hover:border-orange/20 hover:text-white"
+              onClick={() => {
+                setShowForceUpdateModal(false);
+                setPendingUser(null);
+              }}
+            >
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-orange text-white hover:bg-orange/80"
+              onClick={handleForceUpdate}
+            >
+              Forçar Atualização
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
