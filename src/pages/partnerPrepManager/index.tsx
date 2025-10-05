@@ -76,9 +76,9 @@ export default function PartnerPrepManager() {
       <ModalCreatePrepCourse
         isOpen={openCreatePrepCourse}
         handleClose={() => setOpenCreatePrepCourse(false)}
-        onSuccess={() => {
+        onSuccess={(prep: PartnerPrepCourse) => {
           setOpenCreatePrepCourse(false);
-          getMoreCards(1);
+          setEntities([prep, ...entities]);
         }}
       />
     ) : null;

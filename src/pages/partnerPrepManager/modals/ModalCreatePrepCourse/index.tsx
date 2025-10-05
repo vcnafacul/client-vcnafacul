@@ -1,6 +1,16 @@
 import ModalTemplate, {
   ModalProps,
 } from "@/components/templates/modalTemplate";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { createPrepCourse } from "@/services/prepCourse/prepCourse/createPrepCourse";
 import {
@@ -13,13 +23,14 @@ import {
 } from "@/services/prepCourse/prepCourse/getUserByName";
 import { useAuthStore } from "@/store/auth";
 import { CreatePrepCoursePage } from "@/types/partnerPrepCourse/manager/createPrepCouse";
+import { PartnerPrepCourse } from "@/types/partnerPrepCourse/partnerPrepCourse";
 import { Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 export interface ModalCreateProps extends ModalProps {
   isOpen: boolean;
-  onSuccess: () => void;
+  onSuccess: (prep: PartnerPrepCourse) => void;
 }
 
 export const ModalCreatePrepCourse = ({
@@ -55,6 +66,12 @@ export const ModalCreatePrepCourse = ({
   const [isGeoSearching, setIsGeoSearching] = useState<boolean>(false);
   const [selectedGeo, setSelectedGeo] = useState<SearchGeo | null>(null);
   const [geoName, setGeoName] = useState<string>("");
+  const [showForceCreateModal, setShowForceCreateModal] =
+    useState<boolean>(false);
+  const [pendingData, setPendingData] = useState<{
+    geoId: string;
+    representative: string;
+  } | null>(null);
 
   const updateField = (fieldName: string, value: string) => {
     setFormData((prev) => ({
@@ -161,7 +178,7 @@ export const ModalCreatePrepCourse = ({
   const coordinatorInputRef = useRef<HTMLInputElement>(null);
   const geoInputRef = useRef<HTMLInputElement>(null);
 
-  const handleCreatePrepCourse = async () => {
+  const handleCreatePrepCourse = () => {
     const id = toast.loading("Criando curso de preparação...");
 
     // Validação dos campos obrigatórios
@@ -185,32 +202,79 @@ export const ModalCreatePrepCourse = ({
       return;
     }
 
-    try {
-      // Chamar a função de criação
-      await createPrepCourse(token, {
-        geoId: selectedGeo.id,
-        representative: selectedUser.id,
+    createPrepCourse(token, {
+      geoId: selectedGeo.id,
+      representative: selectedUser.id,
+    })
+      .then((prep) => {
+        toast.update(id, {
+          render: "Curso de preparação criado com sucesso!",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        onSuccess?.(prep);
+      })
+      .catch((error) => {
+        if (
+          error.message &&
+          error.message.includes("Representante já cadastrado")
+        ) {
+          toast.update(id, {
+            render: "",
+            type: "error",
+            isLoading: false,
+            autoClose: 0,
+          });
+          // Armazenar os dados pendentes e mostrar modal de confirmação
+          setPendingData({
+            geoId: selectedGeo.id,
+            representative: selectedUser.id,
+          });
+          setShowForceCreateModal(true);
+        } else {
+          toast.update(id, {
+            render: "Erro ao criar curso de preparação. Tente novamente.",
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+          });
+        }
       });
+  };
 
-      toast.update(id, {
-        render: "Curso de preparação criado com sucesso!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
-
-      onSuccess?.();
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      toast.update(id, {
-        render: "Erro ao criar curso de preparação. Tente novamente.",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
-      console.error("Erro ao criar curso de preparação:", error);
+  // Função para forçar criação do curso de preparação
+  const handleForceCreate = () => {
+    if (!pendingData) {
+      return;
     }
+
+    const id = toast.loading("Forçando criação do curso de preparação...");
+
+    createPrepCourse(token, pendingData, true)
+      .then((prep) => {
+        console.log(prep);
+        toast.update(id, {
+          render: "Curso de preparação criado com sucesso!",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+
+        onSuccess?.(prep);
+
+        // Fechar modal e limpar dados pendentes
+        setShowForceCreateModal(false);
+        setPendingData(null);
+      })
+      .catch((error) => {
+        toast.update(id, {
+          render: `Erro ao forçar criação do curso de preparação. ${error.message}`,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      });
   };
 
   // Cleanup dos timeouts
@@ -342,6 +406,41 @@ export const ModalCreatePrepCourse = ({
           Confirmar Cadastro
         </Button>
       </div>
+
+      {/* Modal de confirmação para forçar criação */}
+      <AlertDialog
+        open={showForceCreateModal}
+        onOpenChange={setShowForceCreateModal}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-marine">
+              Representante já é colaborador
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Este usuário já está cadastrado como colaborador. Deseja forçar a
+              criação do curso de preparação com este representante?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              className="border border-orange text-orange hover:bg-orange hover:border-orange/20 hover:text-white"
+              onClick={() => {
+                setShowForceCreateModal(false);
+                setPendingData(null);
+              }}
+            >
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-orange text-white hover:bg-orange/80"
+              onClick={handleForceCreate}
+            >
+              Forçar Criação
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </ModalTemplate>
   );
 };
