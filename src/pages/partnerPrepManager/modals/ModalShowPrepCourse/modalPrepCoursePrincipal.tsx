@@ -57,6 +57,8 @@ export const ModalPrepCoursePrincipal = ({
   const [showForceUpdateModal, setShowForceUpdateModal] =
     useState<boolean>(false);
   const [pendingUser, setPendingUser] = useState<SearchUser | null>(null);
+  const [hasCoordinatorChanges, setHasCoordinatorChanges] =
+    useState<boolean>(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const agreementInputRef = useRef<HTMLInputElement>(null);
@@ -100,6 +102,8 @@ export const ModalPrepCoursePrincipal = ({
       setSelectedUser(null);
       setSearchResults([]);
       setShowDropdown(false);
+      // Resetar estado de mudanças
+      setHasCoordinatorChanges(false);
     }
     setEditable(!editable);
   };
@@ -335,6 +339,10 @@ export const ModalPrepCoursePrincipal = ({
     const value = e.target.value;
     updateField("coordinator", value);
 
+    // Verificar se houve mudança em relação ao valor original
+    const hasChanged = value !== originalData.coordinator;
+    setHasCoordinatorChanges(hasChanged);
+
     // Limpar timeout anterior
     if (searchTimeout) {
       clearTimeout(searchTimeout);
@@ -354,6 +362,11 @@ export const ModalPrepCoursePrincipal = ({
     updateField("coordinator", user.name);
     updateField("coordinatorEmail", user.email);
     updateField("coordinatorPhone", user.phone);
+
+    // Verificar se houve mudança em relação ao valor original
+    const hasChanged = user.name !== originalData.coordinator;
+    setHasCoordinatorChanges(hasChanged);
+
     setShowDropdown(false);
     setSearchResults([]);
   };
@@ -400,6 +413,9 @@ export const ModalPrepCoursePrincipal = ({
       setSelectedUser(null);
       setSearchResults([]);
       setShowDropdown(false);
+
+      // Resetar estado de mudanças
+      setHasCoordinatorChanges(false);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -471,6 +487,9 @@ export const ModalPrepCoursePrincipal = ({
       setSearchResults([]);
       setShowDropdown(false);
 
+      // Resetar estado de mudanças
+      setHasCoordinatorChanges(false);
+
       // Fechar modal e limpar usuário pendente
       setShowForceUpdateModal(false);
       setPendingUser(null);
@@ -501,7 +520,7 @@ export const ModalPrepCoursePrincipal = ({
   }, [searchTimeout]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-0.5">
       {/* Header com título e botões */}
       <div className="flex items-center justify-between">
         <div>
@@ -573,6 +592,7 @@ export const ModalPrepCoursePrincipal = ({
               ref={coordinatorInputRef}
               id="coordinator"
               type="text"
+              autoComplete="off"
               value={formData.coordinator}
               onChange={handleCoordinatorChange}
               disabled={!editable}
@@ -730,7 +750,11 @@ export const ModalPrepCoursePrincipal = ({
         </div>
 
         {/* Botão de atualizar */}
-        <div className={editable ? "flex justify-end" : "hidden"}>
+        <div
+          className={
+            editable && hasCoordinatorChanges ? "flex justify-end" : "hidden"
+          }
+        >
           <Button
             variant="outline"
             onClick={handleUpdateRepresentative}
