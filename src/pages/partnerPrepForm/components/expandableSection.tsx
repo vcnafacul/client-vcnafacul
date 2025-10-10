@@ -19,6 +19,7 @@ import { RenderQuestionsTable } from "./renderQuestionsTable";
 
 interface ExpandableSectionProps {
   section: SectionForm;
+  setSection: (section: SectionForm) => void;
   handleAddQuestion: (id: string) => void;
   handleEditSection: (id: string) => void;
   handleDeleteSection: (id: string) => void;
@@ -26,6 +27,7 @@ interface ExpandableSectionProps {
 
 export function ExpandableSection({
   section,
+  setSection,
   handleAddQuestion,
   handleEditSection,
   handleDeleteSection,
@@ -37,7 +39,21 @@ export function ExpandableSection({
   ).length;
   const totalQuestionsCount = section.questions.length;
 
-  const [questions, setQuestions] = useState<QuestionForm[]>(section.questions);
+  const onDeleteQuestion = (questionId: string) => {
+    const newQuestions = section.questions.filter((q) => q._id !== questionId);
+    section.questions = newQuestions;
+    setSection(section);
+    if (newQuestions.length === 0) {
+      setOpen(false);
+    }
+  };
+
+  const onChangeQuestion = (question: QuestionForm) => {
+    section.questions = section.questions.map((q) =>
+      q._id === question._id ? question : q
+    );
+    setSection(section);
+  };
 
   return (
     <>
@@ -52,20 +68,22 @@ export function ExpandableSection({
           backgroundColor: open ? "action.selected" : "inherit",
         }}
       >
-        <TableCell size="small" className="w-5">
-          <Tooltip title={open ? "Recolher" : "Expandir"} arrow>
-            <IconButton
-              aria-label="expand row"
-              size="small"
-              onClick={() => setOpen(!open)}
-              sx={{
-                transition: "transform 0.2s ease-in-out",
-                transform: open ? "rotate(180deg)" : "rotate(0deg)",
-              }}
-            >
-              <FiChevronDown className="w-5 h-5" />
-            </IconButton>
-          </Tooltip>
+        <TableCell size="small" className="w-16">
+          {section.questions.length > 0 && (
+            <Tooltip title={open ? "Recolher" : "Expandir"} arrow>
+              <IconButton
+                aria-label="expand row"
+                size="small"
+                onClick={() => setOpen(!open)}
+                sx={{
+                  transition: "transform 0.2s ease-in-out",
+                  transform: open ? "rotate(180deg)" : "rotate(0deg)",
+                }}
+              >
+                <FiChevronDown className="w-5 h-5" />
+              </IconButton>
+            </Tooltip>
+          )}
         </TableCell>
         <TableCell>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -174,8 +192,9 @@ export function ExpandableSection({
                 </Typography>
               </Box>
               <RenderQuestionsTable
-                questions={questions}
-                setQuestions={setQuestions}
+                questions={section.questions}
+                onDeleteQuestion={onDeleteQuestion}
+                onChangeQuestion={onChangeQuestion}
               />
             </Box>
           </Collapse>

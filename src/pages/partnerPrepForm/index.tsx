@@ -27,6 +27,7 @@ import { toast } from "react-toastify";
 import { ExpandableSection } from "./components/expandableSection";
 import { ModalCreateQuestion } from "./modals/modalCreateQuestion";
 import { ModalCreateSection } from "./modals/modalCreateSection";
+import { ModalUpdateSection } from "./modals/modalUpdateSection";
 
 type AggregatedSection = {
   section: string;
@@ -144,6 +145,8 @@ export default function PartnerPrepForm() {
   const [sectionSelected, setSectionSelected] = useState<SectionForm | null>(
     null
   );
+  const [isOpenUpdateSection, setIsOpenUpdateSection] =
+    useState<boolean>(false);
 
   const columns: TableColumn<AggregatedSection>[] = [
     { key: "section", label: "Seção" },
@@ -230,7 +233,6 @@ export default function PartnerPrepForm() {
   };
 
   const handleAddQuestion = (sectionId: string) => {
-    console.log("sectionId", sectionId);
     setSectionSelected(entities.find((e) => e._id === sectionId)!);
     setIsOpenCreateQuestion(true);
   };
@@ -269,6 +271,21 @@ export default function PartnerPrepForm() {
         onSuccess={(section: SectionForm) => {
           setEntities((prev) => [...prev, section]);
           setIsOpenCreateSection(false);
+        }}
+      />
+    ) : null;
+  };
+
+  const UpdateSection = () => {
+    return isOpenUpdateSection ? (
+      <ModalUpdateSection
+        isOpen={isOpenUpdateSection}
+        handleClose={() => setIsOpenUpdateSection(false)}
+        section={sectionSelected!}
+        onSuccess={(section: SectionForm) => {
+          setEntities((prev) =>
+            prev.map((e) => (e._id === section._id ? section : e))
+          );
         }}
       />
     ) : null;
@@ -417,8 +434,16 @@ export default function PartnerPrepForm() {
                     <ExpandableSection
                       key={entity._id}
                       section={entity}
+                      setSection={(section) => {
+                        setEntities((prev) =>
+                          prev.map((e) => (e._id === section._id ? section : e))
+                        );
+                      }}
                       handleAddQuestion={handleAddQuestion}
-                      handleEditSection={() => {}}
+                      handleEditSection={() => {
+                        setSectionSelected(entity);
+                        setIsOpenUpdateSection(true);
+                      }}
                       handleDeleteSection={handleDeleteSection}
                     />
                   ))}
@@ -430,6 +455,7 @@ export default function PartnerPrepForm() {
       </Box>
       <CreateQuestion />
       <CreateSection />
+      <UpdateSection />
     </>
   );
 }

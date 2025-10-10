@@ -2,6 +2,7 @@ import ModalTemplate, {
   ModalProps,
 } from "@/components/templates/modalTemplate";
 import { setQuestionActive } from "@/services/partnerPrepForm/setQuestionActive";
+import { updateQuestionForm } from "@/services/partnerPrepForm/updateQuestion";
 import { useAuthStore } from "@/store/auth";
 import {
   AnswerCollectionType,
@@ -32,7 +33,7 @@ import { toast } from "react-toastify";
 interface ModalShowQuestionProps extends ModalProps {
   isOpen: boolean;
   question: QuestionForm;
-  onToggleActive?: (questionId: string) => void;
+  onToggleActive?: () => void;
   onEdit?: (question: QuestionForm) => void;
 }
 
@@ -90,8 +91,8 @@ export function ModalShowQuestion({
           isLoading: false,
           autoClose: 3000,
         });
+        onToggleActive?.();
         handleClose?.();
-        onToggleActive?.(question._id);
       })
       .catch((error) => {
         toast.error(error.message);
@@ -139,34 +140,49 @@ export function ModalShowQuestion({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!validateForm()) {
       return;
     }
 
+    setLoading(true);
+    const id = toast.loading("Atualizando questão...");
     if (onEdit) {
-      setLoading(true);
-      try {
-        const updatedQuestion: QuestionForm = {
-          ...question,
-          text: editableData.text.trim(),
-          helpText: editableData.helpText.trim() || undefined,
-          collection: editableData.collection,
-          options:
-            question.answerType === AnswerType.Options
-              ? editableData.options.filter((option) => option.trim() !== "")
-              : undefined,
-          active: editableData.active,
-        };
+      const updatedQuestion: QuestionForm = {
+        ...question,
+        text: editableData.text.trim(),
+        helpText: editableData.helpText.trim() || undefined,
+        collection: editableData.collection,
+        options:
+          question.answerType === AnswerType.Options
+            ? editableData.options.filter((option) => option.trim() !== "")
+            : undefined,
+        active: editableData.active,
+      };
 
-        await onEdit(updatedQuestion);
-        toast.success("Questão atualizada com sucesso!");
-        setIsEditMode(false);
-      } catch (error) {
-        toast.error("Erro ao atualizar questão");
-      } finally {
-        setLoading(false);
-      }
+      updateQuestionForm(token, question._id, updatedQuestion)
+        .then(() => {
+          toast.update(id, {
+            render: "Questão atualizada com sucesso!",
+            type: "success",
+            isLoading: false,
+            autoClose: 3000,
+          });
+          
+          setIsEditMode(false);
+          onEdit(updatedQuestion);
+        })
+        .catch((error) => {
+          toast.update(id, {
+            render: `Erro ao atualizar questão: ${error.message}`,
+            type: "error",
+            isLoading: false,
+            autoClose: 3000,
+          });
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   };
 

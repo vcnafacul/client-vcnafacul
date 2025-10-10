@@ -28,12 +28,14 @@ import { ActionMenu } from "./actionMenu";
 
 interface RenderQuestionsTableProps {
   questions: QuestionForm[];
-  setQuestions: (questions: QuestionForm[]) => void;
+  onDeleteQuestion: (questionId: string) => void;
+  onChangeQuestion: (question: QuestionForm) => void;
 }
 
 export function RenderQuestionsTable({
   questions,
-  setQuestions,
+  onDeleteQuestion,
+  onChangeQuestion,
 }: RenderQuestionsTableProps) {
   const [questionSelected, setQuestionSelected] = useState<QuestionForm | null>(
     null
@@ -54,8 +56,7 @@ export function RenderQuestionsTable({
     const id = toast.loading("Excluindo questão...");
     deleteQuestion(token, question._id)
       .then(() => {
-        const newQuestions = questions.filter((q) => q._id !== question._id);
-        setQuestions(newQuestions);
+        onDeleteQuestion(question._id);
         toast.update(id, {
           render: "Questão excluída com sucesso",
           type: "success",
@@ -81,14 +82,16 @@ export function RenderQuestionsTable({
         isOpen={isOpenModalShowQuestion}
         handleClose={() => setIsOpenModalShowQuestion(false)}
         question={questionSelected!}
-        onToggleActive={(questionId) => {
-          const newQuestions = questions.map((question) => {
-            if (question._id === questionId) {
-              return { ...question, active: !question.active };
-            }
-            return question;
-          });
-          setQuestions(newQuestions);
+        onToggleActive={() => {
+          const newQuestion = {
+            ...questionSelected!,
+            active: !questionSelected!.active,
+          };
+          onChangeQuestion(newQuestion);
+        }}
+        onEdit={(question) => {
+          onChangeQuestion(question);
+          setQuestionSelected(question);
         }}
       />
     ) : null;
