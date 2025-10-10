@@ -4,6 +4,7 @@ import InviteMemberProcessing from "@/pages/inviteMemberProcessing";
 import ManagerCollaborator from "@/pages/managerCollaborator";
 import { PartnerClass } from "@/pages/partnerClass";
 import { PartnerClassWithStudents } from "@/pages/partnerClassWithStudents";
+import PartnerPrepForm from "@/pages/partnerPrepForm";
 import { PartnerPrepInscriptionManager } from "@/pages/partnerPrepInscriptionManager";
 import { PartnerPrepInscritionStudentManager } from "@/pages/partnerPrepInscritionStudentManager";
 import PartnerPrepManager from "@/pages/partnerPrepManager";
@@ -63,6 +64,7 @@ import {
   MANAGER_COLLABORATOR,
   NEWS,
   PARTNER_CLASS,
+  PARTNER_CLASS_FORM,
   PARTNER_CLASS_STUDENTS,
   PARTNER_PREP,
   PARTNER_PREP_INSCRIPTION,
@@ -127,6 +129,7 @@ export function PlatformRoutes() {
           </ProtectedRoute>
         }
       >
+        <Route path={PARTNER_CLASS_FORM} element={<PartnerPrepForm />} />
         <Route path={DASH_ANALYTICS} element={<Analytics />} />
         <Route
           path={PARTNER_PREP_INSCRIPTION}
