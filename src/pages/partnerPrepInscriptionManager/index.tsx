@@ -34,7 +34,7 @@ export function PartnerPrepInscriptionManager() {
     data: { token },
   } = useAuthStore();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   const getMoreCards = async (): Promise<Paginate<Inscription>> => {
     return {
       data: [],

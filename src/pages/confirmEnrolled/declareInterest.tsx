@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
 import { declaredInterest } from "@/services/prepCourse/student/declaredInterest";
 import { useAuthStore } from "@/store/auth";

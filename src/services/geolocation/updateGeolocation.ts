@@ -5,7 +5,7 @@ import fetchWrapper from "../../utils/fetchWrapper";
 import { geolocations } from "../urls";
 
 interface UpdateGeolocationProps {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     body: any;
     token: string
 }
@@ -49,7 +49,7 @@ export async function UpdateGeolocationStatus({ body, token}: UpdateGeolocationP
 
 const converteGeolocationUpdateDto = (geo: Geolocation): GeolocationUpdateDto => {
     const noneFields = new Set(['createdAt', 'updatedAt', 'deletedAt', 'userFullName', 'userPhone', 'userConnection', 'userEmail', 'status']);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const result: any = {};
     
     Object.keys(geo).forEach((key) => {

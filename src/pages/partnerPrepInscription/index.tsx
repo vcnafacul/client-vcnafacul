@@ -37,7 +37,7 @@ export interface EachStepProps extends StepProps {
   handleBack?: (
     data?: Partial<StudentInscriptionDTO> | LegalGuardianDTO
   ) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   updateSocioeconomic?: (data: SocioeconomicAnswer[]) => void;
   currentData?: Partial<StudentInscriptionDTO>;
 }

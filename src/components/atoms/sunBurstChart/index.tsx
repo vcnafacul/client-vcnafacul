@@ -11,7 +11,7 @@ export interface DataSun {
 interface Props {
   data: DataSun;
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 export function SunBurstChart({ data }: Props) {
   return (
     <ResponsiveSunburst

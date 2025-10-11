@@ -19,6 +19,7 @@ import { RenderQuestionsTable } from "./renderQuestionsTable";
 
 interface ExpandableSectionProps {
   section: SectionForm;
+  allQuestions?: QuestionForm[];
   setSection: (section: SectionForm) => void;
   handleAddQuestion: (id: string) => void;
   handleEditSection: (id: string) => void;
@@ -27,6 +28,7 @@ interface ExpandableSectionProps {
 
 export function ExpandableSection({
   section,
+  allQuestions = [],
   setSection,
   handleAddQuestion,
   handleEditSection,
@@ -193,6 +195,7 @@ export function ExpandableSection({
               </Box>
               <RenderQuestionsTable
                 questions={section.questions}
+                allQuestions={allQuestions}
                 onDeleteQuestion={onDeleteQuestion}
                 onChangeQuestion={onChangeQuestion}
               />

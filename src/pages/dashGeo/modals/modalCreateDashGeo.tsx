@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import { Geolocation } from "@/types/geolocation/geolocation";
 import { useEffect, useState } from "react";
 

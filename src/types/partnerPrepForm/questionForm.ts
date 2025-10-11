@@ -1,3 +1,5 @@
+import { ComplexCondition } from "./condition";
+
 export enum AnswerType {
   Text = "Text",
   Number = "Number",
@@ -17,6 +19,7 @@ export interface QuestionForm {
   answerType: AnswerType;
   collection: AnswerCollectionType;
   options?: string[];
+  conditions?: ComplexCondition;
   active: boolean;
   createdAt: Date;
   updatedAt: Date;

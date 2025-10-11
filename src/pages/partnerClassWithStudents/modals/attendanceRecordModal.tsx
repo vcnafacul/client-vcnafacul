@@ -133,7 +133,7 @@ export function AttendanceRecordModal({
       flex: 1,
       minWidth: 200,
       valueGetter: (params) =>
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         (params as boolean) ? "Presente" : "Ausente",
     },
     {

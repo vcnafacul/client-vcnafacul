@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { Question, QuestionDto } from "../../dtos/question/questionDTO";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import fetchWrapper from "../../utils/fetchWrapper";

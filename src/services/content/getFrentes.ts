@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { FrenteDto } from "../../dtos/content/contentDtoInput";
 import { Materias } from "../../enums/content/materias";
 import { Frente } from "../../types/content/frenteContent";

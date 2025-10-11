@@ -50,7 +50,7 @@ export function ClassCreateEditModal({
     resolver: yupResolver(schema),
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const resolver = (data: any) => {
     onCreateEdit({
       ...data,

@@ -4,6 +4,7 @@ import ModalTemplate, {
 import { setQuestionActive } from "@/services/partnerPrepForm/setQuestionActive";
 import { updateQuestionForm } from "@/services/partnerPrepForm/updateQuestion";
 import { useAuthStore } from "@/store/auth";
+import { ComplexCondition } from "@/types/partnerPrepForm/condition";
 import {
   AnswerCollectionType,
   AnswerType,
@@ -27,12 +28,21 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { FiEdit3, FiPlus, FiSave, FiTrash2, FiX } from "react-icons/fi";
+import {
+  FiEdit3,
+  FiPlus,
+  FiSave,
+  FiSettings,
+  FiTrash2,
+  FiX,
+} from "react-icons/fi";
 import { toast } from "react-toastify";
+import { ModalConditions } from "./modalConditions";
 
 interface ModalShowQuestionProps extends ModalProps {
   isOpen: boolean;
   question: QuestionForm;
+  availableQuestions?: QuestionForm[];
   onToggleActive?: () => void;
   onEdit?: (question: QuestionForm) => void;
 }
@@ -41,6 +51,7 @@ interface EditableFormData {
   text: string;
   helpText: string;
   collection: AnswerCollectionType;
+  conditions?: ComplexCondition;
   options: string[];
   active: boolean;
 }
@@ -49,12 +60,14 @@ export function ModalShowQuestion({
   isOpen,
   handleClose,
   question,
+  availableQuestions = [],
   onToggleActive,
   onEdit,
 }: ModalShowQuestionProps) {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isOpenConditions, setIsOpenConditions] = useState<boolean>(false);
   const {
     data: { token },
   } = useAuthStore();
@@ -63,6 +76,7 @@ export function ModalShowQuestion({
     text: question.text,
     helpText: question.helpText || "",
     collection: question.collection,
+    conditions: question.conditions || undefined,
     options: question.options || [],
     active: question.active,
   });
@@ -153,6 +167,7 @@ export function ModalShowQuestion({
         text: editableData.text.trim(),
         helpText: editableData.helpText.trim() || undefined,
         collection: editableData.collection,
+        conditions: editableData.conditions,
         options:
           question.answerType === AnswerType.Options
             ? editableData.options.filter((option) => option.trim() !== "")
@@ -168,7 +183,7 @@ export function ModalShowQuestion({
             isLoading: false,
             autoClose: 3000,
           });
-          
+
           setIsEditMode(false);
           onEdit(updatedQuestion);
         })
@@ -423,6 +438,54 @@ export function ModalShowQuestion({
 
         <Divider />
 
+        {/* Condições */}
+        <Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
+          >
+            <Typography variant="h6">Condições</Typography>
+            {isEditMode && (
+              <Button
+                startIcon={<FiSettings />}
+                onClick={() => setIsOpenConditions(true)}
+                variant="outlined"
+                size="small"
+              >
+                {editableData.conditions
+                  ? "Editar Condições"
+                  : "Definir Condições"}
+              </Button>
+            )}
+          </Box>
+
+          {editableData.conditions ? (
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center", mb: 2 }}>
+              <Chip
+                label={`${editableData.conditions.conditions.length} condição(ões)`}
+                color="info"
+                variant="outlined"
+              />
+              <Chip
+                label={editableData.conditions.logic}
+                color="primary"
+                variant="filled"
+                size="small"
+              />
+            </Box>
+          ) : (
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Nenhuma condição definida
+            </Typography>
+          )}
+        </Box>
+
+        <Divider />
+
         {/* Status Ativo */}
         <Box
           sx={{
@@ -467,6 +530,18 @@ export function ModalShowQuestion({
           </Box>
         )}
       </Box>
+
+      {/* Modal de Condições */}
+      <ModalConditions
+        isOpen={isOpenConditions}
+        handleClose={() => setIsOpenConditions(false)}
+        conditions={editableData.conditions}
+        availableQuestions={availableQuestions}
+        onSave={(conditions) => {
+          setEditableData((prev) => ({ ...prev, conditions }));
+          setIsOpenConditions(false);
+        }}
+      />
     </ModalTemplate>
   );
 }

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import { useNavigate } from "react-router-dom"
 import { HOME_PATH } from "../../routes/path"
 import { useAuthStore } from "../../store/auth"

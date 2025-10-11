@@ -112,7 +112,7 @@ function DashProva() {
     return await getProvas(token, page, limitCards);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   const buttons: ButtonProps[] = [
     {
       disabled: !permissao[Roles.cadastrarProvas],

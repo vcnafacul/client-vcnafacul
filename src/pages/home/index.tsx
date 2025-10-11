@@ -24,7 +24,7 @@ function Home() {
       .catch((error: Error) => {
         toast.error(error.message);
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, []);
 
   return (

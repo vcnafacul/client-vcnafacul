@@ -10,7 +10,7 @@ interface Props {
   fill?: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 export function RadarChart({ data, scheme, gridShape, fill }: Props) {
   const colorScheme = scheme || "blues";
   const shape: string = gridShape || "linear";

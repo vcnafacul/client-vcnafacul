@@ -6,7 +6,7 @@ import {
 import fetchWrapper from "../../utils/fetchWrapper";
 import { question_form } from "../urls";
 
-interface CreateQuestionDtoInput {
+export interface CreateQuestionDtoInput {
   sectionId: string;
   text: string;
   helpText?: string;

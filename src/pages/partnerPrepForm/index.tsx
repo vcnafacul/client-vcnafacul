@@ -209,11 +209,15 @@ export default function PartnerPrepForm() {
   );
 
   const CreateQuestion = () => {
+    // Coletar todas as questões de todas as seções para referência
+    const allQuestions = entities.flatMap((section) => section.questions);
+
     return isOpenCreateQuestion ? (
       <ModalCreateQuestion
         isOpen={isOpenCreateQuestion}
         handleClose={() => setIsOpenCreateQuestion(false)}
         sectionId={sectionSelected!._id}
+        availableQuestions={allQuestions}
         onSuccess={(question: QuestionForm) => {
           // eu preciso colocar a questão na seção correta
           const newEntities = entities.map((section) => {
@@ -430,23 +434,33 @@ export default function PartnerPrepForm() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {entities.map((entity) => (
-                    <ExpandableSection
-                      key={entity._id}
-                      section={entity}
-                      setSection={(section) => {
-                        setEntities((prev) =>
-                          prev.map((e) => (e._id === section._id ? section : e))
-                        );
-                      }}
-                      handleAddQuestion={handleAddQuestion}
-                      handleEditSection={() => {
-                        setSectionSelected(entity);
-                        setIsOpenUpdateSection(true);
-                      }}
-                      handleDeleteSection={handleDeleteSection}
-                    />
-                  ))}
+                  {entities.map((entity) => {
+                    // Coletar todas as questões de todas as seções para referência
+                    const allQuestions = entities.flatMap(
+                      (section) => section.questions
+                    );
+
+                    return (
+                      <ExpandableSection
+                        key={entity._id}
+                        section={entity}
+                        allQuestions={allQuestions}
+                        setSection={(section) => {
+                          setEntities((prev) =>
+                            prev.map((e) =>
+                              e._id === section._id ? section : e
+                            )
+                          );
+                        }}
+                        handleAddQuestion={handleAddQuestion}
+                        handleEditSection={() => {
+                          setSectionSelected(entity);
+                          setIsOpenUpdateSection(true);
+                        }}
+                        handleDeleteSection={handleDeleteSection}
+                      />
+                    );
+                  })}
                 </TableBody>
               </Table>
             </TableContainer>

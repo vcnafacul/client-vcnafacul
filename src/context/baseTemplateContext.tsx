@@ -3,7 +3,7 @@ import { createContext, useContext } from "react";
 import { FooterProps } from "../components/organisms/footer";
 import { HeaderData } from "../components/organisms/header";
 
-// eslint-disable-next-line react-refresh/only-export-components
+ 
 const BaseTemplateContext = createContext<{
     header:HeaderData, 
     footer?: FooterProps | null,

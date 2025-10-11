@@ -3,6 +3,7 @@ import ModalTemplate, {
 } from "@/components/templates/modalTemplate";
 import { createQuestion } from "@/services/partnerPrepForm/createQuestion";
 import { useAuthStore } from "@/store/auth";
+import { ComplexCondition } from "@/types/partnerPrepForm/condition";
 import {
   AnswerCollectionType,
   AnswerType,
@@ -12,6 +13,7 @@ import {
   Alert,
   Box,
   Button,
+  Chip,
   CircularProgress,
   Divider,
   FormControl,
@@ -27,12 +29,14 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiPlus, FiSettings, FiTrash2 } from "react-icons/fi";
 import { toast } from "react-toastify";
+import { ModalConditions } from "./modalConditions";
 
 interface ModalCreateQuestionProps extends ModalProps {
   isOpen: boolean;
   sectionId: string;
+  availableQuestions?: QuestionForm[];
   onSuccess: (question: QuestionForm) => void;
 }
 
@@ -41,6 +45,7 @@ interface FormData {
   helpText: string;
   answerType: AnswerType;
   collection: AnswerCollectionType;
+  conditions?: ComplexCondition;
   options: string[];
   active: boolean;
 }
@@ -50,6 +55,7 @@ const initialFormData: FormData = {
   helpText: "",
   answerType: AnswerType.Text,
   collection: AnswerCollectionType.Single,
+  conditions: undefined,
   options: [""],
   active: true,
 };
@@ -58,6 +64,7 @@ export function ModalCreateQuestion({
   isOpen,
   handleClose,
   sectionId,
+  availableQuestions = [],
   onSuccess,
 }: ModalCreateQuestionProps) {
   const {
@@ -66,6 +73,7 @@ export function ModalCreateQuestion({
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isOpenConditions, setIsOpenConditions] = useState(false);
 
   const handleInputChange = (
     field: keyof FormData,
@@ -152,6 +160,7 @@ export function ModalCreateQuestion({
         answerType: formData.answerType,
         collection: formData.collection,
         options: validOptions,
+        conditions: formData.conditions,
         active: formData.active,
       };
 
@@ -326,6 +335,46 @@ export function ModalCreateQuestion({
 
         <Divider />
 
+        {/* Condições */}
+        <Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
+          >
+            <Typography variant="h6">Condições</Typography>
+            <Button
+              startIcon={<FiSettings />}
+              onClick={() => setIsOpenConditions(true)}
+              variant="outlined"
+              size="small"
+            >
+              {formData.conditions ? "Editar Condições" : "Definir Condições"}
+            </Button>
+          </Box>
+
+          {formData.conditions && (
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center", mb: 2 }}>
+              <Chip
+                label={`${formData.conditions.conditions.length} condição(ões)`}
+                color="info"
+                variant="outlined"
+              />
+              <Chip
+                label={formData.conditions.logic}
+                color="primary"
+                variant="filled"
+                size="small"
+              />
+            </Box>
+          )}
+        </Box>
+
+        <Divider />
+
         {/* Status Ativo */}
         <FormControlLabel
           control={
@@ -358,6 +407,18 @@ export function ModalCreateQuestion({
           </Button>
         </Box>
       </Box>
+
+      {/* Modal de Condições */}
+      <ModalConditions
+        isOpen={isOpenConditions}
+        handleClose={() => setIsOpenConditions(false)}
+        conditions={formData.conditions}
+        availableQuestions={availableQuestions}
+        onSave={(conditions) => {
+          setFormData((prev) => ({ ...prev, conditions }));
+          setIsOpenConditions(false);
+        }}
+      />
     </ModalTemplate>
   );
 }

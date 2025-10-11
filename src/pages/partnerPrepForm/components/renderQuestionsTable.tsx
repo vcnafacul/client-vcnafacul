@@ -28,12 +28,14 @@ import { ActionMenu } from "./actionMenu";
 
 interface RenderQuestionsTableProps {
   questions: QuestionForm[];
+  allQuestions?: QuestionForm[];
   onDeleteQuestion: (questionId: string) => void;
   onChangeQuestion: (question: QuestionForm) => void;
 }
 
 export function RenderQuestionsTable({
   questions,
+  allQuestions = [],
   onDeleteQuestion,
   onChangeQuestion,
 }: RenderQuestionsTableProps) {
@@ -82,6 +84,7 @@ export function RenderQuestionsTable({
         isOpen={isOpenModalShowQuestion}
         handleClose={() => setIsOpenModalShowQuestion(false)}
         question={questionSelected!}
+        availableQuestions={allQuestions}
         onToggleActive={() => {
           const newQuestion = {
             ...questionSelected!,
