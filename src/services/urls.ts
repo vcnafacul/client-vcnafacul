@@ -81,3 +81,6 @@ export const classes = `${BASE_URL}/class`;
 
 export const attendanceRecord = `${BASE_URL}/attendance-record`;
 export const studentAttendance = `${BASE_URL}/student-attendance`;
+
+export const section_form = `${BASE_URL}/section-form`;
+export const question_form = `${BASE_URL}/question-form`;

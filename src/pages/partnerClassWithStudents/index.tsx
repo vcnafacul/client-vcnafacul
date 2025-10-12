@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import logo from "@/assets/images/logo_carteirinha.png";
 import Button from "@/components/molecules/button";
 import { Bool } from "@/enums/bool";

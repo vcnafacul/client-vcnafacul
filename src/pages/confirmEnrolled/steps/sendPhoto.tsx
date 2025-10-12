@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import PhotoEditor from "@/components/atoms/photoEditor";
 import { useState } from "react";
 import { toast } from "react-toastify";

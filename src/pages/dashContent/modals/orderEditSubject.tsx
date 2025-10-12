@@ -27,7 +27,7 @@ interface ChangeOrderDTO {
   node2?: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const DraggableRow = ({ row, index, moveRow }: any) => {
   const [, ref] = useDrag({
     type: ItemType,

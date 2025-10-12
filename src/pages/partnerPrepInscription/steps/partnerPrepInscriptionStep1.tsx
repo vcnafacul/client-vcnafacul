@@ -184,7 +184,7 @@ export function PartnerPrepInscriptionStep1({
         type="text"
         error={errors.firstName}
         defaultValue={currentData?.firstName}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         onChange={(e: any) => setValue("firstName", e.target.value)}
         maxLength={50}
       />
@@ -194,7 +194,7 @@ export function PartnerPrepInscriptionStep1({
         type="text"
         error={errors.lastName}
         defaultValue={currentData?.lastName}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         onChange={(e: any) => setValue("lastName", e.target.value)}
         maxLength={100}
       />
@@ -204,7 +204,7 @@ export function PartnerPrepInscriptionStep1({
         type="text"
         defaultValue={currentData?.socialName}
         error={errors.socialName}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         onChange={(e: any) => setValue("socialName", e.target.value)}
         maxLength={50}
         disabled={!isCheckboxChecked}
@@ -247,7 +247,7 @@ export function PartnerPrepInscriptionStep1({
         type="email"
         disabled={true}
         value={currentData?.email}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         onChange={(e: any) => setValue("email", e.target.value)}
         className="bg-gray-200 tracking-wider"
         maxLength={100}
@@ -258,7 +258,7 @@ export function PartnerPrepInscriptionStep1({
         type="text"
         error={errors.whatsapp}
         value={whatsapp}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         onChange={(e: any) => {
           const value = phoneMask(e.target.value);
           setWhatsapp(value);
@@ -271,7 +271,7 @@ export function PartnerPrepInscriptionStep1({
         type="text"
         error={errors.urgencyPhone}
         value={phone}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         onChange={(e: any) => {
           const value = phoneMask(e.target.value);
           setPhone(value);
@@ -316,7 +316,7 @@ export function PartnerPrepInscriptionStep1({
             type="text"
             error={errors.rg}
             defaultValue={currentData?.rg}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+             
             onChange={(e: any) => setValue("rg", e.target.value)}
             className="w-full flex flex-1"
             maxLength={15}
@@ -351,7 +351,7 @@ export function PartnerPrepInscriptionStep1({
         type="text"
         error={errors.cpf}
         value={cpf}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         onChange={(e: any) => handleCPFChange(e.target.value)}
       />
       <Button type="submit">Continuar</Button>

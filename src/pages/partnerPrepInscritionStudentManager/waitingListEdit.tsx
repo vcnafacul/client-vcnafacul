@@ -22,7 +22,7 @@ interface Props {
   updateOder: (studentsId: string[]) => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const DraggableRow = ({ row, index, moveRow }: any) => {
   const [, ref] = useDrag({
     type: ItemType,

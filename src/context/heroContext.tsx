@@ -2,7 +2,7 @@
 import { createContext, useContext } from "react";
 import { Slide } from "../components/organisms/hero";
 
-// eslint-disable-next-line react-refresh/only-export-components
+ 
 const HeroContext = createContext<{ heroSlides: Slide[] } | null>(null)
 
 function useHeroContext() {

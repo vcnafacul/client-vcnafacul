@@ -17,6 +17,7 @@ import {
   MANAGER_COLLABORATOR,
   NEWS,
   PARTNER_CLASS,
+  PARTNER_CLASS_FORM,
   PARTNER_CLASS_STUDENTS,
   PARTNER_PREP_INSCRIPTION,
   PARTNER_PREP_MANAGER,
@@ -44,6 +45,7 @@ import { BiSolidSchool } from "react-icons/bi";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { PiStudentFill, PiUsersFourBold } from "react-icons/pi";
 
+import { FaWpforms } from "react-icons/fa6";
 import { IoSchool } from "react-icons/io5";
 import { DashCardMenu } from "../../components/molecules/dashCard";
 import { HeaderData } from "../../components/organisms/header";
@@ -113,6 +115,13 @@ export const dashCardMenuItems: DashCardMenu[] = [
         text: "Estudantes",
         link: `/dashboard/${PARTNER_CLASS_STUDENTS}`,
         permissions: [Roles.visualizarEstudantes],
+      },
+      {
+        icon: FaWpforms,
+        alt: "formulário",
+        text: "Formulário",
+        link: `/dashboard/${PARTNER_CLASS_FORM}`,
+        permissions: [Roles.alterarPermissao],
       },
     ],
   },

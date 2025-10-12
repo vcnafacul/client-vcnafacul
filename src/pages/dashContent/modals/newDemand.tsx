@@ -69,7 +69,7 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
   const materia = watch("materia");
   const frente = watch("frente");
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const create = (data: any) => {
     const id = toast.loading("Criando Demanda ... ");
     createContent(data, token)

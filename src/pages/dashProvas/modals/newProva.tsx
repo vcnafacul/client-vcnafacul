@@ -37,7 +37,7 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
 
   const getInfors = useCallback(async () => {
     getInfosQuestion(token)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       .then((infos: any) => {
         setExames(infos.exames);
       })

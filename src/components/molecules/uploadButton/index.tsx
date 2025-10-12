@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { ComponentProps } from "react"
 import './style.css'
 
