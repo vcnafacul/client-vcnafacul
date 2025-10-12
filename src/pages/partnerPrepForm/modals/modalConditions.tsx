@@ -155,7 +155,7 @@ export function ModalConditions({
   );
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [mainOperator, setMainOperator] = useState<Logic>(Logic.And);
+  const [mainOperator, setMainOperator] = useState<Logic>(conditions?.logic || Logic.And);
   const [conditionList, setConditionList] = useState<ConditionFormData[]>(
     conditions?.conditions || [initialConditionData]
   );
