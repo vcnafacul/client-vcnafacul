@@ -1,18 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Dropdown, DropdownProps } from "primereact/dropdown";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./style.css";
 
 export interface InputSelectProps extends DropdownProps {
   className?: string;
 }
 
-export function InputSelect({ ...props }: InputSelectProps) {
-  const [value, setValue] = useState<any>(props.defaultValue);
+export function InputSelect({ value, onChange, ...props }: InputSelectProps) {
+  const [internalValue, setInternalValue] = useState<any>(
+    value || props.defaultValue
+  );
+
+  // Sincronizar com o valor externo quando mudar
+  useEffect(() => {
+    setInternalValue(value);
+  }, [value]);
 
   const handleOnChange = (e: any) => {
-    props.onChange!(e);
-    setValue(e.value);
+    setInternalValue(e.value);
+    if (onChange) {
+      onChange(e);
+    }
   };
 
   return (
@@ -20,8 +29,7 @@ export function InputSelect({ ...props }: InputSelectProps) {
       {...props}
       optionLabel="label"
       optionValue="value"
-      value={value}
-      defaultValue={value}
+      value={internalValue}
       onChange={handleOnChange}
       className="w-full flex ring-0 items-center 
       bg-transparent dropdown-text-small"

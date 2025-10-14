@@ -1,11 +1,11 @@
 import { StatusEnum } from "@/enums/generic/statusEnum";
+import PartnerPrepForm from "@/types/partnerPrepForm/partnerPrepForm";
 import fetchWrapper from "../../utils/fetchWrapper";
 import { inscriptionCourse } from "../urls";
 
 interface HasActiveInscriptionResponse {
   prepCourseId: string;
   prepCourseName: string;
-  prepCourseEmail: string;
   inscription: {
     name: string;
     email: string;
@@ -14,6 +14,7 @@ interface HasActiveInscriptionResponse {
     endDate: Date;
     status: StatusEnum;
   };
+  partnerPrepForm: PartnerPrepForm;
 }
 
 export async function getInscription(
