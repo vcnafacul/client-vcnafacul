@@ -49,7 +49,7 @@ export function PartnerPrepInscription() {
   } = useAuthStore();
   const navigate = useNavigate();
   const [stepCurrently, setStepCurrently] = useState<StepsInscriptionStudent>(
-    StepsInscriptionStudent.Socioeconomic
+    StepsInscriptionStudent.Blank
   );
   const [dataStudent, setDataStudent] = useState<StudentInscriptionDTO>(
     {} as StudentInscriptionDTO
@@ -119,7 +119,7 @@ export function PartnerPrepInscription() {
     completeInscriptionStudent({ ...dataStudent, socioeconomic: data }, token)
       .then(() => {
         toast.dismiss(id);
-        setStepCurrently(StepsInscriptionStudent.Success); // Redirect to success page
+        // setStepCurrently(StepsInscriptionStudent.Success); // Redirect to success page
       })
       .catch((res) => {
         toast.update(id, {
@@ -333,7 +333,7 @@ export function PartnerPrepInscription() {
             state: res.state,
             email: res.email,
           });
-          setStepCurrently(StepsInscriptionStudent.Socioeconomic);
+          setStepCurrently(StepsInscriptionStudent.Presentation);
         })
         .catch((res) => {
           setStepCurrently(StepsInscriptionStudent.Error);

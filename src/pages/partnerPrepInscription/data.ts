@@ -1,7 +1,9 @@
 export interface SocioeconomicAnswer {
+  questionId: string;
   question: string;
   answer: string | string[] | number | number[] | boolean;
 }
+
 export const stepDescriptions = {
   step1: "Informações Pessoais",
   step2: "Informações de Endereço",
@@ -19,6 +21,20 @@ export const textoParceria = [
   "Com essa parceria, você terá acesso a simulados, materiais de estudo gratuitos e, agora, com as funcionalidades do Você na Facul, você também poderá contar com o acompanhamento do seu cursinho de forma integrada, facilitando o seu processo de inscrição e garantindo que seu progresso seja acompanhado de perto.",
 
   "Seja bem-vindo! Estamos aqui para ajudar você a alcançar seus sonhos e entrar na universidade pública. Para começar, é só clicar no botão abaixo e fazer a sua inscrição.",
+];
+
+export const parentescoOptions = [
+  "Mãe",
+  "Pai",
+  "Avó",
+  "Avô",
+  "Tia",
+  "Tio",
+  "Irmã",
+  "Irmão",
+  "Prima",
+  "Primo",
+  "Outro",
 ];
 
 export const ptBr = {

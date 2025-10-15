@@ -318,34 +318,6 @@ export function PartnerPrepInscriptionStepForm({
     [evaluateBasicCondition]
   );
 
-  // Função para limpar respostas de questões que não são mais visíveis
-  const cleanupInvisibleAnswers = useCallback(() => {
-    setAnswers((prevAnswers) => {
-      const cleanedAnswers: Record<string, unknown> = {};
-
-      partnerPrepForm.sections.forEach((section) => {
-        section.questions.forEach((question) => {
-          // Se a questão deve ser exibida, manter a resposta
-          if (evaluateCondition(question.conditions)) {
-            if (prevAnswers[question._id] !== undefined) {
-              cleanedAnswers[question._id] = prevAnswers[question._id];
-            }
-          }
-          // Se a questão não deve ser exibida, remover do estado
-        });
-      });
-
-      return cleanedAnswers;
-    });
-  }, [partnerPrepForm, evaluateCondition]);
-
-  // Limpar respostas de questões que não são mais visíveis quando as respostas mudam
-  useEffect(() => {
-    if (!isInitializing) {
-      cleanupInvisibleAnswers();
-    }
-  }, [answers, isInitializing, cleanupInvisibleAnswers]);
-
   // Função para validar se todas as questões visíveis foram respondidas
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -446,6 +418,7 @@ export function PartnerPrepInscriptionStepForm({
                 cleanedAnswers[question._id] !== undefined
               ) {
                 socioeconomicAnswers.push({
+                  questionId: question._id,
                   question: question.text,
                   answer: cleanedAnswers[question._id] as
                     | string
@@ -457,7 +430,6 @@ export function PartnerPrepInscriptionStepForm({
             });
           });
 
-          console.log("Dados finais enviados:", socioeconomicAnswers);
           updateSocioeconomic!(socioeconomicAnswers);
         }}
       />

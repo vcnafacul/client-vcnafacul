@@ -20,7 +20,6 @@ import {
 
 import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
 import BLink from "@/components/molecules/bLink";
-import { questions } from "@/pages/partnerPrepInscription/data";
 import { DASH, PARTNER_PREP_INSCRIPTION } from "@/routes/path";
 import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
@@ -136,7 +135,7 @@ export function InscriptionInfoModal({
     const id = toast.loading("Exportando lista de alunos...");
     getSubscribers(token, inscriptionSelected!.id!)
       .then((data) => {
-        const flattenedData = flattenData(data, questions);
+        const flattenedData = flattenData(data, {});
 
         flattenedData.sort((a, b) => {
           if (a.cadastrado_em < b.cadastrado_em) return -1;
