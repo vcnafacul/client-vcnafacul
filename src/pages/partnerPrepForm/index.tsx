@@ -1,6 +1,7 @@
 import { TableColumn } from "@/components/organisms/expandableTable";
 import { deleteSection } from "@/services/partnerPrepForm/deleteSection";
 import { getSection } from "@/services/partnerPrepForm/getSections";
+import { setSectionActive } from "@/services/partnerPrepForm/setSectionActive";
 import { useAuthStore } from "@/store/auth";
 import { AnswerType, QuestionForm } from "@/types/partnerPrepForm/questionForm";
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
@@ -267,6 +268,42 @@ export default function PartnerPrepForm() {
       });
   };
 
+  const handleToggleSection = (sectionId: string) => {
+    const section = entities.find((e) => e._id === sectionId);
+    if (!section) return;
+
+    const newActiveState = !section.active;
+    const action = newActiveState ? "ativando" : "desativando";
+    const successMessage = newActiveState ? "ativada" : "desativada";
+
+    const id = toast.loading(
+      `${action.charAt(0).toUpperCase() + action.slice(1)} seção...`
+    );
+
+    setSectionActive(token, sectionId)
+      .then(() => {
+        setEntities((prev) =>
+          prev.map((e) =>
+            e._id === sectionId ? { ...e, active: newActiveState } : e
+          )
+        );
+        toast.update(id, {
+          render: `Seção ${successMessage} com sucesso`,
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      })
+      .catch((error: Error) => {
+        toast.update(id, {
+          render: `Erro ao ${action} seção: ${error.message}`,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      });
+  };
+
   const CreateSection = () => {
     return isOpenCreateSection ? (
       <ModalCreateSection
@@ -458,6 +495,7 @@ export default function PartnerPrepForm() {
                           setIsOpenUpdateSection(true);
                         }}
                         handleDeleteSection={handleDeleteSection}
+                        handleToggleSection={handleToggleSection}
                       />
                     );
                   })}
