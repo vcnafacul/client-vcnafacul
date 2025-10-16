@@ -1,17 +1,27 @@
 import { Box, IconButton, Tooltip } from "@mui/material";
 import { FaPlus } from "react-icons/fa";
-import { FiEdit3, FiEye, FiTrash2 } from "react-icons/fi";
+import {
+  FiEdit3,
+  FiEye,
+  FiToggleLeft,
+  FiToggleRight,
+  FiTrash2,
+} from "react-icons/fi";
 
 export function ActionMenu({
   onView,
   onEdit,
   onDelete,
   onAdd,
+  onToggle,
+  isActive,
 }: {
   onView?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
   onAdd?: () => void;
+  onToggle?: () => void;
+  isActive?: boolean;
 }) {
   return (
     <Box className="flex gap-1">
@@ -23,6 +33,26 @@ export function ActionMenu({
             sx={{ color: "primary.main" }}
           >
             <FaPlus className="h-4 w-4" />
+          </IconButton>
+        </Tooltip>
+      )}
+      {onToggle && (
+        <Tooltip title={isActive ? "Desativar Seção" : "Ativar Seção"} arrow>
+          <IconButton
+            size="small"
+            onClick={onToggle}
+            sx={{
+              color: isActive ? "success.main" : "text.secondary",
+              "&:hover": {
+                color: isActive ? "error.main" : "success.main",
+              },
+            }}
+          >
+            {isActive ? (
+              <FiToggleRight className="h-4 w-4" />
+            ) : (
+              <FiToggleLeft className="h-4 w-4" />
+            )}
           </IconButton>
         </Tooltip>
       )}

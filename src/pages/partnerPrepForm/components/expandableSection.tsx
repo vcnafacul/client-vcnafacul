@@ -24,6 +24,7 @@ interface ExpandableSectionProps {
   handleAddQuestion: (id: string) => void;
   handleEditSection: (id: string) => void;
   handleDeleteSection: (id: string) => void;
+  handleToggleSection: (id: string) => void;
 }
 
 export function ExpandableSection({
@@ -33,6 +34,7 @@ export function ExpandableSection({
   handleAddQuestion,
   handleEditSection,
   handleDeleteSection,
+  handleToggleSection,
 }: ExpandableSectionProps) {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -62,12 +64,17 @@ export function ExpandableSection({
       <TableRow
         key={section._id}
         sx={{
+          opacity: section.active ? 1 : 0.6,
+          backgroundColor: open
+            ? "action.selected"
+            : section.active
+            ? "transparent"
+            : "grey.50",
           "&:hover": {
-            backgroundColor: "action.hover",
+            backgroundColor: section.active ? "action.hover" : "grey.100",
           },
-          borderLeft: section.active ? "4px solid" : "4px solid",
+          borderLeft: "4px solid",
           borderLeftColor: section.active ? "primary.main" : "grey.300",
-          backgroundColor: open ? "action.selected" : "inherit",
         }}
       >
         <TableCell size="small" className="w-16">
@@ -145,16 +152,22 @@ export function ExpandableSection({
         </TableCell>
         <TableCell align="right" className="w-10">
           <ActionMenu
-            onAdd={() => {
-              console.log("handleAddQuestion", section._id);
-              handleAddQuestion(section._id);
-            }}
+            onAdd={
+              section.active
+                ? () => {
+                    console.log("handleAddQuestion", section._id);
+                    handleAddQuestion(section._id);
+                  }
+                : undefined
+            }
             onEdit={() => handleEditSection(section._id)}
             onDelete={
               totalQuestionsCount > 0
                 ? undefined
                 : () => handleDeleteSection(section._id)
             }
+            onToggle={() => handleToggleSection(section._id)}
+            isActive={section.active}
           />
         </TableCell>
       </TableRow>
