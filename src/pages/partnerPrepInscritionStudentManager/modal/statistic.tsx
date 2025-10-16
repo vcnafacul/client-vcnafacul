@@ -26,13 +26,13 @@ export function Statistic({ geral, enrolleds, handleClose }: Props) {
           <TabsContent value="details" className="h-full">
             <ModalContent onClose={handleClose}>
               <></>
-              {/* <RenderCharts data={geral} /> */}
+              <RenderCharts data={geral} />
             </ModalContent>
           </TabsContent>
           <TabsContent value="enrolled" className="h-full">
             <ModalContent onClose={handleClose}>
               <></>
-              {/* <RenderCharts data={enrolleds} /> */}
+              <RenderCharts data={enrolleds} />
             </ModalContent>
           </TabsContent>
         </Tabs>
