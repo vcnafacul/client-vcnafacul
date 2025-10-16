@@ -20,6 +20,7 @@ import {
 
 import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
 import BLink from "@/components/molecules/bLink";
+import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
 import { DASH, PARTNER_PREP_INSCRIPTION } from "@/routes/path";
 import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
@@ -97,14 +98,22 @@ export function InscriptionInfoModal({
     ) : null;
   };
 
-  const flattenData = (data: XLSXStudentCourseFull[], questions: string[]) => {
+  const uniqueKeysFromArrays = (...arrays: SocioeconomicAnswer[][]) => [
+    ...new Set(arrays.flat().map((obj) => obj.question)),
+  ];
+
+  const flattenData = (data: XLSXStudentCourseFull[]) => {
+    const keys = uniqueKeysFromArrays(
+      ...data.map((student) => student.socioeconomic)
+    );
     return data.map((student) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const flattenedItem: any = { ...student };
       delete flattenedItem.logs;
       delete flattenedItem.documents;
+
       // Preenche as respostas socioeconômicas
-      questions.forEach((question) => {
+      keys.forEach((question) => {
         // Encontra a resposta para a pergunta atual
         const socioItem = student.socioeconomic.find(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -135,7 +144,8 @@ export function InscriptionInfoModal({
     const id = toast.loading("Exportando lista de alunos...");
     getSubscribers(token, inscriptionSelected!.id!)
       .then((data) => {
-        const flattenedData = flattenData(data, {});
+        console.log(data);
+        const flattenedData = flattenData(data);
 
         flattenedData.sort((a, b) => {
           if (a.cadastrado_em < b.cadastrado_em) return -1;
