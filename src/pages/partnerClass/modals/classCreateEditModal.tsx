@@ -1,68 +1,120 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Button from "@/components/molecules/button";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { ClassEntityOutput } from "@/dtos/classes/classOutput";
+import { createClass } from "@/services/prepCourse/class/createClass";
+import { editClass } from "@/services/prepCourse/class/editClass";
+import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Calendar } from "primereact/calendar";
+import Button from "@mui/material/Button";
 import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import * as yup from "yup";
 
 interface ClassModalProps {
   isOpen: boolean;
   handleClose: () => void;
   entity?: ClassEntity;
-  onCreateEdit: (entity: ClassEntityOutput) => void;
+  coursePeriodSelected: string;
+  onCreateClass: (entity: ClassEntity) => void;
+  onEditClass: (entity: ClassEntity) => void;
 }
 
 export function ClassCreateEditModal({
   isOpen,
   handleClose,
   entity,
-  onCreateEdit,
+  coursePeriodSelected,
+  onCreateClass,
+  onEditClass,
 }: ClassModalProps) {
   const schema = yup
     .object()
     .shape({
       name: yup.string().default(entity?.name).required("Campo obrigatório"),
       description: yup.string().default(entity?.description),
-      range: yup
-        .array()
-        .of(yup.date().required("Data obrigatória"))
-        .default([
-          entity?.startDate || new Date(),
-          entity?.endDate || new Date(),
-        ])
-        .length(2, "Selecione um intervalo de datas válido")
-        .required("Campo obrigatório"), // Validando o array de datas com duas posições
     })
     .required();
+
+  const {
+    data: { token },
+  } = useAuthStore();
 
   const {
     register,
     handleSubmit,
     setValue,
-    control,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-   
   const resolver = (data: any) => {
-    onCreateEdit({
-      ...data,
-      id: entity?.id,
-      year: new Date(data.range[0]).getFullYear(),
-    });
+    if (entity) {
+      handleEditClass({ ...data, id: entity.id });
+    } else {
+      handleCreateClass({
+        ...data,
+        coursePeriodId: coursePeriodSelected,
+      });
+    }
+  };
+
+  const handleEditClass = (dto: ClassEntityOutput & { id: string }) => {
+    const id = toast.loading("Editando turma...");
+    editClass(token, dto)
+      .then(() => {
+        handleClose();
+        toast.update(id, {
+          render: "Turma editada com sucesso",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        onEditClass({
+          ...entity!,
+          name: dto.name,
+          description: dto.description,
+        });
+      })
+      .catch((error) => {
+        toast.update(id, {
+          render: `Erro ao editar turma: ${error.message}`,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      });
+  };
+
+  const handleCreateClass = (dto: ClassEntityOutput) => {
+    const id = toast.loading("Criando turma...");
+    createClass(token, dto)
+      .then((res) => {
+        handleClose();
+        toast.update(id, {
+          render: "Turma criada com sucesso",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        onCreateClass(res);
+      })
+      .catch((error) => {
+        toast.update(id, {
+          render: `Erro ao criar turma: ${error.message}`,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      });
   };
 
   useEffect(() => {
     register("name");
     register("description");
-    register("range");
   }, []);
 
   return (
@@ -75,49 +127,16 @@ export function ClassCreateEditModal({
         <h1 className="text-left text-marine text-3xl font-black">Turmas</h1>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(resolver)}>
           {/* Linha 1: Nome e Data */}
-          <div className="flex flex-col sm:grid grid-cols-2 gap-x-4">
-            <InputFactory
-              id="name"
-              label="Título"
-              type="text"
-              defaultValue={entity?.name}
-              error={errors.name}
-              onChange={(e: { target: { value: string } }) =>
-                setValue("name", e.target.value)
-              }
-            />
-            <div className="flex flex-col justify-content-center h-16 border pt-7 pl-4 rounded-md relative">
-              <label
-                className="absolute top-1 left-3 text-xs text-grey font-semibold"
-                htmlFor="date"
-              >
-                Inicio - Fim
-              </label>
-              <Controller
-                name="range"
-                control={control}
-                defaultValue={[
-                  new Date(entity?.startDate || new Date()),
-                  new Date(entity?.endDate || new Date()),
-                ]}
-                render={({ field }) => (
-                  <Calendar
-                    id="range"
-                    dateFormat="dd/mm/yy"
-                    value={field.value}
-                    onChange={(e) => field.onChange(e.value)}
-                    selectionMode="range"
-                    className="focus-visible:ring-orange rounded-md"
-                    readOnlyInput
-                    hideOnRangeSelection
-                  />
-                )}
-              />
-              {errors.range && (
-                <p className="text-red text-xs mt-1">{errors.range.message}</p>
-              )}
-            </div>
-          </div>
+          <InputFactory
+            id="name"
+            label="Título"
+            type="text"
+            defaultValue={entity?.name}
+            error={errors.name}
+            onChange={(e: { target: { value: string } }) =>
+              setValue("name", e.target.value)
+            }
+          />
           {/* Linha 2: Descrição */}
           <InputFactory
             id="description"
@@ -131,18 +150,10 @@ export function ClassCreateEditModal({
           />
           {/* Botões */}
           <div className="flex justify-end gap-4">
-            <Button
-              typeStyle="secondary"
-              className="w-24 h-10 border border-orange text-orange"
-              onClick={handleClose}
-            >
+            <Button variant="outlined" onClick={handleClose}>
               Cancelar
             </Button>
-            <Button
-              typeStyle="primary"
-              className="w-24 h-10 bg-orange text-white"
-              type="submit"
-            >
+            <Button variant="contained" type="submit">
               Salvar
             </Button>
           </div>

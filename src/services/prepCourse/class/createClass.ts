@@ -13,13 +13,7 @@ export async function createClass(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({
-      name: entity.name,
-      description: entity.description,
-      startDate: entity.range[0],
-      endDate: entity.range[1],
-      year: entity.year,
-    }),
+    body: JSON.stringify(entity),
   });
   if (response.status === 400) {
     const res = await response.json();
@@ -33,9 +27,6 @@ export async function createClass(
     id: res.id,
     name: res.name,
     description: res.description,
-    startDate: res.startDate,
-    endDate: res.endDate,
-    year: res.year,
     number_students: 0,
   } as ClassEntity;
 }
