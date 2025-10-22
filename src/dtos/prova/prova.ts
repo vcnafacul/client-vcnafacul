@@ -13,7 +13,7 @@ export interface Prova {
   totalQuestaoValidadas: number;
   createdAt: DateTime;
   filename: string;
-  answerKey: string;
+  gabarito: string;
   enemAreas: string[];
 }
 

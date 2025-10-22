@@ -1,9 +1,247 @@
-input::file-selector-button {
-font-weight: bold;
-color: #FF7600;
-padding: 0.5em;
-border: thin solid #FF7600;
-border-radius: 3px;
-background-color: white;
-margin-left: 10px;
+.upload-container {
+  width: 100%;
+}
+
+.upload-area {
+  position: relative;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #f9fafb;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Variante compact */
+.upload-area.compact {
+  padding: 0.75rem 1rem;
+  min-height: auto;
+  border-radius: 6px;
+  border-style: solid;
+  border-color: #d1d5db;
+  background-color: #ffffff;
+}
+
+.upload-area:hover {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.upload-area.drag-over {
+  border-color: #3b82f6;
+  background-color: #dbeafe;
+  transform: scale(1.02);
+}
+
+.upload-area.has-file {
+  border-color: #10b981;
+  background-color: #ecfdf5;
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Variante compact para upload-content */
+.upload-content.compact {
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.upload-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: #6b7280;
+}
+
+/* Ícone menor para variante compact */
+.upload-content.compact .upload-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.upload-area:hover .upload-icon {
+  color: #3b82f6;
+}
+
+.upload-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.upload-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 1rem;
+}
+
+/* Label menor para variante compact */
+.upload-content.compact .upload-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.upload-hint {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.upload-accept,
+.upload-size {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Estados do arquivo selecionado */
+.file-selected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #f0fdf4;
+  border-radius: 6px;
+  border: 1px solid #bbf7d0;
+}
+
+/* Variante compact para arquivo selecionado */
+.file-selected.compact {
+  padding: 0.5rem;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Gap menor para variante compact */
+.file-selected.compact .file-info {
+  gap: 0.5rem;
+}
+
+.file-icon {
+  width: 2rem;
+  height: 2rem;
+  color: #10b981;
+}
+
+/* Ícone menor para variante compact */
+.file-selected.compact .file-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.file-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.file-name {
+  font-weight: 500;
+  color: #065f46;
+  font-size: 0.875rem;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-size {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.remove-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  background-color: #fef2f2;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Botão menor para variante compact */
+.file-selected.compact .remove-button {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.remove-button:hover {
+  background-color: #fee2e2;
+  transform: scale(1.1);
+}
+
+.remove-icon {
+  width: 1rem;
+  height: 1rem;
+  color: #dc2626;
+}
+
+/* Ícone menor para variante compact */
+.file-selected.compact .remove-icon {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.loading-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid #e5e7eb;
+  border-top: 3px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  .upload-area {
+    padding: 1.5rem;
+    min-height: 100px;
+  }
+  
+  .upload-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .file-name {
+    max-width: 150px;
+  }
 }

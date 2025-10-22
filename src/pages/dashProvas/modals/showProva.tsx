@@ -1,5 +1,6 @@
 /* eslint-disable use-isnan */
 import ModalTemplate from "@/components/templates/modalTemplate";
+import { useAuthStore } from "@/store/auth";
 import {
   AcademicCapIcon,
   ArrowDownTrayIcon,
@@ -7,11 +8,10 @@ import {
   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@mui/material";
+import { toast } from "react-toastify";
 import PropValue from "../../../components/molecules/PropValue";
 import { Prova } from "../../../dtos/prova/prova";
 import { getProvaFile } from "../../../services/prova/getFile";
-import { useAuthStore } from "@/store/auth";
-import { toast } from "react-toastify";
 
 interface ShowProvaProps {
   prova: Prova;
@@ -24,8 +24,11 @@ function ShowProva({ prova, isOpen, handleClose }: ShowProvaProps) {
     (prova.totalQuestaoCadastradas / prova.totalQuestao) * 100;
   const percentValidadas =
     (prova.totalQuestaoValidadas / prova.totalQuestaoCadastradas) * 100;
-  
-  const { data: { token } } = useAuthStore();
+  console.log(prova);
+
+  const {
+    data: { token },
+  } = useAuthStore();
 
   const getProgressColor = (percent: number) => {
     if (percent >= 80) return "bg-green-500";
@@ -56,7 +59,7 @@ function ShowProva({ prova, isOpen, handleClose }: ShowProvaProps) {
   };
 
   const handleDownloadGabarito = () => {
-    downloadFile(prova.answerKey, "gabarito");
+    downloadFile(prova.gabarito, "gabarito");
   };
 
   return (
@@ -181,22 +184,24 @@ function ShowProva({ prova, isOpen, handleClose }: ShowProvaProps) {
 
         {/* Botões de Download */}
         <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-          <Button
-            onClick={handleDownloadGabarito}
-            variant="contained"
-            sx={{
-              backgroundColor: "#6b7280",
-              "&:hover": {
-                backgroundColor: "#4b5563",
-              },
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            <ArrowDownTrayIcon className="h-4 w-4" />
-            Download do Gabarito
-          </Button>
+          {prova.gabarito && (
+            <Button
+              onClick={handleDownloadGabarito}
+              variant="contained"
+              sx={{
+                backgroundColor: "#6b7280",
+                "&:hover": {
+                  backgroundColor: "#4b5563",
+                },
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+            >
+              <ArrowDownTrayIcon className="h-4 w-4" />
+              Download do Gabarito
+            </Button>
+          )}
           <Button
             onClick={handleDownloadProva}
             variant="contained"
