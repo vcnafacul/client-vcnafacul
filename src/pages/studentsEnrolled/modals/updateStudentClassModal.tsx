@@ -44,8 +44,8 @@ export function UpdateStudentClassModal({
     handleConfirm(
       classSelected.id,
       classSelected.name,
-      classSelected.year,
-      classSelected.endDate
+      classSelected.coursePeriod.year,
+      classSelected.coursePeriod.endDate
     );
   };
 
@@ -95,7 +95,7 @@ export function UpdateStudentClassModal({
           <option key={""} value={""}></option>
           {classes.map((classItem) => (
             <option key={classItem.id} value={classItem.id}>
-              {classItem.name} ({classItem.year})
+              {classItem.name} ({classItem.coursePeriod.year})
             </option>
           ))}
         </select>
@@ -108,15 +108,15 @@ export function UpdateStudentClassModal({
             <strong>Nome:</strong> {selectedClass.name}
           </p>
           <p>
-            <strong>Ano:</strong> {selectedClass.year}
+            <strong>Ano:</strong> {selectedClass.coursePeriod.year}
           </p>
           <p>
             <strong>Início:</strong>{" "}
-            {formatDate(selectedClass.startDate?.toString())}
+            {formatDate(selectedClass.coursePeriod.startDate?.toString())}
           </p>
           <p>
             <strong>Fim:</strong>{" "}
-            {formatDate(selectedClass.endDate?.toString())}
+            {formatDate(selectedClass.coursePeriod.endDate?.toString())}
           </p>
           <p>
             <strong>Número de Estudantes:</strong>{" "}

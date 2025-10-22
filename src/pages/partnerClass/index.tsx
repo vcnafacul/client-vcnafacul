@@ -11,6 +11,7 @@ import {
   CoursePeriodOutput,
   createCoursePeriod,
 } from "@/services/prepCourse/coursePeriod/createCoursePeriod";
+import { deleteCoursePeriod } from "@/services/prepCourse/coursePeriod/deleteCoursePeriod";
 import { getCoursePeriods } from "@/services/prepCourse/coursePeriod/getCoursePeriods";
 import { updateCoursePeriod } from "@/services/prepCourse/coursePeriod/updateCoursePeriod";
 import { useAuthStore } from "@/store/auth";
@@ -211,16 +212,24 @@ export function PartnerClass() {
   const handleDeleteCoursePeriod = (_coursePeriodId: string) => {
     const id = toast.loading("Excluindo período letivo...");
 
-    // Mock delete - implementar depois
-    setTimeout(() => {
-      setEntities((prev) => prev.filter((e) => e.id !== _coursePeriodId));
-      toast.update(id, {
-        render: "Período letivo excluído com sucesso",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
+    deleteCoursePeriod(token, _coursePeriodId)
+      .then(() => {
+        setEntities((prev) => prev.filter((e) => e.id !== _coursePeriodId));
+        toast.update(id, {
+          render: "Período letivo excluído com sucesso",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      })
+      .catch((error) => {
+        toast.update(id, {
+          render: `Erro ao excluir período letivo: ${error.message}`,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
       });
-    }, 500);
   };
 
   const handleAddClass = (coursePeriodId: string) => {
