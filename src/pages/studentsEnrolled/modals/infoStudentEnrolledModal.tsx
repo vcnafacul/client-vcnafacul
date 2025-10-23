@@ -13,12 +13,14 @@ interface InfoStudentEnrolledModalProps {
   isOpen: boolean;
   handleClose: () => void;
   entity: StudentsDtoOutput;
+  updateEntity: (entity: StudentsDtoOutput) => void;
 }
 
 export function InfoStudentEnrolledModal({
   isOpen,
   handleClose,
   entity,
+  updateEntity,
 }: InfoStudentEnrolledModalProps) {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [photoEditorOpen, setPhotoEditorOpen] = useState(false);
@@ -64,13 +66,14 @@ export function InfoStudentEnrolledModal({
   const handleUploadProfileImage = async (file: File) => {
     const id = toast.loading("Atualizando foto...");
     uploadProfileImage(file, entity.id, token)
-      .then(() => {
+      .then((res) => {
         toast.update(id, {
           render: `Foto atualizada`,
           type: "success",
           isLoading: false,
           autoClose: 3000,
         });
+        updateEntity({ ...entity, photo: res as string } as StudentsDtoOutput);
         handleClose();
       })
       .catch(() => {

@@ -23,4 +23,5 @@ export async function uploadProfileImage(
   if (response.status !== 200) {
     throw new Error(`Ops, ocorreu um problema na requisição. Tente novamente!`);
   }
+  return await response.text();
 }
