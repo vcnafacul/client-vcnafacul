@@ -276,7 +276,8 @@ export function InscriptionInfoModal({
           </BLink>
           <div className="flex flex-1 justify-end gap-4">
             <Button
-              className="w-24 h-8 bg-red border-none hover:bg-red/60 "
+              className="w-24 h-8 bg-red border-none hover:bg-red/60"
+              disabled={inscriptionSelected!.subscribersCount > 0}
               onClick={() => setOpenModalDelete(true)}
             >
               <div className="flex justify-center gap-1.5">
