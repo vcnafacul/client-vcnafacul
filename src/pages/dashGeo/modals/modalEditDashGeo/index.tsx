@@ -97,7 +97,15 @@ function ModalEditDashGeo({
     state: yup.string().default(geo.state).required("Estado é obrigatório"),
     phone: yup.string().default(geo.phone).nullable(),
     whatsapp: yup.string().default(geo.whatsapp).nullable(),
-    email: yup.string().default(geo.email).email("Email inválido"),
+    email: yup
+      .string()
+      .default(geo.email)
+      .when("type", {
+        is: (value: TypeMarker) => value !== TypeMarker.univPublic,
+        then: () =>
+          yup.string().email("Email inválido").required("Email é obrigatório"),
+        otherwise: () => yup.string().email("Email inválido").nullable(),
+      }),
     site: yup.string().default(geo.site).nullable(),
     instagram: yup.string().default(geo.instagram).nullable(),
     facebook: yup.string().default(geo.facebook).nullable(),
@@ -552,6 +560,7 @@ function ModalEditDashGeo({
                 type="checkbox"
                 checked={useCep}
                 onChange={(e) => setUseCep(e.target.checked)}
+                disabled={!editing}
               />
               <label>Definir localização manualmente</label>
             </div>
