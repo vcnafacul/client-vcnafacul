@@ -552,6 +552,7 @@ function ModalEditDashGeo({
                 type="checkbox"
                 checked={useCep}
                 onChange={(e) => setUseCep(e.target.checked)}
+                disabled={!editing}
               />
               <label>Definir localização manualmente</label>
             </div>
