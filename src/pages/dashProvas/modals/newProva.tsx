@@ -190,7 +190,7 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose!}
-      className="w-full max-w-3xl rounded-lg bg-white shadow-xl"
+      className="w-full max-w-3xl rounded-lg bg-white shadow-xl p-2"
     >
       <div className="p-6">
         {/* Header */}

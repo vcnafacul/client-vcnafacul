@@ -191,12 +191,24 @@ export function StudentsEnrolled() {
       });
   };
 
+  const updateEntities = (entity: StudentsDtoOutput) => {
+    setStudentSelected(entity);
+    const newEntities = students.map((s) => {
+      if (s.id === entity.id) {
+        return entity;
+      }
+      return s;
+    });
+    setStudents(newEntities);
+  };
+
   const ModalInfo = () => {
     return openModalInfo ? (
       <InfoStudentEnrolledModal
         isOpen={openModalInfo}
         handleClose={() => setOpenModalInfo(false)}
         entity={studentSelected}
+        updateEntity={updateEntities}
       />
     ) : null;
   };
