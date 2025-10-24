@@ -1,4 +1,3 @@
- 
 import { Question, QuestionDto } from "../../dtos/question/questionDTO";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import fetchWrapper from "../../utils/fetchWrapper";
@@ -14,7 +13,7 @@ export async function getAllQuestions(
   materia: string = "",
   frente: string = "",
   prova: string = "",
-  enemArea: string = "",
+  enemArea: string = ""
 ): Promise<Paginate<Question>> {
   const url = new URL(questoes);
 
@@ -40,16 +39,20 @@ export async function getAllQuestions(
     },
   });
   if (response.status === 200) {
-    const questoes: Paginate<Question> = await response.json();
+    const questoes: Paginate<QuestionDto> = await response.json();
+
+    const data: Question[] = questoes.data.map((questao) => ({
+      title: `${questao.prova.nome} | ${questao.numero}`,
+      ...questao,
+      prova: questao.prova._id,
+    }));
+
     return {
-      data: questoes.data.map((questao: QuestionDto) => ({
-        title: `${questao._id} ${questao.numero}`,
-        ...questao,
-      })),
+      data: data,
       page,
       limit,
       totalItems: questoes.totalItems,
-    };
+    } as Paginate<Question>;
   }
   throw new Error(`Erro ao tentar recuperar questões - Pagina ${page}`);
 }
