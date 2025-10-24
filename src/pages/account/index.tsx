@@ -6,7 +6,6 @@ import { UserMe } from "@/types/user/userMe";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ReactComponent as LogoIcon } from "../../assets/images/home/logo.svg";
-import Text from "../../components/atoms/text";
 import ImageProfile from "../../components/molecules/imageProfile";
 import ModalConfirmCancel from "../../components/organisms/modalConfirmCancel";
 import { changeImageProfileCollaborator } from "../../services/auth/changeImageProfileCollaborator";
@@ -168,11 +167,11 @@ function Account() {
 
   return (
     <>
-      <div className="pb-20 flex flex-col w-full">
+      <div className="pb-20 flex flex-col md:flex-row w-full">
         {/* Cabeçalho com imagem e nome do usuário */}
-        <div className="flex items-center justify-between px-6 py-4 bg-white rounded-bl-3xl shadow-sm">
+        <div className="flex px-6 py-4 w-full md:w-[300px] rounded-bl-3xl shadow-sm">
           {/* Avatar or Logo */}
-          <div className="flex items-center gap-4">
+          <div className="flex flex-row md:flex-col gap-4">
             {userAccount?.collaborator ? (
               <ImageProfile
                 deleteImage={() => setTryDelete(true)}
@@ -182,38 +181,47 @@ function Account() {
             ) : (
               <LogoIcon className="w-24 h-24 p-2 bg-white border rounded-full animate-rotate" />
             )}
-
-            {/* Name and Role */}
-            <div className="flex flex-col">
-              <span className="text-marine text-2xl md:text-4xl font-extrabold leading-tight">
-                {userAccount?.useSocialName
-                  ? userAccount?.socialName
-                  : userAccount?.firstName}
+          </div>
+          <div className="flex flex-col px-8 pt-4 md:hidden justify-center">
+            <span className="text-marine text-2xl md:text-4xl font-extrabold leading-tight">
+              {userAccount?.useSocialName
+                ? userAccount?.socialName
+                : userAccount?.firstName}
+            </span>
+            <span className="text-marine text-lg md:text-xl font-medium">
+              {userAccount?.lastName}
+            </span>
+            {userAccount?.collaborator && (
+              <span className="text-marine text-sm font-semibold mt-1 opacity-80">
+                {userAccount?.collaboratorDescription}
               </span>
-              <span className="text-marine text-lg md:text-xl font-medium">
-                {userAccount?.lastName}
-              </span>
-              {userAccount?.collaborator && (
-                <span className="text-marine text-sm font-semibold mt-1 opacity-80">
-                  {userAccount?.collaboratorDescription}
-                </span>
-              )}
-            </div>
+            )}
           </div>
         </div>
+        <div className="w-full">
+          {/* Name and Role */}
+          <div className="md:flex flex-col px-8 pt-4 hidden">
+            <span className="text-marine text-2xl md:text-4xl font-extrabold leading-tight">
+              {userAccount?.useSocialName
+                ? userAccount?.socialName
+                : userAccount?.firstName}
+            </span>
+            <span className="text-marine text-lg md:text-xl font-medium">
+              {userAccount?.lastName}
+            </span>
+            {userAccount?.collaborator && (
+              <span className="text-marine text-sm font-semibold mt-1 opacity-80">
+                {userAccount?.collaboratorDescription}
+              </span>
+            )}
+          </div>
 
-        {/* Seção de título */}
-        <div className="px-6 pt-6">
-          <Text className="text-2xl font-bold text-marine" size="secondary">
-            Meus Dados
-          </Text>
-        </div>
-
-        {/* Formulário de atualização */}
-        <div className="px-6 py-6">
-          {userAccount && (
-            <AccountForm update={update} userAccount={userAccount} />
-          )}
+          {/* Formulário de atualização */}
+          <div className="px-6 py-6 w-full">
+            {userAccount && (
+              <AccountForm update={update} userAccount={userAccount} />
+            )}
+          </div>
         </div>
       </div>
       <ModalDelete />

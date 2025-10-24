@@ -129,16 +129,6 @@ export function AccountForm({ update, userAccount }: AccountFormProps) {
 
   return (
     <div className="w-full">
-      {/* Indicador de mudanças pendentes */}
-      {hasChanges && (
-        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-3">
-          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-          <span className="text-sm text-blue-700 font-medium">
-            Você tem alterações não salvas
-          </span>
-        </div>
-      )}
-
       <form
         onSubmit={handleSubmit((data: any) => {
           setIsSaving(true);
@@ -256,7 +246,7 @@ export function AccountForm({ update, userAccount }: AccountFormProps) {
           />
         </div>
         {/* Botão de salvar */}
-        <div className="col-span-1 md:col-span-2 lg:col-span-3 flex justify-end">
+        <div className="flex flex-col md:flex-row justify-between w-full col-span-1 md:col-span-2 lg:col-span-3">
           <div className="w-full max-w-md">
             <Button
               variant={hasChanges ? "contained" : "outlined"}
