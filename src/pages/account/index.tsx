@@ -91,7 +91,11 @@ function Account() {
     setTryDelete(false);
   };
 
-  const updateData = (authUpdate: AuthUpdate) => {
+  const updateData = (
+    authUpdate: AuthUpdate,
+    onSuccess?: () => void,
+    onError?: () => void
+  ) => {
     const id = toast.loading("Atualizando Informações Usuário ... ");
     updateUser(token, authUpdate)
       .then(async (_) => {
@@ -103,6 +107,7 @@ function Account() {
         });
         updateAccount({ ...userAccount!, ...authUpdate });
         setUserAccount({ ...userAccount!, ...authUpdate });
+        onSuccess?.();
       })
       .catch((error: Error) => {
         toast.update(id, {
@@ -111,10 +116,11 @@ function Account() {
           isLoading: false,
           autoClose: 3000,
         });
-      })
+        onError?.();
+      });
   };
 
-  const update = (data: any) => {
+  const update = (data: any, onSuccess?: () => void, onError?: () => void) => {
     const authUpdate: AuthUpdate = {
       firstName: data.firstName,
       lastName: data.lastName,
@@ -129,10 +135,10 @@ function Account() {
     };
     if (file) {
       uploadingImagem(file).then(() => {
-        updateData(authUpdate);
+        updateData(authUpdate, onSuccess, onError);
       });
     } else {
-      updateData(authUpdate);
+      updateData(authUpdate, onSuccess, onError);
     }
   };
 
@@ -197,13 +203,18 @@ function Account() {
         </div>
 
         {/* Seção de título */}
-        <Text className="self-start mx-10 pt-4" size="secondary">
-          Meus Dados
-        </Text>
+        <div className="px-6 pt-6">
+          <Text className="text-2xl font-bold text-marine" size="secondary">
+            Meus Dados
+          </Text>
+        </div>
+
         {/* Formulário de atualização */}
-        {userAccount && (
-          <AccountForm update={update} userAccount={userAccount} />
-        )}
+        <div className="px-6 py-6">
+          {userAccount && (
+            <AccountForm update={update} userAccount={userAccount} />
+          )}
+        </div>
       </div>
       <ModalDelete />
     </>
