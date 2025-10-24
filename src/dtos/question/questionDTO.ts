@@ -1,5 +1,6 @@
 import { DateTime } from "luxon";
 import { StatusEnum } from "../../enums/generic/statusEnum";
+import { Prova } from "../prova/prova";
 
 export interface ObjDefault {
   _id: string;
@@ -14,9 +15,8 @@ export interface MateriaObjDefault extends ObjDefault {
   enemArea: string;
 }
 
-export interface QuestionDto {
+export interface QuestionBase {
   _id: string;
-  prova: string;
   enemArea: string;
   frente1: string;
   frente2: string;
@@ -45,6 +45,11 @@ export interface QuestionDto {
   reported: boolean;
 }
 
-export interface Question extends QuestionDto {
+export interface QuestionDto extends QuestionBase {
+  prova: Prova;
+}
+
+export interface Question extends QuestionBase {
   title: string;
+  prova: string;
 }
