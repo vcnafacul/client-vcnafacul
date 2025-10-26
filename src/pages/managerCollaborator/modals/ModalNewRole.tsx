@@ -53,6 +53,7 @@ function ModalNewRole({
     gerenciarEstudantes: false,
     visualizarEstudantes: false,
     gerenciarPermissoesCursinho: false,
+    visualizarMinhasInscricoes: false,
   });
 
   const {
