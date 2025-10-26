@@ -1,5 +1,5 @@
 export const dataInscription = {
-  inscription: "Processos Seletivos",
+  inscription: "Processo Seletivo",
   title: "Gerenciamento de Processos Seletivos",
   openingText: "Número de Vagas",
   messageNotAllowEdit:

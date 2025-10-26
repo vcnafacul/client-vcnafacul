@@ -2,6 +2,7 @@ import { ButtonProps } from "@/components/molecules/button";
 import { CardDash } from "@/components/molecules/cardDash";
 import DashCardTemplate from "@/components/templates/dashCardTemplate";
 import { DashCardContext } from "@/context/dashCardContext";
+import { StatusEnum } from "@/enums/generic/statusEnum";
 import { createInscription } from "@/services/prepCourse/inscription/createInscription";
 import { deleteInscription } from "@/services/prepCourse/inscription/deleteInscription";
 import { getAllInscription } from "@/services/prepCourse/inscription/getAllInscription";
@@ -34,7 +35,6 @@ export function PartnerPrepInscriptionManager() {
     data: { token },
   } = useAuthStore();
 
-   
   const getMoreCards = async (): Promise<Paginate<Inscription>> => {
     return {
       data: [],
@@ -47,7 +47,10 @@ export function PartnerPrepInscriptionManager() {
   const cardTransformation = (inscription: Inscription): CardDash => ({
     id: inscription.id,
     title: inscription.name,
-    status: inscription.actived,
+    status:
+      inscription.endDate < new Date()
+        ? StatusEnum.Rejected
+        : inscription.actived,
     infos: [
       {
         field: "Inicia",

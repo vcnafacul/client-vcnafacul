@@ -3,6 +3,7 @@ import Button from "@/components/molecules/button";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import * as ShadcnButton from "@/components/ui/button";
+import { extendInscription } from "@/services/prepCourse/inscription/extend";
 import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
 import { useAuthStore } from "@/store/auth";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
@@ -13,6 +14,7 @@ import { useState } from "react";
 import { FaRegCopy } from "react-icons/fa6";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { dataInscription } from "../data";
+import { ExtendInscriptionModal } from "./ExtendInscriptionModal";
 import {
   InscriptionInfoCreateEditModal,
   InscriptionOutput,
@@ -46,10 +48,16 @@ export function InscriptionInfoModal({
   >(inscription);
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [openModalExtend, setOpenModalExtend] = useState(false);
 
   const {
     data: { token },
   } = useAuthStore();
+
+  // Verifica se a data de fim é maior que a data atual
+  const canExtend = inscriptionSelected?.endDate
+    ? new Date(inscriptionSelected.endDate) < new Date()
+    : false;
 
   const ModalDelete = () => {
     return (
@@ -74,17 +82,36 @@ export function InscriptionInfoModal({
 
   const myHandleEdit = (data: InscriptionOutput) => {
     handleEdit(data).then(() => {
-      setInscriptionSelected({
-        ...inscriptionSelected!,
-        name: data.name,
-        description: data.description,
-        openingsCount: data.openingsCount,
-        startDate: data.range[0],
-        endDate: data.range[1],
-        requestDocuments: data.requestDocuments,
-      });
       setOpenModalEdit(false);
     });
+  };
+
+  const handleExtend = (endDate: Date) => {
+    if (!inscriptionSelected?.id) return;
+
+    const id = toast.loading("Prorrogando processo seletivo...");
+    extendInscription(token, inscriptionSelected.id, endDate)
+      .then(() => {
+        setInscriptionSelected({
+          ...inscriptionSelected,
+          endDate: endDate,
+        });
+        setOpenModalExtend(false);
+        toast.update(id, {
+          render: "Processo seletivo prorrogado com sucesso!",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      })
+      .catch((error) => {
+        toast.update(id, {
+          render: error.message || "Erro ao prorrogar processo seletivo",
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      });
   };
 
   const ModalEdit = () => {
@@ -96,6 +123,21 @@ export function InscriptionInfoModal({
         onCreateEdit={myHandleEdit}
       />
     ) : null;
+  };
+
+  const ModalExtend = () => {
+    return (
+      <ExtendInscriptionModal
+        isOpen={openModalExtend}
+        handleClose={() => setOpenModalExtend(false)}
+        handleConfirm={handleExtend}
+        currentEndDate={
+          inscriptionSelected?.endDate
+            ? new Date(inscriptionSelected.endDate)
+            : undefined
+        }
+      />
+    );
   };
 
   const uniqueKeysFromArrays = (...arrays: SocioeconomicAnswer[][]) => [
@@ -275,6 +317,15 @@ export function InscriptionInfoModal({
             </div>
           </BLink>
           <div className="flex flex-1 justify-end gap-4">
+            {canExtend && (
+              <Button
+                typeStyle="secondary"
+                className="w-32 h-8"
+                onClick={() => setOpenModalExtend(true)}
+              >
+                Prorrogar
+              </Button>
+            )}
             <Button
               className="w-24 h-8 bg-red border-none hover:bg-red/60"
               disabled={inscriptionSelected!.subscribersCount > 0}
@@ -296,6 +347,7 @@ export function InscriptionInfoModal({
         </div>
         <ModalEdit />
         <ModalDelete />
+        <ModalExtend />
       </div>
     </ModalTemplate>
   );
