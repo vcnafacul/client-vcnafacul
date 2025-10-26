@@ -30,8 +30,6 @@ export function ExtendInscriptionModal({
     handleSubmit,
     control,
     formState: { errors },
-    setValue,
-    register,
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
