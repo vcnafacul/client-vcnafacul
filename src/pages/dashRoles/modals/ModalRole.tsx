@@ -28,11 +28,10 @@ function PermissionsList({
   if (!permissions || permissions.length === 0) {
     return <Text size="tertiary">Nenhuma permissão encontrada.</Text>;
   }
-
   return (
     <div className="grid grid-cols-2 gap-4">
       {permissions
-        .filter((p) => p.name != "base")
+        .filter((p) => p.name != "base" && p.name !== "children")
         .map((perm) => (
           <div
             key={perm.name}

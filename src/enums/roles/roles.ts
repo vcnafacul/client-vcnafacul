@@ -19,6 +19,7 @@ export enum Roles {
   gerenciarEstudantes = "gerenciarEstudantes",
   visualizarEstudantes = "visualizarEstudantes",
   gerenciarPermissoesCursinho = "gerenciarPermissoesCursinho",
+  visualizarMinhasInscricoes = "visualizarMinhasInscricoes",
 }
 
 export const RolesLabel = [
