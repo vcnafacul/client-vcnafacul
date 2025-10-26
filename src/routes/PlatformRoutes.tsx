@@ -8,6 +8,7 @@ import PartnerPrepForm from "@/pages/partnerPrepForm";
 import { PartnerPrepInscriptionManager } from "@/pages/partnerPrepInscriptionManager";
 import { PartnerPrepInscritionStudentManager } from "@/pages/partnerPrepInscritionStudentManager";
 import PartnerPrepManager from "@/pages/partnerPrepManager";
+import RegistrationMonitor from "@/pages/registrationMonitor";
 import { StudentsEnrolled } from "@/pages/studentsEnrolled";
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashTemplate from "../components/templates/dashTemplate";
@@ -70,6 +71,7 @@ import {
   PARTNER_PREP_INSCRIPTION,
   PARTNER_PREP_MANAGER,
   REGISTER_PATH,
+  REGISTRATION_MONITOR,
   RESET_PASSWORD_PATH,
   SIMULADO,
   SIMULADO_HISTORIES,
@@ -129,6 +131,16 @@ export function PlatformRoutes() {
           </ProtectedRoute>
         }
       >
+        <Route
+          path={REGISTRATION_MONITOR}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.visualizarMinhasInscricoes]}
+            >
+              <RegistrationMonitor />
+            </ProtectedRoutePermission>
+          }
+        />
         <Route path={PARTNER_CLASS_FORM} element={<PartnerPrepForm />} />
         <Route path={DASH_ANALYTICS} element={<Analytics />} />
         <Route
@@ -243,7 +255,6 @@ export function PlatformRoutes() {
           }
         />
       </Route>
-
       <Route
         path="*"
         element={<Navigate to={data.token ? DASH : HOME_PATH} replace />}

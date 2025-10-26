@@ -21,6 +21,7 @@ import {
   PARTNER_CLASS_STUDENTS,
   PARTNER_PREP_INSCRIPTION,
   PARTNER_PREP_MANAGER,
+  REGISTRATION_MONITOR,
   SIMULADO,
 } from "../../routes/path";
 
@@ -35,6 +36,7 @@ import { ReactComponent as Matematica } from "../../assets/icons/home-subjects-m
 import { ReactComponent as Quimica } from "../../assets/icons/home-subjects-quimica.svg";
 
 import { GoGraph } from "react-icons/go";
+import { IoSchool } from "react-icons/io5";
 import { ReactComponent as Atualidades } from "../../assets/icons/home-subjects-atualidades.svg";
 import { ReactComponent as Filosofia } from "../../assets/icons/home-subjects-filosofia.svg";
 import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-geografia.svg";
@@ -45,8 +47,8 @@ import { BiSolidSchool } from "react-icons/bi";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { PiStudentFill, PiUsersFourBold } from "react-icons/pi";
 
+import { FaClipboardList } from "react-icons/fa";
 import { FaWpforms } from "react-icons/fa6";
-import { IoSchool } from "react-icons/io5";
 import { DashCardMenu } from "../../components/molecules/dashCard";
 import { HeaderData } from "../../components/organisms/header";
 import { Materias, getMateriaString } from "../../enums/content/materias";
@@ -303,6 +305,22 @@ export const dashCardMenuItems: DashCardMenu[] = [
         alt: "calculadora",
         text: getMaterialLabel(Materias.Matematica),
         link: `${ESTUDO}/${getMateriaString(Materias.Matematica)}`,
+      },
+    ],
+  },
+  {
+    id: 7,
+    bg: "bg-red",
+    title: "Cursinho",
+    image: IoSchool,
+    alt: "Cursinho",
+    subMenuList: [
+      {
+        icon: FaClipboardList,
+        alt: "processos seletivos",
+        text: "Inscrições",
+        link: `/dashboard/${REGISTRATION_MONITOR}`,
+        permissions: [Roles.visualizarMinhasInscricoes],
       },
     ],
   },

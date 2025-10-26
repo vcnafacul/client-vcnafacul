@@ -56,7 +56,9 @@ export const partnerPrepCourse = `${BASE_URL}/partner-prep-course`;
 
 export const prepCourse = (id: string) =>
   `${partnerPrepCourse}/${id}/has-active-inscription`;
+
 export const studentCourse = `${BASE_URL}/student-course`;
+export const registrationMonitoring = `${studentCourse}/registration-monitoring`;
 export const get_user_info = (inscriptionId: string) =>
   `${studentCourse}/get-user-info/${inscriptionId}`;
 
