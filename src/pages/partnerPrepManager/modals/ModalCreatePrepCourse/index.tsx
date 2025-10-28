@@ -12,15 +12,12 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { getUserByName, SearchUser } from "@/services/auth/getUserByName";
 import { createPrepCourse } from "@/services/prepCourse/prepCourse/createPrepCourse";
 import {
   getGeoByName,
   SearchGeo,
-} from "@/services/prepCourse/prepCourse/getGeoByName";
-import {
-  getUserByName,
-  SearchUser,
-} from "@/services/prepCourse/prepCourse/getUserByName";
+} from "@/services/geolocation/getGeoByName";
 import { useAuthStore } from "@/store/auth";
 import { CreatePrepCoursePage } from "@/types/partnerPrepCourse/manager/createPrepCouse";
 import { PartnerPrepCourse } from "@/types/partnerPrepCourse/partnerPrepCourse";

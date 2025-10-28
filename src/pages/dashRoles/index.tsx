@@ -17,6 +17,7 @@ import { dashRoles } from "./data";
 import ModalEditRole from "./modals/ModalEditRole";
 import ModalNewRole from "./modals/ModalNewRole";
 import ModalRole from "./modals/ModalRole";
+import ModalSendEmail from "./modals/ModalSendEmail";
 import ShowUserInfo from "./modals/showUserInfo";
 
 function DashRoles() {
@@ -27,6 +28,7 @@ function DashRoles() {
   const [userRoleModal, setUserRoleModal] = useState<boolean>(false);
   const [newRole, setnewRole] = useState<boolean>(false);
   const [editRole, setEditRole] = useState<boolean>(false);
+  const [sendEmailModal, setSendEmailModal] = useState<boolean>(false);
   const [filterText, setFilterText] = useState<string>("");
   const dataRef = useRef<UserRole[]>([]);
   const limitCards = 100;
@@ -143,6 +145,15 @@ function DashRoles() {
     );
   };
 
+  const ShowSendEmailModal = () => {
+    return !sendEmailModal ? null : (
+      <ModalSendEmail
+        isOpen={sendEmailModal}
+        handleClose={() => setSendEmailModal(false)}
+      />
+    );
+  };
+
   const ShowUserModal = () => {
     return !userModal ? null : (
       <ShowUserInfo
@@ -171,6 +182,14 @@ function DashRoles() {
       typeStyle: "primary",
       size: "small",
       children: "Editar Funções",
+    },
+    {
+      onClick: () => {
+        setSendEmailModal(true);
+      },
+      typeStyle: "secondary",
+      size: "small",
+      children: "Enviar Email",
     },
   ];
 
@@ -201,6 +220,7 @@ function DashRoles() {
       <ShowUserRole />
       <ShowNewRole />
       <ShowEditRole />
+      <ShowSendEmailModal />
     </DashCardContext.Provider>
   );
 }

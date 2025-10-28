@@ -11,13 +11,10 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { getUserByName, SearchUser } from "@/services/auth/getUserByName";
 import { changeAgreement } from "@/services/prepCourse/prepCourse/changeAgreement";
 import { changeLogo } from "@/services/prepCourse/prepCourse/changeLogo";
 import { getAgreement } from "@/services/prepCourse/prepCourse/getAgreement";
-import {
-  getUserByName,
-  SearchUser,
-} from "@/services/prepCourse/prepCourse/getUserByName";
 import { updateRepresentative } from "@/services/prepCourse/prepCourse/updateRepresentative";
 import { useAuthStore } from "@/store/auth";
 import { PartnerPrepCourse } from "@/types/partnerPrepCourse/partnerPrepCourse";
