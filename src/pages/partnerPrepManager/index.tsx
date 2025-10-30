@@ -3,6 +3,7 @@ import { CardDash } from "@/components/molecules/cardDash";
 import DashCardTemplate from "@/components/templates/dashCardTemplate";
 import { DashCardContext } from "@/context/dashCardContext";
 import { StatusEnum } from "@/enums/generic/statusEnum";
+import { useModals } from "@/hooks/useModal";
 import getPartnerPrepCourse from "@/services/prepCourse/prepCourse/getPartnerPrepCourse";
 import { useAuthStore } from "@/store/auth";
 import { PartnerPrepCourse } from "@/types/partnerPrepCourse/partnerPrepCourse";
@@ -20,9 +21,8 @@ export default function PartnerPrepManager() {
   const [entities, setEntities] = useState<PartnerPrepCourse[]>([]);
   const [entitySelected, setEntitySelected] =
     useState<PartnerPrepCourse | null>(null);
-  const [openPrepCourse, setOpenPrepCourse] = useState<boolean>(false);
-  const [openCreatePrepCourse, setOpenCreatePrepCourse] =
-    useState<boolean>(false);
+
+  const modals = useModals(["modalCreatePrepCourse", "modalShowPrepCourse"]);
 
   const limitCards = 100;
 
@@ -58,26 +58,26 @@ export default function PartnerPrepManager() {
 
   const onClickCard = (id: string) => {
     setEntitySelected(entities.find((e) => e.id === id)!);
-    setOpenPrepCourse(true);
+    modals.modalShowPrepCourse.open();
   };
 
   const ShowPrepCourse = () => {
-    return openPrepCourse ? (
+    return modals.modalShowPrepCourse.isOpen ? (
       <ModalShowPrepCourse
-        isOpen={openPrepCourse}
-        handleClose={() => setOpenPrepCourse(false)}
+        isOpen={modals.modalShowPrepCourse.isOpen}
+        handleClose={() => modals.modalShowPrepCourse.close()}
         prepCourse={entitySelected!}
       />
     ) : null;
   };
 
   const CreatePrepCourse = () => {
-    return openCreatePrepCourse ? (
+    return modals.modalCreatePrepCourse.isOpen ? (
       <ModalCreatePrepCourse
-        isOpen={openCreatePrepCourse}
-        handleClose={() => setOpenCreatePrepCourse(false)}
+        isOpen={modals.modalCreatePrepCourse.isOpen}
+        handleClose={() => modals.modalCreatePrepCourse.close()}
         onSuccess={(prep: PartnerPrepCourse) => {
-          setOpenCreatePrepCourse(false);
+          modals.modalCreatePrepCourse.close();
           setEntities([prep, ...entities]);
         }}
       />
@@ -87,7 +87,7 @@ export default function PartnerPrepManager() {
   const buttons: ButtonProps[] = [
     {
       onClick: () => {
-        setOpenCreatePrepCourse(true);
+        modals.modalCreatePrepCourse.open();
       },
       typeStyle: "accepted",
       size: "small",

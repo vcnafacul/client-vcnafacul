@@ -1,4 +1,5 @@
 import Button from "@/components/molecules/button";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { changeActive } from "@/services/prepCourse/collaborator/change-active";
 import { changeDescription } from "@/services/prepCourse/collaborator/change-description";
 import { getCollaborator } from "@/services/prepCourse/collaborator/get-collaborator";
@@ -19,6 +20,7 @@ import ModalNewRole from "./modals/ModalNewRole";
 import ModalUpdateRoleUser from "./modals/ModalUpdateRoleUser";
 import { ShowInfo } from "./modals/showInfo";
 import { TempInviteMember } from "./modals/temp-invite-member";
+import { useModals } from "@/hooks/useModal";
 
 export interface CollaboratorColumns {
   id: string;
@@ -40,20 +42,25 @@ export interface CollaboratorColumns {
 
 export default function ManagerCollaborator() {
   const [collaborator, setCollaborator] = useState<CollaboratorColumns[]>([]);
-  const [openInviteModal, setOpenInviteModal] = useState(false);
-  const [openShowInfo, setOpenShowInfo] = useState(false);
-  const [openNewRole, setOpenNewRole] = useState(false);
-  const [openEditRole, setOpenEditRole] = useState(false);
-  const [userRoleModal, setUserRoleModal] = useState(false);
   const [collaboratorSelected, setCollaboratorSelected] =
     useState<CollaboratorColumns | null>(null);
   const [limit, setLimit] = useState<number>(100);
   const [totalItems, setTotalItems] = useState<number>(100);
   const [roles, setRoles] = useState<Role[]>([]);
 
+  const modals = useModals([
+    'modalInviteMember',
+    'modalShowInfo',
+    'modalShowNewRole',
+    'modalShowEditRole',
+    'modalUserRole',
+  ]);
+
   const {
     data: { token },
   } = useAuthStore();
+
+  const executeAsync = useToastAsync();
 
   const columns: GridColDef[] = [
     {
@@ -134,14 +141,16 @@ export default function ManagerCollaborator() {
       return;
     }
     setCollaboratorSelected(coll);
-    setOpenShowInfo(true);
+    modals.modalShowInfo.open();
   };
 
-  const handleUpdateUserRole = (roleId: string) => {
-    const id = toast.loading("Atualizando permissão...");
-    setUserRoleModal(false);
-    updateUserRole(collaboratorSelected!.userId, roleId, token)
-      .then(() => {
+  const handleUpdateUserRole = async (roleId: string) => {
+    await executeAsync({
+      action: () => updateUserRole(collaboratorSelected!.userId, roleId, token),
+      loadingMessage: "Atualizando permissão...",
+      successMessage: "Permissão atualizada com sucesso!",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
         setCollaboratorSelected({
           ...collaboratorSelected!,
           role: {
@@ -162,21 +171,9 @@ export default function ManagerCollaborator() {
           return c;
         });
         setCollaborator(updateCollaborator);
-        toast.update(id, {
-          render: "Permissão atualizada com sucesso!",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+        modals.modalUserRole.close();
+      },
+    });
   };
 
   const handleNewRole = (role: Role) => {
@@ -184,19 +181,19 @@ export default function ManagerCollaborator() {
   };
 
   const ModalInviteMember = () => {
-    return openInviteModal ? (
+    return modals.modalInviteMember.isOpen ? (
       <TempInviteMember
-        isOpen={openInviteModal}
-        handleClose={() => setOpenInviteModal(false)}
+        isOpen={modals.modalInviteMember.isOpen}
+        handleClose={() => modals.modalInviteMember.close()}
       />
     ) : null;
   };
 
   const ModalShowInfo = () => {
-    return openShowInfo ? (
+    return modals.modalShowInfo.isOpen ? (
       <ShowInfo
-        isOpen={openShowInfo}
-        handleClose={() => setOpenShowInfo(false)}
+        isOpen={modals.modalShowInfo.isOpen}
+        handleClose={() => modals.modalShowInfo.close()}
         collaborator={collaboratorSelected!}
         handleActive={handleChangeActive}
         handleDescription={handleDescription}
@@ -205,40 +202,40 @@ export default function ManagerCollaborator() {
             toast.error("Não há funções cadastradas");
             return;
           }
-          setUserRoleModal(true);
+          modals.modalUserRole.open();
         }}
       />
     ) : null;
   };
 
   const ShowUserRole = () => {
-    if (!userRoleModal) return null;
-    return !userRoleModal ? null : (
+    if (!modals.modalUserRole.isOpen) return null;
+    return !modals.modalUserRole.isOpen ? null : (
       <ModalUpdateRoleUser
         roles={roles}
         updateUserRole={handleUpdateUserRole}
         role={collaboratorSelected?.role as Role}
-        isOpen={userRoleModal}
-        handleClose={() => setUserRoleModal(false)}
+        isOpen={modals.modalUserRole.isOpen}
+        handleClose={() => modals.modalUserRole.close()}
       />
     );
   };
 
   const ModalShowNewRole = () => {
-    return openNewRole ? (
+    return modals.modalShowNewRole.isOpen ? (
       <ModalNewRole
-        isOpen={openNewRole}
-        handleClose={() => setOpenNewRole(false)}
+        isOpen={modals.modalShowNewRole.isOpen}
+        handleClose={() => modals.modalShowNewRole.close()}
         handleNewRole={handleNewRole}
       />
     ) : null;
   };
 
   const ModalShowEditRole = () => {
-    return openEditRole ? (
+    return modals.modalShowEditRole.isOpen ? (
       <ModalEditRole
-        isOpen={openEditRole}
-        handleClose={() => setOpenEditRole(false)}
+        isOpen={modals.modalShowEditRole.isOpen}
+        handleClose={() => modals.modalShowEditRole.close()}
       />
     ) : null;
   };
@@ -334,7 +331,7 @@ export default function ManagerCollaborator() {
       </div>
       <div className="flex justify-end">
         <Button
-          onClick={() => setOpenInviteModal(true)}
+          onClick={() => modals.modalInviteMember.open()}
           size="small"
           typeStyle="quaternary"
           className="w-fit mx-4"
@@ -342,7 +339,7 @@ export default function ManagerCollaborator() {
           Convidar Colaborador
         </Button>
         <Button
-          onClick={() => setOpenNewRole(true)}
+          onClick={() => modals.modalShowNewRole.open()}
           size="small"
           typeStyle="quaternary"
           className="w-fit mx-4"
@@ -350,7 +347,7 @@ export default function ManagerCollaborator() {
           Nova Função
         </Button>
         <Button
-          onClick={() => setOpenEditRole(true)}
+          onClick={() => modals.modalShowEditRole.open()}
           size="small"
           typeStyle="primary"
           className="w-fit mx-4"

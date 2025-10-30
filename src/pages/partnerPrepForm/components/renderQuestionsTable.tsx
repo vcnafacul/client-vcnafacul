@@ -1,5 +1,6 @@
 // Função para renderizar cards das questões
 
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { deleteQuestion } from "@/services/partnerPrepForm/deleteQuestion";
 import { useAuthStore } from "@/store/auth";
 import { QuestionForm } from "@/types/partnerPrepForm/questionForm";
@@ -16,7 +17,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import {
   AnswerTypeBadge,
   CollectionBadge,
@@ -49,33 +49,23 @@ export function RenderQuestionsTable({
     data: { token },
   } = useAuthStore();
 
+  const executeAsync = useToastAsync();
+
   const handleViewQuestion = (question: QuestionForm) => {
     setQuestionSelected(question);
     setIsOpenModalShowQuestion(true);
   };
 
-  const handleDeleteQuestion = (question: QuestionForm) => {
-    const id = toast.loading("Excluindo questão...");
-    deleteQuestion(token, question._id)
-      .then(() => {
+  const handleDeleteQuestion = async (question: QuestionForm) => {
+    await executeAsync({
+      action: () => deleteQuestion(token, question._id),
+      loadingMessage: "Excluindo questão...",
+      successMessage: "Questão excluída com sucesso!",
+      errorMessage: "Erro ao excluir questão",
+      onSuccess: () => {
         onDeleteQuestion(question._id);
-        toast.update(id, {
-          render: "Questão excluída com sucesso",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      })
-      .catch((error) => {
-        console.error("Erro ao excluir questão:", error);
-        toast.update(id, {
-          render: "Erro ao excluir questão",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
-    // TODO: Implementar confirmação e exclusão
+      },
+    });
   };
 
   const ShowQuestion = () => {

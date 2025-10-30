@@ -1,13 +1,13 @@
 import PhotoEditor from "@/components/atoms/photoEditor";
 import { StudentCard } from "@/components/molecules/studentCard";
 import ModalTemplate from "@/components/templates/modalTemplate";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { getProfilePhoto } from "@/services/prepCourse/student/getProfilePhoto";
 import { uploadProfileImage } from "@/services/prepCourse/student/uploadProfileImage";
 import { useAuthStore } from "@/store/auth";
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
 import heic2any from "heic2any";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 interface InfoStudentEnrolledModalProps {
   isOpen: boolean;
@@ -29,6 +29,8 @@ export function InfoStudentEnrolledModal({
   const {
     data: { token },
   } = useAuthStore();
+
+  const executeAsync = useToastAsync();
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -64,29 +66,18 @@ export function InfoStudentEnrolledModal({
   }, [entity.photo, token]);
 
   const handleUploadProfileImage = async (file: File) => {
-    const id = toast.loading("Atualizando foto...");
-    uploadProfileImage(file, entity.id, token)
-      .then((res) => {
-        toast.update(id, {
-          render: `Foto atualizada`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
+    await executeAsync({
+      action: () => uploadProfileImage(file, entity.id, token),
+      loadingMessage: "Atualizando foto...",
+      successMessage: "Foto atualizada com sucesso!",
+      errorMessage: "Erro ao atualizar foto",
+      onSuccess: (res) => {
         updateEntity({ ...entity, photo: res as string } as StudentsDtoOutput);
-        handleClose();
-      })
-      .catch(() => {
-        toast.update(id, {
-          render: `Erro ao atualizar foto`,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      })
-      .finally(() => {
+      },
+      onFinally: () => {
         setPhotoEditorOpen(false);
-      });
+      },
+    });
   };
 
   const ModalPhotoEditor = () => {

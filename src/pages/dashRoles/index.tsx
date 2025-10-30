@@ -19,19 +19,23 @@ import ModalNewRole from "./modals/ModalNewRole";
 import ModalRole from "./modals/ModalRole";
 import ModalSendEmail from "./modals/ModalSendEmail";
 import ShowUserInfo from "./modals/showUserInfo";
+import { useModals } from "@/hooks/useModal";
 
 function DashRoles() {
   const [roles, setRoles] = useState<Role[]>([]);
   const [usersRole, setUsersRole] = useState<UserRole[]>([]);
   const [userRoleSelect, setUserRoleSelect] = useState<UserRole | null>();
-  const [userModal, setUserModal] = useState<boolean>(false);
-  const [userRoleModal, setUserRoleModal] = useState<boolean>(false);
-  const [newRole, setnewRole] = useState<boolean>(false);
-  const [editRole, setEditRole] = useState<boolean>(false);
-  const [sendEmailModal, setSendEmailModal] = useState<boolean>(false);
   const [filterText, setFilterText] = useState<string>("");
   const dataRef = useRef<UserRole[]>([]);
   const limitCards = 100;
+
+  const modals = useModals([
+    'modalUserRole',
+    'modalNewRole',
+    'modalEditRole',
+    'modalSendEmail',
+    'modalUserModal',
+  ]);
 
   const {
     data: { token },
@@ -49,11 +53,11 @@ function DashRoles() {
 
   const onClickCard = (userId: string) => {
     setUserRoleSelect(usersRole.find((user) => user.user.id === userId));
-    setUserModal(true);
+    modals.modalUserRole.open();
   };
 
   const handleUpdateUserRole = (userRole: UserRole) => {
-    setUserRoleModal(false);
+    modals.modalUserRole.close();
     updateUserRole(userRole.user.id, userRole.roleId, token)
       .then(() => {
         setUsersRole(
@@ -114,7 +118,7 @@ function DashRoles() {
   };
 
   const ShowUserRole = () => {
-    return !userRoleModal ? null : (
+    return !modals.modalUserRole.isOpen ? null : (
       <ModalRole
         roles={roles.filter((r) => {
           if (r.name !== "Todos") {
@@ -123,44 +127,44 @@ function DashRoles() {
         })}
         updateUserRole={handleUpdateUserRole}
         userRole={userRoleSelect!}
-        isOpen={userRoleModal}
-        handleClose={() => setUserRoleModal(false)}
+        isOpen={modals.modalUserRole.isOpen}
+        handleClose={() => modals.modalUserRole.close()}
       />
     );
   };
 
   const ShowNewRole = () => {
-    return !newRole ? null : (
+    return !modals.modalNewRole.isOpen ? null : (
       <ModalNewRole
         handleNewRole={handleNewRole}
-        isOpen={newRole}
-        handleClose={() => setnewRole(false)}
+        isOpen={modals.modalNewRole.isOpen}
+        handleClose={() => modals.modalNewRole.close()}
       />
     );
   };
 
   const ShowEditRole = () => {
-    return !editRole ? null : (
-      <ModalEditRole isOpen={editRole} handleClose={() => setEditRole(false)} />
+    return !modals.modalEditRole.isOpen ? null : (
+      <ModalEditRole isOpen={modals.modalEditRole.isOpen} handleClose={() => modals.modalEditRole.close()} />
     );
   };
 
   const ShowSendEmailModal = () => {
-    return !sendEmailModal ? null : (
+    return !modals.modalSendEmail.isOpen ? null : (
       <ModalSendEmail
-        isOpen={sendEmailModal}
-        handleClose={() => setSendEmailModal(false)}
+        isOpen={modals.modalSendEmail.isOpen}
+        handleClose={() => modals.modalSendEmail.close()}
       />
     );
   };
 
   const ShowUserModal = () => {
-    return !userModal ? null : (
+    return !modals.modalUserModal.isOpen ? null : (
       <ShowUserInfo
-        isOpen={userModal}
-        handleClose={() => setUserModal(false)}
+        isOpen={modals.modalUserModal.isOpen}
+        handleClose={() => modals.modalUserModal.close()}
         ur={userRoleSelect!}
-        openUpdateRole={() => setUserRoleModal(true)}
+        openUpdateRole={() => modals.modalUserRole.open()}
       />
     );
   };
@@ -169,7 +173,7 @@ function DashRoles() {
     {
       onClick: () => {
         setUserRoleSelect(null);
-        setnewRole(true);
+        modals.modalNewRole.open();
       },
       typeStyle: "quaternary",
       size: "small",
@@ -177,7 +181,7 @@ function DashRoles() {
     },
     {
       onClick: () => {
-        setEditRole(true);
+        modals.modalEditRole.open();
       },
       typeStyle: "primary",
       size: "small",
@@ -185,7 +189,7 @@ function DashRoles() {
     },
     {
       onClick: () => {
-        setSendEmailModal(true);
+        modals.modalSendEmail.open();
       },
       typeStyle: "secondary",
       size: "small",

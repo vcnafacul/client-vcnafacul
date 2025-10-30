@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import ManagerFrente from "./managerFrente";
 import OrderEditSubject from "./orderEditSubject";
 import SettingsSubject from "./settingsSubject";
+import { useModals } from "@/hooks/useModal";
 
 interface Props {
   frentes: FrenteDto[];
@@ -37,10 +38,13 @@ export function PanelFrente({
   onUpdate,
   onDelete,
 }: Props) {
-  const [settings, setSettings] = useState<boolean>(false);
-  const [openModalFrente, setOpenModalFrente] = useState<boolean>(false);
   const [frenteSelected, setFrenteSelected] = useState<FrenteDto | null>(null);
-  const [openModalOrderEdit, setOpenModalOrderEdit] = useState<boolean>(false);
+
+  const modals = useModals([
+    'settings',
+    'frenteEditor',
+    'orderEdit',
+  ]);
 
   const {
     data: { token },
@@ -87,7 +91,7 @@ export function PanelFrente({
             <IconButton
               onClick={() => {
                 setFrenteSelected(params.row);
-                setSettings(true);
+                modals.settings.open();
               }}
             >
               <IoEyeSharp className="fill-gray-500 hover:fill-black" />
@@ -97,7 +101,7 @@ export function PanelFrente({
             <IconButton
               onClick={() => {
                 setFrenteSelected(params.row);
-                setOpenModalFrente(true);
+                modals.frenteEditor.open();
               }}
             >
               <MdModeEdit className="fill-gray-500 hover:fill-black" />
@@ -107,7 +111,7 @@ export function PanelFrente({
             <IconButton
               onClick={() => {
                 setFrenteSelected(params.row);
-                setOpenModalOrderEdit(true);
+                modals.orderEdit.open();
               }}
             >
               <CgArrowsExchangeAltV className="fill-gray-500 hover:fill-black" />
@@ -126,24 +130,24 @@ export function PanelFrente({
   ];
 
   const ModalFrente = () => {
-    return openModalFrente ? (
+    return modals.frenteEditor.isOpen ? (
       <ManagerFrente
         frente={frenteSelected}
-        isOpen={openModalFrente}
+        isOpen={modals.frenteEditor.isOpen}
         materia={MateriasLabel.find((m) => m.value === materia)!}
         newFrente={onCreate}
         editFrente={onUpdate}
-        handleClose={() => setOpenModalFrente(false)}
+        handleClose={() => modals.frenteEditor.close()}
       />
     ) : null;
   };
 
   const SettingsModal = () => {
-    return !settings ? null : (
+    return !modals.settings.isOpen ? null : (
       <SettingsSubject
-        isOpen={settings}
+        isOpen={modals.settings.isOpen}
         handleClose={() => {
-          setSettings(false);
+          modals.settings.close();
         }}
         frente={frenteSelected!}
         updateSizeFrente={(size: number) =>
@@ -154,10 +158,10 @@ export function PanelFrente({
   };
 
   const ModalOrderEdit = () => {
-    return !openModalOrderEdit ? null : (
+    return !modals.orderEdit.isOpen ? null : (
       <OrderEditSubject
-        isOpen={openModalOrderEdit}
-        handleClose={() => setOpenModalOrderEdit(false)}
+        isOpen={modals.orderEdit.isOpen}
+        handleClose={() => modals.orderEdit.close()}
         subjects={frenteSelected!.subjects}
         listId={frenteSelected!.id}
         updateOrder={(body: ChangeOrderDTO) => changeOrderSubject(token, body)}
@@ -169,7 +173,7 @@ export function PanelFrente({
     <div className="flex flex-col h-[500px] overflow-y-scroll scrollbar-hide select-none">
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-lg font-semibold text-gray-700">Frentes</h3>
-        <Button onClick={() => setOpenModalFrente(true)}>
+        <Button onClick={() => modals.frenteEditor.open()}>
           Criar Nova Frente
         </Button>
       </div>

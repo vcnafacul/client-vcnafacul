@@ -21,6 +21,7 @@ import { CreateProva, Prova } from "../../../dtos/prova/prova";
 import { ObjDefault } from "../../../dtos/question/questionDTO";
 import { ITipoSimulado } from "../../../dtos/simulado/tipoSimulado";
 import { Edicao, edicaoArray } from "../../../enums/prova/edicao";
+import { useToastAsync } from "../../../hooks/useToastAsync";
 import { createProva } from "../../../services/prova/createProva";
 import { getInfosQuestion } from "../../../services/question/getInfosQuestion";
 import { useAuthStore } from "../../../store/auth";
@@ -37,6 +38,7 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
   const {
     data: { token },
   } = useAuthStore();
+  const executeAsync = useToastAsync();
   const [uploadFile, setUploadFile] = useState(null);
   const [uploadGabarito, setUploadGabarito] = useState(null);
 
@@ -129,61 +131,49 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
   const exame = watch("exame");
   const tipo = watch("tipo");
 
-  const create = (data: any) => {
+  const create = async (data: any) => {
     if (!uploadFile) {
       toast.error("É necessaria fazer o upload do arquivo da prova");
-    } else {
-      const id = toast.loading("Criando Prova ... ");
-      const info = data as CreateProva;
-      info.aplicacao = 1;
-      if (info.edicao.includes("2")) {
-        info.edicao = Edicao.Regular;
-        info.aplicacao = 2;
-      }
-      if (info.edicao.includes("3")) {
-        info.edicao = Edicao.Regular;
-        info.aplicacao = 3;
-      }
-
-      const fileName = Date.now();
-      const formData = new FormData();
-      formData.append("exame", info.exame);
-      formData.append("tipo", info.tipo);
-      formData.append("edicao", info.edicao);
-      formData.append("ano", info.ano.toString());
-      formData.append("aplicacao", info.aplicacao.toString());
-      formData.append("file", uploadFile!, `${fileName}.pdf`);
-
-      // Adicionar gabarito se foi enviado
-      if (uploadGabarito) {
-        formData.append(
-          "gabarito",
-          uploadGabarito!,
-          `${fileName}_gabarito.pdf`
-        );
-      }
-
-      createProva(formData, token)
-        .then((res) => {
-          addProva(res);
-          const title = `${info.exame}_${info.ano}_${info.edicao}_${info.aplicacao}`;
-          toast.update(id, {
-            render: `Prova ${title} criada com sucesso`,
-            type: "success",
-            isLoading: false,
-            autoClose: 3000,
-          });
-          handleClose!();
-        })
-        .catch((error: Error) => {
-          toast.update(id, {
-            render: error.message,
-            type: "error",
-            isLoading: false,
-            autoClose: 3000,
-          });
-        });
+      return;
     }
+
+    const info = data as CreateProva;
+    info.aplicacao = 1;
+    if (info.edicao.includes("2")) {
+      info.edicao = Edicao.Regular;
+      info.aplicacao = 2;
+    }
+    if (info.edicao.includes("3")) {
+      info.edicao = Edicao.Regular;
+      info.aplicacao = 3;
+    }
+
+    const fileName = Date.now();
+    const formData = new FormData();
+    formData.append("exame", info.exame);
+    formData.append("tipo", info.tipo);
+    formData.append("edicao", info.edicao);
+    formData.append("ano", info.ano.toString());
+    formData.append("aplicacao", info.aplicacao.toString());
+    formData.append("file", uploadFile!, `${fileName}.pdf`);
+
+    // Adicionar gabarito se foi enviado
+    if (uploadGabarito) {
+      formData.append("gabarito", uploadGabarito!, `${fileName}_gabarito.pdf`);
+    }
+
+    const title = `${info.exame}_${info.ano}_${info.edicao}_${info.aplicacao}`;
+
+    await executeAsync({
+      action: () => createProva(formData, token),
+      loadingMessage: "Criando Prova...",
+      successMessage: `Prova ${title} criada com sucesso`,
+      errorMessage: (error) => error.message,
+      onSuccess: (res) => {
+        addProva(res);
+        handleClose!();
+      },
+    });
   };
 
   return (

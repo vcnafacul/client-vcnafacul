@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import ManagerSubject from "./managerSubject";
 import OrderEditContent from "./orderEditContent";
 import { StatusContent } from "@/enums/content/statusContent";
+import { useModals } from "@/hooks/useModal";
 
 interface Props {
   subjects: SubjectDto[];
@@ -34,11 +35,14 @@ export function PanelSubject({
   onUpdate,
   onDelete,
 }: Props) {
-  const [openModalSubject, setOpenModalSubject] = useState<boolean>(false);
-  const [openModalOrderEdit, setOpenModalOrderEdit] = useState<boolean>(false);
   const [subjectSelected, setSubjectSelected] = useState<SubjectDto | null>(
     null
   );
+
+  const modals = useModals([
+    'subjectEditor',
+    'orderEdit',
+  ]);
 
   const {
     data: { token },
@@ -152,7 +156,7 @@ export function PanelSubject({
             <IconButton
               onClick={() => {
                 setSubjectSelected(params.row);
-                setOpenModalSubject(true);
+                modals.subjectEditor.open();
               }}
             >
               <MdModeEdit className="fill-gray-500 hover:fill-black" />
@@ -162,7 +166,7 @@ export function PanelSubject({
             <IconButton
               onClick={() => {
                 setSubjectSelected(params.row);
-                setOpenModalOrderEdit(true);
+                modals.orderEdit.open();
               }}
             >
               <CgArrowsExchangeAltV className="fill-gray-500 hover:fill-black" />
@@ -181,23 +185,23 @@ export function PanelSubject({
   ];
 
   const ModalSubject = () => {
-    return openModalSubject ? (
+    return modals.subjectEditor.isOpen ? (
       <ManagerSubject
-        isOpen={openModalSubject}
+        isOpen={modals.subjectEditor.isOpen}
         frente={frente}
         subject={subjectSelected}
         newSubject={onCreate}
         editSubject={onUpdate}
-        handleClose={() => setOpenModalSubject(false)}
+        handleClose={() => modals.subjectEditor.close()}
       />
     ) : null;
   };
 
   const ModalOrderEdit = () => {
-    return !openModalOrderEdit ? null : (
+    return !modals.orderEdit.isOpen ? null : (
       <OrderEditContent
-        isOpen={openModalOrderEdit}
-        handleClose={() => setOpenModalOrderEdit(false)}
+        isOpen={modals.orderEdit.isOpen}
+        handleClose={() => modals.orderEdit.close()}
         contents={subjectSelected!.contents}
         listId={subjectSelected!.id}
         updateOrder={(body: ChangeOrderDTO) => changeOrderDemand(token, body)}
@@ -209,7 +213,7 @@ export function PanelSubject({
     <div className="flex flex-col h-[500px] overflow-y-scroll scrollbar-hide">
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-lg font-semibold text-gray-700">Temas</h3>
-        <Button onClick={() => setOpenModalSubject(true)}>
+        <Button onClick={() => modals.subjectEditor.open()}>
           Criar Novo Tema
         </Button>
       </div>

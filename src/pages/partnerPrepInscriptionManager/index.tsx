@@ -3,6 +3,8 @@ import { CardDash } from "@/components/molecules/cardDash";
 import DashCardTemplate from "@/components/templates/dashCardTemplate";
 import { DashCardContext } from "@/context/dashCardContext";
 import { StatusEnum } from "@/enums/generic/statusEnum";
+import { useModals } from "@/hooks/useModal";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { createInscription } from "@/services/prepCourse/inscription/createInscription";
 import { deleteInscription } from "@/services/prepCourse/inscription/deleteInscription";
 import { getAllInscription } from "@/services/prepCourse/inscription/getAllInscription";
@@ -24,16 +26,18 @@ import { InscriptionInfoModal } from "./modals/InscriptionInfoModal";
 export function PartnerPrepInscriptionManager() {
   const [processing, setProcessing] = useState<boolean>(true);
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
-  const [openModal, setOpenModal] = useState(false);
-  const [openModalCreate, setOpenModalCreate] = useState(false);
   const [inscriptionSelected, setInscriptionSelected] = useState<
     Inscription | undefined
   >(undefined);
   const limitCards = 100;
 
+  const modals = useModals(["modalCreate", "modalInfo"]);
+
   const {
     data: { token },
   } = useAuthStore();
+
+  const executeAsync = useToastAsync();
 
   const getMoreCards = async (): Promise<Paginate<Inscription>> => {
     return {
@@ -79,13 +83,13 @@ export function PartnerPrepInscriptionManager() {
 
   const onClickCard = (cardId: number | string) => {
     setInscriptionSelected(inscriptions.find((ins) => ins.id === cardId)!);
-    setOpenModal(true);
+    modals.modalInfo.open();
   };
   const buttons: ButtonProps[] = [
     {
       // disabled: !permissao[Roles.criarQuestao],
       onClick: () => {
-        setOpenModalCreate(true);
+        modals.modalCreate.open();
       },
       typeStyle: "quaternary",
       size: "small",
@@ -94,42 +98,35 @@ export function PartnerPrepInscriptionManager() {
   ];
 
   const handleCreate = async (data: InscriptionOutput) => {
-    const id = toast.loading("Criando Processo Seletivo...");
-    createInscription(token, data)
-      .then(() => {
-        toast.update(id, {
-          render: `Processo Seletivo ${data.name} criado com sucesso`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        setOpenModalCreate(false);
+    await executeAsync({
+      action: () => createInscription(token, data),
+      loadingMessage: "Criando Processo Seletivo...",
+      successMessage: "Processo Seletivo criado com sucesso!",
+      errorMessage: "Erro ao criar processo seletivo",
+      onSuccess: () => {
+        modals.modalCreate.close();
         fetchInscriptions();
-      })
-      .catch((e) => {
-        toast.update(id, {
-          render: e.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
   const ModalCreate = () => {
-    return openModalCreate ? (
+    return modals.modalCreate.isOpen ? (
       <InscriptionInfoCreateEditModal
-        isOpen={openModalCreate}
-        handleClose={() => setOpenModalCreate(false)}
+        isOpen={modals.modalCreate.isOpen}
+        handleClose={() => modals.modalCreate.close()}
         onCreateEdit={handleCreate}
       />
     ) : null;
   };
 
   const handleEdit = async (data: InscriptionOutput) => {
-    const id = toast.loading("Atualizando Processo Seletivo...");
-    updateInscription(token, data)
-      .then(() => {
+    await executeAsync({
+      action: () => updateInscription(token, data),
+      loadingMessage: "Atualizando Processo Seletivo...",
+      successMessage: "Processo Seletivo atualizado com sucesso!",
+      errorMessage: "Erro ao atualizar processo seletivo",
+      onSuccess: () => {
         setInscriptionSelected({
           ...inscriptionSelected!,
           name: data.name,
@@ -139,22 +136,9 @@ export function PartnerPrepInscriptionManager() {
           endDate: data.range[1],
           requestDocuments: data.requestDocuments,
         });
-        toast.update(id, {
-          render: `Processo Seletivo ${data.name} atualizado com sucesso`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
         fetchInscriptions();
-      })
-      .catch((e) => {
-        toast.update(id, {
-          render: e.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
   const handleDelete = async () => {
@@ -163,7 +147,7 @@ export function PartnerPrepInscriptionManager() {
         setInscriptions(
           inscriptions.filter((ins) => ins.id !== inscriptionSelected?.id)
         );
-        setOpenModal(false);
+        modals.modalInfo.close();
       })
       .catch((error) => {
         toast.error(error.message);
@@ -171,11 +155,11 @@ export function PartnerPrepInscriptionManager() {
   };
 
   const ModalInfo = () => {
-    return openModal ? (
+    return modals.modalInfo.isOpen ? (
       <InscriptionInfoModal
-        isOpen={openModal}
+        isOpen={modals.modalInfo.isOpen}
         handleClose={() => {
-          setOpenModal(false);
+          modals.modalInfo.close();
         }}
         inscription={inscriptionSelected}
         handleEdit={handleEdit}

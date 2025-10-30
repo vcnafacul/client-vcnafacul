@@ -8,6 +8,7 @@ import {
 } from "@/dtos/student/studentInscriptionDTO";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { StepsInscriptionStudent } from "@/enums/prepCourse/stepInscriptionStudent";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { getInscription } from "@/services/prepCourse/getInscription";
 import { getUserInfo } from "@/services/prepCourse/student/getUserInfo";
 import { completeInscriptionStudent } from "@/services/prepCourse/student/inscription";
@@ -15,7 +16,6 @@ import { useAuthStore } from "@/store/auth";
 import PartnerPrepForm from "@/types/partnerPrepForm/partnerPrepForm";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 import BaseTemplate from "../../components/templates/baseTemplate";
 import "../../styles/graphism.css";
 import { SocioeconomicAnswer, stepDescriptions, textoParceria } from "./data";
@@ -48,6 +48,7 @@ export function PartnerPrepInscription() {
     data: { token },
   } = useAuthStore();
   const navigate = useNavigate();
+  const executeAsync = useToastAsync();
   const [stepCurrently, setStepCurrently] = useState<StepsInscriptionStudent>(
     StepsInscriptionStudent.Blank
   );
@@ -114,21 +115,20 @@ export function PartnerPrepInscription() {
     setStepCurrently(stepCurrently + 1);
   };
 
-  const completeInscription = (data: SocioeconomicAnswer[]) => {
-    const id = toast.loading("Finalizando Inscrição ...");
-    completeInscriptionStudent({ ...dataStudent, socioeconomic: data }, token)
-      .then(() => {
-        toast.dismiss(id);
-        // setStepCurrently(StepsInscriptionStudent.Success); // Redirect to success page
-      })
-      .catch((res) => {
-        toast.update(id, {
-          render: res.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+  const completeInscription = async (data: SocioeconomicAnswer[]) => {
+    await executeAsync({
+      action: () =>
+        completeInscriptionStudent(
+          { ...dataStudent, socioeconomic: data },
+          token
+        ),
+      loadingMessage: "Finalizando Inscrição...",
+      successMessage: "Inscrição finalizada com sucesso!",
+      errorMessage: "Erro ao finalizar inscrição",
+      onSuccess: () => {
+        setStepCurrently(StepsInscriptionStudent.Success);
+      },
+    });
   };
 
   const isMinor = (birthday: Date) => {

@@ -1,8 +1,9 @@
- 
 import logo from "@/assets/images/logo_carteirinha.png";
 import Button from "@/components/molecules/button";
 import { Bool } from "@/enums/bool";
 import { Roles } from "@/enums/roles/roles";
+import { useModals } from "@/hooks/useModal";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { getClassById } from "@/services/prepCourse/class/getClassById";
 import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
@@ -20,7 +21,6 @@ import { GoGraph } from "react-icons/go";
 import { IoEyeSharp } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 import { AttendanceHistoryModal } from "./modals/attendanceHistoryModal";
 import { AttendanceRecordByStudentModal } from "./modals/attendanceRecordByStudentModal";
 import { StatisticModal } from "./modals/statistic";
@@ -34,14 +34,18 @@ export function PartnerClassWithStudents() {
   const [studentSelected, setStudentSelected] = useState<ClassStudent>(
     {} as ClassStudent
   );
-  const [openHistory, setOpenHistory] = useState(false);
-  const [openRecord, setOpenRecord] = useState(false);
 
-  const [openModalStatistic, setOpenModalStatistic] = useState<boolean>(false);
+  const modals = useModals([
+    "modalAttendanceHistory",
+    "modalAttendanceRecordByStudent",
+    "modalStatistic",
+  ]);
 
   const {
     data: { token, permissao },
   } = useAuthStore();
+
+  const executeAsync = useToastAsync();
 
   const columns: GridColDef[] = [
     {
@@ -57,7 +61,7 @@ export function PartnerClassWithStudents() {
             <IconButton
               onClick={() => {
                 setStudentSelected(params.row);
-                setOpenRecord(true);
+                modals.modalAttendanceRecordByStudent.open();
               }}
             >
               <IoEyeSharp className="h-6 w-6 fill-gray-500 hover:fill-marine opacity-60 hover:opacity-100" />
@@ -102,30 +106,30 @@ export function PartnerClassWithStudents() {
   const paginationModel = { page: 0, pageSize: 40 };
 
   const ModalAttendanceHistory = () => {
-    return !openHistory ? null : (
+    return !modals.modalAttendanceHistory.isOpen ? null : (
       <AttendanceHistoryModal
-        isOpen={openHistory}
-        handleClose={() => setOpenHistory(false)}
+        isOpen={modals.modalAttendanceHistory.isOpen}
+        handleClose={() => modals.modalAttendanceHistory.close()}
         classId={hashClassId!}
       />
     );
   };
 
   const ModalAttendanceRecordByStudent = () => {
-    return !openRecord ? null : (
+    return !modals.modalAttendanceRecordByStudent.isOpen ? null : (
       <AttendanceRecordByStudentModal
-        isOpen={openRecord}
-        handleClose={() => setOpenRecord(false)}
+        isOpen={modals.modalAttendanceRecordByStudent.isOpen}
+        handleClose={() => modals.modalAttendanceRecordByStudent.close()}
         studentId={studentSelected.id}
       />
     );
   };
 
   const ModalStatistic = () => {
-    return !openModalStatistic ? null : (
+    return !modals.modalStatistic.isOpen ? null : (
       <StatisticModal
-        isOpen={openModalStatistic}
-        handleClose={() => setOpenModalStatistic(false)}
+        isOpen={modals.modalStatistic.isOpen}
+        handleClose={() => modals.modalStatistic.close()}
         data={{
           forms: students.map((student) => student.socioeconomic),
           isFree: students.map((student) => student.isFree === Bool.Yes),
@@ -134,22 +138,26 @@ export function PartnerClassWithStudents() {
     );
   };
 
-  useEffect(() => {
-    const id = toast.loading("Carregando alunos...");
-    getClassById(token, hashClassId!)
-      .then((res) => {
+  const getStudents = async () => {
+    await executeAsync({
+      action: () => getClassById(token, hashClassId!),
+      loadingMessage: "Carregando alunos...",
+      successMessage: "Alunos carregados com sucesso!",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: (res) => {
         setClassEntity(res);
-        setStudents(res.students.sort((a, b) => a.name.localeCompare(b.name)));
-        toast.dismiss(id);
-      })
-      .catch((err) => {
-        toast.update(id, {
-          render: err.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+        setStudents(
+          res.students.sort((a: ClassStudent, b: ClassStudent) =>
+            a.name.localeCompare(b.name)
+          )
+        );
+      },
+    });
+  };
+
+  useEffect(() => {
+    getStudents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const downloadPDFClass = async () => {
@@ -204,7 +212,7 @@ export function PartnerClassWithStudents() {
           <Button
             typeStyle="accepted"
             size="small"
-            onClick={() => setOpenHistory(true)}
+            onClick={() => modals.modalAttendanceHistory.open()}
             className="border-none"
           >
             <div className="flex items-center justify-center gap-2">
@@ -228,7 +236,7 @@ export function PartnerClassWithStudents() {
           size="small"
           className="border-none"
           typeStyle="refused"
-          onClick={() => setOpenModalStatistic(true)}
+          onClick={() => modals.modalStatistic.open()}
         >
           <div className="flex gap-2 items-center justify-center">
             <GoGraph />

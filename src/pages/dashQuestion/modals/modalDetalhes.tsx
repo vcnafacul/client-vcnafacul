@@ -1,3 +1,4 @@
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { getQuestionImage } from "@/services/question/getQuestionImage";
 import { yupResolver } from "@hookform/resolvers/yup";
 import heic2any from "heic2any";
@@ -109,6 +110,8 @@ function ModalDetalhes({
       reported: yup.bool().default(question?.reported),
     })
     .required();
+
+  const executeAsync = useToastAsync();
 
   const {
     register,
@@ -673,33 +676,29 @@ function ModalDetalhes({
   useEffect(() => {
     const fetchImage = async () => {
       if (question?.imageId) {
-        const id = toast.loading("Carregando imagem ...");
-        try {
-          const blob = await getQuestionImage(question.imageId, token);
-          const fileType = blob.type; // Tipo MIME do arquivo
+        await executeAsync({
+          action: () => getQuestionImage(question.imageId, token),
+          loadingMessage: "Carregando imagem ...",
+          successMessage: "Imagem carregada com sucesso",
+          errorMessage: (error: Error) => error.message,
+          onSuccess: async (blob: Blob) => {
+            const fileType = blob.type; // Tipo MIME do arquivo
 
-          if (fileType === "image/heic" || fileType === "image/heif") {
-            // Se for HEIC, converte para PNG
-            const convertedBlob = await heic2any({
-              blob,
-              toType: "image/png",
-            });
-            const convertedUrl = URL.createObjectURL(convertedBlob as Blob);
-            setImageSrc(convertedUrl);
-          } else {
-            // Se não for HEIC, usa a imagem normal
-            const url = URL.createObjectURL(blob);
-            setImageSrc(url);
-          }
-          toast.dismiss(id);
-        } catch (error) {
-          toast.update(id, {
-            render: "Erro ao baixar documento",
-            type: "error",
-            isLoading: false,
-            autoClose: 3000,
-          });
-        }
+            if (fileType === "image/heic" || fileType === "image/heif") {
+              // Se for HEIC, converte para PNG
+              const convertedBlob = await heic2any({
+                blob,
+                toType: "image/png",
+              });
+              const convertedUrl = URL.createObjectURL(convertedBlob as Blob);
+              setImageSrc(convertedUrl);
+            } else {
+              // Se não for HEIC, usa a imagem normal
+              const url = URL.createObjectURL(blob);
+              setImageSrc(url);
+            }
+          },
+        });
       }
     };
     fetchImage();

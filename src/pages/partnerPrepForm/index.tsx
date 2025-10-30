@@ -1,4 +1,5 @@
 import { TableColumn } from "@/components/organisms/expandableTable";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { deleteSection } from "@/services/partnerPrepForm/deleteSection";
 import { getSection } from "@/services/partnerPrepForm/getSections";
 import { setSectionActive } from "@/services/partnerPrepForm/setSectionActive";
@@ -29,6 +30,7 @@ import { ExpandableSection } from "./components/expandableSection";
 import { ModalCreateQuestion } from "./modals/modalCreateQuestion";
 import { ModalCreateSection } from "./modals/modalCreateSection";
 import { ModalUpdateSection } from "./modals/modalUpdateSection";
+import { useModals } from "@/hooks/useModal";
 
 type AggregatedSection = {
   section: string;
@@ -137,17 +139,16 @@ export default function PartnerPrepForm() {
   const {
     data: { token },
   } = useAuthStore();
+
+  const executeAsync = useToastAsync();
+
   const [entities, setEntities] = useState<SectionForm[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isOpenCreateQuestion, setIsOpenCreateQuestion] =
-    useState<boolean>(false);
-  const [isOpenCreateSection, setIsOpenCreateSection] =
-    useState<boolean>(false);
   const [sectionSelected, setSectionSelected] = useState<SectionForm | null>(
     null
   );
-  const [isOpenUpdateSection, setIsOpenUpdateSection] =
-    useState<boolean>(false);
+  
+  const modals = useModals(["modalCreateQuestion", "modalCreateSection", "modalUpdateSection"]);
 
   const columns: TableColumn<AggregatedSection>[] = [
     { key: "section", label: "Seção" },
@@ -213,10 +214,10 @@ export default function PartnerPrepForm() {
     // Coletar todas as questões de todas as seções para referência
     const allQuestions = entities.flatMap((section) => section.questions);
 
-    return isOpenCreateQuestion ? (
+    return modals.modalCreateQuestion.isOpen ? (
       <ModalCreateQuestion
-        isOpen={isOpenCreateQuestion}
-        handleClose={() => setIsOpenCreateQuestion(false)}
+        isOpen={modals.modalCreateQuestion.isOpen}
+        handleClose={() => modals.modalCreateQuestion.close()}
         sectionId={sectionSelected!._id}
         availableQuestions={allQuestions}
         onSuccess={(question: QuestionForm) => {
@@ -231,7 +232,7 @@ export default function PartnerPrepForm() {
             return section;
           });
           setEntities(newEntities);
-          setIsOpenCreateQuestion(false);
+          modals.modalCreateQuestion.close();
         }}
       />
     ) : null;
@@ -239,36 +240,26 @@ export default function PartnerPrepForm() {
 
   const handleAddQuestion = (sectionId: string) => {
     setSectionSelected(entities.find((e) => e._id === sectionId)!);
-    setIsOpenCreateQuestion(true);
+    modals.modalCreateQuestion.open();
   };
 
   const handleCreateSection = () => {
-    setIsOpenCreateSection(true);
+    modals.modalCreateSection.open();
   };
 
-  const handleDeleteSection = (sectionId: string) => {
-    const id = toast.loading("Excluindo seção...");
-    deleteSection(token, sectionId)
-      .then(() => {
+  const handleDeleteSection = async (sectionId: string) => {
+    await executeAsync({
+      action: () => deleteSection(token, sectionId),
+      loadingMessage: "Excluindo seção...",
+      successMessage: "Seção excluída com sucesso!",
+      errorMessage: (error: Error) => `Erro ao excluir seção: ${error.message}`,
+      onSuccess: () => {
         setEntities((prev) => prev.filter((e) => e._id !== sectionId));
-        toast.update(id, {
-          render: "Seção excluída com sucesso",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: `Erro ao excluir seção: ${error.message}`,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
-  const handleToggleSection = (sectionId: string) => {
+  const handleToggleSection = async (sectionId: string) => {
     const section = entities.find((e) => e._id === sectionId);
     if (!section) return;
 
@@ -276,52 +267,41 @@ export default function PartnerPrepForm() {
     const action = newActiveState ? "ativando" : "desativando";
     const successMessage = newActiveState ? "ativada" : "desativada";
 
-    const id = toast.loading(
-      `${action.charAt(0).toUpperCase() + action.slice(1)} seção...`
-    );
-
-    setSectionActive(token, sectionId)
-      .then(() => {
+    await executeAsync({
+      action: () => setSectionActive(token, sectionId),
+      loadingMessage: `${
+        action.charAt(0).toUpperCase() + action.slice(1)
+      } seção...`,
+      successMessage: `Seção ${successMessage} com sucesso`,
+      errorMessage: `Erro ao ${action} seção`,
+      onSuccess: () => {
         setEntities((prev) =>
           prev.map((e) =>
             e._id === sectionId ? { ...e, active: newActiveState } : e
           )
         );
-        toast.update(id, {
-          render: `Seção ${successMessage} com sucesso`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: `Erro ao ${action} seção: ${error.message}`,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
   const CreateSection = () => {
-    return isOpenCreateSection ? (
+    return modals.modalCreateSection.isOpen ? (
       <ModalCreateSection
-        isOpen={isOpenCreateSection}
-        handleClose={() => setIsOpenCreateSection(false)}
+        isOpen={modals.modalCreateSection.isOpen}
+        handleClose={() => modals.modalCreateSection.close()}
         onSuccess={(section: SectionForm) => {
           setEntities((prev) => [...prev, section]);
-          setIsOpenCreateSection(false);
+          modals.modalCreateSection.close();
         }}
       />
     ) : null;
   };
 
   const UpdateSection = () => {
-    return isOpenUpdateSection ? (
+    return modals.modalUpdateSection.isOpen ? (
       <ModalUpdateSection
-        isOpen={isOpenUpdateSection}
-        handleClose={() => setIsOpenUpdateSection(false)}
+        isOpen={modals.modalUpdateSection.isOpen}
+        handleClose={() => modals.modalUpdateSection.close()}
         section={sectionSelected!}
         onSuccess={(section: SectionForm) => {
           setEntities((prev) =>
@@ -373,7 +353,7 @@ export default function PartnerPrepForm() {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => setIsOpenCreateSection(true)}
+              onClick={() => modals.modalCreateSection.open()}
             >
               Criar Seção
             </Button>
@@ -492,7 +472,7 @@ export default function PartnerPrepForm() {
                         handleAddQuestion={handleAddQuestion}
                         handleEditSection={() => {
                           setSectionSelected(entity);
-                          setIsOpenUpdateSection(true);
+                          modals.modalUpdateSection.open();
                         }}
                         handleDeleteSection={handleDeleteSection}
                         handleToggleSection={handleToggleSection}

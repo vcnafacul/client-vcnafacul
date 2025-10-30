@@ -16,6 +16,7 @@ import { Paginate } from "../../utils/paginate";
 import { dashProva } from "./data";
 import NewProva from "./modals/newProva";
 import ShowProva from "./modals/showProva";
+import { useModals } from "@/hooks/useModal";
 
 function DashProva() {
   const [provas, setProvas] = useState<Prova[]>([]);
@@ -23,9 +24,12 @@ function DashProva() {
 
   const [tipoSimulado, setTipoSimulado] = useState<ITipoSimulado[]>();
 
-  const [openNewProva, setOpenNewProva] = useState<boolean>(false);
-  const [showProva, setShowProva] = useState<boolean>(false);
   const limitCards = 500;
+
+  const modals = useModals([
+    'modalNewProva',
+    'modalShowProva',
+  ]);
 
   const {
     data: { token, permissao },
@@ -59,7 +63,7 @@ function DashProva() {
 
   const onClickCard = (id: string | number) => {
     setProvaSelected(provas.find((p) => p._id === id)!);
-    setShowProva(true);
+    modals.modalShowProva.open();
   };
 
   const addProva = (data: Prova) => {
@@ -68,24 +72,24 @@ function DashProva() {
   };
 
   const ModalNewProva = () => {
-    return !openNewProva ? null : (
+    return !modals.modalNewProva.isOpen ? null : (
       <NewProva
         tipos={tipoSimulado!}
         addProva={addProva}
-        handleClose={() => setOpenNewProva(false)}
-        isOpen={openNewProva}
+        handleClose={() => modals.modalNewProva.close()}
+        isOpen={modals.modalNewProva.isOpen}
       />
     );
   };
 
   const ModalShowProva = () => {
-    return !showProva ? null : (
+    return !modals.modalShowProva.isOpen ? null : (
       <ShowProva
         prova={provaSelected!}
         handleClose={() => {
-          setShowProva(false);
+          modals.modalShowProva.close();
         }}
-        isOpen={showProva}
+        isOpen={modals.modalShowProva.isOpen}
       />
     );
   };
@@ -118,7 +122,7 @@ function DashProva() {
       disabled: !permissao[Roles.cadastrarProvas],
       onClick: () => {
         setProvaSelected(null);
-        setOpenNewProva(true);
+        modals.modalNewProva.open();
       },
       typeStyle: "quaternary",
       size: "small",

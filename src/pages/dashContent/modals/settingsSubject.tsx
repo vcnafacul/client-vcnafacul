@@ -3,6 +3,7 @@ import {
   CreateSubjectDtoInput,
   UpdateSubjectDto,
 } from "@/dtos/content/SubjectDto";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { createSubject } from "@/services/content/createSubject";
 import { updateSubject } from "@/services/content/updateSubject";
 import { useEffect, useState } from "react";
@@ -20,49 +21,39 @@ interface Props {
   updateSizeFrente: (size: number) => void;
 }
 
-function SettingsSubject({ isOpen, handleClose, frente, updateSizeFrente }: Props) {
+function SettingsSubject({
+  isOpen,
+  handleClose,
+  frente,
+  updateSizeFrente,
+}: Props) {
   const [subjects, setSubjects] = useState<SubjectDto[]>([]);
 
   const {
     data: { token },
   } = useAuthStore();
 
+  const executeAsync = useToastAsync();
+
   const handleRemove = async (subjectId: string) => {
-    const idToast = toast.loading("Deletando Tema ... ");
-    deleteSubject(subjectId, token)
-      .then(() => {
-        toast.update(idToast, {
-          render: `Tema Deletado`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        const updatedSubject = subjects.filter((subject) => {
-          if (subject.id !== subjectId) return subject;
-        });
-        setSubjects(updatedSubject);
-        updateSizeFrente(updatedSubject.length);
-      })
-      .catch((error: Error) => {
-        toast.update(idToast, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+    await executeAsync({
+      action: () => deleteSubject(subjectId, token),
+      loadingMessage: "Deletando Tema ... ",
+      successMessage: "Tema deletado com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
+        setSubjects(subjects.filter((subject) => subject.id !== subjectId));
+      },
+    });
   };
 
   const handleCreate = async (body: CreateSubjectDtoInput) => {
-    const id = toast.loading("Criando Tema ... ");
-    createSubject(body, token)
-      .then((res) => {
-        toast.update(id, {
-          render: `Tema Criado`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
+    await executeAsync({
+      action: () => createSubject(body, token),
+      loadingMessage: "Criando Tema ... ",
+      successMessage: "Tema criado com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: (res) => {
         const newSubject: SubjectDto = {
           id: res.id,
           name: res.name,
@@ -72,57 +63,34 @@ function SettingsSubject({ isOpen, handleClose, frente, updateSizeFrente }: Prop
           createdAt: new Date(),
           contents: [],
         };
-        const newSubjects: SubjectDto[] = [...subjects, newSubject];
-        setSubjects(newSubjects);
-        updateSizeFrente(newSubjects.length);
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+        setSubjects([...subjects, newSubject]);
+        updateSizeFrente(subjects.length + 1);
+      },
+    });
   };
 
   const handleUpdate = async (body: UpdateSubjectDto) => {
-    const id = toast.loading("Editando Tema ... ");
-    updateSubject(body, token)
-      .then(() => {
-        toast.update(id, {
-          render: `Tema Editado`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        const newSubject = {
-          id: body.id,
-          description: body.description,
-          name: body.name,
-          frente: frente,
-        };
-        const newSubjects: SubjectDto[] = subjects.map((subject) => {
-          if (subject.id === newSubject.id) {
-            return {
-              ...newSubject,
-              lenght: subject.lenght,
-              createdAt: subject.createdAt,
-              contents: subject.contents,
-            };
-          }
-          return subject;
-        });
-        setSubjects(newSubjects);
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+    await executeAsync({
+      action: () => updateSubject(body, token),
+      loadingMessage: "Editando Tema ... ",
+      successMessage: "Tema editado com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
+        setSubjects(
+          subjects.map((subject) =>
+            subject.id === body.id
+              ? {
+                  ...subject,
+                  name: body.name,
+                  description: body.description,
+                  frente: frente,
+                }
+              : subject
+          )
+        );
+        updateSizeFrente(subjects.length);
+      },
+    });
   };
 
   useEffect(() => {

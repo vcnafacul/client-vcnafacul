@@ -1,6 +1,7 @@
 import ModalTemplate, {
   ModalProps,
 } from "@/components/templates/modalTemplate";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { setQuestionActive } from "@/services/partnerPrepForm/setQuestionActive";
 import { updateQuestionForm } from "@/services/partnerPrepForm/updateQuestion";
 import { useAuthStore } from "@/store/auth";
@@ -36,7 +37,6 @@ import {
   FiTrash2,
   FiX,
 } from "react-icons/fi";
-import { toast } from "react-toastify";
 import { ModalConditions } from "./modalConditions";
 
 interface ModalShowQuestionProps extends ModalProps {
@@ -72,6 +72,8 @@ export function ModalShowQuestion({
     data: { token },
   } = useAuthStore();
 
+  const executeAsync = useToastAsync();
+
   const [editableData, setEditableData] = useState<EditableFormData>({
     text: question.text,
     helpText: question.helpText || "",
@@ -92,28 +94,24 @@ export function ModalShowQuestion({
     }
   };
 
-  const handleToggleActive = () => {
+  const handleToggleActive = async () => {
     setLoading(true);
-    const id = toast.loading("Alterando status da questão...");
-    setQuestionActive(token, question._id)
-      .then(() => {
-        toast.update(id, {
-          render: `Questão ${
-            !question.active ? "ativada" : "desativada"
-          } com sucesso!`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
+
+    await executeAsync({
+      action: () => setQuestionActive(token, question._id),
+      loadingMessage: "Alterando status da questão...",
+      successMessage: `Questão ${
+        !question.active ? "ativada" : "desativada"
+      } com sucesso!`,
+      errorMessage: "Erro ao alterar status da questão",
+      onSuccess: () => {
         onToggleActive?.();
         handleClose?.();
-      })
-      .catch((error) => {
-        toast.error(error.message);
-      })
-      .finally(() => {
+      },
+      onFinally: () => {
         setLoading(false);
-      });
+      },
+    });
   };
 
   const handleEditMode = () => {
@@ -154,13 +152,13 @@ export function ModalShowQuestion({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!validateForm()) {
       return;
     }
 
     setLoading(true);
-    const id = toast.loading("Atualizando questão...");
+
     if (onEdit) {
       const updatedQuestion: QuestionForm = {
         ...question,
@@ -175,29 +173,19 @@ export function ModalShowQuestion({
         active: editableData.active,
       };
 
-      updateQuestionForm(token, question._id, updatedQuestion)
-        .then(() => {
-          toast.update(id, {
-            render: "Questão atualizada com sucesso!",
-            type: "success",
-            isLoading: false,
-            autoClose: 3000,
-          });
-
+      await executeAsync({
+        action: () => updateQuestionForm(token, question._id, updatedQuestion),
+        loadingMessage: "Atualizando questão...",
+        successMessage: "Questão atualizada com sucesso!",
+        errorMessage: "Erro ao atualizar questão",
+        onSuccess: () => {
           setIsEditMode(false);
-          onEdit(updatedQuestion);
-        })
-        .catch((error) => {
-          toast.update(id, {
-            render: `Erro ao atualizar questão: ${error.message}`,
-            type: "error",
-            isLoading: false,
-            autoClose: 3000,
-          });
-        })
-        .finally(() => {
+          onEdit?.(updatedQuestion);
+        },
+        onFinally: () => {
           setLoading(false);
-        });
+        },
+      });
     }
   };
 

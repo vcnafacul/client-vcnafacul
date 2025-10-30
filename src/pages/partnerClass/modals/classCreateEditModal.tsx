@@ -2,6 +2,7 @@
 import { InputFactory } from "@/components/organisms/inputFactory";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { ClassEntityOutput } from "@/dtos/classes/classOutput";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { createClass } from "@/services/prepCourse/class/createClass";
 import { editClass } from "@/services/prepCourse/class/editClass";
 import { useAuthStore } from "@/store/auth";
@@ -10,7 +11,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@mui/material/Button";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import * as yup from "yup";
 
 interface ClassModalProps {
@@ -42,6 +42,8 @@ export function ClassCreateEditModal({
     data: { token },
   } = useAuthStore();
 
+  const executeAsync = useToastAsync();
+
   const {
     register,
     handleSubmit,
@@ -62,54 +64,34 @@ export function ClassCreateEditModal({
     }
   };
 
-  const handleEditClass = (dto: ClassEntityOutput & { id: string }) => {
-    const id = toast.loading("Editando turma...");
-    editClass(token, dto)
-      .then(() => {
+  const handleEditClass = async (dto: ClassEntityOutput & { id: string }) => {
+    await executeAsync({
+      action: () => editClass(token, dto),
+      loadingMessage: "Editando turma...",
+      successMessage: "Turma editada com sucesso!",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
         handleClose();
-        toast.update(id, {
-          render: "Turma editada com sucesso",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
         onEditClass({
           ...entity!,
           name: dto.name,
           description: dto.description,
         });
-      })
-      .catch((error) => {
-        toast.update(id, {
-          render: `Erro ao editar turma: ${error.message}`,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+      },
+    });
   };
 
-  const handleCreateClass = (dto: ClassEntityOutput) => {
-    const id = toast.loading("Criando turma...");
-    createClass(token, dto)
-      .then((res) => {
+  const handleCreateClass = async (dto: ClassEntityOutput) => {
+    await executeAsync({
+      action: () => createClass(token, dto),
+      loadingMessage: "Criando turma...",
+      successMessage: "Turma criada com sucesso!",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: (res: ClassEntity) => {
         handleClose();
-        toast.update(id, {
-          render: "Turma criada com sucesso",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
         onCreateClass(res);
-      })
-      .catch((error) => {
-        toast.update(id, {
-          render: `Erro ao criar turma: ${error.message}`,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+      },
+    });
   };
 
   useEffect(() => {

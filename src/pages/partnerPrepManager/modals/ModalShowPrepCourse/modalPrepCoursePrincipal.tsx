@@ -11,6 +11,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useModals } from "@/hooks/useModal";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { getUserByName, SearchUser } from "@/services/auth/getUserByName";
 import { changeAgreement } from "@/services/prepCourse/prepCourse/changeAgreement";
 import { changeLogo } from "@/services/prepCourse/prepCourse/changeLogo";
@@ -51,8 +53,7 @@ export const ModalPrepCoursePrincipal = ({
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
-  const [showForceUpdateModal, setShowForceUpdateModal] =
-    useState<boolean>(false);
+
   const [pendingUser, setPendingUser] = useState<SearchUser | null>(null);
   const [hasCoordinatorChanges, setHasCoordinatorChanges] =
     useState<boolean>(false);
@@ -64,6 +65,10 @@ export const ModalPrepCoursePrincipal = ({
   const {
     data: { token },
   } = useAuthStore();
+
+  const modals = useModals(["modalForceUpdate"]);
+
+  const executeAsync = useToastAsync();
 
   // Estados para controlar os valores dos campos
   const [formData, setFormData] = useState({
@@ -142,29 +147,16 @@ export const ModalPrepCoursePrincipal = ({
     if (!validateImageFile(file)) {
       return;
     }
-    const id = toast.loading("Fazendo upload da imagem...");
-    try {
-      const result = await changeLogo(token, prepCourse.id, file);
 
-      // Atualizar o thumbnail com o resultado
-      setCurrentThumbnail(result);
-
-      toast.update(id, {
-        render: "Upload concluído!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      toast.update(id, {
-        render:
-          "Erro ao fazer upload da imagem. Tente novamente." + error.message,
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
-    }
+    await executeAsync({
+      action: () => changeLogo(token, prepCourse.id, file),
+      loadingMessage: "Fazendo upload da imagem...",
+      successMessage: "Upload concluído!",
+      errorMessage: "Erro ao fazer upload da imagem",
+      onSuccess: (result) => {
+        setCurrentThumbnail(result);
+      },
+    });
   };
 
   // Função para lidar com mudança de arquivo
@@ -237,27 +229,17 @@ export const ModalPrepCoursePrincipal = ({
       return;
     }
 
-    try {
-      const id = toast.loading("Fazendo upload do contrato...");
-
-      await changeAgreement(token, prepCourse.id, selectedAgreement);
-
-      toast.update(id, {
-        render: "Contrato atualizado com sucesso!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
-
-      // Limpar o arquivo selecionado após upload bem-sucedido
-      setSelectedAgreement(null);
-      setAgreementFileName("flipper.contract (26.71kb)");
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      toast.error("Erro ao fazer upload do contrato. Tente novamente.");
-      console.error("Erro no upload do contrato:", error);
-    }
+    await executeAsync({
+      action: () => changeAgreement(token, prepCourse.id, selectedAgreement),
+      loadingMessage: "Fazendo upload do contrato...",
+      successMessage: "Contrato atualizado com sucesso!",
+      errorMessage: "Erro ao fazer upload do contrato",
+      onSuccess: () => {
+        // preciso atualizar o prepCourse com o novo contrato
+        setSelectedAgreement(null);
+        setAgreementFileName("flipper.contract (26.71kb)");
+      },
+    });
   };
 
   // Função para remover arquivo de contrato selecionado
@@ -273,40 +255,26 @@ export const ModalPrepCoursePrincipal = ({
       return;
     }
 
-    const id = toast.loading("Baixando contrato...");
-    try {
-      const blob = await getAgreement(token, prepCourse.id);
-
-      // Criar URL do blob e fazer download
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `contrato_${prepCourse.geo.name.replace(
-        /\s+/g,
-        "_"
-      )}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-
-      toast.update(id, {
-        render: "Contrato baixado com sucesso!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      toast.update(id, {
-        render: "Erro ao baixar o contrato. Tente novamente.",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
-      console.error("Erro no download do contrato:", error);
-    }
+    await executeAsync({
+      action: () => getAgreement(token, prepCourse.id),
+      loadingMessage: "Baixando contrato...",
+      successMessage: "Contrato baixado com sucesso!",
+      errorMessage: "Erro ao baixar o contrato",
+      onSuccess: (blob) => {
+        // Criar URL do blob e fazer download
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `contrato_${prepCourse.geo.name.replace(
+          /\s+/g,
+          "_"
+        )}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      },
+    });
   };
 
   // Função para buscar usuários
@@ -368,6 +336,36 @@ export const ModalPrepCoursePrincipal = ({
     setSearchResults([]);
   };
 
+  const onSuccessUpdateRepresentative = () => {
+    // Atualizar o prepCourse com o novo representante
+    prepCourse.representative = {
+      ...prepCourse.representative,
+      id: selectedUser!.id,
+      name: selectedUser!.name,
+      email: selectedUser!.email,
+      phone: selectedUser!.phone,
+    };
+
+    // Atualizar o formData com os novos valores
+    setFormData((prev) => ({
+      ...prev,
+      coordinator: selectedUser!.name,
+      coordinatorEmail: selectedUser!.email,
+      coordinatorPhone: selectedUser!.phone,
+    }));
+
+    // Fechar modo de edição
+    setEditable(false);
+
+    // Limpar seleção
+    setSelectedUser(null);
+    setSearchResults([]);
+    setShowDropdown(false);
+
+    // Resetar estado de mudanças
+    setHasCoordinatorChanges(false);
+  };
+
   // Função para atualizar representante
   const handleUpdateRepresentative = async () => {
     if (!selectedUser) {
@@ -375,71 +373,13 @@ export const ModalPrepCoursePrincipal = ({
       return;
     }
 
-    const id = toast.loading("Atualizando representante...");
-    try {
-      await updateRepresentative(token, prepCourse.id, selectedUser.id);
-
-      toast.update(id, {
-        render: "Representante atualizado com sucesso!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
-
-      // Atualizar o prepCourse com o novo representante
-      prepCourse.representative = {
-        ...prepCourse.representative,
-        id: selectedUser.id,
-        name: selectedUser.name,
-        email: selectedUser.email,
-        phone: selectedUser.phone,
-      };
-
-      // Atualizar o formData com os novos valores
-      setFormData((prev) => ({
-        ...prev,
-        coordinator: selectedUser.name,
-        coordinatorEmail: selectedUser.email,
-        coordinatorPhone: selectedUser.phone,
-      }));
-
-      // Fechar modo de edição
-      setEditable(false);
-
-      // Limpar seleção
-      setSelectedUser(null);
-      setSearchResults([]);
-      setShowDropdown(false);
-
-      // Resetar estado de mudanças
-      setHasCoordinatorChanges(false);
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      // Verificar se é o erro específico de representante já cadastrado como colaborador
-      if (
-        error.message &&
-        error.message.includes("Representante já cadastrado")
-      ) {
-        toast.update(id, {
-          render: "",
-          type: "error",
-          isLoading: false,
-          autoClose: 0,
-        });
-        // Armazenar o usuário pendente e mostrar modal de confirmação
-        setPendingUser(selectedUser);
-        setShowForceUpdateModal(true);
-      } else {
-        toast.update(id, {
-          render: `Erro ao atualizar representante. ${error.message}`,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        console.error(error);
-      }
-    }
+    await executeAsync({
+      action: () => updateRepresentative(token, prepCourse.id, selectedUser.id),
+      loadingMessage: "Atualizando representante...",
+      successMessage: "Representante atualizado com sucesso!",
+      errorMessage: "Erro ao atualizar representante",
+      onSuccess: onSuccessUpdateRepresentative,
+    });
   };
 
   // Função para forçar atualização do representante
@@ -448,63 +388,18 @@ export const ModalPrepCoursePrincipal = ({
       return;
     }
 
-    const id = toast.loading("Forçando atualização do representante...");
-    try {
-      await updateRepresentative(token, prepCourse.id, pendingUser.id, true);
-
-      toast.update(id, {
-        render: "Representante atualizado com sucesso!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
-
-      // Atualizar o prepCourse com o novo representante
-      prepCourse.representative = {
-        ...prepCourse.representative,
-        id: pendingUser.id,
-        name: pendingUser.name,
-        email: pendingUser.email,
-        phone: pendingUser.phone,
-      };
-
-      // Atualizar o formData com os novos valores
-      setFormData((prev) => ({
-        ...prev,
-        coordinator: pendingUser.name,
-        coordinatorEmail: pendingUser.email,
-        coordinatorPhone: pendingUser.phone,
-      }));
-
-      // Fechar modo de edição
-      setEditable(false);
-
-      // Limpar seleção
-      setSelectedUser(null);
-      setSearchResults([]);
-      setShowDropdown(false);
-
-      // Resetar estado de mudanças
-      setHasCoordinatorChanges(false);
-
-      // Fechar modal e limpar usuário pendente
-      setShowForceUpdateModal(false);
-      setPendingUser(null);
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      toast.update(id, {
-        render: `Erro ao forçar atualização do representante. ${error.message}`,
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
-      console.error(error);
-
-      // Fechar modal mesmo em caso de erro
-      setShowForceUpdateModal(false);
-      setPendingUser(null);
-    }
+    await executeAsync({
+      action: () =>
+        updateRepresentative(token, prepCourse.id, pendingUser.id, true),
+      loadingMessage: "Forçando atualização do representante...",
+      successMessage: "Representante atualizado com sucesso!",
+      errorMessage: "Erro ao forçar atualização do representante",
+      onSuccess: onSuccessUpdateRepresentative,
+      onError: () => {
+        modals.modalForceUpdate.close();
+        setPendingUser(null);
+      },
+    });
   };
 
   // Cleanup do timeout
@@ -782,8 +677,8 @@ export const ModalPrepCoursePrincipal = ({
 
       {/* Modal de confirmação para forçar atualização */}
       <AlertDialog
-        open={showForceUpdateModal}
-        onOpenChange={setShowForceUpdateModal}
+        open={modals.modalForceUpdate.isOpen}
+        onOpenChange={() => modals.modalForceUpdate.close()}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -799,7 +694,7 @@ export const ModalPrepCoursePrincipal = ({
             <AlertDialogCancel
               className="border border-orange text-orange hover:bg-orange hover:border-orange/20 hover:text-white"
               onClick={() => {
-                setShowForceUpdateModal(false);
+                modals.modalForceUpdate.close();
                 setPendingUser(null);
               }}
             >

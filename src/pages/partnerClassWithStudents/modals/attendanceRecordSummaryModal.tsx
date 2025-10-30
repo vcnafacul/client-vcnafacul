@@ -1,4 +1,5 @@
 import ModalTemplate from "@/components/templates/modalTemplate";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { getSummaryByDate } from "@/services/prepCourse/attendanceRecord/getSummaryByDate";
 import { getSummaryByStudent } from "@/services/prepCourse/attendanceRecord/getSummaryByStudent";
 import { useAuthStore } from "@/store/auth";
@@ -7,7 +8,6 @@ import { Calendar } from "primereact/calendar";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FiCalendar } from "react-icons/fi";
-import { toast } from "react-toastify";
 import * as yup from "yup";
 import { summaryByDate } from "../summary/summaryByDate";
 import { summaryByStudent } from "../summary/summaryByStudent";
@@ -26,6 +26,9 @@ export default function AttendanceRecordSummaryModal({
   const {
     data: { token },
   } = useAuthStore();
+
+  const executeAsync = useToastAsync();
+
   const start = new Date();
   start.setDate(start.getDate() - 30);
   const end = new Date();
@@ -61,46 +64,39 @@ export default function AttendanceRecordSummaryModal({
   const reportType = watch("reportType");
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSummary = (data: any) => {
-    const id = toast.loading("Gerando relatório ... ");
+  const handleSummary = async (data: any) => {
     if (data.reportType === "date") {
-      getSummaryByDate(
-        classId,
-        data.range[0] as Date,
-        data.range[1] as Date,
-        token
-      )
-        .then((summary) => {
+      await executeAsync({
+        action: () =>
+          getSummaryByDate(
+            classId,
+            data.range[0] as Date,
+            data.range[1] as Date,
+            token
+          ),
+        loadingMessage: "Gerando relatório ... ",
+        successMessage: "Relatório gerado com sucesso!",
+        errorMessage: (error: Error) => error.message,
+        onSuccess: (summary) => {
           summaryByDate(summary);
-          toast.dismiss(id);
-        })
-        .catch((error) => {
-          toast.update(id, {
-            render: error.message,
-            type: "error",
-            isLoading: false,
-            autoClose: 3000,
-          });
-        });
+        },
+      });
     } else if (data.reportType === "student") {
-      getSummaryByStudent(
-        classId,
-        data.range[0] as Date,
-        data.range[1] as Date,
-        token
-      )
-        .then((summary) => {
+      await executeAsync({
+        action: () =>
+          getSummaryByStudent(
+            classId,
+            data.range[0] as Date,
+            data.range[1] as Date,
+            token
+          ),
+        loadingMessage: "Gerando relatório ... ",
+        successMessage: "Relatório gerado com sucesso!",
+        errorMessage: (error: Error) => error.message,
+        onSuccess: (summary) => {
           summaryByStudent(summary);
-          toast.dismiss(id);
-        })
-        .catch((error) => {
-          toast.update(id, {
-            render: error.message,
-            type: "error",
-            isLoading: false,
-            autoClose: 3000,
-          });
-        });
+        },
+      });
     }
   };
 

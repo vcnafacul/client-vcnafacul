@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AccountForm } from "@/components/organisms/accountForm";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { UserMe } from "@/types/user/userMe";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -13,13 +14,19 @@ import { me } from "../../services/auth/me";
 import { removeImageProfileCollaborator } from "../../services/auth/removeImageProfileCollaborator";
 import { updateUser } from "../../services/auth/updateUser";
 import { AuthUpdate, Gender, useAuthStore } from "../../store/auth";
+import { useModals } from "@/hooks/useModal";
 
 function Account() {
   const {
     data: { token },
     updateAccount,
   } = useAuthStore();
-  const [tryDelete, setTryDelete] = useState<boolean>(false);
+  const executeAsync = useToastAsync();
+
+
+  const modals = useModals([
+    'deleteImage',
+  ]);
 
   const [userAccount, setUserAccount] = useState<UserMe>();
 
@@ -47,28 +54,19 @@ function Account() {
   };
 
   const uploadingImagem = async (file: any) => {
-    const id = toast.loading("Upload de Imagem de Perfil Colaborador ... ");
     const formData = new FormData();
     formData.append("file", file!);
-    await changeImageProfileCollaborator(formData, token)
-      .then((fileName) => {
-        toast.update(id, {
-          render: `Upload feito com sucesso`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
+
+    await executeAsync({
+      action: () => changeImageProfileCollaborator(formData, token),
+      loadingMessage: "Upload de Imagem de Perfil Colaborador ... ",
+      successMessage: "Upload feito com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: (fileName) => {
         setUserAccount({ ...userAccount!, collaboratorPhoto: fileName });
         updateAccount({ ...userAccount! });
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
   const deleteImage = () => {
@@ -87,36 +85,28 @@ function Account() {
     } else {
       setImagePreview(null);
     }
-    setTryDelete(false);
+    modals.deleteImage.close();
   };
 
-  const updateData = (
+  const updateData = async (
     authUpdate: AuthUpdate,
     onSuccess?: () => void,
     onError?: () => void
   ) => {
-    const id = toast.loading("Atualizando Informações Usuário ... ");
-    updateUser(token, authUpdate)
-      .then(async (_) => {
-        toast.update(id, {
-          render: `Atualização feita com sucesso`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
+    await executeAsync({
+      action: () => updateUser(token, authUpdate),
+      loadingMessage: "Atualizando Informações Usuário ... ",
+      successMessage: "Atualização feita com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
         updateAccount({ ...userAccount!, ...authUpdate });
         setUserAccount({ ...userAccount!, ...authUpdate });
         onSuccess?.();
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
+      },
+      onError: () => {
         onError?.();
-      });
+      },
+    });
   };
 
   const update = (data: any, onSuccess?: () => void, onError?: () => void) => {
@@ -144,8 +134,8 @@ function Account() {
   const ModalDelete = () => {
     return (
       <ModalConfirmCancel
-        isOpen={tryDelete}
-        handleClose={() => setTryDelete(false)}
+        isOpen={modals.deleteImage.isOpen}
+        handleClose={modals.deleteImage.close}
         handleConfirm={deleteImage}
         text="Tem certeza que deseja deletar sua imagem?"
       />
@@ -174,7 +164,7 @@ function Account() {
           <div className="flex flex-row md:flex-col gap-4">
             {userAccount?.collaborator ? (
               <ImageProfile
-                deleteImage={() => setTryDelete(true)}
+                deleteImage={modals.deleteImage.open}
                 onChange={handleImageChange}
                 src={imagePreview}
               />

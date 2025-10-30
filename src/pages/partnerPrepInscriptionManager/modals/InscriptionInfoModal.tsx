@@ -22,6 +22,7 @@ import {
 
 import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
 import BLink from "@/components/molecules/bLink";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
 import { DASH, PARTNER_PREP_INSCRIPTION } from "@/routes/path";
 import { toast } from "react-toastify";
@@ -53,6 +54,8 @@ export function InscriptionInfoModal({
   const {
     data: { token },
   } = useAuthStore();
+
+  const executeAsync = useToastAsync();
 
   // Verifica se a data de fim é maior que a data atual
   const canExtend = inscriptionSelected?.endDate
@@ -86,32 +89,22 @@ export function InscriptionInfoModal({
     });
   };
 
-  const handleExtend = (endDate: Date) => {
+  const handleExtend = async (endDate: Date) => {
     if (!inscriptionSelected?.id) return;
 
-    const id = toast.loading("Prorrogando processo seletivo...");
-    extendInscription(token, inscriptionSelected.id, endDate)
-      .then(() => {
+    await executeAsync({
+      action: () => extendInscription(token, inscriptionSelected!.id!, endDate),
+      loadingMessage: "Prorrogando processo seletivo...",
+      successMessage: "Processo seletivo prorrogado com sucesso!",
+      errorMessage: "Erro ao prorrogar processo seletivo",
+      onSuccess: () => {
         setInscriptionSelected({
-          ...inscriptionSelected,
+          ...inscriptionSelected!,
           endDate: endDate,
         });
         setOpenModalExtend(false);
-        toast.update(id, {
-          render: "Processo seletivo prorrogado com sucesso!",
-          type: "success",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      })
-      .catch((error) => {
-        toast.update(id, {
-          render: error.message || "Erro ao prorrogar processo seletivo",
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+      },
+    });
   };
 
   const ModalEdit = () => {
@@ -182,11 +175,13 @@ export function InscriptionInfoModal({
     });
   };
 
-  const exportToExcel = () => {
-    const id = toast.loading("Exportando lista de alunos...");
-    getSubscribers(token, inscriptionSelected!.id!)
-      .then((data) => {
-        console.log(data);
+  const exportToExcel = async () => {
+    await executeAsync({
+      action: () => getSubscribers(token, inscriptionSelected!.id!),
+      loadingMessage: "Exportando lista de alunos...",
+      successMessage: "Lista de alunos exportada com sucesso!",
+      errorMessage: "Erro ao exportar lista de alunos",
+      onSuccess: (data) => {
         const flattenedData = flattenData(data);
 
         flattenedData.sort((a, b) => {
@@ -202,19 +197,11 @@ export function InscriptionInfoModal({
         XLSX.utils.book_append_sheet(workbook, worksheet, "Dados");
 
         // Gera o arquivo Excel e faz o download
-        toast.dismiss(id);
         XLSX.writeFile(workbook, `${Date.now()}.xlsx`);
-      })
-      .catch(() => {
-        toast.update(id, {
-          render: "Erro ao exportar lista de alunos",
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
-    // Cria uma nova planilha a partir dos dados
+      },
+    });
   };
+
   const clipboard = () => {
     const linkPrepCourse = `${
       import.meta.env.VITE_APP_BASE_URL
