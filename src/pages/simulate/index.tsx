@@ -4,6 +4,7 @@ import { QuestionBoxStatus } from "../../enums/simulado/questionBoxStatus";
 import Text from "../../components/atoms/text";
 import Button from "../../components/molecules/button";
 
+import { useModals } from "@/hooks/useModal";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -35,13 +36,13 @@ function Simulate() {
   const navigate = useNavigate();
   const [tryFinish, setTryFinish] = useState<boolean>(false);
   const [reportModal, setReportModal] = useState<boolean>(false);
-  const [reportProblem, setReportProblem] = useState<boolean>(false);
   const [questionProblem, setQuestionProblem] = useState<boolean>(false);
-  const [photoOpen, setPhotoOpen] = useState<boolean>(false);
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const {
     data: { token },
   } = useAuthStore();
+
+  const modals = useModals(["modalReportProblem", "modalImage"]);
 
   const questionSelected = data.questions[data.questionActive];
 
@@ -62,7 +63,8 @@ function Simulate() {
         };
       });
     const tempoRealizado = Math.floor(
-      ((new Date(data.finished)).getTime() - (new Date(data.started)).getTime()) / (1000 * 60)
+      (new Date(data.finished).getTime() - new Date(data.started).getTime()) /
+        (1000 * 60)
     );
     const body: AnswerSimulado = {
       idSimulado: data._id,
@@ -149,7 +151,7 @@ function Simulate() {
         {
           onClick: () => {
             setQuestionProblem(false);
-            setReportProblem(true);
+            modals.modalReportProblem.open();
           },
           type: "secondary",
           children: (
@@ -175,11 +177,11 @@ function Simulate() {
   };
 
   const ReportProblem = () => {
-    return !reportProblem ? null : (
+    return !modals.modalReportProblem.isOpen ? null : (
       <ModalReportProblem
-        isOpen={reportProblem}
+        isOpen={modals.modalReportProblem.isOpen}
         handleClose={() => {
-          setReportProblem(false);
+          modals.modalReportProblem.close();
         }}
         questionProblem={questionProblem}
         idQuestion={questionSelected._id}
@@ -189,10 +191,10 @@ function Simulate() {
   };
 
   const QuestionImageModal = () => {
-    return !photoOpen ? null : (
+    return !modals.modalImage.isOpen ? null : (
       <ModalImage
-        isOpen={photoOpen}
-        handleClose={() => setPhotoOpen(false)}
+        isOpen={modals.modalImage.isOpen}
+        handleClose={() => modals.modalImage.close()}
         image={`${BASE_URL}/images/${questionSelected?.imageId}.png`}
       />
     );
@@ -233,9 +235,9 @@ function Simulate() {
           questionSelected={questionSelected}
           setReportProblem={() => {
             setQuestionProblem(true);
-            setReportProblem(true);
+            modals.modalReportProblem.open();
           }}
-          expandedPhoto={() => setPhotoOpen(true)}
+          expandedPhoto={() => modals.modalImage.open()}
           alternative={
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Text

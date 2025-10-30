@@ -1,3 +1,4 @@
+import { useModals } from "@/hooks/useModal";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Text from "../../components/atoms/text";
@@ -14,9 +15,10 @@ import NewSimulate from "./modals/newSimulate";
 import "./styles.css";
 
 function MainSimulate() {
-  const [initialize, setInitialize] = useState<boolean>(false);
   const [card, setCard] = useState<ICard>();
   const [historical, setHistorical] = useState<HistoricoDTO[]>([]);
+
+  const modals = useModals(["modalNewSimulate"]);
 
   const {
     data: { token },
@@ -24,7 +26,7 @@ function MainSimulate() {
 
   const openModalNew = (card: ICard) => {
     setCard(card);
-    setInitialize(true);
+    modals.modalNewSimulate.open();
   };
 
   const cardsBook = simulateData.simulateCardsBook.map((card) => {
@@ -62,12 +64,12 @@ function MainSimulate() {
   });
 
   const ModalNewSimulate = () => {
-    return !initialize ? null : (
+    return !modals.modalNewSimulate.isOpen ? null : (
       <NewSimulate
         title={card?.tipo || ""}
-        isOpen={initialize}
+        isOpen={modals.modalNewSimulate.isOpen}
         handleClose={() => {
-          setInitialize(false);
+          modals.modalNewSimulate.close();
         }}
       />
     );

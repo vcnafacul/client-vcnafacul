@@ -1,6 +1,7 @@
 // Função para renderizar tabela das classes dentro de um período letivo
 
 import { Roles } from "@/enums/roles/roles";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { DASH, PARTNER_CLASS } from "@/routes/path";
 import { deleteClass } from "@/services/prepCourse/class/deleteClass";
 import { useAuthStore } from "@/store/auth";
@@ -16,7 +17,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { ActionMenu } from "./actionMenu";
 
 interface RenderClassesTableProps {
@@ -36,32 +36,23 @@ export function RenderClassesTable({
     data: { token, permissao },
   } = useAuthStore();
 
+  const executeAsync = useToastAsync();
+
   const handleViewClass = (classItem: ClassEntity) => {
     const url = `${DASH}/${PARTNER_CLASS}/${classItem.id}`;
     navigate(url);
   };
 
-  const handleDeleteClass = (classItem: ClassEntity) => {
-    const id = toast.loading("Excluindo turma...");
-    deleteClass(token, classItem.id)
-      .then(() => {
+  const handleDeleteClass = async (classItem: ClassEntity) => {
+    await executeAsync({
+      action: () => deleteClass(token, classItem.id),
+      loadingMessage: "Excluindo turma...",
+      successMessage: "Turma excluída com sucesso!",
+      errorMessage: "Erro ao excluir turma",
+      onSuccess: () => {
         onDeleteClass(classItem.id);
-        toast.update(id, {
-          render: "Turma excluída com sucesso",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      })
-      .catch((error) => {
-        console.error("Erro ao excluir turma:", error);
-        toast.update(id, {
-          render: "Erro ao excluir turma",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
   return (

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { createGeolocation } from "../../../services/geolocation/createGeolocation";
 import { CreateGeolocation } from "../../../types/geolocation/geolocation";
 import { FormFieldInput } from "../../molecules/formField";
@@ -50,6 +50,8 @@ function GeoForm({ formData }: GeoFormProps) {
     {} as CreateGeolocation
   );
 
+  const executeAsync = useToastAsync();
+
   const updateData = (oldData: any) => {
     setDataGeo({ ...dataGeo, ...oldData });
     setStepCurrently(stepCurrently + 1);
@@ -61,22 +63,18 @@ function GeoForm({ formData }: GeoFormProps) {
     }
   };
 
-  const completeRegisterGeo = (oldData: any) => {
-    const id = toast.loading("Cadastrando o cursinho... ");
-    const body = { ...dataGeo, ...oldData };
-    createGeolocation(body as CreateGeolocation)
-      .then((_) => {
-        toast.dismiss(id);
+  const completeRegisterGeo = async (oldData: any) => {
+    await executeAsync({
+      action: async () => {
+        return await createGeolocation({ ...dataGeo, ...oldData });
+      },
+      loadingMessage: "Cadastrando o cursinho... ",
+      successMessage: "Cursinho cadastrado com sucesso!",
+      errorMessage: "Erro ao cadastrar o cursinho",
+      onSuccess: () => {
         setStepCurrently(Step.Finish);
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
   const resetForm = () => {

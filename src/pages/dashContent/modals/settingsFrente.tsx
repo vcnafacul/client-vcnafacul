@@ -4,6 +4,7 @@ import {
   CreateFrenteDtoInput,
   UpdateFrenteDto,
 } from "@/dtos/content/frenteDto";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { createFrente } from "@/services/content/createFrente";
 import { updateFrente } from "@/services/content/updateFrente";
 import { useEffect, useState } from "react";
@@ -26,6 +27,8 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
   const [materiaSelected, setMateriaSelected] = useState<Materias>(
     Materias.LinguaPortuguesa
   );
+
+  const executeAsync = useToastAsync();
 
   const {
     data: { token },
@@ -58,15 +61,12 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
   };
 
   const handleCreate = async (body: CreateFrenteDtoInput) => {
-    const id = toast.loading("Criando Frente ... ");
-    createFrente(body, token)
-      .then((res) => {
-        toast.update(id, {
-          render: `Frente ${body.name} Criada`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
+    await executeAsync({
+      action: () => createFrente(body, token),
+      loadingMessage: "Criando Frente ... ",
+      successMessage: "Frente criada com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: (res) => {
         const newFrente = {
           id: res.id,
           name: res.name,
@@ -77,53 +77,24 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
         };
         const newFrentes: FrenteDto[] = [...frentes, newFrente];
         setFrentes(newFrentes);
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
   const handleUpdate = async (body: UpdateFrenteDto) => {
-    const id = toast.loading("Editando Frente ... ");
-    updateFrente(body, token)
-      .then(() => {
-        toast.update(id, {
-          render: `Frente Editada`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        const newFrente = {
-          id: body.id,
-          name: body.name,
-          materia: materiaSelected,
-        };
-        const newFrentes: FrenteDto[] = frentes.map((frente) => {
-          if (frente.id === newFrente.id) {
-            return {
-              ...newFrente,
-              lenght: frente.lenght,
-              createdAt: frente.createdAt,
-              subjects: frente.subjects,
-            };
-          }
-          return frente;
-        });
-        setFrentes(newFrentes);
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+    await executeAsync({
+      action: () => updateFrente(body, token),
+      loadingMessage: "Editando Frente ... ",
+      successMessage: "Frente editada com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
+        setFrentes(
+          frentes.map((frente) =>
+            frente.id === body.id ? { ...frente, name: body.name } : frente
+          )
+        );
+      },
+    });
   };
 
   function updateSizeFrente(id: string, size: number) {

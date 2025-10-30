@@ -1,10 +1,10 @@
 import { ShadcnTable } from "@/components/atoms/shadcnTable";
 import { ButtonProps } from "@/components/molecules/button";
 import ModalTabTemplate from "@/components/templates/modalTabTemplate";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { createGeolocation } from "@/services/geolocation/createGeolocation";
 import { TypeMarker } from "@/types/map/marker";
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { FilterProps } from "../../components/atoms/filter";
 import { SelectProps } from "../../components/atoms/select";
 import { CardDash } from "../../components/molecules/cardDash";
@@ -12,26 +12,29 @@ import DashCardTemplate from "../../components/templates/dashCardTemplate";
 import { DashCardContext } from "../../context/dashCardContext";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { getAllGeolocation } from "../../services/geolocation/getAllGeolocation";
-import {
-  CreateGeolocation,
-  Geolocation,
-} from "../../types/geolocation/geolocation";
+import { Geolocation } from "../../types/geolocation/geolocation";
 import { formatDate } from "../../utils/date";
 import { mergeObjects } from "../../utils/mergeObjects";
 import { Paginate } from "../../utils/paginate";
 import { dashGeo } from "./data";
 import ModalCreateDashGeo from "./modals/modalCreateDashGeo";
 import ModalEditDashGeo from "./modals/modalEditDashGeo";
+import { useModals } from "@/hooks/useModal";
 
 function DashGeo() {
   const [status, setStatus] = useState<StatusEnum>(StatusEnum.Pending);
   const [geolocations, setGeolocations] = useState<Geolocation[]>([]);
   const [geoSelect, setGeoSelect] = useState<Geolocation>();
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const [openModalCreate, setOpenModalCreate] = useState<boolean>(false);
   const [filterText, setFilterText] = useState<string>("");
   const [enterText, setEnterText] = useState<string>("");
   const limitCards = 100;
+
+  const modals = useModals([
+    'modalEdit',
+    'modalCreate',
+  ]);
+
+  const executeAsync = useToastAsync();
 
   const cardTransformation = (geo: Geolocation): CardDash => ({
     id: geo.id,
@@ -51,11 +54,11 @@ function DashGeo() {
 
   const onClickCard = (cardId: number | string) => {
     setGeoSelect(geolocations.find((geo) => geo.id === cardId));
-    setOpenModal(true);
+    modals.modalEdit.open();
   };
 
   const handleCloseModalEdit = () => {
-    setOpenModal(false);
+    modals.modalEdit.close();
   };
 
   const updateStatus = (cardId: string) => {
@@ -75,46 +78,33 @@ function DashGeo() {
     setGeoSelect(geolocation);
   };
 
+  const handleCreate = async (geo: Geolocation) => {
+    await executeAsync({
+      action: () => createGeolocation({ ...geo }),
+      loadingMessage: "Criando Universidade...",
+      successMessage: "Universidade criada com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: (res: Geolocation) => {
+        setGeolocations([res, ...geolocations]);
+      },
+    });
+  };
+
   const ModalCreate = () => {
-    return !openModalCreate ? null : (
+    return !modals.modalCreate.isOpen ? null : (
       <ModalCreateDashGeo
-        isOpen={openModalCreate}
-        handleClose={() => setOpenModalCreate(false)}
-        createGeo={(geo: Geolocation) => {
-          const id = toast.loading("Criando Universidade...");
-          createGeolocation({
-            ...geo,
-          } as CreateGeolocation)
-            .then((res) => {
-              toast.update(id, {
-                render: `Universidade ${geo.name} criada com sucesso`,
-                type: `success`,
-                theme: `dark`,
-                isLoading: false,
-                autoClose: 3000,
-              });
-              setOpenModalCreate(false);
-              setGeolocations([res, ...geolocations]);
-            })
-            .catch((error: Error) => {
-              toast.update(id, {
-                render: error.message,
-                type: `error`,
-                theme: `dark`,
-                isLoading: false,
-                autoClose: 3000,
-              });
-            });
-        }}
+        isOpen={modals.modalCreate.isOpen}
+        handleClose={() => modals.modalCreate.close()}
+        createGeo={handleCreate}
         type={TypeMarker.univPublic}
       />
     );
   };
 
   const ModalEdit = () => {
-    return !openModal ? null : (
+    return !modals.modalEdit.isOpen ? null : (
       <ModalTabTemplate
-        isOpen={openModal}
+        isOpen={modals.modalEdit.isOpen}
         className="px-8 py-4 rounded-md  relative h-[90vh] w-[90vw] overflow-y-auto scrollbar-hide"
         tabs={[
           {
@@ -125,7 +115,7 @@ function DashGeo() {
                 rawGeo={geoSelect!}
                 updateStatus={updateStatus}
                 updateGeo={updateGeolocation}
-                isOpen={openModal}
+                isOpen={modals.modalEdit.isOpen}
                 handleClose={handleCloseModalEdit}
               />
             ),
@@ -191,7 +181,7 @@ function DashGeo() {
   const buttons: ButtonProps[] = [
     {
       onClick: () => {
-        setOpenModalCreate(true);
+        modals.modalCreate.open();
       },
       typeStyle: "quaternary",
       size: "small",

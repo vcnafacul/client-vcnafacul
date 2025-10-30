@@ -1,7 +1,6 @@
- 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useToastAsync } from "../../../hooks/useToastAsync";
 import { DASH } from "../../../routes/path";
 import Login from "../../../services/auth/login";
 import { useAuthStore } from "../../../store/auth";
@@ -26,24 +25,20 @@ function LoginForm({
 }: LoginFormProps) {
   const { doAuth } = useAuthStore();
   const navigate = useNavigate();
+  const executeAsync = useToastAsync();
 
-  const login = (data: any) => {
-    const id = toast.loading("Entrando ...");
-    Login(data.email.toLowerCase(), data.password)
-      .then((res) => {
+  const login = async (data: any) => {
+    await executeAsync({
+      action: () => Login(data.email.toLowerCase(), data.password),
+      loadingMessage: "Entrando...",
+      successMessage: "Login realizado com sucesso!",
+      errorMessage: (e) => `Erro ao tentar fazer login - ${e.message}`,
+      onSuccess: (res) => {
         doAuth(res);
-        toast.dismiss(id);
         if (onLogin) onLogin(res);
         else navigate(DASH);
-      })
-      .catch((e: Error) => {
-        toast.update(id, {
-          render: `Erro ao tentar fazer login - ${e.message}`,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
   return (

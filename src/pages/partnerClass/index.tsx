@@ -6,6 +6,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import {
   CoursePeriodEntity,
   CoursePeriodOutput,
@@ -16,6 +17,7 @@ import { getCoursePeriods } from "@/services/prepCourse/coursePeriod/getCoursePe
 import { updateCoursePeriod } from "@/services/prepCourse/coursePeriod/updateCoursePeriod";
 import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
+import { Paginate } from "@/utils/paginate";
 import {
   AppBar,
   Box,
@@ -33,10 +35,10 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { ExpandableCoursePeriod } from "./components/expandableCoursePeriod";
 import { ClassCreateEditModal } from "./modals/classCreateEditModal";
 import { CoursePeriodCreateEditModal } from "./modals/coursePeriodCreateEditModal";
+import { useModals } from "@/hooks/useModal";
 
 export function PartnerClass() {
   const [entities, setEntities] = useState<CoursePeriodEntity[]>([]);
@@ -52,14 +54,16 @@ export function PartnerClass() {
     data: { token },
   } = useAuthStore();
 
-  // Estados para modais (sem criar os componentes)
-  const [isOpenCreateCoursePeriod, setIsOpenCreateCoursePeriod] =
-    useState<boolean>(false);
-  const [isOpenEditCoursePeriod, setIsOpenEditCoursePeriod] =
-    useState<boolean>(false);
-  const [isOpenCreateClass, setIsOpenCreateClass] = useState<boolean>(false);
+  const executeAsync = useToastAsync();
+
   const [coursePeriodSelected, setCoursePeriodSelected] =
     useState<CoursePeriodEntity | null>(null);
+  
+  const modals = useModals([
+    'modalCreateCoursePeriod',
+    'modalEditCoursePeriod',
+    'modalCreateClass',
+  ]);
 
   const columns = [
     { key: "coursePeriod", label: "Período Letivo" },
@@ -75,24 +79,18 @@ export function PartnerClass() {
     setLoading(true);
 
     // Simular delay da API
-    setTimeout(() => {
-      const id = toast.loading("Buscando períodos letivos...");
-      getCoursePeriods(token, currentPage, limit)
-        .then((res) => {
+    setTimeout(async () => {
+      await executeAsync({
+        action: () => getCoursePeriods(token, currentPage, limit),
+        loadingMessage: "Buscando períodos letivos...",
+        successMessage: "Períodos letivos buscados com sucesso!",
+        errorMessage: (error: Error) => error.message,
+        onSuccess: (res: Paginate<CoursePeriodEntity>) => {
           setEntities(res.data);
           setTotalItems(res.totalItems);
           setLoading(false);
-          toast.dismiss(id);
-        })
-        .catch((error) => {
-          toast.update(id, {
-            render: error.message,
-            type: "error",
-            isLoading: false,
-            autoClose: 3000,
-          });
-          setLoading(false);
-        });
+        },
+      });
     }, 1000);
   }, [currentPage, limit, token]);
 
@@ -135,108 +133,66 @@ export function PartnerClass() {
 
   // Handlers para modais
   const handleCreateCoursePeriod = () => {
-    setIsOpenCreateCoursePeriod(true);
+    modals.modalCreateCoursePeriod.open();
   };
 
-  const handleSuccessCreateCoursePeriod = (dto: CoursePeriodOutput) => {
-    const id = toast.loading("Criando período letivo...");
-
-    createCoursePeriod(token, dto)
-      .then((res) => {
+  const handleSuccessCreateCoursePeriod = async (dto: CoursePeriodOutput) => {
+    await executeAsync({
+      action: () => createCoursePeriod(token, dto),
+      loadingMessage: "Criando período letivo...",
+      successMessage: "Período letivo criado com sucesso!",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: (res: CoursePeriodEntity) => {
         setEntities((prev) => [...prev, res]);
-        toast.update(id, {
-          render: "Período letivo criado com sucesso!",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      })
-      .catch((error) => {
-        toast.update(id, {
-          render: `Erro ao criar período letivo: ${error.message}`,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+      },
+    });
   };
 
   const handleEditCoursePeriod = (coursePeriodId: string) => {
     const coursePeriod = entities.find((e) => e.id === coursePeriodId);
     if (coursePeriod) {
       setCoursePeriodSelected(coursePeriod);
-      setIsOpenEditCoursePeriod(true);
+      modals.modalEditCoursePeriod.open();
     }
   };
 
-  const handleSuccessEditCoursePeriod = (
+  const handleSuccessEditCoursePeriod = async (
     dto: CoursePeriodOutput & { id: string }
   ) => {
-    const id = toast.loading("Editando período letivo...");
-
-    updateCoursePeriod(token, dto)
-      .then(() => {
+    await executeAsync({
+      action: () => updateCoursePeriod(token, dto),
+      loadingMessage: "Editando período letivo...",
+      successMessage: "Período letivo editado com sucesso!",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
         setEntities((prev) =>
           prev.map((e) =>
-            e.id === dto.id
-              ? {
-                  ...e,
-                  name: dto.name,
-                  startDate: dto.startDate,
-                  endDate: dto.endDate,
-                  year: new Date(dto.startDate).getFullYear(),
-                  updatedAt: new Date(),
-                }
-              : e
+            e.id === dto.id ? { ...e, ...dto, updatedAt: new Date() } : e
           )
         );
-        toast.update(id, {
-          render: "Período letivo editado com sucesso!",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        setIsOpenEditCoursePeriod(false);
+        modals.modalEditCoursePeriod.close();
         setCoursePeriodSelected(null);
-      })
-      .catch((error) => {
-        toast.update(id, {
-          render: `Erro ao editar período letivo: ${error.message}`,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+      },
+    });
   };
 
-  const handleDeleteCoursePeriod = (_coursePeriodId: string) => {
-    const id = toast.loading("Excluindo período letivo...");
-
-    deleteCoursePeriod(token, _coursePeriodId)
-      .then(() => {
+  const handleDeleteCoursePeriod = async (_coursePeriodId: string) => {
+    await executeAsync({
+      action: () => deleteCoursePeriod(token, _coursePeriodId),
+      loadingMessage: "Excluindo período letivo...",
+      successMessage: "Período letivo excluído com sucesso!",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
         setEntities((prev) => prev.filter((e) => e.id !== _coursePeriodId));
-        toast.update(id, {
-          render: "Período letivo excluído com sucesso",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      })
-      .catch((error) => {
-        toast.update(id, {
-          render: `Erro ao excluir período letivo: ${error.message}`,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+      },
+    });
   };
 
   const handleAddClass = (coursePeriodId: string) => {
     const coursePeriod = entities.find((e) => e.id === coursePeriodId);
     if (coursePeriod) {
       setCoursePeriodSelected(coursePeriod);
-      setIsOpenCreateClass(true);
+      modals.modalCreateClass.open();
     }
   };
 
@@ -248,7 +204,7 @@ export function PartnerClass() {
     if (coursePeriodItem && classItem) {
       setCoursePeriodSelected(coursePeriodItem);
       setClassSelected(classItem);
-      setIsOpenCreateClass(true);
+      modals.modalCreateClass.open();
     }
   };
 
@@ -257,11 +213,11 @@ export function PartnerClass() {
   };
 
   const ModalCreateCoursePeriod = () => {
-    if (isOpenCreateCoursePeriod) {
+    if (modals.modalCreateCoursePeriod.isOpen) {
       return (
         <CoursePeriodCreateEditModal
-          isOpen={isOpenCreateCoursePeriod}
-          handleClose={() => setIsOpenCreateCoursePeriod(false)}
+          isOpen={modals.modalCreateCoursePeriod.isOpen}
+          handleClose={() => modals.modalCreateCoursePeriod.close()}
           onCreate={handleSuccessCreateCoursePeriod}
           onEdit={() => {}} // Não usado no modo criação
         />
@@ -271,12 +227,12 @@ export function PartnerClass() {
   };
 
   const ModalEditCoursePeriod = () => {
-    if (isOpenEditCoursePeriod && coursePeriodSelected) {
+    if (modals.modalEditCoursePeriod.isOpen && coursePeriodSelected) {
       return (
         <CoursePeriodCreateEditModal
-          isOpen={isOpenEditCoursePeriod}
+          isOpen={modals.modalEditCoursePeriod.isOpen}
           handleClose={() => {
-            setIsOpenEditCoursePeriod(false);
+            modals.modalEditCoursePeriod.close();
             setCoursePeriodSelected(null);
           }}
           entity={coursePeriodSelected}
@@ -312,11 +268,11 @@ export function PartnerClass() {
   };
 
   const ModalCreateClass = () => {
-    if (isOpenCreateClass) {
+    if (modals.modalCreateClass.isOpen) {
       return (
         <ClassCreateEditModal
-          isOpen={isOpenCreateClass}
-          handleClose={() => setIsOpenCreateClass(false)}
+          isOpen={modals.modalCreateClass.isOpen}
+          handleClose={() => modals.modalCreateClass.close()}
           entity={classSelected}
           coursePeriodSelected={coursePeriodSelected!.id}
           onCreateClass={handleSuccessCreateClass}

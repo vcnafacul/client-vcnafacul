@@ -1,5 +1,6 @@
  
 import PhotoEditor from "@/components/atoms/photoEditor";
+import { useModals } from "@/hooks/useModal";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -19,7 +20,10 @@ export default function SendPhoto({
   const [photo, setPhoto] = useState<File | null>(oldPhoto);
   const [photoPreview, setPhotoPreview] = useState<File | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null); // Erro ao carregar a foto
-  const [photoEditorOpen, setPhotoEditorOpen] = useState(false);
+
+  const modals = useModals([
+    'photoEditor',
+  ]);
 
   const handlePreview = (file: File) => {
     const maxSizeInMB = 2;
@@ -29,7 +33,7 @@ export default function SendPhoto({
     } else {
       setPhotoError(null);
       setPhoto(file);
-      setPhotoEditorOpen(false);
+      modals.photoEditor.close();
     }
   };
 
@@ -37,7 +41,7 @@ export default function SendPhoto({
     const file = event.target.files?.[0];
     if (file) {
       setPhotoPreview(file);
-      setPhotoEditorOpen(true);
+      modals.photoEditor.open();
     }
   };
 
@@ -55,13 +59,13 @@ export default function SendPhoto({
   };
 
   const ModalPhotoEditor = () => {
-    return photoEditorOpen ? (
+    return modals.photoEditor.isOpen ? (
       <PhotoEditor
-        isOpen={photoEditorOpen}
+        isOpen={modals.photoEditor.isOpen}
         photo={URL.createObjectURL(photoPreview!)}
         onConfirm={handlePreview}
         handleClose={() => {
-          setPhotoEditorOpen(false);
+          modals.photoEditor.close();
         }}
       />
     ) : null;

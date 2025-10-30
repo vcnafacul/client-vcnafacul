@@ -1,6 +1,7 @@
 import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useModals } from "@/hooks/useModal";
 import {
   BaseCondition,
   ComplexCondition,
@@ -239,10 +240,10 @@ export function PartnerPrepInscriptionStepForm({
 }: PartnerPrepInscriptionStepFormProps) {
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [confirmSubscription, setConfirmSubscription] =
-    useState<boolean>(false);
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  const modals = useModals(["modalConfirmSubscription"]);
 
   // Inicializar respostas booleanas como false
   useEffect(() => {
@@ -391,20 +392,20 @@ export function PartnerPrepInscriptionStepForm({
 
     // Simular um pequeno delay para melhorar a UX
     setTimeout(() => {
-      setConfirmSubscription(true);
+      modals.modalConfirmSubscription.open();
       setIsSubmitting(false);
     }, 300);
   };
 
   const ModalConfirmSubscription = () => {
-    return !confirmSubscription ? null : (
+    return !modals.modalConfirmSubscription.isOpen ? null : (
       <ConfirmSubscription
-        isOpen={confirmSubscription}
+        isOpen={modals.modalConfirmSubscription.isOpen}
         handleClose={() => {
-          setConfirmSubscription(false);
+          modals.modalConfirmSubscription.close();
         }}
         handleConfirm={() => {
-          setConfirmSubscription(false);
+          modals.modalConfirmSubscription.close();
 
           // Usar as respostas limpas (sem questões não obrigatórias)
           const cleanedAnswers = cleanAnswers(answers);

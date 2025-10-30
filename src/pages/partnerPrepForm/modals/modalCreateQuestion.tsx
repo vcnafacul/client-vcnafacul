@@ -1,6 +1,7 @@
 import ModalTemplate, {
   ModalProps,
 } from "@/components/templates/modalTemplate";
+import { useModals } from "@/hooks/useModal";
 import { createQuestion } from "@/services/partnerPrepForm/createQuestion";
 import { useAuthStore } from "@/store/auth";
 import { ComplexCondition } from "@/types/partnerPrepForm/condition";
@@ -73,7 +74,8 @@ export function ModalCreateQuestion({
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isOpenConditions, setIsOpenConditions] = useState(false);
+
+  const modals = useModals(["modalConditions"]);
 
   const handleInputChange = (
     field: keyof FormData,
@@ -186,6 +188,21 @@ export function ModalCreateQuestion({
   const handleCloseModal = () => {
     resetForm();
     handleClose?.();
+  };
+
+  const ConditionsModal = () => {
+    return !modals.modalConditions.isOpen ? null : (
+      <ModalConditions
+        isOpen={modals.modalConditions.isOpen}
+        handleClose={() => modals.modalConditions.close()}
+        conditions={formData.conditions}
+        availableQuestions={availableQuestions}
+        onSave={(conditions) => {
+          setFormData((prev) => ({ ...prev, conditions }));
+          modals.modalConditions.close();
+        }}
+      />
+    );
   };
 
   const isOptionsType = formData.answerType === AnswerType.Options;
@@ -348,7 +365,7 @@ export function ModalCreateQuestion({
             <Typography variant="h6">Condições</Typography>
             <Button
               startIcon={<FiSettings />}
-              onClick={() => setIsOpenConditions(true)}
+              onClick={() => modals.modalConditions.open()}
               variant="outlined"
               size="small"
             >
@@ -407,18 +424,7 @@ export function ModalCreateQuestion({
           </Button>
         </Box>
       </Box>
-
-      {/* Modal de Condições */}
-      <ModalConditions
-        isOpen={isOpenConditions}
-        handleClose={() => setIsOpenConditions(false)}
-        conditions={formData.conditions}
-        availableQuestions={availableQuestions}
-        onSave={(conditions) => {
-          setFormData((prev) => ({ ...prev, conditions }));
-          setIsOpenConditions(false);
-        }}
-      />
+      <ConditionsModal />
     </ModalTemplate>
   );
 }

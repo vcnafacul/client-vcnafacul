@@ -13,6 +13,8 @@ import { FaFilePdf } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
 import { toast } from "react-toastify";
 
+import { useModals } from "@/hooks/useModal";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { updateOrderWaitingListInfo } from "@/services/prepCourse/inscription/updateOrderWaitingList";
 import pdfMake from "pdfmake/build/pdfmake.js";
 import pdfFonts from "pdfmake/build/vfs_fonts.js";
@@ -35,8 +37,12 @@ export function WaitingList(props: Props) {
   const {
     data: { token },
   } = useAuthStore();
+
+  const executeAsync = useToastAsync();
+
   const [students, setStudents] = useState<Student[]>([]);
-  const [openEdit, setOpenEdit] = useState<boolean>(false);
+
+  const modals = useModals(["modalEditWailtingList"]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function convertStudentsToTableData(students: Student[]): any[] {
@@ -87,55 +93,34 @@ export function WaitingList(props: Props) {
       .download(`relatorio-estudantes-${datet.getTime()}.pdf`);
   };
 
-  const handleEmailWaitingList = () => {
-    const id = toast.loading("Enviando Email Lista de Espera Altualizada ...");
-    sendEmailWaitingList(props.inscriptionId, token)
-      .then(() => {
-        toast.update(id, {
-          render: "Email enviado com sucesso",
-          type: "success",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      })
-      .catch(() => {
-        toast.update(id, {
-          render: "Erro ao enviar email",
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+  const handleEmailWaitingList = async () => {
+    await executeAsync({
+      action: () => sendEmailWaitingList(props.inscriptionId, token),
+      loadingMessage: "Enviando Email Lista de Espera Altualizada ...",
+      successMessage: "Email enviado com sucesso",
+      errorMessage: "Erro ao enviar email",
+    });
   };
 
-  const updateOrder = (studentsId: string[]) => {
-    const id = toast.loading("Atualizando Order Lista de Espera ...");
-    updateOrderWaitingListInfo(props.inscriptionId, studentsId, token)
-      .then(() => {
-        toast.update(id, {
-          render: "Atualizada com sucesso",
-          type: "success",
-          isLoading: false,
-          autoClose: 5000,
-        });
+  const updateOrder = async (studentsId: string[]) => {
+    await executeAsync({
+      action: () =>
+        updateOrderWaitingListInfo(props.inscriptionId, studentsId, token),
+      loadingMessage: "Atualizando Order Lista de Espera ...",
+      successMessage: "Atualizada com sucesso",
+      errorMessage: "Erro ao atualizar order",
+      onSuccess: () => {
         getWaitingList();
-        setOpenEdit(false);
-      })
-      .catch(() => {
-        toast.update(id, {
-          render: "Erro ao enviar email",
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+        modals.modalEditWailtingList.close();
+      },
+    });
   };
 
   const ModalEditWailtingList = () => {
-    return openEdit ? (
+    return modals.modalEditWailtingList.isOpen ? (
       <WaitingListEdit
-        isOpen={openEdit}
-        handleClose={() => setOpenEdit(false)}
+        isOpen={modals.modalEditWailtingList.isOpen}
+        handleClose={() => modals.modalEditWailtingList.close()}
         inscriptionId={props.inscriptionId}
         students={students}
         updateOder={updateOrder}
@@ -191,7 +176,7 @@ export function WaitingList(props: Props) {
             <Button
               size="small"
               typeStyle="primary"
-              onClick={() => setOpenEdit(true)}
+              onClick={() => modals.modalEditWailtingList.open()}
             >
               <div className="flex items-center">
                 <CgReorder className="h-6 w-10" />

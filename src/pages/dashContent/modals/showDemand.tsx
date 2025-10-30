@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { MateriasLabel } from "@/types/content/materiasLabel";
 import { Save, Trash2, UploadCloud, X } from "lucide-react";
 import { useRef, useState } from "react";
-import { toast } from "react-toastify";
 import Text from "../../../components/atoms/text";
 import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
 import ModalTemplate, {
@@ -16,6 +16,7 @@ import { ContentDtoInput } from "../../../dtos/content/contentDtoInput";
 import { deleteDemand } from "../../../services/content/deleteDemand";
 import { uploadFileDemand } from "../../../services/content/uploadFileDemand";
 import { useAuthStore } from "../../../store/auth";
+import { useModals } from "@/hooks/useModal";
 
 interface ShowDemandProps extends ModalProps {
   demand: ContentDtoInput;
@@ -29,12 +30,17 @@ function ShowDemand({
   isOpen,
   updateStatusDemand,
 }: ShowDemandProps) {
-  const [tryDelete, setTryDelete] = useState<boolean>(false);
   const [arrayBuffer, setArrayBufer] = useState<ArrayBuffer>();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [uploadFile, setUploadFile] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [modalPreview, setModalPreview] = useState<boolean>(false);
+
+  const modals = useModals([
+    'docxPreview',
+    'tryDelete',
+  ]);
+
+  const executeAsync = useToastAsync();
 
   function handleUploadClick() {
     fileInputRef.current?.click();
@@ -62,10 +68,10 @@ function ShowDemand({
   } = useAuthStore();
 
   const ModalDocxPreview = () => {
-    return !modalPreview ? null : (
+    return !modals.docxPreview.isOpen ? null : (
       <ModalTemplate
-        isOpen={modalPreview}
-        handleClose={() => setModalPreview(false)}
+        isOpen={modals.docxPreview.isOpen}
+        handleClose={() => modals.docxPreview.close()}
         title="Pré-visualização do documento"
         className="bg-white p-4 rounded-md h-full max-h-[90vh] min-h-[600px] overflow-y-auto scrollbar-hide"
       >
@@ -74,59 +80,40 @@ function ShowDemand({
     );
   };
 
-  const handleUploadFile = () => {
-    const id = toast.loading("Upload File Demanda ... ");
+  const handleUploadFile = async () => {
     const formData = new FormData();
     formData.append("file", uploadFile);
-    uploadFileDemand(demand.id, formData, token)
-      .then(() => {
+
+    await executeAsync({
+      action: () => uploadFileDemand(demand.id, formData, token),
+      loadingMessage: "Upload File Demanda ... ",
+      successMessage: "File enviada com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
         updateStatusDemand(demand.id);
-        toast.update(id, {
-          render: `Enviado`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
         handleClose!();
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
-  const removeDemand = () => {
-    const id = toast.loading("Deletando Demanda ... ");
-    deleteDemand(demand.id, token)
-      .then(() => {
+  const removeDemand = async () => {
+    await executeAsync({
+      action: () => deleteDemand(demand.id, token),
+      loadingMessage: "Deletando Demanda ... ",
+      successMessage: "Demanda deletada com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
         updateStatusDemand(demand.id);
-        toast.update(id, {
-          render: `Deletado`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
         handleClose!();
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
   const ModalTryDelete = () => {
     return (
       <ModalConfirmCancel
-        isOpen={tryDelete}
-        handleClose={() => setTryDelete(false)}
+        isOpen={modals.tryDelete.isOpen}
+        handleClose={() => modals.tryDelete.close()}
         handleConfirm={removeDemand}
         className="bg-white p-8 rounded-md"
       >
@@ -216,8 +203,8 @@ function ShowDemand({
           {uploadFile &&
             uploadFile.type ===
               "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
-              <Button onClick={() => setModalPreview(true)} className="mt-4">
-                Visualizar Preview
+              <Button onClick={() => modals.docxPreview.open()} className="mt-4">
+                Visualizar Preview  
               </Button>
             )}
           <div className="flex justify-end space-x-4 pt-4">
@@ -232,7 +219,7 @@ function ShowDemand({
             <Button
               variant="destructive"
               className="w-36"
-              onClick={() => setTryDelete(true)}
+              onClick={() => modals.tryDelete.open()}
             >
               <Trash2 className="mr-2 h-4 w-4" /> Excluir
             </Button>

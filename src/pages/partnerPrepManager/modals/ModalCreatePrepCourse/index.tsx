@@ -12,12 +12,11 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useModals } from "@/hooks/useModal";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { getUserByName, SearchUser } from "@/services/auth/getUserByName";
+import { getGeoByName, SearchGeo } from "@/services/geolocation/getGeoByName";
 import { createPrepCourse } from "@/services/prepCourse/prepCourse/createPrepCourse";
-import {
-  getGeoByName,
-  SearchGeo,
-} from "@/services/geolocation/getGeoByName";
 import { useAuthStore } from "@/store/auth";
 import { CreatePrepCoursePage } from "@/types/partnerPrepCourse/manager/createPrepCouse";
 import { PartnerPrepCourse } from "@/types/partnerPrepCourse/partnerPrepCourse";
@@ -38,6 +37,8 @@ export const ModalCreatePrepCourse = ({
   const {
     data: { token },
   } = useAuthStore();
+
+  const executeAsync = useToastAsync();
 
   const [formData, setFormData] = useState<CreatePrepCoursePage>({
     geoId: "",
@@ -63,12 +64,12 @@ export const ModalCreatePrepCourse = ({
   const [isGeoSearching, setIsGeoSearching] = useState<boolean>(false);
   const [selectedGeo, setSelectedGeo] = useState<SearchGeo | null>(null);
   const [geoName, setGeoName] = useState<string>("");
-  const [showForceCreateModal, setShowForceCreateModal] =
-    useState<boolean>(false);
   const [pendingData, setPendingData] = useState<{
     geoId: string;
     representative: string;
   } | null>(null);
+
+  const modals = useModals(["modalForceCreate"]);
 
   const updateField = (fieldName: string, value: string) => {
     setFormData((prev) => ({
@@ -175,8 +176,8 @@ export const ModalCreatePrepCourse = ({
   const coordinatorInputRef = useRef<HTMLInputElement>(null);
   const geoInputRef = useRef<HTMLInputElement>(null);
 
-  const handleCreatePrepCourse = () => {
-    const id = toast.loading("Criando curso de preparação...");
+  const handleCreatePrepCourse = async () => {
+    const id = toast.loading("Criando cursinho parceiro...");
 
     // Validação dos campos obrigatórios
     if (!selectedGeo) {
@@ -199,79 +200,53 @@ export const ModalCreatePrepCourse = ({
       return;
     }
 
-    createPrepCourse(token, {
-      geoId: selectedGeo.id,
-      representative: selectedUser.id,
-    })
-      .then((prep) => {
-        toast.update(id, {
-          render: "Curso de preparação criado com sucesso!",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
+    await executeAsync({
+      action: () =>
+        createPrepCourse(token, {
+          geoId: selectedGeo.id,
+          representative: selectedUser.id,
+        }),
+      loadingMessage: "Criando cursinho parceiro...",
+      successMessage: "Cursinho parceiro criado com sucesso!",
+      errorMessage: "Erro ao criar cursinho parceiro",
+      onSuccess: (prep) => {
         onSuccess?.(prep);
-      })
-      .catch((error) => {
+      },
+      onError: (error) => {
         if (
           error.message &&
           error.message.includes("Representante já cadastrado")
         ) {
-          toast.update(id, {
-            render: "",
-            type: "error",
-            isLoading: false,
-            autoClose: 0,
-          });
-          // Armazenar os dados pendentes e mostrar modal de confirmação
           setPendingData({
             geoId: selectedGeo.id,
             representative: selectedUser.id,
           });
-          setShowForceCreateModal(true);
-        } else {
-          toast.update(id, {
-            render: "Erro ao criar curso de preparação. Tente novamente.",
-            type: "error",
-            isLoading: false,
-            autoClose: 3000,
-          });
+          modals.modalForceCreate.open();
+          return "Representante já é colaborador";
         }
-      });
+        return "Erro ao criar cursinho parceiro";
+      },
+    });
   };
 
   // Função para forçar criação do curso de preparação
-  const handleForceCreate = () => {
+  const handleForceCreate = async () => {
     if (!pendingData) {
       return;
     }
 
-    const id = toast.loading("Forçando criação do curso de preparação...");
-
-    createPrepCourse(token, pendingData, true)
-      .then((prep) => {
-        console.log(prep);
-        toast.update(id, {
-          render: "Curso de preparação criado com sucesso!",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-
+    await executeAsync({
+      action: () => createPrepCourse(token, pendingData, true),
+      loadingMessage: "Forçando criação do cursinho parceiro...",
+      successMessage: "Cursinho parceiro criado com sucesso!",
+      errorMessage: "Erro ao forçar criação do cursinho parceiro",
+      onSuccess: (prep) => {
         onSuccess?.(prep);
-
         // Fechar modal e limpar dados pendentes
-        setShowForceCreateModal(false);
+        modals.modalForceCreate.close();
         setPendingData(null);
-      })
-      .catch((error) => {
-        toast.update(id, {
-          render: `Erro ao forçar criação do curso de preparação. ${error.message}`,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
   // Cleanup dos timeouts
@@ -408,8 +383,8 @@ export const ModalCreatePrepCourse = ({
 
       {/* Modal de confirmação para forçar criação */}
       <AlertDialog
-        open={showForceCreateModal}
-        onOpenChange={setShowForceCreateModal}
+        open={modals.modalForceCreate.isOpen}
+        onOpenChange={() => modals.modalForceCreate.close()}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -425,7 +400,7 @@ export const ModalCreatePrepCourse = ({
             <AlertDialogCancel
               className="border border-orange text-orange hover:bg-orange hover:border-orange/20 hover:text-white"
               onClick={() => {
-                setShowForceCreateModal(false);
+                modals.modalForceCreate.close();
                 setPendingData(null);
               }}
             >

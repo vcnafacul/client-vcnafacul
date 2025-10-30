@@ -1,9 +1,8 @@
- 
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { declaredInterest } from "@/services/prepCourse/student/declaredInterest";
 import { useAuthStore } from "@/store/auth";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import SendDocuments from "./steps/sendDocuments";
 import SendPhoto from "./steps/sendPhoto";
 import SendQuest from "./steps/sendQuest";
@@ -34,35 +33,26 @@ export default function DeclareInterest({
     data: { token },
   } = useAuthStore();
 
+  const executeAsync = useToastAsync();
+
   const handleDeclaredInterest = async (
     areaInterest: string[],
     selectedCursos: string[]
   ) => {
-    const id = toast.loading("Declarando interesse...");
-    await declaredInterest(
-      uploadedFiles,
-      uploadedPhoto as File,
-      areaInterest,
-      selectedCursos,
-      studentId,
-      token
-    )
-      .then(() => {
-        toast.update(id, {
-          render: "Declaração de interesse enviadas com sucesso!",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      })
-      .catch((e) => {
-        toast.update(id, {
-          render: e.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+    return await executeAsync({
+      action: () =>
+        declaredInterest(
+          uploadedFiles,
+          uploadedPhoto as File,
+          areaInterest,
+          selectedCursos,
+          studentId,
+          token
+        ),
+      loadingMessage: "Declarando interesse...",
+      successMessage: "Declaração de interesse enviadas com sucesso!",
+      errorMessage: (e) => e.message,
+    });
   };
 
   const handleSubmit = (areaInterest: string[], selectedCursos: string[]) => {

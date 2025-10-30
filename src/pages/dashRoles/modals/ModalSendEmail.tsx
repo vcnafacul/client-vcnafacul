@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { getUserByName, SearchUser } from "@/services/auth/getUserByName";
 import { sendBulkEmail } from "@/services/auth/sendBulkEmail";
 import { useAuthStore } from "@/store/auth";
@@ -32,6 +33,8 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
   const {
     data: { token },
   } = useAuthStore();
+
+  const executeAsync = useToastAsync();
 
   // Busca de usuários com debounce
   useEffect(() => {
@@ -86,6 +89,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
   };
 
   const handleSendEmail = async () => {
+    // Validações
     if (!subject.trim()) {
       toast.warning("Por favor, preencha o assunto do email");
       return;
@@ -104,35 +108,36 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
     }
 
     setIsSending(true);
-    try {
-      await sendBulkEmail(
-        {
-          subject: subject.trim(),
-          message: message.trim(),
-          userIds: sendToAll ? undefined : selectedUsers.map((u) => u.id),
-          sendToAll,
-        },
-        token
-      );
 
-      toast.success(
-        sendToAll
-          ? "Email enviado para todos os usuários com sucesso!"
-          : `Email enviado para ${selectedUsers.length} usuário(s) com sucesso!`
-      );
+    await executeAsync({
+      action: async () => {
+        return await sendBulkEmail(
+          {
+            subject: subject.trim(),
+            message: message.trim(),
+            userIds: sendToAll ? undefined : selectedUsers.map((u) => u.id),
+            sendToAll,
+          },
+          token
+        );
+      },
+      loadingMessage: "Enviando email...",
+      successMessage: sendToAll
+        ? "Email enviado para todos os usuários com sucesso!"
+        : `Email enviado para ${selectedUsers.length} usuário(s) com sucesso!`,
+      errorMessage: "Erro ao enviar email. Tente novamente.",
+      onSuccess: () => {
+        // Limpa o formulário
+        setSubject("");
+        setMessage("");
+        setSelectedUsers([]);
+        setSendToAll(false);
+        setSearchTerm("");
+        handleClose?.();
+      },
+    });
 
-      // Limpa o formulário
-      setSubject("");
-      setMessage("");
-      setSelectedUsers([]);
-      setSendToAll(false);
-      setSearchTerm("");
-      handleClose?.();
-    } catch (error) {
-      toast.error("Erro ao enviar email. Tente novamente.");
-    } finally {
-      setIsSending(false);
-    }
+    setIsSending(false);
   };
 
   const handleCloseModal = () => {

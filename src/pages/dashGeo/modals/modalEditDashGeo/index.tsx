@@ -10,6 +10,7 @@ import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
 import { ModalProps } from "@/components/templates/modalTemplate";
 import { StatusEnum } from "@/enums/generic/statusEnum";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import {
   UpdateGeolocation,
   UpdateGeolocationStatus,
@@ -145,59 +146,37 @@ function ModalEditDashGeo({
     data: { token },
   } = useAuthStore();
 
+  const executeAsync = useToastAsync();
+
   const UpdateGeo = async (body: any) => {
     body["id"] = geo.id;
     if (selectedPosition[0] !== 0) {
       body["latitude"] = selectedPosition[0];
       body["longitude"] = selectedPosition[1];
     }
-    const id = toast.loading("Atualizando Cursinho...");
-    UpdateGeolocation({ body, token })
-      .then((_) => {
-        updateGeo(body);
-        toast.update(id, {
-          render: `Cursinho ${body.name} atualizado com sucesso`,
-          type: `success`,
-          theme: `dark`,
-          isLoading: false,
-          autoClose: 3000,
-        });
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: `error`,
-          theme: `dark`,
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+
+    await executeAsync({
+      action: () => UpdateGeolocation({ body, token }),
+      loadingMessage: "Atualizando Cursinho...",
+      successMessage: `Cursinho ${body.name} atualizado com sucesso`,
+      errorMessage: (error) => error.message,
+      onSuccess: () => updateGeo(body),
+    });
   };
 
   const UpdateStatus = async (body: ValidationGeolocation) => {
-    const id = toast.loading("Atualizando Cursinho...");
-    UpdateGeolocationStatus({ body, token })
-      .then((_) => {
+    const status = body.status === 1 ? "Aprovado" : "Rejeitado";
+
+    await executeAsync({
+      action: () => UpdateGeolocationStatus({ body, token }),
+      loadingMessage: "Atualizando Cursinho...",
+      successMessage: `Cursinho ${geo.name} atualizado com sucesso: Status - ${status}`,
+      errorMessage: (error) => error.message,
+      onSuccess: () => {
         updateStatus(geo.id);
-        const status = body.status === 1 ? "Aprovado" : "Rejeitado";
-        toast.update(id, {
-          render: `Cursinho ${geo.name} atualizado com sucesso: Status - ${status}`,
-          type: `success`,
-          theme: `dark`,
-          isLoading: false,
-          autoClose: 3000,
-        });
         handleClose!();
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: `error`,
-          theme: `dark`,
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
   const update = async (status: StatusEnum, messageRefused?: string) => {

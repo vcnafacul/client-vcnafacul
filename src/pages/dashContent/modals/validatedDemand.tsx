@@ -8,12 +8,13 @@ import { ContentDtoInput } from "@/dtos/content/contentDtoInput";
 import { StatusContent } from "@/enums/content/statusContent";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { Roles } from "@/enums/roles/roles";
+import { useModals } from "@/hooks/useModal";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { getFile } from "@/services/content/getFile";
 import { resetDemand } from "@/services/content/resetDemand";
 import { updateStatus } from "@/services/content/updateStatus";
 import { useAuthStore } from "@/store/auth";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 interface ValidatedDemandProps {
   demand: ContentDtoInput;
@@ -30,11 +31,16 @@ export default function ValidatedDemand({
 }: ValidatedDemandProps) {
   const [blob, setBlob] = useState<Blob | null>(null);
   const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer>();
-  const [showPreview, setShowPreview] = useState(false);
+
+  const modals = useModals([
+    'docxPreview',
+  ]);
 
   const {
     data: { token, permissao },
   } = useAuthStore();
+
+  const executeAsync = useToastAsync();
 
   const canReview: boolean =
     permissao[Roles.validarDemanda] &&
@@ -43,24 +49,22 @@ export default function ValidatedDemand({
   useEffect(() => {
     const fetchFile = async () => {
       if (demand.file?.id) {
-        const id = toast.loading("Carregando documento ...");
-        try {
-          const blob = await getFile(demand.file.id, token);
-          setBlob(blob);
-          setArrayBuffer(await blob.arrayBuffer());
-          toast.dismiss(id);
-        } catch (error) {
-          toast.update(id, {
-            render: "Erro ao baixar documento",
-            type: "error",
-            isLoading: false,
-            autoClose: 3000,
-          });
-        }
+        await executeAsync({
+          action: () => getFile(demand.file!.id, token),
+          loadingMessage: "Carregando documento ...",
+          successMessage: "Documento carregado com sucesso",
+          errorMessage: (error: Error) => error.message,
+          onSuccess: (blob: Blob) => {
+            setBlob(blob);
+            blob.arrayBuffer().then(setArrayBuffer);
+          },
+        });
       }
     };
+
     fetchFile();
-  }, [demand.file?.id, token]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [demand.file, demand.file?.id, token]);
 
   const handleDownload = async () => {
     if (blob) {
@@ -76,47 +80,29 @@ export default function ValidatedDemand({
   };
 
   const handleUpdateStatus = async (status: StatusEnum | StatusContent) => {
-    const id = toast.loading("Atualizando status...");
-    try {
-      await updateStatus(demand.id, status, token);
-      updateStatusDemand(demand.id);
-      toast.update(id, {
-        render: "Status atualizado com sucesso",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
-      handleClose();
-    } catch (error: any) {
-      toast.update(id, {
-        render: error.message,
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
-    }
+    await executeAsync({
+      action: () => updateStatus(demand.id, status, token),
+      loadingMessage: "Atualizando status...",
+      successMessage: "Status atualizado com sucesso",
+      errorMessage: (error) => error.message,
+      onSuccess: () => {
+        updateStatusDemand(demand.id);
+        handleClose();
+      },
+    });
   };
 
   const handleReset = async () => {
-    const id = toast.loading("Resetando demanda...");
-    try {
-      await resetDemand(demand.id, token);
-      updateStatusDemand(demand.id);
-      toast.update(id, {
-        render: "Demanda resetada",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
-      handleClose();
-    } catch (error: any) {
-      toast.update(id, {
-        render: error.message,
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
-    }
+    await executeAsync({
+      action: () => resetDemand(demand.id, token),
+      loadingMessage: "Resetando demanda...",
+      successMessage: "Demanda resetada",
+      errorMessage: (error) => error.message,
+      onSuccess: () => {
+        updateStatusDemand(demand.id);
+        handleClose();
+      },
+    });
   };
 
   return (
@@ -150,7 +136,7 @@ export default function ValidatedDemand({
                 </Button>
                 <Button
                   className="bg-marine hover:bg-marine/80"
-                  onClick={() => setShowPreview(true)}
+                  onClick={() => modals.docxPreview.open()}
                 >
                   Visualizar
                 </Button>
@@ -185,7 +171,7 @@ export default function ValidatedDemand({
         </Card>
       </DialogContent>
 
-      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+      <Dialog open={modals.docxPreview.isOpen} onOpenChange={modals.docxPreview.close}>
         <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto p-6">
           {arrayBuffer && (
             <ScrollArea className="h-[70vh]">

@@ -1,6 +1,7 @@
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { Roles } from "@/enums/roles/roles";
+import { useModals } from "@/hooks/useModal";
 import { deleteAttendanceRecord } from "@/services/prepCourse/attendanceRecord/deleteAttendanceRecord";
 import { getAttendanceRecord } from "@/services/prepCourse/attendanceRecord/getAttendanceRecord";
 import { useAuthStore } from "@/store/auth";
@@ -33,18 +34,19 @@ export function AttendanceHistoryModal({
   >([]);
   const [attendanceHistorySelected, setAttendanceHistorySelected] =
     useState<SimpleAttendanceRecordHistory>();
-  const [openAttendanceRecord, setOpenAttendanceRecord] =
-    useState<boolean>(false);
-  const [openNewAttendanceRecord, setOpenNewAttendanceRecord] =
-    useState<boolean>(false);
-  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [totalItems, setTotalItems] = useState<number>(100);
-  const [summary, setSummary] = useState<boolean>(false);
   const limit = 10;
 
   const {
     data: { token, permissao },
   } = useAuthStore();
+
+  const modals = useModals([
+    "modalAttendanceRecord",
+    "modalNewAttendanceRecord",
+    "modalConfirmDelete",
+    "modalAttendanceRecordSummary",
+  ]);
 
   const handleActionDeleteRecord = (params: SimpleAttendanceRecordHistory) => {
     if (!permissao[Roles.gerenciarTurmas]) {
@@ -53,7 +55,7 @@ export function AttendanceHistoryModal({
       });
     } else {
       setAttendanceHistorySelected(params);
-      setOpenDeleteModal(true);
+      modals.modalConfirmDelete.open();
     }
   };
 
@@ -63,15 +65,15 @@ export function AttendanceHistoryModal({
         (item) => item.id !== attendanceHistorySelected!.id
       );
       setAttendanceHistory(filtered);
-      setOpenDeleteModal(false);
+      modals.modalConfirmDelete.close();
     });
   };
 
   const ModalConfirmDelete = () => {
-    return !openDeleteModal ? null : (
+    return !modals.modalConfirmDelete.isOpen ? null : (
       <ModalConfirmCancel
-        isOpen={openDeleteModal}
-        handleClose={() => setOpenDeleteModal(false)}
+        isOpen={modals.modalConfirmDelete.isOpen}
+        handleClose={() => modals.modalConfirmDelete.close()}
         handleConfirm={handleDeleteRecord}
         text="Tem certeza que deseja excluir esse registro?"
         className="bg-white p-4 rounded-md w-[512px]"
@@ -93,7 +95,7 @@ export function AttendanceHistoryModal({
             <IconButton
               onClick={() => {
                 setAttendanceHistorySelected(params.row);
-                setOpenAttendanceRecord(true);
+                modals.modalAttendanceRecord.open();
               }}
             >
               <IoEyeSharp className="h-6 w-6 fill-gray-500 hover:fill-marine opacity-60 hover:opacity-100" />
@@ -130,20 +132,20 @@ export function AttendanceHistoryModal({
   const paginationModel = { page: 0, pageSize: limit };
 
   const ModalAttendanceRecord = () => {
-    return !openAttendanceRecord ? null : (
+    return !modals.modalAttendanceRecord.isOpen ? null : (
       <AttendanceRecordModal
-        isOpen={openAttendanceRecord}
-        handleClose={() => setOpenAttendanceRecord(false)}
+        isOpen={modals.modalAttendanceRecord.isOpen}
+        handleClose={() => modals.modalAttendanceRecord.close()}
         attendanceId={attendanceHistorySelected!.id}
       />
     );
   };
 
   const ModalNewAttendanceRecord = () => {
-    return !openNewAttendanceRecord ? null : (
+    return !modals.modalNewAttendanceRecord.isOpen ? null : (
       <NewAttendanceRecordModal
-        isOpen={openNewAttendanceRecord}
-        handleClose={() => setOpenNewAttendanceRecord(false)}
+        isOpen={modals.modalNewAttendanceRecord.isOpen}
+        handleClose={() => modals.modalNewAttendanceRecord.close()}
         classId={classId}
         handleNewAttendanceRecord={(res: SimpleAttendanceRecordHistory) => {
           setAttendanceHistory([res, ...attendanceHistory]);
@@ -153,10 +155,10 @@ export function AttendanceHistoryModal({
   };
 
   const ModalAttendanceRecordSummary = () => {
-    return !summary ? null : (
+    return !modals.modalAttendanceRecordSummary.isOpen ? null : (
       <AttendanceRecordSummaryModal
-        isOpen={summary}
-        handleClose={() => setSummary(false)}
+        isOpen={modals.modalAttendanceRecordSummary.isOpen}
+        handleClose={() => modals.modalAttendanceRecordSummary.close()}
         classId={classId}
       />
     );
@@ -185,7 +187,7 @@ export function AttendanceHistoryModal({
     >
       <div className="flex gap-2">
         <button
-          onClick={() => setOpenNewAttendanceRecord(true)}
+          onClick={() => modals.modalNewAttendanceRecord.open()}
           className="px-4 py-1.5 mb-1 text-white bg-marine rounded-md hover:opacity-90"
         >
           <div className="flex items-center gap-2 justify-center">
@@ -195,7 +197,7 @@ export function AttendanceHistoryModal({
         </button>
         {permissao[Roles.gerenciarTurmas] && (
           <button
-            onClick={() => setSummary(true)}
+            onClick={() => modals.modalAttendanceRecordSummary.open()}
             className="px-4 py-1.5 mb-1 text-white bg-marine rounded-md hover:opacity-90"
           >
             <div className="flex items-center gap-2 justify-center">

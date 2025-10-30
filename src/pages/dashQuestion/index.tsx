@@ -23,6 +23,7 @@ import { Paginate } from "../../utils/paginate";
 import { dashQuest } from "./data";
 import ModalDetalhes from "./modals/modalDetalhes";
 import ModalHistorico from "./modals/modalHistorico";
+import { useModals } from "@/hooks/useModal";
 
 function DashQuestion() {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -36,10 +37,13 @@ function DashQuestion() {
   const [filterText, setFilterText] = useState<string>("");
   const [totalItems, setTotalItems] = useState<number>(0);
 
-  const [openModalEdit, setOpenModalEdit] = useState<boolean>(false);
-  const [openModalRegister, setOpenModalRegister] = useState<boolean>(false);
   const [questionSelect, setQuestionSelect] = useState<Question | null>(null);
   const limitCards = 100;
+
+  const modals = useModals([
+    'modalEdit',
+    'modalRegister',
+  ]);
 
   const [infosQuestion, setInfosQuestion] = useState<InfoQuestion>({
     provas: [],
@@ -131,7 +135,7 @@ function DashQuestion() {
         updateStatus(questionSelect!._id, status, token, message)
           .then(() => {
             handleRemoveQuestion(questionSelect!._id);
-            setOpenModalEdit(false);
+            modals.modalEdit.close();
             toast.success(
               `Questão ${questionSelect!._id} atualizada com sucesso. Status: ${
                 status === StatusEnum.Approved ? "Aprovado" : "Reprovado"
@@ -148,7 +152,7 @@ function DashQuestion() {
 
   const onClickCard = (cardId: number | string) => {
     setQuestionSelect(questions.find((quest) => quest._id === cardId)!);
-    setOpenModalEdit(true);
+    modals.modalEdit.open();
   };
 
   const getQuestions = useCallback(
@@ -198,7 +202,7 @@ function DashQuestion() {
     return (
       <ModalTabTemplate
         className="w-full min-h-[56vh] max-h-[93vh] md:w-screen md:max-w-6xl p-4 overflow-y-auto scrollbar-hide"
-        isOpen={openModalEdit}
+        isOpen={modals.modalEdit.isOpen}
         tabs={[
           {
             label: "Detalhes",
@@ -208,7 +212,7 @@ function DashQuestion() {
                 question={questionSelect!}
                 infos={infosQuestion}
                 handleClose={() => {
-                  setOpenModalEdit(false);
+                  modals.modalEdit.close();
                 }}
                 handleUpdateQuestionStatus={handleUpdateQuestionStatus}
                 handleUpdateQuestion={handleUpdateQuestion}
@@ -217,7 +221,7 @@ function DashQuestion() {
               />
             ),
             handleClose: () => {
-              setOpenModalEdit(false);
+              modals.modalEdit.close();
             },
           },
           {
@@ -226,13 +230,13 @@ function DashQuestion() {
             children: (
               <ModalHistorico
                 handleClose={() => {
-                  setOpenModalEdit(false);
+                  modals.modalEdit.close();
                 }}
                 id={questionSelect?._id ?? ""}
               />
             ),
             handleClose: () => {
-              setOpenModalEdit(false);
+              modals.modalEdit.close();
             },
           },
         ]}
@@ -244,7 +248,7 @@ function DashQuestion() {
     return (
       <ModalTabTemplate
         className="w-full h-[93vh] md:w-screen md:max-w-6xl p-4 overflow-y-auto scrollbar-hide"
-        isOpen={openModalRegister}
+        isOpen={modals.modalRegister.isOpen}
         tabs={[
           {
             label: "Cadastro de Questao",
@@ -254,7 +258,7 @@ function DashQuestion() {
                 question={undefined}
                 infos={infosQuestion}
                 handleClose={() => {
-                  setOpenModalRegister(false);
+                  modals.modalRegister.close();
                 }}
                 handleUpdateQuestionStatus={handleUpdateQuestionStatus}
                 handleUpdateQuestion={handleUpdateQuestion}
@@ -263,7 +267,7 @@ function DashQuestion() {
               />
             ),
             handleClose: () => {
-              setOpenModalRegister(false);
+              modals.modalRegister.close();
             },
           },
         ]}
@@ -339,7 +343,7 @@ function DashQuestion() {
       disabled: !permissao[Roles.criarQuestao],
       onClick: () => {
         setQuestionSelect(null);
-        setOpenModalRegister(true);
+        modals.modalRegister.open();
       },
       typeStyle: "quaternary",
       size: "small",
