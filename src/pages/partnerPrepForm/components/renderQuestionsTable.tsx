@@ -25,12 +25,29 @@ import {
 } from "..";
 import { ModalShowQuestion } from "../modals/modalShowQuestion";
 import { ActionMenu } from "./actionMenu";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { SortableQuestionRow } from "./sortableQuestionRow";
 
 interface RenderQuestionsTableProps {
   questions: QuestionForm[];
   allQuestions?: QuestionForm[];
   onDeleteQuestion: (questionId: string) => void;
   onChangeQuestion: (question: QuestionForm) => void;
+  onReorderQuestions: (questions: QuestionForm[]) => void;
 }
 
 export function RenderQuestionsTable({
@@ -38,6 +55,7 @@ export function RenderQuestionsTable({
   allQuestions = [],
   onDeleteQuestion,
   onChangeQuestion,
+  onReorderQuestions,
 }: RenderQuestionsTableProps) {
   const [questionSelected, setQuestionSelected] = useState<QuestionForm | null>(
     null
@@ -50,6 +68,31 @@ export function RenderQuestionsTable({
   } = useAuthStore();
 
   const executeAsync = useToastAsync();
+
+  // Configuração dos sensores de drag-and-drop
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Arrastar apenas após 8px de movimento
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Handler para quando o arraste terminar
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = questions.findIndex((q) => q._id === active.id);
+      const newIndex = questions.findIndex((q) => q._id === over.id);
+
+      const reorderedQuestions = arrayMove(questions, oldIndex, newIndex);
+      onReorderQuestions(reorderedQuestions);
+    }
+  };
 
   const handleViewQuestion = (question: QuestionForm) => {
     setQuestionSelected(question);
@@ -174,96 +217,60 @@ export function RenderQuestionsTable({
 
   return (
     <>
-      <TableContainer component={Paper} elevation={1} sx={{ borderRadius: 2 }}>
-        <Table aria-label="questões" size="small">
-          <TableHead>
-            <TableRow sx={{ backgroundColor: "grey.50" }}>
-              <TableCell sx={{ fontWeight: "bold" }}>Pergunta</TableCell>
-              <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                Help Text
-              </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Tipo
-              </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Coleção
-              </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Status
-              </TableCell>
-              <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                Criado em
-              </TableCell>
-              <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                Atualizado em
-              </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Ações
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {questions.map((question) => (
-              <TableRow
-                key={question._id}
-                sx={{
-                  "&:hover": {
-                    backgroundColor: "action.hover",
-                  },
-                  borderLeft: question.active ? "4px solid" : "4px solid",
-                  borderLeftColor: question.active
-                    ? "success.main"
-                    : "grey.300",
-                }}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <TableContainer component={Paper} elevation={1} sx={{ borderRadius: 2 }}>
+          <Table aria-label="questões" size="small">
+            <TableHead>
+              <TableRow sx={{ backgroundColor: "grey.50" }}>
+                <TableCell sx={{ fontWeight: "bold", width: 40 }}>
+                  {/* Coluna para drag handle */}
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Pergunta</TableCell>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                  Help Text
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  Tipo
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  Coleção
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  Status
+                </TableCell>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                  Criado em
+                </TableCell>
+                <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                  Atualizado em
+                </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  Ações
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <SortableContext
+                items={questions.map((q) => q._id)}
+                strategy={verticalListSortingStrategy}
               >
-                <TableCell sx={{ maxWidth: 300 }}>
-                  <TruncatedText text={question.text} maxLength={50} />
-                </TableCell>
-                <TableCell align="right" sx={{ maxWidth: 200 }}>
-                  {question.helpText ? (
-                    <TruncatedText text={question.helpText} maxLength={30} />
-                  ) : (
-                    <Typography variant="body2" color="text.secondary">
-                      -
-                    </Typography>
-                  )}
-                </TableCell>
-                <TableCell align="center">
-                  <AnswerTypeBadge answerType={question.answerType} />
-                </TableCell>
-                <TableCell align="center">
-                  <CollectionBadge collection={question.collection} />
-                </TableCell>
-                <TableCell align="center">
-                  <StatusBadge active={question.active} />
-                </TableCell>
-                <TableCell align="right">
-                  <Typography variant="body2">
-                    {formatDate(question.createdAt.toString(), "dd/MM/yyyy")}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {formatDate(question.createdAt.toString(), "HH:mm")}
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography variant="body2">
-                    {formatDate(question.updatedAt.toString(), "dd/MM/yyyy")}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {formatDate(question.updatedAt.toString(), "HH:mm")}
-                  </Typography>
-                </TableCell>
-                <TableCell align="right" className="w-10">
-                  <ActionMenu
+                {questions.map((question) => (
+                  <SortableQuestionRow
+                    key={question._id}
+                    question={question}
                     onView={() => handleViewQuestion(question)}
                     onDelete={() => handleDeleteQuestion(question)}
                   />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                ))}
+              </SortableContext>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </DndContext>
       <ShowQuestion />
     </>
   );

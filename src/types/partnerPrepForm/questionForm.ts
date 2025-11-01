@@ -21,6 +21,7 @@ export interface QuestionForm {
   options?: string[];
   conditions?: ComplexCondition;
   active: boolean;
+  order: number;
   createdAt: Date;
   updatedAt: Date;
 }

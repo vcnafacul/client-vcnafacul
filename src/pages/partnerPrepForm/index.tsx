@@ -1,7 +1,9 @@
 import { TableColumn } from "@/components/organisms/expandableTable";
+import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { deleteSection } from "@/services/partnerPrepForm/deleteSection";
 import { getSection } from "@/services/partnerPrepForm/getSections";
+import { reorderQuestions } from "@/services/partnerPrepForm/reorderQuestions";
 import { setSectionActive } from "@/services/partnerPrepForm/setSectionActive";
 import { useAuthStore } from "@/store/auth";
 import { AnswerType, QuestionForm } from "@/types/partnerPrepForm/questionForm";
@@ -30,7 +32,6 @@ import { ExpandableSection } from "./components/expandableSection";
 import { ModalCreateQuestion } from "./modals/modalCreateQuestion";
 import { ModalCreateSection } from "./modals/modalCreateSection";
 import { ModalUpdateSection } from "./modals/modalUpdateSection";
-import { useModals } from "@/hooks/useModal";
 
 type AggregatedSection = {
   section: string;
@@ -147,8 +148,12 @@ export default function PartnerPrepForm() {
   const [sectionSelected, setSectionSelected] = useState<SectionForm | null>(
     null
   );
-  
-  const modals = useModals(["modalCreateQuestion", "modalCreateSection", "modalUpdateSection"]);
+
+  const modals = useModals([
+    "modalCreateQuestion",
+    "modalCreateSection",
+    "modalUpdateSection",
+  ]);
 
   const columns: TableColumn<AggregatedSection>[] = [
     { key: "section", label: "Seção" },
@@ -280,6 +285,40 @@ export default function PartnerPrepForm() {
             e._id === sectionId ? { ...e, active: newActiveState } : e
           )
         );
+      },
+    });
+  };
+
+  const handleReorderQuestions = async (
+    sectionId: string,
+    reorderedQuestions: QuestionForm[]
+  ) => {
+    // Atualização otimista - atualiza UI primeiro
+    setEntities((prev) =>
+      prev.map((section) =>
+        section._id === sectionId
+          ? { ...section, questions: reorderedQuestions }
+          : section
+      )
+    );
+
+    // Chama API em background
+    const questionIds = reorderedQuestions.map((q) => q._id);
+
+    await executeAsync({
+      action: () => reorderQuestions(token, sectionId, questionIds),
+      loadingMessage: "Reordenando questões...",
+      successMessage: "Questões reordenadas com sucesso!",
+      errorMessage: "Erro ao reordenar questões",
+      onError: () => {
+        const originalSection = entities.find((e) => e._id === sectionId);
+        if (originalSection) {
+          setEntities((prev) =>
+            prev.map((section) =>
+              section._id === sectionId ? originalSection : section
+            )
+          );
+        }
       },
     });
   };
@@ -476,6 +515,7 @@ export default function PartnerPrepForm() {
                         }}
                         handleDeleteSection={handleDeleteSection}
                         handleToggleSection={handleToggleSection}
+                        handleReorderQuestions={handleReorderQuestions}
                       />
                     );
                   })}
