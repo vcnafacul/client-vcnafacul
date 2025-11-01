@@ -1,8 +1,9 @@
+import { QuestionForm } from "@/types/partnerPrepForm/questionForm";
+import { formatDate } from "@/utils/date";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { QuestionForm } from "@/types/partnerPrepForm/questionForm";
-import { TableCell, TableRow, Typography, IconButton, Box } from "@mui/material";
-import { formatDate } from "@/utils/date";
+import { IconButton, TableCell, TableRow, Typography } from "@mui/material";
+import { MdDragIndicator } from "react-icons/md";
 import {
   AnswerTypeBadge,
   CollectionBadge,
@@ -10,7 +11,6 @@ import {
   TruncatedText,
 } from "..";
 import { ActionMenu } from "./actionMenu";
-import { MdDragIndicator } from "react-icons/md";
 
 interface SortableQuestionRowProps {
   question: QuestionForm;
@@ -45,7 +45,9 @@ export function SortableQuestionRow({
       style={style}
       sx={{
         "&:hover": {
-          backgroundColor: isDragging ? "rgba(25, 118, 210, 0.05)" : "action.hover",
+          backgroundColor: isDragging
+            ? "rgba(25, 118, 210, 0.05)"
+            : "action.hover",
         },
         borderLeft: question.active ? "4px solid" : "4px solid",
         borderLeftColor: question.active ? "success.main" : "grey.300",
@@ -132,4 +134,3 @@ export function SortableQuestionRow({
     </TableRow>
   );
 }
-
