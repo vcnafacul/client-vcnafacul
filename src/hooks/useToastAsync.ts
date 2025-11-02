@@ -1,32 +1,72 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Id, toast } from "react-toastify";
 
-interface UseToastAsyncOptions {
+// Tipo base para opções comuns
+interface BaseToastAsyncOptions {
   loadingMessage: string;
-  successMessage?: string | ((result: any) => string);
   errorMessage?: string | ((error: any) => string);
-  onSuccess?: (result: any) => void;
   onError?: (error: any) => void;
   onFinally?: () => void;
 }
 
+// Opções para action sem retorno (void)
+interface VoidToastAsyncOptions extends BaseToastAsyncOptions {
+  action: () => Promise<void>;
+  successMessage?: string;
+  onSuccess?: () => void;
+}
+
+// Opções para function com retorno
+interface FunctionToastAsyncOptions<T> extends BaseToastAsyncOptions {
+  action: () => Promise<T>;
+  successMessage?: string | ((result: T) => string);
+  onSuccess?: (result: T) => void;
+}
+
+// Union type para as opções
+type UseToastAsyncOptions<T = any> =
+  | VoidToastAsyncOptions
+  | FunctionToastAsyncOptions<T>;
+
 /**
  * Hook para executar ações assíncronas com feedback visual via toast
  *
- * @example
- * const execute = useToastAsync();
+ * Suporta dois tipos de ações:
+ * 1. Action sem retorno (void): onSuccess não recebe parâmetros
+ * 2. Function com retorno: onSuccess recebe o resultado
  *
+ * @example
+ * // Action sem retorno
+ * const execute = useToastAsync();
  * await execute({
- *   action: async () => await sendEmail(data),
- *   loadingMessage: "Enviando email...",
- *   successMessage: "Email enviado com sucesso!",
- *   errorMessage: "Erro ao enviar email"
+ *   action: async () => await deleteItem(id),
+ *   loadingMessage: "Excluindo...",
+ *   successMessage: "Item excluído!",
+ *   onSuccess: () => console.log("Done!")
+ * });
+ *
+ * @example
+ * // Function com retorno
+ * await execute({
+ *   action: async () => await fetchData(),
+ *   loadingMessage: "Carregando...",
+ *   successMessage: (data) => `${data.length} itens carregados`,
+ *   onSuccess: (data) => setData(data)
  * });
  */
 export function useToastAsync() {
-  const execute = async <T = any>(
-    options: UseToastAsyncOptions & { action: () => Promise<T> }
-  ): Promise<T | undefined> => {
+  // Overload para action void
+  async function execute(options: VoidToastAsyncOptions): Promise<void>;
+
+  // Overload para function com retorno
+  async function execute<T>(
+    options: FunctionToastAsyncOptions<T>
+  ): Promise<T | undefined>;
+
+  // Implementação
+  async function execute<T = any>(
+    options: UseToastAsyncOptions<T>
+  ): Promise<T | undefined> {
     const {
       action,
       loadingMessage,
@@ -40,11 +80,13 @@ export function useToastAsync() {
     const toastId: Id = toast.loading(loadingMessage);
 
     try {
+      console.log("useToastAsync");
       const result = await action();
 
+      // Determinar mensagem de sucesso
       const finalSuccessMessage =
         typeof successMessage === "function"
-          ? successMessage(result)
+          ? successMessage(result as T)
           : successMessage || "Operação realizada com sucesso!";
 
       toast.update(toastId, {
@@ -54,8 +96,18 @@ export function useToastAsync() {
         autoClose: 3000,
       });
 
-      onSuccess?.(result);
-      return result;
+      // Chamar onSuccess com ou sem parâmetro dependendo do tipo
+      if (onSuccess) {
+        if (result === undefined) {
+          // Action void
+          (onSuccess as () => void)();
+        } else {
+          // Function com retorno
+          (onSuccess as (result: T) => void)(result as T);
+        }
+      }
+
+      return result as T | undefined;
     } catch (error: any) {
       const finalErrorMessage =
         typeof errorMessage === "function"
@@ -74,7 +126,7 @@ export function useToastAsync() {
     } finally {
       onFinally?.();
     }
-  };
+  }
 
   return execute;
 }
