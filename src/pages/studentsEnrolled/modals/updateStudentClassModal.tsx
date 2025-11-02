@@ -247,7 +247,7 @@ export function UpdateStudentClassModal({
             isMobile ? "mb-3 text-lg" : "mb-4"
           }`}
         >
-          {isMobile ? "Selecionar Turma" : "Alterar Turma do Estudante"}
+          Selecionar Turma
         </Text>
         <p
           className={`${
