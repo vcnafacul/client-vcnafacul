@@ -56,7 +56,8 @@ export function NewAttendanceRecordModal({
       loadingMessage: "Registrando presença...",
       successMessage: "Presença registrada com sucesso!",
       errorMessage: (error: Error) => error.message,
-      onSuccess: (res) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onSuccess: (res: any) => {
         handleNewAttendanceRecord({
           id: res.id,
           createdAt: res.createdAt,

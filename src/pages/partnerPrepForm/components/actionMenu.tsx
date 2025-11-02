@@ -6,6 +6,7 @@ import {
   FiToggleLeft,
   FiToggleRight,
   FiTrash2,
+  FiCopy,
 } from "react-icons/fi";
 
 export function ActionMenu({
@@ -14,6 +15,7 @@ export function ActionMenu({
   onDelete,
   onAdd,
   onToggle,
+  onDuplicate,
   isActive,
 }: {
   onView?: () => void;
@@ -21,6 +23,7 @@ export function ActionMenu({
   onDelete?: () => void;
   onAdd?: () => void;
   onToggle?: () => void;
+  onDuplicate?: () => void;
   isActive?: boolean;
 }) {
   return (
@@ -75,6 +78,17 @@ export function ActionMenu({
             sx={{ color: "warning.main" }}
           >
             <FiEdit3 className="h-4 w-4" />
+          </IconButton>
+        </Tooltip>
+      )}
+      {onDuplicate && (
+        <Tooltip title="Duplicar Seção" arrow>
+          <IconButton
+            size="small"
+            onClick={onDuplicate}
+            sx={{ color: "info.main" }}
+          >
+            <FiCopy className="h-4 w-4" />
           </IconButton>
         </Tooltip>
       )}
