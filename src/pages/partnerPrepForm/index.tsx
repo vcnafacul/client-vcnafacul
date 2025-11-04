@@ -328,6 +328,10 @@ export default function PartnerPrepForm() {
             )
           );
         }
+      },
+    });
+  };
+
   const handleOpenDuplicateModal = (sectionId: string) => {
     const section = entities.find((e) => e._id === sectionId);
     if (section) {
