@@ -30,6 +30,7 @@ import { useParams } from "react-router-dom";
 import { ReactComponent as IsentoIcon } from "../../assets/icons/partnerPrepCourse/pagante_add_dk.svg";
 import { ReactComponent as PaganteIcon } from "../../assets/icons/partnerPrepCourse/pagante_remover_dk.svg";
 import { ReactComponent as Reset } from "../../assets/icons/partnerPrepCourse/reset_dk.svg";
+import { UpdateStudentClassModal } from "../studentsEnrolled/modals/updateStudentClassModal";
 import { ActionButton } from "./actionsButton";
 import { Details } from "./modal/details";
 import { Statistic } from "./modal/statistic";
@@ -51,6 +52,7 @@ export function PartnerPrepInscritionStudentManager() {
     "details",
     "statistic",
     "reject",
+    "selectClass",
   ]);
 
   const {
@@ -177,15 +179,23 @@ export function PartnerPrepInscritionStudentManager() {
     });
   };
 
-  const handleConfirmEnrolled = async (studentId: string) => {
+  const handleOpenSelectClassModal = (studentId: string) => {
+    const student = students.find((stu) => stu.id === studentId);
+    setStudentSelected(student);
+    modals.selectClass.open();
+  };
+
+  const handleConfirmEnrolled = async (classId: string, className: string) => {
+    if (!studentSelected) return;
+
     await executeAsync({
-      action: () => confirmEnrolled(studentId, token),
+      action: () => confirmEnrolled(studentSelected.id, classId, token),
       loadingMessage: "Confirmando Matrícula...",
-      successMessage: "Matrícula confirmada com sucesso!",
+      successMessage: `Matrícula confirmada com sucesso na turma ${className}!`,
       errorMessage: "Erro ao confirmar matrícula",
       onSuccess: () => {
         const newStudent = students.map((stu) => {
-          if (stu.id === studentId) {
+          if (stu.id === studentSelected.id) {
             return {
               ...stu,
               status: StatusApplication.Enrolled,
@@ -194,6 +204,7 @@ export function PartnerPrepInscritionStudentManager() {
           return stu;
         });
         setStudents(newStudent);
+        modals.selectClass.close();
       },
     });
   };
@@ -382,16 +393,13 @@ export function PartnerPrepInscritionStudentManager() {
             </ActionButton>
           )}
           {params.row.status === StatusApplication.DeclaredInterest && (
-            <ActionButton
-              titleAlert={`Confirmação de Matrícula ${params.row.nome} ${params.row.sobrenome}`}
-              descriptionAlert={`Realizar a  confirmação de matrícula de  ${params.row.nome} ${params.row.sobrenome}`}
-              onConfirm={() => {
-                handleConfirmEnrolled(params.row.id);
-              }}
-              tooltipTitle="Confirmação de Matrícula"
-            >
-              <FaCheck className="h-6 w-6 fill-green3 opacity-60 hover:opacity-100" />
-            </ActionButton>
+            <Tooltip title="Confirmação de Matrícula">
+              <IconButton
+                onClick={() => handleOpenSelectClassModal(params.row.id)}
+              >
+                <FaCheck className="h-6 w-6 fill-green3 opacity-60 hover:opacity-100" />
+              </IconButton>
+            </Tooltip>
           )}
           {(params.row.status === StatusApplication.DeclaredInterest ||
             params.row.status === StatusApplication.MissedDeadline ||
@@ -538,6 +546,18 @@ export function PartnerPrepInscritionStudentManager() {
     ) : null;
   };
 
+  const ModalSelectClass = () => {
+    return modals.selectClass.isOpen ? (
+      <UpdateStudentClassModal
+        isOpen={modals.selectClass.isOpen}
+        handleClose={modals.selectClass.close}
+        handleConfirm={(classId, className) =>
+          handleConfirmEnrolled(classId, className)
+        }
+      />
+    ) : null;
+  };
+
   const subscribers = async () => {
     if (!inscriptionId) return;
     await executeAsync({
@@ -563,6 +583,7 @@ export function PartnerPrepInscritionStudentManager() {
 
   useEffect(() => {
     subscribers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -623,6 +644,7 @@ export function PartnerPrepInscritionStudentManager() {
       <ModalDetails />
       <ModalStatistic />
       <ModalReject />
+      <ModalSelectClass />
     </div>
   );
 }

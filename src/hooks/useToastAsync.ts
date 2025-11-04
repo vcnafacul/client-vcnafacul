@@ -80,7 +80,6 @@ export function useToastAsync() {
     const toastId: Id = toast.loading(loadingMessage);
 
     try {
-      console.log("useToastAsync");
       const result = await action();
 
       // Determinar mensagem de sucesso

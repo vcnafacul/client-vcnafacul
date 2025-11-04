@@ -1,5 +1,6 @@
 import Analytics from "@/pages/analytics";
 import { ConfirmEnrolled } from "@/pages/confirmEnrolled";
+import EnrollmentConfirmation from "@/pages/enrollmentConfirmation";
 import InviteMemberProcessing from "@/pages/inviteMemberProcessing";
 import ManagerCollaborator from "@/pages/managerCollaborator";
 import { PartnerClass } from "@/pages/partnerClass";
@@ -55,6 +56,7 @@ import {
   DASH_ROLES,
   DASH_SIMULADO,
   DECLARED_INTEREST,
+  ENROLLMENT_CONFIRMATION,
   ESTUDO,
   FORGOT_PASSWORD_PATH,
   FORM_GEOLOCATION,
@@ -104,6 +106,10 @@ export function PlatformRoutes() {
         <Route
           path={`${DECLARED_INTEREST}/:inscriptionId`}
           element={<ConfirmEnrolled />}
+        />
+        <Route
+          path={ENROLLMENT_CONFIRMATION}
+          element={<EnrollmentConfirmation />}
         />
       </Route>
 

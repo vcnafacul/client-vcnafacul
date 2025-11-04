@@ -183,6 +183,7 @@ export default function PartnerPrepForm() {
   useEffect(() => {
     setLoading(true);
     handleGetSections();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   // Componente de loading skeleton
