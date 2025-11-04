@@ -3,6 +3,7 @@ import { LogStudent } from "./studentCourseFull";
 
 export interface RegistrationMonitoring {
   id: string;
+  studentId: string;
   partnerCourseName: string;
   inscriptionName: string;
   status: StatusApplication;

@@ -1,6 +1,7 @@
 import { ShadcnTable } from "@/components/atoms/shadcnTable";
 import Text from "@/components/atoms/text";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useFileDownload } from "@/hooks/useFileDownload";
 import { getDocuments } from "@/services/prepCourse/student/getDocuments";
 import { getProfilePhoto } from "@/services/prepCourse/student/getProfilePhoto";
 import { useAuthStore } from "@/store/auth";
@@ -27,6 +28,10 @@ export function Details({ student, handleClose }: Props) {
   const {
     data: { token },
   } = useAuthStore();
+
+  const { downloadFile, isDownloading } = useFileDownload({
+    showToast: true,
+  });
 
   const personalInfo = [
     {
@@ -66,61 +71,18 @@ export function Details({ student, handleClose }: Props) {
   ];
 
   const handleDownloadDocument = async (key: string) => {
-    try {
-      const blob = await getDocuments(key, token);
-
-      // Determinar a extensão do arquivo
-      let extension = "";
-      if (!key.match(/\.(png|jpeg|jpg|pdf)$/i)) {
-        const mimeType = blob.type; // Exemplo: "image/png", "application/pdf"
-        extension = mimeType.split("/")[1]; // Pega a parte após a barra (ex: "png", "pdf")
-      }
-
-      const fileName = extension ? `${key}.${extension}` : key;
-
-      // Criar o link para download
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      return blob;
-    } catch (error) {
-      console.error("Erro ao buscar o arquivo:", error);
-    }
+    await downloadFile({
+      fetchFunction: () => getDocuments(key, token),
+      fileKey: key,
+    });
   };
 
   const handleDownloadPhoto = async (key: string) => {
-    try {
-      const blob = await getProfilePhoto(key, token);
-
-      // Determinar a extensão do arquivo
-      let extension = "";
-      if (!key.match(/\.(png|jpeg|jpg)$/i)) {
-        const mimeType = blob.type;
-        extension = mimeType.split("/")[1];
-      }
-      
-      const fileName = extension ? `${key}.${extension}` : key;
-
-      // Criar o link para download
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      return blob;
-    } catch (error) {
-      console.error("Erro ao buscar o arquivo:", error);
-    }
+    await downloadFile({
+      fetchFunction: () => getProfilePhoto(key, token),
+      fileKey: key,
+      customFileName: `foto-carteirinha-${key}`,
+    });
   };
 
   const cellDocuments = () => {
@@ -129,8 +91,12 @@ export function Details({ student, handleClose }: Props) {
         doc.name,
         format(doc.createdAt, "dd/MM/yyyy HH:mm"),
         format(doc.expiredAt, "dd/MM/yyyy HH:mm"),
-        <button onClick={() => handleDownloadDocument(doc.key)}>
-          Download
+        <button
+          onClick={() => handleDownloadDocument(doc.key)}
+          disabled={isDownloading}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+        >
+          {isDownloading ? "Baixando..." : "Download"}
         </button>,
       ]) || [];
     const photo = !student.photo
@@ -139,8 +105,12 @@ export function Details({ student, handleClose }: Props) {
           `Foto Carteirinha ${student.photo}`,
           "",
           "",
-          <button onClick={() => handleDownloadPhoto(student.photo)}>
-            Download
+          <button
+            onClick={() => handleDownloadPhoto(student.photo)}
+            disabled={isDownloading}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+          >
+            {isDownloading ? "Baixando..." : "Download"}
           </button>,
         ];
     return [...documents, photo];
