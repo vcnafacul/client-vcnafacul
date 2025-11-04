@@ -25,6 +25,10 @@ interface ExpandableSectionProps {
   handleEditSection: (id: string) => void;
   handleDeleteSection: (id: string) => void;
   handleToggleSection: (id: string) => void;
+  handleReorderQuestions: (
+    sectionId: string,
+    questions: QuestionForm[]
+  ) => void;
   handleDuplicateSection: (id: string) => void;
 }
 
@@ -36,6 +40,7 @@ export function ExpandableSection({
   handleEditSection,
   handleDeleteSection,
   handleToggleSection,
+  handleReorderQuestions,
   handleDuplicateSection,
 }: ExpandableSectionProps) {
   const [open, setOpen] = useState<boolean>(false);
@@ -214,6 +219,9 @@ export function ExpandableSection({
                 allQuestions={allQuestions}
                 onDeleteQuestion={onDeleteQuestion}
                 onChangeQuestion={onChangeQuestion}
+                onReorderQuestions={(reorderedQuestions) =>
+                  handleReorderQuestions(section._id, reorderedQuestions)
+                }
               />
             </Box>
           </Collapse>
