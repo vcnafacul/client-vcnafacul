@@ -2,6 +2,7 @@ import { TableColumn } from "@/components/organisms/expandableTable";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { deleteSection } from "@/services/partnerPrepForm/deleteSection";
+import { duplicateSection } from "@/services/partnerPrepForm/duplicateSection";
 import { getSection } from "@/services/partnerPrepForm/getSections";
 import { reorderQuestions } from "@/services/partnerPrepForm/reorderQuestions";
 import { setSectionActive } from "@/services/partnerPrepForm/setSectionActive";
@@ -29,6 +30,7 @@ import Grid from "@mui/material/Grid2";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ExpandableSection } from "./components/expandableSection";
+import { ModalConfirmDuplicateSection } from "./modals/modalConfirmDuplicateSection";
 import { ModalCreateQuestion } from "./modals/modalCreateQuestion";
 import { ModalCreateSection } from "./modals/modalCreateSection";
 import { ModalUpdateSection } from "./modals/modalUpdateSection";
@@ -153,6 +155,7 @@ export default function PartnerPrepForm() {
     "modalCreateQuestion",
     "modalCreateSection",
     "modalUpdateSection",
+    "modalConfirmDuplicate",
   ]);
 
   const columns: TableColumn<AggregatedSection>[] = [
@@ -164,7 +167,7 @@ export default function PartnerPrepForm() {
     { key: "action", label: "Ações", align: "center" },
   ];
 
-  useEffect(() => {
+  const handleGetSections = async () => {
     setLoading(true);
     getSection(token)
       .then((res) => {
@@ -176,6 +179,12 @@ export default function PartnerPrepForm() {
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    handleGetSections();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   // Componente de loading skeleton
@@ -319,6 +328,27 @@ export default function PartnerPrepForm() {
             )
           );
         }
+  const handleOpenDuplicateModal = (sectionId: string) => {
+    const section = entities.find((e) => e._id === sectionId);
+    if (section) {
+      setSectionSelected(section);
+      modals.modalConfirmDuplicate.open();
+    }
+  };
+
+  const handleConfirmDuplicate = async () => {
+    if (!sectionSelected) return;
+
+    await executeAsync({
+      action: () => duplicateSection(sectionSelected._id, token),
+      loadingMessage: "Duplicando seção...",
+      successMessage: "Seção duplicada com sucesso!",
+      errorMessage: "Erro ao duplicar seção",
+      onSuccess: () => {
+        modals.modalConfirmDuplicate.close();
+        // Recarregar todas as seções
+        setLoading(true);
+        handleGetSections();
       },
     });
   };
@@ -347,6 +377,17 @@ export default function PartnerPrepForm() {
             prev.map((e) => (e._id === section._id ? section : e))
           );
         }}
+      />
+    ) : null;
+  };
+
+  const DuplicateSection = () => {
+    return modals.modalConfirmDuplicate.isOpen ? (
+      <ModalConfirmDuplicateSection
+        isOpen={modals.modalConfirmDuplicate.isOpen}
+        handleClose={() => modals.modalConfirmDuplicate.close()}
+        handleConfirm={handleConfirmDuplicate}
+        sectionName={sectionSelected!.name}
       />
     ) : null;
   };
@@ -457,11 +498,12 @@ export default function PartnerPrepForm() {
             </Typography>
             <Typography variant="body2" color="success.main">
               • Ativas:{" "}
-              {entities.reduce(
-                (acc, section) =>
-                  acc + section.questions.filter((q) => q.active).length,
-                0
-              )}
+              {entities.reduce((acc, section) => {
+                if (section.active) {
+                  return acc + section.questions.filter((q) => q.active).length;
+                }
+                return acc;
+              }, 0)}
             </Typography>
           </Box>
         </Box>
@@ -516,6 +558,7 @@ export default function PartnerPrepForm() {
                         handleDeleteSection={handleDeleteSection}
                         handleToggleSection={handleToggleSection}
                         handleReorderQuestions={handleReorderQuestions}
+                        handleDuplicateSection={handleOpenDuplicateModal}
                       />
                     );
                   })}
@@ -528,6 +571,7 @@ export default function PartnerPrepForm() {
       <CreateQuestion />
       <CreateSection />
       <UpdateSection />
+      <DuplicateSection />
     </>
   );
 }

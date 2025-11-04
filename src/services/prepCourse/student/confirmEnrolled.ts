@@ -1,8 +1,8 @@
 import { studentCourse } from "@/services/urls";
 
-export async function confirmEnrolled(studentId: string, token: string) {
+export async function confirmEnrolled(studentId: string, classId: string, token: string) {
   const response = await fetch(
-    `${studentCourse}/confirm-enrolled/${studentId}`,
+    `${studentCourse}/confirm-enrolled/${studentId}/class/${classId}`,
     {
       method: "PATCH",
       headers: {

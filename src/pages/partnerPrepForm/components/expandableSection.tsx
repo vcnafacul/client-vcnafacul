@@ -25,7 +25,11 @@ interface ExpandableSectionProps {
   handleEditSection: (id: string) => void;
   handleDeleteSection: (id: string) => void;
   handleToggleSection: (id: string) => void;
-  handleReorderQuestions: (sectionId: string, questions: QuestionForm[]) => void;
+  handleReorderQuestions: (
+    sectionId: string,
+    questions: QuestionForm[]
+  ) => void;
+  handleDuplicateSection: (id: string) => void;
 }
 
 export function ExpandableSection({
@@ -37,6 +41,7 @@ export function ExpandableSection({
   handleDeleteSection,
   handleToggleSection,
   handleReorderQuestions,
+  handleDuplicateSection,
 }: ExpandableSectionProps) {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -163,6 +168,7 @@ export function ExpandableSection({
                 : undefined
             }
             onEdit={() => handleEditSection(section._id)}
+            onDuplicate={() => handleDuplicateSection(section._id)}
             onDelete={
               totalQuestionsCount > 0
                 ? undefined
