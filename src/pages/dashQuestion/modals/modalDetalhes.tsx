@@ -1,4 +1,5 @@
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { getProvaFile } from "@/services/prova/getFile";
 import { getQuestionImage } from "@/services/question/getQuestionImage";
 import { yupResolver } from "@hookform/resolvers/yup";
 import heic2any from "heic2any";
@@ -13,7 +14,6 @@ import { Checkbox, CheckboxProps } from "../../../components/atoms/checkbox";
 import { ImagePreview } from "../../../components/atoms/imagePreview";
 import ModalImage from "../../../components/atoms/modalImage";
 import Text from "../../../components/atoms/text";
-import BLink from "../../../components/molecules/bLink";
 import Button from "../../../components/molecules/button";
 import {
   FormFieldInput,
@@ -704,19 +704,36 @@ function ModalDetalhes({
     fetchImage();
   }, []);
 
+  const downloadProva = async (filename: string, fileType: string) => {
+    try {
+      const blob = await getProvaFile(filename, token);
+
+      // Criar URL do blob e fazer download
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${question?.prova!}_${fileType}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error(`Erro ao baixar o ${fileType}`);
+    }
+  };
+
   const BDownloadProva = () => {
     if (!prova) return null;
     return (
-      <BLink
-        to={`${VITE_BASE_FTP}${
-          infos.provas.find((p) => p._id === prova)?.filename
-        }`}
-        target="_blank"
-        className="flex"
-        type="quaternary"
+      <Button
+        type="button"
+        onClick={() => downloadProva(question?.prova!, "pdf")}
+        className="w-full"
+        disabled={!permissao[Roles.visualizarProvas]}
+        typeStyle="quaternary"
       >
         Visualizar Prova
-      </BLink>
+      </Button>
     );
   };
 
