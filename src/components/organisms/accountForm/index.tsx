@@ -172,6 +172,7 @@ export function AccountForm({ update, userAccount }: AccountFormProps) {
           label="Gênero"
           type="select"
           defaultValue={userAccount?.gender}
+          value={userAccount?.gender}
           options={optionsGender}
           error={errors.gender}
           onChange={(e: any) => setValue("gender", e.target.value)}
@@ -229,6 +230,7 @@ export function AccountForm({ update, userAccount }: AccountFormProps) {
           label="Estado"
           type="select"
           defaultValue={userAccount?.state}
+          value={userAccount?.state}
           options={stateOptions}
           error={errors.state}
           onChange={(e: any) => setValue("state", e.target.value)}
@@ -252,6 +254,7 @@ export function AccountForm({ update, userAccount }: AccountFormProps) {
               variant={hasChanges ? "contained" : "outlined"}
               disabled={!hasChanges || isSaving}
               className="transition-all duration-300 w-full"
+              type="submit"
             >
               {isSaving ? (
                 <div className="flex items-center gap-2">
