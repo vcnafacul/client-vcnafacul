@@ -18,12 +18,26 @@ export function InputCheckBox({
 }: InputCheckBoxProps) {
   const [checked, setChecked] = useState<string[]>(props.defaultValue || []);
 
+  // Função para verificar se o valor contém alguma das strings de limpeza
+  const isCleanRestOption = (value: string): boolean => {
+    if (!propCleanRest) return false;
+    const cleanRestPatterns = ["Não possuo", "Não pertenço"];
+    return cleanRestPatterns.some((pattern) =>
+      value.toLowerCase().includes(pattern.toLowerCase())
+    );
+  };
+
+  // Verifica se algum item marcado é uma opção de limpeza
+  const hasCleanRestChecked = (): boolean => {
+    return checked.some((item) => isCleanRestOption(item));
+  };
+
   const onChecked = (value: string) => {
     if (propCleanRest) {
-      if (value === propCleanRest) {
+      if (isCleanRestOption(value)) {
         return checked.includes(value);
       } else {
-        if (!checked.includes(propCleanRest)) {
+        if (!hasCleanRestChecked()) {
           return checked.includes(value);
         }
         return false;
@@ -34,8 +48,8 @@ export function InputCheckBox({
 
   const onDisabled = (value: string) => {
     if (propCleanRest) {
-      if (checked.includes(propCleanRest)) {
-        if (value === propCleanRest) {
+      if (hasCleanRestChecked()) {
+        if (isCleanRestOption(value)) {
           return false;
         } else return true;
       }
@@ -55,7 +69,7 @@ export function InputCheckBox({
             disabled={onDisabled(value)}
             onCheckedChange={(ischeck) => {
               if (ischeck) {
-                if (value === propCleanRest) {
+                if (isCleanRestOption(value)) {
                   setChecked([value]);
                   onCheckedChange([value]);
                 } else {
