@@ -126,6 +126,7 @@ export function PrepCourseInfo({ form, setValue, errors, edit, geo }: Props) {
         options={form.state.options}
         disabled={!edit}
         defaultValue={geo.state}
+        value={geo.state}
       />
       <InputFactory
         id={form.phone.label}
