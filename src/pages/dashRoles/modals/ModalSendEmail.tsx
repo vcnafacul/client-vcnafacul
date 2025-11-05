@@ -28,7 +28,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
   const [sendToAll, setSendToAll] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const searchTimeoutRef = useRef<NodeJS.Timeout>();
+  const searchTimeoutRef = useRef<NodeJS.Timeout>(null);
 
   const {
     data: { token },

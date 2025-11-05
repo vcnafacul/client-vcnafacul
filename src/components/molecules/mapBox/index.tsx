@@ -3,7 +3,7 @@ import "leaflet/dist/leaflet.css";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
 
 import leaflet from "leaflet";
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useMemo, useRef, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { ReactComponent as PointIcon } from "../../../assets/images/home/univ_public.svg";
 import { MarkerPoint, TypeMarker } from "../../../types/map/marker";
@@ -26,8 +26,22 @@ function MapBox({
   center,
 }: MapBoxProps) {
   const [initialPosition, setInitialPosition] = useState<[number, number]>();
+  const hasInitialized = useRef(false);
+
+  // Cria uma key única e estável para o MapContainer
+  const mapKey = useMemo(() => `map-${Date.now()}-${Math.random()}`, []);
+
+   useEffect(() => {
+     // Previne dupla inicialização no StrictMode
+     hasInitialized.current = true;
+     return () => {
+       hasInitialized.current = false;
+     };
+   }, []);
+   if (!hasInitialized) return null;
 
   useEffect(() => {
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -43,6 +57,7 @@ function MapBox({
     <div className="relative h-fit">
       {initialPosition && (
         <MapContainer
+          key={mapKey}
           center={center ?? initialPosition}
           zoom={zoom}
           scrollWheelZoom={false}

@@ -198,6 +198,7 @@ export function PartnerPrepInscriptionStep3({
         }))}
         error={errors.family_relationship}
         defaultValue={currentData?.legalGuardian?.family_relationship}
+        value={currentData?.legalGuardian?.family_relationship}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => {
           const value = e.target.value;
@@ -260,6 +261,7 @@ export function PartnerPrepInscriptionStep3({
               }[]
             }
             defaultValue={currentData?.legalGuardian?.uf}
+            value={currentData?.legalGuardian?.uf}
             error={errors.uf}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onChange={(e: any) => setValue("uf", e.value)}

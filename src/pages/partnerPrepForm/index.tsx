@@ -27,7 +27,7 @@ import {
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { ExpandableSection } from "./components/expandableSection";
 import { ModalConfirmDuplicateSection } from "./modals/modalConfirmDuplicateSection";
@@ -158,6 +158,20 @@ export default function PartnerPrepForm() {
     "modalConfirmDuplicate",
   ]);
 
+  // ✅ OTIMIZAÇÃO: Memoizar allQuestions para evitar flatMap dentro do loop
+  // Antes: executado N vezes (uma por cada entity)
+  // Depois: executado apenas 1 vez quando entities mudar
+  const allQuestions = useMemo(() => {
+    return entities.flatMap((section) => section.questions);
+  }, [entities]);
+
+  // ✅ OTIMIZAÇÃO: Memoizar handler para manter referência estável
+  const handleSetSection = useCallback((section: SectionForm) => {
+    setEntities((prev) =>
+      prev.map((e) => (e._id === section._id ? section : e))
+    );
+  }, []);
+
   const columns: TableColumn<AggregatedSection>[] = [
     { key: "section", label: "Seção" },
     { key: "questions", label: "Total", align: "right" },
@@ -225,9 +239,7 @@ export default function PartnerPrepForm() {
   );
 
   const CreateQuestion = () => {
-    // Coletar todas as questões de todas as seções para referência
-    const allQuestions = entities.flatMap((section) => section.questions);
-
+    // ✅ OTIMIZAÇÃO: Usa allQuestions memoizado em vez de calcular aqui
     return modals.modalCreateQuestion.isOpen ? (
       <ModalCreateQuestion
         isOpen={modals.modalCreateQuestion.isOpen}
@@ -536,36 +548,23 @@ export default function PartnerPrepForm() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {entities.map((entity) => {
-                    // Coletar todas as questões de todas as seções para referência
-                    const allQuestions = entities.flatMap(
-                      (section) => section.questions
-                    );
-
-                    return (
-                      <ExpandableSection
-                        key={entity._id}
-                        section={entity}
-                        allQuestions={allQuestions}
-                        setSection={(section) => {
-                          setEntities((prev) =>
-                            prev.map((e) =>
-                              e._id === section._id ? section : e
-                            )
-                          );
-                        }}
-                        handleAddQuestion={handleAddQuestion}
-                        handleEditSection={() => {
-                          setSectionSelected(entity);
-                          modals.modalUpdateSection.open();
-                        }}
-                        handleDeleteSection={handleDeleteSection}
-                        handleToggleSection={handleToggleSection}
-                        handleReorderQuestions={handleReorderQuestions}
-                        handleDuplicateSection={handleOpenDuplicateModal}
-                      />
-                    );
-                  })}
+                  {entities.map((entity) => (
+                    <ExpandableSection
+                      key={entity._id}
+                      section={entity}
+                      allQuestions={allQuestions} // ✅ Usa versão memoizada
+                      setSection={handleSetSection} // ✅ Usa handler memoizado
+                      handleAddQuestion={handleAddQuestion}
+                      handleEditSection={() => {
+                        setSectionSelected(entity);
+                        modals.modalUpdateSection.open();
+                      }}
+                      handleDeleteSection={handleDeleteSection}
+                      handleToggleSection={handleToggleSection}
+                      handleReorderQuestions={handleReorderQuestions}
+                      handleDuplicateSection={handleOpenDuplicateModal}
+                    />
+                  ))}
                 </TableBody>
               </Table>
             </TableContainer>

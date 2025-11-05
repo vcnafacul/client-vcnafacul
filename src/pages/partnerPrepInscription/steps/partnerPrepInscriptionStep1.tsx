@@ -312,7 +312,7 @@ export function PartnerPrepInscriptionStep1({
         <div className="flex-1">
           <InputFactory
             id="rg"
-            label="RG*"
+            label="RG"
             type="text"
             error={errors.rg}
             defaultValue={currentData?.rg}
@@ -325,7 +325,7 @@ export function PartnerPrepInscriptionStep1({
         <div className="w-24">
           <InputFactory
             id="uf"
-            label="UF*"
+            label="UF"
             type="select"
             options={
               stateOptions.map((state) => ({
@@ -338,6 +338,7 @@ export function PartnerPrepInscriptionStep1({
             }
             error={errors.uf}
             defaultValue={currentData?.uf}
+            value={currentData?.uf}
             onChange={(e: any) => {
               setValue("uf", e.value);
             }}
