@@ -1,6 +1,5 @@
 import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
 import { InputFactory } from "@/components/organisms/inputFactory";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useModals } from "@/hooks/useModal";
 import {
   BaseCondition,
@@ -136,20 +135,29 @@ const QuestionBoolean = ({
   error?: string;
   value?: boolean;
 }) => {
+  // Converter boolean para string para o select
+  const selectValue =
+    value === true ? "Sim" : value === false ? "Não" : undefined;
+
   return (
-    <div className="flex flex-col gap-2 m-2">
-      <div className="flex gap-2">
-        <Checkbox
-          checked={value}
-          onCheckedChange={(isCheck) => {
-            handleChange(question._id, isCheck as boolean);
-          }}
-          className="h-4 w-4 flex justify-center items-center border-grey border-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-white data-[state=checked]:text-green2"
-        />
-        <label className="text-sm text-grey">{question.text}</label>
-      </div>
-      {error && <span className="text-sm text-redError">{error}</span>}
-    </div>
+    <InputFactory
+      id={question._id}
+      label={question.text}
+      type="select"
+      options={[
+        { label: "Sim", value: "Sim" },
+        { label: "Não", value: "Não" },
+      ]}
+      error={error ? { message: error } : undefined}
+      value={selectValue}
+      className={question.text.length > 80 ? "h-20 pt-[48px]" : ""}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onChange={(e: any) => {
+        // Converter string para boolean
+        const boolValue = e.value === "Sim";
+        handleChange(question._id, boolValue);
+      }}
+    />
   );
 };
 
@@ -218,17 +226,39 @@ const QuestionNumber = ({
   error?: string;
   value?: number;
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleNumberChange = (e: any) => {
+    const inputValue = e.target.value;
+
+    // Permitir campo vazio para que o usuário possa apagar
+    if (inputValue === "") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      handleChange(question._id, "" as any);
+      return;
+    }
+
+    // Converter para número e validar
+    const numValue = Number(inputValue);
+
+    // Aceitar apenas números inteiros e positivos (>= 0)
+    if (!isNaN(numValue) && numValue >= 0 && Number.isInteger(numValue)) {
+      handleChange(question._id, numValue);
+    }
+  };
+
   return (
     <InputFactory
       id={question._id}
       label={question.text}
       placeholder={question.helpText ?? "Digite um número..."}
       type="number"
+      min={0}
+      step={1}
       error={error ? { message: error } : undefined}
       value={value}
       className={question.text.length > 100 ? "h-20 pt-[40px]" : ""}
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onChange={(e: any) => handleChange(question._id, e.target.value)}
+      onChange={handleNumberChange}
     />
   );
 };
@@ -245,7 +275,7 @@ export function PartnerPrepInscriptionStepForm({
 
   const modals = useModals(["modalConfirmSubscription"]);
 
-  // Inicializar respostas booleanas como false
+  // Inicializar respostas booleanas como false (Não)
   useEffect(() => {
     const initialAnswers: Record<string, unknown> = {};
 
