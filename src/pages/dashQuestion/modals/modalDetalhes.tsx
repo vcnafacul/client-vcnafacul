@@ -137,8 +137,6 @@ function ModalDetalhes({
   );
   const [uploadFile, setUploadFile] = useState<Blob | null>(null);
 
-  const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
-
   //WATCHERS
   const prova = watch("prova");
   const alternativa = watch("alternativa");
@@ -724,10 +722,14 @@ function ModalDetalhes({
 
   const BDownloadProva = () => {
     if (!prova) return null;
+    const filename = infos.provas.find(
+      (p) => p._id === question?.prova
+    )?.filename;
+    if (!filename) return null;
     return (
       <Button
         type="button"
-        onClick={() => downloadProva(question?.prova!, "pdf")}
+        onClick={() => downloadProva(filename, "pdf")}
         className="w-full"
         disabled={!permissao[Roles.visualizarProvas]}
         typeStyle="quaternary"
