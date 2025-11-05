@@ -46,7 +46,10 @@ const DraggableRow = ({ row, index, moveRow }: any) => {
 
   return (
     <tr
-      ref={(node) => ref(drop(node))}
+      ref={(node) => {
+        ref(node);
+        drop(node);
+      }}
       className="even:bg-gray-200 cursor-pointer"
     >
       <td className="text-center">{row.position}</td>

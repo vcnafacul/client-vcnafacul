@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { JSX, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { useDashCardContext } from "../../../context/dashCardContext";
 import Filter from "../../atoms/filter";

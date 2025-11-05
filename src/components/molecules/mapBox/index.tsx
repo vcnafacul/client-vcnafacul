@@ -3,7 +3,7 @@ import "leaflet/dist/leaflet.css";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
 
 import leaflet from "leaflet";
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { ReactComponent as PointIcon } from "../../../assets/images/home/univ_public.svg";
 import { MarkerPoint, TypeMarker } from "../../../types/map/marker";
