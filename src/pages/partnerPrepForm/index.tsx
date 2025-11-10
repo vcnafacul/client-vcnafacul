@@ -6,7 +6,7 @@ import { duplicateSection } from "@/services/partnerPrepForm/duplicateSection";
 import { getSection } from "@/services/partnerPrepForm/getSections";
 import { reorderQuestions } from "@/services/partnerPrepForm/reorderQuestions";
 import { setSectionActive } from "@/services/partnerPrepForm/setSectionActive";
-import { useAuthStore } from "@/store/auth";
+ import { useAuthStore } from "@/store/auth";
 import { AnswerType, QuestionForm } from "@/types/partnerPrepForm/questionForm";
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
 import {

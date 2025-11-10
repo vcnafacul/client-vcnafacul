@@ -9,6 +9,7 @@ export const FORM_GEOLOCATION = "/geolocation";
 export const DASH = "/dashboard";
 export const DASH_GEOLOCATION = "localiza-cursinho";
 export const DASH_QUESTION = "dashquestoes";
+export const DASH_QUESTION_NEW = "banco-questao-novo";
 export const DASH_NEWS = "dashnews";
 export const DASH_PROVAS = "dashprovas";
 export const DASH_CONTENT = "dash-content";

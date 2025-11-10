@@ -86,14 +86,18 @@ export function useToastAsync() {
       const finalSuccessMessage =
         typeof successMessage === "function"
           ? successMessage(result as T)
-          : successMessage || "Operação realizada com sucesso!";
+          : successMessage;
 
-      toast.update(toastId, {
-        render: finalSuccessMessage,
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      if (finalSuccessMessage) {
+        toast.update(toastId, {
+          render: finalSuccessMessage,
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      } else {
+        toast.dismiss(toastId);
+      }
 
       // Chamar onSuccess com ou sem parâmetro dependendo do tipo
       if (onSuccess) {

@@ -1,4 +1,4 @@
-import { Question, QuestionDto } from "../../dtos/question/questionDTO";
+import { QuestionCardBase } from "@/dtos/question/questionV2Dto";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import fetchWrapper from "../../utils/fetchWrapper";
 import { Paginate } from "../../utils/paginate";
@@ -14,7 +14,7 @@ export async function getAllQuestions(
   frente: string = "",
   prova: string = "",
   enemArea: string = ""
-): Promise<Paginate<Question>> {
+): Promise<Paginate<QuestionCardBase>> {
   const url = new URL(questoes);
 
   const params: Record<string, string | number> = {
@@ -39,20 +39,8 @@ export async function getAllQuestions(
     },
   });
   if (response.status === 200) {
-    const questoes: Paginate<QuestionDto> = await response.json();
-
-    const data: Question[] = questoes.data.map((questao) => ({
-      title: `${questao.prova.nome} | ${questao.numero}`,
-      ...questao,
-      prova: questao.prova._id,
-    }));
-
-    return {
-      data: data,
-      page,
-      limit,
-      totalItems: questoes.totalItems,
-    } as Paginate<Question>;
+    const questoes: Paginate<QuestionCardBase> = await response.json();
+    return questoes;
   }
   throw new Error(`Erro ao tentar recuperar questões - Pagina ${page}`);
 }
