@@ -22,7 +22,6 @@ import DashContent from "../pages/dashContent";
 import DashGeo from "../pages/dashGeo";
 import DashNews from "../pages/dashNews";
 import DashProva from "../pages/dashProvas";
-import DashQuestion from "../pages/dashQuestion";
 import DashQuestionNew from "../pages/dashQuestionNew";
 import DashRoles from "../pages/dashRoles";
 import DashSimulado from "../pages/dashSimulado";
@@ -54,7 +53,6 @@ import {
   DASH_NEWS,
   DASH_PROVAS,
   DASH_QUESTION,
-  DASH_QUESTION_NEW,
   DASH_ROLES,
   DASH_SIMULADO,
   DECLARED_INTEREST,
@@ -180,16 +178,6 @@ export function PlatformRoutes() {
         <Route path={ACCOUNT_PATH} element={<Account />} />
         <Route
           path={DASH_QUESTION}
-          element={
-            <ProtectedRoutePermission
-              permission={data.permissao[Roles.visualizarQuestao]}
-            >
-              <DashQuestion />
-            </ProtectedRoutePermission>
-          }
-        />
-        <Route
-          path={DASH_QUESTION_NEW}
           element={
             <ProtectedRoutePermission
               permission={data.permissao[Roles.visualizarQuestao]}

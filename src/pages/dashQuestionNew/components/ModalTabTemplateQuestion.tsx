@@ -12,12 +12,14 @@ interface ModalTabTemplateQuestionProps {
   tabs: TabModal[];
   isOpen: boolean;
   className?: string;
+  footerContent?: React.ReactNode;
 }
 
 function ModalTabTemplateQuestion({
   tabs,
   isOpen,
   className,
+  footerContent,
 }: ModalTabTemplateQuestionProps) {
   // Define o número de colunas baseado no número de tabs
   const gridCols =
@@ -56,7 +58,7 @@ function ModalTabTemplateQuestion({
                 key={tab.id}
                 value={tab.id}
               >
-                <ModalContent onClose={tab.handleClose}>
+                <ModalContent onClose={tab.handleClose} footer={footerContent}>
                   {tab.children}
                 </ModalContent>
               </TabsContent>
@@ -71,9 +73,11 @@ function ModalTabTemplateQuestion({
 function ModalContent({
   children,
   onClose,
+  footer,
 }: {
   children: React.ReactNode;
   onClose?: () => void;
+  footer?: React.ReactNode;
 }) {
   return (
     <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded flex flex-col relative">
@@ -88,7 +92,14 @@ function ModalContent({
       )}
 
       {/* Conteúdo principal */}
-      <div className="flex flex-col gap-4 h-full">{children}</div>
+      <div className="flex flex-col gap-4 flex-1">{children}</div>
+
+      {/* Footer fixado no final */}
+      {footer && (
+        <div className="sticky bottom-0 bg-white z-20 border-t">
+          {footer}
+        </div>
+      )}
     </div>
   );
 }

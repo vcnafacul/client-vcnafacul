@@ -7,41 +7,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Question } from "@/dtos/question/questionDTO";
-import { StatusEnum } from "@/enums/generic/statusEnum";
 import { StatusBadge } from "./statusBadge";
 
 interface QuestionCardProps {
   question: Question;
   onClick: (questionId: string) => void;
 }
-
-const getStatusLabel = (status: StatusEnum): string => {
-  switch (status) {
-    case StatusEnum.Approved:
-      return "Aprovado";
-    case StatusEnum.Pending:
-      return "Pendente";
-    case StatusEnum.Rejected:
-      return "Recusado";
-    default:
-      return "Todos";
-  }
-};
-
-const getStatusColor = (
-  status: StatusEnum
-): "default" | "secondary" | "destructive" | "outline" => {
-  switch (status) {
-    case StatusEnum.Approved:
-      return "default";
-    case StatusEnum.Pending:
-      return "secondary";
-    case StatusEnum.Rejected:
-      return "destructive";
-    default:
-      return "outline";
-  }
-};
 
 export function QuestionCard({ question, onClick }: QuestionCardProps) {
   const truncateText = (text: string, maxLength: number = 150) => {

@@ -16,10 +16,11 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { getAllQuestions } from "@/services/question/getAllQuestion";
 import { getInfosQuestion } from "@/services/question/getInfosQuestion";
 import { useAuthStore } from "@/store/auth";
-import { ChevronDown, ChevronUp, Filter } from "lucide-react";
+import { ChevronDown, ChevronUp, Filter, Plus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { FilterValues, QuestionFilters } from "./components/QuestionFilters";
 import { SimpleQuestionCard } from "./components/simpleQuestionCard";
+import { ModalCreateQuestion } from "./modals/ModalCreateQuestion";
 import { ModalQuestionDetailsRefactored } from "./modals/ModalQuestionDetailsRefactored";
 
 function DashQuestionNew() {
@@ -28,7 +29,7 @@ function DashQuestionNew() {
   } = useAuthStore();
 
   const executeAsync = useToastAsync();
-  const modals = useModals(["modalQuestionDetails"]);
+  const modals = useModals(["modalQuestionDetails", "modalCreateQuestion"]);
 
   const [questions, setQuestions] = useState<QuestionCardBase[]>([]);
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(
@@ -242,38 +243,48 @@ function DashQuestionNew() {
             </p>
           </div>
 
-          {/* Botão para mostrar/esconder filtros */}
-          {infos && (
-            <Button
-              variant={showFilters ? "default" : "outline"}
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2"
-            >
-              <Filter className="h-4 w-4" />
-              {showFilters ? "Esconder" : "Mostrar"} Filtros
-              {showFilters ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
-              {hasActiveFilters && !showFilters && (
-                <span className="ml-1 px-2 py-0.5 text-xs bg-primary text-primary-foreground rounded-full">
-                  ✓
-                </span>
-              )}
-            </Button>
-          )}
+          {/* Botão de Criar Questão */}
+          <Button
+            onClick={() => modals.modalCreateQuestion.open()}
+            className="bg-primary hover:bg-primary/90 text-white shadow-lg"
+            size="lg"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            Nova Questão
+          </Button>
         </div>
 
-        {/* Filtros */}
-        {infos && showFilters && (
-          <QuestionFilters
-            infos={infos}
-            onFilter={handleFilterChange}
-            isLoading={isLoading}
-          />
+        {/* Botão para mostrar/esconder filtros */}
+        {infos && (
+          <Button
+            variant={showFilters ? "default" : "outline"}
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2"
+          >
+            <Filter className="h-4 w-4" />
+            {showFilters ? "Esconder" : "Mostrar"} Filtros
+            {showFilters ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+            {hasActiveFilters && !showFilters && (
+              <span className="ml-1 px-2 py-0.5 text-xs bg-primary text-primary-foreground rounded-full">
+                ✓
+              </span>
+            )}
+          </Button>
         )}
       </div>
+
+      {/* Filtros */}
+      {infos && showFilters && (
+        <QuestionFilters
+          infos={infos}
+          onFilter={handleFilterChange}
+          isLoading={isLoading}
+        />
+      )}
 
       {/* Informações e Paginação Superior */}
       <div className="flex justify-between items-center">
@@ -326,6 +337,14 @@ function DashQuestionNew() {
         onClose={handleCloseModal}
         questionId={selectedQuestionId}
         infos={infos}
+      />
+
+      {/* Modal de Criação */}
+      <ModalCreateQuestion
+        isOpen={modals.modalCreateQuestion.isOpen}
+        onClose={() => modals.modalCreateQuestion.close()}
+        infos={infos}
+        onSuccess={() => getQuestions(currentPage)}
       />
     </div>
   );

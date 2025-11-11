@@ -23,7 +23,6 @@ export function TabImagens({ question, canEdit = false }: TabImagensProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [isRemoving, setIsRemoving] = useState(false);
   const [currentImageId, setCurrentImageId] = useState<string | null>(
     question.imageId
   );
@@ -215,7 +214,7 @@ export function TabImagens({ question, canEdit = false }: TabImagensProps) {
                     variant="outline"
                     className="flex-1"
                     onClick={openFileSelector}
-                    disabled={isUploading || isRemoving}
+                    disabled={isUploading}
                   >
                     {isUploading ? (
                       <>

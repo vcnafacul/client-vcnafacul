@@ -414,9 +414,6 @@ export function PartnerPrepInscriptionStepForm({
 
     setIsSubmitting(true);
 
-    // Limpar respostas de questões não obrigatórias
-    const cleanedAnswers = cleanAnswers(answers);
-
     // Simular um pequeno delay para melhorar a UX
     setTimeout(() => {
       modals.modalConfirmSubscription.open();

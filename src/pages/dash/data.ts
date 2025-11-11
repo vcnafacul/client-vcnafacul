@@ -11,7 +11,6 @@ import {
   DASH_NEWS,
   DASH_PROVAS,
   DASH_QUESTION,
-  DASH_QUESTION_NEW,
   DASH_ROLES,
   DASH_SIMULADO,
   ESTUDO,
@@ -154,13 +153,6 @@ export const dashCardMenuItems: DashCardMenu[] = [
         alt: "banco_de_questao",
         text: "Banco de Questão",
         link: `/dashboard/${DASH_QUESTION}`,
-        permissions: [Roles.visualizarQuestao],
-      },
-      {
-        icon: Gramatica,
-        alt: "banco_de_questao_novo",
-        text: "Banco de Questão Novo",
-        link: `/dashboard/${DASH_QUESTION_NEW}`,
         permissions: [Roles.visualizarQuestao],
       },
       {

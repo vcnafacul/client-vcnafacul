@@ -7,13 +7,13 @@ export interface CreateQuestion {
   materia?: string;
   numero: number;
   textoQuestao?: string;
+  pergunta?: string;
   textoAlternativaA?: string;
   textoAlternativaB?: string;
   textoAlternativaC?: string;
   textoAlternativaD?: string;
   textoAlternativaE?: string;
   alternativa: string;
-  imageId?: string;
 }
 export interface UpdateQuestion extends CreateQuestion {
   _id: string;

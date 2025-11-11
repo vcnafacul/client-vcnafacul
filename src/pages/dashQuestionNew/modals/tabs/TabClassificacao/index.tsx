@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -12,19 +11,20 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { getMissingNumber } from "@/services/prova/getMissingNumber";
 import { updateStatus } from "@/services/question/updateStatus";
 import { useAuthStore } from "@/store/auth";
 import {
   AlertCircle,
+  AlertTriangle,
   CheckCircle,
   Edit,
   Loader2,
-  RefreshCw,
   Save,
   X,
   XCircle,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import { TabClassificacaoProps } from "./types";
 import { useClassificacaoForm } from "./useClassificacaoForm";
@@ -52,7 +52,6 @@ export function TabClassificacao({
   const {
     form,
     control,
-    register,
     isEditing,
     isSaving,
     isDirty,
@@ -68,10 +67,43 @@ export function TabClassificacao({
   const [rejectionMessage, setRejectionMessage] = useState("");
   const [showRejectionInput, setShowRejectionInput] = useState(false);
 
+  // Estados para números disponíveis
+  const [numerosDisponiveis, setNumerosDisponiveis] = useState<number[]>([]);
+  const [loadingNumeros, setLoadingNumeros] = useState(false);
+
   // Observar valores do formulário para cascata
   const provaId = form.watch("prova");
   const enemArea = form.watch("enemArea");
   const materiaId = form.watch("materia");
+
+  // Buscar números disponíveis quando prova for selecionada (apenas no modo edição)
+  useEffect(() => {
+    const fetchNumerosDisponiveis = async () => {
+      if (provaId && isEditing) {
+        setLoadingNumeros(true);
+        try {
+          const numeros = await getMissingNumber(provaId, token);
+          // Incluir o número atual da questão na lista de disponíveis
+          const numerosComAtual = [...numeros, question.numero].sort(
+            (a, b) => a - b
+          );
+          // Remover duplicatas
+          const numerosUnicos = Array.from(new Set(numerosComAtual));
+          setNumerosDisponiveis(numerosUnicos);
+        } catch (error) {
+          console.error("Erro ao buscar números disponíveis:", error);
+          // Em caso de erro, usar apenas o número atual
+          setNumerosDisponiveis([question.numero]);
+        } finally {
+          setLoadingNumeros(false);
+        }
+      } else {
+        setNumerosDisponiveis([]);
+      }
+    };
+
+    fetchNumerosDisponiveis();
+  }, [provaId, isEditing, token, question.numero]);
 
   // Buscar prova selecionada
   const provaSelecionada = infos?.provas?.find((p) => p._id === provaId);
@@ -339,11 +371,57 @@ export function TabClassificacao({
                 <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
                   <p className="text-base">{question.numero}</p>
                 </div>
+              ) : loadingNumeros ? (
+                <div className="flex items-center justify-center p-3 border border-gray-200 rounded-md bg-gray-50">
+                  <Loader2 className="h-4 w-4 animate-spin text-primary mr-2" />
+                  <span className="text-sm text-gray-600">
+                    Carregando números disponíveis...
+                  </span>
+                </div>
+              ) : numerosDisponiveis.length === 0 && provaId ? (
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-md">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-semibold text-amber-800">
+                        Impossível alterar número
+                      </p>
+                      <p className="text-xs text-amber-700 mt-1">
+                        Não há números disponíveis para esta prova.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               ) : (
-                <Input
-                  type="number"
-                  {...register("numero")}
-                  className={errors.numero ? "border-red-500" : ""}
+                <Controller
+                  name="numero"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value?.toString()}
+                      onValueChange={(value) => field.onChange(parseInt(value))}
+                      disabled={!provaId || numerosDisponiveis.length === 0}
+                    >
+                      <SelectTrigger
+                        className={errors.numero ? "border-red-500" : ""}
+                      >
+                        <SelectValue
+                          placeholder={
+                            !provaId
+                              ? "Selecione uma prova primeiro"
+                              : "Selecione o número"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {numerosDisponiveis.map((numero) => (
+                          <SelectItem key={numero} value={numero.toString()}>
+                            Questão {numero}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 />
               )}
               {errors.numero && (
