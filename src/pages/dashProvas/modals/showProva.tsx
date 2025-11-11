@@ -24,7 +24,6 @@ function ShowProva({ prova, isOpen, handleClose }: ShowProvaProps) {
     (prova.totalQuestaoCadastradas / prova.totalQuestao) * 100;
   const percentValidadas =
     (prova.totalQuestaoValidadas / prova.totalQuestaoCadastradas) * 100;
-  console.log(prova);
 
   const {
     data: { token },

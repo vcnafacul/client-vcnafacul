@@ -22,7 +22,7 @@ import DashContent from "../pages/dashContent";
 import DashGeo from "../pages/dashGeo";
 import DashNews from "../pages/dashNews";
 import DashProva from "../pages/dashProvas";
-import DashQuestion from "../pages/dashQuestion";
+import DashQuestionNew from "../pages/dashQuestionNew";
 import DashRoles from "../pages/dashRoles";
 import DashSimulado from "../pages/dashSimulado";
 import Forgot from "../pages/forgot";
@@ -182,7 +182,7 @@ export function PlatformRoutes() {
             <ProtectedRoutePermission
               permission={data.permissao[Roles.visualizarQuestao]}
             >
-              <DashQuestion />
+              <DashQuestionNew />
             </ProtectedRoutePermission>
           }
         />
