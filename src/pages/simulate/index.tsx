@@ -13,6 +13,7 @@ import Alternative from "../../components/atoms/alternative";
 import ModalImage from "../../components/atoms/modalImage";
 import SimulateTemplate from "../../components/templates/simulateTemplate";
 import { DASH, SIMULADO } from "../../routes/path";
+import { getQuestionImage } from "../../services/question/getQuestionImage";
 import { answerSimulado } from "../../services/simulado/answerSimulado";
 import { useAuthStore } from "../../store/auth";
 import { Answer, AnswerSimulado, useSimuladoStore } from "../../store/simulado";
@@ -37,7 +38,7 @@ function Simulate() {
   const [tryFinish, setTryFinish] = useState<boolean>(false);
   const [reportModal, setReportModal] = useState<boolean>(false);
   const [questionProblem, setQuestionProblem] = useState<boolean>(false);
-  const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const [questionImageUrl, setQuestionImageUrl] = useState<string>("");
   const {
     data: { token },
   } = useAuthStore();
@@ -195,7 +196,7 @@ function Simulate() {
       <ModalImage
         isOpen={modals.modalImage.isOpen}
         handleClose={() => modals.modalImage.close()}
-        image={`${BASE_URL}/images/${questionSelected?.imageId}.png`}
+        image={questionImageUrl}
       />
     );
   };
@@ -206,6 +207,27 @@ function Simulate() {
       toast.warn("Não há Simulado a serem respondido", { theme: "dark" });
     }
   });
+
+  useEffect(() => {
+    if (questionSelected?.imageId && token) {
+      getQuestionImage(questionSelected.imageId, token)
+        .then((blob) => {
+          const imageUrl = URL.createObjectURL(blob);
+          setQuestionImageUrl(imageUrl);
+        })
+        .catch((error) => {
+          toast.error("Erro ao carregar imagem da questão");
+          console.error(error);
+        });
+
+      // Cleanup da URL anterior
+      return () => {
+        if (questionImageUrl) {
+          URL.revokeObjectURL(questionImageUrl);
+        }
+      };
+    }
+  }, [questionSelected?.imageId, token]);
 
   if (data.questions.length > 0)
     return (
@@ -233,6 +255,7 @@ function Simulate() {
           }))}
           legends={simulateData.legends}
           questionSelected={questionSelected}
+          questionImageUrl={questionImageUrl}
           setReportProblem={() => {
             setQuestionProblem(true);
             modals.modalReportProblem.open();
