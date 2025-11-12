@@ -8,10 +8,18 @@ interface Props {
   scheme?: string;
   gridShape?: string;
   fill?: string;
+  dotSize?: number;
+  dotBorderWidth?: number;
 }
 
- 
-export function RadarChart({ data, scheme, gridShape, fill }: Props) {
+export function RadarChart({
+  data,
+  scheme,
+  gridShape,
+  fill,
+  dotSize = 5,
+  dotBorderWidth = 3,
+}: Props) {
   const colorScheme = scheme || "blues";
   const shape: string = gridShape || "linear";
   return (
@@ -24,9 +32,9 @@ export function RadarChart({ data, scheme, gridShape, fill }: Props) {
       gridLabelOffset={10}
       maxValue={100}
       gridLevels={10}
-      dotSize={5}
+      dotSize={dotSize}
       dotColor={{ theme: "background" }}
-      dotBorderWidth={3}
+      dotBorderWidth={dotBorderWidth}
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       colors={{ scheme: colorScheme as any }}
       fillOpacity={0.5}
