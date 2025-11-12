@@ -1,10 +1,14 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { HistoricoDTO } from "../../../dtos/historico/historicoDTO";
-import { StatusEnum } from "../../../enums/generic/statusEnum";
-import { getFormatingTime } from "../../../utils/getFormatingTime";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  CheckCircle2Icon,
+  ClockIcon,
+  TrophyIcon,
+  XCircleIcon,
+} from "lucide-react";
 import { DateTime } from "luxon";
-import { ClockIcon, CheckCircle2Icon, XCircleIcon, TrophyIcon } from "lucide-react";
+import { HistoricoDTO } from "../../../dtos/historico/historicoDTO";
+import { getFormatingTime } from "../../../utils/getFormatingTime";
 
 interface SimpleHistoryCardProps {
   historico: HistoricoDTO;
@@ -35,13 +39,11 @@ export function SimpleHistoryCard({
     historico.questoesRespondidas ===
     historico.simulado.tipo.quantidadeTotalQuestao;
 
-  const performanceColor = getPerformanceColor(
-    historico.aproveitamento.geral
-  );
+  const performanceColor = getPerformanceColor(historico.aproveitamento.geral);
 
-  const performancePercentage = (
-    historico.aproveitamento.geral * 100
-  ).toFixed(2);
+  const performancePercentage = (historico.aproveitamento.geral * 100).toFixed(
+    2
+  );
 
   const formattedDate = DateTime.fromISO(
     historico.createdAt.toString()
@@ -94,7 +96,9 @@ export function SimpleHistoryCard({
             >
               {historico.simulado.tipo.nome}
             </h3>
-            <p className="text-sm text-muted-foreground mt-1">{formattedDate}</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              {formattedDate}
+            </p>
           </div>
         </div>
       </CardHeader>
@@ -163,4 +167,3 @@ export function SimpleHistoryCard({
     </Card>
   );
 }
-
