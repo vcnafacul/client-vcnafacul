@@ -17,7 +17,7 @@ export function PerformanceChart({ aproveitamento }: PerformanceChartProps) {
   // pega os ultimos 10 simulados
   const historicos = aproveitamento.historicos.slice(0, 10).reverse();
   const xAxisData = historicos.map((h) =>
-    formatDate(h.createdAt.toString(), "dd/MM/yyyy HH:mm")
+    formatDate(h.createdAt.toString(), "dd/MM/yyyy HH:mm:ss")
   );
   const performanceData = historicos.map((h) => h.performance.geral * 100);
   // Calcula estatísticas

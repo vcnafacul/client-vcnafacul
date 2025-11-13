@@ -376,7 +376,7 @@ export function SimulationHistoryHeader({
       </Grid>
 
       {/* Recomendações */}
-      {parseFloat(aproveitamentoGeral) < 70 && (
+      {/* {parseFloat(aproveitamentoGeral) < 70 && (
         <Paper
           elevation={3}
           sx={{
@@ -397,7 +397,7 @@ export function SimulationHistoryHeader({
             praticando e revisando os conteúdos!
           </Typography>
         </Paper>
-      )}
+      )} */}
     </Box>
   );
 }

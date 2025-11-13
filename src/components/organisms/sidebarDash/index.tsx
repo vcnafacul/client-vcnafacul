@@ -5,7 +5,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
 } from "@/components/ui/sidebar";
@@ -22,8 +21,7 @@ export function SidebarDash() {
     <Sidebar side="right">
       <SidebarHeader />
       <SidebarContent>
-        <SidebarGroup className="pt-8 overflow-y-scroll scrollbar-hide">
-          <SidebarGroupLabel>Menu</SidebarGroupLabel>
+        <SidebarGroup className="pt-12 overflow-y-scroll scrollbar-hide">
           <SidebarGroupContent>
             <SidebarMenu className="py-4 gap-0">
               {dashCardMenuItems.map((card) => (
