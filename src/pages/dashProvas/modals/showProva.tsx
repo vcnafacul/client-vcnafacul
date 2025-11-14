@@ -36,6 +36,7 @@ function ShowProva({ prova, isOpen, handleClose }: ShowProvaProps) {
   };
 
   const downloadFile = async (filename: string, fileType: string) => {
+    const id = toast.loading(`Baixando prova...`);
     try {
       const blob = await getProvaFile(filename, token);
 
@@ -48,6 +49,7 @@ function ShowProva({ prova, isOpen, handleClose }: ShowProvaProps) {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+      toast.dismiss(id);
     } catch (error) {
       toast.error(`Erro ao baixar o ${fileType}`);
     }

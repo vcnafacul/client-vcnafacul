@@ -11,6 +11,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { getProvaFile } from "@/services/prova/getFile";
 import { getMissingNumber } from "@/services/prova/getMissingNumber";
 import { updateStatus } from "@/services/question/updateStatus";
 import { useAuthStore } from "@/store/auth";
@@ -26,6 +27,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
+import { toast } from "react-toastify";
 import { TabClassificacaoProps } from "./types";
 import { useClassificacaoForm } from "./useClassificacaoForm";
 
@@ -193,6 +195,30 @@ export function TabClassificacao({
           icon: "❓",
         };
     }
+  };
+
+  const downloadFile = async (filename: string, fileType: string) => {
+    const id = toast.loading(`Baixando prova...`);
+    try {
+      const blob = await getProvaFile(filename, token);
+
+      // Criar URL do blob e fazer download
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${provaSelecionada?.nome}_${fileType}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toast.dismiss(id);
+    } catch (error) {
+      toast.error(`Erro ao baixar o ${fileType}`);
+    }
+  };
+
+  const handleDownloadProva = () => {
+    downloadFile(provaSelecionada?.filename || "", "prova");
   };
 
   const statusDisplay = getStatusDisplay();
@@ -706,16 +732,15 @@ export function TabClassificacao({
                 <label className="text-sm font-semibold text-gray-600">
                   Link da Prova
                 </label>
-                <a
-                  href={question.prova}
-                  target="_blank"
+                <Button
+                  onClick={handleDownloadProva}
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 p-3 bg-blue-50 rounded-md border border-blue-200 hover:bg-blue-100 transition-colors"
+                  className="flex items-center w-full h-12 gap-2 p-3 bg-blue-50 rounded-md border border-blue-200 hover:bg-blue-100 transition-colors"
                 >
                   <span className="text-blue-600 font-medium">
                     🔗 Visualizar Prova
                   </span>
-                </a>
+                </Button>
               </div>
             )}
           </div>
