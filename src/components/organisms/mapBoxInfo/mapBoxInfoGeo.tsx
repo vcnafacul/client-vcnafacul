@@ -52,7 +52,7 @@ function MapBoxInfoGeo({ geo, ctaLink }: MapBoxInfoProps) {
             <FaWhatsappSquare color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.email.length !== 0 && (
+        {geo?.email?.length !== 0 && (
           <a href={`mailto:${geo?.email}`}>
             <FaEnvelopeSquare color={"#707070"} size={40} />
           </a>
@@ -97,7 +97,9 @@ function MapBoxInfoGeo({ geo, ctaLink }: MapBoxInfoProps) {
         Conhece um cursinho popular?
       </Text>
       <div>
-        <BLink className="min-w-[300px]"  to={ctaLink}>Cadastrar um Cursinho</BLink>
+        <BLink className="min-w-[300px]" to={ctaLink}>
+          Cadastrar um Cursinho
+        </BLink>
       </div>
     </>
   );
