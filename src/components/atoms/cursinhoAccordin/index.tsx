@@ -34,7 +34,7 @@ export function CursinhoAccordion({ monitoring }: CursinhoAccordionProps) {
     <Accordion type="single" collapsible className="w-full">
       <AccordionItem
         value={monitoring.id}
-        className="border rounded-xl shadow-sm transition hover:shadow-md"
+        className="border rounded-xl shadow-sm transition hover:shadow-md min-h-28"
       >
         {/* Cabeçalho */}
         <div className="p-4 flex items-center justify-between">
@@ -78,11 +78,11 @@ export function CursinhoAccordion({ monitoring }: CursinhoAccordionProps) {
         )}
 
         {/* Conteúdo expandido */}
-        <AccordionContent className="p-4 grid grid-cols-2 gap-2 text-sm">
+        <AccordionContent className="p-4 gap-2 text-sm">
           {monitoring.logs.map((log, i) => (
-            <div key={i} className="flex flex-col md:flex-row gap-2">
+            <div key={i} className="flex flex-col md:flex-row gap-2 py-0.5">
               <span className="text-gray-500">
-                {formatDate(log.createdAt.toString(), "dd/MM/yyyy HH:mm:ss")}
+                {formatDate(log.createdAt.toString(), "dd/MM/yyyy HH:mm")}
               </span>
               <span className="text-blue-600">{log.description}</span>
             </div>

@@ -29,9 +29,11 @@ export default function RegistrationMonitor() {
           Acompanhe aqui suas inscrições realizadas.
         </div>
       </div>
-      {registrationMonitoring.map((registration) => (
-        <CursinhoAccordion key={registration.id} monitoring={registration} />
-      ))}
+      <div className="flex flex-col gap-2">
+        {registrationMonitoring.map((registration) => (
+          <CursinhoAccordion key={registration.id} monitoring={registration} />
+        ))}
+      </div>
     </div>
   );
 }
