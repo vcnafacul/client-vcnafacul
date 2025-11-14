@@ -5,7 +5,7 @@ import Text from "../../components/atoms/text";
 import Button from "../../components/molecules/button";
 
 import { useModals } from "@/hooks/useModal";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ReactComponent as Report } from "../../assets/icons/warning.svg";
@@ -47,14 +47,19 @@ function Simulate() {
 
   const questionSelected = data.questions[data.questionActive];
 
-  const getStatus = (viewed: boolean, resolved: boolean, actived: boolean) => {
-    if (actived) return QuestionBoxStatus.active;
-    else if (resolved) return QuestionBoxStatus.solved;
-    else if (viewed) return QuestionBoxStatus.unsolved;
-    return QuestionBoxStatus.unread;
-  };
+  // Memoiza a função de status para evitar recriação
+  const getStatus = useCallback(
+    (viewed: boolean, resolved: boolean, actived: boolean) => {
+      if (actived) return QuestionBoxStatus.active;
+      else if (resolved) return QuestionBoxStatus.solved;
+      else if (viewed) return QuestionBoxStatus.unsolved;
+      return QuestionBoxStatus.unread;
+    },
+    []
+  );
 
-  const Encerrar = () => {
+  // Memoiza a função de encerrar
+  const Encerrar = useCallback(() => {
     const res: Answer[] = data.questions
       .filter((q) => !!q.answered)
       .map((q) => {
@@ -80,9 +85,10 @@ function Simulate() {
       .finally(() => {
         navigate(`${DASH}/${SIMULADO}`);
       });
-  };
+  }, [data.questions, data.finished, data.started, data._id, token, navigate]);
 
-  const confirmQuestion = () => {
+  // Memoiza a função de confirmar questão
+  const confirmQuestion = useCallback(() => {
     confirm();
     isFinish();
     const solvedCount = data.questions.reduce(
@@ -92,92 +98,103 @@ function Simulate() {
     if (solvedCount + 1 === data.questions.length) {
       setTryFinish(true);
     }
-  };
+  }, [confirm, isFinish, data.questions]);
 
-  const dataModal: ModalType[] = [
-    {
-      show: !data.finish! && tryFinish && !reportModal,
-      title: "Deseja realmente finalizar seu simulado?",
-      subTitle: "Você não respondeu todas as questões",
-      buttons: [
-        {
-          onClick: () => setTryFinish(false),
-          type: "secondary",
-          children: "Nao",
-        },
-        {
-          onClick: () => setFinish(),
-          children: "Sim",
-        },
-      ],
-    },
-    {
-      show: data.finish! && tryFinish && !reportModal,
-      title: "Parabens!!! Ocorreu tudo certo com seu simulado?",
-      subTitle:
-        "Reporte possíveis erros ou traga sugestões para a contínua melhoria da plataforma",
-      buttons: [
-        {
-          onClick: () => Encerrar(),
-          children: "Confirmar e Enviar",
-        },
-        {
-          onClick: () => setReportModal(true),
-          type: "secondary",
-          children: (
-            <div className="flex items-center gap-2">
-              <span>Reportar problema</span>
-              <Report className="w-6 h-6" />
-            </div>
-          ),
-        },
-      ],
-    },
-    {
-      show: reportModal && tryFinish,
-      title: "Qual tipo de problema gostaria de reportar?",
-      subTitle:
-        "ocorreu algum problema com alguma questão especifica ou um bug na plataforma?",
-      buttons: [
-        {
-          onClick: () => setTryFinish(false),
-          type: "secondary",
-          children: (
-            <div className="flex items-center gap-2 justify-center">
-              <span>Reportar problema</span>
-              <Report className="w-6 h-6 transition-all duration-300" />
-            </div>
-          ),
-        },
-        {
-          onClick: () => {
-            setQuestionProblem(false);
-            modals.modalReportProblem.open();
+  // Memoiza os modais para evitar recriação
+  const dataModal: ModalType[] = useMemo(
+    () => [
+      {
+        show: !data.finish! && tryFinish && !reportModal,
+        title: "Deseja realmente finalizar seu simulado?",
+        subTitle: "Você não respondeu todas as questões",
+        buttons: [
+          {
+            onClick: () => setTryFinish(false),
+            type: "secondary",
+            children: "Nao",
           },
-          type: "secondary",
-          children: (
-            <div className="flex items-center gap-2 justify-center">
-              <span>Reportar questão</span>
-              <Report className="w-6 h-6 transition-all duration-300 group-hover:h-8" />
-            </div>
-          ),
-        },
-        {
-          onClick: () => setReportModal(false),
-          children: <span>Voltar</span>,
-        },
-      ],
-    },
-  ];
+          {
+            onClick: () => setFinish(),
+            children: "Sim",
+          },
+        ],
+      },
+      {
+        show: data.finish! && tryFinish && !reportModal,
+        title: "Parabens!!! Ocorreu tudo certo com seu simulado?",
+        subTitle:
+          "Reporte possíveis erros ou traga sugestões para a contínua melhoria da plataforma",
+        buttons: [
+          {
+            onClick: () => Encerrar(),
+            children: "Confirmar e Enviar",
+          },
+          {
+            onClick: () => setReportModal(true),
+            type: "secondary",
+            children: (
+              <div className="flex items-center gap-2">
+                <span>Reportar problema</span>
+                <Report className="w-6 h-6" />
+              </div>
+            ),
+          },
+        ],
+      },
+      {
+        show: reportModal && tryFinish,
+        title: "Qual tipo de problema gostaria de reportar?",
+        subTitle:
+          "ocorreu algum problema com alguma questão especifica ou um bug na plataforma?",
+        buttons: [
+          {
+            onClick: () => setTryFinish(false),
+            type: "secondary",
+            children: (
+              <div className="flex items-center gap-2 justify-center">
+                <span>Reportar problema</span>
+                <Report className="w-6 h-6 transition-all duration-300" />
+              </div>
+            ),
+          },
+          {
+            onClick: () => {
+              setQuestionProblem(false);
+              modals.modalReportProblem.open();
+            },
+            type: "secondary",
+            children: (
+              <div className="flex items-center gap-2 justify-center">
+                <span>Reportar questão</span>
+                <Report className="w-6 h-6 transition-all duration-300 group-hover:h-8" />
+              </div>
+            ),
+          },
+          {
+            onClick: () => setReportModal(false),
+            children: <span>Voltar</span>,
+          },
+        ],
+      },
+    ],
+    [
+      data.finish,
+      tryFinish,
+      reportModal,
+      setFinish,
+      Encerrar,
+      modals.modalReportProblem,
+    ]
+  );
 
-  const FinishReport = () => {
+  const FinishReport = useMemo(() => {
     return dataModal.map((modal, index) => {
       if (modal.show) return <ModalInfo key={index} modal={modal} />;
       else return null;
     });
-  };
+  }, [dataModal]);
 
-  const ReportProblem = () => {
+  const ReportProblem = useMemo(() => {
     return !modals.modalReportProblem.isOpen ? null : (
       <ModalReportProblem
         isOpen={modals.modalReportProblem.isOpen}
@@ -189,9 +206,15 @@ function Simulate() {
         numberQuestion={questionSelected.numero + 1}
       />
     );
-  };
+  }, [
+    modals.modalReportProblem.isOpen,
+    questionProblem,
+    questionSelected._id,
+    questionSelected.numero,
+    modals.modalReportProblem,
+  ]);
 
-  const QuestionImageModal = () => {
+  const QuestionImageModal = useMemo(() => {
     return !modals.modalImage.isOpen ? null : (
       <ModalImage
         isOpen={modals.modalImage.isOpen}
@@ -199,14 +222,15 @@ function Simulate() {
         image={questionImageUrl}
       />
     );
-  };
+  }, [modals.modalImage.isOpen, questionImageUrl, modals.modalImage]);
 
   useEffect(() => {
     if (data.questions.length === 0) {
       navigate(SIMULADO);
       toast.warn("Não há Simulado a serem respondido", { theme: "dark" });
     }
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Executa apenas uma vez ao montar o componente
 
   useEffect(() => {
     if (questionSelected?.imageId && token) {
@@ -304,9 +328,9 @@ function Simulate() {
             </div>
           }
         />
-        <FinishReport />
-        <ReportProblem />
-        <QuestionImageModal />
+        {FinishReport}
+        {ReportProblem}
+        {QuestionImageModal}
       </>
     );
 }
