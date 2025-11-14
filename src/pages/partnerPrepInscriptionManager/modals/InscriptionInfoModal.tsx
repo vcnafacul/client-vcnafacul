@@ -304,15 +304,6 @@ export function InscriptionInfoModal({
             </div>
           </BLink>
           <div className="flex flex-1 justify-end gap-4">
-            {canExtend && (
-              <Button
-                typeStyle="secondary"
-                className="w-32 h-8"
-                onClick={() => setOpenModalExtend(true)}
-              >
-                Prorrogar
-              </Button>
-            )}
             <Button
               className="w-24 h-8 bg-red border-none hover:bg-red/60"
               disabled={inscriptionSelected!.subscribersCount > 0}
@@ -323,13 +314,24 @@ export function InscriptionInfoModal({
                 <p className="text-sm w-fit">Deletar</p>
               </div>
             </Button>
-            <Button
-              typeStyle="secondary"
-              className="w-24 h-8"
-              onClick={() => setOpenModalEdit(true)}
-            >
-              Editar
-            </Button>
+
+            {canExtend === true ? (
+              <Button
+                typeStyle="secondary"
+                className="w-32 h-8"
+                onClick={() => setOpenModalExtend(true)}
+              >
+                Prorrogar
+              </Button>
+            ) : (
+              <Button
+                typeStyle="secondary"
+                className="w-24 h-8"
+                onClick={() => setOpenModalEdit(true)}
+              >
+                Editar
+              </Button>
+            )}
           </div>
         </div>
         <ModalEdit />
