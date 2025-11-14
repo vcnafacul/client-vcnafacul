@@ -1,5 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Box, Chip, Grid, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Chip,
+  Grid,
+  LinearProgress,
+  Paper,
+  Typography,
+} from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 import {
   AlertCircle,
@@ -11,6 +18,7 @@ import {
   TrendingUp,
   XCircle,
 } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HistoricoDTO } from "../../../dtos/historico/historicoDTO";
 import { DASH, SIMULADO_HISTORIES } from "../../../routes/path";
@@ -25,16 +33,33 @@ export function SimulationHistoryHeader({
   historic,
 }: SimulationHistoryHeaderProps) {
   const navigate = useNavigate();
+  // Estado para controlar visualização por matéria ou frente
+  const [viewMode, setViewMode] = useState<"materias" | "frentes">("materias");
 
   const finished =
     historic.simulado.tipo.quantidadeTotalQuestao ===
     historic.questoesRespondidas;
 
-  // Prepara dados do Radar (aproveitamento por matéria)
-  const radarData = historic.aproveitamento.materias.map((m) => ({
+  // Prepara dados do Radar por MATÉRIAS
+  const radarDataMaterias = historic.aproveitamento.materias.map((m) => ({
     materia: m.nome,
     aproveitamento: parseFloat((m.aproveitamento * 100).toFixed(1)),
   }));
+
+  // Prepara dados do Radar por FRENTES
+  // Extrai todas as frentes de todas as matérias
+  const radarDataFrente = historic.aproveitamento.materias.flatMap((materia) =>
+    materia.frentes.map((frente) => ({
+      materia: `${materia.nome} - ${frente.nome}`,
+      aproveitamento: parseFloat((frente.aproveitamento * 100).toFixed(1)),
+      materiaNome: materia.nome,
+      frenteNome: frente.nome,
+    }))
+  );
+
+  // Seleciona os dados baseado no modo de visualização
+  const radarData =
+    viewMode === "frentes" ? radarDataFrente : radarDataMaterias;
 
   // Prepara dados do Pie (acertos/erros)
   const acertos = historic.respostas.filter(
@@ -67,13 +92,20 @@ export function SimulationHistoryHeader({
   const percentualAcertos = ((acertos / totalQuestoes) * 100).toFixed(1);
   const percentualErros = ((erros / totalQuestoes) * 100).toFixed(1);
 
-  // Encontra melhor e pior matéria
-  const melhorMateria = radarData.reduce((prev, current) =>
+  // Encontra melhor e pior (baseado no modo de visualização)
+  const melhor = radarData.reduce((prev, current) =>
     prev.aproveitamento > current.aproveitamento ? prev : current
   );
-  const piorMateria = radarData.reduce((prev, current) =>
+  const pior = radarData.reduce((prev, current) =>
     prev.aproveitamento < current.aproveitamento ? prev : current
   );
+
+  // Função para determinar a cor da barra baseado no aproveitamento
+  const getProgressColor = (aproveitamento: number) => {
+    if (aproveitamento >= 70) return "success";
+    if (aproveitamento >= 50) return "warning";
+    return "error";
+  };
 
   return (
     <Box sx={{ p: 3, minHeight: "100vh" }}>
@@ -276,46 +308,158 @@ export function SimulationHistoryHeader({
 
       {/* Gráficos */}
       <Grid container spacing={3}>
-        {/* Radar Chart - Aproveitamento por Matéria */}
+        {/* Radar Chart - Aproveitamento por Matéria/Frente */}
         <Grid item xs={12} md={7}>
           <Paper elevation={3} sx={{ p: 3, borderRadius: 2, height: "100%" }}>
-            <Typography
-              variant="h6"
-              fontWeight="bold"
-              sx={{ mb: 2, display: "flex", alignItems: "center", gap: 1 }}
+            <Box
+              sx={{
+                mb: 2,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                gap: 2,
+              }}
             >
-              <Target className="h-5 w-5" />
-              Desempenho por Matéria
-            </Typography>
-            <Box sx={{ height: 400 }}>
-              <RadarChart
-                data={radarData}
-                scheme="category10"
-                fill="#374151"
-                dotSize={12}
-                dotBorderWidth={4}
-              />
+              <Typography
+                variant="h6"
+                fontWeight="bold"
+                sx={{ display: "flex", alignItems: "center", gap: 1 }}
+              >
+                <Target className="h-5 w-5" />
+                Desempenho por {viewMode === "frentes" ? "Frente" : "Matéria"}
+              </Typography>
+
+              {/* Toggle Button */}
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <Button
+                  variant={viewMode === "materias" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setViewMode("materias")}
+                  className="transition-all"
+                >
+                  📚 Matérias
+                </Button>
+                <Button
+                  variant={viewMode === "frentes" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setViewMode("frentes")}
+                  className="transition-all"
+                >
+                  🎯 Frentes
+                </Button>
+              </Box>
             </Box>
 
-            {/* Insights */}
-            <Box sx={{ mt: 2, display: "flex", gap: 2, flexWrap: "wrap" }}>
-              <Chip
-                icon={<TrendingUp className="h-4 w-4" />}
-                label={`Melhor: ${
-                  melhorMateria.materia
-                } (${melhorMateria.aproveitamento.toFixed(1)}%)`}
-                color="success"
-                variant="outlined"
-              />
-              <Chip
-                icon={<AlertCircle className="h-4 w-4" />}
-                label={`Precisa melhorar: ${
-                  piorMateria.materia
-                } (${piorMateria.aproveitamento.toFixed(1)}%)`}
-                color="warning"
-                variant="outlined"
-              />
-            </Box>
+            {/* Descrição explicativa */}
+            <Typography
+              variant="body2"
+              sx={{ mb: 2, color: "text.secondary", fontStyle: "italic" }}
+            >
+              {viewMode === "frentes"
+                ? "Visualizando o aproveitamento detalhado por cada frente de estudo dentro das matérias"
+                : "Visualizando o aproveitamento geral por matéria"}
+            </Typography>
+
+            {/* Modo Frentes: Exibe APENAS Radar */}
+            {viewMode === "frentes" && (
+              <>
+                <Box sx={{ height: 400 }}>
+                  <RadarChart
+                    data={radarData}
+                    scheme="category10"
+                    fill="#374151"
+                    dotSize={12}
+                    dotBorderWidth={4}
+                  />
+                </Box>
+
+                {/* Insights */}
+                <Box sx={{ mt: 2, display: "flex", gap: 2, flexWrap: "wrap" }}>
+                  <Chip
+                    icon={<TrendingUp className="h-4 w-4" />}
+                    label={`Melhor: ${
+                      melhor.materia
+                    } (${melhor.aproveitamento.toFixed(1)}%)`}
+                    color="success"
+                    variant="outlined"
+                  />
+                  <Chip
+                    icon={<AlertCircle className="h-4 w-4" />}
+                    label={`Precisa melhorar: ${
+                      pior.materia
+                    } (${pior.aproveitamento.toFixed(1)}%)`}
+                    color="warning"
+                    variant="outlined"
+                  />
+                </Box>
+              </>
+            )}
+
+            {/* Modo Matérias: Exibe APENAS Barras de Progresso */}
+            {viewMode === "materias" && (
+              <Box sx={{ mt: 0 }}>
+                <Typography
+                  variant="subtitle2"
+                  fontWeight="bold"
+                  sx={{ mb: 2, color: "text.secondary" }}
+                >
+                  📊 Aproveitamento por Matéria
+                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                    maxHeight: "500px",
+                    overflowY: "auto",
+                    pr: 1,
+                  }}
+                >
+                  {[...radarData]
+                    .sort((a, b) => b.aproveitamento - a.aproveitamento)
+                    .map((item, index) => (
+                      <Box key={index}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            mb: 0.5,
+                          }}
+                        >
+                          <Typography variant="body2" fontWeight="medium">
+                            {item.materia}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            fontWeight="bold"
+                            color={
+                              item.aproveitamento >= 70
+                                ? "success.main"
+                                : item.aproveitamento >= 50
+                                ? "warning.main"
+                                : "error.main"
+                            }
+                          >
+                            {item.aproveitamento.toFixed(1)}%
+                          </Typography>
+                        </Box>
+                        <LinearProgress
+                          variant="determinate"
+                          value={item.aproveitamento}
+                          color={getProgressColor(item.aproveitamento)}
+                          sx={{
+                            height: 8,
+                            borderRadius: 1,
+                            backgroundColor: "rgba(0, 0, 0, 0.1)",
+                          }}
+                        />
+                      </Box>
+                    ))}
+                </Box>
+              </Box>
+            )}
           </Paper>
         </Grid>
 
