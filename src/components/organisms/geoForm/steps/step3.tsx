@@ -158,6 +158,7 @@ function Step3Geo({
               html: renderToStaticMarkup(
                 <PointIcon className="fill-red h-7" />
               ),
+              iconAnchor: [16, 32], // <-- Aqui está o ajuste
             })}
           ></Marker>;
         }
@@ -187,6 +188,7 @@ function Step3Geo({
           icon={leaflet.divIcon({
             className: "w-8 h-8",
             html: renderToStaticMarkup(<PointIcon className="fill-red h-8" />),
+            iconAnchor: [16, 32], // <-- Aqui está o ajuste
           })}
         ></Marker>
         <CenterMap position={selectedPosition as LatLngTuple} />

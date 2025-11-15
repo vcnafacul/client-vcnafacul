@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { FORM_GEOLOCATION } from "../../../routes/path";
 import getGeolocation from "../../../services/geolocation/getGeolocation";
@@ -94,7 +94,7 @@ function Map() {
       />
 
       <MapBoxInfo
-        boxRef={boxRef}
+        boxRef={boxRef as RefObject<HTMLDivElement>}
         boxInfo={
           <div
             className="md:w-[600px] h-fit relative mb-10 mx-auto md:absolute z-40 

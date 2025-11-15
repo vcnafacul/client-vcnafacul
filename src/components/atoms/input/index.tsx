@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { ComponentProps } from "react";
 import { FieldValues, UseFormRegister } from "react-hook-form";
 import { VariantProps, tv } from "tailwind-variants";

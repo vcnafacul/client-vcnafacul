@@ -46,7 +46,6 @@ function statusToString(status: StatusContent | StatusEnum): string {
   return "Status Desconhecido";
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const DraggableRow = ({ row, index, moveRow }: any) => {
   const [, ref] = useDrag({
     type: ItemType,
@@ -65,7 +64,10 @@ const DraggableRow = ({ row, index, moveRow }: any) => {
 
   return (
     <tr
-      ref={(node) => ref(drop(node))}
+      ref={(node) => {
+        ref(node);
+        drop(node);
+      }}
       className="even:bg-gray-200 cursor-pointer"
     >
       <td className="text-center">{row.position}</td>

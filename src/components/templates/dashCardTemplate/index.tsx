@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { JSX, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { useDashCardContext } from "../../../context/dashCardContext";
 import Filter from "../../atoms/filter";
@@ -72,12 +72,14 @@ function DashCardTemplate({
   }, [firstCardInView, lastCardInView]);
 
   return (
-    <div className="w-full flex flex-col items-center py-8 bg-stone-100 min-h-[calc(100vh-76px)]">
+    <div className="w-full flex flex-col items-center py-8 min-h-[calc(100vh-76px)]">
       {/* Title + Voltar */}
       <div className="w-full max-w-7xl px-4 flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <div className="flex items-center gap-3">
-          {backButton}
-          <h1 className="text-3xl font-black text-marine">{title}</h1>
+        <div className="flex w-full justify-center items-center gap-3">
+          <>
+            {backButton}
+            <h1 className="text-3xl font-black text-marine">{title}</h1>
+          </>
         </div>
         {totalItems !== undefined && (
           <span className="text-sm text-gray-600 font-medium">
@@ -137,7 +139,7 @@ function DashCardTemplate({
 
       {/* Cards */}
       <div
-        className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-7xl mt-10 px-4 ${className}`}
+        className={`flex flex-wrap gap-6 justify-start w-full max-w-7xl mt-10 px-4 ${className}`}
       >
         {entities.map((entity, index) => {
           const isLastCard =

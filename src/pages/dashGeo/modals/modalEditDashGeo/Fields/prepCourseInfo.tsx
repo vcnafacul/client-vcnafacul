@@ -71,7 +71,6 @@ export function PrepCourseInfo({ form, setValue, errors, edit, geo }: Props) {
         error={errors.cep}
         disabled={!edit}
         defaultValue={geo.cep}
-        value={geo.cep}
       />
       <InputFactory
         id={form.street.label}
@@ -127,6 +126,7 @@ export function PrepCourseInfo({ form, setValue, errors, edit, geo }: Props) {
         options={form.state.options}
         disabled={!edit}
         defaultValue={geo.state}
+        value={geo.state}
       />
       <InputFactory
         id={form.phone.label}

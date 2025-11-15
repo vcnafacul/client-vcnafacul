@@ -1,10 +1,15 @@
+import Analytics from "@/pages/analytics";
 import { ConfirmEnrolled } from "@/pages/confirmEnrolled";
+import EnrollmentConfirmation from "@/pages/enrollmentConfirmation";
 import InviteMemberProcessing from "@/pages/inviteMemberProcessing";
 import ManagerCollaborator from "@/pages/managerCollaborator";
 import { PartnerClass } from "@/pages/partnerClass";
 import { PartnerClassWithStudents } from "@/pages/partnerClassWithStudents";
+import PartnerPrepForm from "@/pages/partnerPrepForm";
 import { PartnerPrepInscriptionManager } from "@/pages/partnerPrepInscriptionManager";
 import { PartnerPrepInscritionStudentManager } from "@/pages/partnerPrepInscritionStudentManager";
+import PartnerPrepManager from "@/pages/partnerPrepManager";
+import RegistrationMonitor from "@/pages/registrationMonitor";
 import { StudentsEnrolled } from "@/pages/studentsEnrolled";
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashTemplate from "../components/templates/dashTemplate";
@@ -17,7 +22,7 @@ import DashContent from "../pages/dashContent";
 import DashGeo from "../pages/dashGeo";
 import DashNews from "../pages/dashNews";
 import DashProva from "../pages/dashProvas";
-import DashQuestion from "../pages/dashQuestion";
+import DashQuestionNew from "../pages/dashQuestionNew";
 import DashRoles from "../pages/dashRoles";
 import DashSimulado from "../pages/dashSimulado";
 import Forgot from "../pages/forgot";
@@ -42,6 +47,7 @@ import {
   CONFIRM_EMAIL,
   CONTENT,
   DASH,
+  DASH_ANALYTICS,
   DASH_CONTENT,
   DASH_GEOLOCATION,
   DASH_NEWS,
@@ -50,6 +56,7 @@ import {
   DASH_ROLES,
   DASH_SIMULADO,
   DECLARED_INTEREST,
+  ENROLLMENT_CONFIRMATION,
   ESTUDO,
   FORGOT_PASSWORD_PATH,
   FORM_GEOLOCATION,
@@ -60,10 +67,13 @@ import {
   MANAGER_COLLABORATOR,
   NEWS,
   PARTNER_CLASS,
+  PARTNER_CLASS_FORM,
   PARTNER_CLASS_STUDENTS,
   PARTNER_PREP,
   PARTNER_PREP_INSCRIPTION,
+  PARTNER_PREP_MANAGER,
   REGISTER_PATH,
+  REGISTRATION_MONITOR,
   RESET_PASSWORD_PATH,
   SIMULADO,
   SIMULADO_HISTORIES,
@@ -79,13 +89,13 @@ export function PlatformRoutes() {
   return (
     <Routes>
       {/* Aluno tem acesso */}
+
       <Route element={<ConfirmEmailPage />} path={CONFIRM_EMAIL} />
       <Route element={<BaseRoutes />}>
         <Route element={<HeroRoutes />}>
           <Route path={HOME_PATH} element={<Home />} />
           <Route path={NEWS} element={<NewsPage />} />
         </Route>
-
         <Route path={LOGIN_PATH} element={<Login />} />
         <Route path={FORGOT_PASSWORD_PATH} element={<Forgot />} />
         <Route path={LOGOFF_PATH} element={<Logout />} />
@@ -93,7 +103,14 @@ export function PlatformRoutes() {
         <Route path={REGISTER_PATH} element={<Register />} />
         <Route path={FORM_GEOLOCATION} element={<Geo />} />
         <Route path={INVITE_MEMBER} element={<InviteMemberProcessing />} />
-        <Route path={`${DECLARED_INTEREST}/:inscriptionId`} element={<ConfirmEnrolled />} />
+        <Route
+          path={`${DECLARED_INTEREST}/:inscriptionId`}
+          element={<ConfirmEnrolled />}
+        />
+        <Route
+          path={ENROLLMENT_CONFIRMATION}
+          element={<EnrollmentConfirmation />}
+        />
       </Route>
 
       <Route
@@ -120,6 +137,18 @@ export function PlatformRoutes() {
           </ProtectedRoute>
         }
       >
+        <Route
+          path={REGISTRATION_MONITOR}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.visualizarMinhasInscricoes]}
+            >
+              <RegistrationMonitor />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route path={PARTNER_CLASS_FORM} element={<PartnerPrepForm />} />
+        <Route path={DASH_ANALYTICS} element={<Analytics />} />
         <Route
           path={PARTNER_PREP_INSCRIPTION}
           element={<PartnerPrepInscriptionManager />}
@@ -153,7 +182,7 @@ export function PlatformRoutes() {
             <ProtectedRoutePermission
               permission={data.permissao[Roles.visualizarQuestao]}
             >
-              <DashQuestion />
+              <DashQuestionNew />
             </ProtectedRoutePermission>
           }
         />
@@ -221,8 +250,17 @@ export function PlatformRoutes() {
             </ProtectedRoutePermission>
           }
         />
+        <Route
+          path={PARTNER_PREP_MANAGER}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.alterarPermissao]}
+            >
+              <PartnerPrepManager />
+            </ProtectedRoutePermission>
+          }
+        />
       </Route>
-
       <Route
         path="*"
         element={<Navigate to={data.token ? DASH : HOME_PATH} replace />}

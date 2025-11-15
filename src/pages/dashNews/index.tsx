@@ -18,13 +18,17 @@ import { getStatusBool } from "../../utils/getStatusIcon";
 import { Paginate } from "../../utils/paginate";
 import { dashNews } from "./data";
 import ModalEditNew from "./modals/modalEditNew";
+import { useModals } from "@/hooks/useModal";
 
 function DashNews() {
   const [news, setNews] = useState<News[]>([]);
-  const [openModal, setOpenModal] = useState<boolean>(false);
   const [newSelect, setNewSelect] = useState<News | null>();
   const [status, setStatus] = useState<StatusEnum>(StatusEnum.Approved);
   const limitCards = 100;
+
+  const modals = useModals([
+    'modalEdit',
+  ]);
 
   const {
     data: { token },
@@ -46,7 +50,7 @@ function DashNews() {
 
   const onClickCard = (cardId: number | string) => {
     setNewSelect(news.find((n) => n.id === cardId));
-    setOpenModal(true);
+    modals.modalEdit.open();
   };
 
   const create = (session: string, title: string, file: any) => {
@@ -59,7 +63,7 @@ function DashNews() {
       .then((res) => {
         news.push(res);
         setNews(news);
-        setOpenModal(false);
+        modals.modalEdit.close();
         toast.success(`Novidade ${res.title} criado com sucesso`, {
           theme: "dark",
         });
@@ -81,7 +85,7 @@ function DashNews() {
             return n;
           })
         );
-        setOpenModal(false);
+        modals.modalEdit.close();
         toast.success(`Novidade ${newSelect?.title} deletada com sucesso`);
       })
       .catch((error: Error) => {
@@ -108,11 +112,11 @@ function DashNews() {
   };
 
   const EditNews = () => {
-    return !openModal ? null : (
+    return !modals.modalEdit.isOpen ? null : (
       <ModalEditNew
-        isOpen={openModal}
+        isOpen={modals.modalEdit.isOpen}
         handleClose={() => {
-          setOpenModal(false);
+          modals.modalEdit.close();
         }}
         news={newSelect!}
         create={create}
@@ -129,7 +133,7 @@ function DashNews() {
     {
       onClick: () => {
         setNewSelect(null);
-        setOpenModal(true);
+        modals.modalEdit.open();
       },
       typeStyle: "quaternary",
       size: "small",

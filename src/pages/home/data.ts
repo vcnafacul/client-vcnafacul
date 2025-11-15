@@ -53,11 +53,11 @@ import { ReactComponent as homeSubjectSociologia } from "../../assets/icons/home
 
 import hostingerLogo from "../../assets/images/home/1200px-Hostinger_logo_purple.svg@2x.png";
 import raccoonLogo from "../../assets/images/home/Grupo 1706.svg";
+import JaquelineRibeiro from "../../assets/images/home/JaquelineRibeiro3.png";
 import wikilabLogo from "../../assets/images/home/Logo_WikiLab.png";
 import UFSCarLogo from "../../assets/images/home/UFSCar.png";
 import tumble from "../../assets/images/home/thumb-about-us.png";
 import { SupportersProps } from "../../components/organisms/supporters";
-import  JaquelineRibeiro from "../../assets/images/home/JaquelineRibeiro3.png";
 
 export const userNavigationSign: ItemMenuProps[] = [
   {
@@ -288,7 +288,7 @@ export const footer: FooterProps = {
       Home_Menu_Item_id: {
         id: 1,
         name: "Termos de Serviço",
-        link: "/Termos de Uso.pdf",
+        link: "/docs/Termos_de_Uso.pdf",
         target: "_blank",
       },
     },
@@ -296,7 +296,7 @@ export const footer: FooterProps = {
       Home_Menu_Item_id: {
         id: 2,
         name: "Politicas de Privacidade",
-        link: "/Política de Privacidade.pdf",
+        link: "/docs/Política_de_Privacidade.pdf",
         target: "_blank",
       },
     },

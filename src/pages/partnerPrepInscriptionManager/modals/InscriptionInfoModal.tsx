@@ -3,6 +3,7 @@ import Button from "@/components/molecules/button";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import * as ShadcnButton from "@/components/ui/button";
+import { extendInscription } from "@/services/prepCourse/inscription/extend";
 import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
 import { useAuthStore } from "@/store/auth";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
@@ -13,6 +14,7 @@ import { useState } from "react";
 import { FaRegCopy } from "react-icons/fa6";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { dataInscription } from "../data";
+import { ExtendInscriptionModal } from "./ExtendInscriptionModal";
 import {
   InscriptionInfoCreateEditModal,
   InscriptionOutput,
@@ -20,7 +22,8 @@ import {
 
 import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
 import BLink from "@/components/molecules/bLink";
-import { questions } from "@/pages/partnerPrepInscription/data";
+import { useToastAsync } from "@/hooks/useToastAsync";
+import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
 import { DASH, PARTNER_PREP_INSCRIPTION } from "@/routes/path";
 import { toast } from "react-toastify";
 import * as XLSX from "xlsx";
@@ -46,10 +49,18 @@ export function InscriptionInfoModal({
   >(inscription);
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [openModalExtend, setOpenModalExtend] = useState(false);
 
   const {
     data: { token },
   } = useAuthStore();
+
+  const executeAsync = useToastAsync();
+
+  // Verifica se a data de fim é maior que a data atual
+  const canExtend = inscriptionSelected?.endDate
+    ? new Date(inscriptionSelected.endDate) < new Date()
+    : false;
 
   const ModalDelete = () => {
     return (
@@ -74,16 +85,25 @@ export function InscriptionInfoModal({
 
   const myHandleEdit = (data: InscriptionOutput) => {
     handleEdit(data).then(() => {
-      setInscriptionSelected({
-        ...inscriptionSelected!,
-        name: data.name,
-        description: data.description,
-        openingsCount: data.openingsCount,
-        startDate: data.range[0],
-        endDate: data.range[1],
-        requestDocuments: data.requestDocuments,
-      });
       setOpenModalEdit(false);
+    });
+  };
+
+  const handleExtend = async (endDate: Date) => {
+    if (!inscriptionSelected?.id) return;
+
+    await executeAsync({
+      action: () => extendInscription(token, inscriptionSelected!.id!, endDate),
+      loadingMessage: "Prorrogando processo seletivo...",
+      successMessage: "Processo seletivo prorrogado com sucesso!",
+      errorMessage: "Erro ao prorrogar processo seletivo",
+      onSuccess: () => {
+        setInscriptionSelected({
+          ...inscriptionSelected!,
+          endDate: endDate,
+        });
+        setOpenModalExtend(false);
+      },
     });
   };
 
@@ -98,14 +118,37 @@ export function InscriptionInfoModal({
     ) : null;
   };
 
-  const flattenData = (data: XLSXStudentCourseFull[], questions: string[]) => {
+  const ModalExtend = () => {
+    return (
+      <ExtendInscriptionModal
+        isOpen={openModalExtend}
+        handleClose={() => setOpenModalExtend(false)}
+        handleConfirm={handleExtend}
+        currentEndDate={
+          inscriptionSelected?.endDate
+            ? new Date(inscriptionSelected.endDate)
+            : undefined
+        }
+      />
+    );
+  };
+
+  const uniqueKeysFromArrays = (...arrays: SocioeconomicAnswer[][]) => [
+    ...new Set(arrays.flat().map((obj) => obj.question)),
+  ];
+
+  const flattenData = (data: XLSXStudentCourseFull[]) => {
+    const keys = uniqueKeysFromArrays(
+      ...data.map((student) => student.socioeconomic)
+    );
     return data.map((student) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const flattenedItem: any = { ...student };
       delete flattenedItem.logs;
       delete flattenedItem.documents;
+
       // Preenche as respostas socioeconômicas
-      questions.forEach((question) => {
+      keys.forEach((question) => {
         // Encontra a resposta para a pergunta atual
         const socioItem = student.socioeconomic.find(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -132,11 +175,14 @@ export function InscriptionInfoModal({
     });
   };
 
-  const exportToExcel = () => {
-    const id = toast.loading("Exportando lista de alunos...");
-    getSubscribers(token, inscriptionSelected!.id!)
-      .then((data) => {
-        const flattenedData = flattenData(data, questions);
+  const exportToExcel = async () => {
+    await executeAsync({
+      action: () => getSubscribers(token, inscriptionSelected!.id!),
+      loadingMessage: "Exportando lista de alunos...",
+      successMessage: "Lista de alunos exportada com sucesso!",
+      errorMessage: "Erro ao exportar lista de alunos",
+      onSuccess: (data) => {
+        const flattenedData = flattenData(data);
 
         flattenedData.sort((a, b) => {
           if (a.cadastrado_em < b.cadastrado_em) return -1;
@@ -151,19 +197,11 @@ export function InscriptionInfoModal({
         XLSX.utils.book_append_sheet(workbook, worksheet, "Dados");
 
         // Gera o arquivo Excel e faz o download
-        toast.dismiss(id);
         XLSX.writeFile(workbook, `${Date.now()}.xlsx`);
-      })
-      .catch(() => {
-        toast.update(id, {
-          render: "Erro ao exportar lista de alunos",
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
-    // Cria uma nova planilha a partir dos dados
+      },
+    });
   };
+
   const clipboard = () => {
     const linkPrepCourse = `${
       import.meta.env.VITE_APP_BASE_URL
@@ -267,7 +305,8 @@ export function InscriptionInfoModal({
           </BLink>
           <div className="flex flex-1 justify-end gap-4">
             <Button
-              className="w-24 h-8 bg-red border-none hover:bg-red/60 "
+              className="w-24 h-8 bg-red border-none hover:bg-red/60"
+              disabled={inscriptionSelected!.subscribersCount > 0}
               onClick={() => setOpenModalDelete(true)}
             >
               <div className="flex justify-center gap-1.5">
@@ -275,17 +314,29 @@ export function InscriptionInfoModal({
                 <p className="text-sm w-fit">Deletar</p>
               </div>
             </Button>
-            <Button
-              typeStyle="secondary"
-              className="w-24 h-8"
-              onClick={() => setOpenModalEdit(true)}
-            >
-              Editar
-            </Button>
+
+            {canExtend === true ? (
+              <Button
+                typeStyle="secondary"
+                className="w-32 h-8"
+                onClick={() => setOpenModalExtend(true)}
+              >
+                Prorrogar
+              </Button>
+            ) : (
+              <Button
+                typeStyle="secondary"
+                className="w-24 h-8"
+                onClick={() => setOpenModalEdit(true)}
+              >
+                Editar
+              </Button>
+            )}
           </div>
         </div>
         <ModalEdit />
         <ModalDelete />
+        <ModalExtend />
       </div>
     </ModalTemplate>
   );

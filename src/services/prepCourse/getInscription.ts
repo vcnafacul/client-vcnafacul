@@ -1,29 +1,36 @@
 import { StatusEnum } from "@/enums/generic/statusEnum";
+import PartnerPrepForm from "@/types/partnerPrepForm/partnerPrepForm";
 import fetchWrapper from "../../utils/fetchWrapper";
 import { inscriptionCourse } from "../urls";
 
 interface HasActiveInscriptionResponse {
+  prepCourseId: string;
   prepCourseName: string;
   inscription: {
     name: string;
+    email: string;
     description: string;
     startDate: Date;
     endDate: Date;
     status: StatusEnum;
-  }
+  };
+  partnerPrepForm: PartnerPrepForm;
 }
 
 export async function getInscription(
   inscritionId: string,
   token: string
 ): Promise<HasActiveInscriptionResponse> {
-  const response = await fetchWrapper(`${inscriptionCourse}/to-inscription/${inscritionId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await fetchWrapper(
+    `${inscriptionCourse}/to-inscription/${inscritionId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   const res = await response.json();
   if (response.status !== 200) {

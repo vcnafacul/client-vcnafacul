@@ -2,6 +2,7 @@
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { Button } from "@/components/ui/button";
 import { Materias } from "@/enums/content/materias";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { getFrentes } from "@/services/content/getFrentes";
 import { getSubjects } from "@/services/content/getSubjects";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -30,6 +31,8 @@ interface NewDemandProps extends ModalProps {
 function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
   const [frentes, setFrentes] = useState<FrenteDto[]>([]);
   const [subjects, setSubjects] = useState<SubjectDto[]>([]);
+
+  const executeAsync = useToastAsync();
 
   const {
     data: { token },
@@ -69,28 +72,17 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
   const materia = watch("materia");
   const frente = watch("frente");
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const create = (data: any) => {
-    const id = toast.loading("Criando Demanda ... ");
-    createContent(data, token)
-      .then((res) => {
+  const create = async (data: any) => {
+    await executeAsync({
+      action: () => createContent(data, token),
+      loadingMessage: "Criando Demanda ... ",
+      successMessage: "Demanda criada com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: (res) => {
         addDemand(res);
-        toast.update(id, {
-          render: ``,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
         handleClose!();
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
   useEffect(() => {

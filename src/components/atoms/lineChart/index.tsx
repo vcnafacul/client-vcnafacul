@@ -13,7 +13,7 @@ interface Props {
   legendY: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 export function MyResponsiveLine({ data, legendX, legendY }: Props) {
   return (
       <ResponsiveLine

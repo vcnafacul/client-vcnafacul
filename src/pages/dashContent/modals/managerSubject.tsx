@@ -53,11 +53,9 @@ function ManagerSubject({
     register("description");
   }, []);
 
-  console.log(errors);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const create = (data: any) => {
-    console.log(data);
     const body: CreateSubjectDtoInput = {
       name: data.name,
       description: data.description,

@@ -1,5 +1,6 @@
 import { PermissionsList } from "@/components/atoms/permissionList";
 import { EditRoleDto } from "@/dtos/roles/editRole";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { getRoles } from "@/services/prepCourse/getRoles";
 import { updateRole } from "@/services/prepCourse/updateRole";
 import { useEffect, useState } from "react";
@@ -23,31 +24,24 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
     data: { token },
   } = useAuthStore();
 
+  const executeAsync = useToastAsync();
+
   const handleToggleChange = (name: string, checked: boolean) => {
     setRoleSelected({ ...roleSelected!, [name]: checked });
   };
 
-  const editRole = () => {
+  const editRole = async () => {
     if (!roleSelected) return;
-    const id = toast.loading("Atualizando perfil...");
-    updateRole(token, roleSelected!)
-      .then(() => {
-        toast.update(id, {
-          render: "Perfil atualizado com sucesso!",
-          type: "success",
-          isLoading: false,
-          autoClose: 5000,
-        });
+
+    await executeAsync({
+      action: () => updateRole(token, roleSelected!),
+      loadingMessage: "Atualizando perfil...",
+      successMessage: "Perfil atualizado com sucesso!",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
         handleClose!();
-      })
-      .catch(() => {
-        toast.update(id, {
-          render: "Erro ao atualizar perfil!",
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+      },
+    });
   };
 
   useEffect(() => {

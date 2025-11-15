@@ -1,11 +1,11 @@
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { Button } from "@/components/ui/button";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { InviteMember } from "@/services/prepCourse/invite-member";
 import { useAuthStore } from "@/store/auth";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import * as yup from "yup";
 
 interface TempInviteMemberProps {
@@ -25,6 +25,8 @@ export function TempInviteMember(props: TempInviteMemberProps) {
     data: { token },
   } = useAuthStore();
 
+  const executeAsync = useToastAsync();
+
   const {
     handleSubmit,
     register,
@@ -33,37 +35,30 @@ export function TempInviteMember(props: TempInviteMemberProps) {
     resolver: yupResolver(schema),
   });
 
-  function onSubmit(data: { email: string }) {
-    const id = toast.loading("Enviando convite...");
-    InviteMember(data.email, token)
-      .then(() => {
-        toast.update(id, {
-          render: "Convite enviado com sucesso!",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        props.handleClose();
-      })
-      .catch((e) => {
-        if (e.message === "Failed to fetch") {
-          e.message = "Erro ao enviar convite, tente novamente mais tarde";
+  async function onSubmit(data: { email: string }) {
+    await executeAsync({
+      action: () => InviteMember(data.email, token),
+      loadingMessage: "Enviando convite...",
+      successMessage: "Convite enviado com sucesso!",
+      errorMessage: (error: Error) => error.message,
+      onError: (error: Error) => {
+        if (error.message === "Failed to fetch") {
+          return "Erro ao enviar convite, tente novamente mais tarde";
         }
-        toast.update(id, {
-          render: e.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+        return error.message;
+      },
+      onSuccess: () => {
+        props.handleClose();
+      },
+    });
   }
-  TempInviteMember;
 
   return (
     <ModalTemplate {...props} className="bg-white p-4 rounded-md">
       <div className="w-96">
         <h2 className="text-base text-center font-bold text-marine">
-        Digite o e-mail do usuário para convidá-lo como colaborador do cursinho.
+          Digite o e-mail do usuário para convidá-lo como colaborador do
+          cursinho.
         </h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <input

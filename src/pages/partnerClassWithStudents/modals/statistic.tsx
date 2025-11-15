@@ -21,6 +21,7 @@ export function StatisticModal({
       className="bg-white p-4 rounded-md h-[90vh] min-h-[600px] w-[95vw] overflow-y-auto scrollbar-hide"
     >
       <RenderCharts data={data} />
+      <></>
     </ModalTemplate>
   );
 }

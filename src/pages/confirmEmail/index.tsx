@@ -1,4 +1,5 @@
 import { CreateFlow } from "@/enums/users/createFlow";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import {
   DASH,
   LOGIN_PATH,
@@ -20,9 +21,15 @@ export function ConfirmEmailPage() {
   const { doAuth } = useAuthStore();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    confirmEmail(getToken)
-      .then((res) => {
+  const executeAsync = useToastAsync();
+
+  const handleConfirmEmail = async () => {
+    await executeAsync({
+      action: () => confirmEmail(getToken),
+      loadingMessage: "Confirmando email...",
+      successMessage: "Email confirmado com sucesso",
+      errorMessage: "Erro ao confirmar email",
+      onSuccess: (res) => {
         toast.success("Obrigado por confirmar seu email");
         doAuth(res);
         const jsonToken = jwtDecoded(getToken);
@@ -32,11 +39,16 @@ export function ConfirmEmailPage() {
             { relative: "route" }
           );
         else navigate(DASH);
-      })
-      .catch((erro: Error) => {
-        toast.error(erro.message);
-        if (erro.message === "Email já validado") navigate(LOGIN_PATH);
-      });
+      },
+      onError: (error) => {
+        if (error.message === "Email já validado") navigate(LOGIN_PATH);
+      },
+    });
+  };
+
+  useEffect(() => {
+    handleConfirmEmail();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getToken]);
 
   return <></>;

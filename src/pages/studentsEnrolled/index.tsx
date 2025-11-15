@@ -4,6 +4,8 @@ import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { Roles } from "@/enums/roles/roles";
+import { useModals } from "@/hooks/useModal";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { enrollmentCancelled } from "@/services/prepCourse/student/enrollment-cancelled";
 import { getStudentsEnrolled } from "@/services/prepCourse/student/getStudentsEnrolled";
 import { reactiveEnrolled } from "@/services/prepCourse/student/reactive-enrolled";
@@ -37,11 +39,6 @@ export function StudentsEnrolled() {
   const [students, setStudents] = useState<StudentsDtoOutput[]>([]);
   const [limit, setLimit] = useState<number>(15);
   const [totalItems, setTotalItems] = useState<number>(100);
-  const [openModalInfo, setOpenModalInfo] = useState(false);
-  const [openModalReject, setOpenModalReject] = useState(false);
-  const [confirmEnrolled, setConfirmEnrolled] = useState(false);
-  const [openUpdateClass, setOpenUpdateClass] = useState(false);
-  const [openStudentCards, setOpenStudentCards] = useState(false);
   const [studentSelected, setStudentSelected] = useState<StudentsDtoOutput>(
     {} as StudentsDtoOutput
   );
@@ -49,15 +46,25 @@ export function StudentsEnrolled() {
   const [filter, setFilter] = useState<GridFilterItem | undefined>(undefined);
   const [sort, setSort] = useState<GridSortModel | undefined>(undefined);
 
+  const modals = useModals([
+    "modalInfo",
+    "modalReject",
+    "modalConfirm",
+    "modalUpdateClass",
+    "modalStudentCards",
+  ]);
+
   const {
     data: { token, permissao },
   } = useAuthStore();
+
+  const executeAsync = useToastAsync();
 
   const handleModalDetaild = (id: string) => {
     const student = students.find((student) => student.id === id);
     if (student) {
       setStudentSelected(student);
-      setOpenModalInfo(true);
+      modals.modalInfo.open();
     }
   };
 
@@ -67,22 +74,17 @@ export function StudentsEnrolled() {
     filters?: GridFilterItem,
     sortModel?: GridSortModel
   ) => {
-    const id = toast.loading("Buscando alunos matriculados...");
-    getStudentsEnrolled(token, page, limit, filters, sortModel)
-      .then((res) => {
+    await executeAsync({
+      action: () => getStudentsEnrolled(token, page, limit, filters, sortModel),
+      loadingMessage: "Buscando alunos matriculados...",
+      successMessage: "Alunos matriculados encontrados com sucesso!",
+      errorMessage: "Erro ao buscar alunos matriculados",
+      onSuccess: (res) => {
         setName(res.name);
         setTotalItems(res.students.totalItems);
         setStudents(res.students.data);
-        toast.dismiss(id);
-      })
-      .catch((err) => {
-        toast.update(id, {
-          render: err.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+      },
+    });
   };
 
   const debouncedFilter = useCallback(
@@ -100,10 +102,13 @@ export function StudentsEnrolled() {
     }
   };
 
-  const handleCancelEnrollment = (reason: string) => {
-    const id = toast.loading("Indeferir Matrícula...");
-    enrollmentCancelled(studentSelected.id, reason, token)
-      .then(() => {
+  const handleCancelEnrollment = async (reason: string) => {
+    await executeAsync({
+      action: () => enrollmentCancelled(studentSelected.id, reason, token),
+      loadingMessage: "Indefirindo Matrícula...",
+      successMessage: "Matrícula indeferida com sucesso!",
+      errorMessage: "Erro ao indeferir matrícula",
+      onSuccess: () => {
         const newStudent = students.map((stu) => {
           if (stu.id === studentSelected.id) {
             return {
@@ -114,23 +119,18 @@ export function StudentsEnrolled() {
           return stu;
         });
         setStudents(newStudent);
-        toast.dismiss(id);
-        setOpenModalReject(false);
-      })
-      .catch((err) => {
-        toast.update(id, {
-          render: err.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+        modals.modalReject.close();
+      },
+    });
   };
 
-  const handleReactivateEnrollment = () => {
-    const id = toast.loading("Reativar Matrícula...");
-    reactiveEnrolled(studentSelected.id, token)
-      .then(() => {
+  const handleReactivateEnrollment = async () => {
+    await executeAsync({
+      action: () => reactiveEnrolled(studentSelected.id, token),
+      loadingMessage: "Reativando Matrícula...",
+      successMessage: "Matrícula reativada com sucesso!",
+      errorMessage: "Erro ao reativar matrícula",
+      onSuccess: () => {
         const newStudent = students.map((stu) => {
           if (stu.id === studentSelected.id) {
             return {
@@ -141,28 +141,23 @@ export function StudentsEnrolled() {
           return stu;
         });
         setStudents(newStudent);
-        toast.dismiss(id);
-        setOpenModalReject(false);
-      })
-      .catch((err) => {
-        toast.update(id, {
-          render: err.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+        modals.modalReject.close();
+      },
+    });
   };
 
-  const handleUpdateClass = (
+  const handleUpdateClass = async (
     classId: string,
     name: string,
     year: number,
     endDate: Date
   ) => {
-    const id = toast.loading("Atualizando turma...");
-    updateClass(studentSelected.id, classId, token)
-      .then(() => {
+    await executeAsync({
+      action: () => updateClass(studentSelected.id, classId, token),
+      loadingMessage: "Atualizando turma...",
+      successMessage: "Turma atualizada com sucesso!",
+      errorMessage: "Erro ao atualizar turma",
+      onSuccess: () => {
         const newStudent = students.map((stu) => {
           if (stu.id === studentSelected.id) {
             return {
@@ -178,34 +173,38 @@ export function StudentsEnrolled() {
           return stu;
         });
         setStudents(newStudent);
-        toast.dismiss(id);
-        setOpenUpdateClass(false);
-      })
-      .catch((err) => {
-        toast.update(id, {
-          render: err.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+        modals.modalUpdateClass.close();
+      },
+    });
+  };
+
+  const updateEntities = (entity: StudentsDtoOutput) => {
+    setStudentSelected(entity);
+    const newEntities = students.map((s) => {
+      if (s.id === entity.id) {
+        return entity;
+      }
+      return s;
+    });
+    setStudents(newEntities);
   };
 
   const ModalInfo = () => {
-    return openModalInfo ? (
+    return modals.modalInfo.isOpen ? (
       <InfoStudentEnrolledModal
-        isOpen={openModalInfo}
-        handleClose={() => setOpenModalInfo(false)}
+        isOpen={modals.modalInfo.isOpen}
+        handleClose={() => modals.modalInfo.close()}
         entity={studentSelected}
+        updateEntity={updateEntities}
       />
     ) : null;
   };
 
   const ModalReject = () => {
-    return !openModalReject ? null : (
+    return !modals.modalReject.isOpen ? null : (
       <ModalConfirmCancelMessage
-        isOpen={openModalReject}
-        handleClose={() => setOpenModalReject(false)}
+        isOpen={modals.modalReject.isOpen}
+        handleClose={() => modals.modalReject.close()}
         handleConfirm={(message) => handleCancelEnrollment(message!)}
         text={`Por favor, informe o motivo do cancelamento de matrícula de ${capitalizeWords(
           studentSelected?.name
@@ -216,12 +215,12 @@ export function StudentsEnrolled() {
   };
 
   const ModalConfirm = () => {
-    return confirmEnrolled ? (
+    return modals.modalConfirm.isOpen ? (
       <ModalConfirmCancel
-        isOpen={confirmEnrolled}
-        handleClose={() => setConfirmEnrolled(false)}
+        isOpen={modals.modalConfirm.isOpen}
+        handleClose={() => modals.modalConfirm.close()}
         handleConfirm={() => {
-          setConfirmEnrolled(false);
+          modals.modalConfirm.close();
           handleReactivateEnrollment();
         }}
         className="bg-white p-4 rounded-md w-[512px]"
@@ -239,10 +238,10 @@ export function StudentsEnrolled() {
   };
 
   const ModalUpdateClass = () => {
-    return openUpdateClass ? (
+    return modals.modalUpdateClass.isOpen ? (
       <UpdateStudentClassModal
-        isOpen={openUpdateClass}
-        handleClose={() => setOpenUpdateClass(false)}
+        isOpen={modals.modalUpdateClass.isOpen}
+        handleClose={() => modals.modalUpdateClass.close()}
         classId={studentSelected.class?.id}
         handleConfirm={handleUpdateClass}
       />
@@ -250,10 +249,10 @@ export function StudentsEnrolled() {
   };
 
   const ModalStudentCards = () => {
-    return openStudentCards ? (
+    return modals.modalStudentCards.isOpen ? (
       <PrinterStudentCards
-        isOpen={openStudentCards}
-        handleClose={() => setOpenStudentCards(false)}
+        isOpen={modals.modalStudentCards.isOpen}
+        handleClose={() => modals.modalStudentCards.close()}
         entities={students.filter((s) => selectedRows.includes(s.id))}
       />
     ) : null;
@@ -287,7 +286,7 @@ export function StudentsEnrolled() {
                       alert("Estudante não encontrado");
                     } else {
                       setStudentSelected(student);
-                      setOpenModalReject(true);
+                      modals.modalReject.open();
                     }
                   }}
                 >
@@ -305,7 +304,7 @@ export function StudentsEnrolled() {
                       alert("Estudante não encontrado");
                     } else {
                       setStudentSelected(student);
-                      setConfirmEnrolled(true);
+                      modals.modalConfirm.open();
                     }
                   }}
                 >
@@ -324,7 +323,7 @@ export function StudentsEnrolled() {
                     alert("Estudante não encontrado");
                   } else {
                     setStudentSelected(student);
-                    setOpenUpdateClass(true);
+                    modals.modalUpdateClass.open();
                   }
                 }}
               >
@@ -433,7 +432,7 @@ export function StudentsEnrolled() {
       {permissao[Roles.gerenciarEstudantes] && (
         <div className="w-full px-4">
           <Button
-            onClick={() => setOpenStudentCards(true)}
+            onClick={() => modals.modalStudentCards.open()}
             size="small"
             className="bg-red border-none flex gap-2 items-center hover:bg-red"
             disabled={selectedRows.length === 0}

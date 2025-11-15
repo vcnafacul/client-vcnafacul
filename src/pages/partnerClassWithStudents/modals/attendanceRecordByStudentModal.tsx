@@ -2,6 +2,8 @@
 import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { Button } from "@/components/ui/button";
+import { useModals } from "@/hooks/useModal";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { applyJustication } from "@/services/prepCourse/attendanceRecord/applyJustication";
 import { getAttendanceRecordByStudentId } from "@/services/prepCourse/attendanceRecord/getAttendanceRecordByStudentId";
 import { useAuthStore } from "@/store/auth";
@@ -27,12 +29,15 @@ export function AttendanceRecordByStudentModal({
   );
   const [totalItems, setTotalItems] = useState<number>(0);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
-  const [openModalJustification, setOpenModalJustification] = useState(false);
   const limit = 10;
+
+  const modals = useModals(["modalApplyJustification"]);
 
   const {
     data: { token },
   } = useAuthStore();
+
+  const executeAsync = useToastAsync();
 
   const columns: GridColDef[] = [
     {
@@ -127,7 +132,7 @@ export function AttendanceRecordByStudentModal({
     [attendances]
   );
 
-  const handleApplyJustification = (justification?: string) => {
+  const handleApplyJustification = async (justification?: string) => {
     if (selectedRows.length === 0) {
       toast.warn("Selecione pelo menos um registro");
       return;
@@ -136,32 +141,24 @@ export function AttendanceRecordByStudentModal({
       toast.warn("Preencha a justificativa");
       return;
     }
-    const id = toast.loading("Aplicando justificativa...");
-    applyJustication(token, studentId, selectedRows, justification)
-      .then(() => {
-        toast.update(id, {
-          render: "Justificativa aplicada com sucesso!",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
+
+    await executeAsync({
+      action: () =>
+        applyJustication(token, studentId, selectedRows, justification),
+      loadingMessage: "Aplicando justificativa...",
+      successMessage: "Justificativa aplicada com sucesso!",
+      errorMessage: "Erro ao aplicar justificativa",
+      onSuccess: () => {
         handleClose!();
-      })
-      .catch(() => {
-        toast.update(id, {
-          render: "Erro ao aplicar justificativa!",
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
   const ModalApplyJustification = () => {
-    return !openModalJustification ? null : (
+    return !modals.modalApplyJustification.isOpen ? null : (
       <ModalConfirmCancelMessage
-        isOpen={openModalJustification}
-        handleClose={() => setOpenModalJustification(false)}
+        isOpen={modals.modalApplyJustification.isOpen}
+        handleClose={() => modals.modalApplyJustification.close()}
         handleConfirm={handleApplyJustification}
         className="bg-white p-8 rounded-md"
         text="Descreva a justificativa:"
@@ -178,7 +175,7 @@ export function AttendanceRecordByStudentModal({
       <div className="flex items-center justify-between p-2">
         <h1 className="text-2xl font-bold">Registro de Presença</h1>
         <Button
-          onClick={() => setOpenModalJustification(true)}
+          onClick={() => modals.modalApplyJustification.open()}
           disabled={selectedRows.length === 0}
           className="bg-orange/70 hover:bg-orange font-black"
         >

@@ -2,6 +2,8 @@ import Button from "@/components/molecules/button";
 import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
 import { Bool } from "@/enums/bool";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
+import { useModals } from "@/hooks/useModal";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
 import { updateWaitingListInfo } from "@/services/prepCourse/inscription/updateWaitingList";
 import { confirmEnrolled } from "@/services/prepCourse/student/confirmEnrolled";
@@ -25,10 +27,10 @@ import { IoClose, IoEyeSharp } from "react-icons/io5";
 import { MdEmail, MdTimerOff } from "react-icons/md";
 import { PiTimerFill } from "react-icons/pi";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 import { ReactComponent as IsentoIcon } from "../../assets/icons/partnerPrepCourse/pagante_add_dk.svg";
 import { ReactComponent as PaganteIcon } from "../../assets/icons/partnerPrepCourse/pagante_remover_dk.svg";
 import { ReactComponent as Reset } from "../../assets/icons/partnerPrepCourse/reset_dk.svg";
+import { UpdateStudentClassModal } from "../studentsEnrolled/modals/updateStudentClassModal";
 import { ActionButton } from "./actionsButton";
 import { Details } from "./modal/details";
 import { Statistic } from "./modal/statistic";
@@ -39,19 +41,25 @@ import { WaitingList } from "./waitingList";
 export function PartnerPrepInscritionStudentManager() {
   const { inscriptionId } = useParams();
   const [students, setStudents] = useState<XLSXStudentCourseFull[]>([]);
-  const [openWaitingList, setOpenWaitingList] = useState<boolean>(false);
-  const [openScheduleEnrolled, setOpenScheduleEnrolled] =
-    useState<boolean>(false);
-  const [openModalDetaild, setOpenModalDetaild] = useState<boolean>(false);
-  const [openModalStatistic, setOpenModalStatistic] = useState<boolean>(false);
   const [studentSelected, setStudentSelected] = useState<
     XLSXStudentCourseFull | undefined
   >(undefined);
-  const [openModalReject, setOpenModalReject] = useState<boolean>(false);
+
+  // Gerenciamento de modais com hook customizado
+  const modals = useModals([
+    "waitingList",
+    "scheduleEnrolled",
+    "details",
+    "statistic",
+    "reject",
+    "selectClass",
+  ]);
 
   const {
     data: { token },
   } = useAuthStore();
+
+  const executeAsync = useToastAsync();
 
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
@@ -60,10 +68,13 @@ export function PartnerPrepInscritionStudentManager() {
     setSelectedRows(selectionModel);
   }, []);
 
-  const handleIsFreeInfo = (studentId: string, isFree: boolean) => {
-    const id = toast.loading("Atualizando informações...");
-    updateIsFreeInfo(studentId, isFree, token)
-      .then(() => {
+  const handleIsFreeInfo = async (studentId: string, isFree: boolean) => {
+    await executeAsync({
+      action: () => updateIsFreeInfo(studentId, isFree, token),
+      loadingMessage: "Atualizando informações...",
+      successMessage: "Informações atualizadas com sucesso!",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
         const newStudent = students.map((stu) => {
           if (stu.id === studentId) {
             return { ...stu, isento: isFree ? Bool.Yes : Bool.No };
@@ -71,29 +82,20 @@ export function PartnerPrepInscritionStudentManager() {
           return stu;
         });
         setStudents(newStudent);
-        toast.update(id, {
-          render: "Informações atualizadas com sucesso",
-          type: "success",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      })
-      .catch(() => {
-        toast.update(id, {
-          render: "Erro ao atualizar informações",
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+      },
+    });
   };
 
-  const handleWaitingList = (studentId: string, insert: boolean) => {
-    const id = toast.loading(
-      `${!insert ? "Removendo da" : "Inserindo na"} lista de espera ...`
-    );
-    updateWaitingListInfo(inscriptionId!, studentId, insert, token)
-      .then(() => {
+  const handleWaitingList = async (studentId: string, insert: boolean) => {
+    await executeAsync({
+      action: () =>
+        updateWaitingListInfo(inscriptionId!, studentId, insert, token),
+      loadingMessage: `${
+        !insert ? "Removendo da" : "Inserindo na"
+      } lista de espera ...`,
+      successMessage: "Lista de espera atualizada",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
         const newStudent = students.map((stu) => {
           if (stu.id === studentId) {
             return {
@@ -105,24 +107,22 @@ export function PartnerPrepInscritionStudentManager() {
           return stu;
         });
         setStudents(newStudent);
-        toast.dismiss(id);
-      })
-      .catch(() => {
-        toast.update(id, {
-          render: "Erro ao atualizar informações",
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+      },
+    });
   };
 
-  const handleSelectEnrolledInfo = (studentId: string, selected: boolean) => {
-    const id = toast.loading(
-      `${!selected ? "Removendo da" : "Inserindo na"} lista de convocação ...`
-    );
-    updateSelectEnrolledInfo(studentId, selected, token)
-      .then(() => {
+  const handleSelectEnrolledInfo = async (
+    studentId: string,
+    selected: boolean
+  ) => {
+    await executeAsync({
+      action: () => updateSelectEnrolledInfo(studentId, selected, token),
+      loadingMessage: `${
+        !selected ? "Removendo da" : "Inserindo na"
+      } lista de convocação ...`,
+      successMessage: "Lista de convocação atualizada",
+      errorMessage: "Erro ao atualizar lista de convocação",
+      onSuccess: () => {
         const newStudent = students.map((stu) => {
           if (stu.id === studentId) {
             return {
@@ -137,22 +137,17 @@ export function PartnerPrepInscritionStudentManager() {
           return stu;
         });
         setStudents(newStudent);
-        toast.dismiss(id);
-      })
-      .catch(() => {
-        toast.update(id, {
-          render: "Erro ao atualizar informações",
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+      },
+    });
   };
 
-  const handleResetStudent = (studentId: string) => {
-    const id = toast.loading("Resetando Informações...");
-    resetStudent(studentId, token)
-      .then(() => {
+  const handleResetStudent = async (studentId: string) => {
+    await executeAsync({
+      action: () => resetStudent(studentId, token),
+      loadingMessage: "Resetando Informações...",
+      successMessage: "Informações resetadas com sucesso!",
+      errorMessage: "Erro ao resetar informações",
+      onSuccess: () => {
         const newStudent = students.map((stu) => {
           if (stu.id === studentId) {
             return {
@@ -167,72 +162,60 @@ export function PartnerPrepInscritionStudentManager() {
           return stu;
         });
         setStudents(newStudent);
-        toast.dismiss(id);
-      })
-      .catch(() => {
-        toast.update(id, {
-          render: "Erro ao atualizar informações",
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
-  };
-
-  const handleScheduleEnrolled = (datas: Date[]) => {
-    const id = toast.loading("Programando Convocação");
-    scheduleEnrolled(inscriptionId!, datas[0], datas[1], token)
-      .then(() => {
-        subscribers();
-        toast.dismiss(id);
-        setOpenScheduleEnrolled(false);
-      })
-      .catch((err) => {
-        toast.update(id, {
-          render: err.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
-  };
-
-  const handleConfirmEnrolled = (studentId: string) => {
-    const id = toast.loading("Confirmando Matrícula...");
-    confirmEnrolled(studentId, token).then(() => {
-      const newStudent = students.map((stu) => {
-        if (stu.id === studentId) {
-          return {
-            ...stu,
-            status: StatusApplication.Enrolled,
-          };
-        }
-        return stu;
-      });
-      setStudents(newStudent);
-      toast.dismiss(id);
+      },
     });
   };
 
-  const handleSendEmailDeclaredInterest = (studentId: string) => {
-    const id = toast.loading("Enviando Email...");
-    sendEmailDeclarationInterest(studentId, token)
-      .then(() => {
-        toast.update(id, {
-          render: "Email enviado com sucesso",
-          type: "success",
-          isLoading: false,
-          autoClose: 5000,
+  const handleScheduleEnrolled = async (datas: Date[]) => {
+    await executeAsync({
+      action: () => scheduleEnrolled(inscriptionId!, datas[0], datas[1], token),
+      loadingMessage: "Programando Convocação",
+      successMessage: "Convocação programada com sucesso!",
+      errorMessage: "Erro ao programar convocação",
+      onSuccess: () => {
+        subscribers();
+        modals.scheduleEnrolled.close();
+      },
+    });
+  };
+
+  const handleOpenSelectClassModal = (studentId: string) => {
+    const student = students.find((stu) => stu.id === studentId);
+    setStudentSelected(student);
+    modals.selectClass.open();
+  };
+
+  const handleConfirmEnrolled = async (classId: string, className: string) => {
+    if (!studentSelected) return;
+
+    await executeAsync({
+      action: () => confirmEnrolled(studentSelected.id, classId, token),
+      loadingMessage: "Confirmando Matrícula...",
+      successMessage: `Matrícula confirmada com sucesso na turma ${className}!`,
+      errorMessage: "Erro ao confirmar matrícula",
+      onSuccess: () => {
+        const newStudent = students.map((stu) => {
+          if (stu.id === studentSelected.id) {
+            return {
+              ...stu,
+              status: StatusApplication.Enrolled,
+            };
+          }
+          return stu;
         });
-      })
-      .catch((err) => {
-        toast.update(id, {
-          render: err.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+        setStudents(newStudent);
+        modals.selectClass.close();
+      },
+    });
+  };
+
+  const handleSendEmailDeclaredInterest = async (studentId: string) => {
+    await executeAsync({
+      action: () => sendEmailDeclarationInterest(studentId, token),
+      loadingMessage: "Enviando Email...",
+      successMessage: "Email enviado com sucesso!",
+      errorMessage: "Erro ao enviar email",
+    });
   };
 
   function shouldProcessApplication(
@@ -264,10 +247,13 @@ export function PartnerPrepInscritionStudentManager() {
     return true;
   }
 
-  const handleIndeferir = (studentId: string, reason: string) => {
-    const id = toast.loading("Indeferir Matrícula...");
-    rejectStudent(studentId, reason, token)
-      .then(() => {
+  const handleIndeferir = async (studentId: string, reason: string) => {
+    await executeAsync({
+      action: () => rejectStudent(studentId, reason, token),
+      loadingMessage: "Indefirindo Matrícula...",
+      successMessage: "Matrícula indeferida com sucesso!",
+      errorMessage: "Erro ao indeferir matrícula",
+      onSuccess: () => {
         const newStudent = students.map((stu) => {
           if (stu.id === studentId) {
             return {
@@ -278,24 +264,16 @@ export function PartnerPrepInscritionStudentManager() {
           return stu;
         });
         setStudents(newStudent);
-        toast.dismiss(id);
-        setOpenModalReject(false);
-      })
-      .catch((err) => {
-        toast.update(id, {
-          render: err.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+        modals.reject.close();
+      },
+    });
   };
 
   const ModalReject = () => {
-    return !openModalReject ? null : (
+    return !modals.reject.isOpen ? null : (
       <ModalConfirmCancelMessage
-        isOpen={openModalReject}
-        handleClose={() => setOpenModalReject(false)}
+        isOpen={modals.reject.isOpen}
+        handleClose={modals.reject.close}
         handleConfirm={(message) =>
           handleIndeferir(studentSelected!.id, message!)
         }
@@ -310,7 +288,7 @@ export function PartnerPrepInscritionStudentManager() {
   const handleModalDetaild = (id: string) => {
     const student = students.find((student) => student.id === id);
     setStudentSelected(student!);
-    setOpenModalDetaild(true);
+    modals.details.open();
   };
 
   const columns: GridColDef[] = [
@@ -415,16 +393,13 @@ export function PartnerPrepInscritionStudentManager() {
             </ActionButton>
           )}
           {params.row.status === StatusApplication.DeclaredInterest && (
-            <ActionButton
-              titleAlert={`Confirmação de Matrícula ${params.row.nome} ${params.row.sobrenome}`}
-              descriptionAlert={`Realizar a  confirmação de matrícula de  ${params.row.nome} ${params.row.sobrenome}`}
-              onConfirm={() => {
-                handleConfirmEnrolled(params.row.id);
-              }}
-              tooltipTitle="Confirmação de Matrícula"
-            >
-              <FaCheck className="h-6 w-6 fill-green3 opacity-60 hover:opacity-100" />
-            </ActionButton>
+            <Tooltip title="Confirmação de Matrícula">
+              <IconButton
+                onClick={() => handleOpenSelectClassModal(params.row.id)}
+              >
+                <FaCheck className="h-6 w-6 fill-green3 opacity-60 hover:opacity-100" />
+              </IconButton>
+            </Tooltip>
           )}
           {(params.row.status === StatusApplication.DeclaredInterest ||
             params.row.status === StatusApplication.MissedDeadline ||
@@ -436,7 +411,7 @@ export function PartnerPrepInscritionStudentManager() {
                     setStudentSelected(
                       students.find((student) => student.id === params.row.id)!
                     );
-                    setOpenModalReject(true);
+                    modals.reject.open();
                   }}
                   className="h-6 w-6 fill-redError/60 hover:fill-redError cursor-pointer"
                 />
@@ -526,38 +501,35 @@ export function PartnerPrepInscritionStudentManager() {
   const paginationModel = { page: 0, pageSize: 10 };
 
   const ModalWaitingList = () => {
-    return openWaitingList ? (
+    return modals.waitingList.isOpen ? (
       <WaitingList
-        isOpen={openWaitingList}
-        handleClose={() => setOpenWaitingList(false)}
+        isOpen={modals.waitingList.isOpen}
+        handleClose={modals.waitingList.close}
         inscriptionId={inscriptionId!}
       />
     ) : null;
   };
 
   const ScheduleEnrolled = () => {
-    return openScheduleEnrolled ? (
+    return modals.scheduleEnrolled.isOpen ? (
       <ScheduleCallEnrolle
-        isOpen={openScheduleEnrolled}
-        handleClose={() => setOpenScheduleEnrolled(false)}
+        isOpen={modals.scheduleEnrolled.isOpen}
+        handleClose={modals.scheduleEnrolled.close}
         handleScheduleEnrolled={handleScheduleEnrolled}
       />
     ) : null;
   };
 
   const ModalDetails = () => {
-    return openModalDetaild ? (
-      <Details
-        handleClose={() => setOpenModalDetaild(false)}
-        student={studentSelected!}
-      />
+    return modals.details.isOpen ? (
+      <Details handleClose={modals.details.close} student={studentSelected!} />
     ) : null;
   };
 
   const ModalStatistic = () => {
-    return openModalStatistic ? (
+    return modals.statistic.isOpen ? (
       <Statistic
-        handleClose={() => setOpenModalStatistic(false)}
+        handleClose={modals.statistic.close}
         geral={{
           forms: students.map((student) => student.socioeconomic),
           isFree: students.map((student) => student.isento === Bool.Yes),
@@ -574,37 +546,44 @@ export function PartnerPrepInscritionStudentManager() {
     ) : null;
   };
 
-  const subscribers = () => {
-    if (inscriptionId) {
-      const id = toast.loading("Carregando Lista de Alunos...");
-      getSubscribers(token, inscriptionId)
-        .then((data) => {
-          setStudents(
-            data.map((student) => {
-              return {
-                ...student,
-                nome: student.usar_nome_social
-                  ? student.nome_social
-                  : student.nome,
-              };
-            })
-          );
-          setStudentSelected(data[0]);
-          toast.dismiss(id);
-        })
-        .catch(() => {
-          toast.update(id, {
-            render: "Erro ao carregar lista de alunos",
-            type: "error",
-            isLoading: false,
-            autoClose: 5000,
-          });
-        });
-    }
+  const ModalSelectClass = () => {
+    return modals.selectClass.isOpen ? (
+      <UpdateStudentClassModal
+        isOpen={modals.selectClass.isOpen}
+        handleClose={modals.selectClass.close}
+        handleConfirm={(classId, className) =>
+          handleConfirmEnrolled(classId, className)
+        }
+      />
+    ) : null;
+  };
+
+  const subscribers = async () => {
+    if (!inscriptionId) return;
+    await executeAsync({
+      action: () => getSubscribers(token, inscriptionId!),
+      loadingMessage: "Carregando Lista de Alunos...",
+      successMessage: "Lista de alunos carregada com sucesso!",
+      errorMessage: "Erro ao carregar lista de alunos",
+      onSuccess: (data: XLSXStudentCourseFull[]) => {
+        setStudents(
+          data.map((student) => {
+            return {
+              ...student,
+              nome: student.usar_nome_social
+                ? student.nome_social
+                : student.nome,
+            };
+          })
+        );
+        setStudentSelected(data[0]);
+      },
+    });
   };
 
   useEffect(() => {
     subscribers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -620,14 +599,14 @@ export function PartnerPrepInscritionStudentManager() {
               size="small"
               className="border-none"
               typeStyle="refused"
-              onClick={() => setOpenModalStatistic(true)}
+              onClick={modals.statistic.open}
             >
               <p className="text-sm">Estatisticas</p>
             </Button>
             <Button
               size="small"
               className="border-none"
-              onClick={() => setOpenWaitingList(true)}
+              onClick={modals.waitingList.open}
             >
               <p className="text-sm">Lista de Espera</p>
             </Button>
@@ -635,7 +614,7 @@ export function PartnerPrepInscritionStudentManager() {
               size="small"
               typeStyle="accepted"
               className="border-none"
-              onClick={() => setOpenScheduleEnrolled(true)}
+              onClick={modals.scheduleEnrolled.open}
             >
               <p className="text-sm">Programar Convocação</p>
             </Button>
@@ -665,6 +644,7 @@ export function PartnerPrepInscritionStudentManager() {
       <ModalDetails />
       <ModalStatistic />
       <ModalReject />
+      <ModalSelectClass />
     </div>
   );
 }

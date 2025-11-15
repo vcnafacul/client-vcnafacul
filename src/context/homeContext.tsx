@@ -9,7 +9,7 @@ import {
   Volunteer,
 } from "../components/organisms/supporters";
 
-// eslint-disable-next-line react-refresh/only-export-components
+ 
 const HomeContext = createContext<{
   aboutUs?: AboutUsProps | null;
   features?: FeaturesProps | null;

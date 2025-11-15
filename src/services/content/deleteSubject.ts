@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import fetchWrapper from "../../utils/fetchWrapper";
 import { subject } from "../urls";
 

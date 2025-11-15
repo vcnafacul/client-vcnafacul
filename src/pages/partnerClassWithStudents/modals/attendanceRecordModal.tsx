@@ -1,5 +1,6 @@
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { Roles } from "@/enums/roles/roles";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { getAttendanceRecordById } from "@/services/prepCourse/attendanceRecord/getAttendanceRecordbyId";
 import { updateRegisterStudent } from "@/services/prepCourse/attendanceRecord/updateRegisterStudent";
 import { useAuthStore } from "@/store/auth";
@@ -12,6 +13,7 @@ import { useEffect, useState } from "react";
 import { MdModeEditOutline } from "react-icons/md";
 import { toast } from "react-toastify";
 import { EditStudentRecordModal } from "./editStudentRecordModal";
+import { useModals } from "@/hooks/useModal";
 
 interface AttendanceRecordProps {
   isOpen: boolean;
@@ -28,17 +30,23 @@ export function AttendanceRecordModal({
   const [studentSelected, setStudentSelected] = useState<
     SimpleStudentAttendance | undefined
   >(undefined);
-  const [openModalEdit, setOpenModalEdit] = useState(false);
+
+  const modals = useModals(["modalEditRegister"]);
 
   const {
     data: { token, permissao },
   } = useAuthStore();
 
-  const handleEditRegister = (reason: string, present: boolean) => {
-    const id = toast.loading("Atualizando Presença...");
-    updateRegisterStudent(token, studentSelected!.id!, reason, present)
-      .then(() => {
-        setOpenModalEdit(false);
+  const executeAsync = useToastAsync();
+
+  const handleEditRegister = async (reason: string, present: boolean) => {
+    await executeAsync({
+      action: () =>
+        updateRegisterStudent(token, studentSelected!.id!, reason, present),
+      loadingMessage: "Atualizando Presença...",
+      successMessage: "Presença atualizada com sucesso!",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
         const newStudents = students.map((student) => {
           if (student.id === studentSelected!.id) {
             return {
@@ -50,28 +58,16 @@ export function AttendanceRecordModal({
           return student;
         });
         setStudents(newStudents);
-        toast.update(id, {
-          render: "Presença atualizada com sucesso!",
-          type: "success",
-          isLoading: false,
-          autoClose: 5000,
-        })
-      })
-      .catch((err) => {
-        toast.update(id, {
-          render: err.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+        modals.modalEditRegister.close();
+      },
+    });
   };
 
   const ModalEditRegister = () => {
-    return !openModalEdit ? null : (
+    return !modals.modalEditRegister.isOpen ? null : (
       <EditStudentRecordModal
-        isOpen={openModalEdit}
-        handleClose={() => setOpenModalEdit(false)}
+        isOpen={modals.modalEditRegister.isOpen}
+        handleClose={() => modals.modalEditRegister.close()}
         handleConfirm={(message, present) =>
           handleEditRegister(message!, present)
         }
@@ -87,7 +83,7 @@ export function AttendanceRecordModal({
       });
     } else {
       setStudentSelected(params);
-      setOpenModalEdit(true);
+      modals.modalEditRegister.open();
     }
   };
 
@@ -132,9 +128,7 @@ export function AttendanceRecordModal({
       headerAlign: "center",
       flex: 1,
       minWidth: 200,
-      valueGetter: (params) =>
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (params as boolean) ? "Presente" : "Ausente",
+      valueGetter: (params) => ((params as boolean) ? "Presente" : "Ausente"),
     },
     {
       field: "justification",

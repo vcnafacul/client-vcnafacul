@@ -2,11 +2,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AccountForm } from "@/components/organisms/accountForm";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { UserMe } from "@/types/user/userMe";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ReactComponent as LogoIcon } from "../../assets/images/home/logo.svg";
-import Text from "../../components/atoms/text";
 import ImageProfile from "../../components/molecules/imageProfile";
 import ModalConfirmCancel from "../../components/organisms/modalConfirmCancel";
 import { changeImageProfileCollaborator } from "../../services/auth/changeImageProfileCollaborator";
@@ -14,13 +14,19 @@ import { me } from "../../services/auth/me";
 import { removeImageProfileCollaborator } from "../../services/auth/removeImageProfileCollaborator";
 import { updateUser } from "../../services/auth/updateUser";
 import { AuthUpdate, Gender, useAuthStore } from "../../store/auth";
+import { useModals } from "@/hooks/useModal";
 
 function Account() {
   const {
     data: { token },
     updateAccount,
   } = useAuthStore();
-  const [tryDelete, setTryDelete] = useState<boolean>(false);
+  const executeAsync = useToastAsync();
+
+
+  const modals = useModals([
+    'deleteImage',
+  ]);
 
   const [userAccount, setUserAccount] = useState<UserMe>();
 
@@ -48,28 +54,19 @@ function Account() {
   };
 
   const uploadingImagem = async (file: any) => {
-    const id = toast.loading("Upload de Imagem de Perfil Colaborador ... ");
     const formData = new FormData();
     formData.append("file", file!);
-    await changeImageProfileCollaborator(formData, token)
-      .then((fileName) => {
-        toast.update(id, {
-          render: `Upload feito com sucesso`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
+
+    await executeAsync({
+      action: () => changeImageProfileCollaborator(formData, token),
+      loadingMessage: "Upload de Imagem de Perfil Colaborador ... ",
+      successMessage: "Upload feito com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: (fileName) => {
         setUserAccount({ ...userAccount!, collaboratorPhoto: fileName });
         updateAccount({ ...userAccount! });
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+      },
+    });
   };
 
   const deleteImage = () => {
@@ -88,33 +85,31 @@ function Account() {
     } else {
       setImagePreview(null);
     }
-    setTryDelete(false);
+    modals.deleteImage.close();
   };
 
-  const updateData = (authUpdate: AuthUpdate) => {
-    const id = toast.loading("Atualizando Informações Usuário ... ");
-    updateUser(token, authUpdate)
-      .then(async (_) => {
-        toast.update(id, {
-          render: `Atualização feita com sucesso`,
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
+  const updateData = async (
+    authUpdate: AuthUpdate,
+    onSuccess?: () => void,
+    onError?: () => void
+  ) => {
+    await executeAsync({
+      action: () => updateUser(token, authUpdate),
+      loadingMessage: "Atualizando Informações Usuário ... ",
+      successMessage: "Atualização feita com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
         updateAccount({ ...userAccount!, ...authUpdate });
         setUserAccount({ ...userAccount!, ...authUpdate });
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      })
+        onSuccess?.();
+      },
+      onError: () => {
+        onError?.();
+      },
+    });
   };
 
-  const update = (data: any) => {
+  const update = (data: any, onSuccess?: () => void, onError?: () => void) => {
     const authUpdate: AuthUpdate = {
       firstName: data.firstName,
       lastName: data.lastName,
@@ -129,18 +124,18 @@ function Account() {
     };
     if (file) {
       uploadingImagem(file).then(() => {
-        updateData(authUpdate);
+        updateData(authUpdate, onSuccess, onError);
       });
     } else {
-      updateData(authUpdate);
+      updateData(authUpdate, onSuccess, onError);
     }
   };
 
   const ModalDelete = () => {
     return (
       <ModalConfirmCancel
-        isOpen={tryDelete}
-        handleClose={() => setTryDelete(false)}
+        isOpen={modals.deleteImage.isOpen}
+        handleClose={modals.deleteImage.close}
         handleConfirm={deleteImage}
         text="Tem certeza que deseja deletar sua imagem?"
       />
@@ -162,48 +157,62 @@ function Account() {
 
   return (
     <>
-      <div className="pb-20 flex flex-col w-full">
+      <div className="pb-20 flex flex-col md:flex-row w-full">
         {/* Cabeçalho com imagem e nome do usuário */}
-        <div className="flex items-center justify-between px-6 py-4 bg-white rounded-bl-3xl shadow-sm">
+        <div className="flex px-6 py-4 w-full md:w-[300px] rounded-bl-3xl shadow-sm">
           {/* Avatar or Logo */}
-          <div className="flex items-center gap-4">
+          <div className="flex flex-row md:flex-col gap-4">
             {userAccount?.collaborator ? (
               <ImageProfile
-                deleteImage={() => setTryDelete(true)}
+                deleteImage={modals.deleteImage.open}
                 onChange={handleImageChange}
                 src={imagePreview}
               />
             ) : (
               <LogoIcon className="w-24 h-24 p-2 bg-white border rounded-full animate-rotate" />
             )}
-
-            {/* Name and Role */}
-            <div className="flex flex-col">
-              <span className="text-marine text-2xl md:text-4xl font-extrabold leading-tight">
-                {userAccount?.useSocialName
-                  ? userAccount?.socialName
-                  : userAccount?.firstName}
+          </div>
+          <div className="flex flex-col px-8 pt-4 md:hidden justify-center">
+            <span className="text-marine text-2xl md:text-4xl font-extrabold leading-tight">
+              {userAccount?.useSocialName
+                ? userAccount?.socialName
+                : userAccount?.firstName}
+            </span>
+            <span className="text-marine text-lg md:text-xl font-medium">
+              {userAccount?.lastName}
+            </span>
+            {userAccount?.collaborator && (
+              <span className="text-marine text-sm font-semibold mt-1 opacity-80">
+                {userAccount?.collaboratorDescription}
               </span>
-              <span className="text-marine text-lg md:text-xl font-medium">
-                {userAccount?.lastName}
-              </span>
-              {userAccount?.collaborator && (
-                <span className="text-marine text-sm font-semibold mt-1 opacity-80">
-                  {userAccount?.collaboratorDescription}
-                </span>
-              )}
-            </div>
+            )}
           </div>
         </div>
+        <div className="w-full">
+          {/* Name and Role */}
+          <div className="md:flex flex-col px-8 pt-4 hidden">
+            <span className="text-marine text-2xl md:text-4xl font-extrabold leading-tight">
+              {userAccount?.useSocialName
+                ? userAccount?.socialName
+                : userAccount?.firstName}
+            </span>
+            <span className="text-marine text-lg md:text-xl font-medium">
+              {userAccount?.lastName}
+            </span>
+            {userAccount?.collaborator && (
+              <span className="text-marine text-sm font-semibold mt-1 opacity-80">
+                {userAccount?.collaboratorDescription}
+              </span>
+            )}
+          </div>
 
-        {/* Seção de título */}
-        <Text className="self-start mx-10 pt-4" size="secondary">
-          Meus Dados
-        </Text>
-        {/* Formulário de atualização */}
-        {userAccount && (
-          <AccountForm update={update} userAccount={userAccount} />
-        )}
+          {/* Formulário de atualização */}
+          <div className="px-6 py-6 w-full">
+            {userAccount && (
+              <AccountForm update={update} userAccount={userAccount} />
+            )}
+          </div>
+        </div>
       </div>
       <ModalDelete />
     </>

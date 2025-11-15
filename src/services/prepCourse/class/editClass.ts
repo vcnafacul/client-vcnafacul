@@ -16,9 +16,6 @@ export async function editClass(
       id: entity.id,
       name: entity.name,
       description: entity.description,
-      startDate: entity.range[0],
-      endDate: entity.range[1],
-      year: entity.year,
     }),
   });
   if (response.status === 400) {

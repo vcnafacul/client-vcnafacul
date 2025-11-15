@@ -1,4 +1,5 @@
 import ModalTemplate from "@/components/templates/modalTemplate";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { createAttendanceRecord } from "@/services/prepCourse/attendanceRecord/createAttendanceRecord";
 import { getStudentsToAttendanceRecord } from "@/services/prepCourse/attendanceRecord/getStudentToAttendanceRecord";
 import { useAuthStore } from "@/store/auth";
@@ -9,7 +10,6 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Calendar } from "primereact/calendar";
 
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 interface AttendanceRecordProps {
   isOpen: boolean;
@@ -36,6 +36,8 @@ export function NewAttendanceRecordModal({
     },
   } = useAuthStore();
 
+  const executeAsync = useToastAsync();
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelectionChange = useCallback((selectionModel: any) => {
     setSelectedRows(selectionModel);
@@ -47,40 +49,28 @@ export function NewAttendanceRecordModal({
     });
   }, []);
 
-  const handleCreateAttendancerecord = () => {
+  const handleCreateAttendancerecord = async () => {
     setRegistering(true);
-    const id = toast.loading("Registrando presença...");
-    createAttendanceRecord(token, classId, date, selectedRows)
-      .then(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (res: any) => {
-          handleNewAttendanceRecord({
-            id: res.id,
-            createdAt: res.createdAt,
-            updatedAt: res.updatedAt,
-            registeredAt: res.registeredAt,
-            registeredBy: firstName + " " + lastName,
-          });
-          handleClose();
-          toast.update(id, {
-            render: "Presença registrada com sucesso!",
-            type: "success",
-            isLoading: false,
-            autoClose: 3000,
-          });
-        }
-      )
-      .catch((err) => {
-        toast.update(id, {
-          render: err.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
+    await executeAsync({
+      action: () => createAttendanceRecord(token, classId, date, selectedRows),
+      loadingMessage: "Registrando presença...",
+      successMessage: "Presença registrada com sucesso!",
+      errorMessage: (error: Error) => error.message,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onSuccess: (res: any) => {
+        handleNewAttendanceRecord({
+          id: res.id,
+          createdAt: res.createdAt,
+          updatedAt: res.updatedAt,
+          registeredAt: res.registeredAt,
+          registeredBy: firstName + " " + lastName,
         });
-      })
-      .finally(() => {
+        handleClose();
+      },
+      onFinally: () => {
         setRegistering(false);
-      });
+      },
+    });
   };
 
   const paginationModel = { page: 0, pageSize: 10 };

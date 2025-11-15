@@ -20,18 +20,22 @@ import NewDemand from "./modals/newDemand";
 import SettingsFrente from "./modals/settingsFrente";
 import ShowDemand from "./modals/showDemand";
 import ValidatedDemand from "./modals/validatedDemand";
+import { useModals } from "@/hooks/useModal";
 
 function DashContent() {
   const {
     data: { token, permissao },
   } = useAuthStore();
 
+  const modals = useModals([
+    'showDemand',
+    'newDemand',
+    'settings',
+  ]);
+
   const uploader: boolean = permissao[Roles.uploadDemanda];
   const manager: boolean = permissao[Roles.gerenciadorDemanda];
 
-  const [openShowModal, setOpenShowModal] = useState<boolean>(false);
-  const [settings, setSettings] = useState<boolean>(false);
-  const [openNewModalDemand, setOpenNewModalDemand] = useState<boolean>(false);
   const [demands, setDemands] = useState<ContentDtoInput[]>([]);
   const [demandSelected, setDemandSelected] = useState<ContentDtoInput | null>(
     null
@@ -67,7 +71,7 @@ function DashContent() {
 
   const onClickCard = (id: number | string) => {
     setDemandSelected(dataRef.current.find((demand) => demand.id === id)!);
-    setOpenShowModal(true);
+    modals.showDemand.open();
   };
 
   const addDemand = (data: ContentDtoInput) => {
@@ -81,13 +85,13 @@ function DashContent() {
   };
 
   const ShowDemandModal = () => {
-    return openShowModal &&
+    return modals.showDemand.isOpen &&
       uploader &&
       demandSelected?.status === StatusContent.Pending_Upload ? (
       <ShowDemand
-        handleClose={() => setOpenShowModal(false)}
+        handleClose={() => modals.showDemand.close()}
         isOpen={
-          openShowModal &&
+          modals.showDemand.isOpen &&
           demandSelected?.status === StatusContent.Pending_Upload
         }
         demand={demandSelected!}
@@ -98,36 +102,36 @@ function DashContent() {
 
   const ValidatedModalDemand = () => {
     const open =
-      openShowModal &&
+      modals.showDemand.isOpen &&
       (!uploader || demandSelected?.status !== StatusContent.Pending_Upload);
     return open ? (
       <ValidatedDemand
         demand={demandSelected!}
         updateStatusDemand={handleRemoveDemand}
-        handleClose={() => setOpenShowModal(false)}
+        handleClose={() => modals.showDemand.close()}
         isOpen={open}
       />
     ) : null;
   };
 
   const NewModalDemand = () => {
-    const open = manager && openNewModalDemand;
+    const open = manager && modals.newDemand.isOpen;
     return !open ? null : (
       <NewDemand
         addDemand={addDemand}
-        handleClose={() => setOpenNewModalDemand(false)}
-        isOpen={openNewModalDemand}
+        handleClose={() => modals.newDemand.close()}
+        isOpen={modals.newDemand.isOpen}
       />
     );
   };
 
   const SettingsModal = () => {
-    const open = manager && settings;
+    const open = manager && modals.settings.isOpen;
     return !open ? null : (
       <SettingsFrente
-        isOpen={settings}
+        isOpen={modals.settings.isOpen}
         handleClose={() => {
-          setSettings(false);
+          modals.settings.close();
         }}
       />
     );
@@ -139,7 +143,7 @@ function DashContent() {
       <div className="flex">
         <SettingIcon
           onClick={() => {
-            setSettings(true);
+            modals.settings.open();
           }}
           className="w-10 h-10 transition-all duration-300 opacity-75 cursor-pointer fill-marine hover:opacity-100"
         />
@@ -175,7 +179,7 @@ function DashContent() {
     buttons.push({
       onClick: () => {
         setDemandSelected(null);
-        setOpenNewModalDemand(true);
+        modals.newDemand.open();
       },
       typeStyle: "quaternary",
       size: "small",

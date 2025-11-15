@@ -14,7 +14,6 @@ export async function completeInscriptionStudent(
     },
     body: JSON.stringify({
       ...student,
-      socioeconomic: JSON.stringify(student.socioeconomic),
     }),
   });
   const res = await response.json();

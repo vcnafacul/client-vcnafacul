@@ -13,6 +13,7 @@ export const DASH_NEWS = "dashnews";
 export const DASH_PROVAS = "dashprovas";
 export const DASH_CONTENT = "dash-content";
 export const CONFIRM_EMAIL = "confirmEmail";
+export const DASH_ANALYTICS = "monitoramento";
 
 export const SIMULADO = "simulado/";
 export const SIMULADO_RESPONDER = "/simulado/responder";
@@ -32,3 +33,7 @@ export const DECLARED_INTEREST = "declarar-interesse";
 export const MANAGER_COLLABORATOR = "colaboradores";
 export const PARTNER_CLASS = "turmas";
 export const PARTNER_CLASS_STUDENTS = "alunos";
+export const PARTNER_PREP_MANAGER = "gerenciamento-cursinho";
+export const PARTNER_CLASS_FORM = "formulario";
+export const REGISTRATION_MONITOR = "acompanhamento-inscricoes";
+export const ENROLLMENT_CONFIRMATION = "/confirmacao-matricula";

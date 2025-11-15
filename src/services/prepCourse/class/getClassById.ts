@@ -18,7 +18,7 @@ export async function getClassById(
     throw new Error(res.message);
   }
   if (response.status !== 200) {
-    throw new Error("Erro ao tentar deletar turma");
+    throw new Error("Erro ao buscar turma");
   }
   const res = await response.json();
   return {

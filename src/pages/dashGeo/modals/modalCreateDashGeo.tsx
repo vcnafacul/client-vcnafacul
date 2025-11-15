@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 import { Geolocation } from "@/types/geolocation/geolocation";
 import { useEffect, useState } from "react";
 
@@ -163,8 +163,6 @@ function ModalEditDashGeo({
     setValue("neighborhood", neighborhood);
     setValue("state", state);
 
-    console.log(cep);
-
     setGeo({
       ...geo,
       cep,
@@ -219,6 +217,7 @@ function ModalEditDashGeo({
           icon={leaflet.divIcon({
             className: "w-8 h-8",
             html: renderToStaticMarkup(<PointIcon className="fill-red h-8" />),
+            iconAnchor: [16, 32], // <-- Aqui está o ajuste
           })}
         ></Marker>
         <CenterMap position={selectedPosition as LatLngTuple} />
@@ -305,14 +304,6 @@ function ModalEditDashGeo({
 
         <div className="w-full flex flex-col gap-4">
           <Text size="secondary">Endereço do Cursinho</Text>
-          <div className="flex items-center justify-end gap-4">
-            <label>Definir localização manualmente</label>
-            <input
-              type="checkbox"
-              checked={useCep}
-              onChange={(e) => setUseCep(e.target.checked)}
-            />
-          </div>
           <MapBox
             className="h-[100vh] max-h-[530px] w-full border border-gray-300 z-0"
             zoom={14}
@@ -320,13 +311,22 @@ function ModalEditDashGeo({
             markers={[]}
             mapEvent={<Event />}
           />
-
-          <button
-            type="submit"
-            className="mt-2 self-end px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-          >
-            Salvar
-          </button>
+          <div className="flex justify-between">
+            <div className="flex items-center justify-start gap-4">
+              <input
+                type="checkbox"
+                checked={useCep}
+                onChange={(e) => setUseCep(e.target.checked)}
+              />
+              <label>Definir localização manualmente</label>
+            </div>
+            <button
+              type="submit"
+              className="mt-2 self-end px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+            >
+              Salvar
+            </button>
+          </div>
         </div>
       </form>
     </ModalTemplate>

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { CardDash } from "../../components/molecules/cardDash";
 import DashCardTemplate from "../../components/templates/dashCardTemplate";
 import { DashCardContext } from "../../context/dashCardContext";
 import { ISimuladoDTO } from "../../dtos/simulado/simuladoDto";
 import { StatusEnum } from "../../enums/generic/statusEnum";
+import { useToastAsync } from "../../hooks/useToastAsync";
 import { getSimulados } from "../../services/simulado/getSimulados";
 import { useAuthStore } from "../../store/auth";
 import { formatDate } from "../../utils/date";
@@ -15,6 +15,7 @@ function DashSimulado() {
   const {
     data: { token },
   } = useAuthStore();
+  const executeAsync = useToastAsync();
   const limitCards = 500;
 
   const cardTransformation = (simulado: ISimuladoDTO): CardDash => ({
@@ -48,21 +49,15 @@ function DashSimulado() {
   });
 
   useEffect(() => {
-    const id = toast.loading("Buscando Simulados ... ");
-    getSimulados(token, 1, limitCards)
-      .then((res) => {
-        setSimulados(res.data);
-        toast.dismiss(id);
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        setSimulados([]);
-      });
+    executeAsync({
+      action: () => getSimulados(token, 1, limitCards),
+      loadingMessage: "Buscando Simulados...",
+      successMessage: "Simulados carregados com sucesso!",
+      errorMessage: (error) => error.message,
+      onSuccess: (res) => setSimulados(res.data),
+      onError: () => setSimulados([]),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const getMoreCards = async (

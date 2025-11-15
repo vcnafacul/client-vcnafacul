@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ControlCalendar from "@/components/atoms/controlCalendar";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import {
   linkSocialName,
   optionsGender,
@@ -9,7 +10,6 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import * as yup from "yup";
 import { StepProps } from "..";
 import { Gender } from "../../../../store/auth";
@@ -38,6 +38,8 @@ interface Step2Props extends StepProps {
 
 function Step2({ dataUser, next, back, onRegister }: Step2Props) {
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+
+  const executeAsync = useToastAsync();
 
   const schema = yup
     .object()
@@ -102,30 +104,19 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
     return `${nameToUse} ${lastName}`.trim();
   };
 
-  const registerSubmit = (data: UseRegisterStep2) => {
+  const registerSubmit = async (data: UseRegisterStep2) => {
     if (!isCheckboxChecked) {
       data.socialName = "";
     }
     data.birthday = new Date(data.birthday).toISOString();
-    const id = toast.loading("Cadastrando ... ");
-    onRegister({ ...dataUser, ...(data as UserRegister) })
-      .then(() => {
-        toast.update(id, {
-          render: "Cadastro realizado com sucesso",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-        next();
-      })
-      .catch((error: Error) => {
-        toast.update(id, {
-          render: error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      });
+
+    await executeAsync({
+      action: () => onRegister({ ...dataUser, ...(data as UserRegister) }),
+      loadingMessage: "Cadastrando ... ",
+      successMessage: "Cadastro realizado com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => next(),
+    });
   };
 
   useEffect(() => {
@@ -237,7 +228,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
           <a
             className="font-black text-grey"
             onClick={(e) => e.stopPropagation()}
-            href="/Termos%20de%20Uso.pdf"
+            href="/docs/Termos%20de%20Uso.pdf"
             target="_blank"
           >
             termos de uso
@@ -246,7 +237,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
           <a
             className="font-black text-grey"
             onClick={(e) => e.stopPropagation()}
-            href="/Pol%C3%ADtica%20de%20Privacidade.pdf"
+            href="/docs/Pol%C3%ADtica%20de%20Privacidade.pdf"
             target="_blank"
           >
             políticas de privacidade

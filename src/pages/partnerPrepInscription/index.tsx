@@ -8,13 +8,14 @@ import {
 } from "@/dtos/student/studentInscriptionDTO";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { StepsInscriptionStudent } from "@/enums/prepCourse/stepInscriptionStudent";
+import { useToastAsync } from "@/hooks/useToastAsync";
 import { getInscription } from "@/services/prepCourse/getInscription";
 import { getUserInfo } from "@/services/prepCourse/student/getUserInfo";
 import { completeInscriptionStudent } from "@/services/prepCourse/student/inscription";
 import { useAuthStore } from "@/store/auth";
+import PartnerPrepForm from "@/types/partnerPrepForm/partnerPrepForm";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 import BaseTemplate from "../../components/templates/baseTemplate";
 import "../../styles/graphism.css";
 import { SocioeconomicAnswer, stepDescriptions, textoParceria } from "./data";
@@ -22,8 +23,8 @@ import { PartnerPrepInscriptionStep0 } from "./steps/partnerPrepInscriptionStep0
 import { PartnerPrepInscriptionStep1 } from "./steps/partnerPrepInscriptionStep1";
 import { PartnerPrepInscriptionStep2 } from "./steps/partnerPrepInscriptionStep2";
 import { PartnerPrepInscriptionStep3 } from "./steps/partnerPrepInscriptionStep3";
-import { PartnerPrepInscriptionStep4 } from "./steps/partnerPrepInscriptionStep4";
 import { PartnerPrepInscriptionStepError } from "./steps/partnerPrepInscriptionStepError";
+import { PartnerPrepInscriptionStepForm } from "./steps/partnerPrepInscriptionStepForm";
 import { PartnerPrepInscriptionStepLogin } from "./steps/partnerPrepInscriptionStepLogin";
 import PartnerPrepInscriptionStepPedingOrRejected from "./steps/partnerPrepInscriptionStepPedingOrRejected";
 import { PartnerPrepInscriptionStepRegister } from "./steps/partnerPrepInscriptionStepRegister";
@@ -37,7 +38,7 @@ export interface EachStepProps extends StepProps {
   handleBack?: (
     data?: Partial<StudentInscriptionDTO> | LegalGuardianDTO
   ) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   updateSocioeconomic?: (data: SocioeconomicAnswer[]) => void;
   currentData?: Partial<StudentInscriptionDTO>;
 }
@@ -47,6 +48,7 @@ export function PartnerPrepInscription() {
     data: { token },
   } = useAuthStore();
   const navigate = useNavigate();
+  const executeAsync = useToastAsync();
   const [stepCurrently, setStepCurrently] = useState<StepsInscriptionStudent>(
     StepsInscriptionStudent.Blank
   );
@@ -55,8 +57,11 @@ export function PartnerPrepInscription() {
   );
   const [dataInscription, setDataInscription] =
     useState<DataInscription | null>(null);
-  const [prepCourseName, setPrepCourseName] = useState<string>("");
+  const [prepCourse, setPrepCourse] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [partnerId, setPartnerId] = useState<string>("");
+  const [partnerPrepForm, setPartnerPrepForm] =
+    useState<PartnerPrepForm | null>(null);
 
   const { hashInscriptionId } = useParams();
 
@@ -110,21 +115,20 @@ export function PartnerPrepInscription() {
     setStepCurrently(stepCurrently + 1);
   };
 
-  const completeInscription = (data: SocioeconomicAnswer[]) => {
-    const id = toast.loading("Finalizando Inscrição ...");
-    completeInscriptionStudent({ ...dataStudent, socioeconomic: data }, token)
-      .then(() => {
-        toast.dismiss(id);
-        setStepCurrently(StepsInscriptionStudent.Success); // Redirect to success page
-      })
-      .catch((res) => {
-        toast.update(id, {
-          render: res.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 5000,
-        });
-      });
+  const completeInscription = async (data: SocioeconomicAnswer[]) => {
+    await executeAsync({
+      action: () =>
+        completeInscriptionStudent(
+          { ...dataStudent, socioeconomic: data },
+          token
+        ),
+      loadingMessage: "Finalizando Inscrição...",
+      successMessage: "Inscrição finalizada com sucesso!",
+      errorMessage: "Erro ao finalizar inscrição",
+      onSuccess: () => {
+        setStepCurrently(StepsInscriptionStudent.Success);
+      },
+    });
   };
 
   const isMinor = (birthday: Date) => {
@@ -193,7 +197,7 @@ export function PartnerPrepInscription() {
         return (
           <PartnerPrepInscriptionStepPedingOrRejected
             inscription={dataInscription!}
-            prepCourseName={prepCourseName}
+            prepCourseName={prepCourse}
           />
         );
       case StepsInscriptionStudent.RegisterUser:
@@ -220,6 +224,7 @@ export function PartnerPrepInscription() {
               setStepCurrently(StepsInscriptionStudent.PersonalInformation)
             }
             inscription={dataInscription!}
+            partnerId={partnerId!}
           />
         );
       case StepsInscriptionStudent.PersonalInformation:
@@ -251,14 +256,17 @@ export function PartnerPrepInscription() {
           />
         );
       case StepsInscriptionStudent.Socioeconomic:
-        return (
-          <PartnerPrepInscriptionStep4
-            description={stepDescriptions.step4}
-            currentData={dataStudent}
-            handleBack={backStep}
-            updateSocioeconomic={completeInscription}
-          />
-        );
+        if (partnerPrepForm) {
+          return (
+            <PartnerPrepInscriptionStepForm
+              updateSocioeconomic={completeInscription}
+              handleBack={backStep}
+              description={stepDescriptions.step4}
+              partnerPrepForm={partnerPrepForm!}
+            />
+          );
+        }
+        return <></>;
       case StepsInscriptionStudent.Success:
         return <PartnerPrepInscriptionStepSucess />;
       default:
@@ -280,12 +288,14 @@ export function PartnerPrepInscription() {
       if (!hashInscriptionId) navigate("/");
       getInscription(hashInscriptionId as string, token)
         .then((res) => {
+          setPartnerId(res.prepCourseId);
           setDataStudent({
             ...dataStudent,
             inscriptionId: hashInscriptionId as string,
           });
           setDataInscription(res.inscription);
-          setPrepCourseName(
+          setPartnerPrepForm(res.partnerPrepForm);
+          setPrepCourse(
             res.prepCourseName.toUpperCase().includes("CURSINHO")
               ? res.prepCourseName
               : `Cursinho ${res.prepCourseName}`
@@ -349,7 +359,7 @@ export function PartnerPrepInscription() {
             <Text
               className="text-center"
               size="secondary"
-            >{`Formulário de Inscrição ${prepCourseName}`}</Text>
+            >{`Formulário de Inscrição ${prepCourse}`}</Text>
             <div
               className={`w-11/12 ${
                 stepCurrently === StepsInscriptionStudent.Presentation
