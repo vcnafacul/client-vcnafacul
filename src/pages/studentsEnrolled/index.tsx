@@ -6,6 +6,7 @@ import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { Roles } from "@/enums/roles/roles";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { getAllWithName, InscriptionWithName } from "@/services/prepCourse/inscription/getAllWithName";
 import { enrollmentCancelled } from "@/services/prepCourse/student/enrollment-cancelled";
 import { getStudentsEnrolled } from "@/services/prepCourse/student/getStudentsEnrolled";
 import { reactiveEnrolled } from "@/services/prepCourse/student/reactive-enrolled";
@@ -13,7 +14,8 @@ import { updateClass } from "@/services/prepCourse/student/updateClass";
 import { useAuthStore } from "@/store/auth";
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
 import { capitalizeWords } from "@/utils/capitalizeWords";
-import { IconButton } from "@mui/material";
+import { formatDate } from "@/utils/date";
+import { Autocomplete, IconButton, TextField } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import {
@@ -34,6 +36,7 @@ import { InfoStudentEnrolledModal } from "./modals/infoStudentEnrolledModal";
 import { PrinterStudentCards } from "./modals/printerStudentCards";
 import { UpdateStudentClassModal } from "./modals/updateStudentClassModal";
 
+
 export function StudentsEnrolled() {
   const [name, setName] = useState<string>("");
   const [students, setStudents] = useState<StudentsDtoOutput[]>([]);
@@ -45,6 +48,9 @@ export function StudentsEnrolled() {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [filter, setFilter] = useState<GridFilterItem | undefined>(undefined);
   const [sort, setSort] = useState<GridSortModel | undefined>(undefined);
+  const [inscriptions, setInscriptions] = useState<InscriptionWithName[]>([]);
+  const [selectedInscription, setSelectedInscription] =
+    useState<InscriptionWithName | null>(null);
 
   const modals = useModals([
     "modalInfo",
@@ -68,14 +74,41 @@ export function StudentsEnrolled() {
     }
   };
 
+  const loadInscriptions = async () => {
+    await executeAsync({
+      action: () => getAllWithName(token),
+      loadingMessage: "Carregando processos seletivos...",
+      successMessage: "Processos seletivos carregados!",
+      errorMessage: "Erro ao carregar processos seletivos",
+      onSuccess: (res) => {
+        setInscriptions(res);
+        // Seleciona o primeiro processo automaticamente se houver
+        if (res.length > 0) {
+          setSelectedInscription(res[0]);
+        }
+      },
+    });
+  };
+
   const getEnrolle = async (
     page: number,
     limit: number,
+    inscriptionId: string,
     filters?: GridFilterItem,
     sortModel?: GridSortModel
   ) => {
+    if (!inscriptionId) return;
+
     await executeAsync({
-      action: () => getStudentsEnrolled(token, page, limit, filters, sortModel),
+      action: () =>
+        getStudentsEnrolled(
+          token,
+          page,
+          limit,
+          inscriptionId,
+          filters,
+          sortModel
+        ),
       loadingMessage: "Buscando alunos matriculados...",
       successMessage: "Alunos matriculados encontrados com sucesso!",
       errorMessage: "Erro ao buscar alunos matriculados",
@@ -89,16 +122,18 @@ export function StudentsEnrolled() {
 
   const debouncedFilter = useCallback(
     debounce.debounce(
-      (value: GridFilterItem) => getEnrolle(1, limit, value, sort),
+      (value: GridFilterItem, inscriptionId: string) =>
+        getEnrolle(1, limit, inscriptionId, value, sort),
       1000
     ),
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [limit, sort]
   );
 
   const handleFilterChange = (filterModel: GridFilterItem) => {
-    if (filterModel && filterModel.value !== undefined) {
+    if (filterModel && filterModel.value !== undefined && selectedInscription) {
       setFilter(filterModel);
-      debouncedFilter(filterModel);
+      debouncedFilter(filterModel, selectedInscription.id);
     }
   };
 
@@ -407,9 +442,19 @@ export function StudentsEnrolled() {
     },
   ];
 
+  // Carrega as inscrições ao montar o componente
   useEffect(() => {
-    getEnrolle(1, limit);
-  }, [limit]);
+    loadInscriptions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Carrega os alunos quando a inscrição ou limit mudar
+  useEffect(() => {
+    if (selectedInscription) {
+      getEnrolle(1, limit, selectedInscription.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedInscription, limit]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelectionChange = useCallback((selectionModel: any) => {
@@ -429,8 +474,35 @@ export function StudentsEnrolled() {
       <div className="w-full px-4">
         <h1 className="text-3xl font-bold text-center text-marine">{name}</h1>
       </div>
-      {permissao[Roles.gerenciarEstudantes] && (
-        <div className="w-full px-4">
+      <div className="w-full px-4 flex gap-4 items-center justify-between flex-wrap">
+        <Autocomplete
+          value={selectedInscription}
+          onChange={(_, newValue) => {
+            setSelectedInscription(newValue);
+            setStudents([]);
+            setSelectedRows([]);
+          }}
+          options={inscriptions}
+          getOptionLabel={(option) =>
+            option.name +
+            " - " +
+            formatDate(option.startDate.toString()) +
+            " - " +
+            formatDate(option.endDate.toString())
+          }
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Processo Seletivo"
+              placeholder="Selecione um processo seletivo"
+            />
+          )}
+          sx={{ minWidth: 300, flex: 1 }}
+          noOptionsText="Nenhum processo seletivo encontrado"
+          loadingText="Carregando..."
+        />
+        {permissao[Roles.gerenciarEstudantes] && (
           <Button
             onClick={() => modals.modalStudentCards.open()}
             size="small"
@@ -441,8 +513,8 @@ export function StudentsEnrolled() {
               <FaAddressCard className="w-5 h-5" /> Carteirinhas
             </div>
           </Button>
-        </div>
-      )}
+        )}
+      </div>
       <Paper sx={{ height: "100%", width: "100%" }}>
         <DataGrid
           rows={students}
@@ -458,12 +530,15 @@ export function StudentsEnrolled() {
           pageSizeOptions={[5, 10, 15, 30, 50, 100]}
           onPaginationModelChange={(newPageSize) => {
             setLimit(newPageSize.pageSize);
-            getEnrolle(
-              newPageSize.page + 1,
-              newPageSize.pageSize,
-              filter,
-              sort
-            );
+            if (selectedInscription) {
+              getEnrolle(
+                newPageSize.page + 1,
+                newPageSize.pageSize,
+                selectedInscription.id,
+                filter,
+                sort
+              );
+            }
           }}
           sx={{ border: 0 }}
           isRowSelectable={(params) =>
@@ -483,10 +558,11 @@ export function StudentsEnrolled() {
             if (
               sortModel &&
               sortModel.length > 0 &&
-              !["age", "name"].includes(sortModel[0].field)
+              !["age", "name"].includes(sortModel[0].field) &&
+              selectedInscription
             ) {
               setSort(sortModel);
-              getEnrolle(1, limit, filter, sortModel);
+              getEnrolle(1, limit, selectedInscription.id, filter, sortModel);
             }
           }}
         />
