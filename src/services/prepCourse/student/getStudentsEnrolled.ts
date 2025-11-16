@@ -12,8 +12,9 @@ export async function getStudentsEnrolled(
   token: string,
   page: number,
   limit: number,
+  inscriptionId: string,
   filters?: GridFilterItem,
-  sortModel?: GridSortModel
+  sortModel?: GridSortModel,
 ): Promise<GetEnrolledDtoOutput> {
   const url = new URL(enrolled);
   const params: Record<string, string | number> = {
@@ -21,7 +22,7 @@ export async function getStudentsEnrolled(
     limit,
   };
 
-  if(filters){
+  if (filters) {
     params["filter[field]"] = filters.field;
     params["filter[value]"] = filters.value;
     params["filter[operator]"] = filters.operator;
@@ -31,6 +32,8 @@ export async function getStudentsEnrolled(
     params["sort[field]"] = sortModel[0].field;
     params["sort[order]"] = sortModel[0].sort as string;
   }
+
+  params["inscriptionId"] = inscriptionId;
 
   Object.keys(params).forEach((key) =>
     url.searchParams.append(key, params[key].toString())
