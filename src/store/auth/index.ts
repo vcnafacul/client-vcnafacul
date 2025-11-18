@@ -22,7 +22,6 @@ const initialUser = {
     useSocialName: false,
   },
   token: "",
-  refresh_token: "",
   permissao: {},
 };
 
@@ -47,7 +46,6 @@ export type Auth = AuthUpdate & {
 export type AuthProps = {
   user: Auth;
   token: string;
-  refresh_token: string;
   permissao: Record<string, boolean>;
 };
 
@@ -68,7 +66,6 @@ export const useAuthStore = create<AuthState>()(
           data: {
             user: { ...initialUser.user },
             token: "",
-            refresh_token: "",
             permissao: {},
           },
         });

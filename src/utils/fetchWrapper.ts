@@ -44,6 +44,7 @@ const processQueue = (error: Error | null, token: string | null = null) => {
 
 /**
  * Wrapper para fetch com renovação automática de token
+ * Envia cookies automaticamente (refresh token via httpOnly cookie)
  * @param url - URL da requisição
  * @param options - Opções do fetch
  * @returns Promise com Response
@@ -56,6 +57,12 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
     url.includes("/forgot") ||
     url.includes("/reset");
 
+  // ✅ SEMPRE inclui credentials para enviar/receber cookies
+  const fetchOptions = {
+    ...options,
+    credentials: "include" as RequestCredentials,
+  };
+
   // Verifica se token está expirado antes da requisição
   if (
     !isAuthEndpoint &&
@@ -65,7 +72,7 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
     // ⚠️ CRITICAL: Se já está renovando, aguarda na fila
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
-        failedQueue.push({ resolve, reject, request: { url, options } });
+        failedQueue.push({ resolve, reject, request: { url, options: fetchOptions } });
       });
     }
 
@@ -73,29 +80,20 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
     isRefreshing = true;
 
     const store = useAuthStore.getState();
-    const refreshTokenValue = store.data.refresh_token;
-
-    if (!refreshTokenValue) {
-      // Sem refresh token, redireciona para login
-      isRefreshing = false;
-      processQueue(new Error("Sem refresh token"), null);
-      window.location.href = LOGOFF_PATH;
-      throw new Error("Sessão expirada");
-    }
 
     try {
-      const refreshResponse = await refreshToken(refreshTokenValue);
+      // ✅ Refresh token vai automaticamente via cookie
+      const refreshResponse = await refreshToken();
 
-      // Atualiza store com novos tokens
+      // Atualiza store apenas com access_token
       store.doAuth({
         ...store.data,
         token: refreshResponse.access_token,
-        refresh_token: refreshResponse.refresh_token,
       });
 
       // Atualiza o header da requisição atual
-      if (options?.headers) {
-        options.headers.Authorization = `Bearer ${refreshResponse.access_token}`;
+      if (fetchOptions?.headers) {
+        fetchOptions.headers.Authorization = `Bearer ${refreshResponse.access_token}`;
       }
 
       // Processa fila de requisições pendentes
@@ -116,38 +114,29 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
   }
 
   // Faz a requisição
-  const response = await fetch(url, options);
+  const response = await fetch(url, fetchOptions);
 
   // Verifica se recebeu 401 (não autorizado)
   if (response.status === 401 && !isAuthEndpoint) {
     // Se já está renovando, adiciona na fila
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
-        failedQueue.push({ resolve, reject, request: { url, options } });
+        failedQueue.push({ resolve, reject, request: { url, options: fetchOptions } });
       });
     }
 
     isRefreshing = true;
 
     const store = useAuthStore.getState();
-    const refreshTokenValue = store.data.refresh_token;
-
-    if (!refreshTokenValue) {
-      // Sem refresh token, redireciona para login
-      isRefreshing = false;
-      processQueue(new Error("Sem refresh token"), null);
-      window.location.href = LOGOFF_PATH;
-      return response;
-    }
 
     try {
-      const refreshResponse = await refreshToken(refreshTokenValue);
+      // ✅ Refresh token vai automaticamente via cookie
+      const refreshResponse = await refreshToken();
 
-      // Atualiza store com novos tokens
+      // Atualiza store apenas com access_token
       store.doAuth({
         ...store.data,
         token: refreshResponse.access_token,
-        refresh_token: refreshResponse.refresh_token,
       });
 
       // Processa fila de requisições pendentes
@@ -155,9 +144,9 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
 
       // Repete a requisição original com novo token
       const updatedOptions = {
-        ...options,
+        ...fetchOptions,
         headers: {
-          ...options?.headers,
+          ...fetchOptions?.headers,
           Authorization: `Bearer ${refreshResponse.access_token}`,
         },
       };

@@ -7,6 +7,7 @@ const Login = async (email: string, password: string) => {
 
   const response = await fetch(login, {
     method: "POST",
+    credentials: "include", // ✅ Envia/recebe cookies automaticamente
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
@@ -33,12 +34,8 @@ const Login = async (email: string, password: string) => {
       "Preencha corretamente o campo de " + errorField + " e tente novamente!"
     );
   } else {
-    // Decodifica o access_token e adiciona o refresh_token
-    const authData = decoderUser(res.access_token);
-    return {
-      ...authData,
-      refresh_token: res.refresh_token || "",
-    };
+    // Decodifica o access_token (refresh_token agora está no cookie)
+    return decoderUser(res.access_token);
   }
 };
 

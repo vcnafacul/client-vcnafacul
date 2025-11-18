@@ -5,17 +5,14 @@ interface LogoutResponse {
 }
 
 /**
- * Faz logout do dispositivo atual, revogando o refresh token
- * @param refreshToken - O refresh token a ser revogado
+ * Faz logout do dispositivo atual, revogando o refresh token (via cookie)
+ * O refresh token é enviado automaticamente via cookie e será limpo pelo servidor
  */
-export async function logoutService(
-  refreshToken: string
-): Promise<LogoutResponse> {
+export async function logoutService(): Promise<LogoutResponse> {
   try {
     const response = await fetch(logoutUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refresh_token: refreshToken }),
+      credentials: "include", // ✅ Envia cookie automaticamente
     });
 
     if (!response.ok) {
@@ -40,6 +37,7 @@ export async function logoutAllService(
   try {
     const response = await fetch(logoutAllUrl, {
       method: "POST",
+      credentials: "include", // ✅ Envia cookie automaticamente
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
