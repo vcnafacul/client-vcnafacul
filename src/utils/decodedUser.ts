@@ -9,6 +9,7 @@ export function decoderUser(access_token: string){
     const dayBirthday = birthday.getDate() < 10 ? `0${birthday.getDate()}` : birthday.getDate();
     const payload : AuthProps = {
         token: access_token,
+        refresh_token: decoded.refresh_token,
         user: { 
             ...decoded.user, 
             birthday: `${dayBirthday}/${monthBirthday}/${birthday.getFullYear()}`,
