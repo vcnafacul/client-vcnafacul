@@ -2,22 +2,18 @@ import { refresh as refreshUrl } from "../urls";
 
 interface RefreshTokenResponse {
   access_token: string;
-  refresh_token: string;
   expires_in: number;
 }
 
 /**
- * Renova o access token usando o refresh token
- * @param refreshToken - O refresh token válido
- * @returns Nova resposta com access_token e refresh_token
+ * Renova o access token usando o refresh token (via cookie httpOnly)
+ * O refresh token é enviado automaticamente via cookie
+ * @returns Nova resposta com access_token (refresh_token atualizado no cookie)
  */
-export async function refreshToken(
-  refreshToken: string
-): Promise<RefreshTokenResponse> {
+export async function refreshToken(): Promise<RefreshTokenResponse> {
   const response = await fetch(refreshUrl, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refresh_token: refreshToken }),
+    credentials: "include", // ✅ Envia cookie automaticamente
   });
 
   if (!response.ok) {
