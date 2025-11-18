@@ -64,7 +64,6 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
   ) {
     // ⚠️ CRITICAL: Se já está renovando, aguarda na fila
     if (isRefreshing) {
-      console.log("⏳ Requisição aguardando renovação em andamento...");
       return new Promise((resolve, reject) => {
         failedQueue.push({ resolve, reject, request: { url, options } });
       });
@@ -72,7 +71,6 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
 
     // Inicia processo de renovação
     isRefreshing = true;
-    console.log("🔄 Iniciando renovação de token (pré-requisição)...");
 
     const store = useAuthStore.getState();
     const refreshTokenValue = store.data.refresh_token;
@@ -86,12 +84,7 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
     }
 
     try {
-      console.log(
-        "📤 Enviando refresh_token:",
-        refreshTokenValue.substring(0, 8) + "..."
-      );
       const refreshResponse = await refreshToken(refreshTokenValue);
-      console.log("✅ Token renovado com sucesso!");
 
       // Atualiza store com novos tokens
       store.doAuth({
@@ -127,25 +120,20 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
 
   // Verifica se recebeu 401 (não autorizado)
   if (response.status === 401 && !isAuthEndpoint) {
-    console.log("⚠️ Recebido 401 - Token inválido");
-
     // Se já está renovando, adiciona na fila
     if (isRefreshing) {
-      console.log("⏳ Requisição 401 aguardando renovação em andamento...");
       return new Promise((resolve, reject) => {
         failedQueue.push({ resolve, reject, request: { url, options } });
       });
     }
 
     isRefreshing = true;
-    console.log("🔄 Iniciando renovação de token (pós-401)...");
 
     const store = useAuthStore.getState();
     const refreshTokenValue = store.data.refresh_token;
 
     if (!refreshTokenValue) {
       // Sem refresh token, redireciona para login
-      console.log("❌ Sem refresh token disponível");
       isRefreshing = false;
       processQueue(new Error("Sem refresh token"), null);
       window.location.href = LOGOFF_PATH;
@@ -153,12 +141,7 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
     }
 
     try {
-      console.log(
-        "📤 Enviando refresh_token:",
-        refreshTokenValue.substring(0, 8) + "..."
-      );
       const refreshResponse = await refreshToken(refreshTokenValue);
-      console.log("✅ Token renovado com sucesso após 401!");
 
       // Atualiza store com novos tokens
       store.doAuth({

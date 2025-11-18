@@ -162,7 +162,6 @@ export function ExpandableSection({
             onAdd={
               section.active
                 ? () => {
-                    console.log("handleAddQuestion", section._id);
                     handleAddQuestion(section._id);
                   }
                 : undefined

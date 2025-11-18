@@ -29,6 +29,5 @@ export async function createPrepCourse(
   }
 
   const prep = await response.json();
-  console.log(prep);
   return prep;
 }
