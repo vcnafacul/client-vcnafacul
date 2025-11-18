@@ -12,8 +12,10 @@ export function PartnerPrepInscriptionStepSucess() {
           Inscrição confirmada!
         </h2>
         <p className="text-sm text-gray-600 mt-2 max-w-md">
-          Sua inscrição foi realizada com sucesso. Estamos felizes em ter você
-          com a gente! 😊
+          Recebemos sua inscrição no processo seletivo! Obrigado por se
+          inscrever 😊 Agora é só aguardar: o cursinho vai analisar todas as
+          inscrições e entraremos em contato com o resultado e os próximos
+          passos.
         </p>
       </div>
 
