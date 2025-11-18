@@ -11,7 +11,9 @@ const Login = async (email: string, password: string) => {
     body: JSON.stringify(data),
   });
   if (response.status === StatusCodes.UNAUTHORIZED) {
-    throw new Error("Email não autorizado - Caso já tenha efetuado o cadastro, verifique seu email para confirmação");
+    throw new Error(
+      "Email não autorizado - Caso já tenha efetuado o cadastro, verifique seu email para confirmação"
+    );
   }
   const res = await response.json();
   if (response.status === StatusCodes.CONFLICT) {
@@ -31,7 +33,12 @@ const Login = async (email: string, password: string) => {
       "Preencha corretamente o campo de " + errorField + " e tente novamente!"
     );
   } else {
-    return decoderUser(res.access_token);
+    // Decodifica o access_token e adiciona o refresh_token
+    const authData = decoderUser(res.access_token);
+    return {
+      ...authData,
+      refresh_token: res.refresh_token || "",
+    };
   }
 };
 

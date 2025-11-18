@@ -1,3 +1,4 @@
+import fetchWrapper from "@/utils/fetchWrapper";
 import { send_bulk_email } from "../urls";
 
 interface SendBulkEmailProps {
@@ -8,7 +9,7 @@ interface SendBulkEmailProps {
 }
 
 export async function sendBulkEmail(data: SendBulkEmailProps, token: string) {
-  const response = await fetch(send_bulk_email, {
+  const response = await fetchWrapper(send_bulk_email, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
