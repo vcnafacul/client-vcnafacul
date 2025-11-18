@@ -56,7 +56,6 @@ function MyComponent() {
       errorMessage: "Erro ao excluir seção",
       onSuccess: () => {
         // ✅ Não recebe parâmetros
-        console.log("Seção excluída!");
         refreshList();
       },
     });

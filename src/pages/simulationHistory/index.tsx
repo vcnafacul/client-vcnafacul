@@ -87,7 +87,6 @@ export function SimulationHistory() {
   }, [questionSelected?.imageId, token]);
 
   if (!historic) return <></>;
-  console.log(historic);
   return (
     <>
       <SimulateTemplate

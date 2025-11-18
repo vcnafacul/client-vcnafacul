@@ -17,7 +17,6 @@ export default function ConfirmSubscription({
   handleConfirm,
 }: Props) {
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  console.log(isChecked);
 
   return (
     <ModalTemplate
