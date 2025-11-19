@@ -25,13 +25,11 @@ export const useAuth = () => {
 
   /**
    * Faz logout do usuário no dispositivo atual
-   * Revoga o refresh token no backend
+   * Revoga o refresh token no backend (via cookie httpOnly)
    */
   const logout = async () => {
     try {
-      if (data.refresh_token) {
-        await logoutService(data.refresh_token);
-      }
+      await logoutService(); // ✅ Refresh token vai via cookie
     } catch (error) {
       console.error("Erro ao fazer logout no servidor:", error);
     } finally {
@@ -68,7 +66,6 @@ export const useAuth = () => {
   return {
     user: data.user,
     token: data.token,
-    refresh_token: data.refresh_token,
     permissao: data.permissao,
     login,
     logout,

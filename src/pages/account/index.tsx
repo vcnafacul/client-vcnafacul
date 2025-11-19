@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AccountForm } from "@/components/organisms/accountForm";
+import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { UserMe } from "@/types/user/userMe";
 import { useEffect, useState } from "react";
@@ -13,8 +14,8 @@ import { changeImageProfileCollaborator } from "../../services/auth/changeImageP
 import { me } from "../../services/auth/me";
 import { removeImageProfileCollaborator } from "../../services/auth/removeImageProfileCollaborator";
 import { updateUser } from "../../services/auth/updateUser";
+import { getPhotoCollaborator } from "../../services/prepCourse/collaborator/get-photo";
 import { AuthUpdate, Gender, useAuthStore } from "../../store/auth";
-import { useModals } from "@/hooks/useModal";
 
 function Account() {
   const {
@@ -23,16 +24,35 @@ function Account() {
   } = useAuthStore();
   const executeAsync = useToastAsync();
 
-
-  const modals = useModals([
-    'deleteImage',
-  ]);
+  const modals = useModals(["deleteImage"]);
 
   const [userAccount, setUserAccount] = useState<UserMe>();
 
   const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
   const [imagePreview, setImagePreview] = useState<any>(null);
   const [file, setFile] = useState<any>(null);
+  const [hasImageChange, setHasImageChange] = useState<boolean>(false);
+
+  const loadCollaboratorPhoto = async (photoKey: string) => {
+    try {
+      // Limpar a URL do blob anterior se existir
+      if (
+        imagePreview &&
+        typeof imagePreview === "string" &&
+        imagePreview.startsWith("blob:")
+      ) {
+        URL.revokeObjectURL(imagePreview);
+      }
+
+      const blob = await getPhotoCollaborator(photoKey);
+      const url = URL.createObjectURL(blob);
+      setImagePreview(url);
+    } catch (error) {
+      console.error("Erro ao carregar foto do colaborador:", error);
+      // Fallback para a URL do FTP caso falhe
+      setImagePreview(`${VITE_FTP_PROFILE}${photoKey}`);
+    }
+  };
 
   const previewImage = (file: any) => {
     const reader = new FileReader();
@@ -50,6 +70,7 @@ function Account() {
     } else {
       previewImage(file);
       setFile(file);
+      setHasImageChange(true);
     }
   };
 
@@ -62,19 +83,35 @@ function Account() {
       loadingMessage: "Upload de Imagem de Perfil Colaborador ... ",
       successMessage: "Upload feito com sucesso",
       errorMessage: (error: Error) => error.message,
-      onSuccess: (fileName) => {
+      onSuccess: async (fileName) => {
         setUserAccount({ ...userAccount!, collaboratorPhoto: fileName });
         updateAccount({ ...userAccount! });
+        // Carregar a nova foto usando getPhotoCollaborator
+        await loadCollaboratorPhoto(fileName);
+        setFile(null);
+        setHasImageChange(false);
       },
     });
   };
 
   const deleteImage = () => {
+    // Limpar a URL do blob antes de deletar
+    if (
+      imagePreview &&
+      typeof imagePreview === "string" &&
+      imagePreview.startsWith("blob:")
+    ) {
+      URL.revokeObjectURL(imagePreview);
+    }
+
     if (userAccount?.collaboratorPhoto) {
       removeImageProfileCollaborator(token)
         .then((res) => {
           if (res) {
             updateAccount({ ...userAccount! });
+            setImagePreview(null);
+            setFile(null);
+            setHasImageChange(false);
           } else {
             toast.error("Não foi possível remover sua imagem");
           }
@@ -84,6 +121,8 @@ function Account() {
         });
     } else {
       setImagePreview(null);
+      setFile(null);
+      setHasImageChange(false);
     }
     modals.deleteImage.close();
   };
@@ -122,12 +161,32 @@ function Account() {
       about: data.about,
       useSocialName: data.useSocialName,
     };
+
+    // Verificar se houve mudanças no formulário
+    const hasFormChanges =
+      authUpdate.firstName !== userAccount?.firstName ||
+      authUpdate.lastName !== userAccount?.lastName ||
+      authUpdate.socialName !== userAccount?.socialName ||
+      new Date(authUpdate.birthday).toISOString() !== userAccount?.birthday ||
+      authUpdate.city !== userAccount?.city ||
+      authUpdate.state !== userAccount?.state ||
+      authUpdate.phone !== userAccount?.phone ||
+      authUpdate.gender !== userAccount?.gender ||
+      authUpdate.about !== userAccount?.about ||
+      authUpdate.useSocialName !== userAccount?.useSocialName;
+
     if (file) {
       uploadingImagem(file).then(() => {
-        updateData(authUpdate, onSuccess, onError);
+        if (hasFormChanges) {
+          updateData(authUpdate, onSuccess, onError);
+        } else {
+          onSuccess?.();
+        }
       });
-    } else {
+    } else if (hasFormChanges) {
       updateData(authUpdate, onSuccess, onError);
+    } else {
+      onSuccess?.();
     }
   };
 
@@ -144,15 +203,26 @@ function Account() {
 
   useEffect(() => {
     me(token)
-      .then((res) => {
+      .then(async (res) => {
         setUserAccount(res);
         if (res?.collaboratorPhoto) {
-          setImagePreview(`${VITE_FTP_PROFILE}${res.collaboratorPhoto}`);
+          await loadCollaboratorPhoto(res.collaboratorPhoto);
         }
       })
       .catch((error: Error) => {
         toast.error(error.message);
       });
+
+    // Cleanup da URL do blob quando o componente é desmontado
+    return () => {
+      if (
+        imagePreview &&
+        typeof imagePreview === "string" &&
+        imagePreview.startsWith("blob:")
+      ) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
   }, [token]);
 
   return (
@@ -209,7 +279,11 @@ function Account() {
           {/* Formulário de atualização */}
           <div className="px-6 py-6 w-full">
             {userAccount && (
-              <AccountForm update={update} userAccount={userAccount} />
+              <AccountForm
+                update={update}
+                userAccount={userAccount}
+                hasImageChange={hasImageChange}
+              />
             )}
           </div>
         </div>

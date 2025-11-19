@@ -6,15 +6,13 @@ import { logoutService } from "../../services/auth/logout";
 
 function Logout() {
   const navigate = useNavigate();
-  const { data, logout } = useAuthStore();
+  const { logout } = useAuthStore();
 
   useEffect(() => {
     const performLogout = async () => {
-      // Tenta fazer logout no backend
+      // Tenta fazer logout no backend (refresh token via cookie)
       try {
-        if (data.refresh_token) {
-          await logoutService(data.refresh_token);
-        }
+        await logoutService(); // ✅ Cookie enviado automaticamente
       } catch (error) {
         console.error("Erro ao fazer logout no servidor:", error);
         // Continua o logout local mesmo com erro

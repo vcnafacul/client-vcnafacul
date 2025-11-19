@@ -1,10 +1,10 @@
 import { DateTime } from "luxon";
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { refreshToken } from "../services/auth/refresh";
 import { useAuthStore } from "../store/auth";
 import { jwtDecoded } from "../utils/jwt";
 import { HOME_PATH } from "./path";
-import { refreshToken } from "../services/auth/refresh";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -26,22 +26,23 @@ function ProtectedRoute({ children, redirectTo }: ProtectedRouteProps) {
 
       try {
         const decoded = jwtDecoded(data.token);
-        const isExpired = new Date(decoded.exp * 1000) < DateTime.now().toJSDate();
+        const isExpired =
+          new Date(decoded.exp * 1000) < DateTime.now().toJSDate();
 
         // Se o token está expirado, tenta renovar
-        if (isExpired && data.refresh_token) {
+        if (isExpired) {
           setIsRefreshing(true);
-          
+
           try {
-            const response = await refreshToken(data.refresh_token);
-            
-            // Atualiza o store com os novos tokens
+            // ✅ Refresh token vai automaticamente via cookie
+            const response = await refreshToken();
+
+            // Atualiza o store com o novo access_token
             doAuth({
               ...data,
               token: response.access_token,
-              refresh_token: response.refresh_token,
             });
-            
+
             setIsAuthenticated(true);
           } catch (error) {
             console.error("Erro ao renovar token:", error);
@@ -51,10 +52,6 @@ function ProtectedRoute({ children, redirectTo }: ProtectedRouteProps) {
           } finally {
             setIsRefreshing(false);
           }
-        } else if (isExpired) {
-          // Token expirado e sem refresh token
-          logout();
-          setIsAuthenticated(false);
         }
       } catch (error) {
         console.error("Erro ao verificar token:", error);

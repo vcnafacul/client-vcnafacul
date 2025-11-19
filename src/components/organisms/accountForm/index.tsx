@@ -14,9 +14,14 @@ import { InputFactory } from "../inputFactory";
 interface AccountFormProps {
   update: (data: any, onSuccess?: () => void, onError?: () => void) => void;
   userAccount: UserMe;
+  hasImageChange?: boolean;
 }
 
-export function AccountForm({ update, userAccount }: AccountFormProps) {
+export function AccountForm({
+  update,
+  userAccount,
+  hasImageChange = false,
+}: AccountFormProps) {
   const [isCheckboxChecked, setIsCheckboxChecked] = useState<boolean>(
     userAccount.useSocialName
   );
@@ -115,7 +120,7 @@ export function AccountForm({ update, userAccount }: AccountFormProps) {
 
     const hasCheckboxChanges = isCheckboxChecked !== userAccount?.useSocialName;
 
-    setHasChanges(hasFormChanges || hasCheckboxChanges);
+    setHasChanges(hasFormChanges || hasCheckboxChanges || hasImageChange);
   };
 
   // Monitorar mudanças nos campos
@@ -125,7 +130,13 @@ export function AccountForm({ update, userAccount }: AccountFormProps) {
     });
     return () => subscription.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watch, isCheckboxChecked, userAccount]);
+  }, [watch, isCheckboxChecked, userAccount, hasImageChange]);
+
+  // Monitorar mudanças na imagem especificamente
+  useEffect(() => {
+    checkForChanges();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasImageChange]);
 
   return (
     <div className="w-full">
