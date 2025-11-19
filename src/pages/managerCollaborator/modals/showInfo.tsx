@@ -13,6 +13,7 @@ interface ModalProps {
   handleClose: () => void;
   isOpen: boolean;
   collaborator: CollaboratorColumns;
+  photoUrl?: string;
   handleActive: (id: string) => Promise<void>;
   handleDescription: (id: string, description: string) => Promise<void>;
   openUpdateRole: () => void;
@@ -21,6 +22,7 @@ interface ModalProps {
 
 export function ShowInfo({
   collaborator,
+  photoUrl,
   handleClose,
   isOpen,
   handleActive,
@@ -46,7 +48,7 @@ export function ShowInfo({
             <div className="w-56 h-40">
               <img
                 className="rounded-full object-cover shadow-md shadow-stone-500 w-40 h-40"
-                src={VITE_FTP_PROFILE + collaborator.photo}
+                src={photoUrl || `${VITE_FTP_PROFILE}${collaborator.photo}`}
                 alt={collaborator.name}
               />
             </div>

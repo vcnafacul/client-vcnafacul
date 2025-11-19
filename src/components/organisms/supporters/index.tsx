@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigation, Pagination } from "swiper/modules";
 import { useHomeContext } from "../../../context/homeContext";
+import { getPhotoCollaborator } from "../../../services/prepCourse/collaborator/get-photo";
 import Text from "../../atoms/text";
 import Carousel from "../../molecules/carousel";
 import Selector from "../../molecules/selector";
@@ -48,6 +49,9 @@ function Supporters() {
   const [tab, setTab] = useState<TabItems>(
     volunteers.length === 0 ? TabItems.Empresas : TabItems.Voluntarios
   );
+  const [volunteerPhotos, setVolunteerPhotos] = useState<
+    Record<string, string>
+  >({});
   const changeTab = (tab: number) => {
     setTab(tab);
   };
@@ -84,7 +88,10 @@ function Supporters() {
               className={`rounded-full object-cover ${
                 volunteer.actived ? "" : "grayscale"
               }`}
-              src={`${VITE_FTP_PROFILE}/${volunteer.image}`}
+              src={
+                volunteerPhotos[volunteer.image] ||
+                `${VITE_FTP_PROFILE}/${volunteer.image}`
+              }
               alt={volunteer.alt}
             />
           </div>
@@ -179,6 +186,46 @@ function Supporters() {
       setTab(TabItems.Voluntarios);
     }
   }, [volunteers]);
+
+  useEffect(() => {
+    const loadPhotos = async () => {
+      const photoUrls: Record<string, string> = {};
+
+      for (const volunteer of volunteers) {
+        if (volunteer.image) {
+          try {
+            const blob = await getPhotoCollaborator(volunteer.image);
+            const url = URL.createObjectURL(blob);
+            photoUrls[volunteer.image] = url;
+          } catch (error) {
+            console.error(
+              `Erro ao carregar foto do colaborador ${volunteer.name}:`,
+              error
+            );
+            // Fallback para a URL do FTP caso falhe
+            photoUrls[
+              volunteer.image
+            ] = `${VITE_FTP_PROFILE}/${volunteer.image}`;
+          }
+        }
+      }
+
+      setVolunteerPhotos(photoUrls);
+    };
+
+    if (volunteers.length > 0) {
+      loadPhotos();
+    }
+
+    // Cleanup das URLs criadas
+    return () => {
+      Object.values(volunteerPhotos).forEach((url) => {
+        if (url.startsWith("blob:")) {
+          URL.revokeObjectURL(url);
+        }
+      });
+    };
+  }, [volunteers, VITE_FTP_PROFILE]);
 
   if (!supporters || !volunteers) return <SupportersSkeleton />;
   return (

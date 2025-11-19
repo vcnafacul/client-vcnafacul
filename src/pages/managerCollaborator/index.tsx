@@ -1,8 +1,10 @@
 import Button from "@/components/molecules/button";
+import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { changeActive } from "@/services/prepCourse/collaborator/change-active";
 import { changeDescription } from "@/services/prepCourse/collaborator/change-description";
 import { getCollaborator } from "@/services/prepCourse/collaborator/get-collaborator";
+import { getPhotoCollaborator } from "@/services/prepCourse/collaborator/get-photo";
 import { getRoles } from "@/services/prepCourse/getRoles";
 import { updateUserRole } from "@/services/roles/updateUserRole";
 import { useAuthStore } from "@/store/auth";
@@ -20,7 +22,6 @@ import ModalNewRole from "./modals/ModalNewRole";
 import ModalUpdateRoleUser from "./modals/ModalUpdateRoleUser";
 import { ShowInfo } from "./modals/showInfo";
 import { TempInviteMember } from "./modals/temp-invite-member";
-import { useModals } from "@/hooks/useModal";
 
 export interface CollaboratorColumns {
   id: string;
@@ -47,13 +48,16 @@ export default function ManagerCollaborator() {
   const [limit, setLimit] = useState<number>(100);
   const [totalItems, setTotalItems] = useState<number>(100);
   const [roles, setRoles] = useState<Role[]>([]);
+  const [collaboratorPhotos, setCollaboratorPhotos] = useState<
+    Record<string, string>
+  >({});
 
   const modals = useModals([
-    'modalInviteMember',
-    'modalShowInfo',
-    'modalShowNewRole',
-    'modalShowEditRole',
-    'modalUserRole',
+    "modalInviteMember",
+    "modalShowInfo",
+    "modalShowNewRole",
+    "modalShowEditRole",
+    "modalUserRole",
   ]);
 
   const {
@@ -61,6 +65,19 @@ export default function ManagerCollaborator() {
   } = useAuthStore();
 
   const executeAsync = useToastAsync();
+  const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
+
+  const loadCollaboratorPhoto = async (photoKey: string) => {
+    try {
+      const blob = await getPhotoCollaborator(photoKey);
+      const url = URL.createObjectURL(blob);
+      return url;
+    } catch (error) {
+      console.error(`Erro ao carregar foto do colaborador:`, error);
+      // Fallback para a URL do FTP caso falhe
+      return `${VITE_FTP_PROFILE}${photoKey}`;
+    }
+  };
 
   const columns: GridColDef[] = [
     {
@@ -195,6 +212,11 @@ export default function ManagerCollaborator() {
         isOpen={modals.modalShowInfo.isOpen}
         handleClose={() => modals.modalShowInfo.close()}
         collaborator={collaboratorSelected!}
+        photoUrl={
+          collaboratorSelected?.photo
+            ? collaboratorPhotos[collaboratorSelected.photo]
+            : undefined
+        }
         handleActive={handleChangeActive}
         handleDescription={handleDescription}
         openUpdateRole={() => {
@@ -319,6 +341,34 @@ export default function ManagerCollaborator() {
         setRoles([]);
       });
   }, []);
+
+  useEffect(() => {
+    const loadPhotos = async () => {
+      const photoUrls: Record<string, string> = {};
+
+      for (const col of collaborator) {
+        if (col.photo) {
+          const url = await loadCollaboratorPhoto(col.photo);
+          photoUrls[col.photo] = url;
+        }
+      }
+
+      setCollaboratorPhotos(photoUrls);
+    };
+
+    if (collaborator.length > 0) {
+      loadPhotos();
+    }
+
+    // Cleanup das URLs criadas
+    return () => {
+      Object.values(collaboratorPhotos).forEach((url) => {
+        if (url.startsWith("blob:")) {
+          URL.revokeObjectURL(url);
+        }
+      });
+    };
+  }, [collaborator]);
 
   const paginationModel = { page: 0, pageSize: limit };
 
