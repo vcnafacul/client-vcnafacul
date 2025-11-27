@@ -39,8 +39,14 @@ export function ConfirmEnrolledPage() {
       </div>
     );
   } else {
-    const { expired, convocated, declared, isFree, studentId, requestDocuments } =
-      declaredInterest;
+    const {
+      expired,
+      convocated,
+      declared,
+      isFree,
+      studentId,
+      requestDocuments,
+    } = declaredInterest;
 
     if (declared) {
       componentToRender = (
