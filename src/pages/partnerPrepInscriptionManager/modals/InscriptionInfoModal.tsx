@@ -32,6 +32,7 @@ interface InscriptionInfoModalProps {
   isOpen: boolean;
   handleClose: () => void;
   inscription?: Inscription | undefined;
+  setInscription: (inscription: Inscription) => void;
   canEdit?: boolean;
   handleEdit: (data: InscriptionOutput) => Promise<void>;
   handleDelete: () => Promise<void>;
@@ -41,6 +42,7 @@ export function InscriptionInfoModal({
   isOpen,
   handleClose,
   inscription,
+  setInscription,
   handleEdit,
   handleDelete,
 }: InscriptionInfoModalProps) {
@@ -98,10 +100,13 @@ export function InscriptionInfoModal({
       successMessage: "Processo seletivo prorrogado com sucesso!",
       errorMessage: "Erro ao prorrogar processo seletivo",
       onSuccess: () => {
-        setInscriptionSelected({
+        const inscrption = {
           ...inscriptionSelected!,
           endDate: endDate,
-        });
+        };
+        setInscriptionSelected(inscrption);
+        setInscription(inscrption);
+
         setOpenModalExtend(false);
       },
     });

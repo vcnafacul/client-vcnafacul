@@ -162,6 +162,11 @@ export function PartnerPrepInscriptionManager() {
           modals.modalInfo.close();
         }}
         inscription={inscriptionSelected}
+        setInscription={insc => {
+          setInscriptions(
+            inscriptions.map(ins => ins.id === insc.id ? insc : ins)
+          )
+        }}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
       />
