@@ -10,7 +10,7 @@ import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { formatDate } from "@/utils/date";
 import { FileText, FileX } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaRegCopy } from "react-icons/fa6";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { dataInscription } from "../data";
@@ -22,6 +22,7 @@ import {
 
 import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
 import BLink from "@/components/molecules/bLink";
+import { StatusEnum } from "@/enums/generic/statusEnum";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
 import { DASH, PARTNER_PREP_INSCRIPTION } from "@/routes/path";
@@ -58,6 +59,13 @@ export function InscriptionInfoModal({
   } = useAuthStore();
 
   const executeAsync = useToastAsync();
+
+  // Sincronizar estado local quando a prop inscription mudar
+  useEffect(() => {
+    if (inscription) {
+      setInscriptionSelected(inscription);
+    }
+  }, [inscription]);
 
   // Verifica se a data de fim é maior que a data atual
   const canExtend = inscriptionSelected?.endDate
@@ -103,6 +111,7 @@ export function InscriptionInfoModal({
         const inscrption = {
           ...inscriptionSelected!,
           endDate: endDate,
+          actived: StatusEnum.Approved, // Atualizar status para Approved
         };
         setInscriptionSelected(inscrption);
         setInscription(inscrption);
