@@ -27,8 +27,8 @@ function ModalTemplate({
         scrollbar-hide"
       {...props}
     >
-      <div className="w-full h-full flex justify-center items-center p-1">
-        <div className={className}>
+      <div className="min-h-full w-full flex justify-center items-start py-4 md:py-8 px-2 md:px-4">
+        <div className={`my-auto ${className}`}>
           <div className="flex justify-end">
             {closer && (
               <IoMdClose

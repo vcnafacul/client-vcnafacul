@@ -22,14 +22,16 @@ export default function ConfirmSubscription({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white p-6 rounded-md max-w-lg w-full space-y-6"
+      className="bg-white p-4 md:p-6 rounded-md max-w-lg w-full max-h-[85vh] overflow-y-auto"
     >
-      <div>
-        <div className="flex items-start gap-3">
-          <AlertTriangle className="text-yellow-600 mt-1" />
+      <div className="space-y-4 md:space-y-6">
+        <div className="flex items-start gap-2 md:gap-3">
+          <AlertTriangle className="text-yellow-600 mt-1 flex-shrink-0 w-5 h-5 md:w-6 md:h-6" />
           <div>
-            <h2 className="text-lg font-semibold text-gray-800">Atenção!</h2>
-            <p className="text-sm text-gray-600">
+            <h2 className="text-base md:text-lg font-semibold text-gray-800">
+              Atenção!
+            </h2>
+            <p className="text-xs md:text-sm text-gray-600">
               Antes de prosseguir, é importante que você esteja ciente de que
               fornecer informações falsas é crime previsto no Código Penal
               Brasileiro. Leia com atenção:
@@ -37,7 +39,7 @@ export default function ConfirmSubscription({
           </div>
         </div>
 
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md text-sm text-gray-700">
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 md:p-4 rounded-md text-xs md:text-sm text-gray-700">
           <p className="font-medium">Código Penal – Falsidade ideológica</p>
           <p className="mt-2">
             <strong>Art. 299</strong> – Omitir, em documento público ou
@@ -58,32 +60,41 @@ export default function ConfirmSubscription({
           </p>
         </div>
 
-        <p className="text-sm text-gray-600">
+        <p className="text-xs md:text-sm text-gray-600">
           Durante a declaração de interesse ou qualquer outro momento posterior,
           documentos para comprovação das informações podem ser solicitados a
           qualquer momento.
         </p>
 
-        <div className="flex items-start gap-2 pt-4">
+        <div className="flex items-start gap-2 pt-2 md:pt-4">
           <Checkbox
             id="confirmation"
             checked={isChecked}
             onCheckedChange={() => setIsChecked(!isChecked)}
+            className="mt-0.5"
           />
           <Label
             htmlFor="confirmation"
-            className="text-sm text-gray-700 leading-tight"
+            className="text-xs md:text-sm text-gray-700 leading-tight cursor-pointer"
           >
             Declaro que as informações são verdadeiras e estou ciente das
             implicações legais e da possibilidade de comprovação futura.
           </Label>
         </div>
 
-        <div className="flex justify-end gap-2 pt-4">
-          <Button variant="ghost" onClick={handleClose}>
+        <div className="flex flex-col sm:flex-row justify-end gap-2 pt-2 md:pt-4">
+          <Button
+            variant="ghost"
+            onClick={handleClose}
+            className="w-full sm:w-auto"
+          >
             Cancelar
           </Button>
-          <Button onClick={handleConfirm} disabled={!isChecked}>
+          <Button
+            onClick={handleConfirm}
+            disabled={!isChecked}
+            className="w-full sm:w-auto"
+          >
             Confirmar
           </Button>
         </div>
