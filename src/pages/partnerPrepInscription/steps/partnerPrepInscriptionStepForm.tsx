@@ -23,6 +23,21 @@ interface PartnerPrepInscriptionStepFormProps extends EachStepProps {
   partnerPrepForm: PartnerPrepForm;
 }
 
+// Função helper para determinar o className baseado no tamanho do texto
+const getInputClassByTextLength = (textLength: number): string => {
+  if (textLength <= 50) {
+    return ""; // Altura padrão
+  } else if (textLength <= 80) {
+    return "h-20 pt-[48px]"; // Texto médio
+  } else if (textLength <= 120) {
+    return "h-24 pt-[52px]"; // Texto longo
+  } else if (textLength <= 160) {
+    return "h-28 pt-[56px]"; // Texto muito longo
+  } else {
+    return "h-[130px] pt-[96px]"; // Texto extra longo
+  }
+};
+
 // Componente de Skeleton Loader
 const FormSkeleton = ({
   partnerPrepForm,
@@ -117,7 +132,7 @@ const QuestionText = ({
       type="text"
       error={error ? { message: error } : undefined}
       value={value}
-      className={question.text.length > 80 ? "h-20 pt-[40px]" : ""}
+      className={getInputClassByTextLength(question.text.length)}
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onChange={(e: any) => handleChange(question._id, e.target.value)}
     />
@@ -150,7 +165,7 @@ const QuestionBoolean = ({
       ]}
       error={error ? { message: error } : undefined}
       value={selectValue}
-      className={question.text.length > 80 ? "h-20 pt-[48px]" : ""}
+      className={getInputClassByTextLength(question.text.length)}
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onChange={(e: any) => {
         // Converter string para boolean
@@ -183,7 +198,7 @@ const QuestionOptions = ({
       }))}
       error={error ? { message: error } : undefined}
       value={value}
-      className={question.text.length > 80 ? "h-20 pt-[48px]" : ""}
+      className={getInputClassByTextLength(question.text.length)}
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onChange={(e: any) => handleChange(question._id, e.value)}
     />
@@ -256,7 +271,7 @@ const QuestionNumber = ({
       step={1}
       error={error ? { message: error } : undefined}
       value={value}
-      className={question.text.length > 100 ? "h-20 pt-[40px]" : ""}
+      className={getInputClassByTextLength(question.text.length)}
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onChange={handleNumberChange}
     />
@@ -530,7 +545,7 @@ export function PartnerPrepInscriptionStepForm({
             Por favor, preencha todos os campos obrigatórios
           </p>
         )}
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col-reverse sm:flex-row gap-4">
           <AlertDialogUI
             title="Tem certeza que deseja voltar?"
             description="Se você deixar o formulário, perderá todas as informações já preenchidas"

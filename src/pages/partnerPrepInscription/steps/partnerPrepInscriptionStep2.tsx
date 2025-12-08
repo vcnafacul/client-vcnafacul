@@ -250,7 +250,7 @@ export function PartnerPrepInscriptionStep2({
         maxLength={50}
       />
 
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col-reverse sm:flex-row gap-4">
         <Button type="button" onClick={handleBackForm}>
           Voltar
         </Button>

@@ -277,7 +277,7 @@ export function PartnerPrepInscriptionStep3({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => handleCPFChange(e.target.value)}
       />
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col-reverse sm:flex-row gap-4">
         <Button type="button" onClick={handleBackStep}>
           Voltar
         </Button>

@@ -22,7 +22,7 @@ export default function ConfirmSubscription({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white p-4 md:p-6 rounded-md max-w-lg w-full max-h-[85vh] overflow-y-auto"
+      className="bg-white p-4 md:p-6 rounded-md max-w-lg w-full max-h-[80vh] overflow-y-auto"
     >
       <div className="space-y-4 md:space-y-6">
         <div className="flex items-start gap-2 md:gap-3">
@@ -82,7 +82,7 @@ export default function ConfirmSubscription({
           </Label>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-end gap-2 pt-2 md:pt-4">
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2 md:pt-4">
           <Button
             variant="ghost"
             onClick={handleClose}
