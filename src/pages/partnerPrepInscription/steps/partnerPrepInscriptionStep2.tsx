@@ -155,7 +155,7 @@ export function PartnerPrepInscriptionStep2({
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
-      className="w-full flex flex-col gap-4 md:gap-2 mt-8 mb-16"
+      className="w-full flex flex-col gap-4 md:gap-2 mt-4 md:mt-8 mb-8 md:mb-16"
     >
       <Text size="tertiary">{description}</Text>
       <InputFactory
@@ -250,7 +250,7 @@ export function PartnerPrepInscriptionStep2({
         maxLength={50}
       />
 
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col-reverse sm:flex-row gap-4">
         <Button type="button" onClick={handleBackForm}>
           Voltar
         </Button>

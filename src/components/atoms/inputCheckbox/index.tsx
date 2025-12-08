@@ -60,9 +60,9 @@ export function InputCheckBox({
   return (
     <div className="flex flex-col gap-2">
       {checkboxs.map((value, key) => (
-        <div className="flex gap-2" key={key}>
+        <div className="flex gap-2 items-start" key={key}>
           <Checkbox
-            className="h-5 w-5 border-grey border-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-white data-[state=checked]:text-green2"
+            className="h-5 w-5 border-grey border-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-white data-[state=checked]:text-green2 mt-0.5 flex-shrink-0"
             {...(props as CheckboxProps)}
             id={value}
             checked={onChecked(value)}
@@ -84,9 +84,9 @@ export function InputCheckBox({
               }
             }}
           />
-          <div>
+          <div className="flex-1">
             <label
-              className="text-sm text-grey peer-disabled:cursor-not-allowed peer-disabled:opacity-70 select-none"
+              className="text-sm text-grey peer-disabled:cursor-not-allowed peer-disabled:opacity-70 select-none cursor-pointer break-words"
               htmlFor={value}
             >
               {value}
