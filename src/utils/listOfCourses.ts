@@ -203,7 +203,6 @@ export const cursos = [
   "Química",
   "Rochas Ornamentais",
   "Saneamento Ambiental",
-  "Segurança da Informação",
   "Ciências Exatas",
   "Ciências Atuariais",
   "Física",

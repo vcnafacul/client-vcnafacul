@@ -34,24 +34,24 @@ export function PartnerPrepInscriptionStep0({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="w-full p-4 bg-fuchsia-50 border-l-4 border-fuchsia-500 rounded-md my-4">
-        <div className="flex justify-between gap-2">
-          <h3 className="font-semibold text-fuchsia-800 text-lg">
+      <div className="w-full p-3 md:p-4 bg-fuchsia-50 border-l-4 border-fuchsia-500 rounded-md my-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+          <h3 className="font-semibold text-fuchsia-800 text-base md:text-lg">
             {inscription.name}
           </h3>
-          <div className="flex items-center gap-2 text-fuchsia-700 text-sm font-medium bg-fuchsia-100 p-2 rounded-md w-fit">
+          <div className="flex flex-wrap items-center gap-1 md:gap-2 text-fuchsia-700 text-xs md:text-sm font-medium bg-fuchsia-100 p-2 rounded-md w-fit">
             <span>📅 Inscrições:</span>
-            <span className="font-semibold">
+            <span className="font-semibold whitespace-nowrap">
               {format(inscription.startDate, "dd/MM/yyyy")}
             </span>
             <span>→</span>
-            <span className="font-semibold">
+            <span className="font-semibold whitespace-nowrap">
               {format(inscription.endDate, "dd/MM/yyyy")}
             </span>
           </div>
         </div>
 
-        <p className="mt-2 text-fuchsia-700 text-sm font-medium">
+        <p className="mt-2 text-fuchsia-700 text-xs md:text-sm font-medium">
           {inscription.description}
         </p>
       </div>

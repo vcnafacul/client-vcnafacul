@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { cursos } from "@/utils/listOfCourses";
-import { Checkbox } from "@mui/material";
+import { Autocomplete, Checkbox, TextField } from "@mui/material";
 import { useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import { areas } from "../area";
@@ -23,15 +23,6 @@ export default function SendQuest({
   const [areaInterest, setAreaInterest] = useState<string[]>(selectedField);
   const [selectedCursos, setSelectedCursos] =
     useState<string[]>(selectedCourse);
-  const [selectedCurso, setSelectedCurso] = useState<string>("");
-
-  const handleSelectCurso = (e: any) => {
-    const curso = e.target.value as string;
-    if (curso && !selectedCursos.includes(curso)) {
-      setSelectedCursos([...selectedCursos, curso]);
-    }
-    setSelectedCurso(""); // Resetar o select após a seleção
-  };
 
   const handleRemoveCurso = (cursoToRemove: string) => {
     setSelectedCursos(
@@ -88,30 +79,50 @@ export default function SendQuest({
         <h3 className="text-lg font-semibold text-sky-600 border-l-4 border-sky-500 pl-4">
           Cursos de Interesse
         </h3>
-        <div className="flex flex-col md:flex-row items-center gap-4">
-          <select
-            value={selectedCurso}
-            onChange={handleSelectCurso}
-            className="w-full md:max-w-sm p-3 border border-gray-300 rounded-md self-start mt-4"
-          >
-            <option value="">Selecione um curso</option>
-            {cursos.map((curso, index) => (
-              <option key={index} value={curso}>
-                {curso}
-              </option>
-            ))}
-          </select>
-          <div className="w-full p-2 rounded-lg h-60 overflow-y-auto scrollbar-hide mt-2">
+        <div className="flex flex-col md:flex-row items-start gap-4">
+          <Autocomplete
+            options={cursos}
+            value={null}
+            onChange={(_, newValue) => {
+              if (newValue && !selectedCursos.includes(newValue)) {
+                setSelectedCursos([...selectedCursos, newValue]);
+              }
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Digite para buscar um curso"
+                placeholder="Ex: Medicina, Engenharia..."
+                variant="outlined"
+              />
+            )}
+            noOptionsText="Nenhum curso encontrado"
+            className="w-full md:max-w-sm self-start"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: '#d1d5db',
+                },
+                '&:hover fieldset': {
+                  borderColor: '#0ea5e9',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#0ea5e9',
+                },
+              },
+            }}
+          />
+          <div className="w-full p-2 rounded-lg h-60 overflow-y-auto scrollbar-hide">
             {selectedCursos.length > 0 ? (
               <ul className="space-y-2">
                 {selectedCursos.map((curso, index) => (
                   <li
                     key={index}
-                    className="flex items-center justify-between p-1 bg-gray-50 shadow-md"
+                    className="flex items-center justify-between p-1 bg-gray-50 shadow-md rounded"
                   >
                     <span className="text-gray-700">{curso}</span>
                     <IoCloseSharp
-                      className="text-red-600 w-6 h-6 cursor-pointer"
+                      className="text-red-600 w-6 h-6 cursor-pointer hover:text-red-800 transition-colors"
                       onClick={() => handleRemoveCurso(curso)}
                     />
                   </li>

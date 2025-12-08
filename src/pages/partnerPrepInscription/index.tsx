@@ -346,10 +346,10 @@ export function PartnerPrepInscription() {
   if (stepCurrently === StepsInscriptionStudent.Blank) return <></>;
 
   return (
-    <div className="fixed">
+    <div className="w-full">
       <BaseTemplate
         solid
-        className="overflow-y-auto h-screen overflow-x-hidden relative"
+        className="overflow-y-auto min-h-screen overflow-x-hidden relative"
       >
         {stepCurrently < StepsInscriptionStudent.Error ? (
           <StepCurrently step={stepCurrently} />

@@ -162,6 +162,14 @@ export function PartnerPrepInscriptionManager() {
           modals.modalInfo.close();
         }}
         inscription={inscriptionSelected}
+        setInscription={(insc) => {
+          // Atualizar a lista de inscrições
+          setInscriptions(
+            inscriptions.map((ins) => (ins.id === insc.id ? insc : ins))
+          );
+          // Atualizar também a inscrição selecionada para refletir no modal
+          setInscriptionSelected(insc);
+        }}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
       />

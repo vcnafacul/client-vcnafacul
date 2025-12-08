@@ -1,6 +1,6 @@
 export const areas = [
-  "LinguaPortuguesa",
-  "LinguaEstrangeira",
+  "Lingua Portuguesa",
+  "Lingua Estrangeira",
   "Artes",
   "Biologia",
   "Fisica",
