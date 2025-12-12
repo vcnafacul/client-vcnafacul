@@ -19,8 +19,8 @@ export const courseType: FormFieldOption[] = [
 export const geoForm : GeoFormProps = {
   formData: {
       step1 : {
-        title: 'Dados Pessoais',
-        subtitle: 'Nos conte um pouco sobre você e sua relação com o cursinho que está cadastrando',
+        title: 'Cadastre um novo cursinho para fazer parte do nosso mapa',
+        subtitle: 'Dados Pessoais: Nos conte um pouco sobre você e sua relação com o cursinho que está cadastrando',
         form: [
           {id: "userFullName", label: "Nome Completo*"},
           {id: 'userEmail', label: 'E-mail*', type: 'email'},

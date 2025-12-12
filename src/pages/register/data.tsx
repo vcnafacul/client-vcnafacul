@@ -40,7 +40,7 @@ export const optionsGender: FormFieldOption[] = [
 
 export const registerForm: RegisterFormProps = {
   title: "Cadastre-se",
-  titleSuccess: "Seja bem-vinde ao Você na Facul!",
+  titleSuccess: "Seu cadastro ainda não foi concluído",
 };
 
 export const uppercaseLetterRegex = /[A-Z]/;

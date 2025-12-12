@@ -31,14 +31,12 @@ export function BaseLayoutInput({
       }`}
     >
       <label
-        className="absolute p-0 mb-2 top-1.5 left-2 text-xs text-grey font-semibold"
+        className="absolute p-0 top-1.5 left-2 text-xs text-grey font-semibold"
         htmlFor={id}
       >
         {label}
       </label>
-      <div className="mt-4">
-        {children}
-      </div>
+      {children}
       {error && (
         <span className="absolute text-xs text-red">{errorMessage}</span>
       )}
