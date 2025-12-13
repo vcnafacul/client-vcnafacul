@@ -328,10 +328,12 @@ export function PartnerPrepInscriptionStepForm({
         case Operator.Equal:
           return value?.toString() === rule.expectedValue.toString();
         case Operator.Contains:
-          return (
-            typeof value === "string" &&
-            value.includes(rule.expectedValue as string)
-          );
+          if (typeof value === "string") {
+            return value.includes(rule.expectedValue as string);
+          } else if (typeof value === "object") {
+            return (value as string[]).includes(rule.expectedValue as string);
+          }
+          return false;
         case Operator.GreaterThan:
           return Number(value) > Number(rule.expectedValue);
         case Operator.LessThan:
