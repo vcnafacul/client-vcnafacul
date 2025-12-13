@@ -159,13 +159,9 @@ export function ExpandableSection({
         </TableCell>
         <TableCell align="right" className="w-10">
           <ActionMenu
-            onAdd={
-              section.active
-                ? () => {
-                    handleAddQuestion(section._id);
-                  }
-                : undefined
-            }
+            onAdd={() => {
+              handleAddQuestion(section._id);
+            }}
             onEdit={() => handleEditSection(section._id)}
             onDuplicate={() => handleDuplicateSection(section._id)}
             onDelete={
