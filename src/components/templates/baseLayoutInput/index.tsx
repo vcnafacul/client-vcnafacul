@@ -25,14 +25,18 @@ export function BaseLayoutInput({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (error?.message as any)?.message || error?.message || undefined;
   return (
-    <div className={`relative mb-4 w-full ${isCheckbox ? "flex items-center pt-8 pl-2" : ""}`}>
-        <label
-          className="absolute p-0 top-1.5 left-2 text-xs text-grey font-semibold"
-          htmlFor={id}
-        >
-          {label}
-        </label>
-        {children}
+    <div
+      className={`relative mb-4 w-full ${
+        isCheckbox ? "flex items-center pt-8 pl-2" : ""
+      }`}
+    >
+      <label
+        className="absolute p-0 top-1.5 left-2 text-xs text-grey font-semibold"
+        htmlFor={id}
+      >
+        {label}
+      </label>
+      {children}
       {error && (
         <span className="absolute text-xs text-red">{errorMessage}</span>
       )}
