@@ -5,6 +5,7 @@ export interface RegistrationMonitoring {
   id: string;
   studentId: string;
   partnerCourseName: string;
+  inscriptionId: string;
   inscriptionName: string;
   status: StatusApplication;
   logs: LogStudent[];

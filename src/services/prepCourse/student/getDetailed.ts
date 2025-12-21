@@ -24,10 +24,5 @@ export async function getDetailed(
     data_limite_convocacao: res.data_limite_convocacao
       ? new Date(res.data_limite_convocacao)
       : null,
-    documents: res.documents.map((document: any) => ({
-      ...document,
-      createdAt: new Date(document.createdAt),
-      expiredAt: new Date(document.expiredAt),
-    })),
   };
 }

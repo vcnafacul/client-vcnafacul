@@ -11,6 +11,8 @@ import { formatDate } from "@/utils/date";
 import { Calendar, Download, FileText } from "lucide-react";
 import { useState } from "react";
 import { getStatusIcon } from "../getStatusIcon";
+import { Link } from "react-router-dom";
+import { DECLARED_INTEREST } from "@/routes/path";
 
 interface CursinhoCardProps {
   monitoring: RegistrationMonitoring;
@@ -56,6 +58,7 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
         handleClose={modals.details.close}
         student={studentDetails!}
         disableDocuments
+        disableLogs
       />
     ) : null;
   };
@@ -182,6 +185,18 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
               <FileText className="w-4 h-4 flex-shrink-0" />
               <span>Ver detalhes</span>
             </button>
+            {monitoring.status === StatusApplication.CalledForEnrollment && (
+              <Link
+                to={`/${DECLARED_INTEREST}/${monitoring.inscriptionId}`}
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center justify-center gap-2 min-w-[160px] px-4 py-2.5 
+                           bg-green2/80 text-white text-sm font-medium rounded-lg 
+                           hover:bg-green2 
+                           transition-colors shadow-sm"
+              >
+                Declarar interesse
+              </Link>
+            )}
           </div>
         </div>
       </div>
