@@ -7,6 +7,7 @@ export interface InscriptionWithName {
   startDate: Date;
   endDate: Date;
   createdAt: Date;
+  partnerId: string;
 }
 
 export async function getAllWithName(
