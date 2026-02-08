@@ -14,12 +14,14 @@ interface PrinterStudentCardsProps {
   isOpen: boolean;
   handleClose: () => void;
   entities: StudentsDtoOutput[];
+  partnerLogo: string | null;
 }
 
 export function PrinterStudentCards({
   isOpen,
   handleClose,
   entities,
+  partnerLogo,
 }: PrinterStudentCardsProps) {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -225,6 +227,7 @@ export function PrinterStudentCards({
               <StudentCard
                 entity={entity}
                 imageSrc={photos.get(entity.photo) || null}
+                partnerLogo={partnerLogo}
               />
             </div>
           ))}
