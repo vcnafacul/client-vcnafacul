@@ -1,6 +1,6 @@
 export const dataInscription = {
   inscription: "Processo Seletivo",
-  title: "Gerenciamento de Processos Seletivos",
+  title: "Processos Seletivos",
   openingText: "Número de Vagas",
   messageNotAllowEdit:
     "Não é possível editar este processo seletivo pois já existe um processo seletivo ativo",

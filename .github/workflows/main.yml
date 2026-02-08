@@ -1,24 +1,94 @@
-name: vCnafacul
+# =============================================================================
+# main - CI + Deploy Production
+# =============================================================================
+# CI: Valida build em PR (antes de permitir aprovação)
+# Deploy: Roda após aprovação do PR → deploy em produção
+# =============================================================================
+
+name: main
 
 on:
-  pull_request: 
+  pull_request:
     branches: ["main"]
     types: [opened, synchronize, reopened, closed]
+  pull_request_review:
+    branches: ["main"]
+    types: [submitted]
 
 jobs:
+  # ---------------------------------------------------------------------------
+  # CI: Valida build antes de permitir aprovação do PR
+  # ---------------------------------------------------------------------------
   BUILD:
     if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize' || github.event.action == 'reopened')
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Iniciando CI
-        run: echo "Iniciando CI"
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 'lts/*'
+          cache: 'yarn'
       - name: Install depends
-        run: yarn
+        run: yarn install --frozen-lockfile
       - name: Build app vCnafacul
         run: yarn build
 
+  # ---------------------------------------------------------------------------
+  # Deploy: Production (após aprovação do PR)
+  # ---------------------------------------------------------------------------
+  DEPLOY:
+    if: github.event_name == 'pull_request_review' && github.event.review.state == 'approved'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: |
+          if [ -f .yarnrc.yml ] || { [ -f package.json ] && grep -qE '"packageManager"[[:space:]]*:[[:space:]]*"yarn@[2-9]' package.json; }; then
+            echo "Yarn Berry detected"
+            corepack enable
+            yarn install --immutable
+          else
+            echo "Yarn Classic detected"
+            yarn install --frozen-lockfile
+          fi
+
+      - name: Build for Production
+        run: yarn build
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          echo -e "Host *\n  StrictHostKeyChecking no\n  UserKnownHostsFile /dev/null" >> ~/.ssh/config
+
+      - name: Deploy to Production
+        run: |
+          BASE_PATH="domains/vcnafacul.com.br/public_html"
+
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }}" \
+            ./dist/assets/ \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${BASE_PATH}/assets/
+
+          rsync -avz \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }}" \
+            ./dist/index.html \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${BASE_PATH}/
+
+      - name: Remove SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key ~/.ssh/config
