@@ -38,7 +38,7 @@ jobs:
   # Deploy: Production (após aprovação do PR)
   # ---------------------------------------------------------------------------
   DEPLOY:
-    if: github.event_name == 'pull_request_review' && github.event.review.state == 'approved'
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
