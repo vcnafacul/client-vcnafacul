@@ -35,8 +35,8 @@ export function ConfirmEmailPage() {
         const jsonToken = jwtDecoded(getToken);
         if (jsonToken.user.flow === CreateFlow.CREATE_STUDENT)
           navigate(
-            `/${PARTNER_PREP}${PARTNER_PREP_INSCRIPTION}/${jsonToken.user.hashPrepCourse}`,
-            { relative: "route" }
+            `/${PARTNER_PREP}${PARTNER_PREP_INSCRIPTION}/${jsonToken.user.inscriptionId}`,
+            { relative: "route" },
           );
         else navigate(DASH);
       },
