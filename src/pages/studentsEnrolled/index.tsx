@@ -6,7 +6,11 @@ import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { Roles } from "@/enums/roles/roles";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
-import { getAllWithName, InscriptionWithName } from "@/services/prepCourse/inscription/getAllWithName";
+import {
+  getAllWithName,
+  InscriptionWithName,
+} from "@/services/prepCourse/inscription/getAllWithName";
+import { getPartnerLogo } from "@/services/prepCourse/prepCourse/getPartnerLogo";
 import { enrollmentCancelled } from "@/services/prepCourse/student/enrollment-cancelled";
 import { getStudentsEnrolled } from "@/services/prepCourse/student/getStudentsEnrolled";
 import { reactiveEnrolled } from "@/services/prepCourse/student/reactive-enrolled";
@@ -26,6 +30,7 @@ import {
   GridFilterItem,
   GridSortModel,
 } from "@mui/x-data-grid";
+import heic2any from "heic2any";
 import debounce from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { FaAddressCard, FaCheck } from "react-icons/fa";
@@ -35,15 +40,13 @@ import { toast } from "react-toastify";
 import { InfoStudentEnrolledModal } from "./modals/infoStudentEnrolledModal";
 import { PrinterStudentCards } from "./modals/printerStudentCards";
 import { UpdateStudentClassModal } from "./modals/updateStudentClassModal";
-
-
 export function StudentsEnrolled() {
   const [name, setName] = useState<string>("");
   const [students, setStudents] = useState<StudentsDtoOutput[]>([]);
   const [limit, setLimit] = useState<number>(15);
   const [totalItems, setTotalItems] = useState<number>(100);
   const [studentSelected, setStudentSelected] = useState<StudentsDtoOutput>(
-    {} as StudentsDtoOutput
+    {} as StudentsDtoOutput,
   );
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [filter, setFilter] = useState<GridFilterItem | undefined>(undefined);
@@ -51,6 +54,43 @@ export function StudentsEnrolled() {
   const [inscriptions, setInscriptions] = useState<InscriptionWithName[]>([]);
   const [selectedInscription, setSelectedInscription] =
     useState<InscriptionWithName | null>(null);
+  const [partnerLogo, setPartnerLogo] = useState<string | null>(null);
+
+  const {
+    data: { token, permissao },
+  } = useAuthStore();
+
+  useEffect(() => {
+    const fetchPartnerLogo = async () => {
+      try {
+        const blob = await getPartnerLogo(
+          selectedInscription!.partnerId,
+          token,
+        );
+        const fileType = blob.type;
+
+        if (fileType === "image/heic" || fileType === "image/heif") {
+          const convertedBlob = await heic2any({ blob, toType: "image/jpeg" });
+          const convertedUrl = URL.createObjectURL(convertedBlob as Blob);
+            setPartnerLogo(convertedUrl);
+        } else {
+          const url = URL.createObjectURL(blob);
+          setPartnerLogo(url);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar logo da universidade:", error);
+      }
+    };
+    if (selectedInscription) {
+      fetchPartnerLogo();
+    }
+
+    return () => {
+      if (partnerLogo) {
+        URL.revokeObjectURL(partnerLogo);
+      }
+    };
+  }, [selectedInscription, token]);
 
   const modals = useModals([
     "modalInfo",
@@ -59,10 +99,6 @@ export function StudentsEnrolled() {
     "modalUpdateClass",
     "modalStudentCards",
   ]);
-
-  const {
-    data: { token, permissao },
-  } = useAuthStore();
 
   const executeAsync = useToastAsync();
 
@@ -95,7 +131,7 @@ export function StudentsEnrolled() {
     limit: number,
     inscriptionId: string,
     filters?: GridFilterItem,
-    sortModel?: GridSortModel
+    sortModel?: GridSortModel,
   ) => {
     if (!inscriptionId) return;
 
@@ -107,7 +143,7 @@ export function StudentsEnrolled() {
           limit,
           inscriptionId,
           filters,
-          sortModel
+          sortModel,
         ),
       loadingMessage: "Buscando alunos matriculados...",
       successMessage: "Alunos matriculados encontrados com sucesso!",
@@ -124,10 +160,10 @@ export function StudentsEnrolled() {
     debounce.debounce(
       (value: GridFilterItem, inscriptionId: string) =>
         getEnrolle(1, limit, inscriptionId, value, sort),
-      1000
+      1000,
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [limit, sort]
+    [limit, sort],
   );
 
   const handleFilterChange = (filterModel: GridFilterItem) => {
@@ -185,7 +221,7 @@ export function StudentsEnrolled() {
     classId: string,
     name: string,
     year: number,
-    endDate: Date
+    endDate: Date,
   ) => {
     await executeAsync({
       action: () => updateClass(studentSelected.id, classId, token),
@@ -231,6 +267,7 @@ export function StudentsEnrolled() {
         handleClose={() => modals.modalInfo.close()}
         entity={studentSelected}
         updateEntity={updateEntities}
+        partnerLogo={partnerLogo}
       />
     ) : null;
   };
@@ -242,7 +279,7 @@ export function StudentsEnrolled() {
         handleClose={() => modals.modalReject.close()}
         handleConfirm={(message) => handleCancelEnrollment(message!)}
         text={`Por favor, informe o motivo do cancelamento de matrícula de ${capitalizeWords(
-          studentSelected?.name
+          studentSelected?.name,
         )}.`}
         className="bg-white p-4 rounded-md w-[512px]"
       />
@@ -289,6 +326,7 @@ export function StudentsEnrolled() {
         isOpen={modals.modalStudentCards.isOpen}
         handleClose={() => modals.modalStudentCards.close()}
         entities={students.filter((s) => selectedRows.includes(s.id))}
+        partnerLogo={partnerLogo}
       />
     ) : null;
   };
@@ -315,7 +353,7 @@ export function StudentsEnrolled() {
                 <IconButton
                   onClick={() => {
                     const student = students.find(
-                      (student) => student.id === params.row.id
+                      (student) => student.id === params.row.id,
                     );
                     if (!student) {
                       alert("Estudante não encontrado");
@@ -333,7 +371,7 @@ export function StudentsEnrolled() {
                 <IconButton
                   onClick={() => {
                     const student = students.find(
-                      (student) => student.id === params.row.id
+                      (student) => student.id === params.row.id,
                     );
                     if (!student) {
                       alert("Estudante não encontrado");
@@ -352,7 +390,7 @@ export function StudentsEnrolled() {
               <IconButton
                 onClick={() => {
                   const student = students.find(
-                    (student) => student.id === params.row.id
+                    (student) => student.id === params.row.id,
                   );
                   if (!student) {
                     alert("Estudante não encontrado");
@@ -376,7 +414,7 @@ export function StudentsEnrolled() {
       align: "center",
       headerAlign: "center",
       filterOperators: getGridStringOperators().filter(({ value }) =>
-        ["contains"].includes(value)
+        ["contains"].includes(value),
       ),
     },
     {
@@ -392,7 +430,7 @@ export function StudentsEnrolled() {
       headerName: "Email",
       minWidth: 270,
       filterOperators: getGridStringOperators().filter(({ value }) =>
-        ["contains"].includes(value)
+        ["contains"].includes(value),
       ),
     },
     {
@@ -400,7 +438,7 @@ export function StudentsEnrolled() {
       headerName: "Telefone",
       minWidth: 150,
       filterOperators: getGridStringOperators().filter(({ value }) =>
-        ["contains"].includes(value)
+        ["contains"].includes(value),
       ),
     },
     {
@@ -408,7 +446,7 @@ export function StudentsEnrolled() {
       headerName: "CPF",
       minWidth: 150,
       filterOperators: getGridStringOperators().filter(({ value }) =>
-        ["contains"].includes(value)
+        ["contains"].includes(value),
       ),
     },
     {
@@ -431,7 +469,7 @@ export function StudentsEnrolled() {
       maxWidth: 120,
       type: "date",
       filterOperators: getGridDateOperators().filter(({ value }) =>
-        ["is", "after", "before"].includes(value)
+        ["is", "after", "before"].includes(value),
       ),
     },
     {
@@ -536,7 +574,7 @@ export function StudentsEnrolled() {
                 newPageSize.pageSize,
                 selectedInscription.id,
                 filter,
-                sort
+                sort,
               );
             }
           }}

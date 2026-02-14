@@ -12,9 +12,16 @@ import { IoMdClose } from "react-icons/io";
 interface Props {
   handleClose: () => void;
   student: XLSXStudentCourseFull;
+  disableDocuments?: boolean;
+  disableLogs?: boolean;
 }
 
-export function Details({ student, handleClose }: Props) {
+export function Details({
+  student,
+  handleClose,
+  disableDocuments = false,
+  disableLogs = false,
+}: Props) {
   const formatAnswer = (
     answer: string | number | boolean | string[] | number[]
   ): string => {
@@ -116,16 +123,22 @@ export function Details({ student, handleClose }: Props) {
     return [...documents, photo];
   };
 
+  const cols = 2 + (disableDocuments ? 0 : 1) + (disableLogs ? 0 : 1);
+
   return (
     <>
       <div className="absolute w-screen h-screen -top-[76px] left-0 flex justify-center items-center">
         <div className="w-full h-full bg-black/60 z-50 flex justify-center items-center md:py-4">
           <Tabs defaultValue="details" className="w-11/12 h-[80vh]">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList
+              className={`grid w-full grid-cols-${cols}`}
+            >
               <TabsTrigger value="details">Detalhes</TabsTrigger>
               <TabsTrigger value="form">Formulário</TabsTrigger>
-              <TabsTrigger value="documents">Documentos</TabsTrigger>
-              <TabsTrigger value="logs">Logs</TabsTrigger>
+              {!disableDocuments && (
+                <TabsTrigger value="documents">Documentos</TabsTrigger>
+              )}
+              {!disableLogs && <TabsTrigger value="logs">Logs</TabsTrigger>}
             </TabsList>
             <TabsContent value="details" className="h-full">
               <ModalContent onClose={handleClose}>
@@ -145,15 +158,18 @@ export function Details({ student, handleClose }: Props) {
                 ))}
               </ModalContent>
             </TabsContent>
-            <TabsContent value="documents" className="h-full">
-              <ModalContent onClose={handleClose}>
-                <ShadcnTable
-                  headers={["File", "Enviado em", "Expiração", "Ação"]}
-                  cells={cellDocuments()}
-                />
-              </ModalContent>
-            </TabsContent>
-            <TabsContent value="logs" className="h-full">
+            {!disableDocuments && (
+              <TabsContent value="documents" className="h-full">
+                <ModalContent onClose={handleClose}>
+                  <ShadcnTable
+                    headers={["File", "Enviado em", "Expiração", "Ação"]}
+                    cells={cellDocuments()}
+                  />
+                </ModalContent>
+              </TabsContent>
+            )}
+            {!disableLogs && (
+              <TabsContent value="logs" className="h-full">
               <ModalContent onClose={handleClose}>
                 <ShadcnTable
                   headers={["Data", "Status", "Descrição"]}
@@ -171,8 +187,9 @@ export function Details({ student, handleClose }: Props) {
                       ]) || []
                   }
                 />
-              </ModalContent>
-            </TabsContent>
+                </ModalContent>
+              </TabsContent>
+            )}
           </Tabs>
         </div>
       </div>
