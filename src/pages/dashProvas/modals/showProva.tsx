@@ -6,20 +6,31 @@ import {
   ArrowDownTrayIcon,
   ChartBarIcon,
   DocumentTextIcon,
+  PencilSquareIcon
 } from "@heroicons/react/24/outline";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
 import PropValue from "../../../components/molecules/PropValue";
 import { Prova } from "../../../dtos/prova/prova";
 import { getProvaFile } from "../../../services/prova/getFile";
+import { useState } from "react";
+import { useToastAsync } from "@/hooks/useToastAsync";
+import { updateProvaFiles } from "@/services/prova/updateProvaFiles";
+import UploadButton from "../../../components/molecules/uploadButton";
 
 interface ShowProvaProps {
   prova: Prova;
   isOpen: boolean;
   handleClose: () => void;
+  onUpdated?: (prova: Prova) => void;
 }
 
-function ShowProva({ prova, isOpen, handleClose }: ShowProvaProps) {
+function ShowProva({ prova, isOpen, handleClose, onUpdated }: ShowProvaProps) {
+  const executeAsync = useToastAsync();
+  const [isEditingFiles, setIsEditingFiles] = useState(false);
+  const [newFile, setNewFile] = useState<File | null>(null);
+  const [newGabarito, setNewGabarito] = useState<File | null>(null);
+
   const percentCadastradas =
     (prova.totalQuestaoCadastradas / prova.totalQuestao) * 100;
   const percentValidadas =
@@ -36,7 +47,7 @@ function ShowProva({ prova, isOpen, handleClose }: ShowProvaProps) {
   };
 
   const downloadFile = async (filename: string, fileType: string) => {
-    const id = toast.loading(`Baixando prova...`);
+    const id = toast.loading(`Baixando ${fileType}...`);
     try {
       const blob = await getProvaFile(filename, token);
 
@@ -49,9 +60,10 @@ function ShowProva({ prova, isOpen, handleClose }: ShowProvaProps) {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      toast.dismiss(id);
     } catch (error) {
       toast.error(`Erro ao baixar o ${fileType}`);
+    }finally{
+      toast.dismiss(id);
     }
   };
 
@@ -62,6 +74,54 @@ function ShowProva({ prova, isOpen, handleClose }: ShowProvaProps) {
   const handleDownloadGabarito = () => {
     downloadFile(prova.gabarito, "gabarito");
   };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      setNewFile(e.target.files[0]);
+    }
+  };
+
+  const handleGabaritoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      setNewGabarito(e.target.files[0]);
+    }
+  };
+
+  const handleFileRemove = (_: any) => {
+    setNewFile(null);
+  };
+
+  const handleGabaritoRemove = (_: any) => {
+    setNewGabarito(null);
+  };
+
+  const handleUpdateFiles = async () => {
+    if (!newFile && !newGabarito) return;
+
+    const formData = new FormData();
+
+    if (newFile) {
+      formData.append("file", newFile);
+    }
+
+    if (newGabarito) {
+      formData.append("gabarito", newGabarito);
+    }
+
+    await executeAsync({
+      action: () => updateProvaFiles(prova._id, formData, token),
+      loadingMessage: "Atualizando arquivos...",
+      successMessage: "Arquivos atualizados com sucesso",
+      errorMessage: (error) => error.message,
+      onSuccess(updatedProva) {
+        onUpdated?.(updatedProva);
+        setIsEditingFiles(false);
+        setNewFile(null);
+        setNewGabarito(null);
+      },
+    });
+  };
+
 
   return (
     <ModalTemplate
@@ -185,39 +245,92 @@ function ShowProva({ prova, isOpen, handleClose }: ShowProvaProps) {
 
         {/* Botões de Download */}
         <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-          {prova.gabarito && (
-            <Button
-              onClick={handleDownloadGabarito}
-              variant="contained"
-              sx={{
-                backgroundColor: "#6b7280",
-                "&:hover": {
-                  backgroundColor: "#4b5563",
-                },
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              <ArrowDownTrayIcon className="h-4 w-4" />
-              Download do Gabarito
-            </Button>
-          )}
-          <Button
-            onClick={handleDownloadProva}
-            variant="contained"
-            color="primary"
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            <ArrowDownTrayIcon className="h-4 w-4" />
-            Download da Prova
-          </Button>
+            {!isEditingFiles ? (
+              <>
+                {prova.gabarito && (
+                  <Button
+                    onClick={handleDownloadGabarito}
+                    variant="contained"
+                    sx={{
+                      backgroundColor: "#6b7280",
+                      "&:hover": {
+                        backgroundColor: "#4b5563",
+                      },
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <ArrowDownTrayIcon className="h-4 w-4" />
+                    Download do Gabarito
+                  </Button>
+                )}
+
+                <Button
+                  onClick={handleDownloadProva}
+                  variant="contained"
+                  color="primary"
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <ArrowDownTrayIcon className="h-4 w-4" />
+                  Download da Prova
+                </Button>
+
+                <Button
+                  onClick={() => setIsEditingFiles(true)}
+                  size="small"
+                >
+                  <PencilSquareIcon className="size-8" />
+                </Button>
+              </>
+            ) : (
+              <div className="w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <UploadButton
+                    onChange={handleFileUpload}
+                    placeholder="Substituir Prova"
+                    accept=".pdf"
+                    variant="compact"
+                    onRemove={handleFileRemove}
+                  />
+
+                  <UploadButton
+                    onChange={handleGabaritoUpload}
+                    placeholder={prova.gabarito ? "Substituir Gabarito" : "Adicionar Gabarito"}
+                    accept=".pdf"
+                    variant="compact"
+                    onRemove={handleGabaritoRemove}
+                  />
+                </div>
+
+                <div className="flex justify-end mt-4 gap-3">
+                  <Button
+                    onClick={() => {
+                      setIsEditingFiles(false);
+                      setNewFile(null);
+                      setNewGabarito(null);
+                    }}
+                    variant="outlined"
+                  >
+                    Cancelar
+                  </Button>
+
+                  <Button
+                    onClick={handleUpdateFiles}
+                    disabled={!newFile && !newGabarito}
+                    variant="contained"
+                  >
+                    Salvar Alterações
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
     </ModalTemplate>
   );
 }
