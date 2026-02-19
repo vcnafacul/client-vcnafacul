@@ -9,13 +9,17 @@ import { ITipoSimulado } from "../../dtos/simulado/tipoSimulado";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { Roles } from "../../enums/roles/roles";
 import { getProvas } from "../../services/prova/getProvas";
+import { getSyncReport } from "../../services/prova/getSyncReport";
+import { startSync } from "../../services/prova/startSync";
 import { getTipos } from "../../services/tipoSimulado/getTipos";
 import { useAuthStore } from "../../store/auth";
+import { useToastAsync } from "../../hooks/useToastAsync";
 import { formatDate } from "../../utils/date";
 import { Paginate } from "../../utils/paginate";
 import { dashProva } from "./data";
 import NewProva from "./modals/newProva";
 import ShowProva from "./modals/showProva";
+import { downloadSyncReportPdf } from "./utils/syncReportPdf";
 import { useModals } from "@/hooks/useModal";
 
 function DashProva() {
@@ -34,6 +38,8 @@ function DashProva() {
   const {
     data: { token, permissao },
   } = useAuthStore();
+
+  const execute = useToastAsync();
 
   const cardTransformation = (prova: Prova): CardDash => ({
     id: prova._id,
@@ -117,7 +123,50 @@ function DashProva() {
   };
 
    
+  const handleSync = () => {
+    execute({
+      action: () => startSync(token),
+      loadingMessage: "Sincronizando provas...",
+      successMessage: "Sincronizacao iniciada com sucesso!",
+      errorMessage: (err: Error) => err.message || "Erro ao sincronizar",
+    });
+  };
+
+  const handleSyncReport = () => {
+    execute({
+      action: () => getSyncReport(token),
+      loadingMessage: "Buscando relatorio...",
+      successMessage: "Relatorio gerado!",
+      errorMessage: (err: Error) => err.message || "Erro ao buscar relatorio",
+      onSuccess: (report) => {
+        if (report.status === "processing") {
+          toast.info("Sincronizacao ainda em andamento. Tente novamente em instantes.");
+          return;
+        }
+        if (report.status === "idle") {
+          toast.info("Nenhuma sincronizacao realizada ainda.");
+          return;
+        }
+        downloadSyncReportPdf(report);
+      },
+    });
+  };
+
   const buttons: ButtonProps[] = [
+    {
+      disabled: !permissao[Roles.cadastrarProvas],
+      onClick: handleSync,
+      typeStyle: "primary",
+      size: "small",
+      children: "Sincronizar",
+    },
+    {
+      disabled: !permissao[Roles.visualizarProvas],
+      onClick: handleSyncReport,
+      typeStyle: "secondary",
+      size: "small",
+      children: "Relatorio Sync",
+    },
     {
       disabled: !permissao[Roles.cadastrarProvas],
       onClick: () => {

@@ -25,7 +25,7 @@ export default function DeclareInterest({
   const [areaInterest, setAreaInterest] = useState<string[]>([]);
   const [selectedCursos, setSelectedCursos] = useState<string[]>([]);
   const [step, setStep] = useState<Steps>(
-    requestDocuments ? Steps.Documents : Steps.Photo
+    requestDocuments ? Steps.Documents : Steps.Photo,
   );
   const [processing, setProcessing] = useState<boolean>(false);
 
@@ -35,11 +35,9 @@ export default function DeclareInterest({
 
   const executeAsync = useToastAsync();
 
-  const handleDeclaredInterest = async (
-    areaInterest: string[],
-    selectedCursos: string[]
-  ) => {
-    return await executeAsync({
+  const handleSubmit = (areaInterest: string[], selectedCursos: string[]) => {
+    setProcessing(true);
+    executeAsync({
       action: () =>
         declaredInterest(
           uploadedFiles,
@@ -47,23 +45,15 @@ export default function DeclareInterest({
           areaInterest,
           selectedCursos,
           studentId,
-          token
+          token,
         ),
       loadingMessage: "Declarando interesse...",
       successMessage: "Declaração de interesse enviadas com sucesso!",
       errorMessage: (e) => e.message,
+      onSuccess: () => setStep(Steps.Sucess),
+    }).finally(() => {
+      setProcessing(false);
     });
-  };
-
-  const handleSubmit = (areaInterest: string[], selectedCursos: string[]) => {
-    setProcessing(true);
-    handleDeclaredInterest(areaInterest, selectedCursos)
-      .then(() => {
-        setStep(Steps.Sucess);
-      })
-      .finally(() => {
-        setProcessing(false);
-      });
   };
 
   const StepsComponent = () => {
@@ -130,8 +120,8 @@ export default function DeclareInterest({
       step === Steps.Documents
         ? "upcoming"
         : step === Steps.Photo
-        ? "current"
-        : "complete",
+          ? "current"
+          : "complete",
   });
   stepsCircle.push({
     name: Steps.Quest,
@@ -139,8 +129,8 @@ export default function DeclareInterest({
       step == Steps.Quest
         ? "current"
         : step === Steps.Sucess
-        ? "complete"
-        : "upcoming",
+          ? "complete"
+          : "upcoming",
   });
 
   return (
