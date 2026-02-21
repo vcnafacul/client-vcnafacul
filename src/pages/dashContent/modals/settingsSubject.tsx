@@ -5,6 +5,7 @@ import {
 } from "@/dtos/content/SubjectDto";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { createSubject } from "@/services/content/createSubject";
+import { getContentOrder } from "@/services/content/getContent";
 import { updateSubject } from "@/services/content/updateSubject";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -42,7 +43,7 @@ function SettingsSubject({
       successMessage: "Tema deletado com sucesso",
       errorMessage: (error: Error) => error.message,
       onSuccess: () => {
-        setSubjects(subjects.filter((subject) => subject.id !== subjectId));
+        setSubjects(subjects.filter((subject) => (subject._id || subject.id) !== subjectId));
       },
     });
   };
@@ -78,7 +79,7 @@ function SettingsSubject({
       onSuccess: () => {
         setSubjects(
           subjects.map((subject) =>
-            subject.id === body.id
+            (subject._id || subject.id) === body.id
               ? {
                   ...subject,
                   name: body.name,
@@ -94,19 +95,36 @@ function SettingsSubject({
   };
 
   useEffect(() => {
-    const getSubjectByFrente = (_frente: FrenteDto = frente) => {
-      if (_frente) {
-        getSubjects(_frente.id, token)
-          .then((res) => {
-            setSubjects(res);
+    const frenteId = frente._id || frente.id;
+    if (!frenteId) return;
+
+    getSubjects(frenteId, token)
+      .then(async (res) => {
+        const enriched = await Promise.all(
+          res.map(async (subject) => {
+            const subjectId = subject._id || subject.id;
+            try {
+              const contents = await getContentOrder(token, undefined, subjectId);
+              return {
+                ...subject,
+                contents: contents.map((c) => ({
+                  id: c.id ?? (c as any)._id,
+                  status: c.status as unknown as number,
+                  title: c.title,
+                })),
+                lenght: contents.length,
+              };
+            } catch {
+              return { ...subject, contents: [], lenght: 0 };
+            }
           })
-          .catch((error: Error) => {
-            toast.error(error.message);
-          });
-      }
-    };
-    getSubjectByFrente();
-  }, []);
+        );
+        setSubjects(enriched);
+      })
+      .catch((error: Error) => {
+        toast.error(error.message);
+      });
+  }, [frente, token]);
 
   return (
     <ModalTemplate
@@ -116,7 +134,7 @@ function SettingsSubject({
     >
       <div className="flex flex-col gap-6">
         <span className="text-2xl font-semibold text-marine">
-          {frente.name}
+          {frente.nome}
         </span>
         <div className="h-full">
           <PanelSubject

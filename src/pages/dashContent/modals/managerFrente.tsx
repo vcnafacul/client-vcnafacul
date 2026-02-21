@@ -1,7 +1,6 @@
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { Button } from "@/components/ui/button";
 import { FrenteDto } from "@/dtos/content/contentDtoInput";
-import { Materias } from "@/enums/content/materias";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -56,7 +55,7 @@ function ManagerFrente({
   const create = (data: any) => {
     const body: CreateFrenteDtoInput = {
       name: data.name,
-      materia: materia.value as Materias,
+      materia: materia.value as string,
     };
     newFrente(body).then(() => handleClose!());
   };
@@ -72,7 +71,7 @@ function ManagerFrente({
 
   useEffect(() => {
     if (frente) {
-      setValue("name", frente.name);
+      setValue("name", frente.nome);
     }
   }, [frente, setValue]);
 
@@ -94,7 +93,7 @@ function ManagerFrente({
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           onChange={(e: any) => setValue("name", e.target.value)}
           error={errors.name}
-          defaultValue={frente?.name}
+          defaultValue={frente?.nome}
         />
         <div className="flex justify-end">
           <Button

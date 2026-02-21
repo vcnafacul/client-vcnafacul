@@ -1,12 +1,13 @@
-import { Materias } from "../../enums/content/materias";
-
 export interface CreateFrenteDtoInput {
     name: string;
-    materia: Materias
+    materia: string;
 }
 
-export interface CreateFrenteDtoOutput extends CreateFrenteDtoInput {
+export interface CreateFrenteDtoOutput {
+    _id: string;
     id: string;
+    nome: string;
+    materia: string;
 }
 
 export interface UpdateFrenteDto {

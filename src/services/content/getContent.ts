@@ -10,11 +10,11 @@ import { content } from "../urls";
 export async function getContent(
   token: string,
   status: StatusContent,
-  materia: number,
+  materia: string,
   page: number = 1,
   limit: number = 40
 ): Promise<Paginate<ContentDtoInput>> {
-  const subject = materia > -1 ? `&materia=${materia}` : "";
+  const subject = materia ? `&materia=${materia}` : "";
   const response = await fetchWrapper(
     `${content}?status=${status}${subject}&page=${page}&limit=${limit}`,
     {
