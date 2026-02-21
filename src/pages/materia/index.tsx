@@ -130,7 +130,8 @@ function Materia() {
   }, [tituloMateria, nomeMateria, token]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4 container mx-auto">
+    <div className="min-h-screen bg-gray-10 py-10 px-4">
+      <div className="container mx-auto">
       {/* Header */}
       <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-8">
         <div className="text-center md:text-left">
@@ -147,6 +148,7 @@ function Materia() {
       {/* Conteúdo */}
       {getFrenteCards()}
       {getTemaCards()}
+      </div>
     </div>
   );
 }
