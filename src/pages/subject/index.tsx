@@ -7,10 +7,9 @@ import { toast } from "react-toastify";
 import { ContentDtoInput } from "../../dtos/content/contentDtoInput";
 import { StatusContent } from "../../enums/content/statusContent";
 import { StatusEnum } from "../../enums/generic/statusEnum";
-import { DASH, ESTUDO } from "../../routes/path";
+
 import { getContentOrder } from "../../services/content/getContent";
 import { useAuthStore } from "../../store/auth";
-import { MateriasLabel } from "../../types/content/materiasLabel";
 
 function Subject() {
   const { id } = useParams();
@@ -19,7 +18,6 @@ function Subject() {
   } = useAuthStore();
 
   const [contents, setContents] = useState<ContentDtoInput[]>([]);
-  const [nomeMateria, setNomeMateria] = useState("");
   const [contentSelected, setContentSelected] = useState<ContentDtoInput>();
   const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer>();
   const dataRef = useRef<ContentDtoInput[]>([]);
@@ -27,7 +25,9 @@ function Subject() {
 
   useEffect(() => {
     if (contentSelected) {
-      getFile(contentSelected.file!.id, token).then((res) => {
+      const fileId = contentSelected.file?.id ?? (contentSelected.file as any)?._id;
+      if (!fileId) return;
+      getFile(fileId, token).then((res) => {
         res.arrayBuffer().then(setArrayBuffer);
       });
     }
@@ -37,15 +37,6 @@ function Subject() {
     getContentOrder(token, StatusEnum.Approved as unknown as StatusContent, id)
       .then((res) => {
         setContents(res);
-        const idMateria = res[0].subject.frente.materia;
-        const nomeMateria =
-          MateriasLabel.find((m) => m.value === idMateria)?.label || "";
-        setNomeMateria(
-          nomeMateria
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^a-zA-Z0-9 ]/g, "")
-        );
         dataRef.current = res;
         if (res.length > 0) setContentSelected(res[0]);
       })
@@ -53,7 +44,7 @@ function Subject() {
   }, [id, token]);
 
   return (
-    <div className="min-h-screen bg-gray-100 py-6 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-10 py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6 flex-wrap gap-2">
@@ -62,7 +53,7 @@ function Subject() {
           </h1>
           <button
             className="text-gray-600 hover:text-black flex items-center gap-2 px-2 py-1"
-            onClick={() => navigate(`${DASH}/${ESTUDO}/${nomeMateria}`)}
+            onClick={() => navigate(-1)}
           >
             <ArrowLeft size={18} />
             <span className="text-sm">Voltar</span>
@@ -82,7 +73,7 @@ function Subject() {
                   key={index}
                   onClick={() => setContentSelected(content)}
                   className={`cursor-pointer px-4 py-2 rounded transition-all ${
-                    content.id === contentSelected?.id
+                    (content.id ?? (content as any)._id) === (contentSelected?.id ?? (contentSelected as any)?._id)
                       ? "bg-gray-200 font-semibold"
                       : "hover:bg-gray-50"
                   }`}
