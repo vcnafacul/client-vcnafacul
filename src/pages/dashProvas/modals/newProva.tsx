@@ -91,6 +91,14 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
     }
   };
 
+  const handleRemoveGabarito = (_: any) => {
+    setUploadGabarito(null);
+  };
+
+  const handleRemoveFile = (_: any) => {
+    setUploadFile(null);
+  };
+
   useEffect(() => {
     getInfors();
   }, [getInfors]);
@@ -236,6 +244,7 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
                   className="w-full"
                   accept=".pdf"
                   variant="compact"
+                  onRemove={handleRemoveFile}
                 />
                 {uploadFile && (
                   <p className="text-xs text-blue-700 mt-2">
@@ -254,6 +263,7 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
                   className="w-full"
                   accept=".pdf"
                   variant="compact"
+                  onRemove={handleRemoveGabarito}
                 />
                 {uploadGabarito && (
                   <p className="text-xs text-green-700 mt-2">

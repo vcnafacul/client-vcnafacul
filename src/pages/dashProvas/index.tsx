@@ -96,6 +96,12 @@ function DashProva() {
           modals.modalShowProva.close();
         }}
         isOpen={modals.modalShowProva.isOpen}
+        onUpdated={(updated) => {
+          setProvas((prev) =>
+            prev.map((p) => (p._id === updated._id ? updated : p))
+            );
+          setProvaSelected(updated);
+        }}
       />
     );
   };
