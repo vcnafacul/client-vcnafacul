@@ -89,18 +89,23 @@ export default function SendPhoto({
         </div>
 
         {/* Upload de foto para carteirinha */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center w-full">
           <h2 className="text-lg font-medium text-gray-800 mb-2">
             Envie sua foto para a carteirinha (3x4)
           </h2>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoChange}
-            className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4
-          file:rounded-full file:border-0 file:text-sm file:font-semibold
-          file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-          />
+          <label className="w-full cursor-pointer block relative">
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handlePhotoChange}
+              className="absolute w-px h-px opacity-0 overflow-hidden"
+              aria-label="Selecionar foto para carteirinha"
+            />
+            <span className="flex items-center justify-center text-center py-4 px-4 rounded-lg border-2 border-dashed border-blue-300 bg-blue-50/50 text-blue-700 font-medium min-h-[48px] touch-manipulation active:bg-blue-100">
+              Toque para escolher ou tirar foto
+            </span>
+          </label>
           {photo && (
             <div className="mt-4 w-32 h-40 border rounded-md overflow-hidden">
               <img
