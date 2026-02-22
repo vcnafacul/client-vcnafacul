@@ -35,33 +35,42 @@ const PhotoEditor = ({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-black rounded-md p-0.5"
+      className="bg-black rounded-md p-0.5 max-h-[100dvh] flex flex-col overflow-hidden"
       closer={false}
     >
-      <div className="relative w-[90vw] h-[700px] sm:w-[600px] bg-gray-800">
+      {/* Área do crop: altura limitada no mobile para deixar os botões sempre visíveis */}
+      <div className="relative w-[90vw] sm:w-[600px] flex-1 min-h-0 bg-gray-800 rounded-t-md">
         <Cropper
           image={photo}
           crop={crop}
           zoom={zoom}
-          aspect={3/4} // Mantém a proporção quadrada
+          aspect={3 / 4}
           onCropChange={setCrop}
           onZoomChange={setZoom}
           onCropComplete={onCropComplete}
         />
-        <div className="absolute bottom-2 right-2 flex gap-2">
-          <button
-            onClick={handleConfirm}
-            className="bg-green-500 p-2 rounded-full hover:bg-green-700"
-          >
-            <Check className="text-white w-6 h-6" />
-          </button>
-          <button
-            onClick={handleClose}
-            className="bg-red-500 p-2 rounded-full hover:bg-red-700"
-          >
-            <X className="text-white w-6 h-6" />
-          </button>
-        </div>
+      </div>
+      {/* Barra fixa de ações: sempre visível no mobile (abaixo da área de recorte) */}
+      <div
+        className="flex gap-3 justify-end p-3 bg-gray-800 rounded-b-md shrink-0"
+        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+      >
+        <button
+          type="button"
+          onClick={handleClose}
+          className="bg-red-500 p-3 rounded-full hover:bg-red-700 touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
+          aria-label="Cancelar"
+        >
+          <X className="text-white w-6 h-6" />
+        </button>
+        <button
+          type="button"
+          onClick={handleConfirm}
+          className="bg-green-500 p-3 rounded-full hover:bg-green-700 touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
+          aria-label="Aprovar foto"
+        >
+          <Check className="text-white w-6 h-6" />
+        </button>
       </div>
     </ModalTemplate>
   );
