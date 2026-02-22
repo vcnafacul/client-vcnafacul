@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToastAsync } from "@/hooks/useToastAsync";
-import { MateriasLabel } from "@/types/content/materiasLabel";
 import { Save, Trash2, UploadCloud, X } from "lucide-react";
 import { useRef, useState } from "react";
 import Text from "../../../components/atoms/text";
@@ -80,17 +79,19 @@ function ShowDemand({
     );
   };
 
+  const demandId = demand.id ?? (demand as any)._id;
+
   const handleUploadFile = async () => {
     const formData = new FormData();
     formData.append("file", uploadFile);
 
     await executeAsync({
-      action: () => uploadFileDemand(demand.id, formData, token),
+      action: () => uploadFileDemand(demandId, formData, token),
       loadingMessage: "Upload File Demanda ... ",
       successMessage: "File enviada com sucesso",
       errorMessage: (error: Error) => error.message,
       onSuccess: () => {
-        updateStatusDemand(demand.id);
+        updateStatusDemand(demandId);
         handleClose!();
       },
     });
@@ -98,12 +99,12 @@ function ShowDemand({
 
   const removeDemand = async () => {
     await executeAsync({
-      action: () => deleteDemand(demand.id, token),
+      action: () => deleteDemand(demandId, token),
       loadingMessage: "Deletando Demanda ... ",
       successMessage: "Demanda deletada com sucesso",
       errorMessage: (error: Error) => error.message,
       onSuccess: () => {
-        updateStatusDemand(demand.id);
+        updateStatusDemand(demandId);
         handleClose!();
       },
     });
@@ -145,16 +146,7 @@ function ShowDemand({
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <Input
-              value={
-                MateriasLabel.find(
-                  (m) => m.value === demand.subject.frente.materia
-                )?.label
-              }
-              readOnly
-              placeholder="Matéria"
-            />
-            <Input
-              value={demand.subject.frente.name}
+              value={demand.subject.frente.nome}
               readOnly
               placeholder="Frente"
             />

@@ -1,5 +1,4 @@
 import { DateTime } from "luxon";
-import { Materias } from "../../enums/content/materias";
 import { StatusContent } from "../../enums/content/statusContent";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 
@@ -18,6 +17,7 @@ export interface ContentDtoInput {
 }
 
 export interface SubjectDto {
+    _id?: string;
     id: string;
     name: string;
     lenght: number;
@@ -33,9 +33,10 @@ export interface SubjectDto {
 }
 
 export interface FrenteDto {
+    _id?: string;
     id: string;
-    name: string;
-    materia: Materias,
+    nome: string;
+    materia: string,
     lenght: number
     createdAt: Date;
     subjects: {

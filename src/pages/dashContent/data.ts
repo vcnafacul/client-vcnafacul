@@ -1,7 +1,6 @@
 import { StatusContent } from "@/enums/content/statusContent";
 import { CardDash } from "../../components/molecules/cardDash";
 import { ContentDtoInput } from "../../dtos/content/contentDtoInput";
-import { getMateriaString } from "../../enums/content/materias";
 import { formatDate } from "../../utils/date";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 
@@ -12,15 +11,11 @@ export const dashContent = {
 export const cardTransformationContent = (
   content: ContentDtoInput
 ): CardDash => ({
-  id: content.id,
+  id: content.id ?? (content as any)._id,
   title: content.title,
   status: content.status,
   infos: [
-    {
-      field: "Materia",
-      value: getMateriaString(content.subject.frente.materia),
-    },
-    { field: "Frente", value: content.subject.frente.name },
+    { field: "Frente", value: content.subject.frente.nome },
     { field: "Tema", value: content.subject.name },
     { field: "Descrição", value: content.description.substring(0, 20) + "..." },
     {

@@ -3,6 +3,7 @@ import { cursos } from "@/utils/listOfCourses";
 import { Autocomplete, Checkbox, TextField } from "@mui/material";
 import { useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
+import { toast } from "react-toastify";
 import { areas } from "../area";
 
 interface Props {
@@ -31,7 +32,15 @@ export default function SendQuest({
   };
 
   const handleSubmit = () => {
-    onSubmit(areaInterest, selectedCursos)
+    if (areaInterest.length === 0) {
+      toast.error("Selecione pelo menos uma área com mais dificuldades.");
+      return;
+    }
+    if (selectedCursos.length === 0) {
+      toast.error("Selecione pelo menos um curso de interesse.");
+      return;
+    }
+    onSubmit(areaInterest, selectedCursos);
   };
 
   const handleBack = () => {

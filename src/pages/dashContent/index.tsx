@@ -4,13 +4,12 @@ import { ButtonProps } from "@/components/molecules/button";
 import DashCardTemplate from "@/components/templates/dashCardTemplate";
 import { DashCardContext } from "@/context/dashCardContext";
 import { ContentDtoInput } from "@/dtos/content/contentDtoInput";
-import { Materias } from "@/enums/content/materias";
 import { StatusContent } from "@/enums/content/statusContent";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { Roles } from "@/enums/roles/roles";
 import { getContent } from "@/services/content/getContent";
+import { getMaterias } from "@/services/content/getMaterias";
 import { useAuthStore } from "@/store/auth";
-import { MateriasLabel } from "@/types/content/materiasLabel";
 import { Paginate } from "@/utils/paginate";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -40,26 +39,31 @@ function DashContent() {
   const [demandSelected, setDemandSelected] = useState<ContentDtoInput | null>(
     null
   );
-  const [materias] = useState<OptionProps[]>(() => {
-    const mat = MateriasLabel.map((materia) => ({
-      id: materia.value,
-      name: materia.label,
-    }));
-    mat.unshift({ id: -1 as Materias, name: "Todos" });
-    return mat;
-  });
-  const [materiaSelected, setMateriaSelected] = useState<number>(
-    materias[0].id as number
-  );
+  const [materias, setMaterias] = useState<OptionProps[]>([
+    { id: "", name: "Todos" },
+  ]);
+  const [materiaSelected, setMateriaSelected] = useState<string>("");
   const [status, setStatus] = useState<StatusContent | StatusEnum>(
     StatusContent.Pending_Upload
   );
   const dataRef = useRef<ContentDtoInput[]>([]);
   const limitCards = 100;
 
-  const selectDemandByMateria = (id: Materias) => {
+  useEffect(() => {
+    getMaterias(token)
+      .then((res) => {
+        const options: OptionProps[] = [{ id: "", name: "Todos" }];
+        res.forEach((m) => options.push({ id: m._id, name: m.nome }));
+        setMaterias(options);
+      })
+      .catch((error: Error) => {
+        toast.error(error.message);
+      });
+  }, [token]);
+
+  const selectDemandByMateria = (id: string) => {
     setMateriaSelected(id);
-    if (id === (-1 as Materias)) setDemands(dataRef.current);
+    if (!id) setDemands(dataRef.current);
     else {
       setDemands(
         dataRef.current.filter((demand) => {
@@ -70,7 +74,9 @@ function DashContent() {
   };
 
   const onClickCard = (id: number | string) => {
-    setDemandSelected(dataRef.current.find((demand) => demand.id === id)!);
+    const found = dataRef.current.find((demand) => (demand.id ?? (demand as any)._id) === id);
+    if (!found) return;
+    setDemandSelected(found);
     modals.showDemand.open();
   };
 
@@ -80,7 +86,7 @@ function DashContent() {
   };
 
   const handleRemoveDemand = (id: string) => {
-    const newContent = demands.filter((q) => q.id != id);
+    const newContent = demands.filter((q) => (q.id ?? (q as any)._id) !== id);
     setDemands(newContent);
   };
 

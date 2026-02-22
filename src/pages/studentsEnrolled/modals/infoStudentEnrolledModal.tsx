@@ -14,6 +14,7 @@ interface InfoStudentEnrolledModalProps {
   handleClose: () => void;
   entity: StudentsDtoOutput;
   updateEntity: (entity: StudentsDtoOutput) => void;
+  partnerLogo: string | null;
 }
 
 export function InfoStudentEnrolledModal({
@@ -21,6 +22,7 @@ export function InfoStudentEnrolledModal({
   handleClose,
   entity,
   updateEntity,
+  partnerLogo,
 }: InfoStudentEnrolledModalProps) {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [photoEditorOpen, setPhotoEditorOpen] = useState(false);
@@ -29,15 +31,15 @@ export function InfoStudentEnrolledModal({
   const {
     data: { token },
   } = useAuthStore();
-
+  
   const executeAsync = useToastAsync();
-
+  
   useEffect(() => {
     const fetchImage = async () => {
       try {
         const blob = await getProfilePhoto(entity.photo, token);
         const fileType = blob.type; // Tipo MIME do arquivo
-
+        
         if (fileType === "image/heic" || fileType === "image/heif") {
           // Se for HEIC, converte para JPEG
           const convertedBlob = await heic2any({ blob, toType: "image/jpeg" });
@@ -52,11 +54,11 @@ export function InfoStudentEnrolledModal({
         console.error("Erro ao carregar a imagem:", error);
       }
     };
-
+    
     if (entity.photo) {
       fetchImage();
     }
-
+    
     // Cleanup para evitar vazamento de memória
     return () => {
       if (imageSrc) {
@@ -81,10 +83,10 @@ export function InfoStudentEnrolledModal({
   };
 
   const ModalPhotoEditor = () => {
-    return photoEditorOpen ? (
+    return photoEditorOpen && photo ? (
       <PhotoEditor
         isOpen={photoEditorOpen}
-        photo={photo ? URL.createObjectURL(photo) : ""}
+        photo={photo}
         onConfirm={handleUploadProfileImage}
         handleClose={() => {
           setPhotoEditorOpen(false);
@@ -103,6 +105,7 @@ export function InfoStudentEnrolledModal({
         <StudentCard
           entity={entity}
           imageSrc={imageSrc}
+          partnerLogo={partnerLogo}
           onChangePhoto={(file: File) => {
             setPhoto(file);
             setPhotoEditorOpen(true);

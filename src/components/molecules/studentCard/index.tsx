@@ -1,20 +1,21 @@
 import logo from "@/assets/images/logo_carteirinha.png";
-import univ from "@/assets/images/UFSCar-f440d2791.png";
 import ProfileImage from "@/components/atoms/photoStudentCard";
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
 import { formatDate } from "@/utils/date";
 
-interface InfoStudentEnrolledModalProps {
+interface StudentCardProps {
   entity: StudentsDtoOutput;
   onChangePhoto?: (file: File) => void; // Função para lidar com a nova foto
   imageSrc: string | null;
+  partnerLogo?: string | null;
 }
 
 export function StudentCard({
   entity,
   onChangePhoto,
   imageSrc,
-}: InfoStudentEnrolledModalProps) {
+  partnerLogo,
+}: StudentCardProps) {
   return (
     <>
       <div className="bg-white pt-2 pr-2 rounded-md border-2 border-marine student-card">
@@ -65,7 +66,13 @@ export function StudentCard({
             className="flex flex-wrap justify-between items-center sm:items-end 
           w-full mt-4 sm:absolute sm:bottom-4 px-4"
           >
-            <img className="h-32 sm:h-44" src={univ} alt="Logo da UFSCar" />
+            {partnerLogo && (
+              <img
+                className="h-24 sm:h-36"
+                src={partnerLogo}
+                alt="Logo da universidade"
+              />
+            )}
             <img className="h-12 sm:h-12 sm:pr-4" src={logo} alt="Logo" />
           </div>
         </div>

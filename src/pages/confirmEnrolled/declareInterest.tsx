@@ -3,6 +3,7 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { declaredInterest } from "@/services/prepCourse/student/declaredInterest";
 import { useAuthStore } from "@/store/auth";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import SendDocuments from "./steps/sendDocuments";
 import SendPhoto from "./steps/sendPhoto";
 import SendQuest from "./steps/sendQuest";
@@ -25,7 +26,7 @@ export default function DeclareInterest({
   const [areaInterest, setAreaInterest] = useState<string[]>([]);
   const [selectedCursos, setSelectedCursos] = useState<string[]>([]);
   const [step, setStep] = useState<Steps>(
-    requestDocuments ? Steps.Documents : Steps.Photo
+    requestDocuments ? Steps.Documents : Steps.Photo,
   );
   const [processing, setProcessing] = useState<boolean>(false);
 
@@ -35,35 +36,47 @@ export default function DeclareInterest({
 
   const executeAsync = useToastAsync();
 
-  const handleDeclaredInterest = async (
-    areaInterest: string[],
-    selectedCursos: string[]
-  ) => {
-    return await executeAsync({
-      action: () =>
-        declaredInterest(
-          uploadedFiles,
-          uploadedPhoto as File,
-          areaInterest,
-          selectedCursos,
-          studentId,
-          token
-        ),
-      loadingMessage: "Declarando interesse...",
-      successMessage: "Declaração de interesse enviadas com sucesso!",
-      errorMessage: (e) => e.message,
-    });
+  /** Mensagem amigável para erros de rede (ex.: "Failed to fetch") que aparecem antes do servidor responder. */
+  const getFriendlyErrorMessage = (e: unknown): string => {
+    const msg = e instanceof Error ? e.message : String(e);
+    if (
+      typeof msg === "string" &&
+      (msg === "Failed to fetch" || msg.toLowerCase().includes("network") || msg.toLowerCase().includes("load failed"))
+    ) {
+      return "Não foi possível enviar. Verifique sua conexão com a internet e tente novamente.";
+    }
+    return msg || "Erro ao enviar declaração de interesse. Tente novamente.";
   };
 
   const handleSubmit = (areaInterest: string[], selectedCursos: string[]) => {
+    // Validação antes de enviar — evita toast genérico "Failed to fetch" por dados faltando
+    if (!uploadedPhoto) {
+      toast.error("É obrigatório enviar a foto da carteirinha. Volte à etapa anterior e envie a foto.");
+      return;
+    }
+    if (!token?.trim()) {
+      toast.error("Sessão expirada. Faça login novamente para continuar.");
+      return;
+    }
+
     setProcessing(true);
-    handleDeclaredInterest(areaInterest, selectedCursos)
-      .then(() => {
-        setStep(Steps.Sucess);
-      })
-      .finally(() => {
-        setProcessing(false);
-      });
+    executeAsync({
+      action: () =>
+        declaredInterest(
+          uploadedFiles,
+          uploadedPhoto,
+          areaInterest,
+          selectedCursos,
+          studentId,
+          token,
+        ),
+      loadingMessage: "Declarando interesse...",
+      successMessage: "Declaração de interesse enviadas com sucesso!",
+      errorMessage: (e) => getFriendlyErrorMessage(e),
+      onSuccess: () => setStep(Steps.Sucess),
+    }).finally(() => {
+      setProcessing(false);
+    });
   };
 
   const StepsComponent = () => {
@@ -130,8 +143,8 @@ export default function DeclareInterest({
       step === Steps.Documents
         ? "upcoming"
         : step === Steps.Photo
-        ? "current"
-        : "complete",
+          ? "current"
+          : "complete",
   });
   stepsCircle.push({
     name: Steps.Quest,
@@ -139,8 +152,8 @@ export default function DeclareInterest({
       step == Steps.Quest
         ? "current"
         : step === Steps.Sucess
-        ? "complete"
-        : "upcoming",
+          ? "complete"
+          : "upcoming",
   });
 
   return (

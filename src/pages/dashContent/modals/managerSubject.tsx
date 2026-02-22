@@ -59,7 +59,7 @@ function ManagerSubject({
     const body: CreateSubjectDtoInput = {
       name: data.name,
       description: data.description,
-      frente: frente!.id,
+      frente: frente!._id || frente!.id,
     };
     newSubject(body).then(() => handleClose!());
   };
@@ -67,7 +67,7 @@ function ManagerSubject({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const edit = (data: any) => {
     const body: UpdateSubjectDto = {
-      id: frente!.id,
+      id: subject!._id || subject!.id,
       name: data.name,
       description: data.description,
     };
@@ -87,7 +87,7 @@ function ManagerSubject({
       handleClose={handleClose!}
       isOpen={isOpen}
     >
-      <PropValue prop="Frente" value={frente.name} />
+      <PropValue prop="Frente" value={frente.nome} />
       <form
         onSubmit={handleSubmit(subject ? edit : create)}
         className="flex flex-col py-4"

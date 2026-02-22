@@ -24,6 +24,8 @@ export const geo_summary_status = `${geolocations}/summary-status`;
 export const news = `${BASE_URL}/news`;
 export const newsAll = `${BASE_URL}/news/all`;
 
+export const materias = `${BASE_URL}/materia`;
+
 export const frentes = `${BASE_URL}/frente`;
 export const frentesByMateria = `${frentes}/materia`;
 export const frentesByMateriaWithContent = `${frentes}/materiawithcontent`;
@@ -72,6 +74,7 @@ export const subscribers = `${inscriptionCourse}/subscribers`;
 export const inviteMember = `${partnerPrepCourse}/invite-members`;
 export const inviteMemberAccept = `${partnerPrepCourse}/invite-members-accept`;
 export const termOfUse = `${partnerPrepCourse}/term-of-use`;
+export const getPartnerLogo = `${partnerPrepCourse}/logo`;
 export const updateWaitingList = `${inscriptionCourse}/update-waiting-list`;
 export const updateOrderWaitingList = `${inscriptionCourse}/update-order-waiting-list`;
 export const getWaitingList = `${inscriptionCourse}/waiting-list`;
