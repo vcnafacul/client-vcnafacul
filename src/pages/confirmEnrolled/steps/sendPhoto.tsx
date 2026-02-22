@@ -106,7 +106,7 @@ export default function SendPhoto({
         {/* Upload de foto para carteirinha */}
         <div className="flex flex-col items-center w-full">
           <h2 className="text-lg font-medium text-gray-800 mb-2">
-            Envie sua foto para a carteirinha (3x4)
+            Envie sua foto para a carteirinha (proporção 3x4)
           </h2>
           <label className="w-full cursor-pointer block relative">
             <input
