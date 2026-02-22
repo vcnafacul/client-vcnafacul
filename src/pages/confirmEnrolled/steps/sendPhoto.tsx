@@ -1,7 +1,6 @@
- 
 import PhotoEditor from "@/components/atoms/photoEditor";
 import { useModals } from "@/hooks/useModal";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
 interface Props {
@@ -43,7 +42,10 @@ export default function SendPhoto({
       setPhotoPreview(file);
       modals.photoEditor.open();
     }
+    event.target.value = ""; // permite reselecionar o mesmo arquivo
   };
+
+  // URL não é mais criada aqui; o PhotoEditor recebe o File e cria/revoga a URL internamente
 
   const handleSubmit = async () => {
     if (!photo) {
@@ -59,17 +61,30 @@ export default function SendPhoto({
   };
 
   const ModalPhotoEditor = () => {
-    return modals.photoEditor.isOpen ? (
+    if (!modals.photoEditor.isOpen || !photoPreview) return null;
+    return (
       <PhotoEditor
+        key={photoPreview.name + photoPreview.lastModified}
         isOpen={modals.photoEditor.isOpen}
-        photo={URL.createObjectURL(photoPreview!)}
+        photo={photoPreview}
         onConfirm={handlePreview}
         handleClose={() => {
           modals.photoEditor.close();
         }}
       />
-    ) : null;
+    );
   };
+
+  // URL estável para a pré-visualização da foto aprovada (evita imagem quebrada ao re-renderizar)
+  const photoDisplayUrl = useMemo(
+    () => (photo ? URL.createObjectURL(photo) : null),
+    [photo],
+  );
+  useEffect(() => {
+    return () => {
+      if (photoDisplayUrl) URL.revokeObjectURL(photoDisplayUrl);
+    };
+  }, [photoDisplayUrl]);
 
   return (
     <div className="max-w-5xl w-full mx-auto p-6 space-y-8 bg-white shadow-md rounded-lg">
@@ -97,7 +112,6 @@ export default function SendPhoto({
             <input
               type="file"
               accept="image/*"
-              capture="environment"
               onChange={handlePhotoChange}
               className="absolute w-px h-px opacity-0 overflow-hidden"
               aria-label="Selecionar foto para carteirinha"
@@ -106,10 +120,10 @@ export default function SendPhoto({
               Toque para escolher ou tirar foto
             </span>
           </label>
-          {photo && (
+          {photo && photoDisplayUrl && (
             <div className="mt-4 w-32 h-40 border rounded-md overflow-hidden">
               <img
-                src={URL.createObjectURL(photo)}
+                src={photoDisplayUrl}
                 alt="Foto para carteirinha"
                 className="object-cover w-full h-full"
               />
