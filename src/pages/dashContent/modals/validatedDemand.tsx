@@ -2,7 +2,7 @@
 import DocxPreview from "@/components/atoms/docxPreview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ContentDtoInput } from "@/dtos/content/contentDtoInput";
 import { StatusContent } from "@/enums/content/statusContent";
@@ -42,15 +42,18 @@ export default function ValidatedDemand({
 
   const executeAsync = useToastAsync();
 
+  const demandId = demand.id ?? (demand as any)._id;
+  const fileId = demand.file?.id ?? (demand.file as any)?._id;
+
   const canReview: boolean =
     permissao[Roles.validarDemanda] &&
     demand.status !== StatusContent.Pending_Upload;
 
   useEffect(() => {
     const fetchFile = async () => {
-      if (demand.file?.id) {
+      if (fileId) {
         await executeAsync({
-          action: () => getFile(demand.file!.id, token),
+          action: () => getFile(fileId, token),
           loadingMessage: "Carregando documento ...",
           successMessage: "Documento carregado com sucesso",
           errorMessage: (error: Error) => error.message,
@@ -64,7 +67,7 @@ export default function ValidatedDemand({
 
     fetchFile();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [demand.file, demand.file?.id, token]);
+  }, [demand.file, fileId, token]);
 
   const handleDownload = async () => {
     if (blob) {
@@ -81,12 +84,12 @@ export default function ValidatedDemand({
 
   const handleUpdateStatus = async (status: StatusEnum | StatusContent) => {
     await executeAsync({
-      action: () => updateStatus(demand.id, status, token),
+      action: () => updateStatus(demandId, status, token),
       loadingMessage: "Atualizando status...",
       successMessage: "Status atualizado com sucesso",
       errorMessage: (error) => error.message,
       onSuccess: () => {
-        updateStatusDemand(demand.id);
+        updateStatusDemand(demandId);
         handleClose();
       },
     });
@@ -94,12 +97,12 @@ export default function ValidatedDemand({
 
   const handleReset = async () => {
     await executeAsync({
-      action: () => resetDemand(demand.id, token),
+      action: () => resetDemand(demandId, token),
       loadingMessage: "Resetando demanda...",
       successMessage: "Demanda resetada",
       errorMessage: (error) => error.message,
       onSuccess: () => {
-        updateStatusDemand(demand.id);
+        updateStatusDemand(demandId);
         handleClose();
       },
     });
@@ -108,6 +111,7 @@ export default function ValidatedDemand({
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-5xl p-6">
+        <DialogTitle className="sr-only">{demand.title}</DialogTitle>
         <Card className="border-none shadow-none">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-marine">
@@ -118,7 +122,7 @@ export default function ValidatedDemand({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm font-black text-marine">Frente:</p>
-                <p>{demand.subject.frente.name}</p>
+                <p>{demand.subject.frente.nome}</p>
               </div>
               <div>
                 <p className="text-sm font-black text-marine">Tema:</p>
@@ -129,7 +133,7 @@ export default function ValidatedDemand({
               <p className="text-sm font-medium">{demand.description}</p>
             </div>
 
-            {demand.file?.id && (
+            {fileId && (
               <div className="flex gap-2 mt-4">
                 <Button variant="outline" onClick={handleDownload}>
                   Download
@@ -173,6 +177,7 @@ export default function ValidatedDemand({
 
       <Dialog open={modals.docxPreview.isOpen} onOpenChange={modals.docxPreview.close}>
         <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto p-6">
+          <DialogTitle className="sr-only">Pré-visualização do documento</DialogTitle>
           {arrayBuffer && (
             <ScrollArea className="h-[70vh]">
               <DocxPreview arrayBuffer={arrayBuffer} />

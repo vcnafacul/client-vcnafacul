@@ -4,10 +4,8 @@ import {
   CreateFrenteDtoInput,
   UpdateFrenteDto,
 } from "@/dtos/content/frenteDto";
-import { Materias } from "@/enums/content/materias";
 import { changeOrderSubject } from "@/services/content/changeOrderSubject";
 import { useAuthStore } from "@/store/auth";
-import { MateriasLabel } from "@/types/content/materiasLabel";
 import { Button, IconButton } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
@@ -15,8 +13,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useState } from "react";
 import { CgArrowsExchangeAltV } from "react-icons/cg";
 import { IoEyeSharp } from "react-icons/io5";
-import { MdDeleteForever, MdModeEdit } from "react-icons/md";
-import { toast } from "react-toastify";
+import { MdModeEdit } from "react-icons/md";
 import ManagerFrente from "./managerFrente";
 import OrderEditSubject from "./orderEditSubject";
 import SettingsSubject from "./settingsSubject";
@@ -24,19 +21,19 @@ import { useModals } from "@/hooks/useModal";
 
 interface Props {
   frentes: FrenteDto[];
-  materia: Materias;
+  materia: string;
+  materiaLabel: string;
   updateSizeFrente: (id: string, size: number) => void;
   onCreate: (body: CreateFrenteDtoInput) => Promise<void>;
   onUpdate: (body: UpdateFrenteDto) => Promise<void>;
-  onDelete: (id: string) => void;
 }
 export function PanelFrente({
   frentes,
   materia,
+  materiaLabel,
   updateSizeFrente,
   onCreate,
   onUpdate,
-  onDelete,
 }: Props) {
   const [frenteSelected, setFrenteSelected] = useState<FrenteDto | null>(null);
 
@@ -50,15 +47,9 @@ export function PanelFrente({
     data: { token },
   } = useAuthStore();
 
-  const handleDelete = (frente: FrenteDto) => {
-    if (frente.lenght > 0) {
-      toast.warn("Frente com temas cadastrados, impossivel excluir");
-    }
-    onDelete(frente.id);
-  };
   const columns: GridColDef[] = [
     {
-      field: "name",
+      field: "nome",
       headerName: "Frente",
       flex: 1,
     },
@@ -117,13 +108,6 @@ export function PanelFrente({
               <CgArrowsExchangeAltV className="fill-gray-500 hover:fill-black" />
             </IconButton>
           </Tooltip>
-          {params.row.lenght === 0 && (
-            <Tooltip title="Excluir Frente">
-              <IconButton onClick={() => handleDelete(params.row)}>
-                <MdDeleteForever className="fill-redError opacity-50 hover:opacity-100" />
-              </IconButton>
-            </Tooltip>
-          )}
         </div>
       ),
     },
@@ -134,7 +118,7 @@ export function PanelFrente({
       <ManagerFrente
         frente={frenteSelected}
         isOpen={modals.frenteEditor.isOpen}
-        materia={MateriasLabel.find((m) => m.value === materia)!}
+        materia={{ value: materia, label: materiaLabel }}
         newFrente={onCreate}
         editFrente={onUpdate}
         handleClose={() => modals.frenteEditor.close()}
@@ -151,7 +135,7 @@ export function PanelFrente({
         }}
         frente={frenteSelected!}
         updateSizeFrente={(size: number) =>
-          updateSizeFrente(frenteSelected!.id, size)
+          updateSizeFrente(frenteSelected!._id || frenteSelected!.id, size)
         }
       />
     );
@@ -163,7 +147,7 @@ export function PanelFrente({
         isOpen={modals.orderEdit.isOpen}
         handleClose={() => modals.orderEdit.close()}
         subjects={frenteSelected!.subjects}
-        listId={frenteSelected!.id}
+        listId={frenteSelected!._id || frenteSelected!.id}
         updateOrder={(body: ChangeOrderDTO) => changeOrderSubject(token, body)}
       />
     );
@@ -181,7 +165,7 @@ export function PanelFrente({
         <DataGrid
           rows={frentes}
           columns={columns}
-          getRowId={(row) => row.id}
+          getRowId={(row) => row._id || row.id}
           rowHeight={40}
           sx={{ border: 0 }}
         />

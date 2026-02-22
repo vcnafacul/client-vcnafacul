@@ -83,10 +83,10 @@ export function InfoStudentEnrolledModal({
   };
 
   const ModalPhotoEditor = () => {
-    return photoEditorOpen ? (
+    return photoEditorOpen && photo ? (
       <PhotoEditor
         isOpen={photoEditorOpen}
-        photo={photo ? URL.createObjectURL(photo) : ""}
+        photo={photo}
         onConfirm={handleUploadProfileImage}
         handleClose={() => {
           setPhotoEditorOpen(false);

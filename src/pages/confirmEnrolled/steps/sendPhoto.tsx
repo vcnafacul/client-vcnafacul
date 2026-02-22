@@ -1,7 +1,6 @@
- 
 import PhotoEditor from "@/components/atoms/photoEditor";
 import { useModals } from "@/hooks/useModal";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
 interface Props {
@@ -43,7 +42,10 @@ export default function SendPhoto({
       setPhotoPreview(file);
       modals.photoEditor.open();
     }
+    event.target.value = ""; // permite reselecionar o mesmo arquivo
   };
+
+  // URL não é mais criada aqui; o PhotoEditor recebe o File e cria/revoga a URL internamente
 
   const handleSubmit = async () => {
     if (!photo) {
@@ -59,17 +61,30 @@ export default function SendPhoto({
   };
 
   const ModalPhotoEditor = () => {
-    return modals.photoEditor.isOpen ? (
+    if (!modals.photoEditor.isOpen || !photoPreview) return null;
+    return (
       <PhotoEditor
+        key={photoPreview.name + photoPreview.lastModified}
         isOpen={modals.photoEditor.isOpen}
-        photo={URL.createObjectURL(photoPreview!)}
+        photo={photoPreview}
         onConfirm={handlePreview}
         handleClose={() => {
           modals.photoEditor.close();
         }}
       />
-    ) : null;
+    );
   };
+
+  // URL estável para a pré-visualização da foto aprovada (evita imagem quebrada ao re-renderizar)
+  const photoDisplayUrl = useMemo(
+    () => (photo ? URL.createObjectURL(photo) : null),
+    [photo],
+  );
+  useEffect(() => {
+    return () => {
+      if (photoDisplayUrl) URL.revokeObjectURL(photoDisplayUrl);
+    };
+  }, [photoDisplayUrl]);
 
   return (
     <div className="max-w-5xl w-full mx-auto p-6 space-y-8 bg-white shadow-md rounded-lg">
@@ -89,22 +104,26 @@ export default function SendPhoto({
         </div>
 
         {/* Upload de foto para carteirinha */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center w-full">
           <h2 className="text-lg font-medium text-gray-800 mb-2">
-            Envie sua foto para a carteirinha (3x4)
+            Envie sua foto para a carteirinha (proporção 3x4)
           </h2>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoChange}
-            className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4
-          file:rounded-full file:border-0 file:text-sm file:font-semibold
-          file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-          />
-          {photo && (
+          <label className="w-full cursor-pointer block relative">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoChange}
+              className="absolute w-px h-px opacity-0 overflow-hidden"
+              aria-label="Selecionar foto para carteirinha"
+            />
+            <span className="flex items-center justify-center text-center py-4 px-4 rounded-lg border-2 border-dashed border-blue-300 bg-blue-50/50 text-blue-700 font-medium min-h-[48px] touch-manipulation active:bg-blue-100">
+              Toque para escolher ou tirar foto
+            </span>
+          </label>
+          {photo && photoDisplayUrl && (
             <div className="mt-4 w-32 h-40 border rounded-md overflow-hidden">
               <img
-                src={URL.createObjectURL(photo)}
+                src={photoDisplayUrl}
                 alt="Foto para carteirinha"
                 className="object-cover w-full h-full"
               />

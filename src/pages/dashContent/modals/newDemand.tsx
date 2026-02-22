@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { Button } from "@/components/ui/button";
-import { Materias } from "@/enums/content/materias";
 import { useToastAsync } from "@/hooks/useToastAsync";
-import { getFrentes } from "@/services/content/getFrentes";
+import { getMaterias, MateriaDto } from "@/services/content/getMaterias";
 import { getSubjects } from "@/services/content/getSubjects";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Save, X } from "lucide-react";
@@ -21,7 +20,6 @@ import {
 } from "../../../dtos/content/contentDtoInput";
 import { createContent } from "../../../services/content/createContent";
 import { useAuthStore } from "../../../store/auth";
-import { MateriasLabel } from "../../../types/content/materiasLabel";
 
 interface NewDemandProps extends ModalProps {
   addDemand: (data: ContentDtoInput) => void;
@@ -29,6 +27,7 @@ interface NewDemandProps extends ModalProps {
 }
 
 function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
+  const [materiasList, setMateriasList] = useState<MateriaDto[]>([]);
   const [frentes, setFrentes] = useState<FrenteDto[]>([]);
   const [subjects, setSubjects] = useState<SubjectDto[]>([]);
 
@@ -41,7 +40,7 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
   const schema = yup
     .object()
     .shape({
-      materia: yup.number().required(),
+      materia: yup.string().required("Matéria é obrigatória"),
       frente: yup.string().required("Frente é obrigatória"),
       subjectId: yup.string().required("Tema é Obrigatório"),
       title: yup.string().required("Você precisa definir um Título"),
@@ -69,6 +68,19 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
     register("description");
   }, []);
 
+  useEffect(() => {
+    getMaterias(token)
+      .then((res) => {
+        setMateriasList(res);
+        if (res.length > 0) {
+          setValue("materia", res[0]._id);
+        }
+      })
+      .catch((error: Error) => {
+        toast.error(error.message);
+      });
+  }, [token]);
+
   const materia = watch("materia");
   const frente = watch("frente");
 
@@ -86,32 +98,37 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
   };
 
   useEffect(() => {
-    const getFrenteByMateria = async (materia: Materias) => {
-      getFrentes(materia ? materia : Materias.LinguaPortuguesa, token)
-        .then((res) => {
-          setFrentes(res);
-        })
-        .catch((error: Error) => {
-          toast.error(error.message);
-        });
-    };
-    getFrenteByMateria(materia as Materias);
-  }, [materia, token]);
+    if (!materia) return;
+    const frentesFound = materiasList.find((m) => m._id === materia)?.frentes;
+    if (frentesFound) {
+      setFrentes(frentesFound);
+    } else {
+      setFrentes([]);
+    }
+    setValue("frente", "");
+    setSubjects([]);
+    setValue("subjectId", "");
+  }, [materia]);
 
   useEffect(() => {
-    const getSubjectByFrente = async (frente: string) => {
-      getSubjects(frente, token)
-        .then((res) => {
-          setSubjects(res);
-        })
-        .catch((error: Error) => {
-          toast.error(error.message);
-        });
-    };
-    if (frente) {
-      getSubjectByFrente(frente);
+    if (!frente) {
+      setSubjects([]);
+      setValue("subjectId", "");
+      return;
     }
-  }, [materia, frente, token]);
+    getSubjects(frente, token)
+      .then((res) => {
+        setSubjects(res);
+      })
+      .catch((error: Error) => {
+        toast.error(error.message);
+      });
+  }, [frente, token]);
+
+  const materiasOptions = materiasList.map((m) => ({
+    value: m._id,
+    label: m.nome,
+  }));
 
   return (
     <ModalTemplate
@@ -127,8 +144,8 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
               type="select"
               label="Matéria"
               error={errors.materia}
-              options={MateriasLabel}
-              defaultValue={Materias.LinguaPortuguesa}
+              options={materiasOptions}
+              defaultValue={materia}
               onChange={(e: any) => setValue("materia", e.target.value)}
             />
             <InputFactory
@@ -136,7 +153,8 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
               type="select"
               label="Frente"
               error={errors.frente}
-              options={frentes.map((f) => ({ label: f.name, value: f.id }))}
+              value={frente}
+              options={frentes.map((f) => ({ label: f.nome, value: f._id }))}
               onChange={(e: any) => setValue("frente", e.target.value)}
             />
             <InputFactory
@@ -144,7 +162,8 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
               type="select"
               label="Tema"
               error={errors.subjectId}
-              options={subjects.map((s) => ({ label: s.name, value: s.id }))}
+              value={watch("subjectId")}
+              options={subjects.map((s) => ({ label: s.name, value: s._id }))}
               onChange={(e: any) => setValue("subjectId", e.target.value)}
             />
           </div>

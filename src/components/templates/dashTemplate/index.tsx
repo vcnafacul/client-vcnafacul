@@ -30,7 +30,7 @@ function DashTemplateContent({ hasMenu }: { hasMenu?: boolean }) {
         {hasMenu ? <SidebarDash /> : <></>}
       </div>
       <SidebarTrigger
-        className={`fixed z-30 top-20 transition-all duration-200 ${
+        className={`fixed z-30 top-24 transition-all duration-200 ${
           open ? "right-[0.5rem] md:right-[16rem]" : "right-4"
         }`}
       />

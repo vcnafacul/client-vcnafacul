@@ -14,6 +14,7 @@ interface UploadButtonProps extends Omit<ComponentProps<"input">, "onError"> {
   maxSize?: number; // em MB
   onError?: (error: string) => void;
   variant?: "default" | "compact"; // Nova prop para variantes
+  onRemove?: (event: React.MouseEvent) => void;
 }
 
 function UploadButton({
@@ -24,6 +25,7 @@ function UploadButton({
   maxSize = 10,
   onError,
   variant = "default",
+  onRemove,
   ...props
 }: UploadButtonProps) {
   const [isDragOver, setIsDragOver] = useState(false);
@@ -103,6 +105,9 @@ function UploadButton({
 
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (onRemove){
+      onRemove(e);
+    }
     setSelectedFile(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";

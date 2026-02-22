@@ -52,7 +52,7 @@ export function PanelSubject({
     if (subject.lenght > 0) {
       toast.warn("Temas com conteúdos cadastrados, impossivel excluir");
     }
-    onDelete(subject.id);
+    onDelete(subject._id || subject.id);
   };
 
   const columns: GridColDef[] = [
@@ -203,7 +203,7 @@ export function PanelSubject({
         isOpen={modals.orderEdit.isOpen}
         handleClose={() => modals.orderEdit.close()}
         contents={subjectSelected!.contents}
-        listId={subjectSelected!.id}
+        listId={subjectSelected!._id || subjectSelected!.id}
         updateOrder={(body: ChangeOrderDTO) => changeOrderDemand(token, body)}
       />
     );
@@ -221,7 +221,7 @@ export function PanelSubject({
         <DataGrid
           rows={subjects}
           columns={columns}
-          getRowId={(row) => row.id}
+          getRowId={(row) => row._id || row.id}
           rowHeight={60}
           disableRowSelectionOnClick
           sx={{ border: 0 }}

@@ -24,6 +24,8 @@ export const geo_summary_status = `${geolocations}/summary-status`;
 export const news = `${BASE_URL}/news`;
 export const newsAll = `${BASE_URL}/news/all`;
 
+export const materias = `${BASE_URL}/materia`;
+
 export const frentes = `${BASE_URL}/frente`;
 export const frentesByMateria = `${frentes}/materia`;
 export const frentesByMateriaWithContent = `${frentes}/materiawithcontent`;
