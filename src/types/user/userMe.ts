@@ -1,4 +1,5 @@
 import { Auth } from "@/store/auth";
+import { Afinidade } from "../partnerPrepCourse/afinidades";
 
 export type UserMe = Auth & {
   id: string;
@@ -13,4 +14,6 @@ export type UserMe = Auth & {
   collaborator: boolean;
   collaboratorDescription?: string | null;
   collaboratorPhoto?: string | null;
+  collaboratorFrentes?: string[]; // IDs das frentes selecionadas
+  afinidades?: Afinidade[];
 };
