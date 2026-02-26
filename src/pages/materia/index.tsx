@@ -6,8 +6,7 @@ import { getFrentesWithContent } from "../../services/content/getFrentes";
 import { getMaterias } from "../../services/content/getMaterias";
 import { useAuthStore } from "../../store/auth";
 import { Frente } from "../../types/content/frenteContent";
-import { MateriasLabel } from "../../types/content/materiasLabel";
-import { DataMateriaProps, dataMateria } from "./data";
+import { dataMateria } from "./data";
 
 function Materia() {
   const { nomeMateria } = useParams();
@@ -19,11 +18,10 @@ function Materia() {
   const [frentes, setFrentes] = useState<Frente[]>([]);
   const [frenteSelected, setFrenteSelected] = useState<Frente>();
 
-  const materiaPageInfo = dataMateria[nomeMateria as keyof DataMateriaProps];
-  const Icon = materiaPageInfo.image;
+  const materiaPageInfo = nomeMateria ? dataMateria[nomeMateria] : undefined;
+  const Icon = materiaPageInfo?.image;
 
-  const tituloMateria =
-    MateriasLabel.find((e) => e.value === materiaPageInfo.id)?.label || "";
+  const tituloMateria = materiaPageInfo?.label || "";
 
   const getFrenteCards = useCallback(() => {
     if (frentes.length === 0) return null;
@@ -142,7 +140,7 @@ function Materia() {
             Escolha uma frente e um tema para começar seus estudos 🚀
           </p>
         </div>
-        <Icon className="w-[300px] h-[250px]" />
+        {Icon && <Icon className="w-[300px] h-[250px]" />}
       </div>
 
       {/* Conteúdo */}

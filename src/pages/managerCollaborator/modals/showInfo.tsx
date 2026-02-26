@@ -3,10 +3,15 @@ import Button from "@/components/molecules/button";
 import PropValue from "@/components/molecules/PropValue";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import ModalTemplate from "@/components/templates/modalTemplate";
+import { Badge } from "@/components/ui/badge";
+import { Afinidade } from "@/types/partnerPrepCourse/afinidades";
+import { getColorFromName } from "@/utils/getColorFromName";
 import { formatDate } from "@/utils/date";
 import { phoneMask } from "@/utils/phoneMask";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import { getCollaboratorFrentesEnriched } from "@/services/prepCourse/collaborator/get-collaborator-frentes";
+import { useAuthStore } from "@/store/auth";
 import { CollaboratorColumns } from "..";
 
 interface ModalProps {
@@ -17,7 +22,20 @@ interface ModalProps {
   handleActive: (id: string) => Promise<void>;
   handleDescription: (id: string, description: string) => Promise<void>;
   openUpdateRole: () => void;
+}
 
+function toAfinidades(
+  frentes: { id: string; nome: string; materia: string }[],
+  materias: { id: string; nome: string }[]
+): Afinidade[] {
+  const materiaMap = new Map(materias.map((m) => [m.id, m.nome]));
+  return frentes.map((f) => ({
+    frenteId: f.id,
+    frenteNome: f.nome,
+    materiaId: f.materia,
+    materiaNome: materiaMap.get(f.materia) ?? "",
+    adicionadoEm: undefined as unknown as Date,
+  }));
 }
 
 export function ShowInfo({
@@ -27,14 +45,35 @@ export function ShowInfo({
   isOpen,
   handleActive,
   handleDescription,
-  openUpdateRole
+  openUpdateRole,
 }: ModalProps) {
   const [actived, setActived] = useState<boolean>(collaborator.actived);
   const [description, setDescription] = useState<string>(
     collaborator.description
   );
   const [loading, setLoading] = useState<string>("Atualizar");
+  const [afinidades, setAfinidades] = useState<Afinidade[]>([]);
+  const [frentesLoading, setFrentesLoading] = useState(false);
+  const { data: { token } } = useAuthStore();
   const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
+
+  useEffect(() => {
+    if (!isOpen || !collaborator?.id || !token) return;
+    setFrentesLoading(true);
+    getCollaboratorFrentesEnriched(collaborator.id, token)
+      .then((res) => setAfinidades(toAfinidades(res.frentes, res.materias)))
+      .catch(() => setAfinidades([]))
+      .finally(() => setFrentesLoading(false));
+  }, [isOpen, collaborator?.id, token]);
+
+  const materiasUnicas = useMemo(
+    () => Array.from(new Set(afinidades.map((a) => a.materiaNome).filter(Boolean))),
+    [afinidades]
+  );
+  const frentesUnicas = useMemo(
+    () => Array.from(new Set(afinidades.map((a) => a.frenteNome).filter(Boolean))),
+    [afinidades]
+  );
 
   return (
     <ModalTemplate
@@ -54,6 +93,38 @@ export function ShowInfo({
             </div>
           )}
           <div className="flex flex-col gap-2 w-full">
+            {frentesLoading ? (
+              <div className="text-sm text-gray-500 italic">Carregando...</div>
+            ) : (materiasUnicas.length > 0 || frentesUnicas.length > 0) ? (
+              <div className="flex flex-col gap-2">
+                {materiasUnicas.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {materiasUnicas.map((nome) => (
+                      <Badge
+                        key={nome}
+                        variant="secondary"
+                        className={`inline-flex items-center px-3 py-1 text-xs ${getColorFromName(nome)} text-white`}
+                      >
+                        {nome}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+                {frentesUnicas.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {frentesUnicas.map((nome) => (
+                      <Badge
+                        key={nome}
+                        variant="secondary"
+                        className={`inline-flex items-center px-3 py-1 text-xs ${getColorFromName(nome)} text-white`}
+                      >
+                        {nome}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : null}
             <div className="bg-zinc-800 p-2 rounded shadow-black shadow-md">
               <PropValue
                 prop="Função"
@@ -118,9 +189,11 @@ export function ShowInfo({
             />
           </div>
         </div>
-          <div className="flex gap-4 py-2">
-            <Button onClick={openUpdateRole} typeStyle="refused">Editar Função</Button>
-          </div>
+        <div className="flex gap-4 py-2">
+          <Button onClick={openUpdateRole} typeStyle="refused">
+            Editar Função
+          </Button>
+        </div>
       </div>
     </ModalTemplate>
   );
