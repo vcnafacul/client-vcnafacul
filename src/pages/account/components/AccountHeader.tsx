@@ -26,7 +26,7 @@ export function AccountHeader({
           <ImageProfile
             deleteImage={onDeleteImage}
             onChange={onImageChange}
-            src={imagePreview}
+            src={imagePreview ?? ""}
           />
         ) : (
           <LogoIcon className="w-24 h-24 p-2 bg-white border rounded-full animate-rotate" />

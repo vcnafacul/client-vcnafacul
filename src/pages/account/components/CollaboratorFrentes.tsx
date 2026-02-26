@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { FrenteDto } from '@/dtos/content/contentDtoInput';
-import { getMateriaString } from '@/enums/content/materias';
+import { getMaterias } from '@/services/content/getMaterias';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useFrentesSelection } from '../hooks/useFrentesSelection';
@@ -32,6 +32,19 @@ export function CollaboratorFrentes({
     onSelectionChange,
   });
 
+  const [materiaNomeMap, setMateriaNomeMap] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (!token) return;
+    getMaterias(token)
+      .then((materias) => {
+        const map: Record<string, string> = {};
+        materias.forEach((m) => { map[m._id] = m.nome; });
+        setMateriaNomeMap(map);
+      })
+      .catch((err) => console.error("Erro ao carregar matérias:", err));
+  }, [token]);
+
   // Filtrar frentes disponíveis por busca
   const filteredFrentes = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -39,7 +52,7 @@ export function CollaboratorFrentes({
       return availableFrentes.slice(0, 10); // Limitar a 10 resultados quando não há busca
     }
     return availableFrentes.filter((frente) =>
-      (frente.name ?? "").toLowerCase().includes(term)
+      (frente.nome ?? "").toLowerCase().includes(term)
     );
   }, [availableFrentes, searchTerm]);
 
@@ -101,9 +114,9 @@ export function CollaboratorFrentes({
                     onClick={() => handleSelect(frente)}
                     className="w-full text-left px-4 py-2 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none transition-colors"
                   >
-                    <div className="font-medium text-sm">{frente.name ?? "—"}</div>
+                    <div className="font-medium text-sm">{frente.nome ?? "—"}</div>
                     <div className="text-xs text-gray-500">
-                      {getMateriaString(frente.materia)}
+                      {materiaNomeMap[frente.materia] ?? frente.materia}
                     </div>
                   </button>
                 ))}
@@ -140,12 +153,12 @@ export function CollaboratorFrentes({
                 variant="secondary"
                 className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors"
               >
-                <span className="text-sm">{frente.name ?? "—"}</span>
+                <span className="text-sm">{frente.nome ?? "—"}</span>
                 <button
                   type="button"
                   onClick={() => handleRemove(frente.id)}
                   className="ml-1 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
-                  aria-label={`Remover ${frente.name}`}
+                  aria-label={`Remover ${frente.nome}`}
                 >
                   <X className="h-3 w-3" />
                 </button>
