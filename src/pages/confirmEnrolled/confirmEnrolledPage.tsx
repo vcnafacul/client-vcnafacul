@@ -46,6 +46,9 @@ export function ConfirmEnrolledPage() {
       isFree,
       studentId,
       requestDocuments,
+      documentsDone,
+      photoDone,
+      surveyDone,
     } = declaredInterest;
 
     if (declared) {
@@ -78,6 +81,9 @@ export function ConfirmEnrolledPage() {
             isFree={isFree}
             studentId={studentId}
             requestDocuments={requestDocuments}
+            documentsDone={documentsDone}
+            photoDone={photoDone}
+            surveyDone={surveyDone}
           />
         </div>
       );

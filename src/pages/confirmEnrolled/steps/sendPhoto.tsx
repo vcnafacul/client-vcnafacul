@@ -5,20 +5,20 @@ import { toast } from "react-toastify";
 
 interface Props {
   onSubmit: (file: File) => void;
-  back: (file: File | null) => void;
   oldPhoto: File | null;
   requestDocuments: boolean;
+  documentsDone: boolean;
+  processing: boolean;
 }
 
 export default function SendPhoto({
   onSubmit,
-  back,
   oldPhoto,
-  requestDocuments,
+  processing,
 }: Props) {
   const [photo, setPhoto] = useState<File | null>(oldPhoto);
   const [photoPreview, setPhotoPreview] = useState<File | null>(null);
-  const [photoError, setPhotoError] = useState<string | null>(null); // Erro ao carregar a foto
+  const [photoError, setPhotoError] = useState<string | null>(null);
 
   const modals = useModals([
     'photoEditor',
@@ -42,10 +42,8 @@ export default function SendPhoto({
       setPhotoPreview(file);
       modals.photoEditor.open();
     }
-    event.target.value = ""; // permite reselecionar o mesmo arquivo
+    event.target.value = "";
   };
-
-  // URL não é mais criada aqui; o PhotoEditor recebe o File e cria/revoga a URL internamente
 
   const handleSubmit = async () => {
     if (!photo) {
@@ -54,10 +52,6 @@ export default function SendPhoto({
     }
 
     onSubmit(photo);
-  };
-
-  const handleBack = () => {
-    back(photo);
   };
 
   const ModalPhotoEditor = () => {
@@ -75,7 +69,6 @@ export default function SendPhoto({
     );
   };
 
-  // URL estável para a pré-visualização da foto aprovada (evita imagem quebrada ao re-renderizar)
   const photoDisplayUrl = useMemo(
     () => (photo ? URL.createObjectURL(photo) : null),
     [photo],
@@ -88,9 +81,7 @@ export default function SendPhoto({
 
   return (
     <div className="max-w-5xl w-full mx-auto p-6 space-y-8 bg-white shadow-md rounded-lg">
-      {/* Seção de dicas e foto */}
       <div>
-        {/* Dicas para a foto da carteirinha */}
         <div className="p-4 w-full max-w-5xl bg-blue-50 border-l-4 border-blue-500 rounded-md my-4">
           <h3 className="text-md font-semibold text-blue-800">
             Dicas para uma boa foto:
@@ -103,7 +94,6 @@ export default function SendPhoto({
           </ul>
         </div>
 
-        {/* Upload de foto para carteirinha */}
         <div className="flex flex-col items-center w-full">
           <h2 className="text-lg font-medium text-gray-800 mb-2">
             Envie sua foto para a carteirinha (proporção 3x4)
@@ -115,6 +105,7 @@ export default function SendPhoto({
               onChange={handlePhotoChange}
               className="absolute w-px h-px opacity-0 overflow-hidden"
               aria-label="Selecionar foto para carteirinha"
+              disabled={processing}
             />
             <span className="flex items-center justify-center text-center py-4 px-4 rounded-lg border-2 border-dashed border-blue-300 bg-blue-50/50 text-blue-700 font-medium min-h-[48px] touch-manipulation active:bg-blue-100">
               Toque para escolher ou tirar foto
@@ -135,21 +126,13 @@ export default function SendPhoto({
         </div>
       </div>
 
-      {/* Botão de envio */}
       <div className="w-full flex justify-end gap-4">
-        {requestDocuments && (
-          <button
-            className="mt-8 px-6 py-3  text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
-            onClick={handleBack}
-          >
-            Voltar
-          </button>
-        )}
         <button
           className="mt-8 px-6 py-3  text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
           onClick={handleSubmit}
+          disabled={processing}
         >
-          Continuar
+          {processing ? "Enviando..." : "Continuar"}
         </button>
       </div>
 
