@@ -7,9 +7,10 @@ interface Props {
   isFree: boolean;
   onSubmit: (files: File[]) => void;
   files: File[];
+  processing: boolean;
 }
 
-export default function SendDocuments({ isFree, onSubmit, files }: Props) {
+export default function SendDocuments({ isFree, onSubmit, files, processing }: Props) {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>(files);
 
   const handleDrop = (acceptedFiles: File[]) => {
@@ -165,8 +166,9 @@ export default function SendDocuments({ isFree, onSubmit, files }: Props) {
       <button
         className="mt-8 px-6 py-3 text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60 self-end"
         onClick={hanfleSubmit}
+        disabled={processing}
       >
-        Contínuar
+        {processing ? "Enviando..." : "Contínuar"}
       </button>
     </div>
   );

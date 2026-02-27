@@ -1,6 +1,9 @@
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
 import { useToastAsync } from "@/hooks/useToastAsync";
-import { declaredInterest } from "@/services/prepCourse/student/declaredInterest";
+import { confirmDeclaration } from "@/services/prepCourse/student/confirmDeclaration";
+import { submitDocuments } from "@/services/prepCourse/student/submitDocuments";
+import { submitPhoto } from "@/services/prepCourse/student/submitPhoto";
+import { submitSurvey } from "@/services/prepCourse/student/submitSurvey";
 import { useAuthStore } from "@/store/auth";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -14,19 +17,38 @@ interface Props {
   isFree: boolean;
   studentId: string;
   requestDocuments: boolean;
+  documentsDone: boolean;
+  photoDone: boolean;
+  surveyDone: boolean;
+}
+
+function getInitialStep(
+  requestDocuments: boolean,
+  documentsDone: boolean,
+  photoDone: boolean,
+  surveyDone: boolean,
+): Steps {
+  if (requestDocuments && !documentsDone) return Steps.Documents;
+  if (!photoDone) return Steps.Photo;
+  if (!surveyDone) return Steps.Quest;
+  return Steps.Quest;
 }
 
 export default function DeclareInterest({
   isFree,
   studentId,
   requestDocuments,
+  documentsDone: initialDocsDone,
+  photoDone: initialPhotoDone,
+  surveyDone: initialSurveyDone,
 }: Props) {
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [uploadedPhoto, setUploadedPhoto] = useState<File | null>(null);
+  const [documentsDone, setDocumentsDone] = useState(initialDocsDone);
+  const [photoDone, setPhotoDone] = useState(initialPhotoDone);
+
   const [areaInterest, setAreaInterest] = useState<string[]>([]);
   const [selectedCursos, setSelectedCursos] = useState<string[]>([]);
   const [step, setStep] = useState<Steps>(
-    requestDocuments ? Steps.Documents : Steps.Photo,
+    getInitialStep(requestDocuments, initialDocsDone, initialPhotoDone, initialSurveyDone),
   );
   const [processing, setProcessing] = useState<boolean>(false);
 
@@ -36,7 +58,6 @@ export default function DeclareInterest({
 
   const executeAsync = useToastAsync();
 
-  /** Mensagem amigável para erros de rede (ex.: "Failed to fetch") que aparecem antes do servidor responder. */
   const getFriendlyErrorMessage = (e: unknown): string => {
     const msg = e instanceof Error ? e.message : String(e);
     if (
@@ -45,38 +66,63 @@ export default function DeclareInterest({
     ) {
       return "Não foi possível enviar. Verifique sua conexão com a internet e tente novamente.";
     }
-    return msg || "Erro ao enviar declaração de interesse. Tente novamente.";
+    return msg || "Erro ao enviar. Tente novamente.";
   };
 
-  const handleSubmit = (areaInterest: string[], selectedCursos: string[]) => {
-    // Validação antes de enviar — evita toast genérico "Failed to fetch" por dados faltando
-    if (!uploadedPhoto) {
-      toast.error("É obrigatório enviar a foto da carteirinha. Volte à etapa anterior e envie a foto.");
-      return;
-    }
+  const handleSubmitDocuments = (files: File[]) => {
     if (!token?.trim()) {
       toast.error("Sessão expirada. Faça login novamente para continuar.");
       return;
     }
-
     setProcessing(true);
     executeAsync({
-      action: () =>
-        declaredInterest(
-          uploadedFiles,
-          uploadedPhoto,
-          areaInterest,
-          selectedCursos,
-          studentId,
-          token,
-        ),
-      loadingMessage: "Declarando interesse...",
-      successMessage: "Declaração de interesse enviadas com sucesso!",
+      action: () => submitDocuments(files, studentId, token),
+      loadingMessage: "Enviando documentos...",
+      successMessage: "Documentos enviados com sucesso!",
       errorMessage: (e) => getFriendlyErrorMessage(e),
-      onSuccess: () => setStep(Steps.Sucess),
-    }).finally(() => {
-      setProcessing(false);
-    });
+      onSuccess: () => {
+        setDocumentsDone(true);
+        setStep(Steps.Photo);
+      },
+    }).finally(() => setProcessing(false));
+  };
+
+  const handleSubmitPhoto = (photo: File) => {
+    if (!token?.trim()) {
+      toast.error("Sessão expirada. Faça login novamente para continuar.");
+      return;
+    }
+    setProcessing(true);
+    executeAsync({
+      action: () => submitPhoto(photo, studentId, token),
+      loadingMessage: "Enviando foto...",
+      successMessage: "Foto enviada com sucesso!",
+      errorMessage: (e) => getFriendlyErrorMessage(e),
+      onSuccess: () => {
+        setPhotoDone(true);
+        setStep(Steps.Quest);
+      },
+    }).finally(() => setProcessing(false));
+  };
+
+  const handleSubmitSurvey = async (areas: string[], cursos: string[]) => {
+    if (!token?.trim()) {
+      toast.error("Sessão expirada. Faça login novamente para continuar.");
+      return;
+    }
+    setProcessing(true);
+    executeAsync({
+      action: async () => {
+        await submitSurvey(areas, cursos, studentId, token);
+        await confirmDeclaration(studentId, token);
+      },
+      loadingMessage: "Finalizando declaração de interesse...",
+      successMessage: "Declaração de interesse enviada com sucesso!",
+      errorMessage: (e) => getFriendlyErrorMessage(e),
+      onSuccess: () => {
+        setStep(Steps.Sucess);
+      },
+    }).finally(() => setProcessing(false));
   };
 
   const StepsComponent = () => {
@@ -85,42 +131,36 @@ export default function DeclareInterest({
         return (
           <SendDocuments
             isFree={isFree}
-            onSubmit={(files: File[]) => {
-              setUploadedFiles(files);
-              setStep(Steps.Photo);
-            }}
-            files={uploadedFiles}
+            onSubmit={handleSubmitDocuments}
+            files={[]}
+            processing={processing}
           />
         );
       case Steps.Photo:
         return (
           <SendPhoto
-            onSubmit={(file: File) => {
-              setUploadedPhoto(file);
-              setStep(Steps.Quest);
-            }}
-            back={(file: File | null) => {
-              setUploadedPhoto(file);
-              setStep(Steps.Documents);
-            }}
-            oldPhoto={uploadedPhoto}
+            onSubmit={handleSubmitPhoto}
+            oldPhoto={null}
             requestDocuments={requestDocuments}
+            documentsDone={documentsDone}
+            processing={processing}
           />
         );
       case Steps.Quest:
         return (
           <SendQuest
-            onSubmit={async (areas: string[], cursos: string[]) => {
-              handleSubmit(areas, cursos);
-            }}
+            onSubmit={handleSubmitSurvey}
             back={(areas: string[], cursos: string[]) => {
-              setStep(Steps.Photo);
+              if (!photoDone) {
+                setStep(Steps.Photo);
+              }
               setAreaInterest(areas);
               setSelectedCursos(cursos);
             }}
             selectedField={areaInterest}
             selectedCourse={selectedCursos}
             processing={processing}
+            photoDone={photoDone}
           />
         );
       default:
@@ -133,23 +173,28 @@ export default function DeclareInterest({
   if (requestDocuments) {
     stepsCircle.push({
       name: Steps.Documents,
-      status: step == Steps.Documents ? "current" : "complete",
+      status:
+        step === Steps.Documents
+          ? "current"
+          : documentsDone
+            ? "complete"
+            : "upcoming",
     });
   }
 
   stepsCircle.push({
     name: Steps.Photo,
     status:
-      step === Steps.Documents
-        ? "upcoming"
-        : step === Steps.Photo
-          ? "current"
-          : "complete",
+      step === Steps.Photo
+        ? "current"
+        : photoDone
+          ? "complete"
+          : "upcoming",
   });
   stepsCircle.push({
     name: Steps.Quest,
     status:
-      step == Steps.Quest
+      step === Steps.Quest
         ? "current"
         : step === Steps.Sucess
           ? "complete"
@@ -158,7 +203,6 @@ export default function DeclareInterest({
 
   return (
     <div className="flex flex-col items-center p-6 w-full gap-8">
-      {/* Mensagem inicial */}
       <div className="text-center">
         <h1 className="text-2xl font-bold text-gray-800">
           Pré-Matrícula: Declaração de Interesse
