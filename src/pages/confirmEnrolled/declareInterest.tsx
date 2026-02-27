@@ -1,11 +1,12 @@
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
+import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { confirmDeclaration } from "@/services/prepCourse/student/confirmDeclaration";
 import { submitDocuments } from "@/services/prepCourse/student/submitDocuments";
 import { submitPhoto } from "@/services/prepCourse/student/submitPhoto";
 import { submitSurvey } from "@/services/prepCourse/student/submitSurvey";
 import { useAuthStore } from "@/store/auth";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import SendDocuments from "./steps/sendDocuments";
 import SendPhoto from "./steps/sendPhoto";
@@ -51,6 +52,8 @@ export default function DeclareInterest({
     getInitialStep(requestDocuments, initialDocsDone, initialPhotoDone, initialSurveyDone),
   );
   const [processing, setProcessing] = useState<boolean>(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const pendingAction = useRef<(() => void) | null>(null);
 
   const {
     data: { token },
@@ -69,7 +72,23 @@ export default function DeclareInterest({
     return msg || "Erro ao enviar. Tente novamente.";
   };
 
-  const handleSubmitDocuments = (files: File[]) => {
+  const requestConfirmation = useCallback((action: () => void) => {
+    pendingAction.current = action;
+    setConfirmOpen(true);
+  }, []);
+
+  const handleConfirm = useCallback(() => {
+    setConfirmOpen(false);
+    pendingAction.current?.();
+    pendingAction.current = null;
+  }, []);
+
+  const handleCancelConfirm = useCallback(() => {
+    setConfirmOpen(false);
+    pendingAction.current = null;
+  }, []);
+
+  const doSubmitDocuments = (files: File[]) => {
     if (!token?.trim()) {
       toast.error("Sessão expirada. Faça login novamente para continuar.");
       return;
@@ -87,7 +106,11 @@ export default function DeclareInterest({
     }).finally(() => setProcessing(false));
   };
 
-  const handleSubmitPhoto = (photo: File) => {
+  const handleSubmitDocuments = (files: File[]) => {
+    requestConfirmation(() => doSubmitDocuments(files));
+  };
+
+  const doSubmitPhoto = (photo: File) => {
     if (!token?.trim()) {
       toast.error("Sessão expirada. Faça login novamente para continuar.");
       return;
@@ -105,7 +128,11 @@ export default function DeclareInterest({
     }).finally(() => setProcessing(false));
   };
 
-  const handleSubmitSurvey = async (areas: string[], cursos: string[]) => {
+  const handleSubmitPhoto = (photo: File) => {
+    requestConfirmation(() => doSubmitPhoto(photo));
+  };
+
+  const doSubmitSurvey = (areas: string[], cursos: string[]) => {
     if (!token?.trim()) {
       toast.error("Sessão expirada. Faça login novamente para continuar.");
       return;
@@ -123,6 +150,10 @@ export default function DeclareInterest({
         setStep(Steps.Sucess);
       },
     }).finally(() => setProcessing(false));
+  };
+
+  const handleSubmitSurvey = async (areas: string[], cursos: string[]) => {
+    requestConfirmation(() => doSubmitSurvey(areas, cursos));
   };
 
   const StepsComponent = () => {
@@ -224,6 +255,17 @@ export default function DeclareInterest({
       </div>
       <StepperCircle steps={stepsCircle} />
       <StepsComponent />
+      <ModalConfirmCancel
+        isOpen={confirmOpen}
+        handleClose={handleCancelConfirm}
+        handleConfirm={handleConfirm}
+        text="Atenção"
+      >
+        <p className="text-gray-600">
+          Uma vez confirmado, não será possível voltar atrás nesta etapa.
+          Deseja continuar?
+        </p>
+      </ModalConfirmCancel>
     </div>
   );
 }
