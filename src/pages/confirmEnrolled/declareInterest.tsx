@@ -156,50 +156,6 @@ export default function DeclareInterest({
     requestConfirmation(() => doSubmitSurvey(areas, cursos));
   };
 
-  const StepsComponent = () => {
-    switch (step) {
-      case Steps.Documents:
-        return (
-          <SendDocuments
-            isFree={isFree}
-            requestDocuments={requestDocuments}
-            onSubmit={handleSubmitDocuments}
-            files={[]}
-            processing={processing}
-          />
-        );
-      case Steps.Photo:
-        return (
-          <SendPhoto
-            onSubmit={handleSubmitPhoto}
-            oldPhoto={null}
-            requestDocuments={requestDocuments}
-            documentsDone={documentsDone}
-            processing={processing}
-          />
-        );
-      case Steps.Quest:
-        return (
-          <SendQuest
-            onSubmit={handleSubmitSurvey}
-            back={(areas: string[], cursos: string[]) => {
-              if (!photoDone) {
-                setStep(Steps.Photo);
-              }
-              setAreaInterest(areas);
-              setSelectedCursos(cursos);
-            }}
-            selectedField={areaInterest}
-            selectedCourse={selectedCursos}
-            processing={processing}
-            photoDone={photoDone}
-          />
-        );
-      default:
-        return <SuccessStep />;
-    }
-  };
-
   const stepsCircle: StepCicle[] = [];
 
   if (requestDocuments) {
@@ -255,7 +211,41 @@ export default function DeclareInterest({
         </p>
       </div>
       <StepperCircle steps={stepsCircle} />
-      <StepsComponent />
+      {step === Steps.Documents && (
+        <SendDocuments
+          isFree={isFree}
+          requestDocuments={requestDocuments}
+          onSubmit={handleSubmitDocuments}
+          files={[]}
+          processing={processing}
+        />
+      )}
+      {step === Steps.Photo && (
+        <SendPhoto
+          onSubmit={handleSubmitPhoto}
+          oldPhoto={null}
+          requestDocuments={requestDocuments}
+          documentsDone={documentsDone}
+          processing={processing}
+        />
+      )}
+      {step === Steps.Quest && (
+        <SendQuest
+          onSubmit={handleSubmitSurvey}
+          back={(areas: string[], cursos: string[]) => {
+            if (!photoDone) {
+              setStep(Steps.Photo);
+            }
+            setAreaInterest(areas);
+            setSelectedCursos(cursos);
+          }}
+          selectedField={areaInterest}
+          selectedCourse={selectedCursos}
+          processing={processing}
+          photoDone={photoDone}
+        />
+      )}
+      {step === Steps.Sucess && <SuccessStep />}
       <ModalConfirmCancel
         isOpen={confirmOpen}
         handleClose={handleCancelConfirm}
