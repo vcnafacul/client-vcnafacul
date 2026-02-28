@@ -15,7 +15,11 @@ import { me } from "../../services/auth/me";
 import { removeImageProfileCollaborator } from "../../services/auth/removeImageProfileCollaborator";
 import { updateUser } from "../../services/auth/updateUser";
 import { getPhotoCollaborator } from "../../services/prepCourse/collaborator/get-photo";
+import { updateCollaboratorFrentes } from "../../services/auth/updateCollaboratorFrentes";
 import { AuthUpdate, Gender, useAuthStore } from "../../store/auth";
+import { CollaboratorFrentesDisplay } from "./components/CollaboratorFrentesDisplay";
+import { ModalEditFrentes } from "./components/ModalEditFrentes";
+import { Button } from "@/components/ui/button";
 
 function Account() {
   const {
@@ -24,7 +28,7 @@ function Account() {
   } = useAuthStore();
   const executeAsync = useToastAsync();
 
-  const modals = useModals(["deleteImage"]);
+  const modals = useModals(["deleteImage", "editFrentes"]);
 
   const [userAccount, setUserAccount] = useState<UserMe>();
 
@@ -148,7 +152,7 @@ function Account() {
     });
   };
 
-  const update = (data: any, onSuccess?: () => void, onError?: () => void) => {
+  const update = async (data: any, onSuccess?: () => void, onError?: () => void) => {
     const authUpdate: AuthUpdate = {
       firstName: data.firstName,
       lastName: data.lastName,
@@ -175,19 +179,34 @@ function Account() {
       authUpdate.about !== userAccount?.about ||
       authUpdate.useSocialName !== userAccount?.useSocialName;
 
-    if (file) {
-      uploadingImagem(file).then(() => {
-        if (hasFormChanges) {
-          updateData(authUpdate, onSuccess, onError);
-        } else {
-          onSuccess?.();
-        }
-      });
-    } else if (hasFormChanges) {
-      updateData(authUpdate, onSuccess, onError);
-    } else {
+    try {
+      // Upload de imagem primeiro (se houver)
+      if (file) {
+        await uploadingImagem(file);
+      }
+
+      // Atualizar dados do usuário (se houver mudanças)
+      if (hasFormChanges) {
+        await updateData(authUpdate, undefined, onError);
+      }
+
       onSuccess?.();
+    } catch (error) {
+      onError?.();
     }
+  };
+
+  const handleSaveFrentes = async (frentesIds: string[]) => {
+    await executeAsync({
+      action: () => updateCollaboratorFrentes(frentesIds, token),
+      loadingMessage: "Salvando frentes de afinidade...",
+      successMessage: "Frentes salvas com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: async () => {
+        const res = await me(token);
+        setUserAccount(res);
+      },
+    });
   };
 
   const ModalDelete = () => {
@@ -229,7 +248,7 @@ function Account() {
     <>
       <div className="pb-20 flex flex-col md:flex-row w-full">
         {/* Cabeçalho com imagem e nome do usuário */}
-        <div className="flex px-6 py-4 w-full md:w-[300px] rounded-bl-3xl shadow-sm">
+        <div className="flex flex-col px-6 py-4 w-full md:w-[300px] rounded-bl-3xl shadow-sm">
           {/* Avatar or Logo */}
           <div className="flex flex-row md:flex-col gap-4">
             {userAccount?.collaborator ? (
@@ -257,6 +276,28 @@ function Account() {
               </span>
             )}
           </div>
+
+          {/* Seção de Frentes (apenas para colaboradores) - Desktop */}
+          {userAccount?.collaborator && (
+            <div className="hidden md:block mt-6 pt-6 border-t border-gray-200">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold text-gray-700">
+                  Frentes de Afinidade
+                </h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={modals.editFrentes.open}
+                >
+                  Editar
+                </Button>
+              </div>
+              <CollaboratorFrentesDisplay
+                afinidades={userAccount.afinidades || []}
+                token={token}
+              />
+            </div>
+          )}
         </div>
         <div className="w-full">
           {/* Name and Role */}
@@ -277,18 +318,51 @@ function Account() {
           </div>
 
           {/* Formulário de atualização */}
-          <div className="px-6 py-6 w-full">
+          <div className="px-6 py-6 w-full space-y-6">
             {userAccount && (
-              <AccountForm
-                update={update}
-                userAccount={userAccount}
-                hasImageChange={hasImageChange}
-              />
+              <>
+                <AccountForm
+                  update={update}
+                  userAccount={userAccount}
+                  hasImageChange={hasImageChange}
+                />
+                
+                {/* Seção de Frentes (apenas para colaboradores) - Mobile */}
+                {userAccount.collaborator && (
+                  <div className="md:hidden mt-6 pt-6 border-t border-gray-200">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-semibold text-gray-700">
+                        Frentes de Afinidade
+                      </h3>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={modals.editFrentes.open}
+                      >
+                        Editar
+                      </Button>
+                    </div>
+                    <CollaboratorFrentesDisplay
+                      afinidades={userAccount.afinidades || []}
+                      token={token}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
       </div>
       <ModalDelete />
+      {userAccount?.collaborator && (
+        <ModalEditFrentes
+          isOpen={modals.editFrentes.isOpen}
+          onClose={modals.editFrentes.close}
+          token={token}
+          initialSelectedIds={userAccount.collaboratorFrentes || []}
+          onSave={handleSaveFrentes}
+        />
+      )}
     </>
   );
 }

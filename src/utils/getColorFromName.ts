@@ -1,14 +1,40 @@
+/** Tons escuros (600/700) para garantir contraste com texto branco nos badges. */
 const colors = [
-    'bg-red', 'bg-orange', 'bg-amber-500', 'bg-green', 'bg-green2',
-    'bg-emerald-500', 'bg-teal-500', 'bg-cyan-500', 'bg-sky-500',
-    'bg-indigo-500', 'bg-violet-500', 'bg-purple-500', 'bg-fuchsia-500',
-    'bg-rose-500','bg-lime-500', 'bg-pink', 'bg-redError', 'bg-marine', 
+  'bg-red-600',
+  'bg-orange-600',
+  'bg-amber-600',
+  'bg-emerald-600',
+  'bg-teal-600',
+  'bg-cyan-600',
+  'bg-sky-600',
+  'bg-indigo-600',
+  'bg-violet-600',
+  'bg-purple-600',
+  'bg-fuchsia-600',
+  'bg-pink-600',
+  'bg-rose-600',
+  'bg-lime-600',
+  'bg-blue-600',
+  'bg-slate-600',
 ];
+
 const shadows = [
-    'shadow-red', 'shadow-orange', 'shadow-amber-500/50', 'shadow-green', 'shadow-green2',
-    'shadow-emerald-500/50', 'shadow-teal-500/50', 'shadow-cyan-500/50', 'shadow-sky-500/50',
-    'shadow-indigo-500/50', 'shadow-violet-500/50', 'shadow-purple-500/50', 'shadow-fuchsia-500/50',
-    'shadow-rose-500/50','shadow-lime-500/50', 'shadow-pink', 'shadow-redError', 'shadow-marine'
+  'shadow-red-600/50',
+  'shadow-orange-600/50',
+  'shadow-amber-600/50',
+  'shadow-emerald-600/50',
+  'shadow-teal-600/50',
+  'shadow-cyan-600/50',
+  'shadow-sky-600/50',
+  'shadow-indigo-600/50',
+  'shadow-violet-600/50',
+  'shadow-purple-600/50',
+  'shadow-fuchsia-600/50',
+  'shadow-pink-600/50',
+  'shadow-rose-600/50',
+  'shadow-lime-600/50',
+  'shadow-blue-600/50',
+  'shadow-slate-600/50',
 ];
 
 const getIndex = (name: string) => {

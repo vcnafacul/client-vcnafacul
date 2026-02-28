@@ -51,9 +51,7 @@ import { FaClipboardList } from "react-icons/fa";
 import { FaWpforms } from "react-icons/fa6";
 import { DashCardMenu } from "../../components/molecules/dashCard";
 import { HeaderData } from "../../components/organisms/header";
-import { Materias, getMateriaString } from "../../enums/content/materias";
 import { Roles } from "../../enums/roles/roles";
-import { MateriasLabel } from "../../types/content/materiasLabel";
 import { header } from "../home/data";
 
 export const headerDash: HeaderData = {
@@ -76,10 +74,6 @@ export const headerDash: HeaderData = {
       },
     },
   ],
-};
-
-const getMaterialLabel = (value: Materias) => {
-  return MateriasLabel.find((m) => m.value === value)?.label || "";
 };
 
 export const dashCardMenuItems: DashCardMenu[] = [
@@ -210,20 +204,20 @@ export const dashCardMenuItems: DashCardMenu[] = [
       {
         icon: Gramatica,
         alt: "língua portuguesa",
-        text: getMaterialLabel(Materias.LinguaPortuguesa),
-        link: `${ESTUDO}/${getMateriaString(Materias.LinguaPortuguesa)}`,
+        text: "Língua Portuguesa",
+        link: `${ESTUDO}/LinguaPortuguesa`,
       },
       {
         icon: Ingles,
         alt: "língua estrangeira",
-        text: getMaterialLabel(Materias.LinguaEstrangeira),
-        link: `${ESTUDO}/${getMateriaString(Materias.LinguaEstrangeira)}`,
+        text: "Língua Estrangeira",
+        link: `${ESTUDO}/LinguaEstrangeira`,
       },
       {
         icon: Artes,
         alt: "artes",
-        text: getMaterialLabel(Materias.Artes),
-        link: `${ESTUDO}/${getMateriaString(Materias.Artes)}`,
+        text: "Artes",
+        link: `${ESTUDO}/Artes`,
       },
     ],
   },
@@ -237,20 +231,20 @@ export const dashCardMenuItems: DashCardMenu[] = [
       {
         icon: Biologia,
         alt: "molécula de DNA",
-        text: getMaterialLabel(Materias.Biologia),
-        link: `${ESTUDO}/${getMateriaString(Materias.Biologia)}`,
+        text: "Biologia",
+        link: `${ESTUDO}/Biologia`,
       },
       {
         icon: Fisica,
         alt: "risco biológico",
-        text: getMaterialLabel(Materias.Fisica),
-        link: `${ESTUDO}/${getMateriaString(Materias.Fisica)}`,
+        text: "Física",
+        link: `${ESTUDO}/Fisica`,
       },
       {
         icon: Quimica,
         alt: "quimica",
-        text: getMaterialLabel(Materias.Quimica),
-        link: `${ESTUDO}/${getMateriaString(Materias.Quimica)}`,
+        text: "Quimica",
+        link: `${ESTUDO}/Quimica`,
       },
     ],
   },
@@ -264,32 +258,32 @@ export const dashCardMenuItems: DashCardMenu[] = [
       {
         icon: Historia,
         alt: "História",
-        text: getMaterialLabel(Materias.Historia),
-        link: `${ESTUDO}/${getMateriaString(Materias.Historia)}`,
+        text: "História",
+        link: `${ESTUDO}/Historia`,
       },
       {
         icon: Geografia,
         alt: "Geografia",
-        text: getMaterialLabel(Materias.Geografia),
-        link: `${ESTUDO}/${getMateriaString(Materias.Geografia)}`,
+        text: "Geografia",
+        link: `${ESTUDO}/Geografia`,
       },
       {
         icon: Filosofia,
         alt: "Filosofia",
         text: "Filosofia",
-        link: `${ESTUDO}/${getMateriaString(Materias.Filosofia)}`,
+        link: `${ESTUDO}/Filosofia`,
       },
       {
         icon: Sociologia,
         alt: "Sociologia",
-        text: getMaterialLabel(Materias.Sociologia),
-        link: `${ESTUDO}/${getMateriaString(Materias.Sociologia)}`,
+        text: "Sociologia",
+        link: `${ESTUDO}/Sociologia`,
       },
       {
         icon: Atualidades,
         alt: "atualidades",
-        text: getMaterialLabel(Materias.Atualidades),
-        link: `${ESTUDO}/${getMateriaString(Materias.Atualidades)}`,
+        text: "Atualidades",
+        link: `${ESTUDO}/Atualidades`,
       },
     ],
   },
@@ -303,8 +297,8 @@ export const dashCardMenuItems: DashCardMenu[] = [
       {
         icon: Matematica,
         alt: "calculadora",
-        text: getMaterialLabel(Materias.Matematica),
-        link: `${ESTUDO}/${getMateriaString(Materias.Matematica)}`,
+        text: "Matemática",
+        link: `${ESTUDO}/Matematica`,
       },
     ],
   },

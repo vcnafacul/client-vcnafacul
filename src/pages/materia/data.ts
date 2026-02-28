@@ -9,64 +9,61 @@ import { ReactComponent as Math } from "../../assets/icons/materias/Math.svg";
 import { ReactComponent as Science } from "../../assets/icons/materias/Science.svg";
 import { ReactComponent as TakingEarth } from "../../assets/icons/materias/TakingEarth.svg";
 import { ReactComponent as Thoughts } from "../../assets/icons/materias/Thoughts.svg";
-import { Materias } from "../../enums/content/materias";
 
 export interface MateriaPage {
   image: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
-  id: Materias;
+  label: string;
 }
 
-export interface DataMateriaProps {
-    LinguaPortuguesa: MateriaPage;
-}
+export type DataMateriaProps = Record<string, MateriaPage>;
 
-export const dataMateria = {
+export const dataMateria: DataMateriaProps = {
   LinguaPortuguesa: {
     image: LPT,
-    id: Materias.LinguaPortuguesa,
+    label: "Língua Portuguesa",
   },
   LinguaEstrangeira: {
     image: Grammar,
-    id: Materias.LinguaEstrangeira,
+    label: "Língua Estrangeira",
   },
   Artes: {
     image: Literature,
-    id: Materias.Artes,
+    label: "Artes",
   },
   Biologia: {
     image: Biology,
-    id: Materias.Biologia,
+    label: "Biologia",
   },
   Fisica: {
     image: Astronaut,
-    id: Materias.Fisica,
+    label: "Física",
   },
   Quimica: {
     image: Science,
-    id: Materias.Quimica,
+    label: "Quimica",
   },
   Matematica: {
     image: Math,
-    id: Materias.Matematica,
+    label: "Matemática",
   },
   Historia: {
     image: History,
-    id: Materias.Historia,
+    label: "História",
   },
   Geografia: {
     image: Geo,
-    id: Materias.Geografia,
+    label: "Geografia",
   },
   Filosofia: {
     image: Thoughts,
-    id: Materias.Filosofia,
+    label: "Filosofia",
   },
   Sociologia: {
     image: TakingEarth,
-    id: Materias.Sociologia,
+    label: "Sociologia",
   },
   Atualidades: {
     image: TakingEarth,
-    id: Materias.Atualidades,
+    label: "Atualidades",
   },
-} as DataMateriaProps;
+};

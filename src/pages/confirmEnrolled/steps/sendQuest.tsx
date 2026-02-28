@@ -12,6 +12,7 @@ interface Props {
   selectedCourse: string[];
   selectedField: string[];
   processing: boolean;
+  photoDone: boolean;
 }
 
 export default function SendQuest({
@@ -19,7 +20,8 @@ export default function SendQuest({
   back,
   selectedCourse,
   selectedField,
-  processing
+  processing,
+  photoDone,
 }: Props) {
   const [areaInterest, setAreaInterest] = useState<string[]>(selectedField);
   const [selectedCursos, setSelectedCursos] =
@@ -146,13 +148,15 @@ export default function SendQuest({
 
       {/* Botão de envio */}
       <div className="w-full flex justify-end gap-4">
-        <button
-          className="mt-8 px-6 py-3 text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
-          onClick={handleBack}
-          disabled={processing}
-        >
-          Voltar
-        </button>
+        {!photoDone && (
+          <button
+            className="mt-8 px-6 py-3 text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
+            onClick={handleBack}
+            disabled={processing}
+          >
+            Voltar
+          </button>
+        )}
         <button
           className="mt-8 px-6 py-3  text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
           onClick={handleSubmit}
