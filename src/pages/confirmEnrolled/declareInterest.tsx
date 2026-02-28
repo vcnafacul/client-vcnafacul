@@ -162,6 +162,7 @@ export default function DeclareInterest({
         return (
           <SendDocuments
             isFree={isFree}
+            requestDocuments={requestDocuments}
             onSubmit={handleSubmitDocuments}
             files={[]}
             processing={processing}

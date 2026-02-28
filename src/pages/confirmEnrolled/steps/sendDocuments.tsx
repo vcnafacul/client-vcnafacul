@@ -1,52 +1,73 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import { useDropzone } from "react-dropzone";
+import { useDropzone, type FileRejection } from "react-dropzone";
 import { toast } from "react-toastify";
+
+import ModalMessage from "@/components/organisms/modalMessage";
+
+const MAX_FILES = 10;
+const LIMIT_MESSAGE =
+  "Limite de documentos excedido. É permitido no máximo 10 documentos. Nenhum arquivo foi adicionado.";
 
 interface Props {
   isFree: boolean;
+  requestDocuments: boolean;
   onSubmit: (files: File[]) => void;
   files: File[];
   processing: boolean;
 }
 
-export default function SendDocuments({ isFree, onSubmit, files, processing }: Props) {
+export default function SendDocuments({
+  isFree,
+  requestDocuments,
+  onSubmit,
+  files,
+  processing,
+}: Props) {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>(files);
+  const [showRequiredDocsModal, setShowRequiredDocsModal] = useState(false);
 
   const handleDrop = (acceptedFiles: File[]) => {
     const validFiles = acceptedFiles.filter((file: File) =>
       ["image/jpeg", "image/png", "application/pdf"].includes(file.type)
     );
     if (validFiles.length === 0 || validFiles.length !== acceptedFiles.length) {
-      {
-        toast.warning(
-          "Formato de arquivo inválido. Aceitamos apenas imagens JPEG, PNG ou PDFs",
-          {
-            theme: "dark",
-            autoClose: 10000,
-          }
-        );
-      }
+      toast.warning(
+        "Formato de arquivo inválido. Aceitamos apenas imagens JPEG, PNG ou PDFs",
+        {
+          theme: "dark",
+          autoClose: 10000,
+        }
+      );
     }
-    if (uploadedFiles.length <= 10) {
+    if (uploadedFiles.length <= MAX_FILES) {
       setUploadedFiles((prev: File[]) => {
         const newFiles = [...prev, ...validFiles];
-        if (newFiles.length > 10) {
-          toast.error("Limite de arquivos alcançado!", {
+        if (newFiles.length > MAX_FILES) {
+          toast.error(LIMIT_MESSAGE, {
             theme: "dark",
             autoClose: 10000,
           });
-          return uploadedFiles;
+          return prev;
         }
         return newFiles;
       });
     } else {
-      toast.error("Limite de arquivos alcançado!", {
+      toast.error(LIMIT_MESSAGE, {
         theme: "dark",
         autoClose: 10000,
       });
     }
   };
+
+  const isTooManyFilesRejection = (rejections: FileRejection[]): boolean =>
+    rejections.some((r) =>
+      r.errors.some(
+        (e) =>
+          e.code === "too-many-files" ||
+          (e.code as string)?.toLowerCase?.().includes("many")
+      )
+    );
 
   const handleRemoveFile = (index: number) => {
     setUploadedFiles((prev: any) =>
@@ -56,21 +77,33 @@ export default function SendDocuments({ isFree, onSubmit, files, processing }: P
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: handleDrop,
-    multiple: true, // Permite múltiplos arquivos
-    accept: { "image/*": [], "application/pdf": [] }, // Apenas imagens ou PDFs
+    multiple: true,
+    accept: { "image/*": [], "application/pdf": [] },
     maxSize: 2 * 1024 * 1024,
-    maxFiles: 10,
-    onDropRejected: () => {
-      toast.error(
-        "Arquivo rejeitado! Tamanho máximo 2MB e limite de 10 arquivos.",
-        {
+    maxFiles: MAX_FILES,
+    onDropRejected: (fileRejections: FileRejection[]) => {
+      if (isTooManyFilesRejection(fileRejections)) {
+        toast.error(LIMIT_MESSAGE, {
           theme: "dark",
-        }
-      );
+          autoClose: 10000,
+        });
+      } else {
+        toast.error(
+          "Arquivo rejeitado. Tamanho máximo 2MB. Tipos aceitos: JPEG, PNG e PDF.",
+          {
+            theme: "dark",
+            autoClose: 10000,
+          }
+        );
+      }
     },
   });
 
-  const hanfleSubmit = () => {
+  const handleSubmit = () => {
+    if (requestDocuments && uploadedFiles.length === 0) {
+      setShowRequiredDocsModal(true);
+      return;
+    }
     onSubmit(uploadedFiles);
   };
 
@@ -139,7 +172,7 @@ export default function SendDocuments({ isFree, onSubmit, files, processing }: P
                 Arraste e solte os arquivos aqui, ou clique para selecionar.
               </span>
               <span className="text-blue-500">
-                Limit: {uploadedFiles.length}/10
+                Limite: {uploadedFiles.length}/{MAX_FILES}
               </span>
             </p>
           )}
@@ -165,11 +198,22 @@ export default function SendDocuments({ isFree, onSubmit, files, processing }: P
       </div>
       <button
         className="mt-8 px-6 py-3 text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60 self-end"
-        onClick={hanfleSubmit}
+        onClick={handleSubmit}
         disabled={processing}
       >
-        {processing ? "Enviando..." : "Contínuar"}
+        {processing ? "Enviando..." : "Continuar"}
       </button>
+
+      <ModalMessage
+        isOpen={showRequiredDocsModal}
+        handleClose={() => setShowRequiredDocsModal(false)}
+        text="Documentos obrigatórios"
+      >
+        <p className="text-gray-600 mt-2">
+          O envio dos documentos é obrigatório para continuar. Por favor, envie
+          pelo menos um documento antes de prosseguir.
+        </p>
+      </ModalMessage>
     </div>
   );
 }
