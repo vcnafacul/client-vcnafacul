@@ -45,16 +45,18 @@ export function CollaboratorFrentes({
       .catch((err) => console.error("Erro ao carregar matérias:", err));
   }, [token]);
 
-  // Filtrar frentes disponíveis por busca
+  // Filtrar frentes disponíveis por busca (nome da frente ou nome da matéria)
   const filteredFrentes = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     if (!term) {
-      return availableFrentes.slice(0, 10); // Limitar a 10 resultados quando não há busca
+      return availableFrentes; // Lista completa, com scroll no dropdown
     }
-    return availableFrentes.filter((frente) =>
-      (frente.nome ?? "").toLowerCase().includes(term)
-    );
-  }, [availableFrentes, searchTerm]);
+    return availableFrentes.filter((frente) => {
+      const nomeFrente = (frente.nome ?? "").toLowerCase();
+      const nomeMateria = (materiaNomeMap[frente.materia] ?? "").toLowerCase();
+      return nomeFrente.includes(term) || nomeMateria.includes(term);
+    });
+  }, [availableFrentes, searchTerm, materiaNomeMap]);
 
   const handleSelect = (frente: FrenteDto) => {
     selectFrente(frente.id);
@@ -82,14 +84,14 @@ export function CollaboratorFrentes({
           Frentes de Afinidade
         </label>
         <p className="text-xs text-gray-500 mb-4">
-          Selecione as frentes com as quais você tem mais afinidade. Busque pelo nome e selecione da lista.
+          Selecione as frentes com as quais você tem mais afinidade. Digite o nome da frente ou da matéria para filtrar; a lista completa pode ser rolada.
         </p>
 
         {/* Input de busca e seleção */}
         <div className="relative">
           <Input
             type="text"
-            placeholder="Buscar e selecionar frentes..."
+            placeholder="Buscar por nome da frente ou da matéria..."
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
@@ -106,7 +108,7 @@ export function CollaboratorFrentes({
                 className="fixed inset-0 z-10"
                 onClick={() => setShowDropdown(false)}
               />
-              <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
+              <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-80 overflow-y-auto overflow-x-hidden">
                 {filteredFrentes.map((frente) => (
                   <button
                     key={frente.id}
