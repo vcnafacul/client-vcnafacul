@@ -1,5 +1,8 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+/** Endpoint para envio de erros do frontend (falhas que o back nunca viu) */
+export const frontendErrors = `${BASE_URL}/frontend-errors`;
+
 export const user = `${BASE_URL}/user`;
 export const login = `${user}/login`;
 export const refresh = `${user}/refresh`;

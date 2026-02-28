@@ -2,7 +2,26 @@
 import { LOGOFF_PATH } from "../routes/path";
 import { refreshToken } from "../services/auth/refresh";
 import { useAuthStore } from "../store/auth";
+import {
+  buildFrontendErrorPayload,
+  sendFrontendError,
+} from "./sendFrontendError";
 import { tokenIsExpired } from "./tokenIsExpired";
+
+/** Reporta erro de rede ao backend (requisição falhou antes de chegar ao servidor). */
+function reportFetchError(err: unknown, url: string, method: string): void {
+  if (url.includes("/frontend-errors")) return;
+  const message = err instanceof Error ? err.message : String(err);
+  const token = useAuthStore.getState()?.data?.token ?? null;
+  const payload = buildFrontendErrorPayload({
+    errorType: "FETCH_ERROR",
+    message,
+    origin: "fetchWrapper",
+    request: { method: method || "GET", url },
+    errorDetail: err instanceof Error ? err.stack : undefined,
+  });
+  sendFrontendError(payload, token);
+}
 
 // Flag para evitar múltiplas renovações simultâneas
 let isRefreshing = false;
@@ -34,6 +53,11 @@ const processQueue = (error: Error | null, token: string | null = null) => {
         const response = await fetch(promise.request.url, updatedOptions);
         promise.resolve(response);
       } catch (err) {
+        reportFetchError(
+          err,
+          promise.request.url,
+          promise.request.options?.method ?? "GET",
+        );
         promise.reject(err);
       }
     }
@@ -113,8 +137,14 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
     }
   }
 
-  // Faz a requisição
-  const response = await fetch(url, fetchOptions);
+  // Faz a requisição (erros de rede são reportados ao back para log/Discord)
+  let response: Response;
+  try {
+    response = await fetch(url, fetchOptions);
+  } catch (err) {
+    reportFetchError(err, url, fetchOptions?.method ?? "GET");
+    throw err;
+  }
 
   // Verifica se recebeu 401 (não autorizado)
   if (response.status === 401 && !isAuthEndpoint) {
@@ -152,7 +182,16 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
       };
 
       isRefreshing = false;
-      return fetch(url, updatedOptions);
+      try {
+        return await fetch(url, updatedOptions);
+      } catch (retryErr) {
+        reportFetchError(
+          retryErr,
+          url,
+          updatedOptions?.method ?? fetchOptions?.method ?? "GET",
+        );
+        throw retryErr;
+      }
     } catch (error) {
       // Falha ao renovar token, limpa tudo e redireciona
       console.error("❌ Erro ao renovar token após 401:", error);
