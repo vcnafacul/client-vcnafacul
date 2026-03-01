@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { getColorFromName } from "../../../utils/getColorFromName";
+import { getColorFromName, getTextColorFromName } from "../../../utils/getColorFromName";
 import { VariantProps, tv } from "tailwind-variants";
 
 const simpleCardColor = tv({
@@ -28,11 +28,12 @@ export type SimpleCardColorProps = VariantProps<typeof simpleCardColor> & Compon
 
 function SimpleCardColor({ selected, name, disable, ...props }: SimpleCardColorProps) {
     const selectedColor = getColorFromName(name);
+    const selectedText = getTextColorFromName(name);
 
     return (
-        <div className={`${simpleCardColor({ disable })} ${selected ? `shadow-md shadow-gray-400` : 'shadow-gray-300 shadow'}`} 
+        <div className={`${simpleCardColor({ disable })} ${selected ? `shadow-md shadow-gray-400` : 'shadow-gray-300 shadow'}`}
             style={{ transform: `${ selected ? 'translateY(-2px) translateX(-2px)' : 'none' }`}} {...props}>
-                <div className={`${!disable ? selectedColor : ''} text-white w-14 h-14 flex justify-center items-center font-black text-xl tracking-widest rounded-l-lg`}>{obterSigla(name)}</div>
+                <div className={`${!disable ? selectedColor : ''} ${!disable ? selectedText : 'text-white'} w-14 h-14 flex justify-center items-center font-black text-xl tracking-widest rounded-l-lg`}>{obterSigla(name)}</div>
                 <div className={`${disable ? 'text-white' : 'text-black'} first-line:border-l h-14 px-4 font-semibold flex items-center justify-center text-xl`}>{name}</div>
         </div>
     )

@@ -6,6 +6,7 @@ import {
 } from "@/dtos/content/frenteDto";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { createFrente } from "@/services/content/createFrente";
+import { deleteFrente } from "@/services/content/deleteFrente";
 import { getMaterias, MateriaDto } from "@/services/content/getMaterias";
 import { updateFrente } from "@/services/content/updateFrente";
 import { getSubjects } from "@/services/content/getSubjects";
@@ -47,6 +48,7 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
   }, [token]);
 
   const handleCreate = async (body: CreateFrenteDtoInput) => {
+    const materiaId = body.materia ?? materiaSelected;
     await executeAsync({
       action: () => createFrente(body, token),
       loadingMessage: "Criando Frente ... ",
@@ -56,13 +58,20 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
         const newFrente: FrenteDto = {
           id: res.id ?? res._id,
           nome: res.nome,
-          materia: materiaSelected,
+          materia: materiaId,
           lenght: 0,
           createdAt: new Date(),
           subjects: [],
         };
-        const newFrentes: FrenteDto[] = [...frentes, newFrente];
-        setFrentes(newFrentes);
+        setFrentes((prev) => [...prev, newFrente]);
+        // Atualizar lista de matérias com o novo ObjectId da frente (evita refetch)
+        setMateriasList((prev) =>
+          prev.map((m) =>
+            m._id === materiaId
+              ? { ...m, frentes: [...(m.frentes ?? []), newFrente] }
+              : m
+          )
+        );
       },
     });
   };
@@ -95,6 +104,30 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
     });
     setFrentes(newFrentes);
   }
+
+  /** Remove a frente da lista local e da lista de matérias (usado ao excluir frente). */
+  function removeFrenteFromMateriasList(frenteId: string) {
+    const norm = (id: string) => (f: FrenteDto) => (f._id || f.id) === id;
+    setFrentes((prev) => prev.filter((f) => !norm(frenteId)(f)));
+    setMateriasList((prev) =>
+      prev.map((m) => ({
+        ...m,
+        frentes: (m.frentes ?? []).filter((f) => !norm(frenteId)(f)),
+      }))
+    );
+  }
+
+  const handleDeleteFrente = async (frenteId: string) => {
+    await executeAsync({
+      action: () => deleteFrente(frenteId, token),
+      loadingMessage: "Excluindo frente...",
+      successMessage: "Frente excluída com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
+        removeFrenteFromMateriasList(frenteId);
+      },
+    });
+  };
 
   useEffect(() => {
     if (!materiaSelected) return;
@@ -154,6 +187,7 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
                 }
                 onCreate={handleCreate}
                 onUpdate={handleUpdate}
+                onDelete={handleDeleteFrente}
               />
             </div>
           </>
