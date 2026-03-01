@@ -1,40 +1,21 @@
-/** Tons escuros (600/700) para garantir contraste com texto branco nos badges. */
-const colors = [
-  'bg-red-600',
-  'bg-orange-600',
-  'bg-amber-600',
-  'bg-emerald-600',
-  'bg-teal-600',
-  'bg-cyan-600',
-  'bg-sky-600',
-  'bg-indigo-600',
-  'bg-violet-600',
-  'bg-purple-600',
-  'bg-fuchsia-600',
-  'bg-pink-600',
-  'bg-rose-600',
-  'bg-lime-600',
-  'bg-blue-600',
-  'bg-slate-600',
-];
-
-const shadows = [
-  'shadow-red-600/50',
-  'shadow-orange-600/50',
-  'shadow-amber-600/50',
-  'shadow-emerald-600/50',
-  'shadow-teal-600/50',
-  'shadow-cyan-600/50',
-  'shadow-sky-600/50',
-  'shadow-indigo-600/50',
-  'shadow-violet-600/50',
-  'shadow-purple-600/50',
-  'shadow-fuchsia-600/50',
-  'shadow-pink-600/50',
-  'shadow-rose-600/50',
-  'shadow-lime-600/50',
-  'shadow-blue-600/50',
-  'shadow-slate-600/50',
+/** Paleta fechada de cores com contraste garantido para badges/labels. */
+const palette: { bg: string; text: string; shadow: string }[] = [
+  { bg: 'bg-red-700',     text: 'text-white', shadow: 'shadow-red-700/50' },
+  { bg: 'bg-orange-700',  text: 'text-white', shadow: 'shadow-orange-700/50' },
+  { bg: 'bg-amber-800',   text: 'text-white', shadow: 'shadow-amber-800/50' },
+  { bg: 'bg-emerald-700', text: 'text-white', shadow: 'shadow-emerald-700/50' },
+  { bg: 'bg-teal-700',    text: 'text-white', shadow: 'shadow-teal-700/50' },
+  { bg: 'bg-cyan-800',    text: 'text-white', shadow: 'shadow-cyan-800/50' },
+  { bg: 'bg-sky-700',     text: 'text-white', shadow: 'shadow-sky-700/50' },
+  { bg: 'bg-indigo-700',  text: 'text-white', shadow: 'shadow-indigo-700/50' },
+  { bg: 'bg-violet-700',  text: 'text-white', shadow: 'shadow-violet-700/50' },
+  { bg: 'bg-purple-700',  text: 'text-white', shadow: 'shadow-purple-700/50' },
+  { bg: 'bg-fuchsia-700', text: 'text-white', shadow: 'shadow-fuchsia-700/50' },
+  { bg: 'bg-pink-700',    text: 'text-white', shadow: 'shadow-pink-700/50' },
+  { bg: 'bg-rose-700',    text: 'text-white', shadow: 'shadow-rose-700/50' },
+  { bg: 'bg-lime-800',    text: 'text-white', shadow: 'shadow-lime-800/50' },
+  { bg: 'bg-blue-700',    text: 'text-white', shadow: 'shadow-blue-700/50' },
+  { bg: 'bg-slate-700',   text: 'text-white', shadow: 'shadow-slate-700/50' },
 ];
 
 const getIndex = (name: string) => {
@@ -43,15 +24,20 @@ const getIndex = (name: string) => {
         return acc + code;
     }, 0);
 
-    return (hashCode) % colors.length;
+    return (hashCode) % palette.length;
 }
 
 export const getColorFromName = (name: string) => {
-    const index = getIndex(name)
-    return `${colors[index]}`;
+    const index = getIndex(name);
+    return palette[index].bg;
+};
+
+export const getTextColorFromName = (name: string) => {
+    const index = getIndex(name);
+    return palette[index].text;
 };
 
 export const getShadowColorFromName = (name: string) => {
-    const index = getIndex(name)
-    return `${shadows[index]}`;
+    const index = getIndex(name);
+    return palette[index].shadow;
 };

@@ -13,7 +13,8 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useState } from "react";
 import { CgArrowsExchangeAltV } from "react-icons/cg";
 import { IoEyeSharp } from "react-icons/io5";
-import { MdModeEdit } from "react-icons/md";
+import { MdDeleteForever, MdModeEdit } from "react-icons/md";
+import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ManagerFrente from "./managerFrente";
 import OrderEditSubject from "./orderEditSubject";
 import SettingsSubject from "./settingsSubject";
@@ -26,6 +27,7 @@ interface Props {
   updateSizeFrente: (id: string, size: number) => void;
   onCreate: (body: CreateFrenteDtoInput) => Promise<void>;
   onUpdate: (body: UpdateFrenteDto) => Promise<void>;
+  onDelete?: (frenteId: string) => Promise<void>;
 }
 export function PanelFrente({
   frentes,
@@ -34,13 +36,15 @@ export function PanelFrente({
   updateSizeFrente,
   onCreate,
   onUpdate,
+  onDelete,
 }: Props) {
   const [frenteSelected, setFrenteSelected] = useState<FrenteDto | null>(null);
 
   const modals = useModals([
-    'settings',
-    'frenteEditor',
-    'orderEdit',
+    "settings",
+    "frenteEditor",
+    "orderEdit",
+    "confirmDelete",
   ]);
 
   const {
@@ -75,7 +79,7 @@ export function PanelFrente({
       headerName: "Ações",
       align: "center",
       headerAlign: "center",
-      width: 200,
+      width: 250,
       renderCell: (params) => (
         <div className="flex gap-2 justify-center">
           <Tooltip title="Visualizar temas">
@@ -88,7 +92,7 @@ export function PanelFrente({
               <IoEyeSharp className="fill-gray-500 hover:fill-black" />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Editar tema">
+          <Tooltip title="Editar frente">
             <IconButton
               onClick={() => {
                 setFrenteSelected(params.row);
@@ -98,7 +102,7 @@ export function PanelFrente({
               <MdModeEdit className="fill-gray-500 hover:fill-black" />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Editar order conteúdos">
+          <Tooltip title="Editar ordem conteúdos">
             <IconButton
               onClick={() => {
                 setFrenteSelected(params.row);
@@ -108,6 +112,18 @@ export function PanelFrente({
               <CgArrowsExchangeAltV className="fill-gray-500 hover:fill-black" />
             </IconButton>
           </Tooltip>
+          {onDelete && (
+            <Tooltip title="Excluir frente">
+              <IconButton
+                onClick={() => {
+                  setFrenteSelected(params.row);
+                  modals.confirmDelete.open();
+                }}
+              >
+                <MdDeleteForever className="fill-redError opacity-50 hover:opacity-100" />
+              </IconButton>
+            </Tooltip>
+          )}
         </div>
       ),
     },
@@ -153,6 +169,36 @@ export function PanelFrente({
     );
   };
 
+  const handleConfirmDelete = () => {
+    if (!frenteSelected || !onDelete) return;
+    const id = frenteSelected._id || frenteSelected.id;
+    onDelete(id)
+      .then(() => {
+        modals.confirmDelete.close();
+        setFrenteSelected(null);
+      })
+      .catch(() => {
+        // Erro já tratado pelo executeAsync no parent (toast)
+      });
+  };
+
+  const ModalConfirmDelete = () =>
+    !modals.confirmDelete.isOpen || !frenteSelected ? null : (
+      <ModalConfirmCancel
+        isOpen={modals.confirmDelete.isOpen}
+        handleClose={() => {
+          modals.confirmDelete.close();
+          setFrenteSelected(null);
+        }}
+        handleConfirm={handleConfirmDelete}
+        className="bg-white p-8 rounded-md"
+      >
+        <p className="text-gray-600">
+          Tem certeza que deseja excluir a frente &quot;{frenteSelected.nome}&quot;?
+        </p>
+      </ModalConfirmCancel>
+    );
+
   return (
     <div className="flex flex-col h-[500px] overflow-y-scroll scrollbar-hide select-none">
       <div className="flex justify-between items-center mb-2">
@@ -173,6 +219,7 @@ export function PanelFrente({
       <SettingsModal />
       <ModalFrente />
       <ModalOrderEdit />
+      <ModalConfirmDelete />
     </div>
   );
 }

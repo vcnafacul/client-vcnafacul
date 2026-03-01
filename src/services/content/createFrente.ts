@@ -11,7 +11,10 @@ export async function createFrente(data: CreateFrenteDtoInput, token: string): P
     const res = await response.json()
     if(response.status !== 201){
         if(response.status >= 400) {
-            throw res
+            const msg = Array.isArray(res?.message)
+                ? res.message.join(', ')
+                : res?.message ?? "Erro ao criar frente";
+            throw new Error(msg);
         }
     }
     return res
