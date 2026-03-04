@@ -22,6 +22,8 @@ jobs:
   BUILD:
     if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize' || github.event.action == 'reopened')
     runs-on: ubuntu-latest
+    env:
+      VITE_VCNAFACUL_ID: ${{ vars.VITE_VCNAFACUL_ID }}
 
     steps:
       - uses: actions/checkout@v4
@@ -40,6 +42,8 @@ jobs:
   DEPLOY:
     if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    env:
+      VITE_VCNAFACUL_ID: ${{ vars.VITE_VCNAFACUL_ID }}
 
     steps:
       - name: Checkout repository
