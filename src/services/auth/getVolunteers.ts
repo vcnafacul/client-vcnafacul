@@ -3,9 +3,16 @@ import { Volunteer } from "../../components/organisms/supporters";
 import fetchWrapper from "../../utils/fetchWrapper";
 import { collaborator } from "../urls";
 
+const VCNAFACUL_ID = import.meta.env.VITE_VCNAFACUL_ID;
+
 export async function getVolunteers(): Promise<Volunteer[]> {
+  if (!VCNAFACUL_ID || String(VCNAFACUL_ID).trim() === "") {
+    throw new Error(
+      "VITE_VCNAFACUL_ID não está configurado. Defina no .env (local) ou no Secret do repositório (GitHub Actions)."
+    );
+  }
   const response = await fetchWrapper(
-    `${collaborator}/${import.meta.env.VITE_VCNAFACUL_ID}/prepCourse`,
+    `${collaborator}/${VCNAFACUL_ID}/prepCourse`,
     {
       method: "GET",
       headers: { "Content-Type": "application/json" },
