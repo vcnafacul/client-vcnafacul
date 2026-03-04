@@ -43,7 +43,7 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     env:
-      VITE_VCNAFACUL_ID: ${{ vars.VITE_VCNAFACUL_ID }}
+      VITE_VCNAFACUL_ID: ${{ secrets.VITE_VCNAFACUL_ID }}
 
     steps:
       - name: Checkout repository
