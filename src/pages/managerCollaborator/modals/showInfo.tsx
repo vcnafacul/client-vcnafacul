@@ -5,7 +5,7 @@ import { InputFactory } from "@/components/organisms/inputFactory";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { Badge } from "@/components/ui/badge";
 import { Afinidade } from "@/types/partnerPrepCourse/afinidades";
-import { getColorFromName } from "@/utils/getColorFromName";
+import { getColorFromName, getTextColorFromName } from "@/utils/getColorFromName";
 import { formatDate } from "@/utils/date";
 import { phoneMask } from "@/utils/phoneMask";
 import { useEffect, useMemo, useState } from "react";
@@ -103,7 +103,7 @@ export function ShowInfo({
                       <Badge
                         key={nome}
                         variant="secondary"
-                        className={`inline-flex items-center px-3 py-1 text-xs ${getColorFromName(nome)} text-white`}
+                        className={`inline-flex items-center px-3 py-1 text-xs ${getColorFromName(nome)} ${getTextColorFromName(nome)}`}
                       >
                         {nome}
                       </Badge>
@@ -116,7 +116,7 @@ export function ShowInfo({
                       <Badge
                         key={nome}
                         variant="secondary"
-                        className={`inline-flex items-center px-3 py-1 text-xs ${getColorFromName(nome)} text-white`}
+                        className={`inline-flex items-center px-3 py-1 text-xs ${getColorFromName(nome)} ${getTextColorFromName(nome)}`}
                       >
                         {nome}
                       </Badge>

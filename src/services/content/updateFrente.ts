@@ -12,7 +12,10 @@ export async function updateFrente(data: UpdateFrenteDto, token: string): Promis
     if(response.status !== 200){
         if(response.status >= 400) {
             const res = await response.json()
-            throw new Error(res)
+            const msg = Array.isArray(res?.message)
+                ? res.message.join(', ')
+                : res?.message ?? "Erro ao editar frente";
+            throw new Error(msg)
         }
     }
 }

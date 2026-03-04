@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Afinidade } from "@/types/partnerPrepCourse/afinidades";
-import { getColorFromName } from "@/utils/getColorFromName";
+import { getColorFromName, getTextColorFromName } from "@/utils/getColorFromName";
 import { useMemo } from "react";
 
 interface CollaboratorFrentesDisplayProps {
@@ -46,11 +46,12 @@ export function CollaboratorFrentesDisplay({
           <div className="flex flex-wrap gap-2">
             {allFrentes.map((frenteNome) => {
               const frenteColor = getColorFromName(frenteNome);
+              const frenteText = getTextColorFromName(frenteNome);
               return (
                 <Badge
                   key={frenteNome}
                   variant="secondary"
-                  className={`inline-flex items-center px-3 py-1 text-xs ${frenteColor} text-white`}
+                  className={`inline-flex items-center px-3 py-1 text-xs ${frenteColor} ${frenteText}`}
                 >
                   {frenteNome}
                 </Badge>
@@ -69,11 +70,12 @@ export function CollaboratorFrentesDisplay({
           <div className="flex flex-wrap gap-2">
             {allMaterias.map((materiaNome) => {
               const materiaColor = getColorFromName(materiaNome);
+              const materiaText = getTextColorFromName(materiaNome);
               return (
                 <Badge
                   key={materiaNome}
                   variant="secondary"
-                  className={`inline-flex items-center px-3 py-1 text-xs ${materiaColor} text-white`}
+                  className={`inline-flex items-center px-3 py-1 text-xs ${materiaColor} ${materiaText}`}
                 >
                   {materiaNome}
                 </Badge>
