@@ -8,11 +8,38 @@ import {
   SidebarHeader,
   SidebarMenu,
 } from "@/components/ui/sidebar";
-import { dashCardMenuItems } from "@/pages/dash/data";
-import { useState } from "react";
+import {
+  adminMenuItems,
+  buildAcademicMenuItems,
+  fallbackAcademicMenuItems,
+  studentMenuItem,
+} from "@/pages/dash/data";
+import {
+  AreaWithMaterias,
+  getMateriasGroupedByArea,
+} from "@/services/content/getMateriasGroupedByArea";
+import { useEffect, useMemo, useState } from "react";
+import { DashCardMenu } from "../../molecules/dashCard";
 
 export function SidebarDash() {
   const [opened, setOpened] = useState<number>(0);
+  const [areas, setAreas] = useState<AreaWithMaterias[] | null>(null);
+
+  useEffect(() => {
+    getMateriasGroupedByArea()
+      .then(setAreas)
+      .catch(() => setAreas(null));
+  }, []);
+
+  const academicItems = useMemo<DashCardMenu[]>(() => {
+    if (!areas) return fallbackAcademicMenuItems;
+    return buildAcademicMenuItems(areas);
+  }, [areas]);
+
+  const dashCardMenuItems = useMemo(
+    () => [...adminMenuItems, ...academicItems, studentMenuItem],
+    [academicItems],
+  );
 
   const selectCard = (cardId: number) => {
     setOpened(opened === cardId ? 0 : cardId);
