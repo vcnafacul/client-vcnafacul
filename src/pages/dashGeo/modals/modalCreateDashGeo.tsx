@@ -29,6 +29,9 @@ import * as yup from "yup";
 import { ReactComponent as PointIcon } from "../../../assets/images/home/univ_public.svg";
 import { prepCourseInfo } from "../data";
 import { PrepCourseInfo } from "./modalEditDashGeo/Fields/prepCourseInfo";
+import { LocationAutocomplete } from "@/components/molecules/googleMapsProvider/LocationAutocomplete";
+import { getLocationInformationByPlaceId as getPlaceInformationByPlaceId } from "@/services/places/getLocationInformationByPlaceId";
+import { PlacesDetailsOutput } from "@/dtos/places/placesDetailsOutput";
 
 interface ModalEditDashGeoProps extends ModalProps {
   createGeo: (geo: Geolocation) => void;
@@ -99,7 +102,7 @@ function ModalEditDashGeo({
   const cep = watch("cep");
 
   const {
-    data: { user },
+    data: { user, token },
   } = useAuthStore();
 
   // Ao digitar cep
@@ -179,7 +182,6 @@ function ModalEditDashGeo({
         setClicked(true);
         const { lat, lng } = e.latlng;
         setSelectedPosition([lat, lng]);
-
         if (!useCep) {
           getCepByLatAndLon(lat, lng)
             .then((res) => {
@@ -276,6 +278,66 @@ function ModalEditDashGeo({
     });
   };
 
+  const handleSelectSearchPlace = async (placeId: string) => {
+    const toastId = toast.loading('Buscando dados do local no Google…');
+
+    try {
+      const placeDetails = (await getPlaceInformationByPlaceId(
+        token,
+        placeId,
+      )) as PlacesDetailsOutput;
+
+      const patch: Partial<Record<string, any>> = {};
+
+      const put = (field: string, value: any) => {
+        if (value !== undefined && value !== null && value !== '') {
+          patch[field] = value;
+          setValue(field as any, value);
+        }
+      };
+
+      put('name', placeDetails.name);
+      put('cep', placeDetails.cep);
+      put('street', placeDetails.street);
+      put('number', placeDetails.number);
+      put('complement', placeDetails.complement);
+      put('neighborhood', placeDetails.neighborhood);
+      put('city', placeDetails.city);
+      put('state', placeDetails.state);
+      put('phone', placeDetails.phone);
+      put('site', placeDetails.site);
+
+      setGeo((prev) => ({ ...prev, ...patch }));
+
+      if (placeDetails.lat != null || placeDetails.lng != null) {
+        setGeo((prev) => ({
+          ...prev,
+          latitude: placeDetails.lat ?? prev.latitude,
+          longitude: placeDetails.lng ?? prev.longitude,
+        }));
+
+        setSelectedPosition([placeDetails.lat ?? geo.latitude, placeDetails.lng ?? geo.longitude]);
+      }
+
+      toast.update(toastId, {
+        render: 'Dados do cursinho preenchidos com sucesso.',
+        type: 'success',
+        isLoading: false,
+        autoClose: 3000,
+        closeOnClick: true,
+      });
+    } catch (err) {
+      toast.update(toastId, {
+        render:
+          'Não foi possível preencher os dados automaticamente. Tente novamente.',
+        type: 'error',
+        isLoading: false,
+        autoClose: 4000,
+        closeOnClick: true,
+      });
+    }
+  };
+
   return (
     <ModalTemplate
       isOpen={isOpen}
@@ -293,6 +355,7 @@ function ModalEditDashGeo({
           >
             Informação do Cursinho {getStatusIcon(geo.status)}
           </Text>
+          <LocationAutocomplete onPlaceLoaded={(placeId) => handleSelectSearchPlace(placeId)}/>
           <PrepCourseInfo
             form={prepCourseInfo}
             setValue={mySetValue}
