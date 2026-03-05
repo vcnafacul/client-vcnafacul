@@ -24,6 +24,9 @@ export const validatedgeolocation = `${BASE_URL}/validatedgeolocation`;
 export const allGeolocation = `${geolocations}`;
 export const geo_summary_status = `${geolocations}/summary-status`;
 
+export const places = `${BASE_URL}/places`;
+export const placesDetails = `${places}/details`;
+
 export const news = `${BASE_URL}/news`;
 export const newsAll = `${BASE_URL}/news/all`;
 
