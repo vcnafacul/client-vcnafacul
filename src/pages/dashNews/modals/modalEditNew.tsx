@@ -32,11 +32,9 @@ function ModalEditNew({
 
   const [uploadFile, setUploadFile] = useState(null);
 
-  const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
-
   const MyContent = useCallback(() => {
-    if (news) {
-      return <NewContent fileName={`${VITE_BASE_FTP}${news.fileName}`} />;
+    if (news?.fileName) {
+      return <NewContent fileKey={news.fileName} />;
     } else if (upload && arrayBuffer) {
       return <DocxPreview arrayBuffer={arrayBuffer} />;
     }
@@ -46,7 +44,7 @@ function ModalEditNew({
         <span className="text-gray-400">Carregando documento...</span>
       </div>
     );
-  }, [upload, arrayBuffer, news]);
+  }, [upload, arrayBuffer, news?.fileName]);
 
   const handleFileUpload = (e: any) => {
     const file = e.target.files[0];

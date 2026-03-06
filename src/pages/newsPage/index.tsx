@@ -11,7 +11,6 @@ import NewContent from "./newContent";
 function NewsPage() {
   const [news, setNews] = useState<News[]>([]);
   const [indexSelect, setIndexSelect] = useState<number>(0);
-  const VITE_BASE_FTP = import.meta.env.VITE_BASE_FTP;
 
   const breakpoints = {
     1: {
@@ -61,11 +60,7 @@ function NewsPage() {
           {news.length == 0 ? null : news[indexSelect].title}
         </Text>
         <NewContent
-          fileName={
-            news.length == 0
-              ? ""
-              : `${VITE_BASE_FTP}${news[indexSelect].fileName}`
-          }
+          fileKey={news.length === 0 ? "" : news[indexSelect].fileName}
         />
         <TriangleGreen className="absolute w-[500px] -right-[250px] bottom-0 -z-10" />
       </div>
