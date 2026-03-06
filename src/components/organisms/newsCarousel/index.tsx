@@ -10,8 +10,7 @@ interface NewsCarouselProps {
 }
 
 function NewsCarousel({ news, breakpoints, onClickCard }: NewsCarouselProps){
-    
-    
+
     const cardsNews = news.map((card, index) => {
         return (
             <div key={card.id} className="w-40 h-40 bg-grey m-4 bg-opacity-50 flex justify-center items-end text-white text-sm p-4 mb-10 cursor-pointer" onClick={() => { onClickCard(index) }}>
