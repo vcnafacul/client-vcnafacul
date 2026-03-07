@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import DocxPreview from "@/components/atoms/docxPreview";
 import NewContent from "@/pages/newsPage/newContent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Filter from "../../../components/atoms/filter";
 import Text from "../../../components/atoms/text";
 import Button from "../../../components/molecules/button";
@@ -9,9 +9,21 @@ import UploadButton from "../../../components/molecules/uploadButton";
 import ModalTemplate from "../../../components/templates/modalTemplate";
 import { News } from "../../../dtos/news/news";
 
+/** Formato YYYY-MM-DD para input date; '' = sem expiração */
+function toDateInputValue(d: string | Date | null | undefined): string {
+  if (d == null || d === "") return "";
+  const date = typeof d === "string" ? new Date(d) : d;
+  return date.toISOString().slice(0, 10);
+}
+
+function todayDateString(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
 interface ModalEditNewProps {
-  news: News;
-  create: (session: string, title: string, file: any) => void;
+  news: News | null;
+  create: (session: string, title: string, file: any, expireAt?: string) => void;
+  update?: (id: string, session: string, title: string, expireAt?: string) => void;
   deleteFunc: (id: string) => void;
   isOpen: boolean;
   handleClose: () => void;
@@ -20,6 +32,7 @@ interface ModalEditNewProps {
 function ModalEditNew({
   news,
   create,
+  update,
   deleteFunc,
   isOpen,
   handleClose,
@@ -28,9 +41,19 @@ function ModalEditNew({
   const [upload, setUpload] = useState<boolean>(news ? true : false);
   const [session, setSession] = useState<string>(news ? news.session : "");
   const [title, setTitle] = useState<string>(news ? news.title : "");
+  const [expireAt, setExpireAt] = useState<string>(
+    toDateInputValue(news?.expireAt ?? "")
+  );
   const [uploadFile, setUploadFile] = useState(null);
 
   const isEditing = !!news;
+  const minDate = todayDateString();
+
+  useEffect(() => {
+    setSession(news ? news.session : "");
+    setTitle(news ? news.title : "");
+    setExpireAt(toDateInputValue(news?.expireAt ?? ""));
+  }, [news?.id, news?.session, news?.title, news?.expireAt]);
 
   const hasPreview = !!(news?.fileName || (upload && arrayBuffer));
 
@@ -48,9 +71,11 @@ function ModalEditNew({
     }
   };
 
-  const createNew = () => {
-    if (isEditing || (upload && !!session && !!title)) {
-      create(session, title, uploadFile);
+  const handleSave = () => {
+    if (isEditing && update) {
+      update(news.id, session, title, expireAt || undefined);
+    } else if (upload && !!session && !!title) {
+      create(session, title, uploadFile, expireAt || undefined);
     }
   };
 
@@ -93,6 +118,23 @@ function ModalEditNew({
               filtrar={(e) => setTitle(e.target.value)}
               placeholder="Título"
             />
+            <div className="flex-1 min-w-[200px] flex flex-col gap-1">
+              <label htmlFor="expire-at" className="text-sm text-gray-600">
+                Data de expiração
+              </label>
+              <input
+                id="expire-at"
+                type="date"
+                min={minDate}
+                value={expireAt}
+                onChange={(e) => setExpireAt(e.target.value)}
+                disabled={false}
+                className="border border-gray-300 rounded-md px-3 py-2 text-grey focus:outline-none focus:ring-2 focus:ring-green2/30 focus:border-green2"
+              />
+              <span className="text-xs text-gray-500">
+                Opcional. Não pode ser anterior a hoje.
+              </span>
+            </div>
           </div>
         </div>
 
@@ -123,14 +165,23 @@ function ModalEditNew({
         {/* Actions */}
         <div className="px-6 py-4 border-t border-gray-100 flex gap-4">
           {isEditing ? (
-            <Button className="bg-red border-red" onClick={deleteNew}>
-              Deletar
-            </Button>
+            <>
+              <Button
+                className="bg-green2 border-green2"
+                hover
+                onClick={handleSave}
+              >
+                Salvar
+              </Button>
+              <Button className="bg-red border-red" onClick={deleteNew}>
+                Deletar
+              </Button>
+            </>
           ) : (
             <Button
               className="bg-green2 border-green2"
               hover
-              onClick={createNew}
+              onClick={handleSave}
             >
               Salvar
             </Button>
