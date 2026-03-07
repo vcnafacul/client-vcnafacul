@@ -9,6 +9,7 @@ import NewContent from "./newContent";
 
 function NewsPage() {
   const [news, setNews] = useState<News[]>([]);
+  const [loading, setLoading] = useState(true);
   const [indexSelect, setIndexSelect] = useState<number>(0);
   /** Índice efetivamente exibido (atualiza após o fade out) */
   const [displayIndex, setDisplayIndex] = useState<number>(0);
@@ -20,11 +21,13 @@ function NewsPage() {
   useEffect(() => {
     getNews()
       .then((res) => {
-        setNews(res.data);
+        setNews(res.data ?? []);
       })
       .catch((error: Error) => {
         toast.error(error.message);
-      });
+        setNews([]);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   // Quando o usuário escolhe outra novidade, inicia o fade out
@@ -38,6 +41,42 @@ function NewsPage() {
     setDisplayIndex(indexSelect);
     setIsExiting(false);
   }, [isExiting, indexSelect]);
+
+  if (loading) {
+    return (
+      <HeroTemplate headerPosition="fixed">
+        <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[500px] flex items-center justify-center">
+          <div className="container mx-auto px-3 sm:px-4 text-center">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 sm:p-12 max-w-lg mx-auto animate-pulse">
+              <div className="h-6 bg-gray-200 rounded w-3/4 mx-auto mb-4" />
+              <div className="h-4 bg-gray-100 rounded w-full" />
+            </div>
+          </div>
+          <TriangleGreen className="absolute w-[500px] -right-[250px] bottom-0 -z-10" />
+        </div>
+      </HeroTemplate>
+    );
+  }
+
+  if (news.length === 0) {
+    return (
+      <HeroTemplate headerPosition="fixed">
+        <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[500px] flex items-center justify-center">
+          <div className="container mx-auto px-3 sm:px-4 text-center">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 sm:p-12 max-w-lg mx-auto">
+              <h2 className="text-xl sm:text-2xl font-bold text-grey mb-2">
+                Nenhuma novidade no momento
+              </h2>
+              <p className="text-grey text-base sm:text-lg">
+                Acompanhe esta página para ficar por dentro das próximas novidades e funcionalidades.
+              </p>
+            </div>
+          </div>
+          <TriangleGreen className="absolute w-[500px] -right-[250px] bottom-0 -z-10" />
+        </div>
+      </HeroTemplate>
+    );
+  }
 
   return (
     <HeroTemplate headerPosition="fixed">

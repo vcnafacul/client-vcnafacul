@@ -9,12 +9,14 @@ import Supporters, {
   Volunteer,
 } from "../../components/organisms/supporters/index.tsx";
 import HeroTemplate from "../../components/templates/heroTemplate";
+import { useBaseTemplateContext } from "../../context/baseTemplateContext";
 import { HomeContext } from "../../context/homeContext.tsx";
 import { getVolunteers } from "../../services/auth/getVolunteers.ts";
 import { about_us, actionAreas, features, supporters } from "./data.ts";
 
 function Home() {
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
+  const { hasNews } = useBaseTemplateContext();
 
   useEffect(() => {
     getVolunteers()
@@ -41,7 +43,7 @@ function Home() {
       <HeroTemplate headerPosition="fixed">
         <>
           <AboutUs />
-          <HomeNews />
+          {hasNews !== false && <HomeNews />}
           <Features />
           <ActionAreas />
           <Supporters />
