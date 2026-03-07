@@ -1,25 +1,28 @@
-import { useEffect, useRef } from 'react';
-import { renderAsync } from 'docx-preview';
-import './style.css';
+import { renderAsync } from "docx-preview";
+import { useEffect, useRef } from "react";
+import "./style.css";
 
 interface DocxPreviewProps {
   arrayBuffer: ArrayBuffer;
   className?: string;
 }
 
-export default function DocxPreview({ arrayBuffer, className }: DocxPreviewProps) {
+export default function DocxPreview({
+  arrayBuffer,
+  className,
+}: DocxPreviewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (arrayBuffer && containerRef.current) {
-      containerRef.current.innerHTML = '';
+      containerRef.current.innerHTML = "";
 
       const options = {
         ignoreWidth: true,
         ignoreHeight: true,
       };
 
-      renderAsync(arrayBuffer, containerRef.current, null, options)
+      renderAsync(arrayBuffer, containerRef.current, undefined, options)
         .then(() => {
           replaceYoutubeLinksWithIframes(containerRef.current!);
         })
@@ -30,30 +33,32 @@ export default function DocxPreview({ arrayBuffer, className }: DocxPreviewProps
   }, [arrayBuffer]);
 
   return (
-    <div
-      ref={containerRef}
-      className={`docx-container ${className || ''}`}
-    />
+    <div ref={containerRef} className={`docx-container ${className || ""}`} />
   );
 }
 
 function replaceYoutubeLinksWithIframes(container: HTMLElement) {
-  const links = container.querySelectorAll('a[href*="youtube.com/watch"], a[href*="youtu.be/"]');
+  const links = container.querySelectorAll(
+    'a[href*="youtube.com/watch"], a[href*="youtu.be/"]',
+  );
 
   links.forEach((link) => {
-    const url = link.getAttribute('href');
+    const url = link.getAttribute("href");
     if (!url) return;
 
     const videoId = extractYoutubeId(url);
     if (!videoId) return;
 
-    const iframe = document.createElement('iframe');
-    iframe.setAttribute('src', `https://www.youtube.com/embed/${videoId}`);
-    iframe.setAttribute('title', 'YouTube video player');
-    iframe.setAttribute('frameborder', '0');
-    iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
-    iframe.setAttribute('allowfullscreen', 'true');
-    iframe.className = 'docx-video-embed';
+    const iframe = document.createElement("iframe");
+    iframe.setAttribute("src", `https://www.youtube.com/embed/${videoId}`);
+    iframe.setAttribute("title", "YouTube video player");
+    iframe.setAttribute("frameborder", "0");
+    iframe.setAttribute(
+      "allow",
+      "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
+    );
+    iframe.setAttribute("allowfullscreen", "true");
+    iframe.className = "docx-video-embed";
 
     link.parentElement?.replaceChild(iframe, link);
   });
@@ -62,10 +67,10 @@ function replaceYoutubeLinksWithIframes(container: HTMLElement) {
 function extractYoutubeId(url: string): string | null {
   try {
     const parsed = new URL(url);
-    if (parsed.hostname.includes('youtube.com')) {
-      return parsed.searchParams.get('v');
+    if (parsed.hostname.includes("youtube.com")) {
+      return parsed.searchParams.get("v");
     }
-    if (parsed.hostname.includes('youtu.be')) {
+    if (parsed.hostname.includes("youtu.be")) {
       return parsed.pathname.slice(1); // remove a primeira `/`
     }
   } catch {
