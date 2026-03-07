@@ -41,8 +41,8 @@ function NewsPage() {
 
   return (
     <HeroTemplate headerPosition="fixed">
-      <div className="relative pt-8 pb-16 min-h-[1000px]">
-        <div className="container mx-auto px-4">
+      <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[1000px]">
+        <div className="container mx-auto px-3 sm:px-4">
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             {/* Left: Vertical selector */}
             <div className="w-full lg:w-72 lg:sticky lg:top-24 shrink-0 pt-4">
@@ -56,18 +56,18 @@ function NewsPage() {
             {/* Right: Content */}
             <div className="flex-1 min-w-0">
               {displayNews && (
-                <div className="flex flex-col gap-2 mb-6">
-                  <span className="inline-block w-fit bg-green2 bg-opacity-15 text-green2 text-sm font-semibold px-4 py-1 rounded-full uppercase tracking-wide">
+                <div className="flex flex-col gap-1.5 sm:gap-2 mb-4 sm:mb-6">
+                  <span className="inline-block w-fit bg-green2 bg-opacity-15 text-green2 text-xs sm:text-sm font-semibold px-3 py-0.5 sm:px-4 sm:py-1 rounded-full uppercase tracking-wide">
                     {displayNews.session}
                   </span>
-                  <h2 className="text-2xl md:text-3xl font-bold text-grey">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-grey leading-tight">
                     {displayNews.title}
                   </h2>
                 </div>
               )}
 
               <div
-                className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 md:p-10 transition-opacity duration-300 ease-in-out"
+                className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-6 md:p-10 transition-opacity duration-300 ease-in-out"
                 style={{ opacity: isExiting ? 0 : 1 }}
                 onTransitionEnd={handleTransitionEnd}
               >

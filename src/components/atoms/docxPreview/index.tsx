@@ -14,11 +14,18 @@ export default function DocxPreview({ arrayBuffer, className }: DocxPreviewProps
     if (arrayBuffer && containerRef.current) {
       containerRef.current.innerHTML = '';
 
-      renderAsync(arrayBuffer, containerRef.current).then(() => {
-        replaceYoutubeLinksWithIframes(containerRef.current!);
-      }).catch((err) => {
-        console.error("Erro ao renderizar o DOCX:", err);
-      });
+      const options = {
+        ignoreWidth: true,
+        ignoreHeight: true,
+      };
+
+      renderAsync(arrayBuffer, containerRef.current, null, options)
+        .then(() => {
+          replaceYoutubeLinksWithIframes(containerRef.current!);
+        })
+        .catch((err) => {
+          console.error("Erro ao renderizar o DOCX:", err);
+        });
     }
   }, [arrayBuffer]);
 
@@ -41,13 +48,12 @@ function replaceYoutubeLinksWithIframes(container: HTMLElement) {
     if (!videoId) return;
 
     const iframe = document.createElement('iframe');
-    iframe.setAttribute('width', '560');
-    iframe.setAttribute('height', '315');
     iframe.setAttribute('src', `https://www.youtube.com/embed/${videoId}`);
     iframe.setAttribute('title', 'YouTube video player');
     iframe.setAttribute('frameborder', '0');
     iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
     iframe.setAttribute('allowfullscreen', 'true');
+    iframe.className = 'docx-video-embed';
 
     link.parentElement?.replaceChild(iframe, link);
   });
