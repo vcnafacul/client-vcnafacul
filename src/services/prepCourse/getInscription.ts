@@ -12,6 +12,7 @@ interface HasActiveInscriptionResponse {
     description: string;
     startDate: Date;
     endDate: Date;
+    expectedOpening: number;
     status: StatusEnum;
   };
   partnerPrepForm: PartnerPrepForm;

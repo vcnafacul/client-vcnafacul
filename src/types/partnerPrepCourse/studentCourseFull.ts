@@ -19,6 +19,7 @@ export interface LogStudent {
 
 export interface StudentCourseFull {
   id: string;
+  userId: string;
   cadastrado_em: Date;
   email: string;
   cpf: string;
