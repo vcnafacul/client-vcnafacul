@@ -103,5 +103,7 @@ export const studentAttendance = `${BASE_URL}/student-attendance`;
 
 export const section_form = `${BASE_URL}/section-form`;
 export const question_form = `${BASE_URL}/question-form`;
+export const rule_form = `${BASE_URL}/rule-form`;
+export const rule_set_form = `${BASE_URL}/rule-set-form`;
 
 export const coursePeriod = `${BASE_URL}/course-period`;

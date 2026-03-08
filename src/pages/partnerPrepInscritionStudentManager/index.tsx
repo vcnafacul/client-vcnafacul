@@ -4,6 +4,7 @@ import { Bool } from "@/enums/bool";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { getInscription } from "@/services/prepCourse/getInscription";
 import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
 import { updateWaitingListInfo } from "@/services/prepCourse/inscription/updateWaitingList";
 import { confirmEnrolled } from "@/services/prepCourse/student/confirmEnrolled";
@@ -36,11 +37,19 @@ import { Details } from "./modal/details";
 import { Statistic } from "./modal/statistic";
 import { ScheduleCallEnrolle } from "./scheduleCallEnrolled";
 import { TableInfo } from "./tableInfo";
+import { ModalRules } from "./modal/modalRules";
 import { WaitingList } from "./waitingList";
 
 export function PartnerPrepInscritionStudentManager() {
   const { inscriptionId } = useParams();
   const [students, setStudents] = useState<XLSXStudentCourseFull[]>([]);
+  const [inscriptionInfo, setInscriptionInfo] = useState<{
+    name: string;
+    description: string;
+    startDate: Date;
+    endDate: Date;
+    expectedOpening: number;
+  } | null>(null);
   const [studentSelected, setStudentSelected] = useState<
     XLSXStudentCourseFull | undefined
   >(undefined);
@@ -53,6 +62,7 @@ export function PartnerPrepInscritionStudentManager() {
     "statistic",
     "reject",
     "selectClass",
+    "rules",
   ]);
 
   const {
@@ -583,15 +593,32 @@ export function PartnerPrepInscritionStudentManager() {
 
   useEffect(() => {
     subscribers();
+    if (inscriptionId) {
+      getInscription(inscriptionId, token)
+        .then((res) => setInscriptionInfo(res.inscription))
+        .catch(() => {});
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="flex flex-col justify-center items-center pt-4">
       <div className="w-full px-4">
-        <h1 className="text-3xl font-bold text-center text-marine">
-          Gerenciamento de Inscritos
-        </h1>
+        <div className="mb-2">
+          <h1 className="text-3xl font-bold text-center text-marine">
+            {inscriptionInfo?.name || "Gerenciamento de Inscritos"}
+          </h1>
+          {inscriptionInfo?.description && (
+            <p className="text-sm text-gray-500 text-center mt-1">
+              {inscriptionInfo.description}
+            </p>
+          )}
+          {inscriptionInfo && (
+            <p className="text-xs text-gray-400 text-center mt-1">
+              Período: {new Date(inscriptionInfo.startDate).toLocaleDateString("pt-BR")} — {new Date(inscriptionInfo.endDate).toLocaleDateString("pt-BR")} · {inscriptionInfo.expectedOpening} vagas · {students.length} inscritos
+            </p>
+          )}
+        </div>
         <div className="h-full w-full flex pb-2 flex-col sm:flex-row gap-2 sm:gap-0">
           <TableInfo students={students} />
           <div className="items-end flex flex-wrap gap-1 justify-end flex-1">
@@ -617,6 +644,13 @@ export function PartnerPrepInscritionStudentManager() {
               onClick={modals.scheduleEnrolled.open}
             >
               <p className="text-sm">Programar Convocação</p>
+            </Button>
+            <Button
+              size="small"
+              className="border-none"
+              onClick={modals.rules.open}
+            >
+              <p className="text-sm">Regras de Pontuação</p>
             </Button>
             <FaSyncAlt
               className="h-7 w-7 p-0.5 fill-gray-500 hover:fill-marine cursor-pointer hover:animate-rotate5"
@@ -645,6 +679,14 @@ export function PartnerPrepInscritionStudentManager() {
       <ModalStatistic />
       <ModalReject />
       <ModalSelectClass />
+      {modals.rules.isOpen && (
+        <ModalRules
+          isOpen={modals.rules.isOpen}
+          handleClose={modals.rules.close}
+          inscriptionId={inscriptionId!}
+          students={students}
+        />
+      )}
     </div>
   );
 }
