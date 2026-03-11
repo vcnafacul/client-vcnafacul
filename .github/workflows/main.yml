@@ -24,13 +24,14 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VITE_VCNAFACUL_ID: ${{ secrets.VITE_VCNAFACUL_ID }}
+      VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
 
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
-          cache: 'yarn'
+          node-version: "lts/*"
+          cache: "yarn"
       - name: Install depends
         run: yarn install --frozen-lockfile
       - name: Build app vCnafacul
@@ -44,6 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VITE_VCNAFACUL_ID: ${{ secrets.VITE_VCNAFACUL_ID }}
+      VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
 
     steps:
       - name: Checkout repository
@@ -54,8 +56,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
-          cache: 'yarn'
+          node-version: "lts/*"
+          cache: "yarn"
 
       - name: Install dependencies
         run: |
