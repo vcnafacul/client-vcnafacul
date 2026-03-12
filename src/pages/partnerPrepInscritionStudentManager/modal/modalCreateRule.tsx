@@ -88,6 +88,7 @@ export function ModalCreateRule({
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showAdvancedExpressions, setShowAdvancedExpressions] = useState(false);
 
   const selectedQuestion = questions.find((q) => q._id === formData.questionId);
 
@@ -167,10 +168,15 @@ export function ModalCreateRule({
 
   const addComputedQuestion = (questionId: string) => {
     if (!questionId || formData.computedQuestionIds.includes(questionId)) return;
-    setFormData((prev) => ({
-      ...prev,
-      computedQuestionIds: [...prev.computedQuestionIds, questionId],
-    }));
+    setFormData((prev) => {
+      if (prev.computedQuestionIds.length >= 3) {
+        return prev;
+      }
+      return {
+        ...prev,
+        computedQuestionIds: [...prev.computedQuestionIds, questionId],
+      };
+    });
   };
 
   const removeComputedQuestion = (index: number) => {
@@ -292,12 +298,54 @@ export function ModalCreateRule({
     handleClose?.();
   };
 
-  const expressionTemplates = [
-    { label: "Q0 / Q1", value: "Q0 / Q1" },
-    { label: "Q0 + Q1", value: "Q0 + Q1" },
-    { label: "Q0 - Q1", value: "Q0 - Q1" },
-    { label: "(Q0 + Q1) / Q2", value: "(Q0 + Q1) / Q2" },
-  ];
+  const getExpressionTemplates = (questionCount: number) => {
+    const all: { label: string; value: string }[] = [];
+    const operators = [" / ", " + ", " - ", " * "];
+
+    if (questionCount >= 2) {
+      operators.forEach((op) => {
+        all.push({
+          label: `Q0${op}Q1`,
+          value: `Q0${op}Q1`,
+        });
+      });
+    }
+
+    if (questionCount >= 3) {
+      operators.forEach((op1) => {
+        operators.forEach((op2) => {
+          all.push({
+            label: `Q0${op1}Q1${op2}Q2`,
+            value: `Q0${op1}Q1${op2}Q2`,
+          });
+          all.push({
+            label: `(Q0${op1}Q1)${op2}Q2`,
+            value: `(Q0${op1}Q1)${op2}Q2`,
+          });
+          all.push({
+            label: `Q0${op1}(Q1${op2}Q2)`,
+            value: `Q0${op1}(Q1${op2}Q2)`,
+          });
+        });
+      });
+    }
+
+    // básicos curados para manter a UI enxuta
+    const basicSet = new Set<string>([
+      "Q0 / Q1",
+      "Q0 + Q1",
+      "Q0 - Q1",
+      "Q0 * Q1",
+      "Q0 / (Q1 + Q2)",
+      "(Q0 + Q1) / Q2",
+      "Q0 / Q1 + Q2",
+    ]);
+
+    const basic = all.filter((t) => basicSet.has(t.value));
+    const advanced = all.filter((t) => !basicSet.has(t.value));
+
+    return { basic, advanced };
+  };
 
   return (
     <ModalTemplate
@@ -631,8 +679,9 @@ export function ModalCreateRule({
                 })}
               </Box>
 
-              {/* Add question dropdown */}
-              {numericQuestions.filter((q) => !formData.computedQuestionIds.includes(q._id)).length > 0 && (
+              {/* Add question dropdown (limit 3 questions) */}
+              {formData.computedQuestionIds.length < 3 &&
+                numericQuestions.filter((q) => !formData.computedQuestionIds.includes(q._id)).length > 0 && (
                 <FormControl fullWidth size="small">
                   <Select
                     value=""
@@ -658,32 +707,77 @@ export function ModalCreateRule({
             {formData.computedQuestionIds.length >= 2 && (
               <Box>
                 <FormLabel>Expressão Matemática *</FormLabel>
-                <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap", my: 1 }}>
-                  {expressionTemplates
-                    .filter((t) => {
-                      const maxQ = formData.computedQuestionIds.length - 1;
-                      const vars = t.value.match(/Q(\d+)/g) ?? [];
-                      return vars.every((v) => parseInt(v.slice(1)) <= maxQ);
-                    })
-                    .map((t) => (
-                      <Chip
-                        key={t.value}
-                        label={t.label}
-                        size="small"
-                        variant="outlined"
-                        clickable
-                        onClick={() => handleInputChange("expression", t.value)}
-                        color={formData.expression === t.value ? "primary" : "default"}
-                      />
-                    ))}
-                </Box>
+                {(() => {
+                  const { basic, advanced } = getExpressionTemplates(
+                    formData.computedQuestionIds.length
+                  );
+                  return (
+                    <>
+                      <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
+                        Sugestões principais
+                      </Typography>
+                      <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap", my: 1 }}>
+                        {basic.map((t) => (
+                          <Chip
+                            key={t.value}
+                            label={t.label}
+                            size="small"
+                            variant="outlined"
+                            clickable
+                            onClick={() => handleInputChange("expression", t.value)}
+                            color={formData.expression === t.value ? "primary" : "default"}
+                          />
+                        ))}
+                      </Box>
+                      {advanced.length > 0 && (
+                        <>
+                          <Button
+                            size="small"
+                            variant="text"
+                            onClick={() => setShowAdvancedExpressions((prev) => !prev)}
+                            sx={{ mb: 1, textTransform: "none", px: 0 }}
+                          >
+                            {showAdvancedExpressions
+                              ? "Ocultar combinações avançadas"
+                              : "Mostrar combinações avançadas"}
+                          </Button>
+                          {showAdvancedExpressions && (
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: 0.5,
+                                flexWrap: "wrap",
+                                mb: 1,
+                                maxHeight: 140,
+                                overflowY: "auto",
+                                pr: 0.5,
+                              }}
+                            >
+                              {advanced.map((t) => (
+                                <Chip
+                                  key={t.value}
+                                  label={t.label}
+                                  size="small"
+                                  variant="outlined"
+                                  clickable
+                                  onClick={() => handleInputChange("expression", t.value)}
+                                  color={formData.expression === t.value ? "primary" : "default"}
+                                />
+                              ))}
+                            </Box>
+                          )}
+                        </>
+                      )}
+                    </>
+                  );
+                })()}
                 <TextField
                   value={formData.expression}
-                  onChange={(e) => handleInputChange("expression", e.target.value)}
                   variant="outlined"
                   fullWidth
                   placeholder="Q0 / Q1"
                   size="small"
+                  InputProps={{ readOnly: true }}
                 />
                 {/* Legend */}
                 <Box sx={{ mt: 0.5 }}>
