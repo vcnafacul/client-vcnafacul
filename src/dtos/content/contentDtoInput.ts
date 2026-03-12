@@ -14,6 +14,9 @@ export interface ContentDtoInput {
     subject: SubjectDto;
     createdAt: DateTime;
     updatedAt: DateTime;
+    lastEditedBy?: string;
+    lastEditedByName?: string;
+    lastEditedAt?: string;
 }
 
 export interface SubjectDto {
