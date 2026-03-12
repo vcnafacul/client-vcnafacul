@@ -43,6 +43,7 @@ export interface ProvaOption {
   _id: string;
   nome: string;
   filename?: string;
+  gabarito?: string;
   enemAreas?: string[];
 }
 

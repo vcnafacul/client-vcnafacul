@@ -46,26 +46,39 @@ function ShowProva({ prova, isOpen, handleClose, onUpdated }: ShowProvaProps) {
     return "bg-red-500";
   };
 
-  const downloadFile = async (filename: string, fileType: string) => {
-    const id = toast.loading(`Baixando ${fileType}...`);
-    try {
-      const blob = await getProvaFile(filename, token);
+const downloadFile = async (filename: string, fileType: string) => {
+  const id = toast.loading(`Baixando ${fileType}...`);
 
-      // Criar URL do blob e fazer download
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${prova.nome}_${fileType}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      toast.error(`Erro ao baixar o ${fileType}`);
-    }finally{
-      toast.dismiss(id);
-    }
-  };
+  try {
+    const blob = await getProvaFile(filename, token);
+
+    // Criar URL do blob e fazer download
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${prova.nome}_${fileType}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    toast.update(id, {
+      render: `Download d${fileType == "prova" ? "a" : "o"} ${fileType} concluído com sucesso!`,
+      type: "success",
+      isLoading: false,
+      autoClose: 3000,
+      closeOnClick: true,
+    });
+  } catch (error) {
+    toast.update(id, {
+      render: `Erro ao baixar o ${fileType}`,
+      type: "error",
+      isLoading: false,
+      autoClose: 5000,
+      closeOnClick: true,
+    });
+  }
+};
 
   const handleDownloadProva = () => {
     downloadFile(prova.filename, "prova");
