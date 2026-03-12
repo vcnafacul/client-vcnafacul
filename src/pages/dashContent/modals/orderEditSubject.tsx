@@ -1,6 +1,7 @@
 import Text from "@/components/atoms/text";
 import Button from "@/components/molecules/button";
 import ModalTemplate from "@/components/templates/modalTemplate";
+import { ChangeOrderSubjectDTO } from "@/dtos/content/changeOrderSubject";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { useState } from "react";
 import {
@@ -26,18 +27,12 @@ interface SubjectItem {
   name: string;
 }
 
-interface ChangeOrderDTO {
-  listId: string;
-  node1: string;
-  node2?: string;
-}
-
 interface Props {
   isOpen: boolean;
   handleClose: () => void;
   subjects: SubjectItem[];
   listId: string;
-  updateOrder: (dto: ChangeOrderDTO) => void;
+  updateOrder: (dto: ChangeOrderSubjectDTO) => void;
 }
 
 function SortableRow({ row, position }: { row: SubjectItem; position: number }) {

@@ -1,4 +1,4 @@
-import { ChangeOrderDTO } from "@/dtos/content/changeOrder";
+import { ChangeOrderSubjectDTO } from "@/dtos/content/changeOrderSubject";
 import { FrenteDto } from "@/dtos/content/contentDtoInput";
 import {
   CreateFrenteDtoInput,
@@ -164,7 +164,7 @@ export function PanelFrente({
         handleClose={() => modals.orderEdit.close()}
         subjects={frenteSelected!.subjects}
         listId={frenteSelected!._id || frenteSelected!.id}
-        updateOrder={(body: ChangeOrderDTO) => changeOrderSubject(token, body)}
+        updateOrder={(body: ChangeOrderSubjectDTO) => changeOrderSubject(token, body)}
       />
     );
   };
