@@ -48,10 +48,13 @@ jobs:
       VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
 
     steps:
+      # Checkout develop (estado após o merge) para que homologação reflita sempre a branch develop.
+      # Antes: ref head.sha → deployava só o commit do PR; outro merge podia “sobrescrever” e sumir coisas.
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: develop
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
