@@ -46,10 +46,12 @@ jobs:
       VITE_VCNAFACUL_ID: ${{ secrets.VITE_VCNAFACUL_ID }}
 
     steps:
+      # Checkout main (estado após o merge) para produção refletir sempre a branch main.
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: main
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
