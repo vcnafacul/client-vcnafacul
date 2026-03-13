@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigation, Pagination } from "swiper/modules";
 import { useHomeContext } from "../../../context/homeContext";
 import { getPhotoCollaborator } from "../../../services/prepCourse/collaborator/get-photo";
+import { getPartnerPrepCourseLogos } from "../../../services/prepCourse/partnerLogos";
 import Text from "../../atoms/text";
 import Carousel from "../../molecules/carousel";
 import Selector from "../../molecules/selector";
@@ -11,6 +12,7 @@ export interface Sponsor {
   image: React.FC<React.SVGProps<SVGSVGElement>> | string;
   alt: string;
   link: string;
+  id?: string;
 }
 
 export interface Volunteer {
@@ -52,10 +54,16 @@ function Supporters() {
   const [volunteerPhotos, setVolunteerPhotos] = useState<
     Record<string, string>
   >({});
+  const [partnerPrepCourses, setPartnerPrepCourses] = useState<Sponsor[]>(
+    prepCourse || []
+  );
+  const [loadingPartnerPrepCourses, setLoadingPartnerPrepCourses] =
+    useState<boolean>(false);
   const changeTab = (tab: number) => {
     setTab(tab);
   };
   const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
+  const VITE_VCNAFACUL_ID = import.meta.env.VITE_VCNAFACUL_ID;
 
   const breakpoints = {
     1: {
@@ -180,6 +188,44 @@ function Supporters() {
   };
 
   useEffect(() => {
+    const loadPartnerPrepCourses = async () => {
+      setLoadingPartnerPrepCourses(true);
+      try {
+        const logos = await getPartnerPrepCourseLogos();
+
+        const filtered = logos.filter(
+          (item) =>
+            item.logoUrl &&
+            (!VITE_VCNAFACUL_ID || item.id !== String(VITE_VCNAFACUL_ID))
+        );
+
+        if (filtered.length > 0) {
+          const mapped: Sponsor[] = filtered.map((item) => ({
+            id: item.id,
+            image: item.logoUrl,
+            alt: item.name || "Cursinho parceiro",
+            link: item.siteUrl || "#",
+          }));
+          setPartnerPrepCourses(mapped);
+        } else if (prepCourse?.length) {
+          // fallback para configuração estática caso a API não retorne nada
+          setPartnerPrepCourses(prepCourse);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar logos dos cursinhos parceiros", error);
+        if (prepCourse?.length) {
+          setPartnerPrepCourses(prepCourse);
+        }
+      } finally {
+        setLoadingPartnerPrepCourses(false);
+      }
+    };
+
+    loadPartnerPrepCourses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (volunteers.length === 0) {
       setTab(TabItems.Empresas);
     } else {
@@ -245,21 +291,41 @@ function Supporters() {
           <div className="flex justify-around items-center w-full h-80">
             <Volunteers />
           </div>
-        ) : (
-          prepCourse.length > 0 && (
-            <div className="flex justify-around items-center h-80 w-full">
-              {prepCourse.map((sponsor, index) => (
-                <a key={index} href={sponsor.link} target="_blank">
-                  <img
-                    className="h-80 my-1 mx-0"
-                    src={sponsor.image as string}
-                    alt="Cursinho Parceiro"
-                  />
+        ) : (partnerPrepCourses.length > 0 && !loadingPartnerPrepCourses) ||
+          prepCourse.length > 0 ? (
+          <div className="flex justify-around items-center h-80 w-full">
+            <Carousel
+              childrens={(partnerPrepCourses.length > 0
+                ? partnerPrepCourses
+                : prepCourse
+              ).map((sponsor, index) => (
+                <a
+                  key={index}
+                  href={sponsor.link}
+                  target="_blank"
+                  className="flex justify-center items-center pb-10"
+                >
+                  <div className="h-60">
+                    <img
+                      src={sponsor.image as string}
+                      alt={sponsor.alt || "Cursinho Parceiro"}
+                    />
+                  </div>
                 </a>
               ))}
-            </div>
-          )
-        )}
+              className="bg-white w-full"
+              pagination
+              dynamicBullets
+              breakpoints={{
+                1: { slidesPerView: 1 },
+                600: { slidesPerView: 2 },
+                1000: { slidesPerView: 3 },
+              }}
+              spaceBetween={40}
+              modules={[Pagination, Navigation]}
+            />
+          </div>
+        ) : null}
       </div>
     </div>
   );

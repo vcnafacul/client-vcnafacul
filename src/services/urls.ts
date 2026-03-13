@@ -65,6 +65,7 @@ export const historicoByPeriod = `${historico}/aggregate-by-period`;
 export const historicoByPeriodAndType = `${historico}/aggregate-by-period-and-type`;
 
 export const partnerPrepCourse = `${BASE_URL}/partner-prep-course`;
+export const partnerPrepCourseLogos = `${partnerPrepCourse}/logos`;
 
 export const prepCourse = (id: string) =>
   `${partnerPrepCourse}/${id}/has-active-inscription`;
