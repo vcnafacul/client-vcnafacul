@@ -15,6 +15,10 @@ on:
     branches: ["develop"]
     types: [submitted]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # ---------------------------------------------------------------------------
   # CI: Valida build antes de permitir aprovação do PR
