@@ -45,6 +45,7 @@ export function TabClassificacao({
   question,
   infos,
   canEdit = false,
+  onSaveSuccess,
 }: TabClassificacaoProps) {
   const {
     data: { token },
@@ -62,7 +63,7 @@ export function TabClassificacao({
     handleEdit,
     handleSave,
     handleCancel,
-  } = useClassificacaoForm({ question });
+  } = useClassificacaoForm({ question, onSaveSuccess });
 
   // Estados para gerenciamento de status
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
