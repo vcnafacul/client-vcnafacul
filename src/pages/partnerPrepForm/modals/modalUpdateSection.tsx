@@ -18,6 +18,7 @@ interface ModalUpdateSectionProps extends ModalProps {
   isOpen: boolean;
   section: SectionForm;
   onSuccess: (section: SectionForm) => void;
+  updateFn?: (token: string, id: string, name: string, description?: string) => Promise<void>;
 }
 
 export function ModalUpdateSection({
@@ -25,11 +26,13 @@ export function ModalUpdateSection({
   handleClose,
   section,
   onSuccess,
+  updateFn = updateSection,
 }: ModalUpdateSectionProps) {
   const {
     data: { token },
   } = useAuthStore();
   const [name, setName] = useState(section.name);
+  const [description, setDescription] = useState(section.description ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
@@ -56,11 +59,12 @@ export function ModalUpdateSection({
 
     setLoading(true);
     try {
-      await updateSection(token, section._id, name.trim());
+      await updateFn(token, section._id, name.trim(), description.trim() || undefined);
 
       const updatedSection: SectionForm = {
         ...section,
         name: name.trim(),
+        description: description.trim(),
       };
 
       toast.success("Seção atualizada com sucesso!");
@@ -76,7 +80,8 @@ export function ModalUpdateSection({
   };
 
   const handleCloseModal = () => {
-    setName(section.name); // Reset para valor original
+    setName(section.name);
+    setDescription(section.description ?? "");
     setError("");
     handleClose?.();
   };
@@ -92,7 +97,7 @@ export function ModalUpdateSection({
           Editar Seção
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Atualize o nome da seção
+          Atualize as informações da seção
         </Typography>
       </Box>
 
@@ -107,6 +112,20 @@ export function ModalUpdateSection({
           fullWidth
           variant="outlined"
           placeholder="Ex: Informações Pessoais"
+          disabled={loading}
+        />
+
+        {/* Descrição da Seção */}
+        <TextField
+          label="Descrição"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          fullWidth
+          variant="outlined"
+          placeholder="Ex: Preencha suas informações pessoais básicas"
+          multiline
+          minRows={2}
+          maxRows={4}
           disabled={loading}
         />
 

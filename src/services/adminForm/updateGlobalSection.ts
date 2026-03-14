@@ -1,13 +1,13 @@
-import fetchWrapper from "../../utils/fetchWrapper";
-import { section_form } from "../urls";
+import fetchWrapper from "@/utils/fetchWrapper";
+import { admin_section_form } from "../urls";
 
-export async function updateSection(
+export async function updateGlobalSection(
   token: string,
   id: string,
   name: string,
   description?: string
 ): Promise<void> {
-  const response = await fetchWrapper(`${section_form}/${id}`, {
+  const response = await fetchWrapper(`${admin_section_form}/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

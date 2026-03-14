@@ -1,17 +1,17 @@
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
-import fetchWrapper from "../../utils/fetchWrapper";
-import { section_form } from "../urls";
+import fetchWrapper from "@/utils/fetchWrapper";
+import { admin_section_form } from "../urls";
 
-export interface CreateSectionDtoInput {
+export interface CreateGlobalSectionDtoInput {
   name: string;
   description?: string;
 }
 
-export async function createSection(
-  data: CreateSectionDtoInput,
+export async function createGlobalSection(
+  data: CreateGlobalSectionDtoInput,
   token: string
 ): Promise<SectionForm> {
-  const response = await fetchWrapper(section_form, {
+  const response = await fetchWrapper(admin_section_form, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
