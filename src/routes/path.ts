@@ -35,5 +35,6 @@ export const PARTNER_CLASS = "turmas";
 export const PARTNER_CLASS_STUDENTS = "alunos";
 export const PARTNER_PREP_MANAGER = "gerenciamento-cursinho";
 export const PARTNER_CLASS_FORM = "formulario";
+export const DASH_GLOBAL_FORM = "formulario-global";
 export const REGISTRATION_MONITOR = "acompanhamento-inscricoes";
 export const ENROLLMENT_CONFIRMATION = "/confirmacao-matricula";

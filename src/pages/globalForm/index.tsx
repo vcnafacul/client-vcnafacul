@@ -1,20 +1,25 @@
 import { TableColumn } from "@/components/organisms/expandableTable";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { createGlobalQuestion } from "@/services/adminForm/createGlobalQuestion";
+import { createGlobalSection } from "@/services/adminForm/createGlobalSection";
+import { deleteGlobalQuestion } from "@/services/adminForm/deleteGlobalQuestion";
+import { deleteGlobalSection } from "@/services/adminForm/deleteGlobalSection";
+import { duplicateGlobalSection } from "@/services/adminForm/duplicateGlobalSection";
 import { getGlobalSections } from "@/services/adminForm/getGlobalSections";
-import { deleteSection } from "@/services/partnerPrepForm/deleteSection";
-import { duplicateSection } from "@/services/partnerPrepForm/duplicateSection";
-import { getSection } from "@/services/partnerPrepForm/getSections";
-import { reorderQuestions } from "@/services/partnerPrepForm/reorderQuestions";
-import { setSectionActive } from "@/services/partnerPrepForm/setSectionActive";
- import { useAuthStore } from "@/store/auth";
-import { AnswerType, QuestionForm } from "@/types/partnerPrepForm/questionForm";
+import { reorderGlobalQuestions } from "@/services/adminForm/reorderGlobalQuestions";
+import { setGlobalQuestionActive } from "@/services/adminForm/setGlobalQuestionActive";
+import { setGlobalSectionActive } from "@/services/adminForm/setGlobalSectionActive";
+import { updateGlobalQuestion } from "@/services/adminForm/updateGlobalQuestion";
+import { updateGlobalSection } from "@/services/adminForm/updateGlobalSection";
+import { useAuthStore } from "@/store/auth";
+import { QuestionForm } from "@/types/partnerPrepForm/questionForm";
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
 import {
+  Alert,
   AppBar,
   Box,
   Button,
-  Chip,
   Paper,
   Skeleton,
   Table,
@@ -24,122 +29,23 @@ import {
   TableHead,
   TableRow,
   Toolbar,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { ExpandableSection } from "./components/expandableSection";
-import { ModalConfirmDuplicateSection } from "./modals/modalConfirmDuplicateSection";
-import { ModalCreateQuestion } from "./modals/modalCreateQuestion";
-import { ModalCreateSection } from "./modals/modalCreateSection";
-import { ModalUpdateSection } from "./modals/modalUpdateSection";
+import { ExpandableSection } from "../partnerPrepForm/components/expandableSection";
+import { ModalConfirmDuplicateSection } from "../partnerPrepForm/modals/modalConfirmDuplicateSection";
+import { ModalCreateQuestion } from "../partnerPrepForm/modals/modalCreateQuestion";
+import { ModalCreateSection } from "../partnerPrepForm/modals/modalCreateSection";
+import { ModalUpdateSection } from "../partnerPrepForm/modals/modalUpdateSection";
 
 type AggregatedSection = {
   section: string;
   questions: number;
 };
 
-// Componente para badge de status
-export const StatusBadge = ({ active }: { active: boolean }) => (
-  <Chip
-    label={active ? "Ativo" : "Inativo"}
-    color={active ? "success" : "default"}
-    size="small"
-    variant={active ? "filled" : "outlined"}
-    sx={{
-      fontWeight: 500,
-      fontSize: "0.75rem",
-    }}
-  />
-);
-
-// Componente para badge de tipo de resposta
-export const AnswerTypeBadge = ({ answerType }: { answerType: AnswerType }) => {
-  const getColor = (type: AnswerType) => {
-    switch (type) {
-      case AnswerType.Text:
-        return "primary";
-      case AnswerType.Number:
-        return "secondary";
-      case AnswerType.Boolean:
-        return "warning";
-      case AnswerType.Options:
-        return "info";
-      default:
-        return "default";
-    }
-  };
-
-  const getLabel = (type: AnswerType) => {
-    switch (type) {
-      case AnswerType.Text:
-        return "Texto";
-      case AnswerType.Number:
-        return "Número";
-      case AnswerType.Boolean:
-        return "Sim/Não";
-      case AnswerType.Options:
-        return "Opções";
-      default:
-        return type;
-    }
-  };
-
-  return (
-    <Chip
-      label={getLabel(answerType)}
-      color={getColor(answerType)}
-      size="small"
-      variant="outlined"
-      sx={{
-        fontWeight: 500,
-        fontSize: "0.75rem",
-      }}
-    />
-  );
-};
-
-// Componente para badge de coleção
-export const CollectionBadge = ({ collection }: { collection: string }) => (
-  <Chip
-    label={collection === "single" ? "Única" : "Múltipla"}
-    color={collection === "single" ? "success" : "info"}
-    size="small"
-    variant="outlined"
-    sx={{
-      fontWeight: 500,
-      fontSize: "0.75rem",
-    }}
-  />
-);
-
-// Componente para texto truncado com tooltip
-export const TruncatedText = ({
-  text,
-  maxLength = 50,
-}: {
-  text: string;
-  maxLength?: number;
-}) => {
-  const truncated =
-    text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
-
-  if (text.length <= maxLength) {
-    return <span>{text}</span>;
-  }
-
-  return (
-    <Tooltip title={text} arrow placement="top">
-      <span style={{ cursor: "help", textDecoration: "underline dotted" }}>
-        {truncated}
-      </span>
-    </Tooltip>
-  );
-};
-
-export default function PartnerPrepForm() {
+export default function GlobalFormPage() {
   const {
     data: { token },
   } = useAuthStore();
@@ -159,14 +65,10 @@ export default function PartnerPrepForm() {
     "modalConfirmDuplicate",
   ]);
 
-  // ✅ OTIMIZAÇÃO: Memoizar allQuestions para evitar flatMap dentro do loop
-  // Antes: executado N vezes (uma por cada entity)
-  // Depois: executado apenas 1 vez quando entities mudar
   const allQuestions = useMemo(() => {
     return entities.flatMap((section) => section.questions);
   }, [entities]);
 
-  // ✅ OTIMIZAÇÃO: Memoizar handler para manter referência estável
   const handleSetSection = useCallback((section: SectionForm) => {
     setEntities((prev) =>
       prev.map((e) => (e._id === section._id ? section : e))
@@ -184,43 +86,16 @@ export default function PartnerPrepForm() {
 
   const handleGetSections = async () => {
     setLoading(true);
-    try {
-      const [globalRes, partnerRes] = await Promise.allSettled([
-        getGlobalSections(token),
-        getSection(token),
-      ]);
-
-      // Filtra apenas seções ativas e questões ativas (parceiro vê só o que está ativo)
-      const filterActive = (sections: SectionForm[]): SectionForm[] =>
-        sections
-          .filter((s) => s.active)
-          .map((s) => ({
-            ...s,
-            questions: s.questions.filter((q) => q.active),
-          }));
-
-      const globalSections: SectionForm[] =
-        globalRes.status === "fulfilled"
-          ? filterActive(globalRes.value.data.map((s) => ({ ...s, isGlobal: true })))
-          : [];
-      const partnerSections: SectionForm[] =
-        partnerRes.status === "fulfilled"
-          ? filterActive(partnerRes.value.data.map((s) => ({ ...s, isGlobal: false })))
-          : [];
-
-      if (globalRes.status === "rejected") {
-        toast.warning("Não foi possível carregar seções globais");
-      }
-      if (partnerRes.status === "rejected") {
-        toast.error("Erro ao carregar seções do parceiro");
-      }
-
-      setEntities([...globalSections, ...partnerSections]);
-    } catch {
-      toast.error("Erro ao buscar seções");
-    } finally {
-      setLoading(false);
-    }
+    getGlobalSections(token)
+      .then((res) => {
+        setEntities(res.data);
+      })
+      .catch((err) => {
+        toast.error(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -229,7 +104,6 @@ export default function PartnerPrepForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  // Componente de loading skeleton
   const LoadingSkeleton = () => (
     <Box sx={{ p: 2 }}>
       {[...Array(3)].map((_, index) => (
@@ -244,7 +118,6 @@ export default function PartnerPrepForm() {
     </Box>
   );
 
-  // Componente de estado vazio
   const EmptyState = () => (
     <Box
       sx={{
@@ -261,21 +134,20 @@ export default function PartnerPrepForm() {
         Nenhuma seção encontrada
       </Typography>
       <Typography variant="body2" color="text.secondary">
-        Comece criando sua primeira seção de formulário
+        Comece criando a primeira seção do formulário global
       </Typography>
     </Box>
   );
 
   const CreateQuestion = () => {
-    // ✅ OTIMIZAÇÃO: Usa allQuestions memoizado em vez de calcular aqui
     return modals.modalCreateQuestion.isOpen ? (
       <ModalCreateQuestion
         isOpen={modals.modalCreateQuestion.isOpen}
         handleClose={() => modals.modalCreateQuestion.close()}
         sectionId={sectionSelected!._id}
         availableQuestions={allQuestions}
+        createFn={createGlobalQuestion}
         onSuccess={(question: QuestionForm) => {
-          // eu preciso colocar a questão na seção correta
           const newEntities = entities.map((section) => {
             if (section._id === sectionSelected!._id) {
               return {
@@ -293,9 +165,7 @@ export default function PartnerPrepForm() {
   };
 
   const handleAddQuestion = (sectionId: string) => {
-    const section = entities.find((e) => e._id === sectionId);
-    if (!section || section.isGlobal) return;
-    setSectionSelected(section);
+    setSectionSelected(entities.find((e) => e._id === sectionId)!);
     modals.modalCreateQuestion.open();
   };
 
@@ -304,10 +174,8 @@ export default function PartnerPrepForm() {
   };
 
   const handleDeleteSection = async (sectionId: string) => {
-    const section = entities.find((e) => e._id === sectionId);
-    if (section?.isGlobal) return;
     await executeAsync({
-      action: () => deleteSection(token, sectionId),
+      action: () => deleteGlobalSection(token, sectionId),
       loadingMessage: "Excluindo seção...",
       successMessage: "Seção excluída com sucesso!",
       errorMessage: (error: Error) => `Erro ao excluir seção: ${error.message}`,
@@ -319,14 +187,14 @@ export default function PartnerPrepForm() {
 
   const handleToggleSection = async (sectionId: string) => {
     const section = entities.find((e) => e._id === sectionId);
-    if (!section || section.isGlobal) return;
+    if (!section) return;
 
     const newActiveState = !section.active;
     const action = newActiveState ? "ativando" : "desativando";
     const successMessage = newActiveState ? "ativada" : "desativada";
 
     await executeAsync({
-      action: () => setSectionActive(token, sectionId),
+      action: () => setGlobalSectionActive(token, sectionId),
       loadingMessage: `${
         action.charAt(0).toUpperCase() + action.slice(1)
       } seção...`,
@@ -346,9 +214,6 @@ export default function PartnerPrepForm() {
     sectionId: string,
     reorderedQuestions: QuestionForm[]
   ) => {
-    const section = entities.find((e) => e._id === sectionId);
-    if (section?.isGlobal) return;
-    // Atualização otimista - atualiza UI primeiro
     setEntities((prev) =>
       prev.map((section) =>
         section._id === sectionId
@@ -357,11 +222,10 @@ export default function PartnerPrepForm() {
       )
     );
 
-    // Chama API em background
     const questionIds = reorderedQuestions.map((q) => q._id);
 
     await executeAsync({
-      action: () => reorderQuestions(token, sectionId, questionIds),
+      action: () => reorderGlobalQuestions(token, sectionId, questionIds),
       loadingMessage: "Reordenando questões...",
       successMessage: "Questões reordenadas com sucesso!",
       errorMessage: "Erro ao reordenar questões",
@@ -380,7 +244,7 @@ export default function PartnerPrepForm() {
 
   const handleOpenDuplicateModal = (sectionId: string) => {
     const section = entities.find((e) => e._id === sectionId);
-    if (section && !section.isGlobal) {
+    if (section) {
       setSectionSelected(section);
       modals.modalConfirmDuplicate.open();
     }
@@ -390,13 +254,12 @@ export default function PartnerPrepForm() {
     if (!sectionSelected) return;
 
     await executeAsync({
-      action: () => duplicateSection(sectionSelected._id, token),
+      action: () => duplicateGlobalSection(sectionSelected._id, token),
       loadingMessage: "Duplicando seção...",
       successMessage: "Seção duplicada com sucesso!",
       errorMessage: "Erro ao duplicar seção",
       onSuccess: () => {
         modals.modalConfirmDuplicate.close();
-        // Recarregar todas as seções
         setLoading(true);
         handleGetSections();
       },
@@ -408,6 +271,7 @@ export default function PartnerPrepForm() {
       <ModalCreateSection
         isOpen={modals.modalCreateSection.isOpen}
         handleClose={() => modals.modalCreateSection.close()}
+        createFn={createGlobalSection}
         onSuccess={(section: SectionForm) => {
           setEntities((prev) => [...prev, section]);
           modals.modalCreateSection.close();
@@ -422,6 +286,7 @@ export default function PartnerPrepForm() {
         isOpen={modals.modalUpdateSection.isOpen}
         handleClose={() => modals.modalUpdateSection.close()}
         section={sectionSelected!}
+        updateFn={updateGlobalSection}
         onSuccess={(section: SectionForm) => {
           setEntities((prev) =>
             prev.map((e) => (e._id === section._id ? section : e))
@@ -442,16 +307,33 @@ export default function PartnerPrepForm() {
     ) : null;
   };
 
+  const PageHeader = () => (
+    <AppBar position="static" color="transparent" elevation={0}>
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Typography variant="h4" fontWeight="bold" className="text-marine">
+          Formulário Global
+        </Typography>
+        {!loading && entities.length > 0 && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleCreateSection}
+            sx={{ ml: 2 }}
+          >
+            Nova Seção
+          </Button>
+        )}
+      </Toolbar>
+    </AppBar>
+  );
+
   if (loading) {
     return (
       <>
-        <AppBar position="static" color="transparent" elevation={0}>
-          <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography variant="h4" fontWeight="bold" className="text-marine">
-              Formulários de Preparação
-            </Typography>
-          </Toolbar>
-        </AppBar>
+        <PageHeader />
+        <Alert severity="info" sx={{ mx: 2, mb: 2 }}>
+          Este formulário é incluído em todos os processos seletivos.
+        </Alert>
         <Box p={0}>
           <Typography
             variant="h6"
@@ -470,15 +352,11 @@ export default function PartnerPrepForm() {
   if (entities.length === 0) {
     return (
       <>
-        <AppBar position="static" color="transparent" elevation={0}>
-          <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography variant="h4" fontWeight="bold" className="text-marine">
-              Formulários de Preparação
-            </Typography>
-          </Toolbar>
-        </AppBar>
+        <PageHeader />
+        <Alert severity="info" sx={{ mx: 2, mb: 2 }}>
+          Este formulário é incluído em todos os processos seletivos.
+        </Alert>
         <div className="flex justify-end items-center w-full">
-          {/* criar um header para por um botão de criação de seção */}
           <Box p={0}>
             <Button
               variant="contained"
@@ -508,22 +386,11 @@ export default function PartnerPrepForm() {
 
   return (
     <>
-      {/* Header */}
-      <AppBar position="static" color="transparent" elevation={0}>
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography variant="h4" fontWeight="bold" className="text-marine">
-            Formulários de Preparação
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleCreateSection}
-            sx={{ ml: 2 }}
-          >
-            Nova Seção
-          </Button>
-        </Toolbar>
-      </AppBar>
+      <PageHeader />
+
+      <Alert severity="info" sx={{ mx: 2, mb: 2 }}>
+        Este formulário é incluído em todos os processos seletivos.
+      </Alert>
 
       <Box p={0}>
         <Box
@@ -586,8 +453,8 @@ export default function PartnerPrepForm() {
                     <ExpandableSection
                       key={entity._id}
                       section={entity}
-                      allQuestions={allQuestions} // ✅ Usa versão memoizada
-                      setSection={handleSetSection} // ✅ Usa handler memoizado
+                      allQuestions={allQuestions}
+                      setSection={handleSetSection}
                       handleAddQuestion={handleAddQuestion}
                       handleEditSection={() => {
                         setSectionSelected(entity);
@@ -597,6 +464,9 @@ export default function PartnerPrepForm() {
                       handleToggleSection={handleToggleSection}
                       handleReorderQuestions={handleReorderQuestions}
                       handleDuplicateSection={handleOpenDuplicateModal}
+                      deleteFn={deleteGlobalQuestion}
+                      toggleActiveFn={setGlobalQuestionActive}
+                      updateQuestionFn={updateGlobalQuestion}
                     />
                   ))}
                 </TableBody>

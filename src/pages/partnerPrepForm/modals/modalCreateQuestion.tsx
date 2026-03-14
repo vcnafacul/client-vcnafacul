@@ -2,7 +2,10 @@ import ModalTemplate, {
   ModalProps,
 } from "@/components/templates/modalTemplate";
 import { useModals } from "@/hooks/useModal";
-import { createQuestion } from "@/services/partnerPrepForm/createQuestion";
+import {
+  createQuestion,
+  CreateQuestionDtoInput,
+} from "@/services/partnerPrepForm/createQuestion";
 import { useAuthStore } from "@/store/auth";
 import { ComplexCondition } from "@/types/partnerPrepForm/condition";
 import {
@@ -39,6 +42,7 @@ interface ModalCreateQuestionProps extends ModalProps {
   sectionId: string;
   availableQuestions?: QuestionForm[];
   onSuccess: (question: QuestionForm) => void;
+  createFn?: (data: CreateQuestionDtoInput, token: string) => Promise<QuestionForm>;
 }
 
 interface FormData {
@@ -67,6 +71,7 @@ export function ModalCreateQuestion({
   sectionId,
   availableQuestions = [],
   onSuccess,
+  createFn = createQuestion,
 }: ModalCreateQuestionProps) {
   const {
     data: { token },
@@ -166,7 +171,7 @@ export function ModalCreateQuestion({
         active: formData.active,
       };
 
-      const newQuestion = await createQuestion(questionData, token);
+      const newQuestion = await createFn(questionData, token);
       toast.success("Questão criada com sucesso!");
       onSuccess(newQuestion);
       handleClose?.();

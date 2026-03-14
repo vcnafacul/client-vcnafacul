@@ -48,6 +48,7 @@ function ModalNewRole({
     visualizarEstudantes: false,
     gerenciarPermissoesCursinho: false,
     visualizarMinhasInscricoes: false,
+    gerenciarFormularioGlobal: false,
   });
 
   const {

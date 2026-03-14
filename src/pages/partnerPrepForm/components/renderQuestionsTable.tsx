@@ -48,6 +48,10 @@ interface RenderQuestionsTableProps {
   onDeleteQuestion: (questionId: string) => void;
   onChangeQuestion: (question: QuestionForm) => void;
   onReorderQuestions: (questions: QuestionForm[]) => void;
+  deleteFn?: (token: string, id: string) => Promise<void>;
+  toggleActiveFn?: (token: string, id: string) => Promise<void>;
+  updateQuestionFn?: (token: string, id: string, question: QuestionForm) => Promise<void>;
+  readOnly?: boolean;
 }
 
 export function RenderQuestionsTable({
@@ -56,6 +60,10 @@ export function RenderQuestionsTable({
   onDeleteQuestion,
   onChangeQuestion,
   onReorderQuestions,
+  deleteFn = deleteQuestion,
+  toggleActiveFn,
+  updateQuestionFn,
+  readOnly = false,
 }: RenderQuestionsTableProps) {
   const [questionSelected, setQuestionSelected] = useState<QuestionForm | null>(
     null
@@ -100,8 +108,9 @@ export function RenderQuestionsTable({
   };
 
   const handleDeleteQuestion = async (question: QuestionForm) => {
+    if (readOnly) return;
     await executeAsync({
-      action: () => deleteQuestion(token, question._id),
+      action: () => deleteFn(token, question._id),
       loadingMessage: "Excluindo questão...",
       successMessage: "Questão excluída com sucesso!",
       errorMessage: "Erro ao excluir questão",
@@ -129,6 +138,9 @@ export function RenderQuestionsTable({
           onChangeQuestion(question);
           setQuestionSelected(question);
         }}
+        toggleActiveFn={toggleActiveFn}
+        updateFn={updateQuestionFn}
+        readOnly={readOnly}
       />
     ) : null;
   };
@@ -263,7 +275,7 @@ export function RenderQuestionsTable({
                     key={question._id}
                     question={question}
                     onView={() => handleViewQuestion(question)}
-                    onDelete={() => handleDeleteQuestion(question)}
+                    onDelete={readOnly ? undefined : () => handleDeleteQuestion(question)}
                   />
                 ))}
               </SortableContext>
