@@ -198,11 +198,11 @@ export function TabClassificacao({
   };
 
   const downloadFile = async (filename: string, fileType: string) => {
-    const id = toast.loading(`Baixando prova...`);
+    const id = toast.loading(`Baixando ${fileType}...`);
+
     try {
       const blob = await getProvaFile(filename, token);
 
-      // Criar URL do blob e fazer download
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -211,14 +211,31 @@ export function TabClassificacao({
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      toast.dismiss(id);
+
+      toast.update(id, {
+        render: `Download d${fileType == "prova" ? "a" : "o"} ${fileType} concluído com sucesso!`,
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+        closeOnClick: true,
+      });
     } catch (error) {
-      toast.error(`Erro ao baixar o ${fileType}`);
+      toast.update(id, {
+        render: `Erro ao baixar o ${fileType}`,
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+        closeOnClick: true,
+      });
     }
   };
 
   const handleDownloadProva = () => {
     downloadFile(provaSelecionada?.filename || "", "prova");
+  };
+
+  const handleDownloadGabarito = () => {
+    downloadFile(provaSelecionada?.gabarito || "", "gabarito");
   };
 
   const statusDisplay = getStatusDisplay();
@@ -739,6 +756,24 @@ export function TabClassificacao({
                 >
                   <span className="text-blue-600 font-medium">
                     🔗 Visualizar Prova
+                  </span>
+                </Button>
+              </div>
+            )}
+
+            {/* Link do Gabarito */}
+            {provaSelecionada && provaSelecionada.gabarito && (
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-600">
+                  Link do Gabarito
+                </label>
+                <Button
+                  onClick={handleDownloadGabarito}
+                  rel="noopener noreferrer"
+                  className="flex items-center w-full h-12 gap-2 p-3 bg-blue-50 rounded-md border border-blue-200 hover:bg-blue-100 transition-colors"
+                >
+                  <span className="text-blue-600 font-medium">
+                    🔗 Visualizar Gabarito
                   </span>
                 </Button>
               </div>

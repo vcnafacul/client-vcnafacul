@@ -47,11 +47,14 @@ import { BiSolidSchool } from "react-icons/bi";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { PiStudentFill, PiUsersFourBold } from "react-icons/pi";
 
-import { FaClipboardList } from "react-icons/fa";
+import { FaBook, FaClipboardList } from "react-icons/fa";
 import { FaWpforms } from "react-icons/fa6";
+import { getIconPreset } from "../../config/materiaPresets";
 import { DashCardMenu } from "../../components/molecules/dashCard";
+import { SubDashCardInfo } from "../../components/molecules/subDashCard";
 import { HeaderData } from "../../components/organisms/header";
 import { Roles } from "../../enums/roles/roles";
+import { AreaWithMaterias } from "../../services/content/getMateriasGroupedByArea";
 import { header } from "../home/data";
 
 export const headerDash: HeaderData = {
@@ -76,7 +79,8 @@ export const headerDash: HeaderData = {
   ],
 };
 
-export const dashCardMenuItems: DashCardMenu[] = [
+// Cards administrativos (estáticos)
+export const adminMenuItems: DashCardMenu[] = [
   {
     id: 6,
     bg: "bg-red",
@@ -193,7 +197,97 @@ export const dashCardMenuItems: DashCardMenu[] = [
       },
     ],
   },
+];
 
+export const studentMenuItem: DashCardMenu = {
+  id: 7,
+  bg: "bg-red",
+  title: "Cursinho",
+  image: IoSchool,
+  alt: "Cursinho",
+  subMenuList: [
+    {
+      icon: FaClipboardList,
+      alt: "processos seletivos",
+      text: "Inscrições",
+      link: `/dashboard/${REGISTRATION_MONITOR}`,
+      permissions: [Roles.visualizarMinhasInscricoes],
+    },
+  ],
+};
+
+// Mapeamento de área do ENEM → configuração visual
+const areaConfig: Record<
+  string,
+  {
+    id: number;
+    bg: string;
+    image: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
+    title: string;
+  }
+> = {
+  Linguagens: { id: 1, bg: "bg-marine", image: LinguagensImg, title: "Linguagens" },
+  "Ciências da Natureza": { id: 2, bg: "bg-pink", image: NaturezaImg, title: "Natureza" },
+  "Ciências Humanas": { id: 3, bg: "bg-lightGreen", image: HumanasImg, title: "Humanas" },
+  Matemática: { id: 4, bg: "bg-orange", image: MatematicaImg, title: "Matemática" },
+};
+
+// Mapeamento de nome da matéria → ícone e slug para rota
+const materiaConfig: Record<
+  string,
+  {
+    icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
+    slug: string;
+  }
+> = {
+  "Língua Portuguesa": { icon: Gramatica, slug: "LinguaPortuguesa" },
+  "Língua Estrangeira": { icon: Ingles, slug: "LinguaEstrangeira" },
+  Artes: { icon: Artes, slug: "Artes" },
+  Biologia: { icon: Biologia, slug: "Biologia" },
+  Física: { icon: Fisica, slug: "Fisica" },
+  Química: { icon: Quimica, slug: "Quimica" },
+  Matemática: { icon: Matematica, slug: "Matematica" },
+  História: { icon: Historia, slug: "Historia" },
+  Geografia: { icon: Geografia, slug: "Geografia" },
+  Filosofia: { icon: Filosofia, slug: "Filosofia" },
+  Sociologia: { icon: Sociologia, slug: "Sociologia" },
+  Atualidades: { icon: Atualidades, slug: "Atualidades" },
+};
+
+export function buildAcademicMenuItems(
+  areas: AreaWithMaterias[],
+): DashCardMenu[] {
+  return areas
+    .map((area) => {
+      const config = areaConfig[area.enemArea];
+      if (!config) return null;
+
+      const subMenuList: SubDashCardInfo[] = area.materias.map((materia) => {
+        const icon = materia.icon
+          ? getIconPreset(materia.icon)
+          : (materiaConfig[materia.nome]?.icon ?? FaBook);
+        return {
+          icon,
+          alt: materia.nome.toLowerCase(),
+          text: materia.nome,
+          link: `${ESTUDO}/${materia._id}`,
+        };
+      });
+
+      return {
+        id: config.id,
+        bg: config.bg,
+        title: config.title,
+        image: config.image,
+        alt: config.title,
+        subMenuList,
+      };
+    })
+    .filter((item): item is DashCardMenu => item !== null);
+}
+
+// Fallback hardcoded para quando a API não estiver disponível
+export const fallbackAcademicMenuItems: DashCardMenu[] = [
   {
     id: 1,
     bg: "bg-marine",
@@ -201,24 +295,9 @@ export const dashCardMenuItems: DashCardMenu[] = [
     image: LinguagensImg,
     alt: "Linguagens",
     subMenuList: [
-      {
-        icon: Gramatica,
-        alt: "língua portuguesa",
-        text: "Língua Portuguesa",
-        link: `${ESTUDO}/LinguaPortuguesa`,
-      },
-      {
-        icon: Ingles,
-        alt: "língua estrangeira",
-        text: "Língua Estrangeira",
-        link: `${ESTUDO}/LinguaEstrangeira`,
-      },
-      {
-        icon: Artes,
-        alt: "artes",
-        text: "Artes",
-        link: `${ESTUDO}/Artes`,
-      },
+      { icon: Gramatica, alt: "língua portuguesa", text: "Língua Portuguesa", link: `${ESTUDO}/LinguaPortuguesa` },
+      { icon: Ingles, alt: "língua estrangeira", text: "Língua Estrangeira", link: `${ESTUDO}/LinguaEstrangeira` },
+      { icon: Artes, alt: "artes", text: "Artes", link: `${ESTUDO}/Artes` },
     ],
   },
   {
@@ -228,24 +307,9 @@ export const dashCardMenuItems: DashCardMenu[] = [
     image: NaturezaImg,
     alt: "Natureza",
     subMenuList: [
-      {
-        icon: Biologia,
-        alt: "molécula de DNA",
-        text: "Biologia",
-        link: `${ESTUDO}/Biologia`,
-      },
-      {
-        icon: Fisica,
-        alt: "risco biológico",
-        text: "Física",
-        link: `${ESTUDO}/Fisica`,
-      },
-      {
-        icon: Quimica,
-        alt: "quimica",
-        text: "Quimica",
-        link: `${ESTUDO}/Quimica`,
-      },
+      { icon: Biologia, alt: "molécula de DNA", text: "Biologia", link: `${ESTUDO}/Biologia` },
+      { icon: Fisica, alt: "risco biológico", text: "Física", link: `${ESTUDO}/Fisica` },
+      { icon: Quimica, alt: "quimica", text: "Quimica", link: `${ESTUDO}/Quimica` },
     ],
   },
   {
@@ -255,36 +319,11 @@ export const dashCardMenuItems: DashCardMenu[] = [
     image: HumanasImg,
     alt: "Humanas",
     subMenuList: [
-      {
-        icon: Historia,
-        alt: "História",
-        text: "História",
-        link: `${ESTUDO}/Historia`,
-      },
-      {
-        icon: Geografia,
-        alt: "Geografia",
-        text: "Geografia",
-        link: `${ESTUDO}/Geografia`,
-      },
-      {
-        icon: Filosofia,
-        alt: "Filosofia",
-        text: "Filosofia",
-        link: `${ESTUDO}/Filosofia`,
-      },
-      {
-        icon: Sociologia,
-        alt: "Sociologia",
-        text: "Sociologia",
-        link: `${ESTUDO}/Sociologia`,
-      },
-      {
-        icon: Atualidades,
-        alt: "atualidades",
-        text: "Atualidades",
-        link: `${ESTUDO}/Atualidades`,
-      },
+      { icon: Historia, alt: "História", text: "História", link: `${ESTUDO}/Historia` },
+      { icon: Geografia, alt: "Geografia", text: "Geografia", link: `${ESTUDO}/Geografia` },
+      { icon: Filosofia, alt: "Filosofia", text: "Filosofia", link: `${ESTUDO}/Filosofia` },
+      { icon: Sociologia, alt: "Sociologia", text: "Sociologia", link: `${ESTUDO}/Sociologia` },
+      { icon: Atualidades, alt: "atualidades", text: "Atualidades", link: `${ESTUDO}/Atualidades` },
     ],
   },
   {
@@ -294,28 +333,7 @@ export const dashCardMenuItems: DashCardMenu[] = [
     image: MatematicaImg,
     alt: "Matemática",
     subMenuList: [
-      {
-        icon: Matematica,
-        alt: "calculadora",
-        text: "Matemática",
-        link: `${ESTUDO}/Matematica`,
-      },
-    ],
-  },
-  {
-    id: 7,
-    bg: "bg-red",
-    title: "Cursinho",
-    image: IoSchool,
-    alt: "Cursinho",
-    subMenuList: [
-      {
-        icon: FaClipboardList,
-        alt: "processos seletivos",
-        text: "Inscrições",
-        link: `/dashboard/${REGISTRATION_MONITOR}`,
-        permissions: [Roles.visualizarMinhasInscricoes],
-      },
+      { icon: Matematica, alt: "calculadora", text: "Matemática", link: `${ESTUDO}/Matematica` },
     ],
   },
 ];

@@ -22,6 +22,14 @@ export const cardTransformationContent = (
       field: "Cadastrado em ",
       value: content.createdAt ? formatDate(content.createdAt.toString()) : "",
     },
+    ...(content.lastEditedAt
+      ? [
+          {
+            field: "Ultima edicao",
+            value: formatDate(content.lastEditedAt.toString()),
+          },
+        ]
+      : []),
   ],
 });
 

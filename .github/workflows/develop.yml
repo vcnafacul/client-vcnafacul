@@ -15,6 +15,10 @@ on:
     branches: ["develop"]
     types: [submitted]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # ---------------------------------------------------------------------------
   # CI: Valida build antes de permitir aprovação do PR
@@ -24,13 +28,14 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VITE_VCNAFACUL_ID: ${{ secrets.VITE_VCNAFACUL_ID }}
+      VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
 
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
-          cache: 'yarn'
+          node-version: "lts/*"
+          cache: "yarn"
       - name: Install depends
         run: yarn install --frozen-lockfile
       - name: Build app vCnafacul
@@ -44,18 +49,22 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VITE_VCNAFACUL_ID: ${{ secrets.VITE_VCNAFACUL_ID }}
+      VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
 
     steps:
+      # Checkout develop (estado após o merge) para que homologação reflita sempre a branch develop.
+      # Antes: ref head.sha → deployava só o commit do PR; outro merge podia “sobrescrever” e sumir coisas.
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: develop
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
-          cache: 'yarn'
+          node-version: "lts/*"
+          cache: "yarn"
 
       - name: Install dependencies
         run: |

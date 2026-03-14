@@ -203,8 +203,7 @@ export function PanelSubject({
         isOpen={modals.orderEdit.isOpen}
         handleClose={() => modals.orderEdit.close()}
         contents={subjectSelected!.contents}
-        listId={subjectSelected!._id || subjectSelected!.id}
-        updateOrder={(body: ChangeOrderDTO) => changeOrderDemand(token, body)}
+        updateOrder={(dto: ChangeOrderDTO) => changeOrderDemand(token, dto)}
       />
     );
   };

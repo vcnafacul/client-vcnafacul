@@ -1,12 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { getImagePreset } from "../../config/materiaPresets";
 import { CONTENT } from "../../routes/path";
 import { getFrentesWithContent } from "../../services/content/getFrentes";
-import { getMaterias } from "../../services/content/getMaterias";
+import { getMaterias, MateriaDto } from "../../services/content/getMaterias";
 import { useAuthStore } from "../../store/auth";
 import { Frente } from "../../types/content/frenteContent";
 import { dataMateria } from "./data";
+
+// ObjectId do MongoDB: 24 caracteres hexadecimais
+function isObjectId(value: string): boolean {
+  return /^[a-f\d]{24}$/i.test(value);
+}
 
 function Materia() {
   const { nomeMateria } = useParams();
@@ -17,11 +23,75 @@ function Materia() {
 
   const [frentes, setFrentes] = useState<Frente[]>([]);
   const [frenteSelected, setFrenteSelected] = useState<Frente>();
+  const [materiaInfo, setMateriaInfo] = useState<{
+    nome: string;
+    image?: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
+  } | null>(null);
 
-  const materiaPageInfo = nomeMateria ? dataMateria[nomeMateria] : undefined;
-  const Icon = materiaPageInfo?.image;
+  useEffect(() => {
+    if (!nomeMateria) return;
 
-  const tituloMateria = materiaPageInfo?.label || "";
+    if (isObjectId(nomeMateria)) {
+      // Rota por ID: busca frentes direto pelo ID e resolve nome via getMaterias
+      getMaterias(token)
+        .then((materias) => {
+          const materia = materias.find((m) => m._id === nomeMateria);
+          if (materia) {
+            const imageFromDb = getImagePreset(materia.image);
+            const pageInfo = dataMateria[materia.nome];
+            setMateriaInfo({
+              nome: materia.nome,
+              image: imageFromDb ?? pageInfo?.image,
+            });
+          }
+          return getFrentesWithContent(nomeMateria, token);
+        })
+        .then((res) => {
+          if (!res) {
+            setFrentes([]);
+            setFrenteSelected(undefined);
+            return;
+          }
+          setFrentes(res);
+          setFrenteSelected(res.length > 0 ? res[0] : undefined);
+        })
+        .catch((error: Error) => {
+          toast.error(error.message);
+        });
+    } else {
+      // Rota por slug (fallback): resolve via mapeamento estático
+      const pageInfo = dataMateria[nomeMateria];
+      const tituloMateria = pageInfo?.label || "";
+      setMateriaInfo({
+        nome: tituloMateria,
+        image: pageInfo?.image,
+      });
+
+      getMaterias(token)
+        .then((materias) => {
+          const materia = materias.find((m: MateriaDto) => m.nome === tituloMateria);
+          if (!materia) {
+            toast.error(`Matéria "${tituloMateria}" não encontrada`);
+            return;
+          }
+          return getFrentesWithContent(materia._id, token);
+        })
+        .then((res) => {
+          if (!res) {
+            setFrentes([]);
+            setFrenteSelected(undefined);
+            return;
+          }
+          setFrentes(res);
+          setFrenteSelected(res.length > 0 ? res[0] : undefined);
+        })
+        .catch((error: Error) => {
+          toast.error(error.message);
+        });
+    }
+  }, [nomeMateria, token]);
+
+  const Icon = materiaInfo?.image;
 
   const getFrenteCards = useCallback(() => {
     if (frentes.length === 0) return null;
@@ -99,34 +169,6 @@ function Materia() {
     );
   }, [frenteSelected]);
 
-  useEffect(() => {
-    getMaterias(token)
-      .then((materias) => {
-        const materia = materias.find((m) => m.nome === tituloMateria);
-        if (!materia) {
-          toast.error(`Matéria "${tituloMateria}" não encontrada`);
-          return;
-        }
-        return getFrentesWithContent(materia._id, token);
-      })
-      .then((res) => {
-        if (!res) {
-          setFrentes([]);
-          setFrenteSelected(undefined);
-          return;
-        }
-        setFrentes(res);
-        if (res.length > 0) {
-          setFrenteSelected(res[0]);
-        } else {
-          setFrenteSelected(undefined);
-        }
-      })
-      .catch((error: Error) => {
-        toast.error(error.message);
-      });
-  }, [tituloMateria, nomeMateria, token]);
-
   return (
     <div className="min-h-screen bg-gray-10 py-10 px-4">
       <div className="container mx-auto">
@@ -134,7 +176,7 @@ function Materia() {
       <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-8">
         <div className="text-center md:text-left">
           <h1 className="text-3xl font-bold text-blue-900 mb-2">
-            Explore o mundo da {tituloMateria}
+            Explore o mundo da {materiaInfo?.nome || ""}
           </h1>
           <p className="text-gray-500 text-base">
             Escolha uma frente e um tema para começar seus estudos 🚀

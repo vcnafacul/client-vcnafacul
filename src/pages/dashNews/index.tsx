@@ -12,6 +12,7 @@ import { StatusEnum } from "../../enums/generic/statusEnum";
 import { createNews } from "../../services/news/createNews";
 import { deleteNews } from "../../services/news/deleteNews";
 import { getAllNews } from "../../services/news/getAllNews";
+import { updateNews } from "../../services/news/updateNews";
 import { useAuthStore } from "../../store/auth";
 import { formatDate } from "../../utils/date";
 import { getStatusBool } from "../../utils/getStatusIcon";
@@ -53,20 +54,38 @@ function DashNews() {
     modals.modalEdit.open();
   };
 
-  const create = (session: string, title: string, file: any) => {
+  const create = (session: string, title: string, file: any, expireAt?: string) => {
     const formData = new FormData();
     formData.append("session", session);
     formData.append("title", title);
     formData.append("file", file, title + ".docx");
+    if (expireAt) formData.append("expire_at", expireAt);
 
     createNews(formData, token)
       .then((res) => {
-        news.push(res);
-        setNews(news);
+        setNews([res, ...news]);
         modals.modalEdit.close();
-        toast.success(`Novidade ${res.title} criado com sucesso`, {
+        toast.success(`Novidade ${res.title} criada com sucesso`, {
           theme: "dark",
         });
+      })
+      .catch((error: Error) => {
+        toast.error(error.message, { theme: "dark" });
+      });
+  };
+
+  const update = (id: string, session: string, title: string, expireAt?: string) => {
+    const payload: { session: string; title: string; expire_at?: string | null } = {
+      session,
+      title,
+    };
+    if (expireAt !== undefined) payload.expire_at = expireAt || null;
+
+    updateNews(id, payload, token)
+      .then((res) => {
+        setNews(news.map((n) => (n.id === id ? res : n)));
+        modals.modalEdit.close();
+        toast.success("Novidade atualizada com sucesso", { theme: "dark" });
       })
       .catch((error: Error) => {
         toast.error(error.message, { theme: "dark" });
@@ -118,8 +137,9 @@ function DashNews() {
         handleClose={() => {
           modals.modalEdit.close();
         }}
-        news={newSelect!}
+        news={newSelect ?? null}
         create={create}
+        update={update}
         deleteFunc={deleteNew}
       />
     );

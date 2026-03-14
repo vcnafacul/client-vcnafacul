@@ -6,6 +6,8 @@ export interface MateriaDto {
   _id: string;
   nome: string;
   enemArea: string;
+  icon?: string;
+  image?: string;
   frentes: FrenteDto[];
 }
 

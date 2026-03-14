@@ -1,25 +1,29 @@
 import { useEffect, useState } from "react";
-import fetchWrapper from "@/utils/fetchWrapper";
 import DocxPreview from "@/components/atoms/docxPreview";
+import { getNewsFile } from "@/services/news/getNewsFile";
 
 interface NewContentProps {
-  fileName: string;
+  /** Chave do arquivo no S3 (ex.: news/uuid.docx) */
+  fileKey: string;
 }
 
-export default function NewContent({ fileName }: NewContentProps) {
+export default function NewContent({ fileKey }: NewContentProps) {
   const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!fileName) return;
+    if (!fileKey) return;
 
     const loadDoc = async () => {
       setIsLoading(true);
+      setError(null);
       try {
-        const response = await fetchWrapper(fileName);
-        const buffer = await response.arrayBuffer();
+        const buffer = await getNewsFile(fileKey);
         setArrayBuffer(buffer);
       } catch (err) {
+        const message = err instanceof Error ? err.message : "Falha ao carregar o arquivo";
+        setError(message);
         console.error("[ERRO] Falha ao carregar o arquivo DOCX:", err);
       } finally {
         setIsLoading(false);
@@ -27,10 +31,18 @@ export default function NewContent({ fileName }: NewContentProps) {
     };
 
     loadDoc();
-  }, [fileName]);
+  }, [fileKey]);
 
-  if (!fileName) {
+  if (!fileKey) {
     return <p className="text-center text-gray-400">Nenhum arquivo selecionado.</p>;
+  }
+
+  if (error) {
+    return (
+      <p className="text-center text-red-500 py-4">
+        {error}
+      </p>
+    );
   }
 
   if (isLoading || !arrayBuffer) {
@@ -44,6 +56,6 @@ export default function NewContent({ fileName }: NewContentProps) {
   }
 
   return (
-    <DocxPreview key={fileName} arrayBuffer={arrayBuffer} />
+    <DocxPreview key={fileKey} arrayBuffer={arrayBuffer} />
   );
 }

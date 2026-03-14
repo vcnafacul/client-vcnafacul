@@ -35,6 +35,7 @@ export const useHomeStore = create<HomeState>()(
     {
       name: "cms",
       storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ markers: state.markers }),
     }
   )
 );

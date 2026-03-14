@@ -5,4 +5,6 @@ export interface News {
     fileName: string;
     createdAt: Date;
     actived: boolean;
+    /** Data de expiração (YYYY-MM-DD); null = sem expiração */
+    expireAt?: string | null;
 }

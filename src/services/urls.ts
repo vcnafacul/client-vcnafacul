@@ -24,6 +24,9 @@ export const validatedgeolocation = `${BASE_URL}/validatedgeolocation`;
 export const allGeolocation = `${geolocations}`;
 export const geo_summary_status = `${geolocations}/summary-status`;
 
+export const places = `${BASE_URL}/places`;
+export const placesDetails = `${places}/details`;
+
 export const news = `${BASE_URL}/news`;
 export const newsAll = `${BASE_URL}/news/all`;
 
@@ -62,6 +65,7 @@ export const historicoByPeriod = `${historico}/aggregate-by-period`;
 export const historicoByPeriodAndType = `${historico}/aggregate-by-period-and-type`;
 
 export const partnerPrepCourse = `${BASE_URL}/partner-prep-course`;
+export const partnerPrepCourseLogos = `${partnerPrepCourse}/logos`;
 
 export const prepCourse = (id: string) =>
   `${partnerPrepCourse}/${id}/has-active-inscription`;
@@ -103,5 +107,7 @@ export const studentAttendance = `${BASE_URL}/student-attendance`;
 
 export const section_form = `${BASE_URL}/section-form`;
 export const question_form = `${BASE_URL}/question-form`;
+export const rule_form = `${BASE_URL}/rule-form`;
+export const rule_set_form = `${BASE_URL}/rule-set-form`;
 
 export const coursePeriod = `${BASE_URL}/course-period`;

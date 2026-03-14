@@ -17,53 +17,24 @@ export interface MateriaPage {
 
 export type DataMateriaProps = Record<string, MateriaPage>;
 
+// Indexado por slug (usado no fallback) e por nome da matéria (para resolver pelo nome da API)
 export const dataMateria: DataMateriaProps = {
-  LinguaPortuguesa: {
-    image: LPT,
-    label: "Língua Portuguesa",
-  },
-  LinguaEstrangeira: {
-    image: Grammar,
-    label: "Língua Estrangeira",
-  },
-  Artes: {
-    image: Literature,
-    label: "Artes",
-  },
-  Biologia: {
-    image: Biology,
-    label: "Biologia",
-  },
-  Fisica: {
-    image: Astronaut,
-    label: "Física",
-  },
-  Quimica: {
-    image: Science,
-    label: "Quimica",
-  },
-  Matematica: {
-    image: Math,
-    label: "Matemática",
-  },
-  Historia: {
-    image: History,
-    label: "História",
-  },
-  Geografia: {
-    image: Geo,
-    label: "Geografia",
-  },
-  Filosofia: {
-    image: Thoughts,
-    label: "Filosofia",
-  },
-  Sociologia: {
-    image: TakingEarth,
-    label: "Sociologia",
-  },
-  Atualidades: {
-    image: TakingEarth,
-    label: "Atualidades",
-  },
+  LinguaPortuguesa: { image: LPT, label: "Língua Portuguesa" },
+  "Língua Portuguesa": { image: LPT, label: "Língua Portuguesa" },
+  LinguaEstrangeira: { image: Grammar, label: "Língua Estrangeira" },
+  "Língua Estrangeira": { image: Grammar, label: "Língua Estrangeira" },
+  Artes: { image: Literature, label: "Artes" },
+  Biologia: { image: Biology, label: "Biologia" },
+  Fisica: { image: Astronaut, label: "Física" },
+  Física: { image: Astronaut, label: "Física" },
+  Quimica: { image: Science, label: "Quimica" },
+  Química: { image: Science, label: "Química" },
+  Matematica: { image: Math, label: "Matemática" },
+  Matemática: { image: Math, label: "Matemática" },
+  Historia: { image: History, label: "História" },
+  História: { image: History, label: "História" },
+  Geografia: { image: Geo, label: "Geografia" },
+  Filosofia: { image: Thoughts, label: "Filosofia" },
+  Sociologia: { image: TakingEarth, label: "Sociologia" },
+  Atualidades: { image: TakingEarth, label: "Atualidades" },
 };
