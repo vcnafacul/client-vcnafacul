@@ -43,6 +43,7 @@ export const content = `${BASE_URL}/content`;
 export const demand = `${content}/demand`;
 export const content_stats_by_frente = `${content}/stats-by-frente`;
 export const content_snapshot_status = `${content}/snapshot-content-status`;
+export const content_summary = `${content}/summary`;
 
 export const mssimulado = `${BASE_URL}/mssimulado`;
 
@@ -63,6 +64,7 @@ export const question_summary = `${mssimulado}/questoes/summary`;
 export const prova_summary = `${mssimulado}/prova/summary`;
 export const historicoByPeriod = `${historico}/aggregate-by-period`;
 export const historicoByPeriodAndType = `${historico}/aggregate-by-period-and-type`;
+export const historico_summary = `${historico}/summary`;
 
 export const partnerPrepCourse = `${BASE_URL}/partner-prep-course`;
 export const partnerPrepCourseLogos = `${partnerPrepCourse}/logos`;

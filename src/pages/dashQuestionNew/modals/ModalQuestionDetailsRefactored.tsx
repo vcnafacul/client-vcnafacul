@@ -38,6 +38,32 @@ export function ModalQuestionDetailsRefactored({
   const canEdit =
     permissao[Roles.validarQuestao] || permissao[Roles.criarQuestao];
 
+  const fetchQuestion = async (id: string) => {
+    setIsLoading(true);
+    setError(null);
+
+    await executeAsync({
+      action: () => getQuestionById(token, id),
+      loadingMessage: "Carregando questão...",
+      errorMessage: "Erro ao carregar questão",
+      onError: (err) => {
+        setError(err.message || "Erro ao carregar questão");
+      },
+      onSuccess: (questionData) => {
+        setQuestion(questionData);
+      },
+      onFinally: () => {
+        setIsLoading(false);
+      },
+    });
+  };
+
+  const refreshQuestion = () => {
+    if (questionId) {
+      fetchQuestion(questionId);
+    }
+  };
+
   useEffect(() => {
     if (!isOpen || !questionId) {
       setQuestion(null);
@@ -45,28 +71,7 @@ export function ModalQuestionDetailsRefactored({
       return;
     }
 
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      // Buscar questão e informações dos dropdowns em paralelo
-      await executeAsync({
-        action: () => getQuestionById(token, questionId),
-        loadingMessage: "Carregando questão...",
-        errorMessage: "Erro ao carregar questão",
-        onError: (err) => {
-          setError(err.message || "Erro ao carregar questão");
-        },
-        onSuccess: (questionData) => {
-          setQuestion(questionData);
-        },
-        onFinally: () => {
-          setIsLoading(false);
-        },
-      });
-    };
-
-    fetchData();
+    fetchQuestion(questionId);
   }, [isOpen, questionId, token]);
 
   if (!questionId) return null;
@@ -142,6 +147,7 @@ export function ModalQuestionDetailsRefactored({
               question={question}
               canEdit={canEdit}
               infos={infos}
+              onSaveSuccess={refreshQuestion}
             />
           ),
           handleClose: onClose,

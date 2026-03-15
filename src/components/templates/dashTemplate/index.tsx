@@ -21,17 +21,17 @@ function DashTemplateContent({ hasMenu }: { hasMenu?: boolean }) {
     <div
       className={`relative top-[76px] h-[calc(100vh-76px)] w-full flex flex-row`}
     >
-      <div className={`md:mr-0 w-full overflow-y-scroll scrollbar-hide flex-1 pr-2 pt-6`}>
+      <div className={`xl:mr-0 w-full overflow-y-scroll scrollbar-hide flex-1 pr-2 pt-6`}>
         <Outlet />
       </div>
       <div
-        className={`z-20 h-[calc(100vh-76px)] absolute md:relative md:right-0 transition-all duration-200`}
+        className={`z-20 h-[calc(100vh-76px)] absolute xl:relative xl:right-0 transition-all duration-200`}
       >
         {hasMenu ? <SidebarDash /> : <></>}
       </div>
       <SidebarTrigger
         className={`fixed z-30 top-24 transition-all duration-200 ${
-          open ? "right-[0.5rem] md:right-[16rem]" : "right-4"
+          open ? "right-[0.5rem] xl:right-[16rem]" : "right-4"
         }`}
       />
     </div>
