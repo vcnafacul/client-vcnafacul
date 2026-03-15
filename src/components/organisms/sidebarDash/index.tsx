@@ -8,6 +8,7 @@ import {
   SidebarHeader,
   SidebarMenu,
 } from "@/components/ui/sidebar";
+import { useFetch } from "@/hooks/useFetch";
 import {
   adminMenuItems,
   buildAcademicMenuItems,
@@ -18,18 +19,16 @@ import {
   AreaWithMaterias,
   getMateriasGroupedByArea,
 } from "@/services/content/getMateriasGroupedByArea";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { DashCardMenu } from "../../molecules/dashCard";
 
 export function SidebarDash() {
   const [opened, setOpened] = useState<number>(0);
-  const [areas, setAreas] = useState<AreaWithMaterias[] | null>(null);
 
-  useEffect(() => {
-    getMateriasGroupedByArea()
-      .then(setAreas)
-      .catch(() => setAreas(null));
-  }, []);
+  const { data: areas } = useFetch<AreaWithMaterias[]>(
+    (signal) => getMateriasGroupedByArea(signal),
+    [],
+  );
 
   const academicItems = useMemo<DashCardMenu[]>(() => {
     if (!areas) return fallbackAcademicMenuItems;
