@@ -1,6 +1,18 @@
 import { Box, Typography } from "@mui/material";
 import { LineChart } from "@mui/x-charts";
 
+const DEFAULT_COLORS = [
+  "#02B2AF",
+  "#2E96FF",
+  "#B800D8",
+  "#60009B",
+  "#2731C8",
+  "#03008D",
+  "#F43535",
+  "#FF7600",
+  "#0F9B2C",
+];
+
 interface LineSeries {
   label: string;
   data: number[];
@@ -23,19 +35,19 @@ export default function LineChartMui({
   height = 400,
 }: LineChartMuiProps) {
   return (
-    <Box sx={{ width, height, display: "flex", flexDirection: "column" }}>
+    <Box sx={{ width, display: "flex", flexDirection: "column" }}>
       {title && (
         <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
           {title}
         </Typography>
       )}
-      <Box sx={{ flex: 1, minHeight: 0 }}>
+      <Box sx={{ height, minHeight: 0 }}>
         <LineChart
           xAxis={[{ data: xAxis, scaleType: "band", label: "Período" }]}
           margin={{
-            left: 80, // Increase this value as needed
+            left: 80,
             right: 40,
-            top: 60,
+            top: 20,
             bottom: 40,
           }}
           yAxis={[
@@ -55,10 +67,27 @@ export default function LineChartMui({
           height={undefined}
           grid={{ horizontal: true }}
           slotProps={{
-            legend: { position: { vertical: "top", horizontal: "right" } },
+            legend: { hidden: true },
           }}
         />
       </Box>
+      {/* Custom legend outside the SVG */}
+      {series.length > 0 && (
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-1">
+          {series.map((s, i) => (
+            <div key={s.label} className="flex items-center gap-1.5">
+              <span
+                className="inline-block w-3 h-3 rounded-sm shrink-0"
+                style={{
+                  backgroundColor:
+                    s.color || DEFAULT_COLORS[i % DEFAULT_COLORS.length],
+                }}
+              />
+              <span className="text-xs text-grey">{s.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </Box>
   );
 }
