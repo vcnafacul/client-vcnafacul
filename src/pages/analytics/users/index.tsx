@@ -9,9 +9,19 @@ import { Period } from "@/enums/analytics/period";
 import { aggregateUserByLastAccess } from "@/services/analytics/user/aggregateLUserByLastAccess";
 import { aggregateUserByPeriod } from "@/services/analytics/user/aggregateUserByPeriod";
 import { aggregateUserByRole } from "@/services/analytics/user/aggregateUserByRole";
+import {
+  getPartnerPrepCourseLogos,
+  PartnerPrepCourseLogo,
+} from "@/services/prepCourse/partnerLogos";
 import { useAuthStore } from "@/store/auth";
 import { exportAnalyticsCsv } from "@/utils/exportAnalyticsCsv";
-import { Button } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -37,6 +47,16 @@ function AnalyticsUsers({ period }: { period: Period }) {
       xAxis: [],
       series: [],
     });
+
+  const [partners, setPartners] = useState<PartnerPrepCourseLogo[]>([]);
+  const [partnerId, setPartnerId] = useState("");
+  const [baseOnly, setBaseOnly] = useState(false);
+
+  useEffect(() => {
+    getPartnerPrepCourseLogos()
+      .then(setPartners)
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -68,7 +88,11 @@ function AnalyticsUsers({ period }: { period: Period }) {
   }, [period, token]);
 
   useEffect(() => {
-    aggregateUserByRole(token)
+    aggregateUserByRole(
+      token,
+      partnerId || undefined,
+      baseOnly || undefined
+    )
       .then((res) => {
         setDataUserRole({
           data: res.map((r) => ({
@@ -79,7 +103,7 @@ function AnalyticsUsers({ period }: { period: Period }) {
         });
       })
       .catch((err) => toast.error(err.message));
-  }, [token]);
+  }, [token, partnerId, baseOnly]);
 
   const handleExportCsv = () => {
     if (dataUserRole.data.length === 0) return;
@@ -102,6 +126,32 @@ function AnalyticsUsers({ period }: { period: Period }) {
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>
           <div className="shadow-md bg-white shadow-slate-200 p-2 rounded">
+            <div className="flex items-center gap-4 px-2 pb-2">
+              <Select
+                size="small"
+                value={partnerId}
+                onChange={(e) => setPartnerId(e.target.value)}
+                displayEmpty
+                sx={{ minWidth: 200 }}
+              >
+                <MenuItem value="">Todos os cursinhos</MenuItem>
+                {partners.map((p) => (
+                  <MenuItem key={p.id} value={p.id}>
+                    {p.name}
+                  </MenuItem>
+                ))}
+              </Select>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={baseOnly}
+                    onChange={(e) => setBaseOnly(e.target.checked)}
+                    size="small"
+                  />
+                }
+                label="Somente roles base"
+              />
+            </div>
             {loading ? (
               <Skeleton className="h-[400px] w-full" />
             ) : (

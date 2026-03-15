@@ -2,6 +2,7 @@ import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CookieBar } from "./components/organisms/cookieBar";
+import { ErrorBoundary } from "./components/organisms/errorBoundary";
 import { PlatformRoutes } from "./routes/PlatformRoutes";
 import "./styles/normalize.css";
 import { GoogleMapsProvider } from "./components/molecules/googleMapsProvider/GoogleMapsProvider";
@@ -9,7 +10,7 @@ import { GoogleMapsProvider } from "./components/molecules/googleMapsProvider/Go
 
 function App() {
   return (
-    <>
+    <ErrorBoundary>
       <GoogleMapsProvider>
         <ToastContainer
           position="top-right"
@@ -30,7 +31,7 @@ function App() {
           </div>
         </BrowserRouter>
       </GoogleMapsProvider>
-    </>
+    </ErrorBoundary>
   );
 }
 
