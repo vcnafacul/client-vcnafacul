@@ -1,20 +1,22 @@
 import Button from "@/components/molecules/button";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { getMaterias, MateriaDto } from "@/services/content/getMaterias";
 import { changeActive } from "@/services/prepCourse/collaborator/change-active";
 import { changeDescription } from "@/services/prepCourse/collaborator/change-description";
 import { getCollaborator } from "@/services/prepCourse/collaborator/get-collaborator";
+import { getCollaboratorFrentesBatch } from "@/services/prepCourse/collaborator/get-collaborator-frentes-batch";
 import { getPhotoCollaborator } from "@/services/prepCourse/collaborator/get-photo";
 import { getRoles } from "@/services/prepCourse/getRoles";
 import { updateUserRole } from "@/services/roles/updateUserRole";
 import { useAuthStore } from "@/store/auth";
 import { Role } from "@/types/roles/role";
 import { phoneMask } from "@/utils/phoneMask";
-import { IconButton } from "@mui/material";
+import { FormControl, IconButton, InputLabel, MenuItem, Select } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { IoEyeSharp } from "react-icons/io5";
 import { toast } from "react-toastify";
 import ModalEditRole from "./modals/ModalEditRole";
@@ -51,6 +53,10 @@ export default function ManagerCollaborator() {
   const [collaboratorPhotos, setCollaboratorPhotos] = useState<
     Record<string, string>
   >({});
+  const [materias, setMaterias] = useState<MateriaDto[]>([]);
+  const [frentesMap, setFrentesMap] = useState<Record<string, string[]>>({});
+  const [selectedMateria, setSelectedMateria] = useState<string>("");
+  const [selectedFrente, setSelectedFrente] = useState<string>("");
 
   const modals = useModals([
     "modalInviteMember",
@@ -66,6 +72,46 @@ export default function ManagerCollaborator() {
 
   const executeAsync = useToastAsync();
   const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
+
+  const frentesForSelectedMateria = useMemo(() => {
+    if (!selectedMateria) return [];
+    const materia = materias.find((m) => m._id === selectedMateria);
+    return materia?.frentes ?? [];
+  }, [selectedMateria, materias]);
+
+  const allFrenteIds = useMemo(() => {
+    if (!selectedMateria) return [];
+    return frentesForSelectedMateria.map((f) => f._id ?? f.id);
+  }, [frentesForSelectedMateria, selectedMateria]);
+
+  const filteredCollaborators = useMemo(() => {
+    if (!selectedMateria && !selectedFrente) return collaborator;
+
+    return collaborator.filter((c) => {
+      const collabFrentes = frentesMap[c.id];
+      if (!collabFrentes || collabFrentes.length === 0) return false;
+
+      if (selectedFrente) {
+        return collabFrentes.includes(selectedFrente);
+      }
+      // Only materia selected — match any frente of that materia
+      return collabFrentes.some((fId) => allFrenteIds.includes(fId));
+    });
+  }, [collaborator, frentesMap, selectedMateria, selectedFrente, allFrenteIds]);
+
+  const handleMateriaChange = (value: string) => {
+    setSelectedMateria(value);
+    setSelectedFrente("");
+  };
+
+  const handleFrenteChange = (value: string) => {
+    setSelectedFrente(value);
+  };
+
+  const handleClearFilters = () => {
+    setSelectedMateria("");
+    setSelectedFrente("");
+  };
 
   const loadCollaboratorPhoto = async (photoKey: string) => {
     try {
@@ -332,6 +378,15 @@ export default function ManagerCollaborator() {
   }, [token]);
 
   useEffect(() => {
+    getMaterias(token)
+      .then(setMaterias)
+      .catch(() => setMaterias([]));
+    getCollaboratorFrentesBatch(token)
+      .then(setFrentesMap)
+      .catch(() => setFrentesMap({}));
+  }, [token]);
+
+  useEffect(() => {
     getRoles(token)
       .then((res) => {
         setRoles(res);
@@ -405,12 +460,60 @@ export default function ManagerCollaborator() {
           Editar Função
         </Button>
       </div>
+      <div className="flex items-center gap-4 px-4 flex-wrap">
+        <FormControl size="small" sx={{ minWidth: 200 }}>
+          <InputLabel id="filter-materia-label">Matéria</InputLabel>
+          <Select
+            labelId="filter-materia-label"
+            value={selectedMateria}
+            label="Matéria"
+            onChange={(e) => handleMateriaChange(e.target.value)}
+          >
+            <MenuItem value="">
+              <em>Todas</em>
+            </MenuItem>
+            {materias.map((m) => (
+              <MenuItem key={m._id} value={m._id}>
+                {m.nome}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl size="small" sx={{ minWidth: 200 }} disabled={!selectedMateria}>
+          <InputLabel id="filter-frente-label">Frente</InputLabel>
+          <Select
+            labelId="filter-frente-label"
+            value={selectedFrente}
+            label="Frente"
+            onChange={(e) => handleFrenteChange(e.target.value)}
+          >
+            <MenuItem value="">
+              <em>Todas</em>
+            </MenuItem>
+            {frentesForSelectedMateria.map((f) => (
+              <MenuItem key={f._id ?? f.id} value={f._id ?? f.id}>
+                {f.nome}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        {(selectedMateria || selectedFrente) && (
+          <Button
+            onClick={handleClearFilters}
+            size="small"
+            typeStyle="secondary"
+            className="w-fit"
+          >
+            Limpar Filtros
+          </Button>
+        )}
+      </div>
       <Paper sx={{ height: "100%", width: "100%" }}>
         <DataGrid
-          rows={collaborator}
+          rows={filteredCollaborators}
           columns={columns}
-          rowCount={totalItems}
-          paginationMode="server"
+          rowCount={selectedMateria || selectedFrente ? filteredCollaborators.length : totalItems}
+          paginationMode={selectedMateria || selectedFrente ? "client" : "server"}
           initialState={{ pagination: { paginationModel } }}
           rowHeight={40}
           pageSizeOptions={[5, 10, 15, 30, 50, 100]}

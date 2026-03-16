@@ -27,6 +27,7 @@ export interface TabClassificacaoProps {
   question: Question;
   canEdit?: boolean;
   infos?: ClassificacaoInfos;
+  onSaveSuccess?: () => void;
 }
 
 /**
