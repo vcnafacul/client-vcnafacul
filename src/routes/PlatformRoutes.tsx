@@ -11,6 +11,7 @@ import { PartnerPrepInscritionStudentManager } from "@/pages/partnerPrepInscriti
 import PartnerPrepManager from "@/pages/partnerPrepManager";
 import RegistrationMonitor from "@/pages/registrationMonitor";
 import { StudentsEnrolled } from "@/pages/studentsEnrolled";
+import GlobalFormPage from "@/pages/globalForm";
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashTemplate from "../components/templates/dashTemplate";
 import { Roles } from "../enums/roles/roles";
@@ -50,6 +51,7 @@ import {
   DASH_ANALYTICS,
   DASH_CONTENT,
   DASH_GEOLOCATION,
+  DASH_GLOBAL_FORM,
   DASH_NEWS,
   DASH_PROVAS,
   DASH_QUESTION,
@@ -147,7 +149,26 @@ export function PlatformRoutes() {
             </ProtectedRoutePermission>
           }
         />
-        <Route path={PARTNER_CLASS_FORM} element={<PartnerPrepForm />} />
+        <Route
+          path={PARTNER_CLASS_FORM}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.gerenciarProcessoSeletivo]}
+            >
+              <PartnerPrepForm />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={DASH_GLOBAL_FORM}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.gerenciarFormularioGlobal]}
+            >
+              <GlobalFormPage />
+            </ProtectedRoutePermission>
+          }
+        />
         <Route path={DASH_ANALYTICS} element={<Analytics />} />
         <Route
           path={PARTNER_PREP_INSCRIPTION}

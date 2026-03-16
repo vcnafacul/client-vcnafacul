@@ -8,7 +8,6 @@ export const stepDescriptions = {
   step1: "Informações Pessoais",
   step2: "Informações de Endereço",
   step3: "Representante Legal",
-  step4: "Formulário Sócio-Econômico",
 };
 
 export const textoParceria = [

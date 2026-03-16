@@ -8,6 +8,6 @@ export enum StepsInscriptionStudent {
   PersonalInformation = 2,
   Address = 3,
   LegalGuardian = 4,
-  Socioeconomic = 5,
+  FormSections = 5,
   Success = 6,
 }

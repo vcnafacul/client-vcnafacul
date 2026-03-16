@@ -4,6 +4,7 @@ import { Bool } from "@/enums/bool";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { getRuleSetByInscription } from "@/services/partnerPrepForm/getRuleSetByInscription";
 import { getInscription } from "@/services/prepCourse/getInscription";
 import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
 import { updateWaitingListInfo } from "@/services/prepCourse/inscription/updateWaitingList";
@@ -16,12 +17,13 @@ import { updateSelectEnrolledInfo } from "@/services/prepCourse/student/updateEn
 import { updateIsFreeInfo } from "@/services/prepCourse/student/updateIsFreeInfo";
 import { useAuthStore } from "@/store/auth";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
+import { RankingItem } from "@/types/partnerPrepForm/ruleForm";
 import { capitalizeWords } from "@/utils/capitalizeWords";
 import { IconButton } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { BsEnvelopeArrowDownFill, BsEnvelopeArrowUpFill } from "react-icons/bs";
 import { FaCheck, FaSyncAlt } from "react-icons/fa";
 import { IoClose, IoEyeSharp } from "react-icons/io5";
@@ -53,6 +55,23 @@ export function PartnerPrepInscritionStudentManager() {
   const [studentSelected, setStudentSelected] = useState<
     XLSXStudentCourseFull | undefined
   >(undefined);
+  const [ranking, setRanking] = useState<RankingItem[] | null>(null);
+
+  const rankingMap = useMemo(() => {
+    if (!ranking) return null;
+    const map = new Map<string, number>();
+    ranking.forEach((item) => map.set(item.userId, item.rank));
+    return map;
+  }, [ranking]);
+
+  const sortedStudents = useMemo(() => {
+    if (!rankingMap) return students;
+    return [...students].sort((a, b) => {
+      const rankA = rankingMap.get(a.userId) ?? Infinity;
+      const rankB = rankingMap.get(b.userId) ?? Infinity;
+      return rankA - rankB;
+    });
+  }, [students, rankingMap]);
 
   // Gerenciamento de modais com hook customizado
   const modals = useModals([
@@ -320,7 +339,7 @@ export function PartnerPrepInscritionStudentManager() {
           {params.row.isento === "Sim" &&
             shouldProcessApplication(
               params.row.status,
-              params.row.data_convocacao
+              params.row.data_convocacao,
             ) && (
               <ActionButton
                 titleAlert="Tem certeza que deseja torna esse aluno pagante?"
@@ -333,7 +352,7 @@ export function PartnerPrepInscritionStudentManager() {
           {params.row.isento === "Não" &&
             shouldProcessApplication(
               params.row.status,
-              params.row.data_convocacao
+              params.row.data_convocacao,
             ) && (
               <ActionButton
                 titleAlert="Tem certeza que deseja torna esse aluno isento?"
@@ -345,7 +364,7 @@ export function PartnerPrepInscritionStudentManager() {
             )}
           {shouldProcessApplication(
             params.row.status,
-            params.row.data_convocacao
+            params.row.data_convocacao,
           ) && (
             <ActionButton
               titleAlert={`Confirme a ${
@@ -356,7 +375,7 @@ export function PartnerPrepInscritionStudentManager() {
               onConfirm={() =>
                 handleSelectEnrolledInfo(
                   params.row.id,
-                  params.row.convocar === Bool.No
+                  params.row.convocar === Bool.No,
                 )
               }
               tooltipTitle={`${
@@ -372,7 +391,7 @@ export function PartnerPrepInscritionStudentManager() {
           )}
           {shouldProcessApplication(
             params.row.status,
-            params.row.data_convocacao
+            params.row.data_convocacao,
           ) && (
             <ActionButton
               titleAlert={`${
@@ -388,7 +407,7 @@ export function PartnerPrepInscritionStudentManager() {
               onConfirm={() =>
                 handleWaitingList(
                   params.row.id,
-                  params.row.lista_de_espera === Bool.No
+                  params.row.lista_de_espera === Bool.No,
                 )
               }
               tooltipTitle={`${
@@ -419,7 +438,7 @@ export function PartnerPrepInscritionStudentManager() {
                 <IoClose
                   onClick={() => {
                     setStudentSelected(
-                      students.find((student) => student.id === params.row.id)!
+                      students.find((student) => student.id === params.row.id)!,
                     );
                     modals.reject.open();
                   }}
@@ -431,7 +450,7 @@ export function PartnerPrepInscritionStudentManager() {
           {shouldProcessApplication(
             params.row.status,
             params.row.data_convocacao,
-            [StatusApplication.Enrolled, StatusApplication.DeclaredInterest]
+            [StatusApplication.Enrolled, StatusApplication.DeclaredInterest],
           ) && (
             <ActionButton
               titleAlert="Deseja resetar as informações do aluno?"
@@ -458,6 +477,19 @@ export function PartnerPrepInscritionStudentManager() {
             )}
         </div>
       ),
+    },
+    {
+      field: "rankPosition",
+      headerName: "Pos.",
+      description: "Posição no Ranking",
+      width: 70,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
+        if (!rankingMap) return "—";
+        const rank = rankingMap.get(params.row.userId);
+        return rank != null ? `${rank}º` : "—";
+      },
     },
     { field: "email", headerName: "Email", width: 250 },
     {
@@ -505,6 +537,7 @@ export function PartnerPrepInscritionStudentManager() {
       flex: 1,
       type: "date",
     },
+
     { field: "nome", headerName: "Nome", flex: 1 },
     { field: "sobrenome", headerName: "Sobrenome", flex: 1 },
   ];
@@ -597,6 +630,11 @@ export function PartnerPrepInscritionStudentManager() {
       getInscription(inscriptionId, token)
         .then((res) => setInscriptionInfo(res.inscription))
         .catch(() => {});
+      getRuleSetByInscription(inscriptionId, token)
+        .then((res) => {
+          if (res.lastRanking) setRanking(res.lastRanking);
+        })
+        .catch(() => {});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -661,7 +699,7 @@ export function PartnerPrepInscritionStudentManager() {
       </div>
       <Paper sx={{ height: "100%", width: "100%" }}>
         <DataGrid
-          rows={students}
+          rows={sortedStudents}
           columns={columns}
           initialState={{ pagination: { paginationModel } }}
           // checkboxSelection
@@ -685,6 +723,7 @@ export function PartnerPrepInscritionStudentManager() {
           handleClose={modals.rules.close}
           inscriptionId={inscriptionId!}
           students={students}
+          onRankingUpdate={setRanking}
         />
       )}
     </div>

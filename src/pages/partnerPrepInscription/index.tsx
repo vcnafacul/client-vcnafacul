@@ -62,8 +62,12 @@ export function PartnerPrepInscription() {
   const [partnerId, setPartnerId] = useState<string>("");
   const [partnerPrepForm, setPartnerPrepForm] =
     useState<PartnerPrepForm | null>(null);
+  const [currentSectionIndex, setCurrentSectionIndex] = useState<number>(0);
+  const [allAnswers, setAllAnswers] = useState<Record<string, unknown>>({});
 
   const { hashInscriptionId } = useParams();
+
+  const sections = partnerPrepForm?.sections ?? [];
 
   const backStep = (data?: Partial<StudentInscriptionDTO>) => {
     let newData = { ...dataStudent };
@@ -75,7 +79,7 @@ export function PartnerPrepInscription() {
       if (
         dataStudent?.birthday &&
         !isMinor(dataStudent?.birthday) &&
-        stepCurrently == StepsInscriptionStudent.Socioeconomic
+        stepCurrently == StepsInscriptionStudent.FormSections
       ) {
         setStepCurrently(StepsInscriptionStudent.Address);
         return;
@@ -92,7 +96,8 @@ export function PartnerPrepInscription() {
       !isMinor(newData?.birthday) &&
       stepCurrently == StepsInscriptionStudent.Address
     ) {
-      setStepCurrently(StepsInscriptionStudent.Socioeconomic);
+      setStepCurrently(StepsInscriptionStudent.FormSections);
+      setCurrentSectionIndex(0);
       return;
     }
     setStepCurrently(stepCurrently + 1);
@@ -113,6 +118,29 @@ export function PartnerPrepInscription() {
       },
     });
     setStepCurrently(stepCurrently + 1);
+    setCurrentSectionIndex(0);
+  };
+
+  const buildSocioeconomicAnswers = (
+    finalAnswers: Record<string, unknown>
+  ): SocioeconomicAnswer[] => {
+    const result: SocioeconomicAnswer[] = [];
+    sections.forEach((section) => {
+      section.questions.forEach((question) => {
+        if (finalAnswers[question._id] !== undefined) {
+          result.push({
+            questionId: question._id,
+            question: question.text,
+            answer: finalAnswers[question._id] as
+              | string
+              | string[]
+              | boolean
+              | number,
+          });
+        }
+      });
+    });
+    return result;
   };
 
   const completeInscription = async (data: SocioeconomicAnswer[]) => {
@@ -152,7 +180,7 @@ export function PartnerPrepInscription() {
     return age;
   };
 
-  const steps: StepCicle[] = [
+  const fixedSteps: StepCicle[] = [
     {
       name: stepDescriptions.step1,
       status:
@@ -180,16 +208,23 @@ export function PartnerPrepInscription() {
           ? "current"
           : "complete",
     },
-    {
-      name: stepDescriptions.step4,
-      status:
-        stepCurrently < StepsInscriptionStudent.Socioeconomic
-          ? "upcoming"
-          : stepCurrently == StepsInscriptionStudent.Socioeconomic
-          ? "current"
-          : "complete",
-    },
   ];
+
+  const sectionSteps: StepCicle[] = sections.map((section, index) => {
+    let status: StepCicle["status"] = "upcoming";
+    if (stepCurrently > StepsInscriptionStudent.FormSections) {
+      status = "complete";
+    } else if (stepCurrently === StepsInscriptionStudent.FormSections) {
+      if (index < currentSectionIndex) {
+        status = "complete";
+      } else if (index === currentSectionIndex) {
+        status = "current";
+      }
+    }
+    return { name: section.name, status };
+  });
+
+  const steps: StepCicle[] = [...fixedSteps, ...sectionSteps];
 
   const StepCurrently = ({ step }: { step: number }) => {
     switch (step) {
@@ -255,18 +290,35 @@ export function PartnerPrepInscription() {
             isMinor={isMinor(dataStudent.birthday)}
           />
         );
-      case StepsInscriptionStudent.Socioeconomic:
-        if (partnerPrepForm) {
-          return (
-            <PartnerPrepInscriptionStepForm
-              updateSocioeconomic={completeInscription}
-              handleBack={backStep}
-              description={stepDescriptions.step4}
-              partnerPrepForm={partnerPrepForm!}
-            />
-          );
-        }
-        return <></>;
+      case StepsInscriptionStudent.FormSections: {
+        if (!partnerPrepForm || sections.length === 0) return <></>;
+        const section = sections[currentSectionIndex];
+        const isLastSection = currentSectionIndex === sections.length - 1;
+        return (
+          <PartnerPrepInscriptionStepForm
+            section={section}
+            allAnswers={allAnswers}
+            isLastSection={isLastSection}
+            isFirstSection={currentSectionIndex === 0}
+            onAdvance={(sectionAnswers) => {
+              const merged = { ...allAnswers, ...sectionAnswers };
+              setAllAnswers(merged);
+              if (isLastSection) {
+                completeInscription(buildSocioeconomicAnswers(merged));
+              } else {
+                setCurrentSectionIndex((i) => i + 1);
+              }
+            }}
+            onBack={() => {
+              if (currentSectionIndex > 0) {
+                setCurrentSectionIndex((i) => i - 1);
+              } else {
+                backStep();
+              }
+            }}
+          />
+        );
+      }
       case StepsInscriptionStudent.Success:
         return <PartnerPrepInscriptionStepSucess />;
       default:
@@ -279,7 +331,7 @@ export function PartnerPrepInscription() {
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [stepCurrently]);
+  }, [stepCurrently, currentSectionIndex]);
 
   useEffect(() => {
     if (!token) {

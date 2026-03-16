@@ -15,7 +15,7 @@ import { ActionMenu } from "./actionMenu";
 interface SortableQuestionRowProps {
   question: QuestionForm;
   onView: () => void;
-  onDelete: () => void;
+  onDelete?: () => void;
 }
 
 export function SortableQuestionRow({

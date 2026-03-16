@@ -20,16 +20,19 @@ import { toast } from "react-toastify";
 interface ModalCreateSectionProps extends ModalProps {
   isOpen: boolean;
   onSuccess: (section: SectionForm) => void;
+  createFn?: (data: CreateSectionDtoInput, token: string) => Promise<SectionForm>;
 }
 
 const initialFormData: CreateSectionDtoInput = {
   name: "",
+  description: "",
 };
 
 export function ModalCreateSection({
   isOpen,
   handleClose,
   onSuccess,
+  createFn = createSection,
 }: ModalCreateSectionProps) {
   const {
     data: { token },
@@ -65,11 +68,12 @@ export function ModalCreateSection({
 
     setLoading(true);
     try {
-      const sectionData = {
+      const sectionData: CreateSectionDtoInput = {
         name: formData.name.trim(),
+        description: formData.description?.trim() || undefined,
       };
 
-      const newSection = await createSection(sectionData, token);
+      const newSection = await createFn(sectionData, token);
       toast.success("Seção criada com sucesso!");
       onSuccess(newSection);
       handleClose?.();
@@ -104,7 +108,7 @@ export function ModalCreateSection({
           Criar Nova Seção
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Preencha o nome da nova seção do formulário
+          Preencha as informações da nova seção do formulário
         </Typography>
       </Box>
 
@@ -119,6 +123,19 @@ export function ModalCreateSection({
           fullWidth
           variant="outlined"
           placeholder="Ex: Informações Pessoais"
+        />
+
+        {/* Descrição da Seção */}
+        <TextField
+          label="Descrição"
+          value={formData.description ?? ""}
+          onChange={(e) => handleInputChange("description", e.target.value)}
+          fullWidth
+          variant="outlined"
+          placeholder="Ex: Preencha suas informações pessoais básicas"
+          multiline
+          minRows={2}
+          maxRows={4}
         />
 
         {/* Botões de Ação */}

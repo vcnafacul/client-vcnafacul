@@ -110,6 +110,10 @@ export const studentAttendance = `${BASE_URL}/student-attendance`;
 
 export const section_form = `${BASE_URL}/section-form`;
 export const question_form = `${BASE_URL}/question-form`;
+
+export const admin_form = `${BASE_URL}/admin-form`;
+export const admin_section_form = `${admin_form}/section`;
+export const admin_question_form = `${admin_form}/question`;
 export const rule_form = `${BASE_URL}/rule-form`;
 export const rule_set_form = `${BASE_URL}/rule-set-form`;
 
