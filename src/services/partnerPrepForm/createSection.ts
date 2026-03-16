@@ -4,6 +4,7 @@ import { section_form } from "../urls";
 
 export interface CreateSectionDtoInput {
   name: string;
+  description?: string;
 }
 
 export async function createSection(

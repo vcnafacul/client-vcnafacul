@@ -266,7 +266,7 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
               type="select"
               label="Matéria"
               options={materiasOptions}
-              defaultValue={materiaSelected}
+              value={materiaSelected}
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               onChange={(e: any) => setMateriaSelected(e.target.value)}
             />

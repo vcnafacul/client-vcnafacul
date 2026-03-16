@@ -53,6 +53,7 @@
     "@tiptap/react": "^3.20.1",
     "@tiptap/starter-kit": "^3.20.1",
     "@types/katex": "^0.16.8",
+    "@react-google-maps/api": "^2.20.8",
     "add": "^2.0.6",
     "chart.js": "^4.4.3",
     "class-variance-authority": "^0.7.1",

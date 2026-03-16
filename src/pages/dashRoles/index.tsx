@@ -1,4 +1,5 @@
 import { FilterProps } from "@/components/atoms/filter";
+import { SelectProps } from "@/components/atoms/select";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { ButtonProps } from "../../components/molecules/button";
@@ -26,6 +27,7 @@ function DashRoles() {
   const [usersRole, setUsersRole] = useState<UserRole[]>([]);
   const [userRoleSelect, setUserRoleSelect] = useState<UserRole | null>();
   const [filterText, setFilterText] = useState<string>("");
+  const [roleFilter, setRoleFilter] = useState<string>("0");
   const dataRef = useRef<UserRole[]>([]);
   const limitCards = 100;
 
@@ -84,8 +86,10 @@ function DashRoles() {
     setRoles(newRoles);
   };
 
+  const activeRoleId = roleFilter !== "0" ? roleFilter : "";
+
   const getUsers = () => {
-    getUsersRole(token, 1, limitCards, filterText)
+    getUsersRole(token, 1, limitCards, filterText, activeRoleId)
       .then((res) => {
         setUsersRole(
           res.data?.sort((a, b) =>
@@ -109,12 +113,10 @@ function DashRoles() {
         toast.error(error.message);
         setRoles([]);
       });
-
-    getUsers();
   }, [token]);
 
   const getMoreCards = async (page: number): Promise<Paginate<UserRole>> => {
-    return await getUsersRole(token, page, limitCards, filterText);
+    return await getUsersRole(token, page, limitCards, filterText, activeRoleId);
   };
 
   const ShowUserRole = () => {
@@ -169,7 +171,23 @@ function DashRoles() {
     );
   };
 
+  const selectFiltes: SelectProps[] = roles.length
+    ? [
+        {
+          options: roles.map((r) => ({ id: r.id, name: r.name })),
+          defaultValue: roleFilter,
+          setState: setRoleFilter,
+        },
+      ]
+    : [];
+
   const buttons: ButtonProps[] = [
+    {
+      onClick: () => getUsers(),
+      typeStyle: "primary",
+      size: "small",
+      children: "Buscar",
+    },
     {
       onClick: () => {
         setUserRoleSelect(null);
@@ -200,7 +218,7 @@ function DashRoles() {
   const filterProps: FilterProps = {
     filtrar: (e: React.ChangeEvent<HTMLInputElement>) =>
       setFilterText(e.target.value.toLowerCase()),
-    placeholder: "Busque um usuário",
+    placeholder: "Busque por nome ou email",
     defaultValue: filterText,
     keyDown: () => getUsers(),
   };
@@ -216,6 +234,7 @@ function DashRoles() {
         cardTransformation,
         limitCards,
         buttons,
+        selectFiltes,
         filterProps,
       }}
     >

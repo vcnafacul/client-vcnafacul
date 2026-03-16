@@ -45,6 +45,9 @@ interface ModalShowQuestionProps extends ModalProps {
   availableQuestions?: QuestionForm[];
   onToggleActive?: () => void;
   onEdit?: (question: QuestionForm) => void;
+  toggleActiveFn?: (token: string, id: string) => Promise<void>;
+  updateFn?: (token: string, id: string, question: QuestionForm) => Promise<void>;
+  readOnly?: boolean;
 }
 
 interface EditableFormData {
@@ -63,6 +66,9 @@ export function ModalShowQuestion({
   availableQuestions = [],
   onToggleActive,
   onEdit,
+  toggleActiveFn = setQuestionActive,
+  updateFn = updateQuestionForm,
+  readOnly = false,
 }: ModalShowQuestionProps) {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -98,7 +104,7 @@ export function ModalShowQuestion({
     setLoading(true);
 
     await executeAsync({
-      action: () => setQuestionActive(token, question._id),
+      action: () => toggleActiveFn(token, question._id),
       loadingMessage: "Alterando status da questão...",
       successMessage: `Questão ${
         !question.active ? "ativada" : "desativada"
@@ -174,7 +180,7 @@ export function ModalShowQuestion({
       };
 
       await executeAsync({
-        action: () => updateQuestionForm(token, question._id, updatedQuestion),
+        action: () => updateFn(token, question._id, updatedQuestion),
         loadingMessage: "Atualizando questão...",
         successMessage: "Questão atualizada com sucesso!",
         errorMessage: "Erro ao atualizar questão",
@@ -263,7 +269,7 @@ export function ModalShowQuestion({
             {isEditMode ? "Editar Questão" : "Visualizar Questão"}
           </Typography>
           <Box sx={{ display: "flex", gap: 1 }}>
-            {!isEditMode && (
+            {!isEditMode && !readOnly && (
               <Button
                 startIcon={<FiEdit3 />}
                 onClick={handleEditMode}
@@ -489,7 +495,7 @@ export function ModalShowQuestion({
             <Switch
               checked={editableData.active}
               onChange={handleToggleActive}
-              disabled={loading}
+              disabled={loading || readOnly}
             />
           </Box>
         </Box>

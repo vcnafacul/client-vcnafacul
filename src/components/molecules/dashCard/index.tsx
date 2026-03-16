@@ -1,4 +1,4 @@
-import { ComponentProps, useEffect, useState } from "react";
+import { ComponentProps, useEffect, useRef, useState } from "react";
 import { IoChevronUpCircleSharp } from "react-icons/io5";
 import { VariantProps, tv } from "tailwind-variants";
 import SubMenuDash from "../../organisms/subMenuDash";
@@ -14,7 +14,7 @@ const dashCard = tv({
             big: 'flex-col justify-between h-32',
             small: 'flex-row justify-between gap-4 h-16 px-4'
         },
-        
+
     },
     defaultVariants: {
         size: 'big',
@@ -40,6 +40,9 @@ function DashCard({ card, size, opened, ...props }: DasCardProps) {
   const [appearsAdminDashcard, setAppearsAdminDashcard] = useState(false)
   const { data: { permissao }} = useAuthStore()
   const Icon = card.image;
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState(0);
+
   useEffect(() => {
     const newSubMenus = !!card.subMenuList.find(subCardInfo => {
       if(!subCardInfo.permissions || subCardInfo.permissions?.some(p => permissao[p]))
@@ -48,7 +51,13 @@ function DashCard({ card, size, opened, ...props }: DasCardProps) {
     });
     setAppearsAdminDashcard(newSubMenus)
   }, [card.subMenuList, permissao]);
-  
+
+  useEffect(() => {
+    if (contentRef.current) {
+      setContentHeight(contentRef.current.scrollHeight);
+    }
+  }, [opened, card.subMenuList]);
+
   return (
     appearsAdminDashcard && (
       <div>
@@ -58,7 +67,16 @@ function DashCard({ card, size, opened, ...props }: DasCardProps) {
           <div className={`select-none ${size !== 'small' ? 'flex justify-center w-full' : 'my-4'}`}>{card.title}</div>
           <IoChevronUpCircleSharp size={20} className={`${size !== 'small' ? 'absolute right-4 bottom-4' : ''} ${opened ? 'rotate-180' : ''} ${transition}`} />
         </div>
-        {opened ? <SubMenuDash subDashCardInfo={card.subMenuList} /> : <></>}
+        <div
+          ref={contentRef}
+          className="overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out"
+          style={{
+            maxHeight: opened ? `${contentHeight}px` : '0px',
+            opacity: opened ? 1 : 0,
+          }}
+        >
+          <SubMenuDash subDashCardInfo={card.subMenuList} />
+        </div>
       </div>
     )
   )

@@ -1,8 +1,8 @@
-import { ChangeOrderDTO } from "../../dtos/content/changeOrder";
+import { ChangeOrderSubjectDTO } from "../../dtos/content/changeOrderSubject";
 import fetchWrapper from "../../utils/fetchWrapper";
 import { subject } from "../urls";
 
-export async function changeOrderSubject(token: string, body: ChangeOrderDTO){
+export async function changeOrderSubject(token: string, body: ChangeOrderSubjectDTO){
     const response = await fetchWrapper(`${subject}/order`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },

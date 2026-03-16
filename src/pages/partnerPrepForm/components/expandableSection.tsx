@@ -30,6 +30,9 @@ interface ExpandableSectionProps {
     questions: QuestionForm[]
   ) => void;
   handleDuplicateSection: (id: string) => void;
+  deleteFn?: (token: string, id: string) => Promise<void>;
+  toggleActiveFn?: (token: string, id: string) => Promise<void>;
+  updateQuestionFn?: (token: string, id: string, question: QuestionForm) => Promise<void>;
 }
 
 export function ExpandableSection({
@@ -42,6 +45,9 @@ export function ExpandableSection({
   handleToggleSection,
   handleReorderQuestions,
   handleDuplicateSection,
+  deleteFn,
+  toggleActiveFn,
+  updateQuestionFn,
 }: ExpandableSectionProps) {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -81,7 +87,11 @@ export function ExpandableSection({
             backgroundColor: section.active ? "action.hover" : "grey.100",
           },
           borderLeft: "4px solid",
-          borderLeftColor: section.active ? "primary.main" : "grey.300",
+          borderLeftColor: section.isGlobal
+            ? "info.main"
+            : section.active
+            ? "primary.main"
+            : "grey.300",
         }}
       >
         <TableCell size="small" className="w-16">
@@ -107,6 +117,15 @@ export function ExpandableSection({
               {section.name}
             </Typography>
             <StatusBadge active={section.active} />
+            {section.isGlobal && (
+              <Chip
+                label="Global"
+                size="small"
+                color="info"
+                variant="filled"
+                sx={{ fontWeight: 500, fontSize: "0.7rem" }}
+              />
+            )}
           </Box>
         </TableCell>
         <TableCell align="right">
@@ -158,20 +177,28 @@ export function ExpandableSection({
           </Typography>
         </TableCell>
         <TableCell align="right" className="w-10">
-          <ActionMenu
-            onAdd={() => {
-              handleAddQuestion(section._id);
-            }}
-            onEdit={() => handleEditSection(section._id)}
-            onDuplicate={() => handleDuplicateSection(section._id)}
-            onDelete={
-              totalQuestionsCount > 0
-                ? undefined
-                : () => handleDeleteSection(section._id)
-            }
-            onToggle={() => handleToggleSection(section._id)}
-            isActive={section.active}
-          />
+          {section.isGlobal ? (
+            <Tooltip title="Seção global (somente leitura)" arrow>
+              <Typography variant="caption" color="text.secondary">
+                Somente leitura
+              </Typography>
+            </Tooltip>
+          ) : (
+            <ActionMenu
+              onAdd={() => {
+                handleAddQuestion(section._id);
+              }}
+              onEdit={() => handleEditSection(section._id)}
+              onDuplicate={() => handleDuplicateSection(section._id)}
+              onDelete={
+                totalQuestionsCount > 0
+                  ? undefined
+                  : () => handleDeleteSection(section._id)
+              }
+              onToggle={() => handleToggleSection(section._id)}
+              isActive={section.active}
+            />
+          )}
         </TableCell>
       </TableRow>
       <TableRow>
@@ -217,6 +244,10 @@ export function ExpandableSection({
                 onReorderQuestions={(reorderedQuestions) =>
                   handleReorderQuestions(section._id, reorderedQuestions)
                 }
+                deleteFn={deleteFn}
+                toggleActiveFn={toggleActiveFn}
+                updateQuestionFn={updateQuestionFn}
+                readOnly={section.isGlobal}
               />
             </Box>
           </Collapse>

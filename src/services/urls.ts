@@ -24,6 +24,9 @@ export const validatedgeolocation = `${BASE_URL}/validatedgeolocation`;
 export const allGeolocation = `${geolocations}`;
 export const geo_summary_status = `${geolocations}/summary-status`;
 
+export const places = `${BASE_URL}/places`;
+export const placesDetails = `${places}/details`;
+
 export const news = `${BASE_URL}/news`;
 export const newsAll = `${BASE_URL}/news/all`;
 
@@ -40,6 +43,7 @@ export const content = `${BASE_URL}/content`;
 export const demand = `${content}/demand`;
 export const content_stats_by_frente = `${content}/stats-by-frente`;
 export const content_snapshot_status = `${content}/snapshot-content-status`;
+export const content_summary = `${content}/summary`;
 
 export const mssimulado = `${BASE_URL}/mssimulado`;
 
@@ -60,8 +64,10 @@ export const question_summary = `${mssimulado}/questoes/summary`;
 export const prova_summary = `${mssimulado}/prova/summary`;
 export const historicoByPeriod = `${historico}/aggregate-by-period`;
 export const historicoByPeriodAndType = `${historico}/aggregate-by-period-and-type`;
+export const historico_summary = `${historico}/summary`;
 
 export const partnerPrepCourse = `${BASE_URL}/partner-prep-course`;
+export const partnerPrepCourseLogos = `${partnerPrepCourse}/logos`;
 
 export const prepCourse = (id: string) =>
   `${partnerPrepCourse}/${id}/has-active-inscription`;
@@ -96,6 +102,7 @@ export const enrollmentStatus = `${studentCourse}/verify-enrollment-status`;
 export const enrolled = `${studentCourse}/enrolled`;
 export const uploadPhotoProfile = `${studentCourse}/profile-image`;
 export const collaborator = `${BASE_URL}/collaborator`;
+export const collaborator_frentes_batch = `${collaborator}/frentes/batch`;
 export const classes = `${BASE_URL}/class`;
 
 export const attendanceRecord = `${BASE_URL}/attendance-record`;
@@ -103,6 +110,10 @@ export const studentAttendance = `${BASE_URL}/student-attendance`;
 
 export const section_form = `${BASE_URL}/section-form`;
 export const question_form = `${BASE_URL}/question-form`;
+
+export const admin_form = `${BASE_URL}/admin-form`;
+export const admin_section_form = `${admin_form}/section`;
+export const admin_question_form = `${admin_form}/question`;
 export const rule_form = `${BASE_URL}/rule-form`;
 export const rule_set_form = `${BASE_URL}/rule-set-form`;
 

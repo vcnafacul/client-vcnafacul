@@ -13,12 +13,15 @@ export interface AreaWithMaterias {
   materias: MateriaGroupedItem[];
 }
 
-export async function getMateriasGroupedByArea(): Promise<AreaWithMaterias[]> {
+export async function getMateriasGroupedByArea(
+  signal?: AbortSignal,
+): Promise<AreaWithMaterias[]> {
   const response = await fetchWrapper(`${materias}/grouped-by-area`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
+    signal,
   });
   const res = await response.json();
   if (response.status !== 200) {

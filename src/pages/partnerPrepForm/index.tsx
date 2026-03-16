@@ -1,6 +1,7 @@
 import { TableColumn } from "@/components/organisms/expandableTable";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { getGlobalSections } from "@/services/adminForm/getGlobalSections";
 import { deleteSection } from "@/services/partnerPrepForm/deleteSection";
 import { duplicateSection } from "@/services/partnerPrepForm/duplicateSection";
 import { getSection } from "@/services/partnerPrepForm/getSections";
@@ -183,16 +184,43 @@ export default function PartnerPrepForm() {
 
   const handleGetSections = async () => {
     setLoading(true);
-    getSection(token)
-      .then((res) => {
-        setEntities(res.data);
-      })
-      .catch((err) => {
-        toast.error(err.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const [globalRes, partnerRes] = await Promise.allSettled([
+        getGlobalSections(token),
+        getSection(token),
+      ]);
+
+      // Filtra apenas seções ativas e questões ativas (parceiro vê só o que está ativo)
+      const filterActive = (sections: SectionForm[]): SectionForm[] =>
+        sections
+          .filter((s) => s.active)
+          .map((s) => ({
+            ...s,
+            questions: s.questions.filter((q) => q.active),
+          }));
+
+      const globalSections: SectionForm[] =
+        globalRes.status === "fulfilled"
+          ? filterActive(globalRes.value.data.map((s) => ({ ...s, isGlobal: true })))
+          : [];
+      const partnerSections: SectionForm[] =
+        partnerRes.status === "fulfilled"
+          ? filterActive(partnerRes.value.data.map((s) => ({ ...s, isGlobal: false })))
+          : [];
+
+      if (globalRes.status === "rejected") {
+        toast.warning("Não foi possível carregar seções globais");
+      }
+      if (partnerRes.status === "rejected") {
+        toast.error("Erro ao carregar seções do parceiro");
+      }
+
+      setEntities([...globalSections, ...partnerSections]);
+    } catch {
+      toast.error("Erro ao buscar seções");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -265,7 +293,9 @@ export default function PartnerPrepForm() {
   };
 
   const handleAddQuestion = (sectionId: string) => {
-    setSectionSelected(entities.find((e) => e._id === sectionId)!);
+    const section = entities.find((e) => e._id === sectionId);
+    if (!section || section.isGlobal) return;
+    setSectionSelected(section);
     modals.modalCreateQuestion.open();
   };
 
@@ -274,6 +304,8 @@ export default function PartnerPrepForm() {
   };
 
   const handleDeleteSection = async (sectionId: string) => {
+    const section = entities.find((e) => e._id === sectionId);
+    if (section?.isGlobal) return;
     await executeAsync({
       action: () => deleteSection(token, sectionId),
       loadingMessage: "Excluindo seção...",
@@ -287,7 +319,7 @@ export default function PartnerPrepForm() {
 
   const handleToggleSection = async (sectionId: string) => {
     const section = entities.find((e) => e._id === sectionId);
-    if (!section) return;
+    if (!section || section.isGlobal) return;
 
     const newActiveState = !section.active;
     const action = newActiveState ? "ativando" : "desativando";
@@ -314,6 +346,8 @@ export default function PartnerPrepForm() {
     sectionId: string,
     reorderedQuestions: QuestionForm[]
   ) => {
+    const section = entities.find((e) => e._id === sectionId);
+    if (section?.isGlobal) return;
     // Atualização otimista - atualiza UI primeiro
     setEntities((prev) =>
       prev.map((section) =>
@@ -346,7 +380,7 @@ export default function PartnerPrepForm() {
 
   const handleOpenDuplicateModal = (sectionId: string) => {
     const section = entities.find((e) => e._id === sectionId);
-    if (section) {
+    if (section && !section.isGlobal) {
       setSectionSelected(section);
       modals.modalConfirmDuplicate.open();
     }

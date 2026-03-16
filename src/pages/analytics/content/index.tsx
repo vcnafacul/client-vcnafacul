@@ -1,14 +1,8 @@
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
-
 import LineChartMui, {
   LineChartMuiProps,
 } from "@/components/atoms/lineChartMui";
+import AnalyticsSection from "@/components/molecules/analyticsSection";
+import { Skeleton } from "@/components/ui/skeleton";
 import ExpandableTable, {
   TableColumn,
 } from "@/components/organisms/expandableTable";
@@ -18,12 +12,17 @@ import {
   getContentSummary,
 } from "@/services/analytics/content/statsByFrente";
 import { useAuthStore } from "@/store/auth";
-import { AppBar, Toolbar } from "@mui/material";
+import { exportAnalyticsCsv } from "@/utils/exportAnalyticsCsv";
+import { Button } from "@mui/material";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-// Tipo para os dados agregados
 type AggregatedMateria = {
   materia: number;
   qtdFrentes: number;
@@ -34,7 +33,6 @@ type AggregatedMateria = {
   total: number;
 };
 
-// Função para agregar dados por matéria
 function aggregateMateria(
   frentes: ContentStatsByFrente[] | ContentStatsByFrente
 ): AggregatedMateria {
@@ -60,12 +58,10 @@ function aggregateMateria(
   );
 }
 
-// Função para agrupar por matéria
 function groupByMateria(item: ContentStatsByFrente): string | number {
   return item.materia;
 }
 
-// Componente para renderizar o conteúdo expandido (tabela de frentes)
 function renderFrentesTable(
   frentes: ContentStatsByFrente[] | ContentStatsByFrente
 ) {
@@ -102,10 +98,11 @@ export function AnalyticsContent() {
   const {
     data: { token },
   } = useAuthStore();
-  const [contentSummary, setContentSummary] = useState<ContentStatsByFrente[]>(
-    [] as ContentStatsByFrente[]
-  );
 
+  const [loading, setLoading] = useState(true);
+  const [contentSummary, setContentSummary] = useState<ContentStatsByFrente[]>(
+    []
+  );
   const [dataContentStatus, setDataContentStatus] = useState<LineChartMuiProps>(
     {
       xAxis: [],
@@ -113,7 +110,6 @@ export function AnalyticsContent() {
     }
   );
 
-  // Definição das colunas da tabela
   const columns: TableColumn<AggregatedMateria>[] = [
     { key: "materia", label: "Matéria" },
     { key: "qtdFrentes", label: "Qtd. Frentes", align: "right" },
@@ -125,61 +121,104 @@ export function AnalyticsContent() {
   ];
 
   useEffect(() => {
+    setLoading(true);
     getContentSummary(token)
       .then((res) => {
         setContentSummary(res);
       })
       .catch((err) => {
         toast.error(err.message);
-      });
+      })
+      .finally(() => setLoading(false));
   }, [token]);
 
   useEffect(() => {
-    getContentSnapshotContentStatus(token).then((res) => {
-      const xAxis = res.map((r) => r.snapshot_date.toString());
-      const series = [
-        { label: "Pendentes Upload", data: res.map((r) => r.pendentes_upload) },
-        { label: "Pendentes", data: res.map((r) => r.pendentes) },
-        { label: "Aprovados", data: res.map((r) => r.aprovados) },
-        { label: "Reprovados", data: res.map((r) => r.reprovados) },
-        { label: "Total", data: res.map((r) => r.total) },
-      ];
-      setDataContentStatus({
-        xAxis,
-        series,
-        title: "Status de Conteúdos Diário",
+    getContentSnapshotContentStatus(token)
+      .then((res) => {
+        const xAxis = res.map((r) => r.snapshot_date.toString());
+        const series = [
+          {
+            label: "Pendentes Upload",
+            data: res.map((r) => r.pendentes_upload),
+          },
+          { label: "Pendentes", data: res.map((r) => r.pendentes) },
+          { label: "Aprovados", data: res.map((r) => r.aprovados) },
+          { label: "Reprovados", data: res.map((r) => r.reprovados) },
+          { label: "Total", data: res.map((r) => r.total) },
+        ];
+        setDataContentStatus({
+          xAxis,
+          series,
+          title: "Status de Conteúdos Diário",
+        });
+      })
+      .catch((err) => {
+        toast.error(err.message);
       });
-    });
   }, [token]);
 
+  const handleExportCsv = () => {
+    if (contentSummary.length === 0) return;
+    exportAnalyticsCsv(
+      [
+        "Matéria",
+        "Frente",
+        "Pend. Upload",
+        "Pendentes",
+        "Aprovados",
+        "Reprovados",
+        "Total",
+      ],
+      contentSummary.map((f) => [
+        f.materia,
+        f.frente,
+        f.pendentes_upload,
+        f.pendentes,
+        f.aprovados,
+        f.reprovados,
+        f.total,
+      ]),
+      "conteudos_por_frente"
+    );
+  };
+
   return (
-    <>
-      {/* Header */}
-      <AppBar position="static" color="transparent" elevation={0}>
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography variant="h4" fontWeight="bold" className="text-marine">
-            Conteúdos
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Box p={2}>
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <ExpandableTable
-              data={contentSummary}
-              columns={columns}
-              groupBy={groupByMateria}
-              aggregate={aggregateMateria}
-              expandableContent={renderFrentesTable}
-              expandableTitle="Frentes"
-            />
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <LineChartMui {...dataContentStatus} />
-          </Grid>
+    <AnalyticsSection
+      title="Conteúdos"
+      actions={
+        <Button size="small" variant="outlined" onClick={handleExportCsv}>
+          Exportar CSV
+        </Button>
+      }
+    >
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <div className="shadow-md bg-white shadow-slate-200 p-2 rounded">
+            {loading ? (
+              <Skeleton className="h-[400px] w-full" />
+            ) : (
+              <ExpandableTable
+                data={contentSummary}
+                columns={columns}
+                groupBy={groupByMateria}
+                aggregate={aggregateMateria}
+                expandableContent={renderFrentesTable}
+                expandableTitle="Frentes"
+              />
+            )}
+          </div>
         </Grid>
-      </Box>
-    </>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <div className="shadow-md bg-white shadow-slate-200 p-2 rounded">
+            {loading ? (
+              <Skeleton className="h-[400px] w-full" />
+            ) : (
+              <LineChartMui {...dataContentStatus} />
+            )}
+          </div>
+        </Grid>
+      </Grid>
+    </AnalyticsSection>
   );
 }
 

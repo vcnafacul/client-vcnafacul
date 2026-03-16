@@ -8,9 +8,15 @@ import {
 } from "./sendFrontendError";
 import { tokenIsExpired } from "./tokenIsExpired";
 
+/** Retorna true se o erro é um AbortError (request cancelado intencionalmente). */
+function isAbortError(err: unknown): boolean {
+  return err instanceof DOMException && err.name === "AbortError";
+}
+
 /** Reporta erro de rede ao backend (requisição falhou antes de chegar ao servidor). */
 function reportFetchError(err: unknown, url: string, method: string): void {
   if (url.includes("/frontend-errors")) return;
+  if (isAbortError(err)) return;
   const message = err instanceof Error ? err.message : String(err);
   const token = useAuthStore.getState()?.data?.token ?? null;
   const payload = buildFrontendErrorPayload({
@@ -21,6 +27,37 @@ function reportFetchError(err: unknown, url: string, method: string): void {
     errorDetail: err instanceof Error ? err.stack : undefined,
   });
   sendFrontendError(payload, token);
+}
+
+const RETRY_DELAYS = [500, 1500];
+
+/** Executa fetch com retry automático para GETs que falham por erro de rede. */
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+): Promise<Response> {
+  const method = (options.method ?? "GET").toUpperCase();
+
+  // Só faz retry para GET (idempotente)
+  if (method !== "GET") {
+    return fetch(url, options);
+  }
+
+  let lastError: unknown;
+  // Tentativa inicial + retries
+  for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
+    try {
+      return await fetch(url, options);
+    } catch (err) {
+      lastError = err;
+      // Não faz retry se foi abort intencional
+      if (isAbortError(err)) throw err;
+      // Não faz retry se não há mais tentativas
+      if (attempt >= RETRY_DELAYS.length) break;
+      await new Promise((r) => setTimeout(r, RETRY_DELAYS[attempt]));
+    }
+  }
+  throw lastError;
 }
 
 // Flag para evitar múltiplas renovações simultâneas
@@ -137,10 +174,10 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
     }
   }
 
-  // Faz a requisição (erros de rede são reportados ao back para log/Discord)
+  // Faz a requisição com retry para GETs (erros de rede são reportados ao back para log/Discord)
   let response: Response;
   try {
-    response = await fetch(url, fetchOptions);
+    response = await fetchWithRetry(url, fetchOptions);
   } catch (err) {
     reportFetchError(err, url, fetchOptions?.method ?? "GET");
     throw err;
