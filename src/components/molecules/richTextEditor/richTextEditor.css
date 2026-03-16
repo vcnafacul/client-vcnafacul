@@ -1,0 +1,43 @@
+/* Remove focus outline from ProseMirror editor content */
+.ProseMirror:focus {
+  outline: none;
+}
+
+.ProseMirror {
+  min-height: inherit;
+}
+
+/* LaTeX inline node styling */
+.latex-inline {
+  display: inline;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.latex-inline:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-radius: 2px;
+}
+
+/* LaTeX block node styling */
+.latex-block {
+  display: block;
+  text-align: center;
+  margin: 0.5em 0;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.latex-block:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+  border-radius: 4px;
+}
+
+/* Placeholder styling */
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

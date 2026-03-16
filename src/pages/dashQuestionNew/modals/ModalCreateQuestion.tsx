@@ -2,12 +2,15 @@ import { Button } from "@/components/ui/button";
 import { CreateQuestion } from "@/dtos/question/updateQuestion";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { createQuestion } from "@/services/question/createQuestion";
+import { uploadAsset } from "@/services/question/uploadAsset";
 import { useAuthStore } from "@/store/auth";
+import { PendingImageStore } from "@/utils/pendingImageStore";
 import { Loader2, Plus } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import ModalTabTemplateQuestion from "../components/ModalTabTemplateQuestion";
 import { TabClassificacaoCreate } from "./tabs/TabClassificacaoCreate";
 import { TabConteudoCreate } from "./tabs/TabConteudoCreate";
+import { TabAlternativasCreate } from "./tabs/TabAlternativasCreate";
 
 interface ModalCreateQuestionProps {
   isOpen: boolean;
@@ -15,6 +18,24 @@ interface ModalCreateQuestionProps {
   infos: any;
   onSuccess?: () => void;
 }
+
+const emptyForm: Partial<CreateQuestion> = {
+  prova: "",
+  enemArea: "",
+  frente1: "",
+  frente2: null,
+  frente3: null,
+  materia: "",
+  numero: 1,
+  textoQuestao: "",
+  pergunta: "",
+  textoAlternativaA: "",
+  textoAlternativaB: "",
+  textoAlternativaC: "",
+  textoAlternativaD: "",
+  textoAlternativaE: "",
+  alternativa: "",
+};
 
 export function ModalCreateQuestion({
   isOpen,
@@ -28,31 +49,21 @@ export function ModalCreateQuestion({
   const executeAsync = useToastAsync();
 
   const [isSaving, setIsSaving] = useState(false);
-
-  // Estado do formulário
   const [formData, setFormData] = useState<Partial<CreateQuestion>>({
-    prova: "",
-    enemArea: "",
-    frente1: "",
-    frente2: null,
-    frente3: null,
-    materia: "",
-    numero: 1,
-    textoQuestao: "",
-    pergunta: "",
-    textoAlternativaA: "",
-    textoAlternativaB: "",
-    textoAlternativaC: "",
-    textoAlternativaD: "",
-    textoAlternativaE: "",
-    alternativa: "",
+    ...emptyForm,
   });
-
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const pendingStoreRef = useRef(new PendingImageStore());
+
+  const handleImageUpload = useCallback(
+    async (file: File) => {
+      return pendingStoreRef.current.add(file);
+    },
+    []
+  );
 
   const updateFormData = (field: keyof CreateQuestion, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Limpar erro do campo quando for alterado
     if (errors[field]) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -65,7 +76,6 @@ export function ModalCreateQuestion({
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    // Validações de Classificação
     if (!formData.prova) newErrors.prova = "Prova é obrigatória";
     if (!formData.enemArea) newErrors.enemArea = "Área ENEM é obrigatória";
     if (!formData.materia) newErrors.materia = "Matéria é obrigatória";
@@ -73,7 +83,6 @@ export function ModalCreateQuestion({
     if (!formData.numero || formData.numero < 1)
       newErrors.numero = "Número deve ser maior que 0";
 
-    // Validações de Conteúdo
     if (!formData.textoQuestao?.trim())
       newErrors.textoQuestao = "Texto da questão é obrigatório";
     if (!formData.textoAlternativaA?.trim())
@@ -94,36 +103,45 @@ export function ModalCreateQuestion({
   };
 
   const handleSave = async () => {
-    if (!validateForm()) {
-      // Se há erros na aba atual, não mudar de aba
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsSaving(true);
+
+    // Deferred upload: upload pending images before creating
+    const pendingStore = pendingStoreRef.current;
+    const saveData = { ...formData };
+    if (pendingStore.hasPending()) {
+      const textFields: (keyof CreateQuestion)[] = [
+        'textoQuestao', 'pergunta', 'textoAlternativaA', 'textoAlternativaB',
+        'textoAlternativaC', 'textoAlternativaD', 'textoAlternativaE',
+      ];
+      const allText = textFields.map(f => (saveData[f] as string) || "").join(" ");
+      pendingStore.pruneUnused(allText);
+
+      if (pendingStore.hasPending()) {
+        const uploadFn = (file: File) => uploadAsset(file, token);
+        const replacements = await pendingStore.uploadAll(uploadFn);
+        for (const field of textFields) {
+          const val = saveData[field];
+          if (typeof val === "string" && val) {
+            (saveData as any)[field] = PendingImageStore.replaceInMarkdown(val, replacements);
+          }
+        }
+      }
+      pendingStore.cleanup();
+    }
+
     await executeAsync({
-      action: () => createQuestion(formData as CreateQuestion, token),
+      action: () =>
+        createQuestion(
+          { ...saveData, contentFormat: "markdown" } as CreateQuestion,
+          token
+        ),
       loadingMessage: "Criando questão...",
-      successMessage: "✅ Questão criada com sucesso!",
+      successMessage: "Questão criada com sucesso!",
       errorMessage: "Erro ao criar questão",
       onSuccess: () => {
-        // Reset form
-        setFormData({
-          prova: "",
-          enemArea: "",
-          frente1: "",
-          frente2: null,
-          frente3: null,
-          materia: "",
-          numero: 1,
-          textoQuestao: "",
-          pergunta: "",
-          textoAlternativaA: "",
-          textoAlternativaB: "",
-          textoAlternativaC: "",
-          textoAlternativaD: "",
-          textoAlternativaE: "",
-          alternativa: "",
-        });
+        setFormData({ ...emptyForm });
         setErrors({});
         onClose();
         if (onSuccess) onSuccess();
@@ -135,38 +153,23 @@ export function ModalCreateQuestion({
   const handleClose = () => {
     if (
       !isSaving &&
-      (Object.keys(formData).some((key) => {
+      Object.keys(formData).some((key) => {
         const value = formData[key as keyof CreateQuestion];
         return value && value !== "" && value !== 1;
-      }) ||
-        Object.keys(errors).length > 0)
+      })
     ) {
       if (
         confirm(
           "Você tem alterações não salvas. Deseja realmente fechar o modal?"
         )
       ) {
-        setFormData({
-          prova: "",
-          enemArea: "",
-          frente1: "",
-          frente2: null,
-          frente3: null,
-          materia: "",
-          numero: 1,
-          textoQuestao: "",
-          pergunta: "",
-          textoAlternativaA: "",
-          textoAlternativaB: "",
-          textoAlternativaC: "",
-          textoAlternativaD: "",
-          textoAlternativaE: "",
-          alternativa: "",
-        });
+        pendingStoreRef.current.cleanup();
+        setFormData({ ...emptyForm });
         setErrors({});
         onClose();
       }
     } else {
+      pendingStoreRef.current.cleanup();
       onClose();
     }
   };
@@ -190,13 +193,31 @@ export function ModalCreateQuestion({
           handleClose: handleClose,
         },
         {
-          label: "Conteúdo",
+          label: "Enunciado",
           id: "conteudo",
           children: (
             <TabConteudoCreate
               formData={formData}
               errors={errors}
               onChange={updateFormData}
+              onImageUpload={handleImageUpload}
+              pendingStore={pendingStoreRef.current}
+              token={token}
+            />
+          ),
+          handleClose: handleClose,
+        },
+        {
+          label: "Alternativas",
+          id: "alternativas",
+          children: (
+            <TabAlternativasCreate
+              formData={formData}
+              errors={errors}
+              onChange={updateFormData}
+              onImageUpload={handleImageUpload}
+              pendingStore={pendingStoreRef.current}
+              token={token}
             />
           ),
           handleClose: handleClose,

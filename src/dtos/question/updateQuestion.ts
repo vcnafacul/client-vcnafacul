@@ -14,6 +14,7 @@ export interface CreateQuestion {
   textoAlternativaD?: string;
   textoAlternativaE?: string;
   alternativa: string;
+  contentFormat?: "plain" | "markdown";
 }
 export interface UpdateQuestion extends CreateQuestion {
   _id: string;
