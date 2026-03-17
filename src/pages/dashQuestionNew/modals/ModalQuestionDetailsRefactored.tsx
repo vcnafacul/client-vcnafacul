@@ -146,6 +146,7 @@ export function ModalQuestionDetailsRefactored({
       canEdit={canEdit}
       infos={infos}
       token={token}
+      refreshQuestion={refreshQuestion}
     />
   );
 }
@@ -162,6 +163,7 @@ function ModalContent({
   canEdit,
   infos,
   token,
+  refreshQuestion,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -169,6 +171,7 @@ function ModalContent({
   canEdit: boolean;
   infos: any;
   token: string;
+  refreshQuestion: () => void;
 }) {
   const pendingStoreRef = useRef(new PendingImageStore());
   const conteudoForm = useConteudoForm({ question, pendingStore: pendingStoreRef.current });

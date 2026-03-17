@@ -140,7 +140,27 @@ function serializeInlineContent(node: any): string {
     } else if (child.type.name === "image") {
       const alt = child.attrs.alt || "";
       const src = child.attrs["data-asset-id"] || child.attrs.src || "";
-      parts.push(`![${alt}](${src})`);
+      const width = child.attrs.width;
+      const height = child.attrs.height;
+      const align = child.attrs.textAlign;
+      const hasSize = width && height;
+      const hasAlign = align && align !== "left";
+
+      if (hasSize || hasAlign) {
+        const sizeAttrs = hasSize
+          ? ` width="${Math.round(width)}" height="${Math.round(height)}"`
+          : "";
+        const imgTag = `<img src="${src}" alt="${alt}"${sizeAttrs} />`;
+        if (hasAlign) {
+          parts.push(
+            `<div style="text-align: ${align}">${imgTag}</div>`
+          );
+        } else {
+          parts.push(imgTag);
+        }
+      } else {
+        parts.push(`![${alt}](${src})`);
+      }
     } else if (child.type.name === "hardBreak") {
       parts.push("\n");
     }
@@ -222,7 +242,7 @@ export function useRichTextEditor({
       TableCell,
       TableHeader,
       TextAlign.configure({
-        types: ["heading", "paragraph"],
+        types: ["heading", "paragraph", "image"],
         alignments: ["left", "center", "right", "justify"],
       }),
       Placeholder.configure({

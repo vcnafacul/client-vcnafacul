@@ -16,7 +16,14 @@ interface RichTextRendererProps {
 const ASSET_PROTOCOL = "asset://";
 
 const components: Components = {
-  img: ({ src, alt, ...props }) => {
+  img: ({ src, alt, width, height, ...props }) => {
+    const w = width ? Number(width) : undefined;
+    const h = height ? Number(height) : undefined;
+    const sizeStyle: React.CSSProperties | undefined =
+      w && h
+        ? { width: `${w}px`, height: `${h}px`, maxWidth: "100%" }
+        : undefined;
+
     if (src?.startsWith(ASSET_PROTOCOL)) {
       const assetId = src.slice(ASSET_PROTOCOL.length);
       return (
@@ -24,10 +31,20 @@ const components: Components = {
           assetId={assetId}
           alt={alt || ""}
           className="max-w-full rounded"
+          width={w}
+          height={h}
         />
       );
     }
-    return <img src={src} alt={alt} className="max-w-full rounded" {...props} />;
+    return (
+      <img
+        src={src}
+        alt={alt}
+        className="max-w-full rounded"
+        style={sizeStyle}
+        {...props}
+      />
+    );
   },
 };
 

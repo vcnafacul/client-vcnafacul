@@ -6,9 +6,11 @@ interface AssetImageProps {
   assetId: string;
   alt?: string;
   className?: string;
+  width?: number;
+  height?: number;
 }
 
-export function AssetImage({ assetId, alt = "", className }: AssetImageProps) {
+export function AssetImage({ assetId, alt = "", className, width, height }: AssetImageProps) {
   const [src, setSrc] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const {
@@ -43,7 +45,12 @@ export function AssetImage({ assetId, alt = "", className }: AssetImageProps) {
     return <span className="text-red-500 text-sm">[Imagem indisponível]</span>;
   }
 
-  return <img src={src} alt={alt} className={className} />;
+  const sizeStyle =
+    width && height
+      ? { width: `${width}px`, height: `${height}px`, maxWidth: "100%" as const }
+      : undefined;
+
+  return <img src={src} alt={alt} className={className} style={sizeStyle} />;
 }
 
 export default AssetImage;
