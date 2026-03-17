@@ -18,6 +18,7 @@ export interface UpdateContentData {
   alternativa: string;
   textClassification: boolean;
   alternativeClassfication: boolean;
+  contentFormat?: "plain" | "markdown";
 }
 
 /**

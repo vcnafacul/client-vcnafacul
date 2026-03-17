@@ -125,7 +125,7 @@ export const summaryByDate = async (summary: AttendanceRecordSummaryByDate) => {
           style: "tableStyle",
           table: {
             widths: [100, "*", "*", "*", "*", "*", "*"],
-            body: tableBody,
+            body: tableBody as any,
           },
           layout: "lightHorizontalLines",
         },

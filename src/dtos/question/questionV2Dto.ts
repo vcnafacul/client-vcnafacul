@@ -59,4 +59,6 @@ export interface QuestionBaseV2 {
   imageClassfication: boolean;
   alternativeClassfication: boolean;
   reported: boolean;
+  contentFormat?: "plain" | "markdown";
+  assets?: string[];
 }
