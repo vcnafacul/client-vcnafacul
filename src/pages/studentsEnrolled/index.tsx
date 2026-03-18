@@ -15,6 +15,7 @@ import { enrollmentCancelled } from "@/services/prepCourse/student/enrollment-ca
 import { getStudentsEnrolled } from "@/services/prepCourse/student/getStudentsEnrolled";
 import { reactiveEnrolled } from "@/services/prepCourse/student/reactive-enrolled";
 import { updateClass } from "@/services/prepCourse/student/updateClass";
+import { getEnrollmentCertificate } from "@/services/prepCourse/student/enrollmentCertificate";
 import { useAuthStore } from "@/store/auth";
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
 import { capitalizeWords } from "@/utils/capitalizeWords";
@@ -33,7 +34,7 @@ import {
 import heic2any from "heic2any";
 import debounce from "lodash";
 import { useCallback, useEffect, useState } from "react";
-import { FaAddressCard, FaCheck } from "react-icons/fa";
+import { FaAddressCard, FaCheck, FaDownload } from "react-icons/fa";
 import { IoClose, IoEyeSharp } from "react-icons/io5";
 import { MdClass } from "react-icons/md";
 import { toast } from "react-toastify";
@@ -249,6 +250,15 @@ export function StudentsEnrolled() {
     });
   };
 
+  const handleDownloadEnrollmentCertificate = async (studentId: string) => {
+    await executeAsync({
+      action: () => getEnrollmentCertificate(studentId, token),
+      loadingMessage: "Gerando declaração de matrícula...",
+      successMessage: "Declaração gerada com sucesso!",
+      errorMessage: "Erro ao gerar declaração de matrícula",
+    });
+  };
+
   const updateEntities = (entity: StudentsDtoOutput) => {
     setStudentSelected(entity);
     const newEntities = students.map((s) => {
@@ -335,7 +345,7 @@ export function StudentsEnrolled() {
     {
       field: "actions",
       headerName: "Ações",
-      width: 170,
+      width: 230,
       disableColumnMenu: true,
       sortable: false,
       align: "center",
@@ -347,6 +357,19 @@ export function StudentsEnrolled() {
               <IoEyeSharp className="h-6 w-6 fill-gray-500 opacity-60 hover:opacity-100" />
             </IconButton>
           </Tooltip>
+          {permissao[Roles.gerenciarEstudantes] &&
+            params.row.applicationStatus === StatusApplication.Enrolled &&
+            params.row.class?.id && (
+              <Tooltip title="Declaração de matrícula">
+                <IconButton
+                  onClick={() =>
+                    handleDownloadEnrollmentCertificate(params.row.id)
+                  }
+                >
+                  <FaDownload className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
+                </IconButton>
+              </Tooltip>
+            )}
           {permissao[Roles.gerenciarEstudantes] &&
             (params.row.applicationStatus === StatusApplication.Enrolled ? (
               <Tooltip title="Cancelar matrícula">
