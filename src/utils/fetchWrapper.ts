@@ -2,6 +2,7 @@
 import { LOGOFF_PATH } from "../routes/path";
 import { refreshToken } from "../services/auth/refresh";
 import { useAuthStore } from "../store/auth";
+import { decoderUser } from "./decodedUser";
 import {
   buildFrontendErrorPayload,
   sendFrontendError,
@@ -104,6 +105,16 @@ const processQueue = (error: Error | null, token: string | null = null) => {
 };
 
 /**
+ * Executa o refresh e atualiza o store com as permissões atualizadas do JWT
+ */
+async function doRefreshAndUpdateStore(): Promise<string> {
+  const refreshResponse = await refreshToken();
+  const store = useAuthStore.getState();
+  store.doAuth(decoderUser(refreshResponse.access_token));
+  return refreshResponse.access_token;
+}
+
+/**
  * Wrapper para fetch com renovação automática de token
  * Envia cookies automaticamente (refresh token via httpOnly cookie)
  * @param url - URL da requisição
@@ -118,7 +129,7 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
     url.includes("/forgot") ||
     url.includes("/reset");
 
-  // ✅ SEMPRE inclui credentials para enviar/receber cookies
+  // SEMPRE inclui credentials para enviar/receber cookies
   const fetchOptions = {
     ...options,
     credentials: "include" as RequestCredentials,
@@ -130,51 +141,35 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
     options?.headers?.Authorization &&
     tokenIsExpired(options?.headers?.Authorization)
   ) {
-    // ⚠️ CRITICAL: Se já está renovando, aguarda na fila
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
         failedQueue.push({ resolve, reject, request: { url, options: fetchOptions } });
       });
     }
 
-    // Inicia processo de renovação
     isRefreshing = true;
 
-    const store = useAuthStore.getState();
-
     try {
-      // ✅ Refresh token vai automaticamente via cookie
-      const refreshResponse = await refreshToken();
+      const newToken = await doRefreshAndUpdateStore();
 
-      // Atualiza store apenas com access_token
-      store.doAuth({
-        ...store.data,
-        token: refreshResponse.access_token,
-      });
-
-      // Atualiza o header da requisição atual
       if (fetchOptions?.headers) {
-        fetchOptions.headers.Authorization = `Bearer ${refreshResponse.access_token}`;
+        fetchOptions.headers.Authorization = `Bearer ${newToken}`;
       }
 
-      // Processa fila de requisições pendentes
-      processQueue(null, refreshResponse.access_token);
-
+      processQueue(null, newToken);
       isRefreshing = false;
     } catch (error) {
-      // Falha ao renovar, redireciona para login
       console.error("❌ Erro ao renovar token:", error);
       isRefreshing = false;
       processQueue(error as Error, null);
 
-      // Limpa store e redireciona
-      store.logout();
+      useAuthStore.getState().logout();
       window.location.href = LOGOFF_PATH;
       throw error;
     }
   }
 
-  // Faz a requisição com retry para GETs (erros de rede são reportados ao back para log/Discord)
+  // Faz a requisição com retry para GETs
   let response: Response;
   try {
     response = await fetchWithRetry(url, fetchOptions);
@@ -185,7 +180,6 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
 
   // Verifica se recebeu 401 (não autorizado)
   if (response.status === 401 && !isAuthEndpoint) {
-    // Se já está renovando, adiciona na fila
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
         failedQueue.push({ resolve, reject, request: { url, options: fetchOptions } });
@@ -194,27 +188,16 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
 
     isRefreshing = true;
 
-    const store = useAuthStore.getState();
-
     try {
-      // ✅ Refresh token vai automaticamente via cookie
-      const refreshResponse = await refreshToken();
+      const newToken = await doRefreshAndUpdateStore();
 
-      // Atualiza store apenas com access_token
-      store.doAuth({
-        ...store.data,
-        token: refreshResponse.access_token,
-      });
+      processQueue(null, newToken);
 
-      // Processa fila de requisições pendentes
-      processQueue(null, refreshResponse.access_token);
-
-      // Repete a requisição original com novo token
       const updatedOptions = {
         ...fetchOptions,
         headers: {
           ...fetchOptions?.headers,
-          Authorization: `Bearer ${refreshResponse.access_token}`,
+          Authorization: `Bearer ${newToken}`,
         },
       };
 
@@ -230,13 +213,11 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
         throw retryErr;
       }
     } catch (error) {
-      // Falha ao renovar token, limpa tudo e redireciona
       console.error("❌ Erro ao renovar token após 401:", error);
       isRefreshing = false;
       processQueue(error as Error, null);
 
-      // Limpa store e redireciona
-      store.logout();
+      useAuthStore.getState().logout();
       window.location.href = LOGOFF_PATH;
 
       throw error;
