@@ -122,5 +122,12 @@ export const coursePeriod = `${BASE_URL}/course-period`;
 export const essay = `${BASE_URL}/essay`;
 export const essayTheme = `${essay}/theme`;
 export const essayThemeCurrent = `${essayTheme}/current`;
+export const essayThemeAvailable = `${essayTheme}/available`;
 export const essayMy = `${essay}/my`;
 export const essaySettings = `${essay}/settings`;
+export const essayAll = `${essay}/all`;
+export const essayMyCursinho = `${essay}/my-cursinho`;
+export const essayPrepCourse = (prepCourseId: string) =>
+  `${essay}/prep-course/${prepCourseId}`;
+export const essayReviews = (essayId: string) => `${essay}/${essayId}/reviews`;
+export const essayReview = (essayId: string) => `${essay}/${essayId}/review`;

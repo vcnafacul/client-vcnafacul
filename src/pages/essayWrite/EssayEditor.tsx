@@ -1,54 +1,39 @@
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Placeholder from "@tiptap/extension-placeholder";
-import CharacterCount from "@tiptap/extension-character-count";
-import { useEffect } from "react";
+import { EditorContent } from "@tiptap/react";
+import { useEssayEditor } from "./useEssayEditor";
+import EssayEditorToolbar from "./EssayEditorToolbar";
 
 interface EssayEditorProps {
   content: string;
-  onChange: (text: string) => void;
+  onChange: (markdown: string) => void;
+  onWordCountChange?: (count: number) => void;
   placeholder?: string;
 }
 
 export default function EssayEditor({
   content,
   onChange,
+  onWordCountChange,
   placeholder = "Comece sua redacao aqui...",
 }: EssayEditorProps) {
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        bold: false,
-        italic: false,
-        strike: false,
-        code: false,
-        codeBlock: false,
-        blockquote: false,
-        bulletList: false,
-        orderedList: false,
-        heading: false,
-        horizontalRule: false,
-      }),
-      Placeholder.configure({ placeholder }),
-      CharacterCount.configure({ limit: 5000 }),
-    ],
+  const { editor, getWordCount } = useEssayEditor({
     content,
-    onUpdate: ({ editor }) => {
-      onChange(editor.getText());
+    onChange: (md) => {
+      onChange(md);
+      if (onWordCountChange) {
+        onWordCountChange(getWordCount());
+      }
     },
+    placeholder,
   });
 
-  useEffect(() => {
-    if (editor && content === "" && editor.getText() !== "") {
-      editor.commands.clearContent();
-    }
-  }, [content, editor]);
+  if (!editor) return null;
 
   return (
     <div className="border rounded-lg bg-white">
+      <EssayEditorToolbar editor={editor} />
       <EditorContent
         editor={editor}
-        className="min-h-[400px] p-4 prose prose-sm max-w-none focus-within:ring-2 focus-within:ring-marine rounded-lg"
+        className="min-h-[400px] p-4 prose prose-sm max-w-none focus-within:ring-2 focus-within:ring-marine rounded-b-lg"
       />
     </div>
   );

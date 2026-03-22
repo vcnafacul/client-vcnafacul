@@ -9,7 +9,9 @@ export interface EssayTheme {
   createdAt: string;
 }
 
-export type EssayStatus = 'DRAFT' | 'SUBMITTED' | 'AI_REVIEWED' | 'AI_FAILED';
+export type EssayStatus = 'DRAFT' | 'SUBMITTED' | 'REVIEWED';
+
+export type ReviewType = 'AI' | 'HUMAN';
 
 export interface AICompetency {
   score: number;
@@ -17,14 +19,21 @@ export interface AICompetency {
   suggestion: string;
 }
 
-export interface AIHighlightedExcerpt {
+export interface HighlightedExcerpt {
   trecho: string;
   tipo: 'positivo' | 'negativo';
   comentario: string;
 }
 
-export interface EssayAIReview {
+export interface EssayReview {
   id: string;
+  reviewType: ReviewType;
+  reviewer?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
   comp1Score: number;
   comp1Feedback: string;
   comp1Suggestion: string;
@@ -42,10 +51,11 @@ export interface EssayAIReview {
   comp5Suggestion: string;
   totalScore: number;
   generalComment: string;
-  highlightedExcerpts: AIHighlightedExcerpt[];
-  processingTimeMs: number;
-  provider: string;
-  model: string;
+  highlightedExcerpts: HighlightedExcerpt[];
+  processingTimeMs?: number;
+  provider?: string;
+  model?: string;
+  createdAt: string;
 }
 
 export interface EssaySettingsDto {
@@ -62,5 +72,44 @@ export interface Essay {
   submittedAt: string | null;
   createdAt: string;
   theme: EssayTheme;
-  aiReview: EssayAIReview | null;
+  reviews: EssayReview[];
+}
+
+export interface EssayListItem {
+  id: string;
+  title: string | null;
+  status: EssayStatus;
+  submittedAt: string | null;
+  createdAt: string;
+  user: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  theme: {
+    id: string;
+    title: string;
+  };
+  reviews: EssayReview[];
+}
+
+export interface CreateEssayReviewPayload {
+  comp1Score: number;
+  comp1Feedback: string;
+  comp1Suggestion: string;
+  comp2Score: number;
+  comp2Feedback: string;
+  comp2Suggestion: string;
+  comp3Score: number;
+  comp3Feedback: string;
+  comp3Suggestion: string;
+  comp4Score: number;
+  comp4Feedback: string;
+  comp4Suggestion: string;
+  comp5Score: number;
+  comp5Feedback: string;
+  comp5Suggestion: string;
+  totalScore: number;
+  generalComment: string;
+  highlightedExcerpts?: HighlightedExcerpt[];
 }

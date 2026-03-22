@@ -8,9 +8,8 @@ import { ESSAY_WRITE } from "@/routes/path";
 
 const STATUS_LABELS: Record<string, string> = {
   DRAFT: "Rascunho",
-  SUBMITTED: "Processando",
-  AI_REVIEWED: "Corrigida",
-  AI_FAILED: "Erro na correção",
+  SUBMITTED: "Aguardando revisão",
+  REVIEWED: "Corrigida",
 };
 
 export default function EssayHistory() {
@@ -59,7 +58,9 @@ export default function EssayHistory() {
                 >
                   <td className="p-3 text-sm">{essay.theme.title}</td>
                   <td className="p-3 text-sm font-bold text-marine">
-                    {essay.aiReview ? essay.aiReview.totalScore : "-"}
+                    {essay.reviews?.find((r) => r.reviewType === "AI")
+                      ? essay.reviews.find((r) => r.reviewType === "AI")!.totalScore
+                      : "-"}
                   </td>
                   <td className="p-3 text-sm">
                     {STATUS_LABELS[essay.status] ?? essay.status}

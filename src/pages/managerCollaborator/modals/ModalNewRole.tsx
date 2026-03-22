@@ -56,6 +56,8 @@ function ModalNewRole({
     visualizarMinhasInscricoes: false,
     gerenciarFormularioGlobal: false,
     gerenciarTemas: false,
+    revisarRedacoes: false,
+    revisarTodasRedacoes: false,
   });
 
   const {

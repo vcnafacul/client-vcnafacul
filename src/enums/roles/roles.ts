@@ -22,6 +22,8 @@ export enum Roles {
   visualizarMinhasInscricoes = "visualizarMinhasInscricoes",
   gerenciarFormularioGlobal = "gerenciarFormularioGlobal",
   gerenciarTemas = "gerenciarTemas",
+  revisarRedacoes = "revisarRedacoes",
+  revisarTodasRedacoes = "revisarTodasRedacoes",
 }
 
 export const RolesLabel = [
@@ -133,6 +135,16 @@ export const RolesLabel = [
   {
     value: Roles.gerenciarTemas,
     label: "Gerenciar Temas de Redação",
+    isProjectPermission: true,
+  },
+  {
+    value: Roles.revisarRedacoes,
+    label: "Revisar Redações do Cursinho",
+    isProjectPermission: false,
+  },
+  {
+    value: Roles.revisarTodasRedacoes,
+    label: "Revisar Todas as Redações",
     isProjectPermission: true,
   },
 ];
