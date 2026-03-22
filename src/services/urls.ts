@@ -123,3 +123,4 @@ export const essay = `${BASE_URL}/essay`;
 export const essayTheme = `${essay}/theme`;
 export const essayThemeCurrent = `${essayTheme}/current`;
 export const essayMy = `${essay}/my`;
+export const essaySettings = `${essay}/settings`;

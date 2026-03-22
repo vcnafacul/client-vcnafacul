@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/store/auth";
 import { EssayTheme } from "@/dtos/essay";
-import { getThemes, createTheme, updateTheme, deleteTheme } from "@/services/essay";
+import { getThemes, createTheme, updateTheme, deleteTheme, getEssaySettings, updateEssaySettings } from "@/services/essay";
+import Toggle from "@/components/atoms/toggle";
 import ThemeForm from "./ThemeForm";
 
 export default function EssayThemeAdmin() {
@@ -11,6 +12,8 @@ export default function EssayThemeAdmin() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<EssayTheme | null | undefined>(undefined);
   // undefined = form closed, null = creating new, EssayTheme = editing
+  const [aiEnabled, setAiEnabled] = useState(true);
+  const [aiToggleLoading, setAiToggleLoading] = useState(false);
 
   const loadThemes = () => {
     getThemes(token, 1, 50)
@@ -21,7 +24,23 @@ export default function EssayThemeAdmin() {
 
   useEffect(() => {
     loadThemes();
+    getEssaySettings(token)
+      .then((s) => setAiEnabled(s.aiEnabled))
+      .catch(() => {});
   }, [token]);
+
+  const handleAiToggle = async (_name: string, checked: boolean) => {
+    setAiToggleLoading(true);
+    try {
+      const result = await updateEssaySettings(token, { aiEnabled: checked });
+      setAiEnabled(result.aiEnabled);
+      toast.success(result.aiEnabled ? "Correção por IA ativada" : "Correção por IA desativada");
+    } catch {
+      toast.error("Erro ao atualizar configuração");
+    } finally {
+      setAiToggleLoading(false);
+    }
+  };
 
   const handleSave = async (data: {
     title: string;
@@ -62,12 +81,26 @@ export default function EssayThemeAdmin() {
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-marine">Temas de Redação</h1>
-        <button
-          onClick={() => setEditing(null)}
-          className="px-4 py-2 bg-marine text-white rounded-lg hover:bg-marine/90"
-        >
-          Novo Tema
-        </button>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-700">Correção por IA</span>
+            <Toggle
+              name="aiEnabled"
+              checked={aiEnabled}
+              handleCheck={handleAiToggle}
+              disabled={aiToggleLoading}
+            />
+            <span className={`text-xs font-semibold ${aiEnabled ? "text-green-600" : "text-gray-400"}`}>
+              {aiEnabled ? "Ativo" : "Inativo"}
+            </span>
+          </div>
+          <button
+            onClick={() => setEditing(null)}
+            className="px-4 py-2 bg-marine text-white rounded-lg hover:bg-marine/90"
+          >
+            Novo Tema
+          </button>
+        </div>
       </div>
       <div className="space-y-3">
         {themes.map((theme) => (

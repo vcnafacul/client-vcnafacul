@@ -48,6 +48,10 @@ export interface EssayAIReview {
   model: string;
 }
 
+export interface EssaySettingsDto {
+  aiEnabled: boolean;
+}
+
 export interface Essay {
   id: string;
   title: string | null;

@@ -1,6 +1,6 @@
 import fetchWrapper from "@/utils/fetchWrapper";
-import { essay, essayMy, essayTheme, essayThemeCurrent } from "../urls";
-import { Essay, EssayTheme } from "@/dtos/essay";
+import { essay, essayMy, essaySettings, essayTheme, essayThemeCurrent } from "../urls";
+import { Essay, EssaySettingsDto, EssayTheme } from "@/dtos/essay";
 
 // ---- Themes ----
 
@@ -59,6 +59,30 @@ export async function deleteTheme(token: string, id: string): Promise<void> {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (response.status !== 200) throw new Error("Erro ao remover tema");
+}
+
+// ---- Settings ----
+
+export async function getEssaySettings(token: string): Promise<EssaySettingsDto> {
+  const response = await fetchWrapper(essaySettings, {
+    method: "GET",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+  });
+  if (response.status !== 200) throw new Error("Erro ao buscar configurações");
+  return await response.json();
+}
+
+export async function updateEssaySettings(
+  token: string,
+  data: EssaySettingsDto,
+): Promise<EssaySettingsDto> {
+  const response = await fetchWrapper(essaySettings, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify(data),
+  });
+  if (response.status !== 200) throw new Error("Erro ao atualizar configurações");
+  return await response.json();
 }
 
 // ---- Essays ----

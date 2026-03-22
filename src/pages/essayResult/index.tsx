@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/store/auth";
 import { Essay } from "@/dtos/essay";
-import { getEssayById } from "@/services/essay";
+import { getEssayById, getEssaySettings } from "@/services/essay";
 import ScoreOverview from "./ScoreOverview";
 import CompetencyDetail from "./CompetencyDetail";
 
@@ -12,6 +12,13 @@ export default function EssayResult() {
   const { data: { token } } = useAuthStore();
   const [essay, setEssay] = useState<Essay | null>(null);
   const [loading, setLoading] = useState(true);
+  const [aiEnabled, setAiEnabled] = useState(true);
+
+  useEffect(() => {
+    getEssaySettings(token)
+      .then((s) => setAiEnabled(s.aiEnabled))
+      .catch(() => {});
+  }, [token]);
 
   const fetchEssay = () => {
     if (!id) return;
@@ -50,12 +57,25 @@ export default function EssayResult() {
 
       {isProcessing && (
         <div className="border rounded-lg p-6 bg-yellow-50 text-center">
-          <p className="text-yellow-700 font-semibold">
-            Correção por IA em andamento...
-          </p>
-          <p className="text-sm text-yellow-600 mt-1">
-            Isso geralmente leva menos de 30 segundos
-          </p>
+          {aiEnabled ? (
+            <>
+              <p className="text-yellow-700 font-semibold">
+                Correção por IA em andamento...
+              </p>
+              <p className="text-sm text-yellow-600 mt-1">
+                Isso geralmente leva menos de 30 segundos
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-yellow-700 font-semibold">
+                Redação recebida com sucesso
+              </p>
+              <p className="text-sm text-yellow-600 mt-1">
+                A correção automática por IA está temporariamente desativada. Sua redação será corrigida quando o recurso for reativado.
+              </p>
+            </>
+          )}
         </div>
       )}
 
