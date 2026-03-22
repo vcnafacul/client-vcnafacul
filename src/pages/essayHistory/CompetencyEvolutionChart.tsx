@@ -32,9 +32,7 @@ export default function CompetencyEvolutionChart({ timeline }: Props) {
 
   if (entries.length < 2) return null;
 
-  const xAxis = entries.map((e) =>
-    new Date(e.submittedAt).toLocaleDateString("pt-BR"),
-  );
+  const xAxis = entries.map((e) => e.themeTitle);
 
   const series = COMPETENCY_LABELS.map((label, i) => ({
     label,

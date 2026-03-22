@@ -9,9 +9,7 @@ export default function ScoreEvolutionChart({ timeline }: Props) {
   const reviewed = timeline.filter((e) => e.aiReview || e.humanReview);
   if (reviewed.length < 2) return null;
 
-  const xAxis = reviewed.map((e) =>
-    new Date(e.submittedAt).toLocaleDateString("pt-BR"),
-  );
+  const xAxis = reviewed.map((e) => e.themeTitle);
 
   const aiData = reviewed.map((e) => e.aiReview?.totalScore ?? null);
   const humanData = reviewed.map((e) => e.humanReview?.totalScore ?? null);
