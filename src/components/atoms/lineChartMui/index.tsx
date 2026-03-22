@@ -15,7 +15,7 @@ const DEFAULT_COLORS = [
 
 interface LineSeries {
   label: string;
-  data: number[];
+  data: (number | null)[];
   color?: string;
 }
 
@@ -25,6 +25,8 @@ export interface LineChartMuiProps {
   title?: string;
   width?: string | number;
   height?: string | number;
+  yAxisLabel?: string;
+  yAxisMax?: number;
 }
 
 export default function LineChartMui({
@@ -33,6 +35,8 @@ export default function LineChartMui({
   title,
   width = "100%",
   height = 400,
+  yAxisLabel,
+  yAxisMax,
 }: LineChartMuiProps) {
   return (
     <Box sx={{ width, display: "flex", flexDirection: "column" }}>
@@ -52,7 +56,8 @@ export default function LineChartMui({
           }}
           yAxis={[
             {
-              label: "Quantidade",
+              label: yAxisLabel ?? "Quantidade",
+              ...(yAxisMax !== undefined && { max: yAxisMax }),
               labelStyle: {
                 translate: -15,
               },

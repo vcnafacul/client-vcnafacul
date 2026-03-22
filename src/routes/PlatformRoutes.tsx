@@ -16,6 +16,10 @@ import EssayWrite from "../pages/essayWrite";
 import EssayResult from "../pages/essayResult";
 import EssayHistory from "../pages/essayHistory";
 import EssayThemeAdmin from "../pages/essayThemeAdmin";
+import EssayReviewList from "../pages/essayReviewList";
+import EssayReviewDetail from "../pages/essayReviewDetail";
+import EssayViewDetail from "../pages/essayViewDetail";
+import ReviewSingle from "../pages/essayViewDetail/ReviewSingle";
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashTemplate from "../components/templates/dashTemplate";
 import { Roles } from "../enums/roles/roles";
@@ -66,6 +70,8 @@ import {
   ESSAY_WRITE,
   ESSAY_HISTORY,
   ESSAY_THEME_ADMIN,
+  ESSAY_REVIEW_CURSINHO,
+  ESSAY_REVIEW_LIST,
   ESTUDO,
   FORGOT_PASSWORD_PATH,
   FORM_GEOLOCATION,
@@ -298,6 +304,86 @@ export function PlatformRoutes() {
               permission={data.permissao[Roles.gerenciarTemas]}
             >
               <EssayThemeAdmin />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={ESSAY_REVIEW_LIST}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarTodasRedacoes]}
+            >
+              <EssayReviewList mode="admin" />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={`${ESSAY_REVIEW_LIST}/:id`}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarTodasRedacoes]}
+            >
+              <EssayReviewDetail />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={`${ESSAY_REVIEW_LIST}/:id/ver`}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarTodasRedacoes]}
+            >
+              <EssayViewDetail />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={`${ESSAY_REVIEW_LIST}/:id/ver/:reviewId`}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarTodasRedacoes]}
+            >
+              <ReviewSingle />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={ESSAY_REVIEW_CURSINHO}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarRedacoes]}
+            >
+              <EssayReviewList mode="cursinho" />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={`${ESSAY_REVIEW_CURSINHO}/:id`}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarRedacoes]}
+            >
+              <EssayReviewDetail />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={`${ESSAY_REVIEW_CURSINHO}/:id/ver`}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarRedacoes]}
+            >
+              <EssayViewDetail />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={`${ESSAY_REVIEW_CURSINHO}/:id/ver/:reviewId`}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarRedacoes]}
+            >
+              <ReviewSingle />
             </ProtectedRoutePermission>
           }
         />

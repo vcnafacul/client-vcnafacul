@@ -25,4 +25,6 @@ export interface CreateRoleDto {
   visualizarMinhasInscricoes: boolean;
   gerenciarFormularioGlobal: boolean;
   gerenciarTemas: boolean;
+  revisarRedacoes: boolean;
+  revisarTodasRedacoes: boolean;
 }

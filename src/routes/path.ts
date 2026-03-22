@@ -42,3 +42,5 @@ export const ENROLLMENT_CONFIRMATION = "/confirmacao-matricula";
 export const ESSAY_WRITE = "redacao";
 export const ESSAY_HISTORY = "redacoes";
 export const ESSAY_THEME_ADMIN = "temas-redacao";
+export const ESSAY_REVIEW_LIST = "revisao-redacoes";
+export const ESSAY_REVIEW_CURSINHO = "revisao-redacoes-cursinho";

@@ -1,36 +1,39 @@
 import { ResponsiveRadar } from "@nivo/radar";
 
 interface Props {
-  data: {
-    materia: string;
-    aproveitamento: number;
-  }[];
+  data: Record<string, string | number>[];
+  keys?: string[];
+  indexBy?: string;
   scheme?: string;
   gridShape?: string;
   fill?: string;
   dotSize?: number;
   dotBorderWidth?: number;
+  maxValue?: number;
 }
 
 export function RadarChart({
   data,
+  keys = ["aproveitamento"],
+  indexBy = "materia",
   scheme,
   gridShape,
   fill,
   dotSize = 5,
   dotBorderWidth = 3,
+  maxValue = 100,
 }: Props) {
   const colorScheme = scheme || "blues";
   const shape: string = gridShape || "linear";
   return (
     <ResponsiveRadar
       data={data}
-      keys={["aproveitamento"]}
-      indexBy="materia"
+      keys={keys}
+      indexBy={indexBy}
       margin={{ top: 25, right: 0, bottom: 25, left: 0 }}
       borderColor={{ from: "color", modifiers: [] }}
       gridLabelOffset={10}
-      maxValue={100}
+      maxValue={maxValue}
       gridLevels={10}
       dotSize={dotSize}
       dotColor={{ theme: "background" }}

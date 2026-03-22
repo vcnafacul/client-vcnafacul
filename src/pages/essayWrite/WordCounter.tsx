@@ -1,11 +1,23 @@
 interface WordCounterProps {
   text: string;
+  wordCount?: number;
 }
 
-export default function WordCounter({ text }: WordCounterProps) {
-  const words = text.split(/\s+/).filter(Boolean).length;
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/#{1,6}\s/g, "")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/^>\s/gm, "")
+    .replace(/^[-*+]\s/gm, "")
+    .replace(/^\d+\.\s/gm, "");
+}
+
+export default function WordCounter({ text, wordCount }: WordCounterProps) {
+  const plain = stripMarkdown(text);
+  const words = wordCount ?? plain.split(/\s+/).filter(Boolean).length;
   const lines = text.split("\n").length;
-  const chars = text.length;
+  const chars = plain.length;
 
   const idealMin = 200;
   const idealMax = 500;
