@@ -124,6 +124,7 @@ export const essayTheme = `${essay}/theme`;
 export const essayThemeCurrent = `${essayTheme}/current`;
 export const essayThemeAvailable = `${essayTheme}/available`;
 export const essayMy = `${essay}/my`;
+export const essayMyStats = `${essayMy}/stats`;
 export const essaySettings = `${essay}/settings`;
 export const essayAll = `${essay}/all`;
 export const essayMyCursinho = `${essay}/my-cursinho`;

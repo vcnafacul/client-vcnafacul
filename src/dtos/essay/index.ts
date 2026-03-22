@@ -93,6 +93,27 @@ export interface EssayListItem {
   reviews: EssayReview[];
 }
 
+export interface EssayStatsReview {
+  totalScore: number;
+  comp1Score: number;
+  comp2Score: number;
+  comp3Score: number;
+  comp4Score: number;
+  comp5Score: number;
+}
+
+export interface EssayStatsTimelineEntry {
+  essayId: string;
+  themeTitle: string;
+  submittedAt: string;
+  aiReview: EssayStatsReview | null;
+  humanReview: EssayStatsReview | null;
+}
+
+export interface EssayStats {
+  timeline: EssayStatsTimelineEntry[];
+}
+
 export interface CreateEssayReviewPayload {
   comp1Score: number;
   comp1Feedback: string;

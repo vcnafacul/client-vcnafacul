@@ -1,6 +1,6 @@
 import fetchWrapper from "@/utils/fetchWrapper";
-import { essay, essayAll, essayMy, essayMyCursinho, essayPrepCourse, essayReview, essayReviews, essaySettings, essayTheme, essayThemeAvailable, essayThemeCurrent } from "../urls";
-import { CreateEssayReviewPayload, Essay, EssayListItem, EssayReview, EssaySettingsDto, EssayTheme } from "@/dtos/essay";
+import { essay, essayAll, essayMy, essayMyCursinho, essayMyStats, essayPrepCourse, essayReview, essayReviews, essaySettings, essayTheme, essayThemeAvailable, essayThemeCurrent } from "../urls";
+import { CreateEssayReviewPayload, Essay, EssayListItem, EssayReview, EssaySettingsDto, EssayStats, EssayTheme } from "@/dtos/essay";
 
 // ---- Themes ----
 
@@ -149,6 +149,15 @@ export async function getMyEssays(
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
   });
   if (response.status !== 200) throw new Error("Erro ao buscar redacoes");
+  return await response.json();
+}
+
+export async function getMyStats(token: string): Promise<EssayStats> {
+  const response = await fetchWrapper(essayMyStats, {
+    method: "GET",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+  });
+  if (response.status !== 200) throw new Error("Erro ao buscar estatísticas");
   return await response.json();
 }
 
