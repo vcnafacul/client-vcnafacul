@@ -118,3 +118,8 @@ export const rule_form = `${BASE_URL}/rule-form`;
 export const rule_set_form = `${BASE_URL}/rule-set-form`;
 
 export const coursePeriod = `${BASE_URL}/course-period`;
+
+export const essay = `${BASE_URL}/essay`;
+export const essayTheme = `${essay}/theme`;
+export const essayThemeCurrent = `${essayTheme}/current`;
+export const essayMy = `${essay}/my`;

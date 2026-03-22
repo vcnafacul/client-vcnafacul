@@ -12,6 +12,10 @@ import PartnerPrepManager from "@/pages/partnerPrepManager";
 import RegistrationMonitor from "@/pages/registrationMonitor";
 import { StudentsEnrolled } from "@/pages/studentsEnrolled";
 import GlobalFormPage from "@/pages/globalForm";
+import EssayWrite from "../pages/essayWrite";
+import EssayResult from "../pages/essayResult";
+import EssayHistory from "../pages/essayHistory";
+import EssayThemeAdmin from "../pages/essayThemeAdmin";
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashTemplate from "../components/templates/dashTemplate";
 import { Roles } from "../enums/roles/roles";
@@ -59,6 +63,9 @@ import {
   DASH_SIMULADO,
   DECLARED_INTEREST,
   ENROLLMENT_CONFIRMATION,
+  ESSAY_WRITE,
+  ESSAY_HISTORY,
+  ESSAY_THEME_ADMIN,
   ESTUDO,
   FORGOT_PASSWORD_PATH,
   FORM_GEOLOCATION,
@@ -278,6 +285,19 @@ export function PlatformRoutes() {
               permission={data.permissao[Roles.alterarPermissao]}
             >
               <PartnerPrepManager />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route path={ESSAY_WRITE} element={<EssayWrite />} />
+        <Route path={`${ESSAY_WRITE}/:id`} element={<EssayResult />} />
+        <Route path={ESSAY_HISTORY} element={<EssayHistory />} />
+        <Route
+          path={ESSAY_THEME_ADMIN}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.gerenciarTemas]}
+            >
+              <EssayThemeAdmin />
             </ProtectedRoutePermission>
           }
         />

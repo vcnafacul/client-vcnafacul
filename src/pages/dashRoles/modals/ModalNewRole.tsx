@@ -49,6 +49,7 @@ function ModalNewRole({
     gerenciarPermissoesCursinho: false,
     visualizarMinhasInscricoes: false,
     gerenciarFormularioGlobal: false,
+    gerenciarTemas: false,
   });
 
   const {
