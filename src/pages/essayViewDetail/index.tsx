@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { FiCpu, FiUser } from "react-icons/fi";
 import { useAuthStore } from "@/store/auth";
 import { Essay, EssayReview } from "@/dtos/essay";
-import { getEssayById, getEssayReviews } from "@/services/essay";
+import { getEssayById, getEssayReviews, downloadEssayImage } from "@/services/essay";
 import RichTextRenderer from "@/components/atoms/richTextRenderer/RichTextRenderer";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -55,12 +55,26 @@ export default function EssayViewDetail() {
             </span>
           )}
         </div>
-        <div className="border rounded-lg p-4 bg-gray-50 text-sm">
-          <RichTextRenderer
-            content={essay.text ?? ""}
-            contentFormat="markdown"
-          />
-        </div>
+        {essay.inputType === 'UPLOADED' ? (
+          <div className="border rounded-lg p-6 bg-gray-50 text-center space-y-3">
+            <p className="text-sm text-grey">
+              Redação enviada como {essay.mimeType === 'application/pdf' ? 'PDF' : 'imagem'}
+            </p>
+            <button
+              onClick={() => downloadEssayImage(token, essay.id).catch(() => toast.error("Erro ao baixar arquivo"))}
+              className="px-4 py-2 bg-marine text-white rounded-lg hover:bg-marine/90 text-sm"
+            >
+              Baixar arquivo
+            </button>
+          </div>
+        ) : (
+          <div className="border rounded-lg p-4 bg-gray-50 text-sm">
+            <RichTextRenderer
+              content={essay.text ?? ""}
+              contentFormat="markdown"
+            />
+          </div>
+        )}
       </div>
 
       {/* Reviews list */}

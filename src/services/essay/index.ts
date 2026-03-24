@@ -1,5 +1,5 @@
 import fetchWrapper from "@/utils/fetchWrapper";
-import { essay, essayAll, essayMy, essayMyCursinho, essayMyStats, essayPrepCourse, essayReview, essayReviews, essaySettings, essayTheme, essayThemeAvailable, essayThemeCurrent } from "../urls";
+import { essay, essayAll, essayImage, essayMy, essayMyCursinho, essayMyStats, essayPrepCourse, essayReview, essayReviews, essaySettings, essaySubmitImage, essayTheme, essayThemeAvailable, essayThemeCurrent } from "../urls";
 import { CreateEssayReviewPayload, Essay, EssayListItem, EssayReview, EssaySettingsDto, EssayStats, EssayTheme } from "@/dtos/essay";
 
 // ---- Themes ----
@@ -137,6 +137,49 @@ export async function submitEssay(
   });
   if (response.status !== 201) throw new Error("Erro ao submeter redacao");
   return await response.json();
+}
+
+export async function submitEssayImage(
+  token: string,
+  themeId: string,
+  file: File,
+): Promise<Essay> {
+  const formData = new FormData();
+  formData.append('themeId', themeId);
+  formData.append('file', file);
+
+  const response = await fetchWrapper(essaySubmitImage, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+  if (response.status !== 201) throw new Error("Erro ao enviar redação");
+  return await response.json();
+}
+
+export async function downloadEssayImage(
+  token: string,
+  essayId: string,
+): Promise<void> {
+  const response = await fetchWrapper(essayImage(essayId), {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (response.status !== 200) throw new Error("Erro ao baixar arquivo");
+
+  const blob = await response.blob();
+  const contentDisposition = response.headers.get("Content-Disposition");
+  const filename =
+    contentDisposition?.match(/filename="?(.+?)"?$/)?.[1] ?? `redacao-${essayId}`;
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 export async function getMyEssays(
