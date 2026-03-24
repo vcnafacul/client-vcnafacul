@@ -63,6 +63,7 @@ export default function EssayHistory() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="text-left p-3 text-sm font-semibold text-grey">Tema</th>
+                <th className="text-left p-3 text-sm font-semibold text-grey">Tipo</th>
                 <th className="text-left p-3 text-sm font-semibold text-grey">Nota IA</th>
                 <th className="text-left p-3 text-sm font-semibold text-grey">Status</th>
                 <th className="text-left p-3 text-sm font-semibold text-grey">Data</th>
@@ -78,6 +79,9 @@ export default function EssayHistory() {
                   className="border-t hover:bg-gray-50 cursor-pointer"
                 >
                   <td className="p-3 text-sm">{essay.theme.title}</td>
+                  <td className="p-3 text-sm text-center">
+                    {essay.inputType === 'UPLOADED' ? '📷' : '✍️'}
+                  </td>
                   <td className="p-3 text-sm font-bold text-marine">
                     {essay.reviews?.find((r) => r.reviewType === "AI")
                       ? essay.reviews.find((r) => r.reviewType === "AI")!.totalScore

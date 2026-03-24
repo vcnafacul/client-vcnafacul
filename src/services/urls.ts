@@ -132,3 +132,5 @@ export const essayPrepCourse = (prepCourseId: string) =>
   `${essay}/prep-course/${prepCourseId}`;
 export const essayReviews = (essayId: string) => `${essay}/${essayId}/reviews`;
 export const essayReview = (essayId: string) => `${essay}/${essayId}/review`;
+export const essaySubmitImage = `${essay}/submit-image`;
+export const essayImage = (essayId: string) => `${essay}/${essayId}/image`;

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/store/auth";
 import { Essay, EssayReview, CreateEssayReviewPayload } from "@/dtos/essay";
-import { getEssayById, getEssayReviews, createHumanReview } from "@/services/essay";
+import { getEssayById, getEssayReviews, createHumanReview, downloadEssayImage } from "@/services/essay";
 
 const COMP_NAMES = [
   "Domínio da norma culta",
@@ -122,9 +122,23 @@ export default function EssayReviewDetail() {
           {essay.title || "Sem título"}
         </h1>
         <p className="text-sm text-grey mb-4">Tema: {essay.theme.title}</p>
-        <div className="border rounded-lg p-4 bg-gray-50 whitespace-pre-wrap text-sm">
-          {essay.text}
-        </div>
+        {essay.inputType === 'UPLOADED' ? (
+          <div className="border rounded-lg p-6 bg-gray-50 text-center space-y-3">
+            <p className="text-sm text-grey">
+              Redação enviada como {essay.mimeType === 'application/pdf' ? 'PDF' : 'imagem'}
+            </p>
+            <button
+              onClick={() => downloadEssayImage(token, essay.id).catch(() => toast.error("Erro ao baixar arquivo"))}
+              className="px-4 py-2 bg-marine text-white rounded-lg hover:bg-marine/90 text-sm"
+            >
+              Baixar arquivo
+            </button>
+          </div>
+        ) : (
+          <div className="border rounded-lg p-4 bg-gray-50 whitespace-pre-wrap text-sm">
+            {essay.text}
+          </div>
+        )}
       </div>
 
       {alreadyReviewed && (

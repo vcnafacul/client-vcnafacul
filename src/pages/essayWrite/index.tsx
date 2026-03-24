@@ -9,6 +9,7 @@ import {
   createEssay,
   submitEssay,
   updateDraftEssay,
+  submitEssayImage,
 } from "@/services/essay";
 import ThemeDisplay from "./ThemeDisplay";
 import ThemeSelector from "./ThemeSelector";
@@ -39,6 +40,8 @@ export default function EssayWrite() {
   const [submitting, setSubmitting] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [wordCount, setWordCount] = useState(0);
+  const [mode, setMode] = useState<'select' | 'type' | 'upload'>('select');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
     getAvailableThemes(token)
@@ -50,6 +53,7 @@ export default function EssayWrite() {
           const draftTheme = themes.find((t) => t.id === themeId);
           if (draftTheme) {
             setSelectedTheme(draftTheme);
+            setMode('type');
           } else {
             // Draft theme no longer available — clear stale draft
             clearDraft();
@@ -69,6 +73,8 @@ export default function EssayWrite() {
 
   const handleBack = () => {
     setSelectedTheme(null);
+    setMode('select');
+    setSelectedFile(null);
   };
 
   const handleSubmit = async () => {
@@ -115,6 +121,46 @@ export default function EssayWrite() {
     }
   };
 
+  const handleSubmitImage = async () => {
+    if (!selectedTheme || !selectedFile) return;
+
+    setSubmitting(true);
+    try {
+      const result = await submitEssayImage(token, selectedTheme.id, selectedFile);
+      clearDraft();
+      toast.success("Redação enviada com sucesso!");
+      navigate(`/dashboard/${ESSAY_WRITE}/${result.id}`);
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Erro ao enviar redação";
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Formato não aceito. Envie JPG, PNG ou PDF.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Arquivo deve ter no máximo 5MB.");
+      return;
+    }
+    setSelectedFile(file);
+  };
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
   if (loading) {
     return <div className="p-6 text-center">Carregando...</div>;
   }
@@ -137,16 +183,142 @@ export default function EssayWrite() {
     );
   }
 
-  // Editor screen
+  // Mode select screen
+  if (mode === 'select') {
+    return (
+      <div className="p-6 max-w-4xl mx-auto space-y-6">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <button onClick={handleBack} className="text-marine hover:underline text-sm">
+              &larr; Trocar tema
+            </button>
+            <h1 className="text-2xl font-bold text-marine">Escrever Redação</h1>
+          </div>
+          <Link to={`/dashboard/${ESSAY_HISTORY}`} className="text-marine hover:underline text-sm">
+            Ver histórico
+          </Link>
+        </div>
+        <ThemeDisplay theme={selectedTheme} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button
+            onClick={() => setMode('type')}
+            className="border-2 border-marine rounded-lg p-6 text-center hover:bg-marine/5 transition-colors"
+          >
+            <div className="text-3xl mb-2">✍️</div>
+            <div className="font-bold text-marine">Escrever no editor</div>
+            <p className="text-sm text-grey mt-1">Digite sua redação diretamente no editor de texto</p>
+          </button>
+          <button
+            onClick={() => setMode('upload')}
+            className="border-2 border-marine rounded-lg p-6 text-center hover:bg-marine/5 transition-colors"
+          >
+            <div className="text-3xl mb-2">📷</div>
+            <div className="font-bold text-marine">Enviar foto/PDF</div>
+            <p className="text-sm text-grey mt-1">Envie uma foto ou PDF da sua redação manuscrita</p>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Upload screen
+  if (mode === 'upload') {
+    return (
+      <div className="p-6 max-w-4xl mx-auto space-y-6">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => { setMode('select'); setSelectedFile(null); }}
+              className="text-marine hover:underline text-sm"
+            >
+              &larr; Voltar
+            </button>
+            <h1 className="text-2xl font-bold text-marine">Enviar Redação</h1>
+          </div>
+          <Link to={`/dashboard/${ESSAY_HISTORY}`} className="text-marine hover:underline text-sm">
+            Ver histórico
+          </Link>
+        </div>
+        <ThemeDisplay theme={selectedTheme} />
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+          {!selectedFile ? (
+            <label className="cursor-pointer">
+              <div className="text-4xl mb-3 text-grey">📁</div>
+              <p className="text-sm text-grey mb-2">
+                Clique para selecionar um arquivo
+              </p>
+              <p className="text-xs text-grey">JPG, PNG ou PDF — máximo 5MB</p>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,application/pdf"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </label>
+          ) : (
+            <div className="space-y-2">
+              <p className="font-semibold text-marine">{selectedFile.name}</p>
+              <p className="text-sm text-grey">{formatFileSize(selectedFile.size)}</p>
+              <button
+                onClick={() => setSelectedFile(null)}
+                className="text-sm text-red-500 hover:underline"
+              >
+                Remover arquivo
+              </button>
+            </div>
+          )}
+        </div>
+        <div className="flex gap-4 justify-end">
+          <button
+            onClick={() => setShowConfirmModal(true)}
+            disabled={submitting || !selectedFile}
+            className="px-6 py-2 bg-marine text-white rounded-lg hover:bg-marine/90 disabled:opacity-50"
+          >
+            {submitting ? "Enviando..." : "Enviar redação"}
+          </button>
+        </div>
+        {showConfirmModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md mx-4 space-y-4">
+              <h2 className="text-lg font-bold text-marine">Confirmar envio</h2>
+              <p className="text-sm text-gray-700">
+                Atenção: a submissão é única. Uma vez enviada, não será possível
+                realizar uma nova redação para este tema. Deseja continuar?
+              </p>
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={() => setShowConfirmModal(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => {
+                    setShowConfirmModal(false);
+                    handleSubmitImage();
+                  }}
+                  className="px-4 py-2 bg-marine text-white rounded-lg hover:bg-marine/90"
+                >
+                  Confirmar envio
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Editor screen (mode === 'type')
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           <button
-            onClick={handleBack}
+            onClick={() => setMode('select')}
             className="text-marine hover:underline text-sm"
           >
-            &larr; Trocar tema
+            &larr; Voltar
           </button>
           <h1 className="text-2xl font-bold text-marine">Escrever Redação</h1>
         </div>

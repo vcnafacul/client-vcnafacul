@@ -73,6 +73,9 @@ export interface Essay {
   createdAt: string;
   theme: EssayTheme;
   reviews: EssayReview[];
+  imageKey?: string;
+  originalFilename?: string;
+  mimeType?: string;
 }
 
 export interface EssayListItem {
