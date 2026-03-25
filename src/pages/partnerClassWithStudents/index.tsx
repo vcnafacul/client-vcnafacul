@@ -121,6 +121,8 @@ export function PartnerClassWithStudents() {
         isOpen={modals.modalAttendanceRecordByStudent.isOpen}
         handleClose={() => modals.modalAttendanceRecordByStudent.close()}
         studentId={studentSelected.id}
+        coursePeriodStart={classEntity?.coursePeriod?.startDate}
+        coursePeriodEnd={classEntity?.coursePeriod?.endDate}
       />
     );
   };

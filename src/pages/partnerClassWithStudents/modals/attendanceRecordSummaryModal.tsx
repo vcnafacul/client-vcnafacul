@@ -1,5 +1,6 @@
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { exportAttendanceRecord } from "@/services/prepCourse/attendanceRecord/exportAttendanceRecord";
 import { getSummaryByDate } from "@/services/prepCourse/attendanceRecord/getSummaryByDate";
 import { getSummaryByStudent } from "@/services/prepCourse/attendanceRecord/getSummaryByStudent";
 import { useAuthStore } from "@/store/auth";
@@ -8,6 +9,7 @@ import { Calendar } from "primereact/calendar";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FiCalendar } from "react-icons/fi";
+import { toast } from "react-toastify";
 import * as yup from "yup";
 import { summaryByDate } from "../summary/summaryByDate";
 import { summaryByStudent } from "../summary/summaryByStudent";
@@ -43,8 +45,18 @@ export default function AttendanceRecordSummaryModal({
         .required("Campo obrigatório"),
       reportType: yup
         .string()
-        .oneOf(["date", "student"], "Selecione o tipo de relatório")
+        .oneOf(["date", "student", "excel"], "Selecione o tipo de relatório")
         .required("Tipo de relatório obrigatório"),
+      maxAbsencePercent: yup.number().when("reportType", {
+        is: "excel",
+        then: (schema) =>
+          schema
+            .required("Informe o percentual")
+            .min(0)
+            .max(100)
+            .integer(),
+        otherwise: (schema) => schema.notRequired(),
+      }),
     })
     .required();
 
@@ -61,10 +73,28 @@ export default function AttendanceRecordSummaryModal({
     },
   });
 
-  const reportType = watch("reportType");
+  const watchReportType = watch("reportType");
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSummary = async (data: any) => {
+    if (data.reportType === "excel") {
+      const start = data.range[0].toISOString().split("T")[0];
+      const end = data.range[1].toISOString().split("T")[0];
+      try {
+        await exportAttendanceRecord(
+          token,
+          classId,
+          start,
+          end,
+          data.maxAbsencePercent,
+        );
+        toast.success("Relatório Excel baixado com sucesso");
+      } catch (error: any) {
+        toast.error(error?.message || "Erro ao exportar relatório");
+      }
+      return;
+    }
+
     if (data.reportType === "date") {
       await executeAsync({
         action: () =>
@@ -126,7 +156,7 @@ export default function AttendanceRecordSummaryModal({
                 type="radio"
                 value="date"
                 {...register("reportType")}
-                checked={reportType === "date"}
+                checked={watchReportType === "date"}
                 className="form-radio"
               />
               <span>Relatório por Data</span>
@@ -137,12 +167,44 @@ export default function AttendanceRecordSummaryModal({
                 type="radio"
                 value="student"
                 {...register("reportType")}
-                checked={reportType === "student"}
+                checked={watchReportType === "student"}
                 className="form-radio"
               />
               <span>Relatório por Estudante</span>
             </label>
+
+            <label className="flex items-center space-x-2">
+              <input
+                type="radio"
+                value="excel"
+                {...register("reportType")}
+                checked={watchReportType === "excel"}
+                className="form-radio"
+              />
+              <span>Relatório Excel (Detalhado)</span>
+            </label>
           </div>
+
+          {watchReportType === "excel" && (
+            <div className="mt-2">
+              <label className="block text-sm font-medium mb-1">
+                Percentual máximo de faltas injustificadas (%)
+              </label>
+              <input
+                type="number"
+                {...register("maxAbsencePercent")}
+                min={0}
+                max={100}
+                className="border rounded px-3 py-2 w-24"
+                placeholder="25"
+              />
+              {errors.maxAbsencePercent && (
+                <p className="text-red text-sm mt-1">
+                  {errors.maxAbsencePercent.message}
+                </p>
+              )}
+            </div>
+          )}
 
           {errors.reportType && (
             <p className="text-xs text-red font-medium text-wrap max-w-60">
@@ -172,7 +234,19 @@ export default function AttendanceRecordSummaryModal({
                   readOnlyInput
                   hideOnRangeSelection
                   className="w-full pl-10 rounded-md border border-gray-300 focus:ring-2 focus:ring-orange-400"
-                  maxDate={new Date()}
+                  maxDate={
+                    watchReportType === "excel"
+                      ? (() => {
+                          const rangeStart = watch("range")?.[0];
+                          if (rangeStart) {
+                            const max = new Date(rangeStart);
+                            max.setDate(max.getDate() + 180);
+                            return max < new Date() ? max : new Date();
+                          }
+                          return new Date();
+                        })()
+                      : new Date()
+                  }
                 />
               )}
             />
