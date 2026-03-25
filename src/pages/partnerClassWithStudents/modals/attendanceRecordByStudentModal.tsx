@@ -12,23 +12,31 @@ import Paper from "@mui/material/Paper";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { PeriodJustificationList } from "./periodJustificationList";
+import { PeriodJustificationModal } from "./periodJustificationModal";
 
 interface AttendanceRecordProps {
   isOpen: boolean;
   handleClose: () => void;
   studentId: string;
+  coursePeriodStart?: Date;
+  coursePeriodEnd?: Date;
 }
 
 export function AttendanceRecordByStudentModal({
   isOpen,
   handleClose,
   studentId,
+  coursePeriodStart,
+  coursePeriodEnd,
 }: AttendanceRecordProps) {
   const [attendances, setAttendances] = useState<AttendanceRecordByStudent[]>(
     []
   );
   const [totalItems, setTotalItems] = useState<number>(0);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [showPeriodModal, setShowPeriodModal] = useState(false);
+  const [periodRefreshTrigger, setPeriodRefreshTrigger] = useState(0);
   const limit = 10;
 
   const modals = useModals(["modalApplyJustification"]);
@@ -170,37 +178,76 @@ export function AttendanceRecordByStudentModal({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white p-4 pb-1 rounded-md w-[90vw] h-[90vh] sm:h-[621px]"
+      className="bg-white p-4 rounded-md w-[90vw] max-w-5xl h-[90vh] sm:h-[621px] flex flex-col min-h-0 overflow-hidden shadow-lg"
     >
-      <div className="flex items-center justify-between p-2">
-        <h1 className="text-2xl font-bold">Registro de Presença</h1>
-        <Button
-          onClick={() => modals.modalApplyJustification.open()}
-          disabled={selectedRows.length === 0}
-          className="bg-orange/70 hover:bg-orange font-black"
-        >
-          Aplicar Justificativa
-        </Button>
-      </div>
-      <Paper sx={{ height: "85%", width: "100%" }}>
-        <DataGrid
-          rows={attendances}
-          columns={columns}
-          rowCount={totalItems}
-          paginationMode="server"
-          initialState={{ pagination: { paginationModel } }}
-          rowHeight={40}
-          rowSelection={true}
-          checkboxSelection
-          rowSelectionModel={selectedRows}
-          onRowSelectionModelChange={handleSelectionChange}
-          sx={{ border: 0 }}
-          onPaginationModelChange={(newPageSize) => {
-            handleGetAttendances(newPageSize.page + 1, newPageSize.pageSize);
+      <div className="flex flex-1 flex-col min-h-0 gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 p-2 shrink-0">
+          <h1 className="text-2xl font-bold">Registro de Presença</h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              onClick={() => modals.modalApplyJustification.open()}
+              disabled={selectedRows.length === 0}
+              className="bg-orange/70 hover:bg-orange font-black"
+            >
+              Aplicar Justificativa
+            </Button>
+            <Button
+              onClick={() => setShowPeriodModal(true)}
+              className="bg-orange/70 hover:bg-orange font-black"
+            >
+              Justificar Período
+            </Button>
+          </div>
+        </div>
+        <div className="shrink-0">
+          <PeriodJustificationList
+            studentCourseId={studentId}
+            refreshTrigger={periodRefreshTrigger}
+          />
+        </div>
+        <Paper
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
           }}
-        />
-      </Paper>
+        >
+          <DataGrid
+            rows={attendances}
+            columns={columns}
+            rowCount={totalItems}
+            paginationMode="server"
+            initialState={{ pagination: { paginationModel } }}
+            rowHeight={40}
+            rowSelection={true}
+            checkboxSelection
+            rowSelectionModel={selectedRows}
+            onRowSelectionModelChange={handleSelectionChange}
+            sx={{
+              border: 0,
+              flex: 1,
+              minHeight: 0,
+              height: "100%",
+              "& .MuiDataGrid-main": { overflow: "auto" },
+            }}
+            onPaginationModelChange={(newPageSize) => {
+              handleGetAttendances(newPageSize.page + 1, newPageSize.pageSize);
+            }}
+          />
+        </Paper>
+      </div>
       <ModalApplyJustification />
+      <PeriodJustificationModal
+        isOpen={showPeriodModal}
+        handleClose={() => setShowPeriodModal(false)}
+        studentCourseId={studentId}
+        onSuccess={() => setPeriodRefreshTrigger((prev) => prev + 1)}
+        coursePeriodStart={coursePeriodStart}
+        coursePeriodEnd={coursePeriodEnd}
+      />
     </ModalTemplate>
   );
 }
