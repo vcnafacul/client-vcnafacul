@@ -74,24 +74,19 @@ export function PartnerClass() {
     { key: "action", label: "Ações", align: "center" as const },
   ];
 
-  // Mock data para desenvolvimento
   useEffect(() => {
     setLoading(true);
-
-    // Simular delay da API
-    setTimeout(async () => {
-      await executeAsync({
-        action: () => getCoursePeriods(token, currentPage, limit),
-        loadingMessage: "Buscando períodos letivos...",
-        successMessage: "Períodos letivos buscados com sucesso!",
-        errorMessage: (error: Error) => error.message,
-        onSuccess: (res: Paginate<CoursePeriodEntity>) => {
-          setEntities(res.data);
-          setTotalItems(res.totalItems);
-          setLoading(false);
-        },
-      });
-    }, 1000);
+    executeAsync({
+      action: () => getCoursePeriods(token, currentPage, limit),
+      loadingMessage: "Buscando períodos letivos...",
+      successMessage: "Períodos letivos buscados com sucesso!",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: (res: Paginate<CoursePeriodEntity>) => {
+        setEntities(res.data);
+        setTotalItems(res.totalItems);
+        setLoading(false);
+      },
+    });
   }, [currentPage, limit, token]);
 
   // Componente de loading skeleton
