@@ -111,6 +111,8 @@ export function PartnerClassWithStudents() {
         isOpen={modals.modalAttendanceHistory.isOpen}
         handleClose={() => modals.modalAttendanceHistory.close()}
         classId={hashClassId!}
+        coursePeriodStart={classEntity?.coursePeriod?.startDate}
+        coursePeriodEnd={classEntity?.coursePeriod?.endDate}
       />
     );
   };
@@ -208,6 +210,24 @@ export function PartnerClassWithStudents() {
         <h1 className="text-3xl font-bold text-center text-marine">
           {classEntity?.name}
         </h1>
+        {classEntity?.coursePeriod && (
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 mt-2 text-sm text-gray-600">
+            <span>
+              <strong>Período:</strong> {classEntity.coursePeriod.name} ({classEntity.coursePeriod.year})
+            </span>
+            <span>
+              <strong>Início:</strong>{" "}
+              {format(new Date(classEntity.coursePeriod.startDate), "dd/MM/yyyy")}
+            </span>
+            <span>
+              <strong>Término:</strong>{" "}
+              {format(new Date(classEntity.coursePeriod.endDate), "dd/MM/yyyy")}
+            </span>
+            <span>
+              <strong>Alunos:</strong> {students.length}
+            </span>
+          </div>
+        )}
       </div>
       <div className="p-4 my-4 flex gap-2 flex-start bg-gray-50 w-full">
         {permissao[Roles.gerenciarTurmas] && (

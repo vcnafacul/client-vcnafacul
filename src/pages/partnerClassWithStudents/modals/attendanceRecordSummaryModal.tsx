@@ -6,10 +6,9 @@ import { getSummaryByStudent } from "@/services/prepCourse/attendanceRecord/getS
 import { useAuthStore } from "@/store/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Calendar } from "primereact/calendar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FiCalendar } from "react-icons/fi";
-import { toast } from "react-toastify";
 import * as yup from "yup";
 import { summaryByDate } from "../summary/summaryByDate";
 import { summaryByStudent } from "../summary/summaryByStudent";
@@ -18,18 +17,23 @@ interface AttendanceRecordSummaryProps {
   isOpen: boolean;
   handleClose: () => void;
   classId: string;
+  coursePeriodStart?: Date;
+  coursePeriodEnd?: Date;
 }
 
 export default function AttendanceRecordSummaryModal({
   isOpen,
   handleClose,
   classId,
+  coursePeriodStart,
+  coursePeriodEnd,
 }: AttendanceRecordSummaryProps) {
   const {
     data: { token },
   } = useAuthStore();
 
   const executeAsync = useToastAsync();
+  const [isLoading, setIsLoading] = useState(false);
 
   const start = new Date();
   start.setDate(start.getDate() - 30);
@@ -80,21 +84,19 @@ export default function AttendanceRecordSummaryModal({
     if (data.reportType === "excel") {
       const start = data.range[0].toISOString().split("T")[0];
       const end = data.range[1].toISOString().split("T")[0];
-      try {
-        await exportAttendanceRecord(
-          token,
-          classId,
-          start,
-          end,
-          data.maxAbsencePercent,
-        );
-        toast.success("Relatório Excel baixado com sucesso");
-      } catch (error: any) {
-        toast.error(error?.message || "Erro ao exportar relatório");
-      }
+      setIsLoading(true);
+      await executeAsync({
+        action: () =>
+          exportAttendanceRecord(token, classId, start, end, data.maxAbsencePercent),
+        loadingMessage: "Processando relatório ...",
+        successMessage: "Relatório Excel baixado com sucesso!",
+        errorMessage: (error: Error) => error.message,
+      });
+      setIsLoading(false);
       return;
     }
 
+    setIsLoading(true);
     if (data.reportType === "date") {
       await executeAsync({
         action: () =>
@@ -128,6 +130,7 @@ export default function AttendanceRecordSummaryModal({
         },
       });
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -214,8 +217,7 @@ export default function AttendanceRecordSummaryModal({
         </div>
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            Selecione o intervalo{" "}
-            <span className="text-xs text-gray-400">(máx. 30 dias)</span>
+            Selecione o intervalo
           </label>
 
           <div className="relative">
@@ -233,20 +235,14 @@ export default function AttendanceRecordSummaryModal({
                   selectionMode="range"
                   readOnlyInput
                   hideOnRangeSelection
+                  viewDate={new Date()}
                   className="w-full pl-10 rounded-md border border-gray-300 focus:ring-2 focus:ring-orange-400"
-                  maxDate={
-                    watchReportType === "excel"
-                      ? (() => {
-                          const rangeStart = watch("range")?.[0];
-                          if (rangeStart) {
-                            const max = new Date(rangeStart);
-                            max.setDate(max.getDate() + 180);
-                            return max < new Date() ? max : new Date();
-                          }
-                          return new Date();
-                        })()
-                      : new Date()
-                  }
+                  minDate={coursePeriodStart ? new Date(coursePeriodStart) : undefined}
+                  maxDate={(() => {
+                    const today = new Date();
+                    const periodEnd = coursePeriodEnd ? new Date(coursePeriodEnd) : today;
+                    return periodEnd < today ? periodEnd : today;
+                  })()}
                 />
               )}
             />
@@ -261,9 +257,10 @@ export default function AttendanceRecordSummaryModal({
         <div className="flex justify-end">
           <button
             type="submit"
-            className="bg-marine opacity-90 hover:opacity-100 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm"
+            disabled={isLoading}
+            className="bg-marine opacity-90 hover:opacity-100 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Gerar Relatório
+            {isLoading ? "Processando..." : "Gerar Relatório"}
           </button>
         </div>
       </form>
