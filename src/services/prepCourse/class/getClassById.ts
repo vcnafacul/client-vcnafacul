@@ -40,6 +40,9 @@ export async function getClassById(
         isFree: student.isFree,
         areaInterest: JSON.parse(student.areaInterest),
         selectedCourses: JSON.parse(student.selectedCourses),
+        presencePercentage: student.presencePercentage ?? null,
+        absencePercentage: student.absencePercentage ?? null,
+        justifiedAbsencePercentage: student.justifiedAbsencePercentage ?? null,
       };
     }),
   };

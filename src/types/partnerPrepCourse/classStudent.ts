@@ -17,4 +17,7 @@ export interface ClassStudent {
   isFree: string;
   areaInterest: string[];
   selectedCourses: string[];
+  presencePercentage?: number | null;
+  absencePercentage?: number | null;
+  justifiedAbsencePercentage?: number | null;
 }
