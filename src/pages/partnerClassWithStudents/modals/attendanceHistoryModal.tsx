@@ -22,12 +22,16 @@ interface AttendanceHistoryProps {
   isOpen: boolean;
   handleClose: () => void;
   classId: string;
+  coursePeriodStart?: Date;
+  coursePeriodEnd?: Date;
 }
 
 export function AttendanceHistoryModal({
   isOpen,
   handleClose,
   classId,
+  coursePeriodStart,
+  coursePeriodEnd,
 }: AttendanceHistoryProps) {
   const [attendanceHistory, setAttendanceHistory] = useState<
     SimpleAttendanceRecordHistory[]
@@ -160,6 +164,8 @@ export function AttendanceHistoryModal({
         isOpen={modals.modalAttendanceRecordSummary.isOpen}
         handleClose={() => modals.modalAttendanceRecordSummary.close()}
         classId={classId}
+        coursePeriodStart={coursePeriodStart}
+        coursePeriodEnd={coursePeriodEnd}
       />
     );
   };

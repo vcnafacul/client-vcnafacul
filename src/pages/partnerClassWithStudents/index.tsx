@@ -111,6 +111,8 @@ export function PartnerClassWithStudents() {
         isOpen={modals.modalAttendanceHistory.isOpen}
         handleClose={() => modals.modalAttendanceHistory.close()}
         classId={hashClassId!}
+        coursePeriodStart={classEntity?.coursePeriod?.startDate}
+        coursePeriodEnd={classEntity?.coursePeriod?.endDate}
       />
     );
   };
