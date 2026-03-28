@@ -256,6 +256,9 @@ export function PartnerClassWithStudents() {
             <span>
               <strong>Alunos:</strong> {students.length}
             </span>
+            <span>
+              <strong>Registros:</strong> {classEntity.totalAttendanceRecords ?? 0}
+            </span>
           </div>
         )}
       </div>
