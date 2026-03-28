@@ -80,26 +80,56 @@ export function PartnerClassWithStudents() {
     {
       field: "email",
       headerName: "Email",
-      minWidth: 270,
+      minWidth: 150,
       flex: 1,
     },
     {
       field: "name",
       headerName: "Nome",
-      minWidth: 200,
+      minWidth: 150,
       flex: 1,
-    },
-    {
-      field: "applicationStatus",
-      headerName: "Status",
-      width: 150,
     },
     {
       field: "birthday",
       headerName: "Nascimento",
-      minWidth: 150,
-      flex: 1,
+      width: 110,
       type: "date",
+    },
+    {
+      field: "presencePercentage",
+      headerName: "% Presença",
+      width: 110,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
+        const value = params.row.presencePercentage;
+        if (value == null) return "—";
+        return `${value}%`;
+      },
+    },
+    {
+      field: "absencePercentage",
+      headerName: "% Faltas",
+      width: 100,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
+        const value = params.row.absencePercentage;
+        if (value == null) return "—";
+        return `${value}%`;
+      },
+    },
+    {
+      field: "justifiedAbsencePercentage",
+      headerName: "% Faltas Just.",
+      width: 120,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
+        const value = params.row.justifiedAbsencePercentage;
+        if (value == null) return "—";
+        return `${value}%`;
+      },
     },
   ];
 
