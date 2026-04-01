@@ -6,6 +6,7 @@ import {
   dashboardStudent,
   dashboardCollaborator,
   essayMyCursinhoCount,
+  dashboardQuestoesPendentes,
 } from '../urls';
 
 // --- Types ---
@@ -57,6 +58,17 @@ export interface CollaboratorDashboard {
 
 export interface EssayCountResponse {
   count: number;
+}
+
+export interface MateriaCount {
+  materiaId: string;
+  materiaName: string;
+  count: number;
+}
+
+export interface QuestoesPendentesResponse {
+  total: number;
+  byMateria: MateriaCount[];
 }
 
 // --- Fetchers ---
@@ -136,6 +148,21 @@ export async function getCollaboratorDashboard(
   });
   if (response.status !== 200)
     throw new Error('Erro ao buscar dados do colaborador');
+  return response.json();
+}
+
+export async function getQuestoesPendentes(
+  token: string,
+): Promise<QuestoesPendentesResponse> {
+  const response = await fetchWrapper(dashboardQuestoesPendentes, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (response.status !== 200)
+    throw new Error('Erro ao buscar questões pendentes');
   return response.json();
 }
 

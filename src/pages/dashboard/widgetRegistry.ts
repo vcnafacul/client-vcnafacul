@@ -7,6 +7,7 @@ import { CursinhoStudentWidget } from './components/CursinhoStudentWidget';
 import { RedacoesWidget } from './components/RedacoesWidget';
 import { CursinhoCollabWidget } from './components/CursinhoCollabWidget';
 import { RedacoesRevisarWidget } from './components/RedacoesRevisarWidget';
+import { QuestoesPendentesWidget } from './components/QuestoesPendentesWidget';
 import { Roles } from '@/enums/roles/roles';
 
 export const widgetRegistry: WidgetDef[] = [
@@ -31,13 +32,11 @@ export const widgetRegistry: WidgetDef[] = [
     id: 'processos-seletivos',
     component: ProcessosSeletivosWidget,
     profiles: ['common'],
-    excludeProfiles: ['student', 'collaborator'],
   },
   {
     id: 'cursinho-student',
     component: CursinhoStudentWidget,
     profiles: ['student'],
-    gridSpan: { desktop: 3 },
   },
   {
     id: 'redacoes',
@@ -54,5 +53,11 @@ export const widgetRegistry: WidgetDef[] = [
     component: RedacoesRevisarWidget,
     profiles: ['collaborator'],
     permissions: [Roles.revisarRedacoes],
+  },
+  {
+    id: 'questoes-pendentes',
+    component: QuestoesPendentesWidget,
+    profiles: ['common'],
+    permissions: [Roles.validarQuestao],
   },
 ];
