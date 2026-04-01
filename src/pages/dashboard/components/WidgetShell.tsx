@@ -19,11 +19,11 @@ export function WidgetShell({
   className = '',
 }: WidgetShellProps) {
   return (
-    <Card className={className}>
-      <CardHeader className="pb-2">
+    <Card className={`h-64 flex flex-col ${className}`}>
+      <CardHeader className="pb-2 shrink-0">
         <CardTitle className="text-base font-semibold">{title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1 overflow-y-auto scrollbar-hide">
         {isLoading ? (
           <div className="space-y-3">
             <Skeleton className="h-4 w-3/4" />

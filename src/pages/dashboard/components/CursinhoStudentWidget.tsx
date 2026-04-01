@@ -39,22 +39,25 @@ function FrequencyGauge({ percentual }: { percentual: number }) {
   );
 }
 
+function CursinhoLogo({ logo, name }: { logo: string | null; name: string }) {
+  if (logo) {
+    return (
+      <img src={logo} alt={name} className="h-8 w-8 rounded-full object-cover" />
+    );
+  }
+  return (
+    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xs font-bold text-gray-500">
+      {name.charAt(0)}
+    </div>
+  );
+}
+
 function StudentCard({ item }: { item: StudentDashboard }) {
   return (
     <div className="flex flex-1 gap-4 rounded-lg border p-3">
       <div className="flex-1 space-y-2">
         <div className="flex items-center gap-2">
-          {item.cursinho.logo ? (
-            <img
-              src={item.cursinho.logo}
-              alt={item.cursinho.name}
-              className="h-8 w-8 rounded-full object-cover"
-            />
-          ) : (
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xs font-bold text-gray-500">
-              {item.cursinho.name.charAt(0)}
-            </div>
-          )}
+          <CursinhoLogo logo={item.cursinho.logo} name={item.cursinho.name} />
           <span className="font-medium text-sm">{item.cursinho.name}</span>
         </div>
         {item.matricula && (
@@ -82,6 +85,11 @@ function StudentCard({ item }: { item: StudentDashboard }) {
   );
 }
 
+const spanClass = (count: number) =>
+  count >= 3 ? 'col-span-full' :
+  count === 2 ? 'sm:col-span-2' :
+  '';
+
 export function CursinhoStudentWidget() {
   const token = useAuthStore((s) => s.data.token);
   const { data, isLoading, error, retry } =
@@ -93,6 +101,7 @@ export function CursinhoStudentWidget() {
       isLoading={isLoading}
       error={error}
       retry={retry}
+      className={`h-auto ${spanClass(data?.length ?? 1)}`}
     >
       {data && data.length > 0 ? (
         <div className="flex flex-col sm:flex-row sm:items-stretch gap-3">

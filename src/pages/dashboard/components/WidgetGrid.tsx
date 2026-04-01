@@ -26,6 +26,12 @@ function filterWidgets(
   });
 }
 
+function spanClassName(span: number) {
+  return span === 2 ? 'md:col-span-2' :
+    span === 3 ? 'col-span-full' :
+    '';
+}
+
 export function WidgetGrid({ widgets }: WidgetGridProps) {
   const { profiles, permissao } = useAuthStore((s) => s.data);
 
@@ -37,20 +43,18 @@ export function WidgetGrid({ widgets }: WidgetGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {visible.map((w) => {
-        const span = w.gridSpan?.desktop ?? 1;
+        const span = w.gridSpan?.desktop;
         const Component = w.component;
-        return (
-          <div
-            key={w.id}
-            className={`${
-              span === 2 ? 'md:col-span-2' :
-              span === 3 ? 'col-span-full' :
-              ''
-            } [&>*]:h-full`}
-          >
-            <Component />
-          </div>
-        );
+
+        if (span) {
+          return (
+            <div key={w.id} className={spanClassName(span)}>
+              <Component />
+            </div>
+          );
+        }
+
+        return <Component key={w.id} />;
       })}
     </div>
   );

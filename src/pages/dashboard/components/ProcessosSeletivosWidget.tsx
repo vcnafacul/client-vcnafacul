@@ -4,7 +4,6 @@ import { useWidgetData } from '../hooks/useWidgetData';
 import { WidgetShell } from './WidgetShell';
 import { Link } from 'react-router-dom';
 import { PARTNER_PREP, PARTNER_PREP_INSCRIPTION } from '@/routes/path';
-// PARTNER_PREP = "cursinho/", PARTNER_PREP_INSCRIPTION = "inscricao"
 
 export function ProcessosSeletivosWidget() {
   const token = useAuthStore((s) => s.data.token);
