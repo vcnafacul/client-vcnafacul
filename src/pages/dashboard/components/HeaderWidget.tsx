@@ -24,7 +24,7 @@ export function HeaderWidget() {
 
   return (
     <div className="flex items-center gap-3.5 px-1 py-4">
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-marine to-marine/70 text-white text-lg font-bold">
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-marine/10 text-marine text-lg font-bold">
         {initials}
       </div>
       <div>
