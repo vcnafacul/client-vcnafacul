@@ -15,6 +15,7 @@ export function RedacoesRevisarWidget() {
   return (
     <WidgetShell
       title="Redações para Revisar"
+      widgetId="redacoes-revisar"
       icon={<WidgetIcon icon={FileEdit} />}
       isLoading={isLoading}
       error={error}

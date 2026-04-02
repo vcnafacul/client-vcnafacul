@@ -20,6 +20,7 @@ export function QuestoesPendentesWidget() {
   return (
     <WidgetShell
       title="Questões Pendentes"
+      widgetId="questoes-pendentes"
       icon={<WidgetIcon icon={HelpCircle} />}
       isLoading={isLoading}
       error={error}

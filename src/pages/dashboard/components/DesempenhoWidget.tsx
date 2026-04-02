@@ -15,6 +15,7 @@ export function DesempenhoWidget() {
   return (
     <WidgetShell
       title="Evolução em Simulados"
+      widgetId="desempenho"
       icon={<WidgetIcon icon={BarChart3} />}
       isLoading={isLoading}
       error={error}

@@ -40,6 +40,7 @@ export function RedacoesWidget() {
   return (
     <WidgetShell
       title="Redações"
+      widgetId="redacoes"
       icon={<WidgetIcon icon={PenTool} />}
       isLoading={isLoading}
       error={error}

@@ -16,6 +16,7 @@ export function ProcessosSeletivosWidget() {
   return (
     <WidgetShell
       title="Processos Seletivos"
+      widgetId="processos-seletivos"
       icon={<WidgetIcon icon={GraduationCap} />}
       isLoading={isLoading}
       error={error}

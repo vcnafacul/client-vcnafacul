@@ -107,6 +107,7 @@ export function CursinhoStudentWidget() {
   return (
     <WidgetShell
       title="Meu Cursinho"
+      widgetId="cursinho-student"
       icon={<WidgetIcon icon={School} />}
       isLoading={isLoading}
       error={error}

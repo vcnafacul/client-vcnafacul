@@ -21,6 +21,7 @@ export function SimuladosWidget() {
   return (
     <WidgetShell
       title="Simulados"
+      widgetId="simulados"
       icon={<WidgetIcon icon={ClipboardList} />}
       isLoading={isLoading}
       error={error}

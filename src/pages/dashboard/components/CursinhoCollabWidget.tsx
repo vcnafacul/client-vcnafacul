@@ -13,6 +13,7 @@ export function CursinhoCollabWidget() {
   return (
     <WidgetShell
       title="Colaborador"
+      widgetId="cursinho-collab"
       icon={<WidgetIcon icon={Handshake} />}
       isLoading={isLoading}
       error={error}
