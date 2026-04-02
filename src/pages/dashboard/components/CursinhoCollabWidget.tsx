@@ -2,6 +2,8 @@ import { useAuthStore } from '@/store/auth';
 import { getCollaboratorDashboard, CollaboratorDashboard } from '@/services/dashboard';
 import { useWidgetData } from '../hooks/useWidgetData';
 import { WidgetShell } from './WidgetShell';
+import { WidgetIcon } from './WidgetIcon';
+import { Handshake } from 'lucide-react';
 
 export function CursinhoCollabWidget() {
   const token = useAuthStore((s) => s.data.token);
@@ -10,38 +12,54 @@ export function CursinhoCollabWidget() {
 
   return (
     <WidgetShell
-      title="Meu Cursinho"
+      title="Colaborador"
+      icon={<WidgetIcon icon={Handshake} />}
       isLoading={isLoading}
       error={error}
       retry={retry}
+      className="min-h-[180px]"
     >
       {data && (
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
+        <div className="flex min-h-[120px] flex-col">
+          <div className="flex items-center gap-2.5 py-2">
             {data.cursinho.logo ? (
               <img
                 src={data.cursinho.logo}
                 alt={data.cursinho.name}
-                className="h-8 w-8 rounded-full object-cover"
+                className="h-10 w-10 rounded-full object-cover"
               />
             ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xs font-bold text-gray-500">
-                {data.cursinho.name.charAt(0)}
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-marine/10 to-green/15 text-[13px] font-bold text-marine">
+                {data.cursinho.name.substring(0, 2).toUpperCase()}
               </div>
             )}
-            <span className="font-medium text-sm">{data.cursinho.name}</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[13px] font-medium text-gray-700">
+                {data.cursinho.name}
+              </span>
+              <span className="rounded-full bg-green/15 px-2 py-0.5 text-[10px] font-semibold text-[#0d7a63]">
+                Ativo
+              </span>
+            </div>
           </div>
-          <p className="text-xs text-green font-medium">Colaborador ativo</p>
+
+          <div className="h-px bg-black/[0.06] my-1" />
+
           {data.frentes.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {data.frentes.map((f) => (
-                <span
-                  key={f.id}
-                  className="rounded-full bg-marine/10 px-2.5 py-0.5 text-xs font-medium text-marine"
-                >
-                  {f.name}
-                </span>
-              ))}
+            <div className="flex flex-1 flex-col justify-center py-2">
+              <p className="mb-2 text-[10px] uppercase tracking-wide text-gray-400">
+                Frentes que leciono
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {data.frentes.map((f) => (
+                  <span
+                    key={f.id}
+                    className="rounded-full bg-marine/[0.08] px-2.5 py-0.5 text-[11px] font-medium text-marine"
+                  >
+                    {f.name}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
         </div>
