@@ -54,7 +54,7 @@ export function WidgetShell({
 
   return (
     <div
-      className={`rounded-xl border border-white/80 bg-white/60 backdrop-blur-sm p-4 transition-all hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(11,39,71,0.06)] ${className}`}
+      className={`rounded-xl border border-white/80 bg-white/60 backdrop-blur-sm p-4 transition-all hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(11,39,71,0.06)] ${collapsed ? '' : className}`}
     >
       <div
         className={`flex items-center gap-2 ${collapsed ? '' : 'mb-2.5'} ${widgetId ? 'cursor-pointer select-none' : ''}`}
