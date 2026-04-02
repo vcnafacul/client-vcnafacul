@@ -48,9 +48,9 @@ function FrequencyGauge({ percentual }: { percentual: number }) {
   );
 }
 
-function StudentCard({ item }: { item: StudentDashboard }) {
+function StudentCardContent({ item }: { item: StudentDashboard }) {
   return (
-    <div className="flex min-h-[180px] flex-1 flex-col rounded-xl border border-white/80 bg-white/60 p-3">
+    <div className="flex min-h-[140px] flex-col">
       <div className="mb-1">
         <p className="text-[13px] font-medium text-gray-700">
           {item.cursinho.name}
@@ -92,17 +92,29 @@ function StudentCard({ item }: { item: StudentDashboard }) {
   );
 }
 
-const spanClass = (count: number) =>
-  count >= 3
-    ? 'col-span-full'
-    : count === 2
-      ? 'sm:col-span-2'
-      : '';
-
 export function CursinhoStudentWidget() {
   const token = useAuthStore((s) => s.data.token);
   const { data, isLoading, error, retry } =
     useWidgetData<StudentDashboard[]>(() => getStudentDashboard(token));
+
+  if (!isLoading && !error && data && data.length > 1) {
+    return (
+      <>
+        {data.map((item, i) => (
+          <WidgetShell
+            key={item.matricula ?? i}
+            title="Meu Cursinho"
+            widgetId={`cursinho-student-${i}`}
+            icon={<WidgetIcon icon={School} />}
+            isLoading={false}
+            error={null}
+          >
+            <StudentCardContent item={item} />
+          </WidgetShell>
+        ))}
+      </>
+    );
+  }
 
   return (
     <WidgetShell
@@ -112,14 +124,9 @@ export function CursinhoStudentWidget() {
       isLoading={isLoading}
       error={error}
       retry={retry}
-      className={spanClass(data?.length ?? 1)}
     >
       {data && data.length > 0 ? (
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
-          {data.map((item, i) => (
-            <StudentCard key={item.matricula ?? i} item={item} />
-          ))}
-        </div>
+        <StudentCardContent item={data[0]} />
       ) : (
         <p className="py-4 text-center text-sm text-gray-400">
           Nenhuma matrícula ativa

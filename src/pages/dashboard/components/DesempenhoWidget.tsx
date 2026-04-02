@@ -26,20 +26,20 @@ export function DesempenhoWidget() {
           xAxis={[
             {
               scaleType: 'band',
-              data: data.map((d) => d.period),
+              data: data.slice(-4).map((d) => d.period),
             },
           ]}
           series={[
             {
-              data: data.map((d) => d.completos),
+              data: data.slice(-4).map((d) => d.completos),
               label: 'Completos',
             },
             {
-              data: data.map((d) => d.incompletos),
+              data: data.slice(-4).map((d) => d.incompletos),
               label: 'Incompletos',
             },
           ]}
-          height={200}
+          height={150}
           slotProps={{ legend: { hidden: true } }}
           colors={['#0B2747', '#37D6B5']}
         />

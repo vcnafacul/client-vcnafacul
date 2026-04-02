@@ -1,7 +1,6 @@
 import { WidgetDef } from './types';
 import { HeaderWidget } from './components/HeaderWidget';
 import { SimuladosWidget } from './components/SimuladosWidget';
-import { DesempenhoWidget } from './components/DesempenhoWidget';
 import { ProcessosSeletivosWidget } from './components/ProcessosSeletivosWidget';
 import { CursinhoStudentWidget } from './components/CursinhoStudentWidget';
 import { RedacoesWidget } from './components/RedacoesWidget';
@@ -22,13 +21,7 @@ export const widgetRegistry: WidgetDef[] = [
     component: SimuladosWidget,
     profiles: ['common'],
   },
-  {
-    id: 'desempenho',
-    component: DesempenhoWidget,
-    profiles: ['common'],
-    gridSpan: { desktop: 2 },
-  },
-  {
+{
     id: 'processos-seletivos',
     component: ProcessosSeletivosWidget,
     profiles: ['common'],
