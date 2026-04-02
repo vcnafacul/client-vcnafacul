@@ -68,6 +68,7 @@ export const historico_summary = `${historico}/summary`;
 
 export const partnerPrepCourse = `${BASE_URL}/partner-prep-course`;
 export const partnerPrepCourseLogos = `${partnerPrepCourse}/logos`;
+export const partnerPrepCourseAggregate = `${partnerPrepCourse}/aggregate`;
 
 export const prepCourse = (id: string) =>
   `${partnerPrepCourse}/${id}/has-active-inscription`;
@@ -76,9 +77,11 @@ export const studentCourse = `${BASE_URL}/student-course`;
 export const registrationMonitoring = `${studentCourse}/registration-monitoring`;
 export const get_user_info = (inscriptionId: string) =>
   `${studentCourse}/get-user-info/${inscriptionId}`;
+export const aggregateStudentCourse = `${studentCourse}/aggregate`;
 
 export const inscriptionCourse = `${BASE_URL}/inscription-course`;
 export const inscriptionCourseWithName = `${inscriptionCourse}/all-with-name`;
+export const aggregateInscriptionCourse = `${inscriptionCourse}/aggregate`;
 export const subscribers = `${inscriptionCourse}/subscribers`;
 export const inviteMember = `${partnerPrepCourse}/invite-members`;
 export const inviteMemberAccept = `${partnerPrepCourse}/invite-members-accept`;

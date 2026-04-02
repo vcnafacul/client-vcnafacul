@@ -26,6 +26,7 @@ import AnalyticsGeolocation from "./geolocation";
 import AnalyticsQuestion from "./question";
 import AnalyticsSimulado from "./simulado";
 import AnalyticsUsers from "./users";
+import AnalyticsPrepCourse from "./prepCourse";
 
 function Analytics() {
   const [period, setPeriod] = useState<Period>(Period.month);
@@ -34,9 +35,7 @@ function Analytics() {
   } = useAuthStore();
 
   const [kpiLoading, setKpiLoading] = useState(true);
-  const [geoSummary, setGeoSummary] = useState<GeolocationSummary | null>(
-    null
-  );
+  const [geoSummary, setGeoSummary] = useState<GeolocationSummary | null>(null);
   const [contentSummary, setContentSummary] =
     useState<ContentSummaryResponse | null>(null);
   const [questionSummaryData, setQuestionSummaryData] =
@@ -147,6 +146,7 @@ function Analytics() {
       <AnalyticsContent />
       <AnalyticsQuestion />
       <AnalyticsSimulado period={period} />
+      <AnalyticsPrepCourse period={period} />
     </div>
   );
 }
