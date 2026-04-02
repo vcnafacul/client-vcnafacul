@@ -2,7 +2,9 @@ import { useAuthStore } from '@/store/auth';
 import { getSimuladoByPeriod, SimuladoByPeriod } from '@/services/dashboard';
 import { useWidgetData } from '../hooks/useWidgetData';
 import { WidgetShell } from './WidgetShell';
+import { WidgetIcon } from './WidgetIcon';
 import { BarChart } from '@mui/x-charts/BarChart';
+import { BarChart3 } from 'lucide-react';
 
 export function DesempenhoWidget() {
   const token = useAuthStore((s) => s.data.token);
@@ -13,6 +15,7 @@ export function DesempenhoWidget() {
   return (
     <WidgetShell
       title="Evolução em Simulados"
+      icon={<WidgetIcon icon={BarChart3} />}
       isLoading={isLoading}
       error={error}
       retry={retry}
