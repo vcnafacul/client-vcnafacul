@@ -97,24 +97,7 @@ export function CursinhoStudentWidget() {
   const { data, isLoading, error, retry } =
     useWidgetData<StudentDashboard[]>(() => getStudentDashboard(token));
 
-  if (!isLoading && !error && data && data.length > 1) {
-    return (
-      <>
-        {data.map((item, i) => (
-          <WidgetShell
-            key={item.matricula ?? i}
-            title="Meu Cursinho"
-            widgetId={`cursinho-student-${i}`}
-            icon={<WidgetIcon icon={School} />}
-            isLoading={false}
-            error={null}
-          >
-            <StudentCardContent item={item} />
-          </WidgetShell>
-        ))}
-      </>
-    );
-  }
+  const latest = data?.length ? data[data.length - 1] : null;
 
   return (
     <WidgetShell
@@ -125,8 +108,8 @@ export function CursinhoStudentWidget() {
       error={error}
       retry={retry}
     >
-      {data && data.length > 0 ? (
-        <StudentCardContent item={data[0]} />
+      {latest ? (
+        <StudentCardContent item={latest} />
       ) : (
         <p className="py-4 text-center text-sm text-gray-400">
           Nenhuma matrícula ativa
