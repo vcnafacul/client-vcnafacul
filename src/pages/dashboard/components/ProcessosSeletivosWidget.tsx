@@ -2,8 +2,10 @@ import { useAuthStore } from '@/store/auth';
 import { getOpenInscriptions, OpenInscription } from '@/services/dashboard';
 import { useWidgetData } from '../hooks/useWidgetData';
 import { WidgetShell } from './WidgetShell';
+import { WidgetIcon } from './WidgetIcon';
 import { Link } from 'react-router-dom';
-import { PARTNER_PREP, PARTNER_PREP_INSCRIPTION } from '@/routes/path';
+import { PARTNER_PREP } from '@/routes/path';
+import { GraduationCap } from 'lucide-react';
 
 export function ProcessosSeletivosWidget() {
   const token = useAuthStore((s) => s.data.token);
@@ -14,42 +16,48 @@ export function ProcessosSeletivosWidget() {
   return (
     <WidgetShell
       title="Processos Seletivos"
+      icon={<WidgetIcon icon={GraduationCap} />}
       isLoading={isLoading}
       error={error}
       retry={retry}
     >
       {data && data.length > 0 ? (
-        <ul className="space-y-3">
-          {data.map((item) => (
-            <li key={item.id} className="flex items-center gap-3">
-              {item.cursinho.logo ? (
-                <img
-                  src={item.cursinho.logo}
-                  alt={item.cursinho.name}
-                  className="h-8 w-8 rounded-full object-cover"
-                />
-              ) : (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xs font-bold text-gray-500">
-                  {item.cursinho.name.charAt(0)}
+        <div>
+          <ul className="space-y-2">
+            {data.map((item) => (
+              <li key={item.id} className="flex items-center gap-2">
+                {item.cursinho.logo ? (
+                  <img
+                    src={item.cursinho.logo}
+                    alt={item.cursinho.name}
+                    className="h-6 w-6 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-marine/10 to-green/15 text-[10px] font-bold text-marine">
+                    {item.cursinho.name.charAt(0)}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-medium truncate">
+                    {item.cursinho.name}
+                  </p>
+                  <p className="text-[11px] text-gray-400">
+                    Até {new Date(item.endDate).toLocaleDateString('pt-BR')}
+                  </p>
                 </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">
-                  {item.cursinho.name}
-                </p>
-                <p className="text-xs text-gray-400">
-                  Até {new Date(item.endDate).toLocaleDateString('pt-BR')}
-                </p>
-              </div>
-              <Link
-                to={`/${PARTNER_PREP}${PARTNER_PREP_INSCRIPTION}/${item.id}`}
-                className="shrink-0 text-xs font-medium text-marine hover:underline"
-              >
-                Inscrever
-              </Link>
-            </li>
-          ))}
-        </ul>
+                <span className="shrink-0 rounded-full bg-green/15 px-2 py-0.5 text-[10px] font-semibold text-[#0d7a63]">
+                  Aberto
+                </span>
+              </li>
+            ))}
+          </ul>
+          <Link
+            to={`/${PARTNER_PREP}`}
+            className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-marine hover:underline"
+          >
+            Ver todos →
+          </Link>
+        </div>
       ) : (
         <p className="py-4 text-center text-sm text-gray-400">
           Nenhum processo seletivo aberto no momento
