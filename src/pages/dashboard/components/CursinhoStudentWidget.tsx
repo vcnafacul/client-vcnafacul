@@ -2,93 +2,102 @@ import { useAuthStore } from '@/store/auth';
 import { getStudentDashboard, StudentDashboard } from '@/services/dashboard';
 import { useWidgetData } from '../hooks/useWidgetData';
 import { WidgetShell } from './WidgetShell';
+import { WidgetIcon } from './WidgetIcon';
+import { School } from 'lucide-react';
 
 function FrequencyGauge({ percentual }: { percentual: number }) {
-  const radius = 36;
+  const radius = 28;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percentual / 100) * circumference;
-  const color = percentual >= 75 ? '#37D6B5' : percentual >= 50 ? '#FF7600' : '#F43535';
+  const color =
+    percentual >= 75 ? '#37D6B5' : percentual >= 50 ? '#FF7600' : '#F43535';
 
   return (
-    <div className="flex flex-col items-center">
-      <svg width="88" height="88" className="-rotate-90">
-        <circle
-          cx="44"
-          cy="44"
-          r={radius}
-          fill="none"
-          stroke="#e5e7eb"
-          strokeWidth="8"
-        />
-        <circle
-          cx="44"
-          cy="44"
-          r={radius}
-          fill="none"
-          stroke={color}
-          strokeWidth="8"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          strokeLinecap="round"
-        />
-      </svg>
-      <span className="mt-1 text-lg font-bold" style={{ color }}>
+    <svg width="72" height="72" viewBox="0 0 72 72">
+      <circle
+        cx="36"
+        cy="36"
+        r={radius}
+        fill="none"
+        stroke="rgba(0,0,0,0.06)"
+        strokeWidth="6"
+      />
+      <circle
+        cx="36"
+        cy="36"
+        r={radius}
+        fill="none"
+        stroke={color}
+        strokeWidth="6"
+        strokeDasharray={circumference}
+        strokeDashoffset={offset}
+        strokeLinecap="round"
+        transform="rotate(-90 36 36)"
+      />
+      <text
+        x="36"
+        y="40"
+        textAnchor="middle"
+        fontSize="16"
+        fontWeight="700"
+        fill="#0B2747"
+      >
         {percentual}%
-      </span>
-    </div>
-  );
-}
-
-function CursinhoLogo({ logo, name }: { logo: string | null; name: string }) {
-  if (logo) {
-    return (
-      <img src={logo} alt={name} className="h-8 w-8 rounded-full object-cover" />
-    );
-  }
-  return (
-    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xs font-bold text-gray-500">
-      {name.charAt(0)}
-    </div>
+      </text>
+    </svg>
   );
 }
 
 function StudentCard({ item }: { item: StudentDashboard }) {
   return (
-    <div className="flex flex-1 gap-4 rounded-lg border p-3">
-      <div className="flex-1 space-y-2">
-        <div className="flex items-center gap-2">
-          <CursinhoLogo logo={item.cursinho.logo} name={item.cursinho.name} />
-          <span className="font-medium text-sm">{item.cursinho.name}</span>
-        </div>
+    <div className="flex min-h-[180px] flex-1 flex-col rounded-xl border border-white/80 bg-white/60 p-3">
+      <div className="mb-1">
+        <p className="text-[13px] font-medium text-gray-700">
+          {item.cursinho.name}
+        </p>
         {item.matricula && (
-          <p className="text-xs text-gray-500">
-            Matrícula: <span className="font-medium">{item.matricula}</span>
+          <p className="text-[11px] text-gray-400">
+            Mat. <strong className="text-gray-700">{item.matricula}</strong>
           </p>
         )}
-        {item.turma && (
-          <p className="text-xs text-gray-500">
-            Turma: <span className="font-medium">{item.turma}</span>
+        {(item.turma || item.periodo) && (
+          <p className="text-[11px] text-gray-400">
+            {[item.turma, item.periodo].filter(Boolean).join(' · ')}
           </p>
         )}
-        {item.periodo && (
-          <p className="text-xs text-gray-500">
-            Período: <span className="font-medium">{item.periodo}</span>
-          </p>
-        )}
-        <div className="flex gap-3 text-xs text-gray-500 pt-1">
-          <span>Presenças: <strong>{item.frequencia.presencas}</strong></span>
-          <span>Faltas: <strong>{item.frequencia.faltas}</strong></span>
-        </div>
       </div>
-      <FrequencyGauge percentual={item.frequencia.percentual} />
+
+      <div className="mt-auto flex items-end justify-between pt-2">
+        <div className="flex gap-3">
+          <div className="text-center">
+            <div className="text-lg font-bold text-green">
+              {item.frequencia.presencas}
+            </div>
+            <div className="text-[10px] uppercase tracking-wide text-gray-400">
+              Presenças
+            </div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-red-500">
+              {item.frequencia.faltas}
+            </div>
+            <div className="text-[10px] uppercase tracking-wide text-gray-400">
+              Faltas
+            </div>
+          </div>
+        </div>
+        <FrequencyGauge percentual={item.frequencia.percentual} />
+      </div>
     </div>
   );
 }
 
 const spanClass = (count: number) =>
-  count >= 3 ? 'col-span-full' :
-  count === 2 ? 'sm:col-span-2' :
-  '';
+  count >= 3
+    ? 'col-span-full'
+    : count === 2
+      ? 'sm:col-span-2'
+      : '';
 
 export function CursinhoStudentWidget() {
   const token = useAuthStore((s) => s.data.token);
@@ -97,14 +106,15 @@ export function CursinhoStudentWidget() {
 
   return (
     <WidgetShell
-      title="Meus Cursinhos"
+      title="Meu Cursinho"
+      icon={<WidgetIcon icon={School} />}
       isLoading={isLoading}
       error={error}
       retry={retry}
-      className={`h-auto ${spanClass(data?.length ?? 1)}`}
+      className={spanClass(data?.length ?? 1)}
     >
       {data && data.length > 0 ? (
-        <div className="flex flex-col sm:flex-row sm:items-stretch gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
           {data.map((item, i) => (
             <StudentCard key={item.matricula ?? i} item={item} />
           ))}
