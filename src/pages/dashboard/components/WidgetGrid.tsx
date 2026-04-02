@@ -41,7 +41,7 @@ export function WidgetGrid({ widgets }: WidgetGridProps) {
   );
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
       {visible.map((w) => {
         const span = w.gridSpan?.desktop;
         const Component = w.component;
