@@ -21,7 +21,7 @@ function DashTemplateContent({ hasMenu }: { hasMenu?: boolean }) {
     <div
       className={`relative top-[76px] h-[calc(100vh-76px)] w-full flex flex-row`}
     >
-      <div className={`xl:mr-0 w-full overflow-y-scroll scrollbar-hide flex-1 pr-2 pt-6`}>
+      <div className={`xl:mr-0 w-full overflow-y-scroll scrollbar-hide flex-1`}>
         <Outlet />
       </div>
       <div

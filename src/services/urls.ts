@@ -135,3 +135,10 @@ export const essayReviews = (essayId: string) => `${essay}/${essayId}/reviews`;
 export const essayReview = (essayId: string) => `${essay}/${essayId}/review`;
 export const essaySubmitImage = `${essay}/submit-image`;
 export const essayImage = (essayId: string) => `${essay}/${essayId}/image`;
+
+export const inscriptionCourseOpen = `${inscriptionCourse}/open`;
+export const dashboard = `${BASE_URL}/dashboard`;
+export const dashboardStudent = `${dashboard}/student`;
+export const dashboardCollaborator = `${dashboard}/collaborator`;
+export const dashboardQuestoesPendentes = `${dashboard}/questoes-pendentes`;
+export const essayMyCursinhoCount = `${essayMyCursinho}/count`;

@@ -26,7 +26,7 @@ import { Roles } from "../enums/roles/roles";
 import Geo from "../pages/Geo";
 import Account from "../pages/account";
 import { ConfirmEmailPage } from "../pages/confirmEmail";
-import Dash from "../pages/dash";
+import Dashboard from "../pages/dashboard";
 import DashContent from "../pages/dashContent";
 import DashGeo from "../pages/dashGeo";
 import DashNews from "../pages/dashNews";
@@ -198,7 +198,7 @@ export function PlatformRoutes() {
           element={<PartnerClassWithStudents />}
         />
         <Route path={PARTNER_CLASS_STUDENTS} element={<StudentsEnrolled />} />
-        <Route path={DASH} element={<Dash />} />
+        <Route path={DASH} element={<Dashboard />} />
         <Route path={SIMULADO} element={<MainSimulate />} />
         <Route path={SIMULADO_HISTORIES} element={<SimulationHistories />} />
 
