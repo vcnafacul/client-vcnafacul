@@ -67,6 +67,14 @@ export const headerDash: HeaderData = {
   pageLinks: [
     {
       Home_Menu_Item_id: {
+        id: 0,
+        name: "Dashboard",
+        link: DASH,
+        target: "_self",
+      },
+    },
+    {
+      Home_Menu_Item_id: {
         id: 1,
         name: "Novidades",
         link: NEWS,
@@ -76,7 +84,7 @@ export const headerDash: HeaderData = {
     {
       Home_Menu_Item_id: {
         id: 2,
-        name: "Simulado",
+        name: "Simulados",
         link: `${DASH}/${SIMULADO}`,
         target: "_self",
       },
