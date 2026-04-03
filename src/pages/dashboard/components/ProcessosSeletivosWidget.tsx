@@ -35,16 +35,19 @@ export function ProcessosSeletivosWidget() {
                     <img
                       src={item.cursinho.logo}
                       alt={item.cursinho.name}
-                      className="h-6 w-6 rounded-full object-cover"
+                      className="h-8 w-8 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-marine/10 to-green/15 text-[10px] font-bold text-marine">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-marine/10 to-green/15 text-xs font-bold text-marine">
                       {item.cursinho.name.charAt(0)}
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
                     <p className="text-[13px] font-medium truncate">
                       {item.cursinho.name}
+                    </p>
+                    <p className="text-[11px] text-gray-500 truncate">
+                      {item.name}
                     </p>
                     <p className="text-[11px] text-gray-400">
                       Até {new Date(item.endDate).toLocaleDateString('pt-BR')}
