@@ -45,7 +45,7 @@ export const widgetRegistry: WidgetDef[] = [
     id: 'redacoes-revisar',
     component: RedacoesRevisarWidget,
     profiles: ['collaborator'],
-    permissions: [Roles.revisarRedacoes],
+    permissions: [Roles.revisarRedacoes, Roles.revisarTodasRedacoes],
   },
   {
     id: 'questoes-pendentes',

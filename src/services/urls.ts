@@ -128,6 +128,7 @@ export const essayMy = `${essay}/my`;
 export const essayMyStats = `${essayMy}/stats`;
 export const essaySettings = `${essay}/settings`;
 export const essayAll = `${essay}/all`;
+export const essayAllCount = `${essayAll}/count`;
 export const essayMyCursinho = `${essay}/my-cursinho`;
 export const essayPrepCourse = (prepCourseId: string) =>
   `${essay}/prep-course/${prepCourseId}`;

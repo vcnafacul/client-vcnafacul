@@ -1,16 +1,31 @@
 import { useAuthStore } from '@/store/auth';
-import { getEssayCountForReview, EssayCountResponse } from '@/services/dashboard';
+import {
+  getEssayCountForReview,
+  getEssayCountForReviewAll,
+  EssayCountResponse,
+} from '@/services/dashboard';
 import { useWidgetData } from '../hooks/useWidgetData';
 import { WidgetShell } from './WidgetShell';
 import { WidgetIcon } from './WidgetIcon';
 import { Link } from 'react-router-dom';
-import { ESSAY_REVIEW_CURSINHO } from '@/routes/path';
+import { ESSAY_REVIEW_LIST, ESSAY_REVIEW_CURSINHO } from '@/routes/path';
+import { Roles } from '@/enums/roles/roles';
 import { FileEdit } from 'lucide-react';
 
 export function RedacoesRevisarWidget() {
   const token = useAuthStore((s) => s.data.token);
+  const permissao = useAuthStore((s) => s.data.permissao);
+
+  const isAdmin = !!permissao[Roles.revisarTodasRedacoes];
+
+  const fetcher = isAdmin
+    ? () => getEssayCountForReviewAll(token)
+    : () => getEssayCountForReview(token);
+
+  const reviewPath = isAdmin ? ESSAY_REVIEW_LIST : ESSAY_REVIEW_CURSINHO;
+
   const { data, isLoading, error, retry } =
-    useWidgetData<EssayCountResponse>(() => getEssayCountForReview(token));
+    useWidgetData<EssayCountResponse>(fetcher);
 
   return (
     <WidgetShell
@@ -32,7 +47,7 @@ export function RedacoesRevisarWidget() {
             </span>
           </div>
           <Link
-            to={ESSAY_REVIEW_CURSINHO}
+            to={reviewPath}
             className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-marine hover:underline"
           >
             Ir para revisão →

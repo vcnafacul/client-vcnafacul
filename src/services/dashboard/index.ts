@@ -6,6 +6,7 @@ import {
   dashboardStudent,
   dashboardCollaborator,
   essayMyCursinhoCount,
+  essayAllCount,
   dashboardQuestoesPendentes,
 } from '../urls';
 
@@ -171,6 +172,24 @@ export async function getEssayCountForReview(
 ): Promise<EssayCountResponse> {
   const response = await fetchWrapper(
     `${essayMyCursinhoCount}?status=SUBMITTED`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  if (response.status !== 200)
+    throw new Error('Erro ao buscar contagem de redações');
+  return response.json();
+}
+
+export async function getEssayCountForReviewAll(
+  token: string,
+): Promise<EssayCountResponse> {
+  const response = await fetchWrapper(
+    `${essayAllCount}?status=SUBMITTED`,
     {
       method: 'GET',
       headers: {
