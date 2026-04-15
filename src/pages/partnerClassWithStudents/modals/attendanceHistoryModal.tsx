@@ -5,6 +5,7 @@ import { useModals } from "@/hooks/useModal";
 import { deleteAttendanceRecord } from "@/services/prepCourse/attendanceRecord/deleteAttendanceRecord";
 import { getAttendanceRecord } from "@/services/prepCourse/attendanceRecord/getAttendanceRecord";
 import { useAuthStore } from "@/store/auth";
+import { attendancePeriodLabel } from "@/types/partnerPrepCourse/attendancePeriod";
 import { SimpleAttendanceRecordHistory } from "@/types/partnerPrepCourse/attendanceRecordHistory";
 import { IconButton } from "@mui/material";
 import Paper from "@mui/material/Paper";
@@ -130,6 +131,15 @@ export function AttendanceHistoryModal({
         const date = new Date(params.row.registeredAt);
         return date.toLocaleDateString("pt-BR");
       },
+    },
+    {
+      field: "period",
+      headerName: "Período",
+      width: 110,
+      align: "right",
+      headerAlign: "right",
+      renderCell: (params) =>
+        params.row.period ? attendancePeriodLabel[params.row.period] : "-",
     },
   ];
 

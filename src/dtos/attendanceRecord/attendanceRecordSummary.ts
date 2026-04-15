@@ -1,6 +1,8 @@
+import { AttendancePeriod } from "@/types/partnerPrepCourse/attendancePeriod";
 
 export interface AttendanceRecordItem {
   date: string,
+  period: AttendancePeriod,
   total: number
   presentCount: number
 }
