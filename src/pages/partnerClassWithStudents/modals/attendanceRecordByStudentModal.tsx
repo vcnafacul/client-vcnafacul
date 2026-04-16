@@ -7,7 +7,7 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { applyJustication } from "@/services/prepCourse/attendanceRecord/applyJustication";
 import { getAttendanceRecordByStudentId } from "@/services/prepCourse/attendanceRecord/getAttendanceRecordByStudentId";
 import { useAuthStore } from "@/store/auth";
-import { attendancePeriodLabel } from "@/types/partnerPrepCourse/attendancePeriod";
+import { AttendancePeriod, attendancePeriodLabel } from "@/types/partnerPrepCourse/attendancePeriod";
 import { AttendanceRecordByStudent } from "@/types/partnerPrepCourse/attendanceRecord";
 import Paper from "@mui/material/Paper";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -71,7 +71,7 @@ export function AttendanceRecordByStudentModal({
       filterable: false,
       sortable: false,
       renderCell: (params) =>
-        params.row.period ? attendancePeriodLabel[params.row.period] : "-",
+        params.row.period ? attendancePeriodLabel[params.row.period as AttendancePeriod] : "-",
     },
     {
       field: "className",
