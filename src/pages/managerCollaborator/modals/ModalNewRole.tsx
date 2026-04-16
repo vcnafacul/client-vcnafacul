@@ -55,6 +55,7 @@ function ModalNewRole({
     gerenciarPermissoesCursinho: false,
     visualizarMinhasInscricoes: false,
     gerenciarFormularioGlobal: false,
+    gerenciarFormulario: false,
     gerenciarTemas: false,
     revisarRedacoes: false,
     revisarTodasRedacoes: false,

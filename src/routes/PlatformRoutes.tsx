@@ -166,7 +166,7 @@ export function PlatformRoutes() {
           path={PARTNER_CLASS_FORM}
           element={
             <ProtectedRoutePermission
-              permission={data.permissao[Roles.gerenciarProcessoSeletivo]}
+              permission={data.permissao[Roles.gerenciarFormulario]}
             >
               <PartnerPrepForm />
             </ProtectedRoutePermission>
