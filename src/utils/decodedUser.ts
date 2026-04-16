@@ -22,6 +22,7 @@ export function decoderUser(access_token: string) {
       obj[item] = true;
       return obj;
     }, {}),
+    profiles: decoded.profiles ?? ['common'],
   };
   return payload;
 }

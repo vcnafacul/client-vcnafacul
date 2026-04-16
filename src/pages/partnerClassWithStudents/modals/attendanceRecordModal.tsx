@@ -4,6 +4,10 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { getAttendanceRecordById } from "@/services/prepCourse/attendanceRecord/getAttendanceRecordbyId";
 import { updateRegisterStudent } from "@/services/prepCourse/attendanceRecord/updateRegisterStudent";
 import { useAuthStore } from "@/store/auth";
+import {
+  AttendancePeriod,
+  attendancePeriodLabel,
+} from "@/types/partnerPrepCourse/attendancePeriod";
 import { SimpleStudentAttendance } from "@/types/partnerPrepCourse/attendanceRecord";
 import { IconButton } from "@mui/material";
 import Paper from "@mui/material/Paper";
@@ -27,6 +31,10 @@ export function AttendanceRecordModal({
   attendanceId,
 }: AttendanceRecordProps) {
   const [students, setStudents] = useState<SimpleStudentAttendance[]>([]);
+  const [recordInfo, setRecordInfo] = useState<{
+    registeredAt?: Date;
+    period?: AttendancePeriod;
+  }>({});
   const [studentSelected, setStudentSelected] = useState<
     SimpleStudentAttendance | undefined
   >(undefined);
@@ -151,6 +159,7 @@ export function AttendanceRecordModal({
         cod_enrolled: s.student.cod_enrolled,
       }));
       setStudents(data);
+      setRecordInfo({ registeredAt: res.registeredAt, period: res.period });
     });
   }, []);
 
@@ -160,6 +169,23 @@ export function AttendanceRecordModal({
       handleClose={handleClose}
       className="bg-white p-4 rounded-md w-[90vw] h-[90vh] sm:h-[600px]"
     >
+      {(recordInfo.registeredAt || recordInfo.period) && (
+        <div className="mb-2 text-sm text-gray-700">
+          {recordInfo.registeredAt && (
+            <span className="font-semibold">
+              {new Date(recordInfo.registeredAt).toLocaleDateString("pt-BR")}
+            </span>
+          )}
+          {recordInfo.period && (
+            <span className="ml-2">
+              — Período:{" "}
+              <span className="font-semibold">
+                {attendancePeriodLabel[recordInfo.period]}
+              </span>
+            </span>
+          )}
+        </div>
+      )}
       <Paper sx={{ height: "95%", width: "100%" }}>
         <DataGrid
           rows={students}

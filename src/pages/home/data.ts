@@ -4,7 +4,6 @@ import { HeaderData } from "../../components/organisms/header";
 
 import {
   ACCOUNT_PATH,
-  DASH,
   LOGIN_PATH,
   LOGOFF_PATH,
   NEWS,
@@ -82,15 +81,7 @@ export const userNavigationLogged: ItemMenuProps[] = [
   {
     Home_Menu_Item_id: {
       id: 1,
-      name: "DashBoard",
-      link: DASH,
-      target: "_self",
-    },
-  },
-  {
-    Home_Menu_Item_id: {
-      id: 2,
-      name: "Perfil",
+      name: "Meu Perfil",
       link: `/dashboard/${ACCOUNT_PATH}`,
       target: "_self",
     },

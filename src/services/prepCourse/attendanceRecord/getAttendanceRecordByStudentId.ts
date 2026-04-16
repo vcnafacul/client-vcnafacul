@@ -1,4 +1,5 @@
 import { attendanceRecord } from "@/services/urls";
+import { AttendancePeriod } from "@/types/partnerPrepCourse/attendancePeriod";
 import fetchWrapper from "@/utils/fetchWrapper";
 import { Paginate } from "@/utils/paginate";
 
@@ -9,6 +10,7 @@ interface AttendanceRecord {
     name: string;
   };
   registeredAt: Date;
+  period: AttendancePeriod;
   studentAttendance: StudentAttendance[];
   registeredBy: {
     name: string;

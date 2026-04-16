@@ -5,6 +5,9 @@ import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+    __BUILD_VERSION__: JSON.stringify(Date.now().toString(36)),
+  },
   plugins: [react(), svgr()],
   resolve: {
     alias: {

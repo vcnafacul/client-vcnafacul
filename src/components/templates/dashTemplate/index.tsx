@@ -4,9 +4,12 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useEffect, useMemo, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { BaseTemplateContext } from "../../../context/baseTemplateContext";
 import { headerDash } from "../../../pages/dash/data";
+import { NEWS } from "../../../routes/path";
+import { getNews } from "../../../services/news/getNews";
 import BaseTemplate from "../baseTemplate";
 
 type DashTemplateProps = {
@@ -21,7 +24,7 @@ function DashTemplateContent({ hasMenu }: { hasMenu?: boolean }) {
     <div
       className={`relative top-[76px] h-[calc(100vh-76px)] w-full flex flex-row`}
     >
-      <div className={`xl:mr-0 w-full overflow-y-scroll scrollbar-hide flex-1 pr-2 pt-6`}>
+      <div className={`xl:mr-0 w-full overflow-y-scroll scrollbar-hide flex-1`}>
         <Outlet />
       </div>
       <div
@@ -39,9 +42,27 @@ function DashTemplateContent({ hasMenu }: { hasMenu?: boolean }) {
 }
 
 function DashTemplate({ className, hasMenu }: DashTemplateProps) {
+  const [hasNews, setHasNews] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    getNews()
+      .then((res) => setHasNews((res.data?.length ?? 0) > 0))
+      .catch(() => setHasNews(false));
+  }, []);
+
+  const headerValue = useMemo(() => {
+    const pageLinks =
+      hasNews === false
+        ? headerDash.pageLinks.filter(
+            (l) => l.Home_Menu_Item_id.link !== NEWS,
+          )
+        : headerDash.pageLinks;
+    return { ...headerDash, pageLinks };
+  }, [hasNews]);
+
   return (
     <BaseTemplateContext.Provider
-      value={{ header: headerDash, hasFooter: false }}
+      value={{ header: headerValue, hasFooter: false, hasNews }}
     >
       <BaseTemplate
         className={`overflow-y-clip scrollbar-hide h-full ${className} overflow-x-hidden`}

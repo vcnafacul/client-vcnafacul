@@ -23,6 +23,7 @@ const initialUser = {
   },
   token: "",
   permissao: {},
+  profiles: [],
 };
 
 export type AuthUpdate = {
@@ -47,6 +48,7 @@ export type AuthProps = {
   user: Auth;
   token: string;
   permissao: Record<string, boolean>;
+  profiles: string[];
 };
 
 type AuthState = {
@@ -67,6 +69,7 @@ export const useAuthStore = create<AuthState>()(
             user: { ...initialUser.user },
             token: "",
             permissao: {},
+            profiles: [],
           },
         });
       },
