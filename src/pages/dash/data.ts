@@ -134,7 +134,7 @@ export const adminMenuItems: DashCardMenu[] = [
         alt: "formulário",
         text: "Formulário",
         link: `/dashboard/${PARTNER_CLASS_FORM}`,
-        permissions: [Roles.alterarPermissao],
+        permissions: [Roles.gerenciarFormulario],
       },
       {
         icon: FaBook,
