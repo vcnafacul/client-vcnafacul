@@ -80,26 +80,56 @@ export function PartnerClassWithStudents() {
     {
       field: "email",
       headerName: "Email",
-      minWidth: 270,
+      minWidth: 150,
       flex: 1,
     },
     {
       field: "name",
       headerName: "Nome",
-      minWidth: 200,
+      minWidth: 150,
       flex: 1,
-    },
-    {
-      field: "applicationStatus",
-      headerName: "Status",
-      width: 150,
     },
     {
       field: "birthday",
       headerName: "Nascimento",
-      minWidth: 150,
-      flex: 1,
+      width: 110,
       type: "date",
+    },
+    {
+      field: "presencePercentage",
+      headerName: "% Presença",
+      width: 110,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
+        const value = params.row.presencePercentage;
+        if (value == null) return "—";
+        return `${value}%`;
+      },
+    },
+    {
+      field: "absencePercentage",
+      headerName: "% Faltas",
+      width: 100,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
+        const value = params.row.absencePercentage;
+        if (value == null) return "—";
+        return `${value}%`;
+      },
+    },
+    {
+      field: "justifiedAbsencePercentage",
+      headerName: "% Faltas Just.",
+      width: 120,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => {
+        const value = params.row.justifiedAbsencePercentage;
+        if (value == null) return "—";
+        return `${value}%`;
+      },
     },
   ];
 
@@ -111,6 +141,8 @@ export function PartnerClassWithStudents() {
         isOpen={modals.modalAttendanceHistory.isOpen}
         handleClose={() => modals.modalAttendanceHistory.close()}
         classId={hashClassId!}
+        coursePeriodStart={classEntity?.coursePeriod?.startDate}
+        coursePeriodEnd={classEntity?.coursePeriod?.endDate}
       />
     );
   };
@@ -121,6 +153,8 @@ export function PartnerClassWithStudents() {
         isOpen={modals.modalAttendanceRecordByStudent.isOpen}
         handleClose={() => modals.modalAttendanceRecordByStudent.close()}
         studentId={studentSelected.id}
+        coursePeriodStart={classEntity?.coursePeriod?.startDate}
+        coursePeriodEnd={classEntity?.coursePeriod?.endDate}
       />
     );
   };
@@ -206,6 +240,27 @@ export function PartnerClassWithStudents() {
         <h1 className="text-3xl font-bold text-center text-marine">
           {classEntity?.name}
         </h1>
+        {classEntity?.coursePeriod && (
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 mt-2 text-sm text-gray-600">
+            <span>
+              <strong>Período:</strong> {classEntity.coursePeriod.name} ({classEntity.coursePeriod.year})
+            </span>
+            <span>
+              <strong>Início:</strong>{" "}
+              {format(new Date(classEntity.coursePeriod.startDate), "dd/MM/yyyy")}
+            </span>
+            <span>
+              <strong>Término:</strong>{" "}
+              {format(new Date(classEntity.coursePeriod.endDate), "dd/MM/yyyy")}
+            </span>
+            <span>
+              <strong>Alunos:</strong> {students.length}
+            </span>
+            <span>
+              <strong>Registros:</strong> {classEntity.totalAttendanceRecords ?? 0}
+            </span>
+          </div>
+        )}
       </div>
       <div className="p-4 my-4 flex gap-2 flex-start bg-gray-50 w-full">
         {permissao[Roles.gerenciarTurmas] && (

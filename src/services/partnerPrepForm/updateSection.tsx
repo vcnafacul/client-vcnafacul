@@ -4,7 +4,8 @@ import { section_form } from "../urls";
 export async function updateSection(
   token: string,
   id: string,
-  name: string
+  name: string,
+  description?: string
 ): Promise<void> {
   const response = await fetchWrapper(`${section_form}/${id}`, {
     method: "PATCH",
@@ -12,7 +13,7 @@ export async function updateSection(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ name }),
+    body: JSON.stringify({ name, description }),
   });
   if (response.status !== 200) {
     const res = await response.json();

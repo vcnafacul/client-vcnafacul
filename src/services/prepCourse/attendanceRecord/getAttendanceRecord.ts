@@ -35,6 +35,7 @@ export async function getAttendanceRecord(token: string, page: number, limit: nu
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
       registeredAt: item.registeredAt,
+      period: item.period,
       registeredBy: item.registeredBy.user.firstName + " " + item.registeredBy.user.lastName
     })),
     page: res.page,

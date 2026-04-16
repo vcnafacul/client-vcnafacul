@@ -107,10 +107,39 @@ export const classes = `${BASE_URL}/class`;
 
 export const attendanceRecord = `${BASE_URL}/attendance-record`;
 export const studentAttendance = `${BASE_URL}/student-attendance`;
+export const periodJustification = `${BASE_URL}/period-justification`;
 
 export const section_form = `${BASE_URL}/section-form`;
 export const question_form = `${BASE_URL}/question-form`;
+
+export const admin_form = `${BASE_URL}/admin-form`;
+export const admin_section_form = `${admin_form}/section`;
+export const admin_question_form = `${admin_form}/question`;
 export const rule_form = `${BASE_URL}/rule-form`;
 export const rule_set_form = `${BASE_URL}/rule-set-form`;
 
 export const coursePeriod = `${BASE_URL}/course-period`;
+
+export const essay = `${BASE_URL}/essay`;
+export const essayTheme = `${essay}/theme`;
+export const essayThemeCurrent = `${essayTheme}/current`;
+export const essayThemeAvailable = `${essayTheme}/available`;
+export const essayMy = `${essay}/my`;
+export const essayMyStats = `${essayMy}/stats`;
+export const essaySettings = `${essay}/settings`;
+export const essayAll = `${essay}/all`;
+export const essayAllCount = `${essayAll}/count`;
+export const essayMyCursinho = `${essay}/my-cursinho`;
+export const essayPrepCourse = (prepCourseId: string) =>
+  `${essay}/prep-course/${prepCourseId}`;
+export const essayReviews = (essayId: string) => `${essay}/${essayId}/reviews`;
+export const essayReview = (essayId: string) => `${essay}/${essayId}/review`;
+export const essaySubmitImage = `${essay}/submit-image`;
+export const essayImage = (essayId: string) => `${essay}/${essayId}/image`;
+
+export const inscriptionCourseOpen = `${inscriptionCourse}/open`;
+export const dashboard = `${BASE_URL}/dashboard`;
+export const dashboardStudent = `${dashboard}/student`;
+export const dashboardCollaborator = `${dashboard}/collaborator`;
+export const dashboardQuestoesPendentes = `${dashboard}/questoes-pendentes`;
+export const essayMyCursinhoCount = `${essayMyCursinho}/count`;

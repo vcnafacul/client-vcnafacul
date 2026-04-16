@@ -3,13 +3,17 @@ import { Question } from "@/dtos/question/questionDTO";
 import { Roles } from "@/enums/roles/roles";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getQuestionById } from "@/services/question/getQuestionById";
+
 import { useAuthStore } from "@/store/auth";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { PendingImageStore } from "@/utils/pendingImageStore";
 import ModalTabTemplateQuestion from "../components/ModalTabTemplateQuestion";
 import { TabClassificacao } from "./tabs/TabClassificacao";
 import { TabConteudo } from "./tabs/TabConteudo";
+import { TabAlternativas } from "./tabs/TabAlternativas";
 import { TabHistorico } from "./tabs/TabHistorico";
 import { TabImagens } from "./tabs/TabImagens";
+import { useConteudoForm } from "./tabs/TabConteudo/useConteudoForm";
 
 interface ModalQuestionDetailsRefactoredProps {
   isOpen: boolean;
@@ -135,6 +139,53 @@ export function ModalQuestionDetailsRefactored({
   }
 
   return (
+    <ModalContent
+      isOpen={isOpen}
+      onClose={onClose}
+      question={question}
+      canEdit={canEdit}
+      infos={infos}
+      token={token}
+      refreshQuestion={refreshQuestion}
+    />
+  );
+}
+
+/**
+ * Inner component that renders when question is loaded.
+ * Hooks (useConteudoForm) can only be called unconditionally,
+ * so this component is only mounted when question exists.
+ */
+function ModalContent({
+  isOpen,
+  onClose,
+  question,
+  canEdit,
+  infos,
+  token,
+  refreshQuestion,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  question: Question;
+  canEdit: boolean;
+  infos: any;
+  token: string;
+  refreshQuestion: () => void;
+}) {
+  const pendingStoreRef = useRef(new PendingImageStore());
+  const conteudoForm = useConteudoForm({ question, pendingStore: pendingStoreRef.current });
+
+  const handleImageUpload = useCallback(
+    async (file: File) => {
+      return pendingStoreRef.current.add(file);
+    },
+    []
+  );
+
+  const contentFormat = question.contentFormat || "plain";
+
+  return (
     <ModalTabTemplateQuestion
       isOpen={isOpen}
       className="px-4 py-2"
@@ -153,9 +204,40 @@ export function ModalQuestionDetailsRefactored({
           handleClose: onClose,
         },
         {
-          label: "Conteúdo",
+          label: "Enunciado",
           id: "conteudo",
-          children: <TabConteudo question={question} canEdit={canEdit} />,
+          children: (
+            <TabConteudo
+              form={conteudoForm.form}
+              isEditing={conteudoForm.isEditing}
+              isSaving={conteudoForm.isSaving}
+              isDirty={conteudoForm.isDirty}
+              isValid={conteudoForm.isValid}
+              canEdit={canEdit}
+              contentFormat={contentFormat}
+              onEdit={conteudoForm.handleEdit}
+              onSave={conteudoForm.handleSave}
+              onCancel={conteudoForm.handleCancel}
+              onImageUpload={handleImageUpload}
+              pendingStore={pendingStoreRef.current}
+              token={token}
+            />
+          ),
+          handleClose: onClose,
+        },
+        {
+          label: "Alternativas",
+          id: "alternativas",
+          children: (
+            <TabAlternativas
+              form={conteudoForm.form}
+              isEditing={conteudoForm.isEditing}
+              contentFormat={contentFormat}
+              onImageUpload={handleImageUpload}
+              pendingStore={pendingStoreRef.current}
+              token={token}
+            />
+          ),
           handleClose: onClose,
         },
         {

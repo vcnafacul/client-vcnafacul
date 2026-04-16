@@ -1,5 +1,6 @@
 import logo from "@/assets/images/logo_carteirinha.png";
 import { AttendanceRecordSummaryByDate } from "@/dtos/attendanceRecord/attendanceRecordSummary";
+import { attendancePeriodLabel } from "@/types/partnerPrepCourse/attendancePeriod";
 import { downloadPDF } from "@/utils/get-pdf";
 import { getBase64FromImageUrl } from "@/utils/getBase64FromImageUrl";
 import { format, parseISO } from "date-fns";
@@ -16,21 +17,32 @@ export const summaryByDate = async (summary: AttendanceRecordSummaryByDate) => {
     endDate.setDate(endDate.getDate() + 1);
     const end = format(endDate, "dd/MM/yyyy");
 
-    // 1. Unir todas as datas do relatório
-    const allDates = Array.from(
+    // 1. Unir todas as (data, período) do relatório
+    const keyOf = (item: { date: string; period: string }) =>
+      `${item.date}__${item.period}`;
+    const allKeys = Array.from(
       new Set([
-        ...summary.classReport.map((item) => item.date),
-        ...summary.generalReport.map((item) => item.date),
+        ...summary.classReport.map((item) => keyOf(item)),
+        ...summary.generalReport.map((item) => keyOf(item)),
       ])
     )
       .sort()
-      .map((item) => format(parseISO(item), "dd/MM/yyyy"));
+      .map((k) => {
+        const [date, period] = k.split("__");
+        return {
+          date,
+          period,
+          label: `${format(parseISO(date), "dd/MM/yyyy")} - ${
+            attendancePeriodLabel[period as keyof typeof attendancePeriodLabel] ?? period
+          }`,
+        };
+      });
 
     // 2. Cabeçalho com colSpan/rowSpan (como já estava)
     const tableBody = [
       [
         {
-          text: "Data",
+          text: "Data / Período",
           style: "tableHeader",
           rowSpan: 2,
           colSpan: 1,
@@ -65,13 +77,13 @@ export const summaryByDate = async (summary: AttendanceRecordSummaryByDate) => {
       ],
     ];
 
-    // 3. Montar linhas com segurança para todas as datas
-    allDates.forEach((date) => {
+    // 3. Montar linhas com segurança para todas as (data, período)
+    allKeys.forEach(({ date, period, label }) => {
       const classItem = summary.classReport.find(
-        (item) => format(parseISO(item.date), "dd/MM/yyyy") === date
+        (item) => item.date === date && item.period === period
       );
       const generalItem = summary.generalReport.find(
-        (item) => format(parseISO(item.date), "dd/MM/yyyy") === date
+        (item) => item.date === date && item.period === period
       );
 
       const present = classItem?.presentCount ?? "-";
@@ -91,7 +103,7 @@ export const summaryByDate = async (summary: AttendanceRecordSummaryByDate) => {
           : "-";
 
       tableBody.push([
-        { text: date, style: "tableCell", fontSize: 10 },
+        { text: label, style: "tableCell", fontSize: 10 },
         { text: total.toString(), style: "tableCell", fontSize: 10 },
         { text: present.toString(), style: "tableCell", fontSize: 10 },
         { text: percent.toString(), style: "tableCell", fontSize: 10 },
@@ -124,8 +136,8 @@ export const summaryByDate = async (summary: AttendanceRecordSummaryByDate) => {
         {
           style: "tableStyle",
           table: {
-            widths: [100, "*", "*", "*", "*", "*", "*"],
-            body: tableBody,
+            widths: [140, "*", "*", "*", "*", "*", "*"],
+            body: tableBody as any,
           },
           layout: "lightHorizontalLines",
         },

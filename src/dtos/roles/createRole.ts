@@ -23,4 +23,8 @@ export interface CreateRoleDto {
   visualizarEstudantes: boolean;
   gerenciarPermissoesCursinho: boolean;
   visualizarMinhasInscricoes: boolean;
+  gerenciarFormularioGlobal: boolean;
+  gerenciarTemas: boolean;
+  revisarRedacoes: boolean;
+  revisarTodasRedacoes: boolean;
 }

@@ -1,7 +1,9 @@
 import { Question } from "@/dtos/question/questionDTO";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { updateContent } from "@/services/question/updateContent";
+import { uploadAsset } from "@/services/question/uploadAsset";
 import { useAuthStore } from "@/store/auth";
+import { PendingImageStore } from "@/utils/pendingImageStore";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -10,6 +12,7 @@ import { ConteudoFormData, conteudoSchema } from "./schema";
 interface UseConteudoFormProps {
   question: Question;
   onSaveSuccess?: () => void;
+  pendingStore?: PendingImageStore;
 }
 
 /**
@@ -25,6 +28,7 @@ interface UseConteudoFormProps {
 export function useConteudoForm({
   question,
   onSaveSuccess,
+  pendingStore,
 }: UseConteudoFormProps) {
   const {
     data: { token },
@@ -91,6 +95,29 @@ export function useConteudoForm({
 
     setIsSaving(true);
     const formData = form.getValues();
+
+    // Deferred upload: upload pending images before saving
+    if (pendingStore?.hasPending()) {
+      const textFields: (keyof ConteudoFormData)[] = [
+        'textoQuestao', 'pergunta', 'textoAlternativaA', 'textoAlternativaB',
+        'textoAlternativaC', 'textoAlternativaD', 'textoAlternativaE',
+      ];
+      const allText = textFields.map(f => (formData[f] as string) || "").join(" ");
+      pendingStore.pruneUnused(allText);
+
+      if (pendingStore.hasPending()) {
+        const uploadFn = (file: File) => uploadAsset(file, token);
+        const replacements = await pendingStore.uploadAll(uploadFn);
+        for (const field of textFields) {
+          const val = formData[field];
+          if (typeof val === "string" && val) {
+            (formData as any)[field] = PendingImageStore.replaceInMarkdown(val, replacements);
+          }
+        }
+      }
+      pendingStore.cleanup();
+    }
+
     await executeAsync({
       action: () =>
         updateContent(
@@ -106,11 +133,12 @@ export function useConteudoForm({
             alternativa: formData.alternativa,
             textClassification: formData.textClassification,
             alternativeClassfication: formData.alternativeClassfication,
+            contentFormat: "markdown",
           },
           token
         ),
       loadingMessage: "Salvando conteúdo...",
-      successMessage: "✅ Conteúdo salvo com sucesso!",
+      successMessage: "Conteúdo salvo com sucesso!",
       errorMessage: "Erro ao salvar conteúdo",
       onSuccess: () => {
         form.reset(formData);

@@ -7,7 +7,7 @@ import {
   Logic,
   Operator,
 } from "@/types/partnerPrepForm/condition";
-import PartnerPrepForm from "@/types/partnerPrepForm/partnerPrepForm";
+import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
 import {
   AnswerCollectionType,
   AnswerType,
@@ -15,12 +15,16 @@ import {
 } from "@/types/partnerPrepForm/questionForm";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { useCallback, useEffect, useState } from "react";
-import { EachStepProps } from "..";
-import { SocioeconomicAnswer } from "../data";
 import ConfirmSubscription from "../modals/confirmSubscription";
+import Text from "@/components/atoms/text";
 
-interface PartnerPrepInscriptionStepFormProps extends EachStepProps {
-  partnerPrepForm: PartnerPrepForm;
+interface PartnerPrepInscriptionStepFormProps {
+  section: SectionForm;
+  allAnswers: Record<string, unknown>;
+  isLastSection: boolean;
+  isFirstSection: boolean;
+  onAdvance: (sectionAnswers: Record<string, unknown>) => void;
+  onBack: () => void;
 }
 
 // Função helper para determinar o className baseado no tamanho do texto
@@ -39,18 +43,8 @@ const getInputClassByTextLength = (textLength: number): string => {
 };
 
 // Componente de Skeleton Loader
-const FormSkeleton = ({
-  partnerPrepForm,
-}: {
-  partnerPrepForm: PartnerPrepForm;
-}) => {
-  // Contar quantas questões serão exibidas
-  const visibleQuestionsCount = partnerPrepForm.sections.reduce(
-    (count, section) => {
-      return count + section.questions.length;
-    },
-    0
-  );
+const FormSkeleton = ({ section }: { section: SectionForm }) => {
+  const visibleQuestionsCount = section.questions.length;
 
   return (
     <div className="w-full flex flex-col gap-4 md:gap-2 mt-8 mb-16 animate-pulse">
@@ -279,10 +273,14 @@ const QuestionNumber = ({
 };
 
 export function PartnerPrepInscriptionStepForm({
-  partnerPrepForm,
-  updateSocioeconomic,
-  handleBack,
+  section,
+  allAnswers,
+  isLastSection,
+  isFirstSection,
+  onAdvance,
+  onBack,
 }: PartnerPrepInscriptionStepFormProps) {
+  // Local answers for THIS section, pre-populated from allAnswers
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
@@ -290,40 +288,43 @@ export function PartnerPrepInscriptionStepForm({
 
   const modals = useModals(["modalConfirmSubscription"]);
 
-  // Inicializar respostas booleanas como false (Não)
+  // Merge allAnswers (previous sections) with local answers for condition evaluation
+  const mergedAnswers = { ...allAnswers, ...answers };
+
+  // Initialize answers for this section (boolean defaults + restore from allAnswers)
   useEffect(() => {
     const initialAnswers: Record<string, unknown> = {};
 
-    partnerPrepForm.sections.forEach((section) => {
-      section.questions.forEach((question) => {
-        if (question.answerType === AnswerType.Boolean) {
-          initialAnswers[question._id] = false;
-        }
-      });
+    section.questions.forEach((question) => {
+      // Restore previously filled value from allAnswers if available
+      if (allAnswers[question._id] !== undefined) {
+        initialAnswers[question._id] = allAnswers[question._id];
+      } else if (question.answerType === AnswerType.Boolean) {
+        initialAnswers[question._id] = false;
+      }
     });
 
     setAnswers(initialAnswers);
+    setErrors({});
 
-    // Simular um pequeno delay para suavizar a transição
     const timer = setTimeout(() => {
       setIsInitializing(false);
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [partnerPrepForm]);
+  }, [section, allAnswers]);
 
   const handleChange = (id: string, value: unknown) => {
     setAnswers((prev) => ({ ...prev, [id]: value }));
-    // Limpar erro quando o usuário começar a preencher
     if (errors[id]) {
       setErrors((prev) => ({ ...prev, [id]: "" }));
     }
   };
 
-  // Função para avaliar condições básicas
+  // Evaluate basic conditions using merged answers (cross-section support)
   const evaluateBasicCondition = useCallback(
     (rule: BaseCondition): boolean => {
-      const value = answers[rule.questionId];
+      const value = mergedAnswers[rule.questionId];
       switch (rule.operator) {
         case Operator.Equal:
           return value?.toString() === rule.expectedValue.toString();
@@ -348,10 +349,9 @@ export function PartnerPrepInscriptionStepForm({
           return false;
       }
     },
-    [answers]
+    [mergedAnswers]
   );
 
-  // Função para avaliar condições complexas
   const evaluateCondition = useCallback(
     (condition?: ComplexCondition): boolean => {
       if (!condition) return true;
@@ -366,57 +366,48 @@ export function PartnerPrepInscriptionStepForm({
     [evaluateBasicCondition]
   );
 
-  // Função para validar se todas as questões visíveis foram respondidas
+  // Validate only questions in THIS section
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
     let hasErrors = false;
 
-    partnerPrepForm.sections.forEach((section) => {
-      section.questions.forEach((question) => {
-        // Verificar se a questão deve ser exibida
-        if (evaluateCondition(question.conditions)) {
-          const answer = answers[question._id];
+    section.questions.forEach((question) => {
+      if (evaluateCondition(question.conditions)) {
+        const answer = answers[question._id];
 
-          // Verificar se a resposta está vazia ou undefined
-          if (answer === undefined || answer === null || answer === "") {
-            newErrors[question._id] = "Este campo é obrigatório";
+        if (answer === undefined || answer === null || answer === "") {
+          newErrors[question._id] = "Este campo é obrigatório";
+          hasErrors = true;
+        }
+
+        if (
+          question.answerType === AnswerType.Options &&
+          question.collection === AnswerCollectionType.Multiple
+        ) {
+          if (!Array.isArray(answer) || answer.length === 0) {
+            newErrors[question._id] = "Selecione pelo menos uma opção";
             hasErrors = true;
           }
-
-          // Validações específicas por tipo
-          if (
-            question.answerType === AnswerType.Options &&
-            question.collection === AnswerCollectionType.Multiple
-          ) {
-            if (!Array.isArray(answer) || answer.length === 0) {
-              newErrors[question._id] = "Selecione pelo menos uma opção";
-              hasErrors = true;
-            }
-          }
         }
-      });
+      }
     });
 
     setErrors(newErrors);
     return !hasErrors;
   };
 
-  // Função para limpar respostas de questões não obrigatórias
+  // Clean answers: only include visible questions from this section
   const cleanAnswers = (
     currentAnswers: Record<string, unknown>
   ): Record<string, unknown> => {
     const cleanedAnswers: Record<string, unknown> = {};
 
-    partnerPrepForm.sections.forEach((section) => {
-      section.questions.forEach((question) => {
-        // Se a questão deve ser exibida (condição verdadeira), manter a resposta
-        if (evaluateCondition(question.conditions)) {
-          if (currentAnswers[question._id] !== undefined) {
-            cleanedAnswers[question._id] = currentAnswers[question._id];
-          }
+    section.questions.forEach((question) => {
+      if (evaluateCondition(question.conditions)) {
+        if (currentAnswers[question._id] !== undefined) {
+          cleanedAnswers[question._id] = currentAnswers[question._id];
         }
-        // Se a questão não deve ser exibida, não incluir no objeto limpo
-      });
+      }
     });
 
     return cleanedAnswers;
@@ -429,13 +420,17 @@ export function PartnerPrepInscriptionStepForm({
       return;
     }
 
-    setIsSubmitting(true);
+    const cleanedAnswers = cleanAnswers(answers);
 
-    // Simular um pequeno delay para melhorar a UX
-    setTimeout(() => {
-      modals.modalConfirmSubscription.open();
-      setIsSubmitting(false);
-    }, 300);
+    if (isLastSection) {
+      setIsSubmitting(true);
+      setTimeout(() => {
+        modals.modalConfirmSubscription.open();
+        setIsSubmitting(false);
+      }, 300);
+    } else {
+      onAdvance(cleanedAnswers);
+    }
   };
 
   const ModalConfirmSubscription = () => {
@@ -447,40 +442,15 @@ export function PartnerPrepInscriptionStepForm({
         }}
         handleConfirm={() => {
           modals.modalConfirmSubscription.close();
-
-          // Usar as respostas limpas (sem questões não obrigatórias)
           const cleanedAnswers = cleanAnswers(answers);
-
-          // Converter answers limpas para o formato esperado
-          const socioeconomicAnswers: SocioeconomicAnswer[] = [];
-          partnerPrepForm.sections.forEach((section) => {
-            section.questions.forEach((question) => {
-              if (
-                evaluateCondition(question.conditions) &&
-                cleanedAnswers[question._id] !== undefined
-              ) {
-                socioeconomicAnswers.push({
-                  questionId: question._id,
-                  question: question.text,
-                  answer: cleanedAnswers[question._id] as
-                    | string
-                    | string[]
-                    | boolean
-                    | number,
-                });
-              }
-            });
-          });
-
-          updateSocioeconomic!(socioeconomicAnswers);
+          onAdvance(cleanedAnswers);
         }}
       />
     );
   };
 
-  // Mostrar skeleton durante inicialização
   if (isInitializing) {
-    return <FormSkeleton partnerPrepForm={partnerPrepForm} />;
+    return <FormSkeleton section={section} />;
   }
 
   return (
@@ -489,57 +459,59 @@ export function PartnerPrepInscriptionStepForm({
         onSubmit={handleSubmit}
         className="w-full flex flex-col gap-4 md:gap-2 mt-8 mb-16 animate-in fade-in duration-300"
       >
-        {partnerPrepForm.sections.map((section) => (
-          <div key={section._id}>
-            {section.questions.map((question) => (
-              <div key={question._id}>
-                {evaluateCondition(question.conditions) && (
-                  <>
-                    {question.answerType === AnswerType.Text && (
-                      <QuestionText
-                        question={question}
-                        handleChange={handleChange}
-                        error={errors[question._id]}
-                        value={answers[question._id] as string | undefined}
-                      />
-                    )}
-                    {question.answerType === AnswerType.Boolean && (
-                      <QuestionBoolean
-                        question={question}
-                        handleChange={handleChange}
-                        error={errors[question._id]}
-                        value={answers[question._id] as boolean | undefined}
-                      />
-                    )}
-                    {question.answerType === AnswerType.Options &&
-                      question.collection === AnswerCollectionType.Single && (
-                        <QuestionOptions
-                          question={question}
-                          handleChange={handleChange}
-                          error={errors[question._id]}
-                          value={answers[question._id] as string | undefined}
-                        />
-                      )}
-                    {question.answerType === AnswerType.Options &&
-                      question.collection === AnswerCollectionType.Multiple && (
-                        <QuestionOptionsMultiple
-                          question={question}
-                          handleChange={handleChange}
-                          error={errors[question._id]}
-                        />
-                      )}
-                    {question.answerType === AnswerType.Number && (
-                      <QuestionNumber
-                        question={question}
-                        handleChange={handleChange}
-                        error={errors[question._id]}
-                        value={answers[question._id] as number | undefined}
-                      />
-                    )}
-                  </>
+        <Text className="text-start px-4" size="secondary">
+          {section.name}
+        </Text>
+        {section.description && (
+          <p className="text-gray-600/90 mb-2">{section.description}</p>
+        )}
+        {section.questions.map((question) => (
+          <div key={question._id}>
+            {evaluateCondition(question.conditions) && (
+              <>
+                {question.answerType === AnswerType.Text && (
+                  <QuestionText
+                    question={question}
+                    handleChange={handleChange}
+                    error={errors[question._id]}
+                    value={answers[question._id] as string | undefined}
+                  />
                 )}
-              </div>
-            ))}
+                {question.answerType === AnswerType.Boolean && (
+                  <QuestionBoolean
+                    question={question}
+                    handleChange={handleChange}
+                    error={errors[question._id]}
+                    value={answers[question._id] as boolean | undefined}
+                  />
+                )}
+                {question.answerType === AnswerType.Options &&
+                  question.collection === AnswerCollectionType.Single && (
+                    <QuestionOptions
+                      question={question}
+                      handleChange={handleChange}
+                      error={errors[question._id]}
+                      value={answers[question._id] as string | undefined}
+                    />
+                  )}
+                {question.answerType === AnswerType.Options &&
+                  question.collection === AnswerCollectionType.Multiple && (
+                    <QuestionOptionsMultiple
+                      question={question}
+                      handleChange={handleChange}
+                      error={errors[question._id]}
+                    />
+                  )}
+                {question.answerType === AnswerType.Number && (
+                  <QuestionNumber
+                    question={question}
+                    handleChange={handleChange}
+                    error={errors[question._id]}
+                    value={answers[question._id] as number | undefined}
+                  />
+                )}
+              </>
+            )}
           </div>
         ))}
         {Object.keys(errors).length > 0 && (
@@ -548,17 +520,27 @@ export function PartnerPrepInscriptionStepForm({
           </p>
         )}
         <div className="flex flex-col-reverse sm:flex-row gap-4">
-          <AlertDialogUI
-            title="Tem certeza que deseja voltar?"
-            description="Se você deixar o formulário, perderá todas as informações já preenchidas"
-            onConfirm={handleBack!}
-          >
-            <AlertDialogTrigger className="w-full">
-              <div className="bg-orange w-full h-12 flex justify-center items-center text-white font-bold rounded-md hover:bg-orange/90 transition-colors duration-200 cursor-pointer">
-                Voltar
-              </div>
-            </AlertDialogTrigger>
-          </AlertDialogUI>
+          {isFirstSection ? (
+            <AlertDialogUI
+              title="Tem certeza que deseja voltar?"
+              description="Se você deixar o formulário, perderá todas as informações já preenchidas"
+              onConfirm={onBack}
+            >
+              <AlertDialogTrigger className="w-full">
+                <div className="bg-orange w-full h-12 flex justify-center items-center text-white font-bold rounded-md hover:bg-orange/90 transition-colors duration-200 cursor-pointer">
+                  Voltar
+                </div>
+              </AlertDialogTrigger>
+            </AlertDialogUI>
+          ) : (
+            <button
+              type="button"
+              onClick={onBack}
+              className="w-full h-12 bg-orange text-white font-bold rounded-md hover:bg-orange/90 transition-colors duration-200 cursor-pointer"
+            >
+              Voltar
+            </button>
+          )}
           <button
             type="submit"
             disabled={isSubmitting}
@@ -569,8 +551,10 @@ export function PartnerPrepInscriptionStepForm({
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 <span>Processando...</span>
               </div>
-            ) : (
+            ) : isLastSection ? (
               "Confirmar"
+            ) : (
+              "Próximo"
             )}
           </button>
         </div>

@@ -1,11 +1,12 @@
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { exportAttendanceRecord } from "@/services/prepCourse/attendanceRecord/exportAttendanceRecord";
 import { getSummaryByDate } from "@/services/prepCourse/attendanceRecord/getSummaryByDate";
 import { getSummaryByStudent } from "@/services/prepCourse/attendanceRecord/getSummaryByStudent";
 import { useAuthStore } from "@/store/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Calendar } from "primereact/calendar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FiCalendar } from "react-icons/fi";
 import * as yup from "yup";
@@ -16,18 +17,23 @@ interface AttendanceRecordSummaryProps {
   isOpen: boolean;
   handleClose: () => void;
   classId: string;
+  coursePeriodStart?: Date;
+  coursePeriodEnd?: Date;
 }
 
 export default function AttendanceRecordSummaryModal({
   isOpen,
   handleClose,
   classId,
+  coursePeriodStart,
+  coursePeriodEnd,
 }: AttendanceRecordSummaryProps) {
   const {
     data: { token },
   } = useAuthStore();
 
   const executeAsync = useToastAsync();
+  const [isLoading, setIsLoading] = useState(false);
 
   const start = new Date();
   start.setDate(start.getDate() - 30);
@@ -43,8 +49,18 @@ export default function AttendanceRecordSummaryModal({
         .required("Campo obrigatório"),
       reportType: yup
         .string()
-        .oneOf(["date", "student"], "Selecione o tipo de relatório")
+        .oneOf(["date", "student", "excel"], "Selecione o tipo de relatório")
         .required("Tipo de relatório obrigatório"),
+      maxAbsencePercent: yup.number().when("reportType", {
+        is: "excel",
+        then: (schema) =>
+          schema
+            .required("Informe o percentual")
+            .min(0)
+            .max(100)
+            .integer(),
+        otherwise: (schema) => schema.notRequired(),
+      }),
     })
     .required();
 
@@ -61,10 +77,26 @@ export default function AttendanceRecordSummaryModal({
     },
   });
 
-  const reportType = watch("reportType");
+  const watchReportType = watch("reportType");
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSummary = async (data: any) => {
+    if (data.reportType === "excel") {
+      const start = data.range[0].toISOString().split("T")[0];
+      const end = data.range[1].toISOString().split("T")[0];
+      setIsLoading(true);
+      await executeAsync({
+        action: () =>
+          exportAttendanceRecord(token, classId, start, end, data.maxAbsencePercent),
+        loadingMessage: "Processando relatório ...",
+        successMessage: "Relatório Excel baixado com sucesso!",
+        errorMessage: (error: Error) => error.message,
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
     if (data.reportType === "date") {
       await executeAsync({
         action: () =>
@@ -98,6 +130,7 @@ export default function AttendanceRecordSummaryModal({
         },
       });
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -126,7 +159,7 @@ export default function AttendanceRecordSummaryModal({
                 type="radio"
                 value="date"
                 {...register("reportType")}
-                checked={reportType === "date"}
+                checked={watchReportType === "date"}
                 className="form-radio"
               />
               <span>Relatório por Data</span>
@@ -137,12 +170,44 @@ export default function AttendanceRecordSummaryModal({
                 type="radio"
                 value="student"
                 {...register("reportType")}
-                checked={reportType === "student"}
+                checked={watchReportType === "student"}
                 className="form-radio"
               />
               <span>Relatório por Estudante</span>
             </label>
+
+            <label className="flex items-center space-x-2">
+              <input
+                type="radio"
+                value="excel"
+                {...register("reportType")}
+                checked={watchReportType === "excel"}
+                className="form-radio"
+              />
+              <span>Relatório Excel (Detalhado)</span>
+            </label>
           </div>
+
+          {watchReportType === "excel" && (
+            <div className="mt-2">
+              <label className="block text-sm font-medium mb-1">
+                Percentual máximo de faltas injustificadas (%)
+              </label>
+              <input
+                type="number"
+                {...register("maxAbsencePercent")}
+                min={0}
+                max={100}
+                className="border rounded px-3 py-2 w-24"
+                placeholder="25"
+              />
+              {errors.maxAbsencePercent && (
+                <p className="text-red text-sm mt-1">
+                  {errors.maxAbsencePercent.message}
+                </p>
+              )}
+            </div>
+          )}
 
           {errors.reportType && (
             <p className="text-xs text-red font-medium text-wrap max-w-60">
@@ -152,8 +217,7 @@ export default function AttendanceRecordSummaryModal({
         </div>
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            Selecione o intervalo{" "}
-            <span className="text-xs text-gray-400">(máx. 30 dias)</span>
+            Selecione o intervalo
           </label>
 
           <div className="relative">
@@ -171,8 +235,14 @@ export default function AttendanceRecordSummaryModal({
                   selectionMode="range"
                   readOnlyInput
                   hideOnRangeSelection
+                  viewDate={new Date()}
                   className="w-full pl-10 rounded-md border border-gray-300 focus:ring-2 focus:ring-orange-400"
-                  maxDate={new Date()}
+                  minDate={coursePeriodStart ? new Date(coursePeriodStart) : undefined}
+                  maxDate={(() => {
+                    const today = new Date();
+                    const periodEnd = coursePeriodEnd ? new Date(coursePeriodEnd) : today;
+                    return periodEnd < today ? periodEnd : today;
+                  })()}
                 />
               )}
             />
@@ -187,9 +257,10 @@ export default function AttendanceRecordSummaryModal({
         <div className="flex justify-end">
           <button
             type="submit"
-            className="bg-marine opacity-90 hover:opacity-100 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm"
+            disabled={isLoading}
+            className="bg-marine opacity-90 hover:opacity-100 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Gerar Relatório
+            {isLoading ? "Processando..." : "Gerar Relatório"}
           </button>
         </div>
       </form>

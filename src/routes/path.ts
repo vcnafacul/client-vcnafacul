@@ -35,5 +35,12 @@ export const PARTNER_CLASS = "turmas";
 export const PARTNER_CLASS_STUDENTS = "alunos";
 export const PARTNER_PREP_MANAGER = "gerenciamento-cursinho";
 export const PARTNER_CLASS_FORM = "formulario";
+export const DASH_GLOBAL_FORM = "formulario-global";
 export const REGISTRATION_MONITOR = "acompanhamento-inscricoes";
 export const ENROLLMENT_CONFIRMATION = "/confirmacao-matricula";
+
+export const ESSAY_WRITE = "redacao";
+export const ESSAY_HISTORY = "redacoes";
+export const ESSAY_THEME_ADMIN = "temas-redacao";
+export const ESSAY_REVIEW_LIST = "revisao-redacoes";
+export const ESSAY_REVIEW_CURSINHO = "revisao-redacoes-cursinho";

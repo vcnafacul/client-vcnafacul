@@ -7,10 +7,18 @@ export async function getUsersRole(
   token: string,
   page: number = 1,
   limit: number = 40,
-  name: string = ""
+  name: string = "",
+  roleId: string = ""
 ): Promise<Paginate<UserRole>> {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+  });
+  if (name) params.set("name", name);
+  if (roleId) params.set("roleId", roleId);
+
   const response = await fetchWrapper(
-    `${user}?page=${page}&limit=${limit}&name=${name}`,
+    `${user}?${params.toString()}`,
     {
       method: "GET",
       headers: {

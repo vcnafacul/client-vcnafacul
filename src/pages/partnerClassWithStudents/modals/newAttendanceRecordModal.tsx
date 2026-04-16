@@ -3,6 +3,10 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { createAttendanceRecord } from "@/services/prepCourse/attendanceRecord/createAttendanceRecord";
 import { getStudentsToAttendanceRecord } from "@/services/prepCourse/attendanceRecord/getStudentToAttendanceRecord";
 import { useAuthStore } from "@/store/auth";
+import {
+  AttendancePeriod,
+  attendancePeriodLabel,
+} from "@/types/partnerPrepCourse/attendancePeriod";
 import { SimpleAttendanceRecordHistory } from "@/types/partnerPrepCourse/attendanceRecordHistory";
 import { StudentToAttendanceRecord } from "@/types/partnerPrepCourse/classToAttendanceRecord";
 import Paper from "@mui/material/Paper";
@@ -26,6 +30,7 @@ export function NewAttendanceRecordModal({
 }: AttendanceRecordProps) {
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [date, setDate] = useState<Date>(new Date());
+  const [period, setPeriod] = useState<AttendancePeriod>(AttendancePeriod.NOITE);
   const [students, setStudents] = useState<StudentToAttendanceRecord[]>([]);
   const [registring, setRegistering] = useState<boolean>(false);
 
@@ -52,7 +57,8 @@ export function NewAttendanceRecordModal({
   const handleCreateAttendancerecord = async () => {
     setRegistering(true);
     await executeAsync({
-      action: () => createAttendanceRecord(token, classId, date, selectedRows),
+      action: () =>
+        createAttendanceRecord(token, classId, date, period, selectedRows),
       loadingMessage: "Registrando presença...",
       successMessage: "Presença registrada com sucesso!",
       errorMessage: (error: Error) => error.message,
@@ -63,6 +69,7 @@ export function NewAttendanceRecordModal({
           createdAt: res.createdAt,
           updatedAt: res.updatedAt,
           registeredAt: res.registeredAt,
+          period: res.period ?? period,
           registeredBy: firstName + " " + lastName,
         });
         handleClose();
@@ -132,6 +139,26 @@ export function NewAttendanceRecordModal({
             hideOnRangeSelection
             maxDate={new Date()}
           />
+        </div>
+        <div className="flex flex-col justify-content-center h-16 border pt-7 pl-4 pr-4 rounded-md relative w-full">
+          <label
+            className="absolute top-1 left-3 text-xs text-grey font-semibold"
+            htmlFor="period"
+          >
+            Período
+          </label>
+          <select
+            id="period"
+            value={period}
+            onChange={(e) => setPeriod(e.target.value as AttendancePeriod)}
+            className="bg-transparent outline-none focus-visible:ring-orange rounded-md w-full"
+          >
+            {Object.values(AttendancePeriod).map((p) => (
+              <option key={p} value={p}>
+                {attendancePeriodLabel[p]}
+              </option>
+            ))}
+          </select>
         </div>
         <button
           type="button"

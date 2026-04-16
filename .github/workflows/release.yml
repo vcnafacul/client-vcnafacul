@@ -1,0 +1,92 @@
+# =============================================================================
+# release - Build, Deploy Production & Create GitHub Release
+# =============================================================================
+# Disparado por push de tag (ex: git tag v1.2.0 && git push origin v1.2.0)
+# 1. Build do frontend para produção
+# 2. Deploy via rsync (SSH) para Hostinger
+# 3. Cria Release no GitHub com changelog automático (PRs entre tags)
+# =============================================================================
+
+name: Release & Deploy Production
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  DEPLOY:
+    runs-on: ubuntu-latest
+    env:
+      VITE_VCNAFACUL_ID: ${{ secrets.VITE_VCNAFACUL_ID }}
+      VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: |
+          if [ -f .yarnrc.yml ] || { [ -f package.json ] && grep -qE '"packageManager"[[:space:]]*:[[:space:]]*"yarn@[2-9]' package.json; }; then
+            echo "Yarn Berry detected"
+            corepack enable
+            yarn install --immutable
+          else
+            echo "Yarn Classic detected"
+            yarn install --frozen-lockfile
+          fi
+
+      - name: Build for Production
+        run: yarn build
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          echo -e "Host *\n  StrictHostKeyChecking no\n  UserKnownHostsFile /dev/null" >> ~/.ssh/config
+
+      - name: Deploy to Production
+        run: |
+          BASE_PATH="domains/vcnafacul.com.br/public_html"
+
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }}" \
+            ./dist/assets/ \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${BASE_PATH}/assets/
+
+          rsync -avz \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }}" \
+            ./dist/index.html \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${BASE_PATH}/
+
+      - name: Remove SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key ~/.ssh/config
+
+  CREATE_RELEASE:
+    needs: DEPLOY
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          tag_name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -43,6 +43,8 @@ export interface QuestionBase {
   imageClassfication: boolean;
   alternativeClassfication: boolean;
   reported: boolean;
+  contentFormat?: "plain" | "markdown";
+  assets?: string[];
 }
 
 export interface QuestionDto extends QuestionBase {

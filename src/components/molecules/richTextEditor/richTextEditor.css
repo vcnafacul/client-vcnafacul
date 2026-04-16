@@ -1,0 +1,91 @@
+/* Remove focus outline from ProseMirror editor content */
+.ProseMirror:focus {
+  outline: none;
+}
+
+.ProseMirror {
+  min-height: inherit;
+}
+
+/* LaTeX inline node styling */
+.latex-inline {
+  display: inline;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.latex-inline:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-radius: 2px;
+}
+
+/* LaTeX block node styling */
+.latex-block {
+  display: block;
+  text-align: center;
+  margin: 0.5em 0;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.latex-block:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+  border-radius: 4px;
+}
+
+/* Placeholder styling */
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Resizable image handles */
+[data-resize-wrapper] {
+  display: inline-block;
+}
+
+[data-resize-wrapper]:hover [data-resize-handle] {
+  opacity: 1;
+}
+
+[data-resize-container][data-resize-state="true"] [data-resize-handle] {
+  opacity: 1;
+}
+
+[data-resize-handle] {
+  width: 10px;
+  height: 10px;
+  background: #3b82f6;
+  border: 1.5px solid white;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 10;
+  cursor: nwse-resize;
+  transform: translate(-50%, -50%);
+}
+
+[data-resize-handle="bottom-right"] {
+  cursor: nwse-resize;
+  transform: translate(50%, 50%);
+}
+
+[data-resize-handle="bottom-left"] {
+  cursor: nesw-resize;
+  transform: translate(-50%, 50%);
+}
+
+[data-resize-wrapper]:hover {
+  outline: 2px solid rgba(59, 130, 246, 0.4);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+[data-resize-container][data-resize-state="true"] [data-resize-wrapper] {
+  outline: 2px solid rgba(59, 130, 246, 0.6);
+  outline-offset: 2px;
+  border-radius: 2px;
+}

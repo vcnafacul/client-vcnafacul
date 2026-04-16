@@ -47,13 +47,22 @@ interface ModalRulesProps extends ModalProps {
   isOpen: boolean;
   inscriptionId: string;
   students: XLSXStudentCourseFull[];
+  onRankingUpdate?: (ranking: RankingItem[]) => void;
 }
 
 interface RankingRow {
   rank: number;
   nome: string;
   email: string;
+  maskedEmail: string;
   totalScore: number;
+}
+
+function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  if (!domain) return email;
+  const visible = local.slice(0, 3);
+  return `${visible}***@${domain}`;
 }
 
 export function ModalRules({
@@ -61,6 +70,7 @@ export function ModalRules({
   handleClose,
   inscriptionId,
   students,
+  onRankingUpdate,
 }: ModalRulesProps) {
   const {
     data: { token },
@@ -99,6 +109,7 @@ export function ModalRules({
           ? capitalizeWords(`${student.nome} ${student.sobrenome}`)
           : item.userId,
         email: student?.email ?? "—",
+        maskedEmail: student?.email ? maskEmail(student.email) : "—",
         totalScore: item.totalScore,
       };
     });
@@ -180,6 +191,7 @@ export function ModalRules({
     try {
       const data = await runRanking(ruleSet._id, studentUserIds, token);
       setRanking(data.rankings);
+      onRankingUpdate?.(data.rankings);
       toast.success("Ranking calculado com sucesso!");
     } catch (error: unknown) {
       const msg =
@@ -194,7 +206,7 @@ export function ModalRules({
     if (!rankingRows.length) return;
     const header = "Posição;Nome;Email;Pontuação";
     const rows = rankingRows.map(
-      (r) => `${r.rank};${r.nome};${r.email};${r.totalScore}`
+      (r) => `${r.rank};${r.nome};${r.maskedEmail};${r.totalScore}`
     );
     const csv = [header, ...rows].join("\n");
     const blob = new Blob(["\uFEFF" + csv], {
@@ -226,19 +238,17 @@ export function ModalRules({
           {
             table: {
               headerRows: 1,
-              widths: [40, "*", "*", 60],
+              widths: [40, "*", "*"],
               body: [
                 [
                   { text: "Pos.", bold: true },
                   { text: "Nome", bold: true },
                   { text: "Email", bold: true },
-                  { text: "Pontos", bold: true, alignment: "right" },
                 ],
                 ...rankingRows.map((r) => [
                   `${r.rank}º`,
                   r.nome,
-                  r.email,
-                  { text: String(r.totalScore), alignment: "right" },
+                  r.maskedEmail,
                 ]),
               ],
             },
@@ -548,7 +558,7 @@ export function ModalRules({
                       />
                     </TableCell>
                     <TableCell>{row.nome}</TableCell>
-                    <TableCell>{row.email}</TableCell>
+                    <TableCell>{row.maskedEmail}</TableCell>
                     <TableCell align="right">
                       <Typography fontWeight="bold">
                         {row.totalScore}

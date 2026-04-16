@@ -11,13 +11,22 @@ import { PartnerPrepInscritionStudentManager } from "@/pages/partnerPrepInscriti
 import PartnerPrepManager from "@/pages/partnerPrepManager";
 import RegistrationMonitor from "@/pages/registrationMonitor";
 import { StudentsEnrolled } from "@/pages/studentsEnrolled";
+import GlobalFormPage from "@/pages/globalForm";
+import EssayWrite from "../pages/essayWrite";
+import EssayResult from "../pages/essayResult";
+import EssayHistory from "../pages/essayHistory";
+import EssayThemeAdmin from "../pages/essayThemeAdmin";
+import EssayReviewList from "../pages/essayReviewList";
+import EssayReviewDetail from "../pages/essayReviewDetail";
+import EssayViewDetail from "../pages/essayViewDetail";
+import ReviewSingle from "../pages/essayViewDetail/ReviewSingle";
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashTemplate from "../components/templates/dashTemplate";
 import { Roles } from "../enums/roles/roles";
 import Geo from "../pages/Geo";
 import Account from "../pages/account";
 import { ConfirmEmailPage } from "../pages/confirmEmail";
-import Dash from "../pages/dash";
+import Dashboard from "../pages/dashboard";
 import DashContent from "../pages/dashContent";
 import DashGeo from "../pages/dashGeo";
 import DashNews from "../pages/dashNews";
@@ -50,6 +59,7 @@ import {
   DASH_ANALYTICS,
   DASH_CONTENT,
   DASH_GEOLOCATION,
+  DASH_GLOBAL_FORM,
   DASH_NEWS,
   DASH_PROVAS,
   DASH_QUESTION,
@@ -57,6 +67,11 @@ import {
   DASH_SIMULADO,
   DECLARED_INTEREST,
   ENROLLMENT_CONFIRMATION,
+  ESSAY_WRITE,
+  ESSAY_HISTORY,
+  ESSAY_THEME_ADMIN,
+  ESSAY_REVIEW_CURSINHO,
+  ESSAY_REVIEW_LIST,
   ESTUDO,
   FORGOT_PASSWORD_PATH,
   FORM_GEOLOCATION,
@@ -147,7 +162,26 @@ export function PlatformRoutes() {
             </ProtectedRoutePermission>
           }
         />
-        <Route path={PARTNER_CLASS_FORM} element={<PartnerPrepForm />} />
+        <Route
+          path={PARTNER_CLASS_FORM}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.gerenciarProcessoSeletivo]}
+            >
+              <PartnerPrepForm />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={DASH_GLOBAL_FORM}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.gerenciarFormularioGlobal]}
+            >
+              <GlobalFormPage />
+            </ProtectedRoutePermission>
+          }
+        />
         <Route path={DASH_ANALYTICS} element={<Analytics />} />
         <Route
           path={PARTNER_PREP_INSCRIPTION}
@@ -164,7 +198,7 @@ export function PlatformRoutes() {
           element={<PartnerClassWithStudents />}
         />
         <Route path={PARTNER_CLASS_STUDENTS} element={<StudentsEnrolled />} />
-        <Route path={DASH} element={<Dash />} />
+        <Route path={DASH} element={<Dashboard />} />
         <Route path={SIMULADO} element={<MainSimulate />} />
         <Route path={SIMULADO_HISTORIES} element={<SimulationHistories />} />
 
@@ -257,6 +291,99 @@ export function PlatformRoutes() {
               permission={data.permissao[Roles.alterarPermissao]}
             >
               <PartnerPrepManager />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route path={ESSAY_WRITE} element={<EssayWrite />} />
+        <Route path={`${ESSAY_WRITE}/:id`} element={<EssayResult />} />
+        <Route path={ESSAY_HISTORY} element={<EssayHistory />} />
+        <Route
+          path={ESSAY_THEME_ADMIN}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.gerenciarTemas]}
+            >
+              <EssayThemeAdmin />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={ESSAY_REVIEW_LIST}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarTodasRedacoes]}
+            >
+              <EssayReviewList mode="admin" />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={`${ESSAY_REVIEW_LIST}/:id`}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarTodasRedacoes]}
+            >
+              <EssayReviewDetail />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={`${ESSAY_REVIEW_LIST}/:id/ver`}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarTodasRedacoes]}
+            >
+              <EssayViewDetail />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={`${ESSAY_REVIEW_LIST}/:id/ver/:reviewId`}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarTodasRedacoes]}
+            >
+              <ReviewSingle />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={ESSAY_REVIEW_CURSINHO}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarRedacoes]}
+            >
+              <EssayReviewList mode="cursinho" />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={`${ESSAY_REVIEW_CURSINHO}/:id`}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarRedacoes]}
+            >
+              <EssayReviewDetail />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={`${ESSAY_REVIEW_CURSINHO}/:id/ver`}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarRedacoes]}
+            >
+              <EssayViewDetail />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={`${ESSAY_REVIEW_CURSINHO}/:id/ver/:reviewId`}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.revisarRedacoes]}
+            >
+              <ReviewSingle />
             </ProtectedRoutePermission>
           }
         />

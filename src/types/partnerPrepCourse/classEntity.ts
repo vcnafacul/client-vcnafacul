@@ -12,6 +12,7 @@ export interface ClassEntity {
     endDate: Date;
   };
   number_students: number;
+  totalAttendanceRecords: number;
 }
 
 export interface ClassEntityWithStudents extends ClassEntity {

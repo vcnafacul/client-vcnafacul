@@ -5,6 +5,7 @@ import { useModals } from "@/hooks/useModal";
 import { deleteAttendanceRecord } from "@/services/prepCourse/attendanceRecord/deleteAttendanceRecord";
 import { getAttendanceRecord } from "@/services/prepCourse/attendanceRecord/getAttendanceRecord";
 import { useAuthStore } from "@/store/auth";
+import { AttendancePeriod, attendancePeriodLabel } from "@/types/partnerPrepCourse/attendancePeriod";
 import { SimpleAttendanceRecordHistory } from "@/types/partnerPrepCourse/attendanceRecordHistory";
 import { IconButton } from "@mui/material";
 import Paper from "@mui/material/Paper";
@@ -22,12 +23,16 @@ interface AttendanceHistoryProps {
   isOpen: boolean;
   handleClose: () => void;
   classId: string;
+  coursePeriodStart?: Date;
+  coursePeriodEnd?: Date;
 }
 
 export function AttendanceHistoryModal({
   isOpen,
   handleClose,
   classId,
+  coursePeriodStart,
+  coursePeriodEnd,
 }: AttendanceHistoryProps) {
   const [attendanceHistory, setAttendanceHistory] = useState<
     SimpleAttendanceRecordHistory[]
@@ -127,6 +132,15 @@ export function AttendanceHistoryModal({
         return date.toLocaleDateString("pt-BR");
       },
     },
+    {
+      field: "period",
+      headerName: "Período",
+      width: 110,
+      align: "right",
+      headerAlign: "right",
+      renderCell: (params) =>
+        params.row.period ? attendancePeriodLabel[params.row.period as AttendancePeriod] : "-",
+    },
   ];
 
   const paginationModel = { page: 0, pageSize: limit };
@@ -160,6 +174,8 @@ export function AttendanceHistoryModal({
         isOpen={modals.modalAttendanceRecordSummary.isOpen}
         handleClose={() => modals.modalAttendanceRecordSummary.close()}
         classId={classId}
+        coursePeriodStart={coursePeriodStart}
+        coursePeriodEnd={coursePeriodEnd}
       />
     );
   };

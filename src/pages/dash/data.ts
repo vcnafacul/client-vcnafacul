@@ -8,11 +8,16 @@ import {
   DASH_ANALYTICS,
   DASH_CONTENT,
   DASH_GEOLOCATION,
+  DASH_GLOBAL_FORM,
   DASH_NEWS,
   DASH_PROVAS,
   DASH_QUESTION,
   DASH_ROLES,
   DASH_SIMULADO,
+  ESSAY_REVIEW_CURSINHO,
+  ESSAY_REVIEW_LIST,
+  ESSAY_THEME_ADMIN,
+  ESSAY_WRITE,
   ESTUDO,
   MANAGER_COLLABORATOR,
   NEWS,
@@ -62,6 +67,14 @@ export const headerDash: HeaderData = {
   pageLinks: [
     {
       Home_Menu_Item_id: {
+        id: 0,
+        name: "Dashboard",
+        link: DASH,
+        target: "_self",
+      },
+    },
+    {
+      Home_Menu_Item_id: {
         id: 1,
         name: "Novidades",
         link: NEWS,
@@ -71,7 +84,7 @@ export const headerDash: HeaderData = {
     {
       Home_Menu_Item_id: {
         id: 2,
-        name: "Simulado",
+        name: "Simulados",
         link: `${DASH}/${SIMULADO}`,
         target: "_self",
       },
@@ -122,6 +135,13 @@ export const adminMenuItems: DashCardMenu[] = [
         text: "Formulário",
         link: `/dashboard/${PARTNER_CLASS_FORM}`,
         permissions: [Roles.alterarPermissao],
+      },
+      {
+        icon: FaBook,
+        alt: "revisao redacoes",
+        text: "Revisão de Redações",
+        link: `/dashboard/${ESSAY_REVIEW_CURSINHO}`,
+        permissions: [Roles.revisarRedacoes],
       },
     ],
   },
@@ -195,6 +215,27 @@ export const adminMenuItems: DashCardMenu[] = [
         link: `/dashboard/${PARTNER_PREP_MANAGER}`,
         permissions: [Roles.alterarPermissao],
       },
+      {
+        icon: FaWpforms,
+        alt: "formulario_global",
+        text: "Formulário Global",
+        link: `/dashboard/${DASH_GLOBAL_FORM}`,
+        permissions: [Roles.gerenciarFormularioGlobal],
+      },
+      {
+        icon: FaBook,
+        alt: "redacao",
+        text: "Redação",
+        link: `/dashboard/${ESSAY_THEME_ADMIN}`,
+        permissions: [Roles.gerenciarTemas],
+      },
+      {
+        icon: FaClipboardList,
+        alt: "revisao redacoes",
+        text: "Revisão de Redações",
+        link: `/dashboard/${ESSAY_REVIEW_LIST}`,
+        permissions: [Roles.revisarTodasRedacoes],
+      },
     ],
   },
 ];
@@ -211,6 +252,13 @@ export const studentMenuItem: DashCardMenu = {
       alt: "processos seletivos",
       text: "Inscrições",
       link: `/dashboard/${REGISTRATION_MONITOR}`,
+      permissions: [Roles.visualizarMinhasInscricoes],
+    },
+    {
+      icon: FaBook,
+      alt: "redacoes",
+      text: "Redações",
+      link: `/dashboard/${ESSAY_WRITE}`,
       permissions: [Roles.visualizarMinhasInscricoes],
     },
   ],
