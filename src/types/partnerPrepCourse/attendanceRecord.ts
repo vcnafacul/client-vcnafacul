@@ -1,8 +1,10 @@
+import { AttendancePeriod } from "./attendancePeriod";
 
 export interface AttendanceRecord {
   id: string;
   classId: string;
   registeredAt: Date;
+  period: AttendancePeriod;
   studentAttendance: StudentAttendance[];
   registeredBy: {
     name: string;
@@ -32,6 +34,7 @@ export interface SimpleStudentAttendance {
 export interface AttendanceRecordByStudent {
   id: string;
   registeredAt: Date;
+  period: AttendancePeriod;
   present: string;
   justification?: string;
   className: string;
