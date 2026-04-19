@@ -16,7 +16,7 @@ import ReportLC from "./modal/report";
 const DEFAULT_FILTERS: TypeMarker[] = [TypeMarker.geo, TypeMarker.univPublic];
 
 const INFO_BOX_CLASS =
-  "md:w-[600px] h-fit relative mb-10 mx-auto md:absolute z-40 top-5 md:right-10 bg-white opacity-75 rounded-md p-5 flex items-center justify-between flex-col";
+  "relative mx-auto mb-10 h-fit w-full md:absolute md:right-10 md:top-1/2 md:mb-0 md:h-[490px] md:w-[600px] md:-translate-y-1/2 md:overflow-y-auto z-40 bg-white opacity-75 rounded-md p-5 flex items-center justify-between flex-col";
 
 const FILTER_PANEL_CLASS =
   "absolute top-4 right-4 sm:left-14 sm:right-auto z-40 bg-grey bg-opacity-70 max-w-80 rounded-sm p-2 flex flex-col";
