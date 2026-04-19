@@ -19,7 +19,7 @@ const INFO_BOX_CLASS =
   "relative mx-auto mb-10 h-fit w-full md:absolute md:right-10 md:top-1/2 md:mb-0 md:h-[490px] md:w-[600px] md:-translate-y-1/2 md:overflow-y-auto z-40 bg-white opacity-75 rounded-md p-5 flex items-center justify-between flex-col";
 
 const FILTER_PANEL_CLASS =
-  "absolute top-4 right-4 sm:left-14 sm:right-auto z-40 bg-grey bg-opacity-70 max-w-80 rounded-sm p-2 flex flex-col";
+  "absolute top-4 right-4 sm:left-14 sm:right-auto z-40 bg-grey bg-opacity-70 w-72 rounded-md p-4 flex flex-col gap-3";
 
 const REPORT_BUTTON_CLASS =
   "w-10 h-10 absolute top-2 right-4 md:bottom-4 md:top-auto cursor-pointer bg-transparent border-0 p-0";
@@ -127,7 +127,6 @@ function Map() {
         }
       />
       <div className={FILTER_PANEL_CLASS}>
-        <h3 className="self-center text-white font-black">Localizar:</h3>
         {checkMapFilter.map((filter) => (
           <CheckMapFilter
             key={filter.id}

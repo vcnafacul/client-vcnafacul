@@ -16,14 +16,19 @@ export function CheckMapFilter({
   ...props
 }: CheckMapFilterProps) {
   return (
-    <div className="flex gap-4 items-center" {...props}>
-      <div className="bg-white bg-opacity-70 h-4 w-4 relative">
+    <div
+      className="flex gap-3 items-center cursor-pointer py-1"
+      {...props}
+    >
+      <div className="bg-white bg-opacity-70 h-5 w-5 relative rounded-sm shrink-0">
         {checked && (
-          <HiCheck className="absolute h-7 w-7 -left-0.5 -bottom-1 fill-green3" />
+          <HiCheck className="absolute h-8 w-8 -left-1 -bottom-1 fill-green3" />
         )}
       </div>
-      <label className="text-white font-black flex-1">{label}</label>
-      <MarkerPin type={type} size={22} />
+      <label className="text-white font-black flex-1 cursor-pointer">
+        {label}
+      </label>
+      <MarkerPin type={type} size={28} />
     </div>
   );
 }
