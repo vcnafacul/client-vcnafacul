@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  #about-us,
+  #map,
+  #supporters {
+    scroll-margin-top: 76px;
+  }
   :root {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;

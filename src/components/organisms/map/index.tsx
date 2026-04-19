@@ -100,7 +100,7 @@ function Map() {
   return (
     <div id="map" className="relative w-full">
       <MapBox
-        className="z-30 h-[530px]"
+        className="z-30 h-[630px] lg:h-[750px]"
         zoom={7}
         markers={filteredMarkers}
         handleClickMarker={handleClickMarker}
