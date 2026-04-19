@@ -13,13 +13,22 @@ import MapBoxInfo from "../mapBoxInfo";
 import MapBoxInfoGeo from "../mapBoxInfo/mapBoxInfoGeo";
 import ReportLC from "./modal/report";
 
+const DEFAULT_FILTERS: TypeMarker[] = [TypeMarker.geo, TypeMarker.univPublic];
+
+const INFO_BOX_CLASS =
+  "md:w-[600px] h-fit relative mb-10 mx-auto md:absolute z-40 top-5 md:right-10 bg-white opacity-75 rounded-md p-5 flex items-center justify-between flex-col";
+
+const FILTER_PANEL_CLASS =
+  "absolute top-4 right-4 sm:left-14 sm:right-auto z-40 bg-grey bg-opacity-70 max-w-80 rounded-sm p-2 flex flex-col";
+
+const REPORT_BUTTON_CLASS =
+  "w-10 h-10 absolute top-2 right-4 md:bottom-4 md:top-auto cursor-pointer bg-transparent border-0 p-0";
+
 function Map() {
   const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
   const boxRef = useRef<HTMLDivElement>(null);
-  const [filterMarkers, setFilterMarkers] = useState<TypeMarker[]>([
-    TypeMarker.geo,
-    TypeMarker.univPublic,
-  ]);
+  const [filterMarkers, setFilterMarkers] =
+    useState<TypeMarker[]>(DEFAULT_FILTERS);
   const { markers, setMarkers } = useHomeStore();
   const [report, setReport] = useState(false);
 
@@ -65,22 +74,26 @@ function Map() {
     ) : null;
 
   useEffect(() => {
+    let mounted = true;
     getGeolocation()
       .then((res) => {
-        const geoMarkers = res.data.map((course: Geolocation) => {
-          return {
-            id: `${course.id}`,
-            lat: course.latitude,
-            lon: course.longitude,
-            type: course.type,
-            infos: course,
-          };
-        });
+        if (!mounted) return;
+        const geoMarkers = res.data.map((course) => ({
+          id: `${course.id}`,
+          lat: course.latitude,
+          lon: course.longitude,
+          type: course.type,
+          infos: course,
+        }));
         setMarkers(geoMarkers);
       })
       .catch((error: Error) => {
+        if (!mounted) return;
         toast.error(error.message);
       });
+    return () => {
+      mounted = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -96,23 +109,24 @@ function Map() {
       <MapBoxInfo
         boxRef={boxRef as RefObject<HTMLDivElement>}
         boxInfo={
-          <div
-            className="md:w-[600px] h-fit relative mb-10 mx-auto md:absolute z-40
-          top-5 md:right-10 bg-white opacity-75 rounded-md p-5 flex items-center
-          justify-between flex-col"
-          >
+          <div className={INFO_BOX_CLASS}>
             <MapBoxInfoGeo
               geo={activeMarker?.infos}
               ctaLink={FORM_GEOLOCATION}
             />
-            <Report
-              className="w-10 h-10 absolute top-2 right-4 md:bottom-4 md:top-auto cursor-pointer"
+            <button
+              type="button"
+              aria-label="Reportar problema"
+              className={REPORT_BUTTON_CLASS}
+              disabled={!activeMarker}
               onClick={() => setReport(true)}
-            />
+            >
+              <Report className="w-full h-full" />
+            </button>
           </div>
         }
       />
-      <div className="absolute top-4 right-4 sm:left-14 sm:right-auto z-40 bg-grey bg-opacity-70 max-w-80 rounded-sm p-2 flex flex-col">
+      <div className={FILTER_PANEL_CLASS}>
         <h3 className="self-center text-white font-black">Localizar:</h3>
         {checkMapFilter.map((filter) => (
           <CheckMapFilter
