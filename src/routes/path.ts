@@ -23,6 +23,7 @@ export const SIMULADO_HISTORIES = `${SIMULADO}historico/`;
 
 export const NEWS = "/novidades";
 export const DASH_ROLES = "permissoes";
+export const DASH_HOME = "dash-home";
 
 export const ESTUDO = "estudo";
 export const CONTENT = "content";

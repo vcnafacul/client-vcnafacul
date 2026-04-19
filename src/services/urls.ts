@@ -143,3 +143,16 @@ export const dashboardStudent = `${dashboard}/student`;
 export const dashboardCollaborator = `${dashboard}/collaborator`;
 export const dashboardQuestoesPendentes = `${dashboard}/questoes-pendentes`;
 export const essayMyCursinhoCount = `${essayMyCursinho}/count`;
+
+export const homeContent = `${BASE_URL}/home-content`;
+export const homeAbout = `${homeContent}/about`;
+export const homeAboutThumbnail = `${homeAbout}/thumbnail`;
+export const homeFeatureSection = `${homeContent}/features/section`;
+export const homeFeatures = `${homeContent}/features`;
+export const homeFeaturesReorder = `${homeFeatures}/reorder`;
+export const homeFeatureImage = (id: number) => `${homeFeatures}/${id}/image`;
+export const homeSupporters = `${homeContent}/supporters`;
+export const homeSupportersReorder = `${homeSupporters}/reorder`;
+export const homeSupporterLogo = (id: number) => `${homeSupporters}/${id}/logo`;
+export const homeContentFile = (fileKey: string) =>
+  `${homeContent}/file/${encodeURIComponent(fileKey)}`;
