@@ -9,6 +9,7 @@ import {
   DASH_CONTENT,
   DASH_GEOLOCATION,
   DASH_GLOBAL_FORM,
+  DASH_HOME,
   DASH_NEWS,
   DASH_PROVAS,
   DASH_QUESTION,
@@ -152,6 +153,13 @@ export const adminMenuItems: DashCardMenu[] = [
     image: AdminImg,
     alt: "Admin",
     subMenuList: [
+      {
+        icon: AdminImg,
+        alt: "dash_home",
+        text: "Home",
+        link: `/dashboard/${DASH_HOME}`,
+        permissions: [Roles.alterarPermissao],
+      },
       {
         icon: Historia,
         alt: "localiza cursinho",

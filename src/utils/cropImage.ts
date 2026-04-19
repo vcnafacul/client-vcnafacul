@@ -1,14 +1,18 @@
 const getCroppedImg = async (
   imageSrc: string,
-  pixelCrop: { x: number; y: number; width: number; height: number }
+  pixelCrop: { x: number; y: number; width: number; height: number },
+  target?: { width: number; height: number }
 ): Promise<File> => {
   const image = new Image();
   image.src = imageSrc;
   await new Promise((resolve) => (image.onload = resolve));
 
+  const outWidth = target?.width ?? pixelCrop.width;
+  const outHeight = target?.height ?? pixelCrop.height;
+
   const canvas = document.createElement("canvas");
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
+  canvas.width = outWidth;
+  canvas.height = outHeight;
   const ctx = canvas.getContext("2d");
 
   if (!ctx) {
@@ -22,8 +26,8 @@ const getCroppedImg = async (
     pixelCrop.height,
     0,
     0,
-    pixelCrop.width,
-    pixelCrop.height
+    outWidth,
+    outHeight
   );
 
   return new Promise<File>((resolve) => {

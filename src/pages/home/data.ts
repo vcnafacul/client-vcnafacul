@@ -18,7 +18,6 @@ import { TypeMarker } from "../../types/map/marker";
 
 import { AboutUsProps } from "../../components/organisms/aboutUs";
 import { ActionProps } from "../../components/organisms/actionAreas";
-import { FeaturesProps } from "../../components/organisms/features";
 import { FooterProps } from "../../components/organisms/footer";
 import { Slide } from "../../components/organisms/hero";
 
@@ -27,12 +26,6 @@ import HeroImg3 from "../../assets/images/home/hero_cursinho.svg";
 import HeroImg4 from "../../assets/images/home/hero_sponsor.svg";
 import HeroImg1 from "../../assets/images/home/hero_student.svg";
 import HeroImg2 from "../../assets/images/home/hero_teacher.svg";
-
-import feature1 from "../../assets/images/home/1-Plataforma personalizada - comp.png";
-import feature2 from "../../assets/images/home/2-Conteudos pre-vestibular - comp.png";
-import feature4 from "../../assets/images/home/4-Exercicios e Simulados online - comp.png";
-import feature5 from "../../assets/images/home/5-Forum de duvidas - comp.png";
-import feature6 from "../../assets/images/home/6-Exercicios e Simulados online - comp.png";
 
 import { ReactComponent as homeSubjectArte } from "../../assets/icons/home-subjects-arte.svg";
 import { ReactComponent as homeSubjectAtualidades } from "../../assets/icons/home-subjects-atualidades.svg";
@@ -178,13 +171,11 @@ export const checkMapFilter = [
     id: 1,
     name: "Cursinhos Populares",
     type: TypeMarker.geo,
-    color: "fill-blueGeo",
   },
   {
     id: 2,
     name: "Universidades Públicas",
     type: TypeMarker.univPublic,
-    color: "fill-red",
   },
 ];
 
@@ -346,58 +337,6 @@ export const footer: FooterProps = {
         name: "Instagran",
         link: "https://www.instagram.com/vcnafacul/",
         target: "_blank",
-      },
-    },
-  ],
-};
-
-export const features: FeaturesProps = {
-  title: "O futuro do cursinho popular",
-  subtitle: "Veja tudo o que você terá acesso na nossa plataforma!",
-  items: [
-    {
-      Home_Features_Item_id: {
-        id: 1,
-        title: "Simulados online do ENEM",
-        subtitle:
-          "O Você na Facul disponibiliza simulados automáticos com questões reais para você praticar quantas vezes quiser! E o resultado sai na hora! [EM EXPANSÃO]",
-        image: feature6,
-      },
-    },
-    {
-      Home_Features_Item_id: {
-        id: 2,
-        title: "Conteúdos pré-vestibular",
-        subtitle:
-          "Você terá acesso aos melhores conteúdos pré-vestibular que existem hoje, que foram selecionados com carinho e organizados para você! [EM CONSTRUÇÃO]",
-        image: feature2,
-      },
-    },
-    {
-      Home_Features_Item_id: {
-        id: 3,
-        title: "Plataforma personalizada",
-        subtitle:
-          "Ao acessar a plataforma Você na Facul você terá um painel só seu, personalizado de acordo com seu perfil e seu progresso nos estudos! [EM BREVE]",
-        image: feature1,
-      },
-    },
-    {
-      Home_Features_Item_id: {
-        id: 5,
-        title: "Fórum de dúvidas",
-        subtitle:
-          "Tá com dúvidas sobre os conteúdos? É só mandar uma mensagem no fórum de dúvidas que algum professor vai te ajudar com o maior prazer! [EM BREVE]",
-        image: feature5,
-      },
-    },
-    {
-      Home_Features_Item_id: {
-        id: 4,
-        title: "Suas redações corrigidas",
-        subtitle:
-          "OTá precisando melhorar nas redações? É só escrever quantas quiser e enviar pelo painel que um professor vai corrigir e dar sugestões de melhoria! [EM BREVE]",
-        image: feature4,
       },
     },
   ],

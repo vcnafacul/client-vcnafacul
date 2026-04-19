@@ -16,7 +16,7 @@ import { MdOutlineTravelExplore } from "react-icons/md";
 import BLink from "../../molecules/bLink";
 
 interface MapBoxInfoProps {
-  geo: Geolocation;
+  geo?: Geolocation;
   ctaLink: string;
 }
 

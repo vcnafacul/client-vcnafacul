@@ -12,6 +12,7 @@ import PartnerPrepManager from "@/pages/partnerPrepManager";
 import RegistrationMonitor from "@/pages/registrationMonitor";
 import { StudentsEnrolled } from "@/pages/studentsEnrolled";
 import GlobalFormPage from "@/pages/globalForm";
+import DashHome from "../pages/dashHome";
 import EssayWrite from "../pages/essayWrite";
 import EssayResult from "../pages/essayResult";
 import EssayHistory from "../pages/essayHistory";
@@ -60,6 +61,7 @@ import {
   DASH_CONTENT,
   DASH_GEOLOCATION,
   DASH_GLOBAL_FORM,
+  DASH_HOME,
   DASH_NEWS,
   DASH_PROVAS,
   DASH_QUESTION,
@@ -237,6 +239,16 @@ export function PlatformRoutes() {
               permission={data.permissao[Roles.alterarPermissao]}
             >
               <DashRoles />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={DASH_HOME}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.alterarPermissao]}
+            >
+              <DashHome />
             </ProtectedRoutePermission>
           }
         />
