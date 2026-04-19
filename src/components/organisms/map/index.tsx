@@ -132,7 +132,7 @@ function Map() {
           <CheckMapFilter
             key={filter.id}
             label={filter.name}
-            color={filter.color}
+            type={filter.type}
             checked={filterMarkers.includes(filter.type)}
             onClick={() => handleFilterMarkers(filter.type)}
           />

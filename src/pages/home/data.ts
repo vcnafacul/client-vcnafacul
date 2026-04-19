@@ -171,13 +171,11 @@ export const checkMapFilter = [
     id: 1,
     name: "Cursinhos Populares",
     type: TypeMarker.geo,
-    color: "fill-blueGeo",
   },
   {
     id: 2,
     name: "Universidades Públicas",
     type: TypeMarker.univPublic,
-    color: "fill-red",
   },
 ];
 
