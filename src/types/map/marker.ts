@@ -1,3 +1,5 @@
+import type { Geolocation } from "../geolocation/geolocation";
+
 export enum TypeMarker {
   geo,
   univPublic,
@@ -11,5 +13,5 @@ export interface MarkerPoint {
 }
 
 export interface Marker extends MarkerPoint {
-  infos: object;
+  infos: Geolocation;
 }

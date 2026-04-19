@@ -1,9 +1,8 @@
-import { RefObject, useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { FORM_GEOLOCATION } from "../../../routes/path";
 import getGeolocation from "../../../services/geolocation/getGeolocation";
 import { useHomeStore } from "../../../store/home";
-import { Geolocation } from "../../../types/geolocation/geolocation";
 import { TypeMarker } from "../../../types/map/marker";
 import { CheckMapFilter } from "@/components/atoms/checkMapFilter";
 import { TypeProblem } from "@/enums/audit/typeProblem";
@@ -15,7 +14,7 @@ import MapBoxInfoGeo from "../mapBoxInfo/mapBoxInfoGeo";
 import ReportLC from "./modal/report";
 
 function Map() {
-  const [markerActive, setMarkerActive] = useState<number>(0);
+  const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   const [filterMarkers, setFilterMarkers] = useState<TypeMarker[]>([
     TypeMarker.geo,
@@ -24,41 +23,46 @@ function Map() {
   const { markers, setMarkers } = useHomeStore();
   const [report, setReport] = useState(false);
 
+  const filteredMarkers = useMemo(
+    () => markers.data.filter((marker) => filterMarkers.includes(marker.type)),
+    [markers.data, filterMarkers]
+  );
+
+  const activeMarker = useMemo(
+    () =>
+      activeMarkerId
+        ? markers.data.find((m) => m.id === activeMarkerId) ?? null
+        : null,
+    [markers.data, activeMarkerId]
+  );
+
   function handleClickMarker(index: number) {
-    if (boxRef === null) return;
-    boxRef.current!.scrollIntoView();
-    setMarkerActive(index);
+    const marker = filteredMarkers[index];
+    if (!marker) return;
+    boxRef.current?.scrollIntoView();
+    setActiveMarkerId(marker.id);
   }
 
   function handleFilterMarkers(type: TypeMarker) {
-    if (filterMarkers.includes(type)) {
-      setFilterMarkers((prev) => prev.filter((marker) => marker !== type));
-    } else {
-      setFilterMarkers((prev) => [...prev, type]);
-    }
+    setFilterMarkers((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    );
   }
 
-  const ModalReport = () => {
-    return !report ? null : (
+  const modalReport =
+    report && activeMarker ? (
       <ReportLC
-        entityId={markers.data[markerActive].id}
+        entityId={activeMarker.id}
         type={
-          markers.data[markerActive].type === TypeMarker.geo
+          activeMarker.type === TypeMarker.geo
             ? TypeProblem.GEO
             : TypeProblem.COLLEGE
         }
         isOpen={report}
         handleClose={() => setReport(false)}
-        entityName={
-          (
-            markers.data[markerActive].infos as {
-              name: string;
-            }
-          ).name
-        }
+        entityName={activeMarker.infos.name}
       />
-    );
-  };
+    ) : null;
 
   useEffect(() => {
     getGeolocation()
@@ -85,11 +89,7 @@ function Map() {
       <MapBox
         className="z-30 h-[530px]"
         zoom={7}
-        markers={markers.data.filter((marker) => {
-          if (filterMarkers.includes(marker.type)) {
-            return marker;
-          }
-        })}
+        markers={filteredMarkers}
         handleClickMarker={handleClickMarker}
       />
 
@@ -97,12 +97,12 @@ function Map() {
         boxRef={boxRef as RefObject<HTMLDivElement>}
         boxInfo={
           <div
-            className="md:w-[600px] h-fit relative mb-10 mx-auto md:absolute z-40 
-          top-5 md:right-10 bg-white opacity-75 rounded-md p-5 flex items-center 
+            className="md:w-[600px] h-fit relative mb-10 mx-auto md:absolute z-40
+          top-5 md:right-10 bg-white opacity-75 rounded-md p-5 flex items-center
           justify-between flex-col"
           >
             <MapBoxInfoGeo
-              geo={markers.data[markerActive]?.infos as Geolocation}
+              geo={activeMarker?.infos}
               ctaLink={FORM_GEOLOCATION}
             />
             <Report
@@ -124,7 +124,7 @@ function Map() {
           />
         ))}
       </div>
-      <ModalReport />
+      {modalReport}
     </div>
   );
 }
