@@ -1,5 +1,9 @@
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { FrenteDto, SubjectDto } from "@/dtos/content/contentDtoInput";
+import {
+  CreateSubjectDtoInput,
+  UpdateSubjectDto,
+} from "@/dtos/content/SubjectDto";
 import { getContentOrder } from "@/services/content/getContent";
 import {
   CreateFrenteDtoInput,
@@ -7,6 +11,10 @@ import {
 } from "@/dtos/content/frenteDto";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { createFrente } from "@/services/content/createFrente";
+import { createSubject } from "@/services/content/createSubject";
+import { updateSubject } from "@/services/content/updateSubject";
+import { deleteSubject } from "@/services/content/deleteSubject";
+import { changeOrderSubject } from "@/services/content/changeOrderSubject";
 import {
   createMateria,
   CreateMateriaDto,
@@ -21,6 +29,7 @@ import {
   UpdateMateriaDto,
 } from "@/services/content/updateMateria";
 import { getSubjects } from "@/services/content/getSubjects";
+import { arrayMove } from "@dnd-kit/sortable";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import ModalTemplate from "../../../components/templates/modalTemplate";
@@ -116,16 +125,6 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
     });
   };
 
-  function updateSizeFrente(id: string, size: number) {
-    const newFrentes = frentes.map((frente) => {
-      if ((frente._id || frente.id) === id) {
-        return { ...frente, lenght: size };
-      }
-      return frente;
-    });
-    setFrentes(newFrentes);
-  }
-
   function removeFrenteFromMateriasList(frenteId: string) {
     const norm = (id: string) => (f: FrenteDto) => (f._id || f.id) === id;
     setFrentes((prev) => prev.filter((f) => !norm(frenteId)(f)));
@@ -147,6 +146,110 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
         removeFrenteFromMateriasList(frenteId);
       },
     });
+  };
+
+  // --- Tema handlers ---
+
+  const updateFrenteSubjects = (
+    frenteId: string,
+    mapper: (subjects: SubjectDto[]) => SubjectDto[],
+  ) => {
+    setFrentes((prev) =>
+      prev.map((f) => {
+        const id = f._id || f.id;
+        if (id !== frenteId) return f;
+        const newSubjects = mapper((f.subjects ?? []) as SubjectDto[]);
+        return { ...f, subjects: newSubjects, lenght: newSubjects.length };
+      }),
+    );
+  };
+
+  const handleCreateTema = async (body: CreateSubjectDtoInput) => {
+    const frenteId = body.frente;
+    await executeAsync({
+      action: () => createSubject(body, token),
+      loadingMessage: "Criando tema...",
+      successMessage: "Tema criado com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: (res) => {
+        const parentFrente = frentes.find(
+          (f) => (f._id || f.id) === frenteId,
+        );
+        if (!parentFrente) return;
+        const newTema: SubjectDto = {
+          id: res.id,
+          name: res.name,
+          description: res.description,
+          frente: parentFrente,
+          lenght: 0,
+          createdAt: new Date(),
+          contents: [],
+        };
+        updateFrenteSubjects(frenteId, (subjects) => [...subjects, newTema]);
+      },
+    });
+  };
+
+  const handleUpdateTema = async (
+    body: UpdateSubjectDto,
+    frenteId: string,
+  ) => {
+    await executeAsync({
+      action: () => updateSubject(body, token),
+      loadingMessage: "Editando tema...",
+      successMessage: "Tema editado com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
+        updateFrenteSubjects(frenteId, (subjects) =>
+          subjects.map((s) =>
+            (s._id || s.id) === body.id
+              ? { ...s, name: body.name, description: body.description }
+              : s,
+          ),
+        );
+      },
+    });
+  };
+
+  const handleDeleteTema = async (temaId: string, frenteId: string) => {
+    await executeAsync({
+      action: () => deleteSubject(temaId, token),
+      loadingMessage: "Excluindo tema...",
+      successMessage: "Tema excluído com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
+        updateFrenteSubjects(frenteId, (subjects) =>
+          subjects.filter((s) => (s._id || s.id) !== temaId),
+        );
+      },
+    });
+  };
+
+  const handleReorderTemas = async (
+    frenteId: string,
+    node1: string,
+    node2: string,
+  ) => {
+    const snapshot = frentes;
+    setFrentes((prev) =>
+      prev.map((f) => {
+        const id = f._id || f.id;
+        if (id !== frenteId) return f;
+        const subjects = (f.subjects ?? []) as SubjectDto[];
+        const oldIndex = subjects.findIndex((s) => (s._id || s.id) === node1);
+        const newIndex = subjects.findIndex((s) => (s._id || s.id) === node2);
+        if (oldIndex < 0 || newIndex < 0) return f;
+        return { ...f, subjects: arrayMove(subjects, oldIndex, newIndex) };
+      }),
+    );
+    try {
+      await changeOrderSubject(token, { listId: frenteId, node1, node2 });
+    } catch (err) {
+      setFrentes(snapshot);
+      const message =
+        err instanceof Error ? err.message : "Erro ao reordenar temas";
+      toast.error(message);
+    }
   };
 
   useEffect(() => {
@@ -305,7 +408,6 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
             <div className="h-full">
               <PanelFrente
                 frentes={frentes}
-                updateSizeFrente={updateSizeFrente}
                 materia={materiaSelected}
                 materiaLabel={
                   materiasList.find((m) => m._id === materiaSelected)?.nome ??
@@ -314,6 +416,10 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
                 onCreate={handleCreateFrente}
                 onUpdate={handleUpdateFrente}
                 onDelete={handleDeleteFrente}
+                onCreateTema={handleCreateTema}
+                onUpdateTema={handleUpdateTema}
+                onDeleteTema={handleDeleteTema}
+                onReorderTemas={handleReorderTemas}
               />
             </div>
           </>
