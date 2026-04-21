@@ -45,7 +45,7 @@ interface Props {
 }
 
 function SettingsFrente({ isOpen, handleClose }: Props) {
-  const [activeTab, setActiveTab] = useState<Tab>("frentes");
+  const [activeTab, setActiveTab] = useState<Tab>("materias");
   const [frentes, setFrentes] = useState<FrenteDto[]>([]);
   const [materiasList, setMateriasList] = useState<MateriaDto[]>([]);
   const [materiaSelected, setMateriaSelected] = useState<string>("");
@@ -370,17 +370,6 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
         <div className="flex border-b border-gray-200">
           <button
             type="button"
-            onClick={() => setActiveTab("frentes")}
-            className={`px-4 py-2 text-sm font-medium transition-colors ${
-              activeTab === "frentes"
-                ? "border-b-2 border-orange text-orange"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
-          >
-            Frentes
-          </button>
-          <button
-            type="button"
             onClick={() => setActiveTab("materias")}
             className={`px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === "materias"
@@ -389,6 +378,17 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
             }`}
           >
             Matérias
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("frentes")}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === "frentes"
+                ? "border-b-2 border-orange text-orange"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Frentes
           </button>
         </div>
 
