@@ -1,5 +1,6 @@
 import { InputFactory } from "@/components/organisms/inputFactory";
-import { FrenteDto } from "@/dtos/content/contentDtoInput";
+import { FrenteDto, SubjectDto } from "@/dtos/content/contentDtoInput";
+import { getContentOrder } from "@/services/content/getContent";
 import {
   CreateFrenteDtoInput,
   UpdateFrenteDto,
@@ -159,11 +160,42 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
     }
 
     Promise.all(
-      frentesRaw.map((f) =>
-        getSubjects(f._id || f.id, token)
-          .then((subjects) => ({ ...f, lenght: subjects.length, subjects }))
-          .catch(() => ({ ...f, lenght: 0, subjects: [] })),
-      ),
+      frentesRaw.map(async (f) => {
+        const frenteId = f._id || f.id;
+        try {
+          const subjects = await getSubjects(frenteId, token);
+          const enrichedSubjects = await Promise.all(
+            subjects.map(async (s) => {
+              const subjectId = s._id || s.id;
+              try {
+                const contents = await getContentOrder(
+                  token,
+                  undefined,
+                  subjectId,
+                );
+                return {
+                  ...s,
+                  contents: contents.map((c) => ({
+                    id: c.id ?? (c as unknown as { _id: string })._id,
+                    status: c.status,
+                    title: c.title,
+                  })),
+                  lenght: contents.length,
+                } as SubjectDto;
+              } catch {
+                return { ...s, contents: [], lenght: 0 } as SubjectDto;
+              }
+            }),
+          );
+          return {
+            ...f,
+            lenght: enrichedSubjects.length,
+            subjects: enrichedSubjects,
+          };
+        } catch {
+          return { ...f, lenght: 0, subjects: [] };
+        }
+      }),
     ).then(setFrentes);
   }, [materiaSelected, materiasList, token]);
 
