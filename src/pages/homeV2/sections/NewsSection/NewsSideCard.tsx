@@ -3,7 +3,7 @@ import { NewsItem } from "../../adapters/newsAdapter";
 
 const CAT_BG: Record<NewsItem["category"], string> = {
   DESTAQUE: "bg-[#fff5f8]",
-  NOTÍCIA: "bg-white border border-black/5",
+  NOTÍCIA: "bg-[#37d6b5] text-[#0b2747]",
   EVENTO: "bg-[#edfef8]",
   PARCERIA: "bg-[#fffaee]",
 };
@@ -25,7 +25,7 @@ export function NewsSideCard({ item, index }: { item: NewsItem; index: number })
       <span className="text-[10px] tracking-widest font-bold uppercase opacity-70">
         {item.category}
       </span>
-      <h4 className="mt-1 text-base font-bold leading-snug line-clamp-2">
+      <h4 className="mt-1 text-lg md:text-xl font-bold leading-snug line-clamp-2">
         {item.title}
       </h4>
       {item.publishedAt && (
