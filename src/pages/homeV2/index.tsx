@@ -9,6 +9,8 @@ import { AboutSection } from "./sections/AboutSection";
 import { aboutFallback, fetchAboutSectionData } from "./adapters/aboutAdapter";
 import { VolunteersSection } from "./sections/VolunteersSection";
 import { fetchVolunteers, volunteersFallback } from "./adapters/volunteersAdapter";
+import { PrepCoursesSection } from "./sections/PrepCoursesSection";
+import { fetchPrepCourses, prepCoursesFallback } from "./adapters/prepCoursesAdapter";
 
 interface RenderableSection {
   id: string;
@@ -32,6 +34,7 @@ export default function HomeV2() {
 
   const about = useSectionData(fetchAboutSectionData, aboutFallback, []);
   const volunteers = useSectionData(fetchVolunteers, volunteersFallback, []);
+  const prepCourses = useSectionData(fetchPrepCourses, prepCoursesFallback, []);
 
   const sections: RenderableSection[] = [
     {
@@ -53,6 +56,12 @@ export default function HomeV2() {
       component: VolunteersSection as SectionComponent<unknown>,
       data: volunteers.data,
       theme: "pink",
+    },
+    {
+      id: "prep-courses",
+      component: PrepCoursesSection as SectionComponent<unknown>,
+      data: prepCourses.data,
+      theme: "green",
     },
   ];
 
