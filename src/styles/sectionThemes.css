@@ -18,7 +18,7 @@
   --section-accent-soft: rgba(55, 214, 181, 0.13);
 }
 [data-theme="yellow"] {
-  --section-bg: #fffaee;
+  --section-bg: #ffffff;
   --section-fg: #0b2747;
   --section-accent: #f7b733;
   --section-accent-soft: rgba(247, 183, 51, 0.13);
