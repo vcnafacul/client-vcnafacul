@@ -15,6 +15,8 @@ import { FeaturesSection } from "./sections/FeaturesSection";
 import { fetchFeaturesSectionData, featuresFallback } from "./adapters/featuresAdapter";
 import { ActionAreasSection } from "./sections/ActionAreasSection";
 import { actionAreasData } from "./adapters/actionAreasAdapter";
+import { SponsorsSection } from "./sections/SponsorsSection";
+import { fetchSponsors, sponsorsFallback } from "./adapters/sponsorsAdapter";
 
 interface RenderableSection {
   id: string;
@@ -40,6 +42,7 @@ export default function HomeV2() {
   const volunteers = useSectionData(fetchVolunteers, volunteersFallback, []);
   const prepCourses = useSectionData(fetchPrepCourses, prepCoursesFallback, []);
   const features = useSectionData(fetchFeaturesSectionData, featuresFallback, []);
+  const sponsors = useSectionData(fetchSponsors, sponsorsFallback, []);
 
   const sections: RenderableSection[] = [
     {
@@ -80,6 +83,12 @@ export default function HomeV2() {
       data: actionAreasData,
       theme: "marine",
       fullBleed: true,
+    },
+    {
+      id: "sponsors",
+      component: SponsorsSection as SectionComponent<unknown>,
+      data: sponsors.data,
+      theme: "yellow",
     },
   ];
 
