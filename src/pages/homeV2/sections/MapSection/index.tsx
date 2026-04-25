@@ -8,7 +8,6 @@ import { useHomeStore } from "../../../../store/home";
 import MapBox from "../../../../components/molecules/mapBox";
 import ReportLC from "../../../../components/organisms/map/modal/report";
 import { SectionComponent } from "../../../../components/templates/homeSection/Section.types";
-import { MapHeaderCard } from "./MapHeaderCard";
 import { MapFilterCard } from "./MapFilterCard";
 import { MapInfoCard } from "./MapInfoCard";
 
@@ -71,7 +70,7 @@ export const MapSection: SectionComponent<null> = () => {
   return (
     <div
       className="relative w-full [&>div]:h-full"
-      style={{ height: "80vh", minHeight: 600 }}
+      style={{ height: "100vh", minHeight: 600 }}
     >
       <MapBox
         className="z-30 w-full h-full"
@@ -79,12 +78,12 @@ export const MapSection: SectionComponent<null> = () => {
         markers={filteredMarkers}
         handleClickMarker={handleClickMarker}
       />
-      <MapHeaderCard />
       <MapFilterCard filterMarkers={filterMarkers} onToggle={handleFilterMarkers} />
       <MapInfoCard
         activeMarker={activeMarker}
         boxRef={boxRef as RefObject<HTMLDivElement>}
         onReport={() => setReport(true)}
+        onClose={() => setActiveMarkerId(null)}
       />
       {report && activeMarker && (
         <ReportLC

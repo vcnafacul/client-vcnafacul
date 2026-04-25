@@ -1,6 +1,6 @@
 // client-vcnafacul/src/pages/homeV2/sections/FeaturesSection/FeatureRow.tsx
 import { useRef, useEffect } from "react";
-import { ensureGsapRegistered, gsap } from "../../../../lib/motion/gsapSetup";
+import { ensureGsapRegistered, gsap, ScrollTrigger } from "../../../../lib/motion/gsapSetup";
 import { usePrefersReducedMotion } from "../../../../lib/motion/motionPreference";
 import { FeatureItem } from "../../adapters/featuresAdapter";
 
@@ -19,27 +19,51 @@ export function FeatureRow({
     if (reduced) return;
     if (!rootRef.current) return;
     ensureGsapRegistered();
+    const root = rootRef.current;
     const ctx = gsap.context(() => {
-      const img = rootRef.current!.querySelector("[data-feature-image]");
-      const text = rootRef.current!.querySelectorAll("[data-feature-text]");
-      gsap.from(img, {
-        opacity: 0,
-        scale: 0.92,
-        duration: 0.7,
-        ease: "power2.out",
-        scrollTrigger: { trigger: rootRef.current, start: "top 80%", once: true },
-      });
+      const img = root.querySelector("[data-feature-image]") as HTMLElement | null;
+      const text = root.querySelectorAll("[data-feature-text]");
+      if (img) {
+        gsap.from(img, {
+          opacity: 0,
+          scale: 0.92,
+          duration: 0.7,
+          ease: "power2.out",
+          scrollTrigger: { trigger: root, start: "top 80%", once: true },
+        });
+      }
       gsap.from(text, {
         opacity: 0,
         y: 20,
         stagger: 0.08,
         duration: 0.5,
         ease: "power2.out",
-        scrollTrigger: { trigger: rootRef.current, start: "top 80%", once: true },
+        scrollTrigger: { trigger: root, start: "top 80%", once: true },
       });
     }, rootRef);
-    return () => ctx.revert();
-  }, [reduced]);
+
+    // Force ScrollTrigger to refresh once after the next paint, and also
+    // when the image element finishes loading (covers async-fetched src).
+    const refresh = () => ScrollTrigger.refresh();
+    const r = requestAnimationFrame(() => requestAnimationFrame(refresh));
+
+    const imgEl = root.querySelector("[data-feature-image]") as HTMLImageElement | null;
+    let imgListener: (() => void) | undefined;
+    if (imgEl && imgEl.tagName === "IMG") {
+      imgListener = () => ScrollTrigger.refresh();
+      imgEl.addEventListener("load", imgListener);
+      imgEl.addEventListener("error", imgListener);
+    }
+
+    return () => {
+      cancelAnimationFrame(r);
+      if (imgEl && imgListener) {
+        imgEl.removeEventListener("load", imgListener);
+        imgEl.removeEventListener("error", imgListener);
+      }
+      ctx.revert();
+    };
+  }, [reduced, item.imageUrl]);
 
   return (
     <div
