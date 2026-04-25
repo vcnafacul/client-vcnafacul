@@ -69,7 +69,7 @@ export const MapSection: SectionComponent<null> = () => {
 
   return (
     <div
-      className="relative w-full [&>div]:h-full"
+      className="relative w-full [&>div:first-child]:h-full"
       style={{ height: "100vh", minHeight: 600 }}
     >
       <MapBox
