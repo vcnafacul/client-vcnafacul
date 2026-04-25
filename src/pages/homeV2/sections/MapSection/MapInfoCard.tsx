@@ -28,7 +28,7 @@ export function MapInfoCard({ activeMarker, boxRef, onReport, onClose }: Props) 
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       className="
-        absolute z-[500]
+        absolute z-30
         inset-x-3 bottom-3 max-h-[60vh]
         md:left-auto md:inset-auto md:bottom-6 md:right-6 md:w-[420px] md:max-h-[70vh]
         bg-white/90 backdrop-blur-xl backdrop-saturate-150 border border-white/40
