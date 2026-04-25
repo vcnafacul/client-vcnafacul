@@ -1,4 +1,4 @@
-import { LegacyRef, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import BaseTemplate from "../../components/templates/baseTemplate";
 import { Section } from "../../components/templates/homeSection/Section";
 import { SectionComponent, SectionTheme } from "../../components/templates/homeSection/Section.types";
@@ -31,14 +31,12 @@ interface RenderableSection {
 
 export default function HomeV2() {
   const [solid, setSolid] = useState(false);
-  const scrollContainerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-    const handler = () => setSolid(el.scrollTop > 150);
-    el.addEventListener("scroll", handler);
-    return () => el.removeEventListener("scroll", handler);
+    const handler = () => setSolid(window.scrollY > 150);
+    handler();
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => window.removeEventListener("scroll", handler);
   }, []);
 
   const about = useSectionData(fetchAboutSectionData, aboutFallback, []);
@@ -110,10 +108,7 @@ export default function HomeV2() {
   ];
 
   return (
-    <div
-      ref={scrollContainerRef as LegacyRef<HTMLDivElement>}
-      className="flex flex-col overflow-y-auto scrollbar-hide h-screen overflow-x-hidden scroll-smooth"
-    >
+    <div className="overflow-x-hidden scroll-smooth">
       <BaseTemplate solid={solid} position="fixed" headerShadow={false}>
         {sections.map((s) => {
           const Comp = s.component;
