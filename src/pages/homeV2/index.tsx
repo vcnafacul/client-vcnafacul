@@ -7,6 +7,8 @@ import { HeroSection } from "./sections/HeroSection";
 import { heroData } from "./data/heroData";
 import { AboutSection } from "./sections/AboutSection";
 import { aboutFallback, fetchAboutSectionData } from "./adapters/aboutAdapter";
+import { VolunteersSection } from "./sections/VolunteersSection";
+import { fetchVolunteers, volunteersFallback } from "./adapters/volunteersAdapter";
 
 interface RenderableSection {
   id: string;
@@ -29,6 +31,7 @@ export default function HomeV2() {
   }, []);
 
   const about = useSectionData(fetchAboutSectionData, aboutFallback, []);
+  const volunteers = useSectionData(fetchVolunteers, volunteersFallback, []);
 
   const sections: RenderableSection[] = [
     {
@@ -44,6 +47,12 @@ export default function HomeV2() {
       data: about.data,
       theme: "marine",
       fullBleed: true,
+    },
+    {
+      id: "volunteers",
+      component: VolunteersSection as SectionComponent<unknown>,
+      data: volunteers.data,
+      theme: "pink",
     },
   ];
 
