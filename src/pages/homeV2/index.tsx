@@ -18,6 +18,8 @@ import { actionAreasData } from "./adapters/actionAreasAdapter";
 import { SponsorsSection } from "./sections/SponsorsSection";
 import { fetchSponsors, sponsorsFallback } from "./adapters/sponsorsAdapter";
 import { MapSection } from "./sections/MapSection";
+import { NewsSection } from "./sections/NewsSection";
+import { fetchNews, newsFallback } from "./adapters/newsAdapter";
 
 interface RenderableSection {
   id: string;
@@ -44,6 +46,7 @@ export default function HomeV2() {
   const prepCourses = useSectionData(fetchPrepCourses, prepCoursesFallback, []);
   const features = useSectionData(fetchFeaturesSectionData, featuresFallback, []);
   const sponsors = useSectionData(fetchSponsors, sponsorsFallback, []);
+  const news = useSectionData(fetchNews, newsFallback, []);
 
   const sections: RenderableSection[] = [
     {
@@ -97,6 +100,12 @@ export default function HomeV2() {
       data: null,
       theme: "marine",
       fullBleed: true,
+    },
+    {
+      id: "news",
+      component: NewsSection as SectionComponent<unknown>,
+      data: news.data,
+      theme: "neutral",
     },
   ];
 
