@@ -32,9 +32,18 @@ function formatPt(date: Date | string | undefined): string | undefined {
 
 export async function fetchNews(): Promise<NewsItem[]> {
   const res = await getNews();
-  const items: News[] = res?.data ?? [];
+  // Handle both Paginate<News> and plain News[] shapes
+  const items: News[] = Array.isArray(res)
+    ? (res as News[])
+    : ((res as { data?: News[] })?.data ?? []);
+  const now = Date.now();
   return items
     .filter((n) => n.actived !== false)
+    .filter((n) => {
+      if (!n.expireAt) return true;
+      const exp = new Date(n.expireAt).getTime();
+      return Number.isNaN(exp) || exp >= now;
+    })
     .map((n) => ({
       id: String(n.id),
       title: n.title,

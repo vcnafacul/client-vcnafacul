@@ -5,7 +5,6 @@ import { NewsFeaturedCard } from "./NewsFeaturedCard";
 import { NewsSideCard } from "./NewsSideCard";
 
 export const NewsSection: SectionComponent<NewsItem[]> = ({ data }) => {
-  if (data.length === 0) return null;
   const [featured, ...rest] = data;
   const side = rest.slice(0, 3);
 
@@ -22,14 +21,22 @@ export const NewsSection: SectionComponent<NewsItem[]> = ({ data }) => {
           Ver todas →
         </a>
       </div>
-      <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4 md:h-[480px]">
-        <NewsFeaturedCard item={featured} />
-        <div className="flex flex-col gap-3">
-          {side.map((it, i) => (
-            <NewsSideCard key={it.id} item={it} index={i} />
-          ))}
+      {data.length === 0 ? (
+        <div className="container mx-auto px-4">
+          <div className="rounded-2xl border border-dashed border-black/10 p-10 text-center opacity-70">
+            Sem novidades por enquanto.
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4 md:h-[480px]">
+          <NewsFeaturedCard item={featured} />
+          <div className="flex flex-col gap-3">
+            {side.map((it, i) => (
+              <NewsSideCard key={it.id} item={it} index={i} />
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 };
