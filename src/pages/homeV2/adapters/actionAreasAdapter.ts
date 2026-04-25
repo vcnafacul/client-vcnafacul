@@ -1,5 +1,5 @@
 // client-vcnafacul/src/pages/homeV2/adapters/actionAreasAdapter.ts
-import { actionAreas } from "../../../pages/home/data";
+import { actionAreas } from "../../../pages/homeLegacy/data";
 import type React from "react";
 
 export interface SubjectItem {

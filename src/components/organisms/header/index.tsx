@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ReactComponent as MenuIcon } from "../../../assets/icons/menu.svg";
 
 import DropdwonMenu from "@/components/atoms/dropdownMenu";
-import { report } from "@/pages/home/data";
+import { report } from "@/pages/homeLegacy/data";
 import { ReactComponent as Reporticon } from "../../../assets/icons/warning.svg";
 import { useBaseTemplateContext } from "../../../context/baseTemplateContext";
 import { useAuthStore } from "../../../store/auth";

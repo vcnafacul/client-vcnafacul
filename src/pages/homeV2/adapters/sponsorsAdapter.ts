@@ -1,6 +1,6 @@
 import { getHomeSupporters } from "../../../services/home/getHomeSupporters";
 import { homeContentFile } from "../../../services/urls";
-import { supporters as supportersFallback } from "../../../pages/home/data";
+import { supporters as supportersFallback } from "../../../pages/homeLegacy/data";
 
 export interface Sponsor {
   logoUrl: string;

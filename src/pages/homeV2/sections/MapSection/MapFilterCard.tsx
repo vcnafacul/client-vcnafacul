@@ -1,7 +1,7 @@
 // client-vcnafacul/src/pages/homeV2/sections/MapSection/MapFilterCard.tsx
 import { CheckMapFilter } from "@/components/atoms/checkMapFilter";
 import { TypeMarker } from "../../../../types/map/marker";
-import { checkMapFilter } from "../../../home/data";
+import { checkMapFilter } from "../../../homeLegacy/data";
 
 export function MapFilterCard({
   filterMarkers,

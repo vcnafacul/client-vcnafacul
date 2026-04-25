@@ -61,7 +61,7 @@ import { SubDashCardInfo } from "../../components/molecules/subDashCard";
 import { HeaderData } from "../../components/organisms/header";
 import { Roles } from "../../enums/roles/roles";
 import { AreaWithMaterias } from "../../services/content/getMateriasGroupedByArea";
-import { header } from "../home/data";
+import { header } from "../homeLegacy/data";
 
 export const headerDash: HeaderData = {
   ...header,

@@ -1,6 +1,6 @@
 // client-vcnafacul/src/pages/homeV2/adapters/prepCoursesAdapter.ts
 import { getPartnerPrepCourseLogos } from "../../../services/prepCourse/partnerLogos";
-import { supporters as supportersFallback } from "../../../pages/home/data";
+import { supporters as supportersFallback } from "../../../pages/homeLegacy/data";
 
 const VITE_VCNAFACUL_ID = import.meta.env.VITE_VCNAFACUL_ID;
 

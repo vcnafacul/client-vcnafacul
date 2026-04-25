@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { BaseTemplateContext } from "../context/baseTemplateContext";
 import { headerDash } from "../pages/dash/data";
-import { footer, header } from "../pages/home/data";
+import { footer, header } from "../pages/homeLegacy/data";
 import { HOME_PATH, NEWS } from "../routes/path";
 import { getNews } from "../services/news/getNews";
 import { useAuthStore } from "../store/auth";
