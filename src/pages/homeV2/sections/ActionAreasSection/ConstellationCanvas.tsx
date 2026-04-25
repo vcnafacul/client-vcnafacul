@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ensureGsapRegistered, gsap } from "../../../../lib/motion/gsapSetup";
 import { AreaGroup } from "../../adapters/actionAreasAdapter";
 import { SubjectPill } from "./SubjectPill";
 import { Bbox, poissonPoints } from "../../utils/poissonLayout";
@@ -8,7 +7,6 @@ const CANVAS_HEIGHT_VH = 70;
 
 export function ConstellationCanvas({ groups }: { groups: AreaGroup[] }) {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(1200);
 
   useEffect(() => {
@@ -22,42 +20,24 @@ export function ConstellationCanvas({ groups }: { groups: AreaGroup[] }) {
   }, []);
 
   const groupPoints = useMemo(() => {
-    const canvasH = typeof window !== "undefined" ? window.innerHeight : 800;
+    const canvasH =
+      typeof window !== "undefined"
+        ? Math.round((window.innerHeight * CANVAS_HEIGHT_VH) / 100)
+        : 600;
     return groups.map((g, gi) => {
       const groupWidth = width / 3;
       const bbox: Bbox = {
         x: gi * groupWidth + 40,
-        y: 80,
+        y: 40,
         width: groupWidth - 80,
-        height: canvasH - 160,
+        height: canvasH - 80,
       };
-      const minDist = Math.min(bbox.width, bbox.height) / Math.max(2, Math.sqrt(g.subjects.length));
+      const minDist =
+        Math.min(bbox.width, bbox.height) /
+        Math.max(2, Math.sqrt(g.subjects.length));
       return poissonPoints(bbox, g.subjects.length, minDist * 0.8, g.id * 9973 + 1);
     });
   }, [groups, width]);
-
-  useEffect(() => {
-    if (!sectionRef.current || !trackRef.current) return;
-    ensureGsapRegistered();
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        trackRef.current,
-        { y: "30%" },
-        {
-          y: "-60%",
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top top",
-            end: "+=100%",
-            pin: true,
-            scrub: 1,
-          },
-        },
-      );
-    }, sectionRef);
-    return () => ctx.revert();
-  }, [groupPoints]);
 
   return (
     <div
@@ -74,28 +54,26 @@ export function ConstellationCanvas({ groups }: { groups: AreaGroup[] }) {
         }}
         aria-hidden="true"
       />
-      <div ref={trackRef} className="absolute inset-0">
-        {groups.map((g, gi) => (
-          <div key={g.id} className="absolute inset-0">
-            {g.subjects.map((s, si) => {
-              const pt = groupPoints[gi][si];
-              return (
-                <div
-                  key={s.id}
-                  style={{
-                    position: "absolute",
-                    left: pt.x,
-                    top: pt.y,
-                    transform: "translate(-50%, -50%)",
-                  }}
-                >
-                  <SubjectPill subject={s} group={g} size={si === 0 ? "lg" : "md"} />
-                </div>
-              );
-            })}
-          </div>
-        ))}
-      </div>
+      {groups.map((g, gi) => (
+        <div key={g.id} className="absolute inset-0">
+          {g.subjects.map((s, si) => {
+            const pt = groupPoints[gi][si];
+            return (
+              <div
+                key={s.id}
+                style={{
+                  position: "absolute",
+                  left: pt.x,
+                  top: pt.y,
+                  transform: "translate(-50%, -50%)",
+                }}
+              >
+                <SubjectPill subject={s} group={g} size={si === 0 ? "lg" : "md"} />
+              </div>
+            );
+          })}
+        </div>
+      ))}
     </div>
   );
 }
