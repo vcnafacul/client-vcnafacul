@@ -20,7 +20,11 @@ export async function fetchSponsors(): Promise<Sponsor[]> {
   const res = await getHomeSupporters();
   if (!res || res.length === 0) return sponsorsFallback;
   return res.map((s) => ({
-    logoUrl: s.logoUrl ? homeContentFile(s.logoUrl) : "",
+    logoUrl: s.logoUrl
+      ? /^https?:\/\//.test(s.logoUrl)
+        ? s.logoUrl
+        : homeContentFile(s.logoUrl)
+      : "",
     alt: s.name,
     link: s.link,
   }));

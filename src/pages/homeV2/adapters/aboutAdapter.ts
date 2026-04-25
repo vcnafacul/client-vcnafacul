@@ -29,7 +29,11 @@ export async function fetchAboutSectionData(): Promise<AboutSectionData> {
     eyebrow: "QUEM SOMOS",
     title: aboutFallback.title,
     description: res.description ?? aboutFallback.description,
-    thumbnail: res.thumbnailUrl ? homeContentFile(res.thumbnailUrl) : aboutFallback.thumbnail,
+    thumbnail: res.thumbnailUrl
+      ? /^https?:\/\//.test(res.thumbnailUrl)
+        ? res.thumbnailUrl
+        : homeContentFile(res.thumbnailUrl)
+      : aboutFallback.thumbnail,
     videoId: res.videoUrl ?? aboutFallback.videoId,
   };
 }

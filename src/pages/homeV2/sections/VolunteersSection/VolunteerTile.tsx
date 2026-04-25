@@ -1,7 +1,10 @@
-// client-vcnafacul/src/pages/homeV2/sections/VolunteersSection/VolunteerTile.tsx
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Volunteer } from "../../adapters/volunteersAdapter";
 import { spanForVolunteer, MosaicSpan } from "../../utils/volunteerMosaic";
+import { getPhotoCollaborator } from "../../../../services/prepCourse/collaborator/get-photo";
+
+const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
 
 export function VolunteerTile({
   volunteer,
@@ -17,6 +20,30 @@ export function VolunteerTile({
     gridColumn: `span ${span.colSpan}`,
     gridRow: `span ${span.rowSpan}`,
   };
+  const [photoUrl, setPhotoUrl] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    let cancelled = false;
+    let blobUrl: string | undefined;
+    (async () => {
+      try {
+        const blob = await getPhotoCollaborator(volunteer.imageKey);
+        if (cancelled) return;
+        blobUrl = URL.createObjectURL(blob);
+        setPhotoUrl(blobUrl);
+      } catch {
+        if (cancelled) return;
+        if (VITE_FTP_PROFILE) {
+          setPhotoUrl(`${VITE_FTP_PROFILE}/${volunteer.imageKey}`);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
+    };
+  }, [volunteer.imageKey]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -29,9 +56,9 @@ export function VolunteerTile({
         forceUniformOnMobile ? "aspect-square" : "min-h-[120px]",
       ].join(" ")}
     >
-      {volunteer.photoUrl ? (
+      {photoUrl ? (
         <img
-          src={volunteer.photoUrl}
+          src={photoUrl}
           alt={volunteer.name}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"

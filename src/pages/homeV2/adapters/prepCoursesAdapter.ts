@@ -1,5 +1,8 @@
 // client-vcnafacul/src/pages/homeV2/adapters/prepCoursesAdapter.ts
+import { getPartnerPrepCourseLogos } from "../../../services/prepCourse/partnerLogos";
 import { supporters as supportersFallback } from "../../../pages/home/data";
+
+const VITE_VCNAFACUL_ID = import.meta.env.VITE_VCNAFACUL_ID;
 
 export interface PrepCourse {
   logoUrl: string;
@@ -18,8 +21,22 @@ export const prepCoursesFallback: PrepCourse[] = supportersFallback.prepCourse
     name: p.alt.replace(/^logo-/, "").toUpperCase(),
   }));
 
-// No backend endpoint exists for prep courses today. Returns fallback constant.
-// When an endpoint is added later, replace this body without touching the section component.
 export async function fetchPrepCourses(): Promise<PrepCourse[]> {
-  return prepCoursesFallback;
+  try {
+    const logos = await getPartnerPrepCourseLogos();
+    const filtered = logos.filter(
+      (item) =>
+        item.logoUrl &&
+        (!VITE_VCNAFACUL_ID || item.id !== String(VITE_VCNAFACUL_ID)),
+    );
+    if (filtered.length === 0) return prepCoursesFallback;
+    return filtered.map((item) => ({
+      logoUrl: item.logoUrl,
+      alt: item.name || "Cursinho parceiro",
+      link: item.siteUrl || "#",
+      name: item.name,
+    }));
+  } catch {
+    return prepCoursesFallback;
+  }
 }

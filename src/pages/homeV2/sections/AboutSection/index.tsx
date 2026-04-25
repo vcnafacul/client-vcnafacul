@@ -7,7 +7,7 @@ import { AboutVideoCard } from "./AboutVideoCard";
 
 export const AboutSection: SectionComponent<AboutSectionData> = ({ data }) => {
   return (
-    <div className="relative min-h-[80vh]">
+    <div className="relative min-h-[80vh] pb-16 md:pb-24">
       <div className="grid grid-cols-1 md:grid-cols-[1fr_1.1fr] gap-8 md:gap-0 items-stretch min-h-[80vh]">
         <div className="container mx-auto md:mx-0 md:ml-auto px-4 md:pl-8 md:pr-12 py-16 md:py-24 max-w-2xl flex flex-col justify-center">
           <p className="home-section__eyebrow mb-3">{data.eyebrow}</p>

@@ -36,7 +36,11 @@ export async function fetchFeaturesSectionData(): Promise<FeaturesSectionData> {
       category: "RECURSO",
       title: f.title,
       description: f.description,
-      imageUrl: f.imageUrl ? homeContentFile(f.imageUrl) : "",
+      imageUrl: f.imageUrl
+          ? /^https?:\/\//.test(f.imageUrl)
+            ? f.imageUrl
+            : homeContentFile(f.imageUrl)
+          : "",
     })),
   };
 }
