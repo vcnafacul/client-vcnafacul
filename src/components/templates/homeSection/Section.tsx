@@ -17,8 +17,7 @@ export function Section({
       data-theme={theme}
       className={[
         "home-section",
-        fullBleed ? "home-section--full-bleed" : "",
-        "py-20 md:py-24",
+        fullBleed ? "home-section--full-bleed" : "py-20 md:py-24",
         className ?? "",
       ]
         .filter(Boolean)

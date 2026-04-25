@@ -17,6 +17,7 @@ import { ActionAreasSection } from "./sections/ActionAreasSection";
 import { actionAreasData } from "./adapters/actionAreasAdapter";
 import { SponsorsSection } from "./sections/SponsorsSection";
 import { fetchSponsors, sponsorsFallback } from "./adapters/sponsorsAdapter";
+import { MapSection } from "./sections/MapSection";
 
 interface RenderableSection {
   id: string;
@@ -89,6 +90,13 @@ export default function HomeV2() {
       component: SponsorsSection as SectionComponent<unknown>,
       data: sponsors.data,
       theme: "yellow",
+    },
+    {
+      id: "map",
+      component: MapSection as SectionComponent<unknown>,
+      data: null,
+      theme: "marine",
+      fullBleed: true,
     },
   ];
 
