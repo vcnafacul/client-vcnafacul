@@ -45,3 +45,5 @@ export const ESSAY_HISTORY = "redacoes";
 export const ESSAY_THEME_ADMIN = "temas-redacao";
 export const ESSAY_REVIEW_LIST = "revisao-redacoes";
 export const ESSAY_REVIEW_CURSINHO = "revisao-redacoes-cursinho";
+
+export const HOME_V2_PATH = "/home-v2";

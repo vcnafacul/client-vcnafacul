@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import Analytics from "@/pages/analytics";
 import { ConfirmEnrolled } from "@/pages/confirmEnrolled";
 import EnrollmentConfirmation from "@/pages/enrollmentConfirmation";
@@ -53,6 +54,7 @@ import { useAuthStore } from "../store/auth";
 import { BaseRoutes } from "./baseRoutes";
 import { HeroRoutes } from "./heroRoutes";
 import {
+  HOME_V2_PATH,
   ACCOUNT_PATH,
   CONFIRM_EMAIL,
   CONTENT,
@@ -100,6 +102,8 @@ import {
 import ProtectedRoute from "./protectedRoute";
 import ProtectedRoutePermission from "./protectedRoutePermission";
 
+const HomeV2 = lazy(() => import("../pages/homeV2"));
+
 export function PlatformRoutes() {
   const { data } = useAuthStore();
 
@@ -112,6 +116,14 @@ export function PlatformRoutes() {
         <Route element={<HeroRoutes />}>
           <Route path={HOME_PATH} element={<Home />} />
           <Route path={NEWS} element={<NewsPage />} />
+          <Route
+            path={HOME_V2_PATH}
+            element={
+              <Suspense fallback={null}>
+                <HomeV2 />
+              </Suspense>
+            }
+          />
         </Route>
         <Route path={LOGIN_PATH} element={<Login />} />
         <Route path={FORGOT_PASSWORD_PATH} element={<Forgot />} />
