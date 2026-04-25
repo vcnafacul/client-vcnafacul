@@ -4,7 +4,7 @@ import { AreaGroup } from "../../adapters/actionAreasAdapter";
 import { SubjectPill } from "./SubjectPill";
 import { Bbox, poissonPoints } from "../../utils/poissonLayout";
 
-const CANVAS_HEIGHT_VH = 100;
+const CANVAS_HEIGHT_VH = 70;
 
 export function ConstellationCanvas({ groups }: { groups: AreaGroup[] }) {
   const sectionRef = useRef<HTMLDivElement>(null);

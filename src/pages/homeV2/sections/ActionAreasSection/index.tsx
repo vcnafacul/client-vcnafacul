@@ -11,7 +11,7 @@ export const ActionAreasSection: SectionComponent<AreaGroup[]> = ({ data }) => {
   const useFallback = reduced || mobile;
 
   return (
-    <div className="relative min-h-[90vh]">
+    <div className="relative">
       <div className="container mx-auto px-4 mb-10 md:mb-16 text-center">
         <p className="home-section__eyebrow mb-3" style={{ color: "#37d6b5" }}>
           ÁREAS DE AÇÃO
