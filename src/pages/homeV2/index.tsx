@@ -13,6 +13,8 @@ import { PrepCoursesSection } from "./sections/PrepCoursesSection";
 import { fetchPrepCourses, prepCoursesFallback } from "./adapters/prepCoursesAdapter";
 import { FeaturesSection } from "./sections/FeaturesSection";
 import { fetchFeaturesSectionData, featuresFallback } from "./adapters/featuresAdapter";
+import { ActionAreasSection } from "./sections/ActionAreasSection";
+import { actionAreasData } from "./adapters/actionAreasAdapter";
 
 interface RenderableSection {
   id: string;
@@ -71,6 +73,13 @@ export default function HomeV2() {
       component: FeaturesSection as SectionComponent<unknown>,
       data: features.data,
       theme: "neutral",
+    },
+    {
+      id: "action-areas",
+      component: ActionAreasSection as SectionComponent<unknown>,
+      data: actionAreasData,
+      theme: "marine",
+      fullBleed: true,
     },
   ];
 
