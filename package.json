@@ -77,6 +77,7 @@
     "lucide-react": "^0.544.0",
     "luxon": "^3.6.1",
     "mammoth": "^1.10.0",
+    "motion": "^12.38.0",
     "pdfmake": "^0.2.15",
     "pizzip": "^3.2.0",
     "primereact": "^10.8.4",
