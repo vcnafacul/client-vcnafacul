@@ -1,7 +1,20 @@
 import { LegacyRef, useEffect, useRef, useState } from "react";
 import BaseTemplate from "../../components/templates/baseTemplate";
 import { Section } from "../../components/templates/homeSection/Section";
-import { SECTIONS } from "./sections.config";
+import { SectionComponent, SectionTheme } from "../../components/templates/homeSection/Section.types";
+import { useSectionData } from "../../hooks/useSectionData";
+import { HeroSection } from "./sections/HeroSection";
+import { heroData } from "./data/heroData";
+import { AboutSection } from "./sections/AboutSection";
+import { aboutFallback, fetchAboutSectionData } from "./adapters/aboutAdapter";
+
+interface RenderableSection {
+  id: string;
+  component: SectionComponent<unknown>;
+  data: unknown;
+  theme: SectionTheme;
+  fullBleed?: boolean;
+}
 
 export default function HomeV2() {
   const [solid, setSolid] = useState(false);
@@ -15,13 +28,32 @@ export default function HomeV2() {
     return () => el.removeEventListener("scroll", handler);
   }, []);
 
+  const about = useSectionData(fetchAboutSectionData, aboutFallback, []);
+
+  const sections: RenderableSection[] = [
+    {
+      id: "hero",
+      component: HeroSection as SectionComponent<unknown>,
+      data: heroData,
+      theme: "marine",
+      fullBleed: true,
+    },
+    {
+      id: "about-us",
+      component: AboutSection as SectionComponent<unknown>,
+      data: about.data,
+      theme: "marine",
+      fullBleed: true,
+    },
+  ];
+
   return (
     <div
       ref={scrollContainerRef as LegacyRef<HTMLDivElement>}
       className="flex flex-col overflow-y-auto scrollbar-hide h-screen overflow-x-hidden scroll-smooth"
     >
       <BaseTemplate solid={solid} position="fixed" headerShadow={false}>
-        {SECTIONS.filter((s) => s.condition !== false).map((s) => {
+        {sections.map((s) => {
           const Comp = s.component;
           return (
             <Section
@@ -34,12 +66,6 @@ export default function HomeV2() {
             </Section>
           );
         })}
-        {SECTIONS.length === 0 && (
-          <div className="container mx-auto py-32 text-center text-marine">
-            <h1 className="text-3xl font-bold">Home v2 — em construção</h1>
-            <p className="opacity-70 mt-2">Sections array vazio. Implementação em andamento.</p>
-          </div>
-        )}
       </BaseTemplate>
     </div>
   );
