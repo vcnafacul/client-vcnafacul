@@ -1,5 +1,4 @@
 import { getNews } from "../../../services/news/getNews";
-import { homeContentFile } from "../../../services/urls";
 import { News } from "../../../dtos/news/news";
 
 export type NewsCategory = "DESTAQUE" | "NOTÍCIA" | "EVENTO" | "PARCERIA";
@@ -8,7 +7,6 @@ export interface NewsItem {
   id: string;
   title: string;
   category: NewsCategory;
-  thumbnailUrl?: string;
   publishedAt?: string;
   href: string;
 }
@@ -48,7 +46,6 @@ export async function fetchNews(): Promise<NewsItem[]> {
       id: String(n.id),
       title: n.title,
       category: inferCategory(n.session),
-      thumbnailUrl: n.fileName ? homeContentFile(n.fileName) : undefined,
       publishedAt: formatPt(n.createdAt),
       href: "/novidades",
     }));
