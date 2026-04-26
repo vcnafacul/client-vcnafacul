@@ -24,9 +24,14 @@ export function NewsFeaturedCard({ item }: { item: NewsItem }) {
         <span className="self-start mb-3 text-[10px] tracking-widest font-bold uppercase bg-white/20 backdrop-blur px-3 py-1 rounded-full">
           {item.category}
         </span>
-        <h1 className="text-3xl md:text-4xl font-extrabold leading-tight line-clamp-4">
+        <h1 className="text-3xl md:text-4xl font-extrabold leading-tight line-clamp-3">
           {item.title}
         </h1>
+        {item.description && (
+          <p className="mt-3 text-base md:text-lg opacity-90 line-clamp-3">
+            {item.description}
+          </p>
+        )}
         {item.publishedAt && (
           <p className="mt-3 text-sm opacity-80">{item.publishedAt}</p>
         )}
