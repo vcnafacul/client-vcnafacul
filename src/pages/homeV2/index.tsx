@@ -99,7 +99,7 @@ export default function HomeV2() {
   ];
 
   return (
-    <div className="overflow-x-hidden scroll-smooth">
+    <div className="overflow-x-clip scroll-smooth">
       <BaseTemplate solid={solid} position="fixed" headerShadow={false}>
         {sections.map((s) => {
           const Comp = s.component;
