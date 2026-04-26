@@ -47,15 +47,25 @@ export const PrepCoursesSection: SectionComponent<PrepCourse[]> = ({
         </div>
       )}
 
-      <p className="container mx-auto px-4 mt-10 text-center text-sm">
-        Conhece um cursinho popular? →{" "}
+      <div className="container mx-auto px-4 mt-12 flex flex-col items-center gap-3 text-center">
+        <p className="text-base md:text-lg font-medium">
+          Conhece um cursinho popular?
+        </p>
         <a
           href={FORM_GEOLOCATION}
-          className="underline font-semibold"
+          className="
+            inline-flex items-center gap-2 rounded-full
+            px-6 py-3 text-base font-semibold
+            bg-[#37d6b5] text-[#0b2747]
+            shadow-md hover:shadow-lg
+            hover:-translate-y-0.5 hover:bg-[#2bbfa1]
+            transition-all duration-200
+            focus-visible:outline outline-2 outline-offset-2 outline-[#0b2747]
+          "
         >
-          indique
+          Indique um cursinho →
         </a>
-      </p>
+      </div>
     </>
   );
 };

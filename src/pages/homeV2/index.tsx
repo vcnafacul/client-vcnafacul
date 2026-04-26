@@ -69,7 +69,7 @@ export default function HomeV2() {
       id: "prep-courses",
       component: PrepCoursesSection as SectionComponent<unknown>,
       data: prepCourses.data,
-      theme: "green",
+      theme: "neutral",
     },
     {
       id: "features",
