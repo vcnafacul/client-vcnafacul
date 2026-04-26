@@ -1,12 +1,21 @@
-// client-vcnafacul/src/pages/homeV2/sections/PrepCoursesSection/index.tsx
 import { SectionComponent } from "../../../../components/templates/homeSection/Section.types";
 import { PrepCourse } from "../../adapters/prepCoursesAdapter";
-import { PrepCourseCard } from "./PrepCourseCard";
+import { FORM_GEOLOCATION } from "../../../../routes/path";
 
-const SUGGEST_FORM_URL =
-  "https://docs.google.com/forms/d/e/1FAIpQLSf-VaK8qrxYx6qd-6WHV8aaaiOnR5cxMsQUaKhU3L1N3jNx0w/viewform";
+const LOGO_CLASS =
+  "w-[140px] h-[140px] object-contain " +
+  "opacity-80 " +
+  "transition-all duration-300 ease-out " +
+  "hover:opacity-100 hover:-translate-y-1 " +
+  "hover:[filter:drop-shadow(0_8px_12px_rgb(0_0_0_/_0.18))]";
 
-export const PrepCoursesSection: SectionComponent<PrepCourse[]> = ({ data }) => {
+const TRIGGER_CLASS =
+  "flex-none flex items-center justify-center rounded-md " +
+  "focus-visible:outline outline-2 outline-offset-4 outline-[#37d6b5]";
+
+export const PrepCoursesSection: SectionComponent<PrepCourse[]> = ({
+  data,
+}) => {
   return (
     <>
       <div className="container mx-auto px-4 mb-10 text-center">
@@ -18,26 +27,35 @@ export const PrepCoursesSection: SectionComponent<PrepCourse[]> = ({ data }) => 
           Educação gratuita acontecendo em cidades do Brasil inteiro.
         </p>
       </div>
-      <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-        {data.map((c, i) => (
-          <PrepCourseCard key={c.alt} course={c} index={i} />
-        ))}
+
+      {data.length > 0 && (
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap justify-center items-center gap-6 md:gap-10">
+            {data.map((c) => (
+              <a
+                key={c.alt}
+                href={c.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={c.alt}
+                className={TRIGGER_CLASS}
+              >
+                <img src={c.logoUrl} alt={c.alt} className={LOGO_CLASS} />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <p className="container mx-auto px-4 mt-10 text-center text-sm">
+        Conhece um cursinho popular? →{" "}
         <a
-          href={SUGGEST_FORM_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="
-            rounded-2xl p-5 md:p-6 border-2 border-dashed border-[#37d6b5]
-            flex items-center justify-center text-center font-semibold text-[#0b2747]
-            hover:bg-[#37d6b522] transition-colors
-            focus-visible:outline outline-2 outline-offset-2 outline-[#37d6b5]
-          "
+          href={FORM_GEOLOCATION}
+          className="underline font-semibold"
         >
-          Conhece um cursinho popular?
-          <br />
-          Indique →
+          indique
         </a>
-      </div>
+      </p>
     </>
   );
 };
