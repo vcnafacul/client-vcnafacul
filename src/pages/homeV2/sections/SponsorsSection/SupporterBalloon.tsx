@@ -1,0 +1,46 @@
+import { Globe } from "lucide-react";
+import { Sponsor } from "../../adapters/sponsorsAdapter";
+
+interface SupporterBalloonProps {
+  sponsor: Sponsor;
+  variant?: "popover" | "sheet";
+}
+
+export function SupporterBalloon({
+  sponsor,
+  variant = "popover",
+}: SupporterBalloonProps) {
+  const isMobile = variant === "sheet";
+  return (
+    <div className="flex flex-col items-center gap-3 text-center">
+      {sponsor.logoUrl && (
+        <img
+          src={sponsor.logoUrl}
+          alt={sponsor.alt}
+          className={
+            isMobile
+              ? "w-24 h-24 object-contain"
+              : "w-20 h-20 object-contain"
+          }
+        />
+      )}
+      <h3 className="text-base font-semibold leading-snug">{sponsor.alt}</h3>
+      <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line break-words">
+        {sponsor.description}
+      </p>
+      <a
+        href={sponsor.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={
+          "inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold " +
+          "bg-marine text-white hover:bg-marine/90 transition-colors " +
+          (isMobile ? "w-full justify-center" : "")
+        }
+      >
+        <Globe className="h-4 w-4" />
+        Visitar site →
+      </a>
+    </div>
+  );
+}
