@@ -13,7 +13,11 @@ export function AboutDescription({ description }: { description: string }) {
   if (len <= SHORT_LIMIT) {
     return (
       <div className="opacity-85 text-base md:text-lg leading-relaxed line-clamp-3">
-        <RichTextRenderer content={description} contentFormat="markdown" />
+        <RichTextRenderer
+          content={description}
+          contentFormat="markdown"
+          className="prose-invert"
+        />
       </div>
     );
   }
@@ -27,7 +31,11 @@ export function AboutDescription({ description }: { description: string }) {
             expanded ? "max-h-[1000px]" : "max-h-32 overflow-hidden",
           ].join(" ")}
         >
-          <RichTextRenderer content={description} contentFormat="markdown" />
+          <RichTextRenderer
+            content={description}
+            contentFormat="markdown"
+            className="prose-invert"
+          />
         </div>
         <button
           type="button"
@@ -44,7 +52,11 @@ export function AboutDescription({ description }: { description: string }) {
   return (
     <Dialog.Root>
       <div className="opacity-85 text-base md:text-lg leading-relaxed line-clamp-4">
-        <RichTextRenderer content={description} contentFormat="markdown" />
+        <RichTextRenderer
+          content={description}
+          contentFormat="markdown"
+          className="prose-invert"
+        />
       </div>
       <Dialog.Trigger asChild>
         <button
