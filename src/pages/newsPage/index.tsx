@@ -96,12 +96,19 @@ function NewsPage() {
             <div className="flex-1 min-w-0">
               {displayNews && (
                 <div className="flex flex-col gap-1.5 sm:gap-2 mb-4 sm:mb-6">
-                  <span className="inline-block w-fit bg-green2 bg-opacity-15 text-green2 text-xs sm:text-sm font-semibold px-3 py-0.5 sm:px-4 sm:py-1 rounded-full uppercase tracking-wide">
-                    {displayNews.session}
-                  </span>
+                  {displayNews.destaque && (
+                    <span className="inline-block w-fit bg-green2 bg-opacity-15 text-green2 text-xs sm:text-sm font-semibold px-3 py-0.5 sm:px-4 sm:py-1 rounded-full uppercase tracking-wide">
+                      Destaque
+                    </span>
+                  )}
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-grey leading-tight">
                     {displayNews.title}
                   </h2>
+                  {displayNews.description && (
+                    <p className="text-sm sm:text-base text-grey/80 leading-relaxed">
+                      {displayNews.description}
+                    </p>
+                  )}
                 </div>
               )}
 
