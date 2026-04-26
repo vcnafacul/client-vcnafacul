@@ -14,7 +14,7 @@ export const SponsorsSection: SectionComponent<Sponsor[]> = ({ data }) => {
       </div>
 
       <div className="container mx-auto px-4">
-        <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6">
+        <div className="flex flex-wrap justify-center items-center gap-6 md:gap-10">
           {data.map((s) => (
             <a
               key={s.alt}
@@ -23,19 +23,21 @@ export const SponsorsSection: SectionComponent<Sponsor[]> = ({ data }) => {
               rel="noopener noreferrer"
               title={s.alt}
               className="
-                flex-none w-[140px] h-[140px] bg-white rounded-xl
-                border border-black/5 shadow-sm
-                flex items-center justify-center
-                grayscale opacity-70
-                transition-all duration-300 ease-out
-                hover:grayscale-0 hover:opacity-100 hover:-translate-y-1 hover:shadow-md
-                focus-visible:outline outline-2 outline-offset-2 outline-[#f7b733]
+                flex-none flex items-center justify-center
+                rounded-md
+                focus-visible:outline outline-2 outline-offset-4 outline-[#f7b733]
               "
             >
               <img
                 src={s.logoUrl}
                 alt={s.alt}
-                className="max-w-[80%] max-h-[80%] object-contain"
+                className="
+                  w-[140px] h-[140px] object-contain
+                  grayscale opacity-70
+                  transition-all duration-300 ease-out
+                  hover:grayscale-0 hover:opacity-100 hover:-translate-y-1
+                  hover:[filter:drop-shadow(0_8px_12px_rgb(0_0_0_/_0.18))]
+                "
               />
             </a>
           ))}
