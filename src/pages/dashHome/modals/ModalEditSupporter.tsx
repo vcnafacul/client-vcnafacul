@@ -29,6 +29,8 @@ function isValidUrl(value: string): boolean {
   }
 }
 
+const DESCRIPTION_MAX = 280;
+
 export default function ModalEditSupporter({
   isOpen,
   handleClose,
@@ -41,6 +43,7 @@ export default function ModalEditSupporter({
   } = useAuthStore();
   const [name, setName] = useState("");
   const [link, setLink] = useState("");
+  const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [pendingCrop, setPendingCrop] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
@@ -49,6 +52,7 @@ export default function ModalEditSupporter({
     if (isOpen) {
       setName(supporter?.name ?? "");
       setLink(supporter?.link ?? "");
+      setDescription(supporter?.description ?? "");
       setFile(null);
       setPendingCrop(null);
     }
@@ -76,10 +80,16 @@ export default function ModalEditSupporter({
       if (isCreateMode) {
         let created: HomeSupporter;
         try {
-          created = await createHomeSupporter(
-            { name: trimmedName, link: trimmedLink },
-            token,
-          );
+          const createPayload: {
+            name: string;
+            link: string;
+            description?: string;
+          } = {
+            name: trimmedName,
+            link: trimmedLink,
+          };
+          if (description.length > 0) createPayload.description = description;
+          created = await createHomeSupporter(createPayload, token);
         } catch (err) {
           toast.error((err as Error).message);
           setSaving(false);
@@ -109,9 +119,16 @@ export default function ModalEditSupporter({
         handleClose();
       } else {
         let current: HomeSupporter = supporter;
-        const payload: { name?: string; link?: string } = {};
+        const payload: {
+          name?: string;
+          link?: string;
+          description?: string | null;
+        } = {};
         if (trimmedName !== supporter.name) payload.name = trimmedName;
         if (trimmedLink !== supporter.link) payload.link = trimmedLink;
+        if ((description ?? "") !== (supporter.description ?? "")) {
+          payload.description = description.length > 0 ? description : null;
+        }
         if (Object.keys(payload).length > 0) {
           current = await updateHomeSupporter(supporter.id, payload, token);
         }
@@ -156,6 +173,29 @@ export default function ModalEditSupporter({
             onChange={(e) => setLink(e.target.value)}
             placeholder="https://exemplo.com"
           />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-semibold">Descrição (opcional)</span>
+          <textarea
+            className="border rounded px-2 py-1 resize-none"
+            value={description}
+            onChange={(e) => setDescription(e.target.value.slice(0, DESCRIPTION_MAX))}
+            maxLength={DESCRIPTION_MAX}
+            rows={3}
+            placeholder="Breve texto sobre o apoiador (máx. 280 caracteres)"
+          />
+          <span
+            className={`text-xs ${
+              description.length >= DESCRIPTION_MAX
+                ? "text-red-600"
+                : "text-gray-500"
+            }`}
+          >
+            {description.length}/{DESCRIPTION_MAX}
+          </span>
+          <span className="text-xs text-gray-500">
+            Se vazio, clique no logo abre o site direto.
+          </span>
         </label>
         <div className="flex flex-col gap-1">
           <span className="text-sm font-semibold">

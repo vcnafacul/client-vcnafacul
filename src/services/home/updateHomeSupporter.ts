@@ -4,7 +4,7 @@ import { homeSupporters } from "../urls";
 
 export async function updateHomeSupporter(
   id: number,
-  payload: { name?: string; link?: string },
+  payload: { name?: string; link?: string; description?: string | null },
   token: string,
 ): Promise<HomeSupporter> {
   const res = await fetchWrapper(`${homeSupporters}/${id}`, {
