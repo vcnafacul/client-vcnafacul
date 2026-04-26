@@ -74,20 +74,19 @@ export function FeatureRow({
         reverse ? "md:[&>*:nth-child(1)]:order-2" : "",
       ].join(" ")}
     >
-      <div className="relative aspect-video rounded-3xl overflow-hidden bg-marine">
+      <div className="relative aspect-video rounded-3xl overflow-hidden">
         {item.imageUrl ? (
           <img
             data-feature-image
             src={item.imageUrl}
             alt={item.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
             loading="lazy"
             decoding="async"
           />
         ) : (
           <div data-feature-image className="w-full h-full bg-gradient-to-br from-[#0b2747] to-[#37d6b5]" />
         )}
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/20 to-transparent" />
       </div>
       <div className="relative">
         <span
