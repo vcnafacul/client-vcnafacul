@@ -46,8 +46,7 @@ function NewsPage() {
 
   const Triangle = (
     <TriangleGreen
-      className="absolute w-[500px] -right-[250px] -z-10 pointer-events-none"
-      style={{ top: "calc(100vh - 76px)", transform: "translateY(-100%)" }}
+      className="fixed w-[500px] -left-[250px] top-0 -z-10 pointer-events-none"
     />
   );
 
