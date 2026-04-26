@@ -25,9 +25,11 @@ export function SupporterBalloon({
         />
       )}
       <h3 className="text-base font-semibold leading-snug">{sponsor.alt}</h3>
-      <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line break-words">
-        {sponsor.description}
-      </p>
+      {sponsor.description && (
+        <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line break-words">
+          {sponsor.description}
+        </p>
+      )}
       <a
         href={sponsor.link}
         target="_blank"
