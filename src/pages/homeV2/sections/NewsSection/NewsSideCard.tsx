@@ -5,7 +5,7 @@ export function NewsSideCard({ item, index }: { item: NewsItem; index: number })
   return (
     <motion.a
       href={item.href}
-      whileHover={{ y: -4 }}
+      whileHover={{ y: -4, transition: { duration: 0.15 } }}
       initial={{ opacity: 0, y: 8 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10%" }}
