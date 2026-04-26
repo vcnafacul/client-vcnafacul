@@ -1,8 +1,12 @@
+export type NewsContentType = 'file' | 'text';
+
 export interface News {
     id: string;
     title: string;
     description?: string | null;
-    fileName: string;
+    fileName: string | null;
+    body?: string | null;
+    contentType: NewsContentType;
     createdAt: Date;
     actived: boolean;
     destaque: boolean;
