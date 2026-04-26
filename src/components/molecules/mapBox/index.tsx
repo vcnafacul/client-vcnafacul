@@ -85,6 +85,38 @@ function buildClusterIcon(count: number): leaflet.DivIcon {
   });
 }
 
+function MobileGestureHandler() {
+  const map = useMap();
+  useEffect(() => {
+    const isTouchMobile =
+      typeof window !== "undefined" &&
+      window.matchMedia("(pointer: coarse)").matches;
+    if (!isTouchMobile) return;
+
+    map.dragging.disable();
+    const container = map.getContainer();
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length >= 2) {
+        map.dragging.enable();
+      } else {
+        map.dragging.disable();
+      }
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (e.touches.length < 2) map.dragging.disable();
+    };
+
+    container.addEventListener("touchstart", onTouchStart, { passive: true });
+    container.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      container.removeEventListener("touchstart", onTouchStart);
+      container.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [map]);
+  return null;
+}
+
 interface ClusteredMarkersProps {
   markers: MarkerPoint[];
   handleClickMarker?: (index: number) => void;
@@ -177,6 +209,7 @@ function MapBox({
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        <MobileGestureHandler />
         <ClusteredMarkers
           markers={markers}
           handleClickMarker={handleClickMarker}
