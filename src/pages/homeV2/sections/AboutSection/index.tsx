@@ -8,8 +8,8 @@ import { AboutVideoCard } from "./AboutVideoCard";
 export const AboutSection: SectionComponent<AboutSectionData> = ({ data }) => {
   return (
     <div className="relative min-h-[80vh] pb-16 md:pb-24">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-0 items-stretch min-h-[80vh]">
-        <div className="mx-auto px-4 md:px-8 py-16 md:py-24 max-w-2xl flex flex-col justify-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 min-h-[80vh]">
+        <div className="px-4 py-16 md:py-24 max-w-2xl md:ml-auto flex flex-col justify-center">
           <p className="home-section__eyebrow mb-3">{data.eyebrow}</p>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -22,7 +22,7 @@ export const AboutSection: SectionComponent<AboutSectionData> = ({ data }) => {
           </motion.h2>
           <AboutDescription description={data.description} />
         </div>
-        <div className="relative h-[420px] md:h-auto md:min-h-[80vh] md:pr-8">
+        <div className="relative h-[420px] md:h-auto md:min-h-[80vh] max-w-2xl md:mr-auto w-full">
           <AboutVideoCard thumbnail={data.thumbnail} videoId={data.videoId} />
         </div>
       </div>
