@@ -45,14 +45,17 @@ function NewsPage() {
   }, [isExiting, indexSelect]);
 
   const Triangle = (
-    <TriangleGreen className="fixed w-[500px] -right-[250px] bottom-0 -z-10 pointer-events-none" />
+    <TriangleGreen
+      className="absolute w-[500px] -right-[250px] -z-10 pointer-events-none"
+      style={{ top: "calc(100vh - 76px)", transform: "translateY(-100%)" }}
+    />
   );
 
   if (loading) {
     return (
       <BaseTemplate solid headerShadow>
-        {Triangle}
         <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[500px] flex items-center justify-center">
+          {Triangle}
           <div className="container mx-auto px-3 sm:px-4 text-center">
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 sm:p-12 max-w-lg mx-auto animate-pulse">
               <div className="h-6 bg-gray-200 rounded w-3/4 mx-auto mb-4" />
@@ -67,8 +70,8 @@ function NewsPage() {
   if (news.length === 0) {
     return (
       <BaseTemplate solid headerShadow>
-        {Triangle}
         <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[500px] flex items-center justify-center">
+          {Triangle}
           <div className="container mx-auto px-3 sm:px-4 text-center">
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 sm:p-12 max-w-lg mx-auto">
               <h2 className="text-xl sm:text-2xl font-bold text-grey mb-2">
@@ -86,8 +89,8 @@ function NewsPage() {
 
   return (
     <BaseTemplate solid headerShadow>
-      {Triangle}
       <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[1000px]">
+        {Triangle}
         <div className="container mx-auto px-3 sm:px-4">
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             {/* Left: Vertical selector */}
