@@ -22,7 +22,7 @@ export const AboutSection: SectionComponent<AboutSectionData> = ({ data }) => {
           </motion.h2>
           <AboutDescription description={data.description} />
         </div>
-        <div className="relative h-[420px] md:h-auto md:min-h-[80vh]">
+        <div className="relative h-[420px] md:h-auto md:min-h-[80vh] md:pr-8">
           <AboutVideoCard thumbnail={data.thumbnail} videoId={data.videoId} />
         </div>
       </div>
