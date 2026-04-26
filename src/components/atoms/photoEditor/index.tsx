@@ -14,6 +14,8 @@ interface PhotoEditorProps {
   aspect?: number;
   /** Dimensões finais da imagem cropada (canvas). Quando omitido, usa as pixels do crop. */
   targetSize?: { width: number; height: number };
+  /** Formato de saída. PNG preserva transparência; JPEG é menor. Default: jpeg. */
+  outputFormat?: "image/jpeg" | "image/png";
 }
 
 const PhotoEditor = ({
@@ -23,6 +25,7 @@ const PhotoEditor = ({
   handleClose,
   aspect = 3 / 4,
   targetSize,
+  outputFormat = "image/jpeg",
 }: PhotoEditorProps) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -50,6 +53,7 @@ const PhotoEditor = ({
       photoUrl,
       croppedAreaPixels,
       targetSize,
+      outputFormat,
     );
     onConfirm(croppedImage);
   };

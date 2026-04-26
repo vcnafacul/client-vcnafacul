@@ -11,47 +11,16 @@ interface RichTextRendererProps {
   content: string;
   contentFormat?: "plain" | "markdown";
   className?: string;
+  fetchAsset?: (key: string, token: string) => Promise<Blob>;
 }
 
 const ASSET_PROTOCOL = "asset://";
-
-const components: Components = {
-  img: ({ src, alt, width, height, ...props }) => {
-    const w = width ? Number(width) : undefined;
-    const h = height ? Number(height) : undefined;
-    const sizeStyle: React.CSSProperties | undefined =
-      w && h
-        ? { width: `${w}px`, height: `${h}px`, maxWidth: "100%" }
-        : undefined;
-
-    if (src?.startsWith(ASSET_PROTOCOL)) {
-      const assetId = src.slice(ASSET_PROTOCOL.length);
-      return (
-        <AssetImage
-          assetId={assetId}
-          alt={alt || ""}
-          className="max-w-full rounded"
-          width={w}
-          height={h}
-        />
-      );
-    }
-    return (
-      <img
-        src={src}
-        alt={alt}
-        className="max-w-full rounded"
-        style={sizeStyle}
-        {...props}
-      />
-    );
-  },
-};
 
 export function RichTextRenderer({
   content,
   contentFormat = "plain",
   className = "",
+  fetchAsset,
 }: RichTextRendererProps) {
   if (!content) {
     return <span className="text-gray-400">Sem texto</span>;
@@ -62,6 +31,40 @@ export function RichTextRenderer({
       <p className={`whitespace-pre-wrap ${className}`}>{content}</p>
     );
   }
+
+  const components: Components = {
+    img: ({ src, alt, width, height, ...props }) => {
+      const w = width ? Number(width) : undefined;
+      const h = height ? Number(height) : undefined;
+      const sizeStyle: React.CSSProperties | undefined =
+        w && h
+          ? { width: `${w}px`, height: `${h}px`, maxWidth: "100%" }
+          : undefined;
+
+      if (src?.startsWith(ASSET_PROTOCOL)) {
+        const assetId = src.slice(ASSET_PROTOCOL.length);
+        return (
+          <AssetImage
+            assetId={assetId}
+            alt={alt || ""}
+            className="max-w-full rounded"
+            width={w}
+            height={h}
+            fetchAsset={fetchAsset}
+          />
+        );
+      }
+      return (
+        <img
+          src={src}
+          alt={alt}
+          className="max-w-full rounded"
+          style={sizeStyle}
+          {...props}
+        />
+      );
+    },
+  };
 
   return (
     <div className={`prose prose-sm max-w-none ${className}`}>

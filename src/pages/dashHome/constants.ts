@@ -2,7 +2,7 @@
 // Ajuste aqui para alterar em todos os modals de upload.
 export const HOME_IMAGE_ASPECT = {
   feature: 16 / 9,
-  supporter: 3 / 1,
+  supporter: 1,
   aboutThumbnail: 4 / 3,
 } as const;
 
@@ -10,6 +10,6 @@ export const HOME_IMAGE_ASPECT = {
 // independente do arquivo original escolhido pelo admin.
 export const HOME_IMAGE_SIZE = {
   feature: { width: 1280, height: 720 },
-  supporter: { width: 900, height: 300 },
+  supporter: { width: 600, height: 600 },
   aboutThumbnail: { width: 1280, height: 960 },
 } as const;

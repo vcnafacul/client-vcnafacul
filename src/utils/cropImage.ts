@@ -1,7 +1,10 @@
+type OutputFormat = "image/jpeg" | "image/png";
+
 const getCroppedImg = async (
   imageSrc: string,
   pixelCrop: { x: number; y: number; width: number; height: number },
-  target?: { width: number; height: number }
+  target?: { width: number; height: number },
+  format: OutputFormat = "image/jpeg"
 ): Promise<File> => {
   const image = new Image();
   image.src = imageSrc;
@@ -30,10 +33,13 @@ const getCroppedImg = async (
     outHeight
   );
 
+  const ext = format === "image/png" ? "png" : "jpg";
   return new Promise<File>((resolve) => {
     canvas.toBlob((blob) => {
-      resolve(new File([blob!], "cropped-image.jpg", { type: "image/jpeg" }));
-    }, "image/jpeg");
+      resolve(
+        new File([blob!], `cropped-image.${ext}`, { type: format }),
+      );
+    }, format);
   });
 };
 

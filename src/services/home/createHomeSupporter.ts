@@ -3,7 +3,7 @@ import fetchWrapper from "../../utils/fetchWrapper";
 import { homeSupporters } from "../urls";
 
 export async function createHomeSupporter(
-  payload: { name: string; link: string },
+  payload: { name: string; link: string; description?: string | null },
   token: string,
 ): Promise<HomeSupporter> {
   const res = await fetchWrapper(homeSupporters, {

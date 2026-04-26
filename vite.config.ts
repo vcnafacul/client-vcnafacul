@@ -20,4 +20,14 @@ export default defineConfig({
   optimizeDeps: {
     include: ["pdfmake/build/pdfmake", "pdfmake/build/vfs_fonts"],
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          gsap: ["gsap", "@gsap/react"],
+          motion: ["motion"],
+        },
+      },
+    },
+  },
 });
