@@ -2,6 +2,7 @@
 /** @type {import('tailwindcss').Config} */
 
 import TailwindScrollbarHide from 'tailwind-scrollbar-hide'
+import TailwindTypography from '@tailwindcss/typography'
 
 export default {
 	darkMode: ["class"],
@@ -148,6 +149,7 @@ export default {
     },
 	plugins: [
 		TailwindScrollbarHide,
+		TailwindTypography,
 		// eslint-disable-next-line no-undef
 		require("tailwindcss-animate")
 	],
