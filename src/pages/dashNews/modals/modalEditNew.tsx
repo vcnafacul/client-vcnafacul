@@ -24,8 +24,20 @@ function todayDateString(): string {
 
 interface ModalEditNewProps {
   news: News | null;
-  create: (session: string, title: string, file: any, expireAt?: string) => void;
-  update?: (id: string, session: string, title: string, expireAt?: string) => void;
+  create: (
+    title: string,
+    file: any,
+    options: { description?: string; destaque: boolean; expireAt?: string }
+  ) => void;
+  update?: (
+    id: string,
+    options: {
+      title: string;
+      description: string | null;
+      destaque: boolean;
+      expireAt?: string;
+    }
+  ) => void;
   deleteFunc: (id: string) => void;
   isOpen: boolean;
   handleClose: () => void;
@@ -41,7 +53,8 @@ function ModalEditNew({
 }: ModalEditNewProps) {
   const [arrayBuffer, setArrayBufer] = useState<ArrayBuffer>();
   const [upload, setUpload] = useState<boolean>(news ? true : false);
-  const [session, setSession] = useState<string>(news ? news.session : "");
+  const [destaque, setDestaque] = useState<boolean>(news?.destaque ?? false);
+  const [description, setDescription] = useState<string>(news?.description ?? "");
   const [title, setTitle] = useState<string>(news ? news.title : "");
   const [expireAt, setExpireAt] = useState<string>(
     toDateInputValue(news?.expireAt ?? "")
@@ -52,10 +65,11 @@ function ModalEditNew({
   const minDate = todayDateString();
 
   useEffect(() => {
-    setSession(news ? news.session : "");
+    setDestaque(news?.destaque ?? false);
+    setDescription(news?.description ?? "");
     setTitle(news ? news.title : "");
     setExpireAt(toDateInputValue(news?.expireAt ?? ""));
-  }, [news?.id, news?.session, news?.title, news?.expireAt]);
+  }, [news?.id, news?.title, news?.destaque, news?.description, news?.expireAt]);
 
   const hasPreview = !!(news?.fileName || (upload && arrayBuffer));
 
@@ -75,9 +89,18 @@ function ModalEditNew({
 
   const handleSave = () => {
     if (isEditing && update) {
-      update(news.id, session, title, expireAt || undefined);
-    } else if (upload && !!session && !!title) {
-      create(session, title, uploadFile, expireAt || undefined);
+      update(news.id, {
+        title,
+        description: description.trim() || null,
+        destaque,
+        expireAt: expireAt || undefined,
+      });
+    } else if (upload && !!title) {
+      create(title, uploadFile, {
+        description: description.trim() || undefined,
+        destaque,
+        expireAt: expireAt || undefined,
+      });
     }
   };
 
@@ -106,20 +129,21 @@ function ModalEditNew({
         <div className="px-6 py-4 shrink-0">
           <div className="flex gap-4 flex-wrap">
             <div className="flex-1 min-w-[200px] flex flex-col gap-1">
-              <label htmlFor="session" className="text-sm text-gray-600">
-                Seção
+              <label htmlFor="destaque" className="text-sm text-gray-600">
+                Destaque
               </label>
-              <input
-                id="session"
-                type="text"
-                disabled={isEditing}
-                value={session}
-                onChange={(e) => setSession(e.target.value)}
-                placeholder="Seção"
-                className={inputBaseClass}
-              />
+              <label className="inline-flex items-center gap-2 mt-2">
+                <input
+                  id="destaque"
+                  type="checkbox"
+                  checked={destaque}
+                  onChange={(e) => setDestaque(e.target.checked)}
+                  className="h-4 w-4"
+                />
+                <span className="text-sm">Marcar como novidade em destaque</span>
+              </label>
               <span className="text-xs text-gray-500 min-h-[1rem]">
-                {" "}
+                Apenas uma novidade pode estar em destaque por vez.
               </span>
             </div>
             <div className="flex-1 min-w-[200px] flex flex-col gap-1">
@@ -129,7 +153,6 @@ function ModalEditNew({
               <input
                 id="title"
                 type="text"
-                disabled={isEditing}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Título"
@@ -157,6 +180,25 @@ function ModalEditNew({
               </span>
             </div>
           </div>
+        </div>
+
+        {/* Description textarea */}
+        <div className="px-6 pb-2 shrink-0">
+          <label htmlFor="description" className="text-sm text-gray-600">
+            Descrição (opcional, máx 280 caracteres)
+          </label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value.slice(0, 280))}
+            maxLength={280}
+            rows={3}
+            placeholder="Aparece no card destaque, abaixo do título"
+            className={inputBaseClass + " resize-none"}
+          />
+          <span className="text-xs text-gray-500">
+            {description.length}/280
+          </span>
         </div>
 
         {/* Upload (only for new) */}
