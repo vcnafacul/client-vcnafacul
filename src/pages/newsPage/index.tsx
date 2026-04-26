@@ -5,6 +5,8 @@ import NewsSelector from "../../components/organisms/newsSelector";
 import HeroTemplate from "../../components/templates/heroTemplate";
 import { News } from "../../dtos/news/news";
 import { getNews } from "../../services/news/getNews";
+import { getNewsAssetImage } from "../../services/news/getNewsAssetImage";
+import RichTextRenderer from "../../components/atoms/richTextRenderer/RichTextRenderer";
 import NewContent from "./newContent";
 
 function NewsPage() {
@@ -117,7 +119,15 @@ function NewsPage() {
                 style={{ opacity: isExiting ? 0 : 1 }}
                 onTransitionEnd={handleTransitionEnd}
               >
-                <NewContent fileKey={displayNews?.fileName ?? ""} />
+                {displayNews?.contentType === 'text' ? (
+                  <RichTextRenderer
+                    content={displayNews.body ?? ""}
+                    contentFormat="markdown"
+                    fetchAsset={getNewsAssetImage}
+                  />
+                ) : (
+                  <NewContent fileKey={displayNews?.fileName ?? ""} />
+                )}
               </div>
             </div>
           </div>
