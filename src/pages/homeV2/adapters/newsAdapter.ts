@@ -6,20 +6,13 @@ export type NewsCategory = "DESTAQUE" | "NOTÍCIA" | "EVENTO" | "PARCERIA";
 export interface NewsItem {
   id: string;
   title: string;
+  description?: string;
   category: NewsCategory;
   publishedAt?: string;
   href: string;
 }
 
 export const newsFallback: NewsItem[] = [];
-
-function inferCategory(session: string | undefined | null): NewsCategory {
-  const t = (session ?? "").toString().toUpperCase();
-  if (t.includes("DESTAQUE")) return "DESTAQUE";
-  if (t.includes("EVENTO")) return "EVENTO";
-  if (t.includes("PARCEIR")) return "PARCERIA";
-  return "NOTÍCIA";
-}
 
 function formatPt(date: Date | string | undefined): string | undefined {
   if (!date) return undefined;
@@ -30,23 +23,35 @@ function formatPt(date: Date | string | undefined): string | undefined {
 
 export async function fetchNews(): Promise<NewsItem[]> {
   const res = await getNews();
-  // Handle both Paginate<News> and plain News[] shapes
   const items: News[] = Array.isArray(res)
     ? (res as News[])
     : ((res as { data?: News[] })?.data ?? []);
+
   const now = Date.now();
-  return items
+  const visible = items
     .filter((n) => n.actived !== false)
     .filter((n) => {
       if (!n.expireAt) return true;
       const exp = new Date(n.expireAt).getTime();
       return Number.isNaN(exp) || exp >= now;
-    })
-    .map((n) => ({
+    });
+
+  const sorted = [...visible].sort((a, b) => {
+    if (a.destaque === b.destaque) return 0;
+    return a.destaque ? -1 : 1;
+  });
+
+  const hasExplicitDestaque = sorted.some((n) => n.destaque);
+
+  return sorted.map((n, idx) => {
+    const isFeatured = n.destaque || (!hasExplicitDestaque && idx === 0);
+    return {
       id: String(n.id),
       title: n.title,
-      category: inferCategory(n.session),
+      description: n.description ?? undefined,
+      category: isFeatured ? "DESTAQUE" : "NOTÍCIA",
       publishedAt: formatPt(n.createdAt),
       href: "/novidades",
-    }));
+    };
+  });
 }
