@@ -15,9 +15,9 @@ import { SupporterBalloon } from "./SupporterBalloon";
 
 const LOGO_CLASS =
   "w-[140px] h-[140px] object-contain " +
-  "grayscale opacity-70 " +
+  "opacity-80 " +
   "transition-all duration-300 ease-out " +
-  "hover:grayscale-0 hover:opacity-100 hover:-translate-y-1 " +
+  "hover:opacity-100 hover:-translate-y-1 " +
   "hover:[filter:drop-shadow(0_8px_12px_rgb(0_0_0_/_0.18))]";
 
 const TRIGGER_CLASS =
