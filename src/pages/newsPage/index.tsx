@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
 import NewsSelector from "../../components/organisms/newsSelector";
-import HeroTemplate from "../../components/templates/heroTemplate";
+import BaseTemplate from "../../components/templates/baseTemplate";
 import { News } from "../../dtos/news/news";
 import { getNews } from "../../services/news/getNews";
 import { getNewsAssetImage } from "../../services/news/getNewsAssetImage";
@@ -46,7 +46,7 @@ function NewsPage() {
 
   if (loading) {
     return (
-      <HeroTemplate headerPosition="fixed">
+      <BaseTemplate solid headerShadow>
         <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[500px] flex items-center justify-center">
           <div className="container mx-auto px-3 sm:px-4 text-center">
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 sm:p-12 max-w-lg mx-auto animate-pulse">
@@ -56,13 +56,13 @@ function NewsPage() {
           </div>
           <TriangleGreen className="absolute w-[500px] -right-[250px] bottom-0 -z-10" />
         </div>
-      </HeroTemplate>
+      </BaseTemplate>
     );
   }
 
   if (news.length === 0) {
     return (
-      <HeroTemplate headerPosition="fixed">
+      <BaseTemplate solid headerShadow>
         <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[500px] flex items-center justify-center">
           <div className="container mx-auto px-3 sm:px-4 text-center">
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 sm:p-12 max-w-lg mx-auto">
@@ -76,12 +76,12 @@ function NewsPage() {
           </div>
           <TriangleGreen className="absolute w-[500px] -right-[250px] bottom-0 -z-10" />
         </div>
-      </HeroTemplate>
+      </BaseTemplate>
     );
   }
 
   return (
-    <HeroTemplate headerPosition="fixed">
+    <BaseTemplate solid headerShadow>
       <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[1000px]">
         <div className="container mx-auto px-3 sm:px-4">
           <div className="flex flex-col lg:flex-row gap-8 items-start">
@@ -135,7 +135,7 @@ function NewsPage() {
 
         <TriangleGreen className="absolute w-[500px] -right-[250px] bottom-0 -z-10" />
       </div>
-    </HeroTemplate>
+    </BaseTemplate>
   );
 }
 
