@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
 import NewsSelector from "../../components/organisms/newsSelector";
 import BaseTemplate from "../../components/templates/baseTemplate";
 import { News } from "../../dtos/news/news";
@@ -44,17 +43,10 @@ function NewsPage() {
     setIsExiting(false);
   }, [isExiting, indexSelect]);
 
-  const Triangle = (
-    <TriangleGreen
-      className="fixed w-[500px] -left-[250px] top-0 -z-10 pointer-events-none scale-x-[-1]"
-    />
-  );
-
   if (loading) {
     return (
       <BaseTemplate solid headerShadow>
         <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[500px] flex items-center justify-center">
-          {Triangle}
           <div className="container mx-auto px-3 sm:px-4 text-center">
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 sm:p-12 max-w-lg mx-auto animate-pulse">
               <div className="h-6 bg-gray-200 rounded w-3/4 mx-auto mb-4" />
@@ -70,7 +62,6 @@ function NewsPage() {
     return (
       <BaseTemplate solid headerShadow>
         <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[500px] flex items-center justify-center">
-          {Triangle}
           <div className="container mx-auto px-3 sm:px-4 text-center">
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 sm:p-12 max-w-lg mx-auto">
               <h2 className="text-xl sm:text-2xl font-bold text-grey mb-2">
@@ -89,7 +80,6 @@ function NewsPage() {
   return (
     <BaseTemplate solid headerShadow>
       <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[1000px]">
-        {Triangle}
         <div className="container mx-auto px-3 sm:px-4">
           <div className="flex flex-col lg:flex-row gap-8 items-start">
             {/* Left: Vertical selector */}
