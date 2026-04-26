@@ -3,8 +3,9 @@ import fetchWrapper from "../../utils/fetchWrapper";
 import { news } from "../urls";
 
 export interface UpdateNewsPayload {
-  session?: string;
   title?: string;
+  description?: string | null;
+  destaque?: boolean;
   expire_at?: string | null;
 }
 
