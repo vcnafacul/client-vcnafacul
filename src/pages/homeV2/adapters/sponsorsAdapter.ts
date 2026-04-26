@@ -6,6 +6,7 @@ export interface Sponsor {
   logoUrl: string;
   alt: string;
   link: string;
+  description?: string | null;
 }
 
 export const sponsorsFallback: Sponsor[] = supportersFallback.sponsors
@@ -27,5 +28,6 @@ export async function fetchSponsors(): Promise<Sponsor[]> {
       : "",
     alt: s.name,
     link: s.link,
+    description: s.description ?? null,
   }));
 }
