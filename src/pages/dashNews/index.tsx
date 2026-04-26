@@ -56,17 +56,39 @@ function DashNews() {
 
   const create = (
     title: string,
-    file: any,
-    options: { description?: string; destaque: boolean; expireAt?: string }
+    options: {
+      description?: string;
+      destaque: boolean;
+      expireAt?: string;
+      contentType: 'file' | 'text';
+      body?: string;
+      file?: File | null;
+    }
   ) => {
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("destaque", String(options.destaque));
-    if (options.description) formData.append("description", options.description);
-    formData.append("file", file, title + ".docx");
-    if (options.expireAt) formData.append("expire_at", options.expireAt);
+    const promise =
+      options.contentType === 'text'
+        ? createNews(
+            {
+              title,
+              contentType: 'text',
+              body: options.body!,
+              description: options.description,
+              destaque: options.destaque,
+              expire_at: options.expireAt,
+            },
+            token
+          )
+        : (() => {
+            const fd = new FormData();
+            fd.append("title", title);
+            fd.append("destaque", String(options.destaque));
+            if (options.description) fd.append("description", options.description);
+            fd.append("file", options.file as File, title + ".docx");
+            if (options.expireAt) fd.append("expire_at", options.expireAt);
+            return createNews(fd, token);
+          })();
 
-    createNews(formData, token)
+    promise
       .then((res) => {
         setNews([res, ...news]);
         modals.modalEdit.close();
@@ -86,6 +108,7 @@ function DashNews() {
       description: string | null;
       destaque: boolean;
       expireAt?: string;
+      body?: string;
     }
   ) => {
     const payload: UpdateNewsPayload = {
@@ -95,6 +118,9 @@ function DashNews() {
     };
     if (options.expireAt !== undefined) {
       payload.expire_at = options.expireAt || null;
+    }
+    if (options.body !== undefined) {
+      payload.body = options.body;
     }
 
     updateNews(id, payload, token)

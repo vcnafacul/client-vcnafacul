@@ -6,6 +6,7 @@ export interface UpdateNewsPayload {
   title?: string;
   description?: string | null;
   destaque?: boolean;
+  body?: string;
   expire_at?: string | null;
 }
 
