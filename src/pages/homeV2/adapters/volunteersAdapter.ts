@@ -4,7 +4,7 @@ export interface Volunteer {
   id: string | number;
   name: string;
   role: string;
-  imageKey: string; // S3 key, not URL
+  imageKey: string | null;
 }
 
 export const volunteersFallback: Volunteer[] = [];
@@ -12,11 +12,11 @@ export const volunteersFallback: Volunteer[] = [];
 export async function fetchVolunteers(): Promise<Volunteer[]> {
   const res = await getVolunteers();
   return (res ?? [])
-    .filter((v) => v.actived !== false && v.image)
+    .filter((v) => v.actived !== false)
     .map((v, i) => ({
       id: i,
       name: v.name,
       role: v.description,
-      imageKey: v.image,
+      imageKey: v.image || null,
     }));
 }

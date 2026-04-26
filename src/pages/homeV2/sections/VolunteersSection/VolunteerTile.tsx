@@ -21,20 +21,23 @@ export function VolunteerTile({
     gridRow: `span ${span.rowSpan}`,
   };
   const [photoUrl, setPhotoUrl] = useState<string | undefined>(undefined);
+  const hasImage = !!volunteer.imageKey;
 
   useEffect(() => {
+    if (!volunteer.imageKey) return;
+    const imageKey = volunteer.imageKey;
     let cancelled = false;
     let blobUrl: string | undefined;
     (async () => {
       try {
-        const blob = await getPhotoCollaborator(volunteer.imageKey);
+        const blob = await getPhotoCollaborator(imageKey);
         if (cancelled) return;
         blobUrl = URL.createObjectURL(blob);
         setPhotoUrl(blobUrl);
       } catch {
         if (cancelled) return;
         if (VITE_FTP_PROFILE) {
-          setPhotoUrl(`${VITE_FTP_PROFILE}/${volunteer.imageKey}`);
+          setPhotoUrl(`${VITE_FTP_PROFILE}/${imageKey}`);
         }
       }
     })();
@@ -52,11 +55,12 @@ export function VolunteerTile({
       transition={{ duration: 0.5, delay: 0.04 * index, ease: "easeOut" }}
       style={forceUniformOnMobile ? undefined : desktopStyle}
       className={[
-        "relative overflow-hidden rounded-2xl group bg-white",
+        "relative overflow-hidden rounded-2xl group",
+        hasImage ? "bg-white" : "bg-gray-300",
         forceUniformOnMobile ? "aspect-square" : "min-h-[120px]",
       ].join(" ")}
     >
-      {photoUrl ? (
+      {hasImage && photoUrl && (
         <img
           src={photoUrl}
           alt={volunteer.name}
@@ -64,20 +68,28 @@ export function VolunteerTile({
           loading="lazy"
           decoding="async"
         />
-      ) : (
-        <div className="w-full h-full bg-gradient-to-br from-[#da005a] to-[#37d6b5]" />
       )}
-      <div
-        className={[
-          "absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 to-transparent text-white",
-          forceUniformOnMobile
-            ? ""
-            : "translate-y-full group-hover:translate-y-0 transition-transform duration-300",
-        ].join(" ")}
-      >
-        <p className="text-sm font-semibold">{volunteer.name}</p>
-        <p className="text-xs opacity-85">{volunteer.role}</p>
-      </div>
+      {!hasImage && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-3 text-gray-700">
+          <p className="text-sm font-semibold leading-tight">
+            {volunteer.name}
+          </p>
+          <p className="text-xs opacity-80 mt-1">{volunteer.role}</p>
+        </div>
+      )}
+      {hasImage && (
+        <div
+          className={[
+            "absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 to-transparent text-white",
+            forceUniformOnMobile
+              ? ""
+              : "translate-y-full group-hover:translate-y-0 transition-transform duration-300",
+          ].join(" ")}
+        >
+          <p className="text-sm font-semibold">{volunteer.name}</p>
+          <p className="text-xs opacity-85">{volunteer.role}</p>
+        </div>
+      )}
     </motion.div>
   );
 }
