@@ -172,7 +172,7 @@ export default function ModalEditFeature({
             }}
           />
           <span className="text-xs text-gray-500">
-            Proporção: 16:9 (a imagem será recortada).
+            Proporção: 16:9. Salvo como PNG — fundo transparente é preservado.
           </span>
         </div>
         {pendingCrop && (
@@ -181,6 +181,7 @@ export default function ModalEditFeature({
             photo={pendingCrop}
             aspect={HOME_IMAGE_ASPECT.feature}
             targetSize={HOME_IMAGE_SIZE.feature}
+            outputFormat="image/png"
             handleClose={() => setPendingCrop(null)}
             onConfirm={(cropped) => {
               setFile(cropped);
