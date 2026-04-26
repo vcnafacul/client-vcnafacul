@@ -68,7 +68,7 @@ function SponsorWithBalloon({ sponsor }: { sponsor: Sponsor }) {
           <SponsorLogo sponsor={sponsor} />
         </button>
       </PopoverTrigger>
-      <PopoverContent side="top" align="center" className="w-96">
+      <PopoverContent side="top" align="center" className="w-fit max-w-96">
         <SupporterBalloon sponsor={sponsor} variant="popover" />
       </PopoverContent>
     </Popover>
