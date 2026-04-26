@@ -44,9 +44,14 @@ function NewsPage() {
     setIsExiting(false);
   }, [isExiting, indexSelect]);
 
+  const Triangle = (
+    <TriangleGreen className="fixed w-[500px] -right-[250px] bottom-0 -z-10 pointer-events-none" />
+  );
+
   if (loading) {
     return (
       <BaseTemplate solid headerShadow>
+        {Triangle}
         <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[500px] flex items-center justify-center">
           <div className="container mx-auto px-3 sm:px-4 text-center">
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 sm:p-12 max-w-lg mx-auto animate-pulse">
@@ -54,7 +59,6 @@ function NewsPage() {
               <div className="h-4 bg-gray-100 rounded w-full" />
             </div>
           </div>
-          <TriangleGreen className="absolute w-[500px] -right-[250px] bottom-0 -z-10" />
         </div>
       </BaseTemplate>
     );
@@ -63,6 +67,7 @@ function NewsPage() {
   if (news.length === 0) {
     return (
       <BaseTemplate solid headerShadow>
+        {Triangle}
         <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[500px] flex items-center justify-center">
           <div className="container mx-auto px-3 sm:px-4 text-center">
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 sm:p-12 max-w-lg mx-auto">
@@ -74,7 +79,6 @@ function NewsPage() {
               </p>
             </div>
           </div>
-          <TriangleGreen className="absolute w-[500px] -right-[250px] bottom-0 -z-10" />
         </div>
       </BaseTemplate>
     );
@@ -82,6 +86,7 @@ function NewsPage() {
 
   return (
     <BaseTemplate solid headerShadow>
+      {Triangle}
       <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[1000px]">
         <div className="container mx-auto px-3 sm:px-4">
           <div className="flex flex-col lg:flex-row gap-8 items-start">
@@ -132,8 +137,6 @@ function NewsPage() {
             </div>
           </div>
         </div>
-
-        <TriangleGreen className="absolute w-[500px] -right-[250px] bottom-0 -z-10" />
       </div>
     </BaseTemplate>
   );
