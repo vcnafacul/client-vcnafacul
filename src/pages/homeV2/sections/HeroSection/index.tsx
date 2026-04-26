@@ -11,7 +11,7 @@ export const HeroSection: SectionComponent<HeroData> = ({ data }) => {
   return (
     <div
       ref={sectionRef as never}
-      className="relative min-h-[92vh] flex flex-col justify-center"
+      className="relative min-h-screen flex flex-col justify-center"
     >
       <HeroBlobs sectionRef={sectionRef} />
       <div className="container mx-auto px-4 relative z-10 py-24">
