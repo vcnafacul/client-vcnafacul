@@ -185,7 +185,7 @@ export default function ModalEditSupporter({
             }}
           />
           <span className="text-xs text-gray-500">
-            Proporção: 3:1 (o logo será recortado).
+            Proporção: 1:1 (quadrado). Salvo como PNG — fundo transparente é preservado.
           </span>
         </div>
         {pendingCrop && (
@@ -194,6 +194,7 @@ export default function ModalEditSupporter({
             photo={pendingCrop}
             aspect={HOME_IMAGE_ASPECT.supporter}
             targetSize={HOME_IMAGE_SIZE.supporter}
+            outputFormat="image/png"
             handleClose={() => setPendingCrop(null)}
             onConfirm={(cropped) => {
               setFile(cropped);

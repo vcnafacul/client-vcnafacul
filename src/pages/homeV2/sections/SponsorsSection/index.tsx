@@ -23,7 +23,7 @@ export const SponsorsSection: SectionComponent<Sponsor[]> = ({ data }) => {
               rel="noopener noreferrer"
               title={s.alt}
               className="
-                flex-none w-[160px] h-[90px] bg-white rounded-xl
+                flex-none w-[140px] h-[140px] bg-white rounded-xl
                 border border-black/5 shadow-sm
                 flex items-center justify-center
                 grayscale opacity-70
@@ -35,7 +35,7 @@ export const SponsorsSection: SectionComponent<Sponsor[]> = ({ data }) => {
               <img
                 src={s.logoUrl}
                 alt={s.alt}
-                className="max-w-[75%] max-h-[60%] object-contain"
+                className="max-w-[80%] max-h-[80%] object-contain"
               />
             </a>
           ))}
