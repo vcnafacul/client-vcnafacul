@@ -129,13 +129,19 @@ export function ShowInfo({
     >
       <div className="p-4 rounded-md overflow-y-auto scrollbar-hide h-4/5 sm:h-fit">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
-          {collaborator.photo && (
+          {(collaborator.photo || canEditPhotos) && (
             <div className="w-56 h-40 flex flex-col items-center">
-              <img
-                className="rounded-full object-cover shadow-md shadow-stone-500 w-40 h-40"
-                src={photoUrl || `${VITE_FTP_PROFILE}${collaborator.photo}`}
-                alt={collaborator.name}
-              />
+              {collaborator.photo ? (
+                <img
+                  className="rounded-full object-cover shadow-md shadow-stone-500 w-40 h-40"
+                  src={photoUrl || `${VITE_FTP_PROFILE}${collaborator.photo}`}
+                  alt={collaborator.name}
+                />
+              ) : (
+                <div className="rounded-full shadow-md shadow-stone-500 w-40 h-40 bg-zinc-200 flex items-center justify-center text-zinc-500 text-xs text-center px-2">
+                  Sem foto
+                </div>
+              )}
               {canEditPhotos && (
                 <>
                   <input
@@ -152,7 +158,7 @@ export function ShowInfo({
                     className="mt-2 w-40 font-light"
                     disabled={photoUploading}
                   >
-                    Trocar foto
+                    {collaborator.photo ? "Trocar foto" : "Adicionar foto"}
                   </Button>
                 </>
               )}
