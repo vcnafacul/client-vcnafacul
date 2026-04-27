@@ -248,10 +248,13 @@ function Supporters() {
               `Erro ao carregar foto do colaborador ${volunteer.name}:`,
               error
             );
-            // Fallback para a URL do FTP caso falhe
-            photoUrls[
-              volunteer.image
-            ] = `${VITE_FTP_PROFILE}/${volunteer.image}`;
+            // Legacy keys (sem prefix) ainda no FTP. Novos uploads ficam só
+            // no R2 — sem fallback.
+            if (!volunteer.image.includes("/")) {
+              photoUrls[
+                volunteer.image
+              ] = `${VITE_FTP_PROFILE}/${volunteer.image}`;
+            }
           }
         }
       }

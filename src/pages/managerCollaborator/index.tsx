@@ -6,7 +6,10 @@ import { changeActive } from "@/services/prepCourse/collaborator/change-active";
 import { changeDescription } from "@/services/prepCourse/collaborator/change-description";
 import { getCollaborator } from "@/services/prepCourse/collaborator/get-collaborator";
 import { getCollaboratorFrentesBatch } from "@/services/prepCourse/collaborator/get-collaborator-frentes-batch";
-import { getPhotoCollaborator } from "@/services/prepCourse/collaborator/get-photo";
+import {
+  getPhotoCollaborator,
+  isLegacyPhotoKey,
+} from "@/services/prepCourse/collaborator/get-photo";
 import { getRoles } from "@/services/prepCourse/getRoles";
 import { updateUserRole } from "@/services/roles/updateUserRole";
 import { useAuthStore } from "@/store/auth";
@@ -116,12 +119,15 @@ export default function ManagerCollaborator() {
   const loadCollaboratorPhoto = async (photoKey: string) => {
     try {
       const blob = await getPhotoCollaborator(photoKey);
-      const url = URL.createObjectURL(blob);
-      return url;
+      return URL.createObjectURL(blob);
     } catch (error) {
       console.error(`Erro ao carregar foto do colaborador:`, error);
-      // Fallback para a URL do FTP caso falhe
-      return `${VITE_FTP_PROFILE}${photoKey}`;
+      // Legacy keys (sem prefix /) ainda podem estar no FTP. Novos uploads
+      // (com prefix collaborators/) vivem só no R2 — sem fallback FTP.
+      if (isLegacyPhotoKey(photoKey)) {
+        return `${VITE_FTP_PROFILE}${photoKey}`;
+      }
+      return "";
     }
   };
 
