@@ -265,6 +265,7 @@ export default function ManagerCollaborator() {
         }
         handleActive={handleChangeActive}
         handleDescription={handleDescription}
+        onPhotoUpdated={handlePhotoUpdated}
         openUpdateRole={() => {
           if (roles.length === 0) {
             toast.error("Não há funções cadastradas");
@@ -319,6 +320,24 @@ export default function ManagerCollaborator() {
       });
       setCollaborator(collaboratorAux);
     });
+  };
+
+  const handlePhotoUpdated = async (
+    collaboratorId: string,
+    newPhotoKey: string,
+  ) => {
+    setCollaborator((prev) =>
+      prev.map((c) =>
+        c.id === collaboratorId ? { ...c, photo: newPhotoKey } : c,
+      ),
+    );
+    const url = await loadCollaboratorPhoto(newPhotoKey);
+    setCollaboratorPhotos((prev) => ({ ...prev, [newPhotoKey]: url }));
+    setCollaboratorSelected((prev) =>
+      prev && prev.id === collaboratorId
+        ? { ...prev, photo: newPhotoKey }
+        : prev,
+    );
   };
 
   const handleDescription = async (id: string, description: string) => {
