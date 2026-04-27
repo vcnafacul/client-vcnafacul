@@ -1,5 +1,5 @@
-import fetchWrapper from "../../utils/fetchWrapper";
-import { collaborator } from "../../urls";
+import { collaborator } from "@/services/urls";
+import fetchWrapper from "@/utils/fetchWrapper";
 
 export async function adminUploadPhotoCollaborator(
   collaboratorId: string,
