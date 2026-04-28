@@ -219,8 +219,10 @@ export function PartnerPrepInscriptionManager() {
       value={{
         title: dataInscription.title,
         entities: filteredInscriptions,
-        setEntities: (newList: Inscription[]) => {
+        setEntities: (action) => {
           setInscriptions((prev) => {
+            const newList =
+              typeof action === "function" ? action(prev) : action;
             const prevIds = new Set(prev.map((i) => i.id));
             const genuinelyNew = newList.filter((i) => !prevIds.has(i.id));
             return genuinelyNew.length > 0 ? [...prev, ...genuinelyNew] : prev;
