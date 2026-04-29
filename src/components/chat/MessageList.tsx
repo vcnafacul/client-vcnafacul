@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { listenMessages, type MessageDoc } from "@/services/firebase/messages";
+import { useChatContext } from "@/context/ChatProvider";
 import { ChatMessage } from "./ChatMessage";
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export function MessageList({ conversationId, currentUserId }: Props) {
+  const { role } = useChatContext();
   const [messages, setMessages] = useState<MessageDoc[]>([]);
   const [hasSnapshot, setHasSnapshot] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -17,12 +19,19 @@ export function MessageList({ conversationId, currentUserId }: Props) {
   useEffect(() => {
     setMessages([]);
     setHasSnapshot(false);
-    const unsub = listenMessages(conversationId, (msgs) => {
-      setMessages(msgs);
-      setHasSnapshot(true);
-    });
+    // Estudante precisa filtrar por conversationUserId pra satisfazer security rule
+    // (Firestore exige query filtrada quando rule depende de campo da doc).
+    const studentFilter = role === "student" ? currentUserId : undefined;
+    const unsub = listenMessages(
+      conversationId,
+      (msgs) => {
+        setMessages(msgs);
+        setHasSnapshot(true);
+      },
+      studentFilter,
+    );
     return unsub;
-  }, [conversationId]);
+  }, [conversationId, role, currentUserId]);
 
   useEffect(() => {
     if (messages.length > 0) {
