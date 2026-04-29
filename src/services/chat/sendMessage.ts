@@ -17,7 +17,12 @@ export async function sendMessage(
     },
     body: JSON.stringify({ conversationId, content }),
   });
-  if (res.status === 429) throw new Error("Você está enviando muito rápido");
+  if (res.status === 429) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(
+      `Aguarde ${body.retryAfterSeconds ?? "alguns"} segundos antes de enviar novamente`,
+    );
+  }
   if (!res.ok) throw new Error("Falha ao enviar");
   return res.json();
 }
