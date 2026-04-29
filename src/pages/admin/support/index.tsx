@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ChatLayout } from "@/components/chat/ChatLayout";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useChatContext } from "@/context/ChatProvider";
+import { useTabTitleUnread } from "@/hooks/useTabTitleUnread";
 import { markRead } from "@/services/chat/markRead";
 import {
   listenSupportInbox,
@@ -25,6 +26,13 @@ export default function AdminSupportPage() {
     () => convs.find((c) => c.id === selectedId) ?? null,
     [convs, selectedId],
   );
+
+  const totalUnread = useMemo(
+    () => convs.reduce((acc, c) => acc + (c.unreadCountSupport ?? 0), 0),
+    [convs],
+  );
+
+  useTabTitleUnread(totalUnread);
 
   useEffect(() => {
     if (!jwt || !selected) return;
