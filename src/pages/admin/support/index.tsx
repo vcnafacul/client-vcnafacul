@@ -9,6 +9,7 @@ import {
   type ConversationDoc,
 } from "@/services/firebase/conversations";
 import { useAuthStore } from "@/store/auth";
+import { useChatStore } from "@/store/chatStore";
 import { ConversationListItem } from "./ConversationListItem";
 
 export default function AdminSupportPage() {
@@ -16,11 +17,13 @@ export default function AdminSupportPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const jwt = useAuthStore((s) => s.data.token);
   const { userId } = useChatContext();
+  const authed = useChatStore((s) => s.firebaseAuthed);
 
   useEffect(() => {
+    if (!authed) return;
     const unsub = listenSupportInbox(setConvs);
     return unsub;
-  }, []);
+  }, [authed]);
 
   const selected = useMemo(
     () => convs.find((c) => c.id === selectedId) ?? null,

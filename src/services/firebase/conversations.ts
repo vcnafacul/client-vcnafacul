@@ -30,14 +30,20 @@ export function listenStudentActiveConversation(
     where("status", "==", "open"),
     limit(1),
   );
-  return onSnapshot(q, (snap) => {
-    if (snap.empty) {
-      cb(null);
-    } else {
-      const d = snap.docs[0];
-      cb({ id: d.id, ...(d.data() as Omit<ConversationDoc, "id">) });
-    }
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      if (snap.empty) {
+        cb(null);
+      } else {
+        const d = snap.docs[0];
+        cb({ id: d.id, ...(d.data() as Omit<ConversationDoc, "id">) });
+      }
+    },
+    (err) => {
+      console.warn("[firestore listener]", err.code ?? err.message);
+    },
+  );
 }
 
 export function listenSupportInbox(
@@ -49,12 +55,18 @@ export function listenSupportInbox(
     orderBy("lastMessageAt", "desc"),
     limit(50),
   );
-  return onSnapshot(q, (snap) => {
-    cb(
-      snap.docs.map((d) => ({
-        id: d.id,
-        ...(d.data() as Omit<ConversationDoc, "id">),
-      })),
-    );
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      cb(
+        snap.docs.map((d) => ({
+          id: d.id,
+          ...(d.data() as Omit<ConversationDoc, "id">),
+        })),
+      );
+    },
+    (err) => {
+      console.warn("[firestore listener]", err.code ?? err.message);
+    },
+  );
 }

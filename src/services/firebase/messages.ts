@@ -27,12 +27,18 @@ export function listenMessages(
     where("conversationId", "==", conversationId),
     orderBy("createdAt", "asc"),
   );
-  return onSnapshot(q, (snap) => {
-    cb(
-      snap.docs.map((d) => ({
-        id: d.id,
-        ...(d.data() as Omit<MessageDoc, "id">),
-      })),
-    );
-  });
+  return onSnapshot(
+    q,
+    (snap) => {
+      cb(
+        snap.docs.map((d) => ({
+          id: d.id,
+          ...(d.data() as Omit<MessageDoc, "id">),
+        })),
+      );
+    },
+    (err) => {
+      console.warn("[firestore listener]", err.code ?? err.message);
+    },
+  );
 }

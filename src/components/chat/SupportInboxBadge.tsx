@@ -4,6 +4,7 @@ import { LuMessageSquare } from "react-icons/lu";
 import { UnreadBadge } from "@/components/chat/UnreadBadge";
 import { listenSupportInbox } from "@/services/firebase/conversations";
 import { DASH, DASH_SUPPORT } from "@/routes/path";
+import { useChatStore } from "@/store/chatStore";
 
 /**
  * Badge global de mensagens não lidas no inbox de suporte.
@@ -13,14 +14,16 @@ import { DASH, DASH_SUPPORT } from "@/routes/path";
  */
 export function SupportInboxBadge() {
   const [count, setCount] = useState(0);
+  const authed = useChatStore((s) => s.firebaseAuthed);
 
   useEffect(() => {
+    if (!authed) return;
     return listenSupportInbox((convs) => {
       setCount(
         convs.reduce((acc, c) => acc + (c.unreadCountSupport ?? 0), 0),
       );
     });
-  }, []);
+  }, [authed]);
 
   return (
     <Link
