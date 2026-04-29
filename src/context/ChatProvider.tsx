@@ -30,7 +30,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const unsubscribeRef = useRef<(() => void) | null>(null);
 
   const jwt = data?.token;
-  const isSupport = !!data?.permissao?.support_agent;
+  const isSupport = !!data?.permissao?.supportAgent;
 
   useEffect(() => {
     let cancelled = false;
