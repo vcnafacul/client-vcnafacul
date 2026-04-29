@@ -1,5 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { signInFirebase, signOutFirebase } from "@/services/firebase/auth";
 import { getFirebaseToken } from "@/services/chat/getFirebaseToken";
 import { listenStudentActiveConversation } from "@/services/firebase/conversations";
@@ -32,11 +39,20 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const jwt = data?.token;
   const isSupport = !!data?.permissao?.supportAgent;
 
+  const decodedId = useMemo(() => {
+    if (!jwt) return null;
+    try {
+      return jwtDecoded(jwt)?.user?.id ?? null;
+    } catch {
+      return null;
+    }
+  }, [jwt]);
+
   useEffect(() => {
     let cancelled = false;
     async function bootstrap() {
-      // Cleanup if logged out
-      if (!jwt) {
+      // Cleanup if logged out / no identity
+      if (!decodedId) {
         unsubscribeRef.current?.();
         unsubscribeRef.current = null;
         setAuthed(false);
@@ -47,17 +63,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      let decodedId: string | null = null;
       try {
-        const decoded = jwtDecoded(jwt);
-        decodedId = decoded?.user?.id ?? null;
-      } catch {
-        return;
-      }
-      if (!decodedId) return;
-
-      try {
-        const token = await getFirebaseToken(jwt);
+        // Read latest jwt from store inside the effect so we don't re-auth
+        // on every JWT rotation (fetchWrapper refresh) — only on identity
+        // change.
+        const currentJwt = useAuthStore.getState().data?.token;
+        if (!currentJwt) return;
+        const token = await getFirebaseToken(currentJwt);
         await signInFirebase(token);
         if (cancelled) return;
         setAuthed(true);
@@ -82,7 +94,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       unsubscribeRef.current?.();
       unsubscribeRef.current = null;
     };
-  }, [jwt, isSupport, setAuthed, setActive]);
+  }, [decodedId, isSupport, setAuthed, setActive]);
 
   return (
     <ChatContext.Provider value={{ role, userId }}>
