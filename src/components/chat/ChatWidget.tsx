@@ -14,12 +14,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useChatContext } from "@/context/ChatProvider";
 import { markRead } from "@/services/chat/markRead";
 import { openConversation } from "@/services/chat/openConversation";
@@ -104,29 +98,20 @@ export function ChatWidget() {
   }
 
   const button = (
-    <TooltipProvider delayDuration={200}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="default"
-            size="icon"
-            className="fixed bottom-6 right-6 rounded-full h-14 w-14 shadow-lg z-50"
-            onClick={handleClick}
-            aria-label="Precisa de ajuda?"
-          >
-            <TriangleAlert className="h-6 w-6" />
-            {(active?.unreadCountStudent ?? 0) > 0 && (
-              <span className="absolute -top-1 -right-1">
-                <UnreadBadge count={active?.unreadCountStudent ?? 0} />
-              </span>
-            )}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="left" sideOffset={8}>
-          Precisa de ajuda?
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Button
+      variant="default"
+      className="fixed bottom-6 right-6 rounded-full h-12 px-5 shadow-lg z-50 gap-2"
+      onClick={handleClick}
+      aria-label="Precisa de ajuda?"
+    >
+      <TriangleAlert className="h-5 w-5" />
+      <span className="font-medium">Precisa de ajuda?</span>
+      {(active?.unreadCountStudent ?? 0) > 0 && (
+        <span className="absolute -top-1 -right-1">
+          <UnreadBadge count={active?.unreadCountStudent ?? 0} />
+        </span>
+      )}
+    </Button>
   );
 
   const panel =
