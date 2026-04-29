@@ -7,6 +7,7 @@ import { PlatformRoutes } from "./routes/PlatformRoutes";
 import "./styles/normalize.css";
 import { GoogleMapsProvider } from "./components/molecules/googleMapsProvider/GoogleMapsProvider";
 import { ChatProvider } from "./context/ChatProvider";
+import { ChatWidget } from "./components/chat/ChatWidget";
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
             <div className="w-screen h-screen">
               <CookieBar />
               <PlatformRoutes />
+              <ChatWidget />
             </div>
           </ChatProvider>
         </BrowserRouter>
