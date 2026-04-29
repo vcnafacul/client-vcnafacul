@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LifeBuoy } from "lucide-react";
+import { TriangleAlert } from "lucide-react";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,12 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useChatContext } from "@/context/ChatProvider";
 import { markRead } from "@/services/chat/markRead";
 import { openConversation } from "@/services/chat/openConversation";
@@ -98,20 +104,29 @@ export function ChatWidget() {
   }
 
   const button = (
-    <Button
-      variant="default"
-      size="icon"
-      className="fixed bottom-6 right-6 rounded-full h-14 w-14 shadow-lg z-50"
-      onClick={handleClick}
-      aria-label="Falar com suporte"
-    >
-      <LifeBuoy className="h-6 w-6" />
-      {(active?.unreadCountStudent ?? 0) > 0 && (
-        <span className="absolute -top-1 -right-1">
-          <UnreadBadge count={active?.unreadCountStudent ?? 0} />
-        </span>
-      )}
-    </Button>
+    <TooltipProvider delayDuration={200}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="default"
+            size="icon"
+            className="fixed bottom-6 right-6 rounded-full h-14 w-14 shadow-lg z-50"
+            onClick={handleClick}
+            aria-label="Precisa de ajuda?"
+          >
+            <TriangleAlert className="h-6 w-6" />
+            {(active?.unreadCountStudent ?? 0) > 0 && (
+              <span className="absolute -top-1 -right-1">
+                <UnreadBadge count={active?.unreadCountStudent ?? 0} />
+              </span>
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="left" sideOffset={8}>
+          Precisa de ajuda?
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 
   const panel =
