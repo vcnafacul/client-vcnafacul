@@ -12,7 +12,7 @@ export default function SupportPage() {
   const active = useChatStore((s) => s.activeConversation);
   const { userId } = useChatContext();
   const jwt = useAuthStore((s) => s.data.token);
-  const [confirmOpen, setConfirmOpen] = useState(!active);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleConfirm() {
