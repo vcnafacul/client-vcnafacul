@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MessageCircle } from "lucide-react";
+import { LifeBuoy } from "lucide-react";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import {
@@ -105,7 +105,7 @@ export function ChatWidget() {
       onClick={handleClick}
       aria-label="Falar com suporte"
     >
-      <MessageCircle className="h-6 w-6" />
+      <LifeBuoy className="h-6 w-6" />
       {(active?.unreadCountStudent ?? 0) > 0 && (
         <span className="absolute -top-1 -right-1">
           <UnreadBadge count={active?.unreadCountStudent ?? 0} />
