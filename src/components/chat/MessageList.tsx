@@ -1,8 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { listenMessages } from "@/services/firebase/messages";
-import { useChatStore } from "@/store/chatStore";
+import { listenMessages, type MessageDoc } from "@/services/firebase/messages";
 import { ChatMessage } from "./ChatMessage";
 
 interface Props {
@@ -11,24 +10,41 @@ interface Props {
 }
 
 export function MessageList({ conversationId, currentUserId }: Props) {
-  const messages = useChatStore((s) => s.messages);
-  const setMessages = useChatStore((s) => s.setMessages);
+  const [messages, setMessages] = useState<MessageDoc[]>([]);
+  const [hasSnapshot, setHasSnapshot] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const unsub = listenMessages(conversationId, (msgs) => setMessages(msgs));
+    setMessages([]);
+    setHasSnapshot(false);
+    const unsub = listenMessages(conversationId, (msgs) => {
+      setMessages(msgs);
+      setHasSnapshot(true);
+    });
     return unsub;
-  }, [conversationId, setMessages]);
+  }, [conversationId]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messages.length > 0) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages.length]);
 
-  if (messages.length === 0) {
+  if (!hasSnapshot) {
     return (
       <ScrollArea className="flex-1 p-3">
         <Skeleton className="h-10 w-3/4 mb-2" />
         <Skeleton className="h-10 w-1/2" />
+      </ScrollArea>
+    );
+  }
+
+  if (messages.length === 0) {
+    return (
+      <ScrollArea className="flex-1 p-3 flex items-center justify-center">
+        <p className="text-sm text-muted-foreground text-center">
+          Envie a primeira mensagem para começar.
+        </p>
       </ScrollArea>
     );
   }
