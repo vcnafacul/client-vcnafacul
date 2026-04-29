@@ -10,10 +10,18 @@ export function useTabTitleUnread(
   unread: number,
   baseTitle = "Você na Facul",
 ): void {
+  // Apply the unread-prefixed title only when there's something to show,
+  // so we don't blank the title between effect runs.
   useEffect(() => {
-    document.title = unread > 0 ? `(${unread}) ${baseTitle}` : baseTitle;
+    if (unread > 0) {
+      document.title = `(${unread}) ${baseTitle}`;
+    }
+  }, [unread, baseTitle]);
+
+  // Restore the base title only on unmount.
+  useEffect(() => {
     return () => {
       document.title = baseTitle;
     };
-  }, [unread, baseTitle]);
+  }, [baseTitle]);
 }
