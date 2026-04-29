@@ -13,6 +13,7 @@ import PartnerPrepManager from "@/pages/partnerPrepManager";
 import RegistrationMonitor from "@/pages/registrationMonitor";
 import { StudentsEnrolled } from "@/pages/studentsEnrolled";
 import GlobalFormPage from "@/pages/globalForm";
+import SupportPage from "@/pages/support";
 import DashHome from "../pages/dashHome";
 import EssayWrite from "../pages/essayWrite";
 import EssayResult from "../pages/essayResult";
@@ -97,6 +98,7 @@ import {
   SIMULADO_HISTORIES,
   SIMULADO_RESPONDER,
   SIMULATE_METRICS,
+  SUPORTE,
 } from "./path";
 import ProtectedRoute from "./protectedRoute";
 import ProtectedRoutePermission from "./protectedRoutePermission";
@@ -154,6 +156,15 @@ export function PlatformRoutes() {
         element={
           <ProtectedRoute>
             <Simulate />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={SUPORTE}
+        element={
+          <ProtectedRoute>
+            <SupportPage />
           </ProtectedRoute>
         }
       />
