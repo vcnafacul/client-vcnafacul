@@ -1,4 +1,5 @@
 import DashCard from "@/components/molecules/dashCard";
+import { SupportInboxBadge } from "@/components/chat/SupportInboxBadge";
 import {
   Sidebar,
   SidebarContent,
@@ -8,6 +9,7 @@ import {
   SidebarHeader,
   SidebarMenu,
 } from "@/components/ui/sidebar";
+import { Roles } from "@/enums/roles/roles";
 import { useFetch } from "@/hooks/useFetch";
 import {
   adminMenuItems,
@@ -19,11 +21,15 @@ import {
   AreaWithMaterias,
   getMateriasGroupedByArea,
 } from "@/services/content/getMateriasGroupedByArea";
+import { useAuthStore } from "@/store/auth";
 import { useMemo, useState } from "react";
 import { DashCardMenu } from "../../molecules/dashCard";
 
 export function SidebarDash() {
   const [opened, setOpened] = useState<number>(0);
+  const isSupportAgent = useAuthStore(
+    (s) => !!s.data.permissao[Roles.supportAgent],
+  );
 
   const { data: areas } = useFetch<AreaWithMaterias[]>(
     (signal) => getMateriasGroupedByArea(signal),
@@ -45,7 +51,7 @@ export function SidebarDash() {
   };
   return (
     <Sidebar side="right">
-      <SidebarHeader />
+      <SidebarHeader>{isSupportAgent && <SupportInboxBadge />}</SidebarHeader>
       <SidebarContent>
         <SidebarGroup className="pt-12 overflow-y-scroll scrollbar-hide">
           <SidebarGroupContent>
