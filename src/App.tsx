@@ -6,6 +6,7 @@ import { ErrorBoundary } from "./components/organisms/errorBoundary";
 import { PlatformRoutes } from "./routes/PlatformRoutes";
 import "./styles/normalize.css";
 import { GoogleMapsProvider } from "./components/molecules/googleMapsProvider/GoogleMapsProvider";
+import { ChatProvider } from "./context/ChatProvider";
 
 
 function App() {
@@ -25,10 +26,12 @@ function App() {
           theme="colored"
           />
         <BrowserRouter>
-          <div className="w-screen h-screen">
-            <CookieBar />
-            <PlatformRoutes />
-          </div>
+          <ChatProvider>
+            <div className="w-screen h-screen">
+              <CookieBar />
+              <PlatformRoutes />
+            </div>
+          </ChatProvider>
         </BrowserRouter>
       </GoogleMapsProvider>
     </ErrorBoundary>
