@@ -8,6 +8,12 @@ interface Props {
   currentUserId: string;
   title: string;
   onClose?: () => void;
+  showAvatar?: boolean;
+  avatarSeed?: string;
+  status?: "open" | "closed";
+  originPage?: string;
+  device?: string;
+  browser?: string;
 }
 
 export function ChatLayout({
@@ -15,6 +21,12 @@ export function ChatLayout({
   currentUserId,
   title,
   onClose,
+  showAvatar,
+  avatarSeed,
+  status,
+  originPage,
+  device,
+  browser,
 }: Props) {
   return (
     <Card className="flex flex-col h-full w-full overflow-hidden">
@@ -22,6 +34,12 @@ export function ChatLayout({
         conversationId={conversationId}
         title={title}
         onClose={onClose}
+        showAvatar={showAvatar}
+        avatarSeed={avatarSeed}
+        status={status}
+        originPage={originPage}
+        device={device}
+        browser={browser}
       />
       <MessageList
         conversationId={conversationId}

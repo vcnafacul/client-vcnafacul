@@ -41,25 +41,33 @@ export function MessageList({ conversationId, currentUserId }: Props) {
 
   if (!hasSnapshot) {
     return (
-      <ScrollArea className="flex-1 p-3">
-        <Skeleton className="h-10 w-3/4 mb-2" />
-        <Skeleton className="h-10 w-1/2" />
+      <ScrollArea className="flex-1 p-3 bg-backgroundGrey/30">
+        <Skeleton className="h-10 w-3/4 mb-2 bg-lightGray/60" />
+        <Skeleton className="h-10 w-1/2 bg-lightGray/60" />
       </ScrollArea>
     );
   }
 
   if (messages.length === 0) {
     return (
-      <ScrollArea className="flex-1 p-3 flex items-center justify-center">
-        <p className="text-sm text-muted-foreground text-center">
-          Envie a primeira mensagem para começar.
-        </p>
+      <ScrollArea className="flex-1 bg-backgroundGrey/30">
+        <div className="flex flex-col items-center justify-center h-full py-10 px-6 gap-2 text-center">
+          <span className="h-12 w-12 rounded-full bg-marine/10 flex items-center justify-center text-2xl">
+            👋
+          </span>
+          <p className="text-sm font-medium text-marine">
+            Comece a conversa
+          </p>
+          <p className="text-xs text-grey max-w-[220px]">
+            Envie a primeira mensagem e nossa equipe responderá em breve.
+          </p>
+        </div>
       </ScrollArea>
     );
   }
 
   return (
-    <ScrollArea className="flex-1 p-3">
+    <ScrollArea className="flex-1 p-3 bg-backgroundGrey/30">
       <div className="flex flex-col">
         {messages.map((m) => (
           <ChatMessage

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { TriangleAlert } from "lucide-react";
 import { toast } from "react-toastify";
+import { matchPath, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -15,6 +16,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useChatContext } from "@/context/ChatProvider";
+import { CHAT_ENABLED_ROUTES } from "@/routes/chatEnabledRoutes";
 import { markRead } from "@/services/chat/markRead";
 import { openConversation } from "@/services/chat/openConversation";
 import { useAuthStore } from "@/store/auth";
@@ -49,6 +51,10 @@ export function ChatWidget() {
   const opening = useChatStore((s) => s.isOpening);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [device, setDevice] = useState<"mobile" | "desktop">(detectDevice);
+  const { pathname } = useLocation();
+  const routeEnabled = CHAT_ENABLED_ROUTES.some((pattern) =>
+    matchPath({ path: pattern, end: true }, pathname)
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -65,6 +71,7 @@ export function ChatWidget() {
   }, [isOpen, active, jwt]);
 
   if (role !== "student") return null;
+  if (!routeEnabled) return null;
 
   function handleClick() {
     if (active) {
@@ -100,11 +107,11 @@ export function ChatWidget() {
   const button = (
     <Button
       variant="default"
-      className="fixed bottom-6 right-6 rounded-full h-12 px-5 shadow-lg z-50 gap-2"
+      className="fixed bottom-6 right-6 rounded-full h-12 px-5 shadow-lg z-50 gap-2 bg-marine hover:bg-marine/90 text-white ring-1 ring-white/10 transition-transform hover:scale-105"
       onClick={handleClick}
       aria-label="Precisa de ajuda?"
     >
-      <TriangleAlert className="h-5 w-5" />
+      <TriangleAlert className="h-5 w-5 text-orange" />
       <span className="font-medium">Precisa de ajuda?</span>
       {(active?.unreadCountStudent ?? 0) > 0 && (
         <span className="absolute -top-1 -right-1">
