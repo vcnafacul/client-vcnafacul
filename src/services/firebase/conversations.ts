@@ -15,6 +15,8 @@ export interface ConversationDoc {
   userName: string;
   status: "open" | "closed";
   lastMessageAt?: { toMillis: () => number };
+  lastMessageText?: string;
+  lastMessageSenderType?: "student" | "support";
   unreadCountStudent: number;
   unreadCountSupport: number;
   metadata?: { page: string; device: string; browser: string };

@@ -8,6 +8,7 @@ import "./styles/normalize.css";
 import { GoogleMapsProvider } from "./components/molecules/googleMapsProvider/GoogleMapsProvider";
 import { ChatProvider } from "./context/ChatProvider";
 import { ChatWidget } from "./components/chat/ChatWidget";
+import { SupportNotifier } from "./components/chat/SupportNotifier";
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
               <CookieBar />
               <PlatformRoutes />
               <ChatWidget />
+              <SupportNotifier />
             </div>
           </ChatProvider>
         </BrowserRouter>
