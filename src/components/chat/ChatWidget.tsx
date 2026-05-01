@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { TriangleAlert } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { MessageCircle, TriangleAlert } from "lucide-react";
 import { toast } from "react-toastify";
 import { matchPath, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -70,8 +70,26 @@ export function ChatWidget() {
     }
   }, [isOpen, active, jwt]);
 
+  const hasPending =
+    !!active &&
+    (active.unreadCountStudent ?? 0) > 0 &&
+    active.lastMessageSenderType === "support";
+
+  const prevPendingRef = useRef(false);
+  useEffect(() => {
+    if (hasPending && !prevPendingRef.current) {
+      const audio = new Audio("/sounds/notify.mp3");
+      audio.volume = 0.5;
+      audio.play().catch(() => {
+        /* autoplay policy: best-effort */
+      });
+    }
+    prevPendingRef.current = hasPending;
+  }, [hasPending]);
+
+  const shouldRender = routeEnabled || !!active;
   if (role !== "student") return null;
-  if (!routeEnabled) return null;
+  if (!shouldRender) return null;
 
   function handleClick() {
     if (active) {
@@ -104,15 +122,25 @@ export function ChatWidget() {
     }
   }
 
+  const buttonClassName = `fixed bottom-6 right-6 rounded-full h-12 px-5 shadow-lg z-50 gap-2 bg-marine hover:bg-marine/90 text-white ring-1 ring-white/10 transition-transform hover:scale-105${
+    hasPending ? " animate-attention-ring" : ""
+  }`;
+
   const button = (
     <Button
       variant="default"
-      className="fixed bottom-6 right-6 rounded-full h-12 px-5 shadow-lg z-50 gap-2 bg-marine hover:bg-marine/90 text-white ring-1 ring-white/10 transition-transform hover:scale-105"
+      className={buttonClassName}
       onClick={handleClick}
-      aria-label="Precisa de ajuda?"
+      aria-label={hasPending ? "Mensagem do suporte pendente" : "Precisa de ajuda?"}
     >
-      <TriangleAlert className="h-5 w-5 text-orange" />
-      <span className="font-medium">Precisa de ajuda?</span>
+      {hasPending ? (
+        <MessageCircle className="h-5 w-5 text-orange" />
+      ) : (
+        <TriangleAlert className="h-5 w-5 text-orange" />
+      )}
+      <span className="font-medium">
+        {hasPending ? "Mensagem do Suporte" : "Precisa de ajuda?"}
+      </span>
       {(active?.unreadCountStudent ?? 0) > 0 && (
         <span className="absolute -top-1 -right-1">
           <UnreadBadge count={active?.unreadCountStudent ?? 0} />
