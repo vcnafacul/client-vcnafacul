@@ -67,14 +67,24 @@ export function ConversationListItem({ conv, selected, onClick }: Props) {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex justify-between items-center gap-2">
-            <span
-              className={cn(
-                "text-sm truncate",
-                unread ? "font-bold text-marine" : "font-medium text-darkGrey",
+            <div className="flex items-center gap-1.5 min-w-0 flex-1">
+              <span
+                className={cn(
+                  "text-sm truncate",
+                  unread ? "font-bold text-marine" : "font-medium text-darkGrey",
+                )}
+              >
+                {conv.userName}
+              </span>
+              {conv.initiatedBy === "support" && (
+                <span
+                  className="text-[9px] uppercase tracking-wide font-semibold px-1.5 py-0.5 rounded bg-marine/10 text-marine shrink-0"
+                  aria-label="Conversa iniciada pelo suporte"
+                >
+                  iniciada
+                </span>
               )}
-            >
-              {conv.userName}
-            </span>
+            </div>
             <div className="flex items-center gap-1.5 shrink-0">
               {time && (
                 <span className="text-[10px] text-grey whitespace-nowrap">
