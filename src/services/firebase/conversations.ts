@@ -14,6 +14,7 @@ export interface ConversationDoc {
   userId: string;
   userName: string;
   status: "open" | "closed";
+  initiatedBy?: "student" | "support";
   lastMessageAt?: { toMillis: () => number };
   lastMessageText?: string;
   lastMessageSenderType?: "student" | "support";
