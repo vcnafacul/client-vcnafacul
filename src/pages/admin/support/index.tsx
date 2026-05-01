@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LuMessageSquareDashed, LuHeadset, LuSearch } from "react-icons/lu";
 import { ChatLayout } from "@/components/chat/ChatLayout";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -14,6 +15,7 @@ import {
 import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chatStore";
 import { ConversationListItem } from "./ConversationListItem";
+import { InitiateConversationDialog } from "./InitiateConversationDialog";
 
 type FilterTab = "unread" | "all";
 
@@ -22,6 +24,7 @@ export default function AdminSupportPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [tab, setTab] = useState<FilterTab>("unread");
   const [search, setSearch] = useState("");
+  const [initiateOpen, setInitiateOpen] = useState(false);
   const jwt = useAuthStore((s) => s.data.token);
   const { userId } = useChatContext();
   const authed = useChatStore((s) => s.firebaseAuthed);
@@ -96,6 +99,13 @@ export default function AdminSupportPage() {
           </h1>
         </div>
         <div className="flex items-center gap-2 text-xs">
+          <Button
+            type="button"
+            onClick={() => setInitiateOpen(true)}
+            className="bg-white text-marine hover:bg-white/90 h-8 px-3 text-xs font-semibold"
+          >
+            Iniciar conversa
+          </Button>
           <span className="opacity-80">Conversas abertas</span>
           <span className="bg-orange text-white font-bold rounded-full min-w-[24px] h-6 inline-flex items-center justify-center px-2">
             {convs.length}
@@ -183,6 +193,11 @@ export default function AdminSupportPage() {
           )}
         </main>
       </div>
+      <InitiateConversationDialog
+        open={initiateOpen}
+        onOpenChange={setInitiateOpen}
+        onCreated={(id) => setSelectedId(id)}
+      />
     </div>
   );
 }
