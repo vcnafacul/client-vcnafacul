@@ -13,6 +13,7 @@ import { listenStudentActiveConversation } from "@/services/firebase/conversatio
 import { useChatStore } from "@/store/chatStore";
 import { useAuthStore } from "@/store/auth";
 import { jwtDecoded } from "@/utils/jwt";
+import { useTabTitleUnread } from "@/hooks/useTabTitleUnread";
 
 type Role = "student" | "support_agent" | null;
 
@@ -95,6 +96,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       unsubscribeRef.current = null;
     };
   }, [decodedId, isSupport, setAuthed, setActive]);
+
+  const active = useChatStore((s) => s.activeConversation);
+  const studentUnread =
+    role === "student" ? (active?.unreadCountStudent ?? 0) : 0;
+  useTabTitleUnread(studentUnread);
 
   return (
     <ChatContext.Provider value={{ role, userId }}>
