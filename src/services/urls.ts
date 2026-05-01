@@ -165,3 +165,4 @@ export const chatConversationClose = (id: string) =>
 export const chatConversationRead = (id: string) =>
   `${chat}/conversation/${id}/read`;
 export const chatMessage = `${chat}/message`;
+export const chatConversationsInitiate = `${chat}/conversations/initiate`;
