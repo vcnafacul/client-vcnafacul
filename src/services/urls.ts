@@ -3,6 +3,8 @@ const CMS_URL = import.meta.env.VITE_CMS_URL;
 
 export const user = `${BASE_URL}/user`;
 export const login = `${user}/login`;
+export const completeProfileUrl = `${user}/complete-profile`;
+export const authGoogle = `${BASE_URL}/user/auth/google`;
 export const forgot = `${user}/forgot`;
 export const reset = `${user}/reset`;
 export const confirmemail = `${user}/confirmemail`;

@@ -6,10 +6,13 @@ import { PartnerClassWithStudents } from "@/pages/partnerClassWithStudents";
 import { PartnerPrepInscriptionManager } from "@/pages/partnerPrepInscriptionManager";
 import { PartnerPrepInscritionStudentManager } from "@/pages/partnerPrepInscritionStudentManager";
 import { Navigate, Route, Routes } from "react-router-dom";
+import OnboardingGate from "../components/OnboardingGate";
+import OnboardingRoute from "./OnboardingRoute";
 import DashTemplate from "../components/templates/dashTemplate";
 import { Roles } from "../enums/roles/roles";
 import Geo from "../pages/Geo";
 import Account from "../pages/account";
+import { AuthCallbackPage } from "../pages/authCallback";
 import { ConfirmEmailPage } from "../pages/confirmEmail";
 import Dash from "../pages/dash";
 import DashContent from "../pages/dashContent";
@@ -26,6 +29,7 @@ import Logout from "../pages/logout";
 import MainSimulate from "../pages/mainSimulate";
 import Materia from "../pages/materia";
 import NewsPage from "../pages/newsPage";
+import Onboarding from "../pages/onboarding";
 import { PartnerPrepInscription } from "../pages/partnerPrepInscription";
 import Register from "../pages/register";
 import { Reset } from "../pages/reset";
@@ -38,6 +42,7 @@ import { BaseRoutes } from "./baseRoutes";
 import { HeroRoutes } from "./heroRoutes";
 import {
   ACCOUNT_PATH,
+  AUTH_CALLBACK_PATH,
   CONFIRM_EMAIL,
   CONTENT,
   DASH,
@@ -58,6 +63,7 @@ import {
   LOGOFF_PATH,
   MANAGER_COLLABORATOR,
   NEWS,
+  ONBOARDING_PATH,
   PARTNER_CLASS,
   PARTNER_CLASS_STUDENTS,
   PARTNER_PREP,
@@ -94,6 +100,10 @@ export function PlatformRoutes() {
         <Route path={FORM_GEOLOCATION} element={<Geo />} />
         <Route path={INVITE_MEMBER} element={<InviteMemberProcessing />} />
         <Route path={DECLARED_INTEREST} element={<ConfirmEnrolled />} />
+        <Route path={AUTH_CALLBACK_PATH} element={<AuthCallbackPage />} />
+        <Route element={<OnboardingRoute />}>
+          <Route path={ONBOARDING_PATH} element={<Onboarding />} />
+        </Route>
       </Route>
 
       <Route
@@ -116,7 +126,9 @@ export function PlatformRoutes() {
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <DashTemplate hasMenu />
+            <OnboardingGate>
+              <DashTemplate hasMenu />
+            </OnboardingGate>
           </ProtectedRoute>
         }
       >
