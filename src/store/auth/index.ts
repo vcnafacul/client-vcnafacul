@@ -24,7 +24,6 @@ const initialUser = {
   token: "",
   permissao: {},
   profiles: [],
-  profileComplete: null as boolean | null,
 };
 
 export type AuthUpdate = {
@@ -50,7 +49,6 @@ export type AuthProps = {
   token: string;
   permissao: Record<string, boolean>;
   profiles: string[];
-  profileComplete: boolean | null;
 };
 
 type AuthState = {
@@ -67,7 +65,12 @@ export const useAuthStore = create<AuthState>()(
       doAuth: (auth: AuthProps) => set({ data: auth }),
       logout: () => {
         set({
-          data: { user: { ...initialUser.user }, token: "", permissao: {}, profiles: [], profileComplete: null },
+          data: {
+            user: { ...initialUser.user },
+            token: "",
+            permissao: {},
+            profiles: [],
+          },
         });
       },
       updateAccount: (auth: Auth) =>
