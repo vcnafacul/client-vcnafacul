@@ -15,6 +15,7 @@ import {
   DASH_QUESTION,
   DASH_ROLES,
   DASH_SIMULADO,
+  DASH_SUPPORT,
   ESSAY_REVIEW_CURSINHO,
   ESSAY_REVIEW_LIST,
   ESSAY_THEME_ADMIN,
@@ -43,6 +44,7 @@ import { ReactComponent as Quimica } from "../../assets/icons/home-subjects-quim
 
 import { GoGraph } from "react-icons/go";
 import { IoSchool } from "react-icons/io5";
+import { LuMessageSquare } from "react-icons/lu";
 import { ReactComponent as Atualidades } from "../../assets/icons/home-subjects-atualidades.svg";
 import { ReactComponent as Filosofia } from "../../assets/icons/home-subjects-filosofia.svg";
 import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-geografia.svg";
@@ -61,7 +63,7 @@ import { SubDashCardInfo } from "../../components/molecules/subDashCard";
 import { HeaderData } from "../../components/organisms/header";
 import { Roles } from "../../enums/roles/roles";
 import { AreaWithMaterias } from "../../services/content/getMateriasGroupedByArea";
-import { header } from "../home/data";
+import { header } from "../homeLegacy/data";
 
 export const headerDash: HeaderData = {
   ...header,
@@ -243,6 +245,13 @@ export const adminMenuItems: DashCardMenu[] = [
         text: "Revisão de Redações",
         link: `/dashboard/${ESSAY_REVIEW_LIST}`,
         permissions: [Roles.revisarTodasRedacoes],
+      },
+      {
+        icon: LuMessageSquare,
+        alt: "suporte",
+        text: "Suporte",
+        link: `/dashboard/${DASH_SUPPORT}`,
+        permissions: [Roles.supportAgent],
       },
     ],
   },

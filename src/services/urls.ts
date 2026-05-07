@@ -156,3 +156,13 @@ export const homeSupportersReorder = `${homeSupporters}/reorder`;
 export const homeSupporterLogo = (id: number) => `${homeSupporters}/${id}/logo`;
 export const homeContentFile = (fileKey: string) =>
   `${homeContent}/file/${encodeURIComponent(fileKey)}`;
+
+export const firebaseToken = `${BASE_URL}/firebase/token`;
+export const chat = `${BASE_URL}/chat`;
+export const chatConversationOpen = `${chat}/conversation/open`;
+export const chatConversationClose = (id: string) =>
+  `${chat}/conversation/${id}/close`;
+export const chatConversationRead = (id: string) =>
+  `${chat}/conversation/${id}/read`;
+export const chatMessage = `${chat}/message`;
+export const chatConversationsInitiate = `${chat}/conversations/initiate`;

@@ -18,6 +18,7 @@ interface RichTextEditorProps {
   error?: boolean;
   pendingStore?: PendingImageStore;
   token?: string;
+  fetchAsset?: (key: string, token: string) => Promise<Blob>;
 }
 
 export function RichTextEditor({
@@ -31,6 +32,7 @@ export function RichTextEditor({
   error = false,
   pendingStore,
   token,
+  fetchAsset,
 }: RichTextEditorProps) {
   const [mode, setMode] = useState<"visual" | "markdown">("visual");
   const [rawMarkdown, setRawMarkdown] = useState(content);
@@ -43,6 +45,7 @@ export function RichTextEditor({
     onImageUpload,
     pendingStore,
     token,
+    fetchAsset,
   });
 
   // Sync rawMarkdown when content changes externally

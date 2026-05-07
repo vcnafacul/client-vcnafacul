@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { HeroContext } from "../context/heroContext";
-import { hero } from "../pages/home/data";
+import { hero } from "../pages/homeLegacy/data";
 
 export function HeroRoutes() {
   return (

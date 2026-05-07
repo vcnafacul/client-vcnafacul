@@ -6,7 +6,7 @@ import { useHomeStore } from "../../../store/home";
 import { TypeMarker } from "../../../types/map/marker";
 import { CheckMapFilter } from "@/components/atoms/checkMapFilter";
 import { TypeProblem } from "@/enums/audit/typeProblem";
-import { checkMapFilter } from "@/pages/home/data";
+import { checkMapFilter } from "@/pages/homeLegacy/data";
 import { ReactComponent as Report } from "../../../assets/icons/warning.svg";
 import MapBox from "../../molecules/mapBox";
 import MapBoxInfo from "../mapBoxInfo";

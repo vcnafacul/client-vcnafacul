@@ -13,6 +13,8 @@ import { ImageUploadExtension } from "./extensions/ImageUploadExtension";
 import { PendingImageStore } from "@/utils/pendingImageStore";
 import { getQuestionImage } from "@/services/question/getQuestionImage";
 
+type FetchAsset = (key: string, token: string) => Promise<Blob>;
+
 interface UseRichTextEditorProps {
   content: string;
   onChange: (markdown: string) => void;
@@ -20,6 +22,7 @@ interface UseRichTextEditorProps {
   onImageUpload?: (file: File) => Promise<string>;
   pendingStore?: PendingImageStore;
   token?: string;
+  fetchAsset?: FetchAsset;
 }
 
 /**
@@ -208,6 +211,7 @@ export function useRichTextEditor({
   onImageUpload,
   pendingStore,
   token,
+  fetchAsset = getQuestionImage,
 }: UseRichTextEditorProps) {
   const isUpdatingRef = useRef(false);
   const assetBlobCacheRef = useRef(new Map<string, string>());
@@ -223,7 +227,7 @@ export function useRichTextEditor({
       if (cache.has(assetId)) return cache.get(assetId);
       if (!token) return undefined;
       try {
-        const blob = await getQuestionImage(assetId, token);
+        const blob = await fetchAsset(assetId, token);
         const blobUrl = URL.createObjectURL(blob);
         cache.set(assetId, blobUrl);
         return blobUrl;
@@ -231,7 +235,7 @@ export function useRichTextEditor({
         return undefined;
       }
     },
-    [token]
+    [token, fetchAsset]
   );
 
   const editor = useEditor({

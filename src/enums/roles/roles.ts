@@ -25,6 +25,7 @@ export enum Roles {
   gerenciarTemas = "gerenciarTemas",
   revisarRedacoes = "revisarRedacoes",
   revisarTodasRedacoes = "revisarTodasRedacoes",
+  supportAgent = "supportAgent",
 }
 
 export const RolesLabel = [
@@ -151,6 +152,11 @@ export const RolesLabel = [
   {
     value: Roles.revisarTodasRedacoes,
     label: "Revisar Todas as Redações",
+    isProjectPermission: true,
+  },
+  {
+    value: Roles.supportAgent,
+    label: "Atender suporte (chat)",
     isProjectPermission: true,
   },
 ];
