@@ -9,7 +9,7 @@ import { useAuthStore } from "@/store/auth";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { formatDate } from "@/utils/date";
-import { FileText, FileX } from "lucide-react";
+import { FileText, FileX, FlaskConical, TestTube } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FaRegCopy } from "react-icons/fa6";
 import { MdOutlineFileDownload } from "react-icons/md";
@@ -153,7 +153,7 @@ export function InscriptionInfoModal({
 
   const flattenData = (data: XLSXStudentCourseFull[]) => {
     const keys = uniqueKeysFromArrays(
-      ...data.map((student) => student.socioeconomic)
+      ...data.map((student) => student.socioeconomic),
     );
     return data.map((student) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -166,7 +166,7 @@ export function InscriptionInfoModal({
         // Encontra a resposta para a pergunta atual
         const socioItem = student.socioeconomic.find(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (item: any) => item.question === question
+          (item: any) => item.question === question,
         );
 
         // Se a pergunta tiver uma resposta, coloca-a na coluna, senão deixa vazio
@@ -273,23 +273,34 @@ export function InscriptionInfoModal({
               <strong>Vagas:</strong> {inscriptionSelected?.openingsCount}
             </p>
           </div>
-          <div className="sm:col-span-2 flex items-center gap-3 py-2 px-3 rounded-md bg-gray-50">
-            {inscriptionSelected?.requestDocuments ? (
-              <>
-                <FileText className="w-5 h-5 text-green-600" />
+          <div className="sm:col-span-2 flex flex-col gap-3 py-2 px-3 rounded-md bg-gray-50">
+            <div className="flex items-start gap-2">
+              {inscriptionSelected?.requestDocuments ? (
+                <>
+                  <FileText className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+                  <span className="text-sm text-gray-800">
+                    Este processo seletivo <strong>exigirá</strong> envio de
+                    documentos dos candidatos.
+                  </span>
+                </>
+              ) : (
+                <>
+                  <FileX className="w-5 h-5 text-gray-500 shrink-0 mt-0.5" />
+                  <span className="text-sm text-gray-800">
+                    Este processo seletivo <strong>não exigirá</strong> envio de
+                    documentos dos candidatos.
+                  </span>
+                </>
+              )}
+            </div>
+            {inscriptionSelected?.isTest && (
+              <div className="flex items-start gap-2">
+                <FlaskConical className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                 <span className="text-sm text-gray-800">
-                  Este processo seletivo <strong>exigirá</strong> envio de
-                  documentos dos candidatos.
+                  Este processo está marcado como <strong>teste</strong> e não
+                  deve ser considerado válido para uso real.
                 </span>
-              </>
-            ) : (
-              <>
-                <FileX className="w-5 h-5 text-gray-500" />
-                <span className="text-sm text-gray-800">
-                  Este processo seletivo <strong>não exigirá</strong> envio de
-                  documentos dos candidatos.
-                </span>
-              </>
+              </div>
             )}
           </div>
         </div>

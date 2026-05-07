@@ -34,6 +34,8 @@ export function InscriptionInfoCreateEditModal({
   inscription,
   onCreateEdit,
 }: InscriptionInfoModalProps) {
+  const isEdit = !!inscription;
+
   const schema = yup
     .object()
     .shape({
@@ -172,17 +174,19 @@ export function InscriptionInfoCreateEditModal({
             </Label>
           </div>
 
-          <div className="sm:col-span-2 flex items-center gap-2">
-            <Checkbox
-              id="isTest"
-              checked={watch("isTest")}
-              onCheckedChange={(checked) => setValue("isTest", !!checked)}
-            />
-            <Label htmlFor="isTest" className="text-sm text-gray-700">
-              Este é um processo seletivo de teste e não deve ser considerado
-              válido
-            </Label>
-          </div>
+          {!isEdit && (
+            <div className="sm:col-span-2 flex items-center gap-2">
+              <Checkbox
+                id="isTest"
+                checked={watch("isTest")}
+                onCheckedChange={(checked) => setValue("isTest", !!checked)}
+              />
+              <Label htmlFor="isTest" className="text-sm text-gray-700">
+                Este é um processo seletivo de teste e não deve ser considerado
+                válido
+              </Label>
+            </div>
+          )}
 
           <div className="flex justify-end gap-4 sm:col-span-2 mt-2">
             <Button
