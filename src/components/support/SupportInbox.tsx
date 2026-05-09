@@ -4,7 +4,6 @@ import { ChatLayout } from "@/components/chat/ChatLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
 import { useChatContext } from "@/context/ChatProvider";
 import { useTabTitleUnread } from "@/hooks/useTabTitleUnread";
 import { markRead } from "@/services/chat/markRead";
@@ -17,44 +16,9 @@ import { useChatStore } from "@/store/chatStore";
 import { ConversationListItem } from "@/pages/admin/support/ConversationListItem";
 import { InitiateConversationDialog } from "@/pages/admin/support/InitiateConversationDialog";
 
-type FilterTab = "unread" | "all";
-
-interface FilterButtonProps {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-  count: number;
-}
-
-function FilterButton({ active, onClick, label, count }: FilterButtonProps) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "flex-1 text-xs font-semibold py-1.5 rounded-md transition flex items-center justify-center gap-1.5",
-        active
-          ? "bg-marine text-white shadow-sm"
-          : "text-darkGrey hover:bg-white",
-      )}
-    >
-      <span>{label}</span>
-      <span
-        className={cn(
-          "text-[10px] px-1.5 py-0.5 rounded-full font-bold",
-          active ? "bg-orange text-white" : "bg-lightGray text-darkGrey",
-        )}
-      >
-        {count}
-      </span>
-    </button>
-  );
-}
-
 export function SupportInbox() {
   const [convs, setConvs] = useState<ConversationDoc[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [tab, setTab] = useState<FilterTab>("unread");
   const [search, setSearch] = useState("");
   const [initiateOpen, setInitiateOpen] = useState(false);
   const jwt = useAuthStore((s) => s.data.token);
@@ -62,7 +26,6 @@ export function SupportInbox() {
   const authed = useChatStore((s) => s.firebaseAuthed);
   const partnerPrepId = useChatStore((s) => s.partnerPrepId);
   const autoSelectedRef = useRef(false);
-  const pinnedUnreadIds = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     if (!authed) return;
@@ -70,18 +33,8 @@ export function SupportInbox() {
     return unsub;
   }, [authed, partnerPrepId]);
 
-  useEffect(() => {
-    convs.forEach((c) => {
-      if ((c.unreadCountSupport ?? 0) > 0) pinnedUnreadIds.current.add(c.id);
-    });
-  }, [convs]);
-
   const totalUnread = useMemo(
     () => convs.reduce((acc, c) => acc + (c.unreadCountSupport ?? 0), 0),
-    [convs],
-  );
-  const unreadCount = useMemo(
-    () => convs.filter((c) => (c.unreadCountSupport ?? 0) > 0).length,
     [convs],
   );
 
@@ -89,7 +42,6 @@ export function SupportInbox() {
     const norm = search.trim().toLowerCase();
     return [...convs]
       .filter((c) => {
-        if (tab === "unread" && !pinnedUnreadIds.current.has(c.id)) return false;
         if (norm && !c.userName.toLowerCase().includes(norm)) return false;
         return true;
       })
@@ -101,7 +53,7 @@ export function SupportInbox() {
         const bTs = b.lastMessageAt?.toMillis?.() ?? 0;
         return bTs - aTs;
       });
-  }, [convs, tab, search]);
+  }, [convs, search]);
 
   const selected = useMemo(
     () => convs.find((c) => c.id === selectedId) ?? null,
@@ -111,9 +63,7 @@ export function SupportInbox() {
   useEffect(() => {
     if (autoSelectedRef.current) return;
     if (selectedId) return;
-    const firstUnread = convs.find(
-      (c) => (c.unreadCountSupport ?? 0) > 0,
-    );
+    const firstUnread = convs.find((c) => (c.unreadCountSupport ?? 0) > 0);
     if (firstUnread) {
       setSelectedId(firstUnread.id);
       autoSelectedRef.current = true;
@@ -157,7 +107,7 @@ export function SupportInbox() {
       <div className="h-[3px] bg-custom-gradient" aria-hidden />
       <div className="flex flex-1 min-h-0">
         <aside className="w-80 border-r flex flex-col bg-backgroundGrey">
-          <div className="p-3 border-b bg-white space-y-2">
+          <div className="p-3 border-b bg-white">
             <div className="relative">
               <LuSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-grey" />
               <Input
@@ -165,20 +115,6 @@ export function SupportInbox() {
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar por nome..."
                 className="pl-8 h-9 text-sm"
-              />
-            </div>
-            <div className="flex gap-1 bg-backgroundGrey rounded-md p-0.5">
-              <FilterButton
-                active={tab === "unread"}
-                onClick={() => setTab("unread")}
-                label="Não lidas"
-                count={unreadCount}
-              />
-              <FilterButton
-                active={tab === "all"}
-                onClick={() => setTab("all")}
-                label="Todas"
-                count={convs.length}
               />
             </div>
           </div>
