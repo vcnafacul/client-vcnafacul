@@ -207,6 +207,7 @@ export function SupportInbox() {
               conversationId={selected.id}
               currentUserId={userId}
               title={selected.userName}
+              subtitle={[selected.originLabel, selected.cursinhoName].filter(Boolean).join(" · ") || undefined}
               onClose={() => setSelectedId(null)}
               showAvatar
               avatarSeed={selected.userId ?? selected.userName}

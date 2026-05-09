@@ -7,6 +7,7 @@ interface Props {
   conversationId: string;
   currentUserId: string;
   title: string;
+  subtitle?: string;
   onClose?: () => void;
   showAvatar?: boolean;
   avatarSeed?: string;
@@ -20,6 +21,7 @@ export function ChatLayout({
   conversationId,
   currentUserId,
   title,
+  subtitle,
   onClose,
   showAvatar,
   avatarSeed,
@@ -33,6 +35,7 @@ export function ChatLayout({
       <ChatHeader
         conversationId={conversationId}
         title={title}
+        subtitle={subtitle}
         onClose={onClose}
         showAvatar={showAvatar}
         avatarSeed={avatarSeed}

@@ -100,6 +100,11 @@ export function ConversationListItem({ conv, selected, onClick }: Props) {
               <UnreadBadge count={conv.unreadCountSupport ?? 0} />
             </div>
           </div>
+          {(conv.originLabel || conv.cursinhoName) && (
+            <span className="text-[10px] block truncate text-marine/60 mt-0.5">
+              {[conv.originLabel, conv.cursinhoName].filter(Boolean).join(" · ")}
+            </span>
+          )}
           {preview && (
             <span
               className={cn(

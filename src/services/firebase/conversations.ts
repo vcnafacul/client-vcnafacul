@@ -23,6 +23,8 @@ export interface ConversationDoc {
   unreadCountSupport: number;
   metadata?: { page: string; device: string; browser: string };
   partnerPrepId?: string | null;
+  cursinhoName?: string | null;
+  originLabel?: string | null;
 }
 
 export function listenStudentActiveConversation(
