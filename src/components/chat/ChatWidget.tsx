@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle, TriangleAlert } from "lucide-react";
 import { toast } from "react-toastify";
-import { matchPath, useLocation } from "react-router-dom";
+import { matchPath, useLocation, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -52,8 +52,12 @@ export function ChatWidget() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [device, setDevice] = useState<"mobile" | "desktop">(detectDevice);
   const { pathname } = useLocation();
-  const routeEnabled = CHAT_ENABLED_ROUTES.some((pattern) =>
-    matchPath({ path: pattern, end: true }, pathname)
+  const { hashInscriptionId, inscriptionId } = useParams<{
+    hashInscriptionId?: string;
+    inscriptionId?: string;
+  }>();
+  const routeEnabled = CHAT_ENABLED_ROUTES.some((r) =>
+    matchPath({ path: r.pattern, end: true }, pathname)
   );
 
   useEffect(() => {
@@ -109,7 +113,18 @@ export function ChatWidget() {
         device: detectDevice(),
         browser: detectBrowser(),
       };
-      await openConversation(jwt, meta);
+      const matchedRoute = CHAT_ENABLED_ROUTES.find((r) =>
+        matchPath({ path: r.pattern, end: true }, pathname)
+      );
+      const inscriptionContext = matchedRoute
+        ? {
+            [matchedRoute.paramKey]:
+              matchedRoute.routeParam === 'hashInscriptionId'
+                ? hashInscriptionId
+                : inscriptionId,
+          }
+        : undefined;
+      await openConversation(jwt, meta, inscriptionContext);
       // listener do ChatProvider vai atualizar activeConversation
       setConfirmOpen(false);
       setOpen(true);
