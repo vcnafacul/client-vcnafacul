@@ -68,6 +68,7 @@ export function PartnerSupportInbox() {
   const { userId } = useChatContext();
   const authed = useChatStore((s) => s.firebaseAuthed);
   const autoSelectedRef = useRef(false);
+  const pinnedUnreadIds = useRef<Set<string>>(new Set());
 
   // Fetch the caller's cursinho ID directly from the backend — ignores token
   // claims precedence (supportAgent overrides partnerPrepId in the token).
@@ -85,6 +86,12 @@ export function PartnerSupportInbox() {
     return unsub;
   }, [authed, partnerPrepId]);
 
+  useEffect(() => {
+    convs.forEach((c) => {
+      if ((c.unreadCountSupport ?? 0) > 0) pinnedUnreadIds.current.add(c.id);
+    });
+  }, [convs]);
+
   const totalUnread = useMemo(
     () => convs.reduce((acc, c) => acc + (c.unreadCountSupport ?? 0), 0),
     [convs],
@@ -98,7 +105,7 @@ export function PartnerSupportInbox() {
     const norm = search.trim().toLowerCase();
     return [...convs]
       .filter((c) => {
-        if (tab === "unread" && (c.unreadCountSupport ?? 0) === 0) return false;
+        if (tab === "unread" && !pinnedUnreadIds.current.has(c.id)) return false;
         if (norm && !c.userName.toLowerCase().includes(norm)) return false;
         return true;
       })

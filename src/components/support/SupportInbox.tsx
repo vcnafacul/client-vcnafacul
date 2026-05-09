@@ -62,12 +62,19 @@ export function SupportInbox() {
   const authed = useChatStore((s) => s.firebaseAuthed);
   const partnerPrepId = useChatStore((s) => s.partnerPrepId);
   const autoSelectedRef = useRef(false);
+  const pinnedUnreadIds = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     if (!authed) return;
     const unsub = listenSupportInbox(setConvs, partnerPrepId);
     return unsub;
   }, [authed, partnerPrepId]);
+
+  useEffect(() => {
+    convs.forEach((c) => {
+      if ((c.unreadCountSupport ?? 0) > 0) pinnedUnreadIds.current.add(c.id);
+    });
+  }, [convs]);
 
   const totalUnread = useMemo(
     () => convs.reduce((acc, c) => acc + (c.unreadCountSupport ?? 0), 0),
@@ -82,7 +89,7 @@ export function SupportInbox() {
     const norm = search.trim().toLowerCase();
     return [...convs]
       .filter((c) => {
-        if (tab === "unread" && (c.unreadCountSupport ?? 0) === 0) return false;
+        if (tab === "unread" && !pinnedUnreadIds.current.has(c.id)) return false;
         if (norm && !c.userName.toLowerCase().includes(norm)) return false;
         return true;
       })
