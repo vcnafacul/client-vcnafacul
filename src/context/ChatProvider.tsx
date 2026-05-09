@@ -40,7 +40,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const unsubscribeRef = useRef<(() => void) | null>(null);
 
   const jwt = data?.token;
-  const isSupport = !!data?.permissao?.supportAgent;
+  const isSupport =
+    !!data?.permissao?.supportAgent ||
+    !!data?.permissao?.partnerPrepSupportAgent;
 
   const decodedId = useMemo(() => {
     if (!jwt) return null;
