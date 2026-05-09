@@ -15,6 +15,7 @@ import { StudentsEnrolled } from "@/pages/studentsEnrolled";
 import GlobalFormPage from "@/pages/globalForm";
 import SupportPage from "@/pages/support";
 import AdminSupportPage from "@/pages/admin/support";
+import PartnerSupportPage from "@/pages/dash/suporte-cursinho";
 import DashHome from "../pages/dashHome";
 import EssayWrite from "../pages/essayWrite";
 import EssayResult from "../pages/essayResult";
@@ -71,6 +72,7 @@ import {
   DASH_ROLES,
   DASH_SIMULADO,
   DASH_SUPPORT,
+  DASH_PARTNER_SUPPORT,
   DECLARED_INTEREST,
   ENROLLMENT_CONFIRMATION,
   ESSAY_WRITE,
@@ -281,6 +283,16 @@ export function PlatformRoutes() {
               permission={data.permissao[Roles.supportAgent]}
             >
               <AdminSupportPage />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={DASH_PARTNER_SUPPORT}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.partnerPrepSupportAgent]}
+            >
+              <PartnerSupportPage />
             </ProtectedRoutePermission>
           }
         />

@@ -51,3 +51,4 @@ export const HOME_LEGACY_PATH = "/home-legacy";
 
 export const SUPORTE = "/suporte";
 export const DASH_SUPPORT = "suporte";
+export const DASH_PARTNER_SUPPORT = "suporte-cursinho";
