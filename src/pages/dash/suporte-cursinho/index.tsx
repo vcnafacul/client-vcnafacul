@@ -1,5 +1,5 @@
-import { SupportInbox } from '@/components/support/SupportInbox';
+import { PartnerSupportInbox } from '@/components/support/PartnerSupportInbox';
 
 export default function PartnerSupportPage() {
-  return <SupportInbox />;
+  return <PartnerSupportInbox />;
 }

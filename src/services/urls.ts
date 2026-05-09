@@ -166,3 +166,4 @@ export const chatConversationRead = (id: string) =>
   `${chat}/conversation/${id}/read`;
 export const chatMessage = `${chat}/message`;
 export const chatConversationsInitiate = `${chat}/conversations/initiate`;
+export const chatMyPartnerPrep = `${chat}/my-partner-prep`;
