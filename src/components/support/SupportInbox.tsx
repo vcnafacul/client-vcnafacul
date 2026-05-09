@@ -132,13 +132,15 @@ export function SupportInbox() {
           </h1>
         </div>
         <div className="flex items-center gap-2 text-xs">
-          <Button
-            type="button"
-            onClick={() => setInitiateOpen(true)}
-            className="bg-white text-marine hover:bg-white/90 h-8 px-3 text-xs font-semibold"
-          >
-            Iniciar conversa
-          </Button>
+          {!partnerPrepId && (
+            <Button
+              type="button"
+              onClick={() => setInitiateOpen(true)}
+              className="bg-white text-marine hover:bg-white/90 h-8 px-3 text-xs font-semibold"
+            >
+              Iniciar conversa
+            </Button>
+          )}
           <span className="opacity-80">Conversas abertas</span>
           <span className="bg-orange text-white font-bold rounded-full min-w-[24px] h-6 inline-flex items-center justify-center px-2">
             {convs.length}
@@ -226,11 +228,13 @@ export function SupportInbox() {
           )}
         </main>
       </div>
-      <InitiateConversationDialog
-        open={initiateOpen}
-        onOpenChange={setInitiateOpen}
-        onCreated={(id) => setSelectedId(id)}
-      />
+      {!partnerPrepId && (
+        <InitiateConversationDialog
+          open={initiateOpen}
+          onOpenChange={setInitiateOpen}
+          onCreated={(id) => setSelectedId(id)}
+        />
+      )}
     </div>
   );
 }
