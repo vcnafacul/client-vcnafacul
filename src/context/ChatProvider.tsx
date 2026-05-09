@@ -14,6 +14,7 @@ import { useChatStore } from "@/store/chatStore";
 import { useAuthStore } from "@/store/auth";
 import { jwtDecoded } from "@/utils/jwt";
 import { useTabTitleUnread } from "@/hooks/useTabTitleUnread";
+import { getFirebaseAuth } from "@/services/firebase/client";
 
 type Role = "student" | "support_agent" | null;
 
@@ -33,6 +34,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const { data } = useAuthStore();
   const setAuthed = useChatStore((s) => s.setFirebaseAuthed);
   const setActive = useChatStore((s) => s.setActiveConversation);
+  const setPartnerPrepId = useChatStore((s) => s.setPartnerPrepId);
   const [role, setRole] = useState<Role>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const unsubscribeRef = useRef<(() => void) | null>(null);
@@ -60,6 +62,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         setActive(null);
         setRole(null);
         setUserId(null);
+        setPartnerPrepId(null);
         await signOutFirebase().catch(() => {});
         return;
       }
@@ -78,6 +81,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         setRole(r);
         setUserId(decodedId);
 
+        // Extract partnerPrepId from Firebase ID token claims
+        const auth = getFirebaseAuth();
+        if (auth.currentUser) {
+          const idTokenResult = await auth.currentUser.getIdTokenResult();
+          const partnerPrepIdValue = (idTokenResult.claims.partnerPrepId as string) ?? null;
+          setPartnerPrepId(partnerPrepIdValue);
+        }
+
         if (r === "student") {
           unsubscribeRef.current?.();
           unsubscribeRef.current = listenStudentActiveConversation(
@@ -95,7 +106,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       unsubscribeRef.current?.();
       unsubscribeRef.current = null;
     };
-  }, [decodedId, isSupport, setAuthed, setActive]);
+  }, [decodedId, isSupport, setAuthed, setActive, setPartnerPrepId]);
 
   const active = useChatStore((s) => s.activeConversation);
   const studentUnread =
