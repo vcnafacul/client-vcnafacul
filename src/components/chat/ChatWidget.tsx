@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle, TriangleAlert } from "lucide-react";
 import { toast } from "react-toastify";
-import { matchPath, useLocation, useParams } from "react-router-dom";
+import { matchPath, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -52,13 +52,10 @@ export function ChatWidget() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [device, setDevice] = useState<"mobile" | "desktop">(detectDevice);
   const { pathname } = useLocation();
-  const { hashInscriptionId, inscriptionId } = useParams<{
-    hashInscriptionId?: string;
-    inscriptionId?: string;
-  }>();
-  const routeEnabled = CHAT_ENABLED_ROUTES.some((r) =>
+  const matchedRoute = CHAT_ENABLED_ROUTES.find((r) =>
     matchPath({ path: r.pattern, end: true }, pathname)
   );
+  const routeEnabled = !!matchedRoute;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -113,17 +110,13 @@ export function ChatWidget() {
         device: detectDevice(),
         browser: detectBrowser(),
       };
-      const matchedRoute = CHAT_ENABLED_ROUTES.find((r) =>
-        matchPath({ path: r.pattern, end: true }, pathname)
-      );
-      const inscriptionContext = matchedRoute
-        ? {
-            [matchedRoute.paramKey]:
-              matchedRoute.routeParam === 'hashInscriptionId'
-                ? hashInscriptionId
-                : inscriptionId,
-          }
-        : undefined;
+      const inscriptionContext = (() => {
+        if (!matchedRoute) return undefined;
+        const match = matchPath({ path: matchedRoute.pattern, end: true }, pathname);
+        const paramValue = match?.params[matchedRoute.routeParam];
+        if (!paramValue) return undefined;
+        return { [matchedRoute.paramKey]: paramValue };
+      })();
       await openConversation(jwt, meta, inscriptionContext);
       // listener do ChatProvider vai atualizar activeConversation
       setConfirmOpen(false);
