@@ -143,6 +143,7 @@ export const dashboardStudent = `${dashboard}/student`;
 export const dashboardCollaborator = `${dashboard}/collaborator`;
 export const dashboardQuestoesPendentes = `${dashboard}/questoes-pendentes`;
 export const dashboardStudentsServed = `${dashboard}/students-served`;
+export const dashboardStudentsEnrolled = `${dashboard}/students-enrolled`;
 export const essayMyCursinhoCount = `${essayMyCursinho}/count`;
 
 export const homeContent = `${BASE_URL}/home-content`;

@@ -19,6 +19,8 @@ import {
 import {
   getStudentsServed,
   StudentsServedResponse,
+  getStudentsCurrentlyEnrolled,
+  StudentsEnrolledResponse,
 } from "@/services/dashboard";
 import { useAuthStore } from "@/store/auth";
 import { Box, MenuItem, Select, Typography } from "@mui/material";
@@ -49,6 +51,8 @@ function Analytics() {
     useState<HistoricoSummaryResponse | null>(null);
   const [studentsServedData, setStudentsServedData] =
     useState<StudentsServedResponse | null>(null);
+  const [studentsEnrolledData, setStudentsEnrolledData] =
+    useState<StudentsEnrolledResponse | null>(null);
 
   useEffect(() => {
     setKpiLoading(true);
@@ -58,13 +62,15 @@ function Analytics() {
       questionSummary(token),
       getHistoricoSummary(token),
       getStudentsServed(token).catch(() => null),
+      getStudentsCurrentlyEnrolled(token).catch(() => null),
     ])
-      .then(([geo, content, question, historico, studentsServed]) => {
+      .then(([geo, content, question, historico, studentsServed, studentsEnrolled]) => {
         setGeoSummary(geo);
         setContentSummary(content);
         setQuestionSummaryData(question);
         setHistoricoSummaryData(historico);
         setStudentsServedData(studentsServed);
+        setStudentsEnrolledData(studentsEnrolled);
       })
       .catch((err) => {
         toast.error(err.message);
@@ -153,6 +159,16 @@ function Analytics() {
                 label="Estudantes Atendidos"
                 value={studentsServedData?.total ?? 0}
                 color="green"
+                loading={kpiLoading}
+              />
+            </Grid>
+          )}
+          {studentsEnrolledData !== null && (
+            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+              <StatCard
+                label="Estudantes Ativos"
+                value={studentsEnrolledData?.total ?? 0}
+                color="marine"
                 loading={kpiLoading}
               />
             </Grid>
