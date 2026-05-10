@@ -52,9 +52,10 @@ export function ChatWidget() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [device, setDevice] = useState<"mobile" | "desktop">(detectDevice);
   const { pathname } = useLocation();
-  const routeEnabled = CHAT_ENABLED_ROUTES.some((pattern) =>
-    matchPath({ path: pattern, end: true }, pathname)
+  const matchedRoute = CHAT_ENABLED_ROUTES.find((r) =>
+    matchPath({ path: r.pattern, end: true }, pathname)
   );
+  const routeEnabled = !!matchedRoute;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -109,7 +110,14 @@ export function ChatWidget() {
         device: detectDevice(),
         browser: detectBrowser(),
       };
-      await openConversation(jwt, meta);
+      const inscriptionContext = (() => {
+        if (!matchedRoute) return undefined;
+        const match = matchPath({ path: matchedRoute.pattern, end: true }, pathname);
+        const paramValue = match?.params[matchedRoute.routeParam];
+        if (!paramValue) return undefined;
+        return { [matchedRoute.paramKey]: paramValue };
+      })();
+      await openConversation(jwt, meta, inscriptionContext);
       // listener do ChatProvider vai atualizar activeConversation
       setConfirmOpen(false);
       setOpen(true);

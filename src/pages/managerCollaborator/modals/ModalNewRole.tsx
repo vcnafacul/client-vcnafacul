@@ -60,6 +60,7 @@ function ModalNewRole({
     revisarRedacoes: false,
     revisarTodasRedacoes: false,
     supportAgent: false,
+    partnerPrepSupportAgent: false,
   });
 
   const {

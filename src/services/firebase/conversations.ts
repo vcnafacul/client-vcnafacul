@@ -6,6 +6,7 @@ import {
   orderBy,
   limit,
   type Unsubscribe,
+  type QueryConstraint,
 } from "firebase/firestore";
 import { getFirestoreDb } from "./client";
 
@@ -21,6 +22,9 @@ export interface ConversationDoc {
   unreadCountStudent: number;
   unreadCountSupport: number;
   metadata?: { page: string; device: string; browser: string };
+  partnerPrepId?: string | null;
+  cursinhoName?: string | null;
+  originLabel?: string | null;
 }
 
 export function listenStudentActiveConversation(
@@ -51,13 +55,19 @@ export function listenStudentActiveConversation(
 
 export function listenSupportInbox(
   cb: (convs: ConversationDoc[]) => void,
+  partnerPrepId?: string | null,
 ): Unsubscribe {
-  const q = query(
-    collection(getFirestoreDb(), "conversations"),
+  const constraints: QueryConstraint[] = [
     where("status", "==", "open"),
     orderBy("lastMessageAt", "desc"),
     limit(50),
-  );
+  ];
+
+  if (partnerPrepId) {
+    constraints.push(where("partnerPrepId", "==", partnerPrepId));
+  }
+
+  const q = query(collection(getFirestoreDb(), "conversations"), ...constraints);
   return onSnapshot(
     q,
     (snap) => {
