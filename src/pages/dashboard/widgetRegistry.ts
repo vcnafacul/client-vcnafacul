@@ -7,6 +7,7 @@ import { RedacoesWidget } from './components/RedacoesWidget';
 import { CursinhoCollabWidget } from './components/CursinhoCollabWidget';
 import { RedacoesRevisarWidget } from './components/RedacoesRevisarWidget';
 import { QuestoesPendentesWidget } from './components/QuestoesPendentesWidget';
+import { EstudantesAtendidosWidget } from './components/EstudantesAtendidosWidget';
 import { Roles } from '@/enums/roles/roles';
 
 export const widgetRegistry: WidgetDef[] = [
@@ -52,5 +53,11 @@ export const widgetRegistry: WidgetDef[] = [
     component: QuestoesPendentesWidget,
     profiles: ['common'],
     permissions: [Roles.validarQuestao],
+  },
+  {
+    id: 'estudantes-atendidos',
+    component: EstudantesAtendidosWidget,
+    profiles: ['common'],
+    permissions: [Roles.visualizarEstudantes, Roles.gerenciarEstudantes],
   },
 ];

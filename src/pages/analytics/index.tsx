@@ -16,6 +16,10 @@ import {
   getHistoricoSummary,
   HistoricoSummaryResponse,
 } from "@/services/analytics/simulado/historicoSummary";
+import {
+  getStudentsServed,
+  StudentsServedResponse,
+} from "@/services/dashboard";
 import { useAuthStore } from "@/store/auth";
 import { Box, MenuItem, Select, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -43,6 +47,8 @@ function Analytics() {
     useState<QuestionSummary | null>(null);
   const [historicoSummaryData, setHistoricoSummaryData] =
     useState<HistoricoSummaryResponse | null>(null);
+  const [studentsServedData, setStudentsServedData] =
+    useState<StudentsServedResponse | null>(null);
 
   useEffect(() => {
     setKpiLoading(true);
@@ -51,12 +57,14 @@ function Analytics() {
       getContentSummaryStats(token),
       questionSummary(token),
       getHistoricoSummary(token),
+      getStudentsServed(token).catch(() => null),
     ])
-      .then(([geo, content, question, historico]) => {
+      .then(([geo, content, question, historico, studentsServed]) => {
         setGeoSummary(geo);
         setContentSummary(content);
         setQuestionSummaryData(question);
         setHistoricoSummaryData(historico);
+        setStudentsServedData(studentsServed);
       })
       .catch((err) => {
         toast.error(err.message);
@@ -139,6 +147,16 @@ function Analytics() {
               loading={kpiLoading}
             />
           </Grid>
+          {studentsServedData !== null && (
+            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+              <StatCard
+                label="Estudantes Atendidos"
+                value={studentsServedData?.total ?? 0}
+                color="green"
+                loading={kpiLoading}
+              />
+            </Grid>
+          )}
         </Grid>
       </div>
 
