@@ -16,8 +16,9 @@ import { fetchFeaturesSectionData, featuresFallback } from "./adapters/featuresA
 import { SponsorsSection } from "./sections/SponsorsSection";
 import { fetchSponsors, sponsorsFallback } from "./adapters/sponsorsAdapter";
 import { MapSection } from "./sections/MapSection";
-import { NewsSection } from "./sections/NewsSection";
-import { fetchNews, newsFallback } from "./adapters/newsAdapter";
+import { ImpactoSection } from "../quemSomos/ImpactoSection";
+
+const ImpactoWrapper: SectionComponent<unknown> = () => <ImpactoSection />;
 
 interface RenderableSection {
   id: string;
@@ -42,7 +43,6 @@ export default function HomeV2() {
   const prepCourses = useSectionData(fetchPrepCourses, prepCoursesFallback, []);
   const features = useSectionData(fetchFeaturesSectionData, featuresFallback, []);
   const sponsors = useSectionData(fetchSponsors, sponsorsFallback, []);
-  const news = useSectionData(fetchNews, newsFallback, []);
 
   const sections: RenderableSection[] = [
     {
@@ -60,10 +60,11 @@ export default function HomeV2() {
       fullBleed: true,
     },
     {
-      id: "volunteers",
-      component: VolunteersSection as SectionComponent<unknown>,
-      data: volunteers.data,
-      theme: "pink",
+      id: "impact",
+      component: ImpactoWrapper,
+      data: null,
+      theme: "neutral",
+      fullBleed: true,
     },
     {
       id: "prep-courses",
@@ -78,6 +79,12 @@ export default function HomeV2() {
       theme: "neutral",
     },
     {
+      id: "volunteers",
+      component: VolunteersSection as SectionComponent<unknown>,
+      data: volunteers.data,
+      theme: "neutral",
+    },
+    {
       id: "sponsors",
       component: SponsorsSection as SectionComponent<unknown>,
       data: sponsors.data,
@@ -89,12 +96,6 @@ export default function HomeV2() {
       data: null,
       theme: "marine",
       fullBleed: true,
-    },
-    {
-      id: "news",
-      component: NewsSection as SectionComponent<unknown>,
-      data: news.data,
-      theme: "neutral",
     },
   ];
 

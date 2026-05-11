@@ -7,6 +7,7 @@ import { Section } from "../../components/templates/homeSection/Section";
 import { VolunteersSection } from "../homeV2/sections/VolunteersSection";
 import { PartnersTabs } from "./PartnersTabs";
 import { NossosValores } from "./NossosValores";
+import { ImpactoSection } from "./ImpactoSection";
 import {
   Volunteer,
   volunteersFallback,
@@ -97,6 +98,9 @@ export default function QuemSomosPage() {
 
       {/* Seção: Nossos Valores */}
       <NossosValores />
+
+      {/* Seção: Impacto do Projeto */}
+      <ImpactoSection />
 
       {/* Seção: Voluntários */}
       <Section id="volunteers" theme="neutral">
