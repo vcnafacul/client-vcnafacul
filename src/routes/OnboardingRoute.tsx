@@ -2,11 +2,12 @@ import queryString from "query-string";
 import { Navigate, Outlet } from "react-router-dom";
 import { DASH, LOGIN_PATH } from "./path";
 import { useAuthStore } from "../store/auth";
+import { decoderUser } from "../utils/decodedUser";
 import { jwtDecoded } from "../utils/jwt";
 import { useLocation } from "react-router-dom";
 
 function OnboardingRoute() {
-  const { data } = useAuthStore();
+  const { data, doAuth } = useAuthStore();
   const location = useLocation();
   const tokenFromUrl = (queryString.parse(location.search).token as string) || "";
 
@@ -14,6 +15,11 @@ function OnboardingRoute() {
     try {
       const decoded = jwtDecoded(tokenFromUrl);
       if (decoded.profileComplete === false) {
+        // Hidrata a store antes de renderizar os filhos para evitar que
+        // OnboardingForm leia data.token vazio no primeiro render
+        if (!data.token) {
+          doAuth(decoderUser(tokenFromUrl));
+        }
         return <Outlet />;
       }
     } catch {
