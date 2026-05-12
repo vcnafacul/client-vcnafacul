@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import ControlCalendar from "@/components/atoms/controlCalendar";
 import { optionsGender, stateOptions } from "@/pages/register/data.tsx";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -50,7 +49,7 @@ function OnboardingForm() {
     setValue,
     control,
     formState: { errors },
-  } = useForm({
+  } = useForm<OnboardingFormData>({
     resolver: yupResolver(schema),
   });
 
@@ -82,7 +81,7 @@ function OnboardingForm() {
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit as any)}
+      onSubmit={handleSubmit(onSubmit)}
       className="w-full flex flex-col gap-4"
     >
       <InputFactory
@@ -91,7 +90,7 @@ function OnboardingForm() {
         type="select"
         options={optionsGender}
         error={errors.gender}
-        onChange={(e: any) => setValue("gender", e.target.value)}
+        onChange={(e: { target: { value: Gender } }) => setValue("gender", e.target.value)}
       />
       <ControlCalendar control={control} label="Data de Nascimento" />
       <InputFactory
@@ -99,14 +98,14 @@ function OnboardingForm() {
         label="Telefone"
         type="text"
         error={errors.phone}
-        onChange={(e: any) => setValue("phone", e.target.value)}
+        onChange={(e: { target: { value: string } }) => setValue("phone", e.target.value)}
       />
       <InputFactory
         id="city"
         label="Cidade"
         type="text"
         error={errors.city}
-        onChange={(e: any) => setValue("city", e.target.value)}
+        onChange={(e: { target: { value: string } }) => setValue("city", e.target.value)}
       />
       <InputFactory
         id="state"
@@ -114,7 +113,7 @@ function OnboardingForm() {
         type="select"
         options={stateOptions}
         error={errors.state}
-        onChange={(e: any) => setValue("state", e.target.value)}
+        onChange={(e: { target: { value: string } }) => setValue("state", e.target.value)}
       />
       <div className="flex w-full gap-2 justify-center my-2">
         <input type="checkbox" {...register("lgpd")} />
