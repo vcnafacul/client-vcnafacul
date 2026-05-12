@@ -50,7 +50,7 @@ export type AuthProps = {
   token: string;
   permissao: Record<string, boolean>;
   profiles: string[];
-  profileComplete: boolean | null;
+  profileComplete?: boolean | null;
 };
 
 type AuthState = {
