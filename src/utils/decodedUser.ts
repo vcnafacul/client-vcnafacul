@@ -10,7 +10,7 @@ export function decoderUser(access_token: string) {
     const monthBirthday =
       birthday.getMonth() + 1 < 10
         ? `0${birthday.getMonth() + 1}`
-        : birthday.getMonth();
+        : `${birthday.getMonth() + 1}`;
     const dayBirthday =
       birthday.getDate() < 10 ? `0${birthday.getDate()}` : birthday.getDate();
     birthdayFormatted = `${dayBirthday}/${monthBirthday}/${birthday.getFullYear()}`;
