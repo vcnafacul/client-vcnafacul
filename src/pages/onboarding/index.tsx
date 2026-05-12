@@ -1,6 +1,7 @@
 import queryString from "query-string";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 import Text from "../../components/atoms/text";
 import OnboardingForm from "../../components/organisms/onboardingForm";
 import { useAuthStore } from "../../store/auth";
@@ -22,7 +23,8 @@ function Onboarding() {
           window.location.pathname
         );
       } catch {
-        // token inválido, OnboardingGate vai redirecionar
+        // OnboardingRoute redireciona para login em caso de token inválido
+        toast.error("Token inválido. Tente fazer login novamente.");
       }
     }
   }, []);
