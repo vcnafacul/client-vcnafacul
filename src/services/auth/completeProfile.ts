@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import fetchWrapper from "../../utils/fetchWrapper";
 import { decoderUser } from "../../utils/decodedUser";
 import { completeProfileUrl } from "../urls";
 
@@ -13,7 +14,8 @@ const completeProfile = async (
     lgpd: boolean;
   }
 ) => {
-  const response = await fetch(completeProfileUrl, {
+  // Token vem da URL (fluxo de onboarding), não do cookie — passa explicitamente no header
+  const response = await fetchWrapper(completeProfileUrl, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
