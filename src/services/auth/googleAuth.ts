@@ -1,8 +1,7 @@
-import { authGoogle } from "../urls";
+import { googleAuthUrl } from "../urls";
 
 const googleAuth = () => {
-  console.log("googleAuth called, redirecting to:", authGoogle);
-  window.location.href = authGoogle;
+  window.location.href = googleAuthUrl;
 };
 
 export default googleAuth;
