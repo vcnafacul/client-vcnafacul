@@ -51,3 +51,7 @@ export const HOME_LEGACY_PATH = "/home-legacy";
 
 export const AUTH_CALLBACK_PATH = "/auth/callback";
 export const ONBOARDING_PATH = "/onboarding";
+export const QUEM_SOMOS_PATH = "/quem-somos";
+export const SUPORTE = "/suporte";
+export const DASH_SUPPORT = "suporte";
+export const DASH_PARTNER_SUPPORT = "suporte-cursinho";

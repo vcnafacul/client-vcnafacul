@@ -28,4 +28,6 @@ export interface CreateRoleDto {
   gerenciarTemas: boolean;
   revisarRedacoes: boolean;
   revisarTodasRedacoes: boolean;
+  supportAgent: boolean;
+  partnerPrepSupportAgent: boolean;
 }

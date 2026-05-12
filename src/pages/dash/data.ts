@@ -15,6 +15,8 @@ import {
   DASH_QUESTION,
   DASH_ROLES,
   DASH_SIMULADO,
+  DASH_SUPPORT,
+  DASH_PARTNER_SUPPORT,
   ESSAY_REVIEW_CURSINHO,
   ESSAY_REVIEW_LIST,
   ESSAY_THEME_ADMIN,
@@ -43,6 +45,7 @@ import { ReactComponent as Quimica } from "../../assets/icons/home-subjects-quim
 
 import { GoGraph } from "react-icons/go";
 import { IoSchool } from "react-icons/io5";
+import { LuMessageSquare } from "react-icons/lu";
 import { ReactComponent as Atualidades } from "../../assets/icons/home-subjects-atualidades.svg";
 import { ReactComponent as Filosofia } from "../../assets/icons/home-subjects-filosofia.svg";
 import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-geografia.svg";
@@ -144,6 +147,13 @@ export const adminMenuItems: DashCardMenu[] = [
         link: `/dashboard/${ESSAY_REVIEW_CURSINHO}`,
         permissions: [Roles.revisarRedacoes],
       },
+      {
+        icon: LuMessageSquare,
+        alt: "suporte cursinho",
+        text: "Suporte / Chat",
+        link: `/dashboard/${DASH_PARTNER_SUPPORT}`,
+        permissions: [Roles.partnerPrepSupportAgent],
+      },
     ],
   },
   {
@@ -243,6 +253,13 @@ export const adminMenuItems: DashCardMenu[] = [
         text: "Revisão de Redações",
         link: `/dashboard/${ESSAY_REVIEW_LIST}`,
         permissions: [Roles.revisarTodasRedacoes],
+      },
+      {
+        icon: LuMessageSquare,
+        alt: "suporte",
+        text: "Suporte",
+        link: `/dashboard/${DASH_SUPPORT}`,
+        permissions: [Roles.supportAgent],
       },
     ],
   },

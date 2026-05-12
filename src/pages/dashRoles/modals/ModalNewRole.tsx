@@ -53,6 +53,8 @@ function ModalNewRole({
     gerenciarTemas: false,
     revisarRedacoes: false,
     revisarTodasRedacoes: false,
+    supportAgent: false,
+    partnerPrepSupportAgent: false,
   });
 
   const {
