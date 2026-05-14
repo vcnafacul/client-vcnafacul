@@ -127,7 +127,6 @@ export function PartnerPrepInscriptionManager() {
       modals.modalConfirmTest.open();
       return;
     }
-
     await executeAsync({
       action: () => createInscription(token, data),
       loadingMessage: "Criando Processo Seletivo...",
@@ -187,6 +186,7 @@ export function PartnerPrepInscriptionManager() {
           startDate: data.range[0],
           endDate: data.range[1],
           requestDocuments: data.requestDocuments,
+          isTest: data.isTest,
         });
         fetchInscriptions();
       },

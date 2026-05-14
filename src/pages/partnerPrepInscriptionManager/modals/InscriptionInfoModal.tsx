@@ -9,7 +9,7 @@ import { useAuthStore } from "@/store/auth";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { formatDate } from "@/utils/date";
-import { FileText, FileX, FlaskConical, TestTube } from "lucide-react";
+import { FileText, FileX, FlaskConical } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FaRegCopy } from "react-icons/fa6";
 import { MdOutlineFileDownload } from "react-icons/md";
