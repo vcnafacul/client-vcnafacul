@@ -12,7 +12,18 @@ interface SimulationHistoryCardProps {
   historico: HistoricoDTO;
 }
 
+const statusLabel: Record<string, string> = {
+  pending: "Processando...",
+  processing: "Processando...",
+  failed: "Erro ao processar",
+};
+
 function SimulationHistoryCard({ historico }: SimulationHistoryCardProps) {
+  const isPending = !historico.aproveitamento;
+  const aproveitamentoValue = isPending
+    ? statusLabel[historico.status ?? "pending"] ?? "Pendente"
+    : `${(historico.aproveitamento!.geral * 100).toFixed(2)}%`;
+
   return (
     <Link
       className="flex flex-wrap gap-4 bg-white border border-gray-100 border-t-0 rounded p-4 pb-6 pr-12 m-2.5 shadow-md justify-between relative"
@@ -30,7 +41,7 @@ function SimulationHistoryCard({ historico }: SimulationHistoryCardProps) {
       />
       <SimulationHistoryField
         field="Aproveitamento:"
-        value={`${(historico.aproveitamento.geral * 100).toFixed(2)}%`}
+        value={aproveitamentoValue}
         className="md:min-w-[200px]"
       />
       <div className="group absolute right-4 bottom-6">

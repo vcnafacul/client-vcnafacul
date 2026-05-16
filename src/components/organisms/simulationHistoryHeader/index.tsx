@@ -41,14 +41,13 @@ export function SimulationHistoryHeader({
     historic.questoesRespondidas;
 
   // Prepara dados do Radar por MATÉRIAS
-  const radarDataMaterias = historic.aproveitamento.materias.map((m) => ({
+  const radarDataMaterias = (historic.aproveitamento?.materias ?? []).map((m) => ({
     materia: m.nome,
     aproveitamento: parseFloat((m.aproveitamento * 100).toFixed(1)),
   }));
 
   // Prepara dados do Radar por FRENTES
-  // Extrai todas as frentes de todas as matérias
-  const radarDataFrente = historic.aproveitamento.materias.flatMap((materia) =>
+  const radarDataFrente = (historic.aproveitamento?.materias ?? []).flatMap((materia) =>
     materia.frentes.map((frente) => ({
       materia: `${materia.nome} - ${frente.nome}`,
       aproveitamento: parseFloat((frente.aproveitamento * 100).toFixed(1)),
@@ -87,7 +86,7 @@ export function SimulationHistoryHeader({
     },
   ];
 
-  const aproveitamentoGeral = (historic.aproveitamento.geral * 100).toFixed(1);
+  const aproveitamentoGeral = ((historic.aproveitamento?.geral ?? 0) * 100).toFixed(1);
   const totalQuestoes = historic.simulado.tipo.quantidadeTotalQuestao;
   const percentualAcertos = ((acertos / totalQuestoes) * 100).toFixed(1);
   const percentualErros = ((erros / totalQuestoes) * 100).toFixed(1);

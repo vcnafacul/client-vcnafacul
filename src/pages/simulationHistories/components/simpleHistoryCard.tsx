@@ -39,11 +39,14 @@ export function SimpleHistoryCard({
     historico.questoesRespondidas ===
     historico.simulado.tipo.quantidadeTotalQuestao;
 
-  const performanceColor = getPerformanceColor(historico.aproveitamento.geral);
+  const geral = historico.aproveitamento?.geral;
+  const performanceColor = geral != null
+    ? getPerformanceColor(geral)
+    : "from-gray-100 to-gray-200";
 
-  const performancePercentage = (historico.aproveitamento.geral * 100).toFixed(
-    2
-  );
+  const performancePercentage = geral != null
+    ? `${(geral * 100).toFixed(2)}%`
+    : historico.status === "failed" ? "Erro" : "Processando...";
 
   const formattedDate = DateTime.fromISO(
     historico.createdAt.toString()

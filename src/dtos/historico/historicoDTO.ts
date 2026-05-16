@@ -54,6 +54,8 @@ interface SimuladoHistoricoDTO {
   vezesRespondido: number;
 }
 
+export type HistoricoStatus = 'pending' | 'processing' | 'completed' | 'failed';
+
 export interface HistoricoDTO {
   _id: string;
   usuario: string;
@@ -62,6 +64,7 @@ export interface HistoricoDTO {
   respostas: AnswerHistoricoDTO[];
   tempoRealizado: number;
   questoesRespondidas: number;
-  aproveitamento: AproveitamentoDTO;
+  aproveitamento?: AproveitamentoDTO;
+  status?: HistoricoStatus;
   createdAt: DateTime;
 }
