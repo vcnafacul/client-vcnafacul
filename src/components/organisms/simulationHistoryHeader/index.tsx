@@ -14,6 +14,7 @@ import {
   BookOpen,
   CheckCircle2,
   Clock,
+  Loader2,
   Target,
   TrendingUp,
   XCircle,
@@ -39,6 +40,42 @@ export function SimulationHistoryHeader({
   const finished =
     historic.simulado.tipo.quantidadeTotalQuestao ===
     historic.questoesRespondidas;
+
+  if (!historic.aproveitamento) {
+    const isFailed = historic.status === "failed";
+    return (
+      <Box sx={{ p: 3, minHeight: "100vh" }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+          <Typography variant="h4" sx={{ color: "white", fontWeight: "bold", display: "flex", gap: 1 }}>
+            <BookOpen className="h-8 w-8" />
+            Detalhes do Simulado
+          </Typography>
+          <Button onClick={() => navigate(`${DASH}/${SIMULADO_HISTORIES}`)} variant="outline" className="bg-white hover:bg-gray-100">
+            Voltar
+          </Button>
+        </Box>
+        <Paper elevation={3} sx={{ p: 4, borderRadius: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+          {isFailed ? (
+            <XCircle className="h-16 w-16 text-red-500" />
+          ) : (
+            <Loader2 className="h-16 w-16 text-blue-500 animate-spin" />
+          )}
+          <Typography variant="h5" fontWeight="bold" color={isFailed ? "error" : "primary"}>
+            {isFailed ? "Erro ao processar simulado" : "Processando resultados..."}
+          </Typography>
+          <Typography variant="body1" color="text.secondary" textAlign="center">
+            {isFailed
+              ? "Ocorreu um erro ao calcular seu aproveitamento. Por favor, tente novamente mais tarde ou entre em contato com o suporte."
+              : "Seu simulado está sendo processado. Os resultados estarão disponíveis em breve."}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {historic.simulado.tipo.nome} — {historic.questoesRespondidas} de{" "}
+            {historic.simulado.tipo.quantidadeTotalQuestao} questões respondidas
+          </Typography>
+        </Paper>
+      </Box>
+    );
+  }
 
   // Prepara dados do Radar por MATÉRIAS
   const radarDataMaterias = (historic.aproveitamento?.materias ?? []).map((m) => ({
