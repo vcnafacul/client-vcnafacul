@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useChatContext } from "@/context/ChatProvider";
 import { useTabTitleUnread } from "@/hooks/useTabTitleUnread";
-import { DASH, DASH_SUPPORT } from "@/routes/path";
+import { DASH, DASH_SUPPORT, DASH_PARTNER_SUPPORT } from "@/routes/path";
 import { getMyPartnerPrepId } from "@/services/chat/getMyPartnerPrepId";
 import {
   listenSupportInbox,
@@ -12,7 +12,10 @@ import {
 import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chatStore";
 
-const INBOX_PATH = `${DASH}/${DASH_SUPPORT}`;
+const INBOX_PATHS = [
+  `${DASH}/${DASH_SUPPORT}`,
+  `${DASH}/${DASH_PARTNER_SUPPORT}`,
+];
 
 export function SupportNotifier() {
   const { role } = useChatContext();
@@ -67,13 +70,16 @@ export function SupportNotifier() {
       if (prev === null) return;
       if (newTotal <= prev) return;
 
-      const onInboxPage = pathnameRef.current === INBOX_PATH;
+      const onInboxPage = INBOX_PATHS.includes(pathnameRef.current);
       if (!onInboxPage) {
         toast.info(
           "Um estudante enviou uma mensagem. Clique na notificação para vê-la.",
           {
             autoClose: 15000,
-            onClick: () => navigate(INBOX_PATH),
+            onClick: () =>
+              navigate(
+                resolvedPartnerPrepId ? INBOX_PATHS[1] : INBOX_PATHS[0],
+              ),
           },
         );
       }
@@ -90,7 +96,7 @@ export function SupportNotifier() {
         });
         n.onclick = () => {
           window.focus();
-          navigate(INBOX_PATH);
+          navigate(resolvedPartnerPrepId ? INBOX_PATHS[1] : INBOX_PATHS[0]);
           n.close();
         };
       }
