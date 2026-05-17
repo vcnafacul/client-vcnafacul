@@ -53,16 +53,14 @@ export function SupportInboxView({
       <div className="h-[3px] bg-custom-gradient" aria-hidden />
       <div className="flex flex-1 min-h-0">
         <aside className="max-w-96 border-r flex flex-col bg-backgroundGrey">
-          <div className="p-3 border-b bg-white">
-            <div className="relative">
-              <LuSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-grey" />
-              <Input
-                value={search}
-                onChange={(e) => onSearchChange(e.target.value)}
-                placeholder="Buscar por nome..."
-                className="pl-8 h-9 text-sm"
-              />
-            </div>
+          <div className="flex items-center gap-2 px-3 h-11 border-b bg-white shrink-0">
+            <LuSearch className="h-4 w-4 text-grey shrink-0" />
+            <Input
+              value={search}
+              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder="Buscar por nome..."
+              className="flex-1 border-none shadow-none bg-transparent px-0 h-full text-sm focus-visible:ring-0 placeholder:text-grey"
+            />
           </div>
           <ScrollArea className="flex-1">
             {sorted.map((c) => (
@@ -95,6 +93,7 @@ export function SupportInboxView({
             <ChatLayout
               conversationId={selected.id}
               currentUserId={userId}
+              className="rounded-none"
               title={selected.userName}
               subtitle={
                 [selected.originLabel, selected.cursinhoName]
