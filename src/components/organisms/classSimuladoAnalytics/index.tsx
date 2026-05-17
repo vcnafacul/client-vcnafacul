@@ -25,6 +25,8 @@ export function ClassSimuladoAnalytics({ classId, token }: Props) {
   const [monthLoading, setMonthLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedMateriaId, setSelectedMateriaId] = useState<string | undefined>(undefined);
+  const [view, setView] = useState<"materia" | "frente">("materia");
+  const [viewTouched, setViewTouched] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -43,10 +45,16 @@ export function ClassSimuladoAnalytics({ classId, token }: Props) {
     setMonthLoading(true);
     setMonthData(null);
     setSelectedMateriaId(undefined);
+    setViewTouched(false);
     getClassSimuladoByMonth(classId, selectedMonth, token)
       .then(setMonthData)
       .finally(() => setMonthLoading(false));
   }, [classId, selectedMonth, token]);
+
+  useEffect(() => {
+    if (viewTouched || !monthData) return;
+    setView(monthData.materias.length <= 1 ? "frente" : "materia");
+  }, [monthData, viewTouched]);
 
   const baselineGeneratedAt = monthData?.generatedAt ?? null;
 
@@ -142,12 +150,52 @@ export function ClassSimuladoAnalytics({ classId, token }: Props) {
           {!monthLoading && monthData && (
             <>
               <SampleSizeBanner monthData={monthData} totalStudents={list.totalStudents} />
-              <MateriaRadar
-                materias={monthData.materias}
-                onSelectMateria={setSelectedMateriaId}
-                selectedMateriaId={selectedMateriaId}
-              />
-              {selectedMateria && <FrenteRadar materia={selectedMateria} />}
+              {monthData.materias.length > 0 && (
+                <div className="flex items-center justify-end gap-1 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setView("materia");
+                      setViewTouched(true);
+                    }}
+                    className={`rounded-l border px-3 py-1 ${
+                      view === "materia"
+                        ? "bg-blue-50 border-blue-300 text-blue-700"
+                        : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50"
+                    }`}
+                    aria-pressed={view === "materia"}
+                  >
+                    Por matéria
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setView("frente");
+                      setViewTouched(true);
+                    }}
+                    className={`-ml-px rounded-r border px-3 py-1 ${
+                      view === "frente"
+                        ? "bg-blue-50 border-blue-300 text-blue-700"
+                        : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50"
+                    }`}
+                    aria-pressed={view === "frente"}
+                  >
+                    Por frente
+                  </button>
+                </div>
+              )}
+              {view === "materia" ? (
+                <>
+                  <MateriaRadar
+                    materias={monthData.materias}
+                    onSelectMateria={setSelectedMateriaId}
+                    selectedMateriaId={selectedMateriaId}
+                  />
+                  {selectedMateria && <FrenteRadar materias={[selectedMateria]} />}
+                </>
+              ) : (
+                <FrenteRadar materias={monthData.materias} />
+              )}
             </>
           )}
         </>
