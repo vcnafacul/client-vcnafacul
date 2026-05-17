@@ -4,11 +4,14 @@ import PropValue from "@/components/molecules/PropValue";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { Badge } from "@/components/ui/badge";
+import { Roles } from "@/enums/roles/roles";
+import { useToastAsync } from "@/hooks/useToastAsync";
+import { adminUploadPhotoCollaborator } from "@/services/prepCourse/collaborator/admin-upload-photo";
 import { Afinidade } from "@/types/partnerPrepCourse/afinidades";
 import { getColorFromName, getTextColorFromName } from "@/utils/getColorFromName";
 import { formatDate } from "@/utils/date";
 import { phoneMask } from "@/utils/phoneMask";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { getCollaboratorFrentesEnriched } from "@/services/prepCourse/collaborator/get-collaborator-frentes";
 import { useAuthStore } from "@/store/auth";
@@ -21,6 +24,10 @@ interface ModalProps {
   photoUrl?: string;
   handleActive: (id: string) => Promise<void>;
   handleDescription: (id: string, description: string) => Promise<void>;
+  onPhotoUpdated?: (
+    collaboratorId: string,
+    newPhotoKey: string,
+  ) => Promise<void> | void;
   openUpdateRole: () => void;
 }
 
@@ -45,6 +52,7 @@ export function ShowInfo({
   isOpen,
   handleActive,
   handleDescription,
+  onPhotoUpdated,
   openUpdateRole,
 }: ModalProps) {
   const [actived, setActived] = useState<boolean>(collaborator.actived);
@@ -54,8 +62,46 @@ export function ShowInfo({
   const [loading, setLoading] = useState<string>("Atualizar");
   const [afinidades, setAfinidades] = useState<Afinidade[]>([]);
   const [frentesLoading, setFrentesLoading] = useState(false);
-  const { data: { token } } = useAuthStore();
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const { data } = useAuthStore();
+  const { token, permissao } = data;
+  const canEditPhotos = !!permissao?.[Roles.alterarPermissao];
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const executeAsync = useToastAsync();
   const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
+
+  const handlePhotoFileSelected = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione um arquivo de imagem.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("A imagem não pode passar de 5 MB.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    setPhotoUploading(true);
+    await executeAsync({
+      action: () =>
+        adminUploadPhotoCollaborator(collaborator.id, formData, token),
+      loadingMessage: "Atualizando foto...",
+      successMessage: "Foto atualizada!",
+      errorMessage: (err: Error) => err.message,
+      onSuccess: (newPhotoKey: string) => {
+        void onPhotoUpdated?.(collaborator.id, newPhotoKey);
+      },
+      onFinally: () => setPhotoUploading(false),
+    });
+  };
 
   useEffect(() => {
     if (!isOpen || !collaborator?.id || !token) return;
@@ -83,13 +129,39 @@ export function ShowInfo({
     >
       <div className="p-4 rounded-md overflow-y-auto scrollbar-hide h-4/5 sm:h-fit">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
-          {collaborator.photo && (
-            <div className="w-56 h-40">
-              <img
-                className="rounded-full object-cover shadow-md shadow-stone-500 w-40 h-40"
-                src={photoUrl || `${VITE_FTP_PROFILE}${collaborator.photo}`}
-                alt={collaborator.name}
-              />
+          {(collaborator.photo || canEditPhotos) && (
+            <div className="w-56 h-40 flex flex-col items-center">
+              {collaborator.photo ? (
+                <img
+                  className="rounded-full object-cover shadow-md shadow-stone-500 w-40 h-40"
+                  src={photoUrl || `${VITE_FTP_PROFILE}${collaborator.photo}`}
+                  alt={collaborator.name}
+                />
+              ) : (
+                <div className="rounded-full shadow-md shadow-stone-500 w-40 h-40 bg-zinc-200 flex items-center justify-center text-zinc-500 text-xs text-center px-2">
+                  Sem foto
+                </div>
+              )}
+              {canEditPhotos && (
+                <>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={handlePhotoFileSelected}
+                  />
+                  <Button
+                    onClick={() => fileInputRef.current?.click()}
+                    typeStyle="secondary"
+                    size="small"
+                    className="mt-2 w-40 font-light"
+                    disabled={photoUploading}
+                  >
+                    {collaborator.photo ? "Trocar foto" : "Adicionar foto"}
+                  </Button>
+                </>
+              )}
             </div>
           )}
           <div className="flex flex-col gap-2 w-full">

@@ -23,6 +23,7 @@ export const SIMULADO_HISTORIES = `${SIMULADO}historico/`;
 
 export const NEWS = "/novidades";
 export const DASH_ROLES = "permissoes";
+export const DASH_HOME = "dash-home";
 
 export const ESTUDO = "estudo";
 export const CONTENT = "content";
@@ -44,3 +45,11 @@ export const ESSAY_HISTORY = "redacoes";
 export const ESSAY_THEME_ADMIN = "temas-redacao";
 export const ESSAY_REVIEW_LIST = "revisao-redacoes";
 export const ESSAY_REVIEW_CURSINHO = "revisao-redacoes-cursinho";
+
+export const HOME_V2_PATH = "/home-v2";
+export const HOME_LEGACY_PATH = "/home-legacy";
+
+export const QUEM_SOMOS_PATH = "/quem-somos";
+export const SUPORTE = "/suporte";
+export const DASH_SUPPORT = "suporte";
+export const DASH_PARTNER_SUPPORT = "suporte-cursinho";

@@ -5,6 +5,7 @@ interface Props {
   keys?: string[];
   indexBy?: string;
   scheme?: string;
+  colors?: string[];
   gridShape?: string;
   fill?: string;
   dotSize?: number;
@@ -17,14 +18,21 @@ export function RadarChart({
   keys = ["aproveitamento"],
   indexBy = "materia",
   scheme,
+  colors,
   gridShape,
   fill,
   dotSize = 5,
   dotBorderWidth = 3,
   maxValue = 100,
 }: Props) {
-  const colorScheme = scheme || "blues";
   const shape: string = gridShape || "linear";
+  // Cor explícita > scheme > roxo claro padrão (visível em fundos claros e escuros)
+  const colorProp = colors
+    ? colors
+    : scheme
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ({ scheme: scheme as any } as any)
+      : ["#a78bfa"];
   return (
     <ResponsiveRadar
       data={data}
@@ -38,8 +46,7 @@ export function RadarChart({
       dotSize={dotSize}
       dotColor={{ theme: "background" }}
       dotBorderWidth={dotBorderWidth}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      colors={{ scheme: colorScheme as any }}
+      colors={colorProp}
       fillOpacity={0.5}
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       gridShape={shape as any}

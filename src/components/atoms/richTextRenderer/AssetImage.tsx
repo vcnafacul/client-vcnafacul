@@ -8,9 +8,17 @@ interface AssetImageProps {
   className?: string;
   width?: number;
   height?: number;
+  fetchAsset?: (key: string, token: string) => Promise<Blob>;
 }
 
-export function AssetImage({ assetId, alt = "", className, width, height }: AssetImageProps) {
+export function AssetImage({
+  assetId,
+  alt = "",
+  className,
+  width,
+  height,
+  fetchAsset = getQuestionImage,
+}: AssetImageProps) {
   const [src, setSrc] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const {
@@ -20,7 +28,7 @@ export function AssetImage({ assetId, alt = "", className, width, height }: Asse
   useEffect(() => {
     let objectUrl = "";
 
-    getQuestionImage(assetId, token)
+    fetchAsset(assetId, token)
       .then((blob) => {
         objectUrl = URL.createObjectURL(blob);
         setSrc(objectUrl);
@@ -33,7 +41,7 @@ export function AssetImage({ assetId, alt = "", className, width, height }: Asse
     return () => {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, [assetId, token]);
+  }, [assetId, token, fetchAsset]);
 
   if (loading) {
     return (

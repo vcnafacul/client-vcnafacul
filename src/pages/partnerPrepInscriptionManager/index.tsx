@@ -1,5 +1,6 @@
 import { ButtonProps } from "@/components/molecules/button";
 import { CardDash } from "@/components/molecules/cardDash";
+import { SelectProps } from "@/components/atoms/select";
 import DashCardTemplate from "@/components/templates/dashCardTemplate";
 import { DashCardContext } from "@/context/dashCardContext";
 import { StatusEnum } from "@/enums/generic/statusEnum";
@@ -13,7 +14,7 @@ import { useAuthStore } from "@/store/auth";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import { formatDate } from "@/utils/date";
 import { Paginate } from "@/utils/paginate";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MoonLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { dataInscription } from "./data";
@@ -23,12 +24,18 @@ import {
 } from "./modals/InscriptionInfoCreateEditModal";
 import { InscriptionInfoModal } from "./modals/InscriptionInfoModal";
 
+const getInscriptionStatus = (inscription: Inscription): StatusEnum => {
+  if (new Date(inscription.endDate) < new Date()) return StatusEnum.Rejected;
+  return inscription.actived;
+};
+
 export function PartnerPrepInscriptionManager() {
   const [processing, setProcessing] = useState<boolean>(true);
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
   const [inscriptionSelected, setInscriptionSelected] = useState<
     Inscription | undefined
   >(undefined);
+  const [statusFilter, setStatusFilter] = useState<StatusEnum>(StatusEnum.All);
   const limitCards = 100;
 
   const modals = useModals(["modalCreate", "modalInfo"]);
@@ -85,6 +92,21 @@ export function PartnerPrepInscriptionManager() {
     setInscriptionSelected(inscriptions.find((ins) => ins.id === cardId)!);
     modals.modalInfo.open();
   };
+  const filteredInscriptions = useMemo(() => {
+    if (statusFilter === StatusEnum.All) return inscriptions;
+    return inscriptions.filter(
+      (ins) => getInscriptionStatus(ins) === statusFilter
+    );
+  }, [inscriptions, statusFilter]);
+
+  const selectFiltes: SelectProps[] = [
+    {
+      options: dataInscription.statusOptions,
+      setState: (value) => setStatusFilter(Number(value) as StatusEnum),
+      defaultValue: statusFilter,
+    },
+  ];
+
   const buttons: ButtonProps[] = [
     {
       // disabled: !permissao[Roles.criarQuestao],
@@ -180,9 +202,7 @@ export function PartnerPrepInscriptionManager() {
     setProcessing(true);
     try {
       const res = await getAllInscription(token, 1, limitCards);
-      res.data.sort((a, b) => {
-        return a.startDate < b.startDate ? -1 : 1;
-      });
+      res.data.sort((a, b) => (a.startDate < b.startDate ? -1 : 1));
       setInscriptions(res.data);
       setProcessing(false);
     } catch (e) {
@@ -198,13 +218,22 @@ export function PartnerPrepInscriptionManager() {
     <DashCardContext.Provider
       value={{
         title: dataInscription.title,
-        entities: inscriptions,
-        setEntities: setInscriptions,
+        entities: filteredInscriptions,
+        setEntities: (action) => {
+          setInscriptions((prev) => {
+            const newList =
+              typeof action === "function" ? action(prev) : action;
+            const prevIds = new Set(prev.map((i) => i.id));
+            const genuinelyNew = newList.filter((i) => !prevIds.has(i.id));
+            return genuinelyNew.length > 0 ? [...prev, ...genuinelyNew] : prev;
+          });
+        },
         onClickCard: onClickCard,
         getMoreCards: getMoreCards,
         limitCards: 10,
         cardTransformation,
         buttons,
+        selectFiltes,
       }}
     >
       {processing ? (

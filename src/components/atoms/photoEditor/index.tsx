@@ -10,6 +10,12 @@ interface PhotoEditorProps {
   /** File da foto; a URL é criada e revogada internamente para evitar imagem quebrada (ex.: Strict Mode). */
   photo: File;
   onConfirm: (file: File) => void;
+  /** Proporção do recorte (largura/altura). Default: 3/4. */
+  aspect?: number;
+  /** Dimensões finais da imagem cropada (canvas). Quando omitido, usa as pixels do crop. */
+  targetSize?: { width: number; height: number };
+  /** Formato de saída. PNG preserva transparência; JPEG é menor. Default: jpeg. */
+  outputFormat?: "image/jpeg" | "image/png";
 }
 
 const PhotoEditor = ({
@@ -17,6 +23,9 @@ const PhotoEditor = ({
   photo,
   onConfirm,
   handleClose,
+  aspect = 3 / 4,
+  targetSize,
+  outputFormat = "image/jpeg",
 }: PhotoEditorProps) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -40,7 +49,12 @@ const PhotoEditor = ({
 
   const handleConfirm = async () => {
     if (!croppedAreaPixels || !photoUrl) return;
-    const croppedImage = await getCroppedImg(photoUrl, croppedAreaPixels);
+    const croppedImage = await getCroppedImg(
+      photoUrl,
+      croppedAreaPixels,
+      targetSize,
+      outputFormat,
+    );
     onConfirm(croppedImage);
   };
 
@@ -65,7 +79,7 @@ const PhotoEditor = ({
             image={photoUrl}
             crop={crop}
             zoom={zoom}
-            aspect={3 / 4}
+            aspect={aspect}
             onCropChange={setCrop}
             onZoomChange={setZoom}
             onCropComplete={onCropComplete}

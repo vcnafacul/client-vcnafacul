@@ -9,11 +9,14 @@ import {
   DASH_CONTENT,
   DASH_GEOLOCATION,
   DASH_GLOBAL_FORM,
+  DASH_HOME,
   DASH_NEWS,
   DASH_PROVAS,
   DASH_QUESTION,
   DASH_ROLES,
   DASH_SIMULADO,
+  DASH_SUPPORT,
+  DASH_PARTNER_SUPPORT,
   ESSAY_REVIEW_CURSINHO,
   ESSAY_REVIEW_LIST,
   ESSAY_THEME_ADMIN,
@@ -42,6 +45,7 @@ import { ReactComponent as Quimica } from "../../assets/icons/home-subjects-quim
 
 import { GoGraph } from "react-icons/go";
 import { IoSchool } from "react-icons/io5";
+import { LuMessageSquare } from "react-icons/lu";
 import { ReactComponent as Atualidades } from "../../assets/icons/home-subjects-atualidades.svg";
 import { ReactComponent as Filosofia } from "../../assets/icons/home-subjects-filosofia.svg";
 import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-geografia.svg";
@@ -60,7 +64,7 @@ import { SubDashCardInfo } from "../../components/molecules/subDashCard";
 import { HeaderData } from "../../components/organisms/header";
 import { Roles } from "../../enums/roles/roles";
 import { AreaWithMaterias } from "../../services/content/getMateriasGroupedByArea";
-import { header } from "../home/data";
+import { header } from "../homeLegacy/data";
 
 export const headerDash: HeaderData = {
   ...header,
@@ -134,7 +138,7 @@ export const adminMenuItems: DashCardMenu[] = [
         alt: "formulário",
         text: "Formulário",
         link: `/dashboard/${PARTNER_CLASS_FORM}`,
-        permissions: [Roles.alterarPermissao],
+        permissions: [Roles.gerenciarFormulario],
       },
       {
         icon: FaBook,
@@ -142,6 +146,13 @@ export const adminMenuItems: DashCardMenu[] = [
         text: "Revisão de Redações",
         link: `/dashboard/${ESSAY_REVIEW_CURSINHO}`,
         permissions: [Roles.revisarRedacoes],
+      },
+      {
+        icon: LuMessageSquare,
+        alt: "suporte cursinho",
+        text: "Suporte / Chat",
+        link: `/dashboard/${DASH_PARTNER_SUPPORT}`,
+        permissions: [Roles.partnerPrepSupportAgent],
       },
     ],
   },
@@ -152,6 +163,13 @@ export const adminMenuItems: DashCardMenu[] = [
     image: AdminImg,
     alt: "Admin",
     subMenuList: [
+      {
+        icon: AdminImg,
+        alt: "dash_home",
+        text: "Home",
+        link: `/dashboard/${DASH_HOME}`,
+        permissions: [Roles.alterarPermissao],
+      },
       {
         icon: Historia,
         alt: "localiza cursinho",
@@ -235,6 +253,13 @@ export const adminMenuItems: DashCardMenu[] = [
         text: "Revisão de Redações",
         link: `/dashboard/${ESSAY_REVIEW_LIST}`,
         permissions: [Roles.revisarTodasRedacoes],
+      },
+      {
+        icon: LuMessageSquare,
+        alt: "suporte",
+        text: "Suporte",
+        link: `/dashboard/${DASH_SUPPORT}`,
+        permissions: [Roles.supportAgent],
       },
     ],
   },

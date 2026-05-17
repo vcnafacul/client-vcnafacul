@@ -7,6 +7,7 @@ import { ReactComponent as TriangleGreyBorder } from "../../../assets/icons/tria
 import { ReactComponent as TriangleYellow } from "../../../assets/icons/triangle-yellow.svg";
 
 import Text from "../../atoms/text";
+import RichTextRenderer from "../../atoms/richTextRenderer/RichTextRenderer";
 import './styles.css';
 import { useHomeContext } from "../../../context/homeContext";
 import AboutUsSkeleton from "../aboutUsSkeleton.tsx";
@@ -16,6 +17,16 @@ export interface AboutUsProps {
     description: string,
     thumbnail: string;
     videoID: string;
+}
+
+function extractYoutubeId(input: string | null | undefined): string {
+    if (!input) return "";
+    const trimmed = input.trim();
+    if (/^[\w-]{11}$/.test(trimmed)) return trimmed;
+    const match = trimmed.match(
+        /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([\w-]{11})/,
+    );
+    return match ? match[1] : trimmed;
 }
 
 function AboutUs(){
@@ -35,7 +46,7 @@ function AboutUs(){
         setVideoComponent(
             <Youtube
                 className="video z-40 absolute "
-                videoId={aboutUs?.videoID}
+                videoId={extractYoutubeId(aboutUs?.videoID)}
                 opts={videoOptions}
             />
         );
@@ -53,7 +64,7 @@ function AboutUs(){
                     <div className="flex justify-center items-center bg-blue max-w-[640px] max-h-[390px]">
                         <div className="relative flex justify-center items-center w-96">
                             <TabletImage className="tablet absolute z-20 max-w-[640px] md:w-[640px]" />
-                            <img src={aboutUs!.thumbnail} alt="thumbnail" className="video relative z-30 md:max-w-[440px] sm:max-w-[320px] max-w-[80%]"/>
+                            <img src={aboutUs!.thumbnail} alt="thumbnail" className="video relative z-30  max-w-[540px] md:w-[540px] aspect-[4/3] object-cover opacity-75"/>
                         </div>
                         <button className="absolute z-40 border-none cursor-pointer" onClick={handleClick}>
                             <PlayIcon className="z-30 bg-gray-900 rounded-full border-none cursor-pointer opacity-30 transition-opacity duration-200 ease-linear hover:opacity-100" />
@@ -63,7 +74,9 @@ function AboutUs(){
                 </div>
                 <div>
                     <Text size="secondary" className="text-start">{aboutUs!.title}</Text>
-                    <Text size="tertiary" className="text-start">{aboutUs!.description}</Text>
+                    <div className="text-start">
+                      <RichTextRenderer content={aboutUs!.description} contentFormat="markdown" />
+                    </div>
                 </div>
             </div>
         </div>

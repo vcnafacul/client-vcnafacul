@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import "./styles/sectionThemes.css";
 import "primereact/resources/themes/md-light-indigo/theme.css";
 
 const PRESERVE_KEYS = ["lgpd_status", "lgpd_updated_at"];

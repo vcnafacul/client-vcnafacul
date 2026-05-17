@@ -12,7 +12,7 @@ import { StatusEnum } from "../../enums/generic/statusEnum";
 import { createNews } from "../../services/news/createNews";
 import { deleteNews } from "../../services/news/deleteNews";
 import { getAllNews } from "../../services/news/getAllNews";
-import { updateNews } from "../../services/news/updateNews";
+import { updateNews, UpdateNewsPayload } from "../../services/news/updateNews";
 import { useAuthStore } from "../../store/auth";
 import { formatDate } from "../../utils/date";
 import { getStatusBool } from "../../utils/getStatusIcon";
@@ -40,8 +40,8 @@ function DashNews() {
     title: n.title,
     status: getStatusBool(n.actived),
     infos: [
-      { field: "Session", value: n.session },
       { field: "Título", value: n.title },
+      { field: "Destaque", value: n.destaque ? "Sim" : "Não" },
       {
         field: "Criado em",
         value: n.createdAt ? formatDate(n.createdAt.toString()) : "",
@@ -54,14 +54,41 @@ function DashNews() {
     modals.modalEdit.open();
   };
 
-  const create = (session: string, title: string, file: any, expireAt?: string) => {
-    const formData = new FormData();
-    formData.append("session", session);
-    formData.append("title", title);
-    formData.append("file", file, title + ".docx");
-    if (expireAt) formData.append("expire_at", expireAt);
+  const create = (
+    title: string,
+    options: {
+      description?: string;
+      destaque: boolean;
+      expireAt?: string;
+      contentType: 'file' | 'text';
+      body?: string;
+      file?: File | null;
+    }
+  ) => {
+    const promise =
+      options.contentType === 'text'
+        ? createNews(
+            {
+              title,
+              contentType: 'text',
+              body: options.body!,
+              description: options.description,
+              destaque: options.destaque,
+              expire_at: options.expireAt,
+            },
+            token
+          )
+        : (() => {
+            const fd = new FormData();
+            fd.append("title", title);
+            fd.append("destaque", String(options.destaque));
+            if (options.description) fd.append("description", options.description);
+            fd.append("file", options.file as File, title + ".docx");
+            if (options.expireAt) fd.append("expire_at", options.expireAt);
+            return createNews(fd, token);
+          })();
 
-    createNews(formData, token)
+    promise
       .then((res) => {
         setNews([res, ...news]);
         modals.modalEdit.close();
@@ -74,12 +101,27 @@ function DashNews() {
       });
   };
 
-  const update = (id: string, session: string, title: string, expireAt?: string) => {
-    const payload: { session: string; title: string; expire_at?: string | null } = {
-      session,
-      title,
+  const update = (
+    id: string,
+    options: {
+      title: string;
+      description: string | null;
+      destaque: boolean;
+      expireAt?: string;
+      body?: string;
+    }
+  ) => {
+    const payload: UpdateNewsPayload = {
+      title: options.title,
+      description: options.description,
+      destaque: options.destaque,
     };
-    if (expireAt !== undefined) payload.expire_at = expireAt || null;
+    if (options.expireAt !== undefined) {
+      payload.expire_at = options.expireAt || null;
+    }
+    if (options.body !== undefined) {
+      payload.body = options.body;
+    }
 
     updateNews(id, payload, token)
       .then((res) => {
@@ -116,10 +158,6 @@ function DashNews() {
     getAllNews(token, 1, limitCards, status)
       .then((res) => {
         setNews(res.data);
-        const uniqueSessions = new Set<string>();
-        res.data.map((r) => {
-          uniqueSessions.add(r.session);
-        });
       })
       .catch((error: Error) => {
         toast.error(error.message);

@@ -1,21 +1,34 @@
-import { HiCheck } from "react-icons/hi";
-import { ReactComponent as PointIcon } from "../../../assets/images/home/univ_public.svg";
 import { ComponentProps } from "react";
+import { HiCheck } from "react-icons/hi";
+import { TypeMarker } from "../../../types/map/marker";
+import { MarkerPin } from "../../molecules/mapBox";
 
-interface CheckMapFilterProps extends ComponentProps<'div'> {
+interface CheckMapFilterProps extends ComponentProps<"div"> {
   label: string;
-  color: string;
+  type: TypeMarker;
   checked: boolean;
 }
 
-export function CheckMapFilter({label, color, checked, ...props} : CheckMapFilterProps) {
+export function CheckMapFilter({
+  label,
+  type,
+  checked,
+  ...props
+}: CheckMapFilterProps) {
   return (
-    <div className="flex gap-4 items-center" {...props}>
-      <div className="bg-white bg-opacity-70 h-4 w-4 relative">
-        {checked ? <HiCheck className=" absolute h-7 w-7 -left-0.5 -bottom-1 fill-green3" /> : <></>}
+    <div
+      className="flex gap-3 items-center cursor-pointer py-1"
+      {...props}
+    >
+      <div className="bg-white bg-opacity-70 h-5 w-5 relative rounded-sm shrink-0">
+        {checked && (
+          <HiCheck className="absolute h-8 w-8 -left-1 -bottom-1 fill-green3" />
+        )}
       </div>
-      <label className="text-white font-black">{label}</label>
-      <PointIcon className={`${color} h-8`} />
+      <label className="text-white font-black flex-1 cursor-pointer">
+        {label}
+      </label>
+      <MarkerPin type={type} size={28} />
     </div>
   );
 }

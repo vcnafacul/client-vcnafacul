@@ -1,6 +1,6 @@
 import logo from "@/assets/images/logo_carteirinha.png";
 import Button from "@/components/molecules/button";
-import { Bool } from "@/enums/bool";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Roles } from "@/enums/roles/roles";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
@@ -17,13 +17,12 @@ import { format } from "date-fns";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { useEffect, useState } from "react";
 import { FaListCheck } from "react-icons/fa6";
-import { GoGraph } from "react-icons/go";
 import { IoEyeSharp } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import { AttendanceHistoryModal } from "./modals/attendanceHistoryModal";
 import { AttendanceRecordByStudentModal } from "./modals/attendanceRecordByStudentModal";
-import { StatisticModal } from "./modals/statistic";
+import { ClassSimuladoAnalytics } from "@/components/organisms/classSimuladoAnalytics";
 
 export function PartnerClassWithStudents() {
   const { hashClassId } = useParams();
@@ -38,7 +37,6 @@ export function PartnerClassWithStudents() {
   const modals = useModals([
     "modalAttendanceHistory",
     "modalAttendanceRecordByStudent",
-    "modalStatistic",
   ]);
 
   const {
@@ -159,19 +157,6 @@ export function PartnerClassWithStudents() {
     );
   };
 
-  const ModalStatistic = () => {
-    return !modals.modalStatistic.isOpen ? null : (
-      <StatisticModal
-        isOpen={modals.modalStatistic.isOpen}
-        handleClose={() => modals.modalStatistic.close()}
-        data={{
-          forms: students.map((student) => student.socioeconomic),
-          isFree: students.map((student) => student.isFree === Bool.Yes),
-        }}
-      />
-    );
-  };
-
   const getStudents = async () => {
     await executeAsync({
       action: () => getClassById(token, hashClassId!),
@@ -227,7 +212,7 @@ export function PartnerClassWithStudents() {
             heights: 20,
           },
           layout: "lightHorizontalLines",
-          alignment: "center", // Centraliza horizontalmente
+          alignment: "center",
         },
       ],
     };
@@ -262,57 +247,66 @@ export function PartnerClassWithStudents() {
           </div>
         )}
       </div>
-      <div className="p-4 my-4 flex gap-2 flex-start bg-gray-50 w-full">
-        {permissao[Roles.gerenciarTurmas] && (
-          <Button
-            typeStyle="accepted"
-            size="small"
-            onClick={() => modals.modalAttendanceHistory.open()}
-            className="border-none"
-          >
-            <div className="flex items-center justify-center gap-2">
-              <FaListCheck />
-              Registros de Frequência
-            </div>
-          </Button>
-        )}
-        <Button
-          typeStyle="primary"
-          size="small"
-          onClick={downloadPDFClass}
-          className="border-none"
-        >
-          <div className="flex items-center justify-center gap-2">
-            <MdOutlineFileDownload className="h-5 w-5 fill-white" />
-            Lista de alunos
+
+      <Tabs defaultValue="alunos" className="w-full mt-4">
+        <div className="px-4">
+          <TabsList>
+            <TabsTrigger value="alunos">Alunos</TabsTrigger>
+            <TabsTrigger value="simulados">Simulados</TabsTrigger>
+          </TabsList>
+        </div>
+
+        <TabsContent value="alunos">
+          <div className="p-4 flex gap-2 flex-start bg-gray-50 w-full">
+            {permissao[Roles.gerenciarTurmas] && (
+              <Button
+                typeStyle="accepted"
+                size="small"
+                onClick={() => modals.modalAttendanceHistory.open()}
+                className="border-none"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <FaListCheck />
+                  Registros de Frequência
+                </div>
+              </Button>
+            )}
+            <Button
+              typeStyle="primary"
+              size="small"
+              onClick={downloadPDFClass}
+              className="border-none"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <MdOutlineFileDownload className="h-5 w-5 fill-white" />
+                Lista de alunos
+              </div>
+            </Button>
           </div>
-        </Button>
-        <Button
-          size="small"
-          className="border-none"
-          typeStyle="refused"
-          onClick={() => modals.modalStatistic.open()}
-        >
-          <div className="flex gap-2 items-center justify-center">
-            <GoGraph />
-            <p className="">Estatisticas</p>
+          <Paper sx={{ height: "100%", width: "100%" }}>
+            <DataGrid
+              rows={students}
+              columns={columns}
+              initialState={{ pagination: { paginationModel } }}
+              rowHeight={40}
+              disableRowSelectionOnClick
+              pageSizeOptions={[5, 10, 15, 30, 50, 100]}
+              sx={{ border: 0 }}
+            />
+          </Paper>
+        </TabsContent>
+
+        <TabsContent value="simulados">
+          <div className="p-4">
+            {hashClassId && (
+              <ClassSimuladoAnalytics classId={hashClassId} token={token} />
+            )}
           </div>
-        </Button>
-      </div>
-      <Paper sx={{ height: "100%", width: "100%" }}>
-        <DataGrid
-          rows={students}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          rowHeight={40}
-          disableRowSelectionOnClick
-          pageSizeOptions={[5, 10, 15, 30, 50, 100]}
-          sx={{ border: 0 }}
-        />
-      </Paper>
+        </TabsContent>
+      </Tabs>
+
       <ModalAttendanceHistory />
       <ModalAttendanceRecordByStudent />
-      <ModalStatistic />
     </div>
   );
 }

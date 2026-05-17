@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import Analytics from "@/pages/analytics";
 import { ConfirmEnrolled } from "@/pages/confirmEnrolled";
 import EnrollmentConfirmation from "@/pages/enrollmentConfirmation";
@@ -12,6 +13,11 @@ import PartnerPrepManager from "@/pages/partnerPrepManager";
 import RegistrationMonitor from "@/pages/registrationMonitor";
 import { StudentsEnrolled } from "@/pages/studentsEnrolled";
 import GlobalFormPage from "@/pages/globalForm";
+import SupportPage from "@/pages/support";
+import AdminSupportPage from "@/pages/admin/support";
+import PartnerSupportPage from "@/pages/dash/suporte-cursinho";
+import DashHome from "../pages/dashHome";
+import QuemSomosPage from "../pages/quemSomos";
 import EssayWrite from "../pages/essayWrite";
 import EssayResult from "../pages/essayResult";
 import EssayHistory from "../pages/essayHistory";
@@ -35,7 +41,6 @@ import DashQuestionNew from "../pages/dashQuestionNew";
 import DashRoles from "../pages/dashRoles";
 import DashSimulado from "../pages/dashSimulado";
 import Forgot from "../pages/forgot";
-import Home from "../pages/home";
 import Login from "../pages/login";
 import Logout from "../pages/logout";
 import MainSimulate from "../pages/mainSimulate";
@@ -52,6 +57,8 @@ import { useAuthStore } from "../store/auth";
 import { BaseRoutes } from "./baseRoutes";
 import { HeroRoutes } from "./heroRoutes";
 import {
+  QUEM_SOMOS_PATH,
+  HOME_LEGACY_PATH,
   ACCOUNT_PATH,
   CONFIRM_EMAIL,
   CONTENT,
@@ -60,11 +67,14 @@ import {
   DASH_CONTENT,
   DASH_GEOLOCATION,
   DASH_GLOBAL_FORM,
+  DASH_HOME,
   DASH_NEWS,
   DASH_PROVAS,
   DASH_QUESTION,
   DASH_ROLES,
   DASH_SIMULADO,
+  DASH_SUPPORT,
+  DASH_PARTNER_SUPPORT,
   DECLARED_INTEREST,
   ENROLLMENT_CONFIRMATION,
   ESSAY_WRITE,
@@ -94,9 +104,13 @@ import {
   SIMULADO_HISTORIES,
   SIMULADO_RESPONDER,
   SIMULATE_METRICS,
+  SUPORTE,
 } from "./path";
 import ProtectedRoute from "./protectedRoute";
 import ProtectedRoutePermission from "./protectedRoutePermission";
+
+const Home = lazy(() => import("../pages/homeV2"));
+const HomeLegacy = lazy(() => import("../pages/homeLegacy"));
 
 export function PlatformRoutes() {
   const { data } = useAuthStore();
@@ -108,9 +122,25 @@ export function PlatformRoutes() {
       <Route element={<ConfirmEmailPage />} path={CONFIRM_EMAIL} />
       <Route element={<BaseRoutes />}>
         <Route element={<HeroRoutes />}>
-          <Route path={HOME_PATH} element={<Home />} />
+          <Route
+            path={HOME_PATH}
+            element={
+              <Suspense fallback={null}>
+                <Home />
+              </Suspense>
+            }
+          />
+          <Route
+            path={HOME_LEGACY_PATH}
+            element={
+              <Suspense fallback={null}>
+                <HomeLegacy />
+              </Suspense>
+            }
+          />
           <Route path={NEWS} element={<NewsPage />} />
         </Route>
+        <Route path={QUEM_SOMOS_PATH} element={<QuemSomosPage />} />
         <Route path={LOGIN_PATH} element={<Login />} />
         <Route path={FORGOT_PASSWORD_PATH} element={<Forgot />} />
         <Route path={LOGOFF_PATH} element={<Logout />} />
@@ -133,6 +163,15 @@ export function PlatformRoutes() {
         element={
           <ProtectedRoute>
             <Simulate />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={SUPORTE}
+        element={
+          <ProtectedRoute>
+            <SupportPage />
           </ProtectedRoute>
         }
       />
@@ -166,7 +205,7 @@ export function PlatformRoutes() {
           path={PARTNER_CLASS_FORM}
           element={
             <ProtectedRoutePermission
-              permission={data.permissao[Roles.gerenciarProcessoSeletivo]}
+              permission={data.permissao[Roles.gerenciarFormulario]}
             >
               <PartnerPrepForm />
             </ProtectedRoutePermission>
@@ -237,6 +276,36 @@ export function PlatformRoutes() {
               permission={data.permissao[Roles.alterarPermissao]}
             >
               <DashRoles />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={DASH_SUPPORT}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.supportAgent]}
+            >
+              <AdminSupportPage />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={DASH_PARTNER_SUPPORT}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.partnerPrepSupportAgent]}
+            >
+              <PartnerSupportPage />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={DASH_HOME}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.alterarPermissao]}
+            >
+              <DashHome />
             </ProtectedRoutePermission>
           }
         />

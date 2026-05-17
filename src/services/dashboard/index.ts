@@ -8,6 +8,8 @@ import {
   essayMyCursinhoCount,
   essayAllCount,
   dashboardQuestoesPendentes,
+  dashboardStudentsServed,
+  dashboardStudentsEnrolled,
 } from '../urls';
 
 // --- Types ---
@@ -70,6 +72,14 @@ export interface MateriaCount {
 export interface QuestoesPendentesResponse {
   total: number;
   byMateria: MateriaCount[];
+}
+
+export interface StudentsServedResponse {
+  total: number;
+}
+
+export interface StudentsEnrolledResponse {
+  total: number;
 }
 
 // --- Fetchers ---
@@ -182,6 +192,36 @@ export async function getEssayCountForReview(
   );
   if (response.status !== 200)
     throw new Error('Erro ao buscar contagem de redações');
+  return response.json();
+}
+
+export async function getStudentsCurrentlyEnrolled(
+  token: string,
+): Promise<StudentsEnrolledResponse> {
+  const response = await fetchWrapper(dashboardStudentsEnrolled, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (response.status !== 200)
+    throw new Error('Erro ao buscar estudantes ativos');
+  return response.json();
+}
+
+export async function getStudentsServed(
+  token: string,
+): Promise<StudentsServedResponse> {
+  const response = await fetchWrapper(dashboardStudentsServed, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (response.status !== 200)
+    throw new Error('Erro ao buscar estudantes atendidos');
   return response.json();
 }
 
