@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, RefreshCw } from "lucide-react";
 import { ClassMonthAnalytics, ClassMonthsList } from "@/types/classAnalytics/classSimuladoAnalytics";
+import { formatPercent } from "@/utils/formatPercent";
 
 interface Props {
   list: ClassMonthsList;
@@ -45,7 +46,7 @@ export function KpiHeader({ list, monthData, onRefresh, refreshing }: Props) {
           <Card>
             <CardContent className="pt-4">
               <p className="text-xs text-gray-500">Aproveitamento geral</p>
-              <p className="text-2xl font-bold">{Math.round(monthData.geral)}%</p>
+              <p className="text-2xl font-bold">{formatPercent(monthData.geral)}%</p>
             </CardContent>
           </Card>
           <Card>

@@ -1,5 +1,6 @@
 import { LineChart } from "@mui/x-charts/LineChart";
 import { ClassMonthsList } from "@/types/classAnalytics/classSimuladoAnalytics";
+import { formatPercent } from "@/utils/formatPercent";
 
 interface Props {
   months: ClassMonthsList["months"];
@@ -9,7 +10,7 @@ interface Props {
 
 function formatMonth(yyyymm: string) {
   const [y, m] = yyyymm.split("-");
-  const date = new Date(Date.UTC(Number(y), Number(m) - 1, 1));
+  const date = new Date(Number(y), Number(m) - 1, 1);
   return date
     .toLocaleString("pt-BR", { month: "short", year: "2-digit" })
     .replace(".", "");
@@ -20,7 +21,7 @@ export function ClassEvolutionChart({ months, selectedMonth, onSelectMonth }: Pr
 
   const ordered = [...months].sort((a, b) => a.month.localeCompare(b.month));
   const labels = ordered.map((m) => formatMonth(m.month));
-  const values = ordered.map((m) => Math.round(m.geral));
+  const values = ordered.map((m) => formatPercent(m.geral));
   const selectedIndex = ordered.findIndex((m) => m.month === selectedMonth);
 
   return (

@@ -1,5 +1,6 @@
 import { RadarChart } from "@/components/atoms/radarChart";
 import { ClassMonthAnalytics } from "@/types/classAnalytics/classSimuladoAnalytics";
+import { formatPercent } from "@/utils/formatPercent";
 
 interface Props {
   materias: ClassMonthAnalytics["materias"];
@@ -18,7 +19,7 @@ export function MateriaRadar({ materias, onSelectMateria, selectedMateriaId }: P
 
   const radarData = materias.map((m) => ({
     materia: m.nome.length > 12 ? m.nome.slice(0, 12) + "…" : m.nome,
-    aproveitamento: Math.round(m.aproveitamento),
+    aproveitamento: formatPercent(m.aproveitamento),
   }));
 
   return (
@@ -54,7 +55,7 @@ export function MateriaRadar({ materias, onSelectMateria, selectedMateriaId }: P
                 aria-pressed={selectedMateriaId === m.id}
               >
                 <td className="py-1 pr-2">{m.nome}</td>
-                <td className="py-1 text-right">{Math.round(m.aproveitamento)}%</td>
+                <td className="py-1 text-right">{formatPercent(m.aproveitamento)}%</td>
                 <td className="py-1 text-right text-gray-400">n={m.studentsContributing}</td>
               </tr>
             ))}

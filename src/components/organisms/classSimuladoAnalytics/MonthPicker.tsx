@@ -1,5 +1,6 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ClassMonthsList } from "@/types/classAnalytics/classSimuladoAnalytics";
+import { formatPercent } from "@/utils/formatPercent";
 
 interface Props {
   months: ClassMonthsList["months"];
@@ -9,7 +10,7 @@ interface Props {
 
 function formatMonthLabel(month: string): string {
   const [y, m] = month.split("-");
-  const date = new Date(Date.UTC(Number(y), Number(m) - 1, 1));
+  const date = new Date(Number(y), Number(m) - 1, 1);
   return date.toLocaleString("pt-BR", { month: "long", year: "numeric" });
 }
 
@@ -25,7 +26,7 @@ export function MonthPicker({ months, value, onChange }: Props) {
         <SelectContent>
           {months.map((m) => (
             <SelectItem key={m.month} value={m.month}>
-              {formatMonthLabel(m.month)} — {m.studentsWithAtLeastOneCompletedAttempt} alunos | {Math.round(m.geral)}%
+              {formatMonthLabel(m.month)} — {m.studentsWithAtLeastOneCompletedAttempt} alunos | {formatPercent(m.geral)}%
             </SelectItem>
           ))}
         </SelectContent>
