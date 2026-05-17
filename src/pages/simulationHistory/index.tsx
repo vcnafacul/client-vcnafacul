@@ -32,7 +32,8 @@ export function SimulationHistory() {
 
   const modals = useModals(["modalImage"]);
 
-  const getStatus = (answer: AnswerHistoricoDTO) => {
+  const getStatus = (answer: AnswerHistoricoDTO | undefined) => {
+    if (!answer) return QuestionBoxStatus.unread;
     if (answer.questao === questionSelected?._id)
       return QuestionBoxStatus.active;
     else if (!answer.alternativaEstudante) return QuestionBoxStatus.unread;
@@ -45,7 +46,7 @@ export function SimulationHistory() {
     const questionSelected = historic!.simulado.questoes[index];
     setQuestionSelected(questionSelected);
     setAnswerSelected(
-      historic!.respostas.find((r) => r.questao === questionSelected._id)!
+      historic!.respostas.find((r) => r.questao === questionSelected._id) ?? null
     );
   };
 
@@ -57,7 +58,7 @@ export function SimulationHistory() {
         .then((res) => {
           setHistoric(res);
           setQuestionSelected(res.simulado.questoes[0]);
-          setAnswerSelected(res!.respostas[0]);
+          setAnswerSelected(res.respostas[0] ?? null);
         })
         .catch((error: Error) => {
           toast.error(error.message);
@@ -87,6 +88,11 @@ export function SimulationHistory() {
   }, [questionSelected?.imageId, token]);
 
   if (!historic) return <></>;
+
+  if (!historic.aproveitamento) {
+    return <SimulationHistoryHeader historic={historic} />;
+  }
+
   return (
     <>
       <SimulateTemplate
@@ -96,7 +102,7 @@ export function SimulationHistory() {
           id: q._id,
           number: index,
           status: getStatus(
-            historic.respostas.find((r) => r.questao === q._id)!
+            historic.respostas.find((r) => r.questao === q._id)
           ),
         }))}
         legends={simulateMetricData.legends}
