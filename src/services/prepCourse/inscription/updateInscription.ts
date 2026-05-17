@@ -4,7 +4,7 @@ import fetchWrapper from "@/utils/fetchWrapper";
 
 export async function updateInscription(
   token: string,
-  inscription: InscriptionOutput
+  inscription: InscriptionOutput,
 ): Promise<void> {
   const response = await fetchWrapper(inscriptionCourse, {
     method: "PATCH",
@@ -20,6 +20,7 @@ export async function updateInscription(
       endDate: inscription.range[1],
       expectedOpening: inscription.openingsCount,
       requestDocuments: inscription.requestDocuments,
+      isTest: inscription.isTest,
     }),
   });
   if (response.status !== 200) {

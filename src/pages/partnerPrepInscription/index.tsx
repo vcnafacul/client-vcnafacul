@@ -29,6 +29,7 @@ import { PartnerPrepInscriptionStepLogin } from "./steps/partnerPrepInscriptionS
 import PartnerPrepInscriptionStepPedingOrRejected from "./steps/partnerPrepInscriptionStepPedingOrRejected";
 import { PartnerPrepInscriptionStepRegister } from "./steps/partnerPrepInscriptionStepRegister";
 import { PartnerPrepInscriptionStepSucess } from "./steps/partnerPrepInscriptionStepSucess";
+import { FlaskConical } from "lucide-react";
 
 export interface StepProps {
   description: string;
@@ -36,7 +37,7 @@ export interface StepProps {
 
 export interface EachStepProps extends StepProps {
   handleBack?: (
-    data?: Partial<StudentInscriptionDTO> | LegalGuardianDTO
+    data?: Partial<StudentInscriptionDTO> | LegalGuardianDTO,
   ) => void;
 
   updateSocioeconomic?: (data: SocioeconomicAnswer[]) => void;
@@ -50,10 +51,10 @@ export function PartnerPrepInscription() {
   const navigate = useNavigate();
   const executeAsync = useToastAsync();
   const [stepCurrently, setStepCurrently] = useState<StepsInscriptionStudent>(
-    StepsInscriptionStudent.Blank
+    StepsInscriptionStudent.Blank,
   );
   const [dataStudent, setDataStudent] = useState<StudentInscriptionDTO>(
-    {} as StudentInscriptionDTO
+    {} as StudentInscriptionDTO,
   );
   const [dataInscription, setDataInscription] =
     useState<DataInscription | null>(null);
@@ -122,7 +123,7 @@ export function PartnerPrepInscription() {
   };
 
   const buildSocioeconomicAnswers = (
-    finalAnswers: Record<string, unknown>
+    finalAnswers: Record<string, unknown>,
   ): SocioeconomicAnswer[] => {
     const result: SocioeconomicAnswer[] = [];
     sections.forEach((section) => {
@@ -148,7 +149,7 @@ export function PartnerPrepInscription() {
       action: () =>
         completeInscriptionStudent(
           { ...dataStudent, socioeconomic: data },
-          token
+          token,
         ),
       loadingMessage: "Finalizando Inscrição...",
       successMessage: "Inscrição finalizada com sucesso!",
@@ -187,8 +188,8 @@ export function PartnerPrepInscription() {
         stepCurrently < StepsInscriptionStudent.PersonalInformation
           ? "upcoming"
           : stepCurrently == StepsInscriptionStudent.PersonalInformation
-          ? "current"
-          : "complete",
+            ? "current"
+            : "complete",
     },
     {
       name: stepDescriptions.step2,
@@ -196,8 +197,8 @@ export function PartnerPrepInscription() {
         stepCurrently < StepsInscriptionStudent.Address
           ? "upcoming"
           : stepCurrently == StepsInscriptionStudent.Address
-          ? "current"
-          : "complete",
+            ? "current"
+            : "complete",
     },
     {
       name: stepDescriptions.step3,
@@ -205,8 +206,8 @@ export function PartnerPrepInscription() {
         stepCurrently < StepsInscriptionStudent.LegalGuardian
           ? "upcoming"
           : stepCurrently == StepsInscriptionStudent.LegalGuardian
-          ? "current"
-          : "complete",
+            ? "current"
+            : "complete",
     },
   ];
 
@@ -350,7 +351,7 @@ export function PartnerPrepInscription() {
           setPrepCourse(
             res.prepCourseName.toUpperCase().includes("CURSINHO")
               ? res.prepCourseName
-              : `Cursinho ${res.prepCourseName}`
+              : `Cursinho ${res.prepCourseName}`,
           );
           if (res.inscription.status !== StatusEnum.Approved) {
             setStepCurrently(StepsInscriptionStudent.PendingOrRejected);
@@ -412,6 +413,18 @@ export function PartnerPrepInscription() {
               className="text-center"
               size="secondary"
             >{`Formulário de Inscrição ${prepCourse}`}</Text>
+            {dataInscription?.isTest && (
+              <div className="w-11/12 max-w-6xl p-3 md:p-4 bg-amber-50 border-l-4 border-amber-500 rounded-md">
+                <div className="flex items-start gap-3">
+                  <FlaskConical className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                  <p className="text-sm md:text-base font-medium">
+                    Este processo seletivo está marcado como{" "}
+                    <strong>teste</strong> e não deve ser considerado válido
+                    para uso real.
+                  </p>
+                </div>
+              </div>
+            )}
             <div
               className={`w-11/12 ${
                 stepCurrently === StepsInscriptionStudent.Presentation

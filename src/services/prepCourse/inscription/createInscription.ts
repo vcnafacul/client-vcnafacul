@@ -5,7 +5,7 @@ import fetchWrapper from "@/utils/fetchWrapper";
 
 export async function createInscription(
   token: string,
-  inscription: InscriptionOutput
+  inscription: InscriptionOutput,
 ): Promise<Inscription> {
   const response = await fetchWrapper(inscriptionCourse, {
     method: "POST",
@@ -20,6 +20,7 @@ export async function createInscription(
       endDate: inscription.range[1],
       expectedOpening: inscription.openingsCount,
       requestDocuments: inscription.requestDocuments,
+      isTest: inscription.isTest,
     }),
   });
   if (response.status === 400) {

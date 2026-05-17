@@ -14,13 +14,14 @@ interface HasActiveInscriptionResponse {
     endDate: Date;
     expectedOpening: number;
     status: StatusEnum;
+    isTest: boolean;
   };
   partnerPrepForm: PartnerPrepForm;
 }
 
 export async function getInscription(
   inscritionId: string,
-  token: string
+  token: string,
 ): Promise<HasActiveInscriptionResponse> {
   const response = await fetchWrapper(
     `${inscriptionCourse}/to-inscription/${inscritionId}`,
@@ -30,7 +31,7 @@ export async function getInscription(
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
 
   const res = await response.json();

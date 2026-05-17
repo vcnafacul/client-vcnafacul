@@ -142,7 +142,7 @@ export function PartnerPrepInscritionStudentManager() {
 
   const handleSelectEnrolledInfo = async (
     studentId: string,
-    selected: boolean
+    selected: boolean,
   ) => {
     await executeAsync({
       action: () => updateSelectEnrolledInfo(studentId, selected, token),
@@ -221,7 +221,8 @@ export function PartnerPrepInscritionStudentManager() {
       action: () => confirmEnrolled(studentSelected.id, classId, token),
       loadingMessage: "Confirmando Matrícula...",
       successMessage: `Matrícula confirmada com sucesso na turma ${className}!`,
-      errorMessage: "Erro ao confirmar matrícula",
+      errorMessage: (error: Error) =>
+        `Erro ao confirmar matrícula: ${error.message}`,
       onSuccess: () => {
         const newStudent = students.map((stu) => {
           if (stu.id === studentSelected.id) {
@@ -250,7 +251,7 @@ export function PartnerPrepInscritionStudentManager() {
   function shouldProcessApplication(
     status: StatusApplication,
     startDate: Date | null,
-    custonsStatusReject?: StatusApplication[]
+    custonsStatusReject?: StatusApplication[],
   ): boolean {
     const listStatus = custonsStatusReject || [
       StatusApplication.Enrolled,
@@ -307,7 +308,7 @@ export function PartnerPrepInscritionStudentManager() {
           handleIndeferir(studentSelected!.id, message!)
         }
         text={`Por favor, informe o motivo do indeferimento da matrícula de ${capitalizeWords(
-          studentSelected?.nome + " " + studentSelected?.sobrenome
+          studentSelected?.nome + " " + studentSelected?.sobrenome,
         )}.`}
         className="bg-white p-4 rounded-md w-[512px]"
       />
@@ -617,7 +618,7 @@ export function PartnerPrepInscritionStudentManager() {
                 ? student.nome_social
                 : student.nome,
             };
-          })
+          }),
         );
         setStudentSelected(data[0]);
       },
@@ -653,7 +654,11 @@ export function PartnerPrepInscritionStudentManager() {
           )}
           {inscriptionInfo && (
             <p className="text-xs text-gray-400 text-center mt-1">
-              Período: {new Date(inscriptionInfo.startDate).toLocaleDateString("pt-BR")} — {new Date(inscriptionInfo.endDate).toLocaleDateString("pt-BR")} · {inscriptionInfo.expectedOpening} vagas · {students.length} inscritos
+              Período:{" "}
+              {new Date(inscriptionInfo.startDate).toLocaleDateString("pt-BR")}{" "}
+              — {new Date(inscriptionInfo.endDate).toLocaleDateString("pt-BR")}{" "}
+              · {inscriptionInfo.expectedOpening} vagas · {students.length}{" "}
+              inscritos
             </p>
           )}
         </div>

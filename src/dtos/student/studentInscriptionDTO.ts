@@ -40,4 +40,5 @@ export interface DataInscription {
   startDate: Date;
   endDate: Date;
   status: StatusEnum;
+  isTest: boolean;
 }
