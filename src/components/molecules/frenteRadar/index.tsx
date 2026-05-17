@@ -49,7 +49,6 @@ export function FrenteRadar({ materias, title }: Props) {
           data={radarData}
           indexBy="frente"
           keys={["aproveitamento"]}
-          scheme="greens"
         />
       </div>
       <div className="w-full sm:w-64">
