@@ -4,10 +4,12 @@ import { toast } from "react-toastify";
 import { useChatContext } from "@/context/ChatProvider";
 import { useTabTitleUnread } from "@/hooks/useTabTitleUnread";
 import { DASH, DASH_SUPPORT } from "@/routes/path";
+import { getMyPartnerPrepId } from "@/services/chat/getMyPartnerPrepId";
 import {
   listenSupportInbox,
   type ConversationDoc,
 } from "@/services/firebase/conversations";
+import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chatStore";
 
 const INBOX_PATH = `${DASH}/${DASH_SUPPORT}`;
@@ -15,11 +17,17 @@ const INBOX_PATH = `${DASH}/${DASH_SUPPORT}`;
 export function SupportNotifier() {
   const { role } = useChatContext();
   const authed = useChatStore((s) => s.firebaseAuthed);
+  const jwt = useAuthStore((s) => s.data.token);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [total, setTotal] = useState(0);
   const prevTotalRef = useRef<number | null>(null);
   const pathnameRef = useRef(pathname);
+
+  // undefined = ainda buscando; null = admin global (sem filtro); string = cursinho específico
+  const [resolvedPartnerPrepId, setResolvedPartnerPrepId] = useState<
+    string | null | undefined
+  >(undefined);
 
   useEffect(() => {
     pathnameRef.current = pathname;
@@ -27,8 +35,18 @@ export function SupportNotifier() {
 
   useTabTitleUnread(role === "support_agent" ? total : 0);
 
+  // Resolve o partnerPrepId real via API — o token Firebase não é confiável para
+  // agentes de cursinho pois o claim supportAgent sobrescreve o partnerPrepId.
+  useEffect(() => {
+    if (role !== "support_agent" || !authed || !jwt) return;
+    getMyPartnerPrepId(jwt)
+      .then((id) => setResolvedPartnerPrepId(id))
+      .catch(() => setResolvedPartnerPrepId(null));
+  }, [role, authed, jwt]);
+
   useEffect(() => {
     if (role !== "support_agent" || !authed) return;
+    if (resolvedPartnerPrepId === undefined) return;
 
     if (
       typeof Notification !== "undefined" &&
@@ -76,14 +94,14 @@ export function SupportNotifier() {
           n.close();
         };
       }
-    });
+    }, resolvedPartnerPrepId);
 
     return () => {
       unsub();
       prevTotalRef.current = null;
       setTotal(0);
     };
-  }, [role, authed, navigate]);
+  }, [role, authed, navigate, resolvedPartnerPrepId]);
 
   return null;
 }
