@@ -68,6 +68,7 @@ export const historico_summary = `${historico}/summary`;
 
 export const partnerPrepCourse = `${BASE_URL}/partner-prep-course`;
 export const partnerPrepCourseLogos = `${partnerPrepCourse}/logos`;
+export const partnerPrepCourseAggregate = `${partnerPrepCourse}/aggregate`;
 
 export const prepCourse = (id: string) =>
   `${partnerPrepCourse}/${id}/has-active-inscription`;
@@ -76,9 +77,11 @@ export const studentCourse = `${BASE_URL}/student-course`;
 export const registrationMonitoring = `${studentCourse}/registration-monitoring`;
 export const get_user_info = (inscriptionId: string) =>
   `${studentCourse}/get-user-info/${inscriptionId}`;
-
+export const aggregateStudentCourse = `${studentCourse}/aggregate`;
+export const summaryStudentCourse = `${studentCourse}/summary`;
 export const inscriptionCourse = `${BASE_URL}/inscription-course`;
 export const inscriptionCourseWithName = `${inscriptionCourse}/all-with-name`;
+export const aggregateInscriptionCourse = `${inscriptionCourse}/aggregate`;
 export const subscribers = `${inscriptionCourse}/subscribers`;
 export const inviteMember = `${partnerPrepCourse}/invite-members`;
 export const inviteMemberAccept = `${partnerPrepCourse}/invite-members-accept`;
@@ -88,6 +91,7 @@ export const updateWaitingList = `${inscriptionCourse}/update-waiting-list`;
 export const updateOrderWaitingList = `${inscriptionCourse}/update-order-waiting-list`;
 export const getWaitingList = `${inscriptionCourse}/waiting-list`;
 export const sendWaitingList = `${inscriptionCourse}/send-waiting-list`;
+export const summaryInscriptionCourse = `${inscriptionCourse}/summary`;
 export const uploadDocuments = `${studentCourse}/upload`;
 export const getDocument = `${studentCourse}/document`;
 export const enrollmentCertificate = `${studentCourse}/enrollment-certificate`;
