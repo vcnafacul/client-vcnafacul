@@ -4,7 +4,6 @@ import { useToastAsync } from "../../../hooks/useToastAsync";
 import { DASH } from "../../../routes/path";
 import Login from "../../../services/auth/login";
 import { useAuthStore } from "../../../store/auth";
-import GoogleAuthButton from "../../atoms/GoogleAuthButton";
 import Text from "../../atoms/text";
 import { FormFieldInput } from "../../molecules/formField";
 import FormSubmit from "../formSubmit";
@@ -55,12 +54,6 @@ function LoginForm({
           labelSubmit={labelSubmit}
           onSubmit={login}
         />
-        <div className="w-full flex items-center gap-4 my-2">
-          <hr className="flex-1 border-gray-300" />
-          <span className="text-sm text-gray-500">ou</span>
-          <hr className="flex-1 border-gray-300" />
-        </div>
-        <GoogleAuthButton label="Entrar com Google" />
       </div>
     </div>
   );

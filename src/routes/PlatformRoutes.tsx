@@ -172,7 +172,9 @@ export function PlatformRoutes() {
         path={SIMULADO_RESPONDER}
         element={
           <ProtectedRoute>
-            <Simulate />
+            <OnboardingGate>
+              <Simulate />
+            </OnboardingGate>
           </ProtectedRoute>
         }
       />
@@ -181,7 +183,9 @@ export function PlatformRoutes() {
         path={SUPORTE}
         element={
           <ProtectedRoute>
-            <SupportPage />
+            <OnboardingGate>
+              <SupportPage />
+            </OnboardingGate>
           </ProtectedRoute>
         }
       />

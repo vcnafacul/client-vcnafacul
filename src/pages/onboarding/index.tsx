@@ -1,31 +1,18 @@
 import queryString from "query-string";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { toast } from "react-toastify";
 import Text from "../../components/atoms/text";
 import OnboardingForm from "../../components/organisms/onboardingForm";
-import { useAuthStore } from "../../store/auth";
-import { decoderUser } from "../../utils/decodedUser";
 
 function Onboarding() {
   const location = useLocation();
-  const { doAuth } = useAuthStore();
 
+  // OnboardingRoute já hidrata a store com o token da URL antes de renderizar.
+  // Só precisamos limpar o token da URL para não ficar no histórico do browser.
   useEffect(() => {
     const token = (queryString.parse(location.search).token as string) || "";
     if (token) {
-      try {
-        const authData = decoderUser(token);
-        doAuth(authData);
-        window.history.replaceState(
-          {},
-          document.title,
-          window.location.pathname
-        );
-      } catch {
-        // OnboardingRoute redireciona para login em caso de token inválido
-        toast.error("Token inválido. Tente fazer login novamente.");
-      }
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
 
