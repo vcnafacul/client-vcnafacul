@@ -9,7 +9,7 @@ interface Props {
 
 function formatMonth(yyyymm: string) {
   const [y, m] = yyyymm.split("-");
-  const date = new Date(Date.UTC(Number(y), Number(m) - 1, 1));
+  const date = new Date(Number(y), Number(m) - 1, 1);
   return date
     .toLocaleString("pt-BR", { month: "short", year: "2-digit" })
     .replace(".", "");

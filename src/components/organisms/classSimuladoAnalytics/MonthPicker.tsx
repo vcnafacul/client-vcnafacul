@@ -9,7 +9,7 @@ interface Props {
 
 function formatMonthLabel(month: string): string {
   const [y, m] = month.split("-");
-  const date = new Date(Date.UTC(Number(y), Number(m) - 1, 1));
+  const date = new Date(Number(y), Number(m) - 1, 1);
   return date.toLocaleString("pt-BR", { month: "long", year: "numeric" });
 }
 
