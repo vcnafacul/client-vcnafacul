@@ -27,7 +27,7 @@ export function PartnerSupportInbox() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[calc(100vh-100px)]">
+      <div className="flex items-center justify-center h-[calc(100vh-76px)]">
         <span className="text-sm text-grey">Carregando...</span>
       </div>
     );
@@ -35,7 +35,7 @@ export function PartnerSupportInbox() {
 
   if (!partnerPrepId) {
     return (
-      <div className="flex flex-col items-center justify-center h-[calc(100vh-100px)] gap-3">
+      <div className="flex flex-col items-center justify-center h-[calc(100vh-76px)] gap-3">
         <LuHeadset className="h-12 w-12 text-marine/30" />
         <span className="font-medium text-marine">Nenhum cursinho associado</span>
         <span className="text-sm text-grey max-w-xs text-center">

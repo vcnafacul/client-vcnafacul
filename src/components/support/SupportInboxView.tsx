@@ -34,7 +34,7 @@ export function SupportInboxView({
   headerActions,
 }: Props) {
   return (
-    <div className="flex flex-col h-[calc(100vh-100px)]">
+    <div className="flex flex-col h-[calc(100vh-76px)]">
       <header className="bg-marine text-white px-5 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
           <LuHeadset className="h-5 w-5 text-orange" />
