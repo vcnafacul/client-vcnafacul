@@ -44,6 +44,7 @@ export default function SupportPage() {
           conversationId={active.id}
           currentUserId={userId}
           title="Suporte"
+          status={active.status}
         />
       ) : (
         <div className="flex flex-col items-center justify-center h-full gap-4">
