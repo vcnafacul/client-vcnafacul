@@ -80,11 +80,29 @@ export function ChatHeader({
           <div className="min-w-0 flex flex-col">
             <span className="font-semibold text-sm truncate">{title}</span>
             <div className="flex items-center gap-1.5 text-[11px]">
-              {subtitle && (
-                <span className="px-1.5 py-0.5 rounded-full bg-white/10 truncate max-w-[240px]">
-                  {subtitle}
-                </span>
-              )}
+              {subtitle &&
+                subtitle.split(" · ").map((part, i) =>
+                  i === 0 && originPage ? (
+                    <a
+                      key={i}
+                      href={originPage}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-white/10 hover:bg-white/20 transition truncate max-w-[240px]"
+                      title={originPage}
+                    >
+                      <ExternalLink className="h-3 w-3 shrink-0" />
+                      <span className="truncate">{part}</span>
+                    </a>
+                  ) : (
+                    <span
+                      key={i}
+                      className="px-1.5 py-0.5 rounded-full bg-white/10 truncate max-w-[240px]"
+                    >
+                      {part}
+                    </span>
+                  ),
+                )}
               {status && (
                 <span
                   className={cn(
@@ -96,18 +114,6 @@ export function ChatHeader({
                 >
                   {isOpen ? "aberta" : "encerrada"}
                 </span>
-              )}
-              {originPage && (
-                <a
-                  href={originPage}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-white/10 hover:bg-white/20 transition truncate max-w-[200px]"
-                  title={originPage}
-                >
-                  <ExternalLink className="h-3 w-3 shrink-0" />
-                  <span className="truncate">{originPage}</span>
-                </a>
               )}
               {device && (
                 <span

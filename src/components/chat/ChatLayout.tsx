@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { ChatHeader } from "./ChatHeader";
 import { ChatInput } from "./ChatInput";
@@ -15,6 +16,7 @@ interface Props {
   originPage?: string;
   device?: string;
   browser?: string;
+  className?: string;
 }
 
 export function ChatLayout({
@@ -29,9 +31,10 @@ export function ChatLayout({
   originPage,
   device,
   browser,
+  className,
 }: Props) {
   return (
-    <Card className="flex flex-col h-full w-full overflow-hidden">
+    <Card className={cn("flex flex-col h-full w-full overflow-hidden", className)}>
       <ChatHeader
         conversationId={conversationId}
         title={title}

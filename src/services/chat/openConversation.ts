@@ -12,6 +12,12 @@ interface InscriptionContext {
   studentCourseId?: string;
 }
 
+export class CooldownError extends Error {
+  constructor(public readonly retryAfterSeconds: number) {
+    super("cooldown");
+  }
+}
+
 export async function openConversation(
   jwt: string,
   metadata: ConversationMetadata,
@@ -28,9 +34,7 @@ export async function openConversation(
   });
   if (res.status === 429) {
     const body = await res.json().catch(() => ({}));
-    throw new Error(
-      `Aguarde ${body.retryAfterSeconds ?? "alguns"} segundos para reabrir`,
-    );
+    throw new CooldownError(body.retryAfterSeconds ?? 60);
   }
   if (!res.ok) throw new Error("Falha ao abrir conversa");
   return res.json();

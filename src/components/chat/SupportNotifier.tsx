@@ -3,23 +3,34 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useChatContext } from "@/context/ChatProvider";
 import { useTabTitleUnread } from "@/hooks/useTabTitleUnread";
-import { DASH, DASH_SUPPORT } from "@/routes/path";
+import { DASH, DASH_SUPPORT, DASH_PARTNER_SUPPORT } from "@/routes/path";
+import { getMyPartnerPrepId } from "@/services/chat/getMyPartnerPrepId";
 import {
   listenSupportInbox,
   type ConversationDoc,
 } from "@/services/firebase/conversations";
+import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chatStore";
 
-const INBOX_PATH = `${DASH}/${DASH_SUPPORT}`;
+const INBOX_PATHS = [
+  `${DASH}/${DASH_SUPPORT}`,
+  `${DASH}/${DASH_PARTNER_SUPPORT}`,
+];
 
 export function SupportNotifier() {
   const { role } = useChatContext();
   const authed = useChatStore((s) => s.firebaseAuthed);
+  const jwt = useAuthStore((s) => s.data.token);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [total, setTotal] = useState(0);
   const prevTotalRef = useRef<number | null>(null);
   const pathnameRef = useRef(pathname);
+
+  // undefined = ainda buscando; null = admin global (sem filtro); string = cursinho específico
+  const [resolvedPartnerPrepId, setResolvedPartnerPrepId] = useState<
+    string | null | undefined
+  >(undefined);
 
   useEffect(() => {
     pathnameRef.current = pathname;
@@ -27,8 +38,18 @@ export function SupportNotifier() {
 
   useTabTitleUnread(role === "support_agent" ? total : 0);
 
+  // Resolve o partnerPrepId real via API — o token Firebase não é confiável para
+  // agentes de cursinho pois o claim supportAgent sobrescreve o partnerPrepId.
+  useEffect(() => {
+    if (role !== "support_agent" || !authed || !jwt) return;
+    getMyPartnerPrepId(jwt)
+      .then((id) => setResolvedPartnerPrepId(id))
+      .catch(() => setResolvedPartnerPrepId(null));
+  }, [role, authed, jwt]);
+
   useEffect(() => {
     if (role !== "support_agent" || !authed) return;
+    if (resolvedPartnerPrepId === undefined) return;
 
     if (
       typeof Notification !== "undefined" &&
@@ -49,13 +70,16 @@ export function SupportNotifier() {
       if (prev === null) return;
       if (newTotal <= prev) return;
 
-      const onInboxPage = pathnameRef.current === INBOX_PATH;
+      const onInboxPage = INBOX_PATHS.includes(pathnameRef.current);
       if (!onInboxPage) {
         toast.info(
           "Um estudante enviou uma mensagem. Clique na notificação para vê-la.",
           {
             autoClose: 15000,
-            onClick: () => navigate(INBOX_PATH),
+            onClick: () =>
+              navigate(
+                resolvedPartnerPrepId ? INBOX_PATHS[1] : INBOX_PATHS[0],
+              ),
           },
         );
       }
@@ -72,18 +96,18 @@ export function SupportNotifier() {
         });
         n.onclick = () => {
           window.focus();
-          navigate(INBOX_PATH);
+          navigate(resolvedPartnerPrepId ? INBOX_PATHS[1] : INBOX_PATHS[0]);
           n.close();
         };
       }
-    });
+    }, resolvedPartnerPrepId);
 
     return () => {
       unsub();
       prevTotalRef.current = null;
       setTotal(0);
     };
-  }, [role, authed, navigate]);
+  }, [role, authed, navigate, resolvedPartnerPrepId]);
 
   return null;
 }
