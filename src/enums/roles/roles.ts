@@ -26,6 +26,7 @@ export enum Roles {
   revisarRedacoes = "revisarRedacoes",
   revisarTodasRedacoes = "revisarTodasRedacoes",
   supportAgent = "supportAgent",
+  partnerPrepSupportAgent = "partnerPrepSupportAgent",
 }
 
 export const RolesLabel = [
@@ -158,5 +159,10 @@ export const RolesLabel = [
     value: Roles.supportAgent,
     label: "Atender suporte (chat)",
     isProjectPermission: true,
+  },
+  {
+    value: Roles.partnerPrepSupportAgent,
+    label: "Atender suporte cursinho (chat)",
+    isProjectPermission: false,
   },
 ];

@@ -49,5 +49,7 @@ export const ESSAY_REVIEW_CURSINHO = "revisao-redacoes-cursinho";
 export const HOME_V2_PATH = "/home-v2";
 export const HOME_LEGACY_PATH = "/home-legacy";
 
+export const QUEM_SOMOS_PATH = "/quem-somos";
 export const SUPORTE = "/suporte";
 export const DASH_SUPPORT = "suporte";
+export const DASH_PARTNER_SUPPORT = "suporte-cursinho";

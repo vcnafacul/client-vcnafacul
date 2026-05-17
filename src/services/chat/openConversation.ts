@@ -7,9 +7,15 @@ export interface ConversationMetadata {
   browser: string;
 }
 
+interface InscriptionContext {
+  inscriptionCourseId?: string;
+  studentCourseId?: string;
+}
+
 export async function openConversation(
   jwt: string,
   metadata: ConversationMetadata,
+  inscriptionContext?: InscriptionContext,
 ): Promise<{ id: string }> {
   const res = await fetch(chatConversationOpen, {
     method: "POST",
@@ -18,7 +24,7 @@ export async function openConversation(
       Authorization: `Bearer ${jwt}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ metadata }),
+    body: JSON.stringify({ metadata, ...inscriptionContext }),
   });
   if (res.status === 429) {
     const body = await res.json().catch(() => ({}));

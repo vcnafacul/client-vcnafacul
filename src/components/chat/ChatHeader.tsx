@@ -18,6 +18,7 @@ import { avatarColorFor, initialsOf } from "./avatarUtils";
 interface Props {
   conversationId: string;
   title: string;
+  subtitle?: string;
   onClose?: () => void;
   showAvatar?: boolean;
   avatarSeed?: string;
@@ -30,6 +31,7 @@ interface Props {
 export function ChatHeader({
   conversationId,
   title,
+  subtitle,
   onClose,
   showAvatar = false,
   avatarSeed,
@@ -78,6 +80,11 @@ export function ChatHeader({
           <div className="min-w-0 flex flex-col">
             <span className="font-semibold text-sm truncate">{title}</span>
             <div className="flex items-center gap-1.5 text-[11px]">
+              {subtitle && (
+                <span className="px-1.5 py-0.5 rounded-full bg-white/10 truncate max-w-[240px]">
+                  {subtitle}
+                </span>
+              )}
               {status && (
                 <span
                   className={cn(

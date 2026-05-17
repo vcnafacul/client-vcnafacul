@@ -15,7 +15,9 @@ import { StudentsEnrolled } from "@/pages/studentsEnrolled";
 import GlobalFormPage from "@/pages/globalForm";
 import SupportPage from "@/pages/support";
 import AdminSupportPage from "@/pages/admin/support";
+import PartnerSupportPage from "@/pages/dash/suporte-cursinho";
 import DashHome from "../pages/dashHome";
+import QuemSomosPage from "../pages/quemSomos";
 import EssayWrite from "../pages/essayWrite";
 import EssayResult from "../pages/essayResult";
 import EssayHistory from "../pages/essayHistory";
@@ -55,6 +57,7 @@ import { useAuthStore } from "../store/auth";
 import { BaseRoutes } from "./baseRoutes";
 import { HeroRoutes } from "./heroRoutes";
 import {
+  QUEM_SOMOS_PATH,
   HOME_LEGACY_PATH,
   ACCOUNT_PATH,
   CONFIRM_EMAIL,
@@ -71,6 +74,7 @@ import {
   DASH_ROLES,
   DASH_SIMULADO,
   DASH_SUPPORT,
+  DASH_PARTNER_SUPPORT,
   DECLARED_INTEREST,
   ENROLLMENT_CONFIRMATION,
   ESSAY_WRITE,
@@ -136,6 +140,7 @@ export function PlatformRoutes() {
           />
           <Route path={NEWS} element={<NewsPage />} />
         </Route>
+        <Route path={QUEM_SOMOS_PATH} element={<QuemSomosPage />} />
         <Route path={LOGIN_PATH} element={<Login />} />
         <Route path={FORGOT_PASSWORD_PATH} element={<Forgot />} />
         <Route path={LOGOFF_PATH} element={<Logout />} />
@@ -281,6 +286,16 @@ export function PlatformRoutes() {
               permission={data.permissao[Roles.supportAgent]}
             >
               <AdminSupportPage />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={DASH_PARTNER_SUPPORT}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.partnerPrepSupportAgent]}
+            >
+              <PartnerSupportPage />
             </ProtectedRoutePermission>
           }
         />
