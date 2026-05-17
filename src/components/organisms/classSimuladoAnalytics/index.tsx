@@ -10,6 +10,7 @@ import { SampleSizeBanner } from "./SampleSizeBanner";
 import { EmptyState } from "./EmptyState";
 import { MateriaRadar } from "@/components/molecules/materiaRadar";
 import { FrenteRadar } from "@/components/molecules/frenteRadar";
+import { ClassEvolutionChart } from "@/components/molecules/classEvolutionChart";
 
 interface Props {
   classId: string;
@@ -114,6 +115,15 @@ export function ClassSimuladoAnalytics({ classId, token }: Props) {
         />
       ) : (
         <>
+          <ClassEvolutionChart
+            months={list.months}
+            selectedMonth={selectedMonth}
+            onSelectMonth={(m) => {
+              setSelectedMonth(m);
+              setSelectedMateriaId(undefined);
+            }}
+          />
+
           <MonthPicker
             months={list.months}
             value={selectedMonth}
