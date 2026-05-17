@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { LuHeadset } from "react-icons/lu";
 import { toast } from "react-toastify";
 import { ChatLayout } from "@/components/chat/ChatLayout";
 import { ConfirmOpenDialog } from "@/components/chat/ConfirmOpenDialog";
@@ -14,6 +15,15 @@ export default function SupportPage() {
   const jwt = useAuthStore((s) => s.data.token);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [closedBySupport, setClosedBySupport] = useState(false);
+  const prevActiveRef = useRef(active);
+
+  useEffect(() => {
+    if (prevActiveRef.current && !active) {
+      setClosedBySupport(true);
+    }
+    prevActiveRef.current = active;
+  }, [active]);
 
   async function handleConfirm() {
     if (!jwt) return;
@@ -28,6 +38,7 @@ export default function SupportPage() {
         browser: "other",
       });
       setConfirmOpen(false);
+      setClosedBySupport(false);
     } catch (e) {
       const message =
         e instanceof Error ? e.message : "Falha ao abrir conversa";
@@ -45,7 +56,22 @@ export default function SupportPage() {
           currentUserId={userId}
           title="Suporte"
           status={active.status}
+          onClose={() => setClosedBySupport(true)}
         />
+      ) : closedBySupport ? (
+        <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-8">
+          <LuHeadset className="h-12 w-12 text-marine/30" />
+          <span className="font-raleway font-semibold text-marine">
+            Conversa encerrada
+          </span>
+          <span className="text-sm text-grey max-w-xs">
+            Esta conversa foi encerrada. Se precisar de mais ajuda, você pode
+            abrir uma nova conversa.
+          </span>
+          <Button onClick={() => setConfirmOpen(true)}>
+            Iniciar nova conversa
+          </Button>
+        </div>
       ) : (
         <div className="flex flex-col items-center justify-center h-full gap-4">
           <p>Você ainda não tem uma conversa aberta.</p>
