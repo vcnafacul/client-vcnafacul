@@ -25,6 +25,8 @@ interface MiniLineProps {
   months: string[];
   height: number;
   onSelectMonth: (month: string) => void;
+  tickInterval?: number[];
+  showGrid?: boolean;
 }
 
 function MiniLine({
@@ -37,6 +39,8 @@ function MiniLine({
   months,
   height,
   onSelectMonth,
+  tickInterval,
+  showGrid,
 }: MiniLineProps) {
   return (
     <div className="border rounded-md p-3 bg-white">
@@ -51,7 +55,11 @@ function MiniLine({
       <LineChart
         height={height}
         xAxis={[{ data: labels, scaleType: "point" }]}
-        yAxis={[{ min: 0, max }]}
+        yAxis={[
+          tickInterval
+            ? { min: 0, max, tickInterval }
+            : { min: 0, max },
+        ]}
         series={[
           {
             id,
@@ -67,6 +75,17 @@ function MiniLine({
         ]}
         margin={{ left: 36, right: 12, top: 8, bottom: 28 }}
         slotProps={{ legend: { hidden: true } }}
+        grid={showGrid ? { horizontal: true } : undefined}
+        sx={
+          showGrid
+            ? {
+                "& .MuiChartsGrid-line": {
+                  strokeDasharray: "3 3",
+                  stroke: "#d1d5db",
+                },
+              }
+            : undefined
+        }
         onAreaClick={(_, params) => {
           const idx = params?.dataIndex;
           if (idx != null && months[idx]) onSelectMonth(months[idx]);
@@ -170,6 +189,8 @@ export function EssayEvolutionChart({
             months={monthKeys}
             height={160}
             onSelectMonth={onSelectMonth}
+            tickInterval={[0, 40, 80, 120, 160, 200]}
+            showGrid
           />
         ))}
       </div>
