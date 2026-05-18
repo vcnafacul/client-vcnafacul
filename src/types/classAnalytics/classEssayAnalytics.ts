@@ -7,6 +7,12 @@ export interface ClassEssayMonthSummary {
   studentsWithAtLeastOneHumanReview: number;
   essaysReviewedByHuman: number;
   essaysSubmittedTotal: number;
+  /**
+   * Alunos distintos que submeteram pelo menos uma redação no mês.
+   * Pode ser null em snapshots gerados antes da introdução do campo —
+   * nesse caso a UI mostra "—" até o próximo refresh.
+   */
+  studentsSubmittedTotal: number | null;
   humanReviewRate: number;
   generatedAt: string;
 }

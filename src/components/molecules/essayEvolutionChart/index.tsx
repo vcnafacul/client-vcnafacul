@@ -197,6 +197,13 @@ export function EssayEvolutionChart({
       {selectedIndex >= 0 && (
         <p className="text-sm text-gray-500 mt-3">
           Mês selecionado: {labels[selectedIndex]}
+          {ordered[selectedIndex].studentsSubmittedTotal !== null && (
+            <span className="text-gray-400">
+              {" "}
+              · n={ordered[selectedIndex].studentsSubmittedTotal} aluno
+              {ordered[selectedIndex].studentsSubmittedTotal === 1 ? "" : "s"}
+            </span>
+          )}
         </p>
       )}
     </div>
