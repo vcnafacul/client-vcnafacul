@@ -8,6 +8,7 @@ import {
   SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Roles } from "@/enums/roles/roles";
 import { useFetch } from "@/hooks/useFetch";
@@ -50,11 +51,14 @@ export function SidebarDash() {
     setOpened(opened === cardId ? 0 : cardId);
   };
   return (
-    <Sidebar side="right">
-      <SidebarHeader>{isSupportAgent && <SupportInboxBadge />}</SidebarHeader>
+    <Sidebar side="right" collapsible="icon">
+      <SidebarHeader className="flex flex-row items-center justify-start pt-4 pb-2">
+        <SidebarTrigger />
+        {isSupportAgent && <SupportInboxBadge />}
+      </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup className="pt-12 overflow-y-scroll scrollbar-hide">
-          <SidebarGroupContent>
+        <SidebarGroup className="overflow-y-scroll scrollbar-hide">
+          <SidebarGroupContent className="group-data-[collapsible=icon]:hidden">
             <SidebarMenu className="py-4 gap-0">
               {dashCardMenuItems.map((card) => (
                 <DashCard
