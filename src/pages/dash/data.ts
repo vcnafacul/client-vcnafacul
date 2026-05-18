@@ -85,14 +85,6 @@ export const headerDash: HeaderData = {
         target: "_self",
       },
     },
-    {
-      Home_Menu_Item_id: {
-        id: 2,
-        name: "Simulados",
-        link: `${DASH}/${SIMULADO}`,
-        target: "_self",
-      },
-    },
   ],
 };
 
@@ -268,9 +260,9 @@ export const adminMenuItems: DashCardMenu[] = [
 export const studentMenuItem: DashCardMenu = {
   id: 7,
   bg: "bg-red",
-  title: "Cursinho",
+  title: "Meus Estudos",
   image: IoSchool,
-  alt: "Cursinho",
+  alt: "Meus Estudos",
   subMenuList: [
     {
       icon: FaClipboardList,
@@ -285,6 +277,12 @@ export const studentMenuItem: DashCardMenu = {
       text: "Redações",
       link: `/dashboard/${ESSAY_WRITE}`,
       permissions: [Roles.visualizarMinhasInscricoes],
+    },
+    {
+      icon: GoGraph,
+      alt: "simulados",
+      text: "Simulados",
+      link: `${DASH}/${SIMULADO}`,
     },
   ],
 };

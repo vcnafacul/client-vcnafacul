@@ -4,13 +4,17 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useEffect, useMemo, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { useMemo } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import { BaseTemplateContext } from "../../../context/baseTemplateContext";
 import { headerDash } from "../../../pages/dash/data";
-import { NEWS } from "../../../routes/path";
-import { getNews } from "../../../services/news/getNews";
+import { DASH } from "../../../routes/path";
+import { ItemMenuProps } from "../../../components/molecules/menuItems";
 import BaseTemplate from "../baseTemplate";
+
+const painelDoEstudanteLink: ItemMenuProps = {
+  Home_Menu_Item_id: { id: 1, name: "Painel do Estudante", link: DASH, target: "_self" },
+};
 
 type DashTemplateProps = {
   className?: string;
@@ -44,27 +48,19 @@ function DashTemplateContent({ hasMenu }: { hasMenu?: boolean }) {
 }
 
 function DashTemplate({ className, hasMenu }: DashTemplateProps) {
-  const [hasNews, setHasNews] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    getNews()
-      .then((res) => setHasNews((res.data?.length ?? 0) > 0))
-      .catch(() => setHasNews(false));
-  }, []);
+  const { pathname } = useLocation();
+  const isMainDash = pathname === DASH || pathname === `${DASH}/`;
 
   const headerValue = useMemo(() => {
-    const pageLinks =
-      hasNews === false
-        ? headerDash.pageLinks.filter(
-            (l) => l.Home_Menu_Item_id.link !== NEWS,
-          )
-        : headerDash.pageLinks;
-    return { ...headerDash, pageLinks };
-  }, [hasNews]);
+    return {
+      ...headerDash,
+      pageLinks: isMainDash ? [] : [painelDoEstudanteLink],
+    };
+  }, [isMainDash]);
 
   return (
     <BaseTemplateContext.Provider
-      value={{ header: headerValue, hasFooter: false, hasNews }}
+      value={{ header: headerValue, hasFooter: false }}
     >
       <BaseTemplate
         className={`overflow-y-clip scrollbar-hide h-full ${className} overflow-x-hidden`}
