@@ -15,8 +15,70 @@ function formatMonth(yyyymm: string) {
     .replace(".", "");
 }
 
-const norm = (v: number, max: number) =>
-  Math.round((v / max) * 100 * 10) / 10;
+interface MiniLineProps {
+  id: string;
+  label: string;
+  color: string;
+  max: number;
+  values: number[];
+  labels: string[];
+  months: string[];
+  height: number;
+  onSelectMonth: (month: string) => void;
+}
+
+function MiniLine({
+  id,
+  label,
+  color,
+  max,
+  values,
+  labels,
+  months,
+  height,
+  onSelectMonth,
+}: MiniLineProps) {
+  return (
+    <div className="border rounded-md p-3 bg-white">
+      <div className="flex items-center gap-1.5 mb-1">
+        <span
+          className="inline-block w-3 h-3 rounded-sm"
+          style={{ backgroundColor: color }}
+          aria-hidden
+        />
+        <h4 className="text-sm font-medium text-gray-800">{label}</h4>
+      </div>
+      <LineChart
+        height={height}
+        xAxis={[{ data: labels, scaleType: "point" }]}
+        yAxis={[{ min: 0, max }]}
+        series={[
+          {
+            id,
+            label,
+            color,
+            data: values,
+            showMark: true,
+            valueFormatter: (
+              v: number | null,
+              context: { dataIndex: number }
+            ) => `${v ?? values[context.dataIndex]} / ${max}`,
+          },
+        ]}
+        margin={{ left: 36, right: 12, top: 8, bottom: 28 }}
+        slotProps={{ legend: { hidden: true } }}
+        onAreaClick={(_, params) => {
+          const idx = params?.dataIndex;
+          if (idx != null && months[idx]) onSelectMonth(months[idx]);
+        }}
+        onMarkClick={(_, params) => {
+          const idx = params?.dataIndex;
+          if (idx != null && months[idx]) onSelectMonth(months[idx]);
+        }}
+      />
+    </div>
+  );
+}
 
 export function EssayEvolutionChart({
   months,
@@ -27,16 +89,18 @@ export function EssayEvolutionChart({
 
   const ordered = [...months].sort((a, b) => a.month.localeCompare(b.month));
   const labels = ordered.map((m) => formatMonth(m.month));
+  const monthKeys = ordered.map((m) => m.month);
   const selectedIndex = ordered.findIndex((m) => m.month === selectedMonth);
 
-  const seriesDefs = [
-    {
-      id: "geral",
-      label: "Geral",
-      color: "#02B2AF",
-      max: 1000,
-      values: ordered.map((m) => m.geral),
-    },
+  const geral = {
+    id: "geral",
+    label: "Geral",
+    color: "#02B2AF",
+    max: 1000,
+    values: ordered.map((m) => m.geral),
+  };
+
+  const competencias = [
     {
       id: "c1",
       label: "C1 — Norma",
@@ -74,66 +138,46 @@ export function EssayEvolutionChart({
     },
   ];
 
-  const series = seriesDefs.map(({ id, label, color, max, values }) => ({
-    id,
-    label,
-    color,
-    data: values.map((v) => norm(v, max)),
-    showMark: true,
-    valueFormatter: (
-      _normalizedValue: number | null,
-      context: { dataIndex: number }
-    ) => {
-      const abs = values[context.dataIndex];
-      return `${abs} / ${max}`;
-    },
-  }));
-
   return (
     <div
       className="w-full"
       aria-label="Evolução do desempenho em redação por mês"
     >
-      <h3 className="text-base font-semibold mb-2">
-        Evolução por mês (% do máximo)
-      </h3>
-      <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-2 text-xs text-gray-700">
-        {seriesDefs.map(({ id, label, color }) => (
-          <li key={id} className="flex items-center gap-1.5">
-            <span
-              className="inline-block w-3 h-3 rounded-sm"
-              style={{ backgroundColor: color }}
-              aria-hidden
-            />
-            {label}
-          </li>
+      <h3 className="text-base font-semibold mb-2">Evolução por mês</h3>
+      <div className="mb-4">
+        <MiniLine
+          id={geral.id}
+          label={geral.label}
+          color={geral.color}
+          max={geral.max}
+          values={geral.values}
+          labels={labels}
+          months={monthKeys}
+          height={240}
+          onSelectMonth={onSelectMonth}
+        />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {competencias.map((c) => (
+          <MiniLine
+            key={c.id}
+            id={c.id}
+            label={c.label}
+            color={c.color}
+            max={c.max}
+            values={c.values}
+            labels={labels}
+            months={monthKeys}
+            height={160}
+            onSelectMonth={onSelectMonth}
+          />
         ))}
-      </ul>
-      <LineChart
-        height={280}
-        xAxis={[{ data: labels, scaleType: "point" }]}
-        yAxis={[{ min: 0, max: 100 }]}
-        series={series}
-        margin={{ left: 40, right: 16, top: 16, bottom: 32 }}
-        slotProps={{ legend: { hidden: true } }}
-        onAreaClick={(_, params) => {
-          const idx = params?.dataIndex;
-          if (idx != null && ordered[idx]) onSelectMonth(ordered[idx].month);
-        }}
-        onMarkClick={(_, params) => {
-          const idx = params?.dataIndex;
-          if (idx != null && ordered[idx]) onSelectMonth(ordered[idx].month);
-        }}
-      />
+      </div>
       {selectedIndex >= 0 && (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 mt-3">
           Mês selecionado: {labels[selectedIndex]}
         </p>
       )}
-      <p className="text-xs text-gray-500 mt-1">
-        Valores normalizados em % do máximo (Geral 0–1000, C1–C5 0–200).
-        Tooltip mostra a nota absoluta.
-      </p>
     </div>
   );
 }
