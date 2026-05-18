@@ -15,12 +15,28 @@ import { ClassEvolutionChart } from "@/components/molecules/classEvolutionChart"
 interface Props {
   classId: string;
   token: string;
+  selectedMonth?: string | null;
+  onSelectMonth?: (month: string) => void;
 }
 
-export function ClassSimuladoAnalytics({ classId, token }: Props) {
+export function ClassSimuladoAnalytics({
+  classId,
+  token,
+  selectedMonth: selectedMonthProp,
+  onSelectMonth,
+}: Props) {
+  const isControlled = selectedMonthProp !== undefined && onSelectMonth !== undefined;
   const [list, setList] = useState<ClassMonthsList | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const [internalMonth, setInternalMonth] = useState<string | null>(null);
+  const selectedMonth = isControlled ? selectedMonthProp ?? null : internalMonth;
+  const setSelectedMonth = useCallback(
+    (m: string) => {
+      if (onSelectMonth) onSelectMonth(m);
+      else setInternalMonth(m);
+    },
+    [onSelectMonth],
+  );
   const [monthData, setMonthData] = useState<ClassMonthAnalytics | null>(null);
   const [monthLoading, setMonthLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -33,11 +49,12 @@ export function ClassSimuladoAnalytics({ classId, token }: Props) {
     listClassSimuladoMonths(classId, token)
       .then((data) => {
         setList(data);
-        if (data.months.length > 0) {
+        if (data.months.length > 0 && !selectedMonth) {
           setSelectedMonth(data.months[data.months.length - 1].month);
         }
       })
       .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classId, token]);
 
   useEffect(() => {

@@ -23,6 +23,33 @@ import { useParams } from "react-router-dom";
 import { AttendanceHistoryModal } from "./modals/attendanceHistoryModal";
 import { AttendanceRecordByStudentModal } from "./modals/attendanceRecordByStudentModal";
 import { ClassSimuladoAnalytics } from "@/components/organisms/classSimuladoAnalytics";
+import { ClassEssayAnalytics } from "@/components/organisms/classEssayAnalytics";
+
+function ClassPerformanceTab({
+  classId,
+  token,
+}: {
+  classId: string;
+  token: string;
+}) {
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  return (
+    <>
+      <ClassSimuladoAnalytics
+        classId={classId}
+        token={token}
+        selectedMonth={selectedMonth}
+        onSelectMonth={setSelectedMonth}
+      />
+      <ClassEssayAnalytics
+        classId={classId}
+        token={token}
+        selectedMonth={selectedMonth}
+        onSelectMonth={setSelectedMonth}
+      />
+    </>
+  );
+}
 
 export function PartnerClassWithStudents() {
   const { hashClassId } = useParams();
@@ -252,7 +279,7 @@ export function PartnerClassWithStudents() {
         <div className="px-4">
           <TabsList>
             <TabsTrigger value="alunos">Alunos</TabsTrigger>
-            <TabsTrigger value="simulados">Simulados</TabsTrigger>
+            <TabsTrigger value="desempenho">Desempenho</TabsTrigger>
           </TabsList>
         </div>
 
@@ -296,10 +323,10 @@ export function PartnerClassWithStudents() {
           </Paper>
         </TabsContent>
 
-        <TabsContent value="simulados">
+        <TabsContent value="desempenho">
           <div className="p-4">
             {hashClassId && (
-              <ClassSimuladoAnalytics classId={hashClassId} token={token} />
+              <ClassPerformanceTab classId={hashClassId} token={token} />
             )}
           </div>
         </TabsContent>
