@@ -5,7 +5,6 @@ import { getClassSimuladoByMonth } from "@/services/prepCourse/class/getClassSim
 import { refreshClassSimuladoAnalytics } from "@/services/prepCourse/class/refreshClassSimuladoAnalytics";
 import { useRefreshPolling } from "@/hooks/useRefreshPolling";
 import { KpiHeader } from "./KpiHeader";
-import { MonthPicker } from "./MonthPicker";
 import { SampleSizeBanner } from "./SampleSizeBanner";
 import { EmptyState } from "./EmptyState";
 import { MateriaRadar } from "@/components/molecules/materiaRadar";
@@ -17,6 +16,7 @@ interface Props {
   token: string;
   selectedMonth?: string | null;
   onSelectMonth?: (month: string) => void;
+  onListLoaded?: (list: ClassMonthsList) => void;
 }
 
 export function ClassSimuladoAnalytics({
@@ -24,6 +24,7 @@ export function ClassSimuladoAnalytics({
   token,
   selectedMonth: selectedMonthProp,
   onSelectMonth,
+  onListLoaded,
 }: Props) {
   const isControlled = selectedMonthProp !== undefined && onSelectMonth !== undefined;
   const [list, setList] = useState<ClassMonthsList | null>(null);
@@ -49,6 +50,7 @@ export function ClassSimuladoAnalytics({
     listClassSimuladoMonths(classId, token)
       .then((data) => {
         setList(data);
+        onListLoaded?.(data);
         if (data.months.length > 0 && !selectedMonth) {
           setSelectedMonth(data.months[data.months.length - 1].month);
         }
@@ -144,15 +146,6 @@ export function ClassSimuladoAnalytics({
             months={list.months}
             selectedMonth={selectedMonth}
             onSelectMonth={(m) => {
-              setSelectedMonth(m);
-              setSelectedMateriaId(undefined);
-            }}
-          />
-
-          <MonthPicker
-            months={list.months}
-            value={selectedMonth}
-            onChange={(m) => {
               setSelectedMonth(m);
               setSelectedMateriaId(undefined);
             }}

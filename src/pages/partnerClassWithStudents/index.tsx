@@ -24,15 +24,22 @@ import { AttendanceHistoryModal } from "./modals/attendanceHistoryModal";
 import { AttendanceRecordByStudentModal } from "./modals/attendanceRecordByStudentModal";
 import { ClassSimuladoAnalytics } from "@/components/organisms/classSimuladoAnalytics";
 import { ClassEssayAnalytics } from "@/components/organisms/classEssayAnalytics";
+import { MonthPicker } from "@/components/organisms/classSimuladoAnalytics/MonthPicker";
+import { ClassMonthsList } from "@/types/classAnalytics/classSimuladoAnalytics";
 
 function ClassPerformanceTab({
   classId,
   token,
+  selectedMonth,
+  setSelectedMonth,
+  onListLoaded,
 }: {
   classId: string;
   token: string;
+  selectedMonth: string | null;
+  setSelectedMonth: (m: string) => void;
+  onListLoaded: (list: ClassMonthsList) => void;
 }) {
-  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   return (
     <>
       <ClassSimuladoAnalytics
@@ -40,6 +47,7 @@ function ClassPerformanceTab({
         token={token}
         selectedMonth={selectedMonth}
         onSelectMonth={setSelectedMonth}
+        onListLoaded={onListLoaded}
       />
       <ClassEssayAnalytics
         classId={classId}
@@ -59,6 +67,11 @@ export function PartnerClassWithStudents() {
   const [students, setStudents] = useState<ClassStudent[]>([]);
   const [studentSelected, setStudentSelected] = useState<ClassStudent>(
     {} as ClassStudent
+  );
+  const [activeTab, setActiveTab] = useState<string>("alunos");
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const [simuladoList, setSimuladoList] = useState<ClassMonthsList | null>(
+    null
   );
 
   const modals = useModals([
@@ -275,12 +288,25 @@ export function PartnerClassWithStudents() {
         )}
       </div>
 
-      <Tabs defaultValue="alunos" className="w-full mt-4">
-        <div className="px-4">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="w-full mt-4"
+      >
+        <div className="px-4 flex items-center justify-between gap-4 flex-wrap">
           <TabsList>
             <TabsTrigger value="alunos">Alunos</TabsTrigger>
             <TabsTrigger value="desempenho">Desempenho</TabsTrigger>
           </TabsList>
+          {activeTab === "desempenho" &&
+            simuladoList &&
+            simuladoList.months.length > 0 && (
+              <MonthPicker
+                months={simuladoList.months}
+                value={selectedMonth}
+                onChange={setSelectedMonth}
+              />
+            )}
         </div>
 
         <TabsContent value="alunos">
@@ -326,7 +352,13 @@ export function PartnerClassWithStudents() {
         <TabsContent value="desempenho">
           <div className="p-4">
             {hashClassId && (
-              <ClassPerformanceTab classId={hashClassId} token={token} />
+              <ClassPerformanceTab
+                classId={hashClassId}
+                token={token}
+                selectedMonth={selectedMonth}
+                setSelectedMonth={setSelectedMonth}
+                onListLoaded={setSimuladoList}
+              />
             )}
           </div>
         </TabsContent>
