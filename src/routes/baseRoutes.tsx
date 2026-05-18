@@ -1,33 +1,20 @@
 import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { BaseTemplateContext } from "../context/baseTemplateContext";
-import { headerDash } from "../pages/dash/data";
 import { footer, header } from "../pages/homeLegacy/data";
-import { HOME_PATH, NEWS } from "../routes/path";
+import { DASH, HOME_PATH, NEWS } from "../routes/path";
 import { getNews } from "../services/news/getNews";
 import { useAuthStore } from "../store/auth";
 import { ItemMenuProps } from "../components/molecules/menuItems";
 
-function mergeHeaderLinksForHome(
-  homeLinks: ItemMenuProps[],
-  dashLinks: ItemMenuProps[],
-): ItemMenuProps[] {
-  const seen = new Set<string>();
-  const merged: ItemMenuProps[] = [];
-  let nextId = 1;
-
-  for (const item of [...homeLinks, ...dashLinks]) {
-    const link = item.Home_Menu_Item_id.link;
-    if (seen.has(link)) continue;
-    seen.add(link);
-    merged.push({
-      ...item,
-      Home_Menu_Item_id: { ...item.Home_Menu_Item_id, id: nextId++ },
-    });
-  }
-  merged.pop();
-  return merged;
-}
+const painelDoEstudanteLink: ItemMenuProps = {
+  Home_Menu_Item_id: {
+    id: 99,
+    name: "Painel do Estudante",
+    link: DASH,
+    target: "_self",
+  },
+};
 
 export function BaseRoutes() {
   const [hasNews, setHasNews] = useState<boolean | null>(null);
@@ -42,12 +29,10 @@ export function BaseRoutes() {
   }, []);
 
   let basePageLinks: ItemMenuProps[];
-  if (!token) {
-    basePageLinks = header.pageLinks;
-  } else if (isHome) {
-    basePageLinks = mergeHeaderLinksForHome(header.pageLinks, headerDash.pageLinks);
+  if (token && isHome) {
+    basePageLinks = [...header.pageLinks, painelDoEstudanteLink];
   } else {
-    basePageLinks = headerDash.pageLinks;
+    basePageLinks = header.pageLinks;
   }
 
   const pageLinks =
