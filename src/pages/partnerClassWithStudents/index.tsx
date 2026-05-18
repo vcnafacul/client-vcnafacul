@@ -74,6 +74,15 @@ export function PartnerClassWithStudents() {
     null
   );
 
+  const handleSimuladoListLoaded = (list: ClassMonthsList) => {
+    setSimuladoList(list);
+    if (list.months.length > 0) {
+      setSelectedMonth((current) =>
+        current ?? list.months[list.months.length - 1].month
+      );
+    }
+  };
+
   const modals = useModals([
     "modalAttendanceHistory",
     "modalAttendanceRecordByStudent",
@@ -357,7 +366,7 @@ export function PartnerClassWithStudents() {
                 token={token}
                 selectedMonth={selectedMonth}
                 setSelectedMonth={setSelectedMonth}
-                onListLoaded={setSimuladoList}
+                onListLoaded={handleSimuladoListLoaded}
               />
             )}
           </div>
