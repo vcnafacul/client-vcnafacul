@@ -54,7 +54,8 @@ export function ClassSimuladoAnalytics({
         setList(data);
         onListLoaded?.(data);
         if (data.months.length > 0 && !selectedMonth) {
-          setSelectedMonth(data.months[data.months.length - 1].month);
+          const sorted = [...data.months].sort((a, b) => a.month.localeCompare(b.month));
+          setSelectedMonth(sorted[sorted.length - 1].month);
         }
       })
       .finally(() => setLoading(false));

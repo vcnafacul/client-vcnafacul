@@ -43,7 +43,8 @@ export function ClassEssayAnalytics({
         setList(data);
         // 3) Auto-select latest month when list loads & no selection yet
         if (data.months.length > 0 && !selectedMonth) {
-          onSelectMonth(data.months[data.months.length - 1].month);
+          const sorted = [...data.months].sort((a, b) => a.month.localeCompare(b.month));
+          onSelectMonth(sorted[sorted.length - 1].month);
         }
       })
       .catch(console.error)
