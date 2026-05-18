@@ -33,44 +33,51 @@ export function EssayEvolutionChart({
     {
       id: "geral",
       label: "Geral",
+      color: "#02B2AF",
       max: 1000,
       values: ordered.map((m) => m.geral),
     },
     {
       id: "c1",
       label: "C1 — Norma",
+      color: "#2E96FF",
       max: 200,
       values: ordered.map((m) => m.competencias.c1),
     },
     {
       id: "c2",
       label: "C2 — Tema",
+      color: "#B800D8",
       max: 200,
       values: ordered.map((m) => m.competencias.c2),
     },
     {
       id: "c3",
       label: "C3 — Argumentação",
+      color: "#60009B",
       max: 200,
       values: ordered.map((m) => m.competencias.c3),
     },
     {
       id: "c4",
       label: "C4 — Coesão",
+      color: "#2731C8",
       max: 200,
       values: ordered.map((m) => m.competencias.c4),
     },
     {
       id: "c5",
       label: "C5 — Proposta",
+      color: "#03008D",
       max: 200,
       values: ordered.map((m) => m.competencias.c5),
     },
   ];
 
-  const series = seriesDefs.map(({ id, label, max, values }) => ({
+  const series = seriesDefs.map(({ id, label, color, max, values }) => ({
     id,
     label,
+    color,
     data: values.map((v) => norm(v, max)),
     showMark: true,
     valueFormatter: (
@@ -90,12 +97,25 @@ export function EssayEvolutionChart({
       <h3 className="text-base font-semibold mb-2">
         Evolução por mês (% do máximo)
       </h3>
+      <ul className="flex flex-wrap gap-x-4 gap-y-1 mb-2 text-xs text-gray-700">
+        {seriesDefs.map(({ id, label, color }) => (
+          <li key={id} className="flex items-center gap-1.5">
+            <span
+              className="inline-block w-3 h-3 rounded-sm"
+              style={{ backgroundColor: color }}
+              aria-hidden
+            />
+            {label}
+          </li>
+        ))}
+      </ul>
       <LineChart
         height={280}
         xAxis={[{ data: labels, scaleType: "point" }]}
         yAxis={[{ min: 0, max: 100 }]}
         series={series}
         margin={{ left: 40, right: 16, top: 16, bottom: 32 }}
+        slotProps={{ legend: { hidden: true } }}
         onAreaClick={(_, params) => {
           const idx = params?.dataIndex;
           if (idx != null && ordered[idx]) onSelectMonth(ordered[idx].month);
