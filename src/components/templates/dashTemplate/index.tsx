@@ -1,9 +1,5 @@
 import { SidebarDash } from "@/components/organisms/sidebarDash";
-import {
-  SidebarProvider,
-  SidebarTrigger,
-  useSidebar,
-} from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useMemo } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { BaseTemplateContext } from "../../../context/baseTemplateContext";
@@ -22,27 +18,17 @@ type DashTemplateProps = {
 };
 
 function DashTemplateContent({ hasMenu }: { hasMenu?: boolean }) {
-  const { open } = useSidebar();
-
   return (
-    <div
-      className={`relative top-[76px] h-[calc(100vh-76px)] w-full flex flex-row`}
-    >
-      <div
-        className={`xl:mr-0 w-full overflow-y-scroll scrollbar-hide flex-1 min-w-0`}
-      >
+    <div className="relative top-[76px] h-[calc(100vh-76px)] w-full flex flex-row">
+      <div className="xl:mr-0 w-full overflow-y-scroll scrollbar-hide flex-1 min-w-0">
         <Outlet />
       </div>
-      <div
-        className={`z-20 h-[calc(100vh-76px)] absolute xl:relative xl:right-0 transition-all duration-200`}
-      >
-        {hasMenu ? <SidebarDash /> : <></>}
+      <div className="z-20 h-[calc(100vh-76px)] absolute xl:relative xl:right-0">
+        {hasMenu && <SidebarDash />}
       </div>
-      <SidebarTrigger
-        className={`fixed z-30 top-24 transition-all duration-200 ${
-          open ? "right-[0.5rem] xl:right-[16rem]" : "right-4"
-        }`}
-      />
+      {hasMenu && (
+        <SidebarTrigger className="xl:hidden fixed z-30 top-24 right-4" />
+      )}
     </div>
   );
 }
