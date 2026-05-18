@@ -77,9 +77,8 @@ export function PartnerClassWithStudents() {
   const handleSimuladoListLoaded = (list: ClassMonthsList) => {
     setSimuladoList(list);
     if (list.months.length > 0) {
-      setSelectedMonth((current) =>
-        current ?? list.months[list.months.length - 1].month
-      );
+      const sorted = [...list.months].sort((a, b) => a.month.localeCompare(b.month));
+      setSelectedMonth((current) => current ?? sorted[sorted.length - 1].month);
     }
   };
 

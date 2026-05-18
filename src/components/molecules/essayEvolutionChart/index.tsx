@@ -111,20 +111,21 @@ export function EssayEvolutionChart({
   const monthKeys = ordered.map((m) => m.month);
   const selectedIndex = ordered.findIndex((m) => m.month === selectedMonth);
 
-  const geral = {
-    id: "geral",
-    label: "Geral",
-    color: "#02B2AF",
-    max: 1000,
-    values: ordered.map((m) => m.geral),
-  };
-
-  const competencias = [
+  const charts = [
+    {
+      id: "geral",
+      label: "Geral",
+      color: "#02B2AF",
+      max: 1000,
+      tickInterval: [0, 200, 400, 600, 800, 1000],
+      values: ordered.map((m) => m.geral),
+    },
     {
       id: "c1",
       label: "C1 — Norma",
       color: "#2E96FF",
       max: 200,
+      tickInterval: [0, 40, 80, 120, 160, 200],
       values: ordered.map((m) => m.competencias.c1),
     },
     {
@@ -132,6 +133,7 @@ export function EssayEvolutionChart({
       label: "C2 — Tema",
       color: "#B800D8",
       max: 200,
+      tickInterval: [0, 40, 80, 120, 160, 200],
       values: ordered.map((m) => m.competencias.c2),
     },
     {
@@ -139,6 +141,7 @@ export function EssayEvolutionChart({
       label: "C3 — Argumentação",
       color: "#60009B",
       max: 200,
+      tickInterval: [0, 40, 80, 120, 160, 200],
       values: ordered.map((m) => m.competencias.c3),
     },
     {
@@ -146,6 +149,7 @@ export function EssayEvolutionChart({
       label: "C4 — Coesão",
       color: "#2731C8",
       max: 200,
+      tickInterval: [0, 40, 80, 120, 160, 200],
       values: ordered.map((m) => m.competencias.c4),
     },
     {
@@ -153,6 +157,7 @@ export function EssayEvolutionChart({
       label: "C5 — Proposta",
       color: "#03008D",
       max: 200,
+      tickInterval: [0, 40, 80, 120, 160, 200],
       values: ordered.map((m) => m.competencias.c5),
     },
   ];
@@ -163,21 +168,8 @@ export function EssayEvolutionChart({
       aria-label="Evolução do desempenho em redação por mês"
     >
       <h3 className="text-base font-semibold mb-2">Evolução por mês</h3>
-      <div className="mb-4">
-        <MiniLine
-          id={geral.id}
-          label={geral.label}
-          color={geral.color}
-          max={geral.max}
-          values={geral.values}
-          labels={labels}
-          months={monthKeys}
-          height={240}
-          onSelectMonth={onSelectMonth}
-        />
-      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {competencias.map((c) => (
+        {charts.map((c) => (
           <MiniLine
             key={c.id}
             id={c.id}
@@ -189,7 +181,7 @@ export function EssayEvolutionChart({
             months={monthKeys}
             height={160}
             onSelectMonth={onSelectMonth}
-            tickInterval={[0, 40, 80, 120, 160, 200]}
+            tickInterval={c.tickInterval}
             showGrid
           />
         ))}
