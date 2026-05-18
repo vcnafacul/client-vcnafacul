@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { AlertTriangle } from "lucide-react";
+import { toast } from "react-toastify";
 import type {
   ClassEssayMonthAnalytics,
   ClassEssayMonthsList,
@@ -31,6 +32,7 @@ export function ClassEssayAnalytics({
   const [monthData, setMonthData] = useState<ClassEssayMonthAnalytics | null>(null);
   const [monthLoading, setMonthLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [requesting, setRequesting] = useState(false);
   const [baselineGeneratedAt, setBaselineGeneratedAt] = useState<string | null>(null);
 
   // 1) Load months list once
@@ -76,36 +78,55 @@ export function ClassEssayAnalytics({
     if (latest) {
       setMonthData(latest);
       setRefreshing(false);
+      toast.success("Dados de redação atualizados!");
       // Refresh the list too so the new month appears
       listClassEssayMonths(classId, token).then(setList).catch(console.error);
     }
   }, [latest, classId, token]);
 
   useEffect(() => {
-    if (timedOut) setRefreshing(false);
+    if (timedOut) {
+      setRefreshing(false);
+      toast.info(
+        "Ainda processando em segundo plano. Recarregue a página em alguns minutos para ver os dados atualizados.",
+      );
+    }
   }, [timedOut]);
 
   const handleRefresh = useCallback(async () => {
-    if (refreshing) return;
-    setBaselineGeneratedAt(monthData?.generatedAt ?? null);
-    setRefreshing(true);
+    if (requesting || refreshing) return;
+    setRequesting(true);
     try {
       await refreshClassEssayAnalytics(classId, "current", token);
+      setBaselineGeneratedAt(monthData?.generatedAt ?? null);
+      setRefreshing(true);
+      toast.info(
+        "Atualização enfileirada. O processamento acontece em segundo plano — pode levar alguns minutos.",
+      );
     } catch (e) {
       console.error(e);
-      setRefreshing(false);
+      toast.error("Falha ao solicitar atualização. Tente novamente.");
+    } finally {
+      setRequesting(false);
     }
-  }, [classId, monthData, refreshing, token]);
+  }, [classId, monthData, refreshing, requesting, token]);
 
   const handleGenerate = useCallback(async () => {
-    setRefreshing(true);
+    if (requesting || refreshing) return;
+    setRequesting(true);
     try {
       await refreshClassEssayAnalytics(classId, "all", token);
+      setRefreshing(true);
+      toast.info(
+        "Geração enfileirada. O processamento acontece em segundo plano — pode levar alguns minutos.",
+      );
     } catch (e) {
       console.error(e);
-      setRefreshing(false);
+      toast.error("Falha ao solicitar geração. Tente novamente.");
+    } finally {
+      setRequesting(false);
     }
-  }, [classId, token]);
+  }, [classId, refreshing, requesting, token]);
 
   if (loading) {
     return (
@@ -132,7 +153,7 @@ export function ClassEssayAnalytics({
         <EmptyState
           variant="no-months"
           onGenerate={list.coursePeriod.isActive ? handleGenerate : undefined}
-          loading={refreshing}
+          loading={refreshing || requesting}
         />
       </section>
     );
@@ -155,6 +176,7 @@ export function ClassEssayAnalytics({
           list={list}
           onRefresh={handleRefresh}
           refreshing={refreshing}
+          requesting={requesting}
         />
 
         {showSampleBanner && (

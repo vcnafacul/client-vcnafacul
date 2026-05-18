@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { ClassMonthAnalytics, ClassMonthsList } from "@/types/classAnalytics/classSimuladoAnalytics";
 import { listClassSimuladoMonths } from "@/services/prepCourse/class/listClassSimuladoMonths";
 import { getClassSimuladoByMonth } from "@/services/prepCourse/class/getClassSimuladoByMonth";
@@ -41,6 +42,7 @@ export function ClassSimuladoAnalytics({
   const [monthData, setMonthData] = useState<ClassMonthAnalytics | null>(null);
   const [monthLoading, setMonthLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [requesting, setRequesting] = useState(false);
   const [selectedMateriaId, setSelectedMateriaId] = useState<string | undefined>(undefined);
   const [view, setView] = useState<"materia" | "frente">("materia");
   const [viewTouched, setViewTouched] = useState(false);
@@ -89,31 +91,52 @@ export function ClassSimuladoAnalytics({
     if (latest) {
       setMonthData(latest);
       setRefreshing(false);
+      toast.success("Dados de simulado atualizados!");
     }
   }, [latest]);
 
   useEffect(() => {
-    if (timedOut) setRefreshing(false);
+    if (timedOut) {
+      setRefreshing(false);
+      toast.info(
+        "Ainda processando em segundo plano. Recarregue a página em alguns minutos para ver os dados atualizados.",
+      );
+    }
   }, [timedOut]);
 
   const handleRefresh = useCallback(async () => {
-    if (!selectedMonth || refreshing) return;
-    setRefreshing(true);
+    if (!selectedMonth || requesting || refreshing) return;
+    setRequesting(true);
     try {
       await refreshClassSimuladoAnalytics(classId, "current", token);
-    } catch {
-      setRefreshing(false);
+      setRefreshing(true);
+      toast.info(
+        "Atualização enfileirada. O processamento acontece em segundo plano — pode levar alguns minutos.",
+      );
+    } catch (e) {
+      console.error(e);
+      toast.error("Falha ao solicitar atualização. Tente novamente.");
+    } finally {
+      setRequesting(false);
     }
-  }, [classId, selectedMonth, refreshing, token]);
+  }, [classId, selectedMonth, refreshing, requesting, token]);
 
   const handleGenerate = useCallback(async () => {
-    setRefreshing(true);
+    if (requesting || refreshing) return;
+    setRequesting(true);
     try {
       await refreshClassSimuladoAnalytics(classId, "all", token);
-    } catch {
-      setRefreshing(false);
+      setRefreshing(true);
+      toast.info(
+        "Geração enfileirada. O processamento acontece em segundo plano — pode levar alguns minutos.",
+      );
+    } catch (e) {
+      console.error(e);
+      toast.error("Falha ao solicitar geração. Tente novamente.");
+    } finally {
+      setRequesting(false);
     }
-  }, [classId, token]);
+  }, [classId, refreshing, requesting, token]);
 
   if (loading) {
     return <p className="py-8 text-center text-sm text-gray-400">Carregando dados da turma...</p>;
@@ -132,13 +155,14 @@ export function ClassSimuladoAnalytics({
         monthData={monthData}
         onRefresh={handleRefresh}
         refreshing={refreshing}
+        requesting={requesting}
       />
 
       {list.months.length === 0 ? (
         <EmptyState
           variant="no-months"
           onGenerate={list.coursePeriod.isActive ? handleGenerate : undefined}
-          loading={refreshing}
+          loading={refreshing || requesting}
         />
       ) : (
         <>

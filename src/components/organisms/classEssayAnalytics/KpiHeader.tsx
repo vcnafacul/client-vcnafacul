@@ -12,6 +12,19 @@ interface Props {
   list: ClassEssayMonthsList;
   onRefresh: () => void;
   refreshing: boolean;
+  requesting: boolean;
+}
+
+function formatGeneratedAt(generatedAt: string | null | undefined): string | null {
+  if (!generatedAt) return null;
+  const date = new Date(generatedAt);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function getNotaColor(geral: number): string {
@@ -20,10 +33,17 @@ function getNotaColor(geral: number): string {
   return "text-green-600";
 }
 
-export function KpiHeader({ monthData, list, onRefresh, refreshing }: Props) {
+export function KpiHeader({
+  monthData,
+  list,
+  onRefresh,
+  refreshing,
+  requesting,
+}: Props) {
   const isActive = list.coursePeriod.isActive;
   const start = new Date(list.coursePeriod.startDate).toLocaleDateString("pt-BR");
   const end = new Date(list.coursePeriod.endDate).toLocaleDateString("pt-BR");
+  const lastUpdatedAt = formatGeneratedAt(monthData?.generatedAt);
 
   const geral = monthData ? Math.round(monthData.geral) : null;
   const notaColor = geral !== null ? getNotaColor(geral) : "text-gray-400";
@@ -45,19 +65,28 @@ export function KpiHeader({ monthData, list, onRefresh, refreshing }: Props) {
           {!isActive && <Badge variant="secondary">Turma arquivada</Badge>}
         </div>
         {isActive && (
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={onRefresh}
-            disabled={refreshing}
-          >
-            {refreshing ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <RefreshCw className="mr-2 h-4 w-4" />
+          <div className="flex flex-col items-end gap-1">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onRefresh}
+              disabled={requesting}
+            >
+              {requesting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="mr-2 h-4 w-4" />
+              )}
+              {requesting ? "Enfileirando..." : "Atualizar redação"}
+            </Button>
+            {(refreshing || lastUpdatedAt) && (
+              <p className="text-xs text-gray-400">
+                {refreshing
+                  ? "Processando em segundo plano..."
+                  : `Atualizado em ${lastUpdatedAt}`}
+              </p>
             )}
-            {refreshing ? "Atualizando..." : "Atualizar redação"}
-          </Button>
+          </div>
         )}
       </div>
       <p className="text-sm text-gray-500">Período letivo: {start} – {end}</p>
