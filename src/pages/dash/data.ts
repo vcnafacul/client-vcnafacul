@@ -45,7 +45,7 @@ import { ReactComponent as Quimica } from "../../assets/icons/home-subjects-quim
 
 import { GoGraph } from "react-icons/go";
 import { IoSchool } from "react-icons/io5";
-import { LuMessageSquare } from "react-icons/lu";
+import { LuHouse, LuMessageSquare } from "react-icons/lu";
 import { ReactComponent as Atualidades } from "../../assets/icons/home-subjects-atualidades.svg";
 import { ReactComponent as Filosofia } from "../../assets/icons/home-subjects-filosofia.svg";
 import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-geografia.svg";
@@ -156,7 +156,7 @@ export const adminMenuItems: DashCardMenu[] = [
     alt: "Projeto",
     subMenuList: [
       {
-        icon: AdminImg,
+        icon: LuHouse,
         alt: "dash_home",
         text: "Home",
         link: `/dashboard/${DASH_HOME}`,
