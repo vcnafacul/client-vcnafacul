@@ -18,6 +18,7 @@ export interface InscriptionOutput {
   description: string;
   range: Date[];
   requestDocuments: boolean;
+  isTest: boolean;
 }
 
 interface InscriptionInfoModalProps {
@@ -33,6 +34,8 @@ export function InscriptionInfoCreateEditModal({
   inscription,
   onCreateEdit,
 }: InscriptionInfoModalProps) {
+  const isEdit = !!inscription;
+
   const schema = yup
     .object()
     .shape({
@@ -48,6 +51,7 @@ export function InscriptionInfoCreateEditModal({
         .length(2, "Selecione um intervalo de datas válido")
         .required("Campo obrigatório"),
       requestDocuments: yup.boolean().default(false),
+      isTest: yup.boolean().default(true),
     })
     .required();
 
@@ -69,6 +73,7 @@ export function InscriptionInfoCreateEditModal({
         inscription?.endDate ? new Date(inscription.endDate) : new Date(),
       ],
       requestDocuments: inscription?.requestDocuments ?? false,
+      isTest: inscription?.isTest ?? true,
     },
   });
 
@@ -82,14 +87,22 @@ export function InscriptionInfoCreateEditModal({
     register("description");
     register("range");
     register("requestDocuments");
+    register("isTest");
   }, []);
 
   return (
-    <ModalTemplate isOpen={isOpen} handleClose={handleClose} className="bg-white p-6 rounded-md">
+    <ModalTemplate
+      isOpen={isOpen}
+      handleClose={handleClose}
+      className="bg-white p-6 rounded-md"
+    >
       <div className="sm:min-w-[640px] flex flex-col gap-6">
         <h1 className="text-marine text-2xl font-bold">Processo Seletivo</h1>
 
-        <form className="grid grid-cols-1 sm:grid-cols-2 gap-6" onSubmit={handleSubmit(resolver)}>
+        <form
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+          onSubmit={handleSubmit(resolver)}
+        >
           <InputFactory
             id="name"
             label="Título"
@@ -105,7 +118,9 @@ export function InscriptionInfoCreateEditModal({
             type="number"
             defaultValue={inscription?.openingsCount}
             error={errors.openingsCount}
-            onChange={(e: any) => setValue("openingsCount", parseInt(e.target.value))}
+            onChange={(e: any) =>
+              setValue("openingsCount", parseInt(e.target.value))
+            }
           />
 
           <div className="sm:col-span-2">
@@ -119,7 +134,10 @@ export function InscriptionInfoCreateEditModal({
           </div>
 
           <div className="sm:col-span-2">
-            <Label htmlFor="range" className="text-sm text-gray-700 font-semibold block mb-1">
+            <Label
+              htmlFor="range"
+              className="text-sm text-gray-700 font-semibold block mb-1"
+            >
               Período de Inscrição
             </Label>
             <Controller
@@ -138,22 +156,44 @@ export function InscriptionInfoCreateEditModal({
                 />
               )}
             />
-            {errors.range && <p className="text-red text-xs mt-1">{errors.range.message}</p>}
+            {errors.range && (
+              <p className="text-red text-xs mt-1">{errors.range.message}</p>
+            )}
           </div>
 
           <div className="sm:col-span-2 flex items-center gap-2">
             <Checkbox
               id="requestDocuments"
               checked={watch("requestDocuments")}
-              onCheckedChange={(checked) => setValue("requestDocuments", !!checked)}
+              onCheckedChange={(checked) =>
+                setValue("requestDocuments", !!checked)
+              }
             />
             <Label htmlFor="requestDocuments" className="text-sm text-gray-700">
               Este processo seletivo exigirá envio de documentos dos candidatos
             </Label>
           </div>
 
+          {!isEdit && (
+            <div className="sm:col-span-2 flex items-center gap-2">
+              <Checkbox
+                id="isTest"
+                checked={watch("isTest")}
+                onCheckedChange={(checked) => setValue("isTest", !!checked)}
+              />
+              <Label htmlFor="isTest" className="text-sm text-gray-700">
+                Este é um processo seletivo de teste e não deve ser considerado
+                válido
+              </Label>
+            </div>
+          )}
+
           <div className="flex justify-end gap-4 sm:col-span-2 mt-2">
-            <Button typeStyle="secondary" className="w-24 h-9" onClick={handleClose}>
+            <Button
+              typeStyle="secondary"
+              className="w-24 h-9"
+              onClick={handleClose}
+            >
               Cancelar
             </Button>
             <Button typeStyle="primary" className="w-24 h-9" type="submit">

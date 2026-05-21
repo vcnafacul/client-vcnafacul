@@ -1,4 +1,4 @@
-import { ButtonProps } from "@/components/molecules/button";
+import Button, { ButtonProps } from "@/components/molecules/button";
 import { CardDash } from "@/components/molecules/cardDash";
 import { SelectProps } from "@/components/atoms/select";
 import DashCardTemplate from "@/components/templates/dashCardTemplate";
@@ -35,10 +35,12 @@ export function PartnerPrepInscriptionManager() {
   const [inscriptionSelected, setInscriptionSelected] = useState<
     Inscription | undefined
   >(undefined);
+  const [pendingCreation, setPendingCreation] =
+    useState<InscriptionOutput | null>(null);
   const [statusFilter, setStatusFilter] = useState<StatusEnum>(StatusEnum.All);
   const limitCards = 100;
 
-  const modals = useModals(["modalCreate", "modalInfo"]);
+  const modals = useModals(["modalCreate", "modalInfo", "modalConfirmTest"]);
 
   const {
     data: { token },
@@ -95,7 +97,7 @@ export function PartnerPrepInscriptionManager() {
   const filteredInscriptions = useMemo(() => {
     if (statusFilter === StatusEnum.All) return inscriptions;
     return inscriptions.filter(
-      (ins) => getInscriptionStatus(ins) === statusFilter
+      (ins) => getInscriptionStatus(ins) === statusFilter,
     );
   }, [inscriptions, statusFilter]);
 
@@ -120,6 +122,11 @@ export function PartnerPrepInscriptionManager() {
   ];
 
   const handleCreate = async (data: InscriptionOutput) => {
+    if (data.isTest) {
+      setPendingCreation(data);
+      modals.modalConfirmTest.open();
+      return;
+    }
     await executeAsync({
       action: () => createInscription(token, data),
       loadingMessage: "Criando Processo Seletivo...",
@@ -130,6 +137,28 @@ export function PartnerPrepInscriptionManager() {
         fetchInscriptions();
       },
     });
+  };
+
+  const confirmTestCreation = async () => {
+    if (!pendingCreation) return;
+
+    await executeAsync({
+      action: () => createInscription(token, pendingCreation),
+      loadingMessage: "Criando Processo de Teste...",
+      successMessage: "Processo de teste criado com sucesso!",
+      errorMessage: "Erro ao criar processo de teste",
+      onSuccess: () => {
+        modals.modalConfirmTest.close();
+        modals.modalCreate.close();
+        setPendingCreation(null);
+        fetchInscriptions();
+      },
+    });
+  };
+
+  const cancelTestCreation = () => {
+    setPendingCreation(null);
+    modals.modalConfirmTest.close();
   };
 
   const ModalCreate = () => {
@@ -157,6 +186,7 @@ export function PartnerPrepInscriptionManager() {
           startDate: data.range[0],
           endDate: data.range[1],
           requestDocuments: data.requestDocuments,
+          isTest: data.isTest,
         });
         fetchInscriptions();
       },
@@ -167,7 +197,7 @@ export function PartnerPrepInscriptionManager() {
     deleteInscription(token, inscriptionSelected!.id)
       .then(() => {
         setInscriptions(
-          inscriptions.filter((ins) => ins.id !== inscriptionSelected?.id)
+          inscriptions.filter((ins) => ins.id !== inscriptionSelected?.id),
         );
         modals.modalInfo.close();
       })
@@ -187,7 +217,7 @@ export function PartnerPrepInscriptionManager() {
         setInscription={(insc) => {
           // Atualizar a lista de inscrições
           setInscriptions(
-            inscriptions.map((ins) => (ins.id === insc.id ? insc : ins))
+            inscriptions.map((ins) => (ins.id === insc.id ? insc : ins)),
           );
           // Atualizar também a inscrição selecionada para refletir no modal
           setInscriptionSelected(insc);
@@ -195,6 +225,39 @@ export function PartnerPrepInscriptionManager() {
         handleEdit={handleEdit}
         handleDelete={handleDelete}
       />
+    ) : null;
+  };
+
+  const ModalConfirmTest = () => {
+    return modals.modalConfirmTest.isOpen ? (
+      <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+        <div className="bg-white p-6 rounded-xl w-[400px]">
+          <h2 className="text-lg font-semibold mb-4">
+            Confirmação de Processo de Teste
+          </h2>
+
+          <p className="mb-6 text-sm">
+            Este processo será marcado como <strong>teste</strong> e não deve
+            ser considerado válido para uso real.
+          </p>
+          <div className="flex justify-end gap-4 sm:col-span-2 mt-2">
+            <Button
+              typeStyle="secondary"
+              className="w-24 h-9"
+              onClick={cancelTestCreation}
+            >
+              Cancelar
+            </Button>
+            <Button
+              typeStyle="primary"
+              className="w-24 h-9"
+              onClick={confirmTestCreation}
+            >
+              Salvar
+            </Button>
+          </div>
+        </div>
+      </div>
     ) : null;
   };
 
@@ -248,6 +311,7 @@ export function PartnerPrepInscriptionManager() {
           />
           <ModalInfo />
           <ModalCreate />
+          <ModalConfirmTest />
         </>
       )}
     </DashCardContext.Provider>
