@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GraduationCap, School, Users, BookOpen, FileText } from "lucide-react";
+import { GraduationCap, School, Users, BookOpen } from "lucide-react";
 import { fetchImpactStats, ImpactStats } from "@/services/public/impactStats";
 
 interface StatItem {
@@ -54,11 +54,6 @@ export function ImpactoSection() {
       icon: <BookOpen size={24} />,
       value: stats?.questionsTotal ?? null,
       label: "Questões cadastradas",
-    },
-    {
-      icon: <FileText size={24} />,
-      value: stats?.contentApproved ?? null,
-      label: "Conteúdos disponibilizados",
     },
   ];
 
