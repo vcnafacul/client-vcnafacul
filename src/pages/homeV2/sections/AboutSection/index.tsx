@@ -7,14 +7,14 @@ import { AboutVideoCard } from "./AboutVideoCard";
 
 export const AboutSection: SectionComponent<AboutSectionData> = ({ data }) => {
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative overflow-hidden pb-24 md:pb-32">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -top-40 -right-32 h-[460px] w-[460px] rounded-full blur-3xl opacity-40"
         style={{ background: "#37d6b5" }}
       />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
-        <div className="px-4 py-12 md:py-16 max-w-2xl md:ml-auto flex flex-col justify-center">
+        <div className="px-4 pt-12 md:pt-16 pb-4 max-w-2xl md:ml-auto flex flex-col justify-center">
           <p className="home-section__eyebrow mb-3">{data.eyebrow}</p>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -27,7 +27,7 @@ export const AboutSection: SectionComponent<AboutSectionData> = ({ data }) => {
           </motion.h2>
           <AboutDescription description={data.description} />
         </div>
-        <div className="flex items-center justify-center py-8 md:py-12 px-4 md:mr-auto w-full">
+        <div className="flex items-center justify-center pt-8 md:pt-12 pb-4 px-4 md:mr-auto w-full">
           <div className="w-full max-w-lg aspect-video max-h-[380px]">
             <AboutVideoCard thumbnail={data.thumbnail} videoId={data.videoId} />
           </div>
