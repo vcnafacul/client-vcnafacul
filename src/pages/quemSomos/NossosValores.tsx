@@ -34,9 +34,9 @@ function ValorCard({
   children: ReactNode;
 }) {
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden w-full aspect-[572/328] flex flex-col">
+    <div className="bg-white rounded-2xl shadow-lg overflow-hidden w-full md:aspect-[572/328] flex flex-col">
       <div className="h-2 shrink-0" style={{ background: accent }} />
-      <div className="flex-1 px-10 py-6 flex flex-col justify-center">
+      <div className="flex-1 px-6 py-6 md:px-10 flex flex-col justify-center">
         <div
           className="w-14 h-14 rounded-full flex items-center justify-center mb-4"
           style={{ background: accent }}
