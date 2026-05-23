@@ -72,10 +72,10 @@ export default function QuemSomosPage() {
         />
 
         {/* Seção: Quem Somos */}
-        <div className="max-w-3xl mx-auto px-6 pt-16">
+        <div className="max-w-3xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-6 pt-16">
           <Text size="secondary">Quem Somos?</Text>
-          <div className="prose prose-xl max-w-none">
-            <RichTextRenderer content={data.description} contentFormat="markdown" className="text-marine text-base" />
+          <div className="prose prose-xl max-w-none text-justify">
+            <RichTextRenderer content={data.description} contentFormat="markdown" className="text-marine text-base text-justify" />
           </div>
         </div>
 
