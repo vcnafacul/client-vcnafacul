@@ -8,8 +8,17 @@ import { createHomeSupporter } from "../../../services/home/createHomeSupporter"
 import { updateHomeSupporter } from "../../../services/home/updateHomeSupporter";
 import { uploadHomeSupporterLogo } from "../../../services/home/uploadHomeSupporterLogo";
 import { homeContentFile } from "../../../services/urls";
-import PhotoEditor from "@/components/atoms/photoEditor";
-import { HOME_IMAGE_ASPECT, HOME_IMAGE_SIZE } from "../constants";
+import PhotoEditor, { AspectPreset } from "@/components/atoms/photoEditor";
+import { HOME_IMAGE_SIZE } from "../constants";
+
+const SUPPORTER_ASPECT_PRESETS: AspectPreset[] = [
+  { label: "1:1 (quadrado)", aspect: 1, targetSize: HOME_IMAGE_SIZE.supporter },
+  { label: "4:3", aspect: 4 / 3 },
+  { label: "16:9", aspect: 16 / 9 },
+  { label: "3:4", aspect: 3 / 4 },
+  { label: "9:16", aspect: 9 / 16 },
+  { label: "Original (livre)" },
+];
 
 interface Props {
   isOpen: boolean;
@@ -225,15 +234,14 @@ export default function ModalEditSupporter({
             }}
           />
           <span className="text-xs text-gray-500">
-            Proporção: 1:1 (quadrado). Salvo como PNG — fundo transparente é preservado.
+            Escolha a proporção desejada no editor (ou "Original" para manter a forma da imagem). Salvo como PNG — fundo transparente é preservado.
           </span>
         </div>
         {pendingCrop && (
           <PhotoEditor
             isOpen
             photo={pendingCrop}
-            aspect={HOME_IMAGE_ASPECT.supporter}
-            targetSize={HOME_IMAGE_SIZE.supporter}
+            aspectPresets={SUPPORTER_ASPECT_PRESETS}
             outputFormat="image/png"
             handleClose={() => setPendingCrop(null)}
             onConfirm={(cropped) => {
