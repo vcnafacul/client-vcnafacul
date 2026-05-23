@@ -67,7 +67,7 @@ export default function QuemSomosPage() {
       <div className="relative bg-white overflow-hidden">
         {/* Triângulo decorativo canto superior esquerdo */}
         <div
-          className="absolute top-0 left-0 w-40 h-40 pointer-events-none"
+          className="absolute top-0 left-0 w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40 pointer-events-none"
           style={{ background: "#8CC408", clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
         />
 

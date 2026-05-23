@@ -89,12 +89,12 @@ export function NossosValores() {
     <div className="relative bg-white py-20 md:py-28 flex flex-col gap-16 overflow-hidden">
       {/* Triângulo decorativo canto superior esquerdo */}
       <div
-        className="absolute top-0 left-0 w-40 h-40 pointer-events-none"
+        className="absolute top-0 left-0 w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40 pointer-events-none"
         style={{ background: "#D96B45", clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
       />
       {/* Triângulo decorativo canto inferior direito */}
       <div
-        className="absolute bottom-0 right-0 w-40 h-40 pointer-events-none"
+        className="absolute bottom-0 right-0 w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40 pointer-events-none"
         style={{ background: "#D9AF45", clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }}
       />
       <div className="container mx-auto px-4 text-center">
