@@ -5,7 +5,8 @@ import RichTextRenderer from "../../components/atoms/richTextRenderer/RichTextRe
 import { AboutVideoCard } from "../homeV2/sections/AboutSection/AboutVideoCard";
 import { Section } from "../../components/templates/homeSection/Section";
 import { VolunteersSection } from "../homeV2/sections/VolunteersSection";
-import { PartnersTabs } from "./PartnersTabs";
+import { PrepCoursesSection } from "../homeV2/sections/PrepCoursesSection";
+import { SponsorsSection } from "../homeV2/sections/SponsorsSection";
 import { NossosValores } from "./NossosValores";
 import { ImpactoSection } from "./ImpactoSection";
 import {
@@ -107,9 +108,14 @@ export default function QuemSomosPage() {
         <VolunteersSection id="volunteers" data={volunteers} />
       </Section>
 
-      {/* Seção: Cursinhos Parceiros + Apoiadores */}
-      <Section id="partners" theme="neutral">
-        <PartnersTabs prepCourses={prepCourses} sponsors={sponsors} />
+      {/* Seção: Cursinhos Parceiros */}
+      <Section id="prep-courses" theme="neutral">
+        <PrepCoursesSection id="prep-courses" data={prepCourses} />
+      </Section>
+
+      {/* Seção: Apoiadores */}
+      <Section id="sponsors" theme="yellow">
+        <SponsorsSection id="sponsors" data={sponsors} />
       </Section>
     </BaseTemplate>
   );

@@ -7,14 +7,10 @@ import { HeroSection } from "./sections/HeroSection";
 import { heroData } from "./data/heroData";
 import { AboutSection } from "./sections/AboutSection";
 import { aboutFallback, fetchAboutSectionData } from "./adapters/aboutAdapter";
-import { VolunteersSection } from "./sections/VolunteersSection";
-import { fetchVolunteers, volunteersFallback } from "./adapters/volunteersAdapter";
 import { PrepCoursesSection } from "./sections/PrepCoursesSection";
 import { fetchPrepCourses, prepCoursesFallback } from "./adapters/prepCoursesAdapter";
 import { FeaturesSection } from "./sections/FeaturesSection";
 import { fetchFeaturesSectionData, featuresFallback } from "./adapters/featuresAdapter";
-import { SponsorsSection } from "./sections/SponsorsSection";
-import { fetchSponsors, sponsorsFallback } from "./adapters/sponsorsAdapter";
 import { MapSection } from "./sections/MapSection";
 import { ImpactoSection } from "../quemSomos/ImpactoSection";
 
@@ -39,10 +35,8 @@ export default function HomeV2() {
   }, []);
 
   const about = useSectionData(fetchAboutSectionData, aboutFallback, []);
-  const volunteers = useSectionData(fetchVolunteers, volunteersFallback, []);
   const prepCourses = useSectionData(fetchPrepCourses, prepCoursesFallback, []);
   const features = useSectionData(fetchFeaturesSectionData, featuresFallback, []);
-  const sponsors = useSectionData(fetchSponsors, sponsorsFallback, []);
 
   const sections: RenderableSection[] = [
     {
@@ -77,18 +71,6 @@ export default function HomeV2() {
       component: FeaturesSection as SectionComponent<unknown>,
       data: features.data,
       theme: "neutral",
-    },
-    {
-      id: "volunteers",
-      component: VolunteersSection as SectionComponent<unknown>,
-      data: volunteers.data,
-      theme: "neutral",
-    },
-    {
-      id: "sponsors",
-      component: SponsorsSection as SectionComponent<unknown>,
-      data: sponsors.data,
-      theme: "yellow",
     },
     {
       id: "map",
