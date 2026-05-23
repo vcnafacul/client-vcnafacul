@@ -56,8 +56,9 @@ export function QuestionFilters({
     // Lógica de cascata
     if (key === "enemArea") {
       // Filtrar matérias pela área ENEM
-      const materias =
-        infos?.materias?.filter((mat: any) => mat.enemArea === value) || [];
+      const materias = (
+        infos?.materias?.filter((mat: any) => mat.enemArea === value) || []
+      ).sort((a: any, b: any) => a.nome.localeCompare(b.nome, "pt-BR"));
       setMateriasFiltradas(materias);
       newFilters.materia = "";
       newFilters.frente = "";
@@ -67,7 +68,11 @@ export function QuestionFilters({
     if (key === "materia") {
       // Filtrar frentes pela matéria
       const materia = infos?.materias?.find((m: any) => m._id === value);
-      setFrentesFiltradas(materia?.frentes || []);
+      setFrentesFiltradas(
+        (materia?.frentes || []).sort((a: any, b: any) =>
+          a.nome.localeCompare(b.nome, "pt-BR")
+        )
+      );
       newFilters.frente = "";
     }
 
@@ -180,11 +185,13 @@ export function QuestionFilters({
                 <SelectValue placeholder="Todas as provas" />
               </SelectTrigger>
               <SelectContent>
-                {infos?.provas?.map((prova: any) => (
-                  <SelectItem key={prova._id} value={prova._id}>
-                    {prova.nome}
-                  </SelectItem>
-                ))}
+                {[...(infos?.provas || [])]
+                  .sort((a: any, b: any) => a.nome.localeCompare(b.nome, "pt-BR"))
+                  .map((prova: any) => (
+                    <SelectItem key={prova._id} value={prova._id}>
+                      {prova.nome}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>
