@@ -9,7 +9,10 @@ import React, {
 } from "react";
 import { signInFirebase, signOutFirebase } from "@/services/firebase/auth";
 import { getFirebaseToken } from "@/services/chat/getFirebaseToken";
-import { listenStudentActiveConversation } from "@/services/firebase/conversations";
+import {
+  listenStudentActiveConversation,
+  listenStudentCooldown,
+} from "@/services/firebase/conversations";
 import { useChatStore } from "@/store/chatStore";
 import { useAuthStore } from "@/store/auth";
 import { jwtDecoded } from "@/utils/jwt";
@@ -35,9 +38,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const setAuthed = useChatStore((s) => s.setFirebaseAuthed);
   const setActive = useChatStore((s) => s.setActiveConversation);
   const setPartnerPrepId = useChatStore((s) => s.setPartnerPrepId);
+  const setCooldownUntil = useChatStore((s) => s.setCooldownUntil);
   const [role, setRole] = useState<Role>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const unsubscribeRef = useRef<(() => void) | null>(null);
+  const unsubCooldownRef = useRef<(() => void) | null>(null);
 
   const jwt = data?.token;
   const isSupport =
@@ -60,8 +65,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       if (!decodedId) {
         unsubscribeRef.current?.();
         unsubscribeRef.current = null;
+        unsubCooldownRef.current?.();
+        unsubCooldownRef.current = null;
         setAuthed(false);
         setActive(null);
+        setCooldownUntil(null);
         setRole(null);
         setUserId(null);
         setPartnerPrepId(null);
@@ -84,10 +92,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         setUserId(decodedId);
 
         // Extract partnerPrepId from Firebase ID token claims
+        let partnerPrepIdValue: string | null = null;
         const auth = getFirebaseAuth();
         if (auth.currentUser) {
           const idTokenResult = await auth.currentUser.getIdTokenResult();
-          const partnerPrepIdValue = (idTokenResult.claims.partnerPrepId as string) ?? null;
+          partnerPrepIdValue = (idTokenResult.claims.partnerPrepId as string) ?? null;
           setPartnerPrepId(partnerPrepIdValue);
         }
 
@@ -96,6 +105,12 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
           unsubscribeRef.current = listenStudentActiveConversation(
             decodedId,
             (conv) => setActive(conv),
+          );
+          unsubCooldownRef.current?.();
+          unsubCooldownRef.current = listenStudentCooldown(
+            decodedId,
+            partnerPrepIdValue,
+            (until) => setCooldownUntil(until),
           );
         }
       } catch (err) {
@@ -107,8 +122,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       cancelled = true;
       unsubscribeRef.current?.();
       unsubscribeRef.current = null;
+      unsubCooldownRef.current?.();
+      unsubCooldownRef.current = null;
     };
-  }, [decodedId, isSupport, setAuthed, setActive, setPartnerPrepId]);
+  }, [decodedId, isSupport, setAuthed, setActive, setPartnerPrepId, setCooldownUntil]);
 
   const active = useChatStore((s) => s.activeConversation);
   const studentUnread =

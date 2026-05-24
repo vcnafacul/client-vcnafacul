@@ -10,6 +10,8 @@ import {
 } from "firebase/firestore";
 import { getFirestoreDb } from "./client";
 
+export const CHAT_COOLDOWN_MS = 15 * 60 * 1000;
+
 export interface ConversationDoc {
   id: string;
   userId: string;
@@ -25,6 +27,7 @@ export interface ConversationDoc {
   partnerPrepId?: string | null;
   cursinhoName?: string | null;
   originLabel?: string | null;
+  closedAt?: { toMillis: () => number } | null;
 }
 
 export function listenStudentActiveConversation(
@@ -49,6 +52,40 @@ export function listenStudentActiveConversation(
     },
     (err) => {
       console.warn("[firestore listener]", err.code ?? err.message);
+    },
+  );
+}
+
+export function listenStudentCooldown(
+  userId: string,
+  partnerPrepId: string | null,
+  cb: (cooldownUntil: number | null) => void,
+): Unsubscribe {
+  const q = query(
+    collection(getFirestoreDb(), "conversations"),
+    where("userId", "==", userId),
+    where("status", "==", "closed"),
+    where("partnerPrepId", "==", partnerPrepId),
+    orderBy("closedAt", "desc"),
+    limit(1),
+  );
+  return onSnapshot(
+    q,
+    (snap) => {
+      if (snap.empty) {
+        cb(null);
+        return;
+      }
+      const closedAtMs = snap.docs[0].data().closedAt?.toMillis?.() ?? null;
+      if (closedAtMs === null) {
+        cb(null);
+        return;
+      }
+      const until = closedAtMs + CHAT_COOLDOWN_MS;
+      cb(until > Date.now() ? until : null);
+    },
+    (err) => {
+      console.warn("[firestore cooldown listener]", err.code ?? err.message);
     },
   );
 }
