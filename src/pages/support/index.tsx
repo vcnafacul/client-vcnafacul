@@ -5,7 +5,10 @@ import { ChatLayout } from "@/components/chat/ChatLayout";
 import { ConfirmOpenDialog } from "@/components/chat/ConfirmOpenDialog";
 import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/context/ChatProvider";
-import { openConversation } from "@/services/chat/openConversation";
+import {
+  CooldownError,
+  openConversation,
+} from "@/services/chat/openConversation";
 import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chatStore";
 
@@ -18,6 +21,7 @@ function formatCountdown(seconds: number): string {
 export default function SupportPage() {
   const active = useChatStore((s) => s.activeConversation);
   const cooldownUntil = useChatStore((s) => s.cooldownUntil);
+  const setCooldownUntil = useChatStore((s) => s.setCooldownUntil);
   const { userId } = useChatContext();
   const jwt = useAuthStore((s) => s.data.token);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -60,7 +64,15 @@ export default function SupportPage() {
       setConfirmOpen(false);
       setClosedBySupport(false);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Falha ao abrir conversa");
+      if (e instanceof CooldownError) {
+        setConfirmOpen(false);
+        setCooldownUntil(Date.now() + e.retryAfterSeconds * 1000);
+        toast.info(
+          `Não é possível abrir o chat no momento. Aguarde ${formatCountdown(e.retryAfterSeconds)} para iniciar uma nova conversa.`,
+        );
+      } else {
+        toast.error(e instanceof Error ? e.message : "Falha ao abrir conversa");
+      }
     } finally {
       setLoading(false);
     }

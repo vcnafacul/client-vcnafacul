@@ -18,7 +18,10 @@ import {
 import { useChatContext } from "@/context/ChatProvider";
 import { CHAT_ENABLED_ROUTES } from "@/routes/chatEnabledRoutes";
 import { markRead } from "@/services/chat/markRead";
-import { openConversation } from "@/services/chat/openConversation";
+import {
+  CooldownError,
+  openConversation,
+} from "@/services/chat/openConversation";
 import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chatStore";
 import { ChatLayout } from "./ChatLayout";
@@ -56,6 +59,7 @@ export function ChatWidget() {
   const setOpening = useChatStore((s) => s.setOpening);
   const opening = useChatStore((s) => s.isOpening);
   const cooldownUntil = useChatStore((s) => s.cooldownUntil);
+  const setCooldownUntil = useChatStore((s) => s.setCooldownUntil);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [chatClosed, setChatClosed] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
@@ -155,7 +159,16 @@ export function ChatWidget() {
       setConfirmOpen(false);
       setOpen(true);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Falha ao abrir conversa");
+      if (e instanceof CooldownError) {
+        setConfirmOpen(false);
+        setCooldownUntil(Date.now() + e.retryAfterSeconds * 1000);
+        setOpen(true);
+        toast.info(
+          `Não é possível abrir o chat no momento. Aguarde ${formatCountdown(e.retryAfterSeconds)} para iniciar uma nova conversa.`,
+        );
+      } else {
+        toast.error(e instanceof Error ? e.message : "Falha ao abrir conversa");
+      }
     } finally {
       setOpening(false);
     }
