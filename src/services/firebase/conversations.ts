@@ -58,12 +58,14 @@ export function listenStudentActiveConversation(
 
 export function listenStudentCooldown(
   userId: string,
+  partnerPrepId: string | null,
   cb: (cooldownUntil: number | null) => void,
 ): Unsubscribe {
   const q = query(
     collection(getFirestoreDb(), "conversations"),
     where("userId", "==", userId),
     where("status", "==", "closed"),
+    where("partnerPrepId", "==", partnerPrepId),
     orderBy("closedAt", "desc"),
     limit(1),
   );

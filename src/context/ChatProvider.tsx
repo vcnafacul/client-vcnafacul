@@ -92,10 +92,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         setUserId(decodedId);
 
         // Extract partnerPrepId from Firebase ID token claims
+        let partnerPrepIdValue: string | null = null;
         const auth = getFirebaseAuth();
         if (auth.currentUser) {
           const idTokenResult = await auth.currentUser.getIdTokenResult();
-          const partnerPrepIdValue = (idTokenResult.claims.partnerPrepId as string) ?? null;
+          partnerPrepIdValue = (idTokenResult.claims.partnerPrepId as string) ?? null;
           setPartnerPrepId(partnerPrepIdValue);
         }
 
@@ -108,6 +109,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
           unsubCooldownRef.current?.();
           unsubCooldownRef.current = listenStudentCooldown(
             decodedId,
+            partnerPrepIdValue,
             (until) => setCooldownUntil(until),
           );
         }
