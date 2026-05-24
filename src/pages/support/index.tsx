@@ -5,10 +5,7 @@ import { ChatLayout } from "@/components/chat/ChatLayout";
 import { ConfirmOpenDialog } from "@/components/chat/ConfirmOpenDialog";
 import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/context/ChatProvider";
-import {
-  CooldownError,
-  openConversation,
-} from "@/services/chat/openConversation";
+import { openConversation } from "@/services/chat/openConversation";
 import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chatStore";
 
@@ -20,12 +17,13 @@ function formatCountdown(seconds: number): string {
 
 export default function SupportPage() {
   const active = useChatStore((s) => s.activeConversation);
+  const cooldownUntil = useChatStore((s) => s.cooldownUntil);
   const { userId } = useChatContext();
   const jwt = useAuthStore((s) => s.data.token);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [closedBySupport, setClosedBySupport] = useState(false);
-  const [cooldown, setCooldown] = useState<number | null>(null);
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
   const prevActiveRef = useRef(active);
 
   useEffect(() => {
@@ -36,18 +34,16 @@ export default function SupportPage() {
   }, [active]);
 
   useEffect(() => {
-    if (!cooldown || cooldown <= 0) return;
+    if (!cooldownUntil) { setRemainingSeconds(0); return; }
+    const compute = () => Math.max(0, Math.ceil((cooldownUntil - Date.now()) / 1000));
+    setRemainingSeconds(compute());
     const id = setInterval(() => {
-      setCooldown((s) => {
-        if (s === null || s <= 1) {
-          clearInterval(id);
-          return null;
-        }
-        return s - 1;
-      });
+      const r = compute();
+      setRemainingSeconds(r);
+      if (r <= 0) clearInterval(id);
     }, 1000);
     return () => clearInterval(id);
-  }, [cooldown]);
+  }, [cooldownUntil]);
 
   async function handleConfirm() {
     if (!jwt) return;
@@ -63,14 +59,8 @@ export default function SupportPage() {
       });
       setConfirmOpen(false);
       setClosedBySupport(false);
-      setCooldown(null);
     } catch (e) {
-      if (e instanceof CooldownError) {
-        setConfirmOpen(false);
-        setCooldown(e.retryAfterSeconds);
-      } else {
-        toast.error(e instanceof Error ? e.message : "Falha ao abrir conversa");
-      }
+      toast.error(e instanceof Error ? e.message : "Falha ao abrir conversa");
     } finally {
       setLoading(false);
     }
@@ -96,10 +86,10 @@ export default function SupportPage() {
             Esta conversa foi encerrada. Se precisar de mais ajuda, você pode
             abrir uma nova conversa.
           </span>
-          {cooldown !== null ? (
+          {remainingSeconds > 0 ? (
             <div className="flex flex-col items-center gap-1">
               <span className="text-2xl font-bold font-mono text-marine">
-                {formatCountdown(cooldown)}
+                {formatCountdown(remainingSeconds)}
               </span>
               <span className="text-xs text-grey">
                 Aguarde para iniciar uma nova conversa

@@ -7,12 +7,14 @@ interface ChatState {
   isOpen: boolean;
   isOpening: boolean;
   partnerPrepId: string | null;
+  cooldownUntil: number | null;
 
   setFirebaseAuthed: (v: boolean) => void;
   setActiveConversation: (c: ConversationDoc | null) => void;
   setOpen: (v: boolean) => void;
   setOpening: (v: boolean) => void;
   setPartnerPrepId: (id: string | null) => void;
+  setCooldownUntil: (v: number | null) => void;
 }
 
 export const useChatStore = create<ChatState>((set) => ({
@@ -21,9 +23,11 @@ export const useChatStore = create<ChatState>((set) => ({
   isOpen: false,
   isOpening: false,
   partnerPrepId: null,
+  cooldownUntil: null,
   setFirebaseAuthed: (v) => set({ firebaseAuthed: v }),
   setActiveConversation: (c) => set({ activeConversation: c }),
   setOpen: (v) => set({ isOpen: v }),
   setOpening: (v) => set({ isOpening: v }),
   setPartnerPrepId: (id) => set({ partnerPrepId: id }),
+  setCooldownUntil: (v) => set({ cooldownUntil: v }),
 }));

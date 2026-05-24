@@ -18,10 +18,7 @@ import {
 import { useChatContext } from "@/context/ChatProvider";
 import { CHAT_ENABLED_ROUTES } from "@/routes/chatEnabledRoutes";
 import { markRead } from "@/services/chat/markRead";
-import {
-  CooldownError,
-  openConversation,
-} from "@/services/chat/openConversation";
+import { openConversation } from "@/services/chat/openConversation";
 import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chatStore";
 import { ChatLayout } from "./ChatLayout";
@@ -31,6 +28,12 @@ import { UnreadBadge } from "./UnreadBadge";
 function detectDevice(): "mobile" | "desktop" {
   if (typeof window === "undefined") return "desktop";
   return window.matchMedia("(max-width: 768px)").matches ? "mobile" : "desktop";
+}
+
+function formatCountdown(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return m > 0 ? `${m}:${String(s).padStart(2, "0")}` : `${s}s`;
 }
 
 function detectBrowser(): string {
@@ -52,9 +55,10 @@ export function ChatWidget() {
   const setActive = useChatStore((s) => s.setActiveConversation);
   const setOpening = useChatStore((s) => s.setOpening);
   const opening = useChatStore((s) => s.isOpening);
+  const cooldownUntil = useChatStore((s) => s.cooldownUntil);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [chatClosed, setChatClosed] = useState(false);
-  const [cooldown, setCooldown] = useState<number | null>(null);
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [device, setDevice] = useState<"mobile" | "desktop">(detectDevice);
   const prevActiveRef = useRef<typeof active>(null);
   const { pathname } = useLocation();
@@ -88,18 +92,16 @@ export function ChatWidget() {
   }, [active, isOpen]);
 
   useEffect(() => {
-    if (!cooldown || cooldown <= 0) return;
+    if (!cooldownUntil) { setRemainingSeconds(0); return; }
+    const compute = () => Math.max(0, Math.ceil((cooldownUntil - Date.now()) / 1000));
+    setRemainingSeconds(compute());
     const id = setInterval(() => {
-      setCooldown((s) => {
-        if (s === null || s <= 1) {
-          clearInterval(id);
-          return null;
-        }
-        return s - 1;
-      });
+      const r = compute();
+      setRemainingSeconds(r);
+      if (r <= 0) clearInterval(id);
     }, 1000);
     return () => clearInterval(id);
-  }, [cooldown]);
+  }, [cooldownUntil]);
 
   const hasPending =
     !!active &&
@@ -118,13 +120,14 @@ export function ChatWidget() {
     prevPendingRef.current = hasPending;
   }, [hasPending]);
 
-  const shouldRender = routeEnabled || !!active || chatClosed || cooldown !== null;
+  const shouldRender = routeEnabled || !!active || chatClosed || remainingSeconds > 0;
   if (role !== "student") return null;
   if (!shouldRender) return null;
 
   function handleClick() {
-    if (active) {
-      setOpen(true);
+    if (active) { setOpen(true); return; }
+    if (remainingSeconds > 0) {
+      toast.info(`Aguarde ${formatCountdown(remainingSeconds)} para iniciar uma nova conversa`);
       return;
     }
     setConfirmOpen(true);
@@ -152,13 +155,7 @@ export function ChatWidget() {
       setConfirmOpen(false);
       setOpen(true);
     } catch (e) {
-      if (e instanceof CooldownError) {
-        setConfirmOpen(false);
-        setCooldown(e.retryAfterSeconds);
-        setOpen(true);
-      } else {
-        toast.error(e instanceof Error ? e.message : "Falha ao abrir conversa");
-      }
+      toast.error(e instanceof Error ? e.message : "Falha ao abrir conversa");
     } finally {
       setOpening(false);
     }
@@ -191,17 +188,10 @@ export function ChatWidget() {
     </Button>
   );
 
-  function formatCountdown(seconds: number): string {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return m > 0 ? `${m}:${String(s).padStart(2, "0")}` : `${s}s`;
-  }
-
   function handleWidgetClose() {
     setOpen(false);
     setActive(null);
     setChatClosed(false);
-    setCooldown(null);
   }
 
   const panel = chatClosed ? (
@@ -210,18 +200,20 @@ export function ChatWidget() {
         Esta conversa foi encerrada. Se precisar de mais ajuda, você pode abrir
         uma nova conversa.
       </p>
-      <Button variant="outline" size="sm" onClick={handleWidgetClose}>
-        Fechar
-      </Button>
-    </div>
-  ) : cooldown !== null ? (
-    <div className="flex flex-col items-center justify-center h-full p-6 gap-3 text-center">
-      <span className="text-2xl font-bold font-mono text-marine">
-        {formatCountdown(cooldown)}
-      </span>
-      <p className="text-xs text-muted-foreground">
-        Aguarde para iniciar uma nova conversa
-      </p>
+      {remainingSeconds > 0 ? (
+        <div className="flex flex-col items-center gap-1">
+          <span className="text-2xl font-bold font-mono text-marine">
+            {formatCountdown(remainingSeconds)}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            Aguarde para iniciar uma nova conversa
+          </span>
+        </div>
+      ) : (
+        <Button size="sm" onClick={() => { setChatClosed(false); setConfirmOpen(true); }}>
+          Iniciar nova conversa
+        </Button>
+      )}
     </div>
   ) : active && userId ? (
     <div className="h-full w-full">
@@ -244,7 +236,7 @@ export function ChatWidget() {
         loading={opening}
       />
       {device === "mobile" ? (
-        <Sheet open={isOpen} onOpenChange={(v) => { setOpen(v); if (!v) { setChatClosed(false); setCooldown(null); } }}>
+        <Sheet open={isOpen} onOpenChange={(v) => { setOpen(v); if (!v) setChatClosed(false); }}>
           <SheetContent side="bottom" className="h-[85vh] p-0 flex flex-col">
             <SheetHeader className="sr-only">
               <SheetTitle>Suporte Você na Facul</SheetTitle>
@@ -256,7 +248,7 @@ export function ChatWidget() {
           </SheetContent>
         </Sheet>
       ) : (
-        <Popover open={isOpen} onOpenChange={(v) => { setOpen(v); if (!v) { setChatClosed(false); setCooldown(null); } }}>
+        <Popover open={isOpen} onOpenChange={(v) => { setOpen(v); if (!v) setChatClosed(false); }}>
           <PopoverTrigger asChild>
             <span
               className="fixed bottom-6 right-6 h-14 w-14 pointer-events-none"
