@@ -50,7 +50,9 @@ export function ChatWidget() {
   const setOpening = useChatStore((s) => s.setOpening);
   const opening = useChatStore((s) => s.isOpening);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [chatClosed, setChatClosed] = useState(false);
   const [device, setDevice] = useState<"mobile" | "desktop">(detectDevice);
+  const prevActiveRef = useRef<typeof active>(null);
   const { pathname } = useLocation();
   const matchedRoute = CHAT_ENABLED_ROUTES.find((r) =>
     matchPath({ path: r.pattern, end: true }, pathname)
@@ -71,6 +73,16 @@ export function ChatWidget() {
     }
   }, [isOpen, active, jwt]);
 
+  useEffect(() => {
+    if (prevActiveRef.current && !active && isOpen) {
+      setChatClosed(true);
+    }
+    if (active) {
+      setChatClosed(false);
+    }
+    prevActiveRef.current = active;
+  }, [active, isOpen]);
+
   const hasPending =
     !!active &&
     (active.unreadCountStudent ?? 0) > 0 &&
@@ -88,7 +100,7 @@ export function ChatWidget() {
     prevPendingRef.current = hasPending;
   }, [hasPending]);
 
-  const shouldRender = routeEnabled || !!active;
+  const shouldRender = routeEnabled || !!active || chatClosed;
   if (role !== "student") return null;
   if (!shouldRender) return null;
 
@@ -157,20 +169,32 @@ export function ChatWidget() {
     </Button>
   );
 
-  const panel =
-    active && userId ? (
-      <div className="h-full w-full">
-        <ChatLayout
-          conversationId={active.id}
-          currentUserId={userId}
-          title="Suporte Você na Facul"
-          onClose={() => {
-            setOpen(false);
-            setActive(null);
-          }}
-        />
-      </div>
-    ) : null;
+  function handleWidgetClose() {
+    setOpen(false);
+    setActive(null);
+    setChatClosed(false);
+  }
+
+  const panel = chatClosed ? (
+    <div className="flex flex-col items-center justify-center h-full p-6 gap-4 text-center">
+      <p className="text-sm text-muted-foreground">
+        Esta conversa foi encerrada. Se precisar de mais ajuda, você pode abrir
+        uma nova conversa.
+      </p>
+      <Button variant="outline" size="sm" onClick={handleWidgetClose}>
+        Fechar
+      </Button>
+    </div>
+  ) : active && userId ? (
+    <div className="h-full w-full">
+      <ChatLayout
+        conversationId={active.id}
+        currentUserId={userId}
+        title="Suporte Você na Facul"
+        onClose={handleWidgetClose}
+      />
+    </div>
+  ) : null;
 
   return (
     <>
@@ -182,7 +206,7 @@ export function ChatWidget() {
         loading={opening}
       />
       {device === "mobile" ? (
-        <Sheet open={isOpen} onOpenChange={setOpen}>
+        <Sheet open={isOpen} onOpenChange={(v) => { setOpen(v); if (!v) setChatClosed(false); }}>
           <SheetContent side="bottom" className="h-[85vh] p-0 flex flex-col">
             <SheetHeader className="sr-only">
               <SheetTitle>Suporte Você na Facul</SheetTitle>
@@ -194,7 +218,7 @@ export function ChatWidget() {
           </SheetContent>
         </Sheet>
       ) : (
-        <Popover open={isOpen} onOpenChange={setOpen}>
+        <Popover open={isOpen} onOpenChange={(v) => { setOpen(v); if (!v) setChatClosed(false); }}>
           <PopoverTrigger asChild>
             <span
               className="fixed bottom-6 right-6 h-14 w-14 pointer-events-none"
