@@ -164,7 +164,7 @@ export function ChatWidget() {
         setCooldownUntil(Date.now() + e.retryAfterSeconds * 1000);
         setOpen(true);
         toast.info(
-          `Não é possível abrir o chat no momento. Aguarde ${formatCountdown(e.retryAfterSeconds)} para iniciar uma nova conversa.`,
+          "Aguarde um instante para abrir uma nova sessão.",
         );
       } else {
         toast.error(e instanceof Error ? e.message : "Falha ao abrir conversa");
