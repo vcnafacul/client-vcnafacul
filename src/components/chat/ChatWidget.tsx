@@ -234,6 +234,7 @@ export function ChatWidget() {
         conversationId={active.id}
         currentUserId={userId}
         title="Suporte Você na Facul"
+        status={active.status}
         onClose={handleWidgetClose}
       />
     </div>
