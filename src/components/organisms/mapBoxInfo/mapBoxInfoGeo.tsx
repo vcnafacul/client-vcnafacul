@@ -14,17 +14,26 @@ import {
 } from "react-icons/fa";
 import { MdOutlineTravelExplore } from "react-icons/md";
 import BLink from "../../molecules/bLink";
+import { TypeMarker } from "../../../types/map/marker";
+import { MarkerPin } from "../../molecules/mapBox";
 
 interface MapBoxInfoProps {
   geo?: Geolocation;
   ctaLink: string;
+  label?: string;
+  markerType?: TypeMarker;
 }
 
-function MapBoxInfoGeo({ geo, ctaLink }: MapBoxInfoProps) {
+function MapBoxInfoGeo({ geo, ctaLink, label, markerType }: MapBoxInfoProps) {
   return (
     <>
-      <Text className="flex items-center justify-center">
-        <FaMapMarkerAlt color="red" size={30} /> Localiza Cursinho
+      <Text className="flex items-center justify-center gap-2">
+        {markerType != null ? (
+          <MarkerPin type={markerType} size={30} />
+        ) : (
+          <FaMapMarkerAlt color="red" size={30} />
+        )}
+        {label ?? "Localiza Cursinho"}
       </Text>
       <Text size="quaternary" className="m-0">
         {geo?.name}

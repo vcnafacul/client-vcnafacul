@@ -83,6 +83,15 @@ export const MapSection: SectionComponent<null> = () => {
         handleClickMarker={handleClickMarker}
       />
       <MapFilterCard filterMarkers={filterMarkers} onToggle={handleFilterMarkers} />
+      <div
+        className="
+          absolute z-30 bottom-3 left-3 md:bottom-6 md:left-6
+          bg-white/90 backdrop-blur-xl backdrop-saturate-150 border border-white/40
+          rounded-2xl shadow-xl px-4 py-3
+        "
+      >
+        <p className="text-marine font-bold text-2xl m-0">Localiza Cursinho</p>
+      </div>
       <MapInfoCard
         activeMarker={activeMarker}
         boxRef={boxRef as RefObject<HTMLDivElement>}
