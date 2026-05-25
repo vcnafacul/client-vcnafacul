@@ -4,6 +4,7 @@ import { Bool } from "@/enums/bool";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { toast } from "react-toastify";
 import { getRuleSetByInscription } from "@/services/partnerPrepForm/getRuleSetByInscription";
 import { getInscription } from "@/services/prepCourse/getInscription";
 import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
@@ -217,26 +218,43 @@ export function PartnerPrepInscritionStudentManager() {
   const handleConfirmEnrolled = async (classId: string, className: string) => {
     if (!studentSelected) return;
 
-    await executeAsync({
-      action: () => confirmEnrolled(studentSelected.id, classId, token),
-      loadingMessage: "Confirmando Matrícula...",
-      successMessage: `Matrícula confirmada com sucesso na turma ${className}!`,
-      errorMessage: (error: Error) =>
-        `Erro ao confirmar matrícula: ${error.message}`,
-      onSuccess: () => {
-        const newStudent = students.map((stu) => {
-          if (stu.id === studentSelected.id) {
-            return {
-              ...stu,
-              status: StatusApplication.Enrolled,
-            };
-          }
-          return stu;
+    const toastId = toast.loading("Confirmando Matrícula...");
+    try {
+      await confirmEnrolled(studentSelected.id, classId, token);
+      toast.update(toastId, {
+        render: `Matrícula confirmada com sucesso na turma ${className}!`,
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+        closeOnClick: true,
+      });
+      const newStudents = students.map((stu) =>
+        stu.id === studentSelected.id
+          ? { ...stu, status: StatusApplication.Enrolled }
+          : stu
+      );
+      setStudents(newStudents);
+      modals.selectClass.close();
+    } catch (error: unknown) {
+      if ((error as Error & { isTestPS?: boolean }).isTestPS) {
+        toast.update(toastId, {
+          render: "Processo Seletivo de Teste: Não é possível matricular estudantes",
+          type: "default",
+          theme: "dark",
+          isLoading: false,
+          autoClose: 5000,
+          closeOnClick: true,
         });
-        setStudents(newStudent);
-        modals.selectClass.close();
-      },
-    });
+      } else {
+        toast.update(toastId, {
+          render: `Erro ao confirmar matrícula: ${(error as Error).message}`,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+          closeOnClick: true,
+        });
+      }
+    }
   };
 
   const handleSendEmailDeclaredInterest = async (studentId: string) => {

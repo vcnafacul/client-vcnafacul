@@ -232,14 +232,22 @@ export function PartnerPrepInscriptionManager() {
     return modals.modalConfirmTest.isOpen ? (
       <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
         <div className="bg-white p-6 rounded-xl w-[400px]">
-          <h2 className="text-lg font-semibold mb-4">
-            Confirmação de Processo de Teste
+          <h2 className="text-2xl font-bold mb-4 text-yellow-600">
+            Atenção
           </h2>
 
-          <p className="mb-6 text-sm">
-            Este processo será marcado como <strong>teste</strong> e não deve
-            ser considerado válido para uso real.
+          <p className="mb-6 text-sm leading-relaxed">
+            Você está criando um <strong>Processo Seletivo de Teste</strong>.
+            Leia com atenção antes de confirmar:
           </p>
+          <ul className="mb-6 text-sm leading-relaxed list-disc list-inside space-y-2">
+            <li>
+              Uma vez criado como teste, <strong>não é possível alterar para um Processo Seletivo normal</strong>.
+            </li>
+            <li>
+              <strong>Nenhum estudante</strong> inscrito neste processo poderá ser matriculado.
+            </li>
+          </ul>
           <div className="flex justify-end gap-4 sm:col-span-2 mt-2">
             <Button
               typeStyle="secondary"

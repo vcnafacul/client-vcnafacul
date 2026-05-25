@@ -12,8 +12,9 @@ export async function confirmEnrolled(studentId: string, classId: string, token:
     }
   );
   if (response.status === 400) {
-    const res = await response.json();
-    throw new Error(res.message);
+    const err = new Error("Processo Seletivo de Teste: Não é possível matricular estudantes");
+    (err as Error & { isTestPS: boolean }).isTestPS = true;
+    throw err;
   }
   if (response.status === 500) {
     throw new Error(`Ops, ocorreu um problema na requisição. Tente novamente!`);
