@@ -197,7 +197,7 @@ export function InscriptionInfoCreateEditModal({
               Cancelar
             </Button>
             <Button typeStyle="primary" className="w-24 h-9" type="submit">
-              Salvar
+              {isEdit ? "Salvar" : "Criar"}
             </Button>
           </div>
         </form>

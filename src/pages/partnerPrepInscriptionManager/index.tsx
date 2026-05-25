@@ -37,6 +37,7 @@ export function PartnerPrepInscriptionManager() {
   >(undefined);
   const [pendingCreation, setPendingCreation] =
     useState<InscriptionOutput | null>(null);
+  const [testConfirmed, setTestConfirmed] = useState(false);
   const [statusFilter, setStatusFilter] = useState<StatusEnum>(StatusEnum.All);
   const limitCards = 100;
 
@@ -124,6 +125,7 @@ export function PartnerPrepInscriptionManager() {
   const handleCreate = async (data: InscriptionOutput) => {
     if (data.isTest) {
       setPendingCreation(data);
+      setTestConfirmed(false);
       modals.modalConfirmTest.open();
       return;
     }
@@ -158,6 +160,7 @@ export function PartnerPrepInscriptionManager() {
 
   const cancelTestCreation = () => {
     setPendingCreation(null);
+    setTestConfirmed(false);
     modals.modalConfirmTest.close();
   };
 
@@ -232,14 +235,33 @@ export function PartnerPrepInscriptionManager() {
     return modals.modalConfirmTest.isOpen ? (
       <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
         <div className="bg-white p-6 rounded-xl w-[400px]">
-          <h2 className="text-lg font-semibold mb-4">
-            Confirmação de Processo de Teste
+          <h2 className="text-2xl font-bold mb-4 text-yellow-600">
+            Atenção
           </h2>
 
-          <p className="mb-6 text-sm">
-            Este processo será marcado como <strong>teste</strong> e não deve
-            ser considerado válido para uso real.
+          <p className="mb-6 text-sm leading-relaxed">
+            Você está criando um <strong>Processo Seletivo de Teste</strong>.
+            Leia com atenção antes de confirmar:
           </p>
+          <ul className="mb-6 text-sm leading-relaxed list-disc list-inside space-y-2">
+            <li>
+              Uma vez criado como teste, <strong>não é possível alterar para um Processo Seletivo normal</strong>.
+            </li>
+            <li>
+              <strong>Nenhum estudante</strong> inscrito neste processo poderá ser matriculado.
+            </li>
+          </ul>
+          <label className="flex items-center gap-3 mb-6 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={testConfirmed}
+              onChange={(e) => setTestConfirmed(e.target.checked)}
+              className="w-4 h-4 accent-orange-500 cursor-pointer"
+            />
+            <span className="text-sm font-medium">
+              Entendi e quero continuar
+            </span>
+          </label>
           <div className="flex justify-end gap-4 sm:col-span-2 mt-2">
             <Button
               typeStyle="secondary"
@@ -252,6 +274,7 @@ export function PartnerPrepInscriptionManager() {
               typeStyle="primary"
               className="w-24 h-9"
               onClick={confirmTestCreation}
+              disabled={!testConfirmed}
             >
               Salvar
             </Button>
