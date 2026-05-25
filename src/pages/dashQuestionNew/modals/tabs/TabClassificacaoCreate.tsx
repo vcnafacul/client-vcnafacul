@@ -48,11 +48,9 @@ export function TabClassificacaoCreate({
         try {
           const numeros = await getMissingNumber(formData.prova, token);
           setNumerosDisponiveis(numeros);
-          // Limpar o número selecionado se não estiver mais disponível
-          if (formData.numero && !numeros.includes(formData.numero)) {
-            onChange("numero", numeros[0] || 1);
-          } else if (numeros.length > 0 && !formData.numero) {
-            onChange("numero", numeros[0]);
+          // Limpar numero se o selecionado não está mais disponível
+          if (formData.numero != null && !numeros.includes(formData.numero)) {
+            onChange("numero", null);
           }
         } catch (error) {
           console.error("Erro ao buscar números disponíveis:", error);
@@ -116,7 +114,7 @@ export function TabClassificacaoCreate({
   const handleProvaChange = (value: string) => {
     onChange("prova", value);
     // Limpar campos dependentes
-    onChange("numero", 1); // Reset numero também
+    onChange("numero", null);
     onChange("enemArea", "");
     onChange("materia", "");
     onChange("frente1", "");
@@ -205,9 +203,22 @@ export function TabClassificacaoCreate({
 
             {/* Número */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-600">
-                Número da Questão *
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-semibold text-gray-600">
+                  Número da Questão
+                </label>
+                {formData.numero != null && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onChange("numero", null)}
+                    className="h-6 px-2 text-xs text-red-600 border-red-300 hover:text-red-700 hover:bg-red-50"
+                  >
+                    Remover número
+                  </Button>
+                )}
+              </div>
               {loadingNumeros ? (
                 <div className="flex items-center justify-center p-3 border border-gray-200 rounded-md bg-gray-50">
                   <Loader2 className="h-4 w-4 animate-spin text-primary mr-2" />
@@ -232,7 +243,7 @@ export function TabClassificacaoCreate({
                 </div>
               ) : (
                 <Select
-                  value={formData.numero?.toString()}
+                  value={formData.numero != null ? formData.numero.toString() : undefined}
                   onValueChange={(value) => onChange("numero", parseInt(value))}
                   disabled={!formData.prova || numerosDisponiveis.length === 0}
                 >
