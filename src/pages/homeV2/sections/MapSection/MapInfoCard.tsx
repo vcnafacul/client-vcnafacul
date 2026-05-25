@@ -22,6 +22,9 @@ interface Props {
 
 export function MapInfoCard({ activeMarker, boxRef, onReport, onClose }: Props) {
   if (!activeMarker) return null;
+
+  const label = activeMarker.type === TypeMarker.geo ? "Cursinho" : "Universidade";
+
   return (
     <motion.div
       ref={boxRef}
@@ -29,8 +32,8 @@ export function MapInfoCard({ activeMarker, boxRef, onReport, onClose }: Props) 
       animate={{ opacity: 1, y: 0 }}
       className="
         absolute z-30
-        inset-x-3 bottom-3 max-h-[60vh]
-        md:left-auto md:inset-auto md:bottom-6 md:right-6 md:w-[420px] md:max-h-[70vh]
+        left-3 right-3 bottom-3 max-h-[60vh]
+        md:left-auto md:top-auto md:right-6 md:bottom-6 md:w-[420px] md:max-h-[70vh]
         bg-white/90 backdrop-blur-xl backdrop-saturate-150 border border-white/40
         rounded-2xl shadow-xl text-marine overflow-y-auto
       "
@@ -54,7 +57,7 @@ export function MapInfoCard({ activeMarker, boxRef, onReport, onClose }: Props) 
         </button>
       </div>
       <div className="p-5 pt-12">
-        <MapBoxInfoGeo geo={activeMarker.infos} ctaLink={FORM_GEOLOCATION} />
+        <MapBoxInfoGeo geo={activeMarker.infos} ctaLink={FORM_GEOLOCATION} label={label} markerType={activeMarker.type} />
       </div>
     </motion.div>
   );
