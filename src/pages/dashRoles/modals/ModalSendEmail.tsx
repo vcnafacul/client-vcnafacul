@@ -1,3 +1,4 @@
+import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ModalTemplate, {
   ModalProps,
 } from "@/components/templates/modalTemplate";
@@ -28,6 +29,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
   const [sendToAll, setSendToAll] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [showConfirmAll, setShowConfirmAll] = useState(false);
   const searchTimeoutRef = useRef<NodeJS.Timeout>(null);
 
   const {
@@ -88,25 +90,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
     setSelectedUsers(selectedUsers.filter((u) => u.id !== userId));
   };
 
-  const handleSendEmail = async () => {
-    // Validações
-    if (!subject.trim()) {
-      toast.warning("Por favor, preencha o assunto do email");
-      return;
-    }
-
-    if (!message.trim()) {
-      toast.warning("Por favor, preencha a mensagem do email");
-      return;
-    }
-
-    if (!sendToAll && selectedUsers.length === 0) {
-      toast.warning(
-        "Por favor, selecione pelo menos um usuário ou marque 'Enviar para todos'"
-      );
-      return;
-    }
-
+  const executeSend = async () => {
     setIsSending(true);
 
     await executeAsync({
@@ -127,7 +111,6 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
         : `Email enviado para ${selectedUsers.length} usuário(s) com sucesso!`,
       errorMessage: "Erro ao enviar email. Tente novamente.",
       onSuccess: () => {
-        // Limpa o formulário
         setSubject("");
         setMessage("");
         setSelectedUsers([]);
@@ -138,6 +121,37 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
     });
 
     setIsSending(false);
+  };
+
+  const handleSendEmail = async () => {
+    if (!subject.trim()) {
+      toast.warning("Por favor, preencha o assunto do email");
+      return;
+    }
+
+    if (!message.trim()) {
+      toast.warning("Por favor, preencha a mensagem do email");
+      return;
+    }
+
+    if (!sendToAll && selectedUsers.length === 0) {
+      toast.warning(
+        "Por favor, selecione pelo menos um usuário ou marque 'Enviar para todos'"
+      );
+      return;
+    }
+
+    if (sendToAll) {
+      setShowConfirmAll(true);
+      return;
+    }
+
+    await executeSend();
+  };
+
+  const handleConfirmSendAll = async () => {
+    setShowConfirmAll(false);
+    await executeSend();
   };
 
   const handleCloseModal = () => {
@@ -151,6 +165,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
   };
 
   return (
+    <>
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleCloseModal}
@@ -332,6 +347,23 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
         </div>
       </div>
     </ModalTemplate>
+
+    <ModalConfirmCancel
+      isOpen={showConfirmAll}
+      handleClose={() => setShowConfirmAll(false)}
+      handleConfirm={handleConfirmSendAll}
+      text="⚠️ Atenção"
+    >
+      <p className="text-sm text-gray-700 leading-relaxed">
+        Você está prestes a enviar o email{" "}
+        <strong>para todos os usuários da plataforma</strong>. Esta ação não
+        pode ser desfeita.
+      </p>
+      <p className="text-sm text-gray-700 mt-2">
+        Tem certeza que deseja continuar?
+      </p>
+    </ModalConfirmCancel>
+    </>
   );
 }
 
