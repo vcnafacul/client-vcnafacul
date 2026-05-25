@@ -39,7 +39,7 @@ export function useClassificacaoForm({
     resolver: yupResolver(classificacaoSchema),
     defaultValues: {
       prova: question.prova || "",
-      numero: question.numero || 1,
+      numero: question.numero ?? null,
       enemArea: question.enemArea || "",
       materia: question.materia || "",
       frente1: question.frente1 || "",
@@ -61,7 +61,7 @@ export function useClassificacaoForm({
     if (question) {
       form.reset({
         prova: question.prova || "",
-        numero: question.numero || 1,
+        numero: question.numero ?? null,
         enemArea: question.enemArea || "",
         materia: question.materia || "",
         frente1: question.frente1 || "",

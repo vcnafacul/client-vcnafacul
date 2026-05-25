@@ -13,7 +13,8 @@ export const classificacaoSchema = yup.object({
 
   numero: yup
     .number()
-    .required("O número da questão é obrigatório")
+    .nullable()
+    .optional()
     .positive("O número deve ser positivo")
     .integer("O número deve ser um inteiro")
     .min(1, "O número deve ser maior que 0"),
@@ -56,7 +57,7 @@ export type ClassificacaoFormData = yup.InferType<typeof classificacaoSchema>;
  */
 export const classificacaoDefaultValues: Partial<ClassificacaoFormData> = {
   prova: "",
-  numero: 1,
+  numero: null,
   enemArea: "",
   materia: "",
   frente1: "",

@@ -5,7 +5,7 @@ export interface CreateQuestion {
   frente2?: string | null;
   frente3?: string | null;
   materia?: string;
-  numero: number;
+  numero?: number | null;
   textoQuestao?: string;
   pergunta?: string;
   textoAlternativaA?: string;

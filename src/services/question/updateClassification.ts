@@ -9,7 +9,7 @@ import { questoes } from "../urls";
 export interface UpdateClassificationData {
   _id: string;
   prova: string;
-  numero: number;
+  numero?: number | null;
   enemArea: string;
   materia: string;
   frente1: string;
@@ -33,9 +33,8 @@ export async function updateClassification(
 ): Promise<void> {
   const { _id, ...body } = data;
 
-  // Converter numero para number se vier como string
   if (typeof body.numero === "string") {
-    body.numero = parseInt(body.numero, 10);
+    body.numero = parseInt(body.numero, 10) || null;
   }
 
   const response = await fetchWrapper(`${questoes}/${_id}/classification`, {

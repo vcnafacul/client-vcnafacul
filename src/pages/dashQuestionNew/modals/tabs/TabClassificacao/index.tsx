@@ -408,12 +408,27 @@ export function TabClassificacao({
 
             {/* Número */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-600">
-                Número da Questão *
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-semibold text-gray-600">
+                  Número da Questão
+                </label>
+                {isEditing && form.watch("numero") != null && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => form.setValue("numero", null, { shouldDirty: true })}
+                    className="h-6 px-2 text-xs text-red-600 border-red-300 hover:text-red-700 hover:bg-red-50"
+                  >
+                    Remover número
+                  </Button>
+                )}
+              </div>
               {!isEditing ? (
                 <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
-                  <p className="text-base">{question.numero}</p>
+                  <p className="text-base text-gray-400">
+                    {question.numero ?? "Sem número"}
+                  </p>
                 </div>
               ) : loadingNumeros ? (
                 <div className="flex items-center justify-center p-3 border border-gray-200 rounded-md bg-gray-50">
@@ -442,7 +457,7 @@ export function TabClassificacao({
                   control={control}
                   render={({ field }) => (
                     <Select
-                      value={field.value?.toString()}
+                      value={field.value != null ? field.value.toString() : undefined}
                       onValueChange={(value) => field.onChange(parseInt(value))}
                       disabled={!provaId || numerosDisponiveis.length === 0}
                     >
