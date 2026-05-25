@@ -37,6 +37,7 @@ export function PartnerPrepInscriptionManager() {
   >(undefined);
   const [pendingCreation, setPendingCreation] =
     useState<InscriptionOutput | null>(null);
+  const [testConfirmed, setTestConfirmed] = useState(false);
   const [statusFilter, setStatusFilter] = useState<StatusEnum>(StatusEnum.All);
   const limitCards = 100;
 
@@ -124,6 +125,7 @@ export function PartnerPrepInscriptionManager() {
   const handleCreate = async (data: InscriptionOutput) => {
     if (data.isTest) {
       setPendingCreation(data);
+      setTestConfirmed(false);
       modals.modalConfirmTest.open();
       return;
     }
@@ -158,6 +160,7 @@ export function PartnerPrepInscriptionManager() {
 
   const cancelTestCreation = () => {
     setPendingCreation(null);
+    setTestConfirmed(false);
     modals.modalConfirmTest.close();
   };
 
@@ -248,6 +251,17 @@ export function PartnerPrepInscriptionManager() {
               <strong>Nenhum estudante</strong> inscrito neste processo poderá ser matriculado.
             </li>
           </ul>
+          <label className="flex items-center gap-3 mb-6 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={testConfirmed}
+              onChange={(e) => setTestConfirmed(e.target.checked)}
+              className="w-4 h-4 accent-orange-500 cursor-pointer"
+            />
+            <span className="text-sm font-medium">
+              Entendi e quero continuar
+            </span>
+          </label>
           <div className="flex justify-end gap-4 sm:col-span-2 mt-2">
             <Button
               typeStyle="secondary"
@@ -260,6 +274,7 @@ export function PartnerPrepInscriptionManager() {
               typeStyle="primary"
               className="w-24 h-9"
               onClick={confirmTestCreation}
+              disabled={!testConfirmed}
             >
               Salvar
             </Button>
