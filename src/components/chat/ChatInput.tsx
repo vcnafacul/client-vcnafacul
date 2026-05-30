@@ -8,11 +8,12 @@ import { useAuthStore } from "@/store/auth";
 
 interface Props {
   conversationId: string;
+  status?: "open" | "closed";
 }
 
 const MAX = 1000;
 
-export function ChatInput({ conversationId }: Props) {
+export function ChatInput({ conversationId, status }: Props) {
   const [value, setValue] = useState("");
   const [sending, setSending] = useState(false);
   const jwt = useAuthStore((s) => s.data.token);
@@ -30,6 +31,14 @@ export function ChatInput({ conversationId }: Props) {
     } finally {
       setSending(false);
     }
+  }
+
+  if (status === "closed") {
+    return (
+      <div className="border-t bg-backgroundGrey/50 px-4 py-3 text-center text-xs text-grey">
+        Conversa encerrada
+      </div>
+    );
   }
 
   const charsLeft = MAX - value.length;

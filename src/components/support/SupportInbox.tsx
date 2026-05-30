@@ -4,30 +4,46 @@ import { useChatContext } from "@/context/ChatProvider";
 import { useChatStore } from "@/store/chatStore";
 import { InitiateConversationDialog } from "@/pages/admin/support/InitiateConversationDialog";
 import { useSupportInboxState } from "@/hooks/useSupportInboxState";
+import { useArchivedInboxState } from "@/hooks/useArchivedInboxState";
 import { SupportInboxView } from "./SupportInboxView";
+
+type Tab = "active" | "archived";
 
 export function SupportInbox() {
   const [initiateOpen, setInitiateOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<Tab>("active");
+  const [archivedEnabled, setArchivedEnabled] = useState(false);
   const { userId } = useChatContext();
   const partnerPrepId = useChatStore((s) => s.partnerPrepId);
-  const { convs, sorted, selected, selectedId, setSelectedId, search, setSearch } =
-    useSupportInboxState(partnerPrepId);
+
+  const activeState = useSupportInboxState(partnerPrepId);
+  const archivedState = useArchivedInboxState(partnerPrepId, archivedEnabled);
+
+  function handleTabChange(tab: Tab) {
+    setActiveTab(tab);
+    if (tab === "archived" && !archivedEnabled) setArchivedEnabled(true);
+  }
+
+  const current = activeTab === "active" ? activeState : archivedState;
 
   return (
     <>
       <SupportInboxView
         title="Suporte"
-        convs={convs}
-        sorted={sorted}
-        selected={selected}
-        selectedId={selectedId}
-        onSelect={setSelectedId}
-        onClose={() => setSelectedId(null)}
-        search={search}
-        onSearchChange={setSearch}
+        convs={current.convs}
+        sorted={current.sorted}
+        selected={current.selected}
+        selectedId={current.selectedId}
+        onSelect={current.setSelectedId}
+        onClose={() => current.setSelectedId(null)}
+        search={current.search}
+        onSearchChange={current.setSearch}
         userId={userId}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        archivedCount={archivedState.convs.length}
         headerActions={
-          !partnerPrepId ? (
+          !partnerPrepId && activeTab === "active" ? (
             <Button
               type="button"
               onClick={() => setInitiateOpen(true)}
@@ -42,7 +58,7 @@ export function SupportInbox() {
         <InitiateConversationDialog
           open={initiateOpen}
           onOpenChange={setInitiateOpen}
-          onCreated={(id) => setSelectedId(id)}
+          onCreated={(id) => activeState.setSelectedId(id)}
         />
       )}
     </>
