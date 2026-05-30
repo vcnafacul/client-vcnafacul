@@ -5,15 +5,18 @@ import { Roles } from "@/enums/roles/roles";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getClassById } from "@/services/prepCourse/class/getClassById";
+import { getPartnerLogo } from "@/services/prepCourse/prepCourse/getPartnerLogo";
 import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
 import { ClassStudent } from "@/types/partnerPrepCourse/classStudent";
+import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
 import { downloadPDF } from "@/utils/get-pdf";
 import { getBase64FromImageUrl } from "@/utils/getBase64FromImageUrl";
 import { IconButton, Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { format } from "date-fns";
+import heic2any from "heic2any";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { useEffect, useState } from "react";
 import { FaListCheck } from "react-icons/fa6";
@@ -22,10 +25,35 @@ import { MdOutlineFileDownload } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import { AttendanceHistoryModal } from "./modals/attendanceHistoryModal";
 import { AttendanceRecordByStudentModal } from "./modals/attendanceRecordByStudentModal";
+import { InfoStudentEnrolledModal } from "@/pages/studentsEnrolled/modals/infoStudentEnrolledModal";
 import { ClassSimuladoAnalytics } from "@/components/organisms/classSimuladoAnalytics";
 import { ClassEssayAnalytics } from "@/components/organisms/classEssayAnalytics";
 import { MonthPicker } from "@/components/organisms/classSimuladoAnalytics/MonthPicker";
 import { ClassMonthsList } from "@/types/classAnalytics/classSimuladoAnalytics";
+
+function toStudentsDtoOutput(
+  student: ClassStudent,
+  classEntity: ClassEntity,
+): StudentsDtoOutput {
+  return {
+    id: student.id,
+    name: student.name,
+    email: student.email,
+    whatsapp: "",
+    applicationStatus: student.applicationStatus,
+    cod_enrolled: student.cod_enrolled,
+    birthday: student.birthday,
+    age: 0,
+    photo: student.photo,
+    logs: student.logs,
+    class: {
+      id: classEntity.id,
+      name: classEntity.name,
+      year: classEntity.coursePeriod?.year ?? 0,
+      endDate: classEntity.coursePeriod?.endDate ?? new Date(),
+    },
+  };
+}
 
 function ClassPerformanceTab({
   classId,
@@ -68,6 +96,7 @@ export function PartnerClassWithStudents() {
   const [studentSelected, setStudentSelected] = useState<ClassStudent>(
     {} as ClassStudent
   );
+  const [partnerLogo, setPartnerLogo] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("alunos");
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [simuladoList, setSimuladoList] = useState<ClassMonthsList | null>(
@@ -85,6 +114,7 @@ export function PartnerClassWithStudents() {
   const modals = useModals([
     "modalAttendanceHistory",
     "modalAttendanceRecordByStudent",
+    "modalStudentCard",
   ]);
 
   const {
@@ -92,6 +122,30 @@ export function PartnerClassWithStudents() {
   } = useAuthStore();
 
   const executeAsync = useToastAsync();
+
+  useEffect(() => {
+    if (!classEntity.partnerId) return;
+    let objectUrl: string | null = null;
+    const fetchLogo = async () => {
+      try {
+        const blob = await getPartnerLogo(classEntity.partnerId, token);
+        const fileType = blob.type;
+        if (fileType === "image/heic" || fileType === "image/heif") {
+          const converted = await heic2any({ blob, toType: "image/jpeg" });
+          objectUrl = URL.createObjectURL(converted as Blob);
+        } else {
+          objectUrl = URL.createObjectURL(blob);
+        }
+        setPartnerLogo(objectUrl);
+      } catch {
+        setPartnerLogo(null);
+      }
+    };
+    fetchLogo();
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [classEntity.partnerId, token]);
 
   const columns: GridColDef[] = [
     {
@@ -103,14 +157,24 @@ export function PartnerClassWithStudents() {
       headerAlign: "center",
       renderCell: (params) => (
         <div className="flex gap-2 justify-center">
-          <Tooltip title="Visualizar">
+          <Tooltip title="Ver carteirinha">
+            <IconButton
+              onClick={() => {
+                setStudentSelected(params.row);
+                modals.modalStudentCard.open();
+              }}
+            >
+              <IoEyeSharp className="h-6 w-6 fill-gray-500 hover:fill-marine opacity-60 hover:opacity-100" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Registro de presença">
             <IconButton
               onClick={() => {
                 setStudentSelected(params.row);
                 modals.modalAttendanceRecordByStudent.open();
               }}
             >
-              <IoEyeSharp className="h-6 w-6 fill-gray-500 hover:fill-marine opacity-60 hover:opacity-100" />
+              <FaListCheck className="h-5 w-5 fill-gray-500 hover:fill-marine opacity-60 hover:opacity-100" />
             </IconButton>
           </Tooltip>
         </div>
@@ -374,6 +438,15 @@ export function PartnerClassWithStudents() {
 
       <ModalAttendanceHistory />
       <ModalAttendanceRecordByStudent />
+      {modals.modalStudentCard.isOpen && (
+        <InfoStudentEnrolledModal
+          isOpen={modals.modalStudentCard.isOpen}
+          handleClose={() => modals.modalStudentCard.close()}
+          entity={toStudentsDtoOutput(studentSelected, classEntity)}
+          updateEntity={() => {}}
+          partnerLogo={partnerLogo}
+        />
+      )}
     </div>
   );
 }

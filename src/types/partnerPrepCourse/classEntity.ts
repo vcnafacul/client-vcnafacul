@@ -4,6 +4,7 @@ export interface ClassEntity {
   id: string;
   name: string;
   description?: string;
+  partnerId: string;
   coursePeriod: {
     id: string;
     name: string;
