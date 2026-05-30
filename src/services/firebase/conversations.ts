@@ -90,6 +90,37 @@ export function listenStudentCooldown(
   );
 }
 
+export function listenArchivedInbox(
+  cb: (convs: ConversationDoc[]) => void,
+  partnerPrepId?: string | null,
+): Unsubscribe {
+  const constraints: QueryConstraint[] = [
+    where("status", "==", "closed"),
+    orderBy("lastMessageAt", "desc"),
+    limit(50),
+  ];
+
+  if (partnerPrepId) {
+    constraints.push(where("partnerPrepId", "==", partnerPrepId));
+  }
+
+  const q = query(collection(getFirestoreDb(), "conversations"), ...constraints);
+  return onSnapshot(
+    q,
+    (snap) => {
+      cb(
+        snap.docs.map((d) => ({
+          id: d.id,
+          ...(d.data() as Omit<ConversationDoc, "id">),
+        })),
+      );
+    },
+    (err) => {
+      console.warn("[firestore archived listener]", err.code ?? err.message);
+    },
+  );
+}
+
 export function listenSupportInbox(
   cb: (convs: ConversationDoc[]) => void,
   partnerPrepId?: string | null,
