@@ -96,7 +96,7 @@ export function listenArchivedInbox(
 ): Unsubscribe {
   const constraints: QueryConstraint[] = [
     where("status", "==", "closed"),
-    orderBy("closedAt", "desc"),
+    orderBy("lastMessageAt", "desc"),
     limit(50),
   ];
 
