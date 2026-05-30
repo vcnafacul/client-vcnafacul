@@ -23,6 +23,7 @@ export function useArchivedInboxState(
   const sorted = useMemo(() => {
     const norm = search.trim().toLowerCase();
     return [...convs]
+      .filter((c) => !!c.lastMessageText)
       .filter((c) => !norm || c.userName.toLowerCase().includes(norm))
       .sort((a, b) => {
         const aTs =
