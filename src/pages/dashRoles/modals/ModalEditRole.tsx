@@ -16,6 +16,7 @@ import ModalTemplate, {
 } from "../../../components/templates/modalTemplate";
 import { useAuthStore } from "../../../store/auth";
 import Text from "../../../components/atoms/text";
+import Select from "@/components/atoms/select";
 
 interface ModalEditRoleProps extends ModalProps {
   isOpen: boolean;
@@ -123,19 +124,18 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
               Perfil
             </span>
-            <select
-              className="remove-arrow text-sm font-semibold text-marine px-3 py-2 rounded-lg shadow-sm border border-gray-200 bg-white z-50 w-full"
+            <Select
+              options={roles.map((role) => ({
+                id: role.id,
+                name: role.name,
+              }))}
               value={roleSelected?.id}
-              onChange={(e) =>
-                setRoleSelected(roles.find((r) => r.id === e.target.value)!)
+              setState={(value) =>
+                setRoleSelected(
+                  roles.find((r) => String(r.id) === String(value))!,
+                )
               }
-            >
-              {roles.map((role) => (
-                <option key={role.id} value={role.id}>
-                  {role.name}
-                </option>
-              ))}
-            </select>
+            />
           </label>
           <label className="flex flex-col gap-1">
             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">

@@ -71,38 +71,38 @@ function ModalUpdateRoleUser({
   const [roleInfo, setRoleInfo] = useState<
     PermissionGroupResponse[] | undefined
   >(undefined);
-  const [newRole, setNewRole] = useState<string>(
-    roles.find((r) => r.id === role.id)?.id ?? roles[0]?.id,
-  );
+
+  const [newRole, setNewRole] = useState(role.id);
   const [isEditing, setIsEditing] = useState(false);
 
   const {
     data: { token },
   } = useAuthStore();
 
-  const updateRole = () => {
-    updateUserRole(newRole);
-    setIsEditing(false);
-  };
-
-  const cancelEdit = () => {
-    setIsEditing(false);
-    setRoleInfo(undefined); // clear stale data immediately
-    setNewRole(role.id); // reset triggers useEffect re-fetch
-  };
+  useEffect(() => {
+    if (isOpen) {
+      setNewRole(role.id);
+      setIsEditing(false);
+    }
+  }, [isOpen, role.id]);
 
   useEffect(() => {
     if (!newRole) return;
 
     let cancelled = false;
+
     setRoleInfo(undefined);
 
     getRoleNew(newRole, token)
       .then((data) => {
-        if (!cancelled) setRoleInfo(data);
+        if (!cancelled) {
+          setRoleInfo(data);
+        }
       })
       .catch((error: Error) => {
-        if (!cancelled) toast.error(error.message);
+        if (!cancelled) {
+          toast.error(error.message);
+        }
       });
 
     return () => {
@@ -110,7 +110,18 @@ function ModalUpdateRoleUser({
     };
   }, [newRole, token]);
 
-  const selectedRoleName = roles.find((r) => r.id === newRole)?.name;
+  const updateRole = () => {
+    updateUserRole(newRole);
+    setIsEditing(false);
+  };
+
+  const cancelEdit = () => {
+    setNewRole(role.id);
+    setIsEditing(false);
+  };
+
+  const selectedRoleName =
+    roles.find((r) => r.id === newRole)?.name ?? role.name;
 
   return (
     <ModalTemplate
@@ -134,6 +145,7 @@ function ModalUpdateRoleUser({
           <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
             Perfil
           </span>
+
           {isEditing ? (
             <Select
               options={roles}
@@ -146,6 +158,28 @@ function ModalUpdateRoleUser({
             </div>
           )}
         </label>
+
+        {/* Legend */}
+        <div className="flex flex-wrap items-center gap-4 text-xs text-gray-400">
+          <span className="flex items-center gap-1.5">
+            <span
+              className="w-3 h-3 rounded-full inline-block"
+              style={{ background: "#f97316" }}
+            />
+            Cursinho habilitado
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span
+              className="w-3 h-3 rounded-full inline-block"
+              style={{ background: "#3b82f6" }}
+            />
+            Projeto habilitado
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full border border-gray-300 inline-block" />
+            Desabilitado
+          </span>
+        </div>
 
         {/* Permissions */}
         <div className="overflow-y-auto scrollbar-hide pr-1">
@@ -165,7 +199,12 @@ function ModalUpdateRoleUser({
               <Button typeStyle="primary" onClick={cancelEdit}>
                 Cancelar
               </Button>
-              <Button typeStyle="secondary" onClick={updateRole}>
+
+              <Button
+                typeStyle="secondary"
+                onClick={updateRole}
+                disabled={newRole === role.id}
+              >
                 Salvar
               </Button>
             </>
