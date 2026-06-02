@@ -51,7 +51,7 @@ export function ChatLayout({
         conversationId={conversationId}
         currentUserId={currentUserId}
       />
-      <ChatInput conversationId={conversationId} />
+      <ChatInput conversationId={conversationId} status={status} />
     </Card>
   );
 }

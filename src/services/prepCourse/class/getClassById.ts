@@ -23,6 +23,7 @@ export async function getClassById(
   const res = await response.json();
   return {
     ...res,
+    partnerId: res.partnerId || '',
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     students: res.students.map((student: any) => {
       return {

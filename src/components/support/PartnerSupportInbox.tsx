@@ -4,11 +4,16 @@ import { useChatContext } from "@/context/ChatProvider";
 import { getMyPartnerPrepId } from "@/services/chat/getMyPartnerPrepId";
 import { useAuthStore } from "@/store/auth";
 import { useSupportInboxState } from "@/hooks/useSupportInboxState";
+import { useArchivedInboxState } from "@/hooks/useArchivedInboxState";
 import { SupportInboxView } from "./SupportInboxView";
+
+type Tab = "active" | "archived";
 
 export function PartnerSupportInbox() {
   const [partnerPrepId, setPartnerPrepId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<Tab>("active");
+  const [archivedEnabled, setArchivedEnabled] = useState(false);
   const jwt = useAuthStore((s) => s.data.token);
   const { userId } = useChatContext();
 
@@ -22,8 +27,13 @@ export function PartnerSupportInbox() {
       .finally(() => setLoading(false));
   }, [jwt]);
 
-  const { convs, sorted, selected, selectedId, setSelectedId, search, setSearch } =
-    useSupportInboxState(partnerPrepId);
+  const activeState = useSupportInboxState(partnerPrepId);
+  const archivedState = useArchivedInboxState(partnerPrepId, archivedEnabled);
+
+  function handleTabChange(tab: Tab) {
+    setActiveTab(tab);
+    if (tab === "archived" && !archivedEnabled) setArchivedEnabled(true);
+  }
 
   if (loading) {
     return (
@@ -45,18 +55,23 @@ export function PartnerSupportInbox() {
     );
   }
 
+  const current = activeTab === "active" ? activeState : archivedState;
+
   return (
     <SupportInboxView
       title="Suporte do Cursinho"
-      convs={convs}
-      sorted={sorted}
-      selected={selected}
-      selectedId={selectedId}
-      onSelect={setSelectedId}
-      onClose={() => setSelectedId(null)}
-      search={search}
-      onSearchChange={setSearch}
+      convs={current.convs}
+      sorted={current.sorted}
+      selected={current.selected}
+      selectedId={current.selectedId}
+      onSelect={current.setSelectedId}
+      onClose={() => current.setSelectedId(null)}
+      search={current.search}
+      onSearchChange={current.setSearch}
       userId={userId}
+      activeTab={activeTab}
+      onTabChange={handleTabChange}
+      archivedCount={archivedState.convs.length}
     />
   );
 }
