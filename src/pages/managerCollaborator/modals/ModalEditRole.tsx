@@ -1,16 +1,21 @@
-import { PermissionsList } from "@/components/atoms/permissionList";
+import PermissionHierarchyPanel from "@/components/organisms/permissionHierarchyPanel/PermissionHierarchyPanel";
 import { EditRoleDto } from "@/dtos/roles/editRole";
+import {
+  PermissionGroup,
+  PermissionType,
+} from "@/dtos/roles/permissionHierarchy";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getRoles } from "@/services/prepCourse/getRoles";
 import { updateRole } from "@/services/prepCourse/updateRole";
+import { getPermissionsHierarchy } from "@/services/roles/getPermissionsHierarchy";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Button from "../../../components/molecules/button";
 import ModalTemplate, {
   ModalProps,
 } from "../../../components/templates/modalTemplate";
-import { RolesLabel } from "../../../enums/roles/roles";
 import { useAuthStore } from "../../../store/auth";
+import Text from "../../../components/atoms/text";
 
 interface ModalEditRoleProps extends ModalProps {
   isOpen: boolean;
@@ -19,28 +24,25 @@ interface ModalEditRoleProps extends ModalProps {
 function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
   const [roles, setRoles] = useState<EditRoleDto[]>([]);
   const [roleSelected, setRoleSelected] = useState<EditRoleDto | null>(null);
+  const [hierarchy, setHierarchy] = useState<PermissionGroup[]>([]);
 
   const {
     data: { token },
   } = useAuthStore();
-
   const executeAsync = useToastAsync();
 
-  const handleToggleChange = (name: string, checked: boolean) => {
-    setRoleSelected({ ...roleSelected!, [name]: checked });
+  const handleToggle = (key: string, val: boolean) => {
+    setRoleSelected((prev) => (prev ? { ...prev, [key]: val } : prev));
   };
 
   const editRole = async () => {
     if (!roleSelected) return;
-
     await executeAsync({
-      action: () => updateRole(token, roleSelected!),
+      action: () => updateRole(token, roleSelected),
       loadingMessage: "Atualizando perfil...",
       successMessage: "Perfil atualizado com sucesso!",
       errorMessage: (error: Error) => error.message,
-      onSuccess: () => {
-        handleClose!();
-      },
+      onSuccess: () => handleClose!(),
     });
   };
 
@@ -58,66 +60,72 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
         toast.error("Erro ao carregar perfis!");
         handleClose!();
       });
+
+    getPermissionsHierarchy(token)
+      .then(setHierarchy)
+      .catch(() => toast.error("Erro ao buscar hierarquia de permissões"));
   }, []);
 
   return (
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose!}
-      className="bg-white rounded-md p-4"
+      className="bg-white rounded-xl p-5"
     >
-      <div className="w-[90vw] h-fit max-h-[70vh] overflow-y-auto scrollbar-hide">
-        {/* Nome do Perfil */}
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 flex-wrap w-full">
-            <select
-              className="remove-arrow w-full h-full text-lg font-black text-marine pl-4 pr-10 py-1 rounded-xl shadow-md z-50"
-              id="demo-simple-select"
-              value={roleSelected?.id}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                setRoleSelected(
-                  roles.find((item) => item.id === e.target.value)!
-                );
-              }}
-            >
-              {roles.map((role) => (
-                <option key={role.id} value={role.id}>
-                  {role.name}
-                </option>
-              ))}
-            </select>
-          </div>
+      <div className="w-[92vw] max-w-2xl flex flex-col gap-5 max-h-[80vh]">
+        {/* Header */}
+        <div>
+          <Text size="secondary" className="font-bold text-marine">
+            Editar Perfil
+          </Text>
+          <p className="text-sm text-gray-400 mt-0.5">
+            Selecione um perfil e ajuste suas permissões.
+          </p>
         </div>
 
-        {/* Permissões */}
-        <PermissionsList
-          title="Permissões do Projeto"
-          roles={RolesLabel.filter((role) => role.isProjectPermission)}
-          seletedRole={roleSelected}
-          handleToggleChange={handleToggleChange}
-          disabled
-        />
-        <div className="border-b border-gray-200 pt-3 mb-3" />
-        <PermissionsList
-          title="Permissões do Cursinho"
-          roles={RolesLabel.filter((role) => !role.isProjectPermission)}
-          seletedRole={roleSelected}
-          handleToggleChange={handleToggleChange}
-        />
-      </div>
+        {/* Role selector */}
+        <label className="flex flex-col gap-1">
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+            Perfil
+          </span>
+          <select
+            className="remove-arrow text-sm font-semibold text-marine px-3 py-2 rounded-lg shadow-sm border border-gray-200 bg-white z-50 w-full"
+            value={roleSelected?.id}
+            onChange={(e) =>
+              setRoleSelected(roles.find((r) => r.id === e.target.value)!)
+            }
+          >
+            {roles.map((role) => (
+              <option key={role.id} value={role.id}>
+                {role.name}
+              </option>
+            ))}
+          </select>
+        </label>
 
-      {/* Botões */}
-      <div className="flex flex-col sm:flex-row justify-end gap-4 mt-6">
-        <Button typeStyle="primary" onClick={handleClose}>
-          Cancelar
-        </Button>
-        <Button
-          typeStyle="secondary"
-          disabled={!roleSelected?.name.trim()}
-          onClick={editRole}
-        >
-          Salvar
-        </Button>
+        {/* Permissions */}
+        <div className="overflow-y-auto scrollbar-hide pr-1">
+          <PermissionHierarchyPanel
+            hierarchy={hierarchy}
+            permissions={roleSelected ?? ({} as EditRoleDto)}
+            onToggle={handleToggle}
+            disabledTypes={[PermissionType.project]}
+          />
+        </div>
+
+        {/* Actions */}
+        <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
+          <Button typeStyle="primary" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button
+            typeStyle="secondary"
+            disabled={!roleSelected?.name.trim()}
+            onClick={editRole}
+          >
+            Salvar
+          </Button>
+        </div>
       </div>
     </ModalTemplate>
   );

@@ -1,7 +1,13 @@
-import { PermissionsList } from "@/components/atoms/permissionList";
+import PermissionHierarchyPanel from "@/components/organisms/permissionHierarchyPanel/PermissionHierarchyPanel";
 import Toggle from "@/components/atoms/toggle";
+import {
+  PermissionGroup,
+  PermissionType,
+} from "@/dtos/roles/permissionHierarchy";
 import { createRole } from "@/services/roles/createRole";
-import { useState } from "react";
+import { getPermissionsHierarchy } from "@/services/roles/getPermissionsHierarchy";
+import { Role } from "@/types/roles/role";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Filter from "../../../components/atoms/filter";
 import Text from "../../../components/atoms/text";
@@ -10,13 +16,68 @@ import ModalTemplate, {
   ModalProps,
 } from "../../../components/templates/modalTemplate";
 import { CreateRoleDto } from "../../../dtos/roles/createRole";
-import { RolesLabel } from "../../../enums/roles/roles";
 import { useAuthStore } from "../../../store/auth";
-import { Role } from "../../../types/roles/role";
 
 interface ModalNewRoleProps extends ModalProps {
   handleNewRole: (role: Role) => void;
   isOpen: boolean;
+}
+
+const EMPTY_ROLE: CreateRoleDto = {
+  name: "",
+  base: false,
+  validarCursinho: false,
+  alterarPermissao: false,
+  criarSimulado: false,
+  visualizarQuestao: false,
+  criarQuestao: false,
+  validarQuestao: false,
+  uploadNews: false,
+  visualizarProvas: false,
+  cadastrarProvas: false,
+  visualizarDemanda: false,
+  uploadDemanda: false,
+  validarDemanda: false,
+  gerenciadorDemanda: false,
+  gerenciarProcessoSeletivo: false,
+  gerenciarColaboradores: false,
+  gerenciarTurmas: false,
+  visualizarTurmas: false,
+  gerenciarEstudantes: false,
+  visualizarEstudantes: false,
+  gerenciarPermissoesCursinho: false,
+  visualizarMinhasInscricoes: false,
+  gerenciarFormularioGlobal: false,
+  gerenciarFormulario: false,
+  gerenciarTemas: false,
+  revisarRedacoes: false,
+  revisarTodasRedacoes: false,
+  supportAgent: false,
+  partnerPrepSupportAgent: false,
+};
+
+function applyBaseRoleConstraints(
+  role: CreateRoleDto,
+  hierarchy: PermissionGroup[],
+): CreateRoleDto {
+  if (!role.base) return role;
+  const prepCourseKeys = new Set<string>();
+  for (const group of hierarchy) {
+    for (const node of group.permissions) {
+      if (node.type === PermissionType.prepCourse) {
+        prepCourseKeys.add(
+          node.key.replace(/_([a-z])/g, (_: string, l: string) =>
+            l.toUpperCase(),
+          ),
+        );
+      }
+    }
+  }
+  prepCourseKeys.add("alterarPermissao");
+  prepCourseKeys.add("gerenciarPermissoesCursinho");
+  const patched = { ...role };
+  for (const key of prepCourseKeys) (patched as any)[key] = false;
+  return patched;
 }
 
 function ModalNewRole({
@@ -24,49 +85,28 @@ function ModalNewRole({
   handleClose,
   isOpen,
 }: ModalNewRoleProps) {
-  const [newRole, setNewRole] = useState<CreateRoleDto>({
-    name: "",
-    base: false,
-    validarCursinho: false,
-    alterarPermissao: false,
-    criarSimulado: false,
-    visualizarQuestao: false,
-    criarQuestao: false,
-    validarQuestao: false,
-    uploadNews: false,
-    visualizarProvas: false,
-    cadastrarProvas: false,
-    visualizarDemanda: false,
-    uploadDemanda: false,
-    validarDemanda: false,
-    gerenciadorDemanda: false,
-    gerenciarProcessoSeletivo: false,
-    gerenciarColaboradores: false,
-    gerenciarTurmas: false,
-    visualizarTurmas: false,
-    gerenciarEstudantes: false,
-    visualizarEstudantes: false,
-    gerenciarPermissoesCursinho: false,
-    visualizarMinhasInscricoes: false,
-    gerenciarFormularioGlobal: false,
-    gerenciarFormulario: false,
-    gerenciarTemas: false,
-    revisarRedacoes: false,
-    revisarTodasRedacoes: false,
-    supportAgent: false,
-    partnerPrepSupportAgent: false,
-  });
+  const [newRole, setNewRole] = useState<CreateRoleDto>(EMPTY_ROLE);
+  const [hierarchy, setHierarchy] = useState<PermissionGroup[]>([]);
 
   const {
     data: { token },
   } = useAuthStore();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewRole({ ...newRole, name: event.target.value.trim().toLowerCase() });
+    setNewRole((prev) => ({
+      ...prev,
+      name: event.target.value.trim().toLowerCase(),
+    }));
   };
 
-  const handleToggleChange = (name: string, checked: boolean) => {
-    setNewRole({ ...newRole, [name]: checked });
+  const handleBaseToggle = (_: string, checked: boolean) => {
+    setNewRole((prev) =>
+      applyBaseRoleConstraints({ ...prev, base: checked }, hierarchy),
+    );
+  };
+
+  const handleToggle = (key: string, val: boolean) => {
+    setNewRole((prev) => ({ ...prev, [key]: val }));
   };
 
   const saveNewRole = () => {
@@ -76,71 +116,107 @@ function ModalNewRole({
         handleClose!();
         toast.success(`Perfil "${newRole.name}" criado com sucesso!`);
       })
-      .catch(() => {
-        toast.error(`Erro ao criar o perfil "${newRole.name}".`);
-      });
+      .catch(() => toast.error(`Erro ao criar o perfil "${newRole.name}".`));
   };
+
+  useEffect(() => {
+    getPermissionsHierarchy(token)
+      .then(setHierarchy)
+      .catch(() => toast.error("Erro ao buscar hierarquia de permissões"));
+  }, []);
+
+  const visibleHierarchy: PermissionGroup[] = newRole.base
+    ? hierarchy
+        .map((group) => ({
+          ...group,
+          permissions: group.permissions.filter(
+            (n) =>
+              n.type === PermissionType.project &&
+              n.key !== "alterar_permissao",
+          ),
+        }))
+        .filter((group) => group.permissions.length > 0)
+    : hierarchy;
 
   return (
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose!}
-      className="bg-white rounded-md p-4"
+      className="bg-white rounded-xl p-5"
     >
-      <div className="w-[90vw] h-fit max-h-[70vh] overflow-y-auto scrollbar-hide">
-        {/* Nome do Perfil */}
-        <div className="flex flex-col gap-4">
+      <div className="w-[92vw] max-w-2xl flex flex-col gap-5 max-h-[80vh]">
+        {/* Header */}
+        <div>
           <Text size="secondary" className="font-bold text-marine">
-            Nome do Perfil
+            Novo Perfil
           </Text>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 flex-wrap w-full">
+          <p className="text-sm text-gray-400 mt-0.5">
+            Defina o nome e as permissões do novo perfil.
+          </p>
+        </div>
+
+        {/* Name + base toggle */}
+        <div className="flex gap-7">
+          <label className="flex flex-col gap-1 flex-1">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Nome do perfil
+            </span>
             <Filter
               placeholder="Digite o nome do novo perfil"
               filtrar={handleInputChange}
               search={false}
-              className="bg-gray-200 rounded-md w-full sm:flex-1"
+              className="bg-gray-100 rounded-lg"
             />
-            <div className="flex items-center gap-4 w-full sm:w-auto">
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Perfil Base
+            </span>
+            <div className="flex items-center gap-3 h-full py-2">
               <Toggle
                 name="base"
-                checked={newRole["base"]}
-                handleCheck={handleToggleChange}
+                checked={newRole.base}
+                handleCheck={handleBaseToggle}
               />
-              <span className="text-base font-medium text-marine">
-                Perfil Base
+              <span className="text-sm font-medium text-marine">
+                {newRole.base ? "Ativo" : "Inativo"}
               </span>
             </div>
-          </div>
+          </label>
         </div>
 
-        {/* Permissões */}
-        <PermissionsList
-          title="Permissões do Projeto"
-          roles={RolesLabel.filter((role) => role.isProjectPermission)}
-          seletedRole={newRole}
-          handleToggleChange={handleToggleChange}
-        />
-        <div className="border-b border-gray-200 pt-3 mb-3" />
-        <PermissionsList
-          title="Permissões do Cursinho"
-          roles={RolesLabel.filter((role) => !role.isProjectPermission)}
-          seletedRole={newRole}
-          handleToggleChange={handleToggleChange}
-        />
-      </div>
+        {newRole.base && (
+          <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+            Perfis base só podem ter permissões do projeto. Permissões do
+            cursinho e "Alterar Permissão" são desativadas automaticamente.
+          </p>
+        )}
 
-      {/* Botões */}
-      <div className="flex flex-col sm:flex-row justify-end gap-4 mt-6">
-        <Button
-          typeStyle="secondary"
-          disabled={!newRole.name.trim()}
-          onClick={saveNewRole}
-        >
-          Salvar
-        </Button>
-        <Button typeStyle="primary" onClick={handleClose}>
-          Cancelar
-        </Button>
+        {/* Permissions */}
+        <div className="overflow-y-auto scrollbar-hide pr-1">
+          <PermissionHierarchyPanel
+            hierarchy={visibleHierarchy}
+            permissions={newRole}
+            onToggle={handleToggle}
+            defaultTab={
+              newRole.base ? PermissionType.project : PermissionType.prepCourse
+            }
+          />
+        </div>
+
+        {/* Actions */}
+        <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
+          <Button typeStyle="primary" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button
+            typeStyle="secondary"
+            disabled={!newRole.name.trim()}
+            onClick={saveNewRole}
+          >
+            Salvar
+          </Button>
+        </div>
       </div>
     </ModalTemplate>
   );
