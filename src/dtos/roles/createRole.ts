@@ -30,4 +30,5 @@ export interface CreateRoleDto {
   revisarTodasRedacoes: boolean;
   supportAgent: boolean;
   partnerPrepSupportAgent: boolean;
+  editarMateriasFrentes: boolean;
 }

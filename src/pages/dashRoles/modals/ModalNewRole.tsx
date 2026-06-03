@@ -54,6 +54,7 @@ const EMPTY_ROLE: CreateRoleDto = {
   revisarTodasRedacoes: false,
   supportAgent: false,
   partnerPrepSupportAgent: false,
+  editarMateriasFrentes: false,
 };
 
 function applyBaseRoleConstraints(
