@@ -44,10 +44,9 @@ export function PanelMateria({
   const modals = useModals(["editor", "confirmDelete"]);
 
   const {
-    data: { token, permissao },
+    data: { permissao },
   } = useAuthStore();
   const manager: boolean = permissao[Roles.editarMateriasFrentes];
-  const themeManager: boolean = permissao[Roles.gerenciadorDemanda];
 
   useEffect(() => {
     if (!modals.confirmDelete.isOpen || !selected || !checkCanDelete) {
