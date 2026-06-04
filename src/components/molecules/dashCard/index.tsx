@@ -5,22 +5,20 @@ import SubMenuDash from "../../organisms/subMenuDash";
 import { SubDashCardInfo } from "../subDashCard";
 import { useAuthStore } from "../../../store/auth";
 
-const transition = 'transition-all duration-300'
+const transition = "transition-all duration-300";
 
 const dashCard = tv({
-    base: `text-white font-bold text-base py-3 px-2 flex items-center relative ${transition}`,
-    variants: {
-        size: {
-            big: 'flex-col justify-between h-32',
-            small: 'flex-row justify-between gap-4 h-16 px-4'
-        },
-
+  base: `text-white font-bold text-base py-3 px-2 flex items-center relative ${transition}`,
+  variants: {
+    size: {
+      big: "flex-col justify-between h-32",
+      small: "flex-row justify-between gap-4 h-16 px-4",
     },
-    defaultVariants: {
-        size: 'big',
-    }
   },
-)
+  defaultVariants: {
+    size: "big",
+  },
+});
 
 export interface DashCardMenu {
   id: number;
@@ -28,28 +26,34 @@ export interface DashCardMenu {
   title: string;
   image: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
   alt: string;
-  subMenuList: SubDashCardInfo[]
+  subMenuList: SubDashCardInfo[];
 }
 //criar logica para fechado e aberto no tv
-type DasCardProps = VariantProps<typeof dashCard> & ComponentProps<'div'> & {
-  card: DashCardMenu
-  opened: boolean;
-}
+type DasCardProps = VariantProps<typeof dashCard> &
+  ComponentProps<"div"> & {
+    card: DashCardMenu;
+    opened: boolean;
+  };
 
 function DashCard({ card, size, opened, ...props }: DasCardProps) {
-  const [appearsAdminDashcard, setAppearsAdminDashcard] = useState(false)
-  const { data: { permissao }} = useAuthStore()
+  const [appearsAdminDashcard, setAppearsAdminDashcard] = useState(false);
+  const {
+    data: { permissao },
+  } = useAuthStore();
   const Icon = card.image;
   const contentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState(0);
 
   useEffect(() => {
-    const newSubMenus = !!card.subMenuList.find(subCardInfo => {
-      if(!subCardInfo.permissions || subCardInfo.permissions?.some(p => permissao[p]))
+    const newSubMenus = !!card.subMenuList.find((subCardInfo) => {
+      if (
+        !subCardInfo.permissions ||
+        subCardInfo.permissions?.some((p) => permissao[p])
+      )
         return true;
-      return false
+      return false;
     });
-    setAppearsAdminDashcard(newSubMenus)
+    setAppearsAdminDashcard(newSubMenus);
   }, [card.subMenuList, permissao]);
 
   useEffect(() => {
@@ -61,17 +65,28 @@ function DashCard({ card, size, opened, ...props }: DasCardProps) {
   return (
     appearsAdminDashcard && (
       <div>
-        <div {...props}
-          className={`${dashCard({ size })} ${card.bg} ${size !== 'small' && !opened ? 'mt-4 rounded-t-md' : 'mt-0'} cursor-pointer`}>
-          <Icon className={`select-none fill-white ${size !== 'small' ? 'w-16 h-16' : 'w-7 h-7'} ${transition}`} />
-          <div className={`select-none ${size !== 'small' ? 'flex justify-center w-full' : 'my-4'}`}>{card.title}</div>
-          <IoChevronUpCircleSharp size={20} className={`${size !== 'small' ? 'absolute right-4 bottom-4' : ''} ${opened ? 'rotate-180' : ''} ${transition}`} />
+        <div
+          {...props}
+          className={`${dashCard({ size })} ${card.bg} ${size !== "small" && !opened ? "mt-4 rounded-md" : "mt-0"} cursor-pointer`}
+        >
+          <Icon
+            className={`select-none fill-white ${size !== "small" ? "w-16 h-16" : "w-7 h-7"} ${transition}`}
+          />
+          <div
+            className={`select-none ${size !== "small" ? "flex justify-center w-full" : "my-4"}`}
+          >
+            {card.title}
+          </div>
+          <IoChevronUpCircleSharp
+            size={20}
+            className={`${size !== "small" ? "absolute right-4 bottom-4" : ""} ${opened ? "rotate-180" : ""} ${transition}`}
+          />
         </div>
         <div
           ref={contentRef}
           className="overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out"
           style={{
-            maxHeight: opened ? `${contentHeight}px` : '0px',
+            maxHeight: opened ? `${contentHeight}px` : "0px",
             opacity: opened ? 1 : 0,
           }}
         >
@@ -79,7 +94,7 @@ function DashCard({ card, size, opened, ...props }: DasCardProps) {
         </div>
       </div>
     )
-  )
+  );
 }
 
-export default DashCard
+export default DashCard;
