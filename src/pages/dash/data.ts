@@ -92,7 +92,7 @@ export const headerDash: HeaderData = {
 export const adminMenuItems: DashCardMenu[] = [
   {
     id: 6,
-    bg: "bg-red",
+    bg: "bg-logoCursinho",
     title: "Cursinho",
     image: AdminImg,
     alt: "Cursinho",
@@ -150,7 +150,7 @@ export const adminMenuItems: DashCardMenu[] = [
   },
   {
     id: 8,
-    bg: "bg-purple",
+    bg: "bg-logoProjeto",
     title: "Projeto",
     image: AdminImg,
     alt: "Projeto",
@@ -222,7 +222,7 @@ export const adminMenuItems: DashCardMenu[] = [
   },
   {
     id: 5,
-    bg: "bg-green3",
+    bg: "bg-logoAdmin",
     title: "Admin",
     image: AdminImg,
     alt: "Admin",
@@ -268,7 +268,7 @@ export const adminMenuItems: DashCardMenu[] = [
 
 export const studentMenuItem: DashCardMenu = {
   id: 7,
-  bg: "bg-red",
+  bg: "bg-logoEstudos",
   title: "Meus Estudos",
   image: IoSchool,
   alt: "Meus Estudos",
@@ -306,10 +306,30 @@ const areaConfig: Record<
     title: string;
   }
 > = {
-  Linguagens: { id: 1, bg: "bg-marine", image: LinguagensImg, title: "Linguagens" },
-  "Ciências da Natureza": { id: 2, bg: "bg-pink", image: NaturezaImg, title: "Natureza" },
-  "Ciências Humanas": { id: 3, bg: "bg-lightGreen", image: HumanasImg, title: "Humanas" },
-  Matemática: { id: 4, bg: "bg-orange", image: MatematicaImg, title: "Matemática" },
+  Linguagens: {
+    id: 1,
+    bg: "bg-logoLinguagens",
+    image: LinguagensImg,
+    title: "Linguagens",
+  },
+  "Ciências da Natureza": {
+    id: 2,
+    bg: "bg-logoNatureza",
+    image: NaturezaImg,
+    title: "Natureza",
+  },
+  "Ciências Humanas": {
+    id: 3,
+    bg: "bg-logoHumanas",
+    image: HumanasImg,
+    title: "Humanas",
+  },
+  Matemática: {
+    id: 4,
+    bg: "bg-logoMatematica",
+    image: MatematicaImg,
+    title: "Matemática",
+  },
 };
 
 // Mapeamento de nome da matéria → ícone e slug para rota
@@ -375,8 +395,18 @@ export const fallbackAcademicMenuItems: DashCardMenu[] = [
     image: LinguagensImg,
     alt: "Linguagens",
     subMenuList: [
-      { icon: Gramatica, alt: "língua portuguesa", text: "Língua Portuguesa", link: `${ESTUDO}/LinguaPortuguesa` },
-      { icon: Ingles, alt: "língua estrangeira", text: "Língua Estrangeira", link: `${ESTUDO}/LinguaEstrangeira` },
+      {
+        icon: Gramatica,
+        alt: "língua portuguesa",
+        text: "Língua Portuguesa",
+        link: `${ESTUDO}/LinguaPortuguesa`,
+      },
+      {
+        icon: Ingles,
+        alt: "língua estrangeira",
+        text: "Língua Estrangeira",
+        link: `${ESTUDO}/LinguaEstrangeira`,
+      },
       { icon: Artes, alt: "artes", text: "Artes", link: `${ESTUDO}/Artes` },
     ],
   },
@@ -387,9 +417,24 @@ export const fallbackAcademicMenuItems: DashCardMenu[] = [
     image: NaturezaImg,
     alt: "Natureza",
     subMenuList: [
-      { icon: Biologia, alt: "molécula de DNA", text: "Biologia", link: `${ESTUDO}/Biologia` },
-      { icon: Fisica, alt: "risco biológico", text: "Física", link: `${ESTUDO}/Fisica` },
-      { icon: Quimica, alt: "quimica", text: "Quimica", link: `${ESTUDO}/Quimica` },
+      {
+        icon: Biologia,
+        alt: "molécula de DNA",
+        text: "Biologia",
+        link: `${ESTUDO}/Biologia`,
+      },
+      {
+        icon: Fisica,
+        alt: "risco biológico",
+        text: "Física",
+        link: `${ESTUDO}/Fisica`,
+      },
+      {
+        icon: Quimica,
+        alt: "quimica",
+        text: "Quimica",
+        link: `${ESTUDO}/Quimica`,
+      },
     ],
   },
   {
@@ -399,11 +444,36 @@ export const fallbackAcademicMenuItems: DashCardMenu[] = [
     image: HumanasImg,
     alt: "Humanas",
     subMenuList: [
-      { icon: Historia, alt: "História", text: "História", link: `${ESTUDO}/Historia` },
-      { icon: Geografia, alt: "Geografia", text: "Geografia", link: `${ESTUDO}/Geografia` },
-      { icon: Filosofia, alt: "Filosofia", text: "Filosofia", link: `${ESTUDO}/Filosofia` },
-      { icon: Sociologia, alt: "Sociologia", text: "Sociologia", link: `${ESTUDO}/Sociologia` },
-      { icon: Atualidades, alt: "atualidades", text: "Atualidades", link: `${ESTUDO}/Atualidades` },
+      {
+        icon: Historia,
+        alt: "História",
+        text: "História",
+        link: `${ESTUDO}/Historia`,
+      },
+      {
+        icon: Geografia,
+        alt: "Geografia",
+        text: "Geografia",
+        link: `${ESTUDO}/Geografia`,
+      },
+      {
+        icon: Filosofia,
+        alt: "Filosofia",
+        text: "Filosofia",
+        link: `${ESTUDO}/Filosofia`,
+      },
+      {
+        icon: Sociologia,
+        alt: "Sociologia",
+        text: "Sociologia",
+        link: `${ESTUDO}/Sociologia`,
+      },
+      {
+        icon: Atualidades,
+        alt: "atualidades",
+        text: "Atualidades",
+        link: `${ESTUDO}/Atualidades`,
+      },
     ],
   },
   {
@@ -413,7 +483,12 @@ export const fallbackAcademicMenuItems: DashCardMenu[] = [
     image: MatematicaImg,
     alt: "Matemática",
     subMenuList: [
-      { icon: Matematica, alt: "calculadora", text: "Matemática", link: `${ESTUDO}/Matematica` },
+      {
+        icon: Matematica,
+        alt: "calculadora",
+        text: "Matemática",
+        link: `${ESTUDO}/Matematica`,
+      },
     ],
   },
 ];
