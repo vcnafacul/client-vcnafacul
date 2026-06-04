@@ -11,6 +11,7 @@ interface Props {
   onReorder?: () => void;
   onDelete?: () => void;
   addLabel?: string;
+  menuType?: "frente" | "tema";
 }
 
 export function FrentesActionMenu({
@@ -19,11 +20,17 @@ export function FrentesActionMenu({
   onReorder,
   onDelete,
   addLabel = "Adicionar",
+  menuType = "frente",
 }: Props) {
   const {
     data: { permissao },
   } = useAuthStore();
-  const manager: boolean = permissao[Roles.editarMateriasFrentes];
+  const manager: boolean =
+    permissao[
+      menuType == "frente"
+        ? Roles.editarMateriasFrentes
+        : Roles.gerenciadorDemanda
+    ];
 
   return (
     <Box className="flex gap-1 w-full justify-center">

@@ -106,6 +106,7 @@ export function SortableTemaRow({
           onEdit={onEdit}
           onReorder={onReorderContents}
           onDelete={onDelete}
+          menuType="tema"
         />
       </TableCell>
     </TableRow>

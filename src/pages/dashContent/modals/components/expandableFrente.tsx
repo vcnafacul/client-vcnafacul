@@ -96,6 +96,7 @@ export function ExpandableFrente({
             addLabel="Adicionar Tema"
             onEdit={onEditFrente}
             onDelete={total === 0 ? onDeleteFrente : undefined}
+            menuType="frente"
           />
         </TableCell>
       </TableRow>
