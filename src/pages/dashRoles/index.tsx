@@ -32,11 +32,11 @@ function DashRoles() {
   const limitCards = 100;
 
   const modals = useModals([
-    'modalUserRole',
-    'modalNewRole',
-    'modalEditRole',
-    'modalSendEmail',
-    'modalUserModal',
+    "modalUserRole",
+    "modalNewRole",
+    "modalEditRole",
+    "modalSendEmail",
+    "modalUserModal",
   ]);
 
   const {
@@ -58,26 +58,34 @@ function DashRoles() {
     modals.modalUserRole.open();
   };
 
-  const handleUpdateUserRole = (userRole: UserRole) => {
-    modals.modalUserRole.close();
-    updateUserRole(userRole.user.id, userRole.roleId, token)
+  const handleUpdateUserRole = (roleId: string) => {
+    if (!userRoleSelect) return;
+
+    updateUserRole(userRoleSelect.user.id, roleId, token)
       .then(() => {
+        const updatedUserRole: UserRole = {
+          ...userRoleSelect,
+          roleId,
+          roleName: roles.find((r) => r.id === roleId)?.name ?? "",
+        };
+        updatedUserRole.user.updatedAt = new Date();
+
         setUsersRole(
-          usersRole.map((ur) => {
-            if (ur.user.id === userRole.user.id) {
-              userRole.user.updatedAt = new Date();
-              setUserRoleSelect(userRole);
-              return userRole;
-            }
-            return ur;
-          })
+          usersRole.map((ur) =>
+            ur.user.id === userRoleSelect.user.id ? updatedUserRole : ur,
+          ),
         );
+        setUserRoleSelect(updatedUserRole);
+        modals.modalUserRole.close();
+
         toast.success(
-          `Atualização da permissão do usuário  ${userRole.user.firstName} feita com sucesso`
+          `Atualização da permissão do usuário ${userRoleSelect.user.firstName} feita com sucesso`,
         );
       })
       .catch((error: Error) => {
-        toast.error(`${error.message} - Usuário ${userRole.user.firstName}`);
+        toast.error(
+          `${error.message} - Usuário ${userRoleSelect.user.firstName}`,
+        );
       });
   };
 
@@ -93,8 +101,8 @@ function DashRoles() {
       .then((res) => {
         setUsersRole(
           res.data?.sort((a, b) =>
-            a.user.firstName.localeCompare(b.user.firstName)
-          )
+            a.user.firstName.localeCompare(b.user.firstName),
+          ),
         );
         dataRef.current = res.data;
       })
@@ -116,19 +124,28 @@ function DashRoles() {
   }, [token]);
 
   const getMoreCards = async (page: number): Promise<Paginate<UserRole>> => {
-    return await getUsersRole(token, page, limitCards, filterText, activeRoleId);
+    return await getUsersRole(
+      token,
+      page,
+      limitCards,
+      filterText,
+      activeRoleId,
+    );
   };
 
   const ShowUserRole = () => {
-    return !modals.modalUserRole.isOpen ? null : (
+    if (!modals.modalUserRole.isOpen || !userRoleSelect) return null;
+
+    const currentRole: Role = {
+      id: userRoleSelect.roleId,
+      name: userRoleSelect.roleName,
+    };
+
+    return (
       <ModalRole
-        roles={roles.filter((r) => {
-          if (r.name !== "Todos") {
-            return r;
-          }
-        })}
+        roles={roles.filter((r) => r.name !== "Todos")}
         updateUserRole={handleUpdateUserRole}
-        userRole={userRoleSelect!}
+        role={currentRole}
         isOpen={modals.modalUserRole.isOpen}
         handleClose={() => modals.modalUserRole.close()}
       />
@@ -147,7 +164,10 @@ function DashRoles() {
 
   const ShowEditRole = () => {
     return !modals.modalEditRole.isOpen ? null : (
-      <ModalEditRole isOpen={modals.modalEditRole.isOpen} handleClose={() => modals.modalEditRole.close()} />
+      <ModalEditRole
+        isOpen={modals.modalEditRole.isOpen}
+        handleClose={() => modals.modalEditRole.close()}
+      />
     );
   };
 

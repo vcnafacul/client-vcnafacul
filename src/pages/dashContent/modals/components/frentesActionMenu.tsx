@@ -1,3 +1,5 @@
+import { Roles } from "@/enums/roles/roles";
+import { useAuthStore } from "@/store/auth";
 import { Box, IconButton, Tooltip } from "@mui/material";
 import { CgArrowsExchangeAltV } from "react-icons/cg";
 import { FaPlus } from "react-icons/fa";
@@ -9,6 +11,7 @@ interface Props {
   onReorder?: () => void;
   onDelete?: () => void;
   addLabel?: string;
+  menuType?: "frente" | "tema";
 }
 
 export function FrentesActionMenu({
@@ -17,7 +20,18 @@ export function FrentesActionMenu({
   onReorder,
   onDelete,
   addLabel = "Adicionar",
+  menuType = "frente",
 }: Props) {
+  const {
+    data: { permissao },
+  } = useAuthStore();
+  const manager: boolean =
+    permissao[
+      menuType == "frente"
+        ? Roles.editarMateriasFrentes
+        : Roles.gerenciadorDemanda
+    ];
+
   return (
     <Box className="flex gap-1 w-full justify-center">
       {onAdd && (
@@ -31,7 +45,7 @@ export function FrentesActionMenu({
           </IconButton>
         </Tooltip>
       )}
-      {onEdit && (
+      {onEdit && manager && (
         <Tooltip title="Editar" arrow>
           <IconButton
             size="small"
@@ -42,7 +56,7 @@ export function FrentesActionMenu({
           </IconButton>
         </Tooltip>
       )}
-      {onReorder && (
+      {onReorder && manager && (
         <Tooltip title="Editar ordem conteúdos" arrow>
           <IconButton
             size="small"
@@ -53,7 +67,7 @@ export function FrentesActionMenu({
           </IconButton>
         </Tooltip>
       )}
-      {onDelete && (
+      {onDelete && manager && (
         <Tooltip title="Excluir" arrow>
           <IconButton
             size="small"

@@ -10,6 +10,8 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { MdDeleteForever, MdModeEdit } from "react-icons/md";
 import ManagerMateria from "./managerMateria";
+import { Roles } from "@/enums/roles/roles";
+import { useAuthStore } from "@/store/auth";
 
 interface Props {
   materias: MateriaDto[];
@@ -36,9 +38,15 @@ export function PanelMateria({
   checkCanDelete,
 }: Props) {
   const [selected, setSelected] = useState<MateriaDto | null>(null);
-  const [canDeleteState, setCanDeleteState] = useState<MateriaCanDeleteResult | null>(null);
+  const [canDeleteState, setCanDeleteState] =
+    useState<MateriaCanDeleteResult | null>(null);
 
   const modals = useModals(["editor", "confirmDelete"]);
+
+  const {
+    data: { permissao },
+  } = useAuthStore();
+  const manager: boolean = permissao[Roles.editarMateriasFrentes];
 
   useEffect(() => {
     if (!modals.confirmDelete.isOpen || !selected || !checkCanDelete) {
@@ -51,7 +59,12 @@ export function PanelMateria({
         if (!cancelled) setCanDeleteState(res);
       })
       .catch(() => {
-        if (!cancelled) setCanDeleteState({ canDelete: true, frentesCount: 0, questoesCount: 0 });
+        if (!cancelled)
+          setCanDeleteState({
+            canDelete: true,
+            frentesCount: 0,
+            questoesCount: 0,
+          });
       });
     return () => {
       cancelled = true;
@@ -84,33 +97,38 @@ export function PanelMateria({
       width: 120,
       renderCell: (params) => (
         <div className="flex gap-2 justify-center">
-          <Tooltip title="Editar matéria">
-            <IconButton
-              onClick={() => {
-                setSelected(params.row as MateriaDto);
-                modals.editor.open();
-              }}
-            >
-              <MdModeEdit className="fill-gray-500 hover:fill-black" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Excluir matéria">
-            <IconButton
-              onClick={() => {
-                setSelected(params.row as MateriaDto);
-                modals.confirmDelete.open();
-              }}
-            >
-              <MdDeleteForever className="fill-redError opacity-50 hover:opacity-100" />
-            </IconButton>
-          </Tooltip>
+          {manager && (
+            <Tooltip title="Editar matéria">
+              <IconButton
+                onClick={() => {
+                  setSelected(params.row as MateriaDto);
+                  modals.editor.open();
+                }}
+              >
+                <MdModeEdit className="fill-gray-500 hover:fill-black" />
+              </IconButton>
+            </Tooltip>
+          )}
+          {manager && (
+            <Tooltip title="Excluir matéria">
+              <IconButton
+                onClick={() => {
+                  setSelected(params.row as MateriaDto);
+                  modals.confirmDelete.open();
+                }}
+              >
+                <MdDeleteForever className="fill-redError opacity-50 hover:opacity-100" />
+              </IconButton>
+            </Tooltip>
+          )}
         </div>
       ),
     },
   ];
 
   const canDelete = canDeleteState?.canDelete !== false;
-  const blockReason = canDeleteState && !canDeleteState.canDelete ? canDeleteState.message : null;
+  const blockReason =
+    canDeleteState && !canDeleteState.canDelete ? canDeleteState.message : null;
 
   const handleConfirmDelete = () => {
     if (!selected || !canDelete) return;
@@ -126,14 +144,16 @@ export function PanelMateria({
     <div className="flex flex-col h-[500px] overflow-y-scroll scrollbar-hide select-none">
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-lg font-semibold text-gray-700">Matérias</h3>
-        <Button
-          onClick={() => {
-            setSelected(null);
-            modals.editor.open();
-          }}
-        >
-          Criar Nova Matéria
-        </Button>
+        {manager && (
+          <Button
+            onClick={() => {
+              setSelected(null);
+              modals.editor.open();
+            }}
+          >
+            Criar Nova Matéria
+          </Button>
+        )}
       </div>
       <Paper sx={{ height: "100%", overflow: "auto" }}>
         <DataGrid
@@ -178,7 +198,8 @@ export function PanelMateria({
             <p className="text-gray-600">{blockReason}</p>
           ) : (
             <p className="text-gray-600">
-              Tem certeza que deseja excluir a matéria &quot;{selected.nome}&quot;?
+              Tem certeza que deseja excluir a matéria &quot;{selected.nome}
+              &quot;?
             </p>
           )}
         </ModalConfirmCancel>

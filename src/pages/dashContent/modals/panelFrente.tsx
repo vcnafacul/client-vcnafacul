@@ -25,6 +25,8 @@ import { useState } from "react";
 import { ExpandableFrente } from "./components/expandableFrente";
 import ManagerFrente from "./managerFrente";
 import ManagerSubject from "./managerSubject";
+import { useAuthStore } from "@/store/auth";
+import { Roles } from "@/enums/roles/roles";
 
 interface Props {
   frentes: FrenteDto[];
@@ -62,18 +64,25 @@ export function PanelFrente({
 
   const modals = useModals(["frenteEditor", "confirmDelete", "newTema"]);
 
+  const {
+    data: { permissao },
+  } = useAuthStore();
+  const manager: boolean = permissao[Roles.editarMateriasFrentes];
+
   return (
     <div className="flex flex-col h-[500px] overflow-y-scroll scrollbar-hide select-none">
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-lg font-semibold text-gray-700">Frentes</h3>
-        <Button
-          onClick={() => {
-            setFrenteSelected(null);
-            modals.frenteEditor.open();
-          }}
-        >
-          Criar Nova Frente
-        </Button>
+        {manager && (
+          <Button
+            onClick={() => {
+              setFrenteSelected(null);
+              modals.frenteEditor.open();
+            }}
+          >
+            Criar Nova Frente
+          </Button>
+        )}
       </div>
 
       <TableContainer component={Paper} sx={{ borderRadius: 2 }}>

@@ -26,25 +26,22 @@ function DashContent() {
     data: { token, permissao },
   } = useAuthStore();
 
-  const modals = useModals([
-    'showDemand',
-    'newDemand',
-    'settings',
-  ]);
+  const modals = useModals(["showDemand", "newDemand", "settings"]);
 
   const uploader: boolean = permissao[Roles.uploadDemanda];
-  const manager: boolean = permissao[Roles.gerenciadorDemanda];
+  const manager: boolean = permissao[Roles.editarMateriasFrentes];
+  const themeManager: boolean = permissao[Roles.gerenciadorDemanda];
 
   const [demands, setDemands] = useState<ContentDtoInput[]>([]);
   const [demandSelected, setDemandSelected] = useState<ContentDtoInput | null>(
-    null
+    null,
   );
   const [materias, setMaterias] = useState<OptionProps[]>([
     { id: "", name: "Todos" },
   ]);
   const [materiaSelected, setMateriaSelected] = useState<string>("");
   const [status, setStatus] = useState<StatusContent | StatusEnum>(
-    StatusContent.Pending_Upload
+    StatusContent.Pending_Upload,
   );
   const dataRef = useRef<ContentDtoInput[]>([]);
   const limitCards = 100;
@@ -68,13 +65,15 @@ function DashContent() {
       setDemands(
         dataRef.current.filter((demand) => {
           if (demand.subject.frente.materia === id) return demand;
-        })
+        }),
       );
     }
   };
 
   const onClickCard = (id: number | string) => {
-    const found = dataRef.current.find((demand) => (demand.id ?? (demand as any)._id) === id);
+    const found = dataRef.current.find(
+      (demand) => (demand.id ?? (demand as any)._id) === id,
+    );
     if (!found) return;
     setDemandSelected(found);
     modals.showDemand.open();
@@ -121,7 +120,7 @@ function DashContent() {
   };
 
   const NewModalDemand = () => {
-    const open = manager && modals.newDemand.isOpen;
+    const open = (manager || themeManager) && modals.newDemand.isOpen;
     return !open ? null : (
       <NewDemand
         addDemand={addDemand}
@@ -132,7 +131,7 @@ function DashContent() {
   };
 
   const SettingsModal = () => {
-    const open = manager && modals.settings.isOpen;
+    const open = (manager || themeManager) && modals.settings.isOpen;
     return !open ? null : (
       <SettingsFrente
         isOpen={modals.settings.isOpen}
@@ -144,7 +143,7 @@ function DashContent() {
   };
 
   const FilterManager = () => {
-    if (!manager) return null;
+    if (!manager && !themeManager) return null;
     return (
       <div className="flex">
         <SettingIcon
@@ -169,19 +168,19 @@ function DashContent() {
   }, [token, status, materiaSelected]);
 
   const getMoreCards = async (
-    page: number
+    page: number,
   ): Promise<Paginate<ContentDtoInput>> => {
     return await getContent(
       token,
       status as StatusContent,
       materiaSelected,
       page,
-      limitCards
+      limitCards,
     );
   };
 
   const buttons: ButtonProps[] = [];
-  if (manager) {
+  if (manager || themeManager) {
     buttons.push({
       onClick: () => {
         setDemandSelected(null);
