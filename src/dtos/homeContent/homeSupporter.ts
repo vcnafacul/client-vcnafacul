@@ -4,6 +4,7 @@ export interface HomeSupporter {
   logoUrl: string | null;
   link: string;
   description?: string | null;
+  active: boolean;
   order: number;
   createdAt: string;
   updatedAt: string;
