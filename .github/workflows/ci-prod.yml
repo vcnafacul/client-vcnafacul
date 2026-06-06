@@ -1,7 +1,7 @@
 # =============================================================================
 # release - Build, Deploy Production & Create GitHub Release
 # =============================================================================
-# Disparado por push de tag (ex: git tag v1.2.0 && git push origin v1.2.0)
+# Disparado por push de tag (ex: git tag 1.2.0 && git push origin 1.2.0)
 # 1. Build do frontend para produção
 # 2. Deploy via rsync (SSH) para Hostinger
 # 3. Cria Release no GitHub com changelog automático (PRs entre tags)
@@ -12,7 +12,7 @@ name: Release & Deploy Production
 on:
   push:
     tags:
-      - 'v*'
+      - '[0-9]*'
 
 jobs:
   DEPLOY:
