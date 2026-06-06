@@ -7,10 +7,12 @@ export default function SortableSupporterRow({
   supporter,
   onEdit,
   onDelete,
+  onToggleActive,
 }: {
   supporter: HomeSupporter;
   onEdit: (s: HomeSupporter) => void;
   onDelete: (s: HomeSupporter) => void;
+  onToggleActive: (s: HomeSupporter) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: supporter.id });
@@ -25,7 +27,7 @@ export default function SortableSupporterRow({
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-3 p-3 border rounded bg-white"
+      className={`flex items-center gap-3 p-3 border rounded bg-white${!supporter.active ? " opacity-50" : ""}`}
     >
       <button
         type="button"
@@ -46,7 +48,14 @@ export default function SortableSupporterRow({
         <div className="w-12 h-12 rounded bg-gray-200" />
       )}
       <div className="flex-1 min-w-0 flex flex-col">
-        <span className="font-medium truncate">{supporter.name}</span>
+        <div className="flex items-center gap-2">
+          <span className="font-medium truncate">{supporter.name}</span>
+          {!supporter.active && (
+            <span className="text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded">
+              inativo
+            </span>
+          )}
+        </div>
         <a
           href={supporter.link}
           target="_blank"
@@ -63,6 +72,13 @@ export default function SortableSupporterRow({
         onClick={() => onEdit(supporter)}
       >
         Editar
+      </button>
+      <button
+        type="button"
+        className={`text-sm hover:underline ${supporter.active ? "text-yellow-600" : "text-green-600"}`}
+        onClick={() => onToggleActive(supporter)}
+      >
+        {supporter.active ? "Inativar" : "Ativar"}
       </button>
       <button
         type="button"

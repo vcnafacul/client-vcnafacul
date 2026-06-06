@@ -18,9 +18,10 @@ import {
 import Button from "@/components/molecules/button";
 import { useAuthStore } from "../../../store/auth";
 import { HomeSupporter } from "../../../dtos/homeContent/homeSupporter";
-import { getHomeSupporters } from "../../../services/home/getHomeSupporters";
+import { getAdminHomeSupporters } from "../../../services/home/getAdminHomeSupporters";
 import { deleteHomeSupporter } from "../../../services/home/deleteHomeSupporter";
 import { reorderHomeSupporters } from "../../../services/home/reorderHomeSupporters";
+import { updateHomeSupporter } from "../../../services/home/updateHomeSupporter";
 import SortableSupporterRow from "../components/SortableSupporterRow";
 import ModalEditSupporter from "../modals/ModalEditSupporter";
 
@@ -39,11 +40,11 @@ export default function SupportersSection() {
   );
 
   useEffect(() => {
-    getHomeSupporters()
+    getAdminHomeSupporters(token)
       .then((list) => setSupporters(list))
       .catch((e: Error) => toast.error(e.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [token]);
 
   const onDragEnd = async (e: DragEndEvent) => {
     const { active, over } = e;
@@ -61,6 +62,18 @@ export default function SupportersSection() {
       );
     } catch (err) {
       setSupporters(previous);
+      toast.error((err as Error).message);
+    }
+  };
+
+  const onToggleActive = async (s: HomeSupporter) => {
+    const action = s.active ? "inativar" : "ativar";
+    if (!window.confirm(`Deseja ${action} "${s.name}"?`)) return;
+    try {
+      const updated = await updateHomeSupporter(s.id, { active: !s.active }, token);
+      setSupporters((prev) => prev.map((x) => (x.id === updated.id ? updated : x)));
+      toast.success(`Apoiador ${s.active ? "inativado" : "ativado"}`);
+    } catch (err) {
       toast.error((err as Error).message);
     }
   };
@@ -103,7 +116,9 @@ export default function SupportersSection() {
       <h2 className="text-xl font-semibold">Apoiadores</h2>
       <div className="flex justify-between items-center">
         <span className="text-sm text-gray-600">
-          {supporters.length} apoiador(es)
+          {supporters.filter((s) => s.active).length} ativo(s)
+          {supporters.some((s) => !s.active) &&
+            ` · ${supporters.filter((s) => !s.active).length} inativo(s)`}
         </span>
         <Button typeStyle="primary" size="small" onClick={openCreate}>
           Adicionar apoiador
@@ -125,6 +140,7 @@ export default function SupportersSection() {
                 supporter={s}
                 onEdit={openEdit}
                 onDelete={onDelete}
+                onToggleActive={onToggleActive}
               />
             ))}
           </div>

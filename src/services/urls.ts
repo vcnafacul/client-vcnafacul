@@ -160,6 +160,7 @@ export const homeFeatures = `${homeContent}/features`;
 export const homeFeaturesReorder = `${homeFeatures}/reorder`;
 export const homeFeatureImage = (id: number) => `${homeFeatures}/${id}/image`;
 export const homeSupporters = `${homeContent}/supporters`;
+export const homeSupportersAll = `${homeSupporters}/all`;
 export const homeSupportersReorder = `${homeSupporters}/reorder`;
 export const homeSupporterLogo = (id: number) => `${homeSupporters}/${id}/logo`;
 export const homeContentFile = (fileKey: string) =>
