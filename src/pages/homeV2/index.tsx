@@ -13,6 +13,8 @@ import { FeaturesSection } from "./sections/FeaturesSection";
 import { fetchFeaturesSectionData, featuresFallback } from "./adapters/featuresAdapter";
 import { MapSection } from "./sections/MapSection";
 import { ImpactoSection } from "../quemSomos/ImpactoSection";
+import { NewsSection } from "./sections/NewsSection";
+import { fetchNews, newsFallback } from "./adapters/newsAdapter";
 
 const ImpactoWrapper: SectionComponent<unknown> = () => <ImpactoSection />;
 
@@ -37,6 +39,7 @@ export default function HomeV2() {
   const about = useSectionData(fetchAboutSectionData, aboutFallback, []);
   const prepCourses = useSectionData(fetchPrepCourses, prepCoursesFallback, []);
   const features = useSectionData(fetchFeaturesSectionData, featuresFallback, []);
+  const news = useSectionData(fetchNews, newsFallback, []);
 
   const sections: RenderableSection[] = [
     {
@@ -64,6 +67,12 @@ export default function HomeV2() {
       id: "prep-courses",
       component: PrepCoursesSection as SectionComponent<unknown>,
       data: prepCourses.data,
+      theme: "neutral",
+    },
+    {
+      id: "news",
+      component: NewsSection as SectionComponent<unknown>,
+      data: news.data,
       theme: "neutral",
     },
     {
