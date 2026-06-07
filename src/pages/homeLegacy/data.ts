@@ -7,6 +7,7 @@ import {
   LOGIN_PATH,
   LOGOFF_PATH,
   NEWS,
+  QUEM_SOMOS_PATH,
   REGISTER_PATH,
 } from "../../routes/path";
 
@@ -95,7 +96,7 @@ export const header: HeaderData = {
       Home_Menu_Item_id: {
         id: 1,
         name: "Quem Somos",
-        link: "/#about-us",
+        link: QUEM_SOMOS_PATH,
         target: "_self",
       },
     },
@@ -111,7 +112,7 @@ export const header: HeaderData = {
       Home_Menu_Item_id: {
         id: 3,
         name: "Apoiadores",
-        link: "/#supporters",
+        link: `${QUEM_SOMOS_PATH}#sponsors`,
         target: "_self",
       },
     },
@@ -288,8 +289,8 @@ export const footer: FooterProps = {
       Home_Menu_Item_id: {
         id: 1,
         name: "Quem Somos",
-        link: "/#about-us",
-        target: "_blank",
+        link: QUEM_SOMOS_PATH,
+        target: "_self",
       },
     },
     {
@@ -297,15 +298,15 @@ export const footer: FooterProps = {
         id: 2,
         name: "Localiza Cursinho",
         link: "/#map",
-        target: "_blank",
+        target: "_self",
       },
     },
     {
       Home_Menu_Item_id: {
         id: 3,
         name: "Apoiadores",
-        link: "/#supporters",
-        target: "_blank",
+        link: `${QUEM_SOMOS_PATH}#sponsors`,
+        target: "_self",
       },
     },
   ],

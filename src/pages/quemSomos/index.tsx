@@ -53,6 +53,14 @@ export default function QuemSomosPage() {
   }, []);
 
   useEffect(() => {
+    const { hash } = window.location;
+    if (hash) {
+      const el = document.getElementById(hash.slice(1));
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+    }
     window.scrollTo(0, 0);
   }, []);
 

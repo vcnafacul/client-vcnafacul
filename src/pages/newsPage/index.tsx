@@ -22,7 +22,12 @@ function NewsPage() {
   useEffect(() => {
     getNews()
       .then((res) => {
-        setNews(res.data ?? []);
+        const items = res.data ?? [];
+        const sorted = [...items].sort((a, b) => {
+          if (a.destaque === b.destaque) return 0;
+          return a.destaque ? -1 : 1;
+        });
+        setNews(sorted);
       })
       .catch((error: Error) => {
         toast.error(error.message);
