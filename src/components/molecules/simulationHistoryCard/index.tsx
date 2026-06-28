@@ -24,6 +24,8 @@ function SimulationHistoryCard({ historico }: SimulationHistoryCardProps) {
     ? statusLabel[historico.status ?? "pending"] ?? "Pendente"
     : `${(historico.aproveitamento!.geral * 100).toFixed(2)}%`;
 
+  const totalQuestoes = historico.simulado.categoria.quantidadeTotalQuestao;
+
   return (
     <Link
       className="flex flex-wrap gap-4 bg-white border border-gray-100 border-t-0 rounded p-4 pb-6 pr-12 m-2.5 shadow-md justify-between relative"
@@ -31,7 +33,7 @@ function SimulationHistoryCard({ historico }: SimulationHistoryCardProps) {
     >
       <SimulationHistoryField
         field="Caderno:"
-        value={historico.simulado.tipo.nome}
+        value={historico.simulado.categoria.nome}
         className="md:min-w-[250px]"
       />
       <SimulationHistoryField
@@ -46,14 +48,12 @@ function SimulationHistoryCard({ historico }: SimulationHistoryCardProps) {
       />
       <div className="group absolute right-4 bottom-6">
         {getStatusIcon(
-          historico.questoesRespondidas ===
-            historico.simulado.tipo.quantidadeTotalQuestao
+          historico.questoesRespondidas === totalQuestoes
             ? StatusEnum.Approved
             : StatusEnum.Rejected
         )}
         <ToolTip>
-          {historico.questoesRespondidas ===
-          historico.simulado.tipo.quantidadeTotalQuestao
+          {historico.questoesRespondidas === totalQuestoes
             ? "Simulado Completo"
             : "Simulado Incompleto"}
         </ToolTip>
