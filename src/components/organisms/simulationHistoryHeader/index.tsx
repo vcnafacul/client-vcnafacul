@@ -38,6 +38,7 @@ export function SimulationHistoryHeader({
   const [viewMode, setViewMode] = useState<"materias" | "frentes">("materias");
 
   const finished =
+    historic.simulado.categoria.quantidadeTotalQuestao !== null &&
     historic.simulado.categoria.quantidadeTotalQuestao ===
     historic.questoesRespondidas;
 

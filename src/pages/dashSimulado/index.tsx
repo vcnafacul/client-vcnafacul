@@ -27,7 +27,7 @@ const bloqueadoOptions: OptionProps[] = [
 function DashSimulado() {
   const [simulados, setSimulados] = useState<ISimuladoDTO[]>([]);
   const [nameFilter, setNameFilter] = useState<string>("");
-  const [tipoFilter, setTipoFilter] = useState<string>("");
+  const [categoriaFilter, setCategoriaFilter] = useState<string>("");
   const [bloqueadoFilter, setBloqueadoFilter] =
     useState<string>(BLOQUEADO_ALL);
   const [resetKey, setResetKey] = useState<number>(0);
@@ -42,7 +42,7 @@ function DashSimulado() {
     title: simulado.nome,
     status: simulado.bloqueado ? StatusEnum.Rejected : StatusEnum.Approved,
     infos: [
-      { field: "Tipo", value: simulado.categoria.nome },
+      { field: "Categoria", value: simulado.categoria.nome },
       {
         field: "Duracao",
         value: simulado.categoria.duracao.toString() + " minutos",
@@ -85,7 +85,7 @@ function DashSimulado() {
     return await getSimulados(token, page, limitCards);
   };
 
-  const tipoOptions: OptionProps[] = useMemo(() => {
+  const categoriaOptions: OptionProps[] = useMemo(() => {
     const names = new Set<string>();
     simulados.forEach((s) => {
       if (s.categoria?.nome) names.add(s.categoria.nome);
@@ -102,12 +102,12 @@ function DashSimulado() {
     const term = nameFilter.trim().toLowerCase();
     return simulados.filter((s) => {
       if (term && !s.nome.toLowerCase().includes(term)) return false;
-      if (tipoFilter && s.categoria?.nome !== tipoFilter) return false;
+      if (categoriaFilter && s.categoria?.nome !== categoriaFilter) return false;
       if (bloqueadoFilter === BLOQUEADO_BLOCKED && !s.bloqueado) return false;
       if (bloqueadoFilter === BLOQUEADO_UNBLOCKED && s.bloqueado) return false;
       return true;
     });
-  }, [simulados, nameFilter, tipoFilter, bloqueadoFilter]);
+  }, [simulados, nameFilter, categoriaFilter, bloqueadoFilter]);
 
   const filterProps: FilterProps = {
     placeholder: "Buscar por nome",
@@ -118,9 +118,9 @@ function DashSimulado() {
 
   const selectFiltes: SelectProps[] = [
     {
-      options: tipoOptions,
-      defaultValue: tipoFilter,
-      setState: (value: string) => setTipoFilter(value),
+      options: categoriaOptions,
+      defaultValue: categoriaFilter,
+      setState: (value: string) => setCategoriaFilter(value),
     },
     {
       options: bloqueadoOptions,
@@ -130,13 +130,13 @@ function DashSimulado() {
   ];
 
   const hasActiveFilters =
-    nameFilter !== "" || tipoFilter !== "" || bloqueadoFilter !== BLOQUEADO_ALL;
+    nameFilter !== "" || categoriaFilter !== "" || bloqueadoFilter !== BLOQUEADO_ALL;
 
   const buttons: ButtonProps[] = [
     {
       onClick: () => {
         setNameFilter("");
-        setTipoFilter("");
+        setCategoriaFilter("");
         setBloqueadoFilter(BLOQUEADO_ALL);
         setResetKey((k) => k + 1);
       },

@@ -48,12 +48,12 @@ function SimulationHistoryCard({ historico }: SimulationHistoryCardProps) {
       />
       <div className="group absolute right-4 bottom-6">
         {getStatusIcon(
-          historico.questoesRespondidas === totalQuestoes
+          totalQuestoes !== null && historico.questoesRespondidas === totalQuestoes
             ? StatusEnum.Approved
             : StatusEnum.Rejected
         )}
         <ToolTip>
-          {historico.questoesRespondidas === totalQuestoes
+          {totalQuestoes !== null && historico.questoesRespondidas === totalQuestoes
             ? "Simulado Completo"
             : "Simulado Incompleto"}
         </ToolTip>
