@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { ITipoSimulado } from "./tipoSimulado";
+import { ICategoria } from "../categoria/categoria";
 
 export interface Obj {
     _id: string;
@@ -24,7 +24,7 @@ export interface ISimuladoDTO {
   _id: string
   nome: string
   descricao: string
-  tipo: ITipoSimulado
+  categoria: ICategoria
   questoes: IQuestao[]
   inicio: Date,
   duracao: number,

@@ -6,7 +6,6 @@ export interface Prova {
   edicao: Edicao;
   aplicacao: number;
   ano: number;
-  exame: string;
   nome: string;
   totalQuestao: number;
   totalQuestaoCadastradas: number;
@@ -21,7 +20,6 @@ export interface CreateProva {
   edicao: Edicao;
   aplicacao: number;
   ano: number;
-  exame: string;
+  categoria: string;
   filename: string;
-  tipo: string;
 }

@@ -1,4 +1,5 @@
 import { DateTime } from "luxon";
+import { ICategoria } from "../categoria/categoria";
 import { QuestionTemplate } from "../../components/templates/simulateTemplate";
 import { Alternativa } from "../../types/question/alternative";
 
@@ -23,13 +24,6 @@ export interface AproveitamentoDTO {
   materias: MateriaPerformance[];
 }
 
-interface TipoSimuladoHistorico {
-  _id: string;
-  nome: string;
-  quantidadeTotalQuestao: number;
-  duracao: number;
-}
-
 export interface QuestaoHistorico extends QuestionTemplate {
   materia: string;
   frente1: string;
@@ -48,7 +42,7 @@ export interface QuestaoHistorico extends QuestionTemplate {
 interface SimuladoHistoricoDTO {
   _id: string;
   nome: string;
-  tipo: TipoSimuladoHistorico;
+  categoria: ICategoria;
   questoes: QuestaoHistorico[];
   aproveitamento: number;
   vezesRespondido: number;
