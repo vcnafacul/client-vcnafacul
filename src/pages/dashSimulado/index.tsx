@@ -42,14 +42,14 @@ function DashSimulado() {
     title: simulado.nome,
     status: simulado.bloqueado ? StatusEnum.Rejected : StatusEnum.Approved,
     infos: [
-      { field: "Tipo", value: simulado.tipo.nome },
+      { field: "Tipo", value: simulado.categoria.nome },
       {
         field: "Duracao",
-        value: simulado.tipo.duracao.toString() + " minutos",
+        value: simulado.categoria.duracao.toString() + " minutos",
       },
       {
         field: "Questoes",
-        value: `${simulado.questoes.length.toString()}/${simulado.tipo.quantidadeTotalQuestao.toString()}`,
+        value: `${simulado.questoes.length.toString()}/${(simulado.categoria.quantidadeTotalQuestao ?? 0).toString()}`,
       },
       {
         field: "Descrição",
@@ -88,7 +88,7 @@ function DashSimulado() {
   const tipoOptions: OptionProps[] = useMemo(() => {
     const names = new Set<string>();
     simulados.forEach((s) => {
-      if (s.tipo?.nome) names.add(s.tipo.nome);
+      if (s.categoria?.nome) names.add(s.categoria.nome);
     });
     return [
       { id: "", name: "Todos os tipos" },
@@ -102,7 +102,7 @@ function DashSimulado() {
     const term = nameFilter.trim().toLowerCase();
     return simulados.filter((s) => {
       if (term && !s.nome.toLowerCase().includes(term)) return false;
-      if (tipoFilter && s.tipo?.nome !== tipoFilter) return false;
+      if (tipoFilter && s.categoria?.nome !== tipoFilter) return false;
       if (bloqueadoFilter === BLOQUEADO_BLOCKED && !s.bloqueado) return false;
       if (bloqueadoFilter === BLOQUEADO_UNBLOCKED && s.bloqueado) return false;
       return true;
