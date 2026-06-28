@@ -15,14 +15,12 @@ interface SimpleHistoryCardProps {
   onClick?: (id: string) => void;
 }
 
-// Função para obter cor baseada no aproveitamento
 const getPerformanceColor = (performance: number): string => {
   if (performance >= 0.7) return "from-green-500/10 to-emerald-500/10";
   if (performance >= 0.5) return "from-yellow-500/10 to-orange-500/10";
   return "from-red-500/10 to-pink-500/10";
 };
 
-// Função para obter ícone de status
 const getStatusIcon = (isComplete: boolean) => {
   return isComplete ? (
     <CheckCircle2Icon className="h-5 w-5 text-green-600" />
@@ -35,9 +33,10 @@ export function SimpleHistoryCard({
   historico,
   onClick,
 }: SimpleHistoryCardProps) {
+  const totalQuestoes = historico.simulado.categoria.quantidadeTotalQuestao;
   const isComplete =
-    historico.questoesRespondidas ===
-    historico.simulado.tipo.quantidadeTotalQuestao;
+    totalQuestoes !== null &&
+    historico.questoesRespondidas === totalQuestoes;
 
   const geral = historico.aproveitamento?.geral;
   const performanceColor = geral != null
@@ -60,15 +59,13 @@ export function SimpleHistoryCard({
         overflow-hidden w-[350px]`}
       onClick={() => onClick?.(historico._id)}
     >
-      {/* Efeito de brilho no hover */}
       <div
-        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent 
-        opacity-0 group-hover:opacity-100 transition-opacity duration-500 
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent
+        opacity-0 group-hover:opacity-100 transition-opacity duration-500
         transform translate-x-[-100%] group-hover:translate-x-[100%]"
         style={{ transition: "transform 0.8s ease-in-out" }}
       />
 
-      {/* Badge de status flutuante no canto superior direito */}
       <div className="absolute -top-2 -right-2 rotate-12 group-hover:rotate-0 transition-transform duration-300 z-10">
         <Badge
           variant={isComplete ? "default" : "outline"}
@@ -84,9 +81,8 @@ export function SimpleHistoryCard({
 
       <CardHeader className="pb-3 pt-4">
         <div className="flex items-start gap-3">
-          {/* Ícone animado do troféu */}
           <div
-            className="text-3xl group-hover:scale-125 transition-transform duration-300 
+            className="text-3xl group-hover:scale-125 transition-transform duration-300
             group-hover:rotate-12 flex-shrink-0"
           >
             📝
@@ -94,10 +90,10 @@ export function SimpleHistoryCard({
 
           <div className="flex-1 min-w-0">
             <h3
-              className="text-lg font-bold text-primary group-hover:text-primary/80 
+              className="text-lg font-bold text-primary group-hover:text-primary/80
               transition-colors line-clamp-2 leading-tight"
             >
-              {historico.simulado.tipo.nome}
+              {historico.simulado.categoria.nome}
             </h3>
             <p className="text-sm text-muted-foreground mt-1">
               {formattedDate}
@@ -107,7 +103,6 @@ export function SimpleHistoryCard({
       </CardHeader>
 
       <CardContent className="space-y-3">
-        {/* Aproveitamento - Destaque */}
         <div
           className="flex items-center gap-2 p-2 rounded-lg bg-white/50 backdrop-blur-sm
           group-hover:bg-white/70 transition-all duration-300"
@@ -120,12 +115,11 @@ export function SimpleHistoryCard({
               Aproveitamento
             </p>
             <p className="font-semibold text-sm truncate text-foreground">
-              {performancePercentage}%
+              {performancePercentage}
             </p>
           </div>
         </div>
 
-        {/* Tempo */}
         <div
           className="flex items-center gap-2 p-2 rounded-lg bg-white/50 backdrop-blur-sm
           group-hover:bg-white/70 transition-all duration-300"
@@ -143,7 +137,6 @@ export function SimpleHistoryCard({
           </div>
         </div>
 
-        {/* Questões e Status - Footer */}
         <div
           className="flex items-center justify-between pt-2 border-t border-border/50
           text-xs text-muted-foreground"
@@ -151,18 +144,16 @@ export function SimpleHistoryCard({
           <div className="flex items-center gap-1.5">
             <span className="font-medium text-foreground">
               {historico.questoesRespondidas} de{" "}
-              {historico.simulado.tipo.quantidadeTotalQuestao} questões
+              {totalQuestoes ?? "?"} questões
             </span>
           </div>
 
-          {/* Status Indicator */}
           <div className="flex items-center gap-1.5">
             {getStatusIcon(isComplete)}
           </div>
         </div>
       </CardContent>
 
-      {/* Indicador de clique */}
       <div
         className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0
         opacity-0 group-hover:opacity-100 transition-opacity duration-300"
