@@ -5,7 +5,6 @@ import {
   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import {
@@ -18,23 +17,21 @@ import ModalTemplate, {
   ModalProps,
 } from "../../../components/templates/modalTemplate";
 import { CreateProva, Prova } from "../../../dtos/prova/prova";
-import { ObjDefault } from "../../../dtos/question/questionDTO";
-import { ITipoSimulado } from "../../../dtos/simulado/tipoSimulado";
+import { ICategoria } from "../../../dtos/categoria/categoria";
 import { Edicao, edicaoArray } from "../../../enums/prova/edicao";
 import { useToastAsync } from "../../../hooks/useToastAsync";
 import { createProva } from "../../../services/prova/createProva";
-import { getInfosQuestion } from "../../../services/question/getInfosQuestion";
 import { useAuthStore } from "../../../store/auth";
+import { useState } from "react";
 
 interface NewProvaProps extends ModalProps {
   addProva: (data: Prova) => void;
-  tipos: ITipoSimulado[];
+  categorias: ICategoria[];
   isOpen: boolean;
 }
 
-function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
+function NewProva({ addProva, categorias, handleClose, isOpen }: NewProvaProps) {
   const { register, handleSubmit, watch } = useForm();
-  const [exames, setExames] = useState<ObjDefault[]>([]);
   const {
     data: { token },
   } = useAuthStore();
@@ -42,27 +39,10 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
   const [uploadFile, setUploadFile] = useState(null);
   const [uploadGabarito, setUploadGabarito] = useState(null);
 
-  const getInfors = useCallback(async () => {
-    getInfosQuestion(token)
-      .then((infos: any) => {
-        setExames(infos.exames);
-      })
-      .catch((erro: Error) => {
-        toast.error(erro.message);
-      });
-  }, [token]);
-
-  let examesOptions: FormFieldOption[] = [];
-  examesOptions.push({ label: "", value: "" });
-  examesOptions = examesOptions.concat(
-    exames.map((f) => ({ label: f.nome, value: f._id }))
-  );
-
-  const tiposOptions: FormFieldOption[] = [];
-  tiposOptions.push({ label: "", value: "" });
-  tipos.map((f) => {
+  const categoriasOptions: FormFieldOption[] = [{ label: "", value: "" }];
+  categorias.forEach((f) => {
     if (f.nome.includes("Enem")) {
-      tiposOptions.push({ label: f.nome, value: f._id });
+      categoriasOptions.push({ label: f.nome, value: f._id });
     }
   });
 
@@ -99,25 +79,13 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
     setUploadFile(null);
   };
 
-  useEffect(() => {
-    getInfors();
-  }, [getInfors]);
-
   const listFieldProva: FormFieldInput[] = [
     {
-      id: "exame",
+      id: "categoria",
       type: "option",
-      options: examesOptions,
+      options: categoriasOptions,
       value: "",
-      label: "Exame",
-      disabled: false,
-    },
-    {
-      id: "tipo",
-      type: "option",
-      options: tiposOptions,
-      value: "",
-      label: "Tipo",
+      label: "Categoria",
       disabled: false,
     },
     {
@@ -136,8 +104,7 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
     },
   ];
 
-  const exame = watch("exame");
-  const tipo = watch("tipo");
+  const categoria = watch("categoria");
 
   const create = async (data: any) => {
     if (!uploadFile) {
@@ -158,19 +125,17 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
 
     const fileName = Date.now();
     const formData = new FormData();
-    formData.append("exame", info.exame);
-    formData.append("tipo", info.tipo);
+    formData.append("categoria", info.categoria);
     formData.append("edicao", info.edicao);
     formData.append("ano", info.ano.toString());
     formData.append("aplicacao", info.aplicacao.toString());
     formData.append("file", uploadFile!, `${fileName}.pdf`);
 
-    // Adicionar gabarito se foi enviado
     if (uploadGabarito) {
       formData.append("gabarito", uploadGabarito!, `${fileName}_gabarito.pdf`);
     }
 
-    const title = `${info.exame}_${info.ano}_${info.edicao}_${info.aplicacao}`;
+    const title = `${info.ano}_${info.edicao}_${info.aplicacao}`;
 
     await executeAsync({
       action: () => createProva(formData, token),
@@ -191,7 +156,6 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
       className="w-full max-w-3xl rounded-lg bg-white shadow-xl p-2"
     >
       <div className="p-6">
-        {/* Header */}
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-blue-100 rounded-lg">
@@ -212,7 +176,6 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
           className="flex flex-col w-full gap-6"
           onSubmit={handleSubmit(create)}
         >
-          {/* Informações Básicas */}
           <div>
             <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
               <AcademicCapIcon className="h-4 w-4" />
@@ -227,7 +190,6 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
             </div>
           </div>
 
-          {/* Upload de Arquivos */}
           <div>
             <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
               <CloudArrowUpIcon className="h-4 w-4" />
@@ -274,12 +236,11 @@ function NewProva({ addProva, tipos, handleClose, isOpen }: NewProvaProps) {
             </div>
           </div>
 
-          {/* Botão de Criação */}
           <div className="flex justify-end pt-4 border-t border-gray-200">
             <Button
               type="submit"
               variant="contained"
-              disabled={!exame || !tipo || !uploadFile}
+              disabled={!categoria || !uploadFile}
               sx={{
                 backgroundColor: "#3b82f6",
                 "&:hover": {

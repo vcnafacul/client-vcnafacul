@@ -174,9 +174,6 @@ const downloadFile = async (filename: string, fileType: string) => {
             <div className="bg-gray-50 p-3 rounded-lg">
               <PropValue prop="Aplicação" value={prova.aplicacao.toString()} />
             </div>
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <PropValue prop="Exame" value={prova.exame} />
-            </div>
           </div>
         </div>
 
