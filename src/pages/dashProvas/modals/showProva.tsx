@@ -10,7 +10,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
-import PropValue from "../../../components/molecules/PropValue";
 import { Prova } from "../../../dtos/prova/prova";
 import { getProvaFile } from "../../../services/prova/getFile";
 import { useState } from "react";
@@ -166,13 +165,23 @@ const downloadFile = async (filename: string, fileType: string) => {
           </h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gray-50 p-3 rounded-lg">
-              <PropValue prop="Edição" value={prova.edicao} />
+              <p className="text-xs text-gray-500 mb-1">Edição</p>
+              <p className="text-sm font-medium text-gray-900">{prova.edicao}</p>
             </div>
             <div className="bg-gray-50 p-3 rounded-lg">
-              <PropValue prop="Ano" value={prova.ano.toString()} />
+              <p className="text-xs text-gray-500 mb-1">Ano</p>
+              <p className="text-sm font-medium text-gray-900">{prova.ano}</p>
             </div>
             <div className="bg-gray-50 p-3 rounded-lg">
-              <PropValue prop="Aplicação" value={prova.aplicacao.toString()} />
+              <p className="text-xs text-gray-500 mb-1">Aplicação</p>
+              <p className="text-sm font-medium text-gray-900">{prova.aplicacao}</p>
+            </div>
+            <div className="bg-gray-50 p-3 rounded-lg">
+              <p className="text-xs text-gray-500 mb-1">Categoria</p>
+              <p className="text-sm font-medium text-gray-900">{prova.categoria}</p>
+              {prova.exame && (
+                <p className="text-xs text-gray-500 mt-0.5">{prova.exame}</p>
+              )}
             </div>
           </div>
         </div>

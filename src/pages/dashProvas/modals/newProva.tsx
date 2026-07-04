@@ -41,7 +41,7 @@ function NewProva({ addProva, categorias, handleClose, isOpen }: NewProvaProps) 
 
   const categoriasOptions: FormFieldOption[] = [{ label: "", value: "" }];
   categorias.forEach((f) => {
-    if (f.nome.includes("Enem")) {
+    if (f.selecionavel) {
       categoriasOptions.push({ label: f.nome, value: f._id });
     }
   });

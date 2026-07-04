@@ -6,6 +6,8 @@ export interface Prova {
   edicao: Edicao;
   aplicacao: number;
   ano: number;
+  categoria: string;
+  exame: string;
   nome: string;
   totalQuestao: number;
   totalQuestaoCadastradas: number;
