@@ -8,13 +8,13 @@ import { CardDash } from "../../components/molecules/cardDash";
 import DashCardTemplate from "../../components/templates/dashCardTemplate";
 import { DashCardContext } from "../../context/dashCardContext";
 import { Prova } from "../../dtos/prova/prova";
-import { ITipoSimulado } from "../../dtos/simulado/tipoSimulado";
+import { ICategoria } from "../../dtos/categoria/categoria";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { Roles } from "../../enums/roles/roles";
 import { getProvas } from "../../services/prova/getProvas";
 import { getSyncReport } from "../../services/prova/getSyncReport";
 import { startSync } from "../../services/prova/startSync";
-import { getTipos } from "../../services/tipoSimulado/getTipos";
+import { getCategorias } from "../../services/categoria/getCategorias";
 import { useAuthStore } from "../../store/auth";
 import { useToastAsync } from "../../hooks/useToastAsync";
 import { formatDate } from "../../utils/date";
@@ -33,7 +33,7 @@ function DashProva() {
   const [provas, setProvas] = useState<Prova[]>([]);
   const [provaSelected, setProvaSelected] = useState<Prova | null>(null);
 
-  const [tipoSimulado, setTipoSimulado] = useState<ITipoSimulado[]>();
+  const [categorias, setCategorias] = useState<ICategoria[]>();
 
   const [nameFilter, setNameFilter] = useState<string>("");
   const [edicaoFilter, setEdicaoFilter] = useState<string>(EDICAO_ALL);
@@ -95,7 +95,7 @@ function DashProva() {
   const ModalNewProva = () => {
     return !modals.modalNewProva.isOpen ? null : (
       <NewProva
-        tipos={tipoSimulado!}
+        categorias={categorias!}
         addProva={addProva}
         handleClose={() => modals.modalNewProva.close()}
         isOpen={modals.modalNewProva.isOpen}
@@ -130,9 +130,9 @@ function DashProva() {
         toast.error(erro.message);
       });
 
-    getTipos(token)
+    getCategorias(token)
       .then((res) => {
-        setTipoSimulado(res.data);
+        setCategorias(res.data);
       })
       .catch((erro: Error) => {
         toast.error(erro.message);

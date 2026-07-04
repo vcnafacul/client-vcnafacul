@@ -38,7 +38,8 @@ export function SimulationHistoryHeader({
   const [viewMode, setViewMode] = useState<"materias" | "frentes">("materias");
 
   const finished =
-    historic.simulado.tipo.quantidadeTotalQuestao ===
+    historic.simulado.categoria.quantidadeTotalQuestao !== null &&
+    historic.simulado.categoria.quantidadeTotalQuestao ===
     historic.questoesRespondidas;
 
   if (!historic.aproveitamento) {
@@ -69,8 +70,8 @@ export function SimulationHistoryHeader({
               : "Seu simulado está sendo processado. Os resultados estarão disponíveis em breve."}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {historic.simulado.tipo.nome} — {historic.questoesRespondidas} de{" "}
-            {historic.simulado.tipo.quantidadeTotalQuestao} questões respondidas
+            {historic.simulado.categoria.nome} — {historic.questoesRespondidas} de{" "}
+            {historic.simulado.categoria.quantidadeTotalQuestao ?? 0} questões respondidas
           </Typography>
         </Paper>
       </Box>
@@ -124,9 +125,9 @@ export function SimulationHistoryHeader({
   ];
 
   const aproveitamentoGeral = ((historic.aproveitamento?.geral ?? 0) * 100).toFixed(1);
-  const totalQuestoes = historic.simulado.tipo.quantidadeTotalQuestao;
-  const percentualAcertos = ((acertos / totalQuestoes) * 100).toFixed(1);
-  const percentualErros = ((erros / totalQuestoes) * 100).toFixed(1);
+  const totalQuestoes = historic.simulado.categoria.quantidadeTotalQuestao ?? 0;
+  const percentualAcertos = totalQuestoes > 0 ? ((acertos / totalQuestoes) * 100).toFixed(1) : '0.0';
+  const percentualErros = totalQuestoes > 0 ? ((erros / totalQuestoes) * 100).toFixed(1) : '0.0';
 
   // Encontra melhor e pior (baseado no modo de visualização)
   const melhor = radarData.reduce((prev, current) =>
@@ -192,7 +193,7 @@ export function SimulationHistoryHeader({
         >
           <Box>
             <Typography variant="h6" sx={{ opacity: 0.9, mb: 1 }}>
-              {historic.simulado.tipo.nome} - {historic.ano}
+              {historic.simulado.categoria.nome} - {historic.ano}
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <Award className="h-12 w-12" />
