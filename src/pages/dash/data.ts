@@ -14,7 +14,6 @@ import {
   DASH_PROVAS,
   DASH_QUESTION,
   DASH_ROLES,
-  DASH_SIMULADO,
   DASH_SUPPORT,
   DASH_PARTNER_SUPPORT,
   ESSAY_REVIEW_CURSINHO,
@@ -196,13 +195,6 @@ export const adminMenuItems: DashCardMenu[] = [
         text: "Revisão de Redações",
         link: `/dashboard/${ESSAY_REVIEW_LIST}`,
         permissions: [Roles.revisarTodasRedacoes],
-      },
-      {
-        icon: Matematica,
-        alt: "dash_simulado",
-        text: "Simulados",
-        link: `/dashboard/${DASH_SIMULADO}`,
-        permissions: [Roles.criarQuestao],
       },
       {
         icon: Historia,

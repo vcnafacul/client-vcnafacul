@@ -39,7 +39,6 @@ import DashNews from "../pages/dashNews";
 import DashProva from "../pages/dashProvas";
 import DashQuestionNew from "../pages/dashQuestionNew";
 import DashRoles from "../pages/dashRoles";
-import DashSimulado from "../pages/dashSimulado";
 import Forgot from "../pages/forgot";
 import Login from "../pages/login";
 import Logout from "../pages/logout";
@@ -72,7 +71,6 @@ import {
   DASH_PROVAS,
   DASH_QUESTION,
   DASH_ROLES,
-  DASH_SIMULADO,
   DASH_SUPPORT,
   DASH_PARTNER_SUPPORT,
   DECLARED_INTEREST,
@@ -343,16 +341,6 @@ export function PlatformRoutes() {
           }
         />
 
-        <Route
-          path={DASH_SIMULADO}
-          element={
-            <ProtectedRoutePermission
-              permission={data.permissao[Roles.criarSimulado]}
-            >
-              <DashSimulado />
-            </ProtectedRoutePermission>
-          }
-        />
         <Route
           path={PARTNER_PREP_MANAGER}
           element={
