@@ -86,17 +86,18 @@ export function TabClassificacao({
         setLoadingNumeros(true);
         try {
           const numeros = await getMissingNumber(provaId, token);
-          // Incluir o número atual da questão na lista de disponíveis
-          const numerosComAtual = [...numeros, question.numero].sort(
-            (a, b) => a - b
-          );
+          // Incluir o número atual da questão na lista de disponíveis (ignorar se for null)
+          const numerosComAtual = [
+            ...numeros,
+            ...(question.numero != null ? [question.numero] : []),
+          ].sort((a, b) => a - b);
           // Remover duplicatas
           const numerosUnicos = Array.from(new Set(numerosComAtual));
           setNumerosDisponiveis(numerosUnicos);
         } catch (error) {
           console.error("Erro ao buscar números disponíveis:", error);
-          // Em caso de erro, usar apenas o número atual
-          setNumerosDisponiveis([question.numero]);
+          // Em caso de erro, usar apenas o número atual (se existir)
+          setNumerosDisponiveis(question.numero != null ? [question.numero] : []);
         } finally {
           setLoadingNumeros(false);
         }
