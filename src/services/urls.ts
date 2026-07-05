@@ -54,6 +54,7 @@ export const answer = `${simulado}/answer`;
 export const report = `${simulado}/report`;
 
 export const prova = `${mssimulado}/prova`;
+export const provaById = (id: string) => `${prova}/${id}`;
 export const missing = `${prova}/missing`;
 export const questoes = `${mssimulado}/questoes`;
 export const historico = `${mssimulado}/historico`;
