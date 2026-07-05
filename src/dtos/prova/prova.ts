@@ -17,8 +17,7 @@ export interface Prova {
   edicao: Edicao;
   aplicacao: number;
   ano: number;
-  categoria: string;
-  exame: string;
+  categoria: ICategoria;
   nome: string;
   totalQuestao: number;
   totalQuestaoCadastradas: number;
