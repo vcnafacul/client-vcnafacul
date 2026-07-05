@@ -1,7 +1,6 @@
 export enum Roles {
   validarCursinho = "validarCursinho",
   alterarPermissao = "alterarPermissao",
-  criarSimulado = "criarSimulado",
   visualizarQuestao = "visualizarQuestao",
   criarQuestao = "criarQuestao",
   validarQuestao = "validarQuestao",
@@ -39,11 +38,6 @@ export const RolesLabel = [
   {
     value: Roles.alterarPermissao,
     label: "Alterar Permissões",
-    isProjectPermission: true,
-  },
-  {
-    value: Roles.criarSimulado,
-    label: "Visualizar Simulados",
     isProjectPermission: true,
   },
   {

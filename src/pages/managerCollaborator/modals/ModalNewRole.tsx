@@ -31,7 +31,6 @@ const EMPTY_ROLE: CreateRoleDto = {
   roleBase: "",
   validarCursinho: false,
   alterarPermissao: false,
-  criarSimulado: false,
   visualizarQuestao: false,
   criarQuestao: false,
   validarQuestao: false,
