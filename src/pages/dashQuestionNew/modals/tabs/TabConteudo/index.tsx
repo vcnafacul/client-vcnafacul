@@ -5,12 +5,41 @@ import { RichTextRenderer } from "@/components/atoms/richTextRenderer/RichTextRe
 import { AlertCircle, Edit, Loader2, Save, X } from "lucide-react";
 import { PendingImageStore } from "@/utils/pendingImageStore";
 import { lazy, Suspense } from "react";
-import { Controller, UseFormReturn } from "react-hook-form";
+import { Controller, FieldErrors, UseFormReturn } from "react-hook-form";
 import { ConteudoFormData } from "./schema";
 
 const RichTextEditor = lazy(
   () => import("@/components/molecules/richTextEditor/RichTextEditor")
 );
+
+/**
+ * Metadados de cada campo do form: rótulo amigável e em qual aba do modal ele
+ * fica. Usado para mostrar, na barra de ações (aba Enunciado, onde vive o botão
+ * Salvar), exatamente quais campos bloqueiam o save e onde corrigi-los —
+ * inclusive quando o campo inválido está em outra aba (ex.: alternativas vazias
+ * em questões legadas com alternativas em imagem).
+ */
+const FIELD_META: Record<string, { label: string; tab: string }> = {
+  textoQuestao: { label: "Texto da questão", tab: "Enunciado" },
+  pergunta: { label: "Pergunta", tab: "Enunciado" },
+  textoAlternativaA: { label: "Alternativa A", tab: "Alternativas" },
+  textoAlternativaB: { label: "Alternativa B", tab: "Alternativas" },
+  textoAlternativaC: { label: "Alternativa C", tab: "Alternativas" },
+  textoAlternativaD: { label: "Alternativa D", tab: "Alternativas" },
+  textoAlternativaE: { label: "Alternativa E", tab: "Alternativas" },
+  alternativa: { label: "Alternativa correta", tab: "Alternativas" },
+};
+
+function collectFieldErrors(errors: FieldErrors<ConteudoFormData>) {
+  return Object.entries(errors)
+    .filter(([, err]) => err?.message)
+    .map(([field, err]) => ({
+      field,
+      label: FIELD_META[field]?.label ?? field,
+      tab: FIELD_META[field]?.tab,
+      message: String((err as { message?: unknown })?.message ?? "inválido"),
+    }));
+}
 
 interface TabConteudoProps {
   form: UseFormReturn<ConteudoFormData>;
@@ -224,9 +253,23 @@ export function TabConteudo({
                   </p>
                 )}
                 {!isValid && isDirty && (
-                  <p className="text-sm text-red-600 mt-1">
-                    Por favor, corrija os erros antes de salvar
-                  </p>
+                  <div className="mt-1 space-y-1">
+                    <p className="text-sm text-red-600 font-medium flex items-center gap-1">
+                      <AlertCircle className="h-4 w-4" />
+                      Corrija os campos abaixo antes de salvar:
+                    </p>
+                    <ul className="text-sm text-red-600 list-disc list-inside space-y-0.5">
+                      {collectFieldErrors(errors).map((e) => (
+                        <li key={e.field}>
+                          <span className="font-medium">{e.label}</span>
+                          {e.tab && (
+                            <span className="text-red-500"> (aba {e.tab})</span>
+                          )}
+                          : {e.message}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
               </div>
 
