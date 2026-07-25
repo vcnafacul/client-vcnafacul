@@ -21,14 +21,6 @@ function ModalTabTemplateQuestion({
   className,
   footerContent,
 }: ModalTabTemplateQuestionProps) {
-  // Define o número de colunas baseado no número de tabs
-  const gridCols =
-    tabs.length <= 2
-      ? "grid-cols-2"
-      : tabs.length === 3
-      ? "grid-cols-3"
-      : "grid-cols-4";
-
   if (!isOpen) return null;
 
   // Garante que sempre há um defaultValue válido
@@ -43,9 +35,22 @@ function ModalTabTemplateQuestion({
           defaultValue={defaultTabId}
           className="w-full max-w-6xl"
         >
-          <TabsList className={`grid w-full ${gridCols}`}>
+          {/* Colunas geradas dinamicamente: sempre 1 coluna por aba, todas
+              com a mesma largura (minmax(0,1fr) permite encolher). Assim as
+              abas ficam sempre em uma única linha horizontal, diminuindo de
+              tamanho conforme mais abas são adicionadas. */}
+          <TabsList
+            className="grid w-full"
+            style={{
+              gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))`,
+            }}
+          >
             {tabs.map((tab) => (
-              <TabsTrigger key={tab.id} value={tab.id}>
+              <TabsTrigger
+                key={tab.id}
+                value={tab.id}
+                className="min-w-0 px-2 overflow-hidden text-ellipsis"
+              >
                 {tab.label}
               </TabsTrigger>
             ))}
