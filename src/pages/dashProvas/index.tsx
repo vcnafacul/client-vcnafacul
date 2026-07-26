@@ -306,7 +306,7 @@ function DashProva() {
     {
       disabled: !permissao[Roles.alterarPermissao],
       onClick: () => modals.modalManageCategorias.open(),
-      typeStyle: "tertiary",
+      typeStyle: "secondary",
       size: "small",
       children: "Gerenciar Categorias",
     },
