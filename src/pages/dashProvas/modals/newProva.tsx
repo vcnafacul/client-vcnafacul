@@ -71,13 +71,17 @@ function NewProva({ addProva, categorias, handleClose, isOpen }: NewProvaProps) 
     }
   };
 
-  const handleRemoveGabarito = (_: any) => {
+  const handleRemoveGabarito = () => {
     setUploadGabarito(null);
   };
 
-  const handleRemoveFile = (_: any) => {
+  const handleRemoveFile = () => {
     setUploadFile(null);
   };
+
+  const categoria = watch("categoria");
+  const categoriaEscolhida = categorias.find((c) => c._id === categoria);
+  const isCustom = categoriaEscolhida?.custom === true;
 
   const listFieldProva: FormFieldInput[] = [
     {
@@ -88,6 +92,22 @@ function NewProva({ addProva, categorias, handleClose, isOpen }: NewProvaProps) 
       label: "Categoria",
       disabled: false,
     },
+    ...(isCustom
+      ? ([
+          {
+            id: "nome",
+            type: "text",
+            label: "Nome da prova",
+            disabled: false,
+          },
+          {
+            id: "nomeSimulado",
+            type: "text",
+            label: "Nome do simulado",
+            disabled: false,
+          },
+        ] as FormFieldInput[])
+      : []),
     {
       id: "edicao",
       type: "option",
@@ -104,11 +124,15 @@ function NewProva({ addProva, categorias, handleClose, isOpen }: NewProvaProps) 
     },
   ];
 
-  const categoria = watch("categoria");
-
   const create = async (data: any) => {
-    if (!uploadFile) {
-      toast.error("É necessaria fazer o upload do arquivo da prova");
+    if (!isCustom && !uploadFile) {
+      toast.error("Prova PDF é obrigatória para provas ENEM oficiais");
+      return;
+    }
+    if (isCustom && (!data.nome || !data.nomeSimulado)) {
+      toast.error(
+        "Nome da prova e do simulado são obrigatórios para provas personalizadas",
+      );
       return;
     }
 
@@ -129,13 +153,23 @@ function NewProva({ addProva, categorias, handleClose, isOpen }: NewProvaProps) 
     formData.append("edicao", info.edicao);
     formData.append("ano", info.ano.toString());
     formData.append("aplicacao", info.aplicacao.toString());
-    formData.append("file", uploadFile!, `${fileName}.pdf`);
+
+    if (uploadFile) {
+      formData.append("file", uploadFile, `${fileName}.pdf`);
+    }
 
     if (uploadGabarito) {
       formData.append("gabarito", uploadGabarito!, `${fileName}_gabarito.pdf`);
     }
 
-    const title = `${info.ano}_${info.edicao}_${info.aplicacao}`;
+    if (isCustom) {
+      formData.append("nome", data.nome);
+      formData.append("nomeSimulado", data.nomeSimulado);
+    }
+
+    const title = isCustom
+      ? data.nome
+      : `${info.ano}_${info.edicao}_${info.aplicacao}`;
 
     await executeAsync({
       action: () => createProva(formData, token),
@@ -190,6 +224,12 @@ function NewProva({ addProva, categorias, handleClose, isOpen }: NewProvaProps) 
             </div>
           </div>
 
+          {isCustom && (
+            <p className="text-xs text-blue-700 -mt-2">
+              Prova personalizada — nome livre, PDF opcional.
+            </p>
+          )}
+
           <div>
             <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
               <CloudArrowUpIcon className="h-4 w-4" />
@@ -240,7 +280,7 @@ function NewProva({ addProva, categorias, handleClose, isOpen }: NewProvaProps) 
             <Button
               type="submit"
               variant="contained"
-              disabled={!categoria || !uploadFile}
+              disabled={!categoria || (!isCustom && !uploadFile)}
               sx={{
                 backgroundColor: "#3b82f6",
                 "&:hover": {
