@@ -49,6 +49,7 @@ export const mssimulado = `${BASE_URL}/mssimulado`;
 
 export const simulado = `${mssimulado}/simulado`;
 export const categoria = `${mssimulado}/categoria`;
+export const categoriaById = (id: string) => `${categoria}/${id}`;
 export const toAnswer = `${simulado}/toanswer`;
 export const answer = `${simulado}/answer`;
 export const report = `${simulado}/report`;

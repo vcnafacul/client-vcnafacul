@@ -22,6 +22,7 @@ import { Paginate } from "../../utils/paginate";
 import { dashProva } from "./data";
 import NewProva from "./modals/newProva";
 import ShowProva from "./modals/showProva";
+import ManageCategorias from "./modals/manageCategorias";
 import { downloadSyncReportPdf } from "./utils/syncReportPdf";
 import { useModals } from "@/hooks/useModal";
 
@@ -48,6 +49,7 @@ function DashProva() {
   const modals = useModals([
     'modalNewProva',
     'modalShowProva',
+    'modalManageCategorias',
   ]);
 
   const {
@@ -99,6 +101,16 @@ function DashProva() {
         addProva={addProva}
         handleClose={() => modals.modalNewProva.close()}
         isOpen={modals.modalNewProva.isOpen}
+      />
+    );
+  };
+
+  const ModalManageCategorias = () => {
+    return !modals.modalManageCategorias.isOpen ? null : (
+      <ManageCategorias
+        isOpen={modals.modalManageCategorias.isOpen}
+        handleClose={() => modals.modalManageCategorias.close()}
+        onCategoriasChanged={(cats) => setCategorias(cats)}
       />
     );
   };
@@ -292,6 +304,13 @@ function DashProva() {
       children: "Nova Prova",
     },
     {
+      disabled: !permissao[Roles.alterarPermissao],
+      onClick: () => modals.modalManageCategorias.open(),
+      typeStyle: "secondary",
+      size: "small",
+      children: "Gerenciar Categorias",
+    },
+    {
       disabled: !hasActiveFilters,
       onClick: clearFilters,
       typeStyle: "refused",
@@ -331,6 +350,7 @@ function DashProva() {
       <DashCardTemplate key={resetKey} customFilter={[GabaritoCheckbox]} />
       <ModalNewProva />
       <ModalShowProva />
+      <ModalManageCategorias />
     </DashCardContext.Provider>
   );
 }
