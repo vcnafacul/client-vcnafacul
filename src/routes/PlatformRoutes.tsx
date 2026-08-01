@@ -37,6 +37,7 @@ import DashContent from "../pages/dashContent";
 import DashGeo from "../pages/dashGeo";
 import DashNews from "../pages/dashNews";
 import DashProva from "../pages/dashProvas";
+import PartnerPrepProvas from "../pages/partnerPrepProvas";
 import DashQuestionNew from "../pages/dashQuestionNew";
 import DashRoles from "../pages/dashRoles";
 import Forgot from "../pages/forgot";
@@ -95,6 +96,7 @@ import {
   PARTNER_PREP,
   PARTNER_PREP_INSCRIPTION,
   PARTNER_PREP_MANAGER,
+  PARTNER_PROVAS,
   REGISTER_PATH,
   REGISTRATION_MONITOR,
   RESET_PASSWORD_PATH,
@@ -326,6 +328,17 @@ export function PlatformRoutes() {
               permission={data.permissao[Roles.visualizarProvas]}
             >
               <DashProva />
+            </ProtectedRoutePermission>
+          }
+        />
+
+        <Route
+          path={PARTNER_PROVAS}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.visualizarProvasCursinho]}
+            >
+              <PartnerPrepProvas />
             </ProtectedRoutePermission>
           }
         />

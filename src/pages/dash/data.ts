@@ -28,6 +28,7 @@ import {
   PARTNER_CLASS_STUDENTS,
   PARTNER_PREP_INSCRIPTION,
   PARTNER_PREP_MANAGER,
+  PARTNER_PROVAS,
   REGISTRATION_MONITOR,
   SIMULADO,
 } from "../../routes/path";
@@ -130,6 +131,13 @@ export const adminMenuItems: DashCardMenu[] = [
         text: "Formulário",
         link: `/dashboard/${PARTNER_CLASS_FORM}`,
         permissions: [Roles.gerenciarFormulario],
+      },
+      {
+        icon: Fisica,
+        alt: "provas cursinho",
+        text: "Provas",
+        link: `/dashboard/${PARTNER_PROVAS}`,
+        permissions: [Roles.visualizarProvasCursinho],
       },
       {
         icon: FaBook,
