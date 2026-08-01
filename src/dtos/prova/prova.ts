@@ -10,6 +10,8 @@ export interface SimuladoResumo {
   bloqueado: boolean;
   aproveitamento?: number;
   vezesRespondido?: number;
+  disponivelDe?: string | null; // ISO 8601 (UTC)
+  disponivelAte?: string | null;
 }
 
 export interface Prova {
