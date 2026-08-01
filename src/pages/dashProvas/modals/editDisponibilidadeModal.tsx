@@ -62,6 +62,7 @@ function EditDisponibilidadeModal({
       isOpen={isOpen}
       handleClose={onClose}
       className="w-full max-w-md rounded-lg bg-white shadow-xl p-6"
+      style={{ zIndex: 60 }}
     >
       <h3 className="text-lg font-semibold text-gray-900 mb-1">
         Editar janela
