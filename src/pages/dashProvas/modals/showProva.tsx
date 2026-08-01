@@ -393,8 +393,21 @@ const downloadFile = async (filename: string, fileType: string) => {
             simulados={fullProva?.simulados}
             loading={loadingSimulados}
             error={errorSimulados}
+            token={token}
             onVoltar={() => setView('details')}
             onRetry={() => setRetryCount(c => c + 1)}
+            onSimuladoUpdated={(updated) =>
+              setFullProva((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      simulados: prev.simulados?.map((s) =>
+                        s._id === updated._id ? updated : s,
+                      ),
+                    }
+                  : prev,
+              )
+            }
           />
         )}
         </div>
