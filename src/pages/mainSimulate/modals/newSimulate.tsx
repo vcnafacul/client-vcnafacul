@@ -48,9 +48,7 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
         toast.success(`Iniciado Simulado ${res.title}`);
       })
       .catch((error: Error) => {
-        toast.error(
-          `Erro ao buscar simulado ${availableSelected.id} - Error ${error.message}`
-        );
+        toast.error(error.message);
       });
   };
 

@@ -27,7 +27,16 @@ export async function getSimuladoById(id: string, token: string) {
     },
   });
   if (response.status !== 200) {
-    throw new Error(`Erro ao buscar simulado`);
+    const body = await response.json().catch(() => ({}));
+    if (response.status === 403) {
+      const mensagens: Record<string, string> = {
+        antes_da_janela: "Esse simulado ainda não abriu.",
+        depois_da_janela: "Esse simulado não está mais disponível.",
+        bloqueado: "Esse simulado ainda está sendo preparado.",
+      };
+      throw new Error(mensagens[body?.status] || "Simulado indisponível.");
+    }
+    throw new Error("Erro ao buscar simulado");
   }
 
   const res: ISimuladoDTO = await response.json();
