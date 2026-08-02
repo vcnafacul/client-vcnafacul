@@ -57,6 +57,8 @@ const EMPTY_ROLE: CreateRoleDto = {
   supportAgent: false,
   partnerPrepSupportAgent: false,
   editarMateriasFrentes: false,
+  visualizarProvasCursinho: false,
+  cadastrarProvasCursinho: false,
 };
 
 function ModalNewRole({

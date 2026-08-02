@@ -30,4 +30,6 @@ export interface CreateRoleDto {
   supportAgent: boolean;
   partnerPrepSupportAgent: boolean;
   editarMateriasFrentes: boolean;
+  visualizarProvasCursinho: boolean;
+  cadastrarProvasCursinho: boolean;
 }

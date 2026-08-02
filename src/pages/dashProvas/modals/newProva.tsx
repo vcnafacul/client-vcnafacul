@@ -28,9 +28,10 @@ interface NewProvaProps extends ModalProps {
   addProva: (data: Prova) => void;
   categorias: ICategoria[];
   isOpen: boolean;
+  createService?: (data: FormData, token: string) => Promise<Prova>;
 }
 
-function NewProva({ addProva, categorias, handleClose, isOpen }: NewProvaProps) {
+function NewProva({ addProva, categorias, handleClose, isOpen, createService }: NewProvaProps) {
   const { register, handleSubmit, watch } = useForm();
   const {
     data: { token },
@@ -172,7 +173,7 @@ function NewProva({ addProva, categorias, handleClose, isOpen }: NewProvaProps) 
       : `${info.ano}_${info.edicao}_${info.aplicacao}`;
 
     await executeAsync({
-      action: () => createProva(formData, token),
+      action: () => (createService ?? createProva)(formData, token),
       loadingMessage: "Criando Prova...",
       successMessage: `Prova ${title} criada com sucesso`,
       errorMessage: (error) => error.message,

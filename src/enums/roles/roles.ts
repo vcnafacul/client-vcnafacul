@@ -27,6 +27,8 @@ export enum Roles {
   supportAgent = "supportAgent",
   partnerPrepSupportAgent = "partnerPrepSupportAgent",
   editarMateriasFrentes = "editarMateriasFrentes",
+  visualizarProvasCursinho = "visualizarProvasCursinho",
+  cadastrarProvasCursinho = "cadastrarProvasCursinho",
 }
 
 export const RolesLabel = [
