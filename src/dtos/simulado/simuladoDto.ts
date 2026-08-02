@@ -20,12 +20,18 @@ export interface IQuestao {
   imageId: string
 }
 
+export interface IQuestaoNaContainer {
+  questao: IQuestao;
+  numero: number;
+}
+
 export interface ISimuladoDTO {
   _id: string
   nome: string
   descricao: string
   categoria: ICategoria
   questoes: IQuestao[]
+  questoesNovo?: IQuestaoNaContainer[]
   inicio: Date,
   duracao: number,
   createdAt: DateTime,

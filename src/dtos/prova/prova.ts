@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 import { ICategoria } from "../categoria/categoria";
 import { Edicao } from "../../enums/prova/edicao";
+import { IQuestaoNaContainer } from "../simulado/simuladoDto";
 
 export interface SimuladoResumo {
   _id: string;
@@ -29,6 +30,7 @@ export interface Prova {
   gabarito: string;
   enemAreas: string[];
   simulados?: SimuladoResumo[];
+  questoesNovo?: IQuestaoNaContainer[];
 }
 
 export interface CreateProva {
