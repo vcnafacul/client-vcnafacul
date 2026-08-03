@@ -8,6 +8,7 @@ export interface SimuladoResumo {
   nome: string;
   categoria: ICategoria;
   questoes: { _id: string }[];
+  questoesNovo?: IQuestaoNaContainer[];
   bloqueado: boolean;
   aproveitamento?: number;
   vezesRespondido?: number;
