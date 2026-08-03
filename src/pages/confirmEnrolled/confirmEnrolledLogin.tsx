@@ -1,3 +1,4 @@
+import GoogleAuthButton from "@/components/atoms/GoogleAuthButton";
 import LoginForm from "@/components/organisms/loginForm";
 import { loginForm } from "@/pages/login/data";
 import { FORGOT_PASSWORD_PATH } from "@/routes/path";
@@ -19,6 +20,14 @@ export function ConfirmEnrolledLogin() {
         >
           Esqueci minha senha
         </Link>
+      </div>
+      <div className="flex mx-auto px-4 items-center gap-4 my-2 max-w-[500px] w-full">
+        <hr className="flex-1 border-gray-300" />
+        <span className="text-sm text-gray-500">ou</span>
+        <hr className="flex-1 border-gray-300" />
+      </div>
+      <div className="flex mx-auto px-4 max-w-[500px] w-full">
+        <GoogleAuthButton label="Entrar com Google" />
       </div>
     </div>
   );
