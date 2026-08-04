@@ -764,7 +764,7 @@ export function TabClassificacao({
             </div>
 
             {/* Link da Prova */}
-            {question.prova && (
+            {provaSelecionada && (
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-600">
                   Link da Prova
