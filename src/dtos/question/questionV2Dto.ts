@@ -3,10 +3,9 @@ import { Edicao } from "@/enums/prova/edicao";
 
 export interface QuestionCardBase {
   _id: string;
-  prova: string;
   enemArea: string;
   materia: string;
-  numero: number;
+  provasContendo: { provaId: string; provaNome: string; numero: number }[];
   updatedAt: Date;
   status: StatusEnum;
 }

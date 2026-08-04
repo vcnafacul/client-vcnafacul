@@ -59,6 +59,7 @@ export function SimpleQuestionCard({
 }: SimpleQuestionCardProps) {
   const areaColor = getAreaColor(question.enemArea);
   const areaIcon = getAreaIcon(question.enemArea);
+  const provaAtual = question.provasContendo?.[0];
 
   return (
     <Card
@@ -82,7 +83,7 @@ export function SimpleQuestionCard({
           variant="default"
           className="text-base font-bold px-3 py-1 shadow-lg bg-gradient-to-r from-primary to-primary/80"
         >
-          #{question.numero}
+          {provaAtual ? `#${provaAtual.numero}` : "—"}
         </Badge>
       </div>
 
@@ -101,7 +102,7 @@ export function SimpleQuestionCard({
               className="text-lg font-bold text-primary group-hover:text-primary/80 
               transition-colors line-clamp-2 leading-tight"
             >
-              {question.prova}
+              {provaAtual?.provaNome ?? "Sem prova"}
             </CardTitle>
           </div>
         </div>
