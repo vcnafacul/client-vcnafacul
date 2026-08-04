@@ -11,9 +11,14 @@ import { useEffect, useRef, useState } from "react";
 interface TabImagensProps {
   question: Question;
   canEdit?: boolean;
+  provasContendo: { provaId: string; provaNome: string; numero: number }[];
 }
 
-export function TabImagens({ question, canEdit = false }: TabImagensProps) {
+export function TabImagens({
+  question,
+  canEdit = false,
+  provasContendo,
+}: TabImagensProps) {
   const {
     data: { token },
   } = useAuthStore();
@@ -180,7 +185,8 @@ export function TabImagens({ question, canEdit = false }: TabImagensProps) {
                       onClick={() => {
                         const link = document.createElement("a");
                         link.href = imageUrl;
-                        link.download = `questao-${question.numero}.png`;
+                        const numeroDl = provasContendo?.[0]?.numero ?? question.imageId;
+                        link.download = `questao-${numeroDl}.png`;
                         link.click();
                       }}
                     >

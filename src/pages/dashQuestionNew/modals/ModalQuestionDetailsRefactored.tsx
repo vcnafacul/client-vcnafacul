@@ -20,6 +20,7 @@ interface ModalQuestionDetailsRefactoredProps {
   onClose: () => void;
   questionId: string | null;
   infos: any;
+  provasContendo: { provaId: string; provaNome: string; numero: number }[];
 }
 
 export function ModalQuestionDetailsRefactored({
@@ -27,6 +28,7 @@ export function ModalQuestionDetailsRefactored({
   onClose,
   questionId,
   infos,
+  provasContendo,
 }: ModalQuestionDetailsRefactoredProps) {
   const {
     data: { token, permissao },
@@ -145,6 +147,7 @@ export function ModalQuestionDetailsRefactored({
       question={question}
       canEdit={canEdit}
       infos={infos}
+      provasContendo={provasContendo}
       token={token}
       refreshQuestion={refreshQuestion}
     />
@@ -162,6 +165,7 @@ function ModalContent({
   question,
   canEdit,
   infos,
+  provasContendo,
   token,
   refreshQuestion,
 }: {
@@ -170,6 +174,7 @@ function ModalContent({
   question: Question;
   canEdit: boolean;
   infos: any;
+  provasContendo: { provaId: string; provaNome: string; numero: number }[];
   token: string;
   refreshQuestion: () => void;
 }) {
@@ -198,6 +203,7 @@ function ModalContent({
               question={question}
               canEdit={canEdit}
               infos={infos}
+              provasContendo={provasContendo}
               onSaveSuccess={refreshQuestion}
             />
           ),
@@ -243,7 +249,13 @@ function ModalContent({
         {
           label: "Imagens",
           id: "imagens",
-          children: <TabImagens question={question} canEdit={canEdit} />,
+          children: (
+            <TabImagens
+              question={question}
+              canEdit={canEdit}
+              provasContendo={provasContendo}
+            />
+          ),
           handleClose: onClose,
         },
         {

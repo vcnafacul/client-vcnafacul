@@ -22,7 +22,7 @@ export interface QuestionBase {
   frente2: string;
   frente3: string;
   materia: string;
-  numero: number;
+  numero?: number;
   textoQuestao: string;
   pergunta: string;
   textoAlternativaA: string;
@@ -48,10 +48,10 @@ export interface QuestionBase {
 }
 
 export interface QuestionDto extends QuestionBase {
-  prova: Prova;
+  prova?: Prova;
 }
 
 export interface Question extends QuestionBase {
   title: string;
-  prova: string;
+  prova?: string;
 }

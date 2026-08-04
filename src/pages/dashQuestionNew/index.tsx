@@ -35,6 +35,9 @@ function DashQuestionNew() {
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(
     null
   );
+  const [selectedProvasContendo, setSelectedProvasContendo] = useState<
+    { provaId: string; provaNome: string; numero: number }[]
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [totalItems, setTotalItems] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -94,6 +97,8 @@ function DashQuestionNew() {
 
   const handleCardClick = (questionId: string) => {
     setSelectedQuestionId(questionId);
+    const q = questions.find((x) => x._id === questionId);
+    setSelectedProvasContendo(q?.provasContendo ?? []);
     modals.modalQuestionDetails.open();
   };
 
@@ -337,6 +342,7 @@ function DashQuestionNew() {
         onClose={handleCloseModal}
         questionId={selectedQuestionId}
         infos={infos}
+        provasContendo={selectedProvasContendo}
       />
 
       {/* Modal de Criação */}

@@ -9,6 +9,7 @@ import { ClassificacaoFormData, classificacaoSchema } from "./schema";
 
 interface UseClassificacaoFormProps {
   question: Question;
+  provasContendo: { provaId: string; provaNome: string; numero: number }[];
   onSaveSuccess?: () => void;
 }
 
@@ -24,12 +25,15 @@ interface UseClassificacaoFormProps {
  */
 export function useClassificacaoForm({
   question,
+  provasContendo,
   onSaveSuccess,
 }: UseClassificacaoFormProps) {
   const {
     data: { token },
   } = useAuthStore();
   const executeAsync = useToastAsync();
+
+  const provaAtual = provasContendo?.[0];
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -38,8 +42,8 @@ export function useClassificacaoForm({
   const form = useForm<ClassificacaoFormData>({
     resolver: yupResolver(classificacaoSchema),
     defaultValues: {
-      prova: question.prova || "",
-      numero: question.numero ?? null,
+      prova: provaAtual?.provaId ?? "",
+      numero: provaAtual?.numero ?? null,
       enemArea: question.enemArea || "",
       materia: question.materia || "",
       frente1: question.frente1 || "",
@@ -60,8 +64,8 @@ export function useClassificacaoForm({
   useEffect(() => {
     if (question) {
       form.reset({
-        prova: question.prova || "",
-        numero: question.numero ?? null,
+        prova: provaAtual?.provaId ?? "",
+        numero: provaAtual?.numero ?? null,
         enemArea: question.enemArea || "",
         materia: question.materia || "",
         frente1: question.frente1 || "",

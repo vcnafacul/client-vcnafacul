@@ -27,6 +27,7 @@ export interface TabClassificacaoProps {
   question: Question;
   canEdit?: boolean;
   infos?: ClassificacaoInfos;
+  provasContendo: { provaId: string; provaNome: string; numero: number }[];
   onSaveSuccess?: () => void;
 }
 

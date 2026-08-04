@@ -44,6 +44,7 @@ import { useClassificacaoForm } from "./useClassificacaoForm";
 export function TabClassificacao({
   question,
   infos,
+  provasContendo,
   canEdit = false,
   onSaveSuccess,
 }: TabClassificacaoProps) {
@@ -51,6 +52,8 @@ export function TabClassificacao({
     data: { token },
   } = useAuthStore();
   const executeAsync = useToastAsync();
+
+  const provaAtual = provasContendo?.[0];
 
   const {
     form,
@@ -63,7 +66,7 @@ export function TabClassificacao({
     handleEdit,
     handleSave,
     handleCancel,
-  } = useClassificacaoForm({ question, onSaveSuccess });
+  } = useClassificacaoForm({ question, provasContendo, onSaveSuccess });
 
   // Estados para gerenciamento de status
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
@@ -89,7 +92,7 @@ export function TabClassificacao({
           // Incluir o número atual da questão na lista de disponíveis (ignorar se for null)
           const numerosComAtual = [
             ...numeros,
-            ...(question.numero != null ? [question.numero] : []),
+            ...(provaAtual?.numero != null ? [provaAtual.numero] : []),
           ].sort((a, b) => a - b);
           // Remover duplicatas
           const numerosUnicos = Array.from(new Set(numerosComAtual));
@@ -97,7 +100,7 @@ export function TabClassificacao({
         } catch (error) {
           console.error("Erro ao buscar números disponíveis:", error);
           // Em caso de erro, usar apenas o número atual (se existir)
-          setNumerosDisponiveis(question.numero != null ? [question.numero] : []);
+          setNumerosDisponiveis(provaAtual?.numero != null ? [provaAtual.numero] : []);
         } finally {
           setLoadingNumeros(false);
         }
@@ -107,7 +110,7 @@ export function TabClassificacao({
     };
 
     fetchNumerosDisponiveis();
-  }, [provaId, isEditing, token, question.numero]);
+  }, [provaId, isEditing, token, provaAtual?.numero]);
 
   // Buscar prova selecionada
   const provaSelecionada = infos?.provas?.find((p) => p._id === provaId);
@@ -124,7 +127,7 @@ export function TabClassificacao({
   const frentesDisponiveis = materiaSelecionada?.frentes || [];
 
   // Para visualização: buscar dados originais da questão
-  const provaOriginal = infos?.provas?.find((p) => p._id === question.prova);
+  const provaOriginal = infos?.provas?.find((p) => p._id === provaAtual?.provaId);
   const materiaOriginal = infos?.materias?.find(
     (m) => m._id === question.materia
   );
@@ -428,7 +431,7 @@ export function TabClassificacao({
               {!isEditing ? (
                 <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
                   <p className="text-base text-gray-400">
-                    {question.numero ?? "Sem número"}
+                    {provaAtual?.numero ?? "Sem número"}
                   </p>
                 </div>
               ) : loadingNumeros ? (
