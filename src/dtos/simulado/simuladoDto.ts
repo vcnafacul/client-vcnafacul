@@ -16,7 +16,6 @@ export interface IQuestao {
   frente2?: Obj
   frente3?: Obj
   materia: Obj
-  numero: number
   imageId: string
 }
 
@@ -31,7 +30,6 @@ export interface ISimuladoDTO {
   descricao: string
   categoria: ICategoria
   questoes: IQuestao[]
-  questoesNovo?: IQuestaoNaContainer[]
   inicio: Date,
   duracao: number,
   createdAt: DateTime,

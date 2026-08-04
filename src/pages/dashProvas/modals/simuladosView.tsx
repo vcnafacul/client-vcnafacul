@@ -114,7 +114,7 @@ function SimuladosView({
                     {simulado.categoria?.nome ?? "—"}
                   </td>
                   <td className="px-3 py-2 text-gray-600">
-                    {simulado.questoesNovo?.length ?? 0}/
+                    {simulado.questoes?.length ?? 0}/
                     {simulado.categoria?.quantidadeTotalQuestao ?? "-"}
                   </td>
                   <td className="px-3 py-2 text-gray-600">

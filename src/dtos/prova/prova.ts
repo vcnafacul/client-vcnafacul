@@ -7,8 +7,7 @@ export interface SimuladoResumo {
   _id: string;
   nome: string;
   categoria: ICategoria;
-  questoes: { _id: string }[];
-  questoesNovo?: IQuestaoNaContainer[];
+  questoes: IQuestaoNaContainer[];
   bloqueado: boolean;
   aproveitamento?: number;
   vezesRespondido?: number;
@@ -31,7 +30,6 @@ export interface Prova {
   gabarito: string;
   enemAreas: string[];
   simulados?: SimuladoResumo[];
-  questoesNovo?: IQuestaoNaContainer[];
 }
 
 export interface CreateProva {
