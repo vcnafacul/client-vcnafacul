@@ -323,6 +323,7 @@ function DashQuestionNew() {
               key={question._id}
               question={question}
               onClick={handleCardClick}
+              provaFilterId={filters.prova || undefined}
             />
           ))}
         </div>

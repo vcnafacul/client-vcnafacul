@@ -9,6 +9,12 @@ import { StatusIndicator } from "./statusBadge";
 interface SimpleQuestionCardProps {
   question: QuestionCardBase;
   onClick?: (questionId: string) => void;
+  /**
+   * Id da prova filtrada (quando o filtro de prova está ativo). Só nesse caso o
+   * número faz sentido no card — número vive no vínculo prova↔questão, não na
+   * questão. Sem filtro de prova, o card não mostra nada de número.
+   */
+  provaFilterId?: string;
 }
 
 // Função para escolher cor baseada na área
@@ -56,10 +62,20 @@ const getStatusEmoji = (status: StatusEnum): string => {
 export function SimpleQuestionCard({
   question,
   onClick,
+  provaFilterId,
 }: SimpleQuestionCardProps) {
   const areaColor = getAreaColor(question.enemArea);
   const areaIcon = getAreaIcon(question.enemArea);
-  const provaAtual = question.provasContendo?.[0];
+  // Só há "número" quando filtrando por uma prova específica: pega a entry
+  // dessa prova. Sem filtro de prova, não há número a exibir.
+  const provaFiltrada = provaFilterId
+    ? question.provasContendo?.find((p) => p.provaId === provaFilterId)
+    : undefined;
+  // Título: com filtro de prova → nome da prova; sem filtro → atributo neutro
+  // da questão (matéria) para não sugerir uma prova arbitrária.
+  const cardTitle = provaFiltrada
+    ? provaFiltrada.provaNome
+    : question.materia || question.enemArea || "Questão";
 
   return (
     <Card
@@ -77,15 +93,17 @@ export function SimpleQuestionCard({
         style={{ transition: "transform 0.8s ease-in-out" }}
       />
 
-      {/* Badge de número flutuante no canto superior direito */}
-      <div className="absolute -top-2 -right-2 rotate-12 group-hover:rotate-0 transition-transform duration-300 z-10">
-        <Badge
-          variant="default"
-          className="text-base font-bold px-3 py-1 shadow-lg bg-gradient-to-r from-primary to-primary/80"
-        >
-          {provaAtual ? `#${provaAtual.numero}` : "—"}
-        </Badge>
-      </div>
+      {/* Badge de número — só quando filtrando por uma prova específica */}
+      {provaFiltrada && (
+        <div className="absolute -top-2 -right-2 rotate-12 group-hover:rotate-0 transition-transform duration-300 z-10">
+          <Badge
+            variant="default"
+            className="text-base font-bold px-3 py-1 shadow-lg bg-gradient-to-r from-primary to-primary/80"
+          >
+            {`#${provaFiltrada.numero}`}
+          </Badge>
+        </div>
+      )}
 
       <CardHeader className="pb-3 pt-4">
         <div className="flex items-start gap-3">
@@ -99,10 +117,10 @@ export function SimpleQuestionCard({
 
           <div className="flex-1 min-w-0">
             <CardTitle
-              className="text-lg font-bold text-primary group-hover:text-primary/80 
+              className="text-lg font-bold text-primary group-hover:text-primary/80
               transition-colors line-clamp-2 leading-tight"
             >
-              {provaAtual?.provaNome ?? "Sem prova"}
+              {cardTitle}
             </CardTitle>
           </div>
         </div>
@@ -127,21 +145,23 @@ export function SimpleQuestionCard({
           </div>
         </div>
 
-        {/* Matéria */}
-        <div
-          className="flex items-center gap-2 p-2 rounded-lg bg-white/50 backdrop-blur-sm
-          group-hover:bg-white/70 transition-all duration-300"
-        >
-          <div className="p-1.5 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/10">
-            <BookOpenIcon className="h-4 w-4 text-blue-600" />
+        {/* Matéria — só quando o título é a prova (senão a matéria já é o título) */}
+        {provaFiltrada && (
+          <div
+            className="flex items-center gap-2 p-2 rounded-lg bg-white/50 backdrop-blur-sm
+            group-hover:bg-white/70 transition-all duration-300"
+          >
+            <div className="p-1.5 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/10">
+              <BookOpenIcon className="h-4 w-4 text-blue-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-muted-foreground font-medium">Matéria</p>
+              <p className="font-semibold text-sm truncate text-foreground">
+                {question.materia || "Não definida"}
+              </p>
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs text-muted-foreground font-medium">Matéria</p>
-            <p className="font-semibold text-sm truncate text-foreground">
-              {question.materia || "Não definida"}
-            </p>
-          </div>
-        </div>
+        )}
 
         {/* Data de Atualização e Status - Footer */}
         <div
