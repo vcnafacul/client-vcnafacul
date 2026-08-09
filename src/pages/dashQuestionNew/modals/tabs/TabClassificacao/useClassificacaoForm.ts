@@ -9,23 +9,16 @@ import { ClassificacaoFormData, classificacaoSchema } from "./schema";
 
 interface UseClassificacaoFormProps {
   question: Question;
-  provasContendo: { provaId: string; provaNome: string; numero: number }[];
   onSaveSuccess?: () => void;
 }
 
 /**
- * Hook personalizado para gerenciar o formulário de classificação
- *
- * Responsabilidades:
- * - Gerenciar estado do formulário (React Hook Form)
- * - Controlar modo edição/visualização
- * - Validar dados (Yup)
- * - Salvar alterações via API
- * - Feedback de loading e erros
+ * Hook do formulário de classificação.
+ * `provaSelIdx` seleciona qual vínculo (prova+numero) da questão está em foco:
+ * navegável em view, congelado ao entrar em edição.
  */
 export function useClassificacaoForm({
   question,
-  provasContendo,
   onSaveSuccess,
 }: UseClassificacaoFormProps) {
   const {
@@ -33,72 +26,55 @@ export function useClassificacaoForm({
   } = useAuthStore();
   const executeAsync = useToastAsync();
 
-  const provaAtual = provasContendo?.[0];
+  const provasContendo = question.provasContendo ?? [];
 
+  const [provaSelIdx, setProvaSelIdx] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Formulário local da tab com validação Yup
+  const provaSel = provasContendo[provaSelIdx];
+
+  const buildValues = (ps?: { provaId: string; numero: number }) => ({
+    prova: ps?.provaId ?? "",
+    numero: ps?.numero ?? null,
+    enemArea: question.enemArea || "",
+    materia: question.materia || "",
+    frente1: question.frente1 || "",
+    frente2: question.frente2 || "",
+    frente3: question.frente3 || "",
+    provaClassification: question.provaClassification || false,
+    subjectClassification: question.subjectClassification || false,
+    reported: question.reported || false,
+  });
+
   const form = useForm<ClassificacaoFormData>({
     resolver: yupResolver(classificacaoSchema),
-    defaultValues: {
-      prova: provaAtual?.provaId ?? "",
-      numero: provaAtual?.numero ?? null,
-      enemArea: question.enemArea || "",
-      materia: question.materia || "",
-      frente1: question.frente1 || "",
-      frente2: question.frente2 || "",
-      frente3: question.frente3 || "",
-      provaClassification: question.provaClassification || false,
-      subjectClassification: question.subjectClassification || false,
-      reported: question.reported || false,
-    },
-    mode: "onChange", // Valida em tempo real
+    defaultValues: buildValues(provasContendo[0]),
+    mode: "onChange",
   });
 
   const isDirty = form.formState.isDirty;
   const isValid = form.formState.isValid;
   const errors = form.formState.errors;
 
-  // Resetar formulário quando a questão mudar (ex: trocar de questão)
+  // Ao trocar de questão: volta pro primeiro vínculo e sai da edição.
   useEffect(() => {
-    if (question) {
-      form.reset({
-        prova: provaAtual?.provaId ?? "",
-        numero: provaAtual?.numero ?? null,
-        enemArea: question.enemArea || "",
-        materia: question.materia || "",
-        frente1: question.frente1 || "",
-        frente2: question.frente2 || "",
-        frente3: question.frente3 || "",
-        provaClassification: question.provaClassification || false,
-        subjectClassification: question.subjectClassification || false,
-        reported: question.reported || false,
-      });
-      setIsEditing(false);
-    }
-  }, [question._id]); // Reage apenas quando o ID muda
+    setProvaSelIdx(0);
+    form.reset(buildValues(question.provasContendo?.[0]));
+    setIsEditing(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question._id]);
 
-  /**
-   * Ativar modo edição
-   */
   const handleEdit = () => {
+    // Congela a prova em foco no form e entra em edição.
+    form.reset(buildValues(provaSel));
     setIsEditing(true);
   };
 
-  /**
-   * Salvar alterações da classificação
-   * Envia apenas os dados desta tab para a API
-   */
   const handleSave = async () => {
-    if (!isValid) {
-      return;
-    }
-
+    if (!isValid) return;
     setIsSaving(true);
-
     const formData = form.getValues();
-
     try {
       await executeAsync({
         action: () =>
@@ -123,47 +99,34 @@ export function useClassificacaoForm({
         errorMessage: "Erro ao salvar classificação",
         onFinally: () => setIsSaving(false),
       });
-
-      // Atualizar baseline do formulário após salvar
       form.reset(formData);
       setIsEditing(false);
-
-      // Callback opcional para recarregar dados
-      if (onSaveSuccess) {
-        onSaveSuccess();
-      }
+      if (onSaveSuccess) onSaveSuccess();
     } catch (error) {
       console.error("Erro ao salvar classificação:", error);
     }
   };
 
-  /**
-   * Cancelar edição
-   * Volta aos valores originais
-   */
   const handleCancel = () => {
-    form.reset(); // Reseta para os valores do defaultValues
+    form.reset(buildValues(provaSel));
     setIsEditing(false);
   };
 
   return {
-    // Formulário completo
     form,
-
-    // Métodos individuais (para compatibilidade)
     register: form.register,
     control: form.control,
     watch: form.watch,
     setValue: form.setValue,
-
-    // Estado
+    provasContendo,
+    provaSel,
+    provaSelIdx,
+    setProvaSelIdx,
     isEditing,
     isSaving,
     isDirty,
     isValid,
     errors,
-
-    // Ações
     handleEdit,
     handleSave,
     handleCancel,
