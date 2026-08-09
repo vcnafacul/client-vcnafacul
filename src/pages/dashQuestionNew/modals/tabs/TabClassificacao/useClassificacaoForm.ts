@@ -31,6 +31,9 @@ export function useClassificacaoForm({
   const [provaSelIdx, setProvaSelIdx] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [editingProva, setEditingProva] = useState<
+    { provaId: string; numero: number } | undefined
+  >();
 
   const provaSel = provasContendo[provaSelIdx];
 
@@ -62,11 +65,14 @@ export function useClassificacaoForm({
     setProvaSelIdx(0);
     form.reset(buildValues(question.provasContendo?.[0]));
     setIsEditing(false);
+    // question._id é o sinal canônico de "trocou de questão". Valores dos campos
+    // da mesma questão sempre chegam juntos num objeto novo (refreshQuestion), e
+    // handleSave já reseta o baseline do form pós-save — logo não dependemos deles aqui.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question._id]);
 
   const handleEdit = () => {
-    // Congela a prova em foco no form e entra em edição.
+    setEditingProva(provaSel);
     form.reset(buildValues(provaSel));
     setIsEditing(true);
   };
@@ -108,16 +114,13 @@ export function useClassificacaoForm({
   };
 
   const handleCancel = () => {
-    form.reset(buildValues(provaSel));
+    form.reset(buildValues(editingProva));
     setIsEditing(false);
   };
 
   return {
     form,
-    register: form.register,
     control: form.control,
-    watch: form.watch,
-    setValue: form.setValue,
     provasContendo,
     provaSel,
     provaSelIdx,
