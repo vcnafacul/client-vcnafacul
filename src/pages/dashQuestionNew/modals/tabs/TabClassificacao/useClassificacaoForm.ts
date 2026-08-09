@@ -28,7 +28,16 @@ export function useClassificacaoForm({
 
   const provasContendo = question.provasContendo ?? [];
 
-  const [provaSelIdx, setProvaSelIdx] = useState(0);
+  // Índice do vínculo em foco por default: o da provaBase (prova de origem)
+  // casado com provasContendo; se não houver provaBase (ou não casar), o primeiro.
+  const provaBaseIdx = question.provaBase
+    ? Math.max(
+        0,
+        provasContendo.findIndex((p) => p.provaId === question.provaBase)
+      )
+    : 0;
+
+  const [provaSelIdx, setProvaSelIdx] = useState(provaBaseIdx);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [editingProva, setEditingProva] = useState<
@@ -52,7 +61,7 @@ export function useClassificacaoForm({
 
   const form = useForm<ClassificacaoFormData>({
     resolver: yupResolver(classificacaoSchema),
-    defaultValues: buildValues(provasContendo[0]),
+    defaultValues: buildValues(provasContendo[provaBaseIdx]),
     mode: "onChange",
   });
 
@@ -60,10 +69,11 @@ export function useClassificacaoForm({
   const isValid = form.formState.isValid;
   const errors = form.formState.errors;
 
-  // Ao trocar de questão: volta pro primeiro vínculo e sai da edição.
+  // Ao trocar de questão: foca no vínculo da provaBase (fallback primeiro) e
+  // sai da edição.
   useEffect(() => {
-    setProvaSelIdx(0);
-    form.reset(buildValues(question.provasContendo?.[0]));
+    setProvaSelIdx(provaBaseIdx);
+    form.reset(buildValues(provasContendo[provaBaseIdx]));
     setIsEditing(false);
     // question._id é o sinal canônico de "trocou de questão". Valores dos campos
     // da mesma questão sempre chegam juntos num objeto novo (refreshQuestion), e

@@ -46,6 +46,8 @@ export interface QuestionBase {
   contentFormat?: "plain" | "markdown";
   assets?: string[];
   provasContendo?: { provaId: string; provaNome: string; numero: number }[];
+  /** Ponteiro pra prova de origem: casa com uma entry de provasContendo. */
+  provaBase?: string;
 }
 
 export interface QuestionDto extends QuestionBase {

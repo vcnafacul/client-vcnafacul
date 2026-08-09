@@ -66,15 +66,18 @@ export function SimpleQuestionCard({
 }: SimpleQuestionCardProps) {
   const areaColor = getAreaColor(question.enemArea);
   const areaIcon = getAreaIcon(question.enemArea);
-  // Só há "número" quando filtrando por uma prova específica: pega a entry
-  // dessa prova. Sem filtro de prova, não há número a exibir.
-  const provaFiltrada = provaFilterId
+  // Prova "em foco" (de onde sai número + nome): se há filtro de prova, a prova
+  // filtrada; senão, a provaBase da questão casada com provasContendo. O número
+  // vem sempre do relacionamento (provasContendo), nunca da questão.
+  const provaEmFoco = provaFilterId
     ? question.provasContendo?.find((p) => p.provaId === provaFilterId)
-    : undefined;
-  // Título: com filtro de prova → nome da prova; sem filtro → atributo neutro
-  // da questão (matéria) para não sugerir uma prova arbitrária.
-  const cardTitle = provaFiltrada
-    ? provaFiltrada.provaNome
+    : question.provaBase
+      ? question.provasContendo?.find((p) => p.provaId === question.provaBase)
+      : undefined;
+  // Título: com prova em foco → nome da prova; senão → atributo neutro da
+  // questão (matéria) para não sugerir uma prova arbitrária.
+  const cardTitle = provaEmFoco
+    ? provaEmFoco.provaNome
     : question.materia || question.enemArea || "Questão";
 
   return (
@@ -93,14 +96,14 @@ export function SimpleQuestionCard({
         style={{ transition: "transform 0.8s ease-in-out" }}
       />
 
-      {/* Badge de número — só quando filtrando por uma prova específica */}
-      {provaFiltrada && (
+      {/* Badge de número — só quando há prova em foco (filtro ou provaBase) */}
+      {provaEmFoco && (
         <div className="absolute -top-2 -right-2 rotate-12 group-hover:rotate-0 transition-transform duration-300 z-10">
           <Badge
             variant="default"
             className="text-base font-bold px-3 py-1 shadow-lg bg-gradient-to-r from-primary to-primary/80"
           >
-            {`#${provaFiltrada.numero}`}
+            {`#${provaEmFoco.numero}`}
           </Badge>
         </div>
       )}
@@ -146,7 +149,7 @@ export function SimpleQuestionCard({
         </div>
 
         {/* Matéria — só quando o título é a prova (senão a matéria já é o título) */}
-        {provaFiltrada && (
+        {provaEmFoco && (
           <div
             className="flex items-center gap-2 p-2 rounded-lg bg-white/50 backdrop-blur-sm
             group-hover:bg-white/70 transition-all duration-300"

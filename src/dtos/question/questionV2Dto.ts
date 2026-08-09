@@ -6,6 +6,8 @@ export interface QuestionCardBase {
   enemArea: string;
   materia: string;
   provasContendo: { provaId: string; provaNome: string; numero: number }[];
+  /** Ponteiro pra prova de origem: casa com uma entry de provasContendo. */
+  provaBase?: string;
   updatedAt: Date;
   status: StatusEnum;
 }
