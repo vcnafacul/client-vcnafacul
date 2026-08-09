@@ -45,6 +45,7 @@ export interface QuestionBase {
   reported: boolean;
   contentFormat?: "plain" | "markdown";
   assets?: string[];
+  provasContendo?: { provaId: string; provaNome: string; numero: number }[];
 }
 
 export interface QuestionDto extends QuestionBase {
