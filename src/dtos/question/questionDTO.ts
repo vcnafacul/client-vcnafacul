@@ -47,7 +47,7 @@ export interface QuestionBase {
   assets?: string[];
   provasContendo?: { provaId: string; provaNome: string; numero: number }[];
   /** Ponteiro pra prova de origem: casa com uma entry de provasContendo. */
-  provaBase?: string;
+  provaBase?: string | null;
 }
 
 export interface QuestionDto extends QuestionBase {
