@@ -118,8 +118,8 @@ export function useClassificacaoForm({
       form.reset(formData);
       setIsEditing(false);
       if (onSaveSuccess) onSaveSuccess();
-    } catch (error) {
-      console.error("Erro ao salvar classificação:", error);
+    } catch {
+      // Erro já exibido ao usuário via toast (useToastAsync).
     }
   };
 

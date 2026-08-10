@@ -82,31 +82,31 @@ export function TabClassificacao({
   const enemArea = form.watch("enemArea");
   const materiaId = form.watch("materia");
 
-  // Buscar números disponíveis quando prova for selecionada (apenas no modo edição)
+  // Buscar números disponíveis (só no modo edição). provaSel.numero é lido
+  // dentro do effect — não é dependência do trigger (não muda a lista da API).
   useEffect(() => {
+    if (!isEditing) return;
     const fetchNumerosDisponiveis = async () => {
-      if (provaSel?.provaId && isEditing) {
-        setLoadingNumeros(true);
-        try {
-          const numeros = await getMissingNumber(provaSel.provaId, token);
-          const numerosComAtual = [
-            ...numeros,
-            ...(provaSel?.numero != null ? [provaSel.numero] : []),
-          ].sort((a, b) => a - b);
-          const numerosUnicos = Array.from(new Set(numerosComAtual));
-          setNumerosDisponiveis(numerosUnicos);
-        } catch (error) {
-          console.error("Erro ao buscar números disponíveis:", error);
-          setNumerosDisponiveis(provaSel?.numero != null ? [provaSel.numero] : []);
-        } finally {
-          setLoadingNumeros(false);
-        }
-      } else {
+      if (!provaSel?.provaId) {
         setNumerosDisponiveis([]);
+        return;
+      }
+      setLoadingNumeros(true);
+      try {
+        const numeros = await getMissingNumber(provaSel.provaId, token);
+        const numerosComAtual = [
+          ...numeros,
+          ...(provaSel?.numero != null ? [provaSel.numero] : []),
+        ].sort((a, b) => a - b);
+        setNumerosDisponiveis(Array.from(new Set(numerosComAtual)));
+      } catch {
+        setNumerosDisponiveis(provaSel?.numero != null ? [provaSel.numero] : []);
+      } finally {
+        setLoadingNumeros(false);
       }
     };
     fetchNumerosDisponiveis();
-  }, [provaSel?.provaId, isEditing, token, provaSel?.numero]);
+  }, [provaSel?.provaId, isEditing, token]);
 
   // Buscar prova selecionada (derivada de provaSel)
   const provaSelecionada = infos?.provas?.find((p) => p._id === provaSel?.provaId);
