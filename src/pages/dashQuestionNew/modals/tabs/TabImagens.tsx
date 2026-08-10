@@ -183,7 +183,14 @@ export function TabImagens({
                       onClick={() => {
                         const link = document.createElement("a");
                         link.href = imageUrl;
-                        const numeroDl = question.provasContendo?.[0]?.numero ?? question.imageId;
+                        // Número da provaBase (prova de origem); fallback: 1ª prova, senão imageId.
+                        const numeroDl =
+                          (question.provaBase
+                            ? question.provasContendo?.find(
+                                (p) => p.provaId === question.provaBase,
+                              )?.numero
+                            : question.provasContendo?.[0]?.numero) ??
+                          question.imageId;
                         link.download = `questao-${numeroDl}.png`;
                         link.click();
                       }}
