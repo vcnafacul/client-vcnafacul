@@ -5,22 +5,6 @@ import { Question } from "@/dtos/question/questionDTO";
  */
 
 /**
- * Dados do formulário de classificação
- */
-export interface ClassificacaoFormData {
-  prova: string;
-  numero: number;
-  enemArea: string;
-  materia: string;
-  frente1: string;
-  frente2?: string;
-  frente3?: string;
-  provaClassification: boolean;
-  subjectClassification: boolean;
-  reported: boolean;
-}
-
-/**
  * Props do componente TabClassificacao
  */
 export interface TabClassificacaoProps {

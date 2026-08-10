@@ -3,10 +3,12 @@ import { Edicao } from "@/enums/prova/edicao";
 
 export interface QuestionCardBase {
   _id: string;
-  prova: string;
   enemArea: string;
   materia: string;
-  numero: number;
+  /** Pode vir ausente em questões legadas (pré-backfill 0002). */
+  provasContendo?: { provaId: string; provaNome: string; numero: number }[];
+  /** Ponteiro pra prova de origem: casa com uma entry de provasContendo. */
+  provaBase?: string | null;
   updatedAt: Date;
   status: StatusEnum;
 }

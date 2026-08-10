@@ -55,6 +55,10 @@ export function TabClassificacao({
   const {
     form,
     control,
+    provasContendo,
+    provaSel,
+    provaSelIdx,
+    setProvaSelIdx,
     isEditing,
     isSaving,
     isDirty,
@@ -75,42 +79,37 @@ export function TabClassificacao({
   const [loadingNumeros, setLoadingNumeros] = useState(false);
 
   // Observar valores do formulário para cascata
-  const provaId = form.watch("prova");
   const enemArea = form.watch("enemArea");
   const materiaId = form.watch("materia");
 
-  // Buscar números disponíveis quando prova for selecionada (apenas no modo edição)
+  // Buscar números disponíveis (só no modo edição). provaSel.numero é lido
+  // dentro do effect — não é dependência do trigger (não muda a lista da API).
   useEffect(() => {
+    if (!isEditing) return;
     const fetchNumerosDisponiveis = async () => {
-      if (provaId && isEditing) {
-        setLoadingNumeros(true);
-        try {
-          const numeros = await getMissingNumber(provaId, token);
-          // Incluir o número atual da questão na lista de disponíveis (ignorar se for null)
-          const numerosComAtual = [
-            ...numeros,
-            ...(question.numero != null ? [question.numero] : []),
-          ].sort((a, b) => a - b);
-          // Remover duplicatas
-          const numerosUnicos = Array.from(new Set(numerosComAtual));
-          setNumerosDisponiveis(numerosUnicos);
-        } catch (error) {
-          console.error("Erro ao buscar números disponíveis:", error);
-          // Em caso de erro, usar apenas o número atual (se existir)
-          setNumerosDisponiveis(question.numero != null ? [question.numero] : []);
-        } finally {
-          setLoadingNumeros(false);
-        }
-      } else {
+      if (!provaSel?.provaId) {
         setNumerosDisponiveis([]);
+        return;
+      }
+      setLoadingNumeros(true);
+      try {
+        const numeros = await getMissingNumber(provaSel.provaId, token);
+        const numerosComAtual = [
+          ...numeros,
+          ...(provaSel?.numero != null ? [provaSel.numero] : []),
+        ].sort((a, b) => a - b);
+        setNumerosDisponiveis(Array.from(new Set(numerosComAtual)));
+      } catch {
+        setNumerosDisponiveis(provaSel?.numero != null ? [provaSel.numero] : []);
+      } finally {
+        setLoadingNumeros(false);
       }
     };
-
     fetchNumerosDisponiveis();
-  }, [provaId, isEditing, token, question.numero]);
+  }, [provaSel?.provaId, isEditing, token]);
 
-  // Buscar prova selecionada
-  const provaSelecionada = infos?.provas?.find((p) => p._id === provaId);
+  // Buscar prova selecionada (derivada de provaSel)
+  const provaSelecionada = infos?.provas?.find((p) => p._id === provaSel?.provaId);
 
   // Filtrar áreas ENEM baseado na prova selecionada
   const enemAreasDisponiveis = provaSelecionada?.enemAreas || [];
@@ -123,8 +122,7 @@ export function TabClassificacao({
   const materiaSelecionada = infos?.materias?.find((m) => m._id === materiaId);
   const frentesDisponiveis = materiaSelecionada?.frentes || [];
 
-  // Para visualização: buscar dados originais da questão
-  const provaOriginal = infos?.provas?.find((p) => p._id === question.prova);
+  // Para visualização: buscar matéria original da questão
   const materiaOriginal = infos?.materias?.find(
     (m) => m._id === question.materia
   );
@@ -365,45 +363,25 @@ export function TabClassificacao({
                 Prova *
               </label>
               {!isEditing ? (
-                <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
-                  <p className="text-base">{provaOriginal?.nome}</p>
-                </div>
+                <Select
+                  value={String(provaSelIdx)}
+                  onValueChange={(value) => setProvaSelIdx(Number(value))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione a prova" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {provasContendo.map((p, i) => (
+                      <SelectItem key={p.provaId} value={String(i)}>
+                        {p.provaNome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               ) : (
-                <Controller
-                  name="prova"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      value={field.value}
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                        // Resetar campos dependentes quando prova muda
-                        form.setValue("enemArea", "");
-                        form.setValue("materia", "");
-                        form.setValue("frente1", "");
-                      }}
-                    >
-                      <SelectTrigger
-                        className={errors.prova ? "border-red-500" : ""}
-                      >
-                        <SelectValue placeholder="Selecione a prova" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {infos?.provas?.map((prova) => (
-                          <SelectItem key={prova._id} value={prova._id}>
-                            {prova.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              )}
-              {errors.prova && (
-                <p className="text-sm text-red-600 flex items-center gap-1">
-                  <AlertCircle className="h-3 w-3" />
-                  {errors.prova.message}
-                </p>
+                <div className="p-3 bg-gray-100 rounded-md border border-gray-200 opacity-70">
+                  <p className="text-base">{provaSel?.provaNome ?? "Sem prova"}</p>
+                </div>
               )}
             </div>
 
@@ -413,22 +391,11 @@ export function TabClassificacao({
                 <label className="text-sm font-semibold text-gray-600">
                   Número da Questão
                 </label>
-                {isEditing && form.watch("numero") != null && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => form.setValue("numero", null, { shouldDirty: true })}
-                    className="h-6 px-2 text-xs text-red-600 border-red-300 hover:text-red-700 hover:bg-red-50"
-                  >
-                    Remover número
-                  </Button>
-                )}
               </div>
               {!isEditing ? (
                 <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
                   <p className="text-base text-gray-400">
-                    {question.numero ?? "Sem número"}
+                    {provaSel?.numero ?? "Sem número"}
                   </p>
                 </div>
               ) : loadingNumeros ? (
@@ -438,7 +405,7 @@ export function TabClassificacao({
                     Carregando números disponíveis...
                   </span>
                 </div>
-              ) : numerosDisponiveis.length === 0 && provaId ? (
+              ) : numerosDisponiveis.length === 0 && provaSel?.provaId ? (
                 <div className="p-3 bg-amber-50 border border-amber-200 rounded-md">
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
@@ -460,14 +427,14 @@ export function TabClassificacao({
                     <Select
                       value={field.value != null ? field.value.toString() : undefined}
                       onValueChange={(value) => field.onChange(parseInt(value))}
-                      disabled={!provaId || numerosDisponiveis.length === 0}
+                      disabled={numerosDisponiveis.length === 0}
                     >
                       <SelectTrigger
                         className={errors.numero ? "border-red-500" : ""}
                       >
                         <SelectValue
                           placeholder={
-                            !provaId
+                            !provaSel?.provaId
                               ? "Selecione uma prova primeiro"
                               : "Selecione o número"
                           }
@@ -516,14 +483,14 @@ export function TabClassificacao({
                         form.setValue("materia", "");
                         form.setValue("frente1", "");
                       }}
-                      disabled={!provaId || enemAreasDisponiveis.length === 0}
+                      disabled={!provaSel?.provaId || enemAreasDisponiveis.length === 0}
                     >
                       <SelectTrigger
                         className={errors.enemArea ? "border-red-500" : ""}
                       >
                         <SelectValue
                           placeholder={
-                            !provaId
+                            !provaSel?.provaId
                               ? "Selecione uma prova primeiro"
                               : "Selecione a área"
                           }
@@ -546,7 +513,7 @@ export function TabClassificacao({
                   {errors.enemArea.message}
                 </p>
               )}
-              {isEditing && !provaId && (
+              {isEditing && !provaSel?.provaId && (
                 <p className="text-sm text-gray-500 flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   Selecione uma prova primeiro
@@ -761,7 +728,7 @@ export function TabClassificacao({
             </div>
 
             {/* Link da Prova */}
-            {question.prova && (
+            {provaSelecionada && (
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-600">
                   Link da Prova

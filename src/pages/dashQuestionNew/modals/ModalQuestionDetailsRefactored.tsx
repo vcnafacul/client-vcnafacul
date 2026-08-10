@@ -243,7 +243,9 @@ function ModalContent({
         {
           label: "Imagens",
           id: "imagens",
-          children: <TabImagens question={question} canEdit={canEdit} />,
+          children: (
+            <TabImagens question={question} canEdit={canEdit} />
+          ),
           handleClose: onClose,
         },
         {

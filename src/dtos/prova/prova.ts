@@ -1,12 +1,13 @@
 import { DateTime } from "luxon";
 import { ICategoria } from "../categoria/categoria";
 import { Edicao } from "../../enums/prova/edicao";
+import { IQuestaoNaContainer } from "../simulado/simuladoDto";
 
 export interface SimuladoResumo {
   _id: string;
   nome: string;
   categoria: ICategoria;
-  questoes: { _id: string }[];
+  questoes: IQuestaoNaContainer[];
   bloqueado: boolean;
   aproveitamento?: number;
   vezesRespondido?: number;

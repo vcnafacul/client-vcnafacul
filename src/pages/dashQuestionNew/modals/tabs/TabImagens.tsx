@@ -13,7 +13,10 @@ interface TabImagensProps {
   canEdit?: boolean;
 }
 
-export function TabImagens({ question, canEdit = false }: TabImagensProps) {
+export function TabImagens({
+  question,
+  canEdit = false,
+}: TabImagensProps) {
   const {
     data: { token },
   } = useAuthStore();
@@ -180,7 +183,15 @@ export function TabImagens({ question, canEdit = false }: TabImagensProps) {
                       onClick={() => {
                         const link = document.createElement("a");
                         link.href = imageUrl;
-                        link.download = `questao-${question.numero}.png`;
+                        // Número da provaBase (prova de origem); fallback: 1ª prova, senão imageId.
+                        const numeroDl =
+                          (question.provaBase
+                            ? question.provasContendo?.find(
+                                (p) => p.provaId === question.provaBase,
+                              )?.numero
+                            : question.provasContendo?.[0]?.numero) ??
+                          question.imageId;
+                        link.download = `questao-${numeroDl}.png`;
                         link.click();
                       }}
                     >

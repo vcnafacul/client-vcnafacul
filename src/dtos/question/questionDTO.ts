@@ -22,7 +22,7 @@ export interface QuestionBase {
   frente2: string;
   frente3: string;
   materia: string;
-  numero: number;
+  numero?: number;
   textoQuestao: string;
   pergunta: string;
   textoAlternativaA: string;
@@ -45,13 +45,16 @@ export interface QuestionBase {
   reported: boolean;
   contentFormat?: "plain" | "markdown";
   assets?: string[];
+  provasContendo?: { provaId: string; provaNome: string; numero: number }[];
+  /** Ponteiro pra prova de origem: casa com uma entry de provasContendo. */
+  provaBase?: string | null;
 }
 
 export interface QuestionDto extends QuestionBase {
-  prova: Prova;
+  prova?: Prova;
 }
 
 export interface Question extends QuestionBase {
   title: string;
-  prova: string;
+  prova?: string;
 }
