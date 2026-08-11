@@ -1,5 +1,8 @@
 import { Question } from "@/dtos/question/questionDTO";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { addQuestionToProva } from "@/services/question/addQuestionToProva";
+import { removeQuestionFromProva } from "@/services/question/removeQuestionFromProva";
+import { setProvaBase as setProvaBaseService } from "@/services/question/setProvaBase";
 import { updateClassification } from "@/services/question/updateClassification";
 import { useAuthStore } from "@/store/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -128,6 +131,46 @@ export function useClassificacaoForm({
     setIsEditing(false);
   };
 
+  const handleAddToProva = async (provaId: string, numero: number) => {
+    await executeAsync({
+      action: () => addQuestionToProva(question._id, provaId, numero, token),
+      loadingMessage: "Adicionando à prova...",
+      successMessage: "✅ Questão adicionada à prova!",
+      errorMessage: "Erro ao adicionar à prova",
+      onSuccess: () => onSaveSuccess?.(),
+    });
+  };
+
+  const handleRemoveFromProva = async () => {
+    if (!provaSel?.provaId) return;
+    if (!confirm(`Remover a questão da prova "${provaSel.provaNome}"?`)) return;
+    await executeAsync({
+      action: () =>
+        removeQuestionFromProva(question._id, provaSel.provaId, token),
+      loadingMessage: "Removendo da prova...",
+      successMessage: "✅ Questão removida da prova!",
+      errorMessage: "Erro ao remover da prova",
+      onSuccess: () => {
+        setIsEditing(false);
+        onSaveSuccess?.();
+      },
+    });
+  };
+
+  const handleSetProvaBase = async () => {
+    if (!provaSel?.provaId) return;
+    await executeAsync({
+      action: () => setProvaBaseService(question._id, provaSel.provaId, token),
+      loadingMessage: "Definindo prova de origem...",
+      successMessage: "✅ Prova de origem atualizada!",
+      errorMessage: "Erro ao definir prova de origem",
+      onSuccess: () => {
+        setIsEditing(false);
+        onSaveSuccess?.();
+      },
+    });
+  };
+
   return {
     form,
     control: form.control,
@@ -143,5 +186,8 @@ export function useClassificacaoForm({
     handleEdit,
     handleSave,
     handleCancel,
+    handleAddToProva,
+    handleRemoveFromProva,
+    handleSetProvaBase,
   };
 }

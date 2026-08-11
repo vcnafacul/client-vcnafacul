@@ -30,6 +30,7 @@ import { Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import { TabClassificacaoProps } from "./types";
 import { useClassificacaoForm } from "./useClassificacaoForm";
+import { ModalAddQuestionToProva } from "./ModalAddQuestionToProva";
 
 /**
  * Tab de Classificação - Modo View e Edit
@@ -67,10 +68,14 @@ export function TabClassificacao({
     handleEdit,
     handleSave,
     handleCancel,
+    handleAddToProva,
+    handleRemoveFromProva,
+    handleSetProvaBase,
   } = useClassificacaoForm({ question, onSaveSuccess });
 
   // Estados para gerenciamento de status
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [rejectionMessage, setRejectionMessage] = useState("");
   const [showRejectionInput, setShowRejectionInput] = useState(false);
 
@@ -348,10 +353,19 @@ export function TabClassificacao({
 
           {/* Botão Editar (aparece só no modo visualização) */}
           {!isEditing && canEdit && (
-            <Button size="sm" variant="outline" onClick={handleEdit}>
-              <Edit className="h-4 w-4 mr-2" />
-              Editar Classificação
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setShowAddModal(true)}
+              >
+                Adicionar em uma prova
+              </Button>
+              <Button size="sm" variant="outline" onClick={handleEdit}>
+                <Edit className="h-4 w-4 mr-2" />
+                Editar Classificação
+              </Button>
+            </div>
           )}
         </CardHeader>
 
@@ -845,6 +859,23 @@ export function TabClassificacao({
 
               <div className="flex gap-2">
                 <Button
+                  onClick={handleRemoveFromProva}
+                  disabled={isSaving}
+                  variant="outline"
+                  size="sm"
+                  className="text-red border-red"
+                >
+                  Remover da prova
+                </Button>
+                <Button
+                  onClick={handleSetProvaBase}
+                  disabled={isSaving || provaSel?.provaId === question.provaBase}
+                  variant="outline"
+                  size="sm"
+                >
+                  Transformar em provaBase
+                </Button>
+                <Button
                   onClick={handleCancel}
                   disabled={isSaving}
                   variant="outline"
@@ -876,6 +907,15 @@ export function TabClassificacao({
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {showAddModal && (
+        <ModalAddQuestionToProva
+          provas={infos?.provas ?? []}
+          provaIdsJaVinculadas={provasContendo.map((p) => p.provaId)}
+          onConfirm={handleAddToProva}
+          onClose={() => setShowAddModal(false)}
+        />
       )}
     </div>
   );
