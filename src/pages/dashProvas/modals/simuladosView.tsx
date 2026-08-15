@@ -1,7 +1,13 @@
-import { ArrowLeftIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowLeftIcon,
+  ArrowDownTrayIcon,
+  PencilSquareIcon,
+} from "@heroicons/react/24/outline";
 import { Button } from "@mui/material";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { SimuladoResumo } from "../../../dtos/prova/prova";
+import { baixarCartao } from "../../../services/cartaoResposta/baixarCartao";
 import { formatDateTime } from "../../../utils/date";
 import { getStatus, isSemJanela } from "../../../utils/simuladoAvailability";
 import EditDisponibilidadeModal from "./editDisponibilidadeModal";
@@ -52,6 +58,36 @@ function SimuladosView({
   onSimuladoUpdated,
 }: SimuladosViewProps) {
   const [editing, setEditing] = useState<SimuladoResumo | null>(null);
+
+  const handleDownloadCartao = async (simulado: SimuladoResumo) => {
+    const id = toast.loading("Baixando cartão...");
+    try {
+      const blob = await baixarCartao(simulado._id, token);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `cartao_${simulado.nome}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toast.update(id, {
+        render: "Cartão baixado com sucesso!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+        closeOnClick: true,
+      });
+    } catch {
+      toast.update(id, {
+        render: "Erro ao baixar o cartão",
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+        closeOnClick: true,
+      });
+    }
+  };
 
   return (
     <div>
@@ -125,13 +161,22 @@ function SimuladosView({
                   </td>
                   <td className="px-3 py-2">{renderStatus(simulado)}</td>
                   <td className="px-3 py-2">
-                    <button
-                      onClick={() => setEditing(simulado)}
-                      className="text-gray-400 hover:text-blue-600"
-                      aria-label="Editar janela"
-                    >
-                      <PencilSquareIcon className="h-4 w-4" />
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleDownloadCartao(simulado)}
+                        className="text-gray-400 hover:text-blue-600"
+                        aria-label="Baixar cartão de resposta"
+                      >
+                        <ArrowDownTrayIcon className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => setEditing(simulado)}
+                        className="text-gray-400 hover:text-blue-600"
+                        aria-label="Editar janela"
+                      >
+                        <PencilSquareIcon className="h-4 w-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
