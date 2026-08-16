@@ -131,7 +131,7 @@ export default function UploadCartaoModal({
             <button
               onClick={handleEnviar}
               disabled={!file || enviando}
-              className="w-full px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50"
+              className="w-full px-4 py-2 bg-green2 text-white rounded disabled:opacity-50"
             >
               {enviando ? "Enviando..." : "Enviar cartão"}
             </button>

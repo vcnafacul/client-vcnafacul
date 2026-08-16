@@ -164,7 +164,17 @@ function SimuladosView({
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleDownloadCartao(simulado)}
-                        className="text-gray-400 hover:text-blue-600"
+                        disabled={simulado.bloqueado}
+                        title={
+                          simulado.bloqueado
+                            ? "Disponível só para simulados prontos"
+                            : "Baixar cartão de resposta"
+                        }
+                        className={
+                          simulado.bloqueado
+                            ? "text-gray-200 cursor-not-allowed"
+                            : "text-gray-400 hover:text-blue-600"
+                        }
                         aria-label="Baixar cartão de resposta"
                       >
                         <ArrowDownTrayIcon className="h-4 w-4" />
