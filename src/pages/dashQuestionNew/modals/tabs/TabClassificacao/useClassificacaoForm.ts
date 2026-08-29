@@ -44,12 +44,12 @@ export function useClassificacaoForm({
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [editingProva, setEditingProva] = useState<
-    { provaId: string; numero: number } | undefined
+    { provaId: string; numero: number | null } | undefined
   >();
 
   const provaSel = provasContendo[provaSelIdx];
 
-  const buildValues = (ps?: { provaId: string; numero: number }) => ({
+  const buildValues = (ps?: { provaId: string; numero: number | null }) => ({
     prova: ps?.provaId ?? "",
     numero: ps?.numero ?? null,
     enemArea: question.enemArea || "",

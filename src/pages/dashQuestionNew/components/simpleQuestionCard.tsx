@@ -96,8 +96,8 @@ export function SimpleQuestionCard({
         style={{ transition: "transform 0.8s ease-in-out" }}
       />
 
-      {/* Badge de número — só quando há prova em foco (filtro ou provaBase) */}
-      {provaEmFoco && (
+      {/* Badge de número — só quando há prova em foco com número atribuído */}
+      {provaEmFoco && provaEmFoco.numero != null && (
         <div className="absolute -top-2 -right-2 rotate-12 group-hover:rotate-0 transition-transform duration-300 z-10">
           <Badge
             variant="default"
