@@ -23,7 +23,7 @@ export interface IQuestao {
 // admin/banco de questões (ex.: SimuladoResumo). NÃO é o shape do fluxo do aluno.
 export interface IQuestaoNaContainer {
   questao: IQuestao;
-  numero: number;
+  numero: number | null;
 }
 
 export interface ISimuladoDTO {
