@@ -122,6 +122,13 @@ function ManageCategorias({
                 c.quantidadeTotalQuestao == null
                   ? "livre"
                   : `${c.quantidadeTotalQuestao} questões`;
+              const emUso = c.simuladosCount > 0 || c.provasCount > 0;
+              const desabilitada = protegida || emUso;
+              const tooltip = protegida
+                ? "Categoria seedada — não pode ser excluída"
+                : emUso
+                  ? `Em uso por ${c.simuladosCount} simulado(s) e ${c.provasCount} prova(s)`
+                  : "Excluir categoria";
               return (
                 <div
                   key={c._id}
@@ -135,6 +142,11 @@ function ManageCategorias({
                       Exame: {c.exame?.nome ?? "—"} · {qtd} · {c.duracao} min ·{" "}
                       {c.selecionavel ? "Selecionável" : "Uso interno"}
                     </span>
+                    <span className="text-xs text-gray-400">
+                      {emUso
+                        ? `${c.simuladosCount} simulados · ${c.provasCount} provas em uso`
+                        : "Sem simulados/provas em uso"}
+                    </span>
                     {protegida && (
                       <span className="text-xs font-medium text-amber-600">
                         🔒 Categoria seedada
@@ -143,12 +155,8 @@ function ManageCategorias({
                   </div>
                   <button
                     type="button"
-                    disabled={protegida}
-                    title={
-                      protegida
-                        ? "Categoria seedada — não pode ser excluída"
-                        : "Excluir categoria"
-                    }
+                    disabled={desabilitada}
+                    title={tooltip}
                     onClick={() => abrirExcluir(c)}
                     className="text-gray-400 enabled:hover:text-red disabled:cursor-not-allowed disabled:opacity-40"
                   >
