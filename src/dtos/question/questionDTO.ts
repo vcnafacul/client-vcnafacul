@@ -45,7 +45,7 @@ export interface QuestionBase {
   reported: boolean;
   contentFormat?: "plain" | "markdown";
   assets?: string[];
-  provasContendo?: { provaId: string; provaNome: string; numero: number }[];
+  provasContendo?: { provaId: string; provaNome: string; numero: number | null }[];
   /** Ponteiro pra prova de origem: casa com uma entry de provasContendo. */
   provaBase?: string | null;
 }
