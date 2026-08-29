@@ -18,10 +18,11 @@ export async function deleteCategoria(
 
   if (response.status === 409) {
     const err = await response.json();
+    const partes: string[] = [];
+    if (err.simuladosUsando > 0) partes.push(`${err.simuladosUsando} simulados`);
+    if (err.provasUsando > 0) partes.push(`${err.provasUsando} provas`);
     const detalhes =
-      err.simuladosUsando != null
-        ? `${err.simuladosUsando} simulados usam essa categoria`
-        : err.message;
+      partes.length > 0 ? `${partes.join(" e ")} usam essa categoria` : err.message;
     throw new Error(`Categoria em uso — ${detalhes}`);
   }
   throw new Error("Erro ao excluir categoria");
