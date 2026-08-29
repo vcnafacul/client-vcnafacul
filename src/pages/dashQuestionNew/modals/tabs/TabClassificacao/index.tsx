@@ -405,6 +405,17 @@ export function TabClassificacao({
                 <label className="text-sm font-semibold text-gray-600">
                   Número da Questão
                 </label>
+                {isEditing && form.watch("numero") != null && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => form.setValue("numero", null, { shouldDirty: true })}
+                    className="h-6 px-2 text-xs text-red-600 border-red-300 hover:text-red-700 hover:bg-red-50"
+                  >
+                    Remover número
+                  </Button>
+                )}
               </div>
               {!isEditing ? (
                 <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
