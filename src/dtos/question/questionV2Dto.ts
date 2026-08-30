@@ -6,7 +6,7 @@ export interface QuestionCardBase {
   enemArea: string;
   materia: string;
   /** Pode vir ausente em questões legadas (pré-backfill 0002). */
-  provasContendo?: { provaId: string; provaNome: string; numero: number }[];
+  provasContendo?: { provaId: string; provaNome: string; numero: number | null }[];
   /** Ponteiro pra prova de origem: casa com uma entry de provasContendo. */
   provaBase?: string | null;
   updatedAt: Date;
