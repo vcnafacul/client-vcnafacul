@@ -12,4 +12,6 @@ export interface ICategoria {
   custom: boolean;
   selecionavel: boolean;
   descricao: string;
+  simuladosCount: number;
+  provasCount: number;
 }
