@@ -23,6 +23,7 @@ import { dashProva } from "./data";
 import NewProva from "./modals/newProva";
 import ShowProva from "./modals/showProva";
 import ManageCategorias from "./modals/manageCategorias";
+import UploadCartaoModal from "./modals/uploadCartaoModal";
 import { downloadSyncReportPdf } from "./utils/syncReportPdf";
 import { useModals } from "@/hooks/useModal";
 
@@ -50,6 +51,7 @@ function DashProva() {
     'modalNewProva',
     'modalShowProva',
     'modalManageCategorias',
+    'modalUploadCartao',
   ]);
 
   const {
@@ -311,6 +313,13 @@ function DashProva() {
       children: "Gerenciar Categorias",
     },
     {
+      disabled: !permissao[Roles.visualizarEstudantes],
+      onClick: () => modals.modalUploadCartao.open(),
+      typeStyle: "secondary",
+      size: "small",
+      children: "Enviar cartão",
+    },
+    {
       disabled: !hasActiveFilters,
       onClick: clearFilters,
       typeStyle: "refused",
@@ -351,6 +360,11 @@ function DashProva() {
       <ModalNewProva />
       <ModalShowProva />
       <ModalManageCategorias />
+      <UploadCartaoModal
+        isOpen={modals.modalUploadCartao.isOpen}
+        handleClose={modals.modalUploadCartao.close}
+        token={token}
+      />
     </DashCardContext.Provider>
   );
 }
