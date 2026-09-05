@@ -10,6 +10,7 @@ import {
   getAllWithName,
   InscriptionWithName,
 } from "@/services/prepCourse/inscription/getAllWithName";
+import { getCoursePeriodYears } from "@/services/prepCourse/coursePeriod/getCoursePeriodYears";
 import { getPartnerLogo } from "@/services/prepCourse/prepCourse/getPartnerLogo";
 import { enrollmentCancelled } from "@/services/prepCourse/student/enrollment-cancelled";
 import { getStudentsEnrolled } from "@/services/prepCourse/student/getStudentsEnrolled";
@@ -56,6 +57,12 @@ export function StudentsEnrolled() {
   const [selectedInscription, setSelectedInscription] =
     useState<InscriptionWithName | null>(null);
   const [partnerLogo, setPartnerLogo] = useState<string | null>(null);
+  const [years, setYears] = useState<number[]>([]);
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<StatusApplication | null>(
+    null,
+  );
+  const [partnerId, setPartnerId] = useState<string | null>(null);
 
   const {
     data: { token, permissao },
@@ -64,10 +71,7 @@ export function StudentsEnrolled() {
   useEffect(() => {
     const fetchPartnerLogo = async () => {
       try {
-        const blob = await getPartnerLogo(
-          selectedInscription!.partnerId,
-          token,
-        );
+        const blob = await getPartnerLogo(partnerId!, token);
         const fileType = blob.type;
 
         if (fileType === "image/heic" || fileType === "image/heif") {
@@ -82,7 +86,7 @@ export function StudentsEnrolled() {
         console.error("Erro ao carregar logo da universidade:", error);
       }
     };
-    if (selectedInscription) {
+    if (partnerId) {
       fetchPartnerLogo();
     }
 
@@ -91,7 +95,7 @@ export function StudentsEnrolled() {
         URL.revokeObjectURL(partnerLogo);
       }
     };
-  }, [selectedInscription, token]);
+  }, [partnerId, token]);
 
   const modals = useModals([
     "modalInfo",
@@ -119,10 +123,18 @@ export function StudentsEnrolled() {
       errorMessage: "Erro ao carregar processos seletivos",
       onSuccess: (res) => {
         setInscriptions(res);
-        // Seleciona o primeiro processo automaticamente se houver
-        if (res.length > 0) {
-          setSelectedInscription(res[0]);
-        }
+      },
+    });
+  };
+
+  const loadYears = async () => {
+    await executeAsync({
+      action: () => getCoursePeriodYears(token),
+      loadingMessage: "Carregando anos letivos...",
+      successMessage: "Anos letivos carregados!",
+      errorMessage: "Erro ao carregar anos letivos",
+      onSuccess: (res) => {
+        setYears(res);
       },
     });
   };
@@ -130,12 +142,12 @@ export function StudentsEnrolled() {
   const getEnrolle = async (
     page: number,
     limit: number,
-    inscriptionId: string,
+    inscriptionId?: string,
     filters?: GridFilterItem,
     sortModel?: GridSortModel,
+    year?: number | null,
+    applicationStatus?: StatusApplication | null,
   ) => {
-    if (!inscriptionId) return;
-
     await executeAsync({
       action: () =>
         getStudentsEnrolled(
@@ -145,12 +157,15 @@ export function StudentsEnrolled() {
           inscriptionId,
           filters,
           sortModel,
+          year ?? undefined,
+          applicationStatus ?? undefined,
         ),
       loadingMessage: "Buscando alunos matriculados...",
       successMessage: "Alunos matriculados encontrados com sucesso!",
       errorMessage: "Erro ao buscar alunos matriculados",
       onSuccess: (res) => {
         setName(res.name);
+        setPartnerId(res.partnerId);
         setTotalItems(res.students.totalItems);
         setStudents(res.students.data);
       },
@@ -503,19 +518,27 @@ export function StudentsEnrolled() {
     },
   ];
 
-  // Carrega as inscrições ao montar o componente
+  // Carrega inscrições e anos letivos ao montar o componente
   useEffect(() => {
     loadInscriptions();
+    loadYears();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Carrega os alunos quando a inscrição ou limit mudar
+  // Carrega os alunos na montagem e sempre que um filtro ou o limit mudar
   useEffect(() => {
-    if (selectedInscription) {
-      getEnrolle(1, limit, selectedInscription.id);
-    }
+    setSelectedRows([]);
+    getEnrolle(
+      1,
+      limit,
+      selectedInscription?.id,
+      filter,
+      sort,
+      selectedYear,
+      selectedStatus,
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedInscription, limit]);
+  }, [selectedInscription, selectedYear, selectedStatus, limit]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelectionChange = useCallback((selectionModel: any) => {
