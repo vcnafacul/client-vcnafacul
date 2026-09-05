@@ -472,6 +472,25 @@ export function StudentsEnrolled() {
       valueGetter: (params) => (params as any).name || "Sem Turma",
     },
     {
+      field: "schoolYear",
+      headerName: "Ano Letivo",
+      minWidth: 110,
+      width: 110,
+      filterable: false,
+      sortable: false,
+      valueGetter: (_, row) =>
+        row.class?.year && row.class.year !== 0 ? row.class.year : "—",
+    },
+    {
+      field: "inscriptionCourse",
+      headerName: "Processo Seletivo",
+      minWidth: 200,
+      filterable: false,
+      sortable: false,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      valueGetter: (params) => (params as any)?.name || "—",
+    },
+    {
       field: "email",
       headerName: "Email",
       minWidth: 270,
