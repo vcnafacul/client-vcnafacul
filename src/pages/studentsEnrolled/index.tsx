@@ -174,18 +174,26 @@ export function StudentsEnrolled() {
 
   const debouncedFilter = useCallback(
     debounce.debounce(
-      (value: GridFilterItem, inscriptionId: string) =>
-        getEnrolle(1, limit, inscriptionId, value, sort),
+      (value: GridFilterItem) =>
+        getEnrolle(
+          1,
+          limit,
+          selectedInscription?.id,
+          value,
+          sort,
+          selectedYear,
+          selectedStatus,
+        ),
       1000,
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [limit, sort],
+    [limit, sort, selectedInscription, selectedYear, selectedStatus],
   );
 
   const handleFilterChange = (filterModel: GridFilterItem) => {
-    if (filterModel && filterModel.value !== undefined && selectedInscription) {
+    if (filterModel && filterModel.value !== undefined) {
       setFilter(filterModel);
-      debouncedFilter(filterModel, selectedInscription.id);
+      debouncedFilter(filterModel);
     }
   };
 
@@ -564,7 +572,6 @@ export function StudentsEnrolled() {
           onChange={(_, newValue) => {
             setSelectedInscription(newValue);
             setStudents([]);
-            setSelectedRows([]);
           }}
           options={inscriptions}
           getOptionLabel={(option) =>
@@ -579,12 +586,53 @@ export function StudentsEnrolled() {
             <TextField
               {...params}
               label="Processo Seletivo"
-              placeholder="Selecione um processo seletivo"
+              placeholder="Todos os processos"
             />
           )}
           sx={{ minWidth: 300, flex: 1 }}
           noOptionsText="Nenhum processo seletivo encontrado"
           loadingText="Carregando..."
+        />
+        <Autocomplete
+          value={selectedYear}
+          onChange={(_, newValue) => {
+            setSelectedYear(newValue);
+            setStudents([]);
+          }}
+          options={years}
+          getOptionLabel={(option) => option.toString()}
+          isOptionEqualToValue={(option, value) => option === value}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Ano Letivo"
+              placeholder="Todos os anos"
+            />
+          )}
+          sx={{ minWidth: 160 }}
+          noOptionsText="Nenhum ano letivo encontrado"
+        />
+        <Autocomplete
+          value={selectedStatus}
+          onChange={(_, newValue) => {
+            setSelectedStatus(newValue);
+            setStudents([]);
+          }}
+          options={[
+            StatusApplication.Enrolled,
+            StatusApplication.EnrollmentCancelled,
+            StatusApplication.EnrollmentClosed,
+          ]}
+          getOptionLabel={(option) => option}
+          isOptionEqualToValue={(option, value) => option === value}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Status de Matrícula"
+              placeholder="Todos os status"
+            />
+          )}
+          sx={{ minWidth: 220 }}
         />
         {permissao[Roles.gerenciarEstudantes] && (
           <Button
@@ -614,17 +662,21 @@ export function StudentsEnrolled() {
           pageSizeOptions={[5, 10, 15, 30, 50, 100]}
           onPaginationModelChange={(newPageSize) => {
             setLimit(newPageSize.pageSize);
-            if (selectedInscription) {
-              getEnrolle(
-                newPageSize.page + 1,
-                newPageSize.pageSize,
-                selectedInscription.id,
-                filter,
-                sort,
-              );
-            }
+            getEnrolle(
+              newPageSize.page + 1,
+              newPageSize.pageSize,
+              selectedInscription?.id,
+              filter,
+              sort,
+              selectedYear,
+              selectedStatus,
+            );
           }}
           sx={{ border: 0 }}
+          localeText={{
+            noRowsLabel:
+              "Nenhum estudante encontrado para os filtros selecionados",
+          }}
           isRowSelectable={(params) =>
             params.row.applicationStatus === StatusApplication.Enrolled &&
             params.row.class.id !== undefined
@@ -642,11 +694,18 @@ export function StudentsEnrolled() {
             if (
               sortModel &&
               sortModel.length > 0 &&
-              !["age", "name"].includes(sortModel[0].field) &&
-              selectedInscription
+              !["age", "name"].includes(sortModel[0].field)
             ) {
               setSort(sortModel);
-              getEnrolle(1, limit, selectedInscription.id, filter, sortModel);
+              getEnrolle(
+                1,
+                limit,
+                selectedInscription?.id,
+                filter,
+                sortModel,
+                selectedYear,
+                selectedStatus,
+              );
             }
           }}
         />
