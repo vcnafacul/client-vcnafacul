@@ -115,9 +115,10 @@ export function AttendanceRecordByStudentModal({
           justification: s.studentAttendance[0]?.justification?.justification,
           className: s.class.name,
         }));
-        setAttendances(
-          data.sort((a, b) => (b.registeredAt > a.registeredAt ? 1 : -1))
-        );
+        // A ordenacao vem do backend (registeredAt DESC, period como
+        // desempate). Ordenar aqui reordenaria apenas a pagina atual, o que
+        // divergiria da sequencia entre paginas.
+        setAttendances(data);
         setTotalItems(res.totalItems);
       })
       .catch((err) => {
