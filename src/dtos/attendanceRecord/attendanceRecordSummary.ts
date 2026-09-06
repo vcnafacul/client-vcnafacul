@@ -29,6 +29,8 @@ export interface AttendanceRecordSummaryByStudent {
     socialName: string;
     useSocialName: boolean;
     codEnrolled: string;
+    whatsapp?: string;
+    urgencyPhone?: string;
     totalClassRecords: number;
     studentRecords: number;
     presencePercentage: number;
