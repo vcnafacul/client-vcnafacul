@@ -39,6 +39,7 @@ import { IoClose, IoEyeSharp } from "react-icons/io5";
 import { MdClass, MdOutlineFileDownload } from "react-icons/md";
 import { toast } from "react-toastify";
 import { exportStudentsEnrolled } from "@/services/prepCourse/student/exportStudentsEnrolled";
+import ExportColumnsModal from "./modals/exportColumnsModal";
 import CancelEnrollmentModal from "./modals/cancelEnrollmentModal";
 import { InfoStudentEnrolledModal } from "./modals/infoStudentEnrolledModal";
 import { PrinterStudentCards } from "./modals/printerStudentCards";
@@ -107,6 +108,7 @@ export function StudentsEnrolled() {
     "modalConfirm",
     "modalUpdateClass",
     "modalStudentCards",
+    "modalExportColumns",
   ]);
 
   const executeAsync = useToastAsync();
@@ -199,7 +201,8 @@ export function StudentsEnrolled() {
     };
   }, [debouncedFilter]);
 
-  const handleExport = async () => {
+  const handleExport = async (columns: string[]) => {
+    modals.modalExportColumns.close();
     setExportando(true);
     try {
       await executeAsync({
@@ -211,6 +214,7 @@ export function StudentsEnrolled() {
             sort,
             selectedYear ?? undefined,
             selectedStatus ?? undefined,
+            columns,
           ),
         loadingMessage: "Gerando a lista...",
         successMessage: "Lista baixada com sucesso!",
@@ -690,20 +694,24 @@ export function StudentsEnrolled() {
           )}
           sx={{ minWidth: 220 }}
         />
-        <Button
-          onClick={handleExport}
-          size="small"
-          typeStyle="primary"
-          className="border-none flex gap-2 items-center"
-          // durante a geracao, e o que evita o clique repetido antes de a
-          // requisicao voltar; com a lista vazia, nao ha o que exportar
-          disabled={exportando || totalItems === 0}
-        >
-          <div className="flex gap-2 items-center justify-center">
-            <MdOutlineFileDownload className="w-5 h-5" />
-            {exportando ? "Gerando..." : "Baixar lista"}
-          </div>
-        </Button>
+        {/* exportar leva contato e documento para fora num arquivo, entao
+            exige mais que ver a tela — o endpoint tambem checa */}
+        {permissao[Roles.gerenciarEstudantes] && (
+          <Button
+            onClick={() => modals.modalExportColumns.open()}
+            size="small"
+            typeStyle="primary"
+            className="border-none flex gap-2 items-center"
+            // durante a geracao, e o que evita o clique repetido antes de a
+            // requisicao voltar; com a lista vazia, nao ha o que exportar
+            disabled={exportando || totalItems === 0}
+          >
+            <div className="flex gap-2 items-center justify-center">
+              <MdOutlineFileDownload className="w-5 h-5" />
+              {exportando ? "Gerando..." : "Baixar lista"}
+            </div>
+          </Button>
+        )}
         {permissao[Roles.gerenciarEstudantes] && (
           <Button
             onClick={() => modals.modalStudentCards.open()}
@@ -792,6 +800,14 @@ export function StudentsEnrolled() {
       <ModalConfirm />
       <ModalUpdateClass />
       <ModalStudentCards />
+      {modals.modalExportColumns.isOpen && (
+        <ExportColumnsModal
+          isOpen={modals.modalExportColumns.isOpen}
+          handleClose={() => modals.modalExportColumns.close()}
+          handleConfirm={handleExport}
+          token={token}
+        />
+      )}
     </div>
   );
 }
