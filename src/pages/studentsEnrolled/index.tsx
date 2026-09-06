@@ -200,10 +200,6 @@ export function StudentsEnrolled() {
   }, [debouncedFilter]);
 
   const handleExport = async () => {
-    if (totalItems === 0) {
-      toast.warn("Não há estudantes para exportar com os filtros aplicados");
-      return;
-    }
     setExportando(true);
     try {
       await executeAsync({
@@ -692,9 +688,9 @@ export function StudentsEnrolled() {
           size="small"
           typeStyle="primary"
           className="border-none flex gap-2 items-center"
-          // desabilitado durante a geracao: e o que evita o clique repetido
-          // antes de a requisicao voltar
-          disabled={exportando}
+          // durante a geracao, e o que evita o clique repetido antes de a
+          // requisicao voltar; com a lista vazia, nao ha o que exportar
+          disabled={exportando || totalItems === 0}
         >
           <div className="flex gap-2 items-center justify-center">
             <MdOutlineFileDownload className="w-5 h-5" />
