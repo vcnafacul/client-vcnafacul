@@ -686,8 +686,14 @@ export function StudentsEnrolled() {
           onRowSelectionModelChange={handleSelectionChange}
           pageSizeOptions={[5, 10, 15, 30, 50, 100]}
           onPaginationModelChange={(newPageSize) => {
+            // Mudança de pageSize é tratada pelo useEffect (limit está nas deps),
+            // que já reseta para a página 1. Disparar aqui também deixaria duas
+            // requisições em voo sem ordem garantida entre elas.
+            if (newPageSize.pageSize !== limit) {
+              setLimit(newPageSize.pageSize);
+              return;
+            }
             setPage(newPageSize.page);
-            setLimit(newPageSize.pageSize);
             getEnrolle(
               newPageSize.page + 1,
               newPageSize.pageSize,
