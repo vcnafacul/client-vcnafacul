@@ -8,6 +8,14 @@ import {
 import { Info } from "lucide-react";
 import { useState } from "react";
 
+/**
+ * O default do Radix (700ms) faz a nota demorar a aparecer, e como cada
+ * ShadcnTooltip tem seu proprio Provider o atraso e pago de novo a cada icone.
+ * 150ms mantem a leitura fluida sem disparar tooltip a toa ao atravessar a
+ * lista com o mouse.
+ */
+const NOTE_TOOLTIP_DELAY_MS = 150;
+
 interface CancelEnrollmentModalProps {
   isOpen: boolean;
   handleClose: () => void;
@@ -67,7 +75,7 @@ export default function CancelEnrollmentModal({
               <span className="text-sm">{label}</span>
             </label>
             {note && (
-              <ShadcnTooltip content={note}>
+              <ShadcnTooltip content={note} delayDuration={NOTE_TOOLTIP_DELAY_MS}>
                 {/* Botao (e nao um icone solto) para que a nota tambem seja
                     alcancavel pelo foco do teclado, e nao so pelo mouse. */}
                 <button
