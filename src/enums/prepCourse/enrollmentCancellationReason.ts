@@ -35,8 +35,10 @@ export const ENROLLMENT_CANCELLATION_REASONS = [
     note: undefined,
   },
   {
+    // Sem nota: a propria opcao ja diz o que e, e a caixa de texto que ela
+    // abre deixa claro o que se espera.
     label: "Outros (especifique)",
-    note: "Motivos não contemplados nas categorias anteriores.",
+    note: undefined,
   },
 ] as const;
 
