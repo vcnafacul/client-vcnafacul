@@ -15,10 +15,17 @@ export async function exportStudentsEnrolled(
   filters?: GridFilterItem,
   sortModel?: GridSortModel,
   year?: number,
-  applicationStatus?: string
+  applicationStatus?: string,
+  columns?: string[]
 ): Promise<void> {
   const url = new URL(`${enrolled}/export`);
   const params: Record<string, string | number> = {};
+
+  // sem `columns`, o backend cai na selecao padrao — as mesmas colunas fixas
+  // de antes do seletor
+  if (columns?.length) {
+    params["columns"] = columns.join(",");
+  }
 
   if (filters) {
     params["filter[field]"] = filters.field;
@@ -51,6 +58,12 @@ export async function exportStudentsEnrolled(
     method: "GET",
     headers: { Authorization: `Bearer ${token}` },
   });
+
+  if (response.status === 403) {
+    throw new Error(
+      "Seu perfil não tem permissão para exportar alguma das colunas escolhidas."
+    );
+  }
 
   if (response.status === 429) {
     throw new Error(
