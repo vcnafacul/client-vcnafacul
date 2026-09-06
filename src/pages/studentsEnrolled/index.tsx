@@ -65,10 +65,6 @@ export function StudentsEnrolled() {
     null,
   );
   const [partnerId, setPartnerId] = useState<string | null>(null);
-  // Represa a busca de estudantes enquanto a lista de processos seletivos do
-  // novo periodo letivo nao chegou (ver useEffect de carregamento dos alunos)
-  const [inscriptionsReloading, setInscriptionsReloading] =
-    useState<boolean>(false);
 
   const {
     data: { token, permissao },
@@ -121,26 +117,13 @@ export function StudentsEnrolled() {
     }
   };
 
-  const loadInscriptions = async (year?: number | null) => {
+  const loadInscriptions = async () => {
     await executeAsync({
-      action: () => getAllWithName(token, year ?? undefined),
+      action: () => getAllWithName(token),
       loadingMessage: "Carregando processos seletivos...",
       errorMessage: "Erro ao carregar processos seletivos",
       onSuccess: (res) => {
         setInscriptions(res);
-        // Se o processo seletivo selecionado nao existe mais na lista do
-        // periodo letivo atual, limpa a selecao. Caso contrario o usuario
-        // ficaria com um filtro invisivel ativo e a listagem viria vazia.
-        setSelectedInscription((prev) =>
-          prev && !res.some((inscription) => inscription.id === prev.id)
-            ? null
-            : prev,
-        );
-      },
-      onFinally: () => {
-        // Libera a busca de estudantes tambem quando a requisicao falha,
-        // para a tela nunca ficar sem carregar a listagem
-        setInscriptionsReloading(false);
       },
     });
   };
@@ -569,26 +552,15 @@ export function StudentsEnrolled() {
     },
   ];
 
-  // Carrega os períodos letivos ao montar o componente
+  // Carrega processos seletivos e períodos letivos ao montar o componente
   useEffect(() => {
+    loadInscriptions();
     loadYears();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Cascata: os processos seletivos dependem do período letivo selecionado.
-  // Roda uma vez na montagem (selectedYear === null, lista completa) e a cada
-  // troca de período. É o único ponto que carrega os processos seletivos.
-  useEffect(() => {
-    loadInscriptions(selectedYear);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedYear]);
-
   // Carrega os alunos na montagem e sempre que um filtro ou o limit mudar
   useEffect(() => {
-    // Enquanto os processos seletivos do novo período letivo não chegaram, a
-    // busca fica represada: a cascata ainda pode limpar o processo selecionado
-    // e isso dispararia uma segunda requisição de estudantes.
-    if (inscriptionsReloading) return;
     setSelectedRows([]);
     setPage(0);
     getEnrolle(
@@ -601,13 +573,7 @@ export function StudentsEnrolled() {
       selectedStatus,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    selectedInscription,
-    selectedYear,
-    selectedStatus,
-    limit,
-    inscriptionsReloading,
-  ]);
+  }, [selectedInscription, selectedYear, selectedStatus, limit]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelectionChange = useCallback((selectionModel: any) => {
@@ -631,9 +597,6 @@ export function StudentsEnrolled() {
           onChange={(_, newValue) => {
             setSelectedYear(newValue);
             setStudents([]);
-            // A lista de processos seletivos vai ser recarregada para este
-            // período: represa a busca de estudantes até ela chegar
-            setInscriptionsReloading(true);
           }}
           options={years}
           getOptionLabel={(option) => option.toString()}
