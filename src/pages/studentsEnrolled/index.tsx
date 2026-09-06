@@ -46,6 +46,8 @@ export function StudentsEnrolled() {
   const [name, setName] = useState<string>("");
   const [students, setStudents] = useState<StudentsDtoOutput[]>([]);
   const [limit, setLimit] = useState<number>(15);
+  // DataGrid usa page 0-indexed; a api usa 1-indexed
+  const [page, setPage] = useState<number>(0);
   const [totalItems, setTotalItems] = useState<number>(100);
   const [studentSelected, setStudentSelected] = useState<StudentsDtoOutput>(
     {} as StudentsDtoOutput,
@@ -119,7 +121,6 @@ export function StudentsEnrolled() {
     await executeAsync({
       action: () => getAllWithName(token),
       loadingMessage: "Carregando processos seletivos...",
-      successMessage: "Processos seletivos carregados!",
       errorMessage: "Erro ao carregar processos seletivos",
       onSuccess: (res) => {
         setInscriptions(res);
@@ -131,7 +132,6 @@ export function StudentsEnrolled() {
     await executeAsync({
       action: () => getCoursePeriodYears(token),
       loadingMessage: "Carregando anos letivos...",
-      successMessage: "Anos letivos carregados!",
       errorMessage: "Erro ao carregar anos letivos",
       onSuccess: (res) => {
         setYears(res);
@@ -173,22 +173,29 @@ export function StudentsEnrolled() {
   };
 
   const debouncedFilter = useCallback(
-    debounce.debounce(
-      (value: GridFilterItem) =>
-        getEnrolle(
-          1,
-          limit,
-          selectedInscription?.id,
-          value,
-          sort,
-          selectedYear,
-          selectedStatus,
-        ),
-      1000,
-    ),
+    debounce.debounce((value: GridFilterItem) => {
+      setPage(0);
+      return getEnrolle(
+        1,
+        limit,
+        selectedInscription?.id,
+        value,
+        sort,
+        selectedYear,
+        selectedStatus,
+      );
+    }, 1000),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [limit, sort, selectedInscription, selectedYear, selectedStatus],
   );
+
+  // Cancela o debounce pendente quando a instancia e descartada,
+  // evitando que um timer antigo sobrescreva o resultado correto
+  useEffect(() => {
+    return () => {
+      debouncedFilter.cancel();
+    };
+  }, [debouncedFilter]);
 
   const handleFilterChange = (filterModel: GridFilterItem) => {
     if (filterModel && filterModel.value !== undefined) {
@@ -555,6 +562,7 @@ export function StudentsEnrolled() {
   // Carrega os alunos na montagem e sempre que um filtro ou o limit mudar
   useEffect(() => {
     setSelectedRows([]);
+    setPage(0);
     getEnrolle(
       1,
       limit,
@@ -577,8 +585,6 @@ export function StudentsEnrolled() {
       });
     }
   }, []);
-
-  const paginationModel = { page: 0, pageSize: limit };
 
   return (
     <div className="flex flex-col justify-center items-center pt-4 gap-4">
@@ -672,7 +678,7 @@ export function StudentsEnrolled() {
           columns={columns}
           rowCount={totalItems}
           paginationMode="server"
-          initialState={{ pagination: { paginationModel } }}
+          paginationModel={{ page, pageSize: limit }}
           rowHeight={40}
           disableRowSelectionOnClick
           checkboxSelection={permissao[Roles.gerenciarEstudantes]}
@@ -680,6 +686,7 @@ export function StudentsEnrolled() {
           onRowSelectionModelChange={handleSelectionChange}
           pageSizeOptions={[5, 10, 15, 30, 50, 100]}
           onPaginationModelChange={(newPageSize) => {
+            setPage(newPageSize.page);
             setLimit(newPageSize.pageSize);
             getEnrolle(
               newPageSize.page + 1,
