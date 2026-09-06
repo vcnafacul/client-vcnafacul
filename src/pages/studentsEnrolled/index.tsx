@@ -65,6 +65,10 @@ export function StudentsEnrolled() {
     null,
   );
   const [partnerId, setPartnerId] = useState<string | null>(null);
+  // Represa a busca de estudantes enquanto a lista de processos seletivos do
+  // novo periodo letivo nao chegou (ver useEffect de carregamento dos alunos)
+  const [inscriptionsReloading, setInscriptionsReloading] =
+    useState<boolean>(false);
 
   const {
     data: { token, permissao },
@@ -117,13 +121,26 @@ export function StudentsEnrolled() {
     }
   };
 
-  const loadInscriptions = async () => {
+  const loadInscriptions = async (year?: number | null) => {
     await executeAsync({
-      action: () => getAllWithName(token),
+      action: () => getAllWithName(token, year ?? undefined),
       loadingMessage: "Carregando processos seletivos...",
       errorMessage: "Erro ao carregar processos seletivos",
       onSuccess: (res) => {
         setInscriptions(res);
+        // Se o processo seletivo selecionado nao existe mais na lista do
+        // periodo letivo atual, limpa a selecao. Caso contrario o usuario
+        // ficaria com um filtro invisivel ativo e a listagem viria vazia.
+        setSelectedInscription((prev) =>
+          prev && !res.some((inscription) => inscription.id === prev.id)
+            ? null
+            : prev,
+        );
+      },
+      onFinally: () => {
+        // Libera a busca de estudantes tambem quando a requisicao falha,
+        // para a tela nunca ficar sem carregar a listagem
+        setInscriptionsReloading(false);
       },
     });
   };
@@ -552,15 +569,26 @@ export function StudentsEnrolled() {
     },
   ];
 
-  // Carrega inscrições e anos letivos ao montar o componente
+  // Carrega os períodos letivos ao montar o componente
   useEffect(() => {
-    loadInscriptions();
     loadYears();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Cascata: os processos seletivos dependem do período letivo selecionado.
+  // Roda uma vez na montagem (selectedYear === null, lista completa) e a cada
+  // troca de período. É o único ponto que carrega os processos seletivos.
+  useEffect(() => {
+    loadInscriptions(selectedYear);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedYear]);
+
   // Carrega os alunos na montagem e sempre que um filtro ou o limit mudar
   useEffect(() => {
+    // Enquanto os processos seletivos do novo período letivo não chegaram, a
+    // busca fica represada: a cascata ainda pode limpar o processo selecionado
+    // e isso dispararia uma segunda requisição de estudantes.
+    if (inscriptionsReloading) return;
     setSelectedRows([]);
     setPage(0);
     getEnrolle(
@@ -573,7 +601,13 @@ export function StudentsEnrolled() {
       selectedStatus,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedInscription, selectedYear, selectedStatus, limit]);
+  }, [
+    selectedInscription,
+    selectedYear,
+    selectedStatus,
+    limit,
+    inscriptionsReloading,
+  ]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelectionChange = useCallback((selectionModel: any) => {
@@ -592,6 +626,28 @@ export function StudentsEnrolled() {
         <h1 className="text-3xl font-bold text-center text-marine">{name}</h1>
       </div>
       <div className="w-full px-4 flex gap-4 items-center justify-between flex-wrap">
+        <Autocomplete
+          value={selectedYear}
+          onChange={(_, newValue) => {
+            setSelectedYear(newValue);
+            setStudents([]);
+            // A lista de processos seletivos vai ser recarregada para este
+            // período: represa a busca de estudantes até ela chegar
+            setInscriptionsReloading(true);
+          }}
+          options={years}
+          getOptionLabel={(option) => option.toString()}
+          isOptionEqualToValue={(option, value) => option === value}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Período Letivo"
+              placeholder="Todos os períodos"
+            />
+          )}
+          sx={{ minWidth: 160 }}
+          noOptionsText="Nenhum período letivo encontrado"
+        />
         <Autocomplete
           value={selectedInscription}
           onChange={(_, newValue) => {
@@ -617,25 +673,6 @@ export function StudentsEnrolled() {
           sx={{ minWidth: 300, flex: 1 }}
           noOptionsText="Nenhum processo seletivo encontrado"
           loadingText="Carregando..."
-        />
-        <Autocomplete
-          value={selectedYear}
-          onChange={(_, newValue) => {
-            setSelectedYear(newValue);
-            setStudents([]);
-          }}
-          options={years}
-          getOptionLabel={(option) => option.toString()}
-          isOptionEqualToValue={(option, value) => option === value}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Ano Letivo"
-              placeholder="Todos os anos"
-            />
-          )}
-          sx={{ minWidth: 160 }}
-          noOptionsText="Nenhum ano letivo encontrado"
         />
         <Autocomplete
           value={selectedStatus}
