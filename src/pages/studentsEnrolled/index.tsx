@@ -36,8 +36,9 @@ import debounce from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { FaAddressCard, FaCheck, FaDownload } from "react-icons/fa";
 import { IoClose, IoEyeSharp } from "react-icons/io5";
-import { MdClass } from "react-icons/md";
+import { MdClass, MdOutlineFileDownload } from "react-icons/md";
 import { toast } from "react-toastify";
+import { exportStudentsEnrolled } from "@/services/prepCourse/student/exportStudentsEnrolled";
 import CancelEnrollmentModal from "./modals/cancelEnrollmentModal";
 import { InfoStudentEnrolledModal } from "./modals/infoStudentEnrolledModal";
 import { PrinterStudentCards } from "./modals/printerStudentCards";
@@ -65,6 +66,7 @@ export function StudentsEnrolled() {
     null,
   );
   const [partnerId, setPartnerId] = useState<string | null>(null);
+  const [exportando, setExportando] = useState(false);
 
   const {
     data: { token, permissao },
@@ -196,6 +198,32 @@ export function StudentsEnrolled() {
       debouncedFilter.cancel();
     };
   }, [debouncedFilter]);
+
+  const handleExport = async () => {
+    if (totalItems === 0) {
+      toast.warn("Não há estudantes para exportar com os filtros aplicados");
+      return;
+    }
+    setExportando(true);
+    try {
+      await executeAsync({
+        action: () =>
+          exportStudentsEnrolled(
+            token,
+            selectedInscription?.id,
+            filter,
+            sort,
+            selectedYear ?? undefined,
+            selectedStatus ?? undefined,
+          ),
+        loadingMessage: "Gerando a lista...",
+        successMessage: "Lista baixada com sucesso!",
+        errorMessage: (error: Error) => error.message,
+      });
+    } finally {
+      setExportando(false);
+    }
+  };
 
   const handleFilterChange = (filterModel: GridFilterItem) => {
     if (filterModel && filterModel.value !== undefined) {
@@ -659,6 +687,20 @@ export function StudentsEnrolled() {
           )}
           sx={{ minWidth: 220 }}
         />
+        <Button
+          onClick={handleExport}
+          size="small"
+          typeStyle="primary"
+          className="border-none flex gap-2 items-center"
+          // desabilitado durante a geracao: e o que evita o clique repetido
+          // antes de a requisicao voltar
+          disabled={exportando}
+        >
+          <div className="flex gap-2 items-center justify-center">
+            <MdOutlineFileDownload className="w-5 h-5" />
+            {exportando ? "Gerando..." : "Baixar lista"}
+          </div>
+        </Button>
         {permissao[Roles.gerenciarEstudantes] && (
           <Button
             onClick={() => modals.modalStudentCards.open()}
