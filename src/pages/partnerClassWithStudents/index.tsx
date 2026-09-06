@@ -21,7 +21,7 @@ import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { FormControlLabel, Switch } from "@mui/material";
 import { getCancelledStudentsByClassId } from "@/services/prepCourse/class/getCancelledStudentsByClassId";
 import { CancelledStudent } from "@/types/partnerPrepCourse/cancelledStudent";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaListCheck } from "react-icons/fa6";
 import { IoEyeSharp } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
@@ -101,6 +101,7 @@ export function PartnerClassWithStudents() {
   );
   const [partnerLogo, setPartnerLogo] = useState<string | null>(null);
   const [showCancelled, setShowCancelled] = useState(false);
+  const cancelledInFlight = useRef(false);
   const [cancelledStudents, setCancelledStudents] = useState<
     CancelledStudent[]
   >([]);
@@ -338,6 +339,12 @@ export function PartnerClassWithStudents() {
   }, []);
 
   const getCancelledStudents = async () => {
+    // O cache do backend corta a consulta ao banco, mas a requisicao ainda
+    // sairia a cada clique. A trava garante no maximo uma em voo — alternar o
+    // toggle rapido nao enfileira chamadas nem deixa a resposta antiga chegar
+    // depois da nova.
+    if (cancelledInFlight.current) return;
+    cancelledInFlight.current = true;
     await executeAsync({
       action: () => getCancelledStudentsByClassId(token, hashClassId!),
       loadingMessage: "Carregando matrículas canceladas...",
@@ -346,6 +353,7 @@ export function PartnerClassWithStudents() {
       errorMessage: (error: Error) => error.message,
       onSuccess: (res) => setCancelledStudents(res),
     });
+    cancelledInFlight.current = false;
   };
 
   // Busca a cada vez que a visao e ligada, e nao so na primeira: a matricula
