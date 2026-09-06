@@ -694,20 +694,24 @@ export function StudentsEnrolled() {
           )}
           sx={{ minWidth: 220 }}
         />
-        <Button
-          onClick={() => modals.modalExportColumns.open()}
-          size="small"
-          typeStyle="primary"
-          className="border-none flex gap-2 items-center"
-          // durante a geracao, e o que evita o clique repetido antes de a
-          // requisicao voltar; com a lista vazia, nao ha o que exportar
-          disabled={exportando || totalItems === 0}
-        >
-          <div className="flex gap-2 items-center justify-center">
-            <MdOutlineFileDownload className="w-5 h-5" />
-            {exportando ? "Gerando..." : "Baixar lista"}
-          </div>
-        </Button>
+        {/* exportar leva contato e documento para fora num arquivo, entao
+            exige mais que ver a tela — o endpoint tambem checa */}
+        {permissao[Roles.gerenciarEstudantes] && (
+          <Button
+            onClick={() => modals.modalExportColumns.open()}
+            size="small"
+            typeStyle="primary"
+            className="border-none flex gap-2 items-center"
+            // durante a geracao, e o que evita o clique repetido antes de a
+            // requisicao voltar; com a lista vazia, nao ha o que exportar
+            disabled={exportando || totalItems === 0}
+          >
+            <div className="flex gap-2 items-center justify-center">
+              <MdOutlineFileDownload className="w-5 h-5" />
+              {exportando ? "Gerando..." : "Baixar lista"}
+            </div>
+          </Button>
+        )}
         {permissao[Roles.gerenciarEstudantes] && (
           <Button
             onClick={() => modals.modalStudentCards.open()}
