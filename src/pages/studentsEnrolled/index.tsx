@@ -378,6 +378,9 @@ export function StudentsEnrolled() {
       width: 230,
       disableColumnMenu: true,
       sortable: false,
+      // disableColumnMenu esconde o menu da coluna, mas nao a tira do painel
+      // de filtros do grid
+      filterable: false,
       align: "center",
       headerAlign: "center",
       renderCell: (params) => (
@@ -524,6 +527,8 @@ export function StudentsEnrolled() {
     {
       field: "name",
       headerName: "Nome",
+      // a api nao suporta filtro por este campo (responderia 400)
+      filterable: false,
       minWidth: 200,
       flex: 1,
     },
@@ -547,6 +552,8 @@ export function StudentsEnrolled() {
     {
       field: "age",
       headerName: "Idade",
+      // a api nao suporta filtro por este campo (responderia 400)
+      filterable: false,
       minWidth: 70,
       maxWidth: 100,
     },
