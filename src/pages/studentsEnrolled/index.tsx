@@ -1,7 +1,6 @@
 import Text from "@/components/atoms/text";
 import Button from "@/components/molecules/button";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
-import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { Roles } from "@/enums/roles/roles";
 import { useModals } from "@/hooks/useModal";
@@ -39,6 +38,7 @@ import { FaAddressCard, FaCheck, FaDownload } from "react-icons/fa";
 import { IoClose, IoEyeSharp } from "react-icons/io5";
 import { MdClass } from "react-icons/md";
 import { toast } from "react-toastify";
+import CancelEnrollmentModal from "./modals/cancelEnrollmentModal";
 import { InfoStudentEnrolledModal } from "./modals/infoStudentEnrolledModal";
 import { PrinterStudentCards } from "./modals/printerStudentCards";
 import { UpdateStudentClassModal } from "./modals/updateStudentClassModal";
@@ -314,10 +314,10 @@ export function StudentsEnrolled() {
 
   const ModalReject = () => {
     return !modals.modalReject.isOpen ? null : (
-      <ModalConfirmCancelMessage
+      <CancelEnrollmentModal
         isOpen={modals.modalReject.isOpen}
         handleClose={() => modals.modalReject.close()}
-        handleConfirm={(message) => handleCancelEnrollment(message!)}
+        handleConfirm={(reason) => handleCancelEnrollment(reason)}
         text={`Por favor, informe o motivo do cancelamento de matrícula de ${capitalizeWords(
           studentSelected?.name,
         )}.`}
