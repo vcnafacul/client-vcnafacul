@@ -11,21 +11,9 @@ export interface InscriptionWithName {
 }
 
 export async function getAllWithName(
-  token: string,
-  year?: number
+  token: string
 ): Promise<InscriptionWithName[]> {
-  // O parametro year so pode ser enviado quando definido: o backend converte
-  // string vazia em 0 e devolveria uma lista vazia.
-  const params = new URLSearchParams();
-  if (year !== undefined && year !== null) {
-    params.append("year", year.toString());
-  }
-  const query = params.toString();
-  const url = query
-    ? `${inscriptionCourseWithName}?${query}`
-    : inscriptionCourseWithName;
-
-  const response = await fetchWrapper(url, {
+  const response = await fetchWrapper(inscriptionCourseWithName, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
