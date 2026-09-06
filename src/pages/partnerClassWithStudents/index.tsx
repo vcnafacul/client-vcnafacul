@@ -18,7 +18,10 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { format } from "date-fns";
 import heic2any from "heic2any";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
-import { useEffect, useState } from "react";
+import { FormControlLabel, Switch } from "@mui/material";
+import { getCancelledStudentsByClassId } from "@/services/prepCourse/class/getCancelledStudentsByClassId";
+import { CancelledStudent } from "@/types/partnerPrepCourse/cancelledStudent";
+import { useEffect, useRef, useState } from "react";
 import { FaListCheck } from "react-icons/fa6";
 import { IoEyeSharp } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
@@ -97,6 +100,11 @@ export function PartnerClassWithStudents() {
     {} as ClassStudent
   );
   const [partnerLogo, setPartnerLogo] = useState<string | null>(null);
+  const [showCancelled, setShowCancelled] = useState(false);
+  const cancelledInFlight = useRef(false);
+  const [cancelledStudents, setCancelledStudents] = useState<
+    CancelledStudent[]
+  >([]);
   const [activeTab, setActiveTab] = useState<string>("alunos");
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [simuladoList, setSimuladoList] = useState<ClassMonthsList | null>(
@@ -243,6 +251,45 @@ export function PartnerClassWithStudents() {
     },
   ];
 
+  // Sem coluna de acao: a unica acao de linha da visao de ativos e a
+  // carteirinha, que exibe a turma e a data de termino como se o aluno ainda
+  // estivesse matriculado. Emitir isso para quem teve a matricula cancelada
+  // seria pior do que nao oferecer.
+  const cancelledColumns: GridColDef[] = [
+    {
+      field: "cod_enrolled",
+      headerName: "Nº de matrricula",
+      width: 150,
+      align: "right",
+      headerAlign: "right",
+    },
+    {
+      field: "name",
+      headerName: "Nome",
+      minWidth: 150,
+      flex: 1,
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      minWidth: 150,
+      flex: 1,
+    },
+    {
+      field: "cancelledAt",
+      headerName: "Cancelado em",
+      width: 130,
+      type: "date",
+    },
+    {
+      field: "justification",
+      headerName: "Justificativa",
+      minWidth: 200,
+      flex: 1.5,
+      renderCell: (params) => params.row.justification ?? "—",
+    },
+  ];
+
   const paginationModel = { page: 0, pageSize: 40 };
 
   const ModalAttendanceHistory = () => {
@@ -290,6 +337,31 @@ export function PartnerClassWithStudents() {
     getStudents();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const getCancelledStudents = async () => {
+    // O cache do backend corta a consulta ao banco, mas a requisicao ainda
+    // sairia a cada clique. A trava garante no maximo uma em voo — alternar o
+    // toggle rapido nao enfileira chamadas nem deixa a resposta antiga chegar
+    // depois da nova.
+    if (cancelledInFlight.current) return;
+    cancelledInFlight.current = true;
+    await executeAsync({
+      action: () => getCancelledStudentsByClassId(token, hashClassId!),
+      loadingMessage: "Carregando matrículas canceladas...",
+      // sem toast de sucesso: o toggle e alternado com frequencia, e o
+      // proprio grid ja mostra o resultado
+      errorMessage: (error: Error) => error.message,
+      onSuccess: (res) => setCancelledStudents(res),
+    });
+    cancelledInFlight.current = false;
+  };
+
+  // Busca a cada vez que a visao e ligada, e nao so na primeira: a matricula
+  // pode ter sido cancelada em outra tela desde a ultima consulta.
+  useEffect(() => {
+    if (showCancelled) getCancelledStudents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showCancelled]);
 
   const downloadPDFClass = async () => {
     const logoBase64 = await getBase64FromImageUrl(logo);
@@ -351,7 +423,16 @@ export function PartnerClassWithStudents() {
               {format(new Date(classEntity.coursePeriod.endDate), "dd/MM/yyyy")}
             </span>
             <span>
-              <strong>Alunos:</strong> {students.length}
+              {showCancelled ? (
+                <>
+                  <strong>Matrículas canceladas:</strong>{" "}
+                  {cancelledStudents.length}
+                </>
+              ) : (
+                <>
+                  <strong>Alunos:</strong> {students.length}
+                </>
+              )}
             </span>
             <span>
               <strong>Registros:</strong> {classEntity.totalAttendanceRecords ?? 0}
@@ -396,26 +477,50 @@ export function PartnerClassWithStudents() {
                 </div>
               </Button>
             )}
-            <Button
-              typeStyle="primary"
-              size="small"
-              onClick={downloadPDFClass}
-              className="border-none"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <MdOutlineFileDownload className="h-5 w-5 fill-white" />
-                Lista de alunos
-              </div>
-            </Button>
+            {/* o PDF exporta a lista de ativos; some na outra visao para nao
+                sugerir que exportaria os cancelados */}
+            {!showCancelled && (
+              <Button
+                typeStyle="primary"
+                size="small"
+                onClick={downloadPDFClass}
+                className="border-none"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <MdOutlineFileDownload className="h-5 w-5 fill-white" />
+                  Lista de alunos
+                </div>
+              </Button>
+            )}
+            <FormControlLabel
+              className="ml-auto mr-0"
+              control={
+                <Switch
+                  checked={showCancelled}
+                  onChange={(event) => setShowCancelled(event.target.checked)}
+                  size="small"
+                />
+              }
+              label={
+                <span className="text-sm text-gray-700">
+                  Matrículas canceladas
+                </span>
+              }
+            />
           </div>
           <Paper sx={{ height: "100%", width: "100%" }}>
             <DataGrid
-              rows={students}
-              columns={columns}
+              rows={showCancelled ? cancelledStudents : students}
+              columns={showCancelled ? cancelledColumns : columns}
               initialState={{ pagination: { paginationModel } }}
               rowHeight={40}
               disableRowSelectionOnClick
               pageSizeOptions={[5, 10, 15, 30, 50, 100]}
+              localeText={
+                showCancelled
+                  ? { noRowsLabel: "Nenhuma matrícula cancelada nesta turma" }
+                  : undefined
+              }
               sx={{ border: 0 }}
             />
           </Paper>
