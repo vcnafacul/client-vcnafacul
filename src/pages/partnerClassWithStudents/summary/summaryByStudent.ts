@@ -2,6 +2,7 @@ import logo from "@/assets/images/logo_carteirinha.png";
 import { AttendanceRecordSummaryByStudent } from "@/dtos/attendanceRecord/attendanceRecordSummary";
 import { downloadPDF } from "@/utils/get-pdf";
 import { getBase64FromImageUrl } from "@/utils/getBase64FromImageUrl";
+import { phoneMask } from "@/utils/phoneMask";
 import { format } from "date-fns";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 
@@ -16,6 +17,8 @@ export const summaryByStudent = async (summary: AttendanceRecordSummaryByStudent
     [
       { text: "Nome do Estudante", style: "tableHeader" },
       { text: "Código de Matrícula", style: "tableHeader" },
+      { text: "Contato (WhatsApp)", style: "tableHeader" },
+      { text: "Contato de Referência", style: "tableHeader" },
       { text: "Total de Registros", style: "tableHeader" },
       { text: "Presenças", style: "tableHeader" },
       { text: "% Presença", style: "tableHeader" },
@@ -27,6 +30,8 @@ export const summaryByStudent = async (summary: AttendanceRecordSummaryByStudent
     tableBody.push([
       { text: !student.useSocialName ? student.name : student.socialName || "-", style: "tableCell",},
       { text: student.codEnrolled || "-", style: "tableCell",},
+      { text: phoneMask(student.whatsapp) || "-", style: "tableCell",},
+      { text: phoneMask(student.urgencyPhone) || "-", style: "tableCell",},
       { text: student.totalClassRecords.toString(), style: "tableCell",},
       { text: student.studentRecords.toString(), style: "tableCell",},
       {
@@ -59,7 +64,7 @@ export const summaryByStudent = async (summary: AttendanceRecordSummaryByStudent
       {
         style: "tableStyle",
         table: {
-          widths: ["*", "*", "*", "*", "*"],
+          widths: ["*", "auto", "auto", "auto", "auto", "auto", "auto"],
           body: tableBody,
         },
         layout: "lightHorizontalLines",
