@@ -12,9 +12,11 @@ export async function getStudentsEnrolled(
   token: string,
   page: number,
   limit: number,
-  inscriptionId: string,
+  inscriptionId?: string,
   filters?: GridFilterItem,
   sortModel?: GridSortModel,
+  year?: number,
+  applicationStatus?: string,
 ): Promise<GetEnrolledDtoOutput> {
   const url = new URL(enrolled);
   const params: Record<string, string | number> = {
@@ -33,7 +35,17 @@ export async function getStudentsEnrolled(
     params["sort[order]"] = sortModel[0].sort as string;
   }
 
-  params["inscriptionId"] = inscriptionId;
+  if (inscriptionId) {
+    params["inscriptionId"] = inscriptionId;
+  }
+
+  if (year !== undefined) {
+    params["year"] = year;
+  }
+
+  if (applicationStatus) {
+    params["applicationStatus"] = applicationStatus;
+  }
 
   Object.keys(params).forEach((key) =>
     url.searchParams.append(key, params[key].toString())
@@ -58,6 +70,7 @@ export async function getStudentsEnrolled(
   }
   return {
     name: res.name,
+    partnerId: res.partnerId,
     students: {
       data: res.students.data.map((student: any) => ({
         ...student,

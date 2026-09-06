@@ -4,6 +4,7 @@ import { Paginate } from "@/utils/paginate";
 
 export interface GetEnrolledDtoOutput {
   name: string;
+  partnerId: string;
   students: Paginate<StudentsDtoOutput>;
 }
 
@@ -23,6 +24,11 @@ export interface StudentsDtoOutput {
     name: string;
     year: number;
     endDate: Date;
+  };
+  cpf?: string;
+  inscriptionCourse?: {
+    id: string;
+    name: string;
   };
   photo: string;
   logs: LogStudent[];

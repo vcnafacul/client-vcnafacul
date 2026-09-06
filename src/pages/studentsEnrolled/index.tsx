@@ -10,6 +10,7 @@ import {
   getAllWithName,
   InscriptionWithName,
 } from "@/services/prepCourse/inscription/getAllWithName";
+import { getCoursePeriodYears } from "@/services/prepCourse/coursePeriod/getCoursePeriodYears";
 import { getPartnerLogo } from "@/services/prepCourse/prepCourse/getPartnerLogo";
 import { enrollmentCancelled } from "@/services/prepCourse/student/enrollment-cancelled";
 import { getStudentsEnrolled } from "@/services/prepCourse/student/getStudentsEnrolled";
@@ -45,6 +46,8 @@ export function StudentsEnrolled() {
   const [name, setName] = useState<string>("");
   const [students, setStudents] = useState<StudentsDtoOutput[]>([]);
   const [limit, setLimit] = useState<number>(15);
+  // DataGrid usa page 0-indexed; a api usa 1-indexed
+  const [page, setPage] = useState<number>(0);
   const [totalItems, setTotalItems] = useState<number>(100);
   const [studentSelected, setStudentSelected] = useState<StudentsDtoOutput>(
     {} as StudentsDtoOutput,
@@ -56,6 +59,12 @@ export function StudentsEnrolled() {
   const [selectedInscription, setSelectedInscription] =
     useState<InscriptionWithName | null>(null);
   const [partnerLogo, setPartnerLogo] = useState<string | null>(null);
+  const [years, setYears] = useState<number[]>([]);
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<StatusApplication | null>(
+    null,
+  );
+  const [partnerId, setPartnerId] = useState<string | null>(null);
 
   const {
     data: { token, permissao },
@@ -64,10 +73,7 @@ export function StudentsEnrolled() {
   useEffect(() => {
     const fetchPartnerLogo = async () => {
       try {
-        const blob = await getPartnerLogo(
-          selectedInscription!.partnerId,
-          token,
-        );
+        const blob = await getPartnerLogo(partnerId!, token);
         const fileType = blob.type;
 
         if (fileType === "image/heic" || fileType === "image/heif") {
@@ -82,7 +88,7 @@ export function StudentsEnrolled() {
         console.error("Erro ao carregar logo da universidade:", error);
       }
     };
-    if (selectedInscription) {
+    if (partnerId) {
       fetchPartnerLogo();
     }
 
@@ -91,7 +97,7 @@ export function StudentsEnrolled() {
         URL.revokeObjectURL(partnerLogo);
       }
     };
-  }, [selectedInscription, token]);
+  }, [partnerId, token]);
 
   const modals = useModals([
     "modalInfo",
@@ -115,14 +121,20 @@ export function StudentsEnrolled() {
     await executeAsync({
       action: () => getAllWithName(token),
       loadingMessage: "Carregando processos seletivos...",
-      successMessage: "Processos seletivos carregados!",
       errorMessage: "Erro ao carregar processos seletivos",
       onSuccess: (res) => {
         setInscriptions(res);
-        // Seleciona o primeiro processo automaticamente se houver
-        if (res.length > 0) {
-          setSelectedInscription(res[0]);
-        }
+      },
+    });
+  };
+
+  const loadYears = async () => {
+    await executeAsync({
+      action: () => getCoursePeriodYears(token),
+      loadingMessage: "Carregando anos letivos...",
+      errorMessage: "Erro ao carregar anos letivos",
+      onSuccess: (res) => {
+        setYears(res);
       },
     });
   };
@@ -130,12 +142,12 @@ export function StudentsEnrolled() {
   const getEnrolle = async (
     page: number,
     limit: number,
-    inscriptionId: string,
+    inscriptionId?: string,
     filters?: GridFilterItem,
     sortModel?: GridSortModel,
+    year?: number | null,
+    applicationStatus?: StatusApplication | null,
   ) => {
-    if (!inscriptionId) return;
-
     await executeAsync({
       action: () =>
         getStudentsEnrolled(
@@ -145,12 +157,15 @@ export function StudentsEnrolled() {
           inscriptionId,
           filters,
           sortModel,
+          year ?? undefined,
+          applicationStatus ?? undefined,
         ),
       loadingMessage: "Buscando alunos matriculados...",
       successMessage: "Alunos matriculados encontrados com sucesso!",
       errorMessage: "Erro ao buscar alunos matriculados",
       onSuccess: (res) => {
         setName(res.name);
+        setPartnerId(res.partnerId);
         setTotalItems(res.students.totalItems);
         setStudents(res.students.data);
       },
@@ -158,19 +173,34 @@ export function StudentsEnrolled() {
   };
 
   const debouncedFilter = useCallback(
-    debounce.debounce(
-      (value: GridFilterItem, inscriptionId: string) =>
-        getEnrolle(1, limit, inscriptionId, value, sort),
-      1000,
-    ),
+    debounce.debounce((value: GridFilterItem) => {
+      setPage(0);
+      return getEnrolle(
+        1,
+        limit,
+        selectedInscription?.id,
+        value,
+        sort,
+        selectedYear,
+        selectedStatus,
+      );
+    }, 1000),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [limit, sort],
+    [limit, sort, selectedInscription, selectedYear, selectedStatus],
   );
 
+  // Cancela o debounce pendente quando a instancia e descartada,
+  // evitando que um timer antigo sobrescreva o resultado correto
+  useEffect(() => {
+    return () => {
+      debouncedFilter.cancel();
+    };
+  }, [debouncedFilter]);
+
   const handleFilterChange = (filterModel: GridFilterItem) => {
-    if (filterModel && filterModel.value !== undefined && selectedInscription) {
+    if (filterModel && filterModel.value !== undefined) {
       setFilter(filterModel);
-      debouncedFilter(filterModel, selectedInscription.id);
+      debouncedFilter(filterModel);
     }
   };
 
@@ -449,6 +479,25 @@ export function StudentsEnrolled() {
       valueGetter: (params) => (params as any).name || "Sem Turma",
     },
     {
+      field: "schoolYear",
+      headerName: "Ano Letivo",
+      minWidth: 110,
+      width: 110,
+      filterable: false,
+      sortable: false,
+      valueGetter: (_, row) =>
+        row.class?.year && row.class.year !== 0 ? row.class.year : "—",
+    },
+    {
+      field: "inscriptionCourse",
+      headerName: "Processo Seletivo",
+      minWidth: 200,
+      filterable: false,
+      sortable: false,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      valueGetter: (params) => (params as any)?.name || "—",
+    },
+    {
       field: "email",
       headerName: "Email",
       minWidth: 270,
@@ -503,19 +552,28 @@ export function StudentsEnrolled() {
     },
   ];
 
-  // Carrega as inscrições ao montar o componente
+  // Carrega inscrições e anos letivos ao montar o componente
   useEffect(() => {
     loadInscriptions();
+    loadYears();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Carrega os alunos quando a inscrição ou limit mudar
+  // Carrega os alunos na montagem e sempre que um filtro ou o limit mudar
   useEffect(() => {
-    if (selectedInscription) {
-      getEnrolle(1, limit, selectedInscription.id);
-    }
+    setSelectedRows([]);
+    setPage(0);
+    getEnrolle(
+      1,
+      limit,
+      selectedInscription?.id,
+      filter,
+      sort,
+      selectedYear,
+      selectedStatus,
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedInscription, limit]);
+  }, [selectedInscription, selectedYear, selectedStatus, limit]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelectionChange = useCallback((selectionModel: any) => {
@@ -528,8 +586,6 @@ export function StudentsEnrolled() {
     }
   }, []);
 
-  const paginationModel = { page: 0, pageSize: limit };
-
   return (
     <div className="flex flex-col justify-center items-center pt-4 gap-4">
       <div className="w-full px-4">
@@ -541,7 +597,6 @@ export function StudentsEnrolled() {
           onChange={(_, newValue) => {
             setSelectedInscription(newValue);
             setStudents([]);
-            setSelectedRows([]);
           }}
           options={inscriptions}
           getOptionLabel={(option) =>
@@ -556,12 +611,53 @@ export function StudentsEnrolled() {
             <TextField
               {...params}
               label="Processo Seletivo"
-              placeholder="Selecione um processo seletivo"
+              placeholder="Todos os processos"
             />
           )}
           sx={{ minWidth: 300, flex: 1 }}
           noOptionsText="Nenhum processo seletivo encontrado"
           loadingText="Carregando..."
+        />
+        <Autocomplete
+          value={selectedYear}
+          onChange={(_, newValue) => {
+            setSelectedYear(newValue);
+            setStudents([]);
+          }}
+          options={years}
+          getOptionLabel={(option) => option.toString()}
+          isOptionEqualToValue={(option, value) => option === value}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Ano Letivo"
+              placeholder="Todos os anos"
+            />
+          )}
+          sx={{ minWidth: 160 }}
+          noOptionsText="Nenhum ano letivo encontrado"
+        />
+        <Autocomplete
+          value={selectedStatus}
+          onChange={(_, newValue) => {
+            setSelectedStatus(newValue);
+            setStudents([]);
+          }}
+          options={[
+            StatusApplication.Enrolled,
+            StatusApplication.EnrollmentCancelled,
+            StatusApplication.EnrollmentClosed,
+          ]}
+          getOptionLabel={(option) => option}
+          isOptionEqualToValue={(option, value) => option === value}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Status de Matrícula"
+              placeholder="Todos os status"
+            />
+          )}
+          sx={{ minWidth: 220 }}
         />
         {permissao[Roles.gerenciarEstudantes] && (
           <Button
@@ -582,7 +678,7 @@ export function StudentsEnrolled() {
           columns={columns}
           rowCount={totalItems}
           paginationMode="server"
-          initialState={{ pagination: { paginationModel } }}
+          paginationModel={{ page, pageSize: limit }}
           rowHeight={40}
           disableRowSelectionOnClick
           checkboxSelection={permissao[Roles.gerenciarEstudantes]}
@@ -590,18 +686,29 @@ export function StudentsEnrolled() {
           onRowSelectionModelChange={handleSelectionChange}
           pageSizeOptions={[5, 10, 15, 30, 50, 100]}
           onPaginationModelChange={(newPageSize) => {
-            setLimit(newPageSize.pageSize);
-            if (selectedInscription) {
-              getEnrolle(
-                newPageSize.page + 1,
-                newPageSize.pageSize,
-                selectedInscription.id,
-                filter,
-                sort,
-              );
+            // Mudança de pageSize é tratada pelo useEffect (limit está nas deps),
+            // que já reseta para a página 1. Disparar aqui também deixaria duas
+            // requisições em voo sem ordem garantida entre elas.
+            if (newPageSize.pageSize !== limit) {
+              setLimit(newPageSize.pageSize);
+              return;
             }
+            setPage(newPageSize.page);
+            getEnrolle(
+              newPageSize.page + 1,
+              newPageSize.pageSize,
+              selectedInscription?.id,
+              filter,
+              sort,
+              selectedYear,
+              selectedStatus,
+            );
           }}
           sx={{ border: 0 }}
+          localeText={{
+            noRowsLabel:
+              "Nenhum estudante encontrado para os filtros selecionados",
+          }}
           isRowSelectable={(params) =>
             params.row.applicationStatus === StatusApplication.Enrolled &&
             params.row.class.id !== undefined
@@ -619,11 +726,18 @@ export function StudentsEnrolled() {
             if (
               sortModel &&
               sortModel.length > 0 &&
-              !["age", "name"].includes(sortModel[0].field) &&
-              selectedInscription
+              !["age", "name"].includes(sortModel[0].field)
             ) {
               setSort(sortModel);
-              getEnrolle(1, limit, selectedInscription.id, filter, sortModel);
+              getEnrolle(
+                1,
+                limit,
+                selectedInscription?.id,
+                filter,
+                sortModel,
+                selectedYear,
+                selectedStatus,
+              );
             }
           }}
         />
