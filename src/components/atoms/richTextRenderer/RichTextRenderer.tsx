@@ -12,6 +12,15 @@ interface RichTextRendererProps {
   contentFormat?: "plain" | "markdown";
   className?: string;
   fetchAsset?: (key: string, token: string) => Promise<Blob>;
+  /**
+   * Teto de largura, em px, para imagem **sem** width/height salvos — a mesma
+   * regra que o `ImageUploadExtension` aplica no editor, para a imagem não
+   * mudar de tamanho ao alternar entre visualizar e editar.
+   *
+   * Opcional de propósito: só o modal do banco de questões passa. Ligar por
+   * padrão encolheria imagem na prova do aluno, que usa este mesmo componente.
+   */
+  maxImageWidth?: number;
 }
 
 const ASSET_PROTOCOL = "asset://";
@@ -37,6 +46,7 @@ export function RichTextRenderer({
   contentFormat = "plain",
   className = "",
   fetchAsset,
+  maxImageWidth,
 }: RichTextRendererProps) {
   if (!content) {
     return <span className="text-gray-400">Sem texto</span>;
@@ -56,10 +66,17 @@ export function RichTextRenderer({
     img: ({ src, alt, title, width, height }) => {
       const w = width ? Number(width) : undefined;
       const h = height ? Number(height) : undefined;
+
+      // Espelha o `if (!savedWidth && !savedHeight)` do ImageUploadExtension:
+      // dimensão salva manda nos dois lados, e o teto só vale na ausência dela.
+      // Capar uma imagem salva em 500px criaria uma divergência nova — o editor
+      // continuaria mostrando 500px.
       const sizeStyle: React.CSSProperties | undefined =
         w && h
           ? { width: `${w}px`, height: `${h}px`, maxWidth: "100%" }
-          : undefined;
+          : maxImageWidth
+            ? { maxWidth: `min(100%, ${maxImageWidth}px)` }
+            : undefined;
 
       if (src?.startsWith(ASSET_PROTOCOL)) {
         const assetId = src.slice(ASSET_PROTOCOL.length);
@@ -68,8 +85,7 @@ export function RichTextRenderer({
             assetId={assetId}
             alt={alt || ""}
             className="max-w-full rounded"
-            width={w}
-            height={h}
+            style={sizeStyle}
             fetchAsset={fetchAsset}
           />
         );

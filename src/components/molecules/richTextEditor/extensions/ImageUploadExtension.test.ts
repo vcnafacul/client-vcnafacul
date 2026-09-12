@@ -2,6 +2,7 @@ import { Editor } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { ImageUploadExtension } from "./ImageUploadExtension";
+import { RICH_TEXT_IMAGE_MAX_WIDTH } from "@/utils/richTextImage";
 
 const ASSET_KEY = "assets/990cdfb0-06c6-48a6-ae84-451fde0184a3.png";
 
@@ -98,5 +99,17 @@ describe("ImageUploadExtension — asset:// no editor", () => {
 
     const img = document.querySelector("img");
     expect(img?.getAttribute("data-asset-error")).toBe("true");
+  });
+});
+
+describe("ImageUploadExtension — largura padrão", () => {
+  it("usa a constante compartilhada com o RichTextRenderer", () => {
+    montarEditor(async () => "blob:x");
+
+    // se este número divergir do teto da visualização, a imagem volta a mudar
+    // de tamanho ao abrir o "Editar Conteúdo"
+    expect(document.querySelector("img")?.style.width).toBe(
+      `${RICH_TEXT_IMAGE_MAX_WIDTH}px`
+    );
   });
 });

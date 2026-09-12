@@ -1,5 +1,6 @@
 import Image from "@tiptap/extension-image";
 import { ResizableNodeView } from "@tiptap/core";
+import { RICH_TEXT_IMAGE_MAX_WIDTH } from "@/utils/richTextImage";
 
 export interface ImageUploadOptions {
   onUpload: (file: File) => Promise<string>;
@@ -13,7 +14,8 @@ const ALIGN_TO_JUSTIFY: Record<string, string> = {
   right: "flex-end",
 };
 
-const DEFAULT_WIDTH = 300;
+// Mesmo teto que a visualização usa via `maxImageWidth` — ver richTextImage.ts
+const DEFAULT_WIDTH = RICH_TEXT_IMAGE_MAX_WIDTH;
 
 const PENDING_PROTOCOL = "pending-asset://";
 const ASSET_PROTOCOL = "asset://";

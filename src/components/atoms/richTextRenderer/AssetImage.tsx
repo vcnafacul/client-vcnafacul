@@ -6,8 +6,11 @@ interface AssetImageProps {
   assetId: string;
   alt?: string;
   className?: string;
-  width?: number;
-  height?: number;
+  /**
+   * Estilo de dimensão já resolvido pelo `RichTextRenderer`. A regra de
+   * tamanho mora lá, num lugar só, porque ela precisa bater com a do editor.
+   */
+  style?: React.CSSProperties;
   fetchAsset?: (key: string, token: string) => Promise<Blob>;
 }
 
@@ -15,8 +18,7 @@ export function AssetImage({
   assetId,
   alt = "",
   className,
-  width,
-  height,
+  style,
   fetchAsset = getQuestionImage,
 }: AssetImageProps) {
   const [src, setSrc] = useState<string>("");
@@ -53,12 +55,7 @@ export function AssetImage({
     return <span className="text-red-500 text-sm">[Imagem indisponível]</span>;
   }
 
-  const sizeStyle =
-    width && height
-      ? { width: `${width}px`, height: `${height}px`, maxWidth: "100%" as const }
-      : undefined;
-
-  return <img src={src} alt={alt} className={className} style={sizeStyle} />;
+  return <img src={src} alt={alt} className={className} style={style} />;
 }
 
 export default AssetImage;

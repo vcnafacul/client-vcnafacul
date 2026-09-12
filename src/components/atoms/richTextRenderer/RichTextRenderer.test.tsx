@@ -166,3 +166,74 @@ describe("RichTextRenderer — contentFormat plain", () => {
     expect(screen.getByText(/!\[\]\(asset:\/\//)).toBeVisible();
   });
 });
+
+/**
+ * O editor limita a imagem a `RICH_TEXT_IMAGE_MAX_WIDTH` quando a questão não
+ * tem width/height salvos, e respeita as dimensões quando tem. A visualização
+ * não limitava nada — daí a mesma imagem mudar de tamanho ao abrir a edição.
+ * `maxImageWidth` reproduz a regra do editor, e só onde é pedida.
+ */
+describe("RichTextRenderer — maxImageWidth (paridade com o editor)", () => {
+  it("limita a imagem sem dimensões salvas, como o editor faz", async () => {
+    render(
+      <RichTextRenderer
+        content={`![](asset://${ASSET_KEY})`}
+        contentFormat="markdown"
+        fetchAsset={okFetch()}
+        maxImageWidth={300}
+      />
+    );
+    await findImgSrc();
+
+    // min() para não estourar container mais estreito que o teto
+    expect(document.querySelector("img")?.style.maxWidth).toBe(
+      "min(100%, 300px)"
+    );
+  });
+
+  it("limita também imagem externa", () => {
+    render(
+      <RichTextRenderer
+        content="![g](https://enem.dev/g.png)"
+        contentFormat="markdown"
+        maxImageWidth={300}
+      />
+    );
+
+    expect(document.querySelector("img")?.style.maxWidth).toBe(
+      "min(100%, 300px)"
+    );
+  });
+
+  it("não limita quando a questão tem dimensões salvas — o editor também não", async () => {
+    render(
+      <RichTextRenderer
+        content={`<img src="asset://${ASSET_KEY}" alt="" width="500" height="400" />`}
+        contentFormat="markdown"
+        fetchAsset={okFetch()}
+        maxImageWidth={300}
+      />
+    );
+    await findImgSrc();
+
+    const img = document.querySelector("img");
+    expect(img?.style.width).toBe("500px");
+    expect(img?.style.height).toBe("400px");
+    // um 500px salvo continua 500px nos dois lados; capar aqui criaria
+    // uma divergência nova em vez de fechar a existente
+    expect(img?.style.maxWidth).toBe("100%");
+  });
+
+  it("sem a prop, não limita nada — a prova do aluno fica intocada", async () => {
+    render(
+      <RichTextRenderer
+        content={`![](asset://${ASSET_KEY})`}
+        contentFormat="markdown"
+        fetchAsset={okFetch()}
+      />
+    );
+    await findImgSrc();
+
+    expect(document.querySelector("img")?.style.maxWidth).toBe("");
+  });
+});
