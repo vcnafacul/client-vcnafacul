@@ -1,4 +1,4 @@
-import ReactMarkdown from "react-markdown";
+import ReactMarkdown, { defaultUrlTransform } from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
@@ -15,6 +15,22 @@ interface RichTextRendererProps {
 }
 
 const ASSET_PROTOCOL = "asset://";
+
+/**
+ * A partir da v9 o react-markdown descarta URLs de protocolo desconhecido — só
+ * passam `http`, `https`, `mailto`, `tel` e caminhos relativos. `asset://` não
+ * está na lista, então o `src` chegava vazio ao componente `img` abaixo: o
+ * `AssetImage` nunca era montado e sobrava um `<img src="">`, que não ocupa
+ * espaço e não dá erro. Era isso que fazia a linha da imagem sumir.
+ *
+ * Preservamos `asset://` — que é inerte, nunca vira navegação, só é fatiado
+ * para virar key no S3 — e delegamos todo o resto ao `defaultUrlTransform`.
+ * Trocar isto por `(url) => url` desligaria a proteção inteira e reabriria
+ * `javascript:` e `data:` em conteúdo escrito por usuário.
+ */
+function assetAwareUrlTransform(url: string): string {
+  return url.startsWith(ASSET_PROTOCOL) ? url : defaultUrlTransform(url);
+}
 
 export function RichTextRenderer({
   content,
@@ -33,7 +49,11 @@ export function RichTextRenderer({
   }
 
   const components: Components = {
-    img: ({ src, alt, width, height, ...props }) => {
+    // Sem rest-spread de propósito: o react-markdown injeta a prop `node` do
+    // mdast (que virava um atributo `node="[object Object]"` inválido no DOM) e
+    // o `rehypeRaw` repassa qualquer atributo do `<img>` cru escrito no
+    // enunciado. Listamos explicitamente o que atravessa.
+    img: ({ src, alt, title, width, height }) => {
       const w = width ? Number(width) : undefined;
       const h = height ? Number(height) : undefined;
       const sizeStyle: React.CSSProperties | undefined =
@@ -58,9 +78,9 @@ export function RichTextRenderer({
         <img
           src={src}
           alt={alt}
+          title={title}
           className="max-w-full rounded"
           style={sizeStyle}
-          {...props}
         />
       );
     },
@@ -71,6 +91,7 @@ export function RichTextRenderer({
       <ReactMarkdown
         remarkPlugins={[remarkMath, remarkGfm]}
         rehypePlugins={[rehypeRaw, rehypeKatex]}
+        urlTransform={assetAwareUrlTransform}
         components={components}
       >
         {content}
