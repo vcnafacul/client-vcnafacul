@@ -1,12 +1,14 @@
 import {
   ArrowLeftIcon,
   ArrowDownTrayIcon,
+  DocumentArrowDownIcon,
   PencilSquareIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { SimuladoResumo } from "../../../dtos/prova/prova";
+import { baixarCaderno } from "../../../services/caderno/baixarCaderno";
 import { baixarCartao } from "../../../services/cartaoResposta/baixarCartao";
 import { formatDateTime } from "../../../utils/date";
 import { getStatus, isSemJanela } from "../../../utils/simuladoAvailability";
@@ -58,6 +60,75 @@ function SimuladosView({
   onSimuladoUpdated,
 }: SimuladosViewProps) {
   const [editing, setEditing] = useState<SimuladoResumo | null>(null);
+
+  // ⚠️ Guarda o `_id` em voo, não um booleano. Um booleano único desabilitaria
+  // a tabela INTEIRA, e o coordenador que quer baixar dois simulados
+  // esperaria sem motivo.
+  const [baixandoCaderno, setBaixandoCaderno] = useState<string | null>(null);
+
+  // Botão de rascunho só existe com a env ligada. Lido uma vez, fora do
+  // render: `import.meta.env` é estático no build do Vite.
+  const rascunhoHabilitado = import.meta.env.VITE_CADERNO_DRAFT === "true";
+
+  const handleDownloadCaderno = async (
+    simulado: SimuladoResumo,
+    draft = false,
+  ) => {
+    // ⚠️ Guarda contra clique repetido. O botão já desabilita, mas entre o
+    // clique e o re-render cabe um segundo clique — e gerar o caderno é
+    // lento o bastante para essa janela ser real.
+    if (baixandoCaderno) return;
+    setBaixandoCaderno(simulado._id);
+
+    const id = toast.loading(
+      draft ? "Gerando rascunho..." : "Gerando caderno...",
+    );
+    try {
+      const { blob, avisos } = await baixarCaderno(
+        simulado._id,
+        token,
+        draft,
+      );
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `caderno_${simulado.nome}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      // ⚠️ Aviso é `warning`, não `success`. O download funcionou, mas há algo
+      // para conferir antes de imprimir — e este toast é o canal que devolve a
+      // responsabilidade a quem cadastrou a questão. Um success verde faz a
+      // pessoa fechar sem ler.
+      toast.update(id, {
+        render:
+          avisos > 0
+            ? `Caderno gerado com ${avisos} ${
+                avisos === 1 ? "observação" : "observações"
+              } — confira as questões marcadas`
+            : "Caderno baixado com sucesso!",
+        type: avisos > 0 ? "warning" : "success",
+        isLoading: false,
+        autoClose: avisos > 0 ? 8000 : 3000,
+        closeOnClick: true,
+      });
+    } catch (erro) {
+      // ⚠️ A mensagem do backend, não uma genérica. É o fim da corrente que o
+      // card 05 consertou.
+      toast.update(id, {
+        render:
+          erro instanceof Error ? erro.message : "Erro ao baixar o caderno",
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+        closeOnClick: true,
+      });
+    } finally {
+      setBaixandoCaderno(null);
+    }
+  };
 
   const handleDownloadCartao = async (simulado: SimuladoResumo) => {
     const id = toast.loading("Baixando cartão...");
@@ -179,6 +250,50 @@ function SimuladosView({
                       >
                         <ArrowDownTrayIcon className="h-4 w-4" />
                       </button>
+
+                      {!simulado.bloqueado && (
+                        <button
+                          onClick={() => handleDownloadCaderno(simulado)}
+                          disabled={baixandoCaderno === simulado._id}
+                          title="Baixar caderno de questões (pacote .zip para abrir no Overleaf)"
+                          className={
+                            baixandoCaderno === simulado._id
+                              ? "text-gray-200 cursor-wait"
+                              : "text-gray-400 hover:text-blue-600"
+                          }
+                          aria-label="Baixar caderno de questões"
+                        >
+                          <DocumentArrowDownIcon className="h-4 w-4" />
+                        </button>
+                      )}
+
+                      {simulado.bloqueado && rascunhoHabilitado && (
+                        <button
+                          onClick={() => handleDownloadCaderno(simulado, true)}
+                          disabled={baixandoCaderno === simulado._id}
+                          title="Baixar rascunho do caderno (sai com marca d'água e a lista de pendências)"
+                          className={
+                            baixandoCaderno === simulado._id
+                              ? "text-gray-200 cursor-wait"
+                              : "text-gray-300 hover:text-blue-500"
+                          }
+                          aria-label="Baixar rascunho do caderno"
+                        >
+                          <DocumentArrowDownIcon className="h-4 w-4" />
+                        </button>
+                      )}
+
+                      {simulado.bloqueado && !rascunhoHabilitado && (
+                        <button
+                          disabled
+                          title="O simulado precisa estar com todas as questões cadastradas, aprovadas e numeradas"
+                          className="text-gray-200 cursor-not-allowed"
+                          aria-label="Baixar caderno de questões"
+                        >
+                          <DocumentArrowDownIcon className="h-4 w-4" />
+                        </button>
+                      )}
+
                       <button
                         onClick={() => setEditing(simulado)}
                         className="text-gray-400 hover:text-blue-600"
