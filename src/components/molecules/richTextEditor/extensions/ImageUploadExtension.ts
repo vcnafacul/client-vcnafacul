@@ -1,5 +1,6 @@
 import Image from "@tiptap/extension-image";
 import { ResizableNodeView } from "@tiptap/core";
+import { RICH_TEXT_IMAGE_MAX_WIDTH } from "@/utils/richTextImage";
 
 export interface ImageUploadOptions {
   onUpload: (file: File) => Promise<string>;
@@ -13,7 +14,31 @@ const ALIGN_TO_JUSTIFY: Record<string, string> = {
   right: "flex-end",
 };
 
-const DEFAULT_WIDTH = 300;
+// Mesmo teto que a visualização usa via `maxImageWidth` — ver richTextImage.ts
+const DEFAULT_WIDTH = RICH_TEXT_IMAGE_MAX_WIDTH;
+
+const PENDING_PROTOCOL = "pending-asset://";
+const ASSET_PROTOCOL = "asset://";
+
+/**
+ * Marca a imagem como não resolvida, de forma visível.
+ *
+ * Antes, uma falha de resolução deixava o `<img>` com o `src` original
+ * (`asset://…`, que o browser não sabe carregar) e nada mais: imagem invisível,
+ * nenhum erro no console além da requisição vermelha. Um `<img>` sem `src` e com
+ * `alt` faz o browser desenhar o texto do alt, que é o sinal que faltava.
+ */
+function marcarAssetIndisponivel(img: HTMLImageElement, motivo: string) {
+  img.removeAttribute("src");
+  img.setAttribute("alt", "[Imagem indisponível]");
+  img.setAttribute("data-asset-error", "true");
+  img.title = motivo;
+  img.style.minWidth = "180px";
+  img.style.minHeight = "32px";
+  img.style.outline = "1px dashed #dc2626";
+  img.style.color = "#dc2626";
+  img.style.fontSize = "12px";
+}
 
 export const ImageUploadExtension = Image.extend<ImageUploadOptions>({
   addOptions() {
@@ -88,14 +113,17 @@ export const ImageUploadExtension = Image.extend<ImageUploadOptions>({
     return ({ node, getPos, HTMLAttributes, editor }) => {
       const img = document.createElement("img");
 
-      // Copy HTML attributes (skip width/height/textAlign — handled manually)
+      // Copy HTML attributes (skip width/height/textAlign — handled manually;
+      // skip src — `asset://`/`pending-asset://` não são protocolos de rede e
+      // o browser falharia o carregamento antes da resolução abaixo rodar)
       for (const [key, value] of Object.entries(HTMLAttributes)) {
         if (
           value != null &&
           value !== false &&
           key !== "width" &&
           key !== "height" &&
-          key !== "textAlign"
+          key !== "textAlign" &&
+          key !== "src"
         ) {
           img.setAttribute(key, String(value));
         }
@@ -104,20 +132,42 @@ export const ImageUploadExtension = Image.extend<ImageUploadOptions>({
       const src: string = node.attrs.src || "";
 
       // Resolve special URL schemes
-      if (src.startsWith("pending-asset://")) {
-        const tempId = src.replace("pending-asset://", "");
+      if (src.startsWith(PENDING_PROTOCOL)) {
+        const tempId = src.slice(PENDING_PROTOCOL.length);
         const blobUrl = resolvePendingUrl?.(tempId);
         if (blobUrl) {
           img.src = blobUrl;
+        } else {
+          marcarAssetIndisponivel(
+            img,
+            `Imagem pendente ${tempId} não encontrada nesta sessão`
+          );
         }
-      } else if (src.startsWith("asset://")) {
-        const assetId = src.replace("asset://", "");
+      } else if (src.startsWith(ASSET_PROTOCOL)) {
+        const assetId = src.slice(ASSET_PROTOCOL.length);
         if (resolveAssetUrl) {
-          resolveAssetUrl(assetId).then((blobUrl) => {
-            if (blobUrl) {
-              img.src = blobUrl;
-            }
-          });
+          resolveAssetUrl(assetId)
+            .then((blobUrl) => {
+              if (blobUrl) {
+                img.src = blobUrl;
+              } else {
+                marcarAssetIndisponivel(
+                  img,
+                  `Não foi possível carregar o asset ${assetId}`
+                );
+              }
+            })
+            .catch(() => {
+              marcarAssetIndisponivel(
+                img,
+                `Falha ao buscar o asset ${assetId}`
+              );
+            });
+        } else {
+          marcarAssetIndisponivel(
+            img,
+            "Editor sem resolvedor de assets configurado"
+          );
         }
       } else {
         img.src = src;

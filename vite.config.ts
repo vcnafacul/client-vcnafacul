@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import svgr from "@svgr/rollup";
 import react from "@vitejs/plugin-react";
 import path from "path";
@@ -19,6 +20,11 @@ export default defineConfig({
   assetsInclude: ["**/*.svg"],
   optimizeDeps: {
     include: ["pdfmake/build/pdfmake", "pdfmake/build/vfs_fonts"],
+  },
+  test: {
+    environment: "jsdom",
+    setupFiles: ["./vitest.setup.ts"],
+    include: ["src/**/*.{test,spec}.{ts,tsx}"],
   },
   build: {
     rollupOptions: {

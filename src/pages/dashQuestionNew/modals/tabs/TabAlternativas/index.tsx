@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RichTextRenderer } from "@/components/atoms/richTextRenderer/RichTextRenderer";
+import { RICH_TEXT_IMAGE_MAX_WIDTH } from "@/utils/richTextImage";
 import { PendingImageStore } from "@/utils/pendingImageStore";
 import { AlertCircle } from "lucide-react";
 import { lazy, Suspense } from "react";
@@ -76,6 +77,7 @@ export function TabAlternativas({
                         <RichTextRenderer
                           content={textoAlternativa || "Sem texto"}
                           contentFormat={contentFormat}
+                          maxImageWidth={RICH_TEXT_IMAGE_MAX_WIDTH}
                         />
                       </div>
                     </div>
