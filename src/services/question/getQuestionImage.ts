@@ -1,8 +1,18 @@
 import { questoes } from "@/services/urls";
 import fetchWrapper from "@/utils/fetchWrapper";
 
+/**
+ * Busca a imagem/asset de uma questão.
+ *
+ * `key` pode ser o `imageId` legado (`<uuid>.png`, sem barra) ou a key de um
+ * asset novo (`assets/<uuid>.png`, com barra — o upload joga na pasta `assets`).
+ * A rota no api é `@Get(':id/image')`, de um segmento só: sem o encode a barra
+ * vira separador de path, a URL ganha um segmento e não casa com rota nenhuma
+ * → 404 silencioso. Com o encode, o Express entrega a key já decodificada, com
+ * a barra, num `:id` único. O caminho legado é inerte ao encode.
+ */
 export async function getQuestionImage(key: string, token: string): Promise<Blob> {
-  const response = await fetchWrapper(`${questoes}/${key}/image`, {
+  const response = await fetchWrapper(`${questoes}/${encodeURIComponent(key)}/image`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
