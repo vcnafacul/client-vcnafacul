@@ -61,6 +61,7 @@ export const cursinhoProva = `${mssimulado}/cursinho/prova`;
 export const questoes = `${mssimulado}/questoes`;
 export const historico = `${mssimulado}/historico`;
 export const cartaoResposta = `${mssimulado}/cartao-resposta`;
+export const caderno = `${mssimulado}/caderno`;
 export const auditLog = `${BASE_URL}/auditlog`;
 export const auditLogMs = `${BASE_URL}/auditlog/ms`;
 export const historyQuestion = `${mssimulado}/questoes/history`;
