@@ -24,7 +24,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "svg.d.ts"],
+  "include": ["src", "svg.d.ts", "vitest.setup.ts"],
   "references": [
     {
       "path": "./tsconfig.app.json"
