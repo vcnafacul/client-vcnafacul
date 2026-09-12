@@ -28,7 +28,11 @@ acrescenta um botão.
 
 ## Restrições do repo
 
-- ⚠️ **`npm run lint` exige zero warnings.** Não é conselho: o projeto está configurado assim.
+- ⚠️ **`npm run lint` está QUEBRADO neste repo, e é pré-existente.** ESLint 9 instalado, config em
+  `.eslintrc.cjs` (formato legado que a v9 não lê), script usando `--ext` (removido na v9), e nenhum CI
+  rodando lint. Falha igual na `develop`. Rodando por compatibilidade, o repo tem **155 problemas**
+  pré-existentes. **Não conserte isso** — é tarefa de projeto. Lint só os seus arquivos:
+  `ESLINT_USE_FLAT_CONFIG=false npx eslint <caminhos>`.
 - ⚠️ **Nunca** `git add -A` nem `git add .`.
 - Branch `feature/caderno-06-client-botao`, criada de `poc/caderno-overleaf`, que saiu da `develop`. Commits autônomos liberados.
 
@@ -151,10 +155,10 @@ VITE_CADERNO_DRAFT=false
 
 ```bash
 npx tsc --noEmit
-npm run lint
+ESLINT_USE_FLAT_CONFIG=false npx eslint src/services/urls.ts src/services/caderno/baixarCaderno.ts
 ```
 
-Esperado: os dois limpos. ⚠️ **Zero warnings** — o projeto trata warning como falha.
+Esperado: os dois limpos, nos **seus** arquivos.
 
 - [ ] **Step 5: Commit**
 
@@ -347,11 +351,11 @@ esperando um PDF e encontra `.tex` dentro.
 
 ```bash
 npx tsc --noEmit
-npm run lint
+ESLINT_USE_FLAT_CONFIG=false npx eslint src/pages/dashProvas/modals/simuladosView.tsx
 npm run build
 ```
 
-Os três limpos, **zero warnings**.
+Os três limpos.
 
 ⚠️ Se o lint reclamar de complexidade no componente por causa dos três blocos, **reporte** em vez de
 extrair às pressas — pode ser sinal de que os botões merecem um componente próprio, e quero decidir
@@ -430,7 +434,7 @@ resposta.**
 
 ```bash
 npx tsc --noEmit
-npm run lint
+ESLINT_USE_FLAT_CONFIG=false npx eslint src/services/urls.ts src/services/caderno/baixarCaderno.ts src/pages/dashProvas/modals/simuladosView.tsx
 npm run build
 ```
 

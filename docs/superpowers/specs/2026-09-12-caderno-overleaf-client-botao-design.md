@@ -141,9 +141,29 @@ O `LEIA-ME.txt` dentro do zip (card 00) cobre o resto.
 Isto **corrige o que foi dito no desenho verbal**, onde falei em testes de service e de componente.
 Não há onde escrevê-los.
 
+### E o `npm run lint` está quebrado
+
+⚠️ Medido durante a execução, e **pré-existente**: `npm run lint` não roda neste repo, na `develop`
+inclusive.
+
+| | |
+|---|---|
+| ESLint declarado e instalado | **9.39.4** (`^9.0.0` no `package.json`) |
+| config presente | `.eslintrc.cjs` — formato **legado**, que a v9 não lê por padrão |
+| script | usa `--ext`, flag **removida** na v9 |
+| CI que roda lint | **nenhum** — por isso ninguém notou |
+
+Rodando pelo caminho de compatibilidade (`ESLINT_USE_FLAT_CONFIG=false`), o repo tem **155 problemas
+pré-existentes** (84 erros, 71 avisos) em arquivos que este card não toca. Ou seja: o critério "zero
+warnings" do card **já não era verdade** antes deste trabalho.
+
+**Consertar isso não entra aqui.** Migrar para flat config e zerar 155 problemas é tarefa de projeto,
+não de um card que acrescenta um botão. **Registrado como observação, com prioridade** — sem lint e
+sem testes, este repo não tem verificação automática nenhuma.
+
 A verificação deste card é, portanto:
 
-- `npm run lint` — **zero warnings**, que o projeto exige
+- `ESLINT_USE_FLAT_CONFIG=false npx eslint <arquivos deste card>` — limpo
 - `npx tsc --noEmit`
 - `npm run build`
 - **gate manual**, que aqui não é opcional: é a única prova de comportamento
@@ -167,7 +187,7 @@ Com o client apontando para uma api que tenha o card 05:
 ## Critérios de aceitação
 
 - [ ] Os 8 pontos do gate
-- [ ] `npm run lint` com zero warnings
+- [ ] `ESLINT_USE_FLAT_CONFIG=false npx eslint <arquivos deste card>` limpo (o `npm run lint` do projeto está quebrado — ver acima)
 - [ ] `npx tsc --noEmit` limpo
 - [ ] `npm run build` limpo
 - [ ] `.env.example` com `VITE_CADERNO_DRAFT`
@@ -186,6 +206,9 @@ afirma depende do gate manual. Um erro aqui não é pego por CI.
 caminho de download em produção, sem o card pedir. Registrado.
 
 **Não introduz runner de teste.** Ver acima.
+
+**Não conserta o `npm run lint`.** Migrar para flat config e zerar 155 problemas pré-existentes é
+tarefa de projeto. Registrado.
 
 **Não esconde o botão em prova ENEM oficial.** O card levanta isso como consequência de uma decisão de
 direito autoral que **ainda não foi tomada** (pergunta 3 do README da POC). Enquanto ela não for, o
