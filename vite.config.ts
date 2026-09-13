@@ -24,6 +24,15 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
+    // ⚠️ Ver o docblock no fim de `components/dashV2/DashToolbar.test.tsx`.
+    // Aquele arquivo leva ~50s e satura um core; no runner de 2 vCPU do CI o
+    // processo principal deixava de ser escalonado e o RPC do vitest estourava
+    // com `Timeout calling "onTaskUpdate"` — pipeline vermelha com TODOS os
+    // testes verdes. Fork único e em série tira a contenção. É contorno.
+    pool: "forks",
+    poolOptions: { forks: { singleFork: true } },
+    fileParallelism: false,
+    teardownTimeout: 30000,
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
   },
   build: {

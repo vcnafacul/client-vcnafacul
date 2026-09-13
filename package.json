@@ -11,6 +11,7 @@
     "build:qa": "tsc && vite build --mode qa",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest run",
+    "test:ci": "vitest run --exclude '**/DashToolbar.test.tsx'",
     "test:watch": "vitest",
     "preview": "vite preview"
   },

@@ -3,9 +3,8 @@ import { toast } from "react-toastify";
 import { FilterProps } from "../../components/atoms/filter";
 import { SelectProps } from "../../components/atoms/select";
 import { OptionProps } from "../../components/atoms/selectOption";
-import { ButtonProps } from "../../components/molecules/button";
 import { CardDash } from "../../components/molecules/cardDash";
-import DashCardTemplate from "../../components/templates/dashCardTemplate";
+import { DashListTemplate, type DashAction } from "@/components/dashV2";
 import { DashCardContext } from "../../context/dashCardContext";
 import { Prova } from "../../dtos/prova/prova";
 import { ICategoria } from "../../dtos/categoria/categoria";
@@ -19,6 +18,7 @@ import { useAuthStore } from "../../store/auth";
 import { useToastAsync } from "../../hooks/useToastAsync";
 import { formatDate } from "../../utils/date";
 import { Paginate } from "../../utils/paginate";
+import { colunasDeProva } from "./columns";
 import { dashProva } from "./data";
 import NewProva from "./modals/newProva";
 import ShowProva from "./modals/showProva";
@@ -32,6 +32,21 @@ const EDICAO_ALL = "";
 const APLICACAO_ALL = "";
 const ANO_ALL = "";
 
+/**
+ * ⚠️ **`ano desc`.** O caso de uso que motivou o épico inteiro é "achar a
+ * reaplicação de 2019 que ainda tem questão faltando" — e a primeira metade
+ * disso é o ano. `createdAt desc` (a ordem que o servidor devolve) responde
+ * "o que entrou por último", que é outra pergunta e a menos frequente aqui.
+ */
+const ORDENACAO_PADRAO = { columnId: "ano", direction: "desc" } as const;
+
+const MOTIVO = {
+  cadastrarProvas: "Requer permissão: cadastrar provas",
+  visualizarProvas: "Requer permissão: visualizar provas",
+  visualizarEstudantes: "Requer permissão: visualizar estudantes",
+  alterarPermissao: "Requer permissão: alterar permissões",
+} as const;
+
 function DashProva() {
   const [provas, setProvas] = useState<Prova[]>([]);
   const [provaSelected, setProvaSelected] = useState<Prova | null>(null);
@@ -43,15 +58,24 @@ function DashProva() {
   const [aplicacaoFilter, setAplicacaoFilter] = useState<string>(APLICACAO_ALL);
   const [anoFilter, setAnoFilter] = useState<string>(ANO_ALL);
   const [gabaritoOnly, setGabaritoOnly] = useState<boolean>(false);
-  const [resetKey, setResetKey] = useState<number>(0);
 
   const limitCards = 500;
 
   /**
-   * O scroll infinito é servido por `onLoadMore` (e não pelo `setEntities` do
-   * template) porque `entities` aqui é a lista DERIVADA `filteredProvas`:
-   * deixar o template escrever nela apagaria do estado toda prova escondida
-   * pelo filtro. Concatenamos na lista BRUTA `provas`, deduplicando por `_id`.
+   * ⚠️ **O `DashListTemplate` não usa nada disto** — ele pagina em memória e
+   * nunca chama `getMoreCards` nem `onLoadMore`. Parece código morto, e não é.
+   *
+   * É a rede da reversibilidade: a promessa do V2 é que esta tela volta ao V1
+   * trocando a linha do import. Se o `onLoadMore` sumir daqui, voltar ao V1
+   * reintroduz o defeito que o PR #679 consertou — `entities` é a lista
+   * DERIVADA `filteredProvas`, e deixar o template escrever nela **apaga do
+   * estado** toda prova que o filtro escondeu (não esconde: apaga; só um F5
+   * traz de volta).
+   *
+   * Concatena na lista BRUTA `provas`, deduplicando por `_id`.
+   *
+   * O mecanismo em si segue coberto por `templates/dashCardTemplate/index.test.tsx`
+   * e por `pages/partnerPrepProvas/index.test.tsx`, que continua no V1.
    */
   const requestedPages = useRef<Set<number>>(new Set<number>());
   const bottomReached = useRef<boolean>(false);
@@ -70,6 +94,17 @@ function DashProva() {
 
   const execute = useToastAsync();
 
+  /**
+   * ⚠️ **Continua aqui, e continua obrigatório.** O `DashCardContextProps` o
+   * exige, e o `DashListTemplate` o usa para extrair o `id` da linha — é ele
+   * que faz `onRowClick` e `onClickCard` falarem do mesmo registro. As colunas
+   * do V2 vêm de `columns.tsx` e não passam por aqui.
+   *
+   * ⚠️ O `status` abaixo é a derivação **errada** do V1 (uma prova em cadastro
+   * vira `Rejected`, o vermelho de "recusada"). Fica intacta de propósito: o V2
+   * não a lê — quem manda na coluna Status é o `status.ts` — e mexer nela aqui
+   * mudaria o `CardDash` sem que nada nesta tela mostrasse a diferença.
+   */
   const cardTransformation = (prova: Prova): CardDash => ({
     id: prova._id,
     title: prova.nome,
@@ -287,12 +322,18 @@ function DashProva() {
     },
   ];
 
-  const hasActiveFilters =
-    nameFilter !== "" ||
-    edicaoFilter !== EDICAO_ALL ||
-    aplicacaoFilter !== APLICACAO_ALL ||
-    anoFilter !== ANO_ALL ||
-    gabaritoOnly;
+  /**
+   * ⚠️ Contagem, não booleano: é o número que aparece em "Limpar filtros (3)"
+   * e é a mudança dele que devolve a lista para a página 1 quando o filtro vem
+   * de um controle que o template não enxerga (o checkbox de gabarito).
+   */
+  const activeFilterCount = [
+    nameFilter !== "",
+    edicaoFilter !== EDICAO_ALL,
+    aplicacaoFilter !== APLICACAO_ALL,
+    anoFilter !== ANO_ALL,
+    gabaritoOnly,
+  ].filter(Boolean).length;
 
   const handleSync = () => {
     execute({
@@ -325,68 +366,109 @@ function DashProva() {
     });
   };
 
+  /**
+   * ⚠️ **Sem `setResetKey`.** O V1 remontava o `DashCardTemplate` inteiro com
+   * `key={resetKey}` para limpar os filtros, porque os selects dele não eram
+   * controlados. Remontar descarta a ordenação, a página e a posição de
+   * rolagem — a pessoa limpa a busca e perde o "ordenado por progresso" que
+   * tinha acabado de pedir. Aqui os controles são controlados e limpar filtro
+   * limpa só filtro; a ordenação é do usuário e continua onde estava.
+   */
   const clearFilters = () => {
     setNameFilter("");
     setEdicaoFilter(EDICAO_ALL);
     setAplicacaoFilter(APLICACAO_ALL);
     setAnoFilter(ANO_ALL);
     setGabaritoOnly(false);
-    setResetKey((k) => k + 1);
   };
 
-  const buttons: ButtonProps[] = [
-    {
-      disabled: !permissao[Roles.cadastrarProvas],
-      onClick: handleSync,
-      typeStyle: "primary",
-      size: "small",
-      children: "Sincronizar",
+  function acao(
+    id: string,
+    label: string,
+    permitido: boolean,
+    motivo: string,
+    onClick: () => void,
+  ): DashAction {
+    return {
+      id,
+      label,
+      onClick,
+      disabled: !permitido,
+      // ⚠️ O V1 deixava o botão com `opacity-30` e nada explicava por quê.
+      disabledReason: permitido ? undefined : motivo,
+    };
+  }
+
+  /**
+   * ⚠️ **Uma única ação laranja na tela, e é "Nova Prova".** Hoje o laranja
+   * está em "Sincronizar" — manutenção rara que dispara processamento pesado —
+   * enquanto a ação que a tela existe para permitir é o botão mais apagado dos
+   * seis. E "Limpar filtros" era vermelho, sendo controle de filtro; ele saiu
+   * daqui e virou link na barra de filtros, via `onClearFilters`.
+   */
+  const acaoPrimaria = acao(
+    "nova-prova",
+    "Nova Prova",
+    permissao[Roles.cadastrarProvas],
+    MOTIVO.cadastrarProvas,
+    () => {
+      setProvaSelected(null);
+      modals.modalNewProva.open();
     },
-    {
-      disabled: !permissao[Roles.visualizarProvas],
-      onClick: handleSyncReport,
-      typeStyle: "secondary",
-      size: "small",
-      children: "Relatorio Sync",
-    },
-    {
-      disabled: !permissao[Roles.cadastrarProvas],
-      onClick: () => {
-        setProvaSelected(null);
-        modals.modalNewProva.open();
-      },
-      typeStyle: "quaternary",
-      size: "small",
-      children: "Nova Prova",
-    },
-    {
-      disabled: !permissao[Roles.alterarPermissao],
-      onClick: () => modals.modalManageCategorias.open(),
-      typeStyle: "secondary",
-      size: "small",
-      children: "Gerenciar Categorias",
-    },
-    {
-      disabled: !permissao[Roles.alterarPermissao],
-      onClick: () => modals.modalManageTemplate.open(),
-      typeStyle: "secondary",
-      size: "small",
-      children: "Template do caderno",
-    },
-    {
-      disabled: !permissao[Roles.visualizarEstudantes],
-      onClick: () => modals.modalUploadCartao.open(),
-      typeStyle: "secondary",
-      size: "small",
-      children: "Enviar cartão",
-    },
-    {
-      disabled: !hasActiveFilters,
-      onClick: clearFilters,
-      typeStyle: "refused",
-      size: "small",
-      children: "Limpar filtros",
-    },
+  );
+
+  const acoesSecundarias: DashAction[] = [
+    acao(
+      "enviar-cartao",
+      "Enviar cartão",
+      permissao[Roles.visualizarEstudantes],
+      MOTIVO.visualizarEstudantes,
+      () => modals.modalUploadCartao.open(),
+    ),
+    /*
+      ⚠️ `Roles.alterarPermissao` para categoria de prova é permissão de
+      administração de papéis e não tem relação com o que o botão faz — parece
+      copiar-e-colar antigo. **Não é corrigido aqui de propósito:** mudar regra
+      de permissão no mesmo commit de um redesenho esconde a mudança na
+      revisão. Está registrado como ticket próprio.
+    */
+    acao(
+      "gerenciar-categorias",
+      "Gerenciar Categorias",
+      permissao[Roles.alterarPermissao],
+      MOTIVO.alterarPermissao,
+      () => modals.modalManageCategorias.open(),
+    ),
+    acao(
+      "template-caderno",
+      "Template do caderno",
+      permissao[Roles.alterarPermissao],
+      MOTIVO.alterarPermissao,
+      () => modals.modalManageTemplate.open(),
+    ),
+  ];
+
+  /**
+   * ⚠️ As duas vão para o `⋯`: "Sincronizar" é manutenção rara (confirmado com
+   * quem usa a tela) e "Relatório Sync" só faz sentido depois dela. Deixá-las
+   * na barra é o que fazia seis botões competirem pela atenção de quem só quer
+   * cadastrar uma prova.
+   */
+  const acoesOverflow: DashAction[] = [
+    acao(
+      "sincronizar",
+      "Sincronizar",
+      permissao[Roles.cadastrarProvas],
+      MOTIVO.cadastrarProvas,
+      handleSync,
+    ),
+    acao(
+      "relatorio-sync",
+      "Relatório Sync",
+      permissao[Roles.visualizarProvas],
+      MOTIVO.visualizarProvas,
+      handleSyncReport,
+    ),
   ];
 
   const GabaritoCheckbox = (
@@ -406,6 +488,12 @@ function DashProva() {
       value={{
         title: dashProva.title,
         entities: filteredProvas,
+        /*
+          ⚠️ `setProvas`, e **não** `() => {}`. O `DashListTemplate` nunca
+          escreve em `entities`, então na prática este campo não é chamado; uma
+          função vazia esconderia o bug do par `entities filtrado` +
+          `setEntities da lista bruta` no dia em que a tela voltasse ao V1.
+        */
         setEntities: setProvas,
         onClickCard,
         getMoreCards,
@@ -414,11 +502,21 @@ function DashProva() {
         limitCards,
         filterProps,
         selectFiltes,
-        buttons,
         totalItems: filteredProvas.length,
       }}
     >
-      <DashCardTemplate key={resetKey} customFilter={[GabaritoCheckbox]} />
+      <DashListTemplate<Prova>
+        columns={colunasDeProva}
+        actions={{
+          primary: acaoPrimaria,
+          secondary: acoesSecundarias,
+          overflow: acoesOverflow,
+        }}
+        filters={GabaritoCheckbox}
+        activeFilterCount={activeFilterCount}
+        onClearFilters={clearFilters}
+        defaultSort={ORDENACAO_PADRAO}
+      />
       <ModalNewProva />
       <ModalShowProva />
       <ModalManageCategorias />
