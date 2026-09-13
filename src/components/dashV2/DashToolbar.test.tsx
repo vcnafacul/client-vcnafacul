@@ -154,15 +154,25 @@ describe("DashToolbar — colapso automático", () => {
       <DashToolbar
         title="Provas"
         secondary={[acao("um"), acao("dois"), acao("três"), quatro]}
-        overflow={[acao("arquivar")]}
+        overflow={[acao("arquivar"), acao("excluir", { destructive: true })]}
       />,
     );
 
     const menu = abrirMenu();
-    expect(nomesNoMenu(menu)).toEqual(["quatro", "arquivar"]);
+    expect(nomesNoMenu(menu)).toEqual(["quatro", "arquivar", "excluir"]);
 
     fireEvent.click(within(menu).getByRole("button", { name: "quatro" }));
     expect(quatro.onClick).toHaveBeenCalledTimes(1);
+
+    // ⚠️ Os itens do menu usam os papéis do `02` (`menuItem` e
+    // `destructiveGhost`), não cor escrita à mão aqui dentro — a catraca de
+    // paleta do `tokens.test.ts` só guarda o arquivo de tokens.
+    expect(within(menu).getByRole("button", { name: "arquivar" }).className).toContain(
+      dashV2.action.menuItem,
+    );
+    const destrutivo = within(menu).getByRole("button", { name: "excluir" });
+    expect(destrutivo.className).toContain(dashV2.action.destructiveGhost);
+    expect(destrutivo.className.split(/\s+/)).not.toContain("bg-red");
   });
 });
 

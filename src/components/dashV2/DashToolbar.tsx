@@ -56,13 +56,10 @@ type Variante = "primary" | "secondary" | "menu";
 
 function corDaAcao(acao: DashAction, variante: Variante): string {
   if (variante === "menu") {
-    // ⚠️ Os tokens do `02` não têm papel para "item destrutivo em superfície
-    // clara" — `action.destructive` é vermelho preenchido, que numa linha de
-    // menu vira um bloco vermelho de largura inteira. Fica `text-red` (cor da
-    // paleta) até o `02` ganhar esse papel.
-    return acao.destructive
-      ? "text-red hover:bg-red/10"
-      : cn(dashV2.action.ghost, "hover:bg-backgroundGrey");
+    // ⚠️ Papéis próprios, e não `action.destructive`: vermelho preenchido numa
+    // linha de menu vira um bloco de largura inteira. Ver o comentário dos dois
+    // no `tokens.ts`.
+    return acao.destructive ? dashV2.action.destructiveGhost : dashV2.action.menuItem;
   }
   if (acao.destructive) return dashV2.action.destructive;
   return variante === "primary" ? dashV2.action.primary : dashV2.action.secondary;

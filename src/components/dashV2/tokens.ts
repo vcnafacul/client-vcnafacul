@@ -50,6 +50,31 @@ export const dashV2 = {
     secondary: "bg-white border border-lightGray text-marine",
     ghost: "text-marine",
     destructive: "bg-red text-white",
+
+    /**
+     * Item de menu (o `⋯` da toolbar): `ghost` mais o realce de linha.
+     * `backgroundGrey` é o mesmo cinza do fundo da dash — sobre a superfície
+     * branca do popover ele marca a linha sob o cursor sem virar um segundo
+     * botão.
+     */
+    menuItem: "text-marine hover:bg-backgroundGrey",
+
+    /**
+     * Destrutivo em superfície clara — linha de menu, e não botão.
+     *
+     * ⚠️ **Não é duplicata do `destructive`, é outro papel.** `bg-red
+     * text-white` é o botão de ação, que ocupa o tamanho do próprio rótulo;
+     * numa linha de menu ele vira um bloco vermelho de largura inteira e grita
+     * muito mais alto do que a ação merece — ainda mais quando divide o menu
+     * com itens neutros. Aqui o vermelho fica no texto e só o hover pinta o
+     * fundo, em 10%.
+     *
+     * ⚠️ `red` (#F43535) sobre branco dá 3.88:1: passa no limite de 3:1 de
+     * componente gráfico e no AA de texto grande, mas **não** no AA de texto
+     * pequeno. Por isso o rótulo do item nunca é só a cor — quem lê "Excluir"
+     * tem a informação inteira, e o vermelho é reforço.
+     */
+    destructiveGhost: "text-red hover:bg-red/10",
   },
 
   /** Foco de teclado, em TUDO que recebe foco. Substitui o `blue-500` do `Select`. */
