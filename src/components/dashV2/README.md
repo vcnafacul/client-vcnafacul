@@ -1,0 +1,231 @@
+# Dash V2 — listagens administrativas
+
+Uma segunda dash, **concorrente** da `templates/dashCardTemplate`, para as telas em que o
+administrador precisa **comparar, ordenar e varrer** registros. A `dashProvas` é a tela piloto.
+
+> ⚠️ **Este documento não descreve a API.** Os tipos e os JSDoc de cada arquivo fazem isso, e duplicar
+> aqui garante divergência. O que está escrito abaixo é o que o código **não consegue dizer**: os
+> porquês, as medições, e o que é proibido tocar.
+
+---
+
+## Por que existe
+
+O `DashCardTemplate` resolveu um problema real — cada tela administrativa nova exigia refazer header,
+filtro, grid e paginação na mão — e nove telas vivem nele. **Isso não está em discussão.**
+
+O que o V2 ataca é outra coisa: o template só sabe desenhar **um** layout, grid de cards de 288px. No
+banco de provas, cada card empilha quatro números como `campo: valor` e cabem quatro por linha. Para
+achar *"a reaplicação de 2019 que ainda tem questão faltando"*, o usuário rola a página lendo card a
+card.
+
+⚠️ **Levantamento das nove telas:** nenhuma preenche `card.logo` (o campo existe no `CardDash` e não é
+usado em lugar nenhum), e todas montam de três a cinco pares `campo: valor`. O grid de card não está
+sendo usado pelo que card faz bem — está sendo usado como tabela desalinhada.
+
+Isso **não** torna o V1 dispensável. Ele é a resposta certa para a tela que ainda não existe: galeria
+de cursinhos com foto, banco de imagens, vitrine de conteúdo.
+
+---
+
+## A regra inegociável
+
+> **Nada do V1 muda.** `templates/dashCardTemplate`, `molecules/cardDash`, `context/dashCardContext`,
+> `atoms/filter`, `atoms/select` e `components/ui/*` não são editados por trabalho do V2.
+
+Uma tela migrada volta ao V1 trocando uma linha de import. É isso que torna a POC segura, e é a razão
+de várias decisões abaixo parecerem tortas fora de contexto.
+
+Se um trabalho parecer exigir mexer em arquivo do V1, **ele para e vira discussão** — não é feito de
+passagem.
+
+---
+
+## Como migrar uma tela
+
+São três níveis. O primeiro leva minutos; o terceiro é onde está o trabalho.
+
+### Nível 1 — trocar o import
+
+```tsx
+- <DashCardTemplate />
++ <DashListTemplate />
+```
+
+**Todas as props são opcionais.** Sem `columns`, o template deriva do `cardTransformation` que a tela
+já fornece (`deriveColumns.tsx`): coluna 1 = `title`, uma por `infos[i].field`, última = `StatusBadge`.
+Sem `actions`, deriva dos `buttons` (`deriveActions.ts`).
+
+Rode assim **primeiro**. Isso já diz se a tela faz sentido como tabela, antes de escrever qualquer
+coluna.
+
+⚠️ A saída é degradada de propósito: tudo à esquerda, ordenação numérica só quando **todos** os valores
+da amostra são numéricos.
+
+### Nível 2 — colunas explícitas
+
+`columns.tsx` ao lado do `index.tsx`, como na `dashProvas`. É o que dá alinhamento, largura,
+formatação, `hideBelow` e ordenação correta.
+
+⚠️ **`actions` é tudo ou nada.** Passar `actions` desliga o fallback inteiro — não dá para declarar só
+a primária e deixar o resto derivar.
+
+### Nível 3 — o que a tela precisa mudar nela mesma
+
+- **Remover `key={resetKey}`** e passar `onClearFilters` + `activeFilterCount`. Os selects da tela
+  precisam virar controlados. Remontar descarta ordenação, página e posição de rolagem.
+- **Conferir o par `entities` / `setEntities`** — ver a seção seguinte.
+- **Passar `state="loading"`** no primeiro carregamento, senão o skeleton nunca aparece.
+- **Tirar "Limpar filtros" da lista de botões.** Ele não é ação de registro; mora na barra de filtros.
+
+### Classificação das oito telas restantes
+
+| Tela | Nível esperado | Por quê |
+|---|---|---|
+| `dashContent`, `dashGeo`, `dashNews`, `dashRoles`, `partnerPrepManager` | 1 → 2 | passam lista bruta + setter da mesma; sem `resetKey` |
+| `partnerPrepProvas` | 3 | `entities: filteredProvas` + `setEntities: setProvas` |
+| `partnerPrepInscriptionManager` | 3 | lista derivada, com setter customizado que mescla por id |
+
+### Checklist por tela migrada
+
+- [ ] Todas as ações que existiam continuam acessíveis, **inclusive as que foram para o `⋯`**
+- [ ] As permissões (`Roles.*`) de cada ação são **idênticas** — comparar item a item
+- [ ] Clicar no registro abre o mesmo destino
+- [ ] Os filtros filtram o mesmo conjunto de campos
+- [ ] A contagem de registros confere com a de antes
+- [ ] Carregando, vazio e erro aparecem
+- [ ] `yarn test` e `yarn build` limpos
+
+---
+
+## `entities` é leitura
+
+> **O template nunca chama `setEntities`.** É a diferença de contrato mais importante entre V1 e V2.
+
+No V1, o scroll infinito faz `setEntities([...entities, ...newItems])`. Telas que passam
+`entities: <lista filtrada>` + `setEntities: <setter da lista bruta>` têm os registros escondidos pelo
+filtro **apagados do estado** — não escondidos, apagados; só um F5 traz de volta.
+
+Há teste com spy provando que o V2 não reintroduz isso.
+
+⚠️ O Provider continua **exigindo** `setEntities`. Passe o setter real, **não uma função vazia** — a
+função vazia mascararia o bug caso a tela volte ao V1.
+
+⚠️ `cardTransformation` também continua obrigatório, mesmo com colunas explícitas: o template o usa
+para extrair o `id` do clique. Remover quebra a tipagem.
+
+---
+
+## Decisões que não devem ser reabertas
+
+Cada uma tem medição. Se alguém "consertar" uma delas, quebra algo que foi medido.
+
+### O botão principal tem texto `marine`, não branco
+
+Branco sobre `#FF7600` dá **2.68:1** — reprova até no limite de 3:1 de componente gráfico. `marine`
+sobre o mesmo laranja dá **5.62:1** e mantém o laranja exato da marca.
+
+O `typeStyle="primary"` do V1 continua com texto branco e **não é tocado**.
+
+### O ponto de status "em andamento" fica em 2.21:1, de propósito
+
+Contraste do ponto contra o próprio chip: `done` 3.36:1, `missing` 3.38:1, `neutral` 4.46:1, e
+**`running` 2.21:1**.
+
+Nenhum laranja da paleta alcança 3:1 sobre fundo alaranjado claro — testados `orange` (2.42) e clarear
+o chip para `/5` (2.54). Fica assim porque **o texto carrega o significado** (13:1+ em `marine`) e o
+ponto é pista rápida. A alternativa seria um segundo laranja no produto, que é a deriva que este
+trabalho existe para corrigir.
+
+⚠️ O `neutral` usa `grey` e não `gray2`: `gray2` dava 2.19:1 e tinha conserto de graça.
+
+⚠️ `yellow` saiu de status — 1.27:1 sobre branco, invisível até como marcador.
+
+### Não use o `<Table>` do shadcn — use `<table>`
+
+O wrapper `<Table>` envolve tudo num `div.relative.w-full.overflow-auto`. **Um ancestral com `overflow`
+vira o scrollport do `position: sticky`**, e como esse div não tem altura ele nunca rola: o cabeçalho
+grudaria nele e sumiria junto com a página.
+
+O critério "cabeçalho permanece visível ao rolar" falharia **sem nada acusar**. O resto do shadcn
+(`TableBody`, `TableCell`, `TableHeader`, `TableRow`) é usado normalmente.
+
+⚠️ Pelo mesmo motivo o bloco branco da tabela **não** leva `overflow-hidden`.
+
+### Colapso responsivo em JS, não em CSS
+
+A toolbar abaixo de 768px e a lista empilhada usam o hook `useAcimaDeSm`, não `hidden sm:flex`.
+
+Com CSS, a mesma ação existiria **duas vezes no DOM** e o leitor de tela leria as duas. `window.matchMedia`
+não existe no jsdom — o hook cai em "desktop" quando ele falta, e o teste injeta o mock.
+
+⚠️ Esconder **coluna** por CSS (`hideBelow`) é diferente e está OK: não duplica nada.
+
+### Não existe `mode="server"`
+
+A paginação server-side depende de filtro e ordenação no backend, que não foram feitos. Uma prop que
+meio-funciona é pior que uma prop ausente, porque parece feature pronta. Acrescentar depois é aditivo.
+
+### A tabela não ordena sozinha
+
+`DashTable` só chama `onSortChange`; quem ordena é o template, com `sortRows.ts`. É isso que permite
+trocar para ordenação no servidor sem tocar no componente.
+
+⚠️ `sortRows.ts` já resolve `localeCompare` pt-BR (sem ele, "Ática" cai depois de "Zebra"), datas
+normalizadas (`createdAt` é tipado como `DateTime` do luxon mas **chega como string ISO** — comparar
+cru vira ordem alfabética), ordenação estável e nulos no fim nas duas direções. **Importe; não
+reimplemente.**
+
+### Cor sempre pelos tokens
+
+⚠️ A catraca de paleta (`tokens.test.ts`) lê o `tailwind.config.js` de verdade e derruba cor de fora
+da paleta — **mas ela guarda só o `tokens.ts`**. Se um `.tsx` escrever `text-slate-700`, nada acusa.
+
+Faltando um papel, **acrescente ao `tokens.ts`** em vez de contornar. Foi o que os componentes fizeram
+com `menuItem`, `destructiveGhost`, `row.hover` e `progress`.
+
+---
+
+## Custo de teste: o Radix é caro aqui
+
+**Cada montagem de conteúdo Radix baseado em Popper — Popover, Tooltip, Select — custa 3 a 4,5 s de
+CPU neste jsdom.** Medido com `process.cpuUsage()`: é CPU, não espera (wall 5338 ms / cpu 5335 ms).
+
+Não é do nosso componente: um `<Popper.Root>` pelado reproduz, e `DismissableLayer` + `FocusScope`
+sozinhos custam 2 ms.
+
+⚠️ **E vaza para o teste seguinte.** O trabalho pendente estoura o timeout do próximo teste, mesmo
+desmontando dentro do `act` com timer falso — o sintoma é um teste sem relação nenhuma falhando, o que
+manda depurar o lugar errado.
+
+**Duas regras enquanto isso não for resolvido:**
+
+1. Agrupe as asserções numa **mesma abertura** do popover, em vez de reabrir por teste.
+2. O `describe` que abre o `⋯` é o **último do arquivo**. Quem acrescentar teste depois dele vai ver
+   estouro sem motivo aparente.
+
+Números no fim do `DashToolbar.test.tsx`.
+
+---
+
+## O que está pendente
+
+**Não consertar por conta própria** — cada um tem motivo para estar aqui.
+
+| Pendência | Por que não foi feito |
+|---|---|
+| **`components/ui/pagination` não é acessível por teclado** — renderiza `<a>` **sem `href`**, que pela spec não é link: sem foco, sem Enter. Rótulos em inglês. | Arquivo compartilhado do V1, usado por `simulationHistories`, `partnerClass` e `dashQuestionNew`. Card próprio. |
+| **"Gerenciar Categorias" está atrás de `Roles.alterarPermissao`** — administração de papéis, sem relação com categoria de prova. Parece copiar-e-colar. | Mudar permissão junto com redesenho esconde a mudança na revisão. Card próprio. |
+| **Acessibilidade e teclado** na tabela | Card próprio, ainda não feito. |
+| **Filtro e ordenação server-side** | Card próprio. É o que destrava o `mode="server"`. |
+| **`npm run lint` está quebrado no repo** — ESLint 9 procurando `eslint.config.js` com `.eslintrc.cjs` legado. Não lint-a nada, e o CI não o roda. | Migrar mexe no status de lint de todo arquivo. Card próprio. Para verificar seus arquivos: `ESLINT_USE_FLAT_CONFIG=false npx eslint <caminhos>`. |
+
+### Gate visual nunca executado
+
+Cinco coisas que jsdom não alcança e que **ninguém verificou no navegador**:
+
+1. Densidade em 1440px — o alvo é ao menos 18 provas sem rolar
+2. Lista empilhada em 768px
+3. O cabeçalho sticky com o header de 76px do site por cima
+4. Truncamento de nome longo de prova do ENEM
+5. Paginação com mais de 25 registros — hoje só chegam 40 do gateway, e havia PR aberto consertando
