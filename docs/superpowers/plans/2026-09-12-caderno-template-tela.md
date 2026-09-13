@@ -83,7 +83,8 @@ para o coordenador não perder o zip. **É a armadilha central deste card.**
 | Arquivo | Responsabilidade |
 |---|---|
 | `src/services/caderno/template/tipos.ts` | as formas que a api devolve |
-| `src/services/caderno/template/{baixarModelo,subirRascunho,obterRascunho,descartarRascunho,publicar,listarVersoes,restaurar}.ts` | um por endpoint |
+| `src/services/caderno/template/{obterPublicada,baixarModelo,subirRascunho,obterRascunho,descartarRascunho,publicar,listarVersoes,restaurar}.ts` | um por endpoint |
+| `src/services/caderno/template/erros.ts` | `ErroDeLint` e o parse tolerante de corpo de erro |
 | `src/pages/dashProvas/modals/manageTemplate/estados.ts` | **a máquina de estados. Pura.** |
 | `src/pages/dashProvas/modals/manageTemplate/index.tsx` | o modal |
 | `src/pages/dashProvas/modals/manageTemplate/historico.tsx` | a aba de versões |
@@ -93,7 +94,7 @@ para o coordenador não perder o zip. **É a armadilha central deste card.**
 
 ---
 
-### Task 1: os sete services
+### Task 1: os oito services
 
 **Files:**
 - Create: `src/services/caderno/template/tipos.ts`
@@ -323,11 +324,22 @@ discriminado. **Não** serialize a lista dentro da string da mensagem: a tela pr
 - [ ] **Step 4: Rodar, confirmar vermelho, implementar os sete**
 
 Todos usam `fetchWrapper` com `Authorization: Bearer`, no molde do `baixarCaderno.ts`. Os cinco sem
-teste próprio (`obterRascunho`, `descartarRascunho`, `listarVersoes`, `restaurar`) são triviais — uma
-chamada e um `json()`.
+teste próprio (`obterPublicada`, `obterRascunho`, `descartarRascunho`, `listarVersoes`, `restaurar`)
+são quase triviais — uma chamada e um `json()`.
+
+⚠️ **São OITO, não sete.** O contrato tem oito rotas, e a lista inclui o `GET /template`
+(`obterPublicada`), sem o qual a tela não tem como mostrar que versão está no ar.
 
 ⚠️ **`obterRascunho` devolve `null` no 404**, não lança: "não há rascunho" é estado normal da tela, não
 erro.
+
+⚠️ **`obterPublicada` devolve `null` no `503`, NÃO no 404.** Medido em
+`ms-simulado/.../caderno-template.service.ts:60-68`: sem versão publicada o ms lança
+`ServiceUnavailableException`, e a api repassa. O 503 aqui não é indisponibilidade — é o estado
+legítimo de uma plataforma onde ninguém publicou ainda, e é o estado de **homologação hoje**, porque o
+seed do card 10 ainda não rodou lá. Tratar só o 404 faz o modal quebrar na primeira abertura em homol.
+
+⚠️ **`restaurar` não lê o corpo** — o ms devolve `void`, e um `.json()` em corpo vazio lançaria.
 
 - [ ] **Step 5: Rodar e confirmar verde**
 
