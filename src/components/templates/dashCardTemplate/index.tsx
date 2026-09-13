@@ -27,6 +27,7 @@ function DashCardTemplate({
     setEntities,
     limitCards,
     getMoreCards,
+    onLoadMore,
     filterProps,
     selectFiltes,
     buttons,
@@ -44,28 +45,47 @@ function DashCardTemplate({
     if (lastCardInView && !bottomReached && entities.length > 0) {
       const nextPage = page + 1;
       setPage(nextPage);
-      getMoreCards?.(nextPage).then((res) => {
-        const newItems = res?.data ?? [];
 
-        if (entities.length === 4 * limitCards) {
-          setEntities([...entities.slice(limitCards), ...newItems]);
-        } else {
-          setEntities([...entities, ...newItems]);
-        }
+      if (onLoadMore) {
+        // A tela é dona da lista completa: só avisamos qual página falta.
+        // Escrever via `setEntities` aqui apagaria do estado tudo o que o
+        // filtro escondeu, quando `entities` é uma lista derivada.
+        onLoadMore(nextPage);
+      } else {
+        getMoreCards?.(nextPage).then((res) => {
+          const newItems = res?.data ?? [];
 
-        if (newItems.length < limitCards) {
-          setBottomReached(true);
-        }
-      });
+          if (entities.length === 4 * limitCards) {
+            setEntities([...entities.slice(limitCards), ...newItems]);
+          } else {
+            setEntities([...entities, ...newItems]);
+          }
+
+          if (newItems.length < limitCards) {
+            setBottomReached(true);
+          }
+        });
+      }
     }
 
-    if (firstCardInView && page > limitPages) {
+    // A janela deslizante (descartar o começo da lista ao avançar e recarregar
+    // ao voltar) só existe no modo legado. Com `onLoadMore` a tela guarda a
+    // lista inteira, então não há nada para recarregar ao subir.
+    if (firstCardInView && page > limitPages && !onLoadMore) {
       const previousPage = page - 1;
-      setPage(previousPage);
-      getMoreCards?.(previousPage - limitPages).then((res) => {
-        const newItems = res?.data ?? [];
-        setEntities([...newItems, ...entities.slice(0, 3 * limitCards)]);
-      });
+      const rawTargetPage = previousPage - limitPages;
+
+      // Com `page === 5` o cálculo dá 0. Página 0 vira `skip` negativo no
+      // backend paginado e é rejeitada — nunca requisitar página < 1.
+      const targetPage = Math.max(1, rawTargetPage);
+
+      if (rawTargetPage >= 1) {
+        setPage(previousPage);
+        getMoreCards?.(targetPage).then((res) => {
+          const newItems = res?.data ?? [];
+          setEntities([...newItems, ...entities.slice(0, 3 * limitCards)]);
+        });
+      }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

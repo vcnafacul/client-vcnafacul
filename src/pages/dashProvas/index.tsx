@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { FilterProps } from "../../components/atoms/filter";
 import { SelectProps } from "../../components/atoms/select";
@@ -60,6 +60,25 @@ function DashProva() {
   const [gabaritoOnly, setGabaritoOnly] = useState<boolean>(false);
 
   const limitCards = 500;
+
+  /**
+   * ⚠️ **O `DashListTemplate` não usa nada disto** — ele pagina em memória e
+   * nunca chama `getMoreCards` nem `onLoadMore`. Parece código morto, e não é.
+   *
+   * É a rede da reversibilidade: a promessa do V2 é que esta tela volta ao V1
+   * trocando a linha do import. Se o `onLoadMore` sumir daqui, voltar ao V1
+   * reintroduz o defeito que o PR #679 consertou — `entities` é a lista
+   * DERIVADA `filteredProvas`, e deixar o template escrever nela **apaga do
+   * estado** toda prova que o filtro escondeu (não esconde: apaga; só um F5
+   * traz de volta).
+   *
+   * Concatena na lista BRUTA `provas`, deduplicando por `_id`.
+   *
+   * O mecanismo em si segue coberto por `templates/dashCardTemplate/index.test.tsx`
+   * e por `pages/partnerPrepProvas/index.test.tsx`, que continua no V1.
+   */
+  const requestedPages = useRef<Set<number>>(new Set<number>());
+  const bottomReached = useRef<boolean>(false);
 
   const modals = useModals([
     "modalNewProva",
@@ -171,6 +190,9 @@ function DashProva() {
   };
 
   useEffect(() => {
+    requestedPages.current = new Set<number>([1]);
+    bottomReached.current = false;
+
     getProvas(token, 1, limitCards)
       .then((res) => {
         setProvas(res.data);
@@ -190,6 +212,29 @@ function DashProva() {
 
   const getMoreCards = async (page: number): Promise<Paginate<Prova>> => {
     return await getProvas(token, page, limitCards);
+  };
+
+  const loadMoreProvas = (page: number) => {
+    if (page < 1) return;
+    if (bottomReached.current || requestedPages.current.has(page)) return;
+    requestedPages.current.add(page);
+
+    getProvas(token, page, limitCards)
+      .then((res) => {
+        const newItems = res?.data ?? [];
+        if (newItems.length < limitCards) bottomReached.current = true;
+        if (newItems.length === 0) return;
+
+        setProvas((prev) => {
+          const knownIds = new Set(prev.map((p) => p._id));
+          const genuinelyNew = newItems.filter((p) => !knownIds.has(p._id));
+          return genuinelyNew.length > 0 ? [...prev, ...genuinelyNew] : prev;
+        });
+      })
+      .catch((erro: Error) => {
+        requestedPages.current.delete(page);
+        toast.error(erro.message);
+      });
   };
 
   const edicaoOptions: OptionProps[] = useMemo(() => {
@@ -452,6 +497,7 @@ function DashProva() {
         setEntities: setProvas,
         onClickCard,
         getMoreCards,
+        onLoadMore: loadMoreProvas,
         cardTransformation,
         limitCards,
         filterProps,
