@@ -81,8 +81,16 @@ export const dashV2 = {
   focus:
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange/40 focus-visible:ring-offset-1",
 
-  /** Densidade. 40px alinha com o `rowHeight={40}` do MUI DataGrid em `studentsEnrolled`. */
-  row: { base: "h-10", compact: "h-8" },
+  /**
+   * Densidade. 40px alinha com o `rowHeight={40}` do MUI DataGrid em
+   * `studentsEnrolled`.
+   *
+   * ⚠️ `hover` é o mesmo cinza do fundo da dash (`page`), e é de propósito: numa
+   * listagem, a linha sob o cursor precisa de um realce que não compita com o
+   * status nem com a coluna-chave. Fica aqui, e não escrito à mão no
+   * `DashTable`, porque a catraca de paleta só enxerga este arquivo.
+   */
+  row: { base: "h-10", compact: "h-8", hover: "hover:bg-backgroundGrey" },
   header: "h-9",
   cell: "px-3 text-sm",
 

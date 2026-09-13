@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -12,6 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { dashV2 } from "./tokens";
+import { useAcimaDeSm } from "./useAcimaDeSm";
 import type { DashAction, DashToolbarProps } from "./types";
 
 /**
@@ -20,34 +20,6 @@ import type { DashAction, DashToolbarProps } from "./types";
  * impede `dashProvas` de voltar a ter seis botões lado a lado daqui a um ano.
  */
 export const MAX_SECUNDARIAS_NA_BARRA = 3;
-
-/** O `sm` **deste** projeto é 768px, não o default do Tailwind. */
-const SM = "(min-width: 768px)";
-
-/**
- * ⚠️ Media query em JS, e não `hidden sm:flex`: abaixo de `sm` a ação não fica
- * escondida na barra, ela **muda de lugar** — vai para dentro do `⋯`. Com CSS
- * puro seria preciso renderizar a mesma ação duas vezes, e duas cópias do mesmo
- * botão no DOM é exatamente o tipo de coisa que mente para leitor de tela.
- */
-function useAcimaDeSm(): boolean {
-  const [acima, setAcima] = useState(() =>
-    typeof window === "undefined" || typeof window.matchMedia !== "function"
-      ? true // sem matchMedia (jsdom, SSR) o desktop é o palpite seguro
-      : window.matchMedia(SM).matches,
-  );
-
-  useEffect(() => {
-    if (typeof window.matchMedia !== "function") return;
-    const mql = window.matchMedia(SM);
-    const aoMudar = (e: MediaQueryListEvent) => setAcima(e.matches);
-    setAcima(mql.matches);
-    mql.addEventListener?.("change", aoMudar);
-    return () => mql.removeEventListener?.("change", aoMudar);
-  }, []);
-
-  return acima;
-}
 
 const BASE_BOTAO =
   "inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md px-3 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40";
