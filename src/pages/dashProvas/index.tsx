@@ -74,8 +74,11 @@ function DashProva() {
    *
    * Concatena na lista BRUTA `provas`, deduplicando por `_id`.
    *
-   * O mecanismo em si segue coberto por `templates/dashCardTemplate/index.test.tsx`
-   * e por `pages/partnerPrepProvas/index.test.tsx`, que continua no V1.
+   * O mecanismo em si segue coberto por `templates/dashCardTemplate/index.test.tsx`.
+   *
+   * ⚠️ Este comentário citava também `pages/partnerPrepProvas/index.test.tsx`,
+   * "que continua no V1" — não continua mais, aquela tela migrou. A cobertura
+   * do mecanismo ficou só no teste do template, que é onde ela pertence.
    */
   const requestedPages = useRef<Set<number>>(new Set<number>());
   const bottomReached = useRef<boolean>(false);
