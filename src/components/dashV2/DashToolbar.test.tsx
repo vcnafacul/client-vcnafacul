@@ -1,5 +1,13 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 import { DashToolbar, MAX_SECUNDARIAS_NA_BARRA } from "./DashToolbar";
 import { dashV2 } from "./tokens";
 import type { DashAction } from "./types";
@@ -7,11 +15,12 @@ import type { DashAction } from "./types";
 beforeAll(() => {
   // O Popper do Radix observa o tamanho do gatilho; o jsdom não tem
   // ResizeObserver.
-  (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = class {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
-  };
+  (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver =
+    class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    };
 });
 
 /**
@@ -80,7 +89,12 @@ describe("DashToolbar — hierarquia", () => {
       />,
     );
 
-    expect(naBarra()).toEqual(["Mais ações", "Importar", "Exportar", "Nova prova"]);
+    expect(naBarra()).toEqual([
+      "Mais ações",
+      "Importar",
+      "Exportar",
+      "Nova prova",
+    ]);
   });
 
   it("renderiza no máximo um botão laranja preenchido", () => {
@@ -105,7 +119,9 @@ describe("DashToolbar — hierarquia", () => {
   it("título e subtítulo, com o subtítulo em darkGrey", () => {
     render(<DashToolbar title="Provas" subtitle="128 provas" />);
     expect(screen.getByRole("heading", { name: "Provas" })).toBeInTheDocument();
-    expect(screen.getByText("128 provas").className).toContain(dashV2.text.secondary);
+    expect(screen.getByText("128 provas").className).toContain(
+      dashV2.text.secondary,
+    );
   });
 
   it("renderiza o backButton que a tela passar", () => {
@@ -114,13 +130,21 @@ describe("DashToolbar — hierarquia", () => {
   });
 
   it("sem nada para o menu, o ⋯ não existe", () => {
-    render(<DashToolbar title="Provas" primary={acao("Nova")} secondary={[acao("a")]} />);
+    render(
+      <DashToolbar
+        title="Provas"
+        primary={acao("Nova")}
+        secondary={[acao("a")]}
+      />,
+    );
     expect(screen.queryByRole("button", { name: "Mais ações" })).toBeNull();
   });
 
   it("o gatilho do ⋯ tem nome acessível", () => {
     render(<DashToolbar title="Provas" overflow={[acao("Arquivar")]} />);
-    expect(screen.getByRole("button", { name: "Mais ações" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Mais ações" }),
+    ).toBeInTheDocument();
   });
 });
 
@@ -131,11 +155,23 @@ describe("DashToolbar — colapso automático", () => {
       <DashToolbar
         title="Provas"
         primary={acao("Nova prova")}
-        secondary={[acao("um"), acao("dois"), acao("três"), acao("quatro"), acao("cinco")]}
+        secondary={[
+          acao("um"),
+          acao("dois"),
+          acao("três"),
+          acao("quatro"),
+          acao("cinco"),
+        ]}
       />,
     );
 
-    expect(naBarra()).toEqual(["Mais ações", "um", "dois", "três", "Nova prova"]);
+    expect(naBarra()).toEqual([
+      "Mais ações",
+      "um",
+      "dois",
+      "três",
+      "Nova prova",
+    ]);
     expect(nomesNoMenu(abrirMenu())).toEqual(["quatro", "cinco"]);
   });
 
@@ -144,7 +180,12 @@ describe("DashToolbar — colapso automático", () => {
   });
 
   it("com 3 secundárias ou menos, nada colapsa e o ⋯ nem aparece", () => {
-    render(<DashToolbar title="Provas" secondary={[acao("um"), acao("dois"), acao("três")]} />);
+    render(
+      <DashToolbar
+        title="Provas"
+        secondary={[acao("um"), acao("dois"), acao("três")]}
+      />,
+    );
     expect(naBarra()).toEqual(["um", "dois", "três"]);
   });
 
@@ -167,9 +208,9 @@ describe("DashToolbar — colapso automático", () => {
     // ⚠️ Os itens do menu usam os papéis do `02` (`menuItem` e
     // `destructiveGhost`), não cor escrita à mão aqui dentro — a catraca de
     // paleta do `tokens.test.ts` só guarda o arquivo de tokens.
-    expect(within(menu).getByRole("button", { name: "arquivar" }).className).toContain(
-      dashV2.action.menuItem,
-    );
+    expect(
+      within(menu).getByRole("button", { name: "arquivar" }).className,
+    ).toContain(dashV2.action.menuItem);
     const destrutivo = within(menu).getByRole("button", { name: "excluir" });
     expect(destrutivo.className).toContain(dashV2.action.destructiveGhost);
     expect(destrutivo.className.split(/\s+/)).not.toContain("bg-red");
@@ -210,13 +251,17 @@ describe("DashToolbar — motivo do botão desabilitado", () => {
     // hover é o <span> em volta dele.
     render(<DashToolbar title="Provas" primary={desabilitada()} />);
 
-    const gatilho = screen.getByRole("button", { name: "Nova prova" }).parentElement!;
+    const gatilho = screen.getByRole("button", {
+      name: "Nova prova",
+    }).parentElement!;
     act(() => {
       fireEvent.pointerMove(gatilho, { pointerType: "mouse" });
       vi.advanceTimersByTime(300);
     });
 
-    expect(screen.getAllByText("Requer permissão: cadastrar provas").length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("Requer permissão: cadastrar provas").length,
+    ).toBeGreaterThan(0);
   });
 
   it("o tooltip aparece no foco por teclado", () => {
@@ -224,14 +269,18 @@ describe("DashToolbar — motivo do botão desabilitado", () => {
     // tabIndex, quem navega por Tab nunca chega no motivo.
     render(<DashToolbar title="Provas" primary={desabilitada()} />);
 
-    const gatilho = screen.getByRole("button", { name: "Nova prova" }).parentElement!;
+    const gatilho = screen.getByRole("button", {
+      name: "Nova prova",
+    }).parentElement!;
     act(() => {
       gatilho.focus();
       vi.advanceTimersByTime(300);
     });
 
     expect(document.activeElement).toBe(gatilho);
-    expect(screen.getAllByText("Requer permissão: cadastrar provas").length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("Requer permissão: cadastrar provas").length,
+    ).toBeGreaterThan(0);
   });
 
   it("sem interação, o motivo não está na tela", () => {
@@ -240,7 +289,12 @@ describe("DashToolbar — motivo do botão desabilitado", () => {
   });
 
   it("botão desabilitado sem motivo não ganha embrulho focável nem tooltip", () => {
-    render(<DashToolbar title="Provas" primary={acao("Nova prova", { disabled: true })} />);
+    render(
+      <DashToolbar
+        title="Provas"
+        primary={acao("Nova prova", { disabled: true })}
+      />,
+    );
     const botao = screen.getByRole("button", { name: "Nova prova" });
 
     act(() => {
@@ -257,7 +311,9 @@ describe("DashToolbar — comportamento dos botões", () => {
   it("clique chama o onClick da ação", () => {
     const nova = acao("Nova prova");
     const importar = acao("Importar");
-    render(<DashToolbar title="Provas" primary={nova} secondary={[importar]} />);
+    render(
+      <DashToolbar title="Provas" primary={nova} secondary={[importar]} />,
+    );
 
     fireEvent.click(screen.getByRole("button", { name: "Nova prova" }));
     fireEvent.click(screen.getByRole("button", { name: "Importar" }));
@@ -267,7 +323,10 @@ describe("DashToolbar — comportamento dos botões", () => {
   });
 
   it("desabilitada não chama o onClick", () => {
-    const nova = acao("Nova prova", { disabled: true, disabledReason: "Sem permissão" });
+    const nova = acao("Nova prova", {
+      disabled: true,
+      disabledReason: "Sem permissão",
+    });
     render(<DashToolbar title="Provas" primary={nova} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Nova prova" }));
@@ -276,7 +335,12 @@ describe("DashToolbar — comportamento dos botões", () => {
   });
 
   it("destrutiva não usa o laranja da ação principal", () => {
-    render(<DashToolbar title="Provas" secondary={[acao("Excluir", { destructive: true })]} />);
+    render(
+      <DashToolbar
+        title="Provas"
+        secondary={[acao("Excluir", { destructive: true })]}
+      />,
+    );
     const botao = screen.getByRole("button", { name: "Excluir" });
 
     expect(botao.className).toContain(dashV2.action.destructive);
@@ -294,8 +358,12 @@ describe("DashToolbar — comportamento dos botões", () => {
       />,
     );
 
-    expect(screen.getByTestId("icone").parentElement!.getAttribute("aria-hidden")).toBe("true");
-    expect(screen.getByRole("button", { name: "Importar" }).querySelector("svg")).toBeNull();
+    expect(
+      screen.getByTestId("icone").parentElement!.getAttribute("aria-hidden"),
+    ).toBe("true");
+    expect(
+      screen.getByRole("button", { name: "Importar" }).querySelector("svg"),
+    ).toBeNull();
   });
 });
 
@@ -313,15 +381,24 @@ describe("DashToolbar — acessibilidade", () => {
     const focaveis = [...container.querySelectorAll("button, [tabindex='0']")];
     expect(focaveis.length).toBeGreaterThan(0);
     for (const el of focaveis) {
-      expect(el.className, el.textContent ?? "").toContain("focus-visible:ring-orange/40");
-      expect(el.className).not.toMatch(/ring-blue|focus:ring-blue|outline-blue/);
+      expect(el.className, el.textContent ?? "").toContain(
+        "focus-visible:ring-orange/40",
+      );
+      expect(el.className).not.toMatch(
+        /ring-blue|focus:ring-blue|outline-blue/,
+      );
     }
   });
 
   it("o ⋯ não finge semântica de menu que o teclado não entrega", () => {
     // ⚠️ São botões dentro de um popover, navegáveis por Tab. `role="menu"` sem
     // navegação por setas é ARIA que promete o que não cumpre.
-    render(<DashToolbar title="Provas" overflow={[acao("Arquivar"), acao("Excluir")]} />);
+    render(
+      <DashToolbar
+        title="Provas"
+        overflow={[acao("Arquivar"), acao("Excluir")]}
+      />,
+    );
     const menu = abrirMenu();
 
     expect(menu.querySelector("[role='menu']")).toBeNull();
@@ -331,10 +408,25 @@ describe("DashToolbar — acessibilidade", () => {
 });
 
 /**
- * ⚠️ **Por que este arquivo é lento.** Cada montagem de conteúdo do Radix que
- * usa o Popper (o popover do `⋯` e o tooltip) custa ~3s **de CPU** neste jsdom:
- * o posicionamento do floating-ui não converge com os rects zerados do jsdom e
- * fica girando. Medido com `process.cpuUsage()` — é CPU, não espera. Nada a ver
- * com o componente; um `<Popper.Root>` pelado reproduz. Por isso os testes que
- * abrem o `⋯` são 4, e não um por asserção.
+ * ⚠️ **Este arquivo é lento, e a causa NÃO foi identificada.**
+ *
+ * Medido: 22 testes, ~51 s, e o custo está espalhado por todos eles — inclusive
+ * por um que só faz `expect(MAX_SECUNDARIAS_NA_BARRA).toBe(3)` e leva 1,6 s.
+ * Ou seja, é overhead **entre** testes, não conteúdo de teste: algo montado
+ * antes segue rodando e o tempo é cobrado do seguinte.
+ *
+ * **Hipóteses descartadas por medição** (não repita estas):
+ * - o `@floating-ui/react-dom` do Radix Popper — substituído por stub via
+ *   `vi.mock` hoisted no topo do arquivo: **51 s, sem diferença**;
+ * - o `TooltipProvider` — 1 ms num probe isolado;
+ * - o render do `DashToolbar` em si — 1 a 16 ms;
+ * - `vi.useFakeTimers()` — contribui (~14 s dos 51), mas não explica o resto.
+ *
+ * **O que isso quebrava:** o worker fica bloqueado, o RPC do vitest estoura e
+ * a pipeline falha com `Timeout calling "onTaskUpdate"` **e todos os testes
+ * verdes** (`Tests 307 passed`, `Errors 1 error`). Contornado no
+ * `vite.config.ts` com `pool: "forks"` e `teardownTimeout`.
+ *
+ * ⚠️ É contorno, não conserto. Enquanto a causa não for achada, mantenha os
+ * testes que abrem o `⋯` poucos, cada um verificando tudo de uma abertura só.
  */

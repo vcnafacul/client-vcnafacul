@@ -24,6 +24,8 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
+    pool: "forks",
+    teardownTimeout: 30000,
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
   },
   build: {

@@ -186,27 +186,33 @@ com `menuItem`, `destructiveGhost`, `row.hover` e `progress`.
 
 ---
 
-## Custo de teste: o Radix é caro aqui
+## Custo de teste: este diretório é lento, e a causa é desconhecida
 
-**Cada montagem de conteúdo Radix baseado em Popper — Popover, Tooltip, Select — custa 3 a 4,5 s de
-CPU neste jsdom.** Medido com `process.cpuUsage()`: é CPU, não espera (wall 5338 ms / cpu 5335 ms).
+`DashToolbar.test.tsx` leva **~51 s** para 22 testes, e o custo está espalhado por todos eles —
+inclusive por um que só compara um número e leva 1,6 s. É overhead **entre** testes: algo montado
+antes segue rodando e o tempo é cobrado do seguinte.
 
-Não é do nosso componente: um `<Popper.Root>` pelado reproduz, e `DismissableLayer` + `FocusScope`
-sozinhos custam 2 ms.
+⚠️ **O sintoma é traiçoeiro:** o worker fica bloqueado, o RPC do vitest estoura, e a pipeline falha
+com `Timeout calling "onTaskUpdate"` **e todos os testes verdes** — o log mostra `Tests 307 passed`
+seguido de `Errors 1 error`. Quem olhar a lista de testes não vê nada errado.
 
-⚠️ **E vaza para o teste seguinte.** O trabalho pendente estoura o timeout do próximo teste, mesmo
-desmontando dentro do `act` com timer falso — o sintoma é um teste sem relação nenhuma falhando, o que
-manda depurar o lugar errado.
+**Contornado** no `vite.config.ts` com `pool: "forks"` e `teardownTimeout: 30000`. **É contorno, não
+conserto.**
 
-**Duas regras enquanto isso não for resolvido:**
+**Hipóteses já descartadas por medição — não as repita:**
 
-1. Agrupe as asserções numa **mesma abertura** do popover, em vez de reabrir por teste.
-2. O `describe` que abre o `⋯` é o **último do arquivo**. Quem acrescentar teste depois dele vai ver
-   estouro sem motivo aparente.
+| hipótese | medição |
+|---|---|
+| `@floating-ui/react-dom` do Radix Popper | stub via `vi.mock` hoisted: **51 s, sem diferença** |
+| `TooltipProvider` | 1 ms num probe isolado |
+| render do `DashToolbar` | 1 a 16 ms |
+| `vi.useFakeTimers()` | contribui ~14 s dos 51; não explica o resto |
 
-Números no fim do `DashToolbar.test.tsx`.
+⚠️ `test.alias` **não** funciona para pacotes em `node_modules` — o vitest os resolve externamente. Se
+for tentar stub de dependência, use `vi.mock` no topo do arquivo de teste.
 
----
+**Regra prática enquanto isso não for resolvido:** poucos testes abrindo o `⋯`, cada um verificando
+tudo de uma abertura só.
 
 ## O que está pendente
 
