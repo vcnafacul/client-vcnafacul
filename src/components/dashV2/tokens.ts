@@ -1,0 +1,94 @@
+/**
+ * Papéis de cor, densidade e foco da Dash V2.
+ *
+ * ⚠️ **Isto não inventa paleta.** Toda cor aqui já existe no `tailwind.config.js`;
+ * o que este arquivo acrescenta é **regra de uso** — hoje a mesma cor significa
+ * coisas diferentes em telas diferentes, e é isso que o épico ataca.
+ *
+ * ⚠️ Classes do Tailwind em constantes, e **não** variáveis CSS novas no
+ * `index.css`: as `--primary`/`--secondary` de lá pertencem ao shadcn, estão em
+ * cinza neutro e não têm relação com a marca. Mexer nelas mudaria todos os
+ * componentes de `components/ui/` de uma vez.
+ *
+ * ⚠️ Nenhuma tela do V1 importa este arquivo. Ele é consumido só pelos
+ * componentes novos.
+ *
+ * Contrastes medidos (script em revisão do PR, fórmula WCAG 2.x):
+ *
+ *   marine / branco ........ 15.05:1  ✅ texto
+ *   darkGrey / branco ....... 7.57:1  ✅ texto
+ *   grey / branco ........... 4.95:1  ✅ texto
+ *   marine / orange ......... 5.62:1  ✅ texto  ← o botão principal
+ *   branco / orange ......... 2.68:1  ❌ reprovado, e é o que o V1 faz hoje
+ */
+export const dashV2 = {
+  /** Superfície de conteúdo: tabela, toolbar, modal. */
+  surface: "bg-white",
+  /** Fundo da área da dash, atrás da superfície. */
+  page: "bg-backgroundGrey",
+  /** Divisória. Em listagem, borda de 1px vale mais que sombra — sombra por linha vira ruído. */
+  border: "border-lightGray",
+
+  /** Texto. `marine` cumpre o papel do preto sem a dureza do #000000. */
+  text: {
+    primary: "text-marine",
+    secondary: "text-darkGrey",
+    muted: "text-grey",
+  },
+
+  /**
+   * Ação. ⚠️ **No máximo um `primary` por tela** — a que cria o registro dali.
+   * Espalhado em cinco botões, o laranja deixa de apontar para lugar nenhum.
+   *
+   * ⚠️ O texto do primário é `marine`, não branco: branco sobre #FF7600 dá
+   * 2.68:1 e reprova até no limite de 3:1 de componente gráfico. `marine` sobre
+   * o mesmo laranja dá 5.62:1, mantém o laranja exato da marca, e é o que o V2
+   * usa. O `typeStyle="primary"` do V1 continua com texto branco e não é tocado.
+   */
+  action: {
+    primary: "bg-orange text-marine",
+    secondary: "bg-white border border-lightGray text-marine",
+    ghost: "text-marine",
+    destructive: "bg-red text-white",
+  },
+
+  /** Foco de teclado, em TUDO que recebe foco. Substitui o `blue-500` do `Select`. */
+  focus:
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange/40 focus-visible:ring-offset-1",
+
+  /** Densidade. 40px alinha com o `rowHeight={40}` do MUI DataGrid em `studentsEnrolled`. */
+  row: { base: "h-10", compact: "h-8" },
+  header: "h-9",
+  cell: "px-3 text-sm",
+
+  /**
+   * Status: **a cor vai no marcador, o texto fica em `marine`.**
+   *
+   * ⚠️ Nenhuma cor de acento desta paleta carrega texto pequeno sobre branco —
+   * `green3` 3.77:1, `red` 3.88:1, `darkOrange` 2.45:1. Colorir o texto do badge,
+   * que é o reflexo natural, produz um rótulo que muita gente não lê. Por isso o
+   * texto é sempre `marine` (13:1+ sobre qualquer um dos chips).
+   *
+   * ⚠️ **O ponto é pista rápida, não o portador do significado.** Medido, ponto
+   * contra o próprio chip: `done` 3.36:1, `missing` 3.38:1, `neutral` 4.46:1 — e
+   * `running` **2.21:1**, que é fraco. Nenhum laranja da paleta alcança 3:1 sobre
+   * fundo alaranjado claro (testados `orange` 2.42 e o chip em /5, 2.54). Fica
+   * assim de propósito: quem lê o rótulo tem a informação inteira, e a
+   * alternativa seria um segundo laranja no produto — a deriva que este épico
+   * existe para corrigir.
+   *
+   * ⚠️ `yellow` saiu de status: 1.27:1 sobre branco, invisível até como marcador.
+   * Onde significava "pendente", use `running`. O amarelo segue livre para
+   * ilustração e gráfico.
+   */
+  status: {
+    done: { chip: "bg-green3/10", dot: "bg-green3" },
+    running: { chip: "bg-orange/10", dot: "bg-darkOrange" },
+    missing: { chip: "bg-red/10", dot: "bg-red" },
+    // `grey`, e não `gray2`: sobre `bg-lightGray/40` o gray2 dá 2.19:1 e o grey
+    // dá 4.46:1, sem sair da paleta nem mudar a família de cor.
+    neutral: { chip: "bg-lightGray/40", dot: "bg-grey" },
+  },
+} as const;
+
+export type StatusV2 = keyof typeof dashV2.status;
