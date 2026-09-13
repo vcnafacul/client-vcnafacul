@@ -95,6 +95,31 @@ export const dashV2 = {
   cell: "px-3 text-sm",
 
   /**
+   * Barra de progresso de duas faixas (`dashProvas`, ticket `06`).
+   *
+   * ⚠️ Fica aqui, e não escrita à mão na célula, porque a catraca de paleta
+   * (`tokens.test.ts`) só enxerga este arquivo — uma classe de cor num `.tsx`
+   * passa despercebida.
+   *
+   * ⚠️ **`pending` é o mesmo `darkOrange` do ponto de `running`, a 40%.** Um
+   * segundo laranja "claro" inventado para a barra seria exatamente a deriva de
+   * paleta que este épico combate; a opacidade mantém uma única família e ainda
+   * lê como "menos concluído" ao lado do `done` cheio.
+   *
+   * ⚠️ Cor não é o portador do significado aqui: a célula sempre traz o texto
+   * `validadas/total` e um `title` com as três contagens. Quem não distingue as
+   * faixas tem a informação inteira mesmo assim.
+   */
+  progress: {
+    /** O que falta cadastrar. */
+    track: "bg-lightGray",
+    /** Validadas. */
+    done: "bg-green3",
+    /** Cadastradas e ainda não validadas. */
+    pending: "bg-darkOrange/40",
+  },
+
+  /**
    * Status: **a cor vai no marcador, o texto fica em `marine`.**
    *
    * ⚠️ Nenhuma cor de acento desta paleta carrega texto pequeno sobre branco —
