@@ -17,6 +17,15 @@ const relatorioLimpo = {
   avisos: [],
 };
 
+const rascunhoSalvo = {
+  versao: 5,
+  status: "rascunho" as const,
+  criadorId: "Fernando",
+  publicadaEm: null,
+  notas: "restaurada da versão 2",
+  origemVersao: 2,
+};
+
 describe("carregando", () => {
   it("não pisca 'nenhuma versão publicada' enquanto ainda não sabe", () => {
     // ⚠️ O estado vazio desta tela não é neutro: ele diz "nenhuma versão
@@ -26,6 +35,7 @@ describe("carregando", () => {
     const e = calcularEstado({
       carregando: true,
       publicada: null,
+      rascunhoSalvo: null,
       relatorio: null,
     });
     expect(e.tipo).toBe("carregando");
@@ -38,6 +48,7 @@ describe("carregando", () => {
     const e = calcularEstado({
       carregando: true,
       publicada,
+      rascunhoSalvo: null,
       relatorio: relatorioLimpo,
     });
     expect(e.tipo).toBe("carregando");
@@ -50,7 +61,12 @@ describe("carregando", () => {
 
 describe("sem rascunho", () => {
   it("não tem o que publicar nem descartar", () => {
-    const e = calcularEstado({ carregando: false, publicada, relatorio: null });
+    const e = calcularEstado({
+      carregando: false,
+      publicada,
+      rascunhoSalvo: null,
+      relatorio: null,
+    });
     expect(e.tipo).toBe("sem-rascunho");
     expect(e.podePublicar).toBe(false);
     expect(e.podeDescartar).toBe(false);
@@ -63,6 +79,7 @@ describe("sem rascunho", () => {
     const e = calcularEstado({
       carregando: false,
       publicada: null,
+      rascunhoSalvo: null,
       relatorio: null,
     });
     expect(e.versaoNoAr).toBeNull();
@@ -85,6 +102,7 @@ describe("rascunho COM erro de lint", () => {
     const e = calcularEstado({
       carregando: false,
       publicada,
+      rascunhoSalvo: null,
       relatorio: comErro,
     });
     expect(e.tipo).toBe("rascunho-com-erro");
@@ -95,6 +113,7 @@ describe("rascunho COM erro de lint", () => {
     const e = calcularEstado({
       carregando: false,
       publicada,
+      rascunhoSalvo: null,
       relatorio: comErro,
     });
     expect(e.podeDescartar).toBe(true);
@@ -104,6 +123,7 @@ describe("rascunho COM erro de lint", () => {
     const e = calcularEstado({
       carregando: false,
       publicada,
+      rascunhoSalvo: null,
       relatorio: comErro,
     });
     expect(e.erros).toEqual(comErro.erros);
@@ -119,6 +139,7 @@ describe("rascunho com AVISO, sem erro", () => {
     const e = calcularEstado({
       carregando: false,
       publicada,
+      rascunhoSalvo: null,
       relatorio: { ...relatorioLimpo, avisos: ["2 chaves sem fechar"] },
     });
     expect(e.tipo).toBe("rascunho-limpo");
@@ -135,6 +156,7 @@ describe("os ignorados", () => {
     const e = calcularEstado({
       carregando: false,
       publicada,
+      rascunhoSalvo: null,
       relatorio: relatorioLimpo,
     });
     expect(e.ignorados).toEqual(["conteudo.tex", "main.pdf"]);
@@ -144,9 +166,64 @@ describe("os ignorados", () => {
     const e = calcularEstado({
       carregando: false,
       publicada,
+      rascunhoSalvo: null,
       relatorio: { ...relatorioLimpo, ignorados: [] },
     });
     expect(e.mostrarIgnorados).toBe(false);
+  });
+});
+
+describe("rascunho salvo, sem relatório em mãos", () => {
+  it("PUBLICAR FICA HABILITADO — o lint roda de novo no publicar", () => {
+    // ⚠️ O relatório só existe logo depois de um upload, e não há endpoint que
+    // o devolva para um rascunho salvo antes. Isso NÃO faz dele um rascunho de
+    // estado desconhecido: o `publicar` re-linta de propósito (card 10), porque
+    // o rascunho pode ter vindo de uma restauração feita antes de uma regra
+    // nova existir. Reprovou, volta 409 com a lista — e é ela que desliga o
+    // botão, pelo ramo do relatório.
+    //
+    // E este é o estado NORMAL depois de "Restaurar": exigir "envie o zip de
+    // novo" de quem restaurou justamente porque não tem o zip trava a feature.
+    const e = calcularEstado({
+      carregando: false,
+      publicada,
+      rascunhoSalvo,
+      relatorio: null,
+    });
+    expect(e.tipo).toBe("rascunho-sem-relatorio");
+    expect(e.podePublicar).toBe(true);
+    expect(e.podeDescartar).toBe(true);
+    expect(e.erros).toEqual([]);
+  });
+
+  it("o relatório recém-chegado SOBREPÕE o rascunho salvo e desliga o botão", () => {
+    // ⚠️ A regressão que este teste impede: avaliar `rascunhoSalvo` antes do
+    // relatório faria o documento salvo mascarar o upload que ACABOU de ser
+    // reprovado, e a tela voltaria a oferecer Publicar em cima de um lint que
+    // já falhou. O relatório é o mais fresco dos dois — ele manda.
+    const e = calcularEstado({
+      carregando: false,
+      publicada,
+      rascunhoSalvo,
+      relatorio: {
+        ...relatorioLimpo,
+        erros: ["main.tex — falta \\input{conteudo}"],
+      },
+    });
+    expect(e.tipo).toBe("rascunho-com-erro");
+    expect(e.podePublicar).toBe(false);
+    expect(e.erros).toHaveLength(1);
+  });
+
+  it("carregando continua vencendo, mesmo com rascunho salvo", () => {
+    const e = calcularEstado({
+      carregando: true,
+      publicada,
+      rascunhoSalvo,
+      relatorio: null,
+    });
+    expect(e.tipo).toBe("carregando");
+    expect(e.podePublicar).toBe(false);
   });
 });
 
@@ -155,6 +232,7 @@ describe("depois de publicar", () => {
     const e = calcularEstado({
       carregando: false,
       publicada: { ...publicada, versao: 4 },
+      rascunhoSalvo: null,
       relatorio: null,
     });
     expect(e.tipo).toBe("sem-rascunho");

@@ -40,11 +40,10 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
   /**
    * O rascunho que já estava salvo quando a tela abriu.
    *
-   * ⚠️ Não é a mesma coisa que o `relatorio`: o relatório de lint só existe
-   * logo depois de um upload, e não há endpoint que o devolva para um rascunho
-   * salvo antes. Guardar os dois separados é o que permite a tela dizer "há um
-   * rascunho salvo, mas não tenho o relatório dele em mãos" em vez de mentir
-   * um "nenhum rascunho enviado".
+   * ⚠️ Não é a mesma coisa que o `relatorio`, e por isso vai separado para a
+   * máquina: o relatório só existe logo depois de um upload, enquanto o
+   * rascunho salvo é o estado normal de quem restaurou uma versão. Quem decide
+   * o que fazer com os dois é o `calcularEstado`, não este componente.
    */
   const [rascunhoSalvo, setRascunhoSalvo] = useState<VersaoTemplate | null>(
     null,
@@ -81,7 +80,12 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
   // ⚠️ `carregando` entra na máquina, não no JSX: o vazio desta tela diz
   // "nenhuma versão publicada", e piscar isso a cada abertura do modal treina
   // o coordenador a ignorar o aviso que mais importa.
-  const estado = calcularEstado({ carregando, publicada, relatorio });
+  const estado = calcularEstado({
+    carregando,
+    publicada,
+    rascunhoSalvo,
+    relatorio,
+  });
 
   const handleBaixarModelo = async () => {
     if (baixando) return;
@@ -319,27 +323,43 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
             </li>
           </ol>
 
-          {estado.tipo === "sem-rascunho" && rascunhoSalvo !== null && (
-            <div className="mt-6 rounded-lg border border-amber-300 bg-amber-50 p-4">
-              <p className="text-sm font-semibold text-amber-800">
-                Há um rascunho salvo (v{rascunhoSalvo.versao}) esperando.
-              </p>
-              <p className="mt-1 text-sm text-amber-700">
-                O relatório de conferência dele só aparece logo depois do envio,
-                e esta tela não o tem em mãos. Envie o zip de novo para revisar
-                antes de publicar, ou descarte o rascunho.
-              </p>
-              <div className="mt-3">
-                <Button
-                  typeStyle="refused"
-                  size="small"
-                  onClick={() => setView("descartar")}
-                >
-                  Descartar rascunho
-                </Button>
+          {/* ⚠️ Não é um aviso de impedimento, é uma explicação: rascunho
+              salvo PUBLICA. O lint roda de novo no publicar (card 10) — o
+              veredito sai no clique, e um 409 devolve a lista, que cai em
+              `relatorio.erros` e desliga o botão pela máquina. Este é o estado
+              normal depois de restaurar uma versão. Os gates continuam sendo
+              `estado.podePublicar` / `estado.podeDescartar`. */}
+          {estado.tipo === "rascunho-sem-relatorio" &&
+            rascunhoSalvo !== null && (
+              <div className="mt-6 rounded-lg border border-gray-200 p-4">
+                <p className="text-sm font-semibold text-gray-900">
+                  Há um rascunho salvo (v{rascunhoSalvo.versao})
+                  {rascunhoSalvo.notas ? ` — ${rascunhoSalvo.notas}` : ""}.
+                </p>
+                <p className="mt-1 text-sm text-gray-600">
+                  A conferência dele acontece ao publicar: se algo não passar, a
+                  lista do que corrigir aparece aqui e nada é publicado.
+                </p>
+                <div className="mt-4 flex justify-end gap-3">
+                  <Button
+                    typeStyle="refused"
+                    size="small"
+                    disabled={!estado.podeDescartar}
+                    onClick={() => setView("descartar")}
+                  >
+                    Descartar rascunho
+                  </Button>
+                  <Button
+                    typeStyle="primary"
+                    size="small"
+                    disabled={!estado.podePublicar || publicando}
+                    onClick={handlePublicar}
+                  >
+                    Publicar
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {(estado.tipo === "rascunho-com-erro" ||
             estado.tipo === "rascunho-limpo") && (
