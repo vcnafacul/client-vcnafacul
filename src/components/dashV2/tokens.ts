@@ -168,6 +168,19 @@ export const dashV2 = {
       icon: "text-darkGrey",
     },
     missing: { chip: "bg-red/10", dot: "bg-red", icon: "text-red" },
+    /**
+     * "Começou, mas ainda está longe" — o estágio antes do `running`.
+     *
+     * ⚠️ Existe porque `running` sozinho não dava conta: no banco de provas,
+     * "Em cadastro" e "Em validação" são estados diferentes e saíam com o
+     * mesmo chip laranja, indistinguíveis de relance.
+     *
+     * ⚠️ `blueGeo` é cor **da paleta da marca**, não o `blue-500` do Tailwind
+     * que vazou para o `Select` do V1 — a catraca continua barrando aquele.
+     * Medido: 3.54:1 sobre branco, ponto contra o próprio chip **3.18:1** (o
+     * melhor de todos os tons daqui) e `marine` sobre o chip 13.52:1.
+     */
+    info: { chip: "bg-blueGeo/10", dot: "bg-blueGeo", icon: "text-blueGeo" },
     // `grey`, e não `gray2`: sobre `bg-lightGray/40` o gray2 dá 2.19:1 e o grey
     // dá 4.46:1, sem sair da paleta nem mudar a família de cor.
     neutral: { chip: "bg-lightGray/40", dot: "bg-grey", icon: "text-grey" },

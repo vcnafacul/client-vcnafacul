@@ -4,7 +4,6 @@ import {
   TEXTO_VAZIO_COM_FILTRO,
   TEXTO_VAZIO_SEM_FILTRO,
 } from "@/components/dashV2";
-import type { ICategoria } from "../../dtos/categoria/categoria";
 import type { Prova } from "../../dtos/prova/prova";
 import { Edicao } from "../../enums/prova/edicao";
 import { Roles } from "../../enums/roles/roles";
@@ -31,7 +30,9 @@ vi.mock("../../services/categoria/getCategorias", () => ({
   getCategorias: vi.fn(async () => ({ data: [] })),
 }));
 vi.mock("../../services/prova/startSync", () => ({ startSync: vi.fn() }));
-vi.mock("../../services/prova/getSyncReport", () => ({ getSyncReport: vi.fn() }));
+vi.mock("../../services/prova/getSyncReport", () => ({
+  getSyncReport: vi.fn(),
+}));
 vi.mock("./utils/syncReportPdf", () => ({ downloadSyncReportPdf: vi.fn() }));
 vi.mock("../../hooks/useToastAsync", () => ({ useToastAsync: () => vi.fn() }));
 vi.mock("react-toastify", () => ({
@@ -84,14 +85,13 @@ function telaDesktop() {
   });
 }
 
-const categoria = (nome: string) => ({ _id: `cat-${nome}`, nome }) as ICategoria;
-
 function prova(over: Partial<Prova> & { _id: string; nome: string }): Prova {
   return {
     edicao: Edicao.Regular,
     aplicacao: 1,
     ano: 2019,
-    categoria: categoria("ENEM"),
+    categoria: "ENEM",
+    exame: "ENEM",
     totalQuestao: 180,
     totalQuestaoCadastradas: 180,
     totalQuestaoValidadas: 180,
@@ -185,7 +185,9 @@ describe("dashProvas em tabela densa", () => {
 
   it("traz a coluna Categoria, que não existia no card", async () => {
     await montar();
-    expect(screen.getByRole("columnheader", { name: /Categoria/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("columnheader", { name: /Categoria/ }),
+    ).toBeInTheDocument();
     const linha = document.querySelector('[data-row-key="a"]')!;
     expect(within(linha as HTMLElement).getByText("ENEM")).toBeInTheDocument();
   });
@@ -193,7 +195,9 @@ describe("dashProvas em tabela densa", () => {
   /** ⚠️ O critério de aceite central. */
   it("clicar na linha abre o ShowProva da MESMA prova", async () => {
     await montar();
-    fireEvent.click(screen.getByRole("button", { name: "ENEM 2019 Reaplicação" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "ENEM 2019 Reaplicação" }),
+    );
     expect(await screen.findByTestId("show-prova")).toHaveTextContent(
       "ENEM 2019 Reaplicação",
     );
@@ -246,13 +250,23 @@ describe("hierarquia das ações", () => {
   it("as três secundárias ficam na barra", async () => {
     await montar();
     const barra = screen.getByTestId("dash-toolbar");
-    for (const id of ["enviar-cartao", "gerenciar-categorias", "template-caderno"]) {
-      expect(barra.querySelector(`[data-action-id="${id}"]`), id).not.toBeNull();
+    for (const id of [
+      "enviar-cartao",
+      "gerenciar-categorias",
+      "template-caderno",
+    ]) {
+      expect(
+        barra.querySelector(`[data-action-id="${id}"]`),
+        id,
+      ).not.toBeNull();
     }
   });
 
   it("sem permissão, o botão é desabilitado e ganha o embrulho focável do motivo", async () => {
-    estado.permissao = { ...TODAS_AS_PERMISSOES, [Roles.cadastrarProvas]: false };
+    estado.permissao = {
+      ...TODAS_AS_PERMISSOES,
+      [Roles.cadastrarProvas]: false,
+    };
     await montar();
 
     const nova = document.querySelector(
@@ -289,7 +303,9 @@ describe("filtros", () => {
     // voltava para `ano desc` — a pessoa limpa a busca e perde o que pediu.
     expect(chavesDasLinhas()).toEqual(["c", "b", "a"]);
     expect(
-      document.querySelector('th[aria-sort="ascending"] [data-sort-id="progresso"]'),
+      document.querySelector(
+        'th[aria-sort="ascending"] [data-sort-id="progresso"]',
+      ),
     ).not.toBeNull();
     expect(
       (screen.getByLabelText("Só com gabarito") as HTMLInputElement).checked,
@@ -344,7 +360,9 @@ describe("o menu ⋯", () => {
     expect(within(menu).getByText("Sincronizar")).toBeInTheDocument();
     expect(within(menu).getByText("Relatório Sync")).toBeInTheDocument();
     expect(
-      menu.querySelector('[data-action-id="sincronizar"]')!.getAttribute("class"),
+      menu
+        .querySelector('[data-action-id="sincronizar"]')!
+        .getAttribute("class"),
     ).not.toContain("bg-orange");
 
     /*

@@ -29,7 +29,7 @@ import type { Prova } from "../../dtos/prova/prova";
  * |-----------------------------------------|----------------|-----------|
  * | `totalQuestao === 0`                    | Sem questões   | `neutral` |
  * | `validadas >= total`                    | Completa       | `done`    |
- * | `cadastradas >= total`                  | Em validação   | `running` |
+ * | `cadastradas >= total`                  | Em validação   | `info`    |
  * | resto (`cadastradas < total`)           | Em cadastro    | `running` |
  *
  * ⚠️ A ordem importa: `totalQuestao === 0` vem **primeiro**. Sem isso, uma prova
@@ -64,7 +64,14 @@ export const STATUS_EM_CADASTRO: StatusDaProva = {
 };
 
 export const STATUS_EM_VALIDACAO: StatusDaProva = {
-  tone: "running",
+  /**
+   * ⚠️ `info` (azul), e não `running`. Os dois estados intermediários saíam com
+   * o mesmo chip laranja e eram indistinguíveis de relance — a cor não
+   * separava nada e sobrava só o rótulo. Agora a progressão lê como
+   * progressão: cinza (sem questões) → laranja (em cadastro) → azul (em
+   * validação) → verde (completa).
+   */
+  tone: "info",
   label: "Em validação",
   ordem: 2,
 };
