@@ -141,6 +141,23 @@ trabalho existe para corrigir.
 
 ⚠️ `yellow` saiu de status — 1.27:1 sobre branco, invisível até como marcador.
 
+### Cinco tons de status, e o quinto (`info`) existe por um motivo concreto
+
+`done` · `running` · `info` · `missing` · `neutral`.
+
+O `info` (`blueGeo`) entrou porque **"Em cadastro" e "Em validação" saíam os dois em `running`** no
+banco de provas: mesmo chip laranja, distinguíveis só pelo rótulo. A progressão agora lê como
+progressão — cinza (sem questões) → laranja (em cadastro) → azul (em validação) → verde (completa).
+
+Medido: `blueGeo` 3.54:1 sobre branco, ponto contra o próprio chip **3.18:1** (o melhor de todos os
+tons) e `marine` sobre o chip 13.52:1.
+
+⚠️ `blueGeo` é cor **da paleta da marca**, não o `blue-500` do Tailwind que vazou para o `Select` do
+V1 — a catraca continua barrando aquele.
+
+⚠️ Há teste garantindo que **nenhum tom repete o chip de outro**. Dois tons com o mesmo chip são, na
+prática, um tom só.
+
 ### O ícone de status tem cor própria (`status[tone].icon`), e ela não segue o ponto
 
 O `dot` vive sobre o chip (`bg-` da cor a 10%); o **ícone** vive sobre a superfície branca. Fundos

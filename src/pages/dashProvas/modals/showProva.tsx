@@ -11,7 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
-import { Prova } from "../../../dtos/prova/prova";
+import { Prova, ProvaDetalhada } from "../../../dtos/prova/prova";
 import { getProvaFile } from "../../../services/prova/getFile";
 import { useEffect, useState } from "react";
 import { useToastAsync } from "@/hooks/useToastAsync";
@@ -35,7 +35,7 @@ function ShowProva({ prova, isOpen, handleClose, onUpdated }: ShowProvaProps) {
 
   type ShowProvaView = 'details' | 'simulados';
   const [view, setView] = useState<ShowProvaView>('details');
-  const [fullProva, setFullProva] = useState<Prova | null>(null);
+  const [fullProva, setFullProva] = useState<ProvaDetalhada | null>(null);
   const [loadingSimulados, setLoadingSimulados] = useState(false);
   const [errorSimulados, setErrorSimulados] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -206,9 +206,14 @@ const downloadFile = async (filename: string, fileType: string) => {
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <p className="text-xs text-gray-500 mb-1">Categoria</p>
-                  <p className="text-sm font-medium text-gray-900">{prova.categoria?.nome ?? '—'}</p>
-                  {prova.categoria?.exame?.nome && (
-                    <p className="text-xs text-gray-500 mt-0.5">{prova.categoria.exame.nome}</p>
+                  {/*
+                    ⚠️ `categoria` e `exame` são strings — o ms achata as duas no
+                    DTO da lista. Antes isto lia `.nome` de uma string e o modal
+                    mostrava "—" com o exame nunca aparecendo.
+                  */}
+                  <p className="text-sm font-medium text-gray-900">{prova.categoria || '—'}</p>
+                  {prova.exame && (
+                    <p className="text-xs text-gray-500 mt-0.5">{prova.exame}</p>
                   )}
                 </div>
               </div>
