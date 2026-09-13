@@ -83,8 +83,25 @@ a primária e deixar o resto derivar.
 | Tela | Nível esperado | Por quê |
 |---|---|---|
 | `dashContent`, `dashGeo`, `dashNews`, `dashRoles`, `partnerPrepManager` | 1 → 2 | passam lista bruta + setter da mesma; sem `resetKey` |
-| `partnerPrepProvas` | 3 | `entities: filteredProvas` + `setEntities: setProvas` |
+| ~~`partnerPrepProvas`~~ | ✅ migrada | nível 3, feita — reusa `dashProvas/columns` inteiro |
 | `partnerPrepInscriptionManager` | 3 | lista derivada, com setter customizado que mescla por id |
+
+### Duas telas sobre a mesma tabela: o caso `dashProvas` × `partnerPrepProvas`
+
+A tela do cursinho **importa `colunasDeProva` da `dashProvas`**, não uma cópia. Uma cópia divergiria na
+primeira correção feita só de um lado — e a coluna Categoria já mostrou como esse defeito passa
+despercebido por meses.
+
+O que difere entre as duas é só: o serviço da listagem, a permissão da ação primária, e quais ações
+existem. Nada disso justifica um segundo `columns.tsx`.
+
+⚠️ **Testar "esta ação não existe" com `querySelector('[data-action-id=...]')` NÃO funciona para ações
+de overflow.** Elas moram dentro do Popover do `⋯`, que só renderiza aberto — então a consulta devolve
+`null` tanto quando a ação não existe quanto quando ela está escondida ali. Provado por mutação: pôr
+"Sincronizar" no `overflow` deixava o teste verde.
+
+O que funciona, e é barato: **assertar que o botão `⋯` não existe**. O `DashToolbar` só o desenha
+quando há o que colapsar. Sem abrir Popover nenhum, e sem os segundos de jsdom que isso custaria.
 
 ### Checklist por tela migrada
 

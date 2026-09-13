@@ -1,158 +1,305 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
-import {
-  mockAllIsIntersecting,
-  resetIntersectionMocking,
-  setupIntersectionMocking,
-} from "react-intersection-observer/test-utils";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { Prova } from "../../dtos/prova/prova";
-import { Paginate } from "../../utils/paginate";
-import PartnerPrepProvas from ".";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { Prova } from "../../dtos/prova/prova";
+import { Edicao } from "../../enums/prova/edicao";
+import { Roles } from "../../enums/roles/roles";
 
-// --- mocks de infraestrutura -------------------------------------------------
+/* -------------------------------------------------------------------------- *
+ * Mocks — o que está sob teste é a apresentação e o RECORTE: quais ações a tela
+ * do cursinho tem, quais ela não pode ter, e qual serviço ela consulta.
+ * -------------------------------------------------------------------------- */
+
+const estado = vi.hoisted(() => ({
+  provas: [] as unknown[],
+  permissao: {} as Record<string, boolean>,
+}));
+
+const getProvasCursinho = vi.hoisted(() =>
+  vi.fn(async () => ({ data: estado.provas })),
+);
+/**
+ * ⚠️ Dublê do serviço **da administração**, que esta tela não pode chamar.
+ * Sem ele mockado, um import acidental sairia pela rede no teste em vez de
+ * falhar numa asserção.
+ */
+const getProvas = vi.hoisted(() => vi.fn(async () => ({ data: [] })));
 
 vi.mock("../../services/prova/getProvasCursinho", () => ({
-  getProvasCursinho: vi.fn(),
+  getProvasCursinho,
 }));
+vi.mock("../../services/prova/getProvas", () => ({ getProvas }));
 vi.mock("../../services/prova/createProvaCursinho", () => ({
   createProvaCursinho: vi.fn(),
 }));
 vi.mock("../../services/categoria/getCategorias", () => ({
   getCategorias: vi.fn(async () => ({ data: [] })),
 }));
-// Modais são pesados (TipTap, pdf, upload) e nunca abrem neste teste.
-vi.mock("../dashProvas/modals/newProva", () => ({ default: () => null }));
-vi.mock("../dashProvas/modals/showProva", () => ({ default: () => null }));
-
 vi.mock("../../store/auth", () => ({
-  useAuthStore: () => ({ data: { token: "tok", permissao: {} } }),
+  useAuthStore: () => ({ data: { token: "tok", permissao: estado.permissao } }),
 }));
 vi.mock("react-toastify", () => ({
   toast: { error: vi.fn(), info: vi.fn(), success: vi.fn() },
 }));
 
-import { getProvasCursinho } from "../../services/prova/getProvasCursinho";
-
-const mockedGetProvas = vi.mocked(getProvasCursinho);
-
-// --- dados -------------------------------------------------------------------
-
 /**
- * O template só marca o card sentinela do fim em
- * `index === entities.length - Math.floor(limitCards * 0.25)`. Com o
- * `limitCards = 500` da tela, a lista RENDERIZADA (ou seja, a filtrada) precisa
- * ter pelo menos 125 itens para o scroll infinito chegar a disparar.
+ * ⚠️ O dublê imprime o nome da prova recebida — é o que torna verificável
+ * "clicar na linha abre o registro certo", em vez de só "abre alguma coisa".
  */
-const COM_GABARITO = 130;
-const SEM_GABARITO = 5;
-const PAGINA_2 = 3;
+vi.mock("../dashProvas/modals/showProva", () => ({
+  default: ({ prova }: { prova?: Prova | null }) => (
+    <div data-testid="show-prova">{prova?.nome ?? "SEM PROVA"}</div>
+  ),
+}));
+/** Imprime o serviço de criação recebido: o cursinho não pode criar prova global. */
+vi.mock("../dashProvas/modals/newProva", () => ({
+  default: ({ createService }: { createService?: unknown }) => (
+    <div data-testid="modal-nova-prova">
+      {createService ? "com-create-service" : "SEM CREATE SERVICE"}
+    </div>
+  ),
+}));
+vi.mock("../dashProvas/modals/manageCategorias", () => ({
+  default: () => <div data-testid="modal-categorias" />,
+}));
+vi.mock("../dashProvas/modals/uploadCartaoModal", () => ({
+  default: ({ isOpen }: { isOpen: boolean }) =>
+    isOpen ? <div data-testid="modal-cartao" /> : null,
+}));
 
-function prova(nome: string, gabarito: string): Prova {
+import PartnerPrepProvas from "./index";
+
+/** O `sm` do projeto é 768px e o jsdom não implementa `matchMedia`. */
+function telaDesktop() {
+  Object.defineProperty(window, "matchMedia", {
+    writable: true,
+    configurable: true,
+    value: (query: string) => ({
+      media: query,
+      matches: query === "(min-width: 768px)",
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    }),
+  });
+}
+
+function prova(over: Partial<Prova> & { _id: string; nome: string }): Prova {
   return {
-    _id: nome,
-    nome,
-    gabarito,
-    edicao: "" as Prova["edicao"],
+    edicao: Edicao.Regular,
     aplicacao: 1,
-    ano: 2024,
-    categoria: "cat",
+    ano: 2019,
+    categoria: "ENEM",
     exame: "ENEM",
-    totalQuestao: 1,
-    totalQuestaoCadastradas: 1,
-    totalQuestaoValidadas: 1,
-    createdAt: undefined as unknown as Prova["createdAt"],
-    filename: "f",
+    totalQuestao: 180,
+    totalQuestaoCadastradas: 180,
+    totalQuestaoValidadas: 180,
+    createdAt: "2024-03-10T12:00:00.000Z" as unknown as Prova["createdAt"],
+    filename: "prova.pdf",
+    gabarito: "gabarito.pdf",
     enemAreas: [],
+    ...over,
   };
 }
 
-function lista(prefixo: string, qtd: number, gabarito: string): Prova[] {
-  return Array.from({ length: qtd }, (_, i) =>
-    prova(`${prefixo}-${i}`, gabarito),
-  );
-}
-
-const paginaUm = [
-  ...lista("com-gabarito", COM_GABARITO, "gab.pdf"),
-  ...lista("sem-gabarito", SEM_GABARITO, ""),
+const PROVAS: Prova[] = [
+  prova({ _id: "a", nome: "Simulado interno 2019" }),
+  prova({
+    _id: "b",
+    nome: "Simulado interno 2023",
+    ano: 2023,
+    edicao: Edicao.Digital,
+    totalQuestaoCadastradas: 120,
+    totalQuestaoValidadas: 90,
+  }),
 ];
-const paginaDois = lista("pagina2", PAGINA_2, "");
 
-function paginate(data: Prova[], page: number): Paginate<Prova> {
-  return { data, page, limit: 500, totalItems: data.length };
+const TODAS_AS_PERMISSOES: Record<string, boolean> = {
+  [Roles.cadastrarProvasCursinho]: true,
+  [Roles.visualizarProvasCursinho]: true,
+  [Roles.visualizarEstudantes]: true,
+  [Roles.alterarPermissao]: true,
+};
+
+async function montar() {
+  const utils = render(<PartnerPrepProvas />);
+  // ⚠️ Dois flushes: as duas requisições resolvem em microtasks separadas.
+  await act(async () => {
+    await Promise.resolve();
+    await Promise.resolve();
+  });
+  return utils;
 }
 
-function nomesRenderizados() {
-  return screen
-    .queryAllByText(/^(com-gabarito|sem-gabarito|pagina2)-\d+$/)
-    .map((el) => el.textContent);
+function chavesDasLinhas(): string[] {
+  return [...document.querySelectorAll("[data-row-key]")].map(
+    (el) => el.getAttribute("data-row-key") ?? "",
+  );
 }
 
 beforeEach(() => {
-  setupIntersectionMocking(vi.fn);
-  vi.clearAllMocks();
-  mockedGetProvas.mockImplementation(async (_token, page) =>
-    page === 1 ? paginate(paginaUm, 1) : paginate(paginaDois, page!),
-  );
+  telaDesktop();
+  estado.provas = PROVAS;
+  estado.permissao = { ...TODAS_AS_PERMISSOES };
+  getProvasCursinho.mockClear();
+  getProvas.mockClear();
 });
 
-afterEach(() => {
-  resetIntersectionMocking();
-});
+describe("provas do cursinho — a mesma tabela da administração", () => {
+  it("lista em tabela, ordenada por ano decrescente", async () => {
+    await montar();
+    expect(chavesDasLinhas()).toEqual(["b", "a"]);
+  });
 
-describe("PartnerPrepProvas — scroll infinito com filtro ativo", () => {
-  it("não descarta as provas escondidas pelo filtro ao carregar a próxima página", async () => {
-    render(<PartnerPrepProvas />);
-
-    // 1) carga inicial
-    await act(async () => {});
-    expect(nomesRenderizados()).toHaveLength(COM_GABARITO + SEM_GABARITO);
-
-    // 2) filtra: só com gabarito
-    await act(async () => {
-      fireEvent.click(screen.getByRole("checkbox"));
-    });
-    expect(nomesRenderizados()).toHaveLength(COM_GABARITO);
-
-    // 3) rola até o fim, ainda filtrado
-    await act(async () => {
-      mockAllIsIntersecting(true);
-    });
-    expect(mockedGetProvas).toHaveBeenCalledWith("tok", 2, 500);
-
-    // 4) limpa o filtro — tudo tem que voltar
-    await act(async () => {
-      fireEvent.click(screen.getByText("Limpar filtros"));
-    });
-
-    const nomes = nomesRenderizados();
-    expect(nomes).toHaveLength(COM_GABARITO + SEM_GABARITO + PAGINA_2);
-    // As escondidas pelo filtro continuam no estado (é o defeito do ticket).
-    for (let i = 0; i < SEM_GABARITO; i++) {
-      expect(nomes).toContain(`sem-gabarito-${i}`);
+  it("traz as mesmas colunas, Categoria inclusive", async () => {
+    await montar();
+    for (const nome of [/Prova/, /Categoria/, /Ano/, /Progresso/, /Status/]) {
+      expect(
+        screen.getByRole("columnheader", { name: nome }),
+      ).toBeInTheDocument();
     }
-    // E as da página nova entraram.
-    for (let i = 0; i < PAGINA_2; i++) {
-      expect(nomes).toContain(`pagina2-${i}`);
+    const linha = document.querySelector('[data-row-key="a"]')!;
+    expect(within(linha as HTMLElement).getByText("ENEM")).toBeInTheDocument();
+  });
+
+  it("clicar na linha abre o ShowProva da MESMA prova", async () => {
+    await montar();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Simulado interno 2023" }),
+    );
+    expect(screen.getByTestId("show-prova")).toHaveTextContent(
+      "Simulado interno 2023",
+    );
+  });
+});
+
+describe("o recorte do cursinho", () => {
+  /**
+   * ⚠️ **A garantia central desta tela.** O recorte por cursinho é feito na
+   * api, pelo JWT — mas se a tela chamasse `getProvas`, ela listaria as provas
+   * de todo mundo e nada em tela indicaria isso.
+   */
+  it("consulta só o endpoint do cursinho, nunca o da administração", async () => {
+    await montar();
+    expect(getProvasCursinho).toHaveBeenCalledWith("tok", 1, 500);
+    expect(getProvas).not.toHaveBeenCalled();
+  });
+
+  it("Nova Prova cria pelo serviço do cursinho, não pelo global", async () => {
+    await montar();
+    fireEvent.click(
+      document.querySelector('[data-action-id="nova-prova"]') as HTMLElement,
+    );
+    expect(screen.getByTestId("modal-nova-prova")).toHaveTextContent(
+      "com-create-service",
+    );
+  });
+
+  it("Nova Prova exige a permissão do CURSINHO, não a da administração", async () => {
+    // ⚠️ Se a tela tivesse copiado `Roles.cadastrarProvas`, este teste passaria
+    // por acidente com as duas ligadas — daí desligar só a do cursinho.
+    estado.permissao = {
+      ...TODAS_AS_PERMISSOES,
+      [Roles.cadastrarProvas]: true,
+      [Roles.cadastrarProvasCursinho]: false,
+    };
+    await montar();
+
+    const nova = document.querySelector(
+      '[data-action-id="nova-prova"]',
+    ) as HTMLButtonElement;
+    expect(nova).toBeDisabled();
+  });
+});
+
+describe("as ações que esta tela NÃO pode ter", () => {
+  it.each([
+    ["template-caderno", "só administradores publicam template"],
+    ["sincronizar", "manutenção da base inteira"],
+    ["relatorio-sync", "só faz sentido depois do sincronizar"],
+  ])("não existe %s na barra — %s", async (id) => {
+    await montar();
+    expect(document.querySelector(`[data-action-id="${id}"]`)).toBeNull();
+  });
+
+  /**
+   * ⚠️ **Esta asserção é a que vale, e o teste acima sozinho não bastava.**
+   *
+   * As ações de overflow moram dentro do Popover do `⋯`, que só é renderizado
+   * quando aberto — então `querySelector('[data-action-id="sincronizar"]')`
+   * devolve `null` tanto quando a ação não existe quanto quando ela existe e
+   * está escondida no menu. Provado por mutação: pôr "Sincronizar" no
+   * `overflow` deixava os três testes acima **verdes**.
+   *
+   * O `DashToolbar` só desenha o `⋯` quando há o que colapsar. Com duas
+   * secundárias e nenhum overflow, ele não existe — e é isso que se verifica,
+   * sem abrir Popover nenhum (o que custaria segundos de jsdom).
+   */
+  it("não há menu ⋯ — logo, não há ação escondida nele", async () => {
+    await montar();
+    expect(screen.queryByRole("button", { name: "Mais ações" })).toBeNull();
+  });
+
+  it("não renderiza o modal de template nem por engano", async () => {
+    await montar();
+    expect(screen.queryByTestId("modal-template")).toBeNull();
+  });
+});
+
+describe("as ações que ficam", () => {
+  it("Nova Prova é a única primária laranja", async () => {
+    await montar();
+    const laranjas = [...document.querySelectorAll("[data-action-id]")].filter(
+      (el) =>
+        (el.getAttribute("class") ?? "").split(/\s+/).includes("bg-orange"),
+    );
+    expect(laranjas).toHaveLength(1);
+    expect(laranjas[0]).toHaveAttribute("data-action-id", "nova-prova");
+  });
+
+  it("as duas secundárias ficam na barra", async () => {
+    await montar();
+    const barra = screen.getByTestId("dash-toolbar");
+    for (const id of ["enviar-cartao", "gerenciar-categorias"]) {
+      expect(
+        barra.querySelector(`[data-action-id="${id}"]`),
+        id,
+      ).not.toBeNull();
     }
   });
 
-  it("para de requisitar quando o backend sinaliza o fim, e nunca pede página < 1", async () => {
-    render(<PartnerPrepProvas />);
-    await act(async () => {});
+  it("Gerenciar Categorias fica desabilitada sem alterarPermissao", async () => {
+    // ⚠️ É o estado NORMAL para colaborador de cursinho: categoria é
+    // configuração global. A ação existe para espelhar a administração, e o
+    // motivo tem que chegar em quem clicar.
+    estado.permissao = {
+      ...TODAS_AS_PERMISSOES,
+      [Roles.alterarPermissao]: false,
+    };
+    await montar();
 
-    for (let i = 0; i < 6; i++) {
-      await act(async () => {
-        mockAllIsIntersecting(false);
-      });
-      await act(async () => {
-        mockAllIsIntersecting(true);
-      });
-    }
+    const botao = document.querySelector(
+      '[data-action-id="gerenciar-categorias"]',
+    ) as HTMLButtonElement;
+    expect(botao).toBeDisabled();
+  });
+});
 
-    const paginas = mockedGetProvas.mock.calls.map((c) => c[1] as number);
-    // Página 2 veio incompleta (3 < 500) => fim da lista: nada além dela.
-    expect(paginas).toEqual([1, 2]);
-    expect(paginas).not.toContain(0);
+describe("filtros", () => {
+  it("o checkbox de gabarito filtra e entra na contagem de filtros ativos", async () => {
+    estado.provas = [
+      prova({ _id: "a", nome: "Com gabarito" }),
+      prova({ _id: "b", nome: "Sem gabarito", gabarito: "" }),
+    ];
+    await montar();
+    expect(chavesDasLinhas()).toHaveLength(2);
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole("checkbox"));
+    });
+    expect(chavesDasLinhas()).toEqual(["a"]);
+    expect(screen.getByText(/Limpar filtros \(1\)/)).toBeInTheDocument();
   });
 });
