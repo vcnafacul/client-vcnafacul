@@ -141,6 +141,31 @@ trabalho existe para corrigir.
 
 ⚠️ `yellow` saiu de status — 1.27:1 sobre branco, invisível até como marcador.
 
+### O ícone de status tem cor própria (`status[tone].icon`), e ela não segue o ponto
+
+O `dot` vive sobre o chip (`bg-` da cor a 10%); o **ícone** vive sobre a superfície branca. Fundos
+diferentes, medições diferentes — então são dois tokens, não um com dois prefixos.
+
+Sobre branco: `green3` 3.77:1, `red` 3.88:1, `grey` 4.95:1, `darkGrey` 7.57:1. Todos passam no limite
+de 3:1 de componente gráfico.
+
+⚠️ **`running` sai em `darkGrey`, não em laranja.** Nenhum laranja da paleta alcança 3:1 sobre branco
+(`darkOrange` 2.45:1, `orange` 2.68:1) — um ícone laranja seria um status que parte das pessoas não
+enxerga. Como no ponto, a saída não é inventar um laranja escuro: aqui **quem distingue o estado é a
+forma do ícone** (relógio × cadeado × check), e a cor é reforço.
+
+### Status só-ícone: existe uma exceção, e ela mora fora do dashV2
+
+O `StatusBadge` **continua proibindo modo só-ícone** — é o padrão das listagens e não mudou.
+
+O modal de simulados do `dashProvas` faz diferente: 672px de largura, sete colunas que só cabiam com
+rolagem horizontal, e o status virou ícone com tooltip (`pages/dashProvas/modals/SimuladoStatusIcon`).
+O componente é **local à tela de propósito**, para a exceção não virar padrão por importação.
+
+⚠️ O que se perde: **tooltip do Radix não abre no toque**. Em tablet o ícone fica mudo para quem
+enxerga. Leitor de tela fica coberto pelo `aria-label`, que não depende de abrir nada. Se a próxima
+tela for de estudante e não de administração, esse custo provavelmente não vale.
+
 ### Não use o `<Table>` do shadcn — use `<table>`
 
 O wrapper `<Table>` envolve tudo num `div.relative.w-full.overflow-auto`. **Um ancestral com `overflow`

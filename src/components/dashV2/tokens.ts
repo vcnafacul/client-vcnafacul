@@ -138,14 +138,39 @@ export const dashV2 = {
    * ⚠️ `yellow` saiu de status: 1.27:1 sobre branco, invisível até como marcador.
    * Onde significava "pendente", use `running`. O amarelo segue livre para
    * ilustração e gráfico.
+   *
+   * ---
+   *
+   * **`icon`: a cor do status quando ele é um ícone sozinho sobre branco.**
+   *
+   * ⚠️ **Não é o `dot` com outro prefixo.** O ponto vive sobre o próprio chip
+   * (o `bg-` da cor a 10%), o ícone vive sobre a superfície branca — são fundos
+   * diferentes, então são medições diferentes. Sobre branco: `green3` 3.77:1,
+   * `red` 3.88:1, `grey` 4.95:1, `darkGrey` 7.57:1 — todos passam no limite de
+   * 3:1 de componente gráfico.
+   *
+   * ⚠️ **`running` é a exceção, e ela é obrigatória: nenhum laranja desta
+   * paleta alcança 3:1 sobre branco** — `darkOrange` 2.45:1 e `orange` 2.68:1.
+   * Um ícone laranja seria um status que parte das pessoas simplesmente não
+   * enxerga. As duas saídas seriam inventar um laranja escuro (a deriva de
+   * paleta que este arquivo existe para impedir) ou tirar a cor do papel de
+   * portador. É a segunda: `running` sai em `darkGrey`, e **quem distingue o
+   * estado é a forma do ícone** — um relógio não se confunde com um cadeado
+   * nem com um check. A cor é reforço.
    */
   status: {
-    done: { chip: "bg-green3/10", dot: "bg-green3" },
-    running: { chip: "bg-orange/10", dot: "bg-darkOrange" },
-    missing: { chip: "bg-red/10", dot: "bg-red" },
+    done: { chip: "bg-green3/10", dot: "bg-green3", icon: "text-green3" },
+    // ⚠️ `icon` **não** acompanha o `dot` aqui, e é de propósito. Ver o bloco
+    // sobre `icon` logo acima do `status`.
+    running: {
+      chip: "bg-orange/10",
+      dot: "bg-darkOrange",
+      icon: "text-darkGrey",
+    },
+    missing: { chip: "bg-red/10", dot: "bg-red", icon: "text-red" },
     // `grey`, e não `gray2`: sobre `bg-lightGray/40` o gray2 dá 2.19:1 e o grey
     // dá 4.46:1, sem sair da paleta nem mudar a família de cor.
-    neutral: { chip: "bg-lightGray/40", dot: "bg-grey" },
+    neutral: { chip: "bg-lightGray/40", dot: "bg-grey", icon: "text-grey" },
   },
 } as const;
 

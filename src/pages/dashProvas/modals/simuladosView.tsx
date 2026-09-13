@@ -1,8 +1,12 @@
+import { dashV2 } from "@/components/dashV2";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import {
   ArrowLeftIcon,
-  ArrowDownTrayIcon,
-  DocumentArrowDownIcon,
-  PencilSquareIcon,
+  BookOpenIcon,
+  CalendarDaysIcon,
+  ClipboardDocumentCheckIcon,
+  DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@mui/material";
 import { useState } from "react";
@@ -10,9 +14,10 @@ import { toast } from "react-toastify";
 import { SimuladoResumo } from "../../../dtos/prova/prova";
 import { baixarCaderno } from "../../../services/caderno/baixarCaderno";
 import { baixarCartao } from "../../../services/cartaoResposta/baixarCartao";
-import { formatDateTime } from "../../../utils/date";
-import { getStatus, isSemJanela } from "../../../utils/simuladoAvailability";
+import AcaoIcone from "./AcaoIcone";
 import EditDisponibilidadeModal from "./editDisponibilidadeModal";
+import { proporcaoQuestoes } from "./simuladoStatus";
+import SimuladoStatusIcon from "./SimuladoStatusIcon";
 
 interface SimuladosViewProps {
   simulados: SimuladoResumo[] | undefined;
@@ -24,30 +29,48 @@ interface SimuladosViewProps {
   onSimuladoUpdated: (updated: SimuladoResumo) => void;
 }
 
-function renderStatus(simulado: SimuladoResumo) {
-  const status = getStatus(simulado);
-  switch (status) {
-    case "bloqueado":
-      return <span className="text-gray-600">🔒 Aprovação pendente</span>;
-    case "antes_da_janela":
-      return (
-        <span className="text-yellow-700">
-          🟡 Abre em {formatDateTime(simulado.disponivelDe)}
-        </span>
-      );
-    case "depois_da_janela":
-      return (
-        <span className="text-red-700">
-          🔴 Expirou em {formatDateTime(simulado.disponivelAte)}
-        </span>
-      );
-    default:
-      return isSemJanela(simulado) ? (
-        <span className="text-gray-500">⚪ Sem janela</span>
-      ) : (
-        <span className="text-green-700">🟢 Disponível</span>
-      );
-  }
+const MOTIVO_BLOQUEADO =
+  "O simulado precisa estar com todas as questões cadastradas, aprovadas e numeradas";
+
+function QuestoesCell({ simulado }: { simulado: SimuladoResumo }) {
+  const { pct, texto, completo } = proporcaoQuestoes(
+    simulado.questoes?.length ?? 0,
+    simulado.categoria?.quantidadeTotalQuestao,
+  );
+
+  return (
+    <div className="flex items-center gap-2">
+      {pct !== null && (
+        // ⚠️ `aria-hidden`: a barra repete o número ao lado. Um leitor de tela
+        // anunciando a mesma proporção duas vezes atrapalha mais do que ajuda —
+        // mesma decisão do `ProgressoCell` da listagem.
+        <div
+          aria-hidden="true"
+          className={cn(
+            "h-1.5 w-14 shrink-0 overflow-hidden rounded-full",
+            dashV2.progress.track,
+          )}
+        >
+          <div
+            data-testid="barra-questoes"
+            style={{ width: `${pct}%` }}
+            className={cn(
+              "h-full",
+              completo ? dashV2.progress.done : dashV2.progress.pending,
+            )}
+          />
+        </div>
+      )}
+      <span
+        className={cn(
+          "shrink-0 whitespace-nowrap text-xs tabular-nums",
+          dashV2.text.secondary,
+        )}
+      >
+        {texto}
+      </span>
+    </div>
+  );
 }
 
 function SimuladosView({
@@ -74,7 +97,7 @@ function SimuladosView({
     simulado: SimuladoResumo,
     draft = false,
   ) => {
-    // ⚠️ Guarda contra clique repetido. O botão já desabilita, mas entre o
+    // ⚠️ Guarda contra clique repetido. O botão já sinaliza, mas entre o
     // clique e o re-render cabe um segundo clique — e gerar o caderno é
     // lento o bastante para essa janela ser real.
     if (baixandoCaderno) return;
@@ -84,11 +107,7 @@ function SimuladosView({
       draft ? "Gerando rascunho..." : "Gerando caderno...",
     );
     try {
-      const { blob, avisos } = await baixarCaderno(
-        simulado._id,
-        token,
-        draft,
-      );
+      const { blob, avisos } = await baixarCaderno(simulado._id, token, draft);
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -161,168 +180,182 @@ function SimuladosView({
   };
 
   return (
-    <div>
-      <button
-        onClick={onVoltar}
-        className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 mb-4"
-      >
-        <ArrowLeftIcon className="h-4 w-4" />
-        Voltar aos detalhes
-      </button>
+    <TooltipProvider delayDuration={200}>
+      <div>
+        <button
+          onClick={onVoltar}
+          className={cn(
+            "mb-4 flex items-center gap-1 rounded-md text-sm hover:underline",
+            dashV2.text.secondary,
+            dashV2.focus,
+          )}
+        >
+          <ArrowLeftIcon className="h-4 w-4" />
+          Voltar aos detalhes
+        </button>
 
-      <h3 className="text-sm font-medium text-gray-700 mb-4">Simulados</h3>
+        <h3 className={cn("mb-4 text-sm font-medium", dashV2.text.primary)}>
+          Simulados
+        </h3>
 
-      {loading && (
-        <div className="space-y-2">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="animate-pulse bg-gray-200 h-8 rounded" />
-          ))}
-        </div>
-      )}
+        {loading && (
+          <div className="space-y-2">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className={cn(
+                  "h-10 animate-pulse rounded",
+                  dashV2.progress.track,
+                )}
+              />
+            ))}
+          </div>
+        )}
 
-      {!loading && error && (
-        <div className="text-center py-8">
-          <p className="text-sm text-red-600 mb-3">
-            Não foi possível carregar os simulados.
+        {!loading && error && (
+          <div className="py-8 text-center">
+            <p className="mb-3 text-sm text-red">
+              Não foi possível carregar os simulados.
+            </p>
+            <Button variant="outlined" size="small" onClick={onRetry}>
+              Tentar novamente
+            </Button>
+          </div>
+        )}
+
+        {!loading && !error && simulados?.length === 0 && (
+          <p className={cn("py-8 text-center text-sm", dashV2.text.muted)}>
+            Esta prova ainda não tem simulados cadastrados.
           </p>
-          <Button variant="outlined" size="small" onClick={onRetry}>
-            Tentar novamente
-          </Button>
-        </div>
-      )}
+        )}
 
-      {!loading && !error && simulados?.length === 0 && (
-        <p className="text-sm text-gray-500 text-center py-8">
-          Esta prova ainda não tem simulados cadastrados.
-        </p>
-      )}
-
-      {!loading && !error && simulados && simulados.length > 0 && (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-gray-500 uppercase bg-gray-50">
+        {!loading && !error && simulados && simulados.length > 0 && (
+          <table className="w-full text-left text-sm">
+            <thead
+              className={cn(
+                "text-xs uppercase",
+                dashV2.text.muted,
+                "bg-backgroundGrey",
+              )}
+            >
               <tr>
-                <th className="px-3 py-2">Nome</th>
-                <th className="px-3 py-2">Categoria</th>
-                <th className="px-3 py-2">Questões</th>
-                <th className="px-3 py-2">Disponível de</th>
-                <th className="px-3 py-2">Disponível até</th>
-                <th className="px-3 py-2">Status</th>
-                <th className="px-3 py-2"></th>
+                {/*
+                  ⚠️ Cabeçalho da coluna de status em `sr-only`, não vazio. A
+                  coluna tem 40px e não cabe rótulo, mas um `<th>` sem texto
+                  deixa a tabela sem nome para aquela coluna no leitor de tela.
+                */}
+                <th scope="col" className="w-10 px-2 py-2">
+                  <span className="sr-only">Status</span>
+                </th>
+                <th scope="col" className="px-3 py-2">
+                  Simulado
+                </th>
+                <th scope="col" className="px-3 py-2">
+                  Questões
+                </th>
+                <th scope="col" className="px-3 py-2 text-right">
+                  Ações
+                </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-lightGray">
               {simulados.map((simulado) => (
-                <tr key={simulado._id} className="hover:bg-gray-50">
-                  <td className="px-3 py-2 font-medium text-gray-900">
-                    {simulado.nome}
+                <tr key={simulado._id} className={dashV2.row.hover}>
+                  <td className="px-2 py-2 align-middle">
+                    <SimuladoStatusIcon simulado={simulado} />
                   </td>
-                  <td className="px-3 py-2 text-gray-600">
-                    {simulado.categoria?.nome ?? "—"}
-                  </td>
-                  <td className="px-3 py-2 text-gray-600">
-                    {simulado.questoes?.length ?? 0}/
-                    {simulado.categoria?.quantidadeTotalQuestao ?? "-"}
-                  </td>
-                  <td className="px-3 py-2 text-gray-600">
-                    {formatDateTime(simulado.disponivelDe) || "—"}
-                  </td>
-                  <td className="px-3 py-2 text-gray-600">
-                    {formatDateTime(simulado.disponivelAte) || "—"}
-                  </td>
-                  <td className="px-3 py-2">{renderStatus(simulado)}</td>
+
                   <td className="px-3 py-2">
-                    <div className="flex gap-2">
-                      <button
+                    {/*
+                      ⚠️ Categoria como segunda linha, e não coluna própria: o
+                      modal tem 672px e as sete colunas de antes só cabiam com
+                      rolagem horizontal. Aqui ela fica junto do nome, que é o
+                      contexto em que se lê.
+                    */}
+                    <span
+                      className={cn("block font-medium", dashV2.text.primary)}
+                    >
+                      {simulado.nome}
+                    </span>
+                    <span className={cn("block text-xs", dashV2.text.muted)}>
+                      {simulado.categoria?.nome ?? "Sem categoria"}
+                    </span>
+                  </td>
+
+                  <td className="px-3 py-2">
+                    <QuestoesCell simulado={simulado} />
+                  </td>
+
+                  <td className="px-3 py-2">
+                    <div className="flex items-center justify-end gap-1">
+                      <AcaoIcone
+                        icone={ClipboardDocumentCheckIcon}
+                        rotulo="Baixar cartão de resposta"
                         onClick={() => handleDownloadCartao(simulado)}
-                        disabled={simulado.bloqueado}
-                        title={
-                          simulado.bloqueado
-                            ? "Disponível só para simulados prontos"
-                            : "Baixar cartão de resposta"
-                        }
-                        className={
-                          simulado.bloqueado
-                            ? "text-gray-200 cursor-not-allowed"
-                            : "text-gray-400 hover:text-blue-600"
-                        }
-                        aria-label="Baixar cartão de resposta"
-                      >
-                        <ArrowDownTrayIcon className="h-4 w-4" />
-                      </button>
+                        desabilitado={simulado.bloqueado}
+                        motivoDesabilitado={`Cartão de resposta indisponível. ${MOTIVO_BLOQUEADO}`}
+                      />
 
                       {!simulado.bloqueado && (
-                        <button
+                        <AcaoIcone
+                          icone={BookOpenIcon}
+                          rotulo="Baixar caderno de questões (pacote .zip para abrir no Overleaf)"
                           onClick={() => handleDownloadCaderno(simulado)}
-                          disabled={baixandoCaderno === simulado._id}
-                          title="Baixar caderno de questões (pacote .zip para abrir no Overleaf)"
-                          className={
-                            baixandoCaderno === simulado._id
-                              ? "text-gray-200 cursor-wait"
-                              : "text-gray-400 hover:text-blue-600"
-                          }
-                          aria-label="Baixar caderno de questões"
-                        >
-                          <DocumentArrowDownIcon className="h-4 w-4" />
-                        </button>
+                          carregando={baixandoCaderno === simulado._id}
+                        />
                       )}
 
+                      {/*
+                        ⚠️ Ícone diferente do caderno pronto, não a mesma folha
+                        em outra cor. Nenhum laranja da paleta alcança 3:1 sobre
+                        branco (ver `tokens.ts`), então a distinção "rascunho"
+                        precisa estar na forma para existir para todo mundo.
+                      */}
                       {simulado.bloqueado && rascunhoHabilitado && (
-                        <button
+                        <AcaoIcone
+                          icone={DocumentTextIcon}
+                          rotulo="Baixar rascunho do caderno (sai com marca d'água e a lista de pendências)"
                           onClick={() => handleDownloadCaderno(simulado, true)}
-                          disabled={baixandoCaderno === simulado._id}
-                          title="Baixar rascunho do caderno (sai com marca d'água e a lista de pendências)"
-                          className={
-                            baixandoCaderno === simulado._id
-                              ? "text-gray-200 cursor-wait"
-                              : "text-gray-300 hover:text-blue-500"
-                          }
-                          aria-label="Baixar rascunho do caderno"
-                        >
-                          <DocumentArrowDownIcon className="h-4 w-4" />
-                        </button>
+                          carregando={baixandoCaderno === simulado._id}
+                        />
                       )}
 
                       {simulado.bloqueado && !rascunhoHabilitado && (
-                        <button
-                          disabled
-                          title="O simulado precisa estar com todas as questões cadastradas, aprovadas e numeradas"
-                          className="text-gray-200 cursor-not-allowed"
-                          aria-label="Baixar caderno de questões"
-                        >
-                          <DocumentArrowDownIcon className="h-4 w-4" />
-                        </button>
+                        <AcaoIcone
+                          icone={BookOpenIcon}
+                          rotulo="Baixar caderno de questões"
+                          desabilitado
+                          motivoDesabilitado={`Caderno indisponível. ${MOTIVO_BLOQUEADO}`}
+                        />
                       )}
 
-                      <button
+                      <AcaoIcone
+                        icone={CalendarDaysIcon}
+                        rotulo="Editar janela de disponibilidade"
                         onClick={() => setEditing(simulado)}
-                        className="text-gray-400 hover:text-blue-600"
-                        aria-label="Editar janela"
-                      >
-                        <PencilSquareIcon className="h-4 w-4" />
-                      </button>
+                      />
                     </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-      )}
+        )}
 
-      {editing && (
-        <EditDisponibilidadeModal
-          simulado={editing}
-          token={token}
-          isOpen={!!editing}
-          onClose={() => setEditing(null)}
-          onSaved={(updated) => {
-            onSimuladoUpdated(updated);
-            setEditing(null);
-          }}
-        />
-      )}
-    </div>
+        {editing && (
+          <EditDisponibilidadeModal
+            simulado={editing}
+            token={token}
+            isOpen={!!editing}
+            onClose={() => setEditing(null)}
+            onSaved={(updated) => {
+              onSimuladoUpdated(updated);
+              setEditing(null);
+            }}
+          />
+        )}
+      </div>
+    </TooltipProvider>
   );
 }
 
