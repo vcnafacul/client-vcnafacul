@@ -56,7 +56,14 @@ function Historico({
 
     listarVersoes(token)
       .then((lista) => {
-        if (ativo) setVersoes(lista);
+        // ⚠️ O ms devolve TUDO — `versoes()` é um `find().sort()` sem filtro, e
+        // o rascunho vem junto. O filtro é aqui de propósito, não é sobra: o
+        // rascunho não tem número de versão (o ms grava `0`, um placeholder,
+        // porque a versão só é decidida no publicar), ele já aparece na aba
+        // principal com o contexto e os botões certos, e um "Restaurar" nele
+        // criaria um rascunho a partir dele mesmo — um no-op com cara de ação.
+        // Histórico é o que já foi publicado.
+        if (ativo) setVersoes(lista.filter((v) => v.status !== "rascunho"));
       })
       .catch((erro: Error) => toast.error(erro.message))
       .finally(() => {
@@ -178,11 +185,6 @@ function Historico({
                   {versao.versao === versaoNoAr && (
                     <span className="ml-2 rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
                       no ar
-                    </span>
-                  )}
-                  {versao.status === "rascunho" && (
-                    <span className="ml-2 rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
-                      rascunho
                     </span>
                   )}
                 </p>

@@ -47,8 +47,15 @@ function versao(numero: number, extra: Partial<VersaoTemplate> = {}) {
   return { ...base, ...extra };
 }
 
-/** O histórico do cenário da frase: v4 no ar, v2 é a que ele quer de volta. */
+/**
+ * O histórico do cenário da frase: v4 no ar, v2 é a que ele quer de volta.
+ *
+ * ⚠️ Com o rascunho na frente, como o ms devolve de verdade: `versoes()` é um
+ * `find().sort({versao:-1})` sem filtro, e o rascunho sai com `versao: 0` — um
+ * placeholder, porque a versão de um rascunho só é decidida no publicar.
+ */
 const HISTORICO = [
+  versao(0, { status: "rascunho", publicadaEm: null, notas: "rascunho atual" }),
   versao(4, { status: "publicada" }),
   versao(3),
   versao(2),
@@ -105,6 +112,19 @@ describe("Historico", () => {
       screen.getAllByText(/Publicada em 04\/03\/2026 — por coordenacao/),
     ).toHaveLength(4);
     expect(screen.getByText("notas da v2")).toBeInTheDocument();
+  });
+
+  // ⚠️ O rascunho vem na resposta do ms e NÃO pode virar linha aqui: "v0" exibe
+  // como versão um número que por decisão não é versão, duplica o que a aba
+  // principal já mostra, e o Restaurar dele criaria um rascunho a partir dele
+  // mesmo — no-op com cara de ação.
+  it("não traz o rascunho para o histórico, mesmo o ms devolvendo ele", async () => {
+    renderHistorico();
+
+    await screen.findByText("v4");
+    expect(screen.queryByText("v0")).not.toBeInTheDocument();
+    expect(screen.queryByText("rascunho atual")).not.toBeInTheDocument();
+    expect(document.querySelectorAll("li")).toHaveLength(4);
   });
 
   it("baixa a versão da linha, não a publicada", async () => {
