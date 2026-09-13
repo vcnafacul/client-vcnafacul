@@ -18,13 +18,14 @@ import { useAuthStore } from "../../../../store/auth";
 import { formatDate } from "../../../../utils/date";
 import { calcularEstado } from "./estados";
 import ConfirmarDescarte from "./confirmarDescarte";
+import Historico from "./historico";
 
 interface ManageTemplateProps {
   isOpen: boolean;
   handleClose: () => void;
 }
 
-type View = "principal" | "descartar";
+type View = "principal" | "descartar" | "historico";
 
 function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
   const {
@@ -76,6 +77,30 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
       ativo = false;
     };
   }, [token]);
+
+  /**
+   * Relê publicada + rascunho do servidor.
+   *
+   * ⚠️ Depois de restaurar não dá para inventar o rascunho aqui: o `restaurar`
+   * responde sem corpo, e a versão e as notas do rascunho novo são escritas
+   * pelo ms ("restaurada da versão N"). Pintar um rascunho de mentira na aba
+   * principal é exatamente a falha silenciosa que esta tela não pode ter.
+   */
+  const recarregar = async () => {
+    setCarregando(true);
+    try {
+      const [versaoPublicada, rascunho] = await Promise.all([
+        obterPublicada(token),
+        obterRascunho(token),
+      ]);
+      setPublicada(versaoPublicada);
+      setRascunhoSalvo(rascunho);
+    } catch (erro) {
+      toast.error((erro as Error).message);
+    } finally {
+      setCarregando(false);
+    }
+  };
 
   // ⚠️ `carregando` entra na máquina, não no JSX: o vazio desta tela diz
   // "nenhuma versão publicada", e piscar isso a cada abertura do modal treina
@@ -185,6 +210,18 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
     setView("principal");
   };
 
+  /**
+   * ⚠️ Restaurar devolve para a aba principal: agora HÁ um rascunho pendente,
+   * e é lá que ele publica. O `relatorio` vai a `null` porque o rascunho
+   * restaurado não tem relatório de lint nenhum — a máquina chama isso de
+   * `rascunho-sem-relatorio`, e o lint roda de novo no publicar.
+   */
+  const handleRestaurado = () => {
+    setRelatorio(null);
+    setView("principal");
+    void recarregar();
+  };
+
   const versaoNoAr =
     estado.tipo === "carregando" ? (
       <span className="text-sm text-gray-500">Carregando...</span>
@@ -214,6 +251,13 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
           onDescartado={handleDescartado}
           onCancel={() => setView("principal")}
         />
+      ) : view === "historico" ? (
+        <Historico
+          token={token}
+          versaoNoAr={estado.versaoNoAr}
+          onRestaurado={handleRestaurado}
+          onVoltar={() => setView("principal")}
+        />
       ) : (
         <div className="p-6">
           <div className="mb-2 flex items-center gap-3">
@@ -223,6 +267,15 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
             <h2 className="text-xl font-semibold text-gray-900">
               Template do caderno
             </h2>
+            <div className="ml-auto">
+              <Button
+                typeStyle="quaternary"
+                size="small"
+                onClick={() => setView("historico")}
+              >
+                Histórico de versões
+              </Button>
+            </div>
           </div>
           <div className="mb-6">{versaoNoAr}</div>
 
