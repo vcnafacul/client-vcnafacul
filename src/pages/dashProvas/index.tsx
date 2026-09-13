@@ -23,6 +23,7 @@ import { dashProva } from "./data";
 import NewProva from "./modals/newProva";
 import ShowProva from "./modals/showProva";
 import ManageCategorias from "./modals/manageCategorias";
+import ManageTemplate from "./modals/manageTemplate";
 import UploadCartaoModal from "./modals/uploadCartaoModal";
 import { downloadSyncReportPdf } from "./utils/syncReportPdf";
 import { useModals } from "@/hooks/useModal";
@@ -39,8 +40,7 @@ function DashProva() {
 
   const [nameFilter, setNameFilter] = useState<string>("");
   const [edicaoFilter, setEdicaoFilter] = useState<string>(EDICAO_ALL);
-  const [aplicacaoFilter, setAplicacaoFilter] =
-    useState<string>(APLICACAO_ALL);
+  const [aplicacaoFilter, setAplicacaoFilter] = useState<string>(APLICACAO_ALL);
   const [anoFilter, setAnoFilter] = useState<string>(ANO_ALL);
   const [gabaritoOnly, setGabaritoOnly] = useState<boolean>(false);
   const [resetKey, setResetKey] = useState<number>(0);
@@ -48,10 +48,11 @@ function DashProva() {
   const limitCards = 500;
 
   const modals = useModals([
-    'modalNewProva',
-    'modalShowProva',
-    'modalManageCategorias',
-    'modalUploadCartao',
+    "modalNewProva",
+    "modalShowProva",
+    "modalManageCategorias",
+    "modalManageTemplate",
+    "modalUploadCartao",
   ]);
 
   const {
@@ -67,8 +68,8 @@ function DashProva() {
       prova.totalQuestao === prova.totalQuestaoValidadas
         ? StatusEnum.Approved
         : prova.totalQuestao === prova.totalQuestaoCadastradas
-        ? StatusEnum.Pending
-        : StatusEnum.Rejected,
+          ? StatusEnum.Pending
+          : StatusEnum.Rejected,
     infos: [
       { field: "Total de Questões", value: prova.totalQuestao.toString() },
       {
@@ -117,6 +118,15 @@ function DashProva() {
     );
   };
 
+  const ModalManageTemplate = () => {
+    return !modals.modalManageTemplate.isOpen ? null : (
+      <ManageTemplate
+        isOpen={modals.modalManageTemplate.isOpen}
+        handleClose={() => modals.modalManageTemplate.close()}
+      />
+    );
+  };
+
   const ModalShowProva = () => {
     return !modals.modalShowProva.isOpen ? null : (
       <ShowProva
@@ -127,8 +137,8 @@ function DashProva() {
         isOpen={modals.modalShowProva.isOpen}
         onUpdated={(updated) => {
           setProvas((prev) =>
-            prev.map((p) => (p._id === updated._id ? updated : p))
-            );
+            prev.map((p) => (p._id === updated._id ? updated : p)),
+          );
           setProvaSelected(updated);
         }}
       />
@@ -208,7 +218,14 @@ function DashProva() {
       if (gabaritoOnly && !p.gabarito) return false;
       return true;
     });
-  }, [provas, nameFilter, edicaoFilter, aplicacaoFilter, anoFilter, gabaritoOnly]);
+  }, [
+    provas,
+    nameFilter,
+    edicaoFilter,
+    aplicacaoFilter,
+    anoFilter,
+    gabaritoOnly,
+  ]);
 
   const filterProps: FilterProps = {
     placeholder: "Buscar por nome",
@@ -259,7 +276,9 @@ function DashProva() {
       errorMessage: (err: Error) => err.message || "Erro ao buscar relatorio",
       onSuccess: (report) => {
         if (report.status === "processing") {
-          toast.info("Sincronizacao ainda em andamento. Tente novamente em instantes.");
+          toast.info(
+            "Sincronizacao ainda em andamento. Tente novamente em instantes.",
+          );
           return;
         }
         if (report.status === "idle") {
@@ -313,6 +332,13 @@ function DashProva() {
       children: "Gerenciar Categorias",
     },
     {
+      disabled: !permissao[Roles.alterarPermissao],
+      onClick: () => modals.modalManageTemplate.open(),
+      typeStyle: "secondary",
+      size: "small",
+      children: "Template do caderno",
+    },
+    {
       disabled: !permissao[Roles.visualizarEstudantes],
       onClick: () => modals.modalUploadCartao.open(),
       typeStyle: "secondary",
@@ -360,6 +386,7 @@ function DashProva() {
       <ModalNewProva />
       <ModalShowProva />
       <ModalManageCategorias />
+      <ModalManageTemplate />
       <UploadCartaoModal
         isOpen={modals.modalUploadCartao.isOpen}
         handleClose={modals.modalUploadCartao.close}
