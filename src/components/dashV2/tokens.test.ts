@@ -88,10 +88,34 @@ describe("tokens do dashV2", () => {
     expect(JSON.stringify(dashV2.status)).not.toContain("yellow");
   });
 
-  it("todo status tem chip e ponto", () => {
+  it("todo status tem chip, ponto e cor de ícone", () => {
     for (const [nome, v] of Object.entries(dashV2.status)) {
       expect(v.chip, nome).toBeTruthy();
       expect(v.dot, nome).toBeTruthy();
+      // ⚠️ `icon` é a cor sobre branco, não sobre o chip — sem ela um tom novo
+      // quebra o `SimuladoStatusIcon`, que indexa `status[tone].icon`.
+      expect(v.icon, nome).toBeTruthy();
     }
+  });
+
+  it("nenhum tom repete o chip de outro", () => {
+    /**
+     * ⚠️ A regressão concreta: "Em cadastro" e "Em validação" saíam os dois em
+     * `running` e eram indistinguíveis de relance no banco de provas. Dois tons
+     * com o mesmo chip são, na prática, um tom só — e o próximo par de estados
+     * cairia na mesma armadilha sem nada acusar.
+     */
+    const chips = Object.values(dashV2.status).map((v) => v.chip);
+    expect(new Set(chips).size).toBe(chips.length);
+  });
+
+  it("o ícone do `running` não é laranja, e isso é medido", () => {
+    /**
+     * ⚠️ Nenhum laranja da paleta alcança 3:1 sobre branco (`darkOrange`
+     * 2.45:1, `orange` 2.68:1). "Consertar" esta linha para acompanhar o `dot`
+     * produz um ícone que parte das pessoas não enxerga.
+     */
+    expect(dashV2.status.running.dot).toContain("darkOrange");
+    expect(dashV2.status.running.icon).not.toContain("range");
   });
 });

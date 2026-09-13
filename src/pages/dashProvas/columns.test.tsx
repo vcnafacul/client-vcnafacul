@@ -1,12 +1,15 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { sortRows } from "@/components/dashV2";
-import type { ICategoria } from "../../dtos/categoria/categoria";
 import type { Prova } from "../../dtos/prova/prova";
 import { Edicao } from "../../enums/prova/edicao";
-import { colunasDeProva, COM_GABARITO, SEM_GABARITO, temGabarito, VAZIO } from "./columns";
-
-const categoria = (nome: string) => ({ _id: `cat-${nome}`, nome }) as ICategoria;
+import {
+  colunasDeProva,
+  COM_GABARITO,
+  SEM_GABARITO,
+  temGabarito,
+  VAZIO,
+} from "./columns";
 
 function prova(over: Partial<Prova> = {}): Prova {
   return {
@@ -15,7 +18,8 @@ function prova(over: Partial<Prova> = {}): Prova {
     edicao: Edicao.Regular,
     aplicacao: 1,
     ano: 2019,
-    categoria: categoria("ENEM"),
+    categoria: "ENEM",
+    exame: "ENEM",
     totalQuestao: 180,
     totalQuestaoCadastradas: 160,
     totalQuestaoValidadas: 132,
@@ -40,13 +44,12 @@ function texto(id: string, p: Prova): string {
 }
 
 describe("colunas do banco de provas", () => {
-  it("são as 9 do ticket, nesta ordem", () => {
+  it("são as 8 da tela, nesta ordem", () => {
     expect(colunasDeProva.map((c) => c.id)).toEqual([
       "nome",
       "categoria",
       "ano",
       "edicao",
-      "aplicacao",
       "progresso",
       "gabarito",
       "createdAt",
@@ -61,7 +64,9 @@ describe("colunas do banco de provas", () => {
   });
 
   it("só 'Prova' é a coluna primária — é ela que abre o registro", () => {
-    expect(colunasDeProva.filter((c) => c.primary).map((c) => c.id)).toEqual(["nome"]);
+    expect(colunasDeProva.filter((c) => c.primary).map((c) => c.id)).toEqual([
+      "nome",
+    ]);
   });
 
   it("é uma constante de módulo, para não invalidar o memo da tabela", () => {
@@ -71,20 +76,45 @@ describe("colunas do banco de provas", () => {
   });
 });
 
+describe("coluna Aplicação", () => {
+  it("não existe mais", () => {
+    // ⚠️ Saiu a pedido do time. O campo continua no DTO e no modal de
+    // detalhe — o que saiu foi a coluna.
+    expect(colunasDeProva.find((c) => c.id === "aplicacao")).toBeUndefined();
+  });
+});
+
 describe("coluna Categoria", () => {
-  it("mostra o nome da categoria", () => {
+  /**
+   * ⚠️ **`categoria` é uma STRING no DTO da lista** — o ms achata
+   * `categoria.nome` em `toProvaDTO`. Enquanto o tipo do client dizia
+   * `ICategoria`, a célula fazia `p.categoria?.nome`: compilava, devolvia
+   * `undefined` e a coluna mostrava "—" para **todas** as provas.
+   *
+   * ⚠️ O teste anterior não pegava porque a fixture era construída a partir do
+   * tipo errado — ela montava um objeto `ICategoria` que a API nunca manda. O
+   * teste certificava o defeito. A fixture agora usa a string que chega de
+   * verdade.
+   */
+  it("mostra o nome da categoria, que vem como string", () => {
     expect(texto("categoria", prova())).toBe("ENEM");
+    expect(coluna("categoria").sortValue!(prova())).toBe("ENEM");
   });
 
   /**
-   * ⚠️ O DTO tipa `categoria` como obrigatória; quem garante que ela vem é o
-   * backend. Uma prova órfã derruba a tabela inteira sem o `?.`.
+   * Quem garante que a categoria veio é o backend, não o tipo.
    */
-  it("não quebra quando a categoria não veio populada", () => {
-    const semCategoria = prova({ categoria: undefined as unknown as ICategoria });
+  it("não quebra quando a categoria não veio", () => {
+    const semCategoria = prova({ categoria: undefined as unknown as string });
     expect(() => texto("categoria", semCategoria)).not.toThrow();
     expect(texto("categoria", semCategoria)).toBe(VAZIO);
     expect(coluna("categoria").sortValue!(semCategoria)).toBeNull();
+  });
+
+  it("string vazia também vira travessão, não célula em branco", () => {
+    // ⚠️ `??` deixaria "" passar e a célula ficaria vazia, que parece bug.
+    expect(texto("categoria", prova({ categoria: "" }))).toBe(VAZIO);
+    expect(coluna("categoria").sortValue!(prova({ categoria: "" }))).toBeNull();
   });
 });
 
@@ -168,13 +198,20 @@ describe("coluna Status", () => {
         )}
       </>,
     );
-    expect(screen.getByText("Sem questões")).toHaveAttribute("data-tone", "neutral");
+    expect(screen.getByText("Sem questões")).toHaveAttribute(
+      "data-tone",
+      "neutral",
+    );
     expect(screen.queryByText("Completa")).toBeNull();
   });
 
   it("nenhuma prova desta tela produz um badge vermelho", () => {
     const casos = [
-      prova({ totalQuestao: 0, totalQuestaoCadastradas: 0, totalQuestaoValidadas: 0 }),
+      prova({
+        totalQuestao: 0,
+        totalQuestaoCadastradas: 0,
+        totalQuestaoValidadas: 0,
+      }),
       prova({ totalQuestaoCadastradas: 10, totalQuestaoValidadas: 0 }),
       prova({ totalQuestaoCadastradas: 180, totalQuestaoValidadas: 10 }),
       prova({ totalQuestaoCadastradas: 180, totalQuestaoValidadas: 180 }),
@@ -197,8 +234,16 @@ describe("coluna Progresso", () => {
       totalQuestaoCadastradas: 0,
       totalQuestaoValidadas: 0,
     });
-    const meia = prova({ _id: "meia", totalQuestao: 180, totalQuestaoValidadas: 90 });
-    const cheia = prova({ _id: "cheia", totalQuestao: 180, totalQuestaoValidadas: 180 });
+    const meia = prova({
+      _id: "meia",
+      totalQuestao: 180,
+      totalQuestaoValidadas: 90,
+    });
+    const cheia = prova({
+      _id: "cheia",
+      totalQuestao: 180,
+      totalQuestaoValidadas: 180,
+    });
 
     const asc = sortRows([cheia, meia, vazia], colunasDeProva, {
       columnId: "progresso",

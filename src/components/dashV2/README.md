@@ -141,6 +141,48 @@ trabalho existe para corrigir.
 
 ⚠️ `yellow` saiu de status — 1.27:1 sobre branco, invisível até como marcador.
 
+### Cinco tons de status, e o quinto (`info`) existe por um motivo concreto
+
+`done` · `running` · `info` · `missing` · `neutral`.
+
+O `info` (`blueGeo`) entrou porque **"Em cadastro" e "Em validação" saíam os dois em `running`** no
+banco de provas: mesmo chip laranja, distinguíveis só pelo rótulo. A progressão agora lê como
+progressão — cinza (sem questões) → laranja (em cadastro) → azul (em validação) → verde (completa).
+
+Medido: `blueGeo` 3.54:1 sobre branco, ponto contra o próprio chip **3.18:1** (o melhor de todos os
+tons) e `marine` sobre o chip 13.52:1.
+
+⚠️ `blueGeo` é cor **da paleta da marca**, não o `blue-500` do Tailwind que vazou para o `Select` do
+V1 — a catraca continua barrando aquele.
+
+⚠️ Há teste garantindo que **nenhum tom repete o chip de outro**. Dois tons com o mesmo chip são, na
+prática, um tom só.
+
+### O ícone de status tem cor própria (`status[tone].icon`), e ela não segue o ponto
+
+O `dot` vive sobre o chip (`bg-` da cor a 10%); o **ícone** vive sobre a superfície branca. Fundos
+diferentes, medições diferentes — então são dois tokens, não um com dois prefixos.
+
+Sobre branco: `green3` 3.77:1, `red` 3.88:1, `grey` 4.95:1, `darkGrey` 7.57:1. Todos passam no limite
+de 3:1 de componente gráfico.
+
+⚠️ **`running` sai em `darkGrey`, não em laranja.** Nenhum laranja da paleta alcança 3:1 sobre branco
+(`darkOrange` 2.45:1, `orange` 2.68:1) — um ícone laranja seria um status que parte das pessoas não
+enxerga. Como no ponto, a saída não é inventar um laranja escuro: aqui **quem distingue o estado é a
+forma do ícone** (relógio × cadeado × check), e a cor é reforço.
+
+### Status só-ícone: existe uma exceção, e ela mora fora do dashV2
+
+O `StatusBadge` **continua proibindo modo só-ícone** — é o padrão das listagens e não mudou.
+
+O modal de simulados do `dashProvas` faz diferente: 672px de largura, sete colunas que só cabiam com
+rolagem horizontal, e o status virou ícone com tooltip (`pages/dashProvas/modals/SimuladoStatusIcon`).
+O componente é **local à tela de propósito**, para a exceção não virar padrão por importação.
+
+⚠️ O que se perde: **tooltip do Radix não abre no toque**. Em tablet o ícone fica mudo para quem
+enxerga. Leitor de tela fica coberto pelo `aria-label`, que não depende de abrir nada. Se a próxima
+tela for de estudante e não de administração, esse custo provavelmente não vale.
+
 ### Não use o `<Table>` do shadcn — use `<table>`
 
 O wrapper `<Table>` envolve tudo num `div.relative.w-full.overflow-auto`. **Um ancestral com `overflow`

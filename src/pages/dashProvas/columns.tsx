@@ -1,4 +1,8 @@
-import { dataOrdenavel, StatusBadge, type DashColumn } from "@/components/dashV2";
+import {
+  dataOrdenavel,
+  StatusBadge,
+  type DashColumn,
+} from "@/components/dashV2";
 import type { Prova } from "../../dtos/prova/prova";
 import { formatDate } from "../../utils/date";
 import { ProgressoCell } from "./ProgressoCell";
@@ -6,7 +10,10 @@ import { progressoOrdenavel } from "./progresso";
 import { statusDaProva } from "./status";
 
 /**
- * As 9 colunas do banco de provas.
+ * As 8 colunas do banco de provas.
+ *
+ * ⚠️ `aplicacao` saiu da tabela a pedido do time — o campo continua no DTO e
+ * no modal de detalhe, só não ocupa mais uma coluna aqui.
  *
  * ⚠️ **Fora do componente, e sem `useMemo`.** É um array constante de closures
  * puras; recriá-lo a cada render do `DashProva` faria o `useMemo` das colunas
@@ -50,12 +57,15 @@ export const colunasDeProva: DashColumn<Prova>[] = [
   },
   {
     /*
-      ⚠️ `prova.categoria` é tipada como `ICategoria` obrigatória, mas quem
-      garante que ela vem populada é o backend, não o DTO. Uma prova órfã de
-      categoria derrubaria a tabela inteira num `Cannot read properties of
-      undefined` — daí o encadeamento opcional apesar do tipo.
+      ⚠️ **`p.categoria` é uma STRING**, não um objeto. O ms achata
+      `categoria.nome` no DTO da lista; o `Prova` do client dizia `ICategoria`,
+      então `p.categoria?.nome` compilava, devolvia `undefined` e esta coluna
+      mostrava "—" para TODAS as provas. Ver o docblock em `dtos/prova/prova.ts`.
 
-      ⚠️ `hideBelow: "sm"` aqui (e nas outras quatro) não esconde nada da
+      ⚠️ O `??` continua: quem garante que a categoria veio é o backend, não o
+      tipo.
+
+      ⚠️ `hideBelow: "sm"` aqui (e nas outras três) não esconde nada da
       tabela: a tabela só existe acima de 768px. É como o `DashTable` escolhe o
       que cabe na lista empilhada do celular — sem isto, o bloco do mobile
       mostraria Categoria e Ano, e não Ano e Progresso, que é o par que importa.
@@ -64,8 +74,8 @@ export const colunasDeProva: DashColumn<Prova>[] = [
     header: "Categoria",
     width: "11rem",
     hideBelow: "sm",
-    cell: (p) => p.categoria?.nome ?? VAZIO,
-    sortValue: (p) => p.categoria?.nome ?? null,
+    cell: (p) => p.categoria || VAZIO,
+    sortValue: (p) => p.categoria || null,
   },
   {
     id: "ano",
@@ -82,15 +92,6 @@ export const colunasDeProva: DashColumn<Prova>[] = [
     hideBelow: "sm",
     cell: (p) => p.edicao ?? VAZIO,
     sortValue: (p) => p.edicao ?? null,
-  },
-  {
-    id: "aplicacao",
-    header: "Aplic.",
-    width: "4.5rem",
-    align: "right",
-    hideBelow: "sm",
-    cell: (p) => p.aplicacao ?? VAZIO,
-    sortValue: (p) => p.aplicacao ?? null,
   },
   {
     id: "progresso",

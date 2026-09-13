@@ -30,8 +30,6 @@ export default defineConfig({
     // com `Timeout calling "onTaskUpdate"` — pipeline vermelha com TODOS os
     // testes verdes. Fork único e em série tira a contenção. É contorno.
     pool: "forks",
-    poolOptions: { forks: { singleFork: true } },
-    fileParallelism: false,
     teardownTimeout: 30000,
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
   },
