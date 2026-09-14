@@ -2,11 +2,12 @@ import { useState } from "react";
 import Button from "../../../../components/molecules/button";
 import { ICategoria } from "../../../../dtos/categoria/categoria";
 import { useToastAsync } from "../../../../hooks/useToastAsync";
-import { deleteCategoria } from "../../../../services/categoria/deleteCategoria";
 
 interface DeleteConfirmProps {
   categoria: ICategoria;
   token: string;
+  /** ⚠️ Vem resolvido do `ManageCategorias` — admin ou cursinho. */
+  excluirService: (id: string, token: string) => Promise<void>;
   onDeleted: (id: string) => void;
   onCancel: () => void;
 }
@@ -14,6 +15,7 @@ interface DeleteConfirmProps {
 function DeleteConfirm({
   categoria,
   token,
+  excluirService,
   onDeleted,
   onCancel,
 }: DeleteConfirmProps) {
@@ -23,7 +25,7 @@ function DeleteConfirm({
   const handleExcluir = async () => {
     setExcluindo(true);
     await execute({
-      action: () => deleteCategoria(categoria._id, token),
+      action: () => excluirService(categoria._id, token),
       loadingMessage: "Excluindo categoria...",
       successMessage: "Categoria excluída",
       // A service já monta a mensagem do 409 com a contagem de simulados.

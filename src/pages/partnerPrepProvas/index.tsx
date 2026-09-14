@@ -11,7 +11,9 @@ import { ICategoria } from "../../dtos/categoria/categoria";
 import { Prova } from "../../dtos/prova/prova";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { Roles } from "../../enums/roles/roles";
-import { getCategorias } from "../../services/categoria/getCategorias";
+import { createCategoriaCursinho } from "../../services/categoria/createCategoriaCursinho";
+import { deleteCategoriaCursinho } from "../../services/categoria/deleteCategoriaCursinho";
+import { getCategoriasCursinho } from "../../services/categoria/getCategoriasCursinho";
 import { createProvaCursinho } from "../../services/prova/createProvaCursinho";
 import { getProvasCursinho } from "../../services/prova/getProvasCursinho";
 import { useAuthStore } from "../../store/auth";
@@ -19,6 +21,7 @@ import { formatDate } from "../../utils/date";
 import { Paginate } from "../../utils/paginate";
 import { colunasDeProva } from "../dashProvas/columns";
 import ManageCategorias from "../dashProvas/modals/manageCategorias";
+import type { CriarCategoriaService } from "../dashProvas/modals/manageCategorias/createForm";
 import NewProva from "../dashProvas/modals/newProva";
 import ShowProva from "../dashProvas/modals/showProva";
 import UploadCartaoModal from "../dashProvas/modals/uploadCartaoModal";
@@ -34,7 +37,8 @@ const ORDENACAO_PADRAO = { columnId: "ano", direction: "desc" } as const;
 const MOTIVO = {
   cadastrarProvasCursinho: "Requer permissão: cadastrar provas do cursinho",
   visualizarEstudantes: "Requer permissão: visualizar estudantes",
-  alterarPermissao: "Requer permissão: alterar permissões",
+  gerenciarCategoriasCursinho:
+    "Requer permissão: gerenciar categorias do cursinho",
 } as const;
 
 /**
@@ -56,6 +60,26 @@ const MOTIVO = {
  * - **Sincronizar** e **Relatório Sync** — manutenção da base inteira, não de
  *   um cursinho.
  */
+/**
+ * Ponte entre o contrato do formulário e o serviço do cursinho.
+ *
+ * ⚠️ **Fora do componente de propósito.** Uma arrow inline mudaria de
+ * identidade a cada render; `listarService` entra num array de dependências do
+ * `ManageCategorias` e viraria laço infinito. Aqui a referência é estável.
+ *
+ * ⚠️ O `nome` é opcional no contrato do formulário (o modo do admin não o
+ * envia) e obrigatório no serviço do cursinho. O formulário já barra nome vazio
+ * quando `nomeLivre` está ligado, então este ramo é inalcançável — mas ele
+ * **lança** em vez de mandar string vazia. Um `?? ""` silencioso viraria um 400
+ * do backend com mensagem que não ajuda ninguém.
+ */
+const criarCategoriaDoCursinho: CriarCategoriaService = (input, token) => {
+  if (!input.nome?.trim()) {
+    throw new Error("Nome da categoria é obrigatório");
+  }
+  return createCategoriaCursinho({ ...input, nome: input.nome.trim() }, token);
+};
+
 function PartnerPrepProvas() {
   const [provas, setProvas] = useState<Prova[]>([]);
   const [provaSelected, setProvaSelected] = useState<Prova | null>(null);
@@ -153,6 +177,10 @@ function PartnerPrepProvas() {
       <ManageCategorias
         isOpen={modals.modalManageCategorias.isOpen}
         handleClose={() => modals.modalManageCategorias.close()}
+        listarService={getCategoriasCursinho}
+        criarService={criarCategoriaDoCursinho}
+        excluirService={deleteCategoriaCursinho}
+        nomeLivre
         onCategoriasChanged={(cats) => setCategorias(cats)}
       />
     );
@@ -188,7 +216,7 @@ function PartnerPrepProvas() {
       })
       .finally(() => setCarregando(false));
 
-    getCategorias(token)
+    getCategoriasCursinho(token)
       .then((res) => {
         setCategorias(res.data);
       })
@@ -366,20 +394,20 @@ function PartnerPrepProvas() {
       () => modals.modalUploadCartao.open(),
     ),
     /*
-      ⚠️ **Fica desabilitada para praticamente todo mundo desta tela, e é
-      esperado.** Categoria é configuração global da plataforma e o botão exige
-      `alterarPermissao`, que colaborador de cursinho não tem — então o que
-      aparece aqui é o botão inerte com o motivo no tooltip.
+      ⚠️ **Deixou de ser o botão permanentemente inerte** que a migração desta
+      tela trouxe. Agora ele exige `gerenciarCategoriasCursinho` — permissão do
+      cursinho, e não a `alterarPermissao` da administração de papéis, que
+      nenhum colaborador tem e que não tem relação com o que o botão faz.
 
-      Mantida por decisão do time, para a tela do cursinho espelhar a da
-      administração. A permissão é a MESMA da `dashProvas`: se um dia ela for
-      revista, tem que ser revista nos dois lugares.
+      As categorias que ele gerencia são as DO CURSINHO: a listagem, a criação
+      e a exclusão passam pelas rotas escopadas, e o dono é resolvido pelo JWT
+      na api.
     */
     acao(
       "gerenciar-categorias",
       "Gerenciar Categorias",
-      permissao[Roles.alterarPermissao],
-      MOTIVO.alterarPermissao,
+      permissao[Roles.gerenciarCategoriasCursinho],
+      MOTIVO.gerenciarCategoriasCursinho,
       () => modals.modalManageCategorias.open(),
     ),
   ];

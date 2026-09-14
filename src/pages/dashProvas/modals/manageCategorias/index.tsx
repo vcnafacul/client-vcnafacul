@@ -4,9 +4,12 @@ import { Cog6ToothIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Button from "../../../../components/molecules/button";
 import ModalTemplate from "../../../../components/templates/modalTemplate";
 import { ICategoria } from "../../../../dtos/categoria/categoria";
+import { createCategoria } from "../../../../services/categoria/createCategoria";
+import { deleteCategoria } from "../../../../services/categoria/deleteCategoria";
 import { getCategorias } from "../../../../services/categoria/getCategorias";
+import { getExames } from "../../../../services/exame/getExames";
 import { useAuthStore } from "../../../../store/auth";
-import CreateForm, { ExameOption } from "./createForm";
+import CreateForm, { CriarCategoriaService, ExameOption } from "./createForm";
 import DeleteConfirm from "./deleteConfirm";
 import { isProtegida } from "./protectedTipos";
 
@@ -14,6 +17,16 @@ interface ManageCategoriasProps {
   isOpen: boolean;
   handleClose: () => void;
   onCategoriasChanged: (categorias: ICategoria[]) => void;
+  /**
+   * ⚠️ Serviços por prop, e não `if` interno. O mesmo modal serve a dash da
+   * administração e a do cursinho; um `if` aqui obrigaria o modal a saber em
+   * que tela está, que é exatamente a dependência que se evita.
+   */
+  listarService?: (token: string) => Promise<{ data: ICategoria[] }>;
+  criarService?: CriarCategoriaService;
+  excluirService?: typeof deleteCategoria;
+  /** Nome livre em vez de prefixo + pattern. Ver o docblock no `createForm`. */
+  nomeLivre?: boolean;
 }
 
 type View = "lista" | "criar" | "excluir";
@@ -22,32 +35,50 @@ function ManageCategorias({
   isOpen,
   handleClose,
   onCategoriasChanged,
+  listarService,
+  criarService,
+  excluirService,
+  nomeLivre = false,
 }: ManageCategoriasProps) {
   const {
     data: { token },
   } = useAuthStore();
+
+  const listar = listarService ?? getCategorias;
+  const criar = criarService ?? createCategoria;
+  const excluir = excluirService ?? deleteCategoria;
 
   const [view, setView] = useState<View>("lista");
   const [categorias, setCategorias] = useState<ICategoria[]>([]);
   const [categoriaParaExcluir, setCategoriaParaExcluir] =
     useState<ICategoria | null>(null);
   const [busca, setBusca] = useState("");
+  const [exameOptions, setExameOptions] = useState<ExameOption[]>([]);
 
+  /**
+   * ⚠️ `listar` está nas dependências e isso só é seguro porque os serviços
+   * chegam como referência de módulo, de identidade estável entre renders. Se
+   * alguma tela passar uma arrow inline, cada render cria uma função nova e
+   * este efeito vira laço infinito.
+   */
   useEffect(() => {
-    getCategorias(token)
+    listar(token)
       .then((res) => setCategorias(res.data))
       .catch((erro: Error) => toast.error(erro.message));
-  }, [token]);
+  }, [listar, token]);
 
-  const exameOptions: ExameOption[] = useMemo(() => {
-    const map = new Map<string, string>();
-    categorias.forEach((c) => {
-      if (c.exame && !map.has(c.exame._id)) {
-        map.set(c.exame._id, c.exame.nome);
-      }
-    });
-    return Array.from(map, ([value, label]) => ({ value, label }));
-  }, [categorias]);
+  /**
+   * ⚠️ Os exames vêm do próprio endpoint de exames, não das categorias já
+   * carregadas. Com o recorte por dono, um cursinho novo tem zero categorias —
+   * derivar daí deixaria o dropdown vazio e impediria criar a primeira.
+   */
+  useEffect(() => {
+    getExames(token)
+      .then((res) =>
+        setExameOptions(res.data.map((e) => ({ value: e._id, label: e.nome }))),
+      )
+      .catch((erro: Error) => toast.error(erro.message));
+  }, [token]);
 
   const categoriasFiltradas = useMemo(() => {
     const termo = busca.trim().toLowerCase();
@@ -173,6 +204,8 @@ function ManageCategorias({
         <CreateForm
           exameOptions={exameOptions}
           token={token}
+          criarService={criar}
+          nomeLivre={nomeLivre}
           onCreated={handleCreated}
           onCancel={() => setView("lista")}
         />
@@ -182,6 +215,7 @@ function ManageCategorias({
         <DeleteConfirm
           categoria={categoriaParaExcluir}
           token={token}
+          excluirService={excluir}
           onDeleted={handleDeleted}
           onCancel={() => {
             setCategoriaParaExcluir(null);
