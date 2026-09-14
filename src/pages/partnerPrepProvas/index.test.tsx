@@ -31,8 +31,20 @@ vi.mock("../../services/prova/getProvas", () => ({ getProvas }));
 vi.mock("../../services/prova/createProvaCursinho", () => ({
   createProvaCursinho: vi.fn(),
 }));
-vi.mock("../../services/categoria/getCategorias", () => ({
-  getCategorias: vi.fn(async () => ({ data: [] })),
+const getCategorias = vi.hoisted(() => vi.fn(async () => ({ data: [] })));
+const getCategoriasCursinho = vi.hoisted(() =>
+  vi.fn(async () => ({ data: [] })),
+);
+vi.mock("../../services/categoria/getCategorias", () => ({ getCategorias }));
+vi.mock("../../services/categoria/getCategoriasCursinho", () => ({
+  getCategoriasCursinho,
+}));
+vi.mock("../../services/categoria/createCategoriaCursinho", () => ({
+  createCategoriaCursinho: vi.fn(),
+}));
+const deleteCategoriaCursinho = vi.hoisted(() => vi.fn());
+vi.mock("../../services/categoria/deleteCategoriaCursinho", () => ({
+  deleteCategoriaCursinho,
 }));
 vi.mock("../../store/auth", () => ({
   useAuthStore: () => ({ data: { token: "tok", permissao: estado.permissao } }),
@@ -58,8 +70,21 @@ vi.mock("../dashProvas/modals/newProva", () => ({
     </div>
   ),
 }));
+/**
+ * ⚠️ O dublê imprime as PROPS que recebeu. Sem isso não há como provar que a
+ * tela do cursinho liga o `nomeLivre` e passa os serviços escopados — e sem
+ * `nomeLivre` o cursinho recebe o formulário de prefixo, que não deixa digitar
+ * "Enem Dia 1". Provado por mutação: sem esta asserção, remover a prop deixava
+ * a suíte inteira verde.
+ */
+const propsDoModalCategorias = vi.hoisted(
+  () => ({ atual: null }) as { atual: Record<string, unknown> | null },
+);
 vi.mock("../dashProvas/modals/manageCategorias", () => ({
-  default: () => <div data-testid="modal-categorias" />,
+  default: (props: Record<string, unknown>) => {
+    propsDoModalCategorias.atual = props;
+    return <div data-testid="modal-categorias" />;
+  },
 }));
 vi.mock("../dashProvas/modals/uploadCartaoModal", () => ({
   default: ({ isOpen }: { isOpen: boolean }) =>
@@ -121,6 +146,7 @@ const TODAS_AS_PERMISSOES: Record<string, boolean> = {
   [Roles.visualizarProvasCursinho]: true,
   [Roles.visualizarEstudantes]: true,
   [Roles.alterarPermissao]: true,
+  [Roles.gerenciarCategoriasCursinho]: true,
 };
 
 async function montar() {
@@ -145,6 +171,8 @@ beforeEach(() => {
   estado.permissao = { ...TODAS_AS_PERMISSOES };
   getProvasCursinho.mockClear();
   getProvas.mockClear();
+  getCategorias.mockClear();
+  getCategoriasCursinho.mockClear();
 });
 
 describe("provas do cursinho — a mesma tabela da administração", () => {
@@ -269,22 +297,6 @@ describe("as ações que ficam", () => {
       ).not.toBeNull();
     }
   });
-
-  it("Gerenciar Categorias fica desabilitada sem alterarPermissao", async () => {
-    // ⚠️ É o estado NORMAL para colaborador de cursinho: categoria é
-    // configuração global. A ação existe para espelhar a administração, e o
-    // motivo tem que chegar em quem clicar.
-    estado.permissao = {
-      ...TODAS_AS_PERMISSOES,
-      [Roles.alterarPermissao]: false,
-    };
-    await montar();
-
-    const botao = document.querySelector(
-      '[data-action-id="gerenciar-categorias"]',
-    ) as HTMLButtonElement;
-    expect(botao).toBeDisabled();
-  });
 });
 
 describe("filtros", () => {
@@ -301,5 +313,67 @@ describe("filtros", () => {
     });
     expect(chavesDasLinhas()).toEqual(["a"]);
     expect(screen.getByText(/Limpar filtros \(1\)/)).toBeInTheDocument();
+  });
+});
+
+describe("categorias do cursinho", () => {
+  it("busca as categorias pela rota do cursinho, nunca pela global", async () => {
+    /**
+     * ⚠️ O par do teste de provas. Se a tela chamar `getCategorias`, o cursinho
+     * vê "Enem Dia 1" e "Enem Dia 2" da plataforma no modal de Nova Prova — que
+     * é exatamente o que este trabalho existe para impedir.
+     */
+    await montar();
+    expect(getCategoriasCursinho).toHaveBeenCalledWith("tok");
+    expect(getCategorias).not.toHaveBeenCalled();
+  });
+
+  it("Gerenciar Categorias exige a permissão do cursinho, não a da administração", async () => {
+    // ⚠️ Com `alterarPermissao` ligada e a do cursinho desligada: se a tela
+    // tivesse ficado na permissão antiga, este teste passaria por acidente.
+    estado.permissao = {
+      ...TODAS_AS_PERMISSOES,
+      [Roles.alterarPermissao]: true,
+      [Roles.gerenciarCategoriasCursinho]: false,
+    };
+    await montar();
+
+    const botao = document.querySelector(
+      '[data-action-id="gerenciar-categorias"]',
+    ) as HTMLButtonElement;
+    expect(botao).toBeDisabled();
+  });
+
+  it("o modal recebe nomeLivre e os serviços escopados", async () => {
+    await montar();
+    fireEvent.click(
+      document.querySelector(
+        '[data-action-id="gerenciar-categorias"]',
+      ) as HTMLElement,
+    );
+
+    const props = propsDoModalCategorias.atual!;
+    // ⚠️ Sem `nomeLivre` o cursinho cai no formulário de prefixo e o nome é
+    // gerado pelo pattern — "Enem Dia 1" vira 400 no backend.
+    expect(props.nomeLivre).toBe(true);
+    /**
+     * ⚠️ Comparação por REFERÊNCIA, não por nome. Os serviços são `vi.fn()` no
+     * teste, então `.name` é "spy" em todos — comparar nome deixaria passar o
+     * serviço errado. E não pode ser arrow inline no componente: `listarService`
+     * entra num array de dependências e mudaria de identidade a cada render.
+     */
+    expect(props.listarService).toBe(getCategoriasCursinho);
+    expect(props.excluirService).toBe(deleteCategoriaCursinho);
+    expect(typeof props.criarService).toBe("function");
+  });
+
+  it("com a permissão do cursinho, o botão fica ativo", async () => {
+    // ⚠️ O par do de cima: trocar a permissão não pode ter deixado a ação
+    // inalcançável para quem tem direito a ela.
+    await montar();
+    const botao = document.querySelector(
+      '[data-action-id="gerenciar-categorias"]',
+    ) as HTMLButtonElement;
+    expect(botao).not.toBeDisabled();
   });
 });
