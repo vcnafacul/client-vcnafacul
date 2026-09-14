@@ -14,11 +14,36 @@ export interface ExameOption {
   label: string;
 }
 
+/**
+ * ⚠️ Contrato próprio em vez de `typeof createCategoria`. O serviço do admin
+ * não conhece `nome` (o backend gera pelo pattern) e o do cursinho o exige;
+ * com `strictFunctionTypes` nenhuma das duas assinaturas concretas serve de
+ * contrato para a outra. O denominador comum é o que o formulário sabe montar.
+ */
+export interface CriarCategoriaInput extends CreateCategoriaInput {
+  nome?: string;
+}
+
+export type CriarCategoriaService = (
+  input: CriarCategoriaInput,
+  token: string,
+) => Promise<ICategoria>;
+
 interface CreateFormProps {
   exameOptions: ExameOption[];
   token: string;
   onCreated: (categoria: ICategoria) => void;
   onCancel: () => void;
+  criarService?: CriarCategoriaService;
+  /**
+   * ⚠️ Nome livre em vez de prefixo + pattern.
+   *
+   * O backend só dispensa o pattern para categoria de cursinho
+   * (`validarPatternNome` retorna cedo quando `dono !== 'system'`). Ligar isto
+   * na tela do admin produziria 400 no envio, com o formulário sem nada que
+   * explicasse por quê.
+   */
+  nomeLivre?: boolean;
 }
 
 function CreateForm({
@@ -26,7 +51,10 @@ function CreateForm({
   token,
   onCreated,
   onCancel,
+  criarService,
+  nomeLivre = false,
 }: CreateFormProps) {
+  const criar = criarService ?? createCategoria;
   const execute = useToastAsync();
 
   const [exame, setExame] = useState("");
@@ -34,6 +62,7 @@ function CreateForm({
   const [semAlvo, setSemAlvo] = useState(false);
   const [quantidade, setQuantidade] = useState<number | "">("");
   const [prefixo, setPrefixo] = useState("");
+  const [nome, setNome] = useState("");
   const [salvando, setSalvando] = useState(false);
 
   const quantidadeAplicada: number | null = semAlvo
@@ -52,22 +81,31 @@ function CreateForm({
     [prefixo, quantidadeAplicada, duracao],
   );
 
-  const valido = exame !== "" && duracao !== "" && Number(duracao) > 0;
+  const nomeInformado = !nomeLivre || nome.trim() !== "";
+  const valido =
+    nomeInformado && exame !== "" && duracao !== "" && Number(duracao) > 0;
 
   const handleSalvar = async () => {
     if (!valido) return;
-    const input: CreateCategoriaInput = {
+    const input: CriarCategoriaInput = {
       exame,
       duracao: Number(duracao),
       quantidadeTotalQuestao: quantidadeAplicada,
     };
-    if (prefixo.trim()) {
+    /**
+     * ⚠️ `nome` e `prefixo` são mutuamente exclusivos no corpo. Mandando os
+     * dois, o backend resolve `dto.nome ?? gerarNomeAuto(dto)`: o nome vence, o
+     * prefixo vira peso morto e quem lê o código depois não sabe qual manda.
+     */
+    if (nomeLivre) {
+      input.nome = nome.trim();
+    } else if (prefixo.trim()) {
       input.prefixo = prefixo.trim();
     }
 
     setSalvando(true);
     await execute({
-      action: () => createCategoria(input, token),
+      action: () => criar(input, token),
       loadingMessage: "Criando categoria...",
       successMessage: "Categoria criada",
       errorMessage: (err: Error) => err.message,
@@ -148,21 +186,36 @@ function CreateForm({
           </div>
         </div>
 
-        <label className="flex flex-col gap-1 text-sm font-medium text-gray-700">
-          Prefixo (opcional)
-          <input
-            type="text"
-            value={prefixo}
-            placeholder="Personalizado"
-            onChange={(e) => setPrefixo(e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
-          />
-        </label>
+        {nomeLivre ? (
+          <label className="flex flex-col gap-1 text-sm font-medium text-gray-700">
+            Nome *
+            <input
+              type="text"
+              value={nome}
+              placeholder="Ex.: Enem Dia 1"
+              onChange={(e) => setNome(e.target.value)}
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+            />
+          </label>
+        ) : (
+          <>
+            <label className="flex flex-col gap-1 text-sm font-medium text-gray-700">
+              Prefixo (opcional)
+              <input
+                type="text"
+                value={prefixo}
+                placeholder="Personalizado"
+                onChange={(e) => setPrefixo(e.target.value)}
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+              />
+            </label>
 
-        <div className="rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-600">
-          Preview do nome:{" "}
-          <span className="font-semibold text-gray-900">{preview}</span>
-        </div>
+            <div className="rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-600">
+              Preview do nome:{" "}
+              <span className="font-semibold text-gray-900">{preview}</span>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="mt-6 flex justify-end gap-3">
