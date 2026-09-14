@@ -31,7 +31,13 @@ interface NewProvaProps extends ModalProps {
   createService?: (data: FormData, token: string) => Promise<Prova>;
 }
 
-function NewProva({ addProva, categorias, handleClose, isOpen, createService }: NewProvaProps) {
+function NewProva({
+  addProva,
+  categorias,
+  handleClose,
+  isOpen,
+  createService,
+}: NewProvaProps) {
   const { register, handleSubmit, watch } = useForm();
   const {
     data: { token },
@@ -101,12 +107,6 @@ function NewProva({ addProva, categorias, handleClose, isOpen, createService }: 
             label: "Nome da prova",
             disabled: false,
           },
-          {
-            id: "nomeSimulado",
-            type: "text",
-            label: "Nome do simulado",
-            disabled: false,
-          },
         ] as FormFieldInput[])
       : []),
     {
@@ -130,10 +130,8 @@ function NewProva({ addProva, categorias, handleClose, isOpen, createService }: 
       toast.error("Prova PDF é obrigatória para provas ENEM oficiais");
       return;
     }
-    if (isCustom && (!data.nome || !data.nomeSimulado)) {
-      toast.error(
-        "Nome da prova e do simulado são obrigatórios para provas personalizadas",
-      );
+    if (isCustom && !data.nome) {
+      toast.error("Nome da prova é obrigatório para provas personalizadas");
       return;
     }
 
@@ -165,7 +163,21 @@ function NewProva({ addProva, categorias, handleClose, isOpen, createService }: 
 
     if (isCustom) {
       formData.append("nome", data.nome);
-      formData.append("nomeSimulado", data.nomeSimulado);
+      /*
+        ⚠️ **O campo saiu da tela, não da requisição.** O
+        `CustomProvaFactory.createSimulados` do ms lança
+        `BadRequestException('Nome do simulado é obrigatório')` quando
+        `nomeSimulado` vem vazio — parar de enviar daria 400.
+
+        Prova custom gera exatamente 1 simulado, então pedir dois nomes era
+        pedir a mesma informação duas vezes.
+
+        ⚠️ O default mora aqui por decisão do time, e o custo é conhecido: a
+        regra é do backend e está duplicada no cliente. Outro consumidor da api
+        continua obrigado a mandar o campo. Se um dia isso incomodar, o conserto
+        é uma linha no ms (`nomeSimulado ?? prova.nome`) e esta some.
+      */
+      formData.append("nomeSimulado", data.nome);
     }
 
     const title = isCustom
