@@ -29,6 +29,7 @@ export enum Roles {
   editarMateriasFrentes = "editarMateriasFrentes",
   visualizarProvasCursinho = "visualizarProvasCursinho",
   cadastrarProvasCursinho = "cadastrarProvasCursinho",
+  gerenciarCategoriasCursinho = "gerenciarCategoriasCursinho",
 }
 
 export const RolesLabel = [

@@ -56,6 +56,7 @@ const EMPTY_ROLE: CreateRoleDto = {
   editarMateriasFrentes: false,
   visualizarProvasCursinho: false,
   cadastrarProvasCursinho: false,
+  gerenciarCategoriasCursinho: false,
 };
 
 function applyBaseRoleConstraints(
