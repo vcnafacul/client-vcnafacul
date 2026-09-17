@@ -6,6 +6,8 @@ type StatCardColor = "marine" | "green" | "orange" | "red" | "pink";
 interface StatCardProps {
   label: string;
   value: string | number;
+  /** Exibido entre parênteses, esmaecido, logo após o valor. */
+  secondaryValue?: string | number;
   color?: StatCardColor;
   icon?: ReactNode;
   loading?: boolean;
@@ -27,9 +29,18 @@ const textColorMap: Record<StatCardColor, string> = {
   pink: "text-pink",
 };
 
+const secondaryTextColorMap: Record<StatCardColor, string> = {
+  marine: "text-marine/40",
+  green: "text-green2/40",
+  orange: "text-orange/40",
+  red: "text-red/40",
+  pink: "text-pink/40",
+};
+
 export default function StatCard({
   label,
   value,
+  secondaryValue,
   color = "marine",
   icon,
   loading = false,
@@ -53,6 +64,11 @@ export default function StatCard({
           <>
             <p className={`text-2xl font-bold ${textColorMap[color]}`}>
               {value}
+              {secondaryValue !== undefined && (
+                <span className={`ml-1 ${secondaryTextColorMap[color]}`}>
+                  ({secondaryValue})
+                </span>
+              )}
             </p>
             <p className="text-sm text-grey truncate">{label}</p>
           </>

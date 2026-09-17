@@ -3,4 +3,5 @@ export interface SummaryInscriptionCourse {
   inscriptionPending: number;
   inscriptionApproved: number;
   inscriptionRejected: number;
+  inscriptionTotalNonTest: number; // Total de processos seletivos sem testes
 }
