@@ -20,9 +20,6 @@ vi.mock("../../../services/cartaoResposta/uploadCartao", () => ({
 vi.mock("react-toastify", () => ({
   toast: { loading: vi.fn(() => 1), update: toastUpdate, error: vi.fn() },
 }));
-vi.mock("../../../components/templates/modalTemplate", () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}));
 
 import UploadCartaoModal from "./uploadCartaoModal";
 
