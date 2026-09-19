@@ -53,10 +53,11 @@ export default function UploadCartaoModal({
     try {
       await uploadCartao(file, resultado.estudante.userId, token);
       toast.update(id, {
-        render: "Cartão enviado! Processando...",
-        type: "success",
+        render:
+          "Cartão enviado. O resultado aparece aqui quando o processamento terminar.",
+        type: "info",
         isLoading: false,
-        autoClose: 3000,
+        autoClose: 5000,
         closeOnClick: true,
       });
       fechar();
@@ -114,9 +115,17 @@ export default function UploadCartaoModal({
               </p>
               <ul className="text-sm max-h-32 overflow-auto divide-y">
                 {resultado.historicos.map((h, i) => (
-                  <li key={i} className="py-1 flex justify-between">
-                    <span>{h.ano ?? "—"}</span>
-                    <span className="text-gray-500">{h.status ?? ""}</span>
+                  <li key={i} className="py-1 flex justify-between gap-3">
+                    <span className="shrink-0">{h.ano ?? "—"}</span>
+                    <span
+                      className={
+                        h.falha
+                          ? "text-right text-red-600"
+                          : "text-right text-gray-500"
+                      }
+                    >
+                      {h.falha ? h.falha.descricao : (h.status ?? "")}
+                    </span>
                   </li>
                 ))}
               </ul>
