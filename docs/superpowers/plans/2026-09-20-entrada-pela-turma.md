@@ -391,11 +391,16 @@ export function SimuladosDaTurma({
         state={estado}
         onRetry={carregar}
         stickyHeader
-        emptyState={<DashTableVazio />}
+        emptyState={
+          // ⚠️ Texto próprio DENTRO do emptyState, e nada fora. O
+          // `DashTableVazio` não aceita prop, e a revisão do card 06 pegou
+          // exatamente o erro de ter duas superfícies de estado na mesma tela
+          // — duas mensagens e dois botões. Mesma forma do `TabelaDeQuestoes`.
+          <div className="py-8 text-center">
+            <p className={cn("text-sm", dashV2.text.secondary)}>{TEXTO_VAZIO}</p>
+          </div>
+        }
       />
-      {estado === "idle" && simulados.length === 0 && (
-        <p className={cn("text-sm", dashV2.text.secondary)}>{TEXTO_VAZIO}</p>
-      )}
     </div>
   );
 }
@@ -403,7 +408,7 @@ export function SimuladosDaTurma({
 export default SimuladosDaTurma;
 ```
 
-⚠️ **Leia o `DashTableVazio` e o `DashTableErro` antes.** Se o `DashTableVazio` já disser algo genérico demais, ponha o texto próprio dentro do `emptyState` (como o `TabelaDeQuestoes` faz) em vez do parágrafo solto abaixo — e ajuste o teste. **Uma das duas formas, não as duas.**
+⚠️ **Leia o `TabelaDeQuestoes.tsx` e veja como ele monta o `emptyState`** — siga a mesma forma. O `DashTableVazio` genérico **não** é usado aqui: ele fala em limpar filtros, e esta lista não tem filtro nenhum. E o import dele sai, se ficar sem uso.
 
 - [ ] **Step 4: Rodar e confirmar que passa**
 
@@ -559,10 +564,141 @@ git commit -m "feat: aba de simulados por cartao na tela de turma"
 
 ---
 
+## Task 4: O "voltar" precisa saber voltar para a turma
+
+⚠️ **Sem isto o card entrega um caminho de ida sem volta correta.** O `voltar()` do relatório
+(`src/pages/relatorioSimulado/index.tsx`) faz:
+
+```tsx
+    if (de) { navigate(de.caminho, { replace: true, state: { de } }); return; }
+    navigate(`${DASH}/${PARTNER_PROVAS}`);
+```
+
+Chegando pela turma **não há `de`**, então a pessoa cai na **listagem de provas** — uma tela que ela
+não visitou, noutro canto do sistema. O fallback foi escrito quando a única entrada era o modal de
+provas; agora há duas entradas e ele mente para uma delas.
+
+O `EstadoDeVolta` hoje exige `filtros`, `provaId` e `pagina`, que são coisas da listagem de provas e
+não existem na tela de turma.
+
+**Files:**
+- Modify: `src/pages/relatorioSimulado/voltar.ts`
+- Modify: `src/pages/partnerClassWithStudents/SimuladosDaTurma.tsx`
+- Test: `src/pages/relatorioSimulado/index.test.tsx` e `SimuladosDaTurma.test.tsx`
+
+- [ ] **Step 1: Escrever os testes que falham**
+
+Em `SimuladosDaTurma.test.tsx`:
+
+```tsx
+  it("⚠️ leva o caminho de volta no state, senão o relatório devolve à listagem de provas", async () => {
+    montar();
+    fireEvent.click(await screen.findByText("ENEM 2024 — 1º dia"));
+
+    expect(navigate).toHaveBeenCalledWith(
+      expect.stringContaining("relatorio-simulado/sim-1?turma=t-1"),
+      { state: { de: { caminho: `/dashboard/turmas/t-1` } } },
+    );
+  });
+```
+
+Em `index.test.tsx` do relatório:
+
+```tsx
+  it("voltar usa o caminho do state mesmo sem filtros — veio da tela de turma", () => {
+    // o EstadoDeVolta completo é da listagem de provas; quem vem da turma manda
+    // só o caminho, e o voltar tem que honrá-lo em vez de cair no fallback
+    montarComState({ de: { caminho: "/dashboard/turmas/t-1" } });
+
+    fireEvent.click(screen.getByRole("button", { name: /voltar/i }));
+
+    expect(navigate).toHaveBeenCalledWith("/dashboard/turmas/t-1", {
+      replace: true,
+      state: { de: { caminho: "/dashboard/turmas/t-1" } },
+    });
+  });
+```
+
+⚠️ **Adapte ao helper que o `index.test.tsx` já tem** para injetar `location.state` — ele existe
+desde o card `06`. Não reescreva o dele.
+
+- [ ] **Step 2: Rodar e confirmar que falham**
+
+Run: `npx vitest run src/pages/relatorioSimulado/ src/pages/partnerClassWithStudents/`
+Expected: FAIL.
+
+- [ ] **Step 3: Afrouxar o tipo, sem afrouxar o contrato de quem o preenche inteiro**
+
+Em `voltar.ts`:
+
+```ts
+export interface EstadoDeVolta {
+  /** Para onde voltar. **Só isto é obrigatório.** */
+  caminho: string;
+  /**
+   * O resto é da listagem de provas, e é opcional porque há duas entradas
+   * para o relatório.
+   *
+   * ⚠️ Quem vem da **tela de turma** manda só o `caminho`: não há filtro,
+   * prova nem página para restaurar, e exigir campos inventados só para
+   * satisfazer o tipo faria a tela mentir sobre o que ela sabe.
+   */
+  filtros?: {
+    nome: string;
+    edicao: string;
+    aplicacao: string;
+    ano: string;
+    gabaritoOnly: boolean;
+  };
+  provaId?: string;
+  pagina?: number;
+}
+```
+
+⚠️ **A `PartnerPrepProvas` continua mandando tudo**, e a restauração de lá continua exigindo os
+campos — ela já checa `de.provaId` antes de usar. **Confira** que o `tsc` não passou a aceitar uma
+restauração pela metade lá; se passou, ponha a guarda explícita.
+
+Em `SimuladosDaTurma.tsx`, o `onRowClick`:
+
+```tsx
+        onRowClick={(s) =>
+          navigate(
+            `${DASH}/${RELATORIO_SIMULADO}/${s.simuladoId}?turma=${turmaId}`,
+            // ⚠️ Sem isto o "voltar" do relatório cai no fallback e manda a
+            // pessoa para a LISTAGEM DE PROVAS, que ela não visitou.
+            { state: { de: { caminho: `${DASH}/${PARTNER_CLASS}/${turmaId}` } } },
+          )
+        }
+```
+
+Importe `PARTNER_CLASS` de `@/routes/path`.
+
+- [ ] **Step 4: Rodar e confirmar que passam**
+
+Run: `npx vitest run src/pages/relatorioSimulado/ src/pages/partnerClassWithStudents/ src/pages/partnerPrepProvas/`
+Expected: PASS — **inclusive os da `partnerPrepProvas`**, cuja restauração completa não pode ter
+regredido.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/pages/relatorioSimulado/voltar.ts src/pages/relatorioSimulado/index.test.tsx src/pages/partnerClassWithStudents/SimuladosDaTurma.tsx src/pages/partnerClassWithStudents/SimuladosDaTurma.test.tsx
+git commit -m "feat: voltar do relatorio devolve a turma quando veio dela"
+```
+
+---
+
 ## Fechamento
+
+```bash
+npx vitest run
+npm run build
+ESLINT_USE_FLAT_CONFIG=false npx eslint src/pages/partnerClassWithStudents src/pages/relatorioSimulado src/services/relatorioSimulado
+```
 
 ⚠️ **Gate manual, para o PR** — jsdom não alcança:
 
 1. A aba aparecendo e a lista com mais de uma dezena de simulados, em 1440px
 2. Clicar numa linha e conferir que o relatório abre **com a turma aplicada** (a coluna Turma some)
-3. O "voltar" do relatório devolvendo à tela de turma — ⚠️ **ele foi construído para devolver à listagem de provas**, então aqui provavelmente cai no fallback. Verificar e registrar o que acontece.
+3. O "voltar" do relatório devolvendo à **tela de turma**, e não à listagem de provas
