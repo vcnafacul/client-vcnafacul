@@ -5,6 +5,18 @@ import RelatorioSimulado from "./index";
 
 const buscarRelatorio = vi.hoisted(() => vi.fn());
 const buscarQuestoes = vi.hoisted(() => vi.fn());
+const navigate = vi.hoisted(() => vi.fn());
+
+/**
+ * ⚠️ Só o `useNavigate` é trocado — `MemoryRouter`, `Routes` e `useLocation`
+ * continuam os de verdade. Espionar a navegação por um `<Route>` de destino
+ * não distinguiria `push` de `replace`, que é metade do que estes testes
+ * precisam afirmar.
+ */
+vi.mock("react-router-dom", async (importOriginal) => {
+  const real = await importOriginal<typeof import("react-router-dom")>();
+  return { ...real, useNavigate: () => navigate };
+});
 vi.mock("@/services/relatorioSimulado/buscarRelatorio", () => ({
   buscarRelatorio,
   caminhoDoRelatorio: vi.fn(),
@@ -25,7 +37,7 @@ const RESPOSTA = {
       enviouCartao: true,
       status: "completed",
       aproveitamentoGeral: 0.8,
-      questoesRespondidas: 90,
+      cartaoCode: "07",
     },
   ],
   resumo: {
@@ -47,9 +59,11 @@ const RESPOSTA = {
 const abrirAba = (nome: RegExp) =>
   fireEvent.mouseDown(screen.getByRole("tab", { name: nome }));
 
-const montar = (rota = "/relatorio-simulado/sim-1") =>
+type Entrada = string | { pathname: string; search?: string; state?: unknown };
+
+const montar = (rota: Entrada = "/relatorio-simulado/sim-1") =>
   render(
-    <MemoryRouter initialEntries={[rota]}>
+    <MemoryRouter initialEntries={[rota as never]}>
       <Routes>
         <Route path="/relatorio-simulado/:simuladoId" element={<RelatorioSimulado />} />
       </Routes>
@@ -101,6 +115,107 @@ describe("RelatorioSimulado", () => {
     abrirAba(/quest/i);
 
     expect(buscarQuestoes).toHaveBeenCalledTimes(1);
+  });
+
+  it("⚠️ ?turma= vazio é tratado como SEM turma, nos dois lugares", async () => {
+    // `??` deixaria passar string vazia: o serviço pediria o cursinho inteiro
+    // (o `?` dele é falsy para "") e a tela esconderia a coluna Turma (o
+    // `!== undefined` dela é truthy) — recorte largo sem dizer de quem é.
+    montar("/relatorio-simulado/sim-1?turma=");
+
+    await waitFor(() =>
+      expect(buscarRelatorio).toHaveBeenCalledWith("tok", "sim-1", undefined),
+    );
+    expect(
+      await screen.findByRole("columnheader", { name: /turma/i }),
+    ).toBeInTheDocument();
+  });
+
+  /**
+   * ⚠️ `usuario` sozinho não é chave: a api não faz DISTINCT e não há índice
+   * único em (user_id, partner_prep_course_id). Dois processos seletivos do
+   * mesmo cursinho = duas linhas do mesmo usuário, e chave repetida faz o
+   * React reconciliar linha na DOM errada depois de um sort.
+   */
+  it("⚠️ duas linhas do MESMO usuário, matrículas diferentes, ganham chaves distintas", async () => {
+    const [linha] = RESPOSTA.linhas;
+    buscarRelatorio.mockResolvedValue({
+      ...RESPOSTA,
+      linhas: [
+        { ...linha, matricula: "2025001", nome: "Ana Silva" },
+        { ...linha, matricula: "2024077", nome: "Ana Silva (2024)" },
+      ],
+    });
+
+    const { container } = montar();
+    await screen.findByText("Ana Silva");
+
+    // ⚠️ Renderizar as duas não basta: o React desenha linha de chave repetida
+    // do mesmo jeito (só reclama no console). O que este teste afirma é que as
+    // CHAVES são distintas — é delas que depende a reconciliação pós-sort.
+    const chaves = [...container.querySelectorAll("[data-row-key]")].map((el) =>
+      el.getAttribute("data-row-key"),
+    );
+
+    expect(chaves).toHaveLength(2);
+    expect(new Set(chaves).size).toBe(2);
+    expect(screen.getByText("Ana Silva (2024)")).toBeInTheDocument();
+  });
+
+  it("⚠️ voltar num link aberto em aba nova cai na listagem — não em navigate(-1)", async () => {
+    // sem histórico, `navigate(-1)` não faz nada e o botão fica inerte,
+    // justamente no caso que fez esta tela ser rota e não modal
+    montar();
+    await screen.findByText("Ana Silva");
+
+    fireEvent.click(screen.getByRole("button", { name: /voltar/i }));
+
+    expect(navigate).toHaveBeenCalledWith("/dashboard/cursinho-provas");
+  });
+
+  it("⚠️ voltar com estado de origem REPLACE, para o back do navegador não voltar ao relatório", async () => {
+    const de = {
+      caminho: "/dashboard/cursinho-provas",
+      filtros: {
+        nome: "enem",
+        edicao: "",
+        aplicacao: "",
+        ano: "",
+        gabaritoOnly: false,
+      },
+      provaId: "p-1",
+      pagina: 3,
+    };
+
+    montar({ pathname: "/relatorio-simulado/sim-1", state: { de } });
+    await screen.findByText("Ana Silva");
+
+    fireEvent.click(screen.getByRole("button", { name: /voltar/i }));
+
+    expect(navigate).toHaveBeenCalledWith("/dashboard/cursinho-provas", {
+      replace: true,
+      state: { de },
+    });
+  });
+
+  /**
+   * ⚠️ O "tentar de novo" das questões passa pela MESMA guarda do carregamento
+   * preguiçoso, sem escape hatch: chegar ao erro é chegar pelo `catch`, que
+   * nunca chamou `setQuestoes` — então `questoes` ainda é `null` e a guarda
+   * deixa passar. Se algum dia alguém puser erro e lista no mesmo estado, este
+   * teste cai, e é o aviso de que a guarda precisa de mais do que `!== null`.
+   */
+  it("o erro das questões é recuperável — tentar de novo rebusca", async () => {
+    buscarQuestoes.mockRejectedValueOnce(new Error("caiu"));
+
+    montar();
+    await screen.findByText("Ana Silva");
+    abrirAba(/quest/i);
+
+    await screen.findByText(/erro/i);
+    fireEvent.click(screen.getByRole("button", { name: /tentar novamente/i }));
+
+    await waitFor(() => expect(buscarQuestoes).toHaveBeenCalledTimes(2));
   });
 
   it("erro na busca mostra estado de erro, não tela em branco", async () => {

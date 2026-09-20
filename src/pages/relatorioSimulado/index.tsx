@@ -7,6 +7,7 @@ import type {
   RelatorioDoSimulado,
 } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
+import { DASH, PARTNER_PROVAS } from "@/routes/path";
 import { buscarQuestoes } from "@/services/relatorioSimulado/buscarQuestoes";
 import { buscarRelatorio } from "@/services/relatorioSimulado/buscarRelatorio";
 import { useAuthStore } from "@/store/auth";
@@ -56,7 +57,14 @@ function VazioDeEstudantes() {
 function RelatorioSimulado() {
   const { simuladoId } = useParams<{ simuladoId: string }>();
   const [searchParams] = useSearchParams();
-  const turmaId = searchParams.get("turma") ?? undefined;
+  /**
+   * ⚠️ `||`, **não `??`**: `?turma=` (valor vazio) é um resultado rotineiro de
+   * link mastigado, e `??` deixaria a string vazia passar. Aí os dois lados
+   * discordam — o serviço testa `turmaId ? …` e pediria o cursinho INTEIRO,
+   * enquanto esta tela testa `!== undefined` e esconderia a coluna Turma: o
+   * recorte mais largo possível, numa página que não diz de quem ele é.
+   */
+  const turmaId = searchParams.get("turma") || undefined;
   const { data } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
@@ -92,13 +100,14 @@ function RelatorioSimulado() {
    * quer as linhas — buscar as duas sempre dobra o tempo até a primeira coisa
    * útil aparecer. O `questoes !== null` é o que impede rebuscar ao alternar.
    *
-   * ⚠️ `recarregar` existe porque o "tentar de novo" precisa furar essa guarda,
-   * e zerar `questoes` antes de chamar não furaria: o `setQuestoes(null)` só
-   * vale no próximo render, e esta closure ainda leria o valor antigo.
+   * ⚠️ E a guarda **não atrapalha o "tentar de novo"**: o único jeito de chegar
+   * a `estadoQuestoes === "error"` é pelo `catch`, que nunca chamou
+   * `setQuestoes` — então numa tela em erro `questoes` ainda é `null` e a
+   * guarda deixa passar. Não há caminho que ponha erro e lista ao mesmo tempo.
    */
-  const carregarQuestoes = (recarregar = false) => {
+  const carregarQuestoes = () => {
     if (!simuladoId) return;
-    if (!recarregar && questoes !== null) return;
+    if (questoes !== null) return;
     setEstadoQuestoes("loading");
     buscarQuestoes(data.token, simuladoId, turmaId)
       .then((r) => {
@@ -119,11 +128,16 @@ function RelatorioSimulado() {
   );
 
   const voltar = () => {
+    // ⚠️ `replace`: sem isto o histórico vira [listagem, relatório, listagem]
+    // e o "voltar" do navegador devolve a pessoa PARA o relatório.
     if (de) {
-      navigate(de.caminho, { state: { de } });
+      navigate(de.caminho, { replace: true, state: { de } });
       return;
     }
-    navigate(-1);
+    // ⚠️ E não `navigate(-1)`: num link compartilhado aberto em aba nova não
+    // há histórico, e o botão fica inerte — justamente no caso que fez esta
+    // tela ser rota e não modal.
+    navigate(`${DASH}/${PARTNER_PROVAS}`);
   };
 
   return (
@@ -172,7 +186,17 @@ function RelatorioSimulado() {
             <DashTable<LinhaDoRelatorio>
               rows={linhas}
               columns={colunas}
-              rowKey={(l) => l.usuario}
+              /*
+                ⚠️ `usuario` sozinho NÃO é único. A api monta as linhas de uma
+                query de estudantes filtrada só por cursinho, situação da
+                matrícula e soft-delete — sem DISTINCT, e sem índice único em
+                (user_id, partner_prep_course_id). Quem se matriculou por dois
+                processos seletivos do mesmo cursinho vem duas vezes, com o
+                mesmo `usuario`. Chave repetida numa tabela ordenável faz o
+                React reconciliar linha na DOM errada depois de um sort. A
+                `matricula` (`cod_enrolled`) é que carrega unicidade.
+              */
+              rowKey={(l) => `${l.usuario}:${l.matricula}`}
               sort={sort}
               onSortChange={setSort}
               state={estado}
@@ -186,7 +210,7 @@ function RelatorioSimulado() {
             <TabelaDeQuestoes
               questoes={questoes ?? []}
               estado={estadoQuestoes}
-              onRetry={() => carregarQuestoes(true)}
+              onRetry={carregarQuestoes}
             />
           </TabsContent>
         </Tabs>
