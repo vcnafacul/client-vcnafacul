@@ -126,6 +126,14 @@ const nomesVisiveis = () =>
   );
 const irPara = (pagina: string) =>
   fireEvent.click(within(rodape()!).getByText(pagina));
+/**
+ * ⚠️ O "próxima" do `components/ui/pagination` é um `<a>` **sem `href`** com
+ * `aria-label="Go to next page"` — rótulo em inglês e sem papel de link (é uma
+ * das pendências listadas no README). Consultar por rótulo é o que casa com o
+ * que está realmente na tela.
+ */
+const irParaAProxima = () =>
+  fireEvent.click(within(rodape()!).getByLabelText("Go to next page"));
 
 /* -------------------------------------------------------------------------- *
  * O contrato: `entities` é leitura.
@@ -262,6 +270,107 @@ describe("DashListTemplate — paginação", () => {
 
     expect(intervalo()).toBe("Mostrando 26–30 de 30");
     expect(nomesVisiveis().length).toBeGreaterThan(0);
+  });
+});
+
+/* -------------------------------------------------------------------------- *
+ * Página inicial restaurada, e o aviso de troca de página.
+ * -------------------------------------------------------------------------- */
+
+describe("DashListTemplate — paginaInicial e onPaginaChange", () => {
+  it("paginaInicial abre na página pedida", () => {
+    // 60 registros, 25 por página → 3 páginas; a 3ª é 51–60.
+    montar(criarContexto({ entities: provas(60) }), { paginaInicial: 3 });
+
+    expect(intervalo()).toBe("Mostrando 51–60 de 60");
+    expect(nomesVisiveis()[0]).toBe("Prova 051");
+  });
+
+  it("sem paginaInicial o comportamento é o de hoje: página 1", () => {
+    montar(criarContexto({ entities: provas(60) }));
+
+    expect(intervalo()).toBe("Mostrando 1–25 de 60");
+  });
+
+  it("⚠️ paginaInicial sobrevive ao render com a lista ainda carregando", () => {
+    /**
+     * ⚠️ A linha do clamp roda **durante** o render, e `totalDePaginas(0, n)`
+     * devolve 1 (`paginacao.ts` garante "nunca zero"). Sem o guard por
+     * `state`, a página restaurada é zerada antes de as linhas chegarem — e o
+     * primeiro teste deste bloco passa mesmo assim, porque lá a lista já está
+     * cheia no primeiro render.
+     */
+    const { remontar } = montar(criarContexto({ entities: [] }), {
+      paginaInicial: 3,
+      state: "loading",
+    });
+    // Enquanto carrega o rodapé nem existe: o estado da página não pode ter
+    // sido corrigido por nada que a tela mostre.
+    expect(rodape()).toBeNull();
+
+    remontar(criarContexto({ entities: provas(60) }), {
+      paginaInicial: 3,
+      state: "idle",
+    });
+
+    expect(intervalo()).toBe("Mostrando 51–60 de 60");
+    expect(nomesVisiveis()[0]).toBe("Prova 051");
+  });
+
+  it("onPaginaChange avisa a navegação pelo rodapé — e só ela", () => {
+    const onPaginaChange = vi.fn();
+    const contexto = criarContexto({ entities: provas(60) });
+    const { remontar } = montar(contexto, {
+      onPaginaChange,
+      activeFilterCount: 0,
+    });
+
+    // Montar não é navegar: ninguém escolheu página nenhuma ainda.
+    expect(onPaginaChange).not.toHaveBeenCalled();
+
+    irParaAProxima();
+    expect(onPaginaChange).toHaveBeenCalledWith(2);
+
+    irPara("3");
+    expect(onPaginaChange).toHaveBeenLastCalledWith(3);
+    expect(onPaginaChange).toHaveBeenCalledTimes(2);
+
+    /**
+     * ⚠️ O reset por filtro **não** avisa: a pessoa não escolheu a página 1,
+     * o template é que a devolveu para lá. Avisar aqui faria a tela guardar
+     * como "escolhida" uma página que ninguém pediu.
+     */
+    remontar(contexto, { onPaginaChange, activeFilterCount: 1 });
+    expect(intervalo()).toBe("Mostrando 1–25 de 60");
+    expect(onPaginaChange).toHaveBeenCalledTimes(2);
+
+    /**
+     * ⚠️ Nem o clamp: a lista encolheu sozinha, não houve navegação. (E um
+     * `onPaginaChange` disparado daqui rodaria durante o render.)
+     */
+    irPara("3");
+    expect(onPaginaChange).toHaveBeenCalledTimes(3);
+    remontar(criarContexto({ ...contexto, entities: provas(10) }), {
+      onPaginaChange,
+      activeFilterCount: 1,
+    });
+    expect(intervalo()).toBe("Mostrando 1–10 de 10");
+    expect(onPaginaChange).toHaveBeenCalledTimes(3);
+  });
+
+  it("o clamp continua valendo quando a lista encolhe de verdade", () => {
+    // A rede de segurança original não pode ter sido desligada junto.
+    const contexto = criarContexto({ entities: provas(60) });
+    const { remontar } = montar(contexto, { paginaInicial: 3 });
+    expect(intervalo()).toBe("Mostrando 51–60 de 60");
+
+    remontar(criarContexto({ ...contexto, entities: provas(10) }), {
+      paginaInicial: 3,
+      state: "idle",
+    });
+
+    expect(intervalo()).toBe("Mostrando 1–10 de 10");
+    expect(nomesVisiveis().length).toBe(10);
   });
 });
 

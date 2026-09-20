@@ -14,6 +14,7 @@ export const DASH_PROVAS = "dashprovas";
 export const DASH_CONTENT = "dash-content";
 export const CONFIRM_EMAIL = "confirmEmail";
 export const DASH_ANALYTICS = "monitoramento";
+export const RELATORIO_SIMULADO = "relatorio-simulado";
 
 export const SIMULADO = "simulado/";
 export const SIMULADO_RESPONDER = "/simulado/responder";

@@ -1,15 +1,17 @@
 import { dashV2 } from "@/components/dashV2";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { buscarSimuladosComCartao } from "@/services/relatorioSimulado/buscarSimuladosComCartao";
 import {
   ArrowLeftIcon,
   BookOpenIcon,
   CalendarDaysIcon,
+  ChartBarIcon,
   ClipboardDocumentCheckIcon,
   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { SimuladoResumo } from "../../../dtos/prova/prova";
 import { baixarCaderno } from "../../../services/caderno/baixarCaderno";
@@ -19,6 +21,26 @@ import EditDisponibilidadeModal from "./editDisponibilidadeModal";
 import { proporcaoQuestoes } from "./simuladoStatus";
 import SimuladoStatusIcon from "./SimuladoStatusIcon";
 
+/**
+ * Liga a ação de relatório do cartão-resposta.
+ *
+ * ⚠️ **A presença desta prop é o interruptor por TELA**, e é de propósito. O
+ * `simuladosView` é compartilhado entre a `dashprovas` (admin de plataforma) e
+ * a `cursinho-provas`; sem um interruptor explícito a ação apareceria nas duas,
+ * e o admin — que pode não ter cursinho nenhum — tomaria 403 do card `04`, já
+ * que a api resolve o cursinho pelo JWT (`resolveCursinhoIdByUserId` lança
+ * `ForbiddenException` quando não há colaborador ativo com cursinho).
+ *
+ * ⚠️ **Permissão não serve de interruptor:** `gerenciarEstudantes` pode existir
+ * para um admin de plataforma, e aí a ação voltaria exatamente para onde não
+ * pode estar. Por isso são dois campos, e não um.
+ */
+export interface AcaoRelatorio {
+  aoAbrir: (simulado: SimuladoResumo) => void;
+  /** `gerenciarEstudantes`. Falso = desabilitada com motivo, e sem chamar o ms. */
+  permitido: boolean;
+}
+
 interface SimuladosViewProps {
   simulados: SimuladoResumo[] | undefined;
   loading: boolean;
@@ -27,6 +49,8 @@ interface SimuladosViewProps {
   onVoltar: () => void;
   onRetry: () => void;
   onSimuladoUpdated: (updated: SimuladoResumo) => void;
+  /** Ver `AcaoRelatorio`: ausente = a ação não existe nesta tela. */
+  relatorio?: AcaoRelatorio;
 }
 
 const MOTIVO_BLOQUEADO =
@@ -81,8 +105,39 @@ function SimuladosView({
   onVoltar,
   onRetry,
   onSimuladoUpdated,
+  relatorio,
 }: SimuladosViewProps) {
   const [editing, setEditing] = useState<SimuladoResumo | null>(null);
+
+  const [cartoesPorSimulado, setCartoesPorSimulado] = useState<Map<
+    string,
+    number
+  > | null>(null);
+
+  /**
+   * ⚠️ Só busca quando a ação está ligada **e** permitida. Na `dashprovas` o
+   * usuário pode não ter cursinho, e sem `gerenciarEstudantes` a rota devolve
+   * 403 — chamar nesses casos é um erro no console sem propósito nenhum.
+   */
+  useEffect(() => {
+    if (!relatorio?.permitido) return;
+    let cancelado = false;
+    buscarSimuladosComCartao(token)
+      .then((r) => {
+        if (cancelado) return;
+        setCartoesPorSimulado(
+          new Map(r.simulados.map((s) => [s.simuladoId, s.cartoes])),
+        );
+      })
+      // Silencioso de propósito: falhar em saber quais têm cartão não pode
+      // derrubar o modal, que serve para outras quatro ações.
+      .catch(() => {
+        if (!cancelado) setCartoesPorSimulado(new Map());
+      });
+    return () => {
+      cancelado = true;
+    };
+  }, [relatorio?.permitido, token]);
 
   // ⚠️ Guarda o `_id` em voo, não um booleano. Um booleano único desabilitaria
   // a tabela INTEIRA, e o coordenador que quer baixar dois simulados
@@ -334,6 +389,33 @@ function SimuladosView({
                         rotulo="Editar janela de disponibilidade"
                         onClick={() => setEditing(simulado)}
                       />
+
+                      {/*
+                        ⚠️ O `relatorio &&` é o interruptor por tela — ver o
+                        docblock de `AcaoRelatorio`. Trocar por um teste de
+                        permissão devolve a ação para a tela do admin.
+
+                        ⚠️ Enquanto `cartoesPorSimulado` é `null` (a resposta do
+                        `04b` não chegou), o `?? 0` deixa a ação desabilitada —
+                        que é o certo: melhor desabilitada por um instante do
+                        que habilitada para abrir uma tela vazia.
+                      */}
+                      {relatorio && (
+                        <AcaoIcone
+                          icone={ChartBarIcon}
+                          rotulo="Ver relatório do cartão-resposta"
+                          onClick={() => relatorio.aoAbrir(simulado)}
+                          desabilitado={
+                            !relatorio.permitido ||
+                            (cartoesPorSimulado?.get(simulado._id) ?? 0) === 0
+                          }
+                          motivoDesabilitado={
+                            !relatorio.permitido
+                              ? "Você não tem permissão para ver o desempenho dos estudantes"
+                              : "Nenhum cartão-resposta enviado para este simulado"
+                          }
+                        />
+                      )}
                     </div>
                   </td>
                 </tr>

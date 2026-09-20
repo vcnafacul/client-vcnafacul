@@ -38,6 +38,7 @@ import DashGeo from "../pages/dashGeo";
 import DashNews from "../pages/dashNews";
 import DashProva from "../pages/dashProvas";
 import PartnerPrepProvas from "../pages/partnerPrepProvas";
+import RelatorioSimulado from "../pages/relatorioSimulado";
 import DashQuestionNew from "../pages/dashQuestionNew";
 import DashRoles from "../pages/dashRoles";
 import Forgot from "../pages/forgot";
@@ -99,6 +100,7 @@ import {
   PARTNER_PROVAS,
   REGISTER_PATH,
   REGISTRATION_MONITOR,
+  RELATORIO_SIMULADO,
   RESET_PASSWORD_PATH,
   SIMULADO,
   SIMULADO_HISTORIES,
@@ -339,6 +341,24 @@ export function PlatformRoutes() {
               permission={data.permissao[Roles.visualizarProvasCursinho]}
             >
               <PartnerPrepProvas />
+            </ProtectedRoutePermission>
+          }
+        />
+
+        {/*
+          ⚠️ **Limitação conhecida:** `ProtectedRoutePermission` é um
+          `<Navigate to={DASH} replace />` — quem não tem a permissão é
+          redirecionado **calado**, sem nenhuma explicação. Isso está errado, é
+          o comportamento de todas as rotas desta dash, e consertar é card
+          próprio: não é para resolver aqui.
+        */}
+        <Route
+          path={`${RELATORIO_SIMULADO}/:simuladoId`}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.gerenciarEstudantes]}
+            >
+              <RelatorioSimulado />
             </ProtectedRoutePermission>
           }
         />

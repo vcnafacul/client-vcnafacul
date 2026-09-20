@@ -51,7 +51,10 @@ export function SidebarDash() {
     setOpened(opened === cardId ? 0 : cardId);
   };
   return (
-    <Sidebar side="right" collapsible="icon">
+    // ⚠️ `print:hidden`: a folha impressa do relatório de simulado não leva o
+    // menu lateral da dash — ele não faz sentido no papel e rouba espaço do
+    // conteúdo que o coordenador quer imprimir.
+    <Sidebar side="right" collapsible="icon" className="print:hidden">
       <SidebarHeader className="flex flex-row items-center justify-start pt-4 pb-2">
         <SidebarTrigger />
         {isSupportAgent && <SupportInboxBadge />}

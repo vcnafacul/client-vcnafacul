@@ -61,6 +61,27 @@ export interface DashListTemplateProps<T> {
   backButton?: React.ReactNode;
   /** Equivalente ao `headerDash` do V1 — entra entre os filtros e a tabela. */
   headerSlot?: React.ReactNode;
+  /**
+   * Página em que a lista abre. Ausente = 1, como sempre foi.
+   *
+   * ⚠️ **Não é controle invertido.** O template continua dono da paginação;
+   * isto só semeia o estado inicial. Existe para o "voltar" do relatório de
+   * simulado devolver a pessoa à página em que ela estava.
+   *
+   * ⚠️ Quem usa isto precisa passar `state="loading"` enquanto busca: sem o
+   * estado, o clamp abaixo zera a página restaurada antes de as linhas
+   * chegarem. Ver o comentário do clamp.
+   */
+  paginaInicial?: number;
+  /**
+   * Avisa quem montou a cada troca de página, para ele poder guardar.
+   *
+   * ⚠️ Só a navegação **pelo rodapé** avisa. O reset por filtro e o clamp não:
+   * neles a pessoa não escolheu página nenhuma, e registrar como escolha uma
+   * página que o próprio template impôs faria o "voltar" restaurar o lugar
+   * errado.
+   */
+  onPaginaChange?: (pagina: number) => void;
 }
 
 /**
@@ -214,6 +235,8 @@ export function DashListTemplate<T>({
   onRetry,
   backButton,
   headerSlot,
+  paginaInicial,
+  onPaginaChange,
 }: DashListTemplateProps<T>) {
   // ⚠️ O hook do V1 não é genérico (`DashCardContextProps<any>`). O cast é o
   // preço de não tocar no arquivo do contexto — e é seguro porque quem escolhe
@@ -223,7 +246,7 @@ export function DashListTemplate<T>({
   const { filterProps, selectFiltes, buttons } = contexto;
 
   const [sort, setSort] = useState<SortState | undefined>(defaultSort);
-  const [pagina, setPagina] = useState(1);
+  const [pagina, setPagina] = useState(paginaInicial ?? 1);
 
   const colunas = useMemo(
     () => columns ?? deriveColumns(entities, cardTransformation),
@@ -261,8 +284,17 @@ export function DashListTemplate<T>({
    * conjunto encolheu, a página corrente pode não existir mais. Corrige o
    * estado (para não voltar sozinha à página 9 quando o filtro sair) **e**
    * usa o valor já corrigido neste mesmo render.
+   *
+   * ⚠️ **Mas não enquanto carrega.** Com `entities` vazio, `totalDePaginas`
+   * devolve 1 (ele garante "nunca zero"), e sem esta guarda uma
+   * `paginaInicial` restaurada seria zerada **antes** de as linhas chegarem —
+   * o "voltar" devolveria a pessoa à página 1 em silêncio, e o teste óbvio
+   * (montar com a lista já cheia) passaria assim mesmo.
+   *
+   * ⚠️ E nada de `onPaginaChange` daqui: além de ser correção do template e
+   * não escolha de ninguém, isto roda **durante o render**.
    */
-  if (pagina > paginas) setPagina(paginas);
+  if (state !== "loading" && pagina > paginas) setPagina(paginas);
   const paginaAtual = Math.min(pagina, paginas);
 
   const inicio = (paginaAtual - 1) * pageSize;
@@ -270,6 +302,16 @@ export function DashListTemplate<T>({
     () => linhas.slice(inicio, inicio + pageSize),
     [linhas, inicio, pageSize],
   );
+
+  /**
+   * ⚠️ A única troca de página que avisa a tela — é navegação do usuário. O
+   * `voltarParaPrimeiraPagina` abaixo continua mudo de propósito: ele é reset
+   * por filtro, não escolha.
+   */
+  const irParaPagina = (nova: number) => {
+    setPagina(nova);
+    onPaginaChange?.(nova);
+  };
 
   const voltarParaPrimeiraPagina = () => setPagina(1);
 
@@ -413,7 +455,7 @@ export function DashListTemplate<T>({
               pagina={paginaAtual}
               pageSize={pageSize}
               total={linhas.length}
-              onPageChange={setPagina}
+              onPageChange={irParaPagina}
             />
           ) : null}
         </div>

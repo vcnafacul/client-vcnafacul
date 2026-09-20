@@ -1,6 +1,7 @@
 import { DashListTemplate, type DashAction } from "@/components/dashV2";
 import { useModals } from "@/hooks/useModal";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FilterProps } from "../../components/atoms/filter";
 import { SelectProps } from "../../components/atoms/select";
@@ -16,6 +17,7 @@ import { deleteCategoriaCursinho } from "../../services/categoria/deleteCategori
 import { getCategoriasCursinho } from "../../services/categoria/getCategoriasCursinho";
 import { createProvaCursinho } from "../../services/prova/createProvaCursinho";
 import { getProvasCursinho } from "../../services/prova/getProvasCursinho";
+import { DASH, PARTNER_PROVAS, RELATORIO_SIMULADO } from "../../routes/path";
 import { useAuthStore } from "../../store/auth";
 import { formatDate } from "../../utils/date";
 import { Paginate } from "../../utils/paginate";
@@ -25,6 +27,10 @@ import type { CriarCategoriaService } from "../dashProvas/modals/manageCategoria
 import NewProva from "../dashProvas/modals/newProva";
 import ShowProva from "../dashProvas/modals/showProva";
 import UploadCartaoModal from "../dashProvas/modals/uploadCartaoModal";
+import type {
+  EstadoDeVolta,
+  LocationStateDoRelatorio,
+} from "../relatorioSimulado/voltar";
 import { partnerPrepProva } from "./data";
 
 const EDICAO_ALL = "";
@@ -87,11 +93,46 @@ function PartnerPrepProvas() {
 
   const [categorias, setCategorias] = useState<ICategoria[]>();
 
-  const [nameFilter, setNameFilter] = useState<string>("");
-  const [edicaoFilter, setEdicaoFilter] = useState<string>(EDICAO_ALL);
-  const [aplicacaoFilter, setAplicacaoFilter] = useState<string>(APLICACAO_ALL);
-  const [anoFilter, setAnoFilter] = useState<string>(ANO_ALL);
-  const [gabaritoOnly, setGabaritoOnly] = useState<boolean>(false);
+  /**
+   * De onde a pessoa está voltando. O relatório do simulado é **rota**, e não
+   * modal — foi o preço de ter link compartilhável e página imprimível. Este
+   * `state` é o troco: sem ele a volta cai numa listagem sem filtro, na página
+   * 1 e sem modal. O contrato mora em `relatorioSimulado/voltar.ts`, para as
+   * duas pontas não divergirem em silêncio.
+   */
+  const location = useLocation();
+  const de = (location.state as LocationStateDoRelatorio | null)?.de;
+
+  /**
+   * ⚠️ **Os filtros voltam no PRIMEIRO render**, pelo inicializador do
+   * `useState`, e nunca por um `useEffect`. Com efeito, a tela pinta uma vez
+   * sem filtro e só então filtra — a pessoa vê a lista inteira piscar. E pior:
+   * o `activeFilterCount` sairia de 0 para N num render posterior, o que o
+   * `DashListTemplate` lê como "trocou o filtro" e responde voltando para a
+   * página 1 — destruindo a página que este mesmo state acabou de restaurar.
+   */
+  const [nameFilter, setNameFilter] = useState<string>(de?.filtros.nome ?? "");
+  const [edicaoFilter, setEdicaoFilter] = useState<string>(
+    de?.filtros.edicao ?? EDICAO_ALL,
+  );
+  const [aplicacaoFilter, setAplicacaoFilter] = useState<string>(
+    de?.filtros.aplicacao ?? APLICACAO_ALL,
+  );
+  const [anoFilter, setAnoFilter] = useState<string>(
+    de?.filtros.ano ?? ANO_ALL,
+  );
+  const [gabaritoOnly, setGabaritoOnly] = useState<boolean>(
+    de?.filtros.gabaritoOnly ?? false,
+  );
+
+  /**
+   * A página em que a listagem abre (semente do template) e a página corrente
+   * (o que vai no `state` quando a pessoa sai para o relatório). São duas
+   * coisas: a primeira é lida uma vez na montagem, a segunda muda a cada
+   * navegação pelo rodapé.
+   */
+  const [paginaRestaurada] = useState<number>(de?.pagina ?? 1);
+  const [paginaAtual, setPaginaAtual] = useState<number>(de?.pagina ?? 1);
 
   const limitCards = 500;
 
@@ -118,6 +159,30 @@ function PartnerPrepProvas() {
   const {
     data: { token, permissao },
   } = useAuthStore();
+
+  const navigate = useNavigate();
+
+  /**
+   * ⚠️ Rota nova, fora do modal. O relatório é uma tela cheia — cabe tabela,
+   * resumo e abas, e é imprimível; nada disso cabe nos 672px do `ShowProva`.
+   */
+  const abrirRelatorio = (simuladoId: string) => {
+    const deAqui: EstadoDeVolta = {
+      caminho: `${DASH}/${PARTNER_PROVAS}`,
+      filtros: {
+        nome: nameFilter,
+        edicao: edicaoFilter,
+        aplicacao: aplicacaoFilter,
+        ano: anoFilter,
+        gabaritoOnly,
+      },
+      provaId: provaSelected!._id,
+      pagina: paginaAtual,
+    };
+    navigate(`${DASH}/${RELATORIO_SIMULADO}/${simuladoId}`, {
+      state: { de: deAqui },
+    });
+  };
 
   /**
    * ⚠️ Continua obrigatório mesmo com colunas explícitas: o
@@ -198,6 +263,20 @@ function PartnerPrepProvas() {
           );
           setProvaSelected(updated);
         }}
+        /*
+          ⚠️ **Só aqui.** A `dashProvas` monta o mesmo `ShowProva` e NÃO passa
+          esta prop: lá o usuário é admin de plataforma e pode não ter cursinho
+          nenhum, e a api resolve o cursinho pelo JWT — a chamada voltaria 403.
+          Ver o docblock de `AcaoRelatorio` em `dashProvas/modals/simuladosView`.
+
+          ⚠️ E a permissão é um segundo gate, mais baixo: `gerenciarEstudantes`
+          pode existir para um admin, então ela desabilita com motivo — nunca
+          decide em qual tela a ação aparece.
+        */
+        relatorio={{
+          permitido: !!permissao[Roles.gerenciarEstudantes],
+          aoAbrir: (simulado) => abrirRelatorio(simulado._id),
+        }}
       />
     );
   };
@@ -224,6 +303,45 @@ function PartnerPrepProvas() {
         toast.error(erro.message);
       });
   }, [token]);
+
+  /**
+   * A outra metade da volta: reabrir o `ShowProva` na prova de onde a pessoa
+   * saiu.
+   *
+   * ⚠️ **Espera a lista chegar.** O `onClickCard` faz `provas.find(...)`;
+   * restaurar na montagem, com `provas` ainda vazio, acha `undefined` e o
+   * `ModalShowProva` entrega `provaSelected!` — uma prova que não existe — ao
+   * `ShowProva`. Por isso o guarda de `provas.length === 0`: o efeito roda de
+   * novo quando o fetch pousa.
+   *
+   * ⚠️ **E roda UMA VEZ SÓ.** O `useModals` devolve objetos novos a cada
+   * render, então este efeito é reavaliado em todo render; sem o `ref`, fechar
+   * o modal restaurado o reabriria na hora, e a pessoa ficaria presa nele.
+   */
+  const jaRestaurou = useRef(false);
+  useEffect(() => {
+    if (jaRestaurou.current || !de || provas.length === 0) return;
+    jaRestaurou.current = true;
+
+    /*
+      Prova que saiu da lista (excluída, ou fora do recorte que o cursinho
+      enxerga agora) simplesmente não reabre modal nenhum — os filtros e a
+      página já foram restaurados, que é o grosso do caminho de volta.
+    */
+    const prova = provas.find((p) => p._id === de.provaId);
+    if (prova) {
+      setProvaSelected(prova);
+      modals.modalShowProva.open();
+    }
+
+    /*
+      ⚠️ **Consumir o state.** Sem esta limpeza ele fica grudado na entrada do
+      histórico, e um `navigate` posterior para esta mesma rota ressuscita
+      filtros que a pessoa já trocou. `replace` para não empilhar uma entrada
+      nova no histórico e transformar o "voltar" do navegador em nada.
+    */
+    navigate(location.pathname, { replace: true, state: null });
+  }, [de, provas, navigate, location.pathname, modals]);
 
   const getMoreCards = async (page: number): Promise<Paginate<Prova>> => {
     return await getProvasCursinho(token, page, limitCards);
@@ -456,6 +574,14 @@ function PartnerPrepProvas() {
         onClearFilters={clearFilters}
         defaultSort={ORDENACAO_PADRAO}
         state={carregando ? "loading" : "idle"}
+        /*
+          ⚠️ O par da Task 8: a semente entra uma vez (a página de onde a
+          pessoa saiu) e o retorno mantém `paginaAtual` em dia para a próxima
+          ida ao relatório. O template só avisa a navegação do USUÁRIO — o
+          reset por troca de filtro é mudo de propósito.
+        */
+        paginaInicial={paginaRestaurada}
+        onPaginaChange={setPaginaAtual}
       />
       <ModalNewProva />
       <ModalShowProva />

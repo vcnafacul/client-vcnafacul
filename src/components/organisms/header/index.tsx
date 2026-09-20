@@ -48,7 +48,10 @@ function Header({ solid, className }: HeaderProps) {
   };
 
   return (
-    <header className={className} id="header">
+    // ⚠️ `print:hidden`: o relatório do simulado é impresso, e a folha
+    // impressa não carrega o header do site — não faz sentido no papel e
+    // rouba espaço do que o coordenador quer imprimir.
+    <header className={`${className ?? ""} print:hidden`} id="header">
       <div className="md:container mx-auto h-full flex items-center">
         <div className="flex w-full justify-between items-center mx-4 md:mx-auto md:max-w-6xl">
           <MenuBugger />
