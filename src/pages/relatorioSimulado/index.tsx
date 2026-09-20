@@ -15,6 +15,7 @@ import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { colunasDoRelatorio } from "./colunas";
+import { DetalheDoEstudante } from "./DetalheDoEstudante";
 import { ResumoDoRelatorio } from "./ResumoDoRelatorio";
 import { TabelaDeQuestoes } from "./TabelaDeQuestoes";
 import type { LocationStateDoRelatorio } from "./voltar";
@@ -76,6 +77,9 @@ function RelatorioSimulado() {
     columnId: "estudante",
     direction: "asc",
   });
+
+  /** A linha cujo detalhe está aberto. `null` = modal fechado. */
+  const [aberto, setAberto] = useState<LinhaDoRelatorio | null>(null);
 
   const [aba, setAba] = useState("estudantes");
   const [questoes, setQuestoes] = useState<QuestaoDoRelatorio[] | null>(null);
@@ -197,6 +201,12 @@ function RelatorioSimulado() {
                 `matricula` (`cod_enrolled`) é que carrega unicidade.
               */
               rowKey={(l) => `${l.usuario}:${l.matricula}`}
+              /*
+                ⚠️ Só abre para quem ENVIOU. Linha sem cartão não tem o que
+                detalhar, e a rota devolveria 404 — um clique que só sabe dar
+                erro é pior que um clique que não faz nada.
+              */
+              onRowClick={(l) => l.enviouCartao && setAberto(l)}
               sort={sort}
               onSortChange={setSort}
               state={estado}
@@ -214,6 +224,25 @@ function RelatorioSimulado() {
             />
           </TabsContent>
         </Tabs>
+
+        {/*
+          ⚠️ `print:hidden` não é necessário aqui — o modal fechado não existe
+          no DOM (o `aberto &&` é o gate), e imprimir com ele aberto é escolha
+          de quem imprime.
+        */}
+        {aberto && simuladoId && (
+          <DetalheDoEstudante
+            token={data.token}
+            simuladoId={simuladoId}
+            estudante={{
+              usuario: aberto.usuario,
+              nome: aberto.nome,
+              matricula: aberto.matricula,
+            }}
+            isOpen
+            onClose={() => setAberto(null)}
+          />
+        )}
       </div>
     </TooltipProvider>
   );

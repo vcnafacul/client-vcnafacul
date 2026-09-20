@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { buscarRelatorio } from "./buscarRelatorio";
 import { buscarQuestoes } from "./buscarQuestoes";
 import { buscarSimuladosComCartao } from "./buscarSimuladosComCartao";
+import { buscarDetalheDoEstudante } from "./buscarDetalheDoEstudante";
 
 const fetchWrapper = vi.hoisted(() => vi.fn());
 vi.mock("@/utils/fetchWrapper", () => ({ default: fetchWrapper }));
@@ -75,5 +76,21 @@ describe("serviços do relatório de simulado", () => {
 
     const url = fetchWrapper.mock.calls[0][0] as string;
     expect(url).toMatch(/\/simulados$/);
+  });
+
+  it("buscarDetalheDoEstudante monta a URL com simulado e usuário", async () => {
+    await buscarDetalheDoEstudante("tok", "sim-1", "u1");
+
+    expect(fetchWrapper.mock.calls[0][0]).toContain(
+      "/mssimulado/relatorio/simulado/sim-1/estudante/u1",
+    );
+  });
+
+  it("404 vira erro em português, não tela quebrada", async () => {
+    fetchWrapper.mockResolvedValue({ status: 404, json: async () => ({}) });
+
+    await expect(buscarDetalheDoEstudante("tok", "sim-1", "u1")).rejects.toThrow(
+      /estudante|detalhe/i,
+    );
   });
 });
