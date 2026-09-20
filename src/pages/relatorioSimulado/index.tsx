@@ -238,6 +238,10 @@ function RelatorioSimulado() {
               usuario: aberto.usuario,
               nome: aberto.nome,
               matricula: aberto.matricula,
+              // ⚠️ O detalhe é buscado por `usuario`, mas reprocessar é por
+              // HISTÓRICO — é o histórico que guarda a foto e a falha. A linha
+              // é o único lugar da tela que tem esse id.
+              historicoId: aberto.historicoId,
             }}
             isOpen
             onClose={() => setAberto(null)}

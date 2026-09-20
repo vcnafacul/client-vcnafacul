@@ -278,6 +278,31 @@ describe("RelatorioSimulado", () => {
     );
   });
 
+  it("⚠️ o historicoId da linha chega ao modal — é por ele que se reprocessa", async () => {
+    // o detalhe é buscado por `usuario`, mas reprocessar é por HISTÓRICO. Sem
+    // o id atravessando daqui, o modal de um cartão falho não oferece ação
+    // nenhuma e a série inteira não serve para nada em tela.
+    buscarRelatorio.mockResolvedValue({
+      linhas: [{ ...RESPOSTA.linhas[0], historicoId: "h1", status: "failed" }],
+      resumo: RESPOSTA.resumo,
+    });
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "failed",
+      falha: {
+        codigo: "cartao_nao_detectado",
+        descricao: "Não foi possível localizar o cartão na foto",
+        acaoSugerida: "reenviar_foto",
+      },
+      respostas: [],
+    });
+    const { container } = montar();
+
+    fireEvent.click(await screen.findByText("Ana Silva"));
+
+    await screen.findByText(/não foi possível localizar o cartão/i);
+    expect(container.querySelector('input[type="file"]')).toBeTruthy();
+  });
+
   it("⚠️ clicar numa linha de quem NÃO enviou não abre nada", async () => {
     buscarRelatorio.mockResolvedValue({
       linhas: [{ ...RESPOSTA.linhas[0], enviouCartao: false, status: undefined }],
