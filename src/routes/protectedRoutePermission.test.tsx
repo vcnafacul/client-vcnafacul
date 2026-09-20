@@ -41,13 +41,15 @@ describe("ProtectedRoutePermission", () => {
     expect(screen.queryByText("conteúdo secreto")).not.toBeInTheDocument();
   });
 
-  it("⚠️ e o desvio é CALADO — some para o dashboard sem dizer nada", () => {
-    // Documenta o defeito, não o aprova: é o card `15`. Um link compartilhado
-    // com quem não tem a permissão desaparece sem explicação, e a leitura
-    // natural é "o link está quebrado".
+  it("sem a permissão, vai para a dash principal", () => {
+    // ⚠️ **Decisão, não defeito.** Foi aberto um card para construir uma página
+    // de acesso negado e ele foi **cancelado**: o desvio para a dash é o
+    // comportamento desejado para quem chegou à rota sem poder estar nela.
     //
-    // Quando o `15` for feito, este teste MUDA — e é essa a intenção: ele
-    // falha e obriga quem consertar a dizer o que passou a acontecer.
+    // ⚠️ O custo conhecido: o relatório do card `06` é uma rota própria para o
+    // link poder ser compartilhado, e mandado a quem não tem
+    // `gerenciarEstudantes` ele some sem explicação. Aceito, por escrito, para
+    // ninguém "consertar" isto achando que foi esquecimento.
     montar(false);
 
     expect(screen.getByText("dashboard")).toBeInTheDocument();
