@@ -3,6 +3,7 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   DetalheDoEstudante,
+  TEXTO_PROCESSANDO,
   TEXTO_SEM_RESPOSTAS,
   TEXTO_STATUS_DESCONHECIDO,
 } from "./DetalheDoEstudante";
@@ -11,6 +12,21 @@ const buscarDetalheDoEstudante = vi.hoisted(() => vi.fn());
 vi.mock("@/services/relatorioSimulado/buscarDetalheDoEstudante", () => ({
   buscarDetalheDoEstudante,
 }));
+
+const reprocessarCartao = vi.hoisted(() => vi.fn());
+vi.mock("@/services/cartaoResposta/reprocessarCartao", () => ({
+  reprocessarCartao,
+}));
+
+const FALHA_DE_FOTO = {
+  status: "failed",
+  falha: {
+    codigo: "cartao_nao_detectado",
+    descricao: "Não foi possível localizar o cartão na foto",
+    acaoSugerida: "reenviar_foto",
+  },
+  respostas: [],
+};
 
 const resposta = (over = {}) => ({
   numero: 1,
@@ -36,6 +52,7 @@ const montar = (props = {}) =>
 describe("DetalheDoEstudante", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    reprocessarCartao.mockResolvedValue(undefined);
     buscarDetalheDoEstudante.mockResolvedValue({
       status: "completed",
       respostas: [
@@ -139,6 +156,69 @@ describe("DetalheDoEstudante", () => {
       await screen.findByText(/não foi possível localizar o cartão/i),
     ).toBeInTheDocument();
     expect(screen.queryByRole("row")).not.toBeInTheDocument();
+  });
+
+  it("⚠️ cartão falho com histórico oferece a ação sugerida pelo ms", async () => {
+    // `reenviar_foto` → seletor de arquivo. Quem decide é o `acaoSugerida`
+    // dentro da falha; esta tela não conhece código de erro nenhum.
+    buscarDetalheDoEstudante.mockResolvedValue(FALHA_DE_FOTO);
+    const { container } = montar({
+      estudante: {
+        usuario: "u1",
+        nome: "Ana Silva",
+        matricula: "2025001",
+        historicoId: "h1",
+      },
+    });
+
+    await screen.findByText(/não foi possível localizar o cartão/i);
+    expect(container.querySelector('input[type="file"]')).toBeTruthy();
+  });
+
+  it("⚠️ sem historicoId não oferece ação nenhuma", async () => {
+    // o id vem da LINHA do relatório, e a api só o manda para quem enviou
+    // cartão. Sem ele a rota de reprocessar não existe — e um botão que só
+    // sabe dar 404 é pior que nenhum botão.
+    buscarDetalheDoEstudante.mockResolvedValue(FALHA_DE_FOTO);
+    const { container } = montar();
+
+    await screen.findByText(/não foi possível localizar o cartão/i);
+    expect(container.querySelector('input[type="file"]')).toBeNull();
+    expect(screen.queryByText(/reenviar foto/i)).not.toBeInTheDocument();
+  });
+
+  it("⚠️ depois do reenvio o detalhe recarrega e volta como processando", async () => {
+    // o reenvio reabre o histórico no ms; a tela que continuasse mostrando
+    // "falhou" convidaria a pessoa a reenviar de novo — e a segunda tentativa
+    // cairia na janela entre tentativas.
+    buscarDetalheDoEstudante.mockResolvedValueOnce(FALHA_DE_FOTO);
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "awaiting_omr",
+      respostas: [],
+    });
+    const { container } = montar({
+      estudante: {
+        usuario: "u1",
+        nome: "Ana Silva",
+        matricula: "2025001",
+        historicoId: "h1",
+      },
+    });
+
+    await screen.findByText(/não foi possível localizar o cartão/i);
+    fireEvent.change(container.querySelector('input[type="file"]')!, {
+      target: { files: [new File(["foto"], "cartao.jpg", { type: "image/jpeg" })] },
+    });
+
+    await waitFor(() =>
+      expect(reprocessarCartao).toHaveBeenCalledWith(
+        "tok",
+        "h1",
+        expect.any(File),
+      ),
+    );
+    expect(await screen.findByText(TEXTO_PROCESSANDO)).toBeInTheDocument();
+    expect(buscarDetalheDoEstudante).toHaveBeenCalledTimes(2);
   });
 
   it.each([["awaiting_omr"], ["pending"], ["processing"]])(

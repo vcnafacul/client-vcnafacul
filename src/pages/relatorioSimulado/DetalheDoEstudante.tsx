@@ -12,6 +12,7 @@ import type {
 import { cn } from "@/lib/utils";
 import { buscarDetalheDoEstudante } from "@/services/relatorioSimulado/buscarDetalheDoEstudante";
 import { useCallback, useEffect, useState } from "react";
+import { AcaoDeReenvio } from "./AcaoDeReenvio";
 import { rotuloDoResultado } from "./rotuloDoResultado";
 
 const VAZIO = "—";
@@ -102,6 +103,13 @@ export interface EstudanteDoDetalhe {
   usuario: string;
   nome: string;
   matricula: string;
+  /**
+   * ⚠️ Necessário para reprocessar, e **opcional**: vem de
+   * `LinhaDoRelatorio.historicoId`, que a api só manda para quem enviou
+   * cartão. Sem ele não há o que reprocessar, e a ação simplesmente não
+   * aparece — nunca um botão que só sabe dar 404.
+   */
+  historicoId?: string;
 }
 
 /**
@@ -198,6 +206,28 @@ export function DetalheDoEstudante({
             {detalhe.falha?.descricao ?? TEXTO_FALHA_SEM_DESCRICAO}
           </p>
         )}
+
+        {/*
+          ⚠️ O que oferecer sai do `acaoSugerida` que vem dentro da falha —
+          esta tela não conhece código de erro nenhum. Sem `falha` não há ação
+          sugerida, e oferecer "tentar de novo" por conta própria seria afirmar
+          que tentar resolve.
+
+          ⚠️ `onReenviado={carregar}` recarrega o detalhe, que volta como
+          "processando". **Sem polling neste card**: tela que se atualiza
+          sozinha é outro assunto.
+        */}
+        {estado === "idle" &&
+          detalhe?.status === "failed" &&
+          detalhe.falha &&
+          estudante.historicoId && (
+            <AcaoDeReenvio
+              token={token}
+              historicoId={estudante.historicoId}
+              falha={detalhe.falha}
+              onReenviado={carregar}
+            />
+          )}
 
         {estado === "idle" && processando && (
           <p className={cn("text-sm", dashV2.text.secondary)}>
