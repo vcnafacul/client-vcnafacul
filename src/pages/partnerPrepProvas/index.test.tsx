@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Prova } from "../../dtos/prova/prova";
 import { Edicao } from "../../enums/prova/edicao";
@@ -54,13 +55,32 @@ vi.mock("react-toastify", () => ({
 }));
 
 /**
+ * ⚠️ Só o `useNavigate` é dublado — o resto do `react-router-dom` continua
+ * real, senão o `MemoryRouter` do `montar` sumiria junto.
+ */
+const navigate = vi.hoisted(() => vi.fn());
+vi.mock("react-router-dom", async (original) => ({
+  ...(await original<typeof import("react-router-dom")>()),
+  useNavigate: () => navigate,
+}));
+
+/**
  * ⚠️ O dublê imprime o nome da prova recebida — é o que torna verificável
  * "clicar na linha abre o registro certo", em vez de só "abre alguma coisa".
+ *
+ * ⚠️ E guarda a prop `relatorio`: é o **interruptor por tela** da ação de
+ * relatório do cartão-resposta. O `simuladosView` é compartilhado com a
+ * `dashprovas`, e é esta tela — não a permissão — que decide que a ação existe.
+ * Ver o par deste teste em `dashProvas/index.test.tsx`.
  */
+const propsDoShowProva = vi.hoisted(
+  () => ({ atual: null }) as { atual: Record<string, unknown> | null },
+);
 vi.mock("../dashProvas/modals/showProva", () => ({
-  default: ({ prova }: { prova?: Prova | null }) => (
-    <div data-testid="show-prova">{prova?.nome ?? "SEM PROVA"}</div>
-  ),
+  default: (props: { prova?: Prova | null }) => {
+    propsDoShowProva.atual = props as Record<string, unknown>;
+    return <div data-testid="show-prova">{props.prova?.nome ?? "SEM PROVA"}</div>;
+  },
 }));
 /** Imprime o serviço de criação recebido: o cursinho não pode criar prova global. */
 vi.mock("../dashProvas/modals/newProva", () => ({
@@ -150,7 +170,13 @@ const TODAS_AS_PERMISSOES: Record<string, boolean> = {
 };
 
 async function montar() {
-  const utils = render(<PartnerPrepProvas />);
+  // ⚠️ `MemoryRouter`: a tela navega para o relatório do simulado, e o
+  // `useNavigate` exige um Router acima.
+  const utils = render(
+    <MemoryRouter>
+      <PartnerPrepProvas />
+    </MemoryRouter>,
+  );
   // ⚠️ Dois flushes: as duas requisições resolvem em microtasks separadas.
   await act(async () => {
     await Promise.resolve();
@@ -167,6 +193,8 @@ function chavesDasLinhas(): string[] {
 
 beforeEach(() => {
   telaDesktop();
+  propsDoShowProva.atual = null;
+  navigate.mockClear();
   estado.provas = PROVAS;
   estado.permissao = { ...TODAS_AS_PERMISSOES };
   getProvasCursinho.mockClear();
@@ -200,6 +228,46 @@ describe("provas do cursinho — a mesma tabela da administração", () => {
     expect(screen.getByTestId("show-prova")).toHaveTextContent(
       "Simulado interno 2023",
     );
+  });
+
+  /**
+   * ⚠️ **O par do teste em `dashProvas/index.test.tsx`**, que exige a ausência
+   * desta prop lá. É esta tela — e não a permissão — que liga a ação: o
+   * `simuladosView` é compartilhado, e na `dashprovas` o usuário pode não ter
+   * cursinho nenhum, o que faria a api devolver 403.
+   */
+  it("⚠️ liga a ação de relatório no ShowProva, e navega para a rota nova", async () => {
+    await montar();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Simulado interno 2023" }),
+    );
+
+    const relatorio = propsDoShowProva.atual?.relatorio as {
+      permitido: boolean;
+      aoAbrir: (s: { _id: string }) => void;
+    };
+    expect(relatorio).toBeDefined();
+    // `gerenciarEstudantes` é um segundo gate, mais baixo: desabilita com
+    // motivo, nunca decide em qual tela a ação aparece.
+    expect(relatorio.permitido).toBe(false);
+
+    relatorio.aoAbrir({ _id: "sim-1" });
+    expect(navigate).toHaveBeenCalledWith("/dashboard/relatorio-simulado/sim-1");
+  });
+
+  it("com gerenciarEstudantes, a ação de relatório fica permitida", async () => {
+    estado.permissao = {
+      ...TODAS_AS_PERMISSOES,
+      [Roles.gerenciarEstudantes]: true,
+    };
+    await montar();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Simulado interno 2023" }),
+    );
+
+    expect(
+      (propsDoShowProva.atual?.relatorio as { permitido: boolean }).permitido,
+    ).toBe(true);
   });
 });
 

@@ -49,10 +49,18 @@ vi.mock("./modals/newProva", () => ({
  * `undefined`, o modal abre vazio e este teste fica vermelho — em vez de a tela
  * abrir a prova errada em silêncio, que é o que acontece hoje sem teste.
  */
+/**
+ * ⚠️ O dublê guarda as props: é como se prova que esta tela **não** liga a ação
+ * de relatório do cartão-resposta. Ver o par em `partnerPrepProvas`.
+ */
+const propsDoShowProva = vi.hoisted(
+  () => ({ atual: null }) as { atual: Record<string, unknown> | null },
+);
 vi.mock("./modals/showProva", () => ({
-  default: ({ prova }: { prova?: Prova | null }) => (
-    <div data-testid="show-prova">{prova?.nome ?? "SEM PROVA"}</div>
-  ),
+  default: (props: { prova?: Prova | null }) => {
+    propsDoShowProva.atual = props as Record<string, unknown>;
+    return <div data-testid="show-prova">{props.prova?.nome ?? "SEM PROVA"}</div>;
+  },
 }));
 vi.mock("./modals/manageCategorias", () => ({
   default: () => <div data-testid="modal-categorias" />,
@@ -202,6 +210,25 @@ describe("dashProvas em tabela densa", () => {
       "ENEM 2019 Reaplicação",
     );
     expect(screen.getByTestId("show-prova")).not.toHaveTextContent("SEM PROVA");
+  });
+
+  /**
+   * ⚠️ **A ação de relatório NÃO existe nesta tela**, e o interruptor é a tela,
+   * não a permissão. O `simuladosView` é compartilhado com a
+   * `partnerPrepProvas`; aqui o usuário é admin de plataforma e pode não ter
+   * cursinho nenhum — a api resolve o cursinho pelo JWT e devolveria 403.
+   * `gerenciarEstudantes` pode existir para um admin, então checar permissão
+   * em vez da tela recolocaria a ação exatamente onde ela não pode estar.
+   */
+  it("⚠️ NÃO liga a ação de relatório no ShowProva — é a tela do admin", async () => {
+    await montar();
+    fireEvent.click(
+      screen.getByRole("button", { name: "ENEM 2019 Reaplicação" }),
+    );
+    await screen.findByTestId("show-prova");
+
+    expect(propsDoShowProva.atual).not.toBeNull();
+    expect(propsDoShowProva.atual).not.toHaveProperty("relatorio");
   });
 
   it("uma prova sem questão nenhuma não é anunciada como Completa", async () => {

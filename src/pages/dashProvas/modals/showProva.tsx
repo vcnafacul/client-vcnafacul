@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { updateProvaFiles } from "@/services/prova/updateProvaFiles";
 import { getProvaById } from "../../../services/prova/getProvaById";
-import SimuladosView from "./simuladosView";
+import SimuladosView, { type AcaoRelatorio } from "./simuladosView";
 import UploadButton from "../../../components/molecules/uploadButton";
 
 interface ShowProvaProps {
@@ -25,9 +25,21 @@ interface ShowProvaProps {
   isOpen: boolean;
   handleClose: () => void;
   onUpdated?: (prova: Prova) => void;
+  /**
+   * ⚠️ Só repassado adiante. O interruptor da ação de relatório é a TELA que
+   * monta este modal — ver `AcaoRelatorio` em `simuladosView.tsx`. A
+   * `dashProvas` não passa nada aqui, e é de propósito.
+   */
+  relatorio?: AcaoRelatorio;
 }
 
-function ShowProva({ prova, isOpen, handleClose, onUpdated }: ShowProvaProps) {
+function ShowProva({
+  prova,
+  isOpen,
+  handleClose,
+  onUpdated,
+  relatorio,
+}: ShowProvaProps) {
   const executeAsync = useToastAsync();
   const [isEditingFiles, setIsEditingFiles] = useState(false);
   const [newFile, setNewFile] = useState<File | null>(null);
@@ -401,6 +413,7 @@ const downloadFile = async (filename: string, fileType: string) => {
             token={token}
             onVoltar={() => setView('details')}
             onRetry={() => setRetryCount(c => c + 1)}
+            relatorio={relatorio}
             onSimuladoUpdated={(updated) =>
               setFullProva((prev) =>
                 prev

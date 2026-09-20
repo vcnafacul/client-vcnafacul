@@ -1,6 +1,7 @@
 import { DashListTemplate, type DashAction } from "@/components/dashV2";
 import { useModals } from "@/hooks/useModal";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FilterProps } from "../../components/atoms/filter";
 import { SelectProps } from "../../components/atoms/select";
@@ -16,6 +17,7 @@ import { deleteCategoriaCursinho } from "../../services/categoria/deleteCategori
 import { getCategoriasCursinho } from "../../services/categoria/getCategoriasCursinho";
 import { createProvaCursinho } from "../../services/prova/createProvaCursinho";
 import { getProvasCursinho } from "../../services/prova/getProvasCursinho";
+import { DASH, RELATORIO_SIMULADO } from "../../routes/path";
 import { useAuthStore } from "../../store/auth";
 import { formatDate } from "../../utils/date";
 import { Paginate } from "../../utils/paginate";
@@ -119,6 +121,16 @@ function PartnerPrepProvas() {
     data: { token, permissao },
   } = useAuthStore();
 
+  const navigate = useNavigate();
+
+  /**
+   * ⚠️ Rota nova, fora do modal. O relatório é uma tela cheia — cabe tabela,
+   * resumo e abas, e é imprimível; nada disso cabe nos 672px do `ShowProva`.
+   */
+  const abrirRelatorio = (simuladoId: string) => {
+    navigate(`${DASH}/${RELATORIO_SIMULADO}/${simuladoId}`);
+  };
+
   /**
    * ⚠️ Continua obrigatório mesmo com colunas explícitas: o
    * `DashCardContextProps` o exige e o template o usa para extrair o `id` da
@@ -197,6 +209,20 @@ function PartnerPrepProvas() {
             prev.map((p) => (p._id === updated._id ? updated : p)),
           );
           setProvaSelected(updated);
+        }}
+        /*
+          ⚠️ **Só aqui.** A `dashProvas` monta o mesmo `ShowProva` e NÃO passa
+          esta prop: lá o usuário é admin de plataforma e pode não ter cursinho
+          nenhum, e a api resolve o cursinho pelo JWT — a chamada voltaria 403.
+          Ver o docblock de `AcaoRelatorio` em `dashProvas/modals/simuladosView`.
+
+          ⚠️ E a permissão é um segundo gate, mais baixo: `gerenciarEstudantes`
+          pode existir para um admin, então ela desabilita com motivo — nunca
+          decide em qual tela a ação aparece.
+        */
+        relatorio={{
+          permitido: !!permissao[Roles.gerenciarEstudantes],
+          aoAbrir: (simulado) => abrirRelatorio(simulado._id),
         }}
       />
     );
