@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import RelatorioSimulado from "./index";
@@ -236,8 +236,16 @@ describe("RelatorioSimulado", () => {
     await screen.findByText("Ana Silva");
     abrirAba(/quest/i);
 
-    await screen.findByText(/erro/i);
-    fireEvent.click(screen.getByRole("button", { name: /tentar novamente/i }));
+    /*
+      ⚠️ Espera o BOTÃO de recuperação, não um texto `/erro/i` solto: desde que
+      a tabela ganhou as colunas "Erros" e "% de erro", aquele seletor casa com
+      dois cabeçalhos e falha por ambiguidade — sem que nada do comportamento
+      testado tenha mudado.
+    */
+    const tentarDeNovo = await screen.findByRole("button", {
+      name: /tentar novamente/i,
+    });
+    fireEvent.click(tentarDeNovo);
 
     await waitFor(() => expect(buscarQuestoes).toHaveBeenCalledTimes(2));
   });
@@ -427,5 +435,70 @@ describe("RelatorioSimulado — filtros da tabela", () => {
     montar();
 
     expect(await screen.findByTestId("estudantes-vazio")).toBeInTheDocument();
+  });
+});
+
+describe("RelatorioSimulado — paginação dos estudantes", () => {
+  const muitos = (n: number) => ({
+    linhas: Array.from({ length: n }, (_, i) => ({
+      ...RESPOSTA.linhas[0],
+      usuario: `u${i}`,
+      nome: `Estudante ${i}`,
+      matricula: `20250${i}`,
+    })),
+    resumo: RESPOSTA.resumo,
+  });
+
+  it("⚠️ pagina em 25, como as outras telas do dashV2", async () => {
+    buscarRelatorio.mockResolvedValue(muitos(30));
+    const { container } = montar();
+
+    await screen.findByText("Estudante 0");
+    expect(
+      container.querySelectorAll('[data-column-id="estudante"]'),
+    ).toHaveLength(25);
+  });
+
+  it("⚠️ o rodapé conta as linhas FILTRADAS, não o recorte inteiro", async () => {
+    // Depois de uma busca, "Mostrando 1–25 de 30" seria mentira sobre o que
+    // está na tabela. O número do recorte continua no resumo, acima.
+    buscarRelatorio.mockResolvedValue(muitos(30));
+    montar();
+    await screen.findByText("Estudante 0");
+
+    fireEvent.change(screen.getByPlaceholderText(/nome ou matrícula/i), {
+      target: { value: "Estudante 1" },
+    });
+
+    // "Estudante 1", "Estudante 10".."Estudante 19" = 11
+    await waitFor(() =>
+      expect(screen.getByText(/Mostrando 1.*11.*de 11/)).toBeInTheDocument(),
+    );
+  });
+
+  it("⚠️ filtrar volta para a página 1", async () => {
+    // Buscar estando na página 2 mostraria a tabela vazia: o resultado existe,
+    // mas está na página 1, e a tela não diria isso.
+    //
+    // ⚠️ O conjunto filtrado precisa ter MAIS de uma página (31 itens), senão
+    // o teste não discrimina: com um resultado que cabe numa página só, o
+    // rodapé fica idêntico com ou sem o reset — foi o que uma mutação pegou.
+    buscarRelatorio.mockResolvedValue(muitos(120));
+    montar();
+    await screen.findByText(/Mostrando 1.*25.*de 120/);
+
+    const rodape = screen.getByTestId("dash-list-footer");
+    fireEvent.click(within(rodape).getByText("2"));
+    await screen.findByText(/Mostrando 26.*50.*de 120/);
+
+    // "Estudante 1", "Estudante 10".."Estudante 19", "Estudante 100".."119" = 31
+    fireEvent.change(screen.getByPlaceholderText(/nome ou matrícula/i), {
+      target: { value: "Estudante 1" },
+    });
+
+    // Sem o reset, mostraria "26–31 de 31".
+    await waitFor(() =>
+      expect(screen.getByText(/Mostrando 1.*25.*de 31/)).toBeInTheDocument(),
+    );
   });
 });

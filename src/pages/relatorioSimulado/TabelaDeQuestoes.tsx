@@ -1,17 +1,28 @@
 import {
+  DashListFooter,
   DashTable,
   dashV2,
+  intervaloDaPagina,
   sortRows,
   type DashColumn,
   type SortState,
 } from "@/components/dashV2";
 import type { QuestaoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  formatarPercentual,
+  percentualDaAlternativa,
+  percentualDeAcerto,
+  percentualDeErro,
+} from "./percentuais";
 
 const ALTERNATIVAS = ["A", "B", "C", "D", "E"] as const;
 
 export const TEXTO_SEM_QUESTOES = "Nenhuma questão com resposta ainda";
+
+/** Mesmo padrão do `DashListTemplate`, que usa 25. */
+export const QUESTOES_POR_PAGINA = 25;
 
 /**
  * O vazio desta aba.
@@ -37,11 +48,23 @@ function VazioDeQuestoes() {
   );
 }
 
+/**
+ * ⚠️ **As larguras são o conserto do cabeçalho truncado**, não estética.
+ *
+ * O `<th>` do `DashTable` envolve o título num `<span class="truncate">` e põe
+ * o ícone de ordenação ao lado. Com `6rem` sobram ~54px úteis depois do
+ * `px-3` (24px), do ícone (14px) e do `gap` (4px) — e "Questão" ocupa ~58px em
+ * `text-sm`. O título saía com reticências, que foi o defeito relatado.
+ *
+ * Medida aqui, na tela, e **não** mexendo no `DashTable`: o truncamento é
+ * correto como comportamento geral (protege coluna estreita de quebrar o
+ * layout); o que estava errado era a largura pedida por esta tabela.
+ */
 const colunas: DashColumn<QuestaoDoRelatorio>[] = [
   {
     id: "numero",
     header: "Questão",
-    width: "6rem",
+    width: "7rem",
     primary: true,
     // ⚠️ Questão sem número não some: vai para o fim (o `sortRows` manda nulo
     // para o fim nas duas direções) e mostra travessão.
@@ -51,7 +74,7 @@ const colunas: DashColumn<QuestaoDoRelatorio>[] = [
   {
     id: "acertos",
     header: "Acertos",
-    width: "6rem",
+    width: "7rem",
     align: "right",
     cell: (q) => q.acertos,
     sortValue: (q) => q.acertos,
@@ -59,7 +82,7 @@ const colunas: DashColumn<QuestaoDoRelatorio>[] = [
   {
     id: "erros",
     header: "Erros",
-    width: "6rem",
+    width: "6.5rem",
     align: "right",
     cell: (q) => q.erros,
     sortValue: (q) => q.erros,
@@ -70,7 +93,7 @@ const colunas: DashColumn<QuestaoDoRelatorio>[] = [
     // dupla marcação do mesmo jeito. Chamar de branco afirma o que ninguém
     // verificou — e é o número que o professor usa para decidir o que revisar.
     header: "Sem leitura",
-    width: "7rem",
+    width: "9rem",
     align: "right",
     cell: (q) => q.semLeitura,
     sortValue: (q) => q.semLeitura,
@@ -78,6 +101,7 @@ const colunas: DashColumn<QuestaoDoRelatorio>[] = [
   {
     id: "distribuicao",
     header: "Por alternativa",
+    width: "16rem",
     cell: (q) => (
       <div className="flex gap-3">
         {ALTERNATIVAS.map((alt) => (
@@ -88,6 +112,54 @@ const colunas: DashColumn<QuestaoDoRelatorio>[] = [
         ))}
       </div>
     ),
+  },
+  {
+    id: "distribuicaoPercentual",
+    header: "Por alternativa (%)",
+    width: "18rem",
+    /*
+      ⚠️ Coluna própria, ao lado da contagem — e não no lugar dela. Numa turma
+      pequena "3 de 5" é mais legível que "60%", e numa grande o percentual é
+      que diz o formato da distribuição. As duas leituras servem a perguntas
+      diferentes, então as duas ficam.
+
+      ⚠️ A soma NÃO fecha 100%: `semLeitura` (branco ou dupla marcação) não
+      entra em `porAlternativa`. A diferença é justamente ela, e a coluna "Sem
+      leitura" ao lado é quem a explica.
+    */
+    cell: (q) => (
+      <div className="flex gap-3">
+        {ALTERNATIVAS.map((alt) => (
+          <span key={alt} className={cn("text-xs", dashV2.text.secondary)}>
+            <span className="font-medium">{alt}</span>{" "}
+            {formatarPercentual(percentualDaAlternativa(q, alt))}
+          </span>
+        ))}
+      </div>
+    ),
+  },
+  {
+    id: "acertoPercentual",
+    header: "% de acerto",
+    width: "9rem",
+    align: "right",
+    /*
+      ⚠️ Sobre `respondentes`, não sobre `acertos + erros` — ver o docblock de
+      `percentuais.ts`. Com este denominador, acerto% + erro% + semLeitura%
+      fecha 100%, e quem não foi lido não some da conta.
+    */
+    cell: (q) => formatarPercentual(percentualDeAcerto(q)),
+    // ⚠️ Ordena pelo número, não pelo texto: `sortValue` recebendo a string
+    // formatada colocaria "9%" depois de "80%".
+    sortValue: (q) => percentualDeAcerto(q),
+  },
+  {
+    id: "erroPercentual",
+    header: "% de erro",
+    width: "8.5rem",
+    align: "right",
+    cell: (q) => formatarPercentual(percentualDeErro(q)),
+    sortValue: (q) => percentualDeErro(q),
   },
 ];
 
@@ -104,25 +176,69 @@ export function TabelaDeQuestoes({
     columnId: "numero",
     direction: "asc",
   });
+  const [pagina, setPagina] = useState(1);
 
   // ⚠️ O `DashTable` não ordena sozinho — ele só avisa. Quem ordena é o
   // `sortRows`, que já trata nulos no fim e ordenação estável.
-  const linhas = useMemo(
+  const ordenadas = useMemo(
     () => sortRows(questoes, colunas, sort),
     [questoes, sort],
   );
 
+  /*
+    ⚠️ Volta para a página 1 quando a lista encolhe abaixo da página atual.
+    Sem isto, trocar de simulado com menos questões deixa a tabela numa página
+    que não existe mais — vazia, sem dizer por quê.
+  */
+  useEffect(() => {
+    const ultima = Math.max(1, Math.ceil(ordenadas.length / QUESTOES_POR_PAGINA));
+    if (pagina > ultima) setPagina(1);
+  }, [ordenadas.length, pagina]);
+
+  const daPagina = useMemo(() => {
+    const { inicio, fim } = intervaloDaPagina(
+      pagina,
+      QUESTOES_POR_PAGINA,
+      ordenadas.length,
+    );
+    // ⚠️ `intervaloDaPagina` devolve posições para humano (1-based, fim
+    // inclusivo); `slice` quer índice 0-based com fim exclusivo. Reusar a
+    // função é o que mantém o rodapé e a fatia em acordo — duas contas
+    // separadas divergiriam na primeira mudança de `pageSize`.
+    return ordenadas.slice(inicio - 1, fim);
+  }, [ordenadas, pagina]);
+
   return (
-    <DashTable<QuestaoDoRelatorio>
-      rows={linhas}
-      columns={colunas}
-      rowKey={(q) => q.questaoId}
-      sort={sort}
-      onSortChange={setSort}
-      state={estado}
-      onRetry={onRetry}
-      stickyHeader
-      emptyState={<VazioDeQuestoes />}
-    />
+    <div className="flex flex-col">
+      <DashTable<QuestaoDoRelatorio>
+        rows={daPagina}
+        columns={colunas}
+        rowKey={(q) => q.questaoId}
+        sort={sort}
+        onSortChange={setSort}
+        state={estado}
+        onRetry={onRetry}
+        stickyHeader
+        emptyState={<VazioDeQuestoes />}
+      />
+      {/*
+        ⚠️ O mesmo rodapé das outras telas do dashV2, reusado como componente
+        autônomo. O `DashListTemplate` traz este rodapé de graça, mas lê as
+        linhas do `DashCardContext` do V1 (`entities`, `setEntities`,
+        `getMoreCards`, `cardTransformation`) — esta tela nunca viveu nesse
+        contexto, e montá-lo aqui seria inventar campos que não existem.
+
+        ⚠️ `print:hidden`: numa folha impressa a paginação não é acionável, e a
+        pessoa está vendo a página que mandou imprimir.
+      */}
+      <div className="print:hidden">
+        <DashListFooter
+          pagina={pagina}
+          pageSize={QUESTOES_POR_PAGINA}
+          total={ordenadas.length}
+          onPageChange={setPagina}
+        />
+      </div>
+    </div>
   );
 }

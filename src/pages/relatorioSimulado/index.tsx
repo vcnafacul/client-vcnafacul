@@ -1,7 +1,9 @@
 import {
   DashFilterBar,
+  DashListFooter,
   DashTable,
   dashV2,
+  intervaloDaPagina,
   sortRows,
   type SortState,
 } from "@/components/dashV2";
@@ -30,6 +32,9 @@ import type { LocationStateDoRelatorio } from "./voltar";
 type Estado = "idle" | "loading" | "error";
 
 export const TEXTO_SEM_ESTUDANTES = "Nenhum estudante neste recorte";
+
+/** Mesmo 25 do `DashListTemplate` e da aba de questões. */
+export const ESTUDANTES_POR_PAGINA = 25;
 
 /**
  * O vazio da tabela de estudantes.
@@ -125,6 +130,7 @@ function RelatorioSimulado() {
   */
   const [mostrarQuemNaoEnviou, setMostrarQuemNaoEnviou] = useState(false);
   const [busca, setBusca] = useState("");
+  const [pagina, setPagina] = useState(1);
   const [questoes, setQuestoes] = useState<QuestaoDoRelatorio[] | null>(null);
   const [estadoQuestoes, setEstadoQuestoes] = useState<Estado>("idle");
 
@@ -201,6 +207,27 @@ function RelatorioSimulado() {
     () => totalQueNaoEnviou(todasAsLinhas),
     [todasAsLinhas],
   );
+
+  /*
+    ⚠️ Volta para a página 1 quando o filtro muda. Sem isto, buscar um nome
+    estando na página 3 mostra a tabela vazia — o resultado existe, mas está na
+    página 1, e a tela não diz isso.
+  */
+  useEffect(() => {
+    setPagina(1);
+  }, [mostrarQuemNaoEnviou, busca]);
+
+  const linhasDaPagina = useMemo(() => {
+    const { inicio, fim } = intervaloDaPagina(
+      pagina,
+      ESTUDANTES_POR_PAGINA,
+      linhas.length,
+    );
+    // ⚠️ `intervaloDaPagina` fala em posições para humano (1-based, fim
+    // inclusivo) e o `slice` em índices (0-based, fim exclusivo). Reusar a
+    // função do dashV2 é o que mantém o rodapé e a fatia em acordo.
+    return linhas.slice(inicio - 1, fim);
+  }, [linhas, pagina]);
 
   const filtrosAtivos = (mostrarQuemNaoEnviou ? 1 : 0) + (busca ? 1 : 0);
 
@@ -308,7 +335,7 @@ function RelatorioSimulado() {
               ter de escolher em qual clicar.
             */}
             <DashTable<LinhaDoRelatorio>
-              rows={linhas}
+              rows={linhasDaPagina}
               columns={colunas}
               /*
                 ⚠️ `usuario` sozinho NÃO é único. A api monta as linhas de uma
@@ -346,6 +373,26 @@ function RelatorioSimulado() {
                 )
               }
             />
+            {/*
+              ⚠️ O mesmo rodapé das outras telas do dashV2, reusado como
+              componente autônomo. O `DashListTemplate` o traz de graça, mas lê
+              as linhas do `DashCardContext` do V1 (`entities`, `setEntities`,
+              `getMoreCards`, `cardTransformation`) — esta tela nunca viveu
+              nesse contexto, e montá-lo aqui seria inventar campos que a tela
+              não tem.
+
+              ⚠️ O total é o das linhas FILTRADAS, não o do recorte: é o que
+              faz "Mostrando 1–25 de 12" não aparecer depois de uma busca. O
+              número do recorte continua no resumo, lá em cima.
+            */}
+            <div className="print:hidden">
+              <DashListFooter
+                pagina={pagina}
+                pageSize={ESTUDANTES_POR_PAGINA}
+                total={linhas.length}
+                onPageChange={setPagina}
+              />
+            </div>
           </TabsContent>
 
           <TabsContent value="questoes">
