@@ -6,20 +6,30 @@ import { statusDaLinha } from "./statusDaLinha";
 export const VAZIO = "—";
 
 /**
- * A nota só existe para leitura concluída.
+ * ⚠️ **A leitura só vale quando concluiu.** O `marcarFalha` do ms
+ * (`historico.repository.ts`) grava **só** `status` e `falha`: não limpa
+ * `aproveitamento`, nem `questoesRespondidas`, nem `respostas`. Os dois
+ * números são escritos ANTES de a falha acontecer — `questoesRespondidas` no
+ * `createPending`, `aproveitamento` no `completeProcessing` — e continuam no
+ * documento depois que ele vira `failed`. A api repassa como vieram, de
+ * propósito: ela não reescreve o que o ms disse.
  *
- * ⚠️ **Esta é a regra mais importante do arquivo.** O `marcarFalha` do ms
- * grava `status` e `falha` e **não limpa `aproveitamento`** — um cartão que
- * leu bem, foi refotografado e falhou continua carregando a nota antiga. A api
- * repassa como veio, de propósito: ela não reescreve o que o ms disse.
- * Renderizar aqui mostraria "Falhou" e "20%" na mesma linha, e a aba de
- * questões (que filtra por status no ms) já não conta esse cartão.
+ * Renderizar qualquer um deles mostraria "Falhou" ao lado de um número que
+ * afirma uma leitura que não existe — e a aba de questões, que filtra por
+ * status no ms, já não conta esse cartão.
+ */
+function leituraVale(linha: LinhaDoRelatorio): boolean {
+  return linha.status === "completed";
+}
+
+/**
+ * A nota só existe para leitura concluída — ver `leituraVale`.
  *
  * ⚠️ E ausência vira vazio, **nunca zero**: zero é uma nota, ausência de
  * leitura não é.
  */
 function textoDoAproveitamento(linha: LinhaDoRelatorio): string {
-  if (linha.status !== "completed") return VAZIO;
+  if (!leituraVale(linha)) return VAZIO;
   if (typeof linha.aproveitamentoGeral !== "number") return VAZIO;
   return `${Math.round(linha.aproveitamentoGeral * 100)}%`;
 }
@@ -82,7 +92,7 @@ export function colunasDoRelatorio({
       // ⚠️ Ordena pelo número, não pelo texto: "9%" antes de "80%" senão.
       // E só quem tem leitura entra — os demais vão para o fim, como nulos.
       sortValue: (l) =>
-        l.status === "completed" && typeof l.aproveitamentoGeral === "number"
+        leituraVale(l) && typeof l.aproveitamentoGeral === "number"
           ? l.aproveitamentoGeral
           : null,
     },
@@ -92,8 +102,11 @@ export function colunasDoRelatorio({
       width: "8rem",
       align: "right",
       hideBelow: "md",
-      cell: (l) => l.questoesRespondidas ?? VAZIO,
-      sortValue: (l) => l.questoesRespondidas ?? null,
+      // ⚠️ Mesmo gate da nota: numa refotografia que falhou este número é da
+      // tentativa anterior, e afirmaria uma leitura que não houve.
+      cell: (l) => (leituraVale(l) ? l.questoesRespondidas ?? VAZIO : VAZIO),
+      sortValue: (l) =>
+        leituraVale(l) ? l.questoesRespondidas ?? null : null,
     },
     {
       id: "motivo",

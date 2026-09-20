@@ -55,6 +55,22 @@ describe("colunas do relatório", () => {
     expect(screen.queryByText("0%")).not.toBeInTheDocument();
   });
 
+  it("⚠️ linha que FALHOU também não mostra questões respondidas", () => {
+    // Mesmo mecanismo da nota: `marcarFalha` não limpa `questoesRespondidas`,
+    // que é gravado no `createPending`, ANTES de o processamento falhar — ou
+    // seja, um `failed` chega aqui com o número preenchido. "Falhou" ao lado
+    // de "90 respondidas" afirma que a folha foi lida — que é o que não houve.
+    celula("respondidas", linha({ status: "failed", questoesRespondidas: 90 }));
+
+    expect(screen.queryByText("90")).not.toBeInTheDocument();
+  });
+
+  it("linha lida mostra as questões respondidas", () => {
+    celula("respondidas", linha({ questoesRespondidas: 90 }));
+
+    expect(screen.getByText("90")).toBeInTheDocument();
+  });
+
   it("o motivo é coluna própria, com a descrição que o ms mandou pronta", () => {
     celula(
       "motivo",
