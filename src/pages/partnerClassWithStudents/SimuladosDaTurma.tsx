@@ -1,49 +1,28 @@
-import {
-  DashTable,
-  dashV2,
-  dataOrdenavel,
-  sortRows,
-  type DashColumn,
-  type SortState,
-} from "@/components/dashV2";
+import { dashV2 } from "@/components/dashV2";
 import type { SimuladoComCartao } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
-import { DASH, PARTNER_CLASS, RELATORIO_SIMULADO } from "@/routes/path";
+import { RelatorioDoSimuladoConteudo } from "@/pages/relatorioSimulado/RelatorioDoSimuladoConteudo";
 import { buscarSimuladosComCartao } from "@/services/relatorioSimulado/buscarSimuladosComCartao";
-import type { EstadoDeVolta } from "../relatorioSimulado/voltar";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
 
-const VAZIO = "—";
-const SEM_NOME = "Simulado removido";
-/**
- * ⚠️ Local de propósito, e **não** exportado: o `@/components/dashV2` já
- * exporta um `TEXTO_VAZIO` com outro valor ("Nenhum registro encontrado"), e
- * duas exportações do mesmo nome com textos diferentes é armadilha de import
- * automático. Quem testa este texto casa por regex.
- */
-const TEXTO_VAZIO = "Nenhum simulado desta turma teve cartão enviado";
+export const TEXTO_VAZIO = "Nenhum estudante desta turma enviou cartão";
+export const TEXTO_VAZIO_DICA =
+  "Os simulados aparecem aqui conforme os cartões forem enviados.";
+export const TEXTO_ERRO = "Não foi possível carregar os simulados";
+export const TEXTO_TENTAR = "Tentar novamente";
+export const ROTULO_SELETOR = "Simulado";
+export const SEM_NOME = "Simulado removido";
 
-function dataCurta(iso: string | null): string {
-  if (!iso) return VAZIO;
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? VAZIO : d.toLocaleDateString("pt-BR");
-}
+type Estado = "idle" | "loading" | "error";
 
 /**
  * O vazio desta aba.
  *
- * ⚠️ **Não é o `DashTableVazio`**, que não recebe prop nenhuma: ele traz o
- * texto genérico e a dica "tente limpar os filtros", e esta lista não tem
- * filtro. O próprio `DashTableEmpty.tsx` manda a tela passar um `emptyState`
- * próprio quando o vazio é "não existe registro ainda" — que é este caso.
- * Mesma forma do `TabelaDeQuestoes`.
- *
- * ⚠️ Esta é a **única** superfície de vazio da aba, e o erro fica por conta do
- * `DashTable` (`state` + `onRetry`). A revisão do card `06` pegou exatamente o
- * defeito de ter duas — duas mensagens e dois botões na mesma tela.
+ * ⚠️ O texto fala de **estudantes**, não de simulados. Antes do card 19 esta
+ * aba listava simulados, e "Nenhum simulado desta turma teve cartão enviado"
+ * descrevia a tabela que estava ali. Agora a tela é sobre quem enviou.
  */
-function VazioDeSimulados() {
+function VazioDaTurma() {
   return (
     <div
       data-testid="simulados-da-turma-vazio"
@@ -52,97 +31,51 @@ function VazioDeSimulados() {
       <p className={cn("text-sm font-medium", dashV2.text.primary)}>
         {TEXTO_VAZIO}
       </p>
-      <p className={cn("text-xs", dashV2.text.secondary)}>
-        Os simulados aparecem aqui conforme os cartões forem enviados.
-      </p>
+      <p className={cn("text-xs", dashV2.text.secondary)}>{TEXTO_VAZIO_DICA}</p>
     </div>
   );
 }
 
-const colunas: DashColumn<SimuladoComCartao>[] = [
-  {
-    id: "nome",
-    header: "Simulado",
-    primary: true,
-    /**
-     * ⚠️ `nome` nulo NÃO some da lista: o `04b` devolve nulo quando o documento
-     * do `Simulado` sumiu, e os cartões continuam existindo. Esconder seria o
-     * oposto do que este relatório serve para fazer — e o relatório dele abre,
-     * porque as respostas vivem no `Historico`, não no simulado.
-     */
-    cell: (s) => s.nome ?? SEM_NOME,
-    sortValue: (s) => s.nome ?? SEM_NOME,
-  },
-  {
-    id: "cartoes",
-    header: "Cartões",
-    width: "7rem",
-    align: "right",
-    // ⚠️ PESSOAS, não fotos: a unicidade da junção é {simulado, cursinho, usuario}
-    cell: (s) => s.cartoes,
-    sortValue: (s) => s.cartoes,
-  },
-  {
-    id: "lidos",
-    // ⚠️ Mesmo rótulo que o relatório adotou: a api conta com status completed
-    // E nota numérica, então "com leitura concluída" prometeria outra coisa.
-    header: "No cálculo da média",
-    width: "11rem",
-    align: "right",
-    /**
-     * ⚠️ **Sem `hideBelow`.** Abaixo de 768px o `DashTable` empilha, e com esta
-     * coluna escondida sobrava só o `cartoes` — um número solto, sem rótulo,
-     * grudado no nome do simulado ("ENEM12"). Mantendo-a, a lista empilhada tem
-     * de novo duas posições: uma sob o nome e outra à direita.
-     */
-    cell: (s) => s.comLeituraConcluida,
-    sortValue: (s) => s.comLeituraConcluida,
-  },
-  {
-    id: "ultimoEnvio",
-    header: "Último envio",
-    width: "9rem",
-    align: "right",
-    hideBelow: "md",
-    /**
-     * ⚠️ **Não é "última atividade".** É quando o estudante mais recente entrou
-     * no recorte: o `registrar` do ms é upsert, então reenvio do mesmo
-     * estudante não move a data. O rótulo não pode prometer mais que isso.
-     */
-    cell: (s) => dataCurta(s.ultimoEnvio),
-    /**
-     * ⚠️ `dataOrdenavel`, e **não** `new Date(...)` cru: `new Date("lixo")` é
-     * um `Date` **inválido**, não `null` — o teste de vazio do `sortRows` não o
-     * pega, a comparação devolve `NaN` e o comparador deixa de ser uma
-     * ordenação (a linha que mostra "—" apareceu em PRIMEIRO). O `dataOrdenavel`
-     * devolve `null` para vazio **e** para data inválida, e `null` vai pro fim.
-     */
-    sortValue: (s) => dataOrdenavel(s.ultimoEnvio),
-  },
-];
-
-type Estado = "idle" | "loading" | "error";
-
+/**
+ * A aba "Simulados por cartão" da tela de turma.
+ *
+ * ⚠️ **Mostra o RELATÓRIO da turma**, não uma lista de simulados. Antes era um
+ * intermediário: uma tabela de simulados que levava, em outro clique, ao
+ * relatório já recortado. O card 19 cortou o intermediário.
+ *
+ * ⚠️ **Nada de colunas ou filtro é duplicado aqui.** Todo o conteúdo vem do
+ * `RelatorioDoSimuladoConteudo`, o mesmo que a rota
+ * `/dashboard/relatorio-simulado` usa. Duas cópias divergiriam na primeira
+ * mudança, e a mesma turma mostraria números diferentes em duas telas.
+ *
+ * ⚠️ Esta aba depende do card `18`: o recorte por turma só é correto depois
+ * que a api passou a resolvê-lo pela turma ATUAL do MySQL, em vez do `turmaId`
+ * congelado na junção do Mongo.
+ */
 export function SimuladosDaTurma({
-  token,
   turmaId,
+  token,
 }: {
-  token: string;
   turmaId: string;
+  token: string;
 }) {
-  const navigate = useNavigate();
   const [simulados, setSimulados] = useState<SimuladoComCartao[]>([]);
   const [estado, setEstado] = useState<Estado>("loading");
-  const [sort, setSort] = useState<SortState | undefined>({
-    columnId: "ultimoEnvio",
-    direction: "desc",
-  });
+  /** `null` até a lista chegar; depois, o simulado que o seletor mostra. */
+  const [escolhido, setEscolhido] = useState<string | null>(null);
 
   const carregar = useCallback(() => {
     setEstado("loading");
     buscarSimuladosComCartao(token, turmaId)
       .then((r) => {
         setSimulados(r.simulados);
+        /*
+          ⚠️ Abre já no mais recente. A rota devolve ordenado por último envio,
+          então o primeiro é o que o coordenador quase sempre veio ver — e a
+          tela abre com dado na tela, sem cobrar um clique de quem tem um
+          simulado só.
+        */
+        setEscolhido(r.simulados[0]?.simuladoId ?? null);
         setEstado("idle");
       })
       .catch(() => setEstado("error"));
@@ -150,52 +83,78 @@ export function SimuladosDaTurma({
 
   useEffect(carregar, [carregar]);
 
-  /**
-   * ⚠️ **Tipado**, e não um literal solto: é o que faz o contrato de
-   * `relatorioSimulado/voltar.ts` valer nesta ponta também. Só o `caminho` —
-   * não há filtro, prova nem página aqui para restaurar.
-   */
-  const deAqui: EstadoDeVolta = useMemo(
-    () => ({ caminho: `${DASH}/${PARTNER_CLASS}/${turmaId}` }),
-    [turmaId],
-  );
+  if (estado === "loading") {
+    return (
+      <p className={cn("px-4 py-10 text-center text-sm", dashV2.text.secondary)}>
+        Carregando…
+      </p>
+    );
+  }
 
-  // ⚠️ O `DashTable` não ordena sozinho — ele só avisa. Quem ordena é o
-  // `sortRows`, que já trata nulos no fim e ordenação estável.
-  const linhas = useMemo(
-    () => sortRows(simulados, colunas, sort),
-    [simulados, sort],
-  );
+  if (estado === "error") {
+    return (
+      <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
+        <p className={cn("text-sm", dashV2.text.primary)}>{TEXTO_ERRO}</p>
+        <button
+          type="button"
+          onClick={carregar}
+          className={cn("text-xs underline", dashV2.text.secondary)}
+        >
+          {TEXTO_TENTAR}
+        </button>
+      </div>
+    );
+  }
+
+  if (simulados.length === 0 || escolhido === null) {
+    return <VazioDaTurma />;
+  }
 
   return (
-    <div className="flex flex-col gap-3 p-4">
+    <div className="flex flex-col gap-3">
       {/*
-        ⚠️ Escrito aqui, e não só dentro do relatório: é nesta lista que a
-        pessoa decide entrar.
+        ⚠️ O seletor substitui a tabela de simulados que existia aqui. As
+        colunas dela ("Cartões", "Com leitura", "Último envio") não decidiam
+        nada — quem abre a aba quer ver os estudantes.
       */}
-      <p className={cn("text-xs", dashV2.text.muted)}>
-        Só aparecem simulados respondidos por cartão-resposta. Quem resolveu
-        pela plataforma não entra nesta lista nem nos relatórios dela.
-      </p>
+      <label className="flex flex-wrap items-center gap-2 px-4 pt-3 text-sm">
+        <span className={dashV2.text.secondary}>{ROTULO_SELETOR}</span>
+        <select
+          data-testid="seletor-de-simulado"
+          value={escolhido}
+          onChange={(e) => setEscolhido(e.target.value)}
+          className={cn(
+            "h-9 min-w-0 max-w-full rounded-md border px-2 text-sm outline-none",
+            dashV2.border,
+            dashV2.surface,
+            dashV2.text.primary,
+            dashV2.focus,
+          )}
+        >
+          {simulados.map((s) => (
+            <option key={s.simuladoId} value={s.simuladoId}>
+              {/*
+                ⚠️ Simulado sem nome NÃO some da lista: o documento sumiu mas os
+                cartões continuam existindo, e esconder seria o oposto do que
+                este relatório serve para fazer.
+              */}
+              {s.nome ?? SEM_NOME}
+            </option>
+          ))}
+        </select>
+      </label>
 
-      <DashTable<SimuladoComCartao>
-        rows={linhas}
-        columns={colunas}
-        rowKey={(s) => s.simuladoId}
-        onRowClick={(s) =>
-          navigate(
-            `${DASH}/${RELATORIO_SIMULADO}/${s.simuladoId}?turma=${turmaId}`,
-            // ⚠️ Sem isto o "voltar" do relatório cai no fallback e manda a
-            // pessoa para a LISTAGEM DE PROVAS, que ela não visitou.
-            { state: { de: deAqui } },
-          )
-        }
-        sort={sort}
-        onSortChange={setSort}
-        state={estado}
-        onRetry={carregar}
-        stickyHeader
-        emptyState={<VazioDeSimulados />}
+      {/*
+        ⚠️ `key`: sem ela, trocar de simulado reaproveita a instância e o
+        estado interno (página, busca, aba aberta) sobrevive à troca — a pessoa
+        veria a página 3 de um relatório que acabou de mudar.
+      */}
+      <RelatorioDoSimuladoConteudo
+        key={escolhido}
+        simuladoId={escolhido}
+        turmaId={turmaId}
+        token={token}
+        comPadding={false}
       />
     </div>
   );
