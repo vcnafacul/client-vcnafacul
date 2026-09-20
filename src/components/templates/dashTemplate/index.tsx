@@ -19,15 +19,23 @@ type DashTemplateProps = {
 
 function DashTemplateContent({ hasMenu }: { hasMenu?: boolean }) {
   return (
-    <div className="relative top-[76px] h-[calc(100vh-76px)] w-full flex flex-row">
+    // ⚠️ `print:top-0 print:h-auto print:block`: zera o offset de 76px do
+    // header (que já some via `print:hidden` no `Header`) e devolve o fluxo
+    // normal do documento — sem isso a folha impressa mantém um vão vazio no
+    // topo do tamanho do header que não está mais lá.
+    //
+    // ⚠️ Não unificar o 76px num token agora: ele se repete em `baseTemplate`,
+    // `dashTemplate` e `DashListTemplate`, e isso é refactor de outro
+    // assunto — mexer nos três aqui esconderia a mudança real na revisão.
+    <div className="relative top-[76px] h-[calc(100vh-76px)] w-full flex flex-row print:top-0 print:h-auto print:block">
       <div className="xl:mr-0 w-full overflow-y-scroll scrollbar-hide flex-1 min-w-0">
         <Outlet />
       </div>
-      <div className="z-20 h-[calc(100vh-76px)] absolute xl:relative xl:right-0">
+      <div className="z-20 h-[calc(100vh-76px)] absolute xl:relative xl:right-0 print:hidden">
         {hasMenu && <SidebarDash />}
       </div>
       {hasMenu && (
-        <SidebarTrigger className="xl:hidden fixed z-30 top-24 right-4" />
+        <SidebarTrigger className="xl:hidden fixed z-30 top-24 right-4 print:hidden" />
       )}
     </div>
   );
