@@ -13,6 +13,10 @@ import { cn } from "@/lib/utils";
 import { buscarDetalheDoEstudante } from "@/services/relatorioSimulado/buscarDetalheDoEstudante";
 import { useCallback, useEffect, useState } from "react";
 import { AcaoDeReenvio } from "./AcaoDeReenvio";
+import {
+  formatarDificuldade,
+  type DificuldadeDaQuestao,
+} from "./dificuldadeDaQuestao";
 import { rotuloDoResultado } from "./rotuloDoResultado";
 
 const VAZIO = "—";
@@ -41,7 +45,14 @@ const STATUS_CONHECIDOS: readonly string[] = [
   "processing",
 ];
 
-const colunas: DashColumn<RespostaDoEstudante>[] = [
+/**
+ * ⚠️ Função, e não constante: a coluna de dificuldade depende do índice
+ * carregado pela tela, e uma constante de módulo fecharia sobre o valor do
+ * primeiro render.
+ */
+const colunasDoDetalhe = (
+  dificuldade: Map<string, DificuldadeDaQuestao>,
+): DashColumn<RespostaDoEstudante>[] => [
   {
     id: "numero",
     header: "Questão",
@@ -76,6 +87,24 @@ const colunas: DashColumn<RespostaDoEstudante>[] = [
       const { texto, tone } = rotuloDoResultado(r.resultado);
       return <StatusBadge tone={tone} label={texto} />;
     },
+  },
+  {
+    id: "dificuldade",
+    /*
+      ⚠️ "na turma", escrito no cabeçalho. O agregado vem do MESMO recorte que
+      o relatório aberto (`simuladoId` + `turmaId`), então este percentual é o
+      da turma — e não o do simulado inteiro. Sem o rótulo, seria lido como
+      estatística geral da prova, que é outra coisa.
+    */
+    header: "Acertos na turma",
+    width: "11rem",
+    align: "right",
+    /*
+      ⚠️ A base ("de 20") anda junto, sempre. Num recorte pequeno "100%" é
+      verdadeiro e inútil; com a base, quem lê julga a amostra sozinho — e a
+      tela não precisa esconder nada por baixo de um limiar inventado.
+    */
+    cell: (r) => formatarDificuldade(dificuldade.get(r.questaoId)),
   },
 ];
 
@@ -127,12 +156,23 @@ export function DetalheDoEstudante({
   estudante,
   isOpen,
   onClose,
+  dificuldade,
 }: {
   token: string;
   simuladoId: string;
   estudante: EstudanteDoDetalhe;
   isOpen: boolean;
   onClose: () => void;
+  /**
+   * Acertos por questão no recorte, indexados por `questaoId`.
+   *
+   * ⚠️ **Opcional.** O agregado é carregado preguiçosamente pela tela (só na
+   * primeira abertura da aba "Questões"), e abrir o modal dispara essa mesma
+   * carga. Enquanto ela não volta — ou se falhar — a coluna mostra travessão,
+   * em vez de o modal esperar por um dado que é acessório ao que ele veio
+   * mostrar.
+   */
+  dificuldade?: Map<string, DificuldadeDaQuestao>;
 }) {
   const [detalhe, setDetalhe] = useState<Detalhe | null>(null);
   const [estado, setEstado] = useState<"idle" | "loading" | "error">("loading");
@@ -260,7 +300,7 @@ export function DetalheDoEstudante({
           */
           <DashTable<RespostaDoEstudante>
             rows={detalhe?.respostas ?? []}
-            columns={colunas}
+            columns={colunasDoDetalhe(dificuldade ?? new Map())}
             // `:i` porque a mesma questão pode aparecer duas vezes no simulado
             // (corrida conhecida do `adicionarEmProva`): as linhas seriam
             // idênticas, mas a key do React colidiria.

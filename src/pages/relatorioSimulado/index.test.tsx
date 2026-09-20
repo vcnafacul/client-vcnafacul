@@ -502,3 +502,113 @@ describe("RelatorioSimulado — paginação dos estudantes", () => {
     );
   });
 });
+
+describe("RelatorioSimulado — acertos da turma no detalhe", () => {
+  // ⚠️ `beforeEach` próprio: o do primeiro describe não alcança este, e sem o
+  // mock de `buscarRelatorio` a tabela nem renderiza a linha que o teste clica.
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarRelatorio.mockResolvedValue(RESPOSTA);
+  });
+
+  const QUESTOES = {
+    questoes: [
+      {
+        numero: 1,
+        questaoId: "qa",
+        respondentes: 20,
+        acertos: 18,
+        erros: 2,
+        semLeitura: 0,
+        porAlternativa: {},
+      },
+    ],
+  };
+
+  const RESPOSTAS = {
+    status: "completed" as const,
+    respostas: [
+      {
+        numero: 1,
+        questaoId: "qa",
+        alternativaEstudante: "A",
+        alternativaCorreta: "A",
+        resultado: "acerto" as const,
+      },
+    ],
+  };
+
+  it("⚠️ abrir o detalhe DISPARA a carga do agregado, sem passar pela aba", async () => {
+    // Sem isto a coluna só teria número para quem tivesse visitado a aba
+    // "Questões" antes — apareceria ou não, sem a pessoa entender por quê.
+    buscarQuestoes.mockResolvedValue(QUESTOES);
+    buscarDetalheDoEstudante.mockResolvedValue(RESPOSTAS);
+    montar();
+
+    fireEvent.click(await screen.findByText("Ana Silva"));
+
+    await waitFor(() => expect(buscarQuestoes).toHaveBeenCalled());
+  });
+
+  it("mostra o percentual COM a base", async () => {
+    buscarQuestoes.mockResolvedValue(QUESTOES);
+    buscarDetalheDoEstudante.mockResolvedValue(RESPOSTAS);
+    const { container } = montar();
+
+    fireEvent.click(await screen.findByText("Ana Silva"));
+
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-column-id="dificuldade"]')?.textContent,
+      ).toBe("90% de 20"),
+    );
+  });
+
+  it("⚠️ o detalhe e a aba COMPARTILHAM a mesma carga — não busca duas vezes", async () => {
+    // As duas entradas chamam `carregarQuestoes`, e a guarda
+    // `questoes !== null` dela é quem evita a segunda viagem. Sem a guarda,
+    // abrir o detalhe e depois a aba custaria duas chamadas iguais.
+    buscarQuestoes.mockResolvedValue(QUESTOES);
+    buscarDetalheDoEstudante.mockResolvedValue(RESPOSTAS);
+    montar();
+
+    fireEvent.click(await screen.findByText("Ana Silva"));
+    await waitFor(() => expect(buscarQuestoes).toHaveBeenCalledTimes(1));
+
+    abrirAba(/quest/i);
+
+    await waitFor(() => expect(buscarQuestoes).toHaveBeenCalledTimes(1));
+  });
+
+  it("⚠️ o agregado falhando NÃO quebra o detalhe — coluna vira travessão", async () => {
+    // O percentual é acessório: o modal veio mostrar o que o estudante marcou,
+    // e travar essa leitura por causa de um número de contexto seria pior.
+    buscarQuestoes.mockRejectedValue(new Error("caiu"));
+    buscarDetalheDoEstudante.mockResolvedValue(RESPOSTAS);
+    const { container } = montar();
+
+    fireEvent.click(await screen.findByText("Ana Silva"));
+
+    await waitFor(() =>
+      expect(screen.getByText("Marcou")).toBeInTheDocument(),
+    );
+    expect(
+      container.querySelector('[data-column-id="dificuldade"]')?.textContent,
+    ).toBe("—");
+  });
+
+  it("⚠️ questão fora do agregado vira travessão, e não 0%", async () => {
+    buscarQuestoes.mockResolvedValue({ questoes: [] });
+    buscarDetalheDoEstudante.mockResolvedValue(RESPOSTAS);
+    const { container } = montar();
+
+    fireEvent.click(await screen.findByText("Ana Silva"));
+
+    await waitFor(() =>
+      expect(screen.getByText("Marcou")).toBeInTheDocument(),
+    );
+    expect(
+      container.querySelector('[data-column-id="dificuldade"]')?.textContent,
+    ).toBe("—");
+  });
+});
