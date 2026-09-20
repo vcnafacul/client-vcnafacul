@@ -17,6 +17,17 @@ export const VAZIO = "—";
  * Renderizar qualquer um deles mostraria "Falhou" ao lado de um número que
  * afirma uma leitura que não existe — e a aba de questões, que filtra por
  * status no ms, já não conta esse cartão.
+ *
+ * ⚠️ **`falha` é o terceiro campo obsoleto, e vaza na direção contrária.** O
+ * `marcarFalha` é o ÚNICO escritor de `falha` e **nada a desfaz** — o `$unset`
+ * é de um card futuro que não existe, como diz o próprio docblock dele. Então
+ * um cartão que falhou, foi refotografado e leu bem passa pelo
+ * `completeProcessing` (que grava `status: completed`, `aproveitamento`,
+ * `respostas` e **não toca em `falha`**) e chega aqui `completed` carregando o
+ * motivo velho. Sem gate, a linha diria "Lido", "80%" e "não foi possível
+ * localizar o cartão na foto" ao mesmo tempo. O mesmo vale no meio do caminho:
+ * o `prepararParaProcessamento` grava `rawRespostas` + `status: pending` e
+ * também deixa a `falha` no documento.
  */
 function leituraVale(linha: LinhaDoRelatorio): boolean {
   return linha.status === "completed";
@@ -81,7 +92,9 @@ export function colunasDoRelatorio({
         const { tone, label } = statusDaLinha(l);
         return <StatusBadge tone={tone} label={label} />;
       },
-      sortValue: (l) => statusDaLinha(l).label,
+      // ⚠️ Pelo `ordem`, não pelo `label`: alfabético daria "Aguardando" <
+      // "Falhou" < "Lido" < "Não enviou", que não é ordem de trabalho nenhuma.
+      sortValue: (l) => statusDaLinha(l).ordem,
     },
     {
       id: "aproveitamento",
@@ -97,28 +110,36 @@ export function colunasDoRelatorio({
           : null,
     },
     {
-      id: "respondidas",
-      header: "Respondidas",
-      width: "8rem",
+      id: "cartao",
+      header: "Cartão",
+      width: "7rem",
       align: "right",
       hideBelow: "md",
-      // ⚠️ Mesmo gate da nota: numa refotografia que falhou este número é da
-      // tentativa anterior, e afirmaria uma leitura que não houve.
-      cell: (l) => (leituraVale(l) ? l.questoesRespondidas ?? VAZIO : VAZIO),
-      sortValue: (l) =>
-        leituraVale(l) ? l.questoesRespondidas ?? null : null,
+      /**
+       * ⚠️ **Fora do gate de leitura, de propósito.** `cartaoCode` é escrito do
+       * QR da folha no `createAwaitingOmr`: é a IDENTIDADE do cartão físico, não
+       * um RESULTADO da leitura. Numa linha que falhou é a coisa mais útil que
+       * existe — diz qual folha refotografar.
+       */
+      cell: (l) => l.cartaoCode ?? VAZIO,
+      sortValue: (l) => l.cartaoCode ?? null,
     },
     {
       id: "motivo",
       header: "Motivo",
-      cell: (l) => (
-        // ⚠️ Coluna própria, não texto dentro do badge: o pedido é que o
-        // cursinho veja na linha do aluno que houve erro E qual foi. Truncar a
-        // única informação acionável da linha derrota o propósito.
-        <span className={cn("text-xs", dashV2.text.secondary)}>
-          {l.falha?.descricao ?? ""}
-        </span>
-      ),
+      /**
+       * ⚠️ Coluna própria, não texto dentro do badge: o pedido é que o cursinho
+       * veja na linha do aluno que houve erro E qual foi. Truncar a única
+       * informação acionável da linha derrota o propósito.
+       *
+       * ⚠️ **String crua, não `<span>`** — é o que faz o `DashTable` conseguir
+       * pôr o `title` na célula (o `tituloDe` dele só sabe titular texto). Sem
+       * isso o motivo trunca em ~245px e não há como ler o resto.
+       *
+       * ⚠️ E **gateado em `failed`**: nada desfaz a `falha` no ms — ver
+       * `leituraVale`.
+       */
+      cell: (l) => (l.status === "failed" ? l.falha?.descricao ?? "" : ""),
     },
   );
 

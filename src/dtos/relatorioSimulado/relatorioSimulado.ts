@@ -29,6 +29,13 @@ export interface LinhaDoRelatorio {
   historicoId?: string;
   status?: StatusDoCartao;
   cartaoCode?: string;
+  /**
+   * ⚠️ **Sempre `undefined` nas linhas deste relatório — não faça coluna com
+   * ele.** O campo existe e a api manda, mas o único escritor no ms é o
+   * `createPending`, que é do fluxo DIGITAL. Cartão é
+   * `createAwaitingOmr` → `prepararParaProcessamento` → `completeProcessing`, e
+   * nenhum dos três grava. Toda linha daqui é linha de cartão, por construção.
+   */
   questoesRespondidas?: number;
   /**
    * ⚠️ **Pode vir preenchido com nota VELHA numa linha `failed`.** O
