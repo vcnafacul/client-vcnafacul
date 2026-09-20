@@ -86,6 +86,16 @@ const criarCategoriaDoCursinho: CriarCategoriaService = (input, token) => {
   return createCategoriaCursinho({ ...input, nome: input.nome.trim() }, token);
 };
 
+/**
+ * O `de` veio da **listagem de provas** (e não da tela de turma), e traz tudo
+ * o que esta tela precisa para se remontar. Ver `relatorioSimulado/voltar.ts`.
+ */
+function restauracaoCompleta(
+  de: EstadoDeVolta | undefined,
+): de is Required<EstadoDeVolta> {
+  return !!de?.filtros && !!de.provaId && de.pagina !== undefined;
+}
+
 function PartnerPrepProvas() {
   const [provas, setProvas] = useState<Prova[]>([]);
   const [provaSelected, setProvaSelected] = useState<Prova | null>(null);
@@ -101,7 +111,19 @@ function PartnerPrepProvas() {
    * duas pontas não divergirem em silêncio.
    */
   const location = useLocation();
-  const de = (location.state as LocationStateDoRelatorio | null)?.de;
+  const deBruto = (location.state as LocationStateDoRelatorio | null)?.de;
+
+  /**
+   * ⚠️ **A guarda que o tipo deixou de impor.** Desde que a tela de turma
+   * virou a segunda entrada do relatório, `EstadoDeVolta` só exige o
+   * `caminho` — `filtros`, `provaId` e `pagina` ficaram opcionais, e sem esta
+   * checagem o `tsc` aceitaria aqui uma restauração pela metade.
+   *
+   * Nesta tela os três andam JUNTOS: restaurar meia volta (filtro sem página,
+   * página sem modal) é pior que não restaurar, porque a pessoa não tem como
+   * saber qual metade voltou. Ou vem tudo, ou não se restaura nada.
+   */
+  const de = restauracaoCompleta(deBruto) ? deBruto : undefined;
 
   /**
    * ⚠️ **Os filtros voltam no PRIMEIRO render**, pelo inicializador do

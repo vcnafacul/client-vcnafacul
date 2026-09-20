@@ -198,6 +198,22 @@ describe("RelatorioSimulado", () => {
     });
   });
 
+  it("voltar usa o caminho do state mesmo sem filtros — veio da tela de turma", async () => {
+    // o EstadoDeVolta completo é da listagem de provas; quem vem da turma manda
+    // só o caminho, e o voltar tem que honrá-lo em vez de cair no fallback
+    const de = { caminho: "/dashboard/turmas/t-1" };
+
+    montar({ pathname: "/relatorio-simulado/sim-1", state: { de } });
+    await screen.findByText("Ana Silva");
+
+    fireEvent.click(screen.getByRole("button", { name: /voltar/i }));
+
+    expect(navigate).toHaveBeenCalledWith("/dashboard/turmas/t-1", {
+      replace: true,
+      state: { de },
+    });
+  });
+
   /**
    * ⚠️ O "tentar de novo" das questões passa pela MESMA guarda do carregamento
    * preguiçoso, sem escape hatch: chegar ao erro é chegar pelo `catch`, que

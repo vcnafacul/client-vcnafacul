@@ -6,10 +6,21 @@
  * não divergirem em silêncio.
  */
 export interface EstadoDeVolta {
-  /** Para onde voltar. */
+  /** Para onde voltar. **Só isto é obrigatório.** */
   caminho: string;
-  /** Os filtros da listagem, para re-semear. */
-  filtros: {
+  /**
+   * O resto é da listagem de provas, e é opcional porque há **duas** entradas
+   * para o relatório.
+   *
+   * ⚠️ Quem vem da **tela de turma** manda só o `caminho`: não há filtro,
+   * prova nem página para restaurar, e exigir campos inventados só para
+   * satisfazer o tipo faria a tela mentir sobre o que ela sabe.
+   *
+   * ⚠️ E opcional **não** quer dizer que a listagem de provas possa restaurar
+   * pela metade: lá os três andam juntos, e a guarda explícita que garante
+   * isso mora na `partnerPrepProvas` — o tipo sozinho não a impõe mais.
+   */
+  filtros?: {
     nome: string;
     edicao: string;
     aplicacao: string;
@@ -17,9 +28,9 @@ export interface EstadoDeVolta {
     gabaritoOnly: boolean;
   };
   /** Qual prova reabrir no `ShowProva`. */
-  provaId: string;
+  provaId?: string;
   /** Em que página da listagem a pessoa estava. */
-  pagina: number;
+  pagina?: number;
 }
 
 export interface LocationStateDoRelatorio {

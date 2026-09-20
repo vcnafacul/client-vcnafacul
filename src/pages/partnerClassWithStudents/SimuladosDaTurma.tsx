@@ -7,8 +7,9 @@ import {
 } from "@/components/dashV2";
 import type { SimuladoComCartao } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
-import { DASH, RELATORIO_SIMULADO } from "@/routes/path";
+import { DASH, PARTNER_CLASS, RELATORIO_SIMULADO } from "@/routes/path";
 import { buscarSimuladosComCartao } from "@/services/relatorioSimulado/buscarSimuladosComCartao";
+import type { EstadoDeVolta } from "../relatorioSimulado/voltar";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -130,6 +131,16 @@ export function SimuladosDaTurma({
 
   useEffect(carregar, [carregar]);
 
+  /**
+   * ⚠️ **Tipado**, e não um literal solto: é o que faz o contrato de
+   * `relatorioSimulado/voltar.ts` valer nesta ponta também. Só o `caminho` —
+   * não há filtro, prova nem página aqui para restaurar.
+   */
+  const deAqui: EstadoDeVolta = useMemo(
+    () => ({ caminho: `${DASH}/${PARTNER_CLASS}/${turmaId}` }),
+    [turmaId],
+  );
+
   // ⚠️ O `DashTable` não ordena sozinho — ele só avisa. Quem ordena é o
   // `sortRows`, que já trata nulos no fim e ordenação estável.
   const linhas = useMemo(
@@ -155,6 +166,9 @@ export function SimuladosDaTurma({
         onRowClick={(s) =>
           navigate(
             `${DASH}/${RELATORIO_SIMULADO}/${s.simuladoId}?turma=${turmaId}`,
+            // ⚠️ Sem isto o "voltar" do relatório cai no fallback e manda a
+            // pessoa para a LISTAGEM DE PROVAS, que ela não visitou.
+            { state: { de: deAqui } },
           )
         }
         sort={sort}

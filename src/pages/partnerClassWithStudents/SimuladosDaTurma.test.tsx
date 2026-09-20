@@ -65,8 +65,20 @@ describe("SimuladosDaTurma", () => {
     montar();
     fireEvent.click(await screen.findByText("ENEM 2024 — 1º dia"));
 
+    // ⚠️ este teste fala da URL; o `state` tem teste próprio logo abaixo
     expect(navigate).toHaveBeenCalledWith(
       expect.stringContaining("relatorio-simulado/sim-1?turma=t-1"),
+      expect.anything(),
+    );
+  });
+
+  it("⚠️ leva o caminho de volta no state, senão o relatório devolve à listagem de provas", async () => {
+    montar();
+    fireEvent.click(await screen.findByText("ENEM 2024 — 1º dia"));
+
+    expect(navigate).toHaveBeenCalledWith(
+      expect.stringContaining("relatorio-simulado/sim-1?turma=t-1"),
+      { state: { de: { caminho: `/dashboard/turmas/t-1` } } },
     );
   });
 
@@ -84,6 +96,7 @@ describe("SimuladosDaTurma", () => {
 
     expect(navigate).toHaveBeenCalledWith(
       expect.stringContaining("relatorio-simulado/sim-morto?turma=t-1"),
+      { state: { de: { caminho: `/dashboard/turmas/t-1` } } },
     );
   });
 
