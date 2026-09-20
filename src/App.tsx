@@ -16,6 +16,9 @@ function App() {
     <ErrorBoundary>
       <GoogleMapsProvider>
         <ToastContainer
+          // ⚠️ Toast é aviso de tela, nunca conteúdo: sem isto ele pode
+          // congelar numa folha impressa.
+          className="print:hidden"
           position="top-right"
           autoClose={5000}
           hideProgressBar={false}
