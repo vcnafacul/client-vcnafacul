@@ -25,6 +25,7 @@ import { useLocation, useNavigate, useParams, useSearchParams } from "react-rout
 import { colunasDoRelatorio } from "./colunas";
 import { filtrarLinhas, totalQueNaoEnviou } from "./filtrarLinhas";
 import { DetalheDoEstudante } from "./DetalheDoEstudante";
+import { indiceDeDificuldade } from "./dificuldadeDaQuestao";
 import { ResumoDoRelatorio } from "./ResumoDoRelatorio";
 import { TabelaDeQuestoes } from "./TabelaDeQuestoes";
 import type { LocationStateDoRelatorio } from "./voltar";
@@ -229,6 +230,16 @@ function RelatorioSimulado() {
     return linhas.slice(inicio - 1, fim);
   }, [linhas, pagina]);
 
+  /*
+    ⚠️ Deriva do MESMO `questoes` que alimenta a aba — uma fonte só. Calcular o
+    percentual de novo aqui faria a mesma questão aparecer com dois números na
+    mesma tela se um dos cálculos mudasse.
+  */
+  const dificuldade = useMemo(
+    () => indiceDeDificuldade(questoes ?? []),
+    [questoes],
+  );
+
   const filtrosAtivos = (mostrarQuemNaoEnviou ? 1 : 0) + (busca ? 1 : 0);
 
   const limparFiltros = () => {
@@ -353,7 +364,21 @@ function RelatorioSimulado() {
                 detalhar, e a rota devolveria 404 — um clique que só sabe dar
                 erro é pior que um clique que não faz nada.
               */
-              onRowClick={(l) => l.enviouCartao && setAberto(l)}
+              /*
+                ⚠️ Abrir o detalhe também dispara a carga do agregado por
+                questão, que alimenta a coluna "Acertos na turma".
+
+                É a MESMA função da aba "Questões", e a guarda
+                `questoes !== null` dela impede rebuscar — então visitar a aba
+                antes, ou abrir vários modais, não gera chamada extra. Sem
+                isto a coluna só teria número para quem tivesse passado pela
+                aba, e apareceria ou não sem a pessoa entender por quê.
+              */
+              onRowClick={(l) => {
+                if (!l.enviouCartao) return;
+                carregarQuestoes();
+                setAberto(l);
+              }}
               sort={sort}
               onSortChange={setSort}
               state={estado}
@@ -422,6 +447,7 @@ function RelatorioSimulado() {
               // é o único lugar da tela que tem esse id.
               historicoId: aberto.historicoId,
             }}
+            dificuldade={dificuldade}
             isOpen
             onClose={() => setAberto(null)}
           />
