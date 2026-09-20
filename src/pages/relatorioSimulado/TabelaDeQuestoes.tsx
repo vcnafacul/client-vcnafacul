@@ -98,46 +98,55 @@ const colunas: DashColumn<QuestaoDoRelatorio>[] = [
     cell: (q) => q.semLeitura,
     sortValue: (q) => q.semLeitura,
   },
-  {
-    id: "distribuicao",
-    header: "Por alternativa",
-    width: "16rem",
-    cell: (q) => (
-      <div className="flex gap-3">
-        {ALTERNATIVAS.map((alt) => (
-          <span key={alt} className={cn("text-xs", dashV2.text.secondary)}>
-            <span className="font-medium">{alt}</span>{" "}
-            {q.porAlternativa[alt] ?? 0}
-          </span>
-        ))}
-      </div>
-    ),
-  },
-  {
-    id: "distribuicaoPercentual",
-    header: "Por alternativa (%)",
-    width: "18rem",
-    /*
-      ⚠️ Coluna própria, ao lado da contagem — e não no lugar dela. Numa turma
-      pequena "3 de 5" é mais legível que "60%", e numa grande o percentual é
-      que diz o formato da distribuição. As duas leituras servem a perguntas
-      diferentes, então as duas ficam.
+  /*
+    ⚠️ **Uma coluna por alternativa**, e não uma só com as cinco dentro.
 
-      ⚠️ A soma NÃO fecha 100%: `semLeitura` (branco ou dupla marcação) não
-      entra em `porAlternativa`. A diferença é justamente ela, e a coluna "Sem
-      leitura" ao lado é quem a explica.
-    */
-    cell: (q) => (
-      <div className="flex gap-3">
-        {ALTERNATIVAS.map((alt) => (
-          <span key={alt} className={cn("text-xs", dashV2.text.secondary)}>
-            <span className="font-medium">{alt}</span>{" "}
-            {formatarPercentual(percentualDaAlternativa(q, alt))}
-          </span>
-        ))}
-      </div>
-    ),
-  },
+    Agrupadas, os percentuais viravam um bloco de texto que não dá para
+    comparar entre linhas nem ordenar. Separadas, a coluna inteira é lida de
+    cima a baixo — que é como se acha o distrator que pegou a turma — e cada
+    uma ordena sozinha.
+
+    ⚠️ **Estas cinco substituíram a coluna agrupada de contagem** (`A 12 B 3
+    C 2...`), e a razão é largura, MEDIDA:
+
+    | tela   | sidebar¹           | útil (−`p-4`) | 12 colunas (1448px) |
+    |--------|--------------------|---------------|---------------------|
+    | 1440px | fora do fluxo      | 1408px        | cabe                |
+    | 1565px | entra, 16rem       | 1277px        | **estoura em 171px**|
+
+    ¹ O `xl` deste projeto é **1565px** (customizado em `tailwind.config`), e a
+    sidebar é `absolute xl:relative` — abaixo disso ela não ocupa largura. É
+    justamente quando ela entra no fluxo que a tabela larga deixaria de caber.
+
+    Sem a coluna agrupada são 1192px, que cabem nos dois casos.
+
+    Encolher não era saída: o `<th>` trunca o título, e "Sem leitura" e
+    "% de acerto" já estão no limite — era o defeito que este mesmo trabalho
+    consertou. Pôr `overflow-x` num container também não: o próprio
+    `DashTable` documenta que um ancestral com overflow vira o scrollport do
+    `position: sticky` e faz o cabeçalho grudado sumir.
+
+    Os números crus continuam em "Acertos", "Erros" e "Sem leitura".
+
+    ⚠️ A soma das cinco NÃO fecha 100%: `semLeitura` (branco ou dupla
+    marcação) não entra em `porAlternativa`. A diferença é justamente ela, e a
+    coluna "Sem leitura" ao lado é quem a explica.
+  */
+  ...ALTERNATIVAS.map(
+    (alt): DashColumn<QuestaoDoRelatorio> => ({
+      id: `alternativa${alt}`,
+      header: `${alt} (%)`,
+      // ⚠️ 5.5rem: o `<th>` trunca o título e ainda põe o ícone de ordenação
+      // ao lado. Com 5rem sobram ~38px para "A (%)", que ocupa ~35px — é o
+      // aperto que cortou os títulos antes deste ajuste.
+      width: "5.5rem",
+      align: "right",
+      cell: (q) => formatarPercentual(percentualDaAlternativa(q, alt)),
+      // ⚠️ Ordena pelo número, não pelo texto: com a string formatada, "9%"
+      // viria depois de "80%".
+      sortValue: (q) => percentualDaAlternativa(q, alt),
+    }),
+  ),
   {
     id: "acertoPercentual",
     header: "% de acerto",

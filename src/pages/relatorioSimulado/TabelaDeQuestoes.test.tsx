@@ -48,17 +48,17 @@ describe("TabelaDeQuestoes", () => {
     expect(celula(container, "numero")).toHaveTextContent("—");
   });
 
-  it("mostra a distribuição por alternativa", () => {
+  it("⚠️ a distribuição aparece em COLUNA POR ALTERNATIVA, em percentual", () => {
+    // A coluna agrupada com a contagem crua (`A 12 B 3 C 2...`) saiu: com ela
+    // as 12 colunas somavam 1448px e estouravam a tela a partir de 1565px,
+    // quando a sidebar entra no fluxo. Os números crus seguem em "Acertos",
+    // "Erros" e "Sem leitura".
     const { container } = render(
       <TabelaDeQuestoes questoes={[questao()]} estado="idle" />,
     );
 
-    const distribuicao = celula(container, "distribuicao");
-
-    expect(distribuicao).toHaveTextContent("A 12");
-    // ⚠️ Alternativa com zero aparece: a ausência dela leria como "ninguém
-    // marcou E porque E não existe", que é outra afirmação.
-    expect(distribuicao).toHaveTextContent("E 0");
+    expect(container.querySelector('[data-column-id="distribuicao"]')).toBeNull();
+    expect(celula(container, "alternativaA").textContent).toBe("60%");
   });
 
   it("lista vazia mostra estado vazio, não tabela em branco", () => {
@@ -81,17 +81,30 @@ describe("TabelaDeQuestoes — percentuais", () => {
     expect(celula(container, "erroPercentual").textContent).toBe("30%");
   });
 
-  it("⚠️ a distribuição em % fica AO LADO da contagem, não no lugar dela", () => {
-    // Numa turma pequena "3 de 5" é mais legível que "60%"; numa grande o
-    // percentual é que mostra o formato da distribuição. As duas ficam.
+  it("⚠️ cada alternativa tem COLUNA PRÓPRIA", () => {
+    // Agrupados, os percentuais viravam um bloco de texto que não dá para
+    // comparar entre linhas nem ordenar. Separados, a coluna é lida de cima a
+    // baixo — que é como se acha o distrator que pegou a turma.
     const { container } = render(
       <TabelaDeQuestoes questoes={[questao()]} estado="idle" />,
     );
 
-    expect(celula(container, "distribuicao")).toBeTruthy();
-    const pct = celula(container, "distribuicaoPercentual").textContent!;
-    expect(pct).toContain("60%"); // A: 12 de 20
-    expect(pct).toContain("15%"); // B: 3 de 20
+    expect(celula(container, "alternativaA").textContent).toBe("60%"); // 12/20
+    expect(celula(container, "alternativaB").textContent).toBe("15%"); // 3/20
+    expect(celula(container, "alternativaC").textContent).toBe("10%"); // 2/20
+    expect(celula(container, "alternativaD").textContent).toBe("5%"); // 1/20
+  });
+
+  it("⚠️ os números crus continuam na tabela, em Acertos/Erros/Sem leitura", () => {
+    // Remover a coluna agrupada não pode custar a contagem: é ela que deixa
+    // conferir com a turma pequena, onde "3 de 5" diz mais que "60%".
+    const { container } = render(
+      <TabelaDeQuestoes questoes={[questao()]} estado="idle" />,
+    );
+
+    expect(celula(container, "acertos").textContent).toBe("12");
+    expect(celula(container, "erros").textContent).toBe("6");
+    expect(celula(container, "semLeitura").textContent).toBe("2");
   });
 
   it("⚠️ alternativa sem marcação mostra 0%, e não travessão", () => {
@@ -99,9 +112,40 @@ describe("TabelaDeQuestoes — percentuais", () => {
       <TabelaDeQuestoes questoes={[questao()]} estado="idle" />,
     );
 
-    expect(celula(container, "distribuicaoPercentual").textContent).toContain(
-      "E 0%",
+    expect(celula(container, "alternativaE").textContent).toBe("0%");
+  });
+
+  it("⚠️ ordenar por uma alternativa usa o NÚMERO, não o texto", () => {
+    // É o ganho de separar em colunas: dá para achar o distrator que pegou a
+    // turma ordenando por ele. Com a string formatada, "9%" viria depois de
+    // "80%".
+    const { container } = render(
+      <TabelaDeQuestoes
+        questoes={[
+          questao({
+            questaoId: "a",
+            numero: 1,
+            respondentes: 100,
+            porAlternativa: { B: 80 },
+          }),
+          questao({
+            questaoId: "b",
+            numero: 2,
+            respondentes: 100,
+            porAlternativa: { B: 9 },
+          }),
+        ]}
+        estado="idle"
+      />,
     );
+
+    fireEvent.click(container.querySelector('[data-sort-id="alternativaB"]')!);
+    const celulas = container.querySelectorAll(
+      '[data-column-id="alternativaB"]',
+    );
+
+    expect(celulas[0].textContent).toBe("9%");
+    expect(celulas[1].textContent).toBe("80%");
   });
 
   it("⚠️ questão sem respondentes mostra travessão, e não 0%", () => {
