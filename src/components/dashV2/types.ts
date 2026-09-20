@@ -100,8 +100,13 @@ export interface DashColumn<T> {
 export interface DashTableProps<T> {
   rows: T[];
   columns: DashColumn<T>[];
-  /** ⚠️ Nunca o índice: é por isso que a lista do V1 pisca ao reordenar. */
-  rowKey: (row: T) => string;
+  /**
+   * ⚠️ Nunca o índice SOZINHO: é por isso que a lista do V1 pisca ao
+   * reordenar. O `index` vem junto só para desempatar linhas que já carregam
+   * o mesmo id (`` `${row.id}:${index}` ``) — quem tem id único ignora o
+   * segundo argumento, que é o caso de quase todo chamador.
+   */
+  rowKey: (row: T, index: number) => string;
   onRowClick?: (row: T) => void;
   /**
    * ⚠️ Ordenação é **controlada por fora**, e a tabela não reordena `rows`

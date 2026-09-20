@@ -1,7 +1,11 @@
 import { fireEvent } from "@testing-library/dom";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { DetalheDoEstudante } from "./DetalheDoEstudante";
+import {
+  DetalheDoEstudante,
+  TEXTO_SEM_RESPOSTAS,
+  TEXTO_STATUS_DESCONHECIDO,
+} from "./DetalheDoEstudante";
 
 const buscarDetalheDoEstudante = vi.hoisted(() => vi.fn());
 vi.mock("@/services/relatorioSimulado/buscarDetalheDoEstudante", () => ({
@@ -76,7 +80,7 @@ describe("DetalheDoEstudante", () => {
 
     // ⚠️ Contar linha não prova que a linha diz alguma coisa. O que o professor
     // veio ver é o par marcada/correta da questão que ele errou.
-    const q2 = container.querySelector('[data-row-key="q2"]') as HTMLElement;
+    const q2 = container.querySelector('[data-row-key^="q2:"]') as HTMLElement;
     expect(within(q2).getByText("2")).toBeInTheDocument();
     expect(
       within(q2.querySelector('[data-column-id="marcada"]') as HTMLElement).getByText("B"),
@@ -92,7 +96,7 @@ describe("DetalheDoEstudante", () => {
     const { container } = montar();
 
     await screen.findByText("1");
-    const q3 = container.querySelector('[data-row-key="q3"]') as HTMLElement;
+    const q3 = container.querySelector('[data-row-key^="q3:"]') as HTMLElement;
 
     expect(
       q3.querySelector('[data-column-id="marcada"]')?.textContent?.trim(),
@@ -171,5 +175,58 @@ describe("DetalheDoEstudante", () => {
     fireEvent.click(tentar);
 
     expect(await screen.findByText("1")).toBeInTheDocument();
+  });
+
+  it('⚠️ status que o client não conhece NÃO vira "nenhuma resposta"', async () => {
+    // O `statusDaLinha` já tem um `default` honesto ("Situação desconhecida",
+    // nunca "Lido"). Aqui não havia nenhum: um status fora dos cinco caía na
+    // tabela e a tela dizia "Nenhuma resposta neste cartão" — que AFIRMA que o
+    // estudante não respondeu nada, quando o que se sabe é só que não se sabe.
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "arquivado_pelo_ms",
+      respostas: [],
+    });
+    montar();
+
+    expect(await screen.findByText(TEXTO_STATUS_DESCONHECIDO)).toBeInTheDocument();
+    expect(screen.queryByText(TEXTO_SEM_RESPOSTAS)).not.toBeInTheDocument();
+    expect(screen.queryByRole("row")).not.toBeInTheDocument();
+  });
+
+  it("⚠️ status desconhecido nunca afirma que a leitura terminou", async () => {
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "futuro",
+      respostas: [],
+    });
+    montar();
+
+    await screen.findByText(TEXTO_STATUS_DESCONHECIDO);
+    expect(screen.queryByText(/acertou|errou|sem leitura/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/processando/i)).not.toBeInTheDocument();
+  });
+
+  it("⚠️ questão repetida no simulado não gera key duplicada no React", async () => {
+    // corrida conhecida do `adicionarEmProva` pode pôr a mesma questão duas
+    // vezes. As linhas seriam idênticas (nenhum dado errado), mas a key do
+    // React colidiria.
+    const erros: unknown[] = [];
+    const spy = vi.spyOn(console, "error").mockImplementation((...args) => {
+      erros.push(args[0]);
+    });
+
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "completed",
+      respostas: [resposta(), resposta()],
+    });
+    const { container } = montar();
+
+    // `findAllByText`: são DUAS linhas com o mesmo número, é esse o ponto
+    await screen.findAllByText("1");
+    expect(container.querySelectorAll('[data-row-key^="q1"]')).toHaveLength(2);
+    expect(
+      erros.filter((e) => String(e).includes("same key")),
+    ).toHaveLength(0);
+
+    spy.mockRestore();
   });
 });

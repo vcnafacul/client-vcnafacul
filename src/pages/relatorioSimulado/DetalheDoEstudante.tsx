@@ -20,6 +20,25 @@ export const TEXTO_PROCESSANDO =
   "A leitura deste cartão ainda está processando. Volte em alguns minutos.";
 export const TEXTO_FALHA_SEM_DESCRICAO = "A leitura deste cartão falhou.";
 export const TEXTO_SEM_RESPOSTAS = "Nenhuma resposta neste cartão";
+export const TEXTO_STATUS_DESCONHECIDO =
+  "A situação deste cartão não é conhecida por esta versão da tela. Atualize a página; se continuar, fale com o suporte.";
+
+/**
+ * Os status que ESTA tela sabe exibir.
+ *
+ * ⚠️ **Existe pelo mesmo motivo que o `default` do `statusDaLinha`**: o ms pode
+ * ganhar um status antes do client, e sem esta lista um valor novo caía na
+ * tabela e a tela dizia "Nenhuma resposta neste cartão" — que AFIRMA que o
+ * estudante não respondeu nada. O que se sabe é outra coisa: que não se sabe.
+ * Postura igual dos dois lados da tela, e nunca "Lido" por omissão.
+ */
+const STATUS_CONHECIDOS: readonly string[] = [
+  "completed",
+  "failed",
+  "awaiting_omr",
+  "pending",
+  "processing",
+];
 
 const colunas: DashColumn<RespostaDoEstudante>[] = [
   {
@@ -130,6 +149,11 @@ export function DetalheDoEstudante({
     detalhe?.status === "pending" ||
     detalhe?.status === "processing";
 
+  // ⚠️ `detalhe !== null`: enquanto carrega ainda não há status nenhum, e isso
+  // não é "desconhecido" — é a tabela em estado `loading`.
+  const statusDesconhecido =
+    detalhe !== null && !STATUS_CONHECIDOS.includes(detalhe.status);
+
   return (
     <ModalTemplate
       isOpen={isOpen}
@@ -181,7 +205,24 @@ export function DetalheDoEstudante({
           </p>
         )}
 
-        {estado !== "error" && !processando && detalhe?.status !== "failed" && (
+        {/*
+          ⚠️ Status fora dos cinco conhecidos diz que não se sabe — não cai na
+          tabela. A tabela vazia afirma "não respondeu nada"; isto aqui não
+          afirma nada. Mesma postura do `default` do `statusDaLinha`.
+        */}
+        {estado === "idle" && statusDesconhecido && (
+          <p
+            data-testid="status-desconhecido"
+            className={cn("text-sm", dashV2.text.secondary)}
+          >
+            {TEXTO_STATUS_DESCONHECIDO}
+          </p>
+        )}
+
+        {estado !== "error" &&
+          !processando &&
+          !statusDesconhecido &&
+          detalhe?.status !== "failed" && (
           /*
             ⚠️ Sem `onSortChange`: a ordem é a do ms (por número da questão), e
             deixar reordenar por "resultado" numa prova não acrescenta nada que
@@ -190,7 +231,10 @@ export function DetalheDoEstudante({
           <DashTable<RespostaDoEstudante>
             rows={detalhe?.respostas ?? []}
             columns={colunas}
-            rowKey={(r) => r.questaoId}
+            // `:i` porque a mesma questão pode aparecer duas vezes no simulado
+            // (corrida conhecida do `adicionarEmProva`): as linhas seriam
+            // idênticas, mas a key do React colidiria.
+            rowKey={(r, i) => `${r.questaoId}:${i}`}
             state={estado}
             onRetry={carregar}
             stickyHeader

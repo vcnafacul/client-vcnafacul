@@ -155,10 +155,10 @@ export function DashTable<T>({
         {modo === "error" ? <DashTableErro onRetry={onRetry} /> : null}
         {modo === "empty" ? vazio : null}
         {modo === "rows"
-          ? rows.map((row) => (
+          ? rows.map((row, index) => (
               <div
-                key={rowKey(row)}
-                data-row-key={rowKey(row)}
+                key={rowKey(row, index)}
+                data-row-key={rowKey(row, index)}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
                 className={cn(
                   "flex items-start gap-3 border-b px-4 py-3",
@@ -302,12 +302,13 @@ export function DashTable<T>({
           ) : null}
 
           {modo === "rows"
-            ? rows.map((row) => (
-                /* ⚠️ `rowKey(row)`, nunca o índice: com `key={index}` o React
-                   reusa o DOM da posição e a lista pisca ao reordenar. */
+            ? rows.map((row, index) => (
+                /* ⚠️ `rowKey(row, index)`, nunca o índice puro: com
+                   `key={index}` o React reusa o DOM da posição e a lista
+                   pisca ao reordenar. O `index` só desempata ids repetidos. */
                 <TableRow
-                  key={rowKey(row)}
-                  data-row-key={rowKey(row)}
+                  key={rowKey(row, index)}
+                  data-row-key={rowKey(row, index)}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                   className={cn(
                     "border-b",
