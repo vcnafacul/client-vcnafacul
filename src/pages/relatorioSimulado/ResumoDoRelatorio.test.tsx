@@ -21,6 +21,16 @@ describe("ResumoDoRelatorio", () => {
     expect(screen.getByText("27")).toBeInTheDocument();
   });
 
+  it("⚠️ o rótulo é 'No cálculo da média', não 'Com leitura concluída'", () => {
+    // a api conta aqui só quem é `completed` E tem nota numérica; o badge da
+    // tabela diz "Lido" pelo status sozinho. Com o rótulo antigo, uma linha
+    // concluída sem nota põe 28 badges "Lido" em cima de um número 27.
+    render(<ResumoDoRelatorio resumo={resumo()} />);
+
+    expect(screen.getByText(/no cálculo da média/i)).toBeInTheDocument();
+    expect(screen.queryByText(/com leitura concluída/i)).not.toBeInTheDocument();
+  });
+
   it("média nula vira travessão, não 0%", () => {
     render(<ResumoDoRelatorio resumo={resumo({ aproveitamentoGeral: null })} />);
 

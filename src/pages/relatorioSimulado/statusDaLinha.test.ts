@@ -45,6 +45,32 @@ describe("statusDaLinha", () => {
     expect(r.tone).toBe(tone);
   });
 
+  /**
+   * ⚠️ A ordem é a do trabalho do coordenador — o que ele conserta primeiro —,
+   * e é justamente o que ordenar pelo rótulo NÃO dá: alfabeticamente seria
+   * "Aguardando" < "Falhou" < "Lido" < "Não enviou", com o que já está pronto
+   * no meio da lista e o que precisa de ação espalhado.
+   */
+  it("⚠️ ordem: falhou, aguardando, não enviou, lido", () => {
+    const ordemDe = (over: Partial<LinhaDoRelatorio>) =>
+      statusDaLinha(linha(over)).ordem;
+
+    expect(ordemDe({ status: "failed" })).toBeLessThan(
+      ordemDe({ status: "awaiting_omr" }),
+    );
+    expect(ordemDe({ status: "awaiting_omr" })).toBeLessThan(
+      ordemDe({ enviouCartao: false, status: undefined }),
+    );
+    expect(ordemDe({ enviouCartao: false, status: undefined })).toBeLessThan(
+      ordemDe({ status: "completed" }),
+    );
+  });
+
+  it("status desconhecido vai para o fim — não é ação que alguém possa tomar", () => {
+    expect(statusDaLinha(linha({ status: "status_do_futuro" as never })).ordem)
+      .toBeGreaterThan(statusDaLinha(linha({ status: "completed" })).ordem);
+  });
+
   it("status desconhecido não quebra a tela", () => {
     // o ms pode ganhar um status novo antes do client; a linha tem que
     // continuar renderizando

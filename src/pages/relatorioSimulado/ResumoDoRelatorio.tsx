@@ -25,8 +25,15 @@ export function ResumoDoRelatorio({ resumo }: { resumo: Resumo }) {
           rotulo="Estudantes no recorte"
           valor={String(resumo.totalNoRecorte)}
         />
+        {/*
+          ⚠️ "No cálculo da média", e **não** "Com leitura concluída": a api
+          conta aqui só as linhas que são `completed` E trazem nota numérica,
+          enquanto o badge da tabela diz "Lido" pelo `status` sozinho. Uma
+          linha concluída sem nota aparece como "Lido" e fica de fora desta
+          contagem — com o rótulo antigo, 28 badges em cima de um "27".
+        */}
         <Numero
-          rotulo="Com leitura concluída"
+          rotulo="No cálculo da média"
           valor={String(resumo.comLeituraConcluida)}
         />
         <Numero
