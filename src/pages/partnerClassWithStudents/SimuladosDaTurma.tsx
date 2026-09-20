@@ -1,6 +1,7 @@
 import {
   DashTable,
   dashV2,
+  dataOrdenavel,
   sortRows,
   type DashColumn,
   type SortState,
@@ -14,8 +15,14 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const VAZIO = "—";
-export const SEM_NOME = "Simulado removido";
-export const TEXTO_VAZIO = "Nenhum simulado desta turma teve cartão enviado";
+const SEM_NOME = "Simulado removido";
+/**
+ * ⚠️ Local de propósito, e **não** exportado: o `@/components/dashV2` já
+ * exporta um `TEXTO_VAZIO` com outro valor ("Nenhum registro encontrado"), e
+ * duas exportações do mesmo nome com textos diferentes é armadilha de import
+ * automático. Quem testa este texto casa por regex.
+ */
+const TEXTO_VAZIO = "Nenhum simulado desta turma teve cartão enviado";
 
 function dataCurta(iso: string | null): string {
   if (!iso) return VAZIO;
@@ -82,7 +89,12 @@ const colunas: DashColumn<SimuladoComCartao>[] = [
     header: "No cálculo da média",
     width: "11rem",
     align: "right",
-    hideBelow: "sm",
+    /**
+     * ⚠️ **Sem `hideBelow`.** Abaixo de 768px o `DashTable` empilha, e com esta
+     * coluna escondida sobrava só o `cartoes` — um número solto, sem rótulo,
+     * grudado no nome do simulado ("ENEM12"). Mantendo-a, a lista empilhada tem
+     * de novo duas posições: uma sob o nome e outra à direita.
+     */
     cell: (s) => s.comLeituraConcluida,
     sortValue: (s) => s.comLeituraConcluida,
   },
@@ -98,7 +110,14 @@ const colunas: DashColumn<SimuladoComCartao>[] = [
      * estudante não move a data. O rótulo não pode prometer mais que isso.
      */
     cell: (s) => dataCurta(s.ultimoEnvio),
-    sortValue: (s) => (s.ultimoEnvio ? new Date(s.ultimoEnvio) : null),
+    /**
+     * ⚠️ `dataOrdenavel`, e **não** `new Date(...)` cru: `new Date("lixo")` é
+     * um `Date` **inválido**, não `null` — o teste de vazio do `sortRows` não o
+     * pega, a comparação devolve `NaN` e o comparador deixa de ser uma
+     * ordenação (a linha que mostra "—" apareceu em PRIMEIRO). O `dataOrdenavel`
+     * devolve `null` para vazio **e** para data inválida, e `null` vai pro fim.
+     */
+    sortValue: (s) => dataOrdenavel(s.ultimoEnvio),
   },
 ];
 
@@ -181,5 +200,3 @@ export function SimuladosDaTurma({
     </div>
   );
 }
-
-export default SimuladosDaTurma;

@@ -31,6 +31,18 @@ const montar = () =>
     </MemoryRouter>,
   );
 
+/** Clica no cabeçalho ordenável da coluna — o botão, não o `<th>`. */
+function ordenarPor(colunaId: string) {
+  fireEvent.click(document.querySelector(`[data-sort-id="${colunaId}"]`)!);
+}
+
+/** A ordem em que as linhas saíram pintadas, pela chave de cada `<tr>`. */
+function chavesDasLinhas(): string[] {
+  return [...document.querySelectorAll("[data-row-key]")].map(
+    (el) => el.getAttribute("data-row-key") ?? "",
+  );
+}
+
 describe("SimuladosDaTurma", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -98,6 +110,75 @@ describe("SimuladosDaTurma", () => {
       expect.stringContaining("relatorio-simulado/sim-morto?turma=t-1"),
       { state: { de: { caminho: `/dashboard/turmas/t-1` } } },
     );
+  });
+
+  /**
+   * ⚠️ **A ordenação inteira estava sem teste** — e nove mutações sobreviviam
+   * aqui: inverter `cartoes`, zerar o `sortValue` de qualquer coluna, trocar a
+   * direção inicial para `asc`, tirar a ordenação inicial e até desviar o
+   * `sortRows`.
+   *
+   * O contrato é um só: **mais recente primeiro, e quem não tem data usável
+   * fica no fim** — "não tem data" incluindo a data que não dá para ler, que é
+   * exatamente onde o `new Date("lixo")` cru colocava a linha do "—" em
+   * PRIMEIRO lugar.
+   */
+  it("⚠️ abre com o envio mais recente primeiro, e sem data usável vai pro fim", async () => {
+    buscarSimuladosComCartao.mockResolvedValue({
+      simulados: [
+        simulado({ simuladoId: "sem-data", ultimoEnvio: null }),
+        simulado({ simuladoId: "antigo", ultimoEnvio: "2026-01-10T00:00:00.000Z" }),
+        simulado({ simuladoId: "lixo", ultimoEnvio: "data-invalida" }),
+        simulado({ simuladoId: "recente", ultimoEnvio: "2026-07-20T00:00:00.000Z" }),
+      ],
+    });
+    montar();
+
+    await waitFor(() => expect(chavesDasLinhas()).toHaveLength(4));
+    expect(chavesDasLinhas()).toEqual(["recente", "antigo", "sem-data", "lixo"]);
+  });
+
+  /**
+   * ⚠️ O par do teste acima: lá a ordenação inicial, aqui as colunas que só
+   * ordenam por clique. Sem isto, zerar o `sortValue` de `cartoes`, `lidos` ou
+   * `nome` — ou invertê-lo — não deixa nada vermelho, porque a lista continua
+   * na ordem que a inicial deu.
+   */
+  it("⚠️ clicar no cabeçalho ordena por aquela coluna", async () => {
+    buscarSimuladosComCartao.mockResolvedValue({
+      simulados: [
+        simulado({ simuladoId: "meio", nome: "B", cartoes: 5, comLeituraConcluida: 2 }),
+        simulado({ simuladoId: "muitos", nome: "A", cartoes: 9, comLeituraConcluida: 1 }),
+        simulado({ simuladoId: "poucos", nome: "C", cartoes: 1, comLeituraConcluida: 3 }),
+      ],
+    });
+    montar();
+    await waitFor(() => expect(chavesDasLinhas()).toHaveLength(3));
+
+    ordenarPor("cartoes"); // asc: 1, 5, 9
+    expect(chavesDasLinhas()).toEqual(["poucos", "meio", "muitos"]);
+
+    ordenarPor("lidos"); // asc: 1, 2, 3
+    expect(chavesDasLinhas()).toEqual(["muitos", "meio", "poucos"]);
+
+    ordenarPor("nome"); // asc: A, B, C
+    expect(chavesDasLinhas()).toEqual(["muitos", "meio", "poucos"]);
+
+    ordenarPor("nome"); // desc: C, B, A
+    expect(chavesDasLinhas()).toEqual(["poucos", "meio", "muitos"]);
+  });
+
+  it("⚠️ a chave da linha é o id, não o nome — dois simulados removidos são duas linhas", async () => {
+    buscarSimuladosComCartao.mockResolvedValue({
+      simulados: [
+        simulado({ simuladoId: "morto-1", nome: null }),
+        simulado({ simuladoId: "morto-2", nome: null }),
+      ],
+    });
+    montar();
+
+    await waitFor(() => expect(chavesDasLinhas()).toHaveLength(2));
+    expect(new Set(chavesDasLinhas()).size).toBe(2);
   });
 
   it("turma sem cartão mostra estado vazio explicativo", async () => {
