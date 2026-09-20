@@ -5,6 +5,7 @@ import RelatorioSimulado from "./index";
 
 const buscarRelatorio = vi.hoisted(() => vi.fn());
 const buscarQuestoes = vi.hoisted(() => vi.fn());
+const buscarDetalheDoEstudante = vi.hoisted(() => vi.fn());
 const navigate = vi.hoisted(() => vi.fn());
 
 /**
@@ -22,6 +23,9 @@ vi.mock("@/services/relatorioSimulado/buscarRelatorio", () => ({
   caminhoDoRelatorio: vi.fn(),
 }));
 vi.mock("@/services/relatorioSimulado/buscarQuestoes", () => ({ buscarQuestoes }));
+vi.mock("@/services/relatorioSimulado/buscarDetalheDoEstudante", () => ({
+  buscarDetalheDoEstudante,
+}));
 vi.mock("@/store/auth", () => ({
   useAuthStore: () => ({ data: { token: "tok" } }),
 }));
@@ -75,6 +79,10 @@ describe("RelatorioSimulado", () => {
     vi.clearAllMocks();
     buscarRelatorio.mockResolvedValue(RESPOSTA);
     buscarQuestoes.mockResolvedValue({ questoes: [] });
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "completed",
+      respostas: [],
+    });
   });
 
   it("busca o relatório do simulado da URL", async () => {
@@ -256,5 +264,29 @@ describe("RelatorioSimulado", () => {
 
     expect(await screen.findByText("Ana Silva")).toBeInTheDocument();
     expect(buscarRelatorio).toHaveBeenCalledTimes(2);
+  });
+
+  it("clicar na linha de quem ENVIOU abre o detalhe daquele estudante", async () => {
+    // o par do teste seguinte: sem este, "não abre nada" passaria numa tela
+    // que nunca abre nada
+    montar();
+
+    fireEvent.click(await screen.findByText("Ana Silva"));
+
+    await waitFor(() =>
+      expect(buscarDetalheDoEstudante).toHaveBeenCalledWith("tok", "sim-1", "u1"),
+    );
+  });
+
+  it("⚠️ clicar numa linha de quem NÃO enviou não abre nada", async () => {
+    buscarRelatorio.mockResolvedValue({
+      linhas: [{ ...RESPOSTA.linhas[0], enviouCartao: false, status: undefined }],
+      resumo: RESPOSTA.resumo,
+    });
+    montar();
+
+    fireEvent.click(await screen.findByText("Ana Silva"));
+
+    expect(buscarDetalheDoEstudante).not.toHaveBeenCalled();
   });
 });
