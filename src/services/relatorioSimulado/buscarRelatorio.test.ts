@@ -59,4 +59,21 @@ describe("serviços do relatório de simulado", () => {
     const url = fetchWrapper.mock.calls[0][0] as string;
     expect(url).toMatch(/\/mssimulado\/relatorio\/simulado\/simulados$/);
   });
+
+  it("buscarSimuladosComCartao com turma usa o segmento de turma", async () => {
+    await buscarSimuladosComCartao("tok", "t-1");
+
+    expect(fetchWrapper.mock.calls[0][0]).toContain(
+      "/mssimulado/relatorio/simulado/simulados/turma/t-1",
+    );
+  });
+
+  it("⚠️ turma vazia é tratada como SEM turma", async () => {
+    // mesma armadilha do `?turma=` na rota do relatório: string vazia não pode
+    // virar `/simulados/turma/`, que é uma rota que não existe
+    await buscarSimuladosComCartao("tok", "");
+
+    const url = fetchWrapper.mock.calls[0][0] as string;
+    expect(url).toMatch(/\/simulados$/);
+  });
 });
