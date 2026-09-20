@@ -33,6 +33,7 @@ import { ClassSimuladoAnalytics } from "@/components/organisms/classSimuladoAnal
 import { ClassEssayAnalytics } from "@/components/organisms/classEssayAnalytics";
 import { MonthPicker } from "@/components/organisms/classSimuladoAnalytics/MonthPicker";
 import { ClassMonthsList } from "@/types/classAnalytics/classSimuladoAnalytics";
+import { SimuladosDaTurma } from "./SimuladosDaTurma";
 
 function toStudentsDtoOutput(
   student: ClassStudent,
@@ -130,6 +131,12 @@ export function PartnerClassWithStudents() {
   } = useAuthStore();
 
   const executeAsync = useToastAsync();
+
+  // ⚠️ A aba some sem a permissão, e com ela some a chamada do `04b`, que
+  // devolveria 403. Diferente do ícone do card 06, que fica desabilitado com
+  // motivo: aba é navegação, fica no topo o tempo todo, e o `TabsTrigger`
+  // desabilitado do shadcn não recebe foco nem hover para dizer por quê.
+  const podeVerRelatorio = !!permissao[Roles.gerenciarEstudantes];
 
   useEffect(() => {
     if (!classEntity.partnerId) return;
@@ -450,6 +457,9 @@ export function PartnerClassWithStudents() {
           <TabsList>
             <TabsTrigger value="alunos">Alunos</TabsTrigger>
             <TabsTrigger value="desempenho">Desempenho</TabsTrigger>
+            {podeVerRelatorio && (
+              <TabsTrigger value="simulados">Simulados por cartão</TabsTrigger>
+            )}
           </TabsList>
           {activeTab === "desempenho" &&
             simuladoList &&
@@ -539,6 +549,20 @@ export function PartnerClassWithStudents() {
             )}
           </div>
         </TabsContent>
+
+        {/*
+          ⚠️ Renderizado só quando a aba está ativa — é isso que faz a busca
+          ser preguiçosa, sem precisar de estado de controle. A tela já faz
+          duas chamadas no mount; uma terceira servindo uma aba que a maioria
+          não abre é custo por nada.
+        */}
+        {podeVerRelatorio && (
+          <TabsContent value="simulados">
+            {activeTab === "simulados" && hashClassId && (
+              <SimuladosDaTurma token={token} turmaId={hashClassId} />
+            )}
+          </TabsContent>
+        )}
       </Tabs>
 
       <ModalAttendanceHistory />
