@@ -116,6 +116,11 @@ rota que não existe.
 serve uma aba que a maioria não abre é custo por nada. Mesmo padrão do `06`, cuja aba de questões só
 busca na primeira abertura.
 
+⚠️ **Mas "só quando a aba abre" não quer dizer "uma vez só".** O Radix desmonta o `TabsContent`
+inativo: alternar para outra aba e voltar remonta a `SimuladosDaTurma` e refaz a busca. Fica assim —
+a coordenadora que está subindo cartões quer os números novos ao voltar, e um cache aqui mostraria
+contagem velha logo depois do upload.
+
 ⚠️ **Radix é caro no jsdom neste projeto** — poucos testes montando `Tabs`, cada um verificando tudo
 de uma montagem só.
 
@@ -134,7 +139,7 @@ de uma montagem só.
 - [ ] Por simulado: nome, cartões, no cálculo da média, último envio
 - [ ] Simulado com `nome` nulo continua na lista, rotulado e clicável
 - [ ] Cada linha navega para o relatório do `06` **com `?turma=` aplicado**
-- [ ] Busca só quando a aba abre, e não de novo ao alternar
+- [ ] Busca quando a aba abre — e **de novo a cada reabertura**: o Radix desmonta o `TabsContent` inativo, então o componente perde o estado e rebusca. Não é acidente tolerado: quem está subindo cartões quer os números novos ao voltar. O que **não** pode é buscar no mount da tela, com a aba fechada
 - [ ] A tela diz que o recorte é só de cartão-resposta
 - [ ] Turma sem nenhum cartão: estado vazio explicativo, não tabela em branco
 - [ ] Carregando e erro explícitos, com como tentar de novo

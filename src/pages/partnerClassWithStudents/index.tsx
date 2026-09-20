@@ -551,10 +551,20 @@ export function PartnerClassWithStudents() {
         </TabsContent>
 
         {/*
-          ⚠️ Renderizado só quando a aba está ativa — é isso que faz a busca
-          ser preguiçosa, sem precisar de estado de controle. A tela já faz
-          duas chamadas no mount; uma terceira servindo uma aba que a maioria
-          não abre é custo por nada.
+          ⚠️ Quem faz a busca ser preguiçosa é o **Radix**, não a guarda abaixo:
+          ele desmonta o `TabsContent` inativo, então a `SimuladosDaTurma` só
+          monta — e só busca — com a aba ativa. A tela já faz duas chamadas no
+          mount; uma terceira servindo uma aba que a maioria não abre é custo
+          por nada.
+
+          ⚠️ E porque o Radix desmonta, **reabrir a aba busca de novo** — o
+          componente perde o estado junto. É o comportamento desejado: quem está
+          subindo cartões quer os números novos ao voltar. Há teste fixando
+          isso em `index.test.tsx`.
+
+          O `activeTab === "simulados"` é cinto e suspensório, para o dia em que
+          alguém puser `forceMount` no `TabsContent` — aí o Radix passa a
+          renderizar a aba inativa e só a guarda segura a chamada.
         */}
         {podeVerRelatorio && (
           <TabsContent value="simulados">

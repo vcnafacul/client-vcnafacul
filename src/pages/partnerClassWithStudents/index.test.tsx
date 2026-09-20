@@ -107,6 +107,18 @@ const montar = ({ permissao }: { permissao: Record<string, boolean> }) => {
   );
 };
 
+/**
+ * ⚠️ `mouseDown`, e não `click`: o `TabsTrigger` do Radix troca de aba no
+ * `onMouseDown`. Um `click` aqui passaria sem a aba ter trocado.
+ */
+const abrirAba = (nome: RegExp) =>
+  fireEvent.mouseDown(screen.getByRole("tab", { name: nome }));
+
+const COM_A_ABA = {
+  [Roles.visualizarTurmas]: true,
+  [Roles.gerenciarEstudantes]: true,
+};
+
 describe("PartnerClassWithStudents — aba de simulados por cartão", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -154,6 +166,26 @@ describe("PartnerClassWithStudents — aba de simulados por cartão", () => {
 
     await waitFor(() =>
       expect(buscarSimuladosComCartao).toHaveBeenCalledWith("tok", "t-1"),
+    );
+  });
+
+  it("⚠️ reabrir a aba busca de novo — e isso é de propósito", async () => {
+    // O Radix desmonta o TabsContent inativo, então o componente perde estado
+    // e rebusca. Quem está subindo cartões quer os números novos ao voltar.
+    // O critério de aceite original dizia o contrário e estava errado.
+    montar({ permissao: COM_A_ABA });
+    await screen.findByRole("tab", { name: /simulado/i });
+
+    abrirAba(/simulado/i);
+    await waitFor(() =>
+      expect(buscarSimuladosComCartao).toHaveBeenCalledTimes(1),
+    );
+
+    abrirAba(/alunos/i);
+    abrirAba(/simulado/i);
+
+    await waitFor(() =>
+      expect(buscarSimuladosComCartao).toHaveBeenCalledTimes(2),
     );
   });
 });
