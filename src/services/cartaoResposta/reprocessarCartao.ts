@@ -34,9 +34,11 @@ export async function reprocessarCartao(
     },
   );
 
-  // ⚠️ `ok`, e não uma lista de status: o `@HttpCode(202)` mora no ms; a rota
-  // da api herda o 201 padrão do `@Post` e só DOCUMENTA 202 no Swagger. Exigir
-  // 202 aqui faria toda troca de foto bem-sucedida aparecer como erro.
+  // ⚠️ `ok`, e não uma lista de status. A api hoje devolve 202, mas isso já foi
+  // 201: a rota nasceu como `@Post` pelado, herdando o padrão do Nest, e só
+  // DOCUMENTAVA 202 no Swagger — um contrato que mentia, e que fazia uma lista
+  // de status transformar toda troca bem-sucedida em erro. O `@HttpCode(202)`
+  // consertou o backend; este `ok` é o que impede a tela de depender disso.
   if (response.ok) return;
 
   const corpo = (await response.json().catch(() => ({}))) as {
