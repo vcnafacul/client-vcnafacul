@@ -108,8 +108,8 @@ nas duas direções.
 | Turma | `turmaNome`, ou "—" para quem não tem turma |
 | Status | `StatusBadge`, de `statusDaLinha` |
 | Aproveitamento | só quando `status === 'completed'` — ver abaixo |
-| Questões respondidas | `questoesRespondidas` |
-| Motivo | **coluna própria**, preenchida só quando há `falha`: a `descricao` que o ms já mandou pronta |
+| Cartão | `cartaoCode`, **sem gate** — identidade da folha, não resultado da leitura |
+| Motivo | **coluna própria**, só quando `status === 'failed'`: a `descricao` que o ms já mandou pronta |
 
 ⚠️ **"Motivo" é coluna, não texto dentro da célula de status.** O pedido é explícito: o cursinho tem
 que ver, na linha do aluno, que houve erro **e qual foi**. Enfiar a frase dentro do badge a trunca, e
@@ -156,6 +156,24 @@ os dois dentro do ciclo de **um mesmo documento**:
 zero: zero é uma nota, ausência de leitura não é. E "90 respondidas" ao lado de "Falhou" afirma que a
 folha foi lida — que é exatamente o que não houve.
 
+⚠️ **Correção 2 (revisão adversarial): `falha` é o TERCEIRO campo obsoleto, e o spec não o tinha.**
+`marcarFalha` é o **único** escritor de `falha`, e **nada nunca a desfaz** — o `$unset` inverso é de um
+card futuro que não existe, como o próprio docblock do `marcarFalha` registra. O `completeProcessing`
+grava `status`, `ano`, `simulado`, `respostas`, `aproveitamento` e `rawRespostas` e **não toca em
+`falha`**. Então um cartão que falhou, foi reprocessado e completou chega com `status: 'completed'`
+**e** a falha antiga: a linha diria **"Lido", "80%" e "Não foi possível localizar o cartão"** ao mesmo
+tempo — exatamente a contradição que o gate da nota existe para impedir. A coluna Motivo é gateada em
+`failed`.
+
+⚠️ **Correção 3: a coluna "Respondidas" não podia existir, e saiu.** `questoesRespondidas` tem **um**
+escritor no ms, o `createPending`, que é do fluxo **digital**. O fluxo de cartão é `createAwaitingOmr`
+→ `prepararParaProcessamento` → `completeProcessing`, e **nenhum dos três o escreve**. Como toda linha
+deste relatório é de cartão por construção, a coluna renderizaria `—` para sempre — o que se lê como
+*dado faltando*, não como *dado nunca coletado*. O campo continua no DTO (a api o envia), com
+comentário dizendo por que não vira coluna.
+
+**No lugar dela entrou `cartaoCode`**, que o parágrafo abaixo já defendia e nenhuma coluna mostrava.
+
 ⚠️ **`cartaoCode` NÃO entra no gate**, e a diferença importa: ele é escrito do QR da folha no
 `createAwaitingOmr`, é a **identidade** do cartão físico e não um **resultado** da leitura. Numa linha
 que falhou ele é a coisa mais útil que existe — diz qual folha refotografar.
@@ -167,6 +185,11 @@ isso com uma linha `failed` que traz nota.
 ### O resumo
 
 As duas contagens sempre — `totalNoRecorte` e `comLeituraConcluida` — mais a média.
+
+⚠️ **O segundo número é rotulado "No cálculo da média", não "Com leitura concluída".** A api o conta
+com `status === 'completed'` **e** nota numérica; o badge da linha diz "Lido" só pelo status. Uma linha
+concluída sem nota mostra "Lido" e fica de fora da contagem — 28 badges sobre um cartão dizendo 27. O
+rótulo passa a dizer o que o número é.
 
 ⚠️ **As duas, nunca uma.** Sem as duas ninguém entende a diferença entre "30 alunos" e "27 no cálculo",
 e a média parece errada.
@@ -278,8 +301,13 @@ legado). Para verificar: `ESLINT_USE_FLAT_CONFIG=false npx eslint <caminhos>`.
 - [ ] A rota é protegida por `gerenciarEstudantes`
 - [ ] `?turma=` restringe o relatório, e sem ele é o cursinho inteiro
 - [ ] Estudante sem cartão aparece, lido de `enviouCartao` e não inferido
-- [ ] **Linha com status diferente de `completed` não mostra nota nem questões respondidas** — teste
-      com uma linha `failed` que traz os dois
+- [ ] **Linha com status diferente de `completed` não mostra nota** — teste com uma linha `failed`
+      que a traz
+- [ ] **Linha `completed` que ainda carrega `falha` antiga não mostra o motivo** — nada desfaz a falha
+- [ ] `cartaoCode` aparece **inclusive** numa linha que falhou — é qual folha refotografar
+- [ ] `?turma=` vazio é tratado como sem turma nos DOIS lugares (serviço e coluna)
+- [ ] `voltar` usa `replace`, e num link aberto em aba nova vai para a listagem em vez de ficar inerte
+- [ ] A chave de linha é única mesmo com o mesmo `usuario` em dois processos seletivos
 - [ ] Linha `failed` mostra a descrição amigável do card `01`, **em coluna própria**
 - [ ] A coluna Turma não aparece quando há `?turma=`
 - [ ] As duas contagens aparecem; média `null` vira "—", não "0%"
