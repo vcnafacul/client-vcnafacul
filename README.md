@@ -24,10 +24,10 @@ Este frontend consome **apenas** a `api-vcnafacul`. Nunca fala diretamente com m
 ## Arquitetura
 
 ```
-client-vcnafacul  →  api-vcnafacul  →  ms-simulado       (motor de provas)
-  (React SPA)       (NestJS gateway)   (NestJS + MongoDB)
-                         ↓
-                    vcnafacul-form    (construtor de formulários)
+client-vcnafacul  →  api-vcnafacul  →  ms-simulado      →   ms-omr
+  (React SPA)        (NestJS gateway)  (NestJS + MongoDB)   (FastAPI + OMRChecker)
+                           ↓                ↑                  ↓
+                    vcnafacul-form          └──── callback ────┘
                     (NestJS + MongoDB)
 ```
 
@@ -36,6 +36,7 @@ client-vcnafacul  →  api-vcnafacul  →  ms-simulado       (motor de provas)
 | **client-vcnafacul** (este) | React 19 + Vite 6 | — | `5173` |
 | api-vcnafacul | NestJS 10 + TypeORM | MySQL 8+ | `3333` |
 | ms-simulado | NestJS 10 + Mongoose | MongoDB | `3000` |
+| ms-omr | Python 3.11 + FastAPI | Redis (fila/cache) | `8000` |
 | vcnafacul-form | NestJS 11 + Mongoose | MongoDB | `3001` |
 
 ---
