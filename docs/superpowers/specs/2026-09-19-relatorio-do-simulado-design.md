@@ -135,14 +135,30 @@ Quem não enviou cartão (`enviouCartao: false`) é uma linha como as outras, co
 ⚠️ **Ler `enviouCartao`, não inferir da ausência de `historicoId`** — a api devolve o campo explícito
 exatamente para que ninguém infira.
 
-### ⚠️ A nota não aparece quando o status não é `completed`
+### ⚠️ Nem a nota nem as respondidas aparecem quando o status não é `completed`
 
-O `marcarFalha` do ms **não limpa** `aproveitamento`. Um cartão que leu bem, foi refotografado e
-falhou continua carregando a nota antiga, e a api **repassa como veio** — de propósito: a api não
-reescreve o que o ms disse, e foi essa a decisão do card `04`.
+O `marcarFalha` do ms grava `status` e `falha` e **não limpa** `aproveitamento` **nem**
+`questoesRespondidas`. A api **repassa como veio** — de propósito: ela não reescreve o que o ms disse,
+e foi essa a decisão do card `04`.
 
-**Então quem decide não renderizar é esta tela.** Célula vazia, não zero: zero é uma nota, ausência de
-leitura não é.
+⚠️ **Correção (verificada no código do ms, não no docblock): o mecanismo não é o que este spec dizia.**
+A versão anterior falava em *"cartão refotografado carrega a nota da tentativa anterior"*. **Reenviar
+cria um `Historico` novo** e a junção re-aponta por upsert, então não é isso. São outros dois caminhos,
+os dois dentro do ciclo de **um mesmo documento**:
+
+1. `createPending` grava `questoesRespondidas` e `completeProcessing` grava `aproveitamento` — os dois
+   **antes** de o `marcarFalha` poder cair naquele documento (`simulado.service.ts:171-210` mostra o
+   caminho criar-e-falhar direto).
+2. O reprocessamento (`prepararParaProcessamento`) troca o status do **mesmo** documento sem tocar nos
+   números, como o card `03` já havia registrado para `respostas`.
+
+**Quem decide não renderizar é esta tela**, para os dois campos, por uma função só. Célula vazia, não
+zero: zero é uma nota, ausência de leitura não é. E "90 respondidas" ao lado de "Falhou" afirma que a
+folha foi lida — que é exatamente o que não houve.
+
+⚠️ **`cartaoCode` NÃO entra no gate**, e a diferença importa: ele é escrito do QR da folha no
+`createAwaitingOmr`, é a **identidade** do cartão físico e não um **resultado** da leitura. Numa linha
+que falhou ele é a coisa mais útil que existe — diz qual folha refotografar.
 
 ⚠️ É o mesmo defeito que a revisão do `04` pegou no cálculo da média, reaparecendo na célula. Lá foi
 fechado gateando por `status === 'completed'`; aqui é o mesmo gate, no render. Um teste precisa fixar
@@ -262,8 +278,8 @@ legado). Para verificar: `ESLINT_USE_FLAT_CONFIG=false npx eslint <caminhos>`.
 - [ ] A rota é protegida por `gerenciarEstudantes`
 - [ ] `?turma=` restringe o relatório, e sem ele é o cursinho inteiro
 - [ ] Estudante sem cartão aparece, lido de `enviouCartao` e não inferido
-- [ ] **Linha com status diferente de `completed` não mostra nota** — teste com uma linha `failed` que
-      traz `aproveitamentoGeral`
+- [ ] **Linha com status diferente de `completed` não mostra nota nem questões respondidas** — teste
+      com uma linha `failed` que traz os dois
 - [ ] Linha `failed` mostra a descrição amigável do card `01`, **em coluna própria**
 - [ ] A coluna Turma não aparece quando há `?turma=`
 - [ ] As duas contagens aparecem; média `null` vira "—", não "0%"
