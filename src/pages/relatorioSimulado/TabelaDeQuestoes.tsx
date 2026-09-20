@@ -10,6 +10,8 @@ import {
 import type { QuestaoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useState } from "react";
+import { BotaoExportar } from "./BotaoExportar";
+import { planilhaDeQuestoes } from "./exportar";
 import {
   formatarPercentual,
   percentualDaAlternativa,
@@ -176,10 +178,16 @@ export function TabelaDeQuestoes({
   questoes,
   estado,
   onRetry,
+  nomeArquivo,
 }: {
   questoes: QuestaoDoRelatorio[];
   estado: "idle" | "loading" | "error";
   onRetry?: () => void;
+  /**
+   * Nome do CSV, sem extensão. ⚠️ Opcional: sem ele o botão de exportar não
+   * aparece, e é assim que os testes que só exercitam a tabela seguem valendo.
+   */
+  nomeArquivo?: string;
 }) {
   const [sort, setSort] = useState<SortState | undefined>({
     columnId: "numero",
@@ -217,8 +225,29 @@ export function TabelaDeQuestoes({
     return ordenadas.slice(inicio - 1, fim);
   }, [ordenadas, pagina]);
 
+  /*
+    ⚠️ Das questões INTEIRAS, não de `daPagina`: paginação é de leitura na
+    tela, não de escopo. Exportar só a página aberta daria uma planilha
+    incompleta sem aviso nenhum.
+
+    ⚠️ E de `ordenadas`, para o arquivo sair na mesma ordem que a pessoa está
+    vendo — é o que faz conferir tela contra planilha não virar quebra-cabeça.
+  */
+  const planilha = useMemo(() => planilhaDeQuestoes(ordenadas), [ordenadas]);
+
   return (
     <div className="flex flex-col">
+      {nomeArquivo !== undefined && (
+        <div
+          className={cn(
+            "flex justify-end border-b px-4 py-2 print:hidden",
+            dashV2.surface,
+            dashV2.border,
+          )}
+        >
+          <BotaoExportar planilha={planilha} nomeArquivo={nomeArquivo} />
+        </div>
+      )}
       <DashTable<QuestaoDoRelatorio>
         rows={daPagina}
         columns={colunas}

@@ -1,6 +1,10 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
+
+const exportAnalyticsCsv = vi.hoisted(() => vi.fn());
+vi.mock("@/utils/exportAnalyticsCsv", () => ({ exportAnalyticsCsv }));
 import { describe, expect, it } from "vitest";
 import { QUESTOES_POR_PAGINA, TabelaDeQuestoes } from "./TabelaDeQuestoes";
+import { vi, beforeEach } from "vitest";
 import type { QuestaoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 
 const questao = (
@@ -237,5 +241,38 @@ describe("TabelaDeQuestoes — paginação", () => {
     expect(
       container.querySelectorAll('[data-column-id="numero"]'),
     ).toHaveLength(5);
+  });
+});
+
+describe("TabelaDeQuestoes — exportar CSV", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  const muitas = (n: number) =>
+    Array.from({ length: n }, (_, i) =>
+      questao({ questaoId: `q${i}`, numero: i + 1 }),
+    );
+
+  it("⚠️ exporta TODAS as questões, não só a página aberta", () => {
+    // Paginação é de leitura na tela, não de escopo: exportar 25 de 30 daria
+    // uma planilha incompleta sem aviso nenhum. Com 30 questões a lista tem
+    // duas páginas — é o que faz este teste discriminar.
+    render(
+      <TabelaDeQuestoes
+        questoes={muitas(30)}
+        estado="idle"
+        nomeArquivo="questoes-x"
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("exportar-csv"));
+
+    expect(exportAnalyticsCsv.mock.calls[0][1]).toHaveLength(30);
+  });
+
+  it("⚠️ sem `nomeArquivo` o botão nem aparece", () => {
+    // É o que mantém válidos os testes que só exercitam a tabela.
+    render(<TabelaDeQuestoes questoes={muitas(3)} estado="idle" />);
+
+    expect(screen.queryByTestId("exportar-csv")).not.toBeInTheDocument();
   });
 });
