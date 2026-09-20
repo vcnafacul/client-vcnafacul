@@ -92,3 +92,29 @@ export interface SimuladoComCartao {
 export interface SimuladosComCartao {
   simulados: SimuladoComCartao[];
 }
+
+/**
+ * ⚠️ Três estados, não dois. E é `sem_leitura`, não `em_branco`: o ms-omr
+ * descarta questão em branco e dupla marcação igualmente, então os dois chegam
+ * indistinguíveis. O rótulo diz o que se sabe.
+ */
+export type ResultadoDaQuestao = "acerto" | "erro" | "sem_leitura";
+
+export interface RespostaDoEstudante {
+  numero: number | null;
+  questaoId: string;
+  /** AUSENTE quando não houve leitura — não vazio, não nulo. */
+  alternativaEstudante?: string;
+  alternativaCorreta?: string;
+  /**
+   * ⚠️ Classificado pelo ms, não aqui: a regra de "sem leitura" é a ausência
+   * da chave, e duas implementações dela divergiriam.
+   */
+  resultado: ResultadoDaQuestao;
+}
+
+export interface DetalheDoEstudante {
+  status: StatusDoCartao;
+  falha?: FalhaHistorico;
+  respostas: RespostaDoEstudante[];
+}
