@@ -223,22 +223,76 @@ export function PlatformRoutes() {
             </ProtectedRoutePermission>
           }
         />
-        <Route path={DASH_ANALYTICS} element={<Analytics />} />
+        <Route
+          path={DASH_ANALYTICS}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.criarQuestao]}
+            >
+              <Analytics />
+            </ProtectedRoutePermission>
+          }
+        />
         <Route
           path={PARTNER_PREP_INSCRIPTION}
-          element={<PartnerPrepInscriptionManager />}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.gerenciarProcessoSeletivo]}
+            >
+              <PartnerPrepInscriptionManager />
+            </ProtectedRoutePermission>
+          }
         />
-        <Route path={MANAGER_COLLABORATOR} element={<ManagerCollaborator />} />
-        <Route path={PARTNER_CLASS} element={<PartnerClass />} />
+        <Route
+          path={MANAGER_COLLABORATOR}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.gerenciarColaboradores]}
+            >
+              <ManagerCollaborator />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={PARTNER_CLASS}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.visualizarTurmas]}
+            >
+              <PartnerClass />
+            </ProtectedRoutePermission>
+          }
+        />
         <Route
           path={`${PARTNER_PREP_INSCRIPTION}/:inscriptionId`}
-          element={<PartnerPrepInscritionStudentManager />}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.gerenciarProcessoSeletivo]}
+            >
+              <PartnerPrepInscritionStudentManager />
+            </ProtectedRoutePermission>
+          }
         />
         <Route
           path={`${PARTNER_CLASS}/:hashClassId`}
-          element={<PartnerClassWithStudents />}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.visualizarTurmas]}
+            >
+              <PartnerClassWithStudents />
+            </ProtectedRoutePermission>
+          }
         />
-        <Route path={PARTNER_CLASS_STUDENTS} element={<StudentsEnrolled />} />
+        <Route
+          path={PARTNER_CLASS_STUDENTS}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.visualizarEstudantes]}
+            >
+              <StudentsEnrolled />
+            </ProtectedRoutePermission>
+          }
+        />
         <Route path={DASH} element={<Dashboard />} />
         <Route path={SIMULADO} element={<MainSimulate />} />
         <Route path={SIMULADO_HISTORIES} element={<SimulationHistories />} />
