@@ -1,9 +1,20 @@
+import type { EstudanteEncontrado } from "@/dtos/cartaoResposta/buscaEstudante";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import ModalTemplate from "../../../components/templates/modalTemplate";
-import { ResultadosCartao } from "../../../dtos/cartaoResposta/resultados";
-import { buscarResultados } from "../../../services/cartaoResposta/buscarResultados";
 import { uploadCartao } from "../../../services/cartaoResposta/uploadCartao";
+import {
+  MINIMO_PARA_BUSCAR,
+  useBuscaDeEstudantes,
+} from "./useBuscaDeEstudantes";
+
+export const TEXTO_PLACEHOLDER = "Matrícula, nome ou sobrenome";
+export const TEXTO_DIGITE_MAIS = `Digite ao menos ${MINIMO_PARA_BUSCAR} caracteres`;
+export const TEXTO_BUSCANDO = "Buscando...";
+export const TEXTO_NADA_ENCONTRADO = "Nenhum estudante encontrado";
+export const TEXTO_ERRO_BUSCA = "Não foi possível buscar agora";
+export const TEXTO_TROCAR = "Trocar";
+export const TEXTO_SEM_TURMA = "Sem turma";
 
 interface UploadCartaoModalProps {
   isOpen: boolean;
@@ -16,15 +27,25 @@ export default function UploadCartaoModal({
   handleClose,
   token,
 }: UploadCartaoModalProps) {
-  const [matricula, setMatricula] = useState("");
-  const [resultado, setResultado] = useState<ResultadosCartao | null>(null);
+  const [termo, setTermo] = useState("");
+  /** `null` = ainda escolhendo. Enquanto for nulo, a lista manda na tela. */
+  const [escolhido, setEscolhido] = useState<EstudanteEncontrado | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [buscando, setBuscando] = useState(false);
   const [enviando, setEnviando] = useState(false);
 
+  /*
+    ⚠️ A busca para quando alguém já foi escolhido: sem isso, o termo continua
+    no campo e o hook segue consultando a cada render — gastando rede para
+    montar uma lista que a tela não mostra mais.
+  */
+  const { estudantes, estado } = useBuscaDeEstudantes(
+    escolhido ? "" : termo,
+    token,
+  );
+
   const reset = () => {
-    setMatricula("");
-    setResultado(null);
+    setTermo("");
+    setEscolhido(null);
     setFile(null);
   };
 
@@ -33,25 +54,12 @@ export default function UploadCartaoModal({
     handleClose();
   };
 
-  const handleBuscar = async () => {
-    if (!matricula.trim()) return;
-    setBuscando(true);
-    try {
-      setResultado(await buscarResultados(matricula.trim(), token));
-    } catch (err) {
-      setResultado(null);
-      toast.error((err as Error).message);
-    } finally {
-      setBuscando(false);
-    }
-  };
-
   const handleEnviar = async () => {
-    if (!resultado || !file) return;
+    if (!escolhido || !file) return;
     setEnviando(true);
     const id = toast.loading("Enviando cartão...");
     try {
-      await uploadCartao(file, resultado.estudante.userId, token);
+      await uploadCartao(file, escolhido.userId, token);
       toast.update(id, {
         render:
           "Cartão enviado. O resultado aparece aqui quando o processamento terminar.",
@@ -83,52 +91,96 @@ export default function UploadCartaoModal({
       <div className="p-6 space-y-4">
         <h2 className="text-lg font-semibold">Enviar cartão de resposta</h2>
 
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={matricula}
-            onChange={(e) => setMatricula(e.target.value)}
-            placeholder="Matrícula do aluno"
-            className="flex-1 border rounded px-3 py-2"
-          />
-          <button
-            onClick={handleBuscar}
-            disabled={buscando}
-            className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
-          >
-            {buscando ? "Buscando..." : "Buscar"}
-          </button>
-        </div>
+        {/*
+          ⚠️ Sem botão "Buscar": a consulta sai sozinha 500ms depois da última
+          tecla. O botão obrigava um clique a mais para cada tentativa, e numa
+          busca por nome quase sempre são várias tentativas.
+        */}
+        {!escolhido && (
+          <div className="space-y-2">
+            <input
+              type="text"
+              autoFocus
+              value={termo}
+              onChange={(e) => setTermo(e.target.value)}
+              placeholder={TEXTO_PLACEHOLDER}
+              data-testid="busca-estudante"
+              aria-label={TEXTO_PLACEHOLDER}
+              className="w-full border rounded px-3 py-2"
+            />
 
-        {resultado && (
-          <div className="space-y-3">
-            <div className="border rounded p-3">
-              <p className="font-medium">{resultado.estudante.nome}</p>
-              <p className="text-sm text-gray-500">
-                Matrícula: {resultado.estudante.matricula}
-              </p>
-            </div>
+            {/*
+              ⚠️ Cada estado diz o que está acontecendo. Uma lista vazia sem
+              texto nenhum é indistinguível de "ainda não busquei", e é o que
+              faz a pessoa ficar digitando à espera de algo que já terminou.
+            */}
+            {termo.trim().length > 0 &&
+              termo.trim().length < MINIMO_PARA_BUSCAR && (
+                <p className="text-sm text-gray-500">{TEXTO_DIGITE_MAIS}</p>
+              )}
+            {estado === "buscando" && (
+              <p className="text-sm text-gray-500">{TEXTO_BUSCANDO}</p>
+            )}
+            {estado === "erro" && (
+              <p className="text-sm text-red-600">{TEXTO_ERRO_BUSCA}</p>
+            )}
+            {estado === "pronto" && estudantes.length === 0 && (
+              <p className="text-sm text-gray-500">{TEXTO_NADA_ENCONTRADO}</p>
+            )}
 
-            <div>
-              <p className="text-sm text-gray-600 mb-1">
-                Últimos resultados: {resultado.historicos.length}
-              </p>
-              <ul className="text-sm max-h-32 overflow-auto divide-y">
-                {resultado.historicos.map((h, i) => (
-                  <li key={i} className="py-1 flex justify-between gap-3">
-                    <span className="shrink-0">{h.ano ?? "—"}</span>
-                    <span
-                      className={
-                        h.falha
-                          ? "text-right text-red-600"
-                          : "text-right text-gray-500"
-                      }
+            {estudantes.length > 0 && (
+              <ul
+                data-testid="sugestoes-estudante"
+                className="max-h-64 overflow-auto divide-y rounded border"
+              >
+                {estudantes.map((e) => (
+                  <li key={e.userId}>
+                    <button
+                      type="button"
+                      onClick={() => setEscolhido(e)}
+                      className="w-full px-3 py-2 text-left hover:bg-gray-50"
                     >
-                      {h.falha ? h.falha.descricao : (h.status ?? "")}
-                    </span>
+                      <span className="block font-medium">{e.nome}</span>
+                      {/*
+                        ⚠️ Matrícula E turma embaixo: dois estudantes com o
+                        mesmo nome são caso real, e sem isso não há como saber
+                        para qual dos dois o cartão vai.
+                      */}
+                      <span className="block text-xs text-gray-500">
+                        {e.matricula} · {e.turma ?? TEXTO_SEM_TURMA}
+                      </span>
+                    </button>
                   </li>
                 ))}
               </ul>
+            )}
+          </div>
+        )}
+
+        {escolhido && (
+          <div className="space-y-3">
+            <div className="flex items-start justify-between gap-3 rounded border p-3">
+              <div>
+                <p className="font-medium">{escolhido.nome}</p>
+                <p className="text-sm text-gray-500">
+                  {escolhido.matricula} · {escolhido.turma ?? TEXTO_SEM_TURMA}
+                </p>
+              </div>
+              {/*
+                ⚠️ "Trocar" devolve a busca. Sem ele, corrigir uma escolha
+                errada exigiria fechar o modal e recomeçar — e o envio é a ação
+                que não dá para desfazer.
+              */}
+              <button
+                type="button"
+                onClick={() => {
+                  setEscolhido(null);
+                  setTermo("");
+                }}
+                className="shrink-0 text-sm underline"
+              >
+                {TEXTO_TROCAR}
+              </button>
             </div>
 
             <input
