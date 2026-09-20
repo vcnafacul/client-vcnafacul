@@ -64,6 +64,11 @@ export const cursinhoProva = `${mssimulado}/cursinho/prova`;
 export const questoes = `${mssimulado}/questoes`;
 export const historico = `${mssimulado}/historico`;
 export const cartaoResposta = `${mssimulado}/cartao-resposta`;
+/**
+ * ⚠️ Não confundir com o `report` acima (`${simulado}/report`), que é o POST
+ * de respostas do aluno. Este é o relatório do coordenador.
+ */
+export const relatorioSimulado = `${mssimulado}/relatorio/simulado`;
 export const caderno = `${mssimulado}/caderno`;
 export const cadernoTemplate = `${caderno}/template`;
 export const auditLog = `${BASE_URL}/auditlog`;
