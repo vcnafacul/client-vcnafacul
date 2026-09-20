@@ -44,6 +44,13 @@
 - ⚠️ **`npm run lint` está quebrado no repo** (ESLint 9 procurando `eslint.config.js` com `.eslintrc.cjs` legado). Use `ESLINT_USE_FLAT_CONFIG=false npx eslint <caminhos>`.
 - ⚠️ **Radix Popper é caro no jsdom.** `DashToolbar.test.tsx` leva ~51s para 22 testes, e o custo vaza entre testes. **Poucos testes abrindo tooltip**, cada um verificando tudo de uma abertura só. Lógica de status é função pura e se testa sem render.
 - **Serviços são mockados com `vi.mock` no caminho exato do import** — não há `msw` no projeto.
+- ⚠️ **`@testing-library/user-event` NÃO está instalado**, e não deve ser instalado por causa deste
+  card. Use `fireEvent`. Onde as tasks abaixo escrevem `userEvent.click(...)`, troque — foi erro de
+  quem escreveu o plano.
+- ⚠️ **E `fireEvent.click` não troca aba do Radix.** O `TabsTrigger` reage a **`onMouseDown`**; um
+  `click` deixa a aba parada e faz um teste de "não rebuscou" passar sem provar nada. Use
+  `fireEvent.mouseDown` para abas. Há um helper `abrirAba()` em
+  `src/pages/relatorioSimulado/index.test.tsx` — leia antes de escrever o seu.
 - Commit **adicionando por nome**, nunca `git add .`.
 
 ---
