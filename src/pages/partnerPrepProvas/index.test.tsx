@@ -669,6 +669,49 @@ describe("volta do relatório — o que o state restaura", () => {
     );
   });
 
+  /**
+   * ⚠️ **O estado pela metade é a única razão de a `restauracaoCompleta`
+   * existir** — e era o único que nenhum teste exercia. O completo restaura e
+   * o ausente não restaura nada; o que falta provar é que um `de` com
+   * `filtros` mas sem `provaId` nem `pagina` cai no mesmo lugar do ausente.
+   *
+   * Meia restauração é pior que nenhuma: a pessoa vê a lista filtrada, não vê
+   * o modal, e não tem como saber qual metade voltou.
+   */
+  const FILTROS_CHEIOS = {
+    nome: "2023",
+    edicao: Edicao.Digital,
+    aplicacao: "1",
+    ano: "2023",
+    gabaritoOnly: true,
+  };
+
+  /**
+   * Um caso por conjunto que falta — é assim que cada pedaço da guarda fica
+   * coberto, e não por um caso só: com apenas "filtros sem o resto", derrubar
+   * o `!!de.provaId` da guarda continuaria devolvendo `false` e o teste
+   * passaria do mesmo jeito.
+   */
+  it.each([
+    ["só filtros", { filtros: FILTROS_CHEIOS }],
+    ["filtros e prova, sem página", { filtros: FILTROS_CHEIOS, provaId: "b" }],
+    ["filtros e página, sem prova", { filtros: FILTROS_CHEIOS, pagina: 2 }],
+    ["prova e página, sem filtros", { provaId: "b", pagina: 2 }],
+  ])(
+    "⚠️ restauração pela metade (%s) não restaura NADA — nem filtro, nem modal",
+    async (_caso, parcial) => {
+      await montarComState({ de: { caminho: CAMINHO_DA_TELA, ...parcial } });
+
+      expect(screen.getByPlaceholderText("Buscar por nome")).toHaveValue("");
+      expect(screen.getByLabelText("Todas edições")).toHaveValue("");
+      expect(screen.getByLabelText("Todas aplicações")).toHaveValue("");
+      expect(screen.getByLabelText("Todos os anos")).toHaveValue("");
+      expect(screen.getByRole("checkbox")).not.toBeChecked();
+      expect(screen.queryByText(/Limpar filtros/)).toBeNull();
+      expect(screen.queryByTestId("show-prova")).toBeNull();
+    },
+  );
+
   it("prova que não está mais na lista não abre modal nenhum", async () => {
     await montarComState(deVolta({ provaId: "sumiu" }));
 

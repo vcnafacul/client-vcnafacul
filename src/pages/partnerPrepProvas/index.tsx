@@ -30,6 +30,7 @@ import UploadCartaoModal from "../dashProvas/modals/uploadCartaoModal";
 import type {
   EstadoDeVolta,
   LocationStateDoRelatorio,
+  VoltaParaListagem,
 } from "../relatorioSimulado/voltar";
 import { partnerPrepProva } from "./data";
 
@@ -86,6 +87,23 @@ const criarCategoriaDoCursinho: CriarCategoriaService = (input, token) => {
   return createCategoriaCursinho({ ...input, nome: input.nome.trim() }, token);
 };
 
+/**
+ * O `de` veio da **listagem de provas** (e não da tela de turma), e traz tudo
+ * o que esta tela precisa para se remontar. Ver `relatorioSimulado/voltar.ts`.
+ *
+ * ⚠️ **A guarda promete um pouco mais do que checa**: ela olha só a presença
+ * dos três campos, não o miolo de `filtros` — um `{ filtros: {} }` passa e
+ * `de.filtros.nome` fica tipado `string` valendo `undefined`. Só dá para
+ * chegar aí com `history.state` forjado à mão; validar campo a campo aqui
+ * seria pagar esquema de runtime por um ataque que não existe. Fica escrito
+ * para ninguém ler a assinatura como validação.
+ */
+function restauracaoCompleta(
+  de: EstadoDeVolta | undefined,
+): de is VoltaParaListagem {
+  return !!de?.filtros && !!de.provaId && de.pagina !== undefined;
+}
+
 function PartnerPrepProvas() {
   const [provas, setProvas] = useState<Prova[]>([]);
   const [provaSelected, setProvaSelected] = useState<Prova | null>(null);
@@ -101,7 +119,20 @@ function PartnerPrepProvas() {
    * duas pontas não divergirem em silêncio.
    */
   const location = useLocation();
-  const de = (location.state as LocationStateDoRelatorio | null)?.de;
+  const deBruto = (location.state as LocationStateDoRelatorio | null)?.de;
+
+  /**
+   * ⚠️ **A guarda que o tipo não tem como impor.** O `EstadoDeVolta` é união
+   * (ou vêm os três, ou nenhum) e isso segura os *call sites*; aqui não há
+   * call site nenhum — `location.state` é `any` e chega do histórico do
+   * navegador, que pode trazer qualquer coisa, inclusive um `de` de uma versão
+   * antiga da aplicação.
+   *
+   * Nesta tela os três andam JUNTOS: restaurar meia volta (filtro sem página,
+   * página sem modal) é pior que não restaurar, porque a pessoa não tem como
+   * saber qual metade voltou. Ou vem tudo, ou não se restaura nada.
+   */
+  const de = restauracaoCompleta(deBruto) ? deBruto : undefined;
 
   /**
    * ⚠️ **Os filtros voltam no PRIMEIRO render**, pelo inicializador do

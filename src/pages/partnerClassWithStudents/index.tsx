@@ -33,6 +33,7 @@ import { ClassSimuladoAnalytics } from "@/components/organisms/classSimuladoAnal
 import { ClassEssayAnalytics } from "@/components/organisms/classEssayAnalytics";
 import { MonthPicker } from "@/components/organisms/classSimuladoAnalytics/MonthPicker";
 import { ClassMonthsList } from "@/types/classAnalytics/classSimuladoAnalytics";
+import { SimuladosDaTurma } from "./SimuladosDaTurma";
 
 function toStudentsDtoOutput(
   student: ClassStudent,
@@ -130,6 +131,12 @@ export function PartnerClassWithStudents() {
   } = useAuthStore();
 
   const executeAsync = useToastAsync();
+
+  // ⚠️ A aba some sem a permissão, e com ela some a chamada do `04b`, que
+  // devolveria 403. Diferente do ícone do card 06, que fica desabilitado com
+  // motivo: aba é navegação, fica no topo o tempo todo, e o `TabsTrigger`
+  // desabilitado do shadcn não recebe foco nem hover para dizer por quê.
+  const podeVerRelatorio = !!permissao[Roles.gerenciarEstudantes];
 
   useEffect(() => {
     if (!classEntity.partnerId) return;
@@ -450,6 +457,9 @@ export function PartnerClassWithStudents() {
           <TabsList>
             <TabsTrigger value="alunos">Alunos</TabsTrigger>
             <TabsTrigger value="desempenho">Desempenho</TabsTrigger>
+            {podeVerRelatorio && (
+              <TabsTrigger value="simulados">Simulados por cartão</TabsTrigger>
+            )}
           </TabsList>
           {activeTab === "desempenho" &&
             simuladoList &&
@@ -539,6 +549,30 @@ export function PartnerClassWithStudents() {
             )}
           </div>
         </TabsContent>
+
+        {/*
+          ⚠️ Quem faz a busca ser preguiçosa é o **Radix**, não a guarda abaixo:
+          ele desmonta o `TabsContent` inativo, então a `SimuladosDaTurma` só
+          monta — e só busca — com a aba ativa. A tela já faz duas chamadas no
+          mount; uma terceira servindo uma aba que a maioria não abre é custo
+          por nada.
+
+          ⚠️ E porque o Radix desmonta, **reabrir a aba busca de novo** — o
+          componente perde o estado junto. É o comportamento desejado: quem está
+          subindo cartões quer os números novos ao voltar. Há teste fixando
+          isso em `index.test.tsx`.
+
+          O `activeTab === "simulados"` é cinto e suspensório, para o dia em que
+          alguém puser `forceMount` no `TabsContent` — aí o Radix passa a
+          renderizar a aba inativa e só a guarda segura a chamada.
+        */}
+        {podeVerRelatorio && (
+          <TabsContent value="simulados">
+            {activeTab === "simulados" && hashClassId && (
+              <SimuladosDaTurma token={token} turmaId={hashClassId} />
+            )}
+          </TabsContent>
+        )}
       </Tabs>
 
       <ModalAttendanceHistory />
