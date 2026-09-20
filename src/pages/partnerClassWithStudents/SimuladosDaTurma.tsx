@@ -149,6 +149,12 @@ export function SimuladosDaTurma({
         estado interno (página, busca, aba aberta) sobrevive à troca — a pessoa
         veria a página 3 de um relatório que acabou de mudar.
       */}
+      {/*
+        ⚠️ `comPadding={false}` porque esta aba já dá o espaçamento vertical
+        pelo `gap-3` do container e pelo `pt-3` do seletor. O recuo HORIZONTAL
+        não depende disso: cada bloco do conteúdo traz o seu, e é o que faz o
+        resumo alinhar com o seletor acima e com a tabela abaixo.
+      */}
       <RelatorioDoSimuladoConteudo
         key={escolhido}
         simuladoId={escolhido}

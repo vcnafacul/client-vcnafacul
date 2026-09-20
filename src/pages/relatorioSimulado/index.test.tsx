@@ -702,3 +702,38 @@ describe("RelatorioSimulado — exportar CSV", () => {
     expect(nome).toMatch(/^questoes-sim-1-/);
   });
 });
+
+describe("RelatorioSimulado — alinhamento horizontal", () => {
+  /*
+    ⚠️ jsdom não calcula layout: o que dá para afirmar aqui é que as classes de
+    recuo estão nos blocos certos. O resultado visual — tudo alinhado no mesmo
+    eixo — é gate manual, registrado no PR. Mesma postura do `impressao.test`.
+  */
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarRelatorio.mockResolvedValue(RESPOSTA);
+    buscarQuestoes.mockResolvedValue({ questoes: [] });
+  });
+
+  it("⚠️ o resumo tem recuo PRÓPRIO, não herdado do container", async () => {
+    // O container não pode dar `px`: a `DashFilterBar` e a `DashTable` já
+    // trazem o seu, e os dois somariam — o resumo a 16px da borda e a faixa
+    // de filtros a 32px, desalinhados na mesma tela.
+    const { container } = montar();
+    await screen.findByText("Ana Silva");
+
+    const resumo = screen.getByText("Estudantes no recorte").closest("section");
+    expect(resumo?.parentElement?.className).toContain("px-4");
+    // e o container NÃO tem px
+    const raiz = container.querySelector(".flex.flex-col.gap-4");
+    expect(raiz?.className).not.toMatch(/(^|\s)px-4(\s|$)/);
+    expect(raiz?.className).not.toMatch(/(^|\s)p-4(\s|$)/);
+  });
+
+  it("⚠️ a faixa de filtros mantém o SEU px-4, sem somar com o pai", async () => {
+    montar();
+    await screen.findByText("Ana Silva");
+
+    expect(screen.getByTestId("dash-filter-bar").className).toContain("px-4");
+  });
+});

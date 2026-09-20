@@ -263,10 +263,26 @@ export function RelatorioDoSimuladoConteudo({
 
   return (
     <TooltipProvider>
-      <div className={cn("flex flex-col gap-4", comPadding && "p-4")}>
-        {cabecalho}
+      {/*
+        ⚠️ **O recuo horizontal é de cada bloco, nunca deste container.**
 
-        {relatorio && <ResumoDoRelatorio resumo={relatorio.resumo} />}
+        A `DashFilterBar`, a `DashTable` e os vazios já trazem `px-4` próprio.
+        Um `px-4` aqui SOMARIA ao deles: o resumo ficaria a 16px da borda e a
+        faixa de filtros a 32px, desalinhados entre si na mesma tela. Era o que
+        acontecia na rota, e na aba da turma o resumo ficava colado na borda
+        porque ali o padding do container estava desligado.
+
+        `py` continua sendo do container: espaço vertical não se acumula com
+        nada, e é o que separa o relatório do que vem acima dele.
+      */}
+      <div className={cn("flex flex-col gap-4", comPadding && "py-4")}>
+        {cabecalho !== undefined && <div className="px-4">{cabecalho}</div>}
+
+        {relatorio && (
+          <div className="px-4">
+            <ResumoDoRelatorio resumo={relatorio.resumo} />
+          </div>
+        )}
 
         <Tabs
           value={aba}
@@ -275,7 +291,7 @@ export function RelatorioDoSimuladoConteudo({
             if (v === "questoes") carregarQuestoes();
           }}
         >
-          <TabsList className="print:hidden">
+          <TabsList className="ml-4 print:hidden">
             <TabsTrigger value="estudantes">Estudantes</TabsTrigger>
             <TabsTrigger value="questoes">Questões</TabsTrigger>
           </TabsList>
