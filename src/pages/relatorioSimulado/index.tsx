@@ -26,6 +26,8 @@ import { colunasDoRelatorio } from "./colunas";
 import { filtrarLinhas, totalQueNaoEnviou } from "./filtrarLinhas";
 import { DetalheDoEstudante } from "./DetalheDoEstudante";
 import { indiceDeDificuldade } from "./dificuldadeDaQuestao";
+import { BotaoExportar } from "./BotaoExportar";
+import { nomeDoArquivo, planilhaDeEstudantes } from "./exportar";
 import { ResumoDoRelatorio } from "./ResumoDoRelatorio";
 import { TabelaDeQuestoes } from "./TabelaDeQuestoes";
 import type { LocationStateDoRelatorio } from "./voltar";
@@ -240,6 +242,19 @@ function RelatorioSimulado() {
     [questoes],
   );
 
+  /*
+    ⚠️ Deriva de `linhas`, que já passou pelo filtro e pela ordenação — e NÃO
+    de `todasAsLinhas`. O arquivo é o que está na tela, como a impressão: quem
+    quer o recorte inteiro limpa o filtro antes.
+
+    ⚠️ E não de `linhasDaPagina`: paginação é de leitura na tela, não de
+    escopo. Exportar só 25 de 340 seria uma planilha incompleta sem aviso.
+  */
+  const planilhaEstudantes = useMemo(
+    () => planilhaDeEstudantes(linhas, { comTurma: turmaId !== undefined }),
+    [linhas, turmaId],
+  );
+
   const filtrosAtivos = (mostrarQuemNaoEnviou ? 1 : 0) + (busca ? 1 : 0);
 
   const limparFiltros = () => {
@@ -336,6 +351,20 @@ function RelatorioSimulado() {
                   Mostrar quem não enviou
                   {quantosNaoEnviaram > 0 && ` (${quantosNaoEnviaram})`}
                 </label>
+                {/*
+                  ⚠️ Dentro da faixa de filtros, e não numa barra própria: o
+                  que ele baixa depende do filtro ao lado, e pôr os dois juntos
+                  é o que torna essa relação visível.
+                */}
+                <BotaoExportar
+                  planilha={planilhaEstudantes}
+                  nomeArquivo={nomeDoArquivo(
+                    "estudantes",
+                    simuladoId ?? "",
+                    turmaId,
+                  )}
+                  rotulo="Exportar CSV"
+                />
               </DashFilterBar>
             </div>
             {/*
@@ -425,6 +454,7 @@ function RelatorioSimulado() {
               questoes={questoes ?? []}
               estado={estadoQuestoes}
               onRetry={carregarQuestoes}
+              nomeArquivo={nomeDoArquivo("questoes", simuladoId ?? "", turmaId)}
             />
           </TabsContent>
         </Tabs>

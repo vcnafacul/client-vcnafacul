@@ -23,6 +23,8 @@ vi.mock("@/services/relatorioSimulado/buscarRelatorio", () => ({
   caminhoDoRelatorio: vi.fn(),
 }));
 vi.mock("@/services/relatorioSimulado/buscarQuestoes", () => ({ buscarQuestoes }));
+const exportAnalyticsCsv = vi.hoisted(() => vi.fn());
+vi.mock("@/utils/exportAnalyticsCsv", () => ({ exportAnalyticsCsv }));
 vi.mock("@/services/relatorioSimulado/buscarDetalheDoEstudante", () => ({
   buscarDetalheDoEstudante,
 }));
@@ -610,5 +612,93 @@ describe("RelatorioSimulado — acertos da turma no detalhe", () => {
     expect(
       container.querySelector('[data-column-id="dificuldade"]')?.textContent,
     ).toBe("—");
+  });
+});
+
+describe("RelatorioSimulado — exportar CSV", () => {
+  const muitos = (n: number) => ({
+    linhas: Array.from({ length: n }, (_, i) => ({
+      ...RESPOSTA.linhas[0],
+      usuario: `u${i}`,
+      nome: `Estudante ${i}`,
+      matricula: `20250${i}`,
+    })),
+    resumo: RESPOSTA.resumo,
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarRelatorio.mockResolvedValue(RESPOSTA);
+    buscarQuestoes.mockResolvedValue({ questoes: [] });
+  });
+
+  const linhasExportadas = () => exportAnalyticsCsv.mock.calls[0][1];
+
+  it("exporta os estudantes com cabeçalho e nome de arquivo", async () => {
+    montar();
+    await screen.findByText("Ana Silva");
+
+    fireEvent.click(screen.getByTestId("exportar-csv"));
+
+    const [cabecalho, , nome] = exportAnalyticsCsv.mock.calls[0];
+    expect(cabecalho).toContain("Estudante");
+    expect(nome).toMatch(/^estudantes-sim-1-\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it("⚠️ o CSV respeita o FILTRO — é o que está na tela", async () => {
+    // Coerente com a impressão, que já sai filtrada. Quem quer tudo limpa o
+    // filtro antes.
+    buscarRelatorio.mockResolvedValue(muitos(30));
+    montar();
+    await screen.findByText("Estudante 0");
+
+    fireEvent.change(screen.getByPlaceholderText(/nome ou matrícula/i), {
+      target: { value: "Estudante 7" },
+    });
+    await waitFor(() =>
+      expect(screen.queryByText("Estudante 0")).not.toBeInTheDocument(),
+    );
+    fireEvent.click(screen.getByTestId("exportar-csv"));
+
+    expect(linhasExportadas()).toHaveLength(1);
+  });
+
+  it("⚠️ o CSV IGNORA a paginação — exporta o filtrado inteiro, não a página", async () => {
+    // Paginação é de leitura na tela, não de escopo: exportar 25 de 30 daria
+    // uma planilha incompleta sem aviso nenhum.
+    buscarRelatorio.mockResolvedValue(muitos(30));
+    montar();
+    await screen.findByText("Estudante 0");
+
+    fireEvent.click(screen.getByTestId("exportar-csv"));
+
+    expect(linhasExportadas()).toHaveLength(30);
+  });
+
+  it("⚠️ a aba de questões tem o SEU botão, com o seu arquivo", async () => {
+    buscarQuestoes.mockResolvedValue({
+      questoes: [
+        {
+          numero: 1,
+          questaoId: "q1",
+          respondentes: 10,
+          acertos: 5,
+          erros: 5,
+          semLeitura: 0,
+          porAlternativa: {},
+        },
+      ],
+    });
+    montar();
+    await screen.findByText("Ana Silva");
+    abrirAba(/quest/i);
+    await screen.findByText("Acertos");
+
+    // o botão da aba de questões é o único visível agora
+    fireEvent.click(screen.getByTestId("exportar-csv"));
+
+    const [cabecalho, , nome] = exportAnalyticsCsv.mock.calls[0];
+    expect(cabecalho).toContain("Respondentes");
+    expect(nome).toMatch(/^questoes-sim-1-/);
   });
 });
