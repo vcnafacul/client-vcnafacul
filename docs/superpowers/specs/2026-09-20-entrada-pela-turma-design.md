@@ -71,6 +71,11 @@ atividade seria afirmar o que o número não diz.
 
 ⚠️ **`cartoes` conta PESSOAS, não fotos** — a unicidade da junção é `{simulado, cursinhoId, usuario}`.
 
+⚠️ **`nome` pode vir `null`**, e a linha **não some por isso.** O `04b` devolve nulo quando o documento
+do `Simulado` sumiu da coleção — os cartões continuam existindo, e escondê-los seria o oposto do que
+este relatório serve para fazer. A linha mostra um rótulo honesto ("simulado removido") e continua
+clicável: o relatório dele ainda abre, porque as respostas estão no histórico, não no simulado.
+
 ⚠️ **"No cálculo da média", não "com leitura concluída"** — mesmo rótulo que o `06` adotou, e pelo
 mesmo motivo: a api conta com `status === 'completed'` **e** nota numérica.
 
@@ -127,6 +132,7 @@ de uma montagem só.
 - [ ] **A aba não aparece sem `gerenciarEstudantes`**, e o `04b` não é chamado
 - [ ] Lista só os simulados com cartão **daquela turma** — o `turmaId` chega ao serviço
 - [ ] Por simulado: nome, cartões, no cálculo da média, último envio
+- [ ] Simulado com `nome` nulo continua na lista, rotulado e clicável
 - [ ] Cada linha navega para o relatório do `06` **com `?turma=` aplicado**
 - [ ] Busca só quando a aba abre, e não de novo ao alternar
 - [ ] A tela diz que o recorte é só de cartão-resposta
