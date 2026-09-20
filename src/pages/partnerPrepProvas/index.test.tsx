@@ -1,3 +1,4 @@
+import { DEBOUNCE_BUSCA_MS } from "@/components/dashV2";
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -55,13 +56,25 @@ vi.mock("react-toastify", () => ({
 }));
 
 /**
- * ⚠️ Só o `useNavigate` é dublado — o resto do `react-router-dom` continua
- * real, senão o `MemoryRouter` do `montar` sumiria junto.
+ * ⚠️ Só o `useNavigate` e o `useLocation` são dublados — o resto do
+ * `react-router-dom` continua real, senão o `MemoryRouter` do `montar` sumiria
+ * junto.
+ *
+ * ⚠️ O `useLocation` dublado devolve **sempre o mesmo `state`**, mesmo depois
+ * do `navigate(..., { state: null })` que a tela dispara para consumi-lo. É de
+ * propósito: é assim que o teste de "fechar não reabre" consegue provar que
+ * quem segura o laço é o `ref`, e não a limpeza do state.
  */
 const navigate = vi.hoisted(() => vi.fn());
+const estadoDaLocation = vi.hoisted(() => ({ atual: null as unknown }));
+const CAMINHO_DA_TELA = "/dashboard/cursinho-provas";
 vi.mock("react-router-dom", async (original) => ({
   ...(await original<typeof import("react-router-dom")>()),
   useNavigate: () => navigate,
+  useLocation: () => ({
+    pathname: "/dashboard/cursinho-provas",
+    state: estadoDaLocation.atual,
+  }),
 }));
 
 /**
@@ -161,6 +174,22 @@ const PROVAS: Prova[] = [
   }),
 ];
 
+/**
+ * Uma lista grande o bastante para ter mais de uma página (o `pageSize` do
+ * `DashListTemplate` é 25). O `ano` decrescente fixa a ordem: a ordenação
+ * padrão da tela é `ano desc`, então a prova `i` cai exatamente na posição `i`.
+ */
+function provasNumeradas(quantas: number): Prova[] {
+  return Array.from({ length: quantas }, (_, i) =>
+    prova({
+      _id: `p${i}`,
+      nome: `Prova ${i}`,
+      ano: 3000 - i,
+      edicao: Edicao.Digital,
+    }),
+  );
+}
+
 const TODAS_AS_PERMISSOES: Record<string, boolean> = {
   [Roles.cadastrarProvasCursinho]: true,
   [Roles.visualizarProvasCursinho]: true,
@@ -185,6 +214,41 @@ async function montar() {
   return utils;
 }
 
+/** `montar`, mas com a tela chegando de volta do relatório. */
+async function montarComState(state: unknown) {
+  estadoDaLocation.atual = state;
+  return await montar();
+}
+
+/** O `de` que o relatório devolve, com os cinco filtros e a página. */
+function deVolta(over: {
+  filtros?: Partial<{
+    nome: string;
+    edicao: string;
+    aplicacao: string;
+    ano: string;
+    gabaritoOnly: boolean;
+  }>;
+  provaId?: string;
+  pagina?: number;
+}) {
+  return {
+    de: {
+      caminho: CAMINHO_DA_TELA,
+      filtros: {
+        nome: "",
+        edicao: "",
+        aplicacao: "",
+        ano: "",
+        gabaritoOnly: false,
+        ...over.filtros,
+      },
+      provaId: over.provaId ?? "b",
+      pagina: over.pagina ?? 1,
+    },
+  };
+}
+
 function chavesDasLinhas(): string[] {
   return [...document.querySelectorAll("[data-row-key]")].map(
     (el) => el.getAttribute("data-row-key") ?? "",
@@ -194,6 +258,7 @@ function chavesDasLinhas(): string[] {
 beforeEach(() => {
   telaDesktop();
   propsDoShowProva.atual = null;
+  estadoDaLocation.atual = null;
   navigate.mockClear();
   estado.provas = PROVAS;
   estado.permissao = { ...TODAS_AS_PERMISSOES };
@@ -252,7 +317,27 @@ describe("provas do cursinho — a mesma tabela da administração", () => {
     expect(relatorio.permitido).toBe(false);
 
     relatorio.aoAbrir({ _id: "sim-1" });
-    expect(navigate).toHaveBeenCalledWith("/dashboard/relatorio-simulado/sim-1");
+    // ⚠️ E leva junto de onde saiu — o relatório é rota, e sem isto o "voltar"
+    // devolve a pessoa a uma listagem sem filtro, na página 1, sem modal.
+    expect(navigate).toHaveBeenCalledWith(
+      "/dashboard/relatorio-simulado/sim-1",
+      {
+        state: {
+          de: {
+            caminho: CAMINHO_DA_TELA,
+            filtros: {
+              nome: "",
+              edicao: "",
+              aplicacao: "",
+              ano: "",
+              gabaritoOnly: false,
+            },
+            provaId: "b",
+            pagina: 1,
+          },
+        },
+      },
+    );
   });
 
   it("com gerenciarEstudantes, a ação de relatório fica permitida", async () => {
@@ -443,5 +528,180 @@ describe("categorias do cursinho", () => {
       '[data-action-id="gerenciar-categorias"]',
     ) as HTMLButtonElement;
     expect(botao).not.toBeDisabled();
+  });
+});
+
+/* -------------------------------------------------------------------------- *
+ * A ida e a volta do relatório.
+ *
+ * ⚠️ O relatório é ROTA, não modal — foi o preço de ter link compartilhável e
+ * página imprimível. Quem paga esse preço é a listagem, que sem isto volta sem
+ * filtro, na página 1 e sem o modal aberto.
+ * -------------------------------------------------------------------------- */
+
+const rodape = () => screen.getByTestId("dash-list-footer");
+const intervalo = () => rodape().querySelector("p")?.textContent;
+const irParaPagina = (n: string) =>
+  fireEvent.click(within(rodape()).getByText(n));
+
+function aoAbrirRelatorio(simuladoId: string) {
+  const relatorio = propsDoShowProva.atual?.relatorio as {
+    aoAbrir: (s: { _id: string }) => void;
+  };
+  relatorio.aoAbrir({ _id: simuladoId });
+}
+
+describe("ida para o relatório — o que vai no state", () => {
+  it("⚠️ leva os cinco filtros, a prova e a PÁGINA em que a pessoa estava", async () => {
+    estado.provas = provasNumeradas(30);
+    await montar();
+
+    /*
+      ⚠️ **A busca é debounced em 250ms** pela `DashFilterBar` — só o `change`
+      mexe no rascunho do campo, e não no `nameFilter` da tela. Sem esperar o
+      debounce, o teste passava a acreditar que levava o nome no state levando
+      string vazia.
+    */
+    await act(async () => {
+      fireEvent.change(screen.getByPlaceholderText("Buscar por nome"), {
+        target: { value: "Prova" },
+      });
+      await new Promise((resolve) =>
+        setTimeout(resolve, DEBOUNCE_BUSCA_MS + 20),
+      );
+    });
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText("Todas edições"), {
+        target: { value: Edicao.Digital },
+      });
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByRole("checkbox"));
+    });
+
+    // ⚠️ Paginar DEPOIS de filtrar: trocar filtro devolve o template à página 1.
+    await act(async () => {
+      irParaPagina("2");
+    });
+    expect(intervalo()).toBe("Mostrando 26–30 de 30");
+
+    fireEvent.click(screen.getByRole("button", { name: "Prova 25" }));
+    aoAbrirRelatorio("sim-9");
+
+    expect(navigate).toHaveBeenLastCalledWith(
+      "/dashboard/relatorio-simulado/sim-9",
+      {
+        state: {
+          de: {
+            caminho: CAMINHO_DA_TELA,
+            filtros: {
+              nome: "Prova",
+              edicao: Edicao.Digital,
+              aplicacao: "",
+              ano: "",
+              gabaritoOnly: true,
+            },
+            provaId: "p25",
+            pagina: 2,
+          },
+        },
+      },
+    );
+  });
+});
+
+describe("volta do relatório — o que o state restaura", () => {
+  it("⚠️ restaura os cinco filtros, e a lista já pinta filtrada", async () => {
+    await montarComState(
+      deVolta({
+        filtros: {
+          nome: "2023",
+          edicao: Edicao.Digital,
+          aplicacao: "1",
+          ano: "2023",
+          gabaritoOnly: true,
+        },
+      }),
+    );
+
+    expect(screen.getByPlaceholderText("Buscar por nome")).toHaveValue("2023");
+    expect(screen.getByLabelText("Todas edições")).toHaveValue(Edicao.Digital);
+    expect(screen.getByLabelText("Todas aplicações")).toHaveValue("1");
+    expect(screen.getByLabelText("Todos os anos")).toHaveValue("2023");
+    expect(screen.getByRole("checkbox")).toBeChecked();
+    expect(screen.getByText(/Limpar filtros \(5\)/)).toBeInTheDocument();
+    expect(chavesDasLinhas()).toEqual(["b"]);
+  });
+
+  /**
+   * ⚠️ **Este é o teste que exige o inicializador do `useState`.**
+   *
+   * Com os filtros chegando por `useEffect`, a `activeFilterCount` sai de 0 e
+   * vira 2 num render posterior — e o `DashListTemplate` trata isso como
+   * "trocou o filtro" e volta para a página 1. A pessoa vê a lista inteira
+   * piscar **e** perde a página. Restaurando no primeiro render, a contagem já
+   * nasce 2 e nada é resetado.
+   */
+  it("⚠️ a página restaurada sobrevive aos filtros restaurados", async () => {
+    estado.provas = provasNumeradas(60);
+
+    await montarComState(
+      deVolta({
+        filtros: { nome: "Prova", gabaritoOnly: true },
+        provaId: "p0",
+        pagina: 3,
+      }),
+    );
+
+    expect(intervalo()).toBe("Mostrando 51–60 de 60");
+  });
+
+  /**
+   * ⚠️ **Reabrir o modal espera a lista chegar.** `onClickCard` faz
+   * `provas.find(...)`; restaurar no mount, com `provas` ainda vazio, acha
+   * `undefined` — e o `ShowProva` recebe uma prova que não existe.
+   */
+  it("⚠️ reabre o modal na prova certa, e só depois de a lista chegar", async () => {
+    await montarComState(deVolta({ provaId: "b" }));
+
+    expect(screen.getByTestId("show-prova")).toHaveTextContent(
+      "Simulado interno 2023",
+    );
+  });
+
+  it("prova que não está mais na lista não abre modal nenhum", async () => {
+    await montarComState(deVolta({ provaId: "sumiu" }));
+
+    expect(screen.queryByTestId("show-prova")).toBeNull();
+  });
+
+  /**
+   * ⚠️ **O state é consumido uma vez só.** Sem a limpeza, um `navigate`
+   * posterior para esta mesma rota ressuscita filtros que a pessoa já trocou.
+   */
+  it("⚠️ consome o state, com replace, uma vez só", async () => {
+    await montarComState(deVolta({ provaId: "b" }));
+
+    expect(navigate).toHaveBeenCalledWith(CAMINHO_DA_TELA, {
+      replace: true,
+      state: null,
+    });
+    expect(navigate).toHaveBeenCalledTimes(1);
+  });
+
+  /**
+   * ⚠️ **O guard de "já restaurei" é o que impede o laço.** O `useModals`
+   * devolve objetos novos a cada render, então o efeito roda em todo render;
+   * sem o `ref`, fechar o modal restaurado o reabriria na hora.
+   */
+  it("⚠️ fechar o modal restaurado não o reabre", async () => {
+    await montarComState(deVolta({ provaId: "b" }));
+    const fechar = propsDoShowProva.atual!.handleClose as () => void;
+
+    await act(async () => {
+      fechar();
+    });
+
+    expect(screen.queryByTestId("show-prova")).toBeNull();
   });
 });
