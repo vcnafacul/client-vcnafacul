@@ -102,8 +102,21 @@ nas duas direções.
 
 ### As colunas
 
-Estudante (nome + matrícula), turma, status, aproveitamento, questões respondidas, e — quando
-`failed` — o motivo.
+| coluna | o que mostra |
+|---|---|
+| Estudante | `nome`, com a `matricula` abaixo |
+| Turma | `turmaNome`, ou "—" para quem não tem turma |
+| Status | `StatusBadge`, de `statusDaLinha` |
+| Aproveitamento | só quando `status === 'completed'` — ver abaixo |
+| Questões respondidas | `questoesRespondidas` |
+| Motivo | **coluna própria**, preenchida só quando há `falha`: a `descricao` que o ms já mandou pronta |
+
+⚠️ **"Motivo" é coluna, não texto dentro da célula de status.** O pedido é explícito: o cursinho tem
+que ver, na linha do aluno, que houve erro **e qual foi**. Enfiar a frase dentro do badge a trunca, e
+truncar a única informação acionável da linha derrota o propósito.
+
+⚠️ **A coluna Turma some quando há `?turma=`** — todas as linhas teriam o mesmo valor, e uma coluna
+constante só ocupa largura que os nomes precisam.
 
 ⚠️ **`StatusBadge` exige rótulo; não existe modo só-ícone.** A exceção (`SimuladoStatusIcon`) mora
 local ao `dashProvas` de propósito, para não virar padrão por importação, e o custo dela está medido:
@@ -251,7 +264,8 @@ legado). Para verificar: `ESLINT_USE_FLAT_CONFIG=false npx eslint <caminhos>`.
 - [ ] Estudante sem cartão aparece, lido de `enviouCartao` e não inferido
 - [ ] **Linha com status diferente de `completed` não mostra nota** — teste com uma linha `failed` que
       traz `aproveitamentoGeral`
-- [ ] Linha `failed` mostra a descrição amigável do card `01`
+- [ ] Linha `failed` mostra a descrição amigável do card `01`, **em coluna própria**
+- [ ] A coluna Turma não aparece quando há `?turma=`
 - [ ] As duas contagens aparecem; média `null` vira "—", não "0%"
 - [ ] `linhasSemEstudanteAtivo` aparece como nota quando `> 0`, **sem nomes**
 - [ ] A tela diz que o recorte é só cartão-resposta
