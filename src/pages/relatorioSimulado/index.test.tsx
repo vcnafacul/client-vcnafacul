@@ -310,8 +310,122 @@ describe("RelatorioSimulado", () => {
     });
     montar();
 
+    // ⚠️ Liga o toggle primeiro: quem não enviou fica ESCONDIDO por padrão,
+    // então sem isto a linha nem existe no DOM e o teste passaria sem provar
+    // nada sobre o clique.
+    fireEvent.click(await screen.findByTestId("toggle-nao-enviaram"));
     fireEvent.click(await screen.findByText("Ana Silva"));
 
     expect(buscarDetalheDoEstudante).not.toHaveBeenCalled();
+  });
+});
+
+describe("RelatorioSimulado — filtros da tabela", () => {
+  const COM_DUAS = {
+    linhas: [
+      RESPOSTA.linhas[0],
+      {
+        ...RESPOSTA.linhas[0],
+        usuario: "u9",
+        nome: "Bruno Cardoso",
+        matricula: "2025099",
+        enviouCartao: false,
+        status: undefined,
+        aproveitamentoGeral: undefined,
+      },
+    ],
+    resumo: RESPOSTA.resumo,
+  };
+
+  it("⚠️ por padrão a tabela esconde quem não enviou", async () => {
+    buscarRelatorio.mockResolvedValue(COM_DUAS);
+    montar();
+
+    expect(await screen.findByText("Ana Silva")).toBeInTheDocument();
+    expect(screen.queryByText("Bruno Cardoso")).not.toBeInTheDocument();
+  });
+
+  it("⚠️ o rótulo do toggle diz QUANTOS estão escondidos", async () => {
+    // É o que explica a diferença entre a tabela e o "Estudantes no recorte"
+    // do resumo, que continua contando todo mundo.
+    buscarRelatorio.mockResolvedValue(COM_DUAS);
+    montar();
+
+    expect(await screen.findByText(/Mostrar quem não enviou \(1\)/)).toBeInTheDocument();
+  });
+
+  it("ligar o toggle traz quem não enviou", async () => {
+    buscarRelatorio.mockResolvedValue(COM_DUAS);
+    montar();
+
+    fireEvent.click(await screen.findByTestId("toggle-nao-enviaram"));
+
+    expect(await screen.findByText("Bruno Cardoso")).toBeInTheDocument();
+  });
+
+  it("⚠️ o resumo NÃO muda com o filtro", async () => {
+    // Os números do topo descrevem o recorte, não o que está visível. Se o
+    // filtro mexesse neles, esconder linhas mudaria o denominador e a tela
+    // passaria a dizer que 100% enviou.
+    buscarRelatorio.mockResolvedValue(COM_DUAS);
+    montar();
+
+    const antes = (await screen.findByText("Estudantes no recorte"))
+      .previousSibling?.textContent;
+    fireEvent.click(screen.getByTestId("toggle-nao-enviaram"));
+
+    expect(
+      screen.getByText("Estudantes no recorte").previousSibling?.textContent,
+    ).toBe(antes);
+  });
+
+  it("a busca filtra por nome", async () => {
+    buscarRelatorio.mockResolvedValue(COM_DUAS);
+    montar();
+    await screen.findByText("Ana Silva");
+
+    fireEvent.click(screen.getByTestId("toggle-nao-enviaram"));
+    fireEvent.change(screen.getByPlaceholderText(/nome ou matrícula/i), {
+      target: { value: "bruno" },
+    });
+
+    await waitFor(() =>
+      expect(screen.queryByText("Ana Silva")).not.toBeInTheDocument(),
+    );
+    expect(screen.getByText("Bruno Cardoso")).toBeInTheDocument();
+  });
+
+  it("a busca filtra por matrícula", async () => {
+    buscarRelatorio.mockResolvedValue(COM_DUAS);
+    montar();
+    await screen.findByText("Ana Silva");
+
+    fireEvent.change(screen.getByPlaceholderText(/nome ou matrícula/i), {
+      target: { value: "2025001" },
+    });
+
+    await waitFor(() => expect(screen.getByText("Ana Silva")).toBeInTheDocument());
+  });
+
+  it("⚠️ filtro que esconde tudo mostra vazio DIFERENTE do recorte vazio", async () => {
+    // Dizer "nenhum estudante neste recorte" com a busca preenchida afirma
+    // algo falso sobre os dados e manda procurar defeito onde não há.
+    buscarRelatorio.mockResolvedValue(COM_DUAS);
+    montar();
+    await screen.findByText("Ana Silva");
+
+    fireEvent.change(screen.getByPlaceholderText(/nome ou matrícula/i), {
+      target: { value: "zzzzz" },
+    });
+
+    expect(await screen.findByTestId("estudantes-vazio-filtro")).toBeInTheDocument();
+    expect(screen.queryByTestId("estudantes-vazio")).not.toBeInTheDocument();
+  });
+
+  it("recorte realmente vazio continua com o vazio de sempre", async () => {
+    buscarRelatorio.mockResolvedValue({ linhas: [], resumo: RESPOSTA.resumo });
+    montar();
+
+    expect(await screen.findByTestId("estudantes-vazio")).toBeInTheDocument();
   });
 });

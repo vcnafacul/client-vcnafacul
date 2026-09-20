@@ -1,4 +1,10 @@
-import { DashTable, dashV2, sortRows, type SortState } from "@/components/dashV2";
+import {
+  DashFilterBar,
+  DashTable,
+  dashV2,
+  sortRows,
+  type SortState,
+} from "@/components/dashV2";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import type {
@@ -15,6 +21,7 @@ import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { colunasDoRelatorio } from "./colunas";
+import { filtrarLinhas, totalQueNaoEnviou } from "./filtrarLinhas";
 import { DetalheDoEstudante } from "./DetalheDoEstudante";
 import { ResumoDoRelatorio } from "./ResumoDoRelatorio";
 import { TabelaDeQuestoes } from "./TabelaDeQuestoes";
@@ -44,6 +51,35 @@ function VazioDeEstudantes() {
       <p className={cn("text-xs", dashV2.text.secondary)}>
         Nenhum estudante com cartão-resposta enviado neste simulado.
       </p>
+    </div>
+  );
+}
+
+export const TEXTO_VAZIO_POR_FILTRO = "Nenhum estudante para este filtro";
+
+/**
+ * O vazio de quando o filtro escondeu tudo.
+ *
+ * ⚠️ Separado do `VazioDeEstudantes` de propósito: dizer "nenhum estudante
+ * neste recorte" com a busca preenchida é afirmar algo falso sobre os dados, e
+ * manda a pessoa investigar um problema que não existe.
+ */
+function VazioPorFiltro({ onLimpar }: { onLimpar: () => void }) {
+  return (
+    <div
+      data-testid="estudantes-vazio-filtro"
+      className="flex flex-col items-center gap-2 px-4 py-10 text-center"
+    >
+      <p className={cn("text-sm font-medium", dashV2.text.primary)}>
+        {TEXTO_VAZIO_POR_FILTRO}
+      </p>
+      <button
+        type="button"
+        onClick={onLimpar}
+        className={cn("text-xs underline", dashV2.text.secondary)}
+      >
+        Limpar filtros
+      </button>
     </div>
   );
 }
@@ -82,6 +118,13 @@ function RelatorioSimulado() {
   const [aberto, setAberto] = useState<LinhaDoRelatorio | null>(null);
 
   const [aba, setAba] = useState("estudantes");
+  /*
+    ⚠️ Começa FALSO: o relatório é sobre os cartões que chegaram. Quem não
+    enviou é informação de cobrança, não de leitura — útil, mas não é o que a
+    pessoa veio ver, e antes disto dominava a tabela em turma grande.
+  */
+  const [mostrarQuemNaoEnviou, setMostrarQuemNaoEnviou] = useState(false);
+  const [busca, setBusca] = useState("");
   const [questoes, setQuestoes] = useState<QuestaoDoRelatorio[] | null>(null);
   const [estadoQuestoes, setEstadoQuestoes] = useState<Estado>("idle");
 
@@ -126,10 +169,45 @@ function RelatorioSimulado() {
     [turmaId],
   );
 
+  /*
+    ⚠️ Memoizado, e não `relatorio?.linhas ?? []` solto: o `??` devolve um
+    ARRAY NOVO a cada render quando não há relatório, e isso entraria como
+    dependência dos dois `useMemo` abaixo — que passariam a recalcular sempre,
+    virando enfeite. O eslint aponta isto como `react-hooks/exhaustive-deps`.
+  */
+  const todasAsLinhas = useMemo(() => relatorio?.linhas ?? [], [relatorio]);
+
+  /*
+    ⚠️ Filtra ANTES de ordenar. O contrário ordena linhas que serão jogadas
+    fora — trabalho à toa que cresce com o tamanho da turma.
+  */
   const linhas = useMemo(
-    () => sortRows(relatorio?.linhas ?? [], colunas, sort),
-    [relatorio, colunas, sort],
+    () =>
+      sortRows(
+        filtrarLinhas(todasAsLinhas, { mostrarQuemNaoEnviou, busca }),
+        colunas,
+        sort,
+      ),
+    [todasAsLinhas, mostrarQuemNaoEnviou, busca, colunas, sort],
   );
+
+  /*
+    ⚠️ Sobre a lista INTEIRA, não sobre a filtrada: o número no rótulo do
+    toggle responde "quem mais existe neste recorte". É ele que explica a
+    diferença entre a tabela e o "Estudantes no recorte" do resumo, que conta
+    todo mundo de propósito.
+  */
+  const quantosNaoEnviaram = useMemo(
+    () => totalQueNaoEnviou(todasAsLinhas),
+    [todasAsLinhas],
+  );
+
+  const filtrosAtivos = (mostrarQuemNaoEnviou ? 1 : 0) + (busca ? 1 : 0);
+
+  const limparFiltros = () => {
+    setMostrarQuemNaoEnviou(false);
+    setBusca("");
+  };
 
   const voltar = () => {
     // ⚠️ `replace`: sem isto o histórico vira [listagem, relatório, listagem]
@@ -181,6 +259,48 @@ function RelatorioSimulado() {
 
           <TabsContent value="estudantes">
             {/*
+              ⚠️ `print:hidden` como o resto dos controles desta tela: numa
+              folha impressa um campo de busca e uma caixa de seleção não são
+              interativos, só ruído acima da tabela.
+
+              ⚠️ A impressão sai FILTRADA, e isso é deliberado: a folha tem de
+              ser o que está na tela. Quem quer a lista inteira desliga o
+              filtro antes de imprimir.
+            */}
+            <div className="print:hidden">
+              <DashFilterBar
+                search={{
+                  value: busca,
+                  onChange: setBusca,
+                  placeholder: "Buscar por nome ou matrícula",
+                }}
+                activeCount={filtrosAtivos}
+                onClear={limparFiltros}
+              >
+                <label
+                  className={cn(
+                    "flex cursor-pointer select-none items-center gap-2 text-sm",
+                    dashV2.text.secondary,
+                  )}
+                >
+                  <input
+                    type="checkbox"
+                    data-testid="toggle-nao-enviaram"
+                    className="h-4 w-4 cursor-pointer"
+                    checked={mostrarQuemNaoEnviou}
+                    onChange={(e) => setMostrarQuemNaoEnviou(e.target.checked)}
+                  />
+                  {/*
+                    ⚠️ O número faz parte do rótulo. Sem ele a tabela mostra
+                    uma linha enquanto o resumo diz "2 estudantes no recorte",
+                    e a diferença fica sem explicação na tela.
+                  */}
+                  Mostrar quem não enviou
+                  {quantosNaoEnviaram > 0 && ` (${quantosNaoEnviaram})`}
+                </label>
+              </DashFilterBar>
+            </div>
+            {/*
               ⚠️ O erro mora AQUI, dentro da tabela que falhou, e não numa
               faixa própria acima: é o `DashTableErro` que a spec manda reusar,
               e duas mensagens de erro com dois "tentar de novo" na mesma tela
@@ -212,7 +332,19 @@ function RelatorioSimulado() {
               state={estado}
               onRetry={carregar}
               stickyHeader
-              emptyState={<VazioDeEstudantes />}
+              /*
+                ⚠️ Dois vazios diferentes. "Nenhum estudante neste recorte" é
+                falso quando a lista tem gente e o filtro a escondeu — e manda
+                a pessoa procurar defeito onde não há. Com filtro ativo, o
+                vazio diz o que fazer.
+              */
+              emptyState={
+                filtrosAtivos > 0 && todasAsLinhas.length > 0 ? (
+                  <VazioPorFiltro onLimpar={limparFiltros} />
+                ) : (
+                  <VazioDeEstudantes />
+                )
+              }
             />
           </TabsContent>
 
