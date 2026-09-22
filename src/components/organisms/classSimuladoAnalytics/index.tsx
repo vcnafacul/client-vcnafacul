@@ -184,7 +184,16 @@ export function ClassSimuladoAnalytics({
 
           {!monthLoading && monthData && (
             <>
-              <SampleSizeBanner monthData={monthData} totalStudents={list.totalStudents} />
+              {/*
+                ⚠️ O limiar `max(3, 10%)` vive AQUI desde o card 09: ele é a
+                regra do agregado mensal, e o banner passou a receber números
+                para poder servir também ao relatório de simulado.
+              */}
+              <SampleSizeBanner
+                comDados={monthData.studentsWithAtLeastOneCompletedAttempt}
+                minimo={Math.max(3, Math.floor(list.totalStudents * 0.1))}
+                descricao="com simulado completo"
+              />
               {monthData.materias.length > 0 && (
                 <div className="flex items-center justify-end gap-1 text-xs">
                   <button

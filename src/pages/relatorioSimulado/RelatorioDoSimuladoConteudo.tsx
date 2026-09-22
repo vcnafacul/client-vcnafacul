@@ -22,6 +22,12 @@ import { colunasDoRelatorio } from "./colunas";
 import { filtrarLinhas, totalQueNaoEnviou } from "./filtrarLinhas";
 import { DetalheDoEstudante } from "./DetalheDoEstudante";
 import { indiceDeDificuldade } from "./dificuldadeDaQuestao";
+import { SampleSizeBanner } from "@/components/organisms/classSimuladoAnalytics/SampleSizeBanner";
+import {
+  distribuicaoDaTurma,
+  faixasDoHistograma,
+  MINIMO_PARA_HISTOGRAMA,
+} from "./distribuicao";
 import { desviosPorMateria, materiasVisiveis } from "./materiasDoRelatorio";
 import { BotaoExportar } from "./BotaoExportar";
 import { nomeDoArquivo, planilhaDeEstudantes } from "./exportar";
@@ -212,6 +218,25 @@ export function RelatorioDoSimuladoConteudo({
   */
   const desvios = useMemo(() => desviosPorMateria(todasAsLinhas), [todasAsLinhas]);
 
+  /*
+    ⚠️ **Sobre `todasAsLinhas`**, pelo mesmo motivo do desvio por matéria e da
+    média do card 08: a distribuição é do RECORTE, e filtro de busca não é
+    escopo. Buscar um nome não pode mudar a mediana da turma.
+  */
+  const distribuicao = useMemo(
+    () => distribuicaoDaTurma(todasAsLinhas),
+    [todasAsLinhas],
+  );
+
+  const faixas = useMemo(
+    () =>
+      faixasDoHistograma(
+        todasAsLinhas,
+        relatorio?.resumo.totalDeQuestoes ?? 0,
+      ),
+    [todasAsLinhas, relatorio?.resumo.totalDeQuestoes],
+  );
+
   const colunas = useMemo(
     () =>
       colunasDoRelatorio({
@@ -338,7 +363,33 @@ export function RelatorioDoSimuladoConteudo({
 
         {relatorio && (
           <div className="px-4">
-            <ResumoDoRelatorio resumo={relatorio.resumo} />
+            <>
+                  <ResumoDoRelatorio
+                    resumo={relatorio.resumo}
+                    distribuicao={distribuicao}
+                    faixas={faixas}
+                  />
+                  {/*
+                    ⚠️ **O mesmo `SampleSizeBanner` do agregado mensal da
+                    turma**, generalizado no card 09 para receber números em vez
+                    do `ClassMonthAnalytics`. Escrever um segundo banner faria
+                    as duas telas avisarem de jeitos diferentes sobre a mesma
+                    situação.
+
+                    ⚠️ Aparece só quando há alguém: com zero cartões lidos o
+                    vazio da tabela já explica, e um aviso de amostra pequena em
+                    cima disso seria ruído.
+                  */}
+                  {distribuicao.base > 0 && (
+                    <div className="px-4">
+                      <SampleSizeBanner
+                        comDados={distribuicao.base}
+                        minimo={MINIMO_PARA_HISTOGRAMA}
+                        descricao="com cartão lido"
+                      />
+                    </div>
+                  )}
+                </>
           </div>
         )}
 

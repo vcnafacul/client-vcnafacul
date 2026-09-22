@@ -381,13 +381,19 @@ describe("RelatorioSimulado — filtros da tabela", () => {
     buscarRelatorio.mockResolvedValue(COM_DUAS);
     montar();
 
-    const antes = (await screen.findByText("Estudantes no recorte"))
-      .previousSibling?.textContent;
+    // ⚠️ Ancorado no bloco COBERTURA (card 09), que substituiu os três números
+    // soltos. O que o teste protege não mudou: o denominador do resumo é o
+    // recorte, e esconder linhas não pode mexer nele — senão a tela passa a
+    // dizer que 100% enviou.
+    const cobertura = () =>
+      screen.getByText("estudantes no cálculo da média").previousSibling
+        ?.textContent;
+
+    await screen.findByText("Ana Silva");
+    const antes = cobertura();
     fireEvent.click(screen.getByTestId("toggle-nao-enviaram"));
 
-    expect(
-      screen.getByText("Estudantes no recorte").previousSibling?.textContent,
-    ).toBe(antes);
+    expect(cobertura()).toBe(antes);
   });
 
   it("a busca filtra por nome", async () => {
@@ -725,7 +731,10 @@ describe("RelatorioSimulado — alinhamento horizontal", () => {
     const { container } = montar();
     await screen.findByText("Ana Silva");
 
-    const resumo = screen.getByText("Estudantes no recorte").closest("section");
+    // ⚠️ Ancorado no rótulo do bloco `Cobertura` (card 09).
+    const resumo = screen
+      .getByText("estudantes no cálculo da média")
+      .closest("section");
     expect(resumo?.parentElement?.className).toContain("px-4");
     // e o container NÃO tem px
     const raiz = container.querySelector(".flex.flex-col.gap-4");
@@ -954,5 +963,113 @@ describe("RelatorioSimulado — acertos e desvio (card 08)", () => {
     expect(cabecalho).toContain("Total de questões");
     expect(linhasCsv[0][cabecalho.indexOf("Acertos")]).toBe(61);
     expect(linhasCsv[0][cabecalho.indexOf("Total de questões")]).toBe(90);
+  });
+});
+
+describe("RelatorioSimulado — distribuição da turma (card 09)", () => {
+  /** 10 estudantes, com acertos espalhados — acima dos dois mínimos. */
+  const RESPOSTA_09 = {
+    linhas: Array.from({ length: 10 }, (_, i) => ({
+      ...RESPOSTA.linhas[0],
+      usuario: `u${i}`,
+      nome: `Aluno ${i}`,
+      matricula: `20250${i}`,
+      acertos: 30 + i * 5,
+      aproveitamentoGeral: (30 + i * 5) / 90,
+    })),
+    resumo: {
+      ...RESPOSTA.resumo,
+      totalNoRecorte: 10,
+      comLeituraConcluida: 10,
+      aproveitamentoGeral: 0.58,
+      totalDeQuestoes: 90,
+    },
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarRelatorio.mockResolvedValue(RESPOSTA_09);
+  });
+
+  it("mostra mediana e faixa no resumo", async () => {
+    montar();
+
+    // acertos 30,35,…,75 → mediana (50+55)/2 = 52,5; faixa 30–75
+    const bloco = await screen.findByTestId("resumo-distribuicao");
+    expect(bloco).toHaveTextContent("mediana 52.5");
+    expect(bloco).toHaveTextContent("30–75");
+  });
+
+  it("desenha o histograma", async () => {
+    montar();
+
+    expect(await screen.findByTestId("histograma-da-turma")).toBeInTheDocument();
+  });
+
+  it("⚠️ a mediana NÃO muda com o filtro de busca", async () => {
+    // O recorte é a tela; filtro não é escopo. Mesma decisão do desvio por
+    // matéria (card 07) e da média do card 08. Buscando um aluno, a mediana
+    // viraria a nota dele se fosse derivada da lista filtrada.
+    montar();
+    const antes = (await screen.findByTestId("resumo-distribuicao")).textContent;
+
+    fireEvent.change(screen.getByPlaceholderText(/buscar por nome/i), {
+      target: { value: "Aluno 1" },
+    });
+
+    await waitFor(() =>
+      expect(screen.queryByText("Aluno 5")).not.toBeInTheDocument(),
+    );
+    expect(screen.getByTestId("resumo-distribuicao").textContent).toBe(antes);
+  });
+
+  it("⚠️ turma pequena: sem histograma, e o banner diz por quê", async () => {
+    // Quatro barras de altura 1 parecem distribuição. O `SampleSizeBanner` é o
+    // MESMO do agregado mensal da turma, generalizado neste card.
+    buscarRelatorio.mockResolvedValue({
+      linhas: RESPOSTA_09.linhas.slice(0, 3),
+      resumo: { ...RESPOSTA_09.resumo, totalNoRecorte: 3, comLeituraConcluida: 3 },
+    });
+    montar();
+    await screen.findByText("Aluno 0");
+
+    expect(screen.queryByTestId("histograma-da-turma")).not.toBeInTheDocument();
+    expect(screen.getByTestId("sample-size-banner")).toHaveTextContent(
+      /apenas 3 aluno\(s\) com cartão lido/,
+    );
+  });
+
+  it("⚠️ com base suficiente, nenhum banner aparece", async () => {
+    montar();
+    await screen.findByTestId("histograma-da-turma");
+
+    expect(screen.queryByTestId("sample-size-banner")).not.toBeInTheDocument();
+  });
+
+  it("⚠️ recorte sem ninguém lido não mostra banner de amostra", async () => {
+    // O vazio da tabela já explica; um aviso de amostra pequena em cima disso
+    // seria ruído sobre ruído.
+    buscarRelatorio.mockResolvedValue({
+      linhas: [
+        {
+          ...RESPOSTA.linhas[0],
+          enviouCartao: false,
+          status: undefined,
+          acertos: undefined,
+        },
+      ],
+      resumo: {
+        ...RESPOSTA_09.resumo,
+        totalNoRecorte: 1,
+        comLeituraConcluida: 0,
+        aproveitamentoGeral: null,
+      },
+    });
+    montar();
+    // ⚠️ Ancorado no resumo, não na linha: quem não enviou começa ESCONDIDO
+    // (o toggle nasce falso), então a tabela está vazia neste cenário.
+    await screen.findByText("0 de 1");
+
+    expect(screen.queryByTestId("sample-size-banner")).not.toBeInTheDocument();
   });
 });
