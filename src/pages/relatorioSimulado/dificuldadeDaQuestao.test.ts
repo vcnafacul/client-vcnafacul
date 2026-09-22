@@ -13,6 +13,7 @@ const questao = (over: Partial<QuestaoDoRelatorio>): QuestaoDoRelatorio => ({
   erros: 6,
   semLeitura: 2,
   porAlternativa: {},
+  alternativaCorreta: "A",
   ...over,
 });
 

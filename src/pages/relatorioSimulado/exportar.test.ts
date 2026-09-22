@@ -30,6 +30,7 @@ const questao = (over: Partial<QuestaoDoRelatorio> = {}): QuestaoDoRelatorio => 
   erros: 6,
   semLeitura: 2,
   porAlternativa: { A: 12, B: 4, C: 2, D: 0, E: 0 },
+  alternativaCorreta: "A",
   ...over,
 });
 
@@ -130,6 +131,7 @@ describe("planilhaDeQuestoes", () => {
     expect(p.cabecalho).toEqual([
       "Questão",
       "Respondentes",
+      "Gabarito",
       "Acertos",
       "Erros",
       "Sem leitura",
@@ -141,17 +143,45 @@ describe("planilhaDeQuestoes", () => {
       "Acerto (%)",
       "Erro (%)",
     ]);
-    expect(p.linhas[0]).toEqual([3, 20, 12, 6, 2, 60, 20, 10, 0, 0, 60, 30]);
+    expect(p.linhas[0]).toEqual([3, 20, "A", 12, 6, 2, 60, 20, 10, 0, 0, 60, 30]);
+  });
+
+  it("⚠️ MANTÉM `Acertos`, `Erros` e `Erro (%)`, que a tabela removeu", () => {
+    // Card 04: tela e arquivo seguem critérios diferentes de propósito. A tela
+    // é para ler e comparar — `Acerto (%)` é a coluna do gabarito, `Erros` sai
+    // por subtração. O arquivo é para fazer conta em cima.
+    const p = planilhaDeQuestoes([questao()]);
+
+    expect(p.cabecalho).toContain("Acertos");
+    expect(p.cabecalho).toContain("Erros");
+    expect(p.cabecalho).toContain("Erro (%)");
+  });
+
+  it("⚠️ gabarito `null` sai como célula VAZIA, e não travessão", () => {
+    // O CSV é lido por planilha: um "—" no meio de uma coluna de letras vira
+    // texto que não filtra nem agrupa junto com o resto.
+    const p = planilhaDeQuestoes([questao({ alternativaCorreta: null })]);
+
+    expect(p.linhas[0][2]).toBeNull();
   });
 
   it("⚠️ o percentual vai como NÚMERO, sem o símbolo de %", () => {
     // No Excel pt-BR "60%" é texto e não soma nem ordena. Fazer conta com isso
     // é justamente a razão de exportar em vez de olhar a tela.
-    const p = planilhaDeQuestoes([questao()]);
+    //
+    // ⚠️ `Gabarito` é a ÚNICA célula de texto da planilha (card 04): é uma
+    // letra, não uma medida. Por isso a asserção a exclui por posição em vez de
+    // afrouxar para "quase tudo é número" — assim uma medida que virasse string
+    // por acidente continuaria caindo aqui.
+    const { cabecalho, linhas } = planilhaDeQuestoes([questao()]);
+    const iGabarito = cabecalho.indexOf("Gabarito");
 
-    expect(p.linhas[0].every((c) => c === null || typeof c === "number")).toBe(
-      true,
-    );
+    expect(typeof linhas[0][iGabarito]).toBe("string");
+    expect(
+      linhas[0]
+        .filter((_, i) => i !== iGabarito)
+        .every((c) => c === null || typeof c === "number"),
+    ).toBe(true);
   });
 
   it("⚠️ `respondentes` entra, embora não esteja na tabela", () => {

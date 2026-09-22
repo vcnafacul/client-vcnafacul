@@ -692,7 +692,9 @@ describe("RelatorioSimulado — exportar CSV", () => {
     montar();
     await screen.findByText("Ana Silva");
     abrirAba(/quest/i);
-    await screen.findByText("Acertos");
+    // ⚠️ `Acertos` saiu da tabela no card 04 — `Respondentes` é o cabeçalho
+    // que sinaliza que a aba de questões terminou de montar.
+    await screen.findByText("Respondentes");
 
     // o botão da aba de questões é o único visível agora
     fireEvent.click(screen.getByTestId("exportar-csv"));
