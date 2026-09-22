@@ -2,6 +2,7 @@ import type {
   LinhaDoRelatorio,
   QuestaoDoRelatorio,
 } from "@/dtos/relatorioSimulado/relatorioSimulado";
+import { rotulosDasFlags } from "./flagsDaQuestao";
 import { statusDaLinha } from "./statusDaLinha";
 import {
   percentualDaAlternativa,
@@ -104,6 +105,19 @@ export function planilhaDeQuestoes(questoes: QuestaoDoRelatorio[]): Planilha {
     ...ALTERNATIVAS.map((a) => `${a} (%)`),
     "Acerto (%)",
     "Erro (%)",
+    /*
+      ⚠️ **`Discriminação` e `Sinais` existem no arquivo e NÃO na tabela como
+      colunas próprias** — foi a decisão do card 19. Um `r` entre −1 e +1 numa
+      tela de coordenador é precisão que não ajuda a decidir nada e custa
+      largura; numa planilha é justamente o que se ordena e se filtra.
+    */
+    "Discriminação",
+    /*
+      ⚠️ **Uma coluna de texto, não seis booleanas.** Seis colunas de 0/1 numa
+      planilha de 180 linhas é pior de filtrar que uma coluna com os rótulos —
+      e some com a informação de quantos sinais a questão acumula.
+    */
+    "Sinais",
   ];
 
   const linhas = questoes.map((q) => [
@@ -123,6 +137,12 @@ export function planilhaDeQuestoes(questoes: QuestaoDoRelatorio[]): Planilha {
     ...ALTERNATIVAS.map((a) => numero(percentualDaAlternativa(q, a))),
     numero(percentualDeAcerto(q)),
     numero(percentualDeErro(q)),
+    // ⚠️ `null` atravessa como célula vazia: é "não há como medir", e um zero
+    // afirmaria "não separa ninguém" — ver o DTO.
+    q.discriminacao,
+    // ⚠️ String vazia, e não `null`: aqui a ausência de sinal É a informação
+    // ("esta questão está ok"), diferente de uma medida que não existe.
+    rotulosDasFlags(q),
   ]);
 
   return { cabecalho, linhas };

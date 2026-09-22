@@ -14,6 +14,7 @@ const questao = (over: Partial<QuestaoDoRelatorio>): QuestaoDoRelatorio => ({
   semLeitura: 2,
   porAlternativa: {},
   alternativaCorreta: "A",
+  discriminacao: 0.4,
   ...over,
 });
 

@@ -1,0 +1,54 @@
+import { StatusBadge, dashV2 } from "@/components/dashV2";
+import type { QuestaoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
+import { cn } from "@/lib/utils";
+import { APRESENTACAO_DAS_FLAGS, flagsDaQuestao } from "./flagsDaQuestao";
+
+export const SEM_SINAL = "—";
+
+/**
+ * Os badges de triagem de uma questão.
+ *
+ * ⚠️ **Acumulam, e não se elege um principal**: "muito difícil" **e** "gabarito
+ * suspeito" juntos é o que fecha o diagnóstico — difícil sozinha pede aula,
+ * difícil com gabarito suspeito pede conferir o gabarito antes de tudo.
+ *
+ * ⚠️ **Rótulo textual sempre**, cor só como reforço — ver
+ * `APRESENTACAO_DAS_FLAGS`. A explicação inteira vai no `title`.
+ *
+ * ⚠️ **O valor da discriminação vai no `title` do badge**, e não em coluna
+ * própria: foi a decisão do card 19. O coordenador não quer saber que o
+ * ponto-bisserial é −0,34; quer saber que a questão presta ou não. Mas quem
+ * quiser conferir tem o número ao alcance do cursor — e no CSV.
+ */
+export function SinaisDaQuestao({ questao }: { questao: QuestaoDoRelatorio }) {
+  const flags = flagsDaQuestao(questao);
+
+  if (flags.length === 0) {
+    // ⚠️ Travessão, e não célula vazia: vazio se lê como "não calculou".
+    return <span className={dashV2.text.muted}>{SEM_SINAL}</span>;
+  }
+
+  return (
+    <span className="flex flex-wrap gap-1 py-1">
+      {flags.map((flag) => {
+        const { rotulo, tone, explicacao } = APRESENTACAO_DAS_FLAGS[flag];
+        /*
+          ⚠️ Só os sinais que vêm da discriminação levam o número no título —
+          nos outros ele não explica nada, e repeti-lo em toda flag treinaria
+          a pessoa a ignorar o tooltip.
+        */
+        const comValor =
+          (flag === "gabarito_suspeito" || flag === "nao_discrimina") &&
+          questao.discriminacao !== null
+            ? `${explicacao} (discriminação: ${questao.discriminacao.toFixed(2)})`
+            : explicacao;
+
+        return (
+          <span key={flag} data-flag={flag} title={comValor}>
+            <StatusBadge tone={tone} label={rotulo} className={cn("text-xs")} />
+          </span>
+        );
+      })}
+    </span>
+  );
+}
