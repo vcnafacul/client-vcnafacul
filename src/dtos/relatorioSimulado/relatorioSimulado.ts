@@ -112,8 +112,16 @@ export interface ResumoDoRelatorio {
   totalNoRecorte: number;
   comLeituraConcluida: number;
   aproveitamentoGeral: number | null;
+  /**
+   * Quantos estudantes do cursinho INTEIRO têm cartão neste simulado.
+   *
+   * ⚠️ **Só faz sentido no relatório de UMA turma** — "27 dos 30 cartões deste
+   * simulado são desta turma". No relatório do cursinho inteiro ele é igual ao
+   * numerador, e a frase não informaria nada.
+   *
+   * ⚠️ O campo atravessava os três serviços sem chegar à tela até o card 15.
+   */
   totalEstudantesComCartaoNoCursinho: number;
-  temEstudanteSemTurma: boolean;
   /** Quem saiu do cursinho depois de enviar. ⚠️ Contado, nunca listado. */
   linhasSemEstudanteAtivo: number;
   /**

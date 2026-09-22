@@ -9,7 +9,6 @@ const resumo = (over: Partial<ResumoDoRelatorio> = {}): ResumoDoRelatorio => ({
   comLeituraConcluida: 27,
   aproveitamentoGeral: 0.58,
   totalEstudantesComCartaoNoCursinho: 30,
-  temEstudanteSemTurma: false,
   linhasSemEstudanteAtivo: 0,
   totalDeQuestoes: 90,
   simuladoNome: "ENEM 2024 — 2ª aplicação",

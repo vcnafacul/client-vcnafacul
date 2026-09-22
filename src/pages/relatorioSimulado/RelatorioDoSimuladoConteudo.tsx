@@ -440,6 +440,19 @@ export function RelatorioDoSimuladoConteudo({
                     resumo={relatorio.resumo}
                     distribuicao={distribuicao}
                     faixas={faixas}
+                    /*
+                      ⚠️ **Só no recorte de turma** (card 15): no cursinho
+                      inteiro o numerador e o denominador são o mesmo número.
+
+                      ⚠️ Conta quem ENVIOU, e não `linhas.length`: o outro lado
+                      da comparação é a contagem de cartões do ms, e a lista
+                      daqui inclui quem não enviou.
+                    */
+                    cartoesNoRecorte={
+                      turmaId === undefined
+                        ? undefined
+                        : relatorio.linhas.filter((l) => l.enviouCartao).length
+                    }
                   />
                   {/*
                     ⚠️ **O mesmo `SampleSizeBanner` do agregado mensal da

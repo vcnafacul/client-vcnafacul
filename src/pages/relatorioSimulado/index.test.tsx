@@ -53,7 +53,6 @@ const RESPOSTA = {
     comLeituraConcluida: 1,
     aproveitamentoGeral: 0.8,
     totalEstudantesComCartaoNoCursinho: 1,
-    temEstudanteSemTurma: false,
     linhasSemEstudanteAtivo: 0,
     totalDeQuestoes: 90,
     simuladoNome: "ENEM 2024",
@@ -1549,5 +1548,55 @@ describe("RelatorioSimulado — alerta de leitura (card 12)", () => {
     await waitFor(() => expect(buscarQuestoes).toHaveBeenCalled());
 
     expect(screen.queryByTestId("alertas-de-leitura")).toBeNull();
+  });
+});
+
+describe("RelatorioSimulado — rodapé de turma (card 15)", () => {
+  const linhaDe = (n: string, enviou: boolean) => ({
+    ...RESPOSTA.linhas[0],
+    usuario: `u-${n}`,
+    nome: n,
+    matricula: `m-${n}`,
+    enviouCartao: enviou,
+    status: enviou ? "completed" : undefined,
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarQuestoes.mockResolvedValue({ questoes: [] });
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "completed",
+      respostas: [],
+    });
+    buscarRelatorio.mockResolvedValue({
+      linhas: [linhaDe("Ana", true), linhaDe("Bruno", true), linhaDe("Carla", false)],
+      resumo: {
+        ...RESPOSTA.resumo,
+        totalNoRecorte: 3,
+        comLeituraConcluida: 2,
+        totalEstudantesComCartaoNoCursinho: 30,
+      },
+    });
+  });
+
+  it("⚠️ no recorte de turma, diz quantos cartões do cursinho são dela", async () => {
+    montar("/relatorio-simulado/sim-1?turma=t-9");
+    await screen.findByText("Ana");
+
+    /*
+      ⚠️ **2, e não 3.** O numerador conta quem ENVIOU; `totalNoRecorte` conta
+      estudantes, incluindo quem não enviou. Comparar aquele com a contagem de
+      cartões do ms diria "3 dos 30" onde só 2 cartões existem.
+    */
+    expect(
+      document.querySelector("[data-cartoes-do-cursinho]")?.textContent,
+    ).toContain("2 dos 30");
+  });
+
+  it("⚠️ no cursinho inteiro o rodapé não aparece", async () => {
+    montar();
+    await screen.findByText("Ana");
+
+    expect(document.querySelector("[data-cartoes-do-cursinho]")).toBeNull();
   });
 });
