@@ -1,10 +1,10 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 
 const exportAnalyticsCsv = vi.hoisted(() => vi.fn());
 vi.mock("@/utils/exportAnalyticsCsv", () => ({ exportAnalyticsCsv }));
 import { describe, expect, it } from "vitest";
 import { QUESTOES_POR_PAGINA, TabelaDeQuestoes } from "./TabelaDeQuestoes";
-import { vi, beforeEach } from "vitest";
+import { vi, beforeEach, afterEach } from "vitest";
 import type { QuestaoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 
 const questao = (
@@ -106,10 +106,15 @@ describe("TabelaDeQuestoes — percentuais", () => {
     // FORMA, que é o que se compara entre linhas.
     render(<TabelaDeQuestoes questoes={[questao()]} estado="idle" />);
 
-    const titulo = screen.getByRole("img").getAttribute("title")!;
-    expect(titulo).toContain("A: 12");
-    expect(titulo).toContain("B: 3");
-    expect(titulo).toContain("sem leitura: 2");
+    /*
+      ⚠️ A contagem saiu do `title` para a `DicaRapida` (300ms, num portal). O
+      `aria-label` do `role="img"` continua com o texto inteiro — quem usa
+      leitor de tela não passa o mouse.
+    */
+    const rotulo = screen.getByRole("img").getAttribute("aria-label")!;
+    expect(rotulo).toContain("A: 12");
+    expect(rotulo).toContain("B: 3");
+    expect(rotulo).toContain("sem leitura: 2");
   });
 
   it("⚠️ a BASE continua na tabela — é ela que deixa conferir turma pequena", () => {
@@ -406,6 +411,14 @@ describe("TabelaDeQuestoes — gabarito e colunas enxutas (card 04)", () => {
 });
 
 describe("TabelaDeQuestoes — triagem (card 06)", () => {
+  /*
+    ⚠️ `shouldAdvanceTime` porque a dica abre por `setTimeout` de 300ms — sem
+    ele, `waitFor` e afins ficariam presos, que é a armadilha registrada no
+    `useBuscaDeEstudantes`.
+  */
+  beforeEach(() => vi.useFakeTimers({ shouldAdvanceTime: true }));
+  afterEach(() => vi.useRealTimers());
+
   /**
    * O card 06: um simulado tem de 45 a 180 questões, e a aba entregava uma
    * linha para cada com dez números de peso visual igual e nenhuma indicação de
@@ -459,15 +472,19 @@ describe("TabelaDeQuestoes — triagem (card 06)", () => {
       <TabelaDeQuestoes questoes={[ruim()]} estado="idle" />,
     );
 
-    // ⚠️ O texto está no DOM, não num `title`: a dica virou um elemento com
-    // `role="tooltip"` e atraso de 300ms — o `title` nativo leva ~1s e não é
-    // configurável, e um segundo é tempo de a pessoa concluir que não há
-    // tooltip nenhum.
-    //
-    // ⚠️ Vírgula: o número sai em pt-BR. "-0.30" é como o JS formata.
-    expect(
-      container.querySelector('[data-flag="gabarito_suspeito"]'),
-    ).toHaveTextContent("-0,30");
+    /*
+      ⚠️ A dica só EXISTE depois do hover + 300ms, e num portal no `body` — foi
+      o conserto do corte: o `span.block.truncate` que o `DashTable` põe em toda
+      célula tem `overflow: hidden`, e cortava uma caixa `absolute`.
+
+      ⚠️ Vírgula: o número sai em pt-BR. "-0.30" é como o JS formata.
+    */
+    fireEvent.mouseEnter(
+      container.querySelector('[data-dica="gabarito_suspeito"]')!,
+    );
+    act(() => void vi.advanceTimersByTime(300));
+
+    expect(screen.getByRole("tooltip")).toHaveTextContent("-0,30");
     expect(container.querySelector('[data-column-id="discriminacao"]')).toBeNull();
   });
 
@@ -486,8 +503,11 @@ describe("TabelaDeQuestoes — triagem (card 06)", () => {
 
     const celulaSinais = celula(container, "sinais");
     expect(celulaSinais.querySelector("[title]")).toBeNull();
-    // e a explicação continua acessível, no DOM
-    expect(celulaSinais.querySelector('[role="tooltip"]')).not.toBeNull();
+
+    // e a explicação continua alcançável — no portal, depois do atraso
+    fireEvent.mouseEnter(celulaSinais.querySelector("[data-dica]")!);
+    act(() => void vi.advanceTimersByTime(300));
+    expect(screen.getByRole("tooltip")).toBeInTheDocument();
   });
 
   it("⚠️ a coluna `Sinais` NÃO é ordenável — array não tem ordem natural", () => {

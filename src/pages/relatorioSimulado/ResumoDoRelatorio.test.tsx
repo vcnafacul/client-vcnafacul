@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ResumoDoRelatorio } from "./ResumoDoRelatorio";
 import type { ResumoDoRelatorio as Resumo } from "@/dtos/relatorioSimulado/relatorioSimulado";
 
@@ -222,5 +222,64 @@ describe("ResumoDoRelatorio — distribuição (card 09)", () => {
     // 1/20 = 5%, elevado ao piso de 8%
     expect((uma as HTMLElement).style.height).toBe("8%");
     expect((cheia as HTMLElement).style.height).toBe("100%");
+  });
+});
+
+describe("HistogramaDaTurma — a dica de 300ms", () => {
+  beforeEach(() => vi.useFakeTimers({ shouldAdvanceTime: true }));
+  afterEach(() => vi.useRealTimers());
+
+  const faixas = [
+    { de: 0, ate: 11, quantos: 0 },
+    { de: 12, ate: 22, quantos: 3 },
+  ];
+
+  const montar = () =>
+    render(
+      <ResumoDoRelatorio
+        resumo={resumo()}
+        distribuicao={{
+          base: 3,
+          mediana: 15,
+          minimo: 12,
+          maximo: 20,
+          q1: 13,
+          q3: 18,
+        }}
+        faixas={faixas}
+      />,
+    );
+
+  it("⚠️ a faixa não usa mais o `title` nativo", () => {
+    const { container } = montar();
+
+    expect(
+      container.querySelector('[data-faixa="12-22"]')?.closest("[title]"),
+    ).toBeNull();
+  });
+
+  it("⚠️ o wrapper da faixa recebe `h-full flex-1`", () => {
+    // Mesmo defeito da barra: as oito faixas dependem de dividir a largura por
+    // igual, e o wrapper `inline-flex` da dica entrou no meio.
+    const { container } = montar();
+
+    const wrapper = container
+      .querySelector('[data-faixa="12-22"]')!
+      .parentElement!;
+    expect(wrapper.className).toContain("flex-1");
+    expect(wrapper.className).toContain("h-full");
+  });
+
+  it("abre em 300ms com a contagem da faixa", () => {
+    const { container } = montar();
+
+    fireEvent.mouseEnter(
+      container.querySelector('[data-faixa="12-22"]')!.parentElement!,
+    );
+    act(() => void vi.advanceTimersByTime(300));
+
+    expect(screen.getByRole("tooltip")).toHaveTextContent(
+      "12 a 22 acertos: 3 estudante(s)",
+    );
   });
 });
