@@ -47,15 +47,13 @@ export function SinaisDaQuestao({ questao }: { questao: QuestaoDoRelatorio }) {
           calculada, só não estava sendo dita.
         */
         return (
-          <span key={flag} data-flag={flag}>
-            <DicaDoSinal texto={explicacaoDaFlag(flag, questao)}>
-              <StatusBadge
-                tone={tone}
-                label={rotulo}
-                className={cn("text-xs")}
-              />
-            </DicaDoSinal>
-          </span>
+          <DicaDoSinal
+            key={flag}
+            marcador={flag}
+            texto={explicacaoDaFlag(flag, questao)}
+          >
+            <StatusBadge tone={tone} label={rotulo} className={cn("text-xs")} />
+          </DicaDoSinal>
         );
       })}
     </span>

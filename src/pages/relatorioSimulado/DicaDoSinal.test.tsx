@@ -1,84 +1,166 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
-import { DicaDoSinal } from "./DicaDoSinal";
+import { fireEvent, render, screen, act } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ATRASO_MS, DicaDoSinal, posicaoDaDica } from "./DicaDoSinal";
 
-const montar = (texto = "A alternativa D foi marcada por menos de 5%.") =>
-  render(
-    <DicaDoSinal texto={texto}>
-      <span>Distrator</span>
-    </DicaDoSinal>,
-  );
+describe("posicaoDaDica", () => {
+  const janela = { largura: 1440, altura: 900 };
+  const badge = (over: Partial<DOMRect> = {}) =>
+    ({ top: 400, bottom: 424, right: 900, left: 800, ...over }) as DOMRect;
+
+  it("⚠️ abre ACIMA do badge quando há espaço", () => {
+    const p = posicaoDaDica(badge(), janela, 80);
+
+    expect(p.top).toBeLessThan(400);
+  });
+
+  it("⚠️ abre ABAIXO quando não cabe acima", () => {
+    // Nas primeiras linhas da tabela não há espaço no topo, e a caixa sairia
+    // pela borda da janela.
+    const p = posicaoDaDica(badge({ top: 20, bottom: 44 }), janela, 80);
+
+    expect(p.top).toBeGreaterThan(44);
+  });
+
+  it("⚠️ alinha à DIREITA do badge — a coluna é a penúltima", () => {
+    // Crescendo para a direita, 288px sairiam da tela.
+    const p = posicaoDaDica(badge({ right: 900 }), janela, 80);
+
+    expect(p.left).toBe(900 - 288);
+  });
+
+  it("⚠️ não sai pela ESQUERDA em janela estreita", () => {
+    // Alinhar à direita de um badge perto da borda esquerda jogaria a caixa
+    // para fora — trocaria um corte por outro.
+    const p = posicaoDaDica(badge({ right: 100 }), { largura: 360, altura: 640 }, 80);
+
+    expect(p.left).toBeGreaterThanOrEqual(0);
+  });
+
+  it("⚠️ não sai pela DIREITA quando o badge está colado na borda", () => {
+    const p = posicaoDaDica(badge({ right: 1438 }), janela, 80);
+
+    expect(p.left + 288).toBeLessThanOrEqual(1440);
+  });
+});
 
 describe("DicaDoSinal", () => {
-  it("⚠️ abre em 300ms, não no ~1s do `title` nativo", () => {
-    /*
-      O motivo do card: o `title` do navegador leva cerca de um segundo e **não
-      é configurável** — nem por CSS, nem por JS. Um segundo é tempo suficiente
-      para a pessoa concluir que não existe tooltip e seguir em frente, que foi
-      o que aconteceu na revisão.
-    */
-    const { container } = montar();
+  beforeEach(() => vi.useFakeTimers({ shouldAdvanceTime: true }));
+  afterEach(() => vi.useRealTimers());
 
-    const dica = container.querySelector('[role="tooltip"]') as HTMLElement;
-    expect(dica.style.transitionDelay).toBe("300ms");
+  const montar = (texto = "A alternativa D foi marcada por menos de 5%.") =>
+    render(
+      <DicaDoSinal texto={texto}>
+        <span>Distrator</span>
+      </DicaDoSinal>,
+    );
+
+  const passarMouse = (el: HTMLElement) => fireEvent.mouseEnter(el);
+  const avancar = (ms: number) => act(() => void vi.advanceTimersByTime(ms));
+
+  it(`⚠️ NÃO abre antes de ${ATRASO_MS}ms`, () => {
+    // Sem atraso a dica pisca ao arrastar o ponteiro pela tabela, e cinco
+    // badges por linha viram um estroboscópio.
+    montar();
+    passarMouse(screen.getByText("Distrator"));
+
+    avancar(ATRASO_MS - 50);
+
+    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
   });
 
-  it("⚠️ NÃO usa o `title` nativo — seriam duas caixas sobre o mesmo badge", () => {
-    // Uma com 300ms e outra com ~1s, dizendo a mesma coisa.
-    const { container } = montar();
+  it(`abre depois de ${ATRASO_MS}ms`, () => {
+    montar();
+    passarMouse(screen.getByText("Distrator"));
 
-    expect(container.querySelector("[title]")).toBeNull();
+    avancar(ATRASO_MS);
+
+    expect(screen.getByRole("tooltip")).toHaveTextContent("alternativa D");
   });
 
-  it("o texto fica no DOM, acessível a leitor de tela", () => {
-    montar("Explicação completa");
+  it("⚠️ sair antes do prazo CANCELA — não abre atrasado", () => {
+    // Atravessar a tabela rápido abriria uma caixa 300ms depois de o ponteiro
+    // já ter ido embora.
+    montar();
+    const alvo = screen.getByText("Distrator");
+    passarMouse(alvo);
 
-    expect(screen.getByRole("tooltip")).toHaveTextContent("Explicação completa");
+    avancar(100);
+    fireEvent.mouseLeave(alvo);
+    avancar(ATRASO_MS);
+
+    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
   });
 
-  it("⚠️ começa invisível, e é a opacidade que muda — não o `display`", () => {
-    // `display` não anima, e sem transição o atraso de 300ms não existiria.
-    const { container } = montar();
-    const dica = container.querySelector('[role="tooltip"]')!;
+  it("sair depois de aberta fecha", () => {
+    montar();
+    const alvo = screen.getByText("Distrator");
+    passarMouse(alvo);
+    avancar(ATRASO_MS);
 
-    expect(dica.className).toContain("opacity-0");
-    expect(dica.className).toContain("group-hover:opacity-100");
-    expect(dica.className).toContain("transition-opacity");
+    fireEvent.mouseLeave(alvo);
+
+    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
   });
 
-  it("⚠️ abre também no foco por teclado", () => {
-    // `group-focus-within`, e sem `tabIndex` próprio: um por badge
-    // acrescentaria ~125 paradas de tab nesta tabela.
-    const { container } = montar();
+  describe("⚠️ o corte que motivou este conserto", () => {
+    it("a caixa vai para o BODY, não para dentro da célula", () => {
+      /*
+        O `DashTable` embrulha toda célula não-primária num
+        `span.block.truncate`, e `truncate` inclui `overflow: hidden` — que
+        cortava a caixa. Nenhum `z-index` resolve: o overflow corta antes de o
+        empilhamento entrar na conta.
+      */
+      const { container } = montar();
+      passarMouse(screen.getByText("Distrator"));
+      avancar(ATRASO_MS);
 
-    expect(
-      container.querySelector('[role="tooltip"]')!.className,
-    ).toContain("group-focus-within:opacity-100");
+      expect(container.querySelector('[role="tooltip"]')).toBeNull();
+      expect(document.body.querySelector('[role="tooltip"]')).not.toBeNull();
+    });
+
+    it("⚠️ é `fixed`, com coordenadas de viewport", () => {
+      // `absolute` voltaria a ser contido pelo primeiro ancestral posicionado —
+      // e o portal por si só não basta se a posição for relativa.
+      montar();
+      passarMouse(screen.getByText("Distrator"));
+      avancar(ATRASO_MS);
+
+      const dica = screen.getByRole("tooltip");
+      expect(dica.className).toContain("fixed");
+      expect(dica.style.top).not.toBe("");
+      expect(dica.style.left).not.toBe("");
+    });
   });
 
-  it("⚠️ `pointer-events-none` — senão a dica rouba o hover e pisca", () => {
-    const { container } = montar();
+  it("⚠️ `pointer-events-none` — senão a caixa rouba o hover e pisca", () => {
+    montar();
+    passarMouse(screen.getByText("Distrator"));
+    avancar(ATRASO_MS);
 
-    expect(container.querySelector('[role="tooltip"]')!.className).toContain(
+    expect(screen.getByRole("tooltip").className).toContain(
       "pointer-events-none",
     );
   });
 
-  it("⚠️ abre para a ESQUERDA — a coluna é a penúltima da tabela", () => {
-    // Uma caixa de 18rem crescendo para a direita sairia da tela.
-    const { container } = montar();
+  it("⚠️ não sai na impressão", () => {
+    montar();
+    passarMouse(screen.getByText("Distrator"));
+    avancar(ATRASO_MS);
 
-    expect(container.querySelector('[role="tooltip"]')!.className).toContain(
-      "right-0",
-    );
+    expect(screen.getByRole("tooltip").className).toContain("print:hidden");
   });
 
-  it("⚠️ não sai na impressão — apareceria sobre a linha seguinte", () => {
-    const { container } = montar();
+  it("⚠️ desmontar com o timer vivo não avisa estado em componente morto", () => {
+    const erro = vi.spyOn(console, "error").mockImplementation(() => {});
+    const { unmount } = montar();
+    passarMouse(screen.getByText("Distrator"));
 
-    expect(container.querySelector('[role="tooltip"]')!.className).toContain(
-      "print:hidden",
-    );
+    avancar(100);
+    unmount();
+    avancar(ATRASO_MS);
+
+    expect(erro).not.toHaveBeenCalled();
+    erro.mockRestore();
   });
 
   it("o conteúdo embrulhado continua renderizando", () => {
