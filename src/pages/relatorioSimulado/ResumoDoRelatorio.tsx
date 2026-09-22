@@ -54,11 +54,25 @@ export function ResumoDoRelatorio({
   resumo,
   distribuicao,
   faixas = [],
+  cartoesNoRecorte,
 }: {
   resumo: Resumo;
   /** ⚠️ Ausente = a tela ainda não calculou; tudo `null` = base insuficiente. */
   distribuicao?: Distribuicao;
   faixas?: FaixaDoHistograma[];
+  /**
+   * Quantos estudantes DESTE recorte enviaram cartão — o numerador do rodapé
+   * de turma (card 15).
+   *
+   * ⚠️ **Ausente = o recorte é o cursinho inteiro**, e aí o rodapé não aparece:
+   * o numerador seria igual ao denominador e a frase não informaria nada.
+   *
+   * ⚠️ **Não é `totalNoRecorte`.** Aquele conta ESTUDANTES do recorte, incluindo
+   * quem não enviou; este conta CARTÕES, que é a unidade do outro lado da
+   * comparação (`totalEstudantesComCartaoNoCursinho`). Comparar os dois diria
+   * "30 dos 27", que é a frase errada com números certos.
+   */
+  cartoesNoRecorte?: number;
 }) {
   const d = distribuicao;
 
@@ -119,6 +133,29 @@ export function ResumoDoRelatorio({
         Este relatório considera apenas quem respondeu por cartão-resposta. Quem
         resolveu o simulado pela plataforma não aparece aqui.
       </p>
+
+      {/*
+        ⚠️ **O rodapé que o campo esperava desde sempre** (card 15). Sem ele,
+        quem abre o relatório de uma turma não sabe se está vendo um pedaço ou o
+        todo — e o número já viajava do ms até aqui sem nunca ser mostrado.
+
+        ⚠️ Só no recorte de turma: no cursinho inteiro os dois lados são o mesmo
+        número.
+
+        ⚠️ **O denominador conta o cursinho INTEIRO, inclusive cartão de quem já
+        saiu** — é `countDocuments` no ms, que não sabe de matrícula ativa. Com
+        um ex-aluno na conta a frase pode dizer "27 de 30" onde o 30 inclui
+        alguém que não aparece em lista nenhuma. O aviso de
+        `linhasSemEstudanteAtivo` logo abaixo é o que explica a diferença; somar
+        as duas coisas numa frase só as tornaria ilegíveis.
+      */}
+      {cartoesNoRecorte !== undefined &&
+        resumo.totalEstudantesComCartaoNoCursinho > 0 && (
+          <p data-cartoes-do-cursinho className={cn("text-xs", dashV2.text.muted)}>
+            {cartoesNoRecorte} dos {resumo.totalEstudantesComCartaoNoCursinho}{" "}
+            cartões deste simulado no cursinho são desta turma.
+          </p>
+        )}
 
       {/*
         ⚠️ Contado, NUNCA listado: o nome de quem saiu do cursinho não é

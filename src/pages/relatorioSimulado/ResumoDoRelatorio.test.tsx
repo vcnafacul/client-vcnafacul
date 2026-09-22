@@ -8,12 +8,11 @@ const resumo = (over: Partial<Resumo> = {}): Resumo => ({
   comLeituraConcluida: 27,
   aproveitamentoGeral: 0.62,
   totalEstudantesComCartaoNoCursinho: 27,
-  temEstudanteSemTurma: false,
   linhasSemEstudanteAtivo: 0,
-    totalDeQuestoes: 90,
-    simuladoNome: "ENEM 2024",
-    turmaNome: null,
-    ultimoCartaoEm: "2026-09-21T15:30:00.000Z",
+  totalDeQuestoes: 90,
+  simuladoNome: "ENEM 2024",
+  turmaNome: null,
+  ultimoCartaoEm: "2026-09-21T15:30:00.000Z",
   ...over,
 });
 
@@ -281,5 +280,50 @@ describe("HistogramaDaTurma — a dica de 300ms", () => {
     expect(screen.getByRole("tooltip")).toHaveTextContent(
       "12 a 22 acertos: 3 estudante(s)",
     );
+  });
+});
+
+describe("ResumoDoRelatorio — rodapé de turma (card 15)", () => {
+  const comCursinho = (total: number) => ({
+    ...resumo(),
+    totalEstudantesComCartaoNoCursinho: total,
+  });
+
+  it("⚠️ diz quantos dos cartões do cursinho são desta turma", () => {
+    /*
+      O campo atravessava ms → api → client sem chegar a lugar nenhum. Sem esta
+      frase, quem abre o relatório de uma turma não sabe se está vendo um pedaço
+      ou o todo.
+    */
+    render(
+      <ResumoDoRelatorio resumo={comCursinho(30)} cartoesNoRecorte={27} />,
+    );
+
+    expect(
+      document.querySelector("[data-cartoes-do-cursinho]")?.textContent,
+    ).toContain("27 dos 30");
+  });
+
+  it("⚠️ NÃO aparece no relatório do cursinho inteiro", () => {
+    // Lá o numerador é o denominador, e a frase não informaria nada.
+    render(<ResumoDoRelatorio resumo={comCursinho(30)} />);
+
+    expect(document.querySelector("[data-cartoes-do-cursinho]")).toBeNull();
+  });
+
+  it("cursinho sem cartão nenhum não vira '0 de 0'", () => {
+    render(<ResumoDoRelatorio resumo={comCursinho(0)} cartoesNoRecorte={0} />);
+
+    expect(document.querySelector("[data-cartoes-do-cursinho]")).toBeNull();
+  });
+
+  it("turma que é o cursinho inteiro ainda diz — e isso informa", () => {
+    render(
+      <ResumoDoRelatorio resumo={comCursinho(30)} cartoesNoRecorte={30} />,
+    );
+
+    expect(
+      document.querySelector("[data-cartoes-do-cursinho]")?.textContent,
+    ).toContain("30 dos 30");
   });
 });
