@@ -459,12 +459,35 @@ describe("TabelaDeQuestoes — triagem (card 06)", () => {
       <TabelaDeQuestoes questoes={[ruim()]} estado="idle" />,
     );
 
+    // ⚠️ O texto está no DOM, não num `title`: a dica virou um elemento com
+    // `role="tooltip"` e atraso de 300ms — o `title` nativo leva ~1s e não é
+    // configurável, e um segundo é tempo de a pessoa concluir que não há
+    // tooltip nenhum.
+    //
+    // ⚠️ Vírgula: o número sai em pt-BR. "-0.30" é como o JS formata.
     expect(
       container.querySelector('[data-flag="gabarito_suspeito"]'),
-    // ⚠️ Vírgula: o número sai em pt-BR desde que a explicação passou a ser
-    // concreta. "-0.30" é como o JS formata, não como o Brasil lê.
-    ).toHaveAttribute("title", expect.stringContaining("-0,30"));
+    ).toHaveTextContent("-0,30");
     expect(container.querySelector('[data-column-id="discriminacao"]')).toBeNull();
+  });
+
+  it("⚠️ o badge NÃO tem `title` — a dica de 300ms substituiu o nativo", () => {
+    /*
+      Os dois juntos dariam DUAS caixas de texto sobre o mesmo badge, dizendo a
+      mesma coisa — uma em 300ms e a outra no ~1s do navegador.
+
+      ⚠️ Este teste vive aqui, e não no `DicaDoSinal.test.tsx`: lá o componente
+      é montado isolado e nunca teria `title` de qualquer jeito. A duplicação só
+      pode nascer em quem USA a dica, que é o `SinaisDaQuestao`.
+    */
+    const { container } = render(
+      <TabelaDeQuestoes questoes={[ruim()]} estado="idle" />,
+    );
+
+    const celulaSinais = celula(container, "sinais");
+    expect(celulaSinais.querySelector("[title]")).toBeNull();
+    // e a explicação continua acessível, no DOM
+    expect(celulaSinais.querySelector('[role="tooltip"]')).not.toBeNull();
   });
 
   it("⚠️ a coluna `Sinais` NÃO é ordenável — array não tem ordem natural", () => {
