@@ -128,17 +128,28 @@ describe("DetalheDoEstudante", () => {
     // verde e vermelho sozinhos excluem quem não distingue as duas. E as
     // medições do tokens.ts: green3 dá 3.77:1 e red 3.88:1 sobre branco —
     // passa para componente gráfico, não para texto pequeno.
-    montar();
+    /*
+      ⚠️ Busca DENTRO da tabela: desde o card 20 os chips de filtro trazem
+      "Errou (N)" e "Sem leitura (N)" no cabeçalho, e um `getByText(/errou/i)`
+      solto casa com os dois. O que este teste afirma é sobre o BADGE da linha.
+    */
+    const { container } = montar();
+    await screen.findByText(/acertou/i);
+    const tabela = container.querySelector("table")!;
 
-    expect(await screen.findByText(/acertou/i)).toBeInTheDocument();
-    expect(screen.getByText(/errou/i)).toBeInTheDocument();
+    expect(within(tabela).getByText(/acertou/i)).toBeInTheDocument();
+    expect(within(tabela).getByText(/errou/i)).toBeInTheDocument();
   });
 
   it("⚠️ sem leitura é distinguível de erro", async () => {
     // juntar os dois distorce a leitura que o professor faz
-    montar();
+    // ⚠️ Dentro da tabela: o chip "Sem leitura (N)" do card 20 também casa.
+    const { container } = montar();
+    await screen.findByText(/acertou/i);
 
-    expect(await screen.findByText(/sem leitura/i)).toBeInTheDocument();
+    expect(
+      within(container.querySelector("table")!).getByText(/sem leitura/i),
+    ).toBeInTheDocument();
   });
 
   it("histórico falho mostra a descrição do erro, não tabela vazia", async () => {
@@ -483,5 +494,248 @@ describe("DetalheDoEstudante — rótulo da dificuldade por recorte (card 18)", 
     for (const rotulo of Object.values(ROTULO_DA_DIFICULDADE)) {
       expect(rotulo).toMatch(/turma|cursinho/i);
     }
+  });
+});
+
+describe("DetalheDoEstudante — navegação e filtro (card 20)", () => {
+  /**
+   * O card 20: para ver o próximo aluno era preciso fechar o modal, achar a
+   * linha e clicar — numa turma de 27, ~80 interações por passada. E o modal
+   * abre em 90 linhas quando a pergunta é "o que ele errou".
+   */
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "completed",
+      respostas: [
+        resposta(),
+        resposta({ numero: 2, questaoId: "q2", resultado: "erro", alternativaEstudante: "B" }),
+        resposta({ numero: 3, questaoId: "q3", resultado: "erro", alternativaEstudante: "C" }),
+        resposta({ numero: 4, questaoId: "q4", resultado: "sem_leitura", alternativaEstudante: undefined }),
+      ],
+    });
+  });
+
+  const comNavegacao = (over: Record<string, unknown> = {}) =>
+    montar({
+      navegacao: {
+        posicao: 3,
+        total: 25,
+        aoAnterior: vi.fn(),
+        aoProximo: vi.fn(),
+        ...over,
+      },
+    });
+
+  describe("setas", () => {
+    it("aparecem no cabeçalho, com rótulo acessível", async () => {
+      comNavegacao();
+      await screen.findByText("Marcou");
+
+      expect(
+        screen.getByRole("button", { name: "Estudante anterior" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Próximo estudante" }),
+      ).toBeInTheDocument();
+    });
+
+    it("⚠️ na ponta ficam DESABILITADAS, não somem", async () => {
+      // Uma seta que some faz o cabeçalho mudar de largura entre alunos, e o
+      // olho persegue o movimento.
+      const { container } = montar({
+        navegacao: { posicao: 1, total: 25, aoAnterior: null, aoProximo: vi.fn() },
+      });
+      await screen.findByText("Marcou");
+
+      expect(container.querySelector('[data-seta="anterior"]')).toBeDisabled();
+      expect(container.querySelector('[data-seta="proximo"]')).not.toBeDisabled();
+    });
+
+    it("clicar chama o callback", async () => {
+      const aoProximo = vi.fn();
+      comNavegacao({ aoProximo });
+      await screen.findByText("Marcou");
+
+      fireEvent.click(screen.getByRole("button", { name: "Próximo estudante" }));
+
+      expect(aoProximo).toHaveBeenCalledTimes(1);
+    });
+
+    it("⚠️ o contador é da PÁGINA, e diz o que as setas percorrem", async () => {
+      // Prometer "3 de 27" e parar no 25 seria pior que dizer "3 de 25".
+      comNavegacao();
+
+      expect(await screen.findByTestId("posicao-na-navegacao")).toHaveTextContent(
+        "3 de 25",
+      );
+    });
+
+    it("sem navegação, nem setas nem contador", async () => {
+      montar();
+      await screen.findByText("Marcou");
+
+      expect(screen.queryByTestId("posicao-na-navegacao")).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: "Próximo estudante" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("⚠️ as setas CONTINUAM num cartão que falhou", async () => {
+      // É justamente navegando que se descobre que o cartão do próximo falhou.
+      buscarDetalheDoEstudante.mockResolvedValue({
+        status: "failed",
+        falha: { codigo: "x", descricao: "falhou", acaoSugerida: "reenviar_foto" },
+        respostas: [],
+      });
+      comNavegacao();
+      await screen.findByText("falhou");
+
+      expect(
+        screen.getByRole("button", { name: "Próximo estudante" }),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe("teclado", () => {
+    it("`←` e `→` navegam", async () => {
+      const aoAnterior = vi.fn();
+      const aoProximo = vi.fn();
+      comNavegacao({ aoAnterior, aoProximo });
+      await screen.findByText("Marcou");
+
+      fireEvent.keyDown(window, { key: "ArrowRight" });
+      fireEvent.keyDown(window, { key: "ArrowLeft" });
+
+      expect(aoProximo).toHaveBeenCalledTimes(1);
+      expect(aoAnterior).toHaveBeenCalledTimes(1);
+    });
+
+    it("⚠️ na ponta a tecla não faz nada — e não estoura", async () => {
+      comNavegacao({ aoProximo: null });
+      await screen.findByText("Marcou");
+
+      expect(() =>
+        fireEvent.keyDown(window, { key: "ArrowRight" }),
+      ).not.toThrow();
+    });
+
+    it("⚠️ não rouba a seta de um campo de texto", async () => {
+      // O modal não tem input hoje, mas os cards 10 e 20 continuam crescendo
+      // aqui — e um atalho que sequestra a seta de um `<input>` é o defeito
+      // clássico.
+      const aoProximo = vi.fn();
+      comNavegacao({ aoProximo });
+      await screen.findByText("Marcou");
+
+      const input = document.createElement("input");
+      document.body.appendChild(input);
+      fireEvent.keyDown(input, { key: "ArrowRight" });
+
+      expect(aoProximo).not.toHaveBeenCalled();
+      input.remove();
+    });
+  });
+
+  describe("chips", () => {
+    const chip = (c: HTMLElement, f: string) =>
+      c.querySelector(`[data-chip="${f}"]`) as HTMLElement;
+
+    it("⚠️ são três, com os contadores no rótulo", async () => {
+      // Sem o número, uma tabela de 2 linhas num cartão de 4 fica sem
+      // explicação.
+      const { container } = montar();
+      await screen.findByTestId("chips-do-detalhe");
+
+      expect(chip(container, "tudo")).toHaveTextContent("Tudo (4)");
+      expect(chip(container, "errou")).toHaveTextContent("Errou (2)");
+      expect(chip(container, "sem_leitura")).toHaveTextContent("Sem leitura (1)");
+    });
+
+    it("⚠️ NÃO existe chip de 'Acertou'", async () => {
+      const { container } = montar();
+      await screen.findByTestId("chips-do-detalhe");
+
+      expect(container.querySelectorAll("[data-chip]")).toHaveLength(3);
+      expect(chip(container, "acertou")).toBeNull();
+    });
+
+    it("`Tudo` é o padrão — a tela de abrir não muda", async () => {
+      const { container } = montar();
+      await screen.findByTestId("chips-do-detalhe");
+
+      expect(chip(container, "tudo")).toHaveAttribute("aria-pressed", "true");
+      expect(container.querySelectorAll("tbody tr")).toHaveLength(4);
+    });
+
+    it("filtrar por 'Errou' recorta a tabela", async () => {
+      const { container } = montar();
+      await screen.findByTestId("chips-do-detalhe");
+
+      fireEvent.click(chip(container, "errou"));
+
+      expect(container.querySelectorAll("tbody tr")).toHaveLength(2);
+    });
+
+    it("⚠️ 'Errou' NÃO traz o que ficou sem leitura", async () => {
+      // Juntar os dois "distorce exatamente a leitura que o professor faz para
+      // decidir o que revisar em aula" — o `rotuloDoResultado` documenta.
+      const { container } = montar();
+      await screen.findByTestId("chips-do-detalhe");
+
+      fireEvent.click(chip(container, "errou"));
+      const tabela = container.querySelector("table")!;
+
+      expect(within(tabela).queryByText(/sem leitura/i)).not.toBeInTheDocument();
+    });
+
+    it("⚠️ chip com ZERO fica desabilitado, não some", async () => {
+      // "Sem leitura (0)" é informação boa: diz que o cartão foi lido inteiro.
+      buscarDetalheDoEstudante.mockResolvedValue({
+        status: "completed",
+        respostas: [resposta()],
+      });
+      const { container } = montar();
+      await screen.findByTestId("chips-do-detalhe");
+
+      expect(chip(container, "sem_leitura")).toBeDisabled();
+      expect(chip(container, "sem_leitura")).toHaveTextContent("Sem leitura (0)");
+    });
+
+    it("⚠️ o `Tudo` nunca desabilita, nem com zero respostas", async () => {
+      // Ele é o estado neutro; desabilitá-lo deixaria a pessoa presa num filtro.
+      buscarDetalheDoEstudante.mockResolvedValue({
+        status: "completed",
+        respostas: [],
+      });
+      const { container } = montar();
+      await screen.findByTestId("chips-do-detalhe");
+
+      expect(chip(container, "tudo")).not.toBeDisabled();
+    });
+
+    it("⚠️ não aparecem num cartão que falhou", async () => {
+      // Controles sobre uma tabela que não existe são controles mortos.
+      buscarDetalheDoEstudante.mockResolvedValue({
+        status: "failed",
+        falha: { codigo: "x", descricao: "falhou", acaoSugerida: "reenviar_foto" },
+        respostas: [],
+      });
+      montar();
+      await screen.findByText("falhou");
+
+      expect(screen.queryByTestId("chips-do-detalhe")).not.toBeInTheDocument();
+    });
+
+    it("⚠️ o filtro não reordena — a ordem segue a do ms", async () => {
+      const { container } = montar();
+      await screen.findByTestId("chips-do-detalhe");
+
+      fireEvent.click(chip(container, "errou"));
+      const numeros = [...container.querySelectorAll('[data-column-id="numero"]')]
+        .map((c) => c.textContent);
+
+      expect(numeros).toEqual(["2", "3"]);
+    });
   });
 });

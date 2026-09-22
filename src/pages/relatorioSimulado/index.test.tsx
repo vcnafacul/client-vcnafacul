@@ -1195,3 +1195,205 @@ describe("RelatorioSimulado — rótulo da dificuldade (card 18)", () => {
     ).toBeInTheDocument();
   });
 });
+
+describe("RelatorioSimulado — navegação entre alunos (card 20)", () => {
+  const aluno = (n: string, over = {}) => ({
+    ...RESPOSTA.linhas[0],
+    usuario: `u-${n}`,
+    nome: n,
+    matricula: `m-${n}`,
+    ...over,
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarRelatorio.mockResolvedValue({
+      linhas: [
+        aluno("Ana"),
+        aluno("Bruno"),
+        aluno("Carla"),
+      ],
+      resumo: { ...RESPOSTA.resumo, totalNoRecorte: 3, comLeituraConcluida: 3 },
+    });
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "completed",
+      respostas: [
+        {
+          numero: 1,
+          questaoId: "q1",
+          alternativaEstudante: "A",
+          alternativaCorreta: "A",
+          resultado: "acerto",
+        },
+      ],
+    });
+  });
+
+  it("a seta leva ao próximo aluno da lista visível", async () => {
+    montar();
+    fireEvent.click(await screen.findByText("Ana"));
+    await screen.findByText("Marcou");
+
+    fireEvent.click(screen.getByRole("button", { name: "Próximo estudante" }));
+
+    expect(
+      await screen.findByRole("heading", { name: "Bruno" }),
+    ).toBeInTheDocument();
+  });
+
+  it("⚠️ o contador acompanha a posição", async () => {
+    montar();
+    fireEvent.click(await screen.findByText("Bruno"));
+
+    expect(await screen.findByTestId("posicao-na-navegacao")).toHaveTextContent(
+      "2 de 3",
+    );
+  });
+
+  it("⚠️ trocar de aluno RECARREGA o detalhe", async () => {
+    // Sem a `key`, a instância é reaproveitada e o modal mostraria o detalhe do
+    // aluno anterior — o estado interno sobrevive à troca.
+    montar();
+    fireEvent.click(await screen.findByText("Ana"));
+    await screen.findByText("Marcou");
+    expect(buscarDetalheDoEstudante).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByRole("button", { name: "Próximo estudante" }));
+
+    await waitFor(() =>
+      expect(buscarDetalheDoEstudante).toHaveBeenCalledTimes(2),
+    );
+    expect(buscarDetalheDoEstudante).toHaveBeenLastCalledWith(
+      "tok",
+      "sim-1",
+      "u-Bruno",
+    );
+  });
+
+  it("⚠️ trocar de aluno RESETA o filtro", async () => {
+    // O filtro é do aluno aberto. Levá-lo adiante faria o próximo modal abrir
+    // já recortado, sem a pessoa ter pedido.
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "completed",
+      respostas: [
+        { numero: 1, questaoId: "q1", alternativaCorreta: "A", resultado: "acerto" },
+        { numero: 2, questaoId: "q2", alternativaCorreta: "A", resultado: "erro" },
+      ],
+    });
+    const { container } = montar();
+    fireEvent.click(await screen.findByText("Ana"));
+    await screen.findByTestId("chips-do-detalhe");
+
+    /*
+      ⚠️ Conta as linhas DO MODAL, não do container: a tabela de estudantes
+      atrás dele também tem `tbody tr`, e `container.querySelectorAll` casaria
+      as duas.
+    */
+    const linhasDoModal = () =>
+      screen.getByTestId("chips-do-detalhe").parentElement!.querySelectorAll(
+        "tbody tr",
+      );
+
+    fireEvent.click(container.querySelector('[data-chip="errou"]')!);
+    expect(linhasDoModal()).toHaveLength(1);
+
+    fireEvent.click(screen.getByRole("button", { name: "Próximo estudante" }));
+    await screen.findByRole("heading", { name: "Bruno" });
+
+    expect(
+      container.querySelector('[data-chip="tudo"]'),
+    ).toHaveAttribute("aria-pressed", "true");
+    expect(linhasDoModal()).toHaveLength(2);
+  });
+
+  it("⚠️ quem NÃO enviou é pulado pela seta", async () => {
+    // Mesma razão de o `onRowClick` não abrir para eles: a rota devolve 404.
+    buscarRelatorio.mockResolvedValue({
+      linhas: [
+        aluno("Ana"),
+        aluno("Bruno", { enviouCartao: false, status: undefined }),
+        aluno("Carla"),
+      ],
+      resumo: { ...RESPOSTA.resumo, totalNoRecorte: 3, comLeituraConcluida: 2 },
+    });
+    montar();
+    fireEvent.click(await screen.findByText("Ana"));
+    await screen.findByText("Marcou");
+
+    fireEvent.click(screen.getByRole("button", { name: "Próximo estudante" }));
+
+    expect(
+      await screen.findByRole("heading", { name: "Carla" }),
+    ).toBeInTheDocument();
+  });
+
+  it("⚠️ a navegação percorre as linhas FILTRADAS, não o recorte inteiro", async () => {
+    /*
+      O card é explícito: a ordem é a das linhas que estão na tela. Com a busca
+      "a", Bruno some (o nome não tem 'a') — e "próximo" a partir da Ana tem de
+      ser a Carla, não o Bruno.
+
+      ⚠️ Sem este teste, trocar `linhasDaPagina` por `todasAsLinhas` na tela
+      passava: com três linhas numa página só e sem filtro, as duas listas são
+      iguais. A mutação sobreviveu até este caso existir.
+    */
+    montar();
+    await screen.findByText("Ana");
+
+    fireEvent.change(screen.getByPlaceholderText(/buscar por nome/i), {
+      target: { value: "a" },
+    });
+    await waitFor(() =>
+      expect(screen.queryByText("Bruno")).not.toBeInTheDocument(),
+    );
+
+    fireEvent.click(screen.getByText("Ana"));
+    await screen.findByText("Marcou");
+
+    expect(screen.getByTestId("posicao-na-navegacao")).toHaveTextContent(
+      "1 de 2",
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Próximo estudante" }));
+
+    expect(
+      await screen.findByRole("heading", { name: "Carla" }),
+    ).toBeInTheDocument();
+  });
+
+  it("⚠️ na última linha a seta desabilita", async () => {
+    montar();
+    fireEvent.click(await screen.findByText("Carla"));
+    await screen.findByText("Marcou");
+
+    expect(
+      screen.getByRole("button", { name: "Próximo estudante" }),
+    ).toBeDisabled();
+  });
+
+  it("⚠️ a ordem das setas é a da TABELA, não a do payload", async () => {
+    // Ordena por nome decrescente: "próximo" tem de ser a próxima linha que a
+    // pessoa está vendo.
+    const { container } = montar();
+    await screen.findByText("Ana");
+
+    // clica no cabeçalho "Estudante" duas vezes → desc
+    const th = screen.getByRole("button", { name: /estudante/i });
+    fireEvent.click(th);
+    fireEvent.click(th);
+
+    // ⚠️ Abre pela coluna `estudante` da primeira linha: o nome aparece também
+    // na matrícula e um `getByText` solto casaria os dois.
+    const primeira = container.querySelectorAll("[data-row-key]")[0];
+    fireEvent.click(
+      primeira.querySelector('[data-column-id="estudante"] button')!,
+    );
+    await screen.findByText("Marcou");
+
+    fireEvent.click(screen.getByRole("button", { name: "Próximo estudante" }));
+
+    expect(
+      await screen.findByRole("heading", { name: "Bruno" }),
+    ).toBeInTheDocument();
+  });
+});

@@ -21,6 +21,14 @@ import {
 } from "./dificuldadeDaQuestao";
 import { ResumoDoEstudante } from "./ResumoDoEstudante";
 import {
+  contagensDoDetalhe,
+  filtrarRespostas,
+  FILTRO_PADRAO,
+  type FiltroDoDetalhe,
+} from "./filtroDoDetalhe";
+import { ChipsDoDetalhe } from "./ChipsDoDetalhe";
+import { SetaDeNavegacao } from "./SetaDeNavegacao";
+import {
   ROTULO_DA_DIFICULDADE,
   type RecorteDoRelatorio,
 } from "./recorteDoRelatorio";
@@ -192,6 +200,7 @@ export function DetalheDoEstudante({
   onClose,
   dificuldade,
   recorte = "cursinho",
+  navegacao,
   totalDeQuestoes = 0,
   mediaDoRecorte = null,
   materiasDaTurma = [],
@@ -218,6 +227,17 @@ export function DetalheDoEstudante({
    */
   recorte?: RecorteDoRelatorio;
   /**
+   * Para onde as setas levam. `null` desabilita — **não esconde**: uma seta que
+   * some faz o cabeçalho mudar de largura entre alunos, e o olho persegue o
+   * movimento.
+   */
+  navegacao?: {
+    posicao: number;
+    total: number;
+    aoAnterior: (() => void) | null;
+    aoProximo: (() => void) | null;
+  };
+  /**
    * Quantas questões o simulado tem — denominador dos acertos (card 08).
    */
   totalDeQuestoes?: number;
@@ -228,6 +248,7 @@ export function DetalheDoEstudante({
 }) {
   const [detalhe, setDetalhe] = useState<Detalhe | null>(null);
   const [estado, setEstado] = useState<"idle" | "loading" | "error">("loading");
+  const [filtro, setFiltro] = useState<FiltroDoDetalhe>(FILTRO_PADRAO);
 
   const carregar = useCallback(() => {
     // ⚠️ Só com o modal aberto. Ele é renderizado pela tela do relatório junto
@@ -243,6 +264,26 @@ export function DetalheDoEstudante({
   }, [isOpen, token, simuladoId, estudante.usuario]);
 
   useEffect(carregar, [carregar]);
+
+  /*
+    ⚠️ **`←`/`→` e nada mais.** O `Esc` já fecha pelo `ModalTemplate`, e atalho
+    novo além desses dois seria convenção inventada que ninguém descobre.
+
+    ⚠️ Ignora quando o foco está num campo de texto: a tela não tem nenhum
+    dentro do modal hoje, mas o card 20 e o 10 vão continuar crescendo aqui, e
+    um atalho que rouba a seta de um `<input>` é o defeito clássico.
+  */
+  useEffect(() => {
+    if (!isOpen) return;
+    const aoTeclar = (e: KeyboardEvent) => {
+      const alvo = e.target as HTMLElement | null;
+      if (alvo?.tagName === "INPUT" || alvo?.tagName === "TEXTAREA") return;
+      if (e.key === "ArrowLeft") navegacao?.aoAnterior?.();
+      if (e.key === "ArrowRight") navegacao?.aoProximo?.();
+    };
+    window.addEventListener("keydown", aoTeclar);
+    return () => window.removeEventListener("keydown", aoTeclar);
+  }, [isOpen, navegacao]);
 
   const processando =
     detalhe?.status === "awaiting_omr" ||
@@ -261,13 +302,53 @@ export function DetalheDoEstudante({
       className="w-full max-w-3xl rounded-lg bg-white p-4 shadow-xl"
     >
       <div className="flex flex-col gap-4">
-        <header>
-          <h2 className={cn("text-lg font-semibold", dashV2.text.primary)}>
-            {estudante.nome}
-          </h2>
-          <p className={cn("text-xs", dashV2.text.muted)}>
-            {estudante.matricula}
-          </p>
+        <header className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2">
+            {/*
+              ⚠️ **Desabilitadas nas pontas, nunca escondidas.** Uma seta que
+              some faz o cabeçalho mudar de largura entre alunos, e o olho
+              persegue o movimento.
+            */}
+            {navegacao !== undefined && (
+              <SetaDeNavegacao
+                direcao="anterior"
+                aoClicar={navegacao.aoAnterior}
+              />
+            )}
+            <div className="min-w-0">
+              <h2
+                className={cn(
+                  "truncate text-lg font-semibold",
+                  dashV2.text.primary,
+                )}
+              >
+                {estudante.nome}
+              </h2>
+              <p className={cn("text-xs", dashV2.text.muted)}>
+                {estudante.matricula}
+              </p>
+            </div>
+            {navegacao !== undefined && (
+              <SetaDeNavegacao
+                direcao="proximo"
+                aoClicar={navegacao.aoProximo}
+              />
+            )}
+          </div>
+
+          {/*
+            ⚠️ O contador é da PÁGINA, não do recorte: as setas param no fim da
+            página, e prometer "3 de 27" parando no 25 seria pior que dizer
+            "3 de 25".
+          */}
+          {navegacao !== undefined && navegacao.posicao > 0 && (
+            <span
+              data-testid="posicao-na-navegacao"
+              className={cn("shrink-0 text-xs", dashV2.text.muted)}
+            >
+              {navegacao.posicao} de {navegacao.total}
+            </span>
+          )}
         </header>
 
         {estado === "error" && (
@@ -367,6 +448,27 @@ export function DetalheDoEstudante({
             />
           )}
 
+        {/*
+          ⚠️ **Mesma condição da tabela**: chips de filtro sobre uma tabela que
+          não existe seriam controles mortos. `failed`, `processando` e status
+          desconhecido têm cada um a sua mensagem.
+
+          ⚠️ **As SETAS continuam**, mesmo nesses estados — é justamente
+          navegando que se descobre que o cartão do próximo falhou. Por isso
+          elas vivem no `<header>`, fora deste gate.
+        */}
+        {estado === "idle" &&
+          !processando &&
+          !statusDesconhecido &&
+          detalhe !== null &&
+          detalhe.status !== "failed" && (
+            <ChipsDoDetalhe
+              contagens={contagensDoDetalhe(detalhe.respostas)}
+              ativo={filtro}
+              aoTrocar={setFiltro}
+            />
+          )}
+
         {estado !== "error" &&
           !processando &&
           !statusDesconhecido &&
@@ -377,7 +479,11 @@ export function DetalheDoEstudante({
             não se veja de relance.
           */
           <DashTable<RespostaDoEstudante>
-            rows={detalhe?.respostas ?? []}
+            /*
+              ⚠️ O filtro REMOVE linhas, não reordena — a ordem segue a do ms,
+              por número da questão, e a tabela continua sem `onSortChange`.
+            */
+            rows={filtrarRespostas(detalhe?.respostas ?? [], filtro)}
             columns={colunasDoDetalhe(dificuldade ?? new Map(), recorte)}
             // `:i` porque a mesma questão pode aparecer duas vezes no simulado
             // (corrida conhecida do `adicionarEmProva`): as linhas seriam
