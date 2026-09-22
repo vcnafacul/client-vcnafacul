@@ -19,6 +19,7 @@ const linha = (over: Partial<LinhaDoRelatorio> = {}): LinhaDoRelatorio => ({
   status: "completed",
   cartaoCode: "7",
   aproveitamentoGeral: 0.8,
+  acertos: 61,
   ...over,
 });
 
@@ -37,13 +38,18 @@ const questao = (over: Partial<QuestaoDoRelatorio> = {}): QuestaoDoRelatorio => 
 
 describe("planilhaDeEstudantes", () => {
   it("traz os campos da tabela, na ordem do cabeçalho", () => {
-    const p = planilhaDeEstudantes([linha()], { comTurma: false });
+    const p = planilhaDeEstudantes([linha()], {
+      comTurma: false,
+      totalDeQuestoes: 90,
+    });
 
     expect(p.cabecalho).toEqual([
       "Estudante",
       "Matrícula",
       "Turma",
       "Situação",
+      "Acertos",
+      "Total de questões",
       "Aproveitamento (%)",
       "Cartão",
       "Motivo da falha",
@@ -53,6 +59,8 @@ describe("planilhaDeEstudantes", () => {
       "2025001",
       "Turma A",
       "Lido",
+      61,
+      90,
       80,
       "7",
       null,
@@ -178,6 +186,8 @@ describe("planilhaDeEstudantes", () => {
         "Estudante",
         "Matrícula",
         "Situação",
+        "Acertos",
+        "Total de questões",
         "Aproveitamento (%)",
         "Cartão",
         "Motivo da falha",

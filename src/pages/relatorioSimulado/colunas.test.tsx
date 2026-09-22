@@ -378,3 +378,96 @@ describe("colunas do relatório — nota por matéria (card 07)", () => {
     ).toBeNull();
   });
 });
+
+describe("colunas do relatório — Resultado (card 08)", () => {
+  /**
+   * O card 08: o relatório falava em percentual e **só** em percentual.
+   * Cursinho conversa em acertos, e o percentual sozinho esconde o denominador.
+   */
+  const coluna = (opcoes: Parameters<typeof colunasDoRelatorio>[0]) =>
+    colunasDoRelatorio(opcoes).find((c) => c.id === "aproveitamento")!;
+
+  const padrao = { comTurma: false, totalDeQuestoes: 90, mediaDoRecorte: 0.54 };
+
+  it("a coluna se chama `Resultado`, não mais `Aproveitamento`", () => {
+    expect(coluna(padrao).header).toBe("Resultado");
+  });
+
+  it("mostra `61/90` como primário e o percentual como secundário", () => {
+    const { container } = render(
+      <>{coluna(padrao).cell(linha({ acertos: 61, aproveitamentoGeral: 0.68 }))}</>,
+    );
+
+    expect(container).toHaveTextContent("61/90");
+    expect(container).toHaveTextContent("68%");
+  });
+
+  it("⚠️ o desvio é em p.p. contra a média — não posição na turma", () => {
+    // Decisão de produto tomada antes de implementar: esta tela é a base do
+    // que um dia vira tela do aluno, e "12º de 30" criaria ranking nominal.
+    const { container } = render(
+      <>{coluna(padrao).cell(linha({ acertos: 61, aproveitamentoGeral: 0.68 }))}</>,
+    );
+
+    expect(container.querySelector("[data-desvio]")).toHaveTextContent(
+      "+14 p.p.",
+    );
+  });
+
+  it("⚠️ sem `acertos`, cai para o percentual sozinho", () => {
+    // ms antigo. Degradar é melhor que derivar um número que o aluno confere
+    // contra o cartão e não bate.
+    const { container } = render(
+      <>
+        {coluna(padrao).cell(
+          linha({ acertos: undefined, aproveitamentoGeral: 0.68 }),
+        )}
+      </>,
+    );
+
+    expect(container).toHaveTextContent("68%");
+    expect(container).not.toHaveTextContent("/90");
+  });
+
+  it("⚠️ sem média no recorte, nenhum desvio aparece", () => {
+    const { container } = render(
+      <>
+        {coluna({ ...padrao, mediaDoRecorte: null }).cell(
+          linha({ acertos: 61 }),
+        )}
+      </>,
+    );
+
+    expect(container.querySelector("[data-desvio]")).toBeNull();
+  });
+
+  it("⚠️ linha que falhou não mostra acertos nem desvio", () => {
+    const { container } = render(
+      <>
+        {coluna(padrao).cell(
+          linha({ status: "failed", acertos: 61, aproveitamentoGeral: 0.68 }),
+        )}
+      </>,
+    );
+
+    expect(container).not.toHaveTextContent("61");
+    expect(container.querySelector("[data-desvio]")).toBeNull();
+  });
+
+  it("⚠️ ordena pelo aproveitamento, não pelos acertos", () => {
+    // São a mesma ordem (todos fizeram o mesmo simulado), mas o aproveitamento
+    // existe em histórico anterior ao card 08 e os acertos não — ordenar pelos
+    // acertos jogaria essas linhas para o fim sem motivo.
+    const col = coluna(padrao);
+
+    expect(
+      col.sortValue!(linha({ acertos: undefined, aproveitamentoGeral: 0.68 })),
+    ).toBe(0.68);
+  });
+
+  it("⚠️ a coluna NÃO cresceu — 9rem, a mesma de antes", () => {
+    // Uma coluna nova de 7.5rem para o desvio derrubaria o teto de matérias do
+    // card 07 de 4 para 2. Medido.
+    expect(coluna(padrao).width).toBe("9rem");
+  });
+});

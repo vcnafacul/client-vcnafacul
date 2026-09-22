@@ -63,6 +63,8 @@ export function planilhaDeEstudantes(
      * escopo de LINHAS (filtro), não de colunas.
      */
     materias?: MediaPorMateria[];
+    /** Denominador de `Acertos`. `0`/ausente vira célula vazia, nunca "61/0". */
+    totalDeQuestoes?: number;
   },
 ): Planilha {
   const materias = opcoes.materias ?? [];
@@ -71,6 +73,13 @@ export function planilhaDeEstudantes(
     "Matrícula",
     ...(opcoes.comTurma ? [] : ["Turma"]),
     "Situação",
+    /*
+      ⚠️ **`Acertos` e `Total de questões` em colunas SEPARADAS**, e não
+      "61/90" numa só: no Excel o par é texto e não soma, não ordena e não vira
+      gráfico — que é a razão de exportar em vez de olhar a tela.
+    */
+    "Acertos",
+    "Total de questões",
     "Aproveitamento (%)",
     // ⚠️ Números de 0 a 100, como o aproveitamento geral: "60%" numa célula do
     // Excel pt-BR é TEXTO e não soma nem ordena.
@@ -86,6 +95,11 @@ export function planilhaDeEstudantes(
     // mesmo nome em todas as linhas não informa nada. Mesma regra da tabela.
     ...(opcoes.comTurma ? [] : [l.turmaNome ?? null]),
     statusDaLinha(l).label,
+    // ⚠️ Mesmo gate do aproveitamento: linha `failed` carrega acertos velhos.
+    l.status === "completed" && typeof l.acertos === "number" ? l.acertos : null,
+    // ⚠️ Repetido por linha AQUI, ao contrário da tela: uma planilha em que a
+    // coluna só vale para a primeira linha é uma planilha quebrada.
+    opcoes.totalDeQuestoes || null,
     /*
       ⚠️ Só para quem tem leitura concluída. O `marcarFalha` do ms NÃO limpa o
       `aproveitamento`, então uma linha `failed` pode carregar nota velha — a
