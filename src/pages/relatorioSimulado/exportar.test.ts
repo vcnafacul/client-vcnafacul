@@ -50,6 +50,7 @@ describe("planilhaDeEstudantes", () => {
       "Situação",
       "Acertos",
       "Total de questões",
+      "Não lidas",
       "Aproveitamento (%)",
       "Cartão",
       "Motivo da falha",
@@ -61,6 +62,10 @@ describe("planilhaDeEstudantes", () => {
       "Lido",
       61,
       90,
+      // ⚠️ `null`, e não `0`: este fixture não tem `questoesRespondidas`, que é
+      // o caso do histórico anterior ao card 01. Zero afirmaria "leu o cartão
+      // inteiro" sobre um cartão cuja contagem ninguém tem.
+      null,
       80,
       "7",
       null,
@@ -188,6 +193,7 @@ describe("planilhaDeEstudantes", () => {
         "Situação",
         "Acertos",
         "Total de questões",
+        "Não lidas",
         "Aproveitamento (%)",
         "Cartão",
         "Motivo da falha",
@@ -365,5 +371,45 @@ describe("nomeDoArquivo", () => {
 
     expect(nome).not.toMatch(/[/:\\]/);
     expect(nome).toContain("a-b-c");
+  });
+});
+
+describe("planilhaDeEstudantes — coluna Não lidas (card 13)", () => {
+  const comContagem = (respondidas: number | undefined, status = "completed") =>
+    planilhaDeEstudantes(
+      [linha({ questoesRespondidas: respondidas, status: status as never })],
+      { comTurma: true, totalDeQuestoes: 90 },
+    );
+
+  const naoLidasDa = (p: ReturnType<typeof planilhaDeEstudantes>) =>
+    p.linhas[0][p.cabecalho.indexOf("Não lidas")];
+
+  it("traz total menos respondidas", () => {
+    expect(naoLidasDa(comContagem(87))).toBe(3);
+  });
+
+  it("⚠️ zero SAI na planilha, ao contrário da tela", () => {
+    /*
+      Na tela "0 não lidas" em 300 linhas é ruído. Aqui a célula vazia se lê
+      como "não sei", e a coluna precisa poder ser somada e filtrada — `null`
+      fica reservado para quem realmente não tem contagem.
+    */
+    expect(naoLidasDa(comContagem(90))).toBe(0);
+  });
+
+  it("histórico sem a contagem vai vazio, não zero", () => {
+    expect(naoLidasDa(comContagem(undefined))).toBeNull();
+  });
+
+  it("⚠️ cartão que falhou vai vazio mesmo com contagem velha no documento", () => {
+    expect(naoLidasDa(comContagem(40, "failed"))).toBeNull();
+  });
+
+  it("⚠️ vem ANTES do aproveitamento — a ressalva precede o número que qualifica", () => {
+    const p = comContagem(87);
+
+    expect(p.cabecalho.indexOf("Não lidas")).toBeLessThan(
+      p.cabecalho.indexOf("Aproveitamento (%)"),
+    );
   });
 });

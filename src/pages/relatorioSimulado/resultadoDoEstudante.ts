@@ -65,3 +65,59 @@ export function formatarDesvio(pontos: number | null): string | null {
   // como a diferença.
   return pontos > 0 ? `+${pontos} p.p.` : "0 p.p.";
 }
+
+/**
+ * Quantas questões do cartão não saíram com marcação legível.
+ *
+ * ⚠️ **A decisão do card 13 é a opção C: a fórmula do aproveitamento NÃO muda —
+ * o que muda é a tela dizer o que o número esconde.**
+ *
+ * `criaAproveitamento` divide por `respostas.length`, ou seja, questão não lida
+ * conta como erro. Isso contradizia a regra que o relatório inteiro respeita em
+ * cinco lugares ("sem leitura" ≠ "errou"), e a contradição estava justamente no
+ * único número que o coordenador olha.
+ *
+ * ⚠️ **Mas mudar para `acertos / lidas` (opção B) é pior, por dois motivos
+ * medidos:**
+ *
+ * 1. A nota do aluno **melhoraria quando a leitura do cartão dele piorasse** —
+ *    o incentivo exatamente invertido. E dois alunos com 90 e 60 lidas passariam
+ *    a ter notas em bases diferentes, com a média da turma somando coisas
+ *    incomparáveis.
+ * 2. O valor está **gravado** no histórico. Mudar a fórmula só afeta históricos
+ *    novos, então o radar do `classSimuladoAnalytics` teria meses calculados de
+ *    dois jeitos e nada na tela diria isso.
+ *
+ * ⚠️ E o que decidiria entre A e B — separar "deixou em branco" de "o OMR não
+ * leu" — **não existe nos dados**: o `ms-omr` descarta os dois igualmente. Não
+ * dá para escolher a fórmula certa; dá para mostrar a ambiguidade.
+ *
+ * ⚠️ **Derivado, e não campo novo no contrato.** `questoesRespondidas` (card 01)
+ * e `totalDeQuestoes` (card 08) já viajam; um `naoLidas` ao lado seria o mesmo
+ * dado numa terceira forma, com uma chance a mais de divergir.
+ *
+ * `null` — e nunca `0` — em tudo que não é leitura concluída com contagem
+ * conhecida: `0` afirmaria "leu o cartão inteiro".
+ */
+export function naoLidas(
+  linha: LinhaDoRelatorio,
+  totalDeQuestoes: number,
+): number | null {
+  if (linha.status !== "completed") return null;
+  if (typeof linha.questoesRespondidas !== "number") return null;
+  if (totalDeQuestoes <= 0) return null;
+  /*
+    ⚠️ Maior que o total = o simulado encolheu depois da aplicação. Um número
+    negativo passaria pelo `> 0` da tela e sumiria; `null` diz que não se sabe.
+  */
+  if (linha.questoesRespondidas > totalDeQuestoes) return null;
+  return totalDeQuestoes - linha.questoesRespondidas;
+}
+
+/** "3 não lidas" / "1 não lida". `null` quando não há o que dizer. */
+export function textoDeNaoLidas(quantas: number | null): string | null {
+  // ⚠️ Zero não vira texto: anotar "0 não lidas" em 300 linhas é ruído, e o
+  // card pede explicitamente só quando > 0.
+  if (quantas === null || quantas <= 0) return null;
+  return quantas === 1 ? "1 não lida" : `${quantas} não lidas`;
+}

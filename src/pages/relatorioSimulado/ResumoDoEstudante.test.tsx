@@ -178,6 +178,33 @@ describe("ResumoDoEstudante (card 10)", () => {
 
       expect(container.querySelector("[data-sem-leitura]")).toBeNull();
     });
+
+    it("⚠️ diz que elas CONTAM COMO ERRO na nota acima (card 13)", () => {
+      /*
+        A contagem existia e era muda sobre a consequência. `criaAproveitamento`
+        divide por TODAS as questões do simulado, então a não lida entra no
+        denominador e não no numerador.
+
+        Sem esta frase o modal mostra "45 acertos · 50%" ao lado de "3 questões
+        sem leitura" e deixa supor que os dois números são independentes. São o
+        mesmo número: os 50% já punem as três.
+      */
+      const { container } = montar({
+        respostas: [resposta("sem_leitura", 1), resposta("sem_leitura", 2)],
+      });
+
+      expect(container.querySelector("[data-sem-leitura]")).toHaveTextContent(
+        "elas contam como erro no aproveitamento acima",
+      );
+    });
+
+    it("com uma só, a frase concorda no singular", () => {
+      const { container } = montar({ respostas: [resposta("sem_leitura", 1)] });
+
+      expect(container.querySelector("[data-sem-leitura]")).toHaveTextContent(
+        "ela conta como erro no aproveitamento acima",
+      );
+    });
   });
 
   it("⚠️ sem `acertos` no contrato, o bloco mostra só o percentual", () => {

@@ -5,6 +5,7 @@ import type {
 } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { rotulosDasFlags } from "./flagsDaQuestao";
 import { notaNaMateria } from "./materiasDoRelatorio";
+import { naoLidas } from "./resultadoDoEstudante";
 import { statusDaLinha } from "./statusDaLinha";
 import {
   percentualDaAlternativa,
@@ -80,6 +81,17 @@ export function planilhaDeEstudantes(
     */
     "Acertos",
     "Total de questões",
+    /*
+      ⚠️ **Coluna própria (card 13).** O `Aproveitamento (%)` conta questão não
+      lida como erro — `criaAproveitamento` divide por `respostas.length`. Sem
+      esta coluna a planilha é a fonte "oficial" de um número que não distingue
+      "errou 20" de "o OMR não leu 20", e é justamente na planilha que alguém
+      vai somar, ordenar e comparar sem ter a tela ao lado para explicar.
+
+      ⚠️ Vem ANTES do aproveitamento de propósito: quem lê a linha da esquerda
+      para a direita encontra a ressalva antes do número que ela qualifica.
+    */
+    "Não lidas",
     "Aproveitamento (%)",
     // ⚠️ Números de 0 a 100, como o aproveitamento geral: "60%" numa célula do
     // Excel pt-BR é TEXTO e não soma nem ordena.
@@ -100,6 +112,14 @@ export function planilhaDeEstudantes(
     // ⚠️ Repetido por linha AQUI, ao contrário da tela: uma planilha em que a
     // coluna só vale para a primeira linha é uma planilha quebrada.
     opcoes.totalDeQuestoes || null,
+    /*
+      ⚠️ **Zero SAI na planilha, ao contrário da tela** (card 13). Lá "0 não
+      lidas" em 300 linhas é ruído; aqui uma célula vazia se lê como "não sei",
+      e a coluna precisa poder ser somada e filtrada. `null` fica reservado para
+      quem realmente não tem contagem — leitura não concluída, ou histórico
+      anterior ao card 01.
+    */
+    naoLidas(l, opcoes.totalDeQuestoes ?? 0),
     /*
       ⚠️ Só para quem tem leitura concluída. O `marcarFalha` do ms NÃO limpa o
       `aproveitamento`, então uma linha `failed` pode carregar nota velha — a
