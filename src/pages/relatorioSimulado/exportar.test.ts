@@ -31,6 +31,7 @@ const questao = (over: Partial<QuestaoDoRelatorio> = {}): QuestaoDoRelatorio => 
   semLeitura: 2,
   porAlternativa: { A: 12, B: 4, C: 2, D: 0, E: 0 },
   alternativaCorreta: "A",
+  discriminacao: 0.42,
   ...over,
 });
 
@@ -142,8 +143,52 @@ describe("planilhaDeQuestoes", () => {
       "E (%)",
       "Acerto (%)",
       "Erro (%)",
+      "Discriminação",
+      "Sinais",
     ]);
-    expect(p.linhas[0]).toEqual([3, 20, "A", 12, 6, 2, 60, 20, 10, 0, 0, 60, 30]);
+    expect(p.linhas[0]).toEqual([
+      3, 20, "A", 12, 6, 2, 60, 20, 10, 0, 0, 60, 30, 0.42, "Distrator",
+    ]);
+  });
+
+  it("⚠️ `Discriminação` e `Sinais` existem no arquivo, e não como colunas", () => {
+    // Card 19: um `r` entre −1 e +1 numa tela de coordenador é precisão que não
+    // ajuda a decidir e custa largura. Numa planilha é o que se ordena.
+    const p = planilhaDeQuestoes([questao()]);
+
+    expect(p.cabecalho).toContain("Discriminação");
+    expect(p.cabecalho).toContain("Sinais");
+  });
+
+  it("⚠️ `Sinais` é UMA coluna de texto, não seis booleanas", () => {
+    // Seis colunas de 0/1 numa planilha de 180 linhas é pior de filtrar — e
+    // some com a informação de quantos sinais a questão acumula.
+    const p = planilhaDeQuestoes([
+      questao({ discriminacao: -0.3, acertos: 2, erros: 18 }),
+    ]);
+    const iSinais = p.cabecalho.indexOf("Sinais");
+
+    expect(p.linhas[0][iSinais]).toBe("Gabarito?; Difícil; Distrator");
+    expect(p.cabecalho.filter((c) => c.includes("?"))).toEqual([]);
+  });
+
+  it("⚠️ discriminação `null` sai vazia, e não zero", () => {
+    // `null` é "não há como medir"; zero afirmaria "não separa ninguém".
+    const p = planilhaDeQuestoes([questao({ discriminacao: null })]);
+    const i = p.cabecalho.indexOf("Discriminação");
+
+    expect(p.linhas[0][i]).toBeNull();
+  });
+
+  it("questão sem sinal nenhum sai com `Sinais` vazio", () => {
+    // ⚠️ String vazia, e não `null`: aqui a ausência É a informação — a questão
+    // está ok. Diferente de uma medida que não existe.
+    const p = planilhaDeQuestoes([
+      questao({ porAlternativa: { A: 12, B: 4, C: 2, D: 1, E: 1 } }),
+    ]);
+    const i = p.cabecalho.indexOf("Sinais");
+
+    expect(p.linhas[0][i]).toBe("");
   });
 
   it("⚠️ MANTÉM `Acertos`, `Erros` e `Erro (%)`, que a tabela removeu", () => {
@@ -174,12 +219,16 @@ describe("planilhaDeQuestoes", () => {
     // afrouxar para "quase tudo é número" — assim uma medida que virasse string
     // por acidente continuaria caindo aqui.
     const { cabecalho, linhas } = planilhaDeQuestoes([questao()]);
-    const iGabarito = cabecalho.indexOf("Gabarito");
+    // ⚠️ `Gabarito` e `Sinais` são as ÚNICAS células de texto: uma letra e uma
+    // lista de rótulos, não medidas. A asserção as exclui por posição em vez de
+    // afrouxar para "quase tudo é número" — assim uma medida que virasse string
+    // por acidente continuaria caindo aqui.
+    const texto = ["Gabarito", "Sinais"].map((c) => cabecalho.indexOf(c));
 
-    expect(typeof linhas[0][iGabarito]).toBe("string");
+    for (const i of texto) expect(typeof linhas[0][i]).toBe("string");
     expect(
       linhas[0]
-        .filter((_, i) => i !== iGabarito)
+        .filter((_, i) => !texto.includes(i))
         .every((c) => c === null || typeof c === "number"),
     ).toBe(true);
   });

@@ -93,6 +93,23 @@ export interface QuestaoDoRelatorio {
    * o card 04 removeu uma delas da tela.
    */
   alternativaCorreta: string | null;
+  /**
+   * A correlação ponto-bisserial entre acertar a questão e a nota da prova:
+   * **a questão separa quem sabe de quem não sabe?**
+   *
+   * É o que a dificuldade sozinha não diz. "22% acertaram" pode ser uma questão
+   * difícil e boa — os 22% são quem foi bem na prova — ou uma questão quebrada,
+   * em que acertou quem chutou. As ações são opostas.
+   *
+   * ⚠️ **Negativo é o sinal clássico de gabarito trocado** (os melhores
+   * errando mais que os piores).
+   *
+   * ⚠️ **`null` NÃO é zero.** Zero diria "não separa ninguém"; `null` diz que
+   * não há como medir — menos de 10 estudantes com LEITURA da questão, ou
+   * variância zero. Nunca use um padrão no lugar: `flagsDaQuestao` trata
+   * ausência como ausência de sinal, nunca como "item fraco".
+   */
+  discriminacao: number | null;
 }
 
 export interface QuestoesDoRelatorio {

@@ -21,6 +21,9 @@ const questao = (
   // `porAlternativa[correta] === acertos` vale nos dados de teste também,
   // senão os testes de destaque afirmariam algo que a api nunca produz.
   alternativaCorreta: "A",
+  // ⚠️ Positiva e acima de 0,20: o fixture base é uma questão SEM sinal, para
+  // os testes de triagem partirem de zero e afirmarem o que acrescentam.
+  discriminacao: 0.4,
   ...over,
 });
 
@@ -399,5 +402,189 @@ describe("TabelaDeQuestoes — gabarito e colunas enxutas (card 04)", () => {
     expect(celula(container, "respondentes")).toHaveTextContent("20");
     expect(celula(container, "acertoPercentual")).toHaveTextContent("60%");
     expect(celula(container, "semLeitura")).toHaveTextContent("2");
+  });
+});
+
+describe("TabelaDeQuestoes — triagem (card 06)", () => {
+  /**
+   * O card 06: um simulado tem de 45 a 180 questões, e a aba entregava uma
+   * linha para cada com dez números de peso visual igual e nenhuma indicação de
+   * por onde começar. A triagem é o que transforma os cards 03 e 05 em produto.
+   */
+  const boa = (over: Partial<QuestaoDoRelatorio> = {}) =>
+    questao({
+      respondentes: 20,
+      acertos: 10,
+      erros: 10,
+      semLeitura: 0,
+      porAlternativa: { A: 10, B: 4, C: 3, D: 2, E: 1 },
+      alternativaCorreta: "A",
+      discriminacao: 0.4,
+      ...over,
+    });
+
+  /** Gabarito suspeito + muito difícil + distrator morto, acumulados. */
+  const ruim = (over: Partial<QuestaoDoRelatorio> = {}) =>
+    boa({
+      acertos: 3,
+      erros: 17,
+      discriminacao: -0.3,
+      porAlternativa: { A: 3, B: 16, C: 1, D: 0, E: 0 },
+      ...over,
+    });
+
+  it("a coluna `Sinais` mostra os badges, com rótulo textual", () => {
+    const { container } = render(
+      <TabelaDeQuestoes questoes={[ruim()]} estado="idle" />,
+    );
+
+    const celulaSinais = celula(container, "sinais");
+    expect(celulaSinais).toHaveTextContent("Gabarito?");
+    expect(celulaSinais).toHaveTextContent("Difícil");
+  });
+
+  it("⚠️ questão sem sinal mostra travessão, e não célula vazia", () => {
+    // Vazio se lê como "não calculou".
+    const { container } = render(
+      <TabelaDeQuestoes questoes={[boa()]} estado="idle" />,
+    );
+
+    expect(celula(container, "sinais")).toHaveTextContent("—");
+  });
+
+  it("⚠️ o valor da discriminação vai no `title`, não em coluna própria", () => {
+    // Decisão do card 19: o coordenador quer saber se a questão presta, não que
+    // o ponto-bisserial é −0,30. Mas quem quiser conferir tem o número.
+    const { container } = render(
+      <TabelaDeQuestoes questoes={[ruim()]} estado="idle" />,
+    );
+
+    expect(
+      container.querySelector('[data-flag="gabarito_suspeito"]'),
+    ).toHaveAttribute("title", expect.stringContaining("-0.30"));
+    expect(container.querySelector('[data-column-id="discriminacao"]')).toBeNull();
+  });
+
+  it("⚠️ a coluna `Sinais` NÃO é ordenável — array não tem ordem natural", () => {
+    const { container } = render(
+      <TabelaDeQuestoes questoes={[ruim()]} estado="idle" />,
+    );
+
+    expect(container.querySelector('[data-sort-id="sinais"]')).toBeNull();
+  });
+
+  it("a barra de filtros entrou, e o botão de exportar mora dentro dela", () => {
+    // ⚠️ O que o botão baixa depende do filtro ao lado — separados, a pessoa
+    // exporta 180 linhas achando que exportou as 7 que está vendo.
+    const { container } = render(
+      <TabelaDeQuestoes
+        questoes={[boa()]}
+        estado="idle"
+        nomeArquivo="questoes"
+      />,
+    );
+
+    const barra = container.querySelector('[data-testid="dash-filter-bar"]')!;
+    expect(barra).not.toBeNull();
+    expect(barra.querySelector('[data-testid="exportar-csv"]')).not.toBeNull();
+  });
+
+  it("⚠️ o contador do filtro conta a lista INTEIRA", () => {
+    // Com o filtro ligado, a lista filtrada são só as com sinal — e o rótulo
+    // diria "(1) de 1", que não informa nada. Mesma razão do
+    // `quantosNaoEnviaram` na aba de Estudantes.
+    render(
+      <TabelaDeQuestoes
+        questoes={[
+          boa({ questaoId: "q1", numero: 1 }),
+          boa({ questaoId: "q2", numero: 2 }),
+          ruim({ questaoId: "q3", numero: 3 }),
+        ]}
+        estado="idle"
+      />,
+    );
+
+    expect(screen.getByText(/Só questões com sinal \(1\)/)).toBeInTheDocument();
+  });
+
+  it("o filtro recorta a tabela para as questões com sinal", () => {
+    const { container } = render(
+      <TabelaDeQuestoes
+        questoes={[
+          boa({ questaoId: "q1", numero: 1 }),
+          boa({ questaoId: "q2", numero: 2 }),
+          ruim({ questaoId: "q3", numero: 3 }),
+        ]}
+        estado="idle"
+      />,
+    );
+
+    expect(container.querySelectorAll("[data-row-key]")).toHaveLength(3);
+
+    fireEvent.click(screen.getByTestId("toggle-so-com-sinal"));
+
+    const linhas = container.querySelectorAll("[data-row-key]");
+    expect(linhas).toHaveLength(1);
+    expect(linhas[0]).toHaveTextContent("3");
+  });
+
+  it("⚠️ o filtro volta para a página 1", () => {
+    // 180 questões com 7 sinais cabem numa página; quem estava na página 4
+    // veria a tabela vazia sem dizer por quê.
+    const muitas = Array.from({ length: QUESTOES_POR_PAGINA + 5 }, (_, i) =>
+      boa({ questaoId: `q${i}`, numero: i + 1 }),
+    );
+    // a única com sinal é a última, que está na página 2
+    muitas[muitas.length - 1] = ruim({ questaoId: "qx", numero: 999 });
+
+    const { container } = render(
+      <TabelaDeQuestoes questoes={muitas} estado="idle" />,
+    );
+
+    // ⚠️ Dentro do rodapé: `getByText("2")` solto casa também com a questão de
+    // número 2 na tabela — a armadilha que o teste de paginação acima registra.
+    const rodape = screen.getByTestId("dash-list-footer");
+    fireEvent.click(within(rodape).getByText("2"));
+    expect(container.querySelectorAll("[data-row-key]")).toHaveLength(5);
+
+    fireEvent.click(screen.getByTestId("toggle-so-com-sinal"));
+
+    // uma linha só, e visível — não uma página 2 vazia
+    expect(container.querySelectorAll("[data-row-key]")).toHaveLength(1);
+    expect(container.querySelector("[data-row-key]")).toHaveTextContent("999");
+  });
+
+  it("⚠️ o CSV segue o FILTRO, mas não a paginação", () => {
+    // Paginação é de leitura na tela; filtro é escopo. Quem ligou "só com
+    // sinal" e clicou em exportar quer as com sinal — e é por isso que o botão
+    // mora dentro da barra, ao lado do toggle.
+    const muitas = Array.from({ length: QUESTOES_POR_PAGINA + 5 }, (_, i) =>
+      boa({ questaoId: `q${i}`, numero: i + 1 }),
+    );
+    muitas[0] = ruim({ questaoId: "qx", numero: 1 });
+
+    render(
+      <TabelaDeQuestoes
+        questoes={muitas}
+        estado="idle"
+        nomeArquivo="questoes"
+      />,
+    );
+
+    // sem filtro: todas as 30, embora só 25 estejam na tela
+    fireEvent.click(screen.getByTestId("exportar-csv"));
+    expect(exportAnalyticsCsv.mock.calls[0][1]).toHaveLength(
+      QUESTOES_POR_PAGINA + 5,
+    );
+
+    fireEvent.click(screen.getByTestId("toggle-so-com-sinal"));
+    fireEvent.click(screen.getByTestId("exportar-csv"));
+    expect(exportAnalyticsCsv.mock.calls[1][1]).toHaveLength(1);
+  });
+
+  it("nenhuma questão com sinal: o rótulo não mostra contador", () => {
+    render(<TabelaDeQuestoes questoes={[boa()]} estado="idle" />);
+
+    expect(screen.getByText("Só questões com sinal")).toBeInTheDocument();
   });
 });
