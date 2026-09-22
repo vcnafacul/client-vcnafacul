@@ -30,11 +30,15 @@ export interface LinhaDoRelatorio {
   status?: StatusDoCartao;
   cartaoCode?: string;
   /**
-   * ⚠️ **Sempre `undefined` nas linhas deste relatório — não faça coluna com
-   * ele.** O campo existe e a api manda, mas o único escritor no ms é o
-   * `createPending`, que é do fluxo DIGITAL. Cartão é
-   * `createAwaitingOmr` → `prepararParaProcessamento` → `completeProcessing`, e
-   * nenhum dos três grava. Toda linha daqui é linha de cartão, por construção.
+   * Quantas questões saíram com marcação legível — "leu 87 de 90".
+   *
+   * ⚠️ **Era sempre `undefined` aqui, e deixou de ser** (card 01): o fluxo do
+   * cartão não gravava o campo, porque o único escritor era o `createPending`
+   * do fluxo digital. Hoje o `completeProcessing` grava nos dois, derivado das
+   * respostas já normalizadas.
+   *
+   * ⚠️ Segue opcional: histórico gravado ANTES daquele card não tem o campo, e
+   * linha sem leitura concluída também não. Ausente ≠ zero questões lidas.
    */
   questoesRespondidas?: number;
   /**
@@ -74,6 +78,21 @@ export interface QuestaoDoRelatorio {
    */
   semLeitura: number;
   porAlternativa: Record<string, number>;
+  /**
+   * O gabarito, sem o qual as contagens de `porAlternativa` não são
+   * interpretáveis: "51% marcaram B" é a turma acertando em peso ou meia turma
+   * caindo no mesmo distrator, e são leituras opostas.
+   *
+   * ⚠️ **`null` em dois casos, e a tela não pode presumir qual** (card 03):
+   * nenhum histórico completo no recorte, ou históricos que DISCORDAM (questão
+   * editada entre duas aplicações, ou duplicada no simulado). `null` é "não
+   * sei" — nunca destacar a mais marcada por palpite.
+   *
+   * ⚠️ Quando não é nulo, vale `porAlternativa[alternativaCorreta] === acertos`
+   * — é por isso que `% de acerto` e a coluna da correta são o MESMO número, e
+   * o card 04 removeu uma delas da tela.
+   */
+  alternativaCorreta: string | null;
 }
 
 export interface QuestoesDoRelatorio {

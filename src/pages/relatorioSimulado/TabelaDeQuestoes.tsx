@@ -16,7 +16,6 @@ import {
   formatarPercentual,
   percentualDaAlternativa,
   percentualDeAcerto,
-  percentualDeErro,
 } from "./percentuais";
 
 const ALTERNATIVAS = ["A", "B", "C", "D", "E"] as const;
@@ -73,32 +72,67 @@ const colunas: DashColumn<QuestaoDoRelatorio>[] = [
     cell: (q) => q.numero ?? "—",
     sortValue: (q) => q.numero,
   },
+  /*
+    ⚠️ **`Acertos`, `Erros` e `% de erro` SAÍRAM, e `Respondentes` entrou.**
+
+    Não é troca de gosto. `% de acerto` **é** a coluna da alternativa correta —
+    `acertos` conta `alternativaEstudante == alternativaCorreta`,
+    `porAlternativa[X]` conta `alternativaEstudante == X`, e os dois percentuais
+    dividem por `respondentes`. Era o mesmo número em duas colunas que não se
+    identificavam como tal. E `erros` = `respondentes − acertos − semLeitura`,
+    `% de erro` = `100 − %acerto − %semLeitura`: aritmética de primeiro grau.
+
+    ⚠️ Isto **não** é crítica ao ms, que conta os três de forma independente de
+    propósito (derivar tornaria vazio o teste da invariante). O que estava
+    errado era exibir os três como se cada um trouxesse informação nova.
+
+    ⚠️ E as colunas redundantes CUSTARAM uma coluna útil: a medição no docblock
+    abaixo registra que 12 colunas estouravam a tela a 1565px, e a coluna
+    agrupada de contagem teve de ser removida por isso.
+
+    ⚠️ `Respondentes` entra na MESMA mudança que as remove, e a ordem importa:
+    `acertos` é reconstruível de cabeça a partir de `% de acerto` ×
+    `respondentes`, mas `respondentes` não é reconstruível de nada depois que
+    `Acertos` e `Erros` saem. Ele era o único número que só existia no CSV.
+  */
   {
-    id: "acertos",
-    header: "Acertos",
-    width: "7rem",
+    id: "respondentes",
+    header: "Respondentes",
+    width: "8.5rem",
     align: "right",
-    cell: (q) => q.acertos,
-    sortValue: (q) => q.acertos,
+    cell: (q) => q.respondentes,
+    sortValue: (q) => q.respondentes,
   },
   {
-    id: "erros",
-    header: "Erros",
+    id: "gabarito",
+    header: "Gabarito",
     width: "6.5rem",
-    align: "right",
-    cell: (q) => q.erros,
-    sortValue: (q) => q.erros,
+    align: "center",
+    /*
+      ⚠️ Existe para que o destaque nas colunas de alternativa seja
+      REDUNDANTE, e não a única fonte de "qual é a correta".
+
+      ⚠️ Travessão quando `null` (card 03: históricos que discordam do
+      gabarito, ou nenhum histórico completo). Nunca a mais marcada por
+      palpite — chutar inverteria a conclusão do professor.
+    */
+    cell: (q) => q.alternativaCorreta ?? "—",
+    sortValue: (q) => q.alternativaCorreta,
   },
   {
-    id: "semLeitura",
-    // ⚠️ "Sem leitura", não "Em branco": o ms-omr descarta questão em branco e
-    // dupla marcação do mesmo jeito. Chamar de branco afirma o que ninguém
-    // verificou — e é o número que o professor usa para decidir o que revisar.
-    header: "Sem leitura",
+    id: "acertoPercentual",
+    header: "% de acerto",
     width: "9rem",
     align: "right",
-    cell: (q) => q.semLeitura,
-    sortValue: (q) => q.semLeitura,
+    /*
+      ⚠️ Sobre `respondentes`, não sobre `acertos + erros` — ver o docblock de
+      `percentuais.ts`. Com este denominador, acerto% + erro% + semLeitura%
+      fecha 100%, e quem não foi lido não some da conta.
+    */
+    cell: (q) => formatarPercentual(percentualDeAcerto(q)),
+    // ⚠️ Ordena pelo número, não pelo texto: `sortValue` recebendo a string
+    // formatada colocaria "9%" depois de "80%".
+    sortValue: (q) => percentualDeAcerto(q),
   },
   /*
     ⚠️ **Uma coluna por alternativa**, e não uma só com as cinco dentro.
@@ -120,7 +154,29 @@ const colunas: DashColumn<QuestaoDoRelatorio>[] = [
     sidebar é `absolute xl:relative` — abaixo disso ela não ocupa largura. É
     justamente quando ela entra no fluxo que a tabela larga deixaria de caber.
 
-    Sem a coluna agrupada são 1192px, que cabem nos dois casos.
+    Sem a coluna agrupada eram 1192px, que cabiam nos dois casos.
+
+    ⚠️ **Medição refeita no card 04**, que removeu `Acertos`, `Erros` e
+    `% de erro` e acrescentou `Respondentes` e `Gabarito` — 11 colunas viraram
+    10, e a soma das larguras caiu de 1192px para **1080px**:
+
+    | coluna         | largura |
+    |----------------|---------|
+    | Questão        | 7rem    |
+    | Respondentes   | 8.5rem  |
+    | Gabarito       | 6.5rem  |
+    | % de acerto    | 9rem    |
+    | A–E (%)        | 5×5.5rem|
+    | Sem leitura    | 9rem    |
+
+    No pior caso (1565px, sidebar no fluxo) sobram **197px**. É essa folga que
+    paga as colunas que os cards 05 e 06 vão pedir — o espaço que as colunas
+    derivadas ocupavam.
+
+    ⚠️ **Encolher largura continua proibido**, e por medição, não por gosto: o
+    `<th>` trunca o título, e foi esse aperto que produziu o cabeçalho cortado
+    consertado antes deste card. Quem precisar de mais espaço tira coluna ou
+    reagrupa conteúdo (é o que o card 19 faz), nunca aperta.
 
     Encolher não era saída: o `<th>` trunca o título, e "Sem leitura" e
     "% de acerto" já estão no limite — era o defeito que este mesmo trabalho
@@ -143,34 +199,50 @@ const colunas: DashColumn<QuestaoDoRelatorio>[] = [
       // aperto que cortou os títulos antes deste ajuste.
       width: "5.5rem",
       align: "right",
-      cell: (q) => formatarPercentual(percentualDaAlternativa(q, alt)),
+      /*
+        ⚠️ **O destaque é por CÉLULA, e o card 04 pedia no cabeçalho.**
+
+        Um `<th>` marcado (`C ✓ (%)`) afirmaria que C é a correta da tabela
+        inteira — e o gabarito é POR QUESTÃO. Já erraria na segunda linha da
+        lista. O destaque tem de viver onde o dado vive.
+
+        ⚠️ **Marcador TEXTUAL, não só cor.** Mesma regra do
+        `rotuloDoResultado`: o `green3` do `tokens.ts` mede 3.77:1 e não passa
+        para texto pequeno, e "qual é a correta" é a informação que torna estas
+        cinco colunas legíveis — não pode depender de enxergar verde. O peso de
+        fonte é reforço; a coluna `Gabarito` é a terceira via.
+
+        ⚠️ O `<span>` leva a classe, e não a célula: pôr um `cellClassName` no
+        `DashColumn` mudaria o componente compartilhado por uma necessidade de
+        uma tela só.
+      */
+      cell: (q) => {
+        const texto = formatarPercentual(percentualDaAlternativa(q, alt));
+        if (q.alternativaCorreta !== alt) return texto;
+        return (
+          <span className="font-semibold">
+            {texto}{" "}
+            <span aria-label="gabarito" title="Alternativa correta">
+              ✓
+            </span>
+          </span>
+        );
+      },
       // ⚠️ Ordena pelo número, não pelo texto: com a string formatada, "9%"
       // viria depois de "80%".
       sortValue: (q) => percentualDaAlternativa(q, alt),
     }),
   ),
   {
-    id: "acertoPercentual",
-    header: "% de acerto",
+    id: "semLeitura",
+    // ⚠️ "Sem leitura", não "Em branco": o ms-omr descarta questão em branco e
+    // dupla marcação do mesmo jeito. Chamar de branco afirma o que ninguém
+    // verificou — e é o número que o professor usa para decidir o que revisar.
+    header: "Sem leitura",
     width: "9rem",
     align: "right",
-    /*
-      ⚠️ Sobre `respondentes`, não sobre `acertos + erros` — ver o docblock de
-      `percentuais.ts`. Com este denominador, acerto% + erro% + semLeitura%
-      fecha 100%, e quem não foi lido não some da conta.
-    */
-    cell: (q) => formatarPercentual(percentualDeAcerto(q)),
-    // ⚠️ Ordena pelo número, não pelo texto: `sortValue` recebendo a string
-    // formatada colocaria "9%" depois de "80%".
-    sortValue: (q) => percentualDeAcerto(q),
-  },
-  {
-    id: "erroPercentual",
-    header: "% de erro",
-    width: "8.5rem",
-    align: "right",
-    cell: (q) => formatarPercentual(percentualDeErro(q)),
-    sortValue: (q) => percentualDeErro(q),
+    cell: (q) => q.semLeitura,
+    sortValue: (q) => q.semLeitura,
   },
 ];
 

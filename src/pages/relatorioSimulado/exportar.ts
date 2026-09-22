@@ -84,9 +84,20 @@ export function planilhaDeEstudantes(
 
 /** A aba de desempenho por questão. */
 export function planilhaDeQuestoes(questoes: QuestaoDoRelatorio[]): Planilha {
+  /*
+    ⚠️ **A planilha MANTÉM `Acertos`, `Erros` e `Erro (%)`, que o card 04
+    removeu da tabela.** Não é esquecimento.
+
+    Tela e arquivo seguem critérios diferentes de propósito: a tela é para ler
+    e comparar entre linhas, e ali redundância atrapalha — `Acerto (%)` é a
+    coluna do gabarito, `Erros` sai por subtração. O arquivo é para fazer conta
+    em cima, e quem quer `% de erro` sem calcular tem o CSV. É a mesma razão
+    pela qual `respondentes` sempre esteve aqui e não estava lá (até este card).
+  */
   const cabecalho = [
     "Questão",
     "Respondentes",
+    "Gabarito",
     "Acertos",
     "Erros",
     "Sem leitura",
@@ -103,6 +114,9 @@ export function planilhaDeQuestoes(questoes: QuestaoDoRelatorio[]): Planilha {
       arquivo não consegue refazer nenhuma conta — que é o motivo de exportar.
     */
     q.respondentes,
+    // ⚠️ Vazio, e não "—": a célula do CSV é para ser lida por planilha, e um
+    // travessão vira texto no meio de uma coluna de letras.
+    q.alternativaCorreta ?? null,
     q.acertos,
     q.erros,
     q.semLeitura,
