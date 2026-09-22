@@ -85,7 +85,26 @@ export function flagsDaQuestao(q: QuestaoDoRelatorio): FlagDaQuestao[] {
     item, depois a dificuldade. É a ordem em que o coordenador age, e a coluna
     `Sinais` renderiza nesta ordem — o primeiro badge é o mais urgente.
   */
-  if (q.discriminacao !== null) {
+  /*
+    ⚠️ **`!= null` cobre `undefined`, e hoje isso NÃO muda o comportamento** —
+    dito assim porque a mutação que o troca por `!== null` sobrevive a todos os
+    testes, e vale saber por quê antes de alguém "simplificar".
+
+    O DTO declara `number | null`, mas na janela entre o deploy do client e o do
+    ms o campo chega AUSENTE. Com `!== null` o `undefined` entra na guarda e cai
+    nas comparações, onde `undefined < 0` e `undefined < 0,2` são ambos `false`:
+    o resultado final é o mesmo, **por acidente da semântica de comparação com
+    `undefined`**, não por decisão.
+
+    Fica `!= null` porque é a intenção escrita — "só calculo se tem valor" —, e
+    porque quem mexer nas comparações abaixo não deve precisar descobrir esse
+    acidente para não quebrar nada. É defesa em profundidade declarada, não
+    cobertura que os testes garantem.
+
+    ⚠️ Em `explicacaoDaFlag` o mesmo `== null` NÃO é redundante: lá o
+    `undefined.toFixed()` estoura de verdade, e há teste.
+  */
+  if (q.discriminacao != null) {
     if (q.discriminacao < 0) {
       flags.push("gabarito_suspeito");
     } else if (q.discriminacao < LIMIARES.discriminacaoMinima) {
@@ -185,4 +204,99 @@ export function rotulosDasFlags(q: QuestaoDoRelatorio): string {
 /** Quantas questões da lista têm algum sinal — o contador do filtro. */
 export function quantasComSinal(questoes: QuestaoDoRelatorio[]): number {
   return questoes.filter((q) => flagsDaQuestao(q).length > 0).length;
+}
+
+/**
+ * Quais alternativas ERRADAS quase ninguém marcou.
+ *
+ * ⚠️ Exportada para o `title` poder **nomeá-las**. "Alguma alternativa errada
+ * foi marcada por menos de 5%" manda o professor procurar qual; "a D foi
+ * marcada por 2%" diz o que reescrever. A informação já estava calculada — só
+ * não estava sendo dita.
+ */
+export function distratoresMortos(q: QuestaoDoRelatorio): string[] {
+  if (q.alternativaCorreta === null) return [];
+  return ALTERNATIVAS.filter((alt) => alt !== q.alternativaCorreta).filter(
+    (alt) => {
+      const p = percentualDaAlternativa(q, alt);
+      return p !== null && p < LIMIARES.distratorMorto;
+    },
+  );
+}
+
+/**
+ * A explicação de uma flag, **com os números desta questão**.
+ *
+ * ⚠️ **Concreta, não genérica.** A versão anterior repetia o limiar ("menos de
+ * 25% acertaram"), que é a regra — não o que aconteceu aqui. Quem lê o tooltip
+ * está olhando uma linha específica e quer saber o que ELA tem: "22% acertaram
+ * (o chute com 5 alternativas é 20%)" responde; "menos de 25%" faz conferir na
+ * coluna ao lado.
+ *
+ * ⚠️ Cada uma termina com **o que fazer**. Um sinal que diz o que está errado e
+ * não o que fazer transfere o trabalho inteiro para quem lê — e a triagem
+ * existe justamente para poupar esse trabalho.
+ */
+export function explicacaoDaFlag(
+  flag: FlagDaQuestao,
+  q: QuestaoDoRelatorio,
+): string {
+  const acerto = percentualDeAcerto(q);
+  // ⚠️ `== null` pega `undefined` do ms antigo — ver a guarda em `flagsDaQuestao`.
+  const disc =
+    q.discriminacao == null
+      ? "—"
+      : q.discriminacao.toFixed(2).replace(".", ",");
+
+  switch (flag) {
+    case "gabarito_suspeito":
+      return (
+        `Discriminação ${disc}: os alunos que foram bem na prova erraram esta ` +
+        "questão MAIS que os que foram mal. É o sinal clássico de gabarito " +
+        "trocado — confira o gabarito antes de qualquer outra coisa."
+      );
+    case "nao_discrimina":
+      return (
+        `Discriminação ${disc}, abaixo de 0,20: acertar esta questão não diz ` +
+        "nada sobre o aluno — quem sabe e quem não sabe acertam na mesma " +
+        "proporção. Item fraco, vale revisar o enunciado."
+      );
+    case "muito_dificil":
+      return (
+        `Só ${acerto}% acertaram, e com cinco alternativas o chute já daria ` +
+        "20%. A turma não está respondendo, está sorteando: ou o conteúdo não " +
+        "foi dado, ou o enunciado não está claro."
+      );
+    case "muito_facil":
+      return (
+        `${acerto}% acertaram. Não é defeito, mas a questão não separa ninguém ` +
+        "— ela ocupa uma vaga na prova sem medir nada."
+      );
+    case "distrator_morto": {
+      const mortos = distratoresMortos(q);
+      /*
+        ⚠️ "C, D e E", e não "C e D e E" — o `join(" e ")` produzia a segunda, e
+        o primeiro teste que escrevi a ACEITOU, porque eu escrevi a expectativa
+        com o mesmo erro. Teste que copia a implementação não verifica nada.
+
+        ⚠️ À mão, e não `Intl.ListFormat`: ele resolveria em qualquer língua,
+        mas não está no `lib` do TypeScript deste projeto (`Property
+        'ListFormat' does not exist on type 'typeof Intl'`), e mexer no
+        `tsconfig` por uma lista de no máximo quatro letras não se paga.
+      */
+      const lista =
+        mortos.length <= 1
+          ? mortos.join("")
+          : `${mortos.slice(0, -1).join(", ")} e ${mortos[mortos.length - 1]}`;
+      const quais =
+        mortos.length === 1
+          ? `A alternativa ${lista} foi marcada`
+          : `As alternativas ${lista} foram marcadas`;
+      return (
+        `${quais} por menos de 5% da turma. Na prática esta questão tem ` +
+        `${5 - mortos.length} alternativas, não 5 — vale reescrever ` +
+        `${mortos.length === 1 ? "essa" : "essas"}.`
+      );
+    }
+  }
 }

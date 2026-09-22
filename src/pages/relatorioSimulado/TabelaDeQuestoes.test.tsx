@@ -461,7 +461,9 @@ describe("TabelaDeQuestoes — triagem (card 06)", () => {
 
     expect(
       container.querySelector('[data-flag="gabarito_suspeito"]'),
-    ).toHaveAttribute("title", expect.stringContaining("-0.30"));
+    // ⚠️ Vírgula: o número sai em pt-BR desde que a explicação passou a ser
+    // concreta. "-0.30" é como o JS formata, não como o Brasil lê.
+    ).toHaveAttribute("title", expect.stringContaining("-0,30"));
     expect(container.querySelector('[data-column-id="discriminacao"]')).toBeNull();
   });
 

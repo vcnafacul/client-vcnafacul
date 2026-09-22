@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { QuestaoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
-import { flagsDaQuestao, LIMIARES } from "./flagsDaQuestao";
+import {
+  explicacaoDaFlag,
+  flagsDaQuestao,
+  LIMIARES,
+} from "./flagsDaQuestao";
 
 /**
  * Base 20 e gabarito A, para os percentuais darem números redondos: cada
@@ -212,5 +216,150 @@ describe("flagsDaQuestao (card 06)", () => {
     );
 
     expect(flags[0]).toBe("gabarito_suspeito");
+  });
+});
+
+describe("explicacaoDaFlag — o texto do tooltip", () => {
+  /**
+   * ⚠️ **Concreta, não genérica.** A versão anterior repetia o limiar ("menos
+   * de 25% acertaram"), que é a REGRA — não o que aconteceu naquela linha. Quem
+   * passa o mouse está olhando uma questão específica.
+   */
+  const q20 = (over: Partial<QuestaoDoRelatorio> = {}) =>
+    questao({ respondentes: 20, ...over });
+
+  it("⚠️ 'Difícil' diz o percentual REAL, não o limiar", () => {
+    /*
+      3 de 20 = **15%** de propósito: a primeira versão deste teste usava 4 de
+      20 = 20%, e "20%" aparece também na frase sobre o chute — então ele
+      passava mesmo com a explicação genérica ("menos de 25% acertaram"). O
+      número escolhido tem de ser um que SÓ possa vir do dado.
+    */
+    const q = q20({
+      acertos: 3,
+      erros: 17,
+      porAlternativa: { A: 3, B: 9, C: 4, D: 3, E: 1 },
+    });
+
+    const t = explicacaoDaFlag("muito_dificil", q);
+    expect(t).toContain("15%");
+    expect(t).not.toContain("Menos de 25%");
+    // e segue explicando por que 15% é pouco
+    expect(t).toContain("chute");
+  });
+
+  it("'Fácil' também traz o número da questão", () => {
+    const q = q20({
+      acertos: 19,
+      erros: 1,
+      porAlternativa: { A: 19, B: 1, C: 0, D: 0, E: 0 },
+    });
+
+    expect(explicacaoDaFlag("muito_facil", q)).toContain("95%");
+  });
+
+  it("⚠️ 'Gabarito?' traz o valor da discriminação, com vírgula", () => {
+    // Número em pt-BR: "-0,30", não "-0.30".
+    const t = explicacaoDaFlag("gabarito_suspeito", q20({ discriminacao: -0.3 }));
+
+    expect(t).toContain("-0,30");
+    expect(t).not.toContain("-0.30");
+  });
+
+  it("'Não discrimina' cita o limiar E o valor", () => {
+    const t = explicacaoDaFlag("nao_discrimina", q20({ discriminacao: 0.11 }));
+
+    expect(t).toContain("0,11");
+    expect(t).toContain("0,20");
+  });
+
+  describe("⚠️ o distrator NOMEIA a alternativa morta", () => {
+    it("uma só, no singular", () => {
+      // D com 0 de 20 = 0%
+      const q = q20({ porAlternativa: { A: 10, B: 5, C: 5, D: 0, E: 2 } });
+
+      const t = explicacaoDaFlag("distrator_morto", q);
+      expect(t).toContain("A alternativa D foi marcada");
+      expect(t).toContain("4 alternativas");
+    });
+
+    it("⚠️ várias saem em português, não com 'e' repetido", () => {
+      // `join(" e ")` produzia "C e D e E". O primeiro teste que escrevi
+      // ACEITOU isso, porque eu escrevi a expectativa com o mesmo erro —
+      // teste que copia a implementação não verifica nada.
+      const q = q20({ porAlternativa: { A: 10, B: 10, C: 0, D: 0, E: 0 } });
+
+      const t = explicacaoDaFlag("distrator_morto", q);
+      expect(t).toContain("As alternativas C, D e E foram marcadas");
+      expect(t).not.toContain("C e D e E");
+      expect(t).toContain("2 alternativas");
+    });
+
+    it("⚠️ NÃO nomeia o gabarito, mesmo com pouca marcação", () => {
+      // A é o gabarito e tem 0%: é questão difícil, não distrator morto.
+      const q = q20({
+        acertos: 0,
+        erros: 20,
+        porAlternativa: { A: 0, B: 10, C: 10, D: 0, E: 0 },
+      });
+
+      const t = explicacaoDaFlag("distrator_morto", q);
+      expect(t).not.toContain("A e");
+      expect(t).toContain("D e E");
+    });
+  });
+
+  it("⚠️ toda explicação termina dizendo O QUE FAZER", () => {
+    // Um sinal que diz o que está errado e não o que fazer transfere o trabalho
+    // inteiro para quem lê — e a triagem existe para poupar esse trabalho.
+    const q = q20({
+      discriminacao: -0.3,
+      acertos: 2,
+      erros: 18,
+      porAlternativa: { A: 2, B: 18, C: 0, D: 0, E: 0 },
+    });
+
+    for (const flag of flagsDaQuestao(q)) {
+      expect(explicacaoDaFlag(flag, q)).toMatch(
+        /confira|revisar|reescrever|vaga|dado|claro/i,
+      );
+    }
+  });
+});
+
+describe("⚠️ discriminação `undefined` — o ms antigo, durante o deploy", () => {
+  /**
+   * O DTO declara `number | null`, mas na janela entre o deploy do client e o
+   * do ms o campo chega **ausente**. Com `!== null`, `undefined` passava pela
+   * guarda e caía nas comparações, onde `undefined < 0` é `false` por acidente:
+   * funcionava por sorte, e a explicação estourava com `toFixed of undefined`.
+   */
+  const semCampo = () => {
+    const q = questao();
+    delete (q as { discriminacao?: unknown }).discriminacao;
+    return q;
+  };
+
+  it("não gera flag de discriminação", () => {
+    const flags = flagsDaQuestao(semCampo());
+
+    expect(flags).not.toContain("gabarito_suspeito");
+    expect(flags).not.toContain("nao_discrimina");
+  });
+
+  it("⚠️ a explicação não estoura — mostra travessão", () => {
+    expect(() =>
+      explicacaoDaFlag("nao_discrimina", semCampo()),
+    ).not.toThrow();
+    expect(explicacaoDaFlag("nao_discrimina", semCampo())).toContain("—");
+  });
+
+  it("as flags que NÃO dependem dela continuam funcionando", () => {
+    const q = semCampo();
+    q.acertos = 2;
+    q.erros = 18;
+    q.porAlternativa = { A: 2, B: 18, C: 0, D: 0, E: 0 };
+
+    expect(flagsDaQuestao(q)).toContain("muito_dificil");
   });
 });
