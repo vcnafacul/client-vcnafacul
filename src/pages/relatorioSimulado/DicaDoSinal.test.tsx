@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, act } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ATRASO_MS, DicaDoSinal, posicaoDaDica } from "./DicaDoSinal";
+import { DicaDoSinal } from "./DicaDoSinal";
+import { ATRASO_MS, posicaoDaDica } from "./posicaoDaDica";
 
 describe("posicaoDaDica", () => {
   const janela = { largura: 1440, altura: 900 };
