@@ -2,6 +2,8 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import RelatorioSimulado from "./index";
+import { ROTULO_DA_DIFICULDADE } from "./recorteDoRelatorio";
+
 
 const buscarRelatorio = vi.hoisted(() => vi.fn());
 const buscarQuestoes = vi.hoisted(() => vi.fn());
@@ -54,6 +56,9 @@ const RESPOSTA = {
     temEstudanteSemTurma: false,
     linhasSemEstudanteAtivo: 0,
     totalDeQuestoes: 90,
+    simuladoNome: "ENEM 2024",
+    turmaNome: null,
+    ultimoCartaoEm: "2026-09-21T15:30:00.000Z",
   },
 };
 
@@ -1071,5 +1076,122 @@ describe("RelatorioSimulado — distribuição da turma (card 09)", () => {
     await screen.findByText("0 de 1");
 
     expect(screen.queryByTestId("sample-size-banner")).not.toBeInTheDocument();
+  });
+});
+
+describe("RelatorioSimulado — identificação (card 18)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarRelatorio.mockResolvedValue({
+      ...RESPOSTA,
+      resumo: {
+        ...RESPOSTA.resumo,
+        simuladoNome: "ENEM 2024 — 2ª aplicação",
+        turmaNome: null,
+        ultimoCartaoEm: "2026-09-21T15:30:00.000Z",
+      },
+    });
+  });
+
+  it("o `<h1>` da rota é o nome do simulado", async () => {
+    montar();
+
+    expect(
+      await screen.findByRole("heading", { name: "ENEM 2024 — 2ª aplicação" }),
+    ).toBeInTheDocument();
+  });
+
+  it("⚠️ 'Relatório do simulado' virou o `document.title`", async () => {
+    // Ele não sumiu: saiu do `<h1>` e foi para onde sempre foi útil — a aba do
+    // navegador e o histórico, que é o que identifica a aba esquecida.
+    montar();
+    await screen.findByText("Ana Silva");
+
+    expect(document.title).toBe("Relatório do simulado");
+  });
+
+  it("⚠️ o título é restaurado ao sair", async () => {
+    // Sem isso a próxima tela herda o título desta.
+    document.title = "vcnafacul";
+    const { unmount } = montar();
+    await screen.findByText("Ana Silva");
+
+    unmount();
+
+    expect(document.title).toBe("vcnafacul");
+  });
+
+  it("⚠️ `?turma=` mostra o recorte no cabeçalho", async () => {
+    // Antes a única pista de que o recorte estava ativo era a coluna `Turma`
+    // desaparecer — um sinal por ausência, que ninguém lê.
+    buscarRelatorio.mockResolvedValue({
+      ...RESPOSTA,
+      resumo: {
+        ...RESPOSTA.resumo,
+        simuladoNome: "ENEM 2024",
+        turmaNome: "Turma 3ºA",
+        ultimoCartaoEm: null,
+      },
+    });
+    montar("/relatorio-simulado/sim-1?turma=t-1");
+
+    expect(
+      await screen.findByTestId("identificacao-do-relatorio"),
+    ).toHaveTextContent("Turma 3ºA");
+  });
+
+  it("o cabeçalho aparece junto com o relatório, não depois da tabela", async () => {
+    const { container } = montar();
+    await screen.findByTestId("identificacao-do-relatorio");
+
+    // a identificação vem antes do resumo e da tabela no DOM
+    const ident = container.querySelector(
+      '[data-testid="identificacao-do-relatorio"]',
+    )!;
+    const tabela = container.querySelector("table")!;
+    expect(
+      ident.compareDocumentPosition(tabela) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+});
+
+describe("RelatorioSimulado — rótulo da dificuldade (card 18)", () => {
+  /**
+   * O caminho do `dashProvas` abre o relatório do CURSINHO inteiro, e o rótulo
+   * fixo "Acertos na turma" mentia exatamente ali.
+   */
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarRelatorio.mockResolvedValue(RESPOSTA);
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "completed",
+      respostas: [
+        {
+          numero: 1,
+          questaoId: "q1",
+          alternativaEstudante: "A",
+          alternativaCorreta: "A",
+          resultado: "acerto",
+        },
+      ],
+    });
+  });
+
+  it("⚠️ sem `?turma=`, o modal diz CURSINHO", async () => {
+    montar();
+    fireEvent.click(await screen.findByText("Ana Silva"));
+
+    expect(
+      await screen.findByText(ROTULO_DA_DIFICULDADE.cursinho),
+    ).toBeInTheDocument();
+  });
+
+  it("com `?turma=`, o modal diz TURMA", async () => {
+    montar("/relatorio-simulado/sim-1?turma=t-1");
+    fireEvent.click(await screen.findByText("Ana Silva"));
+
+    expect(
+      await screen.findByText(ROTULO_DA_DIFICULDADE.turma),
+    ).toBeInTheDocument();
   });
 });

@@ -137,6 +137,26 @@ export interface ResumoDoRelatorio {
    * card 08 — e aí a tela mostra só o percentual, nunca "61/0".
    */
   totalDeQuestoes: number;
+  /**
+   * O nome do simulado — sem ele a tela não se identifica (card 18).
+   *
+   * ⚠️ **`null` em DOIS casos que a tela precisa distinguir:** o simulado foi
+   * apagado depois do vínculo (aí vale a constante `SEM_NOME`), ou o recorte
+   * de turma está vazio e a api nem chegou a perguntar ao ms. `totalNoRecorte`
+   * separa os dois — tratar o segundo como remoção faria a tela afirmar que o
+   * simulado sumiu quando o que está vazio é a turma.
+   */
+  simuladoNome: string | null;
+  /** O nome da turma quando o recorte é de uma. `null` no cursinho inteiro. */
+  turmaNome: string | null;
+  /**
+   * Quando o cartão mais recente entrou no recorte, em ISO.
+   *
+   * ⚠️ **NÃO é "data da prova"** — ela não existe no modelo. E **não é "última
+   * atividade"**: reenvio do mesmo estudante não move a data. O rótulo na tela
+   * é "último cartão", e tem de continuar sendo.
+   */
+  ultimoCartaoEm: string | null;
 }
 
 export interface RelatorioDoSimulado {

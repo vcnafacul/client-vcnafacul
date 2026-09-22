@@ -20,9 +20,14 @@ import {
   type DificuldadeDaQuestao,
 } from "./dificuldadeDaQuestao";
 import { ResumoDoEstudante } from "./ResumoDoEstudante";
+import {
+  ROTULO_DA_DIFICULDADE,
+  type RecorteDoRelatorio,
+} from "./recorteDoRelatorio";
 import { rotuloDoResultado } from "./rotuloDoResultado";
 
 const VAZIO = "—";
+
 
 export const TEXTO_PROCESSANDO =
   "A leitura deste cartão ainda está processando. Volte em alguns minutos.";
@@ -55,6 +60,7 @@ const STATUS_CONHECIDOS: readonly string[] = [
  */
 const colunasDoDetalhe = (
   dificuldade: Map<string, DificuldadeDaQuestao>,
+  recorte: RecorteDoRelatorio,
 ): DashColumn<RespostaDoEstudante>[] => [
   {
     id: "numero",
@@ -94,12 +100,29 @@ const colunasDoDetalhe = (
   {
     id: "dificuldade",
     /*
-      ⚠️ "na turma", escrito no cabeçalho. O agregado vem do MESMO recorte que
-      o relatório aberto (`simuladoId` + `turmaId`), então este percentual é o
-      da turma — e não o do simulado inteiro. Sem o rótulo, seria lido como
-      estatística geral da prova, que é outra coisa.
+      ⚠️ **O rótulo diz QUAL recorte**, e ele muda: o agregado vem do mesmo
+      recorte do relatório aberto (`simuladoId` + `turmaId`), então com
+      `?turma=` este percentual é o da turma e **sem ele é o do cursinho
+      inteiro**.
+
+      O rótulo era fixo em "Acertos na turma", e por isso mentia justamente no
+      caminho mais comum — o `dashProvas`, que abre o relatório do cursinho sem
+      turma nenhuma. Quem lê "na turma" ali conclui que está vendo um recorte
+      que não pediu.
+
+      ⚠️ **Dinâmico, e não um rótulo neutro** ("% de acerto" ou "Acertos
+      gerais"): neutro resolve a mentira trocando-a por vaguidão — e o número
+      NÃO é geral, é sempre de um recorte. Dizer qual é o que deixa o
+      coordenador julgar a amostra, que é o mesmo motivo de a base andar junto
+      logo abaixo.
     */
-    header: "Acertos na turma",
+    header: ROTULO_DA_DIFICULDADE[recorte],
+    /*
+      ⚠️ 11rem cabe o maior dos dois rótulos ("Acertos no cursinho", ~145px em
+      `text-sm`) depois do `px-3` e do ícone de ordenação do `<th>`. O
+      `DashTable` trunca o título, e foi esse aperto que produziu o cabeçalho
+      cortado consertado no card 04.
+    */
     width: "11rem",
     align: "right",
     /*
@@ -168,6 +191,7 @@ export function DetalheDoEstudante({
   isOpen,
   onClose,
   dificuldade,
+  recorte = "cursinho",
   totalDeQuestoes = 0,
   mediaDoRecorte = null,
   materiasDaTurma = [],
@@ -187,6 +211,12 @@ export function DetalheDoEstudante({
    * mostrar.
    */
   dificuldade?: Map<string, DificuldadeDaQuestao>;
+  /**
+   * De que recorte é o relatório aberto — decide o rótulo da coluna de
+   * dificuldade. Padrão `cursinho`: é o caminho do `dashProvas`, e é o que
+   * estava rotulado errado.
+   */
+  recorte?: RecorteDoRelatorio;
   /**
    * Quantas questões o simulado tem — denominador dos acertos (card 08).
    */
@@ -348,7 +378,7 @@ export function DetalheDoEstudante({
           */
           <DashTable<RespostaDoEstudante>
             rows={detalhe?.respostas ?? []}
-            columns={colunasDoDetalhe(dificuldade ?? new Map())}
+            columns={colunasDoDetalhe(dificuldade ?? new Map(), recorte)}
             // `:i` porque a mesma questão pode aparecer duas vezes no simulado
             // (corrida conhecida do `adicionarEmProva`): as linhas seriam
             // idênticas, mas a key do React colidiria.

@@ -28,6 +28,7 @@ import {
   faixasDoHistograma,
   MINIMO_PARA_HISTOGRAMA,
 } from "./distribuicao";
+import { IdentificacaoDoRelatorio } from "./IdentificacaoDoRelatorio";
 import { desviosPorMateria, materiasVisiveis } from "./materiasDoRelatorio";
 import { BotaoExportar } from "./BotaoExportar";
 import { nomeDoArquivo, planilhaDeEstudantes } from "./exportar";
@@ -111,6 +112,7 @@ export function RelatorioDoSimuladoConteudo({
   token,
   cabecalho,
   comPadding = true,
+  comTitulo = false,
 }: {
   simuladoId: string;
   /** Ausente = o cursinho inteiro. */
@@ -120,6 +122,13 @@ export function RelatorioDoSimuladoConteudo({
   cabecalho?: React.ReactNode;
   /** A aba já vive dentro de um container com espaçamento próprio. */
   comPadding?: boolean;
+  /**
+   * `true` na rota, onde o `<h1>` passa a ser o nome do simulado (card 18).
+   *
+   * ⚠️ `false` na aba da turma: o seletor logo acima já mostra o nome, e a
+   * turma é a tela inteira — repetir os dois seria ruído.
+   */
+  comTitulo?: boolean;
 }) {
   const [relatorio, setRelatorio] = useState<RelatorioDoSimulado | null>(null);
   const [estado, setEstado] = useState<Estado>("loading");
@@ -361,6 +370,24 @@ export function RelatorioDoSimuladoConteudo({
       <div className={cn("flex flex-col gap-4", comPadding && "py-4")}>
         {cabecalho !== undefined && <div className="px-4">{cabecalho}</div>}
 
+      {/*
+        ⚠️ **Fica AQUI, e não no `cabecalho`** (card 18): o nome do simulado vem
+        do resumo, que este componente carrega — a rota não o tem quando monta a
+        prop. E é o mesmo motivo de os dois lados usarem o mesmo bloco em vez de
+        cada tela escrever o seu.
+
+        ⚠️ Fora do `estado === "idle"` de propósito: enquanto carrega não há
+        resumo, e um cabeçalho que aparece depois da tabela pula a página.
+      */}
+      {relatorio && (
+        <div className="px-4">
+          <IdentificacaoDoRelatorio
+            resumo={relatorio.resumo}
+            comTitulo={comTitulo}
+          />
+        </div>
+      )}
+
         {relatorio && (
           <div className="px-4">
             <>
@@ -577,6 +604,13 @@ export function RelatorioDoSimuladoConteudo({
               linha: aberto,
             }}
             dificuldade={dificuldade}
+            /*
+              ⚠️ É o MESMO `turmaId` que recorta o agregado de dificuldade — e
+              é por isso que o rótulo da coluna pode dizer qual recorte é. Sem
+              turma, o número é do cursinho inteiro e o rótulo antigo ("na
+              turma") mentia no caminho mais comum, o do `dashProvas`.
+            */
+            recorte={turmaId === undefined ? "cursinho" : "turma"}
             totalDeQuestoes={relatorio?.resumo.totalDeQuestoes ?? 0}
             mediaDoRecorte={relatorio?.resumo.aproveitamentoGeral ?? null}
             materiasDaTurma={relatorio?.resumo.aproveitamentoPorMateria ?? []}

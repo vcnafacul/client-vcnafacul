@@ -181,3 +181,22 @@ describe("SimuladosDaTurma — vazio e erro", () => {
     expect(await screen.findByText(TEXTO_ERRO)).toBeInTheDocument();
   });
 });
+
+describe("SimuladosDaTurma — identificação (card 18)", () => {
+  it("⚠️ a aba NÃO repete o nome do simulado que o seletor já mostra", async () => {
+    // O card 18 é explícito: na aba, a turma é a tela inteira e o `<select>`
+    // logo acima já traz o nome. Repetir os dois seria ruído — fica só a linha
+    // de contexto.
+    buscarSimuladosComCartao.mockResolvedValue({
+      simulados: [
+        { simuladoId: "s1", nome: "ENEM 2024", cartoes: 2, comLeituraConcluida: 2, ultimoEnvio: null },
+      ],
+    });
+    render(<SimuladosDaTurma turmaId="t-1" token="tok" />);
+
+    await screen.findByTestId("seletor-de-simulado");
+
+    // nenhum <h1> com o nome: ele existe só dentro do <option>
+    expect(screen.queryByRole("heading", { name: "ENEM 2024" })).not.toBeInTheDocument();
+  });
+});
