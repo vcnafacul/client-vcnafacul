@@ -363,3 +363,64 @@ describe("⚠️ discriminação `undefined` — o ms antigo, durante o deploy",
     expect(flagsDaQuestao(q)).toContain("muito_dificil");
   });
 });
+
+describe("flagsDaQuestao — leitura_suspeita (card 12)", () => {
+  /*
+    ⚠️ 6 sem leitura em 20 respondentes = 30%, contra mediana 2% do simulado:
+    cruza o piso de 15 e é mais de 3× a mediana.
+  */
+  const comSemLeitura = (semLeitura: number) =>
+    questao({
+      semLeitura,
+      acertos: 10,
+      porAlternativa: { A: 10, B: 4, C: 3, D: 2, E: 1 - semLeitura },
+    });
+
+  it("sem mediana no chamador, a flag não existe — nada muda para quem não passa", () => {
+    expect(flagsDaQuestao(comSemLeitura(6))).not.toContain("leitura_suspeita");
+  });
+
+  it("com mediana baixa e percentual alto, acusa", () => {
+    expect(flagsDaQuestao(comSemLeitura(6), 2)).toContain("leitura_suspeita");
+  });
+
+  it("⚠️ mediana alta (simulado inteiro ruim) não acusa", () => {
+    // 30% contra mediana 20%: cruza o piso e não destoa do simulado.
+    expect(flagsDaQuestao(comSemLeitura(6), 20)).not.toContain("leitura_suspeita");
+  });
+
+  it("⚠️ mediana null é 'não avaliado', e não vira flag", () => {
+    expect(flagsDaQuestao(comSemLeitura(6), null)).not.toContain("leitura_suspeita");
+  });
+
+  it("⚠️ vem logo depois do gabarito, antes da dificuldade", () => {
+    /*
+      A ordem é a ordem em que se age: leitura anormal INVALIDA o `% de acerto`
+      da linha, então agir sobre "Difícil" antes de conferir a impressão é
+      tratar sintoma de um número que não vale.
+    */
+    const flags = flagsDaQuestao(
+      questao({
+        semLeitura: 6,
+        acertos: 2,
+        porAlternativa: { A: 2, B: 12, C: 0, D: 0, E: 0 },
+        discriminacao: -0.3,
+      }),
+      2,
+    );
+
+    expect(flags.indexOf("leitura_suspeita")).toBe(
+      flags.indexOf("gabarito_suspeito") + 1,
+    );
+    expect(flags.indexOf("leitura_suspeita")).toBeLessThan(
+      flags.indexOf("muito_dificil"),
+    );
+  });
+
+  it("a explicação traz o percentual DESTA questão e manda conferir a folha", () => {
+    const texto = explicacaoDaFlag("leitura_suspeita", comSemLeitura(6));
+
+    expect(texto).toContain("30%");
+    expect(texto.toLowerCase()).toContain("gabarito impressa torta");
+  });
+});

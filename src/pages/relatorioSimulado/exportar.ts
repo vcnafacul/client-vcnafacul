@@ -132,7 +132,15 @@ export function planilhaDeEstudantes(
 }
 
 /** A aba de desempenho por questão. */
-export function planilhaDeQuestoes(questoes: QuestaoDoRelatorio[]): Planilha {
+export function planilhaDeQuestoes(
+  questoes: QuestaoDoRelatorio[],
+  /**
+   * ⚠️ A mediana do "% sem leitura", só para a coluna `Sinais` poder trazer a
+   * `leitura_suspeita` (card 12). `null` = não avaliado, e o arquivo sai igual
+   * ao de antes.
+   */
+  medianaSemLeitura: number | null = null,
+): Planilha {
   /*
     ⚠️ **A planilha MANTÉM `Acertos`, `Erros` e `Erro (%)`, que o card 04
     removeu da tabela.** Não é esquecimento.
@@ -190,7 +198,7 @@ export function planilhaDeQuestoes(questoes: QuestaoDoRelatorio[]): Planilha {
     q.discriminacao,
     // ⚠️ String vazia, e não `null`: aqui a ausência de sinal É a informação
     // ("esta questão está ok"), diferente de uma medida que não existe.
-    rotulosDasFlags(q),
+    rotulosDasFlags(q, medianaSemLeitura),
   ]);
 
   return { cabecalho, linhas };
