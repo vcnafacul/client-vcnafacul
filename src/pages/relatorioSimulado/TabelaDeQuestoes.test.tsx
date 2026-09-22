@@ -633,3 +633,81 @@ describe("TabelaDeQuestoes — triagem (card 06)", () => {
     expect(screen.getByText("Só questões com sinal")).toBeInTheDocument();
   });
 });
+
+describe("TabelaDeQuestoes — preview da questão (card 11)", () => {
+  /*
+    ⚠️ O serviço é mockado no módulo, e não injetado: a `TabelaDeQuestoes` monta
+    o `PreviewDaQuestao` por dentro, então não há por onde passar um duplo. É o
+    preço de o modal ser detalhe da tabela — e é o que faz este teste provar a
+    ligação, que é justamente o que os testes do preview sozinho não alcançam.
+  */
+  const getQuestionById = vi.hoisted(() => vi.fn());
+  vi.mock("@/services/question/getQuestionById", () => ({ getQuestionById }));
+  vi.mock("@/store/auth", () => ({
+    useAuthStore: () => ({ data: { token: "tok" } }),
+  }));
+
+  beforeEach(() => {
+    getQuestionById.mockReset();
+    getQuestionById.mockResolvedValue({
+      _id: "q5",
+      textoQuestao: "Enunciado da cinco",
+      pergunta: "",
+      textoAlternativaA: "Primeira",
+      textoAlternativaB: "Segunda",
+      textoAlternativaC: "Terceira",
+      textoAlternativaD: "Quarta",
+      textoAlternativaE: "Quinta",
+      alternativa: "A",
+      contentFormat: "plain",
+    });
+  });
+
+  it("clicar no número da questão abre o preview com o enunciado", async () => {
+    render(
+      <TabelaDeQuestoes questoes={[questao()]} estado="idle" token="tok" />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "5" }));
+
+    expect(await screen.findByText("Enunciado da cinco")).toBeTruthy();
+    expect(getQuestionById).toHaveBeenCalledWith("tok", "q5");
+  });
+
+  it("⚠️ sem token não há botão, e nenhuma linha vira alvo de clique", () => {
+    /*
+      O token é opcional de propósito — quem monta a tabela sem ele (os testes
+      de ordenação e filtro deste arquivo, por exemplo) não deve ganhar um
+      preview que só sabe falhar na chamada.
+    */
+    render(<TabelaDeQuestoes questoes={[questao()]} estado="idle" />);
+
+    expect(screen.queryByRole("button", { name: "5" })).toBeNull();
+  });
+
+  it("o preview fechado não existe no DOM — nenhuma busca antes do clique", () => {
+    render(
+      <TabelaDeQuestoes questoes={[questao()]} estado="idle" token="tok" />,
+    );
+
+    expect(getQuestionById).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("preview-da-questao")).toBeNull();
+  });
+
+  it("fechar o preview volta a tabela ao estado anterior", async () => {
+    const { container } = render(
+      <TabelaDeQuestoes questoes={[questao()]} estado="idle" token="tok" />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "5" }));
+    await screen.findByText("Enunciado da cinco");
+
+    // O `ModalTemplate` põe o X como primeiro controle do overlay.
+    const fechar = container.ownerDocument.querySelector(
+      "[data-testid='preview-da-questao']",
+    )!.parentElement!.parentElement!.querySelector("svg")!;
+    fireEvent.click(fechar);
+
+    expect(screen.queryByTestId("preview-da-questao")).toBeNull();
+  });
+});

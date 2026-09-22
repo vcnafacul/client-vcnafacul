@@ -12,6 +12,7 @@ import type { QuestaoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimul
 import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useState } from "react";
 import { BarraDeDistribuicao } from "./BarraDeDistribuicao";
+import { PreviewDaQuestao } from "./PreviewDaQuestao";
 import { flagsDaQuestao, quantasComSinal } from "./flagsDaQuestao";
 import { SinaisDaQuestao } from "./SinaisDaQuestao";
 import { BotaoExportar } from "./BotaoExportar";
@@ -232,6 +233,7 @@ export function TabelaDeQuestoes({
   estado,
   onRetry,
   nomeArquivo,
+  token,
 }: {
   questoes: QuestaoDoRelatorio[];
   estado: "idle" | "loading" | "error";
@@ -241,6 +243,14 @@ export function TabelaDeQuestoes({
    * aparece, e é assim que os testes que só exercitam a tabela seguem valendo.
    */
   nomeArquivo?: string;
+  /**
+   * Token para buscar o enunciado no preview (card 11).
+   *
+   * ⚠️ Opcional pelo mesmo motivo do `nomeArquivo`: sem ele a linha não vira
+   * botão e o preview não existe. Os testes que só exercitam ordenação,
+   * filtro e paginação seguem valendo sem tocar em serviço nenhum.
+   */
+  token?: string;
 }) {
   const [sort, setSort] = useState<SortState | undefined>({
     columnId: "numero",
@@ -248,6 +258,7 @@ export function TabelaDeQuestoes({
   });
   const [pagina, setPagina] = useState(1);
   const [soComSinal, setSoComSinal] = useState(false);
+  const [aberta, setAberta] = useState<QuestaoDoRelatorio | null>(null);
 
   /*
     ⚠️ **O contador conta a lista INTEIRA, não a filtrada.** Com o filtro
@@ -360,6 +371,19 @@ export function TabelaDeQuestoes({
           )}
         </DashFilterBar>
       </div>
+      {/*
+        ⚠️ **O alvo é o número da questão, e não um ícone novo na linha**
+        (card 11). O `DashTable` já transforma a coluna `primary` em `<button>`
+        quando existe `onRowClick` — o mesmo mecanismo que abre o detalhe na aba
+        de Estudantes —, o que dá teclado e leitor de tela de graça. Um ícone à
+        parte significaria mais uma coluna numa tabela cuja folga é medida a
+        cada card, e um segundo alvo para a mesma ação.
+
+        ⚠️ Por isso também **não há `print:hidden` a aplicar**: na folha o
+        `<button>` imprime só o número, com o mesmo peso do `<span>` que ele
+        substituiu. O que o card queria evitar — o afiche de um controle
+        inacionável no papel — não chega a existir.
+      */}
       <DashTable<QuestaoDoRelatorio>
         rows={daPagina}
         columns={colunas}
@@ -370,7 +394,21 @@ export function TabelaDeQuestoes({
         onRetry={onRetry}
         stickyHeader
         emptyState={<VazioDeQuestoes />}
+        onRowClick={token === undefined ? undefined : setAberta}
       />
+      {/*
+        ⚠️ Fechado não existe no DOM — o `aberta !== null` é o gate, mesma
+        decisão do detalhe do estudante. Sem isso o preview dispararia uma
+        busca por linha renderizada.
+      */}
+      {aberta !== null && token !== undefined && (
+        <PreviewDaQuestao
+          token={token}
+          questao={aberta}
+          isOpen
+          onClose={() => setAberta(null)}
+        />
+      )}
       {/*
         ⚠️ O mesmo rodapé das outras telas do dashV2, reusado como componente
         autônomo. O `DashListTemplate` traz este rodapé de graça, mas lê as
