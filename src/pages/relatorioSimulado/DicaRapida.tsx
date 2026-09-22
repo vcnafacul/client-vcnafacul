@@ -34,6 +34,7 @@ import { createPortal } from "react-dom";
 export function DicaRapida({
   texto,
   marcador,
+  className,
   children,
 }: {
   texto: string;
@@ -45,6 +46,18 @@ export function DicaRapida({
    * aciona nada — e o teste passaria a mirar num filho por posição.
    */
   marcador?: string;
+  /**
+   * Classes do elemento que embrulha o conteúdo.
+   *
+   * ⚠️ **Existe porque este wrapper ENTRA no layout de quem o usa.** Ele é um
+   * `inline-flex`, e ao envolver um filho que dependia de `flex-1` ou `w-full`
+   * do container original, quebra a conta: o filho passa a medir 100% de um
+   * wrapper que encolheu até o conteúdo. Foi o que aconteceu com a barra de
+   * distribuição e com as faixas do histograma — as duas encolheram.
+   *
+   * Quem envolve um elemento elástico precisa repassar o `flex-1` para cá.
+   */
+  className?: string;
   children: React.ReactNode;
 }) {
   const alvo = useRef<HTMLSpanElement>(null);
@@ -96,7 +109,7 @@ export function DicaRapida({
     <span
       ref={alvo}
       data-dica={marcador}
-      className="inline-flex"
+      className={cn("inline-flex", className)}
       onMouseEnter={abrir}
       onMouseLeave={fechar}
       /* ⚠️ Teclado: o badge não é focável, mas o `focus` sobe de qualquer coisa

@@ -49,9 +49,12 @@ export function HistogramaDaTurma({
       className="flex h-10 items-end gap-0.5"
     >
       {faixas.map((f) => (
+        // ⚠️ `flex-1 h-full` no wrapper, pelo mesmo motivo da barra: ele entra
+        // no layout, e as oito faixas dependem de dividir a largura por igual.
         <DicaRapida
           key={f.de}
           texto={`${f.de} a ${f.ate} acertos: ${f.quantos} estudante(s)`}
+          className="h-full flex-1"
         >
         <span
           data-faixa={`${f.de}-${f.ate}`}

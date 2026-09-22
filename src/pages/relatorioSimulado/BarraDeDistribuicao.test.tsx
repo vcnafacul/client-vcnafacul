@@ -123,3 +123,38 @@ describe("BarraDeDistribuicao — a dica de 300ms", () => {
     expect(screen.getByRole("img")).toHaveAccessibleName(/B: 16/);
   });
 });
+
+describe("⚠️ a largura da barra", () => {
+  /**
+   * A barra ENCOLHEU ao ganhar a dica: o wrapper `inline-flex` da `DicaRapida`
+   * entrou entre o container flex e a barra, e o `w-full` dela passou a medir
+   * 100% de um elemento que encolheu até o conteúdo — sobrando só o
+   * `min-w-[6rem]`.
+   *
+   * ⚠️ jsdom não calcula layout, então o que se afirma aqui é a CLASSE no
+   * elemento certo. O efeito visual continua sendo gate manual — foi
+   * exatamente o que escapou.
+   */
+  it("o wrapper da dica recebe `flex-1`, senão a barra encolhe", () => {
+    const { container } = render(<BarraDeDistribuicao questao={questao()} />);
+
+    const wrapper = container.querySelector('[data-dica="distribuicao"]')!;
+    expect(wrapper.className).toContain("flex-1");
+  });
+
+  it("⚠️ e `min-w-0`: sem ele o `flex-1` não encolhe abaixo do conteúdo", () => {
+    // Item de flex tem `min-width: auto` por padrão, e o `min-w-[6rem]` da
+    // barra viraria um piso que empurra as colunas vizinhas.
+    const { container } = render(<BarraDeDistribuicao questao={questao()} />);
+
+    expect(
+      container.querySelector('[data-dica="distribuicao"]')!.className,
+    ).toContain("min-w-0");
+  });
+
+  it("a barra em si continua com `w-full`", () => {
+    render(<BarraDeDistribuicao questao={questao()} />);
+
+    expect(screen.getByRole("img").className).toContain("w-full");
+  });
+});

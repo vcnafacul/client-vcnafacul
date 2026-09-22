@@ -70,7 +70,16 @@ export function BarraDeDistribuicao({
         ⚠️ O `aria-label` continua: quem usa leitor de tela não passa o mouse, e
         a dica é `pointer-events-none`.
       */}
-      <DicaRapida marcador="distribuicao" texto={tituloDaBarra(questao)}>
+      {/*
+        ⚠️ `flex-1 min-w-0` repassado ao wrapper: sem isso a barra mede 100% de
+        um `inline-flex` que encolheu até o conteúdo, e o `min-w-[6rem]` dela
+        vira a largura final — foi assim que ela encolheu ao ganhar a dica.
+      */}
+      <DicaRapida
+        marcador="distribuicao"
+        texto={tituloDaBarra(questao)}
+        className="min-w-0 flex-1"
+      >
       <span
         role="img"
         aria-label={`Distribuição das respostas — ${tituloDaBarra(questao)}`}

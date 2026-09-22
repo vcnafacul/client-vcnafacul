@@ -258,6 +258,18 @@ describe("HistogramaDaTurma — a dica de 300ms", () => {
     ).toBeNull();
   });
 
+  it("⚠️ o wrapper da faixa recebe `h-full flex-1`", () => {
+    // Mesmo defeito da barra: as oito faixas dependem de dividir a largura por
+    // igual, e o wrapper `inline-flex` da dica entrou no meio.
+    const { container } = montar();
+
+    const wrapper = container
+      .querySelector('[data-faixa="12-22"]')!
+      .parentElement!;
+    expect(wrapper.className).toContain("flex-1");
+    expect(wrapper.className).toContain("h-full");
+  });
+
   it("abre em 300ms com a contagem da faixa", () => {
     const { container } = montar();
 
