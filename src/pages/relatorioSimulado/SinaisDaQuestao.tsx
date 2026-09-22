@@ -25,8 +25,18 @@ export const SEM_SINAL = "—";
  * ponto-bisserial é −0,34; quer saber que a questão presta ou não. Mas quem
  * quiser conferir tem o número ao alcance do cursor — e no CSV.
  */
-export function SinaisDaQuestao({ questao }: { questao: QuestaoDoRelatorio }) {
-  const flags = flagsDaQuestao(questao);
+export function SinaisDaQuestao({
+  questao,
+  medianaSemLeitura = null,
+}: {
+  questao: QuestaoDoRelatorio;
+  /**
+   * ⚠️ Só para a `leitura_suspeita` (card 12), que é a única flag que depende
+   * do conjunto. `null` = não avaliado, e a coluna volta ao que era.
+   */
+  medianaSemLeitura?: number | null;
+}) {
+  const flags = flagsDaQuestao(questao, medianaSemLeitura);
 
   if (flags.length === 0) {
     // ⚠️ Travessão, e não célula vazia: vazio se lê como "não calculou".

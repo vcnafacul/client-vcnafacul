@@ -77,7 +77,7 @@ function acertosOrdenados(linhas: LinhaDoRelatorio[]): number[] {
  * Excel num número que alguém vai conferir lá é criar uma discussão que não
  * precisa existir.
  */
-function quantil(ordenados: number[], p: number): number {
+export function quantil(ordenados: number[], p: number): number {
   const posicao = (ordenados.length - 1) * p;
   const abaixo = Math.floor(posicao);
   const acima = Math.ceil(posicao);

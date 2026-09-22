@@ -1,4 +1,5 @@
 import type { QuestaoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
+import { leituraAnormalDaQuestao, percentualSemLeitura } from "./leituraAnormal";
 import { percentualDaAlternativa, percentualDeAcerto } from "./percentuais";
 
 /**
@@ -42,6 +43,7 @@ export const LIMIARES = {
 
 export type FlagDaQuestao =
   | "gabarito_suspeito"
+  | "leitura_suspeita"
   | "nao_discrimina"
   | "muito_dificil"
   | "muito_facil"
@@ -73,11 +75,22 @@ const ALTERNATIVAS = ["A", "B", "C", "D", "E"] as const;
  * `react-refresh/only-export-components` reprova função exportada ao lado de
  * componente.
  *
- * ⚠️ O sinal de **leitura suspeita** fica de fora: o limiar dele é o card 12,
- * que ainda não existe. E ele não é sobre a questão, é sobre a foto — misturar
- * os dois numa coluna chamada "Sinais" da questão confundiria as duas coisas.
+ * ⚠️ **`leitura_suspeita` entrou no card 12, e é a única que depende do
+ * CONJUNTO.** As outras cinco se decidem olhando uma questão; esta compara com
+ * a mediana do próprio simulado, e por isso a mediana chega de fora, já
+ * calculada. Sem `medianaSemLeitura` a função devolve exatamente o que devolvia
+ * antes — é o que mantém válidos os chamadores que não têm a lista na mão.
+ *
+ * ⚠️ E ela **não fala sobre a questão, fala sobre a foto** — ressalva que o
+ * card 06 usou para adiá-la. Ela entra mesmo assim, porque a alternativa é pior:
+ * quem chega à tabela por outro caminho não veria nada. O que resolve a confusão
+ * é o rótulo ("Leitura"), que nomeia do que se trata, e a explicação, que manda
+ * conferir o gabarito impresso — não o silêncio.
  */
-export function flagsDaQuestao(q: QuestaoDoRelatorio): FlagDaQuestao[] {
+export function flagsDaQuestao(
+  q: QuestaoDoRelatorio,
+  medianaSemLeitura: number | null = null,
+): FlagDaQuestao[] {
   const flags: FlagDaQuestao[] = [];
 
   /*
@@ -113,6 +126,17 @@ export function flagsDaQuestao(q: QuestaoDoRelatorio): FlagDaQuestao[] {
       // diferentes.
       flags.push("nao_discrimina");
     }
+  }
+
+  /*
+    ⚠️ **Segunda na ordem, logo depois do gabarito**, e não no fim: leitura
+    anormal INVALIDA os números da linha. O `% de acerto` de uma questão cuja
+    linha do gabarito saiu torta está calculado sobre uma base que não
+    representa a turma — agir sobre "Difícil" antes de conferir a impressão é
+    tratar sintoma de um número que não vale.
+  */
+  if (leituraAnormalDaQuestao(q, medianaSemLeitura)) {
+    flags.push("leitura_suspeita");
   }
 
   const acerto = percentualDeAcerto(q);
@@ -168,6 +192,12 @@ export const APRESENTACAO_DAS_FLAGS: Record<
     explicacao:
       "Os alunos que foram bem na prova erraram esta questão mais que os que foram mal. Confira o gabarito antes de qualquer outra coisa.",
   },
+  leitura_suspeita: {
+    rotulo: "Leitura",
+    tone: "missing",
+    explicacao:
+      "Muito mais cartões ficaram sem leitura nesta questão do que nas outras deste simulado. Confira o gabarito impresso antes de usar os percentuais dela.",
+  },
   nao_discrimina: {
     rotulo: "Não discrimina",
     tone: "running",
@@ -195,15 +225,22 @@ export const APRESENTACAO_DAS_FLAGS: Record<
 };
 
 /** O que o CSV escreve — ver o docblock da coluna `Sinais` em `exportar.ts`. */
-export function rotulosDasFlags(q: QuestaoDoRelatorio): string {
-  return flagsDaQuestao(q)
+export function rotulosDasFlags(
+  q: QuestaoDoRelatorio,
+  medianaSemLeitura: number | null = null,
+): string {
+  return flagsDaQuestao(q, medianaSemLeitura)
     .map((f) => APRESENTACAO_DAS_FLAGS[f].rotulo)
     .join("; ");
 }
 
 /** Quantas questões da lista têm algum sinal — o contador do filtro. */
-export function quantasComSinal(questoes: QuestaoDoRelatorio[]): number {
-  return questoes.filter((q) => flagsDaQuestao(q).length > 0).length;
+export function quantasComSinal(
+  questoes: QuestaoDoRelatorio[],
+  medianaSemLeitura: number | null = null,
+): number {
+  return questoes.filter((q) => flagsDaQuestao(q, medianaSemLeitura).length > 0)
+    .length;
 }
 
 /**
@@ -249,6 +286,16 @@ export function explicacaoDaFlag(
       : q.discriminacao.toFixed(2).replace(".", ",");
 
   switch (flag) {
+    case "leitura_suspeita": {
+      const semLeitura = percentualSemLeitura(q);
+      return (
+        `${semLeitura}% dos cartões não tiveram marcação legível nesta ` +
+        "questão, muito acima do resto do simulado. Isso não é a turma " +
+        "deixando a mesma questão em branco: é a linha do gabarito impressa " +
+        "torta ou fora de margem. Confira a folha — e trate os outros " +
+        "percentuais desta linha como não confiáveis até lá."
+      );
+    }
     case "gabarito_suspeito":
       return (
         `Discriminação ${disc}: os alunos que foram bem na prova erraram esta ` +

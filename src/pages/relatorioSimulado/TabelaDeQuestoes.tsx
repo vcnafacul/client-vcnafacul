@@ -96,7 +96,10 @@ function VazioDeQuestoes() {
  * título, e foi esse aperto que produziu o cabeçalho cortado consertado no card
  * 04. Quem precisar de espaço tira coluna ou reagrupa conteúdo — nunca aperta.
  */
-const colunas: DashColumn<QuestaoDoRelatorio>[] = [
+function colunasDeQuestoes(
+  medianaSemLeitura: number | null,
+): DashColumn<QuestaoDoRelatorio>[] {
+  return [
   {
     id: "numero",
     header: "Questão",
@@ -213,7 +216,9 @@ const colunas: DashColumn<QuestaoDoRelatorio>[] = [
       tela de coordenador é precisão que não ajuda a decidir nada e custa
       largura; o valor fica no tooltip e no CSV.
     */
-    cell: (q) => <SinaisDaQuestao questao={q} />,
+    cell: (q) => (
+      <SinaisDaQuestao questao={q} medianaSemLeitura={medianaSemLeitura} />
+    ),
   },
   {
     id: "semLeitura",
@@ -225,8 +230,9 @@ const colunas: DashColumn<QuestaoDoRelatorio>[] = [
     align: "right",
     cell: (q) => q.semLeitura,
     sortValue: (q) => q.semLeitura,
-  },
-];
+    },
+  ];
+}
 
 export function TabelaDeQuestoes({
   questoes,
@@ -234,6 +240,7 @@ export function TabelaDeQuestoes({
   onRetry,
   nomeArquivo,
   token,
+  medianaSemLeitura = null,
 }: {
   questoes: QuestaoDoRelatorio[];
   estado: "idle" | "loading" | "error";
@@ -251,6 +258,19 @@ export function TabelaDeQuestoes({
    * filtro e paginação seguem valendo sem tocar em serviço nenhum.
    */
   token?: string;
+  /**
+   * A mediana do "% sem leitura" do simulado, para a flag `leitura_suspeita`
+   * (card 12).
+   *
+   * ⚠️ **Chega pronta, e não é calculada aqui.** O veredito é por questão mas
+   * depende do CONJUNTO, e a tela já precisa da mesma mediana para o alerta
+   * acima das abas. Duas medianas para a mesma lista divergiriam no primeiro
+   * refactor, e as duas apareceriam na mesma tela.
+   *
+   * ⚠️ `null` (o padrão) é "não avaliado": nenhuma questão ganha a flag, que é
+   * o comportamento anterior ao card 12.
+   */
+  medianaSemLeitura?: number | null;
 }) {
   const [sort, setSort] = useState<SortState | undefined>({
     columnId: "numero",
@@ -261,15 +281,33 @@ export function TabelaDeQuestoes({
   const [aberta, setAberta] = useState<QuestaoDoRelatorio | null>(null);
 
   /*
+    ⚠️ **As colunas passaram a ser função** (card 12): a célula de `Sinais`
+    precisa da mediana do simulado, que é prop. Memoizada porque o `sortRows`
+    recebe o array e a tela re-renderiza a cada clique de ordenação.
+  */
+  const colunas = useMemo(
+    () => colunasDeQuestoes(medianaSemLeitura),
+    [medianaSemLeitura],
+  );
+
+  /*
     ⚠️ **O contador conta a lista INTEIRA, não a filtrada.** Com o filtro
     ligado, `filtradas` são só as com sinal — e o rótulo diria "(7) de 7", o que
     não informa nada. Mesma razão do `quantosNaoEnviaram` na aba de Estudantes.
   */
-  const comSinal = useMemo(() => quantasComSinal(questoes), [questoes]);
+  const comSinal = useMemo(
+    () => quantasComSinal(questoes, medianaSemLeitura),
+    [questoes, medianaSemLeitura],
+  );
 
   const filtradas = useMemo(
-    () => (soComSinal ? questoes.filter((q) => flagsDaQuestao(q).length > 0) : questoes),
-    [questoes, soComSinal],
+    () =>
+      soComSinal
+        ? questoes.filter(
+            (q) => flagsDaQuestao(q, medianaSemLeitura).length > 0,
+          )
+        : questoes,
+    [questoes, soComSinal, medianaSemLeitura],
   );
 
   /*
@@ -286,7 +324,7 @@ export function TabelaDeQuestoes({
   // `sortRows`, que já trata nulos no fim e ordenação estável.
   const ordenadas = useMemo(
     () => sortRows(filtradas, colunas, sort),
-    [filtradas, sort],
+    [filtradas, colunas, sort],
   );
 
   /*
@@ -324,7 +362,10 @@ export function TabelaDeQuestoes({
     ⚠️ E na ordem que a pessoa está vendo — é o que faz conferir tela contra
     planilha não virar quebra-cabeça.
   */
-  const planilha = useMemo(() => planilhaDeQuestoes(ordenadas), [ordenadas]);
+  const planilha = useMemo(
+    () => planilhaDeQuestoes(ordenadas, medianaSemLeitura),
+    [ordenadas, medianaSemLeitura],
+  );
 
   return (
     <div className="flex flex-col">

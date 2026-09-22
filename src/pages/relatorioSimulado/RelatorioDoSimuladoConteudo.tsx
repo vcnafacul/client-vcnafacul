@@ -35,6 +35,11 @@ import { BotaoExportar } from "./BotaoExportar";
 import { nomeDoArquivo, planilhaDeEstudantes } from "./exportar";
 import { ResumoDoRelatorio } from "./ResumoDoRelatorio";
 import { TabelaDeQuestoes } from "./TabelaDeQuestoes";
+import { AlertaDeLeitura } from "./AlertaDeLeitura";
+import {
+  cartoesComLeituraAnormal,
+  questoesComLeituraAnormal,
+} from "./leituraAnormal";
 
 type Estado = "idle" | "loading" | "error";
 
@@ -166,6 +171,27 @@ export function RelatorioDoSimuladoConteudo({
 
   useEffect(carregar, [simuladoId, turmaId, token]);
 
+  /*
+    ⚠️ **As questões passam a ser buscadas em SEGUNDO PLANO, e isto reverte em
+    parte a decisão de carga preguiçosa registrada logo abaixo** (card 12).
+
+    O motivo: o alerta de leitura anormal por questão fica acima das abas, e ele
+    só existe se o agregado existir. Mantida a carga só na abertura da aba, o
+    alerta apareceria depois de a pessoa já ter ido procurar na tabela — que é
+    exatamente o problema que o card descreve ("ninguém vai encontrá-los
+    varrendo a tabela").
+
+    ⚠️ **O que a decisão original protegia continua protegido:** a busca só
+    dispara DEPOIS que o relatório chegou, então a primeira pintura — resumo e
+    tabela de estudantes — não espera por ela. O custo é uma chamada a mais por
+    visita; o ganho, além do alerta, é a aba de Questões abrir já carregada.
+  */
+  useEffect(() => {
+    if (relatorio === null) return;
+    carregarQuestoes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [relatorio]);
+
   /**
    * ⚠️ As questões só são buscadas na PRIMEIRA abertura da aba, e nunca junto
    * com as linhas. São duas chamadas independentes e a maioria das visitas só
@@ -199,6 +225,24 @@ export function RelatorioDoSimuladoConteudo({
     ⚠️ Memoizado à parte porque **a tela e o CSV usam conjuntos diferentes**: a
     tabela respeita o teto de 4 (é problema de largura), o arquivo leva todas.
   */
+  /*
+    ⚠️ Memoizados: `questoesComLeituraAnormal` ordena a lista de percentuais
+    para a mediana, e a tela re-renderiza a cada tecla digitada na busca.
+  */
+  const leituraDasQuestoes = useMemo(
+    () => questoesComLeituraAnormal(questoes ?? []),
+    [questoes],
+  );
+
+  const leituraDosCartoes = useMemo(
+    () =>
+      cartoesComLeituraAnormal(
+        relatorio?.linhas ?? [],
+        relatorio?.resumo.totalDeQuestoes ?? 0,
+      ),
+    [relatorio],
+  );
+
   const todasAsMaterias = useMemo(
     () => relatorio?.resumo.aproveitamentoPorMateria,
     [relatorio?.resumo.aproveitamentoPorMateria],
@@ -421,6 +465,26 @@ export function RelatorioDoSimuladoConteudo({
           </div>
         )}
 
+        {/*
+          ⚠️ **Acima das abas, e antes delas na ordem de leitura.** O alerta diz
+          que os números abaixo podem não valer — depois da tabela seria uma
+          errata, e a pessoa já teria agido sobre o que leu.
+        */}
+        <div className="px-4 pb-2">
+          <AlertaDeLeitura
+            questoes={leituraDasQuestoes}
+            cartoes={leituraDosCartoes}
+            /*
+              ⚠️ Mesmo caminho do clique na linha: carrega o agregado e abre o
+              modal — é lá que vive o `AcaoDeReenvio`, que é o ponto do alerta.
+            */
+            aoAbrirCartao={(l) => {
+              carregarQuestoes();
+              setAberto(l);
+            }}
+          />
+        </div>
+
         <Tabs
           value={aba}
           onValueChange={(v) => {
@@ -579,6 +643,13 @@ export function RelatorioDoSimuladoConteudo({
               onRetry={carregarQuestoes}
               nomeArquivo={nomeDoArquivo("questoes", simuladoId ?? "", turmaId)}
               token={token}
+              /*
+                ⚠️ Calculada AQUI e passada pronta: a flag `leitura_suspeita`
+                depende do conjunto, e a tela já tem a mediana para o alerta.
+                Recalculá-la dentro da tabela daria duas medianas para a mesma
+                lista, com uma chance de divergirem a cada refactor.
+              */
+              medianaSemLeitura={leituraDasQuestoes.mediana}
             />
           </TabsContent>
         </Tabs>

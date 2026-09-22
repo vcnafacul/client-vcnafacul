@@ -110,23 +110,44 @@ describe("RelatorioSimulado", () => {
     );
   });
 
-  it("⚠️ NÃO busca as questões junto — só na primeira abertura da aba", async () => {
+  it("⚠️ as questões vêm DEPOIS do relatório, nunca junto (card 12)", async () => {
+    /*
+      ⚠️ **Este teste mudou de sentido no card 12, e vale dizer por quê.** Antes
+      ele afirmava que as questões só eram buscadas ao abrir a aba. O alerta de
+      leitura anormal mora ACIMA das abas e depende do agregado — mantida a
+      carga preguiçosa, ele só apareceria depois de a pessoa já ter ido procurar
+      na tabela, que é o problema que o card existe para resolver.
+
+      O que a decisão original protegia continua protegido, e é o que se afirma
+      aqui: a primeira pintura não espera pelas questões. O relatório chega
+      primeiro; a segunda busca sai depois dele.
+    */
     montar();
 
-    await screen.findByText("Ana Silva");
+    // Nada de questões antes de o relatório resolver.
     expect(buscarQuestoes).not.toHaveBeenCalled();
+
+    await screen.findByText("Ana Silva");
+
+    await waitFor(() => expect(buscarQuestoes).toHaveBeenCalledTimes(1));
+  });
+
+  it("abrir a aba depois da carga automática não rebusca", async () => {
+    montar();
+    await screen.findByText("Ana Silva");
+    await waitFor(() => expect(buscarQuestoes).toHaveBeenCalledTimes(1));
 
     abrirAba(/quest/i);
 
-    await waitFor(() => expect(buscarQuestoes).toHaveBeenCalledTimes(1));
+    expect(buscarQuestoes).toHaveBeenCalledTimes(1);
   });
 
   it("voltar para a aba de estudantes e de novo para questões não rebusca", async () => {
     montar();
     await screen.findByText("Ana Silva");
+    await waitFor(() => expect(buscarQuestoes).toHaveBeenCalledTimes(1));
 
     abrirAba(/quest/i);
-    await waitFor(() => expect(buscarQuestoes).toHaveBeenCalledTimes(1));
     abrirAba(/estudante/i);
     abrirAba(/quest/i);
 
@@ -238,11 +259,23 @@ describe("RelatorioSimulado", () => {
    * teste cai, e é o aviso de que a guarda precisa de mais do que `!== null`.
    */
   it("o erro das questões é recuperável — tentar de novo rebusca", async () => {
-    buscarQuestoes.mockRejectedValueOnce(new Error("caiu"));
+    /*
+      ⚠️ **Rejeita SEMPRE, e o teste conta três chamadas** (card 12). A carga do
+      agregado virou automática, então a primeira falha acontece sem ninguém
+      pedir; abrir a aba dispara a segunda (a guarda é `questoes !== null`, e o
+      `catch` nunca chamou `setQuestoes`); e o botão dispara a terceira.
+
+      Com `mockRejectedValueOnce` a segunda resolveria, o erro sumiria da tela e
+      o teste passaria a afirmar que não há erro nenhum.
+    */
+    buscarQuestoes.mockRejectedValue(new Error("caiu"));
 
     montar();
     await screen.findByText("Ana Silva");
+    await waitFor(() => expect(buscarQuestoes).toHaveBeenCalledTimes(1));
+
     abrirAba(/quest/i);
+    await waitFor(() => expect(buscarQuestoes).toHaveBeenCalledTimes(2));
 
     /*
       ⚠️ Espera o BOTÃO de recuperação, não um texto `/erro/i` solto: desde que
@@ -255,7 +288,7 @@ describe("RelatorioSimulado", () => {
     });
     fireEvent.click(tentarDeNovo);
 
-    await waitFor(() => expect(buscarQuestoes).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(buscarQuestoes).toHaveBeenCalledTimes(3));
   });
 
   it("erro na busca mostra estado de erro, não tela em branco", async () => {
@@ -1207,6 +1240,14 @@ describe("RelatorioSimulado — navegação entre alunos (card 20)", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    /*
+      ⚠️ **Precisa estar aqui desde o card 12.** O `clearAllMocks` apaga também a
+      implementação, e a carga do agregado passou a disparar sozinha depois do
+      relatório — sem isto `buscarQuestoes()` devolve `undefined`, o `.then`
+      estoura DENTRO do efeito e o React desmonta a árvore inteira: os testes
+      deste bloco falhavam com a tela em branco, não com a asserção.
+    */
+    buscarQuestoes.mockResolvedValue({ questoes: [] });
     buscarRelatorio.mockResolvedValue({
       linhas: [
         aluno("Ana"),
@@ -1395,5 +1436,118 @@ describe("RelatorioSimulado — navegação entre alunos (card 20)", () => {
     expect(
       await screen.findByRole("heading", { name: "Bruno" }),
     ).toBeInTheDocument();
+  });
+});
+
+describe("RelatorioSimulado — alerta de leitura (card 12)", () => {
+  const aluno = (n: string, respondidas: number) => ({
+    ...RESPOSTA.linhas[0],
+    usuario: `u-${n}`,
+    nome: n,
+    matricula: `m-${n}`,
+    questoesRespondidas: respondidas,
+  });
+
+  const questao = (numero: number, semLeitura: number) => ({
+    numero,
+    questaoId: `q${numero}`,
+    respondentes: 20,
+    acertos: 20 - semLeitura,
+    erros: 0,
+    semLeitura,
+    porAlternativa: { A: 20 - semLeitura, B: 0, C: 0, D: 0, E: 0 },
+    alternativaCorreta: "A",
+    discriminacao: 0.4,
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "completed",
+      respostas: [],
+    });
+    buscarRelatorio.mockResolvedValue({
+      linhas: [
+        aluno("Ana", 90),
+        aluno("Bruno", 90),
+        aluno("Carla", 90),
+        aluno("Diego", 90),
+        aluno("Elisa", 90),
+        // ⚠️ 63 de 90 = 30% sem leitura, contra 0% dos outros cinco.
+        aluno("Maria", 63),
+      ],
+      resumo: { ...RESPOSTA.resumo, totalNoRecorte: 6, comLeituraConcluida: 6 },
+    });
+    buscarQuestoes.mockResolvedValue({
+      questoes: [
+        questao(1, 0),
+        questao(2, 0),
+        questao(3, 0),
+        questao(4, 0),
+        questao(5, 0),
+        // ⚠️ 8 de 20 = 40%, contra mediana 0%.
+        questao(34, 8),
+      ],
+    });
+  });
+
+  it("⚠️ o alerta de questões aparece SEM abrir a aba de Questões", async () => {
+    /*
+      É o ponto do card: "ninguém vai encontrá-los varrendo a tabela". Se o
+      alerta só existisse depois de a pessoa abrir a aba, ela já teria ido
+      procurar — e é por isso que a carga do agregado deixou de ser preguiçosa.
+    */
+    montar();
+    await screen.findByText("Ana");
+
+    const faixa = await screen.findByTestId("alerta-leitura-questoes");
+    expect(faixa.textContent).toContain("34");
+    expect(faixa.textContent).toContain("40%");
+  });
+
+  it("o alerta de cartões nomeia quem tem de refotografar", async () => {
+    montar();
+
+    const faixa = await screen.findByTestId("alerta-leitura-cartoes");
+    expect(faixa.textContent).toContain("Maria");
+    expect(faixa.textContent).toContain("30% sem leitura");
+  });
+
+  it("⚠️ clicar no nome abre o modal — onde vive o reenvio", async () => {
+    montar();
+    await screen.findByTestId("alerta-leitura-cartoes");
+
+    fireEvent.click(screen.getByRole("button", { name: "Maria" }));
+
+    expect(
+      await screen.findByRole("heading", { name: "Maria" }),
+    ).toBeInTheDocument();
+  });
+
+  it("⚠️ a flag 'Leitura' chega à linha da tabela de questões", async () => {
+    montar();
+    await screen.findByText("Ana");
+    abrirAba(/quest/i);
+
+    const badges = await screen.findAllByText("Leitura");
+    expect(badges.length).toBe(1);
+  });
+
+  it("leitura uniforme em todo o simulado não gera alerta nenhum", async () => {
+    buscarQuestoes.mockResolvedValue({
+      questoes: [1, 2, 3, 4, 5, 6].map((n) => questao(n, 4)),
+    });
+    buscarRelatorio.mockResolvedValue({
+      linhas: ["Ana", "Bruno", "Carla", "Diego", "Elisa", "Maria"].map((n) =>
+        aluno(n, 72),
+      ),
+      resumo: { ...RESPOSTA.resumo, totalNoRecorte: 6, comLeituraConcluida: 6 },
+    });
+
+    montar();
+    await screen.findByText("Ana");
+    await waitFor(() => expect(buscarQuestoes).toHaveBeenCalled());
+
+    expect(screen.queryByTestId("alertas-de-leitura")).toBeNull();
   });
 });
