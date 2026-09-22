@@ -310,3 +310,109 @@ describe("DetalheDoEstudante", () => {
     spy.mockRestore();
   });
 });
+
+describe("DetalheDoEstudante — bloco de resumo (card 10)", () => {
+  /**
+   * O card 10: o modal abria com o nome e imediatamente 90 linhas. O detalhe
+   * responde "o que ele marcou na 34?"; quem abre o modal quase sempre chega
+   * com "por que o Pedro foi mal?".
+   */
+  const linha = {
+    usuario: "u1",
+    nome: "Ana Silva",
+    matricula: "2025001",
+    turmaId: null,
+    turmaNome: null,
+    enviouCartao: true,
+    status: "completed" as const,
+    acertos: 45,
+    aproveitamentoGeral: 0.5,
+    aproveitamentoPorMateria: [
+      { id: "mat", nome: "Matemática", aproveitamento: 0.3, frentes: [] },
+    ],
+  };
+
+  /*
+    ⚠️ `beforeEach` PRÓPRIO: o do describe acima não alcança este, e sem ele os
+    `it.each` de status deixariam o mock apontando para `status_do_futuro` no
+    teste seguinte — que passaria a falhar por contágio, não pelo que afirma.
+  */
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "completed",
+      respostas: [resposta()],
+    });
+  });
+
+  const comLinha = (props = {}) =>
+    montar({
+      estudante: { usuario: "u1", nome: "Ana Silva", matricula: "2025001", linha },
+      totalDeQuestoes: 90,
+      mediaDoRecorte: 0.36,
+      materiasDaTurma: [
+        { id: "mat", nome: "Matemática", media: 0.52, base: 27 },
+      ],
+      ...props,
+    });
+
+  it("aparece acima da tabela quando o cartão foi lido", async () => {
+    comLinha();
+
+    expect(await screen.findByTestId("resumo-do-estudante")).toBeInTheDocument();
+    expect(screen.getByText("45/90 acertos")).toBeInTheDocument();
+  });
+
+  it("⚠️ a tabela de questões continua exatamente como está", async () => {
+    // Critério explícito do card: o bloco ACRESCENTA, não substitui. O detalhe
+    // questão a questão é o melhor pedaço de design da feature.
+    comLinha();
+    await screen.findByTestId("resumo-do-estudante");
+
+    expect(screen.getByText("Marcou")).toBeInTheDocument();
+    expect(screen.getByText("Acertos na turma")).toBeInTheDocument();
+  });
+
+  it.each([
+    ["failed", { status: "failed", falha: { codigo: "x", descricao: "falhou", acaoSugerida: "reenviar_foto" }, respostas: [] }],
+    ["processando", { status: "pending", respostas: [] }],
+    ["desconhecido", { status: "status_do_futuro", respostas: [] }],
+  ])("⚠️ NÃO aparece em %s", async (_nome, detalhe) => {
+    // Cada um desses já tem a sua mensagem, e o modal é explícito em não
+    // afirmar nada. Um bloco de notas ao lado de "a leitura deste cartão
+    // falhou" afirmaria a leitura que não houve.
+    buscarDetalheDoEstudante.mockResolvedValue(detalhe);
+    comLinha();
+
+    await waitFor(() =>
+      expect(buscarDetalheDoEstudante).toHaveBeenCalled(),
+    );
+    expect(screen.queryByTestId("resumo-do-estudante")).not.toBeInTheDocument();
+  });
+
+  it("⚠️ sem a linha do relatório, o modal segue funcionando sem o bloco", async () => {
+    // É o estado dos testes que só exercitam a tabela — e de qualquer chamador
+    // que não tenha a linha em mãos.
+    montar();
+
+    expect(await screen.findByText("Marcou")).toBeInTheDocument();
+    expect(screen.queryByTestId("resumo-do-estudante")).not.toBeInTheDocument();
+  });
+
+  it("⚠️ nenhum número do bloco é recalculado a partir das respostas", async () => {
+    // O contrato diz 45 acertos; as respostas carregadas dizem outra coisa.
+    // Recalcular produziria um segundo número para a mesma coisa, e os dois
+    // divergiriam no primeiro `null` tratado diferente.
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "completed",
+      respostas: [
+        resposta(),
+        resposta({ numero: 2, questaoId: "q2", alternativaEstudante: "B", alternativaCorreta: "C", resultado: "erro" }),
+      ],
+    });
+    comLinha();
+
+    // 45 do contrato, e não 1 das duas respostas presentes
+    expect(await screen.findByText("45/90 acertos")).toBeInTheDocument();
+  });
+});

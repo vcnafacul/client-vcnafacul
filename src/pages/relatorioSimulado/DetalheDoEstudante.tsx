@@ -7,6 +7,8 @@ import {
 import ModalTemplate from "@/components/templates/modalTemplate";
 import type {
   DetalheDoEstudante as Detalhe,
+  LinhaDoRelatorio,
+  MediaPorMateria,
   RespostaDoEstudante,
 } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
@@ -17,6 +19,7 @@ import {
   formatarDificuldade,
   type DificuldadeDaQuestao,
 } from "./dificuldadeDaQuestao";
+import { ResumoDoEstudante } from "./ResumoDoEstudante";
 import { rotuloDoResultado } from "./rotuloDoResultado";
 
 const VAZIO = "—";
@@ -133,6 +136,14 @@ export interface EstudanteDoDetalhe {
   nome: string;
   matricula: string;
   /**
+   * A linha inteira do relatório — a fonte de TODOS os números do bloco de
+   * resumo (card 10).
+   *
+   * ⚠️ **Opcional**: quem monta o modal sem ela (testes que só exercitam a
+   * tabela) simplesmente não ganha o bloco, e o resto segue igual.
+   */
+  linha?: LinhaDoRelatorio;
+  /**
    * ⚠️ Necessário para reprocessar, e **opcional**: vem de
    * `LinhaDoRelatorio.historicoId`, que a api só manda para quem enviou
    * cartão. Sem ele não há o que reprocessar, e a ação simplesmente não
@@ -157,6 +168,9 @@ export function DetalheDoEstudante({
   isOpen,
   onClose,
   dificuldade,
+  totalDeQuestoes = 0,
+  mediaDoRecorte = null,
+  materiasDaTurma = [],
 }: {
   token: string;
   simuladoId: string;
@@ -173,6 +187,14 @@ export function DetalheDoEstudante({
    * mostrar.
    */
   dificuldade?: Map<string, DificuldadeDaQuestao>;
+  /**
+   * Quantas questões o simulado tem — denominador dos acertos (card 08).
+   */
+  totalDeQuestoes?: number;
+  /** Média do recorte, base do desvio em p.p. (card 08). */
+  mediaDoRecorte?: number | null;
+  /** As matérias do recorte, com a média da turma (card 02). */
+  materiasDaTurma?: MediaPorMateria[];
 }) {
   const [detalhe, setDetalhe] = useState<Detalhe | null>(null);
   const [estado, setEstado] = useState<"idle" | "loading" | "error">("loading");
@@ -288,6 +310,32 @@ export function DetalheDoEstudante({
             {TEXTO_STATUS_DESCONHECIDO}
           </p>
         )}
+
+        {/*
+          ⚠️ **Mesma condição da tabela, de propósito** (card 10). `failed`,
+          `processando` e status desconhecido já têm cada um a sua mensagem, e o
+          modal é explícito em não afirmar nada nesses casos — um bloco de notas
+          ao lado de "a leitura deste cartão falhou" afirmaria a leitura que não
+          houve.
+
+          ⚠️ `detalhe !== null` também: enquanto carrega não há `respostas` para
+          contar o "sem leitura", e o bloco apareceria com a nota certa e a
+          contagem zerada por um instante.
+        */}
+        {estado !== "error" &&
+          !processando &&
+          !statusDesconhecido &&
+          detalhe !== null &&
+          detalhe.status !== "failed" &&
+          estudante.linha !== undefined && (
+            <ResumoDoEstudante
+              linha={estudante.linha}
+              totalDeQuestoes={totalDeQuestoes}
+              mediaDoRecorte={mediaDoRecorte}
+              materiasDaTurma={materiasDaTurma}
+              respostas={detalhe.respostas}
+            />
+          )}
 
         {estado !== "error" &&
           !processando &&
