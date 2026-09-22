@@ -1,6 +1,7 @@
 import { fireEvent } from "@testing-library/dom";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { ROTULO_DA_DIFICULDADE } from "./recorteDoRelatorio";
 import {
   DetalheDoEstudante,
   TEXTO_PROCESSANDO,
@@ -370,7 +371,11 @@ describe("DetalheDoEstudante — bloco de resumo (card 10)", () => {
     await screen.findByTestId("resumo-do-estudante");
 
     expect(screen.getByText("Marcou")).toBeInTheDocument();
-    expect(screen.getByText("Acertos na turma")).toBeInTheDocument();
+    // ⚠️ O rótulo da coluna de dificuldade virou dinâmico (card 18): o padrão
+    // é o recorte do cursinho, que é o caminho do `dashProvas`.
+    expect(
+      screen.getByText(ROTULO_DA_DIFICULDADE.cursinho),
+    ).toBeInTheDocument();
   });
 
   it.each([
@@ -414,5 +419,69 @@ describe("DetalheDoEstudante — bloco de resumo (card 10)", () => {
 
     // 45 do contrato, e não 1 das duas respostas presentes
     expect(await screen.findByText("45/90 acertos")).toBeInTheDocument();
+  });
+});
+
+describe("DetalheDoEstudante — rótulo da dificuldade por recorte (card 18)", () => {
+  /**
+   * O rótulo era fixo em "Acertos na turma" — e mentia justamente no caminho
+   * mais comum: o `dashProvas` abre o relatório do **cursinho inteiro**, sem
+   * turma nenhuma. Quem lia "na turma" ali concluía que estava vendo um recorte
+   * que não pediu.
+   *
+   * ⚠️ O agregado vem do MESMO recorte do relatório aberto (`simuladoId` +
+   * `turmaId`), então o rótulo pode — e deve — dizer qual é.
+   */
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "completed",
+      respostas: [resposta()],
+    });
+  });
+
+  it("⚠️ sem turma, o rótulo diz CURSINHO", async () => {
+    montar({ recorte: "cursinho" });
+
+    expect(
+      await screen.findByText(ROTULO_DA_DIFICULDADE.cursinho),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(ROTULO_DA_DIFICULDADE.turma),
+    ).not.toBeInTheDocument();
+  });
+
+  it("com turma, o rótulo diz TURMA", async () => {
+    montar({ recorte: "turma" });
+
+    expect(
+      await screen.findByText(ROTULO_DA_DIFICULDADE.turma),
+    ).toBeInTheDocument();
+  });
+
+  it("⚠️ o padrão é `cursinho` — é o caso que estava errado", async () => {
+    // Quem montar o modal sem informar o recorte cai no caminho do
+    // `dashProvas`, que é o mais comum e o que o rótulo fixo rotulava mal.
+    montar();
+
+    expect(
+      await screen.findByText(ROTULO_DA_DIFICULDADE.cursinho),
+    ).toBeInTheDocument();
+  });
+
+  it("⚠️ os dois rótulos são diferentes — senão a distinção não existe", () => {
+    expect(ROTULO_DA_DIFICULDADE.turma).not.toBe(
+      ROTULO_DA_DIFICULDADE.cursinho,
+    );
+  });
+
+  it("⚠️ nenhum dos dois é neutro — os dois nomeiam o recorte", async () => {
+    // "% de acerto" ou "Acertos gerais" resolveriam a mentira trocando-a por
+    // vaguidão: o número NUNCA é geral, é sempre de um recorte. Dizer qual é o
+    // que deixa o coordenador julgar a amostra — mesmo motivo de a base andar
+    // junto na célula.
+    for (const rotulo of Object.values(ROTULO_DA_DIFICULDADE)) {
+      expect(rotulo).toMatch(/turma|cursinho/i);
+    }
   });
 });

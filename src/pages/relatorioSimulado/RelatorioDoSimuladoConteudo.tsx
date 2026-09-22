@@ -604,6 +604,13 @@ export function RelatorioDoSimuladoConteudo({
               linha: aberto,
             }}
             dificuldade={dificuldade}
+            /*
+              ⚠️ É o MESMO `turmaId` que recorta o agregado de dificuldade — e
+              é por isso que o rótulo da coluna pode dizer qual recorte é. Sem
+              turma, o número é do cursinho inteiro e o rótulo antigo ("na
+              turma") mentia no caminho mais comum, o do `dashProvas`.
+            */
+            recorte={turmaId === undefined ? "cursinho" : "turma"}
             totalDeQuestoes={relatorio?.resumo.totalDeQuestoes ?? 0}
             mediaDoRecorte={relatorio?.resumo.aproveitamentoGeral ?? null}
             materiasDaTurma={relatorio?.resumo.aproveitamentoPorMateria ?? []}

@@ -2,6 +2,8 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import RelatorioSimulado from "./index";
+import { ROTULO_DA_DIFICULDADE } from "./recorteDoRelatorio";
+
 
 const buscarRelatorio = vi.hoisted(() => vi.fn());
 const buscarQuestoes = vi.hoisted(() => vi.fn());
@@ -1150,5 +1152,46 @@ describe("RelatorioSimulado — identificação (card 18)", () => {
     expect(
       ident.compareDocumentPosition(tabela) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
+  });
+});
+
+describe("RelatorioSimulado — rótulo da dificuldade (card 18)", () => {
+  /**
+   * O caminho do `dashProvas` abre o relatório do CURSINHO inteiro, e o rótulo
+   * fixo "Acertos na turma" mentia exatamente ali.
+   */
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarRelatorio.mockResolvedValue(RESPOSTA);
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "completed",
+      respostas: [
+        {
+          numero: 1,
+          questaoId: "q1",
+          alternativaEstudante: "A",
+          alternativaCorreta: "A",
+          resultado: "acerto",
+        },
+      ],
+    });
+  });
+
+  it("⚠️ sem `?turma=`, o modal diz CURSINHO", async () => {
+    montar();
+    fireEvent.click(await screen.findByText("Ana Silva"));
+
+    expect(
+      await screen.findByText(ROTULO_DA_DIFICULDADE.cursinho),
+    ).toBeInTheDocument();
+  });
+
+  it("com `?turma=`, o modal diz TURMA", async () => {
+    montar("/relatorio-simulado/sim-1?turma=t-1");
+    fireEvent.click(await screen.findByText("Ana Silva"));
+
+    expect(
+      await screen.findByText(ROTULO_DA_DIFICULDADE.turma),
+    ).toBeInTheDocument();
   });
 });
