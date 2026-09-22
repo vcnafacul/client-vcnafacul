@@ -571,8 +571,15 @@ export function RelatorioDoSimuladoConteudo({
               // HISTÓRICO — é o histórico que guarda a foto e a falha. A linha
               // é o único lugar da tela que tem esse id.
               historicoId: aberto.historicoId,
+              // ⚠️ A linha INTEIRA: é a fonte de todos os números do bloco de
+              // resumo (card 10), e recalcular qualquer um deles no modal
+              // produziria um segundo número para a mesma coisa.
+              linha: aberto,
             }}
             dificuldade={dificuldade}
+            totalDeQuestoes={relatorio?.resumo.totalDeQuestoes ?? 0}
+            mediaDoRecorte={relatorio?.resumo.aproveitamentoGeral ?? null}
+            materiasDaTurma={relatorio?.resumo.aproveitamentoPorMateria ?? []}
             isOpen
             onClose={() => setAberto(null)}
           />
