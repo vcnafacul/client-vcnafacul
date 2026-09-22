@@ -1,7 +1,12 @@
 import { StatusBadge, dashV2 } from "@/components/dashV2";
 import type { QuestaoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
-import { APRESENTACAO_DAS_FLAGS, flagsDaQuestao } from "./flagsDaQuestao";
+import { DicaDoSinal } from "./DicaDoSinal";
+import {
+  APRESENTACAO_DAS_FLAGS,
+  explicacaoDaFlag,
+  flagsDaQuestao,
+} from "./flagsDaQuestao";
 
 export const SEM_SINAL = "—";
 
@@ -31,21 +36,25 @@ export function SinaisDaQuestao({ questao }: { questao: QuestaoDoRelatorio }) {
   return (
     <span className="flex flex-wrap gap-1 py-1">
       {flags.map((flag) => {
-        const { rotulo, tone, explicacao } = APRESENTACAO_DAS_FLAGS[flag];
+        const { rotulo, tone } = APRESENTACAO_DAS_FLAGS[flag];
         /*
-          ⚠️ Só os sinais que vêm da discriminação levam o número no título —
-          nos outros ele não explica nada, e repeti-lo em toda flag treinaria
-          a pessoa a ignorar o tooltip.
-        */
-        const comValor =
-          (flag === "gabarito_suspeito" || flag === "nao_discrimina") &&
-          questao.discriminacao !== null
-            ? `${explicacao} (discriminação: ${questao.discriminacao.toFixed(2)})`
-            : explicacao;
+          ⚠️ **A explicação traz os números DESTA questão**, não o limiar
+          genérico. Quem passa o mouse está olhando uma linha específica e quer
+          saber o que ELA tem: "só 22% acertaram" responde, "menos de 25%" manda
+          conferir na coluna ao lado.
 
+          E no distrator ela NOMEIA a alternativa morta — a informação já estava
+          calculada, só não estava sendo dita.
+        */
         return (
-          <span key={flag} data-flag={flag} title={comValor}>
-            <StatusBadge tone={tone} label={rotulo} className={cn("text-xs")} />
+          <span key={flag} data-flag={flag}>
+            <DicaDoSinal texto={explicacaoDaFlag(flag, questao)}>
+              <StatusBadge
+                tone={tone}
+                label={rotulo}
+                className={cn("text-xs")}
+              />
+            </DicaDoSinal>
           </span>
         );
       })}
