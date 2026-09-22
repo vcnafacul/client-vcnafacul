@@ -1,7 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { colunasDoRelatorio } from "./colunas";
-import type { LinhaDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
+import type {
+  LinhaDoRelatorio,
+  MediaPorMateria,
+} from "@/dtos/relatorioSimulado/relatorioSimulado";
 
 const linha = (over: Partial<LinhaDoRelatorio> = {}): LinhaDoRelatorio => ({
   usuario: "u1",
@@ -232,5 +235,146 @@ describe("colunas do relatório — Situação (card 19, parte A)", () => {
     expect(col.sortValue!(linha({ status: "pending" }))).toBe(1);
     expect(col.sortValue!(linha({ enviouCartao: false }))).toBe(2);
     expect(col.sortValue!(linha({ status: "completed" }))).toBe(3);
+  });
+});
+
+describe("colunas do relatório — nota por matéria (card 07)", () => {
+  /**
+   * O card 07: a aba tinha seis colunas e **um** número de desempenho por aluno.
+   * "58%" não diz o que fazer na segunda-feira; "58%, com 30% em Matemática e
+   * 82% em Humanas" diz.
+   *
+   * ⚠️ A largura para estas colunas veio do card 19, que colapsou `Status` +
+   * `Cartão` + `Motivo` em `Situação`. O card 07 não conseguia caber sozinho.
+   */
+  const materia = (id: string, nome: string, media: number): MediaPorMateria => ({
+    id,
+    nome,
+    media,
+    base: 10,
+  });
+
+  const comMaterias = (
+    notas: Array<[string, number]>,
+    over: Partial<LinhaDoRelatorio> = {},
+  ) =>
+    linha({
+      aproveitamentoPorMateria: notas.map(([id, n]) => ({
+        id,
+        nome: id,
+        aproveitamento: n,
+        frentes: [],
+      })),
+      ...over,
+    });
+
+  const MATERIAS = [materia("mat", "Matemática", 0.5), materia("hum", "Humanas", 0.6)];
+
+  const coluna = (id: string, opcoes: Parameters<typeof colunasDoRelatorio>[0]) =>
+    colunasDoRelatorio(opcoes).find((c) => c.id === id)!;
+
+  it("desenha uma coluna por matéria do recorte", () => {
+    const ids = colunasDoRelatorio({ comTurma: false, materias: MATERIAS }).map(
+      (c) => c.id,
+    );
+
+    expect(ids).toContain("materia-mat");
+    expect(ids).toContain("materia-hum");
+  });
+
+  it("sem matérias, a tabela fica exatamente como era", () => {
+    // ⚠️ É o que mantém a tela funcionando enquanto o card 02 não está no ar.
+    const ids = colunasDoRelatorio({ comTurma: false }).map((c) => c.id);
+
+    expect(ids).toEqual(["estudante", "turma", "situacao", "aproveitamento"]);
+  });
+
+  it("a célula mostra o percentual da matéria", () => {
+    const col = coluna("materia-mat", { comTurma: false, materias: MATERIAS });
+    render(<>{col.cell(comMaterias([["mat", 0.42]]))}</>);
+
+    expect(screen.getByText("42%")).toBeInTheDocument();
+  });
+
+  it("⚠️ aluno sem leitura concluída tem célula VAZIA em todas as matérias", () => {
+    // Mesmo gate do `textoDoAproveitamento`: `marcarFalha` não limpa
+    // `aproveitamento`, e as matérias vão pelo mesmo caminho.
+    const col = coluna("materia-mat", { comTurma: false, materias: MATERIAS });
+    const { container } = render(
+      <>{col.cell(comMaterias([["mat", 0.42]], { status: "failed" }))}</>,
+    );
+
+    expect(container.textContent).toBe("");
+  });
+
+  it("⚠️ matéria que o ALUNO não tem mostra travessão, nunca 0%", () => {
+    // Ele pode não ter Química porque nenhuma questão de Química foi lida no
+    // cartão dele. Zero afirmaria que errou todas.
+    const col = coluna("materia-hum", { comTurma: false, materias: MATERIAS });
+    render(<>{col.cell(comMaterias([["mat", 0.42]]))}</>);
+
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  describe("realce de quem está abaixo da turma", () => {
+    const desvios = new Map([["mat", 0.2]]);
+
+    it("⚠️ marca com TEXTO (↓), não só com cor", () => {
+      // Média 0,5, desvio 0,2 → abaixo de 0,3 marca. Mesma medição do
+      // `tokens.ts`: nenhuma cor desta paleta carrega significado sozinha.
+      const col = coluna("materia-mat", {
+        comTurma: false,
+        materias: MATERIAS,
+        desvios,
+      });
+      const { container } = render(<>{col.cell(comMaterias([["mat", 0.2]]))}</>);
+
+      expect(container).toHaveTextContent("20% ↓");
+      expect(container.querySelector("[data-abaixo-da-turma]")).not.toBeNull();
+    });
+
+    it("quem está perto da média não é marcado", () => {
+      const col = coluna("materia-mat", {
+        comTurma: false,
+        materias: MATERIAS,
+        desvios,
+      });
+      const { container } = render(<>{col.cell(comMaterias([["mat", 0.45]]))}</>);
+
+      expect(container.querySelector("[data-abaixo-da-turma]")).toBeNull();
+      expect(container).toHaveTextContent("45%");
+    });
+
+    it("⚠️ sem desvio conhecido, ninguém é marcado", () => {
+      // Turma pequena ou todos com a mesma nota: sem dispersão não existe
+      // "significativamente abaixo".
+      const col = coluna("materia-mat", { comTurma: false, materias: MATERIAS });
+      const { container } = render(<>{col.cell(comMaterias([["mat", 0.0]]))}</>);
+
+      expect(container.querySelector("[data-abaixo-da-turma]")).toBeNull();
+    });
+
+    it("o title diz com o que está sendo comparado", () => {
+      const col = coluna("materia-mat", {
+        comTurma: false,
+        materias: MATERIAS,
+        desvios,
+      });
+      const { container } = render(<>{col.cell(comMaterias([["mat", 0.1]]))}</>);
+
+      expect(
+        container.querySelector("[data-abaixo-da-turma]"),
+      ).toHaveAttribute("title", expect.stringContaining("50%"));
+    });
+  });
+
+  it("⚠️ ordena pelo número, e quem não tem a matéria vai para o fim", () => {
+    const col = coluna("materia-mat", { comTurma: false, materias: MATERIAS });
+
+    expect(col.sortValue!(comMaterias([["mat", 0.42]]))).toBe(0.42);
+    expect(col.sortValue!(comMaterias([["hum", 0.9]]))).toBeNull();
+    expect(
+      col.sortValue!(comMaterias([["mat", 0.9]], { status: "failed" })),
+    ).toBeNull();
   });
 });

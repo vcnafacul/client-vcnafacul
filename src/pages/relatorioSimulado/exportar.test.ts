@@ -117,6 +117,85 @@ describe("planilhaDeEstudantes", () => {
     expect(p.linhas).toHaveLength(2);
   });
 
+  describe("colunas de matéria (card 07)", () => {
+    const materias = [
+      { id: "mat", nome: "Matemática", media: 0.5, base: 2 },
+      { id: "hum", nome: "Humanas", media: 0.6, base: 2 },
+    ];
+
+    const comMaterias = (
+      notas: Array<[string, number]>,
+      over: Partial<LinhaDoRelatorio> = {},
+    ) =>
+      linha({
+        aproveitamentoPorMateria: notas.map(([id, n]) => ({
+          id,
+          nome: id,
+          aproveitamento: n,
+          frentes: [],
+        })),
+        ...over,
+      });
+
+    it("uma coluna numérica por matéria, de 0 a 100", () => {
+      // ⚠️ Número, não "42%": no Excel pt-BR o texto não soma nem ordena — é a
+      // razão de exportar em vez de olhar a tela.
+      const p = planilhaDeEstudantes([comMaterias([["mat", 0.42]])], {
+        comTurma: true,
+        materias,
+      });
+
+      expect(p.cabecalho).toContain("Matemática (%)");
+      expect(p.linhas[0][p.cabecalho.indexOf("Matemática (%)")]).toBe(42);
+    });
+
+    it("⚠️ matéria que o ALUNO não tem sai VAZIA, e não 0", () => {
+      // Zero numa planilha entra em média e em soma como se ele tivesse errado
+      // todas as questões daquela matéria.
+      const p = planilhaDeEstudantes([comMaterias([["mat", 0.42]])], {
+        comTurma: true,
+        materias,
+      });
+
+      expect(p.linhas[0][p.cabecalho.indexOf("Humanas (%)")]).toBeNull();
+    });
+
+    it("⚠️ linha sem leitura concluída sai vazia em todas as matérias", () => {
+      // Mesmo gate do aproveitamento geral: `marcarFalha` não limpa
+      // `aproveitamento`, e as matérias vão pelo mesmo caminho.
+      const p = planilhaDeEstudantes(
+        [comMaterias([["mat", 0.9]], { status: "failed" })],
+        { comTurma: true, materias },
+      );
+
+      expect(p.linhas[0][p.cabecalho.indexOf("Matemática (%)")]).toBeNull();
+    });
+
+    it("sem matérias, a planilha fica exatamente como era", () => {
+      const p = planilhaDeEstudantes([linha()], { comTurma: true });
+
+      expect(p.cabecalho).toEqual([
+        "Estudante",
+        "Matrícula",
+        "Situação",
+        "Aproveitamento (%)",
+        "Cartão",
+        "Motivo da falha",
+      ]);
+    });
+
+    it("⚠️ a linha tem o mesmo tamanho do cabeçalho, com matérias", () => {
+      // O jeito mais fácil de quebrar um CSV é acrescentar coluna num lugar e
+      // célula em outro — e o arquivo abre torto sem erro nenhum.
+      const p = planilhaDeEstudantes([comMaterias([["mat", 0.4]])], {
+        comTurma: false,
+        materias,
+      });
+
+      expect(p.linhas[0]).toHaveLength(p.cabecalho.length);
+    });
+  });
+
   it("lista vazia dá planilha só com cabeçalho", () => {
     const p = planilhaDeEstudantes([], { comTurma: true });
 

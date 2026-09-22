@@ -739,3 +739,150 @@ describe("RelatorioSimulado — alinhamento horizontal", () => {
     expect(screen.getByTestId("dash-filter-bar").className).toContain("px-4");
   });
 });
+
+describe("RelatorioSimulado — nota por matéria (card 07)", () => {
+  const materia = (id: string, nome: string, media: number) => ({
+    id,
+    nome,
+    media,
+    base: 2,
+  });
+
+  const comMaterias = (id: string, nota: number) => [
+    { id, nome: id, aproveitamento: nota, frentes: [] },
+  ];
+
+  /*
+    Três notas — 0,1 / 0,5 / 0,9 — de propósito: média 0,5 e desvio 0,327, então
+    o limiar é 0,173 e a Ana (0,1) É MARCADA. Filtrando só por "Ana" sobraria
+    uma nota, o desvio sumiria e o realce desapareceria — é essa diferença que
+    o teste do filtro exercita.
+  */
+  const RESPOSTA_COM_MATERIAS = {
+    linhas: [
+      {
+        ...RESPOSTA.linhas[0],
+        aproveitamentoPorMateria: comMaterias("mat", 0.1),
+      },
+      {
+        ...RESPOSTA.linhas[0],
+        usuario: "u2",
+        nome: "Bruno Lima",
+        matricula: "2025002",
+        aproveitamentoPorMateria: comMaterias("mat", 0.5),
+      },
+      {
+        ...RESPOSTA.linhas[0],
+        usuario: "u3",
+        nome: "Carla Souza",
+        matricula: "2025003",
+        aproveitamentoPorMateria: comMaterias("mat", 0.9),
+      },
+    ],
+    resumo: {
+      ...RESPOSTA.resumo,
+      totalNoRecorte: 3,
+      comLeituraConcluida: 3,
+      aproveitamentoPorMateria: [materia("mat", "Matemática", 0.5)],
+    },
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarRelatorio.mockResolvedValue(RESPOSTA_COM_MATERIAS);
+  });
+
+  it("a coluna da matéria aparece na tabela", async () => {
+    montar();
+
+    expect(await screen.findByText("Matemática")).toBeInTheDocument();
+  });
+
+  it("⚠️ filtrar por nome NÃO muda o conjunto de colunas", async () => {
+    // As matérias saem do RESUMO, que é do recorte inteiro. Derivadas das
+    // linhas, a busca por "Bruno" removeria a coluna de uma matéria que só a
+    // Ana tem — e ver uma coluna desaparecer ao digitar faz a pessoa
+    // desconfiar da tela toda.
+    montar();
+    await screen.findByText("Ana Silva");
+
+    fireEvent.change(screen.getByPlaceholderText(/buscar por nome/i), {
+      target: { value: "Bruno" },
+    });
+
+    await waitFor(() =>
+      expect(screen.queryByText("Ana Silva")).not.toBeInTheDocument(),
+    );
+    expect(screen.getByText("Matemática")).toBeInTheDocument();
+  });
+
+  it("⚠️ o realce NÃO muda com o filtro — a referência é a TURMA", async () => {
+    // Notas 0,1 / 0,5 / 0,9: média 0,5, desvio 0,327, limiar 0,173 — a Ana
+    // (0,1) está marcada. Buscando "Ana" sobra UMA nota, e uma nota só não tem
+    // dispersão: se o desvio saísse da lista filtrada, o realce sumiria ao
+    // digitar. A referência é a turma, e turma não muda com filtro de tela.
+    const { container } = montar();
+    await screen.findByText("Ana Silva");
+
+    expect(container.querySelector("[data-abaixo-da-turma]")).not.toBeNull();
+
+    fireEvent.change(screen.getByPlaceholderText(/buscar por nome/i), {
+      target: { value: "Ana" },
+    });
+
+    await waitFor(() =>
+      expect(screen.queryByText("Bruno Lima")).not.toBeInTheDocument(),
+    );
+    // segue marcada — é o ponto do teste
+    expect(container.querySelector("[data-abaixo-da-turma]")).not.toBeNull();
+  });
+
+  it("⚠️ o CSV traz TODAS as matérias, sem o teto da tela", async () => {
+    // Planilha não tem problema de largura, e o teto de 4 existe só porque a
+    // tabela estoura em 1565px.
+    buscarRelatorio.mockResolvedValue({
+      ...RESPOSTA_COM_MATERIAS,
+      resumo: {
+        ...RESPOSTA_COM_MATERIAS.resumo,
+        aproveitamentoPorMateria: [
+          materia("m1", "A", 0.5),
+          materia("m2", "B", 0.5),
+          materia("m3", "C", 0.5),
+          materia("m4", "D", 0.5),
+          materia("m5", "E", 0.5),
+          materia("m6", "F", 0.5),
+        ],
+      },
+    });
+    montar();
+    await screen.findByText("Ana Silva");
+
+    fireEvent.click(screen.getByTestId("exportar-csv"));
+
+    const [cabecalho] = exportAnalyticsCsv.mock.calls[0];
+    for (const nome of ["A", "B", "C", "D", "E", "F"]) {
+      expect(cabecalho).toContain(`${nome} (%)`);
+    }
+  });
+
+  it("⚠️ a TELA respeita o teto de 4, mostrando as piores", async () => {
+    buscarRelatorio.mockResolvedValue({
+      ...RESPOSTA_COM_MATERIAS,
+      resumo: {
+        ...RESPOSTA_COM_MATERIAS.resumo,
+        aproveitamentoPorMateria: [
+          materia("m1", "Melhor", 0.95),
+          materia("m2", "Ruim1", 0.2),
+          materia("m3", "Ruim2", 0.3),
+          materia("m4", "Ruim3", 0.4),
+          materia("m5", "Ruim4", 0.5),
+        ],
+      },
+    });
+    montar();
+    await screen.findByText("Ana Silva");
+
+    expect(screen.queryByText("Melhor")).not.toBeInTheDocument();
+    expect(screen.getByText("Ruim1")).toBeInTheDocument();
+  });
+});
