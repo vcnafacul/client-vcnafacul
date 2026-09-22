@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, act } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { DicaDoSinal } from "./DicaDoSinal";
+import { DicaRapida } from "./DicaRapida";
 import { ATRASO_MS, posicaoDaDica } from "./posicaoDaDica";
 
 describe("posicaoDaDica", () => {
@@ -44,15 +44,15 @@ describe("posicaoDaDica", () => {
   });
 });
 
-describe("DicaDoSinal", () => {
+describe("DicaRapida", () => {
   beforeEach(() => vi.useFakeTimers({ shouldAdvanceTime: true }));
   afterEach(() => vi.useRealTimers());
 
   const montar = (texto = "A alternativa D foi marcada por menos de 5%.") =>
     render(
-      <DicaDoSinal texto={texto}>
+      <DicaRapida texto={texto}>
         <span>Distrator</span>
-      </DicaDoSinal>,
+      </DicaRapida>,
     );
 
   const passarMouse = (el: HTMLElement) => fireEvent.mouseEnter(el);

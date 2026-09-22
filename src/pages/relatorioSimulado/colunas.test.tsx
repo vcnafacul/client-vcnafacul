@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { colunasDoRelatorio } from "./colunas";
 import type {
   LinhaDoRelatorio,
@@ -239,6 +239,10 @@ describe("colunas do relatório — Situação (card 19, parte A)", () => {
 });
 
 describe("colunas do relatório — nota por matéria (card 07)", () => {
+  // ⚠️ A `DicaRapida` abre por `setTimeout` de 300ms.
+  beforeEach(() => vi.useFakeTimers({ shouldAdvanceTime: true }));
+  afterEach(() => vi.useRealTimers());
+
   /**
    * O card 07: a aba tinha seis colunas e **um** número de desempenho por aluno.
    * "58%" não diz o que fazer na segunda-feira; "58%, com 30% em Matemática e
@@ -354,7 +358,12 @@ describe("colunas do relatório — nota por matéria (card 07)", () => {
       expect(container.querySelector("[data-abaixo-da-turma]")).toBeNull();
     });
 
-    it("o title diz com o que está sendo comparado", () => {
+    it("⚠️ a dica diz com o que está sendo comparado", () => {
+      /*
+        Saiu do `title` para a `DicaRapida` (300ms). Aqui o `title` nativo
+        também seria CORTADO: esta célula vive dentro do `span.block.truncate`
+        do `DashTable`, que tem `overflow: hidden`.
+      */
       const col = coluna("materia-mat", {
         comTurma: false,
         materias: MATERIAS,
@@ -362,9 +371,15 @@ describe("colunas do relatório — nota por matéria (card 07)", () => {
       });
       const { container } = render(<>{col.cell(comMaterias([["mat", 0.1]]))}</>);
 
-      expect(
-        container.querySelector("[data-abaixo-da-turma]"),
-      ).toHaveAttribute("title", expect.stringContaining("50%"));
+      fireEvent.mouseEnter(
+        container.querySelector('[data-dica="abaixo-da-turma"]')!,
+      );
+      act(() => void vi.advanceTimersByTime(300));
+
+      expect(screen.getByRole("tooltip")).toHaveTextContent("50%");
+      // ⚠️ E o `title` nativo NÃO volta junto: seriam duas caixas sobre a mesma
+      // célula, uma em 300ms e outra em ~1s.
+      expect(container.querySelector("[title]")).toBeNull();
     });
   });
 

@@ -1,5 +1,6 @@
 import type { QuestaoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
+import { DicaRapida } from "./DicaRapida";
 import {
   ALTERNATIVAS,
   CORES_DA_BARRA,
@@ -61,10 +62,18 @@ export function BarraDeDistribuicao({
         ⚠️ O `title` leva as CONTAGENS EXATAS. A barra é a forma; o número
         continua disponível, e é ele que se confere contra a coluna `Base`.
       */}
+      {/*
+        ⚠️ **`DicaRapida`, e não o `title` nativo.** O atraso do `title` é do
+        navegador (~1s) e não é configurável — tempo suficiente para a pessoa
+        concluir que não há dica nenhuma. Aqui ela abre em 300ms.
+
+        ⚠️ O `aria-label` continua: quem usa leitor de tela não passa o mouse, e
+        a dica é `pointer-events-none`.
+      */}
+      <DicaRapida marcador="distribuicao" texto={tituloDaBarra(questao)}>
       <span
         role="img"
         aria-label={`Distribuição das respostas — ${tituloDaBarra(questao)}`}
-        title={tituloDaBarra(questao)}
         className={cn(
           "flex h-3 w-full min-w-[6rem] overflow-hidden rounded-sm",
           // ⚠️ Trilho visível: sem ele, uma questão em que a soma NÃO fecha
@@ -94,6 +103,7 @@ export function BarraDeDistribuicao({
           />
         ))}
       </span>
+      </DicaRapida>
       {/*
         ⚠️ **A letra do gabarito ao lado da barra**, e não só dentro dela: um
         segmento de 4% não tem largura para caber texto nenhum, e é justamente

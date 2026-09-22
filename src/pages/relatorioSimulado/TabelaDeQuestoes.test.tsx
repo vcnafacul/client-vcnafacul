@@ -106,10 +106,15 @@ describe("TabelaDeQuestoes — percentuais", () => {
     // FORMA, que é o que se compara entre linhas.
     render(<TabelaDeQuestoes questoes={[questao()]} estado="idle" />);
 
-    const titulo = screen.getByRole("img").getAttribute("title")!;
-    expect(titulo).toContain("A: 12");
-    expect(titulo).toContain("B: 3");
-    expect(titulo).toContain("sem leitura: 2");
+    /*
+      ⚠️ A contagem saiu do `title` para a `DicaRapida` (300ms, num portal). O
+      `aria-label` do `role="img"` continua com o texto inteiro — quem usa
+      leitor de tela não passa o mouse.
+    */
+    const rotulo = screen.getByRole("img").getAttribute("aria-label")!;
+    expect(rotulo).toContain("A: 12");
+    expect(rotulo).toContain("B: 3");
+    expect(rotulo).toContain("sem leitura: 2");
   });
 
   it("⚠️ a BASE continua na tabela — é ela que deixa conferir turma pequena", () => {
@@ -475,7 +480,7 @@ describe("TabelaDeQuestoes — triagem (card 06)", () => {
       ⚠️ Vírgula: o número sai em pt-BR. "-0.30" é como o JS formata.
     */
     fireEvent.mouseEnter(
-      container.querySelector('[data-flag="gabarito_suspeito"]')!,
+      container.querySelector('[data-dica="gabarito_suspeito"]')!,
     );
     act(() => void vi.advanceTimersByTime(300));
 
@@ -500,7 +505,7 @@ describe("TabelaDeQuestoes — triagem (card 06)", () => {
     expect(celulaSinais.querySelector("[title]")).toBeNull();
 
     // e a explicação continua alcançável — no portal, depois do atraso
-    fireEvent.mouseEnter(celulaSinais.querySelector("[data-flag]")!);
+    fireEvent.mouseEnter(celulaSinais.querySelector("[data-dica]")!);
     act(() => void vi.advanceTimersByTime(300));
     expect(screen.getByRole("tooltip")).toBeInTheDocument();
   });

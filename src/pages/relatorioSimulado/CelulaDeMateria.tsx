@@ -4,6 +4,7 @@ import type {
   MediaPorMateria,
 } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
+import { DicaRapida } from "./DicaRapida";
 import { abaixoDaTurma, notaNaMateria } from "./materiasDoRelatorio";
 
 export const VAZIO_DA_MATERIA = "—";
@@ -53,15 +54,23 @@ export function CelulaDeMateria({
   if (!alerta) return <>{texto}</>;
 
   return (
-    <span
-      data-abaixo-da-turma
-      title={`Abaixo da média da turma em ${materia.nome} (${Math.round(
+    // ⚠️ `DicaRapida` pelo mesmo motivo dos sinais: o `title` nativo leva ~1s e
+    // não é configurável. E aqui ele também seria CORTADO — esta célula vive
+    // dentro do `span.block.truncate` do `DashTable`, que tem `overflow:
+    // hidden`.
+    <DicaRapida
+      marcador="abaixo-da-turma"
+      texto={`Abaixo da média da turma em ${materia.nome} (${Math.round(
         materia.media * 100,
       )}%)`}
-      className={cn("font-semibold", dashV2.text.primary)}
     >
-      {texto} ↓
-    </span>
+      <span
+        data-abaixo-da-turma
+        className={cn("font-semibold", dashV2.text.primary)}
+      >
+        {texto} ↓
+      </span>
+    </DicaRapida>
   );
 }
 

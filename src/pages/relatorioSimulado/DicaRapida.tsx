@@ -5,7 +5,12 @@ import { ATRASO_MS, LARGURA, posicaoDaDica, type Posicao } from "./posicaoDaDica
 import { createPortal } from "react-dom";
 
 /**
- * A dica que explica um sinal de triagem.
+ * Uma dica que abre rápido no hover.
+ *
+ * ⚠️ **Genérica de propósito** — nasceu para os badges de triagem e serve
+ * qualquer coisa que hoje usaria `title`: a barra de distribuição, o realce de
+ * matéria abaixo da média, as faixas do histograma. Um componente por lugar
+ * daria quatro atrasos diferentes para o mesmo gesto.
  *
  * ⚠️ **`position: fixed` num PORTAL, e não `absolute` dentro da célula.** A
  * primeira versão usava `absolute`, e a caixa ficava **cortada**: o `DashTable`
@@ -26,14 +31,14 @@ import { createPortal } from "react-dom";
  * jsdom progressivamente — 22 testes levam 51s e tiveram de sair do CI. Aqui
  * seriam até 125 montagens.
  */
-export function DicaDoSinal({
+export function DicaRapida({
   texto,
   marcador,
   children,
 }: {
   texto: string;
   /**
-   * Vai como `data-flag` no elemento que recebe o hover.
+   * Vai como `data-dica` no elemento que recebe o hover.
    *
    * ⚠️ **No MESMO elemento que tem os handlers**, e não num wrapper por fora:
    * `mouseEnter` não borbulha, então um `fireEvent.mouseEnter` no pai não
@@ -90,7 +95,7 @@ export function DicaDoSinal({
   return (
     <span
       ref={alvo}
-      data-flag={marcador}
+      data-dica={marcador}
       className="inline-flex"
       onMouseEnter={abrir}
       onMouseLeave={fechar}
