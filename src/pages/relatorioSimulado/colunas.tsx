@@ -85,15 +85,93 @@ export function colunasDoRelatorio({
 
   colunas.push(
     {
-      id: "status",
-      header: "Status",
-      width: "11rem",
+      id: "situacao",
+      header: "Situação",
+      width: "18rem",
+      /*
+        ⚠️ **`Status`, `Cartão` e `Motivo` colapsaram aqui** (card 19).
+
+        Quatro das seis colunas eram sobre o CARTÃO, não sobre o aluno. Era o
+        certo quando a tela nasceu para conferir leitura; deixa de ser quando a
+        leitura funciona e a pergunta vira "como foram". As duas colunas
+        liberadas pagam as colunas de matéria do card 07 — que não conseguia
+        caber sozinho.
+
+        Empilhado, no mesmo padrão de duas linhas que a coluna `Estudante` já
+        usa para nome + matrícula.
+
+        ⚠️ **O ganho de largura é a coluna FLEXÍVEL, não a fixa** — e vale
+        dizer com precisão, porque a soma das larguras declaradas **não mudou**:
+        eram `turma` 10rem + `status` 11rem + `aproveitamento` 9rem + `cartao`
+        7rem = 592px, e são `turma` 10rem + `situacao` 18rem + `aproveitamento`
+        9rem = os mesmos 592px (a `situacao` absorveu exatamente `status` +
+        `cartao`).
+
+        O que mudou é que `motivo` não tinha `width`: ele competia com
+        `estudante` pelo espaço restante, e precisava ser largo para não
+        truncar — e truncava assim mesmo, em ~245px. Com ele fora sobra uma
+        coluna flexível só, e o resto do espaço fica disponível para as colunas
+        de matéria do card 07, que não conseguia caber sozinho.
+      */
       cell: (l) => {
         const { tone, label } = statusDaLinha(l);
-        return <StatusBadge tone={tone} label={label} />;
+        const motivo = l.status === "failed" ? l.falha?.descricao : undefined;
+
+        return (
+          <span className="block py-1">
+            <StatusBadge tone={tone} label={label} />
+            {/*
+              ⚠️ **Fora do gate de `leituraVale`, de propósito.** `cartaoCode`
+              é escrito do QR da folha no `createAwaitingOmr`: é a IDENTIDADE
+              do cartão físico, não um RESULTADO da leitura. Numa linha que
+              falhou é a coisa mais útil que existe — diz qual folha
+              refotografar.
+            */}
+            {l.cartaoCode !== undefined && (
+              <span
+                data-cartao
+                className={cn("mt-0.5 block text-xs", dashV2.text.muted)}
+              >
+                {l.cartaoCode}
+              </span>
+            )}
+            {/*
+              ⚠️ **`whitespace-normal` é o que faz o motivo não truncar**, e é o
+              ponto inteiro desta coluna. O `DashTable` embrulha toda célula
+              num `span.block.truncate`, e `truncate` inclui
+              `white-space: nowrap` — sem sobrepor no filho, o motivo ficaria
+              numa linha só e cortado em ~245px, que é o defeito que a coluna
+              `Motivo` existia para evitar e que este card tinha de preservar.
+
+              ⚠️ **Gateado em `failed`**: nada desfaz a `falha` no ms (ver
+              `leituraVale`), então um cartão que falhou, foi refotografado e
+              leu bem chega `completed` carregando o motivo velho. Sem isto a
+              célula diria "Lido" e "não foi possível localizar o cartão" ao
+              mesmo tempo.
+
+              ⚠️ A linha cresce SÓ aqui — e são poucas linhas, justamente as
+              que merecem ocupar mais espaço.
+            */}
+            {motivo !== undefined && (
+              <span
+                data-motivo
+                className={cn(
+                  "mt-0.5 block whitespace-normal text-xs",
+                  dashV2.text.secondary,
+                )}
+              >
+                {motivo}
+              </span>
+            )}
+          </span>
+        );
       },
-      // ⚠️ Pelo `ordem`, não pelo `label`: alfabético daria "Aguardando" <
-      // "Falhou" < "Lido" < "Não enviou", que não é ordem de trabalho nenhuma.
+      /*
+        ⚠️ Pelo `ordem`, e **nunca** pelo texto concatenado da célula:
+        alfabético daria "Aguardando" < "Falhou" < "Lido" < "Não enviou", que
+        não é ordem de trabalho nenhuma. Isto não mudou no card 19 — mas é
+        fácil quebrar sem querer ao mexer na célula.
+      */
       sortValue: (l) => statusDaLinha(l).ordem,
     },
     {
@@ -108,38 +186,6 @@ export function colunasDoRelatorio({
         leituraVale(l) && typeof l.aproveitamentoGeral === "number"
           ? l.aproveitamentoGeral
           : null,
-    },
-    {
-      id: "cartao",
-      header: "Cartão",
-      width: "7rem",
-      align: "right",
-      hideBelow: "md",
-      /**
-       * ⚠️ **Fora do gate de leitura, de propósito.** `cartaoCode` é escrito do
-       * QR da folha no `createAwaitingOmr`: é a IDENTIDADE do cartão físico, não
-       * um RESULTADO da leitura. Numa linha que falhou é a coisa mais útil que
-       * existe — diz qual folha refotografar.
-       */
-      cell: (l) => l.cartaoCode ?? VAZIO,
-      sortValue: (l) => l.cartaoCode ?? null,
-    },
-    {
-      id: "motivo",
-      header: "Motivo",
-      /**
-       * ⚠️ Coluna própria, não texto dentro do badge: o pedido é que o cursinho
-       * veja na linha do aluno que houve erro E qual foi. Truncar a única
-       * informação acionável da linha derrota o propósito.
-       *
-       * ⚠️ **String crua, não `<span>`** — é o que faz o `DashTable` conseguir
-       * pôr o `title` na célula (o `tituloDe` dele só sabe titular texto). Sem
-       * isso o motivo trunca em ~245px e não há como ler o resto.
-       *
-       * ⚠️ E **gateado em `failed`**: nada desfaz a `falha` no ms — ver
-       * `leituraVale`.
-       */
-      cell: (l) => (l.status === "failed" ? l.falha?.descricao ?? "" : ""),
     },
   );
 

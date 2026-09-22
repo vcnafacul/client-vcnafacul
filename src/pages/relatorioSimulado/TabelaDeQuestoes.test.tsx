@@ -58,19 +58,21 @@ describe("TabelaDeQuestoes", () => {
     expect(celula(container, "numero")).toHaveTextContent("—");
   });
 
-  it("⚠️ a distribuição aparece em COLUNA POR ALTERNATIVA, em percentual", () => {
-    // A coluna agrupada com a contagem crua (`A 12 B 3 C 2...`) saiu: com ela
-    // as 12 colunas somavam 1448px e estouravam a tela a partir de 1565px,
-    // quando a sidebar entra no fluxo. A base crua segue em "Respondentes".
-    //
-    // ⚠️ Assere numa alternativa que NÃO é o gabarito, para a igualdade exata
-    // continuar exata — a do gabarito leva o ✓ do card 04.
+  it("⚠️ a distribuição é UMA coluna de barra, não cinco de percentual", () => {
+    // Card 19: as cinco colunas `A (%)`…`E (%)` viraram a coluna
+    // `Distribuição`. Contradiz o docblock que as separou — e a razão está no
+    // `BarraDeDistribuicao`: forma compara melhor que dígito, que era o
+    // objetivo declarado daquele docblock.
     const { container } = render(
       <TabelaDeQuestoes questoes={[questao()]} estado="idle" />,
     );
 
-    expect(container.querySelector('[data-column-id="distribuicao"]')).toBeNull();
-    expect(celula(container, "alternativaB").textContent).toBe("15%");
+    expect(celula(container, "distribuicao")).not.toBeNull();
+    for (const alt of ["A", "B", "C", "D", "E"]) {
+      expect(
+        container.querySelector(`[data-column-id="alternativa${alt}"]`),
+      ).toBeNull();
+    }
   });
 
   it("lista vazia mostra estado vazio, não tabela em branco", () => {
@@ -95,20 +97,16 @@ describe("TabelaDeQuestoes — percentuais", () => {
     expect(celula(container, "semLeitura").textContent).toBe("2");
   });
 
-  it("⚠️ cada alternativa tem COLUNA PRÓPRIA", () => {
-    // Agrupados, os percentuais viravam um bloco de texto que não dá para
-    // comparar entre linhas nem ordenar. Separados, a coluna é lida de cima a
-    // baixo — que é como se acha o distrator que pegou a turma.
-    const { container } = render(
-      <TabelaDeQuestoes questoes={[questao()]} estado="idle" />,
-    );
+  it("⚠️ a barra carrega a distribuição, com as contagens no `title`", () => {
+    // Substituiu as cinco colunas de percentual. O número não desapareceu: ele
+    // está no `title` e no CSV — o que mudou é que a tela passou a mostrar
+    // FORMA, que é o que se compara entre linhas.
+    render(<TabelaDeQuestoes questoes={[questao()]} estado="idle" />);
 
-    // ⚠️ A é o gabarito do fixture, então a célula dela leva o ✓ do card 04 —
-    // `toHaveTextContent` em vez de igualdade exata só nela.
-    expect(celula(container, "alternativaA")).toHaveTextContent("60%"); // 12/20
-    expect(celula(container, "alternativaB").textContent).toBe("15%"); // 3/20
-    expect(celula(container, "alternativaC").textContent).toBe("10%"); // 2/20
-    expect(celula(container, "alternativaD").textContent).toBe("5%"); // 1/20
+    const titulo = screen.getByRole("img").getAttribute("title")!;
+    expect(titulo).toContain("A: 12");
+    expect(titulo).toContain("B: 3");
+    expect(titulo).toContain("sem leitura: 2");
   });
 
   it("⚠️ a BASE continua na tabela — é ela que deixa conferir turma pequena", () => {
@@ -124,45 +122,22 @@ describe("TabelaDeQuestoes — percentuais", () => {
     expect(celula(container, "semLeitura").textContent).toBe("2");
   });
 
-  it("⚠️ alternativa sem marcação mostra 0%, e não travessão", () => {
+  /**
+   * ⚠️ Os testes de "alternativa sem marcação mostra 0%" e "ordenar por uma
+   * alternativa usa o número" saíram com as colunas que eles descreviam
+   * (card 19). O primeiro virou asserção da soma dos segmentos em
+   * `BarraDeDistribuicao.test.tsx`; o segundo descreve uma capacidade que o
+   * card removeu de propósito — ordenar por "% que marcou D" não é pergunta
+   * que alguém faça, e a coluna `Distribuição` não tem `sortValue`.
+   */
+  it("⚠️ a coluna `Distribuição` NÃO é ordenável, e isso é deliberado", () => {
     const { container } = render(
       <TabelaDeQuestoes questoes={[questao()]} estado="idle" />,
     );
 
-    expect(celula(container, "alternativaE").textContent).toBe("0%");
-  });
-
-  it("⚠️ ordenar por uma alternativa usa o NÚMERO, não o texto", () => {
-    // É o ganho de separar em colunas: dá para achar o distrator que pegou a
-    // turma ordenando por ele. Com a string formatada, "9%" viria depois de
-    // "80%".
-    const { container } = render(
-      <TabelaDeQuestoes
-        questoes={[
-          questao({
-            questaoId: "a",
-            numero: 1,
-            respondentes: 100,
-            porAlternativa: { B: 80 },
-          }),
-          questao({
-            questaoId: "b",
-            numero: 2,
-            respondentes: 100,
-            porAlternativa: { B: 9 },
-          }),
-        ]}
-        estado="idle"
-      />,
-    );
-
-    fireEvent.click(container.querySelector('[data-sort-id="alternativaB"]')!);
-    const celulas = container.querySelectorAll(
-      '[data-column-id="alternativaB"]',
-    );
-
-    expect(celulas[0].textContent).toBe("9%");
-    expect(celulas[1].textContent).toBe("80%");
+    // Sem `sortValue`, o `DashTable` não emite botão nem `aria-sort` no `<th>`.
+    const th = container.querySelector('[data-sort-id="distribuicao"]');
+    expect(th).toBeNull();
   });
 
   it("⚠️ questão sem respondentes mostra travessão, e não 0%", () => {
@@ -350,7 +325,13 @@ describe("TabelaDeQuestoes — gabarito e colunas enxutas (card 04)", () => {
    * (ver `tokens.ts`) — e "qual é a correta" é justamente a informação que
    * torna as cinco colunas legíveis.
    */
-  it("⚠️ a correta é marcada por TEXTO na célula, não só por cor", () => {
+  /**
+   * ⚠️ **O destaque nas cinco colunas saiu com elas** (card 19). O requisito do
+   * card 04 sobrevive inteiro, movido para a barra: o gabarito é marcado por
+   * BORDA e leva a LETRA ao lado — ver `BarraDeDistribuicao.test.tsx`. A coluna
+   * `Gabarito`, que o card 04 criou, segue sendo a via textual redundante.
+   */
+  it("⚠️ o gabarito é marcado na barra, por borda e letra", () => {
     const { container } = render(
       <TabelaDeQuestoes
         questoes={[comGabarito({ alternativaCorreta: "C" })]}
@@ -358,13 +339,11 @@ describe("TabelaDeQuestoes — gabarito e colunas enxutas (card 04)", () => {
       />,
     );
 
-    expect(celula(container, "alternativaC")).toHaveTextContent("✓");
-    expect(celula(container, "alternativaA")).not.toHaveTextContent("✓");
+    expect(container.querySelector("[data-gabarito]")).not.toBeNull();
+    expect(screen.getByText("C ✓")).toBeInTheDocument();
   });
 
-  it("⚠️ o cabeçalho NÃO é marcado — o gabarito varia por linha", () => {
-    // Duas questões com gabaritos diferentes na mesma tabela. Qualquer marca no
-    // `<th>` mentiria para uma delas.
+  it("⚠️ cada linha marca o SEU gabarito, não o da primeira", () => {
     render(
       <TabelaDeQuestoes
         questoes={[
@@ -375,35 +354,11 @@ describe("TabelaDeQuestoes — gabarito e colunas enxutas (card 04)", () => {
       />,
     );
 
-    for (const alt of ["A", "B", "C", "D", "E"]) {
-      expect(screen.getByText(`${alt} (%)`)).toBeInTheDocument();
-    }
+    expect(screen.getByText("A ✓")).toBeInTheDocument();
+    expect(screen.getByText("C ✓")).toBeInTheDocument();
   });
 
-  it("⚠️ cada linha marca o SEU gabarito, não o da primeira", () => {
-    const { container } = render(
-      <TabelaDeQuestoes
-        questoes={[
-          comGabarito({ questaoId: "q1", numero: 1, alternativaCorreta: "A" }),
-          comGabarito({ questaoId: "q2", numero: 2, alternativaCorreta: "C" }),
-        ]}
-        estado="idle"
-      />,
-    );
-
-    const linhas = container.querySelectorAll("[data-row-key]");
-    expect(
-      linhas[0].querySelector('[data-column-id="alternativaA"]'),
-    ).toHaveTextContent("✓");
-    expect(
-      linhas[1].querySelector('[data-column-id="alternativaC"]'),
-    ).toHaveTextContent("✓");
-    expect(
-      linhas[1].querySelector('[data-column-id="alternativaA"]'),
-    ).not.toHaveTextContent("✓");
-  });
-
-  it("⚠️ gabarito `null` não marca célula nenhuma", () => {
+  it("⚠️ gabarito `null` não marca segmento nenhum", () => {
     const { container } = render(
       <TabelaDeQuestoes
         questoes={[comGabarito({ alternativaCorreta: null })]}
@@ -411,29 +366,7 @@ describe("TabelaDeQuestoes — gabarito e colunas enxutas (card 04)", () => {
       />,
     );
 
-    for (const alt of ["A", "B", "C", "D", "E"]) {
-      expect(celula(container, `alternativa${alt}`)).not.toHaveTextContent("✓");
-    }
-  });
-
-  it("a célula da correta também tem peso de fonte — reforço, não a única pista", () => {
-    // ⚠️ O peso vive num `<span>` DENTRO da célula, e não na célula: acrescentar
-    // um `cellClassName` ao `DashColumn` mudaria o componente compartilhado por
-    // uma necessidade de uma tela só — o docblock do dashV2 pede que só entre
-    // ali o que duas telas usam.
-    const { container } = render(
-      <TabelaDeQuestoes
-        questoes={[comGabarito({ alternativaCorreta: "C" })]}
-        estado="idle"
-      />,
-    );
-
-    expect(
-      celula(container, "alternativaC").querySelector(".font-semibold"),
-    ).not.toBeNull();
-    expect(
-      celula(container, "alternativaA").querySelector(".font-semibold"),
-    ).toBeNull();
+    expect(container.querySelector("[data-gabarito]")).toBeNull();
   });
 
   it.each(["acertos", "erros", "erroPercentual"])(

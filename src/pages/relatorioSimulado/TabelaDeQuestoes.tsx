@@ -10,15 +10,10 @@ import {
 import type { QuestaoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useState } from "react";
+import { BarraDeDistribuicao } from "./BarraDeDistribuicao";
 import { BotaoExportar } from "./BotaoExportar";
 import { planilhaDeQuestoes } from "./exportar";
-import {
-  formatarPercentual,
-  percentualDaAlternativa,
-  percentualDeAcerto,
-} from "./percentuais";
-
-const ALTERNATIVAS = ["A", "B", "C", "D", "E"] as const;
+import { formatarPercentual, percentualDeAcerto } from "./percentuais";
 
 export const TEXTO_SEM_QUESTOES = "Nenhuma questão com resposta ainda";
 
@@ -134,105 +129,29 @@ const colunas: DashColumn<QuestaoDoRelatorio>[] = [
     // formatada colocaria "9%" depois de "80%".
     sortValue: (q) => percentualDeAcerto(q),
   },
-  /*
-    ⚠️ **Uma coluna por alternativa**, e não uma só com as cinco dentro.
+  {
+    id: "distribuicao",
+    header: "Distribuição",
+    width: "13rem",
+    /*
+      ⚠️ **Substituiu as cinco colunas `A (%)`…`E (%)`** (card 19), e isto
+      contradiz o que o docblock de largura abaixo defendia — de propósito. A
+      razão está toda no `BarraDeDistribuicao`: forma compara melhor que
+      dígito, e a coluna lida de cima a baixo mostra o distrator que pegou a
+      turma mais rápido do que cinco percentuais — que era o objetivo
+      declarado das cinco colunas.
 
-    Agrupadas, os percentuais viravam um bloco de texto que não dá para
-    comparar entre linhas nem ordenar. Separadas, a coluna inteira é lida de
-    cima a baixo — que é como se acha o distrator que pegou a turma — e cada
-    uma ordena sozinha.
-
-    ⚠️ **Estas cinco substituíram a coluna agrupada de contagem** (`A 12 B 3
-    C 2...`), e a razão é largura, MEDIDA:
-
-    | tela   | sidebar¹           | útil (−`p-4`) | 12 colunas (1448px) |
-    |--------|--------------------|---------------|---------------------|
-    | 1440px | fora do fluxo      | 1408px        | cabe                |
-    | 1565px | entra, 16rem       | 1277px        | **estoura em 171px**|
-
-    ¹ O `xl` deste projeto é **1565px** (customizado em `tailwind.config`), e a
-    sidebar é `absolute xl:relative` — abaixo disso ela não ocupa largura. É
-    justamente quando ela entra no fluxo que a tabela larga deixaria de caber.
-
-    Sem a coluna agrupada eram 1192px, que cabiam nos dois casos.
-
-    ⚠️ **Medição refeita no card 04**, que removeu `Acertos`, `Erros` e
-    `% de erro` e acrescentou `Respondentes` e `Gabarito` — 11 colunas viraram
-    10, e a soma das larguras caiu de 1192px para **1080px**:
-
-    | coluna         | largura |
-    |----------------|---------|
-    | Questão        | 7rem    |
-    | Respondentes   | 8.5rem  |
-    | Gabarito       | 6.5rem  |
-    | % de acerto    | 9rem    |
-    | A–E (%)        | 5×5.5rem|
-    | Sem leitura    | 9rem    |
-
-    No pior caso (1565px, sidebar no fluxo) sobram **197px**. É essa folga que
-    paga as colunas que os cards 05 e 06 vão pedir — o espaço que as colunas
-    derivadas ocupavam.
-
-    ⚠️ **Encolher largura continua proibido**, e por medição, não por gosto: o
-    `<th>` trunca o título, e foi esse aperto que produziu o cabeçalho cortado
-    consertado antes deste card. Quem precisar de mais espaço tira coluna ou
-    reagrupa conteúdo (é o que o card 19 faz), nunca aperta.
-
-    Encolher não era saída: o `<th>` trunca o título, e "Sem leitura" e
-    "% de acerto" já estão no limite — era o defeito que este mesmo trabalho
-    consertou. Pôr `overflow-x` num container também não: o próprio
-    `DashTable` documenta que um ancestral com overflow vira o scrollport do
-    `position: sticky` e faz o cabeçalho grudado sumir.
-
-    Os números crus continuam em "Acertos", "Erros" e "Sem leitura".
-
-    ⚠️ A soma das cinco NÃO fecha 100%: `semLeitura` (branco ou dupla
-    marcação) não entra em `porAlternativa`. A diferença é justamente ela, e a
-    coluna "Sem leitura" ao lado é quem a explica.
-  */
-  ...ALTERNATIVAS.map(
-    (alt): DashColumn<QuestaoDoRelatorio> => ({
-      id: `alternativa${alt}`,
-      header: `${alt} (%)`,
-      // ⚠️ 5.5rem: o `<th>` trunca o título e ainda põe o ícone de ordenação
-      // ao lado. Com 5rem sobram ~38px para "A (%)", que ocupa ~35px — é o
-      // aperto que cortou os títulos antes deste ajuste.
-      width: "5.5rem",
-      align: "right",
-      /*
-        ⚠️ **O destaque é por CÉLULA, e o card 04 pedia no cabeçalho.**
-
-        Um `<th>` marcado (`C ✓ (%)`) afirmaria que C é a correta da tabela
-        inteira — e o gabarito é POR QUESTÃO. Já erraria na segunda linha da
-        lista. O destaque tem de viver onde o dado vive.
-
-        ⚠️ **Marcador TEXTUAL, não só cor.** Mesma regra do
-        `rotuloDoResultado`: o `green3` do `tokens.ts` mede 3.77:1 e não passa
-        para texto pequeno, e "qual é a correta" é a informação que torna estas
-        cinco colunas legíveis — não pode depender de enxergar verde. O peso de
-        fonte é reforço; a coluna `Gabarito` é a terceira via.
-
-        ⚠️ O `<span>` leva a classe, e não a célula: pôr um `cellClassName` no
-        `DashColumn` mudaria o componente compartilhado por uma necessidade de
-        uma tela só.
-      */
-      cell: (q) => {
-        const texto = formatarPercentual(percentualDaAlternativa(q, alt));
-        if (q.alternativaCorreta !== alt) return texto;
-        return (
-          <span className="font-semibold">
-            {texto}{" "}
-            <span aria-label="gabarito" title="Alternativa correta">
-              ✓
-            </span>
-          </span>
-        );
-      },
-      // ⚠️ Ordena pelo número, não pelo texto: com a string formatada, "9%"
-      // viria depois de "80%".
-      sortValue: (q) => percentualDaAlternativa(q, alt),
-    }),
-  ),
+      440px (5 × 5.5rem) viraram 208px. É essa largura que os cards 05 e 06
+      precisavam, e é por isso que este card entra antes deles.
+    */
+    cell: (q) => <BarraDeDistribuicao questao={q} />,
+    /*
+      ⚠️ **Sem `sortValue`, de propósito.** Ordenar uma distribuição não é
+      pergunta que alguém faça, e ordenar por "% que marcou D" deixou de ser
+      possível — a perda que o card 19 registra e aceita. O que se ordena de
+      verdade (`% de acerto`, `Respondentes`, `Sem leitura`) segue ordenável.
+    */
+  },
   {
     id: "semLeitura",
     // ⚠️ "Sem leitura", não "Em branco": o ms-omr descarta questão em branco e
