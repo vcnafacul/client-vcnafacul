@@ -1,7 +1,7 @@
 import { StatusBadge, dashV2 } from "@/components/dashV2";
 import type { QuestaoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
-import { DicaDoSinal } from "./DicaDoSinal";
+import { DicaRapida } from "./DicaRapida";
 import {
   APRESENTACAO_DAS_FLAGS,
   explicacaoDaFlag,
@@ -47,13 +47,13 @@ export function SinaisDaQuestao({ questao }: { questao: QuestaoDoRelatorio }) {
           calculada, só não estava sendo dita.
         */
         return (
-          <DicaDoSinal
+          <DicaRapida
             key={flag}
             marcador={flag}
             texto={explicacaoDaFlag(flag, questao)}
           >
             <StatusBadge tone={tone} label={rotulo} className={cn("text-xs")} />
-          </DicaDoSinal>
+          </DicaRapida>
         );
       })}
     </span>

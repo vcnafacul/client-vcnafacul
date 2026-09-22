@@ -5,7 +5,12 @@ import { ATRASO_MS, LARGURA, posicaoDaDica, type Posicao } from "./posicaoDaDica
 import { createPortal } from "react-dom";
 
 /**
- * A dica que explica um sinal de triagem.
+ * Uma dica que abre rápido no hover.
+ *
+ * ⚠️ **Genérica de propósito** — nasceu para os badges de triagem e serve
+ * qualquer coisa que hoje usaria `title`: a barra de distribuição, o realce de
+ * matéria abaixo da média, as faixas do histograma. Um componente por lugar
+ * daria quatro atrasos diferentes para o mesmo gesto.
  *
  * ⚠️ **`position: fixed` num PORTAL, e não `absolute` dentro da célula.** A
  * primeira versão usava `absolute`, e a caixa ficava **cortada**: o `DashTable`
@@ -26,20 +31,33 @@ import { createPortal } from "react-dom";
  * jsdom progressivamente — 22 testes levam 51s e tiveram de sair do CI. Aqui
  * seriam até 125 montagens.
  */
-export function DicaDoSinal({
+export function DicaRapida({
   texto,
   marcador,
+  className,
   children,
 }: {
   texto: string;
   /**
-   * Vai como `data-flag` no elemento que recebe o hover.
+   * Vai como `data-dica` no elemento que recebe o hover.
    *
    * ⚠️ **No MESMO elemento que tem os handlers**, e não num wrapper por fora:
    * `mouseEnter` não borbulha, então um `fireEvent.mouseEnter` no pai não
    * aciona nada — e o teste passaria a mirar num filho por posição.
    */
   marcador?: string;
+  /**
+   * Classes do elemento que embrulha o conteúdo.
+   *
+   * ⚠️ **Existe porque este wrapper ENTRA no layout de quem o usa.** Ele é um
+   * `inline-flex`, e ao envolver um filho que dependia de `flex-1` ou `w-full`
+   * do container original, quebra a conta: o filho passa a medir 100% de um
+   * wrapper que encolheu até o conteúdo. Foi o que aconteceu com a barra de
+   * distribuição e com as faixas do histograma — as duas encolheram.
+   *
+   * Quem envolve um elemento elástico precisa repassar o `flex-1` para cá.
+   */
+  className?: string;
   children: React.ReactNode;
 }) {
   const alvo = useRef<HTMLSpanElement>(null);
@@ -90,8 +108,8 @@ export function DicaDoSinal({
   return (
     <span
       ref={alvo}
-      data-flag={marcador}
-      className="inline-flex"
+      data-dica={marcador}
+      className={cn("inline-flex", className)}
       onMouseEnter={abrir}
       onMouseLeave={fechar}
       /* ⚠️ Teclado: o badge não é focável, mas o `focus` sobe de qualquer coisa

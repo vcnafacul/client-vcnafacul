@@ -1,6 +1,7 @@
 import { dashV2 } from "@/components/dashV2";
 import { cn } from "@/lib/utils";
 import type { FaixaDoHistograma } from "./distribuicao";
+import { DicaRapida } from "./DicaRapida";
 
 /**
  * A distribuição dos acertos, como barras.
@@ -48,10 +49,15 @@ export function HistogramaDaTurma({
       className="flex h-10 items-end gap-0.5"
     >
       {faixas.map((f) => (
-        <span
+        // ⚠️ `flex-1 h-full` no wrapper, pelo mesmo motivo da barra: ele entra
+        // no layout, e as oito faixas dependem de dividir a largura por igual.
+        <DicaRapida
           key={f.de}
+          texto={`${f.de} a ${f.ate} acertos: ${f.quantos} estudante(s)`}
+          className="h-full flex-1"
+        >
+        <span
           data-faixa={`${f.de}-${f.ate}`}
-          title={`${f.de} a ${f.ate} acertos: ${f.quantos} estudante(s)`}
           className="flex h-full flex-1 items-end"
         >
           <span
@@ -69,6 +75,7 @@ export function HistogramaDaTurma({
             }}
           />
         </span>
+        </DicaRapida>
       ))}
     </div>
   );

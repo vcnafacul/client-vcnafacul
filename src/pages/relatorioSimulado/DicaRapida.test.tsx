@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, act } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { DicaDoSinal } from "./DicaDoSinal";
+import { DicaRapida } from "./DicaRapida";
 import { ATRASO_MS, posicaoDaDica } from "./posicaoDaDica";
 
 describe("posicaoDaDica", () => {
@@ -44,15 +44,15 @@ describe("posicaoDaDica", () => {
   });
 });
 
-describe("DicaDoSinal", () => {
+describe("DicaRapida", () => {
   beforeEach(() => vi.useFakeTimers({ shouldAdvanceTime: true }));
   afterEach(() => vi.useRealTimers());
 
   const montar = (texto = "A alternativa D foi marcada por menos de 5%.") =>
     render(
-      <DicaDoSinal texto={texto}>
+      <DicaRapida texto={texto}>
         <span>Distrator</span>
-      </DicaDoSinal>,
+      </DicaRapida>,
     );
 
   const passarMouse = (el: HTMLElement) => fireEvent.mouseEnter(el);
@@ -168,5 +168,42 @@ describe("DicaDoSinal", () => {
     montar();
 
     expect(screen.getByText("Distrator")).toBeInTheDocument();
+  });
+});
+
+describe("⚠️ o wrapper ENTRA no layout de quem o usa", () => {
+  /**
+   * O defeito que motivou o `className`: a `DicaRapida` é um `inline-flex`, e
+   * ao envolver um filho que dependia de `flex-1` ou `w-full` do container
+   * original, **quebra a conta** — o filho passa a medir 100% de um wrapper que
+   * encolheu até o conteúdo.
+   *
+   * Foi o que aconteceu com a barra de distribuição e com as faixas do
+   * histograma: as duas encolheram ao ganhar a dica, e **nenhum teste pegou**,
+   * porque jsdom não calcula layout. O que dá para afirmar aqui é que a classe
+   * chega ao elemento certo — mesmo recurso do `whitespace-normal` no card 19.
+   */
+  it("repassa o `className` ao elemento que embrulha", () => {
+    const { container } = render(
+      <DicaRapida texto="x" marcador="m" className="min-w-0 flex-1">
+        <span>conteúdo</span>
+      </DicaRapida>,
+    );
+
+    const wrapper = container.querySelector('[data-dica="m"]')!;
+    expect(wrapper.className).toContain("flex-1");
+    expect(wrapper.className).toContain("min-w-0");
+  });
+
+  it("sem `className`, continua só `inline-flex`", () => {
+    const { container } = render(
+      <DicaRapida texto="x" marcador="m">
+        <span>conteúdo</span>
+      </DicaRapida>,
+    );
+
+    expect(container.querySelector('[data-dica="m"]')!.className).toContain(
+      "inline-flex",
+    );
   });
 });
