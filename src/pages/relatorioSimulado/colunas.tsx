@@ -13,6 +13,8 @@ import {
   acertosSobreTotal,
   desvioEmPontos,
   formatarDesvio,
+  naoLidas,
+  textoDeNaoLidas,
 } from "./resultadoDoEstudante";
 import { statusDaLinha } from "./statusDaLinha";
 
@@ -252,6 +254,23 @@ export function colunasDoRelatorio({
         const par = acertosSobreTotal(l, totalDeQuestoes);
         const percentual = textoDoAproveitamento(l);
         const desvio = formatarDesvio(desvioEmPontos(l, mediaDoRecorte));
+        /*
+          ⚠️ **A terceira linha é a decisão do card 13 (opção C).** A fórmula do
+          aproveitamento conta questão não lida como ERRO — `criaAproveitamento`
+          divide por `respostas.length` —, e essa é a única parte do relatório
+          que confunde "não marcou" com "errou". A fórmula não muda (mudá-la
+          faria a nota MELHORAR quando a leitura piora); o que muda é a tela
+          dizer o que o número esconde.
+
+          ⚠️ Só quando `> 0`: "0 não lidas" em 300 linhas é ruído, e a altura
+          irregular passa a apontar justamente as linhas que merecem olhar.
+        */
+        const aviso = textoDeNaoLidas(naoLidas(l, totalDeQuestoes));
+        const linhaDeAviso = aviso === null ? null : (
+          <span data-nao-lidas className="block text-xs text-yellow-700">
+            {aviso}
+          </span>
+        );
 
         if (par === null) {
           return (
@@ -265,6 +284,7 @@ export function colunasDoRelatorio({
                   {desvio}
                 </span>
               )}
+              {linhaDeAviso}
             </>
           );
         }
@@ -278,6 +298,7 @@ export function colunasDoRelatorio({
               {percentual}
               {desvio !== null && <span data-desvio> · {desvio}</span>}
             </span>
+            {linhaDeAviso}
           </>
         );
       },

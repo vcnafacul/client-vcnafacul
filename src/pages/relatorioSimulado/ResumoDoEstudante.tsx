@@ -202,10 +202,26 @@ export function ResumoDoEstudante({
         </div>
       )}
 
+      {/*
+        ⚠️ **A segunda frase é o card 13, e é o ponto dele.** A contagem já
+        existia (card 10) e era muda sobre a consequência: `criaAproveitamento`
+        divide por TODAS as questões do simulado, então questão não lida entra
+        no denominador e não no numerador — ou seja, **conta como erro**.
+
+        Sem dizer isso, o modal mostra "45 acertos · 50%" ao lado de "3 questões
+        sem leitura" e deixa o leitor supor que os dois números são
+        independentes. São o mesmo número: 50% já pune as três.
+
+        ⚠️ E "provavelmente", não "certamente": branco e dupla marcação chegam
+        indistinguíveis do `ms-omr`, então não dá para afirmar que o aluno
+        respondeu e o leitor falhou. A opção C do card é exatamente não tentar
+        separar o que os dados não separam — e mostrar a ambiguidade.
+      */}
       {semLeitura > 0 && (
         <p data-sem-leitura className={cn("text-xs", dashV2.text.muted)}>
           {semLeitura} quest{semLeitura === 1 ? "ão" : "ões"} sem leitura neste
-          cartão
+          cartão — {semLeitura === 1 ? "ela conta" : "elas contam"} como erro no
+          aproveitamento acima.
         </p>
       )}
     </section>

@@ -486,3 +486,70 @@ describe("colunas do relatório — Resultado (card 08)", () => {
     expect(coluna(padrao).width).toBe("9rem");
   });
 });
+
+describe("coluna Resultado — não lidas (card 13)", () => {
+  const coluna = () =>
+    colunasDoRelatorio({
+      comTurma: false,
+      totalDeQuestoes: 90,
+      mediaDoRecorte: 0.54,
+    }).find((c) => c.id === "aproveitamento")!;
+
+  const render_ = (over: Partial<LinhaDoRelatorio>) =>
+    render(<>{coluna().cell(linha({ acertos: 61, ...over }))}</>);
+
+  it("⚠️ anota quantas não foram lidas, porque elas contam como erro na nota", () => {
+    /*
+      `criaAproveitamento` divide por TODAS as questões do simulado: a não lida
+      entra no denominador e não no numerador. Esta é a única parte do relatório
+      que confundia "não marcou" com "errou" — e é a que o coordenador mais olha.
+    */
+    const { container } = render_({ questoesRespondidas: 87 });
+
+    expect(container.querySelector("[data-nao-lidas]")).toHaveTextContent(
+      "3 não lidas",
+    );
+  });
+
+  it("uma só fica no singular", () => {
+    const { container } = render_({ questoesRespondidas: 89 });
+
+    expect(container.querySelector("[data-nao-lidas]")).toHaveTextContent(
+      "1 não lida",
+    );
+  });
+
+  it("⚠️ cartão lido inteiro NÃO ganha a anotação", () => {
+    // "0 não lidas" em 300 linhas é ruído, e some com o sinal das que importam.
+    const { container } = render_({ questoesRespondidas: 90 });
+
+    expect(container.querySelector("[data-nao-lidas]")).toBeNull();
+  });
+
+  it("histórico sem a contagem não ganha a anotação", () => {
+    const { container } = render_({ questoesRespondidas: undefined });
+
+    expect(container.querySelector("[data-nao-lidas]")).toBeNull();
+  });
+
+  it("⚠️ cartão que falhou não ganha a anotação", () => {
+    // `marcarFalha` não limpa o histórico: a contagem que sobrou é de outra
+    // leitura, e a linha já não mostra nota nenhuma.
+    const { container } = render_({ status: "failed", questoesRespondidas: 40 });
+
+    expect(container.querySelector("[data-nao-lidas]")).toBeNull();
+  });
+
+  it("a anotação convive com o par de acertos e com o desvio", () => {
+    const { container } = render_({
+      questoesRespondidas: 87,
+      aproveitamentoGeral: 0.68,
+    });
+
+    expect(container).toHaveTextContent("61/90");
+    expect(container.querySelector("[data-desvio]")).toHaveTextContent("+14 p.p.");
+    expect(container.querySelector("[data-nao-lidas]")).toHaveTextContent(
+      "3 não lidas",
+    );
+  });
+});

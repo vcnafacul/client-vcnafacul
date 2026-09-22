@@ -4,6 +4,7 @@ import type {
 } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { quantil } from "./distribuicao";
 import { percentual } from "./percentuais";
+import { naoLidas } from "./resultadoDoEstudante";
 
 /**
  * Os limiares do alerta de leitura.
@@ -56,17 +57,22 @@ export function percentualSemLeitura(q: QuestaoDoRelatorio): number | null {
  * ⚠️ `null` em quatro casos que NÃO são "leu tudo": leitura não concluída,
  * `questoesRespondidas` ausente (histórico anterior ao card 01), simulado sem
  * total conhecido, e contagem maior que o total (o simulado mudou de tamanho
- * depois da aplicação). Zero afirmaria leitura perfeita em todos eles.
+ * depois da aplicação). Zero afirmaria leitura perfeita em todos eles. As
+ * quatro moram no `naoLidas`, em um lugar só.
  */
 export function percentualSemLeituraDoCartao(
   linha: LinhaDoRelatorio,
   totalDeQuestoes: number,
 ): number | null {
-  if (linha.status !== "completed") return null;
-  if (typeof linha.questoesRespondidas !== "number") return null;
-  if (totalDeQuestoes <= 0) return null;
-  if (linha.questoesRespondidas > totalDeQuestoes) return null;
-  return percentual(totalDeQuestoes - linha.questoesRespondidas, totalDeQuestoes);
+  /*
+    ⚠️ **A contagem sai do `naoLidas`** (card 13), e não de uma subtração
+    escrita aqui: são as MESMAS quatro guardas, e duas cópias delas divergiriam
+    no primeiro caso novo — a coluna diria "3 não lidas" e o alerta contaria
+    outra coisa sobre o mesmo cartão.
+  */
+  const quantas = naoLidas(linha, totalDeQuestoes);
+  if (quantas === null) return null;
+  return percentual(quantas, totalDeQuestoes);
 }
 
 /**

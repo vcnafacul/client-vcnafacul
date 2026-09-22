@@ -4,6 +4,8 @@ import {
   acertosSobreTotal,
   desvioEmPontos,
   formatarDesvio,
+  naoLidas,
+  textoDeNaoLidas,
 } from "./resultadoDoEstudante";
 
 const linha = (over: Partial<LinhaDoRelatorio> = {}): LinhaDoRelatorio => ({
@@ -108,5 +110,72 @@ describe("formatarDesvio", () => {
 
   it("null continua null — quem decide o travessão é a célula", () => {
     expect(formatarDesvio(null)).toBeNull();
+  });
+});
+
+describe("naoLidas (card 13)", () => {
+  const cartao = (over: Partial<LinhaDoRelatorio> = {}): LinhaDoRelatorio => ({
+    usuario: "u1",
+    nome: "Ana",
+    matricula: "m1",
+    turmaId: null,
+    turmaNome: null,
+    enviouCartao: true,
+    status: "completed",
+    questoesRespondidas: 87,
+    ...over,
+  });
+
+  it("é total menos respondidas", () => {
+    expect(naoLidas(cartao(), 90)).toBe(3);
+  });
+
+  it("cartão lido inteiro é 0, e 0 é um valor", () => {
+    expect(naoLidas(cartao({ questoesRespondidas: 90 }), 90)).toBe(0);
+  });
+
+  it("⚠️ leitura não concluída é null, nunca o total", () => {
+    // "90 não lidas" num cartão em processamento diria que a leitura falhou.
+    expect(
+      naoLidas(
+        cartao({ status: "awaiting_omr", questoesRespondidas: undefined }),
+        90,
+      ),
+    ).toBeNull();
+  });
+
+  it("⚠️ cartão `failed` é null mesmo com a contagem preenchida", () => {
+    // `marcarFalha` não limpa o histórico: o número que sobrou é de uma leitura
+    // anterior, e anotá-lo na nota desta seria inventar.
+    expect(naoLidas(cartao({ status: "failed" }), 90)).toBeNull();
+  });
+
+  it("histórico anterior ao card 01 é null, não zero", () => {
+    expect(naoLidas(cartao({ questoesRespondidas: undefined }), 90)).toBeNull();
+  });
+
+  it("sem total conhecido é null", () => {
+    expect(naoLidas(cartao(), 0)).toBeNull();
+  });
+
+  it("⚠️ respondidas acima do total é null, e não negativo", () => {
+    // O simulado encolheu depois da aplicação. Um negativo passaria pelo `> 0`
+    // da tela e sumiria sem ninguém saber.
+    expect(naoLidas(cartao({ questoesRespondidas: 95 }), 90)).toBeNull();
+  });
+});
+
+describe("textoDeNaoLidas", () => {
+  it("plural e singular", () => {
+    expect(textoDeNaoLidas(3)).toBe("3 não lidas");
+    expect(textoDeNaoLidas(1)).toBe("1 não lida");
+  });
+
+  it("⚠️ zero não vira texto — 300 linhas com '0 não lidas' é ruído", () => {
+    expect(textoDeNaoLidas(0)).toBeNull();
+  });
+
+  it("null não vira texto", () => {
+    expect(textoDeNaoLidas(null)).toBeNull();
   });
 });
