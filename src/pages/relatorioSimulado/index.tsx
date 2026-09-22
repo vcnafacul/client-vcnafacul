@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { DASH, PARTNER_PROVAS } from "@/routes/path";
 import { useAuthStore } from "@/store/auth";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { useEffect } from "react";
 import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { RelatorioDoSimuladoConteudo } from "./RelatorioDoSimuladoConteudo";
 import type { LocationStateDoRelatorio } from "./voltar";
@@ -47,6 +48,22 @@ function RelatorioSimulado() {
     navigate(`${DASH}/${PARTNER_PROVAS}`);
   };
 
+  /*
+    ⚠️ **"Relatório do simulado" virou o `document.title`** (card 18). Ele saiu
+    do `<h1>`, que agora é o nome do simulado — mas não sumiu: na aba do
+    navegador e no histórico é onde ele sempre foi útil, e é o que identifica a
+    aba esquecida meia hora depois.
+
+    ⚠️ Restaura ao desmontar: sem isso a próxima tela herda o título desta.
+  */
+  useEffect(() => {
+    const anterior = document.title;
+    document.title = "Relatório do simulado";
+    return () => {
+      document.title = anterior;
+    };
+  }, []);
+
   if (!simuladoId) return null;
 
   return (
@@ -54,6 +71,7 @@ function RelatorioSimulado() {
       simuladoId={simuladoId}
       turmaId={turmaId}
       token={data.token}
+      comTitulo
       cabecalho={
         <>
           {/* ⚠️ `print:hidden`: numa folha impressa não há "voltar". */}
@@ -70,9 +88,14 @@ function RelatorioSimulado() {
             Voltar
           </button>
 
-          <h1 className={cn("text-xl font-semibold", dashV2.text.primary)}>
-            Relatório do simulado
-          </h1>
+          {/*
+            ⚠️ O `<h1>` saiu daqui (card 18): ele passou a ser o NOME do
+            simulado, que vem do resumo — e quem carrega o resumo é o
+            `RelatorioDoSimuladoConteudo`, não esta rota.
+
+            "Relatório do simulado" não sumiu: virou o `document.title`, que é
+            onde ele sempre foi útil — na aba do navegador e no histórico.
+          */}
         </>
       }
     />

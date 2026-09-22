@@ -54,6 +54,9 @@ const RESPOSTA = {
     temEstudanteSemTurma: false,
     linhasSemEstudanteAtivo: 0,
     totalDeQuestoes: 90,
+    simuladoNome: "ENEM 2024",
+    turmaNome: null,
+    ultimoCartaoEm: "2026-09-21T15:30:00.000Z",
   },
 };
 
@@ -1071,5 +1074,81 @@ describe("RelatorioSimulado — distribuição da turma (card 09)", () => {
     await screen.findByText("0 de 1");
 
     expect(screen.queryByTestId("sample-size-banner")).not.toBeInTheDocument();
+  });
+});
+
+describe("RelatorioSimulado — identificação (card 18)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarRelatorio.mockResolvedValue({
+      ...RESPOSTA,
+      resumo: {
+        ...RESPOSTA.resumo,
+        simuladoNome: "ENEM 2024 — 2ª aplicação",
+        turmaNome: null,
+        ultimoCartaoEm: "2026-09-21T15:30:00.000Z",
+      },
+    });
+  });
+
+  it("o `<h1>` da rota é o nome do simulado", async () => {
+    montar();
+
+    expect(
+      await screen.findByRole("heading", { name: "ENEM 2024 — 2ª aplicação" }),
+    ).toBeInTheDocument();
+  });
+
+  it("⚠️ 'Relatório do simulado' virou o `document.title`", async () => {
+    // Ele não sumiu: saiu do `<h1>` e foi para onde sempre foi útil — a aba do
+    // navegador e o histórico, que é o que identifica a aba esquecida.
+    montar();
+    await screen.findByText("Ana Silva");
+
+    expect(document.title).toBe("Relatório do simulado");
+  });
+
+  it("⚠️ o título é restaurado ao sair", async () => {
+    // Sem isso a próxima tela herda o título desta.
+    document.title = "vcnafacul";
+    const { unmount } = montar();
+    await screen.findByText("Ana Silva");
+
+    unmount();
+
+    expect(document.title).toBe("vcnafacul");
+  });
+
+  it("⚠️ `?turma=` mostra o recorte no cabeçalho", async () => {
+    // Antes a única pista de que o recorte estava ativo era a coluna `Turma`
+    // desaparecer — um sinal por ausência, que ninguém lê.
+    buscarRelatorio.mockResolvedValue({
+      ...RESPOSTA,
+      resumo: {
+        ...RESPOSTA.resumo,
+        simuladoNome: "ENEM 2024",
+        turmaNome: "Turma 3ºA",
+        ultimoCartaoEm: null,
+      },
+    });
+    montar("/relatorio-simulado/sim-1?turma=t-1");
+
+    expect(
+      await screen.findByTestId("identificacao-do-relatorio"),
+    ).toHaveTextContent("Turma 3ºA");
+  });
+
+  it("o cabeçalho aparece junto com o relatório, não depois da tabela", async () => {
+    const { container } = montar();
+    await screen.findByTestId("identificacao-do-relatorio");
+
+    // a identificação vem antes do resumo e da tabela no DOM
+    const ident = container.querySelector(
+      '[data-testid="identificacao-do-relatorio"]',
+    )!;
+    const tabela = container.querySelector("table")!;
+    expect(
+      ident.compareDocumentPosition(tabela) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 });

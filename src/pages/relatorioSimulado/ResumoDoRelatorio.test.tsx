@@ -11,6 +11,9 @@ const resumo = (over: Partial<Resumo> = {}): Resumo => ({
   temEstudanteSemTurma: false,
   linhasSemEstudanteAtivo: 0,
     totalDeQuestoes: 90,
+    simuladoNome: "ENEM 2024",
+    turmaNome: null,
+    ultimoCartaoEm: "2026-09-21T15:30:00.000Z",
   ...over,
 });
 
