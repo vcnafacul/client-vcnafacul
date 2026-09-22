@@ -22,6 +22,7 @@ import { colunasDoRelatorio } from "./colunas";
 import { filtrarLinhas, totalQueNaoEnviou } from "./filtrarLinhas";
 import { DetalheDoEstudante } from "./DetalheDoEstudante";
 import { indiceDeDificuldade } from "./dificuldadeDaQuestao";
+import { desviosPorMateria, materiasVisiveis } from "./materiasDoRelatorio";
 import { BotaoExportar } from "./BotaoExportar";
 import { nomeDoArquivo, planilhaDeEstudantes } from "./exportar";
 import { ResumoDoRelatorio } from "./ResumoDoRelatorio";
@@ -172,9 +173,24 @@ export function RelatorioDoSimuladoConteudo({
       .catch(() => setEstadoQuestoes("error"));
   };
 
-  const colunas = useMemo(
-    () => colunasDoRelatorio({ comTurma: turmaId !== undefined }),
-    [turmaId],
+  /*
+    ⚠️ **As matérias saem do RESUMO, não das linhas** (card 07). O resumo é do
+    recorte inteiro; derivadas das linhas, as colunas apareceriam e sumiriam
+    conforme a busca por nome — e ver uma coluna desaparecer ao digitar faz a
+    pessoa desconfiar da tela toda.
+  */
+  /*
+    ⚠️ Memoizado à parte porque **a tela e o CSV usam conjuntos diferentes**: a
+    tabela respeita o teto de 4 (é problema de largura), o arquivo leva todas.
+  */
+  const todasAsMaterias = useMemo(
+    () => relatorio?.resumo.aproveitamentoPorMateria,
+    [relatorio?.resumo.aproveitamentoPorMateria],
+  );
+
+  const materias = useMemo(
+    () => materiasVisiveis(todasAsMaterias),
+    [todasAsMaterias],
   );
 
   /*
@@ -184,6 +200,27 @@ export function RelatorioDoSimuladoConteudo({
     virando enfeite. O eslint aponta isto como `react-hooks/exhaustive-deps`.
   */
   const todasAsLinhas = useMemo(() => relatorio?.linhas ?? [], [relatorio]);
+
+  /*
+    ⚠️ **Sobre `todasAsLinhas`, e NÃO sobre a lista filtrada.** O desvio é a
+    referência da TURMA, e turma não muda com filtro de tela: derivado da lista
+    filtrada, a mesma célula ficaria marcada ou não conforme o que a pessoa
+    digitou na busca — o realce mudaria de sentido a cada tecla.
+
+    ⚠️ E tem de vir ANTES de `linhas`, que depende de `colunas`, que depende
+    daqui. Declarado depois, é `Cannot access before initialization`.
+  */
+  const desvios = useMemo(() => desviosPorMateria(todasAsLinhas), [todasAsLinhas]);
+
+  const colunas = useMemo(
+    () =>
+      colunasDoRelatorio({
+        comTurma: turmaId !== undefined,
+        materias,
+        desvios,
+      }),
+    [turmaId, materias, desvios],
+  );
 
   /*
     ⚠️ Filtra ANTES de ordenar. O contrário ordena linhas que serão jogadas
@@ -250,8 +287,13 @@ export function RelatorioDoSimuladoConteudo({
     escopo. Exportar só 25 de 340 seria uma planilha incompleta sem aviso.
   */
   const planilhaEstudantes = useMemo(
-    () => planilhaDeEstudantes(linhas, { comTurma: turmaId !== undefined }),
-    [linhas, turmaId],
+    () => planilhaDeEstudantes(linhas, {
+        comTurma: turmaId !== undefined,
+        // ⚠️ TODAS as matérias do resumo, sem o teto de 4 da tela: o teto é
+        // problema de largura, e planilha não tem largura.
+        materias: todasAsMaterias,
+      }),
+    [linhas, turmaId, todasAsMaterias],
   );
 
   const filtrosAtivos = (mostrarQuemNaoEnviou ? 1 : 0) + (busca ? 1 : 0);

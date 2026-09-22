@@ -1,6 +1,14 @@
 import { dashV2, StatusBadge, type DashColumn } from "@/components/dashV2";
-import type { LinhaDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
+import type {
+  LinhaDoRelatorio,
+  MediaPorMateria,
+} from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
+import {
+  LARGURA_DA_COLUNA_DE_MATERIA,
+  notaNaMateria,
+} from "./materiasDoRelatorio";
+import { CelulaDeMateria } from "./CelulaDeMateria";
 import { statusDaLinha } from "./statusDaLinha";
 
 export const VAZIO = "—";
@@ -47,9 +55,24 @@ function textoDoAproveitamento(linha: LinhaDoRelatorio): string {
 
 export function colunasDoRelatorio({
   comTurma,
+  materias = [],
+  desvios = new Map(),
 }: {
   /** `true` quando o recorte já é de uma turma — aí a coluna Turma some. */
   comTurma: boolean;
+  /**
+   * As matérias que viram coluna — já passadas por `materiasVisiveis`.
+   *
+   * ⚠️ **Vêm do RESUMO, nunca da varredura das linhas.** Derivadas das linhas,
+   * as colunas apareceriam e sumiriam conforme o filtro de busca, e ver uma
+   * coluna desaparecer ao digitar um nome faz a pessoa desconfiar da tela toda.
+   *
+   * ⚠️ Padrão `[]`: sem o card 02 no ar (ou em recorte sem matéria nenhuma) a
+   * tabela fica exatamente como era.
+   */
+  materias?: MediaPorMateria[];
+  /** Desvio-padrão da turma por matéria — ver `desviosPorMateria`. */
+  desvios?: Map<string, number>;
 }): DashColumn<LinhaDoRelatorio>[] {
   const colunas: DashColumn<LinhaDoRelatorio>[] = [
     {
@@ -188,6 +211,43 @@ export function colunasDoRelatorio({
           : null,
     },
   );
+
+  /*
+    ⚠️ **Por MATÉRIA, não por frente.** Um simulado do ENEM tem ~4 matérias e
+    pode ter 15+ frentes; frentes virariam 15 colunas numa tabela que já
+    estourou a largura na outra aba. A frente é drill-down e mora no modal
+    (card 10).
+
+    ⚠️ O conjunto é DINÂMICO — sai do que o recorte tem, não de uma lista fixa.
+    Um simulado só de Matemática desenha uma coluna.
+
+    ⚠️ Estas colunas só cabem por causa do card 19, que colapsou `Status` +
+    `Cartão` + `Motivo` em `Situação`. Ver `materiasDoRelatorio.ts` para a
+    medição que fixa o teto em 4.
+  */
+  for (const materia of materias) {
+    colunas.push({
+      id: `materia-${materia.id}`,
+      header: materia.nome,
+      width: LARGURA_DA_COLUNA_DE_MATERIA,
+      align: "right",
+      hideBelow: "md",
+      cell: (l) => (
+        <CelulaDeMateria
+          linha={l}
+          materia={materia}
+          desvio={desvios.get(materia.id)}
+        />
+      ),
+      /*
+        ⚠️ Ordena pelo número, e quem não tem a matéria vai para o fim como
+        nulo — junto com quem não teve leitura. O `sortRows` já manda nulo para
+        o fim nas duas direções.
+      */
+      sortValue: (l) =>
+        leituraVale(l) ? notaNaMateria(l, materia.id) ?? null : null,
+    });
+  }
 
   return colunas;
 }

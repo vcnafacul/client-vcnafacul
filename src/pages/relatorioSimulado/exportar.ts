@@ -1,8 +1,10 @@
 import type {
   LinhaDoRelatorio,
+  MediaPorMateria,
   QuestaoDoRelatorio,
 } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { rotulosDasFlags } from "./flagsDaQuestao";
+import { notaNaMateria } from "./materiasDoRelatorio";
 import { statusDaLinha } from "./statusDaLinha";
 import {
   percentualDaAlternativa,
@@ -48,14 +50,31 @@ const numero = (valor: number | null): number | null => valor;
  */
 export function planilhaDeEstudantes(
   linhas: LinhaDoRelatorio[],
-  opcoes: { comTurma: boolean },
+  opcoes: {
+    comTurma: boolean;
+    /**
+     * As matérias do recorte, do resumo.
+     *
+     * ⚠️ **TODAS, sem o teto de 4 da tela.** Planilha não tem problema de
+     * largura, e o teto existe só porque a tabela estoura em 1565px. Aqui
+     * esconder matéria seria perder dado sem ganhar nada.
+     *
+     * ⚠️ A regra do `exportar.ts` continua valendo: o arquivo segue a tela em
+     * escopo de LINHAS (filtro), não de colunas.
+     */
+    materias?: MediaPorMateria[];
+  },
 ): Planilha {
+  const materias = opcoes.materias ?? [];
   const cabecalho = [
     "Estudante",
     "Matrícula",
     ...(opcoes.comTurma ? [] : ["Turma"]),
     "Situação",
     "Aproveitamento (%)",
+    // ⚠️ Números de 0 a 100, como o aproveitamento geral: "60%" numa célula do
+    // Excel pt-BR é TEXTO e não soma nem ordena.
+    ...materias.map((m) => `${m.nome} (%)`),
     "Cartão",
     "Motivo da falha",
   ];
@@ -76,6 +95,21 @@ export function planilhaDeEstudantes(
     l.status === "completed" && typeof l.aproveitamentoGeral === "number"
       ? Math.round(l.aproveitamentoGeral * 100)
       : null,
+    /*
+      ⚠️ Mesmo gate de `completed` do aproveitamento geral, e pelo mesmo
+      motivo — `marcarFalha` não limpa `aproveitamento`, e as matérias vão pelo
+      mesmo caminho.
+
+      ⚠️ E matéria que o ALUNO não tem sai vazia, nunca 0: ele pode não ter
+      Química porque nenhuma questão de Química foi lida no cartão dele, e zero
+      numa planilha entraria em média e em soma como se ele tivesse errado
+      todas.
+    */
+    ...materias.map((m) => {
+      if (l.status !== "completed") return null;
+      const nota = notaNaMateria(l, m.id);
+      return nota === undefined ? null : Math.round(nota * 100);
+    }),
     l.cartaoCode ?? null,
     l.status === "failed" ? l.falha?.descricao ?? null : null,
   ]);

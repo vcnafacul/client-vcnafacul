@@ -48,7 +48,50 @@ export interface LinhaDoRelatorio {
    * mostrar é a tela. Ver `colunas.tsx`.
    */
   aproveitamentoGeral?: number;
+  /**
+   * Nota por matéria, com as frentes dentro — o que responde "em QUÊ o aluno
+   * foi mal", e não só quanto acertou.
+   *
+   * ⚠️ **Opcional, e ausente nunca é `[]`.** Histórico anterior ao
+   * `criaAproveitamento`, leitura não concluída, ou cartão em que nenhuma
+   * questão casou com matéria: nos três, lista vazia faria a tela desenhar
+   * barra em zero e afirmar que o aluno zerou TODAS as matérias.
+   *
+   * ⚠️ Mesmo cuidado do `aproveitamentoGeral`: pode vir preenchido numa linha
+   * `failed` com nota VELHA — o `marcarFalha` do ms não limpa `aproveitamento`.
+   * Quem decide não mostrar é a tela, via `leituraVale`.
+   */
+  aproveitamentoPorMateria?: MateriaDoEstudante[];
   falha?: FalhaHistorico;
+}
+
+export interface FrenteDoEstudante {
+  id: string;
+  nome: string;
+  /** Fração de 0 a 1 — a tela é quem formata. */
+  aproveitamento: number;
+}
+
+export interface MateriaDoEstudante {
+  id: string;
+  nome: string;
+  aproveitamento: number;
+  /** ⚠️ Drill-down do modal (card 10), NUNCA coluna: 15+ frentes não cabem. */
+  frentes: FrenteDoEstudante[];
+}
+
+export interface MediaPorMateria {
+  id: string;
+  nome: string;
+  media: number;
+  /**
+   * Quantos estudantes entraram NESTA média.
+   *
+   * ⚠️ Não é o mesmo número para toda matéria: quem não teve questão daquela
+   * matéria lida não entra no denominador dela. "42% em Química" sobre 3 alunos
+   * é verdadeiro e inútil sem o "de 3".
+   */
+  base: number;
 }
 
 export interface ResumoDoRelatorio {
@@ -59,6 +102,19 @@ export interface ResumoDoRelatorio {
   temEstudanteSemTurma: boolean;
   /** Quem saiu do cursinho depois de enviar. ⚠️ Contado, nunca listado. */
   linhasSemEstudanteAtivo: number;
+  /**
+   * A nota da turma em cada matéria — a referência sem a qual "30% em
+   * Matemática" não é diagnóstico nenhum.
+   *
+   * ⚠️ **É daqui que saem as COLUNAS da tabela, não da varredura das linhas.**
+   * O conjunto aqui é o do recorte inteiro; derivado das linhas, as colunas
+   * apareceriam e sumiriam conforme o filtro — uma busca por nome podendo
+   * remover uma coluna da tabela.
+   *
+   * ⚠️ Ausente quando ninguém do recorte tem matéria nenhuma. `[]` faria a tela
+   * desenhar um gráfico vazio afirmando que a turma não tem matérias.
+   */
+  aproveitamentoPorMateria?: MediaPorMateria[];
 }
 
 export interface RelatorioDoSimulado {
