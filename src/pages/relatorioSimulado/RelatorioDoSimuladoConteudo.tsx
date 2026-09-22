@@ -29,6 +29,7 @@ import {
   MINIMO_PARA_HISTOGRAMA,
 } from "./distribuicao";
 import { IdentificacaoDoRelatorio } from "./IdentificacaoDoRelatorio";
+import { posicaoNaNavegacao } from "./navegacaoEntreAlunos";
 import { desviosPorMateria, materiasVisiveis } from "./materiasDoRelatorio";
 import { BotaoExportar } from "./BotaoExportar";
 import { nomeDoArquivo, planilhaDeEstudantes } from "./exportar";
@@ -588,6 +589,13 @@ export function RelatorioDoSimuladoConteudo({
         */}
         {aberto && simuladoId && (
           <DetalheDoEstudante
+            /*
+              ⚠️ **`key` por usuário**: sem ela a instância é reaproveitada ao
+              trocar de aluno e o estado interno sobrevive — detalhe do anterior,
+              estado de carga e filtro. É o mesmo recurso que a
+              `SimuladosDaTurma` usa ao trocar de simulado, e pelo mesmo motivo.
+            */
+            key={aberto.usuario}
             token={token}
             simuladoId={simuladoId}
             estudante={{
@@ -611,6 +619,26 @@ export function RelatorioDoSimuladoConteudo({
               turma") mentia no caminho mais comum, o do `dashProvas`.
             */
             recorte={turmaId === undefined ? "cursinho" : "turma"}
+            /*
+              ⚠️ Percorre `linhasDaPagina` — as linhas que estão NA TELA, já
+              filtradas e ordenadas. Se a pessoa ordenou por aproveitamento,
+              "próximo" tem de ser a próxima linha que ela vê.
+
+              ⚠️ Para no fim da página: atravessar exigiria o modal mexer na
+              paginação por baixo, e o contador honesto ("3 de 25") já entrega o
+              que importa sem esse acoplamento.
+            */
+            navegacao={(() => {
+              const p = posicaoNaNavegacao(linhasDaPagina, aberto.usuario);
+              return {
+                posicao: p.posicao,
+                total: p.total,
+                aoAnterior: p.anterior
+                  ? () => setAberto(p.anterior)
+                  : null,
+                aoProximo: p.proximo ? () => setAberto(p.proximo) : null,
+              };
+            })()}
             totalDeQuestoes={relatorio?.resumo.totalDeQuestoes ?? 0}
             mediaDoRecorte={relatorio?.resumo.aproveitamentoGeral ?? null}
             materiasDaTurma={relatorio?.resumo.aproveitamentoPorMateria ?? []}
