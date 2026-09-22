@@ -578,6 +578,7 @@ export function RelatorioDoSimuladoConteudo({
               estado={estadoQuestoes}
               onRetry={carregarQuestoes}
               nomeArquivo={nomeDoArquivo("questoes", simuladoId ?? "", turmaId)}
+              token={token}
             />
           </TabsContent>
         </Tabs>
