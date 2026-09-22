@@ -9,6 +9,11 @@ import {
   notaNaMateria,
 } from "./materiasDoRelatorio";
 import { CelulaDeMateria } from "./CelulaDeMateria";
+import {
+  acertosSobreTotal,
+  desvioEmPontos,
+  formatarDesvio,
+} from "./resultadoDoEstudante";
 import { statusDaLinha } from "./statusDaLinha";
 
 export const VAZIO = "—";
@@ -57,6 +62,8 @@ export function colunasDoRelatorio({
   comTurma,
   materias = [],
   desvios = new Map(),
+  totalDeQuestoes = 0,
+  mediaDoRecorte = null,
 }: {
   /** `true` quando o recorte já é de uma turma — aí a coluna Turma some. */
   comTurma: boolean;
@@ -73,6 +80,20 @@ export function colunasDoRelatorio({
   materias?: MediaPorMateria[];
   /** Desvio-padrão da turma por matéria — ver `desviosPorMateria`. */
   desvios?: Map<string, number>;
+  /**
+   * Quantas questões o simulado tem — o denominador de `acertos`.
+   *
+   * ⚠️ Padrão `0`: sem ele (ms antigo) a coluna mostra só o percentual, em vez
+   * de "61/0".
+   */
+  totalDeQuestoes?: number;
+  /**
+   * A média do recorte, base do desvio em p.p.
+   *
+   * ⚠️ `null` quando ninguém tem leitura — e aí não há desvio a mostrar, que é
+   * diferente de todo mundo estar na média.
+   */
+  mediaDoRecorte?: number | null;
 }): DashColumn<LinhaDoRelatorio>[] {
   const colunas: DashColumn<LinhaDoRelatorio>[] = [
     {
@@ -199,12 +220,74 @@ export function colunasDoRelatorio({
     },
     {
       id: "aproveitamento",
-      header: "Aproveitamento",
+      header: "Resultado",
+      /*
+        ⚠️ **9rem, a MESMA largura de antes**, e isso é o ponto: a coluna ganhou
+        duas informações sem crescer. Uma coluna nova de 7.5rem para o desvio
+        derrubaria o teto de matérias do card 07 de 4 para 2 — medido.
+      */
       width: "9rem",
       align: "right",
-      cell: (l) => textoDoAproveitamento(l),
+      /*
+        ⚠️ **Acertos como número PRIMÁRIO, percentual como secundário** (card
+        08). Cursinho conversa em acertos: "fiz 61 na primeira aplicação", "o
+        corte de Medicina ficou em 78". É a unidade em que o aluno compara com
+        nota de corte e com o simulado passado — e o percentual sozinho esconde
+        o denominador: 58% de 45 e 58% de 180 são confianças diferentes.
+
+        Mesmo padrão de duas linhas que a coluna `Estudante` usa para nome +
+        matrícula.
+
+        ⚠️ **O desvio é em p.p. contra a média, e NÃO posição na turma.** Foi
+        decisão de produto antes de implementar: esta tela é do coordenador
+        hoje, mas é a base do que um dia vira tela do aluno — "12º de 30"
+        responde a mesma pergunta criando um ranking nominal que teria de
+        nascer marcado como "nunca expor". "+14 p.p." não cria.
+
+        ⚠️ Sem `acertos` (ms antigo, ou simulado sumido), a primeira linha cai
+        para o percentual sozinho: degradar é melhor que mostrar "61/0" ou um
+        número derivado que o aluno confere e não bate.
+      */
+      cell: (l) => {
+        const par = acertosSobreTotal(l, totalDeQuestoes);
+        const percentual = textoDoAproveitamento(l);
+        const desvio = formatarDesvio(desvioEmPontos(l, mediaDoRecorte));
+
+        if (par === null) {
+          return (
+            <>
+              <span className="block">{percentual}</span>
+              {desvio !== null && (
+                <span
+                  data-desvio
+                  className={cn("block text-xs", dashV2.text.muted)}
+                >
+                  {desvio}
+                </span>
+              )}
+            </>
+          );
+        }
+
+        return (
+          <>
+            <span className={cn("block font-medium", dashV2.text.primary)}>
+              {par}
+            </span>
+            <span className={cn("block text-xs", dashV2.text.muted)}>
+              {percentual}
+              {desvio !== null && <span data-desvio> · {desvio}</span>}
+            </span>
+          </>
+        );
+      },
       // ⚠️ Ordena pelo número, não pelo texto: "9%" antes de "80%" senão.
       // E só quem tem leitura entra — os demais vão para o fim, como nulos.
+      //
+      // ⚠️ Pelo APROVEITAMENTO, e não por `acertos`: são a mesma ordem quando
+      // o total é o mesmo (e é — todos fizeram o mesmo simulado), mas o
+      // aproveitamento existe em histórico anterior ao card 08 e os acertos
+      // não. Ordenar pelos acertos jogaria essas linhas para o fim sem motivo.
       sortValue: (l) =>
         leituraVale(l) && typeof l.aproveitamentoGeral === "number"
           ? l.aproveitamentoGeral

@@ -10,6 +10,7 @@ const resumo = (over: Partial<Resumo> = {}): Resumo => ({
   totalEstudantesComCartaoNoCursinho: 27,
   temEstudanteSemTurma: false,
   linhasSemEstudanteAtivo: 0,
+    totalDeQuestoes: 90,
   ...over,
 });
 

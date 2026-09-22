@@ -53,6 +53,7 @@ const RESPOSTA = {
     totalEstudantesComCartaoNoCursinho: 1,
     temEstudanteSemTurma: false,
     linhasSemEstudanteAtivo: 0,
+    totalDeQuestoes: 90,
   },
 };
 
@@ -884,5 +885,74 @@ describe("RelatorioSimulado — nota por matéria (card 07)", () => {
 
     expect(screen.queryByText("Melhor")).not.toBeInTheDocument();
     expect(screen.getByText("Ruim1")).toBeInTheDocument();
+  });
+});
+
+describe("RelatorioSimulado — acertos e desvio (card 08)", () => {
+  const RESPOSTA_08 = {
+    linhas: [
+      { ...RESPOSTA.linhas[0], acertos: 61, aproveitamentoGeral: 0.68 },
+      {
+        ...RESPOSTA.linhas[0],
+        usuario: "u2",
+        nome: "Bruno Lima",
+        matricula: "2025002",
+        acertos: 36,
+        aproveitamentoGeral: 0.4,
+      },
+    ],
+    resumo: {
+      ...RESPOSTA.resumo,
+      totalNoRecorte: 2,
+      comLeituraConcluida: 2,
+      aproveitamentoGeral: 0.54,
+      totalDeQuestoes: 90,
+    },
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarRelatorio.mockResolvedValue(RESPOSTA_08);
+  });
+
+  it("mostra os acertos absolutos na tabela", async () => {
+    montar();
+
+    expect(await screen.findByText("61/90")).toBeInTheDocument();
+    expect(screen.getByText("36/90")).toBeInTheDocument();
+  });
+
+  it("⚠️ o desvio NÃO muda com o filtro — a referência é o recorte", async () => {
+    // A média vem do RESUMO, que é do recorte inteiro. Derivada das linhas
+    // filtradas, buscar "Ana" deixaria uma linha só, a média viraria a própria
+    // nota dela, e "+14 p.p." viraria "0 p.p." — o número mudaria de sentido a
+    // cada tecla.
+    montar();
+    await screen.findByText("61/90");
+
+    expect(screen.getByText(/\+14 p\.p\./)).toBeInTheDocument();
+
+    fireEvent.change(screen.getByPlaceholderText(/buscar por nome/i), {
+      target: { value: "Ana" },
+    });
+
+    await waitFor(() =>
+      expect(screen.queryByText("Bruno Lima")).not.toBeInTheDocument(),
+    );
+    expect(screen.getByText(/\+14 p\.p\./)).toBeInTheDocument();
+  });
+
+  it("⚠️ o CSV traz `Acertos` e `Total de questões` em colunas separadas", async () => {
+    // No Excel, "61/90" é texto: não soma, não ordena, não vira gráfico.
+    montar();
+    await screen.findByText("61/90");
+
+    fireEvent.click(screen.getByTestId("exportar-csv"));
+
+    const [cabecalho, linhasCsv] = exportAnalyticsCsv.mock.calls[0];
+    expect(cabecalho).toContain("Acertos");
+    expect(cabecalho).toContain("Total de questões");
+    expect(linhasCsv[0][cabecalho.indexOf("Acertos")]).toBe(61);
+    expect(linhasCsv[0][cabecalho.indexOf("Total de questões")]).toBe(90);
   });
 });

@@ -49,6 +49,20 @@ export interface LinhaDoRelatorio {
    */
   aproveitamentoGeral?: number;
   /**
+   * Quantas questões o estudante acertou — o número absoluto.
+   *
+   * Cursinho conversa em acertos ("fiz 61 na primeira aplicação", "o corte de
+   * Medicina ficou em 78"), e o percentual sozinho esconde o denominador: 58%
+   * de 45 e 58% de 180 são confianças diferentes sobre o mesmo número.
+   *
+   * ⚠️ **Contado no ms, nunca derivado** de `aproveitamentoGeral × total`: a
+   * fração arredondada produz 44 onde o aluno fez 45 — e ele confere à mão.
+   *
+   * ⚠️ **AUSENTE, não zero**, sem leitura concluída ou em histórico anterior
+   * ao card 08. Zero acertos num cartão lido é ZERO, e é outra coisa.
+   */
+  acertos?: number;
+  /**
    * Nota por matéria, com as frentes dentro — o que responde "em QUÊ o aluno
    * foi mal", e não só quanto acertou.
    *
@@ -115,6 +129,14 @@ export interface ResumoDoRelatorio {
    * desenhar um gráfico vazio afirmando que a turma não tem matérias.
    */
   aproveitamentoPorMateria?: MediaPorMateria[];
+  /**
+   * Quantas questões o simulado tem — o denominador de `acertos`.
+   *
+   * ⚠️ **No resumo, não em cada linha**: é propriedade do simulado, não do
+   * estudante. `0` quando o simulado sumiu, ou quando o ms ainda não tem o
+   * card 08 — e aí a tela mostra só o percentual, nunca "61/0".
+   */
+  totalDeQuestoes: number;
 }
 
 export interface RelatorioDoSimulado {

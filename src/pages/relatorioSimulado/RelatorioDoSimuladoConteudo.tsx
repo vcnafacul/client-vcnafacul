@@ -218,8 +218,23 @@ export function RelatorioDoSimuladoConteudo({
         comTurma: turmaId !== undefined,
         materias,
         desvios,
+        // ⚠️ Do RESUMO, não somado das linhas: é propriedade do simulado.
+        totalDeQuestoes: relatorio?.resumo.totalDeQuestoes ?? 0,
+        /*
+          ⚠️ A média do RECORTE INTEIRO, não das linhas filtradas — mesma razão
+          do desvio por matéria: a referência é a turma, e turma não muda com
+          filtro de tela. Buscar um nome não pode mudar "+14 p.p." para
+          "0 p.p." porque o aluno virou a única linha visível.
+        */
+        mediaDoRecorte: relatorio?.resumo.aproveitamentoGeral ?? null,
       }),
-    [turmaId, materias, desvios],
+    [
+      turmaId,
+      materias,
+      desvios,
+      relatorio?.resumo.totalDeQuestoes,
+      relatorio?.resumo.aproveitamentoGeral,
+    ],
   );
 
   /*
@@ -292,8 +307,9 @@ export function RelatorioDoSimuladoConteudo({
         // ⚠️ TODAS as matérias do resumo, sem o teto de 4 da tela: o teto é
         // problema de largura, e planilha não tem largura.
         materias: todasAsMaterias,
+        totalDeQuestoes: relatorio?.resumo.totalDeQuestoes,
       }),
-    [linhas, turmaId, todasAsMaterias],
+    [linhas, turmaId, todasAsMaterias, relatorio?.resumo.totalDeQuestoes],
   );
 
   const filtrosAtivos = (mostrarQuemNaoEnviou ? 1 : 0) + (busca ? 1 : 0);
