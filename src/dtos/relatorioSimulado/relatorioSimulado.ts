@@ -216,6 +216,26 @@ export interface QuestaoDoRelatorio {
    * ausência como ausência de sinal, nunca como "item fraco".
    */
   discriminacao: number | null;
+  /**
+   * Quantos acertaram esta questão na BASE INTEIRA — todos os cursinhos, todas
+   * as aplicações, os dois fluxos (card 16).
+   *
+   * ⚠️ **Outro ESCOPO, não outro cálculo.** `acertos` é do recorte deste
+   * relatório; este é global, e responde o que o recorte não pode: *"minha
+   * turma foi mal nesta questão, ou a questão é difícil para todo mundo?"*.
+   *
+   * ⚠️ **Opcional**: chega `undefined` de uma api anterior ao card 16, e a
+   * coluna some inteira — que é melhor que uma coluna de travessões.
+   */
+  acertosGeral?: number;
+  /**
+   * O denominador de `acertosGeral`.
+   *
+   * ⚠️ **Nunca mostre o percentual sem esta base ao lado.** "24%" sozinho não
+   * diz se são 1.847 respostas ou 12, e as duas leituras são opostas:
+   * dificuldade da questão contra ruído.
+   */
+  baseGeral?: number;
 }
 
 export interface QuestoesDoRelatorio {

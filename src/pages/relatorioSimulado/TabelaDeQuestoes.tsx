@@ -18,6 +18,11 @@ import { SinaisDaQuestao } from "./SinaisDaQuestao";
 import { BotaoExportar } from "./BotaoExportar";
 import { planilhaDeQuestoes } from "./exportar";
 import { formatarPercentual, percentualDeAcerto } from "./percentuais";
+import {
+  acertoGlobal,
+  temDificuldadeGlobal,
+  textoDaDificuldadeGlobal,
+} from "./dificuldadeGlobal";
 
 export const TEXTO_SEM_QUESTOES = "Nenhuma questão com resposta ainda";
 
@@ -72,7 +77,8 @@ function VazioDeQuestoes() {
  * | original | 11 | 1192px | 85px |
  * | card 04 (−`Acertos`/`Erros`/`% erro`, +`Respondentes`/`Gabarito`) | 10 | 1080px | 197px |
  * | card 19 (5 colunas A–E → 1 barra) | 6 | 848px | 429px |
- * | **card 06** (+`Sinais`) | **7** | **1072px** | **205px** |
+ * | card 06 (+`Sinais`) | 7 | 1072px | 205px |
+ * | **card 16** (+`Acerto geral`, só quando há base) | **8** | **1208px** | **69px** |
  *
  * | coluna | largura |
  * |---|---|
@@ -80,6 +86,7 @@ function VazioDeQuestoes() {
  * | Respondentes | 8.5rem |
  * | Gabarito | 6.5rem |
  * | % de acerto | 9rem |
+ * | Acerto geral | 8.5rem (condicional) |
  * | Distribuição | 13rem |
  * | Sinais | 14rem |
  * | Sem leitura | 9rem |
@@ -87,6 +94,14 @@ function VazioDeQuestoes() {
  * Os 429px que o card 19 liberou eram o que o 06 precisava — e é por isso que
  * o 19 entrou antes dele, embora tenha número maior. `Sinais` consumiu 224px e
  * sobraram 205px.
+ *
+ * ⚠️ **A folga caiu para 69px no card 16, e essa é a última coluna que cabe.**
+ * `Acerto geral` custou 136px dos 205px que havia. Quem quiser a próxima tira
+ * coluna ou reagrupa conteúdo — não há mais margem para acrescentar.
+ *
+ * ⚠️ **E ela é CONDICIONAL**: só existe quando alguma questão tem base
+ * suficiente. Sem isso, uma coluna de travessões custaria os mesmos 136px para
+ * não dizer nada — mesmo raciocínio do `materiasVisiveis` no card 07.
  *
  * ⚠️ **A discriminação NÃO ganhou coluna própria**, e é o que mantém a folga:
  * um `r` entre −1 e +1 custaria mais largura para dizer menos do que o badge
@@ -98,6 +113,7 @@ function VazioDeQuestoes() {
  */
 function colunasDeQuestoes(
   medianaSemLeitura: number | null,
+  comDificuldadeGlobal: boolean,
 ): DashColumn<QuestaoDoRelatorio>[] {
   return [
   {
@@ -172,6 +188,37 @@ function colunasDeQuestoes(
     // formatada colocaria "9%" depois de "80%".
     sortValue: (q) => percentualDeAcerto(q),
   },
+  /*
+    ⚠️ **Ao lado do `% de acerto`, e não no fim da tabela** (card 16). Os dois
+    números só significam alguma coisa juntos: 22% da turma contra 24% da base é
+    "a questão é dura mesmo"; 22% contra 71% é "preciso dar essa aula". Separados
+    por três colunas, a comparação vira trabalho de quem lê.
+  */
+  ...(comDificuldadeGlobal
+    ? [
+        {
+          id: "acertoGeral",
+          header: "Acerto geral",
+          width: "8.5rem",
+          align: "right" as const,
+          /*
+            ⚠️ **A base vem no texto, não em tooltip.** Duas colunas de
+            percentual lado a lado com números diferentes precisam se explicar
+            sozinhas — "24% de 1.847" contra "24% de 34" pedem confianças
+            opostas, e esconder a base num hover joga essa decisão para quem
+            nem sabe que há o que conferir.
+          */
+          cell: (q: QuestaoDoRelatorio) =>
+            textoDaDificuldadeGlobal(q) ?? "—",
+          /*
+            ⚠️ Pelo percentual, e `null` para quem não tem base — o `sortRows`
+            manda nulo para o fim nos dois sentidos, que é onde questão sem base
+            deve ficar em qualquer ordenação.
+          */
+          sortValue: (q: QuestaoDoRelatorio) => acertoGlobal(q),
+        },
+      ]
+    : []),
   {
     id: "distribuicao",
     header: "Distribuição",
@@ -285,9 +332,20 @@ export function TabelaDeQuestoes({
     precisa da mediana do simulado, que é prop. Memoizada porque o `sortRows`
     recebe o array e a tela re-renderiza a cada clique de ordenação.
   */
+  /*
+    ⚠️ **O gate da coluna olha a lista INTEIRA, não a página** (card 16). Uma
+    coluna que aparece e some ao paginar faz a pessoa desconfiar da tela — mesmo
+    motivo pelo qual as colunas de matéria saem do resumo e não das linhas
+    (card 07).
+  */
+  const comDificuldadeGlobal = useMemo(
+    () => temDificuldadeGlobal(questoes),
+    [questoes],
+  );
+
   const colunas = useMemo(
-    () => colunasDeQuestoes(medianaSemLeitura),
-    [medianaSemLeitura],
+    () => colunasDeQuestoes(medianaSemLeitura, comDificuldadeGlobal),
+    [medianaSemLeitura, comDificuldadeGlobal],
   );
 
   /*

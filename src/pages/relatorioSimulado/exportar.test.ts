@@ -240,9 +240,15 @@ describe("planilhaDeQuestoes", () => {
       "Erro (%)",
       "Discriminação",
       "Sinais",
+      "Acerto geral (%)",
+      "Base geral",
     ]);
     expect(p.linhas[0]).toEqual([
       3, 20, "A", 12, 6, 2, 60, 20, 10, 0, 0, 60, 30, 0.42, "Distrator",
+      // ⚠️ Card 16: o fixture não tem `acertosGeral`/`baseGeral` — é o caso da
+      // api anterior ao card. Percentual vazio, base vazia; nenhum zero, que
+      // afirmaria "ninguém no país acertou".
+      null, null,
     ]);
   });
 
@@ -411,5 +417,61 @@ describe("planilhaDeEstudantes — coluna Não lidas (card 13)", () => {
     expect(p.cabecalho.indexOf("Não lidas")).toBeLessThan(
       p.cabecalho.indexOf("Aproveitamento (%)"),
     );
+  });
+});
+
+describe("planilhaDeQuestoes — dificuldade global (card 16)", () => {
+  const indices = (p: ReturnType<typeof planilhaDeQuestoes>) => ({
+    pct: p.cabecalho.indexOf("Acerto geral (%)"),
+    base: p.cabecalho.indexOf("Base geral"),
+  });
+
+  it("leva percentual e base quando há base suficiente", () => {
+    const p = planilhaDeQuestoes([
+      questao({ acertosGeral: 443, baseGeral: 1847 }),
+    ]);
+    const i = indices(p);
+
+    expect(p.linhas[0][i.pct]).toBe(24);
+    expect(p.linhas[0][i.base]).toBe(1847);
+  });
+
+  it("⚠️ abaixo do piso, a BASE sai e o percentual NÃO", () => {
+    /*
+      A planilha leva o denominador — sem ele não há como refazer conta nenhuma
+      —, mas não escreve um percentual que a tela recusa mostrar: seria a
+      planilha virando a fonte "oficial" de um número que a interface considera
+      não confiável, que é o que o card 13 evitou do outro lado.
+    */
+    const p = planilhaDeQuestoes([questao({ acertosGeral: 3, baseGeral: 12 })]);
+    const i = indices(p);
+
+    expect(p.linhas[0][i.pct]).toBeNull();
+    expect(p.linhas[0][i.base]).toBe(12);
+  });
+
+  it("api sem os campos deixa as duas vazias", () => {
+    const p = planilhaDeQuestoes([questao()]);
+    const i = indices(p);
+
+    expect(p.linhas[0][i.pct]).toBeNull();
+    expect(p.linhas[0][i.base]).toBeNull();
+  });
+
+  it("⚠️ as colunas existem mesmo sem nenhuma questão com base", () => {
+    // Ao contrário da TELA, onde a coluna some: numa planilha a coluna ausente
+    // muda o formato do arquivo entre duas exportações da mesma tela.
+    const p = planilhaDeQuestoes([questao()]);
+
+    expect(p.cabecalho).toContain("Acerto geral (%)");
+    expect(p.cabecalho).toContain("Base geral");
+  });
+
+  it("a linha tem o mesmo tamanho do cabeçalho", () => {
+    const p = planilhaDeQuestoes([
+      questao({ acertosGeral: 443, baseGeral: 1847 }),
+    ]);
+
+    expect(p.linhas[0]).toHaveLength(p.cabecalho.length);
   });
 });

@@ -711,3 +711,78 @@ describe("TabelaDeQuestoes — preview da questão (card 11)", () => {
     expect(screen.queryByTestId("preview-da-questao")).toBeNull();
   });
 });
+
+describe("TabelaDeQuestoes — dificuldade global (card 16)", () => {
+  const comGlobal = (over: Partial<QuestaoDoRelatorio> = {}) =>
+    questao({ acertosGeral: 443, baseGeral: 1847, ...over });
+
+  it("⚠️ a coluna fica ao LADO do % de acerto, não no fim", () => {
+    /*
+      Os dois números só significam alguma coisa juntos: 22% da turma contra 24%
+      da base é "a questão é dura mesmo"; 22% contra 71% é "preciso dar essa
+      aula". Separados por três colunas, a comparação vira trabalho de quem lê.
+    */
+    render(<TabelaDeQuestoes questoes={[comGlobal()]} estado="idle" />);
+
+    const cabecalhos = screen
+      .getAllByRole("columnheader")
+      .map((th) => th.textContent);
+
+    expect(cabecalhos.indexOf("Acerto geral")).toBe(
+      cabecalhos.indexOf("% de acerto") + 1,
+    );
+  });
+
+  it("mostra o percentual COM a base ao lado", () => {
+    const { container } = render(
+      <TabelaDeQuestoes questoes={[comGlobal()]} estado="idle" />,
+    );
+
+    expect(celula(container, "acertoGeral")).toHaveTextContent("24% de 1.847");
+  });
+
+  it("⚠️ sem nenhuma questão com base, a coluna NÃO existe", () => {
+    // Uma coluna de travessões custa 136px numa tabela cuja folga é medida a
+    // cada card, e ainda sugere que o dado deveria estar ali.
+    render(<TabelaDeQuestoes questoes={[questao()]} estado="idle" />);
+
+    expect(
+      screen.queryByRole("columnheader", { name: "Acerto geral" }),
+    ).toBeNull();
+  });
+
+  it("⚠️ uma questão com base faz a coluna existir para TODAS", () => {
+    // O gate olha a lista inteira: uma coluna que aparece e some ao paginar faz
+    // a pessoa desconfiar da tela.
+    const { container } = render(
+      <TabelaDeQuestoes
+        questoes={[questao({ questaoId: "sem" }), comGlobal({ questaoId: "com" })]}
+        estado="idle"
+      />,
+    );
+
+    const celulas = container.querySelectorAll('[data-column-id="acertoGeral"]');
+    expect(celulas).toHaveLength(2);
+    expect(celulas[0]).toHaveTextContent("—");
+  });
+
+  it("ordena pelo percentual global, com quem não tem base no fim", () => {
+    const { container } = render(
+      <TabelaDeQuestoes
+        questoes={[
+          comGlobal({ questaoId: "meio", numero: 2, acertosGeral: 900 }),
+          questao({ questaoId: "sem", numero: 3 }),
+          comGlobal({ questaoId: "baixo", numero: 1, acertosGeral: 100 }),
+        ]}
+        estado="idle"
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /acerto geral/i }));
+
+    const linhas = [...container.querySelectorAll("[data-row-key]")].map((el) =>
+      el.getAttribute("data-row-key"),
+    );
+    expect(linhas).toEqual(["baixo", "meio", "sem"]);
+  });
+});
