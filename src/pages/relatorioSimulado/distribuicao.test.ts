@@ -162,6 +162,38 @@ describe("faixasDoHistograma", () => {
     expect(faixasDoHistograma(oito, 80)).toHaveLength(FAIXAS_DO_HISTOGRAMA);
   });
 
+  it("⚠️ simulado MENOR que 8 questões não gera faixa impossível", () => {
+    /*
+      O defeito, achado ao semear homol com o simulado real de **5 questões**:
+      `5/8 = 0,625` produzia faixas com `de > ate` — as de índice 1, 4 e 6
+      nasciam `1..0`, `3..2` e `4..3`, impossíveis de casar. O histograma
+      desenhava três barras sempre vazias entre as cheias, e ninguém saberia
+      que eram artefato e não dado.
+
+      Não aparecia em 45 nem em 90 questões, que eram os únicos tamanhos nos
+      testes.
+    */
+    const f = faixasDoHistograma(oito, 5);
+
+    expect(f).toHaveLength(5);
+    for (const faixa of f) expect(faixa.ate).toBeGreaterThanOrEqual(faixa.de);
+    // cada faixa é exatamente uma nota possível
+    expect(f.map((x) => `${x.de}-${x.ate}`)).toEqual([
+      "0-0",
+      "1-1",
+      "2-2",
+      "3-3",
+      "4-5",
+    ]);
+  });
+
+  it("⚠️ com simulado pequeno a soma continua fechando", () => {
+    const notas = comAcertos([0, 1, 1, 2, 3, 3, 4, 5, 5]);
+    const f = faixasDoHistograma(notas, 5);
+
+    expect(f.reduce((s, x) => s + x.quantos, 0)).toBe(notas.length);
+  });
+
   it("⚠️ total 0 não desenha — não há eixo", () => {
     // ms anterior ao card 08. Dividir por zero daria faixas `NaN..NaN`.
     expect(faixasDoHistograma(oito, 0)).toEqual([]);

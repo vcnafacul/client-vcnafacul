@@ -23,7 +23,12 @@ export const MINIMO_PARA_DISTRIBUICAO = 5;
  */
 export const MINIMO_PARA_HISTOGRAMA = 8;
 
-/** Quantas faixas o histograma tem. */
+/**
+ * Quantas faixas o histograma tem **no máximo**.
+ *
+ * ⚠️ É teto, não quantidade fixa: com menos questões que isso, cada faixa vira
+ * uma nota possível — ver `faixasDoHistograma`.
+ */
 export const FAIXAS_DO_HISTOGRAMA = 8;
 
 export interface Distribuicao {
@@ -140,9 +145,20 @@ export function faixasDoHistograma(
   if (acertos.length < MINIMO_PARA_HISTOGRAMA) return [];
   if (totalDeQuestoes <= 0) return [];
 
-  const tamanho = totalDeQuestoes / FAIXAS_DO_HISTOGRAMA;
+  /*
+    ⚠️ **Nunca mais faixas do que questões.** Um simulado de 5 questões em 8
+    faixas produzia faixas com `de > ate` — impossíveis, que nunca casavam com
+    ninguém e desenhavam barras sempre vazias entre as cheias. Achado ao semear
+    homol com um simulado real de 5 questões: o defeito não aparece em 45 ou 90,
+    que eram os únicos tamanhos nos testes.
 
-  return Array.from({ length: FAIXAS_DO_HISTOGRAMA }, (_, i) => {
+    Com `totalDeQuestoes < 8` cada faixa vira exatamente uma nota possível, que
+    é o histograma mais informativo que existe para esse caso.
+  */
+  const quantas = Math.min(FAIXAS_DO_HISTOGRAMA, totalDeQuestoes);
+  const tamanho = totalDeQuestoes / quantas;
+
+  return Array.from({ length: quantas }, (_, i) => {
     const de = Math.round(i * tamanho);
     /*
       ⚠️ `- 1` porque os limites são INCLUSIVOS nos dois lados: sem isso a
@@ -150,9 +166,7 @@ export function faixasDoHistograma(
       contado duas vezes. A última faixa fecha no total exato.
     */
     const ate =
-      i === FAIXAS_DO_HISTOGRAMA - 1
-        ? totalDeQuestoes
-        : Math.round((i + 1) * tamanho) - 1;
+      i === quantas - 1 ? totalDeQuestoes : Math.round((i + 1) * tamanho) - 1;
 
     /*
       ⚠️ **A última faixa não tem teto**, e isso é proteção, não estética: se um
@@ -165,7 +179,7 @@ export function faixasDoHistograma(
       desaparecido. Foi um fixture meu com 85 acertos em 80 questões que expôs
       isso — o teste da soma falhou, e o caso era real o bastante para tratar.
     */
-    const ultima = i === FAIXAS_DO_HISTOGRAMA - 1;
+    const ultima = i === quantas - 1;
 
     return {
       de,
