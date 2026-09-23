@@ -119,6 +119,7 @@ export function RelatorioDoSimuladoConteudo({
   cabecalho,
   comPadding = true,
   comTitulo = false,
+  linkDoDesempenho,
 }: {
   simuladoId: string;
   /** Ausente = o cursinho inteiro. */
@@ -135,6 +136,18 @@ export function RelatorioDoSimuladoConteudo({
    * turma é a tela inteira — repetir os dois seria ruído.
    */
   comTitulo?: boolean;
+  /**
+   * Para onde vai o "Ver evolução da turma" (card 17).
+   *
+   * ⚠️ **Quem monta decide o modo**, e os dois existem: a rota própria navega
+   * (`href`), a aba da turma só troca de aba (`aoClicar`). Este componente não
+   * sabe em qual das duas está, e inventar um `useNavigate` aqui obrigaria a
+   * aba a recarregar a página para chegar onde já está.
+   *
+   * ⚠️ Ausente no relatório do cursinho inteiro: sem turma não há evolução de
+   * turma para ver.
+   */
+  linkDoDesempenho?: { href?: string; aoClicar?: () => void };
 }) {
   const [relatorio, setRelatorio] = useState<RelatorioDoSimulado | null>(null);
   const [estado, setEstado] = useState<Estado>("loading");
@@ -429,6 +442,7 @@ export function RelatorioDoSimuladoConteudo({
           <IdentificacaoDoRelatorio
             resumo={relatorio.resumo}
             comTitulo={comTitulo}
+            linkDoDesempenho={linkDoDesempenho}
           />
         </div>
       )}
