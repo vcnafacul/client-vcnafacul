@@ -3,6 +3,7 @@ import type {
   MediaPorMateria,
   QuestaoDoRelatorio,
 } from "@/dtos/relatorioSimulado/relatorioSimulado";
+import { acertoGlobal } from "./dificuldadeGlobal";
 import { rotulosDasFlags } from "./flagsDaQuestao";
 import { notaNaMateria } from "./materiasDoRelatorio";
 import { naoLidas } from "./resultadoDoEstudante";
@@ -194,6 +195,16 @@ export function planilhaDeQuestoes(
       e some com a informação de quantos sinais a questão acumula.
     */
     "Sinais",
+    /*
+      ⚠️ **Duas colunas, e o percentual respeita o MESMO piso da tela** (card
+      16). A planilha leva a base sempre — é o denominador, e sem ele não há
+      como refazer conta nenhuma —, mas não escreve um percentual que a tela
+      recusa mostrar: seria a planilha virando a fonte "oficial" de um número
+      que a interface considera não confiável, que é exatamente o que o card 13
+      evitou do outro lado.
+    */
+    "Acerto geral (%)",
+    "Base geral",
   ];
 
   const linhas = questoes.map((q) => [
@@ -219,6 +230,11 @@ export function planilhaDeQuestoes(
     // ⚠️ String vazia, e não `null`: aqui a ausência de sinal É a informação
     // ("esta questão está ok"), diferente de uma medida que não existe.
     rotulosDasFlags(q, medianaSemLeitura),
+    // ⚠️ `null` abaixo do piso — célula vazia, não um número frágil.
+    acertoGlobal(q),
+    // ⚠️ A base sai sempre, inclusive `0`: é o denominador, e `0` é a
+    // informação de que a questão nunca foi respondida fora deste recorte.
+    q.baseGeral ?? null,
   ]);
 
   return { cabecalho, linhas };
