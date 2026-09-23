@@ -7,6 +7,7 @@ import {
 import { duplicarQuestao } from "@/services/question/duplicarQuestao";
 import type { TipoOrigem } from "@/dtos/question/questionDTO";
 import { useCallback, useEffect, useState } from "react";
+import { ExcluirQuestao } from "./ExcluirQuestao";
 import {
   TEXTO_DUPLICAR,
   textoDaOrigem,
@@ -34,6 +35,7 @@ export function LinhagemDaQuestao({
   tipoOrigem,
   aoDuplicar,
   abrirQuestao,
+  aoExcluir,
 }: {
   questaoId: string;
   /** ⚠️ Ausente na esmagadora maioria — só cópias têm. */
@@ -44,6 +46,8 @@ export function LinhagemDaQuestao({
   aoDuplicar?: (novaId: string) => void;
   /** Abre outra questão no mesmo modal — para "ver original" e "ver cópias". */
   abrirQuestao?: (id: string) => void;
+  /** Chamado depois de excluir a questão (card 33). */
+  aoExcluir?: () => void;
 }) {
   const {
     data: { token, permissao },
@@ -168,6 +172,17 @@ export function LinhagemDaQuestao({
           {rotulo}
         </button>
       )}
+
+      {/*
+        ⚠️ **`key` pelo número de filhas** (card 33): duplicar torna esta
+        questão origem de alguém, e origem não se exclui. Remontar faz o
+        botão perguntar de novo ao servidor em vez de continuar visível.
+      */}
+      <ExcluirQuestao
+        key={copias.length}
+        questaoId={questaoId}
+        aoExcluir={aoExcluir}
+      />
 
       {podeDuplicar && (
         <button

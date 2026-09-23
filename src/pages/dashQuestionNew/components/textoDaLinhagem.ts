@@ -45,3 +45,12 @@ export function textoDaOrigem(
 export function textoDaSucessora(idCurto: string): string {
   return `Substituída por ${idCurto}`;
 }
+
+export const TEXTO_EXCLUIR = "Excluir";
+export const TITULO_CONFIRMAR_EXCLUSAO = "Excluir esta questão?";
+/**
+ * ⚠️ **Diz a consequência que não se vê**: se a questão é cópia ou versão, ela
+ * deixa de ser — e isso não volta nem restaurando (card 33).
+ */
+export const TEXTO_CONFIRMAR_EXCLUSAO =
+  "A questão sai do banco de questões. Se ela for cópia ou versão de outra, o vínculo é desfeito e não volta, mesmo que ela seja restaurada.";

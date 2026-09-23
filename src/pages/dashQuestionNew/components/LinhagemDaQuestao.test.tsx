@@ -12,6 +12,12 @@ import {
 const listarCopias = vi.hoisted(() => vi.fn());
 vi.mock("@/services/question/listarCopias", () => ({ listarCopias }));
 
+// ⚠️ Card 33: o rodapé agora pergunta se pode excluir.
+vi.mock("@/services/question/excluirQuestao", () => ({
+  podeExcluirQuestao: vi.fn().mockResolvedValue({ podeExcluir: false, motivos: [] }),
+  excluirQuestao: vi.fn(),
+}));
+
 const duplicarQuestao = vi.hoisted(() => vi.fn());
 vi.mock("@/services/question/duplicarQuestao", () => ({ duplicarQuestao }));
 

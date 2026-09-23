@@ -30,6 +30,8 @@ interface ModalQuestionDetailsRefactoredProps {
    * visível, que é o mínimo.
    */
   abrirQuestao?: (id: string) => void;
+  /** Chamado depois de excluir a questão (card 33). */
+  aoExcluir?: () => void;
 }
 
 export function ModalQuestionDetailsRefactored({
@@ -38,6 +40,7 @@ export function ModalQuestionDetailsRefactored({
   questionId,
   infos,
   abrirQuestao,
+  aoExcluir,
 }: ModalQuestionDetailsRefactoredProps) {
   const {
     data: { token, permissao },
@@ -159,6 +162,7 @@ export function ModalQuestionDetailsRefactored({
       token={token}
       refreshQuestion={refreshQuestion}
       abrirQuestao={abrirQuestao}
+      aoExcluir={aoExcluir}
     />
   );
 }
@@ -177,6 +181,7 @@ function ModalContent({
   token,
   refreshQuestion,
   abrirQuestao,
+  aoExcluir,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -187,6 +192,7 @@ function ModalContent({
   refreshQuestion: () => void;
   /** Abre outra questão no mesmo modal — "ver original" e "ver cópias". */
   abrirQuestao?: (id: string) => void;
+  aoExcluir?: () => void;
 }) {
   const pendingStoreRef = useRef(new PendingImageStore());
   const conteudoForm = useConteudoForm({ question, pendingStore: pendingStoreRef.current });
@@ -241,6 +247,7 @@ function ModalContent({
                 origem={question.origem}
                 tipoOrigem={question.tipoOrigem}
                 abrirQuestao={abrirQuestao}
+                aoExcluir={aoExcluir}
               />
             </div>
           ),

@@ -344,6 +344,14 @@ function DashQuestionNew() {
           e os filtros da listagem atrás.
         */
         abrirQuestao={setSelectedQuestionId}
+        /*
+          ⚠️ Card 33: a questão excluída some da lista — fechar e recarregar a
+          página atual, sem perder os filtros.
+        */
+        aoExcluir={() => {
+          handleCloseModal();
+          getQuestions(currentPage);
+        }}
       />
 
       {/* Modal de Criação */}
