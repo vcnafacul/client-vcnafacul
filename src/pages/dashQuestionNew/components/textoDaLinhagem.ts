@@ -7,6 +7,8 @@
  * componente, e este repo não tolera warning no lint.
  */
 
+import type { TipoOrigem } from "@/dtos/question/questionDTO";
+
 export const TEXTO_DUPLICAR = "Duplicar";
 export const TEXTO_VER_ORIGINAL = "Ver original";
 
@@ -22,4 +24,24 @@ export const TITULO_DUPLICAR =
 export function textoDeCopias(quantas: number): string | null {
   if (quantas <= 0) return null;
   return quantas === 1 ? "1 cópia" : `${quantas} cópias`;
+}
+
+/**
+ * O badge de onde a questão veio (card 32).
+ *
+ * ⚠️ **Uma versão NÃO é "cópia de" nada**: ela substituiu a anterior em todas
+ * as provas. Dizer "Cópia de X" numa sucessora era o defeito do card 32.
+ *
+ * ⚠️ Ausente = cópia, como no ms.
+ */
+export function textoDaOrigem(
+  tipo: TipoOrigem | null | undefined,
+  idCurto: string,
+): string {
+  return tipo === "versao" ? `Substituiu a ${idCurto}` : `Cópia de ${idCurto}`;
+}
+
+/** Na questão que foi versionada: quem ficou no lugar dela nas provas. */
+export function textoDaSucessora(idCurto: string): string {
+  return `Substituída por ${idCurto}`;
 }

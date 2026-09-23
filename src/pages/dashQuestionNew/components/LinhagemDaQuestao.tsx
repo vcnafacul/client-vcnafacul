@@ -5,9 +5,12 @@ import {
   type CopiaDaQuestao,
 } from "@/services/question/listarCopias";
 import { duplicarQuestao } from "@/services/question/duplicarQuestao";
+import type { TipoOrigem } from "@/dtos/question/questionDTO";
 import { useCallback, useEffect, useState } from "react";
 import {
   TEXTO_DUPLICAR,
+  textoDaOrigem,
+  textoDaSucessora,
   textoDeCopias,
   TEXTO_VER_ORIGINAL,
   TITULO_DUPLICAR,
@@ -28,12 +31,15 @@ import {
 export function LinhagemDaQuestao({
   questaoId,
   origem,
+  tipoOrigem,
   aoDuplicar,
   abrirQuestao,
 }: {
   questaoId: string;
   /** ⚠️ Ausente na esmagadora maioria — só cópias têm. */
   origem?: string | null;
+  /** Cópia ou versão da `origem` (card 32). Ausente = cópia. */
+  tipoOrigem?: TipoOrigem | null;
   /** Chamado depois de duplicar, com o id da nova. */
   aoDuplicar?: (novaId: string) => void;
   /** Abre outra questão no mesmo modal — para "ver original" e "ver cópias". */
@@ -84,7 +90,16 @@ export function LinhagemDaQuestao({
     }
   };
 
-  const rotulo = textoDeCopias(copias.length);
+  /*
+    ⚠️ **Cópias e versões chegam na mesma lista, e aqui se separam** (card 32).
+    O contador e a lista são só de cópias; a sucessora — no máximo uma, porque a
+    original congela ao versionar — tem linha própria. Misturadas, "3 cópias"
+    podia ser 1 cópia e 2 versões.
+  */
+  const soCopias = copias.filter((c) => c.tipo !== "versao");
+  const sucessora = copias.find((c) => c.tipo === "versao");
+
+  const rotulo = textoDeCopias(soCopias.length);
 
   return (
     /*
@@ -111,7 +126,7 @@ export function LinhagemDaQuestao({
             origem para mostrar o texto dobraria a carga do modal por uma
             informação que o link já alcança em um clique.
           */}
-          Cópia de {origem.slice(-6)}
+          {textoDaOrigem(tipoOrigem, origem.slice(-6))}
           {abrirQuestao && (
             <button
               type="button"
@@ -120,6 +135,22 @@ export function LinhagemDaQuestao({
               className="underline underline-offset-2"
             >
               {TEXTO_VER_ORIGINAL}
+            </button>
+          )}
+        </span>
+      )}
+
+      {sucessora && (
+        <span data-sucessora className="flex items-center gap-1">
+          {textoDaSucessora(sucessora.id.slice(-6))}
+          {abrirQuestao && (
+            <button
+              type="button"
+              data-ver-sucessora
+              onClick={() => abrirQuestao(sucessora.id)}
+              className="underline underline-offset-2"
+            >
+              ver
             </button>
           )}
         </span>
@@ -151,9 +182,9 @@ export function LinhagemDaQuestao({
         </button>
       )}
 
-      {abertas && copias.length > 0 && (
+      {abertas && soCopias.length > 0 && (
         <ul data-lista-copias className="w-full flex flex-col gap-0.5 pl-2">
-          {copias.map((c) => (
+          {soCopias.map((c) => (
             <li key={c.id} className="flex items-center gap-2">
               <span>{c.id.slice(-6)}</span>
               <span className="text-gray-400">{c.status}</span>

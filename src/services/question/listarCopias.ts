@@ -1,10 +1,16 @@
 import fetchWrapper from "@/utils/fetchWrapper";
 import { questoes } from "../urls";
+import type { TipoOrigem } from "@/dtos/question/questionDTO";
 
 export interface CopiaDaQuestao {
   id: string;
   status: string;
   origem: string;
+  /**
+   * ⚠️ **Cópia e versão vêm na MESMA lista** (card 32) — é o tipo que separa.
+   * Sem ele, "3 cópias" podia ser 1 cópia e 2 versões.
+   */
+  tipo: TipoOrigem;
 }
 
 /**

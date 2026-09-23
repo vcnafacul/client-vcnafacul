@@ -239,6 +239,7 @@ function ModalContent({
               <LinhagemDaQuestao
                 questaoId={question._id}
                 origem={question.origem}
+                tipoOrigem={question.tipoOrigem}
                 abrirQuestao={abrirQuestao}
               />
             </div>

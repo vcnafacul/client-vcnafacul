@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { LinhagemDaQuestao } from "./LinhagemDaQuestao";
 import {
   TEXTO_DUPLICAR,
+  textoDaOrigem,
+  textoDaSucessora,
   textoDeCopias,
   TEXTO_VER_ORIGINAL,
 } from "./textoDaLinhagem";
@@ -222,5 +224,75 @@ describe("LinhagemDaQuestao — posição no rodapé (revisão do card 25)", () 
     expect(container.querySelector("[data-badge-copia]")?.className).toContain(
       "mr-auto",
     );
+  });
+});
+
+describe("LinhagemDaQuestao — cópia × versão (card 32)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    estado.permissao = { criarQuestao: true };
+    listarCopias.mockResolvedValue([]);
+    duplicarQuestao.mockResolvedValue({ _id: "q2" });
+  });
+
+  it("⚠️ uma VERSÃO não se diz cópia — ela substituiu a anterior", async () => {
+    /*
+      Antes do card 32 a sucessora aparecia como "Cópia de X", e ela não é cópia
+      de nada: é a questão que substituiu a X em todas as provas.
+    */
+    const { container } = montar({ origem: "665f0c1a2b3c4d5e6f00abc2", tipoOrigem: "versao" });
+
+    await waitFor(() => expect(listarCopias).toHaveBeenCalled());
+    const badge = container.querySelector("[data-badge-copia]");
+    expect(badge?.textContent).toContain(textoDaOrigem("versao", "00abc2"));
+    expect(badge?.textContent).not.toContain("Cópia");
+  });
+
+  it("uma cópia continua dizendo \"Cópia de\"", async () => {
+    const { container } = montar({ origem: "665f0c1a2b3c4d5e6f00abc2", tipoOrigem: "copia" });
+
+    await waitFor(() => expect(listarCopias).toHaveBeenCalled());
+    expect(container.querySelector("[data-badge-copia]")?.textContent).toContain(
+      "Cópia de 00abc2",
+    );
+  });
+
+  it("⚠️ origem SEM tipo (anterior ao card 32) é cópia", async () => {
+    // Mesma regra do ms: cópia é o tipo que não afirma histórico anterior.
+    const { container } = montar({ origem: "665f0c1a2b3c4d5e6f00abc2" });
+
+    await waitFor(() => expect(listarCopias).toHaveBeenCalled());
+    expect(container.querySelector("[data-badge-copia]")?.textContent).toContain(
+      "Cópia de",
+    );
+  });
+
+  it("⚠️ o contador conta só CÓPIAS — \"3 cópias\" não pode ser 1 cópia e 2 versões", async () => {
+    listarCopias.mockResolvedValue([
+      { id: "665f0c1a2b3c4d5e6f00aaa1", status: "Pending", origem: "q1", tipo: "copia" },
+      { id: "665f0c1a2b3c4d5e6f00aaa2", status: "Pending", origem: "q1", tipo: "versao" },
+    ]);
+    const { container } = montar();
+
+    fireEvent.click(await screen.findByText(/1 cópia/));
+
+    const itens = container.querySelectorAll("[data-lista-copias] li");
+    expect(itens).toHaveLength(1);
+    expect(itens[0].textContent).toContain("00aaa1");
+  });
+
+  it("⚠️ a sucessora aparece como SUCESSORA, com link", async () => {
+    const abrirQuestao = vi.fn();
+    listarCopias.mockResolvedValue([
+      { id: "665f0c1a2b3c4d5e6f00aaa2", status: "Pending", origem: "q1", tipo: "versao" },
+    ]);
+    const { container } = montar({ abrirQuestao });
+
+    await screen.findByText(textoDaSucessora("00aaa2"), { exact: false });
+    // Sem cópias: não há contador, mesmo havendo filha.
+    expect(container.querySelector("[data-ver-copias]")).toBeNull();
+
+    fireEvent.click(container.querySelector("[data-ver-sucessora]")!);
+    expect(abrirQuestao).toHaveBeenCalledWith("665f0c1a2b3c4d5e6f00aaa2");
   });
 });

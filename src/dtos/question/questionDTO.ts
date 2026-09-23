@@ -58,7 +58,17 @@ export interface QuestionBase {
    * lastro seria perder a única pista de onde ela veio.
    */
   origem?: string | null;
+  /**
+   * O que esta questão é em relação à `origem` (card 32).
+   *
+   * ⚠️ `copia` é irmã (as provas não mudam); `versao` é a sucessora, que
+   * substituiu a original nas provas. **Ausente com `origem` = `copia`** — dado
+   * anterior ao card 32, e cópia é o que não afirma histórico anterior.
+   */
+  tipoOrigem?: TipoOrigem | null;
 }
+
+export type TipoOrigem = "copia" | "versao";
 
 export interface QuestionDto extends QuestionBase {
   prova?: Prova;
