@@ -300,3 +300,50 @@ export interface DetalheDoEstudante {
   falha?: FalhaHistorico;
   respostas: RespostaDoEstudante[];
 }
+
+/**
+ * Um ponto da série de aplicações de um estudante (card 17).
+ *
+ * ⚠️ **A média do recorte vem JUNTO, e não é acessório.** Dois simulados de
+ * dificuldade diferente não se comparam por percentual bruto: cair de 62% para
+ * 55% pode ser MELHORA, se o segundo foi muito mais difícil. Com as duas linhas
+ * no mesmo gráfico isso se lê sem normalizar nada — e a alternativa (z-score
+ * contra a turma) é mais correta e ilegível para quem vai usar.
+ *
+ * ⚠️ **A linha do aluno sozinha é o gráfico que mais convida à conclusão
+ * errada**, e é o padrão em quase toda plataforma de simulado.
+ */
+export interface PontoDaSerie {
+  simuladoId: string;
+  /** ⚠️ `null` quando o simulado foi apagado depois do vínculo. */
+  nome: string | null;
+  /** Fração de 0 a 1 — a tela é quem formata. */
+  aproveitamento: number;
+  /** ⚠️ Ausente em histórico anterior ao card 08. Nunca derive do percentual. */
+  acertos?: number;
+  /**
+   * Quando o cartão entrou no recorte, em ISO.
+   *
+   * ⚠️ **NÃO é "data da prova"** — ela não existe no modelo. O rótulo na tela
+   * tem de dizer o que é.
+   */
+  em: string;
+  /**
+   * A média do mesmo recorte naquele simulado.
+   *
+   * ⚠️ `null` quando ninguém mais tem leitura ali — nunca zero, que desenharia
+   * a turma no chão e o aluno voando.
+   */
+  mediaDoRecorte: number | null;
+  /**
+   * Quantos entraram na média daquele ponto.
+   *
+   * ⚠️ Sem ela a linha da turma mente em silêncio: a média de 27 alunos e a de
+   * 2 desenham o mesmo traço.
+   */
+  baseDoRecorte: number;
+}
+
+export interface SerieDoEstudante {
+  pontos: PontoDaSerie[];
+}
