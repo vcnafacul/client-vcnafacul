@@ -20,7 +20,8 @@ import {
  * conveniência, não garantia. Entre a consulta e o clique, alguém pode pôr a
  * questão numa prova; por isso a recusa do `DELETE` é tratada e mostrada.
  *
- * ⚠️ **`validarQuestao`**, a mesma guarda da api. Sem ela, nem pergunta.
+ * ⚠️ **`excluirQuestao`**, permissão própria e a mesma guarda da api. Sem ela,
+ * nem pergunta.
  */
 export function ExcluirQuestao({
   questaoId,
@@ -33,7 +34,7 @@ export function ExcluirQuestao({
   const {
     data: { token, permissao },
   } = useAuthStore();
-  const podeValidar = !!permissao[Roles.validarQuestao];
+  const temPermissao = !!permissao[Roles.excluirQuestao];
 
   const [pode, setPode] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
@@ -42,7 +43,7 @@ export function ExcluirQuestao({
   const [erro, setErro] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!podeValidar) return;
+    if (!temPermissao) return;
     let vivo = true;
     /*
       ⚠️ **Falha em silêncio**, como o resto da linhagem: sem resposta, o botão
@@ -54,9 +55,9 @@ export function ExcluirQuestao({
     return () => {
       vivo = false;
     };
-  }, [token, questaoId, podeValidar]);
+  }, [token, questaoId, temPermissao]);
 
-  if (!podeValidar || !pode) return null;
+  if (!temPermissao || !pode) return null;
 
   const fechar = () => {
     setConfirmando(false);

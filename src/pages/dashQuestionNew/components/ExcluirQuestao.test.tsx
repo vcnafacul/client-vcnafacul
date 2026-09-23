@@ -11,7 +11,7 @@ vi.mock("@/services/question/excluirQuestao", () => ({
 }));
 
 const estado = vi.hoisted(() => ({
-  permissao: { validarQuestao: true } as Record<string, boolean>,
+  permissao: { excluirQuestao: true } as Record<string, boolean>,
 }));
 vi.mock("@/store/auth", () => ({
   useAuthStore: () => ({ data: { token: "tok", permissao: estado.permissao } }),
@@ -29,7 +29,7 @@ const montar = (aoExcluir = vi.fn()) => ({
 describe("ExcluirQuestao (card 33)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    estado.permissao = { validarQuestao: true };
+    estado.permissao = { excluirQuestao: true };
     podeExcluirQuestao.mockResolvedValue({ podeExcluir: true, motivos: [] });
   });
 
@@ -46,8 +46,9 @@ describe("ExcluirQuestao (card 33)", () => {
     expect(container.querySelector("[data-excluir]")).toBeNull();
   });
 
-  it("⚠️ sem `validarQuestao`, nem pergunta — a mesma guarda da api", async () => {
-    estado.permissao = { criarQuestao: true };
+  it("⚠️ sem `excluirQuestao`, nem pergunta — a mesma guarda da api", async () => {
+    // ⚠️ Nem quem valida: excluir é permissão própria.
+    estado.permissao = { criarQuestao: true, validarQuestao: true };
     const { container } = montar();
 
     await Promise.resolve();

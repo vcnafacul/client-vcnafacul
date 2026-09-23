@@ -69,7 +69,7 @@ describe("AcoesDaQuestao — duplicar (card 25)", () => {
       Duplicar torna esta questão origem de alguém, e origem não se exclui —
       o botão não pode continuar visível com a resposta de antes (card 33).
     */
-    estado.permissao = { criarQuestao: true, validarQuestao: true };
+    estado.permissao = { criarQuestao: true, excluirQuestao: true };
     montar();
     await waitFor(() => expect(podeExcluirQuestao).toHaveBeenCalledTimes(1));
 

@@ -30,6 +30,7 @@ export enum Roles {
   visualizarProvasCursinho = "visualizarProvasCursinho",
   cadastrarProvasCursinho = "cadastrarProvasCursinho",
   gerenciarCategoriasCursinho = "gerenciarCategoriasCursinho",
+  excluirQuestao = "excluirQuestao",
 }
 
 export const RolesLabel = [
@@ -56,6 +57,11 @@ export const RolesLabel = [
   {
     value: Roles.validarQuestao,
     label: "Validar Questões",
+    isProjectPermission: true,
+  },
+  {
+    value: Roles.excluirQuestao,
+    label: "Excluir Questões",
     isProjectPermission: true,
   },
   {
