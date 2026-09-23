@@ -14,6 +14,16 @@ vi.mock("@/services/relatorioSimulado/buscarDetalheDoEstudante", () => ({
   buscarDetalheDoEstudante,
 }));
 
+/*
+  ⚠️ Card 17: o modal passou a buscar a série de aplicações do estudante, numa
+  chamada separada do detalhe. Padrão vazio — os testes que não falam de
+  evolução não devem desenhar gráfico nenhum.
+*/
+const buscarSerieDoEstudante = vi.hoisted(() => vi.fn());
+vi.mock("@/services/relatorioSimulado/buscarSerieDoEstudante", () => ({
+  buscarSerieDoEstudante,
+}));
+
 const reprocessarCartao = vi.hoisted(() => vi.fn());
 vi.mock("@/services/cartaoResposta/reprocessarCartao", () => ({
   reprocessarCartao,
@@ -54,6 +64,7 @@ describe("DetalheDoEstudante", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     reprocessarCartao.mockResolvedValue(undefined);
+    buscarSerieDoEstudante.mockResolvedValue({ pontos: [] });
     buscarDetalheDoEstudante.mockResolvedValue({
       status: "completed",
       respostas: [
@@ -737,5 +748,91 @@ describe("DetalheDoEstudante — navegação e filtro (card 20)", () => {
 
       expect(numeros).toEqual(["2", "3"]);
     });
+  });
+});
+
+describe("DetalheDoEstudante — série de aplicações (card 17)", () => {
+  const ponto = (aproveitamento: number, id: string) => ({
+    simuladoId: id,
+    nome: `Prova ${id}`,
+    aproveitamento,
+    em: "2026-03-10T00:00:00.000Z",
+    mediaDoRecorte: 0.5,
+    baseDoRecorte: 27,
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    reprocessarCartao.mockResolvedValue(undefined);
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "completed",
+      respostas: [resposta()],
+    });
+    buscarSerieDoEstudante.mockResolvedValue({
+      pontos: [ponto(0.4, "a"), ponto(0.6, "b")],
+    });
+  });
+
+  it("⚠️ a série é buscada à PARTE do detalhe", async () => {
+    /*
+      São duas perguntas diferentes — "o que ele marcou neste simulado" e "ele
+      melhorou ao longo das aplicações" —, e a primeira é a que trouxe a pessoa
+      ao modal. Juntá-las faria o detalhe esperar por uma consulta que varre
+      todas as aplicações do aluno.
+    */
+    montar({ turmaId: "t-9" });
+
+    await waitFor(() =>
+      expect(buscarSerieDoEstudante).toHaveBeenCalledWith("tok", "u1", "t-9"),
+    );
+  });
+
+  it("desenha a evolução quando há mais de uma aplicação", async () => {
+    const { container } = montar();
+
+    await waitFor(() =>
+      expect(container.querySelector("[data-evolucao]")).toBeTruthy(),
+    );
+  });
+
+  it("⚠️ a série falha em SILÊNCIO — não derruba o modal nem duplica o 'tentar de novo'", async () => {
+    /*
+      A série é acessória. Um segundo botão de recuperação ao lado do da tabela
+      faria a pessoa ter de escolher em qual clicar — o mesmo motivo pelo qual o
+      erro da tabela mora dentro dela, e não numa faixa própria.
+    */
+    buscarSerieDoEstudante.mockRejectedValue(new Error("caiu"));
+
+    const { container } = montar();
+
+    // o detalhe continua na tela
+    expect(await screen.findByText("Ana Silva")).toBeTruthy();
+    await waitFor(() =>
+      expect(container.querySelector("[data-evolucao-vazia]")).toBeTruthy(),
+    );
+  });
+
+  it("⚠️ a evolução aparece mesmo com o cartão DESTE simulado falho", async () => {
+    /*
+      O bloco do resumo some em `failed` — mas a série das OUTRAS aplicações
+      continua verdadeira e útil: o cartão de hoje falhou, a série de março a
+      agosto não mudou.
+    */
+    buscarDetalheDoEstudante.mockResolvedValue(FALHA_DE_FOTO);
+
+    const { container } = montar();
+
+    await waitFor(() =>
+      expect(container.querySelector("[data-evolucao]")).toBeTruthy(),
+    );
+  });
+
+  it("não desenha nada enquanto a série não chega", () => {
+    buscarSerieDoEstudante.mockReturnValue(new Promise(() => {}));
+
+    const { container } = montar();
+
+    expect(container.querySelector("[data-evolucao]")).toBeNull();
+    expect(container.querySelector("[data-evolucao-vazia]")).toBeNull();
   });
 });

@@ -20,6 +20,9 @@ import {
   type DificuldadeDaQuestao,
 } from "./dificuldadeDaQuestao";
 import { ResumoDoEstudante } from "./ResumoDoEstudante";
+import { EvolucaoDoEstudante } from "./EvolucaoDoEstudante";
+import { buscarSerieDoEstudante } from "@/services/relatorioSimulado/buscarSerieDoEstudante";
+import type { PontoDaSerie } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import {
   contagensDoDetalhe,
   filtrarRespostas,
@@ -195,6 +198,7 @@ export interface EstudanteDoDetalhe {
 export function DetalheDoEstudante({
   token,
   simuladoId,
+  turmaId,
   estudante,
   isOpen,
   onClose,
@@ -207,6 +211,15 @@ export function DetalheDoEstudante({
 }: {
   token: string;
   simuladoId: string;
+  /**
+   * O recorte, para a série (card 17).
+   *
+   * ⚠️ **Só a série usa** — o detalhe do estudante não precisa de turma, porque
+   * o `usuario` já identifica a pessoa. Aqui a turma decide contra QUEM o aluno
+   * é comparado: "melhorou em relação à turma" e "em relação ao cursinho" são
+   * perguntas diferentes.
+   */
+  turmaId?: string;
   estudante: EstudanteDoDetalhe;
   isOpen: boolean;
   onClose: () => void;
@@ -249,6 +262,13 @@ export function DetalheDoEstudante({
   const [detalhe, setDetalhe] = useState<Detalhe | null>(null);
   const [estado, setEstado] = useState<"idle" | "loading" | "error">("loading");
   const [filtro, setFiltro] = useState<FiltroDoDetalhe>(FILTRO_PADRAO);
+  /*
+    ⚠️ **`null` = ainda não chegou; `[]` = chegou e está vazia** (card 17), e a
+    distinção importa: a segunda desenha a mensagem de "nenhuma aplicação", a
+    primeira não desenha nada. Tratar as duas igual faria a mensagem piscar em
+    todo modal aberto.
+  */
+  const [serie, setSerie] = useState<PontoDaSerie[] | null>(null);
 
   const carregar = useCallback(() => {
     // ⚠️ Só com o modal aberto. Ele é renderizado pela tela do relatório junto
@@ -264,6 +284,32 @@ export function DetalheDoEstudante({
   }, [isOpen, token, simuladoId, estudante.usuario]);
 
   useEffect(carregar, [carregar]);
+
+  /*
+    ⚠️ **Busca separada, e não junto do detalhe** (card 17). São duas perguntas
+    diferentes — "o que ele marcou neste simulado" e "ele melhorou ao longo das
+    aplicações" — e a primeira é a que trouxe a pessoa ao modal. Juntá-las faria
+    o detalhe esperar por uma consulta que varre todas as aplicações do aluno.
+
+    ⚠️ **Falha em silêncio, de propósito:** a série é acessória. Um erro aqui
+    não pode derrubar o modal nem mostrar um segundo "tentar de novo" ao lado do
+    da tabela — a tela ficaria com dois botões de recuperação e a pessoa teria
+    de escolher em qual clicar.
+  */
+  useEffect(() => {
+    if (!isOpen) return;
+    let vivo = true;
+    buscarSerieDoEstudante(token, estudante.usuario, turmaId)
+      .then((r) => {
+        if (vivo) setSerie(r.pontos);
+      })
+      .catch(() => {
+        if (vivo) setSerie([]);
+      });
+    return () => {
+      vivo = false;
+    };
+  }, [isOpen, token, estudante.usuario, turmaId]);
 
   /*
     ⚠️ **`←`/`→` e nada mais.** O `Esc` já fecha pelo `ModalTemplate`, e atalho
@@ -447,6 +493,14 @@ export function DetalheDoEstudante({
               respostas={detalhe.respostas}
             />
           )}
+
+        {/*
+          ⚠️ **Fora do gate do resumo, e de propósito.** Aquele bloco some em
+          `failed`, em processamento e em status desconhecido — e é justamente
+          nesses casos que a evolução das OUTRAS aplicações continua verdadeira e
+          útil: o cartão de hoje falhou, mas a série de março a agosto não mudou.
+        */}
+        {serie !== null && <EvolucaoDoEstudante pontos={serie} />}
 
         {/*
           ⚠️ **Mesma condição da tabela**: chips de filtro sobre uma tabela que

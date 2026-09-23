@@ -697,6 +697,8 @@ export function RelatorioDoSimuladoConteudo({
             key={aberto.usuario}
             token={token}
             simuladoId={simuladoId}
+            /* ⚠️ Só a série (card 17) usa — ver o docblock da prop. */
+            turmaId={turmaId}
             estudante={{
               usuario: aberto.usuario,
               nome: aberto.nome,
