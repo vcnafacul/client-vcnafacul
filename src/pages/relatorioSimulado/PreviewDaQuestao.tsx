@@ -13,8 +13,32 @@ export const TEXTO_ERRO =
   "Não foi possível carregar o enunciado desta questão.";
 export const TEXTO_SEM_ALTERNATIVAS =
   "As alternativas desta questão não estão em texto — provavelmente fazem parte da imagem do enunciado.";
-export const TEXTO_PODE_TER_MUDADO =
-  "O enunciado e o gabarito mostrados aqui são os do banco de questões HOJE. A questão pode ter sido editada depois da aplicação.";
+/**
+ * ⚠️ **O aviso anterior errava nas DUAS metades, em direções opostas** (card 23).
+ *
+ * Ele dizia: *"O enunciado e o gabarito mostrados aqui são os do banco de
+ * questões HOJE. A questão pode ter sido editada depois da aplicação."*
+ *
+ * **Sobre o gabarito, afirmava DEMAIS.** `historico.respostas[]` grava
+ * `alternativaCorreta` no momento da correção — é cópia, não referência. Este
+ * próprio componente já destaca o gabarito da CORREÇÃO e avisa quando o do banco
+ * diverge. O rodapé contradizia o que o componente faz, e mandava desconfiar de
+ * um número correto.
+ *
+ * **Sobre o enunciado, afirmava DE MENOS.** `respostas[].questao` é um
+ * `ObjectId` puro — medido: `objectId` nas 2.230 linhas de homologação. E "pode
+ * ter sido editada" sugere que alguém saberia se tivesse sido: **não saberia.**
+ * Os 380 registros de questão no `auditlogs` são TODOS mudança de `status`, e o
+ * `updateContent` não grava log nenhum. Não há rastro de edição de conteúdo no
+ * sistema.
+ *
+ * ⚠️ **A terceira frase é o ponto, e não pode sair.** Sem ela, quem lê supõe
+ * que a plataforma guarda o enunciado do momento e só não o está mostrando.
+ */
+export const TEXTO_GABARITO_DA_CORRECAO =
+  "O gabarito destacado acima é o que foi usado na correção deste simulado.";
+export const TEXTO_ENUNCIADO_DE_HOJE =
+  "O enunciado e as alternativas são os do banco de questões hoje — se a questão foi editada depois da aplicação, o que você está lendo pode não ser o que o aluno leu. O sistema não guarda o enunciado do momento da prova.";
 
 /**
  * Preview do enunciado, aberto a partir de uma linha da aba de Questões.
@@ -215,9 +239,17 @@ export function PreviewDaQuestao({
               </p>
             )}
 
-            <p className={cn("text-xs", dashV2.text.muted)}>
-              {TEXTO_PODE_TER_MUDADO}
-            </p>
+            {/*
+              ⚠️ **Dois parágrafos, e não um.** São afirmações de sinais
+              opostos — uma diz que pode confiar, a outra que não pode — e
+              juntas na mesma frase a segunda apagava a primeira. Foi
+              exatamente assim que o texto anterior acabou desmentindo o
+              destaque verde que este componente desenha.
+            */}
+            <div className={cn("flex flex-col gap-1 text-xs", dashV2.text.muted)}>
+              <p data-aviso-gabarito>{TEXTO_GABARITO_DA_CORRECAO}</p>
+              <p data-aviso-enunciado>{TEXTO_ENUNCIADO_DE_HOJE}</p>
+            </div>
           </>
         )}
       </div>
