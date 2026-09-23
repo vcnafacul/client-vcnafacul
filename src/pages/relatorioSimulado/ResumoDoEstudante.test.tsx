@@ -1,7 +1,9 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type {
+  FrenteDoEstudante,
   LinhaDoRelatorio,
+  MateriaDoEstudante,
   MediaPorMateria,
   RespostaDoEstudante,
 } from "@/dtos/relatorioSimulado/relatorioSimulado";
@@ -223,5 +225,85 @@ describe("ResumoDoEstudante (card 10)", () => {
 
     expect(container.querySelector("[data-materia]")).toBeNull();
     expect(screen.getByText("45/90 acertos")).toBeInTheDocument();
+  });
+});
+
+describe("ResumoDoEstudante — a base junto do percentual (card 30)", () => {
+  const comMateria = (
+    over: {
+      materia?: Partial<MateriaDoEstudante>;
+      frente?: Partial<FrenteDoEstudante>;
+    } = {},
+  ) =>
+    montar({
+      linha: linha({
+        aproveitamentoPorMateria: [
+          {
+            id: "m1",
+            nome: "Matemática",
+            aproveitamento: 0.5,
+            frentes: [
+              { id: "f1", nome: "Álgebra", aproveitamento: 0.6, ...(over.frente ?? {}) },
+            ],
+            ...(over.materia ?? {}),
+          },
+        ],
+      }),
+    });
+
+  it("⚠️ mostra de quantas questões é o percentual da matéria", () => {
+    /*
+      Desde o card 14 uma questão conta inteira em CADA (matéria, frente) que
+      toca, então as matérias somam mais que o total da prova — de propósito.
+      Sem a base, quem soma acha que a conta não fecha e desconfia da tela.
+    */
+    const { container } = comMateria({ materia: { questoes: 12 } });
+
+    expect(container.querySelector("[data-base='Matemática']")).toHaveTextContent(
+      "de 12 questões",
+    );
+  });
+
+  it("⚠️ histórico antigo não mostra base — e NUNCA 'de 0 questões'", () => {
+    // O total nunca foi gravado antes do card 30, e é irrecuperável.
+    const { container } = comMateria();
+
+    expect(container.querySelector("[data-base='Matemática']")).toHaveTextContent(
+      "",
+    );
+    expect(container.textContent).not.toContain("de 0 questões");
+  });
+
+  it("uma questão só fica no singular", () => {
+    const { container } = comMateria({ materia: { questoes: 1 } });
+
+    expect(container.querySelector("[data-base='Matemática']")).toHaveTextContent(
+      "de 1 questão",
+    );
+  });
+
+  it("⚠️ a frente também mostra a base — lá ela importa ainda mais", async () => {
+    /*
+      Uma frente com 2 questões e 50% não é diagnóstico nenhum, e sem o "de 2"
+      ela parece ter o mesmo peso de uma com 14.
+    */
+    const { container } = comMateria({
+      materia: { questoes: 12 },
+      frente: { questoes: 2 },
+    });
+
+    fireEvent.click(container.querySelector("[data-materia='Matemática']")!);
+
+    expect(
+      container.querySelector("[data-base-frente='Álgebra']"),
+    ).toHaveTextContent("de 2 questões");
+  });
+
+  it("frente sem base não ganha o sufixo", () => {
+    const { container } = comMateria({ materia: { questoes: 12 } });
+
+    fireEvent.click(container.querySelector("[data-materia='Matemática']")!);
+
+    expect(container.querySelector("[data-base-frente='Álgebra']")).toBeNull();
   });
 });

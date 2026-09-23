@@ -84,12 +84,32 @@ export interface FrenteDoEstudante {
   nome: string;
   /** Fração de 0 a 1 — a tela é quem formata. */
   aproveitamento: number;
+  /**
+   * Quantas questões do simulado tocam esta frente — o denominador do
+   * `aproveitamento` (card 30).
+   *
+   * ⚠️ **Opcional, e ausente ≠ zero.** Histórico gravado antes daquele card não
+   * tem a contagem, e ela é **irrecuperável**. A tela omite a base nesse caso;
+   * "de 0 questões" seria uma afirmação falsa.
+   */
+  questoes?: number;
 }
 
 export interface MateriaDoEstudante {
   id: string;
   nome: string;
   aproveitamento: number;
+  /**
+   * Quantas questões do simulado tocam esta matéria.
+   *
+   * ⚠️ **As bases NÃO somam o total do simulado**, e isso é esperado desde o
+   * card 14: uma questão conta inteira em cada (matéria, frente) que toca. Sem
+   * esta contagem na tela, quem soma as matérias acha que a conta não fecha.
+   *
+   * ⚠️ **Não confundir com `MediaPorMateria.base`**, que conta ESTUDANTES na
+   * média da turma. Aqui são questões.
+   */
+  questoes?: number;
   /** ⚠️ Drill-down do modal (card 10), NUNCA coluna: 15+ frentes não cabem. */
   frentes: FrenteDoEstudante[];
 }
