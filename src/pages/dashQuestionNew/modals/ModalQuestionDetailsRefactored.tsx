@@ -15,6 +15,7 @@ import { TabAlternativas } from "./tabs/TabAlternativas";
 import { TabHistorico } from "./tabs/TabHistorico";
 import { TabImagens } from "./tabs/TabImagens";
 import { useConteudoForm } from "./tabs/TabConteudo/useConteudoForm";
+import { ModalEscolhaAoSalvar } from "./tabs/TabConteudo/ModalEscolhaAoSalvar";
 
 interface ModalQuestionDetailsRefactoredProps {
   isOpen: boolean;
@@ -199,7 +200,16 @@ function ModalContent({
 
   const contentFormat = question.contentFormat || "plain";
 
+  /*
+    ⚠️ **Em quantas provas a questão está** — o número que o modal do card 27
+    mostra. Vem do `provasContendo` que a Etapa 9 já traz no `getById`: sem ele
+    a frase diria "as provas" no genérico, e quem edita não faz ideia de que uma
+    questão está em 2,7 simulados em média (medido no card 22).
+  */
+  const quantasProvas = question.provasContendo?.length ?? 0;
+
   return (
+    <>
     <ModalTabTemplateQuestion
       isOpen={isOpen}
       className="px-4 py-2"
@@ -284,5 +294,25 @@ function ModalContent({
         },
       ]}
     />
+
+    {/*
+      ⚠️ **Fora do `ModalTabTemplateQuestion`, e não dentro de uma aba.** A
+      escolha é sobre o save inteiro, não sobre o conteúdo — e um modal dentro
+      de outro que troca de aba embaixo dele desaparece quando a pessoa clica
+      em "Classificação" sem ter decidido.
+    */}
+    {conteudoForm.escolhaPendente && (
+      <ModalEscolhaAoSalvar
+        isOpen
+        onClose={conteudoForm.cancelarEscolha}
+        campos={conteudoForm.escolhaPendente.campos}
+        respostas={question.quantidadeResposta ?? 0}
+        provas={quantasProvas}
+        antes={question as unknown as Record<string, unknown>}
+        depois={conteudoForm.escolhaPendente.dados}
+        onConfirmar={conteudoForm.confirmarEscolha}
+      />
+    )}
+    </>
   );
 }
