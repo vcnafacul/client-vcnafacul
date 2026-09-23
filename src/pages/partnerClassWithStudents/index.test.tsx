@@ -93,10 +93,17 @@ vi.mock("@/services/relatorioSimulado/buscarSimuladosComCartao", () => ({
   buscarSimuladosComCartao,
 }));
 
-const montar = ({ permissao }: { permissao: Record<string, boolean> }) => {
+const montar = ({
+  permissao,
+  // ⚠️ A aba entrou na URL no card 17 — ver `abaDaTurma.ts`.
+  rota = "/dashboard/turmas/t-1",
+}: {
+  permissao: Record<string, boolean>;
+  rota?: string;
+}) => {
   estado.permissao = permissao;
   return render(
-    <MemoryRouter initialEntries={["/dashboard/turmas/t-1"]}>
+    <MemoryRouter initialEntries={[rota]}>
       <Routes>
         <Route
           path="/dashboard/turmas/:hashClassId"
@@ -187,5 +194,38 @@ describe("PartnerClassWithStudents — aba de simulados por cartão", () => {
     await waitFor(() =>
       expect(buscarSimuladosComCartao).toHaveBeenCalledTimes(2),
     );
+  });
+});
+
+describe("PartnerClassWithStudents — a aba vem da URL (card 17)", () => {
+  it("⚠️ `?aba=desempenho` abre direto na aba de evolução", async () => {
+    /*
+      É o que torna o link do relatório possível: antes a aba era estado local,
+      e as duas metades da mesma pergunta não tinham como mandar a pessoa uma
+      para a outra.
+    */
+    montar({ permissao: COM_A_ABA, rota: "/dashboard/turmas/t-1?aba=desempenho" });
+
+    expect(
+      await screen.findByRole("tab", { name: "Desempenho", selected: true }),
+    ).toBeInTheDocument();
+  });
+
+  it("sem o parâmetro, abre em Alunos", async () => {
+    montar({ permissao: COM_A_ABA });
+
+    expect(
+      await screen.findByRole("tab", { name: "Alunos", selected: true }),
+    ).toBeInTheDocument();
+  });
+
+  it("⚠️ aba desconhecida cai em Alunos, e não numa tela em branco", async () => {
+    // O Radix aceita qualquer string em `value` e renderiza vazio quando nenhum
+    // `TabsContent` casa.
+    montar({ permissao: COM_A_ABA, rota: "/dashboard/turmas/t-1?aba=notas" });
+
+    expect(
+      await screen.findByRole("tab", { name: "Alunos", selected: true }),
+    ).toBeInTheDocument();
   });
 });

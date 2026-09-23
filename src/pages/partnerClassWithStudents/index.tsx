@@ -25,7 +25,7 @@ import { useEffect, useRef, useState } from "react";
 import { FaListCheck } from "react-icons/fa6";
 import { IoEyeSharp } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { AttendanceHistoryModal } from "./modals/attendanceHistoryModal";
 import { AttendanceRecordByStudentModal } from "./modals/attendanceRecordByStudentModal";
 import { InfoStudentEnrolledModal } from "@/pages/studentsEnrolled/modals/infoStudentEnrolledModal";
@@ -34,6 +34,7 @@ import { ClassEssayAnalytics } from "@/components/organisms/classEssayAnalytics"
 import { MonthPicker } from "@/components/organisms/classSimuladoAnalytics/MonthPicker";
 import { ClassMonthsList } from "@/types/classAnalytics/classSimuladoAnalytics";
 import { SimuladosDaTurma } from "./SimuladosDaTurma";
+import { abaDaUrl, PARAM_DA_ABA, type AbaDaTurma } from "./abaDaTurma";
 
 function toStudentsDtoOutput(
   student: ClassStudent,
@@ -106,7 +107,24 @@ export function PartnerClassWithStudents() {
   const [cancelledStudents, setCancelledStudents] = useState<
     CancelledStudent[]
   >([]);
-  const [activeTab, setActiveTab] = useState<string>("alunos");
+  /*
+    ⚠️ **A aba vem da URL** (card 17). Antes era estado local, e por isso as duas
+    metades da mesma pergunta — "a turma melhorou?" (Desempenho) e "como foi
+    neste simulado?" (Simulados por cartão) — não tinham como mandar a pessoa
+    uma para a outra. O relatório também abre numa rota própria, fora desta
+    tela, e sem a aba endereçável ele não tinha para onde apontar.
+
+    ⚠️ `replace`: trocar de aba não é navegação que mereça entrada no histórico.
+    Com `push`, sair da tela depois de olhar três abas exigiria quatro cliques
+    no "voltar" do navegador.
+  */
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = abaDaUrl(searchParams.toString());
+  const setActiveTab = (aba: string) => {
+    const proximos = new URLSearchParams(searchParams);
+    proximos.set(PARAM_DA_ABA, aba as AbaDaTurma);
+    setSearchParams(proximos, { replace: true });
+  };
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [simuladoList, setSimuladoList] = useState<ClassMonthsList | null>(
     null
@@ -569,7 +587,11 @@ export function PartnerClassWithStudents() {
         {podeVerRelatorio && (
           <TabsContent value="simulados">
             {activeTab === "simulados" && hashClassId && (
-              <SimuladosDaTurma token={token} turmaId={hashClassId} />
+              <SimuladosDaTurma
+                token={token}
+                turmaId={hashClassId}
+                aoVerDesempenho={() => setActiveTab("desempenho")}
+              />
             )}
           </TabsContent>
         )}

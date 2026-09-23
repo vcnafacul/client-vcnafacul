@@ -1,8 +1,11 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import type { ResumoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { SEM_NOME } from "@/pages/partnerClassWithStudents/SimuladosDaTurma";
-import { IdentificacaoDoRelatorio } from "./IdentificacaoDoRelatorio";
+import {
+  IdentificacaoDoRelatorio,
+  TEXTO_VER_DESEMPENHO,
+} from "./IdentificacaoDoRelatorio";
 
 const resumo = (over: Partial<ResumoDoRelatorio> = {}): ResumoDoRelatorio => ({
   totalNoRecorte: 30,
@@ -151,5 +154,90 @@ describe("IdentificacaoDoRelatorio (card 18)", () => {
     );
 
     expect(screen.getByRole("heading")).toBeInTheDocument();
+  });
+});
+
+describe("IdentificacaoDoRelatorio — link para a evolução da turma (card 17)", () => {
+  it("⚠️ como LINK quando há para onde navegar", () => {
+    /*
+      Da rota própria do relatório é navegação de verdade, e tem de ser `<a>`
+      para "abrir em aba nova" funcionar — quem está comparando aplicações quer
+      as duas telas abertas ao mesmo tempo.
+    */
+    const { container } = render(
+      <IdentificacaoDoRelatorio
+        resumo={resumo()}
+        comTitulo
+        linkDoDesempenho={{ href: "/dashboard/turmas/t-1?aba=desempenho" }}
+      />,
+    );
+
+    const link = container.querySelector("[data-link-desempenho]")!;
+    expect(link.tagName).toBe("A");
+    expect(link).toHaveAttribute("href", "/dashboard/turmas/t-1?aba=desempenho");
+    expect(link).toHaveTextContent(TEXTO_VER_DESEMPENHO);
+  });
+
+  it("⚠️ como BOTÃO quando é só trocar de aba", () => {
+    // Dentro da tela de turma a evolução está na aba ao lado. Um `<a>` ali
+    // recarregaria a página inteira para chegar onde já se está.
+    const aoClicar = vi.fn();
+    const { container } = render(
+      <IdentificacaoDoRelatorio
+        resumo={resumo()}
+        comTitulo
+        linkDoDesempenho={{ aoClicar }}
+      />,
+    );
+
+    const botao = container.querySelector("[data-link-desempenho]")!;
+    expect(botao.tagName).toBe("BUTTON");
+    fireEvent.click(botao);
+    expect(aoClicar).toHaveBeenCalledTimes(1);
+  });
+
+  it("sem link, nada é desenhado", () => {
+    const { container } = render(
+      <IdentificacaoDoRelatorio resumo={resumo()} comTitulo />,
+    );
+
+    expect(container.querySelector("[data-link-desempenho]")).toBeNull();
+  });
+
+  it("⚠️ não é print:visible — link impresso não é acionável", () => {
+    const { container } = render(
+      <IdentificacaoDoRelatorio
+        resumo={resumo()}
+        comTitulo
+        linkDoDesempenho={{ href: "/x" }}
+      />,
+    );
+
+    expect(
+      container.querySelector("[data-link-desempenho]")?.className,
+    ).toContain("print:hidden");
+  });
+
+  it("⚠️ o link aparece mesmo quando não há contexto nem nome", () => {
+    /*
+      O componente devolvia `null` quando não tinha o que escrever. Com o link,
+      ele passa a ter — e sumir levaria embora a única travessia entre as duas
+      telas justamente no recorte mais pobre.
+    */
+    const { container } = render(
+      <IdentificacaoDoRelatorio
+        resumo={resumo({
+          simuladoNome: null,
+          totalNoRecorte: 0,
+          totalDeQuestoes: 0,
+          turmaNome: null,
+          ultimoCartaoEm: null,
+        })}
+        comTitulo
+        linkDoDesempenho={{ href: "/x" }}
+      />,
+    );
+
+    expect(container.querySelector("[data-link-desempenho]")).toBeTruthy();
   });
 });

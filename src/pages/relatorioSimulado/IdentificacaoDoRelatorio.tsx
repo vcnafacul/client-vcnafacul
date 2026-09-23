@@ -33,9 +33,18 @@ function formatarData(iso: string | null): string | null {
  * ⚠️ **NÃO é `print:hidden`.** É a única parte do cabeçalho que precisa sair na
  * folha — o `Voltar` continua escondido.
  */
+/**
+ * ⚠️ "evolução", e não "desempenho" (card 17). O rótulo da aba é "Desempenho",
+ * mas quem está no relatório já está vendo desempenho — o que falta é a
+ * travessia entre aplicações, e o texto tem de dizer o que a pessoa ganha ao
+ * clicar, não para onde o link aponta.
+ */
+export const TEXTO_VER_DESEMPENHO = "Ver evolução da turma";
+
 export function IdentificacaoDoRelatorio({
   resumo,
   comTitulo,
+  linkDoDesempenho,
 }: {
   resumo: ResumoDoRelatorio;
   /**
@@ -43,6 +52,25 @@ export function IdentificacaoDoRelatorio({
    * onde o seletor logo acima já mostra o nome e a turma é a tela inteira.
    */
   comTitulo: boolean;
+  /**
+   * O link para a evolução da turma — a aba "Desempenho" (card 17).
+   *
+   * ⚠️ **As duas telas não se conheciam**, e são as duas metades da mesma
+   * pergunta: este relatório responde "como foi NESTE simulado", e o desempenho
+   * responde "a turma melhorou". Quem olha um quase sempre quer o outro, e não
+   * havia caminho entre eles.
+   *
+   * ⚠️ **Ausente = não há para onde ir**, e aí nada é desenhado: o relatório do
+   * cursinho inteiro não tem turma, e quem não pode abrir a turma não deve ver
+   * um link que só sabe redirecionar calado. Nunca um link desabilitado — ele
+   * ocuparia o cabeçalho para dizer que não faz nada.
+   *
+   * ⚠️ **Dois modos, e os dois existem:** da rota própria do relatório é
+   * navegação de verdade (`href`, para abrir em aba nova funcionar); de dentro
+   * da tela de turma é só trocar de aba (`aoClicar`) — um `<a>` ali
+   * recarregaria a página inteira para chegar onde já se está.
+   */
+  linkDoDesempenho?: { href?: string; aoClicar?: () => void };
 }) {
   /*
     ⚠️ **`simuladoNome: null` significa duas coisas diferentes**, e confundi-las
@@ -68,7 +96,18 @@ export function IdentificacaoDoRelatorio({
       `último cartão em ${formatarData(resumo.ultimoCartaoEm)}`,
   ].filter(Boolean);
 
-  if (nome === null && contexto.length === 0) return null;
+  const temLink =
+    linkDoDesempenho !== undefined &&
+    (linkDoDesempenho.href !== undefined ||
+      linkDoDesempenho.aoClicar !== undefined);
+
+  if (nome === null && contexto.length === 0 && !temLink) return null;
+
+  const classeDoLink = cn(
+    "rounded-sm text-xs underline underline-offset-2 print:hidden",
+    dashV2.text.secondary,
+    dashV2.focus,
+  );
 
   return (
     <div data-testid="identificacao-do-relatorio" className="flex flex-col gap-1">
@@ -77,11 +116,33 @@ export function IdentificacaoDoRelatorio({
           {nome}
         </h1>
       )}
-      {contexto.length > 0 && (
-        <p className={cn("text-xs", dashV2.text.muted)}>
-          {contexto.join(" · ")}
-        </p>
-      )}
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        {contexto.length > 0 && (
+          <p className={cn("text-xs", dashV2.text.muted)}>
+            {contexto.join(" · ")}
+          </p>
+        )}
+        {/* ⚠️ `print:hidden`: numa folha impressa um link não é acionável. */}
+        {temLink &&
+          (linkDoDesempenho.href !== undefined ? (
+            <a
+              data-link-desempenho
+              href={linkDoDesempenho.href}
+              className={classeDoLink}
+            >
+              {TEXTO_VER_DESEMPENHO}
+            </a>
+          ) : (
+            <button
+              type="button"
+              data-link-desempenho
+              onClick={linkDoDesempenho.aoClicar}
+              className={classeDoLink}
+            >
+              {TEXTO_VER_DESEMPENHO}
+            </button>
+          ))}
+      </div>
     </div>
   );
 }

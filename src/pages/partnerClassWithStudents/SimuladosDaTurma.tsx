@@ -55,9 +55,18 @@ function VazioDaTurma() {
 export function SimuladosDaTurma({
   turmaId,
   token,
+  aoVerDesempenho,
 }: {
   turmaId: string;
   token: string;
+  /**
+   * Troca para a aba "Desempenho" (card 17).
+   *
+   * ⚠️ **Callback, e não link:** aqui a evolução da turma está na aba ao lado,
+   * na mesma tela. Navegar seria recarregar a página inteira para chegar onde
+   * já se está.
+   */
+  aoVerDesempenho?: () => void;
 }) {
   const [simulados, setSimulados] = useState<SimuladoComCartao[]>([]);
   const [estado, setEstado] = useState<Estado>("loading");
@@ -161,6 +170,9 @@ export function SimuladosDaTurma({
         turmaId={turmaId}
         token={token}
         comPadding={false}
+        linkDoDesempenho={
+          aoVerDesempenho && { aoClicar: aoVerDesempenho }
+        }
       />
     </div>
   );

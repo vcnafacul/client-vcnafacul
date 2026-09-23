@@ -1,6 +1,8 @@
 import { dashV2 } from "@/components/dashV2";
 import { cn } from "@/lib/utils";
-import { DASH, PARTNER_PROVAS } from "@/routes/path";
+import { DASH, PARTNER_CLASS, PARTNER_PROVAS } from "@/routes/path";
+import { Roles } from "@/enums/roles/roles";
+import { caminhoDaTurma } from "../partnerClassWithStudents/abaDaTurma";
 import { useAuthStore } from "@/store/auth";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useEffect } from "react";
@@ -64,6 +66,17 @@ function RelatorioSimulado() {
     };
   }, []);
 
+  /*
+    ⚠️ **O link só existe com turma E com permissão** (card 17).
+
+    Sem `turmaId` o relatório é do cursinho inteiro, e não há "a turma" cuja
+    evolução ver. E a rota da turma é guardada por `visualizarTurmas` — sem ela
+    a `ProtectedRoutePermission` redireciona **calada**, então o link levaria a
+    pessoa para fora da tela sem dizer por quê. Mesmo critério que a aba
+    "Simulados por cartão" já aplica com `gerenciarEstudantes`.
+  */
+  const podeVerTurma = !!data.permissao[Roles.visualizarTurmas];
+
   if (!simuladoId) return null;
 
   return (
@@ -72,6 +85,18 @@ function RelatorioSimulado() {
       turmaId={turmaId}
       token={data.token}
       comTitulo
+      linkDoDesempenho={
+        turmaId !== undefined && podeVerTurma
+          ? {
+              // ⚠️ `DASH` já começa com barra — ver `routes/path.ts`.
+              href: caminhoDaTurma(
+                `${DASH}/${PARTNER_CLASS}`,
+                turmaId,
+                "desempenho",
+              ),
+            }
+          : undefined
+      }
       cabecalho={
         <>
           {/* ⚠️ `print:hidden`: numa folha impressa não há "voltar". */}

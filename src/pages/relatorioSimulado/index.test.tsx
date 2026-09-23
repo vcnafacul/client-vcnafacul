@@ -30,8 +30,14 @@ vi.mock("@/utils/exportAnalyticsCsv", () => ({ exportAnalyticsCsv }));
 vi.mock("@/services/relatorioSimulado/buscarDetalheDoEstudante", () => ({
   buscarDetalheDoEstudante,
 }));
+/*
+  ⚠️ **A permissão entrou no card 17** e é variável por teste: o link para a
+  evolução da turma só aparece para quem pode abrir a turma (`visualizarTurmas`),
+  senão a `ProtectedRoutePermission` de lá redirecionaria calada.
+*/
+const permissao = vi.hoisted(() => ({ atual: { visualizarTurmas: true } as Record<string, boolean> }));
 vi.mock("@/store/auth", () => ({
-  useAuthStore: () => ({ data: { token: "tok" } }),
+  useAuthStore: () => ({ data: { token: "tok", permissao: permissao.atual } }),
 }));
 
 const RESPOSTA = {
@@ -1598,5 +1604,64 @@ describe("RelatorioSimulado — rodapé de turma (card 15)", () => {
     await screen.findByText("Ana");
 
     expect(document.querySelector("[data-cartoes-do-cursinho]")).toBeNull();
+  });
+});
+
+describe("RelatorioSimulado — link para a evolução da turma (card 17)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    permissao.atual = { visualizarTurmas: true };
+    buscarRelatorio.mockResolvedValue(RESPOSTA);
+    buscarQuestoes.mockResolvedValue({ questoes: [] });
+    buscarDetalheDoEstudante.mockResolvedValue({
+      status: "completed",
+      respostas: [],
+    });
+  });
+
+  it("⚠️ com `?turma=`, aponta para a aba Desempenho daquela turma", async () => {
+    /*
+      As duas telas não se conheciam, e são as duas metades da mesma pergunta:
+      o relatório responde "como foi NESTE simulado", a aba Desempenho responde
+      "a turma melhorou".
+    */
+    montar("/relatorio-simulado/sim-1?turma=t-9");
+    await screen.findByText("Ana Silva");
+
+    expect(document.querySelector("[data-link-desempenho]")).toHaveAttribute(
+      "href",
+      "/dashboard/turmas/t-9?aba=desempenho",
+    );
+  });
+
+  it("⚠️ sem turma NÃO há link — não existe 'a turma' do cursinho inteiro", async () => {
+    montar();
+    await screen.findByText("Ana Silva");
+
+    expect(document.querySelector("[data-link-desempenho]")).toBeNull();
+  });
+
+  it("⚠️ sem `visualizarTurmas` NÃO há link", async () => {
+    /*
+      A rota da turma é guardada por essa permissão, e a
+      `ProtectedRoutePermission` redireciona CALADA. Um link que só sabe tirar a
+      pessoa da tela é pior que link nenhum — mesmo critério que a aba
+      "Simulados por cartão" já aplica com `gerenciarEstudantes`.
+    */
+    permissao.atual = { visualizarTurmas: false };
+
+    montar("/relatorio-simulado/sim-1?turma=t-9");
+    await screen.findByText("Ana Silva");
+
+    expect(document.querySelector("[data-link-desempenho]")).toBeNull();
+  });
+
+  it("⚠️ `?turma=` vazio não vira link para turma nenhuma", async () => {
+    // Mesmo `||` que o recorte usa: string vazia é resultado rotineiro de link
+    // mastigado, e viraria `/dashboard/turmas/?aba=desempenho`.
+    montar("/relatorio-simulado/sim-1?turma=");
+    await screen.findByText("Ana Silva");
+
+    expect(document.querySelector("[data-link-desempenho]")).toBeNull();
   });
 });
