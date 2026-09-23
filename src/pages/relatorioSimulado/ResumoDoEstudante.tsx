@@ -15,16 +15,37 @@ import {
 const VAZIO = "—";
 
 /** A linha de uma matéria, com a barra e a média da turma ao lado. */
+/**
+ * "de 12 questões", ou nada.
+ *
+ * ⚠️ **Nada, e nunca "de 0 questões"** (card 30): histórico gravado antes
+ * daquele card não tem a contagem, e ela é irrecuperável — o
+ * `criaAproveitamento` calculava o total para dividir e descartava. Zero
+ * afirmaria que nenhuma questão da prova toca a matéria, que é outra coisa.
+ */
+function baseDe(questoes: number | undefined): string | null {
+  if (typeof questoes !== "number" || questoes <= 0) return null;
+  return questoes === 1 ? "de 1 questão" : `de ${questoes} questões`;
+}
+
 function LinhaDeMateria({
   nome,
   nota,
+  questoes,
   mediaDaTurma,
   frentes,
 }: {
   nome: string;
   nota: number;
+  /** ⚠️ Ausente em histórico anterior ao card 30 — ver `baseDe`. */
+  questoes?: number;
   mediaDaTurma: number | undefined;
-  frentes: { id: string; nome: string; aproveitamento: number }[];
+  frentes: {
+    id: string;
+    nome: string;
+    aproveitamento: number;
+    questoes?: number;
+  }[];
 }) {
   /*
     ⚠️ **Fechadas por padrão** (card 10). O `frentes[]` tem a granularidade
@@ -57,6 +78,27 @@ function LinhaDeMateria({
 
         <span className={cn("w-10 shrink-0 text-right font-medium")}>
           {Math.round(nota * 100)}%
+        </span>
+
+        {/*
+          ⚠️ **A base ao lado do percentual, e é o card 14 quem manda** (card
+          30). Desde aquele card uma questão conta inteira em CADA (matéria,
+          frente) que toca — 928 das 1.616 frentes secundárias são de matéria
+          diferente da questão —, então as matérias somam mais que o total da
+          prova, de propósito. Sem a base, quem soma acha que a conta não fecha
+          e desconfia da tela inteira.
+
+          ⚠️ Largura fixa: sem ela, "de 5" e "de 12 questões" desalinham a barra
+          entre matérias, e o olho lê o desalinhamento como diferença de valor.
+        */}
+        <span
+          data-base={nome}
+          className={cn(
+            "w-24 shrink-0 text-right text-xs tabular-nums",
+            dashV2.text.muted,
+          )}
+        >
+          {baseDe(questoes)}
         </span>
 
         {/* ⚠️ `div` com `width: %`, como a barra do card 19 — não um gráfico. */}
@@ -98,7 +140,19 @@ function LinhaDeMateria({
               )}
             >
               <span className="truncate">{f.nome}</span>
-              <span>{Math.round(f.aproveitamento * 100)}%</span>
+              <span className="shrink-0">
+                {Math.round(f.aproveitamento * 100)}%
+                {/*
+                  ⚠️ Na frente a base importa AINDA mais: uma frente com 2
+                  questões e 50% não é diagnóstico nenhum, e sem o "de 2" ela
+                  parece ter o mesmo peso de uma com 14.
+                */}
+                {baseDe(f.questoes) !== null && (
+                  <span data-base-frente={f.nome} className={cn("ml-2", dashV2.text.muted)}>
+                    {baseDe(f.questoes)}
+                  </span>
+                )}
+              </span>
             </li>
           ))}
         </ul>
@@ -195,6 +249,7 @@ export function ResumoDoEstudante({
               key={m.id}
               nome={m.nome}
               nota={m.aproveitamento}
+              questoes={m.questoes}
               mediaDaTurma={mediaPorId.get(m.id)}
               frentes={m.frentes ?? []}
             />
