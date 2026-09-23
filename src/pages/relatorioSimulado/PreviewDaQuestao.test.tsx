@@ -5,7 +5,8 @@ import { describe, expect, it, vi } from "vitest";
 import {
   PreviewDaQuestao,
   TEXTO_ERRO,
-  TEXTO_PODE_TER_MUDADO,
+  TEXTO_ENUNCIADO_DE_HOJE,
+  TEXTO_GABARITO_DA_CORRECAO,
   TEXTO_SEM_ALTERNATIVAS,
 } from "./PreviewDaQuestao";
 import { textosDasAlternativas } from "./alternativasDaQuestao";
@@ -183,10 +184,42 @@ describe("PreviewDaQuestao", () => {
     expect(screen.queryByTestId("preview-pct-A")).toBeNull();
   });
 
-  it("o aviso de que a questão pode ter sido editada está sempre visível", async () => {
+  it("⚠️ o aviso separa o gabarito (da correção) do enunciado (de hoje)", async () => {
+    /*
+      O texto anterior dizia que "o enunciado E o gabarito são os do banco HOJE"
+      — e errava nas duas metades. O gabarito É snapshot: `respostas[]` grava
+      `alternativaCorreta` no momento da correção, e este componente já destaca
+      o da correção. O rodapé contradizia o próprio componente.
+    */
     montar();
 
-    expect(await screen.findByText(TEXTO_PODE_TER_MUDADO)).toBeTruthy();
+    expect(await screen.findByText(TEXTO_GABARITO_DA_CORRECAO)).toBeTruthy();
+    expect(screen.getByText(TEXTO_ENUNCIADO_DE_HOJE)).toBeTruthy();
+  });
+
+  it("⚠️ o aviso diz que o sistema NÃO guarda o enunciado do momento", async () => {
+    /*
+      É a frase que não pode sair. "Pode ter sido editada" sugere que alguém
+      saberia se tivesse sido — e não saberia: os 380 registros de questão no
+      `auditlogs` são todos mudança de `status`, e o `updateContent` não grava
+      log nenhum. Sem esta frase, quem lê supõe que a plataforma guarda o
+      enunciado do momento e só não o está mostrando.
+    */
+    montar();
+
+    await screen.findByText(TEXTO_GABARITO_DA_CORRECAO);
+    expect(
+      document.querySelector("[data-aviso-enunciado]")?.textContent,
+    ).toContain("não guarda o enunciado do momento");
+  });
+
+  it("⚠️ são dois parágrafos — juntos, o segundo apagava o primeiro", async () => {
+    // Afirmações de sinais opostos: uma diz que pode confiar, a outra que não.
+    montar();
+
+    await screen.findByText(TEXTO_GABARITO_DA_CORRECAO);
+    expect(document.querySelector("[data-aviso-gabarito]")).toBeTruthy();
+    expect(document.querySelector("[data-aviso-enunciado]")).toBeTruthy();
   });
 
   it("falha mostra erro e o botão de tentar de novo refaz a busca", async () => {
