@@ -338,6 +338,12 @@ function DashQuestionNew() {
         onClose={handleCloseModal}
         questionId={selectedQuestionId}
         infos={infos}
+        /*
+          ⚠️ **Troca a questão do modal sem fechar** (card 25): "ver original" e
+          "ver cópias" navegam na linhagem, e fechar e reabrir perderia a página
+          e os filtros da listagem atrás.
+        */
+        abrirQuestao={setSelectedQuestionId}
       />
 
       {/* Modal de Criação */}
