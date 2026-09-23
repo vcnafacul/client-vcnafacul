@@ -181,3 +181,46 @@ describe("LinhagemDaQuestao (card 25)", () => {
     expect(container.querySelector("[data-ver-copias]")).toBeTruthy();
   });
 });
+
+describe("LinhagemDaQuestao — posição no rodapé (revisão do card 25)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    estado.permissao = { criarQuestao: true };
+    listarCopias.mockResolvedValue([]);
+    duplicarQuestao.mockResolvedValue({ _id: "q2" });
+  });
+
+  it("⚠️ o bloco alinha à DIREITA — ações ficam no canto da ação", async () => {
+    /*
+      À esquerda, o botão de duplicar lia como se fosse parte da classificação
+      acima. É ação sobre a questão inteira.
+    */
+    const { container } = montar();
+
+    await waitFor(() => expect(listarCopias).toHaveBeenCalled());
+    expect(container.querySelector("[data-linhagem]")?.className).toContain(
+      "justify-end",
+    );
+  });
+
+  it("⚠️ tem separador do conteúdo acima", () => {
+    // No rodapé, sem a linha o bloco encosta na classificação e os dois parecem
+    // o mesmo assunto.
+    const { container } = montar();
+
+    expect(container.querySelector("[data-linhagem]")?.className).toContain(
+      "border-t",
+    );
+  });
+
+  it("⚠️ o badge de origem fica à ESQUERDA, longe do botão", async () => {
+    // "De onde esta questão veio" é informação, e informação não compete com o
+    // botão de ação pelo mesmo canto.
+    const { container } = montar({ origem: "q0" });
+
+    await waitFor(() => expect(listarCopias).toHaveBeenCalled());
+    expect(container.querySelector("[data-badge-copia]")?.className).toContain(
+      "mr-auto",
+    );
+  });
+});
