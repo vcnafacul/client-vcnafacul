@@ -104,7 +104,7 @@ describe("ModalConvites (convite 06)", () => {
       return b!;
     });
 
-    expect(botao.getAttribute("title")).toMatch(/anterior deixa de valer/);
+    expect(botao.getAttribute("aria-label")).toMatch(/anterior deixa de valer/);
     fireEvent.click(botao);
 
     await waitFor(() =>
