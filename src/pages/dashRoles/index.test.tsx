@@ -5,17 +5,40 @@ import DashRoles from ".";
 const getUsersRole = vi.hoisted(() => vi.fn());
 vi.mock("../../services/roles/getUsersRole", () => ({ getUsersRole }));
 vi.mock("../../services/roles/getRoles", () => ({
-  getRoles: vi.fn().mockResolvedValue({ data: [{ id: "r1", name: "admin" }] }),
+  getRoles: vi.fn().mockResolvedValue({
+    data: [
+      { id: "r1", name: "aluno" },
+      { id: "r2", name: "professor" },
+    ],
+  }),
 }));
-vi.mock("../../services/roles/updateUserRole", () => ({ updateUserRole: vi.fn() }));
+const updateUserRole = vi.hoisted(() => vi.fn());
+vi.mock("../../services/roles/updateUserRole", () => ({ updateUserRole }));
+vi.mock("../../services/roles/getResumoDoUsuario", () => ({
+  getResumoDoUsuario: vi.fn().mockResolvedValue({
+    conta: { id: "u1", nome: "Maria da Silva", email: "resumo@x.com", funcao: null },
+    colaborador: null,
+    estudante: { atual: [], historico: [] },
+  }),
+}));
 vi.mock("../../store/auth", () => ({
   useAuthStore: () => ({ data: { token: "tok" } }),
 }));
 vi.mock("react-toastify", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
-// Os modais não interessam aqui — só se abrem.
+// A troca de função não interessa aqui — só se abre, e salva "r2".
 vi.mock("./modals/ModalRole", () => ({
-  default: ({ isOpen }: { isOpen: boolean }) =>
-    isOpen ? <div data-modal-role /> : null,
+  default: ({
+    isOpen,
+    updateUserRole,
+  }: {
+    isOpen: boolean;
+    updateUserRole: (id: string) => void;
+  }) =>
+    isOpen ? (
+      <div data-modal-role>
+        <button onClick={() => updateUserRole("r2")}>salvar-r2</button>
+      </div>
+    ) : null,
 }));
 
 const usuario = (id: string, over: Record<string, unknown> = {}) => ({
@@ -108,14 +131,33 @@ describe("DashRoles no DashListTemplate (usuários 03)", () => {
     }
   });
 
-  it("clicar no usuário abre a troca de função (até o card 05)", async () => {
+  it("⚠️ clicar no usuário abre o modal do usuário, não a troca de função (card 05)", async () => {
     const { container } = render(<DashRoles />);
     fireEvent.click(screen.getByRole("button", { name: "Buscar" }));
 
     fireEvent.click(await screen.findByText("u1@x.com"));
 
+    expect(await screen.findByText("resumo@x.com")).toBeTruthy();
+    expect(container.querySelector("[data-modal-role]")).toBeNull();
+  });
+
+  it("⚠️ 'Alterar função' abre a troca; ao salvar, a seção muda e o modal fica", async () => {
+    updateUserRole.mockResolvedValue(undefined);
+    const { container } = render(<DashRoles />);
+    fireEvent.click(screen.getByRole("button", { name: "Buscar" }));
+    fireEvent.click(await screen.findByText("u1@x.com"));
+    await screen.findByText("resumo@x.com");
+
+    fireEvent.click(screen.getByRole("button", { name: "Alterar função" }));
+    fireEvent.click(await screen.findByText("salvar-r2"));
+
     await waitFor(() =>
-      expect(container.querySelector("[data-modal-role]")).toBeTruthy(),
+      expect(container.querySelector("[data-modal-role]")).toBeNull(),
     );
+    expect(updateUserRole).toHaveBeenCalledWith("u1", "r2", "tok");
+    expect(
+      container.querySelector("[data-secao='funcao']")?.textContent,
+    ).toMatch(/professor/);
+    expect(screen.getByText("resumo@x.com")).toBeTruthy();
   });
 });

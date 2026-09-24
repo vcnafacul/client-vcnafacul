@@ -19,7 +19,7 @@ import ModalEditRole from "./modals/ModalEditRole";
 import ModalNewRole from "./modals/ModalNewRole";
 import ModalRole from "./modals/ModalRole";
 import ModalSendEmail from "./modals/ModalSendEmail";
-import ShowUserInfo from "./modals/showUserInfo";
+import ModalDoUsuario from "./modals/ModalDoUsuario";
 import { useModals } from "@/hooks/useModal";
 
 function DashRoles() {
@@ -65,7 +65,8 @@ function DashRoles() {
 
   const onClickCard = (userId: string) => {
     setUserRoleSelect(usersRole.find((user) => user.user.id === userId));
-    modals.modalUserRole.open();
+    // Card 05: a linha abre o modal do usuário; a troca de função é um passo dentro dele.
+    modals.modalUserModal.open();
   };
 
   const handleUpdateUserRole = (roleId: string) => {
@@ -86,6 +87,7 @@ function DashRoles() {
           ),
         );
         setUserRoleSelect(updatedUserRole);
+        // Fecha só a troca: o modal do usuário fica, já com a função nova.
         modals.modalUserRole.close();
 
         toast.success(
@@ -201,17 +203,6 @@ function DashRoles() {
     );
   };
 
-  const ShowUserModal = () => {
-    return !modals.modalUserModal.isOpen ? null : (
-      <ShowUserInfo
-        isOpen={modals.modalUserModal.isOpen}
-        handleClose={() => modals.modalUserModal.close()}
-        ur={userRoleSelect!}
-        openUpdateRole={() => modals.modalUserRole.open()}
-      />
-    );
-  };
-
   const selectFiltes: SelectProps[] = roles.length
     ? [
         {
@@ -306,7 +297,20 @@ function DashRoles() {
             : "Busque por nome, sobrenome ou email."
         }
       />
-      <ShowUserModal />
+      {/*
+        ⚠️ JSX direto, e não um componente definido aqui dentro como os
+        outros: um componente recriado a cada render remonta o modal — e ele
+        buscaria o resumo de novo a cada tecla na busca.
+      */}
+      {modals.modalUserModal.isOpen && userRoleSelect && (
+        <ModalDoUsuario
+          isOpen
+          userId={userRoleSelect.user.id}
+          funcao={userRoleSelect.roleName}
+          handleClose={() => modals.modalUserModal.close()}
+          openUpdateRole={() => modals.modalUserRole.open()}
+        />
+      )}
       <ShowUserRole />
       <ShowNewRole />
       <ShowEditRole />
