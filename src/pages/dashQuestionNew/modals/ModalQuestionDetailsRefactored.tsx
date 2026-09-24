@@ -2,6 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Question } from "@/dtos/question/questionDTO";
 import { Roles } from "@/enums/roles/roles";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { toast } from "react-toastify";
 import { getQuestionById } from "@/services/question/getQuestionById";
 
 import { useAuthStore } from "@/store/auth";
@@ -88,10 +89,19 @@ export function ModalQuestionDetailsRefactored({
     });
   };
 
+  /*
+    ⚠️ **Recarrega SEM o esqueleto.** Com o `fetchQuestion`, o `isLoading`
+    trocava o modal inteiro pelo "Carregando..." e ele remontava do zero — na
+    primeira aba, sem o que a pessoa via: parecia que salvar fechava o modal.
+    Aqui a questão nova só substitui a antiga quando chega; se falhar, a antiga
+    fica (e o toast avisa).
+  */
   const refreshQuestion = () => {
-    if (questionId) {
-      fetchQuestion(questionId);
-    }
+    if (!questionId) return;
+    // Sem toast de "carregando": o de sucesso do save já está na tela.
+    getQuestionById(token, questionId)
+      .then(setQuestion)
+      .catch(() => toast.error("Erro ao recarregar questão"));
   };
 
   useEffect(() => {
