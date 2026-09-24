@@ -22,10 +22,12 @@ interface UseRegisterStep1 {
 }
 
 interface Step1Props extends StepProps {
+  /** Cadastro pelo convite: o email vem do convite e não se troca. */
+  emailTravado?: string;
   updateData: (data: UserRegister) => void;
 }
 
-function Step1({ updateData, dataUser }: Step1Props) {
+function Step1({ updateData, dataUser, emailTravado }: Step1Props) {
   const schema = yup
     .object()
     .shape({
@@ -67,6 +69,7 @@ function Step1({ updateData, dataUser }: Step1Props) {
   });
 
   const continueRegister = (data: UseRegisterStep1) => {
+    if (emailTravado) data = { ...data, email: emailTravado };
     validNewEmail(data.email)
       .then(() => {
         updateData(data as UserRegister);
@@ -85,7 +88,9 @@ function Step1({ updateData, dataUser }: Step1Props) {
   }, []);
 
   useEffect(() => {
-    if (dataUser.email) {
+    if (emailTravado) {
+      setValue("email", emailTravado);
+    } else if (dataUser.email) {
       setValue("email", dataUser.email);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,14 +101,20 @@ function Step1({ updateData, dataUser }: Step1Props) {
       onSubmit={handleSubmit(continueRegister)}
       className="flex flex-col gap-4 w-full"
     >
-      <InputFactory
-        id="email"
-        label="Email"
-        type="text"
-        error={errors.email}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("email", e.target.value)}
-      />
+      {emailTravado ? (
+        <p data-email-travado className="text-sm">
+          Email: <strong>{emailTravado}</strong>
+        </p>
+      ) : (
+        <InputFactory
+          id="email"
+          label="Email"
+          type="text"
+          error={errors.email}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("email", e.target.value)}
+        />
+      )}
       <InputFactory
         id="password"
         label="Senha"
