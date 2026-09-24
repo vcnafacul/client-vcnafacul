@@ -10,8 +10,8 @@ import {
   getPhotoCollaborator,
   isLegacyPhotoKey,
 } from "@/services/prepCourse/collaborator/get-photo";
-import { getRoles } from "@/services/prepCourse/getRoles";
-import { updateUserRole } from "@/services/roles/updateUserRole";
+import { getRolesAtribuiveis } from "@/services/prepCourse/getRolesAtribuiveis";
+import { atribuirFuncaoColaborador } from "@/services/prepCourse/atribuirFuncaoColaborador";
 import { useAuthStore } from "@/store/auth";
 import { Role } from "@/types/roles/role";
 import { phoneMask } from "@/utils/phoneMask";
@@ -26,7 +26,8 @@ import ModalEditRole from "./modals/ModalEditRole";
 import ModalNewRole from "./modals/ModalNewRole";
 import ModalUpdateRoleUser from "./modals/ModalUpdateRoleUser";
 import { ShowInfo } from "./modals/showInfo";
-import { TempInviteMember } from "./modals/temp-invite-member";
+import { ModalConvites } from "./modals/ModalConvites";
+import { Roles } from "@/enums/roles/roles";
 
 export interface CollaboratorColumns {
   id: string;
@@ -62,7 +63,7 @@ export default function ManagerCollaborator() {
   const [selectedFrente, setSelectedFrente] = useState<string>("");
 
   const modals = useModals([
-    "modalInviteMember",
+    "modalConvites",
     "modalShowInfo",
     "modalShowNewRole",
     "modalShowEditRole",
@@ -70,8 +71,9 @@ export default function ManagerCollaborator() {
   ]);
 
   const {
-    data: { token },
+    data: { token, permissao },
   } = useAuthStore();
+  const ehAdminDoCursinho = !!permissao[Roles.gerenciarPermissoesCursinho];
 
   const executeAsync = useToastAsync();
   const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
@@ -215,7 +217,13 @@ export default function ManagerCollaborator() {
 
   const handleUpdateUserRole = async (roleId: string) => {
     await executeAsync({
-      action: () => updateUserRole(collaboratorSelected!.userId, roleId, token),
+      /*
+        ⚠️ Rota do cursinho (card 02 de `convite-de-colaborador`): confere o
+        cursinho e não deixa quem só gerencia colaboradores escalar. O
+        `user/updateRole` ficou só para a plataforma.
+      */
+      action: () =>
+        atribuirFuncaoColaborador(collaboratorSelected!.userId, roleId, token),
       loadingMessage: "Atualizando permissão...",
       successMessage: "Permissão atualizada com sucesso!",
       errorMessage: (error: Error) => error.message,
@@ -249,11 +257,12 @@ export default function ManagerCollaborator() {
     setRoles([...roles, role]);
   };
 
-  const ModalInviteMember = () => {
-    return modals.modalInviteMember.isOpen ? (
-      <TempInviteMember
-        isOpen={modals.modalInviteMember.isOpen}
-        handleClose={() => modals.modalInviteMember.close()}
+  const ModalDeConvites = () => {
+    return modals.modalConvites.isOpen ? (
+      <ModalConvites
+        isOpen={modals.modalConvites.isOpen}
+        handleClose={() => modals.modalConvites.close()}
+        funcoes={roles}
       />
     ) : null;
   };
@@ -412,7 +421,12 @@ export default function ManagerCollaborator() {
   }, [token]);
 
   useEffect(() => {
-    getRoles(token)
+    /*
+      ⚠️ As funções que QUEM ESTÁ LOGADO pode atribuir — filtradas no servidor.
+      O `getRoles` exige ser admin do cursinho: quem só gerencia colaboradores
+      recebia erro e ficava sem lista.
+    */
+    getRolesAtribuiveis(token)
       .then((res) => {
         setRoles(res);
       })
@@ -459,32 +473,40 @@ export default function ManagerCollaborator() {
           Colaboradores
         </h1>
       </div>
-      <div className="flex justify-end">
-        <Button
-          onClick={() => modals.modalInviteMember.open()}
-          size="small"
-          typeStyle="quaternary"
-          className="w-fit mx-4"
-        >
-          Convidar Colaborador
-        </Button>
-        <Button
-          onClick={() => modals.modalShowNewRole.open()}
-          size="small"
-          typeStyle="quaternary"
-          className="w-fit mx-4"
-        >
-          Nova Função
-        </Button>
-        <Button
-          onClick={() => modals.modalShowEditRole.open()}
-          size="small"
-          typeStyle="primary"
-          className="w-fit mx-4"
-        >
-          Editar Função
-        </Button>
-      </div>
+      {/*
+        ⚠️ **Só o admin do cursinho** (`gerenciarPermissoesCursinho`) convida e
+        mexe nas funções — card 06 de `convite-de-colaborador`. Quem só
+        gerencia colaboradores entra na tela e troca a função pela ação da
+        tabela (card 02), mas não vê estes botões. Antes apareciam para todos.
+      */}
+      {ehAdminDoCursinho && (
+        <div data-acoes-do-admin className="flex justify-end">
+          <Button
+            onClick={() => modals.modalConvites.open()}
+            size="small"
+            typeStyle="quaternary"
+            className="w-fit mx-4"
+          >
+            Convites
+          </Button>
+          <Button
+            onClick={() => modals.modalShowNewRole.open()}
+            size="small"
+            typeStyle="quaternary"
+            className="w-fit mx-4"
+          >
+            Nova Função
+          </Button>
+          <Button
+            onClick={() => modals.modalShowEditRole.open()}
+            size="small"
+            typeStyle="primary"
+            className="w-fit mx-4"
+          >
+            Editar Função
+          </Button>
+        </div>
+      )}
       <div className="flex items-center gap-4 px-4 flex-wrap">
         <FormControl size="small" sx={{ minWidth: 200 }}>
           <InputLabel id="filter-materia-label">Matéria</InputLabel>
@@ -549,7 +571,7 @@ export default function ManagerCollaborator() {
           sx={{ border: 0 }}
         />
       </Paper>
-      <ModalInviteMember />
+      <ModalDeConvites />
       <ModalShowInfo />
       <ModalShowNewRole />
       <ShowUserRole />

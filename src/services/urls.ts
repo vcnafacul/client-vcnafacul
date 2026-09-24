@@ -97,8 +97,8 @@ export const inscriptionCourse = `${BASE_URL}/inscription-course`;
 export const inscriptionCourseWithName = `${inscriptionCourse}/all-with-name`;
 export const aggregateInscriptionCourse = `${inscriptionCourse}/aggregate`;
 export const subscribers = `${inscriptionCourse}/subscribers`;
-export const inviteMember = `${partnerPrepCourse}/invite-members`;
-export const inviteMemberAccept = `${partnerPrepCourse}/invite-members-accept`;
+/** Convites de colaborador gravados, com função (série `convite-de-colaborador`). */
+export const convitesColaborador = `${BASE_URL}/convites-colaborador`;
 export const termOfUse = `${partnerPrepCourse}/term-of-use`;
 export const getPartnerLogo = `${partnerPrepCourse}/logo`;
 export const updateWaitingList = `${inscriptionCourse}/update-waiting-list`;
