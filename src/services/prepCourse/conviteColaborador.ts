@@ -1,3 +1,4 @@
+import type { UserRegister } from "@/types/user/userRegister";
 import fetchWrapper from "@/utils/fetchWrapper";
 import { convitesColaborador } from "../urls";
 
@@ -52,4 +53,30 @@ export async function aceitarConvite(
   });
   if (response.status === 201 || response.status === 200) return;
   throw new Error(await mensagemDe(response, "Não foi possível aceitar o convite."));
+}
+
+/**
+ * Cadastro pelo convite (card 05): cria a conta E aceita o convite — e já
+ * devolve a sessão de login.
+ *
+ * ⚠️ Sem Authorization (ainda não há conta). O refresh volta em cookie
+ * httpOnly — o `fetchWrapper` sempre manda `credentials: "include"`.
+ */
+export async function cadastrarPeloConvite(
+  token: string,
+  dados: UserRegister,
+): Promise<{ access_token: string }> {
+  const response = await fetchWrapper(`${convitesColaborador}/cadastrar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ...dados,
+      gender: parseInt(dados.gender as unknown as string),
+      token,
+    }),
+  });
+  if (response.status === 201) return await response.json();
+  throw new Error(
+    await mensagemDe(response, "Não foi possível concluir o cadastro."),
+  );
 }

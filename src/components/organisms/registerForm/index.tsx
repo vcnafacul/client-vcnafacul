@@ -21,9 +21,15 @@ export interface RegisterFormProps {
 
 interface Props extends RegisterFormProps {
   onRegister: (data: UserRegister) => Promise<void>;
+  /**
+   * ⚠️ Cadastro pelo convite (card 05 de `convite-de-colaborador`): o email é
+   * o do convite e não se troca — é o clique no link mandado a ele que
+   * dispensa a confirmação de email.
+   */
+  emailTravado?: string;
 }
 
-function RegisterForm({ title, titleSuccess, onRegister }: Props) {
+function RegisterForm({ title, titleSuccess, onRegister, emailTravado }: Props) {
   const [step, setStep] = useState<number>(FormStep.STEP_EMAIL_PASSWORD);
   const [dataUser, setDataUser] = useState<UserRegister>({} as UserRegister);
 
@@ -41,7 +47,13 @@ function RegisterForm({ title, titleSuccess, onRegister }: Props) {
   const StepNow = () => {
     switch (step) {
       case FormStep.STEP_EMAIL_PASSWORD:
-        return <Step1 updateData={updateData} dataUser={dataUser} />;
+        return (
+          <Step1
+            updateData={updateData}
+            dataUser={dataUser}
+            emailTravado={emailTravado}
+          />
+        );
       case FormStep.STEP_USER_DATA:
         return (
           <Step2
