@@ -2,6 +2,7 @@ import { dashV2 } from "@/components/dashV2";
 import type { SimuladoComCartao } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
 import { RelatorioDoSimuladoConteudo } from "@/pages/relatorioSimulado/RelatorioDoSimuladoConteudo";
+import { TabelaDeComparacao } from "@/pages/relatorioSimulado/TabelaDeComparacao";
 import { buscarSimuladosComCartao } from "@/services/relatorioSimulado/buscarSimuladosComCartao";
 import { useCallback, useEffect, useState } from "react";
 
@@ -72,6 +73,8 @@ export function SimuladosDaTurma({
   const [estado, setEstado] = useState<Estado>("loading");
   /** `null` até a lista chegar; depois, o simulado que o seletor mostra. */
   const [escolhido, setEscolhido] = useState<string | null>(null);
+  /** ⚠️ Fechada por padrão — ver o docblock do toggle abaixo (card 31). */
+  const [comparando, setComparando] = useState(false);
 
   const carregar = useCallback(() => {
     setEstado("loading");
@@ -119,6 +122,13 @@ export function SimuladosDaTurma({
     return <VazioDaTurma />;
   }
 
+  /*
+    ⚠️ **A comparação só existe com DUAS aplicações** (card 31). Com uma só não
+    há o que comparar, e um seletor que oferece a mesma prova dos dois lados é
+    um controle que só sabe não fazer nada.
+  */
+  const podeComparar = simulados.length >= 2;
+
   return (
     <div className="flex flex-col gap-3">
       {/*
@@ -164,6 +174,35 @@ export function SimuladosDaTurma({
         não depende disso: cada bloco do conteúdo traz o seu, e é o que faz o
         resumo alinhar com o seletor acima e com a tabela abaixo.
       */}
+      {/*
+        ⚠️ **A comparação fica ATRÁS de um toggle, fechada por padrão** (card
+        31). Ela dispara DUAS chamadas ao relatório, e a maioria das visitas
+        quer ver uma aplicação — abrir sempre dobraria o custo da aba para quem
+        nem vai olhar.
+      */}
+      {podeComparar && (
+        <div className="px-4 print:hidden">
+          <button
+            type="button"
+            data-toggle-comparacao
+            onClick={() => setComparando((v) => !v)}
+            aria-expanded={comparando}
+            className={cn("text-xs underline", dashV2.text.secondary)}
+          >
+            {comparando ? "▾ " : "▸ "}
+            Comparar duas aplicações
+          </button>
+        </div>
+      )}
+
+      {podeComparar && comparando && (
+        <TabelaDeComparacao
+          token={token}
+          turmaId={turmaId}
+          simulados={simulados}
+        />
+      )}
+
       <RelatorioDoSimuladoConteudo
         key={escolhido}
         simuladoId={escolhido}

@@ -786,3 +786,65 @@ describe("TabelaDeQuestoes — dificuldade global (card 16)", () => {
     expect(linhas).toEqual(["baixo", "meio", "sem"]);
   });
 });
+
+describe("TabelaDeQuestoes — versão da questão (card 29)", () => {
+  it("⚠️ o número da versão vem marcado com '· nova'", () => {
+    /*
+      A base de uma versão recém-criada é pequena por ser nova, não por a
+      questão ser rara — e a contagem NÃO soma a linhagem, por decisão do
+      card 29.
+    */
+    const { container } = render(
+      <TabelaDeQuestoes
+        questoes={[
+          questao({ acertosGeral: 40, baseGeral: 120, ehVersao: true }),
+        ]}
+        estado="idle"
+      />,
+    );
+
+    expect(celula(container, "acertoGeral")).toHaveTextContent("· nova");
+  });
+
+  it("⚠️ versão SEM base explica o travessão", () => {
+    // "Sem dado" e "dado novo" mostram o mesmo traço e pedem reações opostas.
+    const { container } = render(
+      <TabelaDeQuestoes
+        questoes={[
+          questao({ acertosGeral: 2, baseGeral: 8, ehVersao: true }),
+          // a segunda garante que a coluna exista
+          questao({
+            questaoId: "outra",
+            numero: 2,
+            acertosGeral: 443,
+            baseGeral: 1847,
+          }),
+        ]}
+        estado="idle"
+      />,
+    );
+
+    expect(
+      container.querySelector("[data-ausencia-explicada]")?.getAttribute("title"),
+    ).toContain("Versão nova");
+  });
+
+  it("questão comum sem base mostra travessão seco", () => {
+    const { container } = render(
+      <TabelaDeQuestoes
+        questoes={[
+          questao({ acertosGeral: 2, baseGeral: 8 }),
+          questao({
+            questaoId: "outra",
+            numero: 2,
+            acertosGeral: 443,
+            baseGeral: 1847,
+          }),
+        ]}
+        estado="idle"
+      />,
+    );
+
+    expect(container.querySelector("[data-ausencia-explicada]")).toBeNull();
+  });
+});

@@ -87,12 +87,25 @@ export function LinhagemDaQuestao({
   const rotulo = textoDeCopias(copias.length);
 
   return (
+    /*
+      ⚠️ **Alinhado à DIREITA** — ajuste pedido na revisão. O botão de duplicar
+      é ação sobre a questão inteira, e ações ficam à direita no rodapé; à
+      esquerda ele lia como se fosse parte da classificação acima.
+
+      ⚠️ `border-t` e `pt-3`: no rodapé, sem a linha o bloco encosta na
+      classificação e os dois parecem o mesmo assunto.
+    */
     <div
       data-linhagem
-      className="flex flex-wrap items-center gap-3 text-xs text-gray-600"
+      className="flex flex-wrap items-center justify-end gap-3 border-t pt-3 text-xs text-gray-600"
     >
+      {/*
+        ⚠️ `mr-auto` empurra o badge para a ESQUERDA enquanto o resto fica à
+        direita: "de onde esta questão veio" é informação, e informação não
+        compete com o botão de ação pelo mesmo canto.
+      */}
       {origem && (
-        <span data-badge-copia className="flex items-center gap-1">
+        <span data-badge-copia className="mr-auto flex items-center gap-1">
           {/*
             ⚠️ **Só o id, e não o enunciado da original.** Buscar a questão de
             origem para mostrar o texto dobraria a carga do modal por uma
