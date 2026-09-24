@@ -3,6 +3,7 @@ import Analytics from "@/pages/analytics";
 import { ConfirmEnrolled } from "@/pages/confirmEnrolled";
 import EnrollmentConfirmation from "@/pages/enrollmentConfirmation";
 import InviteMemberProcessing from "@/pages/inviteMemberProcessing";
+import ConviteColaborador from "@/pages/conviteColaborador";
 import ManagerCollaborator from "@/pages/managerCollaborator";
 import { PartnerClass } from "@/pages/partnerClass";
 import { PartnerClassWithStudents } from "@/pages/partnerClassWithStudents";
@@ -87,6 +88,7 @@ import {
   FORM_GEOLOCATION,
   HOME_PATH,
   INVITE_MEMBER,
+  CONVITE_COLABORADOR,
   LOGIN_PATH,
   LOGOFF_PATH,
   MANAGER_COLLABORATOR,
@@ -150,6 +152,7 @@ export function PlatformRoutes() {
         <Route path={REGISTER_PATH} element={<Register />} />
         <Route path={FORM_GEOLOCATION} element={<Geo />} />
         <Route path={INVITE_MEMBER} element={<InviteMemberProcessing />} />
+        <Route path={CONVITE_COLABORADOR} element={<ConviteColaborador />} />
         <Route
           path={`${DECLARED_INTEREST}/:inscriptionId`}
           element={<ConfirmEnrolled />}

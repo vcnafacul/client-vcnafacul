@@ -30,6 +30,11 @@ export const CONTENT = "content";
 export const PARTNER_PREP = "cursinho/";
 export const PARTNER_PREP_INSCRIPTION = "inscricao";
 export const INVITE_MEMBER = "convidar-membro";
+/**
+ * ⚠️ O link do convite NOVO (card 04 de `convite-de-colaborador`). O
+ * `convidar-membro` é o do convite antigo, que fica até a tela nova (card 06).
+ */
+export const CONVITE_COLABORADOR = "convite-colaborador";
 export const DECLARED_INTEREST = "declarar-interesse";
 export const MANAGER_COLLABORATOR = "colaboradores";
 export const PARTNER_CLASS = "turmas";
