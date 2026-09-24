@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { buscarDetalheDoEstudante } from "@/services/relatorioSimulado/buscarDetalheDoEstudante";
 import { useCallback, useEffect, useState } from "react";
 import { AcaoDeReenvio } from "./AcaoDeReenvio";
+import { BaixarFotoDoCartao } from "./BaixarFotoDoCartao";
 import {
   formatarDificuldade,
   type DificuldadeDaQuestao,
@@ -394,6 +395,19 @@ export function DetalheDoEstudante({
             >
               {navegacao.posicao} de {navegacao.total}
             </span>
+          )}
+
+          {/*
+            ⚠️ **Só para quem enviou cartão** (`historicoId`), e em qualquer
+            status — a foto de um cartão que falhou é justamente a que se quer
+            olhar.
+          */}
+          {estudante.historicoId && (
+            <BaixarFotoDoCartao
+              token={token}
+              historicoId={estudante.historicoId}
+              matricula={estudante.matricula}
+            />
           )}
         </header>
 

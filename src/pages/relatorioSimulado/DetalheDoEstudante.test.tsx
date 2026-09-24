@@ -836,3 +836,32 @@ describe("DetalheDoEstudante — série de aplicações (card 17)", () => {
     expect(container.querySelector("[data-evolucao-vazia]")).toBeNull();
   });
 });
+
+describe("DetalheDoEstudante — baixar a foto do cartão (QA)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarSerieDoEstudante.mockResolvedValue({ pontos: [] });
+    buscarDetalheDoEstudante.mockResolvedValue({ status: "completed", respostas: [] });
+  });
+
+  it("⚠️ com historicoId, o botão aparece — mesmo com o cartão falho", async () => {
+    buscarDetalheDoEstudante.mockResolvedValue(FALHA_DE_FOTO);
+    montar({
+      estudante: {
+        usuario: "u1",
+        nome: "Ana Silva",
+        matricula: "2025001",
+        historicoId: "h1",
+      },
+    });
+
+    expect(await screen.findByTestId("baixar-foto-do-cartao")).toBeTruthy();
+  });
+
+  it("sem historicoId (não enviou cartão), sem botão", async () => {
+    montar();
+    await waitFor(() => expect(buscarDetalheDoEstudante).toHaveBeenCalled());
+
+    expect(screen.queryByTestId("baixar-foto-do-cartao")).toBeNull();
+  });
+});
