@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { CardDash } from "../../components/molecules/cardDash";
 import { DashListTemplate, type DashAction } from "@/components/dashV2";
-import { colunasDeUsuario } from "./columns";
+import { colunasComAtivo, colunasDeUsuario } from "./columns";
+import getPartnerPrepCourse from "@/services/prepCourse/prepCourse/getPartnerPrepCourse";
 import { DashCardContext } from "../../context/dashCardContext";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { getRoles } from "../../services/roles/getRoles";
@@ -19,7 +20,7 @@ import ModalEditRole from "./modals/ModalEditRole";
 import ModalNewRole from "./modals/ModalNewRole";
 import ModalRole from "./modals/ModalRole";
 import ModalSendEmail from "./modals/ModalSendEmail";
-import ShowUserInfo from "./modals/showUserInfo";
+import ModalDoUsuario from "./modals/ModalDoUsuario";
 import { useModals } from "@/hooks/useModal";
 
 function DashRoles() {
@@ -28,6 +29,8 @@ function DashRoles() {
   const [userRoleSelect, setUserRoleSelect] = useState<UserRole | null>();
   const [filterText, setFilterText] = useState<string>("");
   const [roleFilter, setRoleFilter] = useState<string>("0");
+  const [cursinhos, setCursinhos] = useState<{ id: string; name: string }[]>([]);
+  const [partnerFilter, setPartnerFilter] = useState<string>("0");
   const dataRef = useRef<UserRole[]>([]);
   /*
     ⚠️ **1000, o teto da api** (card 03 de `tela-de-usuarios`). O V2 pagina no
@@ -65,7 +68,8 @@ function DashRoles() {
 
   const onClickCard = (userId: string) => {
     setUserRoleSelect(usersRole.find((user) => user.user.id === userId));
-    modals.modalUserRole.open();
+    // Card 05: a linha abre o modal do usuário; a troca de função é um passo dentro dele.
+    modals.modalUserModal.open();
   };
 
   const handleUpdateUserRole = (roleId: string) => {
@@ -86,6 +90,7 @@ function DashRoles() {
           ),
         );
         setUserRoleSelect(updatedUserRole);
+        // Fecha só a troca: o modal do usuário fica, já com a função nova.
         modals.modalUserRole.close();
 
         toast.success(
@@ -105,6 +110,7 @@ function DashRoles() {
   };
 
   const activeRoleId = roleFilter !== "0" ? roleFilter : "";
+  const activePartnerId = partnerFilter !== "0" ? partnerFilter : "";
 
   /*
     ⚠️ **Sem reordenar aqui.** Antes o client ordenava por primeiro nome só a
@@ -114,9 +120,12 @@ function DashRoles() {
     ⚠️ Recebe o texto por parâmetro: no Enter, o estado `filterText` ainda
     pode estar no valor anterior (o campo do V2 tem debounce).
   */
-  const getUsers = (texto: string = filterText) => {
+  const getUsers = (
+    texto: string = filterText,
+    partnerId: string = activePartnerId,
+  ) => {
     setCarregando(true);
-    getUsersRole(token, 1, limitCards, texto, activeRoleId)
+    getUsersRole(token, 1, limitCards, texto, activeRoleId, partnerId)
       .then((res) => {
         setUsersRole(res.data ?? []);
         setTotalNoServidor(res.totalItems ?? res.data?.length ?? 0);
@@ -142,6 +151,16 @@ function DashRoles() {
         toast.error(error.message);
         setRoles([]);
       });
+    // O mesmo teto de 1000 da api; a lista é da plataforma inteira.
+    getPartnerPrepCourse(token, 1, 1000)
+      .then((res) =>
+        setCursinhos(
+          res.data
+            .map((c) => ({ id: c.id, name: c.geo?.name ?? "" }))
+            .sort((a, b) => a.name.localeCompare(b.name, "pt-BR")),
+        ),
+      )
+      .catch(() => setCursinhos([]));
   }, [token]);
 
   const getMoreCards = async (page: number): Promise<Paginate<UserRole>> => {
@@ -151,6 +170,7 @@ function DashRoles() {
       limitCards,
       filterText,
       activeRoleId,
+      activePartnerId,
     );
   };
 
@@ -201,17 +221,6 @@ function DashRoles() {
     );
   };
 
-  const ShowUserModal = () => {
-    return !modals.modalUserModal.isOpen ? null : (
-      <ShowUserInfo
-        isOpen={modals.modalUserModal.isOpen}
-        handleClose={() => modals.modalUserModal.close()}
-        ur={userRoleSelect!}
-        openUpdateRole={() => modals.modalUserRole.open()}
-      />
-    );
-  };
-
   const selectFiltes: SelectProps[] = roles.length
     ? [
         {
@@ -221,6 +230,24 @@ function DashRoles() {
         },
       ]
     : [];
+
+  /*
+    ⚠️ **Escolher o cursinho já é a busca** (card 06) — a única exceção ao
+    "não traz nada de início": listar os colaboradores de um cursinho sem
+    digitar nome é o caso de uso. Voltar para "todos" depois de ter buscado
+    refaz a busca sem o filtro; antes de buscar, não traz nada.
+  */
+  if (cursinhos.length) {
+    selectFiltes.push({
+      "aria-label": "Cursinho",
+      options: [{ id: "0", name: "Todos os cursinhos" }, ...cursinhos],
+      defaultValue: partnerFilter,
+      setState: (valor: string) => {
+        setPartnerFilter(valor);
+        if (valor !== "0" || buscou) getUsers(filterText, valor !== "0" ? valor : "");
+      },
+    });
+  }
 
 
   const filterProps: FilterProps = {
@@ -294,7 +321,7 @@ function DashRoles() {
         buscar; depois dela, diz que não achou.
       */}
       <DashListTemplate<UserRole>
-        columns={colunasDeUsuario}
+        columns={activePartnerId ? colunasComAtivo : colunasDeUsuario}
         actions={acoes}
         state={carregando ? "loading" : "idle"}
         headerSlot={aviso}
@@ -306,7 +333,20 @@ function DashRoles() {
             : "Busque por nome, sobrenome ou email."
         }
       />
-      <ShowUserModal />
+      {/*
+        ⚠️ JSX direto, e não um componente definido aqui dentro como os
+        outros: um componente recriado a cada render remonta o modal — e ele
+        buscaria o resumo de novo a cada tecla na busca.
+      */}
+      {modals.modalUserModal.isOpen && userRoleSelect && (
+        <ModalDoUsuario
+          isOpen
+          userId={userRoleSelect.user.id}
+          funcao={userRoleSelect.roleName}
+          handleClose={() => modals.modalUserModal.close()}
+          openUpdateRole={() => modals.modalUserRole.open()}
+        />
+      )}
       <ShowUserRole />
       <ShowNewRole />
       <ShowEditRole />
