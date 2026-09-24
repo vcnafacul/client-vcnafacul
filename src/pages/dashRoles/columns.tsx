@@ -62,3 +62,23 @@ export const colunasDeUsuario: DashColumn<UserRole>[] = [
     sortValue: (ur) => dataOrdenavel(ur.user.lastAccess),
   },
 ];
+
+/**
+ * **Ativo** — só com o filtro de cursinho (card 06): "colaboradores de X"
+ * traz os inativos também, e a tabela precisa dizer quem é quem.
+ */
+export const colunaAtivo: DashColumn<UserRole> = {
+  id: "ativo",
+  header: "Ativo",
+  cell: (ur) =>
+    ur.colaborador ? (ur.colaborador.ativo ? "Sim" : "Não") : VAZIO,
+  sortValue: (ur) =>
+    ur.colaborador ? (ur.colaborador.ativo ? 1 : 0) : null,
+};
+
+/** A coluna Ativo entra depois da Função. */
+export const colunasComAtivo: DashColumn<UserRole>[] = [
+  ...colunasDeUsuario.slice(0, 3),
+  colunaAtivo,
+  ...colunasDeUsuario.slice(3),
+];
