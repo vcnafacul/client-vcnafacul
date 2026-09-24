@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { TabClassificacaoCreate } from "./TabClassificacaoCreate";
 
@@ -21,15 +21,17 @@ const infos = {
   materias: [],
 };
 
-const montar = (formData: Record<string, unknown>) =>
-  render(
+const montar = (formData: Record<string, unknown>, onChange = vi.fn()) => ({
+  onChange,
+  ...render(
     <TabClassificacaoCreate
       formData={formData}
       errors={{}}
       infos={infos}
-      onChange={vi.fn()}
+      onChange={onChange}
     />,
-  );
+  ),
+});
 
 /** O trigger do select de área: o combobox com o placeholder dele. */
 const areaTrigger = () =>
@@ -53,5 +55,28 @@ describe("TabClassificacaoCreate — área destravada (area-enem 02)", () => {
 
     // ⚠️ O NÚMERO continua dependendo da prova — só a área destravou.
     expect(areaTrigger().disabled).toBe(false);
+  });
+});
+
+describe("TabClassificacaoCreate — prova opcional (area-enem 03)", () => {
+  it("⚠️ 'Sem prova' desfaz a escolha: limpa prova e número, mantém a área", () => {
+    // Sem prova toda área cabe — não há o que reclassificar.
+    const { onChange, container } = montar({
+      prova: "dia2",
+      numero: 2,
+      enemArea: "Matemática",
+    });
+
+    fireEvent.click(container.querySelector("[data-sem-prova]")!);
+
+    expect(onChange).toHaveBeenCalledWith("prova", "");
+    expect(onChange).toHaveBeenCalledWith("numero", null);
+    expect(onChange).not.toHaveBeenCalledWith("enemArea", "");
+  });
+
+  it("sem prova escolhida, não há o que desfazer", () => {
+    const { container } = montar({});
+
+    expect(container.querySelector("[data-sem-prova]")).toBeNull();
   });
 });

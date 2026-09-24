@@ -186,9 +186,29 @@ export function TabClassificacaoCreate({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Prova */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-600">
-                Prova *
-              </label>
+              <div className="flex items-center justify-between">
+                {/*
+                  ⚠️ **Opcional** (card 03 de `area-enem-da-questao`): sem
+                  prova, a questão só é gravada e entra numa prova depois, pela
+                  Classificação. O select do Radix não tem item vazio — por
+                  isso o botão para desfazer a escolha.
+                */}
+                <label className="text-sm font-semibold text-gray-600">
+                  Prova <span className="font-normal text-gray-400">(opcional)</span>
+                </label>
+                {formData.prova && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    data-sem-prova
+                    onClick={() => handleProvaChange("")}
+                    className="h-6 px-2 text-xs"
+                  >
+                    Sem prova
+                  </Button>
+                )}
+              </div>
               <Select value={formData.prova} onValueChange={handleProvaChange}>
                 <SelectTrigger className={errors.prova ? "border-red-500" : ""}>
                   <SelectValue placeholder="Selecione a prova" />
