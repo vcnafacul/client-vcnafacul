@@ -8,7 +8,10 @@ import { useAuthStore } from "@/store/auth";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PendingImageStore } from "@/utils/pendingImageStore";
 import ModalTabTemplateQuestion from "../components/ModalTabTemplateQuestion";
-import { LinhagemDaQuestao } from "../components/LinhagemDaQuestao";
+import { AcoesDaQuestao } from "../components/AcoesDaQuestao";
+import { AbaLinhagem } from "../components/AbaLinhagem";
+import { TrilhaDaLinhagem } from "../components/TrilhaDaLinhagem";
+import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import { TabClassificacao } from "./tabs/TabClassificacao";
 import { TabConteudo } from "./tabs/TabConteudo";
 import { TabAlternativas } from "./tabs/TabAlternativas";
@@ -30,6 +33,14 @@ interface ModalQuestionDetailsRefactoredProps {
    * visível, que é o mínimo.
    */
   abrirQuestao?: (id: string) => void;
+  /** Chamado depois de excluir a questão (card 33). */
+  aoExcluir?: () => void;
+  /** Por onde a pessoa veio navegando a linhagem (card 34A). */
+  trilha?: string[];
+  /** Volta um passo na trilha. */
+  voltar?: () => void;
+  /** A aba que abre selecionada — "linhagem" quando se navega por ela. */
+  abaInicial?: string;
 }
 
 export function ModalQuestionDetailsRefactored({
@@ -38,6 +49,10 @@ export function ModalQuestionDetailsRefactored({
   questionId,
   infos,
   abrirQuestao,
+  aoExcluir,
+  trilha,
+  voltar,
+  abaInicial,
 }: ModalQuestionDetailsRefactoredProps) {
   const {
     data: { token, permissao },
@@ -159,6 +174,10 @@ export function ModalQuestionDetailsRefactored({
       token={token}
       refreshQuestion={refreshQuestion}
       abrirQuestao={abrirQuestao}
+      aoExcluir={aoExcluir}
+      trilha={trilha}
+      voltar={voltar}
+      abaInicial={abaInicial}
     />
   );
 }
@@ -177,6 +196,10 @@ function ModalContent({
   token,
   refreshQuestion,
   abrirQuestao,
+  aoExcluir,
+  trilha = [],
+  voltar,
+  abaInicial,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -187,9 +210,36 @@ function ModalContent({
   refreshQuestion: () => void;
   /** Abre outra questão no mesmo modal — "ver original" e "ver cópias". */
   abrirQuestao?: (id: string) => void;
+  aoExcluir?: () => void;
+  trilha?: string[];
+  voltar?: () => void;
+  abaInicial?: string;
 }) {
   const pendingStoreRef = useRef(new PendingImageStore());
   const conteudoForm = useConteudoForm({ question, pendingStore: pendingStoreRef.current });
+
+  /*
+    ⚠️ **Trocar de questão com edição pendente pergunta antes** (card 34A).
+    Navegar pela linhagem desmonta este modal e remonta com a outra questão — o
+    enunciado que a pessoa estava editando se perderia calado.
+
+    ⚠️ Cobre o **conteúdo** (enunciado e alternativas), que é o form que mora
+    aqui. A edição da aba Classificação vive dentro dela e não chega a este
+    nível.
+  */
+  const [navegacaoPendente, setNavegacaoPendente] = useState<
+    (() => void) | null
+  >(null);
+  const navegar = (acao: () => void) => {
+    if (conteudoForm.isEditing && conteudoForm.isDirty) {
+      setNavegacaoPendente(() => acao);
+    } else {
+      acao();
+    }
+  };
+  const abrirNaLinhagem = abrirQuestao
+    ? (id: string) => navegar(() => abrirQuestao(id))
+    : undefined;
 
   const handleImageUpload = useCallback(
     async (file: File) => {
@@ -213,6 +263,16 @@ function ModalContent({
     <ModalTabTemplateQuestion
       isOpen={isOpen}
       className="px-4 py-2"
+      abaInicial={abaInicial}
+      cabecalho={
+        abrirNaLinhagem && voltar ? (
+          <TrilhaDaLinhagem
+            trilha={trilha}
+            abrir={abrirNaLinhagem}
+            voltar={() => navegar(voltar)}
+          />
+        ) : undefined
+      }
       tabs={[
         {
           label: "Classificação",
@@ -226,21 +286,11 @@ function ModalContent({
                 onSaveSuccess={refreshQuestion}
               />
               {/*
-                ⚠️ **No RODAPÉ da aba, e não no topo** — ajuste pedido na
-                revisão. A linhagem é metadado sobre a questão, não conteúdo
-                dela: no topo, ela disputava a primeira leitura com a
-                classificação, que é o que a aba existe para mostrar.
-
-                ⚠️ **Na aba de Classificação, e não numa aba própria** (card
-                25): é aqui que os outros metadados moram, e uma aba só para
-                três linhas custaria um clique a mais para algo que a maioria
-                das questões nem tem.
+                ⚠️ **No RODAPÉ da aba, à direita** — ajuste pedido na revisão
+                do card 25. Ficaram aqui só as AÇÕES (duplicar, excluir); a
+                linhagem em si foi para a aba própria (card 34A).
               */}
-              <LinhagemDaQuestao
-                questaoId={question._id}
-                origem={question.origem}
-                abrirQuestao={abrirQuestao}
-              />
+              <AcoesDaQuestao questaoId={question._id} aoExcluir={aoExcluir} />
             </div>
           ),
           handleClose: onClose,
@@ -290,6 +340,22 @@ function ModalContent({
           ),
           handleClose: onClose,
         },
+        /*
+          ⚠️ **Aba própria, e sempre visível** (card 34A) — reverte a decisão
+          do card 25 de pôr a linhagem no rodapé da Classificação: com a cadeia
+          inteira e o que identifica cada item, deixou de ser três linhas.
+        */
+        {
+          label: "Linhagem",
+          id: "linhagem",
+          children: (
+            <AbaLinhagem
+              questaoId={question._id}
+              abrirQuestao={abrirNaLinhagem}
+            />
+          ),
+          handleClose: onClose,
+        },
         {
           label: "Histórico",
           id: "historico",
@@ -305,6 +371,24 @@ function ModalContent({
       de outro que troca de aba embaixo dele desaparece quando a pessoa clica
       em "Classificação" sem ter decidido.
     */}
+    {navegacaoPendente && (
+      <ModalConfirmCancel
+        isOpen
+        text="Descartar as alterações?"
+        handleClose={() => setNavegacaoPendente(null)}
+        handleConfirm={() => {
+          const acao = navegacaoPendente;
+          setNavegacaoPendente(null);
+          acao();
+        }}
+      >
+        <p className="text-sm text-gray-700">
+          Você está editando esta questão. Abrir outra descarta o que não foi
+          salvo.
+        </p>
+      </ModalConfirmCancel>
+    )}
+
     {conteudoForm.escolhaPendente && (
       <ModalEscolhaAoSalvar
         isOpen

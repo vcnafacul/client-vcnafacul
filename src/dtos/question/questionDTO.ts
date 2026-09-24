@@ -53,12 +53,21 @@ export interface QuestionBase {
    *
    * ⚠️ **`null`/ausente na esmagadora maioria**: só quem veio de "Duplicar" tem.
    *
-   * ⚠️ **A original apagada NÃO limpa este campo**, e é deliberado: a cópia
-   * continua existindo e a tela mostra "Copiada de [questão excluída]". Perder o
-   * lastro seria perder a única pista de onde ela veio.
+   * ⚠️ **Nunca aponta para questão excluída** (card 33): origem de alguém não
+   * pode ser excluída, e quem é excluída perde este campo.
    */
   origem?: string | null;
+  /**
+   * O que esta questão é em relação à `origem` (card 32).
+   *
+   * ⚠️ `copia` é irmã (as provas não mudam); `versao` é a sucessora, que
+   * substituiu a original nas provas. **Ausente com `origem` = `copia`** — dado
+   * anterior ao card 32, e cópia é o que não afirma histórico anterior.
+   */
+  tipoOrigem?: TipoOrigem | null;
 }
+
+export type TipoOrigem = "copia" | "versao";
 
 export interface QuestionDto extends QuestionBase {
   prova?: Prova;

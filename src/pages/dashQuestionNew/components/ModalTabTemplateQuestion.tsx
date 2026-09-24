@@ -13,6 +13,12 @@ interface ModalTabTemplateQuestionProps {
   isOpen: boolean;
   className?: string;
   footerContent?: React.ReactNode;
+  /**
+   * Na barra do topo, à esquerda do fechar — a trilha da linhagem (card 34A).
+   */
+  cabecalho?: React.ReactNode;
+  /** A aba que abre selecionada; sem ela, a primeira. */
+  abaInicial?: string;
 }
 
 function ModalTabTemplateQuestion({
@@ -20,11 +26,18 @@ function ModalTabTemplateQuestion({
   isOpen,
   className,
   footerContent,
+  cabecalho,
+  abaInicial,
 }: ModalTabTemplateQuestionProps) {
   if (!isOpen) return null;
 
   // Garante que sempre há um defaultValue válido
-  const defaultTabId = tabs.length > 0 ? tabs[0].id : undefined;
+  const defaultTabId =
+    abaInicial && tabs.some((t) => t.id === abaInicial)
+      ? abaInicial
+      : tabs.length > 0
+        ? tabs[0].id
+        : undefined;
 
   return (
     <div className="fixed top-0 left-0 z-50 bg-black/50 w-screen h-screen flex justify-center items-center overflow-y-auto scrollbar-hide">
@@ -63,7 +76,11 @@ function ModalTabTemplateQuestion({
                 key={tab.id}
                 value={tab.id}
               >
-                <ModalContent onClose={tab.handleClose} footer={footerContent}>
+                <ModalContent
+                  onClose={tab.handleClose}
+                  footer={footerContent}
+                  cabecalho={cabecalho}
+                >
                   {tab.children}
                 </ModalContent>
               </TabsContent>
@@ -79,16 +96,20 @@ function ModalContent({
   children,
   onClose,
   footer,
+  cabecalho,
 }: {
   children: React.ReactNode;
   onClose?: () => void;
   footer?: React.ReactNode;
+  cabecalho?: React.ReactNode;
 }) {
   return (
     <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded flex flex-col relative">
       {/* Botão de fechar fixado no topo */}
       {onClose && (
-        <div className="sticky top-0 bg-white z-20 flex items-center justify-end p-2">
+        <div className="sticky top-0 bg-white z-20 flex items-center justify-end gap-2 p-2">
+          {/* ⚠️ `mr-auto`: a trilha à esquerda, o fechar no canto de sempre. */}
+          {cabecalho && <div className="mr-auto min-w-0">{cabecalho}</div>}
           <IoMdClose
             className="w-6 h-6 cursor-pointer text-gray-500 hover:text-gray-700 transition"
             onClick={onClose}

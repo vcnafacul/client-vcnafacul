@@ -22,6 +22,10 @@ import { FilterValues, QuestionFilters } from "./components/QuestionFilters";
 import { SimpleQuestionCard } from "./components/simpleQuestionCard";
 import { ModalCreateQuestion } from "./modals/ModalCreateQuestion";
 import { ModalQuestionDetailsRefactored } from "./modals/ModalQuestionDetailsRefactored";
+import {
+  abrirNaTrilha,
+  voltarNaTrilha,
+} from "./components/pilhaDaTrilha";
 
 function DashQuestionNew() {
   const {
@@ -35,6 +39,12 @@ function DashQuestionNew() {
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(
     null
   );
+  /*
+    ⚠️ **A trilha da linhagem** (card 34A): a pilha de questões por onde a
+    pessoa navegou dentro do modal. O topo é sempre a `selectedQuestionId`.
+  */
+  const [trilha, setTrilha] = useState<string[]>([]);
+  const [abaInicial, setAbaInicial] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState(false);
   const [totalItems, setTotalItems] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -94,12 +104,28 @@ function DashQuestionNew() {
 
   const handleCardClick = (questionId: string) => {
     setSelectedQuestionId(questionId);
+    setTrilha([questionId]);
+    setAbaInicial(undefined);
     modals.modalQuestionDetails.open();
   };
 
+  /** ⚠️ Fechar ZERA a trilha — a próxima questão aberta começa do zero. */
   const handleCloseModal = () => {
     modals.modalQuestionDetails.close();
     setSelectedQuestionId(null);
+    setTrilha([]);
+    setAbaInicial(undefined);
+  };
+
+  /*
+    ⚠️ **Troca a questão do modal sem fechar** (cards 25 e 34A): fechar e
+    reabrir perderia a página e os filtros da listagem atrás. E abre na aba
+    Linhagem — quem navega por ela quer continuar navegando.
+  */
+  const irNaLinhagem = (novaTrilha: string[]) => {
+    setTrilha(novaTrilha);
+    setSelectedQuestionId(novaTrilha[novaTrilha.length - 1]);
+    setAbaInicial("linhagem");
   };
 
   const handlePageChange = (page: number) => {
@@ -338,12 +364,18 @@ function DashQuestionNew() {
         onClose={handleCloseModal}
         questionId={selectedQuestionId}
         infos={infos}
+        abrirQuestao={(id) => irNaLinhagem(abrirNaTrilha(trilha, id))}
+        voltar={() => irNaLinhagem(voltarNaTrilha(trilha))}
+        trilha={trilha}
+        abaInicial={abaInicial}
         /*
-          ⚠️ **Troca a questão do modal sem fechar** (card 25): "ver original" e
-          "ver cópias" navegam na linhagem, e fechar e reabrir perderia a página
-          e os filtros da listagem atrás.
+          ⚠️ Card 33: a questão excluída some da lista — fechar e recarregar a
+          página atual, sem perder os filtros.
         */
-        abrirQuestao={setSelectedQuestionId}
+        aoExcluir={() => {
+          handleCloseModal();
+          getQuestions(currentPage);
+        }}
       />
 
       {/* Modal de Criação */}
