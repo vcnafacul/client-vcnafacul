@@ -287,8 +287,8 @@ function ModalContent({
               />
               {/*
                 ⚠️ **No RODAPÉ da aba, à direita** — ajuste pedido na revisão
-                do card 25. Ficaram aqui só as AÇÕES (duplicar, excluir); a
-                linhagem em si foi para a aba própria (card 34A).
+                do card 25. Ficou aqui só o excluir: a linhagem foi para a
+                aba própria (card 34A), e o duplicar para o topo dela (QA).
               */}
               <AcoesDaQuestao questaoId={question._id} aoExcluir={aoExcluir} />
             </div>

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AcoesDaQuestao } from "./AcoesDaQuestao";
 import { TEXTO_DUPLICAR } from "./textoDaLinhagem";
@@ -22,60 +22,26 @@ vi.mock("@/store/auth", () => ({
 const montar = (props: Record<string, unknown> = {}) =>
   render(<AcoesDaQuestao questaoId="q1" {...props} />);
 
-describe("AcoesDaQuestao — duplicar (card 25)", () => {
+describe("AcoesDaQuestao — duplicar saiu daqui (QA)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     estado.permissao = { criarQuestao: true };
     podeExcluirQuestao.mockResolvedValue({ podeExcluir: false, motivos: [] });
-    duplicarQuestao.mockResolvedValue({ _id: "q2" });
   });
 
-  it("⚠️ duplicar é botão à PARTE, fora do fluxo de edição", () => {
-    // Decisão do card 27: duplicar nasce de "quero outra parecida", não de editar.
-    montar();
-
-    expect(screen.getByText(TEXTO_DUPLICAR)).toBeTruthy();
-  });
-
-  it("⚠️ o título do botão diz a CONSEQUÊNCIA na prova", () => {
-    const { container } = montar();
-
-    expect(
-      container.querySelector("[data-duplicar]")?.getAttribute("title"),
-    ).toContain("provas que usam esta questão não mudam");
-  });
-
-  it("⚠️ sem `criarQuestao` NÃO há botão de duplicar", () => {
-    // Mesma guarda da api: um botão que só sabe receber 403 é pior que nenhum.
-    estado.permissao = { validarQuestao: true };
-
+  it("⚠️ nem com `criarQuestao` há botão de duplicar na Classificação", () => {
     const { container } = montar();
 
     expect(container.querySelector("[data-duplicar]")).toBeNull();
+    expect(screen.queryByText(TEXTO_DUPLICAR)).toBeNull();
+    expect(duplicarQuestao).not.toHaveBeenCalled();
   });
 
-  it("duplicar chama o serviço e avisa quem montou", async () => {
-    const aoDuplicar = vi.fn();
-    montar({ aoDuplicar });
-
-    fireEvent.click(screen.getByText(TEXTO_DUPLICAR));
-
-    await waitFor(() => expect(aoDuplicar).toHaveBeenCalledWith("q2"));
-    expect(duplicarQuestao).toHaveBeenCalledWith("tok", "q1");
-  });
-
-  it("⚠️ depois de duplicar, o Excluir pergunta de novo ao servidor", async () => {
-    /*
-      Duplicar torna esta questão origem de alguém, e origem não se exclui —
-      o botão não pode continuar visível com a resposta de antes (card 33).
-    */
-    estado.permissao = { criarQuestao: true, excluirQuestao: true };
+  it("o Excluir continua aqui", async () => {
+    estado.permissao = { excluirQuestao: true };
     montar();
-    await waitFor(() => expect(podeExcluirQuestao).toHaveBeenCalledTimes(1));
 
-    fireEvent.click(screen.getByText(TEXTO_DUPLICAR));
-
-    await waitFor(() => expect(podeExcluirQuestao).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(podeExcluirQuestao).toHaveBeenCalledWith("tok", "q1"));
   });
 });
 

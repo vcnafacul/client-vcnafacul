@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AbaLinhagem } from "./AbaLinhagem";
 import {
+  TEXTO_DUPLICAR,
   TEXTO_SEM_COPIAS,
   TEXTO_SEM_LINHAGEM,
   TEXTO_SEM_VERSOES,
@@ -10,8 +11,13 @@ import {
 
 const buscarLinhagem = vi.hoisted(() => vi.fn());
 vi.mock("@/services/question/buscarLinhagem", () => ({ buscarLinhagem }));
+const duplicarQuestao = vi.hoisted(() => vi.fn());
+vi.mock("@/services/question/duplicarQuestao", () => ({ duplicarQuestao }));
+const estado = vi.hoisted(() => ({
+  permissao: { criarQuestao: true } as Record<string, boolean>,
+}));
 vi.mock("@/store/auth", () => ({
-  useAuthStore: () => ({ data: { token: "tok" } }),
+  useAuthStore: () => ({ data: { token: "tok", permissao: estado.permissao } }),
 }));
 
 const item = (id: string, over: Record<string, unknown> = {}) => ({
@@ -148,5 +154,71 @@ describe("AbaLinhagem (card 34A)", () => {
     await waitFor(() =>
       expect(container.querySelector("[data-linhagem-erro]")).toBeTruthy(),
     );
+  });
+});
+
+describe("AbaLinhagem — duplicar no topo (QA)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    estado.permissao = { criarQuestao: true };
+    buscarLinhagem.mockResolvedValue(cadeia);
+    duplicarQuestao.mockResolvedValue({ _id: "nova" });
+  });
+
+  it("⚠️ o botão está no TOPO da aba, antes da lista", async () => {
+    const { container } = montar();
+    await screen.findByText(textoDaPosicao(2, 3));
+
+    const topo = container.querySelector("[data-topo-da-linhagem]");
+    const lista = container.querySelector("[data-aba-linhagem]");
+    expect(topo?.querySelector("[data-duplicar]")).toBeTruthy();
+    expect(
+      topo!.compareDocumentPosition(lista!) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it("⚠️ aparece também sem linhagem e com erro — é quando mais se duplica", async () => {
+    buscarLinhagem.mockResolvedValue({
+      atual: V1,
+      versoes: [],
+      copias: [],
+      origemCopia: null,
+    });
+    const { container, unmount } = montar();
+    await screen.findByText(TEXTO_SEM_LINHAGEM);
+    expect(container.querySelector("[data-duplicar]")).toBeTruthy();
+    unmount();
+
+    buscarLinhagem.mockRejectedValue(new Error("caiu"));
+    const outro = montar();
+    await waitFor(() =>
+      expect(outro.container.querySelector("[data-linhagem-erro]")).toBeTruthy(),
+    );
+    expect(outro.container.querySelector("[data-duplicar]")).toBeTruthy();
+  });
+
+  it("⚠️ depois de duplicar, busca a linhagem de novo e abre nas Cópias", async () => {
+    const { container } = montar();
+    await screen.findByText(textoDaPosicao(2, 3));
+    buscarLinhagem.mockResolvedValue({
+      ...cadeia,
+      copias: [item(C1), item("665f0c1a2b3c4d5e6f0000c2")],
+    });
+
+    fireEvent.click(screen.getByText(TEXTO_DUPLICAR));
+
+    await waitFor(() =>
+      expect(container.querySelectorAll("[data-lista-copias] li")).toHaveLength(2),
+    );
+    expect(duplicarQuestao).toHaveBeenCalledWith("tok", V2);
+    expect(buscarLinhagem).toHaveBeenCalledTimes(2);
+  });
+
+  it("sem `criarQuestao`, nem a faixa do topo", async () => {
+    estado.permissao = {};
+    const { container } = montar();
+    await screen.findByText(textoDaPosicao(2, 3));
+
+    expect(container.querySelector("[data-topo-da-linhagem]")).toBeNull();
   });
 });
