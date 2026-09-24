@@ -68,6 +68,12 @@ export function DashFilterBar({
             placeholder={search.placeholder ?? "Buscar"}
             value={rascunho}
             onChange={(e) => setRascunho(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key !== "Enter" || !search.onSubmit) return;
+              // Entrega o que está no campo e não espera o debounce.
+              if (rascunho !== valorExterno) aoMudarRef.current?.(rascunho);
+              search.onSubmit(rascunho);
+            }}
             className={cn(
               "h-9 w-full rounded-md border pl-8 pr-3 text-sm outline-none",
               dashV2.border,

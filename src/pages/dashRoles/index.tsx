@@ -2,9 +2,9 @@ import { FilterProps } from "@/components/atoms/filter";
 import { SelectProps } from "@/components/atoms/select";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { ButtonProps } from "../../components/molecules/button";
 import { CardDash } from "../../components/molecules/cardDash";
-import DashCardTemplate from "../../components/templates/dashCardTemplate";
+import { DashListTemplate, type DashAction } from "@/components/dashV2";
+import { colunasDeUsuario } from "./columns";
 import { DashCardContext } from "../../context/dashCardContext";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { getRoles } from "../../services/roles/getRoles";
@@ -29,7 +29,17 @@ function DashRoles() {
   const [filterText, setFilterText] = useState<string>("");
   const [roleFilter, setRoleFilter] = useState<string>("0");
   const dataRef = useRef<UserRole[]>([]);
-  const limitCards = 100;
+  /*
+    ⚠️ **1000, o teto da api** (card 03 de `tela-de-usuarios`). O V2 pagina no
+    CLIENTE, sobre o conjunto que chegou — não pede a próxima página ao rolar,
+    como o V1 fazia. Com a busca dando match (card 02), 1000 é muito; se
+    passar, a tela avisa em vez de esconder.
+  */
+  const limitCards = 1000;
+  const [carregando, setCarregando] = useState(false);
+  /** Já houve busca? Antes dela a tela está vazia de propósito. */
+  const [buscou, setBuscou] = useState(false);
+  const [totalNoServidor, setTotalNoServidor] = useState(0);
 
   const modals = useModals([
     "modalUserRole",
@@ -96,19 +106,30 @@ function DashRoles() {
 
   const activeRoleId = roleFilter !== "0" ? roleFilter : "";
 
-  const getUsers = () => {
-    getUsersRole(token, 1, limitCards, filterText, activeRoleId)
+  /*
+    ⚠️ **Sem reordenar aqui.** Antes o client ordenava por primeiro nome só a
+    página que chegava — com paginação, isso mentia. Agora a ordenação é a da
+    tabela, sobre o conjunto inteiro.
+
+    ⚠️ Recebe o texto por parâmetro: no Enter, o estado `filterText` ainda
+    pode estar no valor anterior (o campo do V2 tem debounce).
+  */
+  const getUsers = (texto: string = filterText) => {
+    setCarregando(true);
+    getUsersRole(token, 1, limitCards, texto, activeRoleId)
       .then((res) => {
-        setUsersRole(
-          res.data?.sort((a, b) =>
-            a.user.firstName.localeCompare(b.user.firstName),
-          ),
-        );
+        setUsersRole(res.data ?? []);
+        setTotalNoServidor(res.totalItems ?? res.data?.length ?? 0);
         dataRef.current = res.data;
       })
       .catch((error: Error) => {
         toast.error(error.message);
         setUsersRole([]);
+        setTotalNoServidor(0);
+      })
+      .finally(() => {
+        setCarregando(false);
+        setBuscou(true);
       });
   };
 
@@ -201,47 +222,57 @@ function DashRoles() {
       ]
     : [];
 
-  const buttons: ButtonProps[] = [
-    {
-      onClick: () => getUsers(),
-      typeStyle: "primary",
-      size: "small",
-      children: "Buscar",
-    },
-    {
-      onClick: () => {
-        setUserRoleSelect(null);
-        modals.modalNewRole.open();
-      },
-      typeStyle: "quaternary",
-      size: "small",
-      children: "Nova Função",
-    },
-    {
-      onClick: () => {
-        modals.modalEditRole.open();
-      },
-      typeStyle: "primary",
-      size: "small",
-      children: "Editar Funções",
-    },
-    {
-      onClick: () => {
-        modals.modalSendEmail.open();
-      },
-      typeStyle: "secondary",
-      size: "small",
-      children: "Enviar Email",
-    },
-  ];
 
   const filterProps: FilterProps = {
     filtrar: (e: React.ChangeEvent<HTMLInputElement>) =>
-      setFilterText(e.target.value.toLowerCase()),
-    placeholder: "Busque por nome ou email",
+      setFilterText(e.target.value),
+    placeholder: "Busque por nome, sobrenome ou email",
     defaultValue: filterText,
     keyDown: () => getUsers(),
   };
+
+  /*
+    ⚠️ **As mesmas quatro ações de antes**, agora por papel: buscar é a
+    primária; as de função e email, secundárias.
+  */
+  const acoes: {
+    primary: DashAction;
+    secondary: DashAction[];
+  } = {
+    primary: { id: "buscar", label: "Buscar", onClick: () => getUsers() },
+    secondary: [
+      {
+        id: "nova-funcao",
+        label: "Nova Função",
+        onClick: () => {
+          setUserRoleSelect(null);
+          modals.modalNewRole.open();
+        },
+      },
+      {
+        id: "editar-funcoes",
+        label: "Editar Funções",
+        onClick: () => modals.modalEditRole.open(),
+      },
+      {
+        id: "enviar-email",
+        label: "Enviar Email",
+        onClick: () => modals.modalSendEmail.open(),
+      },
+    ],
+  };
+
+  /*
+    ⚠️ Passou do teto: avisar, e não cortar calado. Com a busca por palavras,
+    é raro — mas "só a função" (sem nome) pode passar.
+  */
+  const aviso =
+    totalNoServidor > usersRole.length ? (
+      <p data-aviso-limite className="px-4 py-2 text-xs text-gray-600">
+        Mostrando {usersRole.length} de {totalNoServidor} — refine a busca para
+        ver os demais.
+      </p>
+    ) : undefined;
 
   return (
     <DashCardContext.Provider
@@ -253,12 +284,28 @@ function DashRoles() {
         getMoreCards,
         cardTransformation,
         limitCards,
-        buttons,
         selectFiltes,
         filterProps,
       }}
     >
-      <DashCardTemplate />
+      {/*
+        ⚠️ **Continua sem trazer nada de início** — decisão do card 03: a
+        tabela só enche com o que der match. O vazio antes da busca convida a
+        buscar; depois dela, diz que não achou.
+      */}
+      <DashListTemplate<UserRole>
+        columns={colunasDeUsuario}
+        actions={acoes}
+        state={carregando ? "loading" : "idle"}
+        headerSlot={aviso}
+        defaultSort={{ columnId: "nome", direction: "asc" }}
+        onSearchSubmit={(texto) => getUsers(texto)}
+        textoVazio={
+          buscou
+            ? "Nenhum usuário encontrado para esta busca."
+            : "Busque por nome, sobrenome ou email."
+        }
+      />
       <ShowUserModal />
       <ShowUserRole />
       <ShowNewRole />
