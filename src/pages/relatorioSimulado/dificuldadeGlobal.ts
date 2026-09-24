@@ -24,6 +24,20 @@ export const MINIMO_PARA_DIFICULDADE_GLOBAL = 30;
  * (campos ausentes), base abaixo do mínimo, e base zero. Zero por cento diria
  * "ninguém no país acertou", que é uma afirmação — e provavelmente falsa.
  *
+ * ⚠️ **A contagem é DA QUESTÃO, e não da linhagem — decisão do card 29.**
+ *
+ * A pergunta era se "24% de acerto" descreve esta entidade ou a família toda. O
+ * card 27 respondeu sem querer: **"correção" edita in-place e NÃO cria versão**
+ * — só "nova versão" cria, e ela significa por definição que *o conteúdo mudou
+ * de verdade*. Logo toda versão nasce de uma mudança substantiva, e somar a
+ * linhagem somaria sempre textos diferentes.
+ *
+ * ⚠️ **E o custo dessa decisão é a coluna ENCOLHER com o uso:** uma questão com
+ * 1.847 respostas vira duas de ~900 na primeira versão, e a cada versão a base
+ * se aproxima do piso abaixo do qual nada é exibido. **Isto não é defeito** — é
+ * a consequência aceita de não somar textos diferentes. O `textoDaDificuldadeGlobal`
+ * marca a versão justamente para a pessoa saber por quê.
+ *
  * ⚠️ **Estes números só são confiáveis depois do card 21 (escrita no ms) E da
  * execução do sync do card 22.** Antes disso `baseGeral` contava APRESENTAÇÕES
  * em vez de respostas e o reprocessamento contava duas vezes — medido: 0 de 181
@@ -47,11 +61,34 @@ export function acertoGlobal(q: QuestaoDoRelatorio): number | null {
  *
  * ⚠️ Separador de milhar em pt-BR, porque "1847" se lê mal ao lado de um
  * percentual de dois dígitos.
+ *
+ * ⚠️ **Questão que é versão leva um "· nova" atrás** (card 29). Sem isso, a
+ * base pequena de uma versão recém-criada se lê como "questão raramente usada",
+ * que é uma conclusão errada sobre o mesmo número — e a contagem NÃO soma a
+ * linhagem, por decisão.
  */
 export function textoDaDificuldadeGlobal(q: QuestaoDoRelatorio): string | null {
   const pct = acertoGlobal(q);
   if (pct === null) return null;
-  return `${pct}% de ${(q.baseGeral as number).toLocaleString("pt-BR")}`;
+  const base = `${pct}% de ${(q.baseGeral as number).toLocaleString("pt-BR")}`;
+  return q.ehVersao ? `${base} · nova` : base;
+}
+
+/**
+ * Por que a dificuldade global não aparece nesta questão.
+ *
+ * ⚠️ **Existe porque "sem dado" e "dado novo" pedem reações opostas.** Uma
+ * questão nunca usada fora deste recorte e uma versão criada semana passada
+ * mostram o mesmo travessão — e a segunda vai ter base amanhã.
+ *
+ * `null` quando o número está lá: não há o que explicar.
+ */
+export function motivoDaAusencia(q: QuestaoDoRelatorio): string | null {
+  if (acertoGlobal(q) !== null) return null;
+  if (q.ehVersao) {
+    return `Versão nova desta questão: ainda não há ${MINIMO_PARA_DIFICULDADE_GLOBAL} respostas fora deste recorte. O histórico anterior ficou com a versão anterior.`;
+  }
+  return null;
 }
 
 /**

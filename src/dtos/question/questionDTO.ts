@@ -48,6 +48,16 @@ export interface QuestionBase {
   provasContendo?: { provaId: string; provaNome: string; numero: number | null }[];
   /** Ponteiro pra prova de origem: casa com uma entry de provasContendo. */
   provaBase?: string | null;
+  /**
+   * De qual questão esta nasceu — o lastro da duplicação (card 25).
+   *
+   * ⚠️ **`null`/ausente na esmagadora maioria**: só quem veio de "Duplicar" tem.
+   *
+   * ⚠️ **A original apagada NÃO limpa este campo**, e é deliberado: a cópia
+   * continua existindo e a tela mostra "Copiada de [questão excluída]". Perder o
+   * lastro seria perder a única pista de onde ela veio.
+   */
+  origem?: string | null;
 }
 
 export interface QuestionDto extends QuestionBase {

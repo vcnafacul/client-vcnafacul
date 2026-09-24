@@ -256,6 +256,19 @@ export interface QuestaoDoRelatorio {
    * dificuldade da questão contra ruído.
    */
   baseGeral?: number;
+  /**
+   * Esta questão é uma **versão** de outra (card 29).
+   *
+   * ⚠️ **A contagem global é DA QUESTÃO, não da linhagem** — e quem decidiu foi
+   * o card 27: "correção" edita in-place e só "nova versão" cria uma entidade
+   * nova, então toda versão nasce de uma mudança substantiva, e somar a família
+   * somaria textos diferentes.
+   *
+   * ⚠️ **O custo é a base encolher a cada versão**, e a coluna ir sumindo pelo
+   * piso de 30 sem ninguém saber por quê. Este campo existe para a tela poder
+   * dizer *"a base é pequena porque a questão é nova"*.
+   */
+  ehVersao?: boolean;
 }
 
 export interface QuestoesDoRelatorio {

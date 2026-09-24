@@ -8,18 +8,28 @@ import { useAuthStore } from "@/store/auth";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PendingImageStore } from "@/utils/pendingImageStore";
 import ModalTabTemplateQuestion from "../components/ModalTabTemplateQuestion";
+import { LinhagemDaQuestao } from "../components/LinhagemDaQuestao";
 import { TabClassificacao } from "./tabs/TabClassificacao";
 import { TabConteudo } from "./tabs/TabConteudo";
 import { TabAlternativas } from "./tabs/TabAlternativas";
 import { TabHistorico } from "./tabs/TabHistorico";
 import { TabImagens } from "./tabs/TabImagens";
 import { useConteudoForm } from "./tabs/TabConteudo/useConteudoForm";
+import { ModalEscolhaAoSalvar } from "./tabs/TabConteudo/ModalEscolhaAoSalvar";
 
 interface ModalQuestionDetailsRefactoredProps {
   isOpen: boolean;
   onClose: () => void;
   questionId: string | null;
   infos: any;
+  /**
+   * Abre outra questão no mesmo modal (card 25).
+   *
+   * ⚠️ **Opcional**: quem monta o modal decide se sabe trocar de questão. Sem
+   * ele, o badge e a lista de cópias aparecem sem link — a informação continua
+   * visível, que é o mínimo.
+   */
+  abrirQuestao?: (id: string) => void;
 }
 
 export function ModalQuestionDetailsRefactored({
@@ -27,6 +37,7 @@ export function ModalQuestionDetailsRefactored({
   onClose,
   questionId,
   infos,
+  abrirQuestao,
 }: ModalQuestionDetailsRefactoredProps) {
   const {
     data: { token, permissao },
@@ -147,6 +158,7 @@ export function ModalQuestionDetailsRefactored({
       infos={infos}
       token={token}
       refreshQuestion={refreshQuestion}
+      abrirQuestao={abrirQuestao}
     />
   );
 }
@@ -164,6 +176,7 @@ function ModalContent({
   infos,
   token,
   refreshQuestion,
+  abrirQuestao,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -172,6 +185,8 @@ function ModalContent({
   infos: any;
   token: string;
   refreshQuestion: () => void;
+  /** Abre outra questão no mesmo modal — "ver original" e "ver cópias". */
+  abrirQuestao?: (id: string) => void;
 }) {
   const pendingStoreRef = useRef(new PendingImageStore());
   const conteudoForm = useConteudoForm({ question, pendingStore: pendingStoreRef.current });
@@ -185,7 +200,16 @@ function ModalContent({
 
   const contentFormat = question.contentFormat || "plain";
 
+  /*
+    ⚠️ **Em quantas provas a questão está** — o número que o modal do card 27
+    mostra. Vem do `provasContendo` que a Etapa 9 já traz no `getById`: sem ele
+    a frase diria "as provas" no genérico, e quem edita não faz ideia de que uma
+    questão está em 2,7 simulados em média (medido no card 22).
+  */
+  const quantasProvas = question.provasContendo?.length ?? 0;
+
   return (
+    <>
     <ModalTabTemplateQuestion
       isOpen={isOpen}
       className="px-4 py-2"
@@ -194,12 +218,30 @@ function ModalContent({
           label: "Classificação",
           id: "classificacao",
           children: (
-            <TabClassificacao
-              question={question}
-              canEdit={canEdit}
-              infos={infos}
-              onSaveSuccess={refreshQuestion}
-            />
+            <div className="flex flex-col gap-3">
+              <TabClassificacao
+                question={question}
+                canEdit={canEdit}
+                infos={infos}
+                onSaveSuccess={refreshQuestion}
+              />
+              {/*
+                ⚠️ **No RODAPÉ da aba, e não no topo** — ajuste pedido na
+                revisão. A linhagem é metadado sobre a questão, não conteúdo
+                dela: no topo, ela disputava a primeira leitura com a
+                classificação, que é o que a aba existe para mostrar.
+
+                ⚠️ **Na aba de Classificação, e não numa aba própria** (card
+                25): é aqui que os outros metadados moram, e uma aba só para
+                três linhas custaria um clique a mais para algo que a maioria
+                das questões nem tem.
+              */}
+              <LinhagemDaQuestao
+                questaoId={question._id}
+                origem={question.origem}
+                abrirQuestao={abrirQuestao}
+              />
+            </div>
           ),
           handleClose: onClose,
         },
@@ -256,5 +298,25 @@ function ModalContent({
         },
       ]}
     />
+
+    {/*
+      ⚠️ **Fora do `ModalTabTemplateQuestion`, e não dentro de uma aba.** A
+      escolha é sobre o save inteiro, não sobre o conteúdo — e um modal dentro
+      de outro que troca de aba embaixo dele desaparece quando a pessoa clica
+      em "Classificação" sem ter decidido.
+    */}
+    {conteudoForm.escolhaPendente && (
+      <ModalEscolhaAoSalvar
+        isOpen
+        onClose={conteudoForm.cancelarEscolha}
+        campos={conteudoForm.escolhaPendente.campos}
+        respostas={question.quantidadeResposta ?? 0}
+        provas={quantasProvas}
+        antes={question as unknown as Record<string, unknown>}
+        depois={conteudoForm.escolhaPendente.dados}
+        onConfirmar={conteudoForm.confirmarEscolha}
+      />
+    )}
+    </>
   );
 }
