@@ -11,6 +11,8 @@ import ModalTabTemplateQuestion from "../components/ModalTabTemplateQuestion";
 import { TabClassificacaoCreate } from "./tabs/TabClassificacaoCreate";
 import { TabConteudoCreate } from "./tabs/TabConteudoCreate";
 import { TabAlternativasCreate } from "./tabs/TabAlternativasCreate";
+import { validarQuestaoNova } from "./validarQuestaoNova";
+import { toast } from "react-toastify";
 
 interface ModalCreateQuestionProps {
   isOpen: boolean;
@@ -74,32 +76,14 @@ export function ModalCreateQuestion({
   };
 
   const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.prova) newErrors.prova = "Prova é obrigatória";
-    if (!formData.enemArea) newErrors.enemArea = "Área ENEM é obrigatória";
-    if (!formData.materia) newErrors.materia = "Matéria é obrigatória";
-    if (!formData.frente1) newErrors.frente1 = "Frente principal é obrigatória";
-    if (!formData.numero || formData.numero < 1)
-      newErrors.numero = "Número deve ser maior que 0";
-
-    if (!formData.textoQuestao?.trim())
-      newErrors.textoQuestao = "Texto da questão é obrigatório";
-    if (!formData.textoAlternativaA?.trim())
-      newErrors.textoAlternativaA = "Alternativa A é obrigatória";
-    if (!formData.textoAlternativaB?.trim())
-      newErrors.textoAlternativaB = "Alternativa B é obrigatória";
-    if (!formData.textoAlternativaC?.trim())
-      newErrors.textoAlternativaC = "Alternativa C é obrigatória";
-    if (!formData.textoAlternativaD?.trim())
-      newErrors.textoAlternativaD = "Alternativa D é obrigatória";
-    if (!formData.textoAlternativaE?.trim())
-      newErrors.textoAlternativaE = "Alternativa E é obrigatória";
-    if (!formData.alternativa)
-      newErrors.alternativa = "Resposta correta é obrigatória";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const { erros, resumo } = validarQuestaoNova(formData);
+    setErrors(erros);
+    /*
+      ⚠️ **Avisa, e não só marca os campos.** Cada erro aparece só na sua aba;
+      sem o toast, clicar em "Criar Questão" em outra aba não fazia nada visível.
+    */
+    if (resumo) toast.error(resumo);
+    return resumo === null;
   };
 
   const handleSave = async () => {
