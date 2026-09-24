@@ -9,6 +9,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ClassificacaoFormData, classificacaoSchema } from "./schema";
+import { payloadDaClassificacao } from "./payloadDaClassificacao";
 
 interface UseClassificacaoFormProps {
   question: Question;
@@ -98,19 +99,7 @@ export function useClassificacaoForm({
       await executeAsync({
         action: () =>
           updateClassification(
-            {
-              _id: question._id,
-              prova: formData.prova,
-              numero: formData.numero,
-              enemArea: formData.enemArea,
-              materia: formData.materia,
-              frente1: formData.frente1,
-              frente2: formData.frente2 || undefined,
-              frente3: formData.frente3 || undefined,
-              provaClassification: formData.provaClassification,
-              subjectClassification: formData.subjectClassification,
-              reported: formData.reported,
-            },
+            payloadDaClassificacao(question._id, formData, provasContendo.length > 0),
             token
           ),
         loadingMessage: "Salvando classificação...",

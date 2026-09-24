@@ -1,5 +1,11 @@
 # 🔄 Sistema de Cascata Reativa - Tab Classificação
 
+> ⚠️ **Atualizado em 2026-09-23 (card 02 de `docs/cards/area-enem-da-questao`).** A área ENEM
+> **não depende mais de haver prova**: as opções vêm de `areasPermitidas` (`../areasPermitidas.ts`)
+> — as 4 áreas sem prova ou em prova customizada, a interseção dos `enemAreas` das provas ENEM
+> quando há. Na edição, pelas provas de **todos** os vínculos. E trocar a prova só limpa a área
+> (e a cascata) quando ela deixou de ser permitida. O que segue abaixo descreve a versão anterior.
+
 ## ✅ Implementado com Sucesso!
 
 O sistema de dropdowns reativos em cascata foi implementado com as seguintes dependências:
