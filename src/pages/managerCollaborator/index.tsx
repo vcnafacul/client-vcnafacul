@@ -10,8 +10,8 @@ import {
   getPhotoCollaborator,
   isLegacyPhotoKey,
 } from "@/services/prepCourse/collaborator/get-photo";
-import { getRoles } from "@/services/prepCourse/getRoles";
-import { updateUserRole } from "@/services/roles/updateUserRole";
+import { getRolesAtribuiveis } from "@/services/prepCourse/getRolesAtribuiveis";
+import { atribuirFuncaoColaborador } from "@/services/prepCourse/atribuirFuncaoColaborador";
 import { useAuthStore } from "@/store/auth";
 import { Role } from "@/types/roles/role";
 import { phoneMask } from "@/utils/phoneMask";
@@ -215,7 +215,13 @@ export default function ManagerCollaborator() {
 
   const handleUpdateUserRole = async (roleId: string) => {
     await executeAsync({
-      action: () => updateUserRole(collaboratorSelected!.userId, roleId, token),
+      /*
+        ⚠️ Rota do cursinho (card 02 de `convite-de-colaborador`): confere o
+        cursinho e não deixa quem só gerencia colaboradores escalar. O
+        `user/updateRole` ficou só para a plataforma.
+      */
+      action: () =>
+        atribuirFuncaoColaborador(collaboratorSelected!.userId, roleId, token),
       loadingMessage: "Atualizando permissão...",
       successMessage: "Permissão atualizada com sucesso!",
       errorMessage: (error: Error) => error.message,
@@ -412,7 +418,12 @@ export default function ManagerCollaborator() {
   }, [token]);
 
   useEffect(() => {
-    getRoles(token)
+    /*
+      ⚠️ As funções que QUEM ESTÁ LOGADO pode atribuir — filtradas no servidor.
+      O `getRoles` exige ser admin do cursinho: quem só gerencia colaboradores
+      recebia erro e ficava sem lista.
+    */
+    getRolesAtribuiveis(token)
       .then((res) => {
         setRoles(res);
       })
