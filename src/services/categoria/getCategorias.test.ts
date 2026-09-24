@@ -16,8 +16,9 @@ describe("getCategorias", () => {
 
     await getCategorias("tok");
 
-    const url = new URL(String(mockedFetch.mock.calls[0][0]));
-    const limit = Number(url.searchParams.get("limit"));
+    // Sem BASE_URL no teste a URL não é absoluta — lê só a query.
+    const query = String(mockedFetch.mock.calls[0][0]).split("?")[1];
+    const limit = Number(new URLSearchParams(query).get("limit"));
     expect(limit).toBeGreaterThanOrEqual(1);
     expect(limit).toBeLessThanOrEqual(500);
   });
