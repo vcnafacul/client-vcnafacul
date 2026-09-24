@@ -21,19 +21,17 @@ describe("validarQuestaoNova", () => {
     expect(validarQuestaoNova(completa)).toEqual({ erros: {}, resumo: null });
   });
 
-  it("⚠️ o caso do relato: sem prova e sem número, o resumo diz onde", () => {
-    /*
-      Tudo preenchido menos Prova e Número, e o clique na aba Alternativas:
-      antes, nada acontecia. O resumo aponta a aba.
-    */
-    const { erros, resumo } = validarQuestaoNova({
-      ...completa,
-      prova: "",
-      numero: null,
-    });
+  it("⚠️ sem prova: passa — prova é opcional (area-enem 03)", () => {
+    expect(
+      validarQuestaoNova({ ...completa, prova: "", numero: null }),
+    ).toEqual({ erros: {}, resumo: null });
+  });
 
-    expect(Object.keys(erros)).toEqual(["prova", "numero"]);
-    expect(resumo).toBe("Falta preencher — Classificação: Prova, Número");
+  it("⚠️ COM prova e sem número: exige o número", () => {
+    const { erros, resumo } = validarQuestaoNova({ ...completa, numero: null });
+
+    expect(Object.keys(erros)).toEqual(["numero"]);
+    expect(resumo).toBe("Falta preencher — Classificação: Número");
   });
 
   it("agrupa por aba, na ordem das abas", () => {

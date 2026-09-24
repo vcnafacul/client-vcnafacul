@@ -10,19 +10,17 @@ const OBRIGATORIOS: {
   mensagem: string;
   falta: (f: Partial<CreateQuestion>) => boolean;
 }[] = [
-  {
-    campo: "prova",
-    rotulo: "Prova",
-    aba: "Classificação",
-    mensagem: "Prova é obrigatória",
-    falta: (f) => !f.prova,
-  },
+  /*
+    ⚠️ **Prova é opcional** (card 03 de `area-enem-da-questao`): questão sem
+    prova só é gravada, e entra numa prova depois pela Classificação. Mas COM
+    prova o número é obrigatório — é a posição dela na prova.
+  */
   {
     campo: "numero",
     rotulo: "Número",
     aba: "Classificação",
     mensagem: "Número deve ser maior que 0",
-    falta: (f) => !f.numero || f.numero < 1,
+    falta: (f) => !!f.prova && (!f.numero || f.numero < 1),
   },
   {
     campo: "enemArea",

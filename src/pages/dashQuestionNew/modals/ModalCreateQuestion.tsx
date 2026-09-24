@@ -28,7 +28,9 @@ const emptyForm: Partial<CreateQuestion> = {
   frente2: null,
   frente3: null,
   materia: "",
-  numero: 1,
+  // ⚠️ Vazio, e não `1` (card 03): com prova, ficava preenchido sem a pessoa
+  // escolher; sem prova, ia no corpo e o ms recusa número sem prova.
+  numero: null,
   textoQuestao: "",
   pergunta: "",
   textoAlternativaA: "",
