@@ -6,10 +6,13 @@ import * as yup from "yup";
  */
 export const classificacaoSchema = yup.object({
   // Campos obrigatórios
-  prova: yup
-    .string()
-    .required("A prova é obrigatória")
-    .min(1, "Selecione uma prova"),
+  /*
+    ⚠️ **Opcional** (card 02 de `area-enem-da-questao`): questão sem prova — a
+    cópia recém-duplicada — não tem vínculo. Quando há vínculo, o form já vem
+    preenchido com ele; e quem decide se pode faltar é o servidor, pelo estado
+    da questão.
+  */
+  prova: yup.string().default(""),
 
   numero: yup
     .number()

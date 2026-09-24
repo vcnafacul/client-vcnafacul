@@ -12,6 +12,7 @@ import { getMissingNumber } from "@/services/prova/getMissingNumber";
 import { useAuthStore } from "@/store/auth";
 import { AlertCircle, AlertTriangle, Loader2, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { areasPermitidas, mantemArea } from "./areasPermitidas";
 
 interface TabClassificacaoCreateProps {
   formData: Partial<CreateQuestion>;
@@ -30,9 +31,6 @@ export function TabClassificacaoCreate({
     data: { token },
   } = useAuthStore();
 
-  const [enemAreasDisponiveis, setEnemAreasDisponiveis] = useState<string[]>(
-    []
-  );
   const [materiasDisponiveis, setMateriasDisponiveis] = useState<any[]>([]);
   const [frentesDisponiveis, setFrentesDisponiveis] = useState<any[]>([]);
   const [showFrente2, setShowFrente2] = useState(false);
@@ -66,15 +64,19 @@ export function TabClassificacaoCreate({
     fetchNumerosDisponiveis();
   }, [formData.prova, token]);
 
-  // Atualizar áreas ENEM quando prova for selecionada
-  useEffect(() => {
-    if (formData.prova) {
-      const prova = infos?.provas?.find((p: any) => p._id === formData.prova);
-      setEnemAreasDisponiveis(prova?.enemAreas || []);
-    } else {
-      setEnemAreasDisponiveis([]);
-    }
-  }, [formData.prova, infos]);
+  /*
+    ⚠️ **A área não depende mais de haver prova** (card 02 de
+    `area-enem-da-questao`). Sem prova, ou em prova customizada (`enemAreas =
+    []`), as 4 áreas; prova ENEM filtra para as do dia. Antes, a customizada
+    deixava o select vazio e desabilitado — e a área é obrigatória: não
+    salvava.
+  */
+  const provaDe = (id?: string) =>
+    infos?.provas?.find((p: any) => p._id === id);
+  const provaSelecionada = provaDe(formData.prova);
+  const { areas: enemAreasDisponiveis } = areasPermitidas(
+    provaSelecionada ? [provaSelecionada] : []
+  );
 
   // Atualizar matérias quando área ENEM for selecionada
   useEffect(() => {
@@ -113,15 +115,21 @@ export function TabClassificacaoCreate({
 
   const handleProvaChange = (value: string) => {
     onChange("prova", value);
-    // Limpar campos dependentes
     onChange("numero", null);
-    onChange("enemArea", "");
-    onChange("materia", "");
-    onChange("frente1", "");
-    onChange("frente2", null);
-    onChange("frente3", null);
-    setShowFrente2(false);
-    setShowFrente3(false);
+    /*
+      ⚠️ **Só limpa a classificação se a área deixou de caber na prova nova.**
+      Antes limpava sempre — corrigir a prova escolhida custava reclassificar.
+    */
+    const nova = provaDe(value);
+    if (!mantemArea(formData.enemArea, nova ? [nova] : [])) {
+      onChange("enemArea", "");
+      onChange("materia", "");
+      onChange("frente1", "");
+      onChange("frente2", null);
+      onChange("frente3", null);
+      setShowFrente2(false);
+      setShowFrente3(false);
+    }
   };
 
   const handleEnemAreaChange = (value: string) => {
@@ -283,18 +291,11 @@ export function TabClassificacaoCreate({
               <Select
                 value={formData.enemArea}
                 onValueChange={handleEnemAreaChange}
-                disabled={!formData.prova || enemAreasDisponiveis.length === 0}
               >
                 <SelectTrigger
                   className={errors.enemArea ? "border-red-500" : ""}
                 >
-                  <SelectValue
-                    placeholder={
-                      !formData.prova
-                        ? "Selecione uma prova primeiro"
-                        : "Selecione a área"
-                    }
-                  />
+                  <SelectValue placeholder="Selecione a área" />
                 </SelectTrigger>
                 <SelectContent>
                   {enemAreasDisponiveis.map((area) => (

@@ -11,10 +11,13 @@ import { useAuthStore } from "@/store/auth";
 import { Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { ProvaOption } from "./types";
+import { mantemArea } from "../areasPermitidas";
 
 interface ModalAddQuestionToProvaProps {
   provas: ProvaOption[];
   provaIdsJaVinculadas: string[];
+  /** A área da questão — para marcar as provas ENEM que não a aceitam. */
+  enemArea?: string;
   onConfirm: (provaId: string, numero: number) => Promise<void>;
   onClose: () => void;
 }
@@ -22,6 +25,7 @@ interface ModalAddQuestionToProvaProps {
 export function ModalAddQuestionToProva({
   provas,
   provaIdsJaVinculadas,
+  enemArea,
   onConfirm,
   onClose,
 }: ModalAddQuestionToProvaProps) {
@@ -86,17 +90,34 @@ export function ModalAddQuestionToProva({
             className="w-full border rounded-md p-2 text-sm"
           />
           <div className="max-h-40 overflow-y-auto border rounded-md">
-            {provasDisponiveis.map((p) => (
-              <button
-                key={p._id}
-                onClick={() => setProvaId(p._id)}
-                className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 ${
-                  provaId === p._id ? "bg-blue-50 font-medium" : ""
-                }`}
-              >
-                {p.nome}
-              </button>
-            ))}
+            {provasDisponiveis.map((p) => {
+              /*
+                ⚠️ **Conveniência, não garantia** (card 02 de
+                `area-enem-da-questao`): a prova ENEM que não aceita a área da
+                questão aparece desabilitada, com o motivo. Quem garante é o
+                servidor (card 01), que recusa com a mensagem.
+              */
+              const recusa = !mantemArea(enemArea, [p]);
+              return (
+                <button
+                  key={p._id}
+                  data-prova={p._id}
+                  disabled={recusa}
+                  title={
+                    recusa ? `Esta prova não aceita questão de ${enemArea}` : undefined
+                  }
+                  onClick={() => setProvaId(p._id)}
+                  className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400 disabled:hover:bg-transparent ${
+                    provaId === p._id ? "bg-blue-50 font-medium" : ""
+                  }`}
+                >
+                  {p.nome}
+                  {recusa && (
+                    <span className="ml-2 text-xs">— não aceita {enemArea}</span>
+                  )}
+                </button>
+              );
+            })}
             {provasDisponiveis.length === 0 && (
               <p className="px-3 py-2 text-sm text-gray-400">
                 Nenhuma prova disponível

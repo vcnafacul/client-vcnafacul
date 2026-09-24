@@ -8,7 +8,8 @@ import { questoes } from "../urls";
  */
 export interface UpdateClassificationData {
   _id: string;
-  prova: string;
+  /** Ausente em questão sem prova (card 02 de `area-enem-da-questao`). */
+  prova?: string;
   numero?: number | null;
   enemArea: string;
   materia: string;

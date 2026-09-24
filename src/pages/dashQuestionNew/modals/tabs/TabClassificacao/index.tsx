@@ -31,6 +31,7 @@ import { toast } from "react-toastify";
 import { TabClassificacaoProps } from "./types";
 import { useClassificacaoForm } from "./useClassificacaoForm";
 import { ModalAddQuestionToProva } from "./ModalAddQuestionToProva";
+import { areasPermitidas } from "../areasPermitidas";
 
 /**
  * Tab de Classificação - Modo View e Edit
@@ -116,8 +117,18 @@ export function TabClassificacao({
   // Buscar prova selecionada (derivada de provaSel)
   const provaSelecionada = infos?.provas?.find((p) => p._id === provaSel?.provaId);
 
-  // Filtrar áreas ENEM baseado na prova selecionada
-  const enemAreasDisponiveis = provaSelecionada?.enemAreas || [];
+  /*
+    ⚠️ **Áreas pelas provas de TODOS os vínculos, e não pela selecionada**
+    (card 02 de `area-enem-da-questao`). A área é da questão: filtrar pelo
+    vínculo selecionado deixava escolher uma área que outra prova da mesma
+    questão recusa. Sem prova, ou só em customizada, as 4 áreas.
+  */
+  const { areas: enemAreasDisponiveis, conflito: conflitoDeAreas } =
+    areasPermitidas(
+      provasContendo
+        .map((p) => infos?.provas?.find((x) => x._id === p.provaId))
+        .filter((p): p is NonNullable<typeof p> => !!p)
+    );
 
   // Filtrar matérias baseado na área ENEM selecionada
   const materiasDisponiveis =
@@ -423,6 +434,11 @@ export function TabClassificacao({
                     {provaSel?.numero ?? "Sem número"}
                   </p>
                 </div>
+              ) : !provaSel ? (
+                // ⚠️ Sem prova não há posição (card 02): o número nem vai no save.
+                <div className="p-3 bg-gray-100 rounded-md border border-gray-200 opacity-70">
+                  <p className="text-base text-gray-500">Sem prova — sem número</p>
+                </div>
               ) : loadingNumeros ? (
                 <div className="flex items-center justify-center p-3 border border-gray-200 rounded-md bg-gray-50">
                   <Loader2 className="h-4 w-4 animate-spin text-primary mr-2" />
@@ -508,18 +524,11 @@ export function TabClassificacao({
                         form.setValue("materia", "");
                         form.setValue("frente1", "");
                       }}
-                      disabled={!provaSel?.provaId || enemAreasDisponiveis.length === 0}
                     >
                       <SelectTrigger
                         className={errors.enemArea ? "border-red-500" : ""}
                       >
-                        <SelectValue
-                          placeholder={
-                            !provaSel?.provaId
-                              ? "Selecione uma prova primeiro"
-                              : "Selecione a área"
-                          }
-                        />
+                        <SelectValue placeholder="Selecione a área" />
                       </SelectTrigger>
                       <SelectContent>
                         {enemAreasDisponiveis.map((area) => (
@@ -536,6 +545,21 @@ export function TabClassificacao({
                 <p className="text-sm text-red-600 flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {errors.enemArea.message}
+                </p>
+              )}
+              {/*
+                ⚠️ Provas ENEM de dias diferentes: nenhuma área serve para
+                todas. Não trava — mostra as 4 e o servidor recusa o que não
+                couber.
+              */}
+              {isEditing && conflitoDeAreas && (
+                <p
+                  data-conflito-de-areas
+                  className="text-xs text-amber-700 flex items-center gap-1"
+                >
+                  <AlertTriangle className="h-3 w-3" />
+                  Esta questão está em provas ENEM de dias diferentes — nenhuma
+                  área serve para todas.
                 </p>
               )}
               {isEditing && !provaSel?.provaId && (
@@ -924,6 +948,7 @@ export function TabClassificacao({
         <ModalAddQuestionToProva
           provas={infos?.provas ?? []}
           provaIdsJaVinculadas={provasContendo.map((p) => p.provaId)}
+          enemArea={question.enemArea}
           onConfirm={handleAddToProva}
           onClose={() => setShowAddModal(false)}
         />
