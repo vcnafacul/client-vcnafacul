@@ -2,6 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Question } from "@/dtos/question/questionDTO";
 import { Roles } from "@/enums/roles/roles";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { toast } from "react-toastify";
 import { getQuestionById } from "@/services/question/getQuestionById";
 
 import { useAuthStore } from "@/store/auth";
@@ -88,10 +89,19 @@ export function ModalQuestionDetailsRefactored({
     });
   };
 
+  /*
+    ⚠️ **Recarrega SEM o esqueleto.** Com o `fetchQuestion`, o `isLoading`
+    trocava o modal inteiro pelo "Carregando..." e ele remontava do zero — na
+    primeira aba, sem o que a pessoa via: parecia que salvar fechava o modal.
+    Aqui a questão nova só substitui a antiga quando chega; se falhar, a antiga
+    fica (e o toast avisa).
+  */
   const refreshQuestion = () => {
-    if (questionId) {
-      fetchQuestion(questionId);
-    }
+    if (!questionId) return;
+    // Sem toast de "carregando": o de sucesso do save já está na tela.
+    getQuestionById(token, questionId)
+      .then(setQuestion)
+      .catch(() => toast.error("Erro ao recarregar questão"));
   };
 
   useEffect(() => {
@@ -287,8 +297,8 @@ function ModalContent({
               />
               {/*
                 ⚠️ **No RODAPÉ da aba, à direita** — ajuste pedido na revisão
-                do card 25. Ficaram aqui só as AÇÕES (duplicar, excluir); a
-                linhagem em si foi para a aba própria (card 34A).
+                do card 25. Ficou aqui só o excluir: a linhagem foi para a
+                aba própria (card 34A), e o duplicar para o topo dela (QA).
               */}
               <AcoesDaQuestao questaoId={question._id} aoExcluir={aoExcluir} />
             </div>

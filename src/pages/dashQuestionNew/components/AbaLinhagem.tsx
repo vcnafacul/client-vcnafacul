@@ -3,8 +3,10 @@ import {
   type ItemDaLinhagem,
   type LinhagemDaQuestao,
 } from "@/services/question/buscarLinhagem";
+import { Roles } from "@/enums/roles/roles";
 import { useAuthStore } from "@/store/auth";
 import { useEffect, useState } from "react";
+import { DuplicarQuestao } from "./DuplicarQuestao";
 import {
   rotuloDoStatus,
   TEXTO_SEM_COPIAS,
@@ -25,9 +27,9 @@ type Vista = "versoes" | "copias";
  * da trilha e do "voltar". Não abre outro modal por cima: seriam duas edições
  * vivas empilhadas, e a de baixo desatualizada quando a de cima versiona.
  *
- * ⚠️ **Busca ao montar, e a aba remonta a cada visita** (o `TabsContent` do
- * Radix desmonta a aba inativa). É o que faz a lista refletir uma duplicação
- * feita agora no rodapé da Classificação, sem canal entre as duas.
+ * ⚠️ **Duplicar mora no topo desta aba (QA)** — antes ficava no rodapé da
+ * Classificação. Depois de duplicar, a linhagem é buscada de novo e abre nas
+ * Cópias: quem duplicou vê a cópia nascer.
  */
 export function AbaLinhagem({
   questaoId,
@@ -38,12 +40,14 @@ export function AbaLinhagem({
   abrirQuestao?: (id: string) => void;
 }) {
   const {
-    data: { token },
+    data: { token, permissao },
   } = useAuthStore();
 
   const [linhagem, setLinhagem] = useState<LinhagemDaQuestao | null>(null);
   const [erro, setErro] = useState(false);
   const [vista, setVista] = useState<Vista>("versoes");
+  /** Sobe a cada duplicação — é o que faz a linhagem ser buscada de novo. */
+  const [recarga, setRecarga] = useState(0);
 
   useEffect(() => {
     let vivo = true;
@@ -55,8 +59,55 @@ export function AbaLinhagem({
     return () => {
       vivo = false;
     };
-  }, [token, questaoId]);
+  }, [token, questaoId, recarga]);
 
+  const aoDuplicar = () => {
+    setVista("copias");
+    setRecarga((n) => n + 1);
+  };
+
+  /*
+    ⚠️ **O botão fica acima de tudo, em qualquer estado** — carregando, vazio
+    ou com erro. Uma questão sem linhagem é justamente a que mais se duplica.
+  */
+  return (
+    <div className="flex flex-col">
+      {/* Sem `criarQuestao`, sem a faixa — uma barra vazia no topo leria como defeito. */}
+      {permissao?.[Roles.criarQuestao] && (
+        <div
+          data-topo-da-linhagem
+          className="flex justify-end border-b px-4 py-2"
+        >
+          <DuplicarQuestao questaoId={questaoId} aoDuplicar={aoDuplicar} />
+        </div>
+      )}
+      <CorpoDaLinhagem
+        questaoId={questaoId}
+        linhagem={linhagem}
+        erro={erro}
+        vista={vista}
+        setVista={setVista}
+        abrirQuestao={abrirQuestao}
+      />
+    </div>
+  );
+}
+
+function CorpoDaLinhagem({
+  questaoId,
+  linhagem,
+  erro,
+  vista,
+  setVista,
+  abrirQuestao,
+}: {
+  questaoId: string;
+  linhagem: LinhagemDaQuestao | null;
+  erro: boolean;
+  vista: Vista;
+  setVista: (v: Vista) => void;
+  abrirQuestao?: (id: string) => void;
+}) {
   if (erro) {
     return (
       <p data-linhagem-erro className="p-4 text-sm text-gray-600">
