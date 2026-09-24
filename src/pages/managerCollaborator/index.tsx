@@ -474,39 +474,45 @@ export default function ManagerCollaborator() {
         </h1>
       </div>
       {/*
-        ⚠️ **Só o admin do cursinho** (`gerenciarPermissoesCursinho`) convida e
-        mexe nas funções — card 06 de `convite-de-colaborador`. Quem só
-        gerencia colaboradores entra na tela e troca a função pela ação da
-        tabela (card 02), mas não vê estes botões. Antes apareciam para todos.
+        ⚠️ **Convites: quem gerencia colaboradores também** — corrigido em
+        2026-09-24. Esta tela já exige `gerenciarColaboradores`, então o botão
+        aparece para todos que chegam aqui; a lista de funções do modal vem do
+        `role/atribuiveis`, sem as de admin para quem não é admin, e o servidor
+        recusa a escalada.
+
+        ⚠️ **Funções: só o admin do cursinho** (`gerenciarPermissoesCursinho`)
+        cria e edita — quem gerencia colaboradores só escolhe uma que já existe.
       */}
-      {ehAdminDoCursinho && (
-        <div data-acoes-do-admin className="flex justify-end">
-          <Button
-            onClick={() => modals.modalConvites.open()}
-            size="small"
-            typeStyle="quaternary"
-            className="w-fit mx-4"
-          >
-            Convites
-          </Button>
-          <Button
-            onClick={() => modals.modalShowNewRole.open()}
-            size="small"
-            typeStyle="quaternary"
-            className="w-fit mx-4"
-          >
-            Nova Função
-          </Button>
-          <Button
-            onClick={() => modals.modalShowEditRole.open()}
-            size="small"
-            typeStyle="primary"
-            className="w-fit mx-4"
-          >
-            Editar Função
-          </Button>
-        </div>
-      )}
+      <div data-acoes className="flex justify-end">
+        <Button
+          onClick={() => modals.modalConvites.open()}
+          size="small"
+          typeStyle="quaternary"
+          className="w-fit mx-4"
+        >
+          Convites
+        </Button>
+        {ehAdminDoCursinho && (
+          <>
+            <Button
+              onClick={() => modals.modalShowNewRole.open()}
+              size="small"
+              typeStyle="quaternary"
+              className="w-fit mx-4"
+            >
+              Nova Função
+            </Button>
+            <Button
+              onClick={() => modals.modalShowEditRole.open()}
+              size="small"
+              typeStyle="primary"
+              className="w-fit mx-4"
+            >
+              Editar Função
+            </Button>
+          </>
+        )}
+      </div>
       <div className="flex items-center gap-4 px-4 flex-wrap">
         <FormControl size="small" sx={{ minWidth: 200 }}>
           <InputLabel id="filter-materia-label">Matéria</InputLabel>
