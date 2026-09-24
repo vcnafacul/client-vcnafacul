@@ -80,3 +80,89 @@ export async function cadastrarPeloConvite(
     await mensagemDe(response, "Não foi possível concluir o cadastro."),
   );
 }
+
+// ── Gestão dos convites pelo admin do cursinho (card 06) ─────────────────
+
+/** Um convite como o modal de convites mostra. */
+export interface ConviteDoCursinho {
+  id: string;
+  email: string;
+  funcao: { id: string; nome: string };
+  convidadoPor: string;
+  situacao: SituacaoDoConvite;
+  expiraEm: string;
+  createdAt: string;
+}
+
+const autenticado = (tokenDeLogin: string, corpo?: unknown): RequestInit => ({
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${tokenDeLogin}`,
+  },
+  ...(corpo === undefined ? {} : { body: JSON.stringify(corpo) }),
+});
+
+const ok = async <T>(response: Response, padrao: string): Promise<T> => {
+  if (response.status >= 200 && response.status < 300) {
+    return (await response.json().catch(() => undefined)) as T;
+  }
+  throw new Error(await mensagemDe(response, padrao));
+};
+
+export async function listarConvites(
+  tokenDeLogin: string,
+): Promise<ConviteDoCursinho[]> {
+  const response = await fetchWrapper(convitesColaborador, {
+    method: "GET",
+    ...autenticado(tokenDeLogin),
+  });
+  return ok(response, "Erro ao buscar os convites.");
+}
+
+/** ⚠️ A recusa (já há convite, já é colaborador, outro cursinho) traz o motivo. */
+export async function criarConvite(
+  tokenDeLogin: string,
+  email: string,
+  roleId: string,
+): Promise<ConviteDoCursinho> {
+  const response = await fetchWrapper(convitesColaborador, {
+    method: "POST",
+    ...autenticado(tokenDeLogin, { email, roleId }),
+  });
+  return ok(response, "Não foi possível enviar o convite.");
+}
+
+/** ⚠️ Gera link novo — o anterior deixa de valer. */
+export async function reenviarConvite(
+  tokenDeLogin: string,
+  id: string,
+): Promise<ConviteDoCursinho> {
+  const response = await fetchWrapper(`${convitesColaborador}/${id}/reenviar`, {
+    method: "POST",
+    ...autenticado(tokenDeLogin),
+  });
+  return ok(response, "Não foi possível reenviar o convite.");
+}
+
+export async function trocarFuncaoDoConvite(
+  tokenDeLogin: string,
+  id: string,
+  roleId: string,
+): Promise<ConviteDoCursinho> {
+  const response = await fetchWrapper(`${convitesColaborador}/${id}`, {
+    method: "PATCH",
+    ...autenticado(tokenDeLogin, { roleId }),
+  });
+  return ok(response, "Não foi possível trocar a função do convite.");
+}
+
+export async function cancelarConvite(
+  tokenDeLogin: string,
+  id: string,
+): Promise<void> {
+  const response = await fetchWrapper(`${convitesColaborador}/${id}`, {
+    method: "DELETE",
+    ...autenticado(tokenDeLogin),
+  });
+  await ok(response, "Não foi possível cancelar o convite.");
+}
