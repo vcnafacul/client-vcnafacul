@@ -200,3 +200,92 @@ describe("SimuladosDaTurma — identificação (card 18)", () => {
     expect(screen.queryByRole("heading", { name: "ENEM 2024" })).not.toBeInTheDocument();
   });
 });
+
+describe("SimuladosDaTurma — comparação entre aplicações (card 31)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("⚠️ com UMA aplicação só, não há o que comparar", async () => {
+    // Um seletor que oferece a mesma prova dos dois lados é um controle que só
+    // sabe não fazer nada.
+    buscarSimuladosComCartao.mockResolvedValue({
+      simulados: [
+        {
+          simuladoId: "s1",
+          nome: "Única",
+          cartoes: 1,
+          comLeituraConcluida: 1,
+          ultimoEnvio: null,
+        },
+      ],
+    });
+
+    const { container } = montar();
+
+    await screen.findByTestId("seletor-de-simulado");
+    expect(container.querySelector("[data-toggle-comparacao]")).toBeNull();
+  });
+
+  it("⚠️ a comparação fica FECHADA por padrão", async () => {
+    /*
+      Ela dispara DUAS chamadas ao relatório, e a maioria das visitas quer ver
+      uma aplicação — abrir sempre dobraria o custo da aba para quem nem vai
+      olhar.
+    */
+    buscarSimuladosComCartao.mockResolvedValue({
+      simulados: [
+        {
+          simuladoId: "a",
+          nome: "A",
+          cartoes: 1,
+          comLeituraConcluida: 1,
+          ultimoEnvio: null,
+        },
+        {
+          simuladoId: "b",
+          nome: "B",
+          cartoes: 1,
+          comLeituraConcluida: 1,
+          ultimoEnvio: null,
+        },
+      ],
+    });
+
+    const { container } = montar();
+
+    await screen.findByTestId("seletor-de-simulado");
+    expect(container.querySelector("[data-toggle-comparacao]")).toBeTruthy();
+    expect(container.querySelector("[data-comparacao]")).toBeNull();
+  });
+
+  it("o toggle abre a comparação", async () => {
+    buscarSimuladosComCartao.mockResolvedValue({
+      simulados: [
+        {
+          simuladoId: "a",
+          nome: "A",
+          cartoes: 1,
+          comLeituraConcluida: 1,
+          ultimoEnvio: null,
+        },
+        {
+          simuladoId: "b",
+          nome: "B",
+          cartoes: 1,
+          comLeituraConcluida: 1,
+          ultimoEnvio: null,
+        },
+      ],
+    });
+
+    const { container } = montar();
+    await screen.findByTestId("seletor-de-simulado");
+
+    fireEvent.click(container.querySelector("[data-toggle-comparacao]")!);
+
+    await waitFor(() =>
+      expect(container.querySelector("[data-comparacao]")).toBeTruthy(),
+    );
+  });
+});

@@ -20,6 +20,7 @@ import { planilhaDeQuestoes } from "./exportar";
 import { formatarPercentual, percentualDeAcerto } from "./percentuais";
 import {
   acertoGlobal,
+  motivoDaAusencia,
   temDificuldadeGlobal,
   textoDaDificuldadeGlobal,
 } from "./dificuldadeGlobal";
@@ -208,8 +209,23 @@ function colunasDeQuestoes(
             opostas, e esconder a base num hover joga essa decisão para quem
             nem sabe que há o que conferir.
           */
-          cell: (q: QuestaoDoRelatorio) =>
-            textoDaDificuldadeGlobal(q) ?? "—",
+          /*
+            ⚠️ **O travessão ganhou `title` quando a questão é versão** (card
+            29): "sem dado" e "dado novo" mostram o mesmo traço e pedem reações
+            opostas — a segunda vai ter base amanhã.
+          */
+          cell: (q: QuestaoDoRelatorio) => {
+            const texto = textoDaDificuldadeGlobal(q);
+            if (texto !== null) return texto;
+            const motivo = motivoDaAusencia(q);
+            return motivo === null ? (
+              "—"
+            ) : (
+              <span data-ausencia-explicada title={motivo}>
+                —
+              </span>
+            );
+          },
           /*
             ⚠️ Pelo percentual, e `null` para quem não tem base — o `sortRows`
             manda nulo para o fim nos dois sentidos, que é onde questão sem base

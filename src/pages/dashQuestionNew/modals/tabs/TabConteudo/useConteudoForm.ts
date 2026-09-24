@@ -1,6 +1,11 @@
 import { Question } from "@/dtos/question/questionDTO";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { updateContent } from "@/services/question/updateContent";
+import { novaVersaoQuestao } from "@/services/question/novaVersaoQuestao";
+import {
+  camposQueMudaram,
+  type EscolhaDeEdicao,
+} from "./escolhaAoSalvar";
 import { uploadAsset } from "@/services/question/uploadAsset";
 import { useAuthStore } from "@/store/auth";
 import { PendingImageStore } from "@/utils/pendingImageStore";
@@ -37,6 +42,15 @@ export function useConteudoForm({
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  /*
+    ⚠️ **A escolha do card 27.** `null` = nenhum modal aberto. Quando o save
+    encontra uma questão JÁ RESPONDIDA, guarda aqui o que mudou e espera a
+    decisão — em vez de escrever e perguntar depois.
+  */
+  const [escolhaPendente, setEscolhaPendente] = useState<{
+    campos: string[];
+    dados: Record<string, unknown>;
+  } | null>(null);
 
   // Formulário local da tab com validação Yup
   const form = useForm<ConteudoFormData>({
@@ -90,6 +104,53 @@ export function useConteudoForm({
    * Salvar alterações do conteúdo
    * Envia apenas os dados desta tab para a API
    */
+  /**
+   * Escreve o conteúdo — corrigindo a original ou criando a sucessora.
+   *
+   * ⚠️ **As duas chamadas recebem o MESMO corpo.** É o que mantém o `27`
+   * honesto: a diferença entre corrigir e versionar está no que o servidor faz
+   * com as provas, não no que a tela manda.
+   */
+  const escrever = async (
+    dados: Record<string, unknown>,
+    escolha: EscolhaDeEdicao,
+  ) => {
+    setIsSaving(true);
+    await executeAsync({
+      /*
+        ⚠️ O `void` no fim não é adorno: o `executeAsync` tem duas sobrecargas, e
+        uma ação que devolve a questão nova escolheria a errada. O que se faz com
+        a sucessora é decisão de quem monta (o `onSaveSuccess` recarrega), não
+        deste `action`.
+      */
+      action: async () => {
+        if (escolha === "novaVersao") {
+          await novaVersaoQuestao(token, question._id, dados);
+          return;
+        }
+        await updateContent(dados as never, token);
+      },
+      loadingMessage:
+        escolha === "novaVersao"
+          ? "Criando nova versão..."
+          : "Salvando conteúdo...",
+      successMessage:
+        escolha === "novaVersao"
+          ? "Nova versão criada. As provas passaram a usá-la."
+          : "Conteúdo salvo com sucesso!",
+      errorMessage: "Erro ao salvar conteúdo",
+      onSuccess: () => {
+        form.reset(dados as never);
+        setIsEditing(false);
+        setEscolhaPendente(null);
+        if (onSaveSuccess) {
+          onSaveSuccess();
+        }
+      },
+      onFinally: () => setIsSaving(false),
+    });
+  };
+
   const handleSave = async () => {
     if (!isValid) return;
 
@@ -118,37 +179,42 @@ export function useConteudoForm({
       pendingStore.cleanup();
     }
 
-    await executeAsync({
-      action: () =>
-        updateContent(
-          {
-            _id: question._id,
-            textoQuestao: formData.textoQuestao,
-            pergunta: formData.pergunta,
-            textoAlternativaA: formData.textoAlternativaA,
-            textoAlternativaB: formData.textoAlternativaB,
-            textoAlternativaC: formData.textoAlternativaC,
-            textoAlternativaD: formData.textoAlternativaD,
-            textoAlternativaE: formData.textoAlternativaE,
-            alternativa: formData.alternativa,
-            textClassification: formData.textClassification,
-            alternativeClassfication: formData.alternativeClassfication,
-            contentFormat: "markdown",
-          },
-          token
-        ),
-      loadingMessage: "Salvando conteúdo...",
-      successMessage: "Conteúdo salvo com sucesso!",
-      errorMessage: "Erro ao salvar conteúdo",
-      onSuccess: () => {
-        form.reset(formData);
-        setIsEditing(false);
-        if (onSaveSuccess) {
-          onSaveSuccess();
-        }
-      },
-      onFinally: () => setIsSaving(false),
-    });
+    const dados = {
+      _id: question._id,
+      textoQuestao: formData.textoQuestao,
+      pergunta: formData.pergunta,
+      textoAlternativaA: formData.textoAlternativaA,
+      textoAlternativaB: formData.textoAlternativaB,
+      textoAlternativaC: formData.textoAlternativaC,
+      textoAlternativaD: formData.textoAlternativaD,
+      textoAlternativaE: formData.textoAlternativaE,
+      alternativa: formData.alternativa,
+      textClassification: formData.textClassification,
+      alternativeClassfication: formData.alternativeClassfication,
+      contentFormat: "markdown",
+    };
+
+    /*
+      ⚠️ **Questão nunca respondida salva DIRETO, sem modal** (card 27). Ali não
+      há escolha a fazer: é rascunho, ninguém viu. Perguntar seria cerimônia
+      sobre uma decisão que não existe.
+
+      ⚠️ E a contagem vem do contador global, confiável depois dos cards 21 e 22
+      — antes deles ele contava apresentações em vez de respostas.
+    */
+    const respondida = (question.quantidadeResposta ?? 0) > 0;
+    const campos = camposQueMudaram(
+      question as unknown as Record<string, unknown>,
+      dados,
+    );
+
+    if (!respondida || campos.length === 0) {
+      await escrever(dados, "correcao");
+      return;
+    }
+
+    setIsSaving(false);
+    setEscolhaPendente({ campos, dados });
   };
 
   /**
@@ -179,5 +245,11 @@ export function useConteudoForm({
     handleEdit,
     handleSave,
     handleCancel,
+
+    // A escolha do card 27
+    escolhaPendente,
+    confirmarEscolha: (escolha: EscolhaDeEdicao) =>
+      escolhaPendente && escrever(escolhaPendente.dados, escolha),
+    cancelarEscolha: () => setEscolhaPendente(null),
   };
 }

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   acertoGlobal,
   MINIMO_PARA_DIFICULDADE_GLOBAL,
+  motivoDaAusencia,
   temDificuldadeGlobal,
   textoDaDificuldadeGlobal,
 } from "./dificuldadeGlobal";
@@ -116,5 +117,69 @@ describe("temDificuldadeGlobal", () => {
 
   it("lista vazia não tem coluna", () => {
     expect(temDificuldadeGlobal([])).toBe(false);
+  });
+});
+
+describe("dificuldade por questão, não por linhagem (card 29)", () => {
+  const versao = (over: Partial<QuestaoDoRelatorio> = {}) =>
+    questao({ ehVersao: true, ...over });
+
+  it("⚠️ questão que é versão leva um '· nova' atrás do número", () => {
+    /*
+      Sem isso, a base pequena de uma versão recém-criada se lê como "questão
+      raramente usada" — conclusão errada sobre o mesmo número. E a contagem
+      NÃO soma a linhagem, por decisão: no card 27, "correção" edita in-place e
+      só "nova versão" cria entidade nova, então toda versão nasce de uma
+      mudança substantiva e somar a família somaria textos diferentes.
+    */
+    expect(
+      textoDaDificuldadeGlobal(versao({ acertosGeral: 40, baseGeral: 120 })),
+    ).toBe("33% de 120 · nova");
+  });
+
+  it("questão original não leva a marca", () => {
+    expect(
+      textoDaDificuldadeGlobal(questao({ acertosGeral: 443, baseGeral: 1847 })),
+    ).toBe("24% de 1.847");
+  });
+
+  it("⚠️ a contagem NÃO soma a linhagem — é só desta questão", () => {
+    // Se somasse, os 120 desta versão viriam acompanhados dos milhares da
+    // original — e "33%" descreveria dois textos diferentes de uma vez.
+    expect(acertoGlobal(versao({ acertosGeral: 40, baseGeral: 120 }))).toBe(33);
+  });
+});
+
+describe("motivoDaAusencia (card 29)", () => {
+  it("⚠️ versão sem base ainda explica o travessão", () => {
+    /*
+      "Sem dado" e "dado novo" mostram o mesmo traço e pedem reações opostas: a
+      segunda vai ter base amanhã.
+    */
+    const motivo = motivoDaAusencia(
+      questao({ ehVersao: true, acertosGeral: 2, baseGeral: 8 }),
+    )!;
+
+    expect(motivo).toContain("Versão nova");
+    expect(motivo).toContain(String(MINIMO_PARA_DIFICULDADE_GLOBAL));
+  });
+
+  it("⚠️ diz que o histórico ficou com a versão anterior", () => {
+    // É a informação que fecha a leitura: o dado não sumiu, mudou de dono.
+    expect(
+      motivoDaAusencia(questao({ ehVersao: true })),
+    ).toContain("versão anterior");
+  });
+
+  it("questão comum sem base não ganha explicação inventada", () => {
+    expect(motivoDaAusencia(questao())).toBeNull();
+  });
+
+  it("⚠️ com o número na tela, não há o que explicar", () => {
+    expect(
+      motivoDaAusencia(
+        questao({ ehVersao: true, acertosGeral: 40, baseGeral: 120 }),
+      ),
+    ).toBeNull();
   });
 });
