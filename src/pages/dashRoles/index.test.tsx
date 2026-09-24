@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import DashRoles from ".";
+import { DEBOUNCE_BUSCA_MS } from "@/components/dashV2";
 
 const getUsersRole = vi.hoisted(() => vi.fn());
 vi.mock("../../services/roles/getUsersRole", () => ({ getUsersRole }));
@@ -19,6 +20,14 @@ vi.mock("../../services/roles/getResumoDoUsuario", () => ({
     conta: { id: "u1", nome: "Maria da Silva", email: "resumo@x.com", funcao: null },
     colaborador: null,
     estudante: { atual: [], historico: [] },
+  }),
+}));
+vi.mock("@/services/prepCourse/prepCourse/getPartnerPrepCourse", () => ({
+  default: vi.fn().mockResolvedValue({
+    data: [
+      { id: "c2", geo: { name: "Zeta Cursinho" } },
+      { id: "c1", geo: { name: "Alfa Cursinho" } },
+    ],
   }),
 }));
 vi.mock("../../store/auth", () => ({
@@ -82,7 +91,7 @@ describe("DashRoles no DashListTemplate (usuários 03)", () => {
     fireEvent.keyDown(campo(), { key: "Enter" });
 
     await waitFor(() =>
-      expect(getUsersRole).toHaveBeenCalledWith("tok", 1, 1000, "Maria Silva", ""),
+      expect(getUsersRole).toHaveBeenCalledWith("tok", 1, 1000, "Maria Silva", "", ""),
     );
     expect(await screen.findByText("u1@x.com")).toBeTruthy();
   });
@@ -159,5 +168,69 @@ describe("DashRoles no DashListTemplate (usuários 03)", () => {
       container.querySelector("[data-secao='funcao']")?.textContent,
     ).toMatch(/professor/);
     expect(screen.getByText("resumo@x.com")).toBeTruthy();
+  });
+
+  describe("filtro por cursinho (usuários 06)", () => {
+    const selectCursinho = async () =>
+      (await screen.findByRole("combobox", { name: "Cursinho" })) as HTMLSelectElement;
+
+    it("lista os cursinhos em ordem, com 'todos' primeiro", async () => {
+      render(<DashRoles />);
+      const opcoes = [...(await selectCursinho()).options].map((o) => o.text);
+
+      expect(opcoes).toEqual(["Todos os cursinhos", "Alfa Cursinho", "Zeta Cursinho"]);
+    });
+
+    it("⚠️ escolher o cursinho já busca, mesmo sem nome — e mostra a coluna Ativo", async () => {
+      getUsersRole.mockResolvedValue({
+        data: [
+          { ...usuario("u1"), colaborador: { ativo: true } },
+          { ...usuario("u2"), colaborador: { ativo: false } },
+        ],
+        totalItems: 2,
+      });
+      render(<DashRoles />);
+
+      fireEvent.change(await selectCursinho(), { target: { value: "c1" } });
+
+      await waitFor(() =>
+        expect(getUsersRole).toHaveBeenCalledWith("tok", 1, 1000, "", "", "c1"),
+      );
+      expect(await screen.findByText("u2@x.com")).toBeTruthy();
+      expect(screen.getAllByText("Ativo").length).toBeGreaterThan(0);
+      expect(screen.getAllByText("Sim").length).toBeGreaterThan(0);
+      expect(screen.getAllByText("Não").length).toBeGreaterThan(0);
+    });
+
+    it("combina com o nome digitado e com a função", async () => {
+      render(<DashRoles />);
+      fireEvent.change(campo(), { target: { value: "Maria" } });
+      // O campo do V2 entrega o texto depois do debounce.
+      await new Promise((r) => setTimeout(r, DEBOUNCE_BUSCA_MS + 50));
+      const funcao = (await screen.findByRole("combobox", { name: "aluno" })) as HTMLSelectElement;
+      fireEvent.change(funcao, { target: { value: "r2" } });
+
+      fireEvent.change(await selectCursinho(), { target: { value: "c2" } });
+
+      await waitFor(() =>
+        expect(getUsersRole).toHaveBeenLastCalledWith("tok", 1, 1000, "Maria", "r2", "c2"),
+      );
+    });
+
+    it("sem o filtro, sem a coluna Ativo", async () => {
+      render(<DashRoles />);
+      fireEvent.click(screen.getByRole("button", { name: "Buscar" }));
+
+      await screen.findByText("u1@x.com");
+      expect(screen.queryByText("Ativo")).toBeNull();
+    });
+
+    it("voltar para 'todos' antes de ter buscado não traz nada", async () => {
+      render(<DashRoles />);
+
+      fireEvent.change(await selectCursinho(), { target: { value: "0" } });
+
+      expect(getUsersRole).not.toHaveBeenCalled();
+    });
   });
 });
