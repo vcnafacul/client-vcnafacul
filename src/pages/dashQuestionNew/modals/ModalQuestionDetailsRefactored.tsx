@@ -219,23 +219,27 @@ function ModalContent({
           id: "classificacao",
           children: (
             <div className="flex flex-col gap-3">
-              {/*
-                ⚠️ **Na aba de Classificação, e não numa aba própria** (card
-                25). A linhagem é metadado da questão — de onde ela veio e quem
-                nasceu dela —, e é aqui que os outros metadados moram. Uma aba
-                só para três linhas de texto custaria um clique a mais para
-                algo que a maioria das questões nem tem.
-              */}
-              <LinhagemDaQuestao
-                questaoId={question._id}
-                origem={question.origem}
-                abrirQuestao={abrirQuestao}
-              />
               <TabClassificacao
                 question={question}
                 canEdit={canEdit}
                 infos={infos}
                 onSaveSuccess={refreshQuestion}
+              />
+              {/*
+                ⚠️ **No RODAPÉ da aba, e não no topo** — ajuste pedido na
+                revisão. A linhagem é metadado sobre a questão, não conteúdo
+                dela: no topo, ela disputava a primeira leitura com a
+                classificação, que é o que a aba existe para mostrar.
+
+                ⚠️ **Na aba de Classificação, e não numa aba própria** (card
+                25): é aqui que os outros metadados moram, e uma aba só para
+                três linhas custaria um clique a mais para algo que a maioria
+                das questões nem tem.
+              */}
+              <LinhagemDaQuestao
+                questaoId={question._id}
+                origem={question.origem}
+                abrirQuestao={abrirQuestao}
               />
             </div>
           ),
