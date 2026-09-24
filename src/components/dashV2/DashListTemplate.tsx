@@ -82,6 +82,17 @@ export interface DashListTemplateProps<T> {
    * errado.
    */
   onPaginaChange?: (pagina: number) => void;
+  /**
+   * O texto do vazio quando não há filtro ativo. Ausente = "Nenhum registro
+   * cadastrado".
+   *
+   * ⚠️ Existe para telas que **não carregam nada de início** e buscam sob
+   * demanda (a de usuários): lá, "nenhum registro cadastrado" antes da primeira
+   * busca é mentira.
+   */
+  textoVazio?: string;
+  /** Enter na busca — ver `DashFilterBarProps.search.onSubmit`. */
+  onSearchSubmit?: (valor: string) => void;
 }
 
 /**
@@ -141,9 +152,11 @@ function FiltroSelect({
 function VazioDaLista({
   comFiltro,
   onClearFilters,
+  textoSemFiltro = TEXTO_VAZIO_SEM_FILTRO,
 }: {
   comFiltro: boolean;
   onClearFilters?: () => void;
+  textoSemFiltro?: string;
 }) {
   return (
     <div
@@ -152,7 +165,7 @@ function VazioDaLista({
     >
       <Inbox aria-hidden="true" className={cn("h-8 w-8", dashV2.text.muted)} />
       <p className={cn("text-sm font-medium", dashV2.text.primary)}>
-        {comFiltro ? TEXTO_VAZIO_COM_FILTRO : TEXTO_VAZIO_SEM_FILTRO}
+        {comFiltro ? TEXTO_VAZIO_COM_FILTRO : textoSemFiltro}
       </p>
       {comFiltro ? (
         <>
@@ -237,6 +250,8 @@ export function DashListTemplate<T>({
   headerSlot,
   paginaInicial,
   onPaginaChange,
+  textoVazio,
+  onSearchSubmit,
 }: DashListTemplateProps<T>) {
   // ⚠️ O hook do V1 não é genérico (`DashCardContextProps<any>`). O cast é o
   // preço de não tocar no arquivo do contexto — e é seguro porque quem escolhe
@@ -342,6 +357,7 @@ export function DashListTemplate<T>({
             target: { value: valor },
           } as React.ChangeEvent<HTMLInputElement>);
         },
+        onSubmit: onSearchSubmit,
       }
     : undefined;
 
@@ -442,6 +458,7 @@ export function DashListTemplate<T>({
               <VazioDaLista
                 comFiltro={activeFilterCount > 0}
                 onClearFilters={limparFiltros}
+                textoSemFiltro={textoVazio}
               />
             }
           />

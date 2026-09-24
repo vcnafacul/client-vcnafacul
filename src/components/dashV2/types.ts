@@ -45,6 +45,14 @@ export interface DashFilterBarProps {
     value: string;
     onChange: (v: string) => void;
     placeholder?: string;
+    /**
+     * Enter no campo. Recebe o texto DO CAMPO, e não o da tela: com o debounce,
+     * o estado da tela ainda pode estar no valor anterior.
+     *
+     * ⚠️ Para telas que buscam no servidor sob demanda (a de usuários, card 03
+     * de `tela-de-usuarios`). O V1 fazia isso pelo `keyDown` do `Filter`.
+     */
+    onSubmit?: (v: string) => void;
   };
   /** Selects, checkboxes, o que a tela precisar. */
   children?: React.ReactNode;

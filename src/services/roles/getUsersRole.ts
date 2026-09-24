@@ -8,7 +8,9 @@ export async function getUsersRole(
   page: number = 1,
   limit: number = 40,
   name: string = "",
-  roleId: string = ""
+  roleId: string = "",
+  /** Só os colaboradores deste cursinho (card 06 de `tela-de-usuarios`). */
+  partnerId: string = ""
 ): Promise<Paginate<UserRole>> {
   const params = new URLSearchParams({
     page: String(page),
@@ -16,6 +18,7 @@ export async function getUsersRole(
   });
   if (name) params.set("name", name);
   if (roleId) params.set("roleId", roleId);
+  if (partnerId) params.set("partnerId", partnerId);
 
   const response = await fetchWrapper(
     `${user}?${params.toString()}`,

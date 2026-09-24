@@ -2,9 +2,10 @@ import { FilterProps } from "@/components/atoms/filter";
 import { SelectProps } from "@/components/atoms/select";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { ButtonProps } from "../../components/molecules/button";
 import { CardDash } from "../../components/molecules/cardDash";
-import DashCardTemplate from "../../components/templates/dashCardTemplate";
+import { DashListTemplate, type DashAction } from "@/components/dashV2";
+import { colunasComAtivo, colunasDeUsuario } from "./columns";
+import getPartnerPrepCourse from "@/services/prepCourse/prepCourse/getPartnerPrepCourse";
 import { DashCardContext } from "../../context/dashCardContext";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { getRoles } from "../../services/roles/getRoles";
@@ -19,7 +20,7 @@ import ModalEditRole from "./modals/ModalEditRole";
 import ModalNewRole from "./modals/ModalNewRole";
 import ModalRole from "./modals/ModalRole";
 import ModalSendEmail from "./modals/ModalSendEmail";
-import ShowUserInfo from "./modals/showUserInfo";
+import ModalDoUsuario from "./modals/ModalDoUsuario";
 import { useModals } from "@/hooks/useModal";
 
 function DashRoles() {
@@ -28,8 +29,20 @@ function DashRoles() {
   const [userRoleSelect, setUserRoleSelect] = useState<UserRole | null>();
   const [filterText, setFilterText] = useState<string>("");
   const [roleFilter, setRoleFilter] = useState<string>("0");
+  const [cursinhos, setCursinhos] = useState<{ id: string; name: string }[]>([]);
+  const [partnerFilter, setPartnerFilter] = useState<string>("0");
   const dataRef = useRef<UserRole[]>([]);
-  const limitCards = 100;
+  /*
+    ⚠️ **1000, o teto da api** (card 03 de `tela-de-usuarios`). O V2 pagina no
+    CLIENTE, sobre o conjunto que chegou — não pede a próxima página ao rolar,
+    como o V1 fazia. Com a busca dando match (card 02), 1000 é muito; se
+    passar, a tela avisa em vez de esconder.
+  */
+  const limitCards = 1000;
+  const [carregando, setCarregando] = useState(false);
+  /** Já houve busca? Antes dela a tela está vazia de propósito. */
+  const [buscou, setBuscou] = useState(false);
+  const [totalNoServidor, setTotalNoServidor] = useState(0);
 
   const modals = useModals([
     "modalUserRole",
@@ -55,7 +68,8 @@ function DashRoles() {
 
   const onClickCard = (userId: string) => {
     setUserRoleSelect(usersRole.find((user) => user.user.id === userId));
-    modals.modalUserRole.open();
+    // Card 05: a linha abre o modal do usuário; a troca de função é um passo dentro dele.
+    modals.modalUserModal.open();
   };
 
   const handleUpdateUserRole = (roleId: string) => {
@@ -76,6 +90,7 @@ function DashRoles() {
           ),
         );
         setUserRoleSelect(updatedUserRole);
+        // Fecha só a troca: o modal do usuário fica, já com a função nova.
         modals.modalUserRole.close();
 
         toast.success(
@@ -95,20 +110,35 @@ function DashRoles() {
   };
 
   const activeRoleId = roleFilter !== "0" ? roleFilter : "";
+  const activePartnerId = partnerFilter !== "0" ? partnerFilter : "";
 
-  const getUsers = () => {
-    getUsersRole(token, 1, limitCards, filterText, activeRoleId)
+  /*
+    ⚠️ **Sem reordenar aqui.** Antes o client ordenava por primeiro nome só a
+    página que chegava — com paginação, isso mentia. Agora a ordenação é a da
+    tabela, sobre o conjunto inteiro.
+
+    ⚠️ Recebe o texto por parâmetro: no Enter, o estado `filterText` ainda
+    pode estar no valor anterior (o campo do V2 tem debounce).
+  */
+  const getUsers = (
+    texto: string = filterText,
+    partnerId: string = activePartnerId,
+  ) => {
+    setCarregando(true);
+    getUsersRole(token, 1, limitCards, texto, activeRoleId, partnerId)
       .then((res) => {
-        setUsersRole(
-          res.data?.sort((a, b) =>
-            a.user.firstName.localeCompare(b.user.firstName),
-          ),
-        );
+        setUsersRole(res.data ?? []);
+        setTotalNoServidor(res.totalItems ?? res.data?.length ?? 0);
         dataRef.current = res.data;
       })
       .catch((error: Error) => {
         toast.error(error.message);
         setUsersRole([]);
+        setTotalNoServidor(0);
+      })
+      .finally(() => {
+        setCarregando(false);
+        setBuscou(true);
       });
   };
 
@@ -121,6 +151,16 @@ function DashRoles() {
         toast.error(error.message);
         setRoles([]);
       });
+    // O mesmo teto de 1000 da api; a lista é da plataforma inteira.
+    getPartnerPrepCourse(token, 1, 1000)
+      .then((res) =>
+        setCursinhos(
+          res.data
+            .map((c) => ({ id: c.id, name: c.geo?.name ?? "" }))
+            .sort((a, b) => a.name.localeCompare(b.name, "pt-BR")),
+        ),
+      )
+      .catch(() => setCursinhos([]));
   }, [token]);
 
   const getMoreCards = async (page: number): Promise<Paginate<UserRole>> => {
@@ -130,6 +170,7 @@ function DashRoles() {
       limitCards,
       filterText,
       activeRoleId,
+      activePartnerId,
     );
   };
 
@@ -180,17 +221,6 @@ function DashRoles() {
     );
   };
 
-  const ShowUserModal = () => {
-    return !modals.modalUserModal.isOpen ? null : (
-      <ShowUserInfo
-        isOpen={modals.modalUserModal.isOpen}
-        handleClose={() => modals.modalUserModal.close()}
-        ur={userRoleSelect!}
-        openUpdateRole={() => modals.modalUserRole.open()}
-      />
-    );
-  };
-
   const selectFiltes: SelectProps[] = roles.length
     ? [
         {
@@ -201,47 +231,75 @@ function DashRoles() {
       ]
     : [];
 
-  const buttons: ButtonProps[] = [
-    {
-      onClick: () => getUsers(),
-      typeStyle: "primary",
-      size: "small",
-      children: "Buscar",
-    },
-    {
-      onClick: () => {
-        setUserRoleSelect(null);
-        modals.modalNewRole.open();
+  /*
+    ⚠️ **Escolher o cursinho já é a busca** (card 06) — a única exceção ao
+    "não traz nada de início": listar os colaboradores de um cursinho sem
+    digitar nome é o caso de uso. Voltar para "todos" depois de ter buscado
+    refaz a busca sem o filtro; antes de buscar, não traz nada.
+  */
+  if (cursinhos.length) {
+    selectFiltes.push({
+      "aria-label": "Cursinho",
+      options: [{ id: "0", name: "Todos os cursinhos" }, ...cursinhos],
+      defaultValue: partnerFilter,
+      setState: (valor: string) => {
+        setPartnerFilter(valor);
+        if (valor !== "0" || buscou) getUsers(filterText, valor !== "0" ? valor : "");
       },
-      typeStyle: "quaternary",
-      size: "small",
-      children: "Nova Função",
-    },
-    {
-      onClick: () => {
-        modals.modalEditRole.open();
-      },
-      typeStyle: "primary",
-      size: "small",
-      children: "Editar Funções",
-    },
-    {
-      onClick: () => {
-        modals.modalSendEmail.open();
-      },
-      typeStyle: "secondary",
-      size: "small",
-      children: "Enviar Email",
-    },
-  ];
+    });
+  }
+
 
   const filterProps: FilterProps = {
     filtrar: (e: React.ChangeEvent<HTMLInputElement>) =>
-      setFilterText(e.target.value.toLowerCase()),
-    placeholder: "Busque por nome ou email",
+      setFilterText(e.target.value),
+    placeholder: "Busque por nome, sobrenome ou email",
     defaultValue: filterText,
     keyDown: () => getUsers(),
   };
+
+  /*
+    ⚠️ **As mesmas quatro ações de antes**, agora por papel: buscar é a
+    primária; as de função e email, secundárias.
+  */
+  const acoes: {
+    primary: DashAction;
+    secondary: DashAction[];
+  } = {
+    primary: { id: "buscar", label: "Buscar", onClick: () => getUsers() },
+    secondary: [
+      {
+        id: "nova-funcao",
+        label: "Nova Função",
+        onClick: () => {
+          setUserRoleSelect(null);
+          modals.modalNewRole.open();
+        },
+      },
+      {
+        id: "editar-funcoes",
+        label: "Editar Funções",
+        onClick: () => modals.modalEditRole.open(),
+      },
+      {
+        id: "enviar-email",
+        label: "Enviar Email",
+        onClick: () => modals.modalSendEmail.open(),
+      },
+    ],
+  };
+
+  /*
+    ⚠️ Passou do teto: avisar, e não cortar calado. Com a busca por palavras,
+    é raro — mas "só a função" (sem nome) pode passar.
+  */
+  const aviso =
+    totalNoServidor > usersRole.length ? (
+      <p data-aviso-limite className="px-4 py-2 text-xs text-gray-600">
+        Mostrando {usersRole.length} de {totalNoServidor} — refine a busca para
+        ver os demais.
+      </p>
+    ) : undefined;
 
   return (
     <DashCardContext.Provider
@@ -253,13 +311,42 @@ function DashRoles() {
         getMoreCards,
         cardTransformation,
         limitCards,
-        buttons,
         selectFiltes,
         filterProps,
       }}
     >
-      <DashCardTemplate />
-      <ShowUserModal />
+      {/*
+        ⚠️ **Continua sem trazer nada de início** — decisão do card 03: a
+        tabela só enche com o que der match. O vazio antes da busca convida a
+        buscar; depois dela, diz que não achou.
+      */}
+      <DashListTemplate<UserRole>
+        columns={activePartnerId ? colunasComAtivo : colunasDeUsuario}
+        actions={acoes}
+        state={carregando ? "loading" : "idle"}
+        headerSlot={aviso}
+        defaultSort={{ columnId: "nome", direction: "asc" }}
+        onSearchSubmit={(texto) => getUsers(texto)}
+        textoVazio={
+          buscou
+            ? "Nenhum usuário encontrado para esta busca."
+            : "Busque por nome, sobrenome ou email."
+        }
+      />
+      {/*
+        ⚠️ JSX direto, e não um componente definido aqui dentro como os
+        outros: um componente recriado a cada render remonta o modal — e ele
+        buscaria o resumo de novo a cada tecla na busca.
+      */}
+      {modals.modalUserModal.isOpen && userRoleSelect && (
+        <ModalDoUsuario
+          isOpen
+          userId={userRoleSelect.user.id}
+          funcao={userRoleSelect.roleName}
+          handleClose={() => modals.modalUserModal.close()}
+          openUpdateRole={() => modals.modalUserRole.open()}
+        />
+      )}
       <ShowUserRole />
       <ShowNewRole />
       <ShowEditRole />

@@ -526,6 +526,18 @@ describe("DashListTemplate — vazio", () => {
     expect(onClearFilters).toHaveBeenCalledTimes(1);
   });
 
+  it("textoVazio troca a mensagem sem filtro — para telas que só buscam sob demanda", () => {
+    // A tela de usuários não carrega nada de início: "nada cadastrado" mentiria.
+    montar(criarContexto({ entities: [] }), {
+      textoVazio: "Busque por nome, sobrenome ou email.",
+    });
+
+    expect(
+      screen.getByText("Busque por nome, sobrenome ou email."),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(TEXTO_VAZIO_SEM_FILTRO)).toBeNull();
+  });
+
   it("⚠️ sem filtro a mensagem fala em nada cadastrado e não oferece limpar", () => {
     montar(criarContexto({ entities: [] }), {
       activeFilterCount: 0,

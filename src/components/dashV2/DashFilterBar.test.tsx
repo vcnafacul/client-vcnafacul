@@ -140,3 +140,33 @@ describe("DashFilterBar — foco e composição", () => {
     expect(screen.queryByRole("searchbox")).toBeNull();
   });
 });
+
+describe("DashFilterBar — Enter na busca (tela de usuários 03)", () => {
+  it("⚠️ Enter entrega o texto DO CAMPO, sem esperar o debounce", async () => {
+    const onChange = vi.fn();
+    const onSubmit = vi.fn();
+    const { container } = render(
+      <DashFilterBar search={{ value: "", onChange, onSubmit }} />,
+    );
+    const campo = container.querySelector("input[type='search']")!;
+
+    fireEvent.change(campo, { target: { value: "Maria Silva" } });
+    fireEvent.keyDown(campo, { key: "Enter" });
+
+    expect(onSubmit).toHaveBeenCalledWith("Maria Silva");
+    expect(onChange).toHaveBeenCalledWith("Maria Silva");
+  });
+
+  it("sem onSubmit, Enter não faz nada", () => {
+    const onChange = vi.fn();
+    const { container } = render(
+      <DashFilterBar search={{ value: "", onChange }} />,
+    );
+
+    fireEvent.keyDown(container.querySelector("input[type='search']")!, {
+      key: "Enter",
+    });
+
+    expect(onChange).not.toHaveBeenCalled();
+  });
+});
