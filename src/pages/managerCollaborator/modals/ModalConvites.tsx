@@ -19,9 +19,11 @@ interface Funcao {
 }
 
 /**
- * Os convites do cursinho (card 06 de `convite-de-colaborador`) — só o admin
- * (`gerenciarPermissoesCursinho`) chega aqui; quem monta o modal esconde o
- * botão dos outros, e o servidor recusa também.
+ * Os convites do cursinho (card 06 de `convite-de-colaborador`) — para o admin
+ * do cursinho e para quem gerencia colaboradores (corrigido 2026-09-24).
+ *
+ * ⚠️ As `funcoes` vêm do `role/atribuiveis`: quem não é admin não recebe as
+ * funções de administração, e o servidor recusa a escalada de todo jeito.
  *
  * ⚠️ **Convidar já escolhendo a função** — o pedido do cursinho. A pessoa
  * aceita (ou se cadastra) e entra como colaboradora com ela.
