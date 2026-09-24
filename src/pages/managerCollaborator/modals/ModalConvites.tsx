@@ -9,9 +9,24 @@ import {
   type ConviteDoCursinho,
 } from "@/services/prepCourse/conviteColaborador";
 import { useAuthStore } from "@/store/auth";
+import { IconButton } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 import { useCallback, useEffect, useState } from "react";
+import {
+  IoArrowUndoOutline,
+  IoCheckmarkSharp,
+  IoCloseCircleOutline,
+  IoPaperPlaneOutline,
+} from "react-icons/io5";
 import { toast } from "react-toastify";
 import { AVISO_REENVIAR, dataCurta, textoDaSituacao } from "./textosDosConvites";
+
+const COR_DA_SITUACAO: Record<ConviteDoCursinho["situacao"], string> = {
+  pendente: "bg-amber-100 text-amber-800",
+  aceito: "bg-green-100 text-green-800",
+  expirado: "bg-gray-100 text-gray-600",
+  cancelado: "bg-red-100 text-red-700",
+};
 
 interface Funcao {
   id: string;
@@ -95,39 +110,43 @@ export function ModalConvites({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white p-4 rounded-md"
+      className="bg-white p-6 rounded-md"
     >
-      <div data-modal-convites className="flex w-[min(90vw,48rem)] flex-col gap-4">
-        <h2 className="text-center text-base font-bold text-marine">
-          Convites de colaborador
-        </h2>
+      <div data-modal-convites className="flex w-[min(92vw,56rem)] flex-col gap-5">
+        <header className="text-center">
+          <h2 className="text-lg font-bold text-marine">Convites de colaborador</h2>
+          <p className="text-sm text-gray-500">
+            Convide por email já escolhendo a função. O convite vale 7 dias.
+          </p>
+        </header>
 
         <form
           data-novo-convite
           onSubmit={convidar}
-          className="flex flex-wrap items-end gap-2 rounded-md border p-3"
+          className="grid gap-3 rounded-md border bg-gray-50 p-4 sm:grid-cols-[1fr_14rem_auto] sm:items-end"
         >
-          <label className="flex min-w-[14rem] flex-1 flex-col text-xs text-gray-600">
+          <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
             Email
             <input
               data-email
               type="email"
               required
+              placeholder="nome@exemplo.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="rounded-md border px-2 py-1 text-sm"
+              className="h-10 rounded-md border bg-white px-3 text-sm"
             />
           </label>
-          <label className="flex min-w-[10rem] flex-col text-xs text-gray-600">
+          <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
             Função
             <select
               data-funcao
               required
               value={roleId}
               onChange={(e) => setRoleId(e.target.value)}
-              className="rounded-md border px-2 py-1 text-sm"
+              className="h-10 rounded-md border bg-white px-2 text-sm"
             >
-              <option value="">Escolha</option>
+              <option value="">Escolha a função</option>
               {funcoes.map((f) => (
                 <option key={f.id} value={f.id}>
                   {f.name}
@@ -135,7 +154,11 @@ export function ModalConvites({
               ))}
             </select>
           </label>
-          <Button type="submit" disabled={enviando || !email.trim() || !roleId}>
+          <Button
+            type="submit"
+            className="h-10"
+            disabled={enviando || !email.trim() || !roleId}
+          >
             {enviando ? "Enviando…" : "Convidar"}
           </Button>
         </form>
@@ -143,30 +166,36 @@ export function ModalConvites({
         {carregando ? (
           <p className="text-sm text-gray-500">Carregando…</p>
         ) : convites.length === 0 ? (
-          <p data-sem-convites className="text-sm text-gray-600">
+          <p data-sem-convites className="py-6 text-center text-sm text-gray-600">
             Nenhum convite enviado ainda.
           </p>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="max-h-[50vh] overflow-auto">
             <table data-lista-convites className="w-full text-left text-sm">
-              <thead className="text-xs text-gray-500">
+              <thead className="sticky top-0 bg-white text-xs uppercase tracking-wide text-gray-500">
                 <tr>
-                  <th className="p-2">Email</th>
-                  <th className="p-2">Função</th>
-                  <th className="p-2">Convidado por</th>
-                  <th className="p-2">Enviado em</th>
-                  <th className="p-2">Situação</th>
-                  <th className="p-2" />
+                  <th className="px-3 py-2 font-semibold">Convidado</th>
+                  <th className="px-3 py-2 font-semibold">Função</th>
+                  <th className="px-3 py-2 font-semibold">Situação</th>
+                  <th className="px-3 py-2 text-right font-semibold">Ações</th>
                 </tr>
               </thead>
               <tbody>
                 {convites.map((c) => (
-                  <tr key={c.id} data-convite={c.id} className="border-t">
-                    <td className="p-2">{c.email}</td>
-                    <td className="p-2">
+                  <tr key={c.id} data-convite={c.id} className="border-t align-middle">
+                    <td className="max-w-[18rem] px-3 py-3">
+                      <p className="truncate font-medium text-gray-900" title={c.email}>
+                        {c.email}
+                      </p>
+                      <p className="truncate text-xs text-gray-500">
+                        por {c.convidadoPor} · em {dataCurta(c.createdAt)}
+                      </p>
+                    </td>
+                    <td className="px-3 py-3">
                       {c.situacao === "pendente" ? (
                         <select
                           data-trocar-funcao={c.id}
+                          aria-label={`Função do convite de ${c.email}`}
                           value={c.funcao.id}
                           onChange={(e) =>
                             agir(
@@ -174,7 +203,7 @@ export function ModalConvites({
                               "Função do convite alterada.",
                             )
                           }
-                          className="rounded-md border px-1 py-0.5 text-sm"
+                          className="h-9 w-full min-w-[9rem] rounded-md border bg-white px-2 text-sm"
                         >
                           {funcoes.map((f) => (
                             <option key={f.id} value={f.id}>
@@ -186,55 +215,70 @@ export function ModalConvites({
                         c.funcao.nome
                       )}
                     </td>
-                    <td className="p-2">{c.convidadoPor}</td>
-                    <td className="p-2">{dataCurta(c.createdAt)}</td>
-                    <td className="p-2" data-situacao>
-                      {textoDaSituacao(c)}
+                    <td className="px-3 py-3">
+                      <span
+                        data-situacao
+                        className={`inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium ${COR_DA_SITUACAO[c.situacao]}`}
+                      >
+                        {textoDaSituacao(c)}
+                      </span>
                     </td>
-                    <td className="p-2">
-                      {c.situacao === "pendente" && (
-                        <div className="flex gap-1">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            data-reenviar={c.id}
-                            title={AVISO_REENVIAR}
-                            onClick={() =>
-                              agir(
-                                () => reenviarConvite(token, c.id),
-                                "Convite reenviado — o link anterior deixou de valer.",
-                              )
-                            }
-                          >
-                            Reenviar
-                          </Button>
-                          {confirmarCancelar === c.id ? (
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              data-confirmar-cancelar={c.id}
-                              onClick={async () => {
-                                setConfirmarCancelar(null);
-                                await agir(
-                                  () => cancelarConvite(token, c.id),
-                                  "Convite cancelado.",
-                                );
-                              }}
-                            >
-                              Confirmar
-                            </Button>
-                          ) : (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              data-cancelar={c.id}
-                              onClick={() => setConfirmarCancelar(c.id)}
-                            >
-                              Cancelar
-                            </Button>
-                          )}
-                        </div>
-                      )}
+                    <td className="whitespace-nowrap px-3 py-3 text-right">
+                      {c.situacao === "pendente" &&
+                        (confirmarCancelar === c.id ? (
+                          <>
+                            <Tooltip title="Confirmar cancelamento">
+                              <IconButton
+                                size="small"
+                                color="error"
+                                data-confirmar-cancelar={c.id}
+                                onClick={async () => {
+                                  setConfirmarCancelar(null);
+                                  await agir(
+                                    () => cancelarConvite(token, c.id),
+                                    "Convite cancelado.",
+                                  );
+                                }}
+                              >
+                                <IoCheckmarkSharp />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Manter convite">
+                              <IconButton
+                                size="small"
+                                onClick={() => setConfirmarCancelar(null)}
+                              >
+                                <IoArrowUndoOutline />
+                              </IconButton>
+                            </Tooltip>
+                          </>
+                        ) : (
+                          <>
+                            <Tooltip title={AVISO_REENVIAR}>
+                              <IconButton
+                                size="small"
+                                data-reenviar={c.id}
+                                onClick={() =>
+                                  agir(
+                                    () => reenviarConvite(token, c.id),
+                                    "Convite reenviado — o link anterior deixou de valer.",
+                                  )
+                                }
+                              >
+                                <IoPaperPlaneOutline />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Cancelar convite">
+                              <IconButton
+                                size="small"
+                                data-cancelar={c.id}
+                                onClick={() => setConfirmarCancelar(c.id)}
+                              >
+                                <IoCloseCircleOutline />
+                              </IconButton>
+                            </Tooltip>
+                          </>
+                        ))}
                     </td>
                   </tr>
                 ))}
