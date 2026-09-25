@@ -1,4 +1,8 @@
 import { dashV2 } from "@/components/dashV2";
+import {
+  frentesSomamMais,
+  TEXTO_FRENTES_SOMAM_MAIS,
+} from "./frentesSomamMais";
 import type {
   LinhaDoRelatorio,
   MediaPorMateria,
@@ -155,6 +159,14 @@ function LinhaDeMateria({
               </span>
             </li>
           ))}
+          {frentesSomamMais(questoes, frentes) && (
+            <li
+              data-aviso-frentes={nome}
+              className={cn("pt-1 text-xs italic", dashV2.text.muted)}
+            >
+              {TEXTO_FRENTES_SOMAM_MAIS}
+            </li>
+          )}
         </ul>
       )}
     </div>

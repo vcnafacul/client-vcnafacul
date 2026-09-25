@@ -8,6 +8,7 @@ import type {
   RespostaDoEstudante,
 } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { ResumoDoEstudante } from "./ResumoDoEstudante";
+import { TEXTO_FRENTES_SOMAM_MAIS } from "./frentesSomamMais";
 
 const linha = (over: Partial<LinhaDoRelatorio> = {}): LinhaDoRelatorio => ({
   usuario: "u1",
@@ -122,6 +123,55 @@ describe("ResumoDoEstudante (card 10)", () => {
       ).toHaveTextContent("Aritmética");
       // a outra continua fechada
       expect(container.querySelector('[data-frentes="Humanas"]')).toBeNull();
+    });
+
+    it("⚠️ frentes somando mais que a matéria: a tela diz por quê (contagem 03)", () => {
+      // O caso do QA: 2 questões de Matemática, uma com 3 frentes.
+      const { container } = montar({
+        linha: linha({
+          aproveitamentoPorMateria: [
+            {
+              id: "mat",
+              nome: "Matemática",
+              aproveitamento: 0.5,
+              questoes: 2,
+              frentes: [
+                { id: "alg", nome: "Álgebra", aproveitamento: 0.5, questoes: 2 },
+                { id: "fin", nome: "Financeira", aproveitamento: 1, questoes: 1 },
+                { id: "est", nome: "Estatística", aproveitamento: 1, questoes: 1 },
+              ],
+            },
+          ],
+        }),
+      });
+
+      fireEvent.click(screen.getByText(/Matemática/));
+
+      expect(
+        container.querySelector('[data-aviso-frentes="Matemática"]'),
+      ).toHaveTextContent(TEXTO_FRENTES_SOMAM_MAIS);
+    });
+
+    it("quando as frentes fecham na matéria, sem aviso", () => {
+      const { container } = montar({
+        linha: linha({
+          aproveitamentoPorMateria: [
+            {
+              id: "mat",
+              nome: "Matemática",
+              aproveitamento: 0.5,
+              questoes: 2,
+              frentes: [
+                { id: "alg", nome: "Álgebra", aproveitamento: 0.5, questoes: 2 },
+              ],
+            },
+          ],
+        }),
+      });
+
+      fireEvent.click(screen.getByText(/Matemática/));
+
+      expect(container.querySelector("[data-aviso-frentes]")).toBeNull();
     });
 
     it("⚠️ matéria SEM frentes não vira botão que não faz nada", () => {
