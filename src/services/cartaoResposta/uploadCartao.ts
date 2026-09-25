@@ -17,7 +17,19 @@ export async function uploadCartao(
   });
 
   if (response.status === 400) throw new Error("QR do cartão ilegível");
-  if (response.status === 409) throw new Error("Cartão já enviado para este aluno");
+  /*
+    ⚠️ **409: a mensagem do backend, quando houver.** Ela diz se o cartão já
+    foi lido ou se FALHOU — e, falho, que o caminho é o "Reenviar" do relatório,
+    não um envio novo.
+  */
+  if (response.status === 409) {
+    const corpo = (await response.json().catch(() => ({}))) as { message?: unknown };
+    throw new Error(
+      typeof corpo.message === "string" && corpo.message
+        ? corpo.message
+        : "Cartão já enviado para este aluno",
+    );
+  }
   if (response.status === 502) throw new Error("Serviço de leitura (OMR) indisponível");
   if (response.status >= 400) throw new Error("Erro ao enviar o cartão");
   return response.json();
