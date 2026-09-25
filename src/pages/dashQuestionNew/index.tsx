@@ -23,6 +23,7 @@ import { SimpleQuestionCard } from "./components/simpleQuestionCard";
 import { ModalCreateQuestion } from "./modals/ModalCreateQuestion";
 import { ModalQuestionDetailsRefactored } from "./modals/ModalQuestionDetailsRefactored";
 import {
+  abaAoNavegar,
   abrirNaTrilha,
   voltarNaTrilha,
 } from "./components/pilhaDaTrilha";
@@ -119,13 +120,14 @@ function DashQuestionNew() {
 
   /*
     ⚠️ **Troca a questão do modal sem fechar** (cards 25 e 34A): fechar e
-    reabrir perderia a página e os filtros da listagem atrás. E abre na aba
-    Linhagem — quem navega por ela quer continuar navegando.
+    reabrir perderia a página e os filtros da listagem atrás. A aba sai do
+    `abaAoNavegar`: abrir outra questão cai na Classificação, voltar cai na
+    Linhagem (QA).
   */
-  const irNaLinhagem = (novaTrilha: string[]) => {
+  const irNaLinhagem = (novaTrilha: string[], acao: "abrir" | "voltar") => {
     setTrilha(novaTrilha);
     setSelectedQuestionId(novaTrilha[novaTrilha.length - 1]);
-    setAbaInicial("linhagem");
+    setAbaInicial(abaAoNavegar(acao));
   };
 
   const handlePageChange = (page: number) => {
@@ -364,8 +366,8 @@ function DashQuestionNew() {
         onClose={handleCloseModal}
         questionId={selectedQuestionId}
         infos={infos}
-        abrirQuestao={(id) => irNaLinhagem(abrirNaTrilha(trilha, id))}
-        voltar={() => irNaLinhagem(voltarNaTrilha(trilha))}
+        abrirQuestao={(id) => irNaLinhagem(abrirNaTrilha(trilha, id), "abrir")}
+        voltar={() => irNaLinhagem(voltarNaTrilha(trilha), "voltar")}
         trilha={trilha}
         abaInicial={abaInicial}
         /*
