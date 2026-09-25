@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { abrirNaTrilha, voltarNaTrilha } from "./pilhaDaTrilha";
+import { abaAoNavegar, abrirNaTrilha, voltarNaTrilha } from "./pilhaDaTrilha";
 
 describe("trilha da linhagem (card 34A)", () => {
   it("abrir empilha", () => {
@@ -22,5 +22,15 @@ describe("trilha da linhagem (card 34A)", () => {
 
   it("⚠️ voltar nunca esvazia a trilha", () => {
     expect(voltarNaTrilha(["a"])).toEqual(["a"]);
+  });
+});
+
+describe("aba ao navegar pela linhagem (QA)", () => {
+  it("⚠️ abrir outra versão ou cópia cai na Classificação", () => {
+    expect(abaAoNavegar("abrir")).toBe("classificacao");
+  });
+
+  it("voltar cai na Linhagem, de onde a pessoa saiu", () => {
+    expect(abaAoNavegar("voltar")).toBe("linhagem");
   });
 });
