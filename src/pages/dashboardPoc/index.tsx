@@ -3,12 +3,13 @@ import { useAuthStore } from '@/store/auth';
 import { cn } from '@/lib/utils';
 import { Greeting } from './components/Greeting';
 import { clearDashCache } from './data';
-import { KpiGroup, pocRegistry, Slot, visibleWidgets } from './registry';
-
-const kpiGroupTitle: Record<KpiGroup, string> = {
-  estudo: 'Seus estudos',
-  gestao: 'Sua atuação',
-};
+import {
+  availableViews,
+  pocRegistry,
+  Slot,
+  visibleWidgets,
+} from './registry';
+import { useDashView } from './useDashView';
 
 /**
  * POC da nova dashboard (`/dashboard/poc`), inspirada no layout do TailAdmin:
@@ -16,30 +17,30 @@ const kpiGroupTitle: Record<KpiGroup, string> = {
  * (contexto e ação). Tudo com dado real dos serviços que a dashboard atual já
  * usa, exceto o desempenho, que agora vem do `/historico/performance` (por
  * usuário) em vez do `/historico/summary` (da plataforma inteira).
+ *
+ * Quem trabalha na plataforma vê a visão de atuação; se também for aluno
+ * matriculado, alterna para a de estudo pelo seletor da saudação.
  */
 export default function DashboardPoc() {
   // Cada visita busca dado novo; o cache só deduplica dentro da página.
   useState(clearDashCache);
 
   const { profiles, permissao } = useAuthStore((s) => s.data);
-  const bySlot = useMemo(() => {
-    const visible = visibleWidgets(pocRegistry, profiles, permissao);
-    const pick = (slot: Slot) => visible.filter((w) => w.slot === slot);
-    return { kpi: pick('kpi'), main: pick('main'), aside: pick('aside') };
-  }, [profiles, permissao]);
+  const visible = useMemo(
+    () => visibleWidgets(pocRegistry, profiles, permissao),
+    [profiles, permissao],
+  );
+  const views = useMemo(
+    () => availableViews(visible, profiles),
+    [visible, profiles],
+  );
+  const [view, setView] = useDashView(views);
 
-  const kpiGroups = useMemo(() => {
-    const groups = (['estudo', 'gestao'] as const)
-      .map((group) => ({
-        group,
-        widgets: bySlot.kpi.filter((w) => w.group === group),
-      }))
-      .filter((g) => g.widgets.length > 0);
-    return groups.map((g) => ({
-      ...g,
-      title: groups.length > 1 ? kpiGroupTitle[g.group] : null,
-    }));
-  }, [bySlot.kpi]);
+  const bySlot = useMemo(() => {
+    const pick = (slot: Slot) =>
+      visible.filter((w) => w.view === view && w.slot === slot);
+    return { kpi: pick('kpi'), main: pick('main'), aside: pick('aside') };
+  }, [visible, view]);
 
   const hasMain = bySlot.main.length > 0;
   const hasAside = bySlot.aside.length > 0;
@@ -47,22 +48,15 @@ export default function DashboardPoc() {
   return (
     <div className="min-h-full bg-slate-50 lining-nums">
       <div className="mx-auto max-w-[1440px] space-y-6 px-4 py-6 sm:px-6 md:px-10 md:py-8">
-        <Greeting />
+        <Greeting view={view} views={views} onViewChange={setView} />
 
-        {kpiGroups.map(({ group, title, widgets }) => (
-          <section key={group} aria-label={title ?? 'Indicadores'}>
-            {title && (
-              <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                {title}
-              </h2>
-            )}
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
-              {widgets.map(({ id, component: Widget }) => (
-                <Widget key={id} />
-              ))}
-            </div>
-          </section>
-        ))}
+        {bySlot.kpi.length > 0 && (
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+            {bySlot.kpi.map(({ id, component: Widget }) => (
+              <Widget key={id} />
+            ))}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
           {hasMain && (

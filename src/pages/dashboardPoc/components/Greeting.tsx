@@ -2,6 +2,13 @@ import { Link } from 'react-router-dom';
 import { ClipboardList, PenTool } from 'lucide-react';
 import { useAuthStore } from '@/store/auth';
 import { DASH, ESSAY_WRITE, SIMULADO } from '@/routes/path';
+import { View } from '../registry';
+import { Segmented } from './Segmented';
+
+const viewOptions: ReadonlyArray<{ value: View; label: string }> = [
+  { value: 'atuacao', label: 'Colaborador' },
+  { value: 'estudo', label: 'Estudante' },
+];
 
 function greeting(hour: number) {
   if (hour < 12) return 'Bom dia';
@@ -9,7 +16,13 @@ function greeting(hour: number) {
   return 'Boa noite';
 }
 
-export function Greeting() {
+interface GreetingProps {
+  view: View;
+  views: View[];
+  onViewChange: (view: View) => void;
+}
+
+export function Greeting({ view, views, onViewChange }: GreetingProps) {
   const { user, profiles } = useAuthStore((s) => s.data);
   const name =
     user.useSocialName && user.socialName ? user.socialName : user.firstName;
@@ -29,23 +42,41 @@ export function Greeting() {
           {greeting(now.getHours())}, {name}
         </h1>
       </div>
-      <div className="flex flex-wrap gap-2">
-        {isStudent && (
-          <Link
-            to={`${DASH}/${ESSAY_WRITE}`}
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-marine transition-colors hover:border-marine/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marine/40"
-          >
-            <PenTool className="h-4 w-4" aria-hidden />
-            Escrever redação
-          </Link>
+      <div className="flex flex-wrap items-center gap-2">
+        {/* Só existe escolha para quem tem as duas visões. */}
+        {views.length > 1 && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-500" aria-hidden>
+              Ver como
+            </span>
+            <Segmented
+              label="Visão da dashboard"
+              options={viewOptions}
+              value={view}
+              onChange={onViewChange}
+            />
+          </div>
         )}
-        <Link
-          to={`${DASH}/${SIMULADO}`}
-          className="inline-flex items-center gap-2 rounded-lg bg-marine px-3.5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marine/40 focus-visible:ring-offset-2"
-        >
-          <ClipboardList className="h-4 w-4" aria-hidden />
-          Fazer simulado
-        </Link>
+        {view === 'estudo' && (
+          <>
+            {isStudent && (
+              <Link
+                to={`${DASH}/${ESSAY_WRITE}`}
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-marine transition-colors hover:border-marine/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marine/40"
+              >
+                <PenTool className="h-4 w-4" aria-hidden />
+                Escrever redação
+              </Link>
+            )}
+            <Link
+              to={`${DASH}/${SIMULADO}`}
+              className="inline-flex items-center gap-2 rounded-lg bg-marine px-3.5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marine/40 focus-visible:ring-offset-2"
+            >
+              <ClipboardList className="h-4 w-4" aria-hidden />
+              Fazer simulado
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );

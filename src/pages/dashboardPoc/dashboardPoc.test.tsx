@@ -89,6 +89,7 @@ beforeEach(() => {
   getPerformance.mockReset().mockResolvedValue(performance());
   auth.data.profiles = [];
   auth.data.permissao = {};
+  localStorage.clear();
 });
 
 describe('DashboardPoc', () => {
@@ -107,16 +108,64 @@ describe('DashboardPoc', () => {
     expect(screen.queryByText('Redações para revisar')).not.toBeInTheDocument();
   });
 
-  it('colaborador só vê o que a permissão libera', async () => {
+  it('estudante não vê seletor de visão nem nada de atuação', async () => {
+    auth.data.profiles = ['common', 'student'];
+    auth.data.permissao = {};
+    renderPoc();
+
+    expect(await screen.findByText('Simulados feitos')).toBeInTheDocument();
+    expect(screen.queryByRole('group', { name: 'Visão da dashboard' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Onde colaboro')).not.toBeInTheDocument();
+  });
+
+  it('colaborador só vê a visão de atuação, sem nada de estudante', async () => {
     auth.data.profiles = ['common', 'collaborator'];
     auth.data.permissao = { [Roles.validarQuestao]: true };
     renderPoc();
 
     expect(await screen.findByText('Fila de validação')).toBeInTheDocument();
     expect(await screen.findByText('Cursinho Beta')).toBeInTheDocument();
+    for (const estudo of [
+      'Simulados feitos',
+      'Evolução nos simulados',
+      'Processos seletivos abertos',
+      'Por matéria',
+      'Fazer simulado',
+    ])
+      expect(screen.queryByText(estudo)).not.toBeInTheDocument();
+    // Sem matrícula não há o que alternar.
+    expect(screen.queryByRole('group', { name: 'Visão da dashboard' })).not.toBeInTheDocument();
+    // Permissão que ele não tem continua fora.
     expect(screen.queryByText('Redações para revisar')).not.toBeInTheDocument();
-    expect(screen.queryByText('Estudantes atendidos')).not.toBeInTheDocument();
-    expect(screen.queryByText('Frequência no cursinho')).not.toBeInTheDocument();
+    expect(getPerformance).not.toHaveBeenCalled();
+  });
+
+  it('quem atua por permissão, sem ser colaborador de cursinho, também cai na atuação', async () => {
+    auth.data.profiles = ['common'];
+    auth.data.permissao = { [Roles.validarQuestao]: true };
+    renderPoc();
+
+    expect(await screen.findByText('Fila de validação')).toBeInTheDocument();
+    expect(screen.queryByText('Simulados feitos')).not.toBeInTheDocument();
+  });
+
+  it('colaborador matriculado começa na atuação e alterna para estudo', async () => {
+    auth.data.profiles = ['common', 'student', 'collaborator'];
+    auth.data.permissao = { [Roles.validarQuestao]: true };
+    const { unmount } = renderPoc();
+
+    expect(await screen.findByText('Fila de validação')).toBeInTheDocument();
+    expect(screen.queryByText('Simulados feitos')).not.toBeInTheDocument();
+
+    screen.getByRole('button', { name: 'Estudante' }).click();
+
+    expect(await screen.findByText('Simulados feitos')).toBeInTheDocument();
+    expect(screen.queryByText('Fila de validação')).not.toBeInTheDocument();
+
+    // A escolha sobrevive a uma nova visita.
+    unmount();
+    renderPoc();
+    expect(await screen.findByText('Simulados feitos')).toBeInTheDocument();
   });
 
   it('busca o desempenho uma vez, mesmo com quatro widgets lendo', async () => {

@@ -27,64 +27,66 @@ import { CursinhoCollab } from './widgets/CursinhoCollab';
 export type Slot = 'kpi' | 'main' | 'aside';
 
 /**
- * KPIs de quem estuda × KPIs de quem trabalha na plataforma. Só vira dois
- * blocos com título quando o usuário tem os dois; senão é uma linha só.
+ * A qual visão o widget pertence. Quem trabalha na plataforma vê só a de
+ * atuação; se também for aluno matriculado, alterna para a de estudo.
  */
-export type KpiGroup = 'estudo' | 'gestao';
+export type View = 'estudo' | 'atuacao';
 
 export type PocWidget = {
   id: string;
   slot: Slot;
-  group?: KpiGroup;
+  view: View;
   component: React.ComponentType;
   profiles: Profile[];
   permissions?: string[];
 };
 
 export const pocRegistry: PocWidget[] = [
-  { id: 'kpi-simulados', slot: 'kpi', group: 'estudo', component: KpiSimulados, profiles: ['common'] },
-  { id: 'kpi-aproveitamento', slot: 'kpi', group: 'estudo', component: KpiAproveitamento, profiles: ['common'] },
-  { id: 'kpi-frequencia', slot: 'kpi', group: 'estudo', component: KpiFrequencia, profiles: ['student'] },
-  { id: 'kpi-redacoes', slot: 'kpi', group: 'estudo', component: KpiRedacoes, profiles: ['student'] },
+  // --- Estudo
+  { id: 'kpi-simulados', view: 'estudo', slot: 'kpi', component: KpiSimulados, profiles: ['common'] },
+  { id: 'kpi-aproveitamento', view: 'estudo', slot: 'kpi', component: KpiAproveitamento, profiles: ['common'] },
+  { id: 'kpi-frequencia', view: 'estudo', slot: 'kpi', component: KpiFrequencia, profiles: ['student'] },
+  { id: 'kpi-redacoes', view: 'estudo', slot: 'kpi', component: KpiRedacoes, profiles: ['student'] },
+  { id: 'evolucao', view: 'estudo', slot: 'main', component: EvolucaoChart, profiles: ['common'] },
+  { id: 'processos', view: 'estudo', slot: 'main', component: ProcessosTable, profiles: ['common'] },
+  { id: 'tema-semana', view: 'estudo', slot: 'aside', component: TemaSemana, profiles: ['student'] },
+  { id: 'meu-cursinho', view: 'estudo', slot: 'aside', component: MeuCursinho, profiles: ['student'] },
+  { id: 'materias', view: 'estudo', slot: 'aside', component: MateriasPanel, profiles: ['common'] },
+
+  // --- Atuação
   {
     id: 'kpi-redacoes-revisar',
+    view: 'atuacao',
     slot: 'kpi',
-    group: 'gestao',
     component: KpiRedacoesRevisar,
     profiles: ['collaborator'],
     permissions: [Roles.revisarRedacoes, Roles.revisarTodasRedacoes],
   },
   {
     id: 'kpi-questoes',
+    view: 'atuacao',
     slot: 'kpi',
-    group: 'gestao',
     component: KpiQuestoes,
     profiles: ['common'],
     permissions: [Roles.validarQuestao],
   },
   {
     id: 'kpi-estudantes',
+    view: 'atuacao',
     slot: 'kpi',
-    group: 'gestao',
     component: KpiEstudantes,
     profiles: ['common'],
     permissions: [Roles.visualizarEstudantes, Roles.gerenciarEstudantes],
   },
-
-  { id: 'evolucao', slot: 'main', component: EvolucaoChart, profiles: ['common'] },
   {
     id: 'questoes',
+    view: 'atuacao',
     slot: 'main',
     component: QuestoesPanel,
     profiles: ['common'],
     permissions: [Roles.validarQuestao],
   },
-  { id: 'processos', slot: 'main', component: ProcessosTable, profiles: ['common'] },
-
-  { id: 'tema-semana', slot: 'aside', component: TemaSemana, profiles: ['student'] },
-  { id: 'meu-cursinho', slot: 'aside', component: MeuCursinho, profiles: ['student'] },
-  { id: 'cursinho-collab', slot: 'aside', component: CursinhoCollab, profiles: ['collaborator'] },
-  { id: 'materias', slot: 'aside', component: MateriasPanel, profiles: ['common'] },
+  { id: 'cursinho-collab', view: 'atuacao', slot: 'aside', component: CursinhoCollab, profiles: ['collaborator'] },
 ];
 
 export function visibleWidgets(
@@ -97,4 +99,25 @@ export function visibleWidgets(
       w.profiles.some((p) => profiles.includes(p)) &&
       (!w.permissions?.length || w.permissions.some((p) => permissions[p])),
   );
+}
+
+/**
+ * Visões que o usuário pode abrir, na ordem de preferência.
+ *
+ * Atuação existe se algum widget de atuação passou no filtro — não basta o
+ * perfil `collaborator`: um admin com `validarQuestao` que não colabora em
+ * cursinho também trabalha na plataforma. Estudo existe para o aluno
+ * matriculado (`student`) ou para quem não tem atuação nenhuma (todo usuário
+ * comum cai aqui).
+ */
+export function availableViews(
+  visible: PocWidget[],
+  profiles: string[],
+): View[] {
+  const hasAtuacao = visible.some((w) => w.view === 'atuacao');
+  const hasEstudo = profiles.includes('student') || !hasAtuacao;
+  return [
+    ...(hasAtuacao ? (['atuacao'] as const) : []),
+    ...(hasEstudo ? (['estudo'] as const) : []),
+  ];
 }
