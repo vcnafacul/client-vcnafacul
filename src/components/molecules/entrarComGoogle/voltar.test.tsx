@@ -17,7 +17,11 @@ vi.mock("@/components/atoms/googleAuthButton", () => ({
   ),
 }));
 vi.mock("@/components/organisms/loginForm", () => ({ default: () => null }));
-vi.mock("@/components/organisms/registerForm", () => ({ default: () => null }));
+vi.mock("@/components/organisms/registerForm", () => ({
+  default: ({ google }: { google?: { voltar?: string } }) => (
+    <button data-google data-voltar={google?.voltar ?? ""} />
+  ),
+}));
 
 const voltarEm = (url: string, ui: React.ReactElement) => {
   const { container } = render(

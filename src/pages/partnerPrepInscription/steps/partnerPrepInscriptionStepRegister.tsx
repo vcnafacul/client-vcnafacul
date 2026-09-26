@@ -1,4 +1,3 @@
-import EntrarComGoogle from "@/components/molecules/entrarComGoogle";
 import RegisterForm from "@/components/organisms/registerForm";
 import { useCaminhoAtual } from "@/hooks/useCaminhoAtual";
 import { registerForm } from "@/pages/register/data";
@@ -26,8 +25,8 @@ export function PartnerPrepInscriptionStepRegister({ inscriptionId }: Props) {
         title={registerForm.title}
         titleSuccess={registerForm.titleSuccess}
         onRegister={onRegister}
+        google={{ voltar }}
       />
-      <EntrarComGoogle label="Cadastrar com Google" voltar={voltar} />
     </div>
   );
 }
