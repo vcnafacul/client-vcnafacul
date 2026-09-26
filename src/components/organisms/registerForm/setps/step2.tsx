@@ -32,11 +32,23 @@ interface UseRegisterStep2 {
 interface Step2Props extends StepProps {
   dataUser: UserRegister;
   next: () => void;
-  back: () => void;
+  /** Sem `back`, não há passo anterior — o cadastro pelo Google. */
+  back?: () => void;
   onRegister: (data: UserRegister) => Promise<void>;
+  /**
+   * Nome e sobrenome sugeridos — o cadastro pelo Google (card 03 de
+   * `login-com-google`) já os recebe do Google, e a pessoa pode trocar.
+   */
+  valoresIniciais?: { firstName?: string; lastName?: string };
 }
 
-function Step2({ dataUser, next, back, onRegister }: Step2Props) {
+function Step2({
+  dataUser,
+  next,
+  back,
+  onRegister,
+  valoresIniciais,
+}: Step2Props) {
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
 
   const executeAsync = useToastAsync();
@@ -89,9 +101,9 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      firstName: "",
+      firstName: valoresIniciais?.firstName ?? "",
       socialName: "",
-      lastName: "",
+      lastName: valoresIniciais?.lastName ?? "",
     },
   });
 
@@ -140,6 +152,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
         id="firstName"
         label="Nome"
         type="text"
+        defaultValue={valoresIniciais?.firstName}
         error={errors.firstName}
         onChange={(e: any) => setValue("firstName", e.target.value)}
       />
@@ -179,6 +192,7 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
         id="lastName"
         label="Sobrenome"
         type="text"
+        defaultValue={valoresIniciais?.lastName}
         error={errors.lastName}
         onChange={(e: any) => setValue("lastName", e.target.value)}
       />
@@ -248,9 +262,11 @@ function Step2({ dataUser, next, back, onRegister }: Step2Props) {
         {errors["lgpd"]?.message}
       </div>
       <div className="flex gap-4">
-        <Button type="button" onClick={back}>
-          Voltar
-        </Button>
+        {back && (
+          <Button type="button" onClick={back}>
+            Voltar
+          </Button>
+        )}
         <Button type="submit">Cadastrar</Button>
       </div>
     </form>

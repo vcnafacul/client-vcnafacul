@@ -144,3 +144,21 @@ describe("Register — cadastro pelo convite (convite 05)", () => {
     expect(cadastrarPeloConvite).not.toHaveBeenCalled();
   });
 });
+
+describe("Register — botão do Google (login-com-google 03)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarConvitePorToken.mockResolvedValue(convite());
+  });
+
+  it("sem convite: oferece cadastrar com Google", () => {
+    montar("");
+    expect(screen.getByText("Cadastrar com Google")).toBeTruthy();
+  });
+
+  it("⚠️ com convite: não oferece — o convite pelo Google é o card 05", async () => {
+    montar("?convite=abc");
+    await screen.findByText(/Cursinho Popular/);
+    expect(screen.queryByText("Cadastrar com Google")).toBeNull();
+  });
+});

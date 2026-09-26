@@ -1,3 +1,4 @@
+import EntrarComGoogle from "@/components/molecules/entrarComGoogle";
 import { registerUser } from "@/services/auth/registerUser";
 import {
   buscarConvitePorToken,
@@ -112,6 +113,8 @@ function Register() {
             emailTravado={convite?.email}
           />
         )}
+        {/* Convite pelo Google é o card 05 de `login-com-google` */}
+        {!tokenDoConvite && <EntrarComGoogle label="Cadastrar com Google" />}
       </div>
     </BaseTemplate>
   );
