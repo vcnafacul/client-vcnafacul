@@ -35,3 +35,12 @@ export function intervaloDaPagina(
 export function totalDePaginas(total: number, pageSize: number): number {
   return Math.max(1, Math.ceil(total / pageSize));
 }
+
+/** "12 registros", ou "3 de 12 registros" quando há filtro e total conhecido. */
+export function subtituloDaContagem(visiveis: number, total?: number): string {
+  const conta = total !== undefined ? total : visiveis;
+  const palavra = conta === 1 ? "registro" : "registros";
+  return total !== undefined && total !== visiveis
+    ? `${visiveis} de ${total} ${palavra}`
+    : `${visiveis} ${palavra}`;
+}

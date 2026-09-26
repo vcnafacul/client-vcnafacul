@@ -48,3 +48,26 @@ export async function getAllInscription(
   }
   throw new Error(`Erro ao tentar recuperar inscrições - Pagina ${page}`);
 }
+
+/**
+ * **Todos** os processos seletivos do cursinho, página a página (card 02 da
+ * série `tickets/021-dash-v2-processo-seletivo`).
+ *
+ * ⚠️ A tela buscava só a página 1, de 100, e o scroll nunca pedia a 2: acima
+ * de 100 processos, os mais antigos sumiam sem aviso. Filtrar e ordenar no
+ * client (cards 04 e 05) só é correto sobre a lista inteira.
+ *
+ * ⚠️ Erro em qualquer página lança — nunca devolve a lista pela metade.
+ */
+export async function getTodasAsInscricoes(
+  token: string,
+  porPagina: number = 100,
+): Promise<Inscription[]> {
+  const todas: Inscription[] = [];
+  for (let page = 1; ; page++) {
+    const { data, totalItems } = await getAllInscription(token, page, porPagina);
+    todas.push(...data);
+    // Página vazia também para: um `totalItems` inconsistente não vira laço infinito
+    if (data.length === 0 || todas.length >= totalItems) return todas;
+  }
+}
