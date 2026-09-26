@@ -116,6 +116,23 @@ quando há o que colapsar. Sem abrir Popover nenhum, e sem os segundos de jsdom 
 
 ---
 
+### Filtro de intervalo de datas: `DashDateRangeFilter`
+
+Para o `filters` do template. Controlado (`value` / `onChange`, em `yyyy-mm-dd`); a regra de
+comparação é `dentroDoIntervalo(data, intervalo)`, que a tela aplica na sua lista.
+
+- **`<input type="date">` nativo**, e não calendário do Radix: teclado e leitor de tela de graça, e
+  nenhum Popover no jsdom.
+- ⚠️ **Dia do calendário local**: `de` às 00:00, `até` às 23:59:59.999. **Nunca** `new Date("2026-03-10")`
+  — sem hora, a spec lê como UTC, e no Brasil isso é 21h do dia anterior.
+- Intervalo invertido: o componente avisa, e `dentroDoIntervalo` **não filtra** (esconder a lista inteira
+  por um erro de digitação seria pior).
+- `intervaloAtivo` é o que conta no `activeFilterCount`.
+- ⚠️ O teste fixa `TZ=America/Sao_Paulo` no próprio arquivo: os defeitos de fuso só aparecem num fuso
+  negativo, e em UTC (o CI) passariam calados.
+
+---
+
 ## `entities` é leitura
 
 > **O template nunca chama `setEntities`.** É a diferença de contrato mais importante entre V1 e V2.

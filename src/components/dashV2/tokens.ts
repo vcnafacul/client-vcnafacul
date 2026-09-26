@@ -37,6 +37,15 @@ export const dashV2 = {
   },
 
   /**
+   * Campo com valor inválido (ex.: intervalo de datas com "até" antes de "de").
+   *
+   * ⚠️ Só a **borda** fica vermelha. O texto do aviso continua em
+   * `text.secondary`: `red` sobre branco dá 3.88:1 e reprova no AA de texto
+   * pequeno — a mensagem carrega o significado, e o vermelho é reforço.
+   */
+  invalid: "border-red",
+
+  /**
    * Ação. ⚠️ **No máximo um `primary` por tela** — a que cria o registro dali.
    * Espalhado em cinco botões, o laranja deixa de apontar para lugar nenhum.
    *
