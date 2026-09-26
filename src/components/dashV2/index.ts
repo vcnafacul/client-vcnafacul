@@ -11,6 +11,11 @@
  * contrato — em especial `entities` ser leitura.
  */
 
+export {
+  DashDateRangeFilter,
+  TEXTO_INTERVALO_INVERTIDO,
+  type DashDateRangeFilterProps,
+} from "./DashDateRangeFilter";
 export { DashFilterBar, DEBOUNCE_BUSCA_MS } from "./DashFilterBar";
 export { DashListFooter, type DashListFooterProps } from "./DashListFooter";
 export {
@@ -45,7 +50,17 @@ export {
   TAMANHO_DA_AMOSTRA,
   toneDeStatus,
 } from "./deriveColumns";
-export { intervaloDaPagina, totalDePaginas } from "./paginacao";
+export {
+  dentroDoIntervalo,
+  intervaloAtivo,
+  intervaloInvalido,
+  type IntervaloDeDatas,
+} from "./intervaloDeDatas";
+export {
+  intervaloDaPagina,
+  subtituloDaContagem,
+  totalDePaginas,
+} from "./paginacao";
 export { dataOrdenavel, proximoSort, sortRows } from "./sortRows";
 export { StatusBadge, type StatusBadgeProps } from "./StatusBadge";
 export { dashV2, type StatusV2 } from "./tokens";

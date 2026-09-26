@@ -12,7 +12,7 @@ import { DashTable } from "./DashTable";
 import { DashToolbar } from "./DashToolbar";
 import { deriveActions } from "./deriveActions";
 import { deriveColumns } from "./deriveColumns";
-import { totalDePaginas } from "./paginacao";
+import { subtituloDaContagem, totalDePaginas } from "./paginacao";
 import { sortRows } from "./sortRows";
 import { dashV2 } from "./tokens";
 import type { DashAction, DashColumn, SortState } from "./types";
@@ -93,6 +93,15 @@ export interface DashListTemplateProps<T> {
   textoVazio?: string;
   /** Enter na busca — ver `DashFilterBarProps.search.onSubmit`. */
   onSearchSubmit?: (valor: string) => void;
+  /**
+   * Quantos registros existem **sem** filtro. Com filtro ativo, o subtítulo
+   * vira "3 de 12 registros" em vez de só "3 registros".
+   *
+   * ⚠️ Existe porque `entities` chega já filtrada pela tela: o template sozinho
+   * não tem como saber o total, e "3 registros" com filtro ligado parece que o
+   * cursinho só tem três.
+   */
+  totalSemFiltro?: number;
 }
 
 /**
@@ -252,6 +261,7 @@ export function DashListTemplate<T>({
   onPaginaChange,
   textoVazio,
   onSearchSubmit,
+  totalSemFiltro,
 }: DashListTemplateProps<T>) {
   // ⚠️ O hook do V1 não é genérico (`DashCardContextProps<any>`). O cast é o
   // preço de não tocar no arquivo do contexto — e é seguro porque quem escolhe
@@ -391,9 +401,10 @@ export function DashListTemplate<T>({
         >
           <DashToolbar
             title={title}
-            subtitle={`${totalDeRegistros} ${
-              totalDeRegistros === 1 ? "registro" : "registros"
-            }`}
+            subtitle={subtituloDaContagem(
+              totalDeRegistros,
+              activeFilterCount > 0 ? totalSemFiltro : undefined,
+            )}
             primary={acoes.primary}
             secondary={acoes.secondary}
             overflow={acoes.overflow}
