@@ -27,9 +27,19 @@ export async function getAllInscription(
   if (response.status === 200) {
     const inscriptions: Paginate<Inscription> = await response.json();
     return {
+      /*
+        ⚠️ O JSON traz as datas como string ISO, e o tipo `Inscription` diz
+        `Date`. Converter aqui faz o tipo dizer a verdade para a tela —
+        comparar a string crua com um `Date` dá `NaN` e sempre `false`
+        (card 01 da série `tickets/021-dash-v2-processo-seletivo`).
+      */
       data: inscriptions.data.map((inscription) => ({
         title: inscription.id,
         ...inscription,
+        startDate: new Date(inscription.startDate),
+        endDate: new Date(inscription.endDate),
+        createdAt: new Date(inscription.createdAt),
+        updatedAt: new Date(inscription.updatedAt),
       })),
       page,
       limit,

@@ -18,16 +18,12 @@ import { useEffect, useMemo, useState } from "react";
 import { MoonLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import { dataInscription } from "./data";
+import { statusDoProcesso } from "./status";
 import {
   InscriptionInfoCreateEditModal,
   InscriptionOutput,
 } from "./modals/InscriptionInfoCreateEditModal";
 import { InscriptionInfoModal } from "./modals/InscriptionInfoModal";
-
-const getInscriptionStatus = (inscription: Inscription): StatusEnum => {
-  if (new Date(inscription.endDate) < new Date()) return StatusEnum.Rejected;
-  return inscription.actived;
-};
 
 export function PartnerPrepInscriptionManager() {
   const [processing, setProcessing] = useState<boolean>(true);
@@ -61,10 +57,7 @@ export function PartnerPrepInscriptionManager() {
   const cardTransformation = (inscription: Inscription): CardDash => ({
     id: inscription.id,
     title: inscription.name,
-    status:
-      inscription.endDate < new Date()
-        ? StatusEnum.Rejected
-        : inscription.actived,
+    status: statusDoProcesso(inscription),
     infos: [
       {
         field: "Inicia",
@@ -98,7 +91,7 @@ export function PartnerPrepInscriptionManager() {
   const filteredInscriptions = useMemo(() => {
     if (statusFilter === StatusEnum.All) return inscriptions;
     return inscriptions.filter(
-      (ins) => getInscriptionStatus(ins) === statusFilter,
+      (ins) => statusDoProcesso(ins) === statusFilter,
     );
   }, [inscriptions, statusFilter]);
 
