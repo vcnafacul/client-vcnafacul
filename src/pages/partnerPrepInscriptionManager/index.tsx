@@ -1,5 +1,10 @@
 import { SelectProps } from "@/components/atoms/select";
-import { DashListTemplate, type DashAction } from "@/components/dashV2";
+import {
+  DashDateRangeFilter,
+  DashListTemplate,
+  type DashAction,
+} from "@/components/dashV2";
+import { FilterProps } from "@/components/atoms/filter";
 import Button from "@/components/molecules/button";
 import { CardDash } from "@/components/molecules/cardDash";
 import { DashCardContext } from "@/context/dashCardContext";
@@ -18,6 +23,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { colunasDeProcesso, ORDENACAO_PADRAO } from "./columns";
 import { dataInscription } from "./data";
+import {
+  contarFiltrosAtivos,
+  filtrarProcessos,
+  SEM_FILTROS,
+  type FiltrosDoProcesso,
+} from "./filtros";
 import { statusDoProcesso } from "./status";
 import {
   InscriptionInfoCreateEditModal,
@@ -42,7 +53,9 @@ export function PartnerPrepInscriptionManager() {
   const [pendingCreation, setPendingCreation] =
     useState<InscriptionOutput | null>(null);
   const [testConfirmed, setTestConfirmed] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<StatusEnum>(StatusEnum.All);
+  const [filtros, setFiltros] = useState<FiltrosDoProcesso>(SEM_FILTROS);
+  const filtrar = (parcial: Partial<FiltrosDoProcesso>) =>
+    setFiltros((atual) => ({ ...atual, ...parcial }));
 
   const modals = useModals(["modalCreate", "modalInfo", "modalConfirmTest"]);
 
@@ -99,25 +112,54 @@ export function PartnerPrepInscriptionManager() {
     setInscriptionSelected(inscriptions.find((ins) => ins.id === cardId)!);
     modals.modalInfo.open();
   };
-  const filteredInscriptions = useMemo(() => {
-    if (statusFilter === StatusEnum.All) return inscriptions;
-    return inscriptions.filter(
-      (ins) => statusDoProcesso(ins) === statusFilter,
-    );
-  }, [inscriptions, statusFilter]);
+  /*
+    ⚠️ Filtra no client, sobre a lista INTEIRA (card 02) — decisão da série:
+    um cursinho tem poucos processos, e o V2 não pagina pelo servidor.
+  */
+  const filteredInscriptions = useMemo(
+    () => filtrarProcessos(inscriptions, filtros),
+    [inscriptions, filtros],
+  );
+
+  const filterProps: FilterProps = {
+    placeholder: "Buscar por nome",
+    filtrar: (e: React.ChangeEvent<HTMLInputElement>) =>
+      filtrar({ nome: e.target.value }),
+    defaultValue: filtros.nome,
+  };
 
   const selectFiltes: SelectProps[] = [
     {
       "aria-label": "Status",
       options: dataInscription.statusOptions,
-      setState: (value) => setStatusFilter(Number(value) as StatusEnum),
+      setState: (value) => filtrar({ status: Number(value) as StatusEnum }),
       // Controlado: o template lê o valor daqui a cada render
-      defaultValue: statusFilter,
+      defaultValue: filtros.status,
     },
   ];
 
-  const activeFilterCount = statusFilter !== StatusEnum.All ? 1 : 0;
-  const clearFilters = () => setStatusFilter(StatusEnum.All);
+  /*
+    ⚠️ A contagem também é o que faz o template voltar à página 1 quando um
+    filtro de data muda — ele não renderiza os campos de data, só os recebe em
+    `filters`, e observa esta contagem.
+  */
+  const activeFilterCount = contarFiltrosAtivos(filtros);
+  const clearFilters = () => setFiltros(SEM_FILTROS);
+
+  const filtrosDeData = (
+    <>
+      <DashDateRangeFilter
+        label="Inicia em"
+        value={filtros.iniciaEm}
+        onChange={(iniciaEm) => filtrar({ iniciaEm })}
+      />
+      <DashDateRangeFilter
+        label="Criado em"
+        value={filtros.criadoEm}
+        onChange={(criadoEm) => filtrar({ criadoEm })}
+      />
+    </>
+  );
 
   /*
     ⚠️ Sem permissão própria, como antes (a linha `disabled:
@@ -333,6 +375,7 @@ export function PartnerPrepInscriptionManager() {
         getMoreCards,
         limitCards: 10,
         cardTransformation,
+        filterProps,
         selectFiltes,
         totalItems: filteredInscriptions.length,
       }}
@@ -340,7 +383,9 @@ export function PartnerPrepInscriptionManager() {
       <DashListTemplate<Inscription>
         columns={colunasDeProcesso}
         actions={{ primary: acaoPrimaria }}
+        filters={filtrosDeData}
         activeFilterCount={activeFilterCount}
+        totalSemFiltro={inscriptions.length}
         onClearFilters={clearFilters}
         defaultSort={ORDENACAO_PADRAO}
         state={estado}

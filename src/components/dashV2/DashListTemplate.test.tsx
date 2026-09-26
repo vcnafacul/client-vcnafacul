@@ -662,6 +662,21 @@ describe("DashListTemplate — drop-in sobre o contexto do V1", () => {
       .toBeInTheDocument();
   });
 
+  it("com filtro ativo e total conhecido: '3 de 12 registros'", () => {
+    montar(criarContexto({ entities: provas(3) }), {
+      activeFilterCount: 1,
+      totalSemFiltro: 12,
+    });
+    expect(within(screen.getByTestId("dash-toolbar")).getByText("3 de 12 registros"))
+      .toBeInTheDocument();
+  });
+
+  it("sem filtro ativo, o total não aparece mesmo se passado", () => {
+    montar(criarContexto({ entities: provas(12) }), { totalSemFiltro: 12 });
+    expect(within(screen.getByTestId("dash-toolbar")).getByText("12 registros"))
+      .toBeInTheDocument();
+  });
+
   it("singular no subtítulo com um registro só", () => {
     montar(criarContexto({ entities: provas(1) }));
     expect(within(screen.getByTestId("dash-toolbar")).getByText("1 registro"))
