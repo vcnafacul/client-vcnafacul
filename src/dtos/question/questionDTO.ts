@@ -65,6 +65,11 @@ export interface QuestionBase {
    * anterior ao card 32, e cópia é o que não afirma histórico anterior.
    */
   tipoOrigem?: TipoOrigem | null;
+  /**
+   * A questão foi substituída por uma nova versão e não aceita mais edição de
+   * conteúdo (card 26). É a que os históricos anteriores à versão apontam.
+   */
+  congelada?: boolean;
 }
 
 export type TipoOrigem = "copia" | "versao";

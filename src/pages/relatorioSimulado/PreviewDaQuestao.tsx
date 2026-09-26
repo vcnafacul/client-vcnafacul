@@ -32,13 +32,31 @@ export const TEXTO_SEM_ALTERNATIVAS =
  * `updateContent` não grava log nenhum. Não há rastro de edição de conteúdo no
  * sistema.
  *
- * ⚠️ **A terceira frase é o ponto, e não pode sair.** Sem ela, quem lê supõe
- * que a plataforma guarda o enunciado do momento e só não o está mostrando.
+ * ⚠️ **Desde então (cards 24 e 26) o enunciado ganhou duas situações.**
+ * Questão respondida que recebe NOVA VERSÃO é congelada e para de mudar — o
+ * histórico aponta ela, então o texto é o da aplicação (salvo correção feita
+ * antes do congelamento). Questão não congelada ainda é corrigida no lugar, e
+ * para ela vale o aviso de "hoje". O `updateContent` passou a gravar log, mas
+ * o log guarda QUAIS campos mudaram, não o texto anterior — continua não
+ * havendo como mostrar o enunciado do momento.
  */
 export const TEXTO_GABARITO_DA_CORRECAO =
   "O gabarito destacado acima é o que foi usado na correção deste simulado.";
 export const TEXTO_ENUNCIADO_DE_HOJE =
-  "O enunciado e as alternativas são os do banco de questões hoje — se a questão foi editada depois da aplicação, o que você está lendo pode não ser o que o aluno leu. O sistema não guarda o enunciado do momento da prova.";
+  "O enunciado e as alternativas são os do banco de questões hoje. Esta questão ainda pode ser corrigida, e a correção vale para todos os simulados que a usam — se isso aconteceu depois da aplicação, o que você está lendo pode não ser o que o aluno leu.";
+
+/**
+ * ⚠️ **Só para questão `congelada`** (card 26). O histórico aponta o id que o
+ * aluno respondeu; quando a questão ganha nova versão, as provas passam a usar
+ * a sucessora e ESTA para de mudar. Então aqui dá para afirmar o que a outra
+ * frase não pode.
+ *
+ * ⚠️ "não pode mais ser editada", e NÃO "é idêntica ao que o aluno leu": entre
+ * a aplicação e o congelamento cabia uma correção no lugar, e o sistema não
+ * guarda o texto de antes dela.
+ */
+export const TEXTO_ENUNCIADO_CONGELADO =
+  "Esta é a versão da questão usada neste simulado. Ela foi substituída por uma nova versão e não pode mais ser editada.";
 
 /**
  * Preview do enunciado, aberto a partir de uma linha da aba de Questões.
@@ -248,7 +266,11 @@ export function PreviewDaQuestao({
             */}
             <div className={cn("flex flex-col gap-1 text-xs", dashV2.text.muted)}>
               <p data-aviso-gabarito>{TEXTO_GABARITO_DA_CORRECAO}</p>
-              <p data-aviso-enunciado>{TEXTO_ENUNCIADO_DE_HOJE}</p>
+              <p data-aviso-enunciado>
+                {dados.congelada
+                  ? TEXTO_ENUNCIADO_CONGELADO
+                  : TEXTO_ENUNCIADO_DE_HOJE}
+              </p>
             </div>
           </>
         )}
