@@ -33,11 +33,17 @@ vi.mock("@/components/organisms/registerForm", () => ({
   default: ({
     emailTravado,
     onRegister,
+    google,
   }: {
     emailTravado?: string;
     onRegister: (d: unknown) => Promise<void>;
+    google?: { voltar?: string; convite?: string };
   }) => (
-    <div data-register-form data-email-travado={emailTravado ?? ""}>
+    <div
+      data-register-form
+      data-email-travado={emailTravado ?? ""}
+      data-google={google ? JSON.stringify(google) : ""}
+    >
       <button
         onClick={() =>
           onRegister({ email: emailTravado ?? "livre@x.com", gender: "1" }).catch(
@@ -145,36 +151,33 @@ describe("Register — cadastro pelo convite (convite 05)", () => {
   });
 });
 
-describe("Register — botão do Google (login-com-google 03)", () => {
+describe("Register — botão do Google (login-com-google)", () => {
+  const google = (container: HTMLElement) =>
+    container.querySelector("[data-register-form]")?.getAttribute("data-google");
+
   beforeEach(() => {
     vi.clearAllMocks();
     buscarConvitePorToken.mockResolvedValue(convite());
   });
 
-  it("sem convite: oferece cadastrar com Google", () => {
-    montar("");
-    expect(screen.getByText("Cadastrar com Google")).toBeTruthy();
+  it("sem convite: o formulário oferece o Google, sem convite", () => {
+    const { container } = montar("");
+    expect(google(container)).toBe("{}");
   });
 
   it("⚠️ com convite: o Google leva o convite e volta à página dele (card 05)", async () => {
-    const assign = vi.fn();
-    vi.stubGlobal("location", { ...window.location, assign });
-    montar("?convite=abc");
+    const { container } = montar("?convite=abc");
     await screen.findByText(/Cursinho Popular/);
-
-    fireEvent.click(screen.getByText("Cadastrar com Google"));
-
-    const url = new URL(assign.mock.calls[0][0], "http://api");
-    expect(url.searchParams.get("convite")).toBe("abc");
-    expect(url.searchParams.get("voltar")).toBe("/convite-colaborador?token=abc");
-    vi.unstubAllGlobals();
+    expect(JSON.parse(google(container)!)).toEqual({
+      convite: "abc",
+      voltar: "/convite-colaborador?token=abc",
+    });
   });
 
-  it("convite que não vale mais: um botão só, o comum", async () => {
+  it("convite que não vale mais: o Google comum, sem o convite", async () => {
     buscarConvitePorToken.mockResolvedValue(convite({ situacao: "expirado" }));
-    montar("?convite=abc");
+    const { container } = montar("?convite=abc");
     await screen.findByText(/não vale mais/);
-    // O cadastro comum continua — pelo Google também, sem o convite
-    expect(screen.getAllByText("Cadastrar com Google")).toHaveLength(1);
+    expect(google(container)).toBe("{}");
   });
 });

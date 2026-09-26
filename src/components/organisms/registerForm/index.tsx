@@ -1,3 +1,4 @@
+import GoogleAuthButton from "@/components/atoms/googleAuthButton";
 import { useState } from "react";
 import { UserRegister } from "../../../types/user/userRegister";
 import Text from "../../atoms/text";
@@ -27,9 +28,21 @@ interface Props extends RegisterFormProps {
    * dispensa a confirmação de email.
    */
   emailTravado?: string;
+  /**
+   * "Cadastrar com Google" no topo do passo 1 (`login-com-google`). ⚠️ No topo,
+   * e não depois do formulário: o formulário ocupa a tela inteira, e embaixo
+   * o botão ficava fora da vista. Sem a prop, sem botão.
+   */
+  google?: { voltar?: string; convite?: string };
 }
 
-function RegisterForm({ title, titleSuccess, onRegister, emailTravado }: Props) {
+function RegisterForm({
+  title,
+  titleSuccess,
+  onRegister,
+  emailTravado,
+  google,
+}: Props) {
   const [step, setStep] = useState<number>(FormStep.STEP_EMAIL_PASSWORD);
   const [dataUser, setDataUser] = useState<UserRegister>({} as UserRegister);
 
@@ -75,6 +88,20 @@ function RegisterForm({ title, titleSuccess, onRegister, emailTravado }: Props) 
           <Text size="secondary">{title}</Text>
         ) : (
           <Text>{titleSuccess}</Text>
+        )}
+        {google && step === FormStep.STEP_EMAIL_PASSWORD && (
+          <div data-google-no-topo className="flex w-full flex-col gap-4">
+            <GoogleAuthButton
+              label="Cadastrar com Google"
+              voltar={google.voltar}
+              convite={google.convite}
+            />
+            <div className="flex items-center gap-4" aria-hidden="true">
+              <hr className="flex-1 border-grey/30" />
+              <span className="text-sm text-grey">ou com email e senha</span>
+              <hr className="flex-1 border-grey/30" />
+            </div>
+          </div>
         )}
         <StepNow />
       </div>
