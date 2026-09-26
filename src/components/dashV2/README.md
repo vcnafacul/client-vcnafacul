@@ -85,7 +85,7 @@ a primária e deixar o resto derivar.
 | `dashContent`, `dashGeo`, `dashNews`, `partnerPrepManager` | 1 → 2 | passam lista bruta + setter da mesma; sem `resetKey` |
 | ~~`dashRoles`~~ | ✅ migrada | nível 2 — busca **sob demanda** no servidor: usa `textoVazio` (não carrega nada de início) e `onSearchSubmit` (Enter), as duas props que entraram por ela |
 | ~~`partnerPrepProvas`~~ | ✅ migrada | nível 3, feita — reusa `dashProvas/columns` inteiro |
-| `partnerPrepInscriptionManager` | 3 | lista derivada, com setter customizado que mescla por id |
+| ~~`partnerPrepInscriptionManager`~~ | ✅ migrada | nível 3 — o setter que mesclava por id era contorno do scroll do V1 e saiu; lista inteira carregada página a página (`getTodasAsInscricoes`); primeira tela com `DashDateRangeFilter` e `totalSemFiltro` — tickets/021 |
 
 ### Duas telas sobre a mesma tabela: o caso `dashProvas` × `partnerPrepProvas`
 
@@ -115,6 +115,12 @@ quando há o que colapsar. Sem abrir Popover nenhum, e sem os segundos de jsdom 
 - [ ] `yarn test` e `yarn build` limpos
 
 ---
+
+### "3 de 12 registros": `totalSemFiltro`
+
+Como `entities` chega já filtrada pela tela, o template não sabe o total. Com `totalSemFiltro` e filtro
+ativo, o subtítulo vira "3 de 12 registros" — sem ele, "3 registros" com filtro ligado parece que só
+existem três. Sem filtro ativo, o total não aparece mesmo se passado.
 
 ### Filtro de intervalo de datas: `DashDateRangeFilter`
 

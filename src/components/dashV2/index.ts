@@ -56,7 +56,11 @@ export {
   intervaloInvalido,
   type IntervaloDeDatas,
 } from "./intervaloDeDatas";
-export { intervaloDaPagina, totalDePaginas } from "./paginacao";
+export {
+  intervaloDaPagina,
+  subtituloDaContagem,
+  totalDePaginas,
+} from "./paginacao";
 export { dataOrdenavel, proximoSort, sortRows } from "./sortRows";
 export { StatusBadge, type StatusBadgeProps } from "./StatusBadge";
 export { dashV2, type StatusV2 } from "./tokens";
