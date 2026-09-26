@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ClipboardList, PenTool } from 'lucide-react';
 import { useAuthStore } from '@/store/auth';
 import { DASH, ESSAY_WRITE, SIMULADO } from '@/routes/path';
+import { cn } from '@/lib/utils';
 import { View } from '../registry';
 import { Segmented } from './Segmented';
 
@@ -42,21 +43,8 @@ export function Greeting({ view, views, onViewChange }: GreetingProps) {
           {greeting(now.getHours())}, {name}
         </h1>
       </div>
-      <div className="flex flex-wrap items-center gap-2">
-        {/* Só existe escolha para quem tem as duas visões. */}
-        {views.length > 1 && (
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500" aria-hidden>
-              Ver como
-            </span>
-            <Segmented
-              label="Visão da dashboard"
-              options={viewOptions}
-              value={view}
-              onChange={onViewChange}
-            />
-          </div>
-        )}
+      {/* Altura dos botões: no desktop a linha não cresce quando eles aparecem. */}
+      <div className="flex flex-wrap items-center gap-2 sm:min-h-[38px]">
         {view === 'estudo' && (
           <>
             {isStudent && (
@@ -76,6 +64,31 @@ export function Greeting({ view, views, onViewChange }: GreetingProps) {
               Fazer simulado
             </Link>
           </>
+        )}
+        {/*
+          Só existe escolha para quem tem as duas visões. Fica por último para
+          ficar ancorado à direita: os botões de estudante que aparecem ao
+          trocar de visão surgem à esquerda dele, sem empurrá-lo. No celular a
+          linha é alinhada à esquerda, então ali o âncora é o primeiro item.
+        */}
+        {views.length > 1 && (
+          <div
+            className={cn(
+              'flex items-center gap-2 max-sm:order-first',
+              // Separa "Ver como" dos botões, senão lê como parte deles.
+              view === 'estudo' && 'sm:ml-1 sm:border-l sm:border-slate-200 sm:pl-3',
+            )}
+          >
+            <span className="text-xs text-slate-500" aria-hidden>
+              Ver como
+            </span>
+            <Segmented
+              label="Visão da dashboard"
+              options={viewOptions}
+              value={view}
+              onChange={onViewChange}
+            />
+          </div>
         )}
       </div>
     </div>
