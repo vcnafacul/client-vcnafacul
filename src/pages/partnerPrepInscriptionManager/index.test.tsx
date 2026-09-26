@@ -156,4 +156,85 @@ describe("Processos Seletivos na Dash V2 (tickets/021 card 04)", () => {
     await waitFor(() => expect(getTodasAsInscricoes).toHaveBeenCalledWith("tok"));
     expect(getTodasAsInscricoes).toHaveBeenCalledTimes(1);
   });
+
+  describe("filtros por nome, Inicia em e Criado em (card 05)", () => {
+    const buscar = (texto: string) =>
+      fireEvent.change(screen.getByRole("searchbox", { name: "Buscar por nome" }), {
+        target: { value: texto },
+      });
+    const data = (rotulo: string, valor: string) =>
+      fireEvent.change(screen.getByLabelText(rotulo), { target: { value: valor } });
+
+    it("busca por nome, sem acento — e a contagem mostra 'x de y'", async () => {
+      montar();
+      await screen.findByText("Atual 2026");
+
+      buscar("atual");
+
+      await waitFor(() => expect(nomesNaTabela()).toEqual(["Atual 2026"]));
+      expect(screen.getByText("1 de 3 registros")).toBeTruthy();
+    });
+
+    it("Inicia em filtra pelo intervalo", async () => {
+      montar();
+      await screen.findByText("Atual 2026");
+
+      data("Inicia em — de", "2025-01-01");
+
+      expect(nomesNaTabela()).toEqual(["Atual 2026", "Meio 2025"]);
+    });
+
+    it("Criado em filtra pelo intervalo", async () => {
+      getTodasAsInscricoes.mockResolvedValue([
+        processo({ id: "x", name: "Criado em janeiro", createdAt: dia("2026-01-15T15:00:00Z") }),
+        processo({ id: "y", name: "Criado em março", createdAt: dia("2026-03-15T15:00:00Z") }),
+      ]);
+      montar();
+      await screen.findByText("Criado em janeiro");
+
+      data("Criado em — até", "2026-01-31");
+
+      expect(screen.queryByText("Criado em março")).toBeNull();
+      expect(screen.getByText("Criado em janeiro")).toBeTruthy();
+    });
+
+    it("⚠️ Limpar filtros zera os quatro — campos e contagem", async () => {
+      montar();
+      await screen.findByText("Atual 2026");
+      buscar("2026");
+      data("Inicia em — de", "2026-01-01");
+      data("Criado em — de", "2026-01-01");
+      fireEvent.change(screen.getByRole("combobox", { name: "Status" }), {
+        target: { value: String(StatusEnum.Approved) },
+      });
+
+      fireEvent.click(await screen.findByRole("button", { name: "Limpar filtros (4)" }));
+
+      expect(nomesNaTabela()).toHaveLength(3);
+      expect((screen.getByRole("searchbox") as HTMLInputElement).value).toBe("");
+      expect((screen.getByLabelText("Inicia em — de") as HTMLInputElement).value).toBe("");
+      expect((screen.getByLabelText("Criado em — de") as HTMLInputElement).value).toBe("");
+      expect(screen.queryByRole("button", { name: /Limpar filtros/ })).toBeNull();
+    });
+
+    it("⚠️ mudar um filtro de data volta para a página 1", async () => {
+      getTodasAsInscricoes.mockResolvedValue(
+        Array.from({ length: 30 }, (_, i) =>
+          processo({
+            id: `p${i}`,
+            name: `Processo ${String(i).padStart(2, "0")}`,
+            startDate: new Date(2026, 0, 1 + i),
+          }),
+        ),
+      );
+      montar();
+      await screen.findByText("Processo 29");
+      fireEvent.click(screen.getByLabelText("Go to next page"));
+      expect(screen.getByText("Processo 00")).toBeTruthy(); // página 2
+
+      data("Inicia em — de", "2026-01-02");
+
+      expect(screen.getByText("Processo 29")).toBeTruthy(); // de volta à 1
+    });
+  });
 });
