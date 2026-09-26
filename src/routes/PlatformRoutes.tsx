@@ -33,6 +33,7 @@ import Geo from "../pages/Geo";
 import Account from "../pages/account";
 import { ConfirmEmailPage } from "../pages/confirmEmail";
 import Dashboard from "../pages/dashboard";
+import DashboardPoc from "../pages/dashboardPoc";
 import DashContent from "../pages/dashContent";
 import DashGeo from "../pages/dashGeo";
 import DashNews from "../pages/dashNews";
@@ -300,6 +301,8 @@ export function PlatformRoutes() {
           }
         />
         <Route path={DASH} element={<Dashboard />} />
+        {/* POC da nova dashboard — ver src/pages/dashboardPoc */}
+        <Route path="poc" element={<DashboardPoc />} />
         <Route path={SIMULADO} element={<MainSimulate />} />
         <Route path={SIMULADO_HISTORIES} element={<SimulationHistories />} />
 
