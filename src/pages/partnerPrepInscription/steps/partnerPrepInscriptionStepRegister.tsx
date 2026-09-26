@@ -1,4 +1,6 @@
+import EntrarComGoogle from "@/components/molecules/entrarComGoogle";
 import RegisterForm from "@/components/organisms/registerForm";
+import { useCaminhoAtual } from "@/hooks/useCaminhoAtual";
 import { registerForm } from "@/pages/register/data";
 import { registerUserFlowStudent } from "@/services/prepCourse/student/registerUserFlowStudent";
 import { UserRegister } from "@/types/user/userRegister";
@@ -11,6 +13,8 @@ interface Props {
 }
 
 export function PartnerPrepInscriptionStepRegister({ inscriptionId }: Props) {
+  // Depois do 2º passo do Google, volta à inscrição já logada
+  const voltar = useCaminhoAtual();
   const onRegister = async (data: UserRegister) => {
     registerUserFlowStudent(data, inscriptionId as string);
   };
@@ -23,6 +27,7 @@ export function PartnerPrepInscriptionStepRegister({ inscriptionId }: Props) {
         titleSuccess={registerForm.titleSuccess}
         onRegister={onRegister}
       />
+      <EntrarComGoogle label="Cadastrar com Google" voltar={voltar} />
     </div>
   );
 }

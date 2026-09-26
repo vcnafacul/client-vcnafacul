@@ -113,8 +113,21 @@ function Register() {
             emailTravado={convite?.email}
           />
         )}
-        {/* Convite pelo Google é o card 05 de `login-com-google` */}
-        {!tokenDoConvite && <EntrarComGoogle label="Cadastrar com Google" />}
+        {(!tokenDoConvite || avisoDoConvite) && (
+          <EntrarComGoogle label="Cadastrar com Google" />
+        )}
+        {/*
+          ⚠️ Convite pelo Google (card 05 de `login-com-google`): se a conta
+          Google já existir, a api faz login e volta à página do convite, que
+          aceita ali; se não, o 2º passo cria a conta já colaboradora.
+        */}
+        {convite && tokenDoConvite && (
+          <EntrarComGoogle
+            label="Cadastrar com Google"
+            convite={tokenDoConvite}
+            voltar={`/${CONVITE_COLABORADOR}?token=${encodeURIComponent(tokenDoConvite)}`}
+          />
+        )}
       </div>
     </BaseTemplate>
   );

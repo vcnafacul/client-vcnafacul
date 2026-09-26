@@ -18,6 +18,11 @@ vi.mock("@/utils/decodedUser", () => ({
 vi.mock("@/components/organisms/loginForm", () => ({
   default: () => <div data-login-form />,
 }));
+vi.mock("@/components/atoms/googleAuthButton", () => ({
+  default: ({ voltar }: { voltar?: string }) => (
+    <button data-google data-voltar={voltar ?? ""} />
+  ),
+}));
 vi.mock("@/components/templates/baseTemplate", () => ({
   default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
@@ -98,6 +103,17 @@ describe("ConviteColaborador (convite 04)", () => {
 
     await waitFor(() =>
       expect(container.querySelector("[data-login-form]")).toBeTruthy(),
+    );
+  });
+
+  it("⚠️ sem login e com conta: o Google volta para este convite (login-com-google 04)", async () => {
+    estado.token = "";
+    const { container } = montar();
+
+    await waitFor(() =>
+      expect(
+        container.querySelector("[data-google]")?.getAttribute("data-voltar"),
+      ).toBe("/convite-colaborador?token=abc"),
     );
   });
 

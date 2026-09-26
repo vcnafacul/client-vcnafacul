@@ -1,4 +1,6 @@
+import EntrarComGoogle from "@/components/molecules/entrarComGoogle";
 import LoginForm from "@/components/organisms/loginForm";
+import { useCaminhoAtual } from "@/hooks/useCaminhoAtual";
 import { loginForm } from "@/pages/login/data";
 import { FORGOT_PASSWORD_PATH } from "@/routes/path";
 import { Link } from "react-router-dom";
@@ -11,6 +13,8 @@ interface Props {
 }
 
 export function PartnerPrepInscriptionStepLogin({ setStepCurrently }: Props) {
+  // ⚠️ A inscrição se remonta pelo login (o login por senha recarrega a página)
+  const voltar = useCaminhoAtual();
   return (
     <div>
       <TriangleGreen className="graphism triangle-green" />
@@ -30,6 +34,7 @@ export function PartnerPrepInscriptionStepLogin({ setStepCurrently }: Props) {
           Não possuo cadastro
         </div>
       </div>
+      <EntrarComGoogle label="Entrar com Google" voltar={voltar} />
     </div>
   );
 }
