@@ -5,10 +5,24 @@ import CadastroGoogle from ".";
 
 const buscarCadastroGoogle = vi.hoisted(() => vi.fn());
 const concluirCadastroGoogle = vi.hoisted(() => vi.fn());
+const concluirCadastroGooglePeloConvite = vi.hoisted(() => vi.fn());
 vi.mock("@/services/auth/google", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/services/auth/google")>()),
   buscarCadastroGoogle,
   concluirCadastroGoogle,
+  concluirCadastroGooglePeloConvite,
+}));
+const buscarConvitePorToken = vi.hoisted(() => vi.fn());
+vi.mock("@/services/prepCourse/conviteColaborador", () => ({
+  buscarConvitePorToken,
+}));
+vi.mock("react-toastify", () => ({ toast: { success: vi.fn() } }));
+vi.mock("@/components/atoms/googleAuthButton", () => ({
+  default: ({ label, convite }: { label: string; convite?: string }) => (
+    <button data-google data-convite={convite ?? ""}>
+      {label}
+    </button>
+  ),
 }));
 vi.mock("@/utils/decodedUser", () => ({
   decoderUser: (t: string) => ({ token: t }),
@@ -130,5 +144,86 @@ describe("CadastroGoogle (login-com-google 03)", () => {
 
     expect(await screen.findByText(/tempo para concluir o cadastro acabou/)).toBeTruthy();
     expect(doAuth).not.toHaveBeenCalled();
+  });
+});
+
+describe("CadastroGoogle — com convite (login-com-google 05)", () => {
+  const convite = (over = {}) => ({
+    nomeCursinho: "Cursinho Popular",
+    funcao: "Professor",
+    email: "Ana@Gmail.com",
+    situacao: "pendente",
+    expiraEm: "2026-10-01",
+    temConta: false,
+    ...over,
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarCadastroGoogle.mockResolvedValue({
+      email: "ana@gmail.com",
+      firstName: "Ana",
+      lastName: "Silva",
+      convite: "tok",
+    });
+    buscarConvitePorToken.mockResolvedValue(convite());
+    concluirCadastroGooglePeloConvite.mockResolvedValue({ access_token: "colab" });
+    concluirCadastroGoogle.mockResolvedValue({ access_token: "aluno", voltar: "/x" });
+  });
+
+  it("⚠️ email confere: mostra o convite e cria a conta pelo convite", async () => {
+    montar();
+    expect(await screen.findByText(/Ao concluir, você já entra como colaborador/)).toBeTruthy();
+
+    fireEvent.click(screen.getByText("cadastrar"));
+
+    await waitFor(() =>
+      expect(screen.getByTestId("onde").textContent).toBe("/dashboard"),
+    );
+    expect(concluirCadastroGooglePeloConvite).toHaveBeenCalled();
+    expect(concluirCadastroGoogle).not.toHaveBeenCalled();
+    expect(doAuth).toHaveBeenCalledWith({ token: "colab" });
+  });
+
+  it("⚠️ email diferente: não mostra o formulário; oferece outra conta ou seguir sem convite", async () => {
+    buscarConvitePorToken.mockResolvedValue(convite({ email: "bia@x.com" }));
+    montar();
+
+    expect(await screen.findByText(/bia@x.com/)).toBeTruthy();
+    expect(screen.queryByText("cadastrar")).toBeNull();
+    expect(
+      screen.getByText("Entrar com outra conta Google").getAttribute("data-convite"),
+    ).toBe("tok");
+
+    fireEvent.click(screen.getByText("Criar conta sem o convite"));
+    fireEvent.click(await screen.findByText("cadastrar"));
+
+    await waitFor(() => expect(concluirCadastroGoogle).toHaveBeenCalled());
+    expect(concluirCadastroGooglePeloConvite).not.toHaveBeenCalled();
+  });
+
+  it("convite que não vale mais: avisa e segue o cadastro comum", async () => {
+    buscarConvitePorToken.mockResolvedValue(convite({ situacao: "cancelado" }));
+    montar();
+
+    expect(await screen.findByText(/Este convite não vale mais/)).toBeTruthy();
+    fireEvent.click(screen.getByText("cadastrar"));
+    await waitFor(() => expect(concluirCadastroGoogle).toHaveBeenCalled());
+  });
+
+  it("⚠️ convite venceu no envio (400): avisa, e o próximo envio vai sem o convite", async () => {
+    const { ErroDoCadastroGoogle } = await import("@/services/auth/google");
+    concluirCadastroGooglePeloConvite.mockRejectedValue(
+      new ErroDoCadastroGoogle("Este convite expirou.", 400),
+    );
+    montar();
+    fireEvent.click(await screen.findByText("cadastrar"));
+
+    expect(await screen.findByText(/Este convite expirou. Você pode concluir/)).toBeTruthy();
+    expect(doAuth).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByText("cadastrar"));
+    await waitFor(() => expect(concluirCadastroGoogle).toHaveBeenCalledTimes(1));
+    expect(concluirCadastroGooglePeloConvite).toHaveBeenCalledTimes(1);
   });
 });

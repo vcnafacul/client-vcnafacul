@@ -5,6 +5,8 @@ interface Props {
   label: string;
   /** Caminho para voltar depois de entrar (card 04). Sem ele, o dashboard. */
   voltar?: string;
+  /** Token do convite de colaborador (card 05). */
+  convite?: string;
 }
 
 /** O "G" oficial do Google — as cores fazem parte das regras de marca. */
@@ -25,12 +27,12 @@ function LogoGoogle() {
  * ⚠️ **Navegação, não `fetch`**: o OAuth passa pelo Google e volta pela api,
  * que grava os cookies e redireciona para o front.
  */
-function GoogleAuthButton({ label, voltar }: Props) {
+function GoogleAuthButton({ label, voltar, convite }: Props) {
   return (
     <Button
       type="button"
       typeStyle="quaternary"
-      onClick={() => window.location.assign(urlEntrarComGoogle(voltar))}
+      onClick={() => window.location.assign(urlEntrarComGoogle(voltar, convite))}
     >
       <span className="flex items-center justify-center gap-3">
         <LogoGoogle />
