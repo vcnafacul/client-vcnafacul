@@ -8,7 +8,7 @@ import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { createInscription } from "@/services/prepCourse/inscription/createInscription";
 import { deleteInscription } from "@/services/prepCourse/inscription/deleteInscription";
-import { getAllInscription } from "@/services/prepCourse/inscription/getAllInscription";
+import { getTodasAsInscricoes } from "@/services/prepCourse/inscription/getAllInscription";
 import { updateInscription } from "@/services/prepCourse/inscription/updateInscription";
 import { useAuthStore } from "@/store/auth";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
@@ -35,7 +35,6 @@ export function PartnerPrepInscriptionManager() {
     useState<InscriptionOutput | null>(null);
   const [testConfirmed, setTestConfirmed] = useState(false);
   const [statusFilter, setStatusFilter] = useState<StatusEnum>(StatusEnum.All);
-  const limitCards = 100;
 
   const modals = useModals(["modalCreate", "modalInfo", "modalConfirmTest"]);
 
@@ -280,12 +279,16 @@ export function PartnerPrepInscriptionManager() {
   const fetchInscriptions = async () => {
     setProcessing(true);
     try {
-      const res = await getAllInscription(token, 1, limitCards);
-      res.data.sort((a, b) => (a.startDate < b.startDate ? -1 : 1));
-      setInscriptions(res.data);
-      setProcessing(false);
+      const todas = await getTodasAsInscricoes(token);
+      todas.sort((a, b) => (a.startDate < b.startDate ? -1 : 1));
+      setInscriptions(todas);
     } catch (e) {
+      // ⚠️ Antes: só console.error, e o spinner girava para sempre. O estado
+      // de erro com "tentar de novo" vem com a Dash V2 (card 04).
       console.error("Erro ao buscar inscrições", e);
+      toast.error("Não foi possível carregar os processos seletivos.");
+    } finally {
+      setProcessing(false);
     }
   };
 
