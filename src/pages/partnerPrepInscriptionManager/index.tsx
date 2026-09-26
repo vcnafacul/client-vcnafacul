@@ -1,7 +1,7 @@
-import Button, { ButtonProps } from "@/components/molecules/button";
-import { CardDash } from "@/components/molecules/cardDash";
 import { SelectProps } from "@/components/atoms/select";
-import DashCardTemplate from "@/components/templates/dashCardTemplate";
+import { DashListTemplate, type DashAction } from "@/components/dashV2";
+import Button from "@/components/molecules/button";
+import { CardDash } from "@/components/molecules/cardDash";
 import { DashCardContext } from "@/context/dashCardContext";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { useModals } from "@/hooks/useModal";
@@ -14,9 +14,9 @@ import { useAuthStore } from "@/store/auth";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import { formatDate } from "@/utils/date";
 import { Paginate } from "@/utils/paginate";
-import { useEffect, useMemo, useState } from "react";
-import { MoonLoader } from "react-spinners";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import { colunasDeProcesso, ORDENACAO_PADRAO } from "./columns";
 import { dataInscription } from "./data";
 import { statusDoProcesso } from "./status";
 import {
@@ -25,8 +25,16 @@ import {
 } from "./modals/InscriptionInfoCreateEditModal";
 import { InscriptionInfoModal } from "./modals/InscriptionInfoModal";
 
+/** Card 04 da série `tickets/021-dash-v2-processo-seletivo`. */
+export const TEXTO_SEM_PROCESSOS = "Nenhum processo seletivo cadastrado";
+
 export function PartnerPrepInscriptionManager() {
-  const [processing, setProcessing] = useState<boolean>(true);
+  /*
+    ⚠️ Três estados, e não o `processing` de antes: o erro de busca deixava o
+    spinner girando para sempre (card 02 trocou por toast; aqui vira o estado
+    de erro do template, com "tentar de novo").
+  */
+  const [estado, setEstado] = useState<"idle" | "loading" | "error">("loading");
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
   const [inscriptionSelected, setInscriptionSelected] = useState<
     Inscription | undefined
@@ -44,14 +52,18 @@ export function PartnerPrepInscriptionManager() {
 
   const executeAsync = useToastAsync();
 
-  const getMoreCards = async (): Promise<Paginate<Inscription>> => {
-    return {
-      data: [],
-      page: 0,
-      limit: 0,
-      totalItems: 0,
-    };
-  };
+  /*
+    ⚠️ O Provider ainda exige `getMoreCards` e `cardTransformation`. O V2 não
+    pagina pelo servidor (a lista inteira vem do card 02) e usa as colunas
+    explícitas — o `cardTransformation` segue só porque o template tira dele o
+    `id` do clique, e porque é o que a tela usaria se voltasse ao V1.
+  */
+  const getMoreCards = async (): Promise<Paginate<Inscription>> => ({
+    data: [],
+    page: 0,
+    limit: 0,
+    totalItems: 0,
+  });
 
   const cardTransformation = (inscription: Inscription): CardDash => ({
     id: inscription.id,
@@ -96,23 +108,28 @@ export function PartnerPrepInscriptionManager() {
 
   const selectFiltes: SelectProps[] = [
     {
+      "aria-label": "Status",
       options: dataInscription.statusOptions,
       setState: (value) => setStatusFilter(Number(value) as StatusEnum),
+      // Controlado: o template lê o valor daqui a cada render
       defaultValue: statusFilter,
     },
   ];
 
-  const buttons: ButtonProps[] = [
-    {
-      // disabled: !permissao[Roles.criarQuestao],
-      onClick: () => {
-        modals.modalCreate.open();
-      },
-      typeStyle: "quaternary",
-      size: "small",
-      children: "Novo",
-    },
-  ];
+  const activeFilterCount = statusFilter !== StatusEnum.All ? 1 : 0;
+  const clearFilters = () => setStatusFilter(StatusEnum.All);
+
+  /*
+    ⚠️ Sem permissão própria, como antes (a linha `disabled:
+    !permissao[Roles.criarQuestao]` estava comentada): a tela inteira já está
+    atrás de `gerenciarProcessoSeletivo`. Mudar permissão junto com o
+    redesenho esconderia a mudança na revisão.
+  */
+  const acaoPrimaria: DashAction = {
+    id: "novo-processo",
+    label: "Novo processo seletivo",
+    onClick: () => modals.modalCreate.open(),
+  };
 
   const handleCreate = async (data: InscriptionOutput) => {
     if (data.isTest) {
@@ -276,63 +293,63 @@ export function PartnerPrepInscriptionManager() {
     ) : null;
   };
 
-  const fetchInscriptions = async () => {
-    setProcessing(true);
-    try {
-      const todas = await getTodasAsInscricoes(token);
-      todas.sort((a, b) => (a.startDate < b.startDate ? -1 : 1));
-      setInscriptions(todas);
-    } catch (e) {
-      // ⚠️ Antes: só console.error, e o spinner girava para sempre. O estado
-      // de erro com "tentar de novo" vem com a Dash V2 (card 04).
-      console.error("Erro ao buscar inscrições", e);
-      toast.error("Não foi possível carregar os processos seletivos.");
-    } finally {
-      setProcessing(false);
-    }
-  };
+  /*
+    ⚠️ Só a PRIMEIRA carga (ou o "tentar de novo") mostra o skeleton. Depois de
+    criar ou editar, a lista é recarregada por baixo — trocar a tabela por
+    skeleton a cada salvamento faria a tela piscar e perder a rolagem.
+    A ordenação é do template (`ORDENACAO_PADRAO`), não daqui.
+  */
+  const fetchInscriptions = useCallback(
+    async (mostrarCarregando = false) => {
+      if (mostrarCarregando) setEstado("loading");
+      try {
+        setInscriptions(await getTodasAsInscricoes(token));
+        setEstado("idle");
+      } catch (e) {
+        console.error("Erro ao buscar inscrições", e);
+        setEstado("error");
+      }
+    },
+    [token],
+  );
 
   useEffect(() => {
-    fetchInscriptions();
-  }, []);
+    fetchInscriptions(true);
+  }, [fetchInscriptions]);
 
   return (
     <DashCardContext.Provider
       value={{
         title: dataInscription.title,
         entities: filteredInscriptions,
-        setEntities: (action) => {
-          setInscriptions((prev) => {
-            const newList =
-              typeof action === "function" ? action(prev) : action;
-            const prevIds = new Set(prev.map((i) => i.id));
-            const genuinelyNew = newList.filter((i) => !prevIds.has(i.id));
-            return genuinelyNew.length > 0 ? [...prev, ...genuinelyNew] : prev;
-          });
-        },
-        onClickCard: onClickCard,
-        getMoreCards: getMoreCards,
+        /*
+          ⚠️ O setter REAL. O template do V2 nunca o chama; o setter que só
+          acrescentava ids novos era contorno do scroll do V1 e saiu. Uma
+          função vazia aqui esconderia o bug do par "lista filtrada + setter da
+          bruta" no dia em que a tela voltasse ao V1.
+        */
+        setEntities: setInscriptions,
+        onClickCard,
+        getMoreCards,
         limitCards: 10,
         cardTransformation,
-        buttons,
         selectFiltes,
+        totalItems: filteredInscriptions.length,
       }}
     >
-      {processing ? (
-        <div className="w-full h-full flex justify-center pt-40">
-          <MoonLoader color="#FF7600" size={60} speedMultiplier={0.4} />
-        </div>
-      ) : (
-        <>
-          <DashCardTemplate
-            classNameFilter="md:w-9/12 bg-white h-20"
-            className="md:mt-24"
-          />
-          <ModalInfo />
-          <ModalCreate />
-          <ModalConfirmTest />
-        </>
-      )}
+      <DashListTemplate<Inscription>
+        columns={colunasDeProcesso}
+        actions={{ primary: acaoPrimaria }}
+        activeFilterCount={activeFilterCount}
+        onClearFilters={clearFilters}
+        defaultSort={ORDENACAO_PADRAO}
+        state={estado}
+        onRetry={() => fetchInscriptions(true)}
+        textoVazio={TEXTO_SEM_PROCESSOS}
+      />
+      <ModalInfo />
+      <ModalCreate />
+      <ModalConfirmTest />
     </DashCardContext.Provider>
   );
 }
