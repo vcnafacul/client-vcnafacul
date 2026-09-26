@@ -18,6 +18,15 @@ import {
 
 const VAZIO = "—";
 
+/**
+ * ⚠️ **"do simulado", e nem "turma" nem "cursinho".** O número é a média de
+ * todos os estudantes que responderam o simulado no recorte, qualquer que seja
+ * a turma deles. "turma" levava o QA a procurar a turma do aluno; "cursinho"
+ * sugeria o cursinho todo, respondendo ou não. E fica no cabeçalho da coluna,
+ * não repetido em cada linha antes do número.
+ */
+export const ROTULO_MEDIA = "Média do simulado";
+
 /** A linha de uma matéria, com a barra e a média da turma ao lado. */
 /**
  * "de 12 questões", ou nada.
@@ -124,12 +133,15 @@ function LinhaDeMateria({
           seria pior que admitir a ausência.
         */}
         <span
-          data-turma={nome}
-          className={cn("w-24 shrink-0 text-right text-xs", dashV2.text.muted)}
+          data-media-simulado={nome}
+          className={cn(
+            "w-28 shrink-0 text-right text-xs tabular-nums",
+            dashV2.text.muted,
+          )}
         >
           {mediaDaTurma === undefined
-            ? `turma: ${VAZIO}`
-            : `turma: ${Math.round(mediaDaTurma * 100)}%`}
+            ? VAZIO
+            : `${Math.round(mediaDaTurma * 100)}%`}
         </span>
       </div>
 
@@ -249,13 +261,27 @@ export function ResumoDoEstudante({
         )}
         {desvio !== null && (
           <span data-desvio className={cn("text-xs", dashV2.text.muted)}>
-            · {desvio} que a turma
+            · {desvio} que a média do simulado
           </span>
         )}
       </div>
 
       {materias.length > 0 && (
         <div className="flex flex-col gap-1.5">
+          {/*
+            Cabeçalho só da última coluna, alinhado às larguras da
+            `LinhaDeMateria` (w-32 · w-10 · w-24 · barra · w-28): as outras se
+            explicam sozinhas ("50%", "de 2 questões").
+          */}
+          <div
+            aria-hidden
+            className={cn("flex items-center gap-2 text-xs", dashV2.text.muted)}
+          >
+            <span className="flex-1" />
+            <span data-cabecalho-media className="w-28 shrink-0 text-right">
+              {ROTULO_MEDIA}
+            </span>
+          </div>
           {materias.map((m) => (
             <LinhaDeMateria
               key={m.id}

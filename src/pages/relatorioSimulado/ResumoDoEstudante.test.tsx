@@ -63,13 +63,15 @@ const montar = (over: Partial<Parameters<typeof ResumoDoEstudante>[0]> = {}) =>
   );
 
 describe("ResumoDoEstudante (card 10)", () => {
-  it("mostra acertos, percentual e o desvio da turma", () => {
+  it("mostra acertos, percentual e o desvio da média do simulado", () => {
     montar();
 
     expect(screen.getByText("45/90 acertos")).toBeInTheDocument();
     expect(screen.getByText(/50%/)).toBeInTheDocument();
     // 0,50 − 0,36 = +14 p.p.
-    expect(screen.getByText(/\+14 p\.p\. que a turma/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/\+14 p\.p\. que a média do simulado/),
+    ).toBeInTheDocument();
   });
 
   it("⚠️ desvio em p.p., e NÃO posição na turma", () => {
@@ -82,26 +84,37 @@ describe("ResumoDoEstudante (card 10)", () => {
     expect(container.textContent).not.toMatch(/\dº/);
   });
 
-  it("⚠️ a média da TURMA aparece ao lado de cada matéria, sempre", () => {
+  it("⚠️ a média do simulado aparece ao lado de cada matéria, sempre", () => {
     // Mesmo princípio do `formatarDificuldade`: "30% em Matemática" só vira
     // informação contra o "52%" da turma. Sem isso o bloco é bonito e não
     // decide nada.
     const { container } = montar();
 
-    expect(container.querySelector('[data-turma="Matemática"]')).toHaveTextContent(
-      "turma: 52%",
-    );
-    expect(container.querySelector('[data-turma="Humanas"]')).toHaveTextContent(
-      "turma: 70%",
-    );
+    expect(
+      container.querySelector('[data-media-simulado="Matemática"]'),
+    ).toHaveTextContent("52%");
+    expect(
+      container.querySelector('[data-media-simulado="Humanas"]'),
+    ).toHaveTextContent("70%");
   });
 
-  it("⚠️ matéria que a turma não tem mostra travessão, não um número inventado", () => {
+  it("⚠️ o rótulo é o cabeçalho da coluna, e não se repete em cada linha", () => {
+    // "turma: 25%" em cada linha levou o QA a procurar a turma do aluno — o
+    // número é a média de todos que responderam o simulado, de qualquer turma.
+    const { container } = montar();
+
+    expect(
+      container.querySelector("[data-cabecalho-media]"),
+    ).toHaveTextContent("Média do simulado");
+    expect(container.textContent).not.toMatch(/turma/i);
+  });
+
+  it("⚠️ matéria sem média no simulado mostra travessão, não um número inventado", () => {
     const { container } = montar({ materiasDaTurma: [] });
 
-    expect(container.querySelector('[data-turma="Matemática"]')).toHaveTextContent(
-      "turma: —",
-    );
+    expect(
+      container.querySelector('[data-media-simulado="Matemática"]'),
+    ).toHaveTextContent("—");
   });
 
   describe("frentes", () => {
