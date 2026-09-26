@@ -1,3 +1,4 @@
+import type { StatusV2 } from "@/components/dashV2";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
 
@@ -20,4 +21,22 @@ export function statusDoProcesso(
 ): StatusEnum {
   if (new Date(inscription.endDate) < agora) return StatusEnum.Rejected;
   return inscription.actived;
+}
+
+/**
+ * Rótulo e tom do `StatusBadge` (card 04). Os rótulos são os do filtro de
+ * status (`data.ts`), para a coluna e o filtro falarem a mesma língua.
+ */
+export function badgeDoProcesso(
+  inscription: Pick<Inscription, "endDate" | "actived">,
+  agora: Date = new Date(),
+): { tone: StatusV2; label: string } {
+  switch (statusDoProcesso(inscription, agora)) {
+    case StatusEnum.Approved:
+      return { tone: "running", label: "Ativo" };
+    case StatusEnum.Rejected:
+      return { tone: "done", label: "Encerrado" };
+    default:
+      return { tone: "neutral", label: "Pendente" };
+  }
 }

@@ -85,7 +85,7 @@ a primária e deixar o resto derivar.
 | `dashContent`, `dashGeo`, `dashNews`, `partnerPrepManager` | 1 → 2 | passam lista bruta + setter da mesma; sem `resetKey` |
 | ~~`dashRoles`~~ | ✅ migrada | nível 2 — busca **sob demanda** no servidor: usa `textoVazio` (não carrega nada de início) e `onSearchSubmit` (Enter), as duas props que entraram por ela |
 | ~~`partnerPrepProvas`~~ | ✅ migrada | nível 3, feita — reusa `dashProvas/columns` inteiro |
-| `partnerPrepInscriptionManager` | 3 | lista derivada, com setter customizado que mescla por id |
+| ~~`partnerPrepInscriptionManager`~~ | ✅ migrada | nível 3 — o setter que mesclava por id era contorno do scroll do V1 e saiu; lista inteira carregada página a página (`getTodasAsInscricoes`); primeira tela com `DashDateRangeFilter` e `totalSemFiltro` — tickets/021 |
 
 ### Duas telas sobre a mesma tabela: o caso `dashProvas` × `partnerPrepProvas`
 
@@ -113,6 +113,29 @@ quando há o que colapsar. Sem abrir Popover nenhum, e sem os segundos de jsdom 
 - [ ] A contagem de registros confere com a de antes
 - [ ] Carregando, vazio e erro aparecem
 - [ ] `yarn test` e `yarn build` limpos
+
+---
+
+### "3 de 12 registros": `totalSemFiltro`
+
+Como `entities` chega já filtrada pela tela, o template não sabe o total. Com `totalSemFiltro` e filtro
+ativo, o subtítulo vira "3 de 12 registros" — sem ele, "3 registros" com filtro ligado parece que só
+existem três. Sem filtro ativo, o total não aparece mesmo se passado.
+
+### Filtro de intervalo de datas: `DashDateRangeFilter`
+
+Para o `filters` do template. Controlado (`value` / `onChange`, em `yyyy-mm-dd`); a regra de
+comparação é `dentroDoIntervalo(data, intervalo)`, que a tela aplica na sua lista.
+
+- **`<input type="date">` nativo**, e não calendário do Radix: teclado e leitor de tela de graça, e
+  nenhum Popover no jsdom.
+- ⚠️ **Dia do calendário local**: `de` às 00:00, `até` às 23:59:59.999. **Nunca** `new Date("2026-03-10")`
+  — sem hora, a spec lê como UTC, e no Brasil isso é 21h do dia anterior.
+- Intervalo invertido: o componente avisa, e `dentroDoIntervalo` **não filtra** (esconder a lista inteira
+  por um erro de digitação seria pior).
+- `intervaloAtivo` é o que conta no `activeFilterCount`.
+- ⚠️ O teste fixa `TZ=America/Sao_Paulo` no próprio arquivo: os defeitos de fuso só aparecem num fuso
+  negativo, e em UTC (o CI) passariam calados.
 
 ---
 
