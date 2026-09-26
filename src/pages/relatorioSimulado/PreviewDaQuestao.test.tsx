@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   PreviewDaQuestao,
   TEXTO_ERRO,
+  TEXTO_ENUNCIADO_CONGELADO,
   TEXTO_ENUNCIADO_DE_HOJE,
   TEXTO_GABARITO_DA_CORRECAO,
   TEXTO_SEM_ALTERNATIVAS,
@@ -197,20 +198,35 @@ describe("PreviewDaQuestao", () => {
     expect(screen.getByText(TEXTO_ENUNCIADO_DE_HOJE)).toBeTruthy();
   });
 
-  it("⚠️ o aviso diz que o sistema NÃO guarda o enunciado do momento", async () => {
+  it("⚠️ questão não congelada: avisa que ainda pode ser corrigida", async () => {
     /*
-      É a frase que não pode sair. "Pode ter sido editada" sugere que alguém
-      saberia se tivesse sido — e não saberia: os 380 registros de questão no
-      `auditlogs` são todos mudança de `status`, e o `updateContent` não grava
-      log nenhum. Sem esta frase, quem lê supõe que a plataforma guarda o
-      enunciado do momento e só não o está mostrando.
+      Sem congelamento, "corrigir" edita a questão NO LUGAR (card 26), e o
+      histórico aponta esse mesmo id — o texto que aparece pode não ser o que o
+      aluno leu, e a frase precisa dizer isso.
     */
     montar();
 
     await screen.findByText(TEXTO_GABARITO_DA_CORRECAO);
-    expect(
-      document.querySelector("[data-aviso-enunciado]")?.textContent,
-    ).toContain("não guarda o enunciado do momento");
+    const aviso = document.querySelector("[data-aviso-enunciado]")?.textContent;
+    expect(aviso).toBe(TEXTO_ENUNCIADO_DE_HOJE);
+    expect(aviso).toContain("ainda pode ser corrigida");
+  });
+
+  it("⚠️ questão congelada: afirma que é a versão do simulado e que não muda mais", async () => {
+    /*
+      Nova versão congela a original e as provas passam a usar a sucessora; o
+      histórico continua apontando a original. Aqui dá para afirmar o que a
+      frase de "hoje" não pode.
+    */
+    montar({ buscar: vi.fn().mockResolvedValue(doBanco({ congelada: true })) });
+
+    await screen.findByText(TEXTO_GABARITO_DA_CORRECAO);
+    const aviso = document.querySelector("[data-aviso-enunciado]")?.textContent;
+    expect(aviso).toBe(TEXTO_ENUNCIADO_CONGELADO);
+    expect(screen.queryByText(TEXTO_ENUNCIADO_DE_HOJE)).toBeNull();
+    // Não afirma identidade com o que o aluno leu: uma correção antes do
+    // congelamento é possível e não deixa rastro do texto anterior.
+    expect(aviso).not.toMatch(/idêntic|exatamente o que o aluno/i);
   });
 
   it("⚠️ são dois parágrafos — juntos, o segundo apagava o primeiro", async () => {
