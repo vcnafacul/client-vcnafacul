@@ -42,7 +42,8 @@ export interface QuestaoHistorico extends QuestionTemplate {
 interface SimuladoHistoricoDTO {
   _id: string;
   nome: string;
-  categoria: ICategoria;
+  // Opcional: simulado sem categoria existe (o schema não a exige).
+  categoria?: ICategoria | null;
   questoes: QuestaoHistorico[];
   aproveitamento: number;
   vezesRespondido: number;

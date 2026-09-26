@@ -23,6 +23,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HistoricoDTO } from "../../../dtos/historico/historicoDTO";
 import { DASH, SIMULADO_HISTORIES } from "../../../routes/path";
+import { categoriaDoHistorico } from "../../../utils/categoriaDoHistorico";
 import { getFormatingTime } from "../../../utils/getFormatingTime";
 import { RadarChart } from "../../atoms/radarChart";
 
@@ -37,10 +38,10 @@ export function SimulationHistoryHeader({
   // Estado para controlar visualização por matéria ou frente
   const [viewMode, setViewMode] = useState<"materias" | "frentes">("materias");
 
+  const categoria = categoriaDoHistorico(historic);
   const finished =
-    historic.simulado.categoria.quantidadeTotalQuestao !== null &&
-    historic.simulado.categoria.quantidadeTotalQuestao ===
-    historic.questoesRespondidas;
+    categoria.totalQuestoes !== null &&
+    categoria.totalQuestoes === historic.questoesRespondidas;
 
   if (!historic.aproveitamento) {
     const isFailed = historic.status === "failed";
@@ -70,8 +71,8 @@ export function SimulationHistoryHeader({
               : "Seu simulado está sendo processado. Os resultados estarão disponíveis em breve."}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {historic.simulado.categoria.nome} — {historic.questoesRespondidas} de{" "}
-            {historic.simulado.categoria.quantidadeTotalQuestao ?? 0} questões respondidas
+            {categoria.nome} — {historic.questoesRespondidas} de{" "}
+            {categoria.totalQuestoes ?? 0} questões respondidas
           </Typography>
         </Paper>
       </Box>
@@ -125,7 +126,7 @@ export function SimulationHistoryHeader({
   ];
 
   const aproveitamentoGeral = ((historic.aproveitamento?.geral ?? 0) * 100).toFixed(1);
-  const totalQuestoes = historic.simulado.categoria.quantidadeTotalQuestao ?? 0;
+  const totalQuestoes = categoria.totalQuestoes ?? 0;
   const percentualAcertos = totalQuestoes > 0 ? ((acertos / totalQuestoes) * 100).toFixed(1) : '0.0';
   const percentualErros = totalQuestoes > 0 ? ((erros / totalQuestoes) * 100).toFixed(1) : '0.0';
 
@@ -193,7 +194,7 @@ export function SimulationHistoryHeader({
         >
           <Box>
             <Typography variant="h6" sx={{ opacity: 0.9, mb: 1 }}>
-              {historic.simulado.categoria.nome} - {historic.ano}
+              {categoria.nome} - {historic.ano}
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <Award className="h-12 w-12" />

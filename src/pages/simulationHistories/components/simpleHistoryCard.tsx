@@ -9,6 +9,7 @@ import {
 import { DateTime } from "luxon";
 import { HistoricoDTO } from "../../../dtos/historico/historicoDTO";
 import { getFormatingTime } from "../../../utils/getFormatingTime";
+import { categoriaDoHistorico } from "@/utils/categoriaDoHistorico";
 
 interface SimpleHistoryCardProps {
   historico: HistoricoDTO;
@@ -33,7 +34,8 @@ export function SimpleHistoryCard({
   historico,
   onClick,
 }: SimpleHistoryCardProps) {
-  const totalQuestoes = historico.simulado.categoria.quantidadeTotalQuestao;
+  const { nome: nomeCategoria, totalQuestoes } =
+    categoriaDoHistorico(historico);
   const isComplete =
     totalQuestoes !== null &&
     historico.questoesRespondidas === totalQuestoes;
@@ -93,7 +95,7 @@ export function SimpleHistoryCard({
               className="text-lg font-bold text-primary group-hover:text-primary/80
               transition-colors line-clamp-2 leading-tight"
             >
-              {historico.simulado.categoria.nome}
+              {nomeCategoria}
             </h3>
             <p className="text-sm text-muted-foreground mt-1">
               {formattedDate}

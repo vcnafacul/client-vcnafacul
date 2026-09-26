@@ -7,6 +7,7 @@ import { getFormatingTime } from "../../../utils/getFormatingTime";
 import { getStatusIcon } from "../../../utils/getStatusIcon";
 import SimulationHistoryField from "../../atoms/simulationHistoryField";
 import { ToolTip } from "../../atoms/tooltip";
+import { categoriaDoHistorico } from "../../../utils/categoriaDoHistorico";
 
 interface SimulationHistoryCardProps {
   historico: HistoricoDTO;
@@ -24,7 +25,8 @@ function SimulationHistoryCard({ historico }: SimulationHistoryCardProps) {
     ? statusLabel[historico.status ?? "pending"] ?? "Pendente"
     : `${(historico.aproveitamento!.geral * 100).toFixed(2)}%`;
 
-  const totalQuestoes = historico.simulado.categoria.quantidadeTotalQuestao;
+  const { nome: nomeCategoria, totalQuestoes } =
+    categoriaDoHistorico(historico);
 
   return (
     <Link
@@ -33,7 +35,7 @@ function SimulationHistoryCard({ historico }: SimulationHistoryCardProps) {
     >
       <SimulationHistoryField
         field="Caderno:"
-        value={historico.simulado.categoria.nome}
+        value={nomeCategoria}
         className="md:min-w-[250px]"
       />
       <SimulationHistoryField
