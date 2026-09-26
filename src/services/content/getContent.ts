@@ -57,3 +57,32 @@ export async function getContentOrder(
   }
   return res;
 }
+
+/**
+ * Todas as páginas de demandas do filtro, numa lista só.
+ *
+ * ⚠️ O `DashListTemplate` pagina e ordena em memória, e não pede a próxima
+ * página no scroll como o V1 fazia. Com só a primeira página, ordenar por
+ * "Cadastrado em" ordenaria 100 de N e mentiria sobre o resto — mesmo motivo
+ * do `getTodasAsInscricoes`.
+ */
+export async function getTodoConteudo(
+  token: string,
+  status: StatusContent,
+  materia: string,
+  porPagina: number = 100,
+): Promise<ContentDtoInput[]> {
+  const todos: ContentDtoInput[] = [];
+  for (let page = 1; ; page++) {
+    const { data, totalItems } = await getContent(
+      token,
+      status,
+      materia,
+      page,
+      porPagina,
+    );
+    todos.push(...data);
+    // Página vazia também para: um `totalItems` inconsistente não vira laço infinito
+    if (data.length === 0 || todos.length >= totalItems) return todos;
+  }
+}
