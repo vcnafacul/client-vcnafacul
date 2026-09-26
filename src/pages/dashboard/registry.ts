@@ -1,5 +1,5 @@
 import { Roles } from '@/enums/roles/roles';
-import { Profile } from '../dashboard/types';
+export type Profile = 'common' | 'student' | 'collaborator';
 import {
   KpiAproveitamento,
   KpiEstudantes,
@@ -32,7 +32,7 @@ export type Slot = 'kpi' | 'main' | 'aside';
  */
 export type View = 'estudo' | 'atuacao';
 
-export type PocWidget = {
+export type WidgetDef = {
   id: string;
   slot: Slot;
   view: View;
@@ -41,7 +41,7 @@ export type PocWidget = {
   permissions?: string[];
 };
 
-export const pocRegistry: PocWidget[] = [
+export const widgetRegistry: WidgetDef[] = [
   // --- Estudo
   { id: 'kpi-simulados', view: 'estudo', slot: 'kpi', component: KpiSimulados, profiles: ['common'] },
   { id: 'kpi-aproveitamento', view: 'estudo', slot: 'kpi', component: KpiAproveitamento, profiles: ['common'] },
@@ -90,7 +90,7 @@ export const pocRegistry: PocWidget[] = [
 ];
 
 export function visibleWidgets(
-  widgets: PocWidget[],
+  widgets: WidgetDef[],
   profiles: string[],
   permissions: Record<string, boolean>,
 ) {
@@ -111,7 +111,7 @@ export function visibleWidgets(
  * comum cai aqui).
  */
 export function availableViews(
-  visible: PocWidget[],
+  visible: WidgetDef[],
   profiles: string[],
 ): View[] {
   const hasAtuacao = visible.some((w) => w.view === 'atuacao');

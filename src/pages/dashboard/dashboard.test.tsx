@@ -2,7 +2,7 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Roles } from '@/enums/roles/roles';
-import DashboardPoc from '.';
+import Dashboard from '.';
 
 const auth = {
   data: {
@@ -73,10 +73,10 @@ function performance() {
   };
 }
 
-function renderPoc() {
+function renderDashboard() {
   return render(
     <MemoryRouter>
-      <DashboardPoc />
+      <Dashboard />
     </MemoryRouter>,
   );
 }
@@ -92,10 +92,10 @@ beforeEach(() => {
   localStorage.clear();
 });
 
-describe('DashboardPoc', () => {
+describe('Dashboard', () => {
   it('estudante vê KPIs pessoais, frequência e tema da semana', async () => {
     auth.data.profiles = ['common', 'student'];
-    renderPoc();
+    renderDashboard();
 
     expect(await screen.findByText('Desafios da mobilidade urbana')).toBeInTheDocument();
     expect(within(kpi('Simulados feitos')).getByText('2')).toBeInTheDocument();
@@ -111,7 +111,7 @@ describe('DashboardPoc', () => {
   it('estudante não vê seletor de visão nem nada de atuação', async () => {
     auth.data.profiles = ['common', 'student'];
     auth.data.permissao = {};
-    renderPoc();
+    renderDashboard();
 
     expect(await screen.findByText('Simulados feitos')).toBeInTheDocument();
     expect(screen.queryByRole('group', { name: 'Visão da dashboard' })).not.toBeInTheDocument();
@@ -121,7 +121,7 @@ describe('DashboardPoc', () => {
   it('colaborador só vê a visão de atuação, sem nada de estudante', async () => {
     auth.data.profiles = ['common', 'collaborator'];
     auth.data.permissao = { [Roles.validarQuestao]: true };
-    renderPoc();
+    renderDashboard();
 
     expect(await screen.findByText('Fila de validação')).toBeInTheDocument();
     expect(await screen.findByText('Cursinho Beta')).toBeInTheDocument();
@@ -143,7 +143,7 @@ describe('DashboardPoc', () => {
   it('quem atua por permissão, sem ser colaborador de cursinho, também cai na atuação', async () => {
     auth.data.profiles = ['common'];
     auth.data.permissao = { [Roles.validarQuestao]: true };
-    renderPoc();
+    renderDashboard();
 
     expect(await screen.findByText('Fila de validação')).toBeInTheDocument();
     expect(screen.queryByText('Simulados feitos')).not.toBeInTheDocument();
@@ -152,7 +152,7 @@ describe('DashboardPoc', () => {
   it('colaborador matriculado começa na atuação e alterna para estudo', async () => {
     auth.data.profiles = ['common', 'student', 'collaborator'];
     auth.data.permissao = { [Roles.validarQuestao]: true };
-    const { unmount } = renderPoc();
+    const { unmount } = renderDashboard();
 
     expect(await screen.findByText('Fila de validação')).toBeInTheDocument();
     expect(screen.queryByText('Simulados feitos')).not.toBeInTheDocument();
@@ -164,13 +164,13 @@ describe('DashboardPoc', () => {
 
     // A escolha sobrevive a uma nova visita.
     unmount();
-    renderPoc();
+    renderDashboard();
     expect(await screen.findByText('Simulados feitos')).toBeInTheDocument();
   });
 
   it('busca o desempenho uma vez, mesmo com quatro widgets lendo', async () => {
     auth.data.profiles = ['common'];
-    renderPoc();
+    renderDashboard();
 
     expect(await screen.findByText('Matemática')).toBeInTheDocument();
     expect(getPerformance).toHaveBeenCalledTimes(1);
@@ -179,7 +179,7 @@ describe('DashboardPoc', () => {
   it('erro numa fonte mostra "tentar novamente" e busca de novo', async () => {
     auth.data.profiles = ['common'];
     getPerformance.mockRejectedValueOnce(new Error('boom'));
-    renderPoc();
+    renderDashboard();
 
     // O primeiro "tentar novamente" da página é o do KPI de simulados.
     const retries = await screen.findAllByText('Tentar novamente');
