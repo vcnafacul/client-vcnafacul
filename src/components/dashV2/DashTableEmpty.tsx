@@ -21,7 +21,7 @@ export const LINHAS_SKELETON = 8;
 
 /**
  * ⚠️ Faixa, e não modal nem toast: o erro pertence à lista que falhou, e o
- * botão de retentar precisa estar do lado dele. Mesmo padrão do `WidgetShell`
+ * botão de retentar precisa estar do lado dele. Mesmo padrão do `Panel`
  * do `pages/dashboard`.
  */
 export function DashTableErro({ onRetry }: { onRetry?: () => void }) {
