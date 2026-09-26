@@ -1,4 +1,6 @@
+import EntrarComGoogle from "@/components/molecules/entrarComGoogle";
 import LoginForm from "@/components/organisms/loginForm";
+import { useCaminhoAtual } from "@/hooks/useCaminhoAtual";
 import BaseTemplate from "@/components/templates/baseTemplate";
 import { Button } from "@/components/ui/button";
 import { loginForm } from "@/pages/login/data";
@@ -29,6 +31,8 @@ export default function ConviteColaborador() {
   const location = useLocation();
   const navigate = useNavigate();
   const token = new URLSearchParams(location.search).get("token") ?? "";
+  // Entrar pelo Google volta para cá, com o mesmo token (card 04 de `login-com-google`)
+  const voltarAqui = useCaminhoAtual();
   const {
     data: { token: tokenDeLogin, user },
     doAuth,
@@ -157,6 +161,7 @@ export default function ConviteColaborador() {
           </p>
           {/* ⚠️ Continua nesta página depois de entrar — o store já tem o login. */}
           <LoginForm {...loginForm} onLogin={() => undefined} />
+          <EntrarComGoogle label="Entrar com Google" voltar={voltarAqui} />
         </>
       );
     }

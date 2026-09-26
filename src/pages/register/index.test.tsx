@@ -144,3 +144,37 @@ describe("Register — cadastro pelo convite (convite 05)", () => {
     expect(cadastrarPeloConvite).not.toHaveBeenCalled();
   });
 });
+
+describe("Register — botão do Google (login-com-google 03)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarConvitePorToken.mockResolvedValue(convite());
+  });
+
+  it("sem convite: oferece cadastrar com Google", () => {
+    montar("");
+    expect(screen.getByText("Cadastrar com Google")).toBeTruthy();
+  });
+
+  it("⚠️ com convite: o Google leva o convite e volta à página dele (card 05)", async () => {
+    const assign = vi.fn();
+    vi.stubGlobal("location", { ...window.location, assign });
+    montar("?convite=abc");
+    await screen.findByText(/Cursinho Popular/);
+
+    fireEvent.click(screen.getByText("Cadastrar com Google"));
+
+    const url = new URL(assign.mock.calls[0][0], "http://api");
+    expect(url.searchParams.get("convite")).toBe("abc");
+    expect(url.searchParams.get("voltar")).toBe("/convite-colaborador?token=abc");
+    vi.unstubAllGlobals();
+  });
+
+  it("convite que não vale mais: um botão só, o comum", async () => {
+    buscarConvitePorToken.mockResolvedValue(convite({ situacao: "expirado" }));
+    montar("?convite=abc");
+    await screen.findByText(/não vale mais/);
+    // O cadastro comum continua — pelo Google também, sem o convite
+    expect(screen.getAllByText("Cadastrar com Google")).toHaveLength(1);
+  });
+});

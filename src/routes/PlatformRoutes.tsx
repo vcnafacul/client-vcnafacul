@@ -49,6 +49,8 @@ import Materia from "../pages/materia";
 import NewsPage from "../pages/newsPage";
 import { PartnerPrepInscription } from "../pages/partnerPrepInscription";
 import Register from "../pages/register";
+import CadastroGoogle from "../pages/cadastroGoogle";
+import GoogleRetorno from "../pages/googleRetorno";
 import { Reset } from "../pages/reset";
 import Simulate from "../pages/simulate";
 import { SimulationHistories } from "../pages/simulationHistories";
@@ -99,6 +101,8 @@ import {
   PARTNER_PREP_MANAGER,
   PARTNER_PROVAS,
   REGISTER_PATH,
+  GOOGLE_CADASTRO_PATH,
+  GOOGLE_RETORNO_PATH,
   REGISTRATION_MONITOR,
   RELATORIO_SIMULADO,
   RESET_PASSWORD_PATH,
@@ -148,6 +152,8 @@ export function PlatformRoutes() {
         <Route path={LOGOFF_PATH} element={<Logout />} />
         <Route path={RESET_PASSWORD_PATH} element={<Reset />} />
         <Route path={REGISTER_PATH} element={<Register />} />
+        <Route path={GOOGLE_CADASTRO_PATH} element={<CadastroGoogle />} />
+        <Route path={GOOGLE_RETORNO_PATH} element={<GoogleRetorno />} />
         <Route path={FORM_GEOLOCATION} element={<Geo />} />
         <Route path={CONVITE_COLABORADOR} element={<ConviteColaborador />} />
         <Route
