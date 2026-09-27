@@ -1,6 +1,6 @@
 import fetchWrapper from "@/utils/fetchWrapper";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getGeolocation } from "./getGeolocation";
+import { buscarGeoPublico, getGeolocation } from "./getGeolocation";
 
 vi.mock("@/utils/fetchWrapper", () => ({ default: vi.fn() }));
 const mockedFetch = vi.mocked(fetchWrapper);
@@ -34,5 +34,12 @@ describe("getGeolocation (mapa público)", () => {
   it("falha → lista vazia (o mapa fica sem pins, não quebra)", async () => {
     mockedFetch.mockResolvedValue(resposta(500, {}));
     expect(await getGeolocation()).toEqual([]);
+  });
+});
+
+describe("buscarGeoPublico (Localiza Cursinho)", () => {
+  it("status ≠ 200 lança, para a tela mostrar erro com 'tentar de novo'", async () => {
+    mockedFetch.mockResolvedValue(resposta(500, {}));
+    await expect(buscarGeoPublico()).rejects.toThrow(/carregar os cursinhos/);
   });
 });

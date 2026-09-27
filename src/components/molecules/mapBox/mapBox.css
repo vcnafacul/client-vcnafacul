@@ -1,0 +1,9 @@
+/*
+  Pin destacado (MapBox `activeId`). ⚠️ Escala o conteúdo, não o elemento do
+  marcador: o Leaflet posiciona o marcador com `transform` nele mesmo.
+*/
+.pin-ativo > div {
+  transform: scale(1.3);
+  transform-origin: 50% 100%;
+  transition: transform 120ms ease-out;
+}

@@ -8,7 +8,7 @@ import { useHomeStore } from "../../../../store/home";
 import MapBox from "../../../../components/molecules/mapBox";
 import ReportLC from "../../../../components/organisms/map/modal/report";
 import { SectionComponent } from "../../../../components/templates/homeSection/Section.types";
-import { MapFilterCard } from "./MapFilterCard";
+import { MapFilterCard } from "@/components/organisms/mapFilterCard";
 import { MapInfoCard } from "./MapInfoCard";
 
 const DEFAULT_FILTERS: TypeMarker[] = [TypeMarker.geo, TypeMarker.univPublic];
