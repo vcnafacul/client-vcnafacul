@@ -10,6 +10,11 @@ export const googleAuth = `${user}/auth/google`;
 export const googleCadastro = `${googleAuth}/cadastro`;
 export const logout = `${user}/logout`;
 export const logoutAll = `${user}/logout-all`;
+
+export const push = `${BASE_URL}/push`;
+export const pushDevices = `${push}/devices`;
+export const pushDevicesMe = `${pushDevices}/me`;
+export const pushTest = `${push}/test`;
 export const forgot = `${user}/forgot`;
 export const reset = `${user}/reset`;
 export const confirmemail = `${user}/confirmemail`;
