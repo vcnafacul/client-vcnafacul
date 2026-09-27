@@ -33,6 +33,11 @@ jobs:
       VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
       VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
       VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+      VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+      # ⚠️ Push só em prod: a chave do Firebase recusa homol (decisão da série
+      # pwa-push). Fixo em false para a variável do repositório, que liga prod,
+      # não ligar homol junto.
+      VITE_PUSH_ENABLED: "false"
 
     steps:
       - uses: actions/checkout@v4
@@ -66,6 +71,11 @@ jobs:
       VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
       VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
       VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+      VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+      # ⚠️ Push só em prod: a chave do Firebase recusa homol (decisão da série
+      # pwa-push). Fixo em false para a variável do repositório, que liga prod,
+      # não ligar homol junto.
+      VITE_PUSH_ENABLED: "false"
 
     steps:
       # Checkout develop (estado após o merge) para que homologação reflita sempre a branch develop.
@@ -116,6 +126,13 @@ jobs:
           rsync -avz \
             -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }}" \
             ./dist/index.html \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${BASE_PATH}/
+
+          # ⚠️ Arquivos da raiz do `dist` (vindos do `public/` e do vite-plugin-pwa).
+          # Sem eles o fallback de SPA devolve o index.html no lugar do sw.js.
+          rsync -avz \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }}" \
+            ./dist/sw.js ./dist/manifest.webmanifest ./dist/pwa ./dist/sounds \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${BASE_PATH}/
 
       - name: Remove SSH key

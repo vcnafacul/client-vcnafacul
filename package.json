@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "build:development": "tsc && vite build --mode development",
-    "build:homologation": "tsc && vite build --mode homologation",
-    "build:qa": "tsc && vite build --mode qa",
+    "build": "tsc && tsc -p tsconfig.sw.json && vite build",
+    "build:development": "tsc && tsc -p tsconfig.sw.json && vite build --mode development",
+    "build:homologation": "tsc && tsc -p tsconfig.sw.json && vite build --mode homologation",
+    "build:qa": "tsc && tsc -p tsconfig.sw.json && vite build --mode qa",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest run",
     "test:ci": "vitest run --exclude '**/DashToolbar.test.tsx'",
@@ -191,6 +191,7 @@
     "tailwindcss": "^3.4.0",
     "typescript": "^5.7.0",
     "vite": "^6.0.0",
+    "vite-plugin-pwa": "^1.3.0",
     "vitest": "^3"
   }
 }
