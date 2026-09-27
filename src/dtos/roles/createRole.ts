@@ -34,4 +34,5 @@ export interface CreateRoleDto {
   cadastrarProvasCursinho: boolean;
   gerenciarCategoriasCursinho: boolean;
   excluirQuestao: boolean;
+  enviarNotificacao: boolean;
 }
