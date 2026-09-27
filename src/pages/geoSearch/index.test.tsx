@@ -1,4 +1,10 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Limites } from "./regras";
@@ -298,7 +304,12 @@ describe("Localiza Cursinho — busca rápida (card 06)", () => {
 
     buscar("cursinho b");
     await screen.findByText(/Resultados para "cursinho b"/);
-    expect(new URLSearchParams(localAtual.search).get("q")).toBe("cursinho b");
+    // A URL é gravada num efeito DEPOIS de os resultados aparecerem.
+    await waitFor(() =>
+      expect(new URLSearchParams(localAtual.search).get("q")).toBe(
+        "cursinho b",
+      ),
+    );
   });
 
   it("na busca o filtro de tipo sai de cena", async () => {
