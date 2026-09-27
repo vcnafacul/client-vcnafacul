@@ -20,8 +20,10 @@ import { dashGeo } from "./data";
 import ModalCreateDashGeo from "./modals/modalCreateDashGeo";
 import ModalEditDashGeo from "./modals/modalEditDashGeo";
 import { useModals } from "@/hooks/useModal";
+import { useAuthStore } from "@/store/auth";
 
 function DashGeo() {
+  const token = useAuthStore((s) => s.data.token);
   const [status, setStatus] = useState<StatusEnum>(StatusEnum.Pending);
   const [geolocations, setGeolocations] = useState<Geolocation[]>([]);
   const [geoSelect, setGeoSelect] = useState<Geolocation>();
@@ -149,17 +151,17 @@ function DashGeo() {
 
   const getGeolocations = useCallback(
     async (status: StatusEnum, text: string) => {
-      getAllGeolocation(status, 1, limitCards, text)
+      getAllGeolocation(token, status, 1, limitCards, text)
         .then((res) => {
           setGeolocations(res.data);
         })
         .catch(() => setGeolocations([]));
     },
-    []
+    [token]
   );
 
   const getMoreCards = async (page: number): Promise<Paginate<Geolocation>> => {
-    return await getAllGeolocation(status, page, limitCards);
+    return await getAllGeolocation(token, status, page, limitCards);
   };
 
   const selectFiltes: SelectProps[] = [

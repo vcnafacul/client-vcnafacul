@@ -1,4 +1,4 @@
-import { Geolocation } from "../../../types/geolocation/geolocation";
+import { PublicGeolocation } from "../../../types/geolocation/publicGeolocation";
 import Text from "../../atoms/text";
 
 import {
@@ -18,7 +18,7 @@ import { TypeMarker } from "../../../types/map/marker";
 import { MarkerPin } from "../../molecules/mapBox";
 
 interface MapBoxInfoProps {
-  geo?: Geolocation;
+  geo?: PublicGeolocation;
   ctaLink: string;
   label?: string;
   markerType?: TypeMarker;
@@ -67,37 +67,37 @@ function MapBoxInfoGeo({ geo, ctaLink, label, markerType }: MapBoxInfoProps) {
           </a>
         )}
         {geo?.site?.length !== 0 && (
-          <a href={geo?.site} target="_blank" rel="noreferrer">
+          <a href={geo?.site ?? undefined} target="_blank" rel="noreferrer">
             <MdOutlineTravelExplore color={"#707070"} size={40} />
           </a>
         )}
         {geo?.linkedin?.length !== 0 && (
-          <a href={geo?.linkedin} target="_blank" rel="noreferrer">
+          <a href={geo?.linkedin ?? undefined} target="_blank" rel="noreferrer">
             <FaLinkedin color={"#707070"} size={40} />
           </a>
         )}
         {geo?.youtube?.length !== 0 && (
-          <a href={geo?.youtube} target="_blank" rel="noreferrer">
+          <a href={geo?.youtube ?? undefined} target="_blank" rel="noreferrer">
             <FaYoutubeSquare color={"#707070"} size={40} />
           </a>
         )}
         {geo?.facebook?.length !== 0 && (
-          <a href={geo?.facebook} target="_blank" rel="noreferrer">
+          <a href={geo?.facebook ?? undefined} target="_blank" rel="noreferrer">
             <FaFacebookSquare color={"#707070"} size={40} />
           </a>
         )}
         {geo?.instagram?.length !== 0 && (
-          <a href={geo?.instagram} target="_blank" rel="noreferrer">
+          <a href={geo?.instagram ?? undefined} target="_blank" rel="noreferrer">
             <FaInstagramSquare color={"#707070"} size={40} />
           </a>
         )}
         {geo?.twitter?.length !== 0 && (
-          <a href={geo?.twitter} target="_blank" rel="noreferrer">
+          <a href={geo?.twitter ?? undefined} target="_blank" rel="noreferrer">
             <FaTwitterSquare color={"#707070"} size={40} />
           </a>
         )}
         {geo?.tiktok?.length !== 0 && (
-          <a href={geo?.tiktok} target="_blank" rel="noreferrer">
+          <a href={geo?.tiktok ?? undefined} target="_blank" rel="noreferrer">
             <FaTiktok color={"#707070"} size={30} />
           </a>
         )}

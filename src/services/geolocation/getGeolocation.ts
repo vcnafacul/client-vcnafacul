@@ -1,23 +1,20 @@
-import { Geolocation } from "../../types/geolocation/geolocation";
+import { PublicGeolocation } from "../../types/geolocation/publicGeolocation";
 import fetchWrapper from "../../utils/fetchWrapper";
-import { Paginate } from "../../utils/paginate";
 import { geolocations } from "../urls";
 
-export async function getGeolocation() : Promise<Paginate<Geolocation>> {
-
-    const res = await fetchWrapper(`${geolocations}?page=1&limit=1000&status=1&text=`, {
-        headers: { "Content-Type": "application/json" },
-    });
-    if(res.status !== 200) {
-        return {
-            data: [] as Geolocation[],
-            page: 1,
-            limit: 0,
-            totalItems: 0
-        }
-    }
-
-    return await res.json()
+/**
+ * Cursinhos e universidades aprovados, só com campos públicos — o mapa da home
+ * e a busca. ⚠️ Não usar o `GET /geo`: ele devolve dados pessoais de quem
+ * cadastrou e validou, e vai exigir login (tickets/022, cards 01 e 01b).
+ *
+ * Falha → lista vazia, como antes: o mapa segue sem pins em vez de quebrar.
+ */
+export async function getGeolocation(): Promise<PublicGeolocation[]> {
+  const res = await fetchWrapper(`${geolocations}/public`, {
+    headers: { "Content-Type": "application/json" },
+  });
+  if (res.status !== 200) return [];
+  return await res.json();
 }
 
-export default getGeolocation
+export default getGeolocation;

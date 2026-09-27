@@ -78,7 +78,7 @@ function Map() {
     getGeolocation()
       .then((res) => {
         if (!mounted) return;
-        const geoMarkers = res.data.map((course) => ({
+        const geoMarkers = res.map((course) => ({
           id: `${course.id}`,
           lat: course.latitude,
           lon: course.longitude,

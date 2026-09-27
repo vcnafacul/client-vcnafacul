@@ -48,7 +48,7 @@ export const MapSection: SectionComponent<null> = () => {
     getGeolocation()
       .then((res) => {
         if (!mounted) return;
-        const geoMarkers = res.data.map((c) => ({
+        const geoMarkers = res.map((c) => ({
           id: `${c.id}`,
           lat: c.latitude,
           lon: c.longitude,
