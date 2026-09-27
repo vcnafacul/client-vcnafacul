@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { useAuthStore } from "@/store/auth";
 import { TEXTOS } from "./textosDoStatus";
 import { Bell, BellOff, Share, SquarePlus } from "lucide-react";
 import { useState } from "react";
@@ -50,6 +51,9 @@ export function NotificacoesDoAparelho() {
   const { status, aparelhos, ocupado, ativar, desativar, testar } =
     usePushNotifications();
   const [testando, setTestando] = useState(false);
+  // "Enviar teste" só para quem pode enviar notificações (`enviarNotificacao`,
+  // BE-03) — a api também exige a permissão (403 sem ela).
+  const podeTestar = useAuthStore((s) => !!s.data.permissao.enviarNotificacao);
 
   if (!status || status === "disabled-by-flag") return null;
   const { titulo, texto } = TEXTOS[status];
@@ -113,9 +117,11 @@ export function NotificacoesDoAparelho() {
             )}
             {ativo && (
               <>
-                <Button onClick={enviarTeste} disabled={testando || ocupado}>
-                  Enviar notificação de teste
-                </Button>
+                {podeTestar && (
+                  <Button onClick={enviarTeste} disabled={testando || ocupado}>
+                    Enviar notificação de teste
+                  </Button>
+                )}
                 <Button
                   variant="outline"
                   onClick={desativar}
