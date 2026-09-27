@@ -1,6 +1,6 @@
 import { SectionComponent } from "../../../../components/templates/homeSection/Section.types";
 import { PrepCourse } from "../../adapters/prepCoursesAdapter";
-import { FORM_GEOLOCATION } from "../../../../routes/path";
+import { GEOLOCATION_SEARCH } from "../../../../routes/path";
 
 const LOGO_CLASS =
   "w-[140px] h-[140px] object-contain " +
@@ -52,7 +52,7 @@ export const PrepCoursesSection: SectionComponent<PrepCourse[]> = ({
           Conhece um cursinho popular?
         </p>
         <a
-          href={FORM_GEOLOCATION}
+          href={GEOLOCATION_SEARCH}
           className="
             inline-flex items-center gap-2 rounded-full
             px-6 py-3 text-base font-semibold

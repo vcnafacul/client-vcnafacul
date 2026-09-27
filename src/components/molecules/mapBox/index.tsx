@@ -1,9 +1,16 @@
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
-import "leaflet.markercluster";
 
+/*
+  ⚠️ **O Leaflet ANTES do markercluster.** O plugin é UMD e se pendura no `L`
+  global que o Leaflet cria ao carregar. Com o plugin primeiro, este arquivo só
+  funcionava se outro módulo tivesse carregado o Leaflet antes — foi o que
+  quebrou o app inteiro ("L is not defined") quando a ordem dos imports do
+  PlatformRoutes mudou (tickets/022, card 10).
+*/
 import leaflet, { LatLngTuple } from "leaflet";
+import "leaflet.markercluster";
 import { BookOpen, Landmark, LucideIcon } from "lucide-react";
 import { JSX, useEffect, useId, useRef, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";

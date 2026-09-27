@@ -3,7 +3,7 @@ import { RefObject } from "react";
 import { TypeMarker } from "../../../../types/map/marker";
 import MapBoxInfoGeo from "../../../../components/organisms/mapBoxInfo/mapBoxInfoGeo";
 import { ReactComponent as Report } from "../../../../assets/icons/warning.svg";
-import { FORM_GEOLOCATION } from "../../../../routes/path";
+import { GEOLOCATION_SEARCH } from "../../../../routes/path";
 import { motion } from "motion/react";
 
 interface ActiveMarker {
@@ -57,7 +57,7 @@ export function MapInfoCard({ activeMarker, boxRef, onReport, onClose }: Props) 
         </button>
       </div>
       <div className="p-5 pt-12">
-        <MapBoxInfoGeo geo={activeMarker.infos} ctaLink={FORM_GEOLOCATION} label={label} markerType={activeMarker.type} />
+        <MapBoxInfoGeo geo={activeMarker.infos} ctaLink={GEOLOCATION_SEARCH} label={label} markerType={activeMarker.type} />
       </div>
     </motion.div>
   );

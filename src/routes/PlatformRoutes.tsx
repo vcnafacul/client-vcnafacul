@@ -29,7 +29,6 @@ import ReviewSingle from "../pages/essayViewDetail/ReviewSingle";
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashTemplate from "../components/templates/dashTemplate";
 import { Roles } from "../enums/roles/roles";
-import Geo from "../pages/Geo";
 import Account from "../pages/account";
 import { ConfirmEmailPage } from "../pages/confirmEmail";
 import Dashboard from "../pages/dashboard";
@@ -88,7 +87,6 @@ import {
   ESSAY_REVIEW_LIST,
   ESTUDO,
   FORGOT_PASSWORD_PATH,
-  FORM_GEOLOCATION,
   HOME_PATH,
   CONVITE_COLABORADOR,
   LOGIN_PATH,
@@ -115,6 +113,7 @@ import {
   SUPORTE,
 } from "./path";
 import ProtectedRoute from "./protectedRoute";
+import { rotasDoLocalizaCursinho } from "./localizaCursinhoRoutes";
 import ProtectedRoutePermission from "./protectedRoutePermission";
 
 const Home = lazy(() => import("../pages/homeV2"));
@@ -156,7 +155,7 @@ export function PlatformRoutes() {
         <Route path={REGISTER_PATH} element={<Register />} />
         <Route path={GOOGLE_CADASTRO_PATH} element={<CadastroGoogle />} />
         <Route path={GOOGLE_RETORNO_PATH} element={<GoogleRetorno />} />
-        <Route path={FORM_GEOLOCATION} element={<Geo />} />
+        {rotasDoLocalizaCursinho()}
         <Route path={CONVITE_COLABORADOR} element={<ConviteColaborador />} />
         <Route
           path={`${DECLARED_INTEREST}/:inscriptionId`}
