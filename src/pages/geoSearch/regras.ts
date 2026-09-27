@@ -38,6 +38,39 @@ export function cursinhosNaArea(
   return { itens: naArea.slice(0, limite), total: naArea.length };
 }
 
+/**
+ * Sem acento e sem diferenciar maiúscula — mesma regra das buscas da
+ * relatorioSimulado e do gerenciador de inscrições. Quem busca raramente
+ * digita o acento ("sao" tem de achar "São").
+ */
+export function normalizar(texto: string | null | undefined): string {
+  return (texto ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+/**
+ * Busca rápida (card 06), no cliente: trecho do nome, apelido, cidade ou
+ * estado. Só cursinhos (a tela é para achar cursinho). Mesma ordem da lista.
+ */
+export function buscarCursinhos(
+  geos: PublicGeolocation[],
+  termo: string,
+): PublicGeolocation[] {
+  const t = normalizar(termo);
+  if (!t) return [];
+  return geos
+    .filter((g) => g.type === TypeMarker.geo)
+    .filter((g) =>
+      [g.name, g.alias, g.city, g.state].some((campo) =>
+        normalizar(campo).includes(t),
+      ),
+    )
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
 /** `dd/MM/yyyy` no fuso de quem vê. */
 export function formatarData(iso: string): string {
   return new Date(iso).toLocaleDateString("pt-BR", {

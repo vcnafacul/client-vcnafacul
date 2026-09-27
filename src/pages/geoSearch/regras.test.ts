@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { TypeMarker } from "@/types/map/marker";
 import type { PublicGeolocation } from "@/types/geolocation/publicGeolocation";
-import { cursinhosNaArea, dentro, formatarData, type Limites } from "./regras";
+import {
+  buscarCursinhos,
+  cursinhosNaArea,
+  dentro,
+  formatarData,
+  type Limites,
+} from "./regras";
 
 const geo = (
   id: string,
@@ -15,6 +21,7 @@ const geo = (
     latitude: lat,
     longitude: lon,
     type: TypeMarker.geo,
+    state: "SP",
     createdAt: "2026-01-01T12:00:00Z",
     ...extra,
   }) as PublicGeolocation;
@@ -81,5 +88,52 @@ describe("cursinhosNaArea", () => {
 describe("formatarData", () => {
   it("dd/MM/yyyy", () => {
     expect(formatarData("2026-09-27T15:00:00Z")).toBe("27/09/2026");
+  });
+});
+
+describe("buscarCursinhos (card 06)", () => {
+  const lista = [
+    geo("cuca", -22, -48, {
+      name: "CUCA - Boa Esperança do Sul",
+      city: "Boa Esperança do Sul",
+    }),
+    geo("ara1", -21.8, -48.2, { name: "Cursinho Popular", city: "Araraquara" }),
+    geo("ara2", -21.8, -48.2, {
+      name: "Pré-vestibular Comunitário",
+      city: "Araraquara",
+    }),
+    geo("sao", -23.5, -46.6, { name: "São Judas Cursinho", city: "São Paulo" }),
+    geo("apelido", -23, -47, {
+      name: "Associação X",
+      alias: "Cursinho da Vila",
+      city: "Campinas",
+    }),
+    geo("univ", -22, -48, {
+      name: "CUCA Universidade",
+      type: TypeMarker.univPublic,
+    }),
+  ];
+  const ids = (t: string) => buscarCursinhos(lista, t).map((g) => g.id);
+
+  it('"cuca" acha "CUCA - Boa Esperança do Sul" (e não a universidade)', () => {
+    expect(ids("cuca")).toEqual(["cuca"]);
+  });
+
+  it('"araraquara" acha os dois de Araraquara (pela cidade)', () => {
+    expect(ids("araraquara").sort()).toEqual(["ara1", "ara2"]);
+  });
+
+  it('⚠️ "sao" acha "São…" (sem acento e sem maiúscula)', () => {
+    expect(ids("sao")).toEqual(["sao"]);
+    expect(ids("SÃO")).toEqual(["sao"]);
+  });
+
+  it("acha pelo apelido e pelo estado", () => {
+    expect(ids("da vila")).toEqual(["apelido"]);
+    expect(ids("sp")).toEqual(expect.arrayContaining(["cuca", "sao"]));
+  });
+
+  it("termo vazio ou só espaços → nada", () => {
+    expect(ids("  ")).toEqual([]);
   });
 });

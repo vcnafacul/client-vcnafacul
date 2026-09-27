@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Limites } from "./regras";
 
@@ -22,7 +22,7 @@ vi.mock("@/components/molecules/mapBox", () => ({
 // O controlador do mapa entrega a área e o mapa: aqui, o teste é quem manda.
 const controle = vi.hoisted(() => ({
   onLimites: (() => {}) as (l: Limites) => void,
-  mapa: { flyTo: vi.fn() },
+  mapa: { flyTo: vi.fn(), fitBounds: vi.fn() },
 }));
 vi.mock("./components/MapaController", () => ({
   MapaController: ({
@@ -60,10 +60,17 @@ const CAMPINAS: Limites = {
   oeste: -47.2,
 };
 
-async function abrir() {
+const localAtual = { search: "" };
+function EspiaUrl() {
+  localAtual.search = useLocation().search;
+  return null;
+}
+
+async function abrir(url = "/localiza-cursinho") {
   render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[url]}>
       <GeoSearch />
+      <EspiaUrl />
     </MemoryRouter>,
   );
   await screen.findByTestId("mapa");
@@ -74,6 +81,7 @@ const ultimasProps = () => mapBox.props[mapBox.props.length - 1];
 beforeEach(() => {
   mapBox.props = [];
   controle.mapa.flyTo.mockClear();
+  controle.mapa.fitBounds.mockClear();
   Element.prototype.scrollIntoView = vi.fn();
   api.buscarGeoPublico.mockResolvedValue([
     geo("a", -22.9, -47.06),
@@ -205,5 +213,99 @@ describe("Localize um Cursinho — esqueleto (card 04)", () => {
     expect(mapa.className).toContain("order-1");
     expect(mapa.className).toContain("md:order-2");
     expect(mapa.parentElement?.className).toContain("md:grid-cols-2");
+  });
+});
+
+describe("Localiza Cursinho — busca rápida (card 06)", () => {
+  const buscar = (texto: string) =>
+    fireEvent.change(
+      screen.getByRole("searchbox", { name: "Pesquisar cursinhos" }),
+      {
+        target: { value: texto },
+      },
+    );
+
+  it("com termo: a lista vira os resultados e o mapa mostra só eles", async () => {
+    await abrir();
+    act(() => controle.onLimites(CAMPINAS));
+    buscar("longe");
+
+    expect(
+      await screen.findByText('Resultados para "longe" (1)'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Cursinho longe" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Cursinho a" })).toBeNull();
+    expect(
+      (ultimasProps().markers as { id: string }[]).map((m) => m.id),
+    ).toEqual(["longe"]);
+  });
+
+  it("um resultado → voa até ele; vários → enquadra todos", async () => {
+    await abrir();
+    buscar("longe");
+    await screen.findByText(/Resultados para "longe"/);
+    expect(controle.mapa.flyTo).toHaveBeenCalledWith([-21.0, -47.9], 14);
+
+    buscar("cursinho");
+    await screen.findByText(/Resultados para "cursinho"/);
+    expect(controle.mapa.fitBounds).toHaveBeenCalled();
+  });
+
+  it("⚠️ com termo, mexer no mapa NÃO troca a lista", async () => {
+    await abrir();
+    buscar("longe");
+    await screen.findByText(/Resultados para "longe"/);
+    act(() => controle.onLimites(CAMPINAS));
+    expect(
+      screen.getByRole("heading", { name: "Cursinho longe" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Cursinho a" })).toBeNull();
+  });
+
+  it("limpar volta à lista da área visível", async () => {
+    await abrir();
+    act(() => controle.onLimites(CAMPINAS));
+    buscar("longe");
+    await screen.findByText(/Resultados para "longe"/);
+    buscar("");
+    expect(
+      await screen.findByRole("heading", { name: "Cursinho a" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/Resultados para/)).toBeNull();
+  });
+
+  it("sem resultado: aviso e o cadastro ganha destaque", async () => {
+    await abrir();
+    buscar("xyz");
+    expect(
+      await screen.findByText('Não encontramos nenhum cursinho com "xyz".'),
+    ).toBeInTheDocument();
+    expect(
+      document
+        .querySelector('[data-slot="cadastro"]')
+        ?.getAttribute("data-destaque"),
+    ).toBe("true");
+  });
+
+  it("⚠️ ?q= na URL restaura a busca ao recarregar; digitar atualiza a URL", async () => {
+    await abrir("/localiza-cursinho?q=longe");
+    expect(screen.getByRole("searchbox")).toHaveValue("longe");
+    expect(
+      await screen.findByText(/Resultados para "longe"/),
+    ).toBeInTheDocument();
+
+    buscar("cursinho b");
+    await screen.findByText(/Resultados para "cursinho b"/);
+    expect(new URLSearchParams(localAtual.search).get("q")).toBe("cursinho b");
+  });
+
+  it("na busca o filtro de tipo sai de cena", async () => {
+    await abrir();
+    expect(screen.getByText(/Universidade/i)).toBeInTheDocument();
+    buscar("longe");
+    await screen.findByText(/Resultados para "longe"/);
+    expect(screen.queryByText(/Universidade/i)).toBeNull();
   });
 });

@@ -4,6 +4,9 @@ import type { EstadoDaCarga } from "../useGeoPublico";
 import { GeoSearchCard } from "./GeoSearchCard";
 
 type Props = {
+  /** `area`: cursinhos da área visível. `busca`: resultados do termo (06). */
+  modo?: "area" | "busca";
+  termo?: string;
   estado: EstadoDaCarga;
   itens: PublicGeolocation[];
   total: number;
@@ -16,6 +19,8 @@ type Props = {
 
 /** Cursinhos da área visível do mapa (tickets/022, card 05). */
 export function GeoCardList({
+  modo = "area",
+  termo = "",
   estado,
   itens,
   total,
@@ -54,18 +59,29 @@ export function GeoCardList({
     );
   }
 
+  const buscando = modo === "busca";
+
   if (itens.length === 0) {
     return (
-      <p className="text-sm text-slate-500">
-        Nenhum cursinho nesta área do mapa.
+      <p role="status" className="text-sm text-slate-500">
+        {buscando
+          ? `Não encontramos nenhum cursinho com "${termo}".`
+          : "Nenhum cursinho nesta área do mapa."}
       </p>
     );
   }
 
   return (
     <div className="space-y-3">
+      {buscando && (
+        <h2 className="font-bold text-marine">
+          Resultados para "{termo}" ({total})
+        </h2>
+      )}
       <ul
-        aria-label="Cursinhos nesta área do mapa"
+        aria-label={
+          buscando ? "Resultados da busca" : "Cursinhos nesta área do mapa"
+        }
         className="grid gap-3 sm:grid-cols-2"
       >
         {itens.map((geo) => (
@@ -82,8 +98,9 @@ export function GeoCardList({
       </ul>
       {total > itens.length && (
         <p role="status" className="text-sm text-slate-500">
-          Mostrando {itens.length} de {total} cursinhos nesta área — aproxime o
-          mapa para ver os outros.
+          {buscando
+            ? `Mostrando ${itens.length} de ${total} resultados — refine a busca para ver os outros.`
+            : `Mostrando ${itens.length} de ${total} cursinhos nesta área — aproxime o mapa para ver os outros.`}
         </p>
       )}
     </div>
