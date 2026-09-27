@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "lib": ["ES2020", "WebWorker"],
+    "lib": [
+      "ES2020",
+      "WebWorker"
+    ],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "skipLibCheck": true,
@@ -10,5 +13,9 @@
     "isolatedModules": true,
     "types": []
   },
-  "include": ["src/sw.ts"]
+  "include": [
+    "src/sw.ts",
+    "src/pwa/notificacao.ts",
+    "src/sw-env.d.ts"
+  ]
 }

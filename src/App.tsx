@@ -9,6 +9,7 @@ import { GoogleMapsProvider } from "./components/molecules/googleMapsProvider/Go
 import { ChatProvider } from "./context/ChatProvider";
 import { ChatWidget } from "./components/chat/ChatWidget";
 import { SupportNotifier } from "./components/chat/SupportNotifier";
+import { PushSync } from "./components/push/PushSync";
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
               <PlatformRoutes />
               <ChatWidget />
               <SupportNotifier />
+              <PushSync />
             </div>
           </ChatProvider>
         </BrowserRouter>
