@@ -5,6 +5,9 @@ import { rotasDoLocalizaCursinho } from "./localizaCursinhoRoutes";
 import { GEOLOCATION_REGISTER, GEOLOCATION_SEARCH } from "./path";
 
 vi.mock("../pages/Geo", () => ({ default: () => <div>tela do cadastro</div> }));
+vi.mock("../pages/geoSearch", () => ({
+  default: () => <div>tela de busca</div>,
+}));
 
 const abrir = (caminho: string) =>
   render(
@@ -22,9 +25,9 @@ describe("rota do Localiza Cursinho (tickets/022, card 10)", () => {
     expect(GEOLOCATION_REGISTER).toBe("/localiza-cursinho/cadastro");
   });
 
-  it("/localiza-cursinho abre a tela (o cadastro, até o card 04)", () => {
+  it("/localiza-cursinho abre a busca (card 04)", () => {
     abrir("/localiza-cursinho");
-    expect(screen.getByText("tela do cadastro")).toBeInTheDocument();
+    expect(screen.getByText("tela de busca")).toBeInTheDocument();
   });
 
   it("/localiza-cursinho/cadastro abre o cadastro", () => {
