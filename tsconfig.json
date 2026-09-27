@@ -25,6 +25,8 @@
     }
   },
   "include": ["src", "svg.d.ts", "vitest.setup.ts"],
+  // O SW tem tipos de WebWorker, que brigam com os de DOM: `tsconfig.sw.json`.
+  "exclude": ["src/sw.ts"],
   "references": [
     {
       "path": "./tsconfig.app.json"

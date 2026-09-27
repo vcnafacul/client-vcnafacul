@@ -2,6 +2,7 @@ import { PrimeReactProvider } from "primereact/api";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
+import { registrarPwa } from "./pwa/registerSW";
 import "./index.css";
 import "./styles/sectionThemes.css";
 import "primereact/resources/themes/md-light-indigo/theme.css";
@@ -17,6 +18,8 @@ if (storedVersion !== __BUILD_VERSION__) {
   });
   localStorage.setItem("app-version", __BUILD_VERSION__);
 }
+
+registrarPwa();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
