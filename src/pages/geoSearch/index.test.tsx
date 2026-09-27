@@ -1,4 +1,10 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Limites } from "./regras";
@@ -22,23 +28,48 @@ vi.mock("@/components/molecules/mapBox", () => ({
 // O controlador do mapa entrega a área e o mapa: aqui, o teste é quem manda.
 const controle = vi.hoisted(() => ({
   onLimites: (() => {}) as (l: Limites) => void,
-  mapa: { flyTo: vi.fn(), fitBounds: vi.fn() },
+  onCliqueNoMapa: (() => {}) as () => void,
+  mapa: {
+    flyTo: vi.fn(),
+    fitBounds: vi.fn(),
+    // Projeção de brinquedo: o "pixel" é o próprio [lat, lon], e o `add`
+    // guarda o deslocamento para o teste conferir.
+    project: (ll: [number, number]) => ({
+      add: ([dx, dy]: [number, number]) => ({ ll, dx, dy }),
+    }),
+    unproject: (p: { ll: [number, number]; dx: number; dy: number }) => ({
+      centroDeslocado: p.ll,
+      dx: p.dx,
+      dy: p.dy,
+    }),
+  },
 }));
 vi.mock("./components/MapaController", () => ({
   MapaController: ({
     onLimites,
     onMapa,
+    onCliqueNoMapa,
   }: {
     onLimites: (l: Limites) => void;
     onMapa: (m: unknown) => void;
+    onCliqueNoMapa: () => void;
   }) => {
     controle.onLimites = onLimites;
+    controle.onCliqueNoMapa = onCliqueNoMapa;
     onMapa(controle.mapa);
     return null;
   },
 }));
 
 const api = vi.hoisted(() => ({ buscarGeoPublico: vi.fn() }));
+// O modal de reportar tem teste próprio; aqui só importa o que ele recebe.
+vi.mock("@/components/organisms/map/modal/report", () => ({
+  default: (p: { entityId: string; type: string }) => (
+    <div role="dialog" aria-label="Reportar">
+      {p.entityId}|{p.type}
+    </div>
+  ),
+}));
 vi.mock("@/services/geolocation/getGeolocation", () => api);
 
 import GeoSearch from ".";
@@ -132,7 +163,12 @@ describe("Localiza Cursinho — mapa e lista (card 05)", () => {
     act(() => controle.onLimites(CAMPINAS));
     fireEvent.click(await screen.findByRole("button", { name: /Cursinho b/ }));
 
-    expect(controle.mapa.flyTo).toHaveBeenCalledWith([-22.95, -47.1], 14);
+    // ⚠️ O centro vai 210px para a direita: o cartão do mapa (07) abre no
+    // canto inferior direito e, centralizado, cobriria o próprio pin.
+    expect(controle.mapa.flyTo).toHaveBeenCalledWith(
+      { centroDeslocado: [-22.95, -47.1], dx: 210, dy: 0 },
+      14,
+    );
     expect(ultimasProps().activeId).toBe("b");
   });
 
@@ -298,7 +334,12 @@ describe("Localiza Cursinho — busca rápida (card 06)", () => {
 
     buscar("cursinho b");
     await screen.findByText(/Resultados para "cursinho b"/);
-    expect(new URLSearchParams(localAtual.search).get("q")).toBe("cursinho b");
+    // A URL é gravada num efeito DEPOIS de os resultados aparecerem.
+    await waitFor(() =>
+      expect(new URLSearchParams(localAtual.search).get("q")).toBe(
+        "cursinho b",
+      ),
+    );
   });
 
   it("na busca o filtro de tipo sai de cena", async () => {
@@ -307,5 +348,83 @@ describe("Localiza Cursinho — busca rápida (card 06)", () => {
     buscar("longe");
     await screen.findByText(/Resultados para "longe"/);
     expect(screen.queryByText(/Universidade/i)).toBeNull();
+  });
+});
+
+describe("Localiza Cursinho — cartão do mapa e reportar (card 07)", () => {
+  const cartao = () =>
+    screen.queryByRole("dialog", { name: /Cursinho a|Universidade/ });
+  const clicarNoPin = (id: string) =>
+    act(() => (ultimasProps().onMarkerClick as (id: string) => void)(id));
+
+  it("clique no pin abre o cartão com as informações; sem 'Cadastrar um Cursinho'", async () => {
+    await abrir();
+    clicarNoPin("a");
+    expect(
+      await screen.findByRole("dialog", { name: "Cursinho: Cursinho a" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Cadastrar um Cursinho")).toBeNull();
+  });
+
+  it("clique no card da lista também abre o cartão", async () => {
+    await abrir();
+    act(() => controle.onLimites(CAMPINAS));
+    fireEvent.click(await screen.findByRole("button", { name: /Cursinho a/ }));
+    expect(
+      screen.getByRole("dialog", { name: "Cursinho: Cursinho a" }),
+    ).toBeInTheDocument();
+  });
+
+  it("fecha no ✕, no Esc e no clique no mapa vazio", async () => {
+    await abrir();
+    clicarNoPin("a");
+    fireEvent.click(await screen.findByRole("button", { name: "Fechar" }));
+    expect(cartao()).toBeNull();
+
+    clicarNoPin("a");
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(cartao()).toBeNull();
+
+    clicarNoPin("a");
+    act(() => controle.onCliqueNoMapa());
+    expect(cartao()).toBeNull();
+  });
+
+  it("⚠️ reportar: cursinho vai como GEO, universidade como COLLEGE; Esc não fecha o cartão por baixo do modal", async () => {
+    await abrir();
+    clicarNoPin("a");
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Reportar problema" }),
+    );
+    expect(screen.getByRole("dialog", { name: "Reportar" })).toHaveTextContent(
+      "a|Cursinho",
+    );
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(
+      screen.getByRole("dialog", { name: "Cursinho: Cursinho a" }),
+    ).toBeInTheDocument();
+  });
+
+  it("universidade abre o cartão de universidade e reporta como COLLEGE", async () => {
+    await abrir();
+    clicarNoPin("unicamp");
+    expect(
+      await screen.findByRole("dialog", {
+        name: "Universidade: Cursinho unicamp",
+      }),
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Reportar problema" }));
+    expect(screen.getByRole("dialog", { name: "Reportar" })).toHaveTextContent(
+      "unicamp|Universidade",
+    );
+  });
+
+  it("tem o lugar do botão de confirmação (09) ao lado do ⚠️", async () => {
+    await abrir();
+    clicarNoPin("a");
+    await screen.findByRole("dialog", { name: "Cursinho: Cursinho a" });
+    expect(
+      document.querySelector('[data-slot="confirmacao-mapa"]'),
+    ).toBeTruthy();
   });
 });

@@ -1,5 +1,8 @@
 import MapBox from "@/components/molecules/mapBox";
+import ReportLC from "@/components/organisms/map/modal/report";
 import { MapFilterCard } from "@/components/organisms/mapFilterCard";
+import { MapInfoCard } from "@/components/organisms/mapInfoCard";
+import { TypeProblem } from "@/enums/audit/typeProblem";
 import { Marker, TypeMarker } from "@/types/map/marker";
 import leaflet, { type Map as LeafletMap } from "leaflet";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -23,6 +26,8 @@ import { useGeoPublico, useTelaEstreita } from "./useGeoPublico";
 const FILTROS_INICIAIS: TypeMarker[] = [TypeMarker.geo, TypeMarker.univPublic];
 const ZOOM_AO_ESCOLHER = 14;
 export const ESPERA_DA_BUSCA_MS = 250;
+/** Meia largura do cartão do mapa no desktop (420px). */
+export const DESLOCAMENTO_DO_CARTAO_PX = 210;
 
 /**
  * Localiza Cursinho (`/localiza-cursinho`, tickets/022): o passo ANTES do
@@ -31,7 +36,8 @@ export const ESPERA_DA_BUSCA_MS = 250;
  * Card 04 montou o esqueleto; o 05 pôs mapa e lista, sincronizados pela área
  * visível (como no QuintoAndar); o 06, a busca rápida — com termo, lista e
  * pins passam a ser os resultados, e o termo fica em `?q=` (dá para
- * compartilhar e voltar). Faltam o card do mapa (07) e o cadastro (08).
+ * compartilhar e voltar); o 07, o cartão do cursinho sobre o mapa, com
+ * reportar. Falta o modal do cadastro (08).
  *
  * ⚠️ Breakpoints do projeto: `md` = 1200px. Metade/metade de 1200px para
  * cima; abaixo disso, mapa em cima (45vh) e lista embaixo.
@@ -45,6 +51,7 @@ function GeoSearch() {
   const [focoId, setFocoId] = useState<string | null>(null);
   /** Escolhido pelo clique no card ou no pin (abre o card do mapa no 07). */
   const [escolhidoId, setEscolhidoId] = useState<string | null>(null);
+  const [reportando, setReportando] = useState(false);
   const mapa = useRef<LeafletMap | null>(null);
   const [mapaPronto, setMapaPronto] = useState(false);
   const cards = useRef(new Map<string, HTMLElement>());
@@ -132,7 +139,22 @@ function GeoSearch() {
     const geo = geos.find((g) => g.id === id);
     if (!geo) return;
     setEscolhidoId(id);
-    mapa.current?.flyTo([geo.latitude, geo.longitude], ZOOM_AO_ESCOLHER);
+    const m = mapa.current;
+    if (!m) return;
+    /*
+      O cartão do mapa (07) abre no canto inferior direito, e o voo
+      centralizado deixava o pin escolhido ESCONDIDO atrás dele. No desktop, o
+      centro vai meia largura do cartão para a direita — o pin fica à esquerda
+      do cartão. No celular o cartão é um painel por cima do mapa, como na home.
+    */
+    const deslocamento = estreita ? 0 : DESLOCAMENTO_DO_CARTAO_PX;
+    const alvo = m.unproject(
+      m
+        .project([geo.latitude, geo.longitude], ZOOM_AO_ESCOLHER)
+        .add([deslocamento, 0]),
+      ZOOM_AO_ESCOLHER,
+    );
+    m.flyTo(alvo, ZOOM_AO_ESCOLHER);
   };
 
   const escolherNoMapa = useCallback((id: string) => {
@@ -141,6 +163,26 @@ function GeoSearch() {
       .get(id)
       ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, []);
+
+  // Cartão do mapa (07): o escolhido, venha da lista ou do pin.
+  const escolhido = useMemo<Marker | null>(() => {
+    const g = escolhidoId ? geos.find((x) => x.id === escolhidoId) : null;
+    return g
+      ? { id: g.id, lat: g.latitude, lon: g.longitude, type: g.type, infos: g }
+      : null;
+  }, [escolhidoId, geos]);
+  const fecharCartao = useCallback(() => setEscolhidoId(null), []);
+
+  // Esc fecha o cartão — mas não enquanto o modal de reportar está aberto
+  // (ali o Esc é do modal).
+  useEffect(() => {
+    if (!escolhido || reportando) return;
+    const aoTeclar = (e: KeyboardEvent) => {
+      if (e.key === "Escape") fecharCartao();
+    };
+    document.addEventListener("keydown", aoTeclar);
+    return () => document.removeEventListener("keydown", aoTeclar);
+  }, [escolhido, reportando, fecharCartao]);
 
   const refDoCard = useCallback((id: string, el: HTMLElement | null) => {
     if (el) cards.current.set(id, el);
@@ -155,9 +197,10 @@ function GeoSearch() {
           mapa.current = m;
           setMapaPronto(true);
         }}
+        onCliqueNoMapa={fecharCartao}
       />
     ),
-    [],
+    [fecharCartao],
   );
 
   return (
@@ -267,7 +310,32 @@ function GeoSearch() {
               className="bottom-3 left-3 md:bottom-6 md:left-6"
             />
           )}
-          <div data-slot="card-do-mapa" />
+          <div data-slot="card-do-mapa">
+            <MapInfoCard
+              activeMarker={escolhido}
+              onReport={() => setReportando(true)}
+              onClose={fecharCartao}
+              // ⚠️ Sem `ctaLink`: o cadastro já está na coluna da esquerda, e o
+              // link levaria para esta mesma página.
+              // Altura relativa ao mapa (no celular ele tem só 45vh), sem
+              // cobrir a busca no topo.
+              className="left-3 right-3 bottom-3 z-[600] max-h-[calc(100%-5.5rem)] md:left-auto md:right-6 md:bottom-6 md:w-[420px] md:max-h-[calc(100%-8rem)]"
+              acoes={<div data-slot="confirmacao-mapa" />}
+            />
+          </div>
+          {reportando && escolhido && (
+            <ReportLC
+              entityId={escolhido.id}
+              entityName={escolhido.infos.name}
+              type={
+                escolhido.type === TypeMarker.geo
+                  ? TypeProblem.GEO
+                  : TypeProblem.COLLEGE
+              }
+              isOpen={reportando}
+              handleClose={() => setReportando(false)}
+            />
+          )}
         </section>
       </div>
     </BaseTemplate>

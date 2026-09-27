@@ -9,7 +9,8 @@ import MapBox from "../../../../components/molecules/mapBox";
 import ReportLC from "../../../../components/organisms/map/modal/report";
 import { SectionComponent } from "../../../../components/templates/homeSection/Section.types";
 import { MapFilterCard } from "@/components/organisms/mapFilterCard";
-import { MapInfoCard } from "./MapInfoCard";
+import { MapInfoCard } from "@/components/organisms/mapInfoCard";
+import { GEOLOCATION_SEARCH } from "@/routes/path";
 
 const DEFAULT_FILTERS: TypeMarker[] = [TypeMarker.geo, TypeMarker.univPublic];
 
@@ -97,6 +98,7 @@ export const MapSection: SectionComponent<null> = () => {
         boxRef={boxRef as RefObject<HTMLDivElement>}
         onReport={() => setReport(true)}
         onClose={() => setActiveMarkerId(null)}
+        ctaLink={GEOLOCATION_SEARCH}
       />
       {report && activeMarker && (
         <ReportLC
