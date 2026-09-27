@@ -29,6 +29,7 @@ jobs:
       # junto das outras VITE_FIREBASE_*.
       VITE_FIREBASE_VAPID_KEY: ${{ secrets.VITE_FIREBASE_VAPID_KEY }}
       VITE_PUSH_ENABLED: ${{ vars.VITE_PUSH_ENABLED }}
+      VITE_PUSH_BANNER: ${{ vars.VITE_PUSH_BANNER }}
 
     steps:
       - name: Checkout repository

@@ -12,6 +12,7 @@ export const DASH = "/dashboard";
 export const DASH_GEOLOCATION = "localiza-cursinho";
 export const DASH_QUESTION = "dashquestoes";
 export const DASH_NEWS = "dashnews";
+export const DASH_PUSH = "dashpush";
 export const DASH_PROVAS = "dashprovas";
 export const DASH_CONTENT = "dash-content";
 export const CONFIRM_EMAIL = "confirmEmail";

@@ -1,3 +1,8 @@
+import {
+  aoSair,
+  desativarAoSair,
+  temDesativacaoPendente,
+} from "@/services/push/aoSair";
 import { caminhoInterno } from "@/services/push/caminho";
 import { listenForeground, syncPushToken } from "@/services/push/push";
 import { useAuthStore } from "@/store/auth";
@@ -18,12 +23,22 @@ function idDoUsuario(token: string): string | null {
  * Push com o usuário logado (série `pwa-push`, FE-03). Não desenha nada.
  *
  * - Ao logar (ou abrir o app logado): reenvia o token ao backend.
+ * - Ao sair: desativa o push neste aparelho (FE-05, ver `aoSair`).
  * - Com o app aberto e visível, o SW não mostra a notificação — o SDK a
  *   entrega para a página, e aqui ela vira um toast.
  */
 export function PushSync() {
   const token = useAuthStore((s) => s.data.token);
   const navigate = useNavigate();
+
+  // Logout (FE-05): termina o que uma navegação interrompeu e observa a
+  // transição token → vazio, venha de onde vier.
+  useEffect(() => {
+    if (temDesativacaoPendente()) void desativarAoSair();
+    return useAuthStore.subscribe((agora, antes) => {
+      if (antes.data.token && !agora.data.token) aoSair();
+    });
+  }, []);
 
   useEffect(() => {
     const userId = token ? idDoUsuario(token) : null;

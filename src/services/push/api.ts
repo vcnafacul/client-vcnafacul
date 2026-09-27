@@ -43,6 +43,8 @@ export async function registrarAparelho(
 export async function removerAparelho(fcmToken: string): Promise<void> {
   await fetch(pushDevices, {
     method: "DELETE",
+    // Sobrevive à página sendo descarregada (logout que navega em seguida).
+    keepalive: true,
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ token: fcmToken }),
   });
