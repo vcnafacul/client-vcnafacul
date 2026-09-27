@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { PushStatus } from "@/services/push/push";
+import { useAuthStore } from "@/store/auth";
 
 const hook = vi.hoisted(() => ({
   status: "default" as PushStatus | null,
@@ -30,7 +31,21 @@ const comStatus = (status: PushStatus | null, aparelhos: unknown[] = []) => {
 };
 const botao = (nome: RegExp) => screen.queryByRole("button", { name: nome });
 
-beforeEach(() => vi.clearAllMocks());
+const permitirTeste = (pode: boolean) =>
+  useAuthStore.setState((s) => ({
+    data: {
+      ...s.data,
+      permissao: (pode ? { enviarNotificacao: true } : {}) as Record<
+        string,
+        boolean
+      >,
+    },
+  }));
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  permitirTeste(true);
+});
 
 describe("NotificacoesDoAparelho", () => {
   it("push desligado no ambiente (ou carregando) → não renderiza nada", () => {
@@ -90,6 +105,13 @@ describe("NotificacoesDoAparelho", () => {
 
     fireEvent.click(botao(/desativar/i)!);
     expect(hook.desativar).toHaveBeenCalledTimes(1);
+  });
+
+  it("⚠️ sem a permissão enviarNotificacao, o botão de teste nem aparece", () => {
+    permitirTeste(false);
+    comStatus("active");
+    expect(botao(/enviar notificação de teste/i)).toBeNull();
+    expect(botao(/desativar/i)).toBeInTheDocument();
   });
 
   it("enviar teste: sucesso e falha de entrega viram avisos diferentes", async () => {
