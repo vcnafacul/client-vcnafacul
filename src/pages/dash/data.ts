@@ -11,6 +11,7 @@ import {
   DASH_GLOBAL_FORM,
   DASH_HOME,
   DASH_NEWS,
+  DASH_PUSH,
   DASH_PROVAS,
   DASH_QUESTION,
   DASH_ROLES,
@@ -45,7 +46,7 @@ import { ReactComponent as Quimica } from "../../assets/icons/home-subjects-quim
 
 import { GoGraph } from "react-icons/go";
 import { IoSchool } from "react-icons/io5";
-import { LuHouse, LuMessageSquare } from "react-icons/lu";
+import { LuBell, LuHouse, LuMessageSquare } from "react-icons/lu";
 import { ReactComponent as Atualidades } from "../../assets/icons/home-subjects-atualidades.svg";
 import { ReactComponent as Filosofia } from "../../assets/icons/home-subjects-filosofia.svg";
 import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-geografia.svg";
@@ -233,6 +234,13 @@ export const adminMenuItems: DashCardMenu[] = [
         text: "Gerenciamento de Cursinho",
         link: `/dashboard/${PARTNER_PREP_MANAGER}`,
         permissions: [Roles.alterarPermissao],
+      },
+      {
+        icon: LuBell,
+        alt: "notificacoes_push",
+        text: "Notificações",
+        link: `/dashboard/${DASH_PUSH}`,
+        permissions: [Roles.enviarNotificacao],
       },
       {
         icon: LuHouse,
