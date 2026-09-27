@@ -20,6 +20,7 @@ import { AuthUpdate, Gender, useAuthStore } from "../../store/auth";
 import { CollaboratorFrentesDisplay } from "./components/CollaboratorFrentesDisplay";
 import { ModalEditFrentes } from "./components/ModalEditFrentes";
 import { Button } from "@/components/ui/button";
+import { NotificacoesDoAparelho } from "@/components/push/NotificacoesDoAparelho";
 
 function Account() {
   const {
@@ -326,6 +327,9 @@ function Account() {
                   userAccount={userAccount}
                   hasImageChange={hasImageChange}
                 />
+
+                {/* Push neste aparelho (some quando desligado no ambiente) */}
+                <NotificacoesDoAparelho />
                 
                 {/* Seção de Frentes (apenas para colaboradores) - Mobile */}
                 {userAccount.collaborator && (

@@ -36,6 +36,7 @@ import Dashboard from "../pages/dashboard";
 import DashContent from "../pages/dashContent";
 import DashGeo from "../pages/dashGeo";
 import DashNews from "../pages/dashNews";
+import DashPush from "../pages/dashPush";
 import DashProva from "../pages/dashProvas";
 import PartnerPrepProvas from "../pages/partnerPrepProvas";
 import RelatorioSimulado from "../pages/relatorioSimulado";
@@ -72,6 +73,7 @@ import {
   DASH_GLOBAL_FORM,
   DASH_HOME,
   DASH_NEWS,
+  DASH_PUSH,
   DASH_PROVAS,
   DASH_QUESTION,
   DASH_ROLES,
@@ -368,6 +370,17 @@ export function PlatformRoutes() {
               permission={data.permissao[Roles.alterarPermissao]}
             >
               <DashHome />
+            </ProtectedRoutePermission>
+          }
+        />
+
+        <Route
+          path={DASH_PUSH}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.enviarNotificacao]}
+            >
+              <DashPush />
             </ProtectedRoutePermission>
           }
         />
