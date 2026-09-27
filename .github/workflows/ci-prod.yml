@@ -25,6 +25,9 @@ jobs:
       VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
       VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
       VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+      # Chave pública do Web Push (getToken, FE-03). Não é segredo, mas fica
+      # junto das outras VITE_FIREBASE_*.
+      VITE_FIREBASE_VAPID_KEY: ${{ secrets.VITE_FIREBASE_VAPID_KEY }}
       VITE_PUSH_ENABLED: ${{ vars.VITE_PUSH_ENABLED }}
 
     steps:
