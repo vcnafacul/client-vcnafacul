@@ -1,6 +1,7 @@
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import "./mapBox.css";
 
 /*
   ⚠️ **O Leaflet ANTES do markercluster.** O plugin é UMD e se pendura no `L`
@@ -127,20 +128,28 @@ function MobileGestureHandler() {
 interface ClusteredMarkersProps {
   markers: MarkerPoint[];
   handleClickMarker?: (index: number) => void;
+  onMarkerClick?: (id: string) => void;
+  activeId?: string | null;
 }
 
 function ClusteredMarkers({
   markers,
   handleClickMarker,
+  onMarkerClick,
+  activeId,
 }: ClusteredMarkersProps) {
   const map = useMap();
   const handlerRef = useRef(handleClickMarker);
+  const idHandlerRef = useRef(onMarkerClick);
+  const porId = useRef(new Map<string, leaflet.Marker>());
 
   useEffect(() => {
     handlerRef.current = handleClickMarker;
+    idHandlerRef.current = onMarkerClick;
   });
 
   useEffect(() => {
+    const indice = porId.current;
     const clusterGroup = leaflet.markerClusterGroup({
       showCoverageOnHover: false,
       spiderfyOnMaxZoom: true,
@@ -158,15 +167,41 @@ function ClusteredMarkers({
           iconAnchor: [18, 44],
         }),
       });
-      m.on("click", () => handlerRef.current?.(index));
+      m.on("click", () => {
+        handlerRef.current?.(index);
+        // O id é o deste marcador, fixado agora — não depende de o array de
+        // markers ser o mesmo na hora do clique (o índice dependia).
+        idHandlerRef.current?.(mark.id);
+      });
+      indice.set(mark.id, m);
       clusterGroup.addLayer(m);
     });
 
     map.addLayer(clusterGroup);
     return () => {
+      indice.clear();
       map.removeLayer(clusterGroup);
     };
   }, [map, markers]);
+
+  // Pin destacado (ex.: hover no card da lista).
+  // ⚠️ Dentro de um cluster o pin não tem elemento na tela; quando o zoom
+  // desfaz o cluster, o Leaflet cria o elemento de novo, sem a classe. Por
+  // isso o destaque é reaplicado a cada `add` do marcador.
+  useEffect(() => {
+    if (!activeId) return;
+    const m = porId.current.get(activeId);
+    if (!m) return;
+    const destacar = () => m.getElement()?.classList.add("pin-ativo");
+    m.setZIndexOffset(1000);
+    destacar();
+    m.on("add", destacar);
+    return () => {
+      m.off("add", destacar);
+      m.setZIndexOffset(0);
+      m.getElement()?.classList.remove("pin-ativo");
+    };
+  }, [activeId, markers]);
 
   return null;
 }
@@ -174,6 +209,12 @@ function ClusteredMarkers({
 interface MapBoxProps {
   markers: MarkerPoint[];
   handleClickMarker?: (index: number) => void;
+  /** Clique no pin pelo id (mais seguro que o índice). Opcional. */
+  onMarkerClick?: (id: string) => void;
+  /** Pin destacado. Opcional. */
+  activeId?: string | null;
+  /** A home deixa desligado para não prender o scroll da página. */
+  scrollWheelZoom?: boolean;
   className?: string;
   zoom?: number;
   center?: LatLngTuple;
@@ -183,6 +224,9 @@ interface MapBoxProps {
 function MapBox({
   markers,
   handleClickMarker,
+  onMarkerClick,
+  activeId,
+  scrollWheelZoom = false,
   zoom = 7,
   className,
   mapEvent,
@@ -209,7 +253,7 @@ function MapBox({
         key={mapKey}
         center={center ?? initialPosition}
         zoom={zoom}
-        scrollWheelZoom={false}
+        scrollWheelZoom={scrollWheelZoom}
         className={className}
       >
         <TileLayer
@@ -220,6 +264,8 @@ function MapBox({
         <ClusteredMarkers
           markers={markers}
           handleClickMarker={handleClickMarker}
+          onMarkerClick={onMarkerClick}
+          activeId={activeId}
         />
         {mapEvent}
       </MapContainer>
