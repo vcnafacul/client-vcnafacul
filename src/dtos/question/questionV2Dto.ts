@@ -1,3 +1,4 @@
+import { DonoDaProva } from "../prova/donoDaProva";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { Edicao } from "@/enums/prova/edicao";
 
@@ -6,7 +7,11 @@ export interface QuestionCardBase {
   enemArea: string;
   materia: string;
   /** Pode vir ausente em questões legadas (pré-backfill 0002). */
-  provasContendo?: { provaId: string; provaNome: string; numero: number | null }[];
+  provasContendo?: ({
+    provaId: string;
+    provaNome: string;
+    numero: number | null;
+  } & DonoDaProva)[];
   /** Ponteiro pra prova de origem: casa com uma entry de provasContendo. */
   provaBase?: string | null;
   updatedAt: Date;

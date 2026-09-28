@@ -1,4 +1,4 @@
-import { Roles } from "@/enums/roles/roles";
+import { podeCriarAPartir } from "../permissoesDoBanco";
 import { duplicarQuestao } from "@/services/question/duplicarQuestao";
 import { useAuthStore } from "@/store/auth";
 import { useState } from "react";
@@ -32,7 +32,8 @@ export function DuplicarQuestao({
     quem pode criar pode duplicar. Mesmo critério que a api aplica na guarda —
     um botão que só sabe receber 403 é pior que botão nenhum.
   */
-  if (!permissao[Roles.criarQuestao]) return null;
+  // tickets/023, card 08: também o editor do cursinho.
+  if (!podeCriarAPartir(permissao)) return null;
 
   const duplicar = async () => {
     setDuplicando(true);

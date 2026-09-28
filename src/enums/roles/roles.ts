@@ -32,6 +32,9 @@ export enum Roles {
   gerenciarCategoriasCursinho = "gerenciarCategoriasCursinho",
   excluirQuestao = "excluirQuestao",
   enviarNotificacao = "enviarNotificacao",
+  // tickets/023, card 01/11: banco de questões do lado do cursinho.
+  visualizarQuestoesCursinho = "visualizarQuestoesCursinho",
+  editarQuestoesCursinho = "editarQuestoesCursinho",
 }
 
 export const RolesLabel = [
@@ -69,6 +72,14 @@ export const RolesLabel = [
     value: Roles.enviarNotificacao,
     label: "Enviar Notificações Push",
     isProjectPermission: true,
+  },
+  {
+    value: Roles.visualizarQuestoesCursinho,
+    label: "Ver o banco de questões (cursinho)",
+  },
+  {
+    value: Roles.editarQuestoesCursinho,
+    label: "Editar questões e montar as provas do cursinho",
   },
   {
     value: Roles.uploadNews,

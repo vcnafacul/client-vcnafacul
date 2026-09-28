@@ -48,6 +48,13 @@ export interface Prova {
   gabarito: string;
   enemAreas: string[];
   simulados?: SimuladoResumo[];
+  /** Dono e se quem está logado compõe (tickets/023, card 07). */
+  cursinhoId?: string | null;
+  cursinhoNome?: string | null;
+  protegida?: boolean;
+  selecionavel?: boolean;
+  receberNovasVersoes?: boolean;
+  podeComporProva?: boolean;
 }
 
 /**

@@ -35,4 +35,6 @@ export interface CreateRoleDto {
   gerenciarCategoriasCursinho: boolean;
   excluirQuestao: boolean;
   enviarNotificacao: boolean;
+  visualizarQuestoesCursinho: boolean;
+  editarQuestoesCursinho: boolean;
 }

@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { podeEditarQuestao } from "../permissoesDoBanco";
 import { Question } from "@/dtos/question/questionDTO";
-import { Roles } from "@/enums/roles/roles";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { toast } from "react-toastify";
 import { getQuestionById } from "@/services/question/getQuestionById";
@@ -77,8 +77,8 @@ export function ModalQuestionDetailsRefactored({
   const [error, setError] = useState<string | null>(null);
 
   // Verificar permissões
-  const canEdit =
-    permissao[Roles.validarQuestao] || permissao[Roles.criarQuestao];
+  // tickets/023, card 08: o editor do cursinho também edita.
+  const canEdit = podeEditarQuestao(permissao);
 
   const fetchQuestion = async (id: string) => {
     setIsLoading(true);
@@ -274,14 +274,6 @@ function ModalContent({
 
   const contentFormat = question.contentFormat || "plain";
 
-  /*
-    ⚠️ **Em quantas provas a questão está** — o número que o modal do card 27
-    mostra. Vem do `provasContendo` que a Etapa 9 já traz no `getById`: sem ele
-    a frase diria "as provas" no genérico, e quem edita não faz ideia de que uma
-    questão está em 2,7 simulados em média (medido no card 22).
-  */
-  const quantasProvas = question.provasContendo?.length ?? 0;
-
   return (
     <>
     <ModalTabTemplateQuestion
@@ -437,7 +429,13 @@ function ModalContent({
         onClose={conteudoForm.cancelarEscolha}
         campos={conteudoForm.escolhaPendente.campos}
         respostas={question.quantidadeResposta ?? 0}
-        provas={quantasProvas}
+        /*
+          ⚠️ As provas da questão, e não só quantas: a nova versão só entra nas
+          que recebem novas versões (tickets/023, card 10). Vem do
+          `provasContendo` do `getById` — quem edita não faz ideia de que uma
+          questão está em 2,7 simulados em média (medido no card 22).
+        */
+        provas={question.provasContendo ?? []}
         antes={question as unknown as Record<string, unknown>}
         depois={conteudoForm.escolhaPendente.dados}
         onConfirmar={conteudoForm.confirmarEscolha}

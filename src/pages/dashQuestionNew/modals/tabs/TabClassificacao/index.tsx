@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusEnum } from "@/enums/generic/statusEnum";
+import { Roles } from "@/enums/roles/roles";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getProvaFile } from "@/services/prova/getFile";
 import { getMissingNumber } from "@/services/prova/getMissingNumber";
@@ -28,6 +29,7 @@ import {
 import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import { toast } from "react-toastify";
+import { podeCompor, seloDaProva, TEXTO_DO_SELO } from "./seloDaProva";
 import { TabClassificacaoProps } from "./types";
 import { useClassificacaoForm } from "./useClassificacaoForm";
 import { ModalAddQuestionToProva } from "./ModalAddQuestionToProva";
@@ -50,7 +52,7 @@ export function TabClassificacao({
   onSaveSuccess,
 }: TabClassificacaoProps) {
   const {
-    data: { token },
+    data: { token, permissao },
   } = useAuthStore();
   const executeAsync = useToastAsync();
 
@@ -113,6 +115,20 @@ export function TabClassificacao({
     };
     fetchNumerosDisponiveis();
   }, [provaSel?.provaId, isEditing, token]);
+
+  /*
+    ⚠️ tickets/023, card 17 (R10): numa prova de categoria fora de uso (as
+    oficiais), área e frente1 só mudam pela equipe da plataforma
+    (`criarQuestao`). A disciplina trava junto: trocá-la limpa a frente1. O
+    ms recusa de qualquer jeito — travar aqui evita um 403 depois de a pessoa
+    preencher tudo.
+  */
+  const provasOficiais = provasContendo.filter((p) => p.selecionavel === false);
+  const travaAreaFrente =
+    provasOficiais.length > 0 && !permissao?.[Roles.criarQuestao];
+  const textoDaTrava = `Esta questão está numa prova oficial (${provasOficiais
+    .map((p) => p.provaNome)
+    .join(", ")}). Área, disciplina e frente principal só podem ser alteradas pela equipe da plataforma.`;
 
   // Buscar prova selecionada (derivada de provaSel)
   const provaSelecionada = infos?.provas?.find((p) => p._id === provaSel?.provaId);
@@ -399,6 +415,11 @@ export function TabClassificacao({
                     {provasContendo.map((p, i) => (
                       <SelectItem key={p.provaId} value={String(i)}>
                         {p.provaNome}
+                        {seloDaProva(p) && (
+                          <span className="ml-2 text-xs text-gray-500">
+                            {seloDaProva(p)!.texto}
+                          </span>
+                        )}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -408,6 +429,16 @@ export function TabClassificacao({
                   <p className="text-base">{provaSel?.provaNome ?? "Sem prova"}</p>
                 </div>
               )}
+              {/* tickets/023, card 08: de quem é a prova em foco, se não é sua. */}
+              {seloDaProva(provaSel) && (
+                <p
+                  data-testid="selo-da-prova"
+                  title={TEXTO_DO_SELO}
+                  className="text-xs text-gray-600 bg-gray-100 border border-gray-200 rounded px-2 py-1 w-fit cursor-help"
+                >
+                  {seloDaProva(provaSel)!.texto}
+                </p>
+              )}
             </div>
 
             {/* Número */}
@@ -416,7 +447,7 @@ export function TabClassificacao({
                 <label className="text-sm font-semibold text-gray-600">
                   Número da Questão
                 </label>
-                {isEditing && form.watch("numero") != null && (
+                {isEditing && form.watch("numero") != null && podeCompor(provaSel) && (
                   <Button
                     type="button"
                     variant="outline"
@@ -438,6 +469,16 @@ export function TabClassificacao({
                 // ⚠️ Sem prova não há posição (card 02): o número nem vai no save.
                 <div className="p-3 bg-gray-100 rounded-md border border-gray-200 opacity-70">
                   <p className="text-base text-gray-500">Sem prova — sem número</p>
+                </div>
+              ) : !podeCompor(provaSel) ? (
+                // tickets/023, card 08: trocar número é compor a prova.
+                <div
+                  title={TEXTO_DO_SELO}
+                  className="p-3 bg-gray-100 rounded-md border border-gray-200 opacity-70 cursor-help"
+                >
+                  <p className="text-base text-gray-500">
+                    {provaSel.numero ?? "Sem número"}
+                  </p>
                 </div>
               ) : loadingNumeros ? (
                 <div className="flex items-center justify-center p-3 border border-gray-200 rounded-md bg-gray-50">
@@ -500,6 +541,15 @@ export function TabClassificacao({
               )}
             </div>
 
+            {isEditing && travaAreaFrente && (
+              <p
+                data-testid="trava-area-frente"
+                className="sm:col-span-2 text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded px-3 py-2"
+              >
+                🔒 {textoDaTrava}
+              </p>
+            )}
+
             {/* Área ENEM */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-gray-600">
@@ -518,6 +568,7 @@ export function TabClassificacao({
                   render={({ field }) => (
                     <Select
                       value={field.value}
+                      disabled={travaAreaFrente}
                       onValueChange={(value) => {
                         field.onChange(value);
                         // Resetar campos dependentes quando área muda
@@ -591,7 +642,11 @@ export function TabClassificacao({
                         // Resetar campos dependentes quando matéria muda
                         form.setValue("frente1", "");
                       }}
-                      disabled={!enemArea || materiasDisponiveis.length === 0}
+                      disabled={
+                        travaAreaFrente ||
+                        !enemArea ||
+                        materiasDisponiveis.length === 0
+                      }
                     >
                       <SelectTrigger
                         className={errors.materia ? "border-red-500" : ""}
@@ -652,7 +707,11 @@ export function TabClassificacao({
                     <Select
                       value={field.value}
                       onValueChange={field.onChange}
-                      disabled={!materiaId || frentesDisponiveis.length === 0}
+                      disabled={
+                        travaAreaFrente ||
+                        !materiaId ||
+                        frentesDisponiveis.length === 0
+                      }
                     >
                       <SelectTrigger
                         className={errors.frente1 ? "border-red-500" : ""}
@@ -895,7 +954,8 @@ export function TabClassificacao({
               <div className="flex gap-2">
                 <Button
                   onClick={handleRemoveFromProva}
-                  disabled={isSaving}
+                  disabled={isSaving || !podeCompor(provaSel)}
+                  title={podeCompor(provaSel) ? undefined : TEXTO_DO_SELO}
                   variant="outline"
                   size="sm"
                   className="text-red border-red"
@@ -946,7 +1006,8 @@ export function TabClassificacao({
 
       {showAddModal && (
         <ModalAddQuestionToProva
-          provas={infos?.provas ?? []}
+          // tickets/023, card 08: só as provas que a pessoa compõe.
+          provas={(infos?.provas ?? []).filter(podeCompor)}
           provaIdsJaVinculadas={provasContendo.map((p) => p.provaId)}
           enemArea={question.enemArea}
           onConfirm={handleAddToProva}

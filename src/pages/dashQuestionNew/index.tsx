@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { podeEditarQuestao } from "./permissoesDoBanco";
 import {
   Pagination,
   PaginationContent,
@@ -32,7 +33,7 @@ import { passosDaLista, type Passo } from "./components/passosDaLista";
 
 function DashQuestionNew() {
   const {
-    data: { token },
+    data: { token, permissao },
   } = useAuthStore();
 
   const executeAsync = useToastAsync();
@@ -313,15 +314,17 @@ function DashQuestionNew() {
             </p>
           </div>
 
-          {/* Botão de Criar Questão */}
-          <Button
-            onClick={() => modals.modalCreateQuestion.open()}
-            className="bg-primary hover:bg-primary/90 text-white shadow-lg"
-            size="lg"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Nova Questão
-          </Button>
+          {/* Botão de Criar Questão — só quem pode criar (023 · 08) */}
+          {podeEditarQuestao(permissao) && (
+            <Button
+              onClick={() => modals.modalCreateQuestion.open()}
+              className="bg-primary hover:bg-primary/90 text-white shadow-lg"
+              size="lg"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Nova Questão
+            </Button>
+          )}
         </div>
 
         {/* Botão para mostrar/esconder filtros */}

@@ -104,7 +104,9 @@ export function useClassificacaoForm({
           ),
         loadingMessage: "Salvando classificação...",
         successMessage: "✅ Classificação salva com sucesso!",
-        errorMessage: "Erro ao salvar classificação",
+        // 403 do ms (dado velho, corrida): a mensagem da api, e recarrega.
+        errorMessage: (e) => e?.message || "Erro ao salvar classificação",
+        onError: () => onSaveSuccess?.(),
         onFinally: () => setIsSaving(false),
       });
       form.reset(formData);
@@ -125,8 +127,9 @@ export function useClassificacaoForm({
       action: () => addQuestionToProva(question._id, provaId, numero, token),
       loadingMessage: "Adicionando à prova...",
       successMessage: "✅ Questão adicionada à prova!",
-      errorMessage: "Erro ao adicionar à prova",
+      errorMessage: (e) => e?.message || "Erro ao adicionar à prova",
       onSuccess: () => onSaveSuccess?.(),
+      onError: () => onSaveSuccess?.(),
     });
   };
 
@@ -138,7 +141,8 @@ export function useClassificacaoForm({
         removeQuestionFromProva(question._id, provaSel.provaId, token),
       loadingMessage: "Removendo da prova...",
       successMessage: "✅ Questão removida da prova!",
-      errorMessage: "Erro ao remover da prova",
+      errorMessage: (e) => e?.message || "Erro ao remover da prova",
+      onError: () => onSaveSuccess?.(),
       onSuccess: () => {
         setIsEditing(false);
         onSaveSuccess?.();
