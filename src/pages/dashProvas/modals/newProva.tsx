@@ -23,6 +23,7 @@ import { useToastAsync } from "../../../hooks/useToastAsync";
 import { createProva } from "../../../services/prova/createProva";
 import { useAuthStore } from "../../../store/auth";
 import { useState } from "react";
+import { OpcaoNovasVersoes } from "../components/OpcaoNovasVersoes";
 
 interface NewProvaProps extends ModalProps {
   addProva: (data: Prova) => void;
@@ -39,6 +40,7 @@ function NewProva({
   createService,
 }: NewProvaProps) {
   const { register, handleSubmit, watch } = useForm();
+  const [receberNovasVersoes, setReceberNovasVersoes] = useState(false);
   const {
     data: { token },
   } = useAuthStore();
@@ -152,6 +154,8 @@ function NewProva({
     formData.append("edicao", info.edicao);
     formData.append("ano", info.ano.toString());
     formData.append("aplicacao", info.aplicacao.toString());
+    // tickets/023, card 09 — desmarcado por padrão.
+    formData.append("receberNovasVersoes", String(receberNovasVersoes));
 
     if (uploadFile) {
       formData.append("file", uploadFile, `${fileName}.pdf`);
@@ -242,6 +246,11 @@ function NewProva({
               Prova personalizada — nome livre, PDF opcional.
             </p>
           )}
+
+          <OpcaoNovasVersoes
+            checked={receberNovasVersoes}
+            onChange={setReceberNovasVersoes}
+          />
 
           <div>
             <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">

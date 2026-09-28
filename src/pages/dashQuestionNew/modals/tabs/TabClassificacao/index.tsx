@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusEnum } from "@/enums/generic/statusEnum";
+import { Roles } from "@/enums/roles/roles";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getProvaFile } from "@/services/prova/getFile";
 import { getMissingNumber } from "@/services/prova/getMissingNumber";
@@ -51,7 +52,7 @@ export function TabClassificacao({
   onSaveSuccess,
 }: TabClassificacaoProps) {
   const {
-    data: { token },
+    data: { token, permissao },
   } = useAuthStore();
   const executeAsync = useToastAsync();
 
@@ -114,6 +115,20 @@ export function TabClassificacao({
     };
     fetchNumerosDisponiveis();
   }, [provaSel?.provaId, isEditing, token]);
+
+  /*
+    ⚠️ tickets/023, card 17 (R10): numa prova de categoria fora de uso (as
+    oficiais), área e frente1 só mudam pela equipe da plataforma
+    (`criarQuestao`). A disciplina trava junto: trocá-la limpa a frente1. O
+    ms recusa de qualquer jeito — travar aqui evita um 403 depois de a pessoa
+    preencher tudo.
+  */
+  const provasOficiais = provasContendo.filter((p) => p.selecionavel === false);
+  const travaAreaFrente =
+    provasOficiais.length > 0 && !permissao?.[Roles.criarQuestao];
+  const textoDaTrava = `Esta questão está numa prova oficial (${provasOficiais
+    .map((p) => p.provaNome)
+    .join(", ")}). Área, disciplina e frente principal só podem ser alteradas pela equipe da plataforma.`;
 
   // Buscar prova selecionada (derivada de provaSel)
   const provaSelecionada = infos?.provas?.find((p) => p._id === provaSel?.provaId);
@@ -526,6 +541,15 @@ export function TabClassificacao({
               )}
             </div>
 
+            {isEditing && travaAreaFrente && (
+              <p
+                data-testid="trava-area-frente"
+                className="sm:col-span-2 text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded px-3 py-2"
+              >
+                🔒 {textoDaTrava}
+              </p>
+            )}
+
             {/* Área ENEM */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-gray-600">
@@ -544,6 +568,7 @@ export function TabClassificacao({
                   render={({ field }) => (
                     <Select
                       value={field.value}
+                      disabled={travaAreaFrente}
                       onValueChange={(value) => {
                         field.onChange(value);
                         // Resetar campos dependentes quando área muda
@@ -617,7 +642,11 @@ export function TabClassificacao({
                         // Resetar campos dependentes quando matéria muda
                         form.setValue("frente1", "");
                       }}
-                      disabled={!enemArea || materiasDisponiveis.length === 0}
+                      disabled={
+                        travaAreaFrente ||
+                        !enemArea ||
+                        materiasDisponiveis.length === 0
+                      }
                     >
                       <SelectTrigger
                         className={errors.materia ? "border-red-500" : ""}
@@ -678,7 +707,11 @@ export function TabClassificacao({
                     <Select
                       value={field.value}
                       onValueChange={field.onChange}
-                      disabled={!materiaId || frentesDisponiveis.length === 0}
+                      disabled={
+                        travaAreaFrente ||
+                        !materiaId ||
+                        frentesDisponiveis.length === 0
+                      }
                     >
                       <SelectTrigger
                         className={errors.frente1 ? "border-red-500" : ""}
