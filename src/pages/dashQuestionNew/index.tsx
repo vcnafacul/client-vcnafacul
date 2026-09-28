@@ -25,6 +25,7 @@ import { ModalQuestionDetailsRefactored } from "./modals/ModalQuestionDetailsRef
 import {
   abaAoNavegar,
   abrirNaTrilha,
+  depoisDeExcluir,
   voltarNaTrilha,
 } from "./components/pilhaDaTrilha";
 
@@ -371,11 +372,15 @@ function DashQuestionNew() {
         trilha={trilha}
         abaInicial={abaInicial}
         /*
-          ⚠️ Card 33: a questão excluída some da lista — fechar e recarregar a
-          página atual, sem perder os filtros.
+          ⚠️ Card 33: a questão excluída some da lista — recarregar a página
+          atual, sem perder os filtros. Se ela foi aberta a partir de outra
+          (a cópia aberta pela Linhagem), volta para a anterior, na Linhagem;
+          senão fecha, como antes.
         */
         aoExcluir={() => {
-          handleCloseModal();
+          const depois = depoisDeExcluir(trilha);
+          if (depois.acao === "voltar") irNaLinhagem(depois.trilha, "voltar");
+          else handleCloseModal();
           getQuestions(currentPage);
         }}
       />

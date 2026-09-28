@@ -23,6 +23,22 @@ export function voltarNaTrilha(trilha: string[]): string[] {
 }
 
 /**
+ * O que fazer depois de excluir a questão aberta.
+ *
+ * ⚠️ **Aberta a partir de outra (cópia, versão), volta para a anterior** — é
+ * de onde a pessoa veio, e fechar o modal a jogaria de volta na listagem sem
+ * contexto. Aberta direto da listagem, fecha, como antes. A excluída é sempre
+ * a ponta da trilha (é a que está na tela), então voltar a tira da pilha.
+ */
+export function depoisDeExcluir(
+  trilha: string[],
+): { acao: "fechar" } | { acao: "voltar"; trilha: string[] } {
+  return trilha.length > 1
+    ? { acao: "voltar", trilha: voltarNaTrilha(trilha) }
+    : { acao: "fechar" };
+}
+
+/**
  * Em que aba o modal abre depois de navegar pela linhagem.
  *
  * ⚠️ **Abrir outra questão cai na Classificação** (QA): quem clica numa versão

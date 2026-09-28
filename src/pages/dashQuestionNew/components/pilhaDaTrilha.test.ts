@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { abaAoNavegar, abrirNaTrilha, voltarNaTrilha } from "./pilhaDaTrilha";
+import {
+  depoisDeExcluir, abaAoNavegar, abrirNaTrilha, voltarNaTrilha } from "./pilhaDaTrilha";
 
 describe("trilha da linhagem (card 34A)", () => {
   it("abrir empilha", () => {
@@ -32,5 +33,26 @@ describe("aba ao navegar pela linhagem (QA)", () => {
 
   it("voltar cai na Linhagem, de onde a pessoa saiu", () => {
     expect(abaAoNavegar("voltar")).toBe("linhagem");
+  });
+});
+
+describe("depoisDeExcluir", () => {
+  it("⚠️ aberta a partir de outra (A → cópia): volta para A", () => {
+    expect(depoisDeExcluir(["A", "copia"])).toEqual({
+      acao: "voltar",
+      trilha: ["A"],
+    });
+  });
+
+  it("vários passos (A → v2 → cópia): volta só um", () => {
+    expect(depoisDeExcluir(["A", "v2", "copia"])).toEqual({
+      acao: "voltar",
+      trilha: ["A", "v2"],
+    });
+  });
+
+  it("aberta direto da listagem: fecha, como antes", () => {
+    expect(depoisDeExcluir(["A"])).toEqual({ acao: "fechar" });
+    expect(depoisDeExcluir([])).toEqual({ acao: "fechar" });
   });
 });
