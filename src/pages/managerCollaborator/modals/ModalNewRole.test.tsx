@@ -100,3 +100,46 @@ describe("ModalNewRole do cursinho — banco de questões (023 · 11)", () => {
     });
   });
 });
+
+describe("ModalNewRole do cursinho — validar questões (024 · 06)", () => {
+  beforeEach(() => {
+    svc.getBaseRoles.mockResolvedValue([]);
+    svc.getPermissionsHierarchy.mockResolvedValue([
+      {
+        key: "questoes_cursinho",
+        label: "Banco de questões (Cursinho)",
+        permissions: [
+          {
+            key: "validar_questoes_cursinho",
+            label: "Validar questões (aprovar e recusar)",
+            type: "prepCourse",
+            implies: ["visualizar_questoes_cursinho"],
+          },
+          {
+            key: "visualizar_questoes_cursinho",
+            label: "Ver o banco de questões (cursinho)",
+            type: "prepCourse",
+          },
+        ],
+      },
+    ]);
+    svc.createRole.mockReset().mockResolvedValue({ id: "r1", name: "v" });
+  });
+
+  it("marcar 'validar' liga 'ver' e salva a permissão", async () => {
+    render(<ModalNewRole isOpen handleClose={vi.fn()} handleNewRole={vi.fn()} />);
+    const validar = await screen.findByRole("switch", { name: /Validar questões/ });
+    fireEvent.click(validar);
+    expect(
+      screen.getByRole("switch", { name: /Ver o banco de questões/ }),
+    ).toHaveAttribute("aria-checked", "true");
+    fireEvent.change(screen.getByPlaceholderText("Ex: coordenador"), {
+      target: { value: "v" },
+    });
+    fireEvent.click(screen.getByText("Salvar"));
+    await waitFor(() => expect(svc.createRole).toHaveBeenCalled());
+    expect(svc.createRole.mock.calls[0][0]).toMatchObject({
+      validarQuestoesCursinho: true,
+    });
+  });
+});
