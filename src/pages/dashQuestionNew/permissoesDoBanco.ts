@@ -15,8 +15,20 @@ export const podeVerBanco = (p: Permissoes) =>
   !!(
     p?.[Roles.visualizarQuestao] ||
     p?.[Roles.visualizarQuestoesCursinho] ||
-    p?.[Roles.editarQuestoesCursinho]
+    p?.[Roles.editarQuestoesCursinho] ||
+    p?.[Roles.validarQuestoesCursinho]
   );
+
+/**
+ * Aprovar/recusar (tickets/024). Da plataforma (`validarQuestao`) ou do
+ * cursinho (`validarQuestoesCursinho`) — o ms decide o que cada um pode.
+ */
+export const podeValidar = (p: Permissoes) =>
+  !!(p?.[Roles.validarQuestao] || p?.[Roles.validarQuestoesCursinho]);
+
+/** Valida como a plataforma: reverte recusa, recusa questão de qualquer prova. */
+export const validaComoPlataforma = (p: Permissoes) =>
+  !!p?.[Roles.validarQuestao];
 
 /** Criar e editar questão (conteúdo, classificação, imagens). */
 export const podeEditarQuestao = (p: Permissoes) =>

@@ -64,6 +64,7 @@ const EMPTY_ROLE: CreateRoleDto = {
   enviarNotificacao: false,
   visualizarQuestoesCursinho: false,
   editarQuestoesCursinho: false,
+  validarQuestoesCursinho: false,
 };
 
 function ModalNewRole({

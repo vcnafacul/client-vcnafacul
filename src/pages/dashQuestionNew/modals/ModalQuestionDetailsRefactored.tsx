@@ -436,6 +436,8 @@ function ModalContent({
           questão está em 2,7 simulados em média (medido no card 22).
         */
         provas={question.provasContendo ?? []}
+        // tickets/023, card 18: sem galho na linhagem.
+        permiteNovaVersao={!question.teveSucessora}
         antes={question as unknown as Record<string, unknown>}
         depois={conteudoForm.escolhaPendente.dados}
         onConfirmar={conteudoForm.confirmarEscolha}

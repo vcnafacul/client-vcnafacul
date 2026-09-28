@@ -173,6 +173,7 @@ export const adminMenuItems: DashCardMenu[] = [
           Roles.visualizarQuestao,
           Roles.visualizarQuestoesCursinho,
           Roles.editarQuestoesCursinho,
+          Roles.validarQuestoesCursinho,
         ],
       },
       {

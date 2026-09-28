@@ -10,7 +10,7 @@
  * | | as provas que usam a questão | a original |
  * |---|---|---|
  * | **Correção** | continuam com esta questão — **todas**, inclusive as de versões fixas | muda para todo mundo, inclusive no relatório de quem já respondeu |
- * | **Nova versão** | as que **recebem novas versões** passam a usar a nova; as de **versões fixas** continuam com esta (tickets/023, card 06) | congela, e é o que o histórico antigo vê |
+ * | **Nova versão** | as que **recebem novas versões** passam a usar a nova; as de **versões fixas** continuam com esta (card 06) | congela **só se nenhuma prova ficar com ela** — senão segue valendo e editável nas fixas (tickets/023, card 18) |
  * | **Duplicar** (botão à parte) | **não mudam** | segue viva e editável |
  */
 
@@ -134,13 +134,22 @@ const CONGELA =
  * ⚠️ tickets/023, card 10: "as provas passam a usar a nova" deixou de ser
  * verdade para as provas com versões fixas — a frase fala dos dois grupos.
  */
+/**
+ * Quem já teve uma versão nova não ganha outra (tickets/023, card 18): criaria
+ * um galho na linhagem. O ms recusa; a tela nem oferece.
+ */
+export const TEXTO_SEM_NOVA_VERSAO =
+  "Esta questão já tem uma versão mais nova. Corrija esta sem criar versão, ou duplique.";
+
 export function textoDaNovaVersao(provas: ProvaDaQuestao[]): string {
   const { recebem, mantem } = separarProvas(provas);
   if (recebem.length === 0 && mantem.length === 0) {
     return `${CONGELA}, e a nova versão começa sem prova e sem estatísticas.`;
   }
+  // ⚠️ tickets/023, card 18: a questão só congela se NENHUMA prova ficar com
+  // ela. Nas de versões fixas ela segue valendo — e editável.
   if (recebem.length === 0) {
-    return `${CONGELA}. Nenhuma prova recebe a nova versão agora — todas estão com versões fixas. A nova versão fica disponível para os donos aplicarem.`;
+    return "O conteúdo mudou de verdade. Nenhuma prova recebe a nova versão agora — todas estão com versões fixas —, e esta questão continua valendo em todas, editável. A nova versão fica disponível para os donos aplicarem.";
   }
   const alvo =
     recebem.length === 1
@@ -157,7 +166,7 @@ export function textoDaNovaVersao(provas: ProvaDaQuestao[]): string {
     mantem.length === 1
       ? "1 prova está com versões fixas e continua com esta"
       : `${mantem.length} provas estão com versões fixas e continuam com esta`;
-  return `${CONGELA}. ${passam} a usar a nova versão, que começa sem estatísticas. ${fixas}.`;
+  return `O conteúdo mudou de verdade. ${passam} a usar a nova versão, que começa sem estatísticas. ${fixas}, que segue valendo e editável nelas.`;
 }
 
 /**

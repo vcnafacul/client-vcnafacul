@@ -30,6 +30,17 @@ import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import { toast } from "react-toastify";
 import { podeCompor, seloDaProva, TEXTO_DO_SELO } from "./seloDaProva";
+import { ModalRecusaBloqueada } from "./ModalRecusaBloqueada";
+import {
+  ErroDoStatus,
+  type ProvaQueImpede,
+} from "@/services/question/updateStatus";
+import { sinalizarRevisao } from "@/services/question/sinalizarRevisao";
+import { removeQuestionFromProva } from "@/services/question/removeQuestionFromProva";
+import {
+  podeValidar,
+  validaComoPlataforma,
+} from "../../../permissoesDoBanco";
 import { TabClassificacaoProps } from "./types";
 import { useClassificacaoForm } from "./useClassificacaoForm";
 import { ModalAddQuestionToProva } from "./ModalAddQuestionToProva";
@@ -78,6 +89,11 @@ export function TabClassificacao({
 
   // Estados para gerenciamento de status
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  // tickets/024, card 05: as provas que impedem o validador do cursinho de
+  // recusar (vêm do 403 do ms) — abre o modal.
+  const [recusaBloqueada, setRecusaBloqueada] = useState<
+    ProvaQueImpede[] | null
+  >(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [rejectionMessage, setRejectionMessage] = useState("");
   const [showRejectionInput, setShowRejectionInput] = useState(false);
@@ -169,7 +185,15 @@ export function TabClassificacao({
       action: () => updateStatus(question._id, newStatus, token, message),
       loadingMessage: "Atualizando status...",
       successMessage: "✅ Status atualizado com sucesso!",
-      errorMessage: "Erro ao atualizar status",
+      errorMessage: (e) =>
+        e instanceof ErroDoStatus && e.provas
+          ? "Esta questão é usada em outras provas."
+          : e?.message || "Erro ao atualizar status",
+      onError: (e) => {
+        if (e instanceof ErroDoStatus && e.provas) {
+          setRecusaBloqueada(e.provas);
+        }
+      },
       onSuccess: () => {
         // Atualizar o status localmente
         question.status = newStatus;
@@ -196,6 +220,58 @@ export function TabClassificacao({
 
     if (confirm("Tem certeza que deseja rejeitar esta questão?")) {
       handleStatusUpdate(StatusEnum.Rejected, rejectionMessage || undefined);
+    }
+  };
+
+  /*
+    tickets/024, card 05 — o que o validador do cursinho faz quando não pode
+    recusar: tirar a questão das provas DELE (a remoção de sempre, prova a
+    prova) ou pedir à equipe que revise.
+  */
+  const provasDoModal = (recusaBloqueada ?? []).map((p) => ({
+    ...p,
+    ...provasContendo.find((c) => c.provaId === p.provaId),
+  }));
+  const minhasProvas = provasDoModal.filter((p) => p.podeComporProva);
+  const [ocupadoNoModal, setOcupadoNoModal] = useState(false);
+
+  const tirarDasMinhas = async () => {
+    setOcupadoNoModal(true);
+    const falhas: string[] = [];
+    for (const p of minhasProvas) {
+      try {
+        await removeQuestionFromProva(question._id, p.provaId, token);
+      } catch {
+        falhas.push(p.provaNome);
+      }
+    }
+    setOcupadoNoModal(false);
+    setRecusaBloqueada(null);
+    setShowRejectionInput(false);
+    if (falhas.length) {
+      toast.error(`Não foi possível tirar de: ${falhas.join(", ")}`);
+    } else {
+      toast.success(
+        minhasProvas.length === 1
+          ? "Questão retirada da sua prova."
+          : `Questão retirada das suas ${minhasProvas.length} provas.`,
+      );
+    }
+    onSaveSuccess?.();
+  };
+
+  const enviarParaRevisao = async (motivo: string) => {
+    setOcupadoNoModal(true);
+    try {
+      await sinalizarRevisao(question._id, motivo, token);
+      toast.success("Questão enviada para a revisão da equipe.");
+      setRecusaBloqueada(null);
+      setShowRejectionInput(false);
+      onSaveSuccess?.();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setOcupadoNoModal(false);
     }
   };
 
@@ -274,8 +350,21 @@ export function TabClassificacao({
 
   return (
     <div className="flex flex-col gap-4 justify-around">
-      {/* Gerenciamento de Status */}
-      {canEdit && (
+      {recusaBloqueada && (
+        <ModalRecusaBloqueada
+          provas={provasDoModal}
+          onTirarDasMinhas={
+            permissao?.[Roles.editarQuestoesCursinho] && minhasProvas.length
+              ? tirarDasMinhas
+              : undefined
+          }
+          onSinalizar={enviarParaRevisao}
+          onCancelar={() => setRecusaBloqueada(null)}
+          ocupado={ocupadoNoModal}
+        />
+      )}
+      {/* Gerenciamento de Status — quem edita vê; quem valida muda (024) */}
+      {(canEdit || podeValidar(permissao)) && (
         <Card className="pt-6">
           <CardContent className="flex flex-col gap-4">
             {/* Status Atual */}
@@ -308,10 +397,14 @@ export function TabClassificacao({
               </div>
             )}
 
-            {/* Botões de Ação */}
+            {/* Botões de Ação — só quem valida (024) */}
+            {podeValidar(permissao) && (
             <div className="w-full flex gap-3">
-              {/* Botão Aprovar */}
-              {!(question.status === StatusEnum.Approved) && (
+              {/* Botão Aprovar — o validador do cursinho aprova PENDENTE;
+                  reverter uma recusa é da plataforma (024 · 03). */}
+              {question.status !== StatusEnum.Approved &&
+                (validaComoPlataforma(permissao) ||
+                  question.status === StatusEnum.Pending) && (
                 <Button
                   onClick={handleApprove}
                   disabled={isUpdatingStatus}
@@ -343,6 +436,7 @@ export function TabClassificacao({
                 </Button>
               )}
             </div>
+            )}
 
             {/* Cancelar rejeição */}
             {showRejectionInput && (
