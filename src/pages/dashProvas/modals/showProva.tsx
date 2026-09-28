@@ -19,6 +19,7 @@ import { updateProvaFiles } from "@/services/prova/updateProvaFiles";
 import { getProvaById } from "../../../services/prova/getProvaById";
 import SimuladosView, { type AcaoRelatorio } from "./simuladosView";
 import UploadButton from "../../../components/molecules/uploadButton";
+import { BuscarAtualizacoes } from "../components/BuscarAtualizacoes";
 import { alterarReceberNovasVersoes } from "../../../services/prova/alterarReceberNovasVersoes";
 import {
   indicadorDeVersoes,
@@ -289,6 +290,14 @@ const downloadFile = async (filename: string, fileType: string) => {
                   )}
                 </p>
               )}
+            </div>
+
+            {/* tickets/023, card 15: versões mais novas das questões. */}
+            <div className="mb-6">
+              <h3 className="text-sm font-medium text-gray-700 mb-4">
+                Atualizações das questões
+              </h3>
+              <BuscarAtualizacoes provaId={prova._id} token={token} />
             </div>
 
             {/* Métricas de Progresso */}
