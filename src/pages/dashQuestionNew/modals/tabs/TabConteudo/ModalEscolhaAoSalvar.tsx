@@ -4,6 +4,8 @@ import {
   escolhaSugerida,
   textoDaCorrecao,
   textoDaNovaVersao,
+  separarProvas,
+  type ProvaDaQuestao,
   type EscolhaDeEdicao,
 } from "./escolhaAoSalvar";
 
@@ -39,8 +41,8 @@ export function ModalEscolhaAoSalvar({
   campos: string[];
   /** Quantas respostas a questão já tem. */
   respostas: number;
-  /** Em quantas provas ela está. */
-  provas: number;
+  /** As provas em que ela está, com `receberNovasVersoes` (card 10). */
+  provas: ProvaDaQuestao[];
   antes: Record<string, unknown>;
   depois: Record<string, unknown>;
   onConfirmar: (escolha: EscolhaDeEdicao) => void;
@@ -98,6 +100,7 @@ export function ModalEscolhaAoSalvar({
           <span className="text-sm">
             <strong className="block">Nova versão</strong>
             {textoDaNovaVersao(provas)}
+            <ProvasDosDoisGrupos provas={provas} />
           </span>
         </label>
 
@@ -126,5 +129,27 @@ export function ModalEscolhaAoSalvar({
         </div>
       </div>
     </ModalTemplate>
+  );
+}
+
+/** A lista com os nomes, sob demanda (tickets/023, card 10). */
+function ProvasDosDoisGrupos({ provas }: { provas: ProvaDaQuestao[] }) {
+  const { recebem, mantem } = separarProvas(provas);
+  if (recebem.length + mantem.length === 0) return null;
+  return (
+    <details data-provas-da-versao className="mt-2 text-xs text-gray-600">
+      <summary className="cursor-pointer">Ver as provas</summary>
+      {recebem.length > 0 && (
+        <p className="mt-1">
+          <strong>Passam a usar a nova:</strong> {recebem.join(", ")}
+        </p>
+      )}
+      {mantem.length > 0 && (
+        <p className="mt-1">
+          <strong>Continuam com esta (versões fixas):</strong>{" "}
+          {mantem.join(", ")}
+        </p>
+      )}
+    </details>
   );
 }

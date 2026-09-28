@@ -9,8 +9,8 @@
  *
  * | | as provas que usam a questão | a original |
  * |---|---|---|
- * | **Correção** | continuam com esta questão | muda para todo mundo, inclusive no relatório de quem já respondeu |
- * | **Nova versão** | **passam a usar a nova** | congela, e é o que o histórico antigo vê |
+ * | **Correção** | continuam com esta questão — **todas**, inclusive as de versões fixas | muda para todo mundo, inclusive no relatório de quem já respondeu |
+ * | **Nova versão** | as que **recebem novas versões** passam a usar a nova; as de **versões fixas** continuam com esta (tickets/023, card 06) | congela, e é o que o histórico antigo vê |
  * | **Duplicar** (botão à parte) | **não mudam** | segue viva e editável |
  */
 
@@ -99,17 +99,65 @@ export function escolhaSugerida(
   return "correcao";
 }
 
+/** O que o modal sabe de cada prova da questão (tickets/023, card 07). */
+export interface ProvaDaQuestao {
+  provaNome: string;
+  /** `false` = versões fixas. Ausente (api antiga) = recebe, como antes. */
+  receberNovasVersoes?: boolean;
+}
+
+/** As provas da questão separadas pelo que a nova versão faz nelas (card 10). */
+export function separarProvas(provas: ProvaDaQuestao[]): {
+  recebem: string[];
+  mantem: string[];
+} {
+  return {
+    recebem: provas
+      .filter((p) => p.receberNovasVersoes !== false)
+      .map((p) => p.provaNome),
+    mantem: provas
+      .filter((p) => p.receberNovasVersoes === false)
+      .map((p) => p.provaNome),
+  };
+}
+
+const CONGELA =
+  "O conteúdo mudou de verdade. Esta questão congela — é o que quem já respondeu vai ver";
+
 /**
  * A frase da opção "nova versão", com os números REAIS.
  *
  * ⚠️ **"as 3 provas" precisa ser o número de verdade.** Uma questão está em 2,7
  * simulados em média (medido no card 22), e quem edita não faz a menor ideia
  * disso — é o dado que faz a escolha ser informada em vez de intuitiva.
+ *
+ * ⚠️ tickets/023, card 10: "as provas passam a usar a nova" deixou de ser
+ * verdade para as provas com versões fixas — a frase fala dos dois grupos.
  */
-export function textoDaNovaVersao(provas: number): string {
+export function textoDaNovaVersao(provas: ProvaDaQuestao[]): string {
+  const { recebem, mantem } = separarProvas(provas);
+  if (recebem.length === 0 && mantem.length === 0) {
+    return `${CONGELA}, e a nova versão começa sem prova e sem estatísticas.`;
+  }
+  if (recebem.length === 0) {
+    return `${CONGELA}. Nenhuma prova recebe a nova versão agora — todas estão com versões fixas. A nova versão fica disponível para os donos aplicarem.`;
+  }
   const alvo =
-    provas === 1 ? "a prova que a usa passa" : `as ${provas} provas que a usam passam`;
-  return `O conteúdo mudou de verdade. Esta questão congela — é o que quem já respondeu vai ver — e ${alvo} a usar a nova, que começa sem estatísticas.`;
+    recebem.length === 1
+      ? "a prova que a usa passa"
+      : `as ${recebem.length} provas que a usam passam`;
+  if (mantem.length === 0) {
+    return `${CONGELA} — e ${alvo} a usar a nova, que começa sem estatísticas.`;
+  }
+  const passam =
+    recebem.length === 1
+      ? "1 prova passa"
+      : `${recebem.length} provas passam`;
+  const fixas =
+    mantem.length === 1
+      ? "1 prova está com versões fixas e continua com esta"
+      : `${mantem.length} provas estão com versões fixas e continuam com esta`;
+  return `${CONGELA}. ${passam} a usar a nova versão, que começa sem estatísticas. ${fixas}.`;
 }
 
 /**
@@ -124,5 +172,7 @@ export function textoDaCorrecao(respostas: number): string {
     respostas === 1
       ? "a resposta já registrada continua valendo"
       : `as ${respostas} respostas já registradas continuam valendo`;
-  return `Erro de digitação, formatação. A questão continua a mesma, e ${base}.`;
+  // ⚠️ tickets/023, card 10 (R4): a correção muda a questão em TODAS as
+  // provas — inclusive as com versões fixas. É a exceção que ninguém adivinha.
+  return `Erro de digitação, formatação. A questão continua a mesma, e ${base}. A correção vale para todas as provas que usam a questão, inclusive as com versões fixas.`;
 }
