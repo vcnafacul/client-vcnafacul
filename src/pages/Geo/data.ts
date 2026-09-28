@@ -19,8 +19,8 @@ export const courseType: FormFieldOption[] = [
 export const geoForm : GeoFormProps = {
   formData: {
       step1 : {
-        title: 'Cadastre um novo cursinho para fazer parte do nosso mapa',
-        subtitle: 'Dados Pessoais: Nos conte um pouco sobre você e sua relação com o cursinho que está cadastrando',
+        title: 'Dados Pessoais',
+        subtitle: 'Para terminar, nos conte um pouco sobre você e sua relação com o cursinho que está cadastrando',
         form: [
           {id: "userFullName", label: "Nome Completo*"},
           {id: 'userEmail', label: 'E-mail*', type: 'email'},
@@ -29,8 +29,8 @@ export const geoForm : GeoFormProps = {
         ]
       },
       step2 : {
-        title: 'Dados do Cursinho',
-        subtitle: 'Precisamos saber o maior número de informações possível sobre este cursinho.',
+        title: 'Cadastre um novo cursinho para fazer parte do nosso mapa',
+        subtitle: 'Dados do Cursinho: Precisamos saber o maior número de informações possível sobre este cursinho.',
         form: [
           {id: "name", label: "Nome do cursinho*"},
           {id: "category", label: "Tipo de cursinho*",  type: 'option', options: courseType},
@@ -73,7 +73,7 @@ export const geoForm : GeoFormProps = {
       },
       step6 : {
         title: 'O cadastro do cursinho foi realizado com sucesso!',
-        subtitle: 'Nossa equipe estará verificando as informações e liberando o cadastro para aparecer no mapa. Em caso de dúvidas entraremos em contato pelos canais que disponibilizou no começo do formulário.',
+        subtitle: 'Nossa equipe estará verificando as informações e liberando o cadastro para aparecer no mapa. Em caso de dúvidas entraremos em contato pelo e-mail ou telefone que você informou.',
         form: []
       },
   }

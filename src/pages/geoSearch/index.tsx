@@ -350,7 +350,6 @@ function GeoSearch() {
               markers={markers}
               onMarkerClick={escolherNoMapa}
               activeId={focoId ?? escolhidoId}
-              scrollWheelZoom
               mapEvent={controller}
             />
           </div>

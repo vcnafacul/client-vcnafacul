@@ -22,7 +22,7 @@ function Step4Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
   })
   .required()
 
-  const {register, handleSubmit, formState: { errors } } = useForm({
+  const {register, handleSubmit, getValues, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
 });
 
@@ -40,7 +40,7 @@ function Step4Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
           return f
         })} register={register} errors={errors} />
         <div className="flex gap-4">
-          <Button type="button" onClick={handleBack}>Voltar</Button>
+          <Button type="button" onClick={() => handleBack!(getValues())}>Voltar</Button>
           <Button type="submit">Continuar</Button>
         </div>
       </form>

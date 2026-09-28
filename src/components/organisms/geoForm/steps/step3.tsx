@@ -57,6 +57,7 @@ function Step3Geo({
     register,
     handleSubmit,
     setValue,
+    getValues,
     watch,
     reset,
     formState: { errors },
@@ -230,7 +231,16 @@ function Step3Geo({
           errors={errors}
         />
         <div className="flex gap-4">
-          <Button type="button" onClick={handleBack}>
+          <Button
+            type="button"
+            onClick={() =>
+              handleBack!({
+                ...getValues(),
+                latitude: selectedPosition[0],
+                longitude: selectedPosition[1],
+              })
+            }
+          >
             Voltar
           </Button>
           <Button type="submit">Continuar</Button>

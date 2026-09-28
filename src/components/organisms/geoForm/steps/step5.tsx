@@ -7,7 +7,7 @@ import Button from "../../../molecules/button";
 import Form from "../../form";
 
 function Step5Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: EachStepProps){
-  const {register, handleSubmit, formState: { errors } } = useForm();
+  const {register, handleSubmit, getValues, formState: { errors } } = useForm();
 
   function handleForm(data: any) {
     updateData!(data)
@@ -23,8 +23,8 @@ function Step5Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
           return f
         })} register={register} errors={errors} />
         <div className="flex gap-4">
-          <Button type="button" onClick={handleBack}>Voltar</Button>
-          <Button type="submit">Enviar Cadastro</Button>
+          <Button type="button" onClick={() => handleBack!(getValues())}>Voltar</Button>
+          <Button type="submit">Continuar</Button>
         </div>
       </form>
     </div>

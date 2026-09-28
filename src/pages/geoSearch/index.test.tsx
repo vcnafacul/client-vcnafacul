@@ -221,9 +221,10 @@ describe("Localiza Cursinho — mapa e lista (card 05)", () => {
     expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
   });
 
-  it("o mapa desta tela aceita zoom pela roda do mouse", async () => {
+  it("roda do mouse NÃO dá zoom, igual à home (pedido do Fernando, card 11)", async () => {
     await abrir();
-    expect(ultimasProps().scrollWheelZoom).toBe(true);
+    // Sem a prop, o MapBox usa o padrão da home: desligado.
+    expect(ultimasProps().scrollWheelZoom).toBeFalsy();
   });
 
   it("erro ao carregar → aviso com 'tentar de novo'", async () => {

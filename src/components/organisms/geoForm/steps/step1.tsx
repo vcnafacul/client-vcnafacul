@@ -14,6 +14,7 @@ function Step1Geo({
   subtitle,
   form,
   updateData,
+  handleBack,
   dataGeo,
 }: EachStepProps) {
   const schema = yup
@@ -32,6 +33,7 @@ function Step1Geo({
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -60,7 +62,12 @@ function Step1Geo({
           register={register}
           errors={errors}
         />
-        <Button>Continuar</Button>
+        <div className="flex gap-4">
+          <Button type="button" onClick={() => handleBack!(getValues())}>
+            Voltar
+          </Button>
+          <Button type="submit">Enviar Cadastro</Button>
+        </div>
       </form>
     </div>
   );
