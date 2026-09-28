@@ -35,4 +35,11 @@ export interface PublicGeolocation {
   tiktok: string | null;
   createdAt: string;
   updatedAt: string;
+  /**
+   * Última mudança de conteúdo (card 03); `null` se nunca foi editado. ⚠️ Não
+   * use o `updatedAt`: em `geolocations` ele nunca muda depois da criação.
+   */
+  infoUpdatedAt: string | null;
+  /** Confirmações "informação correta" que ainda valem (card 03). */
+  confirmations: number;
 }

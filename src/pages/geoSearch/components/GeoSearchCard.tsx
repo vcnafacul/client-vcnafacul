@@ -1,12 +1,14 @@
 import type { PublicGeolocation } from "@/types/geolocation/publicGeolocation";
-import { forwardRef } from "react";
-import { formatarData } from "../regras";
+import { forwardRef, type ReactNode } from "react";
+import { atualizadoEm, formatarData } from "../regras";
 
 type Props = {
   geo: PublicGeolocation;
   ativo: boolean;
   onFoco: (id: string | null) => void;
   onEscolher: (id: string) => void;
+  /** Botão "informação correta" (card 09), no canto superior direito. */
+  acao?: ReactNode;
 };
 
 /**
@@ -15,7 +17,7 @@ type Props = {
  * será outro botão — por isso não é o card inteiro que é um `<button>`.
  */
 export const GeoSearchCard = forwardRef<HTMLElement, Props>(
-  function GeoSearchCard({ geo, ativo, onFoco, onEscolher }, ref) {
+  function GeoSearchCard({ geo, ativo, onFoco, onEscolher, acao }, ref) {
     return (
       <article
         ref={ref}
@@ -43,10 +45,17 @@ export const GeoSearchCard = forwardRef<HTMLElement, Props>(
             <dd>{geo.city}</dd>
             <dt className="text-slate-400">Cadastro</dt>
             <dd>{formatarData(geo.createdAt)}</dd>
+            {geo.infoUpdatedAt && (
+              <>
+                <dt className="text-slate-400">Atualizado</dt>
+                <dd>{formatarData(atualizadoEm(geo))}</dd>
+              </>
+            )}
           </dl>
         </button>
-        {/* 09: botão "informação correta" */}
-        <div data-slot="confirmacao" className="absolute right-3 top-3" />
+        <div data-slot="confirmacao" className="absolute right-3 top-3">
+          {acao}
+        </div>
       </article>
     );
   },

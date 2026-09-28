@@ -1,7 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { TypeMarker } from "@/types/map/marker";
 import type { PublicGeolocation } from "@/types/geolocation/publicGeolocation";
-import { cursinhosNaArea, dentro, formatarData, type Limites } from "./regras";
+import {
+  buscarCursinhos,
+  cursinhosNaArea,
+  dentro,
+  formatarData,
+  porConfianca,
+  type Limites,
+} from "./regras";
 
 const geo = (
   id: string,
@@ -15,7 +22,10 @@ const geo = (
     latitude: lat,
     longitude: lon,
     type: TypeMarker.geo,
+    state: "SP",
     createdAt: "2026-01-01T12:00:00Z",
+    infoUpdatedAt: null,
+    confirmations: 0,
     ...extra,
   }) as PublicGeolocation;
 
@@ -81,5 +91,86 @@ describe("cursinhosNaArea", () => {
 describe("formatarData", () => {
   it("dd/MM/yyyy", () => {
     expect(formatarData("2026-09-27T15:00:00Z")).toBe("27/09/2026");
+  });
+});
+
+describe("buscarCursinhos (card 06)", () => {
+  const lista = [
+    geo("cuca", -22, -48, {
+      name: "CUCA - Boa Esperança do Sul",
+      city: "Boa Esperança do Sul",
+    }),
+    geo("ara1", -21.8, -48.2, { name: "Cursinho Popular", city: "Araraquara" }),
+    geo("ara2", -21.8, -48.2, {
+      name: "Pré-vestibular Comunitário",
+      city: "Araraquara",
+    }),
+    geo("sao", -23.5, -46.6, { name: "São Judas Cursinho", city: "São Paulo" }),
+    geo("apelido", -23, -47, {
+      name: "Associação X",
+      alias: "Cursinho da Vila",
+      city: "Campinas",
+    }),
+    geo("univ", -22, -48, {
+      name: "CUCA Universidade",
+      type: TypeMarker.univPublic,
+    }),
+  ];
+  const ids = (t: string) => buscarCursinhos(lista, t).map((g) => g.id);
+
+  it('"cuca" acha "CUCA - Boa Esperança do Sul" (e não a universidade)', () => {
+    expect(ids("cuca")).toEqual(["cuca"]);
+  });
+
+  it('"araraquara" acha os dois de Araraquara (pela cidade)', () => {
+    expect(ids("araraquara").sort()).toEqual(["ara1", "ara2"]);
+  });
+
+  it('⚠️ "sao" acha "São…" (sem acento e sem maiúscula)', () => {
+    expect(ids("sao")).toEqual(["sao"]);
+    expect(ids("SÃO")).toEqual(["sao"]);
+  });
+
+  it("acha pelo apelido e pelo estado", () => {
+    expect(ids("da vila")).toEqual(["apelido"]);
+    expect(ids("sp")).toEqual(expect.arrayContaining(["cuca", "sao"]));
+  });
+
+  it("termo vazio ou só espaços → nada", () => {
+    expect(ids("  ")).toEqual([]);
+  });
+});
+
+describe("porConfianca (card 09)", () => {
+  it("mais confirmações primeiro; empate → atualizado mais recentemente", () => {
+    const a = geo("a", 0, 0, {
+      confirmations: 1,
+      createdAt: "2026-01-01T00:00:00Z",
+    });
+    const b = geo("b", 0, 0, {
+      confirmations: 5,
+      createdAt: "2020-01-01T00:00:00Z",
+    });
+    const c = geo("c", 0, 0, {
+      confirmations: 1,
+      createdAt: "2020-01-01T00:00:00Z",
+      infoUpdatedAt: "2026-06-01T00:00:00Z",
+    });
+    expect([a, b, c].sort(porConfianca()).map((g) => g.id)).toEqual([
+      "b",
+      "c",
+      "a",
+    ]);
+  });
+
+  it("aceita um retrato das contagens (a lista não reordena no clique)", () => {
+    const a = geo("a", 0, 0, { confirmations: 0 });
+    const b = geo("b", 0, 0, { confirmations: 3 });
+    const retrato = new Map([["a", 9]]);
+    expect(
+      [a, b]
+        .sort(porConfianca((g) => retrato.get(g.id) ?? g.confirmations))
+        .map((g) => g.id),
+    ).toEqual(["a", "b"]);
   });
 });
