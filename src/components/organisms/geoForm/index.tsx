@@ -20,7 +20,8 @@ export interface StepProps {
 
 export interface EachStepProps extends StepProps {
   updateData?: (data: any) => void;
-  handleBack?: () => void;
+  /** Recebe o que já foi digitado na etapa, para não perder ao voltar. */
+  handleBack?: (data?: any) => void;
   dataGeo?: CreateGeolocation;
 }
 
@@ -37,17 +38,18 @@ export interface GeoFormProps {
   };
 }
 
+// Dados Pessoais por último (tickets/022, card 11): a pessoa começa falando do cursinho.
 enum Step {
-  PersonalData,
   CourseData,
   Address,
   Contact,
   SocialMedia,
+  PersonalData,
   Finish,
 }
 
 function GeoForm({ formData, nomeInicial }: GeoFormProps) {
-  const [stepCurrently, setStepCurrently] = useState<number>(Step.PersonalData);
+  const [stepCurrently, setStepCurrently] = useState<number>(Step.CourseData);
   const [dataGeo, setDataGeo] = useState<CreateGeolocation>(
     () => (nomeInicial ? { name: nomeInicial } : {}) as CreateGeolocation,
   );
@@ -59,7 +61,8 @@ function GeoForm({ formData, nomeInicial }: GeoFormProps) {
     setStepCurrently(stepCurrently + 1);
   };
 
-  const back = () => {
+  const back = (dadosDaEtapa?: any) => {
+    if (dadosDaEtapa) setDataGeo({ ...dataGeo, ...dadosDaEtapa });
     if (stepCurrently > 0) {
       setStepCurrently(stepCurrently - 1);
     }
@@ -80,21 +83,12 @@ function GeoForm({ formData, nomeInicial }: GeoFormProps) {
   };
 
   const resetForm = () => {
-    setStepCurrently(Step.PersonalData);
+    setStepCurrently(Step.CourseData);
     setDataGeo({} as CreateGeolocation);
   };
 
   const StepCurrently = ({ step }: { step: number }) => {
     switch (step) {
-      case Step.CourseData:
-        return (
-          <Step2Geo
-            {...formData.step2}
-            updateData={updateData}
-            handleBack={back}
-            dataGeo={dataGeo}
-          />
-        );
       case Step.Address:
         return (
           <Step3Geo
@@ -117,17 +111,26 @@ function GeoForm({ formData, nomeInicial }: GeoFormProps) {
         return (
           <Step5Geo
             {...formData.step5}
-            updateData={completeRegisterGeo}
+            updateData={updateData}
             handleBack={back}
             dataGeo={dataGeo}
           />
         );
       case Step.Finish:
         return <Step6Geo {...formData.step6} reset={resetForm} />;
-      default:
+      case Step.PersonalData:
         return (
           <Step1Geo
             {...formData.step1}
+            updateData={completeRegisterGeo}
+            handleBack={back}
+            dataGeo={dataGeo}
+          />
+        );
+      default:
+        return (
+          <Step2Geo
+            {...formData.step2}
             updateData={updateData}
             dataGeo={dataGeo}
           />

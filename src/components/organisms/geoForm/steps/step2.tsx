@@ -8,7 +8,7 @@ import Text from "../../../atoms/text"
 import Button from "../../../molecules/button"
 import Form from "../../form"
 
-function Step2Geo({ title, subtitle, form, updateData, handleBack, dataGeo
+function Step2Geo({ title, subtitle, form, updateData, dataGeo
  }: EachStepProps){
 
   const schema = yup
@@ -36,10 +36,7 @@ function Step2Geo({ title, subtitle, form, updateData, handleBack, dataGeo
           f.defaultValue = dataGeo![f.id as keyof CreateGeolocation]  || ''
           return f
         })} register={register} errors={errors} />
-        <div className="flex gap-4">
-          <Button type="button" onClick={handleBack}>Voltar</Button>
-          <Button type="submit">Continuar</Button>
-        </div>
+        <Button type="submit">Continuar</Button>
       </form>
     </div>
   )
