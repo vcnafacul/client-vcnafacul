@@ -16,25 +16,39 @@ export function dentro(l: Limites, lat: number, lon: number): boolean {
   return lat <= l.norte && lat >= l.sul && lon <= l.leste && lon >= l.oeste;
 }
 
+/** Data da última atualização: a de conteúdo, ou a de cadastro. */
+export const atualizadoEm = (g: PublicGeolocation) =>
+  g.infoUpdatedAt ?? g.createdAt;
+
+/**
+ * Ordem da lista (README da série): mais confirmações primeiro; empate →
+ * atualizado mais recentemente. `contagem` permite ordenar por um retrato das
+ * confirmações (card 09: o card não pode "fugir" do dedo ao confirmar).
+ */
+export function porConfianca(
+  contagem: (g: PublicGeolocation) => number = (g) => g.confirmations ?? 0,
+) {
+  return (a: PublicGeolocation, b: PublicGeolocation) =>
+    contagem(b) - contagem(a) || atualizadoEm(b).localeCompare(atualizadoEm(a));
+}
+
 /**
  * Cursinhos na área visível, até `limite`.
  *
  * - Só cursinhos: universidade aparece no mapa, mas não é cadastrável aqui.
- * - ⚠️ Ordem: **cadastro mais recente primeiro.** O card pedia "mais
- *   confirmações, depois `updatedAt`", mas as confirmações são do card 03, e o
- *   `updatedAt` de `geolocations` nunca muda depois da criação (revisão
- *   2026-09-27). Quando o 03 sair, a ordem passa a ser `confirmations` desc.
+ * - Ordem: `porConfianca` (card 09, com as confirmações do card 03).
  */
 export function cursinhosNaArea(
   geos: PublicGeolocation[],
   limites: Limites | null,
   limite: number,
+  ordem = porConfianca(),
 ): { itens: PublicGeolocation[]; total: number } {
   if (!limites) return { itens: [], total: 0 };
   const naArea = geos
     .filter((g) => g.type === TypeMarker.geo)
     .filter((g) => dentro(limites, g.latitude, g.longitude))
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    .sort(ordem);
   return { itens: naArea.slice(0, limite), total: naArea.length };
 }
 
@@ -58,6 +72,7 @@ export function normalizar(texto: string | null | undefined): string {
 export function buscarCursinhos(
   geos: PublicGeolocation[],
   termo: string,
+  ordem = porConfianca(),
 ): PublicGeolocation[] {
   const t = normalizar(termo);
   if (!t) return [];
@@ -68,7 +83,7 @@ export function buscarCursinhos(
         normalizar(campo).includes(t),
       ),
     )
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    .sort(ordem);
 }
 
 /** `dd/MM/yyyy` no fuso de quem vê. */

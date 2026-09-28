@@ -1,14 +1,19 @@
 import MapBox from "@/components/molecules/mapBox";
+import ReportLC from "@/components/organisms/map/modal/report";
 import { MapFilterCard } from "@/components/organisms/mapFilterCard";
+import { MapInfoCard } from "@/components/organisms/mapInfoCard";
+import { TypeProblem } from "@/enums/audit/typeProblem";
 import { Marker, TypeMarker } from "@/types/map/marker";
 import leaflet, { type Map as LeafletMap } from "leaflet";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
 import BaseTemplate from "../../components/templates/baseTemplate";
-import { GEOLOCATION_REGISTER } from "../../routes/path";
+import { AvisoLogin } from "./components/AvisoLogin";
+import { BotaoConfirmar } from "./components/BotaoConfirmar";
 import { BuscaCursinhos } from "./components/BuscaCursinhos";
 import { GeoCardList } from "./components/GeoCardList";
+import { ModalNaoEncontrei } from "./components/ModalNaoEncontrei";
 import { MapaController } from "./components/MapaController";
 import {
   LIMITE_CELULAR,
@@ -17,12 +22,16 @@ import {
   buscarCursinhos,
   cursinhosNaArea,
   normalizar,
+  porConfianca,
 } from "./regras";
+import { useConfirmacoes } from "./useConfirmacoes";
 import { useGeoPublico, useTelaEstreita } from "./useGeoPublico";
 
 const FILTROS_INICIAIS: TypeMarker[] = [TypeMarker.geo, TypeMarker.univPublic];
 const ZOOM_AO_ESCOLHER = 14;
 export const ESPERA_DA_BUSCA_MS = 250;
+/** Meia largura do cartão do mapa no desktop (420px). */
+export const DESLOCAMENTO_DO_CARTAO_PX = 210;
 
 /**
  * Localiza Cursinho (`/localiza-cursinho`, tickets/022): o passo ANTES do
@@ -31,7 +40,10 @@ export const ESPERA_DA_BUSCA_MS = 250;
  * Card 04 montou o esqueleto; o 05 pôs mapa e lista, sincronizados pela área
  * visível (como no QuintoAndar); o 06, a busca rápida — com termo, lista e
  * pins passam a ser os resultados, e o termo fica em `?q=` (dá para
- * compartilhar e voltar). Faltam o card do mapa (07) e o cadastro (08).
+ * compartilhar e voltar); o 07, o cartão do cursinho sobre o mapa, com
+ * reportar; o 08, o "Cadastre um novo cursinho" com o modal de confirmação;
+ * o 09, o "informação correta" (👍) nos dois cartões, que também ordena a
+ * lista.
  *
  * ⚠️ Breakpoints do projeto: `md` = 1200px. Metade/metade de 1200px para
  * cima; abaixo disso, mapa em cima (45vh) e lista embaixo.
@@ -45,6 +57,10 @@ function GeoSearch() {
   const [focoId, setFocoId] = useState<string | null>(null);
   /** Escolhido pelo clique no card ou no pin (abre o card do mapa no 07). */
   const [escolhidoId, setEscolhidoId] = useState<string | null>(null);
+  const [reportando, setReportando] = useState(false);
+  const [confirmandoCadastro, setConfirmandoCadastro] = useState(false);
+  const [pedindoLogin, setPedindoLogin] = useState(false);
+  const confirmacoes = useConfirmacoes();
   const mapa = useRef<LeafletMap | null>(null);
   const [mapaPronto, setMapaPronto] = useState(false);
   const cards = useRef(new Map<string, HTMLElement>());
@@ -70,8 +86,30 @@ function GeoSearch() {
     );
   }, [termo, setParams]);
 
+  /*
+    ⚠️ A ordem usa um RETRATO das confirmações, tirado quando a área, a busca
+    ou os dados mudam — não o contador ao vivo. Senão o card reordenaria no
+    clique do 👍 e "fugiria" do dedo (card 09).
+  */
+  const [retrato, setRetrato] = useState<Map<string, number>>(new Map());
+  useEffect(() => {
+    setRetrato(new Map(geos.map((g) => [g.id, confirmacoes.contagem(g)])));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [geos, limites, termo]);
+  const ordem = useMemo(
+    () => porConfianca((g) => retrato.get(g.id) ?? g.confirmations ?? 0),
+    [retrato],
+  );
+
   const buscando = normalizar(termo) !== "";
+  // ⚠️ O mapa e o enquadramento usam os resultados SEM depender da ordem (que
+  // muda a cada arrasto, pelo retrato): senão o cluster seria recriado e o
+  // mapa piscaria — o teste do card 05 pegou isso.
   const resultados = useMemo(() => buscarCursinhos(geos, termo), [geos, termo]);
+  const resultadosOrdenados = useMemo(
+    () => [...resultados].sort(ordem),
+    [resultados, ordem],
+  );
 
   /*
     ⚠️ Memoizado só por dados e filtro — NUNCA pela área visível. O
@@ -101,9 +139,12 @@ function GeoSearch() {
   const { itens, total } = useMemo(
     () =>
       buscando
-        ? { itens: resultados.slice(0, limite), total: resultados.length }
-        : cursinhosNaArea(geos, limites, limite),
-    [buscando, resultados, geos, limites, limite],
+        ? {
+            itens: resultadosOrdenados.slice(0, limite),
+            total: resultadosOrdenados.length,
+          }
+        : cursinhosNaArea(geos, limites, limite, ordem),
+    [buscando, resultadosOrdenados, geos, limites, limite, ordem],
   );
   const semResultado =
     buscando && estado === "pronto" && resultados.length === 0;
@@ -132,7 +173,22 @@ function GeoSearch() {
     const geo = geos.find((g) => g.id === id);
     if (!geo) return;
     setEscolhidoId(id);
-    mapa.current?.flyTo([geo.latitude, geo.longitude], ZOOM_AO_ESCOLHER);
+    const m = mapa.current;
+    if (!m) return;
+    /*
+      O cartão do mapa (07) abre no canto inferior direito, e o voo
+      centralizado deixava o pin escolhido ESCONDIDO atrás dele. No desktop, o
+      centro vai meia largura do cartão para a direita — o pin fica à esquerda
+      do cartão. No celular o cartão é um painel por cima do mapa, como na home.
+    */
+    const deslocamento = estreita ? 0 : DESLOCAMENTO_DO_CARTAO_PX;
+    const alvo = m.unproject(
+      m
+        .project([geo.latitude, geo.longitude], ZOOM_AO_ESCOLHER)
+        .add([deslocamento, 0]),
+      ZOOM_AO_ESCOLHER,
+    );
+    m.flyTo(alvo, ZOOM_AO_ESCOLHER);
   };
 
   const escolherNoMapa = useCallback((id: string) => {
@@ -141,6 +197,43 @@ function GeoSearch() {
       .get(id)
       ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, []);
+
+  // Cartão do mapa (07): o escolhido, venha da lista ou do pin.
+  const escolhido = useMemo<Marker | null>(() => {
+    const g = escolhidoId ? geos.find((x) => x.id === escolhidoId) : null;
+    return g
+      ? { id: g.id, lat: g.latitude, lon: g.longitude, type: g.type, infos: g }
+      : null;
+  }, [escolhidoId, geos]);
+  const fecharCartao = useCallback(() => setEscolhidoId(null), []);
+
+  // Esc fecha o cartão — mas não enquanto o modal de reportar está aberto
+  // (ali o Esc é do modal).
+  useEffect(() => {
+    if (!escolhido || reportando) return;
+    const aoTeclar = (e: KeyboardEvent) => {
+      if (e.key === "Escape") fecharCartao();
+    };
+    document.addEventListener("keydown", aoTeclar);
+    return () => document.removeEventListener("keydown", aoTeclar);
+  }, [escolhido, reportando, fecharCartao]);
+
+  const botaoConfirmar = (id: string) => {
+    const geo = geos.find((g) => g.id === id);
+    if (!geo) return null;
+    return (
+      <BotaoConfirmar
+        confirmado={confirmacoes.confirmado(id)}
+        contagem={confirmacoes.contagem(geo)}
+        ocupado={confirmacoes.emVoo(id)}
+        onClick={() =>
+          confirmacoes.logado
+            ? void confirmacoes.alternar(id)
+            : setPedindoLogin(true)
+        }
+      />
+    );
+  };
 
   const refDoCard = useCallback((id: string, el: HTMLElement | null) => {
     if (el) cards.current.set(id, el);
@@ -155,9 +248,10 @@ function GeoSearch() {
           mapa.current = m;
           setMapaPronto(true);
         }}
+        onCliqueNoMapa={fecharCartao}
       />
     ),
-    [],
+    [fecharCartao],
   );
 
   return (
@@ -205,14 +299,10 @@ function GeoSearch() {
                 onEscolher={escolherNaLista}
                 tentarDeNovo={tentarDeNovo}
                 refDoCard={refDoCard}
+                acaoDoCard={(g) => botaoConfirmar(g.id)}
               />
             </div>
 
-            {/*
-              08 troca por botão + modal "você não encontrou?". Até lá, um
-              link direto: se a develop subir antes do 05/08, a pessoa ainda
-              consegue cadastrar.
-            */}
             <div
               data-slot="cadastro"
               data-destaque={semResultado || undefined}
@@ -225,19 +315,24 @@ function GeoSearch() {
               <p className="text-sm text-slate-600">
                 Não encontrou um cursinho que conhece?
               </p>
-              <Link
-                to={GEOLOCATION_REGISTER}
+              {/* 08: confirma que não achou antes de ir ao formulário. */}
+              <button
+                type="button"
+                onClick={() => setConfirmandoCadastro(true)}
                 className="inline-flex rounded-full bg-orange px-6 py-3 font-bold text-white hover:opacity-90"
               >
                 Cadastre um novo cursinho
-              </Link>
+              </button>
             </div>
           </div>
         </section>
 
         <section
           aria-label="Mapa de cursinhos"
-          className="relative order-1 h-[45vh] bg-slate-100 md:order-2 md:h-full"
+          // ⚠️ `isolate`: os z-index daqui (busca, cartão, controles do
+          // Leaflet) ficam contidos na coluna do mapa — sem isso a busca
+          // aparecia por cima do fundo dos modais (card 08).
+          className="relative isolate order-1 h-[45vh] bg-slate-100 md:order-2 md:h-full"
         >
           {/* 07: card do cursinho */}
           <div
@@ -267,9 +362,49 @@ function GeoSearch() {
               className="bottom-3 left-3 md:bottom-6 md:left-6"
             />
           )}
-          <div data-slot="card-do-mapa" />
+          <div data-slot="card-do-mapa">
+            <MapInfoCard
+              activeMarker={escolhido}
+              onReport={() => setReportando(true)}
+              onClose={fecharCartao}
+              // ⚠️ Sem `ctaLink`: o cadastro já está na coluna da esquerda, e o
+              // link levaria para esta mesma página.
+              // Altura relativa ao mapa (no celular ele tem só 45vh), sem
+              // cobrir a busca no topo.
+              className="left-3 right-3 bottom-3 z-[600] max-h-[calc(100%-5.5rem)] md:left-auto md:right-6 md:bottom-6 md:w-[420px] md:max-h-[calc(100%-8rem)]"
+              acoes={
+                <div data-slot="confirmacao-mapa" className="flex items-center">
+                  {escolhido?.type === TypeMarker.geo &&
+                    botaoConfirmar(escolhido.id)}
+                </div>
+              }
+            />
+          </div>
+          <AvisoLogin
+            aberto={pedindoLogin}
+            onFechar={() => setPedindoLogin(false)}
+          />
+          <ModalNaoEncontrei
+            aberto={confirmandoCadastro}
+            onFechar={() => setConfirmandoCadastro(false)}
+            termo={termo}
+          />
         </section>
       </div>
+      {/* Fora da coluna do mapa (que é `isolate`): o modal não usa portal. */}
+      {reportando && escolhido && (
+        <ReportLC
+          entityId={escolhido.id}
+          entityName={escolhido.infos.name}
+          type={
+            escolhido.type === TypeMarker.geo
+              ? TypeProblem.GEO
+              : TypeProblem.COLLEGE
+          }
+          isOpen={reportando}
+          handleClose={() => setReportando(false)}
+        />
+      )}
     </BaseTemplate>
   );
 }

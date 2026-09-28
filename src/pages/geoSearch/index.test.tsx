@@ -7,6 +7,7 @@ import {
 } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { useAuthStore } from "@/store/auth";
 import type { Limites } from "./regras";
 
 vi.mock("../../components/templates/baseTemplate", () => ({
@@ -28,28 +29,73 @@ vi.mock("@/components/molecules/mapBox", () => ({
 // O controlador do mapa entrega a área e o mapa: aqui, o teste é quem manda.
 const controle = vi.hoisted(() => ({
   onLimites: (() => {}) as (l: Limites) => void,
-  mapa: { flyTo: vi.fn(), fitBounds: vi.fn() },
+  onCliqueNoMapa: (() => {}) as () => void,
+  mapa: {
+    flyTo: vi.fn(),
+    fitBounds: vi.fn(),
+    // Projeção de brinquedo: o "pixel" é o próprio [lat, lon], e o `add`
+    // guarda o deslocamento para o teste conferir.
+    project: (ll: [number, number]) => ({
+      add: ([dx, dy]: [number, number]) => ({ ll, dx, dy }),
+    }),
+    unproject: (p: { ll: [number, number]; dx: number; dy: number }) => ({
+      centroDeslocado: p.ll,
+      dx: p.dx,
+      dy: p.dy,
+    }),
+  },
 }));
 vi.mock("./components/MapaController", () => ({
   MapaController: ({
     onLimites,
     onMapa,
+    onCliqueNoMapa,
   }: {
     onLimites: (l: Limites) => void;
     onMapa: (m: unknown) => void;
+    onCliqueNoMapa: () => void;
   }) => {
     controle.onLimites = onLimites;
+    controle.onCliqueNoMapa = onCliqueNoMapa;
     onMapa(controle.mapa);
     return null;
   },
 }));
 
 const api = vi.hoisted(() => ({ buscarGeoPublico: vi.fn() }));
+const conf = vi.hoisted(() => ({
+  confirmGeo: vi.fn(),
+  unconfirmGeo: vi.fn(),
+  getMyConfirmations: vi.fn(),
+}));
+vi.mock("@/services/geolocation/confirmation", () => conf);
+const toasts = vi.hoisted(() => ({
+  error: vi.fn(),
+  success: vi.fn(),
+  info: vi.fn(),
+}));
+vi.mock("react-toastify", () => ({ toast: toasts }));
+// O modal de reportar tem teste próprio; aqui só importa o que ele recebe.
+vi.mock("@/components/organisms/map/modal/report", () => ({
+  default: (p: { entityId: string; type: string }) => (
+    <div role="dialog" aria-label="Reportar">
+      {p.entityId}|{p.type}
+    </div>
+  ),
+}));
 vi.mock("@/services/geolocation/getGeolocation", () => api);
 
 import GeoSearch from ".";
 
-const geo = (id: string, lat: number, lon: number, type = 0) => ({
+const geo = (
+  id: string,
+  lat: number,
+  lon: number,
+  type = 0,
+  confirmations = 0,
+) => ({
+  confirmations,
+  infoUpdatedAt: null,
   id,
   name: `Cursinho ${id}`,
   state: "SP",
@@ -85,6 +131,11 @@ async function abrir(url = "/localiza-cursinho") {
 const ultimasProps = () => mapBox.props[mapBox.props.length - 1];
 
 beforeEach(() => {
+  useAuthStore.setState((s) => ({ data: { ...s.data, token: "" } }));
+  conf.confirmGeo.mockReset().mockResolvedValue(undefined);
+  conf.unconfirmGeo.mockReset().mockResolvedValue(undefined);
+  conf.getMyConfirmations.mockReset().mockResolvedValue([]);
+  toasts.error.mockClear();
   mapBox.props = [];
   controle.mapa.flyTo.mockClear();
   controle.mapa.fitBounds.mockClear();
@@ -138,7 +189,12 @@ describe("Localiza Cursinho — mapa e lista (card 05)", () => {
     act(() => controle.onLimites(CAMPINAS));
     fireEvent.click(await screen.findByRole("button", { name: /Cursinho b/ }));
 
-    expect(controle.mapa.flyTo).toHaveBeenCalledWith([-22.95, -47.1], 14);
+    // ⚠️ O centro vai 210px para a direita: o cartão do mapa (07) abre no
+    // canto inferior direito e, centralizado, cobriria o próprio pin.
+    expect(controle.mapa.flyTo).toHaveBeenCalledWith(
+      { centroDeslocado: [-22.95, -47.1], dx: 210, dy: 0 },
+      14,
+    );
     expect(ultimasProps().activeId).toBe("b");
   });
 
@@ -192,11 +248,24 @@ describe("Localize um Cursinho — esqueleto (card 04)", () => {
     ).toBeInTheDocument();
   });
 
-  it("⚠️ já leva ao cadastro (até o 08 trocar pelo modal)", async () => {
+  it("⚠️ 'Cadastre um novo cursinho' abre a confirmação (card 08), sem ir direto ao formulário", async () => {
     await abrir();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Cadastre um novo cursinho" }),
+    );
     expect(
-      screen.getByRole("link", { name: "Cadastre um novo cursinho" }),
-    ).toHaveAttribute("href", "/localiza-cursinho/cadastro");
+      await screen.findByRole("dialog", {
+        name: "Você não encontrou o cursinho?",
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("o modal mostra o termo buscado", async () => {
+    await abrir("/localiza-cursinho?q=cursinho da vila");
+    fireEvent.click(
+      screen.getByRole("button", { name: "Cadastre um novo cursinho" }),
+    );
+    expect(await screen.findByText('"cursinho da vila"')).toBeInTheDocument();
   });
 
   it("tem os lugares dos próximos cards", async () => {
@@ -318,5 +387,207 @@ describe("Localiza Cursinho — busca rápida (card 06)", () => {
     buscar("longe");
     await screen.findByText(/Resultados para "longe"/);
     expect(screen.queryByText(/Universidade/i)).toBeNull();
+  });
+});
+
+describe("Localiza Cursinho — cartão do mapa e reportar (card 07)", () => {
+  const cartao = () =>
+    screen.queryByRole("dialog", { name: /Cursinho a|Universidade/ });
+  const clicarNoPin = (id: string) =>
+    act(() => (ultimasProps().onMarkerClick as (id: string) => void)(id));
+
+  it("clique no pin abre o cartão com as informações; sem 'Cadastrar um Cursinho'", async () => {
+    await abrir();
+    clicarNoPin("a");
+    expect(
+      await screen.findByRole("dialog", { name: "Cursinho: Cursinho a" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Cadastrar um Cursinho")).toBeNull();
+  });
+
+  it("clique no card da lista também abre o cartão", async () => {
+    await abrir();
+    act(() => controle.onLimites(CAMPINAS));
+    fireEvent.click(await screen.findByRole("button", { name: /Cursinho a/ }));
+    expect(
+      screen.getByRole("dialog", { name: "Cursinho: Cursinho a" }),
+    ).toBeInTheDocument();
+  });
+
+  it("fecha no ✕, no Esc e no clique no mapa vazio", async () => {
+    await abrir();
+    clicarNoPin("a");
+    fireEvent.click(await screen.findByRole("button", { name: "Fechar" }));
+    expect(cartao()).toBeNull();
+
+    clicarNoPin("a");
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(cartao()).toBeNull();
+
+    clicarNoPin("a");
+    act(() => controle.onCliqueNoMapa());
+    expect(cartao()).toBeNull();
+  });
+
+  it("⚠️ reportar: cursinho vai como GEO, universidade como COLLEGE; Esc não fecha o cartão por baixo do modal", async () => {
+    await abrir();
+    clicarNoPin("a");
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Reportar problema" }),
+    );
+    expect(screen.getByRole("dialog", { name: "Reportar" })).toHaveTextContent(
+      "a|Cursinho",
+    );
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(
+      screen.getByRole("dialog", { name: "Cursinho: Cursinho a" }),
+    ).toBeInTheDocument();
+  });
+
+  it("universidade abre o cartão de universidade e reporta como COLLEGE", async () => {
+    await abrir();
+    clicarNoPin("unicamp");
+    expect(
+      await screen.findByRole("dialog", {
+        name: "Universidade: Cursinho unicamp",
+      }),
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Reportar problema" }));
+    expect(screen.getByRole("dialog", { name: "Reportar" })).toHaveTextContent(
+      "unicamp|Universidade",
+    );
+  });
+
+  it("tem o lugar do botão de confirmação (09) ao lado do ⚠️", async () => {
+    await abrir();
+    clicarNoPin("a");
+    await screen.findByRole("dialog", { name: "Cursinho: Cursinho a" });
+    expect(
+      document.querySelector('[data-slot="confirmacao-mapa"]'),
+    ).toBeTruthy();
+  });
+});
+
+describe("Localiza Cursinho — informação correta (card 09)", () => {
+  const logar = () =>
+    useAuthStore.setState((s) => ({ data: { ...s.data, token: "jwt" } }));
+  const botoesDe = (nome: string) =>
+    screen
+      .getAllByRole("button", {
+        name: /Confirmo que as informações|Você confirmou/,
+      })
+      .filter(
+        (b) =>
+          b.closest("article")?.textContent?.includes(nome) ||
+          b
+            .closest('[role="dialog"]')
+            ?.getAttribute("aria-label")
+            ?.includes(nome),
+      );
+
+  async function abrirNaArea() {
+    await abrir();
+    act(() => controle.onLimites(CAMPINAS));
+    await screen.findByRole("heading", { name: "Cursinho a" });
+  }
+
+  it("⚠️ deslogado: clique abre o aviso de login e NÃO chama a api", async () => {
+    await abrirNaArea();
+    fireEvent.click(botoesDe("Cursinho a")[0]);
+    expect(
+      await screen.findByRole("dialog", {
+        name: "Entre para confirmar informações",
+      }),
+    ).toBeInTheDocument();
+    expect(conf.confirmGeo).not.toHaveBeenCalled();
+    expect(conf.getMyConfirmations).not.toHaveBeenCalled();
+  });
+
+  it("logado: o 'me' marca o botão ao carregar", async () => {
+    logar();
+    conf.getMyConfirmations.mockResolvedValue(["b"]);
+    await abrirNaArea();
+    await waitFor(() =>
+      expect(botoesDe("Cursinho b")[0]).toHaveAttribute("aria-pressed", "true"),
+    );
+    expect(botoesDe("Cursinho a")[0]).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("⚠️ confirmar e desfazer atualizam contador e cor nos DOIS cartões (lista e mapa)", async () => {
+    logar();
+    await abrirNaArea();
+    act(() => (ultimasProps().onMarkerClick as (id: string) => void)("a"));
+    await screen.findByRole("dialog", { name: "Cursinho: Cursinho a" });
+
+    fireEvent.click(botoesDe("Cursinho a")[0]);
+    await waitFor(() =>
+      expect(conf.confirmGeo).toHaveBeenCalledWith("jwt", "a"),
+    );
+    for (const b of botoesDe("Cursinho a")) {
+      expect(b).toHaveAttribute("aria-pressed", "true");
+      expect(b).toHaveTextContent("1");
+    }
+    expect(botoesDe("Cursinho a")).toHaveLength(2);
+
+    fireEvent.click(botoesDe("Cursinho a")[1]);
+    await waitFor(() =>
+      expect(conf.unconfirmGeo).toHaveBeenCalledWith("jwt", "a"),
+    );
+    for (const b of botoesDe("Cursinho a"))
+      expect(b).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("⚠️ erro da api desfaz o otimista e avisa", async () => {
+    logar();
+    conf.confirmGeo.mockRejectedValueOnce(
+      new Error("Não foi possível confirmar a informação"),
+    );
+    await abrirNaArea();
+    fireEvent.click(botoesDe("Cursinho a")[0]);
+    await waitFor(() => expect(toasts.error).toHaveBeenCalled());
+    expect(botoesDe("Cursinho a")[0]).toHaveAttribute("aria-pressed", "false");
+    expect(botoesDe("Cursinho a")[0].textContent).toBe("");
+  });
+
+  it("clique no botão não move o mapa", async () => {
+    logar();
+    await abrirNaArea();
+    fireEvent.click(botoesDe("Cursinho a")[0]);
+    await waitFor(() => expect(conf.confirmGeo).toHaveBeenCalled());
+    expect(controle.mapa.flyTo).not.toHaveBeenCalled();
+  });
+
+  it("⚠️ a lista não reordena no clique; reordena na próxima mudança de área", async () => {
+    logar();
+    api.buscarGeoPublico.mockResolvedValue([
+      geo("a", -22.9, -47.06, 0, 1),
+      geo("b", -22.95, -47.1, 0, 1),
+    ]);
+    await abrir();
+    act(() => controle.onLimites(CAMPINAS));
+    const ordem = () =>
+      screen.getAllByRole("heading", { level: 3 }).map((h) => h.textContent);
+    await screen.findByRole("heading", { name: "Cursinho a" });
+    const antes = ordem();
+    const ultimo = antes[antes.length - 1]!;
+
+    fireEvent.click(botoesDe(ultimo)[0]); // o de baixo passa a ter 2
+    await waitFor(() => expect(conf.confirmGeo).toHaveBeenCalled());
+    expect(ordem()).toEqual(antes);
+
+    act(() => controle.onLimites({ ...CAMPINAS, norte: -22.79 }));
+    await waitFor(() => expect(ordem()[0]).toBe(ultimo));
+  });
+
+  it("universidade no cartão do mapa não tem o botão (a confirmação é de cursinho)", async () => {
+    logar();
+    await abrir();
+    act(() =>
+      (ultimasProps().onMarkerClick as (id: string) => void)("unicamp"),
+    );
+    const cartao = await screen.findByRole("dialog", {
+      name: "Universidade: Cursinho unicamp",
+    });
+    expect(cartao.querySelector("[aria-pressed]")).toBeNull();
   });
 });

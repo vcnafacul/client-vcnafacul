@@ -23,14 +23,19 @@ function limitesDo(mapa: LeafletMap): Limites {
 export function MapaController({
   onLimites,
   onMapa,
+  onCliqueNoMapa,
 }: {
   onLimites: (l: Limites) => void;
   onMapa: (m: LeafletMap) => void;
+  /** Clique no mapa vazio (pin não conta: o Leaflet não propaga). */
+  onCliqueNoMapa?: () => void;
 }) {
   const mapa = useMap();
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const aoMudar = useRef(onLimites);
   aoMudar.current = onLimites;
+  const aoClicar = useRef(onCliqueNoMapa);
+  aoClicar.current = onCliqueNoMapa;
 
   const avisar = () => {
     clearTimeout(timer.current);
@@ -40,7 +45,11 @@ export function MapaController({
     );
   };
 
-  useMapEvents({ moveend: avisar, zoomend: avisar });
+  useMapEvents({
+    moveend: avisar,
+    zoomend: avisar,
+    click: () => aoClicar.current?.(),
+  });
 
   useEffect(() => {
     onMapa(mapa);
