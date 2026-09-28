@@ -101,3 +101,51 @@ describe("ModalQuestionDetailsRefactored — depois de salvar", () => {
     expect(screen.queryByText("Erro ao carregar questão")).toBeNull();
   });
 });
+
+describe("ModalQuestionDetailsRefactored — anterior/próxima", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    getQuestionById.mockResolvedValue(questao("q"));
+  });
+
+  const abrir = (lista: Record<string, unknown>) =>
+    render(
+      <ModalQuestionDetailsRefactored
+        isOpen
+        onClose={vi.fn()}
+        questionId="q1"
+        infos={{}}
+        lista={lista}
+      />,
+    );
+
+  it("mostra a posição e chama a próxima e a anterior", async () => {
+    const anterior = vi.fn();
+    const proxima = vi.fn();
+    abrir({ anterior, proxima, posicao: 6, total: 100 });
+
+    expect(await screen.findByText("6 de 100")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Próxima questão" }));
+    fireEvent.click(screen.getByRole("button", { name: "Questão anterior" }));
+    expect(proxima).toHaveBeenCalledTimes(1);
+    expect(anterior).toHaveBeenCalledTimes(1);
+  });
+
+  it("nas pontas, o botão fica desabilitado", async () => {
+    abrir({ proxima: vi.fn(), posicao: 1, total: 100 });
+    expect(
+      await screen.findByRole("button", { name: "Questão anterior" }),
+    ).toHaveProperty("disabled", true);
+    expect(
+      screen.getByRole("button", { name: "Próxima questão" }),
+    ).toHaveProperty("disabled", false);
+  });
+
+  it("sem lista (quem monta não sabe navegar): sem os botões", async () => {
+    render(
+      <ModalQuestionDetailsRefactored isOpen onClose={vi.fn()} questionId="q1" infos={{}} />,
+    );
+    await screen.findByText("q");
+    expect(screen.queryByRole("button", { name: "Próxima questão" })).toBeNull();
+  });
+});

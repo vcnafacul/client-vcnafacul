@@ -26,8 +26,10 @@ import { ModalQuestionDetailsRefactored } from "./modals/ModalQuestionDetailsRef
 import {
   abaAoNavegar,
   abrirNaTrilha,
+  depoisDeExcluir,
   voltarNaTrilha,
 } from "./components/pilhaDaTrilha";
+import { passosDaLista, type Passo } from "./components/passosDaLista";
 
 function DashQuestionNew() {
   const {
@@ -130,6 +132,46 @@ function DashQuestionNew() {
     setSelectedQuestionId(novaTrilha[novaTrilha.length - 1]);
     setAbaInicial(abaAoNavegar(acao));
   };
+
+  /*
+    ⚠️ Anterior/Próxima no modal: entre as questões FILTRADAS, atravessando a
+    página (passosDaLista). A posição é a da questão aberta pela listagem —
+    a raiz da trilha —, e trocar começa uma trilha nova.
+  */
+  const [abrirAoCarregar, setAbrirAoCarregar] = useState<
+    "primeira" | "ultima" | null
+  >(null);
+  const abrirDaLista = (id: string) => {
+    setSelectedQuestionId(id);
+    setTrilha([id]);
+    setAbaInicial(undefined);
+  };
+  const passos = passosDaLista({
+    indice: questions.findIndex((q) => q._id === trilha[0]),
+    pagina: currentPage,
+    limite: limitCards,
+    total: totalItems,
+  });
+  const executarPasso = (passo: Passo | null) =>
+    passo &&
+    (() => {
+      if (passo.tipo === "mesmaPagina") {
+        abrirDaLista(questions[passo.indice]._id);
+      } else {
+        setAbrirAoCarregar(passo.abrir);
+        setCurrentPage(passo.pagina);
+      }
+    });
+  useEffect(() => {
+    if (!abrirAoCarregar || !questions.length) return;
+    abrirDaLista(
+      abrirAoCarregar === "primeira"
+        ? questions[0]._id
+        : questions[questions.length - 1]._id,
+    );
+    setAbrirAoCarregar(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questions]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -373,12 +415,22 @@ function DashQuestionNew() {
         voltar={() => irNaLinhagem(voltarNaTrilha(trilha), "voltar")}
         trilha={trilha}
         abaInicial={abaInicial}
+        lista={{
+          anterior: executarPasso(passos.anterior) || undefined,
+          proxima: executarPasso(passos.proxima) || undefined,
+          posicao: passos.posicao,
+          total: totalItems,
+        }}
         /*
-          ⚠️ Card 33: a questão excluída some da lista — fechar e recarregar a
-          página atual, sem perder os filtros.
+          ⚠️ Card 33: a questão excluída some da lista — recarregar a página
+          atual, sem perder os filtros. Se ela foi aberta a partir de outra
+          (a cópia aberta pela Linhagem), volta para a anterior, na Linhagem;
+          senão fecha, como antes.
         */
         aoExcluir={() => {
-          handleCloseModal();
+          const depois = depoisDeExcluir(trilha);
+          if (depois.acao === "voltar") irNaLinhagem(depois.trilha, "voltar");
+          else handleCloseModal();
           getQuestions(currentPage);
         }}
       />
