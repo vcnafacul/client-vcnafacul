@@ -37,4 +37,5 @@ export interface CreateRoleDto {
   enviarNotificacao: boolean;
   visualizarQuestoesCursinho: boolean;
   editarQuestoesCursinho: boolean;
+  validarQuestoesCursinho: boolean;
 }

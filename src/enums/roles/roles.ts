@@ -35,6 +35,8 @@ export enum Roles {
   // tickets/023, card 01/11: banco de questões do lado do cursinho.
   visualizarQuestoesCursinho = "visualizarQuestoesCursinho",
   editarQuestoesCursinho = "editarQuestoesCursinho",
+  // tickets/024: o cursinho ajuda a validar (aprovar/recusar).
+  validarQuestoesCursinho = "validarQuestoesCursinho",
 }
 
 export const RolesLabel = [
@@ -80,6 +82,10 @@ export const RolesLabel = [
   {
     value: Roles.editarQuestoesCursinho,
     label: "Editar questões e montar as provas do cursinho",
+  },
+  {
+    value: Roles.validarQuestoesCursinho,
+    label: "Validar questões (aprovar e recusar)",
   },
   {
     value: Roles.uploadNews,
