@@ -17,7 +17,11 @@ const montar = (over: Record<string, unknown> = {}) => {
       onClose={onClose}
       campos={["enunciado"]}
       respostas={10}
-      provas={3}
+      provas={[
+        { provaNome: "Simulado A", receberNovasVersoes: true },
+        { provaNome: "Simulado B", receberNovasVersoes: true },
+        { provaNome: "ENEM do C", receberNovasVersoes: false },
+      ]}
       antes={base}
       depois={{ ...base, textoQuestao: "Qual é a moeda?" }}
       onConfirmar={onConfirmar}
@@ -42,7 +46,9 @@ describe("ModalEscolhaAoSalvar (card 27)", () => {
   });
 
   it("⚠️ os textos falam da CONSEQUÊNCIA na prova, não de 'versão'", () => {
-    const { container } = montar();
+    const { container } = montar({
+      provas: [1, 2, 3].map((i) => ({ provaNome: `P${i}`, receberNovasVersoes: true })),
+    });
 
     const novaVersao = container.querySelector("[data-opcao='novaVersao']")!
       .parentElement!;
@@ -127,7 +133,9 @@ describe("ModalEscolhaAoSalvar (card 27)", () => {
   });
 
   it("uma prova só fica no singular", () => {
-    const { container } = montar({ provas: 1 });
+    const { container } = montar({
+      provas: [{ provaNome: "P", receberNovasVersoes: true }],
+    });
 
     expect(
       container.querySelector("[data-opcao='novaVersao']")!.parentElement!
@@ -141,5 +149,25 @@ describe("ModalEscolhaAoSalvar (card 27)", () => {
     const { container } = montar();
 
     expect(container.textContent?.toLowerCase()).not.toContain("duplicar");
+  });
+});
+
+describe("ModalEscolhaAoSalvar — provas que recebem × fixas (023 · 10)", () => {
+  it("fala dos dois grupos e lista os nomes", () => {
+    const { container } = montar();
+    expect(container.textContent).toContain("2 provas passam a usar a nova versão");
+    expect(container.textContent).toContain(
+      "1 prova está com versões fixas e continua com esta",
+    );
+    const lista = container.querySelector("[data-provas-da-versao]")!;
+    expect(lista.textContent).toContain("Simulado A, Simulado B");
+    expect(lista.textContent).toContain("ENEM do C");
+  });
+
+  it("⚠️ a correção avisa que muda também as provas com versões fixas", () => {
+    const { container } = montar();
+    expect(container.textContent).toContain(
+      "A correção vale para todas as provas que usam a questão, inclusive as com versões fixas.",
+    );
   });
 });

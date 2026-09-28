@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { podeVerBanco } from "@/pages/dashQuestionNew/permissoesDoBanco";
 import Analytics from "@/pages/analytics";
 import { ConfirmEnrolled } from "@/pages/confirmEnrolled";
 import EnrollmentConfirmation from "@/pages/enrollmentConfirmation";
@@ -315,9 +316,7 @@ export function PlatformRoutes() {
         <Route
           path={DASH_QUESTION}
           element={
-            <ProtectedRoutePermission
-              permission={data.permissao[Roles.visualizarQuestao]}
-            >
+            <ProtectedRoutePermission permission={podeVerBanco(data.permissao)}>
               <DashQuestionNew />
             </ProtectedRoutePermission>
           }

@@ -168,7 +168,12 @@ export const adminMenuItems: DashCardMenu[] = [
         alt: "banco_de_questao",
         text: "Banco de Questão",
         link: `/dashboard/${DASH_QUESTION}`,
-        permissions: [Roles.visualizarQuestao],
+        // tickets/023, card 08: o banco também é do cursinho.
+        permissions: [
+          Roles.visualizarQuestao,
+          Roles.visualizarQuestoesCursinho,
+          Roles.editarQuestoesCursinho,
+        ],
       },
       {
         icon: Historia,

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import RelatorioSimulado from "./index";
 import { ROTULO_DA_DIFICULDADE } from "./recorteDoRelatorio";
 
@@ -1664,4 +1664,52 @@ describe("RelatorioSimulado — link para a evolução da turma (card 17)", () =
 
     expect(document.querySelector("[data-link-desempenho]")).toBeNull();
   });
+});
+
+describe("RelatorioSimulado — abrir a questão exige ver o banco (023 · 16)", () => {
+  const QUESTOES = {
+    questoes: [
+      {
+        numero: 5,
+        questaoId: "qa",
+        respondentes: 20,
+        acertos: 18,
+        erros: 2,
+        semLeitura: 0,
+        porAlternativa: {},
+      },
+    ],
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    buscarRelatorio.mockResolvedValue(RESPOSTA);
+    buscarQuestoes.mockResolvedValue(QUESTOES);
+  });
+  afterEach(() => {
+    permissao.atual = { visualizarTurmas: true };
+  });
+
+  it("⚠️ sem permissão de ver questão: a tabela aparece, mas a questão não vira botão", async () => {
+    permissao.atual = { visualizarTurmas: true, gerenciarEstudantes: true };
+    montar();
+    await screen.findByText("Ana Silva");
+    abrirAba(/Questões/);
+    // a linha da questão 5 está lá (não passou em branco)…
+    const painel = await screen.findByRole("tabpanel");
+    expect(await within(painel).findByText("5")).toBeInTheDocument();
+    // …mas não é botão
+    expect(within(painel).queryByRole("button", { name: "5" })).not.toBeInTheDocument();
+  });
+
+  it.each(["visualizarQuestao", "visualizarQuestoesCursinho", "editarQuestoesCursinho"])(
+    "com %s: a questão vira botão (preview)",
+    async (perm) => {
+      permissao.atual = { visualizarTurmas: true, [perm]: true };
+      montar();
+      await screen.findByText("Ana Silva");
+      abrirAba(/Questões/);
+      expect(await screen.findByRole("button", { name: "5" })).toBeInTheDocument();
+    },
+  );
 });

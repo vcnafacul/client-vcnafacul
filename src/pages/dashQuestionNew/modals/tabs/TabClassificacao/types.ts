@@ -1,3 +1,4 @@
+import { DonoDaProva } from "@/dtos/prova/donoDaProva";
 import { Question } from "@/dtos/question/questionDTO";
 
 /**
@@ -24,7 +25,8 @@ export interface ClassificacaoInfos {
   frentes: FrenteOption[];
 }
 
-export interface ProvaOption {
+/** Com dono e `podeComporProva` do ms (tickets/023, card 07). */
+export interface ProvaOption extends DonoDaProva {
   _id: string;
   nome: string;
   filename?: string;

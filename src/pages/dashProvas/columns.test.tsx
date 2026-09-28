@@ -44,7 +44,7 @@ function texto(id: string, p: Prova): string {
 }
 
 describe("colunas do banco de provas", () => {
-  it("são as 8 da tela, nesta ordem", () => {
+  it("são as 9 da tela, nesta ordem", () => {
     expect(colunasDeProva.map((c) => c.id)).toEqual([
       "nome",
       "categoria",
@@ -52,6 +52,7 @@ describe("colunas do banco de provas", () => {
       "edicao",
       "progresso",
       "gabarito",
+      "versoes",
       "createdAt",
       "status",
     ]);
