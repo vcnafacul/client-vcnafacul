@@ -15,6 +15,8 @@ import type {
   RelatorioDoSimulado,
 } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
+import { Roles } from "@/enums/roles/roles";
+import { useAuthStore } from "@/store/auth";
 import { buscarQuestoes } from "@/services/relatorioSimulado/buscarQuestoes";
 import { buscarRelatorio } from "@/services/relatorioSimulado/buscarRelatorio";
 import { useEffect, useMemo, useState } from "react";
@@ -149,6 +151,13 @@ export function RelatorioDoSimuladoConteudo({
    */
   linkDoDesempenho?: { href?: string; aoClicar?: () => void };
 }) {
+  // tickets/023, card 16 — as mesmas permissões da rota `GET questoes/:id`.
+  const { data: auth } = useAuthStore();
+  const podeVerQuestao = !!(
+    auth.permissao?.[Roles.visualizarQuestao] ||
+    auth.permissao?.[Roles.visualizarQuestoesCursinho] ||
+    auth.permissao?.[Roles.editarQuestoesCursinho]
+  );
   const [relatorio, setRelatorio] = useState<RelatorioDoSimulado | null>(null);
   const [estado, setEstado] = useState<Estado>("loading");
   const [sort, setSort] = useState<SortState | undefined>({
@@ -669,7 +678,13 @@ export function RelatorioDoSimuladoConteudo({
               estado={estadoQuestoes}
               onRetry={carregarQuestoes}
               nomeArquivo={nomeDoArquivo("questoes", simuladoId ?? "", turmaId)}
-              token={token}
+              /*
+                ⚠️ tickets/023, card 16: o preview busca a questão em
+                `GET questoes/:id`, que passou a exigir permissão de ver o
+                banco. Sem ela, nada de token: a linha não vira botão e não
+                existe um clique que só sabe dar 403.
+              */
+              token={podeVerQuestao ? token : undefined}
               /*
                 ⚠️ Calculada AQUI e passada pronta: a flag `leitura_suspeita`
                 depende do conjunto, e a tela já tem a mediana para o alerta.
