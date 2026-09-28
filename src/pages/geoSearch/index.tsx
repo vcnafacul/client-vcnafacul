@@ -6,12 +6,12 @@ import { TypeProblem } from "@/enums/audit/typeProblem";
 import { Marker, TypeMarker } from "@/types/map/marker";
 import leaflet, { type Map as LeafletMap } from "leaflet";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
 import BaseTemplate from "../../components/templates/baseTemplate";
-import { GEOLOCATION_REGISTER } from "../../routes/path";
 import { BuscaCursinhos } from "./components/BuscaCursinhos";
 import { GeoCardList } from "./components/GeoCardList";
+import { ModalNaoEncontrei } from "./components/ModalNaoEncontrei";
 import { MapaController } from "./components/MapaController";
 import {
   LIMITE_CELULAR,
@@ -37,7 +37,7 @@ export const DESLOCAMENTO_DO_CARTAO_PX = 210;
  * visível (como no QuintoAndar); o 06, a busca rápida — com termo, lista e
  * pins passam a ser os resultados, e o termo fica em `?q=` (dá para
  * compartilhar e voltar); o 07, o cartão do cursinho sobre o mapa, com
- * reportar. Falta o modal do cadastro (08).
+ * reportar; o 08, o "Cadastre um novo cursinho" com o modal de confirmação.
  *
  * ⚠️ Breakpoints do projeto: `md` = 1200px. Metade/metade de 1200px para
  * cima; abaixo disso, mapa em cima (45vh) e lista embaixo.
@@ -52,6 +52,7 @@ function GeoSearch() {
   /** Escolhido pelo clique no card ou no pin (abre o card do mapa no 07). */
   const [escolhidoId, setEscolhidoId] = useState<string | null>(null);
   const [reportando, setReportando] = useState(false);
+  const [confirmandoCadastro, setConfirmandoCadastro] = useState(false);
   const mapa = useRef<LeafletMap | null>(null);
   const [mapaPronto, setMapaPronto] = useState(false);
   const cards = useRef(new Map<string, HTMLElement>());
@@ -251,11 +252,6 @@ function GeoSearch() {
               />
             </div>
 
-            {/*
-              08 troca por botão + modal "você não encontrou?". Até lá, um
-              link direto: se a develop subir antes do 05/08, a pessoa ainda
-              consegue cadastrar.
-            */}
             <div
               data-slot="cadastro"
               data-destaque={semResultado || undefined}
@@ -268,19 +264,24 @@ function GeoSearch() {
               <p className="text-sm text-slate-600">
                 Não encontrou um cursinho que conhece?
               </p>
-              <Link
-                to={GEOLOCATION_REGISTER}
+              {/* 08: confirma que não achou antes de ir ao formulário. */}
+              <button
+                type="button"
+                onClick={() => setConfirmandoCadastro(true)}
                 className="inline-flex rounded-full bg-orange px-6 py-3 font-bold text-white hover:opacity-90"
               >
                 Cadastre um novo cursinho
-              </Link>
+              </button>
             </div>
           </div>
         </section>
 
         <section
           aria-label="Mapa de cursinhos"
-          className="relative order-1 h-[45vh] bg-slate-100 md:order-2 md:h-full"
+          // ⚠️ `isolate`: os z-index daqui (busca, cartão, controles do
+          // Leaflet) ficam contidos na coluna do mapa — sem isso a busca
+          // aparecia por cima do fundo dos modais (card 08).
+          className="relative isolate order-1 h-[45vh] bg-slate-100 md:order-2 md:h-full"
         >
           {/* 07: card do cursinho */}
           <div
@@ -323,21 +324,27 @@ function GeoSearch() {
               acoes={<div data-slot="confirmacao-mapa" />}
             />
           </div>
-          {reportando && escolhido && (
-            <ReportLC
-              entityId={escolhido.id}
-              entityName={escolhido.infos.name}
-              type={
-                escolhido.type === TypeMarker.geo
-                  ? TypeProblem.GEO
-                  : TypeProblem.COLLEGE
-              }
-              isOpen={reportando}
-              handleClose={() => setReportando(false)}
-            />
-          )}
+          <ModalNaoEncontrei
+            aberto={confirmandoCadastro}
+            onFechar={() => setConfirmandoCadastro(false)}
+            termo={termo}
+          />
         </section>
       </div>
+      {/* Fora da coluna do mapa (que é `isolate`): o modal não usa portal. */}
+      {reportando && escolhido && (
+        <ReportLC
+          entityId={escolhido.id}
+          entityName={escolhido.infos.name}
+          type={
+            escolhido.type === TypeMarker.geo
+              ? TypeProblem.GEO
+              : TypeProblem.COLLEGE
+          }
+          isOpen={reportando}
+          handleClose={() => setReportando(false)}
+        />
+      )}
     </BaseTemplate>
   );
 }

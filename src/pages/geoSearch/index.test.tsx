@@ -222,11 +222,24 @@ describe("Localize um Cursinho — esqueleto (card 04)", () => {
     ).toBeInTheDocument();
   });
 
-  it("⚠️ já leva ao cadastro (até o 08 trocar pelo modal)", async () => {
+  it("⚠️ 'Cadastre um novo cursinho' abre a confirmação (card 08), sem ir direto ao formulário", async () => {
     await abrir();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Cadastre um novo cursinho" }),
+    );
     expect(
-      screen.getByRole("link", { name: "Cadastre um novo cursinho" }),
-    ).toHaveAttribute("href", "/localiza-cursinho/cadastro");
+      await screen.findByRole("dialog", {
+        name: "Você não encontrou o cursinho?",
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("o modal mostra o termo buscado", async () => {
+    await abrir("/localiza-cursinho?q=cursinho da vila");
+    fireEvent.click(
+      screen.getByRole("button", { name: "Cadastre um novo cursinho" }),
+    );
+    expect(await screen.findByText('"cursinho da vila"')).toBeInTheDocument();
   });
 
   it("tem os lugares dos próximos cards", async () => {
