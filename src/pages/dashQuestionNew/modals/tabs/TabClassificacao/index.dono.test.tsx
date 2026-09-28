@@ -1,8 +1,9 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
+const auth = vi.hoisted(() => ({ permissao: {} as Record<string, boolean> }));
 vi.mock("@/store/auth", () => ({
-  useAuthStore: () => ({ data: { token: "tok", permissao: {} } }),
+  useAuthStore: () => ({ data: { token: "tok", permissao: auth.permissao } }),
 }));
 vi.mock("@/services/prova/getMissingNumber", () => ({
   getMissingNumber: vi.fn().mockResolvedValue([7, 8]),
@@ -85,5 +86,62 @@ describe("TabClassificacao — composição só na prova própria (023 · 08)", 
     fireEvent.click(screen.getByText("Adicionar em uma prova"));
     expect(within(document.body).getByText("Outra do A")).toBeInTheDocument();
     expect(within(document.body).queryByText("ENEM 2023")).toBeNull();
+  });
+});
+
+describe("TabClassificacao — área/frente1 em prova oficial (023 · 17)", () => {
+  const OFICIAL = {
+    provaId: "enem",
+    provaNome: "ENEM 2023 Dia 2",
+    numero: 140,
+    cursinhoId: null,
+    protegida: true,
+    selecionavel: false,
+    podeComporProva: false,
+  };
+  const comOficial = () =>
+    ({
+      _id: "q1",
+      enemArea: "Matemática",
+      materia: "m1",
+      frente1: "f1",
+      status: 0,
+      provasContendo: [PA, OFICIAL],
+      provaBase: "pa",
+    }) as never;
+  const editar = () => {
+    render(<TabClassificacao question={comOficial()} infos={infos} canEdit />);
+    fireEvent.click(screen.getByText("Editar Classificação"));
+  };
+  // Área, disciplina e frente principal — o combobox de cada rótulo.
+  const selects = () =>
+    ["Área do Conhecimento ENEM *", "Disciplina *", "Frente Principal *"].map(
+      (rotulo) =>
+        within(screen.getByText(rotulo).parentElement!).getByRole("combobox"),
+    );
+
+  afterEach(() => {
+    auth.permissao = {};
+  });
+
+  it("sem criarQuestao: aviso com o nome da prova, e área/disciplina/frente travadas", () => {
+    editar();
+    expect(screen.getByTestId("trava-area-frente")).toHaveTextContent(
+      "Esta questão está numa prova oficial (ENEM 2023 Dia 2)",
+    );
+    for (const s of selects()) expect(s).toBeDisabled();
+  });
+
+  it("com criarQuestao (equipe da plataforma): sem trava", () => {
+    auth.permissao = { criarQuestao: true };
+    editar();
+    expect(screen.queryByTestId("trava-area-frente")).toBeNull();
+    expect(selects()[0]).toBeEnabled();
+  });
+
+  it("questão só em provas de cursinho: sem trava", () => {
+    render(<TabClassificacao question={questao("pa")} infos={infos} canEdit />);
+    fireEvent.click(screen.getByText("Editar Classificação"));
+    expect(screen.queryByTestId("trava-area-frente")).toBeNull();
   });
 });
