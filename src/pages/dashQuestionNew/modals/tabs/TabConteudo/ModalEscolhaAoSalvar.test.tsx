@@ -171,3 +171,20 @@ describe("ModalEscolhaAoSalvar — provas que recebem × fixas (023 · 10)", () 
     );
   });
 });
+
+describe("ModalEscolhaAoSalvar — questão que já teve versão nova (023 · 18)", () => {
+  it("⚠️ 'Nova versão' desabilitada, com o motivo, e Correção selecionada", () => {
+    const { container } = montar({ permiteNovaVersao: false });
+    const nova = container.querySelector(
+      "[data-opcao='novaVersao']",
+    ) as HTMLInputElement;
+    expect(nova.disabled).toBe(true);
+    expect(nova.parentElement!.textContent).toContain(
+      "Esta questão já tem uma versão mais nova",
+    );
+    expect(
+      (container.querySelector("[data-opcao='correcao']") as HTMLInputElement)
+        .checked,
+    ).toBe(true);
+  });
+});

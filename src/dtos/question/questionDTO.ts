@@ -75,6 +75,8 @@ export interface QuestionBase {
    * conteúdo (card 26). É a que os históricos anteriores à versão apontam.
    */
   congelada?: boolean;
+  /** Já ganhou versão nova (tickets/023, card 18): não aceita outra. */
+  teveSucessora?: boolean;
 }
 
 export type TipoOrigem = "copia" | "versao";

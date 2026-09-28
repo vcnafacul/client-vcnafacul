@@ -4,6 +4,7 @@ import {
   escolhaSugerida,
   textoDaCorrecao,
   textoDaNovaVersao,
+  TEXTO_SEM_NOVA_VERSAO,
   separarProvas,
   type ProvaDaQuestao,
   type EscolhaDeEdicao,
@@ -34,6 +35,7 @@ export function ModalEscolhaAoSalvar({
   antes,
   depois,
   onConfirmar,
+  permiteNovaVersao = true,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -46,6 +48,8 @@ export function ModalEscolhaAoSalvar({
   antes: Record<string, unknown>;
   depois: Record<string, unknown>;
   onConfirmar: (escolha: EscolhaDeEdicao) => void;
+  /** `false` quando a questão já teve versão nova (tickets/023, card 18). */
+  permiteNovaVersao?: boolean;
 }) {
   /*
     ⚠️ **A heurística escolhe o DEFAULT, a pessoa decide.** Sem ela o default
@@ -53,7 +57,7 @@ export function ModalEscolhaAoSalvar({
     o que ele sabe (o diff); a pessoa decide o que só ela sabe (o significado).
   */
   const [escolha, setEscolha] = useState<EscolhaDeEdicao>(() =>
-    escolhaSugerida(antes, depois),
+    permiteNovaVersao ? escolhaSugerida(antes, depois) : "correcao",
   );
 
   return (
@@ -95,12 +99,19 @@ export function ModalEscolhaAoSalvar({
             data-opcao="novaVersao"
             className="mt-1"
             checked={escolha === "novaVersao"}
+            disabled={!permiteNovaVersao}
             onChange={() => setEscolha("novaVersao")}
           />
           <span className="text-sm">
             <strong className="block">Nova versão</strong>
-            {textoDaNovaVersao(provas)}
-            <ProvasDosDoisGrupos provas={provas} />
+            {permiteNovaVersao ? (
+              <>
+                {textoDaNovaVersao(provas)}
+                <ProvasDosDoisGrupos provas={provas} />
+              </>
+            ) : (
+              TEXTO_SEM_NOVA_VERSAO
+            )}
           </span>
         </label>
 

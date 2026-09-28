@@ -134,6 +134,16 @@ describe("textoDaNovaVersao", () => {
     expect(t).toContain("2 provas estão com versões fixas e continuam com esta");
   });
 
+  it("⚠️ 023 · 18 — misto: NÃO diz que congela; diz que segue editável nas fixas", () => {
+    const t = textoDaNovaVersao(provas(2, 1));
+    expect(t).not.toContain("congela");
+    expect(t).toContain("que segue valendo e editável nelas");
+  });
+
+  it("023 · 18 — todas recebem: congela, como antes", () => {
+    expect(textoDaNovaVersao(provas(2))).toContain("Esta questão congela");
+  });
+
   it("023 · 10 — misto no singular", () => {
     const t = textoDaNovaVersao(provas(1, 1));
     expect(t).toContain("1 prova passa a usar a nova versão");
@@ -143,8 +153,11 @@ describe("textoDaNovaVersao", () => {
   it("⚠️ 023 · 10 — todas travadas: nenhuma recebe agora", () => {
     const t = textoDaNovaVersao(provas(0, 2));
     expect(t).toContain(
-      "Nenhuma prova recebe a nova versão agora — todas estão com versões fixas.",
+      "Nenhuma prova recebe a nova versão agora — todas estão com versões fixas",
     );
+    // 023 · 18: não congela — segue valendo, editável
+    expect(t).toContain("continua valendo em todas, editável");
+    expect(t).not.toContain("congela");
     expect(t).toContain("fica disponível para os donos aplicarem");
     expect(t).not.toMatch(/passa[m]? a usar/);
   });
