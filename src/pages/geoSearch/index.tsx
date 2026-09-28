@@ -9,6 +9,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
 import BaseTemplate from "../../components/templates/baseTemplate";
+import { AvisoLogin } from "./components/AvisoLogin";
+import { BotaoConfirmar } from "./components/BotaoConfirmar";
 import { BuscaCursinhos } from "./components/BuscaCursinhos";
 import { GeoCardList } from "./components/GeoCardList";
 import { ModalNaoEncontrei } from "./components/ModalNaoEncontrei";
@@ -20,7 +22,9 @@ import {
   buscarCursinhos,
   cursinhosNaArea,
   normalizar,
+  porConfianca,
 } from "./regras";
+import { useConfirmacoes } from "./useConfirmacoes";
 import { useGeoPublico, useTelaEstreita } from "./useGeoPublico";
 
 const FILTROS_INICIAIS: TypeMarker[] = [TypeMarker.geo, TypeMarker.univPublic];
@@ -37,7 +41,9 @@ export const DESLOCAMENTO_DO_CARTAO_PX = 210;
  * visível (como no QuintoAndar); o 06, a busca rápida — com termo, lista e
  * pins passam a ser os resultados, e o termo fica em `?q=` (dá para
  * compartilhar e voltar); o 07, o cartão do cursinho sobre o mapa, com
- * reportar; o 08, o "Cadastre um novo cursinho" com o modal de confirmação.
+ * reportar; o 08, o "Cadastre um novo cursinho" com o modal de confirmação;
+ * o 09, o "informação correta" (👍) nos dois cartões, que também ordena a
+ * lista.
  *
  * ⚠️ Breakpoints do projeto: `md` = 1200px. Metade/metade de 1200px para
  * cima; abaixo disso, mapa em cima (45vh) e lista embaixo.
@@ -53,6 +59,8 @@ function GeoSearch() {
   const [escolhidoId, setEscolhidoId] = useState<string | null>(null);
   const [reportando, setReportando] = useState(false);
   const [confirmandoCadastro, setConfirmandoCadastro] = useState(false);
+  const [pedindoLogin, setPedindoLogin] = useState(false);
+  const confirmacoes = useConfirmacoes();
   const mapa = useRef<LeafletMap | null>(null);
   const [mapaPronto, setMapaPronto] = useState(false);
   const cards = useRef(new Map<string, HTMLElement>());
@@ -78,8 +86,30 @@ function GeoSearch() {
     );
   }, [termo, setParams]);
 
+  /*
+    ⚠️ A ordem usa um RETRATO das confirmações, tirado quando a área, a busca
+    ou os dados mudam — não o contador ao vivo. Senão o card reordenaria no
+    clique do 👍 e "fugiria" do dedo (card 09).
+  */
+  const [retrato, setRetrato] = useState<Map<string, number>>(new Map());
+  useEffect(() => {
+    setRetrato(new Map(geos.map((g) => [g.id, confirmacoes.contagem(g)])));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [geos, limites, termo]);
+  const ordem = useMemo(
+    () => porConfianca((g) => retrato.get(g.id) ?? g.confirmations ?? 0),
+    [retrato],
+  );
+
   const buscando = normalizar(termo) !== "";
+  // ⚠️ O mapa e o enquadramento usam os resultados SEM depender da ordem (que
+  // muda a cada arrasto, pelo retrato): senão o cluster seria recriado e o
+  // mapa piscaria — o teste do card 05 pegou isso.
   const resultados = useMemo(() => buscarCursinhos(geos, termo), [geos, termo]);
+  const resultadosOrdenados = useMemo(
+    () => [...resultados].sort(ordem),
+    [resultados, ordem],
+  );
 
   /*
     ⚠️ Memoizado só por dados e filtro — NUNCA pela área visível. O
@@ -109,9 +139,12 @@ function GeoSearch() {
   const { itens, total } = useMemo(
     () =>
       buscando
-        ? { itens: resultados.slice(0, limite), total: resultados.length }
-        : cursinhosNaArea(geos, limites, limite),
-    [buscando, resultados, geos, limites, limite],
+        ? {
+            itens: resultadosOrdenados.slice(0, limite),
+            total: resultadosOrdenados.length,
+          }
+        : cursinhosNaArea(geos, limites, limite, ordem),
+    [buscando, resultadosOrdenados, geos, limites, limite, ordem],
   );
   const semResultado =
     buscando && estado === "pronto" && resultados.length === 0;
@@ -185,6 +218,23 @@ function GeoSearch() {
     return () => document.removeEventListener("keydown", aoTeclar);
   }, [escolhido, reportando, fecharCartao]);
 
+  const botaoConfirmar = (id: string) => {
+    const geo = geos.find((g) => g.id === id);
+    if (!geo) return null;
+    return (
+      <BotaoConfirmar
+        confirmado={confirmacoes.confirmado(id)}
+        contagem={confirmacoes.contagem(geo)}
+        ocupado={confirmacoes.emVoo(id)}
+        onClick={() =>
+          confirmacoes.logado
+            ? void confirmacoes.alternar(id)
+            : setPedindoLogin(true)
+        }
+      />
+    );
+  };
+
   const refDoCard = useCallback((id: string, el: HTMLElement | null) => {
     if (el) cards.current.set(id, el);
     else cards.current.delete(id);
@@ -249,6 +299,7 @@ function GeoSearch() {
                 onEscolher={escolherNaLista}
                 tentarDeNovo={tentarDeNovo}
                 refDoCard={refDoCard}
+                acaoDoCard={(g) => botaoConfirmar(g.id)}
               />
             </div>
 
@@ -321,9 +372,18 @@ function GeoSearch() {
               // Altura relativa ao mapa (no celular ele tem só 45vh), sem
               // cobrir a busca no topo.
               className="left-3 right-3 bottom-3 z-[600] max-h-[calc(100%-5.5rem)] md:left-auto md:right-6 md:bottom-6 md:w-[420px] md:max-h-[calc(100%-8rem)]"
-              acoes={<div data-slot="confirmacao-mapa" />}
+              acoes={
+                <div data-slot="confirmacao-mapa" className="flex items-center">
+                  {escolhido?.type === TypeMarker.geo &&
+                    botaoConfirmar(escolhido.id)}
+                </div>
+              }
             />
           </div>
+          <AvisoLogin
+            aberto={pedindoLogin}
+            onFechar={() => setPedindoLogin(false)}
+          />
           <ModalNaoEncontrei
             aberto={confirmandoCadastro}
             onFechar={() => setConfirmandoCadastro(false)}

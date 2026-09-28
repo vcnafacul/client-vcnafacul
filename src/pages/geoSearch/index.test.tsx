@@ -7,6 +7,7 @@ import {
 } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { useAuthStore } from "@/store/auth";
 import type { Limites } from "./regras";
 
 vi.mock("../../components/templates/baseTemplate", () => ({
@@ -62,6 +63,18 @@ vi.mock("./components/MapaController", () => ({
 }));
 
 const api = vi.hoisted(() => ({ buscarGeoPublico: vi.fn() }));
+const conf = vi.hoisted(() => ({
+  confirmGeo: vi.fn(),
+  unconfirmGeo: vi.fn(),
+  getMyConfirmations: vi.fn(),
+}));
+vi.mock("@/services/geolocation/confirmation", () => conf);
+const toasts = vi.hoisted(() => ({
+  error: vi.fn(),
+  success: vi.fn(),
+  info: vi.fn(),
+}));
+vi.mock("react-toastify", () => ({ toast: toasts }));
 // O modal de reportar tem teste próprio; aqui só importa o que ele recebe.
 vi.mock("@/components/organisms/map/modal/report", () => ({
   default: (p: { entityId: string; type: string }) => (
@@ -74,7 +87,15 @@ vi.mock("@/services/geolocation/getGeolocation", () => api);
 
 import GeoSearch from ".";
 
-const geo = (id: string, lat: number, lon: number, type = 0) => ({
+const geo = (
+  id: string,
+  lat: number,
+  lon: number,
+  type = 0,
+  confirmations = 0,
+) => ({
+  confirmations,
+  infoUpdatedAt: null,
   id,
   name: `Cursinho ${id}`,
   state: "SP",
@@ -110,6 +131,11 @@ async function abrir(url = "/localiza-cursinho") {
 const ultimasProps = () => mapBox.props[mapBox.props.length - 1];
 
 beforeEach(() => {
+  useAuthStore.setState((s) => ({ data: { ...s.data, token: "" } }));
+  conf.confirmGeo.mockReset().mockResolvedValue(undefined);
+  conf.unconfirmGeo.mockReset().mockResolvedValue(undefined);
+  conf.getMyConfirmations.mockReset().mockResolvedValue([]);
+  toasts.error.mockClear();
   mapBox.props = [];
   controle.mapa.flyTo.mockClear();
   controle.mapa.fitBounds.mockClear();
@@ -439,5 +465,129 @@ describe("Localiza Cursinho — cartão do mapa e reportar (card 07)", () => {
     expect(
       document.querySelector('[data-slot="confirmacao-mapa"]'),
     ).toBeTruthy();
+  });
+});
+
+describe("Localiza Cursinho — informação correta (card 09)", () => {
+  const logar = () =>
+    useAuthStore.setState((s) => ({ data: { ...s.data, token: "jwt" } }));
+  const botoesDe = (nome: string) =>
+    screen
+      .getAllByRole("button", {
+        name: /Confirmo que as informações|Você confirmou/,
+      })
+      .filter(
+        (b) =>
+          b.closest("article")?.textContent?.includes(nome) ||
+          b
+            .closest('[role="dialog"]')
+            ?.getAttribute("aria-label")
+            ?.includes(nome),
+      );
+
+  async function abrirNaArea() {
+    await abrir();
+    act(() => controle.onLimites(CAMPINAS));
+    await screen.findByRole("heading", { name: "Cursinho a" });
+  }
+
+  it("⚠️ deslogado: clique abre o aviso de login e NÃO chama a api", async () => {
+    await abrirNaArea();
+    fireEvent.click(botoesDe("Cursinho a")[0]);
+    expect(
+      await screen.findByRole("dialog", {
+        name: "Entre para confirmar informações",
+      }),
+    ).toBeInTheDocument();
+    expect(conf.confirmGeo).not.toHaveBeenCalled();
+    expect(conf.getMyConfirmations).not.toHaveBeenCalled();
+  });
+
+  it("logado: o 'me' marca o botão ao carregar", async () => {
+    logar();
+    conf.getMyConfirmations.mockResolvedValue(["b"]);
+    await abrirNaArea();
+    await waitFor(() =>
+      expect(botoesDe("Cursinho b")[0]).toHaveAttribute("aria-pressed", "true"),
+    );
+    expect(botoesDe("Cursinho a")[0]).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("⚠️ confirmar e desfazer atualizam contador e cor nos DOIS cartões (lista e mapa)", async () => {
+    logar();
+    await abrirNaArea();
+    act(() => (ultimasProps().onMarkerClick as (id: string) => void)("a"));
+    await screen.findByRole("dialog", { name: "Cursinho: Cursinho a" });
+
+    fireEvent.click(botoesDe("Cursinho a")[0]);
+    await waitFor(() =>
+      expect(conf.confirmGeo).toHaveBeenCalledWith("jwt", "a"),
+    );
+    for (const b of botoesDe("Cursinho a")) {
+      expect(b).toHaveAttribute("aria-pressed", "true");
+      expect(b).toHaveTextContent("1");
+    }
+    expect(botoesDe("Cursinho a")).toHaveLength(2);
+
+    fireEvent.click(botoesDe("Cursinho a")[1]);
+    await waitFor(() =>
+      expect(conf.unconfirmGeo).toHaveBeenCalledWith("jwt", "a"),
+    );
+    for (const b of botoesDe("Cursinho a"))
+      expect(b).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("⚠️ erro da api desfaz o otimista e avisa", async () => {
+    logar();
+    conf.confirmGeo.mockRejectedValueOnce(
+      new Error("Não foi possível confirmar a informação"),
+    );
+    await abrirNaArea();
+    fireEvent.click(botoesDe("Cursinho a")[0]);
+    await waitFor(() => expect(toasts.error).toHaveBeenCalled());
+    expect(botoesDe("Cursinho a")[0]).toHaveAttribute("aria-pressed", "false");
+    expect(botoesDe("Cursinho a")[0].textContent).toBe("");
+  });
+
+  it("clique no botão não move o mapa", async () => {
+    logar();
+    await abrirNaArea();
+    fireEvent.click(botoesDe("Cursinho a")[0]);
+    await waitFor(() => expect(conf.confirmGeo).toHaveBeenCalled());
+    expect(controle.mapa.flyTo).not.toHaveBeenCalled();
+  });
+
+  it("⚠️ a lista não reordena no clique; reordena na próxima mudança de área", async () => {
+    logar();
+    api.buscarGeoPublico.mockResolvedValue([
+      geo("a", -22.9, -47.06, 0, 1),
+      geo("b", -22.95, -47.1, 0, 1),
+    ]);
+    await abrir();
+    act(() => controle.onLimites(CAMPINAS));
+    const ordem = () =>
+      screen.getAllByRole("heading", { level: 3 }).map((h) => h.textContent);
+    await screen.findByRole("heading", { name: "Cursinho a" });
+    const antes = ordem();
+    const ultimo = antes[antes.length - 1]!;
+
+    fireEvent.click(botoesDe(ultimo)[0]); // o de baixo passa a ter 2
+    await waitFor(() => expect(conf.confirmGeo).toHaveBeenCalled());
+    expect(ordem()).toEqual(antes);
+
+    act(() => controle.onLimites({ ...CAMPINAS, norte: -22.79 }));
+    await waitFor(() => expect(ordem()[0]).toBe(ultimo));
+  });
+
+  it("universidade no cartão do mapa não tem o botão (a confirmação é de cursinho)", async () => {
+    logar();
+    await abrir();
+    act(() =>
+      (ultimasProps().onMarkerClick as (id: string) => void)("unicamp"),
+    );
+    const cartao = await screen.findByRole("dialog", {
+      name: "Universidade: Cursinho unicamp",
+    });
+    expect(cartao.querySelector("[aria-pressed]")).toBeNull();
   });
 });

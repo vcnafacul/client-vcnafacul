@@ -6,6 +6,7 @@ import {
   cursinhosNaArea,
   dentro,
   formatarData,
+  porConfianca,
   type Limites,
 } from "./regras";
 
@@ -23,6 +24,8 @@ const geo = (
     type: TypeMarker.geo,
     state: "SP",
     createdAt: "2026-01-01T12:00:00Z",
+    infoUpdatedAt: null,
+    confirmations: 0,
     ...extra,
   }) as PublicGeolocation;
 
@@ -135,5 +138,39 @@ describe("buscarCursinhos (card 06)", () => {
 
   it("termo vazio ou só espaços → nada", () => {
     expect(ids("  ")).toEqual([]);
+  });
+});
+
+describe("porConfianca (card 09)", () => {
+  it("mais confirmações primeiro; empate → atualizado mais recentemente", () => {
+    const a = geo("a", 0, 0, {
+      confirmations: 1,
+      createdAt: "2026-01-01T00:00:00Z",
+    });
+    const b = geo("b", 0, 0, {
+      confirmations: 5,
+      createdAt: "2020-01-01T00:00:00Z",
+    });
+    const c = geo("c", 0, 0, {
+      confirmations: 1,
+      createdAt: "2020-01-01T00:00:00Z",
+      infoUpdatedAt: "2026-06-01T00:00:00Z",
+    });
+    expect([a, b, c].sort(porConfianca()).map((g) => g.id)).toEqual([
+      "b",
+      "c",
+      "a",
+    ]);
+  });
+
+  it("aceita um retrato das contagens (a lista não reordena no clique)", () => {
+    const a = geo("a", 0, 0, { confirmations: 0 });
+    const b = geo("b", 0, 0, { confirmations: 3 });
+    const retrato = new Map([["a", 9]]);
+    expect(
+      [a, b]
+        .sort(porConfianca((g) => retrato.get(g.id) ?? g.confirmations))
+        .map((g) => g.id),
+    ).toEqual(["a", "b"]);
   });
 });

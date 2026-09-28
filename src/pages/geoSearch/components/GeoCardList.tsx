@@ -1,5 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import type { PublicGeolocation } from "@/types/geolocation/publicGeolocation";
+import type { ReactNode } from "react";
 import type { EstadoDaCarga } from "../useGeoPublico";
 import { GeoSearchCard } from "./GeoSearchCard";
 
@@ -15,6 +16,7 @@ type Props = {
   onEscolher: (id: string) => void;
   tentarDeNovo: () => void;
   refDoCard: (id: string, el: HTMLElement | null) => void;
+  acaoDoCard?: (geo: PublicGeolocation) => ReactNode;
 };
 
 /** Cursinhos da área visível do mapa (tickets/022, card 05). */
@@ -29,6 +31,7 @@ export function GeoCardList({
   onEscolher,
   tentarDeNovo,
   refDoCard,
+  acaoDoCard,
 }: Props) {
   if (estado === "carregando") {
     return (
@@ -92,6 +95,7 @@ export function GeoCardList({
               ativo={geo.id === ativoId}
               onFoco={onFoco}
               onEscolher={onEscolher}
+              acao={acaoDoCard?.(geo)}
             />
           </li>
         ))}
