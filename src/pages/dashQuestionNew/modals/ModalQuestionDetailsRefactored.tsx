@@ -11,6 +11,7 @@ import { PendingImageStore } from "@/utils/pendingImageStore";
 import ModalTabTemplateQuestion from "../components/ModalTabTemplateQuestion";
 import { AcoesDaQuestao } from "../components/AcoesDaQuestao";
 import { AbaLinhagem } from "../components/AbaLinhagem";
+import { NavegacaoDaLista } from "../components/NavegacaoDaLista";
 import { TrilhaDaLinhagem } from "../components/TrilhaDaLinhagem";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import { TabClassificacao } from "./tabs/TabClassificacao";
@@ -42,6 +43,15 @@ interface ModalQuestionDetailsRefactoredProps {
   voltar?: () => void;
   /** A aba que abre selecionada — "linhagem" quando se navega por ela. */
   abaInicial?: string;
+  /** Anterior/Próxima entre as questões filtradas da listagem. */
+  lista?: NavegacaoNaLista;
+}
+
+export interface NavegacaoNaLista {
+  anterior?: () => void;
+  proxima?: () => void;
+  posicao?: number | null;
+  total?: number;
 }
 
 export function ModalQuestionDetailsRefactored({
@@ -54,6 +64,7 @@ export function ModalQuestionDetailsRefactored({
   trilha,
   voltar,
   abaInicial,
+  lista,
 }: ModalQuestionDetailsRefactoredProps) {
   const {
     data: { token, permissao },
@@ -188,6 +199,7 @@ export function ModalQuestionDetailsRefactored({
       trilha={trilha}
       voltar={voltar}
       abaInicial={abaInicial}
+      lista={lista}
     />
   );
 }
@@ -210,6 +222,7 @@ function ModalContent({
   trilha = [],
   voltar,
   abaInicial,
+  lista,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -224,6 +237,7 @@ function ModalContent({
   trilha?: string[];
   voltar?: () => void;
   abaInicial?: string;
+  lista?: NavegacaoNaLista;
 }) {
   const pendingStoreRef = useRef(new PendingImageStore());
   const conteudoForm = useConteudoForm({ question, pendingStore: pendingStoreRef.current });
@@ -275,12 +289,30 @@ function ModalContent({
       className="px-4 py-2"
       abaInicial={abaInicial}
       cabecalho={
-        abrirNaLinhagem && voltar ? (
-          <TrilhaDaLinhagem
-            trilha={trilha}
-            abrir={abrirNaLinhagem}
-            voltar={() => navegar(voltar)}
-          />
+        abrirNaLinhagem || lista ? (
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            {abrirNaLinhagem && voltar ? (
+              <TrilhaDaLinhagem
+                trilha={trilha}
+                abrir={abrirNaLinhagem}
+                voltar={() => navegar(voltar)}
+              />
+            ) : (
+              <span />
+            )}
+            {/*
+              ⚠️ Pelo mesmo `navegar`: com o enunciado em edição e sujo,
+              pergunta antes de trocar de questão.
+            */}
+            {lista && (
+              <NavegacaoDaLista
+                anterior={lista.anterior && (() => navegar(lista.anterior!))}
+                proxima={lista.proxima && (() => navegar(lista.proxima!))}
+                posicao={lista.posicao}
+                total={lista.total}
+              />
+            )}
+          </div>
         ) : undefined
       }
       tabs={[
