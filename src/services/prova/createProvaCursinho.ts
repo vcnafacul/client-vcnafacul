@@ -11,11 +11,14 @@ export async function createProvaCursinho(
     headers: { Authorization: `Bearer ${token}` },
     body: data,
   });
+  /*
+    ⚠️ Qualquer erro vira exceção com a mensagem da api (tickets/023, card
+    09). Antes só o 403 lançava: um 400/404 voltava como se fosse a prova
+    criada, e a tela a pusesse na lista.
+  */
+  const corpo = await response.json().catch(() => ({}));
   if (response.status !== 201) {
-    const res = await response.json();
-    if (response.status === 403) {
-      throw new Error(res.message);
-    }
+    throw new Error(corpo?.message ?? "Erro ao criar a prova");
   }
-  return await response.json();
+  return corpo;
 }

@@ -19,6 +19,11 @@ import { updateProvaFiles } from "@/services/prova/updateProvaFiles";
 import { getProvaById } from "../../../services/prova/getProvaById";
 import SimuladosView, { type AcaoRelatorio } from "./simuladosView";
 import UploadButton from "../../../components/molecules/uploadButton";
+import { alterarReceberNovasVersoes } from "../../../services/prova/alterarReceberNovasVersoes";
+import {
+  indicadorDeVersoes,
+  OpcaoNovasVersoes,
+} from "../components/OpcaoNovasVersoes";
 
 interface ShowProvaProps {
   prova: Prova;
@@ -51,6 +56,38 @@ function ShowProva({
   const [loadingSimulados, setLoadingSimulados] = useState(false);
   const [errorSimulados, setErrorSimulados] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+
+  const [salvandoVersoes, setSalvandoVersoes] = useState(false);
+
+  /**
+   * Só o dono vê o controle (`podeComporProva` do ms). Ao MARCAR, confirma: a
+   * partir dali versões novas entram sozinhas — e as que já existem não.
+   */
+  const alterarNovasVersoes = async (valor: boolean) => {
+    if (
+      valor &&
+      !window.confirm(
+        "A partir de agora, novas versões entram nesta prova automaticamente. As que já existem não são aplicadas agora.",
+      )
+    )
+      return;
+    setSalvandoVersoes(true);
+    try {
+      const r = await alterarReceberNovasVersoes(prova._id, valor, token);
+      setFullProva((p) =>
+        p ? { ...p, receberNovasVersoes: r.receberNovasVersoes } : p,
+      );
+      toast.success(
+        valor
+          ? "A prova passa a receber novas versões."
+          : "A prova fica com as versões atuais.",
+      );
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setSalvandoVersoes(false);
+    }
+  };
 
   const percentCadastradas =
     (prova.totalQuestaoCadastradas / prova.totalQuestao) * 100;
@@ -229,6 +266,29 @@ const downloadFile = async (filename: string, fileType: string) => {
                   )}
                 </div>
               </div>
+            </div>
+
+            {/* tickets/023, card 09: novas versões das questões. */}
+            <div className="mb-6">
+              <h3 className="text-sm font-medium text-gray-700 mb-4">
+                Novas versões das questões
+              </h3>
+              {fullProva?.podeComporProva ? (
+                <OpcaoNovasVersoes
+                  checked={!!fullProva.receberNovasVersoes}
+                  onChange={alterarNovasVersoes}
+                  disabled={salvandoVersoes}
+                />
+              ) : (
+                <p
+                  data-testid="indicador-versoes"
+                  className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg"
+                >
+                  {indicadorDeVersoes(
+                    fullProva?.receberNovasVersoes ?? prova.receberNovasVersoes,
+                  )}
+                </p>
+              )}
             </div>
 
             {/* Métricas de Progresso */}

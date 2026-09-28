@@ -102,3 +102,42 @@ describe("NewProva — prova personalizada", () => {
     expect(formData.get("nomeSimulado")).toBe("Simulado de março");
   });
 });
+
+describe("NewProva — aplicar novas versões (023 · 09)", () => {
+  const criar = async () => {
+    fireEvent.change(campo("nome")!, { target: { value: "P" } });
+    fireEvent.click(screen.getByRole("button", { name: /Criar|Salvar/i }));
+    await waitFor(() => expect(createProva).toHaveBeenCalled());
+    return createProva.mock.calls[0][0];
+  };
+
+  it("⚠️ nasce desmarcado: criar sem mexer manda false", async () => {
+    montar();
+    escolherCategoriaCustom();
+    const opcao = screen.getByRole("checkbox", {
+      name: /Aplicar novas versões das questões automaticamente/,
+    });
+    expect(opcao).not.toBeChecked();
+    expect((await criar()).get("receberNovasVersoes")).toBe("false");
+  });
+
+  it("marcado manda true", async () => {
+    montar();
+    escolherCategoriaCustom();
+    fireEvent.click(
+      screen.getByRole("checkbox", { name: /Aplicar novas versões/ }),
+    );
+    expect((await criar()).get("receberNovasVersoes")).toBe("true");
+  });
+
+  it("⚠️ o exemplo avisa que correção vale para todas as provas (R4)", () => {
+    montar();
+    expect(screen.getByRole("img", { name: "Exemplo" })).toHaveAttribute(
+      "title",
+      expect.stringContaining(
+        "Correções pequenas (sem criar versão) valem para todas as provas.",
+      ),
+    );
+    expect(screen.getByText(/Desmarcado \(recomendado\)/)).toBeInTheDocument();
+  });
+});
