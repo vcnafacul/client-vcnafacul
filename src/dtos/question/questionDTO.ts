@@ -1,3 +1,4 @@
+import { DonoDaProva } from "../prova/donoDaProva";
 import { DateTime } from "luxon";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { Prova } from "../prova/prova";
@@ -45,7 +46,11 @@ export interface QuestionBase {
   reported: boolean;
   contentFormat?: "plain" | "markdown";
   assets?: string[];
-  provasContendo?: { provaId: string; provaNome: string; numero: number | null }[];
+  provasContendo?: ({
+    provaId: string;
+    provaNome: string;
+    numero: number | null;
+  } & DonoDaProva)[];
   /** Ponteiro pra prova de origem: casa com uma entry de provasContendo. */
   provaBase?: string | null;
   /**

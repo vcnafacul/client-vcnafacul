@@ -4,6 +4,7 @@ import {
   escolhaSugerida,
   textoDaCorrecao,
   textoDaNovaVersao,
+  separarProvas,
 } from "./escolhaAoSalvar";
 
 const base = {
@@ -100,19 +101,70 @@ describe("escolhaSugerida", () => {
   });
 });
 
+/** n provas que recebem novas versões e m com versões fixas. */
+const provas = (recebem: number, fixas = 0) => [
+  ...Array.from({ length: recebem }, (_, i) => ({
+    provaNome: `R${i}`,
+    receberNovasVersoes: true,
+  })),
+  ...Array.from({ length: fixas }, (_, i) => ({
+    provaNome: `F${i}`,
+    receberNovasVersoes: false,
+  })),
+];
+
 describe("textoDaNovaVersao", () => {
   it("⚠️ diz o número REAL de provas", () => {
     // Uma questão está em 2,7 simulados em média (card 22), e quem edita não
     // faz ideia disso — é o dado que faz a escolha ser informada.
-    expect(textoDaNovaVersao(3)).toContain("as 3 provas que a usam passam");
+    expect(textoDaNovaVersao(provas(3))).toContain("as 3 provas que a usam passam");
   });
 
   it("uma prova fica no singular", () => {
-    expect(textoDaNovaVersao(1)).toContain("a prova que a usa passa");
+    expect(textoDaNovaVersao(provas(1))).toContain("a prova que a usa passa");
   });
 
   it("diz que a nova começa sem estatísticas", () => {
-    expect(textoDaNovaVersao(2)).toContain("sem estatísticas");
+    expect(textoDaNovaVersao(provas(2))).toContain("sem estatísticas");
+  });
+
+  it("⚠️ 023 · 10 — misto: os dois grupos com os números reais", () => {
+    const t = textoDaNovaVersao(provas(3, 2));
+    expect(t).toContain("3 provas passam a usar a nova versão");
+    expect(t).toContain("2 provas estão com versões fixas e continuam com esta");
+  });
+
+  it("023 · 10 — misto no singular", () => {
+    const t = textoDaNovaVersao(provas(1, 1));
+    expect(t).toContain("1 prova passa a usar a nova versão");
+    expect(t).toContain("1 prova está com versões fixas e continua com esta");
+  });
+
+  it("⚠️ 023 · 10 — todas travadas: nenhuma recebe agora", () => {
+    const t = textoDaNovaVersao(provas(0, 2));
+    expect(t).toContain(
+      "Nenhuma prova recebe a nova versão agora — todas estão com versões fixas.",
+    );
+    expect(t).toContain("fica disponível para os donos aplicarem");
+    expect(t).not.toMatch(/passa[m]? a usar/);
+  });
+
+  it("api antiga (sem o campo) = recebe, como antes", () => {
+    expect(textoDaNovaVersao([{ provaNome: "P" }, { provaNome: "Q" }])).toContain(
+      "as 2 provas que a usam passam",
+    );
+  });
+
+  it("sem prova nenhuma: não fala em '0 provas'", () => {
+    const t = textoDaNovaVersao([]);
+    expect(t).not.toContain("0 provas");
+    expect(t).toContain("sem prova");
+  });
+});
+
+describe("separarProvas (023 · 10)", () => {
+  it("separa pelos nomes", () => {
+    expect(separarProvas(provas(1, 1))).toEqual({ recebem: ["R0"], mantem: ["F0"] });
   });
 });
 

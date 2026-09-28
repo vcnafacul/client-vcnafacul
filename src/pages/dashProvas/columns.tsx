@@ -3,6 +3,10 @@ import {
   StatusBadge,
   type DashColumn,
 } from "@/components/dashV2";
+import {
+  EXPLICACAO_DA_OPCAO,
+  indicadorDeVersoes,
+} from "./components/OpcaoNovasVersoes";
 import type { Prova } from "../../dtos/prova/prova";
 import { formatDate } from "../../utils/date";
 import { ProgressoCell } from "./ProgressoCell";
@@ -114,6 +118,26 @@ export const colunasDeProva: DashColumn<Prova>[] = [
     // ⚠️ `SortValue` não tem booleano — e ordenar por `String(boolean)` daria
     // "false" antes de "true" por acaso alfabético. 1/0 é explícito.
     sortValue: (p) => (temGabarito(p) ? 1 : 0),
+  },
+  {
+    /*
+      tickets/023, card 09. ⚠️ Ausente (api antiga) é "—", e não "Versões
+      fixas": sem a migração 0004 o campo não existe, e afirmar travada seria
+      mentir sobre uma prova que ainda recebe versões.
+    */
+    id: "versoes",
+    header: "Versões",
+    width: "11rem",
+    hideBelow: "md",
+    cell: (p) =>
+      p.receberNovasVersoes === undefined ? (
+        VAZIO
+      ) : (
+        <span title={EXPLICACAO_DA_OPCAO}>
+          {indicadorDeVersoes(p.receberNovasVersoes)}
+        </span>
+      ),
+    sortValue: (p) => (p.receberNovasVersoes ? 1 : 0),
   },
   {
     id: "createdAt",
