@@ -7,7 +7,10 @@ export const GOOGLE_CADASTRO_PATH = "/cadastro/google";
 export const RESET_PASSWORD_PATH = "/reset";
 export const ACCOUNT_PATH = "meu-perfil";
 export const LOGOFF_PATH = "/logoff";
-export const FORM_GEOLOCATION = "/geolocation";
+/** Localiza Cursinho: a busca (tickets/022, cards 04/05). */
+export const GEOLOCATION_SEARCH = "/localiza-cursinho";
+/** Cadastro de cursinho (o formulário `GeoForm`). */
+export const GEOLOCATION_REGISTER = "/localiza-cursinho/cadastro";
 export const DASH = "/dashboard";
 export const DASH_GEOLOCATION = "localiza-cursinho";
 export const DASH_QUESTION = "dashquestoes";

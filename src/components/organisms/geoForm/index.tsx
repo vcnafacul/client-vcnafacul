@@ -25,6 +25,8 @@ export interface EachStepProps extends StepProps {
 }
 
 export interface GeoFormProps {
+  /** Nome do cursinho já preenchido (vem da busca do Localiza Cursinho, card 08). */
+  nomeInicial?: string;
   formData: {
     step1: StepProps;
     step2: StepProps;
@@ -44,10 +46,10 @@ enum Step {
   Finish,
 }
 
-function GeoForm({ formData }: GeoFormProps) {
+function GeoForm({ formData, nomeInicial }: GeoFormProps) {
   const [stepCurrently, setStepCurrently] = useState<number>(Step.PersonalData);
   const [dataGeo, setDataGeo] = useState<CreateGeolocation>(
-    {} as CreateGeolocation
+    () => (nomeInicial ? { name: nomeInicial } : {}) as CreateGeolocation,
   );
 
   const executeAsync = useToastAsync();

@@ -1,4 +1,4 @@
-import { Geolocation } from "../../../types/geolocation/geolocation";
+import { PublicGeolocation } from "../../../types/geolocation/publicGeolocation";
 import Text from "../../atoms/text";
 
 import {
@@ -18,11 +18,19 @@ import { TypeMarker } from "../../../types/map/marker";
 import { MarkerPin } from "../../molecules/mapBox";
 
 interface MapBoxInfoProps {
-  geo?: Geolocation;
-  ctaLink: string;
+  geo?: PublicGeolocation;
+  /** Sem link, sem o botão "Cadastrar um Cursinho" (a busca já tem o seu). */
+  ctaLink?: string;
   label?: string;
   markerType?: TypeMarker;
 }
+
+/**
+ * ⚠️ Campo vazio vem `null` da api. O teste antigo (`campo?.length !== 0`) é
+ * VERDADEIRO para `null`, e mostrava ícone sem link — e o WhatsApp como
+ * `phone=55null`. Link só com valor de verdade (achado no tickets/022, 02).
+ */
+const tem = (v: string | null | undefined): v is string => !!v?.trim();
 
 function MapBoxInfoGeo({ geo, ctaLink, label, markerType }: MapBoxInfoProps) {
   return (
@@ -53,63 +61,67 @@ function MapBoxInfoGeo({ geo, ctaLink, label, markerType }: MapBoxInfoProps) {
         {geo?.phone}
       </Text>
       <div className="flex justify-around mx-auto w-96">
-        {geo?.whatsapp?.length !== 0 && (
+        {tem(geo?.whatsapp) && (
           <a
-            href={`https://api.whatsapp.com/send?phone=55${geo?.whatsapp}`}
+            href={`https://api.whatsapp.com/send?phone=55${geo.whatsapp}`}
             target="_blank"
           >
             <FaWhatsappSquare color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.email?.length !== 0 && (
-          <a href={`mailto:${geo?.email}`}>
+        {tem(geo?.email) && (
+          <a href={`mailto:${geo.email}`}>
             <FaEnvelopeSquare color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.site?.length !== 0 && (
-          <a href={geo?.site} target="_blank" rel="noreferrer">
+        {tem(geo?.site) && (
+          <a href={geo.site} target="_blank" rel="noreferrer">
             <MdOutlineTravelExplore color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.linkedin?.length !== 0 && (
-          <a href={geo?.linkedin} target="_blank" rel="noreferrer">
+        {tem(geo?.linkedin) && (
+          <a href={geo.linkedin} target="_blank" rel="noreferrer">
             <FaLinkedin color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.youtube?.length !== 0 && (
-          <a href={geo?.youtube} target="_blank" rel="noreferrer">
+        {tem(geo?.youtube) && (
+          <a href={geo.youtube} target="_blank" rel="noreferrer">
             <FaYoutubeSquare color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.facebook?.length !== 0 && (
-          <a href={geo?.facebook} target="_blank" rel="noreferrer">
+        {tem(geo?.facebook) && (
+          <a href={geo.facebook} target="_blank" rel="noreferrer">
             <FaFacebookSquare color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.instagram?.length !== 0 && (
-          <a href={geo?.instagram} target="_blank" rel="noreferrer">
+        {tem(geo?.instagram) && (
+          <a href={geo.instagram} target="_blank" rel="noreferrer">
             <FaInstagramSquare color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.twitter?.length !== 0 && (
-          <a href={geo?.twitter} target="_blank" rel="noreferrer">
+        {tem(geo?.twitter) && (
+          <a href={geo.twitter} target="_blank" rel="noreferrer">
             <FaTwitterSquare color={"#707070"} size={40} />
           </a>
         )}
-        {geo?.tiktok?.length !== 0 && (
-          <a href={geo?.tiktok} target="_blank" rel="noreferrer">
+        {tem(geo?.tiktok) && (
+          <a href={geo.tiktok} target="_blank" rel="noreferrer">
             <FaTiktok color={"#707070"} size={30} />
           </a>
         )}
       </div>
-      <Text size="tertiary" className="m-0 mt-5">
-        Conhece um cursinho popular?
-      </Text>
-      <div>
-        <BLink className="min-w-[300px]" to={ctaLink}>
-          Cadastrar um Cursinho
-        </BLink>
-      </div>
+      {ctaLink && (
+        <>
+          <Text size="tertiary" className="m-0 mt-5">
+            Conhece um cursinho popular?
+          </Text>
+          <div>
+            <BLink className="min-w-[300px]" to={ctaLink}>
+              Cadastrar um Cursinho
+            </BLink>
+          </div>
+        </>
+      )}
     </>
   );
 }

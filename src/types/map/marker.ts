@@ -1,4 +1,4 @@
-import type { Geolocation } from "../geolocation/geolocation";
+import type { PublicGeolocation } from "../geolocation/publicGeolocation";
 
 export enum TypeMarker {
   geo,
@@ -12,6 +12,7 @@ export interface MarkerPoint {
   type: TypeMarker;
 }
 
+/** Pin dos mapas públicos (home e busca): só os campos do `GET /geo/public`. */
 export interface Marker extends MarkerPoint {
-  infos: Geolocation;
+  infos: PublicGeolocation;
 }

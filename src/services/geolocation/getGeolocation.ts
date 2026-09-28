@@ -1,23 +1,35 @@
-import { Geolocation } from "../../types/geolocation/geolocation";
+import { PublicGeolocation } from "../../types/geolocation/publicGeolocation";
 import fetchWrapper from "../../utils/fetchWrapper";
-import { Paginate } from "../../utils/paginate";
 import { geolocations } from "../urls";
 
-export async function getGeolocation() : Promise<Paginate<Geolocation>> {
+/**
+ * Cursinhos e universidades aprovados, só com campos públicos. ⚠️ Não usar o
+ * `GET /geo`: ele devolve dados pessoais de quem cadastrou e validou, e vai
+ * exigir login (tickets/022, cards 01 e 01b).
+ *
+ * Lança em falha — o Localiza Cursinho mostra erro com "tentar de novo".
+ */
+const pedirGeoPublico = () =>
+  fetchWrapper(`${geolocations}/public`, {
+    headers: { "Content-Type": "application/json" },
+  });
 
-    const res = await fetchWrapper(`${geolocations}?page=1&limit=1000&status=1&text=`, {
-        headers: { "Content-Type": "application/json" },
-    });
-    if(res.status !== 200) {
-        return {
-            data: [] as Geolocation[],
-            page: 1,
-            limit: 0,
-            totalItems: 0
-        }
-    }
-
-    return await res.json()
+export async function buscarGeoPublico(): Promise<PublicGeolocation[]> {
+  const res = await pedirGeoPublico();
+  if (res.status !== 200) {
+    throw new Error("Não foi possível carregar os cursinhos");
+  }
+  return await res.json();
 }
 
-export default getGeolocation
+/**
+ * Para o mapa da home, com o comportamento de sempre: status ≠ 200 → lista
+ * vazia (o mapa segue sem pins); erro de rede propaga (a home mostra toast).
+ */
+export async function getGeolocation(): Promise<PublicGeolocation[]> {
+  const res = await pedirGeoPublico();
+  if (res.status !== 200) return [];
+  return await res.json();
+}
+
+export default getGeolocation;
