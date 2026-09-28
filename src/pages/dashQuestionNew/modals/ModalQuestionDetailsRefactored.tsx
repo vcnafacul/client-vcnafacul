@@ -260,14 +260,6 @@ function ModalContent({
 
   const contentFormat = question.contentFormat || "plain";
 
-  /*
-    ⚠️ **Em quantas provas a questão está** — o número que o modal do card 27
-    mostra. Vem do `provasContendo` que a Etapa 9 já traz no `getById`: sem ele
-    a frase diria "as provas" no genérico, e quem edita não faz ideia de que uma
-    questão está em 2,7 simulados em média (medido no card 22).
-  */
-  const quantasProvas = question.provasContendo?.length ?? 0;
-
   return (
     <>
     <ModalTabTemplateQuestion
@@ -405,7 +397,13 @@ function ModalContent({
         onClose={conteudoForm.cancelarEscolha}
         campos={conteudoForm.escolhaPendente.campos}
         respostas={question.quantidadeResposta ?? 0}
-        provas={quantasProvas}
+        /*
+          ⚠️ As provas da questão, e não só quantas: a nova versão só entra nas
+          que recebem novas versões (tickets/023, card 10). Vem do
+          `provasContendo` do `getById` — quem edita não faz ideia de que uma
+          questão está em 2,7 simulados em média (medido no card 22).
+        */
+        provas={question.provasContendo ?? []}
         antes={question as unknown as Record<string, unknown>}
         depois={conteudoForm.escolhaPendente.dados}
         onConfirmar={conteudoForm.confirmarEscolha}
