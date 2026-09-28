@@ -28,6 +28,7 @@ import {
 import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import { toast } from "react-toastify";
+import { podeCompor, seloDaProva, TEXTO_DO_SELO } from "./seloDaProva";
 import { TabClassificacaoProps } from "./types";
 import { useClassificacaoForm } from "./useClassificacaoForm";
 import { ModalAddQuestionToProva } from "./ModalAddQuestionToProva";
@@ -399,6 +400,11 @@ export function TabClassificacao({
                     {provasContendo.map((p, i) => (
                       <SelectItem key={p.provaId} value={String(i)}>
                         {p.provaNome}
+                        {seloDaProva(p) && (
+                          <span className="ml-2 text-xs text-gray-500">
+                            {seloDaProva(p)!.texto}
+                          </span>
+                        )}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -408,6 +414,16 @@ export function TabClassificacao({
                   <p className="text-base">{provaSel?.provaNome ?? "Sem prova"}</p>
                 </div>
               )}
+              {/* tickets/023, card 08: de quem é a prova em foco, se não é sua. */}
+              {seloDaProva(provaSel) && (
+                <p
+                  data-testid="selo-da-prova"
+                  title={TEXTO_DO_SELO}
+                  className="text-xs text-gray-600 bg-gray-100 border border-gray-200 rounded px-2 py-1 w-fit cursor-help"
+                >
+                  {seloDaProva(provaSel)!.texto}
+                </p>
+              )}
             </div>
 
             {/* Número */}
@@ -416,7 +432,7 @@ export function TabClassificacao({
                 <label className="text-sm font-semibold text-gray-600">
                   Número da Questão
                 </label>
-                {isEditing && form.watch("numero") != null && (
+                {isEditing && form.watch("numero") != null && podeCompor(provaSel) && (
                   <Button
                     type="button"
                     variant="outline"
@@ -438,6 +454,16 @@ export function TabClassificacao({
                 // ⚠️ Sem prova não há posição (card 02): o número nem vai no save.
                 <div className="p-3 bg-gray-100 rounded-md border border-gray-200 opacity-70">
                   <p className="text-base text-gray-500">Sem prova — sem número</p>
+                </div>
+              ) : !podeCompor(provaSel) ? (
+                // tickets/023, card 08: trocar número é compor a prova.
+                <div
+                  title={TEXTO_DO_SELO}
+                  className="p-3 bg-gray-100 rounded-md border border-gray-200 opacity-70 cursor-help"
+                >
+                  <p className="text-base text-gray-500">
+                    {provaSel.numero ?? "Sem número"}
+                  </p>
                 </div>
               ) : loadingNumeros ? (
                 <div className="flex items-center justify-center p-3 border border-gray-200 rounded-md bg-gray-50">
@@ -895,7 +921,8 @@ export function TabClassificacao({
               <div className="flex gap-2">
                 <Button
                   onClick={handleRemoveFromProva}
-                  disabled={isSaving}
+                  disabled={isSaving || !podeCompor(provaSel)}
+                  title={podeCompor(provaSel) ? undefined : TEXTO_DO_SELO}
                   variant="outline"
                   size="sm"
                   className="text-red border-red"
@@ -946,7 +973,8 @@ export function TabClassificacao({
 
       {showAddModal && (
         <ModalAddQuestionToProva
-          provas={infos?.provas ?? []}
+          // tickets/023, card 08: só as provas que a pessoa compõe.
+          provas={(infos?.provas ?? []).filter(podeCompor)}
           provaIdsJaVinculadas={provasContendo.map((p) => p.provaId)}
           enemArea={question.enemArea}
           onConfirm={handleAddToProva}

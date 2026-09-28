@@ -3,7 +3,7 @@ import {
   type ItemDaLinhagem,
   type LinhagemDaQuestao,
 } from "@/services/question/buscarLinhagem";
-import { Roles } from "@/enums/roles/roles";
+import { podeCriarAPartir } from "../permissoesDoBanco";
 import { useAuthStore } from "@/store/auth";
 import { useEffect, useState } from "react";
 import { DuplicarQuestao } from "./DuplicarQuestao";
@@ -73,7 +73,7 @@ export function AbaLinhagem({
   return (
     <div className="flex flex-col">
       {/* Sem `criarQuestao`, sem a faixa — uma barra vazia no topo leria como defeito. */}
-      {permissao?.[Roles.criarQuestao] && (
+      {podeCriarAPartir(permissao) && (
         <div
           data-topo-da-linhagem
           className="flex justify-end border-b px-4 py-2"

@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { podeEditarQuestao } from "../permissoesDoBanco";
 import { Question } from "@/dtos/question/questionDTO";
-import { Roles } from "@/enums/roles/roles";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { toast } from "react-toastify";
 import { getQuestionById } from "@/services/question/getQuestionById";
@@ -66,8 +66,8 @@ export function ModalQuestionDetailsRefactored({
   const [error, setError] = useState<string | null>(null);
 
   // Verificar permissões
-  const canEdit =
-    permissao[Roles.validarQuestao] || permissao[Roles.criarQuestao];
+  // tickets/023, card 08: o editor do cursinho também edita.
+  const canEdit = podeEditarQuestao(permissao);
 
   const fetchQuestion = async (id: string) => {
     setIsLoading(true);
