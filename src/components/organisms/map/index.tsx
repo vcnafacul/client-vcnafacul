@@ -1,6 +1,6 @@
 import { RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { FORM_GEOLOCATION } from "../../../routes/path";
+import { GEOLOCATION_SEARCH } from "../../../routes/path";
 import getGeolocation from "../../../services/geolocation/getGeolocation";
 import { useHomeStore } from "../../../store/home";
 import { TypeMarker } from "../../../types/map/marker";
@@ -112,7 +112,7 @@ function Map() {
           <div className={INFO_BOX_CLASS}>
             <MapBoxInfoGeo
               geo={activeMarker?.infos}
-              ctaLink={FORM_GEOLOCATION}
+              ctaLink={GEOLOCATION_SEARCH}
             />
             <button
               type="button"

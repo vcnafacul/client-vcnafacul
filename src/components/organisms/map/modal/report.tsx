@@ -47,7 +47,7 @@ function ReportLC({
       const body: ReportMapHome = {
         updatedBy: email,
         entityId: entityId,
-        message: `${message} - Problema encontrato em ${
+        message: `${message} - Problema encontrado em ${
           selectedOption === 0 ? type : "Plataforma"
         }`,
         address: addressProblem,
@@ -78,7 +78,7 @@ function ReportLC({
             onChange={() => setSelectedOption(0)}
             checked={selectedOption === 0}
           >
-            "Sim"
+            Sim
           </RadioButton>
           <RadioButton
             onChange={() => {
@@ -89,7 +89,7 @@ function ReportLC({
             }}
             checked={selectedOption === 1}
           >
-            "Não, foi um problema na plataforma"
+            Não, foi um problema na plataforma
           </RadioButton>
         </div>
         <div
