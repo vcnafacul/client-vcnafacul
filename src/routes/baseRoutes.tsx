@@ -1,26 +1,13 @@
 import { useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { BaseTemplateContext } from "../context/baseTemplateContext";
 import { footer, header } from "../pages/homeLegacy/data";
-import { DASH, HOME_PATH, NEWS } from "../routes/path";
+import { NEWS } from "../routes/path";
 import { getNews } from "../services/news/getNews";
-import { useAuthStore } from "../store/auth";
 import { ItemMenuProps } from "../components/molecules/menuItems";
-
-const painelDoEstudanteLink: ItemMenuProps = {
-  Home_Menu_Item_id: {
-    id: 99,
-    name: "Painel do Estudante",
-    link: DASH,
-    target: "_self",
-  },
-};
 
 export function BaseRoutes() {
   const [hasNews, setHasNews] = useState<boolean | null>(null);
-  const token = useAuthStore((s) => s.data.token);
-  const { pathname } = useLocation();
-  const isHome = pathname === HOME_PATH;
 
   useEffect(() => {
     getNews()
@@ -28,12 +15,8 @@ export function BaseRoutes() {
       .catch(() => setHasNews(false));
   }, []);
 
-  let basePageLinks: ItemMenuProps[];
-  if (token && isHome) {
-    basePageLinks = [...header.pageLinks, painelDoEstudanteLink];
-  } else {
-    basePageLinks = header.pageLinks;
-  }
+  // O "Painel do Estudante" saiu daqui: está no menu do usuário (header).
+  const basePageLinks: ItemMenuProps[] = header.pageLinks;
 
   const pageLinks =
     hasNews === false
