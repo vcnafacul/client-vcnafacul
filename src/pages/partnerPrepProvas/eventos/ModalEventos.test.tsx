@@ -34,6 +34,16 @@ const evento = (over = {}) => ({
   ...over,
 });
 
+/** Prova da lista; completa = todas as questões validadas. */
+const prova = (_id: string, nome: string, completa = true, ano = 2026) => ({
+  _id,
+  nome,
+  ano,
+  totalQuestao: 90,
+  totalQuestaoCadastradas: 90,
+  totalQuestaoValidadas: completa ? 90 : 40,
+});
+
 const abrir = (podeEditar = true) =>
   render(<ModalEventos isOpen handleClose={vi.fn()} token="tk" podeEditar={podeEditar} />);
 
@@ -42,10 +52,8 @@ describe("Eventos de simulado na tela de provas (026 · 06)", () => {
     vi.clearAllMocks();
     svc.listarEventos.mockResolvedValue([evento()]);
     provasSvc.getProvasCursinho.mockResolvedValue({
-      data: [
-        { _id: "p-en", nome: "Simulado Inglês" },
-        { _id: "p-es", nome: "Simulado Espanhol" },
-      ],
+      data: [prova("p-en", "Simulado Inglês"), prova("p-es", "Simulado Espanhol")],
+      totalItems: 2,
     });
   });
 
@@ -76,8 +84,8 @@ describe("Eventos de simulado na tela de provas (026 · 06)", () => {
     fireEvent.change(screen.getByLabelText("Fim das inscrições"), {
       target: { value: "2026-11-10T18:00" },
     });
-    fireEvent.click(await screen.findByLabelText("Simulado Inglês"));
-    fireEvent.click(screen.getByLabelText("Simulado Espanhol"));
+    fireEvent.click(await screen.findByRole("button", { name: /Simulado Inglês/ }));
+    fireEvent.click(await screen.findByRole("button", { name: /Simulado Espanhol/ }));
     fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
 
     await waitFor(() => expect(svc.salvarEvento).toHaveBeenCalled());
@@ -113,7 +121,7 @@ describe("Eventos de simulado na tela de provas (026 · 06)", () => {
     );
     abrir();
     fireEvent.click(await screen.findByRole("button", { name: "Editar" }));
-    fireEvent.click(await screen.findByLabelText("Simulado Espanhol")); // desmarca
+    fireEvent.click(await screen.findByRole("button", { name: "Tirar Simulado Espanhol" }));
     fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
     await waitFor(() =>
       expect(toast.error).toHaveBeenCalledWith(
@@ -160,5 +168,86 @@ describe("Eventos de simulado na tela de provas (026 · 06)", () => {
     abrir();
     fireEvent.click(await screen.findByRole("button", { name: "Excluir" }));
     await waitFor(() => expect(svc.excluirEvento).toHaveBeenCalledWith("tk", "e1"));
+  });
+
+  describe("escolha das provas (busca)", () => {
+    const abrirNovo = async () => {
+      abrir();
+      fireEvent.click(await screen.findByRole("button", { name: "Novo evento" }));
+      return screen.findByRole("list", { name: "Resultados da busca" });
+    };
+
+    it("só provas completas, com o ano", async () => {
+      provasSvc.getProvasCursinho.mockResolvedValue({
+        data: [
+          prova("p1", "Simulado Inglês", true, 2025),
+          prova("p2", "Simulado em cadastro", false),
+        ],
+        totalItems: 2,
+      });
+      const lista = await abrirNovo();
+      expect(within(lista).getByRole("button", { name: /Simulado Inglês/ })).toHaveTextContent(
+        "2025",
+      );
+      expect(within(lista).queryByText("Simulado em cadastro")).toBeNull();
+    });
+
+    it("busca pelo nome, sem acento e sem diferenciar maiúsculas; escolhida sai da lista", async () => {
+      provasSvc.getProvasCursinho.mockResolvedValue({
+        data: [
+          prova("p1", "Simulado Inglês"),
+          prova("p2", "Simulado Espanhol"),
+          prova("p3", "Revisão de Matemática"),
+        ],
+        totalItems: 3,
+      });
+      await abrirNovo();
+      fireEvent.change(screen.getByLabelText("Buscar prova"), { target: { value: "INGLES" } });
+      let lista = screen.getByRole("list", { name: "Resultados da busca" });
+      expect(within(lista).getAllByRole("button")).toHaveLength(1);
+
+      fireEvent.click(within(lista).getByRole("button", { name: /Simulado Inglês/ }));
+      expect(
+        within(screen.getByRole("list", { name: "Provas escolhidas" })).getByText(/Simulado Inglês/),
+      ).toBeInTheDocument();
+      // a busca limpa e a escolhida não aparece mais nos resultados
+      expect(screen.getByLabelText("Buscar prova")).toHaveValue("");
+      lista = screen.getByRole("list", { name: "Resultados da busca" });
+      expect(within(lista).queryByText("Simulado Inglês")).toBeNull();
+      expect(within(lista).getAllByRole("button")).toHaveLength(2);
+    });
+
+    it("sem resultado: avisa", async () => {
+      await abrirNovo();
+      fireEvent.change(screen.getByLabelText("Buscar prova"), { target: { value: "xyz" } });
+      expect(screen.getByText("Nenhuma prova completa com esse nome.")).toBeInTheDocument();
+    });
+
+    it("⚠️ busca TODAS as páginas de provas, não só a primeira", async () => {
+      provasSvc.getProvasCursinho
+        .mockResolvedValueOnce({
+          data: Array.from({ length: 100 }, (_, i) => prova(`a${i}`, `Prova ${i}`)),
+          totalItems: 101,
+        })
+        .mockResolvedValueOnce({ data: [prova("ultima", "A última prova")], totalItems: 101 });
+      await abrirNovo();
+      fireEvent.change(screen.getByLabelText("Buscar prova"), { target: { value: "última" } });
+      expect(
+        within(screen.getByRole("list", { name: "Resultados da busca" })).getByText(
+          "A última prova",
+        ),
+      ).toBeInTheDocument();
+      expect(provasSvc.getProvasCursinho).toHaveBeenCalledWith("tk", 2, 100);
+    });
+
+    it("muitas provas: mostra 20 e pede para refinar", async () => {
+      provasSvc.getProvasCursinho.mockResolvedValue({
+        data: Array.from({ length: 30 }, (_, i) => prova(`p${i}`, `Prova ${i}`)),
+        totalItems: 30,
+      });
+      const lista = await abrirNovo();
+      expect(within(lista).getAllByRole("button")).toHaveLength(20);
+      expect(screen.getByText("Mostrando 20 de 30. Refine a busca.")).toBeInTheDocument();
+    });
   });
 });
