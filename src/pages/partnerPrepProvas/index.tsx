@@ -33,6 +33,7 @@ import type {
   VoltaParaListagem,
 } from "../relatorioSimulado/voltar";
 import { partnerPrepProva } from "./data";
+import { ModalEventos } from "./eventos/ModalEventos";
 
 const EDICAO_ALL = "";
 const APLICACAO_ALL = "";
@@ -46,6 +47,7 @@ const MOTIVO = {
   visualizarEstudantes: "Requer permissão: visualizar estudantes",
   gerenciarCategoriasCursinho:
     "Requer permissão: gerenciar categorias do cursinho",
+  eventos: "Requer permissão: ver ou cadastrar provas do cursinho",
 } as const;
 
 /**
@@ -185,6 +187,7 @@ function PartnerPrepProvas() {
     "modalShowProva",
     "modalManageCategorias",
     "modalUploadCartao",
+    "modalEventos",
   ]);
 
   const {
@@ -552,6 +555,17 @@ function PartnerPrepProvas() {
       e a exclusão passam pelas rotas escopadas, e o dono é resolvido pelo JWT
       na api.
     */
+    // tickets/026: eventos de simulado presencial (inscrição dos alunos).
+    acao(
+      "eventos-simulado",
+      "Eventos de simulado",
+      !!(
+        permissao[Roles.visualizarProvasCursinho] ||
+        permissao[Roles.cadastrarProvasCursinho]
+      ),
+      MOTIVO.eventos,
+      () => modals.modalEventos.open(),
+    ),
     acao(
       "gerenciar-categorias",
       "Gerenciar Categorias",
@@ -621,6 +635,12 @@ function PartnerPrepProvas() {
         isOpen={modals.modalUploadCartao.isOpen}
         handleClose={modals.modalUploadCartao.close}
         token={token}
+      />
+      <ModalEventos
+        isOpen={modals.modalEventos.isOpen}
+        handleClose={modals.modalEventos.close}
+        token={token}
+        podeEditar={!!permissao[Roles.cadastrarProvasCursinho]}
       />
     </DashCardContext.Provider>
   );
