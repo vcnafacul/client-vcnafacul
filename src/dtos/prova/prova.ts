@@ -55,6 +55,8 @@ export interface Prova {
   selecionavel?: boolean;
   receberNovasVersoes?: boolean;
   podeComporProva?: boolean;
+  /** tickets/027: de qual prova esta foi duplicada. */
+  provaOrigemId?: string | null;
 }
 
 /**
