@@ -49,7 +49,12 @@ function DashQuestionNew() {
   */
   const [trilha, setTrilha] = useState<string[]>([]);
   const [abaInicial, setAbaInicial] = useState<string | undefined>();
-  const [isLoading, setIsLoading] = useState(false);
+  /*
+    ⚠️ Nasce `true`: a primeira carga é a mais demorada, e começar em `false`
+    mostrava "Nenhuma questão encontrada" / "0 de 0" até ela chegar — parecia
+    que o banco estava vazio.
+  */
+  const [isLoading, setIsLoading] = useState(true);
   const [totalItems, setTotalItems] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [infos, setInfos] = useState<any>(null);
@@ -178,11 +183,14 @@ function DashQuestionNew() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  /*
+    ⚠️ As questões NÃO esperam os `infos` (provas, matérias, frentes — a
+    carga mais pesada da tela): a listagem só depende da página e dos filtros.
+    Antes esperava, e a tela ficava vazia o tempo das duas cargas em fila.
+  */
   useEffect(() => {
-    if (infos) {
-      getQuestions(currentPage);
-    }
-  }, [currentPage, filters, infos]);
+    getQuestions(currentPage);
+  }, [currentPage, filters]);
 
   useEffect(() => {
     infosQuestion();
