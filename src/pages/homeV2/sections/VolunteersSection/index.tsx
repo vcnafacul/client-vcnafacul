@@ -4,7 +4,20 @@ import { Volunteer } from "../../adapters/volunteersAdapter";
 import { useIsMobile } from "../../../../lib/motion/motionPreference";
 import { VolunteerTile } from "./VolunteerTile";
 
-export const VolunteersSection: SectionComponent<Volunteer[]> = ({ data }) => {
+/**
+ * `eyebrow`/`title` opcionais: a página do cursinho (tickets/025) usa a mesma
+ * grade com outro título; a "Quem Somos" continua com o de sempre.
+ */
+export const VolunteersSection: React.FC<
+  React.ComponentProps<SectionComponent<Volunteer[]>> & {
+    eyebrow?: string;
+    title?: string;
+  }
+> = ({
+  data,
+  eyebrow = "QUEM FAZ ACONTECER",
+  title = "Voluntários que doam tempo pela educação",
+}) => {
   const mobile = useIsMobile();
   if (data.length === 0) {
     return (
@@ -21,9 +34,9 @@ export const VolunteersSection: SectionComponent<Volunteer[]> = ({ data }) => {
   return (
     <>
       <div className="container mx-auto px-4 mb-10 text-center">
-        <p className="home-section__eyebrow mb-3">QUEM FAZ ACONTECER</p>
+        <p className="home-section__eyebrow mb-3">{eyebrow}</p>
         <h2 className="text-3xl md:text-5xl font-extrabold leading-tight [text-wrap:balance]">
-          Voluntários que doam tempo pela educação
+          {title}
         </h2>
       </div>
       <div

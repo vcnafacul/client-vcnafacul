@@ -92,6 +92,8 @@ export const historico_summary = `${historico}/summary`;
 
 export const partnerPrepCourse = `${BASE_URL}/partner-prep-course`;
 export const partnerPrepCourseLogos = `${partnerPrepCourse}/logos`;
+/** Página pública do cursinho (tickets/025). */
+export const cursinhoPagina = `${BASE_URL}/cursinho-pagina`;
 export const partnerPrepCourseAggregate = `${partnerPrepCourse}/aggregate`;
 
 export const prepCourse = (id: string) =>

@@ -1,5 +1,5 @@
 import fetchWrapper from "@/utils/fetchWrapper";
-import { partnerPrepCourse } from "../urls";
+import { cursinhoPagina, partnerPrepCourse } from "../urls";
 
 export type LinkDaPagina = { titulo: string; url: string };
 
@@ -45,5 +45,56 @@ export async function salvarMinhaPagina(
     body: JSON.stringify(pagina),
   });
   if (!response.ok) return falha(response, "Erro ao salvar a página do cursinho");
+  return response.json();
+}
+
+// ---- Página pública (tickets/025, card 07) ----
+
+export type RedeSocial =
+  | "site"
+  | "instagram"
+  | "facebook"
+  | "linkedin"
+  | "youtube"
+  | "twitter"
+  | "tiktok";
+
+export type PaginaPublica = {
+  cursinhoId: string;
+  slug: string;
+  nome: string;
+  localizacao: string;
+  quemSomos: string;
+  redes: { rede: RedeSocial; url: string }[];
+  linksPublicos: LinkDaPagina[];
+  colaboradores: { name: string; description: string | null; image: string | null }[];
+  impacto: {
+    estudantesAtendidos: number;
+    estudantesAtivos: number;
+    questoesAprovadas: number | null;
+    processosSeletivos: number;
+  };
+};
+
+const publica = (slug: string) => `${cursinhoPagina}/${encodeURIComponent(slug)}`;
+
+/** `null` = página não existe ou está desativada (a api dá o mesmo 404). */
+export async function getPaginaPublica(slug: string): Promise<PaginaPublica | null> {
+  const response = await fetchWrapper(publica(slug), { method: "GET" });
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error("Erro ao carregar a página do cursinho");
+  return response.json();
+}
+
+/** `null` = sem vínculo com o cursinho (403): a seção não aparece. */
+export async function getLinksInternos(
+  slug: string,
+  token: string,
+): Promise<LinkDaPagina[] | null> {
+  const response = await fetchWrapper(`${publica(slug)}/links-internos`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) return null;
   return response.json();
 }
