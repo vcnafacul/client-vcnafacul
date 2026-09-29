@@ -20,14 +20,35 @@ describe("seloDaProva (023 · 08)", () => {
     );
   });
 
-  it("prova oficial: da plataforma, ou protegida mesmo sendo de cursinho", () => {
-    expect(seloDaProva({ podeComporProva: false, cursinhoId: null })!.tipo).toBe(
-      "oficial",
-    );
+  it("⚠️ oficial é SÓ a de categoria não selecionável", () => {
     expect(
-      seloDaProva({ podeComporProva: false, cursinhoId: "A", protegida: true })!
-        .texto,
-    ).toBe("🔒 Prova oficial");
+      seloDaProva({ podeComporProva: false, cursinhoId: null, selecionavel: false }),
+    ).toEqual({ tipo: "oficial", texto: "🔒 Prova oficial" });
+    expect(
+      seloDaProva({ podeComporProva: false, cursinhoId: "A", selecionavel: false })!
+        .tipo,
+    ).toBe("oficial");
+  });
+
+  it("prova da plataforma com categoria selecionável não é oficial", () => {
+    expect(
+      seloDaProva({ podeComporProva: false, cursinhoId: null, selecionavel: true }),
+    ).toEqual({ tipo: "plataforma", texto: "🏛️ Prova da plataforma" });
+    expect(seloDaProva({ podeComporProva: false, cursinhoId: null })!.tipo).toBe(
+      "plataforma",
+    );
+  });
+
+  it("prova de cursinho em categoria do sistema (selecionável) é do cursinho", () => {
+    expect(
+      seloDaProva({
+        podeComporProva: false,
+        cursinhoId: "A",
+        cursinhoNome: "Vila",
+        protegida: true,
+        selecionavel: true,
+      })!.tipo,
+    ).toBe("cursinho");
   });
 
   it("sem prova em foco: nada", () => {

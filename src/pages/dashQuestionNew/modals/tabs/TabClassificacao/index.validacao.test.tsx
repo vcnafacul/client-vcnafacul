@@ -63,6 +63,15 @@ const OF = {
   provaNome: "ENEM 2023",
   numero: 3,
   cursinhoId: null,
+  selecionavel: false,
+  podeComporProva: false,
+};
+const PL = {
+  provaId: "pl",
+  provaNome: "Simulado Geral",
+  numero: 4,
+  cursinhoId: null,
+  selecionavel: true,
   podeComporProva: false,
 };
 
@@ -73,7 +82,7 @@ const questao = (status = 0) =>
     materia: "m1",
     frente1: "f1",
     status,
-    provasContendo: [PA, PB, OF],
+    provasContendo: [PA, PB, OF, PL],
     provaBase: "pa",
   }) as never;
 const infos = { provas: [], enemAreas: [], materias: [], frentes: [] } as never;
@@ -99,6 +108,7 @@ const bloqueio = () =>
       { provaId: "pa", provaNome: "Simulado do A", cursinhoId: "A" },
       { provaId: "pb", provaNome: "Simulado do B", cursinhoId: "B" },
       { provaId: "of", provaNome: "ENEM 2023", cursinhoId: null },
+      { provaId: "pl", provaNome: "Simulado Geral", cursinhoId: null },
     ]),
   );
 
@@ -136,7 +146,7 @@ describe("TabClassificacao — validador do cursinho (024 · 05)", () => {
     expect(screen.getByRole("button", { name: "Aprovar" })).toBeInTheDocument();
   });
 
-  it("⚠️ recusa barrada: o modal lista as provas — sua, de outro cursinho, oficial", async () => {
+  it("⚠️ recusa barrada: o modal lista as provas — sua, de outro cursinho, oficial, da plataforma", async () => {
     bloqueio();
     montar();
     recusar();
@@ -147,6 +157,7 @@ describe("TabClassificacao — validador do cursinho (024 · 05)", () => {
     expect(lista).toHaveTextContent("Simulado do A — sua");
     expect(lista).toHaveTextContent("Simulado do B — Cursinho da Vila");
     expect(lista).toHaveTextContent("ENEM 2023 — oficial");
+    expect(lista).toHaveTextContent("Simulado Geral — da plataforma");
   });
 
   it("sem editar: 'Tirar das minhas provas' desabilitado, com o porquê", async () => {
