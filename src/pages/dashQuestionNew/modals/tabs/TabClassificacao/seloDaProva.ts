@@ -12,12 +12,24 @@ export const podeCompor = (p?: DonoDaProva | null) =>
 export const TEXTO_DO_SELO =
   "Você pode ver esta prova, mas só quem é dono dela pode adicionar ou remover questões.";
 
-export type Selo = { tipo: "cursinho" | "oficial"; texto: string };
+export type Selo = {
+  tipo: "cursinho" | "oficial" | "plataforma";
+  texto: string;
+};
 
-/** O selo de uma prova que a pessoa NÃO compõe; `null` quando compõe. */
+/**
+ * O selo de uma prova que a pessoa NÃO compõe; `null` quando compõe.
+ *
+ * ⚠️ "Oficial" é SÓ a de categoria fora de uso (`selecionavel: false`) — o
+ * ENEM que não se cria mais. Prova da plataforma com categoria selecionável
+ * não é oficial: é "da plataforma" (pedido do Fernando, 2026-09-28).
+ */
 export function seloDaProva(p?: DonoDaProva | null): Selo | null {
   if (!p || podeCompor(p)) return null;
-  if (p.cursinhoId && !p.protegida) {
+  if (p.selecionavel === false) {
+    return { tipo: "oficial", texto: "🔒 Prova oficial" };
+  }
+  if (p.cursinhoId) {
     return {
       tipo: "cursinho",
       texto: p.cursinhoNome
@@ -25,5 +37,5 @@ export function seloDaProva(p?: DonoDaProva | null): Selo | null {
         : "🏫 Prova de outro cursinho",
     };
   }
-  return { tipo: "oficial", texto: "🔒 Prova oficial" };
+  return { tipo: "plataforma", texto: "🏛️ Prova da plataforma" };
 }
