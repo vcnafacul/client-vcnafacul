@@ -37,6 +37,11 @@ interface ShowProvaProps {
    * `dashProvas` não passa nada aqui, e é de propósito.
    */
   relatorio?: AcaoRelatorio;
+  /**
+   * tickets/027 — só a tela do cursinho passa: a `dashProvas` (admin) não
+   * duplica, porque a rota é do cursinho (resolvido pelo JWT).
+   */
+  duplicar?: { permitido: boolean; motivo?: string; aoClicar: () => void };
 }
 
 function ShowProva({
@@ -45,6 +50,7 @@ function ShowProva({
   handleClose,
   onUpdated,
   relatorio,
+  duplicar,
 }: ShowProvaProps) {
   const executeAsync = useToastAsync();
   const [isEditingFiles, setIsEditingFiles] = useState(false);
@@ -104,6 +110,20 @@ function ShowProva({
     if (percent >= 60) return "bg-yellow-500";
     return "bg-red-500";
   };
+
+  // tickets/027: "Duplicada de <nome>" — o nome vem da própria origem.
+  const [nomeDaOrigem, setNomeDaOrigem] = useState<string | null>(null);
+  const origemId = fullProva?.provaOrigemId ?? prova.provaOrigemId ?? null;
+  useEffect(() => {
+    if (!isOpen || !origemId) return setNomeDaOrigem(null);
+    let cancelado = false;
+    getProvaById(origemId, token)
+      .then((o) => !cancelado && setNomeDaOrigem(o.nome))
+      .catch(() => !cancelado && setNomeDaOrigem(""));
+    return () => {
+      cancelado = true;
+    };
+  }, [isOpen, origemId, token]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -229,7 +249,23 @@ const downloadFile = async (filename: string, fileType: string) => {
                 {prova.nome}
               </h2>
               <p className="text-sm text-gray-500">Detalhes da Prova</p>
+              {origemId && nomeDaOrigem !== null && (
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Duplicada de {nomeDaOrigem ? <strong>{nomeDaOrigem}</strong> : "outra prova"}
+                </p>
+              )}
             </div>
+            {duplicar && (
+              <button
+                type="button"
+                onClick={duplicar.aoClicar}
+                disabled={!duplicar.permitido}
+                title={duplicar.permitido ? undefined : duplicar.motivo}
+                className="ml-auto px-3 py-1.5 text-sm border border-marine text-marine rounded-lg hover:bg-marine/5 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Duplicar prova
+              </button>
+            )}
           </div>
         </div>
 

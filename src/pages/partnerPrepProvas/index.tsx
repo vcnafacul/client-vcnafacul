@@ -34,6 +34,7 @@ import type {
 } from "../relatorioSimulado/voltar";
 import { partnerPrepProva } from "./data";
 import { ModalEventos } from "./eventos/ModalEventos";
+import { ModalDuplicarProva } from "./ModalDuplicarProva";
 
 const EDICAO_ALL = "";
 const APLICACAO_ALL = "";
@@ -188,6 +189,7 @@ function PartnerPrepProvas() {
     "modalManageCategorias",
     "modalUploadCartao",
     "modalEventos",
+    "modalDuplicar",
   ]);
 
   const {
@@ -310,6 +312,15 @@ function PartnerPrepProvas() {
         relatorio={{
           permitido: !!permissao[Roles.gerenciarEstudantes],
           aoAbrir: (simulado) => abrirRelatorio(simulado._id),
+        }}
+        // tickets/027: só aqui — a `dashProvas` não duplica.
+        duplicar={{
+          permitido: !!permissao[Roles.cadastrarProvasCursinho],
+          motivo: MOTIVO.cadastrarProvasCursinho,
+          aoClicar: () => {
+            modals.modalShowProva.close();
+            modals.modalDuplicar.open();
+          },
         }}
       />
     );
@@ -636,6 +647,21 @@ function PartnerPrepProvas() {
         handleClose={modals.modalUploadCartao.close}
         token={token}
       />
+      {modals.modalDuplicar.isOpen && provaSelected && (
+        <ModalDuplicarProva
+          prova={provaSelected}
+          token={token}
+          isOpen
+          handleClose={() => modals.modalDuplicar.close()}
+          onDuplicada={(nova) => {
+            // A nova entra no topo e abre, como quem acabou de criar.
+            setProvas((prev) => [nova, ...prev]);
+            setProvaSelected(nova);
+            modals.modalDuplicar.close();
+            modals.modalShowProva.open();
+          }}
+        />
+      )}
       <ModalEventos
         isOpen={modals.modalEventos.isOpen}
         handleClose={modals.modalEventos.close}
