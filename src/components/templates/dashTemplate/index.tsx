@@ -1,16 +1,10 @@
 import { SidebarDash } from "@/components/organisms/sidebarDash";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useMemo } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { BaseTemplateContext } from "../../../context/baseTemplateContext";
 import { headerDash } from "../../../pages/dash/data";
-import { DASH } from "../../../routes/path";
-import { ItemMenuProps } from "../../../components/molecules/menuItems";
 import BaseTemplate from "../baseTemplate";
-
-const painelDoEstudanteLink: ItemMenuProps = {
-  Home_Menu_Item_id: { id: 1, name: "Painel do Estudante", link: DASH, target: "_self" },
-};
 
 type DashTemplateProps = {
   className?: string;
@@ -42,15 +36,11 @@ function DashTemplateContent({ hasMenu }: { hasMenu?: boolean }) {
 }
 
 function DashTemplate({ className, hasMenu }: DashTemplateProps) {
-  const { pathname } = useLocation();
-  const isMainDash = pathname === DASH || pathname === `${DASH}/`;
-
-  const headerValue = useMemo(() => {
-    return {
-      ...headerDash,
-      pageLinks: isMainDash ? [] : [painelDoEstudanteLink],
-    };
-  }, [isMainDash]);
+  const headerValue = useMemo(
+    // O "Painel do Estudante" saiu daqui: está no menu do usuário.
+    () => ({ ...headerDash, pageLinks: [] }),
+    [],
+  );
 
   return (
     <BaseTemplateContext.Provider
