@@ -1,28 +1,12 @@
 import { useEffect, useState } from "react";
 import { GraduationCap, School, Users, BookOpen, ClipboardList } from "lucide-react";
 import { fetchImpactStats, ImpactStats } from "@/services/public/impactStats";
+import { ImpactCard } from "@/components/molecules/impactCard";
 
 interface StatItem {
   icon: React.ReactNode;
   value: number | null;
   label: string;
-}
-
-function ImpactCard({ icon, value, label }: { icon: React.ReactNode; value: number | null; label: string }) {
-  const formatted =
-    value === null ? "—" : value.toLocaleString("pt-BR");
-
-  return (
-    <div className="flex flex-col items-center gap-2 bg-white rounded-2xl shadow-md px-6 py-8 min-w-[160px] flex-1">
-      <div className="w-12 h-12 rounded-full bg-marine/10 flex items-center justify-center text-marine mb-1">
-        {icon}
-      </div>
-      <span className="text-3xl font-extrabold text-marine leading-none">
-        {formatted}
-      </span>
-      <span className="text-sm text-gray-500 text-center leading-snug">{label}</span>
-    </div>
-  );
 }
 
 export function ImpactoSection() {

@@ -6,6 +6,7 @@ import EnrollmentConfirmation from "@/pages/enrollmentConfirmation";
 import ConviteColaborador from "@/pages/conviteColaborador";
 import ManagerCollaborator from "@/pages/managerCollaborator";
 import PaginaCursinhoEdicao from "@/pages/paginaCursinhoEdicao";
+import PaginaCursinhoPublica from "@/pages/paginaCursinhoPublica";
 import { PartnerClass } from "@/pages/partnerClass";
 import { PartnerClassWithStudents } from "@/pages/partnerClassWithStudents";
 import PartnerPrepForm from "@/pages/partnerPrepForm";
@@ -193,6 +194,8 @@ export function PlatformRoutes() {
           path={`${PARTNER_PREP_INSCRIPTION}/:hashInscriptionId`}
           element={<PartnerPrepInscription />}
         />
+        {/* tickets/025: 1 segmento — não disputa com `inscricao/:hash`. */}
+        <Route path=":slug" element={<PaginaCursinhoPublica />} />
       </Route>
 
       <Route
