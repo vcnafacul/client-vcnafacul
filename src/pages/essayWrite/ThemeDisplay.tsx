@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { EssayTheme } from "@/dtos/essay";
 import RichTextRenderer from "@/components/atoms/richTextRenderer/RichTextRenderer";
+import { getEssayThemeAssetImage } from "@/services/essay/themeAssets";
 
 interface ThemeDisplayProps {
   theme: EssayTheme;
@@ -30,6 +31,7 @@ export default function ThemeDisplay({ theme }: ThemeDisplayProps) {
               <RichTextRenderer
                 content={theme.motivationalText}
                 contentFormat="markdown"
+                fetchAsset={getEssayThemeAssetImage}
               />
             </div>
           </div>

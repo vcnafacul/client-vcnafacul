@@ -1,6 +1,13 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { EssayTheme } from "@/dtos/essay";
 import { RichTextEditor } from "@/components/molecules/richTextEditor/RichTextEditor";
+import { useAuthStore } from "@/store/auth";
+import { PendingImageStore } from "@/utils/pendingImageStore";
+import {
+  getEssayThemeAssetImage,
+  uploadEssayThemeAsset,
+} from "@/services/essay/themeAssets";
 
 interface ThemeFormProps {
   initial?: EssayTheme | null;
@@ -10,7 +17,7 @@ interface ThemeFormProps {
     instruction: string;
     weekStart: string;
     weekEnd: string;
-  }) => void;
+  }) => void | Promise<void>;
   onCancel: () => void;
 }
 
@@ -22,10 +29,46 @@ export default function ThemeForm({ initial, onSave, onCancel }: ThemeFormProps)
   const [instruction, setInstruction] = useState(initial?.instruction ?? "");
   const [weekStart, setWeekStart] = useState(initial?.weekStart ?? "");
   const [weekEnd, setWeekEnd] = useState(initial?.weekEnd ?? "");
+  const [salvando, setSalvando] = useState(false);
+  const {
+    data: { token },
+  } = useAuthStore();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Imagens ficam no navegador até o Salvar (mesmo padrão das Novidades e do
+  // banco de questões): cancelar não deixa arquivo órfão no R2.
+  const pendingStoreRef = useRef(new PendingImageStore());
+  useEffect(() => {
+    const store = pendingStoreRef.current;
+    return () => store.cleanup();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({ title, motivationalText, instruction, weekStart, weekEnd });
+    setSalvando(true);
+    try {
+      const store = pendingStoreRef.current;
+      store.pruneUnused(motivationalText);
+      const replacements = await store.uploadAll((file) =>
+        uploadEssayThemeAsset(file, token),
+      );
+      const texto = PendingImageStore.replaceInMarkdown(
+        motivationalText,
+        replacements,
+      );
+      await onSave({
+        title,
+        motivationalText: texto,
+        instruction,
+        weekStart,
+        weekEnd,
+      });
+    } catch (err: unknown) {
+      toast.error(
+        err instanceof Error ? err.message : "Erro ao enviar as imagens",
+      );
+    } finally {
+      setSalvando(false);
+    }
   };
 
   return (
@@ -55,9 +98,18 @@ export default function ThemeForm({ initial, onSave, onCancel }: ThemeFormProps)
           <RichTextEditor
             content={motivationalText}
             onChange={setMotivationalText}
+            onImageUpload={async (file: File) =>
+              pendingStoreRef.current.add(file)
+            }
+            pendingStore={pendingStoreRef.current}
+            token={token}
+            fetchAsset={getEssayThemeAssetImage}
             placeholder="Digite os textos motivadores..."
             minHeight="200px"
           />
+          <p className="text-xs text-grey mt-1">
+            Para inserir imagens, use o botão de imagem da barra (JPG, PNG, WEBP ou GIF, até 5MB cada).
+          </p>
         </div>
         <div>
           <label className="block text-sm font-semibold mb-1">
@@ -106,9 +158,10 @@ export default function ThemeForm({ initial, onSave, onCancel }: ThemeFormProps)
           </button>
           <button
             type="submit"
-            className="px-6 py-2 bg-marine text-white rounded-lg hover:bg-marine/90"
+            disabled={salvando}
+            className="px-6 py-2 bg-marine text-white rounded-lg hover:bg-marine/90 disabled:opacity-60"
           >
-            Salvar
+            {salvando ? "Salvando..." : "Salvar"}
           </button>
         </div>
       </form>
