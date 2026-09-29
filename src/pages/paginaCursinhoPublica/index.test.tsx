@@ -92,6 +92,17 @@ describe("Página pública do cursinho (025 · 07)", () => {
     );
   });
 
+  it("redes sociais ficam no cabeçalho, antes do Quem somos, sem título", async () => {
+    svc.getPaginaPublica.mockResolvedValue(pagina());
+    abrir();
+    const redes = await screen.findByRole("list", { name: "Redes sociais" });
+    const quemSomos = screen.getByRole("region", { name: "Quem somos" });
+    expect(
+      redes.compareDocumentPosition(quemSomos) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(screen.queryByRole("heading", { name: "Redes sociais" })).toBeNull();
+  });
+
   it("colaboradores vão para a grade da Quem Somos, com título próprio e foto nula", async () => {
     svc.getPaginaPublica.mockResolvedValue(pagina());
     abrir();
@@ -113,7 +124,7 @@ describe("Página pública do cursinho (025 · 07)", () => {
     await screen.findByRole("heading", { level: 1 });
     expect(screen.queryByText("grade de colaboradores")).toBeNull();
     expect(screen.queryByRole("region", { name: "Links úteis" })).toBeNull();
-    expect(screen.queryByRole("region", { name: "Redes sociais" })).toBeNull();
+    expect(screen.queryByRole("list", { name: "Redes sociais" })).toBeNull();
   });
 
   it("404 da api → Página não encontrada", async () => {
