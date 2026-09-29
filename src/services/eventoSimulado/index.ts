@@ -95,3 +95,47 @@ export async function engajamentoDoEvento(
   if (!r.ok) return falha(r, "Erro ao carregar o engajamento");
   return r.json();
 }
+
+// ---- aluno (card 07) ----
+
+export type EventoParaOAluno = {
+  id: string;
+  nome: string;
+  descricao: string | null;
+  cursinho: string;
+  inscricoesAte: string;
+  provas: { provaId: string; nome: string }[];
+  /** `null` = ainda não se inscreveu. */
+  minhaProvaId: string | null;
+};
+
+export async function meusEventos(token: string): Promise<EventoParaOAluno[]> {
+  const r = await fetchWrapper(`${eventosSimulado}/meus`, {
+    method: "GET",
+    headers: auth(token),
+  });
+  if (!r.ok) return falha(r, "Erro ao carregar os simulados do cursinho");
+  return r.json();
+}
+
+export async function inscreverNoEvento(
+  token: string,
+  eventoId: string,
+  provaId?: string,
+): Promise<{ evento: EventoParaOAluno; resultado: "nova" | "troca" | "igual" }> {
+  const r = await fetchWrapper(`${eventosSimulado}/${eventoId}/inscricao`, {
+    method: "PUT",
+    headers: json(token),
+    body: JSON.stringify(provaId ? { provaId } : {}),
+  });
+  if (!r.ok) return falha(r, "Erro ao se inscrever");
+  return r.json();
+}
+
+export async function desistirDoEvento(token: string, eventoId: string): Promise<void> {
+  const r = await fetchWrapper(`${eventosSimulado}/${eventoId}/inscricao`, {
+    method: "DELETE",
+    headers: auth(token),
+  });
+  if (!r.ok) return falha(r, "Erro ao desistir");
+}

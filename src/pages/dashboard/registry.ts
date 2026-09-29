@@ -14,6 +14,7 @@ import { MateriasPanel } from './widgets/MateriasPanel';
 import { ProcessosTable } from './widgets/ProcessosTable';
 import { QuestoesPanel } from './widgets/QuestoesPanel';
 import { MeuCursinho } from './widgets/MeuCursinho';
+import { SimuladoDoCursinho } from './widgets/SimuladoDoCursinho';
 import { TemaSemana } from './widgets/TemaSemana';
 import { CursinhoCollab } from './widgets/CursinhoCollab';
 
@@ -49,6 +50,8 @@ export const widgetRegistry: WidgetDef[] = [
   { id: 'kpi-redacoes', view: 'estudo', slot: 'kpi', component: KpiRedacoes, profiles: ['student'] },
   { id: 'evolucao', view: 'estudo', slot: 'main', component: EvolucaoChart, profiles: ['common'] },
   { id: 'processos', view: 'estudo', slot: 'main', component: ProcessosTable, profiles: ['common'] },
+  // tickets/026: some sozinho sem evento aberto.
+  { id: 'simulado-do-cursinho', view: 'estudo', slot: 'aside', component: SimuladoDoCursinho, profiles: ['student'] },
   { id: 'tema-semana', view: 'estudo', slot: 'aside', component: TemaSemana, profiles: ['student'] },
   { id: 'meu-cursinho', view: 'estudo', slot: 'aside', component: MeuCursinho, profiles: ['student'] },
   { id: 'materias', view: 'estudo', slot: 'aside', component: MateriasPanel, profiles: ['common'] },
