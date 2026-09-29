@@ -45,6 +45,8 @@ export const MANAGER_COLLABORATOR = "colaboradores";
 export const PARTNER_CLASS = "turmas";
 export const PARTNER_CLASS_STUDENTS = "alunos";
 export const PARTNER_PREP_MANAGER = "gerenciamento-cursinho";
+/** Edição da página pública do cursinho (tickets/025). */
+export const PARTNER_PAGINA = "pagina-do-cursinho";
 export const PARTNER_PROVAS = "cursinho-provas";
 export const PARTNER_CLASS_FORM = "formulario";
 export const DASH_GLOBAL_FORM = "formulario-global";

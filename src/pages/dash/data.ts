@@ -23,6 +23,7 @@ import {
   ESSAY_WRITE,
   ESTUDO,
   MANAGER_COLLABORATOR,
+  PARTNER_PAGINA,
   NEWS,
   PARTNER_CLASS,
   PARTNER_CLASS_FORM,
@@ -46,7 +47,7 @@ import { ReactComponent as Quimica } from "../../assets/icons/home-subjects-quim
 
 import { GoGraph } from "react-icons/go";
 import { IoSchool } from "react-icons/io5";
-import { LuBell, LuHouse, LuMessageSquare } from "react-icons/lu";
+import { LuBell, LuGlobe, LuHouse, LuMessageSquare } from "react-icons/lu";
 import { ReactComponent as Atualidades } from "../../assets/icons/home-subjects-atualidades.svg";
 import { ReactComponent as Filosofia } from "../../assets/icons/home-subjects-filosofia.svg";
 import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-geografia.svg";
@@ -104,6 +105,14 @@ export const adminMenuItems: DashCardMenu[] = [
         text: "Processos Seletivos",
         link: `/dashboard/${PARTNER_PREP_INSCRIPTION}`,
         permissions: [Roles.gerenciarProcessoSeletivo],
+      },
+      {
+        icon: LuGlobe,
+        alt: "página do cursinho",
+        text: "Página do cursinho",
+        link: `/dashboard/${PARTNER_PAGINA}`,
+        // tickets/025: qualquer uma das duas.
+        permissions: [Roles.gerenciarPermissoesCursinho, Roles.gerenciarEstudantes],
       },
       {
         icon: FaPeopleGroup,

@@ -5,6 +5,7 @@ import { ConfirmEnrolled } from "@/pages/confirmEnrolled";
 import EnrollmentConfirmation from "@/pages/enrollmentConfirmation";
 import ConviteColaborador from "@/pages/conviteColaborador";
 import ManagerCollaborator from "@/pages/managerCollaborator";
+import PaginaCursinhoEdicao from "@/pages/paginaCursinhoEdicao";
 import { PartnerClass } from "@/pages/partnerClass";
 import { PartnerClassWithStudents } from "@/pages/partnerClassWithStudents";
 import PartnerPrepForm from "@/pages/partnerPrepForm";
@@ -93,6 +94,7 @@ import {
   LOGIN_PATH,
   LOGOFF_PATH,
   MANAGER_COLLABORATOR,
+  PARTNER_PAGINA,
   NEWS,
   PARTNER_CLASS,
   PARTNER_CLASS_FORM,
@@ -248,6 +250,19 @@ export function PlatformRoutes() {
               permission={data.permissao[Roles.gerenciarProcessoSeletivo]}
             >
               <PartnerPrepInscriptionManager />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={PARTNER_PAGINA}
+          element={
+            <ProtectedRoutePermission
+              permission={
+                data.permissao[Roles.gerenciarPermissoesCursinho] ||
+                data.permissao[Roles.gerenciarEstudantes]
+              }
+            >
+              <PaginaCursinhoEdicao />
             </ProtectedRoutePermission>
           }
         />
