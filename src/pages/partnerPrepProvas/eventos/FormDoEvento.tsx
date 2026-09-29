@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { FiSearch, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
 import {
   EventoDoCursinho,
@@ -6,7 +7,18 @@ import {
 } from "@/services/eventoSimulado";
 import { deInputLocal, paraInputLocal } from "./datas";
 
-type ProvaOpcao = { id: string; nome: string };
+export type ProvaOpcao = {
+  id: string;
+  nome: string;
+  ano: number | null;
+  /** Todas as questões validadas (o "Completa" da lista de provas). */
+  completa: boolean;
+};
+
+const RESULTADOS_MAX = 20;
+const semAcento = (s: string) =>
+  s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const comAno = (p: ProvaOpcao) => (p.ano ? `${p.nome} · ${p.ano}` : p.nome);
 
 type Props = {
   token: string;
@@ -26,13 +38,28 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
     evento?.provas.map((p) => p.provaId) ?? [],
   );
   const [salvando, setSalvando] = useState(false);
+  const [busca, setBusca] = useState("");
+
+  const porId = useMemo(() => new Map(provas.map((p) => [p.id, p])), [provas]);
+  /** Só provas completas entram na busca; as já escolhidas saem dela. */
+  const resultados = useMemo(() => {
+    const termo = semAcento(busca.trim());
+    return provas.filter(
+      (p) =>
+        p.completa &&
+        !escolhidas.includes(p.id) &&
+        (!termo || semAcento(p.nome).includes(termo) || String(p.ano ?? "").includes(termo)),
+    );
+  }, [provas, escolhidas, busca]);
 
   const janelaInvertida = !!de && !!ate && new Date(de) >= new Date(ate);
 
-  const alternar = (id: string) =>
-    setEscolhidas((atual) =>
-      atual.includes(id) ? atual.filter((x) => x !== id) : [...atual, id],
-    );
+  const adicionar = (id: string) => {
+    setEscolhidas((atual) => (atual.includes(id) ? atual : [...atual, id]));
+    setBusca("");
+  };
+  const remover = (id: string) =>
+    setEscolhidas((atual) => atual.filter((x) => x !== id));
 
   const salvar = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,24 +159,75 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
         <legend className="block text-sm font-semibold mb-1">
           Provas que o aluno pode escolher
         </legend>
+
+        {escolhidas.length > 0 && (
+          <ul aria-label="Provas escolhidas" className="flex flex-wrap gap-2 mb-2">
+            {escolhidas.map((id) => {
+              const p = porId.get(id);
+              return (
+                <li
+                  key={id}
+                  className="flex items-center gap-1 rounded-full bg-marine/10 text-marine pl-3 pr-1 py-1 text-sm"
+                >
+                  <span className="break-words">{p ? comAno(p) : id}</span>
+                  <button
+                    type="button"
+                    onClick={() => remover(id)}
+                    aria-label={`Tirar ${p?.nome ?? "prova"}`}
+                    className="rounded-full p-1 hover:bg-marine/20"
+                  >
+                    <FiX aria-hidden />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        <div className="relative">
+          <FiSearch
+            aria-hidden
+            className="absolute left-2 top-1/2 -translate-y-1/2 text-grey"
+          />
+          <input
+            type="search"
+            aria-label="Buscar prova"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            placeholder="Buscar prova pelo nome ou ano"
+            className="w-full border rounded-lg p-2 pl-8"
+          />
+        </div>
+        <p className="text-xs text-grey mt-1">
+          Só aparecem provas completas (todas as questões validadas).
+        </p>
+
         {provas.length === 0 ? (
-          <p className="text-sm text-grey">O cursinho ainda não tem provas.</p>
+          <p className="text-sm text-grey mt-2">Carregando provas...</p>
+        ) : resultados.length === 0 ? (
+          <p className="text-sm text-grey mt-2">
+            {busca.trim() ? "Nenhuma prova completa com esse nome." : "Nenhuma prova completa disponível."}
+          </p>
         ) : (
-          <ul className="space-y-1 max-h-48 overflow-y-auto border rounded-lg p-2">
-            {provas.map((p) => (
+          <ul aria-label="Resultados da busca" className="mt-2 max-h-48 overflow-y-auto border rounded-lg divide-y">
+            {resultados.slice(0, RESULTADOS_MAX).map((p) => (
               <li key={p.id}>
-                <label className="flex items-center gap-2 text-sm cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={escolhidas.includes(p.id)}
-                    onChange={() => alternar(p.id)}
-                    className="accent-marine"
-                  />
-                  {p.nome}
-                </label>
+                <button
+                  type="button"
+                  onClick={() => adicionar(p.id)}
+                  className="w-full flex justify-between gap-2 text-left px-3 py-2 text-sm hover:bg-gray-50"
+                >
+                  <span className="min-w-0 break-words">{p.nome}</span>
+                  <span className="shrink-0 text-grey">{p.ano ?? ""}</span>
+                </button>
               </li>
             ))}
           </ul>
+        )}
+        {resultados.length > RESULTADOS_MAX && (
+          <p className="text-xs text-grey mt-1">
+            Mostrando {RESULTADOS_MAX} de {resultados.length}. Refine a busca.
+          </p>
         )}
       </fieldset>
       <div className="flex justify-end gap-3">

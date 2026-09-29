@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { getProvasCursinho } from "@/services/prova/getProvasCursinho";
+import { statusDaProva, STATUS_COMPLETA } from "@/pages/dashProvas/status";
+import { ProvaOpcao } from "./FormDoEvento";
 import {
   EventoDoCursinho,
   excluirEvento,
@@ -32,15 +34,35 @@ type Props = {
 
 /**
  * ⚠️ As provas vêm daqui, e não da lista da tela: aquela é paginada (rolagem)
- * e deixaria de fora provas que ainda não carregaram.
+ * e deixaria de fora provas que ainda não carregaram. Aqui busca TODAS as
+ * páginas — com a busca por nome, prova que não veio é prova que "não existe".
  */
-const LIMITE_DE_PROVAS = 100;
+const POR_PAGINA = 100;
+const PAGINAS_MAX = 50;
+
+async function todasAsProvas(token: string): Promise<ProvaOpcao[]> {
+  const out: ProvaOpcao[] = [];
+  for (let page = 1; page <= PAGINAS_MAX; page++) {
+    const r = await getProvasCursinho(token, page, POR_PAGINA);
+    out.push(
+      ...r.data.map((p) => ({
+        id: p._id,
+        nome: p.nome,
+        ano: p.ano ?? null,
+        // "Completa" é o mesmo rótulo da lista de provas: tudo validado.
+        completa: statusDaProva(p) === STATUS_COMPLETA,
+      })),
+    );
+    if (!r.data.length || out.length >= (r.totalItems ?? 0)) break;
+  }
+  return out;
+}
 
 /** Eventos de simulado presencial na tela de provas (tickets/026, card 06). */
 export function ModalEventos({ isOpen, handleClose, token, podeEditar }: Props) {
   const [tela, setTela] = useState<Tela>({ tipo: "lista" });
   const [eventos, setEventos] = useState<EventoDoCursinho[] | null>(null);
-  const [provas, setProvas] = useState<{ id: string; nome: string }[]>([]);
+  const [provas, setProvas] = useState<ProvaOpcao[]>([]);
 
   const carregar = useCallback(() => {
     listarEventos(token)
@@ -60,16 +82,16 @@ export function ModalEventos({ isOpen, handleClose, token, podeEditar }: Props) 
 
   useEffect(() => {
     if (!isOpen || !podeEditar) return;
-    getProvasCursinho(token, 1, LIMITE_DE_PROVAS)
-      .then((r) => setProvas(r.data.map((p) => ({ id: p._id, nome: p.nome }))))
+    todasAsProvas(token)
+      .then(setProvas)
       .catch(() => setProvas([]));
   }, [isOpen, podeEditar, token]);
 
-  /** As do cursinho + as que o evento já tem (mesmo fora das 100). */
-  const opcoesPara = (evento: EventoDoCursinho | null) => {
+  /** As do cursinho + as que o evento já tem (mesmo que não venham na lista). */
+  const opcoesPara = (evento: EventoDoCursinho | null): ProvaOpcao[] => {
     const extras = (evento?.provas ?? [])
       .filter((p) => !provas.some((o) => o.id === p.provaId))
-      .map((p) => ({ id: p.provaId, nome: p.nome }));
+      .map((p) => ({ id: p.provaId, nome: p.nome, ano: null, completa: false }));
     return [...provas, ...extras];
   };
 
