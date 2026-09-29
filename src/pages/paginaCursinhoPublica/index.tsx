@@ -138,6 +138,28 @@ export default function PaginaCursinhoPublica() {
               <FiMapPin aria-hidden /> {pagina.localizacao}
             </p>
           )}
+          {/* Redes sociais: parte do cabeçalho, sem título, ícones pequenos. */}
+          {pagina.redes.length > 0 && (
+            <ul aria-label="Redes sociais" className="flex flex-wrap gap-2 mt-4">
+              {pagina.redes.map(({ rede, url }) => {
+                const { nome, Icone } = REDES[rede];
+                return (
+                  <li key={rede}>
+                    <a
+                      href={comProtocolo(url)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={nome}
+                      title={nome}
+                      className="flex items-center justify-center w-8 h-8 rounded-full bg-marine text-white hover:bg-marine/90"
+                    >
+                      <Icone size={15} aria-hidden />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
       </header>
 
@@ -195,30 +217,6 @@ export default function PaginaCursinhoPublica() {
         />
       )}
 
-      {pagina.redes.length > 0 && (
-        <section aria-label="Redes sociais" className="max-w-5xl mx-auto px-6 py-10">
-          <h2 className="text-2xl font-extrabold text-marine mb-4">Redes sociais</h2>
-          <ul className="flex flex-wrap gap-3">
-            {pagina.redes.map(({ rede, url }) => {
-              const { nome, Icone } = REDES[rede];
-              return (
-                <li key={rede}>
-                  <a
-                    href={comProtocolo(url)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={nome}
-                    title={nome}
-                    className="flex items-center justify-center w-12 h-12 rounded-full bg-marine text-white hover:bg-marine/90"
-                  >
-                    <Icone size={22} aria-hidden />
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      )}
     </BaseTemplate>
   );
 }
