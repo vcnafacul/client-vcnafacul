@@ -124,7 +124,7 @@ function ManageCategorias({
             </h2>
           </div>
 
-          <div className="mb-4 flex items-center justify-between gap-3">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <Button
               typeStyle="quaternary"
               size="small"
@@ -137,7 +137,7 @@ function ManageCategorias({
               value={busca}
               placeholder="Buscar por nome"
               onChange={(e) => setBusca(e.target.value)}
-              className="w-64 rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full sm:w-64 rounded-md border border-gray-300 px-3 py-2 text-sm"
             />
           </div>
 

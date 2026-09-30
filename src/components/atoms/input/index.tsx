@@ -15,7 +15,8 @@ const input = tv({
     },
     size: {
       base: "h-16",
-      small: "h-11",
+      // Compacto (celular): menos altura e o texto mais perto do rótulo.
+      small: "h-11 pt-4 pb-1",
     },
   },
   defaultVariants: {
@@ -24,8 +25,10 @@ const input = tv({
   },
 });
 
-export type InputProps = VariantProps<typeof input> &
+export type InputProps = Omit<VariantProps<typeof input>, "size"> &
   ComponentProps<"input"> & {
+    // `size` colide com o atributo nativo do <input>; por isso outro nome.
+    tamanho?: VariantProps<typeof input>["size"];
     className?: string;
     options?: FormFieldOption[];
     defaultValue?: string | number | readonly string[] | undefined;
@@ -34,7 +37,7 @@ export type InputProps = VariantProps<typeof input> &
 
 function Input({
   erro,
-  size,
+  tamanho: size,
   className,
   type,
   options,

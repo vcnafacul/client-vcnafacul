@@ -22,6 +22,7 @@ import { Edicao, edicaoArray } from "../../../enums/prova/edicao";
 import { useToastAsync } from "../../../hooks/useToastAsync";
 import { createProva } from "../../../services/prova/createProva";
 import { useAuthStore } from "../../../store/auth";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useState } from "react";
 import { OpcaoNovasVersoes } from "../components/OpcaoNovasVersoes";
 
@@ -41,6 +42,8 @@ function NewProva({
 }: NewProvaProps) {
   const { register, handleSubmit, watch } = useForm();
   const [receberNovasVersoes, setReceberNovasVersoes] = useState(false);
+  // No celular (abaixo de 768px) os campos ficam compactos, como na tela de Estudantes.
+  const acimaDeSm = useAcimaDeSm();
   const {
     data: { token },
   } = useAuthStore();
@@ -206,7 +209,7 @@ function NewProva({
       handleClose={handleClose!}
       className="w-full max-w-3xl rounded-lg bg-white shadow-xl p-2"
     >
-      <div className="p-6">
+      <div className="p-3 sm:p-6">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-blue-100 rounded-lg">
@@ -236,7 +239,8 @@ function NewProva({
               <Form
                 formFields={listFieldProva}
                 register={register}
-                className="grid grid-cols-2 gap-4"
+                size={acimaDeSm ? "base" : "small"}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"
               />
             </div>
           </div>
@@ -271,7 +275,7 @@ function NewProva({
                   onRemove={handleRemoveFile}
                 />
                 {uploadFile && (
-                  <p className="text-xs text-blue-700 mt-2">
+                  <p className="text-xs text-blue-700 mt-2 break-all">
                     ✓ Arquivo selecionado: {(uploadFile as File).name}
                   </p>
                 )}
@@ -290,7 +294,7 @@ function NewProva({
                   onRemove={handleRemoveGabarito}
                 />
                 {uploadGabarito && (
-                  <p className="text-xs text-green-700 mt-2">
+                  <p className="text-xs text-green-700 mt-2 break-all">
                     ✓ Arquivo selecionado: {(uploadGabarito as File).name}
                   </p>
                 )}

@@ -1,10 +1,12 @@
 interface LabelInputProps{
     label: string;
+    /** Campo compacto (h-11): o rótulo sobe para não encostar no texto. */
+    compacto?: boolean;
 }
 
-function LabelInput({ label }: LabelInputProps){
+function LabelInput({ label, compacto = false }: LabelInputProps){
     return (
-        <div className="absolute text-grey top-2 left-[21px] font-bold text-xs bg-white">
+        <div className={`absolute text-grey ${compacto ? "top-1 text-[11px]" : "top-2 text-xs"} left-[21px] font-bold bg-white`}>
             {label}
         </div>
     )

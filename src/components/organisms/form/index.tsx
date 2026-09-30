@@ -7,9 +7,11 @@ export type FormProps = ComponentProps<'div'> & {
     formFields: FormFieldInput[];
     register: UseFormRegister<any>;
     errors?: FieldErrors;
+    /** Tamanho de todos os campos; `small` no celular. */
+    size?: "base" | "small";
 }
 
-function Form({ formFields, register, errors, ...props } : FormProps){
+function Form({ formFields, register, errors, size, ...props } : FormProps){
    return (
         <div {...props}>
             {formFields.map(fData => 
@@ -25,6 +27,7 @@ function Form({ formFields, register, errors, ...props } : FormProps){
                     options={fData.options}
                     register={register}
                     className={fData.className}
+                    size={fData.size ?? size}
                     error={errors && errors[fData.id] ? errors[fData.id] as FieldError : undefined}
                     />
                 )}
