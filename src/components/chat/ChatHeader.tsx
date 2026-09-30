@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ExternalLink, Monitor, Smartphone, Globe } from "lucide-react";
+import { ArrowLeft, ExternalLink, Monitor, Smartphone, Globe } from "lucide-react";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +20,8 @@ interface Props {
   title: string;
   subtitle?: string;
   onClose?: () => void;
+  /** Botão ← (inbox no celular): volta à lista sem encerrar a conversa. */
+  onBack?: () => void;
   showAvatar?: boolean;
   avatarSeed?: string;
   status?: "open" | "closed";
@@ -33,6 +35,7 @@ export function ChatHeader({
   title,
   subtitle,
   onClose,
+  onBack,
   showAvatar = false,
   avatarSeed,
   status,
@@ -66,6 +69,16 @@ export function ChatHeader({
     <>
       <div className="flex items-center justify-between gap-3 border-b bg-marine text-white px-3 py-2">
         <div className="flex items-center gap-3 min-w-0">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              aria-label="Voltar para a lista"
+              className="-ml-1 h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-full hover:bg-white/10"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+          )}
           {showAvatar && (
             <div
               className={cn(
@@ -79,7 +92,7 @@ export function ChatHeader({
           )}
           <div className="min-w-0 flex flex-col">
             <span className="font-semibold text-sm truncate">{title}</span>
-            <div className="flex items-center gap-1.5 text-[11px]">
+            <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
               {subtitle &&
                 subtitle.split(" · ").map((part, i) =>
                   i === 0 && originPage ? (
