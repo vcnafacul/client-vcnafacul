@@ -357,7 +357,7 @@ function Account() {
           </div>
         </div>
       </div>
-      <ModalDelete />
+      {ModalDelete()}
       {userAccount?.collaborator && (
         <ModalEditFrentes
           isOpen={modals.editFrentes.isOpen}

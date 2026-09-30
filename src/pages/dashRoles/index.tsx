@@ -347,10 +347,10 @@ function DashRoles() {
           openUpdateRole={() => modals.modalUserRole.open()}
         />
       )}
-      <ShowUserRole />
-      <ShowNewRole />
-      <ShowEditRole />
-      <ShowSendEmailModal />
+      {ShowUserRole()}
+      {ShowNewRole()}
+      {ShowEditRole()}
+      {ShowSendEmailModal()}
     </DashCardContext.Provider>
   );
 }

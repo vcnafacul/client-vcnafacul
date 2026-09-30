@@ -198,7 +198,7 @@ export function AttendanceRecordModal({
           sx={{ border: 0 }}
         />
       </Paper>
-      <ModalEditRegister />
+      {ModalEditRegister()}
     </ModalTemplate>
   );
 }

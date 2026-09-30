@@ -120,7 +120,7 @@ function MainSimulate() {
           <SimulationHistory historical={historical} />
         </div>
       </div>
-      <ModalNewSimulate />
+      {ModalNewSimulate()}
     </>
   );
 }

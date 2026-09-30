@@ -211,7 +211,7 @@ function Step3Geo({
           className="h-80 border border-gray-300 z-0"
           zoom={15}
           markers={[]}
-          mapEvent={<Event />}
+          mapEvent={Event()}
         />
         <div className="flex items-center gap-4 my-4">
           <input

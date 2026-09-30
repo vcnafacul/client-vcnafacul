@@ -370,9 +370,9 @@ export function InscriptionInfoModal({
             )}
           </div>
         </div>
-        <ModalEdit />
-        <ModalDelete />
-        <ModalExtend />
+        {ModalEdit()}
+        {ModalDelete()}
+        {ModalExtend()}
       </div>
     </ModalTemplate>
   );

@@ -113,7 +113,7 @@ export function InfoStudentEnrolledModal({
           }}
         />
       </div>
-      <ModalPhotoEditor />
+      {ModalPhotoEditor()}
     </ModalTemplate>
   );
 }

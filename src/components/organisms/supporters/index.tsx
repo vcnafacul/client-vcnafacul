@@ -288,11 +288,11 @@ function Supporters() {
         <Selector tabItems={tabItems} changeItem={changeTab} activeTab={tab} />
         {tab === TabItems.Empresas ? (
           <div className="flex justify-around items-center">
-            <Empresas />
+            {Empresas()}
           </div>
         ) : tab == TabItems.Voluntarios ? (
           <div className="flex justify-around items-center w-full h-80">
-            <Volunteers />
+            {Volunteers()}
           </div>
         ) : (partnerPrepCourses.length > 0 && !loadingPartnerPrepCourses) ||
           prepCourse.length > 0 ? (

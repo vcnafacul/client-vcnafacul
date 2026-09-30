@@ -307,7 +307,7 @@ export function PartnerClass() {
           >
             Períodos Letivos
           </Typography>
-          <LoadingSkeleton />
+          {LoadingSkeleton()}
         </Box>
       </>
     );
@@ -346,10 +346,10 @@ export function PartnerClass() {
           >
             Períodos Letivos
           </Typography>
-          <EmptyState />
+          {EmptyState()}
         </Box>
-        <ModalCreateCoursePeriod />
-        <ModalEditCoursePeriod />
+        {ModalCreateCoursePeriod()}
+        {ModalEditCoursePeriod()}
       </>
     );
   }
@@ -528,9 +528,9 @@ export function PartnerClass() {
         )}
       </Box>
 
-      <ModalCreateCoursePeriod />
-      <ModalEditCoursePeriod />
-      <ModalCreateClass />
+      {ModalCreateCoursePeriod()}
+      {ModalEditCoursePeriod()}
+      {ModalCreateClass()}
     </>
   );
 }

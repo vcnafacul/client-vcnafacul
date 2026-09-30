@@ -103,7 +103,7 @@ function RegisterForm({
             </div>
           </div>
         )}
-        <StepNow />
+        {StepNow()}
       </div>
     </div>
   );

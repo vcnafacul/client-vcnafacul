@@ -258,7 +258,7 @@ export function AttendanceRecordByStudentModal({
           />
         </Paper>
       </div>
-      <ModalApplyJustification />
+      {ModalApplyJustification()}
       <PeriodJustificationModal
         isOpen={showPeriodModal}
         handleClose={() => setShowPeriodModal(false)}

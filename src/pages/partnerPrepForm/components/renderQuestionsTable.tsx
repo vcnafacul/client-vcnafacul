@@ -261,7 +261,7 @@ export function RenderQuestionsTable({
             </Paper>
           ))}
         </Box>
-        <ShowQuestion />
+        {ShowQuestion()}
       </>
     );
   }
@@ -322,7 +322,7 @@ export function RenderQuestionsTable({
           </Table>
         </TableContainer>
       </DndContext>
-      <ShowQuestion />
+      {ShowQuestion()}
     </>
   );
 }

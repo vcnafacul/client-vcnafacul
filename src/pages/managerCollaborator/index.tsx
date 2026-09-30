@@ -598,11 +598,11 @@ export default function ManagerCollaborator() {
           />
         </Paper>
       )}
-      <ModalDeConvites />
-      <ModalShowInfo />
-      <ModalShowNewRole />
-      <ShowUserRole />
-      <ModalShowEditRole />
+      {ModalDeConvites()}
+      {ModalShowInfo()}
+      {ModalShowNewRole()}
+      {ShowUserRole()}
+      {ModalShowEditRole()}
     </div>
   );
 }

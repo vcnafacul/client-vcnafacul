@@ -429,7 +429,7 @@ export function ModalCreateQuestion({
           </Button>
         </Box>
       </Box>
-      <ConditionsModal />
+      {ConditionsModal()}
     </ModalTemplate>
   );
 }

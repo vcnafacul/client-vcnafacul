@@ -559,7 +559,7 @@ export function PartnerPrepInscriptionStepForm({
           </button>
         </div>
       </form>
-      <ModalConfirmSubscription />
+      {ModalConfirmSubscription()}
     </>
   );
 }

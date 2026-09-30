@@ -206,7 +206,7 @@ export function WaitingList(props: Props) {
           </div>
         </div>
       </ModalTemplate>
-      <ModalEditWailtingList />
+      {ModalEditWailtingList()}
     </>
   );
 }
