@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import DocxPreview from "@/components/atoms/docxPreview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { ContentDtoInput } from "@/dtos/content/contentDtoInput";
 import {
   AdjustmentProposalDto,
@@ -135,6 +135,16 @@ export default function ValidatedDemand({
     }
   };
 
+  /*
+    Rejeitar, resetar e revisar proposta mudam a demanda de vez (aprovar a
+    proposta troca o arquivo): confirmam antes.
+  */
+  const [confirmacao, setConfirmacao] = useState<{
+    titulo: string;
+    texto: string;
+    acao: () => void;
+  } | null>(null);
+
   const handleUpdateStatus = async (status: StatusEnum | StatusContent) => {
     await executeAsync({
       action: () => updateStatus(demandId, status, token),
@@ -215,7 +225,7 @@ export default function ValidatedDemand({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-5xl p-6 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[calc(100%-2rem)] max-w-5xl p-3 sm:p-6 max-h-[90dvh] overflow-y-auto">
         <DialogTitle className="sr-only">{demand.title}</DialogTitle>
         <Card className="border-none shadow-none">
           <CardHeader>
@@ -247,7 +257,7 @@ export default function ValidatedDemand({
             </div>
 
             {fileId && (
-              <div className="flex gap-2 mt-4">
+              <div className="flex flex-wrap gap-2 mt-4">
                 <Button variant="outline" onClick={handleDownload}>
                   Download
                 </Button>
@@ -279,14 +289,26 @@ export default function ValidatedDemand({
               </Button>
               <Button
                 variant="destructive"
-                onClick={() => handleUpdateStatus(StatusEnum.Rejected)}
+                onClick={() =>
+                  setConfirmacao({
+                    titulo: "Rejeitar esta demanda?",
+                    texto: "A demanda volta para quem enviou o arquivo.",
+                    acao: () => handleUpdateStatus(StatusEnum.Rejected),
+                  })
+                }
                 disabled={!canReview || demand.status === StatusEnum.Rejected}
               >
                 Rejeitar
               </Button>
               <Button
                 variant="outline"
-                onClick={handleReset}
+                onClick={() =>
+                  setConfirmacao({
+                    titulo: "Resetar esta demanda?",
+                    texto: "O arquivo enviado sai e a demanda volta a aguardar envio.",
+                    acao: handleReset,
+                  })
+                }
                 disabled={!canReview}
               >
                 Resetar
@@ -305,8 +327,8 @@ export default function ValidatedDemand({
                       key={proposal._id}
                       className="border rounded-lg p-3 flex flex-col gap-2"
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <span className="text-sm font-medium">
                             Autor:{" "}
                             {proposal.authorName || proposal.author}
@@ -326,7 +348,7 @@ export default function ValidatedDemand({
                           {proposal.comment}
                         </p>
                       )}
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <Button
                           variant="outline"
                           size="sm"
@@ -343,10 +365,16 @@ export default function ValidatedDemand({
                                 size="sm"
                                 className="bg-green2 hover:bg-green2/80"
                                 onClick={() =>
-                                  handleReviewProposal(
-                                    proposal._id,
-                                    ProposalStatus.Approved
-                                  )
+                                  setConfirmacao({
+                                    titulo: "Aprovar esta proposta?",
+                                    texto:
+                                      "O arquivo da demanda será trocado pelo da proposta.",
+                                    acao: () =>
+                                      handleReviewProposal(
+                                        proposal._id,
+                                        ProposalStatus.Approved
+                                      ),
+                                  })
                                 }
                               >
                                 Aprovar
@@ -355,10 +383,15 @@ export default function ValidatedDemand({
                                 variant="destructive"
                                 size="sm"
                                 onClick={() =>
-                                  handleReviewProposal(
-                                    proposal._id,
-                                    ProposalStatus.Rejected
-                                  )
+                                  setConfirmacao({
+                                    titulo: "Rejeitar esta proposta?",
+                                    texto: "O arquivo atual da demanda continua.",
+                                    acao: () =>
+                                      handleReviewProposal(
+                                        proposal._id,
+                                        ProposalStatus.Rejected
+                                      ),
+                                  })
                                 }
                               >
                                 Rejeitar
@@ -382,10 +415,10 @@ export default function ValidatedDemand({
                   {fileHistory.map((entry) => (
                     <div
                       key={entry._id}
-                      className="border rounded-lg p-3 flex items-center justify-between"
+                      className="border rounded-lg p-3 flex flex-wrap items-center justify-between gap-2"
                     >
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium">
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-medium break-all">
                           {entry.file?.originalName || "Arquivo"}
                         </span>
                         <span className="text-xs text-muted-foreground">
@@ -419,14 +452,12 @@ export default function ValidatedDemand({
         open={modals.docxPreview.isOpen}
         onOpenChange={modals.docxPreview.close}
       >
-        <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto p-6">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-6xl max-h-[90dvh] overflow-y-auto p-3 sm:p-6">
           <DialogTitle className="sr-only">
             Pre-visualizacao do documento
           </DialogTitle>
           {arrayBuffer && (
-            <ScrollArea className="h-[70vh]">
-              <DocxPreview arrayBuffer={arrayBuffer} />
-            </ScrollArea>
+            <DocxPreview arrayBuffer={arrayBuffer} />
           )}
         </DialogContent>
       </Dialog>
@@ -436,14 +467,12 @@ export default function ValidatedDemand({
         open={modals.proposalPreview.isOpen}
         onOpenChange={modals.proposalPreview.close}
       >
-        <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto p-6">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-6xl max-h-[90dvh] overflow-y-auto p-3 sm:p-6">
           <DialogTitle className="sr-only">
             Pre-visualizacao da proposta
           </DialogTitle>
           {proposalPreviewBuffer && (
-            <ScrollArea className="h-[70vh]">
-              <DocxPreview arrayBuffer={proposalPreviewBuffer} />
-            </ScrollArea>
+            <DocxPreview arrayBuffer={proposalPreviewBuffer} />
           )}
         </DialogContent>
       </Dialog>
@@ -455,6 +484,18 @@ export default function ValidatedDemand({
         handleClose={() => modals.adjustmentProposal.close()}
         onSuccess={loadProposalsAndHistory}
       />
+      <ModalConfirmCancel
+        isOpen={!!confirmacao}
+        handleClose={() => setConfirmacao(null)}
+        handleConfirm={() => {
+          const acao = confirmacao?.acao;
+          setConfirmacao(null);
+          acao?.();
+        }}
+        text={confirmacao?.titulo}
+      >
+        <p className="text-sm text-muted-foreground">{confirmacao?.texto}</p>
+      </ModalConfirmCancel>
     </Dialog>
   );
 }
