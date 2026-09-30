@@ -200,7 +200,7 @@ export function TabHistoricoRefactored({
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-2 sm:p-6">
       {/* Header */}
       <Card>
         <CardHeader>
@@ -218,7 +218,7 @@ export function TabHistoricoRefactored({
       {/* Timeline de Logs */}
       <div className="relative space-y-4">
         {/* Linha vertical da timeline */}
-        <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-primary/50 to-transparent" />
+        <div className="absolute left-4 sm:left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-primary/50 to-transparent" />
 
         {logs.map((log, index) => {
           const changes = parseChanges(log.changes);
@@ -228,26 +228,26 @@ export function TabHistoricoRefactored({
           return (
             <Card
               key={index}
-              className="ml-12 relative hover:shadow-lg transition-shadow duration-300"
+              className="ml-8 sm:ml-12 relative hover:shadow-lg transition-shadow duration-300"
             >
               {/* Ponto da timeline */}
-              <div className="absolute -left-[27px] top-6 w-4 h-4 rounded-full bg-primary border-4 border-background shadow-md" />
+              <div className="absolute -left-[23px] sm:-left-[27px] top-6 w-4 h-4 rounded-full bg-primary border-4 border-background shadow-md" />
 
               <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 space-y-2">
+                <div className="flex flex-wrap items-start justify-between gap-2 sm:gap-4">
+                  <div className="flex-1 min-w-0 space-y-2">
                     {/* Usuário */}
                     <div className="flex items-center gap-2">
                       <div className="p-2 rounded-full bg-primary/10">
                         <User className="h-4 w-4 text-primary" />
                       </div>
-                      <div>
-                        <p className="font-semibold text-base">
+                      <div className="min-w-0">
+                        <p className="font-semibold text-base break-words">
                           {log.user.name}
                         </p>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Mail className="h-3 w-3" />
-                          {log.user.email}
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground min-w-0">
+                          <Mail className="h-3 w-3 shrink-0" />
+                          <span className="break-all">{log.user.email}</span>
                         </div>
                       </div>
                     </div>

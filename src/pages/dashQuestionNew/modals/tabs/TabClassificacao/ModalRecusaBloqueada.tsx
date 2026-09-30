@@ -57,7 +57,7 @@ export function ModalRecusaBloqueada({
       aria-label={TITULO_RECUSA_BLOQUEADA}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
     >
-      <div className="w-full max-w-lg rounded-lg bg-white p-4 shadow-xl flex flex-col gap-3">
+      <div className="w-full max-w-lg max-h-full overflow-y-auto rounded-lg bg-white p-4 shadow-xl flex flex-col gap-3">
         <h2 className="text-lg font-semibold">{TITULO_RECUSA_BLOQUEADA}</h2>
         <p className="text-sm text-gray-600">{TEXTO_RECUSA_BLOQUEADA}</p>
         <ul className="text-sm list-disc pl-5" data-provas-da-recusa>
@@ -123,6 +123,10 @@ export function ModalRecusaBloqueada({
               Sinalizar para revisão
             </Button>
           </div>
+        )}
+        {/* O `title` do botão não aparece no toque: o motivo fica à vista. */}
+        {!sinalizando && !onTirarDasMinhas && (
+          <p className="text-right text-xs text-gray-500">{TEXTO_SEM_EDITAR}</p>
         )}
       </div>
     </div>

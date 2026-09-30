@@ -36,6 +36,8 @@ export function DuplicarQuestao({
   if (!podeCriarAPartir(permissao)) return null;
 
   const duplicar = async () => {
+    // Cria uma questão nova na hora: confirma antes.
+    if (!confirm("Duplicar esta questão? Uma cópia nova será criada.")) return;
     setDuplicando(true);
     try {
       const nova = await duplicarQuestao(token, questaoId);

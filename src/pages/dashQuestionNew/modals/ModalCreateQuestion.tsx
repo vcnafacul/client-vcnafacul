@@ -163,7 +163,7 @@ export function ModalCreateQuestion({
   return (
     <ModalTabTemplateQuestion
       isOpen={isOpen}
-      className="px-4 py-2"
+      className="px-2 py-2 sm:px-4"
       tabs={[
         {
           label: "Classificação",

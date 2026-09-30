@@ -81,8 +81,8 @@ export function TabConteudo({
     <div className="space-y-6">
       {/* Enunciado da Questão */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <div className="flex items-center gap-3">
+        <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 pb-3">
+          <div className="flex flex-wrap items-center gap-3">
             <CardTitle className="text-lg">Enunciado da Questão</CardTitle>
             {isEditing && (
               <span className="text-sm font-normal text-blue-600 bg-blue-50 px-2 py-1 rounded">
@@ -247,8 +247,8 @@ export function TabConteudo({
       {isEditing && (
         <Card className="bg-blue-50 border-blue-200">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex-1">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex-1 min-w-[12rem]">
                 {isDirty && (
                   <p className="text-sm text-amber-600 font-medium flex items-center gap-2">
                     <AlertCircle className="h-4 w-4" />
@@ -276,7 +276,7 @@ export function TabConteudo({
                 )}
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button
                   onClick={onCancel}
                   disabled={isSaving}

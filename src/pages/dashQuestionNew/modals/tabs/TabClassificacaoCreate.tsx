@@ -177,7 +177,7 @@ export function TabClassificacaoCreate({
   };
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-2 sm:p-6">
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">📋 Informações da Prova</CardTitle>
