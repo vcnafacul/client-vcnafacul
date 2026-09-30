@@ -34,6 +34,8 @@ import { ClassEssayAnalytics } from "@/components/organisms/classEssayAnalytics"
 import { MonthPicker } from "@/components/organisms/classSimuladoAnalytics/MonthPicker";
 import { ClassMonthsList } from "@/types/classAnalytics/classSimuladoAnalytics";
 import { SimuladosDaTurma } from "./SimuladosDaTurma";
+import { AlunosMobile } from "./AlunosMobile";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { abaDaUrl, PARAM_DA_ABA, type AbaDaTurma } from "./abaDaTurma";
 
 function toStudentsDtoOutput(
@@ -98,6 +100,8 @@ export function PartnerClassWithStudents() {
     {} as ClassEntity
   );
   const [students, setStudents] = useState<ClassStudent[]>([]);
+  // Abaixo de 768px (o `sm` do projeto) a tabela vira cards.
+  const acimaDeSm = useAcimaDeSm();
   const [studentSelected, setStudentSelected] = useState<ClassStudent>(
     {} as ClassStudent
   );
@@ -180,6 +184,35 @@ export function PartnerClassWithStudents() {
     };
   }, [classEntity.partnerId, token]);
 
+  /*
+    Ações de um aluno ativo: mesma função na coluna do DataGrid (desktop) e no
+    card do celular (AlunosMobile).
+  */
+  const renderAcoes = (aluno: ClassStudent) => (
+    <div className="flex gap-2 justify-center">
+      <Tooltip title="Ver carteirinha">
+        <IconButton
+          onClick={() => {
+            setStudentSelected(aluno);
+            modals.modalStudentCard.open();
+          }}
+        >
+          <IoEyeSharp className="h-6 w-6 fill-gray-500 hover:fill-marine opacity-60 hover:opacity-100" />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Registro de presença">
+        <IconButton
+          onClick={() => {
+            setStudentSelected(aluno);
+            modals.modalAttendanceRecordByStudent.open();
+          }}
+        >
+          <FaListCheck className="h-5 w-5 fill-gray-500 hover:fill-marine opacity-60 hover:opacity-100" />
+        </IconButton>
+      </Tooltip>
+    </div>
+  );
+
   const columns: GridColDef[] = [
     {
       field: "actions",
@@ -188,30 +221,7 @@ export function PartnerClassWithStudents() {
       sortable: false,
       align: "center",
       headerAlign: "center",
-      renderCell: (params) => (
-        <div className="flex gap-2 justify-center">
-          <Tooltip title="Ver carteirinha">
-            <IconButton
-              onClick={() => {
-                setStudentSelected(params.row);
-                modals.modalStudentCard.open();
-              }}
-            >
-              <IoEyeSharp className="h-6 w-6 fill-gray-500 hover:fill-marine opacity-60 hover:opacity-100" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Registro de presença">
-            <IconButton
-              onClick={() => {
-                setStudentSelected(params.row);
-                modals.modalAttendanceRecordByStudent.open();
-              }}
-            >
-              <FaListCheck className="h-5 w-5 fill-gray-500 hover:fill-marine opacity-60 hover:opacity-100" />
-            </IconButton>
-          </Tooltip>
-        </div>
-      ),
+      renderCell: (params) => renderAcoes(params.row),
     },
     {
       field: "cod_enrolled",
@@ -472,7 +482,7 @@ export function PartnerClassWithStudents() {
         className="w-full mt-4"
       >
         <div className="px-4 flex items-center justify-between gap-4 flex-wrap">
-          <TabsList>
+          <TabsList className="max-w-full overflow-x-auto justify-start">
             <TabsTrigger value="alunos">Alunos</TabsTrigger>
             <TabsTrigger value="desempenho">Desempenho</TabsTrigger>
             {podeVerRelatorio && (
@@ -491,7 +501,7 @@ export function PartnerClassWithStudents() {
         </div>
 
         <TabsContent value="alunos">
-          <div className="p-4 flex gap-2 flex-start bg-gray-50 w-full">
+          <div className="p-4 flex flex-wrap items-center gap-2 bg-gray-50 w-full">
             {permissao[Roles.gerenciarTurmas] && (
               <Button
                 typeStyle="accepted"
@@ -536,22 +546,34 @@ export function PartnerClassWithStudents() {
               }
             />
           </div>
-          <Paper sx={{ height: "100%", width: "100%" }}>
-            <DataGrid
-              rows={showCancelled ? cancelledStudents : students}
-              columns={showCancelled ? cancelledColumns : columns}
-              initialState={{ pagination: { paginationModel } }}
-              rowHeight={40}
-              disableRowSelectionOnClick
-              pageSizeOptions={[5, 10, 15, 30, 50, 100]}
-              localeText={
-                showCancelled
-                  ? { noRowsLabel: "Nenhuma matrícula cancelada nesta turma" }
-                  : undefined
-              }
-              sx={{ border: 0 }}
-            />
-          </Paper>
+          {!acimaDeSm ? (
+            showCancelled ? (
+              <AlunosMobile tipo="cancelados" alunos={cancelledStudents} />
+            ) : (
+              <AlunosMobile
+                tipo="ativos"
+                alunos={students}
+                renderAcoes={renderAcoes}
+              />
+            )
+          ) : (
+            <Paper sx={{ height: "100%", width: "100%" }}>
+              <DataGrid
+                rows={showCancelled ? cancelledStudents : students}
+                columns={showCancelled ? cancelledColumns : columns}
+                initialState={{ pagination: { paginationModel } }}
+                rowHeight={40}
+                disableRowSelectionOnClick
+                pageSizeOptions={[5, 10, 15, 30, 50, 100]}
+                localeText={
+                  showCancelled
+                    ? { noRowsLabel: "Nenhuma matrícula cancelada nesta turma" }
+                    : undefined
+                }
+                sx={{ border: 0 }}
+              />
+            </Paper>
+          )}
         </TabsContent>
 
         <TabsContent value="desempenho">
