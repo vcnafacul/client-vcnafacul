@@ -33,7 +33,7 @@ import {
 } from "@mui/x-data-grid";
 import heic2any from "heic2any";
 import debounce from "lodash";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FaAddressCard, FaCheck, FaDownload } from "react-icons/fa";
 import { IoClose, IoEyeSharp } from "react-icons/io5";
 import { MdClass, MdOutlineFileDownload } from "react-icons/md";
@@ -44,6 +44,8 @@ import CancelEnrollmentModal from "./modals/cancelEnrollmentModal";
 import { InfoStudentEnrolledModal } from "./modals/infoStudentEnrolledModal";
 import { PrinterStudentCards } from "./modals/printerStudentCards";
 import { UpdateStudentClassModal } from "./modals/updateStudentClassModal";
+import { EstudantesMobile } from "./EstudantesMobile";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 export function StudentsEnrolled() {
   const [name, setName] = useState<string>("");
   const [students, setStudents] = useState<StudentsDtoOutput[]>([]);
@@ -68,6 +70,20 @@ export function StudentsEnrolled() {
   );
   const [partnerId, setPartnerId] = useState<string | null>(null);
   const [exportando, setExportando] = useState(false);
+  // Busca por texto: `busca` é o campo; `buscaAplicada` só muda depois de
+  // 500ms parado, e é ela que recarrega a lista. O ref deixa as outras
+  // chamadas (paginação, ordenação, filtro do grid) usarem o valor atual sem
+  // entrar nas dependências de cada callback.
+  const [busca, setBusca] = useState("");
+  const [buscaAplicada, setBuscaAplicada] = useState("");
+  const buscaRef = useRef("");
+  useEffect(() => {
+    const t = setTimeout(() => setBuscaAplicada(busca.trim()), 500);
+    return () => clearTimeout(t);
+  }, [busca]);
+  buscaRef.current = buscaAplicada;
+  // Abaixo de 768px (o `sm` do projeto) a tabela vira cards.
+  const acimaDeSm = useAcimaDeSm();
 
   const {
     data: { token, permissao },
@@ -163,6 +179,7 @@ export function StudentsEnrolled() {
           sortModel,
           year ?? undefined,
           applicationStatus ?? undefined,
+          buscaRef.current,
         ),
       loadingMessage: "Buscando alunos matriculados...",
       successMessage: "Alunos matriculados encontrados com sucesso!",
@@ -215,6 +232,7 @@ export function StudentsEnrolled() {
             selectedYear ?? undefined,
             selectedStatus ?? undefined,
             columns,
+            buscaRef.current,
           ),
         loadingMessage: "Gerando a lista...",
         successMessage: "Lista baixada com sucesso!",
@@ -349,7 +367,7 @@ export function StudentsEnrolled() {
         text={`Por favor, informe o motivo do cancelamento de matrícula de ${capitalizeWords(
           studentSelected?.name,
         )}.`}
-        className="bg-white p-4 rounded-md w-[512px]"
+        className="bg-white p-4 rounded-md w-[calc(100%-2rem)] max-w-[512px]"
       />
     );
   };
@@ -363,7 +381,7 @@ export function StudentsEnrolled() {
           modals.modalConfirm.close();
           handleReactivateEnrollment();
         }}
-        className="bg-white p-4 rounded-md w-[512px]"
+        className="bg-white p-4 rounded-md w-[calc(100%-2rem)] max-w-[512px]"
       >
         <div className="flex flex-col gap-2">
           <Text size="secondary" className="font-semibold m-0 text-start">
@@ -399,6 +417,108 @@ export function StudentsEnrolled() {
     ) : null;
   };
 
+  /*
+    Ações de um estudante: mesma função na coluna do DataGrid (desktop) e no
+    card do celular (EstudantesMobile).
+  */
+  const renderAcoes = (estudante: StudentsDtoOutput) => (
+    <div className="flex gap-2 justify-center">
+      <Tooltip title="Visualizar">
+        <IconButton onClick={() => handleModalDetaild(estudante.id)}>
+          <IoEyeSharp className="h-6 w-6 fill-gray-500 opacity-60 hover:opacity-100" />
+        </IconButton>
+      </Tooltip>
+      {permissao[Roles.gerenciarEstudantes] &&
+        estudante.applicationStatus === StatusApplication.Enrolled &&
+        estudante.class?.id && (
+          <Tooltip title="Declaração de matrícula">
+            <IconButton
+              onClick={() =>
+                handleDownloadEnrollmentCertificate(estudante.id)
+              }
+            >
+              <FaDownload className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
+            </IconButton>
+          </Tooltip>
+        )}
+      {permissao[Roles.gerenciarEstudantes] &&
+        (estudante.applicationStatus === StatusApplication.Enrolled ? (
+          <Tooltip title="Cancelar matrícula">
+            <IconButton
+              onClick={() => {
+                const student = students.find(
+                  (student) => student.id === estudante.id,
+                );
+                if (!student) {
+                  alert("Estudante não encontrado");
+                } else {
+                  setStudentSelected(student);
+                  modals.modalReject.open();
+                }
+              }}
+            >
+              <IoClose className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
+            </IconButton>
+          </Tooltip>
+        ) : (
+          <Tooltip title="Reativar matrícula">
+            <IconButton
+              onClick={() => {
+                const student = students.find(
+                  (student) => student.id === estudante.id,
+                );
+                if (!student) {
+                  alert("Estudante não encontrado");
+                } else {
+                  setStudentSelected(student);
+                  modals.modalConfirm.open();
+                }
+              }}
+            >
+              <FaCheck className="h-6 w-6 fill-green2 opacity-60 hover:opacity-100" />
+            </IconButton>
+          </Tooltip>
+        ))}
+      {permissao[Roles.gerenciarTurmas] && (
+        <Tooltip title="Alterar Turma">
+          <IconButton
+            onClick={() => {
+              const student = students.find(
+                (student) => student.id === estudante.id,
+              );
+              if (!student) {
+                alert("Estudante não encontrado");
+              } else {
+                setStudentSelected(student);
+                modals.modalUpdateClass.open();
+              }
+            }}
+          >
+            <MdClass className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
+          </IconButton>
+        </Tooltip>
+      )}
+    </div>
+  );
+
+  // Seleção para carteirinhas: só matriculados com turma (igual ao DataGrid).
+  const selecionavel = (estudante: StudentsDtoOutput) =>
+    estudante.applicationStatus === StatusApplication.Enrolled &&
+    estudante.class?.id !== undefined;
+
+  const irParaPagina = (novaPagina: number) => {
+    setPage(novaPagina);
+    getEnrolle(
+      novaPagina + 1,
+      limit,
+      selectedInscription?.id,
+      filter,
+      sort,
+      selectedYear,
+      selectedStatus,
+    );
+  };
+
   const columns: GridColDef[] = [
     {
       field: "actions",
@@ -411,85 +531,7 @@ export function StudentsEnrolled() {
       filterable: false,
       align: "center",
       headerAlign: "center",
-      renderCell: (params) => (
-        <div className="flex gap-2 justify-center">
-          <Tooltip title="Visualizar">
-            <IconButton onClick={() => handleModalDetaild(params.row.id)}>
-              <IoEyeSharp className="h-6 w-6 fill-gray-500 opacity-60 hover:opacity-100" />
-            </IconButton>
-          </Tooltip>
-          {permissao[Roles.gerenciarEstudantes] &&
-            params.row.applicationStatus === StatusApplication.Enrolled &&
-            params.row.class?.id && (
-              <Tooltip title="Declaração de matrícula">
-                <IconButton
-                  onClick={() =>
-                    handleDownloadEnrollmentCertificate(params.row.id)
-                  }
-                >
-                  <FaDownload className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
-                </IconButton>
-              </Tooltip>
-            )}
-          {permissao[Roles.gerenciarEstudantes] &&
-            (params.row.applicationStatus === StatusApplication.Enrolled ? (
-              <Tooltip title="Cancelar matrícula">
-                <IconButton
-                  onClick={() => {
-                    const student = students.find(
-                      (student) => student.id === params.row.id,
-                    );
-                    if (!student) {
-                      alert("Estudante não encontrado");
-                    } else {
-                      setStudentSelected(student);
-                      modals.modalReject.open();
-                    }
-                  }}
-                >
-                  <IoClose className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
-                </IconButton>
-              </Tooltip>
-            ) : (
-              <Tooltip title="Reativar matrícula">
-                <IconButton
-                  onClick={() => {
-                    const student = students.find(
-                      (student) => student.id === params.row.id,
-                    );
-                    if (!student) {
-                      alert("Estudante não encontrado");
-                    } else {
-                      setStudentSelected(student);
-                      modals.modalConfirm.open();
-                    }
-                  }}
-                >
-                  <FaCheck className="h-6 w-6 fill-green2 opacity-60 hover:opacity-100" />
-                </IconButton>
-              </Tooltip>
-            ))}
-          {permissao[Roles.gerenciarTurmas] && (
-            <Tooltip title="Alterar Turma">
-              <IconButton
-                onClick={() => {
-                  const student = students.find(
-                    (student) => student.id === params.row.id,
-                  );
-                  if (!student) {
-                    alert("Estudante não encontrado");
-                  } else {
-                    setStudentSelected(student);
-                    modals.modalUpdateClass.open();
-                  }
-                }}
-              >
-                <MdClass className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
-              </IconButton>
-            </Tooltip>
-          )}
-        </div>
-      ),
+      renderCell: (params) => renderAcoes(params.row),
     },
     {
       field: "cod_enrolled",
@@ -608,7 +650,7 @@ export function StudentsEnrolled() {
       selectedStatus,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedInscription, selectedYear, selectedStatus, limit]);
+  }, [selectedInscription, selectedYear, selectedStatus, limit, buscaAplicada]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSelectionChange = useCallback((selectionModel: any) => {
@@ -626,8 +668,24 @@ export function StudentsEnrolled() {
       <div className="w-full px-4">
         <h1 className="text-3xl font-bold text-center text-marine">{name}</h1>
       </div>
-      <div className="w-full px-4 flex gap-4 items-center justify-between flex-wrap">
+      {/*
+        No celular os filtros ficam compactos (size small) e em grade de 2:
+        busca e processo na linha inteira, período e status lado a lado.
+      */}
+      <div className="w-full px-4 grid grid-cols-2 gap-2 sm:flex sm:gap-4 sm:items-center sm:justify-between sm:flex-wrap">
+        <TextField
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          label="Buscar"
+          placeholder="Nome, matrícula ou email"
+          type="search"
+          size={acimaDeSm ? "medium" : "small"}
+          inputProps={{ maxLength: 100, "aria-label": "Buscar estudante" }}
+          className="col-span-2"
+          sx={{ minWidth: { sm: 260 }, flex: { sm: 1 } }}
+        />
         <Autocomplete
+          size={acimaDeSm ? "medium" : "small"}
           value={selectedYear}
           onChange={(_, newValue) => {
             setSelectedYear(newValue);
@@ -639,14 +697,16 @@ export function StudentsEnrolled() {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Período Letivo"
+              label={acimaDeSm ? "Período Letivo" : "Período"}
               placeholder="Todos os períodos"
             />
           )}
-          sx={{ minWidth: 160 }}
+          sx={{ minWidth: { xs: 0, sm: 160 }, width: { xs: "100%", sm: "auto" } }}
           noOptionsText="Nenhum período letivo encontrado"
         />
         <Autocomplete
+          size={acimaDeSm ? "medium" : "small"}
+          className="col-span-2 row-start-3 sm:row-start-auto"
           value={selectedInscription}
           onChange={(_, newValue) => {
             setSelectedInscription(newValue);
@@ -668,11 +728,12 @@ export function StudentsEnrolled() {
               placeholder="Todos os processos"
             />
           )}
-          sx={{ minWidth: 300, flex: 1 }}
+          sx={{ minWidth: { xs: 0, sm: 300 }, flex: 1, width: { xs: "100%", sm: "auto" } }}
           noOptionsText="Nenhum processo seletivo encontrado"
           loadingText="Carregando..."
         />
         <Autocomplete
+          size={acimaDeSm ? "medium" : "small"}
           value={selectedStatus}
           onChange={(_, newValue) => {
             setSelectedStatus(newValue);
@@ -688,11 +749,11 @@ export function StudentsEnrolled() {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Status de Matrícula"
+              label={acimaDeSm ? "Status de Matrícula" : "Status"}
               placeholder="Todos os status"
             />
           )}
-          sx={{ minWidth: 220 }}
+          sx={{ minWidth: { xs: 0, sm: 220 }, width: { xs: "100%", sm: "auto" } }}
         />
         {/* exportar leva contato e documento para fora num arquivo, entao
             exige mais que ver a tela — o endpoint tambem checa */}
@@ -701,7 +762,7 @@ export function StudentsEnrolled() {
             onClick={() => modals.modalExportColumns.open()}
             size="small"
             typeStyle="primary"
-            className="border-none flex gap-2 items-center"
+            className="border-none flex gap-2 items-center w-full h-10 sm:w-fit sm:h-fit"
             // durante a geracao, e o que evita o clique repetido antes de a
             // requisicao voltar; com a lista vazia, nao ha o que exportar
             disabled={exportando || totalItems === 0}
@@ -716,7 +777,7 @@ export function StudentsEnrolled() {
           <Button
             onClick={() => modals.modalStudentCards.open()}
             size="small"
-            className="bg-red border-none flex gap-2 items-center hover:bg-red"
+            className="bg-red border-none flex gap-2 items-center hover:bg-red w-full h-10 sm:w-fit sm:h-fit"
             disabled={selectedRows.length === 0}
           >
             <div className="flex gap-2 items-center justify-center">
@@ -725,76 +786,84 @@ export function StudentsEnrolled() {
           </Button>
         )}
       </div>
-      <Paper sx={{ height: "100%", width: "100%" }}>
-        <DataGrid
-          rows={students}
-          columns={columns}
-          rowCount={totalItems}
-          paginationMode="server"
-          paginationModel={{ page, pageSize: limit }}
-          rowHeight={40}
-          disableRowSelectionOnClick
-          checkboxSelection={permissao[Roles.gerenciarEstudantes]}
-          rowSelectionModel={selectedRows}
-          onRowSelectionModelChange={handleSelectionChange}
-          pageSizeOptions={[5, 10, 15, 30, 50, 100]}
-          onPaginationModelChange={(newPageSize) => {
-            // Mudança de pageSize é tratada pelo useEffect (limit está nas deps),
-            // que já reseta para a página 1. Disparar aqui também deixaria duas
-            // requisições em voo sem ordem garantida entre elas.
-            if (newPageSize.pageSize !== limit) {
-              setLimit(newPageSize.pageSize);
-              return;
-            }
-            setPage(newPageSize.page);
-            getEnrolle(
-              newPageSize.page + 1,
-              newPageSize.pageSize,
-              selectedInscription?.id,
-              filter,
-              sort,
-              selectedYear,
-              selectedStatus,
-            );
-          }}
-          sx={{ border: 0 }}
-          localeText={{
-            noRowsLabel:
-              "Nenhum estudante encontrado para os filtros selecionados",
-          }}
-          isRowSelectable={(params) =>
-            params.row.applicationStatus === StatusApplication.Enrolled &&
-            params.row.class.id !== undefined
+      {!acimaDeSm ? (
+        <EstudantesMobile
+          estudantes={students}
+          pagina={page}
+          porPagina={limit}
+          total={totalItems}
+          onPagina={irParaPagina}
+          renderAcoes={renderAcoes}
+          selecao={
+            permissao[Roles.gerenciarEstudantes]
+              ? {
+                  selecionados: selectedRows,
+                  selecionavel,
+                  onChange: handleSelectionChange,
+                }
+              : undefined
           }
-          onFilterModelChange={(filterModel) => {
-            if (
-              filterModel &&
-              filterModel.items.length > 0 &&
-              !["age", "name"].includes(filterModel.items[0].field)
-            ) {
-              handleFilterChange(filterModel.items[0]);
-            }
-          }}
-          onSortModelChange={(sortModel) => {
-            if (
-              sortModel &&
-              sortModel.length > 0 &&
-              !["age", "name"].includes(sortModel[0].field)
-            ) {
-              setSort(sortModel);
-              getEnrolle(
-                1,
-                limit,
-                selectedInscription?.id,
-                filter,
-                sortModel,
-                selectedYear,
-                selectedStatus,
-              );
-            }
-          }}
         />
-      </Paper>
+      ) : (
+        <Paper sx={{ height: "100%", width: "100%" }}>
+          <DataGrid
+            rows={students}
+            columns={columns}
+            rowCount={totalItems}
+            paginationMode="server"
+            paginationModel={{ page, pageSize: limit }}
+            rowHeight={40}
+            disableRowSelectionOnClick
+            checkboxSelection={permissao[Roles.gerenciarEstudantes]}
+            rowSelectionModel={selectedRows}
+            onRowSelectionModelChange={handleSelectionChange}
+            pageSizeOptions={[5, 10, 15, 30, 50, 100]}
+            onPaginationModelChange={(newPageSize) => {
+              // Mudança de pageSize é tratada pelo useEffect (limit está nas deps),
+              // que já reseta para a página 1. Disparar aqui também deixaria duas
+              // requisições em voo sem ordem garantida entre elas.
+              if (newPageSize.pageSize !== limit) {
+                setLimit(newPageSize.pageSize);
+                return;
+              }
+              irParaPagina(newPageSize.page);
+            }}
+            sx={{ border: 0 }}
+            localeText={{
+              noRowsLabel:
+                "Nenhum estudante encontrado para os filtros selecionados",
+            }}
+            isRowSelectable={(params) => selecionavel(params.row)}
+            onFilterModelChange={(filterModel) => {
+              if (
+                filterModel &&
+                filterModel.items.length > 0 &&
+                !["age", "name"].includes(filterModel.items[0].field)
+              ) {
+                handleFilterChange(filterModel.items[0]);
+              }
+            }}
+            onSortModelChange={(sortModel) => {
+              if (
+                sortModel &&
+                sortModel.length > 0 &&
+                !["age", "name"].includes(sortModel[0].field)
+              ) {
+                setSort(sortModel);
+                getEnrolle(
+                  1,
+                  limit,
+                  selectedInscription?.id,
+                  filter,
+                  sortModel,
+                  selectedYear,
+                  selectedStatus,
+                );
+              }
+            }}
+          />
+        </Paper>
+      )}
       <ModalInfo />
       <ModalReject />
       <ModalConfirm />

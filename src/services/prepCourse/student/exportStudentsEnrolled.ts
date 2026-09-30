@@ -16,7 +16,8 @@ export async function exportStudentsEnrolled(
   sortModel?: GridSortModel,
   year?: number,
   applicationStatus?: string,
-  columns?: string[]
+  columns?: string[],
+  search?: string,
 ): Promise<void> {
   const url = new URL(`${enrolled}/export`);
   const params: Record<string, string | number> = {};
@@ -31,6 +32,11 @@ export async function exportStudentsEnrolled(
     params["filter[field]"] = filters.field;
     params["filter[value]"] = filters.value;
     params["filter[operator]"] = filters.operator;
+  }
+
+  // a mesma busca da tela, para a planilha bater com a lista
+  if (search?.trim()) {
+    params["search"] = search.trim();
   }
 
   if (sortModel && sortModel.length > 0) {

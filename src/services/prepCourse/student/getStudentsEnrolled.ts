@@ -17,6 +17,8 @@ export async function getStudentsEnrolled(
   sortModel?: GridSortModel,
   year?: number,
   applicationStatus?: string,
+  /** Matrícula, nome exibido ou (para quem vê sem máscara) email. */
+  search?: string,
 ): Promise<GetEnrolledDtoOutput> {
   const url = new URL(enrolled);
   const params: Record<string, string | number> = {
@@ -45,6 +47,10 @@ export async function getStudentsEnrolled(
 
   if (applicationStatus) {
     params["applicationStatus"] = applicationStatus;
+  }
+
+  if (search?.trim()) {
+    params["search"] = search.trim();
   }
 
   Object.keys(params).forEach((key) =>
