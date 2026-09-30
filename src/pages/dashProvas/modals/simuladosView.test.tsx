@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { SimuladoResumo } from "../../../dtos/prova/prova";
 
@@ -26,8 +32,9 @@ const buscarSimuladosComCartao = vi.hoisted(() => vi.fn());
 vi.mock("@/services/relatorioSimulado/buscarSimuladosComCartao", () => ({
   buscarSimuladosComCartao,
 }));
+const toastInfo = vi.hoisted(() => vi.fn());
 vi.mock("react-toastify", () => ({
-  toast: { loading: vi.fn(() => 1), update: vi.fn() },
+  toast: { loading: vi.fn(() => 1), update: vi.fn(), info: toastInfo },
 }));
 vi.mock("./editDisponibilidadeModal", () => ({
   default: () => <div data-testid="modal-janela" />,
@@ -268,6 +275,11 @@ describe("SimuladosView — a ação de relatório", () => {
     // a guarda sem nenhum teste vermelho.
     expect(botao).toHaveAttribute("aria-disabled", "true");
     expect(aoAbrir).not.toHaveBeenCalled();
+    // No toque o tooltip não abre: o motivo vem num toast.
+    expect(toastInfo).toHaveBeenCalledWith(
+      expect.stringMatching(/nenhum cart/i),
+      expect.anything(),
+    );
   });
 
   it("⚠️ enquanto o `04b` não respondeu, a ação já nasce desabilitada", async () => {

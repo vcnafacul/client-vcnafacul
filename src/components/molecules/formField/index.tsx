@@ -29,6 +29,8 @@ export interface FormFieldInput {
   defaultValue?: string | number | readonly string[] | undefined;
   options?: FormFieldOption[];
   className?: string;
+  /** `small` = campo compacto (usado no celular). */
+  size?: "base" | "small";
 }
 
 export interface FormFieldProps<TFieldValues extends FieldValues>
@@ -51,6 +53,7 @@ function FormField<T extends FieldValues>({
   register,
   ref,
   error,
+  size = "base",
 }: FormFieldProps<T>) {
   const [visible, setVisible] = useState<boolean>(visibility);
 
@@ -84,9 +87,10 @@ function FormField<T extends FieldValues>({
       <Input
         ref={ref}
         register={register as UseFormRegister<FieldValues>}
+        tamanho={size}
         {...commonProps}
       />
-      <LabelInput label={label} />
+      <LabelInput label={label} compacto={size === "small"} />
       {type !== "password" ? <></> : backgroundImageToggleVisibility(visible)}
       {error && (
         <span className="w-full mt-1 text-red" role="alert">

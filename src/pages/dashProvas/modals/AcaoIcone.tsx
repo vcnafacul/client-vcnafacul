@@ -7,6 +7,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import type { ComponentType } from "react";
+import { toast } from "react-toastify";
 
 export interface AcaoIconeProps {
   icone: ComponentType<{ className?: string }>;
@@ -35,6 +36,9 @@ export interface AcaoIconeProps {
  *
  * ⚠️ Com `aria-disabled` o clique **continua chegando** — quem barra é o
  * `onClick` abaixo. Tirar essa guarda reabre a ação sem nenhum aviso visual.
+ *
+ * ⚠️ No toque o tooltip não abre: o clique num ícone desabilitado mostra o
+ * motivo num toast, senão no celular ele ficaria sem explicação nenhuma.
  */
 export function AcaoIcone({
   icone: Icone,
@@ -56,6 +60,9 @@ export function AcaoIcone({
           aria-disabled={inerte || undefined}
           aria-busy={carregando || undefined}
           onClick={() => {
+            if (desabilitado && motivoDesabilitado) {
+              toast.info(motivoDesabilitado, { toastId: motivoDesabilitado });
+            }
             if (inerte) return;
             onClick?.();
           }}

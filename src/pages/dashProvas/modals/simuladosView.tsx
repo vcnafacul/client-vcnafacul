@@ -11,6 +11,7 @@ import {
   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@mui/material";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { SimuladoResumo } from "../../../dtos/prova/prova";
@@ -108,6 +109,8 @@ function SimuladosView({
   relatorio,
 }: SimuladosViewProps) {
   const [editing, setEditing] = useState<SimuladoResumo | null>(null);
+  // Abaixo de 768px (o `sm` do projeto) a tabela vira cards.
+  const acimaDeSm = useAcimaDeSm();
 
   const [cartoesPorSimulado, setCartoesPorSimulado] = useState<Map<
     string,
@@ -234,6 +237,88 @@ function SimuladosView({
     }
   };
 
+  /*
+    As ações de um simulado: mesma função na coluna da tabela (tablet e
+    desktop) e no card do celular.
+  */
+  const acoesDoSimulado = (simulado: SimuladoResumo) => (
+    <div className="flex items-center justify-end gap-1">
+      <AcaoIcone
+        icone={ClipboardDocumentCheckIcon}
+        rotulo="Baixar cartão de resposta"
+        onClick={() => handleDownloadCartao(simulado)}
+        desabilitado={simulado.bloqueado}
+        motivoDesabilitado={`Cartão de resposta indisponível. ${MOTIVO_BLOQUEADO}`}
+      />
+
+      {!simulado.bloqueado && (
+        <AcaoIcone
+          icone={BookOpenIcon}
+          rotulo="Baixar caderno de questões (pacote .zip para abrir no Overleaf)"
+          onClick={() => handleDownloadCaderno(simulado)}
+          carregando={baixandoCaderno === simulado._id}
+        />
+      )}
+
+      {/*
+        ⚠️ Ícone diferente do caderno pronto, não a mesma folha
+        em outra cor. Nenhum laranja da paleta alcança 3:1 sobre
+        branco (ver `tokens.ts`), então a distinção "rascunho"
+        precisa estar na forma para existir para todo mundo.
+      */}
+      {simulado.bloqueado && rascunhoHabilitado && (
+        <AcaoIcone
+          icone={DocumentTextIcon}
+          rotulo="Baixar rascunho do caderno (sai com marca d'água e a lista de pendências)"
+          onClick={() => handleDownloadCaderno(simulado, true)}
+          carregando={baixandoCaderno === simulado._id}
+        />
+      )}
+
+      {simulado.bloqueado && !rascunhoHabilitado && (
+        <AcaoIcone
+          icone={BookOpenIcon}
+          rotulo="Baixar caderno de questões"
+          desabilitado
+          motivoDesabilitado={`Caderno indisponível. ${MOTIVO_BLOQUEADO}`}
+        />
+      )}
+
+      <AcaoIcone
+        icone={CalendarDaysIcon}
+        rotulo="Editar janela de disponibilidade"
+        onClick={() => setEditing(simulado)}
+      />
+
+      {/*
+        ⚠️ O `relatorio &&` é o interruptor por tela — ver o
+        docblock de `AcaoRelatorio`. Trocar por um teste de
+        permissão devolve a ação para a tela do admin.
+
+        ⚠️ Enquanto `cartoesPorSimulado` é `null` (a resposta do
+        `04b` não chegou), o `?? 0` deixa a ação desabilitada —
+        que é o certo: melhor desabilitada por um instante do
+        que habilitada para abrir uma tela vazia.
+      */}
+      {relatorio && (
+        <AcaoIcone
+          icone={ChartBarIcon}
+          rotulo="Ver relatório do cartão-resposta"
+          onClick={() => relatorio.aoAbrir(simulado)}
+          desabilitado={
+            !relatorio.permitido ||
+            (cartoesPorSimulado?.get(simulado._id) ?? 0) === 0
+          }
+          motivoDesabilitado={
+            !relatorio.permitido
+              ? "Você não tem permissão para ver o desempenho dos estudantes"
+              : "Nenhum cartão-resposta enviado para este simulado"
+          }
+        />
+      )}
+    </div>
+  );
+
   return (
     <TooltipProvider delayDuration={200}>
       <div>
@@ -284,145 +369,120 @@ function SimuladosView({
           </p>
         )}
 
-        {!loading && !error && simulados && simulados.length > 0 && (
-          <table className="w-full text-left text-sm">
-            <thead
-              className={cn(
-                "text-xs uppercase",
-                dashV2.text.muted,
-                "bg-backgroundGrey",
-              )}
-            >
-              <tr>
-                {/*
+        {/*
+          No celular, cards: a tabela (~420px) não cabia e as ações só
+          apareciam rolando para o lado.
+        */}
+        {!loading &&
+          !error &&
+          simulados &&
+          simulados.length > 0 &&
+          !acimaDeSm && (
+            <ul className="flex flex-col gap-2">
+              {simulados.map((simulado) => (
+                <li
+                  key={simulado._id}
+                  className="rounded-lg border border-lightGray p-3 flex flex-col gap-2"
+                >
+                  <div className="flex items-start gap-2">
+                    <SimuladoStatusIcon simulado={simulado} />
+                    <div className="min-w-0 flex-1">
+                      <span
+                        className={cn(
+                          "block font-medium break-words",
+                          dashV2.text.primary,
+                        )}
+                      >
+                        {simulado.nome}
+                      </span>
+                      <span className={cn("block text-xs", dashV2.text.muted)}>
+                        {simulado.categoria?.nome ?? "Sem categoria"}
+                      </span>
+                    </div>
+                  </div>
+                  <QuestoesCell simulado={simulado} />
+                  <div className="border-t border-lightGray pt-2 [&>div]:justify-start [&>div]:flex-wrap">
+                    {acoesDoSimulado(simulado)}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+
+        {!loading &&
+          !error &&
+          simulados &&
+          simulados.length > 0 &&
+          acimaDeSm && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead
+                  className={cn(
+                    "text-xs uppercase",
+                    dashV2.text.muted,
+                    "bg-backgroundGrey",
+                  )}
+                >
+                  <tr>
+                    {/*
                   ⚠️ Cabeçalho da coluna de status em `sr-only`, não vazio. A
                   coluna tem 40px e não cabe rótulo, mas um `<th>` sem texto
                   deixa a tabela sem nome para aquela coluna no leitor de tela.
                 */}
-                <th scope="col" className="w-10 px-2 py-2">
-                  <span className="sr-only">Status</span>
-                </th>
-                <th scope="col" className="px-3 py-2">
-                  Simulado
-                </th>
-                <th scope="col" className="px-3 py-2">
-                  Questões
-                </th>
-                <th scope="col" className="px-3 py-2 text-right">
-                  Ações
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-lightGray">
-              {simulados.map((simulado) => (
-                <tr key={simulado._id} className={dashV2.row.hover}>
-                  <td className="px-2 py-2 align-middle">
-                    <SimuladoStatusIcon simulado={simulado} />
-                  </td>
+                    <th scope="col" className="w-10 px-2 py-2">
+                      <span className="sr-only">Status</span>
+                    </th>
+                    <th scope="col" className="px-3 py-2">
+                      Simulado
+                    </th>
+                    <th scope="col" className="px-3 py-2">
+                      Questões
+                    </th>
+                    <th scope="col" className="px-3 py-2 text-right">
+                      Ações
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-lightGray">
+                  {simulados.map((simulado) => (
+                    <tr key={simulado._id} className={dashV2.row.hover}>
+                      <td className="px-2 py-2 align-middle">
+                        <SimuladoStatusIcon simulado={simulado} />
+                      </td>
 
-                  <td className="px-3 py-2">
-                    {/*
+                      <td className="px-3 py-2">
+                        {/*
                       ⚠️ Categoria como segunda linha, e não coluna própria: o
                       modal tem 672px e as sete colunas de antes só cabiam com
                       rolagem horizontal. Aqui ela fica junto do nome, que é o
                       contexto em que se lê.
                     */}
-                    <span
-                      className={cn("block font-medium", dashV2.text.primary)}
-                    >
-                      {simulado.nome}
-                    </span>
-                    <span className={cn("block text-xs", dashV2.text.muted)}>
-                      {simulado.categoria?.nome ?? "Sem categoria"}
-                    </span>
-                  </td>
+                        <span
+                          className={cn(
+                            "block font-medium",
+                            dashV2.text.primary,
+                          )}
+                        >
+                          {simulado.nome}
+                        </span>
+                        <span
+                          className={cn("block text-xs", dashV2.text.muted)}
+                        >
+                          {simulado.categoria?.nome ?? "Sem categoria"}
+                        </span>
+                      </td>
 
-                  <td className="px-3 py-2">
-                    <QuestoesCell simulado={simulado} />
-                  </td>
+                      <td className="px-3 py-2">
+                        <QuestoesCell simulado={simulado} />
+                      </td>
 
-                  <td className="px-3 py-2">
-                    <div className="flex items-center justify-end gap-1">
-                      <AcaoIcone
-                        icone={ClipboardDocumentCheckIcon}
-                        rotulo="Baixar cartão de resposta"
-                        onClick={() => handleDownloadCartao(simulado)}
-                        desabilitado={simulado.bloqueado}
-                        motivoDesabilitado={`Cartão de resposta indisponível. ${MOTIVO_BLOQUEADO}`}
-                      />
-
-                      {!simulado.bloqueado && (
-                        <AcaoIcone
-                          icone={BookOpenIcon}
-                          rotulo="Baixar caderno de questões (pacote .zip para abrir no Overleaf)"
-                          onClick={() => handleDownloadCaderno(simulado)}
-                          carregando={baixandoCaderno === simulado._id}
-                        />
-                      )}
-
-                      {/*
-                        ⚠️ Ícone diferente do caderno pronto, não a mesma folha
-                        em outra cor. Nenhum laranja da paleta alcança 3:1 sobre
-                        branco (ver `tokens.ts`), então a distinção "rascunho"
-                        precisa estar na forma para existir para todo mundo.
-                      */}
-                      {simulado.bloqueado && rascunhoHabilitado && (
-                        <AcaoIcone
-                          icone={DocumentTextIcon}
-                          rotulo="Baixar rascunho do caderno (sai com marca d'água e a lista de pendências)"
-                          onClick={() => handleDownloadCaderno(simulado, true)}
-                          carregando={baixandoCaderno === simulado._id}
-                        />
-                      )}
-
-                      {simulado.bloqueado && !rascunhoHabilitado && (
-                        <AcaoIcone
-                          icone={BookOpenIcon}
-                          rotulo="Baixar caderno de questões"
-                          desabilitado
-                          motivoDesabilitado={`Caderno indisponível. ${MOTIVO_BLOQUEADO}`}
-                        />
-                      )}
-
-                      <AcaoIcone
-                        icone={CalendarDaysIcon}
-                        rotulo="Editar janela de disponibilidade"
-                        onClick={() => setEditing(simulado)}
-                      />
-
-                      {/*
-                        ⚠️ O `relatorio &&` é o interruptor por tela — ver o
-                        docblock de `AcaoRelatorio`. Trocar por um teste de
-                        permissão devolve a ação para a tela do admin.
-
-                        ⚠️ Enquanto `cartoesPorSimulado` é `null` (a resposta do
-                        `04b` não chegou), o `?? 0` deixa a ação desabilitada —
-                        que é o certo: melhor desabilitada por um instante do
-                        que habilitada para abrir uma tela vazia.
-                      */}
-                      {relatorio && (
-                        <AcaoIcone
-                          icone={ChartBarIcon}
-                          rotulo="Ver relatório do cartão-resposta"
-                          onClick={() => relatorio.aoAbrir(simulado)}
-                          desabilitado={
-                            !relatorio.permitido ||
-                            (cartoesPorSimulado?.get(simulado._id) ?? 0) === 0
-                          }
-                          motivoDesabilitado={
-                            !relatorio.permitido
-                              ? "Você não tem permissão para ver o desempenho dos estudantes"
-                              : "Nenhum cartão-resposta enviado para este simulado"
-                          }
-                        />
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+                      <td className="px-3 py-2">{acoesDoSimulado(simulado)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
         {editing && (
           <EditDisponibilidadeModal

@@ -1,3 +1,5 @@
+import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
+import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import type { EstudanteEncontrado } from "@/dtos/cartaoResposta/buscaEstudante";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -189,13 +191,21 @@ export default function UploadCartaoModal({
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             />
 
-            <button
-              onClick={handleEnviar}
-              disabled={!file || enviando}
-              className="w-full px-4 py-2 bg-green2 text-white rounded disabled:opacity-50"
+            {/* O envio não se desfaz: confirma de quem é o cartão antes. */}
+            <AlertDialogUI
+              title="Enviar este cartão?"
+              description={`O cartão será registrado para ${escolhido.nome} (${escolhido.matricula}) e não poderá ser desfeito.`}
+              onConfirm={handleEnviar}
             >
-              {enviando ? "Enviando..." : "Enviar cartão"}
-            </button>
+              <AlertDialogTrigger asChild>
+                <button
+                  disabled={!file || enviando}
+                  className="w-full px-4 py-2 bg-green2 text-white rounded disabled:opacity-50"
+                >
+                  {enviando ? "Enviando..." : "Enviar cartão"}
+                </button>
+              </AlertDialogTrigger>
+            </AlertDialogUI>
           </div>
         )}
       </div>

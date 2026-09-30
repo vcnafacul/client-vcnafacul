@@ -75,13 +75,13 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
             </div>
           </div>
           <div>
-            <div className="flex items-center justify-between gap-2 mb-2">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
               <h4 className="font-semibold text-sm">Inscritos</h4>
               <select
                 aria-label="Filtrar por prova"
                 value={filtro}
                 onChange={(e) => setFiltro(e.target.value)}
-                className="border rounded p-1 text-sm"
+                className="border rounded p-1 text-sm w-full sm:w-auto max-w-full"
               >
                 <option value="todas">Todas as provas</option>
                 {evento.provas.map((p) => (
@@ -94,9 +94,12 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
             {lista?.length ? (
               <ul className="divide-y text-sm" aria-label="Lista de inscritos">
                 {lista.map((i, k) => (
-                  <li key={k} className="flex justify-between gap-2 py-1">
+                  <li
+                    key={k}
+                    className="flex flex-col sm:flex-row sm:justify-between gap-x-2 py-1"
+                  >
                     <span className="min-w-0 break-words">{i.nome}</span>
-                    <span className="text-grey shrink-0">
+                    <span className="text-grey sm:shrink-0 sm:text-right break-words">
                       {nomeDaProva(i.provaId)} · {i.fez ? "fez" : "não fez"}
                     </span>
                   </li>
@@ -111,9 +114,14 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
               <h4 className="font-semibold text-sm mb-2">Fizeram sem se inscrever</h4>
               <ul className="divide-y text-sm">
                 {dados.fizeramSemInscricao.map((i, k) => (
-                  <li key={k} className="flex justify-between gap-2 py-1">
+                  <li
+                    key={k}
+                    className="flex flex-col sm:flex-row sm:justify-between gap-x-2 py-1"
+                  >
                     <span className="min-w-0 break-words">{i.nome}</span>
-                    <span className="text-grey shrink-0">{nomeDaProva(i.provaId)}</span>
+                    <span className="text-grey sm:shrink-0 sm:text-right break-words">
+                      {nomeDaProva(i.provaId)}
+                    </span>
                   </li>
                 ))}
               </ul>
