@@ -342,7 +342,7 @@ function ModalEditDashGeo({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose!}
-      className="p-8 rounded-md relative w-[90vw] h-fit max-h-[95vh] overflow-y-auto scrollbar-hide bg-white"
+      className="p-3 sm:p-8 rounded-md relative w-[90vw] h-fit max-h-[95vh] supports-[height:100dvh]:max-h-[95dvh] overflow-y-auto scrollbar-hide bg-white"
     >
       <form
         className="flex flex-col md:flex-row gap-4 mb-10"
@@ -368,13 +368,13 @@ function ModalEditDashGeo({
         <div className="w-full flex flex-col gap-4">
           <Text size="secondary">Endereço do Cursinho</Text>
           <MapBox
-            className="h-[100vh] max-h-[530px] w-full border border-gray-300 z-0"
+            className="h-80 sm:h-[100vh] sm:max-h-[530px] w-full border border-gray-300 z-0"
             zoom={14}
             center={[selectedPosition[0], selectedPosition[1]]}
             markers={[]}
             mapEvent={<Event />}
           />
-          <div className="flex justify-between">
+          <div className="flex flex-wrap justify-between gap-2">
             <div className="flex items-center justify-start gap-4">
               <input
                 type="checkbox"

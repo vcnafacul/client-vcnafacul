@@ -193,6 +193,8 @@ function ModalEditDashGeo({
       children: "Aceitar",
       type: "button",
       onClick: () => {
+        // Aprovar publica no mapa público do Localiza: confirma antes.
+        if (!confirm(`Aprovar "${geo.name}"? Ele passa a aparecer no mapa.`)) return;
         update(StatusEnum.Approved);
       },
       status: StatusEnum.Approved,
@@ -517,7 +519,8 @@ function ModalEditDashGeo({
           />
           <div className="bg-red"></div>
         </div>
-        <div className="max-w-[30vw] w-full">
+        {/* 30vw só lado a lado (md+): empilhado, dava ~112px no celular. */}
+        <div className="w-full md:max-w-[30vw]">
           <Text size="secondary">Endereço do Cursinho</Text>
           <MapBox
             className="h-80 border border-gray-300 z-0"
@@ -533,7 +536,7 @@ function ModalEditDashGeo({
             ]}
             mapEvent={<Event />}
           />
-          <div className="flex justify-between">
+          <div className="flex flex-wrap justify-between gap-2">
             <div className="flex items-center justify-start gap-4">
               <input
                 type="checkbox"
