@@ -284,8 +284,8 @@ export function PartnerPrepInscriptionManager() {
 
   const ModalConfirmTest = () => {
     return modals.modalConfirmTest.isOpen ? (
-      <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-        <div className="bg-white p-6 rounded-xl w-[400px]">
+      <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
+        <div className="bg-white p-6 rounded-xl w-full max-w-[400px]">
           <h2 className="text-2xl font-bold mb-4 text-yellow-600">
             Atenção
           </h2>

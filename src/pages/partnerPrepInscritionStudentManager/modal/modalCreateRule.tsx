@@ -351,7 +351,7 @@ export function ModalCreateRule({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleCloseModal}
-      className="bg-white p-6 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+      className="bg-white p-4 md:p-6 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
     >
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom>
@@ -504,7 +504,7 @@ export function ModalCreateRule({
 
                 {formData.strategy === Strategy.NumericRange && (
                   <Box>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1, mb: 1 }}>
                       <FormLabel>Faixas Numéricas *</FormLabel>
                       <Button startIcon={<FiPlus />} onClick={addRange} size="small" variant="outlined">
                         Adicionar Faixa
@@ -526,7 +526,7 @@ export function ModalCreateRule({
                             size="small"
                             label="Mín"
                             placeholder="∞"
-                            sx={{ flex: 1 }}
+                            sx={{ flex: 1, minWidth: 0 }}
                           />
                           <TextField
                             type="number"
@@ -536,7 +536,7 @@ export function ModalCreateRule({
                             size="small"
                             label="Máx"
                             placeholder="∞"
-                            sx={{ flex: 1 }}
+                            sx={{ flex: 1, minWidth: 0 }}
                           />
                           <TextField
                             type="number"
@@ -545,7 +545,7 @@ export function ModalCreateRule({
                             variant="outlined"
                             size="small"
                             label="Pontos"
-                            sx={{ width: 100 }}
+                            sx={{ width: { xs: 80, sm: 100 }, flexShrink: 0 }}
                           />
                           {formData.ranges.length > 1 && (
                             <IconButton onClick={() => removeRange(index)} color="error" size="small">
@@ -799,7 +799,7 @@ export function ModalCreateRule({
                 {errors.config}
               </Alert>
             )}
-            <Box sx={{ display: "flex", gap: 2 }}>
+            <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2 }}>
               <TextField
                 type="number"
                 value={formData.referenceValue}

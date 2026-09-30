@@ -236,16 +236,18 @@ export function InscriptionInfoModal({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white p-4 rounded-md"
+      className="bg-white p-4 rounded-md w-full max-w-2xl"
     >
-      <div className=" max-w-2xl min-w-[90%] sm:min-w-[550px] flex flex-col gap-4">
+      <div className="w-full sm:min-w-[550px] flex flex-col gap-4">
         <h1 className="text-left text-marine text-3xl font-black">
           {dataInscription.inscription}
         </h1>
-        <h3 className="font-black text-xl text-marine">
+        <h3 className="font-black text-xl text-marine break-words">
           {inscriptionSelected?.name}
         </h3>
-        <p>{inscriptionSelected?.description}</p>
+        <p className="break-words whitespace-pre-line max-h-40 overflow-y-auto pr-1">
+          {inscriptionSelected?.description}
+        </p>
         <h3 className="font-black text-xl text-marine">Data</h3>
         <div className="flex gap-4">
           <p>
@@ -311,26 +313,35 @@ export function InscriptionInfoModal({
           <p className="font-medium">Link de inscrição</p>
           <FaRegCopy />
         </div>
-        <div className="flex flex-col-reverse items-center gap-4 sm:flex-row relative">
-          <ShadcnTooltip content="Download Lista de Alunos">
-            <ShadcnButton.Button
-              className="bg-orange hover:bg-orange/60 h-8"
-              onClick={() => exportToExcel()}
+        {/*
+          Celular: um botão por linha, na ordem de uso (lista, baixar, editar)
+          e o destrutivo por último. A partir de sm volta à linha única.
+        */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+          <div className="order-2 sm:order-1">
+            <ShadcnTooltip content="Download Lista de Alunos">
+              <ShadcnButton.Button
+                className="bg-orange hover:bg-orange/60 h-10 sm:h-8 w-full sm:w-auto"
+                onClick={() => exportToExcel()}
+              >
+                <MdOutlineFileDownload className="w-6 h-6" />
+                <span className="sm:hidden">Baixar lista de alunos</span>
+              </ShadcnButton.Button>
+            </ShadcnTooltip>
+          </div>
+          <div className="order-1 sm:order-2 w-full sm:w-36">
+            <BLink
+              className="h-10 sm:h-8 w-full bg-green2 border-none hover:bg-green2/60"
+              to={`${DASH}/${PARTNER_PREP_INSCRIPTION}/${inscriptionSelected?.id}`}
             >
-              <MdOutlineFileDownload className="w-6 h-6" />
-            </ShadcnButton.Button>
-          </ShadcnTooltip>
-          <BLink
-            className="h-8 w-36 bg-green2 border-none hover:bg-green2/60"
-            to={`${DASH}/${PARTNER_PREP_INSCRIPTION}/${inscriptionSelected?.id}`}
-          >
-            <div className="flex justify-center gap-1.5">
-              <p className="text-sm w-fit">Lista de Alunos</p>
-            </div>
-          </BLink>
-          <div className="flex flex-1 justify-end gap-4">
+              <div className="flex justify-center gap-1.5">
+                <p className="text-sm w-fit">Lista de Alunos</p>
+              </div>
+            </BLink>
+          </div>
+          <div className="order-3 flex flex-col-reverse gap-3 sm:flex-row sm:flex-1 sm:justify-end sm:gap-4">
             <Button
-              className="w-24 h-8 bg-red border-none hover:bg-red/60"
+              className="w-full sm:w-24 h-10 sm:h-8 bg-red border-none hover:bg-red/60"
               disabled={inscriptionSelected!.subscribersCount > 0}
               onClick={() => setOpenModalDelete(true)}
             >
@@ -343,7 +354,7 @@ export function InscriptionInfoModal({
             {canExtend === true ? (
               <Button
                 typeStyle="secondary"
-                className="w-32 h-8"
+                className="w-full sm:w-32 h-10 sm:h-8"
                 onClick={() => setOpenModalExtend(true)}
               >
                 Prorrogar
@@ -351,7 +362,7 @@ export function InscriptionInfoModal({
             ) : (
               <Button
                 typeStyle="secondary"
-                className="w-24 h-8"
+                className="w-full sm:w-24 h-10 sm:h-8"
                 onClick={() => setOpenModalEdit(true)}
               >
                 Editar

@@ -158,14 +158,14 @@ export function WaitingList(props: Props) {
               {students.map((stu) => (
                 <tr key={stu.id} className="even:bg-gray-200">
                   <td className="text-center">{stu.position}</td>
-                  <td className="whitespace-nowrap text-sm font-medium p-2 text-center">
+                  <td className="sm:whitespace-nowrap break-words text-sm font-medium p-2 text-center">
                     {stu.name}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <div className="flex justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-4">
             <Button
               size="small"
               typeStyle="refused"
