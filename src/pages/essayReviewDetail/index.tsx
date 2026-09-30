@@ -1,3 +1,4 @@
+import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -27,6 +28,7 @@ export default function EssayReviewDetail() {
   const { data: { token, user } } = useAuthStore();
   const [essay, setEssay] = useState<Essay | null>(null);
   const [alreadyReviewed, setAlreadyReviewed] = useState(false);
+  const [confirmarEnvio, setConfirmarEnvio] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
@@ -64,16 +66,22 @@ export default function EssayReviewDetail() {
     });
   };
 
-  const handleSubmitReview = async () => {
-    if (!id) return;
+  // Valida ANTES de pedir confirmação: confirmar e só então descobrir que
+  // faltava um campo seria pior do que não confirmar.
+  const formularioCompleto = () => {
     if (comps.some((c) => !c.feedback.trim() || !c.suggestion.trim())) {
       toast.warn("Preencha feedback e sugestão de todas as competências");
-      return;
+      return false;
     }
     if (!generalComment.trim()) {
       toast.warn("Preencha o comentário geral");
-      return;
+      return false;
     }
+    return true;
+  };
+
+  const handleSubmitReview = async () => {
+    if (!id || !formularioCompleto()) return;
 
     setSubmitting(true);
     try {
@@ -115,7 +123,7 @@ export default function EssayReviewDetail() {
     (essay.status === "SUBMITTED" || essay.status === "REVIEWED") && !alreadyReviewed;
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-8">
+    <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-8">
       {/* Essay content */}
       <div>
         <h1 className="text-2xl font-bold text-marine">
@@ -154,7 +162,7 @@ export default function EssayReviewDetail() {
 
       {/* Review form */}
       {canReview && (
-        <div className="border rounded-lg p-6 space-y-6">
+        <div className="border rounded-lg p-3 sm:p-6 space-y-6">
           <h2 className="text-lg font-bold">Nova Revisão</h2>
           <p className="text-sm text-grey">
             Nota total calculada: <strong>{totalScore}/1000</strong>
@@ -208,15 +216,30 @@ export default function EssayReviewDetail() {
 
           <div className="flex justify-end">
             <button
-              onClick={handleSubmitReview}
+              onClick={() => formularioCompleto() && setConfirmarEnvio(true)}
               disabled={submitting}
-              className="px-6 py-2 bg-marine text-white rounded-lg hover:bg-marine/90 disabled:opacity-50"
+              className="w-full sm:w-auto px-6 py-2 h-10 bg-marine text-white rounded-lg hover:bg-marine/90 disabled:opacity-50"
             >
               {submitting ? "Enviando..." : "Enviar revisão"}
             </button>
           </div>
         </div>
       )}
+      {/* Cada revisor envia uma única revisão por redação: confirma. */}
+      <ModalConfirmCancel
+        isOpen={confirmarEnvio}
+        handleClose={() => setConfirmarEnvio(false)}
+        handleConfirm={() => {
+          setConfirmarEnvio(false);
+          handleSubmitReview();
+        }}
+        text={`Enviar revisão com nota ${totalScore}/1000?`}
+      >
+        <p className="text-sm text-grey">
+          Cada revisor envia uma única revisão por redação. Não será possível
+          editar depois.
+        </p>
+      </ModalConfirmCancel>
     </div>
   );
 }
