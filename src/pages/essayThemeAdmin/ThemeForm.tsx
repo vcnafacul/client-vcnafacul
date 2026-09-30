@@ -75,7 +75,7 @@ export default function ThemeForm({ initial, onSave, onCancel }: ThemeFormProps)
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto space-y-4"
+        className="bg-white rounded-lg p-4 sm:p-6 max-w-2xl w-full max-h-[90vh] supports-[height:100dvh]:max-h-[90dvh] overflow-y-auto space-y-4"
       >
         <h2 className="text-xl font-bold text-marine">
           {initial ? "Editar Tema" : "Novo Tema"}
@@ -122,7 +122,7 @@ export default function ThemeForm({ initial, onSave, onCancel }: ThemeFormProps)
             className="w-full border rounded-lg p-2"
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-semibold mb-1">
               Início da Semana
@@ -148,7 +148,7 @@ export default function ThemeForm({ initial, onSave, onCancel }: ThemeFormProps)
             />
           </div>
         </div>
-        <div className="flex gap-4 justify-end pt-4">
+        <div className="flex flex-wrap gap-3 sm:gap-4 justify-end pt-4">
           <button
             type="button"
             onClick={onCancel}
