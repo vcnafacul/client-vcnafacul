@@ -235,7 +235,12 @@ const downloadFile = async (filename: string, fileType: string) => {
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="w-full max-w-2xl rounded-lg bg-white shadow-xl p-2"
+      /*
+        Largura por tela: abaixo de notebook (<1024px) fica como sempre foi;
+        no notebook alarga e os detalhes viram duas colunas (menos altura);
+        em Full HD (≥1920px) alarga mais.
+      */
+      className="w-full max-w-2xl lg:max-w-5xl min-[1920px]:max-w-7xl rounded-lg bg-white shadow-xl p-2"
     >
       <div className="p-6">
         {/* Header */}
@@ -271,142 +276,148 @@ const downloadFile = async (filename: string, fileType: string) => {
 
         {view === 'details' ? (
           <>
-            {/* Informações Básicas */}
-            <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
-                <AcademicCapIcon className="h-4 w-4" />
-                Informações Gerais
-              </h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-1">Edição</p>
-                  <p className="text-sm font-medium text-gray-900">{prova.edicao}</p>
+            {/* A partir de notebook: dados à esquerda, progresso à direita. */}
+            <div className="lg:grid lg:grid-cols-2 lg:gap-8">
+              <div className="min-w-0">
+                {/* Informações Básicas */}
+                <div className="mb-6">
+                  <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
+                    <AcademicCapIcon className="h-4 w-4" />
+                    Informações Gerais
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-xs text-gray-500 mb-1">Edição</p>
+                      <p className="text-sm font-medium text-gray-900">{prova.edicao}</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-xs text-gray-500 mb-1">Ano</p>
+                      <p className="text-sm font-medium text-gray-900">{prova.ano}</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-xs text-gray-500 mb-1">Aplicação</p>
+                      <p className="text-sm font-medium text-gray-900">{prova.aplicacao}</p>
+                    </div>
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-xs text-gray-500 mb-1">Categoria</p>
+                      {/*
+                        ⚠️ `categoria` e `exame` são strings — o ms achata as duas no
+                        DTO da lista. Antes isto lia `.nome` de uma string e o modal
+                        mostrava "—" com o exame nunca aparecendo.
+                      */}
+                      <p className="text-sm font-medium text-gray-900">{prova.categoria || '—'}</p>
+                      {prova.exame && (
+                        <p className="text-xs text-gray-500 mt-0.5">{prova.exame}</p>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-1">Ano</p>
-                  <p className="text-sm font-medium text-gray-900">{prova.ano}</p>
-                </div>
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-1">Aplicação</p>
-                  <p className="text-sm font-medium text-gray-900">{prova.aplicacao}</p>
-                </div>
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-1">Categoria</p>
-                  {/*
-                    ⚠️ `categoria` e `exame` são strings — o ms achata as duas no
-                    DTO da lista. Antes isto lia `.nome` de uma string e o modal
-                    mostrava "—" com o exame nunca aparecendo.
-                  */}
-                  <p className="text-sm font-medium text-gray-900">{prova.categoria || '—'}</p>
-                  {prova.exame && (
-                    <p className="text-xs text-gray-500 mt-0.5">{prova.exame}</p>
+
+                {/* tickets/023, card 09: novas versões das questões. */}
+                <div className="mb-6">
+                  <h3 className="text-sm font-medium text-gray-700 mb-4">
+                    Novas versões das questões
+                  </h3>
+                  {fullProva?.podeComporProva ? (
+                    <OpcaoNovasVersoes
+                      checked={!!fullProva.receberNovasVersoes}
+                      onChange={alterarNovasVersoes}
+                      disabled={salvandoVersoes}
+                    />
+                  ) : (
+                    <p
+                      data-testid="indicador-versoes"
+                      className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg"
+                    >
+                      {indicadorDeVersoes(
+                        fullProva?.receberNovasVersoes ?? prova.receberNovasVersoes,
+                      )}
+                    </p>
                   )}
+                </div>
+
+                {/* tickets/023, card 15: versões mais novas das questões. */}
+                <div className="mb-6">
+                  <h3 className="text-sm font-medium text-gray-700 mb-4">
+                    Atualizações das questões
+                  </h3>
+                  <BuscarAtualizacoes provaId={prova._id} token={token} />
                 </div>
               </div>
-            </div>
+              <div className="min-w-0">
+                {/* Métricas de Progresso */}
+                <div className="mb-6">
+                  <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
+                    <ChartBarIcon className="h-4 w-4" />
+                    Progresso das Questões
+                  </h3>
 
-            {/* tickets/023, card 09: novas versões das questões. */}
-            <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-4">
-                Novas versões das questões
-              </h3>
-              {fullProva?.podeComporProva ? (
-                <OpcaoNovasVersoes
-                  checked={!!fullProva.receberNovasVersoes}
-                  onChange={alterarNovasVersoes}
-                  disabled={salvandoVersoes}
-                />
-              ) : (
-                <p
-                  data-testid="indicador-versoes"
-                  className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg"
-                >
-                  {indicadorDeVersoes(
-                    fullProva?.receberNovasVersoes ?? prova.receberNovasVersoes,
-                  )}
-                </p>
-              )}
-            </div>
+                  <div className="space-y-4">
+                    {/* Questões Esperadas */}
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-blue-900">
+                          Questões Esperadas
+                        </span>
+                        <span className="text-lg font-bold text-blue-900">
+                          {prova.totalQuestao}
+                        </span>
+                      </div>
+                      <div className="w-full bg-blue-200 rounded-full h-2">
+                        <div
+                          className="bg-blue-500 h-2 rounded-full"
+                          style={{ width: "100%" }}
+                        ></div>
+                      </div>
+                    </div>
 
-            {/* tickets/023, card 15: versões mais novas das questões. */}
-            <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-4">
-                Atualizações das questões
-              </h3>
-              <BuscarAtualizacoes provaId={prova._id} token={token} />
-            </div>
+                    {/* Questões Cadastradas */}
+                    <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-yellow-900">
+                          Questões Cadastradas
+                        </span>
+                        <span className="text-lg font-bold text-yellow-900">
+                          {prova.totalQuestaoCadastradas} (
+                          {percentCadastradas.toFixed(1)}%)
+                        </span>
+                      </div>
+                      <div className="w-full bg-yellow-200 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full ${getProgressColor(
+                            percentCadastradas
+                          )}`}
+                          style={{ width: `${Math.min(percentCadastradas, 100)}%` }}
+                        ></div>
+                      </div>
+                    </div>
 
-            {/* Métricas de Progresso */}
-            <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
-                <ChartBarIcon className="h-4 w-4" />
-                Progresso das Questões
-              </h3>
-
-              <div className="space-y-4">
-                {/* Questões Esperadas */}
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-blue-900">
-                      Questões Esperadas
-                    </span>
-                    <span className="text-lg font-bold text-blue-900">
-                      {prova.totalQuestao}
-                    </span>
-                  </div>
-                  <div className="w-full bg-blue-200 rounded-full h-2">
-                    <div
-                      className="bg-blue-500 h-2 rounded-full"
-                      style={{ width: "100%" }}
-                    ></div>
-                  </div>
-                </div>
-
-                {/* Questões Cadastradas */}
-                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-yellow-900">
-                      Questões Cadastradas
-                    </span>
-                    <span className="text-lg font-bold text-yellow-900">
-                      {prova.totalQuestaoCadastradas} (
-                      {percentCadastradas.toFixed(1)}%)
-                    </span>
-                  </div>
-                  <div className="w-full bg-yellow-200 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full ${getProgressColor(
-                        percentCadastradas
-                      )}`}
-                      style={{ width: `${Math.min(percentCadastradas, 100)}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                {/* Questões Aprovadas */}
-                <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-green-900">
-                      Questões Aprovadas
-                    </span>
-                    <span className="text-lg font-bold text-green-900">
-                      {prova.totalQuestaoValidadas} (
-                      {isNaN(percentValidadas) ? "0" : percentValidadas.toFixed(1)}
-                      %)
-                    </span>
-                  </div>
-                  <div className="w-full bg-green-200 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full ${getProgressColor(
-                        isNaN(percentValidadas) ? 0 : percentValidadas
-                      )}`}
-                      style={{
-                        width: `${Math.min(
-                          isNaN(percentValidadas) ? 0 : percentValidadas,
-                          100
-                        )}%`,
-                      }}
-                    ></div>
+                    {/* Questões Aprovadas */}
+                    <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-green-900">
+                          Questões Aprovadas
+                        </span>
+                        <span className="text-lg font-bold text-green-900">
+                          {prova.totalQuestaoValidadas} (
+                          {isNaN(percentValidadas) ? "0" : percentValidadas.toFixed(1)}
+                          %)
+                        </span>
+                      </div>
+                      <div className="w-full bg-green-200 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full ${getProgressColor(
+                            isNaN(percentValidadas) ? 0 : percentValidadas
+                          )}`}
+                          style={{
+                            width: `${Math.min(
+                              isNaN(percentValidadas) ? 0 : percentValidadas,
+                              100
+                            )}%`,
+                          }}
+                        ></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
