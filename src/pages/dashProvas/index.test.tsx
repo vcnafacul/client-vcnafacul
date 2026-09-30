@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { useEffect } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   TEXTO_VAZIO_COM_FILTRO,
@@ -56,10 +57,29 @@ vi.mock("./modals/newProva", () => ({
 const propsDoShowProva = vi.hoisted(
   () => ({ atual: null }) as { atual: Record<string, unknown> | null },
 );
+/** Quantas vezes o ShowProva MONTOU — remontar perde a vista e refaz a busca. */
+const montagensDoShowProva = vi.hoisted(() => ({ n: 0 }));
 vi.mock("./modals/showProva", () => ({
-  default: (props: { prova?: Prova | null }) => {
+  default: (props: {
+    prova?: Prova | null;
+    onUpdated?: (p: Prova) => void;
+  }) => {
     propsDoShowProva.atual = props as Record<string, unknown>;
-    return <div data-testid="show-prova">{props.prova?.nome ?? "SEM PROVA"}</div>;
+    useEffect(() => {
+      montagensDoShowProva.n += 1;
+    }, []);
+    return (
+      <div data-testid="show-prova">
+        {props.prova?.nome ?? "SEM PROVA"}
+        <button
+          onClick={() =>
+            props.onUpdated?.({ ...(props.prova as Prova), nome: "Renomeada" })
+          }
+        >
+          atualizar
+        </button>
+      </div>
+    );
   },
 }));
 vi.mock("./modals/manageCategorias", () => ({
@@ -201,6 +221,24 @@ describe("dashProvas em tabela densa", () => {
   });
 
   /** ⚠️ O critério de aceite central. */
+  it("⚠️ o ShowProva NÃO remonta quando avisa uma atualização", async () => {
+    await montar();
+    montagensDoShowProva.n = 0;
+    fireEvent.click(
+      screen.getByRole("button", { name: "ENEM 2019 Reaplicação" }),
+    );
+    await screen.findByTestId("show-prova");
+    expect(montagensDoShowProva.n).toBe(1);
+
+    await act(async () => {
+      fireEvent.click(screen.getByText("atualizar"));
+    });
+
+    // A lista e o modal mostram a atualização, sem desmontar o modal.
+    expect(screen.getByTestId("show-prova")).toHaveTextContent("Renomeada");
+    expect(montagensDoShowProva.n).toBe(1);
+  });
+
   it("clicar na linha abre o ShowProva da MESMA prova", async () => {
     await montar();
     fireEvent.click(
