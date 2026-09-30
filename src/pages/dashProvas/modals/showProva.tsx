@@ -9,6 +9,8 @@ import {
   PencilSquareIcon,
   TableCellsIcon,
 } from "@heroicons/react/24/outline";
+import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
+import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
 import { Prova, ProvaDetalhada } from "../../../dtos/prova/prova";
@@ -242,15 +244,15 @@ const downloadFile = async (filename: string, fileType: string) => {
       */
       className="w-full max-w-2xl lg:max-w-5xl min-[1920px]:max-w-7xl rounded-lg bg-white shadow-xl p-2"
     >
-      <div className="p-6">
+      <div className="p-3 sm:p-6">
         {/* Header */}
         <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex flex-wrap items-center gap-3 mb-2">
             <div className="p-2 bg-blue-100 rounded-lg">
               <DocumentTextIcon className="h-6 w-6 text-blue-600" />
             </div>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">
+            <div className="min-w-0 flex-1">
+              <h2 className="text-xl font-semibold text-gray-900 break-words">
                 {prova.nome}
               </h2>
               <p className="text-sm text-gray-500">Detalhes da Prova</p>
@@ -424,13 +426,19 @@ const downloadFile = async (filename: string, fileType: string) => {
             </div>
 
             {/* Botões de Download */}
-            <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+            {/*
+              No celular um botão por linha, em largura total: numa linha só
+              eles passavam de ~500px e, alinhados à direita, vazavam pela
+              esquerda — "Ver simulados" ficava inalcançável.
+            */}
+            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-end gap-3 pt-4 border-t border-gray-200">
               {!isEditingFiles ? (
                 <>
                   <Button
                     onClick={() => setView('simulados')}
                     variant="outlined"
                     color="primary"
+                    className="w-full sm:w-auto"
                     sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                   >
                     <TableCellsIcon className="h-4 w-4" />
@@ -441,6 +449,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                     <Button
                       onClick={handleDownloadGabarito}
                       variant="contained"
+                      className="w-full sm:w-auto"
                       sx={{
                         backgroundColor: "#6b7280",
                         "&:hover": {
@@ -460,6 +469,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                     onClick={handleDownloadProva}
                     variant="contained"
                     color="primary"
+                    className="w-full sm:w-auto"
                     sx={{
                       display: "flex",
                       alignItems: "center",
@@ -473,8 +483,11 @@ const downloadFile = async (filename: string, fileType: string) => {
                   <Button
                     onClick={() => setIsEditingFiles(true)}
                     size="small"
+                    aria-label="Editar arquivos"
+                    className="w-full sm:w-auto"
                   >
                     <PencilSquareIcon className="size-8" />
+                    <span className="sm:hidden ml-2">Editar arquivos</span>
                   </Button>
                 </>
               ) : (
@@ -497,7 +510,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                     />
                   </div>
 
-                  <div className="flex justify-end mt-4 gap-3">
+                  <div className="flex flex-wrap justify-end mt-4 gap-3">
                     <Button
                       onClick={() => {
                         setIsEditingFiles(false);
@@ -509,13 +522,29 @@ const downloadFile = async (filename: string, fileType: string) => {
                       Cancelar
                     </Button>
 
-                    <Button
-                      onClick={handleUpdateFiles}
-                      disabled={!newFile && !newGabarito}
-                      variant="contained"
+                    {/* Substitui o PDF que está no ar: confirma antes. */}
+                    <AlertDialogUI
+                      title="Substituir os arquivos da prova?"
+                      description={[
+                        newFile && "O PDF atual da prova será substituído.",
+                        newGabarito &&
+                          (prova.gabarito
+                            ? "O gabarito atual será substituído."
+                            : "O gabarito será adicionado."),
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                      onConfirm={handleUpdateFiles}
                     >
-                      Salvar Alterações
-                    </Button>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          disabled={!newFile && !newGabarito}
+                          variant="contained"
+                        >
+                          Salvar Alterações
+                        </Button>
+                      </AlertDialogTrigger>
+                    </AlertDialogUI>
                   </div>
                 </div>
               )}
