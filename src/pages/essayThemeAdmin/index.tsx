@@ -1,3 +1,4 @@
+import { dataLocal, formatDate } from "@/utils/date";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FiEdit2, FiToggleLeft, FiToggleRight } from "react-icons/fi";
@@ -19,8 +20,9 @@ function getThemeStatus(theme: EssayTheme): {
   bgColor: string;
 } {
   const now = new Date();
-  const start = new Date(theme.weekStart);
-  const end = new Date(theme.weekEnd);
+  // Datas sem hora (coluna `date`): em horário local, não UTC.
+  const start = dataLocal(String(theme.weekStart));
+  const end = dataLocal(String(theme.weekEnd));
   // Normalize to compare dates only (ignore time)
   now.setHours(0, 0, 0, 0);
   start.setHours(0, 0, 0, 0);
@@ -140,10 +142,10 @@ export default function EssayThemeAdmin() {
   if (loading) return <div className="p-6 text-center">Carregando...</div>;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-4 sm:p-6 max-w-4xl mx-auto">
+      <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
         <h1 className="text-2xl font-bold text-marine">Temas de Redação</h1>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-gray-700">
               Correção por IA
@@ -174,7 +176,7 @@ export default function EssayThemeAdmin() {
           return (
             <div
               key={theme.id}
-              className={`border rounded-lg p-4 bg-white flex justify-between items-center ${
+              className={`border rounded-lg p-3 sm:p-4 bg-white flex justify-between items-center ${
                 !theme.active ? "opacity-60" : ""
               }`}
             >
@@ -188,11 +190,11 @@ export default function EssayThemeAdmin() {
                   </span>
                 </div>
                 <p className="text-sm text-grey mt-1">
-                  {new Date(theme.weekStart).toLocaleDateString("pt-BR")} —{" "}
-                  {new Date(theme.weekEnd).toLocaleDateString("pt-BR")}
+                  {formatDate(String(theme.weekStart))} —{" "}
+                  {formatDate(String(theme.weekEnd))}
                 </p>
               </div>
-              <div className="flex items-center gap-1 ml-4">
+              <div className="flex items-center gap-1 ml-2 sm:ml-4">
                 <button
                   onClick={() => setEditing(theme)}
                   className="p-2 rounded-lg hover:bg-gray-100 text-marine transition-colors"
