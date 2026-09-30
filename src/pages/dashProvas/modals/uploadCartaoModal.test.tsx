@@ -42,9 +42,7 @@ beforeEach(() => {
 afterEach(() => vi.useRealTimers());
 
 const montar = () =>
-  render(
-    <UploadCartaoModal isOpen handleClose={vi.fn()} token="tok" />,
-  );
+  render(<UploadCartaoModal isOpen handleClose={vi.fn()} token="tok" />);
 
 const digitar = (texto: string) =>
   fireEvent.change(screen.getByTestId("busca-estudante"), {
@@ -122,7 +120,9 @@ describe("UploadCartaoModal — escolha", () => {
     await escolherAna();
 
     await waitFor(() =>
-      expect(screen.queryByTestId("sugestoes-estudante")).not.toBeInTheDocument(),
+      expect(
+        screen.queryByTestId("sugestoes-estudante"),
+      ).not.toBeInTheDocument(),
     );
     expect(screen.queryByTestId("busca-estudante")).not.toBeInTheDocument();
     expect(screen.getByText("Ana Silva")).toBeInTheDocument();
@@ -145,10 +145,26 @@ describe("UploadCartaoModal — escolha", () => {
     const input = document.querySelector('input[type="file"]')!;
     fireEvent.change(input, { target: { files: [arquivo] } });
     fireEvent.click(screen.getByRole("button", { name: /enviar cartão/i }));
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 
     await waitFor(() =>
       expect(uploadCartao).toHaveBeenCalledWith(arquivo, "u1", "tok"),
     );
+  });
+
+  it("⚠️ o envio pede confirmação, que diz para quem vai — cancelar não envia", async () => {
+    await escolherAna();
+    const input = document.querySelector('input[type="file"]')!;
+    fireEvent.change(input, {
+      target: { files: [new File(["x"], "c.jpg", { type: "image/jpeg" })] },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /enviar cartão/i }));
+
+    expect(
+      screen.getByText(/será registrado para Ana Silva/),
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
+    expect(uploadCartao).not.toHaveBeenCalled();
   });
 });
 
@@ -187,6 +203,7 @@ describe("UploadCartaoModal — o toast do envio", () => {
       target: { files: [new File(["x"], "c.jpg", { type: "image/jpeg" })] },
     });
     fireEvent.click(screen.getByRole("button", { name: /enviar cartão/i }));
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
 
     await waitFor(() => expect(toastUpdate).toHaveBeenCalled());
     const texto = toastUpdate.mock.calls[0][1].render as string;
