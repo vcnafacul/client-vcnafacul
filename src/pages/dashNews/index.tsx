@@ -1,22 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { DashListTemplate, type DashAction } from "@/components/dashV2";
+import { FilterProps } from "@/components/atoms/filter";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { SelectProps } from "../../components/atoms/select";
-import { ButtonProps } from "../../components/molecules/button";
 import { CardDash } from "../../components/molecules/cardDash";
-import DashCardTemplate from "../../components/templates/dashCardTemplate";
 import { DashCardContext } from "../../context/dashCardContext";
 import { News } from "../../dtos/news/news";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { createNews } from "../../services/news/createNews";
 import { deleteNews } from "../../services/news/deleteNews";
-import { getAllNews } from "../../services/news/getAllNews";
+import { getTodasAsNovidades } from "../../services/news/getAllNews";
 import { updateNews, UpdateNewsPayload } from "../../services/news/updateNews";
 import { useAuthStore } from "../../store/auth";
 import { formatDate } from "../../utils/date";
 import { getStatusBool } from "../../utils/getStatusIcon";
 import { Paginate } from "../../utils/paginate";
+import { colunasDeNovidade, ORDENACAO_PADRAO } from "./columns";
 import { dashNews } from "./data";
 import ModalEditNew from "./modals/modalEditNew";
 import { useModals } from "@/hooks/useModal";
@@ -25,6 +26,9 @@ function DashNews() {
   const [news, setNews] = useState<News[]>([]);
   const [newSelect, setNewSelect] = useState<News | null>();
   const [status, setStatus] = useState<StatusEnum>(StatusEnum.Approved);
+  const [busca, setBusca] = useState("");
+  // Três estados do template V2: o erro de busca vira "tentar de novo".
+  const [estado, setEstado] = useState<"idle" | "loading" | "error">("loading");
   const limitCards = 100;
 
   const modals = useModals([
@@ -137,14 +141,12 @@ function DashNews() {
   const deleteNew = (id: string) => {
     deleteNews(id, token)
       .then((_) => {
-        setNews(
-          news.map((n) => {
-            if (n.id === id) {
-              n.actived = false;
-              return n;
-            }
-            return n;
-          })
+        // A lista é de um status: a desativada sai das "Ativas" (antes ficava,
+        // mostrando uma novidade inativa no filtro de ativas).
+        setNews((atual) =>
+          status === StatusEnum.Approved
+            ? atual.filter((n) => n.id !== id)
+            : atual.map((n) => (n.id === id ? { ...n, actived: false } : n)),
         );
         modals.modalEdit.close();
         toast.success(`Novidade ${newSelect?.title} deletada com sucesso`);
@@ -154,18 +156,39 @@ function DashNews() {
       });
   };
 
-  useEffect(() => {
-    getAllNews(token, 1, limitCards, status)
-      .then((res) => {
-        setNews(res.data);
-      })
-      .catch((error: Error) => {
-        toast.error(error.message);
-      });
-  }, [status]);
+  const carregar = useCallback(async () => {
+    setEstado("loading");
+    try {
+      setNews(await getTodasAsNovidades(token, status));
+      setEstado("idle");
+    } catch {
+      setEstado("error");
+    }
+  }, [token, status]);
 
-  const getMoreCards = async (page: number): Promise<Paginate<News>> => {
-    return await getAllNews(token, page, limitCards, status);
+  useEffect(() => {
+    carregar();
+  }, [carregar]);
+
+  // O V2 não pagina pelo servidor; o Provider ainda exige a função.
+  const getMoreCards = async (): Promise<Paginate<News>> => ({
+    data: [],
+    page: 0,
+    limit: 0,
+    totalItems: 0,
+  });
+
+  const filtradas = useMemo(() => {
+    const termo = busca.trim().toLowerCase();
+    return termo
+      ? news.filter((n) => n.title.toLowerCase().includes(termo))
+      : news;
+  }, [news, busca]);
+
+  const filterProps: FilterProps = {
+    placeholder: "Buscar por título",
+    filtrar: (e: React.ChangeEvent<HTMLInputElement>) => setBusca(e.target.value),
+    defaultValue: busca,
   };
 
   const EditNews = () => {
@@ -184,37 +207,50 @@ function DashNews() {
   };
 
   const selectFiltes: SelectProps[] = [
-    { options: dashNews.options, setState: setStatus, defaultValue: status },
-  ];
-
-  const buttons: ButtonProps[] = [
     {
-      onClick: () => {
-        setNewSelect(null);
-        modals.modalEdit.open();
-      },
-      typeStyle: "quaternary",
-      size: "small",
-      children: "Criar Novidade",
+      "aria-label": "Status",
+      options: dashNews.options,
+      setState: (value) => setStatus(Number(value) as StatusEnum),
+      defaultValue: status,
     },
   ];
+
+  const acaoPrimaria: DashAction = {
+    id: "nova-novidade",
+    label: "Nova novidade",
+    onClick: () => {
+      setNewSelect(null);
+      modals.modalEdit.open();
+    },
+  };
 
   return (
     <DashCardContext.Provider
       value={{
         title: dashNews.title,
-        entities: news,
+        entities: filtradas,
         setEntities: setNews,
         onClickCard,
         getMoreCards,
         cardTransformation,
         limitCards,
+        filterProps,
         selectFiltes,
-        buttons,
+        totalItems: filtradas.length,
       }}
     >
-      <DashCardTemplate />
-      <EditNews />
+      <DashListTemplate<News>
+        columns={colunasDeNovidade}
+        actions={{ primary: acaoPrimaria }}
+        activeFilterCount={busca.trim() ? 1 : 0}
+        totalSemFiltro={news.length}
+        onClearFilters={() => setBusca("")}
+        defaultSort={ORDENACAO_PADRAO}
+        state={estado}
+        onRetry={carregar}
+        textoVazio="Nenhuma novidade cadastrada"
+      />
+      {EditNews()}
     </DashCardContext.Provider>
   );
 }

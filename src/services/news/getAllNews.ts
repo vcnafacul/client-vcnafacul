@@ -25,3 +25,21 @@ export async function getAllNews(
   }
   return await res.json();
 }
+
+/**
+ * Todas as novidades de um status, página por página. A lista V2 filtra e
+ * ordena no navegador, então precisa da lista inteira — com uma página só,
+ * quem passasse de 100 sumia.
+ */
+export async function getTodasAsNovidades(
+  token: string,
+  status: StatusEnum,
+  porPagina = 100,
+): Promise<News[]> {
+  const todas: News[] = [];
+  for (let page = 1; ; page++) {
+    const { data, totalItems } = await getAllNews(token, page, porPagina, status);
+    todas.push(...data);
+    if (data.length === 0 || todas.length >= totalItems) return todas;
+  }
+}
