@@ -7,6 +7,7 @@ import { Button, IconButton } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useEffect, useState } from "react";
 import { MdDeleteForever, MdModeEdit } from "react-icons/md";
 import ManagerMateria from "./managerMateria";
@@ -47,6 +48,17 @@ export function PanelMateria({
     data: { permissao },
   } = useAuthStore();
   const manager: boolean = permissao[Roles.editarMateriasFrentes];
+  // Abaixo de 768px (o `sm` do projeto) a tabela vira cards.
+  const acimaDeSm = useAcimaDeSm();
+
+  const editar = (materia: MateriaDto) => {
+    setSelected(materia);
+    modals.editor.open();
+  };
+  const excluir = (materia: MateriaDto) => {
+    setSelected(materia);
+    modals.confirmDelete.open();
+  };
 
   useEffect(() => {
     if (!modals.confirmDelete.isOpen || !selected || !checkCanDelete) {
@@ -89,41 +101,32 @@ export function PanelMateria({
         return Svg ? <Svg className="w-6 h-6" /> : <span>-</span>;
       },
     },
-    {
-      field: "actions",
-      headerName: "Ações",
-      align: "center",
-      headerAlign: "center",
-      width: 120,
-      renderCell: (params) => (
-        <div className="flex gap-2 justify-center">
-          {manager && (
-            <Tooltip title="Editar matéria">
-              <IconButton
-                onClick={() => {
-                  setSelected(params.row as MateriaDto);
-                  modals.editor.open();
-                }}
-              >
-                <MdModeEdit className="fill-gray-500 hover:fill-black" />
-              </IconButton>
-            </Tooltip>
-          )}
-          {manager && (
-            <Tooltip title="Excluir matéria">
-              <IconButton
-                onClick={() => {
-                  setSelected(params.row as MateriaDto);
-                  modals.confirmDelete.open();
-                }}
-              >
-                <MdDeleteForever className="fill-redError opacity-50 hover:opacity-100" />
-              </IconButton>
-            </Tooltip>
-          )}
-        </div>
-      ),
-    },
+    // Sem a permissão, a coluna aparecia vazia: só entra para quem edita.
+    ...(manager
+      ? [
+          {
+            field: "actions",
+            headerName: "Ações",
+            align: "center",
+            headerAlign: "center",
+            width: 120,
+            renderCell: (params) => (
+              <div className="flex gap-2 justify-center">
+                <Tooltip title="Editar matéria">
+                  <IconButton onClick={() => editar(params.row as MateriaDto)}>
+                    <MdModeEdit className="fill-gray-500 hover:fill-black" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Excluir matéria">
+                  <IconButton onClick={() => excluir(params.row as MateriaDto)}>
+                    <MdDeleteForever className="fill-redError opacity-50 hover:opacity-100" />
+                  </IconButton>
+                </Tooltip>
+              </div>
+            ),
+          } as GridColDef,
+        ]
+      : []),
   ];
 
   const canDelete = canDeleteState?.canDelete !== false;
@@ -141,8 +144,9 @@ export function PanelMateria({
   };
 
   return (
-    <div className="flex flex-col h-[500px] overflow-y-scroll scrollbar-hide select-none">
-      <div className="flex justify-between items-center mb-2">
+    // No celular sem altura fixa: rolagem dentro de rolagem, e a lista em cards.
+    <div className="flex flex-col sm:h-[500px] sm:overflow-y-scroll scrollbar-hide select-none">
+      <div className="flex flex-wrap justify-between items-center gap-2 mb-2">
         <h3 className="text-lg font-semibold text-gray-700">Matérias</h3>
         {manager && (
           <Button
@@ -155,15 +159,56 @@ export function PanelMateria({
           </Button>
         )}
       </div>
-      <Paper sx={{ height: "100%", overflow: "auto" }}>
-        <DataGrid
-          rows={materias}
-          columns={columns}
-          getRowId={(row) => row._id}
-          rowHeight={40}
-          sx={{ border: 0 }}
-        />
-      </Paper>
+      {!acimaDeSm ? (
+        // No celular a coluna de ações ficava ~190px fora da tela.
+        <ul className="flex flex-col gap-2">
+          {materias.map((materia) => {
+            const Icone = materia.icon ? iconPresets[materia.icon] : undefined;
+            return (
+              <li
+                key={materia._id}
+                className="border rounded-lg p-3 flex flex-col gap-2"
+              >
+                <div className="flex items-center gap-3">
+                  {Icone && <Icone className="w-6 h-6 shrink-0" />}
+                  <div className="min-w-0">
+                    <p className="font-semibold break-words">{materia.nome}</p>
+                    <p className="text-xs text-gray-500">{materia.enemArea}</p>
+                  </div>
+                </div>
+                {manager && (
+                  <div className="flex gap-2 border-t pt-2">
+                    <button
+                      type="button"
+                      onClick={() => editar(materia)}
+                      className="flex-1 h-10 border rounded-md text-sm"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => excluir(materia)}
+                      className="flex-1 h-10 border border-redError text-redError rounded-md text-sm"
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <Paper sx={{ height: "100%", overflow: "auto" }}>
+          <DataGrid
+            rows={materias}
+            columns={columns}
+            getRowId={(row) => row._id}
+            rowHeight={40}
+            sx={{ border: 0 }}
+          />
+        </Paper>
+      )}
 
       {modals.editor.isOpen && (
         <ManagerMateria

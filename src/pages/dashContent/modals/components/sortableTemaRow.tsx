@@ -5,6 +5,8 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { IconButton, TableCell, TableRow, Typography } from "@mui/material";
 import { MdDragIndicator } from "react-icons/md";
+import { Roles } from "@/enums/roles/roles";
+import { useAuthStore } from "@/store/auth";
 import { FrentesActionMenu } from "./frentesActionMenu";
 
 interface Props {
@@ -14,7 +16,7 @@ interface Props {
   onDelete?: () => void;
 }
 
-function countByStatus(
+export function countByStatus(
   contents: SubjectDto["contents"],
   status: StatusEnum | StatusContent,
 ) {
@@ -28,6 +30,8 @@ export function SortableTemaRow({
   onDelete,
 }: Props) {
   const id = tema._id || tema.id;
+  // Reordenar temas é de quem gerencia demanda (o arrastar não conferia).
+  const podeReordenar = !!useAuthStore().data.permissao[Roles.gerenciadorDemanda];
   const {
     attributes,
     listeners,
@@ -64,11 +68,14 @@ export function SortableTemaRow({
       }}
     >
       <TableCell sx={{ width: 40, padding: "8px" }}>
+        {podeReordenar && (
         <IconButton
           {...attributes}
           {...listeners}
           size="small"
           sx={{
+            // Sem isto o toque vira rolagem e o arraste é cancelado.
+            touchAction: "none",
             cursor: "grab",
             "&:active": { cursor: "grabbing" },
             color: "grey.500",
@@ -80,6 +87,7 @@ export function SortableTemaRow({
         >
           <MdDragIndicator size={20} />
         </IconButton>
+        )}
       </TableCell>
       <TableCell>
         <Typography variant="body2" fontWeight="medium">
@@ -107,6 +115,7 @@ export function SortableTemaRow({
           onReorder={onReorderContents}
           onDelete={onDelete}
           menuType="tema"
+          confirmarExclusao={`Excluir o tema ${tema.name}?`}
         />
       </TableCell>
     </TableRow>
