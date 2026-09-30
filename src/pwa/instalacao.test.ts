@@ -1,4 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+// Os testes simulam o build de produção (tickets/029: o convite só existe lá).
+vi.mock("@/pwa/conviteLigado", () => ({ conviteDeInstalacaoLigado: () => true }));
 import {
   __resetarInstalacao,
   estadoDaInstalacao,
@@ -69,5 +72,18 @@ describe("convite de instalação do app (029 · 01)", () => {
     ["Firefox Android (sem evento)", { evento: null, instalado: false }, {}, "indisponivel"],
   ])("%s → %s", (_n, estado, amb, esperado) => {
     expect(estadoDaInstalacao(estado as never, ambiente(amb))).toBe(esperado);
+  });
+
+  it("⚠️ fora de produção (homol, local): nunca convida — só 'instalado' continua valendo", () => {
+    const comConvite = { evento: {} as never, instalado: false };
+    expect(estadoDaInstalacao(comConvite, ambiente(), false)).toBe("indisponivel");
+    expect(
+      estadoDaInstalacao(
+        { evento: null, instalado: false },
+        ambiente({ userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X)" }),
+        false,
+      ),
+    ).toBe("indisponivel");
+    expect(estadoDaInstalacao(comConvite, ambiente({ standalone: true }), false)).toBe("instalado");
   });
 });
