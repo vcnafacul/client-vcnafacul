@@ -167,10 +167,10 @@ export function AttendanceRecordModal({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white p-4 rounded-md w-[90vw] h-[90vh] sm:h-[600px]"
+      className="bg-white p-4 rounded-md w-[90vw] h-[90vh] sm:h-[600px] flex flex-col"
     >
       {(recordInfo.registeredAt || recordInfo.period) && (
-        <div className="mb-2 text-sm text-gray-700">
+        <div className="mb-2 text-sm text-gray-700 shrink-0">
           {recordInfo.registeredAt && (
             <span className="font-semibold">
               {new Date(recordInfo.registeredAt).toLocaleDateString("pt-BR")}
@@ -186,7 +186,8 @@ export function AttendanceRecordModal({
           )}
         </div>
       )}
-      <Paper sx={{ height: "95%", width: "100%" }}>
+      {/* flex-1 em vez de 95%: somado à linha da data passava da caixa. */}
+      <Paper sx={{ flex: 1, minHeight: 0, width: "100%" }}>
         <DataGrid
           rows={students}
           columns={columns}

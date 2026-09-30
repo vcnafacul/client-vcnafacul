@@ -81,7 +81,7 @@ export function AttendanceHistoryModal({
         handleClose={() => modals.modalConfirmDelete.close()}
         handleConfirm={handleDeleteRecord}
         text="Tem certeza que deseja excluir esse registro?"
-        className="bg-white p-4 rounded-md w-[512px]"
+        className="bg-white p-4 rounded-md w-[calc(100%-2rem)] max-w-[512px]"
       />
     );
   };

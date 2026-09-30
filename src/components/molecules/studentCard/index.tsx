@@ -8,6 +8,12 @@ interface StudentCardProps {
   onChangePhoto?: (file: File) => void; // Função para lidar com a nova foto
   imageSrc: string | null;
   partnerLogo?: string | null;
+  /**
+   * Largura do cartão. O padrão é o da impressão (`printerStudentCards`);
+   * o modal passa uma que desconta as próprias margens, senão o cartão
+   * estoura a tela no celular e no tablet.
+   */
+  larguraClassName?: string;
 }
 
 export function StudentCard({
@@ -15,14 +21,15 @@ export function StudentCard({
   onChangePhoto,
   imageSrc,
   partnerLogo,
+  larguraClassName = "w-[90vw] sm:w-[733px]",
 }: StudentCardProps) {
   return (
     <>
       <div className="bg-white pt-2 pr-2 rounded-md border-2 border-marine student-card">
         <div
-          className="flex flex-col sm:flex-wrap w-[90vw] sm:w-[733px] 
+          className={`flex flex-col sm:flex-wrap ${larguraClassName}
     h-[calc(100vh-100px)] sm:h-[462px] gap-4 relative px-4 
-      overflow-y-auto scrollbar-hide justify-around sm:justify-normal"
+      overflow-y-auto scrollbar-hide justify-around sm:justify-normal`}
         >
           {/* Imagem de Perfil */}
           <div className="flex flex-col items-center sm:block">
