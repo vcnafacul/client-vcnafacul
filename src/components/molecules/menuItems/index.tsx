@@ -26,6 +26,8 @@ interface ItemMenu {
     target: string;
     image?: string;
     image_dark_theme?: string;
+    /** tickets/029: item de ação (sem navegar) — o dropdown vira botão. */
+    onClick?: () => void;
 }
 
 export interface ItemMenuProps {
