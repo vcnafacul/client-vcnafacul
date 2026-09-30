@@ -23,6 +23,7 @@ interface RenderClassesTableProps {
   classes: ClassEntity[];
   onDeleteClass: (classId: string) => void;
   handleEditClass: (classId: string) => void;
+  podeGerenciar: boolean;
 }
 
 /**
@@ -55,8 +56,10 @@ export function useAcoesDaTurma(onDeleteClass: (classId: string) => void) {
     });
   };
 
+  // Estava invertida: escondia só de quem TINHA a permissão e a turma tinha
+  // alunos — quem só visualiza via o excluir sempre (e levava 403).
   const podeExcluir = (classItem: ClassEntity) =>
-    !(classItem.number_students > 0 && permissao[Roles.gerenciarTurmas]);
+    !!permissao[Roles.gerenciarTurmas] && classItem.number_students === 0;
 
   return { handleViewClass, handleDeleteClass, podeExcluir };
 }
@@ -65,6 +68,7 @@ export function RenderClassesTable({
   classes,
   onDeleteClass,
   handleEditClass,
+  podeGerenciar,
 }: RenderClassesTableProps) {
   const { handleViewClass, handleDeleteClass, podeExcluir } =
     useAcoesDaTurma(onDeleteClass);
@@ -125,7 +129,11 @@ export function RenderClassesTable({
                 <TableCell align="right" className="w-10">
                   <ActionMenu
                     onView={() => handleViewClass(classItem)}
-                    onEdit={() => handleEditClass(classItem.id)}
+                    onEdit={
+                      podeGerenciar
+                        ? () => handleEditClass(classItem.id)
+                        : undefined
+                    }
                     onDelete={
                       podeExcluir(classItem)
                         ? () => handleDeleteClass(classItem)
