@@ -372,7 +372,7 @@ function ModalEditDashGeo({
             zoom={14}
             center={[selectedPosition[0], selectedPosition[1]]}
             markers={[]}
-            mapEvent={<Event />}
+            mapEvent={Event()}
           />
           <div className="flex flex-wrap justify-between gap-2">
             <div className="flex items-center justify-start gap-4">

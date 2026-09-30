@@ -113,8 +113,8 @@ export default function PartnerPrepManager() {
       }}
     >
       <DashCardTemplate />
-      <ShowPrepCourse />
-      <CreatePrepCourse />
+      {ShowPrepCourse()}
+      {CreatePrepCourse()}
     </DashCardContext.Provider>
   );
 }

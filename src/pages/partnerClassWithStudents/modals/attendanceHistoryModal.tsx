@@ -239,10 +239,10 @@ export function AttendanceHistoryModal({
           }}
         />
       </Paper>
-      <ModalAttendanceRecord />
-      <ModalNewAttendanceRecord />
-      <ModalConfirmDelete />
-      <ModalAttendanceRecordSummary />
+      {ModalAttendanceRecord()}
+      {ModalNewAttendanceRecord()}
+      {ModalConfirmDelete()}
+      {ModalAttendanceRecordSummary()}
     </ModalTemplate>
   );
 }

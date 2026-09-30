@@ -619,8 +619,8 @@ export function PartnerClassWithStudents() {
         )}
       </Tabs>
 
-      <ModalAttendanceHistory />
-      <ModalAttendanceRecordByStudent />
+      {ModalAttendanceHistory()}
+      {ModalAttendanceRecordByStudent()}
       {modals.modalStudentCard.isOpen && (
         <InfoStudentEnrolledModal
           isOpen={modals.modalStudentCard.isOpen}

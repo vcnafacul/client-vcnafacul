@@ -146,7 +146,7 @@ function ReportLC({
           Nos desculpe pelo transtorno, nos informe mais sobre o problema para a
           melhoria contínua da plataforma.
         </Text>
-        <IsQuestionProblem />
+        {IsQuestionProblem()}
         <textarea
           className="w-full border h-20 py-2 px-4"
           onChange={(event: any) => setMessage(`${event.target.value}`)}

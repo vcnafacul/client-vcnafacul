@@ -757,12 +757,12 @@ export function PartnerPrepInscritionStudentManager() {
           />
         </Paper>
       )}
-      <ModalWaitingList />
-      <ScheduleEnrolled />
-      <ModalDetails />
-      <ModalStatistic />
-      <ModalReject />
-      <ModalSelectClass />
+      {ModalWaitingList()}
+      {ScheduleEnrolled()}
+      {ModalDetails()}
+      {ModalStatistic()}
+      {ModalReject()}
+      {ModalSelectClass()}
       {modals.rules.isOpen && (
         <ModalRules
           isOpen={modals.rules.isOpen}

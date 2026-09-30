@@ -534,7 +534,7 @@ function ModalEditDashGeo({
                 type: rawGeo.type,
               },
             ]}
-            mapEvent={<Event />}
+            mapEvent={Event()}
           />
           <div className="flex flex-wrap justify-between gap-2">
             <div className="flex items-center justify-start gap-4">
@@ -580,8 +580,8 @@ function ModalEditDashGeo({
           </div>
         </div>
       </form>
-      <ModalRefused />
-      <ModalComeBack />
+      {ModalRefused()}
+      {ModalComeBack()}
     </div>
   );
 }

@@ -864,11 +864,11 @@ export function StudentsEnrolled() {
           />
         </Paper>
       )}
-      <ModalInfo />
-      <ModalReject />
-      <ModalConfirm />
-      <ModalUpdateClass />
-      <ModalStudentCards />
+      {ModalInfo()}
+      {ModalReject()}
+      {ModalConfirm()}
+      {ModalUpdateClass()}
+      {ModalStudentCards()}
       {modals.modalExportColumns.isOpen && (
         <ExportColumnsModal
           isOpen={modals.modalExportColumns.isOpen}

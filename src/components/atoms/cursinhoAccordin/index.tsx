@@ -201,7 +201,7 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
         </div>
       </div>
 
-      <ModalDetails />
+      {ModalDetails()}
     </>
   );
 }

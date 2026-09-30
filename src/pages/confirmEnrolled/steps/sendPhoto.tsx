@@ -136,7 +136,7 @@ export default function SendPhoto({
         </button>
       </div>
 
-      <ModalPhotoEditor />
+      {ModalPhotoEditor()}
     </div>
   );
 }

@@ -465,7 +465,7 @@ export default function PartnerPrepForm() {
           >
             Seções
           </Typography>
-          <LoadingSkeleton />
+          {LoadingSkeleton()}
         </Box>
       </>
     );
@@ -504,9 +504,9 @@ export default function PartnerPrepForm() {
           >
             Seções
           </Typography>
-          <EmptyState />
+          {EmptyState()}
         </Box>
-        <CreateSection />
+        {CreateSection()}
       </>
     );
   }
@@ -639,10 +639,10 @@ export default function PartnerPrepForm() {
           </Grid>
         )}
       </Box>
-      <CreateQuestion />
-      <CreateSection />
-      <UpdateSection />
-      <DuplicateSection />
+      {CreateQuestion()}
+      {CreateSection()}
+      {UpdateSection()}
+      {DuplicateSection()}
     </>
   );
 }

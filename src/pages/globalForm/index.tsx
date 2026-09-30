@@ -330,7 +330,7 @@ export default function GlobalFormPage() {
   if (loading) {
     return (
       <>
-        <PageHeader />
+        {PageHeader()}
         <Alert severity="info" sx={{ mx: 2, mb: 2 }}>
           Este formulário é incluído em todos os processos seletivos.
         </Alert>
@@ -343,7 +343,7 @@ export default function GlobalFormPage() {
           >
             Seções
           </Typography>
-          <LoadingSkeleton />
+          {LoadingSkeleton()}
         </Box>
       </>
     );
@@ -352,7 +352,7 @@ export default function GlobalFormPage() {
   if (entities.length === 0) {
     return (
       <>
-        <PageHeader />
+        {PageHeader()}
         <Alert severity="info" sx={{ mx: 2, mb: 2 }}>
           Este formulário é incluído em todos os processos seletivos.
         </Alert>
@@ -377,16 +377,16 @@ export default function GlobalFormPage() {
           >
             Seções
           </Typography>
-          <EmptyState />
+          {EmptyState()}
         </Box>
-        <CreateSection />
+        {CreateSection()}
       </>
     );
   }
 
   return (
     <>
-      <PageHeader />
+      {PageHeader()}
 
       <Alert severity="info" sx={{ mx: 2, mb: 2 }}>
         Este formulário é incluído em todos os processos seletivos.
@@ -475,10 +475,10 @@ export default function GlobalFormPage() {
           </Grid>
         </Grid>
       </Box>
-      <CreateQuestion />
-      <CreateSection />
-      <UpdateSection />
-      <DuplicateSection />
+      {CreateQuestion()}
+      {CreateSection()}
+      {UpdateSection()}
+      {DuplicateSection()}
     </>
   );
 }

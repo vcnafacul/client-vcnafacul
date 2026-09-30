@@ -392,9 +392,9 @@ export function PartnerPrepInscriptionManager() {
         onRetry={() => fetchInscriptions(true)}
         textoVazio={TEXTO_SEM_PROCESSOS}
       />
-      <ModalInfo />
-      <ModalCreate />
-      <ModalConfirmTest />
+      {ModalInfo()}
+      {ModalCreate()}
+      {ModalConfirmTest()}
     </DashCardContext.Provider>
   );
 }
