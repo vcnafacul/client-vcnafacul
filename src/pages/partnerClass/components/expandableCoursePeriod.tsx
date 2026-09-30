@@ -23,6 +23,8 @@ interface ExpandableCoursePeriodProps {
   handleEditClass: (classId: string) => void;
   handleEditCoursePeriod: (coursePeriodId: string) => void;
   handleDeleteCoursePeriod: (coursePeriodId: string) => void;
+  /** gerenciarTurmas: sem ela, só o expandir (e o ver turma) aparece. */
+  podeGerenciar: boolean;
 }
 
 export function ExpandableCoursePeriod({
@@ -32,6 +34,7 @@ export function ExpandableCoursePeriod({
   handleEditClass,
   handleEditCoursePeriod,
   handleDeleteCoursePeriod,
+  podeGerenciar,
 }: ExpandableCoursePeriodProps) {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -137,14 +140,18 @@ export function ExpandableCoursePeriod({
         </TableCell>
         <TableCell align="right" className="w-10">
           <ActionMenu
-            onAdd={() => {
-              handleAddClass(coursePeriod.id);
-            }}
-            onEdit={() => handleEditCoursePeriod(coursePeriod.id)}
+            onAdd={
+              podeGerenciar ? () => handleAddClass(coursePeriod.id) : undefined
+            }
+            onEdit={
+              podeGerenciar
+                ? () => handleEditCoursePeriod(coursePeriod.id)
+                : undefined
+            }
             onDelete={
-              totalClassesCount > 0
-                ? undefined
-                : () => handleDeleteCoursePeriod(coursePeriod.id)
+              podeGerenciar && totalClassesCount === 0
+                ? () => handleDeleteCoursePeriod(coursePeriod.id)
+                : undefined
             }
             mensagemExclusao={`Excluir o período ${coursePeriod.name}?`}
           />
@@ -181,6 +188,7 @@ export function ExpandableCoursePeriod({
                 classes={coursePeriod.classes}
                 handleEditClass={handleEditClass}
                 onDeleteClass={onDeleteClass}
+                podeGerenciar={podeGerenciar}
               />
             </Box>
           </Collapse>

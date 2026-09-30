@@ -15,6 +15,7 @@ import {
 import { deleteCoursePeriod } from "@/services/prepCourse/coursePeriod/deleteCoursePeriod";
 import { getCoursePeriods } from "@/services/prepCourse/coursePeriod/getCoursePeriods";
 import { updateCoursePeriod } from "@/services/prepCourse/coursePeriod/updateCoursePeriod";
+import { Roles } from "@/enums/roles/roles";
 import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
 import { Paginate } from "@/utils/paginate";
@@ -55,8 +56,11 @@ export function PartnerClass() {
   );
 
   const {
-    data: { token },
+    data: { token, permissao },
   } = useAuthStore();
+  // Criar, editar e excluir exigem gerenciarTurmas (a api também barra);
+  // quem só visualiza não vê os botões — antes via e levava 403.
+  const podeGerenciar = !!permissao[Roles.gerenciarTurmas];
 
   const executeAsync = useToastAsync();
 
@@ -319,17 +323,19 @@ export function PartnerClass() {
             </Typography>
           </Toolbar>
         </AppBar>
-        <div className="flex justify-end items-center w-full">
-          <Box p={0}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleCreateCoursePeriod}
-            >
-              Criar Período Letivo
-            </Button>
-          </Box>
-        </div>
+        {podeGerenciar && (
+          <div className="flex justify-end items-center w-full">
+            <Box p={0}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleCreateCoursePeriod}
+              >
+                Criar Período Letivo
+              </Button>
+            </Box>
+          </div>
+        )}
         <br />
         <Box p={0}>
           <Typography
@@ -364,14 +370,16 @@ export function PartnerClass() {
           <Typography variant="h4" fontWeight="bold" className="text-marine">
             Períodos Letivos
           </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleCreateCoursePeriod}
-            fullWidth={!acimaDeSm}
-          >
-            Novo Período Letivo
-          </Button>
+          {podeGerenciar && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleCreateCoursePeriod}
+              fullWidth={!acimaDeSm}
+            >
+              Novo Período Letivo
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
 
@@ -402,6 +410,7 @@ export function PartnerClass() {
             handleEditClass={handleEditClass}
             handleEditCoursePeriod={handleEditCoursePeriod}
             handleDeleteCoursePeriod={handleDeleteCoursePeriod}
+            podeGerenciar={podeGerenciar}
           />
         ) : (
           <Grid container spacing={2}>
@@ -442,6 +451,7 @@ export function PartnerClass() {
                           handleEditClass={handleEditClass}
                           handleEditCoursePeriod={handleEditCoursePeriod}
                           handleDeleteCoursePeriod={handleDeleteCoursePeriod}
+                          podeGerenciar={podeGerenciar}
                         />
                       );
                     })}
