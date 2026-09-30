@@ -127,9 +127,9 @@ function ModalUpdateRoleUser({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white rounded-xl p-5 shadow-lg"
+      className="bg-white rounded-xl p-4 sm:p-5 shadow-lg w-full max-w-[44.5rem]"
     >
-      <div className="w-[92vw] max-w-2xl flex flex-col gap-5 max-h-[80vh]">
+      <div className="w-full flex flex-col gap-5 max-h-[80vh]">
         {/* Header */}
         <div>
           <Text size="secondary" className="font-bold text-marine">

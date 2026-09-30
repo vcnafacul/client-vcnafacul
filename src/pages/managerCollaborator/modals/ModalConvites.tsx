@@ -110,9 +110,9 @@ export function ModalConvites({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white p-6 rounded-md"
+      className="bg-white p-4 sm:p-6 rounded-md w-full max-w-[59rem]"
     >
-      <div data-modal-convites className="flex w-[min(92vw,56rem)] flex-col gap-5">
+      <div data-modal-convites className="flex w-full flex-col gap-5">
         <header className="text-center">
           <h2 className="text-lg font-bold text-marine">Convites de colaborador</h2>
           <p className="text-sm text-gray-500">
