@@ -639,9 +639,10 @@ function PartnerPrepProvas() {
         paginaInicial={paginaRestaurada}
         onPaginaChange={setPaginaAtual}
       />
-      <ModalNewProva />
-      <ModalShowProva />
-      <ModalManageCategorias />
+      {/* Como função: <Componente /> declarado no render remontava a cada render (ver dashProvas). */}
+      {ModalNewProva()}
+      {ModalShowProva()}
+      {ModalManageCategorias()}
       <UploadCartaoModal
         isOpen={modals.modalUploadCartao.isOpen}
         handleClose={modals.modalUploadCartao.close}

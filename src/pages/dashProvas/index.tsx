@@ -520,10 +520,16 @@ function DashProva() {
         onClearFilters={clearFilters}
         defaultSort={ORDENACAO_PADRAO}
       />
-      <ModalNewProva />
-      <ModalShowProva />
-      <ModalManageCategorias />
-      <ModalManageTemplate />
+      {/*
+        ⚠️ Chamados como função, não como <Componente />: declarados dentro do
+        render, cada render criava um "tipo" novo e o React remontava o modal.
+        Ex.: o ShowProva chama `onUpdated` → a lista muda → o modal remontava,
+        buscava a prova de novo e perdia a vista (ex.: "Ver simulados").
+      */}
+      {ModalNewProva()}
+      {ModalShowProva()}
+      {ModalManageCategorias()}
+      {ModalManageTemplate()}
       <UploadCartaoModal
         isOpen={modals.modalUploadCartao.isOpen}
         handleClose={modals.modalUploadCartao.close}
