@@ -6,6 +6,11 @@ export interface TabModal {
   label: string;
   children: React.ReactNode;
   handleClose?: () => void;
+  /**
+   * Mantém a aba montada quando outra é selecionada (só a esconde). Sem isso
+   * o Radix desmonta a aba e o que estava sendo editado nela se perde.
+   */
+  manterMontada?: boolean;
 }
 
 interface ModalTabTemplateQuestionProps {
@@ -41,7 +46,7 @@ function ModalTabTemplateQuestion({
 
   return (
     <div className="fixed top-0 left-0 z-50 bg-black/50 w-screen h-screen flex justify-center items-center overflow-y-auto scrollbar-hide">
-      <div className="w-full h-full flex justify-center items-center p-4">
+      <div className="w-full h-full flex justify-center items-center p-2 sm:p-4">
         {/* Key força re-montagem quando as tabs mudam (ex: de loading para tabs reais) */}
         <Tabs
           key={defaultTabId}
@@ -52,8 +57,12 @@ function ModalTabTemplateQuestion({
               com a mesma largura (minmax(0,1fr) permite encolher). Assim as
               abas ficam sempre em uma única linha horizontal, diminuindo de
               tamanho conforme mais abas são adicionadas. */}
+          {/*
+            ⚠️ No celular, rolagem horizontal com os rótulos inteiros: seis abas
+            em ~335px davam ~40px a cada uma e cortavam todos os nomes.
+          */}
           <TabsList
-            className="grid w-full"
+            className="flex w-full justify-start overflow-x-auto scrollbar-hide sm:grid"
             style={{
               gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))`,
             }}
@@ -62,19 +71,24 @@ function ModalTabTemplateQuestion({
               <TabsTrigger
                 key={tab.id}
                 value={tab.id}
-                className="min-w-0 px-2 overflow-hidden text-ellipsis"
+                className="shrink-0 px-3 sm:shrink sm:min-w-0 sm:px-2 sm:overflow-hidden sm:text-ellipsis"
               >
                 {tab.label}
               </TabsTrigger>
             ))}
           </TabsList>
           {/* Container com altura fixa para todas as tabs */}
-          <div className="relative h-[calc(100vh-200px)]">
+          {/*
+            `dvh` desconta a barra do navegador no celular (sem suporte, vh).
+            No celular sobra menos margem em volta, então a caixa é mais alta.
+          */}
+          <div className="relative h-[calc(100vh-200px)] supports-[height:100dvh]:h-[calc(100dvh-110px)] sm:supports-[height:100dvh]:h-[calc(100dvh-200px)]">
             {tabs.map((tab) => (
               <TabsContent
-                className={`bg-white rounded-md absolute inset-0 ${className}`}
+                className={`bg-white rounded-md absolute inset-0 data-[state=inactive]:hidden ${className}`}
                 key={tab.id}
                 value={tab.id}
+                forceMount={tab.manterMontada || undefined}
               >
                 <ModalContent
                   onClose={tab.handleClose}
@@ -110,10 +124,14 @@ function ModalContent({
         <div className="sticky top-0 bg-white z-20 flex items-center justify-end gap-2 p-2">
           {/* ⚠️ `mr-auto`: a trilha à esquerda, o fechar no canto de sempre. */}
           {cabecalho && <div className="mr-auto min-w-0">{cabecalho}</div>}
-          <IoMdClose
-            className="w-6 h-6 cursor-pointer text-gray-500 hover:text-gray-700 transition"
+          <button
+            type="button"
+            aria-label="Fechar"
             onClick={onClose}
-          />
+            className="shrink-0 rounded text-gray-500 hover:text-gray-700 transition"
+          >
+            <IoMdClose className="w-6 h-6" />
+          </button>
         </div>
       )}
 
