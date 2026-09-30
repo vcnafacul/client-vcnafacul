@@ -12,6 +12,7 @@ import Text from "../../../components/atoms/text";
 import Button from "../../../components/molecules/button";
 import UploadButton from "../../../components/molecules/uploadButton";
 import ModalTemplate from "../../../components/templates/modalTemplate";
+import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 
 const inputBaseClass =
   "w-full border border-gray-300 rounded-md px-3 py-2 text-grey focus:outline-none focus:ring-2 focus:ring-green2/30 focus:border-green2";
@@ -153,7 +154,10 @@ function ModalEditNew({
     }
   };
 
+  // Excluir tira a novidade do site: confirma antes (apagava direto).
+  const [confirmarExclusao, setConfirmarExclusao] = useState(false);
   const deleteNew = () => {
+    setConfirmarExclusao(false);
     if (news) {
       deleteFunc(news.id);
     }
@@ -163,19 +167,19 @@ function ModalEditNew({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="w-full max-w-4xl max-h-[90vh] bg-white rounded-lg overflow-hidden flex flex-col"
+      className="w-full max-w-4xl max-h-[90vh] supports-[height:100dvh]:max-h-[90dvh] bg-white rounded-lg overflow-hidden flex flex-col"
     >
       {/* Área rolável: header + formulário + preview */}
       <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
         {/* Header */}
-        <div className="px-6 pt-6 pb-4 border-b border-gray-100 shrink-0">
+        <div className="px-4 sm:px-6 pt-6 pb-4 border-b border-gray-100 shrink-0">
           <Text size="secondary">
             {isEditing ? "Detalhes da Novidade" : "Criar Novidade"}
           </Text>
         </div>
 
         {/* Form fields: mesmo layout (label em cima, input, texto embaixo) para alinhar */}
-        <div className="px-6 py-4 shrink-0">
+        <div className="px-4 sm:px-6 py-4 shrink-0">
           {/* Tab switcher: only visible in create mode */}
           {!isEditing && (
             <div className="mb-4 flex gap-2 border-b border-gray-200">
@@ -265,7 +269,7 @@ function ModalEditNew({
         </div>
 
         {/* Description textarea */}
-        <div className="px-6 pb-2 shrink-0">
+        <div className="px-4 sm:px-6 pb-2 shrink-0">
           <label htmlFor="description" className="text-sm text-gray-600">
             Descrição (opcional, máx 280 caracteres)
           </label>
@@ -287,7 +291,7 @@ function ModalEditNew({
         {contentType === 'file' ? (
           <>
             {!isEditing && (
-              <div className="px-6 pb-2 shrink-0">
+              <div className="px-4 sm:px-6 pb-2 shrink-0">
                 <UploadButton
                   placeholder="Upload Novidades"
                   onChange={handleFileUpload}
@@ -295,7 +299,7 @@ function ModalEditNew({
               </div>
             )}
             {hasPreview && (
-              <div className="px-6 py-4 shrink-0">
+              <div className="px-4 sm:px-6 py-4 shrink-0">
                 <p className="text-sm text-gray-500 mb-2 font-medium">Preview</p>
                 <div className="min-h-[200px] max-h-[45vh] overflow-y-auto border rounded-lg shadow-inner p-4 bg-gray-50">
                   {news?.fileName ? (
@@ -308,7 +312,7 @@ function ModalEditNew({
             )}
           </>
         ) : (
-          <div className="px-6 py-4 shrink-0">
+          <div className="px-4 sm:px-6 py-4 shrink-0">
             <p className="text-sm text-gray-500 mb-2 font-medium">Conteúdo</p>
             <RichTextEditor
               content={body}
@@ -327,7 +331,7 @@ function ModalEditNew({
       </div>
 
       {/* Rodapé fixo: botões sempre visíveis */}
-      <div className="px-6 py-4 border-t border-gray-100 flex gap-4 shrink-0 bg-white">
+      <div className="px-4 sm:px-6 py-4 border-t border-gray-100 flex gap-4 shrink-0 bg-white">
         {isEditing ? (
           <>
             <Button
@@ -337,7 +341,10 @@ function ModalEditNew({
             >
               Salvar
             </Button>
-            <Button className="bg-red border-red" onClick={deleteNew}>
+            <Button
+              className="bg-red border-red"
+              onClick={() => setConfirmarExclusao(true)}
+            >
               Deletar
             </Button>
           </>
@@ -351,6 +358,16 @@ function ModalEditNew({
           </Button>
         )}
       </div>
+      <ModalConfirmCancel
+        isOpen={confirmarExclusao}
+        handleClose={() => setConfirmarExclusao(false)}
+        handleConfirm={deleteNew}
+        text={`Excluir a novidade "${news?.title ?? ""}"?`}
+      >
+        <p className="text-sm text-gray-600">
+          Ela deixa de aparecer no site.
+        </p>
+      </ModalConfirmCancel>
     </ModalTemplate>
   );
 }
