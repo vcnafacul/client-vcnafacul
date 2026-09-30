@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { LuMessageSquareDashed, LuHeadset, LuSearch } from "react-icons/lu";
 import { ChatLayout } from "@/components/chat/ChatLayout";
 import { Input } from "@/components/ui/input";
@@ -43,10 +44,19 @@ export function SupportInboxView({
   archivedCount,
 }: Props) {
   const isArchived = activeTab === "archived";
+  /*
+    Abaixo de 768px (o `sm` do projeto) uma coisa de cada vez: a lista, ou a
+    conversa em tela cheia com ← para voltar. Lado a lado não cabia.
+  */
+  const acimaDeSm = useAcimaDeSm();
+  const conversaAberta = !!(selected && userId);
+  const mostrarLista = acimaDeSm || !conversaAberta;
+  const mostrarConversa = acimaDeSm || conversaAberta;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-76px)]">
-      <header className="bg-marine text-white px-5 py-3 flex items-center justify-between shadow-sm">
+    // `dvh` desconta a barra do navegador no celular; sem suporte, cai no vh.
+    <div className="flex flex-col h-[calc(100vh-76px)] supports-[height:100dvh]:h-[calc(100dvh-76px)]">
+      <header className="bg-marine text-white px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 shadow-sm">
         <div className="flex items-center gap-2">
           <LuHeadset className="h-5 w-5 text-orange" />
           <h1 className="font-raleway font-bold text-lg tracking-tight">
@@ -65,7 +75,8 @@ export function SupportInboxView({
       </header>
       <div className="h-[3px] bg-custom-gradient" aria-hidden />
       <div className="flex flex-1 min-h-0">
-        <aside className="max-w-96 border-r flex flex-col bg-backgroundGrey">
+        {mostrarLista && (
+        <aside className="w-full sm:w-auto sm:max-w-96 border-r flex flex-col bg-backgroundGrey">
           <div className="flex border-b bg-white shrink-0">
             <button
               type="button"
@@ -136,7 +147,9 @@ export function SupportInboxView({
             )}
           </ScrollArea>
         </aside>
-        <main className="flex-1 bg-white">
+        )}
+        {mostrarConversa && (
+        <main className="flex-1 min-w-0 bg-white">
           {selected && userId ? (
             <ChatLayout
               conversationId={selected.id}
@@ -149,6 +162,7 @@ export function SupportInboxView({
                   .join(" · ") || undefined
               }
               onClose={onClose}
+              onBack={acimaDeSm ? undefined : onClose}
               showAvatar
               avatarSeed={selected.userId ?? selected.userName}
               status={selected.status}
@@ -170,6 +184,7 @@ export function SupportInboxView({
             </div>
           )}
         </main>
+        )}
       </div>
     </div>
   );

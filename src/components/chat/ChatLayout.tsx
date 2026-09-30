@@ -10,6 +10,7 @@ interface Props {
   title: string;
   subtitle?: string;
   onClose?: () => void;
+  onBack?: () => void;
   showAvatar?: boolean;
   avatarSeed?: string;
   status?: "open" | "closed";
@@ -25,6 +26,7 @@ export function ChatLayout({
   title,
   subtitle,
   onClose,
+  onBack,
   showAvatar,
   avatarSeed,
   status,
@@ -40,6 +42,7 @@ export function ChatLayout({
         title={title}
         subtitle={subtitle}
         onClose={onClose}
+        onBack={onBack}
         showAvatar={showAvatar}
         avatarSeed={avatarSeed}
         status={status}

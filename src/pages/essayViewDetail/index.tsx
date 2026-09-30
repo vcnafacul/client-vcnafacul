@@ -40,14 +40,14 @@ export default function EssayViewDetail() {
   const basePath = location.pathname.replace(/\/$/, "");
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-8">
+    <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-8">
       {/* Essay content */}
       <div>
         <h1 className="text-2xl font-bold text-marine">
           {essay.title || "Sem título"}
         </h1>
-        <div className="flex gap-4 text-sm text-grey mt-1 mb-4">
-          <span>Tema: {essay.theme.title}</span>
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-grey mt-1 mb-4">
+          <span className="break-words">Tema: {essay.theme.title}</span>
           <span>Status: {STATUS_LABELS[essay.status] ?? essay.status}</span>
           {essay.submittedAt && (
             <span>
