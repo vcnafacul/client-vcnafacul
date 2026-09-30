@@ -254,7 +254,7 @@ export function ModalShowQuestion({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose || (() => {})}
-      className="bg-white p-6 rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+      className="bg-white p-4 sm:p-6 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
     >
       <Box sx={{ mb: 3 }}>
         <Box
@@ -262,6 +262,8 @@ export function ModalShowQuestion({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            flexWrap: "wrap",
+            gap: 1,
             mb: 2,
           }}
         >
@@ -495,7 +497,9 @@ export function ModalShowQuestion({
             <Switch
               checked={editableData.active}
               onChange={handleToggleActive}
-              disabled={loading || readOnly}
+              // Ativar/desativar salva na hora e fecha o modal: em modo de
+              // edição, isso descartaria as alterações ainda não salvas.
+              disabled={loading || readOnly || isEditMode}
             />
           </Box>
         </Box>
