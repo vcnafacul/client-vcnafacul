@@ -247,20 +247,22 @@ function ModalContent({
     Navegar pela linhagem desmonta este modal e remonta com a outra questão — o
     enunciado que a pessoa estava editando se perderia calado.
 
-    ⚠️ Cobre o **conteúdo** (enunciado e alternativas), que é o form que mora
-    aqui. A edição da aba Classificação vive dentro dela e não chega a este
-    nível.
+    Cobre o **conteúdo** (enunciado e alternativas), que mora aqui, e a
+    **Classificação**, que avisa por `onSujoChange`. Fechar no X passa pelo
+    mesmo caminho — antes fechava calado e a edição se perdia.
   */
+  const [classificacaoSuja, setClassificacaoSuja] = useState(false);
   const [navegacaoPendente, setNavegacaoPendente] = useState<
     (() => void) | null
   >(null);
   const navegar = (acao: () => void) => {
-    if (conteudoForm.isEditing && conteudoForm.isDirty) {
+    if ((conteudoForm.isEditing && conteudoForm.isDirty) || classificacaoSuja) {
       setNavegacaoPendente(() => acao);
     } else {
       acao();
     }
   };
+  const fechar = () => navegar(onClose);
   const abrirNaLinhagem = abrirQuestao
     ? (id: string) => navegar(() => abrirQuestao(id))
     : undefined;
@@ -278,7 +280,7 @@ function ModalContent({
     <>
     <ModalTabTemplateQuestion
       isOpen={isOpen}
-      className="px-4 py-2"
+      className="px-2 py-2 sm:px-4"
       abaInicial={abaInicial}
       cabecalho={
         abrirNaLinhagem || lista ? (
@@ -311,6 +313,8 @@ function ModalContent({
         {
           label: "Classificação",
           id: "classificacao",
+          // Montada sempre: trocar de aba desmontava e perdia a edição.
+          manterMontada: true,
           children: (
             <div className="flex flex-col gap-3">
               <TabClassificacao
@@ -318,6 +322,7 @@ function ModalContent({
                 canEdit={canEdit}
                 infos={infos}
                 onSaveSuccess={refreshQuestion}
+                onSujoChange={setClassificacaoSuja}
               />
               {/*
                 ⚠️ **No RODAPÉ da aba, à direita** — ajuste pedido na revisão
@@ -327,7 +332,7 @@ function ModalContent({
               <AcoesDaQuestao questaoId={question._id} aoExcluir={aoExcluir} />
             </div>
           ),
-          handleClose: onClose,
+          handleClose: fechar,
         },
         {
           label: "Enunciado",
@@ -349,7 +354,7 @@ function ModalContent({
               token={token}
             />
           ),
-          handleClose: onClose,
+          handleClose: fechar,
         },
         {
           label: "Alternativas",
@@ -364,7 +369,7 @@ function ModalContent({
               token={token}
             />
           ),
-          handleClose: onClose,
+          handleClose: fechar,
         },
         {
           label: "Imagens",
@@ -372,7 +377,7 @@ function ModalContent({
           children: (
             <TabImagens question={question} canEdit={canEdit} />
           ),
-          handleClose: onClose,
+          handleClose: fechar,
         },
         /*
           ⚠️ **Aba própria, e sempre visível** (card 34A) — reverte a decisão
@@ -388,13 +393,13 @@ function ModalContent({
               abrirQuestao={abrirNaLinhagem}
             />
           ),
-          handleClose: onClose,
+          handleClose: fechar,
         },
         {
           label: "Histórico",
           id: "historico",
           children: <TabHistorico questionId={question._id} />,
-          handleClose: onClose,
+          handleClose: fechar,
         },
       ]}
     />
@@ -417,7 +422,7 @@ function ModalContent({
         }}
       >
         <p className="text-sm text-gray-700">
-          Você está editando esta questão. Abrir outra descarta o que não foi
+          Você está editando esta questão. Sair agora descarta o que não foi
           salvo.
         </p>
       </ModalConfirmCancel>

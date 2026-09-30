@@ -27,10 +27,15 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
+import { Roles } from "@/enums/roles/roles";
 import { useState } from "react";
+import { FrentesActionMenu } from "./frentesActionMenu";
 import ManagerSubject from "../managerSubject";
 import OrderEditContent from "../orderEditContent";
-import { SortableTemaRow } from "./sortableTemaRow";
+import { countByStatus, SortableTemaRow } from "./sortableTemaRow";
+import { StatusEnum } from "@/enums/generic/statusEnum";
+import { StatusContent } from "@/enums/content/statusContent";
 
 interface Props {
   frente: FrenteDto;
@@ -50,8 +55,16 @@ export function RenderTemasTable({
   const [temaSelected, setTemaSelected] = useState<SubjectDto | null>(null);
 
   const {
-    data: { token },
+    data: { token, permissao },
   } = useAuthStore();
+  // Abaixo de 768px (o `sm` do projeto) a sub-tabela (~550px) vira cards.
+  const acimaDeSm = useAcimaDeSm();
+  const podeReordenar = !!permissao[Roles.gerenciadorDemanda];
+  const idDe = (t: SubjectDto) => t._id || t.id;
+  const excluirTema = (tema: SubjectDto) =>
+    (tema.contents?.length ?? 0) === 0
+      ? () => onDeleteTema(idDe(tema))
+      : undefined;
 
   const modals = useModals(["temaEditor", "orderEditContent"]);
 
@@ -76,8 +89,67 @@ export function RenderTemasTable({
     modals.orderEditContent.open();
   };
 
+  const cardsNoCelular = (
+    <ul className="flex flex-col gap-2">
+      {temas.map((tema, i) => {
+        const contents = tema.contents ?? [];
+        const total = contents.length;
+        return (
+          <li key={idDe(tema)} className="border rounded-lg p-3 flex flex-col gap-2">
+            <p className="font-medium break-words">{tema.name}</p>
+            <p className="text-xs text-gray-600">
+              Aprovadas {countByStatus(contents, StatusEnum.Approved)}/{total} ·
+              Pendentes {countByStatus(contents, StatusEnum.Pending)}/{total} ·
+              Upload {countByStatus(contents, StatusContent.Pending_Upload)}/{total}
+            </p>
+            <div className="flex flex-wrap items-center justify-between gap-1 border-t pt-2">
+              {podeReordenar ? (
+                // No toque o arrastar não funciona: ↑/↓ usam a mesma chamada.
+                <div className="flex">
+                  <button
+                    type="button"
+                    aria-label="Mover para cima"
+                    disabled={i === 0}
+                    onClick={() => onReorderTemas(idDe(tema), idDe(temas[i - 1]))}
+                    className="h-10 w-10 disabled:opacity-30"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Mover para baixo"
+                    disabled={i === temas.length - 1}
+                    onClick={() => onReorderTemas(idDe(tema), idDe(temas[i + 1]))}
+                    className="h-10 w-10 disabled:opacity-30"
+                  >
+                    ↓
+                  </button>
+                </div>
+              ) : (
+                <span />
+              )}
+              <div>
+                <FrentesActionMenu
+                  onEdit={() => handleEditTema(tema)}
+                  onReorder={() => handleReorderContents(tema)}
+                  onDelete={excluirTema(tema)}
+                  menuType="tema"
+                  tamanho="medium"
+                  confirmarExclusao={`Excluir o tema ${tema.name}?`}
+                />
+              </div>
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  );
+
   return (
     <>
+      {!acimaDeSm ? (
+        cardsNoCelular
+      ) : (
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -118,11 +190,7 @@ export function RenderTemasTable({
                     tema={tema}
                     onEdit={() => handleEditTema(tema)}
                     onReorderContents={() => handleReorderContents(tema)}
-                    onDelete={
-                      (tema.contents?.length ?? 0) === 0
-                        ? () => onDeleteTema(tema._id || tema.id)
-                        : undefined
-                    }
+                    onDelete={excluirTema(tema)}
                   />
                 ))}
               </SortableContext>
@@ -130,6 +198,7 @@ export function RenderTemasTable({
           </Table>
         </TableContainer>
       </DndContext>
+      )}
 
       {modals.temaEditor.isOpen && temaSelected && (
         <ManagerSubject
@@ -156,6 +225,10 @@ export function RenderTemasTable({
           }}
           contents={temaSelected.contents}
           updateOrder={(dto: ChangeOrderDTO) => changeOrderDemand(token, dto)}
+          // Sem isto, reabrir mostrava a ordem antiga (o tema não era atualizado).
+          aoSalvar={(ordenados) => {
+            temaSelected.contents = ordenados as SubjectDto["contents"];
+          }}
         />
       )}
     </>

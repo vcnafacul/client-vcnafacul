@@ -13,7 +13,7 @@ export function NavegacaoDaLista({
   total?: number;
 }) {
   return (
-    <div className="flex items-center gap-2 text-sm" data-navegacao-da-lista>
+    <div className="flex flex-wrap items-center gap-2 text-sm" data-navegacao-da-lista>
       <button
         type="button"
         aria-label="Questão anterior"

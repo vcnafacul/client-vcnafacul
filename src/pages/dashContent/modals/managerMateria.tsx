@@ -49,7 +49,7 @@ function PresetGrid({
   size?: string;
 }) {
   return (
-    <div className="grid grid-cols-5 gap-2">
+    <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
       {Object.entries(presets).map(([key, Svg]) => (
         <button
           key={key}

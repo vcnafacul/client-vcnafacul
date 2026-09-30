@@ -152,6 +152,13 @@ export function useClassificacaoForm({
 
   const handleSetProvaBase = async () => {
     if (!provaSel?.provaId) return;
+    // Mesmo padrão do "Remover da prova": muda a origem da questão na hora.
+    if (
+      !confirm(
+        `Transformar "${provaSel.provaNome}" na prova de origem desta questão?`,
+      )
+    )
+      return;
     await executeAsync({
       action: () => setProvaBaseService(question._id, provaSel.provaId, token),
       loadingMessage: "Definindo prova de origem...",

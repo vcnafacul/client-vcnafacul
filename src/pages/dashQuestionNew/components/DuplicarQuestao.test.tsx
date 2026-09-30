@@ -40,13 +40,28 @@ describe("DuplicarQuestao (card 25, no topo da Linhagem)", () => {
     expect(container.querySelector("[data-duplicar]")).toBeNull();
   });
 
-  it("duplicar chama o serviço e avisa quem montou", async () => {
+  it("duplicar confirma, chama o serviço e avisa quem montou", async () => {
+    const confirmar = vi.spyOn(window, "confirm").mockReturnValue(true);
     const aoDuplicar = vi.fn();
     montar({ aoDuplicar });
 
     fireEvent.click(screen.getByText(TEXTO_DUPLICAR));
 
     await waitFor(() => expect(aoDuplicar).toHaveBeenCalledWith("q2"));
+    expect(confirmar).toHaveBeenCalled();
     expect(duplicarQuestao).toHaveBeenCalledWith("tok", "q1");
+    confirmar.mockRestore();
+  });
+
+  it("cancelar a confirmação não duplica", () => {
+    const confirmar = vi.spyOn(window, "confirm").mockReturnValue(false);
+    const aoDuplicar = vi.fn();
+    montar({ aoDuplicar });
+
+    fireEvent.click(screen.getByText(TEXTO_DUPLICAR));
+
+    expect(duplicarQuestao).not.toHaveBeenCalled();
+    expect(aoDuplicar).not.toHaveBeenCalled();
+    confirmar.mockRestore();
   });
 });

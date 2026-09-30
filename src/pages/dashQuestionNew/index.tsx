@@ -18,6 +18,7 @@ import { getAllQuestions } from "@/services/question/getAllQuestion";
 import { getInfosQuestion } from "@/services/question/getInfosQuestion";
 import { useAuthStore } from "@/store/auth";
 import { ChevronDown, ChevronUp, Filter, Plus } from "lucide-react";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useCallback, useEffect, useState } from "react";
 import { FilterValues, QuestionFilters } from "./components/QuestionFilters";
 import { SimpleQuestionCard } from "./components/simpleQuestionCard";
@@ -57,6 +58,8 @@ function DashQuestionNew() {
   const [isLoading, setIsLoading] = useState(true);
   const [totalItems, setTotalItems] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  // Abaixo de 768px (o `sm` do projeto) a paginação fica compacta.
+  const acimaDeSm = useAcimaDeSm();
   const [infos, setInfos] = useState<any>(null);
 
   // Filters state
@@ -201,6 +204,36 @@ function DashQuestionNew() {
   const renderPagination = () => {
     if (totalPages <= 1) return null;
 
+    // No celular a lista de páginas (até ~460px) não cabia.
+    if (!acimaDeSm) {
+      return (
+        <nav
+          aria-label="Paginação"
+          className="my-4 flex items-center justify-between gap-2"
+        >
+          <button
+            type="button"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="h-10 px-4 border rounded-md text-sm font-medium disabled:opacity-40"
+          >
+            Anterior
+          </button>
+          <span className="text-sm text-muted-foreground">
+            {currentPage} de {totalPages}
+          </span>
+          <button
+            type="button"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="h-10 px-4 border rounded-md text-sm font-medium disabled:opacity-40"
+          >
+            Próxima
+          </button>
+        </nav>
+      );
+    }
+
     const pages = [];
     const showEllipsisStart = currentPage > 3;
     const showEllipsisEnd = currentPage < totalPages - 2;
@@ -309,12 +342,12 @@ function DashQuestionNew() {
     filters.filterText;
 
   return (
-    <div className="container mx-auto p-6 max-w-full">
+    <div className="container mx-auto p-4 sm:p-6 max-w-full">
       {/* Header */}
       <div className="mb-6">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
           <div>
-            <h1 className="text-3xl font-bold text-primary">
+            <h1 className="text-2xl sm:text-3xl font-bold text-primary">
               Banco de Questões (Novo)
             </h1>
             <p className="text-muted-foreground mt-1">
@@ -326,7 +359,7 @@ function DashQuestionNew() {
           {podeEditarQuestao(permissao) && (
             <Button
               onClick={() => modals.modalCreateQuestion.open()}
-              className="bg-primary hover:bg-primary/90 text-white shadow-lg"
+              className="bg-primary hover:bg-primary/90 text-white shadow-lg w-full sm:w-auto"
               size="lg"
             >
               <Plus className="h-5 w-5 mr-2" />
@@ -358,13 +391,18 @@ function DashQuestionNew() {
         )}
       </div>
 
-      {/* Filtros */}
-      {infos && showFilters && (
-        <QuestionFilters
-          infos={infos}
-          onFilter={handleFilterChange}
-          isLoading={isLoading}
-        />
+      {/*
+        Filtros: esconder só oculta, não desmonta. Desmontado, o painel voltava
+        com os selects vazios e o filtro ainda aplicado ("Limpar" desabilitado).
+      */}
+      {infos && (
+        <div className={showFilters ? undefined : "hidden"}>
+          <QuestionFilters
+            infos={infos}
+            onFilter={handleFilterChange}
+            isLoading={isLoading}
+          />
+        </div>
       )}
 
       {/* Informações e Paginação Superior */}

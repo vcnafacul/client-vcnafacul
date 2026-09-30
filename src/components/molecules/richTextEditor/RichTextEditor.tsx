@@ -131,7 +131,9 @@ export function RichTextEditor({
       {mode === "visual" ? (
         <EditorContent
           editor={editor}
-          className="prose prose-sm max-w-none px-3 py-2"
+          // Tabela e fórmula largas rolam aqui dentro — a borda do editor
+          // tem overflow-hidden e cortava o excesso sem rolagem.
+          className="prose prose-sm max-w-none px-3 py-2 overflow-x-auto"
           style={{ minHeight: resolvedMinHeight }}
         />
       ) : (

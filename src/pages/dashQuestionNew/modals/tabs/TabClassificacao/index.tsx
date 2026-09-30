@@ -61,6 +61,7 @@ export function TabClassificacao({
   infos,
   canEdit = false,
   onSaveSuccess,
+  onSujoChange,
 }: TabClassificacaoProps) {
   const {
     data: { token, permissao },
@@ -86,6 +87,13 @@ export function TabClassificacao({
     handleRemoveFromProva,
     handleSetProvaBase,
   } = useClassificacaoForm({ question, onSaveSuccess });
+
+  const sujo = isEditing && isDirty;
+  useEffect(() => {
+    onSujoChange?.(sujo);
+  }, [sujo, onSujoChange]);
+  // Ao sair (fechar/trocar de questão), não deixa o modal achando que há edição.
+  useEffect(() => () => onSujoChange?.(false), [onSujoChange]);
 
   // Estados para gerenciamento de status
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
@@ -399,7 +407,7 @@ export function TabClassificacao({
 
             {/* Botões de Ação — só quem valida (024) */}
             {podeValidar(permissao) && (
-            <div className="w-full flex gap-3">
+            <div className="w-full flex flex-wrap gap-3">
               {/* Botão Aprovar — o validador do cursinho aprova PENDENTE;
                   reverter uma recusa é da plataforma (024 · 03). */}
               {question.status !== StatusEnum.Approved &&
@@ -457,8 +465,8 @@ export function TabClassificacao({
       )}
       {/* Informações Principais */}
       <Card className="h-full flex flex-col">
-        <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <div className="flex items-center gap-3">
+        <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 pb-3">
+          <div className="flex flex-wrap items-center gap-3">
             <CardTitle className="text-lg">📋 Informações da Prova</CardTitle>
             {isEditing && (
               <span className="text-sm font-normal text-blue-600 bg-blue-50 px-2 py-1 rounded">
@@ -474,7 +482,7 @@ export function TabClassificacao({
 
           {/* Botão Editar (aparece só no modo visualização) */}
           {!isEditing && canEdit && (
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button
                 size="sm"
                 variant="outline"
@@ -1030,8 +1038,8 @@ export function TabClassificacao({
       {isEditing && (
         <Card className="bg-blue-50 border-blue-200">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex-1">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex-1 min-w-[12rem]">
                 {isDirty && (
                   <p className="text-sm text-amber-600 font-medium flex items-center gap-2">
                     <AlertCircle className="h-4 w-4" />
@@ -1045,7 +1053,7 @@ export function TabClassificacao({
                 )}
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button
                   onClick={handleRemoveFromProva}
                   disabled={isSaving || !podeCompor(provaSel)}

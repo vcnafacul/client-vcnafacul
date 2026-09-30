@@ -85,7 +85,7 @@ export function SimpleQuestionCard({
       className={`group relative cursor-pointer transition-all duration-300 border-0
         bg-gradient-to-br ${areaColor}
         shadow-md hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 hover:scale-[1.02]
-        overflow-hidden w-[350px]`}
+        overflow-hidden w-full sm:w-[350px]`}
       onClick={() => onClick?.(question._id)}
     >
       {/* Efeito de brilho no hover */}

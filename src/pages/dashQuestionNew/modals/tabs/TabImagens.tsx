@@ -1,3 +1,4 @@
+import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Question } from "@/dtos/question/questionDTO";
@@ -24,6 +25,8 @@ export function TabImagens({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  // Troca de uma imagem que já existe: confirma antes (o upload substitui na hora).
+  const [arquivoPendente, setArquivoPendente] = useState<File | null>(null);
   const [isLoadingImage, setIsLoadingImage] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [currentImageId, setCurrentImageId] = useState<string | null>(
@@ -111,9 +114,11 @@ export function TabImagens({
   // Handler para quando um arquivo é selecionado
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      handleUpload(file);
-    }
+    // Limpa para o mesmo arquivo poder ser escolhido de novo depois de cancelar.
+    e.target.value = "";
+    if (!file) return;
+    if (imageUrl) setArquivoPendente(file);
+    else handleUpload(file);
   };
 
   return (
@@ -166,7 +171,9 @@ export function TabImagens({
 
                 {/* Overlay com ações no hover */}
                 {imageUrl && !isLoadingImage && (
-                  <div className="absolute inset-0 bg-black/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                  // Sem hover (toque), os botões ficam sempre à vista, no rodapé
+                  // da imagem e sem escurecê-la.
+                  <div className="absolute inset-0 bg-black/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 [@media(hover:none)]:opacity-100 [@media(hover:none)]:bg-transparent [@media(hover:none)]:items-end [@media(hover:none)]:pb-2">
                     <Button
                       variant="secondary"
                       size="sm"
@@ -310,7 +317,7 @@ export function TabImagens({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
             {["A", "B", "C", "D", "E"].map((letra) => (
               <div
                 key={letra}
@@ -329,6 +336,21 @@ export function TabImagens({
           </p>
         </CardContent>
       </Card>
+
+      <ModalConfirmCancel
+        isOpen={!!arquivoPendente}
+        handleClose={() => setArquivoPendente(null)}
+        handleConfirm={() => {
+          const arquivo = arquivoPendente;
+          setArquivoPendente(null);
+          if (arquivo) handleUpload(arquivo);
+        }}
+        text="Substituir a imagem da questão?"
+      >
+        <p className="text-sm text-muted-foreground">
+          A imagem atual será trocada por {arquivoPendente?.name}.
+        </p>
+      </ModalConfirmCancel>
     </div>
   );
 }

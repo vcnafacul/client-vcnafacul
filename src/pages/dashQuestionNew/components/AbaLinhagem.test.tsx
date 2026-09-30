@@ -198,6 +198,7 @@ describe("AbaLinhagem — duplicar no topo (QA)", () => {
   });
 
   it("⚠️ depois de duplicar, busca a linhagem de novo e abre nas Cópias", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
     const { container } = montar();
     await screen.findByText(textoDaPosicao(2, 3));
     buscarLinhagem.mockResolvedValue({

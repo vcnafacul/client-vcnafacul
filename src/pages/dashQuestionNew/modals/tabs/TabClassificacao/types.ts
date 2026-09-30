@@ -13,6 +13,11 @@ export interface TabClassificacaoProps {
   canEdit?: boolean;
   infos?: ClassificacaoInfos;
   onSaveSuccess?: () => void;
+  /**
+   * Avisa o modal quando há edição não salva — para ele perguntar antes de
+   * fechar ou trocar de questão (a edição mora aqui, não no modal).
+   */
+  onSujoChange?: (sujo: boolean) => void;
 }
 
 /**

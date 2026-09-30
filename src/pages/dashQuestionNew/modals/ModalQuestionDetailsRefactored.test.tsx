@@ -24,9 +24,11 @@ vi.mock("./tabs/TabClassificacao", () => ({
   TabClassificacao: ({
     question,
     onSaveSuccess,
+    onSujoChange,
   }: {
     question: { enunciado: string };
     onSaveSuccess: () => void;
+    onSujoChange?: (sujo: boolean) => void;
   }) => {
     useEffect(() => {
       montagens.n += 1;
@@ -35,6 +37,7 @@ vi.mock("./tabs/TabClassificacao", () => ({
       <div>
         <span data-enunciado>{question.enunciado}</span>
         <button onClick={onSaveSuccess}>salvar</button>
+        <button onClick={() => onSujoChange?.(true)}>sujar</button>
       </div>
     );
   },
@@ -147,5 +150,61 @@ describe("ModalQuestionDetailsRefactored — anterior/próxima", () => {
     );
     await screen.findByText("q");
     expect(screen.queryByRole("button", { name: "Próxima questão" })).toBeNull();
+  });
+});
+
+describe("ModalQuestionDetailsRefactored — edição não salva da Classificação", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    montagens.n = 0;
+    getQuestionById.mockResolvedValue(questao("q"));
+  });
+
+  const montar = () => {
+    const onClose = vi.fn();
+    render(
+      <ModalQuestionDetailsRefactored
+        isOpen
+        onClose={onClose}
+        questionId="q1"
+        infos={{}}
+      />,
+    );
+    return onClose;
+  };
+
+  it("sem edição, o X fecha direto", async () => {
+    const onClose = montar();
+    await screen.findByText("q");
+    fireEvent.click(screen.getAllByRole("button", { name: "Fechar" })[0]);
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("⚠️ com edição, o X pergunta antes — cancelar mantém, confirmar fecha", async () => {
+    const onClose = montar();
+    await screen.findByText("q");
+    fireEvent.click(screen.getByText("sujar"));
+
+    fireEvent.click(screen.getAllByRole("button", { name: "Fechar" })[0]);
+    expect(screen.getByText("Descartar as alterações?")).toBeInTheDocument();
+    expect(onClose).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
+    expect(onClose).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getAllByRole("button", { name: "Fechar" })[0]);
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("⚠️ trocar de aba não desmonta a Classificação (a edição não se perde)", async () => {
+    montar();
+    await screen.findByText("q");
+    expect(montagens.n).toBe(1);
+
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "Imagens" }));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "Classificação" }));
+
+    expect(montagens.n).toBe(1);
   });
 });
