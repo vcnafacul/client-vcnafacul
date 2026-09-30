@@ -12,7 +12,13 @@ const ScrollArea = React.forwardRef<
     className={cn("relative overflow-hidden", className)}
     {...props}
   >
-    <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]">
+    {/*
+      ⚠️ O Radix envolve o conteúdo num div com `display: table` (para medir
+      rolagem horizontal), que cresce até a largura do conteúdo: `truncate`,
+      `min-w-0` e `max-w-[75%]` deixavam de funcionar e o texto passava da
+      borda. Aqui a rolagem é só vertical, então o wrapper vira `block`.
+    */}
+    <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit] [&>div]:!block">
       {children}
     </ScrollAreaPrimitive.Viewport>
     <ScrollBar />
