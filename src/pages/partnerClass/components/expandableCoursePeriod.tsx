@@ -146,6 +146,7 @@ export function ExpandableCoursePeriod({
                 ? undefined
                 : () => handleDeleteCoursePeriod(coursePeriod.id)
             }
+            mensagemExclusao={`Excluir o período ${coursePeriod.name}?`}
           />
         </TableCell>
       </TableRow>
