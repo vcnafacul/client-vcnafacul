@@ -17,7 +17,35 @@ import { StatusBadge } from "..";
 import { ActionMenu } from "./actionMenu";
 import { RenderQuestionsTable } from "./renderQuestionsTable";
 
-interface ExpandableSectionProps {
+/**
+ * Excluir e alterar uma questão dentro da seção — o mesmo para a linha da
+ * tabela (desktop) e o card do celular (`SecoesMobile`).
+ */
+export function useQuestoesDaSecao(
+  section: SectionForm,
+  setSection: (section: SectionForm) => void,
+  aoFicarVazia: () => void,
+) {
+  const onDeleteQuestion = (questionId: string) => {
+    const newQuestions = section.questions.filter((q) => q._id !== questionId);
+    section.questions = newQuestions;
+    setSection(section);
+    if (newQuestions.length === 0) {
+      aoFicarVazia();
+    }
+  };
+
+  const onChangeQuestion = (question: QuestionForm) => {
+    section.questions = section.questions.map((q) =>
+      q._id === question._id ? question : q
+    );
+    setSection(section);
+  };
+
+  return { onDeleteQuestion, onChangeQuestion };
+}
+
+export interface ExpandableSectionProps {
   section: SectionForm;
   allQuestions?: QuestionForm[];
   setSection: (section: SectionForm) => void;
@@ -56,21 +84,11 @@ export function ExpandableSection({
   ).length;
   const totalQuestionsCount = section.questions.length;
 
-  const onDeleteQuestion = (questionId: string) => {
-    const newQuestions = section.questions.filter((q) => q._id !== questionId);
-    section.questions = newQuestions;
-    setSection(section);
-    if (newQuestions.length === 0) {
-      setOpen(false);
-    }
-  };
-
-  const onChangeQuestion = (question: QuestionForm) => {
-    section.questions = section.questions.map((q) =>
-      q._id === question._id ? question : q
-    );
-    setSection(section);
-  };
+  const { onDeleteQuestion, onChangeQuestion } = useQuestoesDaSecao(
+    section,
+    setSection,
+    () => setOpen(false),
+  );
 
   return (
     <>
@@ -197,12 +215,13 @@ export function ExpandableSection({
               }
               onToggle={() => handleToggleSection(section._id)}
               isActive={section.active}
+              mensagemExclusao={`Excluir a seção ${section.name}?`}
             />
           )}
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 2 }}>
               <Box

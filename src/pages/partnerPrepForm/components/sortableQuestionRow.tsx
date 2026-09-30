@@ -61,6 +61,8 @@ export function SortableQuestionRow({
           {...listeners}
           size="small"
           sx={{
+            // Sem isto o toque vira rolagem e o arraste é cancelado.
+            touchAction: "none",
             cursor: "grab",
             "&:active": {
               cursor: "grabbing",
@@ -129,7 +131,11 @@ export function SortableQuestionRow({
 
       {/* Coluna de Ações */}
       <TableCell align="right" className="w-10">
-        <ActionMenu onView={onView} onDelete={onDelete} />
+        <ActionMenu
+          onView={onView}
+          onDelete={onDelete}
+          mensagemExclusao="Excluir esta questão?"
+        />
       </TableCell>
     </TableRow>
   );
