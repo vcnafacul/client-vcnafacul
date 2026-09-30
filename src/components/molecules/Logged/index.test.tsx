@@ -2,6 +2,9 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+// Os testes simulam o build de produção (tickets/029: o convite só existe lá).
+vi.mock("@/pwa/conviteLigado", () => ({ conviteDeInstalacaoLigado: () => true }));
+
 const amb = vi.hoisted(() => ({ standalone: false }));
 vi.mock("@/services/push/plataforma", async (orig) => {
   const real = await orig<typeof import("@/services/push/plataforma")>();

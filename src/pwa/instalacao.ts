@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { ambienteAtual, ehIOS, type Ambiente } from "@/services/push/plataforma";
+import { conviteDeInstalacaoLigado } from "./conviteLigado";
 
 /**
  * Convite de instalação do app (tickets/029, card 01).
@@ -42,8 +43,11 @@ export type EstadoDaInstalacao =
 export function estadoDaInstalacao(
   estado: EstadoInterno,
   ambiente: Ambiente,
+  ligado: boolean = conviteDeInstalacaoLigado(),
 ): EstadoDaInstalacao {
   if (estado.instalado || ambiente.standalone) return "instalado";
+  // Fora de produção nada convida: nem banner, nem instrução, nem o item do menu.
+  if (!ligado) return "indisponivel";
   if (estado.evento) return "instalavel";
   if (ehIOS(ambiente)) return "ios";
   return "indisponivel";

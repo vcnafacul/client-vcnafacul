@@ -1,6 +1,9 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+// Os testes simulam o build de produção (tickets/029: o convite só existe lá).
+vi.mock("@/pwa/conviteLigado", () => ({ conviteDeInstalacaoLigado: () => true }));
+
 const amb = vi.hoisted(() => ({
   userAgent: "Mozilla/5.0 (Linux; Android 14) Chrome/130",
   standalone: false,
