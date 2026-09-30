@@ -24,12 +24,15 @@ export default function ModalConfirmCancel({
 }: ModalConfirmCancelProps) {
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className={cn("max-w-xl rounded-2xl", className)}>
+      {/* Sem a largura calculada o card encosta nas bordas no celular. */}
+      <DialogContent
+        className={cn("w-[calc(100%-2rem)] max-w-xl rounded-2xl", className)}
+      >
         {text && <h2 className="text-lg font-bold">{text}</h2>}
 
         {children}
 
-        <DialogFooter className="flex justify-end gap-2 pt-4">
+        <DialogFooter className="flex flex-row justify-end gap-2 pt-4">
           <Button variant="outline" onClick={handleClose} className="w-24">
             Cancelar
           </Button>

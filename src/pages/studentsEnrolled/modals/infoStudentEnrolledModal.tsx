@@ -101,8 +101,9 @@ export function InfoStudentEnrolledModal({
       handleClose={handleClose}
       className="bg-white rounded-md p-1"
     >
-      <div className="p-6 pt-1">
+      <div className="pt-1 pb-2 sm:px-2 md:p-6 md:pt-1">
         <StudentCard
+          larguraClassName="w-[calc(100vw-4rem)] sm:w-[min(733px,calc(100vw-4rem))]"
           entity={entity}
           imageSrc={imageSrc}
           partnerLogo={partnerLogo}

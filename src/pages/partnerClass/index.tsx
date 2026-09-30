@@ -35,7 +35,9 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState } from "react";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { ExpandableCoursePeriod } from "./components/expandableCoursePeriod";
+import { PeriodosMobile } from "./components/PeriodosMobile";
 import { ClassCreateEditModal } from "./modals/classCreateEditModal";
 import { CoursePeriodCreateEditModal } from "./modals/coursePeriodCreateEditModal";
 import { useModals } from "@/hooks/useModal";
@@ -46,6 +48,8 @@ export function PartnerClass() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalItems, setTotalItems] = useState<number>(0);
   const [limit] = useState<number>(10);
+  // Abaixo de 768px (o `sm` do projeto) a tabela vira cards.
+  const acimaDeSm = useAcimaDeSm();
   const [classSelected, setClassSelected] = useState<ClassEntity | undefined>(
     undefined
   );
@@ -348,7 +352,15 @@ export function PartnerClass() {
     <>
       {/* Header */}
       <AppBar position="static" color="transparent" elevation={0}>
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 1,
+            py: { xs: 1, sm: 0 },
+          }}
+        >
           <Typography variant="h4" fontWeight="bold" className="text-marine">
             Períodos Letivos
           </Typography>
@@ -356,7 +368,7 @@ export function PartnerClass() {
             variant="contained"
             color="primary"
             onClick={handleCreateCoursePeriod}
-            sx={{ ml: 2 }}
+            fullWidth={!acimaDeSm}
           >
             Novo Período Letivo
           </Button>
@@ -378,52 +390,67 @@ export function PartnerClass() {
           </Typography>
         </Box>
 
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12 }}>
-            <TableContainer
-              component={Paper}
-              elevation={2}
-              sx={{ borderRadius: 2 }}
-            >
-              <Table>
-                <TableHead>
-                  <TableRow sx={{ backgroundColor: "primary.50" }}>
-                    <TableCell size="small" className="w-5" />
-                    {columns.map((column) => (
-                      <TableCell
-                        size="small"
-                        key={column.key as string}
-                        align={column.align || "left"}
-                        sx={{ fontWeight: "bold", color: "primary.main" }}
-                      >
-                        {column.label}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {entities.map((entity) => {
-                    return (
-                      <ExpandableCoursePeriod
-                        key={entity.id}
-                        coursePeriod={entity}
-                        setCoursePeriod={(period) => {
-                          setEntities((prev) =>
-                            prev.map((e) => (e.id === period.id ? period : e))
-                          );
-                        }}
-                        handleAddClass={handleAddClass}
-                        handleEditClass={handleEditClass}
-                        handleEditCoursePeriod={handleEditCoursePeriod}
-                        handleDeleteCoursePeriod={handleDeleteCoursePeriod}
-                      />
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
+        {!acimaDeSm ? (
+          <PeriodosMobile
+            periodos={entities}
+            setCoursePeriod={(period) => {
+              setEntities((prev) =>
+                prev.map((e) => (e.id === period.id ? period : e))
+              );
+            }}
+            handleAddClass={handleAddClass}
+            handleEditClass={handleEditClass}
+            handleEditCoursePeriod={handleEditCoursePeriod}
+            handleDeleteCoursePeriod={handleDeleteCoursePeriod}
+          />
+        ) : (
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12 }}>
+              <TableContainer
+                component={Paper}
+                elevation={2}
+                sx={{ borderRadius: 2 }}
+              >
+                <Table>
+                  <TableHead>
+                    <TableRow sx={{ backgroundColor: "primary.50" }}>
+                      <TableCell size="small" className="w-5" />
+                      {columns.map((column) => (
+                        <TableCell
+                          size="small"
+                          key={column.key as string}
+                          align={column.align || "left"}
+                          sx={{ fontWeight: "bold", color: "primary.main" }}
+                        >
+                          {column.label}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {entities.map((entity) => {
+                      return (
+                        <ExpandableCoursePeriod
+                          key={entity.id}
+                          coursePeriod={entity}
+                          setCoursePeriod={(period) => {
+                            setEntities((prev) =>
+                              prev.map((e) => (e.id === period.id ? period : e))
+                            );
+                          }}
+                          handleAddClass={handleAddClass}
+                          handleEditClass={handleEditClass}
+                          handleEditCoursePeriod={handleEditCoursePeriod}
+                          handleDeleteCoursePeriod={handleDeleteCoursePeriod}
+                        />
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
           </Grid>
-        </Grid>
+        )}
 
         {/* Paginação */}
         {totalPages > 1 && (
@@ -445,7 +472,15 @@ export function PartnerClass() {
                   />
                 </PaginationItem>
 
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                {/* No celular a lista de todas as páginas não cabe. */}
+                {!acimaDeSm && (
+                  <PaginationItem>
+                    <span className="px-3 text-sm text-gray-600">
+                      {currentPage} de {totalPages}
+                    </span>
+                  </PaginationItem>
+                )}
+                {acimaDeSm && Array.from({ length: totalPages }, (_, i) => i + 1).map(
                   (page) => (
                     <PaginationItem key={page}>
                       <PaginationLink

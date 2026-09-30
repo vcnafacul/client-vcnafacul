@@ -25,11 +25,11 @@ interface RenderClassesTableProps {
   handleEditClass: (classId: string) => void;
 }
 
-export function RenderClassesTable({
-  classes,
-  onDeleteClass,
-  handleEditClass,
-}: RenderClassesTableProps) {
+/**
+ * Ver, excluir e a regra de quando excluir aparece — compartilhados pela
+ * tabela (desktop) e pelos cards do celular (`PeriodosMobile`).
+ */
+export function useAcoesDaTurma(onDeleteClass: (classId: string) => void) {
   const navigate = useNavigate();
 
   const {
@@ -54,6 +54,20 @@ export function RenderClassesTable({
       },
     });
   };
+
+  const podeExcluir = (classItem: ClassEntity) =>
+    !(classItem.number_students > 0 && permissao[Roles.gerenciarTurmas]);
+
+  return { handleViewClass, handleDeleteClass, podeExcluir };
+}
+
+export function RenderClassesTable({
+  classes,
+  onDeleteClass,
+  handleEditClass,
+}: RenderClassesTableProps) {
+  const { handleViewClass, handleDeleteClass, podeExcluir } =
+    useAcoesDaTurma(onDeleteClass);
 
   return (
     <>
@@ -113,11 +127,11 @@ export function RenderClassesTable({
                     onView={() => handleViewClass(classItem)}
                     onEdit={() => handleEditClass(classItem.id)}
                     onDelete={
-                      classItem.number_students > 0 &&
-                      permissao[Roles.gerenciarTurmas]
-                        ? undefined
-                        : () => handleDeleteClass(classItem)
+                      podeExcluir(classItem)
+                        ? () => handleDeleteClass(classItem)
+                        : undefined
                     }
+                    mensagemExclusao={`Excluir a turma ${classItem.name}?`}
                   />
                 </TableCell>
               </TableRow>

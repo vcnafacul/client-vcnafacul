@@ -182,7 +182,7 @@ export function AttendanceRecordByStudentModal({
         isOpen={modals.modalApplyJustification.isOpen}
         handleClose={() => modals.modalApplyJustification.close()}
         handleConfirm={handleApplyJustification}
-        className="bg-white p-8 rounded-md"
+        className="bg-white p-4 sm:p-8 rounded-md w-full max-w-[512px]"
         text="Descreva a justificativa:"
       />
     );
@@ -192,7 +192,7 @@ export function AttendanceRecordByStudentModal({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white p-4 rounded-md w-[90vw] max-w-5xl h-[90vh] sm:h-[621px] flex flex-col min-h-0 overflow-hidden shadow-lg"
+      className="bg-white p-4 rounded-md w-[90vw] max-w-5xl sm:h-[621px] flex flex-col min-h-0 sm:overflow-hidden shadow-lg"
     >
       <div className="flex flex-1 flex-col min-h-0 gap-3">
         <div className="flex flex-wrap items-center justify-between gap-2 p-2 shrink-0">
@@ -219,9 +219,14 @@ export function AttendanceRecordByStudentModal({
             refreshTrigger={periodRefreshTrigger}
           />
         </div>
+        {/*
+          No celular a caixa cresce e rola junto com a página: com altura
+          fixa, as justificativas abertas espremiam a grade até sumir.
+        */}
         <Paper
           sx={{
-            flex: 1,
+            flex: { xs: "none", sm: 1 },
+            height: { xs: 420, sm: "auto" },
             minHeight: 0,
             width: "100%",
             display: "flex",
