@@ -330,7 +330,7 @@ export function ModalConditions({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleCloseModal}
-      className="bg-white p-6 rounded-lg shadow-xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+      className="bg-white p-4 sm:p-6 rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
     >
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom>

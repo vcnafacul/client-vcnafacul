@@ -16,7 +16,10 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
+import { IconButton, Tooltip } from "@mui/material";
 import { useState } from "react";
+import { FiArrowDown, FiArrowUp } from "react-icons/fi";
 import {
   AnswerTypeBadge,
   CollectionBadge,
@@ -76,6 +79,13 @@ export function RenderQuestionsTable({
   } = useAuthStore();
 
   const executeAsync = useToastAsync();
+  // Abaixo de 768px (o `sm` do projeto): cards, e ↑/↓ no lugar do arrastar.
+  const isMobile = !useAcimaDeSm();
+
+  const mover = (indice: number, destino: number) => {
+    if (destino < 0 || destino >= questions.length) return;
+    onReorderQuestions(arrayMove(questions, indice, destino));
+  };
 
   // Configuração dos sensores de drag-and-drop
   const sensors = useSensors(
@@ -146,12 +156,11 @@ export function RenderQuestionsTable({
   };
 
   // Para mobile, renderizar como cards
-  const isMobile = false; // Por enquanto sempre renderizar como tabela
   if (isMobile) {
     return (
       <>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 2 }}>
-          {questions.map((question) => (
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          {questions.map((question, indice) => (
             <Paper
               key={question._id}
               elevation={1}
@@ -164,10 +173,6 @@ export function RenderQuestionsTable({
                   ? "success.50"
                   : "background.paper",
                 transition: "all 0.2s ease-in-out",
-                "&:hover": {
-                  elevation: 3,
-                  transform: "translateY(-2px)",
-                },
               }}
             >
               <Box
@@ -208,16 +213,50 @@ export function RenderQuestionsTable({
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: 1,
                 }}
               >
                 <Typography variant="caption" color="text.secondary">
                   Criado:{" "}
                   {formatDate(question.createdAt.toString(), "dd/MM/yyyy")}
                 </Typography>
-                <ActionMenu
-                  onView={() => handleViewQuestion(question)}
-                  onDelete={() => handleDeleteQuestion(question)}
-                />
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  {!readOnly && (
+                    <>
+                      <Tooltip title="Mover para cima" arrow>
+                        <span>
+                          <IconButton
+                            aria-label="Mover para cima"
+                            disabled={indice === 0}
+                            onClick={() => mover(indice, indice - 1)}
+                          >
+                            <FiArrowUp className="h-4 w-4" />
+                          </IconButton>
+                        </span>
+                      </Tooltip>
+                      <Tooltip title="Mover para baixo" arrow>
+                        <span>
+                          <IconButton
+                            aria-label="Mover para baixo"
+                            disabled={indice === questions.length - 1}
+                            onClick={() => mover(indice, indice + 1)}
+                          >
+                            <FiArrowDown className="h-4 w-4" />
+                          </IconButton>
+                        </span>
+                      </Tooltip>
+                    </>
+                  )}
+                  <ActionMenu
+                    tamanho="medium"
+                    onView={() => handleViewQuestion(question)}
+                    onDelete={
+                      readOnly ? undefined : () => handleDeleteQuestion(question)
+                    }
+                    mensagemExclusao="Excluir esta questão?"
+                  />
+                </Box>
               </Box>
             </Paper>
           ))}
