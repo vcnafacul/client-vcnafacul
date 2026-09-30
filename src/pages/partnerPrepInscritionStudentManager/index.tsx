@@ -35,7 +35,9 @@ import { ReactComponent as IsentoIcon } from "../../assets/icons/partnerPrepCour
 import { ReactComponent as PaganteIcon } from "../../assets/icons/partnerPrepCourse/pagante_remover_dk.svg";
 import { ReactComponent as Reset } from "../../assets/icons/partnerPrepCourse/reset_dk.svg";
 import { UpdateStudentClassModal } from "../studentsEnrolled/modals/updateStudentClassModal";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { ActionButton } from "./actionsButton";
+import { ListaDeInscritosMobile } from "./ListaDeInscritosMobile";
 import { Details } from "./modal/details";
 import { Statistic } from "./modal/statistic";
 import { ScheduleCallEnrolle } from "./scheduleCallEnrolled";
@@ -90,6 +92,8 @@ export function PartnerPrepInscritionStudentManager() {
   } = useAuthStore();
 
   const executeAsync = useToastAsync();
+  // Abaixo de 768px (o `sm` do projeto) a tabela vira lista de cards.
+  const acimaDeSm = useAcimaDeSm();
 
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
@@ -328,7 +332,7 @@ export function PartnerPrepInscritionStudentManager() {
         text={`Por favor, informe o motivo do indeferimento da matrícula de ${capitalizeWords(
           studentSelected?.nome + " " + studentSelected?.sobrenome,
         )}.`}
-        className="bg-white p-4 rounded-md w-[512px]"
+        className="bg-white p-4 rounded-md w-full max-w-[512px]"
       />
     );
   };
@@ -339,6 +343,159 @@ export function PartnerPrepInscritionStudentManager() {
     modals.details.open();
   };
 
+  /*
+    As ações de um inscrito. Mesma função na coluna do DataGrid (desktop) e no
+    card da lista do celular, para as duas nunca divergirem.
+  */
+  const renderAcoes = (row: XLSXStudentCourseFull) => (
+    <div className="flex justify-center items-center gap-2 h-8 flex-wrap">
+      <Tooltip title="Visualizar">
+        <IconButton onClick={() => handleModalDetaild(row.id)}>
+          <IoEyeSharp className="h-6 w-6 fill-gray-500 opacity-60 hover:opacity-100" />
+        </IconButton>
+      </Tooltip>
+      {row.isento === "Sim" &&
+        shouldProcessApplication(
+          row.status,
+          row.data_convocacao,
+        ) && (
+          <ActionButton
+            titleAlert="Tem certeza que deseja torna esse aluno pagante?"
+            onConfirm={() => handleIsFreeInfo(row.id, false)}
+            tooltipTitle="Tornar Pagante"
+          >
+            <IsentoIcon className="h-6 w-6 fill-darkGreen opacity-60 hover:opacity-100" />
+          </ActionButton>
+        )}
+      {row.isento === "Não" &&
+        shouldProcessApplication(
+          row.status,
+          row.data_convocacao,
+        ) && (
+          <ActionButton
+            titleAlert="Tem certeza que deseja torna esse aluno isento?"
+            onConfirm={() => handleIsFreeInfo(row.id, true)}
+            tooltipTitle="Dar Isenção"
+          >
+            <PaganteIcon className="h-6 w-6 fill-redError opacity-60 hover:opacity-100" />
+          </ActionButton>
+        )}
+      {shouldProcessApplication(
+        row.status,
+        row.data_convocacao,
+      ) && (
+        <ActionButton
+          titleAlert={`Confirme a ${
+            row.convocar === Bool.No ? "adição" : "remoção"
+          } de ${row.nome} ${
+            row.sobrenome
+          } da lista de convocação`}
+          onConfirm={() =>
+            handleSelectEnrolledInfo(
+              row.id,
+              row.convocar === Bool.No,
+            )
+          }
+          tooltipTitle={`${
+            row.convocar === Bool.No ? "Add" : "Remover"
+          } da lista de convocação`}
+        >
+          {row.convocar === Bool.No ? (
+            <BsEnvelopeArrowUpFill className="h-6 w-6 fill-lime-600 opacity-60 hover:opacity-100" />
+          ) : (
+            <BsEnvelopeArrowDownFill className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
+          )}
+        </ActionButton>
+      )}
+      {shouldProcessApplication(
+        row.status,
+        row.data_convocacao,
+      ) && (
+        <ActionButton
+          titleAlert={`${
+            row.lista_de_espera === Bool.Yes
+              ? "Remover"
+              : "Adicionar"
+          } Lista de espera`}
+          descriptionAlert={`Confirme a  ${
+            row.lista_de_espera === Bool.No ? "adição" : "remoção"
+          } de ${row.nome} ${
+            row.sobrenome
+          } da lista de espera`}
+          onConfirm={() =>
+            handleWaitingList(
+              row.id,
+              row.lista_de_espera === Bool.No,
+            )
+          }
+          tooltipTitle={`${
+            row.lista_de_espera === Bool.No ? "Add" : "Remover"
+          } da lista de espera`}
+        >
+          {row.lista_de_espera === Bool.No ? (
+            <PiTimerFill className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
+          ) : (
+            <MdTimerOff className="h-6 w-6 fill-orange opacity-60 hover:opacity-100" />
+          )}
+        </ActionButton>
+      )}
+      {row.status === StatusApplication.DeclaredInterest && (
+        <Tooltip title="Confirmação de Matrícula">
+          <IconButton
+            onClick={() => handleOpenSelectClassModal(row.id)}
+          >
+            <FaCheck className="h-6 w-6 fill-green3 opacity-60 hover:opacity-100" />
+          </IconButton>
+        </Tooltip>
+      )}
+      {(row.status === StatusApplication.DeclaredInterest ||
+        row.status === StatusApplication.MissedDeadline ||
+        row.status === StatusApplication.UnderReview) && (
+        <Tooltip title="Indeferir">
+          <IconButton>
+            <IoClose
+              onClick={() => {
+                setStudentSelected(
+                  students.find((student) => student.id === row.id)!,
+                );
+                modals.reject.open();
+              }}
+              className="h-6 w-6 fill-redError/60 hover:fill-redError cursor-pointer"
+            />
+          </IconButton>
+        </Tooltip>
+      )}
+      {shouldProcessApplication(
+        row.status,
+        row.data_convocacao,
+        [StatusApplication.Enrolled, StatusApplication.DeclaredInterest],
+      ) && (
+        <ActionButton
+          titleAlert="Deseja resetar as informações do aluno?"
+          onConfirm={() => handleResetStudent(row.id)}
+          tooltipTitle="Resetar"
+        >
+          <Reset className="h-6 w-6 fill-red/70 hover:fill-red" />
+        </ActionButton>
+      )}
+      {row.status === StatusApplication.CalledForEnrollment &&
+        !row.sended_email_recently &&
+        row.data_convocacao &&
+        new Date() >= row.data_convocacao && (
+          <ActionButton
+            titleAlert={`Confirmação de Matrícula ${row.nome} ${row.sobrenome}`}
+            descriptionAlert={`Realizar a  confirmação de matrícula de  ${row.nome} ${row.sobrenome}`}
+            onConfirm={() => {
+              handleSendEmailDeclaredInterest(row.id);
+            }}
+            tooltipTitle="Reenviar email de convocação"
+          >
+            <MdEmail className="h-6 w-6 fill-sky-500 opacity-60 hover:opacity-100" />
+          </ActionButton>
+        )}
+    </div>
+  );
+
   const columns: GridColDef[] = [
     {
       field: "actions",
@@ -348,154 +505,7 @@ export function PartnerPrepInscritionStudentManager() {
       disableColumnMenu: true,
       sortable: false,
       align: "center",
-      renderCell: (params) => (
-        <div className="flex justify-center items-center gap-2 h-8 flex-wrap">
-          <Tooltip title="Visualizar">
-            <IconButton onClick={() => handleModalDetaild(params.row.id)}>
-              <IoEyeSharp className="h-6 w-6 fill-gray-500 opacity-60 hover:opacity-100" />
-            </IconButton>
-          </Tooltip>
-          {params.row.isento === "Sim" &&
-            shouldProcessApplication(
-              params.row.status,
-              params.row.data_convocacao,
-            ) && (
-              <ActionButton
-                titleAlert="Tem certeza que deseja torna esse aluno pagante?"
-                onConfirm={() => handleIsFreeInfo(params.row.id, false)}
-                tooltipTitle="Tornar Pagante"
-              >
-                <IsentoIcon className="h-6 w-6 fill-darkGreen opacity-60 hover:opacity-100" />
-              </ActionButton>
-            )}
-          {params.row.isento === "Não" &&
-            shouldProcessApplication(
-              params.row.status,
-              params.row.data_convocacao,
-            ) && (
-              <ActionButton
-                titleAlert="Tem certeza que deseja torna esse aluno isento?"
-                onConfirm={() => handleIsFreeInfo(params.row.id, true)}
-                tooltipTitle="Dar Isenção"
-              >
-                <PaganteIcon className="h-6 w-6 fill-redError opacity-60 hover:opacity-100" />
-              </ActionButton>
-            )}
-          {shouldProcessApplication(
-            params.row.status,
-            params.row.data_convocacao,
-          ) && (
-            <ActionButton
-              titleAlert={`Confirme a ${
-                params.row.convocar === Bool.No ? "adição" : "remoção"
-              } de ${params.row.nome} ${
-                params.row.sobrenome
-              } da lista de convocação`}
-              onConfirm={() =>
-                handleSelectEnrolledInfo(
-                  params.row.id,
-                  params.row.convocar === Bool.No,
-                )
-              }
-              tooltipTitle={`${
-                params.row.convocar === Bool.No ? "Add" : "Remover"
-              } da lista de convocação`}
-            >
-              {params.row.convocar === Bool.No ? (
-                <BsEnvelopeArrowUpFill className="h-6 w-6 fill-lime-600 opacity-60 hover:opacity-100" />
-              ) : (
-                <BsEnvelopeArrowDownFill className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
-              )}
-            </ActionButton>
-          )}
-          {shouldProcessApplication(
-            params.row.status,
-            params.row.data_convocacao,
-          ) && (
-            <ActionButton
-              titleAlert={`${
-                params.row.lista_de_espera === Bool.Yes
-                  ? "Remover"
-                  : "Adicionar"
-              } Lista de espera`}
-              descriptionAlert={`Confirme a  ${
-                params.row.lista_de_espera === Bool.No ? "adição" : "remoção"
-              } de ${params.row.nome} ${
-                params.row.sobrenome
-              } da lista de espera`}
-              onConfirm={() =>
-                handleWaitingList(
-                  params.row.id,
-                  params.row.lista_de_espera === Bool.No,
-                )
-              }
-              tooltipTitle={`${
-                params.row.lista_de_espera === Bool.No ? "Add" : "Remover"
-              } da lista de espera`}
-            >
-              {params.row.lista_de_espera === Bool.No ? (
-                <PiTimerFill className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
-              ) : (
-                <MdTimerOff className="h-6 w-6 fill-orange opacity-60 hover:opacity-100" />
-              )}
-            </ActionButton>
-          )}
-          {params.row.status === StatusApplication.DeclaredInterest && (
-            <Tooltip title="Confirmação de Matrícula">
-              <IconButton
-                onClick={() => handleOpenSelectClassModal(params.row.id)}
-              >
-                <FaCheck className="h-6 w-6 fill-green3 opacity-60 hover:opacity-100" />
-              </IconButton>
-            </Tooltip>
-          )}
-          {(params.row.status === StatusApplication.DeclaredInterest ||
-            params.row.status === StatusApplication.MissedDeadline ||
-            params.row.status === StatusApplication.UnderReview) && (
-            <Tooltip title="Indeferir">
-              <IconButton>
-                <IoClose
-                  onClick={() => {
-                    setStudentSelected(
-                      students.find((student) => student.id === params.row.id)!,
-                    );
-                    modals.reject.open();
-                  }}
-                  className="h-6 w-6 fill-redError/60 hover:fill-redError cursor-pointer"
-                />
-              </IconButton>
-            </Tooltip>
-          )}
-          {shouldProcessApplication(
-            params.row.status,
-            params.row.data_convocacao,
-            [StatusApplication.Enrolled, StatusApplication.DeclaredInterest],
-          ) && (
-            <ActionButton
-              titleAlert="Deseja resetar as informações do aluno?"
-              onConfirm={() => handleResetStudent(params.row.id)}
-              tooltipTitle="Resetar"
-            >
-              <Reset className="h-6 w-6 fill-red/70 hover:fill-red" />
-            </ActionButton>
-          )}
-          {params.row.status === StatusApplication.CalledForEnrollment &&
-            !params.row.sended_email_recently &&
-            params.row.data_convocacao &&
-            new Date() >= params.row.data_convocacao && (
-              <ActionButton
-                titleAlert={`Confirmação de Matrícula ${params.row.nome} ${params.row.sobrenome}`}
-                descriptionAlert={`Realizar a  confirmação de matrícula de  ${params.row.nome} ${params.row.sobrenome}`}
-                onConfirm={() => {
-                  handleSendEmailDeclaredInterest(params.row.id);
-                }}
-                tooltipTitle="Reenviar email de convocação"
-              >
-                <MdEmail className="h-6 w-6 fill-sky-500 opacity-60 hover:opacity-100" />
-              </ActionButton>
-            )}
-        </div>
-      ),
+      renderCell: (params) => renderAcoes(params.row),
     },
     {
       field: "rankPosition",
@@ -662,11 +672,11 @@ export function PartnerPrepInscritionStudentManager() {
     <div className="flex flex-col justify-center items-center pt-4">
       <div className="w-full px-4">
         <div className="mb-2">
-          <h1 className="text-3xl font-bold text-center text-marine">
+          <h1 className="text-3xl font-bold text-center text-marine break-words">
             {inscriptionInfo?.name || "Gerenciamento de Inscritos"}
           </h1>
           {inscriptionInfo?.description && (
-            <p className="text-sm text-gray-500 text-center mt-1">
+            <p className="text-sm text-gray-500 text-center mt-1 break-words">
               {inscriptionInfo.description}
             </p>
           )}
@@ -680,12 +690,12 @@ export function PartnerPrepInscritionStudentManager() {
             </p>
           )}
         </div>
-        <div className="h-full w-full flex pb-2 flex-col sm:flex-row gap-2 sm:gap-0">
+        <div className="h-full w-full flex pb-2 flex-col md:flex-row gap-2 md:gap-0">
           <TableInfo students={students} />
-          <div className="items-end flex flex-wrap gap-1 justify-end flex-1">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center md:gap-1 md:items-end md:justify-end md:flex-1">
             <Button
               size="small"
-              className="border-none"
+              className="border-none w-full h-10 sm:w-fit sm:h-fit"
               typeStyle="refused"
               onClick={modals.statistic.open}
             >
@@ -693,7 +703,7 @@ export function PartnerPrepInscritionStudentManager() {
             </Button>
             <Button
               size="small"
-              className="border-none"
+              className="border-none w-full h-10 sm:w-fit sm:h-fit"
               onClick={modals.waitingList.open}
             >
               <p className="text-sm">Lista de Espera</p>
@@ -701,39 +711,52 @@ export function PartnerPrepInscritionStudentManager() {
             <Button
               size="small"
               typeStyle="accepted"
-              className="border-none"
+              className="border-none w-full h-10 sm:w-fit sm:h-fit"
               onClick={modals.scheduleEnrolled.open}
             >
               <p className="text-sm">Programar Convocação</p>
             </Button>
             <Button
               size="small"
-              className="border-none"
+              className="border-none w-full h-10 sm:w-fit sm:h-fit"
               onClick={modals.rules.open}
             >
               <p className="text-sm">Regras de Pontuação</p>
             </Button>
-            <FaSyncAlt
-              className="h-7 w-7 p-0.5 fill-gray-500 hover:fill-marine cursor-pointer hover:animate-rotate5"
+            <button
+              type="button"
+              aria-label="Atualizar lista"
               onClick={() => subscribers()}
-            />
+              className="col-span-2 flex items-center justify-center gap-2 h-10 border border-gray-300 rounded-md text-sm text-gray-600 sm:h-auto sm:border-0 sm:col-span-1"
+            >
+              <FaSyncAlt className="h-7 w-7 p-0.5 fill-gray-500 hover:fill-marine hover:animate-rotate5" />
+              {!acimaDeSm && "Atualizar lista"}
+            </button>
           </div>
         </div>
       </div>
-      <Paper sx={{ height: "100%", width: "100%" }}>
-        <DataGrid
-          rows={sortedStudents}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          // checkboxSelection
-          rowHeight={40}
-          disableRowSelectionOnClick
-          pageSizeOptions={[5, 10, 15, 30, 50, 100]}
-          onRowSelectionModelChange={handleSelectionChange}
-          sx={{ border: 0 }}
-          rowSelectionModel={selectedRows}
+      {!acimaDeSm ? (
+        <ListaDeInscritosMobile
+          inscritos={sortedStudents}
+          rankingMap={rankingMap}
+          renderAcoes={renderAcoes}
         />
-      </Paper>
+      ) : (
+        <Paper sx={{ height: "100%", width: "100%" }}>
+          <DataGrid
+            rows={sortedStudents}
+            columns={columns}
+            initialState={{ pagination: { paginationModel } }}
+            // checkboxSelection
+            rowHeight={40}
+            disableRowSelectionOnClick
+            pageSizeOptions={[5, 10, 15, 30, 50, 100]}
+            onRowSelectionModelChange={handleSelectionChange}
+            sx={{ border: 0 }}
+            rowSelectionModel={selectedRows}
+          />
+        </Paper>
+      )}
       <ModalWaitingList />
       <ScheduleEnrolled />
       <ModalDetails />

@@ -16,7 +16,7 @@ interface Props {
 
 export function Statistic({ geral, enrolleds, handleClose }: Props) {
   return (
-    <div className="absolute w-screen h-screen bg-black/60 z-50 -top-[76px] left-0 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black/60 z-50 flex justify-center items-center">
       <div className="w-full h-full flex justify-center items-center md:py-4">
         <Tabs defaultValue="details" className="w-full max-w-[90vw] h-[80vh]">
           <TabsList className="grid w-full grid-cols-2">

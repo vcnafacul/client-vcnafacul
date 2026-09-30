@@ -61,7 +61,7 @@ function SortableRow({ row, position }: { row: Student; position: number }) {
       <td className="text-center cursor-grab active:cursor-grabbing">
         {position}
       </td>
-      <td className="whitespace-nowrap text-sm font-medium p-2 text-center">
+      <td className="sm:whitespace-nowrap break-words text-sm font-medium p-2 text-center">
         {row.name}
       </td>
     </tr>

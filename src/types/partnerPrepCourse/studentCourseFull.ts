@@ -71,4 +71,5 @@ export interface XLSXStudentCourseFull extends StudentCourseFull {
   documents: Documents[];
   data_convocacao: Date | null;
   data_limite_convocacao: Date | null;
+  sended_email_recently: boolean;
 }

@@ -127,7 +127,7 @@ export function Details({
 
   return (
     <>
-      <div className="absolute w-screen h-screen -top-[76px] left-0 flex justify-center items-center">
+      <div className="fixed inset-0 z-50 flex justify-center items-center">
         <div className="w-full h-full bg-black/60 z-50 flex justify-center items-center md:py-4">
           <Tabs defaultValue="details" className="w-11/12 h-[80vh]">
             <TabsList
