@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { registrarPwa } from "./pwa/registerSW";
+import { iniciarCapturaDaInstalacao } from "./pwa/instalacao";
 import "./index.css";
 import "./styles/sectionThemes.css";
 import "primereact/resources/themes/md-light-indigo/theme.css";
@@ -20,6 +21,8 @@ if (storedVersion !== __BUILD_VERSION__) {
 }
 
 registrarPwa();
+// tickets/029: o convite de instalação dispara cedo — capturar antes de montar.
+iniciarCapturaDaInstalacao();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
