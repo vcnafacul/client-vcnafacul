@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useAuthStore } from '@/store/auth';
 import { cn } from '@/lib/utils';
-import { BannerNotificacoes } from '@/components/push/BannerNotificacoes';
+import { BannerDoTopo } from '@/components/pwa/BannerDoApp';
 import { Greeting } from './components/Greeting';
 import { clearDashCache } from './data';
 import {
@@ -50,7 +50,8 @@ export default function Dashboard() {
       <div className="mx-auto max-w-[1440px] space-y-6 px-4 py-6 sm:px-6 md:px-10 md:py-8">
         <Greeting view={view} views={views} onViewChange={setView} />
 
-        <BannerNotificacoes />
+        {/* tickets/029: convite do app e, depois, o de notificações. */}
+        <BannerDoTopo />
 
         {bySlot.kpi.length > 0 && (
           <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
