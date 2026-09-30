@@ -1,5 +1,5 @@
 import { ShadcnTable } from "@/components/atoms/shadcnTable";
-import { ButtonProps } from "@/components/molecules/button";
+import { DashListTemplate, type DashAction } from "@/components/dashV2";
 import ModalTabTemplate from "@/components/templates/modalTabTemplate";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { createGeolocation } from "@/services/geolocation/createGeolocation";
@@ -8,14 +8,14 @@ import { useCallback, useEffect, useState } from "react";
 import { FilterProps } from "../../components/atoms/filter";
 import { SelectProps } from "../../components/atoms/select";
 import { CardDash } from "../../components/molecules/cardDash";
-import DashCardTemplate from "../../components/templates/dashCardTemplate";
 import { DashCardContext } from "../../context/dashCardContext";
 import { StatusEnum } from "../../enums/generic/statusEnum";
-import { getAllGeolocation } from "../../services/geolocation/getAllGeolocation";
+import { getTodasAsGeolocalizacoes } from "../../services/geolocation/getAllGeolocation";
 import { Geolocation } from "../../types/geolocation/geolocation";
 import { formatDate } from "../../utils/date";
 import { mergeObjects } from "../../utils/mergeObjects";
 import { Paginate } from "../../utils/paginate";
+import { colunasDoGeo, ORDENACAO_PADRAO } from "./columns";
 import { dashGeo } from "./data";
 import ModalCreateDashGeo from "./modals/modalCreateDashGeo";
 import ModalEditDashGeo from "./modals/modalEditDashGeo";
@@ -27,8 +27,11 @@ function DashGeo() {
   const [status, setStatus] = useState<StatusEnum>(StatusEnum.Pending);
   const [geolocations, setGeolocations] = useState<Geolocation[]>([]);
   const [geoSelect, setGeoSelect] = useState<Geolocation>();
+  // A busca vai para o servidor; o campo do V2 já espera 250ms antes de avisar.
   const [filterText, setFilterText] = useState<string>("");
-  const [enterText, setEnterText] = useState<string>("");
+  // Três estados do template V2: o erro vira "tentar de novo" (antes a lista
+  // ficava vazia calada).
+  const [estado, setEstado] = useState<"idle" | "loading" | "error">("loading");
   const limitCards = 100;
 
   const modals = useModals([
@@ -107,7 +110,7 @@ function DashGeo() {
     return !modals.modalEdit.isOpen ? null : (
       <ModalTabTemplate
         isOpen={modals.modalEdit.isOpen}
-        className="px-8 py-4 rounded-md  relative h-[90vh] w-[90vw] overflow-y-auto scrollbar-hide"
+        className="px-3 sm:px-8 py-4 rounded-md relative h-[90vh] supports-[height:100dvh]:h-[90dvh] w-[90vw] overflow-y-auto scrollbar-hide"
         tabs={[
           {
             label: "Detalhes",
@@ -149,47 +152,49 @@ function DashGeo() {
     );
   };
 
-  const getGeolocations = useCallback(
-    async (status: StatusEnum, text: string) => {
-      getAllGeolocation(token, status, 1, limitCards, text)
-        .then((res) => {
-          setGeolocations(res.data);
-        })
-        .catch(() => setGeolocations([]));
-    },
-    [token]
-  );
+  const carregar = useCallback(async () => {
+    setEstado("loading");
+    try {
+      setGeolocations(await getTodasAsGeolocalizacoes(token, status, filterText));
+      setEstado("idle");
+    } catch {
+      setEstado("error");
+    }
+  }, [token, status, filterText]);
 
-  const getMoreCards = async (page: number): Promise<Paginate<Geolocation>> => {
-    return await getAllGeolocation(token, status, page, limitCards);
-  };
+  useEffect(() => {
+    carregar();
+  }, [carregar]);
+
+  // O V2 não pagina pelo servidor; o Provider ainda exige a função.
+  const getMoreCards = async (): Promise<Paginate<Geolocation>> => ({
+    data: [],
+    page: 0,
+    limit: 0,
+    totalItems: 0,
+  });
 
   const selectFiltes: SelectProps[] = [
-    { options: dashGeo.options, defaultValue: status, setState: setStatus },
+    {
+      "aria-label": "Status",
+      options: dashGeo.options,
+      defaultValue: status,
+      setState: (value) => setStatus(Number(value) as StatusEnum),
+    },
   ];
 
   const filterProps: FilterProps = {
     filtrar: (e: React.ChangeEvent<HTMLInputElement>) =>
       setFilterText(e.target.value.toLowerCase()),
-    placeholder: "nome | estado | cidade | email | categoria",
+    placeholder: "Nome, estado, cidade, email ou categoria",
     defaultValue: filterText,
-    keyDown: () => setEnterText(filterText),
   };
 
-  useEffect(() => {
-    getGeolocations(status, enterText);
-  }, [status, getGeolocations, enterText]);
-
-  const buttons: ButtonProps[] = [
-    {
-      onClick: () => {
-        modals.modalCreate.open();
-      },
-      typeStyle: "quaternary",
-      size: "small",
-      children: "Criar Universidade",
-    },
-  ];
+  const acaoPrimaria: DashAction = {
+    id: "nova-universidade",
+    label: "Nova universidade",
+    onClick: () => modals.modalCreate.open(),
+  };
 
   return (
     <DashCardContext.Provider
@@ -203,12 +208,27 @@ function DashGeo() {
         limitCards,
         selectFiltes,
         filterProps,
-        buttons,
+        totalItems: geolocations.length,
       }}
     >
-      <DashCardTemplate />
-      <ModalEdit />
-      <ModalCreate />
+      <DashListTemplate<Geolocation>
+        columns={colunasDoGeo}
+        actions={{ primary: acaoPrimaria }}
+        activeFilterCount={filterText.trim() ? 1 : 0}
+        totalSemFiltro={geolocations.length}
+        onClearFilters={() => setFilterText("")}
+        defaultSort={ORDENACAO_PADRAO}
+        state={estado}
+        onRetry={carregar}
+        textoVazio="Nenhum registro com este status"
+      />
+      {/*
+        Como função, não <Componente />: declarados no render, remontavam a
+        cada atualização da lista (ex.: aprovar muda a lista → o modal de
+        edição remontava e perdia o que estava sendo editado).
+      */}
+      {ModalEdit()}
+      {ModalCreate()}
     </DashCardContext.Provider>
   );
 }

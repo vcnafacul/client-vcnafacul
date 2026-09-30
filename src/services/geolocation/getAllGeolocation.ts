@@ -40,3 +40,22 @@ export async function getAllGeolocation(
 
   return await res.json();
 }
+
+/**
+ * Todos os registros de um status (e busca), página por página: a lista V2
+ * ordena no navegador e precisa de tudo — com uma página só, quem passasse
+ * de 100 sumia.
+ */
+export async function getTodasAsGeolocalizacoes(
+  token: string,
+  status: StatusEnum,
+  text = "",
+  porPagina = 100,
+): Promise<Geolocation[]> {
+  const todas: Geolocation[] = [];
+  for (let page = 1; ; page++) {
+    const { data, totalItems } = await getAllGeolocation(token, status, page, porPagina, text);
+    todas.push(...data);
+    if (data.length === 0 || todas.length >= totalItems) return todas;
+  }
+}
