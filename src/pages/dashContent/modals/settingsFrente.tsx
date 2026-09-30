@@ -363,7 +363,9 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose!}
-      className="bg-white w-[90vw] p-6 rounded-md max-h-[90vh]"
+      // Sem max-h: sem overflow, o conteúdo (~730px) vazava do fundo branco.
+      // Quem rola é o overlay do ModalTemplate.
+      className="bg-white w-[90vw] p-3 sm:p-6 rounded-md"
     >
       <div className="flex flex-col gap-6">
         {/* Tabs */}

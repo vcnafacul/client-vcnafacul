@@ -1,6 +1,5 @@
 import DocxPreview from "@/components/atoms/docxPreview";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
   DialogContent,
@@ -85,7 +84,7 @@ export default function AdjustmentProposalModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-5xl p-6">
+      <DialogContent className="w-[calc(100%-2rem)] max-w-5xl max-h-[90dvh] overflow-y-auto p-3 sm:p-6">
         <DialogTitle className="text-xl font-bold text-marine">
           Propor Ajuste de Conteudo
         </DialogTitle>
@@ -154,14 +153,12 @@ export default function AdjustmentProposalModal({
         open={modals.docxPreview.isOpen}
         onOpenChange={modals.docxPreview.close}
       >
-        <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto p-6">
+        <DialogContent className="w-[calc(100%-2rem)] max-w-6xl max-h-[90dvh] overflow-y-auto p-3 sm:p-6">
           <DialogTitle className="sr-only">
             Pre-visualizacao do documento
           </DialogTitle>
           {arrayBuffer && (
-            <ScrollArea className="h-[70vh]">
-              <DocxPreview arrayBuffer={arrayBuffer} />
-            </ScrollArea>
+            <DocxPreview arrayBuffer={arrayBuffer} />
           )}
         </DialogContent>
       </Dialog>

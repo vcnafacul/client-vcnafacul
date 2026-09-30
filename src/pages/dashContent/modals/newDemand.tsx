@@ -134,9 +134,10 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose!}
-      className="bg-white w-full max-w-[90vw] p-6 rounded-2xl shadow-lg"
+      className="bg-white w-full max-w-[90vw] p-3 sm:p-6 rounded-2xl shadow-lg"
     >
-      <div className="bg-white p-6 rounded-lg">
+      {/* Padding dobrado deixava ~241px úteis no celular. */}
+      <div className="bg-white p-1 sm:p-6 rounded-lg">
         <form onSubmit={handleSubmit(create)} className="flex flex-col gap-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <InputFactory

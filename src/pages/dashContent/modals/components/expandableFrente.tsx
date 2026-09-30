@@ -133,3 +133,61 @@ export function ExpandableFrente({
     </>
   );
 }
+
+/**
+ * A frente no celular: a tabela de 4 colunas deixava as ações parcialmente
+ * fora da tela, e a sub-tabela de temas (~550px) alargava tudo. Aqui é card,
+ * e os temas abrem nele (o RenderTemasTable já vira cards no celular).
+ */
+export function FrenteCard({
+  frente,
+  temas,
+  onEditFrente,
+  onDeleteFrente,
+  onAddTema,
+  onUpdateTema,
+  onDeleteTema,
+  onReorderTemas,
+}: Props) {
+  const [open, setOpen] = useState(false);
+  const total = temas.length;
+  return (
+    <li className="border border-l-4 border-l-marine rounded-lg p-3 flex flex-col gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="font-bold break-words min-w-0">{frente.nome}</p>
+        <FrentesActionMenu
+          onAdd={onAddTema}
+          addLabel="Adicionar Tema"
+          onEdit={onEditFrente}
+          onDelete={total === 0 ? onDeleteFrente : undefined}
+          menuType="frente"
+          tamanho="medium"
+        />
+      </div>
+      {total > 0 ? (
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
+          aria-expanded={open}
+          className="flex items-center gap-1 h-10 text-sm font-medium text-marine self-start"
+        >
+          <FiChevronDown
+            className={`w-5 h-5 transition-transform ${open ? "rotate-180" : ""}`}
+          />
+          {total} {total === 1 ? "tema" : "temas"}
+        </button>
+      ) : (
+        <span className="text-sm text-gray-500">Sem temas</span>
+      )}
+      {open && (
+        <RenderTemasTable
+          frente={frente}
+          temas={temas}
+          onUpdateTema={onUpdateTema}
+          onDeleteTema={onDeleteTema}
+          onReorderTemas={onReorderTemas}
+        />
+      )}
+    </li>
+  );
+}

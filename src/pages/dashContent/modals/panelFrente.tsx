@@ -22,7 +22,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { ExpandableFrente } from "./components/expandableFrente";
+import { ExpandableFrente, FrenteCard } from "./components/expandableFrente";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import ManagerFrente from "./managerFrente";
 import ManagerSubject from "./managerSubject";
 import { useAuthStore } from "@/store/auth";
@@ -68,10 +69,39 @@ export function PanelFrente({
     data: { permissao },
   } = useAuthStore();
   const manager: boolean = permissao[Roles.editarMateriasFrentes];
+  // Abaixo de 768px (o `sm` do projeto) a tabela vira cards.
+  const acimaDeSm = useAcimaDeSm();
+
+  const acoesDaFrente = (frente: FrenteDto) => {
+    const frenteId = frente._id || frente.id;
+    return {
+      frente,
+      temas: (frente.subjects ?? []) as SubjectDto[],
+      onEditFrente: () => {
+        setFrenteSelected(frente);
+        modals.frenteEditor.open();
+      },
+      onDeleteFrente: onDelete
+        ? () => {
+            setFrenteSelected(frente);
+            modals.confirmDelete.open();
+          }
+        : undefined,
+      onAddTema: () => {
+        setFrenteForNewTema(frente);
+        modals.newTema.open();
+      },
+      onUpdateTema: (body: UpdateSubjectDto) => onUpdateTema(body, frenteId),
+      onDeleteTema: (id: string) => onDeleteTema(id, frenteId),
+      onReorderTemas: (node1: string, node2: string) =>
+        onReorderTemas(frenteId, node1, node2),
+    };
+  };
 
   return (
-    <div className="flex flex-col h-[500px] overflow-y-scroll scrollbar-hide select-none">
-      <div className="flex justify-between items-center mb-2">
+    // No celular sem altura fixa: rolagem dentro de rolagem, e a lista em cards.
+    <div className="flex flex-col sm:h-[500px] sm:overflow-y-scroll scrollbar-hide select-none">
+      <div className="flex flex-wrap justify-between items-center gap-2 mb-2">
         <h3 className="text-lg font-semibold text-gray-700">Frentes</h3>
         {manager && (
           <Button
@@ -85,6 +115,22 @@ export function PanelFrente({
         )}
       </div>
 
+      {!acimaDeSm ? (
+        frentes.length === 0 ? (
+          <p className="py-6 text-center text-sm text-gray-500">
+            Nenhuma frente cadastrada para esta matéria
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {frentes.map((frente) => (
+              <FrenteCard
+                key={frente._id || frente.id}
+                {...acoesDaFrente(frente)}
+              />
+            ))}
+          </ul>
+        )
+      ) : (
       <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
         <Table>
           <TableHead>
@@ -159,6 +205,7 @@ export function PanelFrente({
           </TableBody>
         </Table>
       </TableContainer>
+      )}
 
       {modals.frenteEditor.isOpen && (
         <ManagerFrente

@@ -264,10 +264,16 @@ function DashContent() {
         defaultSort={{ columnId: "createdAt", direction: "desc" }}
         textoVazio="Nenhuma demanda com este status"
       />
-      <ShowDemandModal />
-      <ValidatedModalDemand />
-      <NewModalDemand />
-      <SettingsModal />
+      {/*
+        ⚠️ Chamados como função, não como <Componente />: declarados dentro
+        do render, cada render criava um "tipo" novo e o React desmontava e
+        remontava o modal — refazia o download do arquivo, mostrava a demanda
+        antiga e perdia o arquivo escolhido.
+      */}
+      {ShowDemandModal()}
+      {ValidatedModalDemand()}
+      {NewModalDemand()}
+      {SettingsModal()}
     </DashCardContext.Provider>
   );
 }

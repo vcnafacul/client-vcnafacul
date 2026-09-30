@@ -72,7 +72,8 @@ function ShowDemand({
         isOpen={modals.docxPreview.isOpen}
         handleClose={() => modals.docxPreview.close()}
         title="Pré-visualização do documento"
-        className="bg-white p-4 rounded-md h-full max-h-[90vh] min-h-[600px] overflow-y-auto scrollbar-hide"
+        // Sem altura mínima: 600px passava de 90vh em tela baixa. Uma rolagem só (a do overlay).
+        className="bg-white p-3 sm:p-4 rounded-md w-full max-w-6xl"
       >
         <DocxPreview arrayBuffer={arrayBuffer!} />
       </ModalTemplate>
@@ -135,16 +136,16 @@ function ShowDemand({
     >
       <Card className="border-none shadow-none">
         <CardHeader>
-          <CardTitle className="text-center text-3xl text-marine">
+          <CardTitle className="text-center text-2xl sm:text-3xl text-marine">
             Visualizar Demanda
           </CardTitle>
-          <p className="text-muted-foreground text-center text-xl">
+          <p className="text-muted-foreground text-center text-lg sm:text-xl break-words">
             {demand.title}
           </p>
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               value={demand.subject.frente.nome}
               readOnly
@@ -154,7 +155,7 @@ function ShowDemand({
               value={demand.subject.name}
               readOnly
               placeholder="Tema"
-              className="col-span-2"
+              className="sm:col-span-2"
             />
           </div>
 
@@ -199,10 +200,11 @@ function ShowDemand({
                 Visualizar Preview  
               </Button>
             )}
-          <div className="flex justify-end space-x-4 pt-4">
+          {/* No celular um por linha: os 3 × w-36 vazavam pela esquerda e cortavam o "Salvar". */}
+          <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-4 pt-4">
             <Button
               variant="default"
-              className="w-36"
+              className="w-full sm:w-36"
               onClick={handleUploadFile}
               disabled={!uploadFile}
             >
@@ -210,19 +212,20 @@ function ShowDemand({
             </Button>
             <Button
               variant="destructive"
-              className="w-36"
+              className="w-full sm:w-36"
               onClick={() => modals.tryDelete.open()}
             >
               <Trash2 className="mr-2 h-4 w-4" /> Excluir
             </Button>
-            <Button variant="outline" className="w-36" onClick={handleClose}>
+            <Button variant="outline" className="w-full sm:w-36" onClick={handleClose}>
               <X className="mr-2 h-4 w-4" /> Fechar
             </Button>
           </div>
         </CardContent>
       </Card>
-      <ModalDocxPreview />
-      <ModalTryDelete />
+      {/* Como função: <Componente /> declarado no render remontava a cada render. */}
+      {ModalDocxPreview()}
+      {ModalTryDelete()}
     </ModalTemplate>
   );
 }

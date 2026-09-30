@@ -13,6 +13,7 @@ interface Props {
   handleEditClass: (classId: string) => void;
   handleEditCoursePeriod: (coursePeriodId: string) => void;
   handleDeleteCoursePeriod: (coursePeriodId: string) => void;
+  podeGerenciar: boolean;
 }
 
 const data = (d: Date | string) => formatDate(d.toString(), "dd/MM/yyyy");
@@ -39,6 +40,7 @@ function PeriodoCard({
   handleEditClass,
   handleEditCoursePeriod,
   handleDeleteCoursePeriod,
+  podeGerenciar,
 }: Omit<Props, "periodos"> & { periodo: CoursePeriodEntity }) {
   const [aberto, setAberto] = useState(false);
   const turmas = periodo.classes;
@@ -87,12 +89,14 @@ function PeriodoCard({
         <div className="shrink-0">
           <ActionMenu
             tamanho="medium"
-            onAdd={() => handleAddClass(periodo.id)}
-            onEdit={() => handleEditCoursePeriod(periodo.id)}
+            onAdd={podeGerenciar ? () => handleAddClass(periodo.id) : undefined}
+            onEdit={
+              podeGerenciar ? () => handleEditCoursePeriod(periodo.id) : undefined
+            }
             onDelete={
-              turmas.length > 0
-                ? undefined
-                : () => handleDeleteCoursePeriod(periodo.id)
+              podeGerenciar && turmas.length === 0
+                ? () => handleDeleteCoursePeriod(periodo.id)
+                : undefined
             }
             mensagemExclusao={`Excluir o período ${periodo.name}?`}
           />
@@ -123,7 +127,9 @@ function PeriodoCard({
                 <ActionMenu
                   tamanho="medium"
                   onView={() => handleViewClass(turma)}
-                  onEdit={() => handleEditClass(turma.id)}
+                  onEdit={
+                    podeGerenciar ? () => handleEditClass(turma.id) : undefined
+                  }
                   onDelete={
                     podeExcluir(turma)
                       ? () => handleDeleteClass(turma)
