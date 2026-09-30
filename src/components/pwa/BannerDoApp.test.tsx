@@ -12,6 +12,11 @@ vi.mock("@/services/push/plataforma", async (orig) => {
     ambienteAtual: () => ({ ...amb, maxTouchPoints: 5 }),
   };
 });
+const aparelhos = vi.hoisted(() => ({ listarMeusAparelhos: vi.fn() }));
+vi.mock("@/services/push/api", () => aparelhos);
+vi.mock("@/store/auth", () => ({
+  useAuthStore: (sel: (s: unknown) => unknown) => sel({ data: { token: "tk" } }),
+}));
 vi.mock("@/components/push/BannerNotificacoes", () => ({
   BannerNotificacoes: () => <div>banner de notificações</div>,
 }));
@@ -35,6 +40,7 @@ describe("Banner do topo em etapas (029 · 02)", () => {
     limparCookie();
     amb.userAgent = "Mozilla/5.0 (Linux; Android 14) Chrome/130";
     amb.standalone = false;
+    aparelhos.listarMeusAparelhos.mockReset().mockResolvedValue([]);
   });
 
   it("celular com convite: o do app, e NÃO o de notificações", () => {
@@ -96,5 +102,55 @@ describe("Banner do topo em etapas (029 · 02)", () => {
     act(() => useInstalacaoDoApp.setState({ evento: convite("accepted") }));
     render(<BannerDoTopo />);
     expect(screen.queryByRole("region", { name: "Instalar o app" })).toBeNull();
+  });
+
+  describe("iPhone (029 · 03)", () => {
+    beforeEach(() => {
+      amb.userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) Safari";
+    });
+
+    it("sem aparelho em modo app: a instrução (Compartilhar → Adicionar à Tela de Início)", async () => {
+      render(<BannerDoTopo />);
+      const regiao = await screen.findByRole("region", { name: "Instalar o app" });
+      expect(regiao).toHaveTextContent("Compartilhar");
+      expect(regiao).toHaveTextContent("Adicionar à Tela de Início");
+      expect(screen.queryByRole("button", { name: "Instalar" })).toBeNull();
+      expect(aparelhos.listarMeusAparelhos).toHaveBeenCalledWith("tk");
+    });
+
+    it("⚠️ já registrou um iPhone em modo app: não convida (e não pisca enquanto pergunta)", async () => {
+      let responder!: (v: unknown) => void;
+      aparelhos.listarMeusAparelhos.mockReturnValue(new Promise((r) => (responder = r)));
+      render(<BannerDoTopo />);
+      // enquanto pergunta: nada de instrução
+      expect(screen.queryByRole("region", { name: "Instalar o app" })).toBeNull();
+      await act(async () =>
+        responder([{ platform: "ios", standalone: true, id: "1", userAgent: null, lastSeenAt: "" }]),
+      );
+      expect(screen.queryByRole("region", { name: "Instalar o app" })).toBeNull();
+      expect(screen.getByText("banner de notificações")).toBeInTheDocument();
+    });
+
+    it("iPhone registrado só no Safari (sem modo app) ainda recebe a instrução", async () => {
+      aparelhos.listarMeusAparelhos.mockResolvedValue([
+        { platform: "ios", standalone: false, id: "1", userAgent: null, lastSeenAt: "" },
+      ]);
+      render(<BannerDoTopo />);
+      expect(await screen.findByRole("region", { name: "Instalar o app" })).toBeInTheDocument();
+    });
+
+    it("'Entendi' adia 30 dias", async () => {
+      render(<BannerDoTopo />);
+      fireEvent.click(await screen.findByRole("button", { name: "Entendi" }));
+      expect(document.cookie).toContain("app_banner_adiado=1");
+      expect(screen.getByText("banner de notificações")).toBeInTheDocument();
+    });
+
+    it("dentro do app no iPhone (standalone): nem pergunta", () => {
+      amb.standalone = true;
+      render(<BannerDoTopo />);
+      expect(aparelhos.listarMeusAparelhos).not.toHaveBeenCalled();
+      expect(screen.getByText("banner de notificações")).toBeInTheDocument();
+    });
   });
 });
