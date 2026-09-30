@@ -4,7 +4,7 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { getMaterias, MateriaDto } from "@/services/content/getMaterias";
 import { changeActive } from "@/services/prepCourse/collaborator/change-active";
 import { changeDescription } from "@/services/prepCourse/collaborator/change-description";
-import { getCollaborator } from "@/services/prepCourse/collaborator/get-collaborator";
+import { getTodosOsColaboradores } from "@/services/prepCourse/collaborator/get-collaborator";
 import { getCollaboratorFrentesBatch } from "@/services/prepCourse/collaborator/get-collaborator-frentes-batch";
 import {
   getPhotoCollaborator,
@@ -28,6 +28,8 @@ import ModalUpdateRoleUser from "./modals/ModalUpdateRoleUser";
 import { ShowInfo } from "./modals/showInfo";
 import { ModalConvites } from "./modals/ModalConvites";
 import { Roles } from "@/enums/roles/roles";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
+import { ListaDeColaboradoresMobile } from "./ListaDeColaboradoresMobile";
 
 export interface CollaboratorColumns {
   id: string;
@@ -51,8 +53,6 @@ export default function ManagerCollaborator() {
   const [collaborator, setCollaborator] = useState<CollaboratorColumns[]>([]);
   const [collaboratorSelected, setCollaboratorSelected] =
     useState<CollaboratorColumns | null>(null);
-  const [limit, setLimit] = useState<number>(100);
-  const [totalItems, setTotalItems] = useState<number>(100);
   const [roles, setRoles] = useState<Role[]>([]);
   const [collaboratorPhotos, setCollaboratorPhotos] = useState<
     Record<string, string>
@@ -76,6 +76,8 @@ export default function ManagerCollaborator() {
   const ehAdminDoCursinho = !!permissao[Roles.gerenciarPermissoesCursinho];
 
   const executeAsync = useToastAsync();
+  // Abaixo de 768px (o `sm` do projeto) a tabela vira lista de cards.
+  const acimaDeSm = useAcimaDeSm();
   const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
 
   const frentesForSelectedMateria = useMemo(() => {
@@ -281,6 +283,7 @@ export default function ManagerCollaborator() {
         handleActive={handleChangeActive}
         handleDescription={handleDescription}
         onPhotoUpdated={handlePhotoUpdated}
+        onPhotoRemoved={handlePhotoRemoved}
         openUpdateRole={() => {
           if (roles.length === 0) {
             toast.error("Não há funções cadastradas");
@@ -355,6 +358,15 @@ export default function ManagerCollaborator() {
     );
   };
 
+  const handlePhotoRemoved = (collaboratorId: string) => {
+    setCollaborator((prev) =>
+      prev.map((c) => (c.id === collaboratorId ? { ...c, photo: "" } : c)),
+    );
+    setCollaboratorSelected((prev) =>
+      prev && prev.id === collaboratorId ? { ...prev, photo: "" } : prev,
+    );
+  };
+
   const handleDescription = async (id: string, description: string) => {
     const _id = toast.loading("Alterando informação de colaborador...");
     changeDescription(token, id, description)
@@ -385,10 +397,10 @@ export default function ManagerCollaborator() {
   };
 
   useEffect(() => {
-    getCollaborator(token, 1, limit)
-      .then((c) => {
+    getTodosOsColaboradores(token)
+      .then((lista) => {
         setCollaborator(
-          c.data.map((col) => ({
+          lista.map((col) => ({
             id: col.id,
             photo: col.photo,
             description: col.description,
@@ -406,7 +418,6 @@ export default function ManagerCollaborator() {
             },
           }))
         );
-        setTotalItems(c.totalItems);
       })
       .catch((error) => toast.error(error.message));
   }, [token]);
@@ -464,7 +475,7 @@ export default function ManagerCollaborator() {
     };
   }, [collaborator]);
 
-  const paginationModel = { page: 0, pageSize: limit };
+  const paginationModel = { page: 0, pageSize: 100 };
 
   return (
     <div className="flex flex-col gap-4 w-full justify-center">
@@ -483,12 +494,15 @@ export default function ManagerCollaborator() {
         ⚠️ **Funções: só o admin do cursinho** (`gerenciarPermissoesCursinho`)
         cria e edita — quem gerencia colaboradores só escolhe uma que já existe.
       */}
-      <div data-acoes className="flex justify-end">
+      <div
+        data-acoes
+        className="grid grid-cols-2 gap-2 px-4 sm:flex sm:justify-end sm:gap-0 sm:px-0"
+      >
         <Button
           onClick={() => modals.modalConvites.open()}
           size="small"
           typeStyle="quaternary"
-          className="w-fit mx-4"
+          className="col-span-2 w-full h-10 sm:w-fit sm:h-fit sm:mx-4"
         >
           Convites
         </Button>
@@ -498,7 +512,7 @@ export default function ManagerCollaborator() {
               onClick={() => modals.modalShowNewRole.open()}
               size="small"
               typeStyle="quaternary"
-              className="w-fit mx-4"
+              className="w-full h-10 sm:w-fit sm:h-fit sm:mx-4"
             >
               Nova Função
             </Button>
@@ -506,15 +520,15 @@ export default function ManagerCollaborator() {
               onClick={() => modals.modalShowEditRole.open()}
               size="small"
               typeStyle="primary"
-              className="w-fit mx-4"
+              className="w-full h-10 sm:w-fit sm:h-fit sm:mx-4"
             >
               Editar Função
             </Button>
           </>
         )}
       </div>
-      <div className="flex items-center gap-4 px-4 flex-wrap">
-        <FormControl size="small" sx={{ minWidth: 200 }}>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 px-4 sm:flex-wrap">
+        <FormControl size="small" sx={{ minWidth: 200 }} fullWidth={!acimaDeSm}>
           <InputLabel id="filter-materia-label">Matéria</InputLabel>
           <Select
             labelId="filter-materia-label"
@@ -532,7 +546,12 @@ export default function ManagerCollaborator() {
             ))}
           </Select>
         </FormControl>
-        <FormControl size="small" sx={{ minWidth: 200 }} disabled={!selectedMateria}>
+        <FormControl
+          size="small"
+          sx={{ minWidth: 200 }}
+          fullWidth={!acimaDeSm}
+          disabled={!selectedMateria}
+        >
           <InputLabel id="filter-frente-label">Frente</InputLabel>
           <Select
             labelId="filter-frente-label"
@@ -555,28 +574,30 @@ export default function ManagerCollaborator() {
             onClick={handleClearFilters}
             size="small"
             typeStyle="secondary"
-            className="w-fit"
+            className="w-full h-10 sm:w-fit sm:h-fit"
           >
             Limpar Filtros
           </Button>
         )}
       </div>
-      <Paper sx={{ height: "100%", width: "100%" }}>
-        <DataGrid
-          rows={filteredCollaborators}
-          columns={columns}
-          rowCount={selectedMateria || selectedFrente ? filteredCollaborators.length : totalItems}
-          paginationMode={selectedMateria || selectedFrente ? "client" : "server"}
-          initialState={{ pagination: { paginationModel } }}
-          rowHeight={40}
-          pageSizeOptions={[5, 10, 15, 30, 50, 100]}
-          onPaginationModelChange={(newPageSize) => {
-            setLimit(newPageSize.pageSize);
-            getCollaborator(token, newPageSize.page + 1, newPageSize.pageSize);
-          }}
-          sx={{ border: 0 }}
+      {!acimaDeSm ? (
+        <ListaDeColaboradoresMobile
+          colaboradores={filteredCollaborators}
+          fotos={collaboratorPhotos}
+          onVer={onClickCard}
         />
-      </Paper>
+      ) : (
+        <Paper sx={{ height: "100%", width: "100%" }}>
+          <DataGrid
+            rows={filteredCollaborators}
+            columns={columns}
+            initialState={{ pagination: { paginationModel } }}
+            rowHeight={40}
+            pageSizeOptions={[5, 10, 15, 30, 50, 100]}
+            sx={{ border: 0 }}
+          />
+        </Paper>
+      )}
       <ModalDeConvites />
       <ModalShowInfo />
       <ModalShowNewRole />
