@@ -1,3 +1,4 @@
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -33,6 +34,15 @@ export default function EssayReviewList({ mode }: Props) {
   }>({});
 
   const limit = 20;
+  // Abaixo de 768px (o `sm` do projeto) a tabela vira cards.
+  const acimaDeSm = useAcimaDeSm();
+
+  // Quem já mandou revisão humana nesta redação não revisa de novo.
+  const podeRevisar = (e: EssayListItem) =>
+    (e.status === "SUBMITTED" || e.status === "REVIEWED") &&
+    !e.reviews?.some(
+      (r) => r.reviewType === "HUMAN" && r.reviewer?.email === user.email,
+    );
 
   const detailBasePath =
     mode === "admin"
@@ -70,21 +80,21 @@ export default function EssayReviewList({ mode }: Props) {
       : "Redações do Cursinho";
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold text-marine mb-6">{title}</h1>
 
       {/* Filters */}
-      <div className="flex gap-4 mb-4 flex-wrap">
+      <div className="flex gap-2 sm:gap-4 mb-4 flex-wrap">
         <input
           type="text"
           placeholder="Buscar por nome ou email..."
-          className="border rounded-lg px-3 py-2 text-sm flex-1 min-w-[200px]"
+          className="border rounded-lg px-3 py-2 text-sm flex-1 basis-full sm:basis-auto min-w-0 sm:min-w-[200px]"
           onChange={(e) =>
             setFilters((f) => ({ ...f, search: e.target.value || undefined }))
           }
         />
         <select
-          className="border rounded-lg px-3 py-2 text-sm"
+          className="border rounded-lg px-3 py-2 text-sm w-full sm:w-auto max-w-full"
           onChange={(e) =>
             setFilters((f) => ({ ...f, themeId: e.target.value || undefined }))
           }
@@ -97,7 +107,7 @@ export default function EssayReviewList({ mode }: Props) {
           ))}
         </select>
         <select
-          className="border rounded-lg px-3 py-2 text-sm"
+          className="border rounded-lg px-3 py-2 text-sm w-full sm:w-auto"
           onChange={(e) =>
             setFilters((f) => ({ ...f, status: e.target.value || undefined }))
           }
@@ -116,6 +126,45 @@ export default function EssayReviewList({ mode }: Props) {
         </div>
       ) : (
         <>
+          {/*
+            No celular, cards: a tabela ficava num overflow-hidden e a coluna
+            de ações (ver/revisar) era cortada sem rolagem.
+          */}
+          {!acimaDeSm ? (
+            <ul className="flex flex-col gap-3">
+              {essays.map((e) => (
+                <li key={e.id} className="border rounded-lg p-3 flex flex-col gap-1">
+                  <p className="font-semibold break-words">
+                    {e.user.firstName} {e.user.lastName}
+                  </p>
+                  <p className="text-xs text-grey break-all">{e.user.email}</p>
+                  <p className="text-sm break-words">{e.theme.title}</p>
+                  <p className="text-xs text-grey">
+                    {STATUS_LABELS[e.status] ?? e.status}
+                    {e.submittedAt &&
+                      ` · enviada em ${new Date(e.submittedAt).toLocaleDateString("pt-BR")}`}
+                    {` · ${e.reviews?.length ?? 0} revisões`}
+                  </p>
+                  <div className="flex gap-2 pt-2 mt-1 border-t">
+                    <button
+                      onClick={() => navigate(`${detailBasePath}/${e.id}/ver`)}
+                      className="flex-1 h-10 border border-marine text-marine rounded-lg text-sm font-medium"
+                    >
+                      Ver
+                    </button>
+                    {podeRevisar(e) && (
+                      <button
+                        onClick={() => navigate(`${detailBasePath}/${e.id}`)}
+                        className="flex-1 h-10 bg-marine text-white rounded-lg text-sm font-medium"
+                      >
+                        Revisar
+                      </button>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
           <div className="border rounded-lg overflow-hidden">
             <table className="w-full">
               <thead className="bg-gray-50">
@@ -159,10 +208,7 @@ export default function EssayReviewList({ mode }: Props) {
                             <FiEye className="h-4 w-4" />
                           </IconButton>
                         </Tooltip>
-                        {(e.status === "SUBMITTED" || e.status === "REVIEWED") &&
-                          !e.reviews?.some(
-                            (r) => r.reviewType === "HUMAN" && r.reviewer?.email === user.email
-                          ) && (
+                        {podeRevisar(e) && (
                           <Tooltip title="Revisar" arrow>
                             <IconButton
                               size="small"
@@ -180,6 +226,7 @@ export default function EssayReviewList({ mode }: Props) {
               </tbody>
             </table>
           </div>
+          )}
 
           {/* Pagination */}
           {totalPages > 1 && (
@@ -187,7 +234,7 @@ export default function EssayReviewList({ mode }: Props) {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1 border rounded disabled:opacity-50"
+                className="px-3 py-1 h-10 sm:h-auto border rounded disabled:opacity-50"
               >
                 Anterior
               </button>
@@ -197,7 +244,7 @@ export default function EssayReviewList({ mode }: Props) {
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1 border rounded disabled:opacity-50"
+                className="px-3 py-1 h-10 sm:h-auto border rounded disabled:opacity-50"
               >
                 Próximo
               </button>
