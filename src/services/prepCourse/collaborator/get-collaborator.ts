@@ -35,3 +35,20 @@ export async function getCollaborator(
   }
   throw new Error(`Erro ao tentar recuperar colaboradores - Pagina ${page}`);
 }
+
+/**
+ * Todos os colaboradores do cursinho, página por página (o servidor limita o
+ * `limit`). A tela filtra por matéria/frente e busca no client, então precisa
+ * da lista inteira — com uma página só, quem passava de 100 nunca aparecia.
+ */
+export async function getTodosOsColaboradores(
+  token: string,
+  porPagina = 100,
+): Promise<Collaborator[]> {
+  const todos: Collaborator[] = [];
+  for (let page = 1; ; page++) {
+    const { data, totalItems } = await getCollaborator(token, page, porPagina);
+    todos.push(...data);
+    if (data.length === 0 || todos.length >= totalItems) return todos;
+  }
+}

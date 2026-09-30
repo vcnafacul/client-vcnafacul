@@ -1,17 +1,20 @@
 import Toggle from "@/components/atoms/toggle";
 import Button from "@/components/molecules/button";
+import ImageProfile from "@/components/molecules/imageProfile";
+import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import PropValue from "@/components/molecules/PropValue";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { Badge } from "@/components/ui/badge";
 import { Roles } from "@/enums/roles/roles";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { adminRemovePhotoCollaborator } from "@/services/prepCourse/collaborator/admin-remove-photo";
 import { adminUploadPhotoCollaborator } from "@/services/prepCourse/collaborator/admin-upload-photo";
 import { Afinidade } from "@/types/partnerPrepCourse/afinidades";
 import { getColorFromName, getTextColorFromName } from "@/utils/getColorFromName";
 import { formatDate } from "@/utils/date";
 import { phoneMask } from "@/utils/phoneMask";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { getCollaboratorFrentesEnriched } from "@/services/prepCourse/collaborator/get-collaborator-frentes";
 import { useAuthStore } from "@/store/auth";
@@ -28,6 +31,7 @@ interface ModalProps {
     collaboratorId: string,
     newPhotoKey: string,
   ) => Promise<void> | void;
+  onPhotoRemoved?: (collaboratorId: string) => void;
   openUpdateRole: () => void;
 }
 
@@ -53,6 +57,7 @@ export function ShowInfo({
   handleActive,
   handleDescription,
   onPhotoUpdated,
+  onPhotoRemoved,
   openUpdateRole,
 }: ModalProps) {
   const [actived, setActived] = useState<boolean>(collaborator.actived);
@@ -63,10 +68,10 @@ export function ShowInfo({
   const [afinidades, setAfinidades] = useState<Afinidade[]>([]);
   const [frentesLoading, setFrentesLoading] = useState(false);
   const [photoUploading, setPhotoUploading] = useState(false);
+  const [confirmarRemocao, setConfirmarRemocao] = useState(false);
   const { data } = useAuthStore();
   const { token, permissao } = data;
   const canEditPhotos = !!permissao?.[Roles.alterarPermissao];
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const executeAsync = useToastAsync();
   const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
 
@@ -75,7 +80,7 @@ export function ShowInfo({
   ) => {
     const file = e.target.files?.[0];
     e.target.value = "";
-    if (!file) return;
+    if (!file || photoUploading) return;
 
     if (!file.type.startsWith("image/")) {
       toast.error("Selecione um arquivo de imagem.");
@@ -103,6 +108,21 @@ export function ShowInfo({
     });
   };
 
+  const handleRemovePhoto = async () => {
+    setConfirmarRemocao(false);
+    await executeAsync({
+      action: () => adminRemovePhotoCollaborator(collaborator.id, token),
+      loadingMessage: "Removendo foto...",
+      successMessage: "Foto removida!",
+      errorMessage: (err: Error) => err.message,
+      onSuccess: () => onPhotoRemoved?.(collaborator.id),
+    });
+  };
+
+  const fotoSrc = collaborator.photo
+    ? photoUrl || `${VITE_FTP_PROFILE}${collaborator.photo}`
+    : "";
+
   useEffect(() => {
     if (!isOpen || !collaborator?.id || !token) return;
     setFrentesLoading(true);
@@ -125,44 +145,30 @@ export function ShowInfo({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white p-4 rounded-md w-[90vw] sm:w-[750px]"
+      className="bg-white p-4 rounded-md w-full max-w-[750px]"
     >
       <div className="p-4 rounded-md overflow-y-auto scrollbar-hide h-4/5 sm:h-fit">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
-          {(collaborator.photo || canEditPhotos) && (
-            <div className="w-56 h-40 flex flex-col items-center">
-              {collaborator.photo ? (
-                <img
-                  className="rounded-full object-cover shadow-md shadow-stone-500 w-40 h-40"
-                  src={photoUrl || `${VITE_FTP_PROFILE}${collaborator.photo}`}
-                  alt={collaborator.name}
-                />
-              ) : (
-                <div className="rounded-full shadow-md shadow-stone-500 w-40 h-40 bg-zinc-200 flex items-center justify-center text-zinc-500 text-xs text-center px-2">
-                  Sem foto
-                </div>
-              )}
-              {canEditPhotos && (
-                <>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    onChange={handlePhotoFileSelected}
-                  />
-                  <Button
-                    onClick={() => fileInputRef.current?.click()}
-                    typeStyle="secondary"
-                    size="small"
-                    className="mt-2 w-40 font-light"
-                    disabled={photoUploading}
-                  >
-                    {collaborator.photo ? "Trocar foto" : "Adicionar foto"}
-                  </Button>
-                </>
-              )}
+          {/*
+            Mesmo componente da foto do perfil: círculo com editar e, havendo
+            foto, remover. Quem não pode editar só vê a foto.
+          */}
+          {canEditPhotos ? (
+            <div className="shrink-0">
+              <ImageProfile
+                src={fotoSrc}
+                onChange={handlePhotoFileSelected}
+                deleteImage={() => setConfirmarRemocao(true)}
+              />
             </div>
+          ) : (
+            collaborator.photo && (
+              <img
+                className="rounded-full object-cover shadow-md shadow-stone-500 w-40 h-40 shrink-0"
+                src={fotoSrc}
+                alt={collaborator.name}
+              />
+            )
           )}
           <div className="flex flex-col gap-2 w-full">
             {frentesLoading ? (
@@ -208,7 +214,11 @@ export function ShowInfo({
               prop="Nome"
               value={collaborator.name}
             />
-            <PropValue prop="Email" value={collaborator.email} />
+            <PropValue
+              prop="Email"
+              value={collaborator.email}
+              className="break-all"
+            />
             <PropValue prop="Telefone" value={phoneMask(collaborator.phone)} />
           </div>
         </div>
@@ -267,6 +277,17 @@ export function ShowInfo({
           </Button>
         </div>
       </div>
+      <ModalConfirmCancel
+        isOpen={confirmarRemocao}
+        handleClose={() => setConfirmarRemocao(false)}
+        handleConfirm={handleRemovePhoto}
+        text="Remover a foto do colaborador?"
+        className="bg-white p-4 rounded-md w-[calc(100%-2rem)]"
+      >
+        <p className="text-sm text-gray-600">
+          A foto também sai da página pública do cursinho.
+        </p>
+      </ModalConfirmCancel>
     </ModalTemplate>
   );
 }
