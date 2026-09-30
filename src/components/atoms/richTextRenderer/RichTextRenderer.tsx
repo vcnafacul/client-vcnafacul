@@ -71,9 +71,17 @@ export function RichTextRenderer({
       // dimensão salva manda nos dois lados, e o teto só vale na ausência dela.
       // Capar uma imagem salva em 500px criaria uma divergência nova — o editor
       // continuaria mostrando 500px.
+      // ⚠️ `height: auto` + `aspectRatio`, e não a altura salva: com a largura
+      // travada em 100% numa tela estreita, a altura fixa distorcia a imagem.
+      // Na largura salva o resultado é o mesmo de antes.
       const sizeStyle: React.CSSProperties | undefined =
         w && h
-          ? { width: `${w}px`, height: `${h}px`, maxWidth: "100%" }
+          ? {
+              width: `${w}px`,
+              maxWidth: "100%",
+              height: "auto",
+              aspectRatio: `${w} / ${h}`,
+            }
           : maxImageWidth
             ? { maxWidth: `min(100%, ${maxImageWidth}px)` }
             : undefined;
@@ -100,10 +108,18 @@ export function RichTextRenderer({
         />
       );
     },
+    // Tabela larga rola sozinha, sem empurrar a página para o lado.
+    table: ({ children }) => (
+      <div className="overflow-x-auto">
+        <table>{children}</table>
+      </div>
+    ),
   };
 
   return (
-    <div className={`prose prose-sm max-w-none ${className}`}>
+    <div
+      className={`prose prose-sm max-w-none [&_.katex-display]:overflow-x-auto [&_.katex-display]:overflow-y-hidden ${className}`}
+    >
       <ReactMarkdown
         remarkPlugins={[remarkMath, remarkGfm]}
         rehypePlugins={[rehypeRaw, rehypeKatex]}

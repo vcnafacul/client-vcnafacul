@@ -78,7 +78,9 @@ describe("RichTextRenderer — asset:// (defeito 2)", () => {
 
     const img = document.querySelector("img");
     expect(img?.style.width).toBe("300px");
-    expect(img?.style.height).toBe("200px");
+    // Altura pela proporção salva: altura fixa distorcia em tela estreita.
+    expect(img?.style.height).toBe("auto");
+    expect(img?.getAttribute("style")).toContain("aspect-ratio: 300 / 200");
   });
 
   it("mostra `[Imagem indisponível]` quando o asset não resolve, em vez de sumir", async () => {
@@ -218,7 +220,8 @@ describe("RichTextRenderer — maxImageWidth (paridade com o editor)", () => {
 
     const img = document.querySelector("img");
     expect(img?.style.width).toBe("500px");
-    expect(img?.style.height).toBe("400px");
+    expect(img?.style.height).toBe("auto");
+    expect(img?.getAttribute("style")).toContain("aspect-ratio: 500 / 400");
     // um 500px salvo continua 500px nos dois lados; capar aqui criaria
     // uma divergência nova em vez de fechar a existente
     expect(img?.style.maxWidth).toBe("100%");
