@@ -1,9 +1,11 @@
 import { StatusEnum } from "../../enums/generic/statusEnum";
 
 export const dashNews = {
-  title: "Conteúdo Novidades",
+  title: "Novidades",
+  // Rótulos iguais aos da coluna Status (Ativa/Inativa): filtro e coluna
+  // falam a mesma língua.
   options: [
-    { name: "Aprovado", id: StatusEnum.Approved },
-    { name: "Reprovado", id: StatusEnum.Rejected },
+    { name: "Ativas", id: StatusEnum.Approved },
+    { name: "Inativas", id: StatusEnum.Rejected },
   ],
 };
