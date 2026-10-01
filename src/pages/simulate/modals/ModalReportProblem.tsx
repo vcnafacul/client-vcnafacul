@@ -67,7 +67,7 @@ function ModalReportProblem({
           </span>{" "}
           ?
         </Text>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
           <RadioButton
             onChange={() => setSelectedOption(0)}
             checked={selectedOption === 0}
@@ -87,7 +87,7 @@ function ModalReportProblem({
         <Text size="tertiary" className="text-start text-grey m-0">
           Foi um bug recorrente ou um bug que ocorreu de maneira esporádica?*
         </Text>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
           <RadioButton
             onChange={() => setSelectedOption(0)}
             checked={selectedOption === 0}
@@ -111,7 +111,7 @@ function ModalReportProblem({
       handleClose={handleClose!}
       className="bg-white p-4 rounded-md"
     >
-      <div className="bg-white max-w-5xl p-10 rounded">
+      <div className="bg-white max-w-5xl p-1 sm:p-10 rounded">
         <Text size="secondary" className="text-start">
           Ocorreu algum problema?
         </Text>
@@ -124,7 +124,7 @@ function ModalReportProblem({
           className="w-full border h-20 py-2 px-4"
           onChange={(event: any) => setMessage(`${event.target.value}`)}
         />
-        <div className="max-w-3xl flex mx-auto gap-4 mt-4">
+        <div className="max-w-3xl flex flex-wrap mx-auto gap-4 mt-4">
           <Button typeStyle="secondary" onClick={handleClose}>
             {" "}
             Cancelar{" "}
