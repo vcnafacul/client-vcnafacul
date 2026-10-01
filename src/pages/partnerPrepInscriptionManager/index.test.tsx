@@ -229,7 +229,7 @@ describe("Processos Seletivos na Dash V2 (tickets/021 card 04)", () => {
       );
       montar();
       await screen.findByText("Processo 29");
-      fireEvent.click(screen.getByLabelText("Go to next page"));
+      fireEvent.click(screen.getByLabelText("Próxima página"));
       expect(screen.getByText("Processo 00")).toBeTruthy(); // página 2
 
       data("Inicia em — de", "2026-01-02");

@@ -74,12 +74,12 @@ export function SimulationHistories() {
   const totalPages = Math.ceil(totalItems / limitCards);
 
   return (
-    <div className="container mx-auto p-6 max-w-full">
+    <div className="container mx-auto p-4 sm:p-6 max-w-full">
       {/* Header */}
       <div className="mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <h1 className="text-3xl font-bold text-primary">
+        <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
+          <div className="min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-bold text-primary">
               Histórico de Simulados
             </h1>
             <p className="text-muted-foreground mt-1">
@@ -100,7 +100,10 @@ export function SimulationHistories() {
 
       {/* Gráfico de Aproveitamento */}
       {aproveitamento && aproveitamento.historicos.length > 0 && (
-        <PerformanceChart aproveitamento={aproveitamento} />
+        <PerformanceChart
+          aproveitamento={aproveitamento}
+          totalSimulados={totalItems}
+        />
       )}
 
       {/* Informações e Paginação */}

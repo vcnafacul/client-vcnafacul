@@ -128,12 +128,12 @@ const irPara = (pagina: string) =>
   fireEvent.click(within(rodape()!).getByText(pagina));
 /**
  * ⚠️ O "próxima" do `components/ui/pagination` é um `<a>` **sem `href`** com
- * `aria-label="Go to next page"` — rótulo em inglês e sem papel de link (é uma
+ * `aria-label="Próxima página"` — sem papel de link (é uma
  * das pendências listadas no README). Consultar por rótulo é o que casa com o
  * que está realmente na tela.
  */
 const irParaAProxima = () =>
-  fireEvent.click(within(rodape()!).getByLabelText("Go to next page"));
+  fireEvent.click(within(rodape()!).getByLabelText("Próxima página"));
 
 /* -------------------------------------------------------------------------- *
  * O contrato: `entities` é leitura.
