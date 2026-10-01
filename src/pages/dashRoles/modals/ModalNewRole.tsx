@@ -150,9 +150,9 @@ function ModalNewRole({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose!}
-      className="bg-white rounded-xl p-5"
+      className="bg-white rounded-xl p-4 sm:p-5 w-full max-w-[44.5rem]"
     >
-      <div className="w-[92vw] max-w-2xl flex flex-col gap-5 max-h-[80vh]">
+      <div className="w-full flex flex-col gap-5 max-h-[80vh]">
         {/* Header */}
         <div>
           <Text size="secondary" className="font-bold text-marine">
@@ -164,7 +164,7 @@ function ModalNewRole({
         </div>
 
         {/* Name + base toggle */}
-        <div className="flex gap-7">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-7">
           <label className="flex flex-col gap-1 flex-1">
             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
               Nome do perfil
