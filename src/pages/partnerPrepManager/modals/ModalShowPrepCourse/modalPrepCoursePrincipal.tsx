@@ -414,9 +414,9 @@ export const ModalPrepCoursePrincipal = ({
   return (
     <div className="space-y-6 px-0.5">
       {/* Header com título e botões */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h1 className="text-3xl font-bold text-marine">
+          <h1 className="text-2xl sm:text-3xl font-bold text-marine">
             Informações Básicas
           </h1>
           <div className="w-16 h-1 bg-green-500 mt-2"></div>
@@ -604,7 +604,7 @@ export const ModalPrepCoursePrincipal = ({
                 />
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button
                 variant="outline"
                 disabled={!editable}
@@ -629,11 +629,12 @@ export const ModalPrepCoursePrincipal = ({
         </div>
       </div>
 
-      <div className="flex justify-between pt-4 items-end">
+      <div className="flex flex-wrap justify-between gap-3 pt-4 items-end">
         {/* Informações de parceria */}
         <div className="space-y-2">
           <p className="text-sm text-gray-600">
-            Ano de parceria: {new Date(prepCourse.updatedAt).getFullYear()}
+            {/* Era o ano do updatedAt: qualquer edição "mudava" o ano de parceria. */}
+            Ano de parceria: {new Date(prepCourse.createdAt).getFullYear()}
           </p>
           <p className="text-sm text-gray-600">
             Última atualização:{" "}
