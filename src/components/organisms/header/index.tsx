@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { ReactComponent as MenuIcon } from "../../../assets/icons/menu.svg";
 
@@ -13,6 +13,7 @@ import Logged from "../../molecules/Logged";
 import Logo from "../../molecules/logo";
 import { ItemMenuProps } from "../../molecules/menuItems";
 import MainMenu from "../mainMenu";
+import MenuMobile from "../menuMobile";
 import Sign from "../sign";
 
 export interface HeaderData {
@@ -37,15 +38,10 @@ function Header({ solid, className }: HeaderProps) {
   } = useAuthStore();
 
   const { header, headerAction } = useBaseTemplateContext();
-
-  const MenuBugger = () => {
-    if (openMenu || headerAction) return null;
-    return (
-      <div onClick={() => setOpenMenu(true)} className="md:hidden">
-        <MenuIcon className={`${!solid ? "fill-white" : "fill-marine"}`} />
-      </div>
-    );
-  };
+  const fecharMenu = useCallback(() => setOpenMenu(false), []);
+  const nome = token
+    ? capitalize(useSocialName ? socialName! : firstName)
+    : undefined;
 
   return (
     // ⚠️ `print:hidden`: o relatório do simulado é impresso, e a folha
@@ -54,16 +50,36 @@ function Header({ solid, className }: HeaderProps) {
     <header className={`${className ?? ""} print:hidden`} id="header">
       <div className="md:container mx-auto h-full flex items-center">
         <div className="flex w-full justify-between items-center mx-4 md:mx-auto md:max-w-6xl">
-          {MenuBugger()}
+          {/* Com `headerAction` (o botão do menu lateral do dashboard, #837)
+              o ☰ do site sai: dois botões de menu no mesmo header confundem. */}
+          {!headerAction && (
+            <button
+              type="button"
+              onClick={() => setOpenMenu(true)}
+              aria-label="Abrir menu do site"
+              aria-expanded={openMenu}
+              className="md:hidden -ml-2 p-2"
+            >
+              <MenuIcon className={`${!solid ? "fill-white" : "fill-marine"}`} />
+            </button>
+          )}
           <Logo solid={solid} name />
-          <MainMenu
-            itemsMenu={header.pageLinks}
-            socialLinks={header.socialLinks}
-            solid={solid}
+          <MainMenu itemsMenu={header.pageLinks} solid={solid} />
+          <MenuMobile
             open={openMenu}
-            handleClose={() => {
-              setOpenMenu(false);
-            }}
+            onClose={fecharMenu}
+            itens={header.pageLinks}
+            // O 4º item dos dados repete o link do Facebook (com ícone do
+            // Twitter): só um ícone por endereço.
+            redes={header.socialLinks.filter(
+              (rede, i, todas) =>
+                todas.findIndex(
+                  (r) => r.Home_Menu_Item_id.link === rede.Home_Menu_Item_id.link,
+                ) === i,
+            )}
+            entrar={token ? undefined : header.userNavigationSign[1]}
+            cadastrar={token ? undefined : header.userNavigationSign[0]}
+            nome={nome}
           />
           {!token ? (
             <Sign
@@ -74,7 +90,7 @@ function Header({ solid, className }: HeaderProps) {
           ) : (
             <Logged
               userNavigation={header.userNavigationLogged}
-              userName={capitalize(useSocialName ? socialName! : firstName)}
+              userName={nome!}
               className={solid ? "text-marine" : "text-white"}
             />
           )}
