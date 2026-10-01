@@ -37,7 +37,7 @@ function Header({ solid, className }: HeaderProps) {
     },
   } = useAuthStore();
 
-  const { header } = useBaseTemplateContext();
+  const { header, headerAction } = useBaseTemplateContext();
   const fecharMenu = useCallback(() => setOpenMenu(false), []);
   const nome = token
     ? capitalize(useSocialName ? socialName! : firstName)
@@ -50,15 +50,19 @@ function Header({ solid, className }: HeaderProps) {
     <header className={`${className ?? ""} print:hidden`} id="header">
       <div className="md:container mx-auto h-full flex items-center">
         <div className="flex w-full justify-between items-center mx-4 md:mx-auto md:max-w-6xl">
-          <button
-            type="button"
-            onClick={() => setOpenMenu(true)}
-            aria-label="Abrir menu"
-            aria-expanded={openMenu}
-            className="md:hidden -ml-2 p-2"
-          >
-            <MenuIcon className={`${!solid ? "fill-white" : "fill-marine"}`} />
-          </button>
+          {/* Com `headerAction` (o botão do menu lateral do dashboard, #837)
+              o ☰ do site sai: dois botões de menu no mesmo header confundem. */}
+          {!headerAction && (
+            <button
+              type="button"
+              onClick={() => setOpenMenu(true)}
+              aria-label="Abrir menu do site"
+              aria-expanded={openMenu}
+              className="md:hidden -ml-2 p-2"
+            >
+              <MenuIcon className={`${!solid ? "fill-white" : "fill-marine"}`} />
+            </button>
+          )}
           <Logo solid={solid} name />
           <MainMenu itemsMenu={header.pageLinks} solid={solid} />
           <MenuMobile
@@ -94,6 +98,7 @@ function Header({ solid, className }: HeaderProps) {
         <DropdwonMenu userNavigation={report}>
           <Reporticon className="hidden sm:block w-8 h-8" />
         </DropdwonMenu>
+        {headerAction}
       </div>
     </header>
   );

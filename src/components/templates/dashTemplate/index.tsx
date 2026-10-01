@@ -28,9 +28,6 @@ function DashTemplateContent({ hasMenu }: { hasMenu?: boolean }) {
       <div className="z-20 h-[calc(100vh-76px)] absolute xl:relative xl:right-0 print:hidden">
         {hasMenu && <SidebarDash />}
       </div>
-      {hasMenu && (
-        <SidebarTrigger className="xl:hidden fixed z-30 top-24 right-4 print:hidden" />
-      )}
     </div>
   );
 }
@@ -42,20 +39,33 @@ function DashTemplate({ className, hasMenu }: DashTemplateProps) {
     [],
   );
 
+  // ⚠️ O botão do menu lateral mora no header, não flutuando sobre a página:
+  // `fixed` no canto superior direito ele cobria a ação primária das telas e,
+  // sem fundo, sumia sobre topo escuro. Por isso o `SidebarProvider` envolve o
+  // `BaseTemplate` — o header precisa enxergar o `toggleSidebar`. O
+  // `block min-h-0` desfaz o `flex min-h-svh` do wrapper, que aqui só serve
+  // de contexto, para não mexer no layout.
+  const headerAction = hasMenu ? (
+    <SidebarTrigger
+      aria-label="Abrir menu"
+      className="xl:hidden ml-1 text-marine hover:bg-marine/10 hover:text-marine print:hidden"
+    />
+  ) : null;
+
   return (
-    <BaseTemplateContext.Provider
-      value={{ header: headerValue, hasFooter: false }}
-    >
-      <BaseTemplate
-        className={`overflow-y-clip scrollbar-hide h-full ${className} overflow-x-hidden`}
-        solid
-        position="fixed"
+    <SidebarProvider className="block min-h-0">
+      <BaseTemplateContext.Provider
+        value={{ header: headerValue, hasFooter: false, headerAction }}
       >
-        <SidebarProvider>
+        <BaseTemplate
+          className={`overflow-y-clip scrollbar-hide h-full ${className} overflow-x-hidden`}
+          solid
+          position="fixed"
+        >
           <DashTemplateContent hasMenu={hasMenu} />
-        </SidebarProvider>
-      </BaseTemplate>
-    </BaseTemplateContext.Provider>
+        </BaseTemplate>
+      </BaseTemplateContext.Provider>
+    </SidebarProvider>
   );
 }
 
