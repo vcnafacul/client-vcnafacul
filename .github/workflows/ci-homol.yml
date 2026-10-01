@@ -34,10 +34,10 @@ jobs:
       VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
       VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
       VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
-      # ⚠️ Push só em prod: a chave do Firebase recusa homol (decisão da série
-      # pwa-push). Fixo em false para a variável do repositório, que liga prod,
-      # não ligar homol junto.
-      VITE_PUSH_ENABLED: "false"
+      # Push ligado em homol para teste. Fixo aqui (e não pela variável do
+      # repositório, que liga prod) para homol e prod serem ligados à parte.
+      # ⚠️ A chave do Firebase precisa aceitar o domínio de homol.
+      VITE_PUSH_ENABLED: "true"
 
     steps:
       - uses: actions/checkout@v4
@@ -72,10 +72,10 @@ jobs:
       VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
       VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
       VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
-      # ⚠️ Push só em prod: a chave do Firebase recusa homol (decisão da série
-      # pwa-push). Fixo em false para a variável do repositório, que liga prod,
-      # não ligar homol junto.
-      VITE_PUSH_ENABLED: "false"
+      # Push ligado em homol para teste. Fixo aqui (e não pela variável do
+      # repositório, que liga prod) para homol e prod serem ligados à parte.
+      # ⚠️ A chave do Firebase precisa aceitar o domínio de homol.
+      VITE_PUSH_ENABLED: "true"
 
     steps:
       # Checkout develop (estado após o merge) para que homologação reflita sempre a branch develop.

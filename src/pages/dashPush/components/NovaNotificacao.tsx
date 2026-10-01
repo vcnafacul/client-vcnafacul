@@ -19,11 +19,12 @@ import {
   type TipoDePublico,
 } from "../regras";
 import { AcompanharEnvio } from "./AcompanharEnvio";
+import { BuscaDePessoas } from "./BuscaDePessoas";
 import { PreviewDaNotificacao } from "./PreviewDaNotificacao";
 
 const TIPOS: { valor: TipoDePublico; rotulo: string }[] = [
   { valor: "roles", rotulo: "Por função" },
-  { valor: "emails", rotulo: "Pessoas específicas (e-mail)" },
+  { valor: "emails", rotulo: "Pessoas específicas" },
   { valor: "all", rotulo: "Todos" },
 ];
 
@@ -235,17 +236,13 @@ export function NovaNotificacao() {
             </div>
           )}
           {r.tipo === "emails" && (
-            <textarea
-              aria-label="E-mails, um por linha"
-              rows={5}
-              className={campo}
-              placeholder={"maria@exemplo.com\njoao@exemplo.com"}
-              value={r.emailsTexto}
-              onChange={(e) => mudar({ emailsTexto: e.target.value })}
+            <BuscaDePessoas
+              escolhidas={r.pessoas}
+              onChange={(pessoas) => mudar({ pessoas })}
             />
           )}
           {mostrarErro("roleIds")}
-          {mostrarErro("emailsTexto")}
+          {mostrarErro("pessoas")}
         </fieldset>
 
         {alcance && (

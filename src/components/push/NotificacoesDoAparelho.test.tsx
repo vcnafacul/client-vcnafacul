@@ -6,6 +6,7 @@ import { useAuthStore } from "@/store/auth";
 const hook = vi.hoisted(() => ({
   status: "default" as PushStatus | null,
   aparelhos: [] as unknown[],
+  aparelhosNaApi: null as number | null,
   ocupado: false,
   ativar: vi.fn(),
   desativar: vi.fn(),
@@ -27,6 +28,7 @@ import { TEXTOS } from "./textosDoStatus";
 const comStatus = (status: PushStatus | null, aparelhos: unknown[] = []) => {
   hook.status = status;
   hook.aparelhos = aparelhos;
+  hook.aparelhosNaApi = aparelhos.length || null;
   return render(<NotificacoesDoAparelho />);
 };
 const botao = (nome: RegExp) => screen.queryByRole("button", { name: nome });
@@ -99,12 +101,39 @@ describe("NotificacoesDoAparelho", () => {
     },
   );
 
-  it("active: enviar teste e desativar; conta os aparelhos quando há mais de um", () => {
+  it("active: diz que o token está no servidor; desativar", () => {
     comStatus("active", [{}, {}]);
-    expect(screen.getByText("Ativas em 2 aparelhos.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Registrado no servidor em 2 aparelhos."),
+    ).toBeInTheDocument();
 
     fireEvent.click(botao(/desativar/i)!);
     expect(hook.desativar).toHaveBeenCalledTimes(1);
+  });
+
+  it("⚠️ active no navegador mas a api sem aparelho → avisa e oferece registrar de novo", () => {
+    hook.status = "active";
+    hook.aparelhos = [];
+    hook.aparelhosNaApi = 0;
+    render(<NotificacoesDoAparelho />);
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "ainda não está registrado no servidor",
+    );
+    fireEvent.click(botao(/registrar de novo/i)!);
+    expect(hook.ativar).toHaveBeenCalledTimes(1);
+  });
+
+  it("falha ao ativar (ex.: api fora) vira toast de erro", async () => {
+    hook.ativar.mockRejectedValueOnce(
+      new Error("Não foi possível ativar as notificações neste aparelho"),
+    );
+    comStatus("default");
+    fireEvent.click(botao(/ativar notificações/i)!);
+    await waitFor(() =>
+      expect(toast.error).toHaveBeenCalledWith(
+        "Não foi possível ativar as notificações neste aparelho",
+      ),
+    );
   });
 
   it("⚠️ sem a permissão enviarNotificacao, o botão de teste nem aparece", () => {

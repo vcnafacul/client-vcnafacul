@@ -48,8 +48,15 @@ function PassosInstalarNoIPhone() {
  * Some quando o push está desligado no ambiente (homol, dev).
  */
 export function NotificacoesDoAparelho() {
-  const { status, aparelhos, ocupado, ativar, desativar, testar } =
-    usePushNotifications();
+  const {
+    status,
+    aparelhos,
+    aparelhosNaApi,
+    ocupado,
+    ativar,
+    desativar,
+    testar,
+  } = usePushNotifications();
   const [testando, setTestando] = useState(false);
   // "Enviar teste" só para quem pode enviar notificações (`enviarNotificacao`,
   // BE-03) — a api também exige a permissão (403 sem ela).
@@ -58,6 +65,18 @@ export function NotificacoesDoAparelho() {
   if (!status || status === "disabled-by-flag") return null;
   const { titulo, texto } = TEXTOS[status];
   const ativo = status === "active";
+  // ⚠️ "Ativo" vem da assinatura do NAVEGADOR. Se a api não tem nenhum
+  // aparelho, o token não foi gravado e nada chega — tem de registrar de novo.
+  const semRegistroNaApi = ativo && aparelhosNaApi === 0;
+
+  // `ativar` direto no onClick: o pedido de permissão só vale dentro do gesto.
+  const ativarComAviso = async () => {
+    try {
+      await ativar();
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  };
 
   const enviarTeste = async () => {
     setTestando(true);
@@ -101,18 +120,29 @@ export function NotificacoesDoAparelho() {
           <p className="text-sm text-slate-600">{texto}</p>
           {status === "denied" && <PassosDesbloquear />}
           {status === "ios-needs-install" && <PassosInstalarNoIPhone />}
-          {ativo && aparelhos.length > 1 && (
+          {ativo && !semRegistroNaApi && aparelhos.length > 0 && (
             <p className="text-sm text-slate-500">
-              Ativas em {aparelhos.length} aparelhos.
+              {aparelhos.length === 1
+                ? "Registrado no servidor neste aparelho."
+                : `Registrado no servidor em ${aparelhos.length} aparelhos.`}
+            </p>
+          )}
+          {semRegistroNaApi && (
+            <p role="alert" className="text-sm text-orange">
+              Este aparelho ainda não está registrado no servidor, então os
+              avisos não chegam. Toque em Registrar de novo.
             </p>
           )}
 
           <div className="flex flex-wrap gap-2 pt-1">
             {(status === "default" || status === "granted-not-registered") && (
-              // ⚠️ `ativar` direto no onClick: o pedido de permissão só vale
-              // dentro do gesto do usuário.
-              <Button onClick={ativar} disabled={ocupado}>
+              <Button onClick={ativarComAviso} disabled={ocupado}>
                 Ativar notificações
+              </Button>
+            )}
+            {semRegistroNaApi && (
+              <Button onClick={ativarComAviso} disabled={ocupado}>
+                Registrar de novo
               </Button>
             )}
             {ativo && (
