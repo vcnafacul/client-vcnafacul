@@ -1,4 +1,4 @@
-import { ComponentProps, useEffect, useRef, useState } from "react";
+import { ComponentProps, useMemo } from "react";
 import { IoChevronUpCircleSharp } from "react-icons/io5";
 import { VariantProps, tv } from "tailwind-variants";
 import SubMenuDash from "../../organisms/subMenuDash";
@@ -36,31 +36,22 @@ type DasCardProps = VariantProps<typeof dashCard> &
   };
 
 function DashCard({ card, size, opened, ...props }: DasCardProps) {
-  const [appearsAdminDashcard, setAppearsAdminDashcard] = useState(false);
   const {
     data: { permissao },
   } = useAuthStore();
   const Icon = card.image;
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [contentHeight, setContentHeight] = useState(0);
 
-  useEffect(() => {
-    const newSubMenus = !!card.subMenuList.find((subCardInfo) => {
-      if (
-        !subCardInfo.permissions ||
-        subCardInfo.permissions?.some((p) => permissao[p])
-      )
-        return true;
-      return false;
-    });
-    setAppearsAdminDashcard(newSubMenus);
-  }, [card.subMenuList, permissao]);
-
-  useEffect(() => {
-    if (contentRef.current) {
-      setContentHeight(contentRef.current.scrollHeight);
-    }
-  }, [opened, card.subMenuList]);
+  // Calculado no render (não em efeito): o card já nasce visível, sem um
+  // primeiro render escondido.
+  const appearsAdminDashcard = useMemo(
+    () =>
+      card.subMenuList.some(
+        (subCardInfo) =>
+          !subCardInfo.permissions ||
+          subCardInfo.permissions.some((p) => permissao[p]),
+      ),
+    [card.subMenuList, permissao],
+  );
 
   return (
     appearsAdminDashcard && (
@@ -82,15 +73,24 @@ function DashCard({ card, size, opened, ...props }: DasCardProps) {
             className={`${size !== "small" ? "absolute right-4 bottom-4" : ""} ${opened ? "rotate-180" : ""} ${transition}`}
           />
         </div>
+        {/*
+          ⚠️ Abre/fecha por `grid-template-rows` (0fr ↔ 1fr), sem medir altura.
+          Antes era `max-height` com o `scrollHeight` medido num efeito: na
+          gaveta do mobile o card desmonta ao fechar o menu e, ao reabrir com a
+          seção ainda aberta, a medição rodava antes do card existir e ficava
+          em 0 — seção "aberta" sem nenhum subitem, pedindo dois cliques.
+        */}
         <div
-          ref={contentRef}
-          className="overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out"
+          data-testid="submenu"
+          className="grid transition-[grid-template-rows,opacity] duration-300 ease-in-out"
           style={{
-            maxHeight: opened ? `${contentHeight}px` : "0px",
+            gridTemplateRows: opened ? "1fr" : "0fr",
             opacity: opened ? 1 : 0,
           }}
         >
-          <SubMenuDash subDashCardInfo={card.subMenuList} />
+          <div className="min-h-0 overflow-hidden">
+            <SubMenuDash subDashCardInfo={card.subMenuList} />
+          </div>
         </div>
       </div>
     )
