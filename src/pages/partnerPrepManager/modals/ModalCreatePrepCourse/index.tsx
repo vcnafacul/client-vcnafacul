@@ -265,7 +265,7 @@ export const ModalCreatePrepCourse = ({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose!}
-      className="space-y-6 bg-white p-4 rounded-md w-[90vw] h-[90vh]  sm:w-[800px] sm:h-fit"
+      className="space-y-6 bg-white p-4 rounded-md w-[90vw] h-[90vh] supports-[height:100dvh]:h-[90dvh] overflow-y-auto sm:w-[800px] sm:h-fit"
     >
       <Typography variant="h4" className="font-bold text-marine">
         Cadastro de Cursinho
