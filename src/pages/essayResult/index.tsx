@@ -21,15 +21,15 @@ export default function EssayResult() {
       .finally(() => setLoading(false));
   }, [id, token]);
 
-  if (loading) return <div className="p-6 text-center">Carregando...</div>;
-  if (!essay) return <div className="p-6 text-center">Redação não encontrada</div>;
+  if (loading) return <div className="p-4 sm:p-6 text-center">Carregando...</div>;
+  if (!essay) return <div className="p-4 sm:p-6 text-center">Redação não encontrada</div>;
 
   const aiReview = essay.reviews?.find((r) => r.reviewType === "AI");
   const humanReviews = essay.reviews?.filter((r) => r.reviewType === "HUMAN") ?? [];
   const isWaiting = essay.status === "SUBMITTED";
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold text-marine">
         {essay.title || "Minha Redação"}
       </h1>

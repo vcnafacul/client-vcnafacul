@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import LineChartMui from "@/components/atoms/lineChartMui";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { EssayStatsTimelineEntry } from "@/dtos/essay";
 
 const COMPETENCY_LABELS = [
@@ -22,9 +23,14 @@ interface Props {
 }
 
 export default function CompetencyEvolutionChart({ timeline }: Props) {
-  const [reviewType, setReviewType] = useState<"ai" | "human">("ai");
-
+  const acimaDeSm = useAcimaDeSm();
+  const hasAi = timeline.some((e) => e.aiReview !== null);
   const hasHuman = timeline.some((e) => e.humanReview !== null);
+  // Abria sempre em IA: com a IA desligada o gráfico sumia inteiro, junto com
+  // o botão de trocar para Humana.
+  const [reviewType, setReviewType] = useState<"ai" | "human">(
+    hasAi ? "ai" : "human",
+  );
 
   const entries = timeline.filter((e) =>
     reviewType === "ai" ? e.aiReview : e.humanReview,
@@ -47,7 +53,7 @@ export default function CompetencyEvolutionChart({ timeline }: Props) {
     <div>
       <div className="flex items-center justify-between mb-2">
         <p className="text-sm font-bold">Evolução por Competência</p>
-        {hasHuman && (
+        {hasAi && hasHuman && (
           <ToggleButtonGroup
             size="small"
             value={reviewType}
@@ -64,7 +70,8 @@ export default function CompetencyEvolutionChart({ timeline }: Props) {
         series={series}
         yAxisLabel="Nota"
         yAxisMax={200}
-        height={300}
+        height={acimaDeSm ? 300 : 240}
+        compacto={!acimaDeSm}
       />
     </div>
   );

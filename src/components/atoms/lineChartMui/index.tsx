@@ -27,6 +27,11 @@ export interface LineChartMuiProps {
   height?: string | number;
   yAxisLabel?: string;
   yAxisMax?: number;
+  /**
+   * Para o celular: margens menores, sem títulos de eixo e sem os rótulos do
+   * eixo X (que se sobrepõem quando são longos); o valor do X segue no tooltip.
+   */
+  compacto?: boolean;
 }
 
 export default function LineChartMui({
@@ -37,6 +42,7 @@ export default function LineChartMui({
   height = 400,
   yAxisLabel,
   yAxisMax,
+  compacto = false,
 }: LineChartMuiProps) {
   return (
     <Box sx={{ width, display: "flex", flexDirection: "column" }}>
@@ -47,16 +53,22 @@ export default function LineChartMui({
       )}
       <Box sx={{ height, minHeight: 0 }}>
         <LineChart
-          xAxis={[{ data: xAxis, scaleType: "band", label: "Período" }]}
-          margin={{
-            left: 80,
-            right: 40,
-            top: 20,
-            bottom: 40,
-          }}
+          xAxis={[
+            {
+              data: xAxis,
+              scaleType: "band",
+              label: compacto ? undefined : "Período",
+              ...(compacto && { tickLabelStyle: { display: "none" } }),
+            },
+          ]}
+          margin={
+            compacto
+              ? { left: 40, right: 8, top: 20, bottom: 12 }
+              : { left: 80, right: 40, top: 20, bottom: 40 }
+          }
           yAxis={[
             {
-              label: yAxisLabel ?? "Quantidade",
+              label: compacto ? undefined : yAxisLabel ?? "Quantidade",
               ...(yAxisMax !== undefined && { max: yAxisMax }),
               labelStyle: {
                 translate: -15,

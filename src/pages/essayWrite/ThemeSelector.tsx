@@ -1,14 +1,17 @@
 import { Link } from "react-router-dom";
 import { EssayTheme } from "@/dtos/essay";
 import { ESSAY_HISTORY } from "@/routes/path";
+import { dataLocal } from "@/utils/date";
 
 interface ThemeSelectorProps {
   themes: EssayTheme[];
   onSelect: (theme: EssayTheme) => void;
 }
 
+// `weekStart`/`weekEnd` chegam como "YYYY-MM-DD" (coluna `date`): com
+// `new Date` seriam lidos em UTC e mostrariam o dia anterior no Brasil.
 function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("pt-BR", {
+  return dataLocal(dateStr).toLocaleDateString("pt-BR", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",

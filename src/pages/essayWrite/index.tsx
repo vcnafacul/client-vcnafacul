@@ -161,23 +161,44 @@ export default function EssayWrite() {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
+  // Voltar acima do título: na mesma linha que "Ver histórico" passava da tela
+  // no celular. "Ver histórico" fica embaixo do título até `xl`, onde o botão
+  // do menu lateral (fixo no canto superior direito) some — antes disso ele
+  // cobria o link. Chamada como `{cabecalho()}` (ver semComponenteNoRender.test.ts).
+  const cabecalho = (
+    titulo: string,
+    voltar?: { label: string; onClick: () => void },
+  ) => (
+    <div className="space-y-1">
+      {voltar && (
+        <button
+          onClick={voltar.onClick}
+          className="text-marine hover:underline text-sm"
+        >
+          &larr; {voltar.label}
+        </button>
+      )}
+      <div className="flex flex-col items-start gap-1 xl:flex-row xl:justify-between xl:items-center xl:gap-4">
+        <h1 className="text-2xl font-bold text-marine">{titulo}</h1>
+        <Link
+          to={`/dashboard/${ESSAY_HISTORY}`}
+          className="text-marine hover:underline text-sm"
+        >
+          Ver histórico
+        </Link>
+      </div>
+    </div>
+  );
+
   if (loading) {
-    return <div className="p-6 text-center">Carregando...</div>;
+    return <div className="p-4 sm:p-6 text-center">Carregando...</div>;
   }
 
   // Theme selection screen
   if (!selectedTheme) {
     return (
-      <div className="p-6 max-w-4xl mx-auto space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-marine">Escrever Redação</h1>
-          <Link
-            to={`/dashboard/${ESSAY_HISTORY}`}
-            className="text-marine hover:underline text-sm"
-          >
-            Ver histórico
-          </Link>
-        </div>
+      <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
+        {cabecalho("Escrever Redação")}
         <ThemeSelector themes={availableThemes} onSelect={handleSelectTheme} />
       </div>
     );
@@ -186,18 +207,11 @@ export default function EssayWrite() {
   // Mode select screen
   if (mode === 'select') {
     return (
-      <div className="p-6 max-w-4xl mx-auto space-y-6">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <button onClick={handleBack} className="text-marine hover:underline text-sm">
-              &larr; Trocar tema
-            </button>
-            <h1 className="text-2xl font-bold text-marine">Escrever Redação</h1>
-          </div>
-          <Link to={`/dashboard/${ESSAY_HISTORY}`} className="text-marine hover:underline text-sm">
-            Ver histórico
-          </Link>
-        </div>
+      <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
+        {cabecalho("Escrever Redação", {
+          label: "Trocar tema",
+          onClick: handleBack,
+        })}
         <ThemeDisplay theme={selectedTheme} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <button
@@ -224,21 +238,14 @@ export default function EssayWrite() {
   // Upload screen
   if (mode === 'upload') {
     return (
-      <div className="p-6 max-w-4xl mx-auto space-y-6">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => { setMode('select'); setSelectedFile(null); }}
-              className="text-marine hover:underline text-sm"
-            >
-              &larr; Voltar
-            </button>
-            <h1 className="text-2xl font-bold text-marine">Enviar Redação</h1>
-          </div>
-          <Link to={`/dashboard/${ESSAY_HISTORY}`} className="text-marine hover:underline text-sm">
-            Ver histórico
-          </Link>
-        </div>
+      <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
+        {cabecalho("Enviar Redação", {
+          label: "Voltar",
+          onClick: () => {
+            setMode('select');
+            setSelectedFile(null);
+          },
+        })}
         <ThemeDisplay theme={selectedTheme} />
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
           {!selectedFile ? (
@@ -272,7 +279,7 @@ export default function EssayWrite() {
           <button
             onClick={() => setShowConfirmModal(true)}
             disabled={submitting || !selectedFile}
-            className="px-6 py-2 bg-marine text-white rounded-lg hover:bg-marine/90 disabled:opacity-50"
+            className="w-full sm:w-auto px-6 py-2 bg-marine text-white rounded-lg hover:bg-marine/90 disabled:opacity-50"
           >
             {submitting ? "Enviando..." : "Enviar redação"}
           </button>
@@ -311,24 +318,11 @@ export default function EssayWrite() {
 
   // Editor screen (mode === 'type')
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setMode('select')}
-            className="text-marine hover:underline text-sm"
-          >
-            &larr; Voltar
-          </button>
-          <h1 className="text-2xl font-bold text-marine">Escrever Redação</h1>
-        </div>
-        <Link
-          to={`/dashboard/${ESSAY_HISTORY}`}
-          className="text-marine hover:underline text-sm"
-        >
-          Ver histórico
-        </Link>
-      </div>
+    <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
+      {cabecalho("Escrever Redação", {
+        label: "Voltar",
+        onClick: () => setMode('select'),
+      })}
       <ThemeDisplay theme={selectedTheme} />
       <div>
         <input
@@ -356,17 +350,18 @@ export default function EssayWrite() {
           <WordCounter text={text} wordCount={wordCount} />
         </div>
       </div>
-      <div className="flex gap-4 justify-end">
+      {/* No celular empilhados, com o envio em cima. */}
+      <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 sm:justify-end">
         <button
           onClick={handleSaveDraft}
-          className="px-6 py-2 border border-marine text-marine rounded-lg hover:bg-gray-50"
+          className="w-full sm:w-auto px-6 py-2 border border-marine text-marine rounded-lg hover:bg-gray-50"
         >
           Salvar rascunho
         </button>
         <button
           onClick={() => setShowConfirmModal(true)}
           disabled={submitting || !title.trim() || !text.trim()}
-          className="px-6 py-2 bg-marine text-white rounded-lg hover:bg-marine/90 disabled:opacity-50"
+          className="w-full sm:w-auto px-6 py-2 bg-marine text-white rounded-lg hover:bg-marine/90 disabled:opacity-50"
         >
           {submitting ? "Enviando..." : "Enviar redacao"}
         </button>

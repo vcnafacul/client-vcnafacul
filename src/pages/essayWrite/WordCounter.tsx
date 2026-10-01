@@ -31,11 +31,12 @@ export default function WordCounter({ text, wordCount }: WordCounterProps) {
         : "bg-marine";
 
   return (
-    <div className="flex items-center gap-4 text-sm text-grey">
+    // No celular os números quebram linha e a barra desce, na largura toda.
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-grey">
       <span>Palavras: {words}</span>
       <span>Linhas: {lines}</span>
       <span>Caracteres: {chars}</span>
-      <div className="flex-1 h-2 bg-gray-200 rounded-full max-w-[200px]">
+      <div className="w-full sm:w-auto sm:flex-1 h-2 bg-gray-200 rounded-full sm:max-w-[200px]">
         <div
           className={`h-2 rounded-full transition-all ${color}`}
           style={{ width: `${pct}%` }}
