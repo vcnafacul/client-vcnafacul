@@ -64,9 +64,9 @@ export function SidebarDash() {
         {isSupportAgent && !isMobile && <SupportInboxBadge />}
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup className="overflow-y-scroll scrollbar-hide">
+        <SidebarGroup className="overflow-y-scroll scrollbar-hide pt-0">
           <SidebarGroupContent className="group-data-[collapsible=icon]:hidden">
-            <SidebarMenu className="py-4 gap-0">
+            <SidebarMenu className="pt-0 pb-4 gap-0">
               {dashCardMenuItems.map((card) => (
                 <DashCard
                   onClick={() => {
