@@ -203,9 +203,9 @@ function ModalDoUsuario({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white rounded-xl p-5 shadow-lg"
+      className="bg-white rounded-xl p-4 sm:p-5 shadow-lg w-full max-w-[50.5rem]"
     >
-      <div className="flex w-[92vw] max-w-3xl flex-col gap-4">
+      <div className="flex w-full flex-col gap-4">
         <Text size="secondary" className="font-bold text-marine">
           Usuário
         </Text>
