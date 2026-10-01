@@ -14,8 +14,14 @@ export default function SortableSupporterRow({
   onDelete: (s: HomeSupporter) => void;
   onToggleActive: (s: HomeSupporter) => void;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: supporter.id });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: supporter.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -27,11 +33,13 @@ export default function SortableSupporterRow({
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-3 p-3 border rounded bg-white${!supporter.active ? " opacity-50" : ""}`}
+      // flex-wrap: no celular as ações descem para a linha de baixo (as três
+      // em texto, ao lado do logo, deixavam o nome sem espaço).
+      className={`flex flex-wrap items-center gap-3 p-3 border rounded bg-white${!supporter.active ? " opacity-50" : ""}`}
     >
       <button
         type="button"
-        className="cursor-grab active:cursor-grabbing px-2 text-gray-500"
+        className="cursor-grab active:cursor-grabbing touch-none px-2 py-2 text-gray-500"
         aria-label="Arrastar para reordenar"
         {...attributes}
         {...listeners}
@@ -66,27 +74,29 @@ export default function SortableSupporterRow({
           {supporter.link}
         </a>
       </div>
-      <button
-        type="button"
-        className="text-sm text-blue-600 hover:underline"
-        onClick={() => onEdit(supporter)}
-      >
-        Editar
-      </button>
-      <button
-        type="button"
-        className={`text-sm hover:underline ${supporter.active ? "text-yellow-600" : "text-green-600"}`}
-        onClick={() => onToggleActive(supporter)}
-      >
-        {supporter.active ? "Inativar" : "Ativar"}
-      </button>
-      <button
-        type="button"
-        className="text-sm text-red-600 hover:underline"
-        onClick={() => onDelete(supporter)}
-      >
-        Excluir
-      </button>
+      <div className="flex w-full justify-end gap-4 sm:w-auto sm:gap-3">
+        <button
+          type="button"
+          className="text-sm text-blue-600 hover:underline"
+          onClick={() => onEdit(supporter)}
+        >
+          Editar
+        </button>
+        <button
+          type="button"
+          className={`text-sm hover:underline ${supporter.active ? "text-yellow-600" : "text-green-600"}`}
+          onClick={() => onToggleActive(supporter)}
+        >
+          {supporter.active ? "Inativar" : "Ativar"}
+        </button>
+        <button
+          type="button"
+          className="text-sm text-red-600 hover:underline"
+          onClick={() => onDelete(supporter)}
+        >
+          Excluir
+        </button>
+      </div>
     </div>
   );
 }
