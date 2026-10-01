@@ -1,5 +1,5 @@
 import { caminhoInterno } from "@/services/push/caminho";
-import type { Publico } from "@/services/push/admin";
+import type { Destinatario, Publico } from "@/services/push/admin";
 
 export const LIMITE_TITULO = 100;
 export const LIMITE_CORPO = 500;
@@ -14,7 +14,8 @@ export type Rascunho = {
   url: string;
   tipo: TipoDePublico;
   roleIds: string[];
-  emailsTexto: string;
+  /** "Pessoas específicas": escolhidas pela busca, nunca digitadas. */
+  pessoas: Destinatario[];
 };
 
 export const RASCUNHO_VAZIO: Rascunho = {
@@ -23,25 +24,17 @@ export const RASCUNHO_VAZIO: Rascunho = {
   url: "",
   tipo: "roles",
   roleIds: [],
-  emailsTexto: "",
+  pessoas: [],
 };
-
-/** Um por linha, vírgula ou ponto e vírgula; sem repetidos, em minúsculas. */
-export function emailsDoTexto(texto: string): string[] {
-  return [
-    ...new Set(
-      texto
-        .split(/[\n,;]+/)
-        .map((e) => e.trim().toLowerCase())
-        .filter(Boolean),
-    ),
-  ];
-}
 
 export function publicoDo(r: Rascunho): Publico {
   if (r.tipo === "all") return { type: "all" };
   if (r.tipo === "roles") return { type: "roles", roleIds: r.roleIds };
-  return { type: "emails", emails: emailsDoTexto(r.emailsTexto) };
+  // ⚠️ O e-mail vem da busca (a pessoa existe), nunca digitado à mão.
+  return {
+    type: "emails",
+    emails: r.pessoas.map((p) => p.email.toLowerCase()),
+  };
 }
 
 /** Erros por campo, antes de chamar a api. Vazio = pode seguir. */
@@ -60,8 +53,8 @@ export function errosDo(r: Rascunho): Partial<Record<keyof Rascunho, string>> {
     erros.url = "Use um caminho do site, como /simulados";
   if (r.tipo === "roles" && r.roleIds.length === 0)
     erros.roleIds = "Escolha ao menos uma função";
-  if (r.tipo === "emails" && emailsDoTexto(r.emailsTexto).length === 0)
-    erros.emailsTexto = "Cole ao menos um e-mail";
+  if (r.tipo === "emails" && r.pessoas.length === 0)
+    erros.pessoas = "Escolha ao menos uma pessoa";
   return erros;
 }
 

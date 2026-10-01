@@ -17,6 +17,8 @@ interface Props {
   originPage?: string;
   device?: string;
   browser?: string;
+  cursinhoLine?: string;
+  cursinhoMissing?: boolean;
   className?: string;
 }
 
@@ -33,6 +35,8 @@ export function ChatLayout({
   originPage,
   device,
   browser,
+  cursinhoLine,
+  cursinhoMissing,
   className,
 }: Props) {
   return (
@@ -49,6 +53,8 @@ export function ChatLayout({
         originPage={originPage}
         device={device}
         browser={browser}
+        cursinhoLine={cursinhoLine}
+        cursinhoMissing={cursinhoMissing}
       />
       <MessageList
         conversationId={conversationId}

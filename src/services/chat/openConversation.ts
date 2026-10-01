@@ -9,7 +9,7 @@ export interface ConversationMetadata {
 
 interface InscriptionContext {
   inscriptionCourseId?: string;
-  studentCourseId?: string;
+  declaredInterestInscriptionCourseId?: string;
 }
 
 export class CooldownError extends Error {

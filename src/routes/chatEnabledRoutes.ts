@@ -6,7 +6,7 @@ import {
 
 export interface ChatEnabledRoute {
   pattern: string;
-  paramKey: 'inscriptionCourseId' | 'studentCourseId';
+  paramKey: 'inscriptionCourseId' | 'declaredInterestInscriptionCourseId';
   routeParam: string;
 }
 
@@ -18,7 +18,8 @@ export const CHAT_ENABLED_ROUTES: ChatEnabledRoute[] = [
   },
   {
     pattern: `/${DECLARED_INTEREST}/:inscriptionId`,
-    paramKey: 'studentCourseId',
+    // O :inscriptionId desta rota é um id de InscriptionCourse.
+    paramKey: 'declaredInterestInscriptionCourseId',
     routeParam: 'inscriptionId',
   },
 ];

@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import {
   RASCUNHO_VAZIO,
   descricaoDoPublico,
-  emailsDoTexto,
   errosDo,
   publicoDo,
 } from "./regras";
@@ -15,13 +14,6 @@ const ok = {
 };
 
 describe("regras da tela de envio", () => {
-  it("e-mails: linha, vírgula e ponto e vírgula; sem repetidos; minúsculas", () => {
-    expect(emailsDoTexto(" A@x.com\nb@x.com, a@x.com ; \n\n")).toEqual([
-      "a@x.com",
-      "b@x.com",
-    ]);
-  });
-
   it("rascunho válido não tem erros", () => {
     expect(errosDo(ok)).toEqual({});
   });
@@ -40,10 +32,10 @@ describe("regras da tela de envio", () => {
     expect(errosDo({ ...ok, url: "//golpe.example" }).url).toBeDefined();
   });
 
-  it("público: função sem escolha e e-mail vazio são erros; todos não", () => {
+  it("público: função sem escolha e nenhuma pessoa são erros; todos não", () => {
     expect(errosDo({ ...ok, roleIds: [] }).roleIds).toBeDefined();
     expect(
-      errosDo({ ...ok, tipo: "emails", emailsTexto: " , " }).emailsTexto,
+      errosDo({ ...ok, tipo: "emails", pessoas: [] }).pessoas,
     ).toBeDefined();
     expect(errosDo({ ...ok, tipo: "all", roleIds: [] })).toEqual({});
   });
@@ -52,7 +44,11 @@ describe("regras da tela de envio", () => {
     expect(publicoDo({ ...ok, tipo: "all" })).toEqual({ type: "all" });
     expect(publicoDo(ok)).toEqual({ type: "roles", roleIds: ["r1"] });
     expect(
-      publicoDo({ ...ok, tipo: "emails", emailsTexto: "A@x.com" }),
+      publicoDo({
+        ...ok,
+        tipo: "emails",
+        pessoas: [{ id: "u1", name: "Ana", email: "A@x.com", devices: 1 }],
+      }),
     ).toEqual({
       type: "emails",
       emails: ["a@x.com"],

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Send } from "lucide-react";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
@@ -12,11 +12,30 @@ interface Props {
 }
 
 const MAX = 1000;
+const MAX_LINES = 6;
 
 export function ChatInput({ conversationId, status }: Props) {
   const [value, setValue] = useState("");
   const [sending, setSending] = useState(false);
   const jwt = useAuthStore((s) => s.data.token);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Cresce com o texto até MAX_LINES; acima disso rola dentro da caixa.
+  // Ao limpar após o envio, volta sozinho a uma linha.
+  useLayoutEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    const style = getComputedStyle(el);
+    const border =
+      parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
+    const maxHeight =
+      parseFloat(style.lineHeight) * MAX_LINES +
+      parseFloat(style.paddingTop) +
+      parseFloat(style.paddingBottom) +
+      border;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight + border, maxHeight)}px`;
+  }, [value]);
 
   async function handleSend() {
     const v = value.trim();
@@ -48,6 +67,7 @@ export function ChatInput({ conversationId, status }: Props) {
     <div className="border-t bg-white p-2 flex items-end gap-2">
       <div className="flex-1">
         <textarea
+          ref={textareaRef}
           value={value}
           onChange={(e) => setValue(e.target.value.slice(0, MAX))}
           placeholder="Escreva sua mensagem..."
@@ -59,7 +79,7 @@ export function ChatInput({ conversationId, status }: Props) {
           }}
           disabled={sending}
           rows={1}
-          className="w-full resize-none rounded-md border border-lightGray bg-backgroundGrey/50 px-3 py-2 text-sm text-darkGrey placeholder:text-grey focus:outline-none focus:ring-2 focus:ring-marine/40 focus:border-marine disabled:opacity-60 transition"
+          className="chat-scrollbar w-full resize-none overflow-y-auto rounded-md border border-lightGray bg-backgroundGrey/50 px-3 py-2 text-sm text-darkGrey placeholder:text-grey focus:outline-none focus:ring-2 focus:ring-marine/40 focus:border-marine disabled:opacity-60 transition"
         />
         <span
           className={cn(

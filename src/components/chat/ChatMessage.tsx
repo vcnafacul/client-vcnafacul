@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import type { MessageDoc } from "@/services/firebase/messages";
+import { formatMessageTimestamp } from "./formatMessageTimestamp";
 
 interface Props {
   message: MessageDoc;
@@ -8,10 +9,7 @@ interface Props {
 
 export function ChatMessage({ message, isOwn }: Props) {
   const time = message.createdAt
-    ? new Date(message.createdAt.toMillis()).toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
+    ? formatMessageTimestamp(new Date(message.createdAt.toMillis()))
     : "";
   return (
     <div

@@ -22,12 +22,16 @@ export function usePushNotifications() {
   const token = useAuthStore((s) => s.data.token);
   const [status, setStatus] = useState<PushStatus | null>(null);
   const [aparelhos, setAparelhos] = useState<AparelhoAtivo[]>([]);
+  /** `null` = ainda não perguntou à api (ou ela falhou). */
+  const [aparelhosNaApi, setAparelhosNaApi] = useState<number | null>(null);
   const [ocupado, setOcupado] = useState(false);
 
   const atualizarAparelhos = useCallback(async () => {
     if (!token) return;
     try {
-      setAparelhos(await listarMeusAparelhos(token));
+      const lista = await listarMeusAparelhos(token);
+      setAparelhos(lista);
+      setAparelhosNaApi(lista.length);
     } catch {
       /* a contagem é informativa; não bloqueia a UI */
     }
@@ -55,7 +59,9 @@ export function usePushNotifications() {
   const ativar = async () => {
     setOcupado(true);
     try {
-      setStatus(await enablePush(token));
+      const novo = await enablePush(token);
+      setStatus(novo);
+      if (novo === "active") await atualizarAparelhos();
     } finally {
       setOcupado(false);
     }
@@ -74,5 +80,13 @@ export function usePushNotifications() {
 
   const testar = () => enviarTeste(token);
 
-  return { status, aparelhos, ocupado, ativar, desativar, testar };
+  return {
+    status,
+    aparelhos,
+    aparelhosNaApi,
+    ocupado,
+    ativar,
+    desativar,
+    testar,
+  };
 }

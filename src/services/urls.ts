@@ -18,6 +18,7 @@ export const pushTest = `${push}/test`;
 export const pushPreview = `${push}/audience/preview`;
 export const pushSend = `${push}/send`;
 export const pushNotifications = `${push}/notifications`;
+export const pushRecipients = `${push}/recipients`;
 export const forgot = `${user}/forgot`;
 export const reset = `${user}/reset`;
 export const confirmemail = `${user}/confirmemail`;

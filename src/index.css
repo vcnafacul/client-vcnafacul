@@ -92,3 +92,29 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Barra de rolagem fina do chat: sem setas, só aparece quando o texto transborda. */
+.chat-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgb(11 39 71 / 0.25);
+  border-radius: 9999px;
+}
+.chat-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(11 39 71 / 0.45);
+}
+.chat-scrollbar::-webkit-scrollbar-button {
+  display: none;
+}
+/* Firefox. Fora do Chromium, que ignora ::-webkit-scrollbar quando
+   scrollbar-color/scrollbar-width estão definidos (Chrome 121+). */
+@supports not selector(::-webkit-scrollbar) {
+  .chat-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(11 39 71 / 0.25) transparent;
+  }
+}

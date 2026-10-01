@@ -28,7 +28,8 @@ jobs:
       # Chave pública do Web Push (getToken, FE-03). Não é segredo, mas fica
       # junto das outras VITE_FIREBASE_*.
       VITE_FIREBASE_VAPID_KEY: ${{ secrets.VITE_FIREBASE_VAPID_KEY }}
-      VITE_PUSH_ENABLED: ${{ vars.VITE_PUSH_ENABLED }}
+      # Ligado por padrão; a variável do repositório = "false" desliga.
+      VITE_PUSH_ENABLED: ${{ vars.VITE_PUSH_ENABLED || 'true' }}
       VITE_PUSH_BANNER: ${{ vars.VITE_PUSH_BANNER }}
 
     steps:

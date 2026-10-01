@@ -28,6 +28,10 @@ interface Props {
   originPage?: string;
   device?: string;
   browser?: string;
+  /** Linha própria sob o título com o cursinho da conversa (inbox do admin). */
+  cursinhoLine?: string;
+  /** `cursinhoLine` é o texto de "sem cursinho": exibido esmaecido. */
+  cursinhoMissing?: boolean;
 }
 
 export function ChatHeader({
@@ -42,6 +46,8 @@ export function ChatHeader({
   originPage,
   device,
   browser,
+  cursinhoLine,
+  cursinhoMissing = false,
 }: Props) {
   const jwt = useAuthStore((s) => s.data.token);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -92,6 +98,19 @@ export function ChatHeader({
           )}
           <div className="min-w-0 flex flex-col">
             <span className="font-semibold text-sm truncate">{title}</span>
+            {cursinhoLine && (
+              <span
+                className={cn(
+                  "text-xs truncate",
+                  cursinhoMissing
+                    ? "italic text-white/60"
+                    : "font-medium text-white",
+                )}
+                title={cursinhoLine}
+              >
+                {cursinhoLine}
+              </span>
+            )}
             <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
               {subtitle &&
                 subtitle.split(" · ").map((part, i) =>
