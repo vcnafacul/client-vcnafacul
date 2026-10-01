@@ -34,7 +34,9 @@ import {
 import Grid from "@mui/material/Grid2";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { ExpandableSection } from "../partnerPrepForm/components/expandableSection";
+import { SecoesMobile } from "../partnerPrepForm/components/SecoesMobile";
 import { ModalConfirmDuplicateSection } from "../partnerPrepForm/modals/modalConfirmDuplicateSection";
 import { ModalCreateQuestion } from "../partnerPrepForm/modals/modalCreateQuestion";
 import { ModalCreateSection } from "../partnerPrepForm/modals/modalCreateSection";
@@ -54,6 +56,8 @@ export default function GlobalFormPage() {
 
   const [entities, setEntities] = useState<SectionForm[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  // Abaixo de 768px (o `sm` do projeto) a tabela vira cards.
+  const acimaDeSm = useAcimaDeSm();
   const [sectionSelected, setSectionSelected] = useState<SectionForm | null>(
     null
   );
@@ -309,7 +313,15 @@ export default function GlobalFormPage() {
 
   const PageHeader = () => (
     <AppBar position="static" color="transparent" elevation={0}>
-      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Toolbar
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 1,
+          py: { xs: 1, sm: 0 },
+        }}
+      >
         <Typography variant="h4" fontWeight="bold" className="text-marine">
           Formulário Global
         </Typography>
@@ -318,7 +330,7 @@ export default function GlobalFormPage() {
             variant="contained"
             color="primary"
             onClick={handleCreateSection}
-            sx={{ ml: 2 }}
+            fullWidth={!acimaDeSm}
           >
             Nova Seção
           </Button>
@@ -356,11 +368,12 @@ export default function GlobalFormPage() {
         <Alert severity="info" sx={{ mx: 2, mb: 2 }}>
           Este formulário é incluído em todos os processos seletivos.
         </Alert>
-        <div className="flex justify-end items-center w-full">
-          <Box p={0}>
+        <div className="flex justify-end items-center w-full px-4">
+          <Box p={0} sx={{ width: { xs: "100%", sm: "auto" } }}>
             <Button
               variant="contained"
               color="primary"
+              fullWidth={!acimaDeSm}
               onClick={() => modals.modalCreateSection.open()}
             >
               Criar Seção
@@ -398,6 +411,8 @@ export default function GlobalFormPage() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            flexWrap: "wrap",
+            columnGap: 2,
             mb: 2,
             px: 2,
           }}
@@ -405,7 +420,7 @@ export default function GlobalFormPage() {
           <Typography variant="h6" gutterBottom component="div">
             Seções ({entities.length})
           </Typography>
-          <Box sx={{ display: "flex", gap: 1 }}>
+          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
             <Typography variant="body2" color="text.secondary">
               Total de questões:{" "}
               {entities.reduce(
@@ -425,55 +440,78 @@ export default function GlobalFormPage() {
           </Box>
         </Box>
 
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12 }}>
-            <TableContainer
-              component={Paper}
-              elevation={2}
-              sx={{ borderRadius: 2 }}
-            >
-              <Table>
-                <TableHead>
-                  <TableRow sx={{ backgroundColor: "primary.50" }}>
-                    <TableCell size="small" className="w-5" />
-                    {columns.map((column) => (
-                      <TableCell
-                        size="small"
-                        key={column.key as string}
-                        align={column.align || "left"}
-                        sx={{ fontWeight: "bold", color: "primary.main" }}
-                      >
-                        {column.label}
-                      </TableCell>
+        {/* Abaixo de 768px, cards (mesmos do Formulário do cursinho, #811). */}
+        {!acimaDeSm ? (
+          <SecoesMobile
+            secoes={entities}
+            allQuestions={allQuestions}
+            setSection={handleSetSection}
+            handleAddQuestion={handleAddQuestion}
+            handleEditSection={(id) => {
+              const secao = entities.find((e) => e._id === id);
+              if (!secao) return;
+              setSectionSelected(secao);
+              modals.modalUpdateSection.open();
+            }}
+            handleDeleteSection={handleDeleteSection}
+            handleToggleSection={handleToggleSection}
+            handleReorderQuestions={handleReorderQuestions}
+            handleDuplicateSection={handleOpenDuplicateModal}
+            deleteFn={deleteGlobalQuestion}
+            toggleActiveFn={setGlobalQuestionActive}
+            updateQuestionFn={updateGlobalQuestion}
+          />
+        ) : (
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12 }}>
+              <TableContainer
+                component={Paper}
+                elevation={2}
+                sx={{ borderRadius: 2 }}
+              >
+                <Table>
+                  <TableHead>
+                    <TableRow sx={{ backgroundColor: "primary.50" }}>
+                      <TableCell size="small" className="w-5" />
+                      {columns.map((column) => (
+                        <TableCell
+                          size="small"
+                          key={column.key as string}
+                          align={column.align || "left"}
+                          sx={{ fontWeight: "bold", color: "primary.main" }}
+                        >
+                          {column.label}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {entities.map((entity) => (
+                      <ExpandableSection
+                        key={entity._id}
+                        section={entity}
+                        allQuestions={allQuestions}
+                        setSection={handleSetSection}
+                        handleAddQuestion={handleAddQuestion}
+                        handleEditSection={() => {
+                          setSectionSelected(entity);
+                          modals.modalUpdateSection.open();
+                        }}
+                        handleDeleteSection={handleDeleteSection}
+                        handleToggleSection={handleToggleSection}
+                        handleReorderQuestions={handleReorderQuestions}
+                        handleDuplicateSection={handleOpenDuplicateModal}
+                        deleteFn={deleteGlobalQuestion}
+                        toggleActiveFn={setGlobalQuestionActive}
+                        updateQuestionFn={updateGlobalQuestion}
+                      />
                     ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {entities.map((entity) => (
-                    <ExpandableSection
-                      key={entity._id}
-                      section={entity}
-                      allQuestions={allQuestions}
-                      setSection={handleSetSection}
-                      handleAddQuestion={handleAddQuestion}
-                      handleEditSection={() => {
-                        setSectionSelected(entity);
-                        modals.modalUpdateSection.open();
-                      }}
-                      handleDeleteSection={handleDeleteSection}
-                      handleToggleSection={handleToggleSection}
-                      handleReorderQuestions={handleReorderQuestions}
-                      handleDuplicateSection={handleOpenDuplicateModal}
-                      deleteFn={deleteGlobalQuestion}
-                      toggleActiveFn={setGlobalQuestionActive}
-                      updateQuestionFn={updateGlobalQuestion}
-                    />
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
           </Grid>
-        </Grid>
+        )}
       </Box>
       {CreateQuestion()}
       {CreateSection()}
