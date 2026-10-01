@@ -156,12 +156,14 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
           </div>
 
           {/* Ações */}
-          <div className="flex items-center gap-2 sm:flex-col sm:items-stretch">
+          {/* Sempre em coluna: no celular, lado a lado, dois botões de 160px
+              passavam da borda do card. */}
+          <div className="flex flex-col items-stretch gap-2">
             {monitoring.status === StatusApplication.Enrolled && (
               <button
                 onClick={handleDownloadEnrollmentCertificate}
                 disabled={isDownloading}
-                className="flex items-center justify-center gap-2 min-w-[160px] px-4 py-2.5 
+                className="flex items-center justify-center gap-2 sm:min-w-[160px] px-4 py-2.5 
                            bg-blue-600 text-white text-sm font-medium rounded-lg 
                            hover:bg-blue-700 active:bg-blue-800 
                            disabled:bg-gray-400 disabled:cursor-not-allowed 
@@ -177,7 +179,7 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
                 e.stopPropagation();
                 handleOpenDetailsModal();
               }}
-              className="flex items-center justify-center gap-2 min-w-[160px] px-4 py-2.5 
+              className="flex items-center justify-center gap-2 sm:min-w-[160px] px-4 py-2.5 
                          border border-gray-300 text-gray-700 text-sm font-medium rounded-lg 
                          hover:bg-gray-50 hover:border-gray-400 
                          transition-colors"
@@ -189,7 +191,7 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
               <Link
                 to={`/${DECLARED_INTEREST}/${monitoring.inscriptionId}`}
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center justify-center gap-2 min-w-[160px] px-4 py-2.5 
+                className="flex items-center justify-center gap-2 sm:min-w-[160px] px-4 py-2.5 
                            bg-green2/80 text-white text-sm font-medium rounded-lg 
                            hover:bg-green2 
                            transition-colors shadow-sm"
