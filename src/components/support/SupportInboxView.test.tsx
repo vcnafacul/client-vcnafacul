@@ -8,9 +8,27 @@ vi.mock("@/components/dashV2/useAcimaDeSm", () => ({
 }));
 // O chat real fala com o Firebase; aqui só importa o que a view passa a ele.
 vi.mock("@/components/chat/ChatLayout", () => ({
-  ChatLayout: ({ title, onBack }: { title: string; onBack?: () => void }) => (
+  ChatLayout: ({
+    title,
+    subtitle,
+    cursinhoLine,
+    cursinhoMissing,
+    onBack,
+  }: {
+    title: string;
+    subtitle?: string;
+    cursinhoLine?: string;
+    cursinhoMissing?: boolean;
+    onBack?: () => void;
+  }) => (
     <div data-testid="chat">
       {title}
+      {subtitle && <span data-testid="subtitle">{subtitle}</span>}
+      {cursinhoLine && (
+        <span data-testid="cursinho" data-missing={String(!!cursinhoMissing)}>
+          {cursinhoLine}
+        </span>
+      )}
       {onBack && <button onClick={onBack}>Voltar para a lista</button>}
     </div>
   ),
@@ -29,7 +47,7 @@ import { SupportInboxView } from "./SupportInboxView";
 
 const conv = { id: "c1", userName: "Ana", status: "open" } as ConversationDoc;
 
-const montar = (selected: ConversationDoc | null) => {
+const montar = (selected: ConversationDoc | null, showCursinho = false) => {
   const onClose = vi.fn();
   const onSelect = vi.fn();
   render(
@@ -47,6 +65,7 @@ const montar = (selected: ConversationDoc | null) => {
       activeTab="active"
       onTabChange={vi.fn()}
       archivedCount={0}
+      showCursinho={showCursinho}
     />,
   );
   return { onClose, onSelect };
@@ -82,5 +101,49 @@ describe("SupportInboxView no celular", () => {
     expect(
       screen.queryByRole("button", { name: "Voltar para a lista" }),
     ).toBeNull();
+  });
+});
+
+describe("SupportInboxView: cursinho no cabeçalho", () => {
+  const comCursinho = {
+    ...conv,
+    originLabel: "Declaração de interesse",
+    cursinhoName: "Cursinho Popular Pré-Vestibular da UFSCar",
+  } as ConversationDoc;
+
+  it("inbox do admin: cursinho em linha própria, fora dos chips", () => {
+    acima.valor = true;
+    montar(comCursinho, true);
+    expect(screen.getByTestId("cursinho")).toHaveTextContent(
+      "Cursinho Popular Pré-Vestibular da UFSCar",
+    );
+    expect(screen.getByTestId("cursinho")).toHaveAttribute(
+      "data-missing",
+      "false",
+    );
+    expect(screen.getByTestId("subtitle")).toHaveTextContent(
+      /^Declaração de interesse$/,
+    );
+  });
+
+  it("inbox do admin: conversa sem cursinho diz isso", () => {
+    acima.valor = true;
+    montar({ ...conv, cursinhoName: null } as ConversationDoc, true);
+    expect(screen.getByTestId("cursinho")).toHaveTextContent(
+      "Sem cursinho vinculado",
+    );
+    expect(screen.getByTestId("cursinho")).toHaveAttribute(
+      "data-missing",
+      "true",
+    );
+  });
+
+  it("inbox do cursinho: igual a antes", () => {
+    acima.valor = true;
+    montar(comCursinho);
+    expect(screen.queryByTestId("cursinho")).toBeNull();
+    expect(screen.getByTestId("subtitle")).toHaveTextContent(
+      "Declaração de interesse · Cursinho Popular Pré-Vestibular da UFSCar",
+    );
   });
 });

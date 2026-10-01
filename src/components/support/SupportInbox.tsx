@@ -42,6 +42,7 @@ export function SupportInbox() {
         activeTab={activeTab}
         onTabChange={handleTabChange}
         archivedCount={archivedState.convs.length}
+        showCursinho
         headerActions={
           !partnerPrepId && activeTab === "active" ? (
             <Button

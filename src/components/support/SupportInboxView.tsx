@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ConversationListItem } from "@/pages/admin/support/ConversationListItem";
 import { cn } from "@/lib/utils";
 import type { ConversationDoc } from "@/services/firebase/conversations";
+import { SEM_CURSINHO } from "./semCursinho";
 
 type Tab = "active" | "archived";
 
@@ -25,6 +26,8 @@ interface Props {
   activeTab: Tab;
   onTabChange: (tab: Tab) => void;
   archivedCount: number;
+  /** Inbox do admin: destaca o cursinho de cada conversa (lista e cabeçalho). */
+  showCursinho?: boolean;
 }
 
 export function SupportInboxView({
@@ -42,6 +45,7 @@ export function SupportInboxView({
   activeTab,
   onTabChange,
   archivedCount,
+  showCursinho = false,
 }: Props) {
   const isArchived = activeTab === "archived";
   /*
@@ -124,6 +128,7 @@ export function SupportInboxView({
                 conv={c}
                 selected={selectedId === c.id}
                 onClick={() => onSelect(c.id)}
+                showCursinho={showCursinho}
               />
             ))}
             {sorted.length === 0 && (
@@ -157,10 +162,18 @@ export function SupportInboxView({
               className="rounded-none"
               title={selected.userName}
               subtitle={
-                [selected.originLabel, selected.cursinhoName]
-                  .filter(Boolean)
-                  .join(" · ") || undefined
+                (showCursinho
+                  ? selected.originLabel
+                  : [selected.originLabel, selected.cursinhoName]
+                      .filter(Boolean)
+                      .join(" · ")) || undefined
               }
+              cursinhoLine={
+                showCursinho
+                  ? selected.cursinhoName || SEM_CURSINHO
+                  : undefined
+              }
+              cursinhoMissing={showCursinho && !selected.cursinhoName}
               onClose={onClose}
               onBack={acimaDeSm ? undefined : onClose}
               showAvatar

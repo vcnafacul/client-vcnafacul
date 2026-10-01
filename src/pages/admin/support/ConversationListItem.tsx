@@ -7,11 +7,14 @@ import {
   initialsOf,
 } from "@/components/chat/avatarUtils";
 import type { ConversationDoc } from "@/services/firebase/conversations";
+import { SEM_CURSINHO } from "@/components/support/semCursinho";
 
 interface Props {
   conv: ConversationDoc;
   selected: boolean;
   onClick: () => void;
+  /** Inbox do admin: cursinho em linha própria, ou "Sem cursinho vinculado". */
+  showCursinho?: boolean;
 }
 
 function formatRelative(ts?: { toMillis: () => number }): string | null {
@@ -26,7 +29,12 @@ function formatRelative(ts?: { toMillis: () => number }): string | null {
   }
 }
 
-export function ConversationListItem({ conv, selected, onClick }: Props) {
+export function ConversationListItem({
+  conv,
+  selected,
+  onClick,
+  showCursinho = false,
+}: Props) {
   const unread = (conv.unreadCountSupport ?? 0) > 0;
   const initials = initialsOf(conv.userName);
   const avatarBg = avatarColorFor(conv.userId ?? conv.userName);
@@ -100,11 +108,32 @@ export function ConversationListItem({ conv, selected, onClick }: Props) {
               <UnreadBadge count={conv.unreadCountSupport ?? 0} />
             </div>
           </div>
-          {(conv.originLabel || conv.cursinhoName) && (
-            <span className="text-[10px] block truncate text-marine/60 mt-0.5">
-              {[conv.originLabel, conv.cursinhoName].filter(Boolean).join(" · ")}
-            </span>
-          )}
+          {showCursinho &&
+            (conv.cursinhoName ? (
+              <span
+                className="text-xs block truncate font-medium text-marine mt-0.5"
+                title={conv.cursinhoName}
+              >
+                {conv.cursinhoName}
+              </span>
+            ) : (
+              <span className="text-xs block truncate italic text-grey mt-0.5">
+                {SEM_CURSINHO}
+              </span>
+            ))}
+          {showCursinho
+            ? conv.originLabel && (
+                <span className="text-[10px] block truncate text-marine/60 mt-0.5">
+                  {conv.originLabel}
+                </span>
+              )
+            : (conv.originLabel || conv.cursinhoName) && (
+                <span className="text-[10px] block truncate text-marine/60 mt-0.5">
+                  {[conv.originLabel, conv.cursinhoName]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </span>
+              )}
           {preview && (
             <span
               className={cn(
