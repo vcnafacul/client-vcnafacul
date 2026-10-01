@@ -75,7 +75,7 @@ jobs:
       # Push ligado em homol para teste. Fixo aqui (e não pela variável do
       # repositório, que liga prod) para homol e prod serem ligados à parte.
       # ⚠️ A chave do Firebase precisa aceitar o domínio de homol.
-      VITE_PUSH_ENABLED: "false"
+      VITE_PUSH_ENABLED: "true"
 
     steps:
       # Checkout develop (estado após o merge) para que homologação reflita sempre a branch develop.
