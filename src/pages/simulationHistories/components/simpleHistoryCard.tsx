@@ -10,6 +10,7 @@ import { DateTime } from "luxon";
 import { HistoricoDTO } from "../../../dtos/historico/historicoDTO";
 import { getFormatingTime } from "../../../utils/getFormatingTime";
 import { categoriaDoHistorico } from "@/utils/categoriaDoHistorico";
+import { foiPorCartao } from "@/utils/foiPorCartao";
 
 interface SimpleHistoryCardProps {
   historico: HistoricoDTO;
@@ -122,22 +123,24 @@ export function SimpleHistoryCard({
           </div>
         </div>
 
-        <div
-          className="flex items-center gap-2 p-2 rounded-lg bg-white/50 backdrop-blur-sm
-          group-hover:bg-white/70 transition-all duration-300"
-        >
-          <div className="p-1.5 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/10">
-            <ClockIcon className="h-4 w-4 text-blue-600" />
+        {!foiPorCartao(historico) && (
+          <div
+            className="flex items-center gap-2 p-2 rounded-lg bg-white/50 backdrop-blur-sm
+            group-hover:bg-white/70 transition-all duration-300"
+          >
+            <div className="p-1.5 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/10">
+              <ClockIcon className="h-4 w-4 text-blue-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-muted-foreground font-medium">
+                Tempo Gasto
+              </p>
+              <p className="font-semibold text-sm truncate text-foreground">
+                {getFormatingTime(historico.tempoRealizado)}
+              </p>
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs text-muted-foreground font-medium">
-              Tempo Gasto
-            </p>
-            <p className="font-semibold text-sm truncate text-foreground">
-              {getFormatingTime(historico.tempoRealizado)}
-            </p>
-          </div>
-        </div>
+        )}
 
         <div
           className="flex items-center justify-between pt-2 border-t border-border/50

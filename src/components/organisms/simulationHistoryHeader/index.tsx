@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { HistoricoDTO } from "../../../dtos/historico/historicoDTO";
 import { DASH, SIMULADO_HISTORIES } from "../../../routes/path";
 import { categoriaDoHistorico } from "../../../utils/categoriaDoHistorico";
+import { foiPorCartao } from "../../../utils/foiPorCartao";
 import { getFormatingTime } from "../../../utils/getFormatingTime";
 import { RadarChart } from "../../atoms/radarChart";
 import { useAcimaDeSm } from "../../dashV2/useAcimaDeSm";
@@ -49,6 +50,10 @@ export function SimulationHistoryHeader({
   const pad = acimaDeSm ? 3 : 2;
 
   const categoria = categoriaDoHistorico(historic);
+  // Cartão-resposta não cronometra: sem o card de tempo, os 3 restantes
+  // dividem a linha (e no celular o 3º ocupa a linha toda).
+  const porCartao = foiPorCartao(historic);
+  const mdDoCard = porCartao ? 4 : 3;
   const finished =
     categoria.totalQuestoes !== null &&
     categoria.totalQuestoes === historic.questoesRespondidas;
@@ -370,7 +375,7 @@ export function SimulationHistoryHeader({
 
       {/* Cards de Estatísticas */}
       <Grid container spacing={acimaDeSm ? 2 : 1.5} sx={{ mb: 3 }}>
-        <Grid item xs={6} md={3}>
+        <Grid item xs={6} md={mdDoCard}>
           <Paper
             elevation={2}
             sx={{
@@ -396,7 +401,7 @@ export function SimulationHistoryHeader({
           </Paper>
         </Grid>
 
-        <Grid item xs={6} md={3}>
+        <Grid item xs={6} md={mdDoCard}>
           <Paper
             elevation={2}
             sx={{
@@ -422,7 +427,7 @@ export function SimulationHistoryHeader({
           </Paper>
         </Grid>
 
-        <Grid item xs={6} md={3}>
+        <Grid item xs={porCartao ? 12 : 6} md={mdDoCard}>
           <Paper
             elevation={2}
             sx={{
@@ -448,31 +453,35 @@ export function SimulationHistoryHeader({
           </Paper>
         </Grid>
 
-        <Grid item xs={6} md={3}>
-          <Paper
-            elevation={2}
-            sx={{
-              p: 2,
-              background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
-              color: "white",
-              borderRadius: 2,
-              height: "100%",
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-              <Clock className="h-5 w-5" />
-              <Typography variant="subtitle2" sx={{ opacity: 0.9 }}>
-                Tempo Gasto
+        {!porCartao && (
+          <Grid item xs={6} md={3}>
+            <Paper
+              elevation={2}
+              sx={{
+                p: 2,
+                background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
+                color: "white",
+                borderRadius: 2,
+                height: "100%",
+              }}
+            >
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+              >
+                <Clock className="h-5 w-5" />
+                <Typography variant="subtitle2" sx={{ opacity: 0.9 }}>
+                  Tempo Gasto
+                </Typography>
+              </Box>
+              <Typography variant="h4" fontWeight="bold">
+                {getFormatingTime(historic.tempoRealizado).split(" ")[0]}
               </Typography>
-            </Box>
-            <Typography variant="h4" fontWeight="bold">
-              {getFormatingTime(historic.tempoRealizado).split(" ")[0]}
-            </Typography>
-            <Typography variant="body2" sx={{ opacity: 0.9 }}>
-              {getFormatingTime(historic.tempoRealizado).split(" ")[1]}
-            </Typography>
-          </Paper>
-        </Grid>
+              <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                {getFormatingTime(historic.tempoRealizado).split(" ")[1]}
+              </Typography>
+            </Paper>
+          </Grid>
+        )}
       </Grid>
 
       {/* Gráficos */}

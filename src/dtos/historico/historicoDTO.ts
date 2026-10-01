@@ -59,6 +59,8 @@ export interface HistoricoDTO {
   respostas: AnswerHistoricoDTO[];
   tempoRealizado: number;
   questoesRespondidas: number;
+  /** Só existe no histórico corrigido por cartão-resposta (simulado presencial). */
+  cartaoCode?: string;
   aproveitamento?: AproveitamentoDTO;
   status?: HistoricoStatus;
   createdAt: DateTime;

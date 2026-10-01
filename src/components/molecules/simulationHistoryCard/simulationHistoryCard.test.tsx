@@ -45,4 +45,13 @@ describe("SimulationHistoryCard", () => {
     // Sem total não dá para afirmar que está completo.
     expect(screen.getByText("Simulado Incompleto")).toBeInTheDocument();
   });
+
+  it("digital mostra o tempo; corrigido por cartão-resposta não", () => {
+    const { unmount } = renderCard(historico({}));
+    expect(screen.getByText("Tempo:")).toBeInTheDocument();
+    unmount();
+
+    renderCard({ ...historico({}), cartaoCode: "7" });
+    expect(screen.queryByText("Tempo:")).not.toBeInTheDocument();
+  });
 });
