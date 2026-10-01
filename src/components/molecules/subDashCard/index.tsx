@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { IoAddCircle } from "react-icons/io5";
 import { Roles } from "../../../enums/roles/roles";
 import { useSidebar } from "@/components/ui/sidebar";
@@ -27,13 +27,32 @@ function SubDashCard({ subCardInfo, blank }: SubDashCardPros){
     };
 
     return (
-        <Link to={subCardInfo.link} target={blank ? "_blank" : ''} className="flex justify-between items-center w-full h-14 px-4 border" onClick={handleClick}>
-            <div className="flex gap-2 justify-center items-center">
-                <Icon className="w-6 h-6 fill-grey"/>
-                {subCardInfo.text}
-            </div>
-            <IoAddCircle size={16} color="green" />
-        </Link>
+        // Página atual: fundo levíssimo, filete marine à esquerda e texto em
+        // marine — destaca sem brigar com as cores dos cards. O `NavLink` já
+        // põe `aria-current="page"` e vale também para as subpáginas (ex.:
+        // detalhe de uma turma acende "Turmas").
+        <NavLink
+            to={subCardInfo.link}
+            target={blank ? "_blank" : ''}
+            onClick={handleClick}
+            className={({ isActive }) =>
+                `flex justify-between items-center w-full h-14 px-4 border transition-colors ${
+                    isActive && !blank
+                        ? "bg-marine/5 text-marine font-semibold shadow-[inset_3px_0_0_theme(colors.marine)]"
+                        : ""
+                }`
+            }
+        >
+            {({ isActive }) => (
+                <>
+                    <div className="flex gap-2 justify-center items-center">
+                        <Icon className={`w-6 h-6 ${isActive && !blank ? "fill-marine" : "fill-grey"}`}/>
+                        {subCardInfo.text}
+                    </div>
+                    <IoAddCircle size={16} color="green" />
+                </>
+            )}
+        </NavLink>
     )
 }
 
