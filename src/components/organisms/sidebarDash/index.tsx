@@ -9,6 +9,7 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Roles } from "@/enums/roles/roles";
 import { useFetch } from "@/hooks/useFetch";
@@ -31,6 +32,9 @@ export function SidebarDash() {
   const isSupportAgent = useAuthStore(
     (s) => !!s.data.permissao[Roles.supportAgent],
   );
+  // Na gaveta (mobile/tablet) o atalho "Suporte" no topo só ocupa espaço: a
+  // inbox já é um item do próprio menu. Fica só na sidebar fixa do desktop.
+  const { isMobile } = useSidebar();
 
   const { data: areas } = useFetch<AreaWithMaterias[]>(
     (signal) => getMateriasGroupedByArea(signal),
@@ -57,12 +61,12 @@ export function SidebarDash() {
     <Sidebar side="right" collapsible="icon" className="print:hidden">
       <SidebarHeader className="flex flex-row items-center justify-start pt-4 pb-2">
         <SidebarTrigger />
-        {isSupportAgent && <SupportInboxBadge />}
+        {isSupportAgent && !isMobile && <SupportInboxBadge />}
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup className="overflow-y-scroll scrollbar-hide">
+        <SidebarGroup className="overflow-y-scroll scrollbar-hide pt-0">
           <SidebarGroupContent className="group-data-[collapsible=icon]:hidden">
-            <SidebarMenu className="py-4 gap-0">
+            <SidebarMenu className="pt-0 pb-4 gap-0">
               {dashCardMenuItems.map((card) => (
                 <DashCard
                   onClick={() => {
