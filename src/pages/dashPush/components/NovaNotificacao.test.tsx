@@ -6,6 +6,7 @@ const api = vi.hoisted(() => ({
   enviarNotificacao: vi.fn(),
   buscarEnvio: vi.fn(),
   listarEnvios: vi.fn(),
+  buscarDestinatarios: vi.fn(),
 }));
 vi.mock("@/services/push/admin", () => api);
 vi.mock("@/services/roles/getRoles", () => ({
@@ -132,6 +133,52 @@ describe("NovaNotificacao", () => {
       "Ninguém nesse público",
     );
     expect(api.buscarEnvio).not.toHaveBeenCalled();
+  });
+
+  it("pessoas específicas: busca por nome, mostra quem ativou e envia pelo e-mail achado", async () => {
+    api.buscarDestinatarios.mockResolvedValue([
+      { id: "u1", name: "Maria Silva", email: "Maria@x.com", devices: 2 },
+      { id: "u2", name: "Mario Souza", email: "mario@x.com", devices: 0 },
+    ]);
+    render(<NovaNotificacao />);
+    escrever(/^Título/, "Oi");
+    escrever(/^Mensagem/, "Só para você.");
+    fireEvent.click(screen.getByLabelText("Pessoas específicas"));
+    escrever("Buscar pessoa por nome ou e-mail", "mari");
+
+    const resultados = await screen.findByRole("list", {
+      name: "Resultados da busca",
+    });
+    expect(api.buscarDestinatarios).toHaveBeenCalledWith(
+      "mari",
+      expect.any(String),
+    );
+    expect(resultados).toHaveTextContent("2 aparelhos ativos");
+    expect(resultados).toHaveTextContent("Não ativou as notificações");
+
+    fireEvent.click(screen.getByRole("button", { name: /Maria Silva/ }));
+    expect(
+      screen.getByRole("list", { name: "Pessoas escolhidas" }),
+    ).toHaveTextContent("Maria Silva");
+
+    clicar("Conferir público");
+    await screen.findByText(/37 pessoas/);
+    expect(api.conferirPublico).toHaveBeenCalledWith(
+      { type: "emails", emails: ["maria@x.com"] },
+      expect.any(String),
+    );
+  });
+
+  it("pessoas específicas sem ninguém escolhido não chama a api", async () => {
+    render(<NovaNotificacao />);
+    escrever(/^Título/, "Oi");
+    escrever(/^Mensagem/, "Só para você.");
+    fireEvent.click(screen.getByLabelText("Pessoas específicas"));
+    clicar("Enviar");
+    expect(
+      await screen.findByText("Escolha ao menos uma pessoa"),
+    ).toBeInTheDocument();
+    expect(api.conferirPublico).not.toHaveBeenCalled();
   });
 
   it("mudar o rascunho descarta o número conferido", async () => {

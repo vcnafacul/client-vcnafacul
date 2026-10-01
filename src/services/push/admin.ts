@@ -1,6 +1,11 @@
 import fetchWrapper from "@/utils/fetchWrapper";
 import { Paginate } from "@/utils/paginate";
-import { pushNotifications, pushPreview, pushSend } from "../urls";
+import {
+  pushNotifications,
+  pushPreview,
+  pushRecipients,
+  pushSend,
+} from "../urls";
 
 /** Públicos do MVP (decisão nº 1 da série): todos, por função, por e-mail. */
 export type Publico =
@@ -34,6 +39,14 @@ export type Envio = {
 };
 
 export type Alcance = { targetUsers: number; targetDevices: number };
+
+/** Pessoa achada pela busca, com quantos aparelhos ATIVOS tem. */
+export type Destinatario = {
+  id: string;
+  name: string;
+  email: string;
+  devices: number;
+};
 
 /** Erro com a mensagem da api (ex.: o 422 de público sem aparelho). */
 async function falha(res: Response, padrao: string): Promise<never> {
@@ -97,5 +110,18 @@ export async function buscarEnvio(id: string, token: string): Promise<Envio> {
     headers: cabecalhos(token),
   });
   if (!res.ok) return falha(res, "Não foi possível acompanhar o envio");
+  return res.json();
+}
+
+/** Busca por nome ou e-mail, como na tela de usuários. */
+export async function buscarDestinatarios(
+  texto: string,
+  token: string,
+): Promise<Destinatario[]> {
+  const res = await fetchWrapper(
+    `${pushRecipients}?q=${encodeURIComponent(texto)}`,
+    { headers: cabecalhos(token) },
+  );
+  if (!res.ok) return falha(res, "Não foi possível buscar as pessoas");
   return res.json();
 }
