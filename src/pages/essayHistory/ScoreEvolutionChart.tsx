@@ -1,4 +1,5 @@
 import LineChartMui from "@/components/atoms/lineChartMui";
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { EssayStatsTimelineEntry } from "@/dtos/essay";
 
 interface Props {
@@ -6,6 +7,7 @@ interface Props {
 }
 
 export default function ScoreEvolutionChart({ timeline }: Props) {
+  const acimaDeSm = useAcimaDeSm();
   const reviewed = timeline.filter((e) => e.aiReview || e.humanReview);
   if (reviewed.length < 2) return null;
 
@@ -14,9 +16,12 @@ export default function ScoreEvolutionChart({ timeline }: Props) {
   const aiData = reviewed.map((e) => e.aiReview?.totalScore ?? null);
   const humanData = reviewed.map((e) => e.humanReview?.totalScore ?? null);
 
-  const series = [
-    { label: "Correção IA", data: aiData, color: "#2E96FF" },
-  ];
+  // A correção por IA pode estar desligada: sem nota de IA, sem a série vazia.
+  const series: { label: string; data: (number | null)[]; color: string }[] =
+    [];
+  if (aiData.some((v) => v !== null)) {
+    series.push({ label: "Correção IA", data: aiData, color: "#2E96FF" });
+  }
 
   const hasHuman = humanData.some((v) => v !== null);
   if (hasHuman) {
@@ -30,7 +35,8 @@ export default function ScoreEvolutionChart({ timeline }: Props) {
       series={series}
       yAxisLabel="Nota"
       yAxisMax={1000}
-      height={300}
+      height={acimaDeSm ? 300 : 240}
+      compacto={!acimaDeSm}
     />
   );
 }
