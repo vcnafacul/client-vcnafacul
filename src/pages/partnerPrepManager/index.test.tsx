@@ -37,8 +37,8 @@ const cursinho = (id: string, nome: string, cidade: string) => ({
     phone: "",
   },
   representative: { id: "r", name: "Coord", email: "c@x.com", phone: "" },
-  number_students: 10,
-  number_members: 3,
+  numberStudents: 10,
+  numberMembers: 3,
   createdAt: "2025-01-10T12:00:00.000Z",
   updatedAt: "2026-01-10T12:00:00.000Z",
 });

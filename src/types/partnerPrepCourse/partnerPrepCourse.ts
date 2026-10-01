@@ -21,8 +21,8 @@ export interface PartnerPrepCourse {
   logo: string;
   agreement: string;
   thumbnail: string;
-  number_students: number;
-  number_members: number;
+  numberStudents: number;
+  numberMembers: number;
   createdAt: string;
   updatedAt: string;
 }
