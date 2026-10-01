@@ -29,6 +29,8 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
   const [availableSelected, setAvailableSelected] = useState<OptionProps>(
     {} as OptionProps
   );
+  // Só depois da resposta dá para dizer que não há simulado disponível.
+  const [carregado, setCarregado] = useState(false);
   const navigate = useNavigate();
   const { simuladoBegin } = useSimuladoStore();
 
@@ -66,7 +68,8 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
       })
       .catch((error: Error) => {
         toast.error(error.message);
-      });
+      })
+      .finally(() => setCarregado(true));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
@@ -81,12 +84,25 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
       className="bg-white p-2 rounded-md"
     >
       <div className="bg-white p-2 rounded-sm max-h-[90vh] overflow-y-auto scrollbar-hide">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+        {/* No celular o seletor ocupa a largura: nomes longos passavam da borda. */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <Text className="text-left m-0" size="secondary">
             Simulado {title}
           </Text>
-          <SelectOption options={availables} setState={setAvailableSelected} />
+          {availables.length > 0 && (
+            <div className="w-full sm:w-auto min-w-0">
+              <SelectOption
+                options={availables}
+                setState={setAvailableSelected}
+              />
+            </div>
+          )}
         </div>
+        {carregado && availables.length === 0 && (
+          <p className="mb-4 rounded-md bg-gray-100 p-3 text-sm text-gray-700 text-start">
+            Nenhum simulado disponível no momento.
+          </p>
+        )}
         <Text className="text-left" size="quaternary">
           Olá! Este é o simulado {info.nome}. Neste modelo, você terá {horas}{" "}
           horas
@@ -116,7 +132,8 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
           Bons estudos!
         </Text>
         <div className="flex justify-end">
-          <div className="flex max-w-[500px] w-full gap-4">
+          {/* No celular empilhados, com o principal em cima. */}
+          <div className="flex flex-col-reverse sm:flex-row max-w-[500px] w-full gap-3 sm:gap-4">
             <Button typeStyle="secondary" onClick={handleClose}>
               Então volto mais tarde!
             </Button>
