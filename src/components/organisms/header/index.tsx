@@ -36,10 +36,10 @@ function Header({ solid, className }: HeaderProps) {
     },
   } = useAuthStore();
 
-  const { header } = useBaseTemplateContext();
+  const { header, headerAction } = useBaseTemplateContext();
 
   const MenuBugger = () => {
-    if (openMenu) return null;
+    if (openMenu || headerAction) return null;
     return (
       <div onClick={() => setOpenMenu(true)} className="md:hidden">
         <MenuIcon className={`${!solid ? "fill-white" : "fill-marine"}`} />
@@ -82,6 +82,7 @@ function Header({ solid, className }: HeaderProps) {
         <DropdwonMenu userNavigation={report}>
           <Reporticon className="hidden sm:block w-8 h-8" />
         </DropdwonMenu>
+        {headerAction}
       </div>
     </header>
   );
