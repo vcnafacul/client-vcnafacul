@@ -73,3 +73,18 @@ describe("SimulationHistoryHeader no celular", () => {
     expect(container.firstElementChild).toHaveClass("bg-marine");
   });
 });
+
+describe("SimulationHistoryHeader — tempo gasto", () => {
+  it("simulado digital mostra o card de tempo", () => {
+    renderizar(historico());
+
+    expect(screen.getByText("Tempo Gasto")).toBeInTheDocument();
+  });
+
+  it("corrigido por cartão-resposta não mostra o card de tempo", () => {
+    renderizar(historico({ cartaoCode: "7" }));
+
+    expect(screen.queryByText("Tempo Gasto")).not.toBeInTheDocument();
+    expect(screen.getByText("Acertos")).toBeInTheDocument();
+  });
+});

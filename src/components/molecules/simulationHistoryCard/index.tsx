@@ -8,6 +8,7 @@ import { getStatusIcon } from "../../../utils/getStatusIcon";
 import SimulationHistoryField from "../../atoms/simulationHistoryField";
 import { ToolTip } from "../../atoms/tooltip";
 import { categoriaDoHistorico } from "../../../utils/categoriaDoHistorico";
+import { foiPorCartao } from "../../../utils/foiPorCartao";
 
 interface SimulationHistoryCardProps {
   historico: HistoricoDTO;
@@ -38,11 +39,13 @@ function SimulationHistoryCard({ historico }: SimulationHistoryCardProps) {
         value={nomeCategoria}
         className="md:min-w-[250px]"
       />
-      <SimulationHistoryField
-        field="Tempo:"
-        value={getFormatingTime(historico.tempoRealizado)}
-        className="md:min-w-[160px]"
-      />
+      {!foiPorCartao(historico) && (
+        <SimulationHistoryField
+          field="Tempo:"
+          value={getFormatingTime(historico.tempoRealizado)}
+          className="md:min-w-[160px]"
+        />
+      )}
       <SimulationHistoryField
         field="Aproveitamento:"
         value={aproveitamentoValue}
