@@ -26,6 +26,13 @@ import { DASH, SIMULADO_HISTORIES } from "../../../routes/path";
 import { categoriaDoHistorico } from "../../../utils/categoriaDoHistorico";
 import { getFormatingTime } from "../../../utils/getFormatingTime";
 import { RadarChart } from "../../atoms/radarChart";
+import { useAcimaDeSm } from "../../dashV2/useAcimaDeSm";
+
+// O rótulo do Chip não quebra linha: no celular o nome da frente saía com "…".
+const chipQuebraLinha = {
+  height: "auto",
+  "& .MuiChip-label": { whiteSpace: "normal", py: 0.75 },
+};
 
 interface SimulationHistoryHeaderProps {
   historic: HistoricoDTO;
@@ -37,6 +44,9 @@ export function SimulationHistoryHeader({
   const navigate = useNavigate();
   // Estado para controlar visualização por matéria ou frente
   const [viewMode, setViewMode] = useState<"materias" | "frentes">("materias");
+  // Abaixo de 768px (o `sm` do projeto): pizza responsiva e frentes em barras.
+  const acimaDeSm = useAcimaDeSm();
+  const pad = acimaDeSm ? 3 : 2;
 
   const categoria = categoriaDoHistorico(historic);
   const finished =
@@ -46,24 +56,64 @@ export function SimulationHistoryHeader({
   if (!historic.aproveitamento) {
     const isFailed = historic.status === "failed";
     return (
-      <Box sx={{ p: 3, minHeight: "100vh" }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-          <Typography variant="h4" sx={{ color: "white", fontWeight: "bold", display: "flex", gap: 1 }}>
+      // ⚠️ Aqui o cabeçalho é desenhado fora do `SimulateTemplate`, que é quem
+      // dá o fundo marinho: sem ele o título branco sumia no fundo claro.
+      <Box className="bg-marine" sx={{ p: pad, minHeight: "100vh" }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 2,
+            mb: 3,
+          }}
+        >
+          <Typography
+            variant={acimaDeSm ? "h4" : "h5"}
+            sx={{
+              color: "white",
+              fontWeight: "bold",
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
             <BookOpen className="h-8 w-8" />
             Detalhes do Simulado
           </Typography>
-          <Button onClick={() => navigate(`${DASH}/${SIMULADO_HISTORIES}`)} variant="outline" className="bg-white hover:bg-gray-100">
+          <Button
+            onClick={() => navigate(`${DASH}/${SIMULADO_HISTORIES}`)}
+            variant="outline"
+            className="bg-white hover:bg-gray-100"
+          >
             Voltar
           </Button>
         </Box>
-        <Paper elevation={3} sx={{ p: 4, borderRadius: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+        <Paper
+          elevation={3}
+          sx={{
+            p: acimaDeSm ? 4 : 2,
+            borderRadius: 2,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 2,
+          }}
+        >
           {isFailed ? (
             <XCircle className="h-16 w-16 text-red-500" />
           ) : (
             <Loader2 className="h-16 w-16 text-blue-500 animate-spin" />
           )}
-          <Typography variant="h5" fontWeight="bold" color={isFailed ? "error" : "primary"}>
-            {isFailed ? "Erro ao processar simulado" : "Processando resultados..."}
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            color={isFailed ? "error" : "primary"}
+          >
+            {isFailed
+              ? "Erro ao processar simulado"
+              : "Processando resultados..."}
           </Typography>
           <Typography variant="body1" color="text.secondary" textAlign="center">
             {isFailed
@@ -80,19 +130,22 @@ export function SimulationHistoryHeader({
   }
 
   // Prepara dados do Radar por MATÉRIAS
-  const radarDataMaterias = (historic.aproveitamento?.materias ?? []).map((m) => ({
-    materia: m.nome,
-    aproveitamento: parseFloat((m.aproveitamento * 100).toFixed(1)),
-  }));
+  const radarDataMaterias = (historic.aproveitamento?.materias ?? []).map(
+    (m) => ({
+      materia: m.nome,
+      aproveitamento: parseFloat((m.aproveitamento * 100).toFixed(1)),
+    }),
+  );
 
   // Prepara dados do Radar por FRENTES
-  const radarDataFrente = (historic.aproveitamento?.materias ?? []).flatMap((materia) =>
-    materia.frentes.map((frente) => ({
-      materia: `${materia.nome} - ${frente.nome}`,
-      aproveitamento: parseFloat((frente.aproveitamento * 100).toFixed(1)),
-      materiaNome: materia.nome,
-      frenteNome: frente.nome,
-    }))
+  const radarDataFrente = (historic.aproveitamento?.materias ?? []).flatMap(
+    (materia) =>
+      materia.frentes.map((frente) => ({
+        materia: `${materia.nome} - ${frente.nome}`,
+        aproveitamento: parseFloat((frente.aproveitamento * 100).toFixed(1)),
+        materiaNome: materia.nome,
+        frenteNome: frente.nome,
+      })),
   );
 
   // Seleciona os dados baseado no modo de visualização
@@ -101,17 +154,17 @@ export function SimulationHistoryHeader({
 
   // Prepara dados do Pie (acertos/erros)
   const acertos = historic.respostas.filter(
-    (r) => r.alternativaCorreta === r.alternativaEstudante
+    (r) => r.alternativaCorreta === r.alternativaEstudante,
   ).length;
 
   const erros = historic.respostas.filter(
     (r) =>
       r.alternativaEstudante !== undefined &&
-      r.alternativaCorreta !== r.alternativaEstudante
+      r.alternativaCorreta !== r.alternativaEstudante,
   ).length;
 
   const naoRespondidas = historic.respostas.filter(
-    (r) => r.alternativaEstudante === undefined
+    (r) => r.alternativaEstudante === undefined,
   ).length;
 
   const pieData = [
@@ -125,17 +178,21 @@ export function SimulationHistoryHeader({
     },
   ];
 
-  const aproveitamentoGeral = ((historic.aproveitamento?.geral ?? 0) * 100).toFixed(1);
+  const aproveitamentoGeral = (
+    (historic.aproveitamento?.geral ?? 0) * 100
+  ).toFixed(1);
   const totalQuestoes = categoria.totalQuestoes ?? 0;
-  const percentualAcertos = totalQuestoes > 0 ? ((acertos / totalQuestoes) * 100).toFixed(1) : '0.0';
-  const percentualErros = totalQuestoes > 0 ? ((erros / totalQuestoes) * 100).toFixed(1) : '0.0';
+  const percentualAcertos =
+    totalQuestoes > 0 ? ((acertos / totalQuestoes) * 100).toFixed(1) : "0.0";
+  const percentualErros =
+    totalQuestoes > 0 ? ((erros / totalQuestoes) * 100).toFixed(1) : "0.0";
 
   // Encontra melhor e pior (baseado no modo de visualização)
   const melhor = radarData.reduce((prev, current) =>
-    prev.aproveitamento > current.aproveitamento ? prev : current
+    prev.aproveitamento > current.aproveitamento ? prev : current,
   );
   const pior = radarData.reduce((prev, current) =>
-    prev.aproveitamento < current.aproveitamento ? prev : current
+    prev.aproveitamento < current.aproveitamento ? prev : current,
   );
 
   // Função para determinar a cor da barra baseado no aproveitamento
@@ -145,20 +202,94 @@ export function SimulationHistoryHeader({
     return "error";
   };
 
+  // Chamada como `{barras()}`, não `<Barras />`: declarada no render, viraria
+  // um componente novo a cada render (ver semComponenteNoRender.test.ts).
+  const barras = () => (
+    <Box sx={{ mt: 0 }}>
+      <Typography
+        variant="subtitle2"
+        fontWeight="bold"
+        sx={{ mb: 2, color: "text.secondary" }}
+      >
+        📊 Aproveitamento por {viewMode === "frentes" ? "Frente" : "Matéria"}
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          maxHeight: "500px",
+          overflowY: "auto",
+          pr: 1,
+        }}
+      >
+        {[...radarData]
+          .sort((a, b) => b.aproveitamento - a.aproveitamento)
+          .map((item, index) => (
+            <Box key={index}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 0.5,
+                }}
+              >
+                <Typography variant="body2" fontWeight="medium">
+                  {item.materia}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  fontWeight="bold"
+                  color={
+                    item.aproveitamento >= 70
+                      ? "success.main"
+                      : item.aproveitamento >= 50
+                        ? "warning.main"
+                        : "error.main"
+                  }
+                >
+                  {item.aproveitamento.toFixed(1)}%
+                </Typography>
+              </Box>
+              <LinearProgress
+                variant="determinate"
+                value={item.aproveitamento}
+                color={getProgressColor(item.aproveitamento)}
+                sx={{
+                  height: 8,
+                  borderRadius: 1,
+                  backgroundColor: "rgba(0, 0, 0, 0.1)",
+                }}
+              />
+            </Box>
+          ))}
+      </Box>
+    </Box>
+  );
+
   return (
-    <Box sx={{ p: 3, minHeight: "100vh" }}>
+    <Box sx={{ p: pad, minHeight: "100vh" }}>
       {/* Header */}
       <Box
         sx={{
           display: "flex",
+          flexWrap: "wrap",
           justifyContent: "space-between",
           alignItems: "center",
+          gap: 2,
           mb: 3,
         }}
       >
         <Typography
-          variant="h4"
-          sx={{ color: "white", fontWeight: "bold", display: "flex", gap: 1 }}
+          variant={acimaDeSm ? "h4" : "h5"}
+          sx={{
+            color: "white",
+            fontWeight: "bold",
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
         >
           <BookOpen className="h-8 w-8" />
           Detalhes do Simulado
@@ -176,7 +307,7 @@ export function SimulationHistoryHeader({
       <Paper
         elevation={3}
         sx={{
-          p: 3,
+          p: pad,
           mb: 3,
           background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
           color: "white",
@@ -238,8 +369,8 @@ export function SimulationHistoryHeader({
       </Paper>
 
       {/* Cards de Estatísticas */}
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6} md={3}>
+      <Grid container spacing={acimaDeSm ? 2 : 1.5} sx={{ mb: 3 }}>
+        <Grid item xs={6} md={3}>
           <Paper
             elevation={2}
             sx={{
@@ -265,7 +396,7 @@ export function SimulationHistoryHeader({
           </Paper>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={6} md={3}>
           <Paper
             elevation={2}
             sx={{
@@ -291,7 +422,7 @@ export function SimulationHistoryHeader({
           </Paper>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={6} md={3}>
           <Paper
             elevation={2}
             sx={{
@@ -317,7 +448,7 @@ export function SimulationHistoryHeader({
           </Paper>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={6} md={3}>
           <Paper
             elevation={2}
             sx={{
@@ -345,10 +476,10 @@ export function SimulationHistoryHeader({
       </Grid>
 
       {/* Gráficos */}
-      <Grid container spacing={3}>
+      <Grid container spacing={acimaDeSm ? 3 : 2}>
         {/* Radar Chart - Aproveitamento por Matéria/Frente */}
         <Grid item xs={12} md={7}>
-          <Paper elevation={3} sx={{ p: 3, borderRadius: 2, height: "100%" }}>
+          <Paper elevation={3} sx={{ p: pad, borderRadius: 2, height: "100%" }}>
             <Box
               sx={{
                 mb: 2,
@@ -399,18 +530,22 @@ export function SimulationHistoryHeader({
                 : "Visualizando o aproveitamento geral por matéria"}
             </Typography>
 
-            {/* Modo Frentes: Exibe APENAS Radar */}
+            {/* Modo Frentes: Radar no desktop; no celular os rótulos
+                "Matéria - Frente" saíam cortados, então vira barras. */}
             {viewMode === "frentes" && (
               <>
-                <Box sx={{ height: 400 }}>
-                  <RadarChart
-                    data={radarData}
-                    scheme="category10"
-                    fill="#374151"
-                    dotSize={12}
-                    dotBorderWidth={4}
-                  />
-                </Box>
+                {!acimaDeSm && barras()}
+                {acimaDeSm && (
+                  <Box sx={{ height: 400 }}>
+                    <RadarChart
+                      data={radarData}
+                      scheme="category10"
+                      fill="#374151"
+                      dotSize={12}
+                      dotBorderWidth={4}
+                    />
+                  </Box>
+                )}
 
                 {/* Insights */}
                 <Box sx={{ mt: 2, display: "flex", gap: 2, flexWrap: "wrap" }}>
@@ -421,6 +556,7 @@ export function SimulationHistoryHeader({
                     } (${melhor.aproveitamento.toFixed(1)}%)`}
                     color="success"
                     variant="outlined"
+                    sx={chipQuebraLinha}
                   />
                   <Chip
                     icon={<AlertCircle className="h-4 w-4" />}
@@ -429,81 +565,20 @@ export function SimulationHistoryHeader({
                     } (${pior.aproveitamento.toFixed(1)}%)`}
                     color="warning"
                     variant="outlined"
+                    sx={chipQuebraLinha}
                   />
                 </Box>
               </>
             )}
 
             {/* Modo Matérias: Exibe APENAS Barras de Progresso */}
-            {viewMode === "materias" && (
-              <Box sx={{ mt: 0 }}>
-                <Typography
-                  variant="subtitle2"
-                  fontWeight="bold"
-                  sx={{ mb: 2, color: "text.secondary" }}
-                >
-                  📊 Aproveitamento por Matéria
-                </Typography>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 2,
-                    maxHeight: "500px",
-                    overflowY: "auto",
-                    pr: 1,
-                  }}
-                >
-                  {[...radarData]
-                    .sort((a, b) => b.aproveitamento - a.aproveitamento)
-                    .map((item, index) => (
-                      <Box key={index}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            mb: 0.5,
-                          }}
-                        >
-                          <Typography variant="body2" fontWeight="medium">
-                            {item.materia}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            fontWeight="bold"
-                            color={
-                              item.aproveitamento >= 70
-                                ? "success.main"
-                                : item.aproveitamento >= 50
-                                ? "warning.main"
-                                : "error.main"
-                            }
-                          >
-                            {item.aproveitamento.toFixed(1)}%
-                          </Typography>
-                        </Box>
-                        <LinearProgress
-                          variant="determinate"
-                          value={item.aproveitamento}
-                          color={getProgressColor(item.aproveitamento)}
-                          sx={{
-                            height: 8,
-                            borderRadius: 1,
-                            backgroundColor: "rgba(0, 0, 0, 0.1)",
-                          }}
-                        />
-                      </Box>
-                    ))}
-                </Box>
-              </Box>
-            )}
+            {viewMode === "materias" && barras()}
           </Paper>
         </Grid>
 
         {/* Pie Chart - Distribuição de Respostas */}
         <Grid item xs={12} md={5}>
-          <Paper elevation={3} sx={{ p: 3, borderRadius: 2, height: "100%" }}>
+          <Paper elevation={3} sx={{ p: pad, borderRadius: 2, height: "100%" }}>
             <Typography
               variant="h6"
               fontWeight="bold"
@@ -514,7 +589,7 @@ export function SimulationHistoryHeader({
             </Typography>
             <Box
               sx={{
-                height: 400,
+                height: acimaDeSm ? 400 : 300,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -530,26 +605,43 @@ export function SimulationHistoryHeader({
                       additionalRadius: -30,
                       color: "gray",
                     },
-                    innerRadius: 50,
-                    outerRadius: 120,
+                    innerRadius: acimaDeSm ? 50 : 40,
+                    outerRadius: acimaDeSm ? 120 : 95,
                     paddingAngle: 2,
                     cornerRadius: 5,
                     arcLabel: (item) => `${item.value}`,
                     arcLabelMinAngle: 20,
                   },
                 ]}
-                width={400}
-                height={400}
+                // No celular sem largura fixa (400px passavam da tela) e com a
+                // legenda embaixo.
+                width={acimaDeSm ? 400 : undefined}
+                height={acimaDeSm ? 400 : 300}
+                margin={
+                  acimaDeSm
+                    ? undefined
+                    : { top: 0, right: 0, left: 0, bottom: 50 }
+                }
                 slotProps={{
-                  legend: {
-                    direction: "column",
-                    position: { vertical: "middle", horizontal: "right" },
-                    padding: -30,
-                    itemMarkWidth: 6,
-                    itemMarkHeight: 15,
-                    markGap: 8,
-                    itemGap: 8,
-                  },
+                  legend: acimaDeSm
+                    ? {
+                        direction: "column",
+                        position: { vertical: "middle", horizontal: "right" },
+                        padding: -30,
+                        itemMarkWidth: 6,
+                        itemMarkHeight: 15,
+                        markGap: 8,
+                        itemGap: 8,
+                      }
+                    : {
+                        direction: "row",
+                        position: { vertical: "bottom", horizontal: "middle" },
+                        padding: 0,
+                        itemMarkWidth: 10,
+                        itemMarkHeight: 10,
+                        markGap: 4,
+                        itemGap: 10,
+                      },
                 }}
               />
             </Box>
