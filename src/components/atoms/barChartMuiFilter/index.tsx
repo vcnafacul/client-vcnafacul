@@ -1,3 +1,4 @@
+import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { Chip, Typography } from "@mui/material";
 import { BarChart } from "@mui/x-charts";
 import { useEffect, useMemo, useState } from "react";
@@ -56,7 +57,12 @@ export default function BarChartWithFilter({
     (max, d) => Math.max(max, d.label.length),
     0
   );
-  const leftMargin = Math.min(220, Math.max(100, longestLabel * 7.5));
+  // No celular a margem dos rótulos (até 220px) deixava as barras com ~70px.
+  const acimaDeSm = useAcimaDeSm();
+  const leftMargin = Math.min(
+    acimaDeSm ? 220 : 120,
+    Math.max(acimaDeSm ? 100 : 80, longestLabel * 7.5),
+  );
 
   return (
     <div>

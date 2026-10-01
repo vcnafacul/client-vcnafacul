@@ -15,7 +15,7 @@ export default function AnalyticsSection({
 }: AnalyticsSectionProps) {
   return (
     <section className="mt-6">
-      <div className="flex items-center justify-between px-4 pb-2 border-b border-lightGray">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-4 pb-2 border-b border-lightGray">
         <div className="flex items-center gap-2">
           <div className="w-1 h-6 bg-marine rounded" />
           <div>
