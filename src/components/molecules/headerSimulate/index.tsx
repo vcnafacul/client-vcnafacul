@@ -12,12 +12,13 @@ interface HeaderSimulateProps {
 
 function HeaderSimulate({ simulateName, onClick } : HeaderSimulateProps){
     return (
-        <div className="container flex justify-between items-center flex-col md:flex-row mx-auto py-4">
-            <Text size="secondary" className="text-white m-0">Simulado {simulateName}</Text>
-            <div className="flex items-center gap-4">
-                <PiTimerBold className="w-20 h-10 fill-white" />
-                <CountdownTimer className="text-5xl font-black" />
-                <Button onClick={onClick}>Concluir Simulado</Button>
+        // No celular quebra linha: ícone de 80px + cronômetro text-5xl + botão (~450px) passavam da tela.
+        <div className="container flex justify-between items-center flex-col md:flex-row gap-3 mx-auto py-4 px-4">
+            <Text size="secondary" className="text-white m-0 text-center break-words">Simulado {simulateName}</Text>
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 w-full sm:w-auto">
+                <PiTimerBold className="w-8 h-8 sm:w-20 sm:h-10 fill-white" />
+                <CountdownTimer className="text-3xl sm:text-5xl font-black" />
+                <Button onClick={onClick} className="w-full sm:w-auto">Concluir Simulado</Button>
             </div>
         </div>
     )

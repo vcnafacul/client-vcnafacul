@@ -278,6 +278,7 @@ function Simulate() {
             ),
           }))}
           legends={simulateData.legends}
+          respondidas={data.questions.filter((q) => q.solved).length}
           questionSelected={questionSelected}
           questionImageUrl={questionImageUrl}
           setReportProblem={() => {
@@ -307,21 +308,22 @@ function Simulate() {
             </div>
           }
           buttons={
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            // No celular: Confirmar em cima, largura toda; Voltar | Pular embaixo.
+            <div className="grid w-full grid-cols-2 gap-3 sm:flex sm:w-auto sm:items-center sm:justify-center sm:gap-4">
               <Button
                 onClick={priorQuestion}
                 typeStyle="secondary"
-                className="w-44"
+                className="w-full sm:w-44"
               >
                 Voltar
               </Button>
-              <Button onClick={nextQuestion} className="w-44">
+              <Button onClick={nextQuestion} className="w-full sm:w-44">
                 Pular
               </Button>
               <Button
                 onClick={confirmQuestion}
                 disabled={questionSelected.answered === undefined}
-                className="transition-all duration-300 bg-lightGreen border-lightGreen w-44 hover:border-green2 hover:bg-green2"
+                className="col-span-2 order-first sm:order-none transition-all duration-300 bg-lightGreen border-lightGreen w-full sm:w-44 hover:border-green2 hover:bg-green2"
               >
                 Confirmar
               </Button>
