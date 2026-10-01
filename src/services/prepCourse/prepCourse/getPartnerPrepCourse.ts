@@ -3,10 +3,11 @@ import { PartnerPrepCourse } from "@/types/partnerPrepCourse/partnerPrepCourse";
 import fetchWrapper from "@/utils/fetchWrapper";
 import { Paginate } from "@/utils/paginate";
 
-export async function getPartnerPrepCourse(
+/** Uma página; lança se a api não responder 200. */
+async function buscarPagina(
   token: string,
-  page: number = 1,
-  limit: number = 100
+  page: number,
+  limit: number,
 ): Promise<Paginate<PartnerPrepCourse>> {
   const url = new URL(partnerPrepCourse);
   const params: Record<string, string | number> = {
@@ -23,6 +24,20 @@ export async function getPartnerPrepCourse(
     },
   });
   if (res.status !== 200) {
+    throw new Error("Erro ao buscar cursinhos parceiros");
+  }
+  return await res.json();
+}
+
+/** Como sempre foi: em erro, devolve a página vazia (quem já usa conta com isso). */
+export async function getPartnerPrepCourse(
+  token: string,
+  page: number = 1,
+  limit: number = 100
+): Promise<Paginate<PartnerPrepCourse>> {
+  try {
+    return await buscarPagina(token, page, limit);
+  } catch {
     return {
       data: [] as PartnerPrepCourse[],
       page: 1,
@@ -30,8 +45,22 @@ export async function getPartnerPrepCourse(
       totalItems: 0,
     };
   }
+}
 
-  return await res.json();
+/**
+ * Todos os cursinhos parceiros, página por página, e **lança** em erro — a
+ * lista V2 mostra "tentar de novo" em vez de uma lista vazia que parece real.
+ */
+export async function getTodosOsCursinhos(
+  token: string,
+  porPagina = 100,
+): Promise<PartnerPrepCourse[]> {
+  const todos: PartnerPrepCourse[] = [];
+  for (let page = 1; ; page++) {
+    const { data, totalItems } = await buscarPagina(token, page, porPagina);
+    todos.push(...data);
+    if (data.length === 0 || todos.length >= totalItems) return todos;
+  }
 }
 
 export default getPartnerPrepCourse;
