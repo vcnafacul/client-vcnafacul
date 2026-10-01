@@ -103,7 +103,8 @@ export function InitiateConversationDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      {/* Sem a largura calculada, o diálogo encostava nas bordas do celular. */}
+      <DialogContent className="w-[calc(100%-2rem)] max-w-md rounded-lg">
         <DialogHeader>
           <DialogTitle>
             {stage === "searching" ? "Iniciar conversa" : "Mensagem inicial"}
@@ -168,7 +169,7 @@ export function InitiateConversationDialog({
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>{remaining} caracteres restantes</span>
             </div>
-            <div className="flex justify-between gap-2">
+            <div className="flex flex-wrap justify-between gap-2">
               <Button
                 type="button"
                 variant="outline"
