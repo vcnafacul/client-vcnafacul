@@ -9,7 +9,9 @@ import {
   mostrarEmPrimeiroPlano,
   syncPushToken,
 } from "@/services/push/push";
+import { MSG_ATUALIZAR_CENTRAL } from "@/pwa/notificacao";
 import { useAuthStore } from "@/store/auth";
+import { useCentralStore } from "@/store/notificacoes";
 import { jwtDecoded } from "@/utils/jwt";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +33,10 @@ function idDoUsuario(token: string): string | null {
  * - Com o app aberto e visível, o SW não mostra a notificação — o SDK a
  *   entrega para a página, e aqui ela vai para a barra do aparelho do mesmo
  *   jeito (toast só se o navegador recusar).
+ * - Central de notificações (central-notificacoes, card 04): recarrega quando
+ *   chega push com o app aberto, quando o SW avisa (push em segundo plano ou
+ *   clique na notificação) e ao voltar para o app (no máximo a cada 30s).
+ *   Sem polling: quem não tem push vê ao abrir ou voltar.
  */
 export function PushSync() {
   const token = useAuthStore((s) => s.data.token);
@@ -51,11 +57,30 @@ export function PushSync() {
     void syncPushToken(token, userId);
     // Voltou para o app (ex.: das configurações do celular): reenvia o token.
     const aoVoltar = () => {
-      if (document.visibilityState === "visible")
-        void syncPushToken(token, userId, { aoVoltar: true });
+      if (document.visibilityState !== "visible") return;
+      void syncPushToken(token, userId, { aoVoltar: true });
+      useCentralStore
+        .getState()
+        .carregarSeVelha(token)
+        .catch(() => undefined);
     };
     document.addEventListener("visibilitychange", aoVoltar);
     return () => document.removeEventListener("visibilitychange", aoVoltar);
+  }, [token]);
+
+  // O SW avisa: chegou push com o app em segundo plano, ou clicaram nela.
+  useEffect(() => {
+    const sw = navigator.serviceWorker;
+    if (!token || !sw) return;
+    const aoAvisar = (e: MessageEvent) => {
+      if (e.data?.tipo === MSG_ATUALIZAR_CENTRAL)
+        useCentralStore
+          .getState()
+          .carregar(token)
+          .catch(() => undefined);
+    };
+    sw.addEventListener("message", aoAvisar);
+    return () => sw.removeEventListener("message", aoAvisar);
   }, [token]);
 
   useEffect(() => {
@@ -63,6 +88,10 @@ export function PushSync() {
     let parar: (() => void) | undefined;
     let desmontado = false;
     void listenForeground((m) => {
+      useCentralStore
+        .getState()
+        .carregar(token)
+        .catch(() => undefined);
       mostrarEmPrimeiroPlano(m).catch(() => {
         const caminho = caminhoInterno(m.url);
         toast.info(

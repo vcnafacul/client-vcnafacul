@@ -74,6 +74,11 @@ export function AcompanharEnvio({ id }: { id: string }) {
           ))}
         </ul>
       )}
+      {envio.pessoas !== undefined && envio.pessoas > 0 && (
+        <p className="text-sm text-marine">
+          👀 {envio.leram ?? 0} de {envio.pessoas} leram na central do app.
+        </p>
+      )}
       {/* ⚠️ Texto visível, não tooltip: não é taxa de abertura. */}
       <p className="text-xs text-slate-500">
         "Entregue ao FCM" quer dizer que o Google aceitou o envio — não que a

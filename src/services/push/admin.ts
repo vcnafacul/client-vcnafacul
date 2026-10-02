@@ -35,12 +35,21 @@ export type Envio = {
   failureCount: number;
   /** Código do FCM → quantos falharam com ele; `null` sem falhas. */
   failureReasons: Record<string, number> | null;
+  /** Quem recebeu na central do app, e quantos leram lá (central, card 05). */
+  pessoas?: number;
+  leram?: number;
   createdAt: string;
   finishedAt: string | null;
   sentBy: { id: string; name: string } | null;
 };
 
-export type Alcance = { targetUsers: number; targetDevices: number };
+export type Alcance = {
+  /** Com push ativo. */
+  targetUsers: number;
+  targetDevices: number;
+  /** Todas as contas do público: quem vê na central do app. */
+  pessoas?: number;
+};
 
 /** Pessoa achada pela busca, com quantos aparelhos ATIVOS tem. */
 export type Destinatario = {

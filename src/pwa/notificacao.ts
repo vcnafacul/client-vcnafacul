@@ -8,6 +8,12 @@ export const ICONE_PADRAO = "/pwa/icon-192.png";
 export const BADGE = "/pwa/badge-72.png";
 export const TITULO_PADRAO = "Você na Facul";
 
+/**
+ * Mensagem do SW para as janelas abertas: "chegou notificação, recarregue a
+ * central" (central-notificacoes, card 04). Aqui porque o SW e o app importam.
+ */
+export const MSG_ATUALIZAR_CENTRAL = "central:atualizar";
+
 /** O que o backend manda em `data` (BE-05): tudo string, por exigência do FCM. */
 export type DadosDoPush = Partial<
   Record<"title" | "body" | "url" | "tag" | "icon" | "notificationId", string>

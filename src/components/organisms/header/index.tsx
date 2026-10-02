@@ -12,6 +12,7 @@ import { SocialLink } from "../../molecules/followUs";
 import Logged from "../../molecules/Logged";
 import Logo from "../../molecules/logo";
 import { ItemMenuProps } from "../../molecules/menuItems";
+import { SinoDaCentral } from "../centralNotificacoes";
 import MainMenu from "../mainMenu";
 import MenuMobile from "../menuMobile";
 import Sign from "../sign";
@@ -60,7 +61,9 @@ function Header({ solid, className }: HeaderProps) {
               aria-expanded={openMenu}
               className="md:hidden -ml-2 p-2"
             >
-              <MenuIcon className={`${!solid ? "fill-white" : "fill-marine"}`} />
+              <MenuIcon
+                className={`${!solid ? "fill-white" : "fill-marine"}`}
+              />
             </button>
           )}
           <Logo solid={solid} name />
@@ -74,7 +77,8 @@ function Header({ solid, className }: HeaderProps) {
             redes={header.socialLinks.filter(
               (rede, i, todas) =>
                 todas.findIndex(
-                  (r) => r.Home_Menu_Item_id.link === rede.Home_Menu_Item_id.link,
+                  (r) =>
+                    r.Home_Menu_Item_id.link === rede.Home_Menu_Item_id.link,
                 ) === i,
             )}
             entrar={token ? undefined : header.userNavigationSign[1]}
@@ -88,11 +92,15 @@ function Header({ solid, className }: HeaderProps) {
               className="items-center gap-2"
             />
           ) : (
-            <Logged
-              userNavigation={header.userNavigationLogged}
-              userName={nome!}
-              className={solid ? "text-marine" : "text-white"}
-            />
+            <div className="flex items-center gap-1">
+              {/* Central de notificações (central-notificacoes, card 03). */}
+              <SinoDaCentral solid={solid} />
+              <Logged
+                userNavigation={header.userNavigationLogged}
+                userName={nome!}
+                className={solid ? "text-marine" : "text-white"}
+              />
+            </div>
           )}
         </div>
         <DropdwonMenu userNavigation={report}>

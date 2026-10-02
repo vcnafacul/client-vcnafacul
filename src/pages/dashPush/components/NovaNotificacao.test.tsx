@@ -35,7 +35,11 @@ async function preencher() {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  api.conferirPublico.mockResolvedValue({ targetUsers: 37, targetDevices: 52 });
+  api.conferirPublico.mockResolvedValue({
+    targetUsers: 37,
+    targetDevices: 52,
+    pessoas: 37,
+  });
   api.enviarNotificacao.mockResolvedValue({
     id: "e1",
     status: "sending",
@@ -179,6 +183,19 @@ describe("NovaNotificacao", () => {
       await screen.findByText("Escolha ao menos uma pessoa"),
     ).toBeInTheDocument();
     expect(api.conferirPublico).not.toHaveBeenCalled();
+  });
+
+  it("⚠️ conferir mostra quem vê na central E quem tem push", async () => {
+    api.conferirPublico.mockResolvedValue({
+      targetUsers: 3,
+      targetDevices: 4,
+      pessoas: 10,
+    });
+    await preencher();
+    clicar("Conferir público");
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      "Vai chegar em 10 pessoas na central do app; 3 delas com push (4 aparelhos).",
+    );
   });
 
   it("mudar o rascunho descarta o número conferido", async () => {
