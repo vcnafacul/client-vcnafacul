@@ -20,6 +20,7 @@ const INBOX_PATHS = [
 export function SupportNotifier() {
   const { role } = useChatContext();
   const authed = useChatStore((s) => s.firebaseAuthed);
+  const setInboxDoSuporte = useChatStore((s) => s.setInboxDoSuporte);
   const jwt = useAuthStore((s) => s.data.token);
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -59,6 +60,8 @@ export function SupportNotifier() {
     }
 
     const unsub = listenSupportInbox((convs: ConversationDoc[]) => {
+      // O sino lê daqui (tickets/031, card 06).
+      setInboxDoSuporte(convs, !!resolvedPartnerPrepId);
       const newTotal = convs.reduce(
         (acc, c) => acc + (c.unreadCountSupport ?? 0),
         0,
@@ -106,8 +109,9 @@ export function SupportNotifier() {
       unsub();
       prevTotalRef.current = null;
       setTotal(0);
+      setInboxDoSuporte([], false);
     };
-  }, [role, authed, navigate, resolvedPartnerPrepId]);
+  }, [role, authed, navigate, resolvedPartnerPrepId, setInboxDoSuporte]);
 
   return null;
 }
