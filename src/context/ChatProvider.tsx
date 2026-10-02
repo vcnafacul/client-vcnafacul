@@ -9,10 +9,12 @@ import React, {
 } from "react";
 import { signInFirebase, signOutFirebase } from "@/services/firebase/auth";
 import { getFirebaseToken } from "@/services/chat/getFirebaseToken";
+import { listenStudentConversations } from "@/services/firebase/conversations";
 import {
-  listenStudentActiveConversation,
-  listenStudentCooldown,
-} from "@/services/firebase/conversations";
+  conversasVisiveis,
+  cooldownDoDestino,
+  naoLidasDoEstudante,
+} from "@/services/chat/conversasDoEstudante";
 import { useChatStore } from "@/store/chatStore";
 import { useAuthStore } from "@/store/auth";
 import { jwtDecoded } from "@/utils/jwt";
@@ -36,13 +38,13 @@ export const useChatContext = () => useContext(ChatContext);
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const { data } = useAuthStore();
   const setAuthed = useChatStore((s) => s.setFirebaseAuthed);
-  const setActive = useChatStore((s) => s.setActiveConversation);
+  const setConversations = useChatStore((s) => s.setConversations);
+  const resetConversations = useChatStore((s) => s.resetConversations);
   const setPartnerPrepId = useChatStore((s) => s.setPartnerPrepId);
   const setCooldownUntil = useChatStore((s) => s.setCooldownUntil);
   const [role, setRole] = useState<Role>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const unsubscribeRef = useRef<(() => void) | null>(null);
-  const unsubCooldownRef = useRef<(() => void) | null>(null);
 
   const jwt = data?.token;
   const isSupport =
@@ -65,11 +67,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       if (!decodedId) {
         unsubscribeRef.current?.();
         unsubscribeRef.current = null;
-        unsubCooldownRef.current?.();
-        unsubCooldownRef.current = null;
         setAuthed(false);
-        setActive(null);
-        setCooldownUntil(null);
+        resetConversations();
         setRole(null);
         setUserId(null);
         setPartnerPrepId(null);
@@ -101,16 +100,20 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         }
 
         if (r === "student") {
+          // tickets/031, card 03: todas as conversas (uma aberta por destino).
           unsubscribeRef.current?.();
-          unsubscribeRef.current = listenStudentActiveConversation(
+          unsubscribeRef.current = listenStudentConversations(
             decodedId,
-            (conv) => setActive(conv),
-          );
-          unsubCooldownRef.current?.();
-          unsubCooldownRef.current = listenStudentCooldown(
-            decodedId,
-            partnerPrepIdValue,
-            (until) => setCooldownUntil(until),
+            (todas) => {
+              const visiveis = conversasVisiveis(todas);
+              setConversations(visiveis);
+              // ⚠️ Antes vinha da claim `partnerPrepId` do token — que, para
+              // estudante, é sempre nula: só vigiava o projeto. Continua sendo
+              // o cooldown do projeto aqui (o `/suporte` e o balão fora das
+              // páginas de inscrição); o de cada cursinho sai de
+              // `cooldownDoDestino` onde o destino é conhecido.
+              setCooldownUntil(cooldownDoDestino(visiveis, null));
+            },
           );
         }
       } catch (err) {
@@ -122,14 +125,20 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       cancelled = true;
       unsubscribeRef.current?.();
       unsubscribeRef.current = null;
-      unsubCooldownRef.current?.();
-      unsubCooldownRef.current = null;
     };
-  }, [decodedId, isSupport, setAuthed, setActive, setPartnerPrepId, setCooldownUntil]);
+  }, [
+    decodedId,
+    isSupport,
+    setAuthed,
+    setConversations,
+    resetConversations,
+    setPartnerPrepId,
+    setCooldownUntil,
+  ]);
 
-  const active = useChatStore((s) => s.activeConversation);
-  const studentUnread =
-    role === "student" ? (active?.unreadCountStudent ?? 0) : 0;
+  // Título da aba: soma de todas as conversas, não só da ativa.
+  const conversas = useChatStore((s) => s.conversations);
+  const studentUnread = role === "student" ? naoLidasDoEstudante(conversas) : 0;
   useTabTitleUnread(studentUnread);
 
   return (

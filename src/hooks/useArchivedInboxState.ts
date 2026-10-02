@@ -13,10 +13,15 @@ export function useArchivedInboxState(
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const authed = useChatStore((s) => s.firebaseAuthed);
+  const [carregado, setCarregado] = useState(false);
 
   useEffect(() => {
     if (!authed || !enabled) return;
-    const unsub = listenArchivedInbox(setConvs, partnerPrepId);
+    setCarregado(false);
+    const unsub = listenArchivedInbox((lista) => {
+      setConvs(lista);
+      setCarregado(true);
+    }, partnerPrepId);
     return unsub;
   }, [authed, enabled, partnerPrepId]);
 
@@ -39,5 +44,14 @@ export function useArchivedInboxState(
     [convs, selectedId],
   );
 
-  return { convs, sorted, selected, selectedId, setSelectedId, search, setSearch };
+  return {
+    convs,
+    sorted,
+    selected,
+    selectedId,
+    setSelectedId,
+    search,
+    setSearch,
+    carregado,
+  };
 }

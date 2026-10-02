@@ -30,64 +30,61 @@ export interface ConversationDoc {
   closedAt?: { toMillis: () => number } | null;
 }
 
-export function listenStudentActiveConversation(
+/** Quantas conversas do estudante a lista acompanha (abertas + recentes). */
+export const LIMITE_CONVERSAS_DO_ESTUDANTE = 30;
+
+const paraDoc = (d: { id: string; data: () => unknown }): ConversationDoc => ({
+  id: d.id,
+  ...(d.data() as Omit<ConversationDoc, "id">),
+});
+
+/**
+ * Todas as conversas recentes do estudante (tickets/031, card 03): ele pode
+ * ter uma aberta por destino. Quem filtra e ordena para a tela é
+ * `conversasVisiveis`.
+ *
+ * ⚠️ Usa o índice `userId, lastMessageAt desc` (api `firestore.indexes.json`).
+ * Sem o índice publicado, o Firestore recusa a consulta
+ * (`failed-precondition`) — aí cai na consulta antiga, só das abertas e sem
+ * ordem, para o estudante não ficar sem chat.
+ */
+export function listenStudentConversations(
   userId: string,
-  cb: (conv: ConversationDoc | null) => void,
+  cb: (convs: ConversationDoc[]) => void,
 ): Unsubscribe {
-  const q = query(
-    collection(getFirestoreDb(), "conversations"),
-    where("userId", "==", userId),
-    where("status", "==", "open"),
-    limit(1),
-  );
-  return onSnapshot(
-    q,
-    (snap) => {
-      if (snap.empty) {
-        cb(null);
-      } else {
-        const d = snap.docs[0];
-        cb({ id: d.id, ...(d.data() as Omit<ConversationDoc, "id">) });
-      }
-    },
+  const db = getFirestoreDb();
+  let parar: Unsubscribe = () => undefined;
+  let encerrado = false;
+
+  const soAbertas = () =>
+    onSnapshot(
+      query(
+        collection(db, "conversations"),
+        where("userId", "==", userId),
+        where("status", "==", "open"),
+      ),
+      (snap) => cb(snap.docs.map(paraDoc)),
+      (err) => console.warn("[firestore listener]", err.code ?? err.message),
+    );
+
+  parar = onSnapshot(
+    query(
+      collection(db, "conversations"),
+      where("userId", "==", userId),
+      orderBy("lastMessageAt", "desc"),
+      limit(LIMITE_CONVERSAS_DO_ESTUDANTE),
+    ),
+    (snap) => cb(snap.docs.map(paraDoc)),
     (err) => {
       console.warn("[firestore listener]", err.code ?? err.message);
+      if (err.code === "failed-precondition" && !encerrado) parar = soAbertas();
     },
   );
-}
 
-export function listenStudentCooldown(
-  userId: string,
-  partnerPrepId: string | null,
-  cb: (cooldownUntil: number | null) => void,
-): Unsubscribe {
-  const q = query(
-    collection(getFirestoreDb(), "conversations"),
-    where("userId", "==", userId),
-    where("status", "==", "closed"),
-    where("partnerPrepId", "==", partnerPrepId),
-    orderBy("closedAt", "desc"),
-    limit(1),
-  );
-  return onSnapshot(
-    q,
-    (snap) => {
-      if (snap.empty) {
-        cb(null);
-        return;
-      }
-      const closedAtMs = snap.docs[0].data().closedAt?.toMillis?.() ?? null;
-      if (closedAtMs === null) {
-        cb(null);
-        return;
-      }
-      const until = closedAtMs + CHAT_COOLDOWN_MS;
-      cb(until > Date.now() ? until : null);
-    },
-    (err) => {
-      console.warn("[firestore cooldown listener]", err.code ?? err.message);
-    },
-  );
+  return () => {
+    encerrado = true;
+    parar();
+  };
 }
 
 export function listenArchivedInbox(
