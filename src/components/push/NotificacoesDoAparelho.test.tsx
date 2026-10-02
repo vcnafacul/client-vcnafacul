@@ -73,13 +73,20 @@ describe("NotificacoesDoAparelho", () => {
     expect(hook.ativar).toHaveBeenCalledTimes(1);
   });
 
-  it("denied: sem botão (o site não muda a permissão); diz onde ativar nas configurações", () => {
-    comStatus("denied");
-    expect(botao(/ativar/i)).toBeNull();
-    expect(screen.getByText(/controladas pelo seu aparelho/)).toHaveTextContent(
-      "Para ativar",
-    );
-  });
+  it.each(["active", "denied"] as const)(
+    "⚠️ %s: só instruções — mesmo título, nada de 'ativadas/desativadas', sem Ativar",
+    (status) => {
+      comStatus(status, [{}]);
+      expect(
+        screen.getByRole("heading", { name: "Notificações neste aparelho" }),
+      ).toBeInTheDocument();
+      expect(screen.queryByText(/ativadas|desativadas/i)).toBeNull();
+      expect(botao(/^ativar/i)).toBeNull();
+      expect(
+        screen.getByText(/controladas pelo seu aparelho/),
+      ).toHaveTextContent("Para ativar ou desativar");
+    },
+  );
 
   it.each([
     ["Linux; Android 14; Pixel 8", false, "Permissões → Notificações"],
@@ -128,15 +135,13 @@ describe("NotificacoesDoAparelho", () => {
     },
   );
 
-  it("⚠️ active: sem botão Desativar; diz onde desativar e que o token está no servidor", () => {
+  it("active: diz que o token está no servidor e que o teste é a confirmação", () => {
     comStatus("active", [{}, {}]);
     expect(
       screen.getByText("Registrado no servidor em 2 aparelhos."),
     ).toBeInTheDocument();
     expect(botao(/desativar/i)).toBeNull();
-    expect(screen.getByText(/controladas pelo seu aparelho/)).toHaveTextContent(
-      "Para desativar",
-    );
+    expect(screen.getByText(/se chegar, está funcionando/)).toBeInTheDocument();
   });
 
   it("⚠️ active no navegador mas a api sem aparelho → avisa e oferece registrar de novo", () => {

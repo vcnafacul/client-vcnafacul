@@ -1,4 +1,5 @@
 import { getFirebaseMessaging } from "@/services/firebase/client";
+import { montarNotificacao, type DadosDoPush } from "@/pwa/notificacao";
 import { swReady } from "@/pwa/registerSW";
 import {
   deleteToken,
@@ -24,11 +25,7 @@ export type PushStatus =
   | "denied" // bloqueado; só pelas configurações do aparelho/navegador
   | "active"; // permitido nas configurações
 
-export type MensagemEmPrimeiroPlano = {
-  title?: string;
-  body?: string;
-  url?: string;
-};
+export type MensagemEmPrimeiroPlano = DadosDoPush;
 
 const habilitado = () => import.meta.env.VITE_PUSH_ENABLED === "true";
 
@@ -223,7 +220,7 @@ export function __reiniciarSincronizacao() {
 
 /**
  * Mensagem com o app aberto e visível: o SW NÃO mostra nada nesse caso (o SDK
- * repassa para a página), então quem avisa é o `cb` — um toast.
+ * repassa para a página) — quem avisa é o `cb` (`mostrarEmPrimeiroPlano`).
  */
 export async function listenForeground(
   cb: (mensagem: MensagemEmPrimeiroPlano) => void,
@@ -231,4 +228,23 @@ export async function listenForeground(
   const messaging = await messagingOuNull();
   if (!messaging) return () => undefined;
   return onMessage(messaging, (payload) => cb(payload.data ?? {}));
+}
+
+/**
+ * Mostra na barra do aparelho a mensagem que chegou com o app aberto, com o
+ * MESMO desenho do SW (`montarNotificacao`). O clique cai no `notificationclick`
+ * do SW, como as outras.
+ *
+ * ⚠️ Pelo `registration` do SW, não `new Notification()`: no Android o
+ * construtor não existe (lança `TypeError`).
+ *
+ * ⚠️ No iPhone, todo push precisa virar notificação visível — senão o iOS
+ * pode cortar a inscrição. Antes, com o app aberto, nada aparecia.
+ */
+export async function mostrarEmPrimeiroPlano(
+  dados: MensagemEmPrimeiroPlano,
+): Promise<void> {
+  const { titulo, opcoes } = montarNotificacao(dados);
+  const reg = await swReady();
+  await reg.showNotification(titulo, opcoes);
 }

@@ -4,7 +4,11 @@ import {
   temDesativacaoPendente,
 } from "@/services/push/aoSair";
 import { caminhoInterno } from "@/services/push/caminho";
-import { listenForeground, syncPushToken } from "@/services/push/push";
+import {
+  listenForeground,
+  mostrarEmPrimeiroPlano,
+  syncPushToken,
+} from "@/services/push/push";
 import { useAuthStore } from "@/store/auth";
 import { jwtDecoded } from "@/utils/jwt";
 import { useEffect } from "react";
@@ -25,7 +29,8 @@ function idDoUsuario(token: string): string | null {
  * - Ao logar (ou abrir o app logado): reenvia o token ao backend.
  * - Ao sair: desativa o push neste aparelho (FE-05, ver `aoSair`).
  * - Com o app aberto e visível, o SW não mostra a notificação — o SDK a
- *   entrega para a página, e aqui ela vira um toast.
+ *   entrega para a página, e aqui ela vai para a barra do aparelho do mesmo
+ *   jeito (toast só se o navegador recusar).
  */
 export function PushSync() {
   const token = useAuthStore((s) => s.data.token);
@@ -58,11 +63,13 @@ export function PushSync() {
     let parar: (() => void) | undefined;
     let desmontado = false;
     void listenForeground((m) => {
-      const caminho = caminhoInterno(m.url);
-      toast.info(
-        [m.title, m.body].filter(Boolean).join(" — ") || "Nova notificação",
-        { onClick: caminho ? () => navigate(caminho) : undefined },
-      );
+      mostrarEmPrimeiroPlano(m).catch(() => {
+        const caminho = caminhoInterno(m.url);
+        toast.info(
+          [m.title, m.body].filter(Boolean).join(" — ") || "Nova notificação",
+          { onClick: caminho ? () => navigate(caminho) : undefined },
+        );
+      });
     }).then((unsubscribe) => {
       if (desmontado) unsubscribe();
       else parar = unsubscribe;

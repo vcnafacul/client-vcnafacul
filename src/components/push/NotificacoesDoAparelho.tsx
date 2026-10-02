@@ -7,7 +7,7 @@ import {
   TEXTOS,
   type OndeConfigurar,
 } from "./textosDoStatus";
-import { Bell, BellOff, Share, SquarePlus } from "lucide-react";
+import { Bell, Share, SquarePlus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -19,17 +19,18 @@ function ondeConfigurar(): OndeConfigurar {
   return "computador";
 }
 
-/** Legenda fixa: quem liga e desliga é o aparelho, não o site. */
-function NasConfiguracoes({ acao }: { acao: "ativar" | "desativar" }) {
+/**
+ * Legenda fixa: quem liga e desliga é o aparelho, não o site.
+ *
+ * ⚠️ **Sem dizer "ativadas"/"desativadas"** (decisão de 2026-10-02): a página
+ * não sabe com certeza — o iOS não avisa quando se desliga em Ajustes, e no
+ * Android o valor pode ficar velho. A confirmação real é o teste chegar.
+ */
+function NasConfiguracoes() {
   return (
     <p className="text-sm text-slate-600">
-      As notificações são controladas pelo seu aparelho. Para {acao}:{" "}
-      <strong>{CAMINHO_DAS_CONFIGURACOES[ondeConfigurar()]}</strong>.
-      {acao === "ativar" && " Depois, volte para esta página."}
-      {/* ⚠️ O iOS não avisa a página quando se desliga em Ajustes. */}
-      {acao === "desativar" &&
-        ondeConfigurar() === "iphone" &&
-        " No iPhone, esta tela pode continuar mostrando “ativadas” depois que você desligar em Ajustes."}
+      As notificações são controladas pelo seu aparelho. Para ativar ou
+      desativar: <strong>{CAMINHO_DAS_CONFIGURACOES[ondeConfigurar()]}</strong>.
     </p>
   );
 }
@@ -53,9 +54,10 @@ function PassosInstalarNoIPhone() {
 
 /**
  * "Notificações neste aparelho" em Minha conta (série `pwa-push`, FE-04).
- * Espelha a permissão do aparelho: não há "Desativar" — desligar é nas
- * configurações (o site não consegue revogar a permissão). Some quando o push
- * está desligado no ambiente.
+ * Só instruções: ligar e desligar é nas configurações (o site não revoga a
+ * permissão nem sabe com certeza o estado dela). O botão "Ativar" fica só para
+ * o aparelho que nunca foi perguntado — sem o pedido, o app nem aparece nas
+ * configurações. Some quando o push está desligado no ambiente.
  */
 export function NotificacoesDoAparelho() {
   const { status, aparelhos, aparelhosNaApi, ocupado, ativar, testar } =
@@ -68,6 +70,8 @@ export function NotificacoesDoAparelho() {
   if (!status || status === "disabled-by-flag") return null;
   const { titulo, texto } = TEXTOS[status];
   const ativo = status === "active";
+  // Já foi perguntado: daqui em diante, só pelas configurações.
+  const configuravel = status === "active" || status === "denied";
   // ⚠️ "Ativo" vem da assinatura do NAVEGADOR. Se a api não tem nenhum
   // aparelho, o token não foi gravado e nada chega — tem de registrar de novo.
   const semRegistroNaApi = ativo && aparelhosNaApi === 0;
@@ -90,7 +94,9 @@ export function NotificacoesDoAparelho() {
           "Enviamos. A notificação deve chegar em alguns segundos.",
         );
       } else {
-        toast.warn("Não conseguimos entregar. Desative e ative de novo.");
+        toast.warn(
+          "Não conseguimos entregar. Confira se as notificações estão permitidas nas configurações.",
+        );
       }
     } catch (e) {
       toast.error((e as Error).message);
@@ -105,23 +111,13 @@ export function NotificacoesDoAparelho() {
       className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
     >
       <div className="flex items-start gap-3">
-        {ativo ? (
-          <Bell
-            aria-hidden
-            className="mt-0.5 h-5 w-5 shrink-0 text-green-600"
-          />
-        ) : (
-          <BellOff
-            aria-hidden
-            className="mt-0.5 h-5 w-5 shrink-0 text-slate-400"
-          />
-        )}
+        <Bell aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-marine" />
         <div className="min-w-0 flex-1 space-y-2">
           <h3 id="notificacoes-titulo" className="font-semibold text-marine">
             {titulo}
           </h3>
           <p className="text-sm text-slate-600">{texto}</p>
-          {status === "denied" && <NasConfiguracoes acao="ativar" />}
+          {configuravel && <NasConfiguracoes />}
           {status === "ios-needs-install" && <PassosInstalarNoIPhone />}
           {ativo && !semRegistroNaApi && aparelhos.length > 0 && (
             <p className="text-sm text-slate-500">
@@ -137,7 +133,12 @@ export function NotificacoesDoAparelho() {
             </p>
           )}
 
-          {ativo && <NasConfiguracoes acao="desativar" />}
+          {ativo && !semRegistroNaApi && podeTestar && (
+            <p className="text-sm text-slate-500">
+              Para conferir, envie uma notificação de teste: se chegar, está
+              funcionando.
+            </p>
+          )}
 
           <div className="flex flex-wrap gap-2 pt-1">
             {status === "default" && (

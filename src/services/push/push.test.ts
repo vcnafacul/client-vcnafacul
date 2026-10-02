@@ -21,6 +21,7 @@ vi.mock("@/services/firebase/client", () => ({
 }));
 const registro = {
   pushManager: { getSubscription: () => Promise.resolve(infra.assinatura) },
+  showNotification: vi.fn(async () => undefined),
 };
 vi.mock("@/pwa/registerSW", () => ({
   swReady: () => Promise.resolve(registro),
@@ -33,6 +34,7 @@ import {
   getPushStatus,
   INTERVALO_MINIMO_MS,
   bloqueadoPeloSistema,
+  mostrarEmPrimeiroPlano,
   registrarSePermitido,
   syncPushToken,
 } from "./push";
@@ -310,5 +312,24 @@ describe("syncPushToken", () => {
     await syncPushToken("jwt", "u1");
 
     expect(api.registrarAparelho).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("mostrarEmPrimeiroPlano", () => {
+  it("⚠️ app aberto: vai para a barra do aparelho com o mesmo desenho do SW", async () => {
+    await mostrarEmPrimeiroPlano({
+      title: "Teste",
+      body: "Funcionou",
+      url: "/simulados",
+      tag: "t1",
+      notificationId: "n1",
+    });
+    expect(registro.showNotification).toHaveBeenCalledWith("Teste", {
+      body: "Funcionou",
+      icon: "/pwa/icon-192.png",
+      badge: "/pwa/badge-72.png",
+      tag: "t1",
+      data: { url: "/simulados", notificationId: "n1" },
+    });
   });
 });
