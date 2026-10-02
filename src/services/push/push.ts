@@ -134,14 +134,22 @@ export function bloqueadoPeloSistema(erro: unknown): boolean {
 }
 
 /**
- * Pede a permissão e registra o aparelho.
+ * Pede a permissão (se ainda não foi decidida) e registra o aparelho.
  *
- * ⚠️ **Chamar DIRETO do clique**, e o `requestPermission` é a primeira coisa
+ * ⚠️ **Chamar DIRETO do clique**, e o `requestPermission` é o primeiro `await`
  * aqui: iOS e Firefox ignoram o pedido fora do gesto do usuário, e um prompt
  * negado é quase irreversível.
+ *
+ * - `denied`: não pergunta de novo — o navegador não mostraria o prompt, e
+ *   insistir não muda nada. Só as configurações liberam.
+ * - `granted`: também não pergunta; segue direto para o registro.
  */
 export async function enablePush(authToken: string): Promise<PushStatus> {
-  const permissao = await Notification.requestPermission();
+  if (Notification.permission === "denied") return "denied";
+  const permissao =
+    Notification.permission === "granted"
+      ? "granted"
+      : await Notification.requestPermission();
   if (permissao === "denied") return "denied";
   if (permissao !== "granted") return "default";
 

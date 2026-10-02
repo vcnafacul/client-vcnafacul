@@ -12,6 +12,8 @@ const hook = vi.hoisted(() => ({
 vi.mock("@/hooks/usePushNotifications", () => ({
   usePushNotifications: () => hook,
 }));
+const toast = vi.hoisted(() => ({ error: vi.fn() }));
+vi.mock("react-toastify", () => ({ toast }));
 
 import { BannerNotificacoes } from "./BannerNotificacoes";
 
@@ -78,6 +80,36 @@ describe("BannerNotificacoes", () => {
     expect(hook.ativar).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole("button", { name: "Ativar" }));
     expect(hook.ativar).toHaveBeenCalledTimes(1);
+  });
+
+  it("bloqueou no prompt → em vez de sumir, explica que está bloqueado e onde liberar", async () => {
+    hook.ativar.mockResolvedValueOnce("denied");
+    montar({ status: "default" });
+
+    fireEvent.click(screen.getByRole("button", { name: "Ativar" }));
+
+    const aviso = await screen.findByRole("region", {
+      name: "Notificações bloqueadas",
+    });
+    expect(aviso).toHaveTextContent("não deixa o site perguntar de novo");
+    expect(aviso).toHaveTextContent("Notificações");
+    expect(
+      screen.queryByRole("button", { name: "Ativar" }),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Entendi" }));
+    expect(
+      screen.queryByRole("region", { name: "Notificações bloqueadas" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("falha ao registrar → toast de erro, sem erro solto", async () => {
+    hook.ativar.mockRejectedValueOnce(new Error("api fora"));
+    montar({ status: "default" });
+
+    fireEvent.click(screen.getByRole("button", { name: "Ativar" }));
+
+    await vi.waitFor(() => expect(toast.error).toHaveBeenCalledTimes(1));
   });
 
   it("ios-needs-install: leva para Minha conta, onde está o passo a passo", () => {

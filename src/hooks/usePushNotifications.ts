@@ -85,13 +85,26 @@ export function usePushNotifications() {
       .then(atualizarAparelhos);
   }, [status, token, atualizarAparelhos]);
 
-  /** ⚠️ Chamar direto do `onClick` — ver `enablePush`. */
-  const ativar = async () => {
+  /**
+   * ⚠️ Chamar direto do `onClick` — ver `enablePush`. Devolve o status novo:
+   * quem chamou mostra o "bloqueado" na hora (o banner, por exemplo, some do
+   * `default` e precisa explicar o porquê).
+   */
+  const ativar = async (): Promise<PushStatus> => {
     setOcupado(true);
     try {
       const novo = await enablePush(token);
       setStatus(novo);
       if (novo === "active") await atualizarAparelhos();
+      return novo;
+    } catch (e) {
+      // Permitiu no prompt, mas o sistema bloqueou o app (Android, nas
+      // configurações do app instalado): para a pessoa, é "bloqueado".
+      if (bloqueadoPeloSistema(e)) {
+        setStatus("denied");
+        return "denied";
+      }
+      throw e;
     } finally {
       setOcupado(false);
     }
