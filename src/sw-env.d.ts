@@ -3,6 +3,8 @@
   entra lá porque puxa tipos de DOM (svg, vite-plugin-pwa/client).
 */
 interface ImportMetaEnv {
+  /** O `--mode` do build (`homologation` em homol). O Vite sempre define. */
+  readonly MODE: string;
   readonly VITE_FIREBASE_API_KEY?: string;
   readonly VITE_FIREBASE_AUTH_DOMAIN?: string;
   readonly VITE_FIREBASE_PROJECT_ID?: string;

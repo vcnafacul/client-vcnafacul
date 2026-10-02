@@ -133,24 +133,33 @@ describe("PushSync — mensagem com o app aberto", () => {
     });
   };
 
-  it("⚠️ vira notificação do aparelho, não toast", async () => {
+  it("⚠️ Android/computador: nem barra nem toast — só o sino", async () => {
     push.mostrarEmPrimeiroPlano.mockResolvedValue(undefined);
     montar(jwt("u1"));
     await chegar({ title: "Oi", body: "Teste" });
-    expect(push.mostrarEmPrimeiroPlano).toHaveBeenCalledWith({
-      title: "Oi",
-      body: "Teste",
-    });
+    expect(push.mostrarEmPrimeiroPlano).not.toHaveBeenCalled();
     expect(toast.info).not.toHaveBeenCalled();
   });
 
-  it("navegador recusou mostrar → cai no toast", async () => {
+  it("⚠️ iPhone: vai para a barra (o iOS corta quem recebe push sem mostrar)", async () => {
+    const agente = vi
+      .spyOn(navigator, "userAgent", "get")
+      .mockReturnValue(
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15",
+      );
     push.mostrarEmPrimeiroPlano.mockRejectedValue(new TypeError("x"));
-    montar(jwt("u1"));
-    await chegar({ title: "Oi", body: "Teste" });
-    await waitFor(() =>
-      expect(toast.info).toHaveBeenCalledWith("Oi — Teste", expect.anything()),
-    );
+    try {
+      montar(jwt("u1"));
+      await chegar({ title: "Oi", body: "Teste" });
+      expect(push.mostrarEmPrimeiroPlano).toHaveBeenCalledWith({
+        title: "Oi",
+        body: "Teste",
+      });
+      // recusou: sem toast mesmo assim
+      expect(toast.info).not.toHaveBeenCalled();
+    } finally {
+      agente.mockRestore();
+    }
   });
 });
 

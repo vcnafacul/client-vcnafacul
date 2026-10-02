@@ -3,19 +3,17 @@ import {
   desativarAoSair,
   temDesativacaoPendente,
 } from "@/services/push/aoSair";
-import { caminhoInterno } from "@/services/push/caminho";
 import {
   listenForeground,
   mostrarEmPrimeiroPlano,
   syncPushToken,
 } from "@/services/push/push";
 import { MSG_ATUALIZAR_CENTRAL } from "@/pwa/notificacao";
+import { ambienteAtual, ehIOS } from "@/services/push/plataforma";
 import { useAuthStore } from "@/store/auth";
 import { useCentralStore } from "@/store/notificacoes";
 import { jwtDecoded } from "@/utils/jwt";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 
 function idDoUsuario(token: string): string | null {
   try {
@@ -31,8 +29,10 @@ function idDoUsuario(token: string): string | null {
  * - Ao logar (ou abrir o app logado): reenvia o token ao backend.
  * - Ao sair: desativa o push neste aparelho (FE-05, ver `aoSair`).
  * - Com o app aberto e visível, o SW não mostra a notificação — o SDK a
- *   entrega para a página, e aqui ela vai para a barra do aparelho do mesmo
- *   jeito (toast só se o navegador recusar).
+ *   entrega para a página. Aqui só o sino da central atualiza (decisão de
+ *   2026-10-02: nem barra nem toast), **menos no iPhone**, onde ela vai para a
+ *   barra do mesmo jeito: o iOS exige que todo push vire notificação visível,
+ *   e pode cortar a inscrição de quem recebe push sem mostrar nada.
  * - Central de notificações (central-notificacoes, card 04): recarrega quando
  *   chega push com o app aberto, quando o SW avisa (push em segundo plano ou
  *   clique na notificação) e ao voltar para o app (no máximo a cada 30s).
@@ -40,7 +40,6 @@ function idDoUsuario(token: string): string | null {
  */
 export function PushSync() {
   const token = useAuthStore((s) => s.data.token);
-  const navigate = useNavigate();
 
   // Logout (FE-05): termina o que uma navegação interrompeu e observa a
   // transição token → vazio, venha de onde vier.
@@ -92,13 +91,8 @@ export function PushSync() {
         .getState()
         .carregar(token)
         .catch(() => undefined);
-      mostrarEmPrimeiroPlano(m).catch(() => {
-        const caminho = caminhoInterno(m.url);
-        toast.info(
-          [m.title, m.body].filter(Boolean).join(" — ") || "Nova notificação",
-          { onClick: caminho ? () => navigate(caminho) : undefined },
-        );
-      });
+      if (ehIOS(ambienteAtual()))
+        mostrarEmPrimeiroPlano(m).catch(() => undefined);
     }).then((unsubscribe) => {
       if (desmontado) unsubscribe();
       else parar = unsubscribe;
@@ -107,7 +101,7 @@ export function PushSync() {
       desmontado = true;
       parar?.();
     };
-  }, [token, navigate]);
+  }, [token]);
 
   return null;
 }
