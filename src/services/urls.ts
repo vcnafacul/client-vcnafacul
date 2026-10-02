@@ -19,6 +19,8 @@ export const pushPreview = `${push}/audience/preview`;
 export const pushSend = `${push}/send`;
 export const pushNotifications = `${push}/notifications`;
 export const pushRecipients = `${push}/recipients`;
+/** Central de notificações de quem está logado (central-notificacoes). */
+export const meNotificacoes = `${BASE_URL}/me/notificacoes`;
 export const forgot = `${user}/forgot`;
 export const reset = `${user}/reset`;
 export const confirmemail = `${user}/confirmemail`;
