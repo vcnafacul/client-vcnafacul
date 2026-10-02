@@ -30,9 +30,24 @@ export type NotificacaoMontada = {
   };
 };
 
-export function montarNotificacao(dados: DadosDoPush = {}): NotificacaoMontada {
+/**
+ * Em homol, todo push chega com "[Homol] " no título — para ninguém confundir
+ * com prod (pedido de 2026-10-02). O `ci-homol` builda com
+ * `--mode homologation`, e o SW e a página passam por aqui. A central do app
+ * não leva o prefixo: ela já está dentro do app de homol.
+ */
+export const PREFIXO_HOMOL = "[Homol] ";
+
+export function tituloDoAmbiente(titulo: string, modo: string): string {
+  return modo === "homologation" ? `${PREFIXO_HOMOL}${titulo}` : titulo;
+}
+
+export function montarNotificacao(
+  dados: DadosDoPush = {},
+  modo: string = import.meta.env.MODE,
+): NotificacaoMontada {
   return {
-    titulo: dados.title || TITULO_PADRAO,
+    titulo: tituloDoAmbiente(dados.title || TITULO_PADRAO, modo),
     opcoes: {
       body: dados.body,
       icon: dados.icon || ICONE_PADRAO,

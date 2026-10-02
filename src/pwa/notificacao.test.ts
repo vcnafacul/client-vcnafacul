@@ -44,6 +44,19 @@ describe("montarNotificacao", () => {
   });
 });
 
+describe("prefixo de homol", () => {
+  it("⚠️ build de homol: título com [Homol]; prod e dev sem", () => {
+    expect(montarNotificacao({ title: "Oi" }, "homologation").titulo).toBe(
+      "[Homol] Oi",
+    );
+    expect(montarNotificacao({}, "homologation").titulo).toBe(
+      "[Homol] Você na Facul",
+    );
+    expect(montarNotificacao({ title: "Oi" }, "production").titulo).toBe("Oi");
+    expect(montarNotificacao({ title: "Oi" }, "development").titulo).toBe("Oi");
+  });
+});
+
 describe("destinoDoClique", () => {
   it("caminho interno vira URL absoluta da origem", () => {
     expect(destinoDoClique("/simulados", ORIGEM)).toBe(`${ORIGEM}/simulados`);
@@ -59,6 +72,8 @@ describe("destinoDoClique", () => {
   });
 
   it("URL absoluta da própria origem é aceita", () => {
-    expect(destinoDoClique(`${ORIGEM}/perfil`, ORIGEM)).toBe(`${ORIGEM}/perfil`);
+    expect(destinoDoClique(`${ORIGEM}/perfil`, ORIGEM)).toBe(
+      `${ORIGEM}/perfil`,
+    );
   });
 });
