@@ -16,6 +16,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useChatContext } from "@/context/ChatProvider";
+import { useConversaDoLink } from "@/hooks/useConversaDoLink";
 import { CHAT_ENABLED_ROUTES } from "@/routes/chatEnabledRoutes";
 import { markRead } from "@/services/chat/markRead";
 import {
@@ -24,8 +25,10 @@ import {
 } from "@/services/chat/openConversation";
 import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chatStore";
+import { nomeDoDestino, naoLidasDoEstudante } from "@/services/chat/conversasDoEstudante";
 import { ChatLayout } from "./ChatLayout";
 import { ConfirmOpenDialog } from "./ConfirmOpenDialog";
+import { ListaDeConversas } from "./ListaDeConversas";
 import { UnreadBadge } from "./UnreadBadge";
 
 function detectDevice(): "mobile" | "desktop" {
@@ -49,27 +52,43 @@ function detectBrowser(): string {
   return "other";
 }
 
+/**
+ * O balão do estudante (tickets/031, card 04): com uma conversa, abre direto
+ * nela; com duas ou mais (o projeto e cursinhos), mostra antes a lista.
+ */
 export function ChatWidget() {
   const { role, userId } = useChatContext();
   const jwt = useAuthStore((s) => s.data.token);
   const isOpen = useChatStore((s) => s.isOpen);
   const setOpen = useChatStore((s) => s.setOpen);
-  const active = useChatStore((s) => s.activeConversation);
+  const conversas = useChatStore((s) => s.conversations);
+  const conversasCarregadas = useChatStore((s) => s.conversationsLoaded);
+  const selecionadaId = useChatStore((s) => s.selectedConversationId);
   const selectConversation = useChatStore((s) => s.selectConversation);
   const setOpening = useChatStore((s) => s.setOpening);
   const opening = useChatStore((s) => s.isOpening);
   const cooldownUntil = useChatStore((s) => s.cooldownUntil);
   const setCooldownUntil = useChatStore((s) => s.setCooldownUntil);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [chatClosed, setChatClosed] = useState(false);
+  // "lista" ou o chat da selecionada. Com uma conversa só, a lista nem aparece.
+  const [vista, setVista] = useState<"lista" | "chat">("lista");
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [device, setDevice] = useState<"mobile" | "desktop">(detectDevice);
-  const prevActiveRef = useRef<typeof active>(null);
   const { pathname } = useLocation();
   const matchedRoute = CHAT_ENABLED_ROUTES.find((r) =>
     matchPath({ path: r.pattern, end: true }, pathname)
   );
   const routeEnabled = !!matchedRoute;
+
+  // A selecionada pode estar encerrada (só leitura) — por isso não é a
+  // `activeConversation`, que só considera as abertas.
+  const selecionada = conversas.find((c) => c.id === selecionadaId) ?? null;
+  const naoLidas = naoLidasDoEstudante(conversas);
+  // A lista aparece com duas ou mais conversas — ou quando a única está
+  // encerrada: é lá que fica "Nova conversa".
+  const comLista =
+    conversas.length > 1 ||
+    (conversas.length === 1 && conversas[0].status === "closed");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -79,21 +98,18 @@ export function ChatWidget() {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
+  // Lida só a que está na tela.
   useEffect(() => {
-    if (isOpen && active && (active.unreadCountStudent ?? 0) > 0 && jwt) {
-      markRead(jwt, active.id).catch(() => {});
+    if (
+      isOpen &&
+      vista === "chat" &&
+      selecionada &&
+      (selecionada.unreadCountStudent ?? 0) > 0 &&
+      jwt
+    ) {
+      markRead(jwt, selecionada.id).catch(() => {});
     }
-  }, [isOpen, active, jwt]);
-
-  useEffect(() => {
-    if (prevActiveRef.current && !active && isOpen) {
-      setChatClosed(true);
-    }
-    if (active) {
-      setChatClosed(false);
-    }
-    prevActiveRef.current = active;
-  }, [active, isOpen]);
+  }, [isOpen, vista, selecionada, jwt]);
 
   useEffect(() => {
     if (!cooldownUntil) { setRemainingSeconds(0); return; }
@@ -107,10 +123,34 @@ export function ChatWidget() {
     return () => clearInterval(id);
   }, [cooldownUntil]);
 
-  const hasPending =
-    !!active &&
-    (active.unreadCountStudent ?? 0) > 0 &&
-    active.lastMessageSenderType === "support";
+  // tickets/031, card 05: `?conversa=<id>` (sino, push) abre o balão nela.
+  // Só decide depois da 1ª lista; id que não é dele (ou expirou) → aviso.
+  const { id: conversaDoLink, limpar: limparLink } = useConversaDoLink();
+  useEffect(() => {
+    if (role !== "student" || !conversaDoLink || !conversasCarregadas) return;
+    if (conversas.some((c) => c.id === conversaDoLink)) {
+      selectConversation(conversaDoLink);
+      setVista("chat");
+      setOpen(true);
+    } else {
+      toast.info("Conversa não encontrada.");
+    }
+    limparLink();
+  }, [
+    role,
+    conversaDoLink,
+    conversasCarregadas,
+    conversas,
+    selectConversation,
+    setOpen,
+    limparLink,
+  ]);
+
+  // Mensagem do suporte não lida em QUALQUER conversa.
+  const hasPending = conversas.some(
+    (c) =>
+      (c.unreadCountStudent ?? 0) > 0 && c.lastMessageSenderType === "support",
+  );
 
   const prevPendingRef = useRef(false);
   useEffect(() => {
@@ -124,17 +164,34 @@ export function ChatWidget() {
     prevPendingRef.current = hasPending;
   }, [hasPending]);
 
-  const shouldRender = routeEnabled || !!active || chatClosed || remainingSeconds > 0;
+  const shouldRender = routeEnabled || conversas.length > 0 || remainingSeconds > 0;
   if (role !== "student") return null;
   if (!shouldRender) return null;
 
-  function handleClick() {
-    if (active) { setOpen(true); return; }
+  function abrirConversa(id: string) {
+    selectConversation(id);
+    setVista("chat");
+  }
+
+  function pedirNova() {
     if (remainingSeconds > 0) {
       toast.info(`Aguarde ${formatCountdown(remainingSeconds)} para iniciar uma nova conversa`);
       return;
     }
     setConfirmOpen(true);
+  }
+
+  function handleClick() {
+    if (conversas.length === 0) {
+      pedirNova();
+      return;
+    }
+    if (comLista) {
+      setVista("lista");
+    } else {
+      abrirConversa(conversas[0].id);
+    }
+    setOpen(true);
   }
 
   async function handleConfirm() {
@@ -154,15 +211,16 @@ export function ChatWidget() {
         if (!paramValue) return undefined;
         return { [matchedRoute.paramKey]: paramValue };
       })();
-      await openConversation(jwt, meta, inscriptionContext);
-      // listener do ChatProvider vai atualizar activeConversation
+      // A api devolve a conversa aberta do destino da página, se já existir
+      // (uma por destino) — senão cria. Abre direto nela.
+      const { id } = await openConversation(jwt, meta, inscriptionContext);
       setConfirmOpen(false);
+      abrirConversa(id);
       setOpen(true);
     } catch (e) {
       if (e instanceof CooldownError) {
         setConfirmOpen(false);
         setCooldownUntil(Date.now() + e.retryAfterSeconds * 1000);
-        setOpen(true);
         toast.info(
           "Aguarde um instante para abrir uma nova sessão.",
         );
@@ -195,52 +253,67 @@ export function ChatWidget() {
       <span className="font-medium">
         {hasPending ? "Mensagem do Suporte" : "Precisa de ajuda?"}
       </span>
-      {(active?.unreadCountStudent ?? 0) > 0 && (
+      {naoLidas > 0 && (
         <span className="absolute -top-1 -right-1">
-          <UnreadBadge count={active?.unreadCountStudent ?? 0} />
+          <UnreadBadge count={naoLidas} />
         </span>
       )}
     </Button>
   );
 
-  function handleWidgetClose() {
-    setOpen(false);
-    selectConversation(null);
-    setChatClosed(false);
-  }
+  const fecharPainel = () => setOpen(false);
 
-  const panel = chatClosed ? (
-    <div className="flex flex-col items-center justify-center h-full p-6 gap-4 text-center">
-      <p className="text-sm text-muted-foreground">
-        Esta conversa foi encerrada. Se precisar de mais ajuda, você pode abrir
-        uma nova conversa.
-      </p>
-      {remainingSeconds > 0 ? (
-        <div className="flex flex-col items-center gap-1">
-          <span className="text-2xl font-bold font-mono text-marine">
-            {formatCountdown(remainingSeconds)}
-          </span>
-          <span className="text-xs text-muted-foreground">
-            Aguarde para iniciar uma nova conversa
-          </span>
-        </div>
-      ) : (
-        <Button size="sm" onClick={() => { setChatClosed(false); setConfirmOpen(true); }}>
-          Iniciar nova conversa
-        </Button>
-      )}
-    </div>
-  ) : active && userId ? (
-    <div className="h-full w-full">
-      <ChatLayout
-        conversationId={active.id}
-        currentUserId={userId}
-        title="Suporte Você na Facul"
-        status={active.status}
-        onClose={handleWidgetClose}
+  const panel =
+    vista === "chat" && selecionada && userId ? (
+      <div className="h-full w-full">
+        <ChatLayout
+          conversationId={selecionada.id}
+          currentUserId={userId}
+          title={nomeDoDestino(selecionada)}
+          status={selecionada.status}
+          // Voltar para a lista: com várias conversas, ou com esta encerrada
+          // (a lista tem "Nova conversa").
+          onBack={
+            comLista || selecionada.status === "closed"
+              ? () => setVista("lista")
+              : undefined
+          }
+          onClose={fecharPainel}
+        />
+      </div>
+    ) : vista === "chat" && selecionadaId ? (
+      // Acabou de abrir: a conversa ainda não chegou pelo listener.
+      <div className="flex h-full items-center justify-center p-6 text-sm text-muted-foreground">
+        Abrindo conversa…
+      </div>
+    ) : conversas.length > 0 ? (
+      <ListaDeConversas
+        conversas={conversas}
+        onAbrir={abrirConversa}
+        onNova={pedirNova}
+        novaDesabilitada={opening}
       />
-    </div>
-  ) : null;
+    ) : (
+      <div className="flex flex-col items-center justify-center h-full p-6 gap-4 text-center">
+        <p className="text-sm text-muted-foreground">
+          Você não tem conversas no momento.
+        </p>
+        {remainingSeconds > 0 ? (
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-2xl font-bold font-mono text-marine">
+              {formatCountdown(remainingSeconds)}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              Aguarde para iniciar uma nova conversa
+            </span>
+          </div>
+        ) : (
+          <Button size="sm" onClick={pedirNova}>
+            Iniciar nova conversa
+          </Button>
+        )}
+      </div>
+    );
 
   return (
     <>
@@ -252,19 +325,19 @@ export function ChatWidget() {
         loading={opening}
       />
       {device === "mobile" ? (
-        <Sheet open={isOpen} onOpenChange={(v) => { setOpen(v); if (!v) setChatClosed(false); }}>
+        <Sheet open={isOpen} onOpenChange={setOpen}>
           <SheetContent side="bottom" className="h-[85vh] p-0 flex flex-col">
             <SheetHeader className="sr-only">
               <SheetTitle>Suporte Você na Facul</SheetTitle>
               <SheetDescription>
-                Conversa com a equipe de suporte
+                Suas conversas com o suporte e com os cursinhos
               </SheetDescription>
             </SheetHeader>
             <div className="flex-1 min-h-0">{panel}</div>
           </SheetContent>
         </Sheet>
       ) : (
-        <Popover open={isOpen} onOpenChange={(v) => { setOpen(v); if (!v) setChatClosed(false); }}>
+        <Popover open={isOpen} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <span
               className="fixed bottom-6 right-6 h-14 w-14 pointer-events-none"

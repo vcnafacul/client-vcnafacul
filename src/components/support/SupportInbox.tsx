@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/context/ChatProvider";
 import { useChatStore } from "@/store/chatStore";
 import { InitiateConversationDialog } from "@/pages/admin/support/InitiateConversationDialog";
 import { useSupportInboxState } from "@/hooks/useSupportInboxState";
 import { useArchivedInboxState } from "@/hooks/useArchivedInboxState";
+import { useConversaDoLinkNaInbox } from "@/hooks/useConversaDoLinkNaInbox";
 import { SupportInboxView } from "./SupportInboxView";
 
 type Tab = "active" | "archived";
@@ -23,6 +24,16 @@ export function SupportInbox() {
     setActiveTab(tab);
     if (tab === "archived" && !archivedEnabled) setArchivedEnabled(true);
   }
+
+  // tickets/031, card 05: `?conversa=<id>` (sino, push) seleciona a conversa.
+  const ligarArquivadas = useCallback(() => setArchivedEnabled(true), []);
+  useConversaDoLinkNaInbox({
+    ativas: activeState,
+    arquivadas: archivedState,
+    arquivadasLigadas: archivedEnabled,
+    ligarArquivadas,
+    mostrarAba: setActiveTab,
+  });
 
   const current = activeTab === "active" ? activeState : archivedState;
 

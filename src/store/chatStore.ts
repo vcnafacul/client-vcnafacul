@@ -21,9 +21,19 @@ interface ChatState {
    * por destino (projeto ou cada cursinho).
    */
   conversations: ConversationDoc[];
+  /** A 1ª lista chegou do Firestore (o `?conversa=` só decide depois). */
+  conversationsLoaded: boolean;
   selectedConversationId: string | null;
   /** Derivada de `conversations` + `selectedConversationId`. */
   activeConversation: ConversationDoc | null;
+  /**
+   * Suporte/colaborador (tickets/031, card 06): as conversas abertas da inbox
+   * dele, para o sino. Quem preenche é o `SupportNotifier` (o listener já
+   * existia lá — evita um segundo).
+   */
+  inboxDoSuporte: ConversationDoc[];
+  /** A inbox é a do cursinho (`/dashboard/suporte-cursinho`), não a do projeto. */
+  inboxDoCursinho: boolean;
   isOpen: boolean;
   isOpening: boolean;
   partnerPrepId: string | null;
@@ -32,6 +42,7 @@ interface ChatState {
   setFirebaseAuthed: (v: boolean) => void;
   setConversations: (c: ConversationDoc[]) => void;
   selectConversation: (id: string | null) => void;
+  setInboxDoSuporte: (c: ConversationDoc[], doCursinho: boolean) => void;
   setOpen: (v: boolean) => void;
   setOpening: (v: boolean) => void;
   setPartnerPrepId: (id: string | null) => void;
@@ -43,8 +54,11 @@ interface ChatState {
 export const useChatStore = create<ChatState>((set) => ({
   firebaseAuthed: false,
   conversations: [],
+  conversationsLoaded: false,
   selectedConversationId: null,
   activeConversation: null,
+  inboxDoSuporte: [],
+  inboxDoCursinho: false,
   isOpen: false,
   isOpening: false,
   partnerPrepId: null,
@@ -53,6 +67,7 @@ export const useChatStore = create<ChatState>((set) => ({
   setConversations: (conversations) =>
     set((s) => ({
       conversations,
+      conversationsLoaded: true,
       activeConversation: ativaEntre(conversations, s.selectedConversationId),
     })),
   selectConversation: (id) =>
@@ -60,6 +75,8 @@ export const useChatStore = create<ChatState>((set) => ({
       selectedConversationId: id,
       activeConversation: ativaEntre(s.conversations, id),
     })),
+  setInboxDoSuporte: (inboxDoSuporte, inboxDoCursinho) =>
+    set({ inboxDoSuporte, inboxDoCursinho }),
   setOpen: (v) => set({ isOpen: v }),
   setOpening: (v) => set({ isOpening: v }),
   setPartnerPrepId: (id) => set({ partnerPrepId: id }),
@@ -67,6 +84,7 @@ export const useChatStore = create<ChatState>((set) => ({
   resetConversations: () =>
     set({
       conversations: [],
+      conversationsLoaded: false,
       selectedConversationId: null,
       activeConversation: null,
       cooldownUntil: null,
