@@ -55,7 +55,7 @@ export function ChatWidget() {
   const isOpen = useChatStore((s) => s.isOpen);
   const setOpen = useChatStore((s) => s.setOpen);
   const active = useChatStore((s) => s.activeConversation);
-  const setActive = useChatStore((s) => s.setActiveConversation);
+  const selectConversation = useChatStore((s) => s.selectConversation);
   const setOpening = useChatStore((s) => s.setOpening);
   const opening = useChatStore((s) => s.isOpening);
   const cooldownUntil = useChatStore((s) => s.cooldownUntil);
@@ -205,7 +205,7 @@ export function ChatWidget() {
 
   function handleWidgetClose() {
     setOpen(false);
-    setActive(null);
+    selectConversation(null);
     setChatClosed(false);
   }
 

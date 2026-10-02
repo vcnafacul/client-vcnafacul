@@ -11,6 +11,7 @@ import {
 } from "@/services/chat/openConversation";
 import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chatStore";
+import { conversaAbertaDoDestino } from "@/services/chat/conversasDoEstudante";
 
 function formatCountdown(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -19,7 +20,10 @@ function formatCountdown(seconds: number): string {
 }
 
 export default function SupportPage() {
-  const active = useChatStore((s) => s.activeConversation);
+  // `/suporte` é a conversa com o PROJETO (tickets/031): com uma aberta por
+  // destino, a "ativa" pode ser a de um cursinho.
+  const conversas = useChatStore((s) => s.conversations);
+  const active = conversaAbertaDoDestino(conversas, null);
   const cooldownUntil = useChatStore((s) => s.cooldownUntil);
   const setCooldownUntil = useChatStore((s) => s.setCooldownUntil);
   const { userId } = useChatContext();
