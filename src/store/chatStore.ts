@@ -21,6 +21,8 @@ interface ChatState {
    * por destino (projeto ou cada cursinho).
    */
   conversations: ConversationDoc[];
+  /** A 1ª lista chegou do Firestore (o `?conversa=` só decide depois). */
+  conversationsLoaded: boolean;
   selectedConversationId: string | null;
   /** Derivada de `conversations` + `selectedConversationId`. */
   activeConversation: ConversationDoc | null;
@@ -43,6 +45,7 @@ interface ChatState {
 export const useChatStore = create<ChatState>((set) => ({
   firebaseAuthed: false,
   conversations: [],
+  conversationsLoaded: false,
   selectedConversationId: null,
   activeConversation: null,
   isOpen: false,
@@ -53,6 +56,7 @@ export const useChatStore = create<ChatState>((set) => ({
   setConversations: (conversations) =>
     set((s) => ({
       conversations,
+      conversationsLoaded: true,
       activeConversation: ativaEntre(conversations, s.selectedConversationId),
     })),
   selectConversation: (id) =>
@@ -67,6 +71,7 @@ export const useChatStore = create<ChatState>((set) => ({
   resetConversations: () =>
     set({
       conversations: [],
+      conversationsLoaded: false,
       selectedConversationId: null,
       activeConversation: null,
       cooldownUntil: null,

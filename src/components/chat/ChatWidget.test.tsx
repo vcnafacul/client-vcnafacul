@@ -5,6 +5,8 @@ import type { ConversationDoc } from "@/services/firebase/conversations";
 import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chatStore";
 
+const toast = vi.hoisted(() => ({ info: vi.fn(), error: vi.fn() }));
+vi.mock("react-toastify", () => ({ toast }));
 const servicos = vi.hoisted(() => ({
   markRead: vi.fn(async () => undefined),
   openConversation: vi.fn(),
@@ -51,12 +53,12 @@ const CURSINHO = conversa({
   lastMessageText: "Sua matrícula",
 });
 
-function montar(conversas: ConversationDoc[]) {
+function montar(conversas: ConversationDoc[], endereco = "/dashboard") {
   useChatStore.getState().resetConversations();
   useChatStore.getState().setOpen(false);
   useChatStore.getState().setConversations(conversas);
   return render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[endereco]}>
       <ChatWidget />
     </MemoryRouter>,
   );
@@ -135,5 +137,17 @@ describe("ChatWidget — conversas do estudante (tickets/031, card 04)", () => {
     });
     expect(servicos.openConversation).toHaveBeenCalledTimes(1);
     expect(screen.getByText("chat: Cursinho Alfa")).toBeInTheDocument();
+  });
+
+  it("?conversa=<id dele> → abre o balão já na conversa (card 05)", () => {
+    montar([CURSINHO, PROJETO], "/dashboard?conversa=a");
+    expect(screen.getByText("chat: Cursinho Alfa")).toBeInTheDocument();
+    expect(useChatStore.getState().isOpen).toBe(true);
+  });
+
+  it("?conversa=<id de outro> → não abre; aviso", () => {
+    montar([CURSINHO, PROJETO], "/dashboard?conversa=de-outro");
+    expect(useChatStore.getState().isOpen).toBe(false);
+    expect(toast.info).toHaveBeenCalledWith("Conversa não encontrada.");
   });
 });
