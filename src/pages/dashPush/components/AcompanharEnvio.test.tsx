@@ -29,6 +29,26 @@ describe("AcompanharEnvio", () => {
     expect(INTERVALO_MS).toBe(2000);
   });
 
+  it("mostra o motivo de cada falha, em português", async () => {
+    vi.useFakeTimers();
+    api.buscarEnvio.mockReset().mockResolvedValue({
+      status: "done",
+      successCount: 0,
+      failureCount: 2,
+      failureReasons: {
+        "messaging/registration-token-not-registered": 1,
+        "messaging/algo-novo": 1,
+      },
+    });
+    render(<AcompanharEnvio id="e1" />);
+    await act(() => vi.advanceTimersByTimeAsync(0));
+
+    expect(screen.getByRole("status")).toHaveTextContent("⚠️ 0 entregues");
+    const motivos = screen.getByRole("list", { name: "Motivos das falhas" });
+    expect(motivos).toHaveTextContent("o aparelho cancelou a inscrição");
+    expect(motivos).toHaveTextContent("erro messaging/algo-novo");
+  });
+
   it("para de consultar ao terminar", async () => {
     vi.useFakeTimers();
     api.buscarEnvio.mockReset().mockResolvedValue({ status: "failed" });

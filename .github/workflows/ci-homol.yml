@@ -34,6 +34,9 @@ jobs:
       VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
       VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
       VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+      # ⚠️ Sem ela o SDK usa a chave VAPID padrão do Firebase, e não a do
+      # projeto (a que o prod usa): homol ficaria gerando tokens diferentes.
+      VITE_FIREBASE_VAPID_KEY: ${{ secrets.VITE_FIREBASE_VAPID_KEY }}
       # Push ligado em homol para teste. Fixo aqui (e não pela variável do
       # repositório, que liga prod) para homol e prod serem ligados à parte.
       # ⚠️ A chave do Firebase precisa aceitar o domínio de homol.
@@ -72,6 +75,9 @@ jobs:
       VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
       VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
       VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+      # ⚠️ Sem ela o SDK usa a chave VAPID padrão do Firebase, e não a do
+      # projeto (a que o prod usa): homol ficaria gerando tokens diferentes.
+      VITE_FIREBASE_VAPID_KEY: ${{ secrets.VITE_FIREBASE_VAPID_KEY }}
       # Push ligado em homol para teste. Fixo aqui (e não pela variável do
       # repositório, que liga prod) para homol e prod serem ligados à parte.
       # ⚠️ A chave do Firebase precisa aceitar o domínio de homol.

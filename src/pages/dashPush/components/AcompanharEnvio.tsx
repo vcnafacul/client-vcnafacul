@@ -1,6 +1,7 @@
 import { buscarEnvio, type Envio } from "@/services/push/admin";
 import { useAuthStore } from "@/store/auth";
 import { useEffect, useState } from "react";
+import { motivoDaFalha } from "../regras";
 
 export const INTERVALO_MS = 2000;
 
@@ -54,11 +55,25 @@ export function AcompanharEnvio({ id }: { id: string }) {
       </p>
     );
   }
+  const ninguem = envio.successCount === 0 && envio.failureCount > 0;
+  const motivos = Object.entries(envio.failureReasons ?? {});
   return (
     <div role="status" className="space-y-1 text-sm">
-      <p className="font-semibold text-green-700">
-        ✅ {envio.successCount} entregues ao FCM · {envio.failureCount} falharam
+      <p
+        className={`font-semibold ${ninguem ? "text-orange" : "text-green-700"}`}
+      >
+        {ninguem ? "⚠️" : "✅"} {envio.successCount} entregues ao FCM ·{" "}
+        {envio.failureCount} falharam
       </p>
+      {motivos.length > 0 && (
+        <ul aria-label="Motivos das falhas" className="list-disc pl-5 text-xs">
+          {motivos.map(([codigo, n]) => (
+            <li key={codigo}>
+              <strong>{n}</strong>: {motivoDaFalha(codigo)}.
+            </li>
+          ))}
+        </ul>
+      )}
       {/* ⚠️ Texto visível, não tooltip: não é taxa de abertura. */}
       <p className="text-xs text-slate-500">
         "Entregue ao FCM" quer dizer que o Google aceitou o envio — não que a

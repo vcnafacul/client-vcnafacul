@@ -31,6 +31,8 @@ import {
   disablePush,
   enablePush,
   getPushStatus,
+  INTERVALO_MINIMO_MS,
+  bloqueadoPeloSistema,
   registrarSePermitido,
   syncPushToken,
 } from "./push";
@@ -188,6 +190,39 @@ describe("registrarSePermitido", () => {
     expect(api.registrarAparelho).toHaveBeenCalledTimes(1);
   });
 
+  it("⚠️ duas chamadas ao mesmo tempo → UM getToken e UM registro (antes: 2 tokens)", async () => {
+    navegador({ permissao: "granted" });
+    let liberar: (t: string) => void = () => undefined;
+    fcm.getToken.mockReturnValueOnce(
+      new Promise<string>((r) => {
+        liberar = r;
+      }),
+    );
+
+    const a = registrarSePermitido("jwt");
+    const b = registrarSePermitido("jwt");
+    await Promise.resolve();
+    liberar("fcm-token");
+    await Promise.all([a, b]);
+
+    expect(fcm.getToken).toHaveBeenCalledTimes(1);
+    expect(api.registrarAparelho).toHaveBeenCalledTimes(1);
+  });
+
+  it("depois de terminar, um novo registro roda de novo", async () => {
+    navegador({ permissao: "granted" });
+    await registrarSePermitido("jwt");
+    await registrarSePermitido("jwt");
+    expect(api.registrarAparelho).toHaveBeenCalledTimes(2);
+  });
+
+  it("sistema bloqueou por fora (NotAllowedError) é reconhecido", () => {
+    expect(bloqueadoPeloSistema(new DOMException("x", "NotAllowedError"))).toBe(
+      true,
+    );
+    expect(bloqueadoPeloSistema(new Error("503"))).toBe(false);
+  });
+
   it("api fora → o erro sobe (a tela avisa)", async () => {
     navegador({ permissao: "granted" });
     api.registrarAparelho.mockRejectedValue(new Error("503"));
@@ -250,6 +285,20 @@ describe("syncPushToken", () => {
       expect.objectContaining({ token: "fcm-token" }),
       "jwt-b",
     );
+  });
+
+  it("⚠️ ao voltar para o app: sincroniza de novo, no máximo a cada 30s", async () => {
+    navegador({ permissao: "granted" });
+    const agora = vi.spyOn(Date, "now").mockReturnValue(1_000_000);
+
+    await syncPushToken("jwt", "u1");
+    await syncPushToken("jwt", "u1", { aoVoltar: true }); // logo depois: não
+    agora.mockReturnValue(1_000_000 + INTERVALO_MINIMO_MS);
+    await syncPushToken("jwt", "u1", { aoVoltar: true }); // 30s depois: sim
+    await syncPushToken("jwt", "u1"); // sem aoVoltar: não
+
+    expect(api.registrarAparelho).toHaveBeenCalledTimes(2);
+    agora.mockRestore();
   });
 
   it("falha na api → tenta de novo na próxima vez", async () => {
