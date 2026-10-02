@@ -44,6 +44,13 @@ export function PushSync() {
     const userId = token ? idDoUsuario(token) : null;
     if (!token || !userId) return;
     void syncPushToken(token, userId);
+    // Voltou para o app (ex.: das configurações do celular): reenvia o token.
+    const aoVoltar = () => {
+      if (document.visibilityState === "visible")
+        void syncPushToken(token, userId, { aoVoltar: true });
+    };
+    document.addEventListener("visibilitychange", aoVoltar);
+    return () => document.removeEventListener("visibilitychange", aoVoltar);
   }, [token]);
 
   useEffect(() => {

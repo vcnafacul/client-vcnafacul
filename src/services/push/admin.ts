@@ -33,6 +33,8 @@ export type Envio = {
   targetDevices: number;
   successCount: number;
   failureCount: number;
+  /** Código do FCM → quantos falharam com ele; `null` sem falhas. */
+  failureReasons: Record<string, number> | null;
   createdAt: string;
   finishedAt: string | null;
   sentBy: { id: string; name: string } | null;

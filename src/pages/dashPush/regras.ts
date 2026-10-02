@@ -69,3 +69,26 @@ export function descricaoDoPublico(
     ? `1 e-mail: ${p.emails[0]}`
     : `${p.emails.length} e-mails`;
 }
+
+/**
+ * O que cada código de erro do FCM quer dizer para quem envia. Os de token
+ * morto já desativam o aparelho na api: ele some do próximo envio.
+ */
+export const MOTIVOS_DE_FALHA: Record<string, string> = {
+  "messaging/registration-token-not-registered":
+    "o aparelho cancelou a inscrição (desativou nas configurações, limpou os dados ou desinstalou). Ele já foi removido; volta a receber quando abrir o app de novo",
+  "messaging/invalid-registration-token":
+    "token inválido. O aparelho já foi removido",
+  "messaging/invalid-argument": "o Google recusou a mensagem ou o token",
+  "messaging/third-party-auth-error":
+    "o serviço de push do navegador recusou a credencial (chave VAPID)",
+  "messaging/mismatched-credential": "o token é de outro projeto do Firebase",
+  "messaging/message-rate-exceeded":
+    "envios demais para esse aparelho em pouco tempo",
+  "messaging/internal-error": "erro temporário do Google. Tente de novo",
+  "messaging/server-unavailable": "erro temporário do Google. Tente de novo",
+};
+
+export function motivoDaFalha(codigo: string): string {
+  return MOTIVOS_DE_FALHA[codigo] ?? `erro ${codigo}`;
+}

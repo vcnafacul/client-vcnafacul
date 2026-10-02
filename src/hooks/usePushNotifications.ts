@@ -6,6 +6,7 @@ import {
 import {
   enablePush,
   getPushStatus,
+  bloqueadoPeloSistema,
   registrarSePermitido,
   type PushStatus,
 } from "@/services/push/push";
@@ -76,7 +77,11 @@ export function usePushNotifications() {
   useEffect(() => {
     if (status !== "active" || !token) return;
     void registrarSePermitido(token)
-      .catch(() => undefined) // a contagem abaixo mostra que não gravou
+      .catch((e) => {
+        // A página diz "permitido", mas o sistema bloqueou: mostra a verdade.
+        if (bloqueadoPeloSistema(e)) setStatus("denied");
+        // Outros erros: a contagem abaixo mostra que não gravou.
+      })
       .then(atualizarAparelhos);
   }, [status, token, atualizarAparelhos]);
 

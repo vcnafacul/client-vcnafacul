@@ -26,6 +26,10 @@ function NasConfiguracoes({ acao }: { acao: "ativar" | "desativar" }) {
       As notificações são controladas pelo seu aparelho. Para {acao}:{" "}
       <strong>{CAMINHO_DAS_CONFIGURACOES[ondeConfigurar()]}</strong>.
       {acao === "ativar" && " Depois, volte para esta página."}
+      {/* ⚠️ O iOS não avisa a página quando se desliga em Ajustes. */}
+      {acao === "desativar" &&
+        ondeConfigurar() === "iphone" &&
+        " No iPhone, esta tela pode continuar mostrando “ativadas” depois que você desligar em Ajustes."}
     </p>
   );
 }

@@ -105,11 +105,35 @@ export async function registrarSePermitido(
   return true;
 }
 
-async function registrarNaApi(messaging: Messaging, authToken: string) {
-  await registrarAparelho(
-    dadosDoAparelho(await tokenDoFcm(messaging)),
-    authToken,
-  );
+let registroEmAndamento: Promise<void> | null = null;
+
+/**
+ * ⚠️ **Um registro por vez.** O card de Minha conta e o `PushSync` registram ao
+ * mesmo tempo ao abrir o app; dois `getToken` simultâneos criaram DOIS tokens
+ * para o mesmo aparelho em homol (2026-10-01), e um deles morre no 1º envio.
+ * Quem chega com um registro em andamento espera o mesmo.
+ */
+function registrarNaApi(messaging: Messaging, authToken: string) {
+  registroEmAndamento ??= (async () => {
+    try {
+      await registrarAparelho(
+        dadosDoAparelho(await tokenDoFcm(messaging)),
+        authToken,
+      );
+    } finally {
+      registroEmAndamento = null;
+    }
+  })();
+  return registroEmAndamento;
+}
+
+/**
+ * O navegador recusou criar a assinatura com a permissão "concedida": o
+ * sistema bloqueou as notificações por fora (Android, nas configurações do
+ * app) e a página ainda não soube.
+ */
+export function bloqueadoPeloSistema(erro: unknown): boolean {
+  return erro instanceof DOMException && erro.name === "NotAllowedError";
 }
 
 /**
@@ -153,25 +177,36 @@ export async function disablePush(): Promise<void> {
 }
 
 let ultimoUsuarioSincronizado: string | null = null;
+let ultimaSincronizacao = 0;
+/** Ao voltar para o app, no máximo uma sincronização a cada 30s. */
+export const INTERVALO_MINIMO_MS = 30_000;
 
 /**
  * Depois do login e na abertura do app: reenvia o token (o FCM rotaciona) e
  * renova o `last_seen_at`, que impede a limpeza de 60 dias (BE-07). Também
  * reatribui o aparelho quando outra conta entra no mesmo navegador.
  *
- * - No máximo uma vez por usuário por sessão da página.
+ * - No máximo uma vez por usuário por sessão da página — ou, com `aoVoltar`
+ *   (o app voltou para a frente), a cada `INTERVALO_MINIMO_MS`: quem religou
+ *   nas configurações ganhou uma assinatura nova, e o token novo tem de chegar
+ *   na api antes do próximo envio.
  * - ⚠️ Basta a permissão do aparelho: quem permitiu nas configurações volta a
  *   receber ao logar, mesmo que o logout tenha cancelado a assinatura.
  */
 export async function syncPushToken(
   authToken: string,
   userId: string,
+  { aoVoltar = false }: { aoVoltar?: boolean } = {},
 ): Promise<void> {
-  if (ultimoUsuarioSincronizado === userId) return;
+  const mesmoUsuario = ultimoUsuarioSincronizado === userId;
+  if (mesmoUsuario && !aoVoltar) return;
+  if (mesmoUsuario && Date.now() - ultimaSincronizacao < INTERVALO_MINIMO_MS)
+    return;
   if (!(await messagingOuNull())) return;
   if (Notification.permission !== "granted") return;
 
   ultimoUsuarioSincronizado = userId;
+  ultimaSincronizacao = Date.now();
   try {
     await registrarSePermitido(authToken);
   } catch {
@@ -182,6 +217,8 @@ export async function syncPushToken(
 /** Só para os testes. */
 export function __reiniciarSincronizacao() {
   ultimoUsuarioSincronizado = null;
+  ultimaSincronizacao = 0;
+  registroEmAndamento = null;
 }
 
 /**

@@ -78,3 +78,35 @@ describe("PushSync — logout (FE-05)", () => {
     expect(saida.aoSair).not.toHaveBeenCalled();
   });
 });
+
+describe("PushSync — token", () => {
+  it("logado: sincroniza ao abrir e de novo ao voltar para o app", async () => {
+    const { syncPushToken } = await import("@/services/push/push");
+    montar(jwt("u1"));
+    expect(syncPushToken).toHaveBeenCalledWith(jwt("u1"), "u1");
+
+    const visivel = vi
+      .spyOn(document, "visibilityState", "get")
+      .mockReturnValue("visible");
+    act(() => {
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    expect(syncPushToken).toHaveBeenLastCalledWith(jwt("u1"), "u1", {
+      aoVoltar: true,
+    });
+    visivel.mockRestore();
+  });
+
+  it("indo para o fundo não sincroniza", async () => {
+    const { syncPushToken } = await import("@/services/push/push");
+    montar(jwt("u1"));
+    const oculto = vi
+      .spyOn(document, "visibilityState", "get")
+      .mockReturnValue("hidden");
+    act(() => {
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    expect(syncPushToken).toHaveBeenCalledTimes(1);
+    oculto.mockRestore();
+  });
+});
