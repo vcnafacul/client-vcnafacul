@@ -16,6 +16,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useChatContext } from "@/context/ChatProvider";
+import { useConversaDoLink } from "@/hooks/useConversaDoLink";
 import { CHAT_ENABLED_ROUTES } from "@/routes/chatEnabledRoutes";
 import { markRead } from "@/services/chat/markRead";
 import {
@@ -61,6 +62,7 @@ export function ChatWidget() {
   const isOpen = useChatStore((s) => s.isOpen);
   const setOpen = useChatStore((s) => s.setOpen);
   const conversas = useChatStore((s) => s.conversations);
+  const conversasCarregadas = useChatStore((s) => s.conversationsLoaded);
   const selecionadaId = useChatStore((s) => s.selectedConversationId);
   const selectConversation = useChatStore((s) => s.selectConversation);
   const setOpening = useChatStore((s) => s.setOpening);
@@ -120,6 +122,29 @@ export function ChatWidget() {
     }, 1000);
     return () => clearInterval(id);
   }, [cooldownUntil]);
+
+  // tickets/031, card 05: `?conversa=<id>` (sino, push) abre o balão nela.
+  // Só decide depois da 1ª lista; id que não é dele (ou expirou) → aviso.
+  const { id: conversaDoLink, limpar: limparLink } = useConversaDoLink();
+  useEffect(() => {
+    if (role !== "student" || !conversaDoLink || !conversasCarregadas) return;
+    if (conversas.some((c) => c.id === conversaDoLink)) {
+      selectConversation(conversaDoLink);
+      setVista("chat");
+      setOpen(true);
+    } else {
+      toast.info("Conversa não encontrada.");
+    }
+    limparLink();
+  }, [
+    role,
+    conversaDoLink,
+    conversasCarregadas,
+    conversas,
+    selectConversation,
+    setOpen,
+    limparLink,
+  ]);
 
   // Mensagem do suporte não lida em QUALQUER conversa.
   const hasPending = conversas.some(

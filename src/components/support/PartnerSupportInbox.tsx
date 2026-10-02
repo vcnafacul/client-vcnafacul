@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { LuHeadset } from "react-icons/lu";
 import { useChatContext } from "@/context/ChatProvider";
 import { getMyPartnerPrepId } from "@/services/chat/getMyPartnerPrepId";
 import { useAuthStore } from "@/store/auth";
 import { useSupportInboxState } from "@/hooks/useSupportInboxState";
 import { useArchivedInboxState } from "@/hooks/useArchivedInboxState";
+import { useConversaDoLinkNaInbox } from "@/hooks/useConversaDoLinkNaInbox";
 import { SupportInboxView } from "./SupportInboxView";
 
 type Tab = "active" | "archived";
@@ -34,6 +35,16 @@ export function PartnerSupportInbox() {
     setActiveTab(tab);
     if (tab === "archived" && !archivedEnabled) setArchivedEnabled(true);
   }
+
+  // tickets/031, card 05: `?conversa=<id>` (sino, push) seleciona a conversa.
+  const ligarArquivadas = useCallback(() => setArchivedEnabled(true), []);
+  useConversaDoLinkNaInbox({
+    ativas: activeState,
+    arquivadas: archivedState,
+    arquivadasLigadas: archivedEnabled,
+    ligarArquivadas,
+    mostrarAba: setActiveTab,
+  });
 
   if (loading) {
     return (

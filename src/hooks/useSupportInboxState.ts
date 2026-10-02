@@ -15,10 +15,16 @@ export function useSupportInboxState(partnerPrepId: string | null) {
   const jwt = useAuthStore((s) => s.data.token);
   const authed = useChatStore((s) => s.firebaseAuthed);
   const autoSelectedRef = useRef(false);
+  // A 1ª resposta do listener chegou (o `?conversa=` só decide depois disso).
+  const [carregado, setCarregado] = useState(false);
 
   useEffect(() => {
     if (!authed) return;
-    const unsub = listenSupportInbox(setConvs, partnerPrepId);
+    setCarregado(false);
+    const unsub = listenSupportInbox((lista) => {
+      setConvs(lista);
+      setCarregado(true);
+    }, partnerPrepId);
     return unsub;
   }, [authed, partnerPrepId]);
 
@@ -64,5 +70,14 @@ export function useSupportInboxState(partnerPrepId: string | null) {
     }
   }, [selected, jwt]);
 
-  return { convs, sorted, selected, selectedId, setSelectedId, search, setSearch };
+  return {
+    convs,
+    sorted,
+    selected,
+    selectedId,
+    setSelectedId,
+    search,
+    setSearch,
+    carregado,
+  };
 }
