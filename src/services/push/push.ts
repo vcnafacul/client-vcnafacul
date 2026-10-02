@@ -21,9 +21,8 @@ export type PushStatus =
   | "ios-needs-install" // iOS ≥ 16.4 fora do app instalado
   | "ios-too-old" // iOS < 16.4
   | "default" // pode pedir permissão
-  | "denied" // bloqueado; só pelas configurações do navegador
-  | "granted-not-registered" // permitido, mas sem assinatura (desativou aqui)
-  | "active";
+  | "denied" // bloqueado; só pelas configurações do aparelho/navegador
+  | "active"; // permitido nas configurações
 
 export type MensagemEmPrimeiroPlano = {
   title?: string;
@@ -41,12 +40,7 @@ function temApisDoNavegador(): boolean {
   );
 }
 
-/**
- * ⚠️ **A assinatura do navegador é a fonte da verdade de "ativo".** A permissão
- * continua `granted` depois de "Desativar" (só o navegador revoga), então ela
- * sozinha não diz se o aparelho recebe. O `deleteToken` do `disablePush`
- * cancela a assinatura; o `getToken` cria uma.
- */
+/** Só o `disablePush` usa: sem assinatura, o `getToken` CRIARIA uma. */
 async function temAssinatura(): Promise<boolean> {
   const reg = await swReady();
   return !!(await reg.pushManager.getSubscription());
@@ -88,9 +82,34 @@ export async function getPushStatus(): Promise<PushStatus> {
     return "unsupported";
   }
 
+  // ⚠️ **A permissão do aparelho é a fonte da verdade** (decisão de
+  // 2026-10-01): ligar e desligar é nas configurações do celular/navegador —
+  // o site não consegue revogar a permissão (`Permissions.revoke` saiu da
+  // especificação) nem abrir a tela de configurações.
   if (Notification.permission === "denied") return "denied";
   if (Notification.permission === "default") return "default";
-  return (await temAssinatura()) ? "active" : "granted-not-registered";
+  return "active";
+}
+
+/**
+ * Com a permissão concedida, garante o token na api — cria a assinatura se
+ * ela não existir (ex.: depois de um logout). Sem pedir nada à pessoa.
+ * Devolve se registrou.
+ */
+export async function registrarSePermitido(
+  authToken: string,
+): Promise<boolean> {
+  const messaging = await messagingOuNull();
+  if (!messaging || Notification.permission !== "granted") return false;
+  await registrarNaApi(messaging, authToken);
+  return true;
+}
+
+async function registrarNaApi(messaging: Messaging, authToken: string) {
+  await registrarAparelho(
+    dadosDoAparelho(await tokenDoFcm(messaging)),
+    authToken,
+  );
 }
 
 /**
@@ -108,13 +127,13 @@ export async function enablePush(authToken: string): Promise<PushStatus> {
   const messaging = await messagingOuNull();
   if (!messaging) return "unsupported";
 
-  const token = await tokenDoFcm(messaging);
-  await registrarAparelho(dadosDoAparelho(token), authToken);
+  await registrarNaApi(messaging, authToken);
   return "active";
 }
 
 /**
- * Para de receber neste aparelho. ⚠️ Tolerante a erro: se a api falhar, a
+ * Para de receber neste aparelho — usado no logout (FE-05); na tela não há
+ * mais "Desativar". ⚠️ Tolerante a erro: se a api falhar, a
  * assinatura é cancelada mesmo assim — o aparelho para de receber de qualquer
  * jeito, e o token órfão na base cai na limpeza (BE-05/BE-07).
  */
@@ -141,23 +160,20 @@ let ultimoUsuarioSincronizado: string | null = null;
  * reatribui o aparelho quando outra conta entra no mesmo navegador.
  *
  * - No máximo uma vez por usuário por sessão da página.
- * - ⚠️ Só se já há assinatura: quem clicou "Desativar" continua desativado.
+ * - ⚠️ Basta a permissão do aparelho: quem permitiu nas configurações volta a
+ *   receber ao logar, mesmo que o logout tenha cancelado a assinatura.
  */
 export async function syncPushToken(
   authToken: string,
   userId: string,
 ): Promise<void> {
   if (ultimoUsuarioSincronizado === userId) return;
-  const messaging = await messagingOuNull();
-  if (!messaging) return;
-  if (Notification.permission !== "granted" || !(await temAssinatura())) return;
+  if (!(await messagingOuNull())) return;
+  if (Notification.permission !== "granted") return;
 
   ultimoUsuarioSincronizado = userId;
   try {
-    await registrarAparelho(
-      dadosDoAparelho(await tokenDoFcm(messaging)),
-      authToken,
-    );
+    await registrarSePermitido(authToken);
   } catch {
     ultimoUsuarioSincronizado = null; // tenta de novo na próxima montagem
   }

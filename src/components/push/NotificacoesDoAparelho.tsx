@@ -1,28 +1,32 @@
 import { Button } from "@/components/ui/button";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useAuthStore } from "@/store/auth";
-import { TEXTOS } from "./textosDoStatus";
+import { ambienteAtual, plataforma } from "@/services/push/plataforma";
+import {
+  CAMINHO_DAS_CONFIGURACOES,
+  TEXTOS,
+  type OndeConfigurar,
+} from "./textosDoStatus";
 import { Bell, BellOff, Share, SquarePlus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-function PassosDesbloquear() {
+function ondeConfigurar(): OndeConfigurar {
+  const ambiente = ambienteAtual();
+  const p = plataforma(ambiente);
+  if (p === "ios") return "iphone";
+  if (p === "android") return ambiente.standalone ? "android-app" : "android";
+  return "computador";
+}
+
+/** Legenda fixa: quem liga e desliga é o aparelho, não o site. */
+function NasConfiguracoes({ acao }: { acao: "ativar" | "desativar" }) {
   return (
-    <ul className="list-disc space-y-1 pl-5 text-sm text-slate-600">
-      <li>
-        <strong>Chrome no Android:</strong> toque no ícone à esquerda do
-        endereço → Permissões → Notificações → Permitir.
-      </li>
-      <li>
-        <strong>Chrome/Edge no computador:</strong> clique no ícone à esquerda
-        do endereço → Notificações → Permitir.
-      </li>
-      <li>
-        <strong>iPhone (app instalado):</strong> Ajustes → Notificações → Você
-        na Facul → Permitir Notificações.
-      </li>
-      <li>Depois, recarregue a página.</li>
-    </ul>
+    <p className="text-sm text-slate-600">
+      As notificações são controladas pelo seu aparelho. Para {acao}:{" "}
+      <strong>{CAMINHO_DAS_CONFIGURACOES[ondeConfigurar()]}</strong>.
+      {acao === "ativar" && " Depois, volte para esta página."}
+    </p>
   );
 }
 
@@ -45,18 +49,13 @@ function PassosInstalarNoIPhone() {
 
 /**
  * "Notificações neste aparelho" em Minha conta (série `pwa-push`, FE-04).
- * Some quando o push está desligado no ambiente (homol, dev).
+ * Espelha a permissão do aparelho: não há "Desativar" — desligar é nas
+ * configurações (o site não consegue revogar a permissão). Some quando o push
+ * está desligado no ambiente.
  */
 export function NotificacoesDoAparelho() {
-  const {
-    status,
-    aparelhos,
-    aparelhosNaApi,
-    ocupado,
-    ativar,
-    desativar,
-    testar,
-  } = usePushNotifications();
+  const { status, aparelhos, aparelhosNaApi, ocupado, ativar, testar } =
+    usePushNotifications();
   const [testando, setTestando] = useState(false);
   // "Enviar teste" só para quem pode enviar notificações (`enviarNotificacao`,
   // BE-03) — a api também exige a permissão (403 sem ela).
@@ -118,7 +117,7 @@ export function NotificacoesDoAparelho() {
             {titulo}
           </h3>
           <p className="text-sm text-slate-600">{texto}</p>
-          {status === "denied" && <PassosDesbloquear />}
+          {status === "denied" && <NasConfiguracoes acao="ativar" />}
           {status === "ios-needs-install" && <PassosInstalarNoIPhone />}
           {ativo && !semRegistroNaApi && aparelhos.length > 0 && (
             <p className="text-sm text-slate-500">
@@ -134,8 +133,10 @@ export function NotificacoesDoAparelho() {
             </p>
           )}
 
+          {ativo && <NasConfiguracoes acao="desativar" />}
+
           <div className="flex flex-wrap gap-2 pt-1">
-            {(status === "default" || status === "granted-not-registered") && (
+            {status === "default" && (
               <Button onClick={ativarComAviso} disabled={ocupado}>
                 Ativar notificações
               </Button>
@@ -145,21 +146,10 @@ export function NotificacoesDoAparelho() {
                 Registrar de novo
               </Button>
             )}
-            {ativo && (
-              <>
-                {podeTestar && (
-                  <Button onClick={enviarTeste} disabled={testando || ocupado}>
-                    Enviar notificação de teste
-                  </Button>
-                )}
-                <Button
-                  variant="outline"
-                  onClick={desativar}
-                  disabled={ocupado}
-                >
-                  Desativar
-                </Button>
-              </>
+            {ativo && !semRegistroNaApi && podeTestar && (
+              <Button onClick={enviarTeste} disabled={testando || ocupado}>
+                Enviar notificação de teste
+              </Button>
             )}
           </div>
         </div>

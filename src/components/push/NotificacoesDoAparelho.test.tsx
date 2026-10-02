@@ -9,7 +9,6 @@ const hook = vi.hoisted(() => ({
   aparelhosNaApi: null as number | null,
   ocupado: false,
   ativar: vi.fn(),
-  desativar: vi.fn(),
   testar: vi.fn(),
 }));
 vi.mock("@/hooks/usePushNotifications", () => ({
@@ -74,18 +73,46 @@ describe("NotificacoesDoAparelho", () => {
     expect(hook.ativar).toHaveBeenCalledTimes(1);
   });
 
-  it("desativado aqui (granted-not-registered) também oferece Ativar", () => {
-    comStatus("granted-not-registered");
-    expect(botao(/ativar notificações/i)).toBeInTheDocument();
-  });
-
-  it("denied: sem botão de ativar, com o passo a passo para desbloquear", () => {
+  it("denied: sem botão (o site não muda a permissão); diz onde ativar nas configurações", () => {
     comStatus("denied");
     expect(botao(/ativar/i)).toBeNull();
-    expect(
-      screen.getByText(/Permissões → Notificações → Permitir/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/controladas pelo seu aparelho/)).toHaveTextContent(
+      "Para ativar",
+    );
   });
+
+  it.each([
+    ["Linux; Android 14; Pixel 8", false, "Permissões → Notificações"],
+    ["Linux; Android 14; Pixel 8", true, "Apps → Você na Facul → Notificações"],
+    [
+      "iPhone; CPU iPhone OS 17_5 like Mac OS X",
+      true,
+      "Ajustes → Notificações → Você na Facul",
+    ],
+    [
+      "Windows NT 10.0; Win64; x64",
+      false,
+      "ícone à esquerda do endereço → Notificações",
+    ],
+  ])(
+    "caminho das configurações: %s (instalado=%s)",
+    (ua, instalado, caminho) => {
+      const agente = vi
+        .spyOn(navigator, "userAgent", "get")
+        .mockReturnValue(`Mozilla/5.0 (${ua})`);
+      const original = window.matchMedia;
+      window.matchMedia = (() => ({ matches: instalado })) as never;
+      try {
+        comStatus("denied");
+        expect(
+          screen.getByText(/controladas pelo seu aparelho/),
+        ).toHaveTextContent(caminho);
+      } finally {
+        agente.mockRestore();
+        window.matchMedia = original;
+      }
+    },
+  );
 
   it("ios-needs-install: passo a passo de Adicionar à Tela de Início", () => {
     comStatus("ios-needs-install");
@@ -101,14 +128,15 @@ describe("NotificacoesDoAparelho", () => {
     },
   );
 
-  it("active: diz que o token está no servidor; desativar", () => {
+  it("⚠️ active: sem botão Desativar; diz onde desativar e que o token está no servidor", () => {
     comStatus("active", [{}, {}]);
     expect(
       screen.getByText("Registrado no servidor em 2 aparelhos."),
     ).toBeInTheDocument();
-
-    fireEvent.click(botao(/desativar/i)!);
-    expect(hook.desativar).toHaveBeenCalledTimes(1);
+    expect(botao(/desativar/i)).toBeNull();
+    expect(screen.getByText(/controladas pelo seu aparelho/)).toHaveTextContent(
+      "Para desativar",
+    );
   });
 
   it("⚠️ active no navegador mas a api sem aparelho → avisa e oferece registrar de novo", () => {
@@ -138,14 +166,13 @@ describe("NotificacoesDoAparelho", () => {
 
   it("⚠️ sem a permissão enviarNotificacao, o botão de teste nem aparece", () => {
     permitirTeste(false);
-    comStatus("active");
+    comStatus("active", [{}]);
     expect(botao(/enviar notificação de teste/i)).toBeNull();
-    expect(botao(/desativar/i)).toBeInTheDocument();
   });
 
   it("enviar teste: sucesso e falha de entrega viram avisos diferentes", async () => {
     hook.testar.mockResolvedValueOnce({ successCount: 1, failureCount: 0 });
-    comStatus("active");
+    comStatus("active", [{}]);
     fireEvent.click(botao(/enviar notificação de teste/i)!);
     await waitFor(() => expect(toast.success).toHaveBeenCalled());
 

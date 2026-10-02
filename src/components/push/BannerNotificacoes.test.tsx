@@ -65,16 +65,13 @@ describe("BannerNotificacoes", () => {
     expect(banner()).toBeInTheDocument();
   });
 
-  it.each([
-    "active",
-    "denied",
-    "unsupported",
-    "granted-not-registered",
-    "disabled-by-flag",
-  ] as const)("%s → não aparece", (status) => {
-    montar({ status });
-    expect(banner()).toBeNull();
-  });
+  it.each(["active", "denied", "unsupported", "disabled-by-flag"] as const)(
+    "%s → não aparece",
+    (status) => {
+      montar({ status });
+      expect(banner()).toBeNull();
+    },
+  );
 
   it("⚠️ não pede permissão sozinho; só no clique de Ativar", () => {
     montar({ status: "default" });
