@@ -11,7 +11,8 @@ import { useAuthStore } from "@/store/auth";
 import { useCentralStore } from "@/store/notificacoes";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Bell } from "lucide-react";
+import { Bell, MessageCircle } from "lucide-react";
+import { type ConversaNoSino, useConversasNoSino } from "./conversasNoSino";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -88,11 +89,59 @@ function Item({
   );
 }
 
+function ItemDeConversa({
+  c,
+  onAbrir,
+}: {
+  c: ConversaNoSino;
+  onAbrir: (id: string) => void;
+}) {
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={() => onAbrir(c.id)}
+        className="flex w-full gap-3 px-4 py-3 text-left hover:bg-slate-50"
+      >
+        <MessageCircle
+          aria-hidden
+          className="mt-0.5 h-4 w-4 shrink-0 text-orange"
+        />
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-semibold text-marine">
+            {c.titulo}
+            {c.subtitulo && (
+              <span className="font-normal text-slate-500">
+                {" "}
+                · {c.subtitulo}
+              </span>
+            )}
+          </span>
+          <span className="block text-sm text-slate-600">
+            {c.naoLidas === 1
+              ? "1 mensagem nova"
+              : `${c.naoLidas} mensagens novas`}
+            {c.trecho && <span className="text-slate-500"> — {c.trecho}</span>}
+          </span>
+          {c.quando && (
+            <span className="block text-xs text-slate-400">
+              {haQuanto(new Date(c.quando).toISOString())}
+            </span>
+          )}
+        </span>
+      </button>
+    </li>
+  );
+}
+
 /** O conteúdo da central — o mesmo no Popover (desktop) e no Sheet (mobile). */
 export function ListaDaCentral({ onFechar }: { onFechar: () => void }) {
   const token = useAuthStore((s) => s.data.token);
   const { itens, naoLidas, marcarLida, marcarTodas } = useCentralStore();
   const navigate = useNavigate();
+  // tickets/031, card 06: conversas com mensagem nova, em cima. Não entram no
+  // "Marcar todas como lidas" — ler uma conversa é abri-la.
+  const { conversas, abrir: abrirConversa } = useConversasNoSino();
 
   const abrir = (n: NotificacaoDaCentral) => {
     void marcarLida(n.id, token);
@@ -118,20 +167,43 @@ export function ListaDaCentral({ onFechar }: { onFechar: () => void }) {
           </Button>
         )}
       </div>
-      {itens.length === 0 ? (
-        <p className="px-4 py-8 text-center text-sm text-slate-500">
-          Nenhuma notificação por aqui.
-        </p>
-      ) : (
-        <ul
-          aria-label="Notificações"
-          className="divide-y divide-slate-100 overflow-y-auto"
-        >
-          {itens.map((n) => (
-            <Item key={n.id} n={n} onAbrir={abrir} />
-          ))}
-        </ul>
-      )}
+      <div className="overflow-y-auto">
+        {conversas.length > 0 && (
+          <section aria-labelledby="sino-conversas">
+            <h3
+              id="sino-conversas"
+              className="bg-slate-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500"
+            >
+              Conversas
+            </h3>
+            <ul aria-label="Conversas" className="divide-y divide-slate-100">
+              {conversas.map((c) => (
+                <ItemDeConversa
+                  key={c.id}
+                  c={c}
+                  onAbrir={(id) => {
+                    onFechar();
+                    abrirConversa(id);
+                  }}
+                />
+              ))}
+            </ul>
+          </section>
+        )}
+        {itens.length === 0 ? (
+          conversas.length === 0 && (
+            <p className="px-4 py-8 text-center text-sm text-slate-500">
+              Nenhuma notificação por aqui.
+            </p>
+          )
+        ) : (
+          <ul aria-label="Notificações" className="divide-y divide-slate-100">
+            {itens.map((n) => (
+              <Item key={n.id} n={n} onAbrir={abrir} />
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
@@ -146,6 +218,10 @@ export function SinoDaCentral({ solid = true }: { solid?: boolean }) {
   const { naoLidas, carregar, limpar } = useCentralStore();
   const [aberto, setAberto] = useState(false);
   const mobile = useTelaPequena();
+  // O contador soma CONVERSAS com mensagem nova, não mensagens: uma conversa
+  // movimentada não deve inflar o sino para 30.
+  const { conversas } = useConversasNoSino();
+  const total = naoLidas + conversas.length;
 
   useEffect(() => {
     if (!token) {
@@ -157,12 +233,12 @@ export function SinoDaCentral({ solid = true }: { solid?: boolean }) {
 
   if (!token) return null;
 
-  const rotulo = rotuloDoContador(naoLidas);
+  const rotulo = rotuloDoContador(total);
   const sino = (
     <button
       type="button"
       aria-label={
-        naoLidas > 0 ? `Notificações, ${naoLidas} não lidas` : "Notificações"
+        total > 0 ? `Notificações, ${total} não lidas` : "Notificações"
       }
       onClick={mobile ? () => setAberto(true) : undefined}
       className={`relative rounded-full p-2 ${
