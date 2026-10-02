@@ -49,6 +49,22 @@ describe("AcompanharEnvio", () => {
     expect(motivos).toHaveTextContent("erro messaging/algo-novo");
   });
 
+  it("mostra quantos leram na central", async () => {
+    vi.useFakeTimers();
+    api.buscarEnvio.mockReset().mockResolvedValue({
+      status: "done",
+      successCount: 3,
+      failureCount: 0,
+      pessoas: 10,
+      leram: 4,
+    });
+    render(<AcompanharEnvio id="e1" />);
+    await act(() => vi.advanceTimersByTimeAsync(0));
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "4 de 10 leram na central do app",
+    );
+  });
+
   it("para de consultar ao terminar", async () => {
     vi.useFakeTimers();
     api.buscarEnvio.mockReset().mockResolvedValue({ status: "failed" });

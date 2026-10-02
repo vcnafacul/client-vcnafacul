@@ -247,7 +247,9 @@ export function NovaNotificacao() {
 
         {alcance && (
           <p role="status" className="text-sm text-marine">
-            Vai chegar em <strong>{alcance.targetUsers} pessoas</strong> (
+            Vai chegar em{" "}
+            <strong>{alcance.pessoas ?? alcance.targetUsers} pessoas</strong> na
+            central do app; {alcance.targetUsers} delas com push (
             {alcance.targetDevices} aparelhos).
           </p>
         )}
@@ -274,8 +276,10 @@ export function NovaNotificacao() {
           >
             <p className="text-sm">
               Enviar "<strong>{r.title.trim()}</strong>" para{" "}
-              <strong>{alcance?.targetUsers} pessoas</strong> (
-              {alcance?.targetDevices} aparelhos)? Não dá para desfazer.
+              <strong>
+                {alcance?.pessoas ?? alcance?.targetUsers} pessoas
+              </strong>{" "}
+              ({alcance?.targetUsers} com push)? Não dá para desfazer.
             </p>
             {paraTodos && (
               <label className="block space-y-1 text-sm">

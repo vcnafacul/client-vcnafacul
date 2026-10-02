@@ -13,6 +13,13 @@ const push = vi.hoisted(() => ({
 vi.mock("@/services/push/push", () => push);
 const toast = vi.hoisted(() => ({ info: vi.fn() }));
 vi.mock("react-toastify", () => ({ toast }));
+const central = vi.hoisted(() => ({
+  carregar: vi.fn(async () => undefined),
+  carregarSeVelha: vi.fn(async () => undefined),
+}));
+vi.mock("@/store/notificacoes", () => ({
+  useCentralStore: { getState: () => central },
+}));
 const saida = vi.hoisted(() => ({
   aoSair: vi.fn(),
   desativarAoSair: vi.fn(),
@@ -144,5 +151,52 @@ describe("PushSync — mensagem com o app aberto", () => {
     await waitFor(() =>
       expect(toast.info).toHaveBeenCalledWith("Oi — Teste", expect.anything()),
     );
+  });
+});
+
+describe("PushSync — central de notificações (card 04)", () => {
+  it("push com o app aberto → recarrega a central", async () => {
+    push.mostrarEmPrimeiroPlano.mockResolvedValue(undefined);
+    montar(jwt("u1"));
+    await waitFor(() => expect(push.listenForeground).toHaveBeenCalled());
+    const cb = push.listenForeground.mock.calls.at(-1)![0];
+    await act(async () => {
+      cb({ title: "Oi" });
+    });
+    expect(central.carregar).toHaveBeenCalledWith(jwt("u1"));
+  });
+
+  it("voltar para o app → recarrega se estiver velha (no máx. a cada 30s)", () => {
+    montar(jwt("u1"));
+    const visivel = vi
+      .spyOn(document, "visibilityState", "get")
+      .mockReturnValue("visible");
+    act(() => {
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    expect(central.carregarSeVelha).toHaveBeenCalledWith(jwt("u1"));
+    visivel.mockRestore();
+  });
+
+  it("⚠️ aviso do SW (push em segundo plano / clique) → recarrega; outra mensagem não", () => {
+    const sw = new EventTarget();
+    vi.stubGlobal("navigator", { ...navigator, serviceWorker: sw });
+    try {
+      montar(jwt("u1"));
+      act(() => {
+        sw.dispatchEvent(
+          new MessageEvent("message", { data: { tipo: "outra" } }),
+        );
+      });
+      expect(central.carregar).not.toHaveBeenCalled();
+      act(() => {
+        sw.dispatchEvent(
+          new MessageEvent("message", { data: { tipo: "central:atualizar" } }),
+        );
+      });
+      expect(central.carregar).toHaveBeenCalledWith(jwt("u1"));
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });
