@@ -1,12 +1,18 @@
-import { act, render } from "@testing-library/react";
+import { act, render, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useAuthStore } from "@/store/auth";
 
-vi.mock("@/services/push/push", () => ({
+const push = vi.hoisted(() => ({
   syncPushToken: vi.fn(),
-  listenForeground: vi.fn(() => Promise.resolve(() => undefined)),
+  mostrarEmPrimeiroPlano: vi.fn(),
+  listenForeground: vi.fn((_cb: (m: Record<string, string>) => void) =>
+    Promise.resolve(() => undefined),
+  ),
 }));
+vi.mock("@/services/push/push", () => push);
+const toast = vi.hoisted(() => ({ info: vi.fn() }));
+vi.mock("react-toastify", () => ({ toast }));
 const saida = vi.hoisted(() => ({
   aoSair: vi.fn(),
   desativarAoSair: vi.fn(),
@@ -81,7 +87,7 @@ describe("PushSync — logout (FE-05)", () => {
 
 describe("PushSync — token", () => {
   it("logado: sincroniza ao abrir e de novo ao voltar para o app", async () => {
-    const { syncPushToken } = await import("@/services/push/push");
+    const { syncPushToken } = push;
     montar(jwt("u1"));
     expect(syncPushToken).toHaveBeenCalledWith(jwt("u1"), "u1");
 
@@ -98,7 +104,7 @@ describe("PushSync — token", () => {
   });
 
   it("indo para o fundo não sincroniza", async () => {
-    const { syncPushToken } = await import("@/services/push/push");
+    const { syncPushToken } = push;
     montar(jwt("u1"));
     const oculto = vi
       .spyOn(document, "visibilityState", "get")
@@ -108,5 +114,35 @@ describe("PushSync — token", () => {
     });
     expect(syncPushToken).toHaveBeenCalledTimes(1);
     oculto.mockRestore();
+  });
+});
+
+describe("PushSync — mensagem com o app aberto", () => {
+  const chegar = async (m: Record<string, string>) => {
+    await waitFor(() => expect(push.listenForeground).toHaveBeenCalled());
+    const cb = push.listenForeground.mock.calls.at(-1)![0];
+    await act(async () => {
+      cb(m);
+    });
+  };
+
+  it("⚠️ vira notificação do aparelho, não toast", async () => {
+    push.mostrarEmPrimeiroPlano.mockResolvedValue(undefined);
+    montar(jwt("u1"));
+    await chegar({ title: "Oi", body: "Teste" });
+    expect(push.mostrarEmPrimeiroPlano).toHaveBeenCalledWith({
+      title: "Oi",
+      body: "Teste",
+    });
+    expect(toast.info).not.toHaveBeenCalled();
+  });
+
+  it("navegador recusou mostrar → cai no toast", async () => {
+    push.mostrarEmPrimeiroPlano.mockRejectedValue(new TypeError("x"));
+    montar(jwt("u1"));
+    await chegar({ title: "Oi", body: "Teste" });
+    await waitFor(() =>
+      expect(toast.info).toHaveBeenCalledWith("Oi — Teste", expect.anything()),
+    );
   });
 });

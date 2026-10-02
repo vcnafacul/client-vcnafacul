@@ -7,9 +7,12 @@ export const TEXTOS: Record<
   Exclude<PushStatus, "disabled-by-flag">,
   Conteudo
 > = {
+  // ⚠️ `active` e `denied` com o MESMO texto: a página não sabe com certeza
+  // o estado da permissão (ver `NasConfiguracoes`).
   active: {
-    titulo: "Notificações ativadas neste aparelho",
-    texto: "Você recebe os avisos do Você na Facul mesmo com o site fechado.",
+    titulo: "Notificações neste aparelho",
+    texto:
+      "Com as notificações permitidas, os avisos do Você na Facul chegam mesmo com o site fechado.",
   },
   default: {
     titulo: "Receba avisos mesmo com o site fechado",
@@ -17,8 +20,9 @@ export const TEXTOS: Record<
       "Ative para receber avisos importantes do Você na Facul neste aparelho.",
   },
   denied: {
-    titulo: "Notificações desativadas neste aparelho",
-    texto: "Para receber os avisos, permita as notificações nas configurações:",
+    titulo: "Notificações neste aparelho",
+    texto:
+      "Com as notificações permitidas, os avisos do Você na Facul chegam mesmo com o site fechado.",
   },
   "ios-needs-install": {
     titulo: "No iPhone, primeiro adicione o site à Tela de Início",
