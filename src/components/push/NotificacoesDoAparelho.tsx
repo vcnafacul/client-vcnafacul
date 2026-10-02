@@ -1,23 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useAuthStore } from "@/store/auth";
-import { ambienteAtual, plataforma } from "@/services/push/plataforma";
 import {
   CAMINHO_DAS_CONFIGURACOES,
   TEXTOS,
-  type OndeConfigurar,
+  ondeConfigurar,
 } from "./textosDoStatus";
 import { Bell, Share, SquarePlus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-
-function ondeConfigurar(): OndeConfigurar {
-  const ambiente = ambienteAtual();
-  const p = plataforma(ambiente);
-  if (p === "ios") return "iphone";
-  if (p === "android") return ambiente.standalone ? "android-app" : "android";
-  return "computador";
-}
 
 /**
  * Legenda fixa: quem liga e desliga é o aparelho, não o site.
@@ -32,6 +23,25 @@ function NasConfiguracoes() {
       As notificações são controladas pelo seu aparelho. Para ativar ou
       desativar: <strong>{CAMINHO_DAS_CONFIGURACOES[ondeConfigurar()]}</strong>.
     </p>
+  );
+}
+
+/**
+ * Bloqueado: o site não pode perguntar de novo nem abrir as configurações
+ * (`chrome://settings` não abre a partir de uma página). O que dá é mostrar o
+ * caminho; a tela se atualiza sozinha quando a pessoa volta.
+ */
+function ComoLiberar() {
+  return (
+    <div className="space-y-1 rounded-lg bg-orange/5 p-3 text-sm text-slate-700">
+      <p>
+        Onde liberar:{" "}
+        <strong>{CAMINHO_DAS_CONFIGURACOES[ondeConfigurar()]}</strong>.
+      </p>
+      <p className="text-slate-500">
+        Depois, volte para cá — esta tela se atualiza sozinha.
+      </p>
+    </div>
   );
 }
 
@@ -70,8 +80,6 @@ export function NotificacoesDoAparelho() {
   if (!status || status === "disabled-by-flag") return null;
   const { titulo, texto } = TEXTOS[status];
   const ativo = status === "active";
-  // Já foi perguntado: daqui em diante, só pelas configurações.
-  const configuravel = status === "active" || status === "denied";
   // ⚠️ "Ativo" vem da assinatura do NAVEGADOR. Se a api não tem nenhum
   // aparelho, o token não foi gravado e nada chega — tem de registrar de novo.
   const semRegistroNaApi = ativo && aparelhosNaApi === 0;
@@ -117,7 +125,8 @@ export function NotificacoesDoAparelho() {
             {titulo}
           </h3>
           <p className="text-sm text-slate-600">{texto}</p>
-          {configuravel && <NasConfiguracoes />}
+          {status === "active" && <NasConfiguracoes />}
+          {status === "denied" && <ComoLiberar />}
           {status === "ios-needs-install" && <PassosInstalarNoIPhone />}
           {ativo && !semRegistroNaApi && aparelhos.length > 0 && (
             <p className="text-sm text-slate-500">

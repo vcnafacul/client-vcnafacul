@@ -150,6 +150,20 @@ describe("enablePush", () => {
     expect(api.registrarAparelho).not.toHaveBeenCalled();
   });
 
+  it("⚠️ já bloqueado → nem chama requestPermission (o navegador não perguntaria)", async () => {
+    const n = navegador({ permissao: "denied" });
+    expect(await enablePush("jwt")).toBe("denied");
+    expect(n.requestPermission).not.toHaveBeenCalled();
+    expect(api.registrarAparelho).not.toHaveBeenCalled();
+  });
+
+  it("já permitido → não pergunta de novo e registra o aparelho", async () => {
+    const n = navegador({ permissao: "granted" });
+    expect(await enablePush("jwt")).toBe("active");
+    expect(n.requestPermission).not.toHaveBeenCalled();
+    expect(api.registrarAparelho).toHaveBeenCalledTimes(1);
+  });
+
   it("fechou o prompt sem decidir → default, sem registrar", async () => {
     navegador({ pedido: "default" });
     expect(await enablePush("jwt")).toBe("default");

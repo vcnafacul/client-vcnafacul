@@ -73,20 +73,33 @@ describe("NotificacoesDoAparelho", () => {
     expect(hook.ativar).toHaveBeenCalledTimes(1);
   });
 
-  it.each(["active", "denied"] as const)(
-    "⚠️ %s: só instruções — mesmo título, nada de 'ativadas/desativadas', sem Ativar",
-    (status) => {
-      comStatus(status, [{}]);
-      expect(
-        screen.getByRole("heading", { name: "Notificações neste aparelho" }),
-      ).toBeInTheDocument();
-      expect(screen.queryByText(/ativadas|desativadas/i)).toBeNull();
-      expect(botao(/^ativar/i)).toBeNull();
-      expect(
-        screen.getByText(/controladas pelo seu aparelho/),
-      ).toHaveTextContent("Para ativar ou desativar");
-    },
-  );
+  it("⚠️ active: só instruções — nada de 'ativadas/desativadas', sem Ativar", () => {
+    comStatus("active", [{}]);
+    expect(
+      screen.getByRole("heading", { name: "Notificações neste aparelho" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/ativadas|desativadas/i)).toBeNull();
+    expect(botao(/^ativar/i)).toBeNull();
+    expect(
+      screen.getByText(/controladas pelo seu aparelho/),
+    ).toHaveTextContent("Para ativar ou desativar");
+  });
+
+  it("⚠️ denied: diz que está bloqueado, mostra onde liberar e NÃO oferece Ativar", () => {
+    comStatus("denied");
+    expect(
+      screen.getByRole("heading", {
+        name: "Notificações bloqueadas neste aparelho",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/não deixa o site perguntar de novo/),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Onde liberar/)).toBeInTheDocument();
+    // Pedir de novo não adianta: o navegador nem mostra o prompt.
+    expect(botao(/ativar|registrar/i)).toBeNull();
+    expect(hook.ativar).not.toHaveBeenCalled();
+  });
 
   it.each([
     ["Linux; Android 14; Pixel 8", false, "Permissões → Notificações"],
@@ -101,6 +114,12 @@ describe("NotificacoesDoAparelho", () => {
       false,
       "ícone à esquerda do endereço → Notificações",
     ],
+    // App instalado pelo Chrome no computador: a janela não tem endereço.
+    [
+      "Windows NT 10.0; Win64; x64",
+      true,
+      "menu ⋮ da janela do app → Informações do app → Configurações do site → Notificações",
+    ],
   ])(
     "caminho das configurações: %s (instalado=%s)",
     (ua, instalado, caminho) => {
@@ -111,9 +130,7 @@ describe("NotificacoesDoAparelho", () => {
       window.matchMedia = (() => ({ matches: instalado })) as never;
       try {
         comStatus("denied");
-        expect(
-          screen.getByText(/controladas pelo seu aparelho/),
-        ).toHaveTextContent(caminho);
+        expect(screen.getByText(/Onde liberar/)).toHaveTextContent(caminho);
       } finally {
         agente.mockRestore();
         window.matchMedia = original;
