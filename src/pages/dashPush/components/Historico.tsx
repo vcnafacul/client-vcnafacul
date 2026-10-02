@@ -77,6 +77,7 @@ export function Historico() {
               >
                 Entregues / falhas
               </th>
+              <th className="py-2 pr-3">Leram no app</th>
             </tr>
           </thead>
           <tbody>
@@ -96,6 +97,9 @@ export function Historico() {
                 <td className="py-2 pr-3">{STATUS[e.status]}</td>
                 <td className="py-2 pr-3">
                   {e.successCount} / {e.failureCount}
+                </td>
+                <td className="py-2 pr-3">
+                  {e.pessoas ? `${e.leram ?? 0} de ${e.pessoas}` : "—"}
                 </td>
               </tr>
             ))}
