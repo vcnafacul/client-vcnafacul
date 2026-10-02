@@ -12,7 +12,11 @@
 */
 import { initializeApp } from "firebase/app";
 import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
-import { destinoDoClique, montarNotificacao } from "./pwa/notificacao";
+import {
+  MSG_ATUALIZAR_CENTRAL,
+  destinoDoClique,
+  montarNotificacao,
+} from "./pwa/notificacao";
 
 declare const self: ServiceWorkerGlobalScope;
 
@@ -23,6 +27,15 @@ self.addEventListener("install", () => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(self.clients.claim());
 });
+
+/** Avisa as janelas abertas (em segundo plano, inclusive) para recarregar a central. */
+async function avisarJanelas(): Promise<void> {
+  const janelas = await self.clients.matchAll({
+    type: "window",
+    includeUncontrolled: true,
+  });
+  for (const j of janelas) j.postMessage({ tipo: MSG_ATUALIZAR_CENTRAL });
+}
 
 self.addEventListener("notificationclick", (event) => {
   const destino = destinoDoClique(
@@ -42,6 +55,7 @@ self.addEventListener("notificationclick", (event) => {
         (j) => new URL(j.url).origin === self.location.origin,
       );
       if (aberta) {
+        aberta.postMessage({ tipo: MSG_ATUALIZAR_CENTRAL });
         await aberta.focus();
         // `navigate` só funciona em janela controlada por este SW.
         const navegou = await aberta.navigate(destino).catch(() => null);
@@ -70,7 +84,11 @@ if (Object.values(config).every(Boolean)) {
     const messaging = getMessaging(initializeApp(config));
     onBackgroundMessage(messaging, (payload) => {
       const { titulo, opcoes } = montarNotificacao(payload.data);
-      return self.registration.showNotification(titulo, opcoes);
+      return Promise.all([
+        self.registration.showNotification(titulo, opcoes),
+        // Avisar é extra: falhar aqui não pode impedir a notificação.
+        avisarJanelas().catch(() => undefined),
+      ]);
     });
   } catch (error) {
     console.error("[sw] push desativado:", error);

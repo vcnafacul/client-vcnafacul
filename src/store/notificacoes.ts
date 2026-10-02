@@ -16,24 +16,36 @@ import { create } from "zustand";
  * ⚠️ Nada em `localStorage`: a fonte da verdade é a api (o `main.tsx` limpa o
  * `localStorage` a cada deploy).
  */
+/** Ao voltar para o app, no máximo uma recarga a cada 30s. */
+export const INTERVALO_MINIMO_MS = 30_000;
+
 type EstadoDaCentral = {
   itens: NotificacaoDaCentral[];
   naoLidas: number;
   carregada: boolean;
+  ultimaCarga: number;
   carregar: (token: string) => Promise<void>;
+  /** Como `carregar`, mas pula se carregou há menos de 30s. */
+  carregarSeVelha: (token: string) => Promise<void>;
   marcarLida: (id: string, token: string) => Promise<void>;
   marcarTodas: (token: string) => Promise<void>;
   limpar: () => void;
 };
 
-const VAZIA = { itens: [], naoLidas: 0, carregada: false };
+const VAZIA = { itens: [], naoLidas: 0, carregada: false, ultimaCarga: 0 };
 
 export const useCentralStore = create<EstadoDaCentral>((set, get) => ({
   ...VAZIA,
 
   carregar: async (token) => {
+    set({ ultimaCarga: Date.now() });
     const { data, naoLidas } = await listarNotificacoes(token);
     set({ itens: data, naoLidas, carregada: true });
+  },
+
+  carregarSeVelha: async (token) => {
+    if (Date.now() - get().ultimaCarga < INTERVALO_MINIMO_MS) return;
+    await get().carregar(token);
   },
 
   // Otimista: o sino responde na hora; se a api falhar, recarrega a verdade.
