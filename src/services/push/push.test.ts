@@ -31,6 +31,7 @@ import {
   disablePush,
   enablePush,
   getPushStatus,
+  registrarSePermitido,
   syncPushToken,
 } from "./push";
 
@@ -130,10 +131,10 @@ describe("getPushStatus", () => {
     expect(await getPushStatus()).toBe("unsupported");
   });
 
-  it("⚠️ permitido mas sem assinatura (desativou aqui) → granted-not-registered", async () => {
+  it("⚠️ permitido nas configurações → active, mesmo sem assinatura", async () => {
     navegador({ permissao: "granted" });
     infra.assinatura = null;
-    expect(await getPushStatus()).toBe("granted-not-registered");
+    expect(await getPushStatus()).toBe("active");
   });
 });
 
@@ -172,6 +173,28 @@ describe("enablePush", () => {
   });
 });
 
+describe("registrarSePermitido", () => {
+  it("sem permissão → não pede nada e não registra", async () => {
+    const n = navegador({ permissao: "default" });
+    expect(await registrarSePermitido("jwt")).toBe(false);
+    expect(n.requestPermission).not.toHaveBeenCalled();
+    expect(api.registrarAparelho).not.toHaveBeenCalled();
+  });
+
+  it("com permissão → registra sem pedir", async () => {
+    const n = navegador({ permissao: "granted" });
+    expect(await registrarSePermitido("jwt")).toBe(true);
+    expect(n.requestPermission).not.toHaveBeenCalled();
+    expect(api.registrarAparelho).toHaveBeenCalledTimes(1);
+  });
+
+  it("api fora → o erro sobe (a tela avisa)", async () => {
+    navegador({ permissao: "granted" });
+    api.registrarAparelho.mockRejectedValue(new Error("503"));
+    await expect(registrarSePermitido("jwt")).rejects.toThrow("503");
+  });
+});
+
 describe("disablePush", () => {
   it("⚠️ chama deleteToken mesmo com a api falhando", async () => {
     navegador({ permissao: "granted" });
@@ -203,11 +226,15 @@ describe("syncPushToken", () => {
     expect(api.registrarAparelho).not.toHaveBeenCalled();
   });
 
-  it("⚠️ quem desativou (sem assinatura) continua desativado", async () => {
+  it("⚠️ permitido mas sem assinatura (ex.: depois do logout) → registra de novo", async () => {
     navegador({ permissao: "granted" });
     infra.assinatura = null;
     await syncPushToken("jwt", "u1");
-    expect(fcm.getToken).not.toHaveBeenCalled();
+    expect(fcm.getToken).toHaveBeenCalled();
+    expect(api.registrarAparelho).toHaveBeenCalledWith(
+      expect.objectContaining({ token: "fcm-token" }),
+      "jwt",
+    );
   });
 
   it("uma vez por usuário; outra conta no mesmo navegador sincroniza de novo", async () => {

@@ -8,7 +8,7 @@ export const TEXTOS: Record<
   Conteudo
 > = {
   active: {
-    titulo: "Notificações ativas neste aparelho",
+    titulo: "Notificações ativadas neste aparelho",
     texto: "Você recebe os avisos do Você na Facul mesmo com o site fechado.",
   },
   default: {
@@ -16,14 +16,9 @@ export const TEXTOS: Record<
     texto:
       "Ative para receber avisos importantes do Você na Facul neste aparelho.",
   },
-  "granted-not-registered": {
-    titulo: "Notificações desativadas neste aparelho",
-    texto: "Ative de novo quando quiser voltar a receber os avisos.",
-  },
   denied: {
-    titulo: "Você bloqueou as notificações",
-    texto:
-      "Para receber os avisos, desbloqueie nas configurações do navegador:",
+    titulo: "Notificações desativadas neste aparelho",
+    texto: "Para receber os avisos, permita as notificações nas configurações:",
   },
   "ios-needs-install": {
     titulo: "No iPhone, primeiro adicione o site à Tela de Início",
@@ -38,4 +33,19 @@ export const TEXTOS: Record<
     titulo: "Este navegador não suporta notificações",
     texto: "Tente pelo Chrome, pelo Edge ou pelo Firefox.",
   },
+};
+
+export type OndeConfigurar =
+  "iphone" | "android-app" | "android" | "computador";
+
+/**
+ * Onde ficam as notificações nas configurações. ⚠️ O site não consegue abrir
+ * essa tela (nem no Android nem no iPhone) — por isso o passo a passo.
+ */
+export const CAMINHO_DAS_CONFIGURACOES: Record<OndeConfigurar, string> = {
+  iphone: "Ajustes → Notificações → Você na Facul",
+  "android-app":
+    "Configurações do celular → Apps → Você na Facul → Notificações",
+  android: "toque no ícone à esquerda do endereço → Permissões → Notificações",
+  computador: "clique no ícone à esquerda do endereço → Notificações",
 };
