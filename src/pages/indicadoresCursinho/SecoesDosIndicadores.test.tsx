@@ -41,4 +41,23 @@ describe("Seções dos indicadores", () => {
     expect(screen.getByText("Alunos no período")).toBeInTheDocument();
     expect(screen.getByText("em 4 turmas")).toBeInTheDocument();
   });
+  it("ativos (03): de quantos alunos; no período encerrado vira 'Chegaram ao fim'", () => {
+    const { rerender } = render(
+      <SecoesDosIndicadores
+        dados={dadosDeExemplo({ cursinho: { alunos: 120, ativos: 98 } })}
+      />,
+    );
+    expect(screen.getByText("98")).toBeInTheDocument();
+    expect(screen.getByText("Ativos")).toBeInTheDocument();
+    expect(screen.getByText("de 120 alunos do período")).toBeInTheDocument();
+    // sem fotos de duas semanas, o gráfico explica por que está vazio
+    expect(
+      screen.getByText(/a partir da segunda semana/),
+    ).toBeInTheDocument();
+
+    const encerrado = dadosDeExemplo({ cursinho: { alunos: 120, ativos: 90 } });
+    encerrado.periodo.emAndamento = false;
+    rerender(<SecoesDosIndicadores dados={encerrado} />);
+    expect(screen.getByText("Chegaram ao fim")).toBeInTheDocument();
+  });
 });

@@ -1,6 +1,7 @@
-import { Users } from "lucide-react";
+import { UserCheck, Users } from "lucide-react";
 import { CardDeMetrica } from "@/components/indicadores/CardDeMetrica";
 import { contagem, type Indicadores } from "@/services/indicadores";
+import { CurvaDoPeriodo, EvolucaoDoPeriodo } from "./EvolucaoDoPeriodo";
 import { explicacoes } from "./explicacoes";
 
 interface Props {
@@ -14,6 +15,17 @@ interface Props {
 export function SecoesDosIndicadores({ dados }: Props) {
   const { cursinho, turmas } = dados;
   const alunos = contagem(cursinho, "alunos");
+  const ativos = contagem(cursinho, "ativos");
+  const emAndamento = dados.periodo.emAndamento;
+
+  const curvas: CurvaDoPeriodo[] = [
+    {
+      chave: "ativos",
+      rotulo: "Ativos",
+      legenda: "alunos ativos",
+      valor: (m) => contagem(m, "ativos"),
+    },
+  ];
 
   return (
     <div className="space-y-8">
@@ -28,7 +40,18 @@ export function SecoesDosIndicadores({ dados }: Props) {
             }
             explicacao={explicacoes.alunos}
           />
+          <CardDeMetrica
+            icon={UserCheck}
+            tom="green"
+            rotulo={emAndamento ? "Ativos" : "Chegaram ao fim"}
+            valor={ativos}
+            detalhe={
+              alunos !== null ? `de ${alunos} alunos do período` : undefined
+            }
+            explicacao={explicacoes.ativos}
+          />
         </div>
+        <EvolucaoDoPeriodo serie={dados.serie} curvas={curvas} />
       </Area>
     </div>
   );

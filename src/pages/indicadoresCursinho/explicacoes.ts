@@ -13,4 +13,11 @@ export const explicacoes = {
     ficaDeFora:
       "quem se inscreveu mas não foi selecionado, quem não confirmou a matrícula e quem está na lista de espera.",
   },
+  ativos: {
+    oQueE: "quantos alunos estão com a matrícula em vigor hoje.",
+    comoContamos:
+      "alunos matriculados nas turmas deste período que não tiveram a matrícula cancelada. Em um período já encerrado, mostramos quantos chegaram até o último dia.",
+    ficaDeFora:
+      "matrículas canceladas, mesmo que o aluno ainda apareça em alguma lista antiga.",
+  },
 } satisfies Record<string, ExplicacaoDaMetrica>;
