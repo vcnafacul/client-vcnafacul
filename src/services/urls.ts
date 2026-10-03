@@ -184,6 +184,13 @@ export const dashboardPublicStudentsServed = `${dashboard}/public/students-serve
 export const dashboardPublicStudentsEnrolled = `${dashboard}/public/students-enrolled`;
 export const essayMyCursinhoCount = `${essayMyCursinho}/count`;
 
+// tickets/033 — indicadores do cursinho
+export const indicadores = `${BASE_URL}/indicadores`;
+export const indicadoresPeriodos = `${indicadores}/periodos`;
+export const indicadoresSumindo = `${indicadores}/sumindo`;
+export const indicadoresDesempenho = `${indicadores}/desempenho`;
+export const indicadoresResumo = `${indicadores}/resumo`;
+
 export const homeContent = `${BASE_URL}/home-content`;
 export const homeAbout = `${homeContent}/about`;
 export const homeAboutThumbnail = `${homeAbout}/thumbnail`;
