@@ -10,6 +10,7 @@ import {
   getStudentsServed,
 } from '@/services/dashboard';
 import { getPerformance } from '@/services/historico/getPerformance';
+import { getResumoDosIndicadores } from '@/services/indicadores';
 import { getCurrentTheme, getMyStats } from '@/services/essay';
 
 /**
@@ -32,6 +33,8 @@ const sources = {
   essaysToReviewAll: (token: string) => getEssayCountForReviewAll(token),
   questoesPendentes: (token: string) => getQuestoesPendentes(token),
   studentsServed: (token: string) => getStudentsServed(token),
+  // tickets/033: ativos, evasão e frequência do período em andamento
+  indicadores: (token: string) => getResumoDosIndicadores(token),
   openInscriptions: (token: string) => getOpenInscriptions(token),
 };
 
