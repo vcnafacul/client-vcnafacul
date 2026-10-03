@@ -41,4 +41,11 @@ export const explicacoes = {
     ficaDeFora:
       "do destaque, as turmas com menos de 10 alunos, porque nelas um único cancelamento muda muito a porcentagem.",
   },
+  frequencia: {
+    oQueE: "de cada 100 presenças possíveis, quantas aconteceram.",
+    comoContamos:
+      "somamos as presenças de todos os alunos e dividimos pelo total de chamadas em que eles estavam na turma. Quem entrou no meio do período só conta a partir da matrícula.",
+    ficaDeFora:
+      "turmas que ainda não registraram chamada. Falta justificada conta como falta, mas mostramos quantas foram.",
+  },
 } satisfies Record<string, ExplicacaoDaMetrica>;

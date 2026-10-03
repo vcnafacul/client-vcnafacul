@@ -1,5 +1,5 @@
 import { contagem } from "@/services/indicadores";
-import { porcentagem } from "./formato";
+import { frequencia, porcentagem } from "./formato";
 import type { TurmaNoRanking } from "./turmas";
 
 export interface ColunaDaTurma {
@@ -19,4 +19,11 @@ export const colunasBase: ColunaDaTurma[] = [
     valor: (t) => contagem(t.metricas, "cancelados") ?? "—",
   },
   { titulo: "Evasão", valor: (t) => porcentagem(t.evasao) ?? "—" },
+  {
+    titulo: "Frequência",
+    valor: (t) =>
+      contagem(t.metricas, "aulasRegistradas") === 0
+        ? "sem chamadas"
+        : (porcentagem(frequencia(t.metricas)) ?? "—"),
+  },
 ];

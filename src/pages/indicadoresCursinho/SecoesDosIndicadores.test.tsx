@@ -142,4 +142,29 @@ describe("Seções dos indicadores", () => {
       "/dashboard/turmas/Noite",
     );
   });
+  it("frequência (07): soma antes de dividir; turma sem chamada fica 'sem chamadas'", () => {
+    renderSecoes(
+      <SecoesDosIndicadores
+        dados={dadosDeExemplo({
+          cursinho: {
+            presencas: 100,
+            chamadasAluno: 120,
+            faltasJustificadas: 4,
+            aulasRegistradas: 64,
+          },
+          turmas: [
+            turma("A", { presencas: 90, chamadasAluno: 100, aulasRegistradas: 50 }),
+            turma("B", { presencas: 10, chamadasAluno: 20, aulasRegistradas: 14 }),
+            turma("C", { aulasRegistradas: 0 }),
+          ],
+        })}
+      />,
+    );
+    expect(screen.getByText("83,3%")).toBeInTheDocument();
+    expect(
+      screen.getByText("em 64 aulas registradas · 3,3% de faltas justificadas"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("90%")).toBeInTheDocument();
+    expect(screen.getByText("sem chamadas")).toBeInTheDocument();
+  });
 });
