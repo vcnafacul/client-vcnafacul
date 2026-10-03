@@ -3,6 +3,7 @@ import {
   indicadores,
   indicadoresPeriodos,
   indicadoresDesempenho,
+  indicadoresResumo,
   indicadoresSumindo,
 } from "../urls";
 
@@ -136,6 +137,27 @@ export async function getDesempenho(
   );
   if (response.status !== 200)
     throw new Error("Erro ao buscar o desempenho");
+  return response.json();
+}
+
+export interface ResumoDosIndicadores {
+  /** A pessoa é de um cursinho? (equipe do projeto: não) */
+  cursinho: boolean;
+  /** Os períodos em andamento somados (normalmente um). */
+  periodos: { id: string; nome: string }[];
+  /** `null` sem período em andamento. */
+  metricas: Metricas | null;
+}
+
+export async function getResumoDosIndicadores(
+  token: string,
+): Promise<ResumoDosIndicadores> {
+  const response = await fetchWrapper(indicadoresResumo, {
+    method: "GET",
+    headers: headers(token),
+  });
+  if (response.status !== 200)
+    throw new Error("Erro ao buscar os indicadores do cursinho");
   return response.json();
 }
 
