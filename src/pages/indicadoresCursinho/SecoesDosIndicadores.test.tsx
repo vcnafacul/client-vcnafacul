@@ -8,6 +8,15 @@ vi.mock("@/components/indicadores/InfoDaMetrica", () => ({
   InfoDaMetrica: () => null,
 }));
 
+// O desempenho vem de outra rota; aqui ele é fixo.
+const desempenho = vi.hoisted(() => ({
+  dados: null as unknown,
+  carregando: false,
+  erro: false,
+  carregar: () => {},
+}));
+vi.mock("./useDesempenho", () => ({ useDesempenho: () => desempenho }));
+
 import { SecoesDosIndicadores } from "./SecoesDosIndicadores";
 
 const renderSecoes = (ui: React.ReactElement) =>
@@ -166,5 +175,39 @@ describe("Seções dos indicadores", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("90%")).toBeInTheDocument();
     expect(screen.getByText("sem chamadas")).toBeInTheDocument();
+  });
+  it("sumindo (08): só no período em andamento", () => {
+    const { rerender } = renderSecoes(
+      <SecoesDosIndicadores
+        dados={dadosDeExemplo({ cursinho: { alunos: 10, sumindo: 7 } })}
+      />,
+    );
+    expect(screen.getByText("Sumindo")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "7" })).toBeInTheDocument();
+
+    const encerrado = dadosDeExemplo({ cursinho: { sumindo: 7 } });
+    encerrado.periodo.emAndamento = false;
+    rerender(<SecoesDosIndicadores dados={encerrado} />);
+    expect(screen.queryByText("Sumindo")).not.toBeInTheDocument();
+  });
+  it("desempenho (09): coluna do último simulado de cada turma", () => {
+    desempenho.dados = {
+      aplicacoes: [],
+      porTurma: [
+        { turmaId: "Manhã", ultimaAplicacao: { nome: "Simulado 2", media: 62.5 } },
+        { turmaId: "Noite", ultimaAplicacao: null },
+      ],
+      porMes: [],
+    };
+    renderSecoes(
+      <SecoesDosIndicadores
+        dados={dadosDeExemplo({
+          turmas: [turma("Manhã", { alunos: 10 }), turma("Noite", { alunos: 10 })],
+        })}
+      />,
+    );
+    expect(screen.getByText("Último simulado")).toBeInTheDocument();
+    expect(screen.getByText("62,5%")).toBeInTheDocument();
+    desempenho.dados = null;
   });
 });

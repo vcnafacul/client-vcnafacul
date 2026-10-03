@@ -2,13 +2,13 @@ import { Roles } from '@/enums/roles/roles';
 export type Profile = 'common' | 'student' | 'collaborator';
 import {
   KpiAproveitamento,
-  KpiEstudantes,
   KpiFrequencia,
   KpiQuestoes,
   KpiRedacoes,
   KpiRedacoesRevisar,
   KpiSimulados,
 } from './widgets/kpis';
+import { KpisDoCursinho } from './widgets/KpisDoCursinho';
 import { EvolucaoChart } from './widgets/EvolucaoChart';
 import { MateriasPanel } from './widgets/MateriasPanel';
 import { ProcessosTable } from './widgets/ProcessosTable';
@@ -74,10 +74,12 @@ export const widgetRegistry: WidgetDef[] = [
     permissions: [Roles.validarQuestao],
   },
   {
+    // tickets/033: ativos, evasão e frequência do cursinho; para quem não é
+    // de cursinho, continua o "Estudantes atendidos" (total da plataforma)
     id: 'kpi-estudantes',
     view: 'atuacao',
     slot: 'kpi',
-    component: KpiEstudantes,
+    component: KpisDoCursinho,
     profiles: ['common'],
     permissions: [Roles.visualizarEstudantes, Roles.gerenciarEstudantes],
   },

@@ -43,14 +43,16 @@ export function TabelaDeTurmas({
 
   return (
     <Panel
-      title="Turmas"
-      subtitle="Da maior para a menor evasão"
-      action={
-        <InfoDaMetrica
-          metrica="Turma com maior evasão"
-          explicacao={explicacoes.turmaComMaiorEvasao}
-        />
+      title={
+        <span className="inline-flex items-center gap-1">
+          Turmas
+          <InfoDaMetrica
+            metrica="Turma com maior evasão"
+            explicacao={explicacoes.turmaComMaiorEvasao}
+          />
+        </span>
       }
+      subtitle="Da maior para a menor evasão"
     >
       {ordenadas.length === 0 ? (
         <p className="py-6 text-center text-sm text-slate-500">

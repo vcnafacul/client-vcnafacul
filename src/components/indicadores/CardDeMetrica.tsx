@@ -23,6 +23,7 @@ interface Props {
   carregando?: boolean;
   /** Torna o card clicável (ex.: abrir a lista do `08`). */
   onClick?: () => void;
+  className?: string;
 }
 
 /**
@@ -39,12 +40,14 @@ export function CardDeMetrica({
   tom = "marine",
   carregando,
   onClick,
+  className,
 }: Props) {
   return (
     <div
       className={cn(
-        "rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(11,39,71,0.04)] sm:p-5",
+        "min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(11,39,71,0.04)] sm:p-5",
         onClick && "transition-colors hover:border-marine/30",
+        className,
       )}
     >
       <span
@@ -75,10 +78,13 @@ export function CardDeMetrica({
               {valor ?? "—"}
             </p>
           )}
-          <div className="mt-2 flex items-center gap-1">
-            <p className="text-sm font-medium text-slate-600">{rotulo}</p>
-            <InfoDaMetrica metrica={rotulo} explicacao={explicacao} />
-          </div>
+          {/* o (i) anda com o texto: se o rótulo quebra linha, ele não fica solto */}
+          <p className="mt-2 text-sm font-medium text-slate-600">
+            {rotulo}{" "}
+            <span className="inline-flex align-middle">
+              <InfoDaMetrica metrica={rotulo} explicacao={explicacao} />
+            </span>
+          </p>
           {valor === null ? (
             <p className="mt-0.5 text-xs text-slate-400">Sem dado ainda</p>
           ) : (
