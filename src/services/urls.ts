@@ -188,6 +188,8 @@ export const essayMyCursinhoCount = `${essayMyCursinho}/count`;
 export const indicadores = `${BASE_URL}/indicadores`;
 export const indicadoresPeriodos = `${indicadores}/periodos`;
 export const indicadoresSumindo = `${indicadores}/sumindo`;
+export const indicadoresDesempenho = `${indicadores}/desempenho`;
+export const indicadoresResumo = `${indicadores}/resumo`;
 
 export const homeContent = `${BASE_URL}/home-content`;
 export const homeAbout = `${homeContent}/about`;

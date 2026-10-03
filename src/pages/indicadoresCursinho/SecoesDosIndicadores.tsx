@@ -14,7 +14,10 @@ import { explicacoes } from "./explicacoes";
 import { evasao, frequencia, porcentagem, taxa } from "./formato";
 import { ListaDeSumindo } from "./ListaDeSumindo";
 import { PorQueSairam } from "./PorQueSairam";
+import { AreaDesempenho } from "./AreaDesempenho";
+import { colunasBase } from "./colunasDaTurma";
 import { TabelaDeTurmas } from "./TabelaDeTurmas";
+import { useDesempenho } from "./useDesempenho";
 
 interface Props {
   dados: Indicadores;
@@ -42,6 +45,21 @@ export function SecoesDosIndicadores({ dados }: Props) {
   const emAndamento = dados.periodo.emAndamento;
   const sumindo = contagem(cursinho, "sumindo");
   const [listaAberta, setListaAberta] = useState(false);
+  const desempenho = useDesempenho(dados.periodo.id);
+  const ultimaDaTurma = new Map(
+    (desempenho.dados?.porTurma ?? []).map((t) => [
+      t.turmaId,
+      t.ultimaAplicacao,
+    ]),
+  );
+  const colunas = [
+    ...colunasBase,
+    {
+      titulo: "Último simulado",
+      valor: (t: { id: string }) =>
+        porcentagem(ultimaDaTurma.get(t.id)?.media ?? null) ?? "—",
+    },
+  ];
 
   const curvas: CurvaDoPeriodo[] = [
     {
@@ -80,8 +98,8 @@ export function SecoesDosIndicadores({ dados }: Props) {
         <div
           className={
             emAndamento
-              ? "grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-5"
-              : "grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4"
+              ? "grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-5"
+              : "grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4"
           }
         >
           <CardDeMetrica
@@ -132,6 +150,8 @@ export function SecoesDosIndicadores({ dados }: Props) {
           />
           {emAndamento && (
             <CardDeMetrica
+              // no celular, 5 cards em 2 colunas: o último ocupa a linha toda
+              className="col-span-2 sm:col-span-1"
               icon={CircleAlert}
               tom="orange"
               rotulo="Sumindo"
@@ -178,8 +198,11 @@ export function SecoesDosIndicadores({ dados }: Props) {
         </div>
       </Area>
 
-      <Area titulo="Turmas">
-        <TabelaDeTurmas turmas={turmas} />
+      {/* o painel já se chama "Turmas": sem o título da área repetido */}
+      <TabelaDeTurmas turmas={turmas} colunas={colunas} />
+
+      <Area titulo="Desempenho">
+        <AreaDesempenho {...desempenho} />
       </Area>
     </div>
   );

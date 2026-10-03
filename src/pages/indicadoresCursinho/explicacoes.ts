@@ -56,4 +56,20 @@ export const explicacoes = {
     ficaDeFora:
       "faltas justificadas e alunos de turmas com menos de 3 chamadas registradas.",
   },
+  simuladosDoCursinho: {
+    oQueE:
+      "a nota média dos alunos em cada simulado que o cursinho aplicou com cartão-resposta.",
+    comoContamos:
+      "para cada aplicação, a média do aproveitamento de quem fez a prova. Como todos fazem a mesma prova, dá para comparar uma aplicação com a outra.",
+    ficaDeFora:
+      "quem faltou no dia da prova. Provas diferentes podem ter dificuldades diferentes.",
+  },
+  porMes: {
+    oQueE:
+      "quantos alunos fizeram simulados e redações a cada mês, e a média deles.",
+    comoContamos:
+      "só contam os simulados que o aluno terminou e as redações já corrigidas.",
+    ficaDeFora:
+      "como cada aluno escolhe quando e qual prova fazer, essa média não serve para dizer se a turma melhorou. Para isso, use os simulados do cursinho.",
+  },
 } satisfies Record<string, ExplicacaoDaMetrica>;

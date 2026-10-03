@@ -8,6 +8,15 @@ vi.mock("@/components/indicadores/InfoDaMetrica", () => ({
   InfoDaMetrica: () => null,
 }));
 
+// O desempenho vem de outra rota; aqui ele é fixo.
+const desempenho = vi.hoisted(() => ({
+  dados: null as unknown,
+  carregando: false,
+  erro: false,
+  carregar: () => {},
+}));
+vi.mock("./useDesempenho", () => ({ useDesempenho: () => desempenho }));
+
 import { SecoesDosIndicadores } from "./SecoesDosIndicadores";
 
 const renderSecoes = (ui: React.ReactElement) =>
@@ -180,5 +189,25 @@ describe("Seções dos indicadores", () => {
     encerrado.periodo.emAndamento = false;
     rerender(<SecoesDosIndicadores dados={encerrado} />);
     expect(screen.queryByText("Sumindo")).not.toBeInTheDocument();
+  });
+  it("desempenho (09): coluna do último simulado de cada turma", () => {
+    desempenho.dados = {
+      aplicacoes: [],
+      porTurma: [
+        { turmaId: "Manhã", ultimaAplicacao: { nome: "Simulado 2", media: 62.5 } },
+        { turmaId: "Noite", ultimaAplicacao: null },
+      ],
+      porMes: [],
+    };
+    renderSecoes(
+      <SecoesDosIndicadores
+        dados={dadosDeExemplo({
+          turmas: [turma("Manhã", { alunos: 10 }), turma("Noite", { alunos: 10 })],
+        })}
+      />,
+    );
+    expect(screen.getByText("Último simulado")).toBeInTheDocument();
+    expect(screen.getByText("62,5%")).toBeInTheDocument();
+    desempenho.dados = null;
   });
 });

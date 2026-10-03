@@ -2,7 +2,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
 interface PanelProps {
-  title: string;
+  /** Texto, ou texto + (i) da métrica (tickets/033). */
+  title: React.ReactNode;
   subtitle?: string;
   action?: React.ReactNode;
   isLoading?: boolean;

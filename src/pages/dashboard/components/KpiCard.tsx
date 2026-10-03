@@ -22,6 +22,12 @@ interface KpiCardProps {
   delta?: { value: number; suffix: string } | null;
   tone?: KpiTone;
   to?: string;
+  /**
+   * O (i) da métrica (tickets/033). Com `to`, o card vira "link esticado": um
+   * botão dentro de um `<a>` não funciona, então o link fica por baixo e o (i)
+   * por cima.
+   */
+  info?: React.ReactNode;
   isLoading?: boolean;
   error?: string | null;
   retry?: () => void;
@@ -35,6 +41,7 @@ export function KpiCard({
   delta,
   tone = 'marine',
   to,
+  info,
   isLoading,
   error,
   retry,
@@ -77,7 +84,16 @@ export function KpiCard({
           <p className="text-2xl font-bold sm:text-[28px] leading-none tabular-nums lining-nums text-marine">
             {value}
           </p>
-          <p className="mt-2 text-sm font-medium text-slate-600">{label}</p>
+          {info ? (
+            <p className="mt-2 text-sm font-medium text-slate-600">
+              {label}{' '}
+              <span className="relative z-10 inline-flex align-middle">
+                {info}
+              </span>
+            </p>
+          ) : (
+            <p className="mt-2 text-sm font-medium text-slate-600">{label}</p>
+          )}
           {hint && <p className="mt-0.5 text-xs text-slate-400">{hint}</p>}
         </div>
       )}
@@ -86,6 +102,23 @@ export function KpiCard({
 
   const className =
     'block rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-[0_1px_2px_rgba(11,39,71,0.04)]';
+
+  if (to && info && !isLoading && !error)
+    return (
+      <div
+        className={cn(
+          className,
+          'relative transition-colors hover:border-marine/30 focus-within:ring-2 focus-within:ring-marine/40',
+        )}
+      >
+        <Link
+          to={to}
+          aria-label={label}
+          className="absolute inset-0 rounded-2xl focus-visible:outline-none"
+        />
+        {body}
+      </div>
+    );
 
   return to && !isLoading && !error ? (
     <Link
