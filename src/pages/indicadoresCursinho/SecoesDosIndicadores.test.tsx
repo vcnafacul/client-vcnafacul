@@ -60,4 +60,35 @@ describe("Seções dos indicadores", () => {
     rerender(<SecoesDosIndicadores dados={encerrado} />);
     expect(screen.getByText("Chegaram ao fim")).toBeInTheDocument();
   });
+  it("cancelamentos (04): % dos alunos e motivos do maior para o menor", () => {
+    render(
+      <SecoesDosIndicadores
+        dados={dadosDeExemplo({
+          cursinho: {
+            alunos: 120,
+            ativos: 98,
+            cancelados: 22,
+            canceladosPorMotivo: {
+              Transporte: 4,
+              Rotina: 10,
+              "Desistência inicial": 6,
+              Abandono: 0,
+            },
+          },
+        })}
+      />,
+    );
+    expect(screen.getByText("22")).toBeInTheDocument();
+    expect(
+      screen.getByText("18,3% dos alunos do período"),
+    ).toBeInTheDocument();
+    const motivos = screen
+      .getAllByRole("listitem")
+      .map((li) => li.textContent);
+    expect(motivos).toEqual([
+      "Rotina10",
+      "Desistência inicial · não conta na evasão6",
+      "Transporte4",
+    ]);
+  });
 });

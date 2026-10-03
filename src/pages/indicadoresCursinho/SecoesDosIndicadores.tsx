@@ -1,8 +1,10 @@
-import { UserCheck, Users } from "lucide-react";
+import { UserCheck, UserMinus, Users } from "lucide-react";
 import { CardDeMetrica } from "@/components/indicadores/CardDeMetrica";
 import { contagem, type Indicadores } from "@/services/indicadores";
 import { CurvaDoPeriodo, EvolucaoDoPeriodo } from "./EvolucaoDoPeriodo";
 import { explicacoes } from "./explicacoes";
+import { porcentagem, taxa } from "./formato";
+import { PorQueSairam } from "./PorQueSairam";
 
 interface Props {
   dados: Indicadores;
@@ -16,6 +18,10 @@ export function SecoesDosIndicadores({ dados }: Props) {
   const { cursinho, turmas } = dados;
   const alunos = contagem(cursinho, "alunos");
   const ativos = contagem(cursinho, "ativos");
+  const cancelados = contagem(cursinho, "cancelados");
+  const porMotivo =
+    (cursinho.canceladosPorMotivo as Record<string, number> | undefined) ??
+    null;
   const emAndamento = dados.periodo.emAndamento;
 
   const curvas: CurvaDoPeriodo[] = [
@@ -50,8 +56,25 @@ export function SecoesDosIndicadores({ dados }: Props) {
             }
             explicacao={explicacoes.ativos}
           />
+          <CardDeMetrica
+            icon={UserMinus}
+            tom="orange"
+            rotulo="Cancelamentos"
+            valor={cancelados}
+            detalhe={
+              porcentagem(taxa(cancelados, alunos))
+                ? `${porcentagem(taxa(cancelados, alunos))} dos alunos do período`
+                : undefined
+            }
+            explicacao={explicacoes.cancelados}
+          />
         </div>
-        <EvolucaoDoPeriodo serie={dados.serie} curvas={curvas} />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="md:col-span-2">
+            <EvolucaoDoPeriodo serie={dados.serie} curvas={curvas} />
+          </div>
+          <PorQueSairam porMotivo={porMotivo} />
+        </div>
       </Area>
     </div>
   );

@@ -20,4 +20,11 @@ export const explicacoes = {
     ficaDeFora:
       "matrículas canceladas, mesmo que o aluno ainda apareça em alguma lista antiga.",
   },
+  cancelados: {
+    oQueE: "quantos alunos deste período tiveram a matrícula cancelada.",
+    comoContamos:
+      "cada aluno conta uma vez, com o motivo escolhido no cancelamento. Se a matrícula foi reativada depois, ele deixa de contar.",
+    ficaDeFora:
+      "quem concluiu o período; matrícula encerrada no fim do período não é cancelamento.",
+  },
 } satisfies Record<string, ExplicacaoDaMetrica>;
