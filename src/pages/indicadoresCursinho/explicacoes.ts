@@ -27,4 +27,49 @@ export const explicacoes = {
     ficaDeFora:
       "quem concluiu o período; matrícula encerrada no fim do período não é cancelamento.",
   },
+  evasao: {
+    oQueE: "a parte dos alunos que deixou o cursinho depois de começar a frequentar.",
+    comoContamos:
+      "cancelamentos divididos pelos alunos do período. Quem desistiu antes de começar (desistência inicial) não entra na conta, nem em cima nem embaixo, e aparece separado.",
+    ficaDeFora:
+      "matrículas encerradas no fim do período, que são alunos que concluíram.",
+  },
+  turmaComMaiorEvasao: {
+    oQueE: "a evasão de cada turma, para ver onde ela se concentra.",
+    comoContamos:
+      "a mesma conta da evasão do cursinho, feita só com os alunos de cada turma. O aluno conta na turma em que está matriculado hoje.",
+    ficaDeFora:
+      "do destaque, as turmas com menos de 10 alunos, porque nelas um único cancelamento muda muito a porcentagem.",
+  },
+  frequencia: {
+    oQueE: "de cada 100 presenças possíveis, quantas aconteceram.",
+    comoContamos:
+      "somamos as presenças de todos os alunos e dividimos pelo total de chamadas em que eles estavam na turma. Quem entrou no meio do período só conta a partir da matrícula.",
+    ficaDeFora:
+      "turmas que ainda não registraram chamada. Falta justificada conta como falta, mas mostramos quantas foram.",
+  },
+  sumindo: {
+    oQueE:
+      "alunos com a matrícula em vigor que faltaram às 3 últimas aulas seguidas da turma. É um aviso para procurar o aluno antes que ele desista.",
+    comoContamos:
+      "olhamos as 3 chamadas mais recentes de cada turma. Se o aluno faltou em todas, ele aparece aqui.",
+    ficaDeFora:
+      "faltas justificadas e alunos de turmas com menos de 3 chamadas registradas.",
+  },
+  simuladosDoCursinho: {
+    oQueE:
+      "a nota média dos alunos em cada simulado que o cursinho aplicou com cartão-resposta.",
+    comoContamos:
+      "para cada aplicação, a média do aproveitamento de quem fez a prova. Como todos fazem a mesma prova, dá para comparar uma aplicação com a outra.",
+    ficaDeFora:
+      "quem faltou no dia da prova. Provas diferentes podem ter dificuldades diferentes.",
+  },
+  porMes: {
+    oQueE:
+      "quantos alunos fizeram simulados e redações a cada mês, e a média deles.",
+    comoContamos:
+      "só contam os simulados que o aluno terminou e as redações já corrigidas.",
+    ficaDeFora:
+      "como cada aluno escolhe quando e qual prova fazer, essa média não serve para dizer se a turma melhorou. Para isso, use os simulados do cursinho.",
+  },
 } satisfies Record<string, ExplicacaoDaMetrica>;

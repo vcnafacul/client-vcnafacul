@@ -35,6 +35,7 @@ export function InfoDaMetrica({ metrica, explicacao }: Props) {
       </PopoverTrigger>
       <PopoverContent
         align="start"
+        collisionPadding={16}
         className="w-[min(20rem,calc(100vw-2rem))] space-y-2 text-sm leading-relaxed text-slate-600"
       >
         <p className="font-semibold text-marine">{metrica}</p>
