@@ -28,3 +28,8 @@ export function evasao(m: ComContagens): number | null {
   const desistencia = n(m, "desistenciaInicial") ?? 0;
   return taxa(cancelados - desistencia, alunos - desistencia);
 }
+
+/** Presenças ÷ chamadas, somando todos os alunos (07). Sem chamada → null. */
+export function frequencia(m: ComContagens): number | null {
+  return taxa(n(m, "presencas"), n(m, "chamadasAluno"));
+}

@@ -22,6 +22,8 @@ export interface CurvaDoPeriodo {
   legenda: string;
   porcentagem?: boolean;
   valor: (m: Metricas) => number | null;
+  /** Valor da semana (e não acumulado) — ver `pontosSemanais`. */
+  daSemana?: (atual: Metricas, anterior: Metricas | undefined) => number | null;
 }
 
 interface Props {
@@ -37,7 +39,7 @@ interface Props {
 export function EvolucaoDoPeriodo({ serie, curvas }: Props) {
   const [chave, setChave] = useState(curvas[0].chave);
   const curva = curvas.find((c) => c.chave === chave) ?? curvas[0];
-  const pontos = pontosSemanais(serie, curva.valor);
+  const pontos = pontosSemanais(serie, curva.valor, curva.daSemana);
   const comDado = pontos.filter((p) => p.valor !== null);
   const fmt = (v: number) =>
     curva.porcentagem ? `${v.toLocaleString("pt-BR")}%` : String(v);

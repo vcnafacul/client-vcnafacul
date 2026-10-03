@@ -29,4 +29,19 @@ describe("pontosSemanais", () => {
       pontosSemanais([ponto("2026-10-05")], (m) => contagem(m, "ativos")),
     ).toEqual([{ dia: "2026-10-05", rotulo: "05/10", valor: null }]);
   });
+  it("valor da semana pela diferença entre o fim desta e o da anterior", () => {
+    const serie = [
+      { dia: "2026-10-09", metricas: { presencas: 8, chamadasAluno: 10 } },
+      { dia: "2026-10-16", metricas: { presencas: 13, chamadasAluno: 20 } },
+    ];
+    const daSemana = (
+      a: Record<string, unknown>,
+      b: Record<string, unknown> | undefined,
+    ) =>
+      ((a.presencas as number) - ((b?.presencas as number) ?? 0)) /
+      ((a.chamadasAluno as number) - ((b?.chamadasAluno as number) ?? 0));
+    expect(
+      pontosSemanais(serie, () => null, daSemana).map((p) => p.valor),
+    ).toEqual([0.8, 0.5]);
+  });
 });
