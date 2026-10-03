@@ -1,5 +1,11 @@
 import fetchWrapper from "@/utils/fetchWrapper";
-import { indicadores, indicadoresPeriodos } from "../urls";
+import {
+  indicadores,
+  indicadoresPeriodos,
+  indicadoresDesempenho,
+  indicadoresResumo,
+  indicadoresSumindo,
+} from "../urls";
 
 /**
  * Contagens de uma turma (ou da soma das turmas) — nunca percentuais: a taxa
@@ -69,6 +75,89 @@ export async function getIndicadores(
   );
   if (response.status !== 200)
     throw new Error("Erro ao buscar os indicadores");
+  return response.json();
+}
+
+export interface AlunoSumindo {
+  alunoId: string;
+  nome: string;
+  turma: string;
+  /** `YYYY-MM-DD`; `null` se nunca veio. */
+  ultimaPresenca: string | null;
+  faltasSeguidas: number;
+  /** Só vem para quem pode gerenciar estudantes. */
+  telefone?: string | null;
+}
+
+export async function getSumindo(
+  token: string,
+  periodoId: string,
+): Promise<AlunoSumindo[]> {
+  const response = await fetchWrapper(
+    `${indicadoresSumindo}?periodoId=${encodeURIComponent(periodoId)}`,
+    { method: "GET", headers: headers(token) },
+  );
+  if (response.status !== 200)
+    throw new Error("Erro ao buscar quem está sumindo");
+  return response.json();
+}
+
+export interface Aplicacao {
+  simuladoId: string;
+  nome: string;
+  /** Data da aplicação (ISO): o primeiro cartão enviado. */
+  em: string | null;
+  /** Aproveitamento médio, 0..100. */
+  media: number | null;
+  participantes: number;
+}
+
+export interface Desempenho {
+  aplicacoes: Aplicacao[];
+  porTurma: {
+    turmaId: string;
+    ultimaAplicacao: { nome: string; media: number | null } | null;
+  }[];
+  porMes: {
+    /** `YYYY-MM` */
+    mes: string;
+    simulados: { participantes: number; media: number | null };
+    /** Nota 0..1000. */
+    redacao: { corrigidas: number; media: number | null };
+  }[];
+}
+
+export async function getDesempenho(
+  token: string,
+  periodoId: string,
+): Promise<Desempenho> {
+  const response = await fetchWrapper(
+    `${indicadoresDesempenho}?periodoId=${encodeURIComponent(periodoId)}`,
+    { method: "GET", headers: headers(token) },
+  );
+  if (response.status !== 200)
+    throw new Error("Erro ao buscar o desempenho");
+  return response.json();
+}
+
+export interface ResumoDosIndicadores {
+  /** A pessoa é de um cursinho? (equipe do projeto: não) */
+  cursinho: boolean;
+  /** Os períodos em andamento somados (normalmente um). */
+  periodos: { id: string; nome: string }[];
+  /** `null` sem período em andamento. */
+  metricas: Metricas | null;
+}
+
+export async function getResumoDosIndicadores(
+  token: string,
+): Promise<ResumoDosIndicadores> {
+  const response = await fetchWrapper(indicadoresResumo, {
+    method: "GET",
+    headers: headers(token),
+  });
+  if (response.status !== 200)
+    throw new Error("Erro ao buscar os indicadores do cursinho");
   return response.json();
 }
 
