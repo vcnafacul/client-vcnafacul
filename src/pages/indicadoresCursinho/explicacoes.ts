@@ -48,4 +48,12 @@ export const explicacoes = {
     ficaDeFora:
       "turmas que ainda não registraram chamada. Falta justificada conta como falta, mas mostramos quantas foram.",
   },
+  sumindo: {
+    oQueE:
+      "alunos com a matrícula em vigor que faltaram às 3 últimas aulas seguidas da turma. É um aviso para procurar o aluno antes que ele desista.",
+    comoContamos:
+      "olhamos as 3 chamadas mais recentes de cada turma. Se o aluno faltou em todas, ele aparece aqui.",
+    ficaDeFora:
+      "faltas justificadas e alunos de turmas com menos de 3 chamadas registradas.",
+  },
 } satisfies Record<string, ExplicacaoDaMetrica>;

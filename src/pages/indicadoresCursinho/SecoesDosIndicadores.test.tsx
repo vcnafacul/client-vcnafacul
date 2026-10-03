@@ -167,4 +167,18 @@ describe("Seções dos indicadores", () => {
     expect(screen.getByText("90%")).toBeInTheDocument();
     expect(screen.getByText("sem chamadas")).toBeInTheDocument();
   });
+  it("sumindo (08): só no período em andamento", () => {
+    const { rerender } = renderSecoes(
+      <SecoesDosIndicadores
+        dados={dadosDeExemplo({ cursinho: { alunos: 10, sumindo: 7 } })}
+      />,
+    );
+    expect(screen.getByText("Sumindo")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "7" })).toBeInTheDocument();
+
+    const encerrado = dadosDeExemplo({ cursinho: { sumindo: 7 } });
+    encerrado.periodo.emAndamento = false;
+    rerender(<SecoesDosIndicadores dados={encerrado} />);
+    expect(screen.queryByText("Sumindo")).not.toBeInTheDocument();
+  });
 });

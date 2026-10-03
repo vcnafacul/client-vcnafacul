@@ -1,5 +1,9 @@
 import fetchWrapper from "@/utils/fetchWrapper";
-import { indicadores, indicadoresPeriodos } from "../urls";
+import {
+  indicadores,
+  indicadoresPeriodos,
+  indicadoresSumindo,
+} from "../urls";
 
 /**
  * Contagens de uma turma (ou da soma das turmas) — nunca percentuais: a taxa
@@ -69,6 +73,30 @@ export async function getIndicadores(
   );
   if (response.status !== 200)
     throw new Error("Erro ao buscar os indicadores");
+  return response.json();
+}
+
+export interface AlunoSumindo {
+  alunoId: string;
+  nome: string;
+  turma: string;
+  /** `YYYY-MM-DD`; `null` se nunca veio. */
+  ultimaPresenca: string | null;
+  faltasSeguidas: number;
+  /** Só vem para quem pode gerenciar estudantes. */
+  telefone?: string | null;
+}
+
+export async function getSumindo(
+  token: string,
+  periodoId: string,
+): Promise<AlunoSumindo[]> {
+  const response = await fetchWrapper(
+    `${indicadoresSumindo}?periodoId=${encodeURIComponent(periodoId)}`,
+    { method: "GET", headers: headers(token) },
+  );
+  if (response.status !== 200)
+    throw new Error("Erro ao buscar quem está sumindo");
   return response.json();
 }
 
