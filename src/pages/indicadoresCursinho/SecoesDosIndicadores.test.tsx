@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 import type { Indicadores } from "@/services/indicadores";
 
@@ -8,6 +9,9 @@ vi.mock("@/components/indicadores/InfoDaMetrica", () => ({
 }));
 
 import { SecoesDosIndicadores } from "./SecoesDosIndicadores";
+
+const renderSecoes = (ui: React.ReactElement) =>
+  render(ui, { wrapper: MemoryRouter });
 
 const dadosDeExemplo = (over: Partial<Indicadores> = {}): Indicadores => ({
   periodo: {
@@ -29,7 +33,7 @@ const turma = (id: string, metricas = {}) => ({ id, nome: id, metricas });
 
 describe("Seções dos indicadores", () => {
   it("alunos do período (02): total do cursinho e quantas turmas", () => {
-    render(
+    renderSecoes(
       <SecoesDosIndicadores
         dados={dadosDeExemplo({
           cursinho: { alunos: 120 },
@@ -42,7 +46,7 @@ describe("Seções dos indicadores", () => {
     expect(screen.getByText("em 4 turmas")).toBeInTheDocument();
   });
   it("ativos (03): de quantos alunos; no período encerrado vira 'Chegaram ao fim'", () => {
-    const { rerender } = render(
+    const { rerender } = renderSecoes(
       <SecoesDosIndicadores
         dados={dadosDeExemplo({ cursinho: { alunos: 120, ativos: 98 } })}
       />,
@@ -65,7 +69,7 @@ describe("Seções dos indicadores", () => {
     expect(screen.getByText("Chegaram ao fim")).toBeInTheDocument();
   });
   it("cancelamentos (04): % dos alunos e motivos do maior para o menor", () => {
-    render(
+    renderSecoes(
       <SecoesDosIndicadores
         dados={dadosDeExemplo({
           cursinho: {
@@ -96,7 +100,7 @@ describe("Seções dos indicadores", () => {
     ]);
   });
   it("evasão (05): taxa sem a desistência inicial, que aparece à parte", () => {
-    render(
+    renderSecoes(
       <SecoesDosIndicadores
         dados={dadosDeExemplo({
           cursinho: {
@@ -113,5 +117,29 @@ describe("Seções dos indicadores", () => {
     expect(
       screen.getByText("16 de 114 alunos · 6 desistências iniciais à parte"),
     ).toBeInTheDocument();
+  });
+  it("turmas (06): ordem pela evasão, selo na maior elegível e link para a turma", () => {
+    renderSecoes(
+      <SecoesDosIndicadores
+        dados={dadosDeExemplo({
+          turmas: [
+            turma("Manhã", { alunos: 20, ativos: 18, cancelados: 2 }),
+            turma("Noite", { alunos: 20, ativos: 14, cancelados: 6 }),
+            turma("Sábado", { alunos: 5, ativos: 3, cancelados: 2 }),
+          ],
+        })}
+      />,
+    );
+    const linhas = screen.getAllByRole("row").slice(1);
+    expect(linhas.map((l) => within(l).getAllByRole("cell")[0].textContent)).toEqual([
+      "Sábado",
+      "NoiteMaior evasão",
+      "Manhã",
+    ]);
+    expect(within(linhas[1]).getByText("30%")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Noite" })).toHaveAttribute(
+      "href",
+      "/dashboard/turmas/Noite",
+    );
   });
 });

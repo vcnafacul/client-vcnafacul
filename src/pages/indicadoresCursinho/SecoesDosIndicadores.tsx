@@ -5,6 +5,7 @@ import { CurvaDoPeriodo, EvolucaoDoPeriodo } from "./EvolucaoDoPeriodo";
 import { explicacoes } from "./explicacoes";
 import { evasao, porcentagem, taxa } from "./formato";
 import { PorQueSairam } from "./PorQueSairam";
+import { TabelaDeTurmas } from "./TabelaDeTurmas";
 
 interface Props {
   dados: Indicadores;
@@ -99,6 +100,10 @@ export function SecoesDosIndicadores({ dados }: Props) {
           </div>
           <PorQueSairam porMotivo={porMotivo} />
         </div>
+      </Area>
+
+      <Area titulo="Turmas">
+        <TabelaDeTurmas turmas={turmas} />
       </Area>
     </div>
   );

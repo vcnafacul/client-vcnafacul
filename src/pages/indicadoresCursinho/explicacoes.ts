@@ -34,4 +34,11 @@ export const explicacoes = {
     ficaDeFora:
       "matrículas encerradas no fim do período, que são alunos que concluíram.",
   },
+  turmaComMaiorEvasao: {
+    oQueE: "a evasão de cada turma, para ver onde ela se concentra.",
+    comoContamos:
+      "a mesma conta da evasão do cursinho, feita só com os alunos de cada turma. O aluno conta na turma em que está matriculado hoje.",
+    ficaDeFora:
+      "do destaque, as turmas com menos de 10 alunos, porque nelas um único cancelamento muda muito a porcentagem.",
+  },
 } satisfies Record<string, ExplicacaoDaMetrica>;
