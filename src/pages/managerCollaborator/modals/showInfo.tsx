@@ -19,13 +19,15 @@ import { toast } from "react-toastify";
 import { getCollaboratorFrentesEnriched } from "@/services/prepCourse/collaborator/get-collaborator-frentes";
 import { useAuthStore } from "@/store/auth";
 import { CollaboratorColumns } from "..";
+import { consequenciasDaInativacao } from "./textosDaAtivacao";
 
 interface ModalProps {
   handleClose: () => void;
   isOpen: boolean;
   collaborator: CollaboratorColumns;
   photoUrl?: string;
-  handleActive: (id: string) => Promise<void>;
+  /** `true` = deu certo. Os toasts ficam com quem chama. */
+  handleActive: (id: string, actived: boolean) => Promise<boolean>;
   handleDescription: (id: string, description: string) => Promise<void>;
   onPhotoUpdated?: (
     collaboratorId: string,
@@ -69,6 +71,8 @@ export function ShowInfo({
   const [frentesLoading, setFrentesLoading] = useState(false);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [confirmarRemocao, setConfirmarRemocao] = useState(false);
+  const [confirmarInativacao, setConfirmarInativacao] = useState(false);
+  const [salvandoAtivo, setSalvandoAtivo] = useState(false);
   const { data } = useAuthStore();
   const { token, permissao } = data;
   const canEditPhotos = !!permissao?.[Roles.alterarPermissao];
@@ -117,6 +121,16 @@ export function ShowInfo({
       errorMessage: (err: Error) => err.message,
       onSuccess: () => onPhotoRemoved?.(collaborator.id),
     });
+  };
+
+  const mudarAtivo = async (novo: boolean) => {
+    setConfirmarInativacao(false);
+    setSalvandoAtivo(true);
+    try {
+      if (await handleActive(collaborator.id, novo)) setActived(novo);
+    } finally {
+      setSalvandoAtivo(false);
+    }
   };
 
   const fotoSrc = collaborator.photo
@@ -231,11 +245,11 @@ export function ShowInfo({
                 <Toggle
                   name="ativo"
                   checked={actived}
-                  handleCheck={() => {
-                    handleActive(collaborator.id)
-                      .then(() => setActived(!actived))
-                      .catch((e) => toast.error(e.message));
-                  }}
+                  disabled={salvandoAtivo}
+                  handleCheck={() =>
+                    // Inativar tira o acesso: pede confirmação. Reativar não.
+                    actived ? setConfirmarInativacao(true) : mudarAtivo(true)
+                  }
                 />
               }
             />
@@ -277,6 +291,19 @@ export function ShowInfo({
           </Button>
         </div>
       </div>
+      <ModalConfirmCancel
+        isOpen={confirmarInativacao}
+        handleClose={() => setConfirmarInativacao(false)}
+        handleConfirm={() => mudarAtivo(false)}
+        text={`Inativar ${collaborator.name}?`}
+        className="bg-white p-4 rounded-md w-[calc(100%-2rem)]"
+      >
+        <ul className="list-disc pl-5 text-sm text-gray-600">
+          {consequenciasDaInativacao(collaborator.role?.name).map((t) => (
+            <li key={t}>{t}</li>
+          ))}
+        </ul>
+      </ModalConfirmCancel>
       <ModalConfirmCancel
         isOpen={confirmarRemocao}
         handleClose={() => setConfirmarRemocao(false)}

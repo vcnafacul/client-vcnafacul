@@ -26,6 +26,7 @@ import ModalEditRole from "./modals/ModalEditRole";
 import ModalNewRole from "./modals/ModalNewRole";
 import ModalUpdateRoleUser from "./modals/ModalUpdateRoleUser";
 import { ShowInfo } from "./modals/showInfo";
+import { mensagemDaAtivacao } from "./modals/textosDaAtivacao";
 import { ModalConvites } from "./modals/ModalConvites";
 import { Roles } from "@/enums/roles/roles";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
@@ -327,17 +328,32 @@ export default function ManagerCollaborator() {
     ) : null;
   };
 
-  const handleChangeActive = async (id: string) => {
-    changeActive(token, id).then(() => {
-      const collaboratorAux = collaborator.map((c) => {
-        if (c.id === id) {
-          setCollaboratorSelected({ ...c, actived: !c.actived });
-          return { ...c, actived: !c.actived };
-        }
-        return c;
-      });
-      setCollaborator(collaboratorAux);
+  /** Devolve se deu certo, para o modal mexer na chave só no sucesso. */
+  const handleChangeActive = async (id: string, actived: boolean) => {
+    let ok = false;
+    await executeAsync({
+      action: () => changeActive(token, id, actived),
+      loadingMessage: actived
+        ? "Reativando colaborador..."
+        : "Inativando colaborador...",
+      successMessage: mensagemDaAtivacao,
+      errorMessage: (err: Error) => err.message,
+      onSuccess: (r) => {
+        ok = true;
+        const atualiza = (c: CollaboratorColumns) => ({
+          ...c,
+          actived: r.actived,
+          role: r.role ?? c.role,
+        });
+        setCollaborator((prev) =>
+          prev.map((c) => (c.id === id ? atualiza(c) : c)),
+        );
+        setCollaboratorSelected((prev) =>
+          prev && prev.id === id ? atualiza(prev) : prev,
+        );
+      },
     });
+    return ok;
   };
 
   const handlePhotoUpdated = async (
