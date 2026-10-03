@@ -26,6 +26,11 @@ const rotulo = (dia: string) => `${dia.slice(8, 10)}/${dia.slice(5, 7)}`;
 export function pontosSemanais(
   serie: Indicadores["serie"],
   valor: (m: Metricas) => number | null,
+  /**
+   * Para o que é "da semana" e não acumulado (ex.: frequência da semana): o
+   * valor sai da diferença entre o fim desta semana e o da anterior.
+   */
+  daSemana?: (atual: Metricas, anterior: Metricas | undefined) => number | null,
 ): PontoDaSerie[] {
   const ultimoDaSemana = new Map<string, Indicadores["serie"][number]>();
   for (const ponto of serie) {
@@ -33,7 +38,14 @@ export function pontosSemanais(
     const atual = ultimoDaSemana.get(s);
     if (!atual || ponto.dia > atual.dia) ultimoDaSemana.set(s, ponto);
   }
-  return [...ultimoDaSemana.values()]
-    .sort((a, b) => a.dia.localeCompare(b.dia))
-    .map((p) => ({ dia: p.dia, rotulo: rotulo(p.dia), valor: valor(p.metricas) }));
+  const semanas = [...ultimoDaSemana.values()].sort((a, b) =>
+    a.dia.localeCompare(b.dia),
+  );
+  return semanas.map((p, i) => ({
+    dia: p.dia,
+    rotulo: rotulo(p.dia),
+    valor: daSemana
+      ? daSemana(p.metricas, semanas[i - 1]?.metricas)
+      : valor(p.metricas),
+  }));
 }

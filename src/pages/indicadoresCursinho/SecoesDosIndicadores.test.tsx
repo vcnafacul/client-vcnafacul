@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 import type { Indicadores } from "@/services/indicadores";
 
@@ -7,7 +8,19 @@ vi.mock("@/components/indicadores/InfoDaMetrica", () => ({
   InfoDaMetrica: () => null,
 }));
 
+// O desempenho vem de outra rota; aqui ele é fixo.
+const desempenho = vi.hoisted(() => ({
+  dados: null as unknown,
+  carregando: false,
+  erro: false,
+  carregar: () => {},
+}));
+vi.mock("./useDesempenho", () => ({ useDesempenho: () => desempenho }));
+
 import { SecoesDosIndicadores } from "./SecoesDosIndicadores";
+
+const renderSecoes = (ui: React.ReactElement) =>
+  render(ui, { wrapper: MemoryRouter });
 
 const dadosDeExemplo = (over: Partial<Indicadores> = {}): Indicadores => ({
   periodo: {
@@ -29,7 +42,7 @@ const turma = (id: string, metricas = {}) => ({ id, nome: id, metricas });
 
 describe("Seções dos indicadores", () => {
   it("alunos do período (02): total do cursinho e quantas turmas", () => {
-    render(
+    renderSecoes(
       <SecoesDosIndicadores
         dados={dadosDeExemplo({
           cursinho: { alunos: 120 },
@@ -42,7 +55,7 @@ describe("Seções dos indicadores", () => {
     expect(screen.getByText("em 4 turmas")).toBeInTheDocument();
   });
   it("ativos (03): de quantos alunos; no período encerrado vira 'Chegaram ao fim'", () => {
-    const { rerender } = render(
+    const { rerender } = renderSecoes(
       <SecoesDosIndicadores
         dados={dadosDeExemplo({ cursinho: { alunos: 120, ativos: 98 } })}
       />,
@@ -65,7 +78,7 @@ describe("Seções dos indicadores", () => {
     expect(screen.getByText("Chegaram ao fim")).toBeInTheDocument();
   });
   it("cancelamentos (04): % dos alunos e motivos do maior para o menor", () => {
-    render(
+    renderSecoes(
       <SecoesDosIndicadores
         dados={dadosDeExemplo({
           cursinho: {
@@ -96,7 +109,7 @@ describe("Seções dos indicadores", () => {
     ]);
   });
   it("evasão (05): taxa sem a desistência inicial, que aparece à parte", () => {
-    render(
+    renderSecoes(
       <SecoesDosIndicadores
         dados={dadosDeExemplo({
           cursinho: {
@@ -113,5 +126,88 @@ describe("Seções dos indicadores", () => {
     expect(
       screen.getByText("16 de 114 alunos · 6 desistências iniciais à parte"),
     ).toBeInTheDocument();
+  });
+  it("turmas (06): ordem pela evasão, selo na maior elegível e link para a turma", () => {
+    renderSecoes(
+      <SecoesDosIndicadores
+        dados={dadosDeExemplo({
+          turmas: [
+            turma("Manhã", { alunos: 20, ativos: 18, cancelados: 2 }),
+            turma("Noite", { alunos: 20, ativos: 14, cancelados: 6 }),
+            turma("Sábado", { alunos: 5, ativos: 3, cancelados: 2 }),
+          ],
+        })}
+      />,
+    );
+    const linhas = screen.getAllByRole("row").slice(1);
+    expect(linhas.map((l) => within(l).getAllByRole("cell")[0].textContent)).toEqual([
+      "Sábado",
+      "NoiteMaior evasão",
+      "Manhã",
+    ]);
+    expect(within(linhas[1]).getByText("30%")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Noite" })).toHaveAttribute(
+      "href",
+      "/dashboard/turmas/Noite",
+    );
+  });
+  it("frequência (07): soma antes de dividir; turma sem chamada fica 'sem chamadas'", () => {
+    renderSecoes(
+      <SecoesDosIndicadores
+        dados={dadosDeExemplo({
+          cursinho: {
+            presencas: 100,
+            chamadasAluno: 120,
+            faltasJustificadas: 4,
+            aulasRegistradas: 64,
+          },
+          turmas: [
+            turma("A", { presencas: 90, chamadasAluno: 100, aulasRegistradas: 50 }),
+            turma("B", { presencas: 10, chamadasAluno: 20, aulasRegistradas: 14 }),
+            turma("C", { aulasRegistradas: 0 }),
+          ],
+        })}
+      />,
+    );
+    expect(screen.getByText("83,3%")).toBeInTheDocument();
+    expect(
+      screen.getByText("em 64 aulas registradas · 3,3% de faltas justificadas"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("90%")).toBeInTheDocument();
+    expect(screen.getByText("sem chamadas")).toBeInTheDocument();
+  });
+  it("sumindo (08): só no período em andamento", () => {
+    const { rerender } = renderSecoes(
+      <SecoesDosIndicadores
+        dados={dadosDeExemplo({ cursinho: { alunos: 10, sumindo: 7 } })}
+      />,
+    );
+    expect(screen.getByText("Sumindo")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "7" })).toBeInTheDocument();
+
+    const encerrado = dadosDeExemplo({ cursinho: { sumindo: 7 } });
+    encerrado.periodo.emAndamento = false;
+    rerender(<SecoesDosIndicadores dados={encerrado} />);
+    expect(screen.queryByText("Sumindo")).not.toBeInTheDocument();
+  });
+  it("desempenho (09): coluna do último simulado de cada turma", () => {
+    desempenho.dados = {
+      aplicacoes: [],
+      porTurma: [
+        { turmaId: "Manhã", ultimaAplicacao: { nome: "Simulado 2", media: 62.5 } },
+        { turmaId: "Noite", ultimaAplicacao: null },
+      ],
+      porMes: [],
+    };
+    renderSecoes(
+      <SecoesDosIndicadores
+        dados={dadosDeExemplo({
+          turmas: [turma("Manhã", { alunos: 10 }), turma("Noite", { alunos: 10 })],
+        })}
+      />,
+    );
+    expect(screen.getByText("Último simulado")).toBeInTheDocument();
+    expect(screen.getByText("62,5%")).toBeInTheDocument();
+    desempenho.dados = null;
   });
 });
