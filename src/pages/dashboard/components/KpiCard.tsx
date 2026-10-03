@@ -85,10 +85,12 @@ export function KpiCard({
             {value}
           </p>
           {info ? (
-            <div className="mt-2 flex items-center gap-1">
-              <p className="text-sm font-medium text-slate-600">{label}</p>
-              <span className="relative z-10">{info}</span>
-            </div>
+            <p className="mt-2 text-sm font-medium text-slate-600">
+              {label}{' '}
+              <span className="relative z-10 inline-flex align-middle">
+                {info}
+              </span>
+            </p>
           ) : (
             <p className="mt-2 text-sm font-medium text-slate-600">{label}</p>
           )}

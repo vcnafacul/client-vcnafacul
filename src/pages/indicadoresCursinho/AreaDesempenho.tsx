@@ -47,17 +47,19 @@ export function AreaDesempenho({
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <Panel
-        title="Simulados do cursinho"
+        title={
+          <span className="inline-flex items-center gap-1">
+            Simulados do cursinho
+            <InfoDaMetrica
+              metrica="Simulados do cursinho"
+              explicacao={explicacoes.simuladosDoCursinho}
+            />
+          </span>
+        }
         subtitle="Nota média em cada simulado aplicado com cartão-resposta"
         isLoading={carregando}
         error={erro ? "erro" : null}
         retry={carregar}
-        action={
-          <InfoDaMetrica
-            metrica="Simulados do cursinho"
-            explicacao={explicacoes.simuladosDoCursinho}
-          />
-        }
       >
         {pontos.length < 2 ? (
           <EmptyState
@@ -134,17 +136,19 @@ export function AreaDesempenho({
       </Panel>
 
       <Panel
-        title="Simulados e redação por mês"
+        title={
+          <span className="inline-flex items-center gap-1">
+            Simulados e redação por mês
+            <InfoDaMetrica
+              metrica="Simulados e redação por mês"
+              explicacao={explicacoes.porMes}
+            />
+          </span>
+        }
         subtitle="Quantos participaram e a média de quem fez"
         isLoading={carregando}
         error={erro ? "erro" : null}
         retry={carregar}
-        action={
-          <InfoDaMetrica
-            metrica="Simulados e redação por mês"
-            explicacao={explicacoes.porMes}
-          />
-        }
       >
         {!dados || dados.porMes.length === 0 ? (
           <EmptyState>
