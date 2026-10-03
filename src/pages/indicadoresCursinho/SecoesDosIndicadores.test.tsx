@@ -48,7 +48,11 @@ describe("Seções dos indicadores", () => {
       />,
     );
     expect(screen.getByText("98")).toBeInTheDocument();
-    expect(screen.getByText("Ativos")).toBeInTheDocument();
+    // rótulo do card + opção do seletor do gráfico (05 acrescentou Evasão)
+    expect(screen.getAllByText("Ativos")).toHaveLength(2);
+    expect(
+      screen.getByRole("button", { name: "Evasão" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("de 120 alunos do período")).toBeInTheDocument();
     // sem fotos de duas semanas, o gráfico explica por que está vazio
     expect(
@@ -90,5 +94,24 @@ describe("Seções dos indicadores", () => {
       "Desistência inicial · não conta na evasão6",
       "Transporte4",
     ]);
+  });
+  it("evasão (05): taxa sem a desistência inicial, que aparece à parte", () => {
+    render(
+      <SecoesDosIndicadores
+        dados={dadosDeExemplo({
+          cursinho: {
+            alunos: 120,
+            ativos: 98,
+            cancelados: 22,
+            desistenciaInicial: 6,
+            canceladosPorMotivo: {},
+          },
+        })}
+      />,
+    );
+    expect(screen.getByText("14%")).toBeInTheDocument();
+    expect(
+      screen.getByText("16 de 114 alunos · 6 desistências iniciais à parte"),
+    ).toBeInTheDocument();
   });
 });

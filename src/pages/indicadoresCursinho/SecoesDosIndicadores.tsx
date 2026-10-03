@@ -1,9 +1,9 @@
-import { UserCheck, UserMinus, Users } from "lucide-react";
+import { TrendingDown, UserCheck, UserMinus, Users } from "lucide-react";
 import { CardDeMetrica } from "@/components/indicadores/CardDeMetrica";
 import { contagem, type Indicadores } from "@/services/indicadores";
 import { CurvaDoPeriodo, EvolucaoDoPeriodo } from "./EvolucaoDoPeriodo";
 import { explicacoes } from "./explicacoes";
-import { porcentagem, taxa } from "./formato";
+import { evasao, porcentagem, taxa } from "./formato";
 import { PorQueSairam } from "./PorQueSairam";
 
 interface Props {
@@ -19,6 +19,8 @@ export function SecoesDosIndicadores({ dados }: Props) {
   const alunos = contagem(cursinho, "alunos");
   const ativos = contagem(cursinho, "ativos");
   const cancelados = contagem(cursinho, "cancelados");
+  const desistencia = contagem(cursinho, "desistenciaInicial") ?? 0;
+  const taxaDeEvasao = evasao(cursinho);
   const porMotivo =
     (cursinho.canceladosPorMotivo as Record<string, number> | undefined) ??
     null;
@@ -30,6 +32,13 @@ export function SecoesDosIndicadores({ dados }: Props) {
       rotulo: "Ativos",
       legenda: "alunos ativos",
       valor: (m) => contagem(m, "ativos"),
+    },
+    {
+      chave: "evasao",
+      rotulo: "Evasão",
+      legenda: "de evasão acumulada",
+      porcentagem: true,
+      valor: (m) => evasao(m),
     },
   ];
 
@@ -67,6 +76,21 @@ export function SecoesDosIndicadores({ dados }: Props) {
                 : undefined
             }
             explicacao={explicacoes.cancelados}
+          />
+          <CardDeMetrica
+            icon={TrendingDown}
+            tom="red"
+            rotulo="Evasão"
+            valor={porcentagem(taxaDeEvasao)}
+            detalhe={
+              cancelados !== null && alunos !== null
+                ? `${cancelados - desistencia} de ${alunos - desistencia} alunos` +
+                  (desistencia > 0
+                    ? ` · ${desistencia} ${desistencia === 1 ? "desistência inicial" : "desistências iniciais"} à parte`
+                    : "")
+                : undefined
+            }
+            explicacao={explicacoes.evasao}
           />
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">

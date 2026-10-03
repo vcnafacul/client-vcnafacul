@@ -27,4 +27,11 @@ export const explicacoes = {
     ficaDeFora:
       "quem concluiu o período; matrícula encerrada no fim do período não é cancelamento.",
   },
+  evasao: {
+    oQueE: "a parte dos alunos que deixou o cursinho depois de começar a frequentar.",
+    comoContamos:
+      "cancelamentos divididos pelos alunos do período. Quem desistiu antes de começar (desistência inicial) não entra na conta, nem em cima nem embaixo, e aparece separado.",
+    ficaDeFora:
+      "matrículas encerradas no fim do período, que são alunos que concluíram.",
+  },
 } satisfies Record<string, ExplicacaoDaMetrica>;
