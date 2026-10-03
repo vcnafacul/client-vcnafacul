@@ -2,6 +2,7 @@ import fetchWrapper from "@/utils/fetchWrapper";
 import {
   indicadores,
   indicadoresPeriodos,
+  indicadoresDesempenho,
   indicadoresSumindo,
 } from "../urls";
 
@@ -97,6 +98,44 @@ export async function getSumindo(
   );
   if (response.status !== 200)
     throw new Error("Erro ao buscar quem está sumindo");
+  return response.json();
+}
+
+export interface Aplicacao {
+  simuladoId: string;
+  nome: string;
+  /** Data da aplicação (ISO): o primeiro cartão enviado. */
+  em: string | null;
+  /** Aproveitamento médio, 0..100. */
+  media: number | null;
+  participantes: number;
+}
+
+export interface Desempenho {
+  aplicacoes: Aplicacao[];
+  porTurma: {
+    turmaId: string;
+    ultimaAplicacao: { nome: string; media: number | null } | null;
+  }[];
+  porMes: {
+    /** `YYYY-MM` */
+    mes: string;
+    simulados: { participantes: number; media: number | null };
+    /** Nota 0..1000. */
+    redacao: { corrigidas: number; media: number | null };
+  }[];
+}
+
+export async function getDesempenho(
+  token: string,
+  periodoId: string,
+): Promise<Desempenho> {
+  const response = await fetchWrapper(
+    `${indicadoresDesempenho}?periodoId=${encodeURIComponent(periodoId)}`,
+    { method: "GET", headers: headers(token) },
+  );
+  if (response.status !== 200)
+    throw new Error("Erro ao buscar o desempenho");
   return response.json();
 }
 

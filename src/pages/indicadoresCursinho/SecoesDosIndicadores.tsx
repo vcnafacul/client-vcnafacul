@@ -14,7 +14,10 @@ import { explicacoes } from "./explicacoes";
 import { evasao, frequencia, porcentagem, taxa } from "./formato";
 import { ListaDeSumindo } from "./ListaDeSumindo";
 import { PorQueSairam } from "./PorQueSairam";
+import { AreaDesempenho } from "./AreaDesempenho";
+import { colunasBase } from "./colunasDaTurma";
 import { TabelaDeTurmas } from "./TabelaDeTurmas";
+import { useDesempenho } from "./useDesempenho";
 
 interface Props {
   dados: Indicadores;
@@ -42,6 +45,21 @@ export function SecoesDosIndicadores({ dados }: Props) {
   const emAndamento = dados.periodo.emAndamento;
   const sumindo = contagem(cursinho, "sumindo");
   const [listaAberta, setListaAberta] = useState(false);
+  const desempenho = useDesempenho(dados.periodo.id);
+  const ultimaDaTurma = new Map(
+    (desempenho.dados?.porTurma ?? []).map((t) => [
+      t.turmaId,
+      t.ultimaAplicacao,
+    ]),
+  );
+  const colunas = [
+    ...colunasBase,
+    {
+      titulo: "Último simulado",
+      valor: (t: { id: string }) =>
+        porcentagem(ultimaDaTurma.get(t.id)?.media ?? null) ?? "—",
+    },
+  ];
 
   const curvas: CurvaDoPeriodo[] = [
     {
@@ -179,7 +197,11 @@ export function SecoesDosIndicadores({ dados }: Props) {
       </Area>
 
       <Area titulo="Turmas">
-        <TabelaDeTurmas turmas={turmas} />
+        <TabelaDeTurmas turmas={turmas} colunas={colunas} />
+      </Area>
+
+      <Area titulo="Desempenho">
+        <AreaDesempenho {...desempenho} />
       </Area>
     </div>
   );
