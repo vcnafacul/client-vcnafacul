@@ -100,6 +100,7 @@ import {
   PARTNER_CLASS,
   PARTNER_CLASS_FORM,
   PARTNER_CLASS_STUDENTS,
+  PARTNER_INDICADORES,
   PARTNER_PREP,
   PARTNER_PREP_INSCRIPTION,
   PARTNER_PREP_MANAGER,
@@ -122,6 +123,7 @@ import ProtectedRoutePermission from "./protectedRoutePermission";
 
 const Home = lazy(() => import("../pages/homeV2"));
 const HomeLegacy = lazy(() => import("../pages/homeLegacy"));
+const IndicadoresCursinho = lazy(() => import("../pages/indicadoresCursinho"));
 
 export function PlatformRoutes() {
   const { data } = useAuthStore();
@@ -316,6 +318,21 @@ export function PlatformRoutes() {
               permission={data.permissao[Roles.visualizarEstudantes]}
             >
               <StudentsEnrolled />
+            </ProtectedRoutePermission>
+          }
+        />
+        <Route
+          path={PARTNER_INDICADORES}
+          element={
+            <ProtectedRoutePermission
+              permission={
+                data.permissao[Roles.visualizarEstudantes] ||
+                data.permissao[Roles.gerenciarEstudantes]
+              }
+            >
+              <Suspense fallback={null}>
+                <IndicadoresCursinho />
+              </Suspense>
             </ProtectedRoutePermission>
           }
         />

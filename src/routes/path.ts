@@ -44,6 +44,7 @@ export const DECLARED_INTEREST = "declarar-interesse";
 export const MANAGER_COLLABORATOR = "colaboradores";
 export const PARTNER_CLASS = "turmas";
 export const PARTNER_CLASS_STUDENTS = "alunos";
+export const PARTNER_INDICADORES = "indicadores";
 export const PARTNER_PREP_MANAGER = "gerenciamento-cursinho";
 /** Edição da página pública do cursinho (tickets/025). */
 export const PARTNER_PAGINA = "pagina-do-cursinho";

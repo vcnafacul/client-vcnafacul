@@ -28,6 +28,7 @@ import {
   PARTNER_CLASS,
   PARTNER_CLASS_FORM,
   PARTNER_CLASS_STUDENTS,
+  PARTNER_INDICADORES,
   PARTNER_PREP_INSCRIPTION,
   PARTNER_PREP_MANAGER,
   PARTNER_PROVAS,
@@ -47,7 +48,13 @@ import { ReactComponent as Quimica } from "../../assets/icons/home-subjects-quim
 
 import { GoGraph } from "react-icons/go";
 import { IoSchool } from "react-icons/io5";
-import { LuBell, LuGlobe, LuHouse, LuMessageSquare } from "react-icons/lu";
+import {
+  LuBell,
+  LuChartColumnIncreasing,
+  LuGlobe,
+  LuHouse,
+  LuMessageSquare,
+} from "react-icons/lu";
 import { ReactComponent as Atualidades } from "../../assets/icons/home-subjects-atualidades.svg";
 import { ReactComponent as Filosofia } from "../../assets/icons/home-subjects-filosofia.svg";
 import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-geografia.svg";
@@ -134,6 +141,14 @@ export const adminMenuItems: DashCardMenu[] = [
         text: "Estudantes",
         link: `/dashboard/${PARTNER_CLASS_STUDENTS}`,
         permissions: [Roles.visualizarEstudantes],
+      },
+      {
+        icon: LuChartColumnIncreasing,
+        alt: "indicadores",
+        text: "Indicadores",
+        link: `/dashboard/${PARTNER_INDICADORES}`,
+        // tickets/033 (R7): as mesmas da lista de estudantes.
+        permissions: [Roles.visualizarEstudantes, Roles.gerenciarEstudantes],
       },
       {
         icon: FaWpforms,
