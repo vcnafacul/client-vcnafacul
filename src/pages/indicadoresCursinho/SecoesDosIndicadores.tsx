@@ -1,4 +1,7 @@
-import type { Indicadores } from "@/services/indicadores";
+import { Users } from "lucide-react";
+import { CardDeMetrica } from "@/components/indicadores/CardDeMetrica";
+import { contagem, type Indicadores } from "@/services/indicadores";
+import { explicacoes } from "./explicacoes";
 
 interface Props {
   dados: Indicadores;
@@ -9,10 +12,24 @@ interface Props {
  * Desempenho (09). Cada card da série acrescenta a sua aqui.
  */
 export function SecoesDosIndicadores({ dados }: Props) {
+  const { cursinho, turmas } = dados;
+  const alunos = contagem(cursinho, "alunos");
+
   return (
-    <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center text-sm text-slate-500">
-      Os indicadores das {dados.turmas.length} turmas deste período aparecem
-      aqui.
+    <div className="space-y-8">
+      <Area titulo="Alunos">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+          <CardDeMetrica
+            icon={Users}
+            rotulo="Alunos no período"
+            valor={alunos}
+            detalhe={
+              turmas.length === 1 ? "em 1 turma" : `em ${turmas.length} turmas`
+            }
+            explicacao={explicacoes.alunos}
+          />
+        </div>
+      </Area>
     </div>
   );
 }
