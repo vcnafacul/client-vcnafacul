@@ -2,6 +2,8 @@ import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { Roles } from "@/enums/roles/roles";
 import { useModals } from "@/hooks/useModal";
+import { useToastAsync } from "@/hooks/useToastAsync";
+import { mensagemDeErro } from "@/utils/mensagemDeErro";
 import { deleteAttendanceRecord } from "@/services/prepCourse/attendanceRecord/deleteAttendanceRecord";
 import { getAttendanceRecord } from "@/services/prepCourse/attendanceRecord/getAttendanceRecord";
 import { useAuthStore } from "@/store/auth";
@@ -45,6 +47,7 @@ export function AttendanceHistoryModal({
   const {
     data: { token, permissao },
   } = useAuthStore();
+  const executeAsync = useToastAsync();
 
   const modals = useModals([
     "modalAttendanceRecord",
@@ -64,13 +67,18 @@ export function AttendanceHistoryModal({
     }
   };
 
-  const handleDeleteRecord = () => {
-    deleteAttendanceRecord(token, attendanceHistorySelected!.id).then(() => {
-      const filtered = attendanceHistory.filter(
-        (item) => item.id !== attendanceHistorySelected!.id
-      );
-      setAttendanceHistory(filtered);
-      modals.modalConfirmDelete.close();
+  /** Antes só tinha `.then`: erro (rede, permissão) passava em silêncio (card 11). */
+  const handleDeleteRecord = async () => {
+    const id = attendanceHistorySelected!.id;
+    await executeAsync({
+      action: () => deleteAttendanceRecord(token, id),
+      loadingMessage: "Excluindo registro...",
+      successMessage: "Registro excluído!",
+      errorMessage: (e: unknown) =>
+        mensagemDeErro(e, "excluir o registro", "Erro ao excluir o registro"),
+      onSuccess: () =>
+        setAttendanceHistory((prev) => prev.filter((item) => item.id !== id)),
+      onFinally: () => modals.modalConfirmDelete.close(),
     });
   };
 

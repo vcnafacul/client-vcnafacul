@@ -3,6 +3,7 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { createAttendanceRecord } from "@/services/prepCourse/attendanceRecord/createAttendanceRecord";
 import { getStudentsToAttendanceRecord } from "@/services/prepCourse/attendanceRecord/getStudentToAttendanceRecord";
 import { useAuthStore } from "@/store/auth";
+import { mensagemDeErro } from "@/utils/mensagemDeErro";
 import {
   AttendancePeriod,
   attendancePeriodLabel,
@@ -14,6 +15,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Calendar } from "primereact/calendar";
 
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 interface AttendanceRecordProps {
   isOpen: boolean;
@@ -33,6 +35,8 @@ export function NewAttendanceRecordModal({
   const [period, setPeriod] = useState<AttendancePeriod>(AttendancePeriod.NOITE);
   const [students, setStudents] = useState<StudentToAttendanceRecord[]>([]);
   const [registring, setRegistering] = useState<boolean>(false);
+  /** A lista chegou? Antes disso não dá para dizer que está vazia. */
+  const [carregou, setCarregou] = useState(false);
 
   const {
     data: {
@@ -49,9 +53,16 @@ export function NewAttendanceRecordModal({
   }, []);
 
   useEffect(() => {
-    getStudentsToAttendanceRecord(token, classId).then((res) => {
-      setStudents(res.students);
-    });
+    getStudentsToAttendanceRecord(token, classId)
+      .then((res) => {
+        setStudents(res.students);
+        setCarregou(true);
+      })
+      .catch((e) =>
+        toast.error(
+          mensagemDeErro(e, "fazer a chamada", "Erro ao carregar os alunos da turma"),
+        ),
+      );
   }, []);
 
   const handleCreateAttendancerecord = async () => {
@@ -107,20 +118,30 @@ export function NewAttendanceRecordModal({
       handleClose={handleClose}
       className="bg-white p-2 sm:p-6 rounded-md w-[90vw] sm:w-[700px] h-[670px] flex flex-col gap-4"
     >
-      <Paper sx={{ height: "85%", width: "100%" }}>
-        <DataGrid
-          rows={students}
-          columns={columns}
-          rowCount={students.length}
-          initialState={{ pagination: { paginationModel } }}
-          rowHeight={40}
-          checkboxSelection
-          disableRowSelectionOnClick
-          rowSelectionModel={selectedRows}
-          onRowSelectionModelChange={handleSelectionChange}
-          sx={{ border: 0 }}
-        />
-      </Paper>
+      {/*
+        Turma sem matriculados (antes das matrículas ou no fim do período): a
+        api recusa a chamada, então a tela avisa e não deixa confirmar (card 11).
+      */}
+      {carregou && students.length === 0 ? (
+        <div className="h-[85%] w-full flex items-center justify-center text-center text-gray-500 px-4">
+          Esta turma não tem alunos matriculados.
+        </div>
+      ) : (
+        <Paper sx={{ height: "85%", width: "100%" }}>
+          <DataGrid
+            rows={students}
+            columns={columns}
+            rowCount={students.length}
+            initialState={{ pagination: { paginationModel } }}
+            rowHeight={40}
+            checkboxSelection
+            disableRowSelectionOnClick
+            rowSelectionModel={selectedRows}
+            onRowSelectionModelChange={handleSelectionChange}
+            sx={{ border: 0 }}
+          />
+        </Paper>
+      )}
       <div className="flex flex-col sm:flex-row gap-2 justify-end w-full">
         <div className="flex flex-col justify-content-center h-16 border pt-7 pl-4 rounded-md relative w-full">
           <label
@@ -165,7 +186,7 @@ export function NewAttendanceRecordModal({
           onClick={handleCreateAttendancerecord}
           className="bg-marine hover:opacity-90 text-white font-bold py-2 px-4 rounded w-full 
             disabled:bg-opacity-75 disabled:cursor-not-allowed"
-          disabled={registring}
+          disabled={registring || !carregou || students.length === 0}
         >
           Confirmar
         </button>
