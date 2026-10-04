@@ -7,6 +7,7 @@ import { PeriodJustification } from "@/types/partnerPrepCourse/periodJustificati
 import { useEffect, useState } from "react";
 import { IoChevronDown, IoChevronUp, IoClose } from "react-icons/io5";
 import { toast } from "react-toastify";
+import { textoDaExclusaoDePeriodo } from "./textoDaExclusaoDePeriodo";
 
 interface PeriodJustificationListProps {
   studentCourseId: string;
@@ -208,7 +209,13 @@ export function PeriodJustificationList({
           }}
           handleConfirm={handleDelete}
           text="Tem certeza que deseja excluir esta justificativa de período?"
-        />
+        >
+          <p className="text-sm text-gray-600">
+            {textoDaExclusaoDePeriodo(
+              items.find((i) => i.id === selectedId)?.faltasJustificadas,
+            )}
+          </p>
+        </ModalConfirmCancel>
       )}
     </div>
   );
