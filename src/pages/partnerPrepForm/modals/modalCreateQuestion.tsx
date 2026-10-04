@@ -1,3 +1,6 @@
+import { rotuloDaLogica } from "../textosDeCondicao";
+import { opcoesLimpas, opcoesRepetidas } from "../opcoes";
+import { motivoDoErro } from "../motivoDoErro";
 import ModalTemplate, {
   ModalProps,
 } from "@/components/templates/modalTemplate";
@@ -134,13 +137,14 @@ export function ModalCreateQuestion({
     }
 
     if (formData.answerType === AnswerType.Options) {
-      const validOptions = formData.options.filter(
-        (option) => option.trim() !== ""
-      );
+      const validOptions = opcoesLimpas(formData.options);
+      const repetidas = opcoesRepetidas(formData.options);
       if (validOptions.length === 0) {
         newErrors.options = "Pelo menos uma opção é obrigatória";
       } else if (validOptions.length < 2) {
         newErrors.options = "Pelo menos duas opções são necessárias";
+      } else if (repetidas.length > 0) {
+        newErrors.options = `As opções não podem se repetir: ${repetidas.join(", ")}`;
       }
     }
 
@@ -157,7 +161,7 @@ export function ModalCreateQuestion({
     try {
       const validOptions =
         formData.answerType === AnswerType.Options
-          ? formData.options.filter((option) => option.trim() !== "")
+          ? opcoesLimpas(formData.options)
           : undefined;
 
       const questionData = {
@@ -177,9 +181,7 @@ export function ModalCreateQuestion({
       handleClose?.();
       resetForm();
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Erro ao criar questão";
-      toast.error(errorMessage);
+      toast.error(motivoDoErro(error, "Erro ao criar questão"));
     } finally {
       setLoading(false);
     }
@@ -386,7 +388,7 @@ export function ModalCreateQuestion({
                 variant="outlined"
               />
               <Chip
-                label={formData.conditions.logic}
+                label={rotuloDaLogica(formData.conditions.logic)}
                 color="primary"
                 variant="filled"
                 size="small"

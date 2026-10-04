@@ -49,10 +49,26 @@ export type ContagensDaProva = Pick<
  * trilho na tela. O `title` mostra os números **crus** — sanear o que se exibe
  * seria esconder o dado inconsistente de quem pode corrigi-lo.
  */
+/** Categoria "livre": sem quantidade-alvo (`totalQuestao` nulo). */
+export function ehCategoriaLivre(prova: ContagensDaProva): boolean {
+  return prova.totalQuestao == null;
+}
+
+/**
+ * O alvo da prova: a quantidade da categoria ou, na categoria livre, as
+ * questões cadastradas (tickets-documentacao, card 34). Antes a livre ficava
+ * "Sem questões" para sempre, com Progresso "—" e "NaN%" nos detalhes.
+ */
+export function alvoDaProva(prova: ContagensDaProva): number {
+  return ehCategoriaLivre(prova)
+    ? (prova.totalQuestaoCadastradas ?? 0)
+    : (prova.totalQuestao ?? 0);
+}
+
 export function faixasDoProgresso(
   prova: ContagensDaProva,
 ): FaixasDoProgresso | null {
-  const total = prova.totalQuestao ?? 0;
+  const total = alvoDaProva(prova);
   if (total <= 0) return null;
 
   const validadas = Math.min(Math.max(prova.totalQuestaoValidadas ?? 0, 0), total);
@@ -74,13 +90,15 @@ export function faixasDoProgresso(
  * `0`, que é onde ela pertence numa ordenação por "quanto falta".
  */
 export function progressoOrdenavel(prova: ContagensDaProva): number {
-  return (prova.totalQuestaoValidadas ?? 0) / (prova.totalQuestao || 1);
+  return (prova.totalQuestaoValidadas ?? 0) / (alvoDaProva(prova) || 1);
 }
 
 /** "180 questões · 160 cadastradas · 132 validadas" — números crus. */
 export function tituloDoProgresso(prova: ContagensDaProva): string {
   return [
-    `${prova.totalQuestao ?? 0} questões`,
+    ehCategoriaLivre(prova)
+      ? "categoria livre"
+      : `${prova.totalQuestao ?? 0} questões`,
     `${prova.totalQuestaoCadastradas ?? 0} cadastradas`,
     `${prova.totalQuestaoValidadas ?? 0} validadas`,
   ].join(" · ");
