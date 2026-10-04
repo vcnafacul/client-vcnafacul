@@ -1,5 +1,15 @@
 import { AttendancePeriod } from "./attendancePeriod";
 
+/**
+ * Por que a presença foi editada (tickets-documentacao, card 05). Não é
+ * justificativa de falta e não entra no cálculo; cada edição substitui.
+ */
+export interface ObservacaoDaPresenca {
+  text: string;
+  by: string | null;
+  at: string | Date;
+}
+
 export interface AttendanceRecord {
   id: string;
   classId: string;
@@ -17,6 +27,7 @@ export interface StudentAttendance {
   id: string;
   present: boolean;
   justification?: string;
+  observation?: ObservacaoDaPresenca | null;
   student: {
     name: string;
     cod_enrolled: string;
@@ -29,6 +40,7 @@ export interface SimpleStudentAttendance {
   studentName: string;
   cod_enrolled: string;
   justification?: string;
+  observation?: ObservacaoDaPresenca | null;
 }
 
 export interface AttendanceRecordByStudent {

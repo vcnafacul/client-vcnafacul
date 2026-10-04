@@ -2,13 +2,17 @@ import ModalTemplate from "@/components/templates/modalTemplate";
 import { Roles } from "@/enums/roles/roles";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getAttendanceRecordById } from "@/services/prepCourse/attendanceRecord/getAttendanceRecordbyId";
-import { updateRegisterStudent } from "@/services/prepCourse/attendanceRecord/updateRegisterStudent";
+import {
+  EdicaoDePresenca,
+  updateRegisterStudent,
+} from "@/services/prepCourse/attendanceRecord/updateRegisterStudent";
 import { useAuthStore } from "@/store/auth";
 import {
   AttendancePeriod,
   attendancePeriodLabel,
 } from "@/types/partnerPrepCourse/attendancePeriod";
 import { SimpleStudentAttendance } from "@/types/partnerPrepCourse/attendanceRecord";
+import { formatDateTime } from "@/utils/date";
 import { IconButton } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
@@ -42,25 +46,32 @@ export function AttendanceRecordModal({
   const modals = useModals(["modalEditRegister"]);
 
   const {
-    data: { token, permissao },
+    data: { token, permissao, user },
   } = useAuthStore();
 
   const executeAsync = useToastAsync();
 
-  const handleEditRegister = async (reason: string, present: boolean) => {
+  const handleEditRegister = async (edicao: EdicaoDePresenca) => {
     await executeAsync({
-      action: () =>
-        updateRegisterStudent(token, studentSelected!.id!, reason, present),
+      action: () => updateRegisterStudent(token, studentSelected!.id!, edicao),
       loadingMessage: "Atualizando Presença...",
       successMessage: "Presença atualizada com sucesso!",
       errorMessage: (error: Error) => error.message,
       onSuccess: () => {
         const newStudents = students.map((student) => {
           if (student.id === studentSelected!.id) {
+            // Espelha a api: Presente não tem justificativa; vazia remove.
             return {
               ...student,
-              present: present,
-              justification: reason,
+              present: edicao.present,
+              justification: edicao.present
+                ? undefined
+                : edicao.justification || undefined,
+              observation: {
+                text: edicao.observation,
+                by: `${user.firstName} ${user.lastName}`,
+                at: new Date().toISOString(),
+              },
             };
           }
           return student;
@@ -76,10 +87,9 @@ export function AttendanceRecordModal({
       <EditStudentRecordModal
         isOpen={modals.modalEditRegister.isOpen}
         handleClose={() => modals.modalEditRegister.close()}
-        handleConfirm={(message, present) =>
-          handleEditRegister(message!, present)
-        }
+        handleConfirm={handleEditRegister}
         currentPresent={studentSelected!.present!}
+        currentJustification={studentSelected!.justification}
       />
     );
   };
@@ -146,6 +156,28 @@ export function AttendanceRecordModal({
       flex: 1,
       minWidth: 200,
     },
+    {
+      // Por que a presença foi editada (card 05) — não entra no cálculo.
+      field: "observation",
+      headerName: "Observação",
+      align: "center",
+      headerAlign: "center",
+      flex: 1,
+      minWidth: 220,
+      sortable: false,
+      renderCell: (params) => {
+        const o = (params.row as SimpleStudentAttendance).observation;
+        if (!o) return null;
+        const quem = [o.by, formatDateTime(String(o.at))]
+          .filter(Boolean)
+          .join(" em ");
+        return (
+          <Tooltip title={quem ? `Alterado por ${quem}` : ""}>
+            <span className="truncate">{o.text}</span>
+          </Tooltip>
+        );
+      },
+    },
   ];
   const paginationModel = { page: 0, pageSize: 10 };
 
@@ -155,6 +187,7 @@ export function AttendanceRecordModal({
         id: s.id,
         present: s.present,
         justification: s.justification,
+        observation: s.observation,
         studentName: s.student.name,
         cod_enrolled: s.student.cod_enrolled,
       }));
