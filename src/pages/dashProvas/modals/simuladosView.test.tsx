@@ -315,3 +315,35 @@ describe("SimuladosView — a ação de relatório", () => {
     expect(buscarSimuladosComCartao).not.toHaveBeenCalled();
   });
 });
+
+describe("SimuladosView — editar janela por permissão (tickets-documentacao, 32)", () => {
+  const MOTIVO = "Requer permissão: cadastrar provas do cursinho";
+  const montarComEdicao = (edicao?: { permitido: boolean; motivo?: string }) =>
+    render(
+      <SimuladosView
+        simulados={[simulado()]}
+        loading={false}
+        error={null}
+        token="tok"
+        onVoltar={vi.fn()}
+        onRetry={vi.fn()}
+        onSimuladoUpdated={vi.fn()}
+        edicao={edicao}
+      />,
+    );
+
+  it("⚠️ sem a permissão: desabilitado com o motivo e não abre o modal", () => {
+    montarComEdicao({ permitido: false, motivo: MOTIVO });
+    const botao = screen.getAllByRole("button", { name: MOTIVO })[0];
+    expect(botao).toHaveAttribute("aria-disabled", "true");
+    fireEvent.click(botao);
+    expect(screen.queryByTestId("modal-janela")).toBeNull();
+  });
+
+  it("tela do admin (sem a prop): habilitado", () => {
+    montarComEdicao();
+    expect(
+      screen.getAllByRole("button", { name: "Editar janela de disponibilidade" })[0],
+    ).not.toHaveAttribute("aria-disabled");
+  });
+});

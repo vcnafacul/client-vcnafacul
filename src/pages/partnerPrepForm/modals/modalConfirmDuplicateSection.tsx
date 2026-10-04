@@ -28,7 +28,8 @@ export function ModalConfirmDuplicateSection({
         </Typography>
         <Typography variant="body2" color="text.secondary">
           Isso criará uma cópia completa da seção incluindo todas as questões
-          associadas.
+          associadas, com o nome "{sectionName} (cópia)". A cópia nasce
+          desativada: revise e ative quando estiver pronta.
         </Typography>
       </div>
     </ModalConfirmCancel>
