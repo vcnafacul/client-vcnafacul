@@ -10,6 +10,7 @@ import { setSectionActive } from "@/services/partnerPrepForm/setSectionActive";
  import { useAuthStore } from "@/store/auth";
 import { AnswerType, QuestionForm } from "@/types/partnerPrepForm/questionForm";
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
+import { secoesVisiveis } from "./secoesVisiveis";
 import {
   AppBar,
   Box,
@@ -194,23 +195,11 @@ export default function PartnerPrepForm() {
         getSection(token),
       ]);
 
-      // Filtra apenas seções ativas e questões ativas (parceiro vê só o que está ativo)
-      const filterActive = (sections: SectionForm[]): SectionForm[] =>
-        sections
-          .filter((s) => s.active)
-          .map((s) => ({
-            ...s,
-            questions: s.questions.filter((q) => q.active),
-          }));
-
-      const globalSections: SectionForm[] =
-        globalRes.status === "fulfilled"
-          ? filterActive(globalRes.value.data.map((s) => ({ ...s, isGlobal: true })))
-          : [];
-      const partnerSections: SectionForm[] =
-        partnerRes.status === "fulfilled"
-          ? filterActive(partnerRes.value.data.map((s) => ({ ...s, isGlobal: false })))
-          : [];
+      // Do cursinho, inclusive inativas; globais, só ativas (card 17).
+      const globais =
+        globalRes.status === "fulfilled" ? globalRes.value.data : [];
+      const doCursinho =
+        partnerRes.status === "fulfilled" ? partnerRes.value.data : [];
 
       if (globalRes.status === "rejected") {
         toast.warning("Não foi possível carregar seções globais");
@@ -219,7 +208,7 @@ export default function PartnerPrepForm() {
         toast.error("Erro ao carregar seções do parceiro");
       }
 
-      setEntities([...globalSections, ...partnerSections]);
+      setEntities(secoesVisiveis(globais, doCursinho));
     } catch {
       toast.error("Erro ao buscar seções");
     } finally {
