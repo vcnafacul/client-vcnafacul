@@ -35,6 +35,8 @@ import type {
 import { partnerPrepProva } from "./data";
 import { ModalEventos } from "./eventos/ModalEventos";
 import { ModalDuplicarProva } from "./ModalDuplicarProva";
+import { ModalEditarDadosDaProva } from "./ModalEditarDadosDaProva";
+import { excluirProvaCursinho } from "@/services/prova/excluirProvaCursinho";
 
 const EDICAO_ALL = "";
 const APLICACAO_ALL = "";
@@ -192,6 +194,7 @@ function PartnerPrepProvas() {
     "modalUploadCartao",
     "modalEventos",
     "modalDuplicar",
+    "modalEditarDados",
   ]);
 
   const {
@@ -293,6 +296,19 @@ function PartnerPrepProvas() {
     );
   };
 
+  /** Card 41 — 409 (prova em evento ou com cartão) chega com o motivo. */
+  const excluirProva = async (prova: Prova) => {
+    try {
+      await excluirProvaCursinho(prova._id, token);
+      toast.success(`Prova excluída: ${prova.nome}`);
+      setProvas((prev) => prev.filter((p) => p._id !== prova._id));
+      modals.modalShowProva.close();
+      setProvaSelected(null);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao excluir a prova");
+    }
+  };
+
   const ModalShowProva = () => {
     return !modals.modalShowProva.isOpen ? null : (
       <ShowProva
@@ -333,6 +349,16 @@ function PartnerPrepProvas() {
         edicao={{
           permitido: !!permissao[Roles.cadastrarProvasCursinho],
           motivo: MOTIVO.cadastrarProvasCursinho,
+        }}
+        // Card 41: editar dados e excluir — mesma permissão, só aqui.
+        gestao={{
+          permitido: !!permissao[Roles.cadastrarProvasCursinho],
+          motivo: MOTIVO.cadastrarProvasCursinho,
+          aoEditar: () => {
+            modals.modalShowProva.close();
+            modals.modalEditarDados.open();
+          },
+          aoExcluir: () => excluirProva(provaSelected!),
         }}
       />
     );
@@ -667,6 +693,26 @@ function PartnerPrepProvas() {
         handleClose={modals.modalUploadCartao.close}
         token={token}
       />
+      {modals.modalEditarDados.isOpen && provaSelected && (
+        <ModalEditarDadosDaProva
+          prova={provaSelected}
+          categorias={categorias}
+          token={token}
+          isOpen
+          handleClose={() => {
+            modals.modalEditarDados.close();
+            modals.modalShowProva.open();
+          }}
+          onSalva={(atualizada) => {
+            setProvas((prev) =>
+              prev.map((p) => (p._id === atualizada._id ? atualizada : p)),
+            );
+            setProvaSelected(atualizada);
+            modals.modalEditarDados.close();
+            modals.modalShowProva.open();
+          }}
+        />
+      )}
       {modals.modalDuplicar.isOpen && provaSelected && (
         <ModalDuplicarProva
           prova={provaSelected}
