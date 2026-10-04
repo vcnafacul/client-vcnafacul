@@ -40,6 +40,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import { ModalConditions } from "./modalConditions";
+import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 
 interface ModalShowQuestionProps extends ModalProps {
   isOpen: boolean;
@@ -67,6 +68,9 @@ export function ModalShowQuestion({
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isOpenConditions, setIsOpenConditions] = useState<boolean>(false);
+  // Remover todas as condições (card 22): no salvar vai `conditions: null`.
+  const [confirmarRemocao, setConfirmarRemocao] = useState(false);
+  const [condicoesRemovidas, setCondicoesRemovidas] = useState(false);
   const {
     data: { token },
   } = useAuthStore();
@@ -117,6 +121,7 @@ export function ModalShowQuestion({
     setIsEditMode(false);
     // Com as condições: antes o Cancelar as tirava da tela (card 25).
     setEditableData(dadosEditaveis(question));
+    setCondicoesRemovidas(false);
     setErrors({});
   };
 
@@ -154,7 +159,9 @@ export function ModalShowQuestion({
       const updatedQuestion: QuestionForm = {
         ...question,
         text: editableData.text.trim(),
-        helpText: editableData.helpText.trim() || undefined,
+        // "" apaga o texto de ajuda; `undefined` sumia do JSON e o antigo
+        // ficava (card 22).
+        helpText: editableData.helpText.trim(),
         collection: editableData.collection,
         conditions: editableData.conditions,
         options:
@@ -164,8 +171,14 @@ export function ModalShowQuestion({
         active: editableData.active,
       };
 
+      // `null` remove as condições no ms; ausente = não mexe (card 22).
+      const paraEnviar =
+        condicoesRemovidas && !editableData.conditions
+          ? ({ ...updatedQuestion, conditions: null } as unknown as QuestionForm)
+          : updatedQuestion;
+
       await executeAsync({
-        action: () => updateFn(token, question._id, updatedQuestion),
+        action: () => updateFn(token, question._id, paraEnviar),
         loadingMessage: "Atualizando questão...",
         successMessage: "Questão atualizada com sucesso!",
         errorMessage: (e: unknown) =>
@@ -432,16 +445,29 @@ export function ModalShowQuestion({
           >
             <Typography variant="h6">Condições</Typography>
             {isEditMode && (
-              <Button
-                startIcon={<FiSettings />}
-                onClick={() => setIsOpenConditions(true)}
-                variant="outlined"
-                size="small"
-              >
-                {editableData.conditions
-                  ? "Editar Condições"
-                  : "Definir Condições"}
-              </Button>
+              <Box sx={{ display: "flex", gap: 1 }}>
+                {editableData.conditions && (
+                  <Button
+                    startIcon={<FiTrash2 />}
+                    onClick={() => setConfirmarRemocao(true)}
+                    variant="outlined"
+                    color="error"
+                    size="small"
+                  >
+                    Remover condições
+                  </Button>
+                )}
+                <Button
+                  startIcon={<FiSettings />}
+                  onClick={() => setIsOpenConditions(true)}
+                  variant="outlined"
+                  size="small"
+                >
+                  {editableData.conditions
+                    ? "Editar Condições"
+                    : "Definir Condições"}
+                </Button>
+              </Box>
             )}
           </Box>
 
@@ -526,6 +552,20 @@ export function ModalShowQuestion({
           setIsOpenConditions(false);
         }}
       />
+      <ModalConfirmCancel
+        isOpen={confirmarRemocao}
+        handleClose={() => setConfirmarRemocao(false)}
+        handleConfirm={() => {
+          setEditableData((prev) => ({ ...prev, conditions: undefined }));
+          setCondicoesRemovidas(true);
+          setConfirmarRemocao(false);
+        }}
+        text="Remover as condições desta questão?"
+      >
+        <p className="text-sm text-gray-600">
+          Ela passa a aparecer para todos. A remoção vale quando você salvar.
+        </p>
+      </ModalConfirmCancel>
     </ModalTemplate>
   );
 }
