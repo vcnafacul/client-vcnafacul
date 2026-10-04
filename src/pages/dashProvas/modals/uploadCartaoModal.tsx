@@ -17,6 +17,8 @@ export const TEXTO_NADA_ENCONTRADO = "Nenhum estudante encontrado";
 export const TEXTO_ERRO_BUSCA = "Não foi possível buscar agora";
 export const TEXTO_TROCAR = "Trocar";
 export const TEXTO_SEM_TURMA = "Sem turma";
+export const TEXTO_CARTAO_ENVIADO =
+  "Cartão enviado. Acompanhe a leitura no relatório do simulado (Detalhes → Ver simulados).";
 
 interface UploadCartaoModalProps {
   isOpen: boolean;
@@ -63,8 +65,8 @@ export default function UploadCartaoModal({
     try {
       await uploadCartao(file, escolhido.userId, token);
       toast.update(id, {
-        render:
-          "Cartão enviado. O resultado aparece aqui quando o processamento terminar.",
+        // Card 35: o modal fecha — o resultado nunca aparece "aqui".
+        render: TEXTO_CARTAO_ENVIADO,
         type: "info",
         isLoading: false,
         autoClose: 5000,
@@ -170,8 +172,8 @@ export default function UploadCartaoModal({
               </div>
               {/*
                 ⚠️ "Trocar" devolve a busca. Sem ele, corrigir uma escolha
-                errada exigiria fechar o modal e recomeçar — e o envio é a ação
-                que não dá para desfazer.
+                errada exigiria fechar o modal e recomeçar — e desfazer o envio
+                depois exige excluí-lo no relatório (card 36).
               */}
               <button
                 type="button"
@@ -191,10 +193,10 @@ export default function UploadCartaoModal({
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             />
 
-            {/* O envio não se desfaz: confirma de quem é o cartão antes. */}
+            {/* Confirma de quem é o cartão: corrigir depois exige excluir o envio. */}
             <AlertDialogUI
               title="Enviar este cartão?"
-              description={`O cartão será registrado para ${escolhido.nome} (${escolhido.matricula}) e não poderá ser desfeito.`}
+              description={`O cartão será registrado para ${escolhido.nome} (${escolhido.matricula}). Se o aluno estiver errado, será preciso excluir o envio no relatório do simulado.`}
               onConfirm={handleEnviar}
             >
               <AlertDialogTrigger asChild>

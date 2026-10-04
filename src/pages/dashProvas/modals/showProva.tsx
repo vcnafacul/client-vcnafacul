@@ -29,6 +29,8 @@ import {
   OpcaoNovasVersoes,
 } from "../components/OpcaoNovasVersoes";
 
+const TEXTO_SEM_PDF = "Sem PDF da prova";
+
 interface ShowProvaProps {
   prova: Prova;
   isOpen: boolean;
@@ -50,6 +52,16 @@ interface ShowProvaProps {
    * cursinho passa; ausente = permitido.
    */
   edicao?: { permitido: boolean; motivo?: string };
+  /**
+   * Card 41 — "Editar dados" e "Excluir". Só a tela do cursinho passa: as
+   * rotas são do cursinho (resolvido pelo JWT), como o `duplicar`.
+   */
+  gestao?: {
+    permitido: boolean;
+    motivo?: string;
+    aoEditar: () => void;
+    aoExcluir: () => void;
+  };
 }
 
 function ShowProva({
@@ -60,6 +72,7 @@ function ShowProva({
   relatorio,
   duplicar,
   edicao,
+  gestao,
 }: ShowProvaProps) {
   const executeAsync = useToastAsync();
   const [isEditingFiles, setIsEditingFiles] = useState(false);
@@ -182,7 +195,7 @@ const downloadFile = async (filename: string, fileType: string) => {
     });
   } catch (error) {
     toast.update(id, {
-      render: `Erro ao baixar o ${fileType}`,
+      render: `Erro ao baixar ${fileType == "prova" ? "a" : "o"} ${fileType}`,
       type: "error",
       isLoading: false,
       autoClose: 5000,
@@ -286,6 +299,40 @@ const downloadFile = async (filename: string, fileType: string) => {
               >
                 Duplicar prova
               </button>
+            )}
+            {gestao && (
+              <>
+                <button
+                  type="button"
+                  onClick={gestao.aoEditar}
+                  disabled={!gestao.permitido}
+                  title={gestao.permitido ? undefined : gestao.motivo}
+                  className="px-3 py-1.5 text-sm border border-marine text-marine rounded-lg hover:bg-marine/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Editar dados
+                </button>
+                {/*
+                  ⚠️ Card 41: a confirmação diz o que a api recusa, para a
+                  pessoa não estranhar o 409 — prova com cartão enviado ou
+                  oferecida num evento de simulado não sai.
+                */}
+                <AlertDialogUI
+                  title="Excluir esta prova?"
+                  description={`A prova "${prova.nome}" sai da lista do cursinho e da escolha de provas dos eventos. As questões continuam no banco. Só dá para excluir prova sem cartão enviado e fora de eventos de simulado.`}
+                  onConfirm={gestao.aoExcluir}
+                >
+                  <AlertDialogTrigger asChild>
+                    <button
+                      type="button"
+                      disabled={!gestao.permitido}
+                      title={gestao.permitido ? undefined : gestao.motivo}
+                      className="px-3 py-1.5 text-sm border border-red-300 text-red-700 rounded-lg hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Excluir
+                    </button>
+                  </AlertDialogTrigger>
+                </AlertDialogUI>
+              </>
             )}
           </div>
         </div>
@@ -479,20 +526,29 @@ const downloadFile = async (filename: string, fileType: string) => {
                     </Button>
                   )}
 
-                  <Button
-                    onClick={handleDownloadProva}
-                    variant="contained"
-                    color="primary"
-                    className="w-full sm:w-auto"
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <ArrowDownTrayIcon className="h-4 w-4" />
-                    Download da Prova
-                  </Button>
+                  {/* Card 37: prova sem PDF não mostra um botão que só falha. */}
+                  {prova.filename ? (
+                    <Button
+                      onClick={handleDownloadProva}
+                      variant="contained"
+                      color="primary"
+                      className="w-full sm:w-auto"
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
+                      <ArrowDownTrayIcon className="h-4 w-4" />
+                      Download da Prova
+                    </Button>
+                  ) : (
+                    <span className="self-center text-sm text-gray-500">
+                      {edicao && !edicao.permitido
+                        ? TEXTO_SEM_PDF
+                        : `${TEXTO_SEM_PDF} — adicione em Editar arquivos`}
+                    </span>
+                  )}
 
                   <Button
                     onClick={() => setIsEditingFiles(true)}

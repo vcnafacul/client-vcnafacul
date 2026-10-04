@@ -26,9 +26,27 @@ import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useState } from "react";
 import { OpcaoNovasVersoes } from "../components/OpcaoNovasVersoes";
 
+export const TEXTO_CARREGANDO_CATEGORIAS = "Carregando categorias…";
+export const TEXTO_ERRO_CATEGORIAS =
+  "Não foi possível carregar as categorias. Tente de novo.";
+
+/** Card 40: aplicação é um campo próprio, independente da edição. */
+const aplicacaoOptions: FormFieldOption[] = [1, 2, 3].map((n) => ({
+  label: `${n}ª aplicação`,
+  value: String(n),
+}));
+
 interface NewProvaProps extends ModalProps {
   addProva: (data: Prova) => void;
-  categorias: ICategoria[];
+  /**
+   * ⚠️ **`undefined` = ainda não chegou ou falhou** (card 40). O modal abria
+   * com `categorias!` e o `forEach` estourava na renderização: tela em branco
+   * se a busca falhasse, ou se a pessoa clicasse antes de ela responder.
+   */
+  categorias?: ICategoria[];
+  /** A busca das categorias falhou — mostra o aviso com "Tentar de novo". */
+  erroCategorias?: boolean;
+  onTentarDeNovo?: () => void;
   isOpen: boolean;
   createService?: (data: FormData, token: string) => Promise<Prova>;
 }
@@ -39,6 +57,8 @@ function NewProva({
   handleClose,
   isOpen,
   createService,
+  erroCategorias = false,
+  onTentarDeNovo,
 }: NewProvaProps) {
   const { register, handleSubmit, watch } = useForm();
   const [receberNovasVersoes, setReceberNovasVersoes] = useState(false);
@@ -52,20 +72,23 @@ function NewProva({
   const [uploadGabarito, setUploadGabarito] = useState(null);
 
   const categoriasOptions: FormFieldOption[] = [{ label: "", value: "" }];
-  categorias.forEach((f) => {
+  (categorias ?? []).forEach((f) => {
     if (f.selecionavel) {
       categoriasOptions.push({ label: f.nome, value: f._id });
     }
   });
 
+  /*
+    ⚠️ Card 40: só as edições. A aplicação ficava aqui dentro ("2ªAplicação")
+    e sempre virava edição Regular — Digital ou PPL na 2ª aplicação eram
+    impossíveis de cadastrar.
+  */
   const edicaoOption: FormFieldOption[] = edicaoArray.map((f) => {
     if (f === Edicao.Reaplicacao) {
       return { label: f, value: "Replicacao" };
     }
     return { label: f, value: f };
   });
-  edicaoOption.push({ label: "2ªAplicação", value: "Reaplicação/PPL2" });
-  edicaoOption.push({ label: "3ªAplicação", value: "Reaplicação/PPL3" });
 
   const handleFileUpload = (e: any) => {
     setUploadFile(null);
@@ -92,7 +115,7 @@ function NewProva({
   };
 
   const categoria = watch("categoria");
-  const categoriaEscolhida = categorias.find((c) => c._id === categoria);
+  const categoriaEscolhida = categorias?.find((c) => c._id === categoria);
   const isCustom = categoriaEscolhida?.custom === true;
 
   const listFieldProva: FormFieldInput[] = [
@@ -118,14 +141,22 @@ function NewProva({
       id: "edicao",
       type: "option",
       options: edicaoOption,
-      label: "Edicao",
+      label: "Edição",
+      disabled: false,
+    },
+    {
+      id: "aplicacao",
+      type: "option",
+      options: aplicacaoOptions,
+      label: "Aplicação",
       disabled: false,
     },
     {
       id: "ano",
       type: "number",
       label: "Ano de Realização",
-      defaultValue: 2023,
+      // Card 40: era 2023 fixo, e o ano não se corrige depois.
+      defaultValue: new Date().getFullYear(),
       disabled: false,
     },
   ];
@@ -141,15 +172,7 @@ function NewProva({
     }
 
     const info = data as CreateProva;
-    info.aplicacao = 1;
-    if (info.edicao.includes("2")) {
-      info.edicao = Edicao.Regular;
-      info.aplicacao = 2;
-    }
-    if (info.edicao.includes("3")) {
-      info.edicao = Edicao.Regular;
-      info.aplicacao = 3;
-    }
+    info.aplicacao = Number(data.aplicacao) || 1;
 
     const fileName = Date.now();
     const formData = new FormData();
@@ -226,102 +249,123 @@ function NewProva({
           </div>
         </div>
 
-        <form
-          className="flex flex-col w-full gap-6"
-          onSubmit={handleSubmit(create)}
-        >
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
-              <AcademicCapIcon className="h-4 w-4" />
-              Informações Gerais
-            </h3>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <Form
-                formFields={listFieldProva}
-                register={register}
-                size={acimaDeSm ? "base" : "small"}
-                className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"
-              />
-            </div>
-          </div>
-
-          {isCustom && (
-            <p className="text-xs text-blue-700 -mt-2">
-              Prova personalizada — nome livre, PDF opcional.
+        {!categorias && (
+          <div className="flex flex-col items-start gap-2 py-4">
+            <p className="text-sm text-gray-600">
+              {erroCategorias
+                ? TEXTO_ERRO_CATEGORIAS
+                : TEXTO_CARREGANDO_CATEGORIAS}
             </p>
-          )}
+            {erroCategorias && onTentarDeNovo && (
+              <button
+                type="button"
+                onClick={onTentarDeNovo}
+                className="text-sm font-medium text-blue-600 underline-offset-2 hover:underline"
+              >
+                Tentar de novo
+              </button>
+            )}
+          </div>
+        )}
 
-          <OpcaoNovasVersoes
-            checked={receberNovasVersoes}
-            onChange={setReceberNovasVersoes}
-          />
-
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
-              <CloudArrowUpIcon className="h-4 w-4" />
-              Arquivos da Prova
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h4 className="text-sm font-medium text-blue-900 mb-2">
-                  Prova (PDF)
-                </h4>
-                <UploadButton
-                  onChange={handleFileUpload}
-                  placeholder="Upload da Prova"
-                  className="w-full"
-                  accept=".pdf"
-                  variant="compact"
-                  onRemove={handleRemoveFile}
+        {categorias && (
+          <form
+            className="flex flex-col w-full gap-6"
+            onSubmit={handleSubmit(create)}
+          >
+            <div>
+              <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
+                <AcademicCapIcon className="h-4 w-4" />
+                Informações Gerais
+              </h3>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <Form
+                  formFields={listFieldProva}
+                  register={register}
+                  size={acimaDeSm ? "base" : "small"}
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"
                 />
-                {uploadFile && (
-                  <p className="text-xs text-blue-700 mt-2 break-all">
-                    ✓ Arquivo selecionado: {(uploadFile as File).name}
-                  </p>
-                )}
-              </div>
-
-              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                <h4 className="text-sm font-medium text-green-900 mb-2">
-                  Gabarito (PDF) - Opcional
-                </h4>
-                <UploadButton
-                  onChange={handleGabaritoUpload}
-                  placeholder="Upload do Gabarito"
-                  className="w-full"
-                  accept=".pdf"
-                  variant="compact"
-                  onRemove={handleRemoveGabarito}
-                />
-                {uploadGabarito && (
-                  <p className="text-xs text-green-700 mt-2 break-all">
-                    ✓ Arquivo selecionado: {(uploadGabarito as File).name}
-                  </p>
-                )}
               </div>
             </div>
-          </div>
 
-          <div className="flex justify-end pt-4 border-t border-gray-200">
-            <Button
-              type="submit"
-              variant="contained"
-              disabled={!categoria || (!isCustom && !uploadFile)}
-              sx={{
-                backgroundColor: "#3b82f6",
-                "&:hover": {
-                  backgroundColor: "#2563eb",
-                },
-                "&:disabled": {
-                  backgroundColor: "#9ca3af",
-                },
-                fontWeight: 600,
-              }}
-            >
-              Criar Prova
-            </Button>
-          </div>
-        </form>
+            {isCustom && (
+              <p className="text-xs text-blue-700 -mt-2">
+                Prova personalizada — nome livre, PDF opcional.
+              </p>
+            )}
+
+            <OpcaoNovasVersoes
+              checked={receberNovasVersoes}
+              onChange={setReceberNovasVersoes}
+            />
+
+            <div>
+              <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
+                <CloudArrowUpIcon className="h-4 w-4" />
+                Arquivos da Prova
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <h4 className="text-sm font-medium text-blue-900 mb-2">
+                    Prova (PDF)
+                  </h4>
+                  <UploadButton
+                    onChange={handleFileUpload}
+                    placeholder="Upload da Prova"
+                    className="w-full"
+                    accept=".pdf"
+                    variant="compact"
+                    onRemove={handleRemoveFile}
+                  />
+                  {uploadFile && (
+                    <p className="text-xs text-blue-700 mt-2 break-all">
+                      ✓ Arquivo selecionado: {(uploadFile as File).name}
+                    </p>
+                  )}
+                </div>
+
+                <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                  <h4 className="text-sm font-medium text-green-900 mb-2">
+                    Gabarito (PDF) - Opcional
+                  </h4>
+                  <UploadButton
+                    onChange={handleGabaritoUpload}
+                    placeholder="Upload do Gabarito"
+                    className="w-full"
+                    accept=".pdf"
+                    variant="compact"
+                    onRemove={handleRemoveGabarito}
+                  />
+                  {uploadGabarito && (
+                    <p className="text-xs text-green-700 mt-2 break-all">
+                      ✓ Arquivo selecionado: {(uploadGabarito as File).name}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-4 border-t border-gray-200">
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={!categoria || (!isCustom && !uploadFile)}
+                sx={{
+                  backgroundColor: "#3b82f6",
+                  "&:hover": {
+                    backgroundColor: "#2563eb",
+                  },
+                  "&:disabled": {
+                    backgroundColor: "#9ca3af",
+                  },
+                  fontWeight: 600,
+                }}
+              >
+                Criar Prova
+              </Button>
+            </div>
+          </form>
+        )}
       </div>
     </ModalTemplate>
   );
