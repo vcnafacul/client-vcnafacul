@@ -1,3 +1,4 @@
+import { motivoDoErro } from "../motivoDoErro";
 import ModalTemplate, {
   ModalProps,
 } from "@/components/templates/modalTemplate";
@@ -71,9 +72,7 @@ export function ModalUpdateSection({
       onSuccess(updatedSection);
       handleClose?.();
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Erro ao atualizar seção";
-      toast.error(errorMessage);
+      toast.error(motivoDoErro(error, "Erro ao atualizar seção"));
     } finally {
       setLoading(false);
     }

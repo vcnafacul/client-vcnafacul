@@ -26,6 +26,7 @@ import {
   Typography,
 } from "@mui/material";
 import { memo, useState } from "react";
+import { resumo, ROTULO_DO_TIPO } from "../textosDeCondicao";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
 import { toast } from "react-toastify";
 
@@ -34,6 +35,8 @@ interface ModalConditionsProps extends ModalProps {
   conditions?: ComplexCondition;
   availableQuestions: QuestionForm[];
   onSave: (conditions: ComplexCondition) => void;
+  /** A questão sendo editada: não pode ser referência dela mesma (card 27). */
+  questaoId?: string;
 }
 
 interface ConditionFormData {
@@ -86,7 +89,10 @@ const ExpectedValueInput = memo(
             label="Valor esperado"
             placeholder="Digite um número..."
             value={String(value)}
-            onChange={(e) => onChange(Number(e.target.value))}
+            // Vazio fica vazio (a validação pega), em vez de virar 0 (card 27)
+            onChange={(e) =>
+              onChange(e.target.value === "" ? "" : Number(e.target.value))
+            }
             fullWidth
             error={error}
             helperText={helperText}
@@ -148,10 +154,11 @@ export function ModalConditions({
   conditions,
   availableQuestions,
   onSave,
+  questaoId,
 }: ModalConditionsProps) {
-  // Filtrar apenas questões ativas para referência
+  // Só ativas, e nunca a própria questão (card 27)
   const activeQuestions = availableQuestions.filter(
-    (question) => question.active
+    (question) => question.active && question._id !== questaoId
   );
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -245,9 +252,20 @@ export function ModalConditions({
     value: string
   ) => {
     setConditionList((prev) =>
-      prev.map((condition, i) =>
-        i === index ? { ...condition, [field]: value } : condition
-      )
+      prev.map((condition, i) => {
+        if (i !== index) return condition;
+        // Trocar a referência limpa operador e valor: "Maior que 18" não
+        // serve para uma questão de Texto (card 27).
+        if (field === "questionId" && value !== condition.questionId) {
+          return {
+            ...condition,
+            questionId: value,
+            operator: Operator.Equal,
+            expectedValue: "",
+          };
+        }
+        return { ...condition, [field]: value };
+      })
     );
 
     // Limpar erro do campo quando usuário começar a digitar
@@ -456,12 +474,12 @@ export function ModalConditions({
                                 }}
                               >
                                 <Chip
-                                  label={question.answerType}
+                                  label={ROTULO_DO_TIPO[question.answerType]}
                                   size="small"
                                   variant="outlined"
                                 />
                                 <Typography variant="body2">
-                                  {question.text.slice(0, 50)}...
+                                  {resumo(question.text)}
                                 </Typography>
                               </Box>
                             </MenuItem>

@@ -2,6 +2,7 @@ import Text from "@/components/atoms/text";
 import Button from "@/components/molecules/button";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
+import { acoesDeMatricula } from "./acoesDoEstudante";
 import { Roles } from "@/enums/roles/roles";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
@@ -253,9 +254,10 @@ export function StudentsEnrolled() {
   const handleCancelEnrollment = async (reason: string) => {
     await executeAsync({
       action: () => enrollmentCancelled(studentSelected.id, reason, token),
-      loadingMessage: "Indefirindo Matrícula...",
-      successMessage: "Matrícula indeferida com sucesso!",
-      errorMessage: "Erro ao indeferir matrícula",
+      loadingMessage: "Cancelando matrícula...",
+      successMessage: "Matrícula cancelada com sucesso!",
+      // A api explica o motivo (ex.: "Só é possível cancelar uma matrícula ativa").
+      errorMessage: (e: Error) => e?.message || "Erro ao cancelar matrícula",
       onSuccess: () => {
         const newStudent = students.map((stu) => {
           if (stu.id === studentSelected.id) {
@@ -277,7 +279,7 @@ export function StudentsEnrolled() {
       action: () => reactiveEnrolled(studentSelected.id, token),
       loadingMessage: "Reativando Matrícula...",
       successMessage: "Matrícula reativada com sucesso!",
-      errorMessage: "Erro ao reativar matrícula",
+      errorMessage: (e: Error) => e?.message || "Erro ao reativar matrícula",
       onSuccess: () => {
         const newStudent = students.map((stu) => {
           if (stu.id === studentSelected.id) {
@@ -304,7 +306,7 @@ export function StudentsEnrolled() {
       action: () => updateClass(studentSelected.id, classId, token),
       loadingMessage: "Atualizando turma...",
       successMessage: "Turma atualizada com sucesso!",
-      errorMessage: "Erro ao atualizar turma",
+      errorMessage: (e: Error) => e?.message || "Erro ao atualizar turma",
       onSuccess: () => {
         const newStudent = students.map((stu) => {
           if (stu.id === studentSelected.id) {
@@ -442,7 +444,7 @@ export function StudentsEnrolled() {
           </Tooltip>
         )}
       {permissao[Roles.gerenciarEstudantes] &&
-        (estudante.applicationStatus === StatusApplication.Enrolled ? (
+        acoesDeMatricula(estudante.applicationStatus).cancelar && (
           <Tooltip title="Cancelar matrícula">
             <IconButton
               onClick={() => {
@@ -460,7 +462,9 @@ export function StudentsEnrolled() {
               <IoClose className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
             </IconButton>
           </Tooltip>
-        ) : (
+        )}
+      {permissao[Roles.gerenciarEstudantes] &&
+        acoesDeMatricula(estudante.applicationStatus).reativar && (
           <Tooltip title="Reativar matrícula">
             <IconButton
               onClick={() => {
@@ -478,8 +482,9 @@ export function StudentsEnrolled() {
               <FaCheck className="h-6 w-6 fill-green2 opacity-60 hover:opacity-100" />
             </IconButton>
           </Tooltip>
-        ))}
-      {permissao[Roles.gerenciarTurmas] && (
+        )}
+      {permissao[Roles.gerenciarTurmas] &&
+        acoesDeMatricula(estudante.applicationStatus).alterarTurma && (
         <Tooltip title="Alterar Turma">
           <IconButton
             onClick={() => {
