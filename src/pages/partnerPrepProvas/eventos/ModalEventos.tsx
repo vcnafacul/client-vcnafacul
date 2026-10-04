@@ -13,6 +13,7 @@ import {
 import { formatarDataHora } from "./datas";
 import { FormDoEvento } from "./FormDoEvento";
 import { PainelDoEvento } from "./PainelDoEvento";
+import { textoDaExclusao } from "./textoDaExclusao";
 
 const ROTULO: Record<StatusDoEvento, { texto: string; cor: string }> = {
   agendado: { texto: "Agendado", cor: "bg-blue-100 text-blue-800" },
@@ -96,7 +97,7 @@ export function ModalEventos({ isOpen, handleClose, token, podeEditar }: Props) 
   };
 
   const excluir = async (e: EventoDoCursinho) => {
-    if (!window.confirm(`Excluir o evento "${e.nome}"?`)) return;
+    if (!window.confirm(textoDaExclusao(e))) return;
     try {
       await excluirEvento(token, e.id);
       toast.success("Evento excluído");

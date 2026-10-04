@@ -21,6 +21,9 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
 
   const nomeDaProva = (id: string) =>
     evento.provas.find((p) => p.provaId === id)?.nome ?? "";
+  /** Card 38: inscrito numa prova, fez outra. */
+  const trocou = (i: EngajamentoDoEvento["inscritos"][number]) =>
+    i.fez && !!i.provaQueFez && i.provaQueFez !== i.provaId;
 
   const lista = dados?.inscritos.filter(
     (i) => filtro === "todas" || i.provaId === filtro,
@@ -43,6 +46,7 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
                   <th className="py-1 pr-2">Prova</th>
                   <th className="py-1 pr-2">Inscritos (imprimir)</th>
                   <th className="py-1 pr-2">Fizeram</th>
+                  <th className="py-1 pr-2">Trocaram de prova</th>
                   <th className="py-1">Não vieram</th>
                 </tr>
               </thead>
@@ -52,11 +56,20 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
                     <td className="py-1 pr-2">{p.nome}</td>
                     <td className="py-1 pr-2 font-semibold">{p.inscritos}</td>
                     <td className="py-1 pr-2">{p.fizeram}</td>
+                    <td className="py-1 pr-2">{p.trocaram}</td>
                     <td className="py-1">{p.naoVieram}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            {/*
+              ⚠️ Card 38: "Fizeram" conta na prova que o aluno FEZ, e por isso
+              pode passar dos inscritos. É o número que serve para a conta de
+              cadernos do próximo evento.
+            */}
+            <p className="text-xs text-grey mt-1">
+              "Fizeram" conta na prova que o aluno fez, mesmo inscrito em outra.
+            </p>
           </div>
           <div className="flex flex-wrap gap-3">
             <div className="bg-gray-50 rounded-lg px-4 py-2">
@@ -100,13 +113,26 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
                   >
                     <span className="min-w-0 break-words">{i.nome}</span>
                     <span className="text-grey sm:shrink-0 sm:text-right break-words">
-                      {nomeDaProva(i.provaId)} · {i.fez ? "fez" : "não fez"}
+                      {nomeDaProva(i.provaId)} ·{" "}
+                      {trocou(i) ? (
+                        <span className="font-medium text-amber-700">
+                          fez outra prova ({nomeDaProva(i.provaQueFez!)})
+                        </span>
+                      ) : i.fez ? (
+                        "fez"
+                      ) : (
+                        "não fez"
+                      )}
                     </span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-grey">Ninguém inscrito ainda.</p>
+              <p className="text-sm text-grey">
+                {filtro === "todas"
+                  ? "Ninguém inscrito ainda."
+                  : "Ninguém inscrito nesta prova."}
+              </p>
             )}
           </div>
           {dados.fizeramSemInscricao.length > 0 && (
