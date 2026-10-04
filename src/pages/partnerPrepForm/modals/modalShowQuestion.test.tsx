@@ -11,7 +11,19 @@ vi.mock("@/store/auth", () => ({
   useAuthStore: () => ({ data: { token: "tok" } }),
 }));
 vi.mock("react-toastify", () => ({
-  toast: { success: vi.fn(), error: vi.fn(), loading: vi.fn() },
+  /*
+    ⚠️ `update` e `dismiss` também: o `useToastAsync` fecha o toast de
+    carregamento com `update` no SUCESSO. Sem eles, o sucesso lançava, o
+    `catch` chamava `update` de novo e o vitest saía com erro não tratado —
+    com todos os testes verdes.
+  */
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+    loading: vi.fn(),
+    update: vi.fn(),
+    dismiss: vi.fn(),
+  },
 }));
 vi.mock("@/components/templates/modalTemplate", () => ({
   default: ({
