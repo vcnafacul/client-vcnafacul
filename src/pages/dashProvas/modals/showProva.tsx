@@ -52,6 +52,16 @@ interface ShowProvaProps {
    * cursinho passa; ausente = permitido.
    */
   edicao?: { permitido: boolean; motivo?: string };
+  /**
+   * Card 41 — "Editar dados" e "Excluir". Só a tela do cursinho passa: as
+   * rotas são do cursinho (resolvido pelo JWT), como o `duplicar`.
+   */
+  gestao?: {
+    permitido: boolean;
+    motivo?: string;
+    aoEditar: () => void;
+    aoExcluir: () => void;
+  };
 }
 
 function ShowProva({
@@ -62,6 +72,7 @@ function ShowProva({
   relatorio,
   duplicar,
   edicao,
+  gestao,
 }: ShowProvaProps) {
   const executeAsync = useToastAsync();
   const [isEditingFiles, setIsEditingFiles] = useState(false);
@@ -288,6 +299,40 @@ const downloadFile = async (filename: string, fileType: string) => {
               >
                 Duplicar prova
               </button>
+            )}
+            {gestao && (
+              <>
+                <button
+                  type="button"
+                  onClick={gestao.aoEditar}
+                  disabled={!gestao.permitido}
+                  title={gestao.permitido ? undefined : gestao.motivo}
+                  className="px-3 py-1.5 text-sm border border-marine text-marine rounded-lg hover:bg-marine/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Editar dados
+                </button>
+                {/*
+                  ⚠️ Card 41: a confirmação diz o que a api recusa, para a
+                  pessoa não estranhar o 409 — prova com cartão enviado ou
+                  oferecida num evento de simulado não sai.
+                */}
+                <AlertDialogUI
+                  title="Excluir esta prova?"
+                  description={`A prova "${prova.nome}" sai da lista do cursinho e da escolha de provas dos eventos. As questões continuam no banco. Só dá para excluir prova sem cartão enviado e fora de eventos de simulado.`}
+                  onConfirm={gestao.aoExcluir}
+                >
+                  <AlertDialogTrigger asChild>
+                    <button
+                      type="button"
+                      disabled={!gestao.permitido}
+                      title={gestao.permitido ? undefined : gestao.motivo}
+                      className="px-3 py-1.5 text-sm border border-red-300 text-red-700 rounded-lg hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Excluir
+                    </button>
+                  </AlertDialogTrigger>
+                </AlertDialogUI>
+              </>
             )}
           </div>
         </div>

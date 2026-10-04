@@ -35,6 +35,8 @@ import type {
 import { partnerPrepProva } from "./data";
 import { ModalEventos } from "./eventos/ModalEventos";
 import { ModalDuplicarProva } from "./ModalDuplicarProva";
+import { ModalEditarDadosDaProva } from "./ModalEditarDadosDaProva";
+import { excluirProvaCursinho } from "@/services/prova/excluirProvaCursinho";
 
 const EDICAO_ALL = "";
 const APLICACAO_ALL = "";
@@ -113,6 +115,8 @@ function PartnerPrepProvas() {
   const [carregando, setCarregando] = useState<boolean>(true);
 
   const [categorias, setCategorias] = useState<ICategoria[]>();
+  /** Card 40: sem isto o Nova Prova não sabia distinguir "carregando" de "falhou". */
+  const [erroCategorias, setErroCategorias] = useState(false);
 
   /**
    * De onde a pessoa está voltando. O relatório do simulado é **rota**, e não
@@ -190,6 +194,7 @@ function PartnerPrepProvas() {
     "modalUploadCartao",
     "modalEventos",
     "modalDuplicar",
+    "modalEditarDados",
   ]);
 
   const {
@@ -264,7 +269,9 @@ function PartnerPrepProvas() {
   const ModalNewProva = () => {
     return !modals.modalNewProva.isOpen ? null : (
       <NewProva
-        categorias={categorias!}
+        categorias={categorias}
+        erroCategorias={erroCategorias}
+        onTentarDeNovo={carregarCategorias}
         addProva={addProva}
         createService={createProvaCursinho}
         handleClose={() => modals.modalNewProva.close()}
@@ -287,6 +294,19 @@ function PartnerPrepProvas() {
         onCategoriasChanged={(cats) => setCategorias(cats)}
       />
     );
+  };
+
+  /** Card 41 — 409 (prova em evento ou com cartão) chega com o motivo. */
+  const excluirProva = async (prova: Prova) => {
+    try {
+      await excluirProvaCursinho(prova._id, token);
+      toast.success(`Prova excluída: ${prova.nome}`);
+      setProvas((prev) => prev.filter((p) => p._id !== prova._id));
+      modals.modalShowProva.close();
+      setProvaSelected(null);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao excluir a prova");
+    }
   };
 
   const ModalShowProva = () => {
@@ -330,8 +350,30 @@ function PartnerPrepProvas() {
           permitido: !!permissao[Roles.cadastrarProvasCursinho],
           motivo: MOTIVO.cadastrarProvasCursinho,
         }}
+        // Card 41: editar dados e excluir — mesma permissão, só aqui.
+        gestao={{
+          permitido: !!permissao[Roles.cadastrarProvasCursinho],
+          motivo: MOTIVO.cadastrarProvasCursinho,
+          aoEditar: () => {
+            modals.modalShowProva.close();
+            modals.modalEditarDados.open();
+          },
+          aoExcluir: () => excluirProva(provaSelected!),
+        }}
       />
     );
+  };
+
+  const carregarCategorias = () => {
+    setErroCategorias(false);
+    getCategoriasCursinho(token)
+      .then((res) => {
+        setCategorias(res.data);
+      })
+      .catch((erro: Error) => {
+        setErroCategorias(true);
+        toast.error(erro.message);
+      });
   };
 
   useEffect(() => {
@@ -348,13 +390,8 @@ function PartnerPrepProvas() {
       })
       .finally(() => setCarregando(false));
 
-    getCategoriasCursinho(token)
-      .then((res) => {
-        setCategorias(res.data);
-      })
-      .catch((erro: Error) => {
-        toast.error(erro.message);
-      });
+    carregarCategorias();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   /**
@@ -656,6 +693,26 @@ function PartnerPrepProvas() {
         handleClose={modals.modalUploadCartao.close}
         token={token}
       />
+      {modals.modalEditarDados.isOpen && provaSelected && (
+        <ModalEditarDadosDaProva
+          prova={provaSelected}
+          categorias={categorias}
+          token={token}
+          isOpen
+          handleClose={() => {
+            modals.modalEditarDados.close();
+            modals.modalShowProva.open();
+          }}
+          onSalva={(atualizada) => {
+            setProvas((prev) =>
+              prev.map((p) => (p._id === atualizada._id ? atualizada : p)),
+            );
+            setProvaSelected(atualizada);
+            modals.modalEditarDados.close();
+            modals.modalShowProva.open();
+          }}
+        />
+      )}
       {modals.modalDuplicar.isOpen && provaSelected && (
         <ModalDuplicarProva
           prova={provaSelected}
