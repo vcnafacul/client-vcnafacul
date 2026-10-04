@@ -20,6 +20,7 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { updateProvaFiles } from "@/services/prova/updateProvaFiles";
 import { getProvaById } from "../../../services/prova/getProvaById";
 import SimuladosView, { type AcaoRelatorio } from "./simuladosView";
+import { ehCategoriaLivre } from "../progresso";
 import UploadButton from "../../../components/molecules/uploadButton";
 import { BuscarAtualizacoes } from "../components/BuscarAtualizacoes";
 import { alterarReceberNovasVersoes } from "../../../services/prova/alterarReceberNovasVersoes";
@@ -27,6 +28,8 @@ import {
   indicadorDeVersoes,
   OpcaoNovasVersoes,
 } from "../components/OpcaoNovasVersoes";
+
+const TEXTO_SEM_PDF = "Sem PDF da prova";
 
 interface ShowProvaProps {
   prova: Prova;
@@ -49,6 +52,16 @@ interface ShowProvaProps {
    * cursinho passa; ausente = permitido.
    */
   edicao?: { permitido: boolean; motivo?: string };
+  /**
+   * Card 41 — "Editar dados" e "Excluir". Só a tela do cursinho passa: as
+   * rotas são do cursinho (resolvido pelo JWT), como o `duplicar`.
+   */
+  gestao?: {
+    permitido: boolean;
+    motivo?: string;
+    aoEditar: () => void;
+    aoExcluir: () => void;
+  };
 }
 
 function ShowProva({
@@ -59,6 +72,7 @@ function ShowProva({
   relatorio,
   duplicar,
   edicao,
+  gestao,
 }: ShowProvaProps) {
   const executeAsync = useToastAsync();
   const [isEditingFiles, setIsEditingFiles] = useState(false);
@@ -104,10 +118,17 @@ function ShowProva({
     }
   };
 
-  const percentCadastradas =
-    (prova.totalQuestaoCadastradas / prova.totalQuestao) * 100;
+  // Sem divisão por zero/nulo: a categoria livre não tem alvo (card 34).
+  const livre = ehCategoriaLivre(prova);
+  const percentCadastradas = livre
+    ? 100
+    : prova.totalQuestao > 0
+      ? (prova.totalQuestaoCadastradas / prova.totalQuestao) * 100
+      : 0;
   const percentValidadas =
-    (prova.totalQuestaoValidadas / prova.totalQuestaoCadastradas) * 100;
+    prova.totalQuestaoCadastradas > 0
+      ? (prova.totalQuestaoValidadas / prova.totalQuestaoCadastradas) * 100
+      : 0;
 
   const {
     data: { token },
@@ -174,7 +195,7 @@ const downloadFile = async (filename: string, fileType: string) => {
     });
   } catch (error) {
     toast.update(id, {
-      render: `Erro ao baixar o ${fileType}`,
+      render: `Erro ao baixar ${fileType == "prova" ? "a" : "o"} ${fileType}`,
       type: "error",
       isLoading: false,
       autoClose: 5000,
@@ -279,6 +300,40 @@ const downloadFile = async (filename: string, fileType: string) => {
                 Duplicar prova
               </button>
             )}
+            {gestao && (
+              <>
+                <button
+                  type="button"
+                  onClick={gestao.aoEditar}
+                  disabled={!gestao.permitido}
+                  title={gestao.permitido ? undefined : gestao.motivo}
+                  className="px-3 py-1.5 text-sm border border-marine text-marine rounded-lg hover:bg-marine/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Editar dados
+                </button>
+                {/*
+                  ⚠️ Card 41: a confirmação diz o que a api recusa, para a
+                  pessoa não estranhar o 409 — prova com cartão enviado ou
+                  oferecida num evento de simulado não sai.
+                */}
+                <AlertDialogUI
+                  title="Excluir esta prova?"
+                  description={`A prova "${prova.nome}" sai da lista do cursinho e da escolha de provas dos eventos. As questões continuam no banco. Só dá para excluir prova sem cartão enviado e fora de eventos de simulado.`}
+                  onConfirm={gestao.aoExcluir}
+                >
+                  <AlertDialogTrigger asChild>
+                    <button
+                      type="button"
+                      disabled={!gestao.permitido}
+                      title={gestao.permitido ? undefined : gestao.motivo}
+                      className="px-3 py-1.5 text-sm border border-red-300 text-red-700 rounded-lg hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Excluir
+                    </button>
+                  </AlertDialogTrigger>
+                </AlertDialogUI>
+              </>
+            )}
           </div>
         </div>
 
@@ -368,7 +423,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                           Questões Esperadas
                         </span>
                         <span className="text-lg font-bold text-blue-900">
-                          {prova.totalQuestao}
+                          {livre ? "Livre (sem alvo)" : prova.totalQuestao}
                         </span>
                       </div>
                       <div className="w-full bg-blue-200 rounded-full h-2">
@@ -386,8 +441,8 @@ const downloadFile = async (filename: string, fileType: string) => {
                           Questões Cadastradas
                         </span>
                         <span className="text-lg font-bold text-yellow-900">
-                          {prova.totalQuestaoCadastradas} (
-                          {percentCadastradas.toFixed(1)}%)
+                          {prova.totalQuestaoCadastradas}
+                          {!livre && ` (${percentCadastradas.toFixed(1)}%)`}
                         </span>
                       </div>
                       <div className="w-full bg-yellow-200 rounded-full h-2">
@@ -471,20 +526,29 @@ const downloadFile = async (filename: string, fileType: string) => {
                     </Button>
                   )}
 
-                  <Button
-                    onClick={handleDownloadProva}
-                    variant="contained"
-                    color="primary"
-                    className="w-full sm:w-auto"
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <ArrowDownTrayIcon className="h-4 w-4" />
-                    Download da Prova
-                  </Button>
+                  {/* Card 37: prova sem PDF não mostra um botão que só falha. */}
+                  {prova.filename ? (
+                    <Button
+                      onClick={handleDownloadProva}
+                      variant="contained"
+                      color="primary"
+                      className="w-full sm:w-auto"
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
+                      <ArrowDownTrayIcon className="h-4 w-4" />
+                      Download da Prova
+                    </Button>
+                  ) : (
+                    <span className="self-center text-sm text-gray-500">
+                      {edicao && !edicao.permitido
+                        ? TEXTO_SEM_PDF
+                        : `${TEXTO_SEM_PDF} — adicione em Editar arquivos`}
+                    </span>
+                  )}
 
                   <Button
                     onClick={() => setIsEditingFiles(true)}

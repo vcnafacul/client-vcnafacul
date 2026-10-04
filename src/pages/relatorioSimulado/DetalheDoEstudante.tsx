@@ -16,6 +16,7 @@ import { buscarDetalheDoEstudante } from "@/services/relatorioSimulado/buscarDet
 import { useCallback, useEffect, useState } from "react";
 import { AcaoDeReenvio } from "./AcaoDeReenvio";
 import { BaixarFotoDoCartao } from "./BaixarFotoDoCartao";
+import { ExcluirEnvioDoCartao } from "./ExcluirEnvioDoCartao";
 import {
   formatarDificuldade,
   type DificuldadeDaQuestao,
@@ -209,6 +210,7 @@ export function DetalheDoEstudante({
   totalDeQuestoes = 0,
   mediaDoRecorte = null,
   materiasDaTurma = [],
+  onEnvioExcluido,
 }: {
   token: string;
   simuladoId: string;
@@ -259,6 +261,12 @@ export function DetalheDoEstudante({
   mediaDoRecorte?: number | null;
   /** As matérias do recorte, com a média da turma (card 02). */
   materiasDaTurma?: MediaPorMateria[];
+  /**
+   * Card 36 — o envio do cartão foi excluído: a tela fecha o modal e recarrega
+   * o relatório. **Opcional**: sem ele o botão não aparece, porque um modal
+   * que continua mostrando o cartão apagado afirmaria uma coisa falsa.
+   */
+  onEnvioExcluido?: () => void;
 }) {
   const [detalhe, setDetalhe] = useState<Detalhe | null>(null);
   const [estado, setEstado] = useState<"idle" | "loading" | "error">("loading");
@@ -407,6 +415,15 @@ export function DetalheDoEstudante({
               token={token}
               historicoId={estudante.historicoId}
               matricula={estudante.matricula}
+            />
+          )}
+          {estudante.historicoId && onEnvioExcluido && (
+            <ExcluirEnvioDoCartao
+              token={token}
+              historicoId={estudante.historicoId}
+              nome={estudante.nome}
+              matricula={estudante.matricula}
+              onExcluido={onEnvioExcluido}
             />
           )}
         </header>

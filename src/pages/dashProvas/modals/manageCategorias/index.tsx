@@ -27,6 +27,16 @@ interface ManageCategoriasProps {
   excluirService?: typeof deleteCategoria;
   /** Nome livre em vez de prefixo + pattern. Ver o docblock no `createForm`. */
   nomeLivre?: boolean;
+  /**
+   * Card 39 — trava (só na tela) as categorias seedadas, reconhecidas pelo
+   * NOME. Padrão `true`: é a dash da plataforma, onde toda categoria tem o
+   * mesmo dono (`system`) e o nome é o único jeito de separar as seedadas.
+   *
+   * ⚠️ **A tela do cursinho passa `false`.** Lá a listagem só traz categorias
+   * DO cursinho — nenhuma é seedada —, e a trava pelo nome bloqueava para
+   * sempre a categoria que ele criou com nome igual ("Enem Dia 1").
+   */
+  protegerSeedadas?: boolean;
 }
 
 type View = "lista" | "criar" | "excluir";
@@ -39,6 +49,7 @@ function ManageCategorias({
   criarService,
   excluirService,
   nomeLivre = false,
+  protegerSeedadas = true,
 }: ManageCategoriasProps) {
   const {
     data: { token },
@@ -148,7 +159,7 @@ function ManageCategorias({
               </p>
             )}
             {categoriasFiltradas.map((c) => {
-              const protegida = isProtegida(c.nome);
+              const protegida = protegerSeedadas && isProtegida(c.nome);
               const qtd =
                 c.quantidadeTotalQuestao == null
                   ? "livre"

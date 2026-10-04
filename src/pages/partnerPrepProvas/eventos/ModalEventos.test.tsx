@@ -18,6 +18,8 @@ vi.mock("@/components/templates/modalTemplate", () => ({
 }));
 
 import { ModalEventos } from "./ModalEventos";
+import { textoDaExclusao } from "./textoDaExclusao";
+import { PROVAS_MAX, TEXTO_MAXIMO_DE_PROVAS } from "./FormDoEvento";
 
 const evento = (over = {}) => ({
   id: "e1",
@@ -135,16 +137,16 @@ describe("Eventos de simulado na tela de provas (026 · 06)", () => {
   it("painel: números por prova, engajamento e lista filtrável", async () => {
     svc.engajamentoDoEvento.mockResolvedValue({
       porProva: [
-        { provaId: "p-en", nome: "Simulado Inglês", inscritos: 2, fizeram: 1, naoVieram: 1 },
-        { provaId: "p-es", nome: "Simulado Espanhol", inscritos: 1, fizeram: 1, naoVieram: 0 },
+        { provaId: "p-en", nome: "Simulado Inglês", inscritos: 2, fizeram: 1, trocaram: 0, naoVieram: 1 },
+        { provaId: "p-es", nome: "Simulado Espanhol", inscritos: 1, fizeram: 1, trocaram: 0, naoVieram: 0 },
       ],
       totalInscritos: 3,
       inscritosQueFizeram: 2,
       engajamento: 2 / 3,
       inscritos: [
-        { nome: "Ana", provaId: "p-en", fez: true },
-        { nome: "Beto", provaId: "p-en", fez: false },
-        { nome: "Caio", provaId: "p-es", fez: true },
+        { nome: "Ana", provaId: "p-en", fez: true, provaQueFez: "p-en" },
+        { nome: "Beto", provaId: "p-en", fez: false, provaQueFez: null },
+        { nome: "Caio", provaId: "p-es", fez: true, provaQueFez: "p-es" },
       ],
       fizeramSemInscricao: [{ nome: "Dani", provaId: "p-en" }],
     });
@@ -251,3 +253,87 @@ describe("Eventos de simulado na tela de provas (026 · 06)", () => {
     });
   });
 });
+
+describe("Eventos de simulado — card 38", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    svc.listarEventos.mockResolvedValue([evento()]);
+  });
+
+  it("⚠️ na 10ª prova a busca some e o limite aparece", async () => {
+    provasSvc.getProvasCursinho.mockResolvedValue({
+      data: Array.from({ length: 12 }, (_, i) => prova(`p${i}`, `Prova ${i}`)),
+      totalItems: 12,
+    });
+    abrir();
+    fireEvent.click(await screen.findByRole("button", { name: "Novo evento" }));
+    await screen.findByRole("list", { name: "Resultados da busca" });
+
+    for (let i = 0; i < PROVAS_MAX; i++) {
+      const lista = screen.getByRole("list", { name: "Resultados da busca" });
+      fireEvent.click(within(lista).getByRole("button", { name: new RegExp(`^Prova ${i}\\b`) }));
+    }
+
+    expect(
+      within(screen.getByRole("list", { name: "Provas escolhidas" })).getAllByRole("listitem"),
+    ).toHaveLength(PROVAS_MAX);
+    expect(screen.getByRole("status")).toHaveTextContent(TEXTO_MAXIMO_DE_PROVAS);
+    expect(screen.queryByLabelText("Buscar prova")).toBeNull();
+
+    // tirar uma devolve a busca
+    fireEvent.click(screen.getByRole("button", { name: "Tirar Prova 0" }));
+    expect(screen.getByLabelText("Buscar prova")).toBeInTheDocument();
+  });
+
+  it("excluir com inscritos: a confirmação diz quantos e que serão avisados", () => {
+    expect(textoDaExclusao(evento() as never)).toBe(
+      'Excluir o evento "Simulado de outubro"? Há 20 alunos inscritos. Eles serão avisados de que o simulado foi cancelado.',
+    );
+    expect(textoDaExclusao(evento({ totalInscritos: 1 }) as never)).toContain(
+      "Há 1 aluno inscrito. Ele será avisado",
+    );
+  });
+
+  it("⚠️ sem inscritos ou já encerrado: só a pergunta, sem prometer aviso", () => {
+    expect(textoDaExclusao(evento({ totalInscritos: 0 }) as never)).toBe(
+      'Excluir o evento "Simulado de outubro"?',
+    );
+    expect(textoDaExclusao(evento({ status: "encerrado" }) as never)).toBe(
+      'Excluir o evento "Simulado de outubro"?',
+    );
+  });
+
+  it("painel: quem trocou de prova aparece destacado; filtro vazio diz 'nesta prova'", async () => {
+    provasSvc.getProvasCursinho.mockResolvedValue({ data: [], totalItems: 0 });
+    svc.listarEventos.mockResolvedValue([
+      evento({
+        provas: [
+          { provaId: "p-en", nome: "Simulado Inglês", inscritos: 1 },
+          { provaId: "p-es", nome: "Simulado Espanhol", inscritos: 0 },
+          { provaId: "p-ma", nome: "Simulado Matemática", inscritos: 0 },
+        ],
+      }),
+    ]);
+    svc.engajamentoDoEvento.mockResolvedValue({
+      porProva: [
+        { provaId: "p-en", nome: "Simulado Inglês", inscritos: 1, fizeram: 0, trocaram: 1, naoVieram: 0 },
+        { provaId: "p-es", nome: "Simulado Espanhol", inscritos: 0, fizeram: 1, trocaram: 0, naoVieram: 0 },
+        { provaId: "p-ma", nome: "Simulado Matemática", inscritos: 0, fizeram: 0, trocaram: 0, naoVieram: 0 },
+      ],
+      totalInscritos: 1,
+      inscritosQueFizeram: 1,
+      engajamento: 1,
+      inscritos: [{ nome: "Pedro", provaId: "p-en", fez: true, provaQueFez: "p-es" }],
+      fizeramSemInscricao: [],
+    });
+    abrir();
+    fireEvent.click(await screen.findByRole("button", { name: "Ver inscritos e engajamento" }));
+
+    expect(await screen.findByText("fez outra prova (Simulado Espanhol)")).toBeInTheDocument();
+    expect(screen.getByText("Trocaram de prova")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Filtrar por prova"), { target: { value: "p-ma" } });
+    expect(screen.getByText("Ninguém inscrito nesta prova.")).toBeInTheDocument();
+  });
+});
+

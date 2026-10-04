@@ -1,4 +1,5 @@
 import type { StatusV2 } from "@/components/dashV2";
+import { alvoDaProva } from "./progresso";
 import type { Prova } from "../../dtos/prova/prova";
 
 /**
@@ -88,7 +89,8 @@ type ContagensDaProva = Pick<
 >;
 
 export function statusDaProva(prova: ContagensDaProva): StatusDaProva {
-  const total = prova.totalQuestao ?? 0;
+  // Categoria livre: o alvo são as cadastradas (card 34).
+  const total = alvoDaProva(prova);
   if (total <= 0) return STATUS_SEM_QUESTOES;
   if ((prova.totalQuestaoValidadas ?? 0) >= total) return STATUS_COMPLETA;
   if ((prova.totalQuestaoCadastradas ?? 0) >= total) return STATUS_EM_VALIDACAO;
