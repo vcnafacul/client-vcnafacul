@@ -13,5 +13,7 @@ export function acoesDeMatricula(status: StatusApplication) {
   return {
     cancelar: status === StatusApplication.Enrolled,
     reativar: status === StatusApplication.EnrollmentCancelled,
+    // Card 15: cancelado ou encerrado mudava de turma sem aparecer nela.
+    alterarTurma: status === StatusApplication.Enrolled,
   };
 }

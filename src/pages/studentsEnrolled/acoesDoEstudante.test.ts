@@ -7,6 +7,7 @@ describe("acoesDeMatricula (tickets-documentacao, 14)", () => {
     expect(acoesDeMatricula(StatusApplication.Enrolled)).toEqual({
       cancelar: true,
       reativar: false,
+      alterarTurma: true,
     });
   });
 
@@ -14,6 +15,7 @@ describe("acoesDeMatricula (tickets-documentacao, 14)", () => {
     expect(acoesDeMatricula(StatusApplication.EnrollmentCancelled)).toEqual({
       cancelar: false,
       reativar: true,
+      alterarTurma: false,
     });
   });
 
@@ -21,6 +23,7 @@ describe("acoesDeMatricula (tickets-documentacao, 14)", () => {
     expect(acoesDeMatricula(StatusApplication.EnrollmentClosed)).toEqual({
       cancelar: false,
       reativar: false,
+      alterarTurma: false,
     });
   });
 });
