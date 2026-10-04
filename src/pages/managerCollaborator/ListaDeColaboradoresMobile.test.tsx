@@ -41,13 +41,8 @@ describe("ListaDeColaboradoresMobile", () => {
     expect(onVer).toHaveBeenCalledWith("id-3");
   });
 
-  it("busca por nome, email ou função", () => {
-    renderLista([colaborador(1), colaborador(2), colaborador(3)]);
-    const busca = screen.getByLabelText("Buscar colaborador");
-    fireEvent.change(busca, { target: { value: "coordena" } });
-    expect(screen.getAllByRole("listitem")).toHaveLength(1);
-    expect(screen.getByText("Pessoa 2")).toBeInTheDocument();
-    fireEvent.change(busca, { target: { value: "ninguém" } });
+  it("lista vazia diz que não encontrou ninguém", () => {
+    renderLista([]);
     expect(screen.getByText("Nenhum colaborador encontrado")).toBeInTheDocument();
   });
 

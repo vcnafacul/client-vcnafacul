@@ -15,7 +15,14 @@ import { atribuirFuncaoColaborador } from "@/services/prepCourse/atribuirFuncaoC
 import { useAuthStore } from "@/store/auth";
 import { Role } from "@/types/roles/role";
 import { phoneMask } from "@/utils/phoneMask";
-import { FormControl, IconButton, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -31,6 +38,7 @@ import { ModalConvites } from "./modals/ModalConvites";
 import { Roles } from "@/enums/roles/roles";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { ListaDeColaboradoresMobile } from "./ListaDeColaboradoresMobile";
+import { buscarColaboradores } from "./buscaDeColaboradores";
 
 export interface CollaboratorColumns {
   id: string;
@@ -62,6 +70,7 @@ export default function ManagerCollaborator() {
   const [frentesMap, setFrentesMap] = useState<Record<string, string[]>>({});
   const [selectedMateria, setSelectedMateria] = useState<string>("");
   const [selectedFrente, setSelectedFrente] = useState<string>("");
+  const [busca, setBusca] = useState("");
 
   const modals = useModals([
     "modalConvites",
@@ -92,10 +101,12 @@ export default function ManagerCollaborator() {
     return frentesForSelectedMateria.map((f) => f._id ?? f.id);
   }, [frentesForSelectedMateria, selectedMateria]);
 
+  /** Matéria/Frente e a busca combinam por E — a mesma regra no celular. */
   const filteredCollaborators = useMemo(() => {
-    if (!selectedMateria && !selectedFrente) return collaborator;
+    if (!selectedMateria && !selectedFrente)
+      return buscarColaboradores(collaborator, busca);
 
-    return collaborator.filter((c) => {
+    const porFrente = collaborator.filter((c) => {
       const collabFrentes = frentesMap[c.id];
       if (!collabFrentes || collabFrentes.length === 0) return false;
 
@@ -105,7 +116,15 @@ export default function ManagerCollaborator() {
       // Only materia selected — match any frente of that materia
       return collabFrentes.some((fId) => allFrenteIds.includes(fId));
     });
-  }, [collaborator, frentesMap, selectedMateria, selectedFrente, allFrenteIds]);
+    return buscarColaboradores(porFrente, busca);
+  }, [
+    collaborator,
+    frentesMap,
+    selectedMateria,
+    selectedFrente,
+    allFrenteIds,
+    busca,
+  ]);
 
   const handleMateriaChange = (value: string) => {
     setSelectedMateria(value);
@@ -119,6 +138,7 @@ export default function ManagerCollaborator() {
   const handleClearFilters = () => {
     setSelectedMateria("");
     setSelectedFrente("");
+    setBusca("");
   };
 
   const loadCollaboratorPhoto = async (photoKey: string) => {
@@ -544,6 +564,16 @@ export default function ManagerCollaborator() {
         )}
       </div>
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 px-4 sm:flex-wrap">
+        <TextField
+          type="search"
+          size="small"
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          placeholder="Buscar por nome, email, função ou telefone"
+          inputProps={{ "aria-label": "Buscar colaborador" }}
+          sx={{ minWidth: 300 }}
+          fullWidth={!acimaDeSm}
+        />
         <FormControl size="small" sx={{ minWidth: 200 }} fullWidth={!acimaDeSm}>
           <InputLabel id="filter-materia-label">Matéria</InputLabel>
           <Select
@@ -585,7 +615,7 @@ export default function ManagerCollaborator() {
             ))}
           </Select>
         </FormControl>
-        {(selectedMateria || selectedFrente) && (
+        {(selectedMateria || selectedFrente || busca) && (
           <Button
             onClick={handleClearFilters}
             size="small"
@@ -596,8 +626,13 @@ export default function ManagerCollaborator() {
           </Button>
         )}
       </div>
+      <p className="text-xs text-gray-500 px-4">
+        {filteredCollaborators.length} de {collaborator.length} colaboradores
+      </p>
       {!acimaDeSm ? (
         <ListaDeColaboradoresMobile
+          // Filtro novo volta para a primeira página da lista.
+          key={`${busca}|${selectedMateria}|${selectedFrente}`}
           colaboradores={filteredCollaborators}
           fotos={collaboratorPhotos}
           onVer={onClickCard}
