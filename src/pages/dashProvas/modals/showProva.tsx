@@ -20,6 +20,7 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { updateProvaFiles } from "@/services/prova/updateProvaFiles";
 import { getProvaById } from "../../../services/prova/getProvaById";
 import SimuladosView, { type AcaoRelatorio } from "./simuladosView";
+import { ehCategoriaLivre } from "../progresso";
 import UploadButton from "../../../components/molecules/uploadButton";
 import { BuscarAtualizacoes } from "../components/BuscarAtualizacoes";
 import { alterarReceberNovasVersoes } from "../../../services/prova/alterarReceberNovasVersoes";
@@ -104,10 +105,17 @@ function ShowProva({
     }
   };
 
-  const percentCadastradas =
-    (prova.totalQuestaoCadastradas / prova.totalQuestao) * 100;
+  // Sem divisão por zero/nulo: a categoria livre não tem alvo (card 34).
+  const livre = ehCategoriaLivre(prova);
+  const percentCadastradas = livre
+    ? 100
+    : prova.totalQuestao > 0
+      ? (prova.totalQuestaoCadastradas / prova.totalQuestao) * 100
+      : 0;
   const percentValidadas =
-    (prova.totalQuestaoValidadas / prova.totalQuestaoCadastradas) * 100;
+    prova.totalQuestaoCadastradas > 0
+      ? (prova.totalQuestaoValidadas / prova.totalQuestaoCadastradas) * 100
+      : 0;
 
   const {
     data: { token },
@@ -368,7 +376,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                           Questões Esperadas
                         </span>
                         <span className="text-lg font-bold text-blue-900">
-                          {prova.totalQuestao}
+                          {livre ? "Livre (sem alvo)" : prova.totalQuestao}
                         </span>
                       </div>
                       <div className="w-full bg-blue-200 rounded-full h-2">
@@ -386,8 +394,8 @@ const downloadFile = async (filename: string, fileType: string) => {
                           Questões Cadastradas
                         </span>
                         <span className="text-lg font-bold text-yellow-900">
-                          {prova.totalQuestaoCadastradas} (
-                          {percentCadastradas.toFixed(1)}%)
+                          {prova.totalQuestaoCadastradas}
+                          {!livre && ` (${percentCadastradas.toFixed(1)}%)`}
                         </span>
                       </div>
                       <div className="w-full bg-yellow-200 rounded-full h-2">
