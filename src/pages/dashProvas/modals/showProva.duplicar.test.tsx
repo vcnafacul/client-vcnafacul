@@ -82,3 +82,61 @@ describe("ShowProva — duplicar (027 · 03)", () => {
     expect(await screen.findByText(/Duplicada de outra prova/)).toBeInTheDocument();
   });
 });
+
+describe("ShowProva — editar dados e excluir (card 41)", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("⚠️ sem a prop (dashProvas, admin): não há botões", async () => {
+    svc.getProvaById.mockResolvedValue({});
+    render(<ShowProva prova={PROVA} isOpen handleClose={vi.fn()} />);
+    await waitFor(() => expect(svc.getProvaById).toHaveBeenCalled());
+    expect(screen.queryByRole("button", { name: "Editar dados" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Excluir" })).toBeNull();
+  });
+
+  it("editar chama a ação; excluir só depois de confirmar", async () => {
+    svc.getProvaById.mockResolvedValue({});
+    const aoEditar = vi.fn();
+    const aoExcluir = vi.fn();
+    render(
+      <ShowProva
+        prova={PROVA}
+        isOpen
+        handleClose={vi.fn()}
+        gestao={{ permitido: true, aoEditar, aoExcluir }}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Editar dados" }));
+    expect(aoEditar).toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Excluir" }));
+    expect(aoExcluir).not.toHaveBeenCalled();
+    expect(screen.getByText(/fora de eventos de simulado/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+    expect(aoExcluir).toHaveBeenCalled();
+  });
+
+  it("sem permissão: os dois desabilitados com o motivo", async () => {
+    svc.getProvaById.mockResolvedValue({});
+    render(
+      <ShowProva
+        prova={PROVA}
+        isOpen
+        handleClose={vi.fn()}
+        gestao={{
+          permitido: false,
+          motivo: "Requer permissão",
+          aoEditar: vi.fn(),
+          aoExcluir: vi.fn(),
+        }}
+      />,
+    );
+    for (const nome of ["Editar dados", "Excluir"]) {
+      const b = screen.getByRole("button", { name: nome });
+      expect(b).toBeDisabled();
+      expect(b).toHaveAttribute("title", "Requer permissão");
+    }
+  });
+});
+
