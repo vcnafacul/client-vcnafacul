@@ -387,7 +387,10 @@ export default function PartnerPrepForm() {
     await executeAsync({
       action: () => duplicateSection(sectionSelected._id, token),
       loadingMessage: "Duplicando seção...",
-      successMessage: "Seção duplicada com sucesso!",
+      // A cópia nasce desativada de propósito (card 18): com o card 17 ela
+      // aparece na tela, e o aviso diz o que fazer.
+      successMessage:
+        "Seção duplicada! A cópia foi criada desativada. Revise e ative.",
       errorMessage: (e: unknown) => motivoDoErro(e, "Erro ao duplicar seção"),
       onSuccess: () => {
         modals.modalConfirmDuplicate.close();
