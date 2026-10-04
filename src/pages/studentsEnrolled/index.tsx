@@ -535,7 +535,7 @@ export function StudentsEnrolled() {
     },
     {
       field: "cod_enrolled",
-      headerName: "Nº de matrricula",
+      headerName: "Nº de matrícula",
       width: 150,
       align: "center",
       headerAlign: "center",

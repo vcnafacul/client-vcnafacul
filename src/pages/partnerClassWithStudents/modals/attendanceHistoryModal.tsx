@@ -58,7 +58,7 @@ export function AttendanceHistoryModal({
 
   const handleActionDeleteRecord = (params: SimpleAttendanceRecordHistory) => {
     if (!permissao[Roles.gerenciarTurmas]) {
-      toast.warn(" Vocé nao tem permissão para excluir registros", {
+      toast.warn("Você não tem permissão para excluir registros", {
         theme: "dark",
       });
     } else {
