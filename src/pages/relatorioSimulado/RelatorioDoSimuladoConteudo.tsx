@@ -760,6 +760,17 @@ export function RelatorioDoSimuladoConteudo({
             materiasDaTurma={relatorio?.resumo.aproveitamentoPorMateria ?? []}
             isOpen
             onClose={() => setAberto(null)}
+            /*
+              Card 36: o estudante volta a "Não enviou" — fecha o detalhe e
+              recarrega. ⚠️ `setQuestoes(null)` porque a guarda do
+              `carregarQuestoes` só rebusca com a lista vazia, e os acertos por
+              questão também mudaram.
+            */
+            onEnvioExcluido={() => {
+              setAberto(null);
+              setQuestoes(null);
+              carregar();
+            }}
           />
         )}
       </div>
