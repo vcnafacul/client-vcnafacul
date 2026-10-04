@@ -44,6 +44,11 @@ interface ShowProvaProps {
    * duplica, porque a rota é do cursinho (resolvido pelo JWT).
    */
   duplicar?: { permitido: boolean; motivo?: string; aoClicar: () => void };
+  /**
+   * Editar arquivos e a janela (tickets-documentacao, card 32). Só a tela do
+   * cursinho passa; ausente = permitido.
+   */
+  edicao?: { permitido: boolean; motivo?: string };
 }
 
 function ShowProva({
@@ -53,6 +58,7 @@ function ShowProva({
   onUpdated,
   relatorio,
   duplicar,
+  edicao,
 }: ShowProvaProps) {
   const executeAsync = useToastAsync();
   const [isEditingFiles, setIsEditingFiles] = useState(false);
@@ -485,6 +491,10 @@ const downloadFile = async (filename: string, fileType: string) => {
                     size="small"
                     aria-label="Editar arquivos"
                     className="w-full sm:w-auto"
+                    disabled={edicao ? !edicao.permitido : false}
+                    title={
+                      edicao && !edicao.permitido ? edicao.motivo : undefined
+                    }
                   >
                     <PencilSquareIcon className="size-8" />
                     <span className="sm:hidden ml-2">Editar arquivos</span>
@@ -559,6 +569,7 @@ const downloadFile = async (filename: string, fileType: string) => {
             onVoltar={() => setView('details')}
             onRetry={() => setRetryCount(c => c + 1)}
             relatorio={relatorio}
+            edicao={edicao}
             onSimuladoUpdated={(updated) =>
               setFullProva((prev) =>
                 prev

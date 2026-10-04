@@ -322,6 +322,12 @@ function PartnerPrepProvas() {
             modals.modalDuplicar.open();
           },
         }}
+        // Card 32: editar arquivos e janela pedem cadastrar provas do
+        // cursinho — sem ela, desabilitado com o motivo (antes, 403).
+        edicao={{
+          permitido: !!permissao[Roles.cadastrarProvasCursinho],
+          motivo: MOTIVO.cadastrarProvasCursinho,
+        }}
       />
     );
   };
