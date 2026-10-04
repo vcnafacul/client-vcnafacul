@@ -7,7 +7,7 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { setQuestionActive } from "@/services/partnerPrepForm/setQuestionActive";
 import { updateQuestionForm } from "@/services/partnerPrepForm/updateQuestion";
 import { useAuthStore } from "@/store/auth";
-import { ComplexCondition } from "@/types/partnerPrepForm/condition";
+import { dadosEditaveis, EditableFormData } from "./dadosEditaveis";
 import {
   AnswerCollectionType,
   AnswerType,
@@ -52,15 +52,6 @@ interface ModalShowQuestionProps extends ModalProps {
   readOnly?: boolean;
 }
 
-interface EditableFormData {
-  text: string;
-  helpText: string;
-  collection: AnswerCollectionType;
-  conditions?: ComplexCondition;
-  options: string[];
-  active: boolean;
-}
-
 export function ModalShowQuestion({
   isOpen,
   handleClose,
@@ -82,14 +73,9 @@ export function ModalShowQuestion({
 
   const executeAsync = useToastAsync();
 
-  const [editableData, setEditableData] = useState<EditableFormData>({
-    text: question.text,
-    helpText: question.helpText || "",
-    collection: question.collection,
-    conditions: question.conditions || undefined,
-    options: question.options || [],
-    active: question.active,
-  });
+  const [editableData, setEditableData] = useState<EditableFormData>(
+    dadosEditaveis(question)
+  );
 
   const handleInputChange = (
     field: keyof EditableFormData,
@@ -129,13 +115,8 @@ export function ModalShowQuestion({
 
   const handleCancelEdit = () => {
     setIsEditMode(false);
-    setEditableData({
-      text: question.text,
-      helpText: question.helpText || "",
-      collection: question.collection,
-      options: question.options || [],
-      active: question.active,
-    });
+    // Com as condições: antes o Cancelar as tirava da tela (card 25).
+    setEditableData(dadosEditaveis(question));
     setErrors({});
   };
 
