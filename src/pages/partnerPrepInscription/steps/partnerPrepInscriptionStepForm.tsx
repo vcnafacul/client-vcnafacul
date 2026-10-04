@@ -1,12 +1,9 @@
 import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { useModals } from "@/hooks/useModal";
-import {
-  BaseCondition,
-  ComplexCondition,
-  Logic,
-  Operator,
-} from "@/types/partnerPrepForm/condition";
+import { ComplexCondition } from "@/types/partnerPrepForm/condition";
+import { avaliarCondicao } from "../avaliarCondicao";
+import { respostasIniciais } from "../respostasIniciais";
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
 import {
   AnswerCollectionType,
@@ -157,6 +154,7 @@ const QuestionBoolean = ({
         { label: "Sim", value: "Sim" },
         { label: "Não", value: "Não" },
       ]}
+      placeholder="Selecione"
       error={error ? { message: error } : undefined}
       value={selectValue}
       className={getInputClassByTextLength(question.text.length)}
@@ -291,20 +289,10 @@ export function PartnerPrepInscriptionStepForm({
   // Merge allAnswers (previous sections) with local answers for condition evaluation
   const mergedAnswers = { ...allAnswers, ...answers };
 
-  // Initialize answers for this section (boolean defaults + restore from allAnswers)
+  // Initialize answers for this section (restore from allAnswers)
   useEffect(() => {
-    const initialAnswers: Record<string, unknown> = {};
-
-    section.questions.forEach((question) => {
-      // Restore previously filled value from allAnswers if available
-      if (allAnswers[question._id] !== undefined) {
-        initialAnswers[question._id] = allAnswers[question._id];
-      } else if (question.answerType === AnswerType.Boolean) {
-        initialAnswers[question._id] = false;
-      }
-    });
-
-    setAnswers(initialAnswers);
+    // Sem "Não" padrão no Sim/Não (card 29): só o que já foi respondido.
+    setAnswers(respostasIniciais(section, allAnswers));
     setErrors({});
 
     const timer = setTimeout(() => {
@@ -322,48 +310,11 @@ export function PartnerPrepInscriptionStepForm({
   };
 
   // Evaluate basic conditions using merged answers (cross-section support)
-  const evaluateBasicCondition = useCallback(
-    (rule: BaseCondition): boolean => {
-      const value = mergedAnswers[rule.questionId];
-      switch (rule.operator) {
-        case Operator.Equal:
-          return value?.toString() === rule.expectedValue.toString();
-        case Operator.Contains:
-          if (typeof value === "string") {
-            return value.includes(rule.expectedValue as string);
-          } else if (typeof value === "object") {
-            return (value as string[]).includes(rule.expectedValue as string);
-          }
-          return false;
-        case Operator.GreaterThan:
-          return Number(value) > Number(rule.expectedValue);
-        case Operator.LessThan:
-          return Number(value) < Number(rule.expectedValue);
-        case Operator.GreaterThanOrEqual:
-          return Number(value) >= Number(rule.expectedValue);
-        case Operator.LessThanOrEqual:
-          return Number(value) <= Number(rule.expectedValue);
-        case Operator.NotEqual:
-          return value !== rule.expectedValue;
-        default:
-          return false;
-      }
-    },
-    [mergedAnswers]
-  );
-
+  // Avaliação compartilhada com o ms de formulários (card 19).
   const evaluateCondition = useCallback(
-    (condition?: ComplexCondition): boolean => {
-      if (!condition) return true;
-
-      const results = condition.conditions.map(evaluateBasicCondition);
-      if (condition.logic === Logic.And) {
-        return results.every(Boolean);
-      } else {
-        return results.some(Boolean);
-      }
-    },
-    [evaluateBasicCondition]
+    (condition?: ComplexCondition): boolean =>
+      avaliarCondicao(condition, mergedAnswers),
+    [mergedAnswers]
   );
 
   // Validate only questions in THIS section

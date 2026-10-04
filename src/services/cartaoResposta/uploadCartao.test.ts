@@ -35,3 +35,43 @@ describe("uploadCartao — 409", () => {
     );
   });
 });
+
+describe("uploadCartao — mensagens do servidor (card 35)", () => {
+  it.each([
+    [400, "Este cartão é de um simulado que não existe mais."],
+    [400, "Este QR não é de um cartão-resposta do Você na Facul."],
+    [403, "Este estudante não é do seu cursinho."],
+    [403, "Este cartão é de um simulado de outro cursinho."],
+    [502, 'O leitor de cartões está fora do ar. O cartão foi registrado: use "Reenviar" no relatório do simulado quando o serviço voltar.'],
+  ])("%i mostra o texto do servidor: %s", async (status, texto) => {
+    mockedFetch.mockResolvedValue(resposta(status, { message: texto }));
+
+    await expect(uploadCartao(arquivo, "u1", "tok")).rejects.toThrow(texto);
+  });
+
+  it("⚠️ 400 sem corpo NÃO diz mais só 'ilegível' — manda tirar outra foto", async () => {
+    mockedFetch.mockResolvedValue(resposta(400));
+
+    await expect(uploadCartao(arquivo, "u1", "tok")).rejects.toThrow(/Tire outra foto/);
+  });
+
+  it("⚠️ 502 sem corpo avisa que o cartão ficou registrado", async () => {
+    mockedFetch.mockResolvedValue(resposta(502));
+
+    await expect(uploadCartao(arquivo, "u1", "tok")).rejects.toThrow(
+      /O cartão foi registrado: use "Reenviar"/,
+    );
+  });
+
+  it("403 sem corpo e status sem texto próprio têm frase genérica", async () => {
+    mockedFetch.mockResolvedValue(resposta(403));
+    await expect(uploadCartao(arquivo, "u1", "tok")).rejects.toThrow(
+      "Você não pode enviar este cartão.",
+    );
+
+    mockedFetch.mockResolvedValue(resposta(500));
+    await expect(uploadCartao(arquivo, "u1", "tok")).rejects.toThrow(
+      "Erro ao enviar o cartão",
+    );
+  });
+});
