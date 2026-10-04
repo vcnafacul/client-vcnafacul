@@ -17,6 +17,8 @@ export const TEXTO_NADA_ENCONTRADO = "Nenhum estudante encontrado";
 export const TEXTO_ERRO_BUSCA = "Não foi possível buscar agora";
 export const TEXTO_TROCAR = "Trocar";
 export const TEXTO_SEM_TURMA = "Sem turma";
+export const TEXTO_CARTAO_ENVIADO =
+  "Cartão enviado. Acompanhe a leitura no relatório do simulado (Detalhes → Ver simulados).";
 
 interface UploadCartaoModalProps {
   isOpen: boolean;
@@ -63,8 +65,8 @@ export default function UploadCartaoModal({
     try {
       await uploadCartao(file, escolhido.userId, token);
       toast.update(id, {
-        render:
-          "Cartão enviado. O resultado aparece aqui quando o processamento terminar.",
+        // Card 35: o modal fecha — o resultado nunca aparece "aqui".
+        render: TEXTO_CARTAO_ENVIADO,
         type: "info",
         isLoading: false,
         autoClose: 5000,
