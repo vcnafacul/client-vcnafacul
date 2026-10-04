@@ -119,3 +119,24 @@ describe("os estados intermediários se distinguem por cor", () => {
     }
   });
 });
+
+describe("categoria livre — sem alvo (tickets-documentacao, 34)", () => {
+  const livre = (cadastradas: number, validadas: number) =>
+    ({
+      totalQuestao: null,
+      totalQuestaoCadastradas: cadastradas,
+      totalQuestaoValidadas: validadas,
+    }) as unknown as Parameters<typeof statusDaProva>[0];
+
+  it("⚠️ 15 cadastradas e 15 aprovadas é Completa (antes: Sem questões para sempre)", () => {
+    expect(statusDaProva(livre(15, 15))).toEqual(STATUS_COMPLETA);
+  });
+
+  it("cadastradas faltando aprovar é Em validação", () => {
+    expect(statusDaProva(livre(15, 10))).toEqual(STATUS_EM_VALIDACAO);
+  });
+
+  it("nenhuma cadastrada é Sem questões", () => {
+    expect(statusDaProva(livre(0, 0))).toEqual(STATUS_SEM_QUESTOES);
+  });
+});

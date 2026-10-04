@@ -90,4 +90,36 @@ describe("ManageCategorias", () => {
       await screen.findByRole("option", { name: "ENEM" }),
     ).toBeInTheDocument();
   });
+
+  describe("categoria com nome de seedada (card 39)", () => {
+    const comNomeDeSeedada: ICategoria = { ...categoria, nome: "Enem Dia 1" };
+
+    it("⚠️ no cursinho (protegerSeedadas=false): sem 🔒 e lixeira habilitada", async () => {
+      render(
+        <ManageCategorias
+          isOpen
+          handleClose={vi.fn()}
+          onCategoriasChanged={vi.fn()}
+          listarService={vi.fn(async () => ({ data: [comNomeDeSeedada] }))}
+          nomeLivre
+          protegerSeedadas={false}
+        />,
+      );
+
+      expect(await screen.findByText("Enem Dia 1")).toBeInTheDocument();
+      expect(screen.queryByText(/Categoria seedada/)).not.toBeInTheDocument();
+      expect(screen.getByTitle("Excluir categoria")).toBeEnabled();
+    });
+
+    it("na plataforma (padrão): continua travada pelo nome", async () => {
+      renderModal([comNomeDeSeedada]);
+
+      expect(
+        await screen.findByText("🔒 Categoria seedada"),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByTitle("Categoria seedada — não pode ser excluída"),
+      ).toBeDisabled();
+    });
+  });
 });
