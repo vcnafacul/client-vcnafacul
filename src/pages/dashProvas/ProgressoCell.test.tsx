@@ -113,3 +113,28 @@ describe("<ProgressoCell>", () => {
     expect(screen.getByText("0/50")).toBeInTheDocument();
   });
 });
+
+describe("progresso na categoria livre (tickets-documentacao, 34)", () => {
+  const livre = (cadastradas: number, validadas: number) =>
+    ({
+      totalQuestao: null,
+      totalQuestaoCadastradas: cadastradas,
+      totalQuestaoValidadas: validadas,
+    }) as never;
+
+  it("⚠️ o alvo são as cadastradas: 10 de 15 aprovadas", () => {
+    const f = faixasDoProgresso(livre(15, 10))!;
+    expect(f.pctValidadas).toBeCloseTo((10 / 15) * 100);
+    expect(f.pctPendentes).toBeCloseTo((5 / 15) * 100);
+  });
+
+  it("sem cadastradas, '—'", () => {
+    expect(faixasDoProgresso(livre(0, 0))).toBeNull();
+  });
+
+  it("o título diz que é categoria livre", () => {
+    expect(tituloDoProgresso(livre(15, 10))).toBe(
+      "categoria livre · 15 cadastradas · 10 validadas",
+    );
+  });
+});

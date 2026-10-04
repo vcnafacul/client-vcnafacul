@@ -16,6 +16,9 @@ export type ProvaOpcao = {
 };
 
 const RESULTADOS_MAX = 20;
+/** O mesmo `PROVAS_MAX` da api (`regras-do-evento.ts`). */
+export const PROVAS_MAX = 10;
+export const TEXTO_MAXIMO_DE_PROVAS = `Máximo de ${PROVAS_MAX} provas por evento.`;
 const semAcento = (s: string) =>
   s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const comAno = (p: ProvaOpcao) => (p.ano ? `${p.nome} · ${p.ano}` : p.nome);
@@ -54,8 +57,16 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
 
   const janelaInvertida = !!de && !!ate && new Date(de) >= new Date(ate);
 
+  /*
+    ⚠️ Card 38: o limite é barrado AQUI, e não só ao salvar — antes a tela
+    deixava escolher a 11ª e a api respondia em inglês.
+  */
+  const noLimite = escolhidas.length >= PROVAS_MAX;
+
   const adicionar = (id: string) => {
-    setEscolhidas((atual) => (atual.includes(id) ? atual : [...atual, id]));
+    setEscolhidas((atual) =>
+      atual.includes(id) || atual.length >= PROVAS_MAX ? atual : [...atual, id],
+    );
     setBusca("");
   };
   const remover = (id: string) =>
@@ -184,6 +195,12 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
           </ul>
         )}
 
+        {noLimite ? (
+          <p role="status" className="text-sm text-grey">
+            {TEXTO_MAXIMO_DE_PROVAS} Tire uma para escolher outra.
+          </p>
+        ) : (
+          <>
         <div className="relative">
           <FiSearch
             aria-hidden
@@ -228,6 +245,8 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
           <p className="text-xs text-grey mt-1">
             Mostrando {RESULTADOS_MAX} de {resultados.length}. Refine a busca.
           </p>
+        )}
+          </>
         )}
       </fieldset>
       <div className="flex justify-end gap-3">

@@ -1,3 +1,4 @@
+import { motivoDoErro } from "../motivoDoErro";
 // Função para renderizar cards das questões
 
 import { useToastAsync } from "@/hooks/useToastAsync";
@@ -123,7 +124,7 @@ export function RenderQuestionsTable({
       action: () => deleteFn(token, question._id),
       loadingMessage: "Excluindo questão...",
       successMessage: "Questão excluída com sucesso!",
-      errorMessage: "Erro ao excluir questão",
+      errorMessage: (e: unknown) => motivoDoErro(e, "Erro ao excluir questão"),
       onSuccess: () => {
         onDeleteQuestion(question._id);
       },

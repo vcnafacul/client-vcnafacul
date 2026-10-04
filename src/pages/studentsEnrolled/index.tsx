@@ -306,7 +306,7 @@ export function StudentsEnrolled() {
       action: () => updateClass(studentSelected.id, classId, token),
       loadingMessage: "Atualizando turma...",
       successMessage: "Turma atualizada com sucesso!",
-      errorMessage: "Erro ao atualizar turma",
+      errorMessage: (e: Error) => e?.message || "Erro ao atualizar turma",
       onSuccess: () => {
         const newStudent = students.map((stu) => {
           if (stu.id === studentSelected.id) {
@@ -483,7 +483,8 @@ export function StudentsEnrolled() {
             </IconButton>
           </Tooltip>
         )}
-      {permissao[Roles.gerenciarTurmas] && (
+      {permissao[Roles.gerenciarTurmas] &&
+        acoesDeMatricula(estudante.applicationStatus).alterarTurma && (
         <Tooltip title="Alterar Turma">
           <IconButton
             onClick={() => {
