@@ -96,6 +96,10 @@ vi.mock("react-router-dom", async (original) => ({
 const propsDoShowProva = vi.hoisted(
   () => ({ atual: null }) as { atual: Record<string, unknown> | null },
 );
+const excluirProvaCursinho = vi.hoisted(() => vi.fn());
+vi.mock("@/services/prova/excluirProvaCursinho", () => ({
+  excluirProvaCursinho,
+}));
 vi.mock("../dashProvas/modals/showProva", () => ({
   default: (props: { prova?: Prova | null }) => {
     propsDoShowProva.atual = props as Record<string, unknown>;
@@ -314,6 +318,39 @@ describe("provas do cursinho — a mesma tabela da administração", () => {
     expect(screen.getByTestId("show-prova")).toHaveTextContent(
       "Simulado interno 2023",
     );
+  });
+
+  it("⚠️ excluir (card 41): a prova sai da lista e o detalhe fecha; recusa mantém", async () => {
+    await montar();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Simulado interno 2023" }),
+    );
+    const gestao = propsDoShowProva.atual?.gestao as {
+      permitido: boolean;
+      aoExcluir: () => Promise<void>;
+    };
+    expect(gestao).toBeDefined();
+
+    excluirProvaCursinho.mockRejectedValueOnce(new Error("está no evento"));
+    await act(async () => {
+      await gestao.aoExcluir();
+    });
+    expect(
+      screen.getByRole("button", { name: "Simulado interno 2023" }),
+    ).toBeInTheDocument();
+
+    excluirProvaCursinho.mockResolvedValueOnce(undefined);
+    await act(async () => {
+      await gestao.aoExcluir();
+    });
+    expect(excluirProvaCursinho).toHaveBeenLastCalledWith(
+      expect.any(String),
+      "tok",
+    );
+    expect(
+      screen.queryByRole("button", { name: "Simulado interno 2023" }),
+    ).toBeNull();
+    expect(screen.queryByTestId("show-prova")).toBeNull();
   });
 
   /**
