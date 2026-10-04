@@ -1,5 +1,12 @@
 import { DEBOUNCE_BUSCA_MS } from "@/components/dashV2";
-import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Prova } from "../../dtos/prova/prova";
@@ -99,9 +106,21 @@ vi.mock("../dashProvas/modals/showProva", () => ({
 }));
 /** Imprime o serviço de criação recebido: o cursinho não pode criar prova global. */
 vi.mock("../dashProvas/modals/newProva", () => ({
-  default: ({ createService }: { createService?: unknown }) => (
+  default: ({
+    createService,
+    erroCategorias,
+    onTentarDeNovo,
+  }: {
+    createService?: unknown;
+    erroCategorias?: boolean;
+    onTentarDeNovo?: () => void;
+  }) => (
     <div data-testid="modal-nova-prova">
       {createService ? "com-create-service" : "SEM CREATE SERVICE"}
+      {erroCategorias ? " erro-categorias" : ""}
+      <button type="button" onClick={onTentarDeNovo}>
+        tentar-categorias
+      </button>
     </div>
   ),
 }));
@@ -378,6 +397,26 @@ describe("o recorte do cursinho", () => {
     expect(screen.getByTestId("modal-nova-prova")).toHaveTextContent(
       "com-create-service",
     );
+  });
+
+  it("⚠️ categorias falharam (card 40): o modal recebe o erro e o Tentar de novo rebusca", async () => {
+    getCategoriasCursinho.mockRejectedValueOnce(new Error("rede"));
+    await montar();
+    fireEvent.click(
+      document.querySelector('[data-action-id="nova-prova"]') as HTMLElement,
+    );
+    expect(screen.getByTestId("modal-nova-prova")).toHaveTextContent(
+      "erro-categorias",
+    );
+
+    fireEvent.click(screen.getByText("tentar-categorias"));
+
+    await waitFor(() =>
+      expect(screen.getByTestId("modal-nova-prova")).not.toHaveTextContent(
+        "erro-categorias",
+      ),
+    );
+    expect(getCategoriasCursinho).toHaveBeenCalledTimes(2);
   });
 
   it("Nova Prova exige a permissão do CURSINHO, não a da administração", async () => {

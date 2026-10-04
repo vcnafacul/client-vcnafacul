@@ -52,6 +52,8 @@ function DashProva() {
   const [provaSelected, setProvaSelected] = useState<Prova | null>(null);
 
   const [categorias, setCategorias] = useState<ICategoria[]>();
+  /** Card 40: sem isto o Nova Prova não sabia distinguir "carregando" de "falhou". */
+  const [erroCategorias, setErroCategorias] = useState(false);
 
   const [nameFilter, setNameFilter] = useState<string>("");
   const [edicaoFilter, setEdicaoFilter] = useState<string>(EDICAO_ALL);
@@ -147,7 +149,9 @@ function DashProva() {
   const ModalNewProva = () => {
     return !modals.modalNewProva.isOpen ? null : (
       <NewProva
-        categorias={categorias!}
+        categorias={categorias}
+        erroCategorias={erroCategorias}
+        onTentarDeNovo={carregarCategorias}
         addProva={addProva}
         handleClose={() => modals.modalNewProva.close()}
         isOpen={modals.modalNewProva.isOpen}
@@ -192,6 +196,18 @@ function DashProva() {
     );
   };
 
+  const carregarCategorias = () => {
+    setErroCategorias(false);
+    getCategorias(token)
+      .then((res) => {
+        setCategorias(res.data);
+      })
+      .catch((erro: Error) => {
+        setErroCategorias(true);
+        toast.error(erro.message);
+      });
+  };
+
   useEffect(() => {
     requestedPages.current = new Set<number>([1]);
     bottomReached.current = false;
@@ -204,13 +220,8 @@ function DashProva() {
         toast.error(erro.message);
       });
 
-    getCategorias(token)
-      .then((res) => {
-        setCategorias(res.data);
-      })
-      .catch((erro: Error) => {
-        toast.error(erro.message);
-      });
+    carregarCategorias();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const getMoreCards = async (page: number): Promise<Paginate<Prova>> => {

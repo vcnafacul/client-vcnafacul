@@ -113,6 +113,8 @@ function PartnerPrepProvas() {
   const [carregando, setCarregando] = useState<boolean>(true);
 
   const [categorias, setCategorias] = useState<ICategoria[]>();
+  /** Card 40: sem isto o Nova Prova não sabia distinguir "carregando" de "falhou". */
+  const [erroCategorias, setErroCategorias] = useState(false);
 
   /**
    * De onde a pessoa está voltando. O relatório do simulado é **rota**, e não
@@ -264,7 +266,9 @@ function PartnerPrepProvas() {
   const ModalNewProva = () => {
     return !modals.modalNewProva.isOpen ? null : (
       <NewProva
-        categorias={categorias!}
+        categorias={categorias}
+        erroCategorias={erroCategorias}
+        onTentarDeNovo={carregarCategorias}
         addProva={addProva}
         createService={createProvaCursinho}
         handleClose={() => modals.modalNewProva.close()}
@@ -334,6 +338,18 @@ function PartnerPrepProvas() {
     );
   };
 
+  const carregarCategorias = () => {
+    setErroCategorias(false);
+    getCategoriasCursinho(token)
+      .then((res) => {
+        setCategorias(res.data);
+      })
+      .catch((erro: Error) => {
+        setErroCategorias(true);
+        toast.error(erro.message);
+      });
+  };
+
   useEffect(() => {
     requestedPages.current = new Set<number>([1]);
     bottomReached.current = false;
@@ -348,13 +364,8 @@ function PartnerPrepProvas() {
       })
       .finally(() => setCarregando(false));
 
-    getCategoriasCursinho(token)
-      .then((res) => {
-        setCategorias(res.data);
-      })
-      .catch((erro: Error) => {
-        toast.error(erro.message);
-      });
+    carregarCategorias();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   /**
