@@ -12,6 +12,7 @@ import { setSectionActive } from "@/services/partnerPrepForm/setSectionActive";
 import { AnswerType, QuestionForm } from "@/types/partnerPrepForm/questionForm";
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
 import { secoesVisiveis } from "./secoesVisiveis";
+import { questoesDeReferencia } from "./questoesDeReferencia";
 import {
   AppBar,
   Box,
@@ -267,7 +268,10 @@ export default function PartnerPrepForm() {
         isOpen={modals.modalCreateQuestion.isOpen}
         handleClose={() => modals.modalCreateQuestion.close()}
         sectionId={sectionSelected!._id}
-        availableQuestions={allQuestions}
+        availableQuestions={questoesDeReferencia(
+          entities,
+          sectionSelected!._id
+        )}
         onSuccess={(question: QuestionForm) => {
           // eu preciso colocar a questão na seção correta
           const newEntities = entities.map((section) => {
@@ -387,7 +391,10 @@ export default function PartnerPrepForm() {
     await executeAsync({
       action: () => duplicateSection(sectionSelected._id, token),
       loadingMessage: "Duplicando seção...",
-      successMessage: "Seção duplicada com sucesso!",
+      // A cópia nasce desativada de propósito (card 18): com o card 17 ela
+      // aparece na tela, e o aviso diz o que fazer.
+      successMessage:
+        "Seção duplicada! A cópia foi criada desativada. Revise e ative.",
       errorMessage: (e: unknown) => motivoDoErro(e, "Erro ao duplicar seção"),
       onSuccess: () => {
         modals.modalConfirmDuplicate.close();
@@ -610,7 +617,8 @@ export default function PartnerPrepForm() {
                       <ExpandableSection
                         key={entity._id}
                         section={entity}
-                        allQuestions={allQuestions} // ✅ Usa versão memoizada
+                        // Só seções até esta podem ser referência (card 27).
+                        allQuestions={questoesDeReferencia(entities, entity._id)}
                         setSection={handleSetSection} // ✅ Usa handler memoizado
                         handleAddQuestion={handleAddQuestion}
                         handleEditSection={() => {

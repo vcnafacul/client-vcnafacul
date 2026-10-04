@@ -52,6 +52,12 @@ interface SimuladosViewProps {
   onSimuladoUpdated: (updated: SimuladoResumo) => void;
   /** Ver `AcaoRelatorio`: ausente = a ação não existe nesta tela. */
   relatorio?: AcaoRelatorio;
+  /**
+   * Editar a janela (tickets-documentacao, card 32). Só a tela do cursinho
+   * passa: sem `cadastrarProvasCursinho`, desabilitada com o motivo (antes o
+   * clique dava 403). Ausente = permitido (a tela do admin).
+   */
+  edicao?: { permitido: boolean; motivo?: string };
 }
 
 const MOTIVO_BLOQUEADO =
@@ -107,6 +113,7 @@ function SimuladosView({
   onRetry,
   onSimuladoUpdated,
   relatorio,
+  edicao,
 }: SimuladosViewProps) {
   const [editing, setEditing] = useState<SimuladoResumo | null>(null);
   // Abaixo de 768px (o `sm` do projeto) a tabela vira cards.
@@ -288,6 +295,8 @@ function SimuladosView({
         icone={CalendarDaysIcon}
         rotulo="Editar janela de disponibilidade"
         onClick={() => setEditing(simulado)}
+        desabilitado={edicao ? !edicao.permitido : false}
+        motivoDesabilitado={edicao?.motivo}
       />
 
       {/*
