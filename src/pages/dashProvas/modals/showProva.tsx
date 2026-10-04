@@ -29,6 +29,8 @@ import {
   OpcaoNovasVersoes,
 } from "../components/OpcaoNovasVersoes";
 
+const TEXTO_SEM_PDF = "Sem PDF da prova";
+
 interface ShowProvaProps {
   prova: Prova;
   isOpen: boolean;
@@ -182,7 +184,7 @@ const downloadFile = async (filename: string, fileType: string) => {
     });
   } catch (error) {
     toast.update(id, {
-      render: `Erro ao baixar o ${fileType}`,
+      render: `Erro ao baixar ${fileType == "prova" ? "a" : "o"} ${fileType}`,
       type: "error",
       isLoading: false,
       autoClose: 5000,
@@ -479,20 +481,29 @@ const downloadFile = async (filename: string, fileType: string) => {
                     </Button>
                   )}
 
-                  <Button
-                    onClick={handleDownloadProva}
-                    variant="contained"
-                    color="primary"
-                    className="w-full sm:w-auto"
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <ArrowDownTrayIcon className="h-4 w-4" />
-                    Download da Prova
-                  </Button>
+                  {/* Card 37: prova sem PDF não mostra um botão que só falha. */}
+                  {prova.filename ? (
+                    <Button
+                      onClick={handleDownloadProva}
+                      variant="contained"
+                      color="primary"
+                      className="w-full sm:w-auto"
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
+                      <ArrowDownTrayIcon className="h-4 w-4" />
+                      Download da Prova
+                    </Button>
+                  ) : (
+                    <span className="self-center text-sm text-gray-500">
+                      {edicao && !edicao.permitido
+                        ? TEXTO_SEM_PDF
+                        : `${TEXTO_SEM_PDF} — adicione em Editar arquivos`}
+                    </span>
+                  )}
 
                   <Button
                     onClick={() => setIsEditingFiles(true)}
