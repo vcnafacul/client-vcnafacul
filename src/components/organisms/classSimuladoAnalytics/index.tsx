@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { mensagemDeErro } from "@/utils/mensagemDeErro";
 import { ClassMonthAnalytics, ClassMonthsList } from "@/types/classAnalytics/classSimuladoAnalytics";
 import { listClassSimuladoMonths } from "@/services/prepCourse/class/listClassSimuladoMonths";
 import { getClassSimuladoByMonth } from "@/services/prepCourse/class/getClassSimuladoByMonth";
@@ -15,6 +16,8 @@ import { ClassEvolutionChart } from "@/components/molecules/classEvolutionChart"
 interface Props {
   classId: string;
   token: string;
+  /** Gerenciar Turmas: atualizar e gerar os dados (card 07). */
+  podeAtualizar: boolean;
   selectedMonth?: string | null;
   onSelectMonth?: (month: string) => void;
   onListLoaded?: (list: ClassMonthsList) => void;
@@ -23,6 +26,7 @@ interface Props {
 export function ClassSimuladoAnalytics({
   classId,
   token,
+  podeAtualizar,
   selectedMonth: selectedMonthProp,
   onSelectMonth,
   onListLoaded,
@@ -116,7 +120,13 @@ export function ClassSimuladoAnalytics({
       );
     } catch (e) {
       console.error(e);
-      toast.error("Falha ao solicitar atualização. Tente novamente.");
+      toast.error(
+        mensagemDeErro(
+          e,
+          "atualizar os dados",
+          "Falha ao solicitar atualização. Tente novamente.",
+        ),
+      );
     } finally {
       setRequesting(false);
     }
@@ -133,7 +143,13 @@ export function ClassSimuladoAnalytics({
       );
     } catch (e) {
       console.error(e);
-      toast.error("Falha ao solicitar geração. Tente novamente.");
+      toast.error(
+        mensagemDeErro(
+          e,
+          "gerar os dados",
+          "Falha ao solicitar geração. Tente novamente.",
+        ),
+      );
     } finally {
       setRequesting(false);
     }
@@ -154,7 +170,7 @@ export function ClassSimuladoAnalytics({
       <KpiHeader
         list={list}
         monthData={monthData}
-        onRefresh={handleRefresh}
+        onRefresh={podeAtualizar ? handleRefresh : undefined}
         refreshing={refreshing}
         requesting={requesting}
       />
@@ -162,7 +178,14 @@ export function ClassSimuladoAnalytics({
       {list.months.length === 0 ? (
         <EmptyState
           variant="no-months"
-          onGenerate={list.coursePeriod.isActive ? handleGenerate : undefined}
+          onGenerate={
+            list.coursePeriod.isActive && podeAtualizar ? handleGenerate : undefined
+          }
+          aviso={
+            list.coursePeriod.isActive && !podeAtualizar
+              ? "Os dados ainda não foram gerados. Quem gerencia turmas pode gerar."
+              : undefined
+          }
           loading={refreshing || requesting}
         />
       ) : (

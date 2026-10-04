@@ -2,7 +2,9 @@ import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import { useModals } from "@/hooks/useModal";
 import { deletePeriodJustification } from "@/services/prepCourse/periodJustification/deletePeriodJustification";
 import { getPeriodJustifications } from "@/services/prepCourse/periodJustification/getPeriodJustifications";
+import { Roles } from "@/enums/roles/roles";
 import { useAuthStore } from "@/store/auth";
+import { mensagemDeErro } from "@/utils/mensagemDeErro";
 import { PeriodJustification } from "@/types/partnerPrepCourse/periodJustification";
 import { useEffect, useState } from "react";
 import { IoChevronDown, IoChevronUp, IoClose } from "react-icons/io5";
@@ -30,8 +32,10 @@ export function PeriodJustificationList({
   const modals = useModals(["modalConfirmDelete"]);
 
   const {
-    data: { token },
+    data: { token, permissao },
   } = useAuthStore();
+  // Excluir é gestão (card 07): sem Gerenciar Turmas, a lista é só leitura.
+  const podeExcluir = !!permissao[Roles.gerenciarTurmas];
 
   // Fetch only count (page=1, limit=1) to show in the header even when collapsed
   const fetchCount = async () => {
@@ -95,8 +99,9 @@ export function PeriodJustificationList({
         await fetchCount();
       }
     } catch (err: unknown) {
-      const error = err as Error;
-      toast.error(error?.message ?? "Erro ao excluir justificativa");
+      toast.error(
+        mensagemDeErro(err, "excluir justificativa", "Erro ao excluir justificativa"),
+      );
       modals.modalConfirmDelete.close();
     }
   };
@@ -161,14 +166,16 @@ export function PeriodJustificationList({
                     {formatDate(item.createdAt)}
                   </span>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => openDeleteModal(item.id)}
-                  className="text-gray-400 hover:text-red-500 flex-shrink-0 mt-0.5"
-                  title="Excluir justificativa"
-                >
-                  <IoClose className="w-5 h-5" />
-                </button>
+                {podeExcluir && (
+                  <button
+                    type="button"
+                    onClick={() => openDeleteModal(item.id)}
+                    className="text-gray-400 hover:text-red-500 flex-shrink-0 mt-0.5"
+                    title="Excluir justificativa"
+                  >
+                    <IoClose className="w-5 h-5" />
+                  </button>
+                )}
               </div>
             ))}
 

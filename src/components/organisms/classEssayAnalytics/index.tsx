@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import { toast } from "react-toastify";
+import { mensagemDeErro } from "@/utils/mensagemDeErro";
 import type {
   ClassEssayMonthAnalytics,
   ClassEssayMonthsList,
@@ -17,6 +18,8 @@ import { CompetenciaRadar } from "@/components/molecules/competenciaRadar";
 interface Props {
   classId: string;
   token: string;
+  /** Gerenciar Turmas: atualizar e gerar os dados (card 07). */
+  podeAtualizar: boolean;
   selectedMonth: string | null;
   onSelectMonth: (month: string) => void;
 }
@@ -24,6 +27,7 @@ interface Props {
 export function ClassEssayAnalytics({
   classId,
   token,
+  podeAtualizar,
   selectedMonth,
   onSelectMonth,
 }: Props) {
@@ -106,7 +110,13 @@ export function ClassEssayAnalytics({
       );
     } catch (e) {
       console.error(e);
-      toast.error("Falha ao solicitar atualização. Tente novamente.");
+      toast.error(
+        mensagemDeErro(
+          e,
+          "atualizar os dados",
+          "Falha ao solicitar atualização. Tente novamente.",
+        ),
+      );
     } finally {
       setRequesting(false);
     }
@@ -123,7 +133,13 @@ export function ClassEssayAnalytics({
       );
     } catch (e) {
       console.error(e);
-      toast.error("Falha ao solicitar geração. Tente novamente.");
+      toast.error(
+        mensagemDeErro(
+          e,
+          "gerar os dados",
+          "Falha ao solicitar geração. Tente novamente.",
+        ),
+      );
     } finally {
       setRequesting(false);
     }
@@ -153,7 +169,14 @@ export function ClassEssayAnalytics({
         </h2>
         <EmptyState
           variant="no-months"
-          onGenerate={list.coursePeriod.isActive ? handleGenerate : undefined}
+          onGenerate={
+            list.coursePeriod.isActive && podeAtualizar ? handleGenerate : undefined
+          }
+          aviso={
+            list.coursePeriod.isActive && !podeAtualizar
+              ? "Os dados ainda não foram gerados. Quem gerencia turmas pode gerar."
+              : undefined
+          }
           loading={refreshing || requesting}
         />
       </section>
@@ -175,7 +198,7 @@ export function ClassEssayAnalytics({
         <KpiHeader
           monthData={monthData}
           list={list}
-          onRefresh={handleRefresh}
+          onRefresh={podeAtualizar ? handleRefresh : undefined}
           refreshing={refreshing}
           requesting={requesting}
         />

@@ -14,6 +14,8 @@ interface StudentCardProps {
    * estoura a tela no celular e no tablet.
    */
   larguraClassName?: string;
+  /** Texto no lugar da foto (ver `PhotoStudentCard`). */
+  avisoDaFoto?: string;
 }
 
 export function StudentCard({
@@ -22,6 +24,7 @@ export function StudentCard({
   imageSrc,
   partnerLogo,
   larguraClassName = "w-[90vw] sm:w-[733px]",
+  avisoDaFoto,
 }: StudentCardProps) {
   return (
     <>
@@ -33,7 +36,11 @@ export function StudentCard({
         >
           {/* Imagem de Perfil */}
           <div className="flex flex-col items-center sm:block">
-            <ProfileImage photo={imageSrc} onChangePhoto={onChangePhoto} />
+            <ProfileImage
+              photo={imageSrc}
+              onChangePhoto={onChangePhoto}
+              aviso={avisoDaFoto}
+            />
           </div>
 
           {/* Informações do Estudante */}

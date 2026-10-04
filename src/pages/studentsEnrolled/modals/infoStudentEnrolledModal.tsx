@@ -4,6 +4,7 @@ import ModalTemplate from "@/components/templates/modalTemplate";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getProfilePhoto } from "@/services/prepCourse/student/getProfilePhoto";
 import { uploadProfileImage } from "@/services/prepCourse/student/uploadProfileImage";
+import { Roles } from "@/enums/roles/roles";
 import { useAuthStore } from "@/store/auth";
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
 import heic2any from "heic2any";
@@ -29,8 +30,13 @@ export function InfoStudentEnrolledModal({
   const [photo, setPhoto] = useState<File | null>(null);
 
   const {
-    data: { token },
+    data: { token, permissao },
   } = useAuthStore();
+  // A foto exige Visualizar Estudantes (ou Gerenciar Processo Seletivo). Sem
+  // ela, a api dá 403 e a tela mostrava a foto padrão (card 07).
+  const podeVerFoto =
+    !!permissao[Roles.visualizarEstudantes] ||
+    !!permissao[Roles.gerenciarProcessoSeletivo];
   
   const executeAsync = useToastAsync();
   
@@ -55,7 +61,7 @@ export function InfoStudentEnrolledModal({
       }
     };
     
-    if (entity.photo) {
+    if (entity.photo && podeVerFoto) {
       fetchImage();
     }
     
@@ -65,7 +71,7 @@ export function InfoStudentEnrolledModal({
         URL.revokeObjectURL(imageSrc);
       }
     };
-  }, [entity.photo, token]);
+  }, [entity.photo, token, podeVerFoto]);
 
   const handleUploadProfileImage = async (file: File) => {
     await executeAsync({
@@ -107,6 +113,11 @@ export function InfoStudentEnrolledModal({
           entity={entity}
           imageSrc={imageSrc}
           partnerLogo={partnerLogo}
+          avisoDaFoto={
+            podeVerFoto
+              ? undefined
+              : "Foto disponível só para quem visualiza estudantes"
+          }
           onChangePhoto={(file: File) => {
             setPhoto(file);
             setPhotoEditorOpen(true);

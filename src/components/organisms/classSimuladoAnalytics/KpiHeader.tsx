@@ -8,7 +8,8 @@ import { formatPercent } from "@/utils/formatPercent";
 interface Props {
   list: ClassMonthsList;
   monthData: ClassMonthAnalytics | null;
-  onRefresh: () => void;
+  /** Sem ele, sem o botão — quem não gerencia turmas não atualiza (card 07). */
+  onRefresh?: () => void;
   refreshing: boolean;
   requesting: boolean;
 }
@@ -46,19 +47,21 @@ export function KpiHeader({
         </div>
         {isActive && (
           <div className="flex flex-col items-end gap-1">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={onRefresh}
-              disabled={requesting}
-            >
-              {requesting ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <RefreshCw className="mr-2 h-4 w-4" />
-              )}
-              {requesting ? "Enfileirando..." : "Atualizar agora"}
-            </Button>
+            {onRefresh && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={onRefresh}
+                disabled={requesting}
+              >
+                {requesting ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                )}
+                {requesting ? "Enfileirando..." : "Atualizar agora"}
+              </Button>
+            )}
             {(refreshing || lastUpdatedAt) && (
               <p className="text-xs text-gray-400">
                 {refreshing

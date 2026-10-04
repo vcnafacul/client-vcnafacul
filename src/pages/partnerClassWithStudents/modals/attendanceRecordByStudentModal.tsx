@@ -6,7 +6,9 @@ import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { applyJustication } from "@/services/prepCourse/attendanceRecord/applyJustication";
 import { getAttendanceRecordByStudentId } from "@/services/prepCourse/attendanceRecord/getAttendanceRecordByStudentId";
+import { Roles } from "@/enums/roles/roles";
 import { useAuthStore } from "@/store/auth";
+import { mensagemDeErro } from "@/utils/mensagemDeErro";
 import { AttendancePeriod, attendancePeriodLabel } from "@/types/partnerPrepCourse/attendancePeriod";
 import { AttendanceRecordByStudent } from "@/types/partnerPrepCourse/attendanceRecord";
 import Paper from "@mui/material/Paper";
@@ -43,8 +45,11 @@ export function AttendanceRecordByStudentModal({
   const modals = useModals(["modalApplyJustification"]);
 
   const {
-    data: { token },
+    data: { token, permissao },
   } = useAuthStore();
+  // Justificar é gestão (a api exige Gerenciar Turmas): sem ela, a janela é
+  // só leitura — sem botões nem caixas de seleção (card 07).
+  const podeGerenciar = !!permissao[Roles.gerenciarTurmas];
 
   const executeAsync = useToastAsync();
 
@@ -169,7 +174,8 @@ export function AttendanceRecordByStudentModal({
         applyJustication(token, studentId, selectedRows, justification),
       loadingMessage: "Aplicando justificativa...",
       successMessage: "Justificativa aplicada com sucesso!",
-      errorMessage: "Erro ao aplicar justificativa",
+      errorMessage: (e: unknown) =>
+        mensagemDeErro(e, "aplicar justificativa", "Erro ao aplicar justificativa"),
       onSuccess: () => {
         handleClose!();
       },
@@ -197,21 +203,23 @@ export function AttendanceRecordByStudentModal({
       <div className="flex flex-1 flex-col min-h-0 gap-3">
         <div className="flex flex-wrap items-center justify-between gap-2 p-2 shrink-0">
           <h1 className="text-2xl font-bold">Registro de Presença</h1>
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              onClick={() => modals.modalApplyJustification.open()}
-              disabled={selectedRows.length === 0}
-              className="bg-orange/70 hover:bg-orange font-black"
-            >
-              Aplicar Justificativa
-            </Button>
-            <Button
-              onClick={() => setShowPeriodModal(true)}
-              className="bg-orange/70 hover:bg-orange font-black"
-            >
-              Justificar Período
-            </Button>
-          </div>
+          {podeGerenciar && (
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                onClick={() => modals.modalApplyJustification.open()}
+                disabled={selectedRows.length === 0}
+                className="bg-orange/70 hover:bg-orange font-black"
+              >
+                Aplicar Justificativa
+              </Button>
+              <Button
+                onClick={() => setShowPeriodModal(true)}
+                className="bg-orange/70 hover:bg-orange font-black"
+              >
+                Justificar Período
+              </Button>
+            </div>
+          )}
         </div>
         <div className="shrink-0">
           <PeriodJustificationList
@@ -241,8 +249,8 @@ export function AttendanceRecordByStudentModal({
             paginationMode="server"
             initialState={{ pagination: { paginationModel } }}
             rowHeight={40}
-            rowSelection={true}
-            checkboxSelection
+            rowSelection={podeGerenciar}
+            checkboxSelection={podeGerenciar}
             rowSelectionModel={selectedRows}
             onRowSelectionModelChange={handleSelectionChange}
             sx={{
