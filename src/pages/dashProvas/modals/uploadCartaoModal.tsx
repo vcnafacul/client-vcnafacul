@@ -172,8 +172,8 @@ export default function UploadCartaoModal({
               </div>
               {/*
                 ⚠️ "Trocar" devolve a busca. Sem ele, corrigir uma escolha
-                errada exigiria fechar o modal e recomeçar — e o envio é a ação
-                que não dá para desfazer.
+                errada exigiria fechar o modal e recomeçar — e desfazer o envio
+                depois exige excluí-lo no relatório (card 36).
               */}
               <button
                 type="button"
@@ -193,10 +193,10 @@ export default function UploadCartaoModal({
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             />
 
-            {/* O envio não se desfaz: confirma de quem é o cartão antes. */}
+            {/* Confirma de quem é o cartão: corrigir depois exige excluir o envio. */}
             <AlertDialogUI
               title="Enviar este cartão?"
-              description={`O cartão será registrado para ${escolhido.nome} (${escolhido.matricula}) e não poderá ser desfeito.`}
+              description={`O cartão será registrado para ${escolhido.nome} (${escolhido.matricula}). Se o aluno estiver errado, será preciso excluir o envio no relatório do simulado.`}
               onConfirm={handleEnviar}
             >
               <AlertDialogTrigger asChild>
