@@ -1,3 +1,4 @@
+import { motivoDoErro } from "../motivoDoErro";
 import ModalTemplate, {
   ModalProps,
 } from "@/components/templates/modalTemplate";
@@ -79,9 +80,7 @@ export function ModalCreateSection({
       handleClose?.();
       resetForm();
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Erro ao criar seção";
-      toast.error(errorMessage);
+      toast.error(motivoDoErro(error, "Erro ao criar seção"));
     } finally {
       setLoading(false);
     }

@@ -1,3 +1,4 @@
+import { motivoDoErro } from "./motivoDoErro";
 import { TableColumn } from "@/components/organisms/expandableTable";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
@@ -303,7 +304,7 @@ export default function PartnerPrepForm() {
       action: () => deleteSection(token, sectionId),
       loadingMessage: "Excluindo seção...",
       successMessage: "Seção excluída com sucesso!",
-      errorMessage: (error: Error) => `Erro ao excluir seção: ${error.message}`,
+      errorMessage: (e: unknown) => motivoDoErro(e, "Erro ao excluir seção"),
       onSuccess: () => {
         setEntities((prev) => prev.filter((e) => e._id !== sectionId));
       },
@@ -324,7 +325,7 @@ export default function PartnerPrepForm() {
         action.charAt(0).toUpperCase() + action.slice(1)
       } seção...`,
       successMessage: `Seção ${successMessage} com sucesso`,
-      errorMessage: `Erro ao ${action} seção`,
+      errorMessage: (e: unknown) => motivoDoErro(e, `Erro ao ${action} seção`),
       onSuccess: () => {
         setEntities((prev) =>
           prev.map((e) =>
@@ -357,7 +358,8 @@ export default function PartnerPrepForm() {
       action: () => reorderQuestions(token, sectionId, questionIds),
       loadingMessage: "Reordenando questões...",
       successMessage: "Questões reordenadas com sucesso!",
-      errorMessage: "Erro ao reordenar questões",
+      errorMessage: (e: unknown) =>
+        motivoDoErro(e, "Erro ao reordenar questões"),
       onError: () => {
         const originalSection = entities.find((e) => e._id === sectionId);
         if (originalSection) {
@@ -386,7 +388,7 @@ export default function PartnerPrepForm() {
       action: () => duplicateSection(sectionSelected._id, token),
       loadingMessage: "Duplicando seção...",
       successMessage: "Seção duplicada com sucesso!",
-      errorMessage: "Erro ao duplicar seção",
+      errorMessage: (e: unknown) => motivoDoErro(e, "Erro ao duplicar seção"),
       onSuccess: () => {
         modals.modalConfirmDuplicate.close();
         // Recarregar todas as seções

@@ -1,3 +1,5 @@
+import { opcoesLimpas, opcoesRepetidas } from "../opcoes";
+import { motivoDoErro } from "../motivoDoErro";
 import ModalTemplate, {
   ModalProps,
 } from "@/components/templates/modalTemplate";
@@ -109,7 +111,8 @@ export function ModalShowQuestion({
       successMessage: `Questão ${
         !question.active ? "ativada" : "desativada"
       } com sucesso!`,
-      errorMessage: "Erro ao alterar status da questão",
+      errorMessage: (e: unknown) =>
+        motivoDoErro(e, "Erro ao alterar status da questão"),
       onSuccess: () => {
         onToggleActive?.();
         handleClose?.();
@@ -144,13 +147,14 @@ export function ModalShowQuestion({
     }
 
     if (question.answerType === AnswerType.Options) {
-      const validOptions = editableData.options.filter(
-        (option) => option.trim() !== ""
-      );
+      const validOptions = opcoesLimpas(editableData.options);
+      const repetidas = opcoesRepetidas(editableData.options);
       if (validOptions.length === 0) {
         newErrors.options = "Pelo menos uma opção é obrigatória";
       } else if (validOptions.length < 2) {
         newErrors.options = "Pelo menos duas opções são necessárias";
+      } else if (repetidas.length > 0) {
+        newErrors.options = `As opções não podem se repetir: ${repetidas.join(", ")}`;
       }
     }
 
@@ -174,7 +178,7 @@ export function ModalShowQuestion({
         conditions: editableData.conditions,
         options:
           question.answerType === AnswerType.Options
-            ? editableData.options.filter((option) => option.trim() !== "")
+            ? opcoesLimpas(editableData.options)
             : undefined,
         active: editableData.active,
       };
@@ -183,7 +187,8 @@ export function ModalShowQuestion({
         action: () => updateFn(token, question._id, updatedQuestion),
         loadingMessage: "Atualizando questão...",
         successMessage: "Questão atualizada com sucesso!",
-        errorMessage: "Erro ao atualizar questão",
+        errorMessage: (e: unknown) =>
+          motivoDoErro(e, "Erro ao atualizar questão"),
         onSuccess: () => {
           setIsEditMode(false);
           onEdit?.(updatedQuestion);
