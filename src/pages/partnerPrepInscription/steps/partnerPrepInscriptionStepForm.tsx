@@ -3,6 +3,7 @@ import { InputFactory } from "@/components/organisms/inputFactory";
 import { useModals } from "@/hooks/useModal";
 import { ComplexCondition } from "@/types/partnerPrepForm/condition";
 import { avaliarCondicao } from "../avaliarCondicao";
+import { respostasIniciais } from "../respostasIniciais";
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
 import {
   AnswerCollectionType,
@@ -153,6 +154,7 @@ const QuestionBoolean = ({
         { label: "Sim", value: "Sim" },
         { label: "Não", value: "Não" },
       ]}
+      placeholder="Selecione"
       error={error ? { message: error } : undefined}
       value={selectValue}
       className={getInputClassByTextLength(question.text.length)}
@@ -287,20 +289,10 @@ export function PartnerPrepInscriptionStepForm({
   // Merge allAnswers (previous sections) with local answers for condition evaluation
   const mergedAnswers = { ...allAnswers, ...answers };
 
-  // Initialize answers for this section (boolean defaults + restore from allAnswers)
+  // Initialize answers for this section (restore from allAnswers)
   useEffect(() => {
-    const initialAnswers: Record<string, unknown> = {};
-
-    section.questions.forEach((question) => {
-      // Restore previously filled value from allAnswers if available
-      if (allAnswers[question._id] !== undefined) {
-        initialAnswers[question._id] = allAnswers[question._id];
-      } else if (question.answerType === AnswerType.Boolean) {
-        initialAnswers[question._id] = false;
-      }
-    });
-
-    setAnswers(initialAnswers);
+    // Sem "Não" padrão no Sim/Não (card 29): só o que já foi respondido.
+    setAnswers(respostasIniciais(section, allAnswers));
     setErrors({});
 
     const timer = setTimeout(() => {
