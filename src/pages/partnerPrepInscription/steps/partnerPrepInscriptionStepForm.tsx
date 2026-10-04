@@ -1,12 +1,8 @@
 import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { useModals } from "@/hooks/useModal";
-import {
-  BaseCondition,
-  ComplexCondition,
-  Logic,
-  Operator,
-} from "@/types/partnerPrepForm/condition";
+import { ComplexCondition } from "@/types/partnerPrepForm/condition";
+import { avaliarCondicao } from "../avaliarCondicao";
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
 import {
   AnswerCollectionType,
@@ -322,48 +318,11 @@ export function PartnerPrepInscriptionStepForm({
   };
 
   // Evaluate basic conditions using merged answers (cross-section support)
-  const evaluateBasicCondition = useCallback(
-    (rule: BaseCondition): boolean => {
-      const value = mergedAnswers[rule.questionId];
-      switch (rule.operator) {
-        case Operator.Equal:
-          return value?.toString() === rule.expectedValue.toString();
-        case Operator.Contains:
-          if (typeof value === "string") {
-            return value.includes(rule.expectedValue as string);
-          } else if (typeof value === "object") {
-            return (value as string[]).includes(rule.expectedValue as string);
-          }
-          return false;
-        case Operator.GreaterThan:
-          return Number(value) > Number(rule.expectedValue);
-        case Operator.LessThan:
-          return Number(value) < Number(rule.expectedValue);
-        case Operator.GreaterThanOrEqual:
-          return Number(value) >= Number(rule.expectedValue);
-        case Operator.LessThanOrEqual:
-          return Number(value) <= Number(rule.expectedValue);
-        case Operator.NotEqual:
-          return value !== rule.expectedValue;
-        default:
-          return false;
-      }
-    },
-    [mergedAnswers]
-  );
-
+  // Avaliação compartilhada com o ms de formulários (card 19).
   const evaluateCondition = useCallback(
-    (condition?: ComplexCondition): boolean => {
-      if (!condition) return true;
-
-      const results = condition.conditions.map(evaluateBasicCondition);
-      if (condition.logic === Logic.And) {
-        return results.every(Boolean);
-      } else {
-        return results.some(Boolean);
-      }
-    },
-    [evaluateBasicCondition]
+    (condition?: ComplexCondition): boolean =>
+      avaliarCondicao(condition, mergedAnswers),
+    [mergedAnswers]
   );
 
   // Validate only questions in THIS section
