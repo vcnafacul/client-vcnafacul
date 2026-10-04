@@ -7,9 +7,18 @@ import { useRef } from "react";
 interface PhotoStudentCardProps {
   photo: string | null;
   onChangePhoto?: (file: File) => void; // Função para lidar com a nova foto
+  /**
+   * No lugar da foto: quem não pode vê-la não pode achar que o aluno não tem
+   * foto (card 07).
+   */
+  aviso?: string;
 }
 
-const PhotoStudentCard = ({ photo, onChangePhoto }: PhotoStudentCardProps) => {
+const PhotoStudentCard = ({
+  photo,
+  onChangePhoto,
+  aviso,
+}: PhotoStudentCardProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
     data: { permissao },
@@ -29,11 +38,17 @@ const PhotoStudentCard = ({ photo, onChangePhoto }: PhotoStudentCardProps) => {
 
   return (
     <div className="w-48 h-72 rounded-lg overflow-hidden relative">
-      <img
-        src={photo || ProfileDefault}
-        alt="Foto de perfil"
-        className="w-full h-full object-cover"
-      />
+      {aviso ? (
+        <div className="w-full h-full bg-gray-100 flex items-center justify-center p-4 text-center text-sm text-gray-500">
+          {aviso}
+        </div>
+      ) : (
+        <img
+          src={photo || ProfileDefault}
+          alt="Foto de perfil"
+          className="w-full h-full object-cover"
+        />
+      )}
 
       {onChangePhoto && (
         <>

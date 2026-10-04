@@ -68,9 +68,11 @@ function ClassPerformanceTab({
   selectedMonth,
   setSelectedMonth,
   onListLoaded,
+  podeAtualizar,
 }: {
   classId: string;
   token: string;
+  podeAtualizar: boolean;
   selectedMonth: string | null;
   setSelectedMonth: (m: string) => void;
   onListLoaded: (list: ClassMonthsList) => void;
@@ -83,10 +85,12 @@ function ClassPerformanceTab({
         selectedMonth={selectedMonth}
         onSelectMonth={setSelectedMonth}
         onListLoaded={onListLoaded}
+        podeAtualizar={podeAtualizar}
       />
       <ClassEssayAnalytics
         classId={classId}
         token={token}
+        podeAtualizar={podeAtualizar}
         selectedMonth={selectedMonth}
         onSelectMonth={setSelectedMonth}
       />
@@ -585,6 +589,7 @@ export function PartnerClassWithStudents() {
                 selectedMonth={selectedMonth}
                 setSelectedMonth={setSelectedMonth}
                 onListLoaded={handleSimuladoListLoaded}
+                podeAtualizar={!!permissao[Roles.gerenciarTurmas]}
               />
             )}
           </div>

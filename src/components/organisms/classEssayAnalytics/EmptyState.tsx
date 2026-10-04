@@ -5,9 +5,11 @@ interface Props {
   variant: "no-months" | "month-empty";
   onGenerate?: () => void;
   loading?: boolean;
+  /** No lugar do botão, para quem não pode gerar (card 07). */
+  aviso?: string;
 }
 
-export function EmptyState({ variant, onGenerate, loading }: Props) {
+export function EmptyState({ variant, onGenerate, loading, aviso }: Props) {
   if (variant === "no-months") {
     return (
       <div className="flex flex-col items-center gap-3 py-12 text-center text-gray-500">
@@ -18,6 +20,7 @@ export function EmptyState({ variant, onGenerate, loading }: Props) {
             {loading ? "Gerando..." : "Gerar agora"}
           </Button>
         )}
+        {!onGenerate && aviso && <p className="text-xs text-gray-400">{aviso}</p>}
       </div>
     );
   }

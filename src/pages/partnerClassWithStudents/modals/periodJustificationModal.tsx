@@ -1,6 +1,7 @@
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { createPeriodJustification } from "@/services/prepCourse/periodJustification/createPeriodJustification";
+import { mensagemDeErro } from "@/utils/mensagemDeErro";
 import { useAuthStore } from "@/store/auth";
 import { Calendar } from "primereact/calendar";
 import { useState } from "react";
@@ -51,7 +52,12 @@ export function PeriodJustificationModal({
         }),
       loadingMessage: "Criando justificativa de período...",
       successMessage: "Justificativa de período criada com sucesso!",
-      errorMessage: (error: Error) => error.message,
+      errorMessage: (error: unknown) =>
+        mensagemDeErro(
+          error,
+          "justificar período",
+          "Erro ao criar justificativa de período",
+        ),
       onSuccess: () => {
         onSuccess();
         handleClose();

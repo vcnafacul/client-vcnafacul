@@ -15,6 +15,10 @@ export async function refreshClassSimuladoAnalytics(
       Authorization: `Bearer ${token}`,
     },
   });
-  if (!response.ok) throw new Error("Falha ao agendar atualização");
+  if (!response.ok) {
+    // Leva o status: 403 vira "sem permissão" no toast (card 07).
+    const corpo = await response.json().catch(() => ({}));
+    throw { ...corpo, status: response.status };
+  }
   return response.json();
 }
