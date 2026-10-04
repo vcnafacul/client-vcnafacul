@@ -26,7 +26,10 @@ vi.mock("../../../hooks/useToastAsync", () => ({
       action(),
 }));
 
-import NewProva from "./newProva";
+import NewProva, {
+  TEXTO_CARREGANDO_CATEGORIAS,
+  TEXTO_ERRO_CATEGORIAS,
+} from "./newProva";
 
 const CUSTOM = {
   _id: "cat-custom",
@@ -139,5 +142,73 @@ describe("NewProva — aplicar novas versões (023 · 09)", () => {
       ),
     );
     expect(screen.getByText(/Desmarcado \(recomendado\)/)).toBeInTheDocument();
+  });
+});
+
+describe("NewProva — edição, aplicação e ano (card 40)", () => {
+  const criar = async () => {
+    fireEvent.change(campo("nome")!, { target: { value: "P" } });
+    fireEvent.click(screen.getByRole("button", { name: /Criar|Salvar/i }));
+    await waitFor(() => expect(createProva).toHaveBeenCalled());
+    return createProva.mock.calls[0][0];
+  };
+
+  it("rótulos corrigidos e aplicação num campo próprio", () => {
+    montar();
+    expect(screen.getByText("Edição")).toBeInTheDocument();
+    expect(screen.queryByText("Edicao")).toBeNull();
+    expect(
+      screen.getByRole("option", { name: "2ª aplicação" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: /ªAplicação/ })).toBeNull();
+  });
+
+  it("⚠️ edição e aplicação são independentes: Digital na 2ª aplicação", async () => {
+    montar();
+    escolherCategoriaCustom();
+    fireEvent.change(campo("edicao")!, { target: { value: "Digital" } });
+    fireEvent.change(campo("aplicacao")!, { target: { value: "2" } });
+
+    const formData = await criar();
+
+    expect(formData.get("edicao")).toBe("Digital");
+    expect(formData.get("aplicacao")).toBe("2");
+  });
+
+  it("sem mexer: Regular, 1ª aplicação e o ano ATUAL", async () => {
+    montar();
+    escolherCategoriaCustom();
+
+    const formData = await criar();
+
+    expect(formData.get("edicao")).toBe("Regular");
+    expect(formData.get("aplicacao")).toBe("1");
+    expect(formData.get("ano")).toBe(String(new Date().getFullYear()));
+  });
+});
+
+describe("NewProva — sem categorias carregadas (card 40)", () => {
+  it("⚠️ ainda carregando: não quebra, mostra o aviso e esconde o formulário", () => {
+    render(<NewProva isOpen addProva={vi.fn()} handleClose={vi.fn()} />);
+
+    expect(screen.getByText(TEXTO_CARREGANDO_CATEGORIAS)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Criar Prova/ })).toBeNull();
+  });
+
+  it("⚠️ busca falhou: mensagem e Tentar de novo", () => {
+    const onTentarDeNovo = vi.fn();
+    render(
+      <NewProva
+        isOpen
+        addProva={vi.fn()}
+        handleClose={vi.fn()}
+        erroCategorias
+        onTentarDeNovo={onTentarDeNovo}
+      />,
+    );
+
+    expect(screen.getByText(TEXTO_ERRO_CATEGORIAS)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Tentar de novo" }));
+    expect(onTentarDeNovo).toHaveBeenCalled();
   });
 });

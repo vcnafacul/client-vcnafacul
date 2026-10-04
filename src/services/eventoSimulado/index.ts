@@ -29,13 +29,22 @@ export type EngajamentoDoEvento = {
     provaId: string;
     nome: string;
     inscritos: number;
+    /** Quem fez ESTA prova, inscrito nela ou noutra (card 38). */
     fizeram: number;
+    /** Inscritos nesta prova que fizeram outra (card 38). */
+    trocaram: number;
     naoVieram: number;
   }[];
   totalInscritos: number;
   inscritosQueFizeram: number;
   engajamento: number | null;
-  inscritos: { nome: string; provaId: string; fez: boolean }[];
+  inscritos: {
+    nome: string;
+    provaId: string;
+    fez: boolean;
+    /** Diferente de `provaId` = trocou de prova (card 38). */
+    provaQueFez: string | null;
+  }[];
   fizeramSemInscricao: { nome: string; provaId: string }[];
 };
 

@@ -1,3 +1,4 @@
+import { motivoDoErro } from "./motivoDoErro";
 import { TableColumn } from "@/components/organisms/expandableTable";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
@@ -10,6 +11,8 @@ import { setSectionActive } from "@/services/partnerPrepForm/setSectionActive";
  import { useAuthStore } from "@/store/auth";
 import { AnswerType, QuestionForm } from "@/types/partnerPrepForm/questionForm";
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
+import { secoesVisiveis } from "./secoesVisiveis";
+import { questoesDeReferencia } from "./questoesDeReferencia";
 import {
   AppBar,
   Box,
@@ -194,23 +197,11 @@ export default function PartnerPrepForm() {
         getSection(token),
       ]);
 
-      // Filtra apenas seções ativas e questões ativas (parceiro vê só o que está ativo)
-      const filterActive = (sections: SectionForm[]): SectionForm[] =>
-        sections
-          .filter((s) => s.active)
-          .map((s) => ({
-            ...s,
-            questions: s.questions.filter((q) => q.active),
-          }));
-
-      const globalSections: SectionForm[] =
-        globalRes.status === "fulfilled"
-          ? filterActive(globalRes.value.data.map((s) => ({ ...s, isGlobal: true })))
-          : [];
-      const partnerSections: SectionForm[] =
-        partnerRes.status === "fulfilled"
-          ? filterActive(partnerRes.value.data.map((s) => ({ ...s, isGlobal: false })))
-          : [];
+      // Do cursinho, inclusive inativas; globais, só ativas (card 17).
+      const globais =
+        globalRes.status === "fulfilled" ? globalRes.value.data : [];
+      const doCursinho =
+        partnerRes.status === "fulfilled" ? partnerRes.value.data : [];
 
       if (globalRes.status === "rejected") {
         toast.warning("Não foi possível carregar seções globais");
@@ -219,7 +210,7 @@ export default function PartnerPrepForm() {
         toast.error("Erro ao carregar seções do parceiro");
       }
 
-      setEntities([...globalSections, ...partnerSections]);
+      setEntities(secoesVisiveis(globais, doCursinho));
     } catch {
       toast.error("Erro ao buscar seções");
     } finally {
@@ -277,7 +268,10 @@ export default function PartnerPrepForm() {
         isOpen={modals.modalCreateQuestion.isOpen}
         handleClose={() => modals.modalCreateQuestion.close()}
         sectionId={sectionSelected!._id}
-        availableQuestions={allQuestions}
+        availableQuestions={questoesDeReferencia(
+          entities,
+          sectionSelected!._id
+        )}
         onSuccess={(question: QuestionForm) => {
           // eu preciso colocar a questão na seção correta
           const newEntities = entities.map((section) => {
@@ -314,7 +308,7 @@ export default function PartnerPrepForm() {
       action: () => deleteSection(token, sectionId),
       loadingMessage: "Excluindo seção...",
       successMessage: "Seção excluída com sucesso!",
-      errorMessage: (error: Error) => `Erro ao excluir seção: ${error.message}`,
+      errorMessage: (e: unknown) => motivoDoErro(e, "Erro ao excluir seção"),
       onSuccess: () => {
         setEntities((prev) => prev.filter((e) => e._id !== sectionId));
       },
@@ -335,7 +329,7 @@ export default function PartnerPrepForm() {
         action.charAt(0).toUpperCase() + action.slice(1)
       } seção...`,
       successMessage: `Seção ${successMessage} com sucesso`,
-      errorMessage: `Erro ao ${action} seção`,
+      errorMessage: (e: unknown) => motivoDoErro(e, `Erro ao ${action} seção`),
       onSuccess: () => {
         setEntities((prev) =>
           prev.map((e) =>
@@ -368,7 +362,8 @@ export default function PartnerPrepForm() {
       action: () => reorderQuestions(token, sectionId, questionIds),
       loadingMessage: "Reordenando questões...",
       successMessage: "Questões reordenadas com sucesso!",
-      errorMessage: "Erro ao reordenar questões",
+      errorMessage: (e: unknown) =>
+        motivoDoErro(e, "Erro ao reordenar questões"),
       onError: () => {
         const originalSection = entities.find((e) => e._id === sectionId);
         if (originalSection) {
@@ -396,8 +391,11 @@ export default function PartnerPrepForm() {
     await executeAsync({
       action: () => duplicateSection(sectionSelected._id, token),
       loadingMessage: "Duplicando seção...",
-      successMessage: "Seção duplicada com sucesso!",
-      errorMessage: "Erro ao duplicar seção",
+      // A cópia nasce desativada de propósito (card 18): com o card 17 ela
+      // aparece na tela, e o aviso diz o que fazer.
+      successMessage:
+        "Seção duplicada! A cópia foi criada desativada. Revise e ative.",
+      errorMessage: (e: unknown) => motivoDoErro(e, "Erro ao duplicar seção"),
       onSuccess: () => {
         modals.modalConfirmDuplicate.close();
         // Recarregar todas as seções
@@ -619,7 +617,8 @@ export default function PartnerPrepForm() {
                       <ExpandableSection
                         key={entity._id}
                         section={entity}
-                        allQuestions={allQuestions} // ✅ Usa versão memoizada
+                        // Só seções até esta podem ser referência (card 27).
+                        allQuestions={questoesDeReferencia(entities, entity._id)}
                         setSection={handleSetSection} // ✅ Usa handler memoizado
                         handleAddQuestion={handleAddQuestion}
                         handleEditSection={() => {
