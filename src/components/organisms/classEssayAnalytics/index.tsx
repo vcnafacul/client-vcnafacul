@@ -9,7 +9,7 @@ import type {
 import { listClassEssayMonths } from "@/services/prepCourse/class/listClassEssayMonths";
 import { getClassEssayByMonth } from "@/services/prepCourse/class/getClassEssayByMonth";
 import { refreshClassEssayAnalytics } from "@/services/prepCourse/class/refreshClassEssayAnalytics";
-import { useRefreshEssayPolling } from "@/hooks/useRefreshEssayPolling";
+import { mesAtual, useAcompanharRecalculo } from "@/hooks/useAcompanharRecalculo";
 import { KpiHeader } from "./KpiHeader";
 import { EmptyState } from "./EmptyState";
 import { EssayEvolutionChart } from "@/components/molecules/essayEvolutionChart";
@@ -35,9 +35,12 @@ export function ClassEssayAnalytics({
   const [loading, setLoading] = useState(true);
   const [monthData, setMonthData] = useState<ClassEssayMonthAnalytics | null>(null);
   const [monthLoading, setMonthLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
+  /** O que está sendo recalculado (cards 09 e 10) — ver o bloco de simulados. */
+  const [acompanhando, setAcompanhando] = useState<
+    { modo: "mes"; mes: string; baseline: string | null } | { modo: "gerar" } | null
+  >(null);
+  const refreshing = acompanhando !== null;
   const [requesting, setRequesting] = useState(false);
-  const [baselineGeneratedAt, setBaselineGeneratedAt] = useState<string | null>(null);
 
   // 1) Load months list once
   useEffect(() => {
@@ -70,41 +73,70 @@ export function ClassEssayAnalytics({
       .finally(() => setMonthLoading(false));
   }, [classId, selectedMonth, token]);
 
-  // 4) Polling after refresh
-  const { latest, timedOut } = useRefreshEssayPolling(
-    classId,
-    selectedMonth ?? "",
-    baselineGeneratedAt,
-    token,
-    refreshing && !!selectedMonth
-  );
+  // 4) Acompanhamento depois de pedir o recálculo (cards 09 e 10)
+  const doMes = useAcompanharRecalculo({
+    ativo: acompanhando?.modo === "mes",
+    consultar: () =>
+      getClassEssayByMonth(
+        classId,
+        acompanhando?.modo === "mes" ? acompanhando.mes : "",
+        token,
+      ),
+    pronto: (r) =>
+      !!r &&
+      acompanhando?.modo === "mes" &&
+      r.generatedAt !== acompanhando.baseline,
+  });
+
+  // Sem meses não há mês para acompanhar: acompanha a lista (card 09).
+  const daLista = useAcompanharRecalculo({
+    ativo: acompanhando?.modo === "gerar",
+    consultar: () => listClassEssayMonths(classId, token),
+    pronto: (l) => l.months.length > 0,
+  });
 
   useEffect(() => {
-    if (latest) {
-      setMonthData(latest);
-      setRefreshing(false);
-      toast.success("Dados de redação atualizados!");
-      // Refresh the list too so the new month appears
-      listClassEssayMonths(classId, token).then(setList).catch(console.error);
-    }
-  }, [latest, classId, token]);
+    if (!doMes.resultado) return;
+    setMonthData(doMes.resultado);
+    setAcompanhando(null);
+    toast.success("Dados de redação atualizados!");
+    // O mês atual pode ser novo: entra no seletor sem recarregar.
+    listClassEssayMonths(classId, token).then(setList).catch(console.error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doMes.resultado]);
 
   useEffect(() => {
-    if (timedOut) {
-      setRefreshing(false);
-      toast.info(
-        "Ainda processando em segundo plano. Recarregue a página em alguns minutos para ver os dados atualizados.",
-      );
-    }
-  }, [timedOut]);
+    if (!daLista.resultado) return;
+    const data = daLista.resultado;
+    setList(data);
+    const sorted = [...data.months].sort((a, b) => a.month.localeCompare(b.month));
+    onSelectMonth(sorted[sorted.length - 1].month);
+    setAcompanhando(null);
+    toast.success("Relatório de redação gerado!");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [daLista.resultado]);
 
+  useEffect(() => {
+    if (!doMes.esgotou && !daLista.esgotou) return;
+    setAcompanhando(null);
+    toast.info(
+      "Ainda processando em segundo plano. Recarregue a página em alguns minutos para ver os dados atualizados.",
+    );
+  }, [doMes.esgotou, daLista.esgotou]);
+
+  /** "Atualizar mês atual" (card 10): mostra o mês atual e espera ele mudar. */
   const handleRefresh = useCallback(async () => {
     if (requesting || refreshing) return;
     setRequesting(true);
     try {
       await refreshClassEssayAnalytics(classId, "current", token);
-      setBaselineGeneratedAt(monthData?.generatedAt ?? null);
-      setRefreshing(true);
+      const mes = mesAtual();
+      const baseline =
+        (mes === selectedMonth
+          ? monthData?.generatedAt
+          : list?.months.find((m) => m.month === mes)?.generatedAt) ?? null;
+      onSelectMonth(mes);
+      setAcompanhando({ modo: "mes", mes, baseline });
       toast.info(
         "Atualização enfileirada. O processamento acontece em segundo plano — pode levar alguns minutos.",
       );
@@ -120,14 +152,14 @@ export function ClassEssayAnalytics({
     } finally {
       setRequesting(false);
     }
-  }, [classId, monthData, refreshing, requesting, token]);
+  }, [classId, list, monthData, onSelectMonth, refreshing, requesting, selectedMonth, token]);
 
   const handleGenerate = useCallback(async () => {
     if (requesting || refreshing) return;
     setRequesting(true);
     try {
       await refreshClassEssayAnalytics(classId, "all", token);
-      setRefreshing(true);
+      setAcompanhando({ modo: "gerar" });
       toast.info(
         "Geração enfileirada. O processamento acontece em segundo plano — pode levar alguns minutos.",
       );
