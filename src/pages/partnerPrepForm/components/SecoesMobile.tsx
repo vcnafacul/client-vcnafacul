@@ -1,3 +1,4 @@
+import { questoesDeReferencia } from "../questoesDeReferencia";
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
 import { formatDate } from "@/utils/date";
 import { Chip } from "@mui/material";
@@ -26,7 +27,13 @@ export function SecoesMobile({ secoes, ...acoes }: Props) {
   return (
     <ul className="flex flex-col gap-3 px-4 pb-4">
       {secoes.map((secao) => (
-        <SecaoCard key={secao._id} section={secao} {...acoes} />
+        <SecaoCard
+          key={secao._id}
+          section={secao}
+          {...acoes}
+          // Só seções até esta podem ser referência (card 27).
+          allQuestions={questoesDeReferencia(secoes, secao._id)}
+        />
       ))}
     </ul>
   );
