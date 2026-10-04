@@ -79,7 +79,7 @@ export function KpiHeader({
                 ) : (
                   <RefreshCw className="mr-2 h-4 w-4" />
                 )}
-                {requesting ? "Enfileirando..." : "Atualizar redação"}
+                {requesting ? "Enfileirando..." : "Atualizar mês atual"}
               </Button>
             )}
             {(refreshing || lastUpdatedAt) && (

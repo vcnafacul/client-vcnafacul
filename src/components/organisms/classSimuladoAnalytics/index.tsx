@@ -5,7 +5,7 @@ import { ClassMonthAnalytics, ClassMonthsList } from "@/types/classAnalytics/cla
 import { listClassSimuladoMonths } from "@/services/prepCourse/class/listClassSimuladoMonths";
 import { getClassSimuladoByMonth } from "@/services/prepCourse/class/getClassSimuladoByMonth";
 import { refreshClassSimuladoAnalytics } from "@/services/prepCourse/class/refreshClassSimuladoAnalytics";
-import { useRefreshPolling } from "@/hooks/useRefreshPolling";
+import { mesAtual, useAcompanharRecalculo } from "@/hooks/useAcompanharRecalculo";
 import { KpiHeader } from "./KpiHeader";
 import { SampleSizeBanner } from "./SampleSizeBanner";
 import { EmptyState } from "./EmptyState";
@@ -45,7 +45,14 @@ export function ClassSimuladoAnalytics({
   );
   const [monthData, setMonthData] = useState<ClassMonthAnalytics | null>(null);
   const [monthLoading, setMonthLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
+  /**
+   * O que está sendo recalculado (cards 09 e 10): o mês atual ("Atualizar mês
+   * atual") ou todos, numa turma ainda sem meses ("Gerar agora").
+   */
+  const [acompanhando, setAcompanhando] = useState<
+    { modo: "mes"; mes: string; baseline: string | null } | { modo: "gerar" } | null
+  >(null);
+  const refreshing = acompanhando !== null;
   const [requesting, setRequesting] = useState(false);
   const [selectedMateriaId, setSelectedMateriaId] = useState<string | undefined>(undefined);
   const [view, setView] = useState<"materia" | "frente">("materia");
@@ -82,39 +89,81 @@ export function ClassSimuladoAnalytics({
     setView(monthData.materias.length <= 1 ? "frente" : "materia");
   }, [monthData, viewTouched]);
 
-  const baselineGeneratedAt = monthData?.generatedAt ?? null;
+  const recarregarLista = useCallback(async () => {
+    const data = await listClassSimuladoMonths(classId, token);
+    setList(data);
+    onListLoaded?.(data);
+    return data;
+  }, [classId, token, onListLoaded]);
 
-  const { latest, timedOut } = useRefreshPolling(
-    classId,
-    selectedMonth ?? "",
-    baselineGeneratedAt,
-    token,
-    refreshing && !!selectedMonth
-  );
+  const doMes = useAcompanharRecalculo({
+    ativo: acompanhando?.modo === "mes",
+    consultar: () =>
+      getClassSimuladoByMonth(
+        classId,
+        acompanhando?.modo === "mes" ? acompanhando.mes : "",
+        token,
+      ),
+    pronto: (r) =>
+      !!r &&
+      acompanhando?.modo === "mes" &&
+      r.generatedAt !== acompanhando.baseline,
+  });
+
+  // Turma sem meses: não há mês para acompanhar — acompanha a lista (card 09).
+  const daLista = useAcompanharRecalculo({
+    ativo: acompanhando?.modo === "gerar",
+    consultar: () => listClassSimuladoMonths(classId, token),
+    pronto: (l) => l.months.length > 0,
+  });
 
   useEffect(() => {
-    if (latest) {
-      setMonthData(latest);
-      setRefreshing(false);
-      toast.success("Dados de simulado atualizados!");
-    }
-  }, [latest]);
+    if (!doMes.resultado) return;
+    setMonthData(doMes.resultado);
+    setAcompanhando(null);
+    toast.success("Dados de simulado atualizados!");
+    // O mês atual pode ser novo: entra no seletor sem recarregar (card 10).
+    recarregarLista().catch(console.error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doMes.resultado]);
 
   useEffect(() => {
-    if (timedOut) {
-      setRefreshing(false);
-      toast.info(
-        "Ainda processando em segundo plano. Recarregue a página em alguns minutos para ver os dados atualizados.",
-      );
-    }
-  }, [timedOut]);
+    if (!daLista.resultado) return;
+    const data = daLista.resultado;
+    setList(data);
+    onListLoaded?.(data);
+    const sorted = [...data.months].sort((a, b) => a.month.localeCompare(b.month));
+    setSelectedMonth(sorted[sorted.length - 1].month);
+    setAcompanhando(null);
+    toast.success("Relatório de simulado gerado!");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [daLista.resultado]);
 
+  useEffect(() => {
+    if (!doMes.esgotou && !daLista.esgotou) return;
+    setAcompanhando(null);
+    toast.info(
+      "Ainda processando em segundo plano. Recarregue a página em alguns minutos para ver os dados atualizados.",
+    );
+  }, [doMes.esgotou, daLista.esgotou]);
+
+  /**
+   * "Atualizar mês atual" (card 10): a api recalcula só o mês atual. A tela
+   * passa a mostrar esse mês e espera ele mudar — antes esperava o mês
+   * selecionado, que num mês antigo nunca mudava.
+   */
   const handleRefresh = useCallback(async () => {
-    if (!selectedMonth || requesting || refreshing) return;
+    if (requesting || refreshing) return;
     setRequesting(true);
     try {
       await refreshClassSimuladoAnalytics(classId, "current", token);
-      setRefreshing(true);
+      const mes = mesAtual();
+      const baseline =
+        (mes === selectedMonth
+          ? monthData?.generatedAt
+          : list?.months.find((m) => m.month === mes)?.generatedAt) ?? null;
+      setSelectedMonth(mes);
+      setAcompanhando({ modo: "mes", mes, baseline });
       toast.info(
         "Atualização enfileirada. O processamento acontece em segundo plano — pode levar alguns minutos.",
       );
@@ -130,14 +179,14 @@ export function ClassSimuladoAnalytics({
     } finally {
       setRequesting(false);
     }
-  }, [classId, selectedMonth, refreshing, requesting, token]);
+  }, [classId, list, monthData, refreshing, requesting, selectedMonth, setSelectedMonth, token]);
 
   const handleGenerate = useCallback(async () => {
     if (requesting || refreshing) return;
     setRequesting(true);
     try {
       await refreshClassSimuladoAnalytics(classId, "all", token);
-      setRefreshing(true);
+      setAcompanhando({ modo: "gerar" });
       toast.info(
         "Geração enfileirada. O processamento acontece em segundo plano — pode levar alguns minutos.",
       );
