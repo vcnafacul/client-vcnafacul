@@ -6,6 +6,18 @@ import { phoneMask } from "@/utils/phoneMask";
 import { format } from "date-fns";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 
+type AlunoDoRelatorio = AttendanceRecordSummaryByStudent["report"][number];
+
+/**
+ * Nome completo no PDF (tickets-documentacao, card 12): antes saía só o
+ * primeiro nome, ou só o nome social.
+ */
+export function nomeDoAluno(aluno: AlunoDoRelatorio): string {
+  const nome =
+    aluno.useSocialName && aluno.socialName ? aluno.socialName : aluno.name;
+  return [nome, aluno.lastName].filter(Boolean).join(" ") || "-";
+}
+
 export const summaryByStudent = async (summary: AttendanceRecordSummaryByStudent) => {
   const logoBase64 = await getBase64FromImageUrl(logo);
 
@@ -28,7 +40,7 @@ export const summaryByStudent = async (summary: AttendanceRecordSummaryByStudent
   // 2. Linhas dos estudantes
   summary.report.forEach((student) => {
     tableBody.push([
-      { text: !student.useSocialName ? student.name : student.socialName || "-", style: "tableCell",},
+      { text: nomeDoAluno(student), style: "tableCell" },
       { text: student.codEnrolled || "-", style: "tableCell",},
       { text: phoneMask(student.whatsapp) || "-", style: "tableCell",},
       { text: phoneMask(student.urgencyPhone) || "-", style: "tableCell",},

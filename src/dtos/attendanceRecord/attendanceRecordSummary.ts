@@ -26,6 +26,8 @@ export interface AttendanceRecordSummaryByStudent {
   endDate: Date;
   report: {
     name: string;
+    /** Ausente na api anterior ao card 12. */
+    lastName?: string;
     socialName: string;
     useSocialName: boolean;
     codEnrolled: string;

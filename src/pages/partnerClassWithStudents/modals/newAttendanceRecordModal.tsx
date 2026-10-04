@@ -104,7 +104,7 @@ export function NewAttendanceRecordModal({
     },
     {
       field: "cod_enrolled",
-      headerName: "Matricula",
+      headerName: "Matrícula",
       flex: 1,
       minWidth: 200,
       align: "center",

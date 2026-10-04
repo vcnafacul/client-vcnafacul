@@ -229,7 +229,7 @@ export function PartnerClassWithStudents() {
     },
     {
       field: "cod_enrolled",
-      headerName: "Nº de matrricula",
+      headerName: "Nº de matrícula",
       width: 150,
       align: "right",
       headerAlign: "right",
@@ -297,7 +297,7 @@ export function PartnerClassWithStudents() {
   const cancelledColumns: GridColDef[] = [
     {
       field: "cod_enrolled",
-      headerName: "Nº de matrricula",
+      headerName: "Nº de matrícula",
       width: 150,
       align: "right",
       headerAlign: "right",
@@ -431,7 +431,7 @@ export function PartnerClassWithStudents() {
         },
         {
           table: {
-            body: [["Nº de matricula", "Nome", "Email"], ...rows],
+            body: [["Nº de matrícula", "Nome", "Email"], ...rows],
             heights: 20,
           },
           layout: "lightHorizontalLines",
