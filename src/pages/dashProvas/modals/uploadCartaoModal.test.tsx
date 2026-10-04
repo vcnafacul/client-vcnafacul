@@ -209,6 +209,8 @@ describe("UploadCartaoModal — o toast do envio", () => {
     const texto = toastUpdate.mock.calls[0][1].render as string;
     // o sucesso é do UPLOAD; a leitura ainda vai acontecer
     expect(texto).not.toMatch(/Processando/i);
-    expect(texto).toMatch(/quando o processamento terminar/i);
+    // card 35: o modal fecha, então nada de "o resultado aparece aqui"
+    expect(texto).not.toMatch(/aparece aqui/i);
+    expect(texto).toMatch(/Acompanhe a leitura no relatório do simulado/);
   });
 });

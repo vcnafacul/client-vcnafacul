@@ -192,7 +192,8 @@ function CreateForm({
             <input
               type="text"
               value={nome}
-              placeholder="Ex.: Enem Dia 1"
+              // Card 39: o exemplo antigo ("Enem Dia 1") colidia com uma seedada.
+              placeholder="Ex.: Simulado mensal"
               onChange={(e) => setNome(e.target.value)}
               className="rounded-md border border-gray-300 px-3 py-2 text-sm"
             />

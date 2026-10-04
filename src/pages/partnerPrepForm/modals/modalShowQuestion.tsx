@@ -1,3 +1,4 @@
+import { rotuloDaLogica } from "../textosDeCondicao";
 import { opcoesLimpas, opcoesRepetidas } from "../opcoes";
 import { motivoDoErro } from "../motivoDoErro";
 import ModalTemplate, {
@@ -7,7 +8,7 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { setQuestionActive } from "@/services/partnerPrepForm/setQuestionActive";
 import { updateQuestionForm } from "@/services/partnerPrepForm/updateQuestion";
 import { useAuthStore } from "@/store/auth";
-import { ComplexCondition } from "@/types/partnerPrepForm/condition";
+import { dadosEditaveis, EditableFormData } from "./dadosEditaveis";
 import {
   AnswerCollectionType,
   AnswerType,
@@ -40,6 +41,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import { ModalConditions } from "./modalConditions";
+import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 
 interface ModalShowQuestionProps extends ModalProps {
   isOpen: boolean;
@@ -50,15 +52,6 @@ interface ModalShowQuestionProps extends ModalProps {
   toggleActiveFn?: (token: string, id: string) => Promise<void>;
   updateFn?: (token: string, id: string, question: QuestionForm) => Promise<void>;
   readOnly?: boolean;
-}
-
-interface EditableFormData {
-  text: string;
-  helpText: string;
-  collection: AnswerCollectionType;
-  conditions?: ComplexCondition;
-  options: string[];
-  active: boolean;
 }
 
 export function ModalShowQuestion({
@@ -76,20 +69,18 @@ export function ModalShowQuestion({
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isOpenConditions, setIsOpenConditions] = useState<boolean>(false);
+  // Remover todas as condições (card 22): no salvar vai `conditions: null`.
+  const [confirmarRemocao, setConfirmarRemocao] = useState(false);
+  const [condicoesRemovidas, setCondicoesRemovidas] = useState(false);
   const {
     data: { token },
   } = useAuthStore();
 
   const executeAsync = useToastAsync();
 
-  const [editableData, setEditableData] = useState<EditableFormData>({
-    text: question.text,
-    helpText: question.helpText || "",
-    collection: question.collection,
-    conditions: question.conditions || undefined,
-    options: question.options || [],
-    active: question.active,
-  });
+  const [editableData, setEditableData] = useState<EditableFormData>(
+    dadosEditaveis(question)
+  );
 
   const handleInputChange = (
     field: keyof EditableFormData,
@@ -129,13 +120,9 @@ export function ModalShowQuestion({
 
   const handleCancelEdit = () => {
     setIsEditMode(false);
-    setEditableData({
-      text: question.text,
-      helpText: question.helpText || "",
-      collection: question.collection,
-      options: question.options || [],
-      active: question.active,
-    });
+    // Com as condições: antes o Cancelar as tirava da tela (card 25).
+    setEditableData(dadosEditaveis(question));
+    setCondicoesRemovidas(false);
     setErrors({});
   };
 
@@ -173,7 +160,9 @@ export function ModalShowQuestion({
       const updatedQuestion: QuestionForm = {
         ...question,
         text: editableData.text.trim(),
-        helpText: editableData.helpText.trim() || undefined,
+        // "" apaga o texto de ajuda; `undefined` sumia do JSON e o antigo
+        // ficava (card 22).
+        helpText: editableData.helpText.trim(),
         collection: editableData.collection,
         conditions: editableData.conditions,
         options:
@@ -183,8 +172,14 @@ export function ModalShowQuestion({
         active: editableData.active,
       };
 
+      // `null` remove as condições no ms; ausente = não mexe (card 22).
+      const paraEnviar =
+        condicoesRemovidas && !editableData.conditions
+          ? ({ ...updatedQuestion, conditions: null } as unknown as QuestionForm)
+          : updatedQuestion;
+
       await executeAsync({
-        action: () => updateFn(token, question._id, updatedQuestion),
+        action: () => updateFn(token, question._id, paraEnviar),
         loadingMessage: "Atualizando questão...",
         successMessage: "Questão atualizada com sucesso!",
         errorMessage: (e: unknown) =>
@@ -451,16 +446,29 @@ export function ModalShowQuestion({
           >
             <Typography variant="h6">Condições</Typography>
             {isEditMode && (
-              <Button
-                startIcon={<FiSettings />}
-                onClick={() => setIsOpenConditions(true)}
-                variant="outlined"
-                size="small"
-              >
-                {editableData.conditions
-                  ? "Editar Condições"
-                  : "Definir Condições"}
-              </Button>
+              <Box sx={{ display: "flex", gap: 1 }}>
+                {editableData.conditions && (
+                  <Button
+                    startIcon={<FiTrash2 />}
+                    onClick={() => setConfirmarRemocao(true)}
+                    variant="outlined"
+                    color="error"
+                    size="small"
+                  >
+                    Remover condições
+                  </Button>
+                )}
+                <Button
+                  startIcon={<FiSettings />}
+                  onClick={() => setIsOpenConditions(true)}
+                  variant="outlined"
+                  size="small"
+                >
+                  {editableData.conditions
+                    ? "Editar Condições"
+                    : "Definir Condições"}
+                </Button>
+              </Box>
             )}
           </Box>
 
@@ -472,7 +480,7 @@ export function ModalShowQuestion({
                 variant="outlined"
               />
               <Chip
-                label={editableData.conditions.logic}
+                label={rotuloDaLogica(editableData.conditions.logic)}
                 color="primary"
                 variant="filled"
                 size="small"
@@ -540,11 +548,26 @@ export function ModalShowQuestion({
         handleClose={() => setIsOpenConditions(false)}
         conditions={editableData.conditions}
         availableQuestions={availableQuestions}
+        questaoId={question._id}
         onSave={(conditions) => {
           setEditableData((prev) => ({ ...prev, conditions }));
           setIsOpenConditions(false);
         }}
       />
+      <ModalConfirmCancel
+        isOpen={confirmarRemocao}
+        handleClose={() => setConfirmarRemocao(false)}
+        handleConfirm={() => {
+          setEditableData((prev) => ({ ...prev, conditions: undefined }));
+          setCondicoesRemovidas(true);
+          setConfirmarRemocao(false);
+        }}
+        text="Remover as condições desta questão?"
+      >
+        <p className="text-sm text-gray-600">
+          Ela passa a aparecer para todos. A remoção vale quando você salvar.
+        </p>
+      </ModalConfirmCancel>
     </ModalTemplate>
   );
 }

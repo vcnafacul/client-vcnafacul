@@ -1,3 +1,4 @@
+import { rotuloDaLogica } from "../textosDeCondicao";
 import { opcoesLimpas, opcoesRepetidas } from "../opcoes";
 import { motivoDoErro } from "../motivoDoErro";
 import ModalTemplate, {
@@ -387,7 +388,7 @@ export function ModalCreateQuestion({
                 variant="outlined"
               />
               <Chip
-                label={formData.conditions.logic}
+                label={rotuloDaLogica(formData.conditions.logic)}
                 color="primary"
                 variant="filled"
                 size="small"
