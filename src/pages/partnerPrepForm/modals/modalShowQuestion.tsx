@@ -1,3 +1,4 @@
+import { rotuloDaLogica } from "../textosDeCondicao";
 import { opcoesLimpas, opcoesRepetidas } from "../opcoes";
 import { motivoDoErro } from "../motivoDoErro";
 import ModalTemplate, {
@@ -479,7 +480,7 @@ export function ModalShowQuestion({
                 variant="outlined"
               />
               <Chip
-                label={editableData.conditions.logic}
+                label={rotuloDaLogica(editableData.conditions.logic)}
                 color="primary"
                 variant="filled"
                 size="small"
@@ -547,6 +548,7 @@ export function ModalShowQuestion({
         handleClose={() => setIsOpenConditions(false)}
         conditions={editableData.conditions}
         availableQuestions={availableQuestions}
+        questaoId={question._id}
         onSave={(conditions) => {
           setEditableData((prev) => ({ ...prev, conditions }));
           setIsOpenConditions(false);

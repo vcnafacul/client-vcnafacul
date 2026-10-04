@@ -1,6 +1,25 @@
 import { cartaoResposta } from "@/services/urls";
 import fetchWrapper from "@/utils/fetchWrapper";
 
+/*
+  Card 35: a tela mostra a mensagem do servidor. É ela que diferencia "não deu
+  para ler o QR" de "QR de um simulado que não existe / de outro cursinho" e de
+  "estudante de outro cursinho" — e, no 502, que o cartão JÁ FICOU registrado
+  (tentar de novo dá "já foi enviado"; o caminho é o "Reenviar" do relatório).
+  O texto fixo de cada status só aparece quando não vem corpo.
+*/
+const TEXTO_SEM_CORPO: Record<number, string> = {
+  400: "Não foi possível ler o cartão. Tire outra foto, com o QR inteiro e nítido.",
+  403: "Você não pode enviar este cartão.",
+  409: "Cartão já enviado para este aluno",
+  502: 'O leitor de cartões está fora do ar. O cartão foi registrado: use "Reenviar" no relatório do simulado quando o serviço voltar.',
+};
+
+async function mensagemDoServidor(response: Response): Promise<string | null> {
+  const corpo = (await response.json().catch(() => ({}))) as { message?: unknown };
+  return typeof corpo?.message === "string" && corpo.message ? corpo.message : null;
+}
+
 export async function uploadCartao(
   file: File,
   usuario: string,
@@ -16,21 +35,12 @@ export async function uploadCartao(
     body: formData,
   });
 
-  if (response.status === 400) throw new Error("QR do cartão ilegível");
-  /*
-    ⚠️ **409: a mensagem do backend, quando houver.** Ela diz se o cartão já
-    foi lido ou se FALHOU — e, falho, que o caminho é o "Reenviar" do relatório,
-    não um envio novo.
-  */
-  if (response.status === 409) {
-    const corpo = (await response.json().catch(() => ({}))) as { message?: unknown };
+  if (response.status >= 400) {
     throw new Error(
-      typeof corpo.message === "string" && corpo.message
-        ? corpo.message
-        : "Cartão já enviado para este aluno",
+      (await mensagemDoServidor(response)) ??
+        TEXTO_SEM_CORPO[response.status] ??
+        "Erro ao enviar o cartão",
     );
   }
-  if (response.status === 502) throw new Error("Serviço de leitura (OMR) indisponível");
-  if (response.status >= 400) throw new Error("Erro ao enviar o cartão");
   return response.json();
 }
