@@ -92,7 +92,9 @@ const propsDoShowProva = vi.hoisted(
 vi.mock("../dashProvas/modals/showProva", () => ({
   default: (props: { prova?: Prova | null }) => {
     propsDoShowProva.atual = props as Record<string, unknown>;
-    return <div data-testid="show-prova">{props.prova?.nome ?? "SEM PROVA"}</div>;
+    return (
+      <div data-testid="show-prova">{props.prova?.nome ?? "SEM PROVA"}</div>
+    );
   },
 }));
 /** Imprime o serviço de criação recebido: o cursinho não pode criar prova global. */
@@ -509,6 +511,8 @@ describe("categorias do cursinho", () => {
     // ⚠️ Sem `nomeLivre` o cursinho cai no formulário de prefixo e o nome é
     // gerado pelo pattern — "Enem Dia 1" vira 400 no backend.
     expect(props.nomeLivre).toBe(true);
+    // Card 39: sem isto, "Enem Dia 1" do cursinho nascia com a lixeira travada.
+    expect(props.protegerSeedadas).toBe(false);
     /**
      * ⚠️ Comparação por REFERÊNCIA, não por nome. Os serviços são `vi.fn()` no
      * teste, então `.name` é "spy" em todos — comparar nome deixaria passar o

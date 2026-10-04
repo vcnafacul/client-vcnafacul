@@ -282,6 +282,8 @@ function PartnerPrepProvas() {
         criarService={criarCategoriaDoCursinho}
         excluirService={deleteCategoriaCursinho}
         nomeLivre
+        // Card 39: aqui toda categoria é do cursinho — nenhuma é seedada.
+        protegerSeedadas={false}
         onCategoriasChanged={(cats) => setCategorias(cats)}
       />
     );
