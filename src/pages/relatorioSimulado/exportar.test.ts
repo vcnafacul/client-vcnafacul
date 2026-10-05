@@ -244,7 +244,8 @@ describe("planilhaDeQuestoes", () => {
       "Base geral",
     ]);
     expect(p.linhas[0]).toEqual([
-      3, 20, "A", 12, 6, 2, 60, 20, 10, 0, 0, 60, 30, 0.42, "Distrator",
+      // Erro (%) = 40: os 6 erros + os 2 sem leitura (decisão de 2026-10-04).
+      3, 20, "A", 12, 6, 2, 60, 20, 10, 0, 0, 60, 40, 0.42, "Distrator",
       // ⚠️ Card 16: o fixture não tem `acertosGeral`/`baseGeral` — é o caso da
       // api anterior ao card. Percentual vazio, base vazia; nenhum zero, que
       // afirmaria "ninguém no país acertou".
@@ -301,6 +302,19 @@ describe("planilhaDeQuestoes", () => {
     expect(p.cabecalho).toContain("Acertos");
     expect(p.cabecalho).toContain("Erros");
     expect(p.cabecalho).toContain("Erro (%)");
+  });
+
+  it("⚠️ `Erro (%)` conta a não leitura, e a coluna `Sem leitura` continua com a contagem", () => {
+    // Decisão de 2026-10-04: 31 respondentes, 1 acerto, 6 erros, 24 sem leitura.
+    const p = planilhaDeQuestoes([
+      questao({ respondentes: 31, acertos: 1, erros: 6, semLeitura: 24 }),
+    ]);
+    const celula = (c: string) => p.linhas[0][p.cabecalho.indexOf(c)];
+
+    expect(celula("Acerto (%)")).toBe(3);
+    expect(celula("Erro (%)")).toBe(97);
+    expect(celula("Erros")).toBe(6);
+    expect(celula("Sem leitura")).toBe(24);
   });
 
   it("⚠️ gabarito `null` sai como célula VAZIA, e não travessão", () => {

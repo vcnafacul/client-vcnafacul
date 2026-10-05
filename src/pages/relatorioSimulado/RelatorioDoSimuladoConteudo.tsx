@@ -32,6 +32,12 @@ import {
 } from "./distribuicao";
 import { IdentificacaoDoRelatorio } from "./IdentificacaoDoRelatorio";
 import { posicaoNaNavegacao } from "./navegacaoEntreAlunos";
+import {
+  chaveDaLinha,
+  idDaFonte,
+  simuladoDaLinha,
+  type FonteDoRelatorio,
+} from "./fonteDoRelatorio";
 import { desviosPorMateria, materiasVisiveis } from "./materiasDoRelatorio";
 import { BotaoExportar } from "./BotaoExportar";
 import { nomeDoArquivo, planilhaDeEstudantes } from "./exportar";
@@ -104,6 +110,16 @@ function VazioPorFiltro({ onLimpar }: { onLimpar: () => void }) {
 }
 
 /**
+ * tickets/034, R3 — a prova tem simulados com questões diferentes.
+ *
+ * ⚠️ Diz o que a média é, e por que a discriminação some: ela correlaciona
+ * acertar o item com a nota geral do aluno, e notas de provas diferentes não
+ * estão na mesma escala.
+ */
+export const TEXTO_COMPOSICOES_DIFERENTES =
+  "Os simulados desta prova não têm as mesmas questões: a média junta provas diferentes, e o índice de discriminação não é calculado.";
+
+/**
  * O miolo do relatório de um simulado, sem nada de roteamento.
  *
  * ⚠️ **Existe para ser usado por DUAS telas** — a rota
@@ -115,7 +131,7 @@ function VazioPorFiltro({ onLimpar }: { onLimpar: () => void }) {
  * `turmaId` da turma aberta. Este componente não sabe de `useParams`.
  */
 export function RelatorioDoSimuladoConteudo({
-  simuladoId,
+  fonte,
   turmaId,
   token,
   cabecalho,
@@ -123,7 +139,11 @@ export function RelatorioDoSimuladoConteudo({
   comTitulo = false,
   linkDoDesempenho,
 }: {
-  simuladoId: string;
+  /**
+   * Um simulado, ou uma prova — o agregado dos simulados dela (tickets/034).
+   * O conteúdo é o mesmo; só muda a quem os dados são pedidos.
+   */
+  fonte: FonteDoRelatorio;
   /** Ausente = o cursinho inteiro. */
   turmaId?: string;
   token: string;
@@ -178,12 +198,22 @@ export function RelatorioDoSimuladoConteudo({
   const [busca, setBusca] = useState("");
   const [pagina, setPagina] = useState(1);
   const [questoes, setQuestoes] = useState<QuestaoDoRelatorio[] | null>(null);
+  /** Só no relatório da prova — ver `TEXTO_COMPOSICOES_DIFERENTES`. */
+  const [questoesMesmas, setQuestoesMesmas] = useState<boolean | undefined>(
+    undefined,
+  );
   const [estadoQuestoes, setEstadoQuestoes] = useState<Estado>("idle");
 
+  /*
+    ⚠️ O id, e não o objeto, nas dependências: quem monta passa um objeto novo
+    a cada render, e o efeito rebuscaria o relatório sem parar.
+  */
+  const idFonte = idDaFonte(fonte);
+
   const carregar = () => {
-    if (!simuladoId) return;
+    if (!idFonte) return;
     setEstado("loading");
-    buscarRelatorio(token, simuladoId, turmaId)
+    buscarRelatorio(token, fonte, turmaId)
       .then((r) => {
         setRelatorio(r);
         setEstado("idle");
@@ -191,7 +221,8 @@ export function RelatorioDoSimuladoConteudo({
       .catch(() => setEstado("error"));
   };
 
-  useEffect(carregar, [simuladoId, turmaId, token]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(carregar, [fonte.tipo, idFonte, turmaId, token]);
 
   /*
     ⚠️ **As questões passam a ser buscadas em SEGUNDO PLANO, e isto reverte em
@@ -226,12 +257,13 @@ export function RelatorioDoSimuladoConteudo({
    * guarda deixa passar. Não há caminho que ponha erro e lista ao mesmo tempo.
    */
   const carregarQuestoes = () => {
-    if (!simuladoId) return;
+    if (!idFonte) return;
     if (questoes !== null) return;
     setEstadoQuestoes("loading");
-    buscarQuestoes(token, simuladoId, turmaId)
+    buscarQuestoes(token, fonte, turmaId)
       .then((r) => {
         setQuestoes(r.questoes);
+        setQuestoesMesmas(r.mesmasQuestoes);
         setEstadoQuestoes("idle");
       })
       .catch(() => setEstadoQuestoes("error"));
@@ -251,6 +283,21 @@ export function RelatorioDoSimuladoConteudo({
     ⚠️ Memoizados: `questoesComLeituraAnormal` ordena a lista de percentuais
     para a mediana, e a tela re-renderiza a cada tecla digitada na busca.
   */
+  /*
+    ⚠️ O denominador de "acertos" (tickets/034). No relatório da prova cada
+    simulado tem o seu total, e o da PROVA não é o de nenhum cartão: com totais
+    diferentes não há um número que valha para todas as linhas, e `0` faz a
+    coluna mostrar só o percentual — melhor que "61/90" num cartão de 45.
+  */
+  const totalDeQuestoes = useMemo(() => {
+    const simulados = relatorio?.resumo.simulados;
+    if (simulados === undefined || simulados.length === 0) {
+      return relatorio?.resumo.totalDeQuestoes ?? 0;
+    }
+    const totais = new Set(simulados.map((s) => s.totalDeQuestoes));
+    return totais.size === 1 ? simulados[0].totalDeQuestoes : 0;
+  }, [relatorio]);
+
   const leituraDasQuestoes = useMemo(
     () => questoesComLeituraAnormal(questoes ?? []),
     [questoes],
@@ -260,9 +307,9 @@ export function RelatorioDoSimuladoConteudo({
     () =>
       cartoesComLeituraAnormal(
         relatorio?.linhas ?? [],
-        relatorio?.resumo.totalDeQuestoes ?? 0,
+        totalDeQuestoes,
       ),
-    [relatorio],
+    [relatorio, totalDeQuestoes],
   );
 
   const todasAsMaterias = useMemo(
@@ -308,19 +355,21 @@ export function RelatorioDoSimuladoConteudo({
     () =>
       faixasDoHistograma(
         todasAsLinhas,
-        relatorio?.resumo.totalDeQuestoes ?? 0,
+        totalDeQuestoes,
       ),
-    [todasAsLinhas, relatorio?.resumo.totalDeQuestoes],
+    [todasAsLinhas, totalDeQuestoes],
   );
 
   const colunas = useMemo(
     () =>
       colunasDoRelatorio({
         comTurma: turmaId !== undefined,
+        simulados: relatorio?.resumo.simulados,
         materias,
         desvios,
         // ⚠️ Do RESUMO, não somado das linhas: é propriedade do simulado.
-        totalDeQuestoes: relatorio?.resumo.totalDeQuestoes ?? 0,
+        // No relatório da prova, ver `totalDeQuestoes` acima.
+        totalDeQuestoes,
         /*
           ⚠️ A média do RECORTE INTEIRO, não das linhas filtradas — mesma razão
           do desvio por matéria: a referência é a turma, e turma não muda com
@@ -333,7 +382,8 @@ export function RelatorioDoSimuladoConteudo({
       turmaId,
       materias,
       desvios,
-      relatorio?.resumo.totalDeQuestoes,
+      totalDeQuestoes,
+      relatorio?.resumo.simulados,
       relatorio?.resumo.aproveitamentoGeral,
     ],
   );
@@ -405,12 +455,19 @@ export function RelatorioDoSimuladoConteudo({
   const planilhaEstudantes = useMemo(
     () => planilhaDeEstudantes(linhas, {
         comTurma: turmaId !== undefined,
+        simulados: relatorio?.resumo.simulados,
         // ⚠️ TODAS as matérias do resumo, sem o teto de 4 da tela: o teto é
         // problema de largura, e planilha não tem largura.
         materias: todasAsMaterias,
-        totalDeQuestoes: relatorio?.resumo.totalDeQuestoes,
+        totalDeQuestoes,
       }),
-    [linhas, turmaId, todasAsMaterias, relatorio?.resumo.totalDeQuestoes],
+    [
+      linhas,
+      turmaId,
+      todasAsMaterias,
+      totalDeQuestoes,
+      relatorio?.resumo.simulados,
+    ],
   );
 
   const filtrosAtivos = (mostrarQuemNaoEnviou ? 1 : 0) + (busca ? 1 : 0);
@@ -502,6 +559,26 @@ export function RelatorioDoSimuladoConteudo({
         )}
 
         {/*
+          tickets/034, R3: no relatório da prova, simulados com questões
+          diferentes. Acima das abas pelo mesmo motivo do alerta de leitura — a
+          ressalva tem de vir antes dos números que ela qualifica.
+        */}
+        {(relatorio?.resumo.mesmasQuestoes === false ||
+          questoesMesmas === false) && (
+          <div className="px-4 pb-2">
+            <p
+              role="note"
+              data-testid="aviso-composicoes-diferentes"
+              className={cn(
+                "rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900",
+              )}
+            >
+              {TEXTO_COMPOSICOES_DIFERENTES}
+            </p>
+          </div>
+        )}
+
+        {/*
           ⚠️ **Acima das abas, e antes delas na ordem de leitura.** O alerta diz
           que os números abaixo podem não valer — depois da tabela seria uma
           errata, e a pessoa já teria agido sobre o que leu.
@@ -583,7 +660,7 @@ export function RelatorioDoSimuladoConteudo({
                   planilha={planilhaEstudantes}
                   nomeArquivo={nomeDoArquivo(
                     "estudantes",
-                    simuladoId ?? "",
+                    idFonte,
                     turmaId,
                   )}
                   rotulo="Exportar CSV"
@@ -610,7 +687,7 @@ export function RelatorioDoSimuladoConteudo({
                 React reconciliar linha na DOM errada depois de um sort. A
                 `matricula` (`cod_enrolled`) é que carrega unicidade.
               */
-              rowKey={(l) => `${l.usuario}:${l.matricula}`}
+              rowKey={chaveDaLinha}
               /*
                 ⚠️ Só abre para quem ENVIOU. Linha sem cartão não tem o que
                 detalhar, e a rota devolveria 404 — um clique que só sabe dar
@@ -677,7 +754,7 @@ export function RelatorioDoSimuladoConteudo({
               questoes={questoes ?? []}
               estado={estadoQuestoes}
               onRetry={carregarQuestoes}
-              nomeArquivo={nomeDoArquivo("questoes", simuladoId ?? "", turmaId)}
+              nomeArquivo={nomeDoArquivo("questoes", idFonte, turmaId)}
               /*
                 ⚠️ tickets/023, card 16: o preview busca a questão em
                 `GET questoes/:id`, que passou a exigir permissão de ver o
@@ -701,7 +778,7 @@ export function RelatorioDoSimuladoConteudo({
           no DOM (o `aberto &&` é o gate), e imprimir com ele aberto é escolha
           de quem imprime.
         */}
-        {aberto && simuladoId && (
+        {aberto && simuladoDaLinha(fonte, aberto) && (
           <DetalheDoEstudante
             /*
               ⚠️ **`key` por usuário**: sem ela a instância é reaproveitada ao
@@ -709,9 +786,13 @@ export function RelatorioDoSimuladoConteudo({
               estado de carga e filtro. É o mesmo recurso que a
               `SimuladosDaTurma` usa ao trocar de simulado, e pelo mesmo motivo.
             */
-            key={aberto.usuario}
+            key={chaveDaLinha(aberto)}
             token={token}
-            simuladoId={simuladoId}
+            /*
+              ⚠️ O simulado DA LINHA (tickets/034): no relatório da prova o
+              estudante pode ter cartão em dois, e o detalhe é de um deles.
+            */
+            simuladoId={simuladoDaLinha(fonte, aberto)!}
             /* ⚠️ Só a série (card 17) usa — ver o docblock da prop. */
             turmaId={turmaId}
             estudante={{
@@ -745,7 +826,10 @@ export function RelatorioDoSimuladoConteudo({
               que importa sem esse acoplamento.
             */
             navegacao={(() => {
-              const p = posicaoNaNavegacao(linhasDaPagina, aberto.usuario);
+              const p = posicaoNaNavegacao(
+                linhasDaPagina,
+                chaveDaLinha(aberto),
+              );
               return {
                 posicao: p.posicao,
                 total: p.total,
@@ -755,7 +839,7 @@ export function RelatorioDoSimuladoConteudo({
                 aoProximo: p.proximo ? () => setAberto(p.proximo) : null,
               };
             })()}
-            totalDeQuestoes={relatorio?.resumo.totalDeQuestoes ?? 0}
+            totalDeQuestoes={totalDeQuestoes}
             mediaDoRecorte={relatorio?.resumo.aproveitamentoGeral ?? null}
             materiasDaTurma={relatorio?.resumo.aproveitamentoPorMateria ?? []}
             isOpen

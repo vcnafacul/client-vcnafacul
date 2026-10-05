@@ -135,7 +135,8 @@ function colunasDeQuestoes(
     `porAlternativa[X]` conta `alternativaEstudante == X`, e os dois percentuais
     dividem por `respondentes`. Era o mesmo número em duas colunas que não se
     identificavam como tal. E `erros` = `respondentes − acertos − semLeitura`,
-    `% de erro` = `100 − %acerto − %semLeitura`: aritmética de primeiro grau.
+    `% de erro` = `100 − %acerto` (quem não acertou, lido ou não — decisão de
+    2026-10-04; ver `percentualDeErro`): aritmética de primeiro grau.
 
     ⚠️ Isto **não** é crítica ao ms, que conta os três de forma independente de
     propósito (derivar tornaria vazio o teste da invariante). O que estava
@@ -181,8 +182,8 @@ function colunasDeQuestoes(
     align: "right",
     /*
       ⚠️ Sobre `respondentes`, não sobre `acertos + erros` — ver o docblock de
-      `percentuais.ts`. Com este denominador, acerto% + erro% + semLeitura%
-      fecha 100%, e quem não foi lido não some da conta.
+      `percentuais.ts`. Com este denominador quem não foi lido não some da
+      conta.
     */
     cell: (q) => formatarPercentual(percentualDeAcerto(q)),
     // ⚠️ Ordena pelo número, não pelo texto: `sortValue` recebendo a string

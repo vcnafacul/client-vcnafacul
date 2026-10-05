@@ -17,6 +17,7 @@ import { Prova, ProvaDetalhada } from "../../../dtos/prova/prova";
 import { getProvaFile } from "../../../services/prova/getFile";
 import { useEffect, useState } from "react";
 import { useToastAsync } from "@/hooks/useToastAsync";
+import { buscarSimuladosComCartao } from "@/services/relatorioSimulado/buscarSimuladosComCartao";
 import { updateProvaFiles } from "@/services/prova/updateProvaFiles";
 import { getProvaById } from "../../../services/prova/getProvaById";
 import SimuladosView, { type AcaoRelatorio } from "./simuladosView";
@@ -42,6 +43,12 @@ interface ShowProvaProps {
    * `dashProvas` não passa nada aqui, e é de propósito.
    */
   relatorio?: AcaoRelatorio;
+  /**
+   * tickets/034 — "Relatório da prova": o agregado dos simulados dela. Mesma
+   * regra do `relatorio`: só a tela do cursinho passa (a rota resolve o
+   * cursinho pelo JWT), e a permissão só desabilita, com motivo.
+   */
+  relatorioDaProva?: { permitido: boolean; aoAbrir: () => void };
   /**
    * tickets/027 — só a tela do cursinho passa: a `dashProvas` (admin) não
    * duplica, porque a rota é do cursinho (resolvido pelo JWT).
@@ -70,6 +77,7 @@ function ShowProva({
   handleClose,
   onUpdated,
   relatorio,
+  relatorioDaProva,
   duplicar,
   edicao,
   gestao,
@@ -169,6 +177,43 @@ function ShowProva({
   useEffect(() => {
     if (!isOpen) setView('details');
   }, [isOpen]);
+
+  /**
+   * tickets/034 — quantos cartões os simulados desta prova têm no cursinho.
+   *
+   * ⚠️ `null` enquanto não se sabe, e aí o botão fica DESABILITADO: melhor
+   * desabilitado por um instante do que abrir uma tela vazia — mesma regra da
+   * ação por simulado no `SimuladosView`. Falhar em saber é silencioso: o modal
+   * serve a outras ações, e o botão só fica desabilitado.
+   */
+  const [cartoesDaProva, setCartoesDaProva] = useState<number | null>(null);
+  const simuladosDaProva = fullProva?.simulados;
+  useEffect(() => {
+    if (!isOpen || !relatorioDaProva?.permitido || !simuladosDaProva) return;
+    let cancelado = false;
+    const ids = new Set(simuladosDaProva.map((s) => s._id));
+    buscarSimuladosComCartao(token)
+      .then((r) => {
+        if (cancelado) return;
+        setCartoesDaProva(
+          r.simulados
+            .filter((s) => ids.has(s.simuladoId))
+            .reduce((t, s) => t + s.cartoes, 0),
+        );
+      })
+      .catch(() => {
+        if (!cancelado) setCartoesDaProva(0);
+      });
+    return () => {
+      cancelado = true;
+    };
+  }, [isOpen, relatorioDaProva?.permitido, simuladosDaProva, token]);
+
+  const motivoRelatorioDaProva = !relatorioDaProva?.permitido
+    ? "Você não tem permissão para ver o desempenho dos estudantes"
+    : (cartoesDaProva ?? 0) === 0
+      ? "Nenhum cartão-resposta enviado para os simulados desta prova"
+      : undefined;
 
 const downloadFile = async (filename: string, fileType: string) => {
   const id = toast.loading(`Baixando ${fileType}...`);
@@ -505,6 +550,31 @@ const downloadFile = async (filename: string, fileType: string) => {
                     <TableCellsIcon className="h-4 w-4" />
                     Ver simulados
                   </Button>
+
+                  {/*
+                    tickets/034. ⚠️ O `span` carrega o motivo: botão
+                    desabilitado não dispara evento de ponteiro, e o `title`
+                    nele nunca apareceria.
+                  */}
+                  {relatorioDaProva && (
+                    <span
+                      title={motivoRelatorioDaProva}
+                      className="w-full sm:w-auto"
+                    >
+                      <Button
+                        onClick={relatorioDaProva.aoAbrir}
+                        disabled={motivoRelatorioDaProva !== undefined}
+                        variant="outlined"
+                        color="primary"
+                        className="w-full sm:w-auto"
+                        data-testid="relatorio-da-prova"
+                        sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                      >
+                        <ChartBarIcon className="h-4 w-4" />
+                        Relatório da prova
+                      </Button>
+                    </span>
+                  )}
 
                   {prova.gabarito && (
                     <Button

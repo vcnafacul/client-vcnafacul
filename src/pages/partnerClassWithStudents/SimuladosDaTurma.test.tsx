@@ -62,7 +62,9 @@ describe("SimuladosDaTurma — a aba mostra o relatório", () => {
     // decidir, e que cobrava um clique a mais para chegar ao que interessa.
     montar();
 
-    expect(await screen.findByTestId("conteudo-do-relatorio")).toBeInTheDocument();
+    expect(
+      await screen.findByTestId("conteudo-do-relatorio"),
+    ).toBeInTheDocument();
     expect(document.querySelector("table")).toBeNull();
   });
 
@@ -73,7 +75,7 @@ describe("SimuladosDaTurma — a aba mostra o relatório", () => {
     expect(conteudoProps.mock.calls.at(-1)![0]).toMatchObject({
       turmaId: "t-1",
       token: "tok",
-      simuladoId: "sim-1",
+      fonte: { tipo: "simulado", simuladoId: "sim-1" },
     });
   });
 
@@ -90,7 +92,7 @@ describe("SimuladosDaTurma — a aba mostra o relatório", () => {
 
     await waitFor(() => expect(conteudoProps).toHaveBeenCalled());
     expect(conteudoProps.mock.calls.at(-1)![0]).toMatchObject({
-      simuladoId: "recente",
+      fonte: { tipo: "simulado", simuladoId: "recente" },
     });
   });
 
@@ -133,7 +135,7 @@ describe("SimuladosDaTurma — o seletor", () => {
 
     await waitFor(() =>
       expect(conteudoProps.mock.calls.at(-1)![0]).toMatchObject({
-        simuladoId: "b",
+        fonte: { tipo: "simulado", simuladoId: "b" },
       }),
     );
   });
@@ -160,7 +162,9 @@ describe("SimuladosDaTurma — vazio e erro", () => {
     montar();
 
     expect(await screen.findByText(TEXTO_VAZIO)).toBeInTheDocument();
-    expect(screen.queryByTestId("conteudo-do-relatorio")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("conteudo-do-relatorio"),
+    ).not.toBeInTheDocument();
   });
 
   it("erro é recuperável — tentar de novo rebusca", async () => {
@@ -189,7 +193,13 @@ describe("SimuladosDaTurma — identificação (card 18)", () => {
     // de contexto.
     buscarSimuladosComCartao.mockResolvedValue({
       simulados: [
-        { simuladoId: "s1", nome: "ENEM 2024", cartoes: 2, comLeituraConcluida: 2, ultimoEnvio: null },
+        {
+          simuladoId: "s1",
+          nome: "ENEM 2024",
+          cartoes: 2,
+          comLeituraConcluida: 2,
+          ultimoEnvio: null,
+        },
       ],
     });
     render(<SimuladosDaTurma turmaId="t-1" token="tok" />);
@@ -197,7 +207,9 @@ describe("SimuladosDaTurma — identificação (card 18)", () => {
     await screen.findByTestId("seletor-de-simulado");
 
     // nenhum <h1> com o nome: ele existe só dentro do <option>
-    expect(screen.queryByRole("heading", { name: "ENEM 2024" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "ENEM 2024" }),
+    ).not.toBeInTheDocument();
   });
 });
 

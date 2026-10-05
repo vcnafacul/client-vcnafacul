@@ -82,6 +82,8 @@ export const cartaoResposta = `${mssimulado}/cartao-resposta`;
  * de respostas do aluno. Este é o relatório do coordenador.
  */
 export const relatorioSimulado = `${mssimulado}/relatorio/simulado`;
+/** tickets/034 — o agregado dos simulados de uma prova. */
+export const relatorioProva = `${mssimulado}/relatorio/prova`;
 export const caderno = `${mssimulado}/caderno`;
 export const cadernoTemplate = `${caderno}/template`;
 export const auditLog = `${BASE_URL}/auditlog`;

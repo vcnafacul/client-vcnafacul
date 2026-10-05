@@ -1,4 +1,5 @@
 import type { LinhaDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
+import { chaveDaLinha } from "./fonteDoRelatorio";
 
 export interface PosicaoNaNavegacao {
   /** 1-based, para humano. */
@@ -41,10 +42,15 @@ export function navegaveis(linhas: LinhaDoRelatorio[]): LinhaDoRelatorio[] {
  */
 export function posicaoNaNavegacao(
   linhas: LinhaDoRelatorio[],
-  usuarioAberto: string,
+  /**
+   * ⚠️ A CHAVE da linha (`chaveDaLinha`), e não o `usuario`: no relatório da
+   * prova o mesmo estudante ocupa uma linha por simulado, e procurar pelo
+   * usuário travaria a navegação na primeira delas.
+   */
+  chaveAberta: string,
 ): PosicaoNaNavegacao {
   const lista = navegaveis(linhas);
-  const i = lista.findIndex((l) => l.usuario === usuarioAberto);
+  const i = lista.findIndex((l) => chaveDaLinha(l) === chaveAberta);
 
   if (i === -1) {
     return { posicao: 0, total: lista.length, anterior: null, proximo: null };

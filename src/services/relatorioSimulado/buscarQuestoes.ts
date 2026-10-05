@@ -1,14 +1,15 @@
 import { QuestoesDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import fetchWrapper from "@/utils/fetchWrapper";
+import type { FonteDoRelatorio } from "@/pages/relatorioSimulado/fonteDoRelatorio";
 import { caminhoDoRelatorio } from "./buscarRelatorio";
 
 export async function buscarQuestoes(
   token: string,
-  simuladoId: string,
+  fonte: FonteDoRelatorio | string,
   turmaId?: string,
 ): Promise<QuestoesDoRelatorio> {
   const response = await fetchWrapper(
-    `${caminhoDoRelatorio(simuladoId, turmaId)}/questoes`,
+    `${caminhoDoRelatorio(fonte, turmaId)}/questoes`,
     {
       method: "GET",
       headers: {
