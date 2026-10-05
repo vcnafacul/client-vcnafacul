@@ -72,5 +72,7 @@ describe("nomeDaFoto", () => {
     expect(nomeDaFoto("2025001", "image/png")).toBe("cartao-2025001.png");
     expect(nomeDaFoto("2025 / 01", "image/jpeg")).toBe("cartao-2025_01.jpg");
     expect(nomeDaFoto("", "")).toBe("cartao-estudante.jpg");
+    // ⚠️ estudante sem matrícula: a api manda `null`
+    expect(nomeDaFoto(null, "")).toBe("cartao-estudante.jpg");
   });
 });

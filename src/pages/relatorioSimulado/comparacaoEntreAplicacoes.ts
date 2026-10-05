@@ -20,7 +20,7 @@ import type {
 export interface LinhaComparada {
   usuario: string;
   nome: string;
-  matricula: string;
+  matricula: string | null;
   /** Fração de 0 a 1. */
   antes: number;
   depois: number;

@@ -18,7 +18,8 @@ export type StatusDoCartao =
 export interface LinhaDoRelatorio {
   usuario: string;
   nome: string;
-  matricula: string;
+  /** `null` para quem ainda não recebeu número de matrícula. */
+  matricula: string | null;
   turmaId: string | null;
   turmaNome: string | null;
   /**

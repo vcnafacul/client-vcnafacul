@@ -170,7 +170,7 @@ function VazioDeRespostas() {
 export interface EstudanteDoDetalhe {
   usuario: string;
   nome: string;
-  matricula: string;
+  matricula: string | null;
   /**
    * A linha inteira do relatório — a fonte de TODOS os números do bloco de
    * resumo (card 10).
