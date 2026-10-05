@@ -22,6 +22,14 @@ import { statusDaLinha } from "./statusDaLinha";
 
 export const VAZIO = "—";
 
+/** tickets/036 — a linha é de quem não está mais matriculado. */
+export function foraDaMatricula(l: LinhaDoRelatorio): boolean {
+  return (
+    l.situacaoDaMatricula !== undefined &&
+    l.situacaoDaMatricula !== "Matriculado"
+  );
+}
+
 /**
  * ⚠️ **A leitura só vale quando concluiu.** O `marcarFalha` do ms
  * (`historico.repository.ts`) grava **só** `status` e `falha`: não limpa
@@ -118,6 +126,17 @@ export function colunasDoRelatorio({
           </span>
           <span className={cn("block text-xs", dashV2.text.muted)}>
             {l.matricula}
+            {/*
+              tickets/036: quem enviou o cartão e depois cancelou ou teve a
+              matrícula encerrada continua aqui — o relatório é registro. A
+              situação diz por que ele não está mais na lista de matriculados.
+            */}
+            {foraDaMatricula(l) && (
+              <span data-situacao-da-matricula>
+                {l.matricula ? " · " : ""}
+                {l.situacaoDaMatricula}
+              </span>
+            )}
           </span>
         </>
       ),
