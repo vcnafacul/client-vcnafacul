@@ -109,6 +109,7 @@ import {
   GOOGLE_CADASTRO_PATH,
   GOOGLE_RETORNO_PATH,
   REGISTRATION_MONITOR,
+  RELATORIO_PROVA,
   RELATORIO_SIMULADO,
   RESET_PASSWORD_PATH,
   SIMULADO,
@@ -465,6 +466,17 @@ export function PlatformRoutes() {
               permission={data.permissao[Roles.gerenciarEstudantes]}
             >
               <RelatorioSimulado />
+            </ProtectedRoutePermission>
+          }
+        />
+        {/* tickets/034 — mesma tela e mesma permissão, recorte da prova. */}
+        <Route
+          path={`${RELATORIO_PROVA}/:provaId`}
+          element={
+            <ProtectedRoutePermission
+              permission={data.permissao[Roles.gerenciarEstudantes]}
+            >
+              <RelatorioSimulado tipo="prova" />
             </ProtectedRoutePermission>
           }
         />

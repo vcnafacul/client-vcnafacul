@@ -191,6 +191,16 @@ export interface ResumoDoRelatorio {
    * é "último cartão", e tem de continuar sendo.
    */
   ultimoCartaoEm: string | null;
+  /**
+   * Só no relatório da PROVA (tickets/034): os simulados dela com cartão no
+   * recorte. Ausente no relatório do simulado.
+   */
+  simulados?: SimuladoDoRelatorio[];
+  /**
+   * Só no relatório da prova: os simulados com cartão têm as mesmas questões.
+   * `false` = a média junta provas diferentes, e a tela avisa.
+   */
+  mesmasQuestoes?: boolean;
 }
 
 export interface RelatorioDoSimulado {
@@ -279,6 +289,17 @@ export interface QuestaoDoRelatorio {
 
 export interface QuestoesDoRelatorio {
   questoes: QuestaoDoRelatorio[];
+  /** Só no relatório da prova — `false` ⇒ discriminação `null` em toda questão. */
+  mesmasQuestoes?: boolean;
+}
+
+/** Um simulado da prova com cartão no recorte (tickets/034). */
+export interface SimuladoDoRelatorio {
+  simuladoId: string;
+  /** `null` quando o simulado foi apagado depois dos cartões. */
+  nome: string | null;
+  cartoes: number;
+  totalDeQuestoes: number;
 }
 
 export interface SimuladoComCartao {

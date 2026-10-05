@@ -110,6 +110,16 @@ function VazioPorFiltro({ onLimpar }: { onLimpar: () => void }) {
 }
 
 /**
+ * tickets/034, R3 — a prova tem simulados com questões diferentes.
+ *
+ * ⚠️ Diz o que a média é, e por que a discriminação some: ela correlaciona
+ * acertar o item com a nota geral do aluno, e notas de provas diferentes não
+ * estão na mesma escala.
+ */
+export const TEXTO_COMPOSICOES_DIFERENTES =
+  "Os simulados desta prova não têm as mesmas questões: a média junta provas diferentes, e o índice de discriminação não é calculado.";
+
+/**
  * O miolo do relatório de um simulado, sem nada de roteamento.
  *
  * ⚠️ **Existe para ser usado por DUAS telas** — a rota
@@ -188,6 +198,10 @@ export function RelatorioDoSimuladoConteudo({
   const [busca, setBusca] = useState("");
   const [pagina, setPagina] = useState(1);
   const [questoes, setQuestoes] = useState<QuestaoDoRelatorio[] | null>(null);
+  /** Só no relatório da prova — ver `TEXTO_COMPOSICOES_DIFERENTES`. */
+  const [questoesMesmas, setQuestoesMesmas] = useState<boolean | undefined>(
+    undefined,
+  );
   const [estadoQuestoes, setEstadoQuestoes] = useState<Estado>("idle");
 
   /*
@@ -249,6 +263,7 @@ export function RelatorioDoSimuladoConteudo({
     buscarQuestoes(token, fonte, turmaId)
       .then((r) => {
         setQuestoes(r.questoes);
+        setQuestoesMesmas(r.mesmasQuestoes);
         setEstadoQuestoes("idle");
       })
       .catch(() => setEstadoQuestoes("error"));
@@ -268,6 +283,21 @@ export function RelatorioDoSimuladoConteudo({
     ⚠️ Memoizados: `questoesComLeituraAnormal` ordena a lista de percentuais
     para a mediana, e a tela re-renderiza a cada tecla digitada na busca.
   */
+  /*
+    ⚠️ O denominador de "acertos" (tickets/034). No relatório da prova cada
+    simulado tem o seu total, e o da PROVA não é o de nenhum cartão: com totais
+    diferentes não há um número que valha para todas as linhas, e `0` faz a
+    coluna mostrar só o percentual — melhor que "61/90" num cartão de 45.
+  */
+  const totalDeQuestoes = useMemo(() => {
+    const simulados = relatorio?.resumo.simulados;
+    if (simulados === undefined || simulados.length === 0) {
+      return relatorio?.resumo.totalDeQuestoes ?? 0;
+    }
+    const totais = new Set(simulados.map((s) => s.totalDeQuestoes));
+    return totais.size === 1 ? simulados[0].totalDeQuestoes : 0;
+  }, [relatorio]);
+
   const leituraDasQuestoes = useMemo(
     () => questoesComLeituraAnormal(questoes ?? []),
     [questoes],
@@ -277,9 +307,9 @@ export function RelatorioDoSimuladoConteudo({
     () =>
       cartoesComLeituraAnormal(
         relatorio?.linhas ?? [],
-        relatorio?.resumo.totalDeQuestoes ?? 0,
+        totalDeQuestoes,
       ),
-    [relatorio],
+    [relatorio, totalDeQuestoes],
   );
 
   const todasAsMaterias = useMemo(
@@ -325,19 +355,21 @@ export function RelatorioDoSimuladoConteudo({
     () =>
       faixasDoHistograma(
         todasAsLinhas,
-        relatorio?.resumo.totalDeQuestoes ?? 0,
+        totalDeQuestoes,
       ),
-    [todasAsLinhas, relatorio?.resumo.totalDeQuestoes],
+    [todasAsLinhas, totalDeQuestoes],
   );
 
   const colunas = useMemo(
     () =>
       colunasDoRelatorio({
         comTurma: turmaId !== undefined,
+        simulados: relatorio?.resumo.simulados,
         materias,
         desvios,
         // ⚠️ Do RESUMO, não somado das linhas: é propriedade do simulado.
-        totalDeQuestoes: relatorio?.resumo.totalDeQuestoes ?? 0,
+        // No relatório da prova, ver `totalDeQuestoes` acima.
+        totalDeQuestoes,
         /*
           ⚠️ A média do RECORTE INTEIRO, não das linhas filtradas — mesma razão
           do desvio por matéria: a referência é a turma, e turma não muda com
@@ -350,7 +382,8 @@ export function RelatorioDoSimuladoConteudo({
       turmaId,
       materias,
       desvios,
-      relatorio?.resumo.totalDeQuestoes,
+      totalDeQuestoes,
+      relatorio?.resumo.simulados,
       relatorio?.resumo.aproveitamentoGeral,
     ],
   );
@@ -422,12 +455,19 @@ export function RelatorioDoSimuladoConteudo({
   const planilhaEstudantes = useMemo(
     () => planilhaDeEstudantes(linhas, {
         comTurma: turmaId !== undefined,
+        simulados: relatorio?.resumo.simulados,
         // ⚠️ TODAS as matérias do resumo, sem o teto de 4 da tela: o teto é
         // problema de largura, e planilha não tem largura.
         materias: todasAsMaterias,
-        totalDeQuestoes: relatorio?.resumo.totalDeQuestoes,
+        totalDeQuestoes,
       }),
-    [linhas, turmaId, todasAsMaterias, relatorio?.resumo.totalDeQuestoes],
+    [
+      linhas,
+      turmaId,
+      todasAsMaterias,
+      totalDeQuestoes,
+      relatorio?.resumo.simulados,
+    ],
   );
 
   const filtrosAtivos = (mostrarQuemNaoEnviou ? 1 : 0) + (busca ? 1 : 0);
@@ -515,6 +555,26 @@ export function RelatorioDoSimuladoConteudo({
                     </div>
                   )}
                 </>
+          </div>
+        )}
+
+        {/*
+          tickets/034, R3: no relatório da prova, simulados com questões
+          diferentes. Acima das abas pelo mesmo motivo do alerta de leitura — a
+          ressalva tem de vir antes dos números que ela qualifica.
+        */}
+        {(relatorio?.resumo.mesmasQuestoes === false ||
+          questoesMesmas === false) && (
+          <div className="px-4 pb-2">
+            <p
+              role="note"
+              data-testid="aviso-composicoes-diferentes"
+              className={cn(
+                "rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900",
+              )}
+            >
+              {TEXTO_COMPOSICOES_DIFERENTES}
+            </p>
           </div>
         )}
 
@@ -779,7 +839,7 @@ export function RelatorioDoSimuladoConteudo({
                 aoProximo: p.proximo ? () => setAberto(p.proximo) : null,
               };
             })()}
-            totalDeQuestoes={relatorio?.resumo.totalDeQuestoes ?? 0}
+            totalDeQuestoes={totalDeQuestoes}
             mediaDoRecorte={relatorio?.resumo.aproveitamentoGeral ?? null}
             materiasDaTurma={relatorio?.resumo.aproveitamentoPorMateria ?? []}
             isOpen

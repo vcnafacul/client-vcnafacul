@@ -21,8 +21,21 @@ import type { LocationStateDoRelatorio } from "./voltar";
  * e `?turma=` opcional. É o que deixa o link ser colado, favoritado e
  * recarregado sem perder onde a pessoa estava.
  */
-function RelatorioSimulado() {
-  const { simuladoId } = useParams<{ simuladoId: string }>();
+function RelatorioSimulado({
+  tipo = "simulado",
+}: {
+  /**
+   * tickets/034 — a MESMA rota serve ao relatório da prova
+   * (`relatorio-prova/:provaId`). Voltar, recorte por turma e link do
+   * desempenho são idênticos; só muda a fonte dos dados e o título da aba.
+   */
+  tipo?: "simulado" | "prova";
+}) {
+  const { simuladoId, provaId } = useParams<{
+    simuladoId: string;
+    provaId: string;
+  }>();
+  const id = tipo === "prova" ? provaId : simuladoId;
   const [searchParams] = useSearchParams();
   /**
    * ⚠️ `||`, **não `??`**: `?turma=` (valor vazio) é um resultado rotineiro de
@@ -60,11 +73,12 @@ function RelatorioSimulado() {
   */
   useEffect(() => {
     const anterior = document.title;
-    document.title = "Relatório do simulado";
+    document.title =
+      tipo === "prova" ? "Relatório da prova" : "Relatório do simulado";
     return () => {
       document.title = anterior;
     };
-  }, []);
+  }, [tipo]);
 
   /*
     ⚠️ **O link só existe com turma E com permissão** (card 17).
@@ -77,11 +91,15 @@ function RelatorioSimulado() {
   */
   const podeVerTurma = !!data.permissao[Roles.visualizarTurmas];
 
-  if (!simuladoId) return null;
+  if (!id) return null;
 
   return (
     <RelatorioDoSimuladoConteudo
-      fonte={{ tipo: "simulado", simuladoId }}
+      fonte={
+        tipo === "prova"
+          ? { tipo: "prova", provaId: id }
+          : { tipo: "simulado", simuladoId: id }
+      }
       turmaId={turmaId}
       token={data.token}
       comTitulo

@@ -2,7 +2,9 @@ import type {
   LinhaDoRelatorio,
   MediaPorMateria,
   QuestaoDoRelatorio,
+  SimuladoDoRelatorio,
 } from "@/dtos/relatorioSimulado/relatorioSimulado";
+import { SEM_NOME } from "@/pages/partnerClassWithStudents/SimuladosDaTurma";
 import { acertoGlobal } from "./dificuldadeGlobal";
 import { rotulosDasFlags } from "./flagsDaQuestao";
 import { notaNaMateria } from "./materiasDoRelatorio";
@@ -55,6 +57,11 @@ export function planilhaDeEstudantes(
   opcoes: {
     comTurma: boolean;
     /**
+     * Os simulados da prova (tickets/034) — com mais de um, a coluna Simulado
+     * entra, como na tabela.
+     */
+    simulados?: SimuladoDoRelatorio[];
+    /**
      * As matérias do recorte, do resumo.
      *
      * ⚠️ **TODAS, sem o teto de 4 da tela.** Planilha não tem problema de
@@ -70,9 +77,15 @@ export function planilhaDeEstudantes(
   },
 ): Planilha {
   const materias = opcoes.materias ?? [];
+  const comSimulado =
+    opcoes.simulados !== undefined && opcoes.simulados.length > 1;
+  const nomeDoSimulado = new Map(
+    (opcoes.simulados ?? []).map((s) => [s.simuladoId, s.nome ?? SEM_NOME]),
+  );
   const cabecalho = [
     "Estudante",
     "Matrícula",
+    ...(comSimulado ? ["Simulado"] : []),
     ...(opcoes.comTurma ? [] : ["Turma"]),
     "Situação",
     /*
@@ -104,6 +117,13 @@ export function planilhaDeEstudantes(
   const linhasCsv = linhas.map((l) => [
     l.nome,
     l.matricula,
+    ...(comSimulado
+      ? [
+          l.simuladoId === undefined
+            ? null
+            : (nomeDoSimulado.get(l.simuladoId) ?? SEM_NOME),
+        ]
+      : []),
     // ⚠️ A coluna Turma some quando o relatório já é de UMA turma — repetir o
     // mesmo nome em todas as linhas não informa nada. Mesma regra da tabela.
     ...(opcoes.comTurma ? [] : [l.turmaNome ?? null]),
