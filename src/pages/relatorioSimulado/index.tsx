@@ -81,7 +81,7 @@ function RelatorioSimulado() {
 
   return (
     <RelatorioDoSimuladoConteudo
-      simuladoId={simuladoId}
+      fonte={{ tipo: "simulado", simuladoId }}
       turmaId={turmaId}
       token={data.token}
       comTitulo

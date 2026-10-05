@@ -1,24 +1,36 @@
 import { RelatorioDoSimulado } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import fetchWrapper from "@/utils/fetchWrapper";
-import { relatorioSimulado } from "../urls";
+import type { FonteDoRelatorio } from "@/pages/relatorioSimulado/fonteDoRelatorio";
+import { relatorioProva, relatorioSimulado } from "../urls";
 
 /**
  * ⚠️ O recorte é **segmento de caminho**, não query. A api expõe
  * `/:simuladoId` e `/:simuladoId/turma/:turmaId` como rotas distintas, e o
  * `cursinhoId` nunca viaja: sai do JWT do outro lado.
  */
-export function caminhoDoRelatorio(simuladoId: string, turmaId?: string): string {
-  return turmaId
-    ? `${relatorioSimulado}/${simuladoId}/turma/${turmaId}`
-    : `${relatorioSimulado}/${simuladoId}`;
+/**
+ * ⚠️ `string` é um simuladoId — o formato de antes da prova (tickets/034), que a
+ * comparação entre aplicações continua usando.
+ */
+export function caminhoDoRelatorio(
+  fonte: FonteDoRelatorio | string,
+  turmaId?: string,
+): string {
+  const base =
+    typeof fonte === "string"
+      ? `${relatorioSimulado}/${fonte}`
+      : fonte.tipo === "simulado"
+        ? `${relatorioSimulado}/${fonte.simuladoId}`
+        : `${relatorioProva}/${fonte.provaId}`;
+  return turmaId ? `${base}/turma/${turmaId}` : base;
 }
 
 export async function buscarRelatorio(
   token: string,
-  simuladoId: string,
+  fonte: FonteDoRelatorio | string,
   turmaId?: string,
 ): Promise<RelatorioDoSimulado> {
-  const response = await fetchWrapper(caminhoDoRelatorio(simuladoId, turmaId), {
+  const response = await fetchWrapper(caminhoDoRelatorio(fonte, turmaId), {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

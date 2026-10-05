@@ -205,7 +205,7 @@ export function SimuladosDaTurma({
 
       <RelatorioDoSimuladoConteudo
         key={escolhido}
-        simuladoId={escolhido}
+        fonte={{ tipo: "simulado", simuladoId: escolhido }}
         turmaId={turmaId}
         token={token}
         comPadding={false}

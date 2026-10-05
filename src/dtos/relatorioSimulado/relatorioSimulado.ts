@@ -27,6 +27,11 @@ export interface LinhaDoRelatorio {
    * manda este campo justamente para ninguém inferir e inferir errado.
    */
   enviouCartao: boolean;
+  /**
+   * De qual simulado é o cartão (tickets/034) — ausente em quem não enviou. No
+   * relatório da prova é o que separa as linhas do mesmo estudante.
+   */
+  simuladoId?: string;
   historicoId?: string;
   status?: StatusDoCartao;
   cartaoCode?: string;

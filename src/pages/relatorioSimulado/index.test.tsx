@@ -1,9 +1,14 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import RelatorioSimulado from "./index";
 import { ROTULO_DA_DIFICULDADE } from "./recorteDoRelatorio";
-
 
 const buscarRelatorio = vi.hoisted(() => vi.fn());
 const buscarQuestoes = vi.hoisted(() => vi.fn());
@@ -24,7 +29,9 @@ vi.mock("@/services/relatorioSimulado/buscarRelatorio", () => ({
   buscarRelatorio,
   caminhoDoRelatorio: vi.fn(),
 }));
-vi.mock("@/services/relatorioSimulado/buscarQuestoes", () => ({ buscarQuestoes }));
+vi.mock("@/services/relatorioSimulado/buscarQuestoes", () => ({
+  buscarQuestoes,
+}));
 const exportAnalyticsCsv = vi.hoisted(() => vi.fn());
 vi.mock("@/utils/exportAnalyticsCsv", () => ({ exportAnalyticsCsv }));
 vi.mock("@/services/relatorioSimulado/buscarDetalheDoEstudante", () => ({
@@ -35,7 +42,9 @@ vi.mock("@/services/relatorioSimulado/buscarDetalheDoEstudante", () => ({
   evolução da turma só aparece para quem pode abrir a turma (`visualizarTurmas`),
   senão a `ProtectedRoutePermission` de lá redirecionaria calada.
 */
-const permissao = vi.hoisted(() => ({ atual: { visualizarTurmas: true } as Record<string, boolean> }));
+const permissao = vi.hoisted(() => ({
+  atual: { visualizarTurmas: true } as Record<string, boolean>,
+}));
 vi.mock("@/store/auth", () => ({
   useAuthStore: () => ({ data: { token: "tok", permissao: permissao.atual } }),
 }));
@@ -82,7 +91,10 @@ const montar = (rota: Entrada = "/relatorio-simulado/sim-1") =>
   render(
     <MemoryRouter initialEntries={[rota as never]}>
       <Routes>
-        <Route path="/relatorio-simulado/:simuladoId" element={<RelatorioSimulado />} />
+        <Route
+          path="/relatorio-simulado/:simuladoId"
+          element={<RelatorioSimulado />}
+        />
       </Routes>
     </MemoryRouter>,
   );
@@ -102,7 +114,11 @@ describe("RelatorioSimulado", () => {
     montar();
 
     await waitFor(() =>
-      expect(buscarRelatorio).toHaveBeenCalledWith("tok", "sim-1", undefined),
+      expect(buscarRelatorio).toHaveBeenCalledWith(
+        "tok",
+        { tipo: "simulado", simuladoId: "sim-1" },
+        undefined,
+      ),
     );
     expect(await screen.findByText("Ana Silva")).toBeInTheDocument();
   });
@@ -111,7 +127,11 @@ describe("RelatorioSimulado", () => {
     montar("/relatorio-simulado/sim-1?turma=t-9");
 
     await waitFor(() =>
-      expect(buscarRelatorio).toHaveBeenCalledWith("tok", "sim-1", "t-9"),
+      expect(buscarRelatorio).toHaveBeenCalledWith(
+        "tok",
+        { tipo: "simulado", simuladoId: "sim-1" },
+        "t-9",
+      ),
     );
   });
 
@@ -166,7 +186,11 @@ describe("RelatorioSimulado", () => {
     montar("/relatorio-simulado/sim-1?turma=");
 
     await waitFor(() =>
-      expect(buscarRelatorio).toHaveBeenCalledWith("tok", "sim-1", undefined),
+      expect(buscarRelatorio).toHaveBeenCalledWith(
+        "tok",
+        { tipo: "simulado", simuladoId: "sim-1" },
+        undefined,
+      ),
     );
     expect(
       await screen.findByRole("columnheader", { name: /turma/i }),
@@ -328,7 +352,11 @@ describe("RelatorioSimulado", () => {
     fireEvent.click(await screen.findByText("Ana Silva"));
 
     await waitFor(() =>
-      expect(buscarDetalheDoEstudante).toHaveBeenCalledWith("tok", "sim-1", "u1"),
+      expect(buscarDetalheDoEstudante).toHaveBeenCalledWith(
+        "tok",
+        "sim-1",
+        "u1",
+      ),
     );
   });
 
@@ -359,7 +387,9 @@ describe("RelatorioSimulado", () => {
 
   it("⚠️ clicar numa linha de quem NÃO enviou não abre nada", async () => {
     buscarRelatorio.mockResolvedValue({
-      linhas: [{ ...RESPOSTA.linhas[0], enviouCartao: false, status: undefined }],
+      linhas: [
+        { ...RESPOSTA.linhas[0], enviouCartao: false, status: undefined },
+      ],
       resumo: RESPOSTA.resumo,
     });
     montar();
@@ -405,7 +435,9 @@ describe("RelatorioSimulado — filtros da tabela", () => {
     buscarRelatorio.mockResolvedValue(COM_DUAS);
     montar();
 
-    expect(await screen.findByText(/Mostrar quem não enviou \(1\)/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Mostrar quem não enviou \(1\)/),
+    ).toBeInTheDocument();
   });
 
   it("ligar o toggle traz quem não enviou", async () => {
@@ -464,7 +496,9 @@ describe("RelatorioSimulado — filtros da tabela", () => {
       target: { value: "2025001" },
     });
 
-    await waitFor(() => expect(screen.getByText("Ana Silva")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("Ana Silva")).toBeInTheDocument(),
+    );
   });
 
   it("⚠️ filtro que esconde tudo mostra vazio DIFERENTE do recorte vazio", async () => {
@@ -478,7 +512,9 @@ describe("RelatorioSimulado — filtros da tabela", () => {
       target: { value: "zzzzz" },
     });
 
-    expect(await screen.findByTestId("estudantes-vazio-filtro")).toBeInTheDocument();
+    expect(
+      await screen.findByTestId("estudantes-vazio-filtro"),
+    ).toBeInTheDocument();
     expect(screen.queryByTestId("estudantes-vazio")).not.toBeInTheDocument();
   });
 
@@ -641,9 +677,7 @@ describe("RelatorioSimulado — acertos da turma no detalhe", () => {
 
     fireEvent.click(await screen.findByText("Ana Silva"));
 
-    await waitFor(() =>
-      expect(screen.getByText("Marcou")).toBeInTheDocument(),
-    );
+    await waitFor(() => expect(screen.getByText("Marcou")).toBeInTheDocument());
     expect(
       container.querySelector('[data-column-id="dificuldade"]')?.textContent,
     ).toBe("—");
@@ -656,9 +690,7 @@ describe("RelatorioSimulado — acertos da turma no detalhe", () => {
 
     fireEvent.click(await screen.findByText("Ana Silva"));
 
-    await waitFor(() =>
-      expect(screen.getByText("Marcou")).toBeInTheDocument(),
-    );
+    await waitFor(() => expect(screen.getByText("Marcou")).toBeInTheDocument());
     expect(
       container.querySelector('[data-column-id="dificuldade"]')?.textContent,
     ).toBe("—");
@@ -1046,7 +1078,9 @@ describe("RelatorioSimulado — distribuição da turma (card 09)", () => {
   it("desenha o histograma", async () => {
     montar();
 
-    expect(await screen.findByTestId("histograma-da-turma")).toBeInTheDocument();
+    expect(
+      await screen.findByTestId("histograma-da-turma"),
+    ).toBeInTheDocument();
   });
 
   it("⚠️ a mediana NÃO muda com o filtro de busca", async () => {
@@ -1054,7 +1088,8 @@ describe("RelatorioSimulado — distribuição da turma (card 09)", () => {
     // matéria (card 07) e da média do card 08. Buscando um aluno, a mediana
     // viraria a nota dele se fosse derivada da lista filtrada.
     montar();
-    const antes = (await screen.findByTestId("resumo-distribuicao")).textContent;
+    const antes = (await screen.findByTestId("resumo-distribuicao"))
+      .textContent;
 
     fireEvent.change(screen.getByPlaceholderText(/buscar por nome/i), {
       target: { value: "Aluno 1" },
@@ -1071,7 +1106,11 @@ describe("RelatorioSimulado — distribuição da turma (card 09)", () => {
     // MESMO do agregado mensal da turma, generalizado neste card.
     buscarRelatorio.mockResolvedValue({
       linhas: RESPOSTA_09.linhas.slice(0, 3),
-      resumo: { ...RESPOSTA_09.resumo, totalNoRecorte: 3, comLeituraConcluida: 3 },
+      resumo: {
+        ...RESPOSTA_09.resumo,
+        totalNoRecorte: 3,
+        comLeituraConcluida: 3,
+      },
     });
     montar();
     await screen.findByText("Aluno 0");
@@ -1254,11 +1293,7 @@ describe("RelatorioSimulado — navegação entre alunos (card 20)", () => {
     */
     buscarQuestoes.mockResolvedValue({ questoes: [] });
     buscarRelatorio.mockResolvedValue({
-      linhas: [
-        aluno("Ana"),
-        aluno("Bruno"),
-        aluno("Carla"),
-      ],
+      linhas: [aluno("Ana"), aluno("Bruno"), aluno("Carla")],
       resumo: { ...RESPOSTA.resumo, totalNoRecorte: 3, comLeituraConcluida: 3 },
     });
     buscarDetalheDoEstudante.mockResolvedValue({
@@ -1322,8 +1357,18 @@ describe("RelatorioSimulado — navegação entre alunos (card 20)", () => {
     buscarDetalheDoEstudante.mockResolvedValue({
       status: "completed",
       respostas: [
-        { numero: 1, questaoId: "q1", alternativaCorreta: "A", resultado: "acerto" },
-        { numero: 2, questaoId: "q2", alternativaCorreta: "A", resultado: "erro" },
+        {
+          numero: 1,
+          questaoId: "q1",
+          alternativaCorreta: "A",
+          resultado: "acerto",
+        },
+        {
+          numero: 2,
+          questaoId: "q2",
+          alternativaCorreta: "A",
+          resultado: "erro",
+        },
       ],
     });
     const { container } = montar();
@@ -1336,9 +1381,9 @@ describe("RelatorioSimulado — navegação entre alunos (card 20)", () => {
       as duas.
     */
     const linhasDoModal = () =>
-      screen.getByTestId("chips-do-detalhe").parentElement!.querySelectorAll(
-        "tbody tr",
-      );
+      screen
+        .getByTestId("chips-do-detalhe")
+        .parentElement!.querySelectorAll("tbody tr");
 
     fireEvent.click(container.querySelector('[data-chip="errou"]')!);
     expect(linhasDoModal()).toHaveLength(1);
@@ -1346,9 +1391,10 @@ describe("RelatorioSimulado — navegação entre alunos (card 20)", () => {
     fireEvent.click(screen.getByRole("button", { name: "Próximo estudante" }));
     await screen.findByRole("heading", { name: "Bruno" });
 
-    expect(
-      container.querySelector('[data-chip="tudo"]'),
-    ).toHaveAttribute("aria-pressed", "true");
+    expect(container.querySelector('[data-chip="tudo"]')).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
     expect(linhasDoModal()).toHaveLength(2);
   });
 
@@ -1575,7 +1621,11 @@ describe("RelatorioSimulado — rodapé de turma (card 15)", () => {
       respostas: [],
     });
     buscarRelatorio.mockResolvedValue({
-      linhas: [linhaDe("Ana", true), linhaDe("Bruno", true), linhaDe("Carla", false)],
+      linhas: [
+        linhaDe("Ana", true),
+        linhaDe("Bruno", true),
+        linhaDe("Carla", false),
+      ],
       resumo: {
         ...RESPOSTA.resumo,
         totalNoRecorte: 3,
@@ -1699,17 +1749,22 @@ describe("RelatorioSimulado — abrir a questão exige ver o banco (023 · 16)",
     const painel = await screen.findByRole("tabpanel");
     expect(await within(painel).findByText("5")).toBeInTheDocument();
     // …mas não é botão
-    expect(within(painel).queryByRole("button", { name: "5" })).not.toBeInTheDocument();
+    expect(
+      within(painel).queryByRole("button", { name: "5" }),
+    ).not.toBeInTheDocument();
   });
 
-  it.each(["visualizarQuestao", "visualizarQuestoesCursinho", "editarQuestoesCursinho"])(
-    "com %s: a questão vira botão (preview)",
-    async (perm) => {
-      permissao.atual = { visualizarTurmas: true, [perm]: true };
-      montar();
-      await screen.findByText("Ana Silva");
-      abrirAba(/Questões/);
-      expect(await screen.findByRole("button", { name: "5" })).toBeInTheDocument();
-    },
-  );
+  it.each([
+    "visualizarQuestao",
+    "visualizarQuestoesCursinho",
+    "editarQuestoesCursinho",
+  ])("com %s: a questão vira botão (preview)", async (perm) => {
+    permissao.atual = { visualizarTurmas: true, [perm]: true };
+    montar();
+    await screen.findByText("Ana Silva");
+    abrirAba(/Questões/);
+    expect(
+      await screen.findByRole("button", { name: "5" }),
+    ).toBeInTheDocument();
+  });
 });

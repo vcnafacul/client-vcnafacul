@@ -32,6 +32,12 @@ import {
 } from "./distribuicao";
 import { IdentificacaoDoRelatorio } from "./IdentificacaoDoRelatorio";
 import { posicaoNaNavegacao } from "./navegacaoEntreAlunos";
+import {
+  chaveDaLinha,
+  idDaFonte,
+  simuladoDaLinha,
+  type FonteDoRelatorio,
+} from "./fonteDoRelatorio";
 import { desviosPorMateria, materiasVisiveis } from "./materiasDoRelatorio";
 import { BotaoExportar } from "./BotaoExportar";
 import { nomeDoArquivo, planilhaDeEstudantes } from "./exportar";
@@ -115,7 +121,7 @@ function VazioPorFiltro({ onLimpar }: { onLimpar: () => void }) {
  * `turmaId` da turma aberta. Este componente não sabe de `useParams`.
  */
 export function RelatorioDoSimuladoConteudo({
-  simuladoId,
+  fonte,
   turmaId,
   token,
   cabecalho,
@@ -123,7 +129,11 @@ export function RelatorioDoSimuladoConteudo({
   comTitulo = false,
   linkDoDesempenho,
 }: {
-  simuladoId: string;
+  /**
+   * Um simulado, ou uma prova — o agregado dos simulados dela (tickets/034).
+   * O conteúdo é o mesmo; só muda a quem os dados são pedidos.
+   */
+  fonte: FonteDoRelatorio;
   /** Ausente = o cursinho inteiro. */
   turmaId?: string;
   token: string;
@@ -180,10 +190,16 @@ export function RelatorioDoSimuladoConteudo({
   const [questoes, setQuestoes] = useState<QuestaoDoRelatorio[] | null>(null);
   const [estadoQuestoes, setEstadoQuestoes] = useState<Estado>("idle");
 
+  /*
+    ⚠️ O id, e não o objeto, nas dependências: quem monta passa um objeto novo
+    a cada render, e o efeito rebuscaria o relatório sem parar.
+  */
+  const idFonte = idDaFonte(fonte);
+
   const carregar = () => {
-    if (!simuladoId) return;
+    if (!idFonte) return;
     setEstado("loading");
-    buscarRelatorio(token, simuladoId, turmaId)
+    buscarRelatorio(token, fonte, turmaId)
       .then((r) => {
         setRelatorio(r);
         setEstado("idle");
@@ -191,7 +207,8 @@ export function RelatorioDoSimuladoConteudo({
       .catch(() => setEstado("error"));
   };
 
-  useEffect(carregar, [simuladoId, turmaId, token]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(carregar, [fonte.tipo, idFonte, turmaId, token]);
 
   /*
     ⚠️ **As questões passam a ser buscadas em SEGUNDO PLANO, e isto reverte em
@@ -226,10 +243,10 @@ export function RelatorioDoSimuladoConteudo({
    * guarda deixa passar. Não há caminho que ponha erro e lista ao mesmo tempo.
    */
   const carregarQuestoes = () => {
-    if (!simuladoId) return;
+    if (!idFonte) return;
     if (questoes !== null) return;
     setEstadoQuestoes("loading");
-    buscarQuestoes(token, simuladoId, turmaId)
+    buscarQuestoes(token, fonte, turmaId)
       .then((r) => {
         setQuestoes(r.questoes);
         setEstadoQuestoes("idle");
@@ -583,7 +600,7 @@ export function RelatorioDoSimuladoConteudo({
                   planilha={planilhaEstudantes}
                   nomeArquivo={nomeDoArquivo(
                     "estudantes",
-                    simuladoId ?? "",
+                    idFonte,
                     turmaId,
                   )}
                   rotulo="Exportar CSV"
@@ -610,7 +627,7 @@ export function RelatorioDoSimuladoConteudo({
                 React reconciliar linha na DOM errada depois de um sort. A
                 `matricula` (`cod_enrolled`) é que carrega unicidade.
               */
-              rowKey={(l) => `${l.usuario}:${l.matricula}`}
+              rowKey={chaveDaLinha}
               /*
                 ⚠️ Só abre para quem ENVIOU. Linha sem cartão não tem o que
                 detalhar, e a rota devolveria 404 — um clique que só sabe dar
@@ -677,7 +694,7 @@ export function RelatorioDoSimuladoConteudo({
               questoes={questoes ?? []}
               estado={estadoQuestoes}
               onRetry={carregarQuestoes}
-              nomeArquivo={nomeDoArquivo("questoes", simuladoId ?? "", turmaId)}
+              nomeArquivo={nomeDoArquivo("questoes", idFonte, turmaId)}
               /*
                 ⚠️ tickets/023, card 16: o preview busca a questão em
                 `GET questoes/:id`, que passou a exigir permissão de ver o
@@ -701,7 +718,7 @@ export function RelatorioDoSimuladoConteudo({
           no DOM (o `aberto &&` é o gate), e imprimir com ele aberto é escolha
           de quem imprime.
         */}
-        {aberto && simuladoId && (
+        {aberto && simuladoDaLinha(fonte, aberto) && (
           <DetalheDoEstudante
             /*
               ⚠️ **`key` por usuário**: sem ela a instância é reaproveitada ao
@@ -709,9 +726,13 @@ export function RelatorioDoSimuladoConteudo({
               estado de carga e filtro. É o mesmo recurso que a
               `SimuladosDaTurma` usa ao trocar de simulado, e pelo mesmo motivo.
             */
-            key={aberto.usuario}
+            key={chaveDaLinha(aberto)}
             token={token}
-            simuladoId={simuladoId}
+            /*
+              ⚠️ O simulado DA LINHA (tickets/034): no relatório da prova o
+              estudante pode ter cartão em dois, e o detalhe é de um deles.
+            */
+            simuladoId={simuladoDaLinha(fonte, aberto)!}
             /* ⚠️ Só a série (card 17) usa — ver o docblock da prop. */
             turmaId={turmaId}
             estudante={{
@@ -745,7 +766,10 @@ export function RelatorioDoSimuladoConteudo({
               que importa sem esse acoplamento.
             */
             navegacao={(() => {
-              const p = posicaoNaNavegacao(linhasDaPagina, aberto.usuario);
+              const p = posicaoNaNavegacao(
+                linhasDaPagina,
+                chaveDaLinha(aberto),
+              );
               return {
                 posicao: p.posicao,
                 total: p.total,

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { LinhaDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
+import { chaveDaLinha } from "./fonteDoRelatorio";
 import { navegaveis, posicaoNaNavegacao } from "./navegacaoEntreAlunos";
 
 const linha = (
@@ -15,6 +16,8 @@ const linha = (
   status: "completed",
   ...over,
 });
+
+const chave = (usuario: string) => chaveDaLinha(linha(usuario));
 
 describe("navegaveis", () => {
   it("⚠️ pula quem NÃO enviou cartão", () => {
@@ -43,7 +46,7 @@ describe("posicaoNaNavegacao", () => {
   const tres = [linha("a"), linha("b"), linha("c")];
 
   it("no meio, tem os dois vizinhos", () => {
-    const p = posicaoNaNavegacao(tres, "b");
+    const p = posicaoNaNavegacao(tres, chave("b"));
 
     expect(p).toMatchObject({ posicao: 2, total: 3 });
     expect(p.anterior?.usuario).toBe("a");
@@ -51,14 +54,14 @@ describe("posicaoNaNavegacao", () => {
   });
 
   it("⚠️ na primeira, `anterior` é null — a seta desabilita, não some", () => {
-    const p = posicaoNaNavegacao(tres, "a");
+    const p = posicaoNaNavegacao(tres, chave("a"));
 
     expect(p.anterior).toBeNull();
     expect(p.proximo?.usuario).toBe("b");
   });
 
   it("na última, `proximo` é null", () => {
-    const p = posicaoNaNavegacao(tres, "c");
+    const p = posicaoNaNavegacao(tres, chave("c"));
 
     expect(p.proximo).toBeNull();
     expect(p.anterior?.usuario).toBe("b");
@@ -73,7 +76,7 @@ describe("posicaoNaNavegacao", () => {
       linha("c"),
     ];
 
-    expect(posicaoNaNavegacao(comVazio, "c")).toMatchObject({
+    expect(posicaoNaNavegacao(comVazio, chave("c"))).toMatchObject({
       posicao: 2,
       total: 2,
     });
@@ -86,8 +89,8 @@ describe("posicaoNaNavegacao", () => {
       linha("c"),
     ];
 
-    expect(posicaoNaNavegacao(comVazio, "a").proximo?.usuario).toBe("c");
-    expect(posicaoNaNavegacao(comVazio, "c").anterior?.usuario).toBe("a");
+    expect(posicaoNaNavegacao(comVazio, chave("a")).proximo?.usuario).toBe("c");
+    expect(posicaoNaNavegacao(comVazio, chave("c")).anterior?.usuario).toBe("a");
   });
 
   it("⚠️ a ordem é a da LISTA recebida, não alfabética nem do payload", () => {
@@ -95,19 +98,19 @@ describe("posicaoNaNavegacao", () => {
     // ordenou por aproveitamento, "próximo" é a próxima linha que ela vê.
     const ordenada = [linha("c"), linha("a"), linha("b")];
 
-    expect(posicaoNaNavegacao(ordenada, "c").proximo?.usuario).toBe("a");
+    expect(posicaoNaNavegacao(ordenada, chave("c")).proximo?.usuario).toBe("a");
   });
 
   it("⚠️ aluno FORA da lista desabilita as duas setas", () => {
     // A página pode ter mudado sob o modal aberto. Pular para um vizinho que
     // não tem relação com quem está na tela seria pior que não navegar.
-    const p = posicaoNaNavegacao(tres, "z");
+    const p = posicaoNaNavegacao(tres, chave("z"));
 
     expect(p).toMatchObject({ posicao: 0, anterior: null, proximo: null });
   });
 
   it("lista de um só não navega para lado nenhum", () => {
-    const p = posicaoNaNavegacao([linha("a")], "a");
+    const p = posicaoNaNavegacao([linha("a")], chave("a"));
 
     expect(p).toMatchObject({ posicao: 1, total: 1 });
     expect(p.anterior).toBeNull();
@@ -115,9 +118,21 @@ describe("posicaoNaNavegacao", () => {
   });
 
   it("lista vazia não estoura", () => {
-    expect(posicaoNaNavegacao([], "a")).toMatchObject({
+    expect(posicaoNaNavegacao([], chave("a"))).toMatchObject({
       posicao: 0,
       total: 0,
     });
+  });
+
+  it("⚠️ o mesmo estudante em dois simulados (relatório da prova) navega entre as duas linhas", () => {
+    const duas = [
+      linha("a", { simuladoId: "s1" }),
+      linha("a", { simuladoId: "s2" }),
+    ];
+
+    const p = posicaoNaNavegacao(duas, chaveDaLinha(duas[0]));
+
+    expect(p).toMatchObject({ posicao: 1, total: 2 });
+    expect(p.proximo?.simuladoId).toBe("s2");
   });
 });
