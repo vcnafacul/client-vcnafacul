@@ -18,7 +18,7 @@ export function BaixarFotoDoCartao({
 }: {
   token: string;
   historicoId: string;
-  matricula: string;
+  matricula: string | null;
 }) {
   const [baixando, setBaixando] = useState(false);
 

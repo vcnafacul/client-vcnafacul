@@ -8,8 +8,8 @@ import type { LinhaDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulad
  * `̀-ͯ` é a dos diacríticos combinantes, que é o que o NFD separa
  * das letras.
  */
-function normalizar(texto: string): string {
-  return texto
+function normalizar(texto: string | null | undefined): string {
+  return (texto ?? "")
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
     .toLowerCase()

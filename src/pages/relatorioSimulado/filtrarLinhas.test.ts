@@ -129,6 +129,20 @@ describe("filtrarLinhas — a busca", () => {
 
     expect(r).toEqual([]);
   });
+
+  it("⚠️ estudante sem matrícula não derruba a busca", () => {
+    // `cod_enrolled` é nulo no banco para quem ainda não recebeu número, e a
+    // api repassa `null`. Antes a busca chamava `.normalize` nele e a tela
+    // inteira quebrava.
+    const semMatricula = linha({ usuario: "u3", nome: "Ana", matricula: null });
+
+    const r = filtrarLinhas([semMatricula, ENVIOU], {
+      mostrarQuemNaoEnviou: true,
+      busca: "2026001",
+    });
+
+    expect(r).toEqual([ENVIOU]);
+  });
 });
 
 describe("totalQueNaoEnviou", () => {

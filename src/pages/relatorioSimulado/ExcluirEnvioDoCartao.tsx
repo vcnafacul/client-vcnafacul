@@ -29,7 +29,7 @@ export function ExcluirEnvioDoCartao({
   token: string;
   historicoId: string;
   nome: string;
-  matricula: string;
+  matricula: string | null;
   onExcluido: () => void;
 }) {
   const [excluindo, setExcluindo] = useState(false);
@@ -50,7 +50,7 @@ export function ExcluirEnvioDoCartao({
   return (
     <AlertDialogUI
       title="Excluir este envio?"
-      description={`O cartão de ${nome} (${matricula}) sai do relatório, com a nota e a foto, e o aluno volta a "Não enviou". Não dá para desfazer.`}
+      description={`O cartão de ${nome}${matricula ? ` (${matricula})` : ""} sai do relatório, com a nota e a foto, e o aluno volta a "Não enviou". Não dá para desfazer.`}
       onConfirm={excluir}
     >
       <AlertDialogTrigger asChild>
