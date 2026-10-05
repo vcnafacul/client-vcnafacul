@@ -46,17 +46,22 @@ describe("percentualDeAcerto e percentualDeErro", () => {
     const q = questao({ respondentes: 10, acertos: 6, erros: 3, semLeitura: 1 });
 
     expect(percentualDeAcerto(q)).toBe(60);
-    expect(percentualDeErro(q)).toBe(30);
   });
 
-  it("⚠️ acerto% + erro% + semLeitura% fecha 100%", () => {
-    // É a propriedade que justifica o denominador escolhido: a coluna "Sem
-    // leitura" ao lado explica a diferença, em vez de ela sumir na conta.
-    const q = questao({ respondentes: 10, acertos: 6, erros: 3, semLeitura: 1 });
+  it("⚠️ erro% inclui quem NÃO FOI LIDO — é o complemento do acerto", () => {
+    // O caso que motivou a decisão (2026-10-04): 31 respondentes, 1 acerto,
+    // 6 erros lidos, 24 sem leitura. Antes: 3% / 19%, e 77% sumiam da conta.
+    const q = questao({ respondentes: 31, acertos: 1, erros: 6, semLeitura: 24 });
 
-    const soma =
-      percentualDeAcerto(q)! + percentualDeErro(q)! + percentual(q.semLeitura, 10)!;
-    expect(soma).toBe(100);
+    expect(percentualDeAcerto(q)).toBe(3);
+    expect(percentualDeErro(q)).toBe(97);
+  });
+
+  it("⚠️ acerto% + erro% fecha 100% mesmo quando os dois arredondariam para fora", () => {
+    // 5/8 = 62,5% → 63 e 3/8 = 37,5% → 38: arredondados à parte somariam 101.
+    const q = questao({ respondentes: 8, acertos: 5, erros: 2, semLeitura: 1 });
+
+    expect(percentualDeAcerto(q)! + percentualDeErro(q)!).toBe(100);
   });
 
   it("questão sem respondentes devolve null nos dois", () => {

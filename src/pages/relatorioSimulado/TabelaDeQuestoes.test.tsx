@@ -90,7 +90,7 @@ describe("TabelaDeQuestoes — percentuais", () => {
     // 12 acertos em 20 respondentes = 60%. Sobre `acertos + erros` (18) daria
     // 67% — número melhor, que esconderia do cálculo os 2 sem leitura.
     //
-    // ⚠️ `% de erro` saiu da tabela no card 04 (é `100 − acerto − semLeitura`),
+    // ⚠️ `% de erro` saiu da tabela no card 04 (é `100 − acerto`),
     // mas `percentualDeErro` continua exercitado pelo CSV — ver `exportar.test.ts`.
     const { container } = render(
       <TabelaDeQuestoes questoes={[questao()]} estado="idle" />,
