@@ -21,6 +21,8 @@ export const DASH_CONTENT = "dash-content";
 export const CONFIRM_EMAIL = "confirmEmail";
 export const DASH_ANALYTICS = "monitoramento";
 export const RELATORIO_SIMULADO = "relatorio-simulado";
+/** tickets/034 — o agregado dos simulados de uma prova. */
+export const RELATORIO_PROVA = "relatorio-prova";
 
 export const SIMULADO = "simulado/";
 export const SIMULADO_RESPONDER = "/simulado/responder";

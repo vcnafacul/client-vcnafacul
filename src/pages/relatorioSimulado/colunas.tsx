@@ -2,8 +2,10 @@ import { dashV2, StatusBadge, type DashColumn } from "@/components/dashV2";
 import type {
   LinhaDoRelatorio,
   MediaPorMateria,
+  SimuladoDoRelatorio,
 } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
+import { SEM_NOME } from "@/pages/partnerClassWithStudents/SimuladosDaTurma";
 import {
   LARGURA_DA_COLUNA_DE_MATERIA,
   notaNaMateria,
@@ -62,6 +64,7 @@ function textoDoAproveitamento(linha: LinhaDoRelatorio): string {
 
 export function colunasDoRelatorio({
   comTurma,
+  simulados,
   materias = [],
   desvios = new Map(),
   totalDeQuestoes = 0,
@@ -69,6 +72,12 @@ export function colunasDoRelatorio({
 }: {
   /** `true` quando o recorte já é de uma turma — aí a coluna Turma some. */
   comTurma: boolean;
+  /**
+   * Os simulados da prova (tickets/034). Com MAIS DE UM nasce a coluna
+   * Simulado — é ela que distingue as duas linhas do mesmo estudante. Com um
+   * só, ou no relatório do simulado, seria uma coluna constante.
+   */
+  simulados?: SimuladoDoRelatorio[];
   /**
    * As matérias que viram coluna — já passadas por `materiasVisiveis`.
    *
@@ -116,6 +125,22 @@ export function colunasDoRelatorio({
       sortValue: (l) => l.nome,
     },
   ];
+
+  if (simulados !== undefined && simulados.length > 1) {
+    const nomePorId = new Map(simulados.map((s) => [s.simuladoId, s.nome]));
+    const nomeDaLinha = (l: LinhaDoRelatorio) =>
+      l.simuladoId === undefined
+        ? null
+        : (nomePorId.get(l.simuladoId) ?? SEM_NOME);
+    colunas.push({
+      id: "simulado",
+      header: "Simulado",
+      width: "10rem",
+      hideBelow: "sm",
+      cell: (l) => nomeDaLinha(l) ?? VAZIO,
+      sortValue: nomeDaLinha,
+    });
+  }
 
   // ⚠️ Coluna constante só ocupa largura que os nomes precisam.
   if (!comTurma) {

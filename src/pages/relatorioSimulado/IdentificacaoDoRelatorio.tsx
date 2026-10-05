@@ -89,6 +89,10 @@ export function IdentificacaoDoRelatorio({
 
   const contexto = [
     resumo.turmaNome,
+    // tickets/034: no relatório da prova, de quantos simulados vêm os cartões.
+    resumo.simulados !== undefined && resumo.simulados.length > 1
+      ? `${resumo.simulados.length} simulados`
+      : null,
     resumo.totalDeQuestoes > 0 ? `${resumo.totalDeQuestoes} questões` : null,
     // ⚠️ "último cartão", e não "data da prova" nem "última atividade" — ver o
     // docblock do campo no DTO.

@@ -17,7 +17,12 @@ import { deleteCategoriaCursinho } from "../../services/categoria/deleteCategori
 import { getCategoriasCursinho } from "../../services/categoria/getCategoriasCursinho";
 import { createProvaCursinho } from "../../services/prova/createProvaCursinho";
 import { getProvasCursinho } from "../../services/prova/getProvasCursinho";
-import { DASH, PARTNER_PROVAS, RELATORIO_SIMULADO } from "../../routes/path";
+import {
+  DASH,
+  PARTNER_PROVAS,
+  RELATORIO_PROVA,
+  RELATORIO_SIMULADO,
+} from "../../routes/path";
 import { useAuthStore } from "../../store/auth";
 import { formatDate } from "../../utils/date";
 import { Paginate } from "../../utils/paginate";
@@ -207,7 +212,18 @@ function PartnerPrepProvas() {
    * ⚠️ Rota nova, fora do modal. O relatório é uma tela cheia — cabe tabela,
    * resumo e abas, e é imprimível; nada disso cabe nos 672px do `ShowProva`.
    */
-  const abrirRelatorio = (simuladoId: string) => {
+  const abrirRelatorio = (simuladoId: string) =>
+    abrirRelatorioDe(`${DASH}/${RELATORIO_SIMULADO}/${simuladoId}`);
+
+  /** tickets/034 — o agregado dos simulados da prova aberta. */
+  const abrirRelatorioDaProva = () =>
+    abrirRelatorioDe(`${DASH}/${RELATORIO_PROVA}/${provaSelected!._id}`);
+
+  /**
+   * ⚠️ Os dois relatórios voltam para o MESMO lugar: a listagem com os filtros,
+   * a página e a prova que estavam abertos.
+   */
+  const abrirRelatorioDe = (caminho: string) => {
     const deAqui: EstadoDeVolta = {
       caminho: `${DASH}/${PARTNER_PROVAS}`,
       filtros: {
@@ -220,9 +236,7 @@ function PartnerPrepProvas() {
       provaId: provaSelected!._id,
       pagina: paginaAtual,
     };
-    navigate(`${DASH}/${RELATORIO_SIMULADO}/${simuladoId}`, {
-      state: { de: deAqui },
-    });
+    navigate(caminho, { state: { de: deAqui } });
   };
 
   /**
@@ -334,6 +348,10 @@ function PartnerPrepProvas() {
         relatorio={{
           permitido: !!permissao[Roles.gerenciarEstudantes],
           aoAbrir: (simulado) => abrirRelatorio(simulado._id),
+        }}
+        relatorioDaProva={{
+          permitido: !!permissao[Roles.gerenciarEstudantes],
+          aoAbrir: abrirRelatorioDaProva,
         }}
         // tickets/027: só aqui — a `dashProvas` não duplica.
         duplicar={{
