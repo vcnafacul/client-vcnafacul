@@ -668,6 +668,28 @@ describe("RelatorioSimulado — acertos da turma no detalhe", () => {
     await waitFor(() => expect(buscarQuestoes).toHaveBeenCalledTimes(1));
   });
 
+  it("⚠️ clicar na linha com a carga em segundo plano AINDA em andamento não busca de novo", async () => {
+    // A corrida que o CI (runner lento) pegou no client#899: o relatório chega,
+    // a carga das questões começa, e o clique na linha acontece antes dela
+    // terminar — com `questoes` ainda `null`.
+    let resolver: (v: unknown) => void = () => {};
+    buscarQuestoes.mockReturnValue(
+      new Promise((r) => {
+        resolver = r;
+      }),
+    );
+    buscarDetalheDoEstudante.mockResolvedValue(RESPOSTAS);
+    montar();
+
+    await waitFor(() => expect(buscarQuestoes).toHaveBeenCalledTimes(1));
+    fireEvent.click(await screen.findByText("Ana Silva"));
+    abrirAba(/quest/i);
+    resolver(QUESTOES);
+
+    await waitFor(() => expect(screen.getByText("Marcou")).toBeInTheDocument());
+    expect(buscarQuestoes).toHaveBeenCalledTimes(1);
+  });
+
   it("⚠️ o agregado falhando NÃO quebra o detalhe — coluna vira travessão", async () => {
     // O percentual é acessório: o modal veio mostrar o que o estudante marcou,
     // e travar essa leitura por causa de um número de contexto seria pior.

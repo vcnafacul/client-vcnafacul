@@ -28,6 +28,13 @@ export interface LinhaDoRelatorio {
    */
   enviouCartao: boolean;
   /**
+   * O status da matrícula HOJE (tickets/036) — "Matriculado", "Matrícula
+   * Cancelada", "Matrícula Encerrada"… O cartão enviado continua no relatório
+   * depois que a matrícula sai de "Matriculado"; a tela usa isto para dizer.
+   * Ausente na api antiga.
+   */
+  situacaoDaMatricula?: string;
+  /**
    * De qual simulado é o cartão (tickets/034) — ausente em quem não enviou. No
    * relatório da prova é o que separa as linhas do mesmo estudante.
    */

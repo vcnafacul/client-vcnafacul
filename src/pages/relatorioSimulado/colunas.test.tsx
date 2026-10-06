@@ -552,4 +552,36 @@ describe("coluna Resultado — não lidas (card 13)", () => {
       "3 não lidas",
     );
   });
+
+  describe("situação da matrícula (036)", () => {
+    it("⚠️ quem cancelou depois de enviar o cartão mostra a situação junto da matrícula", () => {
+      celula(
+        "estudante",
+        linha({ situacaoDaMatricula: "Matrícula Cancelada" }),
+      );
+      expect(screen.getByText(/Matrícula Cancelada/)).toBeInTheDocument();
+    });
+
+    it("matriculado não ganha marca nenhuma", () => {
+      const { container } = render(
+        <>
+          {colunasDoRelatorio({ comTurma: false })
+            .find((c) => c.id === "estudante")!
+            .cell(linha({ situacaoDaMatricula: "Matriculado" }))}
+        </>,
+      );
+      expect(container.querySelector("[data-situacao-da-matricula]")).toBeNull();
+    });
+
+    it("api antiga (sem o campo) também não", () => {
+      const { container } = render(
+        <>
+          {colunasDoRelatorio({ comTurma: false })
+            .find((c) => c.id === "estudante")!
+            .cell(linha())}
+        </>,
+      );
+      expect(container.querySelector("[data-situacao-da-matricula]")).toBeNull();
+    });
+  });
 });
