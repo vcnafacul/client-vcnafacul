@@ -19,7 +19,7 @@ import { Roles } from "@/enums/roles/roles";
 import { useAuthStore } from "@/store/auth";
 import { buscarQuestoes } from "@/services/relatorioSimulado/buscarQuestoes";
 import { buscarRelatorio } from "@/services/relatorioSimulado/buscarRelatorio";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { colunasDoRelatorio } from "./colunas";
 import { filtrarLinhas, totalQueNaoEnviou } from "./filtrarLinhas";
 import { DetalheDoEstudante } from "./DetalheDoEstudante";
@@ -198,6 +198,8 @@ export function RelatorioDoSimuladoConteudo({
   const [busca, setBusca] = useState("");
   const [pagina, setPagina] = useState(1);
   const [questoes, setQuestoes] = useState<QuestaoDoRelatorio[] | null>(null);
+  /** Ver o docblock em `carregarQuestoes`. */
+  const buscandoQuestoes = useRef(false);
   /** Só no relatório da prova — ver `TEXTO_COMPOSICOES_DIFERENTES`. */
   const [questoesMesmas, setQuestoesMesmas] = useState<boolean | undefined>(
     undefined,
@@ -259,6 +261,16 @@ export function RelatorioDoSimuladoConteudo({
   const carregarQuestoes = () => {
     if (!idFonte) return;
     if (questoes !== null) return;
+    /*
+      ⚠️ **A busca EM ANDAMENTO também barra.** A carga em segundo plano começa
+      assim que o relatório chega; um clique na linha antes dela terminar via
+      `questoes === null` e disparava a mesma chamada de novo. É um `ref`, e não
+      o `estadoQuestoes`, porque o clique pode rodar com o closure de um render
+      anterior ao `setEstadoQuestoes("loading")`. (Achado no CI do client#899,
+      onde o runner lento abria essa janela.)
+    */
+    if (buscandoQuestoes.current) return;
+    buscandoQuestoes.current = true;
     setEstadoQuestoes("loading");
     buscarQuestoes(token, fonte, turmaId)
       .then((r) => {
@@ -266,7 +278,11 @@ export function RelatorioDoSimuladoConteudo({
         setQuestoesMesmas(r.mesmasQuestoes);
         setEstadoQuestoes("idle");
       })
-      .catch(() => setEstadoQuestoes("error"));
+      .catch(() => setEstadoQuestoes("error"))
+      // Liberado no fim, com sucesso ou erro: o "tentar de novo" precisa passar.
+      .finally(() => {
+        buscandoQuestoes.current = false;
+      });
   };
 
   /*
