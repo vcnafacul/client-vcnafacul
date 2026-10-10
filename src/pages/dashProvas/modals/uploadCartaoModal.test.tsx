@@ -7,6 +7,7 @@ import UploadCartaoModal, {
   TEXTO_TROCAR,
 } from "./uploadCartaoModal";
 import { DEBOUNCE_MS } from "./useBuscaDeEstudantes";
+import { LINK_SABER_MAIS_LEITURA } from "./OrientacoesDoCartao";
 
 const buscarEstudantes = vi.hoisted(() => vi.fn());
 const uploadCartao = vi.hoisted(() => vi.fn());
@@ -212,5 +213,18 @@ describe("UploadCartaoModal — o toast do envio", () => {
     // card 35: o modal fecha, então nada de "o resultado aparece aqui"
     expect(texto).not.toMatch(/aparece aqui/i);
     expect(texto).toMatch(/Acompanhe a leitura no relatório do simulado/);
+  });
+});
+
+describe("UploadCartaoModal — orientações de leitura", () => {
+  it("mostra as mesmas orientações do download, com o Saber mais", () => {
+    montar();
+
+    expect(screen.getByTestId("orientacoes-do-cartao")).toBeInTheDocument();
+    expect(screen.getByText(/Fotografe o cartão em pé/)).toBeInTheDocument();
+    const link = screen.getByRole("link", { name: /saber mais/i });
+    expect(link).toHaveAttribute("href", LINK_SABER_MAIS_LEITURA);
+    // Abre em outra aba: quem está enviando não perde a busca nem a foto escolhida.
+    expect(link).toHaveAttribute("target", "_blank");
   });
 });

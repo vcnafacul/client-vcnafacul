@@ -39,6 +39,20 @@ vi.mock("react-toastify", () => ({
 vi.mock("./editDisponibilidadeModal", () => ({
   default: () => <div data-testid="modal-janela" />,
 }));
+/**
+ * ⚠️ Dublê do modal de orientações: abrir um diálogo Radix de verdade custa ~2,5s no jsdom e
+ * pesa na suíte inteira (estourava o timeout aqui e em arquivos vizinhos). O conteúdo do
+ * modal é testado em `ModalBaixarCartao.test.tsx`; aqui importa só a LIGAÇÃO: clicar no
+ * cartão abre o modal, e só o "Baixar" do modal baixa.
+ */
+vi.mock("./ModalBaixarCartao", () => ({
+  ModalBaixarCartao: (p: { onBaixar: () => void; onFechar: () => void }) => (
+    <div data-testid="modal-baixar-cartao">
+      <button onClick={p.onBaixar}>baixar (dublê)</button>
+      <button onClick={p.onFechar}>fechar (dublê)</button>
+    </div>
+  ),
+}));
 
 import SimuladosView, { type AcaoRelatorio } from "./simuladosView";
 
@@ -174,13 +188,27 @@ describe("SimuladosView", () => {
     expect(cartao).toHaveFocus();
   });
 
-  it("simulado pronto baixa o cartão e oferece o caderno", () => {
+  /*
+    ⚠️ Um teste só para abrir, fechar e baixar: clicar no ícone aciona o tooltip (Radix
+    Popper), que custa ~1,6s no jsdom — o mesmo custo do teste antigo de baixar o cartão.
+    Dois testes pagariam isso duas vezes.
+  */
+  it("⚠️ baixar o cartão abre as orientações antes; fechar não baixa, confirmar baixa", () => {
     montar([simulado()]);
+    const cartao = screen.getByRole("button", { name: /cartão de resposta/i });
 
-    fireEvent.click(
-      screen.getByRole("button", { name: /cartão de resposta/i }),
-    );
+    fireEvent.click(cartao);
+    expect(screen.getByTestId("modal-baixar-cartao")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "fechar (dublê)" }));
+    expect(screen.queryByTestId("modal-baixar-cartao")).toBeNull();
+    expect(baixarCartao).not.toHaveBeenCalled();
+
+    fireEvent.click(cartao);
+    fireEvent.click(screen.getByRole("button", { name: "baixar (dublê)" }));
+    // ⚠️ Síncrono de propósito: o `baixarCartao` é chamado no próprio clique. Um `waitFor`
+    // deixava o Popper do tooltip recalculando enquanto esperava — 4s por nada.
     expect(baixarCartao).toHaveBeenCalledWith("s1", "tok");
+    expect(screen.queryByTestId("modal-baixar-cartao")).toBeNull();
 
     expect(
       screen.getByRole("button", { name: /caderno de questões/i }),

@@ -4,6 +4,7 @@ import type { EstudanteEncontrado } from "@/dtos/cartaoResposta/buscaEstudante";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import ModalTemplate from "../../../components/templates/modalTemplate";
+import { OrientacoesDoCartao } from "./OrientacoesDoCartao";
 import { uploadCartao } from "../../../services/cartaoResposta/uploadCartao";
 import {
   MINIMO_PARA_BUSCAR,
@@ -94,6 +95,12 @@ export default function UploadCartaoModal({
     >
       <div className="p-6 space-y-4">
         <h2 className="text-lg font-semibold">Enviar cartão de resposta</h2>
+
+        {/*
+          As mesmas orientações do download do cartão: aqui é a hora da FOTO — e ainda dá
+          para conferir a marcação antes de enviar.
+        */}
+        <OrientacoesDoCartao />
 
         {/*
           ⚠️ Sem botão "Buscar": a consulta sai sozinha 500ms depois da última
