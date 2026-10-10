@@ -40,6 +40,8 @@ vi.mock("./editDisponibilidadeModal", () => ({
   default: () => <div data-testid="modal-janela" />,
 }));
 
+import { TEXTO_BAIXAR_CARTAO } from "./ModalBaixarCartao";
+import { LINK_SABER_MAIS_LEITURA } from "./OrientacoesDoCartao";
 import SimuladosView, { type AcaoRelatorio } from "./simuladosView";
 
 /**
@@ -174,17 +176,39 @@ describe("SimuladosView", () => {
     expect(cartao).toHaveFocus();
   });
 
-  it("simulado pronto baixa o cartão e oferece o caderno", () => {
+  it("⚠️ baixar o cartão abre as orientações de leitura antes, e só baixa ao confirmar", async () => {
     montar([simulado()]);
 
     fireEvent.click(
       screen.getByRole("button", { name: /cartão de resposta/i }),
     );
-    expect(baixarCartao).toHaveBeenCalledWith("s1", "tok");
+    expect(baixarCartao).not.toHaveBeenCalled();
+    expect(await screen.findByTestId("orientacoes-do-cartao")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /saber mais/i })).toHaveAttribute(
+      "href",
+      LINK_SABER_MAIS_LEITURA,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: TEXTO_BAIXAR_CARTAO }));
+    await waitFor(() => expect(baixarCartao).toHaveBeenCalledWith("s1", "tok"));
 
     expect(
       screen.getByRole("button", { name: /caderno de questões/i }),
     ).toBeInTheDocument();
+  });
+
+  it("cancelar as orientações não baixa nada", async () => {
+    montar([simulado()]);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /cartão de resposta/i }),
+    );
+    fireEvent.click(await screen.findByRole("button", { name: "Cancelar" }));
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("orientacoes-do-cartao")).toBeNull(),
+    );
+    expect(baixarCartao).not.toHaveBeenCalled();
   });
 
   it("categoria aparece junto do nome, não em coluna própria", () => {

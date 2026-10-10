@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import { SimuladoResumo } from "../../../dtos/prova/prova";
 import { baixarCaderno } from "../../../services/caderno/baixarCaderno";
 import { baixarCartao } from "../../../services/cartaoResposta/baixarCartao";
+import { ModalBaixarCartao } from "./ModalBaixarCartao";
 import AcaoIcone from "./AcaoIcone";
 import EditDisponibilidadeModal from "./editDisponibilidadeModal";
 import { proporcaoQuestoes } from "./simuladoStatus";
@@ -153,6 +154,8 @@ function SimuladosView({
   // a tabela INTEIRA, e o coordenador que quer baixar dois simulados
   // esperaria sem motivo.
   const [baixandoCaderno, setBaixandoCaderno] = useState<string | null>(null);
+  /** O simulado cujo cartão a pessoa pediu: o download espera as orientações. */
+  const [cartaoPedido, setCartaoPedido] = useState<SimuladoResumo | null>(null);
 
   // Botão de rascunho só existe com a env ligada. Lido uma vez, fora do
   // render: `import.meta.env` é estático no build do Vite.
@@ -253,7 +256,7 @@ function SimuladosView({
       <AcaoIcone
         icone={ClipboardDocumentCheckIcon}
         rotulo="Baixar cartão de resposta"
-        onClick={() => handleDownloadCartao(simulado)}
+        onClick={() => setCartaoPedido(simulado)}
         desabilitado={simulado.bloqueado}
         motivoDesabilitado={`Cartão de resposta indisponível. ${MOTIVO_BLOQUEADO}`}
       />
@@ -492,6 +495,19 @@ function SimuladosView({
               </table>
             </div>
           )}
+
+        {cartaoPedido && (
+          <ModalBaixarCartao
+            nomeSimulado={cartaoPedido.nome}
+            aberto
+            onFechar={() => setCartaoPedido(null)}
+            onBaixar={() => {
+              const s = cartaoPedido;
+              setCartaoPedido(null);
+              handleDownloadCartao(s);
+            }}
+          />
+        )}
 
         {editing && (
           <EditDisponibilidadeModal
