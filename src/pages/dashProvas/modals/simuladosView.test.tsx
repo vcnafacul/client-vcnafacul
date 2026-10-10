@@ -39,9 +39,21 @@ vi.mock("react-toastify", () => ({
 vi.mock("./editDisponibilidadeModal", () => ({
   default: () => <div data-testid="modal-janela" />,
 }));
+/**
+ * ⚠️ Dublê do modal de orientações: abrir um diálogo Radix de verdade custa ~2,5s no jsdom e
+ * pesa na suíte inteira (estourava o timeout aqui e em arquivos vizinhos). O conteúdo do
+ * modal é testado em `ModalBaixarCartao.test.tsx`; aqui importa só a LIGAÇÃO: clicar no
+ * cartão abre o modal, e só o "Baixar" do modal baixa.
+ */
+vi.mock("./ModalBaixarCartao", () => ({
+  ModalBaixarCartao: (p: { onBaixar: () => void; onFechar: () => void }) => (
+    <div data-testid="modal-baixar-cartao">
+      <button onClick={p.onBaixar}>baixar (dublê)</button>
+      <button onClick={p.onFechar}>fechar (dublê)</button>
+    </div>
+  ),
+}));
 
-import { TEXTO_BAIXAR_CARTAO } from "./ModalBaixarCartao";
-import { LINK_SABER_MAIS_LEITURA } from "./OrientacoesDoCartao";
 import SimuladosView, { type AcaoRelatorio } from "./simuladosView";
 
 /**
@@ -176,44 +188,31 @@ describe("SimuladosView", () => {
     expect(cartao).toHaveFocus();
   });
 
-  it("⚠️ baixar o cartão abre as orientações de leitura antes, e só baixa ao confirmar", async () => {
+  /*
+    ⚠️ Um teste só para abrir, fechar e baixar: clicar no ícone aciona o tooltip (Radix
+    Popper), que custa ~1,6s no jsdom — o mesmo custo do teste antigo de baixar o cartão.
+    Dois testes pagariam isso duas vezes.
+  */
+  it("⚠️ baixar o cartão abre as orientações antes; fechar não baixa, confirmar baixa", () => {
     montar([simulado()]);
+    const cartao = screen.getByRole("button", { name: /cartão de resposta/i });
 
-    fireEvent.click(
-      screen.getByRole("button", { name: /cartão de resposta/i }),
-    );
+    fireEvent.click(cartao);
+    expect(screen.getByTestId("modal-baixar-cartao")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "fechar (dublê)" }));
+    expect(screen.queryByTestId("modal-baixar-cartao")).toBeNull();
     expect(baixarCartao).not.toHaveBeenCalled();
-    expect(await screen.findByTestId("orientacoes-do-cartao")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /saber mais/i })).toHaveAttribute(
-      "href",
-      LINK_SABER_MAIS_LEITURA,
-    );
 
-    fireEvent.click(screen.getByRole("button", { name: TEXTO_BAIXAR_CARTAO }));
-    await waitFor(() => expect(baixarCartao).toHaveBeenCalledWith("s1", "tok"));
+    fireEvent.click(cartao);
+    fireEvent.click(screen.getByRole("button", { name: "baixar (dublê)" }));
+    // ⚠️ Síncrono de propósito: o `baixarCartao` é chamado no próprio clique. Um `waitFor`
+    // deixava o Popper do tooltip recalculando enquanto esperava — 4s por nada.
+    expect(baixarCartao).toHaveBeenCalledWith("s1", "tok");
+    expect(screen.queryByTestId("modal-baixar-cartao")).toBeNull();
 
     expect(
       screen.getByRole("button", { name: /caderno de questões/i }),
     ).toBeInTheDocument();
-    /*
-      ⚠️ 20s, e não os 5s padrão: é o primeiro teste do arquivo a abrir um diálogo
-      Radix, e essa primeira abertura custa ~2,5s isolada no jsdom — com a suíte
-      inteira rodando, passou de 5s (mesmo contorno do `dashProvas/index.test.tsx`).
-    */
-  }, 20_000);
-
-  it("cancelar as orientações não baixa nada", async () => {
-    montar([simulado()]);
-
-    fireEvent.click(
-      screen.getByRole("button", { name: /cartão de resposta/i }),
-    );
-    fireEvent.click(await screen.findByRole("button", { name: "Cancelar" }));
-
-    await waitFor(() =>
-      expect(screen.queryByTestId("orientacoes-do-cartao")).toBeNull(),
-    );
-    expect(baixarCartao).not.toHaveBeenCalled();
   });
 
   it("categoria aparece junto do nome, não em coluna própria", () => {
