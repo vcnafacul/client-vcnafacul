@@ -195,7 +195,12 @@ describe("SimuladosView", () => {
     expect(
       screen.getByRole("button", { name: /caderno de questões/i }),
     ).toBeInTheDocument();
-  });
+    /*
+      ⚠️ 20s, e não os 5s padrão: é o primeiro teste do arquivo a abrir um diálogo
+      Radix, e essa primeira abertura custa ~2,5s isolada no jsdom — com a suíte
+      inteira rodando, passou de 5s (mesmo contorno do `dashProvas/index.test.tsx`).
+    */
+  }, 20_000);
 
   it("cancelar as orientações não baixa nada", async () => {
     montar([simulado()]);
