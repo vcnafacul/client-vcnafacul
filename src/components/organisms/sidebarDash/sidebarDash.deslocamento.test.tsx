@@ -80,7 +80,7 @@ describe("SidebarDash — menu fixo à mesma distância do header nos dois estad
   it("menu fixo: fechado e aberto, a mesma margem; o 1º card sem a margem própria", () => {
     comLargura(false);
     renderizar();
-    expect(DISTANCIA_DO_HEADER).toBe(50);
+    expect(DISTANCIA_DO_HEADER).toBe(20);
     expect(lista().style.marginTop).toBe(esperado);
     expect(lista().className).toContain("[&>div:first-child>div:first-child]:!mt-0");
 

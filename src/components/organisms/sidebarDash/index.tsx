@@ -31,7 +31,7 @@ import { DashCardMenu } from "../../molecules/dashCard";
  * ✏️ **A distância (px) entre o header e o primeiro card do menu lateral fixo** — a mesma com
  * todas as seções fechadas e com uma aberta. É aqui que se ajusta.
  */
-export const DISTANCIA_DO_HEADER = 50;
+export const DISTANCIA_DO_HEADER = 20;
 
 /**
  * Altura do header fixo da dash. ⚠️ O mesmo 76px de `baseTemplate`/`dashTemplate` (ver o
