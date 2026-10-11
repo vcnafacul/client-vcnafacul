@@ -21,6 +21,7 @@ import { buscarSimuladosComCartao } from "@/services/relatorioSimulado/buscarSim
 import { updateProvaFiles } from "@/services/prova/updateProvaFiles";
 import { getProvaById } from "../../../services/prova/getProvaById";
 import SimuladosView, { type AcaoRelatorio } from "./simuladosView";
+import { MaterialDaProva } from "./MaterialDaProva";
 import { ehCategoriaLivre } from "../progresso";
 import UploadButton from "../../../components/molecules/uploadButton";
 import { BuscarAtualizacoes } from "../components/BuscarAtualizacoes";
@@ -69,6 +70,11 @@ interface ShowProvaProps {
     aoEditar: () => void;
     aoExcluir: () => void;
   };
+  /**
+   * tickets/038 — "Cartão da prova" e "Caderno da prova" (Enem Dia 1/2 do cursinho). Só a
+   * tela do cursinho liga; os botões só aparecem nessas categorias.
+   */
+  materialDaProva?: boolean;
 }
 
 function ShowProva({
@@ -81,6 +87,7 @@ function ShowProva({
   duplicar,
   edicao,
   gestao,
+  materialDaProva,
 }: ShowProvaProps) {
   const executeAsync = useToastAsync();
   const [isEditingFiles, setIsEditingFiles] = useState(false);
@@ -574,6 +581,15 @@ const downloadFile = async (filename: string, fileType: string) => {
                         Relatório da prova
                       </Button>
                     </span>
+                  )}
+
+                  {materialDaProva && (
+                    <MaterialDaProva
+                      prova={prova}
+                      categoria={fullProva?.categoria}
+                      simulados={fullProva?.simulados}
+                      token={token}
+                    />
                   )}
 
                   {prova.gabarito && (
