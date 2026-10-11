@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { useEffect } from "react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
-import { DESLOCAMENTO_COM_SECAO_ABERTA, SidebarDash } from ".";
+import { DISTANCIA_DO_HEADER, SidebarDash } from ".";
 
 const { Icone } = vi.hoisted(() => ({ Icone: () => null }));
 
@@ -66,30 +66,36 @@ const renderizar = () =>
   );
 
 /**
- * No menu fixo, abrir "Cursinho" encolhia os cards e o primeiro ficava metade atrás do
- * header. Com uma seção aberta, a lista desce metade de um card + 100px — só no menu fixo.
+ * O primeiro card do menu fixo fica sempre a `DISTANCIA_DO_HEADER` do header — com tudo
+ * fechado e com uma seção aberta. Antes ficava colado no header (fechado) e metade atrás dele
+ * (aberto).
+ *
+ * ⚠️ No jsdom tudo mede 0: a lista "cairia" no topo, e a margem é o header (76) + a
+ * distância. O que se prova é a regra (a mesma margem nos dois estados, e o 1º card sem a
+ * margem própria); a medida real é do navegador.
  */
-describe("SidebarDash — deslocamento com uma seção aberta", () => {
-  it("menu fixo: sem seção aberta, sem deslocamento; aberta, desce metade do card + 100px", () => {
+describe("SidebarDash — menu fixo à mesma distância do header nos dois estados", () => {
+  const esperado = `${76 + DISTANCIA_DO_HEADER}px`;
+
+  it("menu fixo: fechado e aberto, a mesma margem; o 1º card sem a margem própria", () => {
     comLargura(false);
     renderizar();
-    expect(lista().style.marginTop).toBe("");
+    expect(DISTANCIA_DO_HEADER).toBe(50);
+    expect(lista().style.marginTop).toBe(esperado);
+    expect(lista().className).toContain("[&>div:first-child>div:first-child]:!mt-0");
 
     fireEvent.click(screen.getByText("Cursinho"));
-    expect(DESLOCAMENTO_COM_SECAO_ABERTA).toBe("calc(4rem / 2 + 100px)");
-    // (o jsdom normaliza o calc: 4rem / 2 vira 2rem, e reordena os termos)
-    expect(lista().style.marginTop).toMatch(/2rem/);
-    expect(lista().style.marginTop).toMatch(/100px/);
+    expect(lista().style.marginTop).toBe(esperado);
 
-    // fechar a seção volta ao normal
     fireEvent.click(screen.getByText("Cursinho"));
-    expect(lista().style.marginTop).toBe("");
+    expect(lista().style.marginTop).toBe(esperado);
   });
 
-  it("gaveta (até tablet): não desloca", () => {
+  it("gaveta (até tablet): nada muda", () => {
     comLargura(true);
     renderizar();
     fireEvent.click(screen.getByText("Cursinho"));
     expect(lista().style.marginTop).toBe("");
+    expect(lista().className).not.toContain("!mt-0");
   });
 });

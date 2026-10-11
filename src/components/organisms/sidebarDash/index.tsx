@@ -24,23 +24,35 @@ import {
   getMateriasGroupedByArea,
 } from "@/services/content/getMateriasGroupedByArea";
 import { useAuthStore } from "@/store/auth";
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { DashCardMenu } from "../../molecules/dashCard";
 
 /**
- * Altura dos cards coloridos quando uma seção está aberta — o `h-16` do tamanho `small` do
- * `DashCard`. Se ele mudar, mude aqui.
+ * ✏️ **A distância (px) entre o header e o primeiro card do menu lateral fixo** — a mesma com
+ * todas as seções fechadas e com uma aberta. É aqui que se ajusta.
  */
-const ALTURA_DO_CARD_COM_SECAO_ABERTA = "4rem";
+export const DISTANCIA_DO_HEADER = 50;
 
 /**
- * ⚠️ Só no menu FIXO (fora da gaveta), e só com uma seção aberta. O menu fixo começa no topo
- * da tela, embaixo do header de 76px: fechado, o primeiro card fica abaixo do header graças à
- * margem dos cards grandes; aberta uma seção, os cards encolhem e perdem a margem, e o
- * primeiro ("Cursinho") ficava metade escondido atrás do header. Desloca a lista em metade da
- * altura de um card + 100px.
+ * Altura do header fixo da dash. ⚠️ O mesmo 76px de `baseTemplate`/`dashTemplate` (ver o
+ * comentário no `dashTemplate` sobre não unificar agora).
  */
-export const DESLOCAMENTO_COM_SECAO_ABERTA = `calc(${ALTURA_DO_CARD_COM_SECAO_ABERTA} / 2 + 100px)`;
+const ALTURA_DO_HEADER = 76;
+
+/**
+ * Onde a lista do menu fixo tem de começar: logo abaixo do header + a distância.
+ *
+ * ⚠️ **Medido, e não somado à mão.** O menu fixo começa no TOPO da tela, embaixo do header, e
+ * acima da lista há o cabeçalho do próprio menu (botão de recolher, atalho de suporte), cuja
+ * altura muda com a permissão. Antes, o primeiro card ficava colado no header com tudo
+ * fechado e metade escondido atrás dele com uma seção aberta. Medindo onde a lista cairia sem
+ * margem, a margem que falta é exata nos dois estados.
+ */
+function margemDaLista(lista: HTMLElement): number {
+  const atual = parseFloat(getComputedStyle(lista).marginTop) || 0;
+  const semMargem = lista.getBoundingClientRect().top - atual;
+  return Math.max(0, ALTURA_DO_HEADER + DISTANCIA_DO_HEADER - semMargem);
+}
 
 export function SidebarDash() {
   const [opened, setOpened] = useState<number>(0);
@@ -50,6 +62,22 @@ export function SidebarDash() {
   // Na gaveta (mobile/tablet) o atalho "Suporte" no topo só ocupa espaço: a
   // inbox já é um item do próprio menu. Fica só na sidebar fixa do desktop.
   const { isMobile } = useSidebar();
+
+  // Só no menu FIXO: na gaveta (até tablet) o menu abre por cima de tudo, sem header em cima.
+  const listaRef = useRef<HTMLUListElement>(null);
+  const [margemTopo, setMargemTopo] = useState<number | null>(null);
+  useLayoutEffect(() => {
+    if (isMobile) {
+      setMargemTopo(null);
+      return;
+    }
+    const medir = () => {
+      if (listaRef.current) setMargemTopo(margemDaLista(listaRef.current));
+    };
+    medir();
+    window.addEventListener("resize", medir);
+    return () => window.removeEventListener("resize", medir);
+  }, [isMobile]);
 
   const { data: areas } = useFetch<AreaWithMaterias[]>(
     (signal) => getMateriasGroupedByArea(signal),
@@ -82,11 +110,15 @@ export function SidebarDash() {
         <SidebarGroup className="overflow-y-scroll scrollbar-hide pt-0">
           <SidebarGroupContent className="group-data-[collapsible=icon]:hidden">
             <SidebarMenu
-              className="pt-0 pb-4 gap-0"
+              ref={listaRef}
+              className={`pt-0 pb-4 gap-0 ${
+                // ⚠️ Sem a margem do 1º card no menu fixo: fechado ele tem `mt-4` e aberto
+                // `mt-0`, e é essa diferença que fazia os dois estados ficarem em alturas
+                // diferentes. O espaço até o header passa a ser todo da lista.
+                isMobile ? "" : "[&>div:first-child>div:first-child]:!mt-0"
+              }`}
               style={
-                !isMobile && opened !== 0
-                  ? { marginTop: DESLOCAMENTO_COM_SECAO_ABERTA }
-                  : undefined
+                margemTopo !== null ? { marginTop: margemTopo } : undefined
               }
             >
               {dashCardMenuItems.map((card) => (
