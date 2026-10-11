@@ -211,9 +211,15 @@ export function DetalheDoEstudante({
   mediaDoRecorte = null,
   materiasDaTurma = [],
   onEnvioExcluido,
+  nomeDoSimulado,
 }: {
   token: string;
   simuladoId: string;
+  /**
+   * tickets/038 (R16): no relatório da PROVA, de qual simulado é o cartão aberto — no ENEM
+   * Dia 1 do cursinho, termina em Inglês ou Espanhol. Ausente no relatório do simulado.
+   */
+  nomeDoSimulado?: string | null;
   /**
    * O recorte, para a série (card 17).
    *
@@ -382,6 +388,14 @@ export function DetalheDoEstudante({
               <p className={cn("text-xs", dashV2.text.muted)}>
                 {estudante.matricula}
               </p>
+              {nomeDoSimulado && (
+                <p
+                  data-testid="simulado-do-detalhe"
+                  className={cn("truncate text-xs", dashV2.text.secondary)}
+                >
+                  {nomeDoSimulado}
+                </p>
+              )}
             </div>
             {navegacao !== undefined && (
               <SetaDeNavegacao

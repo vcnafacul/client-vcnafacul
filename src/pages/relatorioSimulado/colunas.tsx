@@ -6,6 +6,7 @@ import type {
 } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
 import { SEM_NOME } from "@/pages/partnerClassWithStudents/SimuladosDaTurma";
+import { TEXTO_AGUARDANDO_SIMULADO } from "./fonteDoRelatorio";
 import {
   LARGURA_DA_COLUNA_DE_MATERIA,
   notaNaMateria,
@@ -150,7 +151,9 @@ export function colunasDoRelatorio({
     const nomeDaLinha = (l: LinhaDoRelatorio) =>
       l.simuladoId === undefined
         ? null
-        : (nomePorId.get(l.simuladoId) ?? SEM_NOME);
+        : l.simuladoId === null
+          ? TEXTO_AGUARDANDO_SIMULADO
+          : (nomePorId.get(l.simuladoId) ?? SEM_NOME);
     colunas.push({
       id: "simulado",
       header: "Simulado",
