@@ -20,11 +20,12 @@ import { CreateProva, Prova } from "../../../dtos/prova/prova";
 import { ICategoria, isCompartilhada } from "../../../dtos/categoria/categoria";
 import { Edicao, edicaoArray } from "../../../enums/prova/edicao";
 import { textoDaCompartilhada } from "./textoDaCompartilhada";
+import { categoriasDoExame, opcoesDeExame } from "./exameDaCategoria";
 import { useToastAsync } from "../../../hooks/useToastAsync";
 import { createProva } from "../../../services/prova/createProva";
 import { useAuthStore } from "../../../store/auth";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { OpcaoNovasVersoes } from "../components/OpcaoNovasVersoes";
 
 export const TEXTO_CARREGANDO_CATEGORIAS = "Carregando categorias…";
@@ -61,7 +62,7 @@ function NewProva({
   erroCategorias = false,
   onTentarDeNovo,
 }: NewProvaProps) {
-  const { register, handleSubmit, watch } = useForm();
+  const { register, handleSubmit, watch, setValue } = useForm();
   const [receberNovasVersoes, setReceberNovasVersoes] = useState(false);
   // No celular (abaixo de 768px) os campos ficam compactos, como na tela de Estudantes.
   const acimaDeSm = useAcimaDeSm();
@@ -72,12 +73,25 @@ function NewProva({
   const [uploadFile, setUploadFile] = useState(null);
   const [uploadGabarito, setUploadGabarito] = useState(null);
 
-  const categoriasOptions: FormFieldOption[] = [{ label: "", value: "" }];
-  (categorias ?? []).forEach((f) => {
-    if (f.selecionavel) {
-      categoriasOptions.push({ label: f.nome, value: f._id });
-    }
-  });
+  /*
+    O exame vem primeiro, e a lista de categorias se adapta a ele. Os exames saem das
+    categorias selecionáveis — só faz sentido escolher um exame que tenha categoria.
+  */
+  const selecionaveis = (categorias ?? []).filter((c) => c.selecionavel);
+  const exame = watch("exame");
+  const examesOptions = opcoesDeExame(selecionaveis);
+  const categoriasOptions: FormFieldOption[] = [
+    { label: "", value: "" },
+    ...categoriasDoExame(selecionaveis, exame).map((c) => ({
+      label: c.nome,
+      value: c._id,
+    })),
+  ];
+
+  // Trocar o exame limpa a categoria: a escolhida pode não ser do exame novo.
+  useEffect(() => {
+    setValue("categoria", "");
+  }, [exame, setValue]);
 
   /*
     ⚠️ Card 40: só as edições. A aplicação ficava aqui dentro ("2ªAplicação")
@@ -126,12 +140,21 @@ function NewProva({
 
   const listFieldProva: FormFieldInput[] = [
     {
+      id: "exame",
+      type: "option",
+      options: examesOptions,
+      value: "",
+      label: "Exame",
+      disabled: false,
+    },
+    {
       id: "categoria",
       type: "option",
       options: categoriasOptions,
       value: "",
       label: "Categoria",
-      disabled: false,
+      // Sem exame não há lista: escolher a categoria antes do exame.
+      disabled: !exame,
     },
     ...(isCustom
       ? ([
