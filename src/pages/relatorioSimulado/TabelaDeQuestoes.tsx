@@ -124,7 +124,13 @@ function colunasDeQuestoes(
     primary: true,
     // ⚠️ Questão sem número não some: vai para o fim (o `sortRows` manda nulo
     // para o fim nas duas direções) e mostra travessão.
-    cell: (q) => q.numero ?? "—",
+    // tickets/038: "1 · Inglês" e "1 · Espanhol" na prova do ENEM Dia 1 do cursinho.
+    cell: (q) =>
+      q.numero === null
+        ? "—"
+        : q.idioma
+          ? `${q.numero} · ${q.idioma}`
+          : q.numero,
     sortValue: (q) => q.numero,
   },
   /*

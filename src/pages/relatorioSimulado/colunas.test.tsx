@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { colunasDoRelatorio } from "./colunas";
+import { TEXTO_AGUARDANDO_SIMULADO } from "./fonteDoRelatorio";
 import type {
   LinhaDoRelatorio,
   MediaPorMateria,
@@ -583,5 +584,19 @@ describe("coluna Resultado — não lidas (card 13)", () => {
       );
       expect(container.querySelector("[data-situacao-da-matricula]")).toBeNull();
     });
+  });
+});
+
+describe("coluna Simulado — cartão da prova sem simulado (tickets/038 · 14)", () => {
+  it("mostra que aguarda a leitura do idioma", () => {
+    const col = colunasDoRelatorio({
+      comTurma: false,
+      simulados: [
+        { simuladoId: "s1", nome: "P Inglês", cartoes: 1, totalDeQuestoes: 90 },
+        { simuladoId: "s2", nome: "P Espanhol", cartoes: 1, totalDeQuestoes: 90 },
+      ],
+    }).find((c) => c.id === "simulado")!;
+    render(<>{col.cell(linha({ simuladoId: null, status: "awaiting_omr" }))}</>);
+    expect(screen.getByText(TEXTO_AGUARDANDO_SIMULADO)).toBeInTheDocument();
   });
 });

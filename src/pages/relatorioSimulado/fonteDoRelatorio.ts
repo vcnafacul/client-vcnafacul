@@ -28,11 +28,16 @@ export function simuladoDaLinha(
   fonte: FonteDoRelatorio,
   linha: Pick<LinhaDoRelatorio, "simuladoId">,
 ): string | undefined {
+  // tickets/038: `null` é o cartão da prova ainda sem simulado — não há detalhe a buscar.
+  if (linha.simuladoId === null) return undefined;
   return (
     linha.simuladoId ??
     (fonte.tipo === "simulado" ? fonte.simuladoId : undefined)
   );
 }
+
+/** tickets/038: o rótulo do cartão da prova que ainda não tem simulado. */
+export const TEXTO_AGUARDANDO_SIMULADO = "Aguardando leitura do idioma";
 
 /**
  * O que identifica UMA linha da tabela.

@@ -848,3 +848,24 @@ describe("TabelaDeQuestoes — versão da questão (card 29)", () => {
     expect(container.querySelector("[data-ausencia-explicada]")).toBeNull();
   });
 });
+
+describe("TabelaDeQuestoes — idioma (tickets/038 · 14)", () => {
+  it("as questões de língua estrangeira mostram o idioma junto do número", () => {
+    const { container } = render(
+      <TabelaDeQuestoes
+        questoes={[
+          questao({ numero: 1, questaoId: "qi", idioma: "Inglês" }),
+          questao({ numero: 1, questaoId: "qe", idioma: "Espanhol" }),
+          questao({ numero: 6, questaoId: "qc" }),
+        ]}
+        estado="idle"
+      />,
+    );
+    const numeros = [
+      ...container.querySelectorAll('[data-column-id="numero"]'),
+    ]
+      .map((c) => c.textContent?.trim())
+      .filter((t) => t && t !== "Nº" && !/^#|Questão/.test(t));
+    expect(numeros).toEqual(expect.arrayContaining(["1 · Inglês", "1 · Espanhol", "6"]));
+  });
+});
