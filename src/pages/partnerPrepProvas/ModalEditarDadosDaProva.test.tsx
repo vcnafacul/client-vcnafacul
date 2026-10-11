@@ -12,6 +12,7 @@ vi.mock("@/components/templates/modalTemplate", () => ({
 import {
   ModalEditarDadosDaProva,
   TEXTO_AVISO_CATEGORIA,
+  TEXTO_CATEGORIA_TRAVADA,
 } from "./ModalEditarDadosDaProva";
 
 const PROVA = {
@@ -109,5 +110,53 @@ describe("Editar dados da prova (card 41)", () => {
       ),
     );
     expect(onSalva).not.toHaveBeenCalled();
+  });
+});
+
+describe("Editar dados da prova — Enem do cursinho (tickets/038)", () => {
+  const ENEM1 = {
+    _id: "c-enem1",
+    nome: "Enem Dia 1",
+    quantidadeTotalQuestao: 90,
+    selecionavel: true,
+    dono: "Cursinho",
+  };
+  const abrirCom = (categoria: string) =>
+    render(
+      <ModalEditarDadosDaProva
+        prova={{ ...(PROVA as object), categoria } as never}
+        categorias={[...(CATEGORIAS as unknown as object[]), ENEM1] as never}
+        token="tk"
+        isOpen
+        handleClose={vi.fn()}
+        onSalva={vi.fn()}
+      />,
+    );
+
+  it("a compartilhada não aparece como destino", () => {
+    abrirCom("Mensal 45");
+    expect(screen.queryByRole("option", { name: "Enem Dia 1" })).toBeNull();
+  });
+
+  it("⚠️ prova na compartilhada: categoria travada, com o motivo", () => {
+    abrirCom("Enem Dia 1");
+    expect(screen.getByLabelText("Categoria")).toBeDisabled();
+    expect(screen.getByText(TEXTO_CATEGORIA_TRAVADA)).toBeInTheDocument();
+  });
+
+  it("renomear a prova na compartilhada não manda categoria", async () => {
+    svc.editarDadosProvaCursinho.mockResolvedValue({ nome: "Outro" });
+    abrirCom("Enem Dia 1");
+    fireEvent.change(screen.getByLabelText("Nome"), {
+      target: { value: "Outro" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Salvar/ }));
+    await waitFor(() =>
+      expect(svc.editarDadosProvaCursinho).toHaveBeenCalledWith(
+        "p1",
+        { nome: "Outro" },
+        "tk",
+      ),
+    );
   });
 });

@@ -17,8 +17,9 @@ import ModalTemplate, {
   ModalProps,
 } from "../../../components/templates/modalTemplate";
 import { CreateProva, Prova } from "../../../dtos/prova/prova";
-import { ICategoria } from "../../../dtos/categoria/categoria";
+import { ICategoria, isCompartilhada } from "../../../dtos/categoria/categoria";
 import { Edicao, edicaoArray } from "../../../enums/prova/edicao";
+import { textoDaCompartilhada } from "./textoDaCompartilhada";
 import { useToastAsync } from "../../../hooks/useToastAsync";
 import { createProva } from "../../../services/prova/createProva";
 import { useAuthStore } from "../../../store/auth";
@@ -116,7 +117,12 @@ function NewProva({
 
   const categoria = watch("categoria");
   const categoriaEscolhida = categorias?.find((c) => c._id === categoria);
-  const isCustom = categoriaEscolhida?.custom === true;
+  /*
+    tickets/038: a "Enem Dia 1/2" do cursinho não é custom (a fábrica é a do
+    ENEM), mas o cursinho digita o nome e o PDF é opcional, como na custom.
+  */
+  const compartilhada = isCompartilhada(categoriaEscolhida);
+  const isCustom = categoriaEscolhida?.custom === true || compartilhada;
 
   const listFieldProva: FormFieldInput[] = [
     {
@@ -290,7 +296,9 @@ function NewProva({
 
             {isCustom && (
               <p className="text-xs text-blue-700 -mt-2">
-                Prova personalizada — nome livre, PDF opcional.
+                {compartilhada
+                  ? textoDaCompartilhada(categoriaEscolhida!.nome)
+                  : "Prova personalizada — nome livre, PDF opcional."}
               </p>
             )}
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import ModalTemplate from "@/components/templates/modalTemplate";
-import { ICategoria } from "@/dtos/categoria/categoria";
+import { ICategoria, isCompartilhada } from "@/dtos/categoria/categoria";
 import { Prova } from "@/dtos/prova/prova";
 import {
   DadosDaProva,
@@ -17,6 +17,9 @@ const EDICOES = [
 const valorDaEdicao = (edicao: string) =>
   EDICOES.find((e) => e.valor === edicao || e.rotulo === edicao)?.valor ??
   "Regular";
+
+export const TEXTO_CATEGORIA_TRAVADA =
+  "A categoria de uma prova ENEM do cursinho não pode ser trocada: ela define os simulados da prova.";
 
 export const TEXTO_AVISO_CATEGORIA =
   "A categoria só pode ser trocada antes de gerar o cartão-resposta e de qualquer envio de cartão.";
@@ -47,9 +50,21 @@ export function ModalEditarDadosDaProva({
   handleClose,
   onSalva,
 }: Props) {
-  const selecionaveis = (categorias ?? []).filter((c) => c.selecionavel);
+  /*
+    tickets/038: a compartilhada ("Enem Dia 1/2" do cursinho) define os
+    simulados da prova — não entra como destino, e a prova que está nela não
+    troca de categoria (o backend recusa os dois).
+  */
+  const selecionaveis = (categorias ?? []).filter(
+    (c) => c.selecionavel && !isCompartilhada(c),
+  );
   const categoriaAtual =
     selecionaveis.find((c) => c.nome === prova.categoria)?._id ?? "";
+  const travada =
+    !categoriaAtual &&
+    (categorias ?? []).some(
+      (c) => isCompartilhada(c) && c.nome === prova.categoria,
+    );
 
   const [nome, setNome] = useState(prova.nome);
   const [ano, setAno] = useState(String(prova.ano));
@@ -111,9 +126,14 @@ export function ModalEditarDadosDaProva({
       className="w-full max-w-lg rounded-lg bg-white shadow-xl p-2"
     >
       <form onSubmit={salvar} className="p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-marine">Editar dados da prova</h2>
+        <h2 className="text-lg font-semibold text-marine">
+          Editar dados da prova
+        </h2>
         <div>
-          <label htmlFor="prova-nome" className="block text-sm font-semibold mb-1">
+          <label
+            htmlFor="prova-nome"
+            className="block text-sm font-semibold mb-1"
+          >
             Nome
           </label>
           <input
@@ -126,7 +146,10 @@ export function ModalEditarDadosDaProva({
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label htmlFor="prova-ano" className="block text-sm font-semibold mb-1">
+            <label
+              htmlFor="prova-ano"
+              className="block text-sm font-semibold mb-1"
+            >
               Ano
             </label>
             <input
@@ -140,7 +163,10 @@ export function ModalEditarDadosDaProva({
             />
           </div>
           <div>
-            <label htmlFor="prova-edicao" className="block text-sm font-semibold mb-1">
+            <label
+              htmlFor="prova-edicao"
+              className="block text-sm font-semibold mb-1"
+            >
               Edição
             </label>
             <select
@@ -187,7 +213,7 @@ export function ModalEditarDadosDaProva({
           <select
             id="prova-categoria"
             value={categoria}
-            disabled={!categorias}
+            disabled={!categorias || travada}
             onChange={(e) => setCategoria(e.target.value)}
             className="w-full border rounded-lg p-2 disabled:opacity-60"
           >
@@ -198,7 +224,9 @@ export function ModalEditarDadosDaProva({
               </option>
             ))}
           </select>
-          <p className="text-xs text-gray-500 mt-1">{TEXTO_AVISO_CATEGORIA}</p>
+          <p className="text-xs text-gray-500 mt-1">
+            {travada ? TEXTO_CATEGORIA_TRAVADA : TEXTO_AVISO_CATEGORIA}
+          </p>
         </div>
         <div className="flex justify-end gap-3">
           <button

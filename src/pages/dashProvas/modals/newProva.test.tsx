@@ -30,6 +30,7 @@ import NewProva, {
   TEXTO_CARREGANDO_CATEGORIAS,
   TEXTO_ERRO_CATEGORIAS,
 } from "./newProva";
+import { textoDaCompartilhada } from "./textoDaCompartilhada";
 
 const CUSTOM = {
   _id: "cat-custom",
@@ -103,6 +104,55 @@ describe("NewProva — prova personalizada", () => {
     const formData = createProva.mock.calls[0][0];
     expect(formData.get("nome")).toBe("Simulado de março");
     expect(formData.get("nomeSimulado")).toBe("Simulado de março");
+  });
+});
+
+describe("NewProva — Enem Dia 1/2 do cursinho (tickets/038)", () => {
+  const ENEM1 = {
+    _id: "cat-enem1",
+    nome: "Enem Dia 1",
+    custom: false,
+    selecionavel: true,
+    quantidadeTotalQuestao: 90,
+    dono: "Cursinho",
+  } as unknown as ICategoria;
+  const ENEM2 = { ...ENEM1, _id: "cat-enem2", nome: "Enem Dia 2" };
+
+  const escolher = (c: ICategoria) => {
+    render(
+      <NewProva
+        isOpen
+        categorias={[CUSTOM, ENEM1, ENEM2]}
+        addProva={vi.fn()}
+        handleClose={vi.fn()}
+      />,
+    );
+    fireEvent.change(document.querySelector("select")!, {
+      target: { value: c._id },
+    });
+  };
+
+  it("⚠️ não é custom, mas pede o nome e cria sem PDF", async () => {
+    escolher(ENEM1);
+    expect(campo("nome")).not.toBeNull();
+
+    fireEvent.change(campo("nome")!, { target: { value: "1º ENEM" } });
+    const criar = screen.getByRole("button", { name: /Criar|Salvar/i });
+    expect(criar).not.toBeDisabled();
+    fireEvent.click(criar);
+
+    await waitFor(() => expect(createProva).toHaveBeenCalled());
+    const formData = createProva.mock.calls[0][0];
+    expect(formData.get("categoria")).toBe("cat-enem1");
+    expect(formData.get("nome")).toBe("1º ENEM");
+    expect(formData.get("file")).toBeNull();
+  });
+
+  it("explica o que cada dia cria", () => {
+    escolher(ENEM1);
+    expect(screen.getByText(textoDaCompartilhada("Enem Dia 1"))).toBeTruthy();
+    expect(textoDaCompartilhada("Enem Dia 1")).toMatch(/2 simulados/);
+    expect(textoDaCompartilhada("Enem Dia 2")).toMatch(/91 a 180/);
   });
 });
 

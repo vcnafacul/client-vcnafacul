@@ -16,3 +16,7 @@ export const CATEGORIAS_PROTEGIDAS = [
 export function isProtegida(nome: string): boolean {
   return CATEGORIAS_PROTEGIDAS.includes(nome);
 }
+
+/** tickets/038 — "Enem Dia 1/2" compartilhadas com todos os cursinhos. */
+export const TEXTO_COMPARTILHADA =
+  "Categoria da plataforma, vale para todos os cursinhos — não pode ser excluída";

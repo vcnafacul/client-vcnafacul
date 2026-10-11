@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { ICategoria } from "../../../../dtos/categoria/categoria";
 import { getCategorias } from "../../../../services/categoria/getCategorias";
 import ManageCategorias from "./index";
+import { TEXTO_COMPARTILHADA } from "./protectedTipos";
 
 /* -------------------------------------------------------------------------- *
  * Os serviços do admin entram como dublês porque este teste verifica quem é
@@ -120,6 +121,33 @@ describe("ManageCategorias", () => {
       expect(
         screen.getByTitle("Categoria seedada — não pode ser excluída"),
       ).toBeDisabled();
+    });
+  });
+
+  describe("compartilhada Enem Dia 1/2 do cursinho (tickets/038)", () => {
+    it("⚠️ no cursinho: travada com o motivo, mesmo com protegerSeedadas=false", async () => {
+      const compartilhada: ICategoria = {
+        ...categoria,
+        _id: "c-enem",
+        nome: "Enem Dia 1",
+        custom: false,
+        dono: "Cursinho",
+      };
+      render(
+        <ManageCategorias
+          isOpen
+          handleClose={vi.fn()}
+          onCategoriasChanged={vi.fn()}
+          listarService={vi.fn(async () => ({ data: [compartilhada] }))}
+          nomeLivre
+          protegerSeedadas={false}
+        />,
+      );
+
+      expect(
+        await screen.findByText(`🔒 ${TEXTO_COMPARTILHADA}`),
+      ).toBeInTheDocument();
+      expect(screen.getByTitle(TEXTO_COMPARTILHADA)).toBeDisabled();
     });
   });
 });
