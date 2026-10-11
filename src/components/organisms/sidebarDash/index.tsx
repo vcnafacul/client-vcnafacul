@@ -27,6 +27,21 @@ import { useAuthStore } from "@/store/auth";
 import { useMemo, useState } from "react";
 import { DashCardMenu } from "../../molecules/dashCard";
 
+/**
+ * Altura dos cards coloridos quando uma seção está aberta — o `h-16` do tamanho `small` do
+ * `DashCard`. Se ele mudar, mude aqui.
+ */
+const ALTURA_DO_CARD_COM_SECAO_ABERTA = "4rem";
+
+/**
+ * ⚠️ Só no menu FIXO (fora da gaveta), e só com uma seção aberta. O menu fixo começa no topo
+ * da tela, embaixo do header de 76px: fechado, o primeiro card fica abaixo do header graças à
+ * margem dos cards grandes; aberta uma seção, os cards encolhem e perdem a margem, e o
+ * primeiro ("Cursinho") ficava metade escondido atrás do header. Desloca a lista em metade da
+ * altura de um card + 100px.
+ */
+export const DESLOCAMENTO_COM_SECAO_ABERTA = `calc(${ALTURA_DO_CARD_COM_SECAO_ABERTA} / 2 + 100px)`;
+
 export function SidebarDash() {
   const [opened, setOpened] = useState<number>(0);
   const isSupportAgent = useAuthStore(
@@ -66,7 +81,14 @@ export function SidebarDash() {
       <SidebarContent>
         <SidebarGroup className="overflow-y-scroll scrollbar-hide pt-0">
           <SidebarGroupContent className="group-data-[collapsible=icon]:hidden">
-            <SidebarMenu className="pt-0 pb-4 gap-0">
+            <SidebarMenu
+              className="pt-0 pb-4 gap-0"
+              style={
+                !isMobile && opened !== 0
+                  ? { marginTop: DESLOCAMENTO_COM_SECAO_ABERTA }
+                  : undefined
+              }
+            >
               {dashCardMenuItems.map((card) => (
                 <DashCard
                   onClick={() => {
