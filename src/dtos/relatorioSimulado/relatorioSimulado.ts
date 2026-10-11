@@ -37,8 +37,11 @@ export interface LinhaDoRelatorio {
   /**
    * De qual simulado é o cartão (tickets/034) — ausente em quem não enviou. No
    * relatório da prova é o que separa as linhas do mesmo estudante.
+   *
+   * ⚠️ `null` (tickets/038): o cartão DA PROVA ainda sem simulado — aguardando a leitura do
+   * idioma, ou com falha antes dela. Só no relatório da prova.
    */
-  simuladoId?: string;
+  simuladoId?: string | null;
   historicoId?: string;
   status?: StatusDoCartao;
   cartaoCode?: string;
@@ -217,6 +220,11 @@ export interface RelatorioDoSimulado {
 
 export interface QuestaoDoRelatorio {
   numero: number | null;
+  /**
+   * tickets/038: no relatório da prova do ENEM Dia 1 do cursinho, o idioma das questões de
+   * língua estrangeira (1–5) — "Inglês" ou "Espanhol". Sem ele, as duas "1" seriam iguais.
+   */
+  idioma?: string;
   questaoId: string;
   respondentes: number;
   acertos: number;

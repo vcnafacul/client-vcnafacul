@@ -5,6 +5,7 @@ import type {
   SimuladoDoRelatorio,
 } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { SEM_NOME } from "@/pages/partnerClassWithStudents/SimuladosDaTurma";
+import { TEXTO_AGUARDANDO_SIMULADO } from "./fonteDoRelatorio";
 import { acertoGlobal } from "./dificuldadeGlobal";
 import { rotulosDasFlags } from "./flagsDaQuestao";
 import { notaNaMateria } from "./materiasDoRelatorio";
@@ -121,7 +122,9 @@ export function planilhaDeEstudantes(
       ? [
           l.simuladoId === undefined
             ? null
-            : (nomeDoSimulado.get(l.simuladoId) ?? SEM_NOME),
+            : l.simuladoId === null
+              ? TEXTO_AGUARDANDO_SIMULADO
+              : (nomeDoSimulado.get(l.simuladoId) ?? SEM_NOME),
         ]
       : []),
     // ⚠️ A coluna Turma some quando o relatório já é de UMA turma — repetir o

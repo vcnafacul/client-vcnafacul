@@ -35,7 +35,10 @@ export async function baixarCaderno(
   }
 
   const avisos = Number(response.headers.get("X-Caderno-Avisos") ?? 0);
-  return { blob: await response.blob(), avisos: Number.isNaN(avisos) ? 0 : avisos };
+  return {
+    blob: await response.blob(),
+    avisos: Number.isNaN(avisos) ? 0 : avisos,
+  };
 }
 
 /**
@@ -49,7 +52,10 @@ export async function baixarCaderno(
  * inteira para o `409` chegar legível até aqui ("simulado não está pronto…");
  * descartá-la e mostrar "erro ao baixar" anula aquele trabalho.
  */
-async function mensagemDoErro(response: Response): Promise<string> {
+export async function mensagemDoErro(
+  response: Response,
+  generica = "Não foi possível baixar o caderno",
+): Promise<string> {
   try {
     const corpo = await response.json();
     if (typeof corpo?.message === "string" && corpo.message.trim()) {
@@ -58,5 +64,5 @@ async function mensagemDoErro(response: Response): Promise<string> {
   } catch {
     // corpo vazio ou não-JSON: cai na genérica
   }
-  return "Não foi possível baixar o caderno";
+  return generica;
 }
