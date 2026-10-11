@@ -3,7 +3,10 @@ import { toast } from "react-toastify";
 import { Cog6ToothIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Button from "../../../../components/molecules/button";
 import ModalTemplate from "../../../../components/templates/modalTemplate";
-import { ICategoria } from "../../../../dtos/categoria/categoria";
+import {
+  ICategoria,
+  isCompartilhada,
+} from "../../../../dtos/categoria/categoria";
 import { createCategoria } from "../../../../services/categoria/createCategoria";
 import { deleteCategoria } from "../../../../services/categoria/deleteCategoria";
 import { getCategorias } from "../../../../services/categoria/getCategorias";
@@ -11,7 +14,7 @@ import { getExames } from "../../../../services/exame/getExames";
 import { useAuthStore } from "../../../../store/auth";
 import CreateForm, { CriarCategoriaService, ExameOption } from "./createForm";
 import DeleteConfirm from "./deleteConfirm";
-import { isProtegida } from "./protectedTipos";
+import { isProtegida, TEXTO_COMPARTILHADA } from "./protectedTipos";
 
 interface ManageCategoriasProps {
   isOpen: boolean;
@@ -159,18 +162,23 @@ function ManageCategorias({
               </p>
             )}
             {categoriasFiltradas.map((c) => {
-              const protegida = protegerSeedadas && isProtegida(c.nome);
+              // tickets/038: a compartilhada é da plataforma — nunca se exclui.
+              const compartilhada = isCompartilhada(c);
+              const protegida =
+                compartilhada || (protegerSeedadas && isProtegida(c.nome));
               const qtd =
                 c.quantidadeTotalQuestao == null
                   ? "livre"
                   : `${c.quantidadeTotalQuestao} questões`;
               const emUso = c.simuladosCount > 0 || c.provasCount > 0;
               const desabilitada = protegida || emUso;
-              const tooltip = protegida
-                ? "Categoria seedada — não pode ser excluída"
-                : emUso
-                  ? `Em uso por ${c.simuladosCount} simulado(s) e ${c.provasCount} prova(s)`
-                  : "Excluir categoria";
+              const tooltip = compartilhada
+                ? TEXTO_COMPARTILHADA
+                : protegida
+                  ? "Categoria seedada — não pode ser excluída"
+                  : emUso
+                    ? `Em uso por ${c.simuladosCount} simulado(s) e ${c.provasCount} prova(s)`
+                    : "Excluir categoria";
               return (
                 <div
                   key={c._id}
@@ -191,7 +199,9 @@ function ManageCategorias({
                     </span>
                     {protegida && (
                       <span className="text-xs font-medium text-amber-600">
-                        🔒 Categoria seedada
+                        {compartilhada
+                          ? `🔒 ${TEXTO_COMPARTILHADA}`
+                          : "🔒 Categoria seedada"}
                       </span>
                     )}
                   </div>

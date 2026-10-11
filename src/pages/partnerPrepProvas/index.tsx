@@ -368,6 +368,8 @@ function PartnerPrepProvas() {
           permitido: !!permissao[Roles.cadastrarProvasCursinho],
           motivo: MOTIVO.cadastrarProvasCursinho,
         }}
+        // tickets/038: cartão e caderno DA PROVA (Enem Dia 1/2 do cursinho) — só aqui.
+        materialDaProva
         // Card 41: editar dados e excluir — mesma permissão, só aqui.
         gestao={{
           permitido: !!permissao[Roles.cadastrarProvasCursinho],

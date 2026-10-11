@@ -30,6 +30,10 @@ import NewProva, {
   TEXTO_CARREGANDO_CATEGORIAS,
   TEXTO_ERRO_CATEGORIAS,
 } from "./newProva";
+import { textoDaCompartilhada } from "./textoDaCompartilhada";
+
+const PERSONALIZADO = { _id: "ex-pers", nome: "Personalizado" };
+const ENEM = { _id: "ex-enem", nome: "ENEM" };
 
 const CUSTOM = {
   _id: "cat-custom",
@@ -37,7 +41,18 @@ const CUSTOM = {
   custom: true,
   selecionavel: true,
   quantidadeTotalQuestao: 30,
+  exame: PERSONALIZADO,
 } as unknown as ICategoria;
+
+/** O exame vem antes da categoria, e a lista de categorias depende dele. */
+function escolher(categoria: ICategoria) {
+  fireEvent.change(document.querySelector('select[name="exame"]')!, {
+    target: { value: categoria.exame._id },
+  });
+  fireEvent.change(document.querySelector('select[name="categoria"]')!, {
+    target: { value: categoria._id },
+  });
+}
 
 function montar() {
   return render(
@@ -52,8 +67,7 @@ function montar() {
 
 /** Seleciona a categoria custom, que é o que revela os campos de prova custom. */
 function escolherCategoriaCustom() {
-  const select = document.querySelector("select") as HTMLSelectElement;
-  fireEvent.change(select, { target: { value: CUSTOM._id } });
+  escolher(CUSTOM);
 }
 
 /**
@@ -103,6 +117,54 @@ describe("NewProva — prova personalizada", () => {
     const formData = createProva.mock.calls[0][0];
     expect(formData.get("nome")).toBe("Simulado de março");
     expect(formData.get("nomeSimulado")).toBe("Simulado de março");
+  });
+});
+
+describe("NewProva — Enem Dia 1/2 do cursinho (tickets/038)", () => {
+  const ENEM1 = {
+    _id: "cat-enem1",
+    nome: "Enem Dia 1",
+    custom: false,
+    selecionavel: true,
+    quantidadeTotalQuestao: 90,
+    dono: "Cursinho",
+    exame: ENEM,
+  } as unknown as ICategoria;
+  const ENEM2 = { ...ENEM1, _id: "cat-enem2", nome: "Enem Dia 2" };
+
+  const escolherEnem = (c: ICategoria) => {
+    render(
+      <NewProva
+        isOpen
+        categorias={[CUSTOM, ENEM1, ENEM2]}
+        addProva={vi.fn()}
+        handleClose={vi.fn()}
+      />,
+    );
+    escolher(c);
+  };
+
+  it("⚠️ não é custom, mas pede o nome e cria sem PDF", async () => {
+    escolherEnem(ENEM1);
+    expect(campo("nome")).not.toBeNull();
+
+    fireEvent.change(campo("nome")!, { target: { value: "1º ENEM" } });
+    const criar = screen.getByRole("button", { name: /Criar|Salvar/i });
+    expect(criar).not.toBeDisabled();
+    fireEvent.click(criar);
+
+    await waitFor(() => expect(createProva).toHaveBeenCalled());
+    const formData = createProva.mock.calls[0][0];
+    expect(formData.get("categoria")).toBe("cat-enem1");
+    expect(formData.get("nome")).toBe("1º ENEM");
+    expect(formData.get("file")).toBeNull();
+  });
+
+  it("explica o que cada dia cria", () => {
+    escolherEnem(ENEM1);
+    expect(screen.getByText(textoDaCompartilhada("Enem Dia 1"))).toBeTruthy();
+    expect(textoDaCompartilhada("Enem Dia 1")).toMatch(/2 simulados/);
+    expect(textoDaCompartilhada("Enem Dia 2")).toMatch(/91 a 180/);
   });
 });
 
@@ -210,5 +272,71 @@ describe("NewProva — sem categorias carregadas (card 40)", () => {
     expect(screen.getByText(TEXTO_ERRO_CATEGORIAS)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Tentar de novo" }));
     expect(onTentarDeNovo).toHaveBeenCalled();
+  });
+});
+
+describe("NewProva — exame primeiro, categorias do exame", () => {
+  const ENEM_DIA1 = {
+    _id: "cat-e1",
+    nome: "Enem Dia 1",
+    custom: false,
+    selecionavel: true,
+    exame: ENEM,
+  } as unknown as ICategoria;
+  const FORA_DE_USO = {
+    _id: "cat-velha",
+    nome: "Velha",
+    selecionavel: false,
+    exame: { _id: "ex-velho", nome: "Vestibular antigo" },
+  } as unknown as ICategoria;
+  const opcoes = (nome: string) =>
+    [
+      ...document.querySelectorAll(`select[name="${nome}"] option`),
+    ].map((o) => o.textContent);
+
+  const abrir = () =>
+    render(
+      <NewProva
+        isOpen
+        categorias={[CUSTOM, ENEM_DIA1, FORA_DE_USO]}
+        addProva={vi.fn()}
+        handleClose={vi.fn()}
+      />,
+    );
+
+  it("o exame é o primeiro campo, só com exames de categorias em uso", () => {
+    abrir();
+    expect(document.querySelector("select")).toHaveAttribute("name", "exame");
+    expect(opcoes("exame")).toEqual(["", "ENEM", "Personalizado"]);
+  });
+
+  it("sem exame, a categoria fica desabilitada e vazia", () => {
+    abrir();
+    expect(document.querySelector('select[name="categoria"]')).toBeDisabled();
+    expect(opcoes("categoria")).toEqual([""]);
+  });
+
+  it("escolhido o exame, só as categorias dele", () => {
+    abrir();
+    fireEvent.change(document.querySelector('select[name="exame"]')!, {
+      target: { value: ENEM._id },
+    });
+    expect(opcoes("categoria")).toEqual(["", "Enem Dia 1"]);
+  });
+
+  it("⚠️ trocar o exame limpa a categoria escolhida", async () => {
+    abrir();
+    escolher(CUSTOM);
+    expect(campo("nome")).not.toBeNull(); // custom escolhida
+    fireEvent.change(document.querySelector('select[name="exame"]')!, {
+      target: { value: ENEM._id },
+    });
+    await waitFor(() =>
+      expect(
+        (document.querySelector('select[name="categoria"]') as HTMLSelectElement)
+          .value,
+      ).toBe(""),
+    );
+    expect(campo("nome")).toBeNull();
   });
 });

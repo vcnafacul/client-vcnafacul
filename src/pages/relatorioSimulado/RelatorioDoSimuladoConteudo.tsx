@@ -22,6 +22,7 @@ import { buscarRelatorio } from "@/services/relatorioSimulado/buscarRelatorio";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { colunasDoRelatorio } from "./colunas";
 import { filtrarLinhas, totalQueNaoEnviou } from "./filtrarLinhas";
+import { CartaoSemSimulado } from "./CartaoSemSimulado";
 import { DetalheDoEstudante } from "./DetalheDoEstudante";
 import { indiceDeDificuldade } from "./dificuldadeDaQuestao";
 import { SampleSizeBanner } from "@/components/organisms/classSimuladoAnalytics/SampleSizeBanner";
@@ -794,6 +795,20 @@ export function RelatorioDoSimuladoConteudo({
           no DOM (o `aberto &&` é o gate), e imprimir com ele aberto é escolha
           de quem imprime.
         */}
+        {/* tickets/038: o cartão da prova ainda sem simulado não tem detalhe por simulado. */}
+        {aberto && aberto.simuladoId === null && aberto.historicoId && (
+          <CartaoSemSimulado
+            token={token}
+            linha={{ ...aberto, historicoId: aberto.historicoId }}
+            onClose={() => setAberto(null)}
+            onMudou={() => {
+              setAberto(null);
+              setQuestoes(null);
+              carregar();
+            }}
+          />
+        )}
+
         {aberto && simuladoDaLinha(fonte, aberto) && (
           <DetalheDoEstudante
             /*
@@ -809,6 +824,14 @@ export function RelatorioDoSimuladoConteudo({
               estudante pode ter cartão em dois, e o detalhe é de um deles.
             */
             simuladoId={simuladoDaLinha(fonte, aberto)!}
+            // tickets/038 (R16): no relatório da prova, de qual simulado é o cartão.
+            nomeDoSimulado={
+              fonte.tipo === "prova"
+                ? relatorio?.resumo.simulados?.find(
+                    (s) => s.simuladoId === aberto.simuladoId,
+                  )?.nome
+                : undefined
+            }
             /* ⚠️ Só a série (card 17) usa — ver o docblock da prop. */
             turmaId={turmaId}
             estudante={{
