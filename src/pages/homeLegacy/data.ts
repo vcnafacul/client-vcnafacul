@@ -5,6 +5,7 @@ import { HeaderData } from "../../components/organisms/header";
 import {
   ACCOUNT_PATH,
   DASH,
+  GEOLOCATION_SEARCH,
   LOGIN_PATH,
   LOGOFF_PATH,
   NEWS,
@@ -114,7 +115,7 @@ export const header: HeaderData = {
       Home_Menu_Item_id: {
         id: 2,
         name: "Localize um Cursinho",
-        link: "/#map",
+        link: GEOLOCATION_SEARCH,
         target: "_self",
       },
     },
@@ -307,7 +308,7 @@ export const footer: FooterProps = {
       Home_Menu_Item_id: {
         id: 2,
         name: "Localiza Cursinho",
-        link: "/#map",
+        link: GEOLOCATION_SEARCH,
         target: "_self",
       },
     },
