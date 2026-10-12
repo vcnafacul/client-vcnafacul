@@ -151,3 +151,51 @@ describe("ManageCategorias", () => {
     });
   });
 });
+
+/**
+ * ⚠️ A resposta da criação traz o `exame` só como id. Se ela fosse direto para
+ * a tela, o "Nova prova" — que monta a lista de exames a partir de
+ * `categoria.exame` — não mostraria o exame de uma categoria recém-criada
+ * até recarregar a página.
+ */
+describe("ManageCategorias — depois de criar, a tela recebe a lista do servidor", () => {
+  it("entrega a categoria nova com o exame completo", async () => {
+    const completa: ICategoria = { ...categoria, _id: "c2", nome: "Mensal" };
+    const listar = vi
+      .fn()
+      .mockResolvedValueOnce({ data: [] })
+      .mockResolvedValueOnce({ data: [completa] });
+    const criar = vi.fn(async () => ({
+      ...completa,
+      exame: "e1" as unknown as ICategoria["exame"],
+    }));
+    const onCategoriasChanged = vi.fn();
+    render(
+      <ManageCategorias
+        isOpen
+        handleClose={vi.fn()}
+        onCategoriasChanged={onCategoriasChanged}
+        listarService={listar}
+        criarService={criar}
+        nomeLivre
+      />,
+    );
+    await waitFor(() => expect(listar).toHaveBeenCalledTimes(1));
+
+    fireEvent.click(screen.getByRole("button", { name: /Nova Categoria/ }));
+    await screen.findByRole("option", { name: "ENEM" });
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: "e1" } });
+    fireEvent.change(screen.getByLabelText(/^Duração \(min\) \*$/), {
+      target: { value: "90" },
+    });
+    fireEvent.change(screen.getByLabelText(/^Nome \*$/), {
+      target: { value: "Mensal" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
+
+    await waitFor(() => expect(listar).toHaveBeenCalledTimes(2));
+    await waitFor(() =>
+      expect(onCategoriasChanged).toHaveBeenLastCalledWith([completa]),
+    );
+  });
+});
