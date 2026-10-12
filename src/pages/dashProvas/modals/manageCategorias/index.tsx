@@ -139,11 +139,13 @@ function ManageCategorias({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="w-full max-w-3xl rounded-lg bg-white shadow-xl p-2"
+      // No máximo 90% da altura da tela: com muitas categorias o modal crescia
+      // para baixo sem fim. Coluna flex — o cabeçalho fica, só a lista rola.
+      className="flex max-h-[90dvh] w-full max-w-3xl flex-col overflow-hidden rounded-lg bg-white p-2 shadow-xl"
     >
       {view === "lista" && (
-        <div className="p-6">
-          <div className="mb-6 flex items-center gap-3">
+        <div className="flex min-h-0 flex-1 flex-col p-6">
+          <div className="mb-6 flex shrink-0 items-center gap-3">
             <div className="rounded-lg bg-blue-100 p-2">
               <Cog6ToothIcon className="h-6 w-6 text-blue-600" />
             </div>
@@ -152,7 +154,7 @@ function ManageCategorias({
             </h2>
           </div>
 
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="mb-4 flex shrink-0 flex-wrap items-center justify-between gap-3">
             <Button
               typeStyle="quaternary"
               size="small"
@@ -169,7 +171,10 @@ function ManageCategorias({
             />
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div
+            data-slot="lista-de-categorias"
+            className="-mr-2 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-2"
+          >
             {categoriasFiltradas.length === 0 && (
               <p className="py-8 text-center text-sm text-gray-500">
                 Nenhuma categoria encontrada.
@@ -236,27 +241,31 @@ function ManageCategorias({
       )}
 
       {view === "criar" && (
-        <CreateForm
-          exameOptions={exameOptions}
-          token={token}
-          criarService={criar}
-          nomeLivre={nomeLivre}
-          onCreated={handleCreated}
-          onCancel={() => setView("lista")}
-        />
+        <div className="min-h-0 overflow-y-auto">
+          <CreateForm
+            exameOptions={exameOptions}
+            token={token}
+            criarService={criar}
+            nomeLivre={nomeLivre}
+            onCreated={handleCreated}
+            onCancel={() => setView("lista")}
+          />
+        </div>
       )}
 
       {view === "excluir" && categoriaParaExcluir && (
-        <DeleteConfirm
-          categoria={categoriaParaExcluir}
-          token={token}
-          excluirService={excluir}
-          onDeleted={handleDeleted}
-          onCancel={() => {
-            setCategoriaParaExcluir(null);
-            setView("lista");
-          }}
-        />
+        <div className="min-h-0 overflow-y-auto">
+          <DeleteConfirm
+            categoria={categoriaParaExcluir}
+            token={token}
+            excluirService={excluir}
+            onDeleted={handleDeleted}
+            onCancel={() => {
+              setCategoriaParaExcluir(null);
+              setView("lista");
+            }}
+          />
+        </div>
       )}
     </ModalTemplate>
   );
