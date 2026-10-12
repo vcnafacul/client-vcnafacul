@@ -105,13 +105,27 @@ function ManageCategorias({
     onCategoriasChanged(novas);
   };
 
+  /**
+   * ⚠️ Depois de criar ou excluir, a lista vem **de novo do servidor**, e não da
+   * resposta da criação: ela traz o `exame` só como id, sem o nome, e o "Nova
+   * prova" monta a lista de exames a partir de `categoria.exame` — a categoria
+   * nova de um exame que ainda não tinha nenhuma ficava de fora até recarregar
+   * a página. Se a releitura falhar, segue com a lista montada aqui.
+   */
+  const recarregar = (provisoria: ICategoria[]) => {
+    propagar(provisoria);
+    listar(token)
+      .then((res) => propagar(res.data))
+      .catch(() => {});
+  };
+
   const handleCreated = (categoria: ICategoria) => {
-    propagar([...categorias, categoria]);
+    recarregar([...categorias, categoria]);
     setView("lista");
   };
 
   const handleDeleted = (id: string) => {
-    propagar(categorias.filter((c) => c._id !== id));
+    recarregar(categorias.filter((c) => c._id !== id));
     setCategoriaParaExcluir(null);
     setView("lista");
   };
