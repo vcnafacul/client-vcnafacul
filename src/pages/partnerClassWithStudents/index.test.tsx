@@ -229,3 +229,32 @@ describe("PartnerClassWithStudents — a aba vem da URL (card 17)", () => {
     ).toBeInTheDocument();
   });
 });
+
+describe("PartnerClassWithStudents — turma encerrada", () => {
+  const comPeriodo = (endDate: string) =>
+    getClassById.mockImplementationOnce(async () => ({
+      id: "t-1",
+      name: "Turma A",
+      students: [],
+      totalAttendanceRecords: 0,
+      coursePeriod: {
+        name: "2025",
+        year: 2025,
+        startDate: "2025-02-01T12:00:00",
+        endDate,
+      },
+    }));
+
+  it("período que já terminou: aviso de turma encerrada no cabeçalho", async () => {
+    comPeriodo("2025-12-12T12:00:00");
+    montar({ permissao: COM_A_ABA });
+    expect(await screen.findByText("Turma encerrada.")).toBeInTheDocument();
+  });
+
+  it("período em andamento: sem aviso", async () => {
+    comPeriodo("2999-12-12T12:00:00");
+    montar({ permissao: COM_A_ABA });
+    await screen.findByText("Turma A");
+    expect(screen.queryByText("Turma encerrada.")).toBeNull();
+  });
+});

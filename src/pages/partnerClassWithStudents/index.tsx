@@ -16,6 +16,7 @@ import { IconButton, Tooltip } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { format } from "date-fns";
+import { turmaEncerrada } from "./turmaEncerrada";
 import heic2any from "heic2any";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { FormControlLabel, Switch } from "@mui/material";
@@ -23,7 +24,7 @@ import { getCancelledStudentsByClassId } from "@/services/prepCourse/class/getCa
 import { CancelledStudent } from "@/types/partnerPrepCourse/cancelledStudent";
 import { useEffect, useRef, useState } from "react";
 import { FaListCheck } from "react-icons/fa6";
-import { IoEyeSharp } from "react-icons/io5";
+import { IoEyeSharp, IoWarningOutline } from "react-icons/io5";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { useParams, useSearchParams } from "react-router-dom";
 import { AttendanceHistoryModal } from "./modals/attendanceHistoryModal";
@@ -475,6 +476,20 @@ export function PartnerClassWithStudents() {
             </span>
             <span>
               <strong>Registros:</strong> {classEntity.totalAttendanceRecords ?? 0}
+            </span>
+          </div>
+        )}
+        {turmaEncerrada(classEntity?.coursePeriod?.endDate) && (
+          <div
+            role="status"
+            className="mx-auto mt-3 flex max-w-2xl items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900"
+          >
+            <IoWarningOutline aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>
+              <strong>Turma encerrada.</strong> O período letivo terminou em{" "}
+              {format(new Date(classEntity!.coursePeriod.endDate), "dd/MM/yyyy")}
+              . Os alunos aparecem com Matrícula Encerrada e as informações
+              seguem disponíveis para consulta.
             </span>
           </div>
         )}
