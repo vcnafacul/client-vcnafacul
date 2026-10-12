@@ -140,6 +140,8 @@ beforeEach(() => {
   controle.mapa.flyTo.mockClear();
   controle.mapa.fitBounds.mockClear();
   Element.prototype.scrollIntoView = vi.fn();
+  // jsdom não implementa: a página volta ao topo ao abrir.
+  window.scrollTo = vi.fn() as unknown as typeof window.scrollTo;
   api.buscarGeoPublico.mockResolvedValue([
     geo("a", -22.9, -47.06),
     geo("b", -22.95, -47.1),
@@ -182,6 +184,23 @@ describe("Localiza Cursinho — mapa e lista (card 05)", () => {
     expect(ids()).toContain("unicamp");
     fireEvent.click(screen.getByText(/Universidade/i));
     expect(ids()).not.toContain("unicamp");
+  });
+
+  it("celular e tablet: o filtro mora na gaveta, fechada, com só a aba", async () => {
+    const original = window.matchMedia;
+    window.matchMedia = vi.fn().mockReturnValue({
+      matches: true,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }) as unknown as typeof window.matchMedia;
+    try {
+      await abrir();
+      expect(
+        screen.getByRole("button", { name: "Mostrar filtros" }),
+      ).toHaveAttribute("aria-expanded", "false");
+    } finally {
+      window.matchMedia = original;
+    }
   });
 
   it("clique no card: voa até o cursinho (zoom 14) e marca o pin", async () => {
@@ -239,6 +258,13 @@ describe("Localiza Cursinho — mapa e lista (card 05)", () => {
 });
 
 describe("Localize um Cursinho — esqueleto (card 04)", () => {
+  it("abre no topo, e não no scroll da página de onde veio", async () => {
+    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    await abrir();
+    expect(scrollTo).toHaveBeenCalledWith(0, 0);
+    scrollTo.mockRestore();
+  });
+
   it("título e texto do mock", async () => {
     await abrir();
     expect(

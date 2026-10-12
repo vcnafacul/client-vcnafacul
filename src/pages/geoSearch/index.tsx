@@ -12,6 +12,7 @@ import BaseTemplate from "../../components/templates/baseTemplate";
 import { AvisoLogin } from "./components/AvisoLogin";
 import { BotaoConfirmar } from "./components/BotaoConfirmar";
 import { BuscaCursinhos } from "./components/BuscaCursinhos";
+import { FiltroGaveta } from "./components/FiltroGaveta";
 import { GeoCardList } from "./components/GeoCardList";
 import { ModalNaoEncontrei } from "./components/ModalNaoEncontrei";
 import { MapaController } from "./components/MapaController";
@@ -64,6 +65,12 @@ function GeoSearch() {
   const mapa = useRef<LeafletMap | null>(null);
   const [mapaPronto, setMapaPronto] = useState(false);
   const cards = useRef(new Map<string, HTMLElement>());
+
+  // Vindo de um link (header, selo do mapa da home), o router mantém o scroll da
+  // página anterior — e a tela abria no footer. Mesmo padrão da Quem Somos.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Busca (06): o que se digita, e o termo que vale (depois da espera).
   const [params, setParams] = useSearchParams();
@@ -255,7 +262,7 @@ function GeoSearch() {
   );
 
   return (
-    <BaseTemplate solid className="bg-white">
+    <BaseTemplate solid hideFooter className="bg-white">
       <div className="grid grid-cols-1 md:h-[calc(100vh-76px)] md:grid-cols-2">
         <section
           aria-labelledby="localiza-titulo"
@@ -263,13 +270,15 @@ function GeoSearch() {
         >
           {/*
             Menor que o `.graphism` da tela de cadastro (446px): nesta coluna,
-            o tamanho padrão cobria o título e o texto.
+            o tamanho padrão cobria o título e o texto. Mesmo tamanho no
+            desktop: o maior pedia 96px de respiro em cima, e no notebook Full
+            HD o botão de cadastro caía abaixo da dobra.
           */}
           <TriangleGreen
             aria-hidden
-            className="pointer-events-none absolute -left-10 -top-6 h-24 w-24 rotate-180 md:-left-16 md:-top-10 md:h-40 md:w-40"
+            className="pointer-events-none absolute -left-10 -top-6 h-24 w-24 rotate-180"
           />
-          <div className="relative z-10 flex flex-col gap-6 px-4 pb-8 pt-14 sm:px-8 md:min-h-full md:px-12 md:pt-24">
+          <div className="relative z-10 flex flex-col gap-6 px-4 pb-8 pt-14 sm:px-8 md:min-h-full md:gap-4 md:px-12 md:pb-6">
             <header className="space-y-2">
               <h1
                 id="localiza-titulo"
@@ -306,7 +315,7 @@ function GeoSearch() {
             <div
               data-slot="cadastro"
               data-destaque={semResultado || undefined}
-              className={`space-y-2 border-t pt-6 transition ${
+              className={`space-y-2 border-t pt-6 transition md:flex md:items-center md:justify-between md:gap-4 md:space-y-0 md:pt-4 ${
                 semResultado
                   ? "-mx-4 rounded-2xl border-t-0 bg-orange/10 p-4 ring-2 ring-orange/50"
                   : ""
@@ -319,7 +328,7 @@ function GeoSearch() {
               <button
                 type="button"
                 onClick={() => setConfirmandoCadastro(true)}
-                className="inline-flex rounded-full bg-orange px-6 py-3 font-bold text-white hover:opacity-90"
+                className="inline-flex shrink-0 rounded-full bg-orange px-6 py-3 font-bold text-white hover:opacity-90 md:py-2.5"
               >
                 Cadastre um novo cursinho
               </button>
@@ -354,13 +363,22 @@ function GeoSearch() {
             />
           </div>
           {/* Na busca só entram cursinhos: o filtro de tipo sai de cena. */}
-          {!buscando && (
-            <MapFilterCard
-              filterMarkers={filtros}
-              onToggle={alternarFiltro}
-              className="bottom-3 left-3 md:bottom-6 md:left-6"
-            />
-          )}
+          {!buscando &&
+            (estreita ? (
+              // No celular e no tablet o mapa é curto: o filtro mora numa
+              // gaveta, com só a aba à mostra.
+              <FiltroGaveta
+                filterMarkers={filtros}
+                onToggle={alternarFiltro}
+                className="bottom-3"
+              />
+            ) : (
+              <MapFilterCard
+                filterMarkers={filtros}
+                onToggle={alternarFiltro}
+                className="bottom-3 left-3 md:bottom-6 md:left-6"
+              />
+            ))}
           <div data-slot="card-do-mapa">
             <MapInfoCard
               activeMarker={escolhido}

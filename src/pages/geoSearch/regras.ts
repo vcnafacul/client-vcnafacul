@@ -9,7 +9,7 @@ export type Limites = {
   oeste: number;
 };
 
-export const LIMITE_DESKTOP = 12;
+export const LIMITE_DESKTOP = 8;
 export const LIMITE_CELULAR = 6;
 
 export function dentro(l: Limites, lat: number, lon: number): boolean {

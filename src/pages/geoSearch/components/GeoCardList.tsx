@@ -88,7 +88,7 @@ export function GeoCardList({
         className="grid gap-3 sm:grid-cols-2"
       >
         {itens.map((geo) => (
-          <li key={geo.id}>
+          <li key={geo.id} className="h-full">
             <GeoSearchCard
               ref={(el) => refDoCard(geo.id, el)}
               geo={geo}

@@ -25,6 +25,24 @@ export function MapFilterCard({
         [&_label]:!text-[#0b2747]
       `}
     >
+      <MapFilterOptions filterMarkers={filterMarkers} onToggle={onToggle} />
+    </div>
+  );
+}
+
+/**
+ * O miolo do filtro (título e opções), sem a caixa nem a posição — usado
+ * também pela gaveta do Localiza no celular.
+ */
+export function MapFilterOptions({
+  filterMarkers,
+  onToggle,
+}: {
+  filterMarkers: TypeMarker[];
+  onToggle: (t: TypeMarker) => void;
+}) {
+  return (
+    <>
       <p className="text-[10px] uppercase tracking-wider opacity-70 mb-2">
         Filtros
       </p>
@@ -39,6 +57,6 @@ export function MapFilterCard({
           />
         ))}
       </div>
-    </div>
+    </>
   );
 }
