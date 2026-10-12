@@ -26,9 +26,11 @@ export type BaseTemplateProps = VariantProps<typeof baseTemplate> & ComponentPro
     solid: boolean;
     className?: string;
     headerShadow?: boolean;
+    /** Telas que ocupam a altura toda (ex.: Localiza Cursinho) dispensam o rodapé. */
+    hideFooter?: boolean;
 }
 
-function BaseTemplate({  children, solid, position, headerShadow, className }: BaseTemplateProps){
+function BaseTemplate({  children, solid, position, headerShadow, className, hideFooter }: BaseTemplateProps){
   return (
     <div className={className}>
       <div className="min-h-screen w-screen flex flex-col">
@@ -40,7 +42,7 @@ function BaseTemplate({  children, solid, position, headerShadow, className }: B
           { children }
         </div>
       </div>
-      <Footer />
+      {!hideFooter && <Footer />}
     </div>
   )
 }

@@ -261,7 +261,7 @@ function GeoSearch() {
   );
 
   return (
-    <BaseTemplate solid className="bg-white">
+    <BaseTemplate solid hideFooter className="bg-white">
       <div className="grid grid-cols-1 md:h-[calc(100vh-76px)] md:grid-cols-2">
         <section
           aria-labelledby="localiza-titulo"
