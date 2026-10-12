@@ -22,7 +22,7 @@ export const GeoSearchCard = forwardRef<HTMLElement, Props>(
       <article
         ref={ref}
         data-geo-id={geo.id}
-        className={`relative rounded-2xl border bg-white p-4 shadow-sm transition ${
+        className={`relative rounded-2xl border bg-white p-3 shadow-sm transition ${
           ativo ? "border-orange ring-2 ring-orange/40" : "border-slate-200"
         }`}
       >
@@ -33,12 +33,12 @@ export const GeoSearchCard = forwardRef<HTMLElement, Props>(
           onMouseLeave={() => onFoco(null)}
           onFocus={() => onFoco(geo.id)}
           onBlur={() => onFoco(null)}
-          className="flex w-full flex-col gap-2 pr-10 text-left focus:outline-none"
+          className="flex w-full flex-col gap-1.5 pr-10 text-left focus:outline-none"
         >
           <h3 className="line-clamp-2 font-bold text-marine" title={geo.name}>
             {geo.name}
           </h3>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 text-sm text-slate-600">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-2 text-sm text-slate-600">
             <dt className="text-slate-400">Estado</dt>
             <dd>{geo.state}</dd>
             <dt className="text-slate-400">Cidade</dt>
