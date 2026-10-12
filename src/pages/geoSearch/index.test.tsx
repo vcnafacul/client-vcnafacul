@@ -239,6 +239,13 @@ describe("Localiza Cursinho — mapa e lista (card 05)", () => {
 });
 
 describe("Localize um Cursinho — esqueleto (card 04)", () => {
+  it("abre no topo, e não no scroll da página de onde veio", async () => {
+    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    await abrir();
+    expect(scrollTo).toHaveBeenCalledWith(0, 0);
+    scrollTo.mockRestore();
+  });
+
   it("título e texto do mock", async () => {
     await abrir();
     expect(

@@ -65,6 +65,12 @@ function GeoSearch() {
   const [mapaPronto, setMapaPronto] = useState(false);
   const cards = useRef(new Map<string, HTMLElement>());
 
+  // Vindo de um link (header, selo do mapa da home), o router mantém o scroll da
+  // página anterior — e a tela abria no footer. Mesmo padrão da Quem Somos.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Busca (06): o que se digita, e o termo que vale (depois da espera).
   const [params, setParams] = useSearchParams();
   const [texto, setTexto] = useState(() => params.get("q") ?? "");
