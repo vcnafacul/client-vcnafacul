@@ -107,6 +107,17 @@ export async function engajamentoDoEvento(
 
 // ---- aluno (card 07) ----
 
+/**
+ * O que o aluno escolhe (tickets/039): um simulado de uma prova do evento.
+ * Prova de um simulado = uma opção com o nome dela; Enem Dia 1 = "… Inglês" e
+ * "… Espanhol".
+ */
+export type OpcaoDoEvento = {
+  provaId: string;
+  simuladoId: string | null;
+  nome: string;
+};
+
 export type EventoParaOAluno = {
   id: string;
   nome: string;
@@ -114,8 +125,11 @@ export type EventoParaOAluno = {
   cursinho: string;
   inscricoesAte: string;
   provas: { provaId: string; nome: string }[];
+  /** tickets/039. Ausente num api de antes — aí as opções são as provas. */
+  opcoes?: OpcaoDoEvento[];
   /** `null` = ainda não se inscreveu. */
   minhaProvaId: string | null;
+  meuSimuladoId?: string | null;
 };
 
 export async function meusEventos(token: string): Promise<EventoParaOAluno[]> {
@@ -131,11 +145,15 @@ export async function inscreverNoEvento(
   token: string,
   eventoId: string,
   provaId?: string,
+  simuladoId?: string,
 ): Promise<{ evento: EventoParaOAluno; resultado: "nova" | "troca" | "igual" }> {
   const r = await fetchWrapper(`${eventosSimulado}/${eventoId}/inscricao`, {
     method: "PUT",
     headers: json(token),
-    body: JSON.stringify(provaId ? { provaId } : {}),
+    body: JSON.stringify({
+      ...(provaId && { provaId }),
+      ...(simuladoId && { simuladoId }),
+    }),
   });
   if (!r.ok) return falha(r, "Erro ao se inscrever");
   return r.json();

@@ -6,8 +6,20 @@ import {
   EventoParaOAluno,
   inscreverNoEvento,
   meusEventos,
+  OpcaoDoEvento,
 } from '@/services/eventoSimulado';
 import { Panel } from '../components/Panel';
+
+/**
+ * tickets/039: o aluno escolhe o SIMULADO. Sem `opcoes` (api de antes), cada
+ * prova é uma opção, como sempre foi.
+ */
+const opcoesDo = (e: EventoParaOAluno): OpcaoDoEvento[] =>
+  e.opcoes ??
+  e.provas.map((p) => ({ provaId: p.provaId, simuladoId: null, nome: p.nome }));
+
+const chave = (provaId: string, simuladoId?: string | null) =>
+  `${provaId}|${simuladoId ?? ''}`;
 
 const ate = (iso: string) =>
   new Date(iso).toLocaleString('pt-BR', {
@@ -26,23 +38,38 @@ function CardDoEvento({
   token: string;
   onMudou: (e: EventoParaOAluno) => void;
 }) {
+  const opcoes = opcoesDo(evento);
   const inscrito = evento.minhaProvaId !== null;
+  const minha = inscrito ? chave(evento.minhaProvaId!, evento.meuSimuladoId) : '';
   const [escolhida, setEscolhida] = useState<string>(
-    evento.minhaProvaId ?? (evento.provas.length === 1 ? evento.provas[0].provaId : ''),
+    minha ||
+      (opcoes.length === 1 ? chave(opcoes[0].provaId, opcoes[0].simuladoId) : ''),
   );
   const [ocupado, setOcupado] = useState(false);
-  const nomeDa = (id: string | null) =>
-    evento.provas.find((p) => p.provaId === id)?.nome ?? '';
-  const variasProvas = evento.provas.length > 1;
+  const opcaoDa = (k: string) =>
+    opcoes.find((o) => chave(o.provaId, o.simuladoId) === k);
+  // Inscrição de antes, numa prova de vários simulados: sem a língua, vale o
+  // nome da prova.
+  const nomeDa = (k: string) =>
+    opcaoDa(k)?.nome ??
+    evento.provas.find((p) => p.provaId === k.split('|')[0])?.nome ??
+    '';
+  const variasOpcoes = opcoes.length > 1;
 
   const inscrever = async () => {
-    if (!escolhida) {
-      toast.error('Escolha a prova que você vai fazer.');
+    const opcao = opcaoDa(escolhida);
+    if (!opcao) {
+      toast.error('Escolha o simulado que você vai fazer.');
       return;
     }
     setOcupado(true);
     try {
-      const r = await inscreverNoEvento(token, evento.id, escolhida);
+      const r = await inscreverNoEvento(
+        token,
+        evento.id,
+        opcao.provaId,
+        opcao.simuladoId ?? undefined,
+      );
       onMudou(r.evento);
       if (r.resultado === 'nova') toast.success('Inscrição confirmada!');
       if (r.resultado === 'troca') toast.success(`Agora você vai fazer ${nomeDa(escolhida)}.`);
@@ -58,7 +85,7 @@ function CardDoEvento({
     setOcupado(true);
     try {
       await desistirDoEvento(token, evento.id);
-      onMudou({ ...evento, minhaProvaId: null });
+      onMudou({ ...evento, minhaProvaId: null, meuSimuladoId: null });
       toast.success('Inscrição cancelada');
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Erro ao desistir');
@@ -80,28 +107,31 @@ function CardDoEvento({
 
         {inscrito && (
           <p role="status" className="rounded-lg bg-green-50 px-3 py-2 text-green-800">
-            Você está inscrito em <strong>{nomeDa(evento.minhaProvaId)}</strong>.
+            Você está inscrito em <strong>{nomeDa(minha)}</strong>.
           </p>
         )}
 
-        {variasProvas && (
+        {variasOpcoes && (
           <fieldset>
             <legend className="mb-1 font-medium">
-              {inscrito ? 'Trocar de prova' : 'Qual prova você vai fazer?'}
+              {inscrito ? 'Trocar de simulado' : 'Qual simulado você vai fazer?'}
             </legend>
             <div className="space-y-1">
-              {evento.provas.map((p) => (
-                <label key={p.provaId} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name={`prova-${evento.id}`}
-                    checked={escolhida === p.provaId}
-                    onChange={() => setEscolhida(p.provaId)}
-                    className="accent-marine"
-                  />
-                  {p.nome}
-                </label>
-              ))}
+              {opcoes.map((o) => {
+                const k = chave(o.provaId, o.simuladoId);
+                return (
+                  <label key={k} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name={`opcao-${evento.id}`}
+                      checked={escolhida === k}
+                      onChange={() => setEscolhida(k)}
+                      className="accent-marine"
+                    />
+                    {o.nome}
+                  </label>
+                );
+              })}
             </div>
           </fieldset>
         )}
@@ -117,7 +147,7 @@ function CardDoEvento({
               Quero fazer
             </button>
           )}
-          {inscrito && variasProvas && escolhida !== evento.minhaProvaId && (
+          {inscrito && variasOpcoes && escolhida !== minha && (
             <button
               type="button"
               onClick={inscrever}
