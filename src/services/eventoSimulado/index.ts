@@ -12,7 +12,13 @@ export type EventoDoCursinho = {
   inscricoesDe: string;
   inscricoesAte: string;
   status: StatusDoEvento;
-  provas: { provaId: string; nome: string; inscritos: number }[];
+  provas: {
+    provaId: string;
+    nome: string;
+    inscritos: number;
+    /** tickets/039: só na prova de mais de um simulado (Enem Dia 1). */
+    simulados?: { simuladoId: string; nome: string; inscritos: number }[];
+  }[];
   totalInscritos: number;
 };
 
@@ -24,28 +30,41 @@ export type SalvarEvento = {
   provaIds: string[];
 };
 
+export type NumerosDoPainel = {
+  inscritos: number;
+  /** Quem fez ESTA prova (ou este simulado), inscrito nela ou noutra (card 38). */
+  fizeram: number;
+  /** Inscritos aqui que fizeram outra prova — ou, no Enem Dia 1, a outra língua. */
+  trocaram: number;
+  naoVieram: number;
+};
+
 export type EngajamentoDoEvento = {
-  porProva: {
+  /**
+   * Os números de cada prova são o TOTAL dela. tickets/039: `simulados` quebra a
+   * prova por simulado (no Enem Dia 1, Inglês e Espanhol); ausente num api de
+   * antes. `semSimulado`: inscrições de antes, sem a língua.
+   */
+  porProva: ({
     provaId: string;
     nome: string;
-    inscritos: number;
-    /** Quem fez ESTA prova, inscrito nela ou noutra (card 38). */
-    fizeram: number;
-    /** Inscritos nesta prova que fizeram outra (card 38). */
-    trocaram: number;
-    naoVieram: number;
-  }[];
+    simulados?: ({ simuladoId: string; nome: string } & NumerosDoPainel)[];
+    semSimulado?: number;
+  } & NumerosDoPainel)[];
   totalInscritos: number;
   inscritosQueFizeram: number;
   engajamento: number | null;
   inscritos: {
     nome: string;
     provaId: string;
+    simuladoId?: string | null;
     fez: boolean;
     /** Diferente de `provaId` = trocou de prova (card 38). */
     provaQueFez: string | null;
+    /** tickets/039: diferente de `simuladoId` = trocou (inclusive de língua). */
+    simuladoQueFez?: string | null;
   }[];
-  fizeramSemInscricao: { nome: string; provaId: string }[];
+  fizeramSemInscricao: { nome: string; provaId: string; simuladoId?: string }[];
 };
 
 const auth = (token: string) => ({ Authorization: `Bearer ${token}` });
@@ -107,6 +126,17 @@ export async function engajamentoDoEvento(
 
 // ---- aluno (card 07) ----
 
+/**
+ * O que o aluno escolhe (tickets/039): um simulado de uma prova do evento.
+ * Prova de um simulado = uma opção com o nome dela; Enem Dia 1 = "… Inglês" e
+ * "… Espanhol".
+ */
+export type OpcaoDoEvento = {
+  provaId: string;
+  simuladoId: string | null;
+  nome: string;
+};
+
 export type EventoParaOAluno = {
   id: string;
   nome: string;
@@ -114,8 +144,11 @@ export type EventoParaOAluno = {
   cursinho: string;
   inscricoesAte: string;
   provas: { provaId: string; nome: string }[];
+  /** tickets/039. Ausente num api de antes — aí as opções são as provas. */
+  opcoes?: OpcaoDoEvento[];
   /** `null` = ainda não se inscreveu. */
   minhaProvaId: string | null;
+  meuSimuladoId?: string | null;
 };
 
 export async function meusEventos(token: string): Promise<EventoParaOAluno[]> {
@@ -131,11 +164,15 @@ export async function inscreverNoEvento(
   token: string,
   eventoId: string,
   provaId?: string,
+  simuladoId?: string,
 ): Promise<{ evento: EventoParaOAluno; resultado: "nova" | "troca" | "igual" }> {
   const r = await fetchWrapper(`${eventosSimulado}/${eventoId}/inscricao`, {
     method: "PUT",
     headers: json(token),
-    body: JSON.stringify(provaId ? { provaId } : {}),
+    body: JSON.stringify({
+      ...(provaId && { provaId }),
+      ...(simuladoId && { simuladoId }),
+    }),
   });
   if (!r.ok) return falha(r, "Erro ao se inscrever");
   return r.json();

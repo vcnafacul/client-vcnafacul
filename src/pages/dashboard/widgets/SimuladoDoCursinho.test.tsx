@@ -57,13 +57,13 @@ describe('Card do simulado do cursinho no dashboard (026 · 07)', () => {
     expect(screen.getByText('Sábado, 8h, na escola')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Quero fazer' }));
-    expect(toast.error).toHaveBeenCalledWith('Escolha a prova que você vai fazer.');
+    expect(toast.error).toHaveBeenCalledWith('Escolha o simulado que você vai fazer.');
     expect(svc.inscreverNoEvento).not.toHaveBeenCalled();
 
     fireEvent.click(screen.getByLabelText('Simulado Espanhol'));
     fireEvent.click(screen.getByRole('button', { name: 'Quero fazer' }));
     await waitFor(() =>
-      expect(svc.inscreverNoEvento).toHaveBeenCalledWith('tk', 'e1', 'p-es'),
+      expect(svc.inscreverNoEvento).toHaveBeenCalledWith('tk', 'e1', 'p-es', undefined),
     );
     expect(await screen.findByRole('status')).toHaveTextContent(
       'Você está inscrito em Simulado Espanhol',
@@ -86,7 +86,7 @@ describe('Card do simulado do cursinho no dashboard (026 · 07)', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Quero fazer' }));
     expect(screen.queryByRole('radio')).toBeNull();
     await waitFor(() =>
-      expect(svc.inscreverNoEvento).toHaveBeenCalledWith('tk', 'e1', 'p-unica'),
+      expect(svc.inscreverNoEvento).toHaveBeenCalledWith('tk', 'e1', 'p-unica', undefined),
     );
   });
 
@@ -110,5 +110,61 @@ describe('Card do simulado do cursinho no dashboard (026 · 07)', () => {
     await waitFor(() => expect(svc.desistirDoEvento).toHaveBeenCalledWith('tk', 'e1'));
     await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
     expect(screen.getByRole('button', { name: 'Quero fazer' })).toBeInTheDocument();
+  });
+
+  describe('tickets/039: o aluno escolhe o simulado', () => {
+    const dia1 = (over = {}) =>
+      evento({
+        provas: [{ provaId: 'p-dia1', nome: 'Enem Dia 1' }],
+        opcoes: [
+          { provaId: 'p-dia1', simuladoId: 's-ing', nome: 'Enem Dia 1 Inglês' },
+          { provaId: 'p-dia1', simuladoId: 's-esp', nome: 'Enem Dia 1 Espanhol' },
+        ],
+        meuSimuladoId: null,
+        ...over,
+      });
+
+    it('Enem Dia 1: as duas línguas como opções; inscreve no simulado escolhido', async () => {
+      svc.meusEventos.mockResolvedValue([dia1()]);
+      svc.inscreverNoEvento.mockResolvedValue({
+        evento: dia1({ minhaProvaId: 'p-dia1', meuSimuladoId: 's-esp' }),
+        resultado: 'nova',
+      });
+      render(<SimuladoDoCursinho />);
+      expect(
+        await screen.findByText('Qual simulado você vai fazer?'),
+      ).toBeInTheDocument();
+
+      fireEvent.click(screen.getByLabelText('Enem Dia 1 Espanhol'));
+      fireEvent.click(screen.getByRole('button', { name: 'Quero fazer' }));
+      await waitFor(() =>
+        expect(svc.inscreverNoEvento).toHaveBeenCalledWith('tk', 'e1', 'p-dia1', 's-esp'),
+      );
+      expect(await screen.findByRole('status')).toHaveTextContent(
+        'Você está inscrito em Enem Dia 1 Espanhol',
+      );
+    });
+
+    it('inscrito em Inglês: troca para Espanhol', async () => {
+      svc.meusEventos.mockResolvedValue([
+        dia1({ minhaProvaId: 'p-dia1', meuSimuladoId: 's-ing' }),
+      ]);
+      svc.inscreverNoEvento.mockResolvedValue({
+        evento: dia1({ minhaProvaId: 'p-dia1', meuSimuladoId: 's-esp' }),
+        resultado: 'troca',
+      });
+      render(<SimuladoDoCursinho />);
+      expect(await screen.findByRole('status')).toHaveTextContent('Enem Dia 1 Inglês');
+      expect(screen.getByText('Trocar de simulado')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByLabelText('Enem Dia 1 Espanhol'));
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Trocar para Enem Dia 1 Espanhol' }),
+      );
+      await waitFor(() =>
+        expect(svc.inscreverNoEvento).toHaveBeenCalledWith('tk', 'e1', 'p-dia1', 's-esp'),
+      );
+      expect(toast.success).toHaveBeenCalledWith('Agora você vai fazer Enem Dia 1 Espanhol.');
+    });
   });
 });
