@@ -1,5 +1,7 @@
 // client-vcnafacul/src/pages/homeV2/sections/MapSection/index.tsx
 import { RefObject, useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import { toast } from "react-toastify";
 import { TypeMarker } from "../../../../types/map/marker";
 import { TypeProblem } from "@/enums/audit/typeProblem";
@@ -84,15 +86,23 @@ export const MapSection: SectionComponent<null> = () => {
         handleClickMarker={handleClickMarker}
       />
       <MapFilterCard filterMarkers={filterMarkers} onToggle={handleFilterMarkers} />
-      <div
+      <Link
+        to={GEOLOCATION_SEARCH}
         className="
-          absolute z-30 bottom-3 left-3 md:bottom-6 md:left-6
+          group absolute z-30 bottom-3 left-3 md:bottom-6 md:left-6
+          flex items-center gap-2
           bg-white/90 backdrop-blur-xl backdrop-saturate-150 border border-white/40
           rounded-2xl shadow-xl px-4 py-3
+          transition-colors hover:bg-white
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marine
         "
       >
-        <p className="text-marine font-bold text-2xl m-0">Localiza Cursinho</p>
-      </div>
+        <span className="text-marine font-bold text-2xl">Localiza Cursinho</span>
+        <ArrowRight
+          aria-hidden
+          className="h-6 w-6 text-marine transition-transform group-hover:translate-x-1"
+        />
+      </Link>
       <MapInfoCard
         activeMarker={activeMarker}
         boxRef={boxRef as RefObject<HTMLDivElement>}
