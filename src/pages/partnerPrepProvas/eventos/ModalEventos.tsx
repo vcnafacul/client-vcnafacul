@@ -11,6 +11,7 @@ import {
   StatusDoEvento,
 } from "@/services/eventoSimulado";
 import { formatarDataHora } from "./datas";
+import { inscritosDaProva } from "./inscritosDaProva";
 import { FormDoEvento } from "./FormDoEvento";
 import { PainelDoEvento } from "./PainelDoEvento";
 import { textoDaExclusao } from "./textoDaExclusao";
@@ -150,7 +151,7 @@ export function ModalEventos({ isOpen, handleClose, token, podeEditar }: Props) 
                     {formatarDataHora(e.inscricoesAte)}
                   </p>
                   <p className="text-sm mt-1">
-                    {e.provas.map((p) => `${p.nome}: ${p.inscritos}`).join(" · ")} —{" "}
+                    {e.provas.map(inscritosDaProva).join(" · ")} —{" "}
                     <strong>{e.totalInscritos}</strong> inscritos
                   </p>
                   <div className="flex flex-wrap gap-3 mt-2 text-sm">

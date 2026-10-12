@@ -7,7 +7,7 @@ import {
 
 type Props = { token: string; evento: EventoDoCursinho; onVoltar: () => void };
 
-/** Inscritos, quem fez e engajamento (tickets/026, card 06). */
+/** Inscritos, quem fez e engajamento (tickets/026, card 06; por simulado na 039). */
 export function PainelDoEvento({ token, evento, onVoltar }: Props) {
   const [dados, setDados] = useState<EngajamentoDoEvento | null>(null);
   const [erro, setErro] = useState<string | null>(null);
@@ -21,12 +21,37 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
 
   const nomeDaProva = (id: string) =>
     evento.provas.find((p) => p.provaId === id)?.nome ?? "";
-  /** Card 38: inscrito numa prova, fez outra. */
-  const trocou = (i: EngajamentoDoEvento["inscritos"][number]) =>
+  /**
+   * tickets/039: os simulados de cada prova que tem mais de um (Enem Dia 1). Só
+   * essas são quebradas por simulado; as outras seguem como antes.
+   */
+  const simuladosDa = (provaId: string) => {
+    const s = dados?.porProva.find((p) => p.provaId === provaId)?.simulados;
+    return s && s.length > 1 ? s : [];
+  };
+  /** O nome do que o aluno escolheu (ou fez): o simulado, se a prova tiver vários. */
+  const nomeDaOpcao = (provaId: string, simuladoId?: string | null) =>
+    simuladosDa(provaId).find((s) => s.simuladoId === simuladoId)?.nome ??
+    nomeDaProva(provaId);
+  type Inscrito = EngajamentoDoEvento["inscritos"][number];
+  /** Card 38: inscrito numa prova, fez outra. 039: ou a outra língua. */
+  const trocouDeProva = (i: Inscrito) =>
     i.fez && !!i.provaQueFez && i.provaQueFez !== i.provaId;
+  const trocouDeLingua = (i: Inscrito) =>
+    i.fez &&
+    !trocouDeProva(i) &&
+    !!i.simuladoId &&
+    !!i.simuladoQueFez &&
+    i.simuladoQueFez !== i.simuladoId;
+  const temQuebra = !!dados?.porProva.some((p) => simuladosDa(p.provaId).length);
 
-  const lista = dados?.inscritos.filter(
-    (i) => filtro === "todas" || i.provaId === filtro,
+  // Filtro: `<provaId>` (a prova toda) ou `sim:<simuladoId>`.
+  const lista = dados?.inscritos.filter((i) =>
+    filtro === "todas"
+      ? true
+      : filtro.startsWith("sim:")
+        ? i.simuladoId === filtro.slice(4)
+        : i.provaId === filtro,
   );
 
   return (
@@ -51,15 +76,54 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
                 </tr>
               </thead>
               <tbody>
-                {dados.porProva.map((p) => (
-                  <tr key={p.provaId} className="border-t">
-                    <td className="py-1 pr-2">{p.nome}</td>
-                    <td className="py-1 pr-2 font-semibold">{p.inscritos}</td>
-                    <td className="py-1 pr-2">{p.fizeram}</td>
-                    <td className="py-1 pr-2">{p.trocaram}</td>
-                    <td className="py-1">{p.naoVieram}</td>
-                  </tr>
-                ))}
+                {dados.porProva.map((p) => {
+                  const sims = simuladosDa(p.provaId);
+                  if (!sims.length) {
+                    return (
+                      <tr key={p.provaId} className="border-t">
+                        <td className="py-1 pr-2">{p.nome}</td>
+                        <td className="py-1 pr-2 font-semibold">{p.inscritos}</td>
+                        <td className="py-1 pr-2">{p.fizeram}</td>
+                        <td className="py-1 pr-2">{p.trocaram}</td>
+                        <td className="py-1">{p.naoVieram}</td>
+                      </tr>
+                    );
+                  }
+                  /*
+                    tickets/039 (D2): uma linha por simulado e o total da prova —
+                    o total é o que se imprime do caderno da prova; as linhas,
+                    quantos de cada língua.
+                  */
+                  return [
+                    ...sims.map((s) => (
+                      <tr key={s.simuladoId} className="border-t">
+                        <td className="py-1 pr-2">{s.nome}</td>
+                        <td className="py-1 pr-2">{s.inscritos}</td>
+                        <td className="py-1 pr-2">{s.fizeram}</td>
+                        <td className="py-1 pr-2">{s.trocaram}</td>
+                        <td className="py-1">{s.naoVieram}</td>
+                      </tr>
+                    )),
+                    <tr
+                      key={`${p.provaId}-total`}
+                      data-slot="total-da-prova"
+                      className="border-t bg-gray-50"
+                    >
+                      <td className="py-1 pr-2 font-medium">
+                        Total — {p.nome}
+                        {!!p.semSimulado && (
+                          <span className="block text-xs font-normal text-grey">
+                            inclui {p.semSimulado} sem língua escolhida
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-1 pr-2 font-semibold">{p.inscritos}</td>
+                      <td className="py-1 pr-2">{p.fizeram}</td>
+                      <td className="py-1 pr-2">{p.trocaram}</td>
+                      <td className="py-1">{p.naoVieram}</td>
+                    </tr>,
+                  ];
+                })}
               </tbody>
             </table>
             {/*
@@ -69,6 +133,8 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
             */}
             <p className="text-xs text-grey mt-1">
               "Fizeram" conta na prova que o aluno fez, mesmo inscrito em outra.
+              {temQuebra &&
+                " Na prova com Inglês e Espanhol, trocar de língua também conta como troca."}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -97,11 +163,16 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
                 className="border rounded p-1 text-sm w-full sm:w-auto max-w-full"
               >
                 <option value="todas">Todas as provas</option>
-                {evento.provas.map((p) => (
+                {evento.provas.flatMap((p) => [
                   <option key={p.provaId} value={p.provaId}>
                     {p.nome}
-                  </option>
-                ))}
+                  </option>,
+                  ...simuladosDa(p.provaId).map((s) => (
+                    <option key={s.simuladoId} value={`sim:${s.simuladoId}`}>
+                      {`  ${s.nome}`}
+                    </option>
+                  )),
+                ])}
               </select>
             </div>
             {lista?.length ? (
@@ -113,10 +184,16 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
                   >
                     <span className="min-w-0 break-words">{i.nome}</span>
                     <span className="text-grey sm:shrink-0 sm:text-right break-words">
-                      {nomeDaProva(i.provaId)} ·{" "}
-                      {trocou(i) ? (
+                      {nomeDaOpcao(i.provaId, i.simuladoId)} ·{" "}
+                      {trocouDeProva(i) ? (
                         <span className="font-medium text-amber-700">
-                          fez outra prova ({nomeDaProva(i.provaQueFez!)})
+                          fez outra prova (
+                          {nomeDaOpcao(i.provaQueFez!, i.simuladoQueFez)})
+                        </span>
+                      ) : trocouDeLingua(i) ? (
+                        <span className="font-medium text-amber-700">
+                          fez outro simulado (
+                          {nomeDaOpcao(i.provaId, i.simuladoQueFez)})
                         </span>
                       ) : i.fez ? (
                         "fez"
@@ -146,7 +223,7 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
                   >
                     <span className="min-w-0 break-words">{i.nome}</span>
                     <span className="text-grey sm:shrink-0 sm:text-right break-words">
-                      {nomeDaProva(i.provaId)}
+                      {nomeDaOpcao(i.provaId, i.simuladoId)}
                     </span>
                   </li>
                 ))}

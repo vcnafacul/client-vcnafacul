@@ -335,5 +335,71 @@ describe("Eventos de simulado — card 38", () => {
     fireEvent.change(screen.getByLabelText("Filtrar por prova"), { target: { value: "p-ma" } });
     expect(screen.getByText("Ninguém inscrito nesta prova.")).toBeInTheDocument();
   });
-});
 
+  it("tickets/039: Enem Dia 1 com uma linha por língua, o total da prova e quem trocou de língua", async () => {
+    provasSvc.getProvasCursinho.mockResolvedValue({ data: [], totalItems: 0 });
+    const simulados = [
+      { simuladoId: "s-ing", nome: "Enem Dia 1 Inglês", inscritos: 2 },
+      { simuladoId: "s-esp", nome: "Enem Dia 1 Espanhol", inscritos: 1 },
+    ];
+    svc.listarEventos.mockResolvedValue([
+      evento({
+        provas: [{ provaId: "p-dia1", nome: "Enem Dia 1", inscritos: 3, simulados }],
+        totalInscritos: 3,
+      }),
+    ]);
+    svc.engajamentoDoEvento.mockResolvedValue({
+      porProva: [
+        {
+          provaId: "p-dia1",
+          nome: "Enem Dia 1",
+          inscritos: 3,
+          fizeram: 2,
+          trocaram: 1,
+          naoVieram: 1,
+          semSimulado: 0,
+          simulados: [
+            { simuladoId: "s-ing", nome: "Enem Dia 1 Inglês", inscritos: 2, fizeram: 1, trocaram: 1, naoVieram: 0 },
+            { simuladoId: "s-esp", nome: "Enem Dia 1 Espanhol", inscritos: 1, fizeram: 1, trocaram: 0, naoVieram: 1 },
+          ],
+        },
+      ],
+      totalInscritos: 3,
+      inscritosQueFizeram: 2,
+      engajamento: 2 / 3,
+      inscritos: [
+        { nome: "Ana", provaId: "p-dia1", simuladoId: "s-ing", fez: true, provaQueFez: "p-dia1", simuladoQueFez: "s-ing" },
+        { nome: "Beto", provaId: "p-dia1", simuladoId: "s-ing", fez: true, provaQueFez: "p-dia1", simuladoQueFez: "s-esp" },
+        { nome: "Caio", provaId: "p-dia1", simuladoId: "s-esp", fez: false, provaQueFez: null, simuladoQueFez: null },
+      ],
+      fizeramSemInscricao: [],
+    });
+    abrir();
+
+    // Lista dos eventos: o total e quantos de cada língua.
+    expect(
+      await screen.findByText(/Enem Dia 1: 3 \(Inglês 2 · Espanhol 1\)/),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Ver inscritos e engajamento" }));
+    const tabela = await screen.findByRole("table", { name: "Números por prova" });
+    const linhas = within(tabela).getAllByRole("row").map((r) => r.textContent);
+    expect(linhas).toEqual([
+      expect.stringContaining("Prova"),
+      "Enem Dia 1 Inglês2110",
+      "Enem Dia 1 Espanhol1101",
+      "Total — Enem Dia 13211",
+    ]);
+
+    expect(screen.getByText("fez outro simulado (Enem Dia 1 Espanhol)")).toBeInTheDocument();
+    expect(screen.getByText(/trocar de língua também conta como troca/)).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Filtrar por prova"), {
+      target: { value: "sim:s-esp" },
+    });
+    const lista = screen.getByRole("list", { name: "Lista de inscritos" });
+    expect(within(lista).getAllByRole("listitem").map((li) => li.firstChild?.textContent)).toEqual([
+      "Caio",
+    ]);
+  });
+});
