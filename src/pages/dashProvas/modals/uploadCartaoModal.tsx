@@ -19,7 +19,9 @@ export const TEXTO_ERRO_BUSCA = "Não foi possível buscar agora";
 export const TEXTO_TROCAR = "Trocar";
 export const TEXTO_SEM_TURMA = "Sem turma";
 export const TEXTO_CARTAO_ENVIADO =
-  "Cartão enviado. Acompanhe a leitura no relatório do simulado (Detalhes → Ver simulados).";
+  // ⚠️ O relatório DA PROVA, e não o do simulado: o cartão da prova (ENEM Dia 1,
+  // tickets/038) só cai num simulado depois de lido — até lá, só aparece lá.
+  "Cartão enviado. Acompanhe a leitura no relatório da prova (Detalhes → Relatório da prova).";
 
 interface UploadCartaoModalProps {
   isOpen: boolean;
@@ -203,7 +205,7 @@ export default function UploadCartaoModal({
             {/* Confirma de quem é o cartão: corrigir depois exige excluir o envio. */}
             <AlertDialogUI
               title="Enviar este cartão?"
-              description={`O cartão será registrado para ${escolhido.nome} (${escolhido.matricula}). Se o aluno estiver errado, será preciso excluir o envio no relatório do simulado.`}
+              description={`O cartão será registrado para ${escolhido.nome} (${escolhido.matricula}). Se o aluno estiver errado, será preciso excluir o envio no relatório da prova.`}
               onConfirm={handleEnviar}
             >
               <AlertDialogTrigger asChild>

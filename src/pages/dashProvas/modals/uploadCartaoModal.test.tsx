@@ -212,7 +212,7 @@ describe("UploadCartaoModal — o toast do envio", () => {
     expect(texto).not.toMatch(/Processando/i);
     // card 35: o modal fecha, então nada de "o resultado aparece aqui"
     expect(texto).not.toMatch(/aparece aqui/i);
-    expect(texto).toMatch(/Acompanhe a leitura no relatório do simulado/);
+    expect(texto).toMatch(/Acompanhe a leitura no relatório da prova/);
   });
 });
 

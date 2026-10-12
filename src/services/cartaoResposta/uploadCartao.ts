@@ -12,7 +12,7 @@ const TEXTO_SEM_CORPO: Record<number, string> = {
   400: "Não foi possível ler o cartão. Tire outra foto, com o QR inteiro e nítido.",
   403: "Você não pode enviar este cartão.",
   409: "Cartão já enviado para este aluno",
-  502: 'O leitor de cartões está fora do ar. O cartão foi registrado: use "Reenviar" no relatório do simulado quando o serviço voltar.',
+  502: 'O leitor de cartões está fora do ar. O cartão foi registrado: use "Reenviar" no relatório da prova quando o serviço voltar.',
 };
 
 async function mensagemDoServidor(response: Response): Promise<string | null> {

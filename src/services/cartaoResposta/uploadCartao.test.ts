@@ -42,7 +42,7 @@ describe("uploadCartao — mensagens do servidor (card 35)", () => {
     [400, "Este QR não é de um cartão-resposta do Você na Facul."],
     [403, "Este estudante não é do seu cursinho."],
     [403, "Este cartão é de um simulado de outro cursinho."],
-    [502, 'O leitor de cartões está fora do ar. O cartão foi registrado: use "Reenviar" no relatório do simulado quando o serviço voltar.'],
+    [502, 'O leitor de cartões está fora do ar. O cartão foi registrado: use "Reenviar" no relatório da prova quando o serviço voltar.'],
   ])("%i mostra o texto do servidor: %s", async (status, texto) => {
     mockedFetch.mockResolvedValue(resposta(status, { message: texto }));
 
