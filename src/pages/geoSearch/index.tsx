@@ -12,6 +12,7 @@ import BaseTemplate from "../../components/templates/baseTemplate";
 import { AvisoLogin } from "./components/AvisoLogin";
 import { BotaoConfirmar } from "./components/BotaoConfirmar";
 import { BuscaCursinhos } from "./components/BuscaCursinhos";
+import { FiltroGaveta } from "./components/FiltroGaveta";
 import { GeoCardList } from "./components/GeoCardList";
 import { ModalNaoEncontrei } from "./components/ModalNaoEncontrei";
 import { MapaController } from "./components/MapaController";
@@ -362,13 +363,22 @@ function GeoSearch() {
             />
           </div>
           {/* Na busca só entram cursinhos: o filtro de tipo sai de cena. */}
-          {!buscando && (
-            <MapFilterCard
-              filterMarkers={filtros}
-              onToggle={alternarFiltro}
-              className="bottom-3 left-3 md:bottom-6 md:left-6"
-            />
-          )}
+          {!buscando &&
+            (estreita ? (
+              // No celular e no tablet o mapa é curto: o filtro mora numa
+              // gaveta, com só a aba à mostra.
+              <FiltroGaveta
+                filterMarkers={filtros}
+                onToggle={alternarFiltro}
+                className="bottom-3"
+              />
+            ) : (
+              <MapFilterCard
+                filterMarkers={filtros}
+                onToggle={alternarFiltro}
+                className="bottom-3 left-3 md:bottom-6 md:left-6"
+              />
+            ))}
           <div data-slot="card-do-mapa">
             <MapInfoCard
               activeMarker={escolhido}
