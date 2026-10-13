@@ -39,6 +39,8 @@ export type WidgetDef = {
   view: View;
   component: React.ComponentType;
   profiles: Profile[];
+  /** Some para quem tem algum destes perfis, mesmo passando em `profiles`. */
+  hiddenFor?: Profile[];
   permissions?: string[];
 };
 
@@ -49,7 +51,9 @@ export const widgetRegistry: WidgetDef[] = [
   { id: 'kpi-frequencia', view: 'estudo', slot: 'kpi', component: KpiFrequencia, profiles: ['student'] },
   { id: 'kpi-redacoes', view: 'estudo', slot: 'kpi', component: KpiRedacoes, profiles: ['student'] },
   { id: 'evolucao', view: 'estudo', slot: 'main', component: EvolucaoChart, profiles: ['common'] },
-  { id: 'processos', view: 'estudo', slot: 'main', component: ProcessosTable, profiles: ['common'] },
+  // Quem tem matrícula ativa (`student`) não pode ter outra (tickets/035): não
+  // oferecer processo seletivo. Some até a matrícula encerrar.
+  { id: 'processos', view: 'estudo', slot: 'main', component: ProcessosTable, profiles: ['common'], hiddenFor: ['student'] },
   // tickets/026: some sozinho sem evento aberto.
   { id: 'simulado-do-cursinho', view: 'estudo', slot: 'aside', component: SimuladoDoCursinho, profiles: ['student'] },
   { id: 'tema-semana', view: 'estudo', slot: 'aside', component: TemaSemana, profiles: ['student'] },
@@ -102,6 +106,7 @@ export function visibleWidgets(
   return widgets.filter(
     (w) =>
       w.profiles.some((p) => profiles.includes(p)) &&
+      !w.hiddenFor?.some((p) => profiles.includes(p)) &&
       (!w.permissions?.length || w.permissions.some((p) => permissions[p])),
   );
 }
