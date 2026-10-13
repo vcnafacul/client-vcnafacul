@@ -1,5 +1,12 @@
 import { Link } from 'react-router-dom';
-import { PARTNER_PREP, PARTNER_PREP_INSCRIPTION } from '@/routes/path';
+import { StatusApplication } from '@/enums/prepCourse/statusApplication';
+import { statusLabel } from './statusLabel';
+import {
+  DASH,
+  PARTNER_PREP,
+  PARTNER_PREP_INSCRIPTION,
+  REGISTRATION_MONITOR,
+} from '@/routes/path';
 import { Panel, EmptyState } from '../components/Panel';
 import { useDashData } from '../data';
 
@@ -7,6 +14,13 @@ const DAY = 24 * 60 * 60 * 1000;
 
 function daysLeft(endDate: string) {
   return Math.ceil((new Date(endDate).getTime() - Date.now()) / DAY);
+}
+
+/** Sem inscrição vai para o formulário; com, para "Inscrições". */
+function linkTo(id: string, status: StatusApplication | null) {
+  return status === null
+    ? `/${PARTNER_PREP}${PARTNER_PREP_INSCRIPTION}/${id}`
+    : `${DASH}/${REGISTRATION_MONITOR}`;
 }
 
 export function ProcessosTable() {
@@ -34,6 +48,7 @@ export function ProcessosTable() {
                 <th className="hidden px-3 py-2.5 font-medium md:table-cell">
                   Processo
                 </th>
+                <th className="px-3 py-2.5 font-medium">Status</th>
                 <th className="px-5 py-2.5 text-right font-medium sm:px-6">
                   Encerra
                 </th>
@@ -43,11 +58,12 @@ export function ProcessosTable() {
               {rows.map((item) => {
                 const left = daysLeft(item.endDate);
                 const urgent = left <= 3;
+                const status = item.studentStatus ?? null;
                 return (
                   <tr key={item.id} className="group hover:bg-slate-50">
                     <td className="px-5 py-3 sm:px-6">
                       <Link
-                        to={`/${PARTNER_PREP}${PARTNER_PREP_INSCRIPTION}/${item.id}`}
+                        to={linkTo(item.id, status)}
                         className="flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marine/40"
                       >
                         {item.cursinho.logo ? (
@@ -73,6 +89,15 @@ export function ProcessosTable() {
                     </td>
                     <td className="hidden max-w-[220px] truncate px-3 py-3 text-slate-600 md:table-cell">
                       {item.name}
+                    </td>
+                    <td className="px-3 py-3">
+                      {status === null ? (
+                        <span className="text-slate-400">-</span>
+                      ) : (
+                        <span className="inline-block whitespace-nowrap rounded-full bg-marine/[0.07] px-2 py-0.5 text-xs font-medium text-marine">
+                          {statusLabel(status)}
+                        </span>
+                      )}
                     </td>
                     <td className="whitespace-nowrap px-5 py-3 text-right sm:px-6">
                       <span className="block tabular-nums lining-nums text-slate-700">

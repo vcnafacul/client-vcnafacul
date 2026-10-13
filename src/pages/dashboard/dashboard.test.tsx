@@ -108,6 +108,21 @@ describe('Dashboard', () => {
     expect(screen.queryByText('Redações para revisar')).not.toBeInTheDocument();
   });
 
+  it('quem tem matrícula ativa não vê processos seletivos abertos', async () => {
+    auth.data.profiles = ['common', 'student'];
+    renderDashboard();
+
+    expect(await screen.findByText('Simulados feitos')).toBeInTheDocument();
+    expect(screen.queryByText('Processos seletivos abertos')).not.toBeInTheDocument();
+  });
+
+  it('sem matrícula ativa vê processos seletivos abertos', async () => {
+    auth.data.profiles = ['common'];
+    renderDashboard();
+
+    expect(await screen.findByText('Processos seletivos abertos')).toBeInTheDocument();
+  });
+
   it('estudante não vê seletor de visão nem nada de atuação', async () => {
     auth.data.profiles = ['common', 'student'];
     auth.data.permissao = {};

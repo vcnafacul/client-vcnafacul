@@ -60,6 +60,7 @@ export function PartnerPrepInscription() {
     useState<DataInscription | null>(null);
   const [prepCourse, setPrepCourse] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [alreadyInscribed, setAlreadyInscribed] = useState<boolean>(false);
   const [partnerId, setPartnerId] = useState<string>("");
   const [partnerPrepForm, setPartnerPrepForm] =
     useState<PartnerPrepForm | null>(null);
@@ -251,7 +252,12 @@ export function PartnerPrepInscription() {
           />
         );
       case StepsInscriptionStudent.Error:
-        return <PartnerPrepInscriptionStepError message={errorMessage} />;
+        return (
+          <PartnerPrepInscriptionStepError
+            message={errorMessage}
+            alreadyInscribed={alreadyInscribed}
+          />
+        );
       case StepsInscriptionStudent.Presentation:
         return (
           <PartnerPrepInscriptionStep0
@@ -389,6 +395,8 @@ export function PartnerPrepInscription() {
           setStepCurrently(StepsInscriptionStudent.Presentation);
         })
         .catch((res) => {
+          // 409 = "Você já realizou a inscrição neste Processo Seletivo."
+          setAlreadyInscribed(res?.statusCode === 409);
           setStepCurrently(StepsInscriptionStudent.Error);
           setErrorMessage(res.message);
         });

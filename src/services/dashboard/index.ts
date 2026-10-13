@@ -1,3 +1,4 @@
+import { StatusApplication } from '@/enums/prepCourse/statusApplication';
 import fetchWrapper from '@/utils/fetchWrapper';
 import {
   historico_summary,
@@ -34,6 +35,8 @@ export interface OpenInscription {
     name: string;
     logo: string | null;
   };
+  /** Situação do usuário neste processo; `null` = não se inscreveu. */
+  studentStatus: StatusApplication | null;
 }
 
 export interface StudentDashboard {
