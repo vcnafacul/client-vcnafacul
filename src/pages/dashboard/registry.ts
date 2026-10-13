@@ -21,11 +21,12 @@ import { CursinhoCollab } from './widgets/CursinhoCollab';
 /**
  * Onde o widget aparece:
  * - `kpi`: linha de números no topo (4 por linha no desktop)
- * - `main`: coluna larga (8/12), gráficos e tabelas
- * - `aside`: coluna estreita (4/12), cards de contexto e ação
- * Se uma das colunas ficar vazia para o perfil, a outra ocupa a largura toda.
+ * - `body`: os blocos abaixo, em linhas — ver `span` e `grow`
  */
-export type Slot = 'kpi' | 'main' | 'aside';
+export type Slot = 'kpi' | 'body';
+
+/** Largura do bloco no desktop, em colunas de 12. */
+export type Span = 4 | 8 | 12;
 
 /**
  * A qual visão o widget pertence. Quem trabalha na plataforma vê só a de
@@ -39,6 +40,13 @@ export type WidgetDef = {
   view: View;
   component: React.ComponentType;
   profiles: Profile[];
+  /** Só em `body`. Os blocos seguem na ordem do registry, quebrando linha. */
+  span?: Span;
+  /**
+   * Só em `body`: ocupa o que sobrar na linha. É o que deixa a linha cheia
+   * quando um vizinho não aparece (perfil, ou o widget que some sozinho).
+   */
+  grow?: boolean;
   /** Some para quem tem algum destes perfis, mesmo passando em `profiles`. */
   hiddenFor?: Profile[];
   permissions?: string[];
@@ -50,15 +58,18 @@ export const widgetRegistry: WidgetDef[] = [
   { id: 'kpi-aproveitamento', view: 'estudo', slot: 'kpi', component: KpiAproveitamento, profiles: ['common'] },
   { id: 'kpi-frequencia', view: 'estudo', slot: 'kpi', component: KpiFrequencia, profiles: ['student'] },
   { id: 'kpi-redacoes', view: 'estudo', slot: 'kpi', component: KpiRedacoes, profiles: ['student'] },
-  { id: 'evolucao', view: 'estudo', slot: 'main', component: EvolucaoChart, profiles: ['common'] },
+  // Matriculado: [Evolução 8 | Tema 4] · [Meu cursinho 4 | Por matéria 8]
+  // (com evento: [Simulado 4 | Meu cursinho 4 | Por matéria 4]).
+  // Sem matrícula: [Evolução 8 | Por matéria 4] · [Processos 12].
+  { id: 'evolucao', view: 'estudo', slot: 'body', span: 8, grow: true, component: EvolucaoChart, profiles: ['common'] },
+  { id: 'tema-semana', view: 'estudo', slot: 'body', span: 4, component: TemaSemana, profiles: ['student'] },
+  // tickets/026: some sozinho sem evento aberto.
+  { id: 'simulado-do-cursinho', view: 'estudo', slot: 'body', span: 4, component: SimuladoDoCursinho, profiles: ['student'] },
+  { id: 'meu-cursinho', view: 'estudo', slot: 'body', span: 4, component: MeuCursinho, profiles: ['student'] },
+  { id: 'materias', view: 'estudo', slot: 'body', span: 4, grow: true, component: MateriasPanel, profiles: ['common'] },
   // Quem tem matrícula ativa (`student`) não pode ter outra (tickets/035): não
   // oferecer processo seletivo. Some até a matrícula encerrar.
-  { id: 'processos', view: 'estudo', slot: 'main', component: ProcessosTable, profiles: ['common'], hiddenFor: ['student'] },
-  // tickets/026: some sozinho sem evento aberto.
-  { id: 'simulado-do-cursinho', view: 'estudo', slot: 'aside', component: SimuladoDoCursinho, profiles: ['student'] },
-  { id: 'tema-semana', view: 'estudo', slot: 'aside', component: TemaSemana, profiles: ['student'] },
-  { id: 'meu-cursinho', view: 'estudo', slot: 'aside', component: MeuCursinho, profiles: ['student'] },
-  { id: 'materias', view: 'estudo', slot: 'aside', component: MateriasPanel, profiles: ['common'] },
+  { id: 'processos', view: 'estudo', slot: 'body', span: 12, component: ProcessosTable, profiles: ['common'], hiddenFor: ['student'] },
 
   // --- Atuação
   {
@@ -90,12 +101,14 @@ export const widgetRegistry: WidgetDef[] = [
   {
     id: 'questoes',
     view: 'atuacao',
-    slot: 'main',
+    slot: 'body',
+    span: 8,
+    grow: true,
     component: QuestoesPanel,
     profiles: ['common'],
     permissions: [Roles.validarQuestao],
   },
-  { id: 'cursinho-collab', view: 'atuacao', slot: 'aside', component: CursinhoCollab, profiles: ['collaborator'] },
+  { id: 'cursinho-collab', view: 'atuacao', slot: 'body', span: 4, grow: true, component: CursinhoCollab, profiles: ['collaborator'] },
 ];
 
 export function visibleWidgets(

@@ -6,16 +6,26 @@ import { Greeting } from './components/Greeting';
 import { clearDashCache } from './data';
 import {
   availableViews,
+  Span,
   widgetRegistry,
-  Slot,
   visibleWidgets,
 } from './registry';
 import { useDashView } from './useDashView';
 
 /**
+ * Base de cada largura com o `gap-6` (1.5rem) descontado: n/12 da linha menos
+ * a fração de vão que cabe a ela, para 8+4 e 4+4+4 fecharem 100% exatos.
+ */
+const SPAN_BASIS: Record<Span, string> = {
+  4: 'md:basis-[calc(33.3333%-1rem)]',
+  8: 'md:basis-[calc(66.6666%-0.5rem)]',
+  12: 'md:basis-full',
+};
+
+/**
  * Dashboard (`/dashboard`), com layout inspirado no TailAdmin: saudação →
- * linha de KPIs → coluna larga (gráficos/tabela) + coluna estreita (contexto e
- * ação). O desempenho vem do `/historico/performance`, que é por usuário — o
+ * linha de KPIs → blocos em linhas de 12 colunas (ver `span`/`grow` no
+ * registry). O desempenho vem do `/historico/performance`, que é por usuário — o
  * `/historico/summary` que a versão anterior usava é da plataforma inteira.
  *
  * Quem trabalha na plataforma vê a visão de atuação; se também for aluno
@@ -37,13 +47,12 @@ export default function Dashboard() {
   const [view, setView] = useDashView(views);
 
   const bySlot = useMemo(() => {
-    const pick = (slot: Slot) =>
-      visible.filter((w) => w.view === view && w.slot === slot);
-    return { kpi: pick('kpi'), main: pick('main'), aside: pick('aside') };
+    const ofView = visible.filter((w) => w.view === view);
+    return {
+      kpi: ofView.filter((w) => w.slot === 'kpi'),
+      body: ofView.filter((w) => w.slot === 'body'),
+    };
   }, [visible, view]);
-
-  const hasMain = bySlot.main.length > 0;
-  const hasAside = bySlot.aside.length > 0;
 
   return (
     <div className="min-h-full bg-slate-50 lining-nums">
@@ -61,33 +70,25 @@ export default function Dashboard() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
-          {hasMain && (
+        {/*
+         * Linhas, não colunas: os blocos de uma linha ficam com a mesma
+         * altura. `empty:hidden` tira da linha o widget que renderiza null
+         * (Tema sem tema, Simulado sem evento), e o `grow` do vizinho fecha
+         * o buraco.
+         */}
+        <div className="flex flex-col gap-6 md:flex-row md:flex-wrap">
+          {bySlot.body.map(({ id, span = 12, grow, component: Widget }) => (
             <div
+              key={id}
               className={cn(
-                'flex min-w-0 flex-col gap-6',
-                hasAside ? 'md:col-span-8' : 'md:col-span-12',
+                'flex min-w-0 flex-col empty:hidden [&>*]:flex-1',
+                SPAN_BASIS[span],
+                grow && 'md:grow',
               )}
             >
-              {bySlot.main.map(({ id, component: Widget }) => (
-                <Widget key={id} />
-              ))}
+              <Widget />
             </div>
-          )}
-          {hasAside && (
-            <div
-              className={cn(
-                'flex min-w-0 flex-col gap-6',
-                hasMain
-                  ? 'md:col-span-4'
-                  : 'md:col-span-12 md:grid md:grid-cols-2',
-              )}
-            >
-              {bySlot.aside.map(({ id, component: Widget }) => (
-                <Widget key={id} />
-              ))}
-            </div>
-          )}
+          ))}
         </div>
       </div>
     </div>
