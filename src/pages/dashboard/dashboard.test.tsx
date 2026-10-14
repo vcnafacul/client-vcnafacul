@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Roles } from '@/enums/roles/roles';
 import Dashboard from '.';
+import { visibleWidgets, widgetRegistry } from './registry';
 
 const auth = {
   data: {
@@ -205,5 +206,26 @@ describe('Dashboard', () => {
       expect(within(kpi('Simulados feitos')).getByText('2')).toBeInTheDocument(),
     );
     expect(getPerformance).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('Linhas da dashboard', () => {
+  const body = (profiles: string[]) =>
+    visibleWidgets(widgetRegistry, profiles, {})
+      .filter((w) => w.view === 'estudo' && w.slot === 'body')
+      .map((w) => `${w.id}:${w.span}${w.grow ? '+' : ''}`);
+
+  it('matriculado: [Evolução | Tema] e [Simulado? | Meu cursinho | Por matéria]', () => {
+    expect(body(['common', 'student'])).toEqual([
+      'evolucao:8+',
+      'tema-semana:4',
+      'simulado-do-cursinho:4',
+      'meu-cursinho:4',
+      'materias:4+',
+    ]);
+  });
+
+  it('sem matrícula: [Evolução | Por matéria] e [Processos]', () => {
+    expect(body(['common'])).toEqual(['evolucao:8+', 'materias:4+', 'processos:12']);
   });
 });
