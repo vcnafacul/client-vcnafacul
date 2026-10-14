@@ -17,6 +17,7 @@ import { JSX, useEffect, useId, useRef, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import { MarkerPoint, TypeMarker } from "../../../types/map/marker";
+import { clusterType } from "./clusterType";
 
 const FALLBACK_POSITION: [number, number] = [-21.4638407, -47.0065925];
 
@@ -78,11 +79,20 @@ function buildPinHtml(type: TypeMarker): string {
   return renderToStaticMarkup(<MarkerPin type={type} />);
 }
 
-function buildClusterIcon(count: number): leaflet.DivIcon {
+/** Mesmas cores dos pins, com a transparência do aglomerado. */
+const CLUSTER_COLORS: Record<TypeMarker, string> = {
+  [TypeMarker.geo]: "rgba(37,99,235,0.85)",
+  [TypeMarker.univPublic]: "rgba(185,28,28,0.85)",
+};
+
+/** Tipo de cada pin, para o aglomerado saber o que tem dentro. */
+const typeOf = new WeakMap<leaflet.Marker, TypeMarker>();
+
+function buildClusterIcon(count: number, type: TypeMarker): leaflet.DivIcon {
   return leaflet.divIcon({
-    html: `<div style="
+    html: `<div data-cluster-type="${type}" style="
       width:40px;height:40px;border-radius:50%;
-      background:rgba(37,99,235,0.85);color:#fff;
+      background:${CLUSTER_COLORS[type]};color:#fff;
       display:flex;align-items:center;justify-content:center;
       font-weight:700;font-size:14px;
       border:3px solid rgba(255,255,255,0.9);
@@ -154,7 +164,15 @@ function ClusteredMarkers({
       showCoverageOnHover: false,
       spiderfyOnMaxZoom: true,
       maxClusterRadius: 50,
-      iconCreateFunction: (cluster) => buildClusterIcon(cluster.getChildCount()),
+      iconCreateFunction: (cluster) =>
+        buildClusterIcon(
+          cluster.getChildCount(),
+          clusterType(
+            cluster
+              .getAllChildMarkers()
+              .map((m) => typeOf.get(m) ?? TypeMarker.geo),
+          ),
+        ),
     });
 
     markers.forEach((mark, index) => {
@@ -173,6 +191,7 @@ function ClusteredMarkers({
         // markers ser o mesmo na hora do clique (o índice dependia).
         idHandlerRef.current?.(mark.id);
       });
+      typeOf.set(m, mark.type);
       indice.set(mark.id, m);
       clusterGroup.addLayer(m);
     });

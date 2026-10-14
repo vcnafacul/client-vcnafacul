@@ -4,6 +4,7 @@ import { useMap } from "react-leaflet";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TypeMarker } from "@/types/map/marker";
 import MapBox from ".";
+import { clusterType } from "./clusterType";
 
 /*
   Leaflet de verdade no jsdom (sem tiles). Cobre as props opcionais que o
@@ -132,5 +133,33 @@ describe("MapBox — props opcionais do Localiza Cursinho", () => {
     await waitFor(() =>
       expect(container.querySelector(".pin-ativo")).toBeTruthy(),
     );
+  });
+});
+
+describe("MapBox — cor do aglomerado", () => {
+  it("segue o tipo que é maioria; empate fica azul (cursinho)", () => {
+    const { geo, univPublic: univ } = TypeMarker;
+    expect(clusterType([univ, univ])).toBe(univ);
+    expect(clusterType([univ, univ, geo])).toBe(univ);
+    expect(clusterType([geo, geo, univ])).toBe(geo);
+    expect(clusterType([geo, univ])).toBe(geo);
+  });
+
+  it("aglomerado só de universidades sai vermelho", async () => {
+    const perto = [
+      { id: "a", lat: -22.9, lon: -47.06, type: TypeMarker.univPublic },
+      { id: "b", lat: -22.91, lon: -47.07, type: TypeMarker.univPublic },
+    ];
+    const { container } = render(
+      <MapBox markers={perto} zoom={3} center={[-22.9, -47.06]} />,
+    );
+    await waitFor(() =>
+      expect(container.querySelector("[data-cluster-type]")).toBeTruthy(),
+    );
+    const cluster = container.querySelector(
+      "[data-cluster-type]",
+    ) as HTMLElement;
+    expect(cluster.dataset.clusterType).toBe(String(TypeMarker.univPublic));
+    expect(cluster.style.background).toContain("185, 28, 28");
   });
 });
