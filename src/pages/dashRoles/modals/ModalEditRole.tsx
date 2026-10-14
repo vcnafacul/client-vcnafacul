@@ -8,6 +8,8 @@ import {
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getAllRoles } from "@/services/roles/getAll";
 import { updateRole } from "@/services/roles/updateRole";
+import { setRoleRecommended } from "@/services/roles/setRoleRecommended";
+import { motivoSemRecomendacao, passosDoSalvar } from "./recomendacao";
 import { getPermissionsHierarchy } from "@/services/roles/getPermissionsHierarchy";
 import { useEffect, useState } from "react";
 import Button from "../../../components/molecules/button";
@@ -57,20 +59,43 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
   } = useAuthStore();
 
   const handleToggle = (key: string, val: boolean) => {
-    setRoleSelected((prev) => (prev ? { ...prev, [key]: val } : prev));
+    setRoleSelected((prev) => {
+      if (!prev) return prev;
+      const next = { ...prev, [key]: val };
+      // Perfil recomendado não pode ter "Alterar Permissão" (ver recomendacao.ts).
+      return motivoSemRecomendacao(next) ? { ...next, isRecommended: false } : next;
+    });
+  };
+
+  const handleRecommendedToggle = (_: string, checked: boolean) => {
+    setRoleSelected((prev) => (prev ? { ...prev, isRecommended: checked } : prev));
   };
 
   const handleBaseToggle = (_: string, checked: boolean) => {
     setRoleSelected((prev) => {
       if (!prev) return prev;
-      return applyBaseRoleConstraints({ ...prev, base: checked }, hierarchy);
+      const next = applyBaseRoleConstraints({ ...prev, base: checked }, hierarchy);
+      return motivoSemRecomendacao(next) ? { ...next, isRecommended: false } : next;
     });
   };
 
   const editRole = async () => {
     if (!roleSelected) return;
+    const antes =
+      roles.find((r) => r.id === roleSelected.id)?.isRecommended ?? false;
+    const passos = passosDoSalvar(antes, roleSelected.isRecommended ?? false);
     await executeAsync({
-      action: () => updateRole(token, roleSelected),
+      action: async () => {
+        for (const passo of passos) {
+          if (passo === "perfil") await updateRole(token, roleSelected);
+          else
+            await setRoleRecommended(
+              token,
+              roleSelected.id,
+              passo === "recomendar",
+            );
+        }
+      },
       loadingMessage: "Atualizando perfil...",
       successMessage: "Perfil atualizado com sucesso!",
       errorMessage: (error: Error) => error.message,
@@ -127,7 +152,9 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
             <Select
               options={roles.map((role) => ({
                 id: role.id,
-                name: role.name,
+                name: role.isRecommended
+                  ? `${role.name} · recomendado`
+                  : role.name,
               }))}
               value={roleSelected?.id}
               setState={(value) =>
@@ -152,6 +179,24 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
               </span>
             </div>
           </label>
+        </div>
+
+        <div className="flex flex-col gap-1 rounded-lg border border-gray-100 px-3 py-2">
+          <div className="flex items-center gap-3">
+            <Toggle
+              name="isRecommended"
+              checked={roleSelected?.isRecommended ?? false}
+              handleCheck={handleRecommendedToggle}
+              disabled={!roleSelected || !!motivoSemRecomendacao(roleSelected)}
+            />
+            <span className="text-sm font-medium text-marine">
+              Recomendado para ex-colaboradores
+            </span>
+          </div>
+          <p className="text-xs text-gray-500">
+            {(roleSelected && motivoSemRecomendacao(roleSelected)) ??
+              "Coordenadores poderão indicar este perfil ao excluir um colaborador do cursinho."}
+          </p>
         </div>
 
         {roleSelected?.base && (
