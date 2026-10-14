@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { ReactComponent as MenuIcon } from "../../../assets/icons/menu.svg";
 
@@ -16,6 +16,7 @@ import { SinoDaCentral } from "../centralNotificacoes";
 import MainMenu from "../mainMenu";
 import MenuMobile from "../menuMobile";
 import Sign from "../sign";
+import { comNomeDoPainel, ehColaborador } from "./nomeDoPainel";
 
 export interface HeaderData {
   pageLinks: ItemMenuProps[];
@@ -35,11 +36,21 @@ function Header({ solid, className }: HeaderProps) {
     data: {
       token,
       user: { firstName, socialName, useSocialName },
+      profiles,
+      permissao,
     },
   } = useAuthStore();
 
   const { header, headerAction } = useBaseTemplateContext();
   const fecharMenu = useCallback(() => setOpenMenu(false), []);
+  const menuDoUsuario = useMemo(
+    () =>
+      comNomeDoPainel(
+        header.userNavigationLogged,
+        ehColaborador(profiles ?? [], permissao ?? {}),
+      ),
+    [header.userNavigationLogged, profiles, permissao],
+  );
   const nome = token
     ? capitalize(useSocialName ? socialName! : firstName)
     : undefined;
@@ -96,7 +107,7 @@ function Header({ solid, className }: HeaderProps) {
               {/* Central de notificações (central-notificacoes, card 03). */}
               <SinoDaCentral solid={solid} />
               <Logged
-                userNavigation={header.userNavigationLogged}
+                userNavigation={menuDoUsuario}
                 userName={nome!}
                 className={solid ? "text-marine" : "text-white"}
               />
