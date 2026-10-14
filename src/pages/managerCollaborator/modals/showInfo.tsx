@@ -20,6 +20,7 @@ import { getCollaboratorFrentesEnriched } from "@/services/prepCourse/collaborat
 import { useAuthStore } from "@/store/auth";
 import { CollaboratorColumns } from "..";
 import { consequenciasDaInativacao } from "./textosDaAtivacao";
+import { ModalExcluirColaborador } from "./ModalExcluirColaborador";
 
 interface ModalProps {
   handleClose: () => void;
@@ -35,6 +36,11 @@ interface ModalProps {
   ) => Promise<void> | void;
   onPhotoRemoved?: (collaboratorId: string) => void;
   openUpdateRole: () => void;
+  /**
+   * Exclui (tickets/040): `roleId` vazio = só aluno. `true` = deu certo.
+   * Sem a prop, o botão não aparece.
+   */
+  handleExcluir?: (id: string, roleId?: string) => Promise<boolean>;
 }
 
 function toAfinidades(
@@ -61,6 +67,7 @@ export function ShowInfo({
   onPhotoUpdated,
   onPhotoRemoved,
   openUpdateRole,
+  handleExcluir,
 }: ModalProps) {
   const [actived, setActived] = useState<boolean>(collaborator.actived);
   const [description, setDescription] = useState<string>(
@@ -72,6 +79,7 @@ export function ShowInfo({
   const [photoUploading, setPhotoUploading] = useState(false);
   const [confirmarRemocao, setConfirmarRemocao] = useState(false);
   const [confirmarInativacao, setConfirmarInativacao] = useState(false);
+  const [confirmarExclusao, setConfirmarExclusao] = useState(false);
   const [salvandoAtivo, setSalvandoAtivo] = useState(false);
   const { data } = useAuthStore();
   const { token, permissao } = data;
@@ -289,6 +297,14 @@ export function ShowInfo({
           <Button onClick={openUpdateRole} typeStyle="refused">
             Editar Função
           </Button>
+          {handleExcluir && (
+            <Button
+              onClick={() => setConfirmarExclusao(true)}
+              typeStyle="quaternary"
+            >
+              Excluir do cursinho
+            </Button>
+          )}
         </div>
       </div>
       <ModalConfirmCancel
@@ -304,6 +320,14 @@ export function ShowInfo({
           ))}
         </ul>
       </ModalConfirmCancel>
+      {handleExcluir && confirmarExclusao && (
+        <ModalExcluirColaborador
+          isOpen={confirmarExclusao}
+          handleClose={() => setConfirmarExclusao(false)}
+          nome={collaborator.name}
+          handleExcluir={(roleId) => handleExcluir(collaborator.id, roleId)}
+        />
+      )}
       <ModalConfirmCancel
         isOpen={confirmarRemocao}
         handleClose={() => setConfirmarRemocao(false)}

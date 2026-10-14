@@ -3,6 +3,9 @@ import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getMaterias, MateriaDto } from "@/services/content/getMaterias";
 import { changeActive } from "@/services/prepCourse/collaborator/change-active";
+import { excluirColaborador } from "@/services/prepCourse/collaborator/excluir";
+import { Segmented } from "@/pages/dashboard/components/Segmented";
+import { ListaDeExMembros } from "./ListaDeExMembros";
 import { changeDescription } from "@/services/prepCourse/collaborator/change-description";
 import { getTodosOsColaboradores } from "@/services/prepCourse/collaborator/get-collaborator";
 import { getCollaboratorFrentesBatch } from "@/services/prepCourse/collaborator/get-collaborator-frentes-batch";
@@ -71,6 +74,10 @@ export default function ManagerCollaborator() {
   const [selectedMateria, setSelectedMateria] = useState<string>("");
   const [selectedFrente, setSelectedFrente] = useState<string>("");
   const [busca, setBusca] = useState("");
+  /** tickets/040, card 07: colaboradores atuais ou ex-membros. */
+  const [aba, setAba] = useState<"colaboradores" | "ex-membros">(
+    "colaboradores",
+  );
 
   const modals = useModals([
     "modalConvites",
@@ -302,6 +309,7 @@ export default function ManagerCollaborator() {
             : undefined
         }
         handleActive={handleChangeActive}
+        handleExcluir={handleExcluir}
         handleDescription={handleDescription}
         onPhotoUpdated={handlePhotoUpdated}
         onPhotoRemoved={handlePhotoRemoved}
@@ -346,6 +354,28 @@ export default function ManagerCollaborator() {
         handleClose={() => modals.modalShowEditRole.close()}
       />
     ) : null;
+  };
+
+  /**
+   * Exclui (tickets/040): sai da lista e o modal de detalhes fecha. Devolve se
+   * deu certo, para o modal de exclusão fechar só no sucesso.
+   */
+  const handleExcluir = async (id: string, roleId?: string) => {
+    let ok = false;
+    await executeAsync({
+      action: () => excluirColaborador(token, id, roleId),
+      loadingMessage: "Excluindo colaborador...",
+      successMessage: (r) =>
+        `Colaborador excluído. Perfil depois da saída: ${r.role.name}.`,
+      errorMessage: (err: Error) => err.message,
+      onSuccess: () => {
+        ok = true;
+        setCollaborator((prev) => prev.filter((c) => c.id !== id));
+        setCollaboratorSelected(null);
+        modals.modalShowInfo.close();
+      },
+    });
+    return ok;
   };
 
   /** Devolve se deu certo, para o modal mexer na chave só no sucesso. */
@@ -452,7 +482,7 @@ export default function ManagerCollaborator() {
               id: col.user.role.id,
               name: col.user.role.name,
             },
-          }))
+          })),
         );
       })
       .catch((error) => toast.error(error.message));
@@ -519,8 +549,23 @@ export default function ManagerCollaborator() {
         <h1 className="text-3xl font-bold text-center text-marine">
           Colaboradores
         </h1>
+        <div className="mt-3 flex justify-center">
+          <Segmented
+            label="Lista"
+            options={[
+              { value: "colaboradores", label: "Colaboradores" },
+              { value: "ex-membros", label: "Ex-membros" },
+            ]}
+            value={aba}
+            onChange={setAba}
+          />
+        </div>
       </div>
-      {/*
+      {aba === "ex-membros" ? (
+        <ListaDeExMembros />
+      ) : (
+        <>
+          {/*
         ⚠️ **Convites: quem gerencia colaboradores também** — corrigido em
         2026-09-24. Esta tela já exige `gerenciarColaboradores`, então o botão
         aparece para todos que chegam aqui; a lista de funções do modal vem do
@@ -530,124 +575,131 @@ export default function ManagerCollaborator() {
         ⚠️ **Funções: só o admin do cursinho** (`gerenciarPermissoesCursinho`)
         cria e edita — quem gerencia colaboradores só escolhe uma que já existe.
       */}
-      <div
-        data-acoes
-        className="grid grid-cols-2 gap-2 px-4 sm:flex sm:justify-end sm:gap-0 sm:px-0"
-      >
-        <Button
-          onClick={() => modals.modalConvites.open()}
-          size="small"
-          typeStyle="quaternary"
-          className="col-span-2 w-full h-10 sm:w-fit sm:h-fit sm:mx-4"
-        >
-          Convites
-        </Button>
-        {ehAdminDoCursinho && (
-          <>
+          <div
+            data-acoes
+            className="grid grid-cols-2 gap-2 px-4 sm:flex sm:justify-end sm:gap-0 sm:px-0"
+          >
             <Button
-              onClick={() => modals.modalShowNewRole.open()}
+              onClick={() => modals.modalConvites.open()}
               size="small"
               typeStyle="quaternary"
-              className="w-full h-10 sm:w-fit sm:h-fit sm:mx-4"
+              className="col-span-2 w-full h-10 sm:w-fit sm:h-fit sm:mx-4"
             >
-              Nova Função
+              Convites
             </Button>
-            <Button
-              onClick={() => modals.modalShowEditRole.open()}
+            {ehAdminDoCursinho && (
+              <>
+                <Button
+                  onClick={() => modals.modalShowNewRole.open()}
+                  size="small"
+                  typeStyle="quaternary"
+                  className="w-full h-10 sm:w-fit sm:h-fit sm:mx-4"
+                >
+                  Nova Função
+                </Button>
+                <Button
+                  onClick={() => modals.modalShowEditRole.open()}
+                  size="small"
+                  typeStyle="primary"
+                  className="w-full h-10 sm:w-fit sm:h-fit sm:mx-4"
+                >
+                  Editar Função
+                </Button>
+              </>
+            )}
+          </div>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 px-4 sm:flex-wrap">
+            <TextField
+              type="search"
               size="small"
-              typeStyle="primary"
-              className="w-full h-10 sm:w-fit sm:h-fit sm:mx-4"
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              placeholder="Buscar por nome, email, função ou telefone"
+              inputProps={{ "aria-label": "Buscar colaborador" }}
+              sx={{ minWidth: 300 }}
+              fullWidth={!acimaDeSm}
+            />
+            <FormControl
+              size="small"
+              sx={{ minWidth: 200 }}
+              fullWidth={!acimaDeSm}
             >
-              Editar Função
-            </Button>
-          </>
-        )}
-      </div>
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 px-4 sm:flex-wrap">
-        <TextField
-          type="search"
-          size="small"
-          value={busca}
-          onChange={(e) => setBusca(e.target.value)}
-          placeholder="Buscar por nome, email, função ou telefone"
-          inputProps={{ "aria-label": "Buscar colaborador" }}
-          sx={{ minWidth: 300 }}
-          fullWidth={!acimaDeSm}
-        />
-        <FormControl size="small" sx={{ minWidth: 200 }} fullWidth={!acimaDeSm}>
-          <InputLabel id="filter-materia-label">Matéria</InputLabel>
-          <Select
-            labelId="filter-materia-label"
-            value={selectedMateria}
-            label="Matéria"
-            onChange={(e) => handleMateriaChange(e.target.value)}
-          >
-            <MenuItem value="">
-              <em>Todas</em>
-            </MenuItem>
-            {materias.map((m) => (
-              <MenuItem key={m._id} value={m._id}>
-                {m.nome}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl
-          size="small"
-          sx={{ minWidth: 200 }}
-          fullWidth={!acimaDeSm}
-          disabled={!selectedMateria}
-        >
-          <InputLabel id="filter-frente-label">Frente</InputLabel>
-          <Select
-            labelId="filter-frente-label"
-            value={selectedFrente}
-            label="Frente"
-            onChange={(e) => handleFrenteChange(e.target.value)}
-          >
-            <MenuItem value="">
-              <em>Todas</em>
-            </MenuItem>
-            {frentesForSelectedMateria.map((f) => (
-              <MenuItem key={f._id ?? f.id} value={f._id ?? f.id}>
-                {f.nome}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        {(selectedMateria || selectedFrente || busca) && (
-          <Button
-            onClick={handleClearFilters}
-            size="small"
-            typeStyle="secondary"
-            className="w-full h-10 sm:w-fit sm:h-fit"
-          >
-            Limpar Filtros
-          </Button>
-        )}
-      </div>
-      <p className="text-xs text-gray-500 px-4">
-        {filteredCollaborators.length} de {collaborator.length} colaboradores
-      </p>
-      {!acimaDeSm ? (
-        <ListaDeColaboradoresMobile
-          // Filtro novo volta para a primeira página da lista.
-          key={`${busca}|${selectedMateria}|${selectedFrente}`}
-          colaboradores={filteredCollaborators}
-          fotos={collaboratorPhotos}
-          onVer={onClickCard}
-        />
-      ) : (
-        <Paper sx={{ height: "100%", width: "100%" }}>
-          <DataGrid
-            rows={filteredCollaborators}
-            columns={columns}
-            initialState={{ pagination: { paginationModel } }}
-            rowHeight={40}
-            pageSizeOptions={[5, 10, 15, 30, 50, 100]}
-            sx={{ border: 0 }}
-          />
-        </Paper>
+              <InputLabel id="filter-materia-label">Matéria</InputLabel>
+              <Select
+                labelId="filter-materia-label"
+                value={selectedMateria}
+                label="Matéria"
+                onChange={(e) => handleMateriaChange(e.target.value)}
+              >
+                <MenuItem value="">
+                  <em>Todas</em>
+                </MenuItem>
+                {materias.map((m) => (
+                  <MenuItem key={m._id} value={m._id}>
+                    {m.nome}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl
+              size="small"
+              sx={{ minWidth: 200 }}
+              fullWidth={!acimaDeSm}
+              disabled={!selectedMateria}
+            >
+              <InputLabel id="filter-frente-label">Frente</InputLabel>
+              <Select
+                labelId="filter-frente-label"
+                value={selectedFrente}
+                label="Frente"
+                onChange={(e) => handleFrenteChange(e.target.value)}
+              >
+                <MenuItem value="">
+                  <em>Todas</em>
+                </MenuItem>
+                {frentesForSelectedMateria.map((f) => (
+                  <MenuItem key={f._id ?? f.id} value={f._id ?? f.id}>
+                    {f.nome}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            {(selectedMateria || selectedFrente || busca) && (
+              <Button
+                onClick={handleClearFilters}
+                size="small"
+                typeStyle="secondary"
+                className="w-full h-10 sm:w-fit sm:h-fit"
+              >
+                Limpar Filtros
+              </Button>
+            )}
+          </div>
+          <p className="text-xs text-gray-500 px-4">
+            {filteredCollaborators.length} de {collaborator.length}{" "}
+            colaboradores
+          </p>
+          {!acimaDeSm ? (
+            <ListaDeColaboradoresMobile
+              // Filtro novo volta para a primeira página da lista.
+              key={`${busca}|${selectedMateria}|${selectedFrente}`}
+              colaboradores={filteredCollaborators}
+              fotos={collaboratorPhotos}
+              onVer={onClickCard}
+            />
+          ) : (
+            <Paper sx={{ height: "100%", width: "100%" }}>
+              <DataGrid
+                rows={filteredCollaborators}
+                columns={columns}
+                initialState={{ pagination: { paginationModel } }}
+                rowHeight={40}
+                pageSizeOptions={[5, 10, 15, 30, 50, 100]}
+                sx={{ border: 0 }}
+              />
+            </Paper>
+          )}
+        </>
       )}
       {ModalDeConvites()}
       {ModalShowInfo()}
