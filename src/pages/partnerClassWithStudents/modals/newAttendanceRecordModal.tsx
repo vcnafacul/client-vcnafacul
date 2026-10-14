@@ -116,18 +116,25 @@ export function NewAttendanceRecordModal({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-white p-2 sm:p-6 rounded-md w-[90vw] sm:w-[700px] h-[670px] flex flex-col gap-4"
+      /*
+        ⚠️ Altura limitada à tela: com 670px fixos, no celular (Moto Edge 70,
+        Oppo A58) a data, o período e o Confirmar ficavam para fora da caixa.
+        Só a lista rola; os controles de baixo ficam sempre visíveis.
+      */
+      className="bg-white p-2 sm:p-6 rounded-md w-[90vw] sm:w-[700px] h-[min(670px,calc(100dvh-2rem))] md:h-[min(670px,calc(100dvh-4rem))] flex flex-col gap-4"
     >
       {/*
         Turma sem matriculados (antes das matrículas ou no fim do período): a
         api recusa a chamada, então a tela avisa e não deixa confirmar (card 11).
       */}
       {carregou && students.length === 0 ? (
-        <div className="h-[85%] w-full flex items-center justify-center text-center text-gray-500 px-4">
+        <div className="flex-1 min-h-[200px] w-full flex items-center justify-center text-center text-gray-500 px-4">
           Esta turma não tem alunos matriculados.
         </div>
       ) : (
-        <Paper sx={{ height: "85%", width: "100%" }}>
+        <Paper
+          sx={{ flex: 1, minHeight: 200, width: "100%" }}
+        >
           <DataGrid
             rows={students}
             columns={columns}
@@ -142,7 +149,8 @@ export function NewAttendanceRecordModal({
           />
         </Paper>
       )}
-      <div className="flex flex-col sm:flex-row gap-2 justify-end w-full">
+      {/* No celular: data e período lado a lado, Confirmar embaixo. */}
+      <div className="shrink-0 grid grid-cols-2 gap-2 w-full sm:flex sm:flex-row sm:justify-end">
         <div className="flex flex-col justify-content-center h-16 border pt-7 pl-4 rounded-md relative w-full">
           <label
             className="absolute top-1 left-3 text-xs text-grey font-semibold"
@@ -184,7 +192,7 @@ export function NewAttendanceRecordModal({
         <button
           type="button"
           onClick={handleCreateAttendancerecord}
-          className="bg-marine hover:opacity-90 text-white font-bold py-2 px-4 rounded w-full 
+          className="col-span-2 bg-marine hover:opacity-90 text-white font-bold py-2 px-4 rounded w-full 
             disabled:bg-opacity-75 disabled:cursor-not-allowed"
           disabled={registring || !carregou || students.length === 0}
         >
