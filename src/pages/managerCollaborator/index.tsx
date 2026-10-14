@@ -3,6 +3,7 @@ import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getMaterias, MateriaDto } from "@/services/content/getMaterias";
 import { changeActive } from "@/services/prepCourse/collaborator/change-active";
+import { excluirColaborador } from "@/services/prepCourse/collaborator/excluir";
 import { changeDescription } from "@/services/prepCourse/collaborator/change-description";
 import { getTodosOsColaboradores } from "@/services/prepCourse/collaborator/get-collaborator";
 import { getCollaboratorFrentesBatch } from "@/services/prepCourse/collaborator/get-collaborator-frentes-batch";
@@ -302,6 +303,7 @@ export default function ManagerCollaborator() {
             : undefined
         }
         handleActive={handleChangeActive}
+        handleExcluir={handleExcluir}
         handleDescription={handleDescription}
         onPhotoUpdated={handlePhotoUpdated}
         onPhotoRemoved={handlePhotoRemoved}
@@ -346,6 +348,28 @@ export default function ManagerCollaborator() {
         handleClose={() => modals.modalShowEditRole.close()}
       />
     ) : null;
+  };
+
+  /**
+   * Exclui (tickets/040): sai da lista e o modal de detalhes fecha. Devolve se
+   * deu certo, para o modal de exclusão fechar só no sucesso.
+   */
+  const handleExcluir = async (id: string, roleId?: string) => {
+    let ok = false;
+    await executeAsync({
+      action: () => excluirColaborador(token, id, roleId),
+      loadingMessage: "Excluindo colaborador...",
+      successMessage: (r) =>
+        `Colaborador excluído. Perfil depois da saída: ${r.role.name}.`,
+      errorMessage: (err: Error) => err.message,
+      onSuccess: () => {
+        ok = true;
+        setCollaborator((prev) => prev.filter((c) => c.id !== id));
+        setCollaboratorSelected(null);
+        modals.modalShowInfo.close();
+      },
+    });
+    return ok;
   };
 
   /** Devolve se deu certo, para o modal mexer na chave só no sucesso. */
