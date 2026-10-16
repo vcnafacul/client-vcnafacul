@@ -22,8 +22,14 @@ function ModalTemplate({
   ...props
 }: ModalTemplateProps) {
   return !isOpen ? null : (
+    /*
+      ⚠️ Altura da área VISÍVEL (`dvh`), não `h-screen`: no celular o `100vh`
+      inclui o espaço atrás da barra do navegador, o modal centralizava nesse
+      espaço maior e a parte de baixo ficava escondida, sem como rolar até ela
+      — o botão Confirmar da chamada aparecia cortado (Oppo A58, Moto Edge 70).
+    */
     <div
-      className="fixed top-0 left-0 z-50 bg-black/65 w-screen h-screen overflow-y-auto 
+      className="fixed inset-0 z-50 bg-black/65 h-screen supports-[height:100dvh]:h-dvh overflow-y-auto 
         scrollbar-hide"
       {...props}
     >
