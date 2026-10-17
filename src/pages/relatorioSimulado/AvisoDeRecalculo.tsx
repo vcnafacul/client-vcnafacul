@@ -36,6 +36,7 @@ export function AvisoDeRecalculo({
   token,
   divergentes,
   anuladas,
+  desanuladas = [],
   jobAtivo,
   aoConcluir,
 }: {
@@ -43,6 +44,8 @@ export function AvisoDeRecalculo({
   token: string;
   divergentes: number;
   anuladas: AnuladaDoRelatorio[];
+  /** Card 20: o que voltou a valer depois dos resultados calculados. */
+  desanuladas?: number[];
   jobAtivo: JobDoRecalculo | null;
   /** Recarrega o relatório quando o job termina. */
   aoConcluir: () => void;
@@ -139,7 +142,7 @@ export function AvisoDeRecalculo({
       <p className="flex items-start gap-2">
         <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" aria-hidden />
         <span>
-          <strong>Relatório desatualizado.</strong> {textoDaDivergencia(anuladas, divergentes)}
+          <strong>Relatório desatualizado.</strong> {textoDaDivergencia(anuladas, divergentes, desanuladas)}
           {fase.tipo === "erro" && <span className="block text-rose-700">{fase.mensagem}</span>}
         </span>
       </p>

@@ -231,6 +231,11 @@ export const vitrineAvisoDeRecalculo: Vitrine = {
   estados: [
     { slug: "divergente", titulo: "Divergente", render: avisoDeRecalculo() },
     {
+      slug: "desanulada",
+      titulo: "Desanulada (voltou a valer)",
+      render: avisoDeRecalculo({ anuladas: [], desanuladas: [45], divergentes: 30 }),
+    },
+    {
       slug: "rodando",
       titulo: "Rodando",
       rotas: situacao({ divergentes: 84, jobAtivo: jobDaVitrine() }),
