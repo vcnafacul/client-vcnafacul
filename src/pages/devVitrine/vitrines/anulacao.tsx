@@ -7,6 +7,9 @@ import { AnulacaoDaProva } from "@/pages/dashQuestionNew/modals/tabs/TabClassifi
 import QuestionBox from "@/components/atoms/questionBox";
 import QuestionList from "@/components/molecules/questionList";
 import { QuestionBoxStatus } from "@/enums/simulado/questionBoxStatus";
+import type { AvisoDeRecalculo } from "@/pages/relatorioSimulado/AvisoDeRecalculo";
+import { AvisoComToken } from "./AvisoComToken";
+import { RotaFalsa } from "../fetchFalso";
 import { Vitrine } from "../tipos";
 
 const nada = () => {};
@@ -201,5 +204,56 @@ export const vitrineQuestaoAnuladaNoSimulado: Vitrine = {
       ),
     },
     { slug: "questionList", titulo: "Grade de 90 com anuladas", render: grade([0, 44, 45, 89]) },
+  ],
+};
+
+const jobDaVitrine = (o: Record<string, unknown> = {}) => ({
+  id: "j1",
+  status: "processando" as const,
+  total: 132,
+  processados: 48,
+  falhas: 0,
+  regravados: 0,
+  ...o,
+});
+const situacao = (o: Record<string, unknown>): RotaFalsa[] => [
+  { caminho: /recalculo-anulacao$/, resposta: { corpo: { divergentes: 0, anulacoes: [], jobAtivo: null, ultimoJob: null, ...o } } },
+];
+const avisoDeRecalculo = (props: Partial<Parameters<typeof AvisoDeRecalculo>[0]> = {}) => () => (
+  <AvisoComToken {...props} />
+);
+
+/** tickets/042, card 15. ⚠️ "concluído" e "com falhas" aparecem depois do 1º polling (3 s). */
+export const vitrineAvisoDeRecalculo: Vitrine = {
+  slug: "aviso-recalculo",
+  titulo: "Relatório desatualizado",
+  arquivo: "src/pages/relatorioSimulado/AvisoDeRecalculo.tsx",
+  estados: [
+    { slug: "divergente", titulo: "Divergente", render: avisoDeRecalculo() },
+    {
+      slug: "rodando",
+      titulo: "Rodando",
+      rotas: situacao({ divergentes: 84, jobAtivo: jobDaVitrine() }),
+      render: avisoDeRecalculo({ jobAtivo: jobDaVitrine() }),
+    },
+    {
+      slug: "concluido",
+      titulo: "Concluído",
+      rotas: situacao({ ultimoJob: jobDaVitrine({ status: "concluido", processados: 132, regravados: 132 }) }),
+      render: avisoDeRecalculo({ jobAtivo: jobDaVitrine() }),
+    },
+    {
+      slug: "com-falhas",
+      titulo: "Com falhas",
+      rotas: situacao({ divergentes: 3, ultimoJob: jobDaVitrine({ status: "concluido", processados: 132, falhas: 3, regravados: 129 }) }),
+      render: avisoDeRecalculo({ jobAtivo: jobDaVitrine() }),
+    },
+    {
+      slug: "varias",
+      titulo: "Várias anuladas",
+      render: avisoDeRecalculo({
+        anuladas: [3, 45, 90].map((numero) => ({ numero, motivo: MotivoAnulacao.outro, justificativa: "x" })),
+      }),
+    },
   ],
 };

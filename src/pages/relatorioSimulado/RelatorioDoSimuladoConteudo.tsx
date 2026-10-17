@@ -19,7 +19,9 @@ import { Roles } from "@/enums/roles/roles";
 import { useAuthStore } from "@/store/auth";
 import { buscarQuestoes } from "@/services/relatorioSimulado/buscarQuestoes";
 import { buscarRelatorio } from "@/services/relatorioSimulado/buscarRelatorio";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AvisoDeRecalculo } from "./AvisoDeRecalculo";
+import { TEXTO_SEM_DISCRIMINACAO_DIVERGENTE } from "./textosDaAnulacao";
 import { colunasDoRelatorio } from "./colunas";
 import { filtrarLinhas, totalQueNaoEnviou } from "./filtrarLinhas";
 import { CartaoSemSimulado } from "./CartaoSemSimulado";
@@ -205,6 +207,10 @@ export function RelatorioDoSimuladoConteudo({
   const [questoesMesmas, setQuestoesMesmas] = useState<boolean | undefined>(
     undefined,
   );
+  /** tickets/042: por que a discriminação veio `null` em todas. */
+  const [semDiscriminacao, setSemDiscriminacao] = useState<
+    "divergente" | "composicao" | null | undefined
+  >(undefined);
   const [estadoQuestoes, setEstadoQuestoes] = useState<Estado>("idle");
 
   /*
@@ -277,6 +283,7 @@ export function RelatorioDoSimuladoConteudo({
       .then((r) => {
         setQuestoes(r.questoes);
         setQuestoesMesmas(r.mesmasQuestoes);
+        setSemDiscriminacao(r.semDiscriminacao);
         setEstadoQuestoes("idle");
       })
       .catch(() => setEstadoQuestoes("error"))
@@ -372,10 +379,21 @@ export function RelatorioDoSimuladoConteudo({
     () =>
       faixasDoHistograma(
         todasAsLinhas,
-        totalDeQuestoes,
+        // tickets/042: o histograma é sobre a base da análise (sem anuladas).
+        relatorio?.resumo.totalConsiderado ?? totalDeQuestoes,
       ),
-    [todasAsLinhas, totalDeQuestoes],
+    [todasAsLinhas, totalDeQuestoes, relatorio?.resumo.totalConsiderado],
   );
+
+  /*
+    tickets/042, card 15: o recálculo terminou — relê o relatório e o agregado
+    por questão (as notas, a média e a discriminação mudaram).
+  */
+  const recarregarDepoisDoRecalculo = useCallback(() => {
+    setQuestoes(null);
+    carregar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fonte.tipo, idFonte, turmaId, token]);
 
   const colunas = useMemo(
     () =>
@@ -591,6 +609,34 @@ export function RelatorioDoSimuladoConteudo({
               )}
             >
               {TEXTO_COMPOSICOES_DIFERENTES}
+            </p>
+          </div>
+        )}
+
+        {/*
+          tickets/042, card 15: o relatório desatualizado por anulação, e o
+          "Recalcular". Acima das abas: a ressalva vem antes dos números.
+        */}
+        {relatorio?.resumo.anulacao && (
+          <div className="px-4 pb-2">
+            <AvisoDeRecalculo
+              fonte={fonte}
+              token={token}
+              divergentes={relatorio.resumo.anulacao.divergentes}
+              anuladas={relatorio.resumo.anuladas ?? []}
+              jobAtivo={relatorio.resumo.anulacao.jobAtivo}
+              aoConcluir={recarregarDepoisDoRecalculo}
+            />
+          </div>
+        )}
+        {semDiscriminacao === "divergente" && (
+          <div className="px-4 pb-2">
+            <p
+              role="note"
+              data-testid="aviso-sem-discriminacao"
+              className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900"
+            >
+              {TEXTO_SEM_DISCRIMINACAO_DIVERGENTE}
             </p>
           </div>
         )}
