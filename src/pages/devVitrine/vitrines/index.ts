@@ -2,6 +2,7 @@ import { Vitrine } from "../tipos";
 import {
   vitrineAnulacaoNaProva,
   vitrineAvisoAnulada,
+  vitrineCadernoComAnuladas,
   vitrineModalAnular,
 } from "./anulacao";
 import { vitrineChamada } from "./chamada";
@@ -12,4 +13,5 @@ export const vitrines: Vitrine[] = [
   vitrineModalAnular,
   vitrineAnulacaoNaProva,
   vitrineAvisoAnulada,
+  vitrineCadernoComAnuladas,
 ];

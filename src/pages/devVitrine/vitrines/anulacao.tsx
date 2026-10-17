@@ -1,5 +1,6 @@
 import { ModalAnularQuestao } from "@/components/molecules/anulacao/ModalAnularQuestao";
 import { ModalAvisoAnulada } from "@/components/molecules/anulacao/ModalAvisoAnulada";
+import { ModalCadernoComAnuladas } from "@/components/molecules/anulacao/ModalCadernoComAnuladas";
 import { MotivoAnulacao } from "@/dtos/question/anulacao";
 import { AnuladasDaProva } from "@/pages/dashProvas/modals/AnuladasDaProva";
 import { AnulacaoDaProva } from "@/pages/dashQuestionNew/modals/tabs/TabClassificacao/AnulacaoDaProva";
@@ -144,5 +145,20 @@ export const vitrineAvisoAnulada: Vitrine = {
     { slug: "uma", titulo: "1 anulação", render: aviso([daQuestao(0)]) },
     { slug: "quatro", titulo: "4 anulações", render: aviso([0, 1, 2, 3].map((i) => daQuestao(i, LONGA.slice(0, 200)))) },
     { slug: "longa", titulo: "Justificativa longa", render: aviso([daQuestao(0, LONGA.slice(0, 500))]) },
+  ],
+};
+
+/** tickets/042, card 09. */
+export const vitrineCadernoComAnuladas: Vitrine = {
+  slug: "caderno-com-anuladas",
+  titulo: "Caderno com questão anulada",
+  arquivo: "src/components/molecules/anulacao/ModalCadernoComAnuladas.tsx",
+  estados: [
+    { slug: "uma", titulo: "1 anulada", render: () => <ModalCadernoComAnuladas numeros={[45]} onConfirmar={nada} onCancelar={nada} /> },
+    {
+      slug: "varias",
+      titulo: "Várias",
+      render: () => <ModalCadernoComAnuladas numeros={[3, 12, 45, 88, 136]} onConfirmar={nada} onCancelar={nada} />,
+    },
   ],
 };
