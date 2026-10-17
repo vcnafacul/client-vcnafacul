@@ -48,6 +48,8 @@ interface SimulateTemplateProps {
   respondidas?: number;
   /** tickets/042: o total que conta (sem as anuladas). Ausente = todas. */
   totalConsiderado?: number;
+  /** tickets/042, card 16: no resultado, a anulada abre (o aluno lê o porquê). */
+  anuladaAbre?: boolean;
 }
 
 const ALTERNATIVA_LETRAS = ["A", "B", "C", "D", "E"] as const;
@@ -65,6 +67,7 @@ function SimulateTemplate({
   buttons,
   respondidas,
   totalConsiderado,
+  anuladaAbre = false,
 }: SimulateTemplateProps) {
   const hasTextContent = !!questionSelected.textoQuestao;
   const acimaDeSm = useAcimaDeSm();
@@ -121,7 +124,11 @@ function SimulateTemplate({
         )}
         {mostrarGrade && (
           <>
-            <QuestionList selectQuestion={escolherQuestao} questions={questions} />
+            <QuestionList
+              selectQuestion={escolherQuestao}
+              questions={questions}
+              anuladaAbre={anuladaAbre}
+            />
             <Legends legends={legends} />
           </>
         )}

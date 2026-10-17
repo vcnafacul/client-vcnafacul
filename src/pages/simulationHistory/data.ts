@@ -6,6 +6,8 @@ export const simulateMetricData = {
         { label: "Questão respondida", className: "bg-white border border-marine"},
         { label: "Questão certas", className: "border border-marine bg-right-gradient rotate-45"},
         { label: "Questão não visualizada", className: "bg-lightGray border border-grey"},
+        // tickets/042
+        { label: "Questão anulada", className: "bg-white border border-rose-400"},
      ],
      alternativasData: Alternatives,
 }

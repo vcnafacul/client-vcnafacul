@@ -16,6 +16,7 @@ import { getHistoricoSimuladoById } from "../../services/historico/getHistoricoS
 import { getQuestionImage } from "../../services/question/getQuestionImage";
 import { useAuthStore } from "../../store/auth";
 import { simulateMetricData } from "./data";
+import { PorqueDaAnulada } from "../../components/molecules/anulacao/PorqueDaAnulada";
 
 export function SimulationHistory() {
   const { historicId } = useParams();
@@ -32,7 +33,12 @@ export function SimulationHistory() {
 
   const modals = useModals(["modalImage"]);
 
-  const getStatus = (answer: AnswerHistoricoDTO | undefined) => {
+  const getStatus = (
+    answer: AnswerHistoricoDTO | undefined,
+    questao?: QuestaoHistorico,
+  ) => {
+    // tickets/042: a anulada leva o X — e abre, para o aluno ler o porquê.
+    if (questao?.anulada || answer?.anulada) return QuestionBoxStatus.anulada;
     if (!answer) return QuestionBoxStatus.unread;
     if (answer.questao === questionSelected?._id)
       return QuestionBoxStatus.active;
@@ -102,13 +108,22 @@ export function SimulationHistory() {
           id: q._id,
           number: index,
           status: getStatus(
-            historic.respostas.find((r) => r.questao === q._id)
+            historic.respostas.find((r) => r.questao === q._id),
+            q
           ),
         }))}
         legends={simulateMetricData.legends}
+        anuladaAbre
         questionSelected={questionSelected!}
         questionImageUrl={questionImageUrl}
-        alternative={<AlternativeHistorico answer={answerSelected!} />}
+        alternative={
+          <>
+            {questionSelected?.anulada && (
+              <PorqueDaAnulada anulacao={questionSelected.anulacao} />
+            )}
+            <AlternativeHistorico answer={answerSelected!} />
+          </>
+        }
         buttons={[]}
         expandedPhoto={() => modals.modalImage.open()}
       />
