@@ -4,6 +4,7 @@ import {
   vitrineAvisoAnulada,
   vitrineCadernoComAnuladas,
   vitrineModalAnular,
+  vitrineQuestaoAnuladaNoSimulado,
 } from "./anulacao";
 import { vitrineChamada } from "./chamada";
 
@@ -14,4 +15,5 @@ export const vitrines: Vitrine[] = [
   vitrineAnulacaoNaProva,
   vitrineAvisoAnulada,
   vitrineCadernoComAnuladas,
+  vitrineQuestaoAnuladaNoSimulado,
 ];

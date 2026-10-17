@@ -23,6 +23,11 @@ export interface Question extends QuestionTemplate {
     solved: boolean;
     answered?: Alternativa;
     viewed: boolean
+    /**
+     * tickets/042 (D5): anulada nesta prova. Nasce `solved` (o `finish =
+     * every(solved)` continua valendo), nunca fica ativa e não é enviada.
+     */
+    anulada?: boolean;
 }
 
 export interface Simulado {
@@ -49,24 +54,48 @@ const initialSimulado : Simulado = {
     finish: false,
 }
 
-function nextQuestionActive(question: Question[], active: number){
+/**
+ * ⚠️ `numero` aqui é o ÍNDICE (o `getSimuladoById` re-indexa por posição), e
+ * `questionActive` também.
+ *
+ * tickets/042: as anuladas nascem `solved`, então os dois laços já as pulam; o
+ * fallback (todas respondidas) também tem de pular — antes devolvia `active ± 1`
+ * sem olhar.
+ */
+export function nextQuestionActive(question: Question[], active: number){
     for (let index = active + 1; index < question.length; index++) {
         if(!question[index].solved) return question[index].numero
     }
     for (let index = 0; index < active; index++) {
         if(!question[index].solved) return question[index].numero
     }
-    return active + 1 >= question.length ? 0 : active + 1;
+    return vizinhaValida(question, active, +1);
 }
 
-function priorQuestionActive(question: Question[], active: number){
+export function priorQuestionActive(question: Question[], active: number){
     for (let index = active - 1; index > -1; index--) {
         if(!question[index].solved) return question[index].numero
     }
     for (let index = question.length - 1; index > active; index--) {
         if(!question[index].solved) return question[index].numero
     }
-    return active - 1 < 0 ? question.length - 1 : active - 1;
+    return vizinhaValida(question, active, -1);
+}
+
+/** A próxima (ou anterior), em círculo, que não seja anulada; sem nenhuma, fica. */
+function vizinhaValida(question: Question[], active: number, passo: 1 | -1) {
+    const n = question.length;
+    for (let i = 1; i < n; i++) {
+        const index = (((active + passo * i) % n) + n) % n;
+        if (!question[index].anulada) return index;
+    }
+    return active;
+}
+
+/** A primeira questão que o aluno pode abrir (tickets/042). */
+export function primeiraValida(question: Pick<Question, "anulada">[]) {
+    const i = question.findIndex((q) => !q.anulada);
+    return i < 0 ? 0 : i;
 }
 
 type SimuladoState = {
@@ -89,6 +118,8 @@ export const useSimuladoStore = create<SimuladoState>()(
             set(() => ({ data: simulado }))
         },
         setActive: (numberQuestion) => {
+            // tickets/042 (D5): a anulada não abre.
+            if (useSimuladoStore.getState().data.questions[numberQuestion]?.anulada) return;
             set((state) => ({
                 data: {
                         ...state.data, 

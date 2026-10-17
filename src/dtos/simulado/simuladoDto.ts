@@ -17,6 +17,8 @@ export interface IQuestao {
   frente3?: Obj
   materia: Obj
   imageId: string
+  /** tickets/042 (D5): anulada nesta prova — sem imagem, pulada. */
+  anulada?: boolean
 }
 
 // Shape do vínculo prova↔questão (número no relacionamento). Usado no contexto

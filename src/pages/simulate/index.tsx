@@ -49,7 +49,8 @@ function Simulate() {
 
   // Memoiza a função de status para evitar recriação
   const getStatus = useCallback(
-    (viewed: boolean, resolved: boolean, actived: boolean) => {
+    (viewed: boolean, resolved: boolean, actived: boolean, anulada = false) => {
+      if (anulada) return QuestionBoxStatus.anulada;
       if (actived) return QuestionBoxStatus.active;
       else if (resolved) return QuestionBoxStatus.solved;
       else if (viewed) return QuestionBoxStatus.unsolved;
@@ -61,7 +62,8 @@ function Simulate() {
   // Memoiza a função de encerrar
   const Encerrar = useCallback(() => {
     const res: Answer[] = data.questions
-      .filter((q) => !!q.answered)
+      // tickets/042: resposta de anulada não vai (e o ms ignoraria).
+      .filter((q) => !!q.answered && !q.anulada)
       .map((q) => {
         return {
           questao: q._id,
@@ -274,11 +276,14 @@ function Simulate() {
             status: getStatus(
               quest.viewed,
               quest.solved,
-              data.questionActive === quest.numero
+              data.questionActive === quest.numero,
+              quest.anulada
             ),
           }))}
           legends={simulateData.legends}
-          respondidas={data.questions.filter((q) => q.solved).length}
+          // tickets/042: a anulada nasce `solved`, mas não é "respondida".
+          respondidas={data.questions.filter((q) => q.solved && !q.anulada).length}
+          totalConsiderado={data.questions.filter((q) => !q.anulada).length}
           questionSelected={questionSelected}
           questionImageUrl={questionImageUrl}
           setReportProblem={() => {
