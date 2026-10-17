@@ -37,6 +37,7 @@ import {
   ROTULO_DA_DIFICULDADE,
   type RecorteDoRelatorio,
 } from "./recorteDoRelatorio";
+import { XCircle } from "lucide-react";
 import { rotuloDoResultado } from "./rotuloDoResultado";
 
 const VAZIO = "—";
@@ -81,7 +82,16 @@ const colunasDoDetalhe = (
     width: "6rem",
     primary: true,
     // Questão sem número já vem no fim, ordenada pelo ms.
-    cell: (r) => r.numero ?? VAZIO,
+    // tickets/042: a anulada com o X (fora da nota, ou anulada agora).
+    cell: (r) =>
+      r.anulada || r.anulacao ? (
+        <span data-anulada className="inline-flex items-center gap-1 text-rose-700">
+          <XCircle className="h-4 w-4" aria-hidden />
+          {r.numero ?? VAZIO}
+        </span>
+      ) : (
+        (r.numero ?? VAZIO)
+      ),
   },
   {
     id: "marcada",
@@ -106,8 +116,29 @@ const colunasDoDetalhe = (
     header: "Resultado",
     width: "9rem",
     cell: (r) => {
+      /*
+        tickets/042: "Anulada" no lugar do resultado — fora da nota gravada.
+        Anulada agora mas ainda na nota (divergente): o resultado de sempre,
+        com a ressalva.
+      */
+      if (r.anulada) {
+        return (
+          <span title={r.anulacao?.justificativa}>
+            <StatusBadge tone="neutral" label="Anulada" />
+          </span>
+        );
+      }
       const { texto, tone } = rotuloDoResultado(r.resultado);
-      return <StatusBadge tone={tone} label={texto} />;
+      return (
+        <>
+          <StatusBadge tone={tone} label={texto} />
+          {r.anulacao && (
+            <span className="block text-xs text-amber-700" title={r.anulacao.justificativa}>
+              anulada depois: recalcule
+            </span>
+          )}
+        </>
+      );
     },
   },
   {

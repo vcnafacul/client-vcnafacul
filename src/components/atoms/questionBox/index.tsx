@@ -23,11 +23,16 @@ const questionBox = tv({
 
 export type QuestionBoxProps = React.ComponentProps<"div"> & VariantProps<typeof questionBox> & {
     number: number;
+    /**
+     * tickets/042, card 16: no RESULTADO a anulada abre (o aluno lê o motivo).
+     * No simulado (padrão) não abre.
+     */
+    abreQuandoAnulada?: boolean;
 }
 
 export const DICA_ANULADA = "Questão anulada: não conta na nota";
 
-function QuestionBox({ number, status, onClick, ...props }: QuestionBoxProps) {
+function QuestionBox({ number, status, onClick, abreQuandoAnulada = false, ...props }: QuestionBoxProps) {
     const anulada = status === QuestionBoxStatus.anulada;
     // No celular não há hover: o toque mostra a dica, e não abre a questão.
     // `null` = fechada. Alinha pela posição na tela: centrada, a dica da 1ª
@@ -41,13 +46,13 @@ function QuestionBox({ number, status, onClick, ...props }: QuestionBoxProps) {
     };
     return (
         <div
-            className={questionBox({ status })}
+            className={questionBox({ status, class: anulada && abreQuandoAnulada ? "cursor-pointer" : undefined })}
             {...(anulada
                 ? {
-                    role: "img",
+                    role: abreQuandoAnulada ? "button" : "img",
                     "aria-label": `Questão ${number}: ${DICA_ANULADA}`,
                     title: DICA_ANULADA,
-                    onClick: abrirDica,
+                    onClick: abreQuandoAnulada ? onClick : abrirDica,
                     onMouseLeave: () => setDica(null),
                 }
                 : { onClick })}
