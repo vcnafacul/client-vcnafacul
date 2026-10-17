@@ -4,6 +4,9 @@ import { ModalCadernoComAnuladas } from "@/components/molecules/anulacao/ModalCa
 import { MotivoAnulacao } from "@/dtos/question/anulacao";
 import { AnuladasDaProva } from "@/pages/dashProvas/modals/AnuladasDaProva";
 import { AnulacaoDaProva } from "@/pages/dashQuestionNew/modals/tabs/TabClassificacao/AnulacaoDaProva";
+import QuestionBox from "@/components/atoms/questionBox";
+import QuestionList from "@/components/molecules/questionList";
+import { QuestionBoxStatus } from "@/enums/simulado/questionBoxStatus";
 import { Vitrine } from "../tipos";
 
 const nada = () => {};
@@ -160,5 +163,43 @@ export const vitrineCadernoComAnuladas: Vitrine = {
       titulo: "Várias",
       render: () => <ModalCadernoComAnuladas numeros={[3, 12, 45, 88, 136]} onConfirmar={nada} onCancelar={nada} />,
     },
+  ],
+};
+
+const grade = (anuladas: number[]) => () => (
+  <QuestionList
+    selectQuestion={nada}
+    questions={Array.from({ length: 90 }, (_, i) => ({
+      id: i,
+      number: i,
+      status: anuladas.includes(i)
+        ? QuestionBoxStatus.anulada
+        : i === 1
+          ? QuestionBoxStatus.active
+          : i < 20
+            ? QuestionBoxStatus.solved
+            : QuestionBoxStatus.unread,
+    }))}
+  />
+);
+
+/** tickets/042, card 11. */
+export const vitrineQuestaoAnuladaNoSimulado: Vitrine = {
+  slug: "questionBox",
+  titulo: "Simulado: questão anulada",
+  arquivo: "src/components/atoms/questionBox/index.tsx",
+  estados: [
+    {
+      slug: "anulada",
+      titulo: "Caixa anulada",
+      render: () => (
+        <div className="flex gap-2 p-8">
+          <QuestionBox number={44} status={QuestionBoxStatus.solved} />
+          <QuestionBox number={45} status={QuestionBoxStatus.anulada} />
+          <QuestionBox number={46} status={QuestionBoxStatus.active} />
+        </div>
+      ),
+    },
+    { slug: "questionList", titulo: "Grade de 90 com anuladas", render: grade([0, 44, 45, 89]) },
   ],
 };

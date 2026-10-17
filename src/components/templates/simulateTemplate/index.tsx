@@ -46,6 +46,8 @@ interface SimulateTemplateProps {
   buttons: ReactNode;
   /** Quantas já foram respondidas — o resumo da grade recolhida no celular. */
   respondidas?: number;
+  /** tickets/042: o total que conta (sem as anuladas). Ausente = todas. */
+  totalConsiderado?: number;
 }
 
 const ALTERNATIVA_LETRAS = ["A", "B", "C", "D", "E"] as const;
@@ -62,6 +64,7 @@ function SimulateTemplate({
   alternative,
   buttons,
   respondidas,
+  totalConsiderado,
 }: SimulateTemplateProps) {
   const hasTextContent = !!questionSelected.textoQuestao;
   const acimaDeSm = useAcimaDeSm();
@@ -109,7 +112,7 @@ function SimulateTemplate({
             <span>
               Questões
               {respondidas !== undefined &&
-                ` · ${respondidas}/${questions.length} respondidas`}
+                ` · ${respondidas}/${totalConsiderado ?? questions.length} respondidas`}
             </span>
             <FiChevronDown
               className={`h-5 w-5 transition-transform ${gradeAberta ? "rotate-180" : ""}`}
