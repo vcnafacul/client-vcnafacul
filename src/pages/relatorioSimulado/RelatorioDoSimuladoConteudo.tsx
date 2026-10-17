@@ -624,6 +624,7 @@ export function RelatorioDoSimuladoConteudo({
               token={token}
               divergentes={relatorio.resumo.anulacao.divergentes}
               anuladas={relatorio.resumo.anuladas ?? []}
+              desanuladas={relatorio.resumo.anulacao.desanuladas ?? []}
               jobAtivo={relatorio.resumo.anulacao.jobAtivo}
               aoConcluir={recarregarDepoisDoRecalculo}
             />
