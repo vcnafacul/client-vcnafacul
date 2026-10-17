@@ -1,4 +1,5 @@
 import { ModalAnularQuestao } from "@/components/molecules/anulacao/ModalAnularQuestao";
+import { ModalAvisoAnulada } from "@/components/molecules/anulacao/ModalAvisoAnulada";
 import { MotivoAnulacao } from "@/dtos/question/anulacao";
 import { AnuladasDaProva } from "@/pages/dashProvas/modals/AnuladasDaProva";
 import { AnulacaoDaProva } from "@/pages/dashQuestionNew/modals/tabs/TabClassificacao/AnulacaoDaProva";
@@ -119,5 +120,29 @@ export const vitrineAnulacaoNaProva: Vitrine = {
         />
       ),
     },
+  ],
+};
+
+const daQuestao = (i: number, justificativa = anulacao.justificativa) => ({
+  provaId: `p${i}`,
+  provaNome: ["ENEM 2022 – Dia 2", "Simulado 3 – Cursinho X", "Simulado de Outubro – Cursinho Esperança da Zona Leste", "Revisão final"][i % 4],
+  numero: [45, 12, 88, 3][i % 4],
+  motivo: [MotivoAnulacao.semAlternativaCorreta, MotivoAnulacao.enunciadoComErro, MotivoAnulacao.repetidaDeOutroExame, MotivoAnulacao.outro][i % 4],
+  justificativa,
+  em: "2026-10-01T15:00:00Z",
+});
+const aviso = (anulacoes: ReturnType<typeof daQuestao>[]) => () => (
+  <ModalAvisoAnulada anulacoes={anulacoes} numero={7} provaNome="Minha prova" onEscolher={nada} onCancelar={nada} />
+);
+
+/** tickets/042, card 08. */
+export const vitrineAvisoAnulada: Vitrine = {
+  slug: "aviso-questao-anulada",
+  titulo: "Aviso ao adicionar questão anulada",
+  arquivo: "src/components/molecules/anulacao/ModalAvisoAnulada.tsx",
+  estados: [
+    { slug: "uma", titulo: "1 anulação", render: aviso([daQuestao(0)]) },
+    { slug: "quatro", titulo: "4 anulações", render: aviso([0, 1, 2, 3].map((i) => daQuestao(i, LONGA.slice(0, 200)))) },
+    { slug: "longa", titulo: "Justificativa longa", render: aviso([daQuestao(0, LONGA.slice(0, 500))]) },
   ],
 };

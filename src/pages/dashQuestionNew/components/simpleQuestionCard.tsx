@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QuestionCardBase } from "@/dtos/question/questionV2Dto";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { formatDate } from "@/utils/date";
-import { BookOpenIcon, CalendarIcon, GraduationCapIcon } from "lucide-react";
+import { BookOpenIcon, CalendarIcon, GraduationCapIcon, XCircle } from "lucide-react";
+import { seloDoBanco } from "@/components/molecules/anulacao/textos";
 import { StatusIndicator } from "./statusBadge";
 
 interface SimpleQuestionCardProps {
@@ -130,6 +131,16 @@ export function SimpleQuestionCard({
       </CardHeader>
 
       <CardContent className="space-y-3">
+        {/* tickets/042, card 08 */}
+        {!!question.qtdAnulacoes && (
+          <span
+            data-testid="selo-anulada"
+            className="inline-flex items-center gap-1 rounded-full border border-rose-300 bg-rose-50 px-2 py-0.5 text-xs font-semibold text-rose-800"
+          >
+            <XCircle className="h-3.5 w-3.5" aria-hidden />
+            {seloDoBanco(question.qtdAnulacoes)}
+          </span>
+        )}
         {/* Área ENEM - Destaque */}
         <div
           className="flex items-center gap-2 p-2 rounded-lg bg-white/50 backdrop-blur-sm

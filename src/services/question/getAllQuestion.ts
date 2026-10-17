@@ -13,7 +13,9 @@ export async function getAllQuestions(
   materia: string = "",
   frente: string = "",
   prova: string = "",
-  enemArea: string = ""
+  enemArea: string = "",
+  /** tickets/042: `todas` não vai na URL. */
+  anulada: "todas" | "esconder" | "somente" = "todas"
 ): Promise<Paginate<QuestionCardBase>> {
   const url = new URL(questoes);
 
@@ -27,6 +29,7 @@ export async function getAllQuestions(
   if (frente) params.frente = frente;
   if (prova) params.prova = prova;
   if (enemArea) params.enemArea = enemArea;
+  if (anulada !== "todas") params.anulada = anulada;
   Object.keys(params).forEach((key) =>
     url.searchParams.append(key, params[key].toString())
   );
