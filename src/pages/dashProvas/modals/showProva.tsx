@@ -26,6 +26,7 @@ import { ehCategoriaLivre } from "../progresso";
 import UploadButton from "../../../components/molecules/uploadButton";
 import { BuscarAtualizacoes } from "../components/BuscarAtualizacoes";
 import { alterarReceberNovasVersoes } from "../../../services/prova/alterarReceberNovasVersoes";
+import { AnuladasDaProva } from "./AnuladasDaProva";
 import {
   indicadorDeVersoes,
   OpcaoNovasVersoes,
@@ -460,6 +461,8 @@ const downloadFile = async (filename: string, fileType: string) => {
                 </div>
               </div>
               <div className="min-w-0">
+                {/* tickets/042, card 07: as anuladas, com motivo e justificativa. */}
+                <AnuladasDaProva questoes={fullProva?.questoes} />
                 {/* Métricas de Progresso */}
                 <div className="mb-6">
                   <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">

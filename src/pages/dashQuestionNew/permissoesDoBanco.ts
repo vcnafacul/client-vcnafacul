@@ -38,6 +38,20 @@ export const podeEditarQuestao = (p: Permissoes) =>
     p?.[Roles.editarQuestoesCursinho]
   );
 
+/**
+ * Anular uma questão NUMA prova (tickets/042, D3-aberta saída a): quem compõe a
+ * prova, ou a plataforma (`criarQuestao`/`validarQuestao` = o `ator.admin` da
+ * api) em qualquer prova. ⚠️ Espelha a regra do ms (`podeAnularNaProva`) só
+ * para mostrar ou esconder a ação — quem decide é o ms.
+ */
+export const podeAnularNa = (
+  p: Permissoes,
+  prova?: { podeComporProva?: boolean } | null,
+) =>
+  !!prova &&
+  (prova.podeComporProva !== false ||
+    !!(p?.[Roles.criarQuestao] || p?.[Roles.validarQuestao]));
+
 /** Duplicar e nova versão — na api, `criarQuestao` ou o editor do cursinho. */
 export const podeCriarAPartir = (p: Permissoes) =>
   !!(p?.[Roles.criarQuestao] || p?.[Roles.editarQuestoesCursinho]);
