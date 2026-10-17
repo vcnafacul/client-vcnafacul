@@ -82,6 +82,7 @@ import {
   DASH_SUPPORT,
   DASH_PARTNER_SUPPORT,
   DECLARED_INTEREST,
+  DEV_VITRINE,
   ENROLLMENT_CONFIRMATION,
   ESSAY_WRITE,
   ESSAY_HISTORY,
@@ -125,6 +126,13 @@ import ProtectedRoutePermission from "./protectedRoutePermission";
 const Home = lazy(() => import("../pages/homeV2"));
 const HomeLegacy = lazy(() => import("../pages/homeLegacy"));
 const IndicadoresCursinho = lazy(() => import("../pages/indicadoresCursinho"));
+/*
+  Vitrine de componentes (tickets/041): com `import.meta.env.DEV` falso no build,
+  o Vite corta o ramo e o `import()` — o código da vitrine não vai para prod.
+*/
+const DevVitrine = import.meta.env.DEV
+  ? lazy(() => import("../pages/devVitrine"))
+  : null;
 
 export function PlatformRoutes() {
   const { data } = useAuthStore();
@@ -596,6 +604,16 @@ export function PlatformRoutes() {
           }
         />
       </Route>
+      {DevVitrine && (
+        <Route
+          path={`${DEV_VITRINE}/:componente?/:estado?`}
+          element={
+            <Suspense fallback={null}>
+              <DevVitrine />
+            </Suspense>
+          }
+        />
+      )}
       <Route
         path="*"
         element={<Navigate to={data.token ? DASH : HOME_PATH} replace />}

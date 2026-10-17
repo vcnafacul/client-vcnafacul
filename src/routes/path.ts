@@ -69,3 +69,5 @@ export const QUEM_SOMOS_PATH = "/quem-somos";
 export const SUPORTE = "/suporte";
 export const DASH_SUPPORT = "suporte";
 export const DASH_PARTNER_SUPPORT = "suporte-cursinho";
+/** Vitrine de componentes — só existe em dev (tickets/041, card 04). */
+export const DEV_VITRINE = "/dev/vitrine";
