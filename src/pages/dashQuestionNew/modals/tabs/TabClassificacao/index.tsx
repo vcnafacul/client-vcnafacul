@@ -38,9 +38,11 @@ import {
 import { sinalizarRevisao } from "@/services/question/sinalizarRevisao";
 import { removeQuestionFromProva } from "@/services/question/removeQuestionFromProva";
 import {
+  podeAnularNa,
   podeValidar,
   validaComoPlataforma,
 } from "../../../permissoesDoBanco";
+import { AnulacaoDaProva } from "./AnulacaoDaProva";
 import { TabClassificacaoProps } from "./types";
 import { useClassificacaoForm } from "./useClassificacaoForm";
 import { ModalAddQuestionToProva } from "./ModalAddQuestionToProva";
@@ -540,6 +542,21 @@ export function TabClassificacao({
                 >
                   {seloDaProva(provaSel)!.texto}
                 </p>
+              )}
+              {/* tickets/042, card 07: anulada NESTA prova, e as ações. */}
+              {!isEditing && provaSel?.provaId && (
+                <AnulacaoDaProva
+                  questaoId={question._id}
+                  provaId={provaSel.provaId}
+                  provaNome={provaSel.provaNome}
+                  numero={provaSel.numero}
+                  anulacao={question.anulacoes?.find(
+                    (a) => a.provaId === provaSel.provaId,
+                  )}
+                  podeAnular={podeAnularNa(permissao, provaSel)}
+                  token={token}
+                  onMudou={onSaveSuccess}
+                />
               )}
             </div>
 

@@ -2,6 +2,7 @@ import { DonoDaProva } from "../prova/donoDaProva";
 import { DateTime } from "luxon";
 import { StatusEnum } from "../../enums/generic/statusEnum";
 import { Prova } from "../prova/prova";
+import { AnulacaoNaProva } from "./anulacao";
 
 export interface ObjDefault {
   _id: string;
@@ -77,6 +78,8 @@ export interface QuestionBase {
   congelada?: boolean;
   /** Já ganhou versão nova (tickets/023, card 18): não aceita outra. */
   teveSucessora?: boolean;
+  /** tickets/042: em quais provas está anulada (o espelho). */
+  anulacoes?: AnulacaoNaProva[];
 }
 
 export type TipoOrigem = "copia" | "versao";

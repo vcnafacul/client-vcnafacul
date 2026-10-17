@@ -2,6 +2,7 @@ import { DateTime } from "luxon";
 import { ICategoria } from "../categoria/categoria";
 import { Edicao } from "../../enums/prova/edicao";
 import { IQuestaoNaContainer } from "../simulado/simuladoDto";
+import { Anulacao } from "../question/anulacao";
 
 export interface SimuladoResumo {
   _id: string;
@@ -68,6 +69,8 @@ export interface Prova {
  */
 export type ProvaDetalhada = Omit<Prova, "categoria" | "exame"> & {
   categoria: ICategoria;
+  /** Os slots da prova; `anulacao` presente = anulada nela (tickets/042). */
+  questoes?: { numero: number | null; anulacao?: Anulacao }[];
 };
 
 export interface CreateProva {
