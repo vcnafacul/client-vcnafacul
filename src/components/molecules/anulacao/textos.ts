@@ -6,3 +6,9 @@ export function textoDoEfeito(numero: number | null) {
   const q = numero != null ? `A questão ${numero}` : "A questão";
   return `${q} fica fora da análise desta prova: nota e relatórios. Os resultados já calculados só mudam quando alguém pedir o recálculo no relatório.`;
 }
+
+export const TITULO_AVISO_ANULADA = "Questão já anulada em outra prova";
+export const tituloDoAviso = (n: number) =>
+  `Esta questão foi anulada em ${n} ${n === 1 ? "prova" : "provas"}`;
+export const seloDoBanco = (n: number) =>
+  `Anulada em ${n} ${n === 1 ? "prova" : "provas"}`;

@@ -16,6 +16,9 @@ export interface QuestionCardBase {
   provaBase?: string | null;
   updatedAt: Date;
   status: StatusEnum;
+  /** tickets/042: anulada em alguma prova, e em quantas. */
+  anulada?: boolean;
+  qtdAnulacoes?: number;
 }
 
 export interface QuestionBaseV2 {

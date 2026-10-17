@@ -43,6 +43,8 @@ import {
   validaComoPlataforma,
 } from "../../../permissoesDoBanco";
 import { AnulacaoDaProva } from "./AnulacaoDaProva";
+import { AnuladaEm } from "./AnuladaEm";
+import { ModalAvisoAnulada } from "@/components/molecules/anulacao/ModalAvisoAnulada";
 import { TabClassificacaoProps } from "./types";
 import { useClassificacaoForm } from "./useClassificacaoForm";
 import { ModalAddQuestionToProva } from "./ModalAddQuestionToProva";
@@ -86,6 +88,10 @@ export function TabClassificacao({
     handleSave,
     handleCancel,
     handleAddToProva,
+    avisoDeAnulada,
+    enviandoEntrada,
+    escolherEntrada,
+    cancelarAviso,
     handleRemoveFromProva,
     handleSetProvaBase,
   } = useClassificacaoForm({ question, onSaveSuccess });
@@ -360,6 +366,23 @@ export function TabClassificacao({
 
   return (
     <div className="flex flex-col gap-4 justify-around">
+      {/* tickets/042, card 08: em quais provas está anulada. */}
+      <AnuladaEm
+        anulacoes={question.anulacoes}
+        nomeDaProva={(id) => provasContendo.find((p) => p.provaId === id)?.provaNome}
+      />
+      {avisoDeAnulada && (
+        <ModalAvisoAnulada
+          anulacoes={avisoDeAnulada.anulacoes}
+          numero={avisoDeAnulada.numero}
+          provaNome={
+            infos?.provas?.find((p) => p._id === avisoDeAnulada.provaId)?.nome
+          }
+          ocupado={enviandoEntrada}
+          onEscolher={escolherEntrada}
+          onCancelar={cancelarAviso}
+        />
+      )}
       {recusaBloqueada && (
         <ModalRecusaBloqueada
           provas={provasDoModal}
