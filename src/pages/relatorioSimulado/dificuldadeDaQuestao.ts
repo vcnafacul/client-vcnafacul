@@ -34,6 +34,8 @@ export function indiceDeDificuldade(
   const mapa = new Map<string, DificuldadeDaQuestao>();
 
   for (const q of questoes) {
+    // tickets/042: fora da análise, fora do índice de dificuldade.
+    if (q.anulada) continue;
     const pct = percentualDeAcerto(q);
     if (pct === null) continue;
     mapa.set(q.questaoId, { percentual: pct, base: q.respondentes });
