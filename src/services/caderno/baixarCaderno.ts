@@ -18,9 +18,11 @@ export async function baixarCaderno(
   simuladoId: string,
   token: string,
   draft = false,
+  /** tickets/042 (D8): quem pediu já viu o modal das anuladas. */
+  confirmarAnuladas = false,
 ): Promise<{ blob: Blob; avisos: number }> {
   const response = await fetchWrapper(
-    `${caderno}/${simuladoId}${draft ? "?draft=true" : ""}`,
+    `${caderno}/${simuladoId}${consultaDoCaderno({ draft, confirmarAnuladas })}`,
     {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
@@ -31,7 +33,7 @@ export async function baixarCaderno(
   // A decisão é pelo `response.ok`, antes de tocar no corpo: ler o errado
   // consome o stream e o download quebra.
   if (!response.ok) {
-    throw new Error(await mensagemDoErro(response));
+    throw await erroDoCaderno(response);
   }
 
   const avisos = Number(response.headers.get("X-Caderno-Avisos") ?? 0);
@@ -39,6 +41,52 @@ export async function baixarCaderno(
     blob: await response.blob(),
     avisos: Number.isNaN(avisos) ? 0 : avisos,
   };
+}
+
+/**
+ * O caderno tem questão anulada e o pedido veio sem confirmação (tickets/042,
+ * D8): a tela mostra o modal "A prova tem 1 questão anulada (45)" e reenvia
+ * com `confirmarAnuladas`.
+ */
+export class ErroCadernoComAnuladas extends Error {
+  constructor(
+    message: string,
+    readonly numeros: number[],
+  ) {
+    super(message);
+  }
+}
+
+export function consultaDoCaderno(f: {
+  draft?: boolean;
+  confirmarAnuladas?: boolean;
+}) {
+  const partes = [
+    f.draft ? "draft=true" : null,
+    f.confirmarAnuladas ? "confirmarAnuladas=true" : null,
+  ].filter(Boolean);
+  return partes.length ? `?${partes.join("&")}` : "";
+}
+
+/**
+ * O erro do caderno: o 409 `CADERNO_COM_ANULADAS` vira `ErroCadernoComAnuladas`;
+ * o resto, um `Error` com a mensagem do backend (ver `mensagemDoErro`).
+ */
+export async function erroDoCaderno(response: Response): Promise<Error> {
+  const generica = "Não foi possível baixar o caderno";
+  try {
+    const corpo = await response.json();
+    const msg =
+      typeof corpo?.message === "string" && corpo.message.trim()
+        ? corpo.message
+        : generica;
+    if (corpo?.code === "CADERNO_COM_ANULADAS" && Array.isArray(corpo.numeros)) {
+      return new ErroCadernoComAnuladas(msg, corpo.numeros);
+    }
+    return new Error(msg);
+  } catch {
+    return new Error(generica);
+  }
 }
 
 /**

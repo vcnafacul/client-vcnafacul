@@ -223,7 +223,8 @@ export function ResumoDoEstudante({
   respostas: RespostaDoEstudante[];
 }) {
   const materias = linha.aproveitamentoPorMateria ?? [];
-  const par = acertosSobreTotal(linha, totalDeQuestoes);
+  // tickets/042: sobre o total DESTA nota (sem as anuladas, se recalculada).
+  const par = acertosSobreTotal(linha, linha.totalConsiderado ?? totalDeQuestoes);
   const desvio = formatarDesvio(desvioEmPontos(linha, mediaDoRecorte));
   const percentual =
     typeof linha.aproveitamentoGeral === "number"
@@ -237,7 +238,8 @@ export function ResumoDoEstudante({
     leitura" na tabela à mão.
   */
   const semLeitura = respostas.filter(
-    (r) => r.resultado === "sem_leitura",
+    // tickets/042: a anulada não conta como "sem leitura".
+    (r) => r.resultado === "sem_leitura" && !r.anulada,
   ).length;
 
   const mediaPorId = new Map(materiasDaTurma.map((m) => [m.id, m.media]));

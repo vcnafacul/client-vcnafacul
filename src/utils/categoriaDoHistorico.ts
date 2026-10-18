@@ -12,6 +12,12 @@ export function categoriaDoHistorico(historico: HistoricoDTO) {
   const categoria = historico.simulado?.categoria;
   return {
     nome: categoria?.nome ?? historico.simulado?.nome ?? "Simulado",
-    totalQuestoes: categoria?.quantidadeTotalQuestao ?? null,
+    /*
+      ⚠️ tickets/042: sem as anuladas. O `questoesRespondidas` do ms já conta
+      só as consideradas — comparar com o total da categoria marcaria
+      "Incompleto" todo histórico com anulada.
+    */
+    totalQuestoes:
+      historico.totalConsiderado ?? categoria?.quantidadeTotalQuestao ?? null,
   };
 }

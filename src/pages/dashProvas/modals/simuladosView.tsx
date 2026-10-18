@@ -15,7 +15,11 @@ import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { SimuladoResumo } from "../../../dtos/prova/prova";
-import { baixarCaderno } from "../../../services/caderno/baixarCaderno";
+import {
+  baixarCaderno,
+  ErroCadernoComAnuladas,
+} from "../../../services/caderno/baixarCaderno";
+import { ModalCadernoComAnuladas } from "@/components/molecules/anulacao/ModalCadernoComAnuladas";
 import { baixarCartao } from "../../../services/cartaoResposta/baixarCartao";
 import { ModalBaixarCartao } from "./ModalBaixarCartao";
 import AcaoIcone from "./AcaoIcone";
@@ -154,6 +158,12 @@ function SimuladosView({
   // a tabela INTEIRA, e o coordenador que quer baixar dois simulados
   // esperaria sem motivo.
   const [baixandoCaderno, setBaixandoCaderno] = useState<string | null>(null);
+  // tickets/042 (D8): o caderno tem anulada — pergunta antes de gerar.
+  const [comAnuladas, setComAnuladas] = useState<{
+    simulado: SimuladoResumo;
+    draft: boolean;
+    numeros: number[];
+  } | null>(null);
   /** O simulado cujo cartão a pessoa pediu: o download espera as orientações. */
   const [cartaoPedido, setCartaoPedido] = useState<SimuladoResumo | null>(null);
 
@@ -164,6 +174,7 @@ function SimuladosView({
   const handleDownloadCaderno = async (
     simulado: SimuladoResumo,
     draft = false,
+    confirmarAnuladas = false,
   ) => {
     // ⚠️ Guarda contra clique repetido. O botão já sinaliza, mas entre o
     // clique e o re-render cabe um segundo clique — e gerar o caderno é
@@ -175,7 +186,12 @@ function SimuladosView({
       draft ? "Gerando rascunho..." : "Gerando caderno...",
     );
     try {
-      const { blob, avisos } = await baixarCaderno(simulado._id, token, draft);
+      const { blob, avisos } = await baixarCaderno(
+        simulado._id,
+        token,
+        draft,
+        confirmarAnuladas,
+      );
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -202,6 +218,11 @@ function SimuladosView({
         closeOnClick: true,
       });
     } catch (erro) {
+      if (erro instanceof ErroCadernoComAnuladas) {
+        toast.dismiss(id);
+        setComAnuladas({ simulado, draft, numeros: erro.numeros });
+        return;
+      }
       // ⚠️ A mensagem do backend, não uma genérica. É o fim da corrente que o
       // card 05 consertou.
       toast.update(id, {
@@ -334,6 +355,17 @@ function SimuladosView({
   return (
     <TooltipProvider delayDuration={200}>
       <div>
+        {comAnuladas && (
+          <ModalCadernoComAnuladas
+            numeros={comAnuladas.numeros}
+            onCancelar={() => setComAnuladas(null)}
+            onConfirmar={() => {
+              const { simulado, draft } = comAnuladas;
+              setComAnuladas(null);
+              void handleDownloadCaderno(simulado, draft, true);
+            }}
+          />
+        )}
         <button
           onClick={onVoltar}
           className={cn(

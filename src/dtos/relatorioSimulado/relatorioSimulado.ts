@@ -93,6 +93,13 @@ export interface LinhaDoRelatorio {
    */
   aproveitamentoPorMateria?: MateriaDoEstudante[];
   falha?: FalhaHistorico;
+  /**
+   * tickets/042: a nota GRAVADA é de antes da última anulação do simulado —
+   * ainda conta a anulada. Só em `completed`.
+   */
+  divergente?: boolean;
+  /** tickets/042: sobre quantas questões a nota foi calculada. Ausente = o total. */
+  totalConsiderado?: number;
 }
 
 export interface FrenteDoEstudante {
@@ -211,6 +218,44 @@ export interface ResumoDoRelatorio {
    * `false` = a média junta provas diferentes, e a tela avisa.
    */
   mesmasQuestoes?: boolean;
+  /** tickets/042: o total menos as anuladas — a base da análise. */
+  totalConsiderado?: number;
+  /** tickets/042: as anuladas agora, por número. */
+  anuladas?: AnuladaDoRelatorio[];
+  /** tickets/042: o aviso de "relatório desatualizado" e o recálculo em andamento. */
+  anulacao?: {
+    divergentes: number;
+    /** Card 20: números que os resultados contaram como anulados e agora valem. */
+    desanuladas?: number[];
+    jobAtivo: JobDoRecalculo | null;
+  };
+}
+
+export interface AnuladaDoRelatorio {
+  numero: number;
+  motivo: string;
+  justificativa: string;
+}
+
+/** Um recálculo por anulação (tickets/042, card 12) — o resumo que o ms devolve. */
+export interface JobDoRecalculo {
+  id: string;
+  status: "na_fila" | "processando" | "concluido" | "falhou";
+  total: number;
+  processados: number;
+  falhas: number;
+  regravados: number;
+  criadoEm?: string;
+  concluidoEm?: string | null;
+}
+
+/** `GET …/recalculo-anulacao`. */
+export interface SituacaoDoRecalculo {
+  divergentes: number;
+  anulacoes: AnuladaDoRelatorio[];
+  desanuladas?: number[];
+  jobAtivo: JobDoRecalculo | null;
+  ultimoJob: JobDoRecalculo | null;
 }
 
 export interface RelatorioDoSimulado {
@@ -300,12 +345,18 @@ export interface QuestaoDoRelatorio {
    * dizer *"a base é pequena porque a questão é nova"*.
    */
   ehVersao?: boolean;
+  /** tickets/042: anulada — fica na tabela, fora da análise. */
+  anulada?: boolean;
+  motivoAnulacao?: string;
+  justificativaAnulacao?: string;
 }
 
 export interface QuestoesDoRelatorio {
   questoes: QuestaoDoRelatorio[];
   /** Só no relatório da prova — `false` ⇒ discriminação `null` em toda questão. */
   mesmasQuestoes?: boolean;
+  /** tickets/042: por que a discriminação veio `null` em todas. */
+  semDiscriminacao?: "divergente" | "composicao" | null;
 }
 
 /** Um simulado da prova com cartão no recorte (tickets/034). */
@@ -315,6 +366,8 @@ export interface SimuladoDoRelatorio {
   nome: string | null;
   cartoes: number;
   totalDeQuestoes: number;
+  /** tickets/042: sem as anuladas deste simulado. */
+  totalConsiderado?: number;
 }
 
 export interface SimuladoComCartao {
@@ -348,12 +401,21 @@ export interface RespostaDoEstudante {
    * da chave, e duas implementações dela divergiriam.
    */
   resultado: ResultadoDaQuestao;
+  /** tickets/042: fora da nota GRAVADA. */
+  anulada?: boolean;
+  /** tickets/042: o porquê, se está anulada agora. */
+  anulacao?: { motivo: string; justificativa: string };
 }
 
 export interface DetalheDoEstudante {
   status: StatusDoCartao;
   falha?: FalhaHistorico;
   respostas: RespostaDoEstudante[];
+  /** tickets/042, card 16. */
+  divergente?: boolean;
+  totalConsiderado?: number;
+  numerosAnulados?: number[];
+  recalculadoEm?: string;
 }
 
 /**
@@ -376,6 +438,8 @@ export interface PontoDaSerie {
   aproveitamento: number;
   /** ⚠️ Ausente em histórico anterior ao card 08. Nunca derive do percentual. */
   acertos?: number;
+  /** tickets/042: sobre quantas questões (sem as anuladas). */
+  totalConsiderado?: number;
   /**
    * Quando o cartão entrou no recorte, em ISO.
    *

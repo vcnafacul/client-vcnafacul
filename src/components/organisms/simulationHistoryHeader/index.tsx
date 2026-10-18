@@ -28,6 +28,7 @@ import { foiPorCartao } from "../../../utils/foiPorCartao";
 import { getFormatingTime } from "../../../utils/getFormatingTime";
 import { RadarChart } from "../../atoms/radarChart";
 import { useAcimaDeSm } from "../../dashV2/useAcimaDeSm";
+import { AvisoDoResultado } from "../../molecules/anulacao/AvisoDoResultado";
 
 // O rótulo do Chip não quebra linha: no celular o nome da frente saía com "…".
 const chipQuebraLinha = {
@@ -158,17 +159,20 @@ export function SimulationHistoryHeader({
     viewMode === "frentes" ? radarDataFrente : radarDataMaterias;
 
   // Prepara dados do Pie (acertos/erros)
-  const acertos = historic.respostas.filter(
+  // tickets/042: a anulada (fora da nota gravada) não é acerto, erro nem branco.
+  const consideradas = historic.respostas.filter((r) => !r.anulada);
+  const anuladasDaNota = historic.numerosAnulados?.length ?? 0;
+  const acertos = consideradas.filter(
     (r) => r.alternativaCorreta === r.alternativaEstudante,
   ).length;
 
-  const erros = historic.respostas.filter(
+  const erros = consideradas.filter(
     (r) =>
       r.alternativaEstudante !== undefined &&
       r.alternativaCorreta !== r.alternativaEstudante,
   ).length;
 
-  const naoRespondidas = historic.respostas.filter(
+  const naoRespondidas = consideradas.filter(
     (r) => r.alternativaEstudante === undefined,
   ).length;
 
@@ -373,6 +377,19 @@ export function SimulationHistoryHeader({
         </Box>
       </Paper>
 
+      {/* tickets/042, card 16: anulada, "nota será atualizada" ou "atualizada em". */}
+      <Box sx={{ mb: 3 }}>
+        <AvisoDoResultado
+          divergente={historic.divergente}
+          recalculadoEm={historic.recalculadoEm}
+          numerosAnulados={historic.numerosAnulados}
+          totalConsiderado={historic.totalConsiderado}
+          anuladasAgora={historic.simulado.questoes
+            .map((q, i) => (q.anulada ? q.numero ?? i + 1 : null))
+            .filter((n): n is number => n !== null)}
+        />
+      </Box>
+
       {/* Cards de Estatísticas */}
       <Grid container spacing={acimaDeSm ? 2 : 1.5} sx={{ mb: 3 }}>
         <Grid item xs={6} md={mdDoCard}>
@@ -394,9 +411,17 @@ export function SimulationHistoryHeader({
             </Box>
             <Typography variant="h4" fontWeight="bold">
               {acertos}
+              {/* tickets/042: "50 de 89" — a base sem as anuladas. */}
+              {anuladasDaNota > 0 && (
+                <Typography component="span" variant="h6" sx={{ opacity: 0.9 }}>
+                  {" "}de {totalQuestoes}
+                </Typography>
+              )}
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.9 }}>
               {percentualAcertos}% do total
+              {anuladasDaNota > 0 &&
+                ` · ${anuladasDaNota} ${anuladasDaNota === 1 ? "questão anulada" : "questões anuladas"}`}
             </Typography>
           </Paper>
         </Grid>

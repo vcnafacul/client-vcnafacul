@@ -26,7 +26,11 @@ export interface FilterValues {
   prova: string;
   enemArea: string;
   filterText: string;
+  /** tickets/042, card 08. */
+  anulada: FiltroDeAnulada;
 }
+
+export type FiltroDeAnulada = "todas" | "esconder" | "somente";
 
 export function QuestionFilters({
   infos,
@@ -40,6 +44,7 @@ export function QuestionFilters({
     prova: "",
     enemArea: "",
     filterText: "",
+    anulada: "todas",
   });
 
   const [materiasFiltradas, setMateriasFiltradas] = useState<any[]>([]);
@@ -100,6 +105,7 @@ export function QuestionFilters({
       prova: "",
       enemArea: "",
       filterText: "",
+      anulada: "todas",
     };
     setFilters(clearedFilters);
     setMateriasFiltradas([]);
@@ -113,7 +119,8 @@ export function QuestionFilters({
     filters.frente ||
     filters.prova ||
     filters.enemArea ||
-    filters.filterText;
+    filters.filterText ||
+    filters.anulada !== "todas";
 
   return (
     <Card className="mb-6">
@@ -169,6 +176,25 @@ export function QuestionFilters({
                 <SelectItem value={StatusEnum.Rejected.toString()}>
                   ❌ Rejeitada
                 </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* tickets/042, card 08: anuladas em alguma prova */}
+          <div className="space-y-2">
+            <Label htmlFor="anulada">Anuladas</Label>
+            <Select
+              value={filters.anulada}
+              onValueChange={(value) => handleFilterChange("anulada", value)}
+              disabled={isLoading}
+            >
+              <SelectTrigger id="anulada">
+                <SelectValue placeholder="Todas" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todas">Todas</SelectItem>
+                <SelectItem value="esconder">Esconder anuladas</SelectItem>
+                <SelectItem value="somente">Só anuladas</SelectItem>
               </SelectContent>
             </Select>
           </div>

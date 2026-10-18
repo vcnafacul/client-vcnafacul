@@ -6,6 +6,8 @@ export const simulateData = {
         { label: "Questão pulada", className: "bg-lightYellow border border-marine"},
         { label: "Questão respondida", className: "bg-white border border-marine"},
         { label: "Questão não visualizada", className: "bg-lightGray border border-grey"},
+        // tickets/042 (D5)
+        { label: "Questão anulada", className: "bg-white border border-rose-400"},
      ]
 }
 
