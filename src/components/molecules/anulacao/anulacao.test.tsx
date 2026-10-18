@@ -91,11 +91,13 @@ describe("AnulacaoDaProva (042/07)", () => {
     expect(container.innerHTML).toBe("");
   });
 
-  it("anulada: mostra motivo e justificativa para todos, ações só para quem pode", () => {
-    montar({ anulacao, podeAnular: false });
-    expect(screen.getByText(/Anulada nesta prova: Sem alternativa correta/)).toBeTruthy();
-    expect(screen.getByText(anulacao.justificativa)).toBeTruthy();
-    expect(screen.queryByText("Desanular")).toBeNull();
+  it("card 21: só as ações — o motivo e a justificativa ficam no aviso do topo", () => {
+    const { container } = montar({ anulacao, podeAnular: false });
+    expect(container.innerHTML).toBe("");
+    montar({ anulacao });
+    expect(screen.getByText("Editar justificativa")).toBeTruthy();
+    expect(screen.getByText("Desanular")).toBeTruthy();
+    expect(screen.queryByText(anulacao.justificativa)).toBeNull();
   });
 
   it("Anular nesta prova abre o modal, e nada muda antes de confirmar", async () => {

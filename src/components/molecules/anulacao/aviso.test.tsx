@@ -154,6 +154,30 @@ describe("serviço e banco (042/08)", () => {
     const texto = screen.getByTestId("anulada-em").textContent!;
     expect(texto).toContain("ENEM 2022 – Dia 2, Q45 · Sem alternativa correta · 01/10/2026");
     expect(texto).toContain(a1.justificativa);
+    expect(screen.queryByText("Ver justificativas")).toBeNull();
+  });
+
+  it("card 21: 2+ provas → uma linha cada, justificativas atrás do botão; marca a prova em foco", () => {
+    render(
+      <AnuladaEm
+        anulacoes={[
+          { ...a1, numero: 45 },
+          { ...a1, provaId: "p2", numero: 3, justificativa: "Outra justificativa." },
+        ]}
+        nomeDaProva={(id) => (id === "p1" ? "Prova A" : "Prova B")}
+        provaEmFoco="p2"
+      />,
+    );
+    const bloco = () => screen.getByTestId("anulada-em").textContent!;
+    expect(bloco()).toContain("Anulada em 2 provas");
+    expect(bloco()).not.toContain(a1.justificativa);
+    expect(screen.getAllByText("nesta prova")).toHaveLength(1);
+    expect(screen.getByText("nesta prova").closest("li")!.textContent).toContain("Prova B");
+    fireEvent.click(screen.getByText("Ver justificativas"));
+    expect(bloco()).toContain(a1.justificativa);
+    expect(bloco()).toContain("Outra justificativa.");
+    fireEvent.click(screen.getByText("Ocultar justificativas"));
+    expect(bloco()).not.toContain("Outra justificativa.");
   });
 });
 

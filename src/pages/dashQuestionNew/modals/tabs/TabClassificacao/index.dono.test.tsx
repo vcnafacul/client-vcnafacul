@@ -81,6 +81,18 @@ describe("TabClassificacao — composição só na prova própria (023 · 08)", 
     expect(screen.getByRole("button", { name: "Remover da prova" })).toBeEnabled();
   });
 
+  it("card 21 (042): no modo edição, 'Remover da prova' e 'Cancelar' no topo, no lugar de 'Editar Classificação'", () => {
+    montar("pa");
+    fireEvent.click(screen.getByText("Editar Classificação"));
+    expect(screen.queryByText("Editar Classificação")).toBeNull();
+    // Um "Remover da prova" só (saiu da barra de baixo); "Cancelar" no topo e embaixo.
+    expect(screen.getAllByRole("button", { name: "Remover da prova" })).toHaveLength(1);
+    const cancelar = screen.getAllByRole("button", { name: "Cancelar" });
+    expect(cancelar).toHaveLength(2);
+    fireEvent.click(cancelar[0]);
+    expect(screen.getByText("Editar Classificação")).toBeInTheDocument();
+  });
+
   it("'Adicionar em uma prova' lista só as que a pessoa compõe", () => {
     montar("pa");
     fireEvent.click(screen.getByText("Adicionar em uma prova"));

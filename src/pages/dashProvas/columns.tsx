@@ -3,10 +3,7 @@ import {
   StatusBadge,
   type DashColumn,
 } from "@/components/dashV2";
-import {
-  EXPLICACAO_DA_OPCAO,
-  indicadorDeVersoes,
-} from "./components/OpcaoNovasVersoes";
+import { AnuladasCell } from "./AnuladasCell";
 import type { Prova } from "../../dtos/prova/prova";
 import { formatDate } from "../../utils/date";
 import { ProgressoCell } from "./ProgressoCell";
@@ -121,23 +118,19 @@ export const colunasDeProva: DashColumn<Prova>[] = [
   },
   {
     /*
-      tickets/023, card 09. ⚠️ Ausente (api antiga) é "—", e não "Versões
-      fixas": sem a migração 0004 o campo não existe, e afirmar travada seria
-      mentir sobre uma prova que ainda recebe versões.
+      tickets/042, card 21: "Anuladas" no lugar de "Versões" (por enquanto). A
+      opção de versões continua no detalhe da prova.
+
+      ⚠️ Ausente (ms antigo, sem `totalAnuladas`) e zero são "—": a coluna só
+      chama atenção quando há anulada.
     */
-    id: "versoes",
-    header: "Versões",
-    width: "11rem",
+    id: "anuladas",
+    header: "Anuladas",
+    width: "7rem",
+    align: "center",
     hideBelow: "md",
-    cell: (p) =>
-      p.receberNovasVersoes === undefined ? (
-        VAZIO
-      ) : (
-        <span title={EXPLICACAO_DA_OPCAO}>
-          {indicadorDeVersoes(p.receberNovasVersoes)}
-        </span>
-      ),
-    sortValue: (p) => (p.receberNovasVersoes ? 1 : 0),
+    cell: (p) => <AnuladasCell total={p.totalAnuladas} />,
+    sortValue: (p) => p.totalAnuladas ?? 0,
   },
   {
     id: "createdAt",

@@ -55,6 +55,8 @@ export interface Prova {
   protegida?: boolean;
   selecionavel?: boolean;
   receberNovasVersoes?: boolean;
+  /** tickets/042, card 21: questões anuladas nesta prova (ausente = ms antigo). */
+  totalAnuladas?: number;
   podeComporProva?: boolean;
   /** tickets/027: de qual prova esta foi duplicada. */
   provaOrigemId?: string | null;
