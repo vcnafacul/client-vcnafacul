@@ -8,7 +8,7 @@ import { questoes } from "../urls";
 /**
  * A listagem do banco de questões. Desde o tickets/043 recebe os filtros num
  * objeto (a lista posicional já tinha 10 argumentos). Só vai na URL o que está
- * preenchido: `todas` (anuladas), revisões vazias e "com imagem" desmarcado não vão.
+ * preenchido: `todas` (anuladas), revisões vazias e "sem imagem" desmarcado não vão.
  */
 export async function getAllQuestions(
   token: string,
@@ -30,7 +30,7 @@ export async function getAllQuestions(
   if (f.exame) params.exame = f.exame;
   if (f.categoria) params.categoria = f.categoria;
   if (f.revisoes?.length) params.revisoes = f.revisoes.join(",");
-  if (f.comImagem) params.comImagem = "true";
+  if (f.semImagem) params.semImagem = "true";
   Object.keys(params).forEach((key) =>
     url.searchParams.append(key, params[key].toString())
   );

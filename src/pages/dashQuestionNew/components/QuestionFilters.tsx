@@ -348,12 +348,12 @@ export function QuestionFilters({
           <div className="flex items-end">
             <label className="flex h-9 cursor-pointer items-center gap-2 text-sm">
               <Checkbox
-                id="comImagem"
-                checked={filters.comImagem}
-                onCheckedChange={(v) => setFilters({ ...filters, comImagem: v === true })}
+                id="semImagem"
+                checked={filters.semImagem}
+                onCheckedChange={(v) => setFilters({ ...filters, semImagem: v === true })}
                 disabled={isLoading}
               />
-              Só com imagem da questão
+              Questões sem imagem
             </label>
           </div>
         </div>
