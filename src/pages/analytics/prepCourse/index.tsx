@@ -18,7 +18,13 @@ import Grid from "@mui/material/Grid2";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-function AnalyticsPrepCourse({ period }: { period: Period }) {
+function AnalyticsPrepCourse({
+  period,
+}: {
+  period: Period;
+  /** tickets/044 — o recorte chega no card 07. */
+  cursinhoId?: string;
+}) {
   const {
     data: { token },
   } = useAuthStore();

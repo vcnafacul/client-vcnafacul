@@ -13,7 +13,13 @@ import Grid from "@mui/material/Grid2";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-function AnalyticsSimulado({ period }: { period: Period }) {
+function AnalyticsSimulado({
+  period,
+}: {
+  period: Period;
+  /** tickets/044 — o recorte chega no card 07. */
+  cursinhoId?: string;
+}) {
   const {
     data: { token },
   } = useAuthStore();

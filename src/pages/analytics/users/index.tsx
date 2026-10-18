@@ -9,24 +9,21 @@ import { Period } from "@/enums/analytics/period";
 import { aggregateUserByLastAccess } from "@/services/analytics/user/aggregateLUserByLastAccess";
 import { aggregateUserByPeriod } from "@/services/analytics/user/aggregateUserByPeriod";
 import { aggregateUserByRole } from "@/services/analytics/user/aggregateUserByRole";
-import {
-  getPartnerPrepCourseLogos,
-  PartnerPrepCourseLogo,
-} from "@/services/prepCourse/partnerLogos";
 import { useAuthStore } from "@/store/auth";
 import { exportAnalyticsCsv } from "@/utils/exportAnalyticsCsv";
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
+import { Button, Checkbox, FormControlLabel } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-function AnalyticsUsers({ period }: { period: Period }) {
+function AnalyticsUsers({
+  period,
+  cursinhoId,
+}: {
+  period: Period;
+  /** tickets/044 — o cursinho do topo da tela. */
+  cursinhoId?: string;
+}) {
   const {
     data: { token },
   } = useAuthStore();
@@ -48,15 +45,7 @@ function AnalyticsUsers({ period }: { period: Period }) {
       series: [],
     });
 
-  const [partners, setPartners] = useState<PartnerPrepCourseLogo[]>([]);
-  const [partnerId, setPartnerId] = useState("");
   const [baseOnly, setBaseOnly] = useState(false);
-
-  useEffect(() => {
-    getPartnerPrepCourseLogos()
-      .then(setPartners)
-      .catch(() => {});
-  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -88,11 +77,7 @@ function AnalyticsUsers({ period }: { period: Period }) {
   }, [period, token]);
 
   useEffect(() => {
-    aggregateUserByRole(
-      token,
-      partnerId || undefined,
-      baseOnly || undefined
-    )
+    aggregateUserByRole(token, cursinhoId, baseOnly || undefined)
       .then((res) => {
         setDataUserRole({
           data: res.map((r) => ({
@@ -103,7 +88,7 @@ function AnalyticsUsers({ period }: { period: Period }) {
         });
       })
       .catch((err) => toast.error(err.message));
-  }, [token, partnerId, baseOnly]);
+  }, [token, cursinhoId, baseOnly]);
 
   const handleExportCsv = () => {
     if (dataUserRole.data.length === 0) return;
@@ -127,20 +112,6 @@ function AnalyticsUsers({ period }: { period: Period }) {
         <Grid size={{ xs: 12, md: 6 }}>
           <div className="shadow-md bg-white shadow-slate-200 p-2 rounded">
             <div className="flex items-center gap-4 px-2 pb-2">
-              <Select
-                size="small"
-                value={partnerId}
-                onChange={(e) => setPartnerId(e.target.value)}
-                displayEmpty
-                sx={{ minWidth: 200 }}
-              >
-                <MenuItem value="">Todos os cursinhos</MenuItem>
-                {partners.map((p) => (
-                  <MenuItem key={p.id} value={p.id}>
-                    {p.name}
-                  </MenuItem>
-                ))}
-              </Select>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -177,19 +148,22 @@ function AnalyticsUsers({ period }: { period: Period }) {
                 )}
               </div>
             </Grid>
-            <Grid>
-              <div className="shadow-md bg-white shadow-slate-200 p-2 rounded">
-                {loading ? (
-                  <Skeleton className="h-[320px] w-full" />
-                ) : (
-                  <LineChartMui
-                    {...dataUserActive}
-                    title="Usuários Ativos e Total"
-                    height={320}
-                  />
-                )}
-              </div>
-            </Grid>
+            {/* Agrupa pela criação da conta: não diz nada sobre o cursinho (D4). */}
+            {!cursinhoId && (
+              <Grid>
+                <div className="shadow-md bg-white shadow-slate-200 p-2 rounded">
+                  {loading ? (
+                    <Skeleton className="h-[320px] w-full" />
+                  ) : (
+                    <LineChartMui
+                      {...dataUserActive}
+                      title="Usuários Ativos e Total"
+                      height={320}
+                    />
+                  )}
+                </div>
+              </Grid>
+            )}
           </Grid>
         </Grid>
       </Grid>
