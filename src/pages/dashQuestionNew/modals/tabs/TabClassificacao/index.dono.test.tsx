@@ -93,6 +93,18 @@ describe("TabClassificacao — composição só na prova própria (023 · 08)", 
     expect(screen.getByText("Editar Classificação")).toBeInTheDocument();
   });
 
+  it("card 22 (042): filtrou o banco pela prova → a aba abre nela, não na provaBase", () => {
+    render(<TabClassificacao question={questao("pa")} infos={infos} canEdit provaEmFoco="pb" />);
+    expect(screen.getByRole("combobox")).toHaveTextContent("Simulado do B");
+    // A prova de outro cursinho em foco traz o selo dela: é a pb mesmo.
+    expect(screen.getByTestId("selo-da-prova")).toHaveTextContent("Cursinho da Vila");
+  });
+
+  it("card 22 (042): a questão não está na prova filtrada → vale a provaBase", () => {
+    render(<TabClassificacao question={questao("pa")} infos={infos} canEdit provaEmFoco="pc" />);
+    expect(screen.getByRole("combobox")).toHaveTextContent("Simulado do A");
+  });
+
   it("'Adicionar em uma prova' lista só as que a pessoa compõe", () => {
     montar("pa");
     fireEvent.click(screen.getByText("Adicionar em uma prova"));

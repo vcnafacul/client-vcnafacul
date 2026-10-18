@@ -464,6 +464,8 @@ function DashQuestionNew() {
         voltar={() => irNaLinhagem(voltarNaTrilha(trilha), "voltar")}
         trilha={trilha}
         abaInicial={abaInicial}
+        // tickets/042, card 22: filtrou por prova → a questão abre nela.
+        provaEmFoco={filters.prova || undefined}
         lista={{
           anterior: executarPasso(passos.anterior) || undefined,
           proxima: executarPasso(passos.proxima) || undefined,

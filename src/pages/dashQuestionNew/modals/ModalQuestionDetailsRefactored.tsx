@@ -45,6 +45,8 @@ interface ModalQuestionDetailsRefactoredProps {
   abaInicial?: string;
   /** Anterior/Próxima entre as questões filtradas da listagem. */
   lista?: NavegacaoNaLista;
+  /** A prova filtrada no banco: a aba Classificação abre nela (tickets/042, card 22). */
+  provaEmFoco?: string;
 }
 
 export interface NavegacaoNaLista {
@@ -65,6 +67,7 @@ export function ModalQuestionDetailsRefactored({
   voltar,
   abaInicial,
   lista,
+  provaEmFoco,
 }: ModalQuestionDetailsRefactoredProps) {
   const {
     data: { token, permissao },
@@ -200,6 +203,7 @@ export function ModalQuestionDetailsRefactored({
       voltar={voltar}
       abaInicial={abaInicial}
       lista={lista}
+      provaEmFoco={provaEmFoco}
     />
   );
 }
@@ -223,6 +227,7 @@ function ModalContent({
   voltar,
   abaInicial,
   lista,
+  provaEmFoco,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -238,6 +243,7 @@ function ModalContent({
   voltar?: () => void;
   abaInicial?: string;
   lista?: NavegacaoNaLista;
+  provaEmFoco?: string;
 }) {
   const pendingStoreRef = useRef(new PendingImageStore());
   const conteudoForm = useConteudoForm({ question, pendingStore: pendingStoreRef.current });
@@ -323,6 +329,7 @@ function ModalContent({
                 infos={infos}
                 onSaveSuccess={refreshQuestion}
                 onSujoChange={setClassificacaoSuja}
+                provaEmFoco={provaEmFoco}
               />
               {/*
                 ⚠️ **No RODAPÉ da aba, à direita** — ajuste pedido na revisão

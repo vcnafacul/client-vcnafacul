@@ -64,5 +64,12 @@ export const vitrineAbaClassificacao: Vitrine = {
       rotas,
       render: () => <TabClassificacao question={questao(true)} infos={infos} canEdit />,
     },
+    {
+      slug: "filtrada",
+      titulo: "Banco filtrado pela 2ª prova",
+      rotas,
+      // Card 22: provaBase é a "pa", mas o banco estava filtrado pela "pb".
+      render: () => <TabClassificacao question={questao(true)} infos={infos} canEdit provaEmFoco="pb" />,
+    },
   ],
 };
