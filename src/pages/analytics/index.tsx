@@ -17,6 +17,10 @@ import {
   HistoricoSummaryResponse,
 } from "@/services/analytics/simulado/historicoSummary";
 import {
+  estudantesDoCursinho,
+  simuladosResumoDoCursinho,
+} from "@/services/analytics/monitoramento";
+import {
   getStudentsServed,
   StudentsServedResponse,
   getStudentsCurrentlyEnrolled,
@@ -75,7 +79,6 @@ function Analytics() {
     else proximos.delete("cursinho");
     setParams(proximos);
   };
-
   const [kpiLoading, setKpiLoading] = useState(true);
   const [geoSummary, setGeoSummary] = useState<GeolocationSummary | null>(null);
   const [contentSummary, setContentSummary] =
@@ -89,31 +92,56 @@ function Analytics() {
   const [studentsEnrolledData, setStudentsEnrolledData] =
     useState<StudentsEnrolledResponse | null>(null);
 
+  // KPIs só da plataforma (somem no recorte): não busca com cursinho escolhido.
   useEffect(() => {
-    setKpiLoading(true);
+    if (cursinhoId) return;
     Promise.all([
       geolocationSummary(token),
       getContentSummaryStats(token),
       questionSummary(token),
-      getHistoricoSummary(token),
-      getStudentsServed(token).catch(() => null),
-      getStudentsCurrentlyEnrolled(token).catch(() => null),
     ])
-      .then(([geo, content, question, historico, studentsServed, studentsEnrolled]) => {
+      .then(([geo, content, question]) => {
         setGeoSummary(geo);
         setContentSummary(content);
         setQuestionSummaryData(question);
-        setHistoricoSummaryData(historico);
-        setStudentsServedData(studentsServed);
-        setStudentsEnrolledData(studentsEnrolled);
       })
-      .catch((err) => {
+      .catch((err) => toast.error(err.message));
+  }, [token, cursinhoId]);
+
+  // KPIs recortáveis: simulados e estudantes (tickets/044, card 07).
+  useEffect(() => {
+    setKpiLoading(true);
+    const simulados = cursinhoId
+      ? simuladosResumoDoCursinho(cursinhoId, token)
+      : getHistoricoSummary(token);
+    // Sem `visualizarEstudantes` a rota responde 403: os dois cards somem (null).
+    const estudantes = cursinhoId
+      ? estudantesDoCursinho(cursinhoId, token)
+          .then((e) => ({
+            servidos: { total: e.estudantesAtendidos },
+            ativos: { total: e.estudantesAtivos },
+          }))
+          .catch(() => ({ servidos: null, ativos: null }))
+      : Promise.all([
+          getStudentsServed(token).catch(() => null),
+          getStudentsCurrentlyEnrolled(token).catch(() => null),
+        ]).then(([servidos, ativos]) => ({ servidos, ativos }));
+    Promise.all([
+      simulados.catch((err) => {
         toast.error(err.message);
+        return null;
+      }),
+      estudantes,
+    ])
+      .then(([historico, { servidos, ativos }]) => {
+        setHistoricoSummaryData(historico);
+        setStudentsServedData(servidos);
+        setStudentsEnrolledData(ativos);
       })
-      .finally(() => {
-        setKpiLoading(false);
-      });
-  }, [token]);
+      .finally(() => setKpiLoading(false));
+  }, [token, cursinhoId]);
+
+
 
   return (
     <div>
@@ -208,12 +236,24 @@ function Analytics() {
         </Grid>
       </div>
 
-      <AnalyticsUsers period={period} cursinhoId={cursinhoId} />
+      <AnalyticsUsers
+        period={period}
+        cursinhoId={cursinhoId}
+        cursinhoNome={cursinho?.name}
+      />
       {!cursinhoId && <AnalyticsGeolocation />}
       {!cursinhoId && <AnalyticsContent />}
       {!cursinhoId && <AnalyticsQuestion />}
-      <AnalyticsSimulado period={period} cursinhoId={cursinhoId} />
-      <AnalyticsPrepCourse period={period} cursinhoId={cursinhoId} />
+      <AnalyticsSimulado
+        period={period}
+        cursinhoId={cursinhoId}
+        cursinhoNome={cursinho?.name}
+      />
+      <AnalyticsPrepCourse
+        period={period}
+        cursinhoId={cursinhoId}
+        cursinhoNome={cursinho?.name}
+      />
     </div>
   );
 }
