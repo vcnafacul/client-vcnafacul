@@ -19,6 +19,7 @@ import {
   naoLidas,
   textoDeNaoLidas,
 } from "./resultadoDoEstudante";
+import { TEXTO_LINHA_DIVERGENTE } from "./textosDaAnulacao";
 import { statusDaLinha } from "./statusDaLinha";
 
 export const VAZIO = "—";
@@ -298,7 +299,13 @@ export function colunasDoRelatorio({
         número derivado que o aluno confere e não bate.
       */
       cell: (l) => {
-        const par = acertosSobreTotal(l, totalDeQuestoes);
+        /*
+          tickets/042: o total DESTA nota — sem as anuladas, quando já foi
+          recalculada. A linha divergente (de antes da anulação) segue sobre o
+          total de antes, que é como a nota dela foi calculada.
+        */
+        const totalDaNota = l.totalConsiderado ?? totalDeQuestoes;
+        const par = acertosSobreTotal(l, totalDaNota);
         const percentual = textoDoAproveitamento(l);
         const desvio = formatarDesvio(desvioEmPontos(l, mediaDoRecorte));
         /*
@@ -312,11 +319,24 @@ export function colunasDoRelatorio({
           ⚠️ Só quando `> 0`: "0 não lidas" em 300 linhas é ruído, e a altura
           irregular passa a apontar justamente as linhas que merecem olhar.
         */
-        const aviso = textoDeNaoLidas(naoLidas(l, totalDeQuestoes));
-        const linhaDeAviso = aviso === null ? null : (
-          <span data-nao-lidas className="block text-xs text-yellow-700">
-            {aviso}
-          </span>
+        const aviso = textoDeNaoLidas(naoLidas(l, totalDaNota));
+        const linhaDeAviso = (
+          <>
+            {aviso !== null && (
+              <span data-nao-lidas className="block text-xs text-yellow-700">
+                {aviso}
+              </span>
+            )}
+            {l.divergente && (
+              <span
+                data-divergente
+                title={TEXTO_LINHA_DIVERGENTE}
+                className="block text-xs text-amber-700"
+              >
+                desatualizada
+              </span>
+            )}
+          </>
         );
 
         if (par === null) {

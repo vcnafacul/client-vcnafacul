@@ -1,6 +1,6 @@
 import { caderno } from "@/services/urls";
 import fetchWrapper from "@/utils/fetchWrapper";
-import { mensagemDoErro } from "./baixarCaderno";
+import { consultaDoCaderno, erroDoCaderno } from "./baixarCaderno";
 
 /**
  * tickets/038 — o caderno DA PROVA (Enem Dia 1/2 do cursinho): 1–5 Inglês, 1–5 Espanhol e
@@ -9,13 +9,15 @@ import { mensagemDoErro } from "./baixarCaderno";
 export async function baixarCadernoDaProva(
   provaId: string,
   token: string,
+  /** tickets/042 (D8). */
+  confirmarAnuladas = false,
 ): Promise<{ blob: Blob; avisos: number }> {
-  const response = await fetchWrapper(`${caderno}/prova/${provaId}`, {
+  const response = await fetchWrapper(`${caderno}/prova/${provaId}${consultaDoCaderno({ confirmarAnuladas })}`, {
     method: "GET",
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
-    throw new Error(await mensagemDoErro(response));
+    throw await erroDoCaderno(response);
   }
   const avisos = Number(response.headers.get("X-Caderno-Avisos") ?? 0);
   return {

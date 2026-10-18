@@ -118,7 +118,7 @@ describe("MaterialDaProva (tickets/038 · 11)", () => {
     );
     fireEvent.click(screen.getByText(TEXTO_CADERNO_DA_PROVA));
     await waitFor(() =>
-      expect(svc.baixarCadernoDaProva).toHaveBeenCalledWith("p1", "t"),
+      expect(svc.baixarCadernoDaProva).toHaveBeenCalledWith("p1", "t", false),
     );
   });
 });

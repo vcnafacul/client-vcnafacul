@@ -7,6 +7,9 @@ export interface AnswerHistoricoDTO {
   questao: string;
   alternativaCorreta: Alternativa;
   alternativaEstudante?: Alternativa;
+  /** tickets/042: fora da nota gravada. */
+  anulada?: boolean;
+  numero?: number | null;
 }
 
 interface PerformanceSpecific {
@@ -37,6 +40,9 @@ export interface QuestaoHistorico extends QuestionTemplate {
   updatedAt: string;
   quantidadeSimulado: number;
   prova: string;
+  /** tickets/042: anulada agora nesta prova, e por quê. */
+  anulada?: boolean;
+  anulacao?: { motivo: string; justificativa: string };
 }
 
 interface SimuladoHistoricoDTO {
@@ -64,4 +70,14 @@ export interface HistoricoDTO {
   aproveitamento?: AproveitamentoDTO;
   status?: HistoricoStatus;
   createdAt: DateTime;
+  /**
+   * tickets/042: a nota é de antes da última anulação. O de cartão espera o
+   * recálculo do cursinho; o digital é recalculado ao abrir (D11).
+   */
+  divergente?: boolean;
+  /** Sobre quantas questões a nota foi calculada (sem as anuladas). */
+  totalConsiderado?: number;
+  numerosAnulados?: number[];
+  /** Quando a nota foi recalculada por anulação. */
+  recalculadoEm?: string;
 }
