@@ -30,6 +30,8 @@ export const roles_users = `${role}/users`;
 export const user_aggregate = `${user}/aggregate`;
 export const user_aggregate_role = `${user}/aggregate-role`;
 export const user_aggregate_last_access = `${user}/aggregate-last-access`;
+/** tickets/044 — o Monitoramento recortado por cursinho. */
+export const monitoramento = `${BASE_URL}/monitoramento`;
 export const send_bulk_email = `${user}/send-bulk-email`;
 
 export const geolocations = `${BASE_URL}/geo`;

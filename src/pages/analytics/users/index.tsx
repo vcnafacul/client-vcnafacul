@@ -9,7 +9,12 @@ import { Period } from "@/enums/analytics/period";
 import { aggregateUserByLastAccess } from "@/services/analytics/user/aggregateLUserByLastAccess";
 import { aggregateUserByPeriod } from "@/services/analytics/user/aggregateUserByPeriod";
 import { aggregateUserByRole } from "@/services/analytics/user/aggregateUserByRole";
+import {
+  ultimoAcessoDoCursinho,
+  usuariosPorPerfilDoCursinho,
+} from "@/services/analytics/monitoramento";
 import { useAuthStore } from "@/store/auth";
+import { nomeDoArquivo } from "../nomeDoArquivo";
 import { exportAnalyticsCsv } from "@/utils/exportAnalyticsCsv";
 import { Button, Checkbox, FormControlLabel } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -19,10 +24,12 @@ import { toast } from "react-toastify";
 function AnalyticsUsers({
   period,
   cursinhoId,
+  cursinhoNome,
 }: {
   period: Period;
   /** tickets/044 — o cursinho do topo da tela. */
   cursinhoId?: string;
+  cursinhoNome?: string;
 }) {
   const {
     data: { token },
@@ -48,6 +55,11 @@ function AnalyticsUsers({
   const [baseOnly, setBaseOnly] = useState(false);
 
   useEffect(() => {
+    // "Usuários Ativos e Total" some no recorte (D4): nada a buscar.
+    if (cursinhoId) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     aggregateUserByPeriod(period, token)
       .then((res) => {
@@ -61,9 +73,24 @@ function AnalyticsUsers({
       })
       .catch((err) => toast.error(err.message))
       .finally(() => setLoading(false));
-  }, [period, token]);
+  }, [period, token, cursinhoId]);
 
   useEffect(() => {
+    if (cursinhoId) {
+      // Duas séries no recorte (D1): colaboradores ativos × estudantes.
+      ultimoAcessoDoCursinho(cursinhoId, period, token)
+        .then((res) => {
+          setDataUserLastAccess({
+            xAxis: res.map((r) => r.period),
+            series: [
+              { label: "Colaboradores", data: res.map((r) => r.colaboradores) },
+              { label: "Estudantes", data: res.map((r) => r.estudantes) },
+            ],
+          });
+        })
+        .catch((err) => toast.error(err.message));
+      return;
+    }
     aggregateUserByLastAccess(period, token)
       .then((res) => {
         setDataUserLastAccess({
@@ -74,10 +101,13 @@ function AnalyticsUsers({
         });
       })
       .catch((err) => toast.error(err.message));
-  }, [period, token]);
+  }, [period, token, cursinhoId]);
 
   useEffect(() => {
-    aggregateUserByRole(token, cursinhoId, baseOnly || undefined)
+    (cursinhoId
+      ? usuariosPorPerfilDoCursinho(cursinhoId, baseOnly, token)
+      : aggregateUserByRole(token, undefined, baseOnly || undefined)
+    )
       .then((res) => {
         setDataUserRole({
           data: res.map((r) => ({
@@ -95,7 +125,7 @@ function AnalyticsUsers({
     exportAnalyticsCsv(
       ["Perfil", "Total"],
       dataUserRole.data.map((d) => [d.label, d.value]),
-      "usuarios_por_perfil"
+      nomeDoArquivo("usuarios_por_perfil", cursinhoNome)
     );
   };
 
