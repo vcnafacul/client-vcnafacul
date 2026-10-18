@@ -36,6 +36,18 @@ describe("textos (042/15)", () => {
       "As questões 45, 3 e 90 foram anuladas",
     );
   });
+  it("card 20: desanulada diz 'voltou a valer', nunca 'foi anulada'", () => {
+    expect(textoDaDivergencia([], 30, [45])).toBe(
+      "A questão 45 voltou a valer depois que 30 resultados foram calculados. Esses resultados ainda não contam a questão, e médias, discriminação e comparação podem estar erradas.",
+    );
+    expect(textoDaDivergencia([], 1, [3, 45])).toBe(
+      "As questões 3 e 45 voltaram a valer depois que 1 resultado foi calculado. Esses resultados ainda não contam essas questões, e médias, discriminação e comparação podem estar erradas.",
+    );
+    expect(textoDaDivergencia([anulada], 30, [3])).toBe(
+      "A questão 45 foi anulada (sem alternativa correta) e a questão 3 voltou a valer depois que 30 resultados foram calculados. Esses resultados ainda estão com as questões de antes, e médias, discriminação e comparação podem estar erradas.",
+    );
+    expect(textoDaDivergencia([anulada], 30, [])).toContain("ainda contam a questão");
+  });
   it("resumo: '90 questões · 1 anulada · análise sobre 89'", () => {
     expect(resumoDasQuestoesDoRelatorio(90, 1, 89)).toBe("90 questões · 1 anulada · análise sobre 89");
     expect(resumoDasQuestoesDoRelatorio(90, 0)).toBe("90 questões");
