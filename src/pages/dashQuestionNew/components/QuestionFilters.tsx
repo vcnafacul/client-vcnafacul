@@ -5,7 +5,9 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -227,10 +229,16 @@ export function QuestionFilters({
                 <SelectValue placeholder="Todas as categorias" />
               </SelectTrigger>
               <SelectContent>
-                {opcoes.categorias.map((c) => (
-                  <SelectItem key={c._id} value={c._id}>
-                    {c.nome}
-                  </SelectItem>
+                {/* tickets/043, card 07: system → cursinho → meu cursinho */}
+                {opcoes.gruposDeCategorias.map((g) => (
+                  <SelectGroup key={g.grupo}>
+                    <SelectLabel className="text-xs text-muted-foreground">{g.titulo}</SelectLabel>
+                    {g.itens.map((c) => (
+                      <SelectItem key={c._id} value={c._id}>
+                        {c.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
                 ))}
               </SelectContent>
             </Select>

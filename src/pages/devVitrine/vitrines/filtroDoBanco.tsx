@@ -13,7 +13,9 @@ const infos = {
     { _id: "p6", nome: "Enem Dia 1 2026 – Cursinho X", enemAreas: ["Linguagens"], categoria: cat("c5", "Enem Dia 1", ENEM, "Cursinho") },
     { _id: "p7", nome: "Enem Dia 2 2026 – Cursinho X", enemAreas: ["Matemática"], categoria: cat("c6", "Enem Dia 2", ENEM, "Cursinho") },
     { _id: "p4", nome: "Fuvest 2023 – 1ª fase", enemAreas: [], categoria: cat("c3", "1ª fase", FUVEST, "6acc0000000000000000cafe") },
-    { _id: "p5", nome: "Simulado de Outubro – Cursinho Esperança da Zona Leste", enemAreas: ["Matemática"], categoria: cat("c4", "Simulado do cursinho", ENEM, "6acc0000000000000000cafe") },
+    { _id: "p5", nome: "Simulado de Outubro – Meu cursinho", enemAreas: ["Matemática"], categoriaDoMeuCursinho: true, categoria: cat("c4", "Simulado mensal", ENEM, "meu-cursinho") },
+    { _id: "p8", nome: "Aulão – Meu cursinho", enemAreas: ["Matemática"], categoriaDoMeuCursinho: true, categoria: cat("c7", "Aulão de revisão", ENEM, "meu-cursinho") },
+    { _id: "p9", nome: "Simulado de outro cursinho", enemAreas: ["Matemática"], categoria: cat("c8", "Categoria de outro cursinho", ENEM, "outro-cursinho") },
   ],
   materias: [{ _id: "m1", nome: "Matemática", enemArea: "Matemática", frentes: [{ _id: "f1", nome: "Álgebra" }] }],
 };

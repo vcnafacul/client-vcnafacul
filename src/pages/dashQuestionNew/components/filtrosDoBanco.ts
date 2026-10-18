@@ -82,6 +82,8 @@ export function temFiltroAtivo(f: FilterValues): boolean {
 export interface ProvaDoFiltro {
   _id: string;
   nome: string;
+  /** tickets/043, card 06 (ms): a categoria é própria do cursinho de quem pede. */
+  categoriaDoMeuCursinho?: boolean;
   categoria?: {
     _id: string;
     nome: string;
@@ -93,6 +95,27 @@ export interface ProvaDoFiltro {
 export interface Opcao {
   _id: string;
   nome: string;
+}
+
+/** Os grupos do campo Categoria, nesta ordem (tickets/043, card 07). */
+export type GrupoDaCategoria = "system" | "cursinho" | "meu";
+export const GRUPOS_DE_CATEGORIA: { grupo: GrupoDaCategoria; titulo: string }[] = [
+  { grupo: "system", titulo: "System" },
+  { grupo: "cursinho", titulo: "Cursinho" },
+  { grupo: "meu", titulo: "Meu cursinho" },
+];
+
+/**
+ * Em que grupo a categoria entra — ou `null`, e ela não aparece: categoria
+ * própria de OUTRO cursinho não é da conta de quem filtra (card 07).
+ */
+export function grupoDaCategoria(
+  cat: { dono?: string | null },
+  doMeuCursinho: boolean,
+): GrupoDaCategoria | null {
+  if (cat.dono === "system") return "system";
+  if (cat.dono === "Cursinho") return "cursinho";
+  return doMeuCursinho ? "meu" : null;
 }
 
 const categoriaDe = (p: ProvaDoFiltro) =>
@@ -125,28 +148,40 @@ export function rotuloDaCategoria(cat: { nome: string; dono?: string | null }): 
 export function opcoesDoFiltro(
   provas: ProvaDoFiltro[],
   filtro: Pick<FilterValues, "exame" | "categoria">,
-): { exames: Opcao[]; categorias: Opcao[]; provas: Opcao[] } {
+): {
+  exames: Opcao[];
+  /** Na ordem dos grupos (system → cursinho → meu cursinho), e por nome dentro de cada. */
+  categorias: Opcao[];
+  gruposDeCategorias: { grupo: GrupoDaCategoria; titulo: string; itens: Opcao[] }[];
+  provas: Opcao[];
+} {
   const exames = new Map<string, Opcao>();
-  const categorias = new Map<string, Opcao>();
+  const categorias = new Map<string, Opcao & { grupo: GrupoDaCategoria }>();
   const lista: Opcao[] = [];
   for (const p of provas) {
     const ex = exameDe(p);
     const cat = categoriaDe(p);
     if (ex) exames.set(ex._id, { _id: ex._id, nome: ex.nome });
     const doExame = !filtro.exame || ex?._id === filtro.exame;
-    if (cat && doExame) {
-      categorias.set(cat._id, {
-        _id: cat._id,
-        nome: rotuloDaCategoria(cat),
-      });
+    const grupo = cat ? grupoDaCategoria(cat, p.categoriaDoMeuCursinho === true) : null;
+    if (cat && doExame && grupo && !categorias.has(cat._id)) {
+      categorias.set(cat._id, { _id: cat._id, nome: rotuloDaCategoria(cat), grupo });
     }
     if (doExame && (!filtro.categoria || cat?._id === filtro.categoria)) {
       lista.push({ _id: p._id, nome: p.nome });
     }
   }
+  const gruposDeCategorias = GRUPOS_DE_CATEGORIA.map((g) => ({
+    ...g,
+    itens: [...categorias.values()]
+      .filter((c) => c.grupo === g.grupo)
+      .map(({ _id, nome }) => ({ _id, nome }))
+      .sort(porNome),
+  })).filter((g) => g.itens.length > 0);
   return {
     exames: [...exames.values()].sort(porNome),
-    categorias: [...categorias.values()].sort(porNome),
+    categorias: gruposDeCategorias.flatMap((g) => g.itens),
+    gruposDeCategorias,
     provas: lista.sort(porNome),
   };
 }
