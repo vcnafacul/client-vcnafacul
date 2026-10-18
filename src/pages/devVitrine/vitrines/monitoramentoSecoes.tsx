@@ -32,6 +32,12 @@ const rotasDoCursinho = (simuladosFora = false): RotaFalsa[] => [
     period, totalInscriptions: 20 + i * 15, totalEnrolments: 5 + i * 3,
     cumulativeInscriptionsTotal: 0, cumulativeEnrolmentsTotal: 0,
   })) } },
+  { caminho: /\/monitoramento\/ultimos-processos$/, resposta: { corpo: [
+    { id: "p1", nome: "Processo 2026 – 2º semestre", cursinho: { id: "c1", nome: "Cursinho Alfa" },
+      inicio: "2026-07-01T00:00:00.000Z", fim: "2026-08-15T00:00:00.000Z", situacao: "encerrado", inscricoes: 180, matriculas: 52 },
+    { id: "p2", nome: "Processo 2026 – 1º semestre", cursinho: { id: "c1", nome: "Cursinho Alfa" },
+      inicio: "2026-01-10T00:00:00.000Z", fim: "2026-02-20T00:00:00.000Z", situacao: "encerrado", inscricoes: 132, matriculas: 35 },
+  ] } },
   { caminho: /\/monitoramento\/simulados\/por-periodo$/, resposta: simuladosFora ? { status: 502, corpo: { message: "x" } } : { corpo: porPeriodo } },
   { caminho: /\/monitoramento\/simulados\/por-tipo$/, resposta: simuladosFora ? { status: 502, corpo: { message: "x" } } : { corpo: porTipo } },
 ];
