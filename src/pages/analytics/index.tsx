@@ -17,16 +17,26 @@ import {
   HistoricoSummaryResponse,
 } from "@/services/analytics/simulado/historicoSummary";
 import {
+  estudantesDoCursinho,
+  simuladosResumoDoCursinho,
+} from "@/services/analytics/monitoramento";
+import {
   getStudentsServed,
   StudentsServedResponse,
   getStudentsCurrentlyEnrolled,
   StudentsEnrolledResponse,
 } from "@/services/dashboard";
+import {
+  getPartnerPrepCourseLogos,
+  PartnerPrepCourseLogo,
+} from "@/services/prepCourse/partnerLogos";
 import { useAuthStore } from "@/store/auth";
-import { Box, MenuItem, Select, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { CabecalhoDoMonitoramento } from "./CabecalhoDoMonitoramento";
+import { cursinhoDaUrl } from "./recorte";
 import AnalyticsContent from "./content";
 import AnalyticsGeolocation from "./geolocation";
 import AnalyticsQuestion from "./question";
@@ -40,6 +50,35 @@ function Analytics() {
     data: { token },
   } = useAuthStore();
 
+  // tickets/044, card 06 — o cursinho do recorte mora na URL (D8).
+  const [params, setParams] = useSearchParams();
+  const [cursinhos, setCursinhos] = useState<PartnerPrepCourseLogo[]>([]);
+  const [carregandoCursinhos, setCarregandoCursinhos] = useState(true);
+  useEffect(() => {
+    getPartnerPrepCourseLogos()
+      .then(setCursinhos)
+      .catch(() => toast.error("Não foi possível carregar os cursinhos"))
+      .finally(() => setCarregandoCursinhos(false));
+  }, []);
+  const cursinho = useMemo(
+    () => cursinhoDaUrl(params.get("cursinho"), cursinhos),
+    [params, cursinhos],
+  );
+  const cursinhoId = cursinho?.id;
+  // id que não está na lista (cursinho apagado, link velho) → "Todos"
+  useEffect(() => {
+    if (!carregandoCursinhos && params.get("cursinho") && !cursinho) {
+      const proximos = new URLSearchParams(params);
+      proximos.delete("cursinho");
+      setParams(proximos, { replace: true });
+    }
+  }, [carregandoCursinhos, cursinho, params, setParams]);
+  const escolherCursinho = (id: string | null) => {
+    const proximos = new URLSearchParams(params);
+    if (id) proximos.set("cursinho", id);
+    else proximos.delete("cursinho");
+    setParams(proximos);
+  };
   const [kpiLoading, setKpiLoading] = useState(true);
   const [geoSummary, setGeoSummary] = useState<GeolocationSummary | null>(null);
   const [contentSummary, setContentSummary] =
@@ -53,89 +92,111 @@ function Analytics() {
   const [studentsEnrolledData, setStudentsEnrolledData] =
     useState<StudentsEnrolledResponse | null>(null);
 
+  // KPIs só da plataforma (somem no recorte): não busca com cursinho escolhido.
   useEffect(() => {
-    setKpiLoading(true);
+    if (cursinhoId) return;
     Promise.all([
       geolocationSummary(token),
       getContentSummaryStats(token),
       questionSummary(token),
-      getHistoricoSummary(token),
-      getStudentsServed(token).catch(() => null),
-      getStudentsCurrentlyEnrolled(token).catch(() => null),
     ])
-      .then(([geo, content, question, historico, studentsServed, studentsEnrolled]) => {
+      .then(([geo, content, question]) => {
         setGeoSummary(geo);
         setContentSummary(content);
         setQuestionSummaryData(question);
-        setHistoricoSummaryData(historico);
-        setStudentsServedData(studentsServed);
-        setStudentsEnrolledData(studentsEnrolled);
       })
-      .catch((err) => {
+      .catch((err) => toast.error(err.message));
+  }, [token, cursinhoId]);
+
+  // KPIs recortáveis: simulados e estudantes (tickets/044, card 07).
+  useEffect(() => {
+    setKpiLoading(true);
+    const simulados = cursinhoId
+      ? simuladosResumoDoCursinho(cursinhoId, token)
+      : getHistoricoSummary(token);
+    // Sem `visualizarEstudantes` a rota responde 403: os dois cards somem (null).
+    const estudantes = cursinhoId
+      ? estudantesDoCursinho(cursinhoId, token)
+          .then((e) => ({
+            servidos: { total: e.estudantesAtendidos },
+            ativos: { total: e.estudantesAtivos },
+          }))
+          .catch(() => ({ servidos: null, ativos: null }))
+      : Promise.all([
+          getStudentsServed(token).catch(() => null),
+          getStudentsCurrentlyEnrolled(token).catch(() => null),
+        ]).then(([servidos, ativos]) => ({ servidos, ativos }));
+    Promise.all([
+      simulados.catch((err) => {
         toast.error(err.message);
+        return null;
+      }),
+      estudantes,
+    ])
+      .then(([historico, { servidos, ativos }]) => {
+        setHistoricoSummaryData(historico);
+        setStudentsServedData(servidos);
+        setStudentsEnrolledData(ativos);
       })
-      .finally(() => {
-        setKpiLoading(false);
-      });
-  }, [token]);
+      .finally(() => setKpiLoading(false));
+  }, [token, cursinhoId]);
+
+
 
   return (
     <div>
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-4 py-3">
-        <Typography variant="h4" fontWeight="bold" className="text-marine">
-          Monitoramento de Atividades
-        </Typography>
-        <Box>
-          <Select
-            value={period}
-            onChange={(e) => setPeriod(e.target.value as Period)}
-            size="small"
-            sx={{ minWidth: 150 }}
-          >
-            <MenuItem value={Period.day}>Diário</MenuItem>
-            <MenuItem value={Period.month}>Mensal</MenuItem>
-            <MenuItem value={Period.year}>Anual</MenuItem>
-          </Select>
-          <p className="text-xs text-grey mt-1">Afeta gráficos temporais</p>
-        </Box>
-      </div>
+      <CabecalhoDoMonitoramento
+        period={period}
+        onPeriod={setPeriod}
+        cursinhos={cursinhos}
+        cursinho={cursinho}
+        onCursinho={escolherCursinho}
+        carregandoCursinhos={carregandoCursinhos}
+      />
 
       {/* KPI Bar */}
       <div className="px-4 pb-2">
         <Grid container spacing={2}>
-          <Grid size={{ xs: 6, sm: 4, md: 2 }}>
-            <StatCard
-              label="Total Cursinhos"
-              value={geoSummary?.totalCourses ?? 0}
-              color="marine"
-              loading={kpiLoading}
-            />
-          </Grid>
-          <Grid size={{ xs: 6, sm: 4, md: 2 }}>
-            <StatCard
-              label="Conteúdos Aprovados"
-              value={contentSummary?.contentApproved ?? 0}
-              color="green"
-              loading={kpiLoading}
-            />
-          </Grid>
-          <Grid size={{ xs: 6, sm: 4, md: 2 }}>
-            <StatCard
-              label="Conteúdos Pendentes"
-              value={contentSummary?.contentPending ?? 0}
-              color="orange"
-              loading={kpiLoading}
-            />
-          </Grid>
-          <Grid size={{ xs: 6, sm: 4, md: 2 }}>
-            <StatCard
-              label="Questões Total"
-              value={questionSummaryData?.questionTotal ?? 0}
-              color="marine"
-              loading={kpiLoading}
-            />
-          </Grid>
+          {!cursinhoId && (
+            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+              <StatCard
+                label="Total Cursinhos"
+                value={geoSummary?.totalCourses ?? 0}
+                color="marine"
+                loading={kpiLoading}
+              />
+            </Grid>
+          )}
+          {!cursinhoId && (
+            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+              <StatCard
+                label="Conteúdos Aprovados"
+                value={contentSummary?.contentApproved ?? 0}
+                color="green"
+                loading={kpiLoading}
+              />
+            </Grid>
+          )}
+          {!cursinhoId && (
+            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+              <StatCard
+                label="Conteúdos Pendentes"
+                value={contentSummary?.contentPending ?? 0}
+                color="orange"
+                loading={kpiLoading}
+              />
+            </Grid>
+          )}
+          {!cursinhoId && (
+            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+              <StatCard
+                label="Questões Total"
+                value={questionSummaryData?.questionTotal ?? 0}
+                color="marine"
+                loading={kpiLoading}
+              />
+            </Grid>
+          )}
           <Grid size={{ xs: 6, sm: 4, md: 2 }}>
             <StatCard
               label="Simulados Completos"
@@ -175,12 +236,24 @@ function Analytics() {
         </Grid>
       </div>
 
-      <AnalyticsUsers period={period} />
-      <AnalyticsGeolocation />
-      <AnalyticsContent />
-      <AnalyticsQuestion />
-      <AnalyticsSimulado period={period} />
-      <AnalyticsPrepCourse period={period} />
+      <AnalyticsUsers
+        period={period}
+        cursinhoId={cursinhoId}
+        cursinhoNome={cursinho?.name}
+      />
+      {!cursinhoId && <AnalyticsGeolocation />}
+      {!cursinhoId && <AnalyticsContent />}
+      {!cursinhoId && <AnalyticsQuestion />}
+      <AnalyticsSimulado
+        period={period}
+        cursinhoId={cursinhoId}
+        cursinhoNome={cursinho?.name}
+      />
+      <AnalyticsPrepCourse
+        period={period}
+        cursinhoId={cursinhoId}
+        cursinhoNome={cursinho?.name}
+      />
     </div>
   );
 }

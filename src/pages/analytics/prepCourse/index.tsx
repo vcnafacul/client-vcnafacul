@@ -11,14 +11,50 @@ import { getSummaryInscriptionCourse } from "@/services/analytics/prepCourse/get
 import { getSummaryStudentCourse } from "@/services/analytics/prepCourse/getSummaryStudentCourse";
 import { SummaryInscriptionCourse } from "@/services/analytics/prepCourse/dtos/summary-inscription-course";
 import { SummaryStudentCourse } from "@/services/analytics/prepCourse/dtos/summary-student-course";
+import {
+  inscricoesPorPeriodoDoCursinho,
+  resumoDoCursinho,
+  UltimoProcesso,
+  ultimosProcessos,
+} from "@/services/analytics/monitoramento";
 import { useAuthStore } from "@/store/auth";
+import { nomeDoArquivo } from "../nomeDoArquivo";
+import { periodoDoProcesso } from "../periodoDoProcesso";
+import { UltimosProcessos } from "../UltimosProcessos";
 import { exportAnalyticsCsv } from "@/utils/exportAnalyticsCsv";
 import { Button } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-function AnalyticsPrepCourse({ period }: { period: Period }) {
+/** Os quatro números do card, da plataforma ou do cursinho (tickets/044). */
+type NumerosDosCursinhos = {
+  processosNaoTeste: number;
+  processosTotal: number;
+  inscricoesNaoTeste: number;
+  matriculasNaoTeste: number;
+};
+
+const daPlataforma = (
+  inscricoes: SummaryInscriptionCourse,
+  estudantes: SummaryStudentCourse,
+): NumerosDosCursinhos => ({
+  processosNaoTeste: inscricoes.inscriptionTotalNonTest,
+  processosTotal: inscricoes.inscriptionTotal,
+  inscricoesNaoTeste: estudantes.totalStudentsNonTest,
+  matriculasNaoTeste: estudantes.studentEnrolledNonTest,
+});
+
+function AnalyticsPrepCourse({
+  period,
+  cursinhoId,
+  cursinhoNome,
+}: {
+  period: Period;
+  /** tickets/044 — com cursinho, os números só dele. */
+  cursinhoId?: string;
+  cursinhoNome?: string;
+}) {
   const {
     data: { token },
   } = useAuthStore();
@@ -28,51 +64,58 @@ function AnalyticsPrepCourse({ period }: { period: Period }) {
   const [dataNumberInscriptionsByPeriod, setDataNumberInscriptionsByPeriod] =
     useState<LineChartMuiProps>({ xAxis: [], series: [] });
 
-  const [summaryInscriptionCourse, setSummaryInscriptionCourse] =
-    useState<SummaryInscriptionCourse | null>(null);
-  const [summaryStudentCourse, setSummaryStudentCourse] =
-    useState<SummaryStudentCourse | null>(null);
+  const [numeros, setNumeros] = useState<NumerosDosCursinhos | null>(null);
+  const [processos, setProcessos] = useState<UltimoProcesso[]>([]);
+  const [carregandoProcessos, setCarregandoProcessos] = useState(true);
+
+  // tickets/044, card 08 — com ou sem cursinho (sem: a plataforma inteira).
+  useEffect(() => {
+    setCarregandoProcessos(true);
+    ultimosProcessos(token, cursinhoId)
+      .then(setProcessos)
+      .catch((err) => {
+        setProcessos([]);
+        toast.error(err.message);
+      })
+      .finally(() => setCarregandoProcessos(false));
+  }, [token, cursinhoId]);
 
   useEffect(() => {
     setLoading(true);
 
-    Promise.all([
-      getSummaryStudentCourse(token),
-      getSummaryInscriptionCourse(token),
-      aggregateStudentCourseByPeriod(period, token),
-    ])
-      .then(
-        ([
-          summaryStudentCourse,
-          summaryInscriptionCourse,
-          aggregateStudentCourseByPeriod,
-        ]) => {
-          setSummaryStudentCourse(summaryStudentCourse);
-          setSummaryInscriptionCourse(summaryInscriptionCourse);
+    const resumo: Promise<NumerosDosCursinhos> = cursinhoId
+      ? resumoDoCursinho(cursinhoId, token)
+      : Promise.all([
+          getSummaryInscriptionCourse(token),
+          getSummaryStudentCourse(token),
+        ]).then(([inscricoes, estudantes]) =>
+          daPlataforma(inscricoes, estudantes),
+        );
+    const porPeriodo = cursinhoId
+      ? inscricoesPorPeriodoDoCursinho(cursinhoId, period, token)
+      : aggregateStudentCourseByPeriod(period, token);
 
-          const studentXAxis = aggregateStudentCourseByPeriod.map(
-            (r) => r.period,
-          );
-
-          setDataNumberInscriptionsByPeriod({
-            xAxis: studentXAxis,
-            series: [
-              {
-                label: "Número de inscrições",
-                data: aggregateStudentCourseByPeriod.map(
-                  (r) => r.totalInscriptions,
-                ),
-              },
-            ],
-          });
-        },
-      )
+    Promise.all([resumo, porPeriodo])
+      .then(([numeros, aggregateStudentCourseByPeriod]) => {
+        setNumeros(numeros);
+        setDataNumberInscriptionsByPeriod({
+          xAxis: aggregateStudentCourseByPeriod.map((r) => r.period),
+          series: [
+            {
+              label: "Número de inscrições",
+              data: aggregateStudentCourseByPeriod.map(
+                (r) => r.totalInscriptions,
+              ),
+            },
+          ],
+        });
+      })
       .catch((err) => toast.error(err.message))
       .finally(() => setLoading(false));
-  }, [period, token]);
+  }, [period, token, cursinhoId]);
 
   const handleExportCsv = () => {
-    if (!summaryInscriptionCourse || !summaryStudentCourse) return;
+    if (!numeros) return;
 
     const periods = dataNumberInscriptionsByPeriod.xAxis;
     const total = dataNumberInscriptionsByPeriod.series[0]?.data || [];
@@ -83,31 +126,48 @@ function AnalyticsPrepCourse({ period }: { period: Period }) {
       ["Métrica", "Valor"],
       [
         "Total de processos seletivos realizados (sem testes)",
-        summaryInscriptionCourse.inscriptionTotalNonTest,
+        numeros.processosNaoTeste,
       ],
       [
         "Total de processos seletivos realizados (incluindo testes)",
-        summaryInscriptionCourse.inscriptionTotal,
+        numeros.processosTotal,
       ],
       [
         "Total de inscrições realizadas (sem testes)",
-        summaryStudentCourse.totalStudentsNonTest,
+        numeros.inscricoesNaoTeste,
       ],
       [
         "Total de matrículas realizadas (sem testes)",
-        summaryStudentCourse.studentEnrolledNonTest,
+        numeros.matriculasNaoTeste,
       ],
+      [],
+      [
+        "Últimos processos seletivos (sem testes)",
+        "Cursinho",
+        "Período",
+        "Situação",
+        "Inscrições",
+        "Matrículas",
+      ],
+      ...processos.map((p) => [
+        p.nome,
+        p.cursinho.nome,
+        periodoDoProcesso(p),
+        p.situacao,
+        p.inscricoes,
+        p.matriculas,
+      ]),
     ];
     exportAnalyticsCsv(
       ["Período", "Inscrições no período (incluindo testes)"],
       rows,
-      "analytics_cursinhos",
+      nomeDoArquivo("analytics_cursinhos", cursinhoNome),
     );
   };
 
   return (
     <AnalyticsSection
-      title="Cursinhos"
+      title={cursinhoId ? "Processos seletivos do cursinho" : "Cursinhos"}
       actions={
         <Button size="small" variant="outlined" onClick={handleExportCsv}>
           Exportar CSV
@@ -119,8 +179,8 @@ function AnalyticsPrepCourse({ period }: { period: Period }) {
           <Grid size={{ xs: 6, sm: 4 }}>
             <StatCard
               label="Total de processos seletivos realizados"
-              value={summaryInscriptionCourse?.inscriptionTotalNonTest ?? 0}
-              secondaryValue={summaryInscriptionCourse?.inscriptionTotal ?? 0}
+              value={numeros?.processosNaoTeste ?? 0}
+              secondaryValue={numeros?.processosTotal ?? 0}
               color="marine"
               loading={loading}
             />
@@ -128,7 +188,7 @@ function AnalyticsPrepCourse({ period }: { period: Period }) {
           <Grid size={{ xs: 6, sm: 4 }}>
             <StatCard
               label="Total de inscrições realizadas"
-              value={summaryStudentCourse?.totalStudentsNonTest ?? 0}
+              value={numeros?.inscricoesNaoTeste ?? 0}
               color="green"
               loading={loading}
             />
@@ -136,7 +196,7 @@ function AnalyticsPrepCourse({ period }: { period: Period }) {
           <Grid size={{ xs: 6, sm: 4 }}>
             <StatCard
               label="Total de matrículas realizadas"
-              value={summaryStudentCourse?.studentEnrolledNonTest ?? 0}
+              value={numeros?.matriculasNaoTeste ?? 0}
               color="red"
               loading={loading}
             />
@@ -160,6 +220,13 @@ function AnalyticsPrepCourse({ period }: { period: Period }) {
           )}
         </div>
       </Grid>
+      <div className="mt-4">
+        <UltimosProcessos
+          processos={processos}
+          carregando={carregandoProcessos}
+          mostrarCursinho={!cursinhoId}
+        />
+      </div>
     </AnalyticsSection>
   );
 }

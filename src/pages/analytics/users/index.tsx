@@ -10,23 +10,27 @@ import { aggregateUserByLastAccess } from "@/services/analytics/user/aggregateLU
 import { aggregateUserByPeriod } from "@/services/analytics/user/aggregateUserByPeriod";
 import { aggregateUserByRole } from "@/services/analytics/user/aggregateUserByRole";
 import {
-  getPartnerPrepCourseLogos,
-  PartnerPrepCourseLogo,
-} from "@/services/prepCourse/partnerLogos";
+  ultimoAcessoDoCursinho,
+  usuariosPorPerfilDoCursinho,
+} from "@/services/analytics/monitoramento";
 import { useAuthStore } from "@/store/auth";
+import { nomeDoArquivo } from "../nomeDoArquivo";
 import { exportAnalyticsCsv } from "@/utils/exportAnalyticsCsv";
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
+import { Button, Checkbox, FormControlLabel } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-function AnalyticsUsers({ period }: { period: Period }) {
+function AnalyticsUsers({
+  period,
+  cursinhoId,
+  cursinhoNome,
+}: {
+  period: Period;
+  /** tickets/044 — o cursinho do topo da tela. */
+  cursinhoId?: string;
+  cursinhoNome?: string;
+}) {
   const {
     data: { token },
   } = useAuthStore();
@@ -48,17 +52,14 @@ function AnalyticsUsers({ period }: { period: Period }) {
       series: [],
     });
 
-  const [partners, setPartners] = useState<PartnerPrepCourseLogo[]>([]);
-  const [partnerId, setPartnerId] = useState("");
   const [baseOnly, setBaseOnly] = useState(false);
 
   useEffect(() => {
-    getPartnerPrepCourseLogos()
-      .then(setPartners)
-      .catch(() => {});
-  }, []);
-
-  useEffect(() => {
+    // "Usuários Ativos e Total" some no recorte (D4): nada a buscar.
+    if (cursinhoId) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     aggregateUserByPeriod(period, token)
       .then((res) => {
@@ -72,9 +73,24 @@ function AnalyticsUsers({ period }: { period: Period }) {
       })
       .catch((err) => toast.error(err.message))
       .finally(() => setLoading(false));
-  }, [period, token]);
+  }, [period, token, cursinhoId]);
 
   useEffect(() => {
+    if (cursinhoId) {
+      // Duas séries no recorte (D1): colaboradores ativos × estudantes.
+      ultimoAcessoDoCursinho(cursinhoId, period, token)
+        .then((res) => {
+          setDataUserLastAccess({
+            xAxis: res.map((r) => r.period),
+            series: [
+              { label: "Colaboradores", data: res.map((r) => r.colaboradores) },
+              { label: "Estudantes", data: res.map((r) => r.estudantes) },
+            ],
+          });
+        })
+        .catch((err) => toast.error(err.message));
+      return;
+    }
     aggregateUserByLastAccess(period, token)
       .then((res) => {
         setDataUserLastAccess({
@@ -85,13 +101,12 @@ function AnalyticsUsers({ period }: { period: Period }) {
         });
       })
       .catch((err) => toast.error(err.message));
-  }, [period, token]);
+  }, [period, token, cursinhoId]);
 
   useEffect(() => {
-    aggregateUserByRole(
-      token,
-      partnerId || undefined,
-      baseOnly || undefined
+    (cursinhoId
+      ? usuariosPorPerfilDoCursinho(cursinhoId, baseOnly, token)
+      : aggregateUserByRole(token, undefined, baseOnly || undefined)
     )
       .then((res) => {
         setDataUserRole({
@@ -103,14 +118,14 @@ function AnalyticsUsers({ period }: { period: Period }) {
         });
       })
       .catch((err) => toast.error(err.message));
-  }, [token, partnerId, baseOnly]);
+  }, [token, cursinhoId, baseOnly]);
 
   const handleExportCsv = () => {
     if (dataUserRole.data.length === 0) return;
     exportAnalyticsCsv(
       ["Perfil", "Total"],
       dataUserRole.data.map((d) => [d.label, d.value]),
-      "usuarios_por_perfil"
+      nomeDoArquivo("usuarios_por_perfil", cursinhoNome)
     );
   };
 
@@ -127,20 +142,6 @@ function AnalyticsUsers({ period }: { period: Period }) {
         <Grid size={{ xs: 12, md: 6 }}>
           <div className="shadow-md bg-white shadow-slate-200 p-2 rounded">
             <div className="flex items-center gap-4 px-2 pb-2">
-              <Select
-                size="small"
-                value={partnerId}
-                onChange={(e) => setPartnerId(e.target.value)}
-                displayEmpty
-                sx={{ minWidth: 200 }}
-              >
-                <MenuItem value="">Todos os cursinhos</MenuItem>
-                {partners.map((p) => (
-                  <MenuItem key={p.id} value={p.id}>
-                    {p.name}
-                  </MenuItem>
-                ))}
-              </Select>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -177,19 +178,22 @@ function AnalyticsUsers({ period }: { period: Period }) {
                 )}
               </div>
             </Grid>
-            <Grid>
-              <div className="shadow-md bg-white shadow-slate-200 p-2 rounded">
-                {loading ? (
-                  <Skeleton className="h-[320px] w-full" />
-                ) : (
-                  <LineChartMui
-                    {...dataUserActive}
-                    title="Usuários Ativos e Total"
-                    height={320}
-                  />
-                )}
-              </div>
-            </Grid>
+            {/* Agrupa pela criação da conta: não diz nada sobre o cursinho (D4). */}
+            {!cursinhoId && (
+              <Grid>
+                <div className="shadow-md bg-white shadow-slate-200 p-2 rounded">
+                  {loading ? (
+                    <Skeleton className="h-[320px] w-full" />
+                  ) : (
+                    <LineChartMui
+                      {...dataUserActive}
+                      title="Usuários Ativos e Total"
+                      height={320}
+                    />
+                  )}
+                </div>
+              </Grid>
+            )}
           </Grid>
         </Grid>
       </Grid>
