@@ -196,8 +196,8 @@ describe("selo no banco (042/08)", () => {
     vi.resetModules();
     const { getAllQuestions } = await import("@/services/question/getAllQuestion");
     mocks.fetch.mockReset().mockImplementation(async () => new Response(JSON.stringify({ data: [], totalItems: 0 }), { status: 200 }));
-    await getAllQuestions("t", 0 as never, "", 1, 40, "", "", "", "", "somente");
-    await getAllQuestions("t", 0 as never);
+    await getAllQuestions("t", { anulada: "somente" });
+    await getAllQuestions("t", { anulada: "todas" });
     expect(mocks.fetch.mock.calls[0][0]).toContain("anulada=somente");
     expect(mocks.fetch.mock.calls[1][0]).not.toContain("anulada");
     vi.unstubAllEnvs();

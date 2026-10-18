@@ -9,9 +9,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { Filter, RotateCcw, Search } from "lucide-react";
 import { useState } from "react";
+import { FiltroDeRevisoes } from "./FiltroDeRevisoes";
+import {
+  ajustarCascata,
+  FILTROS_VAZIOS,
+  FilterValues,
+  OPCOES_DE_ANULADA,
+  opcoesDoFiltro,
+  ProvaDoFiltro,
+  RevisaoDoFiltro,
+  temFiltroAtivo,
+} from "./filtrosDoBanco";
+
+// tickets/043: o tipo mora em `filtrosDoBanco`; reexportado para quem já importava daqui.
+export type { FilterValues, FiltroDeAnulada } from "./filtrosDoBanco";
 
 interface QuestionFiltersProps {
   infos: any;
@@ -19,33 +34,15 @@ interface QuestionFiltersProps {
   isLoading?: boolean;
 }
 
-export interface FilterValues {
-  status: StatusEnum;
-  materia: string;
-  frente: string;
-  prova: string;
-  enemArea: string;
-  filterText: string;
-  /** tickets/042, card 08. */
-  anulada: FiltroDeAnulada;
-}
-
-export type FiltroDeAnulada = "todas" | "esconder" | "somente";
 
 export function QuestionFilters({
   infos,
   onFilter,
   isLoading = false,
 }: QuestionFiltersProps) {
-  const [filters, setFilters] = useState<FilterValues>({
-    status: StatusEnum.All,
-    materia: "",
-    frente: "",
-    prova: "",
-    enemArea: "",
-    filterText: "",
-    anulada: "todas",
-  });
+  const [filters, setFilters] = useState<FilterValues>(FILTROS_VAZIOS);
+  const provasDoFiltro: ProvaDoFiltro[] = infos?.provas ?? [];
+  const opcoes = opcoesDoFiltro(provasDoFiltro, filters);
 
   const [materiasFiltradas, setMateriasFiltradas] = useState<any[]>([]);
   const [frentesFiltradas, setFrentesFiltradas] = useState<any[]>([]);
@@ -56,7 +53,17 @@ export function QuestionFilters({
   ).sort() as string[];
 
   const handleFilterChange = (key: keyof FilterValues, value: string) => {
-    const newFilters = { ...filters, [key]: value };
+    let newFilters = { ...filters, [key]: value } as FilterValues;
+
+    // tickets/043: Exame → Categoria → Prova. Trocar exame/categoria limpa o
+    // que deixou de casar (e, se a prova sair, Área/Matéria/Frente com ela).
+    if (key === "exame" || key === "categoria") {
+      newFilters = ajustarCascata(newFilters, provasDoFiltro);
+      if (!newFilters.prova && filters.prova) {
+        setMateriasFiltradas([]);
+        setFrentesFiltradas([]);
+      }
+    }
 
     // Lógica de cascata
     if (key === "enemArea") {
@@ -98,29 +105,14 @@ export function QuestionFilters({
   };
 
   const handleClearFilters = () => {
-    const clearedFilters: FilterValues = {
-      status: StatusEnum.All,
-      materia: "",
-      frente: "",
-      prova: "",
-      enemArea: "",
-      filterText: "",
-      anulada: "todas",
-    };
+    const clearedFilters: FilterValues = FILTROS_VAZIOS;
     setFilters(clearedFilters);
     setMateriasFiltradas([]);
     setFrentesFiltradas([]);
     onFilter(clearedFilters);
   };
 
-  const hasActiveFilters =
-    filters.status !== StatusEnum.All ||
-    filters.materia ||
-    filters.frente ||
-    filters.prova ||
-    filters.enemArea ||
-    filters.filterText ||
-    filters.anulada !== "todas";
+  const hasActiveFilters = temFiltroAtivo(filters);
 
   return (
     <Card className="mb-6">
@@ -180,21 +172,66 @@ export function QuestionFilters({
             </Select>
           </div>
 
-          {/* tickets/042, card 08: anuladas em alguma prova */}
+          {/* tickets/042, card 08 — rótulo e opções revistos no 043 */}
           <div className="space-y-2">
-            <Label htmlFor="anulada">Anuladas</Label>
+            <Label htmlFor="anulada">Questões anuladas</Label>
             <Select
               value={filters.anulada}
               onValueChange={(value) => handleFilterChange("anulada", value)}
               disabled={isLoading}
             >
               <SelectTrigger id="anulada">
-                <SelectValue placeholder="Todas" />
+                <SelectValue placeholder="Mostrar" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="todas">Todas</SelectItem>
-                <SelectItem value="esconder">Esconder anuladas</SelectItem>
-                <SelectItem value="somente">Só anuladas</SelectItem>
+                {OPCOES_DE_ANULADA.map((o) => (
+                  <SelectItem key={o.valor} value={o.valor}>
+                    {o.rotulo}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* tickets/043: Exame → Categoria → Prova */}
+          <div className="space-y-2">
+            <Label htmlFor="exame">Exame</Label>
+            <Select
+              key={`exame-${filters.exame}`}
+              value={filters.exame || undefined}
+              onValueChange={(value) => handleFilterChange("exame", value)}
+              disabled={isLoading || opcoes.exames.length === 0}
+            >
+              <SelectTrigger id="exame">
+                <SelectValue placeholder="Todos os exames" />
+              </SelectTrigger>
+              <SelectContent>
+                {opcoes.exames.map((e) => (
+                  <SelectItem key={e._id} value={e._id}>
+                    {e.nome}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="categoria">Categoria</Label>
+            <Select
+              key={`categoria-${filters.categoria}`}
+              value={filters.categoria || undefined}
+              onValueChange={(value) => handleFilterChange("categoria", value)}
+              disabled={isLoading || opcoes.categorias.length === 0}
+            >
+              <SelectTrigger id="categoria">
+                <SelectValue placeholder="Todas as categorias" />
+              </SelectTrigger>
+              <SelectContent>
+                {opcoes.categorias.map((c) => (
+                  <SelectItem key={c._id} value={c._id}>
+                    {c.nome}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -203,21 +240,20 @@ export function QuestionFilters({
           <div className="space-y-2">
             <Label htmlFor="prova">Prova</Label>
             <Select
-              value={filters.prova}
+              key={`prova-${filters.prova}`}
+              value={filters.prova || undefined}
               onValueChange={(value) => handleFilterChange("prova", value)}
-              disabled={isLoading || !infos?.provas?.length}
+              disabled={isLoading || opcoes.provas.length === 0}
             >
               <SelectTrigger id="prova">
                 <SelectValue placeholder="Todas as provas" />
               </SelectTrigger>
               <SelectContent>
-                {[...(infos?.provas || [])]
-                  .sort((a: any, b: any) => a.nome.localeCompare(b.nome, "pt-BR"))
-                  .map((prova: any) => (
-                    <SelectItem key={prova._id} value={prova._id}>
-                      {prova.nome}
-                    </SelectItem>
-                  ))}
+                {opcoes.provas.map((prova) => (
+                  <SelectItem key={prova._id} value={prova._id}>
+                    {prova.nome}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -299,6 +335,26 @@ export function QuestionFilters({
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          {/* tickets/043: revisões necessárias (em "e") e imagem */}
+          <div className="space-y-2">
+            <Label htmlFor="revisoes">Revisões necessárias</Label>
+            <FiltroDeRevisoes
+              value={filters.revisoes}
+              onChange={(revisoes: RevisaoDoFiltro[]) => setFilters({ ...filters, revisoes })}
+              disabled={isLoading}
+            />
+          </div>
+          <div className="flex items-end">
+            <label className="flex h-9 cursor-pointer items-center gap-2 text-sm">
+              <Checkbox
+                id="comImagem"
+                checked={filters.comImagem}
+                onCheckedChange={(v) => setFilters({ ...filters, comImagem: v === true })}
+                disabled={isLoading}
+              />
+              Só com imagem da questão
+            </label>
           </div>
         </div>
 

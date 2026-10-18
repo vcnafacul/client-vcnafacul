@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { QuestionCardBase } from "@/dtos/question/questionV2Dto";
-import { StatusEnum } from "@/enums/generic/statusEnum";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getAllQuestions } from "@/services/question/getAllQuestion";
@@ -20,7 +19,8 @@ import { useAuthStore } from "@/store/auth";
 import { ChevronDown, ChevronUp, Filter, Plus } from "lucide-react";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useCallback, useEffect, useState } from "react";
-import { FilterValues, QuestionFilters } from "./components/QuestionFilters";
+import { QuestionFilters } from "./components/QuestionFilters";
+import { FILTROS_VAZIOS, FilterValues, temFiltroAtivo } from "./components/filtrosDoBanco";
 import { SimpleQuestionCard } from "./components/simpleQuestionCard";
 import { ModalCreateQuestion } from "./modals/ModalCreateQuestion";
 import { ModalQuestionDetailsRefactored } from "./modals/ModalQuestionDetailsRefactored";
@@ -63,15 +63,7 @@ function DashQuestionNew() {
   const [infos, setInfos] = useState<any>(null);
 
   // Filters state
-  const [filters, setFilters] = useState<FilterValues>({
-    status: StatusEnum.All,
-    materia: "",
-    frente: "",
-    prova: "",
-    enemArea: "",
-    filterText: "",
-    anulada: "todas",
-  });
+  const [filters, setFilters] = useState<FilterValues>(FILTROS_VAZIOS);
   const [showFilters, setShowFilters] = useState(false);
 
   const limitCards = 40;
@@ -86,18 +78,7 @@ function DashQuestionNew() {
       setIsLoading(true);
       await executeAsync({
         action: () =>
-          getAllQuestions(
-            token,
-            filters.status,
-            filters.filterText,
-            page,
-            limitCards,
-            filters.materia,
-            filters.frente,
-            filters.prova,
-            filters.enemArea,
-            filters.anulada
-          ),
+          getAllQuestions(token, filters, page, limitCards),
         loadingMessage: "Carregando questões...",
         successMessage: "Questões carregadas com sucesso",
         errorMessage: (error: any) => error.message,
@@ -335,14 +316,7 @@ function DashQuestionNew() {
     );
   };
 
-  const hasActiveFilters =
-    filters.status !== StatusEnum.All ||
-    filters.materia ||
-    filters.frente ||
-    filters.prova ||
-    filters.enemArea ||
-    filters.filterText ||
-    filters.anulada !== "todas";
+  const hasActiveFilters = temFiltroAtivo(filters);
 
   return (
     <div className="container mx-auto p-4 sm:p-6 max-w-full">
