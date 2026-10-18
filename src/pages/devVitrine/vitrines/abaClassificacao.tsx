@@ -4,8 +4,8 @@ import { Vitrine } from "../tipos";
 
 /**
  * A aba Classificação do modal da questão (tickets/042, card 21): aviso único
- * no topo, ações da anulação no título "Prova" e, no modo edição, "Remover da
- * prova" + "Cancelar" no lugar do "Editar Classificação".
+ * no topo, ações da anulação no título "Prova" (no modo edição, o "Remover da
+ * prova" no mesmo lugar) e "Cancelar" no lugar do "Editar Classificação".
  */
 const provas = [
   { provaId: "pa", provaNome: "Simulado 3 – Cursinho X", numero: 45, podeComporProva: true },

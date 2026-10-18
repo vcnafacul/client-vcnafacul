@@ -81,12 +81,14 @@ describe("TabClassificacao — composição só na prova própria (023 · 08)", 
     expect(screen.getByRole("button", { name: "Remover da prova" })).toBeEnabled();
   });
 
-  it("card 21 (042): no modo edição, 'Remover da prova' e 'Cancelar' no topo, no lugar de 'Editar Classificação'", () => {
+  it("card 21 (042): no modo edição, 'Cancelar' no topo e 'Remover da prova' no título do campo Prova", () => {
     montar("pa");
     fireEvent.click(screen.getByText("Editar Classificação"));
     expect(screen.queryByText("Editar Classificação")).toBeNull();
-    // Um "Remover da prova" só (saiu da barra de baixo); "Cancelar" no topo e embaixo.
-    expect(screen.getAllByRole("button", { name: "Remover da prova" })).toHaveLength(1);
+    // Um "Remover da prova" só, ao lado do título "Prova"; "Cancelar" no topo e embaixo.
+    const remover = screen.getAllByRole("button", { name: "Remover da prova" });
+    expect(remover).toHaveLength(1);
+    expect(remover[0].parentElement?.querySelector("label")).toHaveTextContent("Prova *");
     const cancelar = screen.getAllByRole("button", { name: "Cancelar" });
     expect(cancelar).toHaveLength(2);
     fireEvent.click(cancelar[0]);
