@@ -4,6 +4,12 @@ import { ModalCadernoComAnuladas } from "@/components/molecules/anulacao/ModalCa
 import { MotivoAnulacao } from "@/dtos/question/anulacao";
 import { AnuladasDaProva } from "@/pages/dashProvas/modals/AnuladasDaProva";
 import { AnulacaoDaProva } from "@/pages/dashQuestionNew/modals/tabs/TabClassificacao/AnulacaoDaProva";
+import QuestionBox from "@/components/atoms/questionBox";
+import QuestionList from "@/components/molecules/questionList";
+import { QuestionBoxStatus } from "@/enums/simulado/questionBoxStatus";
+import type { AvisoDeRecalculo } from "@/pages/relatorioSimulado/AvisoDeRecalculo";
+import { AvisoComToken } from "./AvisoComToken";
+import { RotaFalsa } from "../fetchFalso";
 import { Vitrine } from "../tipos";
 
 const nada = () => {};
@@ -159,6 +165,100 @@ export const vitrineCadernoComAnuladas: Vitrine = {
       slug: "varias",
       titulo: "Várias",
       render: () => <ModalCadernoComAnuladas numeros={[3, 12, 45, 88, 136]} onConfirmar={nada} onCancelar={nada} />,
+    },
+  ],
+};
+
+const grade = (anuladas: number[]) => () => (
+  <QuestionList
+    selectQuestion={nada}
+    questions={Array.from({ length: 90 }, (_, i) => ({
+      id: i,
+      number: i,
+      status: anuladas.includes(i)
+        ? QuestionBoxStatus.anulada
+        : i === 1
+          ? QuestionBoxStatus.active
+          : i < 20
+            ? QuestionBoxStatus.solved
+            : QuestionBoxStatus.unread,
+    }))}
+  />
+);
+
+/** tickets/042, card 11. */
+export const vitrineQuestaoAnuladaNoSimulado: Vitrine = {
+  slug: "questionBox",
+  titulo: "Simulado: questão anulada",
+  arquivo: "src/components/atoms/questionBox/index.tsx",
+  estados: [
+    {
+      slug: "anulada",
+      titulo: "Caixa anulada",
+      render: () => (
+        <div className="flex gap-2 p-8">
+          <QuestionBox number={44} status={QuestionBoxStatus.solved} />
+          <QuestionBox number={45} status={QuestionBoxStatus.anulada} />
+          <QuestionBox number={46} status={QuestionBoxStatus.active} />
+        </div>
+      ),
+    },
+    { slug: "questionList", titulo: "Grade de 90 com anuladas", render: grade([0, 44, 45, 89]) },
+  ],
+};
+
+const jobDaVitrine = (o: Record<string, unknown> = {}) => ({
+  id: "j1",
+  status: "processando" as const,
+  total: 132,
+  processados: 48,
+  falhas: 0,
+  regravados: 0,
+  ...o,
+});
+const situacao = (o: Record<string, unknown>): RotaFalsa[] => [
+  { caminho: /recalculo-anulacao$/, resposta: { corpo: { divergentes: 0, anulacoes: [], jobAtivo: null, ultimoJob: null, ...o } } },
+];
+const avisoDeRecalculo = (props: Partial<Parameters<typeof AvisoDeRecalculo>[0]> = {}) => () => (
+  <AvisoComToken {...props} />
+);
+
+/** tickets/042, card 15. ⚠️ "concluído" e "com falhas" aparecem depois do 1º polling (3 s). */
+export const vitrineAvisoDeRecalculo: Vitrine = {
+  slug: "aviso-recalculo",
+  titulo: "Relatório desatualizado",
+  arquivo: "src/pages/relatorioSimulado/AvisoDeRecalculo.tsx",
+  estados: [
+    { slug: "divergente", titulo: "Divergente", render: avisoDeRecalculo() },
+    {
+      slug: "desanulada",
+      titulo: "Desanulada (voltou a valer)",
+      render: avisoDeRecalculo({ anuladas: [], desanuladas: [45], divergentes: 30 }),
+    },
+    {
+      slug: "rodando",
+      titulo: "Rodando",
+      rotas: situacao({ divergentes: 84, jobAtivo: jobDaVitrine() }),
+      render: avisoDeRecalculo({ jobAtivo: jobDaVitrine() }),
+    },
+    {
+      slug: "concluido",
+      titulo: "Concluído",
+      rotas: situacao({ ultimoJob: jobDaVitrine({ status: "concluido", processados: 132, regravados: 132 }) }),
+      render: avisoDeRecalculo({ jobAtivo: jobDaVitrine() }),
+    },
+    {
+      slug: "com-falhas",
+      titulo: "Com falhas",
+      rotas: situacao({ divergentes: 3, ultimoJob: jobDaVitrine({ status: "concluido", processados: 132, falhas: 3, regravados: 129 }) }),
+      render: avisoDeRecalculo({ jobAtivo: jobDaVitrine() }),
+    },
+    {
+      slug: "varias",
+      titulo: "Várias anuladas",
+      render: avisoDeRecalculo({
+        anuladas: [3, 45, 90].map((numero) => ({ numero, motivo: MotivoAnulacao.outro, justificativa: "x" })),
+      }),
     },
   ],
 };
