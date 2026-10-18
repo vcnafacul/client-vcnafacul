@@ -625,7 +625,7 @@ export function TabClassificacao({
                     variant="outline"
                     size="sm"
                     onClick={() => form.setValue("numero", null, { shouldDirty: true })}
-                    className="h-6 px-2 text-xs text-red-600 border-red-300 hover:text-red-700 hover:bg-red-50"
+                    className="h-6 px-2 text-xs text-red border-red hover:text-red hover:bg-red/5"
                   >
                     Remover número
                   </Button>
