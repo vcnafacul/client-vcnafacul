@@ -18,6 +18,11 @@ export interface TabClassificacaoProps {
    * fechar ou trocar de questão (a edição mora aqui, não no modal).
    */
   onSujoChange?: (sujo: boolean) => void;
+  /**
+   * A prova filtrada no banco de questões (tickets/042, card 22): a aba abre
+   * com ela selecionada, se a questão estiver nela.
+   */
+  provaEmFoco?: string;
 }
 
 /**

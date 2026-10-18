@@ -66,6 +66,7 @@ export function TabClassificacao({
   canEdit = false,
   onSaveSuccess,
   onSujoChange,
+  provaEmFoco,
 }: TabClassificacaoProps) {
   const {
     data: { token, permissao },
@@ -94,7 +95,7 @@ export function TabClassificacao({
     cancelarAviso,
     handleRemoveFromProva,
     handleSetProvaBase,
-  } = useClassificacaoForm({ question, onSaveSuccess });
+  } = useClassificacaoForm({ question, onSaveSuccess, provaEmFoco });
 
   const sujo = isEditing && isDirty;
   useEffect(() => {

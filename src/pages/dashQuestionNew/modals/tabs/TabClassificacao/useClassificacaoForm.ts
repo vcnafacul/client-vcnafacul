@@ -18,6 +18,8 @@ import { payloadDaClassificacao } from "./payloadDaClassificacao";
 interface UseClassificacaoFormProps {
   question: Question;
   onSaveSuccess?: () => void;
+  /** A prova filtrada no banco (tickets/042, card 22): abre em foco, se a questão estiver nela. */
+  provaEmFoco?: string;
 }
 
 /**
@@ -28,6 +30,7 @@ interface UseClassificacaoFormProps {
 export function useClassificacaoForm({
   question,
   onSaveSuccess,
+  provaEmFoco,
 }: UseClassificacaoFormProps) {
   const {
     data: { token },
@@ -45,7 +48,18 @@ export function useClassificacaoForm({
       )
     : 0;
 
-  const [provaSelIdx, setProvaSelIdx] = useState(provaBaseIdx);
+  /*
+    tickets/042, card 22: quem filtrou o banco por uma prova e abriu a questão
+    espera estar NESSA prova — anular "na prova em foco" caía na provaBase e a
+    pessoa anulava na prova errada sem perceber. A filtrada vence a provaBase;
+    se a questão não estiver nela (ex.: aberta pela Linhagem), vale a provaBase.
+  */
+  const idxDoFiltro = provaEmFoco
+    ? provasContendo.findIndex((p) => p.provaId === provaEmFoco)
+    : -1;
+  const idxInicial = idxDoFiltro >= 0 ? idxDoFiltro : provaBaseIdx;
+
+  const [provaSelIdx, setProvaSelIdx] = useState(idxInicial);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [editingProva, setEditingProva] = useState<
@@ -69,7 +83,7 @@ export function useClassificacaoForm({
 
   const form = useForm<ClassificacaoFormData>({
     resolver: yupResolver(classificacaoSchema),
-    defaultValues: buildValues(provasContendo[provaBaseIdx]),
+    defaultValues: buildValues(provasContendo[idxInicial]),
     mode: "onChange",
   });
 
@@ -77,11 +91,11 @@ export function useClassificacaoForm({
   const isValid = form.formState.isValid;
   const errors = form.formState.errors;
 
-  // Ao trocar de questão: foca no vínculo da provaBase (fallback primeiro) e
-  // sai da edição.
+  // Ao trocar de questão: foca na prova filtrada no banco (card 22), senão no
+  // vínculo da provaBase (fallback primeiro), e sai da edição.
   useEffect(() => {
-    setProvaSelIdx(provaBaseIdx);
-    form.reset(buildValues(provasContendo[provaBaseIdx]));
+    setProvaSelIdx(idxInicial);
+    form.reset(buildValues(provasContendo[idxInicial]));
     setIsEditing(false);
     // question._id é o sinal canônico de "trocou de questão". Valores dos campos
     // da mesma questão sempre chegam juntos num objeto novo (refreshQuestion), e
