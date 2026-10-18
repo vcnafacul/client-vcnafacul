@@ -91,6 +91,8 @@ export function flagsDaQuestao(
   q: QuestaoDoRelatorio,
   medianaSemLeitura: number | null = null,
 ): FlagDaQuestao[] {
+  // tickets/042: a anulada está fora da análise — não é sinal de nada.
+  if (q.anulada) return [];
   const flags: FlagDaQuestao[] = [];
 
   /*

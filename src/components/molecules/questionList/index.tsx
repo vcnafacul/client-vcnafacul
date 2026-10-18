@@ -10,15 +10,17 @@ export interface QuestionProps {
 interface QuestionListProps {
     questions: QuestionProps[]
     selectQuestion: (number: number) => void;
+    /** tickets/042: no resultado, a anulada abre. */
+    anuladaAbre?: boolean;
 }
 
-function QuestionList({ questions, selectQuestion } : QuestionListProps) {
+function QuestionList({ questions, selectQuestion, anuladaAbre = false } : QuestionListProps) {
 
 
     return (
         <div className="flex w-full flex-wrap">
             {questions.map(question => (
-                <QuestionBox key={question.id} number={question.number + 1} status={question.status} onClick={() => { selectQuestion(question.number) }} />
+                <QuestionBox key={question.id} number={question.number + 1} status={question.status} abreQuandoAnulada={anuladaAbre} onClick={() => { selectQuestion(question.number) }} />
             ))}
         </div>
     ) 
