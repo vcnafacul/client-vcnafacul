@@ -1,6 +1,7 @@
 import { dashV2 } from "@/components/dashV2";
 import type { ResumoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
+import { resumoDasQuestoesDoRelatorio } from "./textosDaAnulacao";
 import { SEM_NOME } from "@/pages/partnerClassWithStudents/SimuladosDaTurma";
 
 /**
@@ -93,7 +94,14 @@ export function IdentificacaoDoRelatorio({
     resumo.simulados !== undefined && resumo.simulados.length > 1
       ? `${resumo.simulados.length} simulados`
       : null,
-    resumo.totalDeQuestoes > 0 ? `${resumo.totalDeQuestoes} questões` : null,
+    // tickets/042: "90 questões · 1 anulada · análise sobre 89".
+    resumo.totalDeQuestoes > 0
+      ? resumoDasQuestoesDoRelatorio(
+          resumo.totalDeQuestoes,
+          resumo.anuladas?.length ?? 0,
+          resumo.totalConsiderado,
+        )
+      : null,
     // ⚠️ "último cartão", e não "data da prova" nem "última atividade" — ver o
     // docblock do campo no DTO.
     formatarData(resumo.ultimoCartaoEm) &&

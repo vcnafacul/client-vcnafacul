@@ -11,6 +11,8 @@ import {
 import type { QuestaoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useState } from "react";
+import { XCircle } from "lucide-react";
+import { rotuloDoMotivo } from "@/dtos/question/anulacao";
 import { BarraDeDistribuicao } from "./BarraDeDistribuicao";
 import { PreviewDaQuestao } from "./PreviewDaQuestao";
 import { flagsDaQuestao, quantasComSinal } from "./flagsDaQuestao";
@@ -125,12 +127,26 @@ function colunasDeQuestoes(
     // ⚠️ Questão sem número não some: vai para o fim (o `sortRows` manda nulo
     // para o fim nas duas direções) e mostra travessão.
     // tickets/038: "1 · Inglês" e "1 · Espanhol" na prova do ENEM Dia 1 do cursinho.
-    cell: (q) =>
-      q.numero === null
-        ? "—"
-        : q.idioma
-          ? `${q.numero} · ${q.idioma}`
-          : q.numero,
+    cell: (q) => {
+      const n =
+        q.numero === null
+          ? "—"
+          : q.idioma
+            ? `${q.numero} · ${q.idioma}`
+            : q.numero;
+      // tickets/042: a anulada fica na tabela, com o X — fora da análise.
+      if (!q.anulada) return n;
+      return (
+        <span
+          data-anulada
+          className="inline-flex items-center gap-1 text-rose-700"
+          aria-label={`Questão ${q.numero}, anulada`}
+        >
+          <XCircle className="h-4 w-4 shrink-0" aria-hidden />
+          {n}
+        </span>
+      );
+    },
     sortValue: (q) => q.numero,
   },
   /*
@@ -194,7 +210,8 @@ function colunasDeQuestoes(
     cell: (q) => formatarPercentual(percentualDeAcerto(q)),
     // ⚠️ Ordena pelo número, não pelo texto: `sortValue` recebendo a string
     // formatada colocaria "9%" depois de "80%".
-    sortValue: (q) => percentualDeAcerto(q),
+    // tickets/042: a anulada não entra na ordenação por dificuldade (fim).
+    sortValue: (q) => (q.anulada ? null : percentualDeAcerto(q)),
   },
   /*
     ⚠️ **Ao lado do `% de acerto`, e não no fim da tabela** (card 16). Os dois
@@ -286,9 +303,26 @@ function colunasDeQuestoes(
       tela de coordenador é precisão que não ajuda a decidir nada e custa
       largura; o valor fica no tooltip e no CSV.
     */
-    cell: (q) => (
-      <SinaisDaQuestao questao={q} medianaSemLeitura={medianaSemLeitura} />
-    ),
+    cell: (q) =>
+      q.anulada ? (
+        <span
+          data-anulada-motivo
+          title={q.justificativaAnulacao}
+          className="block text-xs text-rose-800"
+        >
+          <span className="font-semibold">
+            Anulada: {rotuloDoMotivo(q.motivoAnulacao)}
+          </span>{" "}
+          · fora da análise
+          {q.justificativaAnulacao && (
+            <span className="block line-clamp-2 text-rose-900">
+              {q.justificativaAnulacao}
+            </span>
+          )}
+        </span>
+      ) : (
+        <SinaisDaQuestao questao={q} medianaSemLeitura={medianaSemLeitura} />
+      ),
   },
   {
     id: "semLeitura",

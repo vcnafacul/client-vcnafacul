@@ -8,6 +8,10 @@ import { useAuthStore } from "@/store/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { AnulacaoDaQuestao } from "@/dtos/question/anulacao";
+import { ErroDaAnulacao } from "@/services/anulacao/anularQuestao";
+import { EntradaDaAnulada } from "@/components/molecules/anulacao/ModalAvisoAnulada";
 import { ClassificacaoFormData, classificacaoSchema } from "./schema";
 import { payloadDaClassificacao } from "./payloadDaClassificacao";
 
@@ -122,14 +126,67 @@ export function useClassificacaoForm({
     setIsEditing(false);
   };
 
+  /**
+   * tickets/042 (D4): o 1º envio vai sem `modo`. Se a questão já foi anulada
+   * em outra prova, o 409 `QUESTAO_ANULADA` NÃO vira toast de erro: abre o
+   * aviso, e a escolha reenvia com o `modo`.
+   */
+  const [avisoDeAnulada, setAvisoDeAnulada] = useState<{
+    provaId: string;
+    numero: number;
+    anulacoes: AnulacaoDaQuestao[];
+  } | null>(null);
+  const [enviandoEntrada, setEnviandoEntrada] = useState(false);
+
   const handleAddToProva = async (provaId: string, numero: number) => {
+    const id = toast.loading("Adicionando à prova...");
+    try {
+      await addQuestionToProva(question._id, provaId, numero, token);
+      toast.update(id, { render: "✅ Questão adicionada à prova!", type: "success", isLoading: false, autoClose: 3000 });
+      onSaveSuccess?.();
+    } catch (e) {
+      if (e instanceof ErroDaAnulacao && e.code === "QUESTAO_ANULADA") {
+        toast.dismiss(id);
+        setAvisoDeAnulada({
+          provaId,
+          numero,
+          anulacoes: (e.corpo.anulacoes as AnulacaoDaQuestao[]) ?? [],
+        });
+        return;
+      }
+      toast.update(id, {
+        render: (e as Error)?.message || "Erro ao adicionar à prova",
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
+      onSaveSuccess?.();
+    }
+  };
+
+  const escolherEntrada = async (entrada: EntradaDaAnulada) => {
+    if (!avisoDeAnulada) return;
+    setEnviandoEntrada(true);
     await executeAsync({
-      action: () => addQuestionToProva(question._id, provaId, numero, token),
+      action: () =>
+        addQuestionToProva(
+          question._id,
+          avisoDeAnulada.provaId,
+          avisoDeAnulada.numero,
+          token,
+          entrada,
+        ),
       loadingMessage: "Adicionando à prova...",
-      successMessage: "✅ Questão adicionada à prova!",
+      successMessage:
+        entrada.modo === "anulada"
+          ? "✅ Questão adicionada como anulada!"
+          : "✅ Questão adicionada à prova!",
       errorMessage: (e) => e?.message || "Erro ao adicionar à prova",
-      onSuccess: () => onSaveSuccess?.(),
-      onError: () => onSaveSuccess?.(),
+      onSuccess: () => {
+        setAvisoDeAnulada(null);
+        onSaveSuccess?.();
+      },
+      onFinally: () => setEnviandoEntrada(false),
     });
   };
 
@@ -187,6 +244,10 @@ export function useClassificacaoForm({
     handleSave,
     handleCancel,
     handleAddToProva,
+    avisoDeAnulada,
+    enviandoEntrada,
+    escolherEntrada,
+    cancelarAviso: () => setAvisoDeAnulada(null),
     handleRemoveFromProva,
     handleSetProvaBase,
   };

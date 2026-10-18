@@ -1,6 +1,8 @@
 import { isCompartilhada, ICategoria } from "@/dtos/categoria/categoria";
 import { SimuladoResumo } from "@/dtos/prova/prova";
 import { baixarCadernoDaProva } from "@/services/caderno/baixarCadernoDaProva";
+import { ErroCadernoComAnuladas } from "@/services/caderno/baixarCaderno";
+import { ModalCadernoComAnuladas } from "@/components/molecules/anulacao/ModalCadernoComAnuladas";
 import { baixarCartaoDaProva } from "@/services/cartaoResposta/baixarCartaoDaProva";
 import {
   BookOpenIcon,
@@ -49,6 +51,8 @@ export function MaterialDaProva({
 }) {
   const [cartaoPedido, setCartaoPedido] = useState(false);
   const [baixandoCaderno, setBaixandoCaderno] = useState(false);
+  // tickets/042 (D8): os números anulados, quando o ms pediu confirmação.
+  const [anuladas, setAnuladas] = useState<number[] | null>(null);
 
   if (!isCompartilhada(categoria)) return null;
   const motivo = motivoMaterialDaProva(simulados);
@@ -79,12 +83,16 @@ export function MaterialDaProva({
     }
   };
 
-  const baixarCaderno = async () => {
+  const baixarCaderno = async (confirmarAnuladas = false) => {
     if (baixandoCaderno) return;
     setBaixandoCaderno(true);
     const id = toast.loading("Gerando caderno da prova...");
     try {
-      const { blob, avisos } = await baixarCadernoDaProva(prova._id, token);
+      const { blob, avisos } = await baixarCadernoDaProva(
+        prova._id,
+        token,
+        confirmarAnuladas,
+      );
       salvar(blob, `caderno_${prova.nome}.zip`);
       toast.update(id, {
         render:
@@ -99,6 +107,11 @@ export function MaterialDaProva({
         closeOnClick: true,
       });
     } catch (erro) {
+      if (erro instanceof ErroCadernoComAnuladas) {
+        toast.dismiss(id);
+        setAnuladas(erro.numeros);
+        return;
+      }
       toast.update(id, {
         render:
           erro instanceof Error ? erro.message : "Erro ao baixar o caderno",
@@ -114,6 +127,16 @@ export function MaterialDaProva({
 
   return (
     <>
+      {anuladas && (
+        <ModalCadernoComAnuladas
+          numeros={anuladas}
+          onCancelar={() => setAnuladas(null)}
+          onConfirmar={() => {
+            setAnuladas(null);
+            void baixarCaderno(true);
+          }}
+        />
+      )}
       <span title={motivo} className="w-full sm:w-auto">
         <Button
           onClick={() => setCartaoPedido(true)}
@@ -130,7 +153,7 @@ export function MaterialDaProva({
       </span>
       <span title={motivo} className="w-full sm:w-auto">
         <Button
-          onClick={baixarCaderno}
+          onClick={() => baixarCaderno()}
           disabled={motivo !== undefined || baixandoCaderno}
           variant="outlined"
           color="primary"

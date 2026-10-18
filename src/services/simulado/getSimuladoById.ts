@@ -1,5 +1,5 @@
 import { IQuestao, ISimuladoDTO } from "../../dtos/simulado/simuladoDto";
-import { Question, Simulado } from "../../store/simulado";
+import { primeiraValida, Question, Simulado } from "../../store/simulado";
 import fetchWrapper from "../../utils/fetchWrapper";
 import { toAnswer } from "../urls";
 
@@ -13,8 +13,10 @@ function mapIQuestaoToQuestion(questao: IQuestao, index: number): Question {
     enemArea: questao.enemArea,
     materia: questao.materia.nome, // Se a propriedade materia for { $oid: string }
     numero: index,
-    solved: false,
-    viewed: false,
+    // tickets/042 (D5): a anulada nasce resolvida — é pulada e não impede finalizar.
+    solved: !!questao.anulada,
+    viewed: !!questao.anulada,
+    ...(questao.anulada ? { anulada: true } : {}),
   };
 }
 
@@ -48,7 +50,7 @@ export async function getSimuladoById(id: string, token: string) {
     questions: res.questoes.map(mapIQuestaoToQuestion),
     title: res.nome,
     started: new Date(res.inicio),
-    questionActive: 0,
+    questionActive: primeiraValida(res.questoes),
     duration: res.duracao,
     finish: false,
     finished: new Date(),

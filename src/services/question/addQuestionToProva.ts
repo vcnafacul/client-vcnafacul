@@ -1,12 +1,19 @@
-import { StatusCodes } from "http-status-codes";
 import fetchWrapper from "../../utils/fetchWrapper";
 import { questoes } from "../urls";
+import { AnulacaoInput } from "@/dtos/question/anulacao";
+import { lerErro } from "../anulacao/anularQuestao";
 
+/**
+ * ⚠️ tickets/042 (D4): questão anulada em outra prova volta com 409
+ * `QUESTAO_ANULADA` e a lista — o erro sai como `ErroDaAnulacao`, com o corpo,
+ * para a tela abrir o aviso. Reenviar com `modo` decide.
+ */
 export async function addQuestionToProva(
   questaoId: string,
   provaId: string,
   numero: number,
-  token: string
+  token: string,
+  entrada?: { modo: "normal" | "anulada"; anulacao?: AnulacaoInput },
 ): Promise<void> {
   const response = await fetchWrapper(`${questoes}/${questaoId}/provas`, {
     method: "POST",
@@ -14,14 +21,14 @@ export async function addQuestionToProva(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ provaId, numero }),
+    body: JSON.stringify({ provaId, numero, ...(entrada ?? {}) }),
   });
 
-  if (
-    response.status !== StatusCodes.OK &&
-    response.status !== StatusCodes.CREATED
-  ) {
-    const res = await response.json().catch(() => ({}));
-    throw new Error(`Erro ao adicionar questão à prova - ${res.message ?? ""}`);
+  if (!response.ok) {
+    const erro = await lerErro(response, "");
+    if (erro.code !== "QUESTAO_ANULADA") {
+      erro.message = `Erro ao adicionar questão à prova - ${erro.message}`;
+    }
+    throw erro;
   }
 }

@@ -11,6 +11,7 @@ import { rotulosDasFlags } from "./flagsDaQuestao";
 import { notaNaMateria } from "./materiasDoRelatorio";
 import { naoLidas } from "./resultadoDoEstudante";
 import { statusDaLinha } from "./statusDaLinha";
+import { rotuloDoMotivo } from "@/dtos/question/anulacao";
 import {
   percentualDaAlternativa,
   percentualDeAcerto,
@@ -83,6 +84,16 @@ export function planilhaDeEstudantes(
   const nomeDoSimulado = new Map(
     (opcoes.simulados ?? []).map((s) => [s.simuladoId, s.nome ?? SEM_NOME]),
   );
+  /*
+    tickets/042: as colunas da anulação só entram quando há anulação — sem ela
+    a planilha fica exatamente como era (mesma regra das colunas de matéria).
+  */
+  const comAnulacao = linhas.some(
+    (l) =>
+      l.divergente ||
+      (l.totalConsiderado !== undefined &&
+        l.totalConsiderado !== opcoes.totalDeQuestoes),
+  );
   const cabecalho = [
     "Estudante",
     "Matrícula",
@@ -96,6 +107,11 @@ export function planilhaDeEstudantes(
     */
     "Acertos",
     "Total de questões",
+    /*
+      tickets/042: o total sobre o qual ESTA nota foi calculada (sem as
+      anuladas), e se ela é de antes da anulação.
+    */
+    ...(comAnulacao ? ["Total considerado", "Nota desatualizada"] : []),
     /*
       ⚠️ **Coluna própria (card 13).** O `Aproveitamento (%)` conta questão não
       lida como erro — `criaAproveitamento` divide por `respostas.length`. Sem
@@ -136,6 +152,14 @@ export function planilhaDeEstudantes(
     // ⚠️ Repetido por linha AQUI, ao contrário da tela: uma planilha em que a
     // coluna só vale para a primeira linha é uma planilha quebrada.
     opcoes.totalDeQuestoes || null,
+    ...(comAnulacao
+      ? [
+          l.status === "completed"
+            ? (l.totalConsiderado ?? (opcoes.totalDeQuestoes || null))
+            : null,
+          l.divergente ? "sim" : null,
+        ]
+      : []),
     /*
       ⚠️ **Zero SAI na planilha, ao contrário da tela** (card 13). Lá "0 não
       lidas" em 300 linhas é ruído; aqui uma célula vazia se lê como "não sei",
@@ -143,7 +167,8 @@ export function planilhaDeEstudantes(
       quem realmente não tem contagem — leitura não concluída, ou histórico
       anterior ao card 01.
     */
-    naoLidas(l, opcoes.totalDeQuestoes ?? 0),
+    // tickets/042: contra o total DESTA nota (sem as anuladas, se recalculada).
+    naoLidas(l, l.totalConsiderado ?? opcoes.totalDeQuestoes ?? 0),
     /*
       ⚠️ Só para quem tem leitura concluída. O `marcarFalha` do ms NÃO limpa o
       `aproveitamento`, então uma linha `failed` pode carregar nota velha — a
@@ -195,6 +220,7 @@ export function planilhaDeQuestoes(
     em cima, e quem quer `% de erro` sem calcular tem o CSV. É a mesma razão
     pela qual `respondentes` sempre esteve aqui e não estava lá (até este card).
   */
+  const comAnulada = questoes.some((q) => q.anulada);
   const cabecalho = [
     "Questão",
     "Respondentes",
@@ -228,6 +254,9 @@ export function planilhaDeQuestoes(
     */
     "Acerto geral (%)",
     "Base geral",
+    // tickets/042: a anulada fica no arquivo, marcada — fora da análise.
+    // Só quando há anulada: sem ela, o arquivo de sempre.
+    ...(comAnulada ? ["Anulada", "Justificativa da anulação"] : []),
   ];
 
   const linhas = questoes.map((q) => [
@@ -258,6 +287,12 @@ export function planilhaDeQuestoes(
     // ⚠️ A base sai sempre, inclusive `0`: é o denominador, e `0` é a
     // informação de que a questão nunca foi respondida fora deste recorte.
     q.baseGeral ?? null,
+    ...(comAnulada
+      ? [
+          q.anulada ? rotuloDoMotivo(q.motivoAnulacao) || "sim" : null,
+          q.anulada ? (q.justificativaAnulacao ?? null) : null,
+        ]
+      : []),
   ]);
 
   return { cabecalho, linhas };

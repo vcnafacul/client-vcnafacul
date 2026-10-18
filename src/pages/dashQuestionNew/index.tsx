@@ -70,6 +70,7 @@ function DashQuestionNew() {
     prova: "",
     enemArea: "",
     filterText: "",
+    anulada: "todas",
   });
   const [showFilters, setShowFilters] = useState(false);
 
@@ -94,7 +95,8 @@ function DashQuestionNew() {
             filters.materia,
             filters.frente,
             filters.prova,
-            filters.enemArea
+            filters.enemArea,
+            filters.anulada
           ),
         loadingMessage: "Carregando questões...",
         successMessage: "Questões carregadas com sucesso",
@@ -339,7 +341,8 @@ function DashQuestionNew() {
     filters.frente ||
     filters.prova ||
     filters.enemArea ||
-    filters.filterText;
+    filters.filterText ||
+    filters.anulada !== "todas";
 
   return (
     <div className="container mx-auto p-4 sm:p-6 max-w-full">
