@@ -82,7 +82,13 @@ export function temFiltroAtivo(f: FilterValues): boolean {
 export interface ProvaDoFiltro {
   _id: string;
   nome: string;
-  categoria?: { _id: string; nome: string; exame?: { _id: string; nome: string } | string | null } | string | null;
+  categoria?: {
+    _id: string;
+    nome: string;
+    /** `system`, `Cursinho` (compartilhada) ou o id de um cursinho. */
+    dono?: string | null;
+    exame?: { _id: string; nome: string } | string | null;
+  } | string | null;
 }
 export interface Opcao {
   _id: string;
@@ -98,12 +104,23 @@ const exameDe = (p: ProvaDoFiltro) => {
 const porNome = (a: Opcao, b: Opcao) => a.nome.localeCompare(b.nome, "pt-BR");
 
 /**
+ * "Enem Dia 1 (system)" / "Enem Dia 1 (cursinho)": o dono no rótulo, só para os
+ * dois donos fixos. Categoria de um cursinho (dono = id dele) fica só com o nome.
+ */
+export function rotuloDaCategoria(cat: { nome: string; dono?: string | null }): string {
+  if (cat.dono === "system") return `${cat.nome} (system)`;
+  if (cat.dono === "Cursinho") return `${cat.nome} (cursinho)`;
+  return cat.nome;
+}
+
+/**
  * As opções de Exame, Categoria e Prova a partir das provas que a pessoa vê
  * (tickets/043): só aparece exame/categoria que tem prova. Exame filtra
  * Categoria e Prova; Categoria filtra Prova.
  *
- * ⚠️ Sem exame escolhido, duas categorias de exames diferentes podem ter o mesmo
- * nome ("Dia 1"): a categoria leva o exame no rótulo.
+ * ⚠️ Há categorias com o mesmo nome e donos diferentes ("Enem Dia 1" da
+ * plataforma e a compartilhada com os cursinhos): o rótulo leva o dono quando
+ * ele é `system` ou `Cursinho` — ver `rotuloDaCategoria`.
  */
 export function opcoesDoFiltro(
   provas: ProvaDoFiltro[],
@@ -120,7 +137,7 @@ export function opcoesDoFiltro(
     if (cat && doExame) {
       categorias.set(cat._id, {
         _id: cat._id,
-        nome: !filtro.exame && ex ? `${cat.nome} · ${ex.nome}` : cat.nome,
+        nome: rotuloDaCategoria(cat),
       });
     }
     if (doExame && (!filtro.categoria || cat?._id === filtro.categoria)) {
