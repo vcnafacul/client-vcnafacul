@@ -29,6 +29,7 @@ export async function getAllQuestions(
   if (f.anulada && f.anulada !== "todas") params.anulada = f.anulada;
   if (f.exame) params.exame = f.exame;
   if (f.categoria) params.categoria = f.categoria;
+  if (f.ano) params.ano = f.ano;
   if (f.revisoes?.length) params.revisoes = f.revisoes.join(",");
   if (f.semImagem) params.semImagem = "true";
   Object.keys(params).forEach((key) =>

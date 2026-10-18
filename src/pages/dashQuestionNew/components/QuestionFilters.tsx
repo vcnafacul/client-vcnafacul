@@ -59,7 +59,7 @@ export function QuestionFilters({
 
     // tickets/043: Exame → Categoria → Prova. Trocar exame/categoria limpa o
     // que deixou de casar (e, se a prova sair, Área/Matéria/Frente com ela).
-    if (key === "exame" || key === "categoria") {
+    if (key === "exame" || key === "categoria" || key === "ano") {
       newFilters = ajustarCascata(newFilters, provasDoFiltro);
       if (!newFilters.prova && filters.prova) {
         setMateriasFiltradas([]);
@@ -239,6 +239,28 @@ export function QuestionFilters({
                       </SelectItem>
                     ))}
                   </SelectGroup>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* tickets/043, card 09: ano da prova — filtra a lista de Provas */}
+          <div className="space-y-2">
+            <Label htmlFor="ano">Ano</Label>
+            <Select
+              key={`ano-${filters.ano}`}
+              value={filters.ano || undefined}
+              onValueChange={(value) => handleFilterChange("ano", value)}
+              disabled={isLoading || opcoes.anos.length === 0}
+            >
+              <SelectTrigger id="ano">
+                <SelectValue placeholder="Todos os anos" />
+              </SelectTrigger>
+              <SelectContent>
+                {opcoes.anos.map((a) => (
+                  <SelectItem key={a} value={a}>
+                    {a}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>

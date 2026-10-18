@@ -43,6 +43,8 @@ export interface FilterValues {
   /** tickets/043. */
   exame: string;
   categoria: string;
+  /** tickets/043, card 09: ano da prova ("" = todos). */
+  ano: string;
   revisoes: RevisaoDoFiltro[];
   /** Só as questões SEM imagem da questão (`imageId` vazio). */
   semImagem: boolean;
@@ -58,6 +60,7 @@ export const FILTROS_VAZIOS: FilterValues = {
   anulada: "todas",
   exame: "",
   categoria: "",
+  ano: "",
   revisoes: [],
   semImagem: false,
 };
@@ -73,6 +76,7 @@ export function temFiltroAtivo(f: FilterValues): boolean {
     f.anulada !== "todas" ||
     !!f.exame ||
     !!f.categoria ||
+    !!f.ano ||
     f.revisoes.length > 0 ||
     f.semImagem
   );
@@ -84,6 +88,7 @@ export interface ProvaDoFiltro {
   nome: string;
   /** tickets/043, card 06 (ms): a categoria é própria do cursinho de quem pede. */
   categoriaDoMeuCursinho?: boolean;
+  ano?: number;
   categoria?: {
     _id: string;
     nome: string;
@@ -147,9 +152,11 @@ export function rotuloDaCategoria(cat: { nome: string; dono?: string | null }): 
  */
 export function opcoesDoFiltro(
   provas: ProvaDoFiltro[],
-  filtro: Pick<FilterValues, "exame" | "categoria">,
+  filtro: Pick<FilterValues, "exame" | "categoria"> & { ano?: string },
 ): {
   exames: Opcao[];
+  /** Anos das provas do exame/categoria escolhidos, do mais novo ao mais antigo (card 09). */
+  anos: string[];
   /** Na ordem dos grupos (system → cursinho → meu cursinho), e por nome dentro de cada. */
   categorias: Opcao[];
   gruposDeCategorias: { grupo: GrupoDaCategoria; titulo: string; itens: Opcao[] }[];
@@ -158,6 +165,7 @@ export function opcoesDoFiltro(
   const exames = new Map<string, Opcao>();
   const categorias = new Map<string, Opcao & { grupo: GrupoDaCategoria }>();
   const lista: Opcao[] = [];
+  const anos = new Set<string>();
   for (const p of provas) {
     const ex = exameDe(p);
     const cat = categoriaDe(p);
@@ -167,7 +175,9 @@ export function opcoesDoFiltro(
     if (cat && doExame && grupo && !categorias.has(cat._id)) {
       categorias.set(cat._id, { _id: cat._id, nome: rotuloDaCategoria(cat), grupo });
     }
-    if (doExame && (!filtro.categoria || cat?._id === filtro.categoria)) {
+    const daCategoria = doExame && (!filtro.categoria || cat?._id === filtro.categoria);
+    if (daCategoria && p.ano) anos.add(String(p.ano));
+    if (daCategoria && (!filtro.ano || String(p.ano) === filtro.ano)) {
       lista.push({ _id: p._id, nome: p.nome });
     }
   }
@@ -180,6 +190,7 @@ export function opcoesDoFiltro(
   })).filter((g) => g.itens.length > 0);
   return {
     exames: [...exames.values()].sort(porNome),
+    anos: [...anos].sort((a, b) => Number(b) - Number(a)),
     categorias: gruposDeCategorias.flatMap((g) => g.itens),
     gruposDeCategorias,
     provas: lista.sort(porNome),
@@ -197,12 +208,16 @@ export function ajustarCascata(
 ): FilterValues {
   const o = opcoesDoFiltro(provas, { exame: filtro.exame, categoria: "" });
   const categoria = o.categorias.some((c) => c._id === filtro.categoria) ? filtro.categoria : "";
-  const daProva = opcoesDoFiltro(provas, { exame: filtro.exame, categoria });
+  // Card 09: o ano que não existe no exame/categoria escolhidos sai.
+  const doRecorte = opcoesDoFiltro(provas, { exame: filtro.exame, categoria });
+  const ano = doRecorte.anos.includes(filtro.ano) ? filtro.ano : "";
+  const daProva = opcoesDoFiltro(provas, { exame: filtro.exame, categoria, ano });
   const prova = daProva.provas.some((p) => p._id === filtro.prova) ? filtro.prova : "";
   const limpouProva = !!filtro.prova && !prova;
   return {
     ...filtro,
     categoria,
+    ano,
     prova,
     ...(limpouProva ? { enemArea: "", materia: "", frente: "" } : {}),
   };
