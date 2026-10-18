@@ -12,27 +12,34 @@ import {
 const ENEM = { _id: "enem", nome: "ENEM" };
 const FUVEST = { _id: "fuvest", nome: "Fuvest" };
 const provas: ProvaDoFiltro[] = [
-  { _id: "p1", nome: "Enem D1 2022", categoria: { _id: "c1", nome: "Dia 1", exame: ENEM } },
-  { _id: "p2", nome: "Enem D2 2022", categoria: { _id: "c2", nome: "Dia 2", exame: ENEM } },
-  { _id: "p3", nome: "Enem D1 2023", categoria: { _id: "c1", nome: "Dia 1", exame: ENEM } },
-  { _id: "p4", nome: "Fuvest 2023", categoria: { _id: "c3", nome: "Dia 1", exame: FUVEST } },
+  { _id: "p1", nome: "Enem D1 2022", categoria: { _id: "c1", nome: "Enem Dia 1", dono: "system", exame: ENEM } },
+  { _id: "p2", nome: "Enem D2 2022", categoria: { _id: "c2", nome: "Enem Dia 2", dono: "system", exame: ENEM } },
+  { _id: "p3", nome: "Enem D1 2023", categoria: { _id: "c1", nome: "Enem Dia 1", dono: "system", exame: ENEM } },
+  { _id: "p4", nome: "Fuvest 2023", categoria: { _id: "c3", nome: "1ª fase", dono: "6acc0000000000000000cafe", exame: FUVEST } },
+  { _id: "p6", nome: "Enem D1 do cursinho", categoria: { _id: "c5", nome: "Enem Dia 1", dono: "Cursinho", exame: ENEM } },
   // Categoria não populada (api antiga): entra só na lista de provas.
   { _id: "p5", nome: "Avulsa", categoria: "c9" },
 ];
 const nomes = (xs: { nome: string }[]) => xs.map((x) => x.nome);
 
 describe("filtro do banco — Exame → Categoria → Prova (043/03)", () => {
-  it("sem nada: todos os exames, categorias com o exame no rótulo, todas as provas", () => {
+  it("sem nada: todos os exames, categorias com o dono (system/cursinho) no rótulo, todas as provas", () => {
     const o = opcoesDoFiltro(provas, { exame: "", categoria: "" });
     expect(nomes(o.exames)).toEqual(["ENEM", "Fuvest"]);
-    expect(nomes(o.categorias)).toEqual(["Dia 1 · ENEM", "Dia 1 · Fuvest", "Dia 2 · ENEM"]);
-    expect(o.provas).toHaveLength(5);
+    // Categoria de um cursinho específico (dono = id) fica só com o nome.
+    expect(nomes(o.categorias)).toEqual([
+      "1ª fase",
+      "Enem Dia 1 (cursinho)",
+      "Enem Dia 1 (system)",
+      "Enem Dia 2 (system)",
+    ]);
+    expect(o.provas).toHaveLength(6);
   });
 
   it("exame filtra categoria e prova; categoria filtra prova", () => {
     const o = opcoesDoFiltro(provas, { exame: "enem", categoria: "" });
-    expect(nomes(o.categorias)).toEqual(["Dia 1", "Dia 2"]);
-    expect(nomes(o.provas)).toEqual(["Enem D1 2022", "Enem D1 2023", "Enem D2 2022"]);
+    expect(nomes(o.categorias)).toEqual(["Enem Dia 1 (cursinho)", "Enem Dia 1 (system)", "Enem Dia 2 (system)"]);
+    expect(nomes(o.provas)).toEqual(["Enem D1 2022", "Enem D1 2023", "Enem D1 do cursinho", "Enem D2 2022"]);
     const c = opcoesDoFiltro(provas, { exame: "enem", categoria: "c1" });
     expect(nomes(c.provas)).toEqual(["Enem D1 2022", "Enem D1 2023"]);
     const soCategoria = opcoesDoFiltro(provas, { exame: "", categoria: "c3" });
