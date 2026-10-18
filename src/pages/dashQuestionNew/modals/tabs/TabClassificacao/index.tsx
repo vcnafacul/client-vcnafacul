@@ -524,20 +524,10 @@ export function TabClassificacao({
             </div>
           )}
 
-          {/* Card 21 (042): no modo edição, no lugar do "Editar Classificação" —
-              sem descer até a barra de baixo para remover ou cancelar. */}
+          {/* Card 21 (042): no modo edição, "Cancelar" no lugar do "Editar
+              Classificação". O "Remover da prova" fica no título do campo Prova. */}
           {isEditing && (
             <div className="flex flex-wrap gap-2">
-              <Button
-                onClick={handleRemoveFromProva}
-                disabled={isSaving || !podeCompor(provaSel)}
-                title={podeCompor(provaSel) ? undefined : TEXTO_DO_SELO}
-                variant="outline"
-                size="sm"
-                className="text-red border-red"
-              >
-                Remover da prova
-              </Button>
               <Button
                 onClick={handleCancel}
                 disabled={isSaving}
@@ -556,11 +546,25 @@ export function TabClassificacao({
             {/* Prova */}
             <div className="space-y-2">
               {/* tickets/042, card 21: as ações da anulação à direita do título,
-                  como o "Remover número" do campo Número. */}
+                  como o "Remover número" do campo Número. No modo edição, o
+                  "Remover da prova" ocupa o mesmo lugar, com o mesmo estilo. */}
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <label className="text-sm font-semibold text-gray-600">
                   Prova *
                 </label>
+                {isEditing && provaSel && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRemoveFromProva}
+                    disabled={isSaving || !podeCompor(provaSel)}
+                    title={podeCompor(provaSel) ? undefined : TEXTO_DO_SELO}
+                    className="h-6 px-2 text-xs text-red border-red hover:text-red hover:bg-red/5"
+                  >
+                    Remover da prova
+                  </Button>
+                )}
                 {!isEditing && provaSel?.provaId && (
                   <AnulacaoDaProva
                     questaoId={question._id}
