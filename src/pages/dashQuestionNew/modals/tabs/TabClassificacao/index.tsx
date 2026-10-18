@@ -370,6 +370,7 @@ export function TabClassificacao({
       <AnuladaEm
         anulacoes={question.anulacoes}
         nomeDaProva={(id) => provasContendo.find((p) => p.provaId === id)?.provaNome}
+        provaEmFoco={provaSel?.provaId}
       />
       {avisoDeAnulada && (
         <ModalAvisoAnulada
@@ -521,15 +522,59 @@ export function TabClassificacao({
               </Button>
             </div>
           )}
+
+          {/* Card 21 (042): no modo edição, no lugar do "Editar Classificação" —
+              sem descer até a barra de baixo para remover ou cancelar. */}
+          {isEditing && (
+            <div className="flex flex-wrap gap-2">
+              <Button
+                onClick={handleRemoveFromProva}
+                disabled={isSaving || !podeCompor(provaSel)}
+                title={podeCompor(provaSel) ? undefined : TEXTO_DO_SELO}
+                variant="outline"
+                size="sm"
+                className="text-red border-red"
+              >
+                Remover da prova
+              </Button>
+              <Button
+                onClick={handleCancel}
+                disabled={isSaving}
+                variant="outline"
+                size="sm"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Cancelar
+              </Button>
+            </div>
+          )}
         </CardHeader>
 
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Prova */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-600">
-                Prova *
-              </label>
+              {/* tickets/042, card 21: as ações da anulação à direita do título,
+                  como o "Remover número" do campo Número. */}
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <label className="text-sm font-semibold text-gray-600">
+                  Prova *
+                </label>
+                {!isEditing && provaSel?.provaId && (
+                  <AnulacaoDaProva
+                    questaoId={question._id}
+                    provaId={provaSel.provaId}
+                    provaNome={provaSel.provaNome}
+                    numero={provaSel.numero}
+                    anulacao={question.anulacoes?.find(
+                      (a) => a.provaId === provaSel.provaId,
+                    )}
+                    podeAnular={podeAnularNa(permissao, provaSel)}
+                    token={token}
+                    onMudou={onSaveSuccess}
+                  />
+                )}
+              </div>
               {!isEditing ? (
                 <Select
                   value={String(provaSelIdx)}
@@ -565,21 +610,6 @@ export function TabClassificacao({
                 >
                   {seloDaProva(provaSel)!.texto}
                 </p>
-              )}
-              {/* tickets/042, card 07: anulada NESTA prova, e as ações. */}
-              {!isEditing && provaSel?.provaId && (
-                <AnulacaoDaProva
-                  questaoId={question._id}
-                  provaId={provaSel.provaId}
-                  provaNome={provaSel.provaNome}
-                  numero={provaSel.numero}
-                  anulacao={question.anulacoes?.find(
-                    (a) => a.provaId === provaSel.provaId,
-                  )}
-                  podeAnular={podeAnularNa(permissao, provaSel)}
-                  token={token}
-                  onMudou={onSaveSuccess}
-                />
               )}
             </div>
 
@@ -1094,16 +1124,6 @@ export function TabClassificacao({
               </div>
 
               <div className="flex flex-wrap gap-2">
-                <Button
-                  onClick={handleRemoveFromProva}
-                  disabled={isSaving || !podeCompor(provaSel)}
-                  title={podeCompor(provaSel) ? undefined : TEXTO_DO_SELO}
-                  variant="outline"
-                  size="sm"
-                  className="text-red border-red"
-                >
-                  Remover da prova
-                </Button>
                 <Button
                   onClick={handleSetProvaBase}
                   disabled={isSaving || provaSel?.provaId === question.provaBase}

@@ -7,6 +7,7 @@ import {
   vitrineModalAnular,
   vitrineQuestaoAnuladaNoSimulado,
 } from "./anulacao";
+import { vitrineAbaClassificacao } from "./abaClassificacao";
 import { vitrineChamada } from "./chamada";
 import { vitrineResultadoComAnulada } from "./resultadoComAnulada";
 
@@ -20,4 +21,5 @@ export const vitrines: Vitrine[] = [
   vitrineQuestaoAnuladaNoSimulado,
   vitrineAvisoDeRecalculo,
   vitrineResultadoComAnulada,
+  vitrineAbaClassificacao,
 ];

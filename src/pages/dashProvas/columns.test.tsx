@@ -52,10 +52,18 @@ describe("colunas do banco de provas", () => {
       "edicao",
       "progresso",
       "gabarito",
-      "versoes",
+      "anuladas",
       "createdAt",
       "status",
     ]);
+  });
+
+  it("card 21 (042): 'Anuladas' mostra a quantidade; zero ou ausente é '—'", () => {
+    const base = {} as Prova;
+    expect(texto("anuladas", { ...base, totalAnuladas: 2 } as Prova)).toBe("2");
+    expect(texto("anuladas", { ...base, totalAnuladas: 0 } as Prova)).toBe("—");
+    expect(texto("anuladas", { ...base } as Prova)).toBe("—");
+    expect(coluna("anuladas").sortValue!({ ...base, totalAnuladas: 3 } as Prova)).toBe(3);
   });
 
   it("todas são ordenáveis", () => {

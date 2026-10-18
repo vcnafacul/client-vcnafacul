@@ -3,7 +3,9 @@ import { ModalAvisoAnulada } from "@/components/molecules/anulacao/ModalAvisoAnu
 import { ModalCadernoComAnuladas } from "@/components/molecules/anulacao/ModalCadernoComAnuladas";
 import { MotivoAnulacao } from "@/dtos/question/anulacao";
 import { AnuladasDaProva } from "@/pages/dashProvas/modals/AnuladasDaProva";
-import { AnulacaoDaProva } from "@/pages/dashQuestionNew/modals/tabs/TabClassificacao/AnulacaoDaProva";
+import { CampoProvaDemo } from "./CampoProvaDemo";
+import { colunasDeProva } from "@/pages/dashProvas/columns";
+import type { Prova } from "@/dtos/prova/prova";
 import QuestionBox from "@/components/atoms/questionBox";
 import QuestionList from "@/components/molecules/questionList";
 import { QuestionBoxStatus } from "@/enums/simulado/questionBoxStatus";
@@ -27,7 +29,9 @@ const LONGA =
   "A alternativa C, dada como gabarito, está errada: o texto-base afirma o contrário no segundo parágrafo. " +
   "Nenhuma das outras alternativas responde à pergunta, então a questão não tem resposta correta. ".repeat(3);
 
-/** tickets/042, card 07. */
+const colunaAnuladas = colunasDeProva.find((c) => c.id === "anuladas")!;
+
+/** tickets/042, cards 07 e 21. */
 export const vitrineModalAnular: Vitrine = {
   slug: "modal-anular-questao",
   titulo: "Anular questão na prova",
@@ -80,38 +84,59 @@ export const vitrineAnulacaoNaProva: Vitrine = {
     {
       slug: "valida",
       titulo: "Válida (pode anular)",
-      render: () => (
-        <AnulacaoDaProva questaoId="q" provaId="p1" provaNome="Simulado 3" numero={45} podeAnular token="" />
-      ),
+      render: () => <CampoProvaDemo podeAnular />,
     },
     {
       slug: "anulada",
-      titulo: "Anulada (dono)",
+      titulo: "Anulada (dono, 1 prova)",
       render: () => (
-        <AnulacaoDaProva
-          questaoId="q"
-          provaId="p1"
-          provaNome="Simulado 3"
-          numero={45}
-          anulacao={{ ...anulacao, justificativa: LONGA }}
+        <CampoProvaDemo podeAnular anulacoes={[{ ...anulacao, provaId: "p1", numero: 45, justificativa: LONGA }]} />
+      ),
+    },
+    {
+      slug: "anulada-varias",
+      titulo: "Anulada em 3 provas",
+      render: () => (
+        <CampoProvaDemo
           podeAnular
-          token=""
+          anulacoes={[
+            { ...anulacao, provaId: "p0", numero: 12 },
+            { ...anulacao, provaId: "p1", numero: 45, justificativa: LONGA },
+            { ...anulacao, provaId: "p2", numero: 88, motivo: MotivoAnulacao.repetidaDeOutroExame },
+          ]}
         />
       ),
     },
     {
       slug: "anulada-sem-permissao",
       titulo: "Anulada (outro cursinho)",
+      render: () => <CampoProvaDemo podeAnular={false} anulacoes={[{ ...anulacao, provaId: "p1", numero: 45 }]} />,
+    },
+    {
+      slug: "coluna-da-lista",
+      titulo: "Coluna Anuladas da lista",
       render: () => (
-        <AnulacaoDaProva
-          questaoId="q"
-          provaId="p1"
-          provaNome="Simulado 3"
-          numero={45}
-          anulacao={anulacao}
-          podeAnular={false}
-          token=""
-        />
+        <table className="w-full max-w-md text-sm">
+          <thead>
+            <tr className="text-left text-gray-500">
+              <th className="py-1">Prova</th>
+              <th className="py-1 text-center">Anuladas</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { nome: "Simulado 3", totalAnuladas: 2 },
+              { nome: "ENEM 2022 – Dia 2", totalAnuladas: 1 },
+              { nome: "Revisão final", totalAnuladas: 0 },
+              { nome: "Prova antiga (ms sem o campo)" },
+            ].map((p) => (
+              <tr key={p.nome} className="border-t">
+                <td className="py-2">{p.nome}</td>
+                <td className="py-2 text-center">{colunaAnuladas.cell(p as Prova)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       ),
     },
     {

@@ -1,9 +1,8 @@
 import { ModalAnularQuestao } from "@/components/molecules/anulacao/ModalAnularQuestao";
 import { TITULO_EDITAR } from "@/components/molecules/anulacao/textos";
 import { Button } from "@/components/ui/button";
-import { AnulacaoInput, AnulacaoNaProva, rotuloDoMotivo } from "@/dtos/question/anulacao";
+import { AnulacaoInput, AnulacaoNaProva } from "@/dtos/question/anulacao";
 import { anularQuestao, desanularQuestao, ErroDaAnulacao } from "@/services/anulacao/anularQuestao";
-import { XCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -11,8 +10,9 @@ export const TEXTO_PROVA_APLICADA =
   "Esta prova já tem resultados. A anulação em prova aplicada chega com o recálculo do relatório.";
 
 /**
- * O estado da questão NA prova em foco, e as ações (tickets/042, card 07).
- * Aparece para todos; as ações, só para quem pode anular naquela prova.
+ * As ações da anulação na prova em foco (tickets/042, cards 07 e 21): Anular
+ * nesta prova, ou Editar justificativa + Desanular. Só para quem pode anular
+ * naquela prova; o estado (motivo, justificativa) aparece no `AnuladaEm`.
  */
 export function AnulacaoDaProva({
   questaoId,
@@ -71,45 +71,32 @@ export function AnulacaoDaProva({
     }
   };
 
-  if (!anulacao && !podeAnular) return null;
+  // tickets/042, card 21: só as ações, na linha do título "Prova". O estado
+  // (motivo, justificativa) mora no aviso do topo — `AnuladaEm`.
+  if (!podeAnular) return null;
 
+  const pequeno = "h-6 px-2 text-xs";
   return (
-    <div data-testid="anulacao-da-prova" className="flex flex-col gap-2">
+    <div data-testid="anulacao-da-prova" className="flex flex-wrap justify-end gap-1">
       {anulacao ? (
-        <div className="flex items-start gap-2 rounded-md border border-rose-200 bg-rose-50 p-2 text-sm">
-          <XCircle className="h-4 w-4 text-rose-600 shrink-0 mt-0.5" aria-hidden />
-          <div className="min-w-0">
-            <p className="font-semibold text-rose-800">
-              Anulada nesta prova: {rotuloDoMotivo(anulacao.motivo)}
-            </p>
-            <p className="text-rose-900 break-words">{anulacao.justificativa}</p>
-            <p className="text-xs text-rose-700 mt-1">Fora da análise: não conta na nota nem nos relatórios.</p>
-          </div>
-        </div>
-      ) : null}
-      {podeAnular && (
-        <div className="flex flex-wrap gap-2">
-          {anulacao ? (
-            <>
-              <Button size="sm" variant="outline" disabled={ocupado} onClick={() => setAberto(true)}>
-                Editar justificativa
-              </Button>
-              <Button size="sm" variant="outline" disabled={ocupado} onClick={desanular}>
-                Desanular
-              </Button>
-            </>
-          ) : (
-            <Button
-              size="sm"
-              variant="outline"
-              className="text-rose-700 border-rose-300 hover:bg-rose-50"
-              disabled={ocupado}
-              onClick={() => setAberto(true)}
-            >
-              Anular nesta prova
-            </Button>
-          )}
-        </div>
+        <>
+          <Button size="sm" variant="outline" className={pequeno} disabled={ocupado} onClick={() => setAberto(true)}>
+            Editar justificativa
+          </Button>
+          <Button size="sm" variant="outline" className={pequeno} disabled={ocupado} onClick={desanular}>
+            Desanular
+          </Button>
+        </>
+      ) : (
+        <Button
+          size="sm"
+          variant="outline"
+          className={`${pequeno} text-rose-700 border-rose-300 hover:bg-rose-50 hover:text-rose-800`}
+          disabled={ocupado}
+          onClick={() => setAberto(true)}
+        >
+          Anular nesta prova
+        </Button>
       )}
       {aberto && (
         <ModalAnularQuestao
