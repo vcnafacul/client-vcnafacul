@@ -17,33 +17,54 @@ const provas: ProvaDoFiltro[] = [
   { _id: "p3", nome: "Enem D1 2023", categoria: { _id: "c1", nome: "Enem Dia 1", dono: "system", exame: ENEM } },
   { _id: "p4", nome: "Fuvest 2023", categoria: { _id: "c3", nome: "1ª fase", dono: "6acc0000000000000000cafe", exame: FUVEST } },
   { _id: "p6", nome: "Enem D1 do cursinho", categoria: { _id: "c5", nome: "Enem Dia 1", dono: "Cursinho", exame: ENEM } },
+  // Categoria própria do MEU cursinho (o ms marca) e uma de OUTRO cursinho.
+  { _id: "p7", nome: "Simulado do meu cursinho", categoriaDoMeuCursinho: true, categoria: { _id: "c7", nome: "Aulão", dono: "meu-id", exame: ENEM } },
+  { _id: "p8", nome: "Simulado de outro cursinho", categoria: { _id: "c8", nome: "Revisão", dono: "outro-id", exame: ENEM } },
   // Categoria não populada (api antiga): entra só na lista de provas.
   { _id: "p5", nome: "Avulsa", categoria: "c9" },
 ];
 const nomes = (xs: { nome: string }[]) => xs.map((x) => x.nome);
 
 describe("filtro do banco — Exame → Categoria → Prova (043/03)", () => {
-  it("sem nada: todos os exames, categorias com o dono (system/cursinho) no rótulo, todas as provas", () => {
+  it("categorias: system → cursinho → meu cursinho; as de OUTRO cursinho não aparecem", () => {
     const o = opcoesDoFiltro(provas, { exame: "", categoria: "" });
     expect(nomes(o.exames)).toEqual(["ENEM", "Fuvest"]);
-    // Categoria de um cursinho específico (dono = id) fica só com o nome.
+    expect(o.gruposDeCategorias.map((g) => [g.titulo, nomes(g.itens)])).toEqual([
+      ["System", ["Enem Dia 1 (system)", "Enem Dia 2 (system)"]],
+      ["Cursinho", ["Enem Dia 1 (cursinho)"]],
+      ["Meu cursinho", ["Aulão"]],
+    ]);
+    // "1ª fase" e "Revisão" são de outros cursinhos: ficam fora.
     expect(nomes(o.categorias)).toEqual([
-      "1ª fase",
-      "Enem Dia 1 (cursinho)",
       "Enem Dia 1 (system)",
       "Enem Dia 2 (system)",
+      "Enem Dia 1 (cursinho)",
+      "Aulão",
     ]);
-    expect(o.provas).toHaveLength(6);
+    // As provas não mudam: o recorte é só do campo Categoria.
+    expect(o.provas).toHaveLength(8);
+  });
+
+  it("grupo vazio não aparece", () => {
+    const so = opcoesDoFiltro(provas.slice(0, 3), { exame: "", categoria: "" });
+    expect(so.gruposDeCategorias.map((g) => g.titulo)).toEqual(["System"]);
   });
 
   it("exame filtra categoria e prova; categoria filtra prova", () => {
     const o = opcoesDoFiltro(provas, { exame: "enem", categoria: "" });
-    expect(nomes(o.categorias)).toEqual(["Enem Dia 1 (cursinho)", "Enem Dia 1 (system)", "Enem Dia 2 (system)"]);
-    expect(nomes(o.provas)).toEqual(["Enem D1 2022", "Enem D1 2023", "Enem D1 do cursinho", "Enem D2 2022"]);
+    expect(nomes(o.categorias)).toEqual(["Enem Dia 1 (system)", "Enem Dia 2 (system)", "Enem Dia 1 (cursinho)", "Aulão"]);
+    expect(nomes(o.provas)).toEqual([
+      "Enem D1 2022",
+      "Enem D1 2023",
+      "Enem D1 do cursinho",
+      "Enem D2 2022",
+      "Simulado de outro cursinho",
+      "Simulado do meu cursinho",
+    ]);
     const c = opcoesDoFiltro(provas, { exame: "enem", categoria: "c1" });
     expect(nomes(c.provas)).toEqual(["Enem D1 2022", "Enem D1 2023"]);
-    const soCategoria = opcoesDoFiltro(provas, { exame: "", categoria: "c3" });
-    expect(nomes(soCategoria.provas)).toEqual(["Fuvest 2023"]);
+    const soCategoria = opcoesDoFiltro(provas, { exame: "", categoria: "c7" });
+    expect(nomes(soCategoria.provas)).toEqual(["Simulado do meu cursinho"]);
   });
 
   it("trocar o exame limpa a categoria e a prova que não casam (e Área/Matéria/Frente com a prova)", () => {
