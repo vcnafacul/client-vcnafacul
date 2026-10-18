@@ -223,7 +223,12 @@ export interface ResumoDoRelatorio {
   /** tickets/042: as anuladas agora, por número. */
   anuladas?: AnuladaDoRelatorio[];
   /** tickets/042: o aviso de "relatório desatualizado" e o recálculo em andamento. */
-  anulacao?: { divergentes: number; jobAtivo: JobDoRecalculo | null };
+  anulacao?: {
+    divergentes: number;
+    /** Card 20: números que os resultados contaram como anulados e agora valem. */
+    desanuladas?: number[];
+    jobAtivo: JobDoRecalculo | null;
+  };
 }
 
 export interface AnuladaDoRelatorio {
@@ -248,6 +253,7 @@ export interface JobDoRecalculo {
 export interface SituacaoDoRecalculo {
   divergentes: number;
   anulacoes: AnuladaDoRelatorio[];
+  desanuladas?: number[];
   jobAtivo: JobDoRecalculo | null;
   ultimoJob: JobDoRecalculo | null;
 }
