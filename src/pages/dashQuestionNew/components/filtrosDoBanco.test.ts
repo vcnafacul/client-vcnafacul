@@ -12,10 +12,10 @@ import {
 const ENEM = { _id: "enem", nome: "ENEM" };
 const FUVEST = { _id: "fuvest", nome: "Fuvest" };
 const provas: ProvaDoFiltro[] = [
-  { _id: "p1", nome: "Enem D1 2022", categoria: { _id: "c1", nome: "Enem Dia 1", dono: "system", exame: ENEM } },
-  { _id: "p2", nome: "Enem D2 2022", categoria: { _id: "c2", nome: "Enem Dia 2", dono: "system", exame: ENEM } },
-  { _id: "p3", nome: "Enem D1 2023", categoria: { _id: "c1", nome: "Enem Dia 1", dono: "system", exame: ENEM } },
-  { _id: "p4", nome: "Fuvest 2023", categoria: { _id: "c3", nome: "1ª fase", dono: "6acc0000000000000000cafe", exame: FUVEST } },
+  { _id: "p1", nome: "Enem D1 2022", ano: 2022, categoria: { _id: "c1", nome: "Enem Dia 1", dono: "system", exame: ENEM } },
+  { _id: "p2", nome: "Enem D2 2022", ano: 2022, categoria: { _id: "c2", nome: "Enem Dia 2", dono: "system", exame: ENEM } },
+  { _id: "p3", nome: "Enem D1 2023", ano: 2023, categoria: { _id: "c1", nome: "Enem Dia 1", dono: "system", exame: ENEM } },
+  { _id: "p4", nome: "Fuvest 2023", ano: 2023, categoria: { _id: "c3", nome: "1ª fase", dono: "6acc0000000000000000cafe", exame: FUVEST } },
   { _id: "p6", nome: "Enem D1 do cursinho", categoria: { _id: "c5", nome: "Enem Dia 1", dono: "Cursinho", exame: ENEM } },
   // Categoria própria do MEU cursinho (o ms marca) e uma de OUTRO cursinho.
   { _id: "p7", nome: "Simulado do meu cursinho", categoriaDoMeuCursinho: true, categoria: { _id: "c7", nome: "Aulão", dono: "meu-id", exame: ENEM } },
@@ -67,6 +67,28 @@ describe("filtro do banco — Exame → Categoria → Prova (043/03)", () => {
     expect(nomes(soCategoria.provas)).toEqual(["Simulado do meu cursinho"]);
   });
 
+  it("card 09: anos do recorte (mais novo primeiro) e o ano filtra as provas", () => {
+    const tudo = opcoesDoFiltro(provas, { exame: "", categoria: "" });
+    expect(tudo.anos).toEqual(["2023", "2022"]);
+    const dia1 = opcoesDoFiltro(provas, { exame: "enem", categoria: "c1" });
+    expect(dia1.anos).toEqual(["2023", "2022"]);
+    const de2023 = opcoesDoFiltro(provas, { exame: "enem", categoria: "c1", ano: "2023" });
+    expect(nomes(de2023.provas)).toEqual(["Enem D1 2023"]);
+    const fuvest = opcoesDoFiltro(provas, { exame: "fuvest", categoria: "" });
+    expect(fuvest.anos).toEqual(["2023"]);
+  });
+
+  it("card 09: trocar para um exame sem aquele ano limpa o ano; o ano limpa a prova de outro ano", () => {
+    expect(
+      ajustarCascata({ ...FILTROS_VAZIOS, exame: "fuvest", ano: "2022" }, provas),
+    ).toMatchObject({ exame: "fuvest", ano: "" });
+    expect(
+      ajustarCascata({ ...FILTROS_VAZIOS, ano: "2023", prova: "p1", materia: "m" }, provas),
+    ).toMatchObject({ ano: "2023", prova: "", materia: "" });
+    const fica = { ...FILTROS_VAZIOS, exame: "enem", ano: "2022", prova: "p2" };
+    expect(ajustarCascata(fica, provas)).toEqual(fica);
+  });
+
   it("trocar o exame limpa a categoria e a prova que não casam (e Área/Matéria/Frente com a prova)", () => {
     const antes = {
       ...FILTROS_VAZIOS,
@@ -97,6 +119,7 @@ describe("filtro do banco — Exame → Categoria → Prova (043/03)", () => {
     expect(temFiltroAtivo({ ...FILTROS_VAZIOS, revisoes: ["reported"] })).toBe(true);
     expect(temFiltroAtivo({ ...FILTROS_VAZIOS, semImagem: true })).toBe(true);
     expect(temFiltroAtivo({ ...FILTROS_VAZIOS, exame: "enem" })).toBe(true);
+    expect(temFiltroAtivo({ ...FILTROS_VAZIOS, ano: "2023" })).toBe(true);
   });
 
   it("resumo das revisões no gatilho", () => {
@@ -119,6 +142,7 @@ describe("getAllQuestions — parâmetros novos (043/03)", () => {
       ...FILTROS_VAZIOS,
       exame: "enem",
       categoria: "c1",
+      ano: "2023",
       revisoes: ["textClassification", "reported"],
       semImagem: true,
     });
@@ -126,6 +150,7 @@ describe("getAllQuestions — parâmetros novos (043/03)", () => {
     const [com, sem] = fetchMock.mock.calls.map((c) => new URL((c as unknown as [string])[0]));
     expect(com.searchParams.get("exame")).toBe("enem");
     expect(com.searchParams.get("categoria")).toBe("c1");
+    expect(com.searchParams.get("ano")).toBe("2023");
     expect(com.searchParams.get("revisoes")).toBe("textClassification,reported");
     expect(com.searchParams.get("semImagem")).toBe("true");
     expect([...sem.searchParams.keys()].sort()).toEqual(["limit", "page"]);

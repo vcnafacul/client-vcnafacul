@@ -7,15 +7,15 @@ const FUVEST = { _id: "fuvest", nome: "Fuvest" };
 const cat = (id: string, nome: string, exame: typeof ENEM, dono = "system") => ({ _id: id, nome, exame, dono });
 const infos = {
   provas: [
-    { _id: "p1", nome: "ENEM 2022 – Dia 1", enemAreas: ["Linguagens", "Ciências Humanas"], categoria: cat("c1", "Enem Dia 1", ENEM) },
-    { _id: "p2", nome: "ENEM 2022 – Dia 2", enemAreas: ["Matemática", "Ciências da Natureza"], categoria: cat("c2", "Enem Dia 2", ENEM) },
-    { _id: "p3", nome: "ENEM 2023 – Dia 1", enemAreas: ["Linguagens"], categoria: cat("c1", "Enem Dia 1", ENEM) },
-    { _id: "p6", nome: "Enem Dia 1 2026 – Cursinho X", enemAreas: ["Linguagens"], categoria: cat("c5", "Enem Dia 1", ENEM, "Cursinho") },
-    { _id: "p7", nome: "Enem Dia 2 2026 – Cursinho X", enemAreas: ["Matemática"], categoria: cat("c6", "Enem Dia 2", ENEM, "Cursinho") },
-    { _id: "p4", nome: "Fuvest 2023 – 1ª fase", enemAreas: [], categoria: cat("c3", "1ª fase", FUVEST, "6acc0000000000000000cafe") },
-    { _id: "p5", nome: "Simulado de Outubro – Meu cursinho", enemAreas: ["Matemática"], categoriaDoMeuCursinho: true, categoria: cat("c4", "Simulado mensal", ENEM, "meu-cursinho") },
-    { _id: "p8", nome: "Aulão – Meu cursinho", enemAreas: ["Matemática"], categoriaDoMeuCursinho: true, categoria: cat("c7", "Aulão de revisão", ENEM, "meu-cursinho") },
-    { _id: "p9", nome: "Simulado de outro cursinho", enemAreas: ["Matemática"], categoria: cat("c8", "Categoria de outro cursinho", ENEM, "outro-cursinho") },
+    { _id: "p1", ano: 2022, nome: "ENEM 2022 – Dia 1", enemAreas: ["Linguagens", "Ciências Humanas"], categoria: cat("c1", "Enem Dia 1", ENEM) },
+    { _id: "p2", ano: 2022, nome: "ENEM 2022 – Dia 2", enemAreas: ["Matemática", "Ciências da Natureza"], categoria: cat("c2", "Enem Dia 2", ENEM) },
+    { _id: "p3", ano: 2023, nome: "ENEM 2023 – Dia 1", enemAreas: ["Linguagens"], categoria: cat("c1", "Enem Dia 1", ENEM) },
+    { _id: "p6", ano: 2026, nome: "Enem Dia 1 2026 – Cursinho X", enemAreas: ["Linguagens"], categoria: cat("c5", "Enem Dia 1", ENEM, "Cursinho") },
+    { _id: "p7", ano: 2026, nome: "Enem Dia 2 2026 – Cursinho X", enemAreas: ["Matemática"], categoria: cat("c6", "Enem Dia 2", ENEM, "Cursinho") },
+    { _id: "p4", ano: 2023, nome: "Fuvest 2023 – 1ª fase", enemAreas: [], categoria: cat("c3", "1ª fase", FUVEST, "6acc0000000000000000cafe") },
+    { _id: "p5", ano: 2026, nome: "Simulado de Outubro – Meu cursinho", enemAreas: ["Matemática"], categoriaDoMeuCursinho: true, categoria: cat("c4", "Simulado mensal", ENEM, "meu-cursinho") },
+    { _id: "p8", ano: 2025, nome: "Aulão – Meu cursinho", enemAreas: ["Matemática"], categoriaDoMeuCursinho: true, categoria: cat("c7", "Aulão de revisão", ENEM, "meu-cursinho") },
+    { _id: "p9", ano: 2024, nome: "Simulado de outro cursinho", enemAreas: ["Matemática"], categoria: cat("c8", "Categoria de outro cursinho", ENEM, "outro-cursinho") },
   ],
   materias: [{ _id: "m1", nome: "Matemática", enemArea: "Matemática", frentes: [{ _id: "f1", nome: "Álgebra" }] }],
 };
