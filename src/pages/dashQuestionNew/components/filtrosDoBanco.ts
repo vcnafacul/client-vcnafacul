@@ -44,7 +44,8 @@ export interface FilterValues {
   exame: string;
   categoria: string;
   revisoes: RevisaoDoFiltro[];
-  comImagem: boolean;
+  /** Só as questões SEM imagem da questão (`imageId` vazio). */
+  semImagem: boolean;
 }
 
 export const FILTROS_VAZIOS: FilterValues = {
@@ -58,7 +59,7 @@ export const FILTROS_VAZIOS: FilterValues = {
   exame: "",
   categoria: "",
   revisoes: [],
-  comImagem: false,
+  semImagem: false,
 };
 
 export function temFiltroAtivo(f: FilterValues): boolean {
@@ -73,7 +74,7 @@ export function temFiltroAtivo(f: FilterValues): boolean {
     !!f.exame ||
     !!f.categoria ||
     f.revisoes.length > 0 ||
-    f.comImagem
+    f.semImagem
   );
 }
 

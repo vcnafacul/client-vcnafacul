@@ -67,7 +67,7 @@ describe("filtro do banco — Exame → Categoria → Prova (043/03)", () => {
   it("filtro ativo conta os campos novos", () => {
     expect(temFiltroAtivo(FILTROS_VAZIOS)).toBe(false);
     expect(temFiltroAtivo({ ...FILTROS_VAZIOS, revisoes: ["reported"] })).toBe(true);
-    expect(temFiltroAtivo({ ...FILTROS_VAZIOS, comImagem: true })).toBe(true);
+    expect(temFiltroAtivo({ ...FILTROS_VAZIOS, semImagem: true })).toBe(true);
     expect(temFiltroAtivo({ ...FILTROS_VAZIOS, exame: "enem" })).toBe(true);
   });
 
@@ -79,7 +79,7 @@ describe("filtro do banco — Exame → Categoria → Prova (043/03)", () => {
 });
 
 describe("getAllQuestions — parâmetros novos (043/03)", () => {
-  it("manda exame, categoria, revisões juntas e comImagem; nada vazio", async () => {
+  it("manda exame, categoria, revisões juntas e semImagem; nada vazio", async () => {
     vi.stubEnv("VITE_BASE_URL", "http://api");
     vi.resetModules();
     const fetchMock = vi.fn(
@@ -92,14 +92,14 @@ describe("getAllQuestions — parâmetros novos (043/03)", () => {
       exame: "enem",
       categoria: "c1",
       revisoes: ["textClassification", "reported"],
-      comImagem: true,
+      semImagem: true,
     });
     await getAllQuestions("t", FILTROS_VAZIOS);
     const [com, sem] = fetchMock.mock.calls.map((c) => new URL((c as unknown as [string])[0]));
     expect(com.searchParams.get("exame")).toBe("enem");
     expect(com.searchParams.get("categoria")).toBe("c1");
     expect(com.searchParams.get("revisoes")).toBe("textClassification,reported");
-    expect(com.searchParams.get("comImagem")).toBe("true");
+    expect(com.searchParams.get("semImagem")).toBe("true");
     expect([...sem.searchParams.keys()].sort()).toEqual(["limit", "page"]);
     vi.doUnmock("@/utils/fetchWrapper");
     vi.unstubAllEnvs();
