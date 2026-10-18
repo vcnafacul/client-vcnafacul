@@ -14,9 +14,13 @@ import { SummaryStudentCourse } from "@/services/analytics/prepCourse/dtos/summa
 import {
   inscricoesPorPeriodoDoCursinho,
   resumoDoCursinho,
+  UltimoProcesso,
+  ultimosProcessos,
 } from "@/services/analytics/monitoramento";
 import { useAuthStore } from "@/store/auth";
 import { nomeDoArquivo } from "../nomeDoArquivo";
+import { periodoDoProcesso } from "../periodoDoProcesso";
+import { UltimosProcessos } from "../UltimosProcessos";
 import { exportAnalyticsCsv } from "@/utils/exportAnalyticsCsv";
 import { Button } from "@mui/material";
 import Grid from "@mui/material/Grid2";
@@ -61,6 +65,20 @@ function AnalyticsPrepCourse({
     useState<LineChartMuiProps>({ xAxis: [], series: [] });
 
   const [numeros, setNumeros] = useState<NumerosDosCursinhos | null>(null);
+  const [processos, setProcessos] = useState<UltimoProcesso[]>([]);
+  const [carregandoProcessos, setCarregandoProcessos] = useState(true);
+
+  // tickets/044, card 08 — com ou sem cursinho (sem: a plataforma inteira).
+  useEffect(() => {
+    setCarregandoProcessos(true);
+    ultimosProcessos(token, cursinhoId)
+      .then(setProcessos)
+      .catch((err) => {
+        setProcessos([]);
+        toast.error(err.message);
+      })
+      .finally(() => setCarregandoProcessos(false));
+  }, [token, cursinhoId]);
 
   useEffect(() => {
     setLoading(true);
@@ -122,6 +140,23 @@ function AnalyticsPrepCourse({
         "Total de matrículas realizadas (sem testes)",
         numeros.matriculasNaoTeste,
       ],
+      [],
+      [
+        "Últimos processos seletivos (sem testes)",
+        "Cursinho",
+        "Período",
+        "Situação",
+        "Inscrições",
+        "Matrículas",
+      ],
+      ...processos.map((p) => [
+        p.nome,
+        p.cursinho.nome,
+        periodoDoProcesso(p),
+        p.situacao,
+        p.inscricoes,
+        p.matriculas,
+      ]),
     ];
     exportAnalyticsCsv(
       ["Período", "Inscrições no período (incluindo testes)"],
@@ -185,6 +220,13 @@ function AnalyticsPrepCourse({
           )}
         </div>
       </Grid>
+      <div className="mt-4">
+        <UltimosProcessos
+          processos={processos}
+          carregando={carregandoProcessos}
+          mostrarCursinho={!cursinhoId}
+        />
+      </div>
     </AnalyticsSection>
   );
 }

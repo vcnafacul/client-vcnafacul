@@ -23,6 +23,7 @@ const m = vi.hoisted(() => ({
   globalPorPeriodo: vi.fn(),
   globalUltimoAcesso: vi.fn(),
   globalAtivos: vi.fn(),
+  ultimosProcessos: vi.fn(),
 }));
 vi.mock("@/services/analytics/monitoramento", async (orig) => ({
   ...(await orig<typeof import("@/services/analytics/monitoramento")>()),
@@ -32,6 +33,7 @@ vi.mock("@/services/analytics/monitoramento", async (orig) => ({
   inscricoesPorPeriodoDoCursinho: m.inscricoesPorPeriodoDoCursinho,
   ultimoAcessoDoCursinho: m.ultimoAcessoDoCursinho,
   usuariosPorPerfilDoCursinho: m.usuariosPorPerfilDoCursinho,
+  ultimosProcessos: m.ultimosProcessos,
 }));
 vi.mock("@/services/analytics/simulado/aggregateByPeriod", () => ({
   getAggregateHistoricoByPeriod: m.globalPorPeriodo,
@@ -55,7 +57,10 @@ import AnalyticsSimulado from "./simulado";
 import AnalyticsUsers from "./users";
 
 describe("seções do monitoramento com cursinho (044/07)", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    m.ultimosProcessos.mockResolvedValue([]);
+  });
 
   it("Simulados: rota do cursinho, sem a global; 502 → Indisponível", async () => {
     m.simuladosPorPeriodoDoCursinho.mockRejectedValue(new MonitoramentoIndisponivel());
@@ -97,5 +102,6 @@ describe("seções do monitoramento com cursinho (044/07)", () => {
     expect(screen.getByText("40")).toBeInTheDocument();
     expect(screen.getByText("Número de inscrições:7")).toBeInTheDocument();
     expect(screen.getByText("Processos seletivos do cursinho")).toBeInTheDocument();
+    expect(m.ultimosProcessos).toHaveBeenCalledWith("tk", "A");
   });
 });
