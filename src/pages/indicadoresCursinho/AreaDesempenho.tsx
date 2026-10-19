@@ -16,6 +16,7 @@ import { DASH, PARTNER_PROVAS } from "@/routes/path";
 import type { Desempenho } from "@/services/indicadores";
 import { explicacoes } from "./explicacoes";
 import { porcentagem } from "./formato";
+import { useNoRecorte } from "./cursinhoDosIndicadores";
 
 const MESES = [
   "jan", "fev", "mar", "abr", "mai", "jun",
@@ -40,6 +41,7 @@ export function AreaDesempenho({
   erro: boolean;
   carregar: () => void;
 }) {
+  const noRecorte = useNoRecorte();
   const pontos = (dados?.aplicacoes ?? [])
     .filter((a) => a.media !== null)
     .map((a) => ({ ...a, rotulo: a.em ? diaCurto(a.em) : a.nome }));
@@ -152,7 +154,7 @@ export function AreaDesempenho({
       >
         {!dados || dados.porMes.length === 0 ? (
           <EmptyState>
-            Nenhum simulado concluído nem redação corrigida neste período.
+            Nenhum simulado concluído nem redação corrigida {noRecorte}.
           </EmptyState>
         ) : (
           <table className="w-full text-sm">

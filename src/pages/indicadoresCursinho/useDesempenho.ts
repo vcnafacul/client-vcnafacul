@@ -7,7 +7,8 @@ import { useAuthStore } from "@/store/auth";
  * O desempenho vem numa rota à parte (é mais lento: fala com o ms) — a tela
  * mostra os outros números sem esperar por ele.
  */
-export function useDesempenho(periodoId: string) {
+/** `null` = todos os períodos (046). */
+export function useDesempenho(periodoId: string | null) {
   const token = useAuthStore((s) => s.data.token);
   const cursinhoId = useCursinhoDosIndicadores();
   const [dados, setDados] = useState<Desempenho | null>(null);

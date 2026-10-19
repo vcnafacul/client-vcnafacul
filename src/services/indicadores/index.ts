@@ -36,6 +36,8 @@ export interface TurmaDoIndicador {
   id: string;
   nome: string;
   metricas: Metricas;
+  /** Só na visão de todos os períodos (046). */
+  periodoNome?: string;
 }
 
 export interface Indicadores {
@@ -47,6 +49,35 @@ export interface Indicadores {
   /** Um ponto por dia, do snapshot diário. */
   serie: { dia: string; metricas: Metricas }[];
 }
+
+/** tickets/046 — todos os períodos do cursinho, somados (D1). */
+export interface IndicadoresDeTodos {
+  todos: true;
+  periodos: PeriodoDoIndicador[];
+  atualizadoEm: string;
+  /** Soma de todos os períodos: matrícula conta em cada período. */
+  cursinho: Metricas;
+  /** Soma só dos períodos em andamento (ativos, sumindo); `null` se nenhum. */
+  emAndamento: Metricas | null;
+  turmas: (TurmaDoIndicador & { periodoId: string; periodoNome: string })[];
+  /** Um por período, do mais antigo ao mais novo. */
+  comparativo: {
+    periodoId: string;
+    nome: string;
+    inicio: string;
+    fim: string;
+    emAndamento: boolean;
+    metricas: Metricas;
+  }[];
+}
+
+export const ehVisaoDeTodos = (
+  d: Indicadores | IndicadoresDeTodos,
+): d is IndicadoresDeTodos => "todos" in d && d.todos === true;
+
+/** Sem período (`null`) = todos os períodos (046). */
+const doPeriodo = (periodoId: string | null) =>
+  periodoId ? `?periodoId=${encodeURIComponent(periodoId)}` : "";
 
 /**
  * tickets/045 — com `cursinhoId`, as rotas do admin
@@ -91,11 +122,11 @@ export async function getPeriodosDosIndicadores(
 
 export async function getIndicadores(
   token: string,
-  periodoId: string,
+  periodoId: string | null,
   cursinhoId?: string,
-): Promise<Indicadores> {
+): Promise<Indicadores | IndicadoresDeTodos> {
   const response = await fetchWrapper(
-    rota(indicadores, "", cursinhoId, `?periodoId=${encodeURIComponent(periodoId)}`),
+    rota(indicadores, "", cursinhoId, doPeriodo(periodoId)),
     { method: "GET", headers: headers(token) },
   );
   if (response.status !== 200)
@@ -110,22 +141,19 @@ export interface AlunoSumindo {
   /** `YYYY-MM-DD`; `null` se nunca veio. */
   ultimaPresenca: string | null;
   faltasSeguidas: number;
+  /** Na visão de todos os períodos (046): de qual período é o aluno. */
+  periodo?: string;
   /** Só vem para quem pode gerenciar estudantes (nunca na visão do admin, 045). */
   telefone?: string | null;
 }
 
 export async function getSumindo(
   token: string,
-  periodoId: string,
+  periodoId: string | null,
   cursinhoId?: string,
 ): Promise<AlunoSumindo[]> {
   const response = await fetchWrapper(
-    rota(
-      indicadoresSumindo,
-      "/sumindo",
-      cursinhoId,
-      `?periodoId=${encodeURIComponent(periodoId)}`,
-    ),
+    rota(indicadoresSumindo, "/sumindo", cursinhoId, doPeriodo(periodoId)),
     { method: "GET", headers: headers(token) },
   );
   if (response.status !== 200)
@@ -160,16 +188,11 @@ export interface Desempenho {
 
 export async function getDesempenho(
   token: string,
-  periodoId: string,
+  periodoId: string | null,
   cursinhoId?: string,
 ): Promise<Desempenho> {
   const response = await fetchWrapper(
-    rota(
-      indicadoresDesempenho,
-      "/desempenho",
-      cursinhoId,
-      `?periodoId=${encodeURIComponent(periodoId)}`,
-    ),
+    rota(indicadoresDesempenho, "/desempenho", cursinhoId, doPeriodo(periodoId)),
     { method: "GET", headers: headers(token) },
   );
   if (response.status !== 200)

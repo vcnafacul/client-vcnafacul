@@ -8,3 +8,10 @@ import { createContext, useContext } from "react";
 export const CursinhoDosIndicadores = createContext<string | undefined>(undefined);
 
 export const useCursinhoDosIndicadores = () => useContext(CursinhoDosIndicadores);
+
+/** tickets/046 — a tela está na visão de todos os períodos? (para os textos) */
+export const TodosOsPeriodos = createContext(false);
+
+/** "neste período" ou "nos períodos", conforme a visão. */
+export const useNoRecorte = () =>
+  useContext(TodosOsPeriodos) ? "nos períodos" : "neste período";

@@ -26,9 +26,9 @@ const periodo = (over = {}) => ({
   ...over,
 });
 
-const renderTela = () =>
+const renderTela = (url = "/indicadores") =>
   render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[url]}>
       <IndicadoresCursinho />
     </MemoryRouter>,
   );
@@ -39,10 +39,40 @@ describe("tela de Indicadores", () => {
     svc.getIndicadores.mockReset();
   });
 
-  it("busca os indicadores do período em andamento e avisa das turmas sem período", async () => {
+  it("tickets/046: abre em todos os períodos (sem periodoId) e avisa das turmas sem período", async () => {
     svc.getPeriodosDosIndicadores.mockResolvedValue({
       periodos: [periodo({ id: "antigo", emAndamento: false }), periodo()],
       turmasSemPeriodo: 2,
+    });
+    svc.getIndicadores.mockResolvedValue({
+      todos: true,
+      periodos: [],
+      atualizadoEm: new Date().toISOString(),
+      cursinho: {},
+      emAndamento: null,
+      turmas: [],
+      comparativo: [],
+    });
+
+    renderTela();
+
+    await waitFor(() =>
+      expect(svc.getIndicadores).toHaveBeenCalledWith("tk", null, undefined),
+    );
+    expect(
+      screen.getByText(/2 turmas sem período letivo não entram/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Como estão os alunos do seu cursinho em todos os períodos letivos."),
+    ).toBeInTheDocument();
+    // cada período tem a sua hora: na visão de todos, sem "Atualizado às"
+    expect(screen.queryByText(/Atualizado às/)).toBeNull();
+  });
+
+  it("com ?periodo=, busca aquele período, como antes", async () => {
+    svc.getPeriodosDosIndicadores.mockResolvedValue({
+      periodos: [periodo({ id: "antigo", emAndamento: false }), periodo()],
+      turmasSemPeriodo: 0,
     });
     svc.getIndicadores.mockResolvedValue({
       periodo: periodo(),
@@ -52,15 +82,26 @@ describe("tela de Indicadores", () => {
       serie: [],
     });
 
-    renderTela();
+    renderTela("/indicadores?periodo=p1");
 
     await waitFor(() =>
       expect(svc.getIndicadores).toHaveBeenCalledWith("tk", "p1", undefined),
     );
-    expect(
-      screen.getByText(/2 turmas sem período letivo não entram/),
-    ).toBeInTheDocument();
     expect(await screen.findByText(/Atualizado às/)).toBeInTheDocument();
+  });
+
+  it("?periodo= de outro cursinho (fora da lista) cai em todos", async () => {
+    svc.getPeriodosDosIndicadores.mockResolvedValue({
+      periodos: [periodo()],
+      turmasSemPeriodo: 0,
+    });
+    svc.getIndicadores.mockResolvedValue({
+      todos: true, periodos: [], atualizadoEm: "", cursinho: {}, emAndamento: null, turmas: [], comparativo: [],
+    });
+    renderTela("/indicadores?periodo=xyz");
+    await waitFor(() =>
+      expect(svc.getIndicadores).toHaveBeenCalledWith("tk", null, undefined),
+    );
   });
 
   it("sem período letivo: orienta a cadastrar e não busca indicadores", async () => {

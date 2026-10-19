@@ -13,6 +13,22 @@ export const explicacoes = {
     ficaDeFora:
       "quem se inscreveu mas não foi selecionado, quem não confirmou a matrícula e quem está na lista de espera.",
   },
+  /** tickets/046 — o total na visão de todos os períodos (D1). */
+  matriculas: {
+    oQueE: "quantas matrículas foram confirmadas somando todos os períodos letivos.",
+    comoContamos:
+      "cada período conta os seus alunos, como na visão do período, e os períodos são somados. Quem estudou em dois períodos conta nos dois.",
+    ficaDeFora:
+      "turmas sem período letivo, e quem se inscreveu mas não chegou a ser matriculado.",
+  },
+  /** tickets/046 — ativos na visão de todos os períodos (D2). */
+  ativosEmAndamento: {
+    oQueE: "quantos alunos estão com a matrícula em vigor hoje, nos períodos em andamento.",
+    comoContamos:
+      "só os períodos que estão acontecendo agora; períodos encerrados não têm aluno ativo.",
+    ficaDeFora:
+      "períodos encerrados e os que ainda não começaram, além das matrículas canceladas.",
+  },
   ativos: {
     oQueE: "quantos alunos estão com a matrícula em vigor hoje.",
     comoContamos:
