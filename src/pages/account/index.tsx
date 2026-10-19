@@ -6,6 +6,7 @@ import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { UserMe } from "@/types/user/userMe";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ReactComponent as LogoIcon } from "../../assets/images/home/logo.svg";
 import ImageProfile from "../../components/molecules/imageProfile";
@@ -21,6 +22,14 @@ import { CollaboratorFrentesDisplay } from "./components/CollaboratorFrentesDisp
 import { ModalEditFrentes } from "./components/ModalEditFrentes";
 import { Button } from "@/components/ui/button";
 import { NotificacoesDoAparelho } from "@/components/push/NotificacoesDoAparelho";
+import { pushHabilitado } from "@/services/push/push";
+import { MenuDoPerfil } from "./MenuDoPerfil";
+import {
+  ROTULO_DA_SECAO,
+  secaoDaUrl,
+  secoesDoPerfil,
+  type SecaoDoPerfil,
+} from "./secoes";
 
 function Account() {
   const {
@@ -35,8 +44,8 @@ function Account() {
 
   const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
   const [imagePreview, setImagePreview] = useState<any>(null);
-  const [file, setFile] = useState<any>(null);
-  const [hasImageChange, setHasImageChange] = useState<boolean>(false);
+  const [dadosSujos, setDadosSujos] = useState(false);
+  const [params, setParams] = useSearchParams();
 
   const loadCollaboratorPhoto = async (photoKey: string) => {
     try {
@@ -73,10 +82,12 @@ function Account() {
     if (file.size > 1024 * 1024) {
       toast.warn("O arquivo pode ter no máximo 1mb", { theme: "dark" });
     } else {
+      // 2026-10-19: a foto salva na hora em que é escolhida (antes esperava o
+      // "Salvar" do formulário). A pré-visualização aparece já.
       previewImage(file);
-      setFile(file);
-      setHasImageChange(true);
+      void uploadingImagem(file);
     }
+    e.target.value = "";
   };
 
   const uploadingImagem = async (file: any) => {
@@ -93,8 +104,6 @@ function Account() {
         updateAccount({ ...userAccount! });
         // Carregar a nova foto usando getPhotoCollaborator
         await loadCollaboratorPhoto(fileName);
-        setFile(null);
-        setHasImageChange(false);
       },
     });
   };
@@ -114,9 +123,8 @@ function Account() {
         .then((res) => {
           if (res) {
             updateAccount({ ...userAccount! });
+            setUserAccount({ ...userAccount!, collaboratorPhoto: "" });
             setImagePreview(null);
-            setFile(null);
-            setHasImageChange(false);
           } else {
             toast.error("Não foi possível remover sua imagem");
           }
@@ -126,8 +134,6 @@ function Account() {
         });
     } else {
       setImagePreview(null);
-      setFile(null);
-      setHasImageChange(false);
     }
     modals.deleteImage.close();
   };
@@ -181,12 +187,7 @@ function Account() {
       authUpdate.useSocialName !== userAccount?.useSocialName;
 
     try {
-      // Upload de imagem primeiro (se houver)
-      if (file) {
-        await uploadingImagem(file);
-      }
-
-      // Atualizar dados do usuário (se houver mudanças)
+      // Atualizar dados do usuário (se houver mudanças) — a foto já salvou sozinha
       if (hasFormChanges) {
         await updateData(authUpdate, undefined, onError);
       }
@@ -245,116 +246,142 @@ function Account() {
     };
   }, [token]);
 
+  const ehColaborador = !!userAccount?.collaborator;
+  const secoes = secoesDoPerfil(ehColaborador);
+  const secao = secaoDaUrl(params.get("secao"), secoes);
+  const escolher = (s: SecaoDoPerfil) => {
+    const proximos = new URLSearchParams(params);
+    if (s === "dados") proximos.delete("secao");
+    else proximos.set("secao", s);
+    setParams(proximos, { replace: true });
+  };
+  const nome = userAccount?.useSocialName
+    ? userAccount?.socialName
+    : userAccount?.firstName;
+
+  /** Foto pequena, nome e função: sempre visíveis, em qualquer seção. */
+  const identidade = (
+    <div className="flex items-center gap-3">
+      {ehColaborador && imagePreview ? (
+        <img
+          src={imagePreview}
+          alt=""
+          className="h-10 w-10 shrink-0 rounded-full object-cover sm:h-12 sm:w-12"
+        />
+      ) : ehColaborador ? (
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 font-bold text-marine sm:h-12 sm:w-12">
+          {nome?.charAt(0)}
+        </span>
+      ) : (
+        <LogoIcon className="h-10 w-10 shrink-0 rounded-full border bg-white p-1 sm:h-12 sm:w-12" />
+      )}
+      <div className="min-w-0">
+        <p className="truncate font-semibold text-marine">
+          {nome} {userAccount?.lastName}
+        </p>
+        {ehColaborador && userAccount?.collaboratorDescription && (
+          <p className="truncate text-xs text-slate-500">
+            {userAccount.collaboratorDescription}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+
+  /*
+    ⚠️ As seções ficam montadas e só se escondem: trocar de seção não perde o
+    que foi digitado no formulário (o ponto no menu avisa que falta salvar).
+  */
+  const painel = (s: SecaoDoPerfil, conteudo: React.ReactNode) => (
+    <section
+      key={s}
+      id={`secao-${s}`}
+      role="tabpanel"
+      aria-labelledby={`aba-${s}`}
+      hidden={s !== secao}
+      className="space-y-4"
+    >
+      <h1 className="text-xl font-bold text-marine">{ROTULO_DA_SECAO[s]}</h1>
+      {conteudo}
+    </section>
+  );
+
   return (
     <>
-      <div className="pb-20 flex flex-col md:flex-row w-full">
-        {/* Cabeçalho com imagem e nome do usuário */}
-        <div className="flex flex-col px-6 py-4 w-full md:w-[300px] rounded-bl-3xl shadow-sm">
-          {/* Avatar or Logo */}
-          <div className="flex flex-row md:flex-col gap-4">
-            {userAccount?.collaborator ? (
-              <ImageProfile
-                deleteImage={modals.deleteImage.open}
-                onChange={handleImageChange}
-                src={imagePreview}
-              />
-            ) : (
-              <LogoIcon className="w-24 h-24 p-2 bg-white border rounded-full animate-rotate" />
-            )}
-          </div>
-          <div className="flex flex-col px-8 pt-4 md:hidden justify-center">
-            <span className="text-marine text-2xl md:text-4xl font-extrabold leading-tight">
-              {userAccount?.useSocialName
-                ? userAccount?.socialName
-                : userAccount?.firstName}
-            </span>
-            <span className="text-marine text-lg md:text-xl font-medium">
-              {userAccount?.lastName}
-            </span>
-            {userAccount?.collaborator && (
-              <span className="text-marine text-sm font-semibold mt-1 opacity-80">
-                {userAccount?.collaboratorDescription}
-              </span>
-            )}
-          </div>
-
-          {/* Seção de Frentes (apenas para colaboradores) - Desktop */}
-          {userAccount?.collaborator && (
-            <div className="hidden md:block mt-6 pt-6 border-t border-gray-200">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-gray-700">
-                  Frentes de Afinidade
-                </h3>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={modals.editFrentes.open}
-                >
-                  Editar
-                </Button>
-              </div>
-              <CollaboratorFrentesDisplay
-                afinidades={userAccount.afinidades || []}
-                token={token}
-              />
-            </div>
-          )}
-        </div>
-        <div className="w-full">
-          {/* Name and Role */}
-          <div className="md:flex flex-col px-8 pt-4 hidden">
-            <span className="text-marine text-2xl md:text-4xl font-extrabold leading-tight">
-              {userAccount?.useSocialName
-                ? userAccount?.socialName
-                : userAccount?.firstName}
-            </span>
-            <span className="text-marine text-lg md:text-xl font-medium">
-              {userAccount?.lastName}
-            </span>
-            {userAccount?.collaborator && (
-              <span className="text-marine text-sm font-semibold mt-1 opacity-80">
-                {userAccount?.collaboratorDescription}
-              </span>
-            )}
-          </div>
-
-          {/* Formulário de atualização */}
-          <div className="px-6 py-6 w-full space-y-6">
-            {userAccount && (
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 pb-20 pt-4 sm:flex-row sm:gap-10 sm:pt-8">
+        <MenuDoPerfil
+          secoes={secoes}
+          atual={secao}
+          onEscolher={escolher}
+          identidade={identidade}
+          dadosSujos={dadosSujos}
+        />
+        <div className="min-w-0 flex-1 sm:max-w-[720px]">
+          {userAccount &&
+            painel(
+              "dados",
               <>
+                {ehColaborador && (
+                  <div className="flex flex-col items-center gap-2 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:gap-6">
+                    {/* shrink-0: na linha, o flex espremia a foto num oval */}
+                    <div className="shrink-0">
+                      <ImageProfile
+                        deleteImage={modals.deleteImage.open}
+                        onChange={handleImageChange}
+                        src={imagePreview}
+                      />
+                    </div>
+                    <div className="text-center text-sm text-slate-600 sm:text-left">
+                      <p className="font-medium text-marine">Foto de perfil</p>
+                      <p>
+                        Aparece para o cursinho e na página pública. JPG ou PNG,
+                        até 1 MB. Salva assim que você escolhe.
+                      </p>
+                    </div>
+                  </div>
+                )}
                 <AccountForm
                   update={update}
                   userAccount={userAccount}
-                  hasImageChange={hasImageChange}
+                  onChangesChange={setDadosSujos}
                 />
-
-                {/* Push neste aparelho (some quando desligado no ambiente) */}
-                <NotificacoesDoAparelho />
-                
-                {/* Seção de Frentes (apenas para colaboradores) - Mobile */}
-                {userAccount.collaborator && (
-                  <div className="md:hidden mt-6 pt-6 border-t border-gray-200">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-sm font-semibold text-gray-700">
-                        Frentes de Afinidade
-                      </h3>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={modals.editFrentes.open}
-                      >
-                        Editar
-                      </Button>
-                    </div>
-                    <CollaboratorFrentesDisplay
-                      afinidades={userAccount.afinidades || []}
-                      token={token}
-                    />
-                  </div>
-                )}
-              </>
+              </>,
             )}
-          </div>
+          {userAccount &&
+            ehColaborador &&
+            painel(
+              "frentes",
+              <div className="rounded-xl border border-slate-200 bg-white p-4">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <p className="text-sm text-slate-600">
+                    As frentes em que você pode ajudar o cursinho.
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={modals.editFrentes.open}
+                  >
+                    Editar
+                  </Button>
+                </div>
+                <CollaboratorFrentesDisplay
+                  afinidades={userAccount.afinidades || []}
+                  token={token}
+                />
+              </div>,
+            )}
+          {userAccount &&
+            painel(
+              "notificacoes",
+              pushHabilitado() ? (
+                <NotificacoesDoAparelho />
+              ) : (
+                <p className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
+                  As notificações no aparelho ainda não estão disponíveis neste
+                  ambiente.
+                </p>
+              ),
+            )}
         </div>
       </div>
       {ModalDelete()}

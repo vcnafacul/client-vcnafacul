@@ -15,17 +15,24 @@ interface AccountFormProps {
   update: (data: any, onSuccess?: () => void, onError?: () => void) => void;
   userAccount: UserMe;
   hasImageChange?: boolean;
+  /** Avisa quando há (ou deixa de haver) mudança sem salvar — o ponto no menu do perfil. */
+  onChangesChange?: (temMudancas: boolean) => void;
 }
 
 export function AccountForm({
   update,
   userAccount,
   hasImageChange = false,
+  onChangesChange,
 }: AccountFormProps) {
   const [isCheckboxChecked, setIsCheckboxChecked] = useState<boolean>(
     userAccount.useSocialName
   );
   const [hasChanges, setHasChanges] = useState<boolean>(false);
+  useEffect(() => {
+    onChangesChange?.(hasChanges);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasChanges]);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
   const schema = yup
@@ -115,6 +122,13 @@ export function AccountForm({
         return watchedDate !== originalValue;
       }
 
+      /*
+        ⚠️ Campo ainda não preenchido (undefined) não é mudança: na primeira
+        checagem, ao montar, os valores ainda não chegaram ao formulário e
+        "Isabela" contra undefined deixava o "Salvar" habilitado sem nada
+        editado (e o ponto de "não salvo" do Meu perfil aceso).
+      */
+      if (watchedValue === undefined) return false;
       return watchedValue !== originalValue;
     });
 
