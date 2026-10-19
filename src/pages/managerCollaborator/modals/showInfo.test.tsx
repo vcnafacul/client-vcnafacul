@@ -20,10 +20,7 @@ vi.mock("@/components/templates/modalTemplate", () => ({
 
 import { CollaboratorColumns } from "..";
 import { ShowInfo } from "./showInfo";
-import {
-  consequenciasDaInativacao,
-  mensagemDaAtivacao,
-} from "./textosDaAtivacao";
+import { mensagemDaAtivacao } from "./textosDaAtivacao";
 
 const colaborador = (actived: boolean): CollaboratorColumns => ({
   id: "c-1",
@@ -51,88 +48,50 @@ const abrir = (actived: boolean, handleActive = vi.fn()) => {
       openUpdateRole={vi.fn()}
     />,
   );
-  return { handleActive, chave: screen.getByRole("checkbox") };
+  return { handleActive };
 };
 
-describe("ShowInfo — ativar e inativar (tickets-documentacao, 03)", () => {
+/** 2026-10-19: inativar saiu da tela; a chave só existe para ativar. */
+describe("ShowInfo — só ativar", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("inativar abre a confirmação com o nome e as consequências", async () => {
-    const { handleActive, chave } = abrir(true);
-    fireEvent.click(chave);
-
-    expect(await screen.findByText("Inativar Ana Lima?")).toBeTruthy();
-    expect(
-      screen.getByText("Ao reativar, volta com a função atual (Professor)."),
-    ).toBeTruthy();
-    expect(handleActive).not.toHaveBeenCalled();
-  });
-
-  it("cancelar não muda nada", async () => {
-    const { handleActive, chave } = abrir(true);
-    fireEvent.click(chave);
-    fireEvent.click(await screen.findByRole("button", { name: "Cancelar" }));
-
-    await waitFor(() =>
-      expect(screen.queryByText("Inativar Ana Lima?")).toBeNull(),
-    );
-    expect(handleActive).not.toHaveBeenCalled();
-    expect((chave as HTMLInputElement).checked).toBe(true);
-  });
-
-  it("confirmar inativa com a intenção explícita e desliga a chave", async () => {
-    const { handleActive, chave } = abrir(true, vi.fn().mockResolvedValue(true));
-    fireEvent.click(chave);
-    fireEvent.click(await screen.findByRole("button", { name: "Confirmar" }));
-
-    await waitFor(() => expect(handleActive).toHaveBeenCalledWith("c-1", false));
-    await waitFor(() => expect((chave as HTMLInputElement).checked).toBe(false));
-  });
-
-  it("falhou: a chave continua como estava", async () => {
-    const { handleActive, chave } = abrir(
-      true,
-      vi.fn().mockResolvedValue(false),
-    );
-    fireEvent.click(chave);
-    fireEvent.click(await screen.findByRole("button", { name: "Confirmar" }));
-
-    await waitFor(() => expect(handleActive).toHaveBeenCalled());
-    await waitFor(() => expect((chave as HTMLInputElement).disabled).toBe(false));
-    expect((chave as HTMLInputElement).checked).toBe(true);
-  });
-
-  it("reativar vai direto, sem confirmação", async () => {
-    const { handleActive, chave } = abrir(
-      false,
-      vi.fn().mockResolvedValue(true),
-    );
-    fireEvent.click(chave);
-
+  it("colaborador ativo: não há chave (não dá para inativar)", () => {
+    abrir(true);
+    expect(screen.queryByRole("checkbox")).toBeNull();
     expect(screen.queryByText(/^Inativar /)).toBeNull();
+  });
+
+  it("inativo: a chave ativa direto e some depois", async () => {
+    const { handleActive } = abrir(false, vi.fn().mockResolvedValue(true));
+    fireEvent.click(screen.getByRole("checkbox"));
     await waitFor(() => expect(handleActive).toHaveBeenCalledWith("c-1", true));
+    await waitFor(() => expect(screen.queryByRole("checkbox")).toBeNull());
+  });
+
+  it("falhou: a chave continua, desligada e habilitada", async () => {
+    const { handleActive } = abrir(false, vi.fn().mockResolvedValue(false));
+    const chave = screen.getByRole("checkbox") as HTMLInputElement;
+    fireEvent.click(chave);
+    await waitFor(() => expect(handleActive).toHaveBeenCalled());
+    await waitFor(() => expect(chave.disabled).toBe(false));
+    expect(chave.checked).toBe(false);
   });
 
   it("a chave fica desabilitada enquanto a requisição anda", async () => {
     let terminar: (ok: boolean) => void = () => {};
-    const { chave } = abrir(
+    abrir(
       false,
       vi.fn(() => new Promise<boolean>((r) => (terminar = r))),
     );
+    const chave = screen.getByRole("checkbox") as HTMLInputElement;
     fireEvent.click(chave);
-    await waitFor(() => expect((chave as HTMLInputElement).disabled).toBe(true));
-    terminar(true);
-    await waitFor(() => expect((chave as HTMLInputElement).disabled).toBe(false));
+    await waitFor(() => expect(chave.disabled).toBe(true));
+    terminar(false);
+    await waitFor(() => expect(chave.disabled).toBe(false));
   });
 });
 
 describe("textos da ativação", () => {
-  it("consequências sem função não citam o nome", () => {
-    expect(consequenciasDaInativacao()).toContain(
-      "Ao reativar, volta com a função atual.",
-    );
-  });
-
   it("mensagem de sucesso conforme a resposta", () => {
     expect(mensagemDaAtivacao({ actived: false })).toBe("Colaborador inativado.");
     expect(

@@ -19,7 +19,6 @@ import { toast } from "react-toastify";
 import { getCollaboratorFrentesEnriched } from "@/services/prepCourse/collaborator/get-collaborator-frentes";
 import { useAuthStore } from "@/store/auth";
 import { CollaboratorColumns } from "..";
-import { consequenciasDaInativacao } from "./textosDaAtivacao";
 import { ModalExcluirColaborador } from "./ModalExcluirColaborador";
 
 interface ModalProps {
@@ -78,7 +77,6 @@ export function ShowInfo({
   const [frentesLoading, setFrentesLoading] = useState(false);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [confirmarRemocao, setConfirmarRemocao] = useState(false);
-  const [confirmarInativacao, setConfirmarInativacao] = useState(false);
   const [confirmarExclusao, setConfirmarExclusao] = useState(false);
   const [salvandoAtivo, setSalvandoAtivo] = useState(false);
   const { data } = useAuthStore();
@@ -131,11 +129,11 @@ export function ShowInfo({
     });
   };
 
-  const mudarAtivo = async (novo: boolean) => {
-    setConfirmarInativacao(false);
+  /** Só ativar: inativar saiu da tela (2026-10-19). Ativado, a chave some. */
+  const ativar = async () => {
     setSalvandoAtivo(true);
     try {
-      if (await handleActive(collaborator.id, novo)) setActived(novo);
+      if (await handleActive(collaborator.id, true)) setActived(true);
     } finally {
       setSalvandoAtivo(false);
     }
@@ -246,22 +244,26 @@ export function ShowInfo({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-          <div className="sm:col-start-2 md:justify-self-end">
-            <PropValue
-              prop="Ativo"
-              value={
-                <Toggle
-                  name="ativo"
-                  checked={actived}
-                  disabled={salvandoAtivo}
-                  handleCheck={() =>
-                    // Inativar tira o acesso: pede confirmação. Reativar não.
-                    actived ? setConfirmarInativacao(true) : mudarAtivo(true)
-                  }
-                />
-              }
-            />
-          </div>
+          {/*
+            ⚠️ **Inativar não existe mais nesta tela** (2026-10-19): a saída de um
+            colaborador é "Excluir do cursinho". A chave só aparece para quem está
+            inativo, para reativar — e some depois de ativado.
+          */}
+          {!actived && (
+            <div className="sm:col-start-2 md:justify-self-end">
+              <PropValue
+                prop="Ativar"
+                value={
+                  <Toggle
+                    name="ativo"
+                    checked={false}
+                    disabled={salvandoAtivo}
+                    handleCheck={ativar}
+                  />
+                }
+              />
+            </div>
+          )}
           <div className="sm:col-span-2 flex flex-col sm:flex-row gap-2">
             <InputFactory
               id="description"
@@ -307,19 +309,6 @@ export function ShowInfo({
           )}
         </div>
       </div>
-      <ModalConfirmCancel
-        isOpen={confirmarInativacao}
-        handleClose={() => setConfirmarInativacao(false)}
-        handleConfirm={() => mudarAtivo(false)}
-        text={`Inativar ${collaborator.name}?`}
-        className="bg-white p-4 rounded-md w-[calc(100%-2rem)]"
-      >
-        <ul className="list-disc pl-5 text-sm text-gray-600">
-          {consequenciasDaInativacao(collaborator.role?.name).map((t) => (
-            <li key={t}>{t}</li>
-          ))}
-        </ul>
-      </ModalConfirmCancel>
       {handleExcluir && confirmarExclusao && (
         <ModalExcluirColaborador
           isOpen={confirmarExclusao}
