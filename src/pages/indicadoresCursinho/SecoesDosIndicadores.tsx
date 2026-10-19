@@ -15,6 +15,12 @@ import {
   type IndicadoresDeTodos,
 } from "@/services/indicadores";
 import { ComparativoEntrePeriodos } from "./ComparativoEntrePeriodos";
+import {
+  hojeEmSaoPaulo,
+  rotuloDoPeriodoDaTurma,
+  subtituloDoRecorte,
+  turmasDaVisao,
+} from "./turmasDaVisao";
 import { TodosOsPeriodos } from "./cursinhoDosIndicadores";
 import { CurvaDoPeriodo, EvolucaoDoPeriodo } from "./EvolucaoDoPeriodo";
 import { explicacoes } from "./explicacoes";
@@ -57,6 +63,19 @@ export function SecoesDosIndicadores({ dados }: Props) {
   const periodoId = todos ? null : dados.periodo.id;
   const sumindo = abertos ? contagem(abertos, "sumindo") : null;
   const [listaAberta, setListaAberta] = useState(false);
+  // tickets/047 — na visão de todos, a tabela mostra primeiro futuros e vigentes
+  const [mostrarEncerrados, setMostrarEncerrados] = useState(false);
+  const daVisao = todos
+    ? turmasDaVisao(
+        dados.turmas,
+        dados.comparativo,
+        hojeEmSaoPaulo(),
+        mostrarEncerrados,
+      )
+    : null;
+  const inicioDe = new Map(
+    (todos ? dados.comparativo : []).map((p) => [p.periodoId, p.inicio]),
+  );
   const desempenho = useDesempenho(periodoId);
   const doPeriodo = todos ? "das matrículas" : "dos alunos do período";
   const ultimaDaTurma = new Map(
@@ -226,7 +245,36 @@ export function SecoesDosIndicadores({ dados }: Props) {
         </Area>
 
         {/* o painel já se chama "Turmas": sem o título da área repetido */}
-        <TabelaDeTurmas turmas={turmas} colunas={colunas} />
+        {daVisao ? (
+          <TabelaDeTurmas
+            turmas={daVisao.turmas}
+            colunas={colunas}
+            subtitulo={subtituloDoRecorte(daVisao.recorte)}
+            periodoDaTurma={(t) => {
+              const v = daVisao.turmas.find((x) => x.id === t.id);
+              return v
+                ? rotuloDoPeriodoDaTurma(v, inicioDe.get(v.periodoId))
+                : undefined;
+            }}
+            rodape={
+              (daVisao.temEncerradasEscondidas || mostrarEncerrados) && (
+                <div className="mt-3 border-t border-slate-100 pt-3 text-center">
+                  <button
+                    type="button"
+                    onClick={() => setMostrarEncerrados((v) => !v)}
+                    className="text-sm font-medium text-marine underline-offset-2 hover:underline"
+                  >
+                    {mostrarEncerrados
+                      ? "Esconder turmas de períodos encerrados"
+                      : "Mostrar turmas de períodos encerrados"}
+                  </button>
+                </div>
+              )
+            }
+          />
+        ) : (
+          <TabelaDeTurmas turmas={turmas} colunas={colunas} />
+        )}
 
         <Area titulo="Desempenho">
           <AreaDesempenho {...desempenho} />

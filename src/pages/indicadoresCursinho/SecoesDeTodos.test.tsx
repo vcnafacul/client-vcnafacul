@@ -1,6 +1,6 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import type { IndicadoresDeTodos } from "@/services/indicadores";
 
 vi.mock("@/components/indicadores/InfoDaMetrica", () => ({ InfoDaMetrica: () => null }));
@@ -49,6 +49,13 @@ const todos = (emAndamento: boolean): IndicadoresDeTodos => ({
   ],
 });
 
+// ⚠️ A tabela depende de "hoje" (047): data fixa, 2025 encerrado e 2026 em andamento.
+beforeAll(() => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(new Date("2026-10-18T15:00:00Z"));
+});
+afterAll(() => vi.useRealTimers());
+
 const montar = (d: IndicadoresDeTodos) =>
   render(<SecoesDosIndicadores dados={d} />, { wrapper: MemoryRouter });
 
@@ -69,8 +76,15 @@ describe("Seções na visão de todos os períodos (046)", () => {
     // o período fica embaixo do nome da turma (sem coluna nova: cabe em 768px)
     const tabela = screen.getAllByRole("table")[0];
     expect(within(tabela).queryByText("Período")).toBeNull();
+    // 047: só a turma do período em andamento; a de 2025 (encerrado) fica atrás do botão
     expect(within(tabela).getAllByText("Extensivo 2026").length).toBe(1);
-    expect(within(tabela).getAllByText("Extensivo 2025").length).toBe(1);
+    expect(within(tabela).queryByText(/Extensivo 2025/)).toBeNull();
+    expect(screen.getByText(/Turmas dos períodos futuros e em andamento/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Mostrar turmas de períodos encerrados" }));
+    expect(within(screen.getAllByRole("table")[0]).getByText("Extensivo 2025 · encerrado")).toBeInTheDocument();
+    expect(screen.getByText(/Todas as turmas/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Esconder turmas de períodos encerrados" }));
+    expect(within(screen.getAllByRole("table")[0]).queryByText(/Extensivo 2025/)).toBeNull();
     expect(desempenho.periodoId).toBeNull();
   });
 
@@ -93,5 +107,22 @@ describe("Turmas na visão de outro cursinho (045)", () => {
     );
     const tabela = screen.getAllByRole("table")[0];
     expect(within(tabela).queryAllByRole("link")).toHaveLength(0);
+  });
+});
+
+describe("Turmas no fim do ano (047, D3)", () => {
+  it("tudo encerrado e nada novo: só as turmas do último período", () => {
+    const d = todos(false);
+    d.comparativo = d.comparativo.map((p) =>
+      p.periodoId === "p2" ? { ...p, fim: "2026-09-30", emAndamento: false } : p,
+    );
+    montar(d);
+    const tabela = screen.getAllByRole("table")[0];
+    expect(within(tabela).getByText("Extensivo 2026 · encerrado")).toBeInTheDocument();
+    expect(within(tabela).queryByText(/Extensivo 2025/)).toBeNull();
+    expect(screen.getByText(/do último período \(Extensivo 2026\)/)).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Mostrar turmas de períodos encerrados" }),
+    ).toBeInTheDocument();
   });
 });
