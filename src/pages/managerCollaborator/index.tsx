@@ -1,4 +1,3 @@
-import Button from "@/components/molecules/button";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getMaterias, MateriaDto } from "@/services/content/getMaterias";
@@ -17,21 +16,15 @@ import { getRolesAtribuiveis } from "@/services/prepCourse/getRolesAtribuiveis";
 import { atribuirFuncaoColaborador } from "@/services/prepCourse/atribuirFuncaoColaborador";
 import { useAuthStore } from "@/store/auth";
 import { Role } from "@/types/roles/role";
-import { phoneMask } from "@/utils/phoneMask";
-import {
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
-import Paper from "@mui/material/Paper";
-import Tooltip from "@mui/material/Tooltip";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useMemo, useState } from "react";
-import { IoEyeSharp } from "react-icons/io5";
 import { toast } from "react-toastify";
+import { DashListTemplate, type DashAction } from "@/components/dashV2";
+import type { CardDash } from "@/components/molecules/cardDash";
+import { DashCardContext } from "@/context/dashCardContext";
+import { StatusEnum } from "@/enums/generic/statusEnum";
+import { cn } from "@/lib/utils";
+import { dashV2 } from "@/components/dashV2/tokens";
+import { colunasDeColaborador } from "./columns";
 import ModalEditRole from "./modals/ModalEditRole";
 import ModalNewRole from "./modals/ModalNewRole";
 import ModalUpdateRoleUser from "./modals/ModalUpdateRoleUser";
@@ -39,8 +32,6 @@ import { ShowInfo } from "./modals/showInfo";
 import { mensagemDaAtivacao } from "./modals/textosDaAtivacao";
 import { ModalConvites } from "./modals/ModalConvites";
 import { Roles } from "@/enums/roles/roles";
-import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
-import { ListaDeColaboradoresMobile } from "./ListaDeColaboradoresMobile";
 import { buscarColaboradores } from "./buscaDeColaboradores";
 
 export interface CollaboratorColumns {
@@ -74,6 +65,7 @@ export default function ManagerCollaborator() {
   const [selectedMateria, setSelectedMateria] = useState<string>("");
   const [selectedFrente, setSelectedFrente] = useState<string>("");
   const [busca, setBusca] = useState("");
+  const [carregando, setCarregando] = useState(true);
   /** tickets/040, card 07: colaboradores atuais ou ex-membros. */
   const [aba, setAba] = useState<"colaboradores" | "ex-membros">(
     "colaboradores",
@@ -93,8 +85,6 @@ export default function ManagerCollaborator() {
   const ehAdminDoCursinho = !!permissao[Roles.gerenciarPermissoesCursinho];
 
   const executeAsync = useToastAsync();
-  // Abaixo de 768px (o `sm` do projeto) a tabela vira lista de cards.
-  const acimaDeSm = useAcimaDeSm();
   const VITE_FTP_PROFILE = import.meta.env.VITE_FTP_PROFILE;
 
   const frentesForSelectedMateria = useMemo(() => {
@@ -162,78 +152,6 @@ export default function ManagerCollaborator() {
       return "";
     }
   };
-
-  const columns: GridColDef[] = [
-    {
-      field: "actions",
-      headerName: "Ações",
-      width: 170,
-      disableColumnMenu: true,
-      sortable: false,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => (
-        <div className="flex gap-2 justify-center">
-          <Tooltip title="Visualizar">
-            <IconButton onClick={() => onClickCard(params.row.id)}>
-              <IoEyeSharp className="h-6 w-6 fill-gray-500 opacity-60 hover:opacity-100" />
-            </IconButton>
-          </Tooltip>
-        </div>
-      ),
-    },
-    {
-      field: "name",
-      headerName: "Nome",
-      width: 150,
-      minWidth: 150,
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      width: 250,
-      minWidth: 250,
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-    },
-    {
-      field: "role",
-      headerName: "Função",
-      width: 150,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => params.row.role.name,
-    },
-    {
-      field: "phone",
-      headerName: "Telefone",
-      width: 250,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => phoneMask(params.row.phone),
-    },
-    {
-      field: "actived",
-      headerName: "Status",
-      width: 150,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => (params.row.actived ? "Ativo" : "Inativo"),
-    },
-    {
-      field: "createdAt",
-      headerName: "Criado em",
-      width: 250,
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) =>
-        new Date(params.row.createdAt).toLocaleDateString("pt-BR"),
-    },
-  ];
 
   const onClickCard = (userId: string) => {
     const coll = collaborator.find((c) => c.id === userId);
@@ -485,7 +403,8 @@ export default function ManagerCollaborator() {
           })),
         );
       })
-      .catch((error) => toast.error(error.message));
+      .catch((error) => toast.error(error.message))
+      .finally(() => setCarregando(false));
   }, [token]);
 
   useEffect(() => {
@@ -541,171 +460,156 @@ export default function ManagerCollaborator() {
     };
   }, [collaborator]);
 
-  const paginationModel = { page: 0, pageSize: 100 };
+  const filtrosAtivos =
+    (busca ? 1 : 0) + (selectedMateria ? 1 : 0) + (selectedFrente ? 1 : 0);
 
-  return (
-    <div className="flex flex-col gap-4 w-full justify-center">
-      <div className="w-full px-4">
-        <h1 className="text-3xl font-bold text-center text-marine">
-          Colaboradores
-        </h1>
-        <div className="mt-3 flex justify-center">
-          <Segmented
-            label="Lista"
-            options={[
-              { value: "colaboradores", label: "Colaboradores" },
-              { value: "ex-membros", label: "Ex-membros" },
-            ]}
-            value={aba}
-            onChange={setAba}
-          />
-        </div>
-      </div>
-      {aba === "ex-membros" ? (
-        <ListaDeExMembros />
-      ) : (
-        <>
-          {/*
-        ⚠️ **Convites: quem gerencia colaboradores também** — corrigido em
-        2026-09-24. Esta tela já exige `gerenciarColaboradores`, então o botão
-        aparece para todos que chegam aqui; a lista de funções do modal vem do
-        `role/atribuiveis`, sem as de admin para quem não é admin, e o servidor
-        recusa a escalada.
+  /** tickets/040, card 07: colaboradores atuais ou ex-membros. */
+  const abas = (
+    <div className="flex justify-center sm:justify-start">
+      <Segmented
+        label="Lista"
+        options={[
+          { value: "colaboradores", label: "Colaboradores" },
+          { value: "ex-membros", label: "Ex-membros" },
+        ]}
+        value={aba}
+        onChange={setAba}
+      />
+    </div>
+  );
 
-        ⚠️ **Funções: só o admin do cursinho** (`gerenciarPermissoesCursinho`)
-        cria e edita — quem gerencia colaboradores só escolhe uma que já existe.
-      */}
-          <div
-            data-acoes
-            className="grid grid-cols-2 gap-2 px-4 sm:flex sm:justify-end sm:gap-0 sm:px-0"
-          >
-            <Button
-              onClick={() => modals.modalConvites.open()}
-              size="small"
-              typeStyle="quaternary"
-              className="col-span-2 w-full h-10 sm:w-fit sm:h-fit sm:mx-4"
-            >
-              Convites
-            </Button>
-            {ehAdminDoCursinho && (
-              <>
-                <Button
-                  onClick={() => modals.modalShowNewRole.open()}
-                  size="small"
-                  typeStyle="quaternary"
-                  className="w-full h-10 sm:w-fit sm:h-fit sm:mx-4"
-                >
-                  Nova Função
-                </Button>
-                <Button
-                  onClick={() => modals.modalShowEditRole.open()}
-                  size="small"
-                  typeStyle="primary"
-                  className="w-full h-10 sm:w-fit sm:h-fit sm:mx-4"
-                >
-                  Editar Função
-                </Button>
-              </>
-            )}
-          </div>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 px-4 sm:flex-wrap">
-            <TextField
-              type="search"
-              size="small"
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              placeholder="Buscar por nome, email, função ou telefone"
-              inputProps={{ "aria-label": "Buscar colaborador" }}
-              sx={{ minWidth: 300 }}
-              fullWidth={!acimaDeSm}
-            />
-            <FormControl
-              size="small"
-              sx={{ minWidth: 200 }}
-              fullWidth={!acimaDeSm}
-            >
-              <InputLabel id="filter-materia-label">Matéria</InputLabel>
-              <Select
-                labelId="filter-materia-label"
-                value={selectedMateria}
-                label="Matéria"
-                onChange={(e) => handleMateriaChange(e.target.value)}
-              >
-                <MenuItem value="">
-                  <em>Todas</em>
-                </MenuItem>
-                {materias.map((m) => (
-                  <MenuItem key={m._id} value={m._id}>
-                    {m.nome}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl
-              size="small"
-              sx={{ minWidth: 200 }}
-              fullWidth={!acimaDeSm}
-              disabled={!selectedMateria}
-            >
-              <InputLabel id="filter-frente-label">Frente</InputLabel>
-              <Select
-                labelId="filter-frente-label"
-                value={selectedFrente}
-                label="Frente"
-                onChange={(e) => handleFrenteChange(e.target.value)}
-              >
-                <MenuItem value="">
-                  <em>Todas</em>
-                </MenuItem>
-                {frentesForSelectedMateria.map((f) => (
-                  <MenuItem key={f._id ?? f.id} value={f._id ?? f.id}>
-                    {f.nome}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            {(selectedMateria || selectedFrente || busca) && (
-              <Button
-                onClick={handleClearFilters}
-                size="small"
-                typeStyle="secondary"
-                className="w-full h-10 sm:w-fit sm:h-fit"
-              >
-                Limpar Filtros
-              </Button>
-            )}
-          </div>
-          <p className="text-xs text-gray-500 px-4">
-            {filteredCollaborators.length} de {collaborator.length}{" "}
-            colaboradores
-          </p>
-          {!acimaDeSm ? (
-            <ListaDeColaboradoresMobile
-              // Filtro novo volta para a primeira página da lista.
-              key={`${busca}|${selectedMateria}|${selectedFrente}`}
-              colaboradores={filteredCollaborators}
-              fotos={collaboratorPhotos}
-              onVer={onClickCard}
-            />
-          ) : (
-            <Paper sx={{ height: "100%", width: "100%" }}>
-              <DataGrid
-                rows={filteredCollaborators}
-                columns={columns}
-                initialState={{ pagination: { paginationModel } }}
-                rowHeight={40}
-                pageSizeOptions={[5, 10, 15, 30, 50, 100]}
-                sx={{ border: 0 }}
-              />
-            </Paper>
-          )}
-        </>
-      )}
+  const modais = (
+    <>
       {ModalDeConvites()}
       {ModalShowInfo()}
       {ModalShowNewRole()}
       {ShowUserRole()}
       {ModalShowEditRole()}
-    </div>
+    </>
+  );
+
+  /*
+    ⚠️ **Convites: quem gerencia colaboradores também** — corrigido em
+    2026-09-24. Esta tela já exige `gerenciarColaboradores`, então a ação
+    aparece para todos que chegam aqui; a lista de funções do modal vem do
+    `role/atribuiveis`, sem as de admin para quem não é admin, e o servidor
+    recusa a escalada.
+
+    ⚠️ **Funções: só o admin do cursinho** (`gerenciarPermissoesCursinho`)
+    cria e edita — quem gerencia colaboradores só escolhe uma que já existe.
+  */
+  const acoes: { primary: DashAction; secondary: DashAction[] } = {
+    primary: {
+      id: "convites",
+      label: "Convites",
+      onClick: () => modals.modalConvites.open(),
+    },
+    secondary: ehAdminDoCursinho
+      ? [
+          {
+            id: "nova-funcao",
+            label: "Nova Função",
+            onClick: () => modals.modalShowNewRole.open(),
+          },
+          {
+            id: "editar-funcao",
+            label: "Editar Função",
+            onClick: () => modals.modalShowEditRole.open(),
+          },
+        ]
+      : [],
+  };
+
+  // Ex-membros: a mesma moldura do Dash V2, sem a tabela de colaboradores.
+  if (aba === "ex-membros") {
+    return (
+      <div className={cn("min-h-[calc(100vh-76px)]", dashV2.page)}>
+        <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-6">
+          <div
+            className={cn(
+              "rounded-md border px-4 py-3",
+              dashV2.surface,
+              dashV2.border,
+            )}
+          >
+            <h1 className={cn("text-lg font-semibold", dashV2.text.primary)}>
+              Colaboradores
+            </h1>
+          </div>
+          {abas}
+          <ListaDeExMembros />
+        </div>
+        {modais}
+      </div>
+    );
+  }
+
+  const cardTransformation = (c: CollaboratorColumns): CardDash => ({
+    id: c.id,
+    title: c.name,
+    status: StatusEnum.Approved,
+  });
+
+  return (
+    <DashCardContext.Provider
+      value={{
+        title: "Colaboradores",
+        entities: filteredCollaborators,
+        setEntities: setCollaborator,
+        onClickCard,
+        // O V2 pagina no client, sobre a lista inteira que já chegou.
+        getMoreCards: async () => ({
+          data: collaborator,
+          page: 1,
+          limit: collaborator.length,
+          totalItems: collaborator.length,
+        }),
+        cardTransformation,
+        limitCards: Math.max(collaborator.length, 1),
+        filterProps: {
+          filtrar: (e: React.ChangeEvent<HTMLInputElement>) =>
+            setBusca(e.target.value),
+          placeholder: "Buscar por nome, email, função ou telefone",
+          defaultValue: busca,
+        },
+        selectFiltes: [
+          {
+            "aria-label": "Matéria",
+            options: [
+              { id: "", name: "Todas as matérias" },
+              ...materias.map((m) => ({ id: m._id, name: m.nome })),
+            ],
+            value: selectedMateria,
+            setState: handleMateriaChange,
+          },
+          {
+            "aria-label": "Frente",
+            disabled: !selectedMateria,
+            options: [
+              { id: "", name: "Todas as frentes" },
+              ...frentesForSelectedMateria.map((f) => ({
+                id: f._id ?? f.id,
+                name: f.nome,
+              })),
+            ],
+            value: selectedFrente,
+            setState: handleFrenteChange,
+          },
+        ],
+      }}
+    >
+      <DashListTemplate<CollaboratorColumns>
+        columns={colunasDeColaborador(collaboratorPhotos)}
+        actions={acoes}
+        state={carregando ? "loading" : "idle"}
+        activeFilterCount={filtrosAtivos}
+        onClearFilters={handleClearFilters}
+        totalSemFiltro={collaborator.length}
+        defaultSort={{ columnId: "nome", direction: "asc" }}
+        headerSlot={abas}
+        textoVazio="Nenhum colaborador no cursinho ainda. Use Convites para chamar o primeiro."
+      />
+      {modais}
+    </DashCardContext.Provider>
   );
 }
