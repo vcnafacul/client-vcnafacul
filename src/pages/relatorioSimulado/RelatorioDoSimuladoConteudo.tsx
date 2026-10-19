@@ -203,6 +203,17 @@ export function RelatorioDoSimuladoConteudo({
   const [questoes, setQuestoes] = useState<QuestaoDoRelatorio[] | null>(null);
   /** Ver o docblock em `carregarQuestoes`. */
   const buscandoQuestoes = useRef(false);
+  /**
+   * Já chegaram? Espelho em `ref` do `questoes !== null`: a busca termina e
+   * libera o `buscandoQuestoes` ANTES de o React repintar, e um clique com o
+   * closure do render anterior ainda vê `questoes === null` — e buscava de novo
+   * (CI do client#940, runner lento). Toda limpeza passa por `esquecerQuestoes`.
+   */
+  const questoesCarregadas = useRef(false);
+  const esquecerQuestoes = () => {
+    questoesCarregadas.current = false;
+    setQuestoes(null);
+  };
   /** Só no relatório da prova — ver `TEXTO_COMPOSICOES_DIFERENTES`. */
   const [questoesMesmas, setQuestoesMesmas] = useState<boolean | undefined>(
     undefined,
@@ -267,7 +278,7 @@ export function RelatorioDoSimuladoConteudo({
    */
   const carregarQuestoes = () => {
     if (!idFonte) return;
-    if (questoes !== null) return;
+    if (questoes !== null || questoesCarregadas.current) return;
     /*
       ⚠️ **A busca EM ANDAMENTO também barra.** A carga em segundo plano começa
       assim que o relatório chega; um clique na linha antes dela terminar via
@@ -281,6 +292,7 @@ export function RelatorioDoSimuladoConteudo({
     setEstadoQuestoes("loading");
     buscarQuestoes(token, fonte, turmaId)
       .then((r) => {
+        questoesCarregadas.current = true;
         setQuestoes(r.questoes);
         setQuestoesMesmas(r.mesmasQuestoes);
         setSemDiscriminacao(r.semDiscriminacao);
@@ -390,7 +402,7 @@ export function RelatorioDoSimuladoConteudo({
     por questão (as notas, a média e a discriminação mudaram).
   */
   const recarregarDepoisDoRecalculo = useCallback(() => {
-    setQuestoes(null);
+    esquecerQuestoes();
     carregar();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fonte.tipo, idFonte, turmaId, token]);
@@ -850,7 +862,7 @@ export function RelatorioDoSimuladoConteudo({
             onClose={() => setAberto(null)}
             onMudou={() => {
               setAberto(null);
-              setQuestoes(null);
+              esquecerQuestoes();
               carregar();
             }}
           />
@@ -938,7 +950,7 @@ export function RelatorioDoSimuladoConteudo({
             */
             onEnvioExcluido={() => {
               setAberto(null);
-              setQuestoes(null);
+              esquecerQuestoes();
               carregar();
             }}
           />

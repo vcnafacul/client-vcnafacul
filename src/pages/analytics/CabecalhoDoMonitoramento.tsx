@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Period } from "@/enums/analytics/period";
 import { MenuItem, Select, Typography } from "@mui/material";
 import { CursinhoDoFiltro, FORA_DO_RECORTE } from "./recorte";
-import { SeletorDeCursinho } from "./SeletorDeCursinho";
+import { SeletorDeCursinho } from "@/components/molecules/seletorDeCursinho";
 
 type Props = {
   period: Period;

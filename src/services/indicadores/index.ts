@@ -48,6 +48,28 @@ export interface Indicadores {
   serie: { dia: string; metricas: Metricas }[];
 }
 
+/**
+ * tickets/045 — com `cursinhoId`, as rotas do admin
+ * (`/indicadores/cursinho/:id/...`); sem, as do próprio cursinho (como sempre).
+ */
+const rota = (
+  propria: string,
+  sufixo: string,
+  cursinhoId?: string,
+  query = "",
+) =>
+  cursinhoId
+    ? `${indicadores}/cursinho/${encodeURIComponent(cursinhoId)}${sufixo}${query}`
+    : `${propria}${query}`;
+
+/** 404 nas rotas do próprio cursinho: quem pede não é de cursinho nenhum. */
+export class SemCursinho extends Error {
+  constructor() {
+    super("Você não é de um cursinho");
+    this.name = "SemCursinho";
+  }
+}
+
 const headers = (token: string) => ({
   "Content-Type": "application/json",
   Authorization: `Bearer ${token}`,
@@ -55,11 +77,13 @@ const headers = (token: string) => ({
 
 export async function getPeriodosDosIndicadores(
   token: string,
+  cursinhoId?: string,
 ): Promise<PeriodosDoCursinho> {
-  const response = await fetchWrapper(indicadoresPeriodos, {
-    method: "GET",
-    headers: headers(token),
-  });
+  const response = await fetchWrapper(
+    rota(indicadoresPeriodos, "/periodos", cursinhoId),
+    { method: "GET", headers: headers(token) },
+  );
+  if (response.status === 404 && !cursinhoId) throw new SemCursinho();
   if (response.status !== 200)
     throw new Error("Erro ao buscar os períodos letivos");
   return response.json();
@@ -68,9 +92,10 @@ export async function getPeriodosDosIndicadores(
 export async function getIndicadores(
   token: string,
   periodoId: string,
+  cursinhoId?: string,
 ): Promise<Indicadores> {
   const response = await fetchWrapper(
-    `${indicadores}?periodoId=${encodeURIComponent(periodoId)}`,
+    rota(indicadores, "", cursinhoId, `?periodoId=${encodeURIComponent(periodoId)}`),
     { method: "GET", headers: headers(token) },
   );
   if (response.status !== 200)
@@ -85,16 +110,22 @@ export interface AlunoSumindo {
   /** `YYYY-MM-DD`; `null` se nunca veio. */
   ultimaPresenca: string | null;
   faltasSeguidas: number;
-  /** Só vem para quem pode gerenciar estudantes. */
+  /** Só vem para quem pode gerenciar estudantes (nunca na visão do admin, 045). */
   telefone?: string | null;
 }
 
 export async function getSumindo(
   token: string,
   periodoId: string,
+  cursinhoId?: string,
 ): Promise<AlunoSumindo[]> {
   const response = await fetchWrapper(
-    `${indicadoresSumindo}?periodoId=${encodeURIComponent(periodoId)}`,
+    rota(
+      indicadoresSumindo,
+      "/sumindo",
+      cursinhoId,
+      `?periodoId=${encodeURIComponent(periodoId)}`,
+    ),
     { method: "GET", headers: headers(token) },
   );
   if (response.status !== 200)
@@ -130,9 +161,15 @@ export interface Desempenho {
 export async function getDesempenho(
   token: string,
   periodoId: string,
+  cursinhoId?: string,
 ): Promise<Desempenho> {
   const response = await fetchWrapper(
-    `${indicadoresDesempenho}?periodoId=${encodeURIComponent(periodoId)}`,
+    rota(
+      indicadoresDesempenho,
+      "/desempenho",
+      cursinhoId,
+      `?periodoId=${encodeURIComponent(periodoId)}`,
+    ),
     { method: "GET", headers: headers(token) },
   );
   if (response.status !== 200)

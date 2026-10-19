@@ -42,7 +42,7 @@ describe("ListaDeSumindo", () => {
     rerender(<ListaDeSumindo periodoId="p1" aberta aoFechar={() => {}} />);
 
     expect(await screen.findByText("Ana Souza")).toBeInTheDocument();
-    expect(svc.getSumindo).toHaveBeenCalledWith("tk", "p1");
+    expect(svc.getSumindo).toHaveBeenCalledWith("tk", "p1", undefined);
     expect(
       screen.getByText("Noite · última presença em 28/09"),
     ).toBeInTheDocument();
