@@ -48,6 +48,15 @@ const antigo = {
   fim: "2025-12-12",
   emAndamento: false,
 };
+const futuro = {
+  id: "p2",
+  nome: "Extensivo 2027",
+  ano: 2027,
+  inicio: "2027-02-01",
+  fim: "2027-12-10",
+  emAndamento: false,
+};
+
 /** Soma chave a chave, como o `somarMetricas` da api. */
 function somar(lista: Record<string, unknown>[]) {
   const soma: Record<string, unknown> = {};
@@ -65,11 +74,15 @@ function somar(lista: Record<string, unknown>[]) {
 }
 
 /** tickets/046 — a visão de todos os períodos. */
-const todos = (comAberto: boolean) => {
+const todos = (comAberto: boolean, comFuturo = false) => {
   const encerrado = { ...metricas(84), ativos: 70 };
-  const periodosDaVisao = comAberto ? [antigo, periodo] : [antigo];
+  const periodosDaVisao = [
+    antigo,
+    ...(comAberto ? [periodo] : []),
+    ...(comFuturo ? [futuro] : []),
+  ];
   const doPeriodo = (p: typeof periodo) =>
-    p.id === "p0" ? encerrado : metricas(97);
+    p.id === "p0" ? encerrado : p.id === "p2" ? metricas(0) : metricas(97);
   return {
     todos: true,
     periodos: periodosDaVisao,
@@ -84,6 +97,9 @@ const todos = (comAberto: boolean) => {
             { id: "t1", nome: "Manhã", periodoId: "p1", periodoNome: "Extensivo 2026", metricas: metricas(52) },
             { id: "t2", nome: "Noite", periodoId: "p1", periodoNome: "Extensivo 2026", metricas: metricas(45) },
           ]
+        : []),
+      ...(comFuturo
+        ? [{ id: "f1", nome: "Manhã", periodoId: "p2", periodoNome: "Extensivo 2027", metricas: metricas(0) }]
         : []),
     ],
     comparativo: periodosDaVisao.map((p) => ({
@@ -103,7 +119,7 @@ const cursinhos = [
 ];
 
 const rotas = (
-  opcoes: { semCursinhoProprio?: boolean; semAberto?: boolean } = {},
+  opcoes: { semCursinhoProprio?: boolean; semAberto?: boolean; comFuturo?: boolean } = {},
 ): RotaFalsa[] => [
   { caminho: /\/partner-prep-course\/logos$/, resposta: { corpo: cursinhos } },
   {
@@ -112,7 +128,11 @@ const rotas = (
       ? { status: 404, corpo: { message: "Cursinho não encontrado" } }
       : {
           corpo: {
-            periodos: opcoes.semAberto ? [antigo] : [periodo, antigo],
+            periodos: [
+              ...(opcoes.comFuturo ? [futuro] : []),
+              ...(opcoes.semAberto ? [] : [periodo]),
+              antigo,
+            ],
             turmasSemPeriodo: 0,
           },
         },
@@ -124,7 +144,7 @@ const rotas = (
     resposta: (url) =>
       url.searchParams.get("periodoId")
         ? { corpo: indicadores }
-        : { corpo: todos(!opcoes.semAberto) },
+        : { corpo: todos(!opcoes.semAberto, opcoes.comFuturo) },
   },
   { caminho: /\/desempenho$/, resposta: { corpo: { aplicacoes: [], porTurma: [], porMes: [] } } },
   { caminho: /\/sumindo$/, resposta: { corpo: [] } },
@@ -138,6 +158,7 @@ export const vitrineIndicadoresAdmin: Vitrine = {
     { slug: "proprio", titulo: "Admin no próprio cursinho", rotas: rotas(), render: () => <TelaDosIndicadores podeVerOutros /> },
     { slug: "admin-sem-cursinho", titulo: "Admin sem cursinho", rotas: rotas({ semCursinhoProprio: true }), render: () => <TelaDosIndicadores podeVerOutros /> },
     { slug: "colaborador", titulo: "Colaborador comum", rotas: rotas(), render: () => <TelaDosIndicadores podeVerOutros={false} /> },
-    { slug: "nenhum-em-andamento", titulo: "Todos, nenhum em andamento", rotas: rotas({ semAberto: true }), render: () => <TelaDosIndicadores podeVerOutros={false} /> },
+    { slug: "com-futuro", titulo: "Todos, com período futuro", rotas: rotas({ comFuturo: true }), render: () => <TelaDosIndicadores podeVerOutros={false} /> },
+    { slug: "nenhum-em-andamento", titulo: "Todos, fim do ano", rotas: rotas({ semAberto: true }), render: () => <TelaDosIndicadores podeVerOutros={false} /> },
   ],
 };

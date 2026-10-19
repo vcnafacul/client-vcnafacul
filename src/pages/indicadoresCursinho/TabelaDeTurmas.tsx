@@ -20,15 +20,32 @@ import {
 export function TabelaDeTurmas({
   turmas,
   colunas = colunasBase,
+  subtitulo = "Da maior para a menor evasão",
+  rodape,
+  periodoDaTurma,
 }: {
-  turmas: TurmaDoIndicador[];
+  /** tickets/047 — com `grupo`, a tabela agrupa (futuro → vigente → vencido). */
+  turmas: (TurmaDoIndicador & { grupo?: number })[];
   colunas?: ColunaDaTurma[];
+  subtitulo?: string;
+  /** tickets/047 — o botão das turmas encerradas. */
+  rodape?: React.ReactNode;
+  /** O texto do período embaixo do nome (padrão: `periodoNome`). */
+  periodoDaTurma?: (t: TurmaNoRanking) => string | undefined;
 }) {
   const noRecorte = useNoRecorte();
   const acimaDeSm = useAcimaDeSm();
-  const { turmas: ordenadas, destaqueId } = rankingDeEvasao(turmas);
-  const linkDa = (id: string) =>
-    caminhoDaTurma(`${DASH}/${PARTNER_CLASS}`, id);
+  // D5: o destaque sai só das turmas mostradas; D1: agrupa mantendo a ordem
+  // de evasão dentro de cada grupo (o sort é estável)
+  const ranking = rankingDeEvasao(turmas);
+  const grupoDe = new Map(turmas.map((t) => [t.id, t.grupo ?? 0]));
+  const ordenadas = [...ranking.turmas].sort(
+    (a, b) => (grupoDe.get(a.id) ?? 0) - (grupoDe.get(b.id) ?? 0),
+  );
+  const { destaqueId } = ranking;
+  const rotuloDoPeriodo = (t: TurmaNoRanking) =>
+    periodoDaTurma ? periodoDaTurma(t) : t.periodoNome;
+  const linkDa = (id: string) => caminhoDaTurma(`${DASH}/${PARTNER_CLASS}`, id);
 
   // tickets/045 — vendo outro cursinho, a turma é dele: sem link para a tela
   // de turmas, que é a do próprio usuário
@@ -53,8 +70,8 @@ export function TabelaDeTurmas({
         )}
       </span>
       {/* tickets/046 — na visão de todos, de qual período é a turma */}
-      {t.periodoNome && (
-        <span className="text-xs text-slate-500">{t.periodoNome}</span>
+      {rotuloDoPeriodo(t) && (
+        <span className="text-xs text-slate-500">{rotuloDoPeriodo(t)}</span>
       )}
     </span>
   );
@@ -70,7 +87,7 @@ export function TabelaDeTurmas({
           />
         </span>
       }
-      subtitle="Da maior para a menor evasão"
+      subtitle={subtitulo}
     >
       {ordenadas.length === 0 ? (
         <p className="py-6 text-center text-sm text-slate-500">
@@ -83,7 +100,10 @@ export function TabelaDeTurmas({
               <tr className="border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-400">
                 <th className="py-2 pr-4 font-medium">Turma</th>
                 {colunas.map((c) => (
-                  <th key={c.titulo} className="px-3 py-2 text-right font-medium">
+                  <th
+                    key={c.titulo}
+                    className="px-3 py-2 text-right font-medium"
+                  >
                     {c.titulo}
                   </th>
                 ))}
@@ -91,7 +111,10 @@ export function TabelaDeTurmas({
             </thead>
             <tbody>
               {ordenadas.map((t) => (
-                <tr key={t.id} className="border-b border-slate-100 last:border-0">
+                <tr
+                  key={t.id}
+                  className="border-b border-slate-100 last:border-0"
+                >
                   <td className="py-3 pr-4">{nome(t)}</td>
                   {colunas.map((c) => (
                     <td
@@ -125,6 +148,7 @@ export function TabelaDeTurmas({
           ))}
         </ul>
       )}
+      {rodape}
     </Panel>
   );
 }
