@@ -7,24 +7,30 @@ import {
 } from "@/components/ui/popover";
 import { useMemo, useState } from "react";
 import { FiCheck, FiChevronDown } from "react-icons/fi";
-import { CursinhoDoFiltro, filtrarCursinhos } from "./recorte";
+import { CursinhoDoFiltro, filtrarCursinhos } from "./filtrar";
 
 type Props = {
   cursinhos: CursinhoDoFiltro[];
   valor: string | null;
   onChange: (id: string | null) => void;
   carregando?: boolean;
+  /** O que o "nenhum" significa na tela: "Todos os cursinhos" (padrão) ou "Meu cursinho". */
+  rotuloDoVazio?: string;
+  /** Nome acessível do botão. */
+  rotulo?: string;
 };
 
 /**
- * O cursinho do Monitoramento (tickets/044, card 06): no topo da tela, com
- * busca, porque a lista de cursinhos parceiros passa de algumas dezenas.
+ * Seletor de cursinho com busca (tickets/044, card 06; compartilhado no 045 —
+ * Monitoramento e Indicadores). A lista de parceiros passa de algumas dezenas.
  */
 export function SeletorDeCursinho({
   cursinhos,
   valor,
   onChange,
   carregando,
+  rotuloDoVazio = "Todos os cursinhos",
+  rotulo = "Cursinho do monitoramento",
 }: Props) {
   const [aberto, setAberto] = useState(false);
   const [busca, setBusca] = useState("");
@@ -45,12 +51,12 @@ export function SeletorDeCursinho({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          aria-label="Cursinho do monitoramento"
+          aria-label={rotulo}
           disabled={carregando}
           className="w-full sm:w-64 justify-between font-normal"
         >
           <span className="truncate">
-            {escolhido?.name ?? "Todos os cursinhos"}
+            {escolhido?.name ?? rotuloDoVazio}
           </span>
           <FiChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-60" />
         </Button>
@@ -72,7 +78,7 @@ export function SeletorDeCursinho({
             <Opcao
               selecionada={!valor}
               onClick={() => escolher(null)}
-              texto="Todos os cursinhos"
+              texto={rotuloDoVazio}
             />
           )}
           {filtrados.map((c) => (

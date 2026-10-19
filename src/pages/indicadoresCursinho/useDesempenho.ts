@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { type Desempenho, getDesempenho } from "@/services/indicadores";
+import { useCursinhoDosIndicadores } from "./cursinhoDosIndicadores";
 import { useAuthStore } from "@/store/auth";
 
 /**
@@ -8,6 +9,7 @@ import { useAuthStore } from "@/store/auth";
  */
 export function useDesempenho(periodoId: string) {
   const token = useAuthStore((s) => s.data.token);
+  const cursinhoId = useCursinhoDosIndicadores();
   const [dados, setDados] = useState<Desempenho | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(false);
@@ -16,14 +18,14 @@ export function useDesempenho(periodoId: string) {
     let cancelado = false;
     setCarregando(true);
     setErro(false);
-    getDesempenho(token, periodoId)
+    getDesempenho(token, periodoId, cursinhoId)
       .then((d) => !cancelado && setDados(d))
       .catch(() => !cancelado && setErro(true))
       .finally(() => !cancelado && setCarregando(false));
     return () => {
       cancelado = true;
     };
-  }, [token, periodoId]);
+  }, [token, periodoId, cursinhoId]);
 
   useEffect(carregar, [carregar]);
 

@@ -336,7 +336,8 @@ export function PlatformRoutes() {
             <ProtectedRoutePermission
               permission={
                 data.permissao[Roles.visualizarEstudantes] ||
-                data.permissao[Roles.gerenciarEstudantes]
+                data.permissao[Roles.gerenciarEstudantes] ||
+                data.permissao[Roles.alterarPermissao]
               }
             >
               <Suspense fallback={null}>

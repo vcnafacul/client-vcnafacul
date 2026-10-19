@@ -1,3 +1,5 @@
+import { CursinhoDoFiltro } from "@/components/molecules/seletorDeCursinho/filtrar";
+
 /**
  * O recorte por cursinho do Monitoramento (tickets/044).
  *
@@ -12,21 +14,8 @@ export const FORA_DO_RECORTE = [
   "Questões e Provas",
 ] as const;
 
-export type CursinhoDoFiltro = { id: string; name: string };
-
-const semAcento = (s: string) =>
-  s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
-
-/** Busca do seletor: sem acento e sem caixa, ordenada por nome. */
-export function filtrarCursinhos(
-  cursinhos: CursinhoDoFiltro[],
-  busca: string,
-): CursinhoDoFiltro[] {
-  const termo = semAcento(busca.trim());
-  return [...cursinhos]
-    .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"))
-    .filter((c) => !termo || semAcento(c.name).includes(termo));
-}
+export type { CursinhoDoFiltro };
+export { filtrarCursinhos } from "@/components/molecules/seletorDeCursinho/filtrar";
 
 /** `?cursinho=<id>` só vale se o id estiver na lista (senão, "Todos"). */
 export function cursinhoDaUrl(

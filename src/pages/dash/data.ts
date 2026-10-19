@@ -147,8 +147,13 @@ export const adminMenuItems: DashCardMenu[] = [
         alt: "indicadores",
         text: "Indicadores",
         link: `/dashboard/${PARTNER_INDICADORES}`,
-        // tickets/033 (R7): as mesmas da lista de estudantes.
-        permissions: [Roles.visualizarEstudantes, Roles.gerenciarEstudantes],
+        // tickets/033 (R7): as mesmas da lista de estudantes; tickets/045: e o
+        // admin da plataforma, que escolhe o cursinho no topo da tela.
+        permissions: [
+          Roles.visualizarEstudantes,
+          Roles.gerenciarEstudantes,
+          Roles.alterarPermissao,
+        ],
       },
       {
         icon: FaWpforms,

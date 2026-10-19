@@ -9,6 +9,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { PanelError } from "@/pages/dashboard/components/Panel";
 import { type AlunoSumindo, getSumindo } from "@/services/indicadores";
+import { useCursinhoDosIndicadores } from "./cursinhoDosIndicadores";
 import { useAuthStore } from "@/store/auth";
 
 const diaCurto = (dia: string) => `${dia.slice(8, 10)}/${dia.slice(5, 7)}`;
@@ -33,13 +34,14 @@ export function ListaDeSumindo({
   aoFechar: () => void;
 }) {
   const token = useAuthStore((s) => s.data.token);
+  const cursinhoId = useCursinhoDosIndicadores();
   const [alunos, setAlunos] = useState<AlunoSumindo[] | null>(null);
   const [erro, setErro] = useState(false);
 
   const carregar = () => {
     setErro(false);
     setAlunos(null);
-    getSumindo(token, periodoId)
+    getSumindo(token, periodoId, cursinhoId)
       .then(setAlunos)
       .catch(() => setErro(true));
   };
@@ -47,7 +49,7 @@ export function ListaDeSumindo({
   useEffect(() => {
     if (aberta) carregar();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [aberta, periodoId, token]);
+  }, [aberta, periodoId, token, cursinhoId]);
 
   return (
     <Dialog open={aberta} onOpenChange={(v) => !v && aoFechar()}>

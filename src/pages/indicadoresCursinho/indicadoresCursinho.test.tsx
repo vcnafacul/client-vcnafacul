@@ -55,7 +55,7 @@ describe("tela de Indicadores", () => {
     renderTela();
 
     await waitFor(() =>
-      expect(svc.getIndicadores).toHaveBeenCalledWith("tk", "p1"),
+      expect(svc.getIndicadores).toHaveBeenCalledWith("tk", "p1", undefined),
     );
     expect(
       screen.getByText(/2 turmas sem período letivo não entram/),
