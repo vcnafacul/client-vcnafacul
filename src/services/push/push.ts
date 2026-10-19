@@ -29,6 +29,9 @@ export type MensagemEmPrimeiroPlano = DadosDoPush;
 
 const habilitado = () => import.meta.env.VITE_PUSH_ENABLED === "true";
 
+/** O push está ligado neste ambiente? (homol e prod sim; dev não) */
+export const pushHabilitado = habilitado;
+
 function temApisDoNavegador(): boolean {
   return (
     "serviceWorker" in navigator &&
