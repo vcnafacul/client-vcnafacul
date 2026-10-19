@@ -1,5 +1,6 @@
 import { BarList } from "@/pages/dashboard/components/BarList";
 import { EmptyState, Panel } from "@/pages/dashboard/components/Panel";
+import { useNoRecorte } from "./cursinhoDosIndicadores";
 
 const DESISTENCIA_INICIAL = "Desistência inicial";
 
@@ -12,6 +13,7 @@ export function PorQueSairam({
 }: {
   porMotivo: Record<string, number> | null;
 }) {
+  const noRecorte = useNoRecorte();
   const itens = Object.entries(porMotivo ?? {})
     .filter(([, n]) => n > 0)
     .sort(([a, x], [b, y]) => y - x || a.localeCompare(b))
@@ -28,7 +30,7 @@ export function PorQueSairam({
   return (
     <Panel title="Por que saíram" subtitle="Motivo escolhido ao cancelar">
       {itens.length === 0 ? (
-        <EmptyState>Nenhuma matrícula cancelada neste período.</EmptyState>
+        <EmptyState>Nenhuma matrícula cancelada {noRecorte}.</EmptyState>
       ) : (
         <BarList items={itens} />
       )}

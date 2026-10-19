@@ -29,7 +29,8 @@ export function ListaDeSumindo({
   aberta,
   aoFechar,
 }: {
-  periodoId: string;
+  /** `null` = todos os períodos em andamento (046). */
+  periodoId: string | null;
   aberta: boolean;
   aoFechar: () => void;
 }) {
@@ -80,6 +81,7 @@ export function ListaDeSumindo({
                   <div className="min-w-0">
                     <p className="font-medium text-marine">{a.nome}</p>
                     <p className="text-slate-500">
+                      {a.periodo ? `${a.periodo} · ` : ""}
                       {a.turma} ·{" "}
                       {a.ultimaPresenca
                         ? `última presença em ${diaCurto(a.ultimaPresenca)}`

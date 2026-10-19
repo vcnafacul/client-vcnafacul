@@ -18,6 +18,8 @@ interface Props {
   /** `null` = sem dado (nunca mostrar 0 no lugar). */
   valor: string | number | null;
   detalhe?: string;
+  /** O texto quando `valor` é `null` (padrão "Sem dado ainda"). */
+  semDado?: string;
   explicacao: ExplicacaoDaMetrica;
   tom?: TomDaMetrica;
   carregando?: boolean;
@@ -36,6 +38,7 @@ export function CardDeMetrica({
   rotulo,
   valor,
   detalhe,
+  semDado = "Sem dado ainda",
   explicacao,
   tom = "marine",
   carregando,
@@ -86,7 +89,7 @@ export function CardDeMetrica({
             </span>
           </p>
           {valor === null ? (
-            <p className="mt-0.5 text-xs text-slate-400">Sem dado ainda</p>
+            <p className="mt-0.5 text-xs text-slate-400">{semDado}</p>
           ) : (
             detalhe && <p className="mt-0.5 text-xs text-slate-400">{detalhe}</p>
           )}

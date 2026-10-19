@@ -50,7 +50,7 @@ describe("Indicadores — visão do admin (045)", () => {
   it("com ?cursinho=, espera a lista e busca pelas rotas daquele cursinho, com o aviso", async () => {
     tela("/indicadores?cursinho=A");
     await waitFor(() =>
-      expect(svc.getIndicadores).toHaveBeenCalledWith("tk", "pA", "A"),
+      expect(svc.getIndicadores).toHaveBeenCalledWith("tk", null, "A"),
     );
     expect(svc.getPeriodosDosIndicadores).toHaveBeenCalledTimes(1);
     expect(svc.getPeriodosDosIndicadores).toHaveBeenCalledWith("tk", "A");
@@ -74,7 +74,7 @@ describe("Indicadores — visão do admin (045)", () => {
   it("sem alterarPermissao: nem seletor, nem lista de cursinhos; ?cursinho= é ignorado", async () => {
     tela("/indicadores?cursinho=A", false);
     await waitFor(() =>
-      expect(svc.getIndicadores).toHaveBeenCalledWith("tk", "pA", undefined),
+      expect(svc.getIndicadores).toHaveBeenCalledWith("tk", null, undefined),
     );
     expect(svc.getPartnerPrepCourseLogos).not.toHaveBeenCalled();
     expect(screen.queryByRole("button", { name: "Ver os indicadores de" })).toBeNull();

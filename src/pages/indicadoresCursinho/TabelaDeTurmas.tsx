@@ -8,6 +8,10 @@ import type { TurmaDoIndicador } from "@/services/indicadores";
 import { colunasBase, type ColunaDaTurma } from "./colunasDaTurma";
 import { explicacoes } from "./explicacoes";
 import { rankingDeEvasao, type TurmaNoRanking } from "./turmas";
+import {
+  useCursinhoDosIndicadores,
+  useNoRecorte,
+} from "./cursinhoDosIndicadores";
 
 /**
  * Turmas do período, da maior para a menor evasão (tickets/033, card 06).
@@ -20,23 +24,37 @@ export function TabelaDeTurmas({
   turmas: TurmaDoIndicador[];
   colunas?: ColunaDaTurma[];
 }) {
+  const noRecorte = useNoRecorte();
   const acimaDeSm = useAcimaDeSm();
   const { turmas: ordenadas, destaqueId } = rankingDeEvasao(turmas);
   const linkDa = (id: string) =>
     caminhoDaTurma(`${DASH}/${PARTNER_CLASS}`, id);
 
+  // tickets/045 — vendo outro cursinho, a turma é dele: sem link para a tela
+  // de turmas, que é a do próprio usuário
+  const deOutroCursinho = !!useCursinhoDosIndicadores();
   const nome = (t: TurmaNoRanking) => (
-    <span className="flex flex-wrap items-center gap-2">
-      <Link
-        to={linkDa(t.id)}
-        className="font-medium text-marine underline-offset-2 hover:underline"
-      >
-        {t.nome}
-      </Link>
-      {t.id === destaqueId && (
-        <span className="rounded-full bg-red/[0.10] px-2 py-0.5 text-xs font-semibold text-red">
-          Maior evasão
-        </span>
+    <span className="flex flex-col gap-0.5">
+      <span className="flex flex-wrap items-center gap-2">
+        {deOutroCursinho ? (
+          <span className="font-medium text-marine">{t.nome}</span>
+        ) : (
+          <Link
+            to={linkDa(t.id)}
+            className="font-medium text-marine underline-offset-2 hover:underline"
+          >
+            {t.nome}
+          </Link>
+        )}
+        {t.id === destaqueId && (
+          <span className="rounded-full bg-red/[0.10] px-2 py-0.5 text-xs font-semibold text-red">
+            Maior evasão
+          </span>
+        )}
+      </span>
+      {/* tickets/046 — na visão de todos, de qual período é a turma */}
+      {t.periodoNome && (
+        <span className="text-xs text-slate-500">{t.periodoNome}</span>
       )}
     </span>
   );
@@ -56,7 +74,7 @@ export function TabelaDeTurmas({
     >
       {ordenadas.length === 0 ? (
         <p className="py-6 text-center text-sm text-slate-500">
-          Nenhuma turma neste período.
+          Nenhuma turma {noRecorte}.
         </p>
       ) : acimaDeSm ? (
         <div className="overflow-x-auto">
