@@ -42,6 +42,15 @@ export const colunasDeConteudo: DashColumn<ContentDtoInput>[] = [
     sortValue: (c) => c.subject?.name ?? null,
   },
   {
+    id: "enviadoPor",
+    header: "Enviado por",
+    width: "12rem",
+    hideBelow: "sm",
+    // Nome de quem enviou o arquivo vigente (api 048/06). Sem arquivo: "—".
+    cell: (c) => c.uploadedByName ?? VAZIO,
+    sortValue: (c) => c.uploadedByName ?? null,
+  },
+  {
     id: "createdAt",
     header: "Cadastrado em",
     width: "9rem",

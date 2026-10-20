@@ -4,6 +4,7 @@ import DocxPreview from "@/components/atoms/docxPreview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { ContentDtoInput } from "@/dtos/content/contentDtoInput";
 import {
   AdjustmentProposalDto,
@@ -137,17 +138,24 @@ export default function ValidatedDemand({
 
   /*
     Rejeitar, resetar e revisar proposta mudam a demanda de vez (aprovar a
-    proposta troca o arquivo): confirmam antes.
+    proposta troca o arquivo): confirmam antes. Rejeitar ainda pede o motivo —
+    a api recusa sem ele, e é o que quem enviou lê para saber o que corrigir.
   */
   const [confirmacao, setConfirmacao] = useState<{
     titulo: string;
     texto: string;
-    acao: () => void;
+    pedeMotivo?: boolean;
+    acao: (motivo?: string) => void;
   } | null>(null);
+  const [motivo, setMotivo] = useState("");
+  const motivoFalta = !!confirmacao?.pedeMotivo && motivo.trim() === "";
 
-  const handleUpdateStatus = async (status: StatusEnum | StatusContent) => {
+  const handleUpdateStatus = async (
+    status: StatusEnum | StatusContent,
+    reason?: string,
+  ) => {
     await executeAsync({
-      action: () => updateStatus(demandId, status, token),
+      action: () => updateStatus(demandId, status, token, reason),
       loadingMessage: "Atualizando status...",
       successMessage: "Status atualizado com sucesso",
       errorMessage: (error) => error.message,
@@ -232,14 +240,32 @@ export default function ValidatedDemand({
             <CardTitle className="text-xl font-bold text-marine">
               {demand.title}
             </CardTitle>
-            {demand.lastEditedBy && (
-              <p className="text-xs text-muted-foreground">
-                Ultima edicao por:{" "}
-                {demand.lastEditedByName || demand.lastEditedBy}
-                {demand.lastEditedAt &&
-                  ` em ${formatDate(demand.lastEditedAt)}`}
-              </p>
-            )}
+            {/*
+              Quem abriu a demanda, quem enviou o arquivo vigente e quem fez a
+              última edição são três pessoas diferentes — a tela mostra as três
+              (api 048/06). Sem nome resolvido, o id ainda identifica.
+            */}
+            <p className="text-xs text-muted-foreground">
+              {demand.userId && (
+                <span>
+                  Criado por {demand.createdByName || demand.userId}
+                  {demand.createdAt && ` em ${formatDate(String(demand.createdAt))}`}
+                </span>
+              )}
+              {fileId && (
+                <span>
+                  {demand.userId && " · "}
+                  Enviado por {demand.uploadedByName || demand.file?.uploadedBy || "—"}
+                </span>
+              )}
+              {demand.lastEditedBy && (
+                <span>
+                  {(demand.userId || fileId) && " · "}
+                  Última edição por {demand.lastEditedByName || demand.lastEditedBy}
+                  {demand.lastEditedAt && ` em ${formatDate(demand.lastEditedAt)}`}
+                </span>
+              )}
+            </p>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -255,6 +281,20 @@ export default function ValidatedDemand({
             <div>
               <p className="text-sm font-medium">{demand.description}</p>
             </div>
+
+            {demand.status === StatusEnum.Rejected && demand.rejectionReason && (
+              <div
+                role="note"
+                className="rounded-lg border border-red-200 bg-red-50 p-3"
+              >
+                <p className="text-sm font-black text-red-800">
+                  Motivo da rejeição:
+                </p>
+                <p className="text-sm text-red-900 whitespace-pre-wrap break-words">
+                  {demand.rejectionReason}
+                </p>
+              </div>
+            )}
 
             {fileId && (
               <div className="flex flex-wrap gap-2 mt-4">
@@ -292,8 +332,12 @@ export default function ValidatedDemand({
                 onClick={() =>
                   setConfirmacao({
                     titulo: "Rejeitar esta demanda?",
-                    texto: "A demanda volta para quem enviou o arquivo.",
-                    acao: () => handleUpdateStatus(StatusEnum.Rejected),
+                    // ⚠️ Ela NÃO volta para a fila de envio: fica rejeitada, com o
+                    // motivo visível para quem enviou. Devolver à fila é o Resetar.
+                    texto:
+                      "A demanda fica como rejeitada, com o motivo abaixo visível para quem enviou. Para devolvê-la à fila de envio, use Resetar.",
+                    pedeMotivo: true,
+                    acao: (motivo) => handleUpdateStatus(StatusEnum.Rejected, motivo),
                   })
                 }
                 disabled={!canReview || demand.status === StatusEnum.Rejected}
@@ -305,7 +349,8 @@ export default function ValidatedDemand({
                 onClick={() =>
                   setConfirmacao({
                     titulo: "Resetar esta demanda?",
-                    texto: "O arquivo enviado sai e a demanda volta a aguardar envio.",
+                    texto:
+                      "O arquivo atual sai da demanda (fica no histórico) e ela volta a aguardar envio.",
                     acao: handleReset,
                   })
                 }
@@ -409,7 +454,7 @@ export default function ValidatedDemand({
             {fileHistory.length > 0 && (
               <div className="mt-6">
                 <h3 className="text-lg font-bold text-marine mb-3">
-                  Historico de Arquivos
+                  Histórico de Arquivos
                 </h3>
                 <div className="space-y-2">
                   {fileHistory.map((entry) => (
@@ -454,7 +499,7 @@ export default function ValidatedDemand({
       >
         <DialogContent className="w-[calc(100%-2rem)] max-w-6xl max-h-[90dvh] overflow-y-auto p-3 sm:p-6">
           <DialogTitle className="sr-only">
-            Pre-visualizacao do documento
+            Pré-visualização do documento
           </DialogTitle>
           {arrayBuffer && (
             <DocxPreview arrayBuffer={arrayBuffer} />
@@ -469,7 +514,7 @@ export default function ValidatedDemand({
       >
         <DialogContent className="w-[calc(100%-2rem)] max-w-6xl max-h-[90dvh] overflow-y-auto p-3 sm:p-6">
           <DialogTitle className="sr-only">
-            Pre-visualizacao da proposta
+            Pré-visualização da proposta
           </DialogTitle>
           {proposalPreviewBuffer && (
             <DocxPreview arrayBuffer={proposalPreviewBuffer} />
@@ -486,15 +531,33 @@ export default function ValidatedDemand({
       />
       <ModalConfirmCancel
         isOpen={!!confirmacao}
-        handleClose={() => setConfirmacao(null)}
-        handleConfirm={() => {
-          const acao = confirmacao?.acao;
+        handleClose={() => {
           setConfirmacao(null);
-          acao?.();
+          setMotivo("");
+        }}
+        confirmDisabled={motivoFalta}
+        handleConfirm={() => {
+          if (motivoFalta) return;
+          const acao = confirmacao?.acao;
+          const motivoEnviado = motivo.trim();
+          setConfirmacao(null);
+          setMotivo("");
+          acao?.(motivoEnviado || undefined);
         }}
         text={confirmacao?.titulo}
       >
         <p className="text-sm text-muted-foreground">{confirmacao?.texto}</p>
+        {confirmacao?.pedeMotivo && (
+          <Textarea
+            aria-label="Motivo da rejeição"
+            placeholder="O que precisa ser corrigido?"
+            value={motivo}
+            onChange={(e) => setMotivo(e.target.value)}
+            maxLength={1000}
+            className="resize-none h-28"
+            autoFocus
+          />
+        )}
       </ModalConfirmCancel>
     </Dialog>
   );
