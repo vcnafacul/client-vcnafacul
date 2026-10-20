@@ -25,9 +25,8 @@ vi.mock("@/services/content/adjustmentProposal", () => ({
   getProposals: vi.fn(async () => []),
   reviewProposal: vi.fn(),
 }));
-vi.mock("@/services/content/fileHistory", () => ({
-  getFileHistory: vi.fn(async () => []),
-}));
+const getTimeline = vi.hoisted(() => vi.fn());
+vi.mock("@/services/content/getTimeline", () => ({ getTimeline }));
 vi.mock("@/components/atoms/docxPreview", () => ({ default: () => null }));
 vi.mock("../AdjustmentProposalModal", () => ({ default: () => null }));
 vi.mock("react-toastify", () => ({
@@ -91,6 +90,14 @@ const abrirRejeitar = () => {
 beforeEach(() => {
   updateStatus.mockClear();
   getFile.mockClear();
+  getTimeline.mockReset().mockResolvedValue([
+    {
+      tipo: "criada",
+      em: "2026-09-01T12:00:00.000Z",
+      porId: "u-criador",
+      por: "Carla Mendes",
+    },
+  ]);
   auth.data.permissao = {
     [Roles.validarDemanda]: true,
     [Roles.uploadDemanda]: true,
@@ -242,5 +249,39 @@ describe("DemandaModal — conteúdo em vídeo (049/05)", () => {
     montar({ file: undefined, uploadedByName: undefined });
     expect(screen.queryByText("Documento")).toBeNull();
     expect(screen.queryByText("Vídeo")).toBeNull();
+  });
+});
+
+describe("DemandaModal — aba Histórico (050/04)", () => {
+  it("só busca a timeline quando a aba abre, e mostra os eventos", async () => {
+    montar();
+    expect(getTimeline).not.toHaveBeenCalled();
+    // ⚠️ mouseDown, não click: é assim que o Radix Tabs ativa no jsdom.
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "Histórico" }));
+    expect(await screen.findByText(/criou a demanda/)).toBeInTheDocument();
+    expect(getTimeline).toHaveBeenCalledWith("d1", "tok");
+    expect(getTimeline).toHaveBeenCalledTimes(1);
+  });
+
+  it("erro na timeline mostra o aviso e 'Tentar de novo' refaz a chamada", async () => {
+    getTimeline
+      .mockRejectedValueOnce(new Error("ms fora"))
+      .mockResolvedValueOnce([]);
+    montar();
+    // ⚠️ mouseDown, não click: é assim que o Radix Tabs ativa no jsdom.
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "Histórico" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("ms fora");
+    fireEvent.click(screen.getByRole("button", { name: "Tentar de novo" }));
+    expect(
+      await screen.findByText("Nada registrado ainda."),
+    ).toBeInTheDocument();
+    expect(getTimeline).toHaveBeenCalledTimes(2);
+  });
+
+  it("a aba Propostas não lista mais as versões do material", () => {
+    montar();
+    fireEvent.mouseDown(screen.getByRole("tab", { name: /Propostas/ }));
+    expect(screen.queryByText("Versões do material")).toBeNull();
+    expect(screen.getByText("Nenhuma proposta de ajuste.")).toBeInTheDocument();
   });
 });

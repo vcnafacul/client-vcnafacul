@@ -3,7 +3,6 @@ import {
   AdjustmentProposalDto,
   ProposalStatus,
 } from "@/dtos/content/adjustmentProposalDto";
-import { ContentFileHistoryDto } from "@/dtos/content/contentFileHistoryDto";
 import { formatDate } from "@/utils/date";
 import { rotuloDoMaterial } from "./helpers";
 
@@ -21,8 +20,6 @@ const statusColor: Record<ProposalStatus, string> = {
 
 interface Props {
   proposals: AdjustmentProposalDto[];
-  /** Até a aba Histórico (050/04), as versões do material ficam aqui. */
-  fileHistory: ContentFileHistoryDto[];
   podeRevisar: boolean;
   onVisualizar: (file: {
     _id: string;
@@ -35,7 +32,6 @@ interface Props {
 
 export function AbaPropostas({
   proposals,
-  fileHistory,
   podeRevisar,
   onVisualizar,
   onAprovar,
@@ -125,42 +121,6 @@ export function AbaPropostas({
           </ul>
         )}
       </section>
-
-      {fileHistory.length > 0 && (
-        <section>
-          <h3 className="text-base font-bold text-marine mb-3">
-            Versões do material
-          </h3>
-          <ul className="space-y-2">
-            {fileHistory.map((entry) => (
-              <li
-                key={entry._id}
-                className="border rounded-lg p-3 flex flex-wrap items-center justify-between gap-2"
-              >
-                <div className="flex flex-col min-w-0">
-                  <span className="text-sm font-medium break-all">
-                    {rotuloDoMaterial(entry.file)}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    Por: {entry.uploadedByName || entry.uploadedBy} |{" "}
-                    {entry.source === "initial_upload"
-                      ? "Upload inicial"
-                      : "Proposta aprovada"}{" "}
-                    | {formatDate(entry.createdAt)}
-                  </span>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onVisualizar(entry.file)}
-                >
-                  Visualizar
-                </Button>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
     </div>
   );
 }
