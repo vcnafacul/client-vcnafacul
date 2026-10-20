@@ -33,7 +33,7 @@ describe("AdjustmentProposalModal — proposta em vídeo (049/04)", () => {
     fireEvent.click(enviar);
 
     await waitFor(() => expect(createProposal).toHaveBeenCalled());
-    const form = createProposal.mock.calls[0][1] as FormData;
+    const form = (createProposal.mock.calls[0] as unknown as [string, FormData])[1];
     expect(form.get("url")).toBe("https://youtu.be/dQw4w9WgXcQ");
     expect(form.get("comment")).toBe("troca");
     expect(form.get("file")).toBeNull();
