@@ -9,8 +9,10 @@ export interface AdjustmentProposalDto {
   content: string;
   file: {
     _id: string;
-    fileKey: string;
+    fileKey?: string;
     originalName?: string;
+    tipo?: "documento" | "video";
+    videoId?: string;
   };
   status: ProposalStatus;
   author: string;
