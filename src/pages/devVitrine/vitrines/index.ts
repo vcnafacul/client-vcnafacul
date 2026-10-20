@@ -17,6 +17,7 @@ import { vitrineIndicadoresAdmin } from "./indicadores";
 import { vitrineColaboradores } from "./colaboradores";
 import { vitrineMeuPerfil } from "./meuPerfil";
 import { vitrineResultadoComAnulada } from "./resultadoComAnulada";
+import { vitrineDemanda } from "./demandas";
 
 /** Para pôr um componente na vitrine: criar o arquivo nesta pasta e listar aqui. */
 export const vitrines: Vitrine[] = [
@@ -36,4 +37,5 @@ export const vitrines: Vitrine[] = [
   vitrineIndicadoresAdmin,
   vitrineColaboradores,
   vitrineMeuPerfil,
+  vitrineDemanda,
 ];

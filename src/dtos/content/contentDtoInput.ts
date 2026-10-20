@@ -7,6 +7,8 @@ export interface ContentDtoInput {
     file?: {
         id: string;
         originalName: string;
+        /** Quem enviou o arquivo vigente. */
+        uploadedBy?: string;
     };
     status: StatusContent | StatusEnum;
     title: string;
@@ -14,9 +16,16 @@ export interface ContentDtoInput {
     subject: SubjectDto;
     createdAt: DateTime;
     updatedAt: DateTime;
+    /** Quem abriu a demanda. */
+    userId?: string;
+    createdByName?: string;
+    /** Quem enviou o arquivo vigente (nome resolvido pela api, 048/06). */
+    uploadedByName?: string;
     lastEditedBy?: string;
     lastEditedByName?: string;
     lastEditedAt?: string;
+    /** Só existe enquanto a demanda está rejeitada (048/03). */
+    rejectionReason?: string;
 }
 
 export interface SubjectDto {
