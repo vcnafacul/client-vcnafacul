@@ -8,8 +8,10 @@ import ValidatedDemand from "./validatedDemand";
 const updateStatus = vi.hoisted(() => vi.fn(async () => true));
 vi.mock("@/services/content/updateStatus", () => ({ updateStatus }));
 vi.mock("@/services/content/resetDemand", () => ({ resetDemand: vi.fn() }));
-vi.mock("@/services/content/getFile", () => ({
-  getFile: vi.fn(async () => new Blob(["PK"])),
+const getFile = vi.hoisted(() => vi.fn(async () => new Blob(["PK"])));
+vi.mock("@/services/content/getFile", () => ({ getFile }));
+vi.mock("@/components/atoms/youtubePlayer", () => ({
+  YoutubePlayer: ({ videoId }: { videoId: string }) => <div data-testid="player">{videoId}</div>,
 }));
 vi.mock("@/services/content/adjustmentProposal", () => ({
   getProposals: vi.fn(async () => []),
@@ -71,6 +73,7 @@ const abrirRejeitar = () => {
 
 beforeEach(() => {
   updateStatus.mockClear();
+  getFile.mockClear();
   auth.data.permissao = { [Roles.validarDemanda]: true, [Roles.uploadDemanda]: true };
 });
 
@@ -157,5 +160,32 @@ describe("ValidatedDemand — motivo e autores na tela", () => {
     });
     expect(screen.getByText(/Criado por u-criador/)).toBeInTheDocument();
     expect(screen.queryByText(/Enviado por/)).toBeNull();
+  });
+});
+
+describe("ValidatedDemand — conteúdo em vídeo (049/05)", () => {
+  it("vídeo: chip, player, sem Download/Visualizar, não busca o arquivo; Propor Ajuste fica", () => {
+    montar({
+      file: { id: "f1", originalName: "", uploadedBy: "u-autor", tipo: "video", videoId: "dQw4w9WgXcQ" },
+    });
+    expect(screen.getByText("Vídeo")).toBeInTheDocument();
+    expect(screen.getByTestId("player")).toHaveTextContent("dQw4w9WgXcQ");
+    expect(screen.queryByRole("button", { name: "Download" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Visualizar" })).toBeNull();
+    expect(getFile).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "Propor Ajuste" })).toBeInTheDocument();
+  });
+
+  it("documento: chip Documento, Download e Visualizar, e busca o arquivo", async () => {
+    montar();
+    expect(screen.getByText("Documento")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Download" })).toBeInTheDocument();
+    await waitFor(() => expect(getFile).toHaveBeenCalledWith("f1", "tok"));
+  });
+
+  it("sem arquivo: nenhum chip", () => {
+    montar({ file: undefined, uploadedByName: undefined });
+    expect(screen.queryByText("Documento")).toBeNull();
+    expect(screen.queryByText("Vídeo")).toBeNull();
   });
 });

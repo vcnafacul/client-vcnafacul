@@ -1,4 +1,10 @@
 import DocxPreview from "@/components/atoms/docxPreview";
+import {
+  TipoDeEnvio,
+  TipoDeEnvioToggle,
+} from "@/components/molecules/tipoDeEnvio";
+import { VideoLinkField } from "@/components/molecules/videoLinkField";
+import { sendVideoDemand } from "@/services/content/sendVideoDemand";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -33,11 +39,21 @@ function ShowDemand({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [uploadFile, setUploadFile] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // O tipo é escolhido aqui, no envio (tickets/049): a demanda é neutra.
+  const [tipo, setTipo] = useState<TipoDeEnvio>("documento");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [videoId, setVideoId] = useState<string | null>(null);
 
-  const modals = useModals([
-    'docxPreview',
-    'tryDelete',
-  ]);
+  const trocarTipo = (novo: TipoDeEnvio) => {
+    setTipo(novo);
+    // Trocar de lado limpa o outro: não existe envio com os dois.
+    setUploadFile(null);
+    setArrayBufer(undefined);
+    setVideoUrl("");
+    setVideoId(null);
+  };
+
+  const modals = useModals(["docxPreview", "tryDelete"]);
 
   const executeAsync = useToastAsync();
 
@@ -80,7 +96,7 @@ function ShowDemand({
     );
   };
 
-  const demandId = demand.id ?? (demand as any)._id;
+  const demandId = demand.id ?? (demand as { _id?: string })._id ?? "";
 
   const handleUploadFile = async () => {
     const formData = new FormData();
@@ -88,8 +104,22 @@ function ShowDemand({
 
     await executeAsync({
       action: () => uploadFileDemand(demandId, formData, token),
-      loadingMessage: "Upload File Demanda ... ",
-      successMessage: "File enviada com sucesso",
+      loadingMessage: "Enviando documento...",
+      successMessage: "Documento enviado com sucesso",
+      errorMessage: (error: Error) => error.message,
+      onSuccess: () => {
+        updateStatusDemand(demandId);
+        handleClose!();
+      },
+    });
+  };
+
+  const handleSendVideo = async () => {
+    if (!videoId) return;
+    await executeAsync({
+      action: () => sendVideoDemand(demandId, videoUrl.trim(), token),
+      loadingMessage: "Enviando vídeo...",
+      successMessage: "Vídeo enviado com sucesso",
       errorMessage: (error: Error) => error.message,
       onSuccess: () => {
         updateStatusDemand(demandId);
@@ -168,45 +198,66 @@ function ShowDemand({
             />
           </div>
 
-          <div
-            className="border-2 border-dashed border-muted rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/50 transition"
-            onClick={handleUploadClick}
-          >
-            {uploadFile ? (
-              <>
-                <UploadCloud className="h-10 w-10 text-primary mb-2" />
-                <p className="font-medium">{uploadFile.name}</p>
-              </>
-            ) : (
-              <>
-                <UploadCloud className="h-10 w-10 text-muted-foreground mb-2" />
-                <p className="text-muted-foreground">
-                  Clique para fazer upload de um documento
-                </p>
-              </>
-            )}
-            <input
-              type="file"
-              accept=".docx"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="hidden"
+          <TipoDeEnvioToggle value={tipo} onChange={trocarTipo} />
+
+          {tipo === "video" && (
+            <VideoLinkField
+              value={videoUrl}
+              onChange={(url, id) => {
+                setVideoUrl(url);
+                setVideoId(id);
+              }}
             />
-          </div>
-          {uploadFile &&
-            uploadFile.type ===
-              "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
-              <Button onClick={() => modals.docxPreview.open()} className="mt-4">
-                Visualizar Preview  
-              </Button>
-            )}
+          )}
+
+          {tipo === "documento" && (
+            <div
+              className="border-2 border-dashed border-muted rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/50 transition"
+              onClick={handleUploadClick}
+            >
+              {uploadFile ? (
+                <>
+                  <UploadCloud className="h-10 w-10 text-primary mb-2" />
+                  <p className="font-medium">{uploadFile.name}</p>
+                </>
+              ) : (
+                <>
+                  <UploadCloud className="h-10 w-10 text-muted-foreground mb-2" />
+                  <p className="text-muted-foreground">
+                    Clique para fazer upload de um documento
+                  </p>
+                </>
+              )}
+              <input
+                type="file"
+                accept=".docx"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </div>
+          )}
+          {tipo === "documento" && (
+            <>
+              {uploadFile &&
+                uploadFile.type ===
+                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
+                  <Button
+                    onClick={() => modals.docxPreview.open()}
+                    className="mt-4"
+                  >
+                    Visualizar Preview
+                  </Button>
+                )}
+            </>
+          )}
           {/* No celular um por linha: os 3 × w-36 vazavam pela esquerda e cortavam o "Salvar". */}
           <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-4 pt-4">
             <Button
               variant="default"
               className="w-full sm:w-36"
-              onClick={handleUploadFile}
-              disabled={!uploadFile}
+              onClick={tipo === "video" ? handleSendVideo : handleUploadFile}
+              disabled={tipo === "video" ? !videoId : !uploadFile}
             >
               <Save className="mr-2 h-4 w-4" /> Salvar
             </Button>
@@ -217,7 +268,11 @@ function ShowDemand({
             >
               <Trash2 className="mr-2 h-4 w-4" /> Excluir
             </Button>
-            <Button variant="outline" className="w-full sm:w-36" onClick={handleClose}>
+            <Button
+              variant="outline"
+              className="w-full sm:w-36"
+              onClick={handleClose}
+            >
               <X className="mr-2 h-4 w-4" /> Fechar
             </Button>
           </div>

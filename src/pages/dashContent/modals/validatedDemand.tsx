@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import DocxPreview from "@/components/atoms/docxPreview";
+import { YoutubePlayer } from "@/components/atoms/youtubePlayer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -75,6 +76,9 @@ export default function ValidatedDemand({
 
   const demandId = demand.id ?? (demand as any)._id;
   const fileId = demand.file?.id ?? (demand.file as any)?._id;
+  // O tipo do conteúdo é o do vigente (tickets/049): vídeo não tem arquivo.
+  const ehVideo = demand.file?.tipo === "video";
+  const [videoPreviewId, setVideoPreviewId] = useState<string | null>(null);
 
   const canReview: boolean =
     permissao[Roles.validarDemanda] &&
@@ -99,7 +103,7 @@ export default function ValidatedDemand({
 
   useEffect(() => {
     const fetchFile = async () => {
-      if (fileId) {
+      if (fileId && !ehVideo) {
         await executeAsync({
           action: () => getFile(fileId, token),
           loadingMessage: "Carregando documento ...",
@@ -115,7 +119,7 @@ export default function ValidatedDemand({
 
     fetchFile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [demand.file, fileId, token]);
+  }, [demand.file, fileId, ehVideo, token]);
 
   useEffect(() => {
     if (isOpen && demandId) {
@@ -181,7 +185,7 @@ export default function ValidatedDemand({
 
   const handleReviewProposal = async (
     proposalId: string,
-    status: ProposalStatus
+    status: ProposalStatus,
   ) => {
     await executeAsync({
       action: () => reviewProposal(proposalId, status, token),
@@ -237,8 +241,13 @@ export default function ValidatedDemand({
         <DialogTitle className="sr-only">{demand.title}</DialogTitle>
         <Card className="border-none shadow-none">
           <CardHeader>
-            <CardTitle className="text-xl font-bold text-marine">
+            <CardTitle className="text-xl font-bold text-marine flex flex-wrap items-center gap-2">
               {demand.title}
+              {fileId && (
+                <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
+                  {ehVideo ? "Vídeo" : "Documento"}
+                </span>
+              )}
             </CardTitle>
             {/*
               Quem abriu a demanda, quem enviou o arquivo vigente e quem fez a
@@ -249,20 +258,24 @@ export default function ValidatedDemand({
               {demand.userId && (
                 <span>
                   Criado por {demand.createdByName || demand.userId}
-                  {demand.createdAt && ` em ${formatDate(String(demand.createdAt))}`}
+                  {demand.createdAt &&
+                    ` em ${formatDate(String(demand.createdAt))}`}
                 </span>
               )}
               {fileId && (
                 <span>
                   {demand.userId && " · "}
-                  Enviado por {demand.uploadedByName || demand.file?.uploadedBy || "—"}
+                  Enviado por{" "}
+                  {demand.uploadedByName || demand.file?.uploadedBy || "—"}
                 </span>
               )}
               {demand.lastEditedBy && (
                 <span>
                   {(demand.userId || fileId) && " · "}
-                  Última edição por {demand.lastEditedByName || demand.lastEditedBy}
-                  {demand.lastEditedAt && ` em ${formatDate(demand.lastEditedAt)}`}
+                  Última edição por{" "}
+                  {demand.lastEditedByName || demand.lastEditedBy}
+                  {demand.lastEditedAt &&
+                    ` em ${formatDate(demand.lastEditedAt)}`}
                 </span>
               )}
             </p>
@@ -282,31 +295,43 @@ export default function ValidatedDemand({
               <p className="text-sm font-medium">{demand.description}</p>
             </div>
 
-            {demand.status === StatusEnum.Rejected && demand.rejectionReason && (
-              <div
-                role="note"
-                className="rounded-lg border border-red-200 bg-red-50 p-3"
-              >
-                <p className="text-sm font-black text-red-800">
-                  Motivo da rejeição:
-                </p>
-                <p className="text-sm text-red-900 whitespace-pre-wrap break-words">
-                  {demand.rejectionReason}
-                </p>
-              </div>
+            {demand.status === StatusEnum.Rejected &&
+              demand.rejectionReason && (
+                <div
+                  role="note"
+                  className="rounded-lg border border-red-200 bg-red-50 p-3"
+                >
+                  <p className="text-sm font-black text-red-800">
+                    Motivo da rejeição:
+                  </p>
+                  <p className="text-sm text-red-900 whitespace-pre-wrap break-words">
+                    {demand.rejectionReason}
+                  </p>
+                </div>
+              )}
+
+            {fileId && ehVideo && demand.file?.videoId && (
+              <YoutubePlayer
+                videoId={demand.file.videoId}
+                title={demand.title}
+              />
             )}
 
             {fileId && (
               <div className="flex flex-wrap gap-2 mt-4">
-                <Button variant="outline" onClick={handleDownload}>
-                  Download
-                </Button>
-                <Button
-                  className="bg-marine hover:bg-marine/80"
-                  onClick={() => modals.docxPreview.open()}
-                >
-                  Visualizar
-                </Button>
+                {!ehVideo && (
+                  <>
+                    <Button variant="outline" onClick={handleDownload}>
+                      Download
+                    </Button>
+                    <Button
+                      className="bg-marine hover:bg-marine/80"
+                      onClick={() => modals.docxPreview.open()}
+                    >
+                      Visualizar
+                    </Button>
+                  </>
+                )}
                 {canUpload && (
                   <Button
                     variant="outline"
@@ -337,7 +362,8 @@ export default function ValidatedDemand({
                     texto:
                       "A demanda fica como rejeitada, com o motivo abaixo visível para quem enviou. Para devolvê-la à fila de envio, use Resetar.",
                     pedeMotivo: true,
-                    acao: (motivo) => handleUpdateStatus(StatusEnum.Rejected, motivo),
+                    acao: (motivo) =>
+                      handleUpdateStatus(StatusEnum.Rejected, motivo),
                   })
                 }
                 disabled={!canReview || demand.status === StatusEnum.Rejected}
@@ -375,8 +401,7 @@ export default function ValidatedDemand({
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="text-sm font-medium">
-                            Autor:{" "}
-                            {proposal.authorName || proposal.author}
+                            Autor: {proposal.authorName || proposal.author}
                           </span>
                           <span
                             className={`text-xs px-2 py-0.5 rounded-full ${statusColor[proposal.status]}`}
@@ -394,11 +419,18 @@ export default function ValidatedDemand({
                         </p>
                       )}
                       <div className="flex flex-wrap gap-2">
+                        <span className="text-xs text-muted-foreground self-center">
+                          {proposal.file?.tipo === "video"
+                            ? "▶ Vídeo"
+                            : proposal.file?.originalName || "Arquivo"}
+                        </span>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() =>
-                            handlePreviewProposalFile(proposal.file._id)
+                            proposal.file?.tipo === "video"
+                              ? setVideoPreviewId(proposal.file.videoId ?? null)
+                              : handlePreviewProposalFile(proposal.file._id)
                           }
                         >
                           Visualizar
@@ -417,7 +449,7 @@ export default function ValidatedDemand({
                                     acao: () =>
                                       handleReviewProposal(
                                         proposal._id,
-                                        ProposalStatus.Approved
+                                        ProposalStatus.Approved,
                                       ),
                                   })
                                 }
@@ -430,11 +462,12 @@ export default function ValidatedDemand({
                                 onClick={() =>
                                   setConfirmacao({
                                     titulo: "Rejeitar esta proposta?",
-                                    texto: "O arquivo atual da demanda continua.",
+                                    texto:
+                                      "O arquivo atual da demanda continua.",
                                     acao: () =>
                                       handleReviewProposal(
                                         proposal._id,
-                                        ProposalStatus.Rejected
+                                        ProposalStatus.Rejected,
                                       ),
                                   })
                                 }
@@ -464,7 +497,9 @@ export default function ValidatedDemand({
                     >
                       <div className="flex flex-col min-w-0">
                         <span className="text-sm font-medium break-all">
-                          {entry.file?.originalName || "Arquivo"}
+                          {entry.file?.tipo === "video"
+                            ? "▶ Vídeo"
+                            : entry.file?.originalName || "Arquivo"}
                         </span>
                         <span className="text-xs text-muted-foreground">
                           Por: {entry.uploadedByName || entry.uploadedBy} |{" "}
@@ -478,7 +513,9 @@ export default function ValidatedDemand({
                         variant="outline"
                         size="sm"
                         onClick={() =>
-                          handlePreviewHistoryFile(entry.file._id)
+                          entry.file?.tipo === "video"
+                            ? setVideoPreviewId(entry.file.videoId ?? null)
+                            : handlePreviewHistoryFile(entry.file._id)
                         }
                       >
                         Visualizar
@@ -501,9 +538,7 @@ export default function ValidatedDemand({
           <DialogTitle className="sr-only">
             Pré-visualização do documento
           </DialogTitle>
-          {arrayBuffer && (
-            <DocxPreview arrayBuffer={arrayBuffer} />
-          )}
+          {arrayBuffer && <DocxPreview arrayBuffer={arrayBuffer} />}
         </DialogContent>
       </Dialog>
 
@@ -519,6 +554,19 @@ export default function ValidatedDemand({
           {proposalPreviewBuffer && (
             <DocxPreview arrayBuffer={proposalPreviewBuffer} />
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Player de uma proposta ou versão do histórico em vídeo */}
+      <Dialog
+        open={!!videoPreviewId}
+        onOpenChange={() => setVideoPreviewId(null)}
+      >
+        <DialogContent className="w-[calc(100%-2rem)] max-w-4xl p-3 sm:p-6">
+          <DialogTitle className="sr-only">
+            Pré-visualização do vídeo
+          </DialogTitle>
+          {videoPreviewId && <YoutubePlayer videoId={videoPreviewId} />}
         </DialogContent>
       </Dialog>
 

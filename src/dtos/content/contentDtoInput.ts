@@ -9,6 +9,9 @@ export interface ContentDtoInput {
         originalName: string;
         /** Quem enviou o arquivo vigente. */
         uploadedBy?: string;
+        /** documento (.docx) ou vídeo do YouTube (tickets/049). */
+        tipo?: "documento" | "video";
+        videoId?: string;
     };
     status: StatusContent | StatusEnum;
     title: string;

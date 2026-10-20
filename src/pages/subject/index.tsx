@@ -1,6 +1,7 @@
 import DocxPreview from "@/components/atoms/docxPreview";
+import { YoutubePlayer } from "@/components/atoms/youtubePlayer";
 import { getFile } from "@/services/content/getFile";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -25,8 +26,13 @@ function Subject() {
 
   useEffect(() => {
     if (contentSelected) {
-      const fileId = contentSelected.file?.id ?? (contentSelected.file as any)?._id;
-      if (!fileId) return;
+      const fileId =
+        contentSelected.file?.id ?? (contentSelected.file as { _id?: string } | undefined)?._id;
+      // Vídeo não tem arquivo: o player usa o videoId que já veio na lista.
+      if (!fileId || contentSelected.file?.tipo === "video") {
+        setArrayBuffer(undefined);
+        return;
+      }
       getFile(fileId, token).then((res) => {
         res.arrayBuffer().then(setArrayBuffer);
       });
@@ -73,11 +79,19 @@ function Subject() {
                   key={index}
                   onClick={() => setContentSelected(content)}
                   className={`cursor-pointer px-4 py-2 rounded transition-all ${
-                    (content.id ?? (content as any)._id) === (contentSelected?.id ?? (contentSelected as any)?._id)
+                    (content.id ?? (content as { _id?: string })._id) ===
+                    (contentSelected?.id ?? (contentSelected as { _id?: string } | undefined)?._id)
                       ? "bg-gray-200 font-semibold"
                       : "hover:bg-gray-50"
                   }`}
                 >
+                  {content.file?.tipo === "video" && (
+                    <Play
+                      size={14}
+                      className="inline mr-1 align-[-2px]"
+                      aria-label="vídeo"
+                    />
+                  )}
                   {index + 1} - {content.title}
                 </div>
               ))}
@@ -86,7 +100,13 @@ function Subject() {
 
           {/* Preview do conteúdo */}
           <section className="bg-white shadow-md rounded-lg p-4 flex-1 overflow-x-auto">
-            {contentSelected && arrayBuffer ? (
+            {contentSelected?.file?.tipo === "video" &&
+            contentSelected.file.videoId ? (
+              <YoutubePlayer
+                videoId={contentSelected.file.videoId}
+                title={contentSelected.title}
+              />
+            ) : contentSelected && arrayBuffer ? (
               <DocxPreview arrayBuffer={arrayBuffer} />
             ) : (
               <p className="text-gray-600">
