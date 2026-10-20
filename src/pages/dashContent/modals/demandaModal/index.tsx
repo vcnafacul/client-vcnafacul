@@ -317,7 +317,8 @@ export default function DemandaModal({
           </div>
         </Tabs>
 
-        <footer className="shrink-0 border-t px-4 sm:px-6 py-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+        {/* 3 colunas também no celular: rótulos curtos cabem, e o meio ganha ~90px. */}
+        <footer className="shrink-0 border-t px-4 sm:px-6 py-3 grid grid-cols-3 gap-2">
           <Button
             variant="default"
             className="bg-green2 hover:bg-green2/80"
