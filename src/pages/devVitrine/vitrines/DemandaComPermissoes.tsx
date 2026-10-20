@@ -1,6 +1,6 @@
 import type { ContentDtoInput } from "@/dtos/content/contentDtoInput";
 import { Roles } from "@/enums/roles/roles";
-import ValidatedDemand from "@/pages/dashContent/modals/validatedDemand";
+import DemandaModal from "@/pages/dashContent/modals/demandaModal";
 import { useAuthStore } from "@/store/auth";
 import { useEffect, useMemo } from "react";
 
@@ -32,6 +32,6 @@ export function DemandaComPermissoes({ demand }: { demand: ContentDtoInput }) {
   }, []);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const d = useMemo(() => demand, []);
-  return <ValidatedDemand isOpen demand={d} handleClose={nada} updateStatusDemand={nada} />;
+  return <DemandaModal isOpen demand={d} handleClose={nada} updateStatusDemand={nada} />;
 }
 

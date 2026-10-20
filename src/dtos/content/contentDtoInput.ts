@@ -29,6 +29,10 @@ export interface ContentDtoInput {
     lastEditedAt?: string;
     /** Só existe enquanto a demanda está rejeitada (048/03). */
     rejectionReason?: string;
+    /** Quem aprovou e quando; só enquanto está aprovada (050/01). */
+    approvedBy?: string;
+    approvedByName?: string;
+    approvedAt?: string;
 }
 
 export interface SubjectDto {

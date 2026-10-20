@@ -18,7 +18,7 @@ import { cardTransformationContent, dashAllContent } from "./data";
 import NewDemand from "./modals/newDemand";
 import SettingsFrente from "./modals/settingsFrente";
 import ShowDemand from "./modals/showDemand";
-import ValidatedDemand from "./modals/validatedDemand";
+import DemandaModal from "./modals/demandaModal";
 
 /** Filtro de matéria vazio = todas. */
 export const MATERIA_TODAS = "";
@@ -138,7 +138,7 @@ function DashContent() {
       modals.showDemand.isOpen &&
       (!uploader || demandSelected?.status !== StatusContent.Pending_Upload);
     return open ? (
-      <ValidatedDemand
+      <DemandaModal
         demand={demandSelected!}
         updateStatusDemand={handleRemoveDemand}
         handleClose={() => modals.showDemand.close()}

@@ -25,7 +25,7 @@ vi.mock("./modals/showDemand", () => ({
     <div data-modal="show">{demand.title}</div>
   ),
 }));
-vi.mock("./modals/validatedDemand", () => ({
+vi.mock("./modals/demandaModal", () => ({
   default: ({ demand }: { demand: { title: string } }) => (
     <div data-modal="validated">{demand.title}</div>
   ),

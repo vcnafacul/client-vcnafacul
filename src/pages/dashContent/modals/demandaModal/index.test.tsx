@@ -1,9 +1,15 @@
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { Roles } from "@/enums/roles/roles";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ContentDtoInput } from "@/dtos/content/contentDtoInput";
-import ValidatedDemand from "./validatedDemand";
+import DemandaModal from ".";
 
 const updateStatus = vi.hoisted(() => vi.fn(async () => true));
 vi.mock("@/services/content/updateStatus", () => ({ updateStatus }));
@@ -11,7 +17,9 @@ vi.mock("@/services/content/resetDemand", () => ({ resetDemand: vi.fn() }));
 const getFile = vi.hoisted(() => vi.fn(async () => new Blob(["PK"])));
 vi.mock("@/services/content/getFile", () => ({ getFile }));
 vi.mock("@/components/atoms/youtubePlayer", () => ({
-  YoutubePlayer: ({ videoId }: { videoId: string }) => <div data-testid="player">{videoId}</div>,
+  YoutubePlayer: ({ videoId }: { videoId: string }) => (
+    <div data-testid="player">{videoId}</div>
+  ),
 }));
 vi.mock("@/services/content/adjustmentProposal", () => ({
   getProposals: vi.fn(async () => []),
@@ -21,9 +29,14 @@ vi.mock("@/services/content/fileHistory", () => ({
   getFileHistory: vi.fn(async () => []),
 }));
 vi.mock("@/components/atoms/docxPreview", () => ({ default: () => null }));
-vi.mock("./AdjustmentProposalModal", () => ({ default: () => null }));
+vi.mock("../AdjustmentProposalModal", () => ({ default: () => null }));
 vi.mock("react-toastify", () => ({
-  toast: { loading: vi.fn(), update: vi.fn(), success: vi.fn(), error: vi.fn() },
+  toast: {
+    loading: vi.fn(),
+    update: vi.fn(),
+    success: vi.fn(),
+    error: vi.fn(),
+  },
 }));
 
 const auth = vi.hoisted(() => ({
@@ -45,7 +58,11 @@ const demanda = (over: Partial<ContentDtoInput> = {}): ContentDtoInput =>
     lastEditedBy: "u-autor",
     lastEditedByName: "Ana Souza",
     lastEditedAt: "2026-09-02T12:00:00Z",
-    subject: { id: "s1", name: "Funções", frente: { nome: "Álgebra", materia: "m1" } },
+    subject: {
+      id: "s1",
+      name: "Funções",
+      frente: { nome: "Álgebra", materia: "m1" },
+    },
     ...over,
   }) as unknown as ContentDtoInput;
 
@@ -53,7 +70,7 @@ const montar = (over: Partial<ContentDtoInput> = {}) => {
   const handleClose = vi.fn();
   const updateStatusDemand = vi.fn();
   render(
-    <ValidatedDemand
+    <DemandaModal
       isOpen
       demand={demanda(over)}
       handleClose={handleClose}
@@ -74,10 +91,13 @@ const abrirRejeitar = () => {
 beforeEach(() => {
   updateStatus.mockClear();
   getFile.mockClear();
-  auth.data.permissao = { [Roles.validarDemanda]: true, [Roles.uploadDemanda]: true };
+  auth.data.permissao = {
+    [Roles.validarDemanda]: true,
+    [Roles.uploadDemanda]: true,
+  };
 });
 
-describe("ValidatedDemand — rejeição com motivo (048/07)", () => {
+describe("DemandaModal — rejeição com motivo (048/07)", () => {
   it("rejeitar sem motivo não confirma nem chama o serviço", () => {
     montar();
     const { confirmar, motivo } = abrirRejeitar();
@@ -120,17 +140,25 @@ describe("ValidatedDemand — rejeição com motivo (048/07)", () => {
     montar();
     fireEvent.click(screen.getByRole("button", { name: "Aprovar" }));
     await waitFor(() =>
-      expect(updateStatus).toHaveBeenCalledWith("d1", StatusEnum.Approved, "tok", undefined),
+      expect(updateStatus).toHaveBeenCalledWith(
+        "d1",
+        StatusEnum.Approved,
+        "tok",
+        undefined,
+      ),
     );
   });
 });
 
-describe("ValidatedDemand — motivo e autores na tela", () => {
+describe("DemandaModal — motivo e autores na tela", () => {
   it("demanda rejeitada mostra o motivo; pendente não mostra o bloco", () => {
     const { unmount } = render(
-      <ValidatedDemand
+      <DemandaModal
         isOpen
-        demand={demanda({ status: StatusEnum.Rejected, rejectionReason: "Sem exercícios" })}
+        demand={demanda({
+          status: StatusEnum.Rejected,
+          rejectionReason: "Sem exercícios",
+        })}
         handleClose={vi.fn()}
         updateStatusDemand={vi.fn()}
       />,
@@ -143,43 +171,70 @@ describe("ValidatedDemand — motivo e autores na tela", () => {
     expect(screen.queryByRole("note")).toBeNull();
   });
 
-  it("cabeçalho mostra quem criou, quem enviou e a última edição", () => {
-    montar();
-    expect(screen.getByText(/Criado por Carla Mendes em 01\/09\/2026/)).toBeInTheDocument();
-    expect(screen.getByText(/Enviado por Ana Souza/)).toBeInTheDocument();
-    expect(screen.getByText(/Última edição por Ana Souza em 02\/09\/2026/)).toBeInTheDocument();
+  it("cabeçalho mostra quem criou, de quem é o material e quem aprovou, com iniciais e data", () => {
+    montar({
+      status: StatusEnum.Approved,
+      approvedBy: "u-bruno",
+      approvedByName: "Bruno Costa",
+      approvedAt: "2026-09-05T12:00:00Z",
+    });
+    const pessoas = screen.getByRole("list", { name: "Pessoas da demanda" });
+    const itens = within(pessoas).getAllByRole("listitem");
+    expect(itens.map((li) => li.textContent)).toEqual([
+      "CMCriada porCarla Mendes · 01/09/2026",
+      "ASMaterial deAna Souza · 02/09/2026",
+      "BCAprovada porBruno Costa · 05/09/2026",
+    ]);
+    expect(screen.getByText("Aprovada")).toBeInTheDocument();
   });
 
-  it("sem nome resolvido mostra o id; sem arquivo não mostra 'Enviado por'", () => {
+  it("sem material e sem aprovação: só 'Criada por'; sem nome resolvido mostra o id", () => {
     montar({
       createdByName: undefined,
       file: undefined,
       uploadedByName: undefined,
       lastEditedBy: undefined,
       lastEditedByName: undefined,
+      status: 3 as unknown as StatusEnum,
     });
-    expect(screen.getByText(/Criado por u-criador/)).toBeInTheDocument();
-    expect(screen.queryByText(/Enviado por/)).toBeNull();
+    const itens = within(
+      screen.getByRole("list", { name: "Pessoas da demanda" }),
+    ).getAllByRole("listitem");
+    expect(itens).toHaveLength(1);
+    expect(itens[0]).toHaveTextContent("Criada por");
+    expect(itens[0]).toHaveTextContent("u-criador");
+    expect(screen.getByText("Aguardando envio")).toBeInTheDocument();
+    expect(screen.getByText(/ainda não tem material/)).toBeInTheDocument();
   });
 });
 
-describe("ValidatedDemand — conteúdo em vídeo (049/05)", () => {
+describe("DemandaModal — conteúdo em vídeo (049/05)", () => {
   it("vídeo: chip, player, sem Download/Visualizar, não busca o arquivo; Propor Ajuste fica", () => {
     montar({
-      file: { id: "f1", originalName: "", uploadedBy: "u-autor", tipo: "video", videoId: "dQw4w9WgXcQ" },
+      file: {
+        id: "f1",
+        originalName: "",
+        uploadedBy: "u-autor",
+        tipo: "video",
+        videoId: "dQw4w9WgXcQ",
+      },
     });
     expect(screen.getByText("Vídeo")).toBeInTheDocument();
     expect(screen.getByTestId("player")).toHaveTextContent("dQw4w9WgXcQ");
     expect(screen.queryByRole("button", { name: "Download" })).toBeNull();
     expect(screen.queryByRole("button", { name: "Visualizar" })).toBeNull();
     expect(getFile).not.toHaveBeenCalled();
-    expect(screen.getByRole("button", { name: "Propor Ajuste" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Propor Ajuste" }),
+    ).toBeInTheDocument();
   });
 
   it("documento: chip Documento, Download e Visualizar, e busca o arquivo", async () => {
     montar();
     expect(screen.getByText("Documento")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Download" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Download" }),
+    ).toBeInTheDocument();
     await waitFor(() => expect(getFile).toHaveBeenCalledWith("f1", "tok"));
   });
 
