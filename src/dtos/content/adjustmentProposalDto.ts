@@ -20,5 +20,7 @@ export interface AdjustmentProposalDto {
   comment?: string;
   reviewedBy?: string;
   reviewedByName?: string;
+  /** Quando foi revisada (050/01); propostas antigas não têm. */
+  reviewedAt?: string;
   createdAt: string;
 }
