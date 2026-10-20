@@ -3,8 +3,10 @@ export interface ContentFileHistoryDto {
   content: string;
   file: {
     _id: string;
-    fileKey: string;
+    fileKey?: string;
     originalName?: string;
+    tipo?: "documento" | "video";
+    videoId?: string;
   };
   uploadedBy: string;
   uploadedByName?: string;
