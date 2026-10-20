@@ -10,7 +10,7 @@ import {
   ProposalStatus,
 } from "@/dtos/content/adjustmentProposalDto";
 import { ContentDtoInput } from "@/dtos/content/contentDtoInput";
-import { ContentFileHistoryDto } from "@/dtos/content/contentFileHistoryDto";
+import type { EventoDaTimeline } from "@/dtos/content/timelineDto";
 import { StatusContent } from "@/enums/content/statusContent";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { Roles } from "@/enums/roles/roles";
@@ -20,14 +20,15 @@ import {
   getProposals,
   reviewProposal,
 } from "@/services/content/adjustmentProposal";
-import { getFileHistory } from "@/services/content/fileHistory";
 import { getFile } from "@/services/content/getFile";
+import { getTimeline } from "@/services/content/getTimeline";
 import { resetDemand } from "@/services/content/resetDemand";
 import { updateStatus } from "@/services/content/updateStatus";
 import { useAuthStore } from "@/store/auth";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import AdjustmentProposalModal from "../AdjustmentProposalModal";
 import { AbaConteudo } from "./AbaConteudo";
+import { AbaHistorico } from "./AbaHistorico";
 import { AbaPropostas } from "./AbaPropostas";
 import { Cabecalho } from "./Cabecalho";
 
@@ -54,7 +55,13 @@ export default function DemandaModal({
   const [blob, setBlob] = useState<Blob | null>(null);
   const [arrayBuffer, setArrayBuffer] = useState<ArrayBuffer>();
   const [proposals, setProposals] = useState<AdjustmentProposalDto[]>([]);
-  const [fileHistory, setFileHistory] = useState<ContentFileHistoryDto[]>([]);
+  // Histórico: só carrega quando a aba abre; null = ainda não carregou.
+  const [eventos, setEventos] = useState<EventoDaTimeline[] | null>(null);
+  const [erroHistorico, setErroHistorico] = useState<string | null>(null);
+  const [aba, setAba] = useState("conteudo");
+  // Já pediu a timeline alguma vez? Evita que o retry (que zera `eventos`)
+  // dispare o efeito de primeira abertura e busque duas vezes.
+  const historicoPedido = useRef(false);
   const [previewBuffer, setPreviewBuffer] = useState<ArrayBuffer>();
   const [videoPreviewId, setVideoPreviewId] = useState<string | null>(null);
 
@@ -82,18 +89,34 @@ export default function DemandaModal({
     permissao[Roles.uploadDemanda] &&
     demand.status !== StatusContent.Pending_Upload;
 
-  const loadProposalsAndHistory = useCallback(async () => {
+  const loadProposals = useCallback(async () => {
     try {
-      const [p, h] = await Promise.all([
-        getProposals(demandId, token),
-        getFileHistory(demandId, token),
-      ]);
-      setProposals(p);
-      setFileHistory(h);
+      setProposals(await getProposals(demandId, token));
     } catch {
       // silent
     }
   }, [demandId, token]);
+
+  const carregarHistorico = useCallback(async () => {
+    historicoPedido.current = true;
+    setErroHistorico(null);
+    setEventos(null);
+    try {
+      setEventos(await getTimeline(demandId, token));
+    } catch (e) {
+      setErroHistorico(e instanceof Error ? e.message : "");
+    }
+  }, [demandId, token]);
+
+  /** Depois de qualquer ação, propostas e histórico (se já aberto) são relidos. */
+  const recarregar = useCallback(() => {
+    loadProposals();
+    if (historicoPedido.current) carregarHistorico();
+  }, [loadProposals, carregarHistorico]);
+
+  useEffect(() => {
+    if (aba === "historico" && !historicoPedido.current) carregarHistorico();
+  }, [aba, carregarHistorico]);
 
   useEffect(() => {
     const fetchFile = async () => {
@@ -115,8 +138,8 @@ export default function DemandaModal({
   }, [demand.file, fileId, ehVideo, token]);
 
   useEffect(() => {
-    if (isOpen && demandId) loadProposalsAndHistory();
-  }, [isOpen, demandId, loadProposalsAndHistory]);
+    if (isOpen && demandId) loadProposals();
+  }, [isOpen, demandId, loadProposals]);
 
   const handleDownload = () => {
     if (!blob) return;
@@ -187,7 +210,7 @@ export default function DemandaModal({
           : "Proposta rejeitada",
       errorMessage: (error: Error) => error.message,
       onSuccess: () => {
-        loadProposalsAndHistory();
+        recarregar();
         if (status === ProposalStatus.Approved) updateStatusDemand(demandId);
       },
     });
@@ -223,12 +246,17 @@ export default function DemandaModal({
         </div>
 
         {/* Só o meio rola: cabeçalho e ações ficam sempre à vista. */}
-        <Tabs defaultValue="conteudo" className="flex-1 min-h-0 flex flex-col">
+        <Tabs
+          value={aba}
+          onValueChange={setAba}
+          className="flex-1 min-h-0 flex flex-col"
+        >
           <TabsList className="mx-4 sm:mx-6 shrink-0 justify-start">
             <TabsTrigger value="conteudo">Conteúdo</TabsTrigger>
             <TabsTrigger value="propostas">
               Propostas{proposals.length ? ` (${proposals.length})` : ""}
             </TabsTrigger>
+            <TabsTrigger value="historico">Histórico</TabsTrigger>
           </TabsList>
           <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4">
             <TabsContent value="conteudo" className="mt-0">
@@ -245,7 +273,6 @@ export default function DemandaModal({
             <TabsContent value="propostas" className="mt-0">
               <AbaPropostas
                 proposals={proposals}
-                fileHistory={fileHistory}
                 podeRevisar={!!permissao[Roles.validarDemanda]}
                 onVisualizar={visualizarMaterial}
                 onAprovar={(proposal) =>
@@ -269,6 +296,20 @@ export default function DemandaModal({
                         proposal._id,
                         ProposalStatus.Rejected,
                       ),
+                  })
+                }
+              />
+            </TabsContent>
+            <TabsContent value="historico" className="mt-0">
+              <AbaHistorico
+                eventos={eventos}
+                erro={erroHistorico}
+                onTentarDeNovo={carregarHistorico}
+                onVerMaterial={(m) =>
+                  visualizarMaterial({
+                    _id: m.fileContentId,
+                    tipo: m.tipo,
+                    videoId: m.videoId,
                   })
                 }
               />
@@ -359,7 +400,7 @@ export default function DemandaModal({
         contentId={demandId}
         isOpen={modals.adjustmentProposal.isOpen}
         handleClose={() => modals.adjustmentProposal.close()}
-        onSuccess={loadProposalsAndHistory}
+        onSuccess={recarregar}
       />
 
       <ModalConfirmCancel
