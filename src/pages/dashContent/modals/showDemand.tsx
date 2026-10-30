@@ -6,9 +6,7 @@ import {
 import { VideoLinkField } from "@/components/molecules/videoLinkField";
 import { sendVideoDemand } from "@/services/content/sendVideoDemand";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { Save, Trash2, UploadCloud, X } from "lucide-react";
 import { useRef, useState } from "react";
@@ -22,6 +20,7 @@ import { deleteDemand } from "../../../services/content/deleteDemand";
 import { uploadFileDemand } from "../../../services/content/uploadFileDemand";
 import { useAuthStore } from "../../../store/auth";
 import { useModals } from "@/hooks/useModal";
+import { Cabecalho } from "./demandaModal/Cabecalho";
 
 interface ShowDemandProps extends ModalProps {
   demand: ContentDtoInput;
@@ -165,39 +164,16 @@ function ShowDemand({
       className="bg-white w-full max-w-6xl p-4 rounded-md"
     >
       <Card className="border-none shadow-none">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl sm:text-3xl text-marine">
-            Visualizar Demanda
-          </CardTitle>
-          <p className="text-muted-foreground text-center text-lg sm:text-xl break-words">
-            {demand.title}
+        <CardContent className="space-y-4 p-0 sm:p-2">
+          {/* O mesmo cabeçalho da validação: quem pediu, tema, status (050). */}
+          <Cabecalho demand={demand} papelDoCriador="Pedida por" />
+          <p className="text-sm whitespace-pre-wrap break-words">
+            {demand.description}
           </p>
-        </CardHeader>
 
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input
-              value={demand.subject.frente.nome}
-              readOnly
-              placeholder="Frente"
-            />
-            <Input
-              value={demand.subject.name}
-              readOnly
-              placeholder="Tema"
-              className="sm:col-span-2"
-            />
-          </div>
-
-          <div>
-            <Textarea
-              value={demand.description}
-              readOnly
-              placeholder="Descrição"
-              className="resize-none h-32"
-            />
-          </div>
-
+          <h3 className="text-sm font-black text-marine pt-2">
+            O que você vai enviar
+          </h3>
           <TipoDeEnvioToggle value={tipo} onChange={trocarTipo} />
 
           {tipo === "video" && (
@@ -237,44 +213,42 @@ function ShowDemand({
               />
             </div>
           )}
-          {tipo === "documento" && (
-            <>
-              {uploadFile &&
-                uploadFile.type ===
-                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
-                  <Button
-                    onClick={() => modals.docxPreview.open()}
-                    className="mt-4"
-                  >
-                    Visualizar Preview
-                  </Button>
-                )}
-            </>
-          )}
-          {/* No celular um por linha: os 3 × w-36 vazavam pela esquerda e cortavam o "Salvar". */}
-          <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-4 pt-4">
+          {tipo === "documento" &&
+            uploadFile &&
+            uploadFile.type ===
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document" && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => modals.docxPreview.open()}
+              >
+                Pré-visualizar documento
+              </Button>
+            )}
+          {/*
+            Excluir à esquerda, longe de Salvar: é destrutivo e não é o fluxo
+            normal. No celular, Salvar por último (mais perto do polegar).
+          */}
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-2 pt-4 border-t">
             <Button
-              variant="default"
-              className="w-full sm:w-36"
-              onClick={tipo === "video" ? handleSendVideo : handleUploadFile}
-              disabled={tipo === "video" ? !videoId : !uploadFile}
-            >
-              <Save className="mr-2 h-4 w-4" /> Salvar
-            </Button>
-            <Button
-              variant="destructive"
-              className="w-full sm:w-36"
+              variant="ghost"
+              className="text-destructive hover:text-destructive sm:w-auto"
               onClick={() => modals.tryDelete.open()}
             >
-              <Trash2 className="mr-2 h-4 w-4" /> Excluir
+              <Trash2 className="mr-2 h-4 w-4" /> Excluir demanda
             </Button>
-            <Button
-              variant="outline"
-              className="w-full sm:w-36"
-              onClick={handleClose}
-            >
-              <X className="mr-2 h-4 w-4" /> Fechar
-            </Button>
+            <div className="flex flex-col-reverse sm:flex-row gap-2">
+              <Button variant="outline" onClick={handleClose}>
+                <X className="mr-2 h-4 w-4" /> Fechar
+              </Button>
+              <Button
+                variant="default"
+                onClick={tipo === "video" ? handleSendVideo : handleUploadFile}
+                disabled={tipo === "video" ? !videoId : !uploadFile}
+              >
+                <Save className="mr-2 h-4 w-4" /> Salvar
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
