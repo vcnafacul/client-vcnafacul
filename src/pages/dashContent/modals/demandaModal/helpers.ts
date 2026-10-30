@@ -1,4 +1,5 @@
 import type { ContentDtoInput } from "@/dtos/content/contentDtoInput";
+import type { EventoDaTimeline } from "@/dtos/content/timelineDto";
 import { StatusContent } from "@/enums/content/statusContent";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import type { PessoaDaDemanda } from "./PessoasDaDemanda";
@@ -78,3 +79,32 @@ export const rotuloDoMaterial = (file?: {
   tipo?: string;
   originalName?: string;
 }) => (file?.tipo === "video" ? "▶ Vídeo" : file?.originalName || "Arquivo");
+
+const tipoDoMaterial = (e: EventoDaTimeline) =>
+  e.material ? ` (${e.material.tipo === "video" ? "vídeo" : "documento"})` : "";
+
+/** O que a pessoa fez, para ler depois do nome: "Ana enviou o material (vídeo)". */
+export function fraseDoEvento(e: EventoDaTimeline): string {
+  switch (e.tipo) {
+    case "criada":
+      return "criou a demanda";
+    case "enviada":
+      return `enviou o material${tipoDoMaterial(e)}`;
+    case "aprovada":
+      return "aprovou a demanda";
+    case "rejeitada":
+      return "rejeitou a demanda";
+    case "resetada":
+      return "devolveu a demanda para a fila de envio";
+    case "proposta_enviada":
+      return `propôs um ajuste${tipoDoMaterial(e)}`;
+    case "proposta_aprovada":
+      return "aprovou a proposta de ajuste";
+    case "proposta_recusada":
+      return "recusou a proposta de ajuste";
+    case "material_substituido":
+      return `teve o material substituído pelo da proposta${tipoDoMaterial(e)}`;
+    default:
+      return "registrou uma alteração";
+  }
+}
