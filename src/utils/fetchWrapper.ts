@@ -179,7 +179,14 @@ const fetchWrapper = async (url: string, options?: any): Promise<Response> => {
   }
 
   // Verifica se recebeu 401 (não autorizado)
-  if (response.status === 401 && !isAuthEndpoint) {
+  // ⚠️ Só renova (e desloga) quem mandou token. Requisição anônima com 401 —
+  // ex.: a home sem login — mandava para /logoff, que volta para a home, que
+  // repete a requisição: a tela ficava trocando sem parar.
+  if (
+    response.status === 401 &&
+    !isAuthEndpoint &&
+    options?.headers?.Authorization
+  ) {
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
         failedQueue.push({ resolve, reject, request: { url, options: fetchOptions } });
