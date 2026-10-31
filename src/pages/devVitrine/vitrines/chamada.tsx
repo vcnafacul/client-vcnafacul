@@ -36,6 +36,7 @@ const modal = () => (
     isOpen
     handleClose={() => {}}
     classId="turma-vitrine"
+    turmaNome="Turma Noite 2026"
     handleNewAttendanceRecord={() => {}}
   />
 );
