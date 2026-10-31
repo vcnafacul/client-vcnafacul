@@ -340,6 +340,7 @@ export function PartnerClassWithStudents() {
         classId={hashClassId!}
         coursePeriodStart={classEntity?.coursePeriod?.startDate}
         coursePeriodEnd={classEntity?.coursePeriod?.endDate}
+        turmaNome={classEntity?.name}
       />
     );
   };

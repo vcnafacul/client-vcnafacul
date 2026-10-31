@@ -9,6 +9,7 @@ import {
 } from "./anulacao";
 import { vitrineAbaClassificacao } from "./abaClassificacao";
 import { vitrineChamada } from "./chamada";
+import { vitrineHistoricoDeChamadas } from "./historicoDeChamadas";
 import { vitrineFiltroDoBanco } from "./filtroDoBanco";
 import { vitrineMonitoramentoCabecalho } from "./monitoramento";
 import { vitrineMonitoramentoSecoes } from "./monitoramentoSecoes";
@@ -22,6 +23,7 @@ import { vitrineDemandaModal } from "./demandaModal";
 /** Para pôr um componente na vitrine: criar o arquivo nesta pasta e listar aqui. */
 export const vitrines: Vitrine[] = [
   vitrineChamada,
+  vitrineHistoricoDeChamadas,
   vitrineModalAnular,
   vitrineAnulacaoNaProva,
   vitrineAvisoAnulada,
