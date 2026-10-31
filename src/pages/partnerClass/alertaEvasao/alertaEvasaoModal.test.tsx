@@ -106,4 +106,21 @@ describe("AlertaEvasaoModal (tickets/054, card 03)", () => {
     expect(screen.getByText("Use um número inteiro de 1 a 100.")).toBeInTheDocument();
     expect(svc.salvar).not.toHaveBeenCalled();
   });
+
+  it("⚠️ exemplo sem erro de ponto flutuante: 28% de 25 aulas são 7 faltas", async () => {
+    svc.get.mockResolvedValue({ percentual: 28, minimoDeAulas: 25 });
+    render(<AlertaEvasaoModal isOpen handleClose={vi.fn()} />);
+    expect(
+      await screen.findByText(/7 faltas sem justificativa em 25 aulas \(28%\)/),
+    ).toBeInTheDocument();
+  });
+
+  it("⚠️ falha ao carregar: mostra Tentar de novo e recarrega", async () => {
+    svc.get.mockRejectedValueOnce({ statusCode: 500, message: "Erro" });
+    svc.get.mockResolvedValueOnce({ percentual: 15, minimoDeAulas: 10 });
+    render(<AlertaEvasaoModal isOpen handleClose={vi.fn()} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Tentar de novo" }));
+    await waitFor(() => expect(percentual()).toHaveValue("15"));
+    expect(screen.queryByRole("button", { name: "Tentar de novo" })).toBeNull();
+  });
 });

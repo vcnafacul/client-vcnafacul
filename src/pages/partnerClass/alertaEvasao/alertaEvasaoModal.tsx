@@ -7,7 +7,7 @@ import {
 } from "@/services/prepCourse/alertaEvasao";
 import { useAuthStore } from "@/store/auth";
 import { mensagemDeErro } from "@/utils/mensagemDeErro";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { validarAlerta } from "./validarAlerta";
@@ -31,20 +31,26 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
   const [carregou, setCarregou] = useState(false);
   const [salvando, setSalvando] = useState(false);
   const [tentouSalvar, setTentouSalvar] = useState(false);
+  /** Falhou ao ler: sem isto os campos ficavam desabilitados para sempre. */
+  const [erro, setErro] = useState(false);
 
-  useEffect(() => {
+  const carregar = useCallback(() => {
+    setErro(false);
     getAlertaEvasao(token)
       .then((a: AlertaEvasao) => {
         setPercentual(a.percentual == null ? "" : String(a.percentual));
         setMinimo(String(a.minimoDeAulas));
         setCarregou(true);
       })
-      .catch((e) =>
+      .catch((e) => {
+        setErro(true);
         toast.error(
           mensagemDeErro(e, "ver o alerta de evasão", "Erro ao carregar o alerta"),
-        ),
-      );
+        );
+      });
   }, [token]);
+
+  useEffect(() => carregar(), [carregar]);
 
   const erros = validarAlerta(percentual, minimo);
   const valido = !erros.percentual && !erros.minimo;
@@ -75,7 +81,9 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
     if (!valido || desligado) return null;
     const p = Number(percentual);
     const aulas = Number(minimo);
-    const faltas = Math.ceil((p / 100) * aulas);
+    // Inteiros antes de dividir: (28 / 100) * 25 dá 7,000000000000001 e o
+    // ceil virava 8.
+    const faltas = Math.ceil((p * aulas) / 100);
     return `Com ${p}% e ${aulas} aulas: um aluno com ${faltas} ${
       faltas === 1 ? "falta" : "faltas"
     } sem justificativa em ${aulas} aulas (${Math.round(
@@ -170,6 +178,21 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
               : "Nas primeiras aulas uma falta pesa muito; antes disso ninguém aparece em risco."}
           </span>
         </label>
+
+        {erro && (
+          <div className="flex items-center justify-between gap-3 rounded-lg border border-lightGray px-3 py-2">
+            <p className="text-sm text-grey">
+              Não foi possível carregar o alerta.
+            </p>
+            <button
+              type="button"
+              onClick={carregar}
+              className="shrink-0 h-9 px-3 rounded-lg border border-marine/30 text-marine text-sm font-bold hover:bg-marine/5"
+            >
+              Tentar de novo
+            </button>
+          </div>
+        )}
 
         <p
           aria-live="polite"
