@@ -184,6 +184,68 @@ describe("Novo Registro (tickets-documentacao, 11)", () => {
     expect(screen.getByRole("group", { name: "João" })).toBeInTheDocument();
     expect(screen.queryByRole("group", { name: "Ana" })).toBeNull();
   });
+
+  describe("risco de evasão (tickets/054, card 04)", () => {
+    const hoje = new Date();
+    const p = (n: number) => String(n).padStart(2, "0");
+    const dataDeHoje = `${hoje.getFullYear()}-${p(hoje.getMonth() + 1)}-${p(hoje.getDate())}`;
+
+    const turma = (alertaEvasao: object | null) =>
+      svc.alunos.mockResolvedValue({
+        alertaEvasao,
+        students: [
+          // 2 faltas em 11 aulas: Ausente → 25%, Presente → 17%
+          { id: "s1", name: "Joana", cod_enrolled: "1", aulas: 11, faltasNaoJustificadas: 2 },
+          // 0 faltas: nunca em risco
+          { id: "s2", name: "Aline", cod_enrolled: "2", aulas: 11, faltasNaoJustificadas: 0 },
+          // justificada hoje por período
+          {
+            id: "s3",
+            name: "César",
+            cod_enrolled: "3",
+            aulas: 11,
+            faltasNaoJustificadas: 1,
+            justificativasPorPeriodo: [{ inicio: dataDeHoje, fim: dataDeHoje }],
+          },
+        ],
+      });
+
+    it("selo e resumo seguem os toques", async () => {
+      turma({ percentual: 15, minimoDeAulas: 10 });
+      abrir();
+      expect(
+        await screen.findByLabelText("risco de evasão, 25% de faltas"),
+      ).toBeInTheDocument();
+      expect(screen.getByText(/aluno em risco de evasão/)).toBeInTheDocument();
+
+      fireEvent.click(
+        within(screen.getByRole("group", { name: "Joana" })).getByRole("button", {
+          name: "Presente",
+        }),
+      );
+      expect(
+        screen.getByLabelText("risco de evasão, 17% de faltas"),
+      ).toBeInTheDocument();
+      expect(screen.queryByLabelText(/risco de evasão, 25%/)).toBeNull();
+    });
+
+    it("justificado na data: etiqueta e sem selo", async () => {
+      turma({ percentual: 15, minimoDeAulas: 10 });
+      abrir();
+      const cesar = await screen.findByRole("group", { name: "César" });
+      const linha = cesar.closest("li")!;
+      expect(within(linha).getByText("justificado")).toBeInTheDocument();
+      expect(within(linha).queryByLabelText(/risco de evasão/)).toBeNull();
+    });
+
+    it("alerta desligado: nada de selo nem resumo", async () => {
+      turma(null);
+      abrir();
+      await screen.findByRole("group", { name: "Joana" });
+      expect(screen.queryByLabelText(/risco de evasão/)).toBeNull();
+      expect(screen.queryByText(/em risco de evasão/)).toBeNull();
+    });
+  });
 });
 
 describe("excluir chamada (tickets-documentacao, 11)", () => {

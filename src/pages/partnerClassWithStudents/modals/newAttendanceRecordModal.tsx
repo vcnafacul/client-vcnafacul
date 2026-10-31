@@ -11,8 +11,13 @@ import {
 import { SimpleAttendanceRecordHistory } from "@/types/partnerPrepCourse/attendanceRecordHistory";
 import { StudentToAttendanceRecord } from "@/types/partnerPrepCourse/classToAttendanceRecord";
 import { useEffect, useMemo, useState } from "react";
-import { IoClose, IoSearch } from "react-icons/io5";
+import { IoClose, IoSearch, IoWarning } from "react-icons/io5";
 import { toast } from "react-toastify";
+import {
+  AlertaEvasaoDaTurma,
+  justificadoNaData,
+  riscoDeEvasao,
+} from "./riscoDeEvasao";
 
 interface AttendanceRecordProps {
   isOpen: boolean;
@@ -59,6 +64,8 @@ export function NewAttendanceRecordModal({
   const [registring, setRegistering] = useState<boolean>(false);
   /** A lista chegou? Antes disso não dá para dizer que está vazia. */
   const [carregou, setCarregou] = useState(false);
+  /** `null` = alerta desligado no cursinho (tickets/054, D5). */
+  const [alerta, setAlerta] = useState<AlertaEvasaoDaTurma | null>(null);
 
   const {
     data: {
@@ -73,6 +80,7 @@ export function NewAttendanceRecordModal({
     getStudentsToAttendanceRecord(token, classId)
       .then((res) => {
         setStudents(res.students);
+        setAlerta(res.alertaEvasao ?? null);
         setCarregou(true);
       })
       .catch((e) =>
@@ -137,6 +145,29 @@ export function NewAttendanceRecordModal({
   };
 
   const ausentes = students.length - presentes.size;
+
+  /*
+    Risco de evasão (tickets/054, card 04). "Justificado na data" só muda com
+    a data; o % de cada linha sai disso em O(1) a cada toque; o resumo é uma
+    passada na lista. Com ~30 alunos não precisa memoizar as linhas.
+  */
+  const dataDaChamada = paraInput(date);
+  const justificados = useMemo(
+    () =>
+      new Set(
+        students
+          .filter((s) => justificadoNaData(s, dataDaChamada))
+          .map((s) => s.id),
+      ),
+    [students, dataDaChamada],
+  );
+  const riscoDe = (s: StudentToAttendanceRecord) =>
+    riscoDeEvasao(
+      s,
+      { presente: presentes.has(s.id), justificado: justificados.has(s.id) },
+      alerta,
+    );
+  const emRisco = alerta ? students.filter((s) => riscoDe(s).emRisco).length : 0;
 
   return (
     <ModalTemplate
@@ -262,6 +293,7 @@ export function NewAttendanceRecordModal({
             )}
             {visiveis.map((s) => {
               const presente = presentes.has(s.id);
+              const risco = riscoDe(s);
               return (
                 <li
                   key={s.id}
@@ -271,7 +303,23 @@ export function NewAttendanceRecordModal({
                     <p className="text-marine font-medium leading-snug break-words">
                       {s.name}
                     </p>
-                    <p className="text-xs text-grey">{s.cod_enrolled}</p>
+                    <p className="text-xs text-grey flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                      <span>{s.cod_enrolled}</span>
+                      {risco.emRisco && (
+                        <span
+                          aria-label={`risco de evasão, ${Math.round(risco.percentual)}% de faltas`}
+                          className="inline-flex items-center gap-0.5 px-1.5 rounded-full bg-orange/10 text-orange font-bold"
+                        >
+                          <IoWarning aria-hidden className="w-3 h-3" />
+                          {Math.round(risco.percentual)}%
+                        </span>
+                      )}
+                      {!presente && justificados.has(s.id) && (
+                        <span className="px-1.5 rounded-full bg-gray-100 text-grey font-semibold">
+                          justificado
+                        </span>
+                      )}
+                    </p>
                   </div>
                   <div
                     role="group"
@@ -311,6 +359,20 @@ export function NewAttendanceRecordModal({
       )}
 
       {/* Rodapé */}
+      {emRisco > 0 && (
+        <p
+          aria-live="polite"
+          className="shrink-0 mx-4 sm:mx-6 mt-2 px-3 py-1.5 sm:py-2 rounded-lg bg-orange/5 border-l-4 border-orange text-sm text-marine flex items-center gap-2"
+        >
+          <IoWarning aria-hidden className="w-4 h-4 text-orange shrink-0" />
+          <span>
+            <strong>{emRisco}</strong>{" "}
+            {emRisco === 1 ? "aluno em risco" : "alunos em risco"} de evasão
+            {/* No celular a faixa cabe numa linha só: o % fica para a tela larga. */}
+            <span className="hidden sm:inline"> (alerta: {alerta?.percentual}%)</span>
+          </span>
+        </p>
+      )}
       <div className="shrink-0 px-4 py-3 sm:px-6 sm:py-4 border-t border-lightGray flex flex-col gap-2 [@media(min-width:420px)]:flex-row [@media(min-width:420px)]:items-center">
         <p className="text-sm text-grey flex-1" aria-live="polite">
           {carregou && students.length > 0 && (
