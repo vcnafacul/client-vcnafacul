@@ -53,6 +53,24 @@ describe("riscoDeEvasao (tickets/054, R2–R5)", () => {
     ).toBe(false); // 3/21 ≈ 14,3%
   });
 
+  it.each([
+    // [aulas antes, faltas antes, alerta %] → hoje Ausente fica exatamente no %
+    [49, 28, 58], // 29/50: em ponto flutuante dá 57,999…
+    [99, 28, 29], // 29/100
+    [99, 56, 57], // 57/100
+  ])(
+    "⚠️ exatamente no limite em ponto flutuante: %i aulas, %i faltas, alerta %i%%",
+    (aulas, faltas, percentual) => {
+      expect(
+        riscoDeEvasao(
+          { aulas, faltasNaoJustificadas: faltas },
+          ausente,
+          { percentual, minimoDeAulas: 10 },
+        ).emRisco,
+      ).toBe(true);
+    },
+  );
+
   it("sem alerta configurado → nunca em risco", () => {
     const aluno = { aulas: 30, faltasNaoJustificadas: 30 };
     expect(riscoDeEvasao(aluno, ausente, null).emRisco).toBe(false);

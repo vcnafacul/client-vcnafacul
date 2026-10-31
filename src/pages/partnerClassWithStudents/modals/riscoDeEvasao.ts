@@ -32,7 +32,11 @@ export function riscoDeEvasao(
     (aluno.faltasNaoJustificadas ?? 0) +
     (!hoje.presente && !hoje.justificado ? 1 : 0);
   const percentual = (faltas / aulas) * 100;
+  // ⚠️ Compara em inteiros: (29 / 50) * 100 dá 57,99999999999999 e o aluno
+  // exatamente em 58% ficava sem selo.
   const emRisco =
-    !!alerta && aulas >= alerta.minimoDeAulas && percentual >= alerta.percentual;
+    !!alerta &&
+    aulas >= alerta.minimoDeAulas &&
+    faltas * 100 >= alerta.percentual * aulas;
   return { percentual, emRisco };
 }
