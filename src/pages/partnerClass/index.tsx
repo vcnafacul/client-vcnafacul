@@ -38,6 +38,7 @@ import Grid from "@mui/material/Grid2";
 import { useEffect, useState } from "react";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { ExpandableCoursePeriod } from "./components/expandableCoursePeriod";
+import { BotaoAlertaEvasao } from "./alertaEvasao/botaoAlertaEvasao";
 import { PeriodosMobile } from "./components/PeriodosMobile";
 import { ClassCreateEditModal } from "./modals/classCreateEditModal";
 import { CoursePeriodCreateEditModal } from "./modals/coursePeriodCreateEditModal";
@@ -324,7 +325,8 @@ export function PartnerClass() {
           </Toolbar>
         </AppBar>
         {podeGerenciar && (
-          <div className="flex justify-end items-center w-full">
+          <div className="flex justify-end items-center gap-2 w-full">
+            <BotaoAlertaEvasao />
             <Box p={0}>
               <Button
                 variant="contained"
@@ -371,14 +373,17 @@ export function PartnerClass() {
             Períodos Letivos
           </Typography>
           {podeGerenciar && (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleCreateCoursePeriod}
-              fullWidth={!acimaDeSm}
-            >
-              Novo Período Letivo
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <BotaoAlertaEvasao fullWidth={!acimaDeSm} />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleCreateCoursePeriod}
+                fullWidth={!acimaDeSm}
+              >
+                Novo Período Letivo
+              </Button>
+            </div>
           )}
         </Toolbar>
       </AppBar>
