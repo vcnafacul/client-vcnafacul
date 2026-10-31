@@ -38,4 +38,14 @@ describe("Relatório com o % do alerta (tickets/054, card 05)", () => {
     expect(screen.getByRole("spinbutton")).toHaveValue(null);
     expect(screen.queryByText(/Padrão do cursinho/)).toBeNull();
   });
+
+  it("só busca o alerta quando o Excel é escolhido", async () => {
+    alerta.mockResolvedValue({ percentual: 15, minimoDeAulas: 10 });
+    render(
+      <AttendanceRecordSummaryModal isOpen handleClose={vi.fn()} classId="c1" />,
+    );
+    expect(alerta).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByLabelText("Relatório Excel (Detalhado)"));
+    await waitFor(() => expect(alerta).toHaveBeenCalledTimes(1));
+  });
 });

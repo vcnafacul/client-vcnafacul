@@ -36,7 +36,10 @@ export default function AttendanceRecordSummaryModal({
   const executeAsync = useToastAsync();
   const [isLoading, setIsLoading] = useState(false);
   /** % do alerta de risco de evasão do cursinho (tickets/054, card 05). */
-  const [padraoDoCursinho, setPadraoDoCursinho] = useState<number | null>(null);
+  // undefined = ainda não buscou; null = sem alerta (ou falhou).
+  const [padraoDoCursinho, setPadraoDoCursinho] = useState<
+    number | null | undefined
+  >(undefined);
 
   const start = new Date();
   start.setDate(start.getDate() - 30);
@@ -143,21 +146,24 @@ export default function AttendanceRecordSummaryModal({
     register("reportType");
   }, [register]);
 
-  // O limite do Excel abre com o % do alerta de risco de evasão, para o
-  // "Excedeu Limite" bater com o selo da chamada. Continua editável. Sem
-  // alerta (ou se a leitura falhar) o campo fica como antes: vazio.
+  // O limite do Excel abre com o % do alerta de risco de evasão do cursinho,
+  // como ponto de partida; continua editável. ⚠️ Não é a mesma conta da
+  // chamada: o Excel usa só o intervalo escolhido, compara com ">" e não tem
+  // mínimo de aulas. Busca só quando o Excel é escolhido; sem alerta (ou se a
+  // leitura falhar) o campo fica como antes: vazio.
   useEffect(() => {
+    if (watchReportType !== "excel" || padraoDoCursinho !== undefined) return;
     getAlertaEvasao(token)
       .then(({ percentual }) => {
-        if (percentual == null) return;
         setPadraoDoCursinho(percentual);
+        if (percentual == null) return;
         // Input montado e vazio vale "", não null: os dois são "não digitou".
         const atual = getValues("maxAbsencePercent") as unknown;
         if (atual == null || atual === "")
           setValue("maxAbsencePercent", percentual);
       })
-      .catch(() => undefined);
-  }, [token, getValues, setValue]);
+      .catch(() => setPadraoDoCursinho(null));
+  }, [watchReportType, padraoDoCursinho, token, getValues, setValue]);
 
   return (
     <ModalTemplate
