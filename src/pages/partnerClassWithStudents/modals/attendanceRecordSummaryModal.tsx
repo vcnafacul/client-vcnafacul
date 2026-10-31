@@ -3,6 +3,7 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { exportAttendanceRecord } from "@/services/prepCourse/attendanceRecord/exportAttendanceRecord";
 import { getSummaryByDate } from "@/services/prepCourse/attendanceRecord/getSummaryByDate";
 import { getSummaryByStudent } from "@/services/prepCourse/attendanceRecord/getSummaryByStudent";
+import { getAlertaEvasao } from "@/services/prepCourse/alertaEvasao";
 import { useAuthStore } from "@/store/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Calendar } from "primereact/calendar";
@@ -34,6 +35,8 @@ export default function AttendanceRecordSummaryModal({
 
   const executeAsync = useToastAsync();
   const [isLoading, setIsLoading] = useState(false);
+  /** % do alerta de risco de evasão do cursinho (tickets/054, card 05). */
+  const [padraoDoCursinho, setPadraoDoCursinho] = useState<number | null>(null);
 
   const start = new Date();
   start.setDate(start.getDate() - 30);
@@ -70,6 +73,8 @@ export default function AttendanceRecordSummaryModal({
     control,
     formState: { errors },
     watch,
+    setValue,
+    getValues,
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -138,6 +143,22 @@ export default function AttendanceRecordSummaryModal({
     register("reportType");
   }, [register]);
 
+  // O limite do Excel abre com o % do alerta de risco de evasão, para o
+  // "Excedeu Limite" bater com o selo da chamada. Continua editável. Sem
+  // alerta (ou se a leitura falhar) o campo fica como antes: vazio.
+  useEffect(() => {
+    getAlertaEvasao(token)
+      .then(({ percentual }) => {
+        if (percentual == null) return;
+        setPadraoDoCursinho(percentual);
+        // Input montado e vazio vale "", não null: os dois são "não digitou".
+        const atual = getValues("maxAbsencePercent") as unknown;
+        if (atual == null || atual === "")
+          setValue("maxAbsencePercent", percentual);
+      })
+      .catch(() => undefined);
+  }, [token, getValues, setValue]);
+
   return (
     <ModalTemplate
       isOpen={isOpen}
@@ -201,6 +222,12 @@ export default function AttendanceRecordSummaryModal({
                 className="border rounded px-3 py-2 w-24"
                 placeholder="25"
               />
+              {padraoDoCursinho != null && (
+                <p className="text-xs text-grey mt-1">
+                  Padrão do cursinho: {padraoDoCursinho}% (alerta de risco de
+                  evasão)
+                </p>
+              )}
               {errors.maxAbsencePercent && (
                 <p className="text-red text-sm mt-1">
                   {errors.maxAbsencePercent.message}
