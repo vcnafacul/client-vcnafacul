@@ -7,6 +7,7 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { toast } from "react-toastify";
 import { getRuleSetByInscription } from "@/services/partnerPrepForm/getRuleSetByInscription";
 import { getInscription } from "@/services/prepCourse/getInscription";
+import { getHistoricoInscrito } from "@/services/prepCourse/inscription/getHistoricoInscrito";
 import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
 import { updateWaitingListInfo } from "@/services/prepCourse/inscription/updateWaitingList";
 import { confirmEnrolled } from "@/services/prepCourse/student/confirmEnrolled";
@@ -337,10 +338,19 @@ export function PartnerPrepInscritionStudentManager() {
     );
   };
 
-  const handleModalDetaild = (id: string) => {
+  // Logs e documentos não vêm na lista (pesavam a consulta): busca ao abrir.
+  const handleModalDetaild = async (id: string) => {
     const student = students.find((student) => student.id === id);
-    setStudentSelected(student!);
-    modals.details.open();
+    if (!student) return;
+    await executeAsync({
+      action: () => getHistoricoInscrito(inscriptionId!, id, token),
+      loadingMessage: "Carregando detalhes...",
+      errorMessage: "Erro ao carregar documentos e histórico do aluno",
+      onSuccess: (historico) => {
+        setStudentSelected({ ...student, ...historico });
+        modals.details.open();
+      },
+    });
   };
 
   /*

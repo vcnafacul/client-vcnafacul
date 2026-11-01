@@ -19,15 +19,8 @@ export async function getSubscribers(
   if (response.status === 200) {
     const data: StudentCourseFullDtoInput[] = await response.json();
     return data.map((student) => {
-      const log = student.logs
-        .filter((log) => log.description === "Email de convocação enviado")
-        .sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )[0];
-
-      const logDate: Date | undefined = log?.createdAt
-        ? new Date(log?.createdAt)
+      const logDate: Date | undefined = student.ultimo_email_convocacao
+        ? new Date(student.ultimo_email_convocacao)
         : undefined;
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
 
