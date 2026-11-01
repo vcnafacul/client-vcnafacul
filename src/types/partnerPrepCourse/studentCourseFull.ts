@@ -1,7 +1,7 @@
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
 
-interface Documents {
+export interface Documents {
   key: string;
   name: string;
   createdAt: Date;
@@ -58,17 +58,17 @@ export interface StudentCourseFull {
 
 export interface StudentCourseFullDtoInput extends StudentCourseFull {
   socioeconomic: string;
-  logs: LogStudent[];
-  documents: Documents[];
+  // último "Email de convocação enviado"; logs e documentos vêm à parte
+  ultimo_email_convocacao: string | null;
   data_convocacao: string | null;
   data_limite_convocacao: string | null;
-  sended_email_recently: boolean;
 }
 
 export interface XLSXStudentCourseFull extends StudentCourseFull {
   socioeconomic: SocioeconomicAnswer[];
-  logs: LogStudent[];
-  documents: Documents[];
+  // A lista de inscritos não traz: carregados ao abrir os detalhes.
+  logs?: LogStudent[];
+  documents?: Documents[];
   data_convocacao: Date | null;
   data_limite_convocacao: Date | null;
   sended_email_recently: boolean;

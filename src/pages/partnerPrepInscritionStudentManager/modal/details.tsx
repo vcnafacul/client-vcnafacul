@@ -174,7 +174,7 @@ export function Details({
                 <ShadcnTable
                   headers={["Data", "Status", "Descrição"]}
                   cells={
-                    student.logs
+                    [...(student.logs ?? [])]
                       .sort(
                         (a, b) =>
                           new Date(b.createdAt).getTime() -
