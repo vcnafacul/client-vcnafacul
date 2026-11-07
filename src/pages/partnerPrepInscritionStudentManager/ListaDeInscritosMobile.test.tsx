@@ -2,6 +2,7 @@ import { Bool } from "@/enums/bool";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { fireEvent, render, screen } from "@testing-library/react";
+import { SEM_MASCARA } from "@/hooks/useDadosSensiveis";
 import { describe, expect, it } from "vitest";
 import {
   ListaDeInscritosMobile,
@@ -30,6 +31,7 @@ const renderLista = (n: number, ranking?: Map<string, number>) =>
       inscritos={Array.from({ length: n }, (_, i) => inscrito(i + 1))}
       rankingMap={ranking ?? null}
       renderAcoes={(i) => <button>ações de {i.id}</button>}
+      mascarar={SEM_MASCARA}
     />,
   );
 

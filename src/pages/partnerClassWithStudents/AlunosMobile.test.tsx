@@ -1,3 +1,4 @@
+import { SEM_MASCARA } from "@/hooks/useDadosSensiveis";
 import { CancelledStudent } from "@/types/partnerPrepCourse/cancelledStudent";
 import { ClassStudent } from "@/types/partnerPrepCourse/classStudent";
 import { fireEvent, render, screen } from "@testing-library/react";
@@ -18,7 +19,7 @@ const aluno = (i: number): ClassStudent =>
 describe("AlunosMobile", () => {
   it("ativos: nome, email, matrícula, frequência e ações", () => {
     render(
-      <AlunosMobile
+      <AlunosMobile mascarar={SEM_MASCARA}
         tipo="ativos"
         alunos={[aluno(1)]}
         renderAcoes={(a) => <button>ações de {a.id}</button>}
@@ -40,7 +41,7 @@ describe("AlunosMobile", () => {
       cancelledAt: new Date(2026, 8, 1),
       justification: "Mudou de cidade",
     };
-    render(<AlunosMobile tipo="cancelados" alunos={[cancelado]} />);
+    render(<AlunosMobile mascarar={SEM_MASCARA} tipo="cancelados" alunos={[cancelado]} />);
     expect(screen.getByText("Cancelado em 01/09/2026")).toBeInTheDocument();
     expect(screen.getByText("Mudou de cidade")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /ações/ })).toBeNull();
@@ -48,7 +49,7 @@ describe("AlunosMobile", () => {
 
   it("busca e mostra uma página por vez", () => {
     render(
-      <AlunosMobile
+      <AlunosMobile mascarar={SEM_MASCARA}
         tipo="ativos"
         alunos={Array.from({ length: TAMANHO_DA_PAGINA + 1 }, (_, i) => aluno(i + 1))}
         renderAcoes={() => null}

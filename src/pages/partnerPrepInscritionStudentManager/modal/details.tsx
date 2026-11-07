@@ -1,6 +1,7 @@
 import { ShadcnTable } from "@/components/atoms/shadcnTable";
 import Text from "@/components/atoms/text";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Mascaras, SEM_MASCARA } from "@/hooks/useDadosSensiveis";
 import { useFileDownload } from "@/hooks/useFileDownload";
 import { getDocuments } from "@/services/prepCourse/student/getDocuments";
 import { getProfilePhoto } from "@/services/prepCourse/student/getProfilePhoto";
@@ -14,6 +15,8 @@ interface Props {
   student: XLSXStudentCourseFull;
   disableDocuments?: boolean;
   disableLogs?: boolean;
+  /** Sem máscara por padrão: o estudante vendo os próprios dados. */
+  mascarar?: Mascaras;
 }
 
 export function Details({
@@ -21,6 +24,7 @@ export function Details({
   handleClose,
   disableDocuments = false,
   disableLogs = false,
+  mascarar = SEM_MASCARA,
 }: Props) {
   const formatAnswer = (
     answer: string | number | boolean | string[] | number[]
@@ -45,17 +49,20 @@ export function Details({
       label: "Cadastrado em",
       value: format(student.cadastrado_em, "dd/MM/yyyy"),
     },
-    { label: "Email", value: student.email },
+    { label: "Email", value: mascarar.email(student.email) },
     { label: "Nome Completo", value: `${student.nome} ${student.sobrenome}` },
     { label: "Nome Social", value: student.nome_social },
     { label: "Gênero", value: student.genero },
-    { label: "CPF", value: student.cpf },
+    { label: "CPF", value: mascarar.cpf(student.cpf) },
     {
       label: "Data de nascimento",
       value: format(student.data_nascimento, "dd/MM/yyyy"),
     },
-    { label: "Telefone de emergência", value: student.telefone_emergencia },
-    { label: "WhatsApp", value: student.whatsapp },
+    {
+      label: "Telefone de emergência",
+      value: mascarar.telefone(student.telefone_emergencia),
+    },
+    { label: "WhatsApp", value: mascarar.telefone(student.whatsapp) },
   ];
 
   const addressInfo = [
@@ -70,10 +77,13 @@ export function Details({
 
   const guardianInfo = [
     { label: "Nome", value: student.nome_guardiao_legal },
-    { label: "Telefone", value: student.telefone_guardiao_legal },
-    { label: "RG", value: student.rg_guardiao_legal },
+    {
+      label: "Telefone",
+      value: mascarar.telefone(student.telefone_guardiao_legal),
+    },
+    { label: "RG", value: mascarar.rg(student.rg_guardiao_legal) },
     { label: "UF", value: student.uf_guardiao_legal },
-    { label: "CPF", value: student.cpf_guardiao_legal },
+    { label: "CPF", value: mascarar.cpf(student.cpf_guardiao_legal) },
     { label: "Parentesco", value: student.parentesco_guardiao_legal },
   ];
 
