@@ -35,6 +35,7 @@ import {
   getCepByLatAndLon,
 } from "@/services/geolocation/getCepByLatAndLon";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { socialLinksSchema } from "@/utils/socialLinks";
 import { renderToStaticMarkup } from "react-dom/server";
 import * as yup from "yup";
 import { ReactComponent as PointIcon } from "../../../../assets/images/home/univ_public.svg";
@@ -107,13 +108,13 @@ function ModalEditDashGeo({
           yup.string().email("Email inválido").required("Email é obrigatório"),
         otherwise: () => yup.string().email("Email inválido").nullable(),
       }),
-    site: yup.string().default(geo.site).nullable(),
-    instagram: yup.string().default(geo.instagram).nullable(),
-    facebook: yup.string().default(geo.facebook).nullable(),
-    youtube: yup.string().default(geo.youtube).nullable(),
-    linkedin: yup.string().default(geo.linkedin).nullable(),
-    twitter: yup.string().default(geo.twitter).nullable(),
-    tiktok: yup.string().default(geo.tiktok).nullable(),
+    site: socialLinksSchema.site.default(geo.site),
+    instagram: socialLinksSchema.instagram.default(geo.instagram),
+    facebook: socialLinksSchema.facebook.default(geo.facebook),
+    youtube: socialLinksSchema.youtube.default(geo.youtube),
+    linkedin: socialLinksSchema.linkedin.default(geo.linkedin),
+    twitter: socialLinksSchema.twitter.default(geo.twitter),
+    tiktok: socialLinksSchema.tiktok.default(geo.tiktok),
     reportAddress: yup.bool().default(geo.reportAddress),
     reportContact: yup.bool().default(geo.reportContact),
     reportOther: yup.bool().default(geo.reportOther),

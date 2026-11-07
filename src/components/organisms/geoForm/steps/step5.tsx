@@ -1,13 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { yupResolver } from "@hookform/resolvers/yup";
+import { socialLinksSchema } from "@/utils/socialLinks";
 import { useForm } from "react-hook-form";
+import * as yup from "yup";
 import { EachStepProps } from "..";
 import { CreateGeolocation } from "../../../../types/geolocation/geolocation";
 import Text from "../../../atoms/text";
 import Button from "../../../molecules/button";
 import Form from "../../form";
 
+const schema = yup.object(socialLinksSchema);
+
 function Step5Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: EachStepProps){
-  const {register, handleSubmit, getValues, formState: { errors } } = useForm();
+  const {register, handleSubmit, getValues, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   function handleForm(data: any) {
     updateData!(data)

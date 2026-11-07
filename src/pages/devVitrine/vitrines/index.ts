@@ -21,6 +21,7 @@ import { vitrineMeuPerfil } from "./meuPerfil";
 import { vitrineResultadoComAnulada } from "./resultadoComAnulada";
 import { vitrineDemandaModal } from "./demandaModal";
 import { vitrineContatosDoCursinho } from "./contatosDoCursinho";
+import { vitrineCanaisDigitais } from "./canaisDigitais";
 
 /** Para pôr um componente na vitrine: criar o arquivo nesta pasta e listar aqui. */
 export const vitrines: Vitrine[] = [
@@ -44,4 +45,5 @@ export const vitrines: Vitrine[] = [
   vitrineMeuPerfil,
   vitrineDemandaModal,
   vitrineContatosDoCursinho,
+  vitrineCanaisDigitais,
 ];
