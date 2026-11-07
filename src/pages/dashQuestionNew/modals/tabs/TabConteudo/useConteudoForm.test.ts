@@ -169,3 +169,45 @@ describe("useConteudoForm — a escolha ao salvar (card 27)", () => {
     expect(novaVersaoQuestao).not.toHaveBeenCalled();
   });
 });
+
+describe("pendências do conteúdo (o que impede salvar)", () => {
+  it("⚠️ questão antiga com alternativa vazia: a pendência aparece mesmo sem mexer na alternativa", async () => {
+    const { result } = montar(question({ textoAlternativaA: "" }));
+    act(() => result.current.handleEdit());
+    act(() =>
+      result.current.setValue("textoQuestao", "um enunciado novo e maior", {
+        shouldDirty: true,
+        shouldValidate: true,
+      }),
+    );
+    await waitFor(() =>
+      expect(result.current.pendencias).toEqual([
+        expect.objectContaining({
+          campo: "textoAlternativaA",
+          aba: "alternativas",
+          rotulo: "Alternativa A",
+        }),
+      ]),
+    );
+    // Ao entrar em edição, o campo vazio também fica marcado na própria aba.
+    await waitFor(() =>
+      expect(result.current.errors.textoAlternativaA).toBeDefined(),
+    );
+  });
+
+  it("conteúdo válido: nenhuma pendência", () => {
+    const { result } = montar();
+    expect(result.current.pendencias).toEqual([]);
+  });
+
+  it("vários problemas: um por campo, na ordem da tela", () => {
+    const { result } = montar(
+      question({ textoQuestao: "curto", textoAlternativaC: "", alternativa: "" }),
+    );
+    expect(result.current.pendencias.map((p) => p.campo)).toEqual([
+      "textoQuestao",
+      "textoAlternativaC",
+      "alternativa",
+    ]);
+  });
+});

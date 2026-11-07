@@ -6,41 +6,14 @@ import { RICH_TEXT_IMAGE_MAX_WIDTH } from "@/utils/richTextImage";
 import { AlertCircle, Edit, Loader2, Save, X } from "lucide-react";
 import { PendingImageStore } from "@/utils/pendingImageStore";
 import { lazy, Suspense } from "react";
-import { Controller, FieldErrors, UseFormReturn } from "react-hook-form";
+import { Controller, UseFormReturn } from "react-hook-form";
+import { ListaDePendencias } from "./PendenciasDoConteudo";
+import { ancoraDoCampo, Pendencia } from "./pendencias";
 import { ConteudoFormData } from "./schema";
 
 const RichTextEditor = lazy(
   () => import("@/components/molecules/richTextEditor/RichTextEditor")
 );
-
-/**
- * Metadados de cada campo do form: rótulo amigável e em qual aba do modal ele
- * fica. Usado para mostrar, na barra de ações (aba Enunciado, onde vive o botão
- * Salvar), exatamente quais campos bloqueiam o save e onde corrigi-los —
- * inclusive quando o campo inválido está em outra aba (ex.: alternativas vazias
- * em questões legadas com alternativas em imagem).
- */
-const FIELD_META: Record<string, { label: string; tab: string }> = {
-  textoQuestao: { label: "Texto da questão", tab: "Enunciado" },
-  pergunta: { label: "Pergunta", tab: "Enunciado" },
-  textoAlternativaA: { label: "Alternativa A", tab: "Alternativas" },
-  textoAlternativaB: { label: "Alternativa B", tab: "Alternativas" },
-  textoAlternativaC: { label: "Alternativa C", tab: "Alternativas" },
-  textoAlternativaD: { label: "Alternativa D", tab: "Alternativas" },
-  textoAlternativaE: { label: "Alternativa E", tab: "Alternativas" },
-  alternativa: { label: "Alternativa correta", tab: "Alternativas" },
-};
-
-function collectFieldErrors(errors: FieldErrors<ConteudoFormData>) {
-  return Object.entries(errors)
-    .filter(([, err]) => err?.message)
-    .map(([field, err]) => ({
-      field,
-      label: FIELD_META[field]?.label ?? field,
-      tab: FIELD_META[field]?.tab,
-      message: String((err as { message?: unknown })?.message ?? "inválido"),
-    }));
-}
 
 interface TabConteudoProps {
   form: UseFormReturn<ConteudoFormData>;
@@ -56,6 +29,9 @@ interface TabConteudoProps {
   onImageUpload?: (file: File) => Promise<string>;
   pendingStore?: PendingImageStore;
   token?: string;
+  /** O que impede salvar (inclusive campos de outra aba). */
+  pendencias?: Pendencia[];
+  onIrPara?: (pendencia: Pendencia) => void;
 }
 
 export function TabConteudo({
@@ -72,6 +48,8 @@ export function TabConteudo({
   onImageUpload,
   pendingStore,
   token,
+  pendencias = [],
+  onIrPara = () => {},
 }: TabConteudoProps) {
   const { control, formState: { errors } } = form;
   const textoQuestao = form.watch("textoQuestao");
@@ -106,7 +84,7 @@ export function TabConteudo({
 
         <CardContent className="space-y-4">
           {/* Texto da Questão — editor grande */}
-          <div className="space-y-2">
+          <div id={ancoraDoCampo("textoQuestao")} className="space-y-2 scroll-mt-28">
             <label className="text-sm font-semibold text-gray-600">
               Texto da Questão *
             </label>
@@ -143,7 +121,7 @@ export function TabConteudo({
               </Suspense>
             )}
             {errors.textoQuestao && (
-              <p className="text-sm text-red-600 flex items-center gap-1">
+              <p className="text-sm text-rose-700 flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
                 {errors.textoQuestao.message}
               </p>
@@ -151,7 +129,7 @@ export function TabConteudo({
           </div>
 
           {/* Pergunta (opcional) */}
-          <div className="space-y-2">
+          <div id={ancoraDoCampo("pergunta")} className="space-y-2 scroll-mt-28">
             <label className="text-sm font-semibold text-gray-600">
               Pergunta (opcional)
             </label>
@@ -194,7 +172,7 @@ export function TabConteudo({
               </Suspense>
             )}
             {errors.pergunta && (
-              <p className="text-sm text-red-600 flex items-center gap-1">
+              <p className="text-sm text-rose-700 flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
                 {errors.pergunta.message}
               </p>
@@ -255,23 +233,9 @@ export function TabConteudo({
                     Você tem alterações não salvas
                   </p>
                 )}
-                {!isValid && isDirty && (
-                  <div className="mt-1 space-y-1">
-                    <p className="text-sm text-red-600 font-medium flex items-center gap-1">
-                      <AlertCircle className="h-4 w-4" />
-                      Corrija os campos abaixo antes de salvar:
-                    </p>
-                    <ul className="text-sm text-red-600 list-disc list-inside space-y-0.5">
-                      {collectFieldErrors(errors).map((e) => (
-                        <li key={e.field}>
-                          <span className="font-medium">{e.label}</span>
-                          {e.tab && (
-                            <span className="text-red-500"> (aba {e.tab})</span>
-                          )}
-                          : {e.message}
-                        </li>
-                      ))}
-                    </ul>
+                {pendencias.length > 0 && (
+                  <div className="mt-1">
+                    <ListaDePendencias pendencias={pendencias} onIrPara={onIrPara} />
                   </div>
                 )}
               </div>
@@ -288,7 +252,7 @@ export function TabConteudo({
                 </Button>
                 <Button
                   onClick={onSave}
-                  disabled={isSaving || !isDirty || !isValid}
+                  disabled={isSaving || !isDirty || !isValid || pendencias.length > 0}
                   variant="default"
                   size="sm"
                   className="bg-primary"

@@ -1,4 +1,5 @@
 import { Question } from "@/dtos/question/questionDTO";
+import { pendenciasDoConteudo } from "./pendencias";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { updateContent } from "@/services/question/updateContent";
 import { novaVersaoQuestao } from "@/services/question/novaVersaoQuestao";
@@ -73,6 +74,8 @@ export function useConteudoForm({
   const isDirty = form.formState.isDirty;
   const isValid = form.formState.isValid;
   const errors = form.formState.errors;
+  // O que impede salvar, pelo schema inteiro (ver `pendenciasDoConteudo`).
+  const pendencias = pendenciasDoConteudo(form.watch());
 
   // Resetar formulário quando a questão mudar (ex: trocar de questão)
   useEffect(() => {
@@ -98,6 +101,8 @@ export function useConteudoForm({
    */
   const handleEdit = () => {
     setIsEditing(true);
+    // Marca já os campos inválidos, inclusive os que a pessoa não vai tocar.
+    form.trigger();
   };
 
   /**
@@ -240,6 +245,7 @@ export function useConteudoForm({
     isDirty,
     isValid,
     errors,
+    pendencias,
 
     // Ações
     handleEdit,
