@@ -1,4 +1,8 @@
-import { StatusEnum } from "../../enums/generic/statusEnum";
+import {
+  FILTROS_VAZIOS,
+  FiltrosDoGeo,
+  paraQuery,
+} from "@/pages/dashGeo/filtros";
 import { Geolocation } from "../../types/geolocation/geolocation";
 import fetchWrapper from "../../utils/fetchWrapper";
 import { Paginate } from "../../utils/paginate";
@@ -11,13 +15,16 @@ import { allGeolocation } from "../urls";
  */
 export async function getAllGeolocation(
   token: string,
-  status: StatusEnum,
+  filtros: FiltrosDoGeo = FILTROS_VAZIOS,
   page: number = 1,
   limit: number = 40,
-  text: string = "",
 ): Promise<Paginate<Geolocation>> {
   const url = new URL(allGeolocation);
-  const params: Record<string, string | number> = { status, text, page, limit };
+  const params: Record<string, string | number> = {
+    ...paraQuery(filtros),
+    page,
+    limit,
+  };
   Object.keys(params).forEach((key) =>
     url.searchParams.append(key, params[key].toString()),
   );
@@ -42,19 +49,23 @@ export async function getAllGeolocation(
 }
 
 /**
- * Todos os registros de um status (e busca), página por página: a lista V2
+ * Todos os registros que casam com os filtros, página por página: a lista V2
  * ordena no navegador e precisa de tudo — com uma página só, quem passasse
  * de 100 sumia.
  */
 export async function getTodasAsGeolocalizacoes(
   token: string,
-  status: StatusEnum,
-  text = "",
+  filtros: FiltrosDoGeo = FILTROS_VAZIOS,
   porPagina = 100,
 ): Promise<Geolocation[]> {
   const todas: Geolocation[] = [];
   for (let page = 1; ; page++) {
-    const { data, totalItems } = await getAllGeolocation(token, status, page, porPagina, text);
+    const { data, totalItems } = await getAllGeolocation(
+      token,
+      filtros,
+      page,
+      porPagina,
+    );
     todas.push(...data);
     if (data.length === 0 || todas.length >= totalItems) return todas;
   }

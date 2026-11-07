@@ -5,8 +5,6 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { createGeolocation } from "@/services/geolocation/createGeolocation";
 import { TypeMarker } from "@/types/map/marker";
 import { useCallback, useEffect, useState } from "react";
-import { FilterProps } from "../../components/atoms/filter";
-import { SelectProps } from "../../components/atoms/select";
 import { CardDash } from "../../components/molecules/cardDash";
 import { DashCardContext } from "../../context/dashCardContext";
 import { StatusEnum } from "../../enums/generic/statusEnum";
@@ -17,6 +15,12 @@ import { mergeObjects } from "../../utils/mergeObjects";
 import { Paginate } from "../../utils/paginate";
 import { colunasDoGeo, ORDENACAO_PADRAO } from "./columns";
 import { dashGeo } from "./data";
+import { FiltrosDoGeo } from "./FiltrosDoGeo";
+import {
+  contarFiltros,
+  FILTROS_VAZIOS,
+  type FiltrosDoGeo as Filtros,
+} from "./filtros";
 import ModalCreateDashGeo from "./modals/modalCreateDashGeo";
 import ModalEditDashGeo from "./modals/modalEditDashGeo";
 import { useModals } from "@/hooks/useModal";
@@ -24,11 +28,10 @@ import { useAuthStore } from "@/store/auth";
 
 function DashGeo() {
   const token = useAuthStore((s) => s.data.token);
-  const [status, setStatus] = useState<StatusEnum>(StatusEnum.Pending);
   const [geolocations, setGeolocations] = useState<Geolocation[]>([]);
   const [geoSelect, setGeoSelect] = useState<Geolocation>();
-  // A busca vai para o servidor; o campo do V2 já espera 250ms antes de avisar.
-  const [filterText, setFilterText] = useState<string>("");
+  // Os filtros vão para o servidor; os campos de texto esperam a digitação parar.
+  const [filtros, setFiltros] = useState<Filtros>(FILTROS_VAZIOS);
   // Três estados do template V2: o erro vira "tentar de novo" (antes a lista
   // ficava vazia calada).
   const [estado, setEstado] = useState<"idle" | "loading" | "error">("loading");
@@ -67,6 +70,11 @@ function DashGeo() {
   };
 
   const updateStatus = (cardId: string) => {
+    // Em "Todos" o registro continua na lista, só com outro status.
+    if (filtros.status === StatusEnum.All) {
+      carregar();
+      return;
+    }
     const updatedGeo = geolocations.filter((geo) => {
       if (geo.id !== cardId) return geo;
     });
@@ -155,12 +163,12 @@ function DashGeo() {
   const carregar = useCallback(async () => {
     setEstado("loading");
     try {
-      setGeolocations(await getTodasAsGeolocalizacoes(token, status, filterText));
+      setGeolocations(await getTodasAsGeolocalizacoes(token, filtros));
       setEstado("idle");
     } catch {
       setEstado("error");
     }
-  }, [token, status, filterText]);
+  }, [token, filtros]);
 
   useEffect(() => {
     carregar();
@@ -173,22 +181,6 @@ function DashGeo() {
     limit: 0,
     totalItems: 0,
   });
-
-  const selectFiltes: SelectProps[] = [
-    {
-      "aria-label": "Status",
-      options: dashGeo.options,
-      defaultValue: status,
-      setState: (value) => setStatus(Number(value) as StatusEnum),
-    },
-  ];
-
-  const filterProps: FilterProps = {
-    filtrar: (e: React.ChangeEvent<HTMLInputElement>) =>
-      setFilterText(e.target.value.toLowerCase()),
-    placeholder: "Nome, estado, cidade, email ou categoria",
-    defaultValue: filterText,
-  };
 
   const acaoPrimaria: DashAction = {
     id: "nova-universidade",
@@ -206,21 +198,19 @@ function DashGeo() {
         getMoreCards,
         cardTransformation,
         limitCards,
-        selectFiltes,
-        filterProps,
         totalItems: geolocations.length,
       }}
     >
       <DashListTemplate<Geolocation>
         columns={colunasDoGeo}
         actions={{ primary: acaoPrimaria }}
-        activeFilterCount={filterText.trim() ? 1 : 0}
-        totalSemFiltro={geolocations.length}
-        onClearFilters={() => setFilterText("")}
+        filters={<FiltrosDoGeo valor={filtros} onChange={setFiltros} />}
+        activeFilterCount={contarFiltros(filtros)}
+        onClearFilters={() => setFiltros(FILTROS_VAZIOS)}
         defaultSort={ORDENACAO_PADRAO}
         state={estado}
         onRetry={carregar}
-        textoVazio="Nenhum registro com este status"
+        textoVazio="Nenhum registro pendente"
       />
       {/*
         Como função, não <Componente />: declarados no render, remontavam a

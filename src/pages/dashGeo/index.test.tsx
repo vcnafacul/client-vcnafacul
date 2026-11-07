@@ -50,19 +50,68 @@ describe("DashGeo (V2)", () => {
     expect(screen.getByText("2 relato(s)")).toBeInTheDocument();
   });
 
-  it("a busca vai para o servidor", async () => {
+  it("os filtros vão para o servidor (o texto espera a digitação parar)", async () => {
     getTodasAsGeolocalizacoes.mockResolvedValue([geo("1", "Cursinho A")]);
     render(<DashGeo />);
     await screen.findByText("Cursinho A");
-    fireEvent.change(
-      screen.getByPlaceholderText("Nome, estado, cidade, email ou categoria"),
-      { target: { value: "campinas" } },
-    );
+    fireEvent.change(screen.getByLabelText("Buscar"), {
+      target: { value: "semear" },
+    });
+    fireEvent.change(screen.getByLabelText("Estado"), {
+      target: { value: "SP" },
+    });
+    fireEvent.click(screen.getByLabelText("Endereço"));
     await waitFor(() =>
       expect(getTodasAsGeolocalizacoes).toHaveBeenLastCalledWith(
         "tok",
-        expect.anything(),
-        "campinas",
+        expect.objectContaining({
+          texto: "semear",
+          uf: "SP",
+          revisoes: ["reportAddress"],
+        }),
+      ),
+    );
+    expect(
+      screen.getByRole("button", { name: /Limpar filtros \(3\)/ }),
+    ).toBeInTheDocument();
+  });
+
+  it("universidade desliga o tipo de cursinho e limpa o que estava escolhido", async () => {
+    getTodasAsGeolocalizacoes.mockResolvedValue([]);
+    render(<DashGeo />);
+    fireEvent.change(await screen.findByLabelText("Tipo de cursinho"), {
+      target: { value: "Gratuito" },
+    });
+    fireEvent.change(screen.getByLabelText("Tipo"), { target: { value: "1" } });
+    const categoria = screen.getByLabelText("Tipo de cursinho");
+    expect(categoria).toBeDisabled();
+    expect(categoria).toHaveValue("");
+  });
+
+  it("no celular, 'Mais filtros' mostra quantos filtros estão escondidos", async () => {
+    getTodasAsGeolocalizacoes.mockResolvedValue([]);
+    render(<DashGeo />);
+    fireEvent.change(await screen.findByLabelText("Estado"), {
+      target: { value: "SP" },
+    });
+    const botao = screen.getByRole("button", { name: "Mais filtros (1)" });
+    expect(botao).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(botao);
+    expect(
+      screen.getByRole("button", { name: "Menos filtros (1)" }),
+    ).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("status 'Todos' manda -1", async () => {
+    getTodasAsGeolocalizacoes.mockResolvedValue([]);
+    render(<DashGeo />);
+    fireEvent.change(await screen.findByLabelText("Status"), {
+      target: { value: "-1" },
+    });
+    await waitFor(() =>
+      expect(getTodasAsGeolocalizacoes).toHaveBeenLastCalledWith(
+        "tok",
+        expect.objectContaining({ status: -1 }),
       ),
     );
   });
