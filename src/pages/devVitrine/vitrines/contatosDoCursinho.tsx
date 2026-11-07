@@ -42,6 +42,22 @@ const vazio = {
   tiktok: "",
 } as Geolocation;
 
+const erros = {
+  instagram: {
+    type: "link",
+    message: "Cole o link do Instagram, ex.: https://instagram.com/seucursinho",
+  },
+  linkedin: {
+    type: "link",
+    message:
+      "Cole o link do Linkedin, ex.: https://linkedin.com/company/seucursinho",
+  },
+  tiktok: {
+    type: "link",
+    message: "Cole o link do TikTok, ex.: https://tiktok.com/@seucursinho",
+  },
+};
+
 const props = { form: prepCourseInfo, setValue: () => {}, errors: {} };
 
 export const vitrineContatosDoCursinho: Vitrine = {
@@ -64,6 +80,13 @@ export const vitrineContatosDoCursinho: Vitrine = {
       slug: "edicao",
       titulo: "Edição",
       render: () => <PrepCourseInfo {...props} edit geo={cheio} />,
+    },
+    {
+      slug: "links-errados",
+      titulo: "Links errados",
+      render: () => (
+        <PrepCourseInfo {...props} errors={erros} edit geo={cheio} />
+      ),
     },
   ],
 };

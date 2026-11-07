@@ -68,7 +68,9 @@ function ContactField({
   };
 
   return (
-    <div className="relative">
+    // O erro do campo é absolute: a mensagem com exemplo quebra em 2 linhas no
+    // celular e cobriria o campo de baixo sem esse espaço.
+    <div className={`relative ${error ? "pb-4" : ""}`}>
       <InputFactory
         id={id}
         label={label}

@@ -26,6 +26,7 @@ import leaflet from "leaflet";
 import { renderToStaticMarkup } from "react-dom/server";
 import { toast } from "react-toastify";
 import * as yup from "yup";
+import { socialLinksSchema } from "@/utils/socialLinks";
 import { ReactComponent as PointIcon } from "../../../assets/images/home/univ_public.svg";
 import { prepCourseInfo } from "../data";
 import { PrepCourseInfo } from "./modalEditDashGeo/Fields/prepCourseInfo";
@@ -69,12 +70,7 @@ function ModalEditDashGeo({
     phone: yup.string().nullable(),
     whatsapp: yup.string().nullable(),
     email: yup.string().email("Email inválido"),
-    site: yup.string().nullable(),
-    instagram: yup.string().nullable(),
-    facebook: yup.string().nullable(),
-    youtube: yup.string().nullable(),
-    linkedin: yup.string().nullable(),
-    twitter: yup.string().nullable(),
+    ...socialLinksSchema,
     type: yup.number().default(type),
     campus: yup.string().when("type", {
       is: (value: TypeMarker) => value == TypeMarker.univPublic,
