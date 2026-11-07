@@ -6,7 +6,10 @@ import {
 import { prepCourseInfoType } from "@/pages/dashGeo/data";
 import { Geolocation } from "@/types/geolocation/geolocation";
 import { TypeMarker } from "@/types/map/marker";
+import { useState } from "react";
+import { FaRegCopy } from "react-icons/fa";
 import { FieldErrors, UseFormSetValue } from "react-hook-form";
+import { toast } from "react-toastify";
 
 interface Props {
   form: prepCourseInfoType;
@@ -16,11 +19,89 @@ interface Props {
   geo: Geolocation;
 }
 
+// Contatos ganham um botão de copiar quando o modal está só para visualização.
+const CONTACT_FIELDS = [
+  "phone",
+  "whatsapp",
+  "email",
+  "site",
+  "instagram",
+  "youtube",
+  "facebook",
+  "linkedin",
+  "twitter",
+  "tiktok",
+] as const;
+
+interface ContactFieldProps {
+  id: string;
+  label: string;
+  type: InputFactoryType;
+  onChange: (value: string) => void;
+  error: FieldErrors[string];
+  edit: boolean;
+  defaultValue?: string;
+}
+
+function ContactField({
+  id,
+  label,
+  type,
+  onChange,
+  error,
+  edit,
+  defaultValue,
+}: ContactFieldProps) {
+  // O input não é controlado: guarda o que está na tela para copiar o valor atual.
+  const [value, setValue] = useState(defaultValue ?? "");
+  const canCopy = !edit && !!value;
+
+  const copy = () => {
+    if (!navigator.clipboard?.writeText) {
+      toast.error(`Não foi possível copiar ${label}`);
+      return;
+    }
+    navigator.clipboard
+      .writeText(value)
+      .then(() => toast.info(`${label} copiado!`))
+      .catch(() => toast.error(`Não foi possível copiar ${label}`));
+  };
+
+  return (
+    <div className="relative">
+      <InputFactory
+        id={id}
+        label={label}
+        type={type}
+        onChange={(e: any) => {
+          setValue(e.target.value);
+          onChange(e.target.value);
+        }}
+        error={error}
+        disabled={!edit}
+        defaultValue={defaultValue}
+        className={canCopy ? "pr-11" : ""}
+      />
+      {canCopy && (
+        <button
+          type="button"
+          onClick={copy}
+          aria-label={`Copiar ${label}`}
+          title={`Copiar ${label}`}
+          className="absolute right-2 top-4 p-2 rounded-md text-grey hover:text-orange hover:bg-gray-100"
+        >
+          <FaRegCopy className="w-4 h-4" />
+        </button>
+      )}
+    </div>
+  );
+}
+
 export function PrepCourseInfo({ form, setValue, errors, edit, geo }: Props) {
   return (
     <div
       className="grid grid-cols-1 sm:grid-cols-2 items-center 
-      h-full sm:h-[729px] gap-x-4 px-1"
+      h-full sm:min-h-[729px] gap-x-4 px-1"
     >
       <InputFactory
         id={form.name.label}
@@ -128,87 +209,18 @@ export function PrepCourseInfo({ form, setValue, errors, edit, geo }: Props) {
         defaultValue={geo.state}
         value={geo.state}
       />
-      <InputFactory
-        id={form.phone.label}
-        label={form.phone.label}
-        type={form.phone.type as InputFactoryType}
-        onChange={(e: any) => setValue("phone", e.target.value)}
-        error={errors.phone}
-        disabled={!edit}
-        defaultValue={geo.phone}
-      />
-      <InputFactory
-        id={form.whatsapp.label}
-        label={form.whatsapp.label}
-        type={form.whatsapp.type as InputFactoryType}
-        onChange={(e: any) => setValue("whatsapp", e.target.value)}
-        error={errors.whatsapp}
-        disabled={!edit}
-        defaultValue={geo.whatsapp}
-      />
-      <InputFactory
-        id={form.email.label}
-        label={form.email.label}
-        type={form.email.type as InputFactoryType}
-        onChange={(e: any) => setValue("email", e.target.value)}
-        error={errors.email}
-        disabled={!edit}
-        defaultValue={geo.email}
-      />
-      <InputFactory
-        id={form.site.label}
-        label={form.site.label}
-        type={form.site.type as InputFactoryType}
-        onChange={(e: any) => setValue("site", e.target.value)}
-        error={errors.site}
-        disabled={!edit}
-        defaultValue={geo.site}
-      />
-      <InputFactory
-        id={form.instagram.label}
-        label={form.instagram.label}
-        type={form.instagram.type as InputFactoryType}
-        onChange={(e: any) => setValue("instagram", e.target.value)}
-        error={errors.instagram}
-        disabled={!edit}
-        defaultValue={geo.instagram}
-      />
-      <InputFactory
-        id={form.youtube.label}
-        label={form.youtube.label}
-        type={form.youtube.type as InputFactoryType}
-        onChange={(e: any) => setValue("youtube", e.target.value)}
-        error={errors.youtube}
-        disabled={!edit}
-        defaultValue={geo.youtube}
-      />
-      <InputFactory
-        id={form.facebook.label}
-        label={form.facebook.label}
-        type={form.facebook.type as InputFactoryType}
-        onChange={(e: any) => setValue("facebook", e.target.value)}
-        error={errors.facebook}
-        disabled={!edit}
-        defaultValue={geo.facebook}
-      />
-      <InputFactory
-        id={form.linkedin.label}
-        label={form.linkedin.label}
-        type={form.linkedin.type as InputFactoryType}
-        onChange={(e: any) => setValue("linkedin", e.target.value)}
-        error={errors.linkedin}
-        disabled={!edit}
-        defaultValue={geo.linkedin}
-      />
-      <InputFactory
-        id={form.twitter.label}
-        label={form.twitter.label}
-        type={form.twitter.type as InputFactoryType}
-        onChange={(e: any) => setValue("twitter", e.target.value)}
-        error={errors.twitter}
-        disabled={!edit}
-        defaultValue={geo.twitter}
-      />
+      {CONTACT_FIELDS.map((field) => (
+        <ContactField
+          key={field}
+          id={form[field].label}
+          label={form[field].label}
+          type={form[field].type as InputFactoryType}
+          onChange={(value) => setValue(field, value)}
+          error={errors[field]}
+          edit={edit}
+          defaultValue={geo[field]}
+        />
+      ))}
     </div>
   );
 }
