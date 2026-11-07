@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { ancoraDoCampo } from "../TabConteudo/pendencias";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RichTextRenderer } from "@/components/atoms/richTextRenderer/RichTextRenderer";
@@ -49,7 +50,7 @@ export function TabAlternativas({
         <CardHeader>
           <CardTitle className="text-lg">Alternativas</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent id={ancoraDoCampo("alternativa")} className="space-y-3 scroll-mt-28">
           {alternativas.map((alt) => {
             const textoAlternativa = form.watch(alt.campo as any);
             const isCorreta = respostaCorreta === alt.letra;
@@ -57,7 +58,8 @@ export function TabAlternativas({
             return (
               <div
                 key={alt.letra}
-                className={`p-4 rounded-lg border-2 transition-all ${
+                id={ancoraDoCampo(alt.campo)}
+                className={`scroll-mt-28 p-4 rounded-lg border-2 transition-all ${
                   isCorreta
                     ? "bg-green-50 border-green-400 shadow-sm"
                     : "bg-gray-50 border-gray-200"
@@ -144,7 +146,7 @@ export function TabAlternativas({
                       />
                     </Suspense>
                     {errors[alt.campo as keyof typeof errors] && (
-                      <p className="text-sm text-red-600 flex items-center gap-1">
+                      <p className="text-sm text-rose-700 flex items-center gap-1">
                         <AlertCircle className="h-3 w-3" />
                         {errors[alt.campo as keyof typeof errors]?.message}
                       </p>
@@ -156,8 +158,8 @@ export function TabAlternativas({
           })}
 
           {errors.alternativa && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm text-red-600 flex items-center gap-2">
+            <div className="p-3 bg-rose-50 border border-rose-200 rounded-md">
+              <p className="text-sm text-rose-700 flex items-center gap-2">
                 <AlertCircle className="h-4 w-4" />
                 {errors.alternativa.message}
               </p>

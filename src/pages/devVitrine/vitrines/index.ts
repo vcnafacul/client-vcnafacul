@@ -20,6 +20,7 @@ import { vitrineColaboradores } from "./colaboradores";
 import { vitrineMeuPerfil } from "./meuPerfil";
 import { vitrineResultadoComAnulada } from "./resultadoComAnulada";
 import { vitrineDemandaModal } from "./demandaModal";
+import { vitrinePendenciasDaQuestao } from "./pendenciasDaQuestao";
 import { vitrineContatosDoCursinho } from "./contatosDoCursinho";
 import { vitrineCanaisDigitais } from "./canaisDigitais";
 
@@ -46,4 +47,5 @@ export const vitrines: Vitrine[] = [
   vitrineDemandaModal,
   vitrineContatosDoCursinho,
   vitrineCanaisDigitais,
+  vitrinePendenciasDaQuestao,
 ];

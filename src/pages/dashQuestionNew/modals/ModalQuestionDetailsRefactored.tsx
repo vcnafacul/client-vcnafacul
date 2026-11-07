@@ -21,6 +21,8 @@ import { TabHistorico } from "./tabs/TabHistorico";
 import { TabImagens } from "./tabs/TabImagens";
 import { useConteudoForm } from "./tabs/TabConteudo/useConteudoForm";
 import { ModalEscolhaAoSalvar } from "./tabs/TabConteudo/ModalEscolhaAoSalvar";
+import { FaixaDoConteudo } from "./tabs/TabConteudo/PendenciasDoConteudo";
+import { ancoraDoCampo, Pendencia } from "./tabs/TabConteudo/pendencias";
 
 interface ModalQuestionDetailsRefactoredProps {
   isOpen: boolean;
@@ -282,12 +284,50 @@ function ModalContent({
 
   const contentFormat = question.contentFormat || "plain";
 
+  /*
+    A aba fica controlada aqui para o "Ir até o campo" das pendências do
+    conteúdo trocar de aba. O Salvar do conteúdo mora na aba Enunciado; nas
+    outras, enquanto o conteúdo está em edição, a faixa do topo mostra o que
+    impede salvar (ou deixa salvar dali).
+  */
+  const [aba, setAba] = useState(abaInicial ?? "classificacao");
+  const irPara = (pendencia: Pendencia) => {
+    setAba(pendencia.aba);
+    // Depois de a aba aparecer: rola até o campo, destaca e põe o cursor nele.
+    setTimeout(() => {
+      const bloco = document.getElementById(ancoraDoCampo(pendencia.campo));
+      if (!bloco) return;
+      bloco.scrollIntoView({ behavior: "smooth", block: "center" });
+      bloco.classList.add("ring-2", "ring-rose-400", "rounded-md");
+      setTimeout(
+        () => bloco.classList.remove("ring-2", "ring-rose-400", "rounded-md"),
+        2000,
+      );
+      bloco
+        .querySelector<HTMLElement>('[contenteditable="true"], input, textarea')
+        ?.focus({ preventScroll: true });
+    }, 50);
+  };
+
   return (
     <>
     <ModalTabTemplateQuestion
       isOpen={isOpen}
       className="px-2 py-2 sm:px-4"
       abaInicial={abaInicial}
+      abaAtiva={aba}
+      onAbaChange={setAba}
+      aviso={
+        conteudoForm.isEditing && aba !== "conteudo" ? (
+          <FaixaDoConteudo
+            pendencias={conteudoForm.pendencias}
+            onIrPara={irPara}
+            isDirty={conteudoForm.isDirty}
+            isSaving={conteudoForm.isSaving}
+            onSave={conteudoForm.handleSave}
+          />
+        ) : undefined
+      }
       cabecalho={
         abrirNaLinhagem || lista ? (
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -359,6 +399,8 @@ function ModalContent({
               onImageUpload={handleImageUpload}
               pendingStore={pendingStoreRef.current}
               token={token}
+              pendencias={conteudoForm.pendencias}
+              onIrPara={irPara}
             />
           ),
           handleClose: fechar,
