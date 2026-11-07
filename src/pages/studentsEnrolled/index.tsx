@@ -18,6 +18,8 @@ import { reactiveEnrolled } from "@/services/prepCourse/student/reactive-enrolle
 import { updateClass } from "@/services/prepCourse/student/updateClass";
 import { getEnrollmentCertificate } from "@/services/prepCourse/student/enrollmentCertificate";
 import { useAuthStore } from "@/store/auth";
+import { useDadosSensiveis } from "@/hooks/useDadosSensiveis";
+import { ToggleDadosSensiveis } from "@/components/molecules/toggleDadosSensiveis";
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
 import { capitalizeWords } from "@/utils/capitalizeWords";
 import { formatDate } from "@/utils/date";
@@ -89,6 +91,12 @@ export function StudentsEnrolled() {
   const {
     data: { token, permissao },
   } = useAuthStore();
+  // A api só manda completo o que a permissão libera: e-mail e telefone com
+  // gerenciarEstudantes, CPF com gerenciarProcessoSeletivo.
+  const { mostrarToggle, ocultar, setOcultar, mascarar } = useDadosSensiveis(
+    !!permissao[Roles.gerenciarEstudantes] ||
+      !!permissao[Roles.gerenciarProcessoSeletivo],
+  );
 
   useEffect(() => {
     const fetchPartnerLogo = async () => {
@@ -579,6 +587,7 @@ export function StudentsEnrolled() {
       field: "email",
       headerName: "Email",
       minWidth: 270,
+      renderCell: (params) => mascarar.email(params.value),
       filterOperators: getGridStringOperators().filter(({ value }) =>
         ["contains"].includes(value),
       ),
@@ -587,6 +596,7 @@ export function StudentsEnrolled() {
       field: "whatsapp",
       headerName: "Telefone",
       minWidth: 150,
+      renderCell: (params) => mascarar.telefone(params.value),
       filterOperators: getGridStringOperators().filter(({ value }) =>
         ["contains"].includes(value),
       ),
@@ -595,6 +605,7 @@ export function StudentsEnrolled() {
       field: "cpf",
       headerName: "CPF",
       minWidth: 150,
+      renderCell: (params) => mascarar.cpf(params.value),
       filterOperators: getGridStringOperators().filter(({ value }) =>
         ["contains"].includes(value),
       ),
@@ -791,6 +802,11 @@ export function StudentsEnrolled() {
           </Button>
         )}
       </div>
+      {mostrarToggle && (
+        <div className="w-full px-4 flex justify-end">
+          <ToggleDadosSensiveis ocultar={ocultar} onChange={setOcultar} />
+        </div>
+      )}
       {!acimaDeSm ? (
         <EstudantesMobile
           estudantes={students}
@@ -799,6 +815,7 @@ export function StudentsEnrolled() {
           total={totalItems}
           onPagina={irParaPagina}
           renderAcoes={renderAcoes}
+          mascarar={mascarar}
           selecao={
             permissao[Roles.gerenciarEstudantes]
               ? {

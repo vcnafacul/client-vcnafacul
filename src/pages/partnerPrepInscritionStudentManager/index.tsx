@@ -18,6 +18,8 @@ import { sendEmailDeclarationInterest } from "@/services/prepCourse/student/send
 import { updateSelectEnrolledInfo } from "@/services/prepCourse/student/updateEnrolledInfo";
 import { updateIsFreeInfo } from "@/services/prepCourse/student/updateIsFreeInfo";
 import { useAuthStore } from "@/store/auth";
+import { useDadosSensiveis } from "@/hooks/useDadosSensiveis";
+import { ToggleDadosSensiveis } from "@/components/molecules/toggleDadosSensiveis";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { RankingItem } from "@/types/partnerPrepForm/ruleForm";
 import { capitalizeWords } from "@/utils/capitalizeWords";
@@ -91,6 +93,8 @@ export function PartnerPrepInscritionStudentManager() {
   const {
     data: { token },
   } = useAuthStore();
+  // A rota já exige gerenciarProcessoSeletivo: quem chega aqui vê o dado completo.
+  const { ocultar, setOcultar, mascarar } = useDadosSensiveis(true);
 
   const executeAsync = useToastAsync();
   // Abaixo de 768px (o `sm` do projeto) a tabela vira lista de cards.
@@ -530,12 +534,18 @@ export function PartnerPrepInscritionStudentManager() {
         return rank != null ? `${rank}º` : "—";
       },
     },
-    { field: "email", headerName: "Email", width: 250 },
+    {
+      field: "email",
+      headerName: "Email",
+      width: 250,
+      renderCell: (params) => mascarar.email(params.value),
+    },
     {
       field: "cpf",
       headerName: "CPF",
       flex: 1,
       minWidth: 120,
+      renderCell: (params) => mascarar.cpf(params.value),
     },
     { field: "status", headerName: "Status", width: 200 },
     {
@@ -604,7 +614,11 @@ export function PartnerPrepInscritionStudentManager() {
 
   const ModalDetails = () => {
     return modals.details.isOpen ? (
-      <Details handleClose={modals.details.close} student={studentSelected!} />
+      <Details
+        handleClose={modals.details.close}
+        student={studentSelected!}
+        mascarar={mascarar}
+      />
     ) : null;
   };
 
@@ -745,11 +759,15 @@ export function PartnerPrepInscritionStudentManager() {
           </div>
         </div>
       </div>
+      <div className="w-full px-4 flex justify-end">
+        <ToggleDadosSensiveis ocultar={ocultar} onChange={setOcultar} />
+      </div>
       {!acimaDeSm ? (
         <ListaDeInscritosMobile
           inscritos={sortedStudents}
           rankingMap={rankingMap}
           renderAcoes={renderAcoes}
+          mascarar={mascarar}
         />
       ) : (
         <Paper sx={{ height: "100%", width: "100%" }}>

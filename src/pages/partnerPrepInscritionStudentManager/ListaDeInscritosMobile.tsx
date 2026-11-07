@@ -1,4 +1,5 @@
 import { Bool } from "@/enums/bool";
+import { Mascaras } from "@/hooks/useDadosSensiveis";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { capitalizeWords } from "@/utils/capitalizeWords";
 import { ReactNode, useMemo, useState } from "react";
@@ -10,6 +11,7 @@ interface Props {
   inscritos: XLSXStudentCourseFull[];
   rankingMap: Map<string, number> | null;
   renderAcoes: (inscrito: XLSXStudentCourseFull) => ReactNode;
+  mascarar: Mascaras;
 }
 
 const dataCurta = (data: Date | string | null) =>
@@ -38,6 +40,7 @@ export function ListaDeInscritosMobile({
   inscritos,
   rankingMap,
   renderAcoes,
+  mascarar,
 }: Props) {
   const [busca, setBusca] = useState("");
   const [visiveis, setVisiveis] = useState(TAMANHO_DA_PAGINA);
@@ -90,7 +93,7 @@ export function ListaDeInscritosMobile({
                     {capitalizeWords(`${inscrito.nome} ${inscrito.sobrenome}`)}
                   </p>
                   <p className="text-xs text-gray-500 break-all">
-                    {inscrito.email}
+                    {mascarar.email(inscrito.email)}
                   </p>
                 </div>
               </div>

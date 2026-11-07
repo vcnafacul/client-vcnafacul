@@ -1,3 +1,4 @@
+import { Mascaras } from "@/hooks/useDadosSensiveis";
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
 import { ReactNode } from "react";
 
@@ -9,6 +10,7 @@ interface Props {
   total: number;
   onPagina: (pagina: number) => void;
   renderAcoes: (estudante: StudentsDtoOutput) => ReactNode;
+  mascarar: Mascaras;
   /** Só para quem gera carteirinhas (gerenciarEstudantes). */
   selecao?: {
     selecionados: string[];
@@ -29,6 +31,7 @@ export function EstudantesMobile({
   total,
   onPagina,
   renderAcoes,
+  mascarar,
   selecao,
 }: Props) {
   const totalDePaginas = Math.max(1, Math.ceil(total / porPagina));
@@ -74,12 +77,14 @@ export function EstudantesMobile({
                   <p className="font-semibold text-gray-900 break-words">
                     {e.name}
                   </p>
-                  <p className="text-xs text-gray-500 break-all">{e.email}</p>
+                  <p className="text-xs text-gray-500 break-all">
+                    {mascarar.email(e.email)}
+                  </p>
                 </div>
               </div>
               <p className="text-xs text-gray-700">
                 Matrícula {e.cod_enrolled} · {e.class?.name ?? "Sem turma"}
-                {e.whatsapp && <> · {e.whatsapp}</>}
+                {e.whatsapp && <> · {mascarar.telefone(e.whatsapp)}</>}
               </p>
               <p className="text-sm">
                 <span className="text-gray-500">Status: </span>

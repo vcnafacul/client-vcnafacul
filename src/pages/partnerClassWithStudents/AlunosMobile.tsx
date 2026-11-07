@@ -1,3 +1,4 @@
+import { Mascaras } from "@/hooks/useDadosSensiveis";
 import { CancelledStudent } from "@/types/partnerPrepCourse/cancelledStudent";
 import { ClassStudent } from "@/types/partnerPrepCourse/classStudent";
 import { ReactNode, useMemo, useState } from "react";
@@ -7,13 +8,14 @@ export const TAMANHO_DA_PAGINA = 20;
 
 const pct = (v?: number | null) => (v == null ? "—" : `${v}%`);
 
-type Props =
+type Props = (
   | {
       tipo: "ativos";
       alunos: ClassStudent[];
       renderAcoes: (aluno: ClassStudent) => ReactNode;
     }
-  | { tipo: "cancelados"; alunos: CancelledStudent[] };
+  | { tipo: "cancelados"; alunos: CancelledStudent[] }
+) & { mascarar: Mascaras };
 
 /**
  * Os alunos da turma no celular. No DataGrid o nome era a 4ª coluna e ficava
@@ -60,7 +62,9 @@ export function AlunosMobile(props: Props) {
             <p className="font-semibold text-gray-900 break-words">
               {aluno.name}
             </p>
-            <p className="text-xs text-gray-500 break-all">{aluno.email}</p>
+            <p className="text-xs text-gray-500 break-all">
+              {props.mascarar.email(aluno.email)}
+            </p>
             <p className="text-xs text-gray-600">
               Matrícula {aluno.cod_enrolled}
             </p>
@@ -70,7 +74,8 @@ export function AlunosMobile(props: Props) {
                 <p className="text-xs text-gray-700">
                   Presença {pct((aluno as ClassStudent).presencePercentage)} ·
                   Faltas {pct((aluno as ClassStudent).absencePercentage)} ·
-                  Just. {pct((aluno as ClassStudent).justifiedAbsencePercentage)}
+                  Just.{" "}
+                  {pct((aluno as ClassStudent).justifiedAbsencePercentage)}
                 </p>
                 <div className="border-t border-gray-100 mt-1 pt-1 flex justify-end">
                   {props.renderAcoes(aluno as ClassStudent)}

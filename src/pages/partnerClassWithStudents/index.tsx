@@ -20,6 +20,8 @@ import { turmaEncerrada } from "./turmaEncerrada";
 import heic2any from "heic2any";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { FormControlLabel, Switch } from "@mui/material";
+import { useDadosSensiveis } from "@/hooks/useDadosSensiveis";
+import { ToggleDadosSensiveis } from "@/components/molecules/toggleDadosSensiveis";
 import { getCancelledStudentsByClassId } from "@/services/prepCourse/class/getCancelledStudentsByClassId";
 import { CancelledStudent } from "@/types/partnerPrepCourse/cancelledStudent";
 import { useEffect, useRef, useState } from "react";
@@ -164,6 +166,10 @@ export function PartnerClassWithStudents() {
   // motivo: aba é navegação, fica no topo o tempo todo, e o `TabsTrigger`
   // desabilitado do shadcn não recebe foco nem hover para dizer por quê.
   const podeVerRelatorio = !!permissao[Roles.gerenciarEstudantes];
+  // A api só manda o e-mail completo para quem tem gerenciarEstudantes.
+  const { mostrarToggle, ocultar, setOcultar, mascarar } = useDadosSensiveis(
+    !!permissao[Roles.gerenciarEstudantes],
+  );
 
   useEffect(() => {
     if (!classEntity.partnerId) return;
@@ -240,6 +246,7 @@ export function PartnerClassWithStudents() {
       headerName: "Email",
       minWidth: 150,
       flex: 1,
+      renderCell: (params) => mascarar.email(params.value),
     },
     {
       field: "name",
@@ -314,6 +321,7 @@ export function PartnerClassWithStudents() {
       headerName: "Email",
       minWidth: 150,
       flex: 1,
+      renderCell: (params) => mascarar.email(params.value),
     },
     {
       field: "cancelledAt",
@@ -550,8 +558,15 @@ export function PartnerClassWithStudents() {
                 </div>
               </Button>
             )}
+            {mostrarToggle && (
+              <ToggleDadosSensiveis
+                className="ml-auto"
+                ocultar={ocultar}
+                onChange={setOcultar}
+              />
+            )}
             <FormControlLabel
-              className="ml-auto mr-0"
+              className={`${mostrarToggle ? "" : "ml-auto "}mr-0`}
               control={
                 <Switch
                   checked={showCancelled}
@@ -568,12 +583,17 @@ export function PartnerClassWithStudents() {
           </div>
           {!acimaDeSm ? (
             showCancelled ? (
-              <AlunosMobile tipo="cancelados" alunos={cancelledStudents} />
+              <AlunosMobile
+                tipo="cancelados"
+                alunos={cancelledStudents}
+                mascarar={mascarar}
+              />
             ) : (
               <AlunosMobile
                 tipo="ativos"
                 alunos={students}
                 renderAcoes={renderAcoes}
+                mascarar={mascarar}
               />
             )
           ) : (

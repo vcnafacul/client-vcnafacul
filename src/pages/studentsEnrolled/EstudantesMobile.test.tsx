@@ -1,3 +1,4 @@
+import { SEM_MASCARA } from "@/hooks/useDadosSensiveis";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
 import { fireEvent, render, screen } from "@testing-library/react";
@@ -21,6 +22,7 @@ const base = {
   total: 5,
   onPagina: vi.fn(),
   renderAcoes: (e: StudentsDtoOutput) => <button>ações de {e.id}</button>,
+  mascarar: SEM_MASCARA,
 };
 
 describe("EstudantesMobile", () => {
