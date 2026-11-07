@@ -36,6 +36,10 @@ beforeEach(() => {
 describe("ModalExcluirColaborador", () => {
   it("sem escolher perfil, exclui como aluno e fecha", async () => {
     const { handleExcluir, handleClose } = montar();
+    // A opção padrão continua sendo o perfil aluno, com o rótulo novo.
+    expect(screen.getByRole("combobox")).toHaveDisplayValue(
+      "Não recomendo permissões",
+    );
     fireEvent.click(screen.getByRole("button", { name: "Excluir" }));
     await waitFor(() => expect(handleClose).toHaveBeenCalled());
     expect(handleExcluir).toHaveBeenCalledWith(undefined);

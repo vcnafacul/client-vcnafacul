@@ -71,7 +71,7 @@ export function ModalExcluirColaborador({
           </span>
           <Select
             options={[
-              { id: SO_ALUNO, name: "Só aluno (sem permissões)" },
+              { id: SO_ALUNO, name: "Não recomendo permissões" },
               ...perfis.map((p) => ({ id: p.id, name: p.name })),
             ]}
             value={perfil}
