@@ -113,6 +113,7 @@ function ModalEditDashGeo({
     youtube: yup.string().default(geo.youtube).nullable(),
     linkedin: yup.string().default(geo.linkedin).nullable(),
     twitter: yup.string().default(geo.twitter).nullable(),
+    tiktok: yup.string().default(geo.tiktok).nullable(),
     reportAddress: yup.bool().default(geo.reportAddress),
     reportContact: yup.bool().default(geo.reportContact),
     reportOther: yup.bool().default(geo.reportOther),
@@ -473,6 +474,7 @@ function ModalEditDashGeo({
       setValue("youtube", geo.youtube);
       setValue("linkedin", geo.linkedin);
       setValue("twitter", geo.twitter);
+      setValue("tiktok", geo.tiktok);
       setValue("reportAddress", geo.reportAddress);
       setValue("reportContact", geo.reportContact);
       setValue("reportOther", geo.reportOther);
