@@ -11,8 +11,9 @@ describe("máscaras (iguais às da api)", () => {
     expect(mascararCpf("123.456.789-01")).toBe("***.***.789-01");
   });
 
-  it("⚠️ CPF salvo só com dígitos também é mascarado (a api deixa passar)", () => {
+  it("⚠️ CPF salvo só com dígitos também é mascarado; sem 11 dígitos, tudo oculto", () => {
     expect(mascararCpf("12345678901")).toBe("***.***.789-01");
+    expect(mascararCpf("123456789")).toBe("***.***.***-**");
   });
 
   it("RG mostra só o fim", () => {

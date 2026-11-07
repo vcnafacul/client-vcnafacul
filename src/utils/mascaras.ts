@@ -5,12 +5,11 @@ const jaMascarado = (valor?: string | null) => !valor || valor.includes("*");
 
 export function mascararCpf(cpf?: string | null): string {
   if (jaMascarado(cpf)) return cpf ?? "";
-  // A api só mascara CPF com pontos; aqui vale também o salvo só com dígitos.
+  // Pelos dígitos (com ou sem pontuação), como a api desde o api#727; sem 11
+  // dígitos, oculta tudo.
   const digitos = cpf!.replace(/\D/g, "");
-  if (digitos.length === 11) {
-    return `***.***.${digitos.slice(6, 9)}-${digitos.slice(9)}`;
-  }
-  return cpf!.replace(/^(\d{3})\.(\d{3})/, "***.***");
+  if (digitos.length !== 11) return "***.***.***-**";
+  return `***.***.${digitos.slice(6, 9)}-${digitos.slice(9)}`;
 }
 
 export function mascararRg(rg?: string | null): string {
