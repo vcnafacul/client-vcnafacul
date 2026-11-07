@@ -7,7 +7,8 @@ import Text from "@/components/atoms/text";
 import Button from "@/components/molecules/button";
 import MapBox from "@/components/molecules/mapBox";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
-import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
+import { ModalMotivoRejeicao } from "../modalMotivoRejeicao";
+import { MotivoRejeicaoGeo } from "../modalMotivoRejeicao/motivos";
 import { ModalProps } from "@/components/templates/modalTemplate";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { useToastAsync } from "@/hooks/useToastAsync";
@@ -181,11 +182,16 @@ function ModalEditDashGeo({
     });
   };
 
-  const update = async (status: StatusEnum, messageRefused?: string) => {
+  const update = async (
+    status: StatusEnum,
+    motivo?: MotivoRejeicaoGeo,
+    complemento?: string,
+  ) => {
     const body: ValidationGeolocation = {
       geoId: geo.id,
       status: status,
-      refuseReason: messageRefused,
+      motivo,
+      refuseReason: complemento,
     };
     await UpdateStatus(body);
   };
@@ -344,16 +350,12 @@ function ModalEditDashGeo({
 
   const ModalRefused = () => {
     return !refuse ? null : (
-      <ModalConfirmCancelMessage
-        className=" w-full max-w-[500px] bg-white p-4 rounded-md"
+      <ModalMotivoRejeicao
         isOpen={refuse}
-        text="Descreva o motivo da rejeição:"
-        handleClose={() => {
+        handleClose={() => setRefuse(false)}
+        onConfirm={(motivo, complemento) => {
           setRefuse(false);
-        }}
-        handleConfirm={(message?: string) => {
-          setRefuse(false);
-          update(StatusEnum.Rejected, message!);
+          update(StatusEnum.Rejected, motivo, complemento);
         }}
       />
     );
