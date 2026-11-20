@@ -414,9 +414,21 @@ describe("DashToolbar — acessibilidade", () => {
  * navegador, onde o Radix faz portal para uma div comum) e delega o resto ao original.
  *
  * **Medido:** o arquivo foi de 83,7 s (testes mais lentos: 7,3 s, 6,5 s, 5,4 s) para 0,85 s
- * (mais lento: 50 ms). Suíte inteira (`yarn test`): 336 arquivos, 3082 testes, 0 erros, ~112 s.
+ * (mais lento: 50 ms). `yarn test:ci`: 335 arquivos, 3060 testes, 0 erros, saída 0, ~110 s.
+ * `yarn test` (suíte inteira): 336 arquivos, 3082 testes, 0 erros, saída 0, ~112 s.
  *
- * **Cabe no CI:** pelos números, sim; o `test:ci` e o comentário em `vite.config.ts` ainda o
- * excluem e voltar com ele é decisão humana. Os contornos `pool: "forks"` e `teardownTimeout`
- * também podem ser reavaliados.
+ * **Hipóteses descartadas no caminho** (histórico; nenhuma era a causa):
+ * - o `@floating-ui/react-dom` do Radix Popper, substituído por stub via `vi.mock` hoisted no
+ *   topo do arquivo: 51 s, sem diferença;
+ * - o `TooltipProvider`: 1 ms num probe isolado;
+ * - o render do `DashToolbar` em si: 1 a 16 ms;
+ * - `vi.useFakeTimers()`: contribuía com ~14 s dos 51, mas não explicava o resto.
+ * A causa real acabou sendo `matches(":popover-open")` / `matches(":modal")` no nwsapi do jsdom,
+ * por isso nenhuma dessas hipóteses a explicava.
+ *
+ * **Contorno anterior:** o `vite.config.ts` usa `pool: "forks"` e `teardownTimeout` por causa do
+ * `Timeout calling "onTaskUpdate"`. Com a causa removida, ambos podem ser reavaliados.
+ *
+ * **CI:** `test:ci` e o comentário em `vite.config.ts` ainda excluem este arquivo. Pelos números
+ * acima ele roda em <1 s e a suíte completa fecha sem erro; reincluí-lo é decisão humana.
  */
