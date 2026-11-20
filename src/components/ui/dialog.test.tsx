@@ -110,4 +110,41 @@ describe("Dialog", () => {
     render(<Exemplo size="lg" />);
     expect(screen.getByRole("dialog").className).toContain("max-w-[800px]");
   });
+
+  it("a tela cheia no celular vence a largura e a altura passadas por quem usa", () => {
+    render(
+      <Dialog open>
+        <DialogContent className="w-[calc(100%-2rem)] max-w-5xl max-h-[90dvh]">
+          <DialogTitle>Título</DialogTitle>
+        </DialogContent>
+      </Dialog>
+    );
+    const classes = screen.getByRole("dialog").className.split(/\s+/);
+    for (const c of ["max-sm:w-full", "max-sm:max-w-none", "max-sm:max-h-none", "max-sm:h-dvh", "max-sm:left-0"]) {
+      expect(classes).toContain(c);
+    }
+  });
+
+  it("sem cabeçalho nem rodapé, os filhos não ganham um corpo que rola", () => {
+    render(
+      <Dialog open>
+        <DialogContent className="p-0 flex flex-col">
+          <DialogTitle>Título</DialogTitle>
+          <div className="overflow-y-auto">Área própria</div>
+        </DialogContent>
+      </Dialog>
+    );
+    expect(screen.getByRole("dialog").querySelector('[data-slot="dialog-body"]')).toBeNull();
+  });
+
+  it("um DialogBody explícito continua sendo o contêiner que rola, mesmo sem cabeçalho", () => {
+    render(
+      <Dialog open>
+        <DialogContent>
+          <DialogBody>Rola aqui</DialogBody>
+        </DialogContent>
+      </Dialog>
+    );
+    expect(screen.getByText("Rola aqui").className).toContain("overflow-y-auto");
+  });
 });

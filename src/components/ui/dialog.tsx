@@ -45,7 +45,7 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 // tickets/059 D21: abaixo de 768 o Dialog é tela cheia; de 768 em diante, altura máxima calc(100dvh-2rem).
 const dialogVariants = cva(
-  "fixed left-[50%] top-[50%] z-overlay flex w-full translate-x-[-50%] translate-y-[-50%] flex-col gap-4 border bg-background p-6 text-foreground shadow-lg duration-200 sm:max-h-[calc(100dvh-2rem)] sm:rounded-xl max-sm:left-0 max-sm:top-0 max-sm:h-dvh max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-none max-sm:border-0 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+  "fixed left-[50%] top-[50%] z-overlay flex w-full translate-x-[-50%] translate-y-[-50%] flex-col gap-4 border bg-background p-6 text-foreground shadow-lg duration-200 sm:max-h-[calc(100dvh-2rem)] sm:rounded-xl max-sm:left-0 max-sm:top-0 max-sm:h-dvh max-sm:max-h-none max-sm:w-full max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-none max-sm:border-0 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
   {
     variants: {
       size: {
@@ -144,8 +144,10 @@ const DialogContent = React.forwardRef<
 >(({ className, children, size, banner, ...props }, ref) => {
   const sizeDoDialog = React.useContext(DialogSizeContext)
   const { cabecalho, rodape, corpo } = repartir(children)
-  const corpoPronto =
-    corpo.length === 1 &&
+  // Sem cabeçalho nem rodapé não há o que fixar: os filhos ficam soltos, como antes, e quem
+  // já cuida do próprio scroll (p-0 flex-col + área com overflow) não ganha um segundo contêiner.
+  const estruturado = cabecalho.length > 0 || rodape.length > 0
+  const corpoPronto = !estruturado ? corpo : corpo.length === 1 &&
     React.isValidElement(corpo[0]) &&
     corpo[0].type === DialogBody ? (
       corpo[0]
