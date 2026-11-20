@@ -59,51 +59,51 @@ function MapBoxInfoGeo({ geo, ctaLink, label, markerType }: MapBoxInfoProps) {
       </Text>
       <div className="flex justify-around mx-auto w-96">
         {tem(geo?.whatsapp) && (
-          <a
+          <a aria-label="WhatsApp do cursinho"
             href={`https://api.whatsapp.com/send?phone=55${geo.whatsapp}`}
             target="_blank"
           >
-            <SocialWhatsapp color={palette.neutral[500]} className="h-10 w-10" />
+            <SocialWhatsapp aria-hidden color={palette.neutral[500]} className="h-10 w-10" />
           </a>
         )}
         {tem(geo?.email) && (
-          <a href={`mailto:${geo.email}`}>
-            <Mail color={palette.neutral[500]} size={40} />
+          <a aria-label="Enviar e-mail ao cursinho" href={`mailto:${geo.email}`}>
+            <Mail aria-hidden color={palette.neutral[500]} size={40} />
           </a>
         )}
         {tem(geo?.site) && (
-          <a href={geo.site} target="_blank" rel="noreferrer">
-            <Compass color={palette.neutral[500]} size={40} />
+          <a aria-label="Site do cursinho" href={geo.site} target="_blank" rel="noreferrer">
+            <Compass aria-hidden color={palette.neutral[500]} size={40} />
           </a>
         )}
         {tem(geo?.linkedin) && (
-          <a href={geo.linkedin} target="_blank" rel="noreferrer">
-            <SocialLinkedin color={palette.neutral[500]} className="h-10 w-10" />
+          <a aria-label="LinkedIn do cursinho" href={geo.linkedin} target="_blank" rel="noreferrer">
+            <SocialLinkedin aria-hidden color={palette.neutral[500]} className="h-10 w-10" />
           </a>
         )}
         {tem(geo?.youtube) && (
-          <a href={geo.youtube} target="_blank" rel="noreferrer">
-            <SocialYoutube color={palette.neutral[500]} className="h-10 w-10" />
+          <a aria-label="YouTube do cursinho" href={geo.youtube} target="_blank" rel="noreferrer">
+            <SocialYoutube aria-hidden color={palette.neutral[500]} className="h-10 w-10" />
           </a>
         )}
         {tem(geo?.facebook) && (
-          <a href={geo.facebook} target="_blank" rel="noreferrer">
-            <SocialFacebook color={palette.neutral[500]} className="h-10 w-10" />
+          <a aria-label="Facebook do cursinho" href={geo.facebook} target="_blank" rel="noreferrer">
+            <SocialFacebook aria-hidden color={palette.neutral[500]} className="h-10 w-10" />
           </a>
         )}
         {tem(geo?.instagram) && (
-          <a href={geo.instagram} target="_blank" rel="noreferrer">
-            <SocialInstagram color={palette.neutral[500]} className="h-10 w-10" />
+          <a aria-label="Instagram do cursinho" href={geo.instagram} target="_blank" rel="noreferrer">
+            <SocialInstagram aria-hidden color={palette.neutral[500]} className="h-10 w-10" />
           </a>
         )}
         {tem(geo?.twitter) && (
-          <a href={geo.twitter} target="_blank" rel="noreferrer">
-            <SocialX color={palette.neutral[500]} className="h-10 w-10" />
+          <a aria-label="X (Twitter) do cursinho" href={geo.twitter} target="_blank" rel="noreferrer">
+            <SocialX aria-hidden color={palette.neutral[500]} className="h-10 w-10" />
           </a>
         )}
         {tem(geo?.tiktok) && (
-          <a href={geo.tiktok} target="_blank" rel="noreferrer">
-            <SocialTiktok color={palette.neutral[500]} className="h-8 w-8" />
+          <a aria-label="TikTok do cursinho" href={geo.tiktok} target="_blank" rel="noreferrer">
+            <SocialTiktok aria-hidden color={palette.neutral[500]} className="h-8 w-8" />
           </a>
         )}
       </div>

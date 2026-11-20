@@ -1,7 +1,7 @@
 import PropValue from "@/components/molecules/PropValue";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
-import { Check, CircleDollarSign, ClipboardClock, FileText, IdCard, ListChecks } from "lucide-react";
+import { BanknoteX, Check, ClipboardClock, FileText, IdCard, ListChecks } from "lucide-react";
 
 interface Props {
   students: XLSXStudentCourseFull[];
@@ -56,7 +56,7 @@ export function TableInfo({ students }: Props) {
         />
       </div>
       <div className="flex gap-1">
-        <CircleDollarSign className="h-6 w-6 text-success" />
+        <BanknoteX className="h-6 w-6 text-success" />
         <PropValue
           className="text-body"
           prop="Isentos Matriculados"
