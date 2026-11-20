@@ -63,11 +63,11 @@ export function SupportInboxView({
       <header className="bg-primary text-primary-foreground px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 shadow-sm">
         <div className="flex items-center gap-2">
           <LuHeadset className="h-5 w-5 text-primary" />
-          <h1 className="font-raleway font-bold text-lg tracking-tight">
+          <h1 className="font-raleway font-bold text-h3">
             {title}
           </h1>
         </div>
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-2 text-caption">
           {headerActions}
           <span className="opacity-80">
             {isArchived ? "Arquivadas" : "Conversas abertas"}
@@ -86,7 +86,7 @@ export function SupportInboxView({
               type="button"
               onClick={() => onTabChange("active")}
               className={cn(
-                "flex-1 py-2.5 text-xs font-semibold transition-colors border-b-2",
+                "flex-1 py-2.5 text-caption font-semibold transition-colors border-b-2",
                 !isArchived
                   ? "border-cta text-foreground"
                   : "border-transparent text-muted-foreground hover:text-foreground",
@@ -98,7 +98,7 @@ export function SupportInboxView({
               type="button"
               onClick={() => onTabChange("archived")}
               className={cn(
-                "flex-1 py-2.5 text-xs font-semibold transition-colors border-b-2 flex items-center justify-center gap-1.5",
+                "flex-1 py-2.5 text-caption font-semibold transition-colors border-b-2 flex items-center justify-center gap-1.5",
                 isArchived
                   ? "border-cta text-foreground"
                   : "border-transparent text-muted-foreground hover:text-foreground",
@@ -106,7 +106,7 @@ export function SupportInboxView({
             >
               Arquivadas
               {archivedCount > 0 && (
-                <span className="bg-muted-foreground/20 text-muted-foreground rounded-full min-w-[18px] h-[18px] inline-flex items-center justify-center px-1 text-[10px] font-bold">
+                <span className="bg-muted-foreground/20 text-muted-foreground rounded-full min-w-[18px] h-[18px] inline-flex items-center justify-center px-1 text-caption font-bold">
                   {archivedCount}
                 </span>
               )}
@@ -118,7 +118,7 @@ export function SupportInboxView({
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Buscar por nome..."
-              className="flex-1 border-none shadow-none bg-transparent px-0 h-full text-sm focus-visible:ring-0 placeholder:text-muted-foreground"
+              className="flex-1 border-none shadow-none bg-transparent px-0 h-full text-body focus-visible:ring-0 placeholder:text-muted-foreground"
             />
           </div>
           <ScrollArea className="flex-1">
@@ -141,7 +141,7 @@ export function SupportInboxView({
                       : "Nenhuma conversa aberta"
                     : "Nenhum resultado"}
                 </span>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-caption text-muted-foreground">
                   {convs.length === 0
                     ? isArchived
                       ? "As conversas encerradas aparecerão aqui."
@@ -189,7 +189,7 @@ export function SupportInboxView({
               <span className="font-raleway font-semibold text-foreground">
                 Selecione uma conversa
               </span>
-              <span className="text-sm text-muted-foreground max-w-xs">
+              <span className="text-body text-muted-foreground max-w-xs">
                 {isArchived
                   ? "Escolha uma conversa arquivada para visualizar o histórico."
                   : "Escolha uma conversa na lista ao lado para começar a atender."}

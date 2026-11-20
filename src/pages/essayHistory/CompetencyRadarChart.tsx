@@ -61,7 +61,7 @@ export default function CompetencyRadarChart({ timeline }: Props) {
 
   return (
     <div>
-      <p className="text-sm font-bold mb-2">Média por Competência</p>
+      <p className="text-body font-bold mb-2">Média por Competência</p>
       {acimaDeSm ? (
         <div style={{ height: 300 }}>
           <RadarChart
@@ -77,12 +77,12 @@ export default function CompetencyRadarChart({ timeline }: Props) {
         <ul className="space-y-3">
           {data.map((d) => (
             <li key={d.competencia}>
-              <p className="text-sm mb-1">{d.competencia}</p>
+              <p className="text-body mb-1">{d.competencia}</p>
               {keys.map((k) => {
                 const valor = Number(d[k]);
                 return (
                   <div key={k} className="flex items-center gap-2">
-                    <span className="w-14 text-xs text-muted-foreground">{k}</span>
+                    <span className="w-14 text-caption text-muted-foreground">{k}</span>
                     <div className="flex-1 h-2 bg-muted rounded-full">
                       <div
                         className="h-2 rounded-full"
@@ -92,7 +92,7 @@ export default function CompetencyRadarChart({ timeline }: Props) {
                         }}
                       />
                     </div>
-                    <span className="w-8 text-right text-xs font-bold">
+                    <span className="w-8 text-right text-caption font-bold">
                       {valor}
                     </span>
                   </div>

@@ -24,7 +24,7 @@ function Situacao({ situacao }: { situacao: SituacaoDoProcesso }) {
   const s = SITUACAO[situacao];
   return (
     <span
-      className={`inline-block shrink-0 whitespace-nowrap rounded-full border px-2 py-0.5 text-xs font-medium ${s.classe}`}
+      className={`inline-block shrink-0 whitespace-nowrap rounded-full border px-2 py-0.5 text-caption font-medium ${s.classe}`}
     >
       {s.texto}
     </span>
@@ -52,7 +52,7 @@ export function UltimosProcessos({ processos, carregando, mostrarCursinho }: Pro
           ))}
         </div>
       ) : processos.length === 0 ? (
-        <p className="py-6 text-center text-sm text-muted-foreground">
+        <p className="py-6 text-center text-body text-muted-foreground">
           Nenhum processo seletivo ainda.
         </p>
       ) : (
@@ -66,10 +66,10 @@ export function UltimosProcessos({ processos, carregando, mostrarCursinho }: Pro
                   <Situacao situacao={p.situacao} />
                 </div>
                 {mostrarCursinho && (
-                  <p className="text-sm text-muted-foreground break-words">{p.cursinho.nome}</p>
+                  <p className="text-body text-muted-foreground break-words">{p.cursinho.nome}</p>
                 )}
-                <p className="text-xs text-muted-foreground mt-1">{periodoDoProcesso(p)}</p>
-                <p className="text-sm mt-1">
+                <p className="text-caption text-muted-foreground mt-1">{periodoDoProcesso(p)}</p>
+                <p className="text-body mt-1">
                   <strong>{p.inscricoes}</strong> inscrições ·{" "}
                   <strong>{p.matriculas}</strong> matrículas
                 </p>
@@ -118,7 +118,7 @@ export function UltimosProcessos({ processos, carregando, mostrarCursinho }: Pro
           </div>
         </>
       )}
-      <p className="text-xs text-muted-foreground mt-2">
+      <p className="text-caption text-muted-foreground mt-2">
         Sem processos de teste. Os 10 mais recentes.
       </p>
     </div>

@@ -33,7 +33,7 @@ function ControlCalendar({
   return (
     <div className="card flex justify-content-center h-16 border hover:border-cta pt-4 pl-4 rounded-md relative mb-4  row-start-3 col-start-1 w-full">
       <label
-        className="absolute top-1 left-3 text-xs text-muted-foreground font-semibold"
+        className="absolute top-1 left-3 text-caption text-muted-foreground font-semibold"
         htmlFor="date"
       >
         {label}
@@ -57,7 +57,7 @@ function ControlCalendar({
         )}
       />
       {error && (
-        <span className="absolute left-0 -bottom-4 text-xs text-destructive">{errorMessage}</span>
+        <span className="absolute left-0 -bottom-4 text-caption text-destructive">{errorMessage}</span>
       )}
     </div>
   );

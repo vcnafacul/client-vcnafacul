@@ -167,11 +167,11 @@ function ShowDemand({
         <CardContent className="space-y-4 p-0 sm:p-2">
           {/* O mesmo cabeçalho da validação: quem pediu, tema, status (050). */}
           <Cabecalho demand={demand} papelDoCriador="Pedida por" />
-          <p className="text-sm whitespace-pre-wrap break-words">
+          <p className="text-body whitespace-pre-wrap break-words">
             {demand.description}
           </p>
 
-          <h3 className="text-sm font-black text-foreground pt-2">
+          <h3 className="text-body font-black text-foreground pt-2">
             O que você vai enviar
           </h3>
           <TipoDeEnvioToggle value={tipo} onChange={trocarTipo} />

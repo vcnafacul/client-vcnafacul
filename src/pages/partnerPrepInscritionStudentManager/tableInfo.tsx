@@ -20,7 +20,7 @@ export function TableInfo({ students }: Props) {
       <div className="flex gap-1">
         <MdOutlinePendingActions className="h-6 w-6 fill-warning" />
         <PropValue
-          className="md:text-base"
+          className="text-body"
           prop="Em Análise"
           value={students.reduce((acc, item) => {
             if (item.status === StatusApplication.UnderReview) return acc + 1;
@@ -31,7 +31,7 @@ export function TableInfo({ students }: Props) {
       <div className="flex gap-1">
         <PiListChecksFill className="h-6 w-6 fill-success" />
         <PropValue
-          className="md:text-base"
+          className="text-body"
           prop="A Convocar"
           value={students.reduce((acc, item) => {
             if (item.convocar === "Sim") return acc + 1;
@@ -42,7 +42,7 @@ export function TableInfo({ students }: Props) {
       <div className="flex gap-1">
         <RiFileListFill className="h-6 w-6 fill-primary" />
         <PropValue
-          className="md:text-base"
+          className="text-body"
           prop="Lista de Espera"
           value={students.reduce((acc, item) => {
             if (item.lista_de_espera === "Sim") return acc + 1;
@@ -53,7 +53,7 @@ export function TableInfo({ students }: Props) {
       <div className="flex gap-1">
         <FaCheck className="h-6 w-6 fill-success" />
         <PropValue
-          className="md:text-base"
+          className="text-body"
           prop="Declarou Interesse"
           value={students.reduce((acc, item) => {
             if (item.status === StatusApplication.DeclaredInterest)
@@ -65,7 +65,7 @@ export function TableInfo({ students }: Props) {
       <div className="flex gap-1">
         <MdOutlineMoneyOffCsred className="h-6 w-6 fill-success" />
         <PropValue
-          className="md:text-base"
+          className="text-body"
           prop="Isentos Matriculados"
           value={students.reduce((acc, item) => {
             if (
@@ -80,7 +80,7 @@ export function TableInfo({ students }: Props) {
       <div className="flex gap-1">
         <BsPersonVcard className="h-6 w-6 fill-chart-4" />
         <PropValue
-          className="md:text-base"
+          className="text-body"
           prop="Matriculados"
           value={students.reduce((acc, item) => {
             if (item.status === StatusApplication.Enrolled) return acc + 1;

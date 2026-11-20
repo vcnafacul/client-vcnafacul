@@ -51,7 +51,7 @@ export function BannerNotificacoes() {
           aria-hidden
           className="hidden h-5 w-5 shrink-0 text-primary sm:block"
         />
-        <p className="flex-1 text-sm text-foreground">
+        <p className="flex-1 text-body text-foreground">
           <strong>As notificações ficaram bloqueadas.</strong> O navegador não
           deixa o site perguntar de novo. Para receber os avisos, libere em:{" "}
           <strong>{CAMINHO_DAS_CONFIGURACOES[ondeConfigurar()]}</strong>.
@@ -97,7 +97,7 @@ export function BannerNotificacoes() {
         aria-hidden
         className="hidden h-5 w-5 shrink-0 text-primary sm:block"
       />
-      <p className="flex-1 text-sm text-foreground">
+      <p className="flex-1 text-body text-foreground">
         {status === "ios-needs-install"
           ? "Quer receber avisos do Você na Facul no iPhone? Primeiro adicione o site à Tela de Início."
           : "Quer receber avisos do Você na Facul no celular, mesmo com o site fechado?"}

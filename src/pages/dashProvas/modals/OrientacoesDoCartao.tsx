@@ -49,7 +49,7 @@ export function OrientacoesDoCartao({ resumo }: { resumo?: string }) {
     <section
       aria-labelledby="titulo-orientacoes-cartao"
       data-testid="orientacoes-do-cartao"
-      className="space-y-2 rounded-md border border-info/30 bg-info-muted p-3 text-sm text-foreground"
+      className="space-y-2 rounded-md border border-info/30 bg-info-muted p-3 text-body text-foreground"
     >
       <h3 id="titulo-orientacoes-cartao" className="font-semibold text-foreground">
         {TITULO_ORIENTACOES}

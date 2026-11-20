@@ -40,11 +40,11 @@ export function AbaPropostas({
   return (
     <div className="flex flex-col gap-6">
       <section>
-        <h3 className="text-base font-bold text-foreground mb-3">
+        <h3 className="text-body font-bold text-foreground mb-3">
           Propostas de ajuste
         </h3>
         {proposals.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body text-muted-foreground">
             Nenhuma proposta de ajuste.
           </p>
         ) : (
@@ -56,27 +56,27 @@ export function AbaPropostas({
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm font-medium">
+                    <span className="text-body font-medium">
                       {proposal.authorName || proposal.author}
                     </span>
                     <span
-                      className={`text-xs px-2 py-0.5 rounded-full ${statusColor[proposal.status]}`}
+                      className={`text-caption px-2 py-0.5 rounded-full ${statusColor[proposal.status]}`}
                     >
                       {statusLabel[proposal.status]}
                     </span>
                   </div>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-caption text-muted-foreground">
                     {formatDate(proposal.createdAt)}
                   </span>
                 </div>
                 {proposal.comment && (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-body text-muted-foreground">
                     {proposal.comment}
                   </p>
                 )}
                 {proposal.status !== ProposalStatus.Pending &&
                   proposal.reviewedBy && (
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-caption text-muted-foreground">
                       {proposal.status === ProposalStatus.Approved
                         ? "Aprovada"
                         : "Recusada"}{" "}
@@ -86,7 +86,7 @@ export function AbaPropostas({
                     </p>
                   )}
                 <div className="flex flex-wrap gap-2 items-center">
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-caption text-muted-foreground">
                     {rotuloDoMaterial(proposal.file)}
                   </span>
                   <Button

@@ -79,14 +79,14 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
           <Text size="secondary" className="font-bold text-foreground">
             Editar Perfil
           </Text>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <p className="text-body text-muted-foreground mt-0.5">
             Selecione um perfil e ajuste suas permissões.
           </p>
         </div>
 
         {/* Role selector */}
         <label className="flex flex-col gap-1">
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+          <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
             Perfil
           </span>
 

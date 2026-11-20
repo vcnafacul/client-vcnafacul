@@ -53,7 +53,7 @@ const HighlightSelectorMobile = (props: Props) => {
   }
 
   return (
-    <div className="mobile text-foreground text-lg">
+    <div className="mobile text-foreground text-h3">
       <div className="w-full flex justify-center">{apparentItem()}</div>
       <ul
         className={`mobileDropdown ${showDropdown ? "visible" : "invisible"}`}

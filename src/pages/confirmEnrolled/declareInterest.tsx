@@ -192,10 +192,10 @@ export default function DeclareInterest({
   return (
     <div className="flex flex-col items-center p-6 w-full gap-8">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-foreground">
+        <h1 className="text-h1 font-bold text-foreground">
           Pré-Matrícula: Declaração de Interesse
         </h1>
-        <p className="text-muted-foreground mt-2 text-lg">
+        <p className="text-muted-foreground mt-2 text-h3">
           {step != Steps.Sucess &&
             (isFree ? (
               <>

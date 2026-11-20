@@ -280,7 +280,7 @@ function Account() {
           {nome} {userAccount?.lastName}
         </p>
         {ehColaborador && userAccount?.collaboratorDescription && (
-          <p className="truncate text-xs text-muted-foreground">
+          <p className="truncate text-caption text-muted-foreground">
             {userAccount.collaboratorDescription}
           </p>
         )}
@@ -301,7 +301,7 @@ function Account() {
       hidden={s !== secao}
       className="space-y-4"
     >
-      <h1 className="text-xl font-bold text-foreground">{ROTULO_DA_SECAO[s]}</h1>
+      <h1 className="text-h2 font-bold text-foreground">{ROTULO_DA_SECAO[s]}</h1>
       {conteudo}
     </section>
   );
@@ -331,7 +331,7 @@ function Account() {
                         src={imagePreview}
                       />
                     </div>
-                    <div className="text-center text-sm text-muted-foreground sm:text-left">
+                    <div className="text-center text-body text-muted-foreground sm:text-left">
                       <p className="font-medium text-foreground">Foto de perfil</p>
                       <p>
                         Aparece para o cursinho e na página pública. JPG ou PNG,
@@ -353,7 +353,7 @@ function Account() {
               "frentes",
               <div className="rounded-xl border border-border bg-white p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-body text-muted-foreground">
                     As frentes em que você pode ajudar o cursinho.
                   </p>
                   <Button
@@ -376,7 +376,7 @@ function Account() {
               pushHabilitado() ? (
                 <NotificacoesDoAparelho />
               ) : (
-                <p className="rounded-xl border border-border bg-white p-4 text-sm text-muted-foreground">
+                <p className="rounded-xl border border-border bg-white p-4 text-body text-muted-foreground">
                   As notificações no aparelho ainda não estão disponíveis neste
                   ambiente.
                 </p>

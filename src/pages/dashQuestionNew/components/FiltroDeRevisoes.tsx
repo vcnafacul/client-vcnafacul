@@ -29,7 +29,7 @@ export function FiltroDeRevisoes({
           id="revisoes"
           type="button"
           data-testid="filtro-revisoes"
-          className="flex h-9 w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-9 w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2 text-body shadow-sm disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span className={`truncate ${value.length ? "" : "text-muted-foreground"}`}>
             {resumoDasRevisoes(value)}
@@ -38,13 +38,13 @@ export function FiltroDeRevisoes({
         </button>
       </PopoverTrigger>
       <PopoverContent align="start" collisionPadding={16} className="w-[min(20rem,calc(100vw-2rem))] p-3">
-        <p className="mb-2 text-xs text-muted-foreground">
+        <p className="mb-2 text-caption text-muted-foreground">
           A questão precisa ter <strong>todas</strong> as marcadas.
         </p>
         <ul className="flex flex-col gap-2">
           {REVISOES_DO_FILTRO.map((r) => (
             <li key={r.campo}>
-              <label className="flex cursor-pointer items-center gap-2 text-sm">
+              <label className="flex cursor-pointer items-center gap-2 text-body">
                 <Checkbox
                   checked={value.includes(r.campo)}
                   onCheckedChange={(v) => alternar(r.campo, v === true)}
@@ -58,7 +58,7 @@ export function FiltroDeRevisoes({
           <button
             type="button"
             onClick={() => onChange([])}
-            className="mt-3 text-xs font-medium text-primary hover:underline"
+            className="mt-3 text-caption font-medium text-primary hover:underline"
           >
             Desmarcar todas
           </button>

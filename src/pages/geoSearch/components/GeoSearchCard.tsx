@@ -45,7 +45,7 @@ export const GeoSearchCard = forwardRef<HTMLElement, Props>(
           >
             {geo.name}
           </h3>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-2 text-sm text-muted-foreground">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-2 text-body text-muted-foreground">
             <dt className="text-muted-foreground">Estado</dt>
             <dd>{geo.state}</dd>
             <dt className="text-muted-foreground">Cidade</dt>

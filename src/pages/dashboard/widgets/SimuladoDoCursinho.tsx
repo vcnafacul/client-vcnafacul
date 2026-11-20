@@ -96,13 +96,13 @@ function CardDoEvento({
 
   return (
     <Panel title="Simulado do cursinho" subtitle={evento.cursinho}>
-      <div className="space-y-3 text-sm">
+      <div className="space-y-3 text-body">
         <div>
-          <p className="text-base font-semibold text-foreground break-words">{evento.nome}</p>
+          <p className="text-body font-semibold text-foreground break-words">{evento.nome}</p>
           {evento.descricao && (
             <p className="text-muted-foreground whitespace-pre-line break-words">{evento.descricao}</p>
           )}
-          <p className="text-xs text-muted-foreground mt-1">Inscrições até {ate(evento.inscricoesAte)}</p>
+          <p className="text-caption text-muted-foreground mt-1">Inscrições até {ate(evento.inscricoesAte)}</p>
         </div>
 
         {inscrito && (

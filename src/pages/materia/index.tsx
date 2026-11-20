@@ -97,7 +97,7 @@ function Materia() {
     if (frentes.length === 0) return null;
     return (
       <section className="mt-10">
-        <span className="text-xl font-semibold text-foreground mb-4 block">
+        <span className="text-h2 font-semibold text-foreground mb-4 block">
           Escolha uma frente:
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -120,7 +120,7 @@ function Materia() {
                   <p className="text-md font-medium text-foreground">
                     {frente.nome}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-body text-muted-foreground">
                     Clique para ver os temas
                   </p>
                 </div>
@@ -136,7 +136,7 @@ function Materia() {
     if (!frenteSelected) return null;
     return (
       <section className="mt-10">
-        <span className="text-xl font-semibold text-foreground mb-4 block">
+        <span className="text-h2 font-semibold text-foreground mb-4 block">
           Temas disponíveis:
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -159,7 +159,7 @@ function Materia() {
                   <p className="text-md font-medium text-foreground">
                     {subject.name}
                   </p>
-                  <p className="text-sm text-muted-foreground">Clique para estudar</p>
+                  <p className="text-body text-muted-foreground">Clique para estudar</p>
                 </div>
               </div>
             );
@@ -175,10 +175,10 @@ function Materia() {
       {/* Header */}
       <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-8">
         <div className="text-center md:text-left">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-h1 font-bold text-foreground mb-2">
             Explore o mundo da {materiaInfo?.nome || ""}
           </h1>
-          <p className="text-muted-foreground text-base">
+          <p className="text-muted-foreground text-body">
             Escolha uma frente e um tema para começar seus estudos 🚀
           </p>
         </div>

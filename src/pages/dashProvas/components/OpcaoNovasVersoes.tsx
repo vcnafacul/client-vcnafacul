@@ -36,7 +36,7 @@ export function OpcaoNovasVersoes({
           onChange={(e) => onChange(e.target.checked)}
         />
         <span>
-          <span className="text-sm font-semibold text-foreground">
+          <span className="text-body font-semibold text-foreground">
             {TEXTO_DA_OPCAO}
           </span>
           <span
@@ -47,10 +47,10 @@ export function OpcaoNovasVersoes({
           >
             ⓘ
           </span>
-          <span className="block text-xs text-muted-foreground mt-1">
+          <span className="block text-caption text-muted-foreground mt-1">
             {EXPLICACAO_DA_OPCAO}
           </span>
-          <span className="block text-xs text-muted-foreground mt-1">
+          <span className="block text-caption text-muted-foreground mt-1">
             {RECOMENDACAO_DA_OPCAO}
           </span>
         </span>

@@ -61,7 +61,7 @@ function PermissionHierarchyPanel({
   return (
     <div className="flex flex-col gap-3">
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-4 text-caption text-muted-foreground">
         <span className="flex items-center gap-1.5">
           <span
             className="w-3 h-3 rounded-full inline-block"
@@ -97,7 +97,7 @@ function PermissionHierarchyPanel({
             type="button"
             onClick={() => setActiveTab(tab.key)}
             className={[
-              "px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-150",
+              "px-4 py-1.5 rounded-md text-body font-medium transition-all duration-150",
               activeTab === tab.key
                 ? "bg-white text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground",

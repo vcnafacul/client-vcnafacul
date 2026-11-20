@@ -80,10 +80,10 @@ export function CollaboratorFrentes({
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-foreground mb-2">
+        <label className="block text-body font-medium text-foreground mb-2">
           Frentes de Afinidade
         </label>
-        <p className="text-xs text-muted-foreground mb-4">
+        <p className="text-caption text-muted-foreground mb-4">
           Selecione as frentes com as quais você tem mais afinidade. Digite o nome da frente ou da matéria para filtrar; a lista completa pode ser rolada.
         </p>
 
@@ -116,8 +116,8 @@ export function CollaboratorFrentes({
                     onClick={() => handleSelect(frente)}
                     className="w-full text-left px-4 py-2 hover:bg-muted focus:bg-muted focus:outline-none transition-colors"
                   >
-                    <div className="font-medium text-sm">{frente.nome ?? "—"}</div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="font-medium text-body">{frente.nome ?? "—"}</div>
+                    <div className="text-caption text-muted-foreground">
                       {materiaNomeMap[frente.materia] ?? frente.materia}
                     </div>
                   </button>
@@ -133,7 +133,7 @@ export function CollaboratorFrentes({
                 onClick={() => setShowDropdown(false)}
               />
               <div className="absolute z-20 w-full mt-1 bg-white border border-border rounded-lg shadow-lg p-4">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-body text-muted-foreground">
                   Nenhuma frente encontrada com "{searchTerm}"
                 </p>
               </div>
@@ -145,7 +145,7 @@ export function CollaboratorFrentes({
       {/* Frentes selecionadas */}
       {selectedFrentes.length > 0 && (
         <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
+          <label className="block text-body font-medium text-foreground mb-2">
             Frentes Selecionadas ({selectedFrentes.length})
           </label>
           <div className="flex flex-wrap gap-2">
@@ -155,7 +155,7 @@ export function CollaboratorFrentes({
                 variant="secondary"
                 className="inline-flex items-center gap-2 px-3 py-1 bg-muted text-foreground hover:bg-accent transition-colors"
               >
-                <span className="text-sm">{frente.nome ?? "—"}</span>
+                <span className="text-body">{frente.nome ?? "—"}</span>
                 <button
                   type="button"
                   onClick={() => handleRemove(frente.id)}
@@ -171,7 +171,7 @@ export function CollaboratorFrentes({
       )}
 
       {selectedFrentes.length === 0 && (
-        <div className="text-sm text-muted-foreground italic">
+        <div className="text-body text-muted-foreground italic">
           Nenhuma frente selecionada ainda. Use o campo acima para buscar e selecionar.
         </div>
       )}

@@ -28,10 +28,10 @@ export default function ConfirmSubscription({
         <div className="flex items-start gap-2 md:gap-3">
           <AlertTriangle className="text-warning mt-1 flex-shrink-0 w-5 h-5 md:w-6 md:h-6" />
           <div>
-            <h2 className="text-base md:text-lg font-semibold text-foreground">
+            <h2 className="text-h3 font-semibold text-foreground">
               Atenção!
             </h2>
-            <p className="text-xs md:text-sm text-muted-foreground">
+            <p className="text-caption text-muted-foreground">
               Antes de prosseguir, é importante que você esteja ciente de que
               fornecer informações falsas é crime previsto no Código Penal
               Brasileiro. Leia com atenção:
@@ -39,7 +39,7 @@ export default function ConfirmSubscription({
           </div>
         </div>
 
-        <div className="bg-warning-muted border-l-4 border-warning p-3 md:p-4 rounded-md text-xs md:text-sm text-foreground">
+        <div className="bg-warning-muted border-l-4 border-warning p-3 md:p-4 rounded-md text-caption text-foreground">
           <p className="font-medium">Código Penal – Falsidade ideológica</p>
           <p className="mt-2">
             <strong>Art. 299</strong> – Omitir, em documento público ou
@@ -60,7 +60,7 @@ export default function ConfirmSubscription({
           </p>
         </div>
 
-        <p className="text-xs md:text-sm text-muted-foreground">
+        <p className="text-caption text-muted-foreground">
           Durante a declaração de interesse ou qualquer outro momento posterior,
           documentos para comprovação das informações podem ser solicitados a
           qualquer momento.
@@ -75,7 +75,7 @@ export default function ConfirmSubscription({
           />
           <Label
             htmlFor="confirmation"
-            className="text-xs md:text-sm text-foreground leading-tight cursor-pointer"
+            className="text-caption text-foreground cursor-pointer"
           >
             Declaro que as informações são verdadeiras e estou ciente das
             implicações legais e da possibilidade de comprovação futura.

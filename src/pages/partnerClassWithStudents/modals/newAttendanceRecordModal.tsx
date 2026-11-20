@@ -185,10 +185,10 @@ export function NewAttendanceRecordModal({
       <div className="shrink-0 px-4 pt-4 pb-3 sm:px-6 sm:pt-6 border-b border-border">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="text-xl sm:text-2xl font-black text-foreground leading-tight">
+            <h2 className="text-h2 font-black text-foreground">
               Chamada{turmaNome ? ` · ${turmaNome}` : ""}
             </h2>
-            <p className="text-sm text-muted-foreground mt-0.5 [@media(max-height:700px)]:hidden">
+            <p className="text-body text-muted-foreground mt-0.5 [@media(max-height:700px)]:hidden">
               Marque quem veio. Quem não for marcado fica como ausente.
             </p>
           </div>
@@ -203,7 +203,7 @@ export function NewAttendanceRecordModal({
         </div>
 
         <div className="mt-3 flex items-center gap-2">
-          <label className="shrink-0 flex items-center gap-2 text-sm text-muted-foreground">
+          <label className="shrink-0 flex items-center gap-2 text-body text-muted-foreground">
             <span className="font-semibold sr-only sm:not-sr-only">Data</span>
             <input
               type="date"
@@ -226,7 +226,7 @@ export function NewAttendanceRecordModal({
                 role="radio"
                 aria-checked={period === p}
                 onClick={() => setPeriod(p)}
-                className={`flex-1 min-w-0 h-8 rounded-md text-sm font-semibold transition-colors ${
+                className={`flex-1 min-w-0 h-8 rounded-md text-body font-semibold transition-colors ${
                   period === p
                     ? "bg-white text-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground"
@@ -259,14 +259,14 @@ export function NewAttendanceRecordModal({
                 onChange={(e) => setBusca(e.target.value)}
                 placeholder="Buscar aluno"
                 aria-label="Buscar aluno"
-                className="w-full h-10 pl-9 pr-3 rounded-lg border border-border text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="w-full h-10 pl-9 pr-3 rounded-lg border border-border text-body focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               />
             </div>
             <button
               type="button"
               onClick={alternarTodos}
               disabled={!carregou}
-              className="shrink-0 h-10 px-3 rounded-lg text-sm font-semibold text-foreground border border-primary/30 hover:bg-primary/5 disabled:opacity-50"
+              className="shrink-0 h-10 px-3 rounded-lg text-body font-semibold text-foreground border border-primary/30 hover:bg-primary/5 disabled:opacity-50"
             >
               {todosPresentes ? "Desmarcar todos" : "Todos presentes"}
             </button>
@@ -287,7 +287,7 @@ export function NewAttendanceRecordModal({
                 </li>
               ))}
             {carregou && visiveis.length === 0 && (
-              <li className="py-8 text-center text-sm text-muted-foreground">
+              <li className="py-8 text-center text-body text-muted-foreground">
                 Nenhum aluno encontrado para “{busca}”.
               </li>
             )}
@@ -303,7 +303,7 @@ export function NewAttendanceRecordModal({
                     <p className="text-foreground font-medium leading-snug break-words">
                       {s.name}
                     </p>
-                    <p className="text-xs text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                    <p className="text-caption text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5">
                       <span>{s.cod_enrolled}</span>
                       {risco.emRisco && (
                         <span
@@ -330,7 +330,7 @@ export function NewAttendanceRecordModal({
                       type="button"
                       aria-pressed={presente}
                       onClick={() => marcar(s.id, true)}
-                      className={`h-9 px-2.5 sm:px-4 rounded-full text-[13px] sm:text-sm font-bold border transition-colors ${
+                      className={`h-9 px-2.5 sm:px-4 rounded-full text-caption sm:text-body font-bold border transition-colors ${
                         presente
                           ? "bg-primary border-primary text-primary-foreground"
                           : "bg-white border-border text-muted-foreground hover:border-primary hover:text-foreground"
@@ -342,7 +342,7 @@ export function NewAttendanceRecordModal({
                       type="button"
                       aria-pressed={!presente}
                       onClick={() => marcar(s.id, false)}
-                      className={`h-9 px-2.5 sm:px-4 rounded-full text-[13px] sm:text-sm font-bold border transition-colors ${
+                      className={`h-9 px-2.5 sm:px-4 rounded-full text-caption sm:text-body font-bold border transition-colors ${
                         !presente
                           ? "bg-muted border-primary text-foreground"
                           : "bg-white border-border text-muted-foreground hover:border-primary hover:text-foreground"
@@ -362,7 +362,7 @@ export function NewAttendanceRecordModal({
       {emRisco > 0 && (
         <p
           aria-live="polite"
-          className="shrink-0 mx-4 sm:mx-6 mt-2 px-3 py-1.5 sm:py-2 rounded-lg bg-warning-muted border-l-4 border-warning text-sm text-foreground flex items-center gap-2"
+          className="shrink-0 mx-4 sm:mx-6 mt-2 px-3 py-1.5 sm:py-2 rounded-lg bg-warning-muted border-l-4 border-warning text-body text-foreground flex items-center gap-2"
         >
           <IoWarning aria-hidden className="w-4 h-4 text-warning shrink-0" />
           <span>
@@ -374,7 +374,7 @@ export function NewAttendanceRecordModal({
         </p>
       )}
       <div className="shrink-0 px-4 py-3 sm:px-6 sm:py-4 border-t border-border flex flex-col gap-2 [@media(min-width:420px)]:flex-row [@media(min-width:420px)]:items-center">
-        <p className="text-sm text-muted-foreground flex-1" aria-live="polite">
+        <p className="text-body text-muted-foreground flex-1" aria-live="polite">
           {carregou && students.length > 0 && (
             <>
               <strong className="text-foreground">{presentes.size}</strong>{" "}

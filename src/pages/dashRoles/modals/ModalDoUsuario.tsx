@@ -25,10 +25,10 @@ interface ModalDoUsuarioProps {
 function Campo({ nome, valor }: { nome: string; valor: React.ReactNode }) {
   return (
     <div className="flex flex-col">
-      <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <span className="text-caption font-semibold uppercase tracking-wide text-muted-foreground">
         {nome}
       </span>
-      <span className="text-sm text-foreground break-words">{valor || "—"}</span>
+      <span className="text-body text-foreground break-words">{valor || "—"}</span>
     </div>
   );
 }
@@ -47,14 +47,14 @@ function Secao({
       data-secao={id}
       className="flex flex-col gap-3 rounded-xl border border-border p-4"
     >
-      <h3 className="text-sm font-bold text-foreground">{titulo}</h3>
+      <h3 className="text-body font-bold text-foreground">{titulo}</h3>
       {children}
     </section>
   );
 }
 
 const Vazio = ({ texto }: { texto: string }) => (
-  <p className="text-sm text-muted-foreground">{texto}</p>
+  <p className="text-body text-muted-foreground">{texto}</p>
 );
 
 function ListaDeInscricoes({
@@ -156,7 +156,7 @@ function ModalDoUsuario({
 
         <Secao titulo="Função" id="funcao">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <span className="text-sm font-semibold text-foreground">
+            <span className="text-body font-semibold text-foreground">
               {funcao || "—"}
             </span>
             <Button typeStyle="secondary" onClick={openUpdateRole}>

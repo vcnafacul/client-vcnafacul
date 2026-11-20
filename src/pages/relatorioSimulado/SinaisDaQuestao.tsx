@@ -62,7 +62,7 @@ export function SinaisDaQuestao({
             marcador={flag}
             texto={explicacaoDaFlag(flag, questao)}
           >
-            <StatusBadge tone={tone} label={rotulo} className={cn("text-xs")} />
+            <StatusBadge tone={tone} label={rotulo} className={cn("text-caption")} />
           </DicaRapida>
         );
       })}

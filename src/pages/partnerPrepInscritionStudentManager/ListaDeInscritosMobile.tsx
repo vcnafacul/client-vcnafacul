@@ -20,7 +20,7 @@ const dataCurta = (data: Date | string | null) =>
 function Marca({ ativo, children }: { ativo: boolean; children: ReactNode }) {
   return (
     <span
-      className={`text-xs px-2 py-0.5 rounded-full border ${
+      className={`text-caption px-2 py-0.5 rounded-full border ${
         ativo
           ? "bg-primary/10 border-primary/30 text-foreground font-semibold"
           : "border-border text-muted-foreground"
@@ -66,9 +66,9 @@ export function ListaDeInscritosMobile({
         }}
         placeholder="Buscar por nome, email ou CPF"
         aria-label="Buscar inscrito"
-        className="w-full h-10 px-3 border border-border rounded-md text-sm"
+        className="w-full h-10 px-3 border border-border rounded-md text-body"
       />
-      <p className="text-xs text-muted-foreground">
+      <p className="text-caption text-muted-foreground">
         {filtrados.length} de {inscritos.length} inscritos
       </p>
 
@@ -84,7 +84,7 @@ export function ListaDeInscritosMobile({
             >
               <div className="flex items-start gap-2">
                 {posicao != null && (
-                  <span className="text-sm font-bold text-foreground shrink-0">
+                  <span className="text-body font-bold text-foreground shrink-0">
                     {posicao}º
                   </span>
                 )}
@@ -92,13 +92,13 @@ export function ListaDeInscritosMobile({
                   <p className="font-semibold text-foreground break-words">
                     {capitalizeWords(`${inscrito.nome} ${inscrito.sobrenome}`)}
                   </p>
-                  <p className="text-xs text-muted-foreground break-all">
+                  <p className="text-caption text-muted-foreground break-all">
                     {mascarar.email(inscrito.email)}
                   </p>
                 </div>
               </div>
 
-              <p className="text-sm">
+              <p className="text-body">
                 <span className="text-muted-foreground">Status: </span>
                 <span className="font-medium">{inscrito.status}</span>
               </p>
@@ -114,7 +114,7 @@ export function ListaDeInscritosMobile({
               </div>
 
               {(convocacao || prazo) && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-caption text-muted-foreground">
                   {convocacao && <>Convocado em {convocacao}</>}
                   {convocacao && prazo && " · "}
                   {prazo && <>Prazo {prazo}</>}
@@ -130,7 +130,7 @@ export function ListaDeInscritosMobile({
       </ul>
 
       {filtrados.length === 0 && (
-        <p className="text-center text-sm text-muted-foreground py-6">
+        <p className="text-center text-body text-muted-foreground py-6">
           Nenhum inscrito encontrado
         </p>
       )}
@@ -139,7 +139,7 @@ export function ListaDeInscritosMobile({
         <button
           type="button"
           onClick={() => setVisiveis((v) => v + TAMANHO_DA_PAGINA)}
-          className="h-10 w-full border border-primary text-foreground rounded-md text-sm font-medium"
+          className="h-10 w-full border border-primary text-foreground rounded-md text-body font-medium"
         >
           Mostrar mais ({filtrados.length - visiveis} restantes)
         </button>

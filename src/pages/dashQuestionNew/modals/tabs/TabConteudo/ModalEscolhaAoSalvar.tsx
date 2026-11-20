@@ -67,13 +67,13 @@ export function ModalEscolhaAoSalvar({
       className="w-full max-w-lg rounded-lg bg-white p-4 shadow-xl"
     >
       <div data-escolha-ao-salvar className="flex flex-col gap-4">
-        <h2 className="text-lg font-semibold">{TITULO}</h2>
+        <h2 className="text-h3 font-semibold">{TITULO}</h2>
 
         {/*
           ⚠️ **O diff vem primeiro.** A pergunta abstrata vira concreta quando
           ela chega com o que mudou — e é o que sustenta o default proposto.
         */}
-        <p data-campos-alterados className="text-sm text-muted-foreground">
+        <p data-campos-alterados className="text-body text-muted-foreground">
           Você alterou: <strong>{campos.join(" · ")}</strong>
         </p>
 
@@ -86,7 +86,7 @@ export function ModalEscolhaAoSalvar({
             checked={escolha === "correcao"}
             onChange={() => setEscolha("correcao")}
           />
-          <span className="text-sm">
+          <span className="text-body">
             <strong className="block">Correção</strong>
             {textoDaCorrecao(respostas)}
           </span>
@@ -102,7 +102,7 @@ export function ModalEscolhaAoSalvar({
             disabled={!permiteNovaVersao}
             onChange={() => setEscolha("novaVersao")}
           />
-          <span className="text-sm">
+          <span className="text-body">
             <strong className="block">Nova versão</strong>
             {permiteNovaVersao ? (
               <>
@@ -125,7 +125,7 @@ export function ModalEscolhaAoSalvar({
             type="button"
             data-cancelar
             onClick={onClose}
-            className="text-sm text-muted-foreground underline underline-offset-2"
+            className="text-body text-muted-foreground underline underline-offset-2"
           >
             Cancelar
           </button>
@@ -133,7 +133,7 @@ export function ModalEscolhaAoSalvar({
             type="button"
             data-confirmar
             onClick={() => onConfirmar(escolha)}
-            className="rounded-md bg-cta px-4 py-2 text-sm text-cta-foreground"
+            className="rounded-md bg-cta px-4 py-2 text-body text-cta-foreground"
           >
             Salvar
           </button>
@@ -148,7 +148,7 @@ function ProvasDosDoisGrupos({ provas }: { provas: ProvaDaQuestao[] }) {
   const { recebem, mantem } = separarProvas(provas);
   if (recebem.length + mantem.length === 0) return null;
   return (
-    <details data-provas-da-versao className="mt-2 text-xs text-muted-foreground">
+    <details data-provas-da-versao className="mt-2 text-caption text-muted-foreground">
       <summary className="cursor-pointer">Ver as provas</summary>
       {recebem.length > 0 && (
         <p className="mt-1">

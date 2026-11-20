@@ -59,7 +59,7 @@ export function SupportInbox() {
             <Button
               type="button"
               onClick={() => setInitiateOpen(true)}
-              className="bg-white text-foreground hover:bg-white/90 h-8 px-3 text-xs font-semibold"
+              className="bg-white text-foreground hover:bg-white/90 h-8 px-3 text-caption font-semibold"
             >
               Iniciar conversa
             </Button>

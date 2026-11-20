@@ -144,10 +144,10 @@ export default function EssayThemeAdmin() {
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto">
       <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Temas de Redação</h1>
+        <h1 className="text-h1 font-bold text-foreground">Temas de Redação</h1>
         <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-foreground">
+            <span className="text-body font-medium text-foreground">
               Correção por IA
             </span>
             <Toggle
@@ -157,7 +157,7 @@ export default function EssayThemeAdmin() {
               disabled={aiToggleLoading}
             />
             <span
-              className={`text-xs font-semibold ${aiEnabled ? "text-success" : "text-muted-foreground"}`}
+              className={`text-caption font-semibold ${aiEnabled ? "text-success" : "text-muted-foreground"}`}
             >
               {aiEnabled ? "Ativo" : "Inativo"}
             </span>
@@ -184,12 +184,12 @@ export default function EssayThemeAdmin() {
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold truncate">{theme.title}</h3>
                   <span
-                    className={`text-xs font-medium px-2 py-0.5 rounded-full whitespace-nowrap ${status.bgColor}`}
+                    className={`text-caption font-medium px-2 py-0.5 rounded-full whitespace-nowrap ${status.bgColor}`}
                   >
                     {status.label}
                   </span>
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-body text-muted-foreground mt-1">
                   {formatDate(String(theme.weekStart))} —{" "}
                   {formatDate(String(theme.weekEnd))}
                 </p>
@@ -235,10 +235,10 @@ export default function EssayThemeAdmin() {
       {confirmToggle && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md mx-4 space-y-4">
-            <h2 className="text-lg font-bold text-foreground">
+            <h2 className="text-h3 font-bold text-foreground">
               {confirmToggle.active ? "Desativar tema" : "Ativar tema"}
             </h2>
-            <p className="text-sm text-foreground">
+            <p className="text-body text-foreground">
               {confirmToggle.active
                 ? `Deseja desativar o tema "${confirmToggle.title}"? Ele não aparecerá mais para os alunos.`
                 : `Deseja ativar o tema "${confirmToggle.title}"? Se estiver dentro do período, ele ficará disponível para os alunos.`}

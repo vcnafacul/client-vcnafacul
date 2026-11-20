@@ -18,7 +18,7 @@ export function ToggleDadosSensiveis({ ocultar, onChange, className }: Props) {
         />
       }
       label={
-        <span className="text-sm text-foreground">Ocultar dados sensíveis</span>
+        <span className="text-body text-foreground">Ocultar dados sensíveis</span>
       }
     />
   );

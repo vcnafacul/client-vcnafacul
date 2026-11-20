@@ -43,10 +43,10 @@ export default function EssayViewDetail() {
     <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-8">
       {/* Essay content */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">
+        <h1 className="text-h1 font-bold text-foreground">
           {essay.title || "Sem título"}
         </h1>
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground mt-1 mb-4">
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-body text-muted-foreground mt-1 mb-4">
           <span className="break-words">Tema: {essay.theme.title}</span>
           <span>Status: {STATUS_LABELS[essay.status] ?? essay.status}</span>
           {essay.submittedAt && (
@@ -57,18 +57,18 @@ export default function EssayViewDetail() {
         </div>
         {essay.inputType === 'UPLOADED' ? (
           <div className="border rounded-lg p-6 bg-page text-center space-y-3">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body text-muted-foreground">
               Redação enviada como {essay.mimeType === 'application/pdf' ? 'PDF' : 'imagem'}
             </p>
             <button
               onClick={() => downloadEssayImage(token, essay.id).catch(() => toast.error("Erro ao baixar arquivo"))}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 text-sm"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 text-body"
             >
               Baixar arquivo
             </button>
           </div>
         ) : (
-          <div className="border rounded-lg p-4 bg-page text-sm">
+          <div className="border rounded-lg p-4 bg-page text-body">
             <RichTextRenderer
               content={essay.text ?? ""}
               contentFormat="markdown"
@@ -79,11 +79,11 @@ export default function EssayViewDetail() {
 
       {/* Reviews list */}
       <div className="space-y-4">
-        <h2 className="text-lg font-bold">
+        <h2 className="text-h3 font-bold">
           Revisões ({reviews.length})
         </h2>
         {reviews.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Nenhuma revisão realizada ainda.</p>
+          <p className="text-body text-muted-foreground">Nenhuma revisão realizada ainda.</p>
         ) : (
           <div className="grid gap-3">
             {reviews.map((review) => (
@@ -100,22 +100,22 @@ export default function EssayViewDetail() {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-sm">
+                  <div className="font-semibold text-body">
                     {review.reviewType === "AI"
                       ? "Correção por IA"
                       : `${review.reviewer?.firstName ?? ""} ${review.reviewer?.lastName ?? ""}`}
                   </div>
-                  <div className="text-xs text-muted-foreground mt-0.5">
+                  <div className="text-caption text-muted-foreground mt-0.5">
                     {review.reviewType === "AI" ? "Inteligência Artificial" : "Revisão Humana"}
                     {" · "}
                     {new Date(review.createdAt).toLocaleDateString("pt-BR")}
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <div className="text-2xl font-bold text-foreground">
+                  <div className="text-h1 font-bold text-foreground">
                     {review.totalScore}
                   </div>
-                  <div className="text-xs text-muted-foreground">de 1000</div>
+                  <div className="text-caption text-muted-foreground">de 1000</div>
                 </div>
               </button>
             ))}
@@ -126,7 +126,7 @@ export default function EssayViewDetail() {
       <div>
         <button
           onClick={() => navigate(-1)}
-          className="px-4 py-2 border rounded-lg text-sm hover:bg-page"
+          className="px-4 py-2 border rounded-lg text-body hover:bg-page"
         >
           Voltar à lista
         </button>

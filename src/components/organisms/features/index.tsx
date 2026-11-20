@@ -44,7 +44,7 @@ function Features() {
         {features!.title}
       </Text>
       {features.description && (
-        <p className="text-foreground mb-6 text-center text-base md:text-xl leading-6 md:leading-9">
+        <p className="text-foreground mb-6 text-center text-prose leading-6 md:leading-9">
           {features.description}
         </p>
       )}
@@ -63,7 +63,7 @@ function Features() {
           src={feature?.image as string}
         />
         {feature?.description && (
-          <p className="description text-sm text-muted-foreground mt-3 mx-10 md:max-w-[623px] md:text-center">
+          <p className="description text-body text-muted-foreground mt-3 mx-10 md:max-w-[623px] md:text-center">
             {feature.description}
           </p>
         )}

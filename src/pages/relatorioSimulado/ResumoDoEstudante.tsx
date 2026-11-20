@@ -71,7 +71,7 @@ function LinhaDeMateria({
 
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex items-center gap-2 text-sm">
+      <div className="flex items-center gap-2 text-body">
         <button
           type="button"
           data-materia={nome}
@@ -107,7 +107,7 @@ function LinhaDeMateria({
         <span
           data-base={nome}
           className={cn(
-            "w-24 shrink-0 text-right text-xs tabular-nums",
+            "w-24 shrink-0 text-right text-caption tabular-nums",
             dashV2.text.muted,
           )}
         >
@@ -135,7 +135,7 @@ function LinhaDeMateria({
         <span
           data-media-simulado={nome}
           className={cn(
-            "w-28 shrink-0 text-right text-xs tabular-nums",
+            "w-28 shrink-0 text-right text-caption tabular-nums",
             dashV2.text.muted,
           )}
         >
@@ -151,7 +151,7 @@ function LinhaDeMateria({
             <li
               key={f.id}
               className={cn(
-                "flex items-center justify-between text-xs",
+                "flex items-center justify-between text-caption",
                 dashV2.text.secondary,
               )}
             >
@@ -174,7 +174,7 @@ function LinhaDeMateria({
           {frentesSomamMais(questoes, frentes) && (
             <li
               data-aviso-frentes={nome}
-              className={cn("pt-1 text-xs italic", dashV2.text.muted)}
+              className={cn("pt-1 text-caption italic", dashV2.text.muted)}
             >
               {TEXTO_FRENTES_SOMAM_MAIS}
             </li>
@@ -249,9 +249,9 @@ export function ResumoDoEstudante({
       data-testid="resumo-do-estudante"
       className={cn("flex flex-col gap-3 rounded-md border p-3", dashV2.border)}
     >
-      <div className="flex flex-wrap items-baseline gap-x-2 text-sm">
+      <div className="flex flex-wrap items-baseline gap-x-2 text-body">
         {par !== null && (
-          <span className={cn("text-lg font-semibold", dashV2.text.primary)}>
+          <span className={cn("text-h3 font-semibold", dashV2.text.primary)}>
             {par} acertos
           </span>
         )}
@@ -262,7 +262,7 @@ export function ResumoDoEstudante({
           </span>
         )}
         {desvio !== null && (
-          <span data-desvio className={cn("text-xs", dashV2.text.muted)}>
+          <span data-desvio className={cn("text-caption", dashV2.text.muted)}>
             · {desvio} que a média do simulado
           </span>
         )}
@@ -277,7 +277,7 @@ export function ResumoDoEstudante({
           */}
           <div
             aria-hidden
-            className={cn("flex items-center gap-2 text-xs", dashV2.text.muted)}
+            className={cn("flex items-center gap-2 text-caption", dashV2.text.muted)}
           >
             <span className="flex-1" />
             <span data-cabecalho-media className="w-28 shrink-0 text-right">
@@ -313,7 +313,7 @@ export function ResumoDoEstudante({
         separar o que os dados não separam — e mostrar a ambiguidade.
       */}
       {semLeitura > 0 && (
-        <p data-sem-leitura className={cn("text-xs", dashV2.text.muted)}>
+        <p data-sem-leitura className={cn("text-caption", dashV2.text.muted)}>
           {semLeitura} quest{semLeitura === 1 ? "ão" : "ões"} sem leitura neste
           cartão — {semLeitura === 1 ? "ela conta" : "elas contam"} como erro no
           aproveitamento acima.

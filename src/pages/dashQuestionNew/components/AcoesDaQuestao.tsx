@@ -28,7 +28,7 @@ export function AcoesDaQuestao({
     */
     <div
       data-acoes-da-questao
-      className="flex flex-wrap items-center justify-end gap-3 border-t pt-3 text-xs text-muted-foreground"
+      className="flex flex-wrap items-center justify-end gap-3 border-t pt-3 text-caption text-muted-foreground"
     >
       <ExcluirQuestao questaoId={questaoId} aoExcluir={aoExcluir} />
     </div>

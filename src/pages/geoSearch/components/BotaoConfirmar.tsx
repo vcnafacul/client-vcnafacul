@@ -32,7 +32,7 @@ export function BotaoConfirmar({
         e.stopPropagation();
         onClick();
       }}
-      className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-sm transition disabled:opacity-60 ${
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-body transition disabled:opacity-60 ${
         confirmado
           ? "bg-success-muted text-success"
           : "text-muted-foreground hover:bg-muted"

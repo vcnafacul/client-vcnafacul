@@ -244,14 +244,14 @@ export function UpdateStudentClassModal({
         <Text
           size="secondary"
           className={`font-bold text-center ${
-            isMobile ? "mb-3 text-lg" : "mb-4"
+            isMobile ? "mb-3 text-h3" : "mb-4"
           }`}
         >
           Selecionar Turma
         </Text>
         <p
           className={`${
-            isMobile ? "text-sm mb-3" : "text-lg mb-4"
+            isMobile ? "text-body mb-3" : "text-h3 mb-4"
           } text-center text-muted-foreground`}
         >
           Selecione uma nova turma para o estudante
@@ -268,7 +268,7 @@ export function UpdateStudentClassModal({
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={`w-full ${
-                  isMobile ? "p-2.5 text-sm" : "p-3 text-base"
+                  isMobile ? "p-2.5 text-body" : "p-3 text-body"
                 } border-2 border-border rounded-md focus:border-primary focus:outline-none transition-colors`}
                 aria-label="Buscar turmas"
               />
@@ -283,7 +283,7 @@ export function UpdateStudentClassModal({
               )}
             </div>
             {searchTerm && (
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-caption text-muted-foreground mt-1">
                 {filteredClassesByPeriod.reduce(
                   (acc, period) => acc + period.classes.length,
                   0
@@ -308,7 +308,7 @@ export function UpdateStudentClassModal({
             <p className="text-destructive font-semibold mb-3">❌ {error}</p>
             <button
               onClick={loadClasses}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 active:bg-primary/80 transition-colors text-sm font-medium"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 active:bg-primary/80 transition-colors text-body font-medium"
             >
               🔄 Tentar Novamente
             </button>
@@ -320,7 +320,7 @@ export function UpdateStudentClassModal({
           <div className="space-y-2">
             {filteredClassesByPeriod.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
-                <p className="text-lg mb-2">🔍</p>
+                <p className="text-h3 mb-2">🔍</p>
                 <p>Nenhuma turma encontrada</p>
               </div>
             ) : (
@@ -341,12 +341,12 @@ export function UpdateStudentClassModal({
                     } período ${period.periodName}`}
                   >
                     <div className="flex items-center gap-2">
-                      <span className="text-xl">📚</span>
+                      <span className="text-h2">📚</span>
                       <div className="text-left">
-                        <p className="font-bold text-foreground text-sm">
+                        <p className="font-bold text-foreground text-body">
                           {period.periodName}
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-caption text-muted-foreground">
                           {period.year} • {period.classes.length}{" "}
                           {period.classes.length === 1 ? "turma" : "turmas"}
                         </p>
@@ -385,7 +385,7 @@ export function UpdateStudentClassModal({
                             <div className="flex-1">
                               <div className="flex items-center gap-2">
                                 <p
-                                  className={`font-semibold text-sm ${
+                                  className={`font-semibold text-body ${
                                     selectedClassId === classItem.id
                                       ? "text-primary-foreground"
                                       : "text-foreground"
@@ -394,13 +394,13 @@ export function UpdateStudentClassModal({
                                   {classItem.name}
                                 </p>
                                 {classId === classItem.id && (
-                                  <span className="bg-cta text-cta-foreground text-xs px-2 py-0.5 rounded-full font-bold">
+                                  <span className="bg-cta text-cta-foreground text-caption px-2 py-0.5 rounded-full font-bold">
                                     Atual
                                   </span>
                                 )}
                               </div>
                               <p
-                                className={`text-xs ${
+                                className={`text-caption ${
                                   selectedClassId === classItem.id
                                     ? "text-primary-foreground/80"
                                     : "text-muted-foreground"
@@ -413,7 +413,7 @@ export function UpdateStudentClassModal({
                               </p>
                             </div>
                             {selectedClassId === classItem.id && (
-                              <span className="text-xl">✓</span>
+                              <span className="text-h2">✓</span>
                             )}
                           </div>
                         </button>
@@ -435,7 +435,7 @@ export function UpdateStudentClassModal({
               <select
                 ref={selectRef}
                 id="classSelect"
-                className="w-full p-3 border-2 rounded-md focus:border-primary focus:outline-none cursor-pointer text-base"
+                className="w-full p-3 border-2 rounded-md focus:border-primary focus:outline-none cursor-pointer text-body"
                 value={selectedClassId}
                 onChange={(e) => setSelectedClassId(e.target.value)}
                 autoFocus={!classId}
@@ -463,7 +463,7 @@ export function UpdateStudentClassModal({
                   </optgroup>
                 ))}
               </select>
-              <p className="text-sm text-muted-foreground mt-2">
+              <p className="text-body text-muted-foreground mt-2">
                 {filteredClassesByPeriod.length > 0
                   ? `${filteredClassesByPeriod.length} período(s) letivo(s) disponível(is)`
                   : "Nenhuma turma disponível"}
@@ -480,14 +480,14 @@ export function UpdateStudentClassModal({
           >
             <p
               className={`font-bold ${
-                isMobile ? "text-base mb-2" : "text-lg mb-3"
+                isMobile ? "text-body mb-2" : "text-h3 mb-3"
               } text-foreground flex items-center gap-2`}
             >
               <span>📋</span>{" "}
               {isMobile ? "Detalhes" : "Detalhes da Turma Selecionada"}
             </p>
             <div
-              className={isMobile ? "space-y-1.5 text-xs" : "space-y-2 text-sm"}
+              className={isMobile ? "space-y-1.5 text-caption" : "space-y-2 text-body"}
             >
               <div className="flex justify-between gap-2">
                 <span className="font-semibold text-foreground">Nome:</span>
@@ -532,7 +532,7 @@ export function UpdateStudentClassModal({
                   </span>
                   <p
                     className={`text-muted-foreground ${
-                      isMobile ? "text-xs" : "text-xs"
+                      isMobile ? "text-caption" : "text-caption"
                     } leading-relaxed`}
                   >
                     {isMobile
@@ -550,7 +550,7 @@ export function UpdateStudentClassModal({
         {/* Mensagem quando a turma atual é selecionada */}
         {selectedClassId && selectedClassId === classId && (
           <div className="bg-warning-muted border-2 border-warning rounded-lg p-3 text-center mb-4">
-            <p className="text-foreground text-sm font-medium">
+            <p className="text-foreground text-body font-medium">
               ⚠️ Esta já é a turma atual do estudante. Selecione uma turma
               diferente.
             </p>
@@ -568,7 +568,7 @@ export function UpdateStudentClassModal({
       >
         <button
           className={`${
-            isMobile ? "flex-1 py-3 text-sm" : "px-6 py-2"
+            isMobile ? "flex-1 py-3 text-body" : "px-6 py-2"
           } bg-muted text-foreground rounded-md hover:bg-muted-foreground active:bg-muted-foreground transition-colors font-medium`}
           onClick={handleClose}
         >
@@ -576,7 +576,7 @@ export function UpdateStudentClassModal({
         </button>
         <button
           className={`${
-            isMobile ? "flex-1 py-3 text-sm" : "px-6 py-2"
+            isMobile ? "flex-1 py-3 text-body" : "px-6 py-2"
           } bg-primary text-primary-foreground rounded-md hover:bg-primary/90 active:bg-primary/80 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors font-medium shadow-sm`}
           onClick={handleConfirmClass}
           disabled={!selectedClassId || selectedClassId === classId}

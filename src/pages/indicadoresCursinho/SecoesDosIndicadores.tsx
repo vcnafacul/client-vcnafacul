@@ -262,7 +262,7 @@ export function SecoesDosIndicadores({ dados }: Props) {
                   <button
                     type="button"
                     onClick={() => setMostrarEncerrados((v) => !v)}
-                    className="text-sm font-medium text-foreground underline-offset-2 hover:underline"
+                    className="text-body font-medium text-foreground underline-offset-2 hover:underline"
                   >
                     {mostrarEncerrados
                       ? "Esconder turmas de períodos encerrados"
@@ -294,7 +294,7 @@ export function Area({
 }) {
   return (
     <section className="space-y-3">
-      <h2 className="text-base font-semibold text-foreground">{titulo}</h2>
+      <h2 className="text-body font-semibold text-foreground">{titulo}</h2>
       {children}
     </section>
   );

@@ -61,9 +61,9 @@ export default function AboutSection() {
 
   return (
     <section className="flex flex-col gap-4 p-4 border rounded-lg bg-white">
-      <h2 className="text-xl font-semibold">Quem Somos</h2>
+      <h2 className="text-h2 font-semibold">Quem Somos</h2>
       <label className="flex flex-col gap-1">
-        <span className="text-sm font-semibold">ID do vídeo YouTube</span>
+        <span className="text-body font-semibold">ID do vídeo YouTube</span>
         <input
           className="border rounded px-2 py-1"
           value={videoUrl}
@@ -72,7 +72,7 @@ export default function AboutSection() {
         />
       </label>
       <div className="flex flex-col gap-1">
-        <span className="text-sm font-semibold">Thumbnail</span>
+        <span className="text-body font-semibold">Thumbnail</span>
         {thumbnailUrl ? (
           <img
             src={homeContentFile(thumbnailUrl)}
@@ -80,7 +80,7 @@ export default function AboutSection() {
             className="max-w-xs rounded"
           />
         ) : (
-          <span className="text-sm text-muted-foreground">Sem thumbnail</span>
+          <span className="text-body text-muted-foreground">Sem thumbnail</span>
         )}
         <input
           type="file"
@@ -93,7 +93,7 @@ export default function AboutSection() {
             }
           }}
         />
-        <span className="text-xs text-muted-foreground">
+        <span className="text-caption text-muted-foreground">
           Proporção: 4:3 (a imagem será recortada e redimensionada para caber no
           tablet).
         </span>
@@ -112,7 +112,7 @@ export default function AboutSection() {
         />
       )}
       <div className="flex flex-col gap-1">
-        <span className="text-sm font-semibold">Descrição (markdown)</span>
+        <span className="text-body font-semibold">Descrição (markdown)</span>
         <RichTextEditor
           content={description}
           onChange={setDescription}

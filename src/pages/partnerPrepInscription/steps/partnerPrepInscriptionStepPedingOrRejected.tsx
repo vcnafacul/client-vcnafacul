@@ -41,13 +41,13 @@ export default function PartnerPrepInscriptionStepPedingOrRejected({
     <div className="flex flex-col items-center justify-center h-full p-8 text-center space-y-6">
       <Icon className={`w-14 h-14 ${iconColor}`} />
 
-      <h1 className={`text-3xl font-semibold ${textColor}`}>
+      <h1 className={`text-h1 font-semibold ${textColor}`}>
         {isBeforeStart
           ? "Processo Seletivo Pendente"
           : "Processo Seletivo Encerrado"}
       </h1>
 
-      <p className="text-foreground text-base max-w-xl">
+      <p className="text-foreground text-prose max-w-xl">
         {isBeforeStart ? (
           <>
             O período de inscrições para o cursinho{" "}
@@ -71,7 +71,7 @@ export default function PartnerPrepInscriptionStepPedingOrRejected({
       </p>
 
       <div>
-        <BLink to={HOME_PATH} className="mt-4 text-base w-96">
+        <BLink to={HOME_PATH} className="mt-4 text-body w-96">
           Ir para a Página Inicial
         </BLink>
       </div>

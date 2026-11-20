@@ -100,13 +100,13 @@ export function BuscarAtualizacoes({
         type="button"
         onClick={buscar}
         disabled={carregando}
-        className="self-start rounded-lg border border-border px-3 py-1.5 text-sm font-medium hover:bg-page disabled:opacity-50"
+        className="self-start rounded-lg border border-border px-3 py-1.5 text-body font-medium hover:bg-page disabled:opacity-50"
       >
         {carregando ? "Buscando…" : "Buscar atualizações"}
       </button>
 
       {dados && dados.atualizacoes.length === 0 && (
-        <p className="text-sm text-muted-foreground">{TEXTO_VAZIO}</p>
+        <p className="text-body text-muted-foreground">{TEXTO_VAZIO}</p>
       )}
 
       {dados && dados.atualizacoes.length > 0 && (
@@ -128,7 +128,7 @@ export function BuscarAtualizacoes({
               type="button"
               onClick={aplicar}
               disabled={aplicando || selecionadas.size === 0}
-              className="self-end rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground disabled:opacity-50"
+              className="self-end rounded-lg bg-primary px-3 py-1.5 text-body font-medium text-primary-foreground disabled:opacity-50"
             >
               Aplicar selecionadas
             </button>
@@ -174,7 +174,7 @@ function LinhaDeAtualizacao({
   };
 
   return (
-    <li className="rounded-lg border border-border p-3 text-sm">
+    <li className="rounded-lg border border-border p-3 text-body">
       <div className="flex items-start gap-3">
         {podeAplicar && (
           <input
@@ -191,21 +191,21 @@ function LinhaDeAtualizacao({
             <span data-status>{ROTULO_DO_STATUS[a.oferta.status] ?? "—"}</span>
           </p>
           {a.camposAlterados.length > 0 && (
-            <p className="text-xs text-muted-foreground">
+            <p className="text-caption text-muted-foreground">
               Mudou:{" "}
               {a.camposAlterados.map((c) => ROTULO_DO_CAMPO[c] ?? c).join(", ")}
             </p>
           )}
           {a.oferta.status === StatusEnum.Pending && (
-            <p className="text-xs text-warning">{TEXTO_EM_REVISAO}</p>
+            <p className="text-caption text-warning">{TEXTO_EM_REVISAO}</p>
           )}
           {a.cadeiaInterrompida && (
-            <p className="text-xs text-muted-foreground">{TEXTO_CADEIA_INTERROMPIDA}</p>
+            <p className="text-caption text-muted-foreground">{TEXTO_CADEIA_INTERROMPIDA}</p>
           )}
           <button
             type="button"
             onClick={comparar}
-            className="mt-1 text-xs text-primary underline underline-offset-2"
+            className="mt-1 text-caption text-primary underline underline-offset-2"
           >
             {comparando ? "Fechar comparação" : "Ver lado a lado"}
           </button>
@@ -213,7 +213,7 @@ function LinhaDeAtualizacao({
             <div className="mt-2 grid grid-cols-1 gap-3 md:grid-cols-2" data-comparacao>
               {comparando.map((q, i) => (
                 <div key={q._id} className="rounded border border-border p-2">
-                  <p className="mb-1 text-xs font-semibold text-muted-foreground">
+                  <p className="mb-1 text-caption font-semibold text-muted-foreground">
                     {i === 0 ? "Atual" : "Nova"}
                   </p>
                   <RichTextRenderer

@@ -11,14 +11,14 @@ export function AccountUserName({ userAccount }: AccountUserNameProps) {
 
   return (
     <div className="md:flex flex-col px-8 pt-4 hidden">
-      <span className="text-foreground text-2xl md:text-4xl font-extrabold leading-tight">
+      <span className="text-foreground text-h1 font-extrabold leading-tight">
         {displayName}
       </span>
-      <span className="text-foreground text-lg md:text-xl font-medium">
+      <span className="text-foreground text-h3 font-medium">
         {userAccount?.lastName}
       </span>
       {userAccount?.collaborator && (
-        <span className="text-foreground text-sm font-semibold mt-1 opacity-80">
+        <span className="text-foreground text-body font-semibold mt-1 opacity-80">
           {userAccount?.collaboratorDescription}
         </span>
       )}

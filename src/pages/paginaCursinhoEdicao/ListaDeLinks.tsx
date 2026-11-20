@@ -16,8 +16,8 @@ export function ListaDeLinks({ titulo, ajuda, links, onChange }: Props) {
 
   return (
     <fieldset className="space-y-2">
-      <legend className="block text-sm font-semibold">{titulo}</legend>
-      <p className="text-xs text-muted-foreground">{ajuda}</p>
+      <legend className="block text-body font-semibold">{titulo}</legend>
+      <p className="text-caption text-muted-foreground">{ajuda}</p>
       {links.map((l, i) => (
         <div key={i} className="flex flex-col sm:flex-row gap-2">
           <input
@@ -52,7 +52,7 @@ export function ListaDeLinks({ titulo, ajuda, links, onChange }: Props) {
         <button
           type="button"
           onClick={() => onChange([...links, { titulo: "", url: "" }])}
-          className="flex items-center gap-1 text-sm text-foreground hover:underline"
+          className="flex items-center gap-1 text-body text-foreground hover:underline"
         >
           <FiPlus /> Adicionar link
         </button>

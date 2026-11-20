@@ -124,10 +124,10 @@ export default function FeaturesSection() {
 
   return (
     <section className="flex flex-col gap-4 p-4 border rounded-lg bg-white">
-      <h2 className="text-xl font-semibold">Futuro do Cursinho Popular</h2>
+      <h2 className="text-h2 font-semibold">Futuro do Cursinho Popular</h2>
       <div className="flex flex-col gap-2">
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-semibold">Título da seção</span>
+          <span className="text-body font-semibold">Título da seção</span>
           <input
             className="border rounded px-2 py-1"
             value={sectionTitle}
@@ -135,7 +135,7 @@ export default function FeaturesSection() {
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-semibold">Descrição da seção</span>
+          <span className="text-body font-semibold">Descrição da seção</span>
           <textarea
             className="border rounded px-2 py-1"
             rows={2}
@@ -156,7 +156,7 @@ export default function FeaturesSection() {
         </div>
       </div>
       <div className="flex justify-between items-center">
-        <span className="text-sm text-muted-foreground">
+        <span className="text-body text-muted-foreground">
           {features.length} item(s)
         </span>
         <Button typeStyle="primary" size="small" onClick={openCreate}>

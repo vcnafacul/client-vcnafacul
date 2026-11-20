@@ -70,9 +70,9 @@ export function ModalAnularQuestao({
     >
       <div className="w-full max-w-lg max-h-[calc(100dvh-2rem)] rounded-lg bg-white shadow-xl flex flex-col">
         <div className="shrink-0 px-4 pt-4">
-          <h2 className="text-lg font-semibold">{titulo}</h2>
+          <h2 className="text-h3 font-semibold">{titulo}</h2>
           {provaNome && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body text-muted-foreground">
               {provaNome}
               {numero != null && ` · questão ${numero}`}
             </p>
@@ -82,7 +82,7 @@ export function ModalAnularQuestao({
         <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 flex flex-col gap-3">
           {acima}
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-semibold text-foreground" id="motivo-anulacao">
+            <label className="text-body font-semibold text-foreground" id="motivo-anulacao">
               Motivo
             </label>
             <Select
@@ -103,7 +103,7 @@ export function ModalAnularQuestao({
           </div>
           <div className="flex flex-col gap-1">
             <label
-              className="text-sm font-semibold text-foreground"
+              className="text-body font-semibold text-foreground"
               htmlFor="justificativa-anulacao"
             >
               Justificativa
@@ -117,7 +117,7 @@ export function ModalAnularQuestao({
               placeholder="Ex.: a alternativa C, dada como gabarito, está errada; nenhuma alternativa responde."
             />
             <p
-              className={`text-xs ${
+              className={`text-caption ${
                 tamanho > 0 && tamanho < JUSTIFICATIVA_MIN
                   ? "text-destructive"
                   : "text-muted-foreground"
@@ -126,11 +126,11 @@ export function ModalAnularQuestao({
               {tamanho}/{JUSTIFICATIVA_MAX} (mínimo {JUSTIFICATIVA_MIN})
             </p>
           </div>
-          <p className="text-sm text-foreground bg-warning-muted border border-warning rounded p-2">
+          <p className="text-body text-foreground bg-warning-muted border border-warning rounded p-2">
             {textoDoEfeito(numero)}
           </p>
           {erro && (
-            <p role="alert" className="text-sm text-destructive bg-destructive-muted border border-destructive rounded p-2">
+            <p role="alert" className="text-body text-destructive bg-destructive-muted border border-destructive rounded p-2">
               {erro}
             </p>
           )}

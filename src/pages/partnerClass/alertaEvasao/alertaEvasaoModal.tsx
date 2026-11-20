@@ -92,7 +92,7 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
   })();
 
   const campo =
-    "h-11 w-24 px-3 rounded-lg border text-foreground text-lg font-bold text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+    "h-11 w-24 px-3 rounded-lg border text-foreground text-h3 font-bold text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
   return (
     <ModalTemplate
@@ -102,7 +102,7 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
       className="bg-white rounded-xl shadow-xl w-[calc(100vw-1rem)] sm:w-[520px] max-h-[calc(100dvh-2rem)] flex flex-col overflow-hidden"
     >
       <div className="shrink-0 px-4 pt-4 sm:px-6 sm:pt-6 flex items-start justify-between gap-3">
-        <h2 className="text-xl sm:text-2xl font-black text-foreground leading-tight">
+        <h2 className="text-h2 font-black text-foreground">
           Alerta de risco de evasão
         </h2>
         <button
@@ -116,14 +116,14 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-3 flex flex-col gap-4">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           Na chamada, o aluno aparece em risco quando as faltas{" "}
           <strong>sem justificativa</strong> passam do percentual abaixo,
           contando só as aulas dele.
         </p>
 
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-semibold text-foreground">
+          <span className="text-body font-semibold text-foreground">
             Avisar a partir de
           </span>
           <span className="flex items-center gap-2">
@@ -141,7 +141,7 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
             <span className="text-foreground">% de faltas</span>
           </span>
           <span
-            className={`text-xs ${
+            className={`text-caption ${
               tentouSalvar && erros.percentual ? "text-destructive" : "text-muted-foreground"
             }`}
           >
@@ -152,7 +152,7 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
         </label>
 
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-semibold text-foreground">
+          <span className="text-body font-semibold text-foreground">
             Começar a avisar depois de
           </span>
           <span className="flex items-center gap-2">
@@ -169,7 +169,7 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
             <span className="text-foreground">aulas do aluno</span>
           </span>
           <span
-            className={`text-xs ${
+            className={`text-caption ${
               tentouSalvar && erros.minimo ? "text-destructive" : "text-muted-foreground"
             }`}
           >
@@ -181,13 +181,13 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
 
         {erro && (
           <div className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body text-muted-foreground">
               Não foi possível carregar o alerta.
             </p>
             <button
               type="button"
               onClick={carregar}
-              className="shrink-0 h-9 px-3 rounded-lg border border-primary/30 text-foreground text-sm font-bold hover:bg-primary/5"
+              className="shrink-0 h-9 px-3 rounded-lg border border-primary/30 text-foreground text-body font-bold hover:bg-primary/5"
             >
               Tentar de novo
             </button>
@@ -196,7 +196,7 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
 
         <p
           aria-live="polite"
-          className="text-sm rounded-lg bg-cta/5 border-l-4 border-cta px-3 py-2 text-foreground min-h-[2.5rem]"
+          className="text-body rounded-lg bg-cta/5 border-l-4 border-cta px-3 py-2 text-foreground min-h-[2.5rem]"
         >
           {desligado
             ? "Alerta desligado: a chamada não mostra risco de evasão."

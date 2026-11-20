@@ -46,7 +46,7 @@ export function StudentCard({
           {/* Informações do Estudante */}
           <div className="flex flex-col gap-4 w-full sm:w-[470px]">
             <div className="flex justify-center mb-4">
-              <span className="text-2xl text-center sm:text-left">
+              <span className="text-h1 text-center sm:text-left">
                 Estudante Pré-Vestibular
               </span>
             </div>
@@ -69,8 +69,8 @@ export function StudentCard({
               },
             ].map((item, index) => (
               <div key={index}>
-                <p className="font-bold text-xl">{item.label}</p>
-                <p className="text-lg">{item.value}</p>
+                <p className="font-bold text-h2">{item.label}</p>
+                <p className="text-h3">{item.value}</p>
               </div>
             ))}
           </div>

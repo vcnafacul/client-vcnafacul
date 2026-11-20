@@ -25,7 +25,7 @@ export function ProgressoCell({ prova }: { prova: ContagensDaProva }) {
         data-testid="progresso"
         data-sem-questoes="true"
         title={TITULO_SEM_QUESTOES}
-        className={cn("block text-sm", dashV2.text.muted)}
+        className={cn("block text-body", dashV2.text.muted)}
       >
         {TEXTO_SEM_QUESTOES}
       </span>
@@ -62,7 +62,7 @@ export function ProgressoCell({ prova }: { prova: ContagensDaProva }) {
         />
       </div>
       <span
-        className={cn("shrink-0 whitespace-nowrap text-xs tabular-nums", dashV2.text.secondary)}
+        className={cn("shrink-0 whitespace-nowrap text-caption tabular-nums", dashV2.text.secondary)}
       >
         {prova.totalQuestaoValidadas ?? 0}/{prova.totalQuestao ?? 0}
       </span>

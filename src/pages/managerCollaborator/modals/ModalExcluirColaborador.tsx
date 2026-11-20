@@ -57,8 +57,8 @@ export function ModalExcluirColaborador({
       className="bg-white rounded-xl p-4 sm:p-5 w-[calc(100%-2rem)] max-w-lg"
     >
       <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-bold text-foreground">Excluir {nome}?</h2>
-        <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+        <h2 className="text-h3 font-bold text-foreground">Excluir {nome}?</h2>
+        <ul className="list-disc pl-5 text-body text-muted-foreground space-y-1">
           <li>Sai da lista de colaboradores e vai para Ex-membros.</li>
           <li>Perde o acesso ao cursinho e sai das turmas que administra.</li>
           <li>
@@ -66,7 +66,7 @@ export function ModalExcluirColaborador({
           </li>
         </ul>
         <label className="flex flex-col gap-1">
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+          <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
             Perfil depois da saída
           </span>
           <Select
@@ -77,7 +77,7 @@ export function ModalExcluirColaborador({
             value={perfil}
             setState={(v) => setPerfil(String(v))}
           />
-          <span className="text-xs text-muted-foreground">
+          <span className="text-caption text-muted-foreground">
             Os perfis da lista são recomendados pelo projeto para quem continua
             ajudando em outras frentes.
           </span>

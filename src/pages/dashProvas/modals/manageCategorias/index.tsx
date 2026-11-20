@@ -149,7 +149,7 @@ function ManageCategorias({
             <div className="rounded-lg bg-info-muted p-2">
               <Cog6ToothIcon className="h-6 w-6 text-info" />
             </div>
-            <h2 className="text-xl font-semibold text-foreground">
+            <h2 className="text-h2 font-semibold text-foreground">
               Gerenciar Categorias
             </h2>
           </div>
@@ -167,7 +167,7 @@ function ManageCategorias({
               value={busca}
               placeholder="Buscar por nome"
               onChange={(e) => setBusca(e.target.value)}
-              className="w-full sm:w-64 rounded-md border border-border px-3 py-2 text-sm"
+              className="w-full sm:w-64 rounded-md border border-border px-3 py-2 text-body"
             />
           </div>
 
@@ -176,7 +176,7 @@ function ManageCategorias({
             className="-mr-2 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-2"
           >
             {categoriasFiltradas.length === 0 && (
-              <p className="py-8 text-center text-sm text-muted-foreground">
+              <p className="py-8 text-center text-body text-muted-foreground">
                 Nenhuma categoria encontrada.
               </p>
             )}
@@ -207,17 +207,17 @@ function ManageCategorias({
                     <span className="font-semibold text-foreground">
                       {c.nome}
                     </span>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-body text-muted-foreground">
                       Exame: {c.exame?.nome ?? "—"} · {qtd} · {c.duracao} min ·{" "}
                       {c.selecionavel ? "Selecionável" : "Uso interno"}
                     </span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-caption text-muted-foreground">
                       {emUso
                         ? `${c.simuladosCount} simulados · ${c.provasCount} provas em uso`
                         : "Sem simulados/provas em uso"}
                     </span>
                     {protegida && (
-                      <span className="text-xs font-medium text-warning">
+                      <span className="text-caption font-medium text-warning">
                         {compartilhada
                           ? `🔒 ${TEXTO_COMPARTILHADA}`
                           : "🔒 Categoria seedada"}

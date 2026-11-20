@@ -122,7 +122,7 @@ function RelatorioSimulado({
             type="button"
             onClick={voltar}
             className={cn(
-              "inline-flex w-fit items-center gap-2 text-sm print:hidden",
+              "inline-flex w-fit items-center gap-2 text-body print:hidden",
               dashV2.text.secondary,
               dashV2.focus,
             )}

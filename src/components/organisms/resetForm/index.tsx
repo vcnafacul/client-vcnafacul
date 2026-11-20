@@ -105,9 +105,9 @@ export function ResetForm({
             type={formData[0].type}
             visibility={formData[0].visibility}
           />
-          <div className="flex gap-4 w-full text-sm">
-            <div className="font-thin text-xs"> Sua senha deve conter:</div>
-            <div className="flex flex-col text-sm">
+          <div className="flex gap-4 w-full text-body">
+            <div className="font-thin text-caption"> Sua senha deve conter:</div>
+            <div className="flex flex-col text-body">
               <SpanValidate
                 valid={
                   password !== undefined && uppercaseLetterRegex.test(password)
@@ -124,7 +124,7 @@ export function ResetForm({
                 Caractere Especial
               </SpanValidate>
             </div>
-            <div className="flex flex-col text-sm">
+            <div className="flex flex-col text-body">
               <SpanValidate
                 valid={
                   password !== undefined && lowercaseLetterRegex.test(password)

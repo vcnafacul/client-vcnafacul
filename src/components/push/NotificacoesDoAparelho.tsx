@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
  */
 function NasConfiguracoes() {
   return (
-    <p className="text-sm text-muted-foreground">
+    <p className="text-body text-muted-foreground">
       As notificações são controladas pelo seu aparelho. Para ativar ou
       desativar: <strong>{CAMINHO_DAS_CONFIGURACOES[ondeConfigurar()]}</strong>.
     </p>
@@ -33,7 +33,7 @@ function NasConfiguracoes() {
  */
 function ComoLiberar() {
   return (
-    <div className="space-y-1 rounded-lg bg-cta/5 p-3 text-sm text-foreground">
+    <div className="space-y-1 rounded-lg bg-cta/5 p-3 text-body text-foreground">
       <p>
         Onde liberar:{" "}
         <strong>{CAMINHO_DAS_CONFIGURACOES[ondeConfigurar()]}</strong>.
@@ -47,7 +47,7 @@ function ComoLiberar() {
 
 function PassosInstalarNoIPhone() {
   return (
-    <ol className="list-decimal space-y-1 pl-5 text-sm text-muted-foreground">
+    <ol className="list-decimal space-y-1 pl-5 text-body text-muted-foreground">
       <li>
         No Safari, toque em Compartilhar{" "}
         <Share aria-hidden className="inline h-4 w-4 align-text-bottom" />.
@@ -124,26 +124,26 @@ export function NotificacoesDoAparelho() {
           <h3 id="notificacoes-titulo" className="font-semibold text-foreground">
             {titulo}
           </h3>
-          <p className="text-sm text-muted-foreground">{texto}</p>
+          <p className="text-body text-muted-foreground">{texto}</p>
           {status === "active" && <NasConfiguracoes />}
           {status === "denied" && <ComoLiberar />}
           {status === "ios-needs-install" && <PassosInstalarNoIPhone />}
           {ativo && !semRegistroNaApi && aparelhos.length > 0 && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body text-muted-foreground">
               {aparelhos.length === 1
                 ? "Registrado no servidor neste aparelho."
                 : `Registrado no servidor em ${aparelhos.length} aparelhos.`}
             </p>
           )}
           {semRegistroNaApi && (
-            <p role="alert" className="text-sm text-warning">
+            <p role="alert" className="text-body text-warning">
               Este aparelho ainda não está registrado no servidor, então os
               avisos não chegam. Toque em Registrar de novo.
             </p>
           )}
 
           {ativo && !semRegistroNaApi && podeTestar && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body text-muted-foreground">
               Para conferir, envie uma notificação de teste: se chegar, está
               funcionando.
             </p>

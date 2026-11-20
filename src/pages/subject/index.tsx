@@ -54,7 +54,7 @@ function Subject() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6 flex-wrap gap-2">
-          <h1 className="text-2xl font-bold text-foreground">
+          <h1 className="text-h1 font-bold text-foreground">
             {contents[0]?.subject.name}
           </h1>
           <button
@@ -62,7 +62,7 @@ function Subject() {
             onClick={() => navigate(-1)}
           >
             <ArrowLeft size={18} />
-            <span className="text-sm">Voltar</span>
+            <span className="text-body">Voltar</span>
           </button>
         </div>
 
@@ -70,7 +70,7 @@ function Subject() {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Menu lateral */}
           <aside className="bg-white shadow-md rounded-lg p-4 w-full lg:w-80 flex-shrink-0">
-            <h2 className="text-lg font-semibold text-foreground mb-3">
+            <h2 className="text-h3 font-semibold text-foreground mb-3">
               Conteúdos
             </h2>
             <nav className="space-y-2">

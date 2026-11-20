@@ -115,7 +115,7 @@ export default function SendDocuments({
           <h3 className="text-md font-semibold text-foreground">
             Informações sobre o envio de documentos:
           </h3>
-          <ul className="mt-2 list-disc list-inside text-foreground text-sm flex flex-col gap-1">
+          <ul className="mt-2 list-disc list-inside text-foreground text-body flex flex-col gap-1">
             <li className={`${isFree ? "" : "hidden"}`}>
               Fazer o upload de todos os documentos necessários para comprovação
               da renda informada no formulário de inscrição.
@@ -183,7 +183,7 @@ export default function SendDocuments({
           {uploadedFiles.map((file: any, index: number) => (
             <li
               key={index}
-              className="flex justify-between items-center text-muted-foreground text-sm border p-2 rounded-md"
+              className="flex justify-between items-center text-muted-foreground text-body border p-2 rounded-md"
             >
               <span>{file.name}</span>
               <button

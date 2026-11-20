@@ -48,14 +48,14 @@ export function CabecalhoDoMonitoramento({
               <MenuItem value={Period.month}>Mensal</MenuItem>
               <MenuItem value={Period.year}>Anual</MenuItem>
             </Select>
-            <p className="text-xs text-muted-foreground mt-1">Afeta gráficos temporais</p>
+            <p className="text-caption text-muted-foreground mt-1">Afeta gráficos temporais</p>
           </div>
         </div>
       </div>
       {cursinho && (
         <div
           role="status"
-          className="mt-3 flex flex-col gap-2 rounded border border-border bg-white px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between"
+          className="mt-3 flex flex-col gap-2 rounded border border-border bg-white px-3 py-2 text-body sm:flex-row sm:items-center sm:justify-between"
         >
           <p>
             Mostrando só <strong>{cursinho.name}</strong>. Fora do recorte:{" "}

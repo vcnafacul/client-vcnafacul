@@ -48,7 +48,7 @@ export default function EssayHistory() {
 
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold text-foreground mb-6">
+      <h1 className="text-h1 font-bold text-foreground mb-6">
         Minhas Redações
       </h1>
 
@@ -82,17 +82,17 @@ export default function EssayHistory() {
                   className="w-full border rounded-lg p-3 text-left bg-white hover:bg-page"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <p className="font-semibold text-sm break-words min-w-0">
+                    <p className="font-semibold text-body break-words min-w-0">
                       <span aria-hidden className="mr-1">
                         {tipoDaRedacao(essay)}
                       </span>
                       {essay.theme.title}
                     </p>
-                    <span className="shrink-0 text-lg font-bold text-foreground">
+                    <span className="shrink-0 text-h3 font-bold text-foreground">
                       {nota ?? "-"}
                     </span>
                   </div>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mt-1 text-caption text-muted-foreground">
                     {STATUS_LABELS[essay.status] ?? essay.status} ·{" "}
                     {dataDaRedacao(essay)}
                   </p>
@@ -106,11 +106,11 @@ export default function EssayHistory() {
           <table className="w-full">
             <thead className="bg-page">
               <tr>
-                <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Tema</th>
-                <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Tipo</th>
-                <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Nota</th>
-                <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Status</th>
-                <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Data</th>
+                <th className="text-left p-3 text-body font-semibold text-muted-foreground">Tema</th>
+                <th className="text-left p-3 text-body font-semibold text-muted-foreground">Tipo</th>
+                <th className="text-left p-3 text-body font-semibold text-muted-foreground">Nota</th>
+                <th className="text-left p-3 text-body font-semibold text-muted-foreground">Status</th>
+                <th className="text-left p-3 text-body font-semibold text-muted-foreground">Data</th>
               </tr>
             </thead>
             <tbody>
@@ -120,17 +120,17 @@ export default function EssayHistory() {
                   onClick={() => abrir(essay)}
                   className="border-t hover:bg-page cursor-pointer"
                 >
-                  <td className="p-3 text-sm">{essay.theme.title}</td>
-                  <td className="p-3 text-sm text-center">
+                  <td className="p-3 text-body">{essay.theme.title}</td>
+                  <td className="p-3 text-body text-center">
                     {tipoDaRedacao(essay)}
                   </td>
-                  <td className="p-3 text-sm font-bold text-foreground">
+                  <td className="p-3 text-body font-bold text-foreground">
                     {notaDaRedacao(essay) ?? "-"}
                   </td>
-                  <td className="p-3 text-sm">
+                  <td className="p-3 text-body">
                     {STATUS_LABELS[essay.status] ?? essay.status}
                   </td>
-                  <td className="p-3 text-sm text-muted-foreground">
+                  <td className="p-3 text-body text-muted-foreground">
                     {dataDaRedacao(essay)}
                   </td>
                 </tr>

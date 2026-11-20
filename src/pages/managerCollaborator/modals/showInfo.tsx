@@ -192,7 +192,7 @@ export function ShowInfo({
           )}
           <div className="flex flex-col gap-2 w-full">
             {frentesLoading ? (
-              <div className="text-sm text-muted-foreground italic">Carregando...</div>
+              <div className="text-body text-muted-foreground italic">Carregando...</div>
             ) : (materiasUnicas.length > 0 || frentesUnicas.length > 0) ? (
               <div className="flex flex-col gap-2">
                 {materiasUnicas.length > 0 && (
@@ -201,7 +201,7 @@ export function ShowInfo({
                       <Badge
                         key={nome}
                         variant="secondary"
-                        className={`inline-flex items-center px-3 py-1 text-xs ${getColorFromName(nome)} ${getTextColorFromName(nome)}`}
+                        className={`inline-flex items-center px-3 py-1 text-caption ${getColorFromName(nome)} ${getTextColorFromName(nome)}`}
                       >
                         {nome}
                       </Badge>
@@ -214,7 +214,7 @@ export function ShowInfo({
                       <Badge
                         key={nome}
                         variant="secondary"
-                        className={`inline-flex items-center px-3 py-1 text-xs ${getColorFromName(nome)} ${getTextColorFromName(nome)}`}
+                        className={`inline-flex items-center px-3 py-1 text-caption ${getColorFromName(nome)} ${getTextColorFromName(nome)}`}
                       >
                         {nome}
                       </Badge>
@@ -324,7 +324,7 @@ export function ShowInfo({
         text="Remover a foto do colaborador?"
         className="bg-white p-4 rounded-md w-[calc(100%-2rem)]"
       >
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           A foto também sai da página pública do cursinho.
         </p>
       </ModalConfirmCancel>

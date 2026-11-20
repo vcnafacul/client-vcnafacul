@@ -118,43 +118,43 @@ export function ModalEventos({ isOpen, handleClose, token, podeEditar }: Props) 
         {tela.tipo === "lista" && (
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-lg font-semibold text-foreground">Eventos de simulado</h2>
+              <h2 className="text-h3 font-semibold text-foreground">Eventos de simulado</h2>
               {podeEditar && (
                 <button
                   type="button"
                   onClick={() => setTela({ tipo: "form", evento: null })}
-                  className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm"
+                  className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-body"
                 >
                   Novo evento
                 </button>
               )}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-caption text-muted-foreground">
               Os alunos matriculados se inscrevem escolhendo a prova. Use o número de
               inscritos de cada prova para saber quanto imprimir.
             </p>
-            {eventos === null && <p className="text-sm">Carregando...</p>}
+            {eventos === null && <p className="text-body">Carregando...</p>}
             {eventos?.length === 0 && (
-              <p className="text-sm text-muted-foreground">Nenhum evento ainda.</p>
+              <p className="text-body text-muted-foreground">Nenhum evento ainda.</p>
             )}
             <ul className="space-y-2">
               {eventos?.map((e) => (
                 <li key={e.id} className="border rounded-lg p-3">
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="font-semibold break-words min-w-0">{e.nome}</h3>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${ROTULO[e.status].cor}`}>
+                    <span className={`text-caption px-2 py-0.5 rounded-full ${ROTULO[e.status].cor}`}>
                       {ROTULO[e.status].texto}
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-caption text-muted-foreground mt-1">
                     Inscrições: {formatarDataHora(e.inscricoesDe)} até{" "}
                     {formatarDataHora(e.inscricoesAte)}
                   </p>
-                  <p className="text-sm mt-1">
+                  <p className="text-body mt-1">
                     {e.provas.map(inscritosDaProva).join(" · ")} —{" "}
                     <strong>{e.totalInscritos}</strong> inscritos
                   </p>
-                  <div className="flex flex-wrap gap-3 mt-2 text-sm">
+                  <div className="flex flex-wrap gap-3 mt-2 text-body">
                     <button
                       type="button"
                       onClick={() => setTela({ tipo: "painel", evento: e })}

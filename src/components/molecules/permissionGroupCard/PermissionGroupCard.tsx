@@ -35,7 +35,7 @@ function PermissionGroupCard({
 
   return (
     <div className="rounded-xl border border-border bg-page/50 p-4 flex flex-col gap-3">
-      <span className="text-sm font-semibold text-foreground">{group.label}</span>
+      <span className="text-body font-semibold text-foreground">{group.label}</span>
       <div className="flex flex-wrap gap-2">
         {visibleNodes.map((node) => {
           const camelKey = toCamelPermission(node.key);

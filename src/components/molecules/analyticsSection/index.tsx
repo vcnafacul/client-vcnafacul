@@ -19,9 +19,9 @@ export default function AnalyticsSection({
         <div className="flex items-center gap-2">
           <div className="w-1 h-6 bg-primary rounded" />
           <div>
-            <h2 className="text-xl font-bold text-foreground">{title}</h2>
+            <h2 className="text-h2 font-bold text-foreground">{title}</h2>
             {subtitle && (
-              <p className="text-sm text-muted-foreground">{subtitle}</p>
+              <p className="text-body text-muted-foreground">{subtitle}</p>
             )}
           </div>
         </div>

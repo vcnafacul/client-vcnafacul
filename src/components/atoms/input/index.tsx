@@ -7,7 +7,7 @@ import { FormFieldOption } from "../../molecules/formField";
 const input = tv({
   base:
     "bg-white appearance-none box-border w-full rounded-lg border text-muted-foreground" +
-    " text-xs pl-5 pr-2 pt-5 pb-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-no-repeat md:text-base md:pt-7 md:pb-3 md:mx-6",
+    " text-body pl-5 pr-2 pt-5 pb-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-no-repeat md:pt-7 md:pb-3 md:mx-6",
   variants: {
     erro: {
       true: "border-destructive",

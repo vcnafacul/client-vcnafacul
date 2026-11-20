@@ -48,13 +48,13 @@ export function Historico() {
   const paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
   if (erro)
     return (
-      <p role="alert" className="text-sm text-destructive">
+      <p role="alert" className="text-body text-destructive">
         {erro}
       </p>
     );
   if (!envios.length) {
     return (
-      <p className="text-sm text-muted-foreground">
+      <p className="text-body text-muted-foreground">
         Nenhuma notificação enviada ainda.
       </p>
     );
@@ -63,8 +63,8 @@ export function Historico() {
   return (
     <div className="space-y-3">
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
-          <thead className="text-xs uppercase text-muted-foreground">
+        <table className="w-full text-left text-body">
+          <thead className="text-caption uppercase text-muted-foreground">
             <tr>
               <th className="py-2 pr-3">Data</th>
               <th className="py-2 pr-3">Título</th>
@@ -106,11 +106,11 @@ export function Historico() {
           </tbody>
         </table>
       </div>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-caption text-muted-foreground">
         "Entregues" = aceitas pelo FCM; não quer dizer que foram lidas.
       </p>
       {paginas > 1 && (
-        <div className="flex items-center gap-2 text-sm">
+        <div className="flex items-center gap-2 text-body">
           <Button
             variant="outline"
             size="sm"

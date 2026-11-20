@@ -92,15 +92,15 @@ export default function PaginaCursinhoEdicao() {
     <form onSubmit={salvar} className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
       <div className="flex flex-wrap justify-between items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Página do cursinho</h1>
-          <p className="text-sm text-muted-foreground">{salva.nomeDoCursinho}</p>
+          <h1 className="text-h1 font-bold text-foreground">Página do cursinho</h1>
+          <p className="text-body text-muted-foreground">{salva.nomeDoCursinho}</p>
         </div>
         {salva.active && (
           <a
             href={enderecoPublico(salva.slug)}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1 text-sm text-foreground hover:underline"
+            className="flex items-center gap-1 text-body text-foreground hover:underline"
           >
             Ver página pública <FiExternalLink />
           </a>
@@ -114,10 +114,10 @@ export default function PaginaCursinhoEdicao() {
           handleCheck={(_nome, marcado) => setActive(marcado)}
         />
         <div>
-          <p className="font-semibold text-sm">
+          <p className="font-semibold text-body">
             Página {active ? "ativa" : "desativada"}
           </p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-caption text-muted-foreground">
             Desativada, ninguém consegue abrir o endereço. Para ativar, o Quem somos é
             obrigatório.
           </p>
@@ -125,11 +125,11 @@ export default function PaginaCursinhoEdicao() {
       </div>
 
       <div>
-        <label htmlFor="slug" className="block text-sm font-semibold mb-1">
+        <label htmlFor="slug" className="block text-body font-semibold mb-1">
           Endereço da página
         </label>
         <div className="flex items-center border rounded-lg overflow-hidden bg-white">
-          <span className="px-2 text-sm text-muted-foreground bg-page border-r py-2 whitespace-nowrap">
+          <span className="px-2 text-body text-muted-foreground bg-page border-r py-2 whitespace-nowrap">
             …/{PARTNER_PREP}
           </span>
           <input
@@ -139,13 +139,13 @@ export default function PaginaCursinhoEdicao() {
             className="flex-1 min-w-0 p-2 outline-none"
           />
         </div>
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-caption text-muted-foreground mt-1">
           Se você trocar o endereço, o link antigo deixa de funcionar.
         </p>
       </div>
 
       <div>
-        <label className="block text-sm font-semibold mb-1">
+        <label className="block text-body font-semibold mb-1">
           Quem somos <span className="text-destructive">*</span>
         </label>
         {/* Sem `onImageUpload`: o editor não mostra o botão de imagem (R4). */}
@@ -157,7 +157,7 @@ export default function PaginaCursinhoEdicao() {
           error={avisoAtivar}
         />
         {avisoAtivar && (
-          <p role="alert" className="text-xs text-destructive mt-1">
+          <p role="alert" className="text-caption text-destructive mt-1">
             Para ativar a página, preencha o Quem somos.
           </p>
         )}

@@ -696,16 +696,16 @@ export function PartnerPrepInscritionStudentManager() {
     <div className="flex flex-col justify-center items-center pt-4">
       <div className="w-full px-4">
         <div className="mb-2">
-          <h1 className="text-3xl font-bold text-center text-foreground break-words">
+          <h1 className="text-h1 font-bold text-center text-foreground break-words">
             {inscriptionInfo?.name || "Gerenciamento de Inscritos"}
           </h1>
           {inscriptionInfo?.description && (
-            <p className="text-sm text-muted-foreground text-center mt-1 break-words">
+            <p className="text-body text-muted-foreground text-center mt-1 break-words">
               {inscriptionInfo.description}
             </p>
           )}
           {inscriptionInfo && (
-            <p className="text-xs text-muted-foreground text-center mt-1">
+            <p className="text-caption text-muted-foreground text-center mt-1">
               Período:{" "}
               {new Date(inscriptionInfo.startDate).toLocaleDateString("pt-BR")}{" "}
               — {new Date(inscriptionInfo.endDate).toLocaleDateString("pt-BR")}{" "}
@@ -723,14 +723,14 @@ export function PartnerPrepInscritionStudentManager() {
               typeStyle="refused"
               onClick={modals.statistic.open}
             >
-              <p className="text-sm">Estatisticas</p>
+              <p className="text-body">Estatisticas</p>
             </Button>
             <Button
               size="small"
               className="border-none w-full h-10 sm:w-fit sm:h-fit"
               onClick={modals.waitingList.open}
             >
-              <p className="text-sm">Lista de Espera</p>
+              <p className="text-body">Lista de Espera</p>
             </Button>
             <Button
               size="small"
@@ -738,20 +738,20 @@ export function PartnerPrepInscritionStudentManager() {
               className="border-none w-full h-10 sm:w-fit sm:h-fit"
               onClick={modals.scheduleEnrolled.open}
             >
-              <p className="text-sm">Programar Convocação</p>
+              <p className="text-body">Programar Convocação</p>
             </Button>
             <Button
               size="small"
               className="border-none w-full h-10 sm:w-fit sm:h-fit"
               onClick={modals.rules.open}
             >
-              <p className="text-sm">Regras de Pontuação</p>
+              <p className="text-body">Regras de Pontuação</p>
             </Button>
             <button
               type="button"
               aria-label="Atualizar lista"
               onClick={() => subscribers()}
-              className="col-span-2 flex items-center justify-center gap-2 h-10 border border-border rounded-md text-sm text-muted-foreground sm:h-auto sm:border-0 sm:col-span-1"
+              className="col-span-2 flex items-center justify-center gap-2 h-10 border border-border rounded-md text-body text-muted-foreground sm:h-auto sm:border-0 sm:col-span-1"
             >
               <FaSyncAlt className="h-7 w-7 p-0.5 fill-muted-foreground hover:fill-primary hover:animate-rotate5" />
               {!acimaDeSm && "Atualizar lista"}

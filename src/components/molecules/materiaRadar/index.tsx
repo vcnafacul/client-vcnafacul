@@ -11,7 +11,7 @@ interface Props {
 export function MateriaRadar({ materias, onSelectMateria, selectedMateriaId }: Props) {
   if (materias.length === 0) {
     return (
-      <p className="py-4 text-sm text-center text-muted-foreground">
+      <p className="py-4 text-body text-center text-muted-foreground">
         Nenhuma matéria com dados para este mês.
       </p>
     );
@@ -28,10 +28,10 @@ export function MateriaRadar({ materias, onSelectMateria, selectedMateriaId }: P
         <RadarChart data={radarData} indexBy="materia" keys={["aproveitamento"]} />
       </div>
       <div className="w-full sm:w-64">
-        <p className="mb-1 text-xs font-medium text-muted-foreground uppercase">Matérias</p>
-        <table className="w-full text-sm" role="table" aria-label="Tabela de matérias">
+        <p className="mb-1 text-caption font-medium text-muted-foreground uppercase">Matérias</p>
+        <table className="w-full text-body" role="table" aria-label="Tabela de matérias">
           <thead>
-            <tr className="text-left text-xs text-muted-foreground">
+            <tr className="text-left text-caption text-muted-foreground">
               <th className="pb-1 font-normal">Matéria</th>
               <th className="pb-1 font-normal text-right">Aproveito.</th>
               <th className="pb-1 font-normal text-right">Alunos</th>

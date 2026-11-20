@@ -64,14 +64,14 @@ function NewsSelector({ news, selectedIndex, onSelect }: NewsSelectorProps) {
                 `}
               >
                 <span
-                  className={`text-xs font-mono shrink-0 ${
+                  className={`text-caption font-mono shrink-0 ${
                     isSelected ? "text-white/70" : "text-muted-foreground/50"
                   }`}
                 >
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <span
-                  className={`truncate text-sm ${
+                  className={`truncate text-body ${
                     isSelected ? "font-semibold" : "font-normal"
                   }`}
                 >

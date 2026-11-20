@@ -406,12 +406,12 @@ export function TabClassificacao({
             <div className={`p-4 rounded-lg border-2 ${statusDisplay.color}`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">{statusDisplay.icon}</span>
+                  <span className="text-h1">{statusDisplay.icon}</span>
                   <div>
-                    <p className="text-sm font-medium opacity-75">
+                    <p className="text-body font-medium opacity-75">
                       Status atual
                     </p>
-                    <p className="text-lg font-bold">{statusDisplay.label}</p>
+                    <p className="text-h3 font-bold">{statusDisplay.label}</p>
                   </div>
                 </div>
               </div>
@@ -420,7 +420,7 @@ export function TabClassificacao({
             {/* Input de mensagem de rejeição (condicional) */}
             {showRejectionInput && (
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-muted-foreground">
+                <label className="text-body font-semibold text-muted-foreground">
                   Motivo da Rejeição (opcional)
                 </label>
                 <Textarea
@@ -494,14 +494,14 @@ export function TabClassificacao({
       <Card className="h-full flex flex-col">
         <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 pb-3">
           <div className="flex flex-wrap items-center gap-3">
-            <CardTitle className="text-lg">📋 Informações da Prova</CardTitle>
+            <CardTitle className="text-h3">📋 Informações da Prova</CardTitle>
             {isEditing && (
-              <span className="text-sm font-normal text-info bg-info-muted px-2 py-1 rounded">
+              <span className="text-body font-normal text-info bg-info-muted px-2 py-1 rounded">
                 Modo Edição
               </span>
             )}
             {isDirty && !isEditing && (
-              <span className="text-sm font-normal text-warning bg-warning-muted px-2 py-1 rounded">
+              <span className="text-body font-normal text-warning bg-warning-muted px-2 py-1 rounded">
                 • Alterações não salvas
               </span>
             )}
@@ -549,7 +549,7 @@ export function TabClassificacao({
                   como o "Remover número" do campo Número. No modo edição, o
                   "Remover da prova" ocupa o mesmo lugar, com o mesmo estilo. */}
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <label className="text-sm font-semibold text-muted-foreground">
+                <label className="text-body font-semibold text-muted-foreground">
                   Prova *
                 </label>
                 {isEditing && provaSel && (
@@ -560,7 +560,7 @@ export function TabClassificacao({
                     onClick={handleRemoveFromProva}
                     disabled={isSaving || !podeCompor(provaSel)}
                     title={podeCompor(provaSel) ? undefined : TEXTO_DO_SELO}
-                    className="h-6 px-2 text-xs text-destructive border-destructive hover:text-destructive hover:bg-destructive/5"
+                    className="h-6 px-2 text-caption text-destructive border-destructive hover:text-destructive hover:bg-destructive/5"
                   >
                     Remover da prova
                   </Button>
@@ -593,7 +593,7 @@ export function TabClassificacao({
                       <SelectItem key={p.provaId} value={String(i)}>
                         {p.provaNome}
                         {seloDaProva(p) && (
-                          <span className="ml-2 text-xs text-muted-foreground">
+                          <span className="ml-2 text-caption text-muted-foreground">
                             {seloDaProva(p)!.texto}
                           </span>
                         )}
@@ -603,7 +603,7 @@ export function TabClassificacao({
                 </Select>
               ) : (
                 <div className="p-3 bg-muted rounded-md border border-border opacity-70">
-                  <p className="text-base">{provaSel?.provaNome ?? "Sem prova"}</p>
+                  <p className="text-body">{provaSel?.provaNome ?? "Sem prova"}</p>
                 </div>
               )}
               {/* tickets/023, card 08: de quem é a prova em foco, se não é sua. */}
@@ -611,7 +611,7 @@ export function TabClassificacao({
                 <p
                   data-testid="selo-da-prova"
                   title={TEXTO_DO_SELO}
-                  className="text-xs text-muted-foreground bg-muted border border-border rounded px-2 py-1 w-fit cursor-help"
+                  className="text-caption text-muted-foreground bg-muted border border-border rounded px-2 py-1 w-fit cursor-help"
                 >
                   {seloDaProva(provaSel)!.texto}
                 </p>
@@ -621,7 +621,7 @@ export function TabClassificacao({
             {/* Número */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-muted-foreground">
+                <label className="text-body font-semibold text-muted-foreground">
                   Número da Questão
                 </label>
                 {isEditing && form.watch("numero") != null && podeCompor(provaSel) && (
@@ -630,7 +630,7 @@ export function TabClassificacao({
                     variant="outline"
                     size="sm"
                     onClick={() => form.setValue("numero", null, { shouldDirty: true })}
-                    className="h-6 px-2 text-xs text-destructive border-destructive hover:text-destructive hover:bg-destructive/5"
+                    className="h-6 px-2 text-caption text-destructive border-destructive hover:text-destructive hover:bg-destructive/5"
                   >
                     Remover número
                   </Button>
@@ -638,14 +638,14 @@ export function TabClassificacao({
               </div>
               {!isEditing ? (
                 <div className="p-3 bg-page rounded-md border border-border">
-                  <p className="text-base text-muted-foreground">
+                  <p className="text-body text-muted-foreground">
                     {provaSel?.numero ?? "Sem número"}
                   </p>
                 </div>
               ) : !provaSel ? (
                 // ⚠️ Sem prova não há posição (card 02): o número nem vai no save.
                 <div className="p-3 bg-muted rounded-md border border-border opacity-70">
-                  <p className="text-base text-muted-foreground">Sem prova — sem número</p>
+                  <p className="text-body text-muted-foreground">Sem prova — sem número</p>
                 </div>
               ) : !podeCompor(provaSel) ? (
                 // tickets/023, card 08: trocar número é compor a prova.
@@ -653,14 +653,14 @@ export function TabClassificacao({
                   title={TEXTO_DO_SELO}
                   className="p-3 bg-muted rounded-md border border-border opacity-70 cursor-help"
                 >
-                  <p className="text-base text-muted-foreground">
+                  <p className="text-body text-muted-foreground">
                     {provaSel.numero ?? "Sem número"}
                   </p>
                 </div>
               ) : loadingNumeros ? (
                 <div className="flex items-center justify-center p-3 border border-border rounded-md bg-page">
                   <Loader2 className="h-4 w-4 animate-spin text-primary mr-2" />
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-body text-muted-foreground">
                     Carregando números disponíveis...
                   </span>
                 </div>
@@ -669,10 +669,10 @@ export function TabClassificacao({
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-semibold text-warning">
+                      <p className="text-body font-semibold text-warning">
                         Impossível alterar número
                       </p>
-                      <p className="text-xs text-warning mt-1">
+                      <p className="text-caption text-warning mt-1">
                         Não há números disponíveis para esta prova.
                       </p>
                     </div>
@@ -711,7 +711,7 @@ export function TabClassificacao({
                 />
               )}
               {errors.numero && (
-                <p className="text-sm text-destructive flex items-center gap-1">
+                <p className="text-body text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {errors.numero.message}
                 </p>
@@ -721,7 +721,7 @@ export function TabClassificacao({
             {isEditing && travaAreaFrente && (
               <p
                 data-testid="trava-area-frente"
-                className="sm:col-span-2 text-xs text-warning bg-warning-muted border border-warning/30 rounded px-3 py-2"
+                className="sm:col-span-2 text-caption text-warning bg-warning-muted border border-warning/30 rounded px-3 py-2"
               >
                 🔒 {textoDaTrava}
               </p>
@@ -729,12 +729,12 @@ export function TabClassificacao({
 
             {/* Área ENEM */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-muted-foreground">
+              <label className="text-body font-semibold text-muted-foreground">
                 Área do Conhecimento ENEM *
               </label>
               {!isEditing ? (
                 <div className="p-3 bg-page rounded-md border border-border">
-                  <p className="text-base">
+                  <p className="text-body">
                     {question.enemArea || "Não definida"}
                   </p>
                 </div>
@@ -770,7 +770,7 @@ export function TabClassificacao({
                 />
               )}
               {errors.enemArea && (
-                <p className="text-sm text-destructive flex items-center gap-1">
+                <p className="text-body text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {errors.enemArea.message}
                 </p>
@@ -783,7 +783,7 @@ export function TabClassificacao({
               {isEditing && conflitoDeAreas && (
                 <p
                   data-conflito-de-areas
-                  className="text-xs text-warning flex items-center gap-1"
+                  className="text-caption text-warning flex items-center gap-1"
                 >
                   <AlertTriangle className="h-3 w-3" />
                   Esta questão está em provas ENEM de dias diferentes — nenhuma
@@ -791,7 +791,7 @@ export function TabClassificacao({
                 </p>
               )}
               {isEditing && !provaSel?.provaId && (
-                <p className="text-sm text-muted-foreground flex items-center gap-1">
+                <p className="text-body text-muted-foreground flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   Selecione uma prova primeiro
                 </p>
@@ -800,12 +800,12 @@ export function TabClassificacao({
 
             {/* Disciplina */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-muted-foreground">
+              <label className="text-body font-semibold text-muted-foreground">
                 Disciplina *
               </label>
               {!isEditing ? (
                 <div className="p-3 bg-page rounded-md border border-border">
-                  <p className="text-base">{materiaOriginal?.nome}</p>
+                  <p className="text-body">{materiaOriginal?.nome}</p>
                 </div>
               ) : (
                 <Controller
@@ -850,13 +850,13 @@ export function TabClassificacao({
                 />
               )}
               {errors.materia && (
-                <p className="text-sm text-destructive flex items-center gap-1">
+                <p className="text-body text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {errors.materia.message}
                 </p>
               )}
               {isEditing && !enemArea && (
-                <p className="text-sm text-muted-foreground flex items-center gap-1">
+                <p className="text-body text-muted-foreground flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   Selecione uma área ENEM primeiro
                 </p>
@@ -865,12 +865,12 @@ export function TabClassificacao({
 
             {/* Frente Principal */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-muted-foreground">
+              <label className="text-body font-semibold text-muted-foreground">
                 Frente Principal *
               </label>
               {!isEditing ? (
                 <div className="p-3 bg-page rounded-md border border-border">
-                  <p className="text-base">
+                  <p className="text-body">
                     {materiaOriginal?.frentes?.find(
                       (frente) => frente._id === question.frente1
                     )?.nome || "Não definida"}
@@ -915,13 +915,13 @@ export function TabClassificacao({
                 />
               )}
               {errors.frente1 && (
-                <p className="text-sm text-destructive flex items-center gap-1">
+                <p className="text-body text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {errors.frente1.message}
                 </p>
               )}
               {isEditing && !materiaId && (
-                <p className="text-sm text-muted-foreground flex items-center gap-1">
+                <p className="text-body text-muted-foreground flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   Selecione uma disciplina primeiro
                 </p>
@@ -930,13 +930,13 @@ export function TabClassificacao({
 
             {/* Frente Secundária */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-muted-foreground">
+              <label className="text-body font-semibold text-muted-foreground">
                 Frente Secundária
               </label>
               {!isEditing ? (
                 <div className="p-3 bg-page rounded-md border border-border">
                   <p
-                    className={`text-base ${
+                    className={`text-body ${
                       question.frente2 ? "" : "text-muted-foreground"
                     }`}
                   >
@@ -972,13 +972,13 @@ export function TabClassificacao({
 
             {/* Frente Terciária */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-muted-foreground">
+              <label className="text-body font-semibold text-muted-foreground">
                 Frente Terciária
               </label>
               {!isEditing ? (
                 <div className="p-3 bg-page rounded-md border border-border">
                   <p
-                    className={`text-base ${
+                    className={`text-body ${
                       question.frente3 ? "" : "text-muted-foreground"
                     }`}
                   >
@@ -1015,7 +1015,7 @@ export function TabClassificacao({
             {/* Link da Prova */}
             {provaSelecionada && (
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-muted-foreground">
+                <label className="text-body font-semibold text-muted-foreground">
                   Link da Prova
                 </label>
                 <Button
@@ -1033,7 +1033,7 @@ export function TabClassificacao({
             {/* Link do Gabarito */}
             {provaSelecionada && provaSelecionada.gabarito && (
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-muted-foreground">
+                <label className="text-body font-semibold text-muted-foreground">
                   Link do Gabarito
                 </label>
                 <Button
@@ -1054,7 +1054,7 @@ export function TabClassificacao({
       {/* Revisões Necessárias */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">⚠️ Revisões Necessárias</CardTitle>
+          <CardTitle className="text-h3">⚠️ Revisões Necessárias</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1071,7 +1071,7 @@ export function TabClassificacao({
                   />
                 )}
               />
-              <span className="text-sm">Classificação de Prova</span>
+              <span className="text-body">Classificação de Prova</span>
             </div>
 
             {/* Classificação de Disciplina e Frente */}
@@ -1087,7 +1087,7 @@ export function TabClassificacao({
                   />
                 )}
               />
-              <span className="text-sm">
+              <span className="text-body">
                 Classificação de Disciplina e Frente
               </span>
             </div>
@@ -1103,7 +1103,7 @@ export function TabClassificacao({
                   />
                 )}
               />
-              <span className="text-sm">Report</span>
+              <span className="text-body">Report</span>
             </div>
           </div>
         </CardContent>
@@ -1116,13 +1116,13 @@ export function TabClassificacao({
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex-1 min-w-[12rem]">
                 {isDirty && (
-                  <p className="text-sm text-warning font-medium flex items-center gap-2">
+                  <p className="text-body text-warning font-medium flex items-center gap-2">
                     <AlertCircle className="h-4 w-4" />
                     Você tem alterações não salvas
                   </p>
                 )}
                 {!isValid && isDirty && (
-                  <p className="text-sm text-destructive mt-1">
+                  <p className="text-body text-destructive mt-1">
                     Por favor, corrija os erros antes de salvar
                   </p>
                 )}

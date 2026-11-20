@@ -48,7 +48,7 @@ export function TabAlternativas({
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Alternativas</CardTitle>
+          <CardTitle className="text-h3">Alternativas</CardTitle>
         </CardHeader>
         <CardContent id={ancoraDoCampo("alternativa")} className="space-y-3 scroll-mt-28">
           {alternativas.map((alt) => {
@@ -69,7 +69,7 @@ export function TabAlternativas({
                   <div className="flex gap-3">
                     <div className="flex items-start gap-3 flex-1">
                       <span
-                        className={`font-bold text-lg min-w-[32px] ${
+                        className={`font-bold text-h3 min-w-[32px] ${
                           isCorreta ? "text-success" : "text-muted-foreground"
                         }`}
                       >
@@ -95,7 +95,7 @@ export function TabAlternativas({
                 ) : (
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-lg text-foreground min-w-[24px]">
+                      <span className="font-bold text-h3 text-foreground min-w-[24px]">
                         {alt.letra})
                       </span>
                       <div className="flex items-center gap-2">
@@ -115,7 +115,7 @@ export function TabAlternativas({
                         />
                         <Label
                           htmlFor={`radio-${alt.letra}`}
-                          className="text-sm text-muted-foreground cursor-pointer"
+                          className="text-body text-muted-foreground cursor-pointer"
                         >
                           Correta
                         </Label>
@@ -146,7 +146,7 @@ export function TabAlternativas({
                       />
                     </Suspense>
                     {errors[alt.campo as keyof typeof errors] && (
-                      <p className="text-sm text-destructive flex items-center gap-1">
+                      <p className="text-body text-destructive flex items-center gap-1">
                         <AlertCircle className="h-3 w-3" />
                         {errors[alt.campo as keyof typeof errors]?.message}
                       </p>
@@ -159,7 +159,7 @@ export function TabAlternativas({
 
           {errors.alternativa && (
             <div className="p-3 bg-destructive-muted border border-destructive/30 rounded-md">
-              <p className="text-sm text-destructive flex items-center gap-2">
+              <p className="text-body text-destructive flex items-center gap-2">
                 <AlertCircle className="h-4 w-4" />
                 {errors.alternativa.message}
               </p>
@@ -172,20 +172,20 @@ export function TabAlternativas({
       {!isEditing && respostaCorreta && (
         <Card className="bg-success-muted border-success">
           <CardHeader>
-            <CardTitle className="text-lg text-success">
+            <CardTitle className="text-h3 text-success">
               Resposta Correta
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-success flex items-center justify-center">
-                <span className="text-success-foreground text-2xl font-bold">
+                <span className="text-success-foreground text-h1 font-bold">
                   {respostaCorreta}
                 </span>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Alternativa correta</p>
-                <p className="text-lg font-semibold text-success">
+                <p className="text-body text-muted-foreground">Alternativa correta</p>
+                <p className="text-h3 font-semibold text-success">
                   Opção {respostaCorreta}
                 </p>
               </div>

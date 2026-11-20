@@ -198,18 +198,18 @@ function DashQuestionNew() {
             type="button"
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="h-10 px-4 border rounded-md text-sm font-medium disabled:opacity-40"
+            className="h-10 px-4 border rounded-md text-body font-medium disabled:opacity-40"
           >
             Anterior
           </button>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-body text-muted-foreground">
             {currentPage} de {totalPages}
           </span>
           <button
             type="button"
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="h-10 px-4 border rounded-md text-sm font-medium disabled:opacity-40"
+            className="h-10 px-4 border rounded-md text-body font-medium disabled:opacity-40"
           >
             Próxima
           </button>
@@ -324,7 +324,7 @@ function DashQuestionNew() {
       <div className="mb-6">
         <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-primary">
+            <h1 className="text-h1 font-bold text-primary">
               Banco de Questões (Novo)
             </h1>
             <p className="text-muted-foreground mt-1">
@@ -360,7 +360,7 @@ function DashQuestionNew() {
               <ChevronDown className="h-4 w-4" />
             )}
             {hasActiveFilters && !showFilters && (
-              <span className="ml-1 px-2 py-0.5 text-xs bg-primary text-primary-foreground rounded-full">
+              <span className="ml-1 px-2 py-0.5 text-caption bg-primary text-primary-foreground rounded-full">
                 ✓
               </span>
             )}
@@ -384,7 +384,7 @@ function DashQuestionNew() {
 
       {/* Informações e Paginação Superior */}
       <div className="flex justify-between items-center">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           {isLoading ? (
             "Carregando..."
           ) : (
@@ -408,7 +408,7 @@ function DashQuestionNew() {
         </div>
       ) : questions.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-lg text-muted-foreground">
+          <p className="text-h3 text-muted-foreground">
             Nenhuma questão encontrada
           </p>
         </div>

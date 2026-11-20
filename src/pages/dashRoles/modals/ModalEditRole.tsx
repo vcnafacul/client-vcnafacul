@@ -138,7 +138,7 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
           <Text size="secondary" className="font-bold text-foreground">
             Editar Perfil
           </Text>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <p className="text-body text-muted-foreground mt-0.5">
             Selecione um perfil e ajuste suas permissões.
           </p>
         </div>
@@ -146,7 +146,7 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
         {/* Role selector + base toggle */}
         <div className="flex flex-col sm:flex-row gap-3">
           <label className="flex flex-col gap-1 flex-1">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
               Perfil
             </span>
             <Select
@@ -165,7 +165,7 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
               Perfil Base
             </span>
             <div className="flex items-center gap-3 h-full py-2">
@@ -174,7 +174,7 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
                 checked={roleSelected?.base ?? false}
                 handleCheck={handleBaseToggle}
               />
-              <span className="text-sm font-medium text-foreground">
+              <span className="text-body font-medium text-foreground">
                 {roleSelected?.base ? "Ativo" : "Inativo"}
               </span>
             </div>
@@ -189,18 +189,18 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
               handleCheck={handleRecommendedToggle}
               disabled={!roleSelected || !!motivoSemRecomendacao(roleSelected)}
             />
-            <span className="text-sm font-medium text-foreground">
+            <span className="text-body font-medium text-foreground">
               Recomendado para ex-colaboradores
             </span>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-caption text-muted-foreground">
             {(roleSelected && motivoSemRecomendacao(roleSelected)) ??
               "Coordenadores poderão indicar este perfil ao excluir um colaborador do cursinho."}
           </p>
         </div>
 
         {roleSelected?.base && (
-          <p className="text-xs text-warning bg-warning-muted border border-warning/30 rounded-lg px-3 py-2">
+          <p className="text-caption text-warning bg-warning-muted border border-warning/30 rounded-lg px-3 py-2">
             Perfis base só podem ter permissões do projeto. Permissões do
             cursinho e "Alterar Permissão" são desativadas automaticamente.
           </p>

@@ -9,7 +9,7 @@ function Ul({childrens, ...props}: UlProps){
     return (
         <ul {...props}>
             {childrens.map((children, index) => (
-                <li key={index} className="item-marker ml-4 text-start text-base">{children}</li>
+                <li key={index} className="item-marker ml-4 text-start text-body">{children}</li>
             ))}
         </ul>
     )

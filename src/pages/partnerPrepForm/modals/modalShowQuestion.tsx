@@ -564,7 +564,7 @@ export function ModalShowQuestion({
         }}
         text="Remover as condições desta questão?"
       >
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           Ela passa a aparecer para todos. A remoção vale quando você salvar.
         </p>
       </ModalConfirmCancel>

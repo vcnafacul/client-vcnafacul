@@ -72,7 +72,7 @@ export default function CancelEnrollmentModal({
                 onChange={() => setSelected(label)}
                 className="h-4 w-4 cursor-pointer accent-primary"
               />
-              <span className="text-sm">{label}</span>
+              <span className="text-body">{label}</span>
             </label>
             {note && (
               <ShadcnTooltip content={note} delayDuration={NOTE_TOOLTIP_DELAY_MS}>

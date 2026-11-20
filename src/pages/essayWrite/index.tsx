@@ -173,16 +173,16 @@ export default function EssayWrite() {
       {voltar && (
         <button
           onClick={voltar.onClick}
-          className="text-foreground hover:underline text-sm"
+          className="text-foreground hover:underline text-body"
         >
           &larr; {voltar.label}
         </button>
       )}
       <div className="flex flex-col items-start gap-1 xl:flex-row xl:justify-between xl:items-center xl:gap-4">
-        <h1 className="text-2xl font-bold text-foreground">{titulo}</h1>
+        <h1 className="text-h1 font-bold text-foreground">{titulo}</h1>
         <Link
           to={`/dashboard/${ESSAY_HISTORY}`}
-          className="text-foreground hover:underline text-sm"
+          className="text-foreground hover:underline text-body"
         >
           Ver histórico
         </Link>
@@ -218,17 +218,17 @@ export default function EssayWrite() {
             onClick={() => setMode('type')}
             className="border-2 border-primary rounded-lg p-6 text-center hover:bg-primary/5 transition-colors"
           >
-            <div className="text-3xl mb-2">✍️</div>
+            <div className="text-h1 mb-2">✍️</div>
             <div className="font-bold text-foreground">Escrever no editor</div>
-            <p className="text-sm text-muted-foreground mt-1">Digite sua redação diretamente no editor de texto</p>
+            <p className="text-body text-muted-foreground mt-1">Digite sua redação diretamente no editor de texto</p>
           </button>
           <button
             onClick={() => setMode('upload')}
             className="border-2 border-primary rounded-lg p-6 text-center hover:bg-primary/5 transition-colors"
           >
-            <div className="text-3xl mb-2">📷</div>
+            <div className="text-h1 mb-2">📷</div>
             <div className="font-bold text-foreground">Enviar foto/PDF</div>
-            <p className="text-sm text-muted-foreground mt-1">Envie uma foto ou PDF da sua redação manuscrita</p>
+            <p className="text-body text-muted-foreground mt-1">Envie uma foto ou PDF da sua redação manuscrita</p>
           </button>
         </div>
       </div>
@@ -250,11 +250,11 @@ export default function EssayWrite() {
         <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
           {!selectedFile ? (
             <label className="cursor-pointer">
-              <div className="text-4xl mb-3 text-muted-foreground">📁</div>
-              <p className="text-sm text-muted-foreground mb-2">
+              <div className="text-h1 mb-3 text-muted-foreground">📁</div>
+              <p className="text-body text-muted-foreground mb-2">
                 Clique para selecionar um arquivo
               </p>
-              <p className="text-xs text-muted-foreground">JPG, PNG ou PDF — máximo 5MB</p>
+              <p className="text-caption text-muted-foreground">JPG, PNG ou PDF — máximo 5MB</p>
               <input
                 type="file"
                 accept="image/jpeg,image/png,application/pdf"
@@ -265,10 +265,10 @@ export default function EssayWrite() {
           ) : (
             <div className="space-y-2">
               <p className="font-semibold text-foreground">{selectedFile.name}</p>
-              <p className="text-sm text-muted-foreground">{formatFileSize(selectedFile.size)}</p>
+              <p className="text-body text-muted-foreground">{formatFileSize(selectedFile.size)}</p>
               <button
                 onClick={() => setSelectedFile(null)}
-                className="text-sm text-destructive hover:underline"
+                className="text-body text-destructive hover:underline"
               >
                 Remover arquivo
               </button>
@@ -287,8 +287,8 @@ export default function EssayWrite() {
         {showConfirmModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 max-w-md mx-4 space-y-4">
-              <h2 className="text-lg font-bold text-foreground">Confirmar envio</h2>
-              <p className="text-sm text-foreground">
+              <h2 className="text-h3 font-bold text-foreground">Confirmar envio</h2>
+              <p className="text-body text-foreground">
                 Atenção: a submissão é única. Uma vez enviada, não será possível
                 realizar uma nova redação para este tema. Deseja continuar?
               </p>
@@ -334,7 +334,7 @@ export default function EssayWrite() {
               setDraft(selectedTheme.id, e.target.value, text, draftId ?? undefined);
           }}
           placeholder="Titulo da sua redacao"
-          className="w-full border rounded-lg p-3 text-lg font-semibold mb-4 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:outline-none"
+          className="w-full border rounded-lg p-3 text-h3 font-semibold mb-4 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:outline-none"
           maxLength={200}
         />
         <EssayEditor
@@ -369,8 +369,8 @@ export default function EssayWrite() {
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md mx-4 space-y-4">
-            <h2 className="text-lg font-bold text-foreground">Confirmar envio</h2>
-            <p className="text-sm text-foreground">
+            <h2 className="text-h3 font-bold text-foreground">Confirmar envio</h2>
+            <p className="text-body text-foreground">
               Atenção: a submissão é única. Uma vez enviada, não será possível
               realizar uma nova redação para este tema. Deseja continuar?
             </p>

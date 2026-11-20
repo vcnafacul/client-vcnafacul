@@ -61,14 +61,14 @@ export function TabConteudo({
       <Card>
         <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 pb-3">
           <div className="flex flex-wrap items-center gap-3">
-            <CardTitle className="text-lg">Enunciado da Questão</CardTitle>
+            <CardTitle className="text-h3">Enunciado da Questão</CardTitle>
             {isEditing && (
-              <span className="text-sm font-normal text-info bg-info-muted px-2 py-1 rounded">
+              <span className="text-body font-normal text-info bg-info-muted px-2 py-1 rounded">
                 Modo Edição
               </span>
             )}
             {isDirty && !isEditing && (
-              <span className="text-sm font-normal text-warning bg-warning-muted px-2 py-1 rounded">
+              <span className="text-body font-normal text-warning bg-warning-muted px-2 py-1 rounded">
                 Alterações não salvas
               </span>
             )}
@@ -85,7 +85,7 @@ export function TabConteudo({
         <CardContent className="space-y-4">
           {/* Texto da Questão — editor grande */}
           <div id={ancoraDoCampo("textoQuestao")} className="space-y-2 scroll-mt-28">
-            <label className="text-sm font-semibold text-muted-foreground">
+            <label className="text-body font-semibold text-muted-foreground">
               Texto da Questão *
             </label>
             {!isEditing ? (
@@ -121,7 +121,7 @@ export function TabConteudo({
               </Suspense>
             )}
             {errors.textoQuestao && (
-              <p className="text-sm text-destructive flex items-center gap-1">
+              <p className="text-body text-destructive flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
                 {errors.textoQuestao.message}
               </p>
@@ -130,7 +130,7 @@ export function TabConteudo({
 
           {/* Pergunta (opcional) */}
           <div id={ancoraDoCampo("pergunta")} className="space-y-2 scroll-mt-28">
-            <label className="text-sm font-semibold text-muted-foreground">
+            <label className="text-body font-semibold text-muted-foreground">
               Pergunta (opcional)
             </label>
             {!isEditing ? (
@@ -144,7 +144,7 @@ export function TabConteudo({
                 </div>
               ) : (
                 <div className="p-3 bg-page rounded-md border border-border">
-                  <p className="text-base text-muted-foreground">Não definida</p>
+                  <p className="text-body text-muted-foreground">Não definida</p>
                 </div>
               )
             ) : (
@@ -172,7 +172,7 @@ export function TabConteudo({
               </Suspense>
             )}
             {errors.pergunta && (
-              <p className="text-sm text-destructive flex items-center gap-1">
+              <p className="text-body text-destructive flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
                 {errors.pergunta.message}
               </p>
@@ -184,7 +184,7 @@ export function TabConteudo({
       {/* Revisões Necessárias */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Revisões Necessárias</CardTitle>
+          <CardTitle className="text-h3">Revisões Necessárias</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -200,7 +200,7 @@ export function TabConteudo({
                   />
                 )}
               />
-              <span className="text-sm">Texto da Questão/Alternativas</span>
+              <span className="text-body">Texto da Questão/Alternativas</span>
             </div>
 
             <div className="flex items-center gap-3 p-3 bg-page rounded-md">
@@ -215,7 +215,7 @@ export function TabConteudo({
                   />
                 )}
               />
-              <span className="text-sm">Alternativa Correta</span>
+              <span className="text-body">Alternativa Correta</span>
             </div>
           </div>
         </CardContent>
@@ -228,7 +228,7 @@ export function TabConteudo({
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex-1 min-w-[12rem]">
                 {isDirty && (
-                  <p className="text-sm text-warning font-medium flex items-center gap-2">
+                  <p className="text-body text-warning font-medium flex items-center gap-2">
                     <AlertCircle className="h-4 w-4" />
                     Você tem alterações não salvas
                   </p>

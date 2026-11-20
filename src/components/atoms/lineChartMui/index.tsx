@@ -96,7 +96,7 @@ export default function LineChartMui({
                     s.color || DEFAULT_COLORS[i % DEFAULT_COLORS.length],
                 }}
               />
-              <span className="text-xs text-muted-foreground">{s.label}</span>
+              <span className="text-caption text-muted-foreground">{s.label}</span>
             </div>
           ))}
         </div>

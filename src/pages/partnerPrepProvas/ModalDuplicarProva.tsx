@@ -49,12 +49,12 @@ export function ModalDuplicarProva({
       className="w-full max-w-lg rounded-lg bg-white shadow-xl p-2"
     >
       <form onSubmit={duplicar} className="p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-foreground">Duplicar prova</h2>
-        <p className="text-sm text-muted-foreground">
+        <h2 className="text-h3 font-semibold text-foreground">Duplicar prova</h2>
+        <p className="text-body text-muted-foreground">
           Nova prova a partir de <strong>{prova.nome}</strong>.
         </p>
         <div>
-          <label htmlFor="nome-da-copia" className="block text-sm font-semibold mb-1">
+          <label htmlFor="nome-da-copia" className="block text-body font-semibold mb-1">
             Nome da nova prova
           </label>
           <input
@@ -65,7 +65,7 @@ export function ModalDuplicarProva({
             className="w-full border rounded-lg p-2"
           />
         </div>
-        <div role="note" className="rounded-lg bg-warning-muted p-3 text-sm text-foreground space-y-1">
+        <div role="note" className="rounded-lg bg-warning-muted p-3 text-body text-foreground space-y-1">
           <p>
             As questões serão <strong>as mesmas</strong> da prova original — corrigir
             uma questão vale para as duas.

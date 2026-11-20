@@ -269,10 +269,10 @@ function NewProva({
               <DocumentTextIcon className="h-6 w-6 text-info" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-foreground">
+              <h2 className="text-h2 font-semibold text-foreground">
                 Cadastro de Prova
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-body text-muted-foreground">
                 Preencha os dados da nova prova
               </p>
             </div>
@@ -281,7 +281,7 @@ function NewProva({
 
         {!categorias && (
           <div className="flex flex-col items-start gap-2 py-4">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body text-muted-foreground">
               {erroCategorias
                 ? TEXTO_ERRO_CATEGORIAS
                 : TEXTO_CARREGANDO_CATEGORIAS}
@@ -290,7 +290,7 @@ function NewProva({
               <button
                 type="button"
                 onClick={onTentarDeNovo}
-                className="text-sm font-medium text-primary underline-offset-2 hover:underline"
+                className="text-body font-medium text-primary underline-offset-2 hover:underline"
               >
                 Tentar de novo
               </button>
@@ -304,7 +304,7 @@ function NewProva({
             onSubmit={handleSubmit(create)}
           >
             <div>
-              <h3 className="text-sm font-medium text-foreground mb-4 flex items-center gap-2">
+              <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
                 <AcademicCapIcon className="h-4 w-4" />
                 Informações Gerais
               </h3>
@@ -319,7 +319,7 @@ function NewProva({
             </div>
 
             {isCustom && (
-              <p className="text-xs text-info -mt-2">
+              <p className="text-caption text-info -mt-2">
                 {compartilhada
                   ? textoDaCompartilhada(categoriaEscolhida!.nome)
                   : "Prova personalizada — nome livre, PDF opcional."}
@@ -332,13 +332,13 @@ function NewProva({
             />
 
             <div>
-              <h3 className="text-sm font-medium text-foreground mb-4 flex items-center gap-2">
+              <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
                 <CloudArrowUpIcon className="h-4 w-4" />
                 Arquivos da Prova
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-info-muted p-4 rounded-lg border border-info/30">
-                  <h4 className="text-sm font-medium text-info mb-2">
+                  <h4 className="text-body font-medium text-info mb-2">
                     Prova (PDF)
                   </h4>
                   <UploadButton
@@ -350,14 +350,14 @@ function NewProva({
                     onRemove={handleRemoveFile}
                   />
                   {uploadFile && (
-                    <p className="text-xs text-info mt-2 break-all">
+                    <p className="text-caption text-info mt-2 break-all">
                       ✓ Arquivo selecionado: {(uploadFile as File).name}
                     </p>
                   )}
                 </div>
 
                 <div className="bg-success-muted p-4 rounded-lg border border-success">
-                  <h4 className="text-sm font-medium text-success mb-2">
+                  <h4 className="text-body font-medium text-success mb-2">
                     Gabarito (PDF) - Opcional
                   </h4>
                   <UploadButton
@@ -369,7 +369,7 @@ function NewProva({
                     onRemove={handleRemoveGabarito}
                   />
                   {uploadGabarito && (
-                    <p className="text-xs text-success mt-2 break-all">
+                    <p className="text-caption text-success mt-2 break-all">
                       ✓ Arquivo selecionado: {(uploadGabarito as File).name}
                     </p>
                   )}

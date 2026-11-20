@@ -123,7 +123,7 @@ export function PeriodJustificationList({
       <button
         type="button"
         onClick={handleToggle}
-        className="w-full flex items-center justify-between px-4 py-3 bg-page hover:bg-muted text-sm font-semibold text-foreground"
+        className="w-full flex items-center justify-between px-4 py-3 bg-page hover:bg-muted text-body font-semibold text-foreground"
       >
         <span>Justificativas de Período ({totalItems})</span>
         {expanded ? (
@@ -137,13 +137,13 @@ export function PeriodJustificationList({
       {expanded && (
         <div className="flex flex-col gap-2 p-4">
           {loading && (
-            <p className="text-sm text-muted-foreground text-center py-2">
+            <p className="text-body text-muted-foreground text-center py-2">
               Carregando...
             </p>
           )}
 
           {!loading && items.length === 0 && (
-            <p className="text-sm text-muted-foreground text-center py-2">
+            <p className="text-body text-muted-foreground text-center py-2">
               Nenhuma justificativa encontrada.
             </p>
           )}
@@ -155,13 +155,13 @@ export function PeriodJustificationList({
                 className="flex items-start justify-between border rounded-md p-3 gap-2 bg-white"
               >
                 <div className="flex flex-col gap-1 flex-1 min-w-0">
-                  <span className="text-xs font-semibold text-foreground">
+                  <span className="text-caption font-semibold text-foreground">
                     {formatDate(item.startDate)} — {formatDate(item.endDate)}
                   </span>
-                  <p className="text-sm text-foreground break-words">
+                  <p className="text-body text-foreground break-words">
                     {item.justification}
                   </p>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-caption text-muted-foreground">
                     Criado por: {item.createdBy?.name ?? "—"} em{" "}
                     {formatDate(item.createdAt)}
                   </span>
@@ -186,18 +186,18 @@ export function PeriodJustificationList({
                 type="button"
                 onClick={() => fetchPage(page - 1)}
                 disabled={page <= 1 || loading}
-                className="px-3 py-1 text-xs rounded border disabled:opacity-40 hover:bg-muted"
+                className="px-3 py-1 text-caption rounded border disabled:opacity-40 hover:bg-muted"
               >
                 Anterior
               </button>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-caption text-muted-foreground">
                 {page} / {totalPages}
               </span>
               <button
                 type="button"
                 onClick={() => fetchPage(page + 1)}
                 disabled={page >= totalPages || loading}
-                className="px-3 py-1 text-xs rounded border disabled:opacity-40 hover:bg-muted"
+                className="px-3 py-1 text-caption rounded border disabled:opacity-40 hover:bg-muted"
               >
                 Próxima
               </button>
@@ -217,7 +217,7 @@ export function PeriodJustificationList({
           handleConfirm={handleDelete}
           text="Tem certeza que deseja excluir esta justificativa de período?"
         >
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body text-muted-foreground">
             {textoDaExclusaoDePeriodo(
               items.find((i) => i.id === selectedId)?.faltasJustificadas,
             )}

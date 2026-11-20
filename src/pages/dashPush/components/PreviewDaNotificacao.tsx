@@ -18,9 +18,9 @@ export function PreviewDaNotificacao({
         className="h-10 w-10 shrink-0 rounded-lg bg-white p-1"
       />
       <div className="min-w-0">
-        <p className="text-xs text-primary-foreground/80">Você na Facul · agora</p>
+        <p className="text-caption text-primary-foreground/80">Você na Facul · agora</p>
         <p className="truncate font-semibold">{title || "Título do aviso"}</p>
-        <p className="line-clamp-3 text-sm text-primary-foreground/90">
+        <p className="line-clamp-3 text-body text-primary-foreground/90">
           {body || "A mensagem aparece aqui."}
         </p>
       </div>

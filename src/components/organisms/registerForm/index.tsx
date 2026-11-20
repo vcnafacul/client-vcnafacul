@@ -98,7 +98,7 @@ function RegisterForm({
             />
             <div className="flex items-center gap-4" aria-hidden="true">
               <hr className="flex-1 border-input/30" />
-              <span className="text-sm text-muted-foreground">ou com email e senha</span>
+              <span className="text-body text-muted-foreground">ou com email e senha</span>
               <hr className="flex-1 border-input/30" />
             </div>
           </div>

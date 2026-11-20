@@ -52,13 +52,13 @@ export function MessageList({ conversationId, currentUserId }: Props) {
     return (
       <ScrollArea className="flex-1 bg-page/30">
         <div className="flex flex-col items-center justify-center h-full py-10 px-6 gap-2 text-center">
-          <span className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-2xl">
+          <span className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-h1">
             👋
           </span>
-          <p className="text-sm font-medium text-foreground">
+          <p className="text-body font-medium text-foreground">
             Comece a conversa
           </p>
-          <p className="text-xs text-muted-foreground max-w-[220px]">
+          <p className="text-caption text-muted-foreground max-w-[220px]">
             Envie a primeira mensagem e nossa equipe responderá em breve.
           </p>
         </div>

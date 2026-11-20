@@ -373,7 +373,7 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
           <button
             type="button"
             onClick={() => setActiveTab("materias")}
-            className={`px-4 py-2 text-sm font-medium transition-colors ${
+            className={`px-4 py-2 text-body font-medium transition-colors ${
               activeTab === "materias"
                 ? "border-b-2 border-cta text-foreground font-semibold"
                 : "text-muted-foreground hover:text-foreground"
@@ -384,7 +384,7 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
           <button
             type="button"
             onClick={() => setActiveTab("frentes")}
-            className={`px-4 py-2 text-sm font-medium transition-colors ${
+            className={`px-4 py-2 text-body font-medium transition-colors ${
               activeTab === "frentes"
                 ? "border-b-2 border-cta text-foreground font-semibold"
                 : "text-muted-foreground hover:text-foreground"

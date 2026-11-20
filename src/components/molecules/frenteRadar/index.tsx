@@ -28,7 +28,7 @@ export function FrenteRadar({ materias, title }: Props) {
 
   if (flat.length === 0) {
     return (
-      <p className="py-2 text-sm text-center text-muted-foreground">
+      <p className="py-2 text-body text-center text-muted-foreground">
         Nenhuma frente com dados.
       </p>
     );
@@ -52,10 +52,10 @@ export function FrenteRadar({ materias, title }: Props) {
         />
       </div>
       <div className="w-full sm:w-64">
-        <p className="mb-1 text-xs font-medium text-muted-foreground uppercase">{heading}</p>
-        <table className="w-full text-sm" aria-label="Tabela de frentes">
+        <p className="mb-1 text-caption font-medium text-muted-foreground uppercase">{heading}</p>
+        <table className="w-full text-body" aria-label="Tabela de frentes">
           <thead>
-            <tr className="text-left text-xs text-muted-foreground">
+            <tr className="text-left text-caption text-muted-foreground">
               <th className="pb-1 font-normal">Frente</th>
               {multipleMaterias && <th className="pb-1 font-normal">Matéria</th>}
               <th className="pb-1 font-normal text-right">Aproveito.</th>

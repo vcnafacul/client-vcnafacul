@@ -32,7 +32,7 @@ export function colunasDeColaborador(
             ) : (
               <span
                 aria-hidden
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-foreground"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-caption font-bold text-foreground"
               >
                 {c.name?.charAt(0)}
               </span>

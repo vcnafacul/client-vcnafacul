@@ -169,7 +169,7 @@ export function FrenteCard({
           type="button"
           onClick={() => setOpen(!open)}
           aria-expanded={open}
-          className="flex items-center gap-1 h-10 text-sm font-medium text-foreground self-start"
+          className="flex items-center gap-1 h-10 text-body font-medium text-foreground self-start"
         >
           <FiChevronDown
             className={`w-5 h-5 transition-transform ${open ? "rotate-180" : ""}`}
@@ -177,7 +177,7 @@ export function FrenteCard({
           {total} {total === 1 ? "tema" : "temas"}
         </button>
       ) : (
-        <span className="text-sm text-muted-foreground">Sem temas</span>
+        <span className="text-body text-muted-foreground">Sem temas</span>
       )}
       {open && (
         <RenderTemasTable

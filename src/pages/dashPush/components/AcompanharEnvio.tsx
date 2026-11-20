@@ -37,20 +37,20 @@ export function AcompanharEnvio({ id }: { id: string }) {
 
   if (erro)
     return (
-      <p role="alert" className="text-sm text-destructive">
+      <p role="alert" className="text-body text-destructive">
         {erro}
       </p>
     );
   if (!envio || envio.status === "sending") {
     return (
-      <p role="status" className="text-sm text-muted-foreground">
+      <p role="status" className="text-body text-muted-foreground">
         Enviando…
       </p>
     );
   }
   if (envio.status === "failed") {
     return (
-      <p role="alert" className="text-sm text-destructive">
+      <p role="alert" className="text-body text-destructive">
         O envio falhou. Tente de novo em alguns minutos.
       </p>
     );
@@ -58,7 +58,7 @@ export function AcompanharEnvio({ id }: { id: string }) {
   const ninguem = envio.successCount === 0 && envio.failureCount > 0;
   const motivos = Object.entries(envio.failureReasons ?? {});
   return (
-    <div role="status" className="space-y-1 text-sm">
+    <div role="status" className="space-y-1 text-body">
       <p
         className={`font-semibold ${ninguem ? "text-warning" : "text-success"}`}
       >
@@ -66,7 +66,7 @@ export function AcompanharEnvio({ id }: { id: string }) {
         {envio.failureCount} falharam
       </p>
       {motivos.length > 0 && (
-        <ul aria-label="Motivos das falhas" className="list-disc pl-5 text-xs">
+        <ul aria-label="Motivos das falhas" className="list-disc pl-5 text-caption">
           {motivos.map(([codigo, n]) => (
             <li key={codigo}>
               <strong>{n}</strong>: {motivoDaFalha(codigo)}.
@@ -75,12 +75,12 @@ export function AcompanharEnvio({ id }: { id: string }) {
         </ul>
       )}
       {envio.pessoas !== undefined && envio.pessoas > 0 && (
-        <p className="text-sm text-foreground">
+        <p className="text-body text-foreground">
           👀 {envio.leram ?? 0} de {envio.pessoas} leram na central do app.
         </p>
       )}
       {/* ⚠️ Texto visível, não tooltip: não é taxa de abertura. */}
-      <p className="text-xs text-muted-foreground">
+      <p className="text-caption text-muted-foreground">
         "Entregue ao FCM" quer dizer que o Google aceitou o envio — não que a
         pessoa viu ou abriu a notificação.
       </p>

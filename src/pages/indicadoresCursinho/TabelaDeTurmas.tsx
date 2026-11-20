@@ -64,14 +64,14 @@ export function TabelaDeTurmas({
           </Link>
         )}
         {t.id === destaqueId && (
-          <span className="rounded-full bg-destructive-muted px-2 py-0.5 text-xs font-semibold text-destructive">
+          <span className="rounded-full bg-destructive-muted px-2 py-0.5 text-caption font-semibold text-destructive">
             Maior evasão
           </span>
         )}
       </span>
       {/* tickets/046 — na visão de todos, de qual período é a turma */}
       {rotuloDoPeriodo(t) && (
-        <span className="text-xs text-muted-foreground">{rotuloDoPeriodo(t)}</span>
+        <span className="text-caption text-muted-foreground">{rotuloDoPeriodo(t)}</span>
       )}
     </span>
   );
@@ -90,14 +90,14 @@ export function TabelaDeTurmas({
       subtitle={subtitulo}
     >
       {ordenadas.length === 0 ? (
-        <p className="py-6 text-center text-sm text-muted-foreground">
+        <p className="py-6 text-center text-body text-muted-foreground">
           Nenhuma turma {noRecorte}.
         </p>
       ) : acimaDeSm ? (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-body">
             <thead>
-              <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
+              <tr className="border-b border-border text-left text-caption uppercase tracking-wide text-muted-foreground">
                 <th className="py-2 pr-4 font-medium">Turma</th>
                 {colunas.map((c) => (
                   <th
@@ -134,7 +134,7 @@ export function TabelaDeTurmas({
           {ordenadas.map((t) => (
             <li key={t.id} className="py-3">
               {nome(t)}
-              <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+              <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-body">
                 {colunas.map((c) => (
                   <div key={c.titulo} className="flex justify-between gap-2">
                     <dt className="text-muted-foreground">{c.titulo}</dt>

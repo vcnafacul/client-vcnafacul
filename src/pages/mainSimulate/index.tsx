@@ -93,7 +93,7 @@ function MainSimulate() {
             <Text size="primary" className="mb-1">
               {simulateData.titleBook}
             </Text>
-            <Text size="tertiary" className="text-xl">
+            <Text size="tertiary" className="text-h2">
               {simulateData.subTitleBook}
             </Text>
             <CarouselRef
@@ -105,7 +105,7 @@ function MainSimulate() {
           <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-10 gap-2 sm:gap-8 mx-4">
             <div className="flex flex-col items-start sm:col-span-1 md:col-span-3">
               <Text size="primary">{simulateData.titleDay}</Text>
-              <Text size="tertiary" className="text-start text-xl mt-2 sm:mt-8">
+              <Text size="tertiary" className="text-start text-h2 mt-2 sm:mt-8">
                 {simulateData.subTitleDay}
               </Text>
             </div>

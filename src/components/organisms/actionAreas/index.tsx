@@ -58,7 +58,7 @@ function Action() {
               <cardItem.Home_Action_Area_Item_id.image />
             }
           </div>
-          <h3 className="z-10 px-4 py-0 text-2xl text-center text-foreground">
+          <h3 className="z-10 px-4 py-0 text-h1 text-center text-foreground">
             {cardItem.Home_Action_Area_Item_id.title}
           </h3>
         </div>

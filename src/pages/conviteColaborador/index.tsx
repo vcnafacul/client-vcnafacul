@@ -88,7 +88,7 @@ export default function ConviteColaborador() {
     if (aceito && convite) {
       return (
         <>
-          <h1 className="text-2xl font-bold text-foreground">Convite aceito!</h1>
+          <h1 className="text-h1 font-bold text-foreground">Convite aceito!</h1>
           <p>
             Você agora faz parte do {convite.nomeCursinho} como{" "}
             <strong>{convite.funcao}</strong>.
@@ -109,7 +109,7 @@ export default function ConviteColaborador() {
 
     const titulo = (
       <>
-        <h1 className="text-2xl font-bold text-foreground">
+        <h1 className="text-h1 font-bold text-foreground">
           Convite para o {convite.nomeCursinho}
         </h1>
         <p>

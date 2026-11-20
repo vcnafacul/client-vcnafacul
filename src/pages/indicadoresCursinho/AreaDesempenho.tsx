@@ -68,7 +68,7 @@ export function AreaDesempenho({
             action={
               <Link
                 to={`${DASH}/${PARTNER_PROVAS}`}
-                className="text-sm font-medium text-foreground underline-offset-2 hover:underline"
+                className="text-body font-medium text-foreground underline-offset-2 hover:underline"
               >
                 Ir para Provas →
               </Link>
@@ -157,9 +157,9 @@ export function AreaDesempenho({
             Nenhum simulado concluído nem redação corrigida {noRecorte}.
           </EmptyState>
         ) : (
-          <table className="w-full text-sm">
+          <table className="w-full text-body">
             <thead>
-              <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
+              <tr className="border-b border-border text-left text-caption uppercase tracking-wide text-muted-foreground">
                 <th className="py-2 pr-2 font-medium">Mês</th>
                 <th className="px-2 py-2 text-right font-medium">Simulados</th>
                 <th className="py-2 pl-2 text-right font-medium">Redação</th>

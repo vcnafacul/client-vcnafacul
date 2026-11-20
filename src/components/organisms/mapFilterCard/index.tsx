@@ -43,7 +43,7 @@ export function MapFilterOptions({
 }) {
   return (
     <>
-      <p className="text-[10px] uppercase tracking-wider opacity-70 mb-2">
+      <p className="text-caption uppercase tracking-wider opacity-70 mb-2">
         Filtros
       </p>
       <div className="flex flex-col gap-2">

@@ -126,10 +126,10 @@ export function InitiateConversationDialog({
             />
             <div className="max-h-72 overflow-y-auto flex flex-col gap-1">
               {loading && (
-                <div className="text-sm text-muted-foreground">Buscando…</div>
+                <div className="text-body text-muted-foreground">Buscando…</div>
               )}
               {!loading && debounced.length >= 2 && results.length === 0 && (
-                <div className="text-sm text-muted-foreground">
+                <div className="text-body text-muted-foreground">
                   Nenhum estudante encontrado
                 </div>
               )}
@@ -143,12 +143,12 @@ export function InitiateConversationDialog({
                   }}
                   className="flex items-center gap-3 rounded-md p-2 hover:bg-muted text-left"
                 >
-                  <span className="h-8 w-8 rounded-full bg-primary text-primary-foreground text-sm flex items-center justify-center">
+                  <span className="h-8 w-8 rounded-full bg-primary text-primary-foreground text-body flex items-center justify-center">
                     {initialsOf(u.name)}
                   </span>
                   <span className="flex flex-col">
-                    <span className="font-medium text-sm">{u.name}</span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="font-medium text-body">{u.name}</span>
+                    <span className="text-caption text-muted-foreground">
                       {u.email}
                     </span>
                   </span>
@@ -166,7 +166,7 @@ export function InitiateConversationDialog({
               onChange={(e) => setContent(e.target.value)}
               placeholder="Digite a mensagem inicial"
             />
-            <div className="flex justify-between text-xs text-muted-foreground">
+            <div className="flex justify-between text-caption text-muted-foreground">
               <span>{remaining} caracteres restantes</span>
             </div>
             <div className="flex flex-wrap justify-between gap-2">

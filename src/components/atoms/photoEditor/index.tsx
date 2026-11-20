@@ -118,7 +118,7 @@ const PhotoEditor = ({
               type="button"
               onClick={() => setActivePresetIndex(i)}
               className={[
-                "px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors",
+                "px-3 py-1.5 rounded-full text-caption font-semibold transition-colors",
                 i === activePresetIndex
                   ? "bg-white text-foreground"
                   : "bg-foreground/80 text-primary-foreground hover:bg-foreground/60",

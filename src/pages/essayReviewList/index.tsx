@@ -81,20 +81,20 @@ export default function EssayReviewList({ mode }: Props) {
 
   return (
     <div className="p-4 sm:p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold text-foreground mb-6">{title}</h1>
+      <h1 className="text-h1 font-bold text-foreground mb-6">{title}</h1>
 
       {/* Filters */}
       <div className="flex gap-2 sm:gap-4 mb-4 flex-wrap">
         <input
           type="text"
           placeholder="Buscar por nome ou email..."
-          className="border rounded-lg px-3 py-2 text-sm flex-1 basis-full sm:basis-auto min-w-0 sm:min-w-[200px]"
+          className="border rounded-lg px-3 py-2 text-body flex-1 basis-full sm:basis-auto min-w-0 sm:min-w-[200px]"
           onChange={(e) =>
             setFilters((f) => ({ ...f, search: e.target.value || undefined }))
           }
         />
         <select
-          className="border rounded-lg px-3 py-2 text-sm w-full sm:w-auto max-w-full"
+          className="border rounded-lg px-3 py-2 text-body w-full sm:w-auto max-w-full"
           onChange={(e) =>
             setFilters((f) => ({ ...f, themeId: e.target.value || undefined }))
           }
@@ -107,7 +107,7 @@ export default function EssayReviewList({ mode }: Props) {
           ))}
         </select>
         <select
-          className="border rounded-lg px-3 py-2 text-sm w-full sm:w-auto"
+          className="border rounded-lg px-3 py-2 text-body w-full sm:w-auto"
           onChange={(e) =>
             setFilters((f) => ({ ...f, status: e.target.value || undefined }))
           }
@@ -137,9 +137,9 @@ export default function EssayReviewList({ mode }: Props) {
                   <p className="font-semibold break-words">
                     {e.user.firstName} {e.user.lastName}
                   </p>
-                  <p className="text-xs text-muted-foreground break-all">{e.user.email}</p>
-                  <p className="text-sm break-words">{e.theme.title}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-caption text-muted-foreground break-all">{e.user.email}</p>
+                  <p className="text-body break-words">{e.theme.title}</p>
+                  <p className="text-caption text-muted-foreground">
                     {STATUS_LABELS[e.status] ?? e.status}
                     {e.submittedAt &&
                       ` · enviada em ${new Date(e.submittedAt).toLocaleDateString("pt-BR")}`}
@@ -148,14 +148,14 @@ export default function EssayReviewList({ mode }: Props) {
                   <div className="flex gap-2 pt-2 mt-1 border-t">
                     <button
                       onClick={() => navigate(`${detailBasePath}/${e.id}/ver`)}
-                      className="flex-1 h-10 border border-primary text-foreground rounded-lg text-sm font-medium"
+                      className="flex-1 h-10 border border-primary text-foreground rounded-lg text-body font-medium"
                     >
                       Ver
                     </button>
                     {podeRevisar(e) && (
                       <button
                         onClick={() => navigate(`${detailBasePath}/${e.id}`)}
-                        className="flex-1 h-10 bg-primary text-primary-foreground rounded-lg text-sm font-medium"
+                        className="flex-1 h-10 bg-primary text-primary-foreground rounded-lg text-body font-medium"
                       >
                         Revisar
                       </button>
@@ -169,32 +169,32 @@ export default function EssayReviewList({ mode }: Props) {
             <table className="w-full">
               <thead className="bg-page">
                 <tr>
-                  <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Estudante</th>
-                  <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Email</th>
-                  <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Tema</th>
-                  <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Data envio</th>
-                  <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Status</th>
-                  <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Reviews</th>
-                  <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Ações</th>
+                  <th className="text-left p-3 text-body font-semibold text-muted-foreground">Estudante</th>
+                  <th className="text-left p-3 text-body font-semibold text-muted-foreground">Email</th>
+                  <th className="text-left p-3 text-body font-semibold text-muted-foreground">Tema</th>
+                  <th className="text-left p-3 text-body font-semibold text-muted-foreground">Data envio</th>
+                  <th className="text-left p-3 text-body font-semibold text-muted-foreground">Status</th>
+                  <th className="text-left p-3 text-body font-semibold text-muted-foreground">Reviews</th>
+                  <th className="text-left p-3 text-body font-semibold text-muted-foreground">Ações</th>
                 </tr>
               </thead>
               <tbody>
                 {essays.map((e) => (
                   <tr key={e.id} className="border-t hover:bg-page">
-                    <td className="p-3 text-sm">
+                    <td className="p-3 text-body">
                       {e.user.firstName} {e.user.lastName}
                     </td>
-                    <td className="p-3 text-sm text-muted-foreground">{e.user.email}</td>
-                    <td className="p-3 text-sm">{e.theme.title}</td>
-                    <td className="p-3 text-sm text-muted-foreground">
+                    <td className="p-3 text-body text-muted-foreground">{e.user.email}</td>
+                    <td className="p-3 text-body">{e.theme.title}</td>
+                    <td className="p-3 text-body text-muted-foreground">
                       {e.submittedAt
                         ? new Date(e.submittedAt).toLocaleDateString("pt-BR")
                         : "-"}
                     </td>
-                    <td className="p-3 text-sm">
+                    <td className="p-3 text-body">
                       {STATUS_LABELS[e.status] ?? e.status}
                     </td>
-                    <td className="p-3 text-sm font-bold text-foreground">
+                    <td className="p-3 text-body font-bold text-foreground">
                       {e.reviews?.length ?? 0}
                     </td>
                     <td className="p-3">
@@ -238,7 +238,7 @@ export default function EssayReviewList({ mode }: Props) {
               >
                 Anterior
               </button>
-              <span className="px-3 py-1 text-sm">
+              <span className="px-3 py-1 text-body">
                 {page} / {totalPages}
               </span>
               <button

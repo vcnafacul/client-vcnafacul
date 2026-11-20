@@ -54,10 +54,10 @@ export default function SendQuest({
     <div className="max-w-5xl w-full mx-auto p-6 space-y-8 bg-white shadow-md rounded-lg">
       {/* Áreas com mais dificuldades */}
       <section className="space-y-4">
-        <h3 className="text-lg font-semibold text-success border-l-4 border-success pl-4">
+        <h3 className="text-h3 font-semibold text-success border-l-4 border-success pl-4">
           Áreas com mais dificuldades
         </h3>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-body">
           Nos ajude a entender melhor suas expectativas. Assinale abaixo as
           áreas onde acredita ter mais dificuldades.
         </p>
@@ -88,7 +88,7 @@ export default function SendQuest({
 
       {/* Cursos de Interesse */}
       <section className="space-y-4">
-        <h3 className="text-lg font-semibold text-foreground border-l-4 border-info pl-4">
+        <h3 className="text-h3 font-semibold text-foreground border-l-4 border-info pl-4">
           Cursos de Interesse
         </h3>
         <div className="flex flex-col md:flex-row items-start gap-4">
@@ -141,7 +141,7 @@ export default function SendQuest({
                 ))}
               </ul>
             ) : (
-              <p className="text-muted-foreground text-sm">Nenhum curso selecionado.</p>
+              <p className="text-muted-foreground text-body">Nenhum curso selecionado.</p>
             )}
           </div>
         </div>

@@ -48,7 +48,7 @@ export function ExtendInscriptionModal({
       className="bg-white p-6 rounded-md"
     >
       <div className="sm:min-w-[500px] flex flex-col gap-6">
-        <h1 className="text-foreground text-2xl font-bold">
+        <h1 className="text-foreground text-h1 font-bold">
           Prorrogar Processo Seletivo
         </h1>
 
@@ -56,7 +56,7 @@ export function ExtendInscriptionModal({
           <div>
             <Label
               htmlFor="endDate"
-              className="text-sm text-foreground font-semibold block mb-1"
+              className="text-body text-foreground font-semibold block mb-1"
             >
               Nova Data de Fim
             </Label>
@@ -78,7 +78,7 @@ export function ExtendInscriptionModal({
               )}
             />
             {errors.endDate && (
-              <p className="text-destructive text-xs mt-1">{errors.endDate.message}</p>
+              <p className="text-destructive text-caption mt-1">{errors.endDate.message}</p>
             )}
           </div>
 

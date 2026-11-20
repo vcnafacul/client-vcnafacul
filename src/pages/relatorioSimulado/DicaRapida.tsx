@@ -133,7 +133,7 @@ export function DicaRapida({
               // viewport — é o que faz `overflow: hidden` de ancestral parar de
               // importar.
               "pointer-events-none fixed z-50",
-              "rounded-md border px-3 py-2 text-xs font-normal shadow-lg",
+              "rounded-md border px-3 py-2 text-caption font-normal shadow-lg",
               "print:hidden",
               dashV2.surface,
               dashV2.border,

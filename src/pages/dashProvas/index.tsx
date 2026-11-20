@@ -486,7 +486,7 @@ function DashProva() {
   ];
 
   const GabaritoCheckbox = (
-    <label className="flex items-center gap-2 text-sm font-medium text-foreground cursor-pointer select-none">
+    <label className="flex items-center gap-2 text-body font-medium text-foreground cursor-pointer select-none">
       <input
         type="checkbox"
         checked={gabaritoOnly}

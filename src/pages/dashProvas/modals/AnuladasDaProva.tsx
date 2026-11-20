@@ -16,7 +16,7 @@ export function AnuladasDaProva({ questoes }: { questoes?: Slot[] }) {
   if (!anuladas.length) return null;
   return (
     <div data-testid="anuladas-da-prova" className="mb-6">
-      <h3 className="text-sm font-medium text-foreground mb-2">
+      <h3 className="text-body font-medium text-foreground mb-2">
         {resumoDasQuestoes(questoes!.length, anuladas.length)}
       </h3>
       <ul className="flex flex-col gap-2">
@@ -24,7 +24,7 @@ export function AnuladasDaProva({ questoes }: { questoes?: Slot[] }) {
           <li
             key={q.numero ?? "sem-numero"}
             title={q.anulacao!.justificativa}
-            className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive-muted p-2 text-sm"
+            className="flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive-muted p-2 text-body"
           >
             <span className="flex items-center gap-1 font-semibold text-destructive shrink-0">
               <XCircle className="h-4 w-4" aria-hidden />

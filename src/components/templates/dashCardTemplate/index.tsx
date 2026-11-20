@@ -98,11 +98,11 @@ function DashCardTemplate({
         <div className="flex w-full justify-center items-center gap-3">
           <>
             {backButton}
-            <h1 className="text-3xl font-black text-foreground">{title}</h1>
+            <h1 className="text-h1 font-black text-foreground">{title}</h1>
           </>
         </div>
         {totalItems !== undefined && (
-          <span className="text-sm text-muted-foreground font-medium">
+          <span className="text-body text-muted-foreground font-medium">
             Total de registros: {totalItems}
           </span>
         )}

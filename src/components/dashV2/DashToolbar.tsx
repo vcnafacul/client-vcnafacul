@@ -22,7 +22,7 @@ import type { DashAction, DashToolbarProps } from "./types";
 export const MAX_SECUNDARIAS_NA_BARRA = 3;
 
 const BASE_BOTAO =
-  "inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md px-3 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40";
+  "inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md px-3 text-body font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40";
 
 type Variante = "primary" | "secondary" | "menu";
 
@@ -90,7 +90,7 @@ function MenuOverflow({ acoes }: { acoes: DashAction[] }) {
           aria-label="Mais ações"
           className={cn(
             BASE_BOTAO,
-            "w-9 px-0 text-lg leading-none",
+            "w-9 px-0 text-h3",
             dashV2.focus,
             dashV2.action.secondary,
           )}
@@ -149,11 +149,11 @@ export function DashToolbar({
         <div className="flex min-w-0 items-center gap-2">
           {backButton}
           <div className="min-w-0">
-            <h2 className={cn("truncate text-lg font-semibold", dashV2.text.primary)}>
+            <h2 className={cn("truncate text-h3 font-semibold", dashV2.text.primary)}>
               {title}
             </h2>
             {subtitle ? (
-              <div className={cn("truncate text-sm", dashV2.text.secondary)}>{subtitle}</div>
+              <div className={cn("truncate text-body", dashV2.text.secondary)}>{subtitle}</div>
             ) : null}
           </div>
         </div>

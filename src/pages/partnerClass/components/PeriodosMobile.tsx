@@ -63,7 +63,7 @@ function PeriodoCard({
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="font-bold text-foreground break-words">{periodo.name}</p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-caption text-muted-foreground">
             {periodo.year} · {data(periodo.startDate)} a {data(periodo.endDate)}
           </p>
         </div>
@@ -76,7 +76,7 @@ function PeriodoCard({
             type="button"
             onClick={() => setAberto(!aberto)}
             aria-expanded={aberto}
-            className="flex items-center gap-1 h-10 text-sm font-medium text-foreground"
+            className="flex items-center gap-1 h-10 text-body font-medium text-foreground"
           >
             <FiChevronDown
               className={`w-5 h-5 transition-transform ${aberto ? "rotate-180" : ""}`}
@@ -84,7 +84,7 @@ function PeriodoCard({
             {turmas.length} {turmas.length === 1 ? "turma" : "turmas"}
           </button>
         ) : (
-          <span className="text-sm text-muted-foreground">Sem turmas</span>
+          <span className="text-body text-muted-foreground">Sem turmas</span>
         )}
         <div className="shrink-0">
           <ActionMenu
@@ -111,15 +111,15 @@ function PeriodoCard({
               className="bg-page rounded-md p-2 flex items-center justify-between gap-2"
             >
               <div className="min-w-0">
-                <p className="text-sm font-semibold break-words">
+                <p className="text-body font-semibold break-words">
                   {turma.name}
                 </p>
                 {turma.description && (
-                  <p className="text-xs text-muted-foreground line-clamp-2 break-words">
+                  <p className="text-caption text-muted-foreground line-clamp-2 break-words">
                     {turma.description}
                   </p>
                 )}
-                <p className="text-xs text-foreground font-medium">
+                <p className="text-caption text-foreground font-medium">
                   {turma.number_students} inscritos
                 </p>
               </div>

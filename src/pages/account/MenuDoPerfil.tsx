@@ -34,7 +34,7 @@ export function MenuDoPerfil({
         id={`aba-${s}${celular ? "-celular" : ""}`}
         onClick={() => onEscolher(s)}
         className={cn(
-          "relative flex items-center gap-2 whitespace-nowrap text-sm transition-colors",
+          "relative flex items-center gap-2 whitespace-nowrap text-body transition-colors",
           celular
             ? "rounded-full px-3 py-1.5"
             : "w-full rounded-md py-2 pl-4 pr-3 text-left",

@@ -43,13 +43,13 @@ export function CartaoSemSimulado({
           <div className="min-w-0">
             <h2
               className={cn(
-                "truncate text-lg font-semibold",
+                "truncate text-h3 font-semibold",
                 dashV2.text.primary,
               )}
             >
               {linha.nome}
             </h2>
-            <p className={cn("text-xs", dashV2.text.muted)}>
+            <p className={cn("text-caption", dashV2.text.muted)}>
               {linha.matricula}
             </p>
           </div>
@@ -68,7 +68,7 @@ export function CartaoSemSimulado({
         </header>
 
         <p
-          className={cn("text-sm", dashV2.text.secondary)}
+          className={cn("text-body", dashV2.text.secondary)}
           data-testid="cartao-sem-simulado"
         >
           {falhou

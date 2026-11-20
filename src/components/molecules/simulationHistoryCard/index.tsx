@@ -63,7 +63,7 @@ function SimulationHistoryCard({ historico }: SimulationHistoryCardProps) {
             : "Simulado Incompleto"}
         </ToolTip>
       </div>
-      <h1 className="font-bold text-foreground text-base sm:absolute bottom-0.5 left-4">
+      <h1 className="font-bold text-foreground text-body sm:absolute bottom-0.5 left-4">
         {DateTime.fromISO(historico.createdAt.toString()).toLocaleString(
           DateTime.DATE_MED
         )}

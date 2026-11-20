@@ -682,7 +682,7 @@ export function StudentsEnrolled() {
   return (
     <div className="flex flex-col justify-center items-center pt-4 gap-4">
       <div className="w-full px-4">
-        <h1 className="text-3xl font-bold text-center text-foreground">{name}</h1>
+        <h1 className="text-h1 font-bold text-center text-foreground">{name}</h1>
       </div>
       {/*
         No celular os filtros ficam compactos (size small) e em grade de 2:

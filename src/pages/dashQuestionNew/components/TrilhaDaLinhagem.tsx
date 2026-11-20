@@ -22,7 +22,7 @@ export function TrilhaDaLinhagem({
     <nav
       data-trilha
       aria-label="Trilha da linhagem"
-      className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground"
+      className="flex flex-wrap items-center gap-1 text-caption text-muted-foreground"
     >
       {trilha.map((id, i) => {
         const ultima = i === trilha.length - 1;

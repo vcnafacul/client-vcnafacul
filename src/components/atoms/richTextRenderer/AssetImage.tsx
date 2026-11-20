@@ -52,7 +52,7 @@ export function AssetImage({
   }
 
   if (!src) {
-    return <span className="text-destructive text-sm">[Imagem indisponível]</span>;
+    return <span className="text-destructive text-body">[Imagem indisponível]</span>;
   }
 
   return <img src={src} alt={alt} className={className} style={style} />;

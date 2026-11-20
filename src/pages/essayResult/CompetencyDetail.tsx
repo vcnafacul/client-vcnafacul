@@ -24,10 +24,10 @@ export default function CompetencyDetail({
   return (
     <div className="border rounded-lg p-4 bg-white">
       <div className="flex justify-between items-center mb-2">
-        <h3 className="font-semibold text-sm">
+        <h3 className="font-semibold text-body">
           Competência {number} — {COMPETENCY_LABELS[number - 1]}
         </h3>
-        <span className="text-lg font-bold text-foreground">{score}</span>
+        <span className="text-h3 font-bold text-foreground">{score}</span>
       </div>
       <div className="h-2 bg-muted rounded-full mb-3">
         <div
@@ -35,9 +35,9 @@ export default function CompetencyDetail({
           style={{ width: `${pct}%` }}
         />
       </div>
-      <p className="text-sm text-foreground mb-2">{feedback}</p>
+      <p className="text-body text-foreground mb-2">{feedback}</p>
       {suggestion && (
-        <p className="text-sm text-muted-foreground italic">
+        <p className="text-body text-muted-foreground italic">
           <strong>Sugestão:</strong> {suggestion}
         </p>
       )}

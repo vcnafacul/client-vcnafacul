@@ -282,7 +282,7 @@ function GeoSearch() {
             <header className="space-y-2">
               <h1
                 id="localiza-titulo"
-                className="text-3xl font-black text-foreground md:text-4xl"
+                className="text-h1 font-black text-foreground"
               >
                 Localize um Cursinho
               </h1>
@@ -321,7 +321,7 @@ function GeoSearch() {
                   : ""
               }`}
             >
-              <p className="text-sm text-muted-foreground">
+              <p className="text-body text-muted-foreground">
                 Não encontrou um cursinho que conhece?
               </p>
               {/* 08: confirma que não achou antes de ir ao formulário. */}

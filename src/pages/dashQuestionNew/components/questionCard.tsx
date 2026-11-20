@@ -29,27 +29,27 @@ export function QuestionCard({ question, onClick }: QuestionCardProps) {
     >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-lg font-bold">{question.title}</CardTitle>
+          <CardTitle className="text-h3 font-bold">{question.title}</CardTitle>
           <StatusBadge status={question.status} />
         </div>
-        <CardDescription className="text-sm">
+        <CardDescription className="text-body">
           Questão #{question.numero}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
-          <p className="text-sm text-muted-foreground line-clamp-3">
+          <p className="text-body text-muted-foreground line-clamp-3">
             {truncateText(question.textoQuestao)}
           </p>
 
           <div className="flex flex-wrap gap-2 mt-3">
             {question.imageId && (
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-caption">
                 📷 Com imagem
               </Badge>
             )}
 
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-caption">
               {question.alternativa && `Resposta: ${question.alternativa}`}
             </Badge>
           </div>
@@ -61,7 +61,7 @@ export function QuestionCard({ question, onClick }: QuestionCardProps) {
             question.alternativeClassfication ||
             question.reported) && (
             <div className="pt-2 border-t mt-2">
-              <p className="text-xs text-warning font-medium">
+              <p className="text-caption text-warning font-medium">
                 ⚠️ Requer revisão
               </p>
             </div>

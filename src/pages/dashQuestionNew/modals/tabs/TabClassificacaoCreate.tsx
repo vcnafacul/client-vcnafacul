@@ -180,7 +180,7 @@ export function TabClassificacaoCreate({
     <div className="space-y-6 p-2 sm:p-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">📋 Informações da Prova</CardTitle>
+          <CardTitle className="text-h3">📋 Informações da Prova</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -193,7 +193,7 @@ export function TabClassificacaoCreate({
                   Classificação. O select do Radix não tem item vazio — por
                   isso o botão para desfazer a escolha.
                 */}
-                <label className="text-sm font-semibold text-muted-foreground">
+                <label className="text-body font-semibold text-muted-foreground">
                   Prova <span className="font-normal text-muted-foreground">(opcional)</span>
                 </label>
                 {formData.prova && (
@@ -203,7 +203,7 @@ export function TabClassificacaoCreate({
                     size="sm"
                     data-sem-prova
                     onClick={() => handleProvaChange("")}
-                    className="h-6 px-2 text-xs"
+                    className="h-6 px-2 text-caption"
                   >
                     Sem prova
                   </Button>
@@ -222,7 +222,7 @@ export function TabClassificacaoCreate({
                 </SelectContent>
               </Select>
               {errors.prova && (
-                <p className="text-sm text-destructive flex items-center gap-1">
+                <p className="text-body text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {errors.prova}
                 </p>
@@ -232,7 +232,7 @@ export function TabClassificacaoCreate({
             {/* Número */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-muted-foreground">
+                <label className="text-body font-semibold text-muted-foreground">
                   Número da Questão
                 </label>
                 {formData.numero != null && (
@@ -241,7 +241,7 @@ export function TabClassificacaoCreate({
                     variant="outline"
                     size="sm"
                     onClick={() => onChange("numero", null)}
-                    className="h-6 px-2 text-xs text-destructive border-destructive hover:text-destructive hover:bg-destructive-muted"
+                    className="h-6 px-2 text-caption text-destructive border-destructive hover:text-destructive hover:bg-destructive-muted"
                   >
                     Remover número
                   </Button>
@@ -250,7 +250,7 @@ export function TabClassificacaoCreate({
               {loadingNumeros ? (
                 <div className="flex items-center justify-center p-3 border border-border rounded-md bg-page">
                   <Loader2 className="h-4 w-4 animate-spin text-primary mr-2" />
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-body text-muted-foreground">
                     Carregando números disponíveis...
                   </span>
                 </div>
@@ -259,10 +259,10 @@ export function TabClassificacaoCreate({
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-semibold text-warning">
+                      <p className="text-body font-semibold text-warning">
                         Impossível cadastrar nova questão
                       </p>
-                      <p className="text-xs text-warning mt-1">
+                      <p className="text-caption text-warning mt-1">
                         Não há números disponíveis para esta prova. Todas as
                         questões já foram cadastradas.
                       </p>
@@ -296,7 +296,7 @@ export function TabClassificacaoCreate({
                 </Select>
               )}
               {errors.numero && (
-                <p className="text-sm text-destructive flex items-center gap-1">
+                <p className="text-body text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {errors.numero}
                 </p>
@@ -305,7 +305,7 @@ export function TabClassificacaoCreate({
 
             {/* Área ENEM */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-muted-foreground">
+              <label className="text-body font-semibold text-muted-foreground">
                 Área do Conhecimento ENEM *
               </label>
               <Select
@@ -326,7 +326,7 @@ export function TabClassificacaoCreate({
                 </SelectContent>
               </Select>
               {errors.enemArea && (
-                <p className="text-sm text-destructive flex items-center gap-1">
+                <p className="text-body text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {errors.enemArea}
                 </p>
@@ -335,7 +335,7 @@ export function TabClassificacaoCreate({
 
             {/* Disciplina */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-muted-foreground">
+              <label className="text-body font-semibold text-muted-foreground">
                 Disciplina *
               </label>
               <Select
@@ -365,7 +365,7 @@ export function TabClassificacaoCreate({
                 </SelectContent>
               </Select>
               {errors.materia && (
-                <p className="text-sm text-destructive flex items-center gap-1">
+                <p className="text-body text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {errors.materia}
                 </p>
@@ -374,7 +374,7 @@ export function TabClassificacaoCreate({
 
             {/* Frente Principal */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-muted-foreground">
+              <label className="text-body font-semibold text-muted-foreground">
                 Frente Principal *
               </label>
               <Select
@@ -402,7 +402,7 @@ export function TabClassificacaoCreate({
                 </SelectContent>
               </Select>
               {errors.frente1 && (
-                <p className="text-sm text-destructive flex items-center gap-1">
+                <p className="text-body text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {errors.frente1}
                 </p>
@@ -413,7 +413,7 @@ export function TabClassificacaoCreate({
             {showFrente2 ? (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-semibold text-muted-foreground">
+                  <label className="text-body font-semibold text-muted-foreground">
                     Frente Secundária
                   </label>
                   <Button
@@ -447,7 +447,7 @@ export function TabClassificacaoCreate({
               </div>
             ) : (
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-muted-foreground">
+                <label className="text-body font-semibold text-muted-foreground">
                   Frente Secundária
                 </label>
                 <Button
@@ -469,7 +469,7 @@ export function TabClassificacaoCreate({
             {showFrente3 ? (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-semibold text-muted-foreground">
+                  <label className="text-body font-semibold text-muted-foreground">
                     Frente Terciária
                   </label>
                   <Button
@@ -503,7 +503,7 @@ export function TabClassificacaoCreate({
               </div>
             ) : showFrente2 ? (
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-muted-foreground">
+                <label className="text-body font-semibold text-muted-foreground">
                   Frente Terciária
                 </label>
                 <Button

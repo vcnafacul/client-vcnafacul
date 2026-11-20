@@ -16,7 +16,7 @@ function Bloco({
     <div className="flex min-w-[14rem] flex-col gap-1">
       <span
         className={cn(
-          "text-[0.65rem] font-semibold uppercase tracking-wide",
+          "text-caption font-semibold uppercase tracking-wide",
           dashV2.text.muted,
         )}
       >
@@ -81,11 +81,11 @@ export function ResumoDoRelatorio({
       <div className="flex flex-wrap items-start gap-8">
         <Bloco rotulo="Resultado">
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span className={cn("text-2xl font-semibold", dashV2.text.primary)}>
+            <span className={cn("text-h1 font-semibold", dashV2.text.primary)}>
               {/* ⚠️ `null` vira travessão. "0%" afirmaria que a turma zerou. */}
               {pct(resumo.aproveitamentoGeral)}
             </span>
-            <span className={cn("text-xs", dashV2.text.muted)}>média</span>
+            <span className={cn("text-caption", dashV2.text.muted)}>média</span>
             {/*
               ⚠️ **Mediana e faixa ao lado da média, não no lugar dela.** Média
               sozinha esconde a turma bimodal — que é o caso comum em cursinho:
@@ -98,7 +98,7 @@ export function ResumoDoRelatorio({
             {d !== undefined && d.mediana !== null && (
               <span
                 data-testid="resumo-distribuicao"
-                className={cn("text-xs", dashV2.text.secondary)}
+                className={cn("text-caption", dashV2.text.secondary)}
               >
                 mediana {d.mediana} · metade do meio entre {d.q1} e {d.q3} ·
                 faixa {d.minimo}–{d.maximo}
@@ -109,7 +109,7 @@ export function ResumoDoRelatorio({
         </Bloco>
 
         <Bloco rotulo="Cobertura">
-          <div className={cn("text-2xl font-semibold", dashV2.text.primary)}>
+          <div className={cn("text-h1 font-semibold", dashV2.text.primary)}>
             {resumo.comLeituraConcluida} de {resumo.totalNoRecorte}
           </div>
           {/*
@@ -119,7 +119,7 @@ export function ResumoDoRelatorio({
             linha concluída sem nota aparece como "Lido" e fica de fora desta
             contagem — com o rótulo antigo, 28 badges em cima de um "27".
           */}
-          <div className={cn("text-xs", dashV2.text.muted)}>
+          <div className={cn("text-caption", dashV2.text.muted)}>
             estudantes no cálculo da média
           </div>
         </Bloco>
@@ -129,7 +129,7 @@ export function ResumoDoRelatorio({
         ⚠️ Escrito na tela, não só no código. Um relatório que silenciosamente
         ignora quem respondeu online gera "cadê o fulano?" na primeira semana.
       */}
-      <p className={cn("text-xs", dashV2.text.muted)}>
+      <p className={cn("text-caption", dashV2.text.muted)}>
         Este relatório considera apenas quem respondeu por cartão-resposta. Quem
         resolveu o simulado pela plataforma não aparece aqui.
       </p>
@@ -151,7 +151,7 @@ export function ResumoDoRelatorio({
       */}
       {cartoesNoRecorte !== undefined &&
         resumo.totalEstudantesComCartaoNoCursinho > 0 && (
-          <p data-cartoes-do-cursinho className={cn("text-xs", dashV2.text.muted)}>
+          <p data-cartoes-do-cursinho className={cn("text-caption", dashV2.text.muted)}>
             {cartoesNoRecorte} dos {resumo.totalEstudantesComCartaoNoCursinho}{" "}
             cartões deste simulado no cursinho são desta turma.
           </p>
@@ -163,7 +163,7 @@ export function ResumoDoRelatorio({
         batem e a leitura natural é "o sistema perdeu cartão".
       */}
       {resumo.linhasSemEstudanteAtivo > 0 && (
-        <p className={cn("text-xs", dashV2.text.muted)}>
+        <p className={cn("text-caption", dashV2.text.muted)}>
           {resumo.linhasSemEstudanteAtivo} cartão(ões) enviado(s) por estudantes
           que não estão mais ativos nesta turma ou cursinho não aparecem na
           lista.

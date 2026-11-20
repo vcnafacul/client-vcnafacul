@@ -17,7 +17,7 @@ export function MonthPicker({ months, value, onChange }: Props) {
   if (months.length === 0) return null;
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-muted-foreground">Mês:</span>
+      <span className="text-body text-muted-foreground">Mês:</span>
       <Select value={value ?? ""} onValueChange={onChange}>
         <SelectTrigger className="w-64">
           <SelectValue placeholder="Selecione um mês" />

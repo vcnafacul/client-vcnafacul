@@ -15,17 +15,17 @@ export function PartnerPrepInscriptionStepError({
   return (
     <div className="flex flex-col items-center justify-center text-center p-6 gap-6">
       <AlertCircle className="w-12 h-12 text-warning" />
-      <h1 className="text-3xl font-semibold text-foreground">Atenção</h1>
-      <p className="text-lg text-muted-foreground max-w-md">{message}</p>
+      <h1 className="text-h1 font-semibold text-foreground">Atenção</h1>
+      <p className="text-h3 text-muted-foreground max-w-md">{message}</p>
       {alreadyInscribed ? (
         <BLink
           to={`${DASH}/${REGISTRATION_MONITOR}`}
-          className="mt-4 text-base"
+          className="mt-4 text-body"
         >
           Ir para minhas inscrições
         </BLink>
       ) : (
-        <BLink to={HOME_PATH} className="mt-4 text-base">
+        <BLink to={HOME_PATH} className="mt-4 text-body">
           Ir para a Página Inicial
         </BLink>
       )}

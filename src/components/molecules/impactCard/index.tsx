@@ -18,10 +18,10 @@ export function ImpactCard({
       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-foreground mb-1">
         {icon}
       </div>
-      <span className="text-3xl font-extrabold text-foreground leading-none">
+      <span className="text-h1 font-extrabold text-foreground">
         {formatted}
       </span>
-      <span className="text-sm text-muted-foreground text-center leading-snug">{label}</span>
+      <span className="text-body text-muted-foreground text-center">{label}</span>
     </div>
   );
 }

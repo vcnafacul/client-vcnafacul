@@ -77,11 +77,11 @@ export default function ThemeForm({ initial, onSave, onCancel }: ThemeFormProps)
         onSubmit={handleSubmit}
         className="bg-white rounded-lg p-4 sm:p-6 max-w-2xl w-full max-h-[90vh] supports-[height:100dvh]:max-h-[90dvh] overflow-y-auto space-y-4"
       >
-        <h2 className="text-xl font-bold text-foreground">
+        <h2 className="text-h2 font-bold text-foreground">
           {initial ? "Editar Tema" : "Novo Tema"}
         </h2>
         <div>
-          <label className="block text-sm font-semibold mb-1">Título</label>
+          <label className="block text-body font-semibold mb-1">Título</label>
           <input
             type="text"
             value={title}
@@ -92,7 +92,7 @@ export default function ThemeForm({ initial, onSave, onCancel }: ThemeFormProps)
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold mb-1">
+          <label className="block text-body font-semibold mb-1">
             Texto Motivador
           </label>
           <RichTextEditor
@@ -107,12 +107,12 @@ export default function ThemeForm({ initial, onSave, onCancel }: ThemeFormProps)
             placeholder="Digite os textos motivadores..."
             minHeight="200px"
           />
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-caption text-muted-foreground mt-1">
             Para inserir imagens, use o botão de imagem da barra (JPG, PNG, WEBP ou GIF, até 5MB cada).
           </p>
         </div>
         <div>
-          <label className="block text-sm font-semibold mb-1">
+          <label className="block text-body font-semibold mb-1">
             Instrução (opcional)
           </label>
           <textarea
@@ -124,7 +124,7 @@ export default function ThemeForm({ initial, onSave, onCancel }: ThemeFormProps)
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold mb-1">
+            <label className="block text-body font-semibold mb-1">
               Início da Semana
             </label>
             <input
@@ -136,7 +136,7 @@ export default function ThemeForm({ initial, onSave, onCancel }: ThemeFormProps)
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold mb-1">
+            <label className="block text-body font-semibold mb-1">
               Fim da Semana
             </label>
             <input

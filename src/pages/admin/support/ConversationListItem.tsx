@@ -66,7 +66,7 @@ export function ConversationListItem({
       <div className="flex items-start gap-3">
         <div
           className={cn(
-            "h-9 w-9 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0",
+            "h-9 w-9 rounded-full flex items-center justify-center text-white text-caption font-semibold shrink-0",
             avatarBg,
           )}
           aria-hidden
@@ -78,7 +78,7 @@ export function ConversationListItem({
             <div className="flex items-center gap-1.5 min-w-0 flex-1">
               <span
                 className={cn(
-                  "text-sm truncate",
+                  "text-body truncate",
                   unread ? "font-bold text-foreground" : "font-medium text-muted-foreground",
                 )}
               >
@@ -86,7 +86,7 @@ export function ConversationListItem({
               </span>
               {conv.initiatedBy === "support" && (
                 <span
-                  className="text-[9px] uppercase tracking-wide font-semibold px-1.5 py-0.5 rounded bg-primary/10 text-foreground shrink-0"
+                  className="text-caption uppercase tracking-wide font-semibold px-1.5 py-0.5 rounded bg-primary/10 text-foreground shrink-0"
                   aria-label="Conversa iniciada pelo suporte"
                 >
                   iniciada
@@ -95,7 +95,7 @@ export function ConversationListItem({
             </div>
             <div className="flex items-center gap-1.5 shrink-0">
               {time && (
-                <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                <span className="text-caption text-muted-foreground whitespace-nowrap">
                   {time}
                 </span>
               )}
@@ -111,24 +111,24 @@ export function ConversationListItem({
           {showCursinho &&
             (conv.cursinhoName ? (
               <span
-                className="text-xs block truncate font-medium text-foreground mt-0.5"
+                className="text-caption block truncate font-medium text-foreground mt-0.5"
                 title={conv.cursinhoName}
               >
                 {conv.cursinhoName}
               </span>
             ) : (
-              <span className="text-xs block truncate italic text-muted-foreground mt-0.5">
+              <span className="text-caption block truncate italic text-muted-foreground mt-0.5">
                 {SEM_CURSINHO}
               </span>
             ))}
           {showCursinho
             ? conv.originLabel && (
-                <span className="text-[10px] block truncate text-foreground/60 mt-0.5">
+                <span className="text-caption block truncate text-foreground/60 mt-0.5">
                   {conv.originLabel}
                 </span>
               )
             : (conv.originLabel || conv.cursinhoName) && (
-                <span className="text-[10px] block truncate text-foreground/60 mt-0.5">
+                <span className="text-caption block truncate text-foreground/60 mt-0.5">
                   {[conv.originLabel, conv.cursinhoName]
                     .filter(Boolean)
                     .join(" · ")}
@@ -137,7 +137,7 @@ export function ConversationListItem({
           {preview && (
             <span
               className={cn(
-                "text-xs block truncate mt-0.5",
+                "text-caption block truncate mt-0.5",
                 unread ? "text-muted-foreground" : "text-muted-foreground",
               )}
             >

@@ -333,12 +333,12 @@ const downloadFile = async (filename: string, fileType: string) => {
               <DocumentTextIcon className="h-6 w-6 text-info" />
             </div>
             <div className="min-w-0 flex-1">
-              <h2 className="text-xl font-semibold text-foreground break-words">
+              <h2 className="text-h2 font-semibold text-foreground break-words">
                 {prova.nome}
               </h2>
-              <p className="text-sm text-muted-foreground">Detalhes da Prova</p>
+              <p className="text-body text-muted-foreground">Detalhes da Prova</p>
               {origemId && nomeDaOrigem !== null && (
-                <p className="text-xs text-muted-foreground mt-0.5">
+                <p className="text-caption text-muted-foreground mt-0.5">
                   Duplicada de {nomeDaOrigem ? <strong>{nomeDaOrigem}</strong> : "outra prova"}
                 </p>
               )}
@@ -349,7 +349,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                 onClick={duplicar.aoClicar}
                 disabled={!duplicar.permitido}
                 title={duplicar.permitido ? undefined : duplicar.motivo}
-                className="ml-auto px-3 py-1.5 text-sm border border-primary text-foreground rounded-lg hover:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="ml-auto px-3 py-1.5 text-body border border-primary text-foreground rounded-lg hover:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Duplicar prova
               </button>
@@ -361,7 +361,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                   onClick={gestao.aoEditar}
                   disabled={!gestao.permitido}
                   title={gestao.permitido ? undefined : gestao.motivo}
-                  className="px-3 py-1.5 text-sm border border-primary text-foreground rounded-lg hover:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 text-body border border-primary text-foreground rounded-lg hover:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Editar dados
                 </button>
@@ -380,7 +380,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                       type="button"
                       disabled={!gestao.permitido}
                       title={gestao.permitido ? undefined : gestao.motivo}
-                      className="px-3 py-1.5 text-sm border border-destructive text-destructive rounded-lg hover:bg-destructive-muted disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-3 py-1.5 text-body border border-destructive text-destructive rounded-lg hover:bg-destructive-muted disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Excluir
                     </button>
@@ -398,33 +398,33 @@ const downloadFile = async (filename: string, fileType: string) => {
               <div className="min-w-0">
                 {/* Informações Básicas */}
                 <div className="mb-6">
-                  <h3 className="text-sm font-medium text-foreground mb-4 flex items-center gap-2">
+                  <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
                     <AcademicCapIcon className="h-4 w-4" />
                     Informações Gerais
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-page p-3 rounded-lg">
-                      <p className="text-xs text-muted-foreground mb-1">Edição</p>
-                      <p className="text-sm font-medium text-foreground">{prova.edicao}</p>
+                      <p className="text-caption text-muted-foreground mb-1">Edição</p>
+                      <p className="text-body font-medium text-foreground">{prova.edicao}</p>
                     </div>
                     <div className="bg-page p-3 rounded-lg">
-                      <p className="text-xs text-muted-foreground mb-1">Ano</p>
-                      <p className="text-sm font-medium text-foreground">{prova.ano}</p>
+                      <p className="text-caption text-muted-foreground mb-1">Ano</p>
+                      <p className="text-body font-medium text-foreground">{prova.ano}</p>
                     </div>
                     <div className="bg-page p-3 rounded-lg">
-                      <p className="text-xs text-muted-foreground mb-1">Aplicação</p>
-                      <p className="text-sm font-medium text-foreground">{prova.aplicacao}</p>
+                      <p className="text-caption text-muted-foreground mb-1">Aplicação</p>
+                      <p className="text-body font-medium text-foreground">{prova.aplicacao}</p>
                     </div>
                     <div className="bg-page p-3 rounded-lg">
-                      <p className="text-xs text-muted-foreground mb-1">Categoria</p>
+                      <p className="text-caption text-muted-foreground mb-1">Categoria</p>
                       {/*
                         ⚠️ `categoria` e `exame` são strings — o ms achata as duas no
                         DTO da lista. Antes isto lia `.nome` de uma string e o modal
                         mostrava "—" com o exame nunca aparecendo.
                       */}
-                      <p className="text-sm font-medium text-foreground">{prova.categoria || '—'}</p>
+                      <p className="text-body font-medium text-foreground">{prova.categoria || '—'}</p>
                       {prova.exame && (
-                        <p className="text-xs text-muted-foreground mt-0.5">{prova.exame}</p>
+                        <p className="text-caption text-muted-foreground mt-0.5">{prova.exame}</p>
                       )}
                     </div>
                   </div>
@@ -432,7 +432,7 @@ const downloadFile = async (filename: string, fileType: string) => {
 
                 {/* tickets/023, card 09: novas versões das questões. */}
                 <div className="mb-6">
-                  <h3 className="text-sm font-medium text-foreground mb-4">
+                  <h3 className="text-body font-medium text-foreground mb-4">
                     Novas versões das questões
                   </h3>
                   {fullProva?.podeComporProva ? (
@@ -444,7 +444,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                   ) : (
                     <p
                       data-testid="indicador-versoes"
-                      className="text-sm text-foreground bg-page p-3 rounded-lg"
+                      className="text-body text-foreground bg-page p-3 rounded-lg"
                     >
                       {indicadorDeVersoes(
                         fullProva?.receberNovasVersoes ?? prova.receberNovasVersoes,
@@ -455,7 +455,7 @@ const downloadFile = async (filename: string, fileType: string) => {
 
                 {/* tickets/023, card 15: versões mais novas das questões. */}
                 <div className="mb-6">
-                  <h3 className="text-sm font-medium text-foreground mb-4">
+                  <h3 className="text-body font-medium text-foreground mb-4">
                     Atualizações das questões
                   </h3>
                   <BuscarAtualizacoes provaId={prova._id} token={token} />
@@ -466,7 +466,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                 <AnuladasDaProva questoes={fullProva?.questoes} />
                 {/* Métricas de Progresso */}
                 <div className="mb-6">
-                  <h3 className="text-sm font-medium text-foreground mb-4 flex items-center gap-2">
+                  <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
                     <ChartBarIcon className="h-4 w-4" />
                     Progresso das Questões
                   </h3>
@@ -475,10 +475,10 @@ const downloadFile = async (filename: string, fileType: string) => {
                     {/* Questões Esperadas */}
                     <div className="bg-info-muted p-4 rounded-lg border border-info/30">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-info">
+                        <span className="text-body font-medium text-info">
                           Questões Esperadas
                         </span>
-                        <span className="text-lg font-bold text-info">
+                        <span className="text-h3 font-bold text-info">
                           {livre ? "Livre (sem alvo)" : prova.totalQuestao}
                         </span>
                       </div>
@@ -493,10 +493,10 @@ const downloadFile = async (filename: string, fileType: string) => {
                     {/* Questões Cadastradas */}
                     <div className="bg-warning-muted p-4 rounded-lg border border-warning/30">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-warning">
+                        <span className="text-body font-medium text-warning">
                           Questões Cadastradas
                         </span>
-                        <span className="text-lg font-bold text-warning">
+                        <span className="text-h3 font-bold text-warning">
                           {prova.totalQuestaoCadastradas}
                           {!livre && ` (${percentCadastradas.toFixed(1)}%)`}
                         </span>
@@ -514,10 +514,10 @@ const downloadFile = async (filename: string, fileType: string) => {
                     {/* Questões Aprovadas */}
                     <div className="bg-success-muted p-4 rounded-lg border border-success">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-success">
+                        <span className="text-body font-medium text-success">
                           Questões Aprovadas
                         </span>
-                        <span className="text-lg font-bold text-success">
+                        <span className="text-h3 font-bold text-success">
                           {prova.totalQuestaoValidadas} (
                           {isNaN(percentValidadas) ? "0" : percentValidadas.toFixed(1)}
                           %)
@@ -633,7 +633,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                       Download da Prova
                     </Button>
                   ) : (
-                    <span className="self-center text-sm text-muted-foreground">
+                    <span className="self-center text-body text-muted-foreground">
                       {edicao && !edicao.permitido
                         ? TEXTO_SEM_PDF
                         : `${TEXTO_SEM_PDF} — adicione em Editar arquivos`}

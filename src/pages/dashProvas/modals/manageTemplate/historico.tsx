@@ -122,13 +122,13 @@ function Historico({
   if (aRestaurar !== null) {
     return (
       <div className="p-6">
-        <h2 className="mb-4 text-xl font-semibold text-foreground">
+        <h2 className="mb-4 text-h2 font-semibold text-foreground">
           Restaurar a v{aRestaurar.versao}
         </h2>
-        <p className="text-sm font-medium text-foreground">
+        <p className="text-body font-medium text-foreground">
           {fraseDaConfirmacao(aRestaurar.versao, versaoNoAr)}
         </p>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="mt-2 text-body text-muted-foreground">
           Restaurar não é reverter: nada muda para as provas agora. O rascunho
           aparece na aba principal, e é de lá que ele vai ao ar.
         </p>
@@ -158,7 +158,7 @@ function Historico({
   return (
     <div className="p-6">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="text-xl font-semibold text-foreground">
+        <h2 className="text-h2 font-semibold text-foreground">
           Histórico de versões
         </h2>
         <Button typeStyle="quaternary" size="small" onClick={onVoltar}>
@@ -167,9 +167,9 @@ function Historico({
       </div>
 
       {carregando ? (
-        <p className="text-sm text-muted-foreground">Carregando...</p>
+        <p className="text-body text-muted-foreground">Carregando...</p>
       ) : versoes.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           Nenhuma versão no histórico ainda.
         </p>
       ) : (
@@ -183,12 +183,12 @@ function Historico({
                 <p className="font-semibold text-foreground">
                   v{versao.versao}
                   {versao.versao === versaoNoAr && (
-                    <span className="ml-2 rounded bg-success-muted px-2 py-0.5 text-xs font-medium text-success">
+                    <span className="ml-2 rounded bg-success-muted px-2 py-0.5 text-caption font-medium text-success">
                       no ar
                     </span>
                   )}
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="mt-1 text-body text-muted-foreground">
                   {versao.publicadaEm
                     ? `Publicada em ${formatDate(versao.publicadaEm)}`
                     : "Nunca publicada"}
@@ -196,7 +196,7 @@ function Historico({
                   {versao.criadorId}
                 </p>
                 {versao.notas && (
-                  <p className="mt-1 break-words text-sm text-muted-foreground">
+                  <p className="mt-1 break-words text-body text-muted-foreground">
                     {versao.notas}
                   </p>
                 )}

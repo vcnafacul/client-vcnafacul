@@ -75,7 +75,7 @@ export function AnulacaoDaProva({
   // (motivo, justificativa) mora no aviso do topo — `AnuladaEm`.
   if (!podeAnular) return null;
 
-  const pequeno = "h-6 px-2 text-xs";
+  const pequeno = "h-6 px-2 text-caption";
   return (
     <div data-testid="anulacao-da-prova" className="flex flex-wrap justify-end gap-1">
       {anulacao ? (

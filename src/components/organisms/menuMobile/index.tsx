@@ -69,7 +69,7 @@ export default function MenuMobile({
   if (!open) return null;
 
   const classeItem = (eAtivo: boolean) =>
-    `group flex items-center justify-between gap-4 py-4 text-2xl font-bold tracking-tight transition-colors ${
+    `group flex items-center justify-between gap-4 py-4 text-h1 font-bold transition-colors ${
       eAtivo ? "text-primary" : "text-foreground hover:text-primary"
     }`;
 
@@ -97,7 +97,7 @@ export default function MenuMobile({
         <Link
           to={HOME_PATH}
           onClick={onClose}
-          className="flex items-center gap-2.5 text-lg text-foreground"
+          className="flex items-center gap-2.5 text-h3 text-foreground"
         >
           <LogoIcon />
           <span>
@@ -116,7 +116,7 @@ export default function MenuMobile({
 
       <div className="flex flex-1 flex-col px-6 pb-8 pt-4">
         {nome && (
-          <p className="mb-2 text-sm font-medium text-muted-foreground">
+          <p className="mb-2 text-body font-medium text-muted-foreground">
             Olá, <span className="text-foreground">{nome}</span> 👋
           </p>
         )}
@@ -166,7 +166,7 @@ export default function MenuMobile({
           className="mt-8 animate-in fade-in fill-mode-both duration-300"
           style={{ animationDelay: `${120 + itens.length * 50}ms` }}
         >
-          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          <p className="mb-3 text-caption font-semibold uppercase tracking-widest text-muted-foreground">
             Ajude a melhorar
           </p>
           <div className="grid grid-cols-2 gap-3">
@@ -175,7 +175,7 @@ export default function MenuMobile({
               target="_blank"
               rel="noopener noreferrer"
               onClick={onClose}
-              className="flex flex-col gap-3 rounded-2xl bg-page p-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+              className="flex flex-col gap-3 rounded-2xl bg-page p-4 text-body font-semibold text-foreground transition-colors hover:bg-muted"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-primary shadow-sm">
                 <Bug className="h-4 w-4" />
@@ -187,7 +187,7 @@ export default function MenuMobile({
               target="_blank"
               rel="noopener noreferrer"
               onClick={onClose}
-              className="flex flex-col gap-3 rounded-2xl bg-page p-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+              className="flex flex-col gap-3 rounded-2xl bg-page p-4 text-body font-semibold text-foreground transition-colors hover:bg-muted"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-success shadow-sm">
                 <Lightbulb className="h-4 w-4" />
@@ -207,14 +207,14 @@ export default function MenuMobile({
               <Link
                 to={entrar.Home_Menu_Item_id.link}
                 onClick={onClose}
-                className="flex h-12 items-center justify-center rounded-full border-2 border-primary text-base font-bold text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                className="flex h-12 items-center justify-center rounded-full border-2 border-primary text-body font-bold text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
               >
                 Entrar
               </Link>
               <Link
                 to={cadastrar.Home_Menu_Item_id.link}
                 onClick={onClose}
-                className="flex h-12 items-center justify-center gap-1 rounded-full bg-cta text-base font-bold text-cta-foreground transition-opacity hover:opacity-90"
+                className="flex h-12 items-center justify-center gap-1 rounded-full bg-cta text-body font-bold text-cta-foreground transition-opacity hover:opacity-90"
               >
                 Cadastrar
                 <ArrowUpRight className="h-4 w-4" />
@@ -224,7 +224,7 @@ export default function MenuMobile({
 
           {redes.length > 0 && (
             <div className="flex items-center justify-between gap-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="text-caption font-semibold uppercase tracking-widest text-muted-foreground">
                 Siga a gente
               </p>
               <div className="flex gap-2">

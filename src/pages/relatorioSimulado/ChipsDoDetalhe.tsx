@@ -57,7 +57,7 @@ export function ChipsDoDetalhe({
             disabled={desabilitado}
             onClick={() => aoTrocar(f)}
             className={cn(
-              "rounded-full border px-3 py-1 text-xs font-medium",
+              "rounded-full border px-3 py-1 text-caption font-medium",
               "disabled:cursor-not-allowed disabled:opacity-40",
               dashV2.border,
               dashV2.focus,

@@ -225,8 +225,8 @@ export function PartnerPrepInscriptionStep1({
             }}
           />
         </div>
-        <div className="text-sm text-muted-foreground">
-          <span className="text-sm font-extrabold pb-2 text-muted-foreground"></span>
+        <div className="text-body text-muted-foreground">
+          <span className="text-body font-extrabold pb-2 text-muted-foreground"></span>
           {socialNameCheckbox}{" "}
           <a
             href={linkSocialName}
@@ -237,7 +237,7 @@ export function PartnerPrepInscriptionStep1({
           </a>
         </div>
       </div>
-      <span className="text-xs text-muted-foreground font-semibold mb-4">
+      <span className="text-caption text-muted-foreground font-semibold mb-4">
         Esta é uma pré-visualização do nome que será utilizado na plataforma:{" "}
         {getDisplayName()}
       </span>
@@ -280,7 +280,7 @@ export function PartnerPrepInscriptionStep1({
       />
       <div className="card flex justify-content-center h-16 border hover:border-cta pt-4 pl-4 rounded-md relative mb-4 row-start-3 col-start-1 z-10">
         <label
-          className="absolute top-1 left-3 text-xs text-muted-foreground font-semibold"
+          className="absolute top-1 left-3 text-caption text-muted-foreground font-semibold"
           htmlFor="date"
         >
           Data de Nascimento*
@@ -303,7 +303,7 @@ export function PartnerPrepInscriptionStep1({
           )}
         />
         {errors.birthday && (
-          <p className="absolute text-destructive text-xs mt-1 -bottom-5 left-0">
+          <p className="absolute text-destructive text-caption mt-1 -bottom-5 left-0">
             {errors.birthday.message}
           </p>
         )}

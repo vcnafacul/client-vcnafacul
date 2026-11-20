@@ -185,7 +185,7 @@ function ModalEditNew({
             <div className="mb-4 flex gap-2 border-b border-border">
               <button
                 type="button"
-                className={`px-3 py-2 text-sm font-medium border-b-2 ${
+                className={`px-3 py-2 text-body font-medium border-b-2 ${
                   contentType === 'file'
                     ? 'border-success text-success'
                     : 'border-transparent text-muted-foreground'
@@ -196,7 +196,7 @@ function ModalEditNew({
               </button>
               <button
                 type="button"
-                className={`px-3 py-2 text-sm font-medium border-b-2 ${
+                className={`px-3 py-2 text-body font-medium border-b-2 ${
                   contentType === 'text'
                     ? 'border-success text-success'
                     : 'border-transparent text-muted-foreground'
@@ -208,14 +208,14 @@ function ModalEditNew({
             </div>
           )}
           {isEditing && (
-            <div className="mb-4 text-sm text-muted-foreground">
+            <div className="mb-4 text-body text-muted-foreground">
               Tipo: <strong>{contentType === 'text' ? 'Texto (markdown)' : 'Arquivo (.docx)'}</strong>
             </div>
           )}
 
           <div className="flex gap-4 flex-wrap">
             <div className="flex-1 min-w-[200px] flex flex-col gap-1">
-              <label htmlFor="destaque" className="text-sm text-muted-foreground">
+              <label htmlFor="destaque" className="text-body text-muted-foreground">
                 Destaque
               </label>
               <label className="inline-flex items-center gap-2 mt-2">
@@ -226,14 +226,14 @@ function ModalEditNew({
                   onChange={(e) => setDestaque(e.target.checked)}
                   className="h-4 w-4"
                 />
-                <span className="text-sm">Marcar como novidade em destaque</span>
+                <span className="text-body">Marcar como novidade em destaque</span>
               </label>
-              <span className="text-xs text-muted-foreground min-h-[1rem]">
+              <span className="text-caption text-muted-foreground min-h-[1rem]">
                 Apenas uma novidade pode estar em destaque por vez.
               </span>
             </div>
             <div className="flex-1 min-w-[200px] flex flex-col gap-1">
-              <label htmlFor="title" className="text-sm text-muted-foreground">
+              <label htmlFor="title" className="text-body text-muted-foreground">
                 Título
               </label>
               <input
@@ -244,12 +244,12 @@ function ModalEditNew({
                 placeholder="Título"
                 className={inputBaseClass}
               />
-              <span className="text-xs text-muted-foreground min-h-[1rem]">
+              <span className="text-caption text-muted-foreground min-h-[1rem]">
                 {" "}
               </span>
             </div>
             <div className="flex-1 min-w-[200px] flex flex-col gap-1">
-              <label htmlFor="expire-at" className="text-sm text-muted-foreground">
+              <label htmlFor="expire-at" className="text-body text-muted-foreground">
                 Data de expiração
               </label>
               <input
@@ -261,7 +261,7 @@ function ModalEditNew({
                 disabled={false}
                 className={inputBaseClass}
               />
-              <span className="text-xs text-muted-foreground">
+              <span className="text-caption text-muted-foreground">
                 Obrigatório. Não pode ser anterior a hoje.
               </span>
             </div>
@@ -270,7 +270,7 @@ function ModalEditNew({
 
         {/* Description textarea */}
         <div className="px-4 sm:px-6 pb-2 shrink-0">
-          <label htmlFor="description" className="text-sm text-muted-foreground">
+          <label htmlFor="description" className="text-body text-muted-foreground">
             Descrição (opcional, máx 280 caracteres)
           </label>
           <textarea
@@ -282,7 +282,7 @@ function ModalEditNew({
             placeholder="Aparece no card destaque, abaixo do título"
             className={inputBaseClass + " resize-none"}
           />
-          <span className="text-xs text-muted-foreground">
+          <span className="text-caption text-muted-foreground">
             {description.length}/280
           </span>
         </div>
@@ -300,7 +300,7 @@ function ModalEditNew({
             )}
             {hasPreview && (
               <div className="px-4 sm:px-6 py-4 shrink-0">
-                <p className="text-sm text-muted-foreground mb-2 font-medium">Preview</p>
+                <p className="text-body text-muted-foreground mb-2 font-medium">Preview</p>
                 <div className="min-h-[200px] max-h-[45vh] overflow-y-auto border rounded-lg shadow-inner p-4 bg-page">
                   {news?.fileName ? (
                     <NewContent fileKey={news.fileName} />
@@ -313,7 +313,7 @@ function ModalEditNew({
           </>
         ) : (
           <div className="px-4 sm:px-6 py-4 shrink-0">
-            <p className="text-sm text-muted-foreground mb-2 font-medium">Conteúdo</p>
+            <p className="text-body text-muted-foreground mb-2 font-medium">Conteúdo</p>
             <RichTextEditor
               content={body}
               onChange={setBody}
@@ -364,7 +364,7 @@ function ModalEditNew({
         handleConfirm={deleteNew}
         text={`Excluir a novidade "${news?.title ?? ""}"?`}
       >
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           Ela deixa de aparecer no site.
         </p>
       </ModalConfirmCancel>

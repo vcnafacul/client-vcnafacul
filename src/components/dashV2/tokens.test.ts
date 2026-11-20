@@ -51,6 +51,20 @@ const NAO_E_COR = new Set([
   "1",
   "0",
   "offset",
+  // Passos da escala tipográfica do design system (tailwind/type-scale.js).
+  "hero",
+  "display",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "prose",
+  "body",
+  "caption",
+  "label",
+  "button",
+  "overline",
+  "numeric",
 ]);
 
 describe("tokens do dashV2", () => {

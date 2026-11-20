@@ -126,7 +126,7 @@ export function TabImagens({
       {/* Imagem Principal */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">🖼️ Imagem da Questão</CardTitle>
+          <CardTitle className="text-h3">🖼️ Imagem da Questão</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Input de arquivo oculto */}
@@ -147,7 +147,7 @@ export function TabImagens({
                     <div className="flex items-center justify-center min-h-[300px]">
                       <div className="text-center">
                         <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-body text-muted-foreground">
                           Carregando imagem...
                         </p>
                       </div>
@@ -162,7 +162,7 @@ export function TabImagens({
                     </div>
                   ) : (
                     <div className="flex items-center justify-center min-h-[300px]">
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-body text-muted-foreground">
                         Erro ao carregar imagem
                       </p>
                     </div>
@@ -212,14 +212,14 @@ export function TabImagens({
               {/* Informações da Imagem */}
               <div className="grid grid-cols-2 gap-4 p-4 bg-info-muted rounded-lg border border-info/30">
                 <div>
-                  <p className="text-xs text-muted-foreground">ID da Imagem</p>
-                  <p className="text-sm font-semibold truncate">
+                  <p className="text-caption text-muted-foreground">ID da Imagem</p>
+                  <p className="text-body font-semibold truncate">
                     {currentImageId}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Status</p>
-                  <p className="text-sm font-semibold text-success">
+                  <p className="text-caption text-muted-foreground">Status</p>
+                  <p className="text-body font-semibold text-success">
                     ✓ Disponível
                   </p>
                 </div>
@@ -262,31 +262,31 @@ export function TabImagens({
               {isUploading ? (
                 <div className="flex flex-col items-center">
                   <Loader2 className="h-12 w-12 mx-auto text-primary mb-4 animate-spin" />
-                  <p className="text-lg font-semibold text-foreground mb-2">
+                  <p className="text-h3 font-semibold text-foreground mb-2">
                     Enviando imagem...
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-body text-muted-foreground">
                     Por favor, aguarde enquanto processamos sua imagem
                   </p>
                 </div>
               ) : (
                 <>
                   <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-lg font-semibold text-foreground mb-2">
+                  <p className="text-h3 font-semibold text-foreground mb-2">
                     Nenhuma imagem enviada
                   </p>
                   {canEdit ? (
                     <>
-                      <p className="text-sm text-muted-foreground mb-4">
+                      <p className="text-body text-muted-foreground mb-4">
                         Clique para fazer upload de uma imagem
                       </p>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-caption text-muted-foreground">
                         <p>Formatos aceitos: PNG, JPG, JPEG, HEIC</p>
                         <p>Tamanho máximo: 5MB</p>
                       </div>
                     </>
                   ) : (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-body text-muted-foreground">
                       Você não tem permissão para adicionar imagens
                     </p>
                   )}
@@ -297,7 +297,7 @@ export function TabImagens({
 
           {/* Informação sobre conversão HEIC */}
           <div className="p-3 bg-warning-muted border border-warning/30 rounded-lg">
-            <p className="text-sm text-warning">
+            <p className="text-body text-warning">
               <span className="font-semibold">💡 Dica:</span> Imagens no formato
               HEIC serão automaticamente convertidas para PNG
             </p>
@@ -308,10 +308,10 @@ export function TabImagens({
       {/* Imagens por Alternativa - Futuro */}
       <Card className="border-dashed border-2">
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
+          <CardTitle className="text-h3 flex items-center gap-2">
             <span>🔮</span>
             <span>Imagens por Alternativa</span>
-            <span className="text-xs font-normal text-muted-foreground ml-2">
+            <span className="text-caption font-normal text-muted-foreground ml-2">
               (Em breve)
             </span>
           </CardTitle>
@@ -324,13 +324,13 @@ export function TabImagens({
                 className="aspect-square border-2 border-dashed border-border rounded-lg flex items-center justify-center bg-page opacity-50"
               >
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-muted-foreground">{letra}</p>
+                  <p className="text-h1 font-bold text-muted-foreground">{letra}</p>
                   <Upload className="h-6 w-6 mx-auto text-muted-foreground mt-2" />
                 </div>
               </div>
             ))}
           </div>
-          <p className="text-sm text-muted-foreground text-center mt-4">
+          <p className="text-body text-muted-foreground text-center mt-4">
             Funcionalidade para adicionar imagens específicas para cada
             alternativa
           </p>
@@ -347,7 +347,7 @@ export function TabImagens({
         }}
         text="Substituir a imagem da questão?"
       >
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           A imagem atual será trocada por {arquivoPendente?.name}.
         </p>
       </ModalConfirmCancel>

@@ -224,13 +224,13 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
 
   const versaoNoAr =
     estado.tipo === "carregando" ? (
-      <span className="text-sm text-muted-foreground">Carregando...</span>
+      <span className="text-body text-muted-foreground">Carregando...</span>
     ) : estado.versaoNoAr === null ? (
-      <span className="text-sm font-medium text-warning">
+      <span className="text-body font-medium text-warning">
         Nenhuma versão publicada ainda.
       </span>
     ) : (
-      <span className="text-sm text-muted-foreground">
+      <span className="text-body text-muted-foreground">
         Versão <span className="font-semibold">v{estado.versaoNoAr}</span> no ar
         {publicada?.publicadaEm
           ? ` — publicada em ${formatDate(publicada.publicadaEm)}`
@@ -264,7 +264,7 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
             <div className="rounded-lg bg-info-muted p-2">
               <DocumentTextIcon className="h-6 w-6 text-info" />
             </div>
-            <h2 className="text-xl font-semibold text-foreground">
+            <h2 className="text-h2 font-semibold text-foreground">
               Template do caderno
             </h2>
             <div className="ml-auto">
@@ -286,7 +286,7 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
               <p className="font-semibold text-foreground">
                 1. Baixe o zip do modelo
               </p>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="mt-1 text-body text-muted-foreground">
                 É o template que está no ar hoje, do jeito que ele sai. Parta
                 sempre dele — não comece um projeto do zero.
               </p>
@@ -306,7 +306,7 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
               <p className="font-semibold text-foreground">
                 2. Edite no Overleaf e confira o PDF
               </p>
-              <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-sm text-muted-foreground">
+              <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-body text-muted-foreground">
                 <li>
                   Entre no <span className="font-medium">overleaf.com</span> e
                   crie um projeto novo em{" "}
@@ -343,7 +343,7 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
               <p className="font-semibold text-foreground">
                 3. Envie o zip do Overleaf aqui
               </p>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="mt-1 text-body text-muted-foreground">
                 A plataforma confere o zip e guarda como rascunho. Publicar é o
                 passo seguinte — até lá, nada muda para as provas.
               </p>
@@ -353,14 +353,14 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
                   type="file"
                   accept=".zip,application/zip"
                   onChange={(e) => setArquivo(e.target.files?.[0] ?? null)}
-                  className="text-sm"
+                  className="text-body"
                 />
                 <input
                   type="text"
                   value={notas}
                   placeholder="Notas da versão (opcional) — ex.: nova logo da capa"
                   onChange={(e) => setNotas(e.target.value)}
-                  className="w-full rounded-md border border-border px-3 py-2 text-sm"
+                  className="w-full rounded-md border border-border px-3 py-2 text-body"
                 />
                 <div>
                   <Button
@@ -385,11 +385,11 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
           {estado.tipo === "rascunho-sem-relatorio" &&
             rascunhoSalvo !== null && (
               <div className="mt-6 rounded-lg border border-border p-4">
-                <p className="text-sm font-semibold text-foreground">
+                <p className="text-body font-semibold text-foreground">
                   Há um rascunho salvo (v{rascunhoSalvo.versao})
                   {rascunhoSalvo.notas ? ` — ${rascunhoSalvo.notas}` : ""}.
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="mt-1 text-body text-muted-foreground">
                   A conferência dele acontece ao publicar: se algo não passar, a
                   lista do que corrigir aparece aqui e nada é publicado.
                 </p>
@@ -423,10 +423,10 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
 
               {relatorio && relatorio.aceitos.length > 0 && (
                 <div className="mb-3">
-                  <p className="text-sm font-medium text-foreground">
+                  <p className="text-body font-medium text-foreground">
                     Arquivos usados
                   </p>
-                  <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-sm text-muted-foreground">
+                  <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-body text-muted-foreground">
                     {relatorio.aceitos.map((nome) => (
                       <li key={nome} className="font-mono">
                         {nome}
@@ -442,11 +442,11 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
                   subiu — e um dia jura que trocou a logo pela tela. */}
               {estado.mostrarIgnorados && (
                 <div className="mb-3">
-                  <p className="text-sm font-medium text-foreground">
+                  <p className="text-body font-medium text-foreground">
                     Arquivos ignorados — vieram no zip e{" "}
                     <span className="font-semibold">não</span> foram usados
                   </p>
-                  <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-sm text-muted-foreground">
+                  <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-body text-muted-foreground">
                     {estado.ignorados.map((nome) => (
                       <li key={nome} className="font-mono">
                         {nome}
@@ -458,11 +458,11 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
 
               {estado.erros.length > 0 && (
                 <div className="mb-3 rounded-md border border-destructive bg-destructive-muted p-3">
-                  <p className="text-sm font-semibold text-destructive">
+                  <p className="text-body font-semibold text-destructive">
                     Corrija no Overleaf e envie de novo — sem isto não dá para
                     publicar:
                   </p>
-                  <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-sm text-destructive">
+                  <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-body text-destructive">
                     {estado.erros.map((erro, i) => (
                       <li key={`${i}-${erro}`}>{erro}</li>
                     ))}
@@ -472,10 +472,10 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
 
               {estado.avisos.length > 0 && (
                 <div className="mb-3 rounded-md border border-warning/40 bg-warning-muted p-3">
-                  <p className="text-sm font-semibold text-warning">
+                  <p className="text-body font-semibold text-warning">
                     Vale conferir — não impede publicar:
                   </p>
-                  <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-sm text-warning">
+                  <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-body text-warning">
                     {estado.avisos.map((aviso, i) => (
                       <li key={`${i}-${aviso}`}>{aviso}</li>
                     ))}

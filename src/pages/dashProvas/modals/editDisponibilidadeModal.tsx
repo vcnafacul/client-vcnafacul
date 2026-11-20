@@ -64,14 +64,14 @@ function EditDisponibilidadeModal({
       className="w-full max-w-md rounded-lg bg-white shadow-xl p-6"
       style={{ zIndex: 60 }}
     >
-      <h3 className="text-lg font-semibold text-foreground mb-1">
+      <h3 className="text-h3 font-semibold text-foreground mb-1">
         Editar janela
       </h3>
-      <p className="text-sm text-muted-foreground mb-4">{simulado.nome}</p>
+      <p className="text-body text-muted-foreground mb-4">{simulado.nome}</p>
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm text-foreground mb-1">
+          <label className="block text-body text-foreground mb-1">
             Disponível de
           </label>
           <div className="flex items-center gap-2">
@@ -79,13 +79,13 @@ function EditDisponibilidadeModal({
               type="datetime-local"
               value={de}
               onChange={(e) => setDe(e.target.value)}
-              className="border border-border rounded px-2 py-1 text-sm w-full"
+              className="border border-border rounded px-2 py-1 text-body w-full"
             />
             {de && (
               <button
                 type="button"
                 onClick={() => setDe("")}
-                className="text-muted-foreground hover:text-foreground text-lg leading-none"
+                className="text-muted-foreground hover:text-foreground text-h3"
                 aria-label="Limpar disponível de"
               >
                 ×
@@ -95,7 +95,7 @@ function EditDisponibilidadeModal({
         </div>
 
         <div>
-          <label className="block text-sm text-foreground mb-1">
+          <label className="block text-body text-foreground mb-1">
             Disponível até
           </label>
           <div className="flex items-center gap-2">
@@ -103,13 +103,13 @@ function EditDisponibilidadeModal({
               type="datetime-local"
               value={ate}
               onChange={(e) => setAte(e.target.value)}
-              className="border border-border rounded px-2 py-1 text-sm w-full"
+              className="border border-border rounded px-2 py-1 text-body w-full"
             />
             {ate && (
               <button
                 type="button"
                 onClick={() => setAte("")}
-                className="text-muted-foreground hover:text-foreground text-lg leading-none"
+                className="text-muted-foreground hover:text-foreground text-h3"
                 aria-label="Limpar disponível até"
               >
                 ×
@@ -118,7 +118,7 @@ function EditDisponibilidadeModal({
           </div>
         </div>
 
-        {erro && <p className="text-sm text-destructive">{erro}</p>}
+        {erro && <p className="text-body text-destructive">{erro}</p>}
       </div>
 
       <div className="flex justify-end gap-3 mt-6">

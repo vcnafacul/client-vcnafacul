@@ -29,7 +29,7 @@ const TIPOS: { valor: TipoDePublico; rotulo: string }[] = [
 ];
 
 const campo =
-  "w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+  "w-full rounded-lg border border-border px-3 py-2 text-body focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
 function Contador({ atual, limite }: { atual: number; limite: number }) {
   return (
@@ -72,7 +72,7 @@ export function NovaNotificacao() {
   };
   const mostrarErro = (k: keyof Rascunho) =>
     tentouEnviar && erros[k] ? (
-      <p className="text-xs text-destructive">{erros[k]}</p>
+      <p className="text-caption text-destructive">{erros[k]}</p>
     ) : null;
 
   const conferir = async () => {
@@ -149,7 +149,7 @@ export function NovaNotificacao() {
         <div className="space-y-1">
           <label
             htmlFor="push-titulo"
-            className="flex justify-between text-sm font-medium"
+            className="flex justify-between text-body font-medium"
           >
             Título{" "}
             <Contador atual={r.title.trim().length} limite={LIMITE_TITULO} />
@@ -166,7 +166,7 @@ export function NovaNotificacao() {
         <div className="space-y-1">
           <label
             htmlFor="push-corpo"
-            className="flex justify-between text-sm font-medium"
+            className="flex justify-between text-body font-medium"
           >
             Mensagem{" "}
             <Contador atual={r.body.trim().length} limite={LIMITE_CORPO} />
@@ -182,7 +182,7 @@ export function NovaNotificacao() {
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="push-link" className="text-sm font-medium">
+          <label htmlFor="push-link" className="text-body font-medium">
             Link ao clicar (opcional)
           </label>
           <input
@@ -196,10 +196,10 @@ export function NovaNotificacao() {
         </div>
 
         <fieldset className="space-y-2">
-          <legend className="text-sm font-medium">Quem recebe</legend>
+          <legend className="text-body font-medium">Quem recebe</legend>
           <div className="flex flex-wrap gap-4">
             {TIPOS.map((t) => (
-              <label key={t.valor} className="flex items-center gap-2 text-sm">
+              <label key={t.valor} className="flex items-center gap-2 text-body">
                 <input
                   type="radio"
                   name="push-publico"
@@ -218,7 +218,7 @@ export function NovaNotificacao() {
               className="max-h-48 space-y-1 overflow-y-auto rounded-lg border border-border p-3"
             >
               {funcoes.map((f) => (
-                <label key={f.id} className="flex items-center gap-2 text-sm">
+                <label key={f.id} className="flex items-center gap-2 text-body">
                   <input
                     type="checkbox"
                     checked={r.roleIds.includes(f.id)}
@@ -246,7 +246,7 @@ export function NovaNotificacao() {
         </fieldset>
 
         {alcance && (
-          <p role="status" className="text-sm text-foreground">
+          <p role="status" className="text-body text-foreground">
             Vai chegar em{" "}
             <strong>{alcance.pessoas ?? alcance.targetUsers} pessoas</strong> na
             central do app; {alcance.targetUsers} delas com push (
@@ -254,7 +254,7 @@ export function NovaNotificacao() {
           </p>
         )}
         {erroDaApi && (
-          <p role="alert" className="text-sm text-destructive">
+          <p role="alert" className="text-body text-destructive">
             {erroDaApi}
           </p>
         )}
@@ -274,7 +274,7 @@ export function NovaNotificacao() {
             aria-label="Confirmar envio"
             className="space-y-3 rounded-xl border border-cta/40 bg-cta/5 p-4"
           >
-            <p className="text-sm">
+            <p className="text-body">
               Enviar "<strong>{r.title.trim()}</strong>" para{" "}
               <strong>
                 {alcance?.pessoas ?? alcance?.targetUsers} pessoas
@@ -282,7 +282,7 @@ export function NovaNotificacao() {
               ({alcance?.targetUsers} com push)? Não dá para desfazer.
             </p>
             {paraTodos && (
-              <label className="block space-y-1 text-sm">
+              <label className="block space-y-1 text-body">
                 <span>
                   É para <strong>todos</strong>. Digite{" "}
                   <strong>{PALAVRA_DE_CONFIRMACAO}</strong> para confirmar:
@@ -308,7 +308,7 @@ export function NovaNotificacao() {
       </div>
 
       <aside className="space-y-2">
-        <p className="text-sm font-medium text-muted-foreground">Pré-visualização</p>
+        <p className="text-body font-medium text-muted-foreground">Pré-visualização</p>
         <PreviewDaNotificacao title={r.title.trim()} body={r.body.trim()} />
       </aside>
     </div>

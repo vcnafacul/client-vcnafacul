@@ -29,10 +29,10 @@ function VazioDaTurma() {
       data-testid="simulados-da-turma-vazio"
       className="flex flex-col items-center gap-2 px-4 py-10 text-center"
     >
-      <p className={cn("text-sm font-medium", dashV2.text.primary)}>
+      <p className={cn("text-body font-medium", dashV2.text.primary)}>
         {TEXTO_VAZIO}
       </p>
-      <p className={cn("text-xs", dashV2.text.secondary)}>{TEXTO_VAZIO_DICA}</p>
+      <p className={cn("text-caption", dashV2.text.secondary)}>{TEXTO_VAZIO_DICA}</p>
     </div>
   );
 }
@@ -97,7 +97,7 @@ export function SimuladosDaTurma({
 
   if (estado === "loading") {
     return (
-      <p className={cn("px-4 py-10 text-center text-sm", dashV2.text.secondary)}>
+      <p className={cn("px-4 py-10 text-center text-body", dashV2.text.secondary)}>
         Carregando…
       </p>
     );
@@ -106,11 +106,11 @@ export function SimuladosDaTurma({
   if (estado === "error") {
     return (
       <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
-        <p className={cn("text-sm", dashV2.text.primary)}>{TEXTO_ERRO}</p>
+        <p className={cn("text-body", dashV2.text.primary)}>{TEXTO_ERRO}</p>
         <button
           type="button"
           onClick={carregar}
-          className={cn("text-xs underline", dashV2.text.secondary)}
+          className={cn("text-caption underline", dashV2.text.secondary)}
         >
           {TEXTO_TENTAR}
         </button>
@@ -136,14 +136,14 @@ export function SimuladosDaTurma({
         colunas dela ("Cartões", "Com leitura", "Último envio") não decidiam
         nada — quem abre a aba quer ver os estudantes.
       */}
-      <label className="flex flex-wrap items-center gap-2 px-4 pt-3 text-sm">
+      <label className="flex flex-wrap items-center gap-2 px-4 pt-3 text-body">
         <span className={dashV2.text.secondary}>{ROTULO_SELETOR}</span>
         <select
           data-testid="seletor-de-simulado"
           value={escolhido}
           onChange={(e) => setEscolhido(e.target.value)}
           className={cn(
-            "h-9 min-w-0 max-w-full rounded-md border px-2 text-sm outline-none",
+            "h-9 min-w-0 max-w-full rounded-md border px-2 text-body outline-none",
             dashV2.border,
             dashV2.surface,
             dashV2.text.primary,
@@ -187,7 +187,7 @@ export function SimuladosDaTurma({
             data-toggle-comparacao
             onClick={() => setComparando((v) => !v)}
             aria-expanded={comparando}
-            className={cn("text-xs underline", dashV2.text.secondary)}
+            className={cn("text-caption underline", dashV2.text.secondary)}
           >
             {comparando ? "▾ " : "▸ "}
             Comparar duas aplicações

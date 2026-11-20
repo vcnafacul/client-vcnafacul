@@ -55,7 +55,7 @@ export function EvolucaoChart() {
           action={
             <Link
               to={`${DASH}/${SIMULADO}`}
-              className="text-sm font-medium text-foreground underline-offset-2 hover:underline"
+              className="text-body font-medium text-foreground underline-offset-2 hover:underline"
             >
               Fazer um simulado →
             </Link>

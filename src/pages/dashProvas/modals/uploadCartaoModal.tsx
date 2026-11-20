@@ -96,7 +96,7 @@ export default function UploadCartaoModal({
       className="w-full max-w-lg rounded-lg bg-white shadow-xl p-2"
     >
       <div className="p-6 space-y-4">
-        <h2 className="text-lg font-semibold">Enviar cartão de resposta</h2>
+        <h2 className="text-h3 font-semibold">Enviar cartão de resposta</h2>
 
         {/*
           As mesmas orientações do download do cartão: aqui é a hora da FOTO — e ainda dá
@@ -129,16 +129,16 @@ export default function UploadCartaoModal({
             */}
             {termo.trim().length > 0 &&
               termo.trim().length < MINIMO_PARA_BUSCAR && (
-                <p className="text-sm text-muted-foreground">{TEXTO_DIGITE_MAIS}</p>
+                <p className="text-body text-muted-foreground">{TEXTO_DIGITE_MAIS}</p>
               )}
             {estado === "buscando" && (
-              <p className="text-sm text-muted-foreground">{TEXTO_BUSCANDO}</p>
+              <p className="text-body text-muted-foreground">{TEXTO_BUSCANDO}</p>
             )}
             {estado === "erro" && (
-              <p className="text-sm text-destructive">{TEXTO_ERRO_BUSCA}</p>
+              <p className="text-body text-destructive">{TEXTO_ERRO_BUSCA}</p>
             )}
             {estado === "pronto" && estudantes.length === 0 && (
-              <p className="text-sm text-muted-foreground">{TEXTO_NADA_ENCONTRADO}</p>
+              <p className="text-body text-muted-foreground">{TEXTO_NADA_ENCONTRADO}</p>
             )}
 
             {estudantes.length > 0 && (
@@ -159,7 +159,7 @@ export default function UploadCartaoModal({
                         mesmo nome são caso real, e sem isso não há como saber
                         para qual dos dois o cartão vai.
                       */}
-                      <span className="block text-xs text-muted-foreground">
+                      <span className="block text-caption text-muted-foreground">
                         {e.matricula} · {e.turma ?? TEXTO_SEM_TURMA}
                       </span>
                     </button>
@@ -175,7 +175,7 @@ export default function UploadCartaoModal({
             <div className="flex items-start justify-between gap-3 rounded border p-3">
               <div>
                 <p className="font-medium">{escolhido.nome}</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-body text-muted-foreground">
                   {escolhido.matricula} · {escolhido.turma ?? TEXTO_SEM_TURMA}
                 </p>
               </div>
@@ -190,7 +190,7 @@ export default function UploadCartaoModal({
                   setEscolhido(null);
                   setTermo("");
                 }}
-                className="shrink-0 text-sm underline"
+                className="shrink-0 text-body underline"
               >
                 {TEXTO_TROCAR}
               </button>

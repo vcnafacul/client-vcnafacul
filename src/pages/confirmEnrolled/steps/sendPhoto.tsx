@@ -86,7 +86,7 @@ export default function SendPhoto({
           <h3 className="text-md font-semibold text-foreground">
             Dicas para uma boa foto:
           </h3>
-          <ul className="mt-2 list-disc list-inside text-foreground text-sm">
+          <ul className="mt-2 list-disc list-inside text-foreground text-body">
             <li>Certifique-se de que a foto esteja nítida e bem iluminada.</li>
             <li>Use um fundo neutro, como branco ou cinza claro.</li>
             <li>Evite acessórios como óculos de sol ou chapéus.</li>
@@ -95,7 +95,7 @@ export default function SendPhoto({
         </div>
 
         <div className="flex flex-col items-center w-full">
-          <h2 className="text-lg font-medium text-foreground mb-2">
+          <h2 className="text-h3 font-medium text-foreground mb-2">
             Envie sua foto para a carteirinha (proporção 3x4)
           </h2>
           <label className="w-full cursor-pointer block relative">
@@ -121,7 +121,7 @@ export default function SendPhoto({
             </div>
           )}
           {photoError && (
-            <p className="text-destructive font-semibold text-sm mt-2">{photoError}</p>
+            <p className="text-destructive font-semibold text-body mt-2">{photoError}</p>
           )}
         </div>
       </div>

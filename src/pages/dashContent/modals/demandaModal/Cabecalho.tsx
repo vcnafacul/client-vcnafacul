@@ -21,7 +21,7 @@ export function Cabecalho({ demand, papelDoCriador = "Criada por" }: Props) {
   return (
     <header className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
-        <h2 className="text-xl font-bold text-foreground break-words">
+        <h2 className="text-h2 font-bold text-foreground break-words">
           {demand.title}
         </h2>
         {temMaterial && (
@@ -36,7 +36,7 @@ export function Cabecalho({ demand, papelDoCriador = "Criada por" }: Props) {
           {status.rotulo}
         </Badge>
       </div>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-body text-muted-foreground">
         {demand.subject?.frente?.nome}
         {demand.subject?.frente?.nome && demand.subject?.name && " · "}
         {demand.subject?.name}

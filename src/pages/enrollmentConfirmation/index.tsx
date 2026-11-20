@@ -169,16 +169,16 @@ export default function EnrollmentConfirmation() {
                 />
               </svg>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+            <h1 className="text-h1 font-bold text-foreground mb-2">
               Confirmação de Matrícula
             </h1>
-            <p className="text-muted-foreground text-sm md:text-base">
+            <p className="text-muted-foreground text-body">
               Verifique o status da sua matrícula informando seus dados abaixo
             </p>
 
             {/* Indicador de verificação automática */}
             {loading && autoVerified && (
-              <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-info-muted text-foreground rounded-lg text-sm font-medium">
+              <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-info-muted text-foreground rounded-lg text-body font-medium">
                 <svg
                   className="animate-spin h-4 w-4"
                   xmlns="http://www.w3.org/2000/svg"
@@ -210,7 +210,7 @@ export default function EnrollmentConfirmation() {
             <div>
               <label
                 htmlFor="cpf"
-                className="block text-sm font-semibold text-foreground mb-2"
+                className="block text-body font-semibold text-foreground mb-2"
               >
                 CPF
               </label>
@@ -221,7 +221,7 @@ export default function EnrollmentConfirmation() {
                 onChange={handleCpfChange}
                 placeholder="000.000.000-00"
                 maxLength={14}
-                className="w-full px-4 py-3 border-2 border-border rounded-lg focus:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 outline-none transition-all text-base"
+                className="w-full px-4 py-3 border-2 border-border rounded-lg focus:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 outline-none transition-all text-body"
                 disabled={loading}
                 required
               />
@@ -231,7 +231,7 @@ export default function EnrollmentConfirmation() {
             <div>
               <label
                 htmlFor="enrollmentCode"
-                className="block text-sm font-semibold text-foreground mb-2"
+                className="block text-body font-semibold text-foreground mb-2"
               >
                 Código de Matrícula
               </label>
@@ -241,7 +241,7 @@ export default function EnrollmentConfirmation() {
                 value={enrollmentCode}
                 onChange={handleEnrollmentCodeChange}
                 placeholder="Digite o código de matrícula"
-                className="w-full px-4 py-3 border-2 border-border rounded-lg focus:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 outline-none transition-all text-base uppercase"
+                className="w-full px-4 py-3 border-2 border-border rounded-lg focus:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 outline-none transition-all text-body uppercase"
                 disabled={loading}
                 required
               />
@@ -328,7 +328,7 @@ export default function EnrollmentConfirmation() {
                   </div>
                   <div className="flex-1">
                     <h3
-                      className={`font-bold text-lg mb-2 ${
+                      className={`font-bold text-h3 mb-2 ${
                         result.isEnrolled ? "text-success" : "text-destructive"
                       }`}
                     >
@@ -337,7 +337,7 @@ export default function EnrollmentConfirmation() {
                         : "✗ Matrícula Não Encontrada"}
                     </h3>
                     <p
-                      className={`text-sm mb-4 ${
+                      className={`text-body mb-4 ${
                         result.isEnrolled ? "text-success" : "text-destructive"
                       }`}
                     >
@@ -347,7 +347,7 @@ export default function EnrollmentConfirmation() {
                     {/* Period Status */}
                     {result.periodStatus && (
                       <div
-                        className={`inline-block px-4 py-2 rounded-lg text-sm font-medium ${getPeriodStatusColor(
+                        className={`inline-block px-4 py-2 rounded-lg text-body font-medium ${getPeriodStatusColor(
                           result.periodStatus
                         )} mb-4`}
                       >
@@ -361,7 +361,7 @@ export default function EnrollmentConfirmation() {
                         <h4 className="font-semibold text-foreground mb-3">
                           Informações do Curso
                         </h4>
-                        <div className="space-y-2 text-sm">
+                        <div className="space-y-2 text-body">
                           <div className="flex items-center gap-2">
                             <svg
                               className="w-4 h-4 text-muted-foreground"
@@ -435,7 +435,7 @@ export default function EnrollmentConfirmation() {
         </div>
 
         {/* Footer Info */}
-        <div className="text-center mt-6 text-sm text-muted-foreground">
+        <div className="text-center mt-6 text-body text-muted-foreground">
           <p>
             Precisa de ajuda?{" "}
             <a

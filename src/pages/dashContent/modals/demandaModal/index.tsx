@@ -421,7 +421,7 @@ export default function DemandaModal({
         }}
         text={confirmacao?.titulo}
       >
-        <p className="text-sm text-muted-foreground">{confirmacao?.texto}</p>
+        <p className="text-body text-muted-foreground">{confirmacao?.texto}</p>
         {confirmacao?.pedeMotivo && (
           <Textarea
             aria-label="Motivo da rejeição"

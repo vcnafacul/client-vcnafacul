@@ -110,13 +110,13 @@ function CorpoDaLinhagem({
 }) {
   if (erro) {
     return (
-      <p data-linhagem-erro className="p-4 text-sm text-muted-foreground">
+      <p data-linhagem-erro className="p-4 text-body text-muted-foreground">
         Não foi possível carregar a linhagem desta questão.
       </p>
     );
   }
   if (!linhagem) {
-    return <p className="p-4 text-sm text-muted-foreground">Carregando…</p>;
+    return <p className="p-4 text-body text-muted-foreground">Carregando…</p>;
   }
 
   const { versoes, copias, origemCopia } = linhagem;
@@ -127,7 +127,7 @@ function CorpoDaLinhagem({
   */
   if (versoes.length === 0 && copias.length === 0 && !origemCopia) {
     return (
-      <p data-linhagem-vazia className="p-4 text-sm text-muted-foreground">
+      <p data-linhagem-vazia className="p-4 text-body text-muted-foreground">
         {TEXTO_SEM_LINHAGEM}
       </p>
     );
@@ -156,10 +156,10 @@ function CorpoDaLinhagem({
 
       {vista === "versoes" &&
         (versoes.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{TEXTO_SEM_VERSOES}</p>
+          <p className="text-body text-muted-foreground">{TEXTO_SEM_VERSOES}</p>
         ) : (
           <div className="flex flex-col gap-2">
-            <p data-posicao className="text-sm font-semibold text-foreground">
+            <p data-posicao className="text-body font-semibold text-foreground">
               {textoDaPosicao(posicao + 1, versoes.length)}
             </p>
             {/*
@@ -184,7 +184,7 @@ function CorpoDaLinhagem({
         <div className="flex flex-col gap-3">
           {origemCopia && (
             <div data-origem-copia className="flex flex-col gap-1">
-              <p className="text-sm font-semibold text-foreground">
+              <p className="text-body font-semibold text-foreground">
                 Esta questão é cópia de
               </p>
               <ul>
@@ -196,11 +196,11 @@ function CorpoDaLinhagem({
             </div>
           )}
           <div className="flex flex-col gap-1">
-            <p className="text-sm font-semibold text-foreground">
+            <p className="text-body font-semibold text-foreground">
               Cópias desta questão
             </p>
             {copias.length === 0 ? (
-              <p className="text-sm text-muted-foreground">{TEXTO_SEM_COPIAS}</p>
+              <p className="text-body text-muted-foreground">{TEXTO_SEM_COPIAS}</p>
             ) : (
               /*
                 ⚠️ **Um leque, não uma árvore.** A cópia de uma cópia aparece na
@@ -241,7 +241,7 @@ function BotaoDaVista({
       aria-selected={ativa}
       data-vista={dado}
       onClick={onClick}
-      className={`rounded-md border px-3 py-1 text-sm ${
+      className={`rounded-md border px-3 py-1 text-body ${
         ativa ? "bg-primary text-primary-foreground" : "bg-white text-foreground"
       }`}
     >
@@ -271,7 +271,7 @@ function LinhaDaLinhagem({
   const clicavel = !atual && !!abrirQuestao;
   const conteudo = (
     <>
-      <span className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+      <span className="flex flex-wrap items-center gap-2 text-caption text-muted-foreground">
         {rotulo && (
           <span className="font-semibold text-foreground">{rotulo}</span>
         )}
@@ -285,7 +285,7 @@ function LinhaDaLinhagem({
           </span>
         )}
       </span>
-      <span className="text-sm text-foreground">
+      <span className="text-body text-foreground">
         {item.enunciado || "(sem enunciado)"}
       </span>
     </>

@@ -57,14 +57,14 @@ export default function SortableFeatureRow({
       <div className="flex gap-3">
         <button
           type="button"
-          className="text-sm text-primary hover:underline"
+          className="text-body text-primary hover:underline"
           onClick={() => onEdit(feature)}
         >
           Editar
         </button>
         <button
           type="button"
-          className="text-sm text-destructive hover:underline"
+          className="text-body text-destructive hover:underline"
           onClick={() => onDelete(feature)}
         >
           Excluir

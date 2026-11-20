@@ -102,7 +102,7 @@ export function SimpleQuestionCard({
         <div className="absolute -top-2 -right-2 rotate-12 group-hover:rotate-0 transition-transform duration-300 z-10">
           <Badge
             variant="default"
-            className="text-base font-bold px-3 py-1 shadow-lg bg-gradient-to-r from-primary to-primary/80"
+            className="text-body font-bold px-3 py-1 shadow-lg bg-gradient-to-r from-primary to-primary/80"
           >
             {`#${provaEmFoco.numero}`}
           </Badge>
@@ -113,7 +113,7 @@ export function SimpleQuestionCard({
         <div className="flex items-start gap-3">
           {/* Ícone animado da área */}
           <div
-            className="text-3xl group-hover:scale-125 transition-transform duration-300 
+            className="text-h1 group-hover:scale-125 transition-transform duration-300 
             group-hover:rotate-12 flex-shrink-0"
           >
             {areaIcon}
@@ -121,8 +121,8 @@ export function SimpleQuestionCard({
 
           <div className="flex-1 min-w-0">
             <CardTitle
-              className="text-lg font-bold text-primary group-hover:text-primary/80
-              transition-colors line-clamp-2 leading-tight"
+              className="text-h3 font-bold text-primary group-hover:text-primary/80
+              transition-colors line-clamp-2"
             >
               {cardTitle}
             </CardTitle>
@@ -135,7 +135,7 @@ export function SimpleQuestionCard({
         {!!question.qtdAnulacoes && (
           <span
             data-testid="selo-anulada"
-            className="inline-flex items-center gap-1 rounded-full border border-destructive/40 bg-destructive-muted px-2 py-0.5 text-xs font-semibold text-destructive"
+            className="inline-flex items-center gap-1 rounded-full border border-destructive/40 bg-destructive-muted px-2 py-0.5 text-caption font-semibold text-destructive"
           >
             <XCircle className="h-3.5 w-3.5" aria-hidden />
             {seloDoBanco(question.qtdAnulacoes)}
@@ -150,10 +150,10 @@ export function SimpleQuestionCard({
             <GraduationCapIcon className="h-4 w-4 text-primary" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-muted-foreground font-medium">
+            <p className="text-caption text-muted-foreground font-medium">
               Área ENEM
             </p>
-            <p className="font-semibold text-sm truncate text-foreground">
+            <p className="font-semibold text-body truncate text-foreground">
               {question.enemArea || "Não definida"}
             </p>
           </div>
@@ -169,8 +169,8 @@ export function SimpleQuestionCard({
               <BookOpenIcon className="h-4 w-4 text-info" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-muted-foreground font-medium">Matéria</p>
-              <p className="font-semibold text-sm truncate text-foreground">
+              <p className="text-caption text-muted-foreground font-medium">Matéria</p>
+              <p className="font-semibold text-body truncate text-foreground">
                 {question.materia || "Não definida"}
               </p>
             </div>
@@ -180,7 +180,7 @@ export function SimpleQuestionCard({
         {/* Data de Atualização e Status - Footer */}
         <div
           className="flex items-center justify-between pt-2 border-t border-border/50
-          text-xs text-muted-foreground"
+          text-caption text-muted-foreground"
         >
           <div className="flex items-center gap-1.5">
             <CalendarIcon className="h-3.5 w-3.5" />
@@ -193,7 +193,7 @@ export function SimpleQuestionCard({
           {question.status !== undefined && (
             <div className="flex items-center gap-1.5">
               <StatusIndicator status={question.status} />
-              <span className="text-base">
+              <span className="text-body">
                 {getStatusEmoji(question.status)}
               </span>
             </div>

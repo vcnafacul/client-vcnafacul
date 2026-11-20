@@ -23,7 +23,7 @@ export function CursinhoCollab() {
                 className="h-11 w-11 rounded-full object-cover"
               />
             ) : (
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/[0.07] text-sm font-bold text-foreground">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/[0.07] text-body font-bold text-foreground">
                 {data.cursinho.name.substring(0, 2).toUpperCase()}
               </span>
             )}
@@ -31,19 +31,19 @@ export function CursinhoCollab() {
               <p className="truncate font-medium text-foreground">
                 {data.cursinho.name}
               </p>
-              <p className="text-xs text-muted-foreground">Colaborador ativo</p>
+              <p className="text-caption text-muted-foreground">Colaborador ativo</p>
             </div>
           </div>
           {data.frentes.length > 0 && (
             <>
-              <p className="mb-2 mt-5 text-xs font-medium text-muted-foreground">
+              <p className="mb-2 mt-5 text-caption font-medium text-muted-foreground">
                 Frentes que leciono
               </p>
               <ul className="flex flex-wrap gap-1.5">
                 {data.frentes.map((f) => (
                   <li
                     key={f.id}
-                    className="rounded-full bg-primary/[0.06] px-2.5 py-1 text-xs font-medium text-foreground"
+                    className="rounded-full bg-primary/[0.06] px-2.5 py-1 text-caption font-medium text-foreground"
                   >
                     {f.name}
                   </li>

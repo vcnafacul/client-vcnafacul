@@ -466,7 +466,7 @@ export function PartnerPrepInscriptionStepForm({
           </div>
         ))}
         {Object.keys(errors).length > 0 && (
-          <p className="text-sm text-destructive font-semibold text-end">
+          <p className="text-body text-destructive font-semibold text-end">
             Por favor, preencha todos os campos obrigatórios
           </p>
         )}

@@ -126,7 +126,7 @@ export function colunasDoRelatorio({
           <span className={cn("block font-medium", dashV2.text.primary)}>
             {l.nome}
           </span>
-          <span className={cn("block text-xs", dashV2.text.muted)}>
+          <span className={cn("block text-caption", dashV2.text.muted)}>
             {l.matricula}
             {/*
               tickets/036: quem enviou o cartão e depois cancelou ou teve a
@@ -224,7 +224,7 @@ export function colunasDoRelatorio({
             {l.cartaoCode !== undefined && (
               <span
                 data-cartao
-                className={cn("mt-0.5 block text-xs", dashV2.text.muted)}
+                className={cn("mt-0.5 block text-caption", dashV2.text.muted)}
               >
                 {l.cartaoCode}
               </span>
@@ -250,7 +250,7 @@ export function colunasDoRelatorio({
               <span
                 data-motivo
                 className={cn(
-                  "mt-0.5 block whitespace-normal text-xs",
+                  "mt-0.5 block whitespace-normal text-caption",
                   dashV2.text.secondary,
                 )}
               >
@@ -323,7 +323,7 @@ export function colunasDoRelatorio({
         const linhaDeAviso = (
           <>
             {aviso !== null && (
-              <span data-nao-lidas className="block text-xs text-warning">
+              <span data-nao-lidas className="block text-caption text-warning">
                 {aviso}
               </span>
             )}
@@ -331,7 +331,7 @@ export function colunasDoRelatorio({
               <span
                 data-divergente
                 title={TEXTO_LINHA_DIVERGENTE}
-                className="block text-xs text-warning"
+                className="block text-caption text-warning"
               >
                 desatualizada
               </span>
@@ -346,7 +346,7 @@ export function colunasDoRelatorio({
               {desvio !== null && (
                 <span
                   data-desvio
-                  className={cn("block text-xs", dashV2.text.muted)}
+                  className={cn("block text-caption", dashV2.text.muted)}
                 >
                   {desvio}
                 </span>
@@ -361,7 +361,7 @@ export function colunasDoRelatorio({
             <span className={cn("block font-medium", dashV2.text.primary)}>
               {par}
             </span>
-            <span className={cn("block text-xs", dashV2.text.muted)}>
+            <span className={cn("block text-caption", dashV2.text.muted)}>
               {percentual}
               {desvio !== null && <span data-desvio> · {desvio}</span>}
             </span>

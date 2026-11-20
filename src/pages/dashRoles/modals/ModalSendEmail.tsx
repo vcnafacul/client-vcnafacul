@@ -175,7 +175,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
         {/* Título */}
         <div className="flex items-center gap-3 mb-6">
           <MdEmail className="w-8 h-8 text-foreground" />
-          <h2 className="text-2xl font-bold text-foreground">
+          <h2 className="text-h1 font-bold text-foreground">
             Enviar Email em Massa
           </h2>
         </div>
@@ -185,7 +185,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
           <div className="space-y-2 px-0.5">
             <Label
               htmlFor="subject"
-              className="text-base font-semibold text-foreground"
+              className="text-body font-semibold text-foreground"
             >
               Assunto *
             </Label>
@@ -194,7 +194,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
               placeholder="Digite o assunto do email"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              className="text-base"
+              className="text-body"
               disabled={isSending}
             />
           </div>
@@ -203,7 +203,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
           <div className="space-y-2 px-0.5">
             <Label
               htmlFor="message"
-              className="text-base font-semibold text-foreground"
+              className="text-body font-semibold text-foreground"
             >
               Mensagem *
             </Label>
@@ -212,10 +212,10 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
               placeholder="Digite a mensagem do email..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="min-h-[150px] text-base resize-none"
+              className="min-h-[150px] text-body resize-none"
               disabled={isSending}
             />
-            <p className="text-xs text-muted-foreground">{message.length} caracteres</p>
+            <p className="text-caption text-muted-foreground">{message.length} caracteres</p>
           </div>
 
           {/* Checkbox Enviar para Todos */}
@@ -228,7 +228,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
             />
             <Label
               htmlFor="sendToAll"
-              className="text-base font-medium text-foreground cursor-pointer"
+              className="text-body font-medium text-foreground cursor-pointer"
             >
               Enviar para todos os usuários
             </Label>
@@ -240,7 +240,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
               <div className="space-y-2 p-0.5">
                 <Label
                   htmlFor="search"
-                  className="text-base font-semibold text-foreground"
+                  className="text-body font-semibold text-foreground"
                 >
                   Buscar Usuários
                 </Label>
@@ -251,14 +251,14 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
                     placeholder="Digite o nome do usuário..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 text-base"
+                    className="pl-10 text-body"
                     disabled={isSending}
                   />
                 </div>
 
                 {/* Resultados da busca */}
                 {isSearching && (
-                  <div className="text-sm text-muted-foreground p-2">Buscando...</div>
+                  <div className="text-body text-muted-foreground p-2">Buscando...</div>
                 )}
 
                 {searchResults.length > 0 && (
@@ -272,11 +272,11 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
                         <div className="font-medium text-foreground">
                           {user.name}
                         </div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-body text-muted-foreground">
                           {user.email}
                         </div>
                         {user.phone && (
-                          <div className="text-xs text-muted-foreground">
+                          <div className="text-caption text-muted-foreground">
                             {user.phone}
                           </div>
                         )}
@@ -288,7 +288,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
                 {searchTerm.trim().length >= 2 &&
                   !isSearching &&
                   searchResults.length === 0 && (
-                    <div className="text-sm text-muted-foreground p-2">
+                    <div className="text-body text-muted-foreground p-2">
                       Nenhum usuário encontrado
                     </div>
                   )}
@@ -297,14 +297,14 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
               {/* Usuários Selecionados */}
               {selectedUsers.length > 0 && (
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold text-foreground">
+                  <Label className="text-body font-semibold text-foreground">
                     Usuários Selecionados ({selectedUsers.length})
                   </Label>
                   <div className="flex flex-wrap gap-2 p-3 bg-page rounded-md border border-border max-h-40 overflow-y-auto">
                     {selectedUsers.map((user) => (
                       <div
                         key={user.id}
-                        className="flex items-center gap-2 bg-primary text-primary-foreground px-3 py-2 rounded-full text-sm font-medium shadow-sm hover:bg-primary/90 transition-colors"
+                        className="flex items-center gap-2 bg-primary text-primary-foreground px-3 py-2 rounded-full text-body font-medium shadow-sm hover:bg-primary/90 transition-colors"
                       >
                         <span>{user.name}</span>
                         <button
@@ -354,12 +354,12 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
       handleConfirm={handleConfirmSendAll}
       text="⚠️ Atenção"
     >
-      <p className="text-sm text-foreground leading-relaxed">
+      <p className="text-body text-foreground">
         Você está prestes a enviar o email{" "}
         <strong>para todos os usuários da plataforma</strong>. Esta ação não
         pode ser desfeita.
       </p>
-      <p className="text-sm text-foreground mt-2">
+      <p className="text-body text-foreground mt-2">
         Tem certeza que deseja continuar?
       </p>
     </ModalConfirmCancel>

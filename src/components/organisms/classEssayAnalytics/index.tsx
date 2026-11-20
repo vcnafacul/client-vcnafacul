@@ -179,7 +179,7 @@ export function ClassEssayAnalytics({
 
   if (loading) {
     return (
-      <p className="py-8 text-center text-sm text-muted-foreground">
+      <p className="py-8 text-center text-body text-muted-foreground">
         Carregando dados de redação da turma...
       </p>
     );
@@ -187,7 +187,7 @@ export function ClassEssayAnalytics({
 
   if (!list) {
     return (
-      <p className="py-8 text-center text-sm text-destructive">
+      <p className="py-8 text-center text-body text-destructive">
         Erro ao carregar dados de redação.
       </p>
     );
@@ -196,7 +196,7 @@ export function ClassEssayAnalytics({
   if (list.months.length === 0) {
     return (
       <section aria-labelledby="bloco-redacao">
-        <h2 id="bloco-redacao" className="text-xl font-semibold mt-8 mb-4">
+        <h2 id="bloco-redacao" className="text-h2 font-semibold mt-8 mb-4">
           Redação
         </h2>
         <EmptyState
@@ -222,7 +222,7 @@ export function ClassEssayAnalytics({
 
   return (
     <section aria-labelledby="bloco-redacao">
-      <h2 id="bloco-redacao" className="text-xl font-semibold mt-8 mb-4">
+      <h2 id="bloco-redacao" className="text-h2 font-semibold mt-8 mb-4">
         Redação
       </h2>
 
@@ -236,7 +236,7 @@ export function ClassEssayAnalytics({
         />
 
         {showSampleBanner && (
-          <div className="flex items-center gap-2 rounded-md border border-warning bg-warning-muted px-3 py-2 text-sm text-foreground">
+          <div className="flex items-center gap-2 rounded-md border border-warning bg-warning-muted px-3 py-2 text-body text-foreground">
             <AlertTriangle className="h-4 w-4 shrink-0" />
             <span>
               Amostra pequena: apenas{" "}
@@ -254,7 +254,7 @@ export function ClassEssayAnalytics({
         />
 
         {monthLoading && (
-          <p className="py-6 text-center text-sm text-muted-foreground">
+          <p className="py-6 text-center text-body text-muted-foreground">
             Carregando mês...
           </p>
         )}

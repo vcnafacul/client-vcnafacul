@@ -8,7 +8,7 @@ import { useAuthStore } from "../../../store/auth";
 const transition = "transition-all duration-300";
 
 const dashCard = tv({
-  base: `text-white font-bold text-base py-3 px-2 flex items-center relative ${transition}`,
+  base: `text-white font-bold text-body py-3 px-2 flex items-center relative ${transition}`,
   variants: {
     size: {
       big: "flex-col justify-between h-32",

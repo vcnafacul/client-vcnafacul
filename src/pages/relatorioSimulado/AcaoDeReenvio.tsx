@@ -81,7 +81,7 @@ export function AcaoDeReenvio({
       {pedeFoto && (
         <label
           className={cn(
-            "flex flex-col items-start gap-1 text-sm font-medium",
+            "flex flex-col items-start gap-1 text-body font-medium",
             dashV2.text.primary,
           )}
         >
@@ -99,7 +99,7 @@ export function AcaoDeReenvio({
               e.target.value = "";
               if (file) void enviar(file);
             }}
-            className={cn("text-sm font-normal", dashV2.text.secondary)}
+            className={cn("text-body font-normal", dashV2.text.secondary)}
           />
         </label>
       )}
@@ -110,7 +110,7 @@ export function AcaoDeReenvio({
           disabled={enviando}
           onClick={() => void enviar()}
           className={cn(
-            "rounded-sm text-sm font-medium underline-offset-2 hover:underline disabled:no-underline disabled:opacity-60",
+            "rounded-sm text-body font-medium underline-offset-2 hover:underline disabled:no-underline disabled:opacity-60",
             dashV2.text.primary,
             dashV2.focus,
           )}
@@ -120,11 +120,11 @@ export function AcaoDeReenvio({
       )}
 
       {pedeFoto && enviando && (
-        <p className={cn("text-sm", dashV2.text.secondary)}>{TEXTO_ENVIANDO}</p>
+        <p className={cn("text-body", dashV2.text.secondary)}>{TEXTO_ENVIANDO}</p>
       )}
 
       {erro && (
-        <p className={cn("text-sm", dashV2.text.secondary)} role="alert">
+        <p className={cn("text-body", dashV2.text.secondary)} role="alert">
           {erro}
         </p>
       )}

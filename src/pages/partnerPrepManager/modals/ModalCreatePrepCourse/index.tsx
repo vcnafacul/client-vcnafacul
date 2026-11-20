@@ -277,7 +277,7 @@ export const ModalCreatePrepCourse = ({
           {/* Campo Geolocalização com busca */}
           <div className="relative">
             <label
-              className="absolute p-0 top-1.5 left-2 text-xs text-muted-foreground font-semibold"
+              className="absolute p-0 top-1.5 left-2 text-caption text-muted-foreground font-semibold"
               htmlFor="geo"
             >
               Geolocalização
@@ -289,7 +289,7 @@ export const ModalCreatePrepCourse = ({
               autoComplete="off"
               value={geoName}
               onChange={handleGeoChange}
-              className="h-16 pt-4 w-full px-3 py-1 text-sm border border-border rounded-md bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
+              className="h-16 pt-4 w-full px-3 py-1 text-body border border-border rounded-md bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
               placeholder="Digite o nome da geolocalização..."
             />
 
@@ -302,7 +302,7 @@ export const ModalCreatePrepCourse = ({
                     className="px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
                     onClick={() => selectGeo(geo)}
                   >
-                    <div className="font-medium text-sm text-foreground">
+                    <div className="font-medium text-body text-foreground">
                       {geo.name}
                     </div>
                   </div>
@@ -324,7 +324,7 @@ export const ModalCreatePrepCourse = ({
           {/* Campo Coordenador com busca */}
           <div className="relative">
             <label
-              className="absolute p-0 top-1.5 left-2 text-xs text-muted-foreground font-semibold"
+              className="absolute p-0 top-1.5 left-2 text-caption text-muted-foreground font-semibold"
               htmlFor="coordinator"
             >
               Coordenador
@@ -336,7 +336,7 @@ export const ModalCreatePrepCourse = ({
               autoComplete="off"
               value={formData.coordinator}
               onChange={handleCoordinatorChange}
-              className="h-16 pt-4 w-full px-3 py-1 text-sm border border-border rounded-md bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
+              className="h-16 pt-4 w-full px-3 py-1 text-body border border-border rounded-md bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
               placeholder="Digite o nome do coordenador..."
             />
 
@@ -349,10 +349,10 @@ export const ModalCreatePrepCourse = ({
                     className="px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
                     onClick={() => selectUser(user)}
                   >
-                    <div className="font-medium text-sm text-foreground">
+                    <div className="font-medium text-body text-foreground">
                       {user.name}
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-caption text-muted-foreground">
                       {user.email} • {user.phone}
                     </div>
                   </div>

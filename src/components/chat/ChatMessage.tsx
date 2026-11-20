@@ -18,12 +18,12 @@ export function ChatMessage({ message, isOwn }: Props) {
         isOwn ? "self-end items-end" : "self-start items-start",
       )}
     >
-      <span className="text-[11px] text-muted-foreground font-medium">
+      <span className="text-caption text-muted-foreground font-medium">
         {message.senderName}
       </span>
       <div
         className={cn(
-          "rounded-2xl px-3 py-2 text-sm whitespace-pre-wrap break-words shadow-sm",
+          "rounded-2xl px-3 py-2 text-body whitespace-pre-wrap break-words shadow-sm",
           isOwn
             ? "bg-primary text-primary-foreground rounded-br-sm"
             : "bg-page text-muted-foreground border border-border rounded-bl-sm",
@@ -31,7 +31,7 @@ export function ChatMessage({ message, isOwn }: Props) {
       >
         {message.content}
       </div>
-      <span className="text-[10px] text-muted-foreground mt-0.5">{time}</span>
+      <span className="text-caption text-muted-foreground mt-0.5">{time}</span>
     </div>
   );
 }

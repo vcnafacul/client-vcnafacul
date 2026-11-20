@@ -81,7 +81,7 @@ function SecaoCard({
           <Chip label="Global" size="small" color="info" />
         )}
       </div>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-caption text-muted-foreground">
         {total} {total === 1 ? "questão" : "questões"} · {ativas} ativas ·
         atualizada em {formatDate(section.updatedAt.toString(), "dd/MM/yyyy")}
       </p>
@@ -92,7 +92,7 @@ function SecaoCard({
             type="button"
             onClick={() => setAberto(!aberto)}
             aria-expanded={aberto}
-            className="flex items-center gap-1 h-10 text-sm font-medium text-foreground"
+            className="flex items-center gap-1 h-10 text-body font-medium text-foreground"
           >
             <FiChevronDown
               className={`w-5 h-5 transition-transform ${aberto ? "rotate-180" : ""}`}
@@ -100,10 +100,10 @@ function SecaoCard({
             Ver questões
           </button>
         ) : (
-          <span className="text-sm text-muted-foreground">Sem questões</span>
+          <span className="text-body text-muted-foreground">Sem questões</span>
         )}
         {section.isGlobal ? (
-          <span className="text-xs text-muted-foreground">Somente leitura</span>
+          <span className="text-caption text-muted-foreground">Somente leitura</span>
         ) : (
           <ActionMenu
             tamanho="medium"

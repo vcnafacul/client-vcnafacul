@@ -102,7 +102,7 @@ export function RichTextEditor({
         )}
         {mode === "markdown" && (
           <div className="flex-1 px-2 py-1.5">
-            <span className="text-xs font-medium text-muted-foreground">
+            <span className="text-caption font-medium text-muted-foreground">
               Modo Markdown
             </span>
           </div>
@@ -142,7 +142,7 @@ export function RichTextEditor({
           value={rawMarkdown}
           onChange={handleRawChange}
           placeholder={placeholder || "Digite markdown aqui..."}
-          className="w-full px-3 py-2 font-mono text-sm resize-y outline-none bg-white"
+          className="w-full px-3 py-2 font-mono text-body resize-y outline-none bg-white"
           style={{ minHeight: resolvedMinHeight }}
         />
       )}

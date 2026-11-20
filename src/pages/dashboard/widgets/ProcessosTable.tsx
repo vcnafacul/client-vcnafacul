@@ -41,8 +41,8 @@ export function ProcessosTable() {
         <EmptyState>Nenhum processo seletivo aberto no momento.</EmptyState>
       ) : (
         <div className="-mx-5 max-h-[340px] overflow-y-auto sm:-mx-6">
-          <table className="w-full text-sm">
-            <thead className="sticky top-0 bg-page text-left text-xs uppercase tracking-wide text-muted-foreground">
+          <table className="w-full text-body">
+            <thead className="sticky top-0 bg-page text-left text-caption uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th className="px-5 py-2.5 font-medium sm:px-6">Cursinho</th>
                 <th className="hidden px-3 py-2.5 font-medium md:table-cell">
@@ -73,7 +73,7 @@ export function ProcessosTable() {
                             className="h-9 w-9 shrink-0 rounded-full object-cover"
                           />
                         ) : (
-                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/[0.07] text-xs font-bold text-foreground">
+                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/[0.07] text-caption font-bold text-foreground">
                             {item.cursinho.name.charAt(0)}
                           </span>
                         )}
@@ -81,7 +81,7 @@ export function ProcessosTable() {
                           <span className="block truncate font-medium text-foreground group-hover:underline">
                             {item.cursinho.name}
                           </span>
-                          <span className="block truncate text-xs text-muted-foreground md:hidden">
+                          <span className="block truncate text-caption text-muted-foreground md:hidden">
                             {item.name}
                           </span>
                         </span>
@@ -94,7 +94,7 @@ export function ProcessosTable() {
                       {status === null ? (
                         <span className="text-muted-foreground">-</span>
                       ) : (
-                        <span className="inline-block whitespace-nowrap rounded-full bg-primary/[0.07] px-2 py-0.5 text-xs font-medium text-foreground">
+                        <span className="inline-block whitespace-nowrap rounded-full bg-primary/[0.07] px-2 py-0.5 text-caption font-medium text-foreground">
                           {statusLabel(status)}
                         </span>
                       )}
@@ -106,8 +106,8 @@ export function ProcessosTable() {
                       <span
                         className={
                           urgent
-                            ? 'text-xs font-semibold text-warning'
-                            : 'text-xs text-muted-foreground'
+                            ? 'text-caption font-semibold text-warning'
+                            : 'text-caption text-muted-foreground'
                         }
                       >
                         {left <= 0

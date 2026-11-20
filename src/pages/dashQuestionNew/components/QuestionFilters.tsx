@@ -121,9 +121,9 @@ export function QuestionFilters({
       <CardContent className="pt-6">
         <div className="flex items-center gap-2 mb-4">
           <Filter className="h-5 w-5 text-primary" />
-          <h3 className="text-lg font-semibold">Filtros de Busca</h3>
+          <h3 className="text-h3 font-semibold">Filtros de Busca</h3>
           {hasActiveFilters && (
-            <span className="text-sm text-muted-foreground">
+            <span className="text-body text-muted-foreground">
               (Filtros ativos)
             </span>
           )}
@@ -232,7 +232,7 @@ export function QuestionFilters({
                 {/* tickets/043, card 07: system → cursinho → meu cursinho */}
                 {opcoes.gruposDeCategorias.map((g) => (
                   <SelectGroup key={g.grupo}>
-                    <SelectLabel className="text-xs text-muted-foreground">{g.titulo}</SelectLabel>
+                    <SelectLabel className="text-caption text-muted-foreground">{g.titulo}</SelectLabel>
                     {g.itens.map((c) => (
                       <SelectItem key={c._id} value={c._id}>
                         {c.nome}
@@ -376,7 +376,7 @@ export function QuestionFilters({
             />
           </div>
           <div className="flex items-end">
-            <label className="flex h-9 cursor-pointer items-center gap-2 text-sm">
+            <label className="flex h-9 cursor-pointer items-center gap-2 text-body">
               <Checkbox
                 id="semImagem"
                 checked={filters.semImagem}

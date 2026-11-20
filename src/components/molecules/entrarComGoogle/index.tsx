@@ -12,7 +12,7 @@ function EntrarComGoogle({ label, voltar, convite }: Props) {
     <div className="mx-auto my-6 flex w-full max-w-[500px] flex-col gap-4 px-4">
       <div className="flex items-center gap-4" aria-hidden="true">
         <hr className="flex-1 border-input/30" />
-        <span className="text-sm text-muted-foreground">ou</span>
+        <span className="text-body text-muted-foreground">ou</span>
         <hr className="flex-1 border-input/30" />
       </div>
       <GoogleAuthButton label={label} voltar={voltar} convite={convite} />

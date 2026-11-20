@@ -158,7 +158,7 @@ function ModalNewRole({
           <Text size="secondary" className="font-bold text-foreground">
             Novo Perfil
           </Text>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <p className="text-body text-muted-foreground mt-0.5">
             Defina o nome e as permissões do novo perfil.
           </p>
         </div>
@@ -166,7 +166,7 @@ function ModalNewRole({
         {/* Name + base toggle */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-7">
           <label className="flex flex-col gap-1 flex-1">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
               Nome do perfil
             </span>
             <Filter
@@ -177,7 +177,7 @@ function ModalNewRole({
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
               Perfil Base
             </span>
             <div className="flex items-center gap-3 h-full py-2">
@@ -186,7 +186,7 @@ function ModalNewRole({
                 checked={newRole.base}
                 handleCheck={handleBaseToggle}
               />
-              <span className="text-sm font-medium text-foreground">
+              <span className="text-body font-medium text-foreground">
                 {newRole.base ? "Ativo" : "Inativo"}
               </span>
             </div>
@@ -194,7 +194,7 @@ function ModalNewRole({
         </div>
 
         {newRole.base && (
-          <p className="text-xs text-warning bg-warning-muted border border-warning/30 rounded-lg px-3 py-2">
+          <p className="text-caption text-warning bg-warning-muted border border-warning/30 rounded-lg px-3 py-2">
             Perfis base só podem ter permissões do projeto. Permissões do
             cursinho e "Alterar Permissão" são desativadas automaticamente.
           </p>

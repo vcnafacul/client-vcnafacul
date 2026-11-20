@@ -25,7 +25,7 @@ export function AbaConteudo({
 }: Props) {
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-sm whitespace-pre-wrap break-words">
+      <p className="text-body whitespace-pre-wrap break-words">
         {demand.description}
       </p>
 
@@ -34,10 +34,10 @@ export function AbaConteudo({
           role="note"
           className="rounded-lg border border-destructive/30 bg-destructive-muted p-3"
         >
-          <p className="text-sm font-black text-destructive">
+          <p className="text-body font-black text-destructive">
             Motivo da rejeição:
           </p>
-          <p className="text-sm text-destructive whitespace-pre-wrap break-words">
+          <p className="text-body text-destructive whitespace-pre-wrap break-words">
             {demand.rejectionReason}
           </p>
         </div>
@@ -69,7 +69,7 @@ export function AbaConteudo({
           )}
         </div>
       ) : (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           Esta demanda ainda não tem material enviado.
         </p>
       )}

@@ -8,10 +8,10 @@ export function PartnerPrepInscriptionStepSucess() {
       <CheckCircle className="w-16 h-16 text-success drop-shadow-md" />
 
       <div>
-        <h2 className="text-2xl font-semibold text-foreground">
+        <h2 className="text-h1 font-semibold text-foreground">
           Inscrição confirmada!
         </h2>
-        <p className="text-sm text-muted-foreground mt-2 max-w-md">
+        <p className="text-body text-muted-foreground mt-2 max-w-md">
           Recebemos sua inscrição no processo seletivo! Obrigado por se
           inscrever 😊 Agora é só aguardar: o cursinho vai analisar todas as
           inscrições e entraremos em contato com o resultado e os próximos
@@ -19,7 +19,7 @@ export function PartnerPrepInscriptionStepSucess() {
         </p>
       </div>
 
-      <BLink to={HOME_PATH} className="mt-4 text-base">
+      <BLink to={HOME_PATH} className="mt-4 text-body">
         Ir para a Página Inicial
       </BLink>
     </div>

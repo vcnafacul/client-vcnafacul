@@ -50,7 +50,7 @@ export function ModalNaoEncontrei({ aberto, onFechar, termo }: Props) {
           </DialogDescription>
         </DialogHeader>
         {t && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body text-muted-foreground">
             Você buscou por: <strong>"{t}"</strong>
           </p>
         )}

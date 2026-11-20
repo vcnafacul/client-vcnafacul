@@ -202,7 +202,7 @@ function AnalyticsPrepCourse({
             />
           </Grid>
         </Grid>
-        <p className="text-xs text-muted-foreground mt-2">
+        <p className="text-caption text-muted-foreground mt-2">
           Totais sem processos seletivos de teste. Entre parênteses, o total
           incluindo testes.
         </p>

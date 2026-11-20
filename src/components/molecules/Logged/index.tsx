@@ -34,9 +34,9 @@ function Logged({ userName, userNavigation, className }: LoggedProps) {
   return (
     <DropdwonMenu
       userNavigation={instalavel ? comInstalarApp(userNavigation) : userNavigation}
-      className={`${className} flex items-center font-bold text-lg`}
+      className={`${className} flex items-center font-bold text-h3`}
     >
-      <div className={`${className} flex items-center font-bold text-lg`}>
+      <div className={`${className} flex items-center font-bold text-h3`}>
           <div className="">{userName}</div>
         <Avatar />
       </div>

@@ -33,9 +33,9 @@ export function Panel({
     >
       <header className="mb-4 flex flex-col items-start gap-3 sm:flex-row sm:justify-between sm:gap-4">
         <div className="min-w-0">
-          <h2 className="text-base font-semibold text-foreground">{title}</h2>
+          <h2 className="text-body font-semibold text-foreground">{title}</h2>
           {subtitle && (
-            <p className="mt-0.5 text-sm text-muted-foreground">{subtitle}</p>
+            <p className="mt-0.5 text-body text-muted-foreground">{subtitle}</p>
           )}
         </div>
         {action && <div className="shrink-0">{action}</div>}
@@ -57,11 +57,11 @@ export function Panel({
 export function PanelError({ retry }: { retry?: () => void }) {
   return (
     <div className="flex flex-col items-center gap-2 py-6 text-center">
-      <p className="text-sm text-muted-foreground">Não foi possível carregar.</p>
+      <p className="text-body text-muted-foreground">Não foi possível carregar.</p>
       {retry && (
         <button
           onClick={retry}
-          className="text-sm font-medium text-foreground underline-offset-2 hover:underline"
+          className="text-body font-medium text-foreground underline-offset-2 hover:underline"
         >
           Tentar novamente
         </button>
@@ -79,7 +79,7 @@ export function EmptyState({
 }) {
   return (
     <div className="flex h-full min-h-[120px] flex-col items-center justify-center gap-2 py-6 text-center">
-      <p className="max-w-xs text-sm text-muted-foreground">{children}</p>
+      <p className="max-w-xs text-body text-muted-foreground">{children}</p>
       {action}
     </div>
   );

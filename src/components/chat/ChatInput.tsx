@@ -54,7 +54,7 @@ export function ChatInput({ conversationId, status }: Props) {
 
   if (status === "closed") {
     return (
-      <div className="border-t bg-page/50 px-4 py-3 text-center text-xs text-muted-foreground">
+      <div className="border-t bg-page/50 px-4 py-3 text-center text-caption text-muted-foreground">
         Conversa encerrada
       </div>
     );
@@ -79,11 +79,11 @@ export function ChatInput({ conversationId, status }: Props) {
           }}
           disabled={sending}
           rows={1}
-          className="chat-scrollbar w-full resize-none overflow-y-auto rounded-md border border-border bg-page/50 px-3 py-2 text-sm text-muted-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary disabled:opacity-60 transition"
+          className="chat-scrollbar w-full resize-none overflow-y-auto rounded-md border border-border bg-page/50 px-3 py-2 text-body text-muted-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary disabled:opacity-60 transition"
         />
         <span
           className={cn(
-            "text-[10px] block text-right mt-0.5",
+            "text-caption block text-right mt-0.5",
             nearLimit ? "text-warning font-semibold" : "text-muted-foreground",
           )}
         >

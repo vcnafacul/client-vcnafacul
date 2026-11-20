@@ -25,7 +25,7 @@ export function SelectOption({
       <div className="relative group">
         <TiArrowSortedDown className="absolute select-none right-1 top-0 w-10 h-10 fill-primary" />
         <select
-          className="remove-arrow w-full h-full text-lg font-black text-foreground pl-4 pr-10 py-1 rounded-xl shadow-md z-50"
+          className="remove-arrow w-full h-full text-h3 font-black text-foreground pl-4 pr-10 py-1 rounded-xl shadow-md z-50"
           disabled={disabled ?? false}
           defaultValue={defaultValue?.id}
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {

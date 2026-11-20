@@ -42,7 +42,7 @@ export function KpiHeader({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-semibold">{list.className}</h2>
+          <h2 className="text-h3 font-semibold">{list.className}</h2>
           {!isActive && <Badge variant="secondary">Turma arquivada</Badge>}
         </div>
         {isActive && (
@@ -63,7 +63,7 @@ export function KpiHeader({
               </Button>
             )}
             {(refreshing || lastUpdatedAt) && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-caption text-muted-foreground">
                 {refreshing
                   ? "Processando em segundo plano..."
                   : `Atualizado em ${lastUpdatedAt}`}
@@ -72,34 +72,34 @@ export function KpiHeader({
           </div>
         )}
       </div>
-      <p className="text-sm text-muted-foreground">Período letivo: {start} – {end}</p>
+      <p className="text-body text-muted-foreground">Período letivo: {start} – {end}</p>
       {monthData && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Card>
             <CardContent className="pt-4">
-              <p className="text-xs text-muted-foreground">Aproveitamento geral</p>
-              <p className="text-2xl font-bold">{formatPercent(monthData.geral)}%</p>
+              <p className="text-caption text-muted-foreground">Aproveitamento geral</p>
+              <p className="text-h1 font-bold">{formatPercent(monthData.geral)}%</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-4">
-              <p className="text-xs text-muted-foreground">Engajados</p>
-              <p className="text-2xl font-bold">
+              <p className="text-caption text-muted-foreground">Engajados</p>
+              <p className="text-h1 font-bold">
                 {monthData.studentsWithAtLeastOneCompletedAttempt}
-                <span className="text-sm font-normal text-muted-foreground">/{list.totalStudents}</span>
+                <span className="text-body font-normal text-muted-foreground">/{list.totalStudents}</span>
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-4">
-              <p className="text-xs text-muted-foreground">Tentativas completas</p>
-              <p className="text-2xl font-bold">{monthData.totalAttemptsCompleted}</p>
+              <p className="text-caption text-muted-foreground">Tentativas completas</p>
+              <p className="text-h1 font-bold">{monthData.totalAttemptsCompleted}</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-4">
-              <p className="text-xs text-muted-foreground">Total tentativas</p>
-              <p className="text-2xl font-bold">{monthData.totalAttempts}</p>
+              <p className="text-caption text-muted-foreground">Total tentativas</p>
+              <p className="text-h1 font-bold">{monthData.totalAttempts}</p>
             </CardContent>
           </Card>
         </div>

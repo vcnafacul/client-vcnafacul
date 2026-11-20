@@ -31,13 +31,13 @@ export function DashTableErro({ onRetry }: { onRetry?: () => void }) {
       data-testid="dash-table-erro"
       className="flex flex-col items-center gap-2 px-4 py-8 text-center"
     >
-      <p className={cn("text-sm", dashV2.text.secondary)}>{TEXTO_ERRO}</p>
+      <p className={cn("text-body", dashV2.text.secondary)}>{TEXTO_ERRO}</p>
       {onRetry ? (
         <button
           type="button"
           onClick={onRetry}
           className={cn(
-            "rounded-sm text-sm font-medium underline-offset-2 hover:underline",
+            "rounded-sm text-body font-medium underline-offset-2 hover:underline",
             dashV2.text.primary,
             dashV2.focus,
           )}
@@ -63,8 +63,8 @@ export function DashTableVazio() {
       className="flex flex-col items-center gap-2 px-4 py-10 text-center"
     >
       <Inbox aria-hidden="true" className={cn("h-8 w-8", dashV2.text.muted)} />
-      <p className={cn("text-sm font-medium", dashV2.text.primary)}>{TEXTO_VAZIO}</p>
-      <p className={cn("text-xs", dashV2.text.secondary)}>{DICA_VAZIO}</p>
+      <p className={cn("text-body font-medium", dashV2.text.primary)}>{TEXTO_VAZIO}</p>
+      <p className={cn("text-caption", dashV2.text.secondary)}>{DICA_VAZIO}</p>
     </div>
   );
 }

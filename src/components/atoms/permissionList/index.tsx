@@ -33,7 +33,7 @@ export function PermissionsList({
               handleCheck={handleToggleChange}
               disabled={disabled}
             />
-            <span className="text-base font-medium text-foreground">
+            <span className="text-body font-medium text-foreground">
               {role.label}
             </span>
           </div>

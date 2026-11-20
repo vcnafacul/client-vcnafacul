@@ -65,7 +65,7 @@ export function AdvancedExample() {
       >
         {isDownloading ? "Baixando..." : "Download Foto"}
       </button>
-      {error && <p className="text-destructive text-sm mt-2">{error}</p>}
+      {error && <p className="text-destructive text-body mt-2">{error}</p>}
     </div>
   );
 }

@@ -26,14 +26,14 @@ export default function DevVitrine() {
     <div className="min-h-dvh bg-muted">
       <nav
         data-vitrine-barra
-        className="sticky top-0 z-0 flex flex-wrap items-center gap-2 border-b bg-white px-4 py-2 text-sm"
+        className="sticky top-0 z-0 flex flex-wrap items-center gap-2 border-b bg-white px-4 py-2 text-body"
       >
         <Link to={DEV_VITRINE} className="font-bold text-foreground">
           Vitrine
         </Link>
         <span className="text-muted-foreground">/</span>
         <span className="font-semibold">{vitrine.titulo}</span>
-        <code className="hidden text-xs text-muted-foreground sm:inline">{vitrine.arquivo}</code>
+        <code className="hidden text-caption text-muted-foreground sm:inline">{vitrine.arquivo}</code>
         <span className="flex-1" />
         {vitrine.estados.map((e) => (
           <Link
@@ -77,16 +77,16 @@ function Bancada({ estado }: { estado: EstadoDaVitrine }) {
 function Indice() {
   return (
     <div className="mx-auto max-w-2xl p-6">
-      <h1 className="mb-1 text-2xl font-bold text-foreground">Vitrine de componentes</h1>
-      <p className="mb-6 text-sm text-muted-foreground">
+      <h1 className="mb-1 text-h1 font-bold text-foreground">Vitrine de componentes</h1>
+      <p className="mb-6 text-body text-muted-foreground">
         Só em dev. Cada estado monta o componente real com respostas falsas da api.
       </p>
       <ul className="flex flex-col gap-4">
         {vitrines.map((v) => (
           <li key={v.slug} className="rounded-md border bg-white p-4">
             <p className="font-semibold">{v.titulo}</p>
-            <code className="text-xs text-muted-foreground">{v.arquivo}</code>
-            <div className="mt-2 flex flex-wrap gap-2 text-sm">
+            <code className="text-caption text-muted-foreground">{v.arquivo}</code>
+            <div className="mt-2 flex flex-wrap gap-2 text-body">
               {v.estados.map((e) => (
                 <Link
                   key={e.slug}

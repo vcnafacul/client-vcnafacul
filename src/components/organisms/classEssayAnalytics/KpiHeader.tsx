@@ -62,7 +62,7 @@ export function KpiHeader({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-semibold">{list.className}</h2>
+          <h2 className="text-h3 font-semibold">{list.className}</h2>
           {!isActive && <Badge variant="secondary">Turma arquivada</Badge>}
         </div>
         {isActive && (
@@ -83,7 +83,7 @@ export function KpiHeader({
               </Button>
             )}
             {(refreshing || lastUpdatedAt) && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-caption text-muted-foreground">
                 {refreshing
                   ? "Processando em segundo plano..."
                   : `Atualizado em ${lastUpdatedAt}`}
@@ -92,51 +92,51 @@ export function KpiHeader({
           </div>
         )}
       </div>
-      <p className="text-sm text-muted-foreground">Período letivo: {start} – {end}</p>
+      <p className="text-body text-muted-foreground">Período letivo: {start} – {end}</p>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <Card>
           <CardContent className="pt-4">
-            <p className="text-xs text-muted-foreground">Nota geral</p>
-            <p className={`text-2xl font-bold ${notaColor}`}>
+            <p className="text-caption text-muted-foreground">Nota geral</p>
+            <p className={`text-h1 font-bold ${notaColor}`}>
               {geral !== null ? `${geral}` : "—"}
-              <span className="text-sm font-normal text-muted-foreground"> / 1000</span>
+              <span className="text-body font-normal text-muted-foreground"> / 1000</span>
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <p className="text-xs text-muted-foreground">Participantes</p>
-            <p className="text-2xl font-bold">
+            <p className="text-caption text-muted-foreground">Participantes</p>
+            <p className="text-h1 font-bold">
               {studentsSubmitted !== null ? studentsSubmitted : "—"}
-              <span className="text-sm font-normal text-muted-foreground">
+              <span className="text-body font-normal text-muted-foreground">
                 /{list.totalStudents}
               </span>
             </p>
-            <p className="text-xs text-muted-foreground mt-1">Entregaram redação</p>
+            <p className="text-caption text-muted-foreground mt-1">Entregaram redação</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <p className="text-xs text-muted-foreground">Alunos engajados</p>
-            <p className="text-2xl font-bold">
+            <p className="text-caption text-muted-foreground">Alunos engajados</p>
+            <p className="text-h1 font-bold">
               {studentsWithReview !== null ? studentsWithReview : "—"}
-              <span className="text-sm font-normal text-muted-foreground">/{list.totalStudents}</span>
+              <span className="text-body font-normal text-muted-foreground">/{list.totalStudents}</span>
             </p>
-            <p className="text-xs text-muted-foreground mt-1">Receberam revisão humana</p>
+            <p className="text-caption text-muted-foreground mt-1">Receberam revisão humana</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <p className="text-xs text-muted-foreground">Redações revisadas</p>
-            <p className="text-2xl font-bold">{essaysReviewed}</p>
-            <p className="text-xs text-muted-foreground mt-1">Total entregues: {essaysSubmitted}</p>
+            <p className="text-caption text-muted-foreground">Redações revisadas</p>
+            <p className="text-h1 font-bold">{essaysReviewed}</p>
+            <p className="text-caption text-muted-foreground mt-1">Total entregues: {essaysSubmitted}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <p className="text-xs text-muted-foreground">Cobertura humana</p>
+            <p className="text-caption text-muted-foreground">Cobertura humana</p>
             <div className="flex items-center gap-2 mt-1">
-              <p className="text-2xl font-bold">{coveragePct}%</p>
+              <p className="text-h1 font-bold">{coveragePct}%</p>
               {coverageLow && (
                 <Badge className="bg-warning-muted text-warning hover:bg-warning-muted border-warning">
                   Cobertura baixa

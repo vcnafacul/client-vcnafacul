@@ -120,7 +120,7 @@ export function BarraDeDistribuicao({
         a correta importa mais.
       */}
       {correta !== undefined && (
-        <span className="shrink-0 whitespace-nowrap text-xs font-semibold">
+        <span className="shrink-0 whitespace-nowrap text-caption font-semibold">
           {correta.rotulo} ✓
         </span>
       )}

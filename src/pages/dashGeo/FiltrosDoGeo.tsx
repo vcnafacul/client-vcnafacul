@@ -23,7 +23,7 @@ interface Props {
 const ESPERA_DO_TEXTO = 400;
 
 const campo = cn(
-  "h-9 w-full rounded-md border px-2 text-sm",
+  "h-9 w-full rounded-md border px-2 text-body",
   dashV2.border,
   dashV2.surface,
   dashV2.text.primary,
@@ -34,7 +34,7 @@ function Rotulo({ htmlFor, children }: { htmlFor?: string; children: string }) {
   return (
     <label
       htmlFor={htmlFor}
-      className={cn("text-xs font-medium", dashV2.text.secondary)}
+      className={cn("text-caption font-medium", dashV2.text.secondary)}
     >
       {children}
     </label>
@@ -121,7 +121,7 @@ export function FiltrosDoGeo({ valor, onChange }: Props) {
         aria-expanded={aberto}
         onClick={() => setAberto(!aberto)}
         className={cn(
-          "h-9 rounded-md border px-3 text-sm sm:hidden",
+          "h-9 rounded-md border px-3 text-body sm:hidden",
           dashV2.border,
           dashV2.text.primary,
           dashV2.focus,
@@ -211,7 +211,7 @@ export function FiltrosDoGeo({ valor, onChange }: Props) {
         />
         <fieldset className="flex flex-col gap-1 sm:col-span-2 md:col-span-4">
           <legend
-            className={cn("mb-1 text-xs font-medium", dashV2.text.secondary)}
+            className={cn("mb-1 text-caption font-medium", dashV2.text.secondary)}
           >
             Revisões necessárias (qualquer uma)
           </legend>
@@ -220,7 +220,7 @@ export function FiltrosDoGeo({ valor, onChange }: Props) {
               <label
                 key={r.campo}
                 className={cn(
-                  "flex items-center gap-2 text-sm",
+                  "flex items-center gap-2 text-body",
                   dashV2.text.primary,
                 )}
               >

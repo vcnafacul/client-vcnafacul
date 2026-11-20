@@ -79,7 +79,7 @@ export function SimulationHistories() {
       <div className="mb-6">
         <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
           <div className="min-w-0">
-            <h1 className="text-2xl sm:text-3xl font-bold text-primary">
+            <h1 className="text-h1 font-bold text-primary">
               Histórico de Simulados
             </h1>
             <p className="text-muted-foreground mt-1">
@@ -108,7 +108,7 @@ export function SimulationHistories() {
 
       {/* Informações e Paginação */}
       <div className="flex justify-between items-center mb-4">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           {isLoading ? (
             "Carregando..."
           ) : (
@@ -138,7 +138,7 @@ export function SimulationHistories() {
         </div>
       ) : historical.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-lg text-muted-foreground">
+          <p className="text-h3 text-muted-foreground">
             Nenhum simulado encontrado
           </p>
         </div>

@@ -36,10 +36,10 @@ export function PartnerPrepInscriptionStep0({
     <div className="flex flex-col gap-4">
       <div className="w-full p-3 md:p-4 bg-info-muted border-l-4 border-info rounded-md my-4">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
-          <h3 className="font-semibold text-foreground text-base md:text-lg">
+          <h3 className="font-semibold text-foreground text-h3">
             {inscription.name}
           </h3>
-          <div className="flex flex-wrap items-center gap-1 md:gap-2 text-foreground text-xs md:text-sm font-medium bg-muted p-2 rounded-md w-fit">
+          <div className="flex flex-wrap items-center gap-1 md:gap-2 text-foreground text-caption font-medium bg-muted p-2 rounded-md w-fit">
             <span>📅 Inscrições:</span>
             <span className="font-semibold whitespace-nowrap">
               {format(inscription.startDate, "dd/MM/yyyy")}
@@ -51,13 +51,13 @@ export function PartnerPrepInscriptionStep0({
           </div>
         </div>
 
-        <p className="mt-2 text-foreground text-xs md:text-sm font-medium">
+        <p className="mt-2 text-foreground text-caption font-medium">
           {inscription.description}
         </p>
       </div>
 
       {description.map((text, index) => (
-        <p key={index} className="text-base text-justify">
+        <p key={index} className="text-prose text-justify">
           {text}
         </p>
       ))}
@@ -70,7 +70,7 @@ export function PartnerPrepInscriptionStep0({
           onChange={(e) => setAccepted(e.target.checked)}
           className="mt-1"
         />
-        <label htmlFor="accept" className="text-sm text-foreground">
+        <label htmlFor="accept" className="text-body text-foreground">
           Li e aceito o{" "}
           <button
             type="button"

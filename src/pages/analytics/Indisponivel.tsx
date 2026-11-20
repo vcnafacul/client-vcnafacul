@@ -4,7 +4,7 @@ export function Indisponivel({ altura = 320 }: { altura?: number }) {
     <div
       role="status"
       style={{ minHeight: altura }}
-      className="flex items-center justify-center rounded border border-dashed border-border bg-white p-4 text-sm text-muted-foreground"
+      className="flex items-center justify-center rounded border border-dashed border-border bg-white p-4 text-body text-muted-foreground"
     >
       Indisponível agora. Tente de novo em alguns minutos.
     </div>

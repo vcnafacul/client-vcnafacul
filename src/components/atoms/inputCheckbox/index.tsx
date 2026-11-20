@@ -86,7 +86,7 @@ export function InputCheckBox({
           />
           <div className="flex-1">
             <label
-              className="text-sm text-muted-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70 select-none cursor-pointer break-words"
+              className="text-body text-muted-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70 select-none cursor-pointer break-words"
               htmlFor={value}
             >
               {value}

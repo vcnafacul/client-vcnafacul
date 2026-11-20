@@ -4,7 +4,7 @@ import HighlightSelectorMobile from "../../atoms/highlightSelectorMobile"
 import './styles.css'
 
 const selector = tv({
-    base: 'desktop ulComponent text-xl',
+    base: 'desktop ulComponent text-h2',
     variants: {
         align: {
             horizontal: 'justify-center',

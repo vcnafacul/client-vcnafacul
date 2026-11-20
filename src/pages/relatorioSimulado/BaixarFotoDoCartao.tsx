@@ -48,7 +48,7 @@ export function BaixarFotoDoCartao({
       onClick={baixar}
       disabled={baixando}
       className={cn(
-        "shrink-0 rounded-md border px-2 py-1 text-xs font-medium disabled:opacity-50",
+        "shrink-0 rounded-md border px-2 py-1 text-caption font-medium disabled:opacity-50",
         dashV2.border,
         dashV2.text.primary,
         dashV2.focus,

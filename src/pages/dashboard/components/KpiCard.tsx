@@ -66,8 +66,8 @@ export function KpiCard({
         </div>
       ) : error ? (
         <div className="mt-4">
-          <p className="text-sm font-medium text-muted-foreground">{label}</p>
-          <p className="mt-0.5 text-xs text-muted-foreground">
+          <p className="text-body font-medium text-muted-foreground">{label}</p>
+          <p className="mt-0.5 text-caption text-muted-foreground">
             Não foi possível carregar.{' '}
             {retry && (
               <button
@@ -81,20 +81,20 @@ export function KpiCard({
         </div>
       ) : (
         <div className="mt-3 sm:mt-4">
-          <p className="text-2xl font-bold sm:text-[28px] leading-none tabular-nums lining-nums text-foreground">
+          <p className="text-h1 font-bold tabular-nums lining-nums text-foreground">
             {value}
           </p>
           {info ? (
-            <p className="mt-2 text-sm font-medium text-muted-foreground">
+            <p className="mt-2 text-body font-medium text-muted-foreground">
               {label}{' '}
               <span className="relative z-10 inline-flex align-middle">
                 {info}
               </span>
             </p>
           ) : (
-            <p className="mt-2 text-sm font-medium text-muted-foreground">{label}</p>
+            <p className="mt-2 text-body font-medium text-muted-foreground">{label}</p>
           )}
-          {hint && <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>}
+          {hint && <p className="mt-0.5 text-caption text-muted-foreground">{hint}</p>}
         </div>
       )}
     </>
@@ -141,7 +141,7 @@ function Delta({ value, suffix }: { value: number; suffix: string }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums lining-nums',
+        'inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-caption font-semibold tabular-nums lining-nums',
         up ? 'bg-success-muted text-success' : 'bg-destructive/[0.10] text-destructive',
       )}
       title="Comparado ao simulado anterior"

@@ -116,7 +116,7 @@ export const vitrineAnulacaoNaProva: Vitrine = {
       slug: "coluna-da-lista",
       titulo: "Coluna Anuladas da lista",
       render: () => (
-        <table className="w-full max-w-md text-sm">
+        <table className="w-full max-w-md text-body">
           <thead>
             <tr className="text-left text-muted-foreground">
               <th className="py-1">Prova</th>

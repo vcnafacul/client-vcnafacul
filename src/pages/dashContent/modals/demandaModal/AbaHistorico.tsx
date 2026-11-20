@@ -65,7 +65,7 @@ export function AbaHistorico({
         role="alert"
         className="flex flex-col items-start gap-3 rounded-lg border p-4"
       >
-        <p className="text-sm">Não foi possível carregar o histórico. {erro}</p>
+        <p className="text-body">Não foi possível carregar o histórico. {erro}</p>
         <Button variant="outline" size="sm" onClick={onTentarDeNovo}>
           Tentar de novo
         </Button>
@@ -89,7 +89,7 @@ export function AbaHistorico({
   }
   if (!eventos.length) {
     return (
-      <p className="text-sm text-muted-foreground">Nada registrado ainda.</p>
+      <p className="text-body text-muted-foreground">Nada registrado ainda.</p>
     );
   }
   return (
@@ -116,7 +116,7 @@ export function AbaHistorico({
               <Icone className="h-4 w-4" />
             </span>
             <div className="min-w-0 flex-1 flex flex-col gap-1">
-              <p className="text-sm leading-snug">
+              <p className="text-body">
                 <span
                   className={
                     semUsuario
@@ -128,11 +128,11 @@ export function AbaHistorico({
                 </span>{" "}
                 {fraseDoEvento(e)}
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-caption text-muted-foreground">
                 {formatDateTime(e.em)}
               </p>
               {e.detalhe && (
-                <p className="text-sm rounded-md bg-muted/60 px-3 py-2 whitespace-pre-wrap break-words">
+                <p className="text-body rounded-md bg-muted/60 px-3 py-2 whitespace-pre-wrap break-words">
                   {e.detalhe}
                 </p>
               )}

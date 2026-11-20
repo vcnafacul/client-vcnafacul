@@ -74,12 +74,12 @@ export function PeriodJustificationModal({
       handleClose={handleClose}
       className="bg-white p-6 rounded-md w-[90vw] sm:w-[520px] h-auto flex flex-col gap-4"
     >
-      <h2 className="text-lg font-semibold text-foreground">
+      <h2 className="text-h3 font-semibold text-foreground">
         Nova Justificativa de Período
       </h2>
 
       <div className="flex flex-col gap-1">
-        <label className="text-xs text-muted-foreground font-semibold">
+        <label className="text-caption text-muted-foreground font-semibold">
           Período (início — fim)
         </label>
         <div className="flex flex-col justify-content-center border rounded-md px-3 py-2">
@@ -101,7 +101,7 @@ export function PeriodJustificationModal({
 
       <div className="flex flex-col gap-1">
         <label
-          className="text-xs text-muted-foreground font-semibold"
+          className="text-caption text-muted-foreground font-semibold"
           htmlFor="justification-input"
         >
           Justificativa *
@@ -112,10 +112,10 @@ export function PeriodJustificationModal({
           onChange={(e) => setJustification(e.target.value)}
           maxLength={255}
           rows={3}
-          className="border rounded-md px-3 py-2 text-sm resize-none focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="border rounded-md px-3 py-2 text-body resize-none focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           placeholder="Descreva a justificativa..."
         />
-        <span className="text-xs text-muted-foreground text-right">
+        <span className="text-caption text-muted-foreground text-right">
           {justification.length}/255
         </span>
       </div>

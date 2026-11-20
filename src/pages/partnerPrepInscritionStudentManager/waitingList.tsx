@@ -158,7 +158,7 @@ export function WaitingList(props: Props) {
               {students.map((stu) => (
                 <tr key={stu.id} className="even:bg-muted">
                   <td className="text-center">{stu.position}</td>
-                  <td className="sm:whitespace-nowrap break-words text-sm font-medium p-2 text-center">
+                  <td className="sm:whitespace-nowrap break-words text-body font-medium p-2 text-center">
                     {stu.name}
                   </td>
                 </tr>
@@ -180,7 +180,7 @@ export function WaitingList(props: Props) {
             >
               <div className="flex items-center">
                 <CgReorder className="h-6 w-10" />
-                <p className="text-sm leading-3">Editar Ordem</p>
+                <p className="text-body">Editar Ordem</p>
               </div>
             </Button>
             <AlertDialogUI
@@ -196,7 +196,7 @@ export function WaitingList(props: Props) {
                 >
                   <div className="flex justify-center items-center">
                     <MdEmail className="h-6 w-10" />
-                    <p className="text-sm leading-3">
+                    <p className="text-body">
                       Enviar Lista de Espera Atualizada
                     </p>
                   </div>

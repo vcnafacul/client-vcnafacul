@@ -111,7 +111,7 @@ export function Details({
         <button
           onClick={() => handleDownloadDocument(doc.key)}
           disabled={isDownloading}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 active:bg-primary/80 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors text-sm font-medium"
+          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 active:bg-primary/80 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors text-body font-medium"
         >
           {isDownloading ? "Baixando..." : "Download"}
         </button>,
@@ -125,7 +125,7 @@ export function Details({
           <button
             onClick={() => handleDownloadPhoto(student.photo)}
             disabled={isDownloading}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 active:bg-primary/80 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors text-sm font-medium"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 active:bg-primary/80 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors text-body font-medium"
           >
             {isDownloading ? "Baixando..." : "Download"}
           </button>,
@@ -254,9 +254,9 @@ function Section({
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-1 px-4">
-      <span className="text-xs font-bold text-foreground">{label}</span>
+      <span className="text-caption font-bold text-foreground">{label}</span>
       <div
-        className={`text-sm font-medium text-foreground bg-muted rounded px-3 py-2 ${
+        className={`text-body font-medium text-foreground bg-muted rounded px-3 py-2 ${
           value ? "" : "text-muted-foreground italic"
         }`}
       >

@@ -106,7 +106,7 @@ export default function ExportColumnsModal({
       className="bg-white p-4 rounded-md w-[640px] max-w-[95vw]"
     >
       {carregando ? (
-        <p className="py-6 text-center text-sm text-muted-foreground">
+        <p className="py-6 text-center text-body text-muted-foreground">
           Carregando colunas...
         </p>
       ) : (
@@ -154,7 +154,7 @@ export default function ExportColumnsModal({
                     />
                     <label
                       htmlFor={`grupo-${grupo}`}
-                      className="cursor-pointer text-sm font-semibold text-foreground"
+                      className="cursor-pointer text-body font-semibold text-foreground"
                     >
                       {grupo}
                     </label>
@@ -170,7 +170,7 @@ export default function ExportColumnsModal({
                         />
                         <label
                           htmlFor={column.key}
-                          className="cursor-pointer text-sm"
+                          className="cursor-pointer text-body"
                         >
                           {column.label}
                         </label>
@@ -196,7 +196,7 @@ export default function ExportColumnsModal({
             })}
           </div>
 
-          <p className="pt-2 text-xs text-muted-foreground">
+          <p className="pt-2 text-caption text-muted-foreground">
             {selected.size} coluna{selected.size === 1 ? "" : "s"} selecionada
             {selected.size === 1 ? "" : "s"}
           </p>
@@ -217,7 +217,7 @@ function PresetButton({
     <button
       type="button"
       onClick={onClick}
-      className="rounded-full border border-border px-3 py-1 text-xs text-foreground hover:border-primary hover:text-foreground"
+      className="rounded-full border border-border px-3 py-1 text-caption text-foreground hover:border-primary hover:text-foreground"
     >
       {label}
     </button>

@@ -59,7 +59,7 @@ export function EditStudentRecordModal({
       handleClose={handleClose}
       className="bg-white p-6 rounded-md w-[90vw] sm:w-[500px] h-auto flex flex-col gap-4"
     >
-      <h2 className="text-lg font-semibold text-foreground">Editar Presença</h2>
+      <h2 className="text-h3 font-semibold text-foreground">Editar Presença</h2>
 
       <div className="flex items-center justify-between">
         <span className="text-foreground">Presente:</span>
@@ -80,7 +80,7 @@ export function EditStudentRecordModal({
           onChange={(e: any) => setObservation(e.target.value)}
           maxLength={255}
         />
-        <p className="text-xs text-muted-foreground">Descreva o motivo da alteração.</p>
+        <p className="text-caption text-muted-foreground">Descreva o motivo da alteração.</p>
       </div>
 
       {!present && (
@@ -94,7 +94,7 @@ export function EditStudentRecordModal({
             onChange={(e: any) => setJustification(e.target.value)}
             maxLength={255}
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-caption text-muted-foreground">
             Opcional. Preencha se o aluno justificou a falta (ex.: atestado).
             Deixe em branco para falta sem justificativa.
           </p>

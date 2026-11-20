@@ -147,7 +147,7 @@ export function PanelMateria({
     // No celular sem altura fixa: rolagem dentro de rolagem, e a lista em cards.
     <div className="flex flex-col sm:h-[500px] sm:overflow-y-scroll scrollbar-hide select-none">
       <div className="flex flex-wrap justify-between items-center gap-2 mb-2">
-        <h3 className="text-lg font-semibold text-foreground">Matérias</h3>
+        <h3 className="text-h3 font-semibold text-foreground">Matérias</h3>
         {manager && (
           <Button
             onClick={() => {
@@ -173,7 +173,7 @@ export function PanelMateria({
                   {Icone && <Icone className="w-6 h-6 shrink-0" />}
                   <div className="min-w-0">
                     <p className="font-semibold break-words">{materia.nome}</p>
-                    <p className="text-xs text-muted-foreground">{materia.enemArea}</p>
+                    <p className="text-caption text-muted-foreground">{materia.enemArea}</p>
                   </div>
                 </div>
                 {manager && (
@@ -181,14 +181,14 @@ export function PanelMateria({
                     <button
                       type="button"
                       onClick={() => editar(materia)}
-                      className="flex-1 h-10 border rounded-md text-sm"
+                      className="flex-1 h-10 border rounded-md text-body"
                     >
                       Editar
                     </button>
                     <button
                       type="button"
                       onClick={() => excluir(materia)}
-                      className="flex-1 h-10 border border-destructive text-destructive rounded-md text-sm"
+                      className="flex-1 h-10 border border-destructive text-destructive rounded-md text-body"
                     >
                       Excluir
                     </button>

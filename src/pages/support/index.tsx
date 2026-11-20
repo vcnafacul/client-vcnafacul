@@ -98,16 +98,16 @@ export default function SupportPage() {
           <span className="font-raleway font-semibold text-foreground">
             Conversa encerrada
           </span>
-          <span className="text-sm text-muted-foreground max-w-xs">
+          <span className="text-body text-muted-foreground max-w-xs">
             Esta conversa foi encerrada. Se precisar de mais ajuda, você pode
             abrir uma nova conversa.
           </span>
           {remainingSeconds > 0 ? (
             <div className="flex flex-col items-center gap-1">
-              <span className="text-2xl font-bold font-mono text-foreground">
+              <span className="text-h1 font-bold font-mono text-foreground">
                 {formatCountdown(remainingSeconds)}
               </span>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-caption text-muted-foreground">
                 Aguarde para iniciar uma nova conversa
               </span>
             </div>

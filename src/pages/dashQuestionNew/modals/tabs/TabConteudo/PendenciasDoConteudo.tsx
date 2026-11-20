@@ -12,14 +12,14 @@ export function ListaDePendencias({
 }) {
   return (
     <div className="space-y-1" role="alert">
-      <p className="text-sm text-destructive font-medium flex items-center gap-1">
+      <p className="text-body text-destructive font-medium flex items-center gap-1">
         <AlertCircle className="h-4 w-4 shrink-0" />
         {pendencias.length === 1
           ? "1 problema impede salvar:"
           : `${pendencias.length} problemas impedem salvar:`}
       </p>
       {/* Altura máxima: a faixa fica fixa no topo e não pode cobrir a tela. */}
-      <ul className="text-sm text-destructive space-y-1 max-h-32 overflow-y-auto sm:max-h-none">
+      <ul className="text-body text-destructive space-y-1 max-h-32 overflow-y-auto sm:max-h-none">
         {pendencias.map((p) => (
           <li key={p.campo} className="flex flex-wrap items-center gap-x-2">
             {/* A mensagem já diz o campo ("A alternativa A é obrigatória"). */}
@@ -33,7 +33,7 @@ export function ListaDePendencias({
             <button
               type="button"
               onClick={() => onIrPara(p)}
-              className="text-xs font-semibold text-foreground underline underline-offset-2 hover:text-primary"
+              className="text-caption font-semibold text-foreground underline underline-offset-2 hover:text-primary"
             >
               Ir até o campo
             </button>
@@ -78,7 +78,7 @@ export function FaixaDoConteudo({
         {pendencias.length ? (
           <ListaDePendencias pendencias={pendencias} onIrPara={onIrPara} />
         ) : (
-          <p className="text-sm text-warning font-medium flex items-center gap-2">
+          <p className="text-body text-warning font-medium flex items-center gap-2">
             <AlertCircle className="h-4 w-4 shrink-0" />O enunciado ou as
             alternativas têm alterações não salvas
           </p>

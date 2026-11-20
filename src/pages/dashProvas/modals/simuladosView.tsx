@@ -99,7 +99,7 @@ function QuestoesCell({ simulado }: { simulado: SimuladoResumo }) {
       )}
       <span
         className={cn(
-          "shrink-0 whitespace-nowrap text-xs tabular-nums",
+          "shrink-0 whitespace-nowrap text-caption tabular-nums",
           dashV2.text.secondary,
         )}
       >
@@ -369,7 +369,7 @@ function SimuladosView({
         <button
           onClick={onVoltar}
           className={cn(
-            "mb-4 flex items-center gap-1 rounded-md text-sm hover:underline",
+            "mb-4 flex items-center gap-1 rounded-md text-body hover:underline",
             dashV2.text.secondary,
             dashV2.focus,
           )}
@@ -378,7 +378,7 @@ function SimuladosView({
           Voltar aos detalhes
         </button>
 
-        <h3 className={cn("mb-4 text-sm font-medium", dashV2.text.primary)}>
+        <h3 className={cn("mb-4 text-body font-medium", dashV2.text.primary)}>
           Simulados
         </h3>
 
@@ -398,7 +398,7 @@ function SimuladosView({
 
         {!loading && error && (
           <div className="py-8 text-center">
-            <p className="mb-3 text-sm text-destructive">
+            <p className="mb-3 text-body text-destructive">
               Não foi possível carregar os simulados.
             </p>
             <Button variant="outlined" size="small" onClick={onRetry}>
@@ -408,7 +408,7 @@ function SimuladosView({
         )}
 
         {!loading && !error && simulados?.length === 0 && (
-          <p className={cn("py-8 text-center text-sm", dashV2.text.muted)}>
+          <p className={cn("py-8 text-center text-body", dashV2.text.muted)}>
             Esta prova ainda não tem simulados cadastrados.
           </p>
         )}
@@ -439,7 +439,7 @@ function SimuladosView({
                       >
                         {simulado.nome}
                       </span>
-                      <span className={cn("block text-xs", dashV2.text.muted)}>
+                      <span className={cn("block text-caption", dashV2.text.muted)}>
                         {simulado.categoria?.nome ?? "Sem categoria"}
                       </span>
                     </div>
@@ -459,10 +459,10 @@ function SimuladosView({
           simulados.length > 0 &&
           acimaDeSm && (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
+              <table className="w-full text-left text-body">
                 <thead
                   className={cn(
-                    "text-xs uppercase",
+                    "text-caption uppercase",
                     dashV2.text.muted,
                     "bg-page",
                   )}
@@ -510,7 +510,7 @@ function SimuladosView({
                           {simulado.nome}
                         </span>
                         <span
-                          className={cn("block text-xs", dashV2.text.muted)}
+                          className={cn("block text-caption", dashV2.text.muted)}
                         >
                           {simulado.categoria?.nome ?? "Sem categoria"}
                         </span>

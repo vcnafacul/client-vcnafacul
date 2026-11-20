@@ -109,7 +109,7 @@ export function AvisoDeRecalculo({
   if (fase.tipo === "concluido") {
     const falhas = textoDasFalhas(fase.job.falhas);
     return (
-      <div role="status" data-testid="recalculo-concluido" className="flex items-start gap-2 rounded-md border border-success bg-success-muted px-3 py-2 text-sm text-foreground">
+      <div role="status" data-testid="recalculo-concluido" className="flex items-start gap-2 rounded-md border border-success bg-success-muted px-3 py-2 text-body text-foreground">
         <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5" aria-hidden />
         <p>
           Resultados recalculados{fase.job.regravados ? ` (${fase.job.regravados})` : ""}.
@@ -123,7 +123,7 @@ export function AvisoDeRecalculo({
     const { processados, total } = fase.job;
     const pct = total ? Math.round((Math.min(processados, total) / total) * 100) : 0;
     return (
-      <div role="status" data-testid="recalculo-rodando" className="flex flex-col gap-2 rounded-md border border-warning bg-warning-muted px-3 py-2 text-sm text-foreground">
+      <div role="status" data-testid="recalculo-rodando" className="flex flex-col gap-2 rounded-md border border-warning bg-warning-muted px-3 py-2 text-body text-foreground">
         <p className="flex items-center gap-2">
           <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden />
           {textoDoProgresso(processados, total)}
@@ -138,7 +138,7 @@ export function AvisoDeRecalculo({
   if (divergentes <= 0 && fase.tipo !== "erro") return null;
 
   return (
-    <div role="note" data-testid="aviso-divergencia" className="flex flex-col gap-2 rounded-md border border-warning bg-warning-muted px-3 py-2 text-sm text-foreground sm:flex-row sm:items-center sm:justify-between">
+    <div role="note" data-testid="aviso-divergencia" className="flex flex-col gap-2 rounded-md border border-warning bg-warning-muted px-3 py-2 text-body text-foreground sm:flex-row sm:items-center sm:justify-between">
       <p className="flex items-start gap-2">
         <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" aria-hidden />
         <span>

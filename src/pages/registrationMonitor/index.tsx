@@ -22,10 +22,10 @@ export default function RegistrationMonitor() {
   return (
     <div className="p-4">
       <div className="mb-10">
-        <div className="text-2xl sm:text-4xl font-extrabold text-foreground">
+        <div className="text-h1 font-extrabold text-foreground">
           Acompanhamento de Inscrições
         </div>
-        <div className="text-base sm:text-xl font-normal text-foreground mb-6">
+        <div className="text-h2 font-normal text-foreground mb-6">
           Acompanhe aqui suas inscrições realizadas.
         </div>
       </div>

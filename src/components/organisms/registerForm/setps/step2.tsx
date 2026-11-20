@@ -168,8 +168,8 @@ function Step2({
             }}
           />
         </div>
-        <div className="text-sm text-muted-foreground">
-          <span className="text-sm font-extrabold pb-2 text-muted-foreground"></span>
+        <div className="text-body text-muted-foreground">
+          <span className="text-body font-extrabold pb-2 text-muted-foreground"></span>
           {socialNameCheckbox}{" "}
           <a
             href={linkSocialName}
@@ -196,7 +196,7 @@ function Step2({
         error={errors.lastName}
         onChange={(e: any) => setValue("lastName", e.target.value)}
       />
-      <span className="text-xs text-muted-foreground font-semibold mb-4">
+      <span className="text-caption text-muted-foreground font-semibold mb-4">
         Esta é uma pré-visualização do nome que será utilizado na plataforma:{" "}
         {getDisplayName()}
       </span>

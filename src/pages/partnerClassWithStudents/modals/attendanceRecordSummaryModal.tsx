@@ -176,7 +176,7 @@ export default function AttendanceRecordSummaryModal({
         className="w-full max-w-md mx-auto space-y-6"
       >
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-foreground">
+          <label className="block text-body font-medium text-foreground">
             Selecione o tipo de relatório
           </label>
 
@@ -217,7 +217,7 @@ export default function AttendanceRecordSummaryModal({
 
           {watchReportType === "excel" && (
             <div className="mt-2">
-              <label className="block text-sm font-medium mb-1">
+              <label className="block text-body font-medium mb-1">
                 Percentual máximo de faltas injustificadas (%)
               </label>
               <input
@@ -229,13 +229,13 @@ export default function AttendanceRecordSummaryModal({
                 placeholder="25"
               />
               {padraoDoCursinho != null && (
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-caption text-muted-foreground mt-1">
                   Padrão do cursinho: {padraoDoCursinho}% (alerta de risco de
                   evasão)
                 </p>
               )}
               {errors.maxAbsencePercent && (
-                <p className="text-destructive text-sm mt-1">
+                <p className="text-destructive text-body mt-1">
                   {errors.maxAbsencePercent.message}
                 </p>
               )}
@@ -243,13 +243,13 @@ export default function AttendanceRecordSummaryModal({
           )}
 
           {errors.reportType && (
-            <p className="text-xs text-destructive font-medium text-wrap max-w-60">
+            <p className="text-caption text-destructive font-medium text-wrap max-w-60">
               {errors.reportType.message}
             </p>
           )}
         </div>
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-foreground">
+          <label className="block text-body font-medium text-foreground">
             Selecione o intervalo
           </label>
 
@@ -281,7 +281,7 @@ export default function AttendanceRecordSummaryModal({
             />
           </div>
           {errors.range && (
-            <p className="text-xs text-destructive font-medium text-wrap max-w-60">
+            <p className="text-caption text-destructive font-medium text-wrap max-w-60">
               {errors.range.message}
             </p>
           )}

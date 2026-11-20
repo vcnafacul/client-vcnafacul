@@ -3,7 +3,7 @@ import { useState } from "react";
 import { QuestionBoxStatus } from "../../../enums/simulado/questionBoxStatus";
 
 const questionBox = tv({
-    base: 'w-8 h-8 rounded m-1 cursor-pointer flex justify-center items-center pb-1 text-base border relative',
+    base: 'w-8 h-8 rounded m-1 cursor-pointer flex justify-center items-center pb-1 text-body border relative',
     variants: {
         status: {
             unsolved : 'bg-warning-muted border-primary',
@@ -67,7 +67,7 @@ function QuestionBox({ number, status, onClick, abreQuandoAnulada = false, ...pr
             {anulada && dica && (
                 <span
                     role="tooltip"
-                    className={`absolute bottom-full z-20 mb-1 w-max max-w-[12rem] rounded bg-foreground px-2 py-1 text-xs font-normal text-white ${
+                    className={`absolute bottom-full z-20 mb-1 w-max max-w-[12rem] rounded bg-foreground px-2 py-1 text-caption font-normal text-white ${
                         dica === "esquerda" ? "left-0" : dica === "direita" ? "right-0" : "left-1/2 -translate-x-1/2"
                     }`}
                 >

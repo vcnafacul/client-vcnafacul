@@ -209,7 +209,7 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
             <span className="font-medium text-foreground">
               Configurações dos Gráficos
             </span>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-body text-muted-foreground">
               ({selectedQuestions.length} perguntas selecionadas)
             </span>
           </div>
@@ -244,7 +244,7 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
               {!showAllQuestions && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="text-sm font-medium text-foreground">
+                    <div className="text-body font-medium text-foreground">
                       Selecionar perguntas específicas:
                     </div>
                     <div className="flex gap-2">
@@ -256,7 +256,7 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
                             .map((q) => q.questionId);
                           setSelectedQuestions(allQuestionIds);
                         }}
-                        className="text-xs px-2 py-1 bg-info-muted text-info rounded hover:bg-info-muted transition-colors"
+                        className="text-caption px-2 py-1 bg-info-muted text-info rounded hover:bg-info-muted transition-colors"
                       >
                         Selecionar Todas
                       </button>
@@ -265,7 +265,7 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
                           setHasUserInteracted(true);
                           setSelectedQuestions([]);
                         }}
-                        className="text-xs px-2 py-1 bg-muted text-foreground rounded hover:bg-muted transition-colors"
+                        className="text-caption px-2 py-1 bg-muted text-foreground rounded hover:bg-muted transition-colors"
                       >
                         Limpar
                       </button>
@@ -302,10 +302,10 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
                             className="rounded mt-0.5"
                           />
                           <div className="flex-1">
-                            <span className="text-sm text-foreground">
+                            <span className="text-body text-foreground">
                               {question.question}
                             </span>
-                            <div className="text-xs text-muted-foreground mt-1">
+                            <div className="text-caption text-muted-foreground mt-1">
                               {question.totalResponses} respostas •{" "}
                               {question.uniqueAnswers.length} opções
                             </div>
@@ -337,12 +337,12 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
 
           return (
             <div key={question.questionId} className="flex flex-col gap-1">
-              <span className="font-medium text-sm">
+              <span className="font-medium text-body">
                 {question.question.length > 60
                   ? question.question.substring(0, 60) + "..."
                   : question.question}
               </span>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-caption text-muted-foreground">
                 {question.totalResponses} respostas •{" "}
                 {question.uniqueAnswers.length} opções
               </span>
@@ -368,25 +368,25 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
       {/* Estatísticas gerais */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-info-muted rounded-lg">
         <div className="text-center">
-          <div className="text-2xl font-bold text-info">
+          <div className="text-h1 font-bold text-info">
             {data.forms.length}
           </div>
-          <div className="text-sm text-muted-foreground">Total de Estudantes</div>
+          <div className="text-body text-muted-foreground">Total de Estudantes</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-success">
+          <div className="text-h1 font-bold text-success">
             {processedQuestions.filter((q) => q.totalResponses > 0).length}
           </div>
-          <div className="text-sm text-muted-foreground">Perguntas Respondidas</div>
+          <div className="text-body text-muted-foreground">Perguntas Respondidas</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-foreground">
+          <div className="text-h1 font-bold text-foreground">
             {Math.round(
               processedQuestions.reduce((sum, q) => sum + q.totalResponses, 0) /
                 processedQuestions.length || 0
             )}
           </div>
-          <div className="text-sm text-muted-foreground">Média de Respostas</div>
+          <div className="text-body text-muted-foreground">Média de Respostas</div>
         </div>
       </div>
     </div>

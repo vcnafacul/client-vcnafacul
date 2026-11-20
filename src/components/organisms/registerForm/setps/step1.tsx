@@ -102,7 +102,7 @@ function Step1({ updateData, dataUser, emailTravado }: Step1Props) {
       className="flex flex-col gap-4 w-full"
     >
       {emailTravado ? (
-        <p data-email-travado className="text-sm">
+        <p data-email-travado className="text-body">
           Email: <strong>{emailTravado}</strong>
         </p>
       ) : (
@@ -131,10 +131,10 @@ function Step1({ updateData, dataUser, emailTravado }: Step1Props) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e: any) => setValue("password_confirmation", e.target.value)}
       />
-      <div className="flex gap-4 w-full text-sm justify-between">
-        <div className="font-thin text-xs"> Sua senha deve conter:</div>
+      <div className="flex gap-4 w-full text-body justify-between">
+        <div className="font-thin text-caption"> Sua senha deve conter:</div>
         <div className="flex flex-col sm:flex-row sm:gap-4">
-          <div className="flex flex-col text-sm items-end sm:items-start">
+          <div className="flex flex-col text-body items-end sm:items-start">
             <SpanValidate
               valid={
                 password !== undefined && uppercaseLetterRegex.test(password)
@@ -150,7 +150,7 @@ function Step1({ updateData, dataUser, emailTravado }: Step1Props) {
               Caractere Especial
             </SpanValidate>
           </div>
-          <div className="flex flex-col text-sm items-end sm:items-start">
+          <div className="flex flex-col text-body items-end sm:items-start">
             <SpanValidate
               valid={
                 password !== undefined && lowercaseLetterRegex.test(password)

@@ -162,11 +162,11 @@ export default function ModalEditSupporter({
       className="bg-white p-6 rounded-md w-[90vw] max-w-[500px]"
     >
       <div className="flex flex-col gap-4">
-        <h3 className="text-lg font-semibold">
+        <h3 className="text-h3 font-semibold">
           {isCreateMode ? "Adicionar apoiador" : "Editar apoiador"}
         </h3>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-semibold">Nome</span>
+          <span className="text-body font-semibold">Nome</span>
           <input
             className="border rounded px-2 py-1"
             value={name}
@@ -175,7 +175,7 @@ export default function ModalEditSupporter({
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-semibold">Link</span>
+          <span className="text-body font-semibold">Link</span>
           <input
             className="border rounded px-2 py-1"
             value={link}
@@ -184,7 +184,7 @@ export default function ModalEditSupporter({
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-semibold">Descrição (opcional)</span>
+          <span className="text-body font-semibold">Descrição (opcional)</span>
           <textarea
             className="border rounded px-2 py-1 resize-none"
             value={description}
@@ -194,7 +194,7 @@ export default function ModalEditSupporter({
             placeholder="Breve texto sobre o apoiador (máx. 280 caracteres)"
           />
           <span
-            className={`text-xs ${
+            className={`text-caption ${
               description.length >= DESCRIPTION_MAX
                 ? "text-destructive"
                 : "text-muted-foreground"
@@ -202,12 +202,12 @@ export default function ModalEditSupporter({
           >
             {description.length}/{DESCRIPTION_MAX}
           </span>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-caption text-muted-foreground">
             Se vazio, clique no logo abre o site direto.
           </span>
         </label>
         <div className="flex flex-col gap-1">
-          <span className="text-sm font-semibold">
+          <span className="text-body font-semibold">
             Logo {isCreateMode ? "(opcional)" : "(opcional — substitui atual)"}
           </span>
           {!isCreateMode && supporter?.logoUrl && !file && (
@@ -218,7 +218,7 @@ export default function ModalEditSupporter({
             />
           )}
           {file && (
-            <span className="text-xs text-success">
+            <span className="text-caption text-success">
               Logo recortado pronto para upload.
             </span>
           )}
@@ -233,7 +233,7 @@ export default function ModalEditSupporter({
               }
             }}
           />
-          <span className="text-xs text-muted-foreground">
+          <span className="text-caption text-muted-foreground">
             Escolha a proporção desejada no editor (ou "Original" para manter a forma da imagem). Salvo como PNG — fundo transparente é preservado.
           </span>
         </div>

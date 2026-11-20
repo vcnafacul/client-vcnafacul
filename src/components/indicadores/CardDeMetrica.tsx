@@ -72,26 +72,26 @@ export function CardDeMetrica({
             <button
               type="button"
               onClick={onClick}
-              className="text-left text-2xl font-bold leading-none text-foreground tabular-nums lining-nums underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:text-[28px]"
+              className="text-left text-h1 font-bold text-foreground tabular-nums lining-nums underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               {valor ?? "—"}
             </button>
           ) : (
-            <p className="text-2xl font-bold leading-none text-foreground tabular-nums lining-nums sm:text-[28px]">
+            <p className="text-h1 font-bold text-foreground tabular-nums lining-nums">
               {valor ?? "—"}
             </p>
           )}
           {/* o (i) anda com o texto: se o rótulo quebra linha, ele não fica solto */}
-          <p className="mt-2 text-sm font-medium text-muted-foreground">
+          <p className="mt-2 text-body font-medium text-muted-foreground">
             {rotulo}{" "}
             <span className="inline-flex align-middle">
               <InfoDaMetrica metrica={rotulo} explicacao={explicacao} />
             </span>
           </p>
           {valor === null ? (
-            <p className="mt-0.5 text-xs text-muted-foreground">{semDado}</p>
+            <p className="mt-0.5 text-caption text-muted-foreground">{semDado}</p>
           ) : (
-            detalhe && <p className="mt-0.5 text-xs text-muted-foreground">{detalhe}</p>
+            detalhe && <p className="mt-0.5 text-caption text-muted-foreground">{detalhe}</p>
           )}
         </div>
       )}

@@ -38,14 +38,14 @@ function DeleteConfirm({
 
   return (
     <div className="p-6">
-      <h2 className="mb-4 text-xl font-semibold text-foreground">
+      <h2 className="mb-4 text-h2 font-semibold text-foreground">
         Excluir Categoria
       </h2>
-      <p className="text-sm text-foreground">
+      <p className="text-body text-foreground">
         Excluir a categoria{" "}
         <span className="font-semibold">&quot;{categoria.nome}&quot;</span>?
       </p>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <p className="mt-1 text-body text-muted-foreground">
         Esta ação não pode ser desfeita.
       </p>
 

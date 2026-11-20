@@ -100,7 +100,7 @@ export const dashV2 = {
    */
   row: { base: "h-10", compact: "h-8", hover: "hover:bg-page" },
   header: "h-9",
-  cell: "px-3 text-sm",
+  cell: "px-3 text-body",
 
   /**
    * Barra de progresso de duas faixas (`dashProvas`, ticket `06`).

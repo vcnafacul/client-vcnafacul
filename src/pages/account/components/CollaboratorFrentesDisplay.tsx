@@ -29,7 +29,7 @@ export function CollaboratorFrentesDisplay({
 
   if (afinidades.length === 0) {
     return (
-      <div className="text-sm text-muted-foreground italic">
+      <div className="text-body text-muted-foreground italic">
         Nenhuma frente selecionada ainda.
       </div>
     );
@@ -40,7 +40,7 @@ export function CollaboratorFrentesDisplay({
       {/* Grupo de Frentes */}
       {allFrentes.length > 0 && (
         <div>
-          <h4 className="text-xs font-semibold text-muted-foreground mb-2">
+          <h4 className="text-caption font-semibold text-muted-foreground mb-2">
             Frentes ({allFrentes.length})
           </h4>
           <div className="flex flex-wrap gap-2">
@@ -51,7 +51,7 @@ export function CollaboratorFrentesDisplay({
                 <Badge
                   key={frenteNome}
                   variant="secondary"
-                  className={`inline-flex items-center px-3 py-1 text-xs ${frenteColor} ${frenteText}`}
+                  className={`inline-flex items-center px-3 py-1 text-caption ${frenteColor} ${frenteText}`}
                 >
                   {frenteNome}
                 </Badge>
@@ -64,7 +64,7 @@ export function CollaboratorFrentesDisplay({
       {/* Grupo de Matérias */}
       {allMaterias.length > 0 && (
         <div>
-          <h4 className="text-xs font-semibold text-muted-foreground mb-2">
+          <h4 className="text-caption font-semibold text-muted-foreground mb-2">
             Matérias ({allMaterias.length})
           </h4>
           <div className="flex flex-wrap gap-2">
@@ -75,7 +75,7 @@ export function CollaboratorFrentesDisplay({
                 <Badge
                   key={materiaNome}
                   variant="secondary"
-                  className={`inline-flex items-center px-3 py-1 text-xs ${materiaColor} ${materiaText}`}
+                  className={`inline-flex items-center px-3 py-1 text-caption ${materiaColor} ${materiaText}`}
                 >
                   {materiaNome}
                 </Badge>

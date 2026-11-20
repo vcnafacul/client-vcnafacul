@@ -75,10 +75,10 @@ export function ModalAddQuestionToProva({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-md max-h-full overflow-y-auto space-y-4">
-        <h3 className="text-lg font-bold">Adicionar em uma prova</h3>
+        <h3 className="text-h3 font-bold">Adicionar em uma prova</h3>
 
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-muted-foreground">Prova</label>
+          <label className="text-body font-semibold text-muted-foreground">Prova</label>
           <input
             type="text"
             value={busca}
@@ -87,7 +87,7 @@ export function ModalAddQuestionToProva({
               setProvaId(null);
             }}
             placeholder="Buscar prova por nome..."
-            className="w-full border rounded-md p-2 text-sm"
+            className="w-full border rounded-md p-2 text-body"
           />
           <div className="max-h-40 overflow-y-auto border rounded-md">
             {provasDisponiveis.map((p) => {
@@ -107,19 +107,19 @@ export function ModalAddQuestionToProva({
                     recusa ? `Esta prova não aceita questão de ${enemArea}` : undefined
                   }
                   onClick={() => setProvaId(p._id)}
-                  className={`w-full text-left px-3 py-2 text-sm hover:bg-muted disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:bg-transparent ${
+                  className={`w-full text-left px-3 py-2 text-body hover:bg-muted disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:bg-transparent ${
                     provaId === p._id ? "bg-info-muted font-medium" : ""
                   }`}
                 >
                   {p.nome}
                   {recusa && (
-                    <span className="ml-2 text-xs">— não aceita {enemArea}</span>
+                    <span className="ml-2 text-caption">— não aceita {enemArea}</span>
                   )}
                 </button>
               );
             })}
             {provasDisponiveis.length === 0 && (
-              <p className="px-3 py-2 text-sm text-muted-foreground">
+              <p className="px-3 py-2 text-body text-muted-foreground">
                 Nenhuma prova disponível
               </p>
             )}
@@ -128,9 +128,9 @@ export function ModalAddQuestionToProva({
 
         {provaId && (
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-muted-foreground">Número</label>
+            <label className="text-body font-semibold text-muted-foreground">Número</label>
             {loadingNumeros ? (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-body text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" /> Carregando números...
               </div>
             ) : (

@@ -51,17 +51,17 @@ export function ListaDeExMembros() {
 
   if (erro) {
     return (
-      <p className="px-4 text-sm text-destructive">
+      <p className="px-4 text-body text-destructive">
         Não foi possível carregar os ex-membros.
       </p>
     );
   }
   if (!resultado) {
-    return <p className="px-4 text-sm text-muted-foreground">Carregando...</p>;
+    return <p className="px-4 text-body text-muted-foreground">Carregando...</p>;
   }
   if (resultado.totalItems === 0) {
     return (
-      <p className="px-4 py-8 text-center text-sm text-muted-foreground">
+      <p className="px-4 py-8 text-center text-body text-muted-foreground">
         Nenhum ex-membro. Quem for excluído da lista de colaboradores aparece
         aqui.
       </p>
@@ -71,7 +71,7 @@ export function ListaDeExMembros() {
   const paginas = Math.max(1, Math.ceil(resultado.totalItems / POR_PAGINA));
   return (
     <div className="flex flex-col gap-3 px-4">
-      <p className="text-xs text-muted-foreground">
+      <p className="text-caption text-muted-foreground">
         {resultado.totalItems} ex-membro{resultado.totalItems === 1 ? "" : "s"}
       </p>
       <ul className="flex flex-col gap-2">
@@ -86,7 +86,7 @@ export function ListaDeExMembros() {
       {paginas > 1 && (
         <nav
           aria-label="Páginas de ex-membros"
-          className="flex items-center justify-center gap-3 text-sm"
+          className="flex items-center justify-center gap-3 text-body"
         >
           <button
             type="button"
@@ -123,17 +123,17 @@ function ItemDeExMembro({ membro, foto }: { membro: ExMembro; foto?: string }) {
           className="h-10 w-10 shrink-0 rounded-full object-cover"
         />
       ) : (
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-bold text-foreground">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-body font-bold text-foreground">
           {membro.nome.charAt(0)}
         </span>
       )}
       <div className="min-w-0 flex-1">
         <p className="truncate font-medium text-foreground">{membro.nome}</p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-caption text-muted-foreground">
           {data(membro.entrada)} → {data(membro.saida)}
           {membro.excluidoPor && ` · excluído por ${membro.excluidoPor}`}
         </p>
-        <dl className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
+        <dl className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-caption text-muted-foreground">
           <div className="flex gap-1">
             <dt>Função que tinha:</dt>
             <dd className="font-medium">{membro.funcaoQueTinha ?? "—"}</dd>

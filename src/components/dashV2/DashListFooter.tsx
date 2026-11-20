@@ -63,7 +63,7 @@ export function DashListFooter({
       */}
       <p
         aria-live="polite"
-        className={cn("text-sm", dashV2.text.secondary)}
+        className={cn("text-body", dashV2.text.secondary)}
       >
         Mostrando {inicio}–{fim} de {total}
       </p>

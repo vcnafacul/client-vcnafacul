@@ -168,8 +168,8 @@ export function ModalQuestionDetailsRefactored({
             id: "error",
             children: (
               <div className="flex flex-col items-center justify-center p-12 text-center h-full">
-                <div className="text-6xl mb-4">⚠️</div>
-                <h3 className="text-xl font-bold text-foreground mb-2">
+                <div className="text-h1 mb-4">⚠️</div>
+                <h3 className="text-h2 font-bold text-foreground mb-2">
                   Erro ao carregar questão
                 </h3>
                 <p className="text-muted-foreground mb-6">
@@ -470,7 +470,7 @@ function ModalContent({
           acao();
         }}
       >
-        <p className="text-sm text-foreground">
+        <p className="text-body text-foreground">
           Você está editando esta questão. Sair agora descarta o que não foi
           salvo.
         </p>

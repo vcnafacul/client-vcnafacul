@@ -88,7 +88,7 @@ export function ChatHeader({
           {showAvatar && (
             <div
               className={cn(
-                "h-8 w-8 rounded-full flex items-center justify-center text-white text-[11px] font-semibold shrink-0 ring-2 ring-white/30",
+                "h-8 w-8 rounded-full flex items-center justify-center text-white text-caption font-semibold shrink-0 ring-2 ring-white/30",
                 avatarBg,
               )}
               aria-hidden
@@ -97,11 +97,11 @@ export function ChatHeader({
             </div>
           )}
           <div className="min-w-0 flex flex-col">
-            <span className="font-semibold text-sm truncate">{title}</span>
+            <span className="font-semibold text-body truncate">{title}</span>
             {cursinhoLine && (
               <span
                 className={cn(
-                  "text-xs truncate",
+                  "text-caption truncate",
                   cursinhoMissing
                     ? "italic text-white/60"
                     : "font-medium text-white",
@@ -111,7 +111,7 @@ export function ChatHeader({
                 {cursinhoLine}
               </span>
             )}
-            <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+            <div className="flex flex-wrap items-center gap-1.5 text-caption">
               {subtitle &&
                 subtitle.split(" · ").map((part, i) =>
                   i === 0 && originPage ? (

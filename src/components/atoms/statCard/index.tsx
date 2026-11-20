@@ -50,7 +50,7 @@ export default function StatCard({
       className={`shadow-md bg-white rounded-lg p-4 border-l-4 ${borderColorMap[color]} flex items-center gap-3`}
     >
       {icon && (
-        <div className={`${textColorMap[color]} text-2xl shrink-0`}>
+        <div className={`${textColorMap[color]} text-h1 shrink-0`}>
           {icon}
         </div>
       )}
@@ -62,7 +62,7 @@ export default function StatCard({
           </>
         ) : (
           <>
-            <p className={`text-2xl font-bold ${textColorMap[color]}`}>
+            <p className={`text-h1 font-bold ${textColorMap[color]}`}>
               {value}
               {secondaryValue !== undefined && (
                 <span className={`ml-1 ${secondaryTextColorMap[color]}`}>
@@ -70,7 +70,7 @@ export default function StatCard({
                 </span>
               )}
             </p>
-            <p className="text-sm text-muted-foreground truncate">{label}</p>
+            <p className="text-body text-muted-foreground truncate">{label}</p>
           </>
         )}
       </div>

@@ -36,7 +36,7 @@ function DropdwonMenu({ userNavigation, children, className }: DropdwonMenuProps
                                         onClick={item.Home_Menu_Item_id.onClick}
                                         className={classNames(
                                             active ? 'bg-muted' : '',
-                                            'block w-full px-4 py-2 text-left text-sm text-foreground'
+                                            'block w-full px-4 py-2 text-left text-body text-foreground'
                                         )}
                                     >
                                         {item.Home_Menu_Item_id.name}
@@ -46,7 +46,7 @@ function DropdwonMenu({ userNavigation, children, className }: DropdwonMenuProps
                                         to={item.Home_Menu_Item_id.link}
                                         className={classNames(
                                             active ? 'bg-muted' : '',
-                                            'block px-4 py-2 text-sm text-foreground'
+                                            'block px-4 py-2 text-body text-foreground'
                                         )}
                                         target={item.Home_Menu_Item_id.target}
                                     >

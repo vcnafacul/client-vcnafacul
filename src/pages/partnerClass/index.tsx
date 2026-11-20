@@ -490,7 +490,7 @@ export function PartnerClass() {
                 {/* No celular a lista de todas as páginas não cabe. */}
                 {!acimaDeSm && (
                   <PaginationItem>
-                    <span className="px-3 text-sm text-muted-foreground">
+                    <span className="px-3 text-body text-muted-foreground">
                       {currentPage} de {totalPages}
                     </span>
                   </PaginationItem>

@@ -59,7 +59,7 @@ export default function SortableSupporterRow({
         <div className="flex items-center gap-2">
           <span className="font-medium truncate">{supporter.name}</span>
           {!supporter.active && (
-            <span className="text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded">
+            <span className="text-caption bg-muted text-muted-foreground px-1.5 py-0.5 rounded">
               inativo
             </span>
           )}
@@ -68,7 +68,7 @@ export default function SortableSupporterRow({
           href={supporter.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-muted-foreground truncate hover:underline"
+          className="text-caption text-muted-foreground truncate hover:underline"
           title={supporter.link}
         >
           {supporter.link}
@@ -77,21 +77,21 @@ export default function SortableSupporterRow({
       <div className="flex w-full justify-end gap-4 sm:w-auto sm:gap-3">
         <button
           type="button"
-          className="text-sm text-primary hover:underline"
+          className="text-body text-primary hover:underline"
           onClick={() => onEdit(supporter)}
         >
           Editar
         </button>
         <button
           type="button"
-          className={`text-sm hover:underline ${supporter.active ? "text-warning" : "text-success"}`}
+          className={`text-body hover:underline ${supporter.active ? "text-warning" : "text-success"}`}
           onClick={() => onToggleActive(supporter)}
         >
           {supporter.active ? "Inativar" : "Ativar"}
         </button>
         <button
           type="button"
-          className="text-sm text-destructive hover:underline"
+          className="text-body text-destructive hover:underline"
           onClick={() => onDelete(supporter)}
         >
           Excluir

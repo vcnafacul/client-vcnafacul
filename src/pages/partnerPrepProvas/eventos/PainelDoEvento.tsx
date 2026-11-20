@@ -56,16 +56,16 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
 
   return (
     <div className="space-y-4">
-      <button type="button" onClick={onVoltar} className="text-sm text-foreground hover:underline">
+      <button type="button" onClick={onVoltar} className="text-body text-foreground hover:underline">
         ← Voltar para os eventos
       </button>
-      <h3 className="text-lg font-semibold text-foreground">{evento.nome}</h3>
-      {erro && <p className="text-destructive text-sm">{erro}</p>}
-      {!dados && !erro && <p className="text-sm">Carregando...</p>}
+      <h3 className="text-h3 font-semibold text-foreground">{evento.nome}</h3>
+      {erro && <p className="text-destructive text-body">{erro}</p>}
+      {!dados && !erro && <p className="text-body">Carregando...</p>}
       {dados && (
         <>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm" aria-label="Números por prova">
+            <table className="w-full text-body" aria-label="Números por prova">
               <thead>
                 <tr className="text-left text-muted-foreground">
                   <th className="py-1 pr-2">Prova</th>
@@ -112,7 +112,7 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
                       <td className="py-1 pr-2 font-medium">
                         Total — {p.nome}
                         {!!p.semSimulado && (
-                          <span className="block text-xs font-normal text-muted-foreground">
+                          <span className="block text-caption font-normal text-muted-foreground">
                             inclui {p.semSimulado} sem língua escolhida
                           </span>
                         )}
@@ -131,7 +131,7 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
               pode passar dos inscritos. É o número que serve para a conta de
               cadernos do próximo evento.
             */}
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-caption text-muted-foreground mt-1">
               "Fizeram" conta na prova que o aluno fez, mesmo inscrito em outra.
               {temQuebra &&
                 " Na prova com Inglês e Espanhol, trocar de língua também conta como troca."}
@@ -139,28 +139,28 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
           </div>
           <div className="flex flex-wrap gap-3">
             <div className="bg-page rounded-lg px-4 py-2">
-              <p className="text-xs text-muted-foreground">Engajamento</p>
-              <p className="text-xl font-bold text-foreground">
+              <p className="text-caption text-muted-foreground">Engajamento</p>
+              <p className="text-h2 font-bold text-foreground">
                 {dados.engajamento === null
                   ? "—"
                   : `${Math.round(dados.engajamento * 100)}%`}
               </p>
             </div>
             <div className="bg-page rounded-lg px-4 py-2">
-              <p className="text-xs text-muted-foreground">Fizeram sem se inscrever</p>
-              <p className="text-xl font-bold text-foreground">
+              <p className="text-caption text-muted-foreground">Fizeram sem se inscrever</p>
+              <p className="text-h2 font-bold text-foreground">
                 {dados.fizeramSemInscricao.length}
               </p>
             </div>
           </div>
           <div>
             <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-              <h4 className="font-semibold text-sm">Inscritos</h4>
+              <h4 className="font-semibold text-body">Inscritos</h4>
               <select
                 aria-label="Filtrar por prova"
                 value={filtro}
                 onChange={(e) => setFiltro(e.target.value)}
-                className="border rounded p-1 text-sm w-full sm:w-auto max-w-full"
+                className="border rounded p-1 text-body w-full sm:w-auto max-w-full"
               >
                 <option value="todas">Todas as provas</option>
                 {evento.provas.flatMap((p) => [
@@ -176,7 +176,7 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
               </select>
             </div>
             {lista?.length ? (
-              <ul className="divide-y text-sm" aria-label="Lista de inscritos">
+              <ul className="divide-y text-body" aria-label="Lista de inscritos">
                 {lista.map((i, k) => (
                   <li
                     key={k}
@@ -205,7 +205,7 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-body text-muted-foreground">
                 {filtro === "todas"
                   ? "Ninguém inscrito ainda."
                   : "Ninguém inscrito nesta prova."}
@@ -214,8 +214,8 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
           </div>
           {dados.fizeramSemInscricao.length > 0 && (
             <div>
-              <h4 className="font-semibold text-sm mb-2">Fizeram sem se inscrever</h4>
-              <ul className="divide-y text-sm">
+              <h4 className="font-semibold text-body mb-2">Fizeram sem se inscrever</h4>
+              <ul className="divide-y text-body">
                 {dados.fizeramSemInscricao.map((i, k) => (
                   <li
                     key={k}

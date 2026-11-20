@@ -16,15 +16,15 @@ export default function ThemeDisplay({ theme }: ThemeDisplayProps) {
         onClick={() => setExpanded(!expanded)}
         className="w-full flex justify-between items-center text-left"
       >
-        <h2 className="text-lg font-bold text-foreground">{theme.title}</h2>
-        <span className="text-sm text-muted-foreground">
+        <h2 className="text-h3 font-bold text-foreground">{theme.title}</h2>
+        <span className="text-body text-muted-foreground">
           {expanded ? "Recolher" : "Expandir"}
         </span>
       </button>
       {expanded && (
         <div className="mt-4 space-y-4">
           <div>
-            <h3 className="font-semibold text-sm text-muted-foreground mb-2">
+            <h3 className="font-semibold text-body text-muted-foreground mb-2">
               Textos motivadores
             </h3>
             <div className="prose prose-sm max-w-none">
@@ -36,7 +36,7 @@ export default function ThemeDisplay({ theme }: ThemeDisplayProps) {
             </div>
           </div>
           {theme.instruction && (
-            <div className="bg-page p-3 rounded text-sm">
+            <div className="bg-page p-3 rounded text-body">
               <strong>Instrucao:</strong> {theme.instruction}
             </div>
           )}

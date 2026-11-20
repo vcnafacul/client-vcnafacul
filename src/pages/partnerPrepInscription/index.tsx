@@ -425,7 +425,7 @@ export function PartnerPrepInscription() {
               <div className="w-11/12 max-w-6xl p-3 md:p-4 bg-warning-muted border-l-4 border-warning rounded-md">
                 <div className="flex items-start gap-3">
                   <FlaskConical className="w-5 h-5 text-warning shrink-0 mt-0.5" />
-                  <p className="text-sm md:text-base font-medium">
+                  <p className="text-body font-medium">
                     Este processo seletivo está marcado como{" "}
                     <strong>teste</strong> e não deve ser considerado válido
                     para uso real.

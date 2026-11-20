@@ -286,15 +286,15 @@ export function PartnerPrepInscriptionManager() {
     return modals.modalConfirmTest.isOpen ? (
       <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
         <div className="bg-white p-6 rounded-xl w-full max-w-[400px]">
-          <h2 className="text-2xl font-bold mb-4 text-warning">
+          <h2 className="text-h1 font-bold mb-4 text-warning">
             Atenção
           </h2>
 
-          <p className="mb-6 text-sm leading-relaxed">
+          <p className="mb-6 text-body">
             Você está criando um <strong>Processo Seletivo de Teste</strong>.
             Leia com atenção antes de confirmar:
           </p>
-          <ul className="mb-6 text-sm leading-relaxed list-disc list-inside space-y-2">
+          <ul className="mb-6 text-body list-disc list-inside space-y-2">
             <li>
               Uma vez criado como teste, <strong>não é possível alterar para um Processo Seletivo normal</strong>.
             </li>
@@ -309,7 +309,7 @@ export function PartnerPrepInscriptionManager() {
               onChange={(e) => setTestConfirmed(e.target.checked)}
               className="w-4 h-4 accent-primary cursor-pointer"
             />
-            <span className="text-sm font-medium">
+            <span className="text-body font-medium">
               Entendi e quero continuar
             </span>
           </label>

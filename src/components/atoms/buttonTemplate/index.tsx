@@ -15,7 +15,7 @@ import { VariantProps, tv } from "tailwind-variants";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const buttonTemplate = tv({
-  base: "flex justify-center items-center border-2 font-bold transition-all duration-250 ease-in-out text-sm md:text-base rounded-md group gap-1 cursor-pointer",
+  base: "flex justify-center items-center border-2 font-bold transition-all duration-250 ease-in-out text-button rounded-md group gap-1 cursor-pointer",
   variants: {
     typeStyle: {
       accepted: "bg-success text-success-foreground hover:bg-success/80",

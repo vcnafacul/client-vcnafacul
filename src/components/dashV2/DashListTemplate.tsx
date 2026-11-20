@@ -136,7 +136,7 @@ function FiltroSelect({
       value={String(valor)}
       onChange={(e) => onChange(e.target.value)}
       className={cn(
-        "h-9 max-w-[12rem] rounded-md border px-2 text-sm",
+        "h-9 max-w-[12rem] rounded-md border px-2 text-body",
         dashV2.border,
         dashV2.surface,
         dashV2.text.primary,
@@ -173,12 +173,12 @@ function VazioDaLista({
       className="flex flex-col items-center gap-2 px-4 py-10 text-center"
     >
       <Inbox aria-hidden="true" className={cn("h-8 w-8", dashV2.text.muted)} />
-      <p className={cn("text-sm font-medium", dashV2.text.primary)}>
+      <p className={cn("text-body font-medium", dashV2.text.primary)}>
         {comFiltro ? TEXTO_VAZIO_COM_FILTRO : textoSemFiltro}
       </p>
       {comFiltro ? (
         <>
-          <p className={cn("text-xs", dashV2.text.secondary)}>
+          <p className={cn("text-caption", dashV2.text.secondary)}>
             {DICA_VAZIO_COM_FILTRO}
           </p>
           {onClearFilters ? (
@@ -186,7 +186,7 @@ function VazioDaLista({
               type="button"
               onClick={onClearFilters}
               className={cn(
-                "rounded-sm text-sm font-medium underline-offset-2 hover:underline",
+                "rounded-sm text-body font-medium underline-offset-2 hover:underline",
                 dashV2.text.primary,
                 dashV2.focus,
               )}

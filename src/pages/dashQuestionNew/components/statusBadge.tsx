@@ -65,7 +65,7 @@ export function StatusBadge({ status, className = "" }: StatusBadgeProps) {
 
       {/* Badge principal */}
       <Badge 
-        className={`relative flex items-center gap-2 px-3 py-1.5 text-sm font-bold
+        className={`relative flex items-center gap-2 px-3 py-1.5 text-body font-bold
           transition-all duration-300 hover:scale-110 hover:shadow-xl
           ${config.className}`}
       >
@@ -73,7 +73,7 @@ export function StatusBadge({ status, className = "" }: StatusBadgeProps) {
         <Icon className="h-4 w-4 animate-pulse" />
         
         {/* Emoji decorativo */}
-        <span className="text-base leading-none">{config.emoji}</span>
+        <span className="text-body leading-none">{config.emoji}</span>
         
         {/* Label */}
         <span className="leading-none">{config.label}</span>
@@ -90,12 +90,12 @@ export function StatusBadgeCompact({ status }: { status: StatusEnum }) {
   return (
     <div 
       className={`inline-flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-full
-        text-xs font-semibold transition-all duration-300 hover:scale-105
+        text-caption font-semibold transition-all duration-300 hover:scale-105
         ${config.className}`}
       title={config.label}
     >
       <Icon className="h-3.5 w-3.5" />
-      <span className="text-sm">{config.emoji}</span>
+      <span className="text-body">{config.emoji}</span>
     </div>
   );
 }

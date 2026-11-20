@@ -455,11 +455,11 @@ export function PartnerClassWithStudents() {
   return (
     <div className="flex flex-col justify-center items-center pt-4">
       <div className="w-full px-4">
-        <h1 className="text-3xl font-bold text-center text-foreground">
+        <h1 className="text-h1 font-bold text-center text-foreground">
           {classEntity?.name}
         </h1>
         {classEntity?.coursePeriod && (
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 mt-2 text-sm text-muted-foreground">
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 mt-2 text-body text-muted-foreground">
             <span>
               <strong>Período:</strong> {classEntity.coursePeriod.name} ({classEntity.coursePeriod.year})
             </span>
@@ -491,7 +491,7 @@ export function PartnerClassWithStudents() {
         {turmaEncerrada(classEntity?.coursePeriod?.endDate) && (
           <div
             role="status"
-            className="mx-auto mt-3 flex max-w-2xl items-start gap-2 rounded-lg border border-warning bg-warning-muted px-4 py-2 text-sm text-foreground"
+            className="mx-auto mt-3 flex max-w-2xl items-start gap-2 rounded-lg border border-warning bg-warning-muted px-4 py-2 text-body text-foreground"
           >
             <IoWarningOutline aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
             <span>
@@ -575,7 +575,7 @@ export function PartnerClassWithStudents() {
                 />
               }
               label={
-                <span className="text-sm text-foreground">
+                <span className="text-body text-foreground">
                   Matrículas canceladas
                 </span>
               }

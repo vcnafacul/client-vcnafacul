@@ -203,7 +203,7 @@ export function AttendanceHistoryModal({
     >
       <div className="shrink-0 px-4 pt-4 pb-3 sm:px-6 sm:pt-6 border-b border-border">
         <div className="flex items-start justify-between gap-3">
-          <h2 className="min-w-0 text-xl sm:text-2xl font-black text-foreground leading-tight">
+          <h2 className="min-w-0 text-h2 font-black text-foreground">
             Frequência{turmaNome ? ` · ${turmaNome}` : ""}
           </h2>
           <button
@@ -240,7 +240,7 @@ export function AttendanceHistoryModal({
       <ul aria-label="Chamadas" className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6">
         {erro && (
           <li className="py-10 flex flex-col items-center gap-3 text-center">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body text-muted-foreground">
               Não foi possível carregar as chamadas.
             </p>
             <button
@@ -263,7 +263,7 @@ export function AttendanceHistoryModal({
         {carregou && !erro && attendanceHistory.length === 0 && (
           <li className="h-full flex flex-col items-center justify-center gap-3 text-center py-10">
             <p className="text-foreground font-bold">Nenhuma chamada ainda.</p>
-            <p className="text-sm text-muted-foreground max-w-xs">
+            <p className="text-body text-muted-foreground max-w-xs">
               As chamadas registradas desta turma aparecem aqui.
             </p>
             <button
@@ -286,12 +286,12 @@ export function AttendanceHistoryModal({
                   {dataDaChamada(r.registeredAt)}
                 </span>
                 {r.period && (
-                  <span className="px-2 py-0.5 rounded-full bg-primary/10 text-foreground text-xs font-semibold">
+                  <span className="px-2 py-0.5 rounded-full bg-primary/10 text-foreground text-caption font-semibold">
                     {attendancePeriodLabel[r.period as AttendancePeriod]}
                   </span>
                 )}
               </div>
-              <p className="text-sm text-muted-foreground truncate">por {r.registeredBy}</p>
+              <p className="text-body text-muted-foreground truncate">por {r.registeredBy}</p>
             </div>
             <div className="shrink-0 flex gap-1">
               <button
@@ -300,7 +300,7 @@ export function AttendanceHistoryModal({
                   setAttendanceHistorySelected(r);
                   modals.modalAttendanceRecord.open();
                 }}
-                className="h-9 px-3 rounded-lg text-sm font-semibold text-foreground hover:bg-primary/5 flex items-center gap-1.5"
+                className="h-9 px-3 rounded-lg text-body font-semibold text-foreground hover:bg-primary/5 flex items-center gap-1.5"
               >
                 <IoEyeOutline className="w-4 h-4" />
                 Ver
@@ -320,7 +320,7 @@ export function AttendanceHistoryModal({
       </ul>
 
       {totalItems > limit && (
-        <div className="shrink-0 px-4 py-2 sm:px-6 border-t border-border flex items-center justify-center gap-3 text-sm text-muted-foreground">
+        <div className="shrink-0 px-4 py-2 sm:px-6 border-t border-border flex items-center justify-center gap-3 text-body text-muted-foreground">
           <button
             type="button"
             aria-label="Página anterior"

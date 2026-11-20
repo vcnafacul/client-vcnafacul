@@ -28,7 +28,7 @@ export function StatusDemo() {
   return (
     <div className="space-y-8 p-6">
       <div>
-        <h2 className="text-2xl font-bold mb-4">Demonstração de Status Visual</h2>
+        <h2 className="text-h1 font-bold mb-4">Demonstração de Status Visual</h2>
         <p className="text-muted-foreground mb-6">
           Visualização de todos os componentes de status disponíveis
         </p>
@@ -44,7 +44,7 @@ export function StatusDemo() {
             {statuses.map((item) => (
               <div key={item.status} className="flex flex-col items-center gap-2">
                 <StatusBadge status={item.status} />
-                <span className="text-xs text-muted-foreground">{item.name}</span>
+                <span className="text-caption text-muted-foreground">{item.name}</span>
               </div>
             ))}
           </div>
@@ -61,7 +61,7 @@ export function StatusDemo() {
             {statuses.map((item) => (
               <div key={item.status} className="flex flex-col items-center gap-2">
                 <StatusBadgeCompact status={item.status} />
-                <span className="text-xs text-muted-foreground">{item.name}</span>
+                <span className="text-caption text-muted-foreground">{item.name}</span>
               </div>
             ))}
           </div>
@@ -79,8 +79,8 @@ export function StatusDemo() {
               <div key={item.status} className="flex items-center gap-3">
                 <StatusIndicator status={item.status} />
                 <div>
-                  <p className="text-sm font-medium">{item.name}</p>
-                  <p className="text-xs text-muted-foreground">{item.description}</p>
+                  <p className="text-body font-medium">{item.name}</p>
+                  <p className="text-caption text-muted-foreground">{item.description}</p>
                 </div>
               </div>
             ))}
@@ -104,10 +104,10 @@ export function StatusDemo() {
                   <StatusBadge status={item.status} />
                 </div>
                 <CardHeader className="pt-6">
-                  <CardTitle className="text-base">Questão de Exemplo</CardTitle>
+                  <CardTitle className="text-body">Questão de Exemplo</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-body text-muted-foreground">
                     Esta é uma questão de exemplo com status: <strong>{item.name}</strong>
                   </p>
                 </CardContent>
@@ -143,7 +143,7 @@ export function StatusDemo() {
                     <td className="p-2">
                       <StatusIndicator status={item.status} />
                     </td>
-                    <td className="p-2 text-sm text-muted-foreground">
+                    <td className="p-2 text-body text-muted-foreground">
                       {item.description}
                     </td>
                   </tr>

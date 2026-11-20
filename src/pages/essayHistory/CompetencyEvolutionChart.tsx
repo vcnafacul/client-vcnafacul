@@ -53,7 +53,7 @@ export default function CompetencyEvolutionChart({ timeline }: Props) {
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <p className="text-sm font-bold">Evolução por Competência</p>
+        <p className="text-body font-bold">Evolução por Competência</p>
         {hasAi && hasHuman && (
           <ToggleButtonGroup
             size="small"

@@ -532,7 +532,7 @@ export default function ManagerCollaborator() {
               dashV2.border,
             )}
           >
-            <h1 className={cn("text-lg font-semibold", dashV2.text.primary)}>
+            <h1 className={cn("text-h3 font-semibold", dashV2.text.primary)}>
               Colaboradores
             </h1>
           </div>

@@ -41,12 +41,12 @@ export default function ReviewSingle() {
           )}
         </div>
         <div>
-          <h1 className="text-xl font-bold text-foreground">
+          <h1 className="text-h2 font-bold text-foreground">
             {review.reviewType === "AI"
               ? "Correção por IA"
               : `Revisão de ${review.reviewer?.firstName ?? ""} ${review.reviewer?.lastName ?? ""}`}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body text-muted-foreground">
             {review.reviewType === "AI" ? "Inteligência Artificial" : "Revisão Humana"}
             {" · "}
             {new Date(review.createdAt).toLocaleDateString("pt-BR")}
@@ -72,7 +72,7 @@ export default function ReviewSingle() {
       {review.generalComment && (
         <div className="border rounded-lg p-4 bg-white">
           <h3 className="font-bold mb-2">Comentário Geral</h3>
-          <p className="text-sm text-foreground">{review.generalComment}</p>
+          <p className="text-body text-foreground">{review.generalComment}</p>
         </div>
       )}
 
@@ -89,8 +89,8 @@ export default function ReviewSingle() {
                     : "border-destructive bg-destructive-muted"
                 }`}
               >
-                <p className="text-sm italic mb-1">"{excerpt.trecho}"</p>
-                <p className="text-sm text-foreground">{excerpt.comentario}</p>
+                <p className="text-body italic mb-1">"{excerpt.trecho}"</p>
+                <p className="text-body text-foreground">{excerpt.comentario}</p>
               </div>
             ))}
           </div>
@@ -100,7 +100,7 @@ export default function ReviewSingle() {
       <div>
         <button
           onClick={() => navigate(-1)}
-          className="px-4 py-2 border rounded-lg text-sm hover:bg-page"
+          className="px-4 py-2 border rounded-lg text-body hover:bg-page"
         >
           Voltar
         </button>

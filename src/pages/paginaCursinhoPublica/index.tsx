@@ -49,7 +49,7 @@ function ListaDeLinksPublica({
 }) {
   return (
     <section aria-label={titulo} className="max-w-5xl mx-auto px-6 py-10">
-      <h2 className="flex items-center gap-2 text-2xl font-extrabold text-foreground mb-4">
+      <h2 className="flex items-center gap-2 text-h1 font-extrabold text-foreground mb-4">
         {icone}
         {titulo}
       </h2>
@@ -107,7 +107,7 @@ export default function PaginaCursinhoPublica() {
     return (
       <BaseTemplate solid position="relative">
         <div className="max-w-xl mx-auto px-6 py-24 text-center">
-          <h1 className="text-3xl font-extrabold text-foreground mb-3">
+          <h1 className="text-h1 font-extrabold text-foreground mb-3">
             Página não encontrada
           </h1>
           <p className="text-muted-foreground">
@@ -130,7 +130,7 @@ export default function PaginaCursinhoPublica() {
     <BaseTemplate solid position="relative">
       <header className="bg-white">
         <div className="max-w-5xl mx-auto px-6 pt-16 pb-6">
-          <h1 className="text-3xl md:text-5xl font-extrabold text-foreground leading-tight break-words">
+          <h1 className="text-h1 font-extrabold text-foreground leading-tight break-words">
             {pagina.nome}
           </h1>
           {pagina.localizacao && (
@@ -165,12 +165,12 @@ export default function PaginaCursinhoPublica() {
 
       <section aria-label="Quem somos" className="bg-white">
         <div className="max-w-5xl mx-auto px-6 pb-12">
-          <h2 className="text-2xl font-extrabold text-foreground mb-3">Quem somos</h2>
+          <h2 className="text-h1 font-extrabold text-foreground mb-3">Quem somos</h2>
           <div className="prose max-w-none">
             <RichTextRenderer
               content={pagina.quemSomos}
               contentFormat="markdown"
-              className="text-foreground text-base"
+              className="text-foreground text-prose"
             />
           </div>
         </div>
@@ -194,7 +194,7 @@ export default function PaginaCursinhoPublica() {
 
       <section aria-label="Impacto" className="bg-page py-16">
         <div className="max-w-5xl mx-auto px-6">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-foreground text-center mb-8">
+          <h2 className="text-h1 font-extrabold text-foreground text-center mb-8">
             Nosso impacto
           </h2>
           <div className="flex flex-wrap justify-center gap-4">
@@ -213,7 +213,7 @@ export default function PaginaCursinhoPublica() {
         <ListaDeLinksPublica
           titulo="Links internos"
           links={internos}
-          icone={<FiLock aria-hidden className="text-xl" />}
+          icone={<FiLock aria-hidden className="text-h2" />}
         />
       )}
 

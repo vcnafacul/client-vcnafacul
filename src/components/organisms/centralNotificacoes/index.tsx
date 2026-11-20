@@ -72,15 +72,15 @@ function Item({
         />
         <span className="min-w-0 flex-1">
           <span
-            className={`block text-sm text-foreground ${lida ? "" : "font-semibold"}`}
+            className={`block text-body text-foreground ${lida ? "" : "font-semibold"}`}
           >
             {n.titulo}
             {!lida && <span className="sr-only"> (não lida)</span>}
           </span>
-          <span className="line-clamp-2 block text-sm text-muted-foreground">
+          <span className="line-clamp-2 block text-body text-muted-foreground">
             {n.corpo}
           </span>
-          <span className="block text-xs text-muted-foreground">
+          <span className="block text-caption text-muted-foreground">
             {haQuanto(n.createdAt)}
           </span>
         </span>
@@ -108,7 +108,7 @@ function ItemDeConversa({
           className="mt-0.5 h-4 w-4 shrink-0 text-primary"
         />
         <span className="min-w-0 flex-1">
-          <span className="block text-sm font-semibold text-foreground">
+          <span className="block text-body font-semibold text-foreground">
             {c.titulo}
             {c.subtitulo && (
               <span className="font-normal text-muted-foreground">
@@ -117,14 +117,14 @@ function ItemDeConversa({
               </span>
             )}
           </span>
-          <span className="block text-sm text-muted-foreground">
+          <span className="block text-body text-muted-foreground">
             {c.naoLidas === 1
               ? "1 mensagem nova"
               : `${c.naoLidas} mensagens novas`}
             {c.trecho && <span className="text-muted-foreground"> — {c.trecho}</span>}
           </span>
           {c.quando && (
-            <span className="block text-xs text-muted-foreground">
+            <span className="block text-caption text-muted-foreground">
               {haQuanto(new Date(c.quando).toISOString())}
             </span>
           )}
@@ -172,7 +172,7 @@ export function ListaDaCentral({ onFechar }: { onFechar: () => void }) {
           <section aria-labelledby="sino-conversas">
             <h3
               id="sino-conversas"
-              className="bg-page px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+              className="bg-page px-4 py-1.5 text-caption font-semibold uppercase tracking-wide text-muted-foreground"
             >
               Conversas
             </h3>
@@ -192,7 +192,7 @@ export function ListaDaCentral({ onFechar }: { onFechar: () => void }) {
         )}
         {itens.length === 0 ? (
           conversas.length === 0 && (
-            <p className="px-4 py-8 text-center text-sm text-muted-foreground">
+            <p className="px-4 py-8 text-center text-body text-muted-foreground">
               Nenhuma notificação por aqui.
             </p>
           )
@@ -251,7 +251,7 @@ export function SinoDaCentral({ solid = true }: { solid?: boolean }) {
       {rotulo && (
         <span
           aria-hidden
-          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-cta px-1 text-[10px] font-bold leading-none text-cta-foreground"
+          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-cta px-1 text-caption font-bold text-cta-foreground"
         >
           {rotulo}
         </span>

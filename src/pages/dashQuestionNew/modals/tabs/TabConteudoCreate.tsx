@@ -29,12 +29,12 @@ export function TabConteudoCreate({
     <div className="space-y-6 p-2 sm:p-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Enunciado da Questão</CardTitle>
+          <CardTitle className="text-h3">Enunciado da Questão</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Texto da Questão — editor grande */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-muted-foreground">
+            <label className="text-body font-semibold text-muted-foreground">
               Texto da Questão *
             </label>
             <Suspense
@@ -54,7 +54,7 @@ export function TabConteudoCreate({
               />
             </Suspense>
             {errors.textoQuestao && (
-              <p className="text-sm text-destructive flex items-center gap-1">
+              <p className="text-body text-destructive flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
                 {errors.textoQuestao}
               </p>
@@ -63,7 +63,7 @@ export function TabConteudoCreate({
 
           {/* Pergunta */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-muted-foreground">
+            <label className="text-body font-semibold text-muted-foreground">
               Pergunta (opcional)
             </label>
             <Suspense
@@ -81,7 +81,7 @@ export function TabConteudoCreate({
                 token={token}
               />
             </Suspense>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-caption text-muted-foreground">
               Caso a questão tenha uma pergunta específica após o enunciado
             </p>
           </div>
@@ -90,7 +90,7 @@ export function TabConteudoCreate({
 
       {/* Dica */}
       <div className="p-4 bg-info-muted border border-info/30 rounded-lg">
-        <p className="text-sm text-info">
+        <p className="text-body text-info">
           <span className="font-semibold">Dica:</span> Use a barra de
           ferramentas para formatar texto, inserir fórmulas LaTeX e imagens.
         </p>

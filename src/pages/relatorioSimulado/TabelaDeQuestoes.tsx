@@ -46,10 +46,10 @@ function VazioDeQuestoes() {
       data-testid="questoes-vazio"
       className="flex flex-col items-center gap-2 px-4 py-10 text-center"
     >
-      <p className={cn("text-sm font-medium", dashV2.text.primary)}>
+      <p className={cn("text-body font-medium", dashV2.text.primary)}>
         {TEXTO_SEM_QUESTOES}
       </p>
-      <p className={cn("text-xs", dashV2.text.secondary)}>
+      <p className={cn("text-caption", dashV2.text.secondary)}>
         As questões aparecem aqui conforme os cartões forem lidos.
       </p>
     </div>
@@ -308,7 +308,7 @@ function colunasDeQuestoes(
         <span
           data-anulada-motivo
           title={q.justificativaAnulacao}
-          className="block text-xs text-destructive"
+          className="block text-caption text-destructive"
         >
           <span className="font-semibold">
             Anulada: {rotuloDoMotivo(q.motivoAnulacao)}
@@ -501,7 +501,7 @@ export function TabelaDeQuestoes({
         >
           <label
             className={cn(
-              "flex cursor-pointer select-none items-center gap-2 text-sm",
+              "flex cursor-pointer select-none items-center gap-2 text-body",
               dashV2.text.secondary,
             )}
           >

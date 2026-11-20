@@ -27,12 +27,12 @@ export function Section({
         <header className="container mx-auto px-4 mb-10 md:mb-14 text-center">
           {eyebrow && <p className="home-section__eyebrow mb-3">{eyebrow}</p>}
           {title && (
-            <h2 className="text-3xl md:text-5xl font-extrabold leading-tight text-balance">
+            <h2 className="text-h1 font-extrabold leading-tight text-balance">
               {title}
             </h2>
           )}
           {subtitle && (
-            <p className="mt-3 md:mt-4 text-base md:text-lg opacity-80 max-w-2xl mx-auto">
+            <p className="mt-3 md:mt-4 text-prose opacity-80 max-w-2xl mx-auto">
               {subtitle}
             </p>
           )}

@@ -126,13 +126,13 @@ export function ModalEditarDadosDaProva({
       className="w-full max-w-lg rounded-lg bg-white shadow-xl p-2"
     >
       <form onSubmit={salvar} className="p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-foreground">
+        <h2 className="text-h3 font-semibold text-foreground">
           Editar dados da prova
         </h2>
         <div>
           <label
             htmlFor="prova-nome"
-            className="block text-sm font-semibold mb-1"
+            className="block text-body font-semibold mb-1"
           >
             Nome
           </label>
@@ -148,7 +148,7 @@ export function ModalEditarDadosDaProva({
           <div>
             <label
               htmlFor="prova-ano"
-              className="block text-sm font-semibold mb-1"
+              className="block text-body font-semibold mb-1"
             >
               Ano
             </label>
@@ -165,7 +165,7 @@ export function ModalEditarDadosDaProva({
           <div>
             <label
               htmlFor="prova-edicao"
-              className="block text-sm font-semibold mb-1"
+              className="block text-body font-semibold mb-1"
             >
               Edição
             </label>
@@ -185,7 +185,7 @@ export function ModalEditarDadosDaProva({
           <div>
             <label
               htmlFor="prova-aplicacao"
-              className="block text-sm font-semibold mb-1"
+              className="block text-body font-semibold mb-1"
             >
               Aplicação
             </label>
@@ -206,7 +206,7 @@ export function ModalEditarDadosDaProva({
         <div>
           <label
             htmlFor="prova-categoria"
-            className="block text-sm font-semibold mb-1"
+            className="block text-body font-semibold mb-1"
           >
             Categoria
           </label>
@@ -224,7 +224,7 @@ export function ModalEditarDadosDaProva({
               </option>
             ))}
           </select>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-caption text-muted-foreground mt-1">
             {travada ? TEXTO_CATEGORIA_TRAVADA : TEXTO_AVISO_CATEGORIA}
           </p>
         </div>

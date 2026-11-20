@@ -114,8 +114,8 @@ export function ModalConvites({
     >
       <div data-modal-convites className="flex w-full flex-col gap-5">
         <header className="text-center">
-          <h2 className="text-lg font-bold text-foreground">Convites de colaborador</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="text-h3 font-bold text-foreground">Convites de colaborador</h2>
+          <p className="text-body text-muted-foreground">
             Convide por email já escolhendo a função. O convite vale 7 dias.
           </p>
         </header>
@@ -125,7 +125,7 @@ export function ModalConvites({
           onSubmit={convidar}
           className="grid gap-3 rounded-md border bg-page p-4 sm:grid-cols-[1fr_14rem_auto] sm:items-end"
         >
-          <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
+          <label className="flex flex-col gap-1 text-caption font-medium text-muted-foreground">
             Email
             <input
               data-email
@@ -134,17 +134,17 @@ export function ModalConvites({
               placeholder="nome@exemplo.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-10 rounded-md border bg-white px-3 text-sm"
+              className="h-10 rounded-md border bg-white px-3 text-body"
             />
           </label>
-          <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
+          <label className="flex flex-col gap-1 text-caption font-medium text-muted-foreground">
             Função
             <select
               data-funcao
               required
               value={roleId}
               onChange={(e) => setRoleId(e.target.value)}
-              className="h-10 rounded-md border bg-white px-2 text-sm"
+              className="h-10 rounded-md border bg-white px-2 text-body"
             >
               <option value="">Escolha a função</option>
               {funcoes.map((f) => (
@@ -164,15 +164,15 @@ export function ModalConvites({
         </form>
 
         {carregando ? (
-          <p className="text-sm text-muted-foreground">Carregando…</p>
+          <p className="text-body text-muted-foreground">Carregando…</p>
         ) : convites.length === 0 ? (
-          <p data-sem-convites className="py-6 text-center text-sm text-muted-foreground">
+          <p data-sem-convites className="py-6 text-center text-body text-muted-foreground">
             Nenhum convite enviado ainda.
           </p>
         ) : (
           <div className="max-h-[50vh] overflow-auto">
-            <table data-lista-convites className="w-full text-left text-sm">
-              <thead className="sticky top-0 bg-white text-xs uppercase tracking-wide text-muted-foreground">
+            <table data-lista-convites className="w-full text-left text-body">
+              <thead className="sticky top-0 bg-white text-caption uppercase tracking-wide text-muted-foreground">
                 <tr>
                   <th className="px-3 py-2 font-semibold">Convidado</th>
                   <th className="px-3 py-2 font-semibold">Função</th>
@@ -187,7 +187,7 @@ export function ModalConvites({
                       <p className="truncate font-medium text-foreground" title={c.email}>
                         {c.email}
                       </p>
-                      <p className="truncate text-xs text-muted-foreground">
+                      <p className="truncate text-caption text-muted-foreground">
                         por {c.convidadoPor} · em {dataCurta(c.createdAt)}
                       </p>
                     </td>
@@ -203,7 +203,7 @@ export function ModalConvites({
                               "Função do convite alterada.",
                             )
                           }
-                          className="h-9 w-full min-w-[9rem] rounded-md border bg-white px-2 text-sm"
+                          className="h-9 w-full min-w-[9rem] rounded-md border bg-white px-2 text-body"
                         >
                           {funcoes.map((f) => (
                             <option key={f.id} value={f.id}>
@@ -218,7 +218,7 @@ export function ModalConvites({
                     <td className="px-3 py-3">
                       <span
                         data-situacao
-                        className={`inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium ${COR_DA_SITUACAO[c.situacao]}`}
+                        className={`inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 text-caption font-medium ${COR_DA_SITUACAO[c.situacao]}`}
                       >
                         {textoDaSituacao(c)}
                       </span>

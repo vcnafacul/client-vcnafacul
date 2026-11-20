@@ -38,7 +38,7 @@ export function BotaoExportar({
         exportAnalyticsCsv(planilha.cabecalho, planilha.linhas, nomeArquivo)
       }
       className={cn(
-        "h-9 rounded-md px-3 text-sm font-medium",
+        "h-9 rounded-md px-3 text-body font-medium",
         "disabled:cursor-not-allowed disabled:opacity-60",
         dashV2.action.secondary,
         dashV2.focus,

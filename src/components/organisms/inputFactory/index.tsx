@@ -43,7 +43,7 @@ export function InputFactory({
       inputElement = (
         <div
           className={`card flex justify-content-center h-16 pt-8 pl-2 border border-input rounded-md 
-      text-xs shadow-sm disabled:opacity-50 ${
+      text-caption shadow-sm disabled:opacity-50 ${
         (props as DropdownProps).className
       }`}
         >

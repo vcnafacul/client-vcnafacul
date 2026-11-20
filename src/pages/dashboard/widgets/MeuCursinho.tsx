@@ -51,30 +51,30 @@ export function MeuCursinho() {
               </RadialBarChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-bold tabular-nums lining-nums text-foreground">
+              <span className="text-h1 font-bold tabular-nums lining-nums text-foreground">
                 {latest.frequencia.percentual}%
               </span>
-              <span className="text-xs text-muted-foreground">de frequência</span>
+              <span className="text-caption text-muted-foreground">de frequência</span>
             </div>
           </div>
 
           <dl className="mt-4 grid grid-cols-2 gap-3 text-center">
             <div className="rounded-xl bg-page py-2.5">
-              <dt className="text-xs text-muted-foreground">Presenças</dt>
-              <dd className="text-lg font-bold tabular-nums lining-nums text-success">
+              <dt className="text-caption text-muted-foreground">Presenças</dt>
+              <dd className="text-h3 font-bold tabular-nums lining-nums text-success">
                 {latest.frequencia.presencas}
               </dd>
             </div>
             <div className="rounded-xl bg-page py-2.5">
-              <dt className="text-xs text-muted-foreground">Faltas</dt>
-              <dd className="text-lg font-bold tabular-nums lining-nums text-destructive">
+              <dt className="text-caption text-muted-foreground">Faltas</dt>
+              <dd className="text-h3 font-bold tabular-nums lining-nums text-destructive">
                 {latest.frequencia.faltas}
               </dd>
             </div>
           </dl>
 
           {(latest.matricula || latest.turma || latest.periodo) && (
-            <p className="mt-4 text-center text-xs text-muted-foreground">
+            <p className="mt-4 text-center text-caption text-muted-foreground">
               {[
                 latest.matricula && `Matrícula ${latest.matricula}`,
                 latest.turma,

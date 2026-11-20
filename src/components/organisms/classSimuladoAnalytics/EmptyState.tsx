@@ -14,20 +14,20 @@ export function EmptyState({ variant, onGenerate, loading, aviso }: Props) {
     return (
       <div className="flex flex-col items-center gap-3 py-12 text-center text-muted-foreground">
         <BarChart3 className="h-10 w-10 opacity-40" />
-        <p className="text-sm">Nenhum relatório gerado ainda para esta turma.</p>
+        <p className="text-body">Nenhum relatório gerado ainda para esta turma.</p>
         {onGenerate && (
           <Button size="sm" onClick={onGenerate} disabled={loading}>
             {loading ? "Gerando..." : "Gerar agora"}
           </Button>
         )}
-        {!onGenerate && aviso && <p className="text-xs text-muted-foreground">{aviso}</p>}
+        {!onGenerate && aviso && <p className="text-caption text-muted-foreground">{aviso}</p>}
       </div>
     );
   }
   return (
     <div className="flex flex-col items-center gap-2 py-8 text-center text-muted-foreground">
       <CalendarX className="h-8 w-8 opacity-40" />
-      <p className="text-sm">Nenhum dado disponível para o mês selecionado.</p>
+      <p className="text-body">Nenhum dado disponível para o mês selecionado.</p>
     </div>
   );
 }

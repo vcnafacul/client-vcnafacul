@@ -26,7 +26,7 @@ export function BarList({ items, max }: { items: BarListItem[]; max?: number }) 
     <ul className="space-y-3">
       {items.map((item) => (
         <li key={item.id}>
-          <div className="mb-1 flex items-baseline justify-between gap-3 text-sm">
+          <div className="mb-1 flex items-baseline justify-between gap-3 text-body">
             <span className="truncate text-muted-foreground">{item.label}</span>
             <span className="shrink-0 font-semibold tabular-nums lining-nums text-foreground">
               {item.display ?? item.value}

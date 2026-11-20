@@ -98,7 +98,7 @@ function PermissionToggle({
       aria-checked={isOn}
       onClick={() => !isReadonly && onChange(!checked)}
       style={buttonStyle}
-      className="flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-all duration-200 select-none"
+      className="flex items-center gap-2 px-3 py-1.5 rounded-lg border text-body font-medium transition-all duration-200 select-none"
     >
       <span
         style={dotStyle}
@@ -106,7 +106,7 @@ function PermissionToggle({
       />
       {label}
       {implied && (
-        <span className="text-[10px] font-normal opacity-60 ml-0.5">
+        <span className="text-caption font-normal opacity-60 ml-0.5">
           (auto)
         </span>
       )}

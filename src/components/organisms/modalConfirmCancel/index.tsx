@@ -28,7 +28,7 @@ export default function ModalConfirmCancel({
       <DialogContent
         className={cn("w-[calc(100%-2rem)] max-w-xl rounded-2xl", className)}
       >
-        {text && <h2 className="text-lg font-bold">{text}</h2>}
+        {text && <h2 className="text-h3 font-bold">{text}</h2>}
 
         {children}
 

@@ -133,7 +133,7 @@ const colunasDoDetalhe = (
         <>
           <StatusBadge tone={tone} label={texto} />
           {r.anulacao && (
-            <span className="block text-xs text-warning" title={r.anulacao.justificativa}>
+            <span className="block text-caption text-warning" title={r.anulacao.justificativa}>
               anulada depois: recalcule
             </span>
           )}
@@ -191,7 +191,7 @@ function VazioDeRespostas() {
       data-testid="respostas-vazio"
       className="flex flex-col items-center gap-2 px-4 py-10 text-center"
     >
-      <p className={cn("text-sm font-medium", dashV2.text.primary)}>
+      <p className={cn("text-body font-medium", dashV2.text.primary)}>
         {TEXTO_SEM_RESPOSTAS}
       </p>
     </div>
@@ -410,19 +410,19 @@ export function DetalheDoEstudante({
             <div className="min-w-0">
               <h2
                 className={cn(
-                  "truncate text-lg font-semibold",
+                  "truncate text-h3 font-semibold",
                   dashV2.text.primary,
                 )}
               >
                 {estudante.nome}
               </h2>
-              <p className={cn("text-xs", dashV2.text.muted)}>
+              <p className={cn("text-caption", dashV2.text.muted)}>
                 {estudante.matricula}
               </p>
               {nomeDoSimulado && (
                 <p
                   data-testid="simulado-do-detalhe"
-                  className={cn("truncate text-xs", dashV2.text.secondary)}
+                  className={cn("truncate text-caption", dashV2.text.secondary)}
                 >
                   {nomeDoSimulado}
                 </p>
@@ -444,7 +444,7 @@ export function DetalheDoEstudante({
           {navegacao !== undefined && navegacao.posicao > 0 && (
             <span
               data-testid="posicao-na-navegacao"
-              className={cn("shrink-0 text-xs", dashV2.text.muted)}
+              className={cn("shrink-0 text-caption", dashV2.text.muted)}
             >
               {navegacao.posicao} de {navegacao.total}
             </span>
@@ -475,14 +475,14 @@ export function DetalheDoEstudante({
 
         {estado === "error" && (
           <div className="flex flex-col items-start gap-2">
-            <p className={cn("text-sm", dashV2.text.secondary)}>
+            <p className={cn("text-body", dashV2.text.secondary)}>
               Erro ao carregar o detalhe.
             </p>
             <button
               type="button"
               onClick={carregar}
               className={cn(
-                "rounded-sm text-sm font-medium underline-offset-2 hover:underline",
+                "rounded-sm text-body font-medium underline-offset-2 hover:underline",
                 dashV2.text.primary,
                 dashV2.focus,
               )}
@@ -497,7 +497,7 @@ export function DetalheDoEstudante({
           informação acionável da tela neste caso — diz o que fazer com a folha.
         */}
         {estado === "idle" && detalhe?.status === "failed" && (
-          <p className={cn("text-sm", dashV2.text.secondary)}>
+          <p className={cn("text-body", dashV2.text.secondary)}>
             {detalhe.falha?.descricao ?? TEXTO_FALHA_SEM_DESCRICAO}
           </p>
         )}
@@ -525,7 +525,7 @@ export function DetalheDoEstudante({
           )}
 
         {estado === "idle" && processando && (
-          <p className={cn("text-sm", dashV2.text.secondary)}>
+          <p className={cn("text-body", dashV2.text.secondary)}>
             {TEXTO_PROCESSANDO}
           </p>
         )}
@@ -538,7 +538,7 @@ export function DetalheDoEstudante({
         {estado === "idle" && statusDesconhecido && (
           <p
             data-testid="status-desconhecido"
-            className={cn("text-sm", dashV2.text.secondary)}
+            className={cn("text-body", dashV2.text.secondary)}
           >
             {TEXTO_STATUS_DESCONHECIDO}
           </p>

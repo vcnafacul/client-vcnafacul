@@ -49,7 +49,7 @@ export function PartnerSupportInbox() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-76px)]">
-        <span className="text-sm text-muted-foreground">Carregando...</span>
+        <span className="text-body text-muted-foreground">Carregando...</span>
       </div>
     );
   }
@@ -59,7 +59,7 @@ export function PartnerSupportInbox() {
       <div className="flex flex-col items-center justify-center h-[calc(100vh-76px)] gap-3">
         <LuHeadset className="h-12 w-12 text-foreground/30" />
         <span className="font-medium text-foreground">Nenhum cursinho associado</span>
-        <span className="text-sm text-muted-foreground max-w-xs text-center">
+        <span className="text-body text-muted-foreground max-w-xs text-center">
           Sua conta não está vinculada a um cursinho parceiro.
         </span>
       </div>

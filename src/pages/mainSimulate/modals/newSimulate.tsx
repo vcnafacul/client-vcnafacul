@@ -99,7 +99,7 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
           )}
         </div>
         {carregado && availables.length === 0 && (
-          <p className="mb-4 rounded-md bg-muted p-3 text-sm text-foreground text-start">
+          <p className="mb-4 rounded-md bg-muted p-3 text-body text-foreground text-start">
             Nenhum simulado disponível no momento.
           </p>
         )}

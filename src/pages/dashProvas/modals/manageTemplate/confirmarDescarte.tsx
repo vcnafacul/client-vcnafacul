@@ -34,14 +34,14 @@ function ConfirmarDescarte({
 
   return (
     <div className="p-6">
-      <h2 className="mb-4 text-xl font-semibold text-foreground">
+      <h2 className="mb-4 text-h2 font-semibold text-foreground">
         Descartar rascunho
       </h2>
-      <p className="text-sm text-foreground">
+      <p className="text-body text-foreground">
         O zip enviado se perde e não dá para trazer de volta — só subindo o
         projeto do Overleaf outra vez.
       </p>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <p className="mt-1 text-body text-muted-foreground">
         {versaoNoAr === null
           ? "A versão publicada não muda: continua não havendo nenhuma."
           : `A versão publicada não muda: as provas seguem saindo com a v${versaoNoAr}.`}

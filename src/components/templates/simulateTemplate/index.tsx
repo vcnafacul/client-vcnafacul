@@ -110,7 +110,7 @@ function SimulateTemplate({
             type="button"
             onClick={() => setGradeAberta(!gradeAberta)}
             aria-expanded={gradeAberta}
-            className="flex w-full items-center justify-between rounded-md border border-border bg-white px-3 h-11 text-sm font-medium text-foreground"
+            className="flex w-full items-center justify-between rounded-md border border-border bg-white px-3 h-11 text-body font-medium text-foreground"
           >
             <span>
               Questões
@@ -166,7 +166,7 @@ function SimulateTemplate({
               onClick={() =>
                 setDisplayMode(modo === "image" ? "text" : "image")
               }
-              className="text-sm px-3 py-1 rounded border border-border hover:bg-muted transition-colors"
+              className="text-body px-3 py-1 rounded border border-border hover:bg-muted transition-colors"
             >
               {modo === "image" ? "Ver texto" : "Ver imagem"}
             </button>

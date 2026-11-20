@@ -27,7 +27,7 @@ function PermissionReadonlyList({
 }) {
   if (!groups || groups.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground text-center py-4">
+      <p className="text-body text-muted-foreground text-center py-4">
         Nenhuma permissão encontrada.
       </p>
     );
@@ -40,7 +40,7 @@ function PermissionReadonlyList({
           key={group.key}
           className="rounded-xl border border-border bg-page/50 p-4 flex flex-col gap-3"
         >
-          <span className="text-sm font-semibold text-foreground">
+          <span className="text-body font-semibold text-foreground">
             {group.label}
           </span>
           <div className="flex flex-wrap gap-2">
@@ -135,14 +135,14 @@ function ModalRole({
           <Text size="secondary" className="font-bold text-foreground">
             Permissões do Usuário
           </Text>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <p className="text-body text-muted-foreground mt-0.5">
             Visualize ou altere o perfil atribuído a este usuário.
           </p>
         </div>
 
         {/* Role selector */}
         <label className="flex flex-col gap-1">
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+          <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
             Perfil
           </span>
 
@@ -153,14 +153,14 @@ function ModalRole({
               setState={setNewRole}
             />
           ) : (
-            <div className="text-sm font-semibold text-foreground px-3 py-2 rounded-lg border border-border bg-page">
+            <div className="text-body font-semibold text-foreground px-3 py-2 rounded-lg border border-border bg-page">
               {selectedRoleName}
             </div>
           )}
         </label>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-4 text-caption text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <span
               className="w-3 h-3 rounded-full inline-block"
@@ -186,7 +186,7 @@ function ModalRole({
           {roleInfo ? (
             <PermissionReadonlyList groups={roleInfo} />
           ) : (
-            <p className="text-sm text-muted-foreground text-center py-4">
+            <p className="text-body text-muted-foreground text-center py-4">
               Carregando...
             </p>
           )}

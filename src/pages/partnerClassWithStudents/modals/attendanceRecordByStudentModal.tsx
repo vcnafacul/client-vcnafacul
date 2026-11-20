@@ -202,7 +202,7 @@ export function AttendanceRecordByStudentModal({
     >
       <div className="flex flex-1 flex-col min-h-0 gap-3">
         <div className="flex flex-wrap items-center justify-between gap-2 p-2 shrink-0">
-          <h1 className="text-2xl font-bold">Registro de Presença</h1>
+          <h1 className="text-h1 font-bold">Registro de Presença</h1>
           {podeGerenciar && (
             <div className="flex flex-wrap items-center gap-2">
               <Button

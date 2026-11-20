@@ -126,24 +126,24 @@ export default function EssayReviewDetail() {
     <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-8">
       {/* Essay content */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">
+        <h1 className="text-h1 font-bold text-foreground">
           {essay.title || "Sem título"}
         </h1>
-        <p className="text-sm text-muted-foreground mb-4">Tema: {essay.theme.title}</p>
+        <p className="text-body text-muted-foreground mb-4">Tema: {essay.theme.title}</p>
         {essay.inputType === 'UPLOADED' ? (
           <div className="border rounded-lg p-6 bg-page text-center space-y-3">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-body text-muted-foreground">
               Redação enviada como {essay.mimeType === 'application/pdf' ? 'PDF' : 'imagem'}
             </p>
             <button
               onClick={() => downloadEssayImage(token, essay.id).catch(() => toast.error("Erro ao baixar arquivo"))}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 text-sm"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 text-body"
             >
               Baixar arquivo
             </button>
           </div>
         ) : (
-          <div className="border rounded-lg p-4 bg-page whitespace-pre-wrap text-sm">
+          <div className="border rounded-lg p-4 bg-page whitespace-pre-wrap text-body">
             {essay.text}
           </div>
         )}
@@ -154,7 +154,7 @@ export default function EssayReviewDetail() {
           <p className="text-warning font-semibold">
             Você já revisou esta redação
           </p>
-          <p className="text-sm text-warning mt-1">
+          <p className="text-body text-warning mt-1">
             Cada revisor pode enviar apenas uma revisão por redação.
           </p>
         </div>
@@ -163,18 +163,18 @@ export default function EssayReviewDetail() {
       {/* Review form */}
       {canReview && (
         <div className="border rounded-lg p-3 sm:p-6 space-y-6">
-          <h2 className="text-lg font-bold">Nova Revisão</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="text-h3 font-bold">Nova Revisão</h2>
+          <p className="text-body text-muted-foreground">
             Nota total calculada: <strong>{totalScore}/1000</strong>
           </p>
 
           {comps.map((comp, i) => (
             <div key={i} className="space-y-2 border-b pb-4">
-              <h3 className="font-semibold text-sm">
+              <h3 className="font-semibold text-body">
                 Competência {i + 1}: {COMP_NAMES[i]}
               </h3>
               <div className="flex items-center gap-2">
-                <label className="text-sm w-24">Nota (0-200):</label>
+                <label className="text-body w-24">Nota (0-200):</label>
                 <input
                   type="number"
                   min={0}
@@ -183,32 +183,32 @@ export default function EssayReviewDetail() {
                   onChange={(e) =>
                     updateComp(i, "score", Math.min(200, Math.max(0, +e.target.value)))
                   }
-                  className="border rounded px-2 py-1 w-24 text-sm"
+                  className="border rounded px-2 py-1 w-24 text-body"
                 />
               </div>
               <textarea
                 placeholder="Feedback..."
                 value={comp.feedback}
                 onChange={(e) => updateComp(i, "feedback", e.target.value)}
-                className="w-full border rounded-lg p-2 text-sm"
+                className="w-full border rounded-lg p-2 text-body"
                 rows={2}
               />
               <textarea
                 placeholder="Sugestão de melhoria..."
                 value={comp.suggestion}
                 onChange={(e) => updateComp(i, "suggestion", e.target.value)}
-                className="w-full border rounded-lg p-2 text-sm"
+                className="w-full border rounded-lg p-2 text-body"
                 rows={2}
               />
             </div>
           ))}
 
           <div>
-            <label className="font-semibold text-sm">Comentário Geral</label>
+            <label className="font-semibold text-body">Comentário Geral</label>
             <textarea
               value={generalComment}
               onChange={(e) => setGeneralComment(e.target.value)}
-              className="w-full border rounded-lg p-3 text-sm mt-1"
+              className="w-full border rounded-lg p-3 text-body mt-1"
               rows={4}
               placeholder="Comentário geral sobre a redação..."
             />
@@ -235,7 +235,7 @@ export default function EssayReviewDetail() {
         }}
         text={`Enviar revisão com nota ${totalScore}/1000?`}
       >
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           Cada revisor envia uma única revisão por redação. Não será possível
           editar depois.
         </p>

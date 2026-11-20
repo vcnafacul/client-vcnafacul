@@ -68,7 +68,7 @@ export function MapInfoCard({
         <button
           type="button"
           aria-label="Fechar"
-          className="w-9 h-9 cursor-pointer bg-transparent border-0 text-xl leading-none hover:bg-black/5 rounded-lg"
+          className="w-9 h-9 cursor-pointer bg-transparent border-0 text-h2 hover:bg-black/5 rounded-lg"
           onClick={onClose}
         >
           ✕

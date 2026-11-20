@@ -95,7 +95,7 @@ export function CoursePeriodCreateEditModal({
       className="bg-white p-4 rounded-md shadow-md"
     >
       <div className="w-[85vw] sm:w-[600px] flex flex-col gap-4">
-        <h1 className="text-left text-foreground text-3xl font-black">
+        <h1 className="text-left text-foreground text-h1 font-black">
           {isEdit ? "Editar Período Letivo" : "Novo Período Letivo"}
         </h1>
 
@@ -118,7 +118,7 @@ export function CoursePeriodCreateEditModal({
             {/* Data de Início */}
             <div className="flex flex-col justify-content-center h-16 border pt-7 pl-4 rounded-md relative">
               <label
-                className="absolute top-1 left-3 text-xs text-muted-foreground font-semibold"
+                className="absolute top-1 left-3 text-caption text-muted-foreground font-semibold"
                 htmlFor="startDate"
               >
                 Data de Início *
@@ -140,7 +140,7 @@ export function CoursePeriodCreateEditModal({
                 )}
               />
               {errors.startDate && (
-                <p className="text-destructive text-xs mt-1">
+                <p className="text-destructive text-caption mt-1">
                   {errors.startDate.message}
                 </p>
               )}
@@ -149,7 +149,7 @@ export function CoursePeriodCreateEditModal({
             {/* Data de Fim */}
             <div className="flex flex-col justify-content-center h-16 border pt-7 pl-4 rounded-md relative">
               <label
-                className="absolute top-1 left-3 text-xs text-muted-foreground font-semibold"
+                className="absolute top-1 left-3 text-caption text-muted-foreground font-semibold"
                 htmlFor="endDate"
               >
                 Data de Fim *
@@ -171,7 +171,7 @@ export function CoursePeriodCreateEditModal({
                 )}
               />
               {errors.endDate && (
-                <p className="text-destructive text-xs mt-1">
+                <p className="text-destructive text-caption mt-1">
                   {errors.endDate.message}
                 </p>
               )}

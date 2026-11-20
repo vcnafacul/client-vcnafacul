@@ -51,12 +51,12 @@ export function ModalAvisoAnulada({
         acima={
           anulacoes.length > 1 ? (
             <div className="flex flex-col gap-1">
-              <label htmlFor="anulacao-base" className="text-sm font-semibold text-foreground">
+              <label htmlFor="anulacao-base" className="text-body font-semibold text-foreground">
                 Usar a justificativa de
               </label>
               <select
                 id="anulacao-base"
-                className="h-9 rounded-md border border-input bg-transparent px-2 text-sm"
+                className="h-9 rounded-md border border-input bg-transparent px-2 text-body"
                 value={base}
                 onChange={(e) => setBase(Number(e.target.value))}
               >
@@ -86,14 +86,14 @@ export function ModalAvisoAnulada({
       <div className="w-full max-w-lg max-h-[calc(100dvh-2rem)] rounded-lg bg-white shadow-xl flex flex-col">
         <div className="shrink-0 px-4 pt-4 flex items-start gap-2">
           <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" aria-hidden />
-          <h2 className="text-lg font-semibold">{tituloDoAviso(anulacoes.length)}</h2>
+          <h2 className="text-h3 font-semibold">{tituloDoAviso(anulacoes.length)}</h2>
         </div>
         <ul
           data-testid="anulacoes-do-aviso"
           className="flex-1 min-h-0 overflow-y-auto px-4 py-3 flex flex-col gap-2"
         >
           {anulacoes.map((a, i) => (
-            <li key={`${a.provaId}-${i}`} className="rounded-md border border-border bg-page p-2 text-sm">
+            <li key={`${a.provaId}-${i}`} className="rounded-md border border-border bg-page p-2 text-body">
               <p>
                 <span className="font-semibold">{a.provaNome ?? "Prova"}</span>
                 {a.numero != null && `, Q${a.numero}`}:{" "}
@@ -102,7 +102,7 @@ export function ModalAvisoAnulada({
               <p className="text-foreground break-words">“{a.justificativa}”</p>
             </li>
           ))}
-          <li className="text-sm text-foreground">Ela pode ter o mesmo problema na sua prova.</li>
+          <li className="text-body text-foreground">Ela pode ter o mesmo problema na sua prova.</li>
         </ul>
         <div className="shrink-0 flex flex-wrap justify-end gap-2 border-t px-4 py-3">
           <Button variant="ghost" size="sm" onClick={onCancelar} disabled={ocupado}>

@@ -213,7 +213,7 @@ export function AccountForm({
           />
           <label
             htmlFor="useSocialName"
-            className="text-sm font-medium text-foreground cursor-pointer select-none"
+            className="text-body font-medium text-foreground cursor-pointer select-none"
           >
             Desejo usar um nome social
           </label>

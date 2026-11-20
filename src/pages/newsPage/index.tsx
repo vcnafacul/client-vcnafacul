@@ -69,10 +69,10 @@ function NewsPage() {
         <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[500px] flex items-center justify-center">
           <div className="container mx-auto px-3 sm:px-4 text-center">
             <div className="bg-white rounded-lg shadow-sm border border-border p-8 sm:p-12 max-w-lg mx-auto">
-              <h2 className="text-xl sm:text-2xl font-bold text-muted-foreground mb-2">
+              <h2 className="text-h2 font-bold text-muted-foreground mb-2">
                 Nenhuma novidade no momento
               </h2>
-              <p className="text-muted-foreground text-base sm:text-lg">
+              <p className="text-muted-foreground text-prose">
                 Acompanhe esta página para ficar por dentro das próximas novidades e funcionalidades.
               </p>
             </div>
@@ -101,15 +101,15 @@ function NewsPage() {
               {displayNews && (
                 <div className="flex flex-col gap-1.5 sm:gap-2 mb-4 sm:mb-6">
                   {displayNews.destaque && (
-                    <span className="inline-block w-fit bg-success bg-opacity-15 text-success text-xs sm:text-sm font-semibold px-3 py-0.5 sm:px-4 sm:py-1 rounded-full uppercase tracking-wide">
+                    <span className="inline-block w-fit bg-success bg-opacity-15 text-success text-caption font-semibold px-3 py-0.5 sm:px-4 sm:py-1 rounded-full uppercase tracking-wide">
                       Destaque
                     </span>
                   )}
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-muted-foreground leading-tight">
+                  <h2 className="text-h2 font-bold text-muted-foreground">
                     {displayNews.title}
                   </h2>
                   {displayNews.description && (
-                    <p className="text-sm sm:text-base text-muted-foreground/80 leading-relaxed">
+                    <p className="text-body text-muted-foreground/80 leading-relaxed">
                       {displayNews.description}
                     </p>
                   )}

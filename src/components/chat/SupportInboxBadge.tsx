@@ -28,7 +28,7 @@ export function SupportInboxBadge() {
   return (
     <Link
       to={`${DASH}/${DASH_SUPPORT}`}
-      className="flex items-center gap-2 px-2 py-1 text-sm hover:bg-muted rounded-md transition"
+      className="flex items-center gap-2 px-2 py-1 text-body hover:bg-muted rounded-md transition"
       aria-label="Abrir inbox de suporte"
     >
       <LuMessageSquare className="h-4 w-4" />

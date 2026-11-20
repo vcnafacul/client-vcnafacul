@@ -17,7 +17,7 @@ export function VideoLinkField({ value, onChange }: Props) {
   const invalido = value.trim() !== "" && !videoId;
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-medium" htmlFor="video-url">
+      <label className="text-body font-medium" htmlFor="video-url">
         Link do YouTube
       </label>
       <Input
@@ -28,7 +28,7 @@ export function VideoLinkField({ value, onChange }: Props) {
         aria-invalid={invalido}
       />
       {invalido && (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="text-body text-destructive">
           {MENSAGEM_LINK_INVALIDO}
         </p>
       )}

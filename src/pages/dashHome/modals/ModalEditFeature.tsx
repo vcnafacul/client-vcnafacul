@@ -122,11 +122,11 @@ export default function ModalEditFeature({
       className="bg-white p-6 rounded-md w-[90vw] max-w-[500px]"
     >
       <div className="flex flex-col gap-4">
-        <h3 className="text-lg font-semibold">
+        <h3 className="text-h3 font-semibold">
           {isCreateMode ? "Adicionar item" : "Editar item"}
         </h3>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-semibold">Título</span>
+          <span className="text-body font-semibold">Título</span>
           <input
             className="border rounded px-2 py-1"
             value={title}
@@ -135,7 +135,7 @@ export default function ModalEditFeature({
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-semibold">Descrição (opcional)</span>
+          <span className="text-body font-semibold">Descrição (opcional)</span>
           <textarea
             className="border rounded px-2 py-1"
             rows={3}
@@ -145,7 +145,7 @@ export default function ModalEditFeature({
           />
         </label>
         <div className="flex flex-col gap-1">
-          <span className="text-sm font-semibold">
+          <span className="text-body font-semibold">
             Imagem {isCreateMode ? "(opcional)" : "(opcional — substitui atual)"}
           </span>
           {!isCreateMode && feature?.imageUrl && !file && (
@@ -156,7 +156,7 @@ export default function ModalEditFeature({
             />
           )}
           {file && (
-            <span className="text-xs text-success">
+            <span className="text-caption text-success">
               Imagem recortada pronta para upload.
             </span>
           )}
@@ -171,7 +171,7 @@ export default function ModalEditFeature({
               }
             }}
           />
-          <span className="text-xs text-muted-foreground">
+          <span className="text-caption text-muted-foreground">
             Proporção: 16:9. Salvo como PNG — fundo transparente é preservado.
           </span>
         </div>

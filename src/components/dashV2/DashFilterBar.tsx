@@ -77,7 +77,7 @@ export function DashFilterBar({
               search.onSubmit(rascunho);
             }}
             className={cn(
-              "h-9 w-full rounded-md border pl-8 pr-3 text-sm outline-none",
+              "h-9 w-full rounded-md border pl-8 pr-3 text-body outline-none",
               dashV2.border,
               dashV2.surface,
               dashV2.text.primary,
@@ -98,7 +98,7 @@ export function DashFilterBar({
           type="button"
           onClick={onClear}
           className={cn(
-            "ml-auto shrink-0 rounded-sm text-sm underline-offset-2 hover:underline",
+            "ml-auto shrink-0 rounded-sm text-body underline-offset-2 hover:underline",
             dashV2.text.primary,
             dashV2.focus,
           )}

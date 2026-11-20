@@ -32,7 +32,7 @@ export default function WordCounter({ text, wordCount }: WordCounterProps) {
 
   return (
     // No celular os números quebram linha e a barra desce, na largura toda.
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-body text-muted-foreground">
       <span>Palavras: {words}</span>
       <span>Linhas: {lines}</span>
       <span>Caracteres: {chars}</span>

@@ -56,20 +56,20 @@ export function ListaDeConversas({
                       {nomeDoDestino(c)}
                     </span>
                     {encerrada && (
-                      <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+                      <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-caption text-muted-foreground">
                         Encerrada
                       </span>
                     )}
                   </div>
                   {c.lastMessageText && (
-                    <p className="truncate text-sm text-muted-foreground">
+                    <p className="truncate text-body text-muted-foreground">
                       {c.lastMessageText}
                     </p>
                   )}
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   {quando ? (
-                    <span className="text-[11px] text-muted-foreground">
+                    <span className="text-caption text-muted-foreground">
                       {formatMessageTimestamp(new Date(quando))}
                     </span>
                   ) : null}

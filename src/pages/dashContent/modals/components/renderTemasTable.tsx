@@ -97,7 +97,7 @@ export function RenderTemasTable({
         return (
           <li key={idDe(tema)} className="border rounded-lg p-3 flex flex-col gap-2">
             <p className="font-medium break-words">{tema.name}</p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-caption text-muted-foreground">
               Aprovadas {countByStatus(contents, StatusEnum.Approved)}/{total} ·
               Pendentes {countByStatus(contents, StatusEnum.Pending)}/{total} ·
               Upload {countByStatus(contents, StatusContent.Pending_Upload)}/{total}

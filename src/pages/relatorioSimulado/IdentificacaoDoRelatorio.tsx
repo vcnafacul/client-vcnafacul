@@ -116,7 +116,7 @@ export function IdentificacaoDoRelatorio({
   if (nome === null && contexto.length === 0 && !temLink) return null;
 
   const classeDoLink = cn(
-    "rounded-sm text-xs underline underline-offset-2 print:hidden",
+    "rounded-sm text-caption underline underline-offset-2 print:hidden",
     dashV2.text.secondary,
     dashV2.focus,
   );
@@ -124,13 +124,13 @@ export function IdentificacaoDoRelatorio({
   return (
     <div data-testid="identificacao-do-relatorio" className="flex flex-col gap-1">
       {comTitulo && nome !== null && (
-        <h1 className={cn("text-xl font-semibold", dashV2.text.primary)}>
+        <h1 className={cn("text-h2 font-semibold", dashV2.text.primary)}>
           {nome}
         </h1>
       )}
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         {contexto.length > 0 && (
-          <p className={cn("text-xs", dashV2.text.muted)}>
+          <p className={cn("text-caption", dashV2.text.muted)}>
             {contexto.join(" · ")}
           </p>
         )}

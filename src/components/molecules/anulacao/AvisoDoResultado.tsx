@@ -14,7 +14,7 @@ export function AvisoDoResultado(props: Parameters<typeof avisoDoResultado>[0]) 
       role="note"
       data-testid="aviso-do-resultado"
       data-tipo={aviso.tipo}
-      className={`flex items-start gap-2 rounded-md border px-3 py-2 text-sm ${
+      className={`flex items-start gap-2 rounded-md border px-3 py-2 text-body ${
         pendente
           ? "border-warning bg-warning-muted text-foreground"
           : "border-info bg-info-muted text-foreground"

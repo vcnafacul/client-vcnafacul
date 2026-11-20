@@ -140,12 +140,12 @@ export function PreviewDaQuestao({
     >
       <div className="flex flex-col gap-4" data-testid="preview-da-questao">
         <header className="flex flex-col gap-1">
-          <h2 className={cn("text-lg font-semibold", dashV2.text.primary)}>
+          <h2 className={cn("text-h3 font-semibold", dashV2.text.primary)}>
             {questao.numero === null
               ? "Questão sem número"
               : `Questão ${questao.numero}`}
           </h2>
-          <p className={cn("text-xs", dashV2.text.secondary)}>
+          <p className={cn("text-caption", dashV2.text.secondary)}>
             {questao.respondentes} respondente(s) neste recorte
           </p>
         </header>
@@ -159,12 +159,12 @@ export function PreviewDaQuestao({
 
         {estado === "error" && (
           <div className="flex flex-col items-start gap-2">
-            <p className={cn("text-sm", dashV2.text.primary)}>{TEXTO_ERRO}</p>
+            <p className={cn("text-body", dashV2.text.primary)}>{TEXTO_ERRO}</p>
             <button
               type="button"
               onClick={carregar}
               className={cn(
-                "rounded-md border px-3 py-1.5 text-sm",
+                "rounded-md border px-3 py-1.5 text-body",
                 dashV2.border,
                 dashV2.text.secondary,
                 dashV2.focus,
@@ -189,7 +189,7 @@ export function PreviewDaQuestao({
             )}
 
             {semAlternativasEmTexto ? (
-              <p className={cn("text-sm", dashV2.text.secondary)}>
+              <p className={cn("text-body", dashV2.text.secondary)}>
                 {TEXTO_SEM_ALTERNATIVAS}
               </p>
             ) : (
@@ -231,7 +231,7 @@ export function PreviewDaQuestao({
                       <span
                         data-testid={`preview-pct-${letra}`}
                         className={cn(
-                          "shrink-0 text-sm tabular-nums",
+                          "shrink-0 text-body tabular-nums",
                           dashV2.text.secondary,
                         )}
                       >
@@ -248,7 +248,7 @@ export function PreviewDaQuestao({
             {divergeOGabarito && (
               <p
                 data-testid="preview-gabarito-divergente"
-                className="rounded-md border border-warning bg-warning-muted px-3 py-2 text-sm text-foreground"
+                className="rounded-md border border-warning bg-warning-muted px-3 py-2 text-body text-foreground"
               >
                 O gabarito desta questão no banco hoje é {gabaritoDoBanco}, e os
                 cartões deste simulado foram corrigidos por{" "}
@@ -264,7 +264,7 @@ export function PreviewDaQuestao({
               exatamente assim que o texto anterior acabou desmentindo o
               destaque verde que este componente desenha.
             */}
-            <div className={cn("flex flex-col gap-1 text-xs", dashV2.text.muted)}>
+            <div className={cn("flex flex-col gap-1 text-caption", dashV2.text.muted)}>
               <p data-aviso-gabarito>{TEXTO_GABARITO_DA_CORRECAO}</p>
               <p data-aviso-enunciado>
                 {dados.congelada

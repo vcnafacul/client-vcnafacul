@@ -59,7 +59,7 @@ export function ExcluirEnvioDoCartao({
           data-testid="excluir-envio-do-cartao"
           disabled={excluindo}
           className={cn(
-            "shrink-0 rounded-md border border-destructive px-2 py-1 text-xs font-medium text-destructive disabled:opacity-50",
+            "shrink-0 rounded-md border border-destructive px-2 py-1 text-caption font-medium text-destructive disabled:opacity-50",
             dashV2.focus,
           )}
         >

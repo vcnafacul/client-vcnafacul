@@ -33,7 +33,7 @@ export function SampleSizeBanner({ comDados, minimo, descricao }: Props) {
   return (
     <div
       data-testid="sample-size-banner"
-      className="flex items-center gap-2 rounded-md border border-warning bg-warning-muted px-3 py-2 text-sm text-foreground"
+      className="flex items-center gap-2 rounded-md border border-warning bg-warning-muted px-3 py-2 text-body text-foreground"
     >
       <AlertTriangle className="h-4 w-4 shrink-0" />
       <span>

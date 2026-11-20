@@ -135,7 +135,7 @@ export default function BarChartWithFilter({
       {hasMore && (
         <button
           type="button"
-          className="text-xs text-foreground underline mt-1 hover:text-primary"
+          className="text-caption text-foreground underline mt-1 hover:text-primary"
           onClick={() => setShowAll((v) => !v)}
         >
           {showAll

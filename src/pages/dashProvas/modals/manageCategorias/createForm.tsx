@@ -120,22 +120,22 @@ function CreateForm({
         <button
           type="button"
           onClick={onCancel}
-          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+          className="flex items-center gap-1 text-body text-muted-foreground hover:text-foreground"
         >
           <ArrowLeftIcon className="h-4 w-4" /> Voltar
         </button>
-        <h2 className="text-xl font-semibold text-foreground">
+        <h2 className="text-h2 font-semibold text-foreground">
           Nova Categoria personalizada
         </h2>
       </div>
 
       <div className="flex flex-col gap-4">
-        <label className="flex flex-col gap-1 text-sm font-medium text-foreground">
+        <label className="flex flex-col gap-1 text-body font-medium text-foreground">
           Exame *
           <select
             value={exame}
             onChange={(e) => setExame(e.target.value)}
-            className="rounded-md border border-border px-3 py-2 text-sm"
+            className="rounded-md border border-border px-3 py-2 text-body"
           >
             <option value="">Selecione um exame</option>
             {exameOptions.map((op) => (
@@ -146,7 +146,7 @@ function CreateForm({
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-sm font-medium text-foreground">
+        <label className="flex flex-col gap-1 text-body font-medium text-foreground">
           Duração (min) *
           <input
             type="number"
@@ -155,11 +155,11 @@ function CreateForm({
             onChange={(e) =>
               setDuracao(e.target.value === "" ? "" : Number(e.target.value))
             }
-            className="rounded-md border border-border px-3 py-2 text-sm"
+            className="rounded-md border border-border px-3 py-2 text-body"
           />
         </label>
 
-        <div className="flex flex-col gap-1 text-sm font-medium text-foreground">
+        <div className="flex flex-col gap-1 text-body font-medium text-foreground">
           Qtd de questões
           <div className="flex items-center gap-3">
             <input
@@ -172,7 +172,7 @@ function CreateForm({
                   e.target.value === "" ? "" : Number(e.target.value),
                 )
               }
-              className="w-32 rounded-md border border-border px-3 py-2 text-sm disabled:bg-muted"
+              className="w-32 rounded-md border border-border px-3 py-2 text-body disabled:bg-muted"
             />
             <label className="flex cursor-pointer items-center gap-2 font-normal">
               <input
@@ -187,7 +187,7 @@ function CreateForm({
         </div>
 
         {nomeLivre ? (
-          <label className="flex flex-col gap-1 text-sm font-medium text-foreground">
+          <label className="flex flex-col gap-1 text-body font-medium text-foreground">
             Nome *
             <input
               type="text"
@@ -195,23 +195,23 @@ function CreateForm({
               // Card 39: o exemplo antigo ("Enem Dia 1") colidia com uma seedada.
               placeholder="Ex.: Simulado mensal"
               onChange={(e) => setNome(e.target.value)}
-              className="rounded-md border border-border px-3 py-2 text-sm"
+              className="rounded-md border border-border px-3 py-2 text-body"
             />
           </label>
         ) : (
           <>
-            <label className="flex flex-col gap-1 text-sm font-medium text-foreground">
+            <label className="flex flex-col gap-1 text-body font-medium text-foreground">
               Prefixo (opcional)
               <input
                 type="text"
                 value={prefixo}
                 placeholder="Personalizado"
                 onChange={(e) => setPrefixo(e.target.value)}
-                className="rounded-md border border-border px-3 py-2 text-sm"
+                className="rounded-md border border-border px-3 py-2 text-body"
               />
             </label>
 
-            <div className="rounded-md bg-page px-3 py-2 text-sm text-muted-foreground">
+            <div className="rounded-md bg-page px-3 py-2 text-body text-muted-foreground">
               Preview do nome:{" "}
               <span className="font-semibold text-foreground">{preview}</span>
             </div>

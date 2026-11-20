@@ -33,7 +33,7 @@ export function ModalMotivoRejeicao({ isOpen, handleClose, onConfirm }: Props) {
       <fieldset className="flex flex-col gap-2 w-full text-left">
         <legend className="sr-only">Motivo da rejeição</legend>
         {MOTIVOS_DE_REJEICAO.map((m) => (
-          <label key={m.valor} className="flex items-center gap-2 text-sm">
+          <label key={m.valor} className="flex items-center gap-2 text-body">
             <input
               type="radio"
               name="motivo-rejeicao"
@@ -45,7 +45,7 @@ export function ModalMotivoRejeicao({ isOpen, handleClose, onConfirm }: Props) {
           </label>
         ))}
       </fieldset>
-      <label className="flex flex-col gap-1 w-full text-left text-sm">
+      <label className="flex flex-col gap-1 w-full text-left text-body">
         {ehOutro ? "Descreva o motivo" : "Complemento (opcional)"}
         <textarea
           value={complemento}
@@ -58,7 +58,7 @@ export function ModalMotivoRejeicao({ isOpen, handleClose, onConfirm }: Props) {
           }
           className="p-2 w-full border border-input rounded min-h-[80px] resize-none"
         />
-        <span className="self-end text-xs text-muted-foreground">
+        <span className="self-end text-caption text-muted-foreground">
           {complemento.length}/{MAXIMO}
         </span>
       </label>

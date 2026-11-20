@@ -7,11 +7,11 @@ const ESPERA_MS = 300;
 
 function Aparelhos({ devices }: { devices: number }) {
   return devices > 0 ? (
-    <span className="text-xs text-success">
+    <span className="text-caption text-success">
       {devices === 1 ? "1 aparelho ativo" : `${devices} aparelhos ativos`}
     </span>
   ) : (
-    <span className="text-xs text-muted-foreground">Não ativou as notificações</span>
+    <span className="text-caption text-muted-foreground">Não ativou as notificações</span>
   );
 }
 
@@ -72,7 +72,7 @@ export function BuscaDePessoas({
           {escolhidas.map((p) => (
             <li
               key={p.id}
-              className="flex items-center gap-2 rounded-full border border-border bg-page py-1 pl-3 pr-1 text-sm"
+              className="flex items-center gap-2 rounded-full border border-border bg-page py-1 pl-3 pr-1 text-body"
             >
               <span className="flex flex-col leading-tight">
                 <span>{p.name}</span>
@@ -94,21 +94,21 @@ export function BuscaDePessoas({
       <input
         aria-label="Buscar pessoa por nome ou e-mail"
         placeholder="Busque por nome, sobrenome ou email"
-        className="w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="w-full rounded-lg border border-border px-3 py-2 text-body focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         value={texto}
         onChange={(e) => setTexto(e.target.value)}
       />
 
-      {buscando && <p className="text-xs text-muted-foreground">Buscando…</p>}
+      {buscando && <p className="text-caption text-muted-foreground">Buscando…</p>}
       {erro && (
-        <p role="alert" className="text-xs text-destructive">
+        <p role="alert" className="text-caption text-destructive">
           {erro}
         </p>
       )}
       {!buscando &&
         texto.trim().length >= 2 &&
         achadas.length === 0 &&
-        !erro && <p className="text-xs text-muted-foreground">Ninguém encontrado.</p>}
+        !erro && <p className="text-caption text-muted-foreground">Ninguém encontrado.</p>}
       {achadas.length > 0 && (
         <ul
           aria-label="Resultados da busca"
@@ -122,10 +122,10 @@ export function BuscaDePessoas({
                   type="button"
                   disabled={jaEscolhida}
                   onClick={() => escolher(p)}
-                  className="flex w-full flex-col items-start px-3 py-2 text-left text-sm hover:bg-page disabled:opacity-50"
+                  className="flex w-full flex-col items-start px-3 py-2 text-left text-body hover:bg-page disabled:opacity-50"
                 >
                   <span className="font-medium">{p.name}</span>
-                  <span className="text-xs text-muted-foreground">{p.email}</span>
+                  <span className="text-caption text-muted-foreground">{p.email}</span>
                   <Aparelhos devices={p.devices} />
                 </button>
               </li>

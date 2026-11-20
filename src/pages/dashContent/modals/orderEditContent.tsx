@@ -92,10 +92,10 @@ function SortableRow({
       <td className="text-center cursor-grab active:cursor-grabbing">
         {position}
       </td>
-      <td className="break-words text-sm font-medium p-2 text-center">
+      <td className="break-words text-body font-medium p-2 text-center">
         {row.title}
       </td>
-      <td className="text-sm font-medium p-2 text-center">
+      <td className="text-body font-medium p-2 text-center">
         {statusToString(row.status)}
       </td>
       {/*

@@ -239,16 +239,16 @@ export function InscriptionInfoModal({
       className="bg-white p-4 rounded-md w-full max-w-2xl"
     >
       <div className="w-full sm:min-w-[550px] flex flex-col gap-4">
-        <h1 className="text-left text-foreground text-3xl font-black">
+        <h1 className="text-left text-foreground text-h1 font-black">
           {dataInscription.inscription}
         </h1>
-        <h3 className="font-black text-xl text-foreground break-words">
+        <h3 className="font-black text-h2 text-foreground break-words">
           {inscriptionSelected?.name}
         </h3>
         <p className="break-words whitespace-pre-line max-h-40 overflow-y-auto pr-1">
           {inscriptionSelected?.description}
         </p>
-        <h3 className="font-black text-xl text-foreground">Data</h3>
+        <h3 className="font-black text-h2 text-foreground">Data</h3>
         <div className="flex gap-4">
           <p>
             <strong>Início:</strong>
@@ -263,7 +263,7 @@ export function InscriptionInfoModal({
               : ""}
           </p>
         </div>
-        <h3 className="font-black text-xl text-foreground">
+        <h3 className="font-black text-h2 text-foreground">
           {dataInscription.openingText}
         </h3>
         <div className="flex flex-col gap-4">
@@ -280,7 +280,7 @@ export function InscriptionInfoModal({
               {inscriptionSelected?.requestDocuments ? (
                 <>
                   <FileText className="w-5 h-5 text-success shrink-0 mt-0.5" />
-                  <span className="text-sm text-foreground">
+                  <span className="text-body text-foreground">
                     Este processo seletivo <strong>exigirá</strong> envio de
                     documentos dos candidatos.
                   </span>
@@ -288,7 +288,7 @@ export function InscriptionInfoModal({
               ) : (
                 <>
                   <FileX className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
-                  <span className="text-sm text-foreground">
+                  <span className="text-body text-foreground">
                     Este processo seletivo <strong>não exigirá</strong> envio de
                     documentos dos candidatos.
                   </span>
@@ -298,7 +298,7 @@ export function InscriptionInfoModal({
             {inscriptionSelected?.isTest && (
               <div className="flex items-start gap-2">
                 <FlaskConical className="w-5 h-5 text-warning shrink-0 mt-0.5" />
-                <span className="text-sm text-foreground">
+                <span className="text-body text-foreground">
                   Este processo está marcado como <strong>teste</strong> e não
                   deve ser considerado válido para uso real.
                 </span>
@@ -335,7 +335,7 @@ export function InscriptionInfoModal({
               to={`${DASH}/${PARTNER_PREP_INSCRIPTION}/${inscriptionSelected?.id}`}
             >
               <div className="flex justify-center gap-1.5">
-                <p className="text-sm w-fit">Lista de Alunos</p>
+                <p className="text-body w-fit">Lista de Alunos</p>
               </div>
             </BLink>
           </div>
@@ -347,7 +347,7 @@ export function InscriptionInfoModal({
             >
               <div className="flex justify-center gap-1.5">
                 <TrashIcon />
-                <p className="text-sm w-fit">Deletar</p>
+                <p className="text-body w-fit">Deletar</p>
               </div>
             </Button>
 

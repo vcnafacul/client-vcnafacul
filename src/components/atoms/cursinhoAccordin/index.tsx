@@ -130,16 +130,16 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           {/* Informações principais */}
           <div className="flex-1 min-w-0 pl-2">
-            <h3 className="font-semibold text-foreground text-lg truncate group-hover:text-primary transition-colors">
+            <h3 className="font-semibold text-foreground text-h3 truncate group-hover:text-primary transition-colors">
               {monitoring.partnerCourseName}
             </h3>
-            <p className="text-muted-foreground text-sm mt-0.5 truncate">
+            <p className="text-muted-foreground text-body mt-0.5 truncate">
               {monitoring.inscriptionName}
             </p>
 
             {/* Data e Status */}
             <div className="flex flex-wrap items-center gap-4 mt-3">
-              <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
+              <div className="flex items-center gap-1.5 text-muted-foreground text-body">
                 <Calendar className="w-4 h-4" />
                 <span>
                   {formatDate(monitoring.createdAt.toString(), "dd/MM/yyyy")}
@@ -148,7 +148,7 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
 
               <div className="flex items-center gap-2 px-3 py-1 bg-page rounded-full">
                 {getStatusIcon(monitoring.status)}
-                <span className="text-sm font-medium text-foreground">
+                <span className="text-body font-medium text-foreground">
                   {monitoring.status}
                 </span>
               </div>
@@ -164,7 +164,7 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
                 onClick={handleDownloadEnrollmentCertificate}
                 disabled={isDownloading}
                 className="flex items-center justify-center gap-2 sm:min-w-[160px] px-4 py-2.5 
-                           bg-primary text-primary-foreground text-sm font-medium rounded-lg 
+                           bg-primary text-primary-foreground text-body font-medium rounded-lg 
                            hover:bg-primary/90 active:bg-primary/80 
                            disabled:bg-muted-foreground disabled:cursor-not-allowed 
                            transition-colors shadow-sm"
@@ -180,7 +180,7 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
                 handleOpenDetailsModal();
               }}
               className="flex items-center justify-center gap-2 sm:min-w-[160px] px-4 py-2.5 
-                         border border-border text-foreground text-sm font-medium rounded-lg 
+                         border border-border text-foreground text-body font-medium rounded-lg 
                          hover:bg-page hover:border-input 
                          transition-colors"
             >
@@ -192,7 +192,7 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
                 to={`/${DECLARED_INTEREST}/${monitoring.inscriptionId}`}
                 onClick={(e) => e.stopPropagation()}
                 className="flex items-center justify-center gap-2 sm:min-w-[160px] px-4 py-2.5 
-                           bg-success/80 text-success-foreground text-sm font-medium rounded-lg 
+                           bg-success/80 text-success-foreground text-body font-medium rounded-lg 
                            hover:bg-success 
                            transition-colors shadow-sm"
               >

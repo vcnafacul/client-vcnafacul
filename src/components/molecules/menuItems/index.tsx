@@ -46,13 +46,13 @@ function MenuItem({ align, itemsMenu, className, solid } : MenuItemProps) {
             {itemsMenu?.map(link => {
                 if(link.Home_Menu_Item_id.link.includes('#') ) {
                     return (
-                    <a className="text-xl font-bold md:text-base md:font-medium mx-6 my-3" target={link.Home_Menu_Item_id.target}
+                    <a className="text-body font-bold md:font-medium mx-6 my-3" target={link.Home_Menu_Item_id.target}
                         key={link.Home_Menu_Item_id.id} href={link.Home_Menu_Item_id.link}>{link.Home_Menu_Item_id.name}
                     </a> 
                     )
                 } 
                 return (
-                    <Link className="text-xl font-bold md:text-base md:font-medium mx-6 my-3" target={link.Home_Menu_Item_id.target}
+                    <Link className="text-body font-bold md:font-medium mx-6 my-3" target={link.Home_Menu_Item_id.target}
                         key={link.Home_Menu_Item_id.id} to={link.Home_Menu_Item_id.link}>{link.Home_Menu_Item_id.name}
                     </Link>
                 )

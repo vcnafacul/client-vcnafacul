@@ -416,7 +416,7 @@ export const ModalPrepCoursePrincipal = ({
       {/* Header com título e botões */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+          <h1 className="text-h1 font-bold text-foreground">
             Informações Básicas
           </h1>
           <div className="w-16 h-1 bg-success mt-2"></div>
@@ -475,7 +475,7 @@ export const ModalPrepCoursePrincipal = ({
           {/* Campo Coordenador com busca */}
           <div className="relative">
             <label
-              className="absolute p-0 top-1.5 left-2 text-xs text-muted-foreground font-semibold"
+              className="absolute p-0 top-1.5 left-2 text-caption text-muted-foreground font-semibold"
               htmlFor="coordinator"
             >
               Coordenador
@@ -488,7 +488,7 @@ export const ModalPrepCoursePrincipal = ({
               value={formData.coordinator}
               onChange={handleCoordinatorChange}
               disabled={!editable}
-              className="h-16 pt-4 w-full px-3 py-1 text-sm border border-border rounded-md bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
+              className="h-16 pt-4 w-full px-3 py-1 text-body border border-border rounded-md bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
               placeholder="Digite o nome do coordenador..."
             />
 
@@ -501,10 +501,10 @@ export const ModalPrepCoursePrincipal = ({
                     className="px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
                     onClick={() => selectUser(user)}
                   >
-                    <div className="font-medium text-sm text-foreground">
+                    <div className="font-medium text-body text-foreground">
                       {user.name}
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-caption text-muted-foreground">
                       {user.email} • {user.phone}
                     </div>
                   </div>
@@ -545,10 +545,10 @@ export const ModalPrepCoursePrincipal = ({
         {/* Seção de Logo */}
         <div className="space-y-3 flex justify-between">
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-foreground">
+            <label className="block text-body font-medium text-foreground">
               Logomarca do cursinho
             </label>
-            <p className="text-xs text-muted-foreground">Recomendado 300x300</p>
+            <p className="text-caption text-muted-foreground">Recomendado 300x300</p>
             <Button
               variant="outline"
               disabled={!editable}
@@ -562,21 +562,21 @@ export const ModalPrepCoursePrincipal = ({
             {currentThumbnail ? (
               <img src={currentThumbnail} alt="Logo" />
             ) : (
-              <span className="text-muted-foreground text-sm font-medium">Logo</span>
+              <span className="text-muted-foreground text-body font-medium">Logo</span>
             )}
           </div>
         </div>
 
         {/* Seção de Contrato */}
         <div className="space-y-3">
-          <label className="block text-sm font-medium text-foreground">
+          <label className="block text-body font-medium text-foreground">
             Contrato
           </label>
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2 px-3 py-2 bg-muted border border-border rounded-md group">
               <div className="w-4 h-4 bg-muted-foreground rounded"></div>
               <span
-                className={`text-sm text-muted-foreground flex items-center gap-1 ${
+                className={`text-body text-muted-foreground flex items-center gap-1 ${
                   prepCourse.agreement && !selectedAgreement
                     ? "cursor-pointer hover:text-primary hover:underline"
                     : ""
@@ -632,11 +632,11 @@ export const ModalPrepCoursePrincipal = ({
       <div className="flex flex-wrap justify-between gap-3 pt-4 items-end">
         {/* Informações de parceria */}
         <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body text-muted-foreground">
             {/* Era o ano do updatedAt: qualquer edição "mudava" o ano de parceria. */}
             Ano de parceria: {new Date(prepCourse.createdAt).getFullYear()}
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body text-muted-foreground">
             Última atualização:{" "}
             {new Date(prepCourse.updatedAt).toLocaleDateString("pt-BR")}
           </p>

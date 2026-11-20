@@ -283,7 +283,7 @@ export function ChatWidget() {
       </div>
     ) : vista === "chat" && selecionadaId ? (
       // Acabou de abrir: a conversa ainda não chegou pelo listener.
-      <div className="flex h-full items-center justify-center p-6 text-sm text-muted-foreground">
+      <div className="flex h-full items-center justify-center p-6 text-body text-muted-foreground">
         Abrindo conversa…
       </div>
     ) : conversas.length > 0 ? (
@@ -295,15 +295,15 @@ export function ChatWidget() {
       />
     ) : (
       <div className="flex flex-col items-center justify-center h-full p-6 gap-4 text-center">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-body text-muted-foreground">
           Você não tem conversas no momento.
         </p>
         {remainingSeconds > 0 ? (
           <div className="flex flex-col items-center gap-1">
-            <span className="text-2xl font-bold font-mono text-foreground">
+            <span className="text-h1 font-bold font-mono text-foreground">
               {formatCountdown(remainingSeconds)}
             </span>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-caption text-muted-foreground">
               Aguarde para iniciar uma nova conversa
             </span>
           </div>

@@ -72,7 +72,7 @@ export function LocationAutocomplete({ onPlaceLoaded }: Props) {
     <div className="py-2 px-1 w-full focus-within:border-cta rounded-md">
       <input
         type="text"
-        className="fflex w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 h-16 pt-4"
+        className="fflex w-full rounded-md border border-input bg-transparent px-3 py-1 text-body shadow-sm transition-colors file:border-0 file:bg-transparent file:text-body file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 h-16 pt-4"
         value={inputValue}
         onChange={(e) => handleChange(e.target.value)}
         placeholder="Buscar localização"
