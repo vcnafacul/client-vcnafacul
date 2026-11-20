@@ -1,0 +1,40 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Uso/DatePicker" />
+
+# DatePicker e DateRangePicker
+
+Escolha de uma data ou de um período num calendário que abre em um `Popover`, com rótulos em pt-BR. O campo
+mostra um ícone de calendário e a data no formato `dd/MM/yyyy`. O dia é sempre o do fuso `America/Sao_Paulo`
+(`date-fns-tz`): o valor devolvido em `onChange` é a meia-noite de São Paulo, em qualquer fuso do aparelho.
+
+## Quando usar
+
+- **`DatePicker`:** uma data que a pessoa escolhe ou confere, como a data de uma prova ou o início de uma
+  inscrição.
+- **`DateRangePicker`:** um período com início e fim, como o filtro "Inicia em" de uma lista ou o intervalo de
+  um relatório.
+- Dentro de um `Field`, para ter rótulo, dica, erro e `required`.
+
+## Quando não usar
+
+- **Data de nascimento ou data muito distante:** quem preenche precisa voltar muitos anos no calendário.
+  Use três campos numéricos (dia, mês, ano) ou um `Input` com máscara.
+- **Data que a pessoa já sabe de cabeça e digita rápido** (CPF, RG, protocolo): use o `Input`.
+- **Filtro de lista no celular em que o teclado de data nativo basta:** o `DateRangeFields`
+  (`<input type="date">`, usado pela Dash V2) é mais leve e tem teclado e leitor de tela de graça.
+- **Hora:** estes componentes escolhem só o dia.
+
+## No celular (abaixo de 768px)
+
+- O gatilho e os botões do mês têm **44px**, e cada dia do calendário é um alvo de **44px**.
+- O calendário mostra **um mês** por vez e cabe na largura do aparelho (7 dias × 44px).
+- Nada depende de hover: toque no campo abre, toque num dia escolhe e fecha. No período, o primeiro toque
+  marca o início e o segundo marca o fim.
+- Quem precisa digitar a data tem `DateRangeFields` ou `Input` como alternativa.
+
+## Acessibilidade
+
+- O gatilho é um `button` com nome acessível: ligue-o a um `Field` ou passe `aria-label`.
+- O calendário navega por setas, `PageUp`/`PageDown` (mês) e `Esc` fecha e devolve o foco ao campo.
+- Erro de data aparece no `Field`, em texto, com `aria-invalid` no gatilho.
