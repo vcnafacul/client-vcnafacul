@@ -232,7 +232,7 @@ export function TelaDosIndicadores({
         )}
 
         {!!periodos?.turmasSemPeriodo && (
-          <p className="rounded-xl border border-cta/30 bg-cta/[0.06] px-4 py-3 text-sm text-muted-foreground">
+          <p className="rounded-xl border border-border bg-muted px-4 py-3 text-sm text-muted-foreground">
             {periodos.turmasSemPeriodo === 1
               ? "1 turma sem período letivo não entra nestes números. "
               : `${periodos.turmasSemPeriodo} turmas sem período letivo não entram nestes números. `}

@@ -1,7 +1,7 @@
 import LineChartMui from "@/components/atoms/lineChartMui";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { EssayStatsTimelineEntry } from "@/dtos/essay";
-import { palette } from "@/lib/palette";
+import { chartSeries } from "@/lib/palette";
 
 interface Props {
   timeline: EssayStatsTimelineEntry[];
@@ -21,12 +21,12 @@ export default function ScoreEvolutionChart({ timeline }: Props) {
   const series: { label: string; data: (number | null)[]; color: string }[] =
     [];
   if (aiData.some((v) => v !== null)) {
-    series.push({ label: "Correção IA", data: aiData, color: palette.blue[500] });
+    series.push({ label: "Correção IA", data: aiData, color: chartSeries[0] });
   }
 
   const hasHuman = humanData.some((v) => v !== null);
   if (hasHuman) {
-    series.push({ label: "Correção Humana", data: humanData, color: palette.mint[600] });
+    series.push({ label: "Correção Humana", data: humanData, color: chartSeries[3] });
   }
 
   return (

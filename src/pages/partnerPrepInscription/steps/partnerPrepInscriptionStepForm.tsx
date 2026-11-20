@@ -478,7 +478,7 @@ export function PartnerPrepInscriptionStepForm({
               onConfirm={onBack}
             >
               <AlertDialogTrigger className="w-full">
-                <div className="bg-cta w-full h-12 flex justify-center items-center text-white font-bold rounded-md hover:bg-cta/90 transition-colors duration-200 cursor-pointer">
+                <div className="bg-cta w-full h-12 flex justify-center items-center text-cta-foreground font-bold rounded-md hover:bg-cta/90 transition-colors duration-200 cursor-pointer">
                   Voltar
                 </div>
               </AlertDialogTrigger>
@@ -487,7 +487,7 @@ export function PartnerPrepInscriptionStepForm({
             <button
               type="button"
               onClick={onBack}
-              className="w-full h-12 bg-cta text-white font-bold rounded-md hover:bg-cta/90 transition-colors duration-200 cursor-pointer"
+              className="w-full h-12 bg-cta text-cta-foreground font-bold rounded-md hover:bg-cta/90 transition-colors duration-200 cursor-pointer"
             >
               Voltar
             </button>
@@ -495,7 +495,7 @@ export function PartnerPrepInscriptionStepForm({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full h-12 bg-success text-white font-bold rounded-md hover:bg-success/90 transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            className="w-full h-12 bg-success text-success-foreground font-bold rounded-md hover:bg-success/90 transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
             {isSubmitting ? (
               <div className="flex items-center gap-2">

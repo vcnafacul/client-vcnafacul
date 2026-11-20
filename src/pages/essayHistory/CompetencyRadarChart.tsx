@@ -1,7 +1,7 @@
 import { RadarChart } from "@/components/atoms/radarChart";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { EssayStatsTimelineEntry, EssayStatsReview } from "@/dtos/essay";
-import { palette } from "@/lib/palette";
+import { chartSeries, palette } from "@/lib/palette";
 
 const COMPETENCY_LABELS = [
   "Domínio da norma culta",
@@ -24,7 +24,7 @@ function average(values: number[]): number {
   return Math.round(values.reduce((a, b) => a + b, 0) / values.length);
 }
 
-const CORES: Record<string, string> = { IA: palette.blue[500], Humana: palette.mint[600] };
+const CORES: Record<string, string> = { IA: chartSeries[0], Humana: chartSeries[3] };
 
 export default function CompetencyRadarChart({ timeline }: Props) {
   // Abaixo de 768px os rótulos do radar saíam cortados: vira barras.

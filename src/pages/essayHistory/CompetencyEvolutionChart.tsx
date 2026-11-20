@@ -3,7 +3,7 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import LineChartMui from "@/components/atoms/lineChartMui";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { EssayStatsTimelineEntry } from "@/dtos/essay";
-import { palette } from "@/lib/palette";
+import { chartSeries } from "@/lib/palette";
 
 const COMPETENCY_LABELS = [
   "Domínio da norma culta",
@@ -17,7 +17,7 @@ const COMP_FIELDS = [
   "comp1Score", "comp2Score", "comp3Score", "comp4Score", "comp5Score",
 ] as const;
 
-const COLORS = [palette.mint[600], palette.blue[500], palette.pink[600], palette.orange[600], palette.yellow[500]];
+const COLORS = chartSeries.slice(0, 5);
 
 interface Props {
   timeline: EssayStatsTimelineEntry[];

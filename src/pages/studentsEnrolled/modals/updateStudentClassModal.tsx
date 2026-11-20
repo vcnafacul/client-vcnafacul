@@ -526,7 +526,7 @@ export function UpdateStudentClassModal({
                 </span>
               </div>
               {selectedClass.description && (
-                <div className="pt-2 border-t border-info">
+                <div className="pt-2 border-t border-border">
                   <span className="font-semibold text-foreground block mb-1">
                     Descrição:
                   </span>

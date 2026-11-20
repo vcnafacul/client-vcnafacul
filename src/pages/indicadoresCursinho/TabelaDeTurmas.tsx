@@ -64,7 +64,7 @@ export function TabelaDeTurmas({
           </Link>
         )}
         {t.id === destaqueId && (
-          <span className="rounded-full bg-destructive/[0.10] px-2 py-0.5 text-xs font-semibold text-destructive">
+          <span className="rounded-full bg-destructive-muted px-2 py-0.5 text-xs font-semibold text-destructive">
             Maior evasão
           </span>
         )}
