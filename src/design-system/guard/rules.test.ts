@@ -76,6 +76,7 @@ describe("regras do guard", () => {
   it("frozen-folder", () => {
     const r = regra("frozen-folder");
     expect(r.match("", "src/components/molecules/arquivoNovoQueNaoExiste.tsx")).toBe(1);
+    expect(r.match("", "src/components/atoms/novo.css")).toBe(1);
     expect(r.match("", "src/components/ui/button.tsx")).toBe(0);
   });
 

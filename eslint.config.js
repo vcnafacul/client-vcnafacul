@@ -6,8 +6,12 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 // jsx-a11y recomendado, tudo em warn dentro da branch; vira error na limpeza (tickets/059 §5.4).
+// Mantém as opções e os "off" da config recomendada; só rebaixa o que é error para warn.
 const a11yWarn = Object.fromEntries(
-  Object.keys(jsxA11y.flatConfigs.recommended.rules).map((r) => [r, "warn"]),
+  Object.entries(jsxA11y.flatConfigs.recommended.rules).map(([nome, v]) => {
+    const [nivel, ...opcoes] = Array.isArray(v) ? v : [v];
+    return [nome, nivel === "off" || nivel === 0 ? v : ["warn", ...opcoes]];
+  }),
 );
 
 export default tseslint.config(

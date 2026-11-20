@@ -101,6 +101,7 @@ export const rules: GuardRule[] = [
   {
     id: "frozen-folder",
     description: "arquivo novo em components/{atoms,molecules,organisms,templates}",
+    // Varrida pela listagem completa das pastas (qualquer extensão), não só por ts/tsx: ver scan.ts.
     match: (_s, file) =>
       PASTAS_CONGELADAS.test(file) && !(baseline.frozenFolderAllowList as string[]).includes(file) ? 1 : 0,
   },
