@@ -33,7 +33,7 @@ function SimpleCardColor({ selected, name, disable, ...props }: SimpleCardColorP
     return (
         <div className={`${simpleCardColor({ disable })} ${selected ? `shadow-md shadow-muted-foreground` : 'shadow-border shadow'}`}
             style={{ transform: `${ selected ? 'translateY(-2px) translateX(-2px)' : 'none' }`}} {...props}>
-                <div className={`${!disable ? selectedColor : ''} ${!disable ? selectedText : 'text-white'} w-14 h-14 flex justify-center items-center font-black text-h2 rounded-l-lg`}>{obterSigla(name)}</div>
+                <div className={`${!disable ? selectedColor : ''} ${!disable ? selectedText : 'text-white'} w-14 h-14 flex justify-center items-center font-extrabold text-h2 rounded-l-lg`}>{obterSigla(name)}</div>
                 <div className={`${disable ? 'text-white' : 'text-foreground'} first-line:border-l h-14 px-4 font-semibold flex items-center justify-center text-h2`}>{name}</div>
         </div>
     )

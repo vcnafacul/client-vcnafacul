@@ -106,7 +106,7 @@ export function ResetForm({
             visibility={formData[0].visibility}
           />
           <div className="flex gap-4 w-full text-body">
-            <div className="font-thin text-caption"> Sua senha deve conter:</div>
+            <div className="font-normal text-caption"> Sua senha deve conter:</div>
             <div className="flex flex-col text-body">
               <SpanValidate
                 valid={

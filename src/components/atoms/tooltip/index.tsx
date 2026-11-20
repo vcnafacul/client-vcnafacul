@@ -8,7 +8,7 @@ export function ToolTip({ children }: Props) {
   return (
     <div
       className="absolute -right-3.5 -top-8 z-50 bg-muted-foreground px-2 py-0.5 text-center 
-          text-white font-black transition-opacity duration-300 rounded shadow-md
+          text-white font-extrabold transition-opacity duration-300 rounded shadow-md
           opacity-0 group-hover:opacity-95 whitespace-nowrap"
     >
       {children}

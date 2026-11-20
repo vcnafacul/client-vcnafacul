@@ -25,7 +25,7 @@ export function CheckMapFilter({
           <HiCheck className="absolute h-8 w-8 -left-1 -bottom-1 fill-success" />
         )}
       </div>
-      <label className="text-white font-black flex-1 cursor-pointer">
+      <label className="text-white font-extrabold flex-1 cursor-pointer">
         {label}
       </label>
       <MarkerPin type={type} size={28} />

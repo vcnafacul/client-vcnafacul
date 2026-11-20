@@ -98,7 +98,7 @@ function DashCardTemplate({
         <div className="flex w-full justify-center items-center gap-3">
           <>
             {backButton}
-            <h1 className="text-h1 font-black text-foreground">{title}</h1>
+            <h1 className="text-h1 font-extrabold text-foreground">{title}</h1>
           </>
         </div>
         {totalItems !== undefined && (

@@ -39,7 +39,7 @@ export function CookieBar() {
             nossos serviços, você aceita a política de monitoramento de cookies.
             Para mais informações, consulte nossa
             <Link className="w-60" to={"/Pol%C3%ADtica%20de%20Privacidade.pdf"}>
-              <span className="pl-1 font-black text-foreground">
+              <span className="pl-1 font-extrabold text-foreground">
                 Politica de Privacidade
               </span>
             </Link>

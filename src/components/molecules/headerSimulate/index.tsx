@@ -17,7 +17,7 @@ function HeaderSimulate({ simulateName, onClick } : HeaderSimulateProps){
             <Text size="secondary" className="text-white m-0 text-center break-words">Simulado {simulateName}</Text>
             <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 w-full sm:w-auto">
                 <PiTimerBold className="w-8 h-8 sm:w-20 sm:h-10 fill-white" />
-                <CountdownTimer className="text-h1 font-black" />
+                <CountdownTimer className="text-h1 font-extrabold" />
                 <Button onClick={onClick} className="w-full sm:w-auto">Concluir Simulado</Button>
             </div>
         </div>

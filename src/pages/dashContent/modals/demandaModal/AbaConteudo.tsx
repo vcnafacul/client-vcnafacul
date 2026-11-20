@@ -34,7 +34,7 @@ export function AbaConteudo({
           role="note"
           className="rounded-lg border border-destructive/30 bg-destructive-muted p-3"
         >
-          <p className="text-body font-black text-destructive">
+          <p className="text-body font-extrabold text-destructive">
             Motivo da rejeição:
           </p>
           <p className="text-body text-destructive whitespace-pre-wrap break-words">

@@ -185,7 +185,7 @@ export function NewAttendanceRecordModal({
       <div className="shrink-0 px-4 pt-4 pb-3 sm:px-6 sm:pt-6 border-b border-border">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="text-h2 font-black text-foreground">
+            <h2 className="text-h2 font-extrabold text-foreground">
               Chamada{turmaNome ? ` · ${turmaNome}` : ""}
             </h2>
             <p className="text-body text-muted-foreground mt-0.5 [@media(max-height:700px)]:hidden">

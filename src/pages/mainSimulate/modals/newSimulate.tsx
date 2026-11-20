@@ -128,7 +128,7 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
           Aqui vão algumas dicas para ajudá-lo:
         </Text>
         <Ul className="ml-4 mb-4" childrens={dataModalNew} />
-        <Text size="quaternary" className="font-black text-muted-foreground text-start">
+        <Text size="quaternary" className="font-extrabold text-muted-foreground text-start">
           Bons estudos!
         </Text>
         <div className="flex justify-end">

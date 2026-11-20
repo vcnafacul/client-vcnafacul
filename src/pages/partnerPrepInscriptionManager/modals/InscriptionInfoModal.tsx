@@ -239,16 +239,16 @@ export function InscriptionInfoModal({
       className="bg-white p-4 rounded-md w-full max-w-2xl"
     >
       <div className="w-full sm:min-w-[550px] flex flex-col gap-4">
-        <h1 className="text-left text-foreground text-h1 font-black">
+        <h1 className="text-left text-foreground text-h1 font-extrabold">
           {dataInscription.inscription}
         </h1>
-        <h3 className="font-black text-h2 text-foreground break-words">
+        <h3 className="font-extrabold text-h2 text-foreground break-words">
           {inscriptionSelected?.name}
         </h3>
         <p className="break-words whitespace-pre-line max-h-40 overflow-y-auto pr-1">
           {inscriptionSelected?.description}
         </p>
-        <h3 className="font-black text-h2 text-foreground">Data</h3>
+        <h3 className="font-extrabold text-h2 text-foreground">Data</h3>
         <div className="flex gap-4">
           <p>
             <strong>Início:</strong>
@@ -263,7 +263,7 @@ export function InscriptionInfoModal({
               : ""}
           </p>
         </div>
-        <h3 className="font-black text-h2 text-foreground">
+        <h3 className="font-extrabold text-h2 text-foreground">
           {dataInscription.openingText}
         </h3>
         <div className="flex flex-col gap-4">

@@ -8,7 +8,7 @@ const questionBox = tv({
         status: {
             unsolved : 'bg-warning-muted border-primary',
             solved : 'bg-white border-primary',
-            active : 'bg-cta border-cta text-cta-foreground font-black',
+            active : 'bg-cta border-cta text-cta-foreground font-extrabold',
             unread : 'bg-muted border-input opacity-50',
             isRight: 'bg-white border-primary',
             // tickets/042 (D5). ⚠️ `rose`, não `red`: o tailwind.config troca

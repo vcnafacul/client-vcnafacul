@@ -203,7 +203,7 @@ export function AttendanceHistoryModal({
     >
       <div className="shrink-0 px-4 pt-4 pb-3 sm:px-6 sm:pt-6 border-b border-border">
         <div className="flex items-start justify-between gap-3">
-          <h2 className="min-w-0 text-h2 font-black text-foreground">
+          <h2 className="min-w-0 text-h2 font-extrabold text-foreground">
             Frequência{turmaNome ? ` · ${turmaNome}` : ""}
           </h2>
           <button

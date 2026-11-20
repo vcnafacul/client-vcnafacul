@@ -282,7 +282,7 @@ function GeoSearch() {
             <header className="space-y-2">
               <h1
                 id="localiza-titulo"
-                className="text-h1 font-black text-foreground"
+                className="text-h1 font-extrabold text-foreground"
               >
                 Localize um Cursinho
               </h1>

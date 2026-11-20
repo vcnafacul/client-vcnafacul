@@ -22,7 +22,7 @@ function Footer() {
       <div className="container flex flex-col justify-center items-center mx-auto md:grid md:grid-cols-4 md:gap-4">
         <div>
           <Logo name text={footer.slogan} />
-          <div className="mt-1 mb-10 md:mb-0 font-black text-white">
+          <div className="mt-1 mb-10 md:mb-0 font-extrabold text-white">
             {footer.contact}
           </div>
         </div>

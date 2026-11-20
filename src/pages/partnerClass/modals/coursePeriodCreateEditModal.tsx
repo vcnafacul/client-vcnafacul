@@ -127,7 +127,7 @@ export function CoursePeriodCreateEditModal({
       className="bg-white p-4 rounded-md shadow-md"
     >
       <div className="w-[85vw] sm:w-[600px] flex flex-col gap-4">
-        <h1 className="text-left text-foreground text-h1 font-black">
+        <h1 className="text-left text-foreground text-h1 font-extrabold">
           {isEdit ? "Editar Período Letivo" : "Novo Período Letivo"}
         </h1>
 

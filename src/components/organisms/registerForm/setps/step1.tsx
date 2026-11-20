@@ -132,7 +132,7 @@ function Step1({ updateData, dataUser, emailTravado }: Step1Props) {
         onChange={(e: any) => setValue("password_confirmation", e.target.value)}
       />
       <div className="flex gap-4 w-full text-body justify-between">
-        <div className="font-thin text-caption"> Sua senha deve conter:</div>
+        <div className="font-normal text-caption"> Sua senha deve conter:</div>
         <div className="flex flex-col sm:flex-row sm:gap-4">
           <div className="flex flex-col text-body items-end sm:items-start">
             <SpanValidate

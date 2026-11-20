@@ -102,7 +102,7 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
       className="bg-white rounded-xl shadow-xl w-[calc(100vw-1rem)] sm:w-[520px] max-h-[calc(100dvh-2rem)] flex flex-col overflow-hidden"
     >
       <div className="shrink-0 px-4 pt-4 sm:px-6 sm:pt-6 flex items-start justify-between gap-3">
-        <h2 className="text-h2 font-black text-foreground">
+        <h2 className="text-h2 font-extrabold text-foreground">
           Alerta de risco de evasão
         </h2>
         <button

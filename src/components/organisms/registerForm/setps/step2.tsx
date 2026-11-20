@@ -240,7 +240,7 @@ function Step2({
         <span>
           Eu li e aceito os{" "}
           <a
-            className="font-black text-muted-foreground"
+            className="font-extrabold text-muted-foreground"
             onClick={(e) => e.stopPropagation()}
             href="/docs/Termos%20de%20Uso.pdf"
             target="_blank"
@@ -249,7 +249,7 @@ function Step2({
           </a>{" "}
           e{" "}
           <a
-            className="font-black text-muted-foreground"
+            className="font-extrabold text-muted-foreground"
             onClick={(e) => e.stopPropagation()}
             href="/docs/Pol%C3%ADtica%20de%20Privacidade.pdf"
             target="_blank"

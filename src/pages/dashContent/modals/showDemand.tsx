@@ -171,7 +171,7 @@ function ShowDemand({
             {demand.description}
           </p>
 
-          <h3 className="text-body font-black text-foreground pt-2">
+          <h3 className="text-body font-extrabold text-foreground pt-2">
             O que você vai enviar
           </h3>
           <TipoDeEnvioToggle value={tipo} onChange={trocarTipo} />

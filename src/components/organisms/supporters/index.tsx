@@ -104,11 +104,11 @@ function Supporters() {
             />
           </div>
           <p className="font-base text-foreground text-h3">{volunteer.name}</p>
-          <p className="font-thin text-foreground text-prose">
+          <p className="font-normal text-foreground text-prose">
             {volunteer.description?.substring(0, 30) +
               `${volunteer.description?.length > 30 ? " ..." : ""}`}
           </p>
-          <p className="font-thin text-foreground text-prose">
+          <p className="font-normal text-foreground text-prose">
             {`${volunteer.actived ? "" : "Ex-membro"}`}
           </p>
         </div>

@@ -282,7 +282,7 @@ export function ShowInfo({
                   .catch((e) => toast.error(e.message))
                   .finally(() => setLoading("Atualizar"));
               }}
-              className="sm:w-64 font-light"
+              className="sm:w-64 font-normal"
               disabled={loading === "Atualizando..."}
             >
               {loading}
