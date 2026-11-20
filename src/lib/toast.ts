@@ -1,3 +1,4 @@
+import { isValidElement } from "react";
 import { toast as base } from "react-toastify";
 import type { ToastOptions } from "react-toastify";
 
@@ -42,5 +43,26 @@ for (const chave of Object.keys(base) as (keyof Base)[]) {
 for (const tipo of Object.keys(AUTO_CLOSE) as Tipo[]) {
   toast[tipo] = comPadrao(tipo);
 }
+
+// `toast.promise`: sucesso fecha em 5 s e erro fica na tela, igual aos outros métodos.
+// Texto, nó ou função viram `{ render, autoClose }`; objeto sem `autoClose` ganha o padrão.
+function normalizar(valor: unknown, autoClose: number | false): unknown {
+  if (valor === undefined || valor === null) return valor;
+  const ehObjeto =
+    typeof valor === "object" && !isValidElement(valor) && !Array.isArray(valor);
+  if (ehObjeto) return { autoClose, ...(valor as object) };
+  return { render: valor, autoClose };
+}
+
+toast.promise = ((promessa: unknown, mensagens: Record<string, unknown>, options?: unknown) =>
+  (base.promise as (...a: unknown[]) => unknown)(
+    promessa,
+    {
+      ...mensagens,
+      success: normalizar(mensagens?.success, AUTO_CLOSE.success),
+      error: normalizar(mensagens?.error, AUTO_CLOSE.error),
+    },
+    options,
+  )) as Base["promise"];
 
 export { toast };

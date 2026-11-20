@@ -66,4 +66,33 @@ describe("toast (tickets/059 §3)", () => {
     }
     expect(Object.keys(base).length).toBeGreaterThan(8);
   });
+
+  describe("promise", () => {
+    it("error em texto fica na tela (autoClose false)", () => {
+      const spy = vi.spyOn(base, "promise").mockResolvedValue(undefined as never);
+      toast.promise(Promise.reject(new Error("x")).catch(() => {}), { error: "x" });
+      expect(spy.mock.calls[0][1]).toMatchObject({ error: { render: "x", autoClose: false } });
+    });
+
+    it("autoClose explícito no error vence", () => {
+      const spy = vi.spyOn(base, "promise").mockResolvedValue(undefined as never);
+      toast.promise(Promise.resolve(1), { error: { render: "x", autoClose: 3000 } });
+      expect(spy.mock.calls[0][1]).toMatchObject({ error: { render: "x", autoClose: 3000 } });
+    });
+
+    it("objeto sem autoClose ganha o padrão e success fecha em 5000", () => {
+      const spy = vi.spyOn(base, "promise").mockResolvedValue(undefined as never);
+      toast.promise(Promise.resolve(1), { pending: "p", success: "ok", error: { render: "x" } });
+      expect(spy.mock.calls[0][1]).toMatchObject({
+        pending: "p",
+        success: { render: "ok", autoClose: 5000 },
+        error: { render: "x", autoClose: false },
+      });
+    });
+
+    it("devolve a promessa do react-toastify", async () => {
+      vi.spyOn(base, "promise").mockResolvedValue("v" as never);
+      await expect(toast.promise(Promise.resolve(1), { error: "x" })).resolves.toBe("v");
+    });
+  });
 });
