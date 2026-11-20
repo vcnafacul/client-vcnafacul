@@ -116,12 +116,12 @@ function CadastroGoogle() {
           <Text size="secondary">Complete seu cadastro</Text>
           {erro && (
             <div data-erro className="flex w-full flex-col gap-4 text-center">
-              <p className="text-red-700">{erro}</p>
+              <p className="text-destructive">{erro}</p>
               <GoogleAuthButton label="Entrar com Google de novo" />
             </div>
           )}
           {!erro && (!pendente || !modo) && (
-            <p role="status" className="text-grey">
+            <p role="status" className="text-muted-foreground">
               Carregando…
             </p>
           )}
@@ -156,7 +156,7 @@ function CadastroGoogle() {
                 </p>
               )}
               {modo.tipo === "semConvite" && modo.aviso && (
-                <p data-aviso-convite className="text-center text-red-700">
+                <p data-aviso-convite className="text-center text-destructive">
                   {modo.aviso}
                 </p>
               )}

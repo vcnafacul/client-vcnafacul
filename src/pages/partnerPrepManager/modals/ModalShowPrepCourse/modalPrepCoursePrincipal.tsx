@@ -416,23 +416,23 @@ export const ModalPrepCoursePrincipal = ({
       {/* Header com título e botões */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-marine">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
             Informações Básicas
           </h1>
-          <div className="w-16 h-1 bg-green-500 mt-2"></div>
+          <div className="w-16 h-1 bg-success mt-2"></div>
         </div>
         <div className="flex gap-2">
           <button
             onClick={toggleEdit}
-            className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 transition-colors"
+            className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-border transition-colors"
           >
-            <IoMdCreate className="w-4 h-4 text-gray-600" />
+            <IoMdCreate className="w-4 h-4 text-muted-foreground" />
           </button>
           <button
             onClick={handleClose}
-            className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 transition-colors"
+            className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-border transition-colors"
           >
-            <IoMdClose className="w-4 h-4 text-gray-600" />
+            <IoMdClose className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
       </div>
@@ -448,7 +448,7 @@ export const ModalPrepCoursePrincipal = ({
             value={formData.prepCourseName}
             onChange={handleInputChange("prepCourseName")}
             disabled
-            className="bg-gray-100 border-gray-300 h-14"
+            className="bg-muted border-border h-14"
           />
           <InputFactory
             id="city"
@@ -457,7 +457,7 @@ export const ModalPrepCoursePrincipal = ({
             value={formData.city}
             onChange={handleInputChange("city")}
             disabled
-            className="bg-gray-100 border-gray-300 h-14"
+            className="bg-muted border-border h-14"
           />
           <InputFactory
             id="state"
@@ -466,7 +466,7 @@ export const ModalPrepCoursePrincipal = ({
             value={formData.state}
             onChange={handleInputChange("state")}
             disabled
-            className="bg-gray-100 border-gray-300 h-14"
+            className="bg-muted border-border h-14"
           />
         </div>
 
@@ -475,7 +475,7 @@ export const ModalPrepCoursePrincipal = ({
           {/* Campo Coordenador com busca */}
           <div className="relative">
             <label
-              className="absolute p-0 top-1.5 left-2 text-xs text-grey font-semibold"
+              className="absolute p-0 top-1.5 left-2 text-xs text-muted-foreground font-semibold"
               htmlFor="coordinator"
             >
               Coordenador
@@ -488,23 +488,23 @@ export const ModalPrepCoursePrincipal = ({
               value={formData.coordinator}
               onChange={handleCoordinatorChange}
               disabled={!editable}
-              className="h-16 pt-4 w-full px-3 py-1 text-sm border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-1 focus:ring-orange disabled:opacity-50"
+              className="h-16 pt-4 w-full px-3 py-1 text-sm border border-border rounded-md bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
               placeholder="Digite o nome do coordenador..."
             />
 
             {/* Dropdown de resultados */}
             {showDropdown && searchResults.length > 0 && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+              <div className="absolute z-10 w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
                 {searchResults.map((user) => (
                   <div
                     key={user.id}
-                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0"
+                    className="px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
                     onClick={() => selectUser(user)}
                   >
-                    <div className="font-medium text-sm text-gray-900">
+                    <div className="font-medium text-sm text-foreground">
                       {user.name}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-muted-foreground">
                       {user.email} • {user.phone}
                     </div>
                   </div>
@@ -515,7 +515,7 @@ export const ModalPrepCoursePrincipal = ({
             {/* Loading indicator */}
             {isSearching && (
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <div className="w-4 h-4 border-2 border-gray-300 border-t-orange rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-border border-t-cta rounded-full animate-spin"></div>
               </div>
             )}
           </div>
@@ -526,7 +526,7 @@ export const ModalPrepCoursePrincipal = ({
             value={formData.coordinatorEmail}
             onChange={handleInputChange("coordinatorEmail")}
             disabled
-            className="bg-gray-100 border-gray-300 h-14"
+            className="bg-muted border-border h-14"
           />
           <InputFactory
             id="coordinatorPhone"
@@ -535,7 +535,7 @@ export const ModalPrepCoursePrincipal = ({
             value={formData.coordinatorPhone}
             onChange={handleInputChange("coordinatorPhone")}
             disabled
-            className="bg-gray-100 border-gray-300 h-14"
+            className="bg-muted border-border h-14"
           />
         </div>
       </div>
@@ -545,15 +545,15 @@ export const ModalPrepCoursePrincipal = ({
         {/* Seção de Logo */}
         <div className="space-y-3 flex justify-between">
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-foreground">
               Logomarca do cursinho
             </label>
-            <p className="text-xs text-gray-500">Recomendado 300x300</p>
+            <p className="text-xs text-muted-foreground">Recomendado 300x300</p>
             <Button
               variant="outline"
               disabled={!editable}
               onClick={openFileSelector}
-              className="bg-gray-50 w-28 h-10 border-gray-300 text-gray-600 hover:bg-gray-100"
+              className="bg-page w-28 h-10 border-border text-muted-foreground hover:bg-muted"
             >
               Mudar
             </Button>
@@ -562,23 +562,23 @@ export const ModalPrepCoursePrincipal = ({
             {currentThumbnail ? (
               <img src={currentThumbnail} alt="Logo" />
             ) : (
-              <span className="text-gray-500 text-sm font-medium">Logo</span>
+              <span className="text-muted-foreground text-sm font-medium">Logo</span>
             )}
           </div>
         </div>
 
         {/* Seção de Contrato */}
         <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-foreground">
             Contrato
           </label>
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 border border-gray-300 rounded-md group">
-              <div className="w-4 h-4 bg-gray-400 rounded"></div>
+            <div className="flex items-center gap-2 px-3 py-2 bg-muted border border-border rounded-md group">
+              <div className="w-4 h-4 bg-muted-foreground rounded"></div>
               <span
-                className={`text-sm text-gray-600 flex items-center gap-1 ${
+                className={`text-sm text-muted-foreground flex items-center gap-1 ${
                   prepCourse.agreement && !selectedAgreement
-                    ? "cursor-pointer hover:text-blue-600 hover:underline"
+                    ? "cursor-pointer hover:text-primary hover:underline"
                     : ""
                 }`}
                 onClick={
@@ -599,7 +599,7 @@ export const ModalPrepCoursePrincipal = ({
               </span>
               {selectedAgreement && (
                 <IoMdClose
-                  className="w-4 h-4 text-gray-400 cursor-pointer hover:text-gray-600"
+                  className="w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground"
                   onClick={removeSelectedAgreement}
                 />
               )}
@@ -609,7 +609,7 @@ export const ModalPrepCoursePrincipal = ({
                 variant="outline"
                 disabled={!editable}
                 onClick={openAgreementFileSelector}
-                className="bg-gray-50 w-fit border-gray-300 text-gray-600 hover:bg-gray-100 flex items-center gap-2"
+                className="bg-page w-fit border-border text-muted-foreground hover:bg-muted flex items-center gap-2"
               >
                 <IoMdCloudOutline className="w-4 h-4" />
                 Selecionar arquivo
@@ -619,7 +619,7 @@ export const ModalPrepCoursePrincipal = ({
                   variant="outline"
                   disabled={!editable}
                   onClick={handleAgreementUpload}
-                  className="bg-gray-50 w-fit border-gray-300 text-gray-600 hover:bg-gray-100"
+                  className="bg-page w-fit border-border text-muted-foreground hover:bg-muted"
                 >
                   Atualizar contrato
                 </Button>
@@ -632,11 +632,11 @@ export const ModalPrepCoursePrincipal = ({
       <div className="flex flex-wrap justify-between gap-3 pt-4 items-end">
         {/* Informações de parceria */}
         <div className="space-y-2">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             {/* Era o ano do updatedAt: qualquer edição "mudava" o ano de parceria. */}
             Ano de parceria: {new Date(prepCourse.createdAt).getFullYear()}
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             Última atualização:{" "}
             {new Date(prepCourse.updatedAt).toLocaleDateString("pt-BR")}
           </p>
@@ -651,7 +651,7 @@ export const ModalPrepCoursePrincipal = ({
           <Button
             variant="outline"
             onClick={handleUpdateRepresentative}
-            className="bg-gray-100 border-gray-300 text-gray-600 hover:bg-gray-200 px-8"
+            className="bg-muted border-border text-muted-foreground hover:bg-muted px-8"
           >
             Atualizar
           </Button>
@@ -683,7 +683,7 @@ export const ModalPrepCoursePrincipal = ({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-marine">
+            <AlertDialogTitle className="text-foreground">
               Representante já é colaborador
             </AlertDialogTitle>
             <AlertDialogDescription>
@@ -693,7 +693,7 @@ export const ModalPrepCoursePrincipal = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel
-              className="border border-orange text-orange hover:bg-orange hover:border-orange/20 hover:text-white"
+              className="border border-cta text-foreground hover:bg-cta hover:border-cta/20 hover:text-cta-foreground"
               onClick={() => {
                 modals.modalForceUpdate.close();
                 setPendingUser(null);
@@ -702,7 +702,7 @@ export const ModalPrepCoursePrincipal = ({
               Cancelar
             </AlertDialogCancel>
             <AlertDialogAction
-              className="bg-orange text-white hover:bg-orange/80"
+              className="bg-cta text-white hover:bg-cta/80"
               onClick={handleForceUpdate}
             >
               Forçar Atualização

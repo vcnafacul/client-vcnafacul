@@ -64,16 +64,16 @@ function SecaoCard({
 
   return (
     <li
-      className={`bg-white border border-gray-200 border-l-4 rounded-lg p-3 flex flex-col gap-2 ${
+      className={`bg-white border border-border border-l-4 rounded-lg p-3 flex flex-col gap-2 ${
         section.isGlobal
-          ? "border-l-sky-600"
+          ? "border-l-chart-6"
           : section.active
-            ? "border-l-marine"
-            : "border-l-gray-300 opacity-70"
+            ? "border-l-primary"
+            : "border-l-border opacity-70"
       }`}
     >
       <div className="flex flex-wrap items-center gap-2">
-        <p className="font-bold text-gray-900 break-words min-w-0">
+        <p className="font-bold text-foreground break-words min-w-0">
           {section.name}
         </p>
         <StatusBadge active={section.active} />
@@ -81,18 +81,18 @@ function SecaoCard({
           <Chip label="Global" size="small" color="info" />
         )}
       </div>
-      <p className="text-xs text-gray-600">
+      <p className="text-xs text-muted-foreground">
         {total} {total === 1 ? "questão" : "questões"} · {ativas} ativas ·
         atualizada em {formatDate(section.updatedAt.toString(), "dd/MM/yyyy")}
       </p>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-gray-100 pt-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-2">
         {total > 0 ? (
           <button
             type="button"
             onClick={() => setAberto(!aberto)}
             aria-expanded={aberto}
-            className="flex items-center gap-1 h-10 text-sm font-medium text-marine"
+            className="flex items-center gap-1 h-10 text-sm font-medium text-foreground"
           >
             <FiChevronDown
               className={`w-5 h-5 transition-transform ${aberto ? "rotate-180" : ""}`}
@@ -100,10 +100,10 @@ function SecaoCard({
             Ver questões
           </button>
         ) : (
-          <span className="text-sm text-gray-500">Sem questões</span>
+          <span className="text-sm text-muted-foreground">Sem questões</span>
         )}
         {section.isGlobal ? (
-          <span className="text-xs text-gray-500">Somente leitura</span>
+          <span className="text-xs text-muted-foreground">Somente leitura</span>
         ) : (
           <ActionMenu
             tamanho="medium"

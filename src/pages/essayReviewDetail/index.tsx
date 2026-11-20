@@ -126,35 +126,35 @@ export default function EssayReviewDetail() {
     <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-8">
       {/* Essay content */}
       <div>
-        <h1 className="text-2xl font-bold text-marine">
+        <h1 className="text-2xl font-bold text-foreground">
           {essay.title || "Sem título"}
         </h1>
-        <p className="text-sm text-grey mb-4">Tema: {essay.theme.title}</p>
+        <p className="text-sm text-muted-foreground mb-4">Tema: {essay.theme.title}</p>
         {essay.inputType === 'UPLOADED' ? (
-          <div className="border rounded-lg p-6 bg-gray-50 text-center space-y-3">
-            <p className="text-sm text-grey">
+          <div className="border rounded-lg p-6 bg-page text-center space-y-3">
+            <p className="text-sm text-muted-foreground">
               Redação enviada como {essay.mimeType === 'application/pdf' ? 'PDF' : 'imagem'}
             </p>
             <button
               onClick={() => downloadEssayImage(token, essay.id).catch(() => toast.error("Erro ao baixar arquivo"))}
-              className="px-4 py-2 bg-marine text-white rounded-lg hover:bg-marine/90 text-sm"
+              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm"
             >
               Baixar arquivo
             </button>
           </div>
         ) : (
-          <div className="border rounded-lg p-4 bg-gray-50 whitespace-pre-wrap text-sm">
+          <div className="border rounded-lg p-4 bg-page whitespace-pre-wrap text-sm">
             {essay.text}
           </div>
         )}
       </div>
 
       {alreadyReviewed && (
-        <div className="border rounded-lg p-4 bg-yellow-50 text-center">
-          <p className="text-yellow-700 font-semibold">
+        <div className="border rounded-lg p-4 bg-warning-muted text-center">
+          <p className="text-warning font-semibold">
             Você já revisou esta redação
           </p>
-          <p className="text-sm text-yellow-600 mt-1">
+          <p className="text-sm text-warning mt-1">
             Cada revisor pode enviar apenas uma revisão por redação.
           </p>
         </div>
@@ -164,7 +164,7 @@ export default function EssayReviewDetail() {
       {canReview && (
         <div className="border rounded-lg p-3 sm:p-6 space-y-6">
           <h2 className="text-lg font-bold">Nova Revisão</h2>
-          <p className="text-sm text-grey">
+          <p className="text-sm text-muted-foreground">
             Nota total calculada: <strong>{totalScore}/1000</strong>
           </p>
 
@@ -218,7 +218,7 @@ export default function EssayReviewDetail() {
             <button
               onClick={() => formularioCompleto() && setConfirmarEnvio(true)}
               disabled={submitting}
-              className="w-full sm:w-auto px-6 py-2 h-10 bg-marine text-white rounded-lg hover:bg-marine/90 disabled:opacity-50"
+              className="w-full sm:w-auto px-6 py-2 h-10 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50"
             >
               {submitting ? "Enviando..." : "Enviar revisão"}
             </button>
@@ -235,7 +235,7 @@ export default function EssayReviewDetail() {
         }}
         text={`Enviar revisão com nota ${totalScore}/1000?`}
       >
-        <p className="text-sm text-grey">
+        <p className="text-sm text-muted-foreground">
           Cada revisor envia uma única revisão por redação. Não será possível
           editar depois.
         </p>

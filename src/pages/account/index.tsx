@@ -269,18 +269,18 @@ function Account() {
           className="h-10 w-10 shrink-0 rounded-full object-cover sm:h-12 sm:w-12"
         />
       ) : ehColaborador ? (
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 font-bold text-marine sm:h-12 sm:w-12">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted font-bold text-foreground sm:h-12 sm:w-12">
           {nome?.charAt(0)}
         </span>
       ) : (
         <LogoIcon className="h-10 w-10 shrink-0 rounded-full border bg-white p-1 sm:h-12 sm:w-12" />
       )}
       <div className="min-w-0">
-        <p className="truncate font-semibold text-marine">
+        <p className="truncate font-semibold text-foreground">
           {nome} {userAccount?.lastName}
         </p>
         {ehColaborador && userAccount?.collaboratorDescription && (
-          <p className="truncate text-xs text-slate-500">
+          <p className="truncate text-xs text-muted-foreground">
             {userAccount.collaboratorDescription}
           </p>
         )}
@@ -301,7 +301,7 @@ function Account() {
       hidden={s !== secao}
       className="space-y-4"
     >
-      <h1 className="text-xl font-bold text-marine">{ROTULO_DA_SECAO[s]}</h1>
+      <h1 className="text-xl font-bold text-foreground">{ROTULO_DA_SECAO[s]}</h1>
       {conteudo}
     </section>
   );
@@ -322,7 +322,7 @@ function Account() {
               "dados",
               <>
                 {ehColaborador && (
-                  <div className="flex flex-col items-center gap-2 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:gap-6">
+                  <div className="flex flex-col items-center gap-2 rounded-xl border border-border bg-white p-4 sm:flex-row sm:gap-6">
                     {/* shrink-0: na linha, o flex espremia a foto num oval */}
                     <div className="shrink-0">
                       <ImageProfile
@@ -331,8 +331,8 @@ function Account() {
                         src={imagePreview}
                       />
                     </div>
-                    <div className="text-center text-sm text-slate-600 sm:text-left">
-                      <p className="font-medium text-marine">Foto de perfil</p>
+                    <div className="text-center text-sm text-muted-foreground sm:text-left">
+                      <p className="font-medium text-foreground">Foto de perfil</p>
                       <p>
                         Aparece para o cursinho e na página pública. JPG ou PNG,
                         até 1 MB. Salva assim que você escolhe.
@@ -351,9 +351,9 @@ function Account() {
             ehColaborador &&
             painel(
               "frentes",
-              <div className="rounded-xl border border-slate-200 bg-white p-4">
+              <div className="rounded-xl border border-border bg-white p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-muted-foreground">
                     As frentes em que você pode ajudar o cursinho.
                   </p>
                   <Button
@@ -376,7 +376,7 @@ function Account() {
               pushHabilitado() ? (
                 <NotificacoesDoAparelho />
               ) : (
-                <p className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
+                <p className="rounded-xl border border-border bg-white p-4 text-sm text-muted-foreground">
                   As notificações no aparelho ainda não estão disponíveis neste
                   ambiente.
                 </p>

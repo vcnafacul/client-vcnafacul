@@ -295,7 +295,7 @@ function Simulate() {
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Text
                 size="secondary"
-                className="m-0 text-orange w-60 text-start"
+                className="m-0 text-foreground font-semibold w-60 text-start"
               >
                 {simulateData.alternativeText}
               </Text>
@@ -328,7 +328,7 @@ function Simulate() {
               <Button
                 onClick={confirmQuestion}
                 disabled={questionSelected.answered === undefined}
-                className="col-span-2 order-first sm:order-none transition-all duration-300 bg-lightGreen border-lightGreen w-full sm:w-44 hover:border-green2 hover:bg-green2"
+                className="col-span-2 order-first sm:order-none transition-all duration-300 bg-success border-success text-success-foreground w-full sm:w-44 hover:border-success hover:bg-success/90"
               >
                 Confirmar
               </Button>

@@ -267,7 +267,7 @@ export const ModalCreatePrepCourse = ({
       handleClose={handleClose!}
       className="space-y-6 bg-white p-4 rounded-md w-[90vw] h-[90vh] supports-[height:100dvh]:h-[90dvh] overflow-y-auto sm:w-[800px] sm:h-fit"
     >
-      <Typography variant="h4" className="font-bold text-marine">
+      <Typography variant="h4" className="font-bold text-foreground">
         Cadastro de Cursinho
       </Typography>
       {/* Campos de formulário em duas colunas */}
@@ -277,7 +277,7 @@ export const ModalCreatePrepCourse = ({
           {/* Campo Geolocalização com busca */}
           <div className="relative">
             <label
-              className="absolute p-0 top-1.5 left-2 text-xs text-grey font-semibold"
+              className="absolute p-0 top-1.5 left-2 text-xs text-muted-foreground font-semibold"
               htmlFor="geo"
             >
               Geolocalização
@@ -289,20 +289,20 @@ export const ModalCreatePrepCourse = ({
               autoComplete="off"
               value={geoName}
               onChange={handleGeoChange}
-              className="h-16 pt-4 w-full px-3 py-1 text-sm border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-1 focus:ring-orange disabled:opacity-50"
+              className="h-16 pt-4 w-full px-3 py-1 text-sm border border-border rounded-md bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
               placeholder="Digite o nome da geolocalização..."
             />
 
             {/* Dropdown de resultados */}
             {showGeoDropdown && geoSearchResults.length > 0 && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+              <div className="absolute z-10 w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
                 {geoSearchResults.map((geo) => (
                   <div
                     key={geo.id}
-                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0"
+                    className="px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
                     onClick={() => selectGeo(geo)}
                   >
-                    <div className="font-medium text-sm text-gray-900">
+                    <div className="font-medium text-sm text-foreground">
                       {geo.name}
                     </div>
                   </div>
@@ -313,7 +313,7 @@ export const ModalCreatePrepCourse = ({
             {/* Loading indicator */}
             {isGeoSearching && (
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <div className="w-4 h-4 border-2 border-gray-300 border-t-orange rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-border border-t-cta rounded-full animate-spin"></div>
               </div>
             )}
           </div>
@@ -324,7 +324,7 @@ export const ModalCreatePrepCourse = ({
           {/* Campo Coordenador com busca */}
           <div className="relative">
             <label
-              className="absolute p-0 top-1.5 left-2 text-xs text-grey font-semibold"
+              className="absolute p-0 top-1.5 left-2 text-xs text-muted-foreground font-semibold"
               htmlFor="coordinator"
             >
               Coordenador
@@ -336,23 +336,23 @@ export const ModalCreatePrepCourse = ({
               autoComplete="off"
               value={formData.coordinator}
               onChange={handleCoordinatorChange}
-              className="h-16 pt-4 w-full px-3 py-1 text-sm border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-1 focus:ring-orange disabled:opacity-50"
+              className="h-16 pt-4 w-full px-3 py-1 text-sm border border-border rounded-md bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
               placeholder="Digite o nome do coordenador..."
             />
 
             {/* Dropdown de resultados */}
             {showDropdown && searchResults.length > 0 && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+              <div className="absolute z-10 w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
                 {searchResults.map((user) => (
                   <div
                     key={user.id}
-                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0"
+                    className="px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
                     onClick={() => selectUser(user)}
                   >
-                    <div className="font-medium text-sm text-gray-900">
+                    <div className="font-medium text-sm text-foreground">
                       {user.name}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-muted-foreground">
                       {user.email} • {user.phone}
                     </div>
                   </div>
@@ -363,7 +363,7 @@ export const ModalCreatePrepCourse = ({
             {/* Loading indicator */}
             {isSearching && (
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <div className="w-4 h-4 border-2 border-gray-300 border-t-orange rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-border border-t-cta rounded-full animate-spin"></div>
               </div>
             )}
           </div>
@@ -375,7 +375,7 @@ export const ModalCreatePrepCourse = ({
         <Button
           variant="outline"
           onClick={handleCreatePrepCourse}
-          className="bg-gray-100 border-gray-300 text-gray-600 hover:bg-gray-200 px-8"
+          className="bg-muted border-border text-muted-foreground hover:bg-muted px-8"
         >
           Confirmar Cadastro
         </Button>
@@ -388,7 +388,7 @@ export const ModalCreatePrepCourse = ({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-marine">
+            <AlertDialogTitle className="text-foreground">
               Representante já é colaborador
             </AlertDialogTitle>
             <AlertDialogDescription>
@@ -398,7 +398,7 @@ export const ModalCreatePrepCourse = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel
-              className="border border-orange text-orange hover:bg-orange hover:border-orange/20 hover:text-white"
+              className="border border-cta text-foreground hover:bg-cta hover:border-cta/20 hover:text-cta-foreground"
               onClick={() => {
                 modals.modalForceCreate.close();
                 setPendingData(null);
@@ -407,7 +407,7 @@ export const ModalCreatePrepCourse = ({
               Cancelar
             </AlertDialogCancel>
             <AlertDialogAction
-              className="bg-orange text-white hover:bg-orange/80"
+              className="bg-cta text-white hover:bg-cta/80"
               onClick={handleForceCreate}
             >
               Forçar Criação

@@ -34,12 +34,12 @@ export default function NewContent({ fileKey }: NewContentProps) {
   }, [fileKey]);
 
   if (!fileKey) {
-    return <p className="text-center text-gray-400">Nenhum arquivo selecionado.</p>;
+    return <p className="text-center text-muted-foreground">Nenhum arquivo selecionado.</p>;
   }
 
   if (error) {
     return (
-      <p className="text-center text-red-500 py-4">
+      <p className="text-center text-destructive py-4">
         {error}
       </p>
     );
@@ -47,8 +47,8 @@ export default function NewContent({ fileKey }: NewContentProps) {
 
   if (isLoading || !arrayBuffer) {
     return (
-      <div className="min-h-[500px] w-full bg-gray-100 animate-pulse rounded-md">
-        <p className="text-center pt-10 text-gray-400">
+      <div className="min-h-[500px] w-full bg-muted animate-pulse rounded-md">
+        <p className="text-center pt-10 text-muted-foreground">
           Carregando documento...
         </p>
       </div>

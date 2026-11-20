@@ -49,12 +49,12 @@ export function GeoCardList({
 
   if (estado === "erro") {
     return (
-      <div role="alert" className="space-y-2 text-sm text-slate-600">
+      <div role="alert" className="space-y-2 text-sm text-muted-foreground">
         <p>Não conseguimos carregar os cursinhos.</p>
         <button
           type="button"
           onClick={tentarDeNovo}
-          className="font-semibold text-marine underline"
+          className="font-semibold text-foreground underline"
         >
           Tentar de novo
         </button>
@@ -66,7 +66,7 @@ export function GeoCardList({
 
   if (itens.length === 0) {
     return (
-      <p role="status" className="text-sm text-slate-500">
+      <p role="status" className="text-sm text-muted-foreground">
         {buscando
           ? `Não encontramos nenhum cursinho com "${termo}".`
           : "Nenhum cursinho nesta área do mapa."}
@@ -77,7 +77,7 @@ export function GeoCardList({
   return (
     <div className="space-y-3">
       {buscando && (
-        <h2 className="font-bold text-marine">
+        <h2 className="font-bold text-foreground">
           Resultados para "{termo}" ({total})
         </h2>
       )}
@@ -101,7 +101,7 @@ export function GeoCardList({
         ))}
       </ul>
       {total > itens.length && (
-        <p role="status" className="text-sm text-slate-500">
+        <p role="status" className="text-sm text-muted-foreground">
           {buscando
             ? `Mostrando ${itens.length} de ${total} resultados — refine a busca para ver os outros.`
             : `Mostrando ${itens.length} de ${total} cursinhos nesta área — aproxime o mapa para ver os outros.`}

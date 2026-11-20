@@ -294,7 +294,7 @@ export function PartnerClass() {
       <>
         <AppBar position="static" color="transparent" elevation={0}>
           <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography variant="h4" fontWeight="bold" className="text-marine">
+            <Typography variant="h4" fontWeight="bold" className="text-foreground">
               Períodos Letivos
             </Typography>
           </Toolbar>
@@ -319,7 +319,7 @@ export function PartnerClass() {
       <>
         <AppBar position="static" color="transparent" elevation={0}>
           <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography variant="h4" fontWeight="bold" className="text-marine">
+            <Typography variant="h4" fontWeight="bold" className="text-foreground">
               Períodos Letivos
             </Typography>
           </Toolbar>
@@ -369,7 +369,7 @@ export function PartnerClass() {
             py: { xs: 1, sm: 0 },
           }}
         >
-          <Typography variant="h4" fontWeight="bold" className="text-marine">
+          <Typography variant="h4" fontWeight="bold" className="text-foreground">
             Períodos Letivos
           </Typography>
           {podeGerenciar && (
@@ -490,7 +490,7 @@ export function PartnerClass() {
                 {/* No celular a lista de todas as páginas não cabe. */}
                 {!acimaDeSm && (
                   <PaginationItem>
-                    <span className="px-3 text-sm text-gray-600">
+                    <span className="px-3 text-sm text-muted-foreground">
                       {currentPage} de {totalPages}
                     </span>
                   </PaginationItem>

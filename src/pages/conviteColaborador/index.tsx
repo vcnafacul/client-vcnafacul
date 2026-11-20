@@ -88,7 +88,7 @@ export default function ConviteColaborador() {
     if (aceito && convite) {
       return (
         <>
-          <h1 className="text-2xl font-bold text-marine">Convite aceito!</h1>
+          <h1 className="text-2xl font-bold text-foreground">Convite aceito!</h1>
           <p>
             Você agora faz parte do {convite.nomeCursinho} como{" "}
             <strong>{convite.funcao}</strong>.
@@ -99,17 +99,17 @@ export default function ConviteColaborador() {
     }
     if (!convite) {
       return erro ? (
-        <p data-erro className="text-red-700">
+        <p data-erro className="text-destructive">
           {erro}
         </p>
       ) : (
-        <p className="text-gray-500">Carregando o convite…</p>
+        <p className="text-muted-foreground">Carregando o convite…</p>
       );
     }
 
     const titulo = (
       <>
-        <h1 className="text-2xl font-bold text-marine">
+        <h1 className="text-2xl font-bold text-foreground">
           Convite para o {convite.nomeCursinho}
         </h1>
         <p>
@@ -122,7 +122,7 @@ export default function ConviteColaborador() {
       return (
         <>
           {titulo}
-          <p data-situacao className="text-red-700">
+          <p data-situacao className="text-destructive">
             {MENSAGEM_DA_SITUACAO[convite.situacao]}
           </p>
         </>
@@ -174,7 +174,7 @@ export default function ConviteColaborador() {
       return (
         <>
           {titulo}
-          <p data-conta-errada className="text-red-700">
+          <p data-conta-errada className="text-destructive">
             Este convite foi enviado para <strong>{convite.email}</strong>, e você
             está conectado como {user.email}. Saia e entre com a conta certa.
           </p>
@@ -189,7 +189,7 @@ export default function ConviteColaborador() {
           {aceitando ? "Aceitando…" : "Aceitar convite"}
         </Button>
         {erro && (
-          <p data-erro className="text-red-700">
+          <p data-erro className="text-destructive">
             {erro}
           </p>
         )}

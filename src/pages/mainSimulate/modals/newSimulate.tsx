@@ -99,7 +99,7 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
           )}
         </div>
         {carregado && availables.length === 0 && (
-          <p className="mb-4 rounded-md bg-gray-100 p-3 text-sm text-gray-700 text-start">
+          <p className="mb-4 rounded-md bg-muted p-3 text-sm text-foreground text-start">
             Nenhum simulado disponível no momento.
           </p>
         )}
@@ -128,7 +128,7 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
           Aqui vão algumas dicas para ajudá-lo:
         </Text>
         <Ul className="ml-4 mb-4" childrens={dataModalNew} />
-        <Text size="quaternary" className="font-black text-grey text-start">
+        <Text size="quaternary" className="font-black text-muted-foreground text-start">
           Bons estudos!
         </Text>
         <div className="flex justify-end">

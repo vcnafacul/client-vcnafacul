@@ -23,23 +23,23 @@ export default function DevVitrine() {
   const atual = vitrine.estados.find((e) => e.slug === estado) ?? vitrine.estados[0];
 
   return (
-    <div className="min-h-dvh bg-gray-100">
+    <div className="min-h-dvh bg-muted">
       <nav
         data-vitrine-barra
         className="sticky top-0 z-0 flex flex-wrap items-center gap-2 border-b bg-white px-4 py-2 text-sm"
       >
-        <Link to={DEV_VITRINE} className="font-bold text-marine">
+        <Link to={DEV_VITRINE} className="font-bold text-foreground">
           Vitrine
         </Link>
-        <span className="text-gray-400">/</span>
+        <span className="text-muted-foreground">/</span>
         <span className="font-semibold">{vitrine.titulo}</span>
-        <code className="hidden text-xs text-gray-500 sm:inline">{vitrine.arquivo}</code>
+        <code className="hidden text-xs text-muted-foreground sm:inline">{vitrine.arquivo}</code>
         <span className="flex-1" />
         {vitrine.estados.map((e) => (
           <Link
             key={e.slug}
             to={`${DEV_VITRINE}/${vitrine.slug}/${e.slug}`}
-            className={`rounded px-2 py-1 ${e.slug === atual.slug ? "bg-marine text-white" : "bg-gray-100"}`}
+            className={`rounded px-2 py-1 ${e.slug === atual.slug ? "bg-primary text-white" : "bg-muted"}`}
           >
             {e.titulo}
           </Link>
@@ -77,21 +77,21 @@ function Bancada({ estado }: { estado: EstadoDaVitrine }) {
 function Indice() {
   return (
     <div className="mx-auto max-w-2xl p-6">
-      <h1 className="mb-1 text-2xl font-bold text-marine">Vitrine de componentes</h1>
-      <p className="mb-6 text-sm text-gray-500">
+      <h1 className="mb-1 text-2xl font-bold text-foreground">Vitrine de componentes</h1>
+      <p className="mb-6 text-sm text-muted-foreground">
         Só em dev. Cada estado monta o componente real com respostas falsas da api.
       </p>
       <ul className="flex flex-col gap-4">
         {vitrines.map((v) => (
           <li key={v.slug} className="rounded-md border bg-white p-4">
             <p className="font-semibold">{v.titulo}</p>
-            <code className="text-xs text-gray-500">{v.arquivo}</code>
+            <code className="text-xs text-muted-foreground">{v.arquivo}</code>
             <div className="mt-2 flex flex-wrap gap-2 text-sm">
               {v.estados.map((e) => (
                 <Link
                   key={e.slug}
                   to={`${DEV_VITRINE}/${v.slug}/${e.slug}`}
-                  className="rounded bg-gray-100 px-2 py-1 hover:bg-gray-200"
+                  className="rounded bg-muted px-2 py-1 hover:bg-muted"
                 >
                   {e.titulo}
                 </Link>

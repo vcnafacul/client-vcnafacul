@@ -53,7 +53,7 @@ function Login() {
           <Link
             key={link}
             to={link}
-            className="text-orange w-fit underline font-bold"
+            className="text-primary w-fit underline font-bold"
           >
             {label}
           </Link>

@@ -94,20 +94,20 @@ export default function SupportPage() {
         />
       ) : closedBySupport ? (
         <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-8">
-          <LuHeadset className="h-12 w-12 text-marine/30" />
-          <span className="font-raleway font-semibold text-marine">
+          <LuHeadset className="h-12 w-12 text-foreground/30" />
+          <span className="font-raleway font-semibold text-foreground">
             Conversa encerrada
           </span>
-          <span className="text-sm text-grey max-w-xs">
+          <span className="text-sm text-muted-foreground max-w-xs">
             Esta conversa foi encerrada. Se precisar de mais ajuda, você pode
             abrir uma nova conversa.
           </span>
           {remainingSeconds > 0 ? (
             <div className="flex flex-col items-center gap-1">
-              <span className="text-2xl font-bold font-mono text-marine">
+              <span className="text-2xl font-bold font-mono text-foreground">
                 {formatCountdown(remainingSeconds)}
               </span>
-              <span className="text-xs text-grey">
+              <span className="text-xs text-muted-foreground">
                 Aguarde para iniciar uma nova conversa
               </span>
             </div>

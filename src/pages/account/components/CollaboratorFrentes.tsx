@@ -71,8 +71,8 @@ export function CollaboratorFrentes({
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-        <div className="h-20 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-4 bg-muted rounded animate-pulse"></div>
+        <div className="h-20 bg-muted rounded animate-pulse"></div>
       </div>
     );
   }
@@ -80,10 +80,10 @@ export function CollaboratorFrentes({
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-foreground mb-2">
           Frentes de Afinidade
         </label>
-        <p className="text-xs text-gray-500 mb-4">
+        <p className="text-xs text-muted-foreground mb-4">
           Selecione as frentes com as quais você tem mais afinidade. Digite o nome da frente ou da matéria para filtrar; a lista completa pode ser rolada.
         </p>
 
@@ -108,16 +108,16 @@ export function CollaboratorFrentes({
                 className="fixed inset-0 z-10"
                 onClick={() => setShowDropdown(false)}
               />
-              <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-80 overflow-y-auto overflow-x-hidden">
+              <div className="absolute z-20 w-full mt-1 bg-white border border-border rounded-lg shadow-lg max-h-80 overflow-y-auto overflow-x-hidden">
                 {filteredFrentes.map((frente) => (
                   <button
                     key={frente.id}
                     type="button"
                     onClick={() => handleSelect(frente)}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none transition-colors"
+                    className="w-full text-left px-4 py-2 hover:bg-muted focus:bg-muted focus:outline-none transition-colors"
                   >
                     <div className="font-medium text-sm">{frente.nome ?? "—"}</div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-muted-foreground">
                       {materiaNomeMap[frente.materia] ?? frente.materia}
                     </div>
                   </button>
@@ -132,8 +132,8 @@ export function CollaboratorFrentes({
                 className="fixed inset-0 z-10"
                 onClick={() => setShowDropdown(false)}
               />
-              <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg p-4">
-                <p className="text-sm text-gray-500">
+              <div className="absolute z-20 w-full mt-1 bg-white border border-border rounded-lg shadow-lg p-4">
+                <p className="text-sm text-muted-foreground">
                   Nenhuma frente encontrada com "{searchTerm}"
                 </p>
               </div>
@@ -145,7 +145,7 @@ export function CollaboratorFrentes({
       {/* Frentes selecionadas */}
       {selectedFrentes.length > 0 && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             Frentes Selecionadas ({selectedFrentes.length})
           </label>
           <div className="flex flex-wrap gap-2">
@@ -153,13 +153,13 @@ export function CollaboratorFrentes({
               <Badge
                 key={frente.id}
                 variant="secondary"
-                className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors"
+                className="inline-flex items-center gap-2 px-3 py-1 bg-info-muted text-info hover:bg-info-muted/70 transition-colors"
               >
                 <span className="text-sm">{frente.nome ?? "—"}</span>
                 <button
                   type="button"
                   onClick={() => handleRemove(frente.id)}
-                  className="ml-1 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                  className="ml-1 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
                   aria-label={`Remover ${frente.nome}`}
                 >
                   <X className="h-3 w-3" />
@@ -171,7 +171,7 @@ export function CollaboratorFrentes({
       )}
 
       {selectedFrentes.length === 0 && (
-        <div className="text-sm text-gray-500 italic">
+        <div className="text-sm text-muted-foreground italic">
           Nenhuma frente selecionada ainda. Use o campo acima para buscar e selecionar.
         </div>
       )}

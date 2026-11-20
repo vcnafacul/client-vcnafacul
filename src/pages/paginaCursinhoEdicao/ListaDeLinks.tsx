@@ -17,7 +17,7 @@ export function ListaDeLinks({ titulo, ajuda, links, onChange }: Props) {
   return (
     <fieldset className="space-y-2">
       <legend className="block text-sm font-semibold">{titulo}</legend>
-      <p className="text-xs text-grey">{ajuda}</p>
+      <p className="text-xs text-muted-foreground">{ajuda}</p>
       {links.map((l, i) => (
         <div key={i} className="flex flex-col sm:flex-row gap-2">
           <input
@@ -40,7 +40,7 @@ export function ListaDeLinks({ titulo, ajuda, links, onChange }: Props) {
           <button
             type="button"
             onClick={() => onChange(links.filter((_, j) => j !== i))}
-            className="p-2 rounded-lg hover:bg-gray-100 text-red-600 self-start"
+            className="p-2 rounded-lg hover:bg-muted text-destructive self-start"
             title="Remover link"
             aria-label={`${titulo}: remover link ${i + 1}`}
           >
@@ -52,7 +52,7 @@ export function ListaDeLinks({ titulo, ajuda, links, onChange }: Props) {
         <button
           type="button"
           onClick={() => onChange([...links, { titulo: "", url: "" }])}
-          className="flex items-center gap-1 text-sm text-marine hover:underline"
+          className="flex items-center gap-1 text-sm text-foreground hover:underline"
         >
           <FiPlus /> Adicionar link
         </button>

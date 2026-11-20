@@ -282,11 +282,11 @@ function GeoSearch() {
             <header className="space-y-2">
               <h1
                 id="localiza-titulo"
-                className="text-3xl font-black text-marine md:text-4xl"
+                className="text-3xl font-black text-foreground md:text-4xl"
               >
                 Localize um Cursinho
               </h1>
-              <p className="text-slate-600">
+              <p className="text-muted-foreground">
                 Antes de cadastrar um novo cursinho, verifique se este não se
                 encontra em nossa plataforma.
               </p>
@@ -317,18 +317,18 @@ function GeoSearch() {
               data-destaque={semResultado || undefined}
               className={`space-y-2 border-t pt-6 transition md:flex md:items-center md:justify-between md:gap-4 md:space-y-0 md:pt-4 ${
                 semResultado
-                  ? "-mx-4 rounded-2xl border-t-0 bg-orange/10 p-4 ring-2 ring-orange/50"
+                  ? "-mx-4 rounded-2xl border-t-0 bg-cta/10 p-4 ring-2 ring-primary"
                   : ""
               }`}
             >
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-muted-foreground">
                 Não encontrou um cursinho que conhece?
               </p>
               {/* 08: confirma que não achou antes de ir ao formulário. */}
               <button
                 type="button"
                 onClick={() => setConfirmandoCadastro(true)}
-                className="inline-flex shrink-0 rounded-full bg-orange px-6 py-3 font-bold text-white hover:opacity-90 md:py-2.5"
+                className="inline-flex shrink-0 rounded-full bg-cta px-6 py-3 font-bold text-white hover:opacity-90 md:py-2.5"
               >
                 Cadastre um novo cursinho
               </button>
@@ -341,7 +341,7 @@ function GeoSearch() {
           // ⚠️ `isolate`: os z-index daqui (busca, cartão, controles do
           // Leaflet) ficam contidos na coluna do mapa — sem isso a busca
           // aparecia por cima do fundo dos modais (card 08).
-          className="relative isolate order-1 h-[45vh] bg-slate-100 md:order-2 md:h-full"
+          className="relative isolate order-1 h-[45vh] bg-muted md:order-2 md:h-full"
         >
           {/* 07: card do cursinho */}
           <div

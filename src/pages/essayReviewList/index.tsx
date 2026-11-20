@@ -81,7 +81,7 @@ export default function EssayReviewList({ mode }: Props) {
 
   return (
     <div className="p-4 sm:p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold text-marine mb-6">{title}</h1>
+      <h1 className="text-2xl font-bold text-foreground mb-6">{title}</h1>
 
       {/* Filters */}
       <div className="flex gap-2 sm:gap-4 mb-4 flex-wrap">
@@ -121,7 +121,7 @@ export default function EssayReviewList({ mode }: Props) {
       {loading ? (
         <div className="text-center py-6">Carregando...</div>
       ) : essays.length === 0 ? (
-        <div className="text-center py-6 text-grey">
+        <div className="text-center py-6 text-muted-foreground">
           Nenhuma redação encontrada.
         </div>
       ) : (
@@ -137,9 +137,9 @@ export default function EssayReviewList({ mode }: Props) {
                   <p className="font-semibold break-words">
                     {e.user.firstName} {e.user.lastName}
                   </p>
-                  <p className="text-xs text-grey break-all">{e.user.email}</p>
+                  <p className="text-xs text-muted-foreground break-all">{e.user.email}</p>
                   <p className="text-sm break-words">{e.theme.title}</p>
-                  <p className="text-xs text-grey">
+                  <p className="text-xs text-muted-foreground">
                     {STATUS_LABELS[e.status] ?? e.status}
                     {e.submittedAt &&
                       ` · enviada em ${new Date(e.submittedAt).toLocaleDateString("pt-BR")}`}
@@ -148,14 +148,14 @@ export default function EssayReviewList({ mode }: Props) {
                   <div className="flex gap-2 pt-2 mt-1 border-t">
                     <button
                       onClick={() => navigate(`${detailBasePath}/${e.id}/ver`)}
-                      className="flex-1 h-10 border border-marine text-marine rounded-lg text-sm font-medium"
+                      className="flex-1 h-10 border border-primary text-foreground rounded-lg text-sm font-medium"
                     >
                       Ver
                     </button>
                     {podeRevisar(e) && (
                       <button
                         onClick={() => navigate(`${detailBasePath}/${e.id}`)}
-                        className="flex-1 h-10 bg-marine text-white rounded-lg text-sm font-medium"
+                        className="flex-1 h-10 bg-primary text-white rounded-lg text-sm font-medium"
                       >
                         Revisar
                       </button>
@@ -167,26 +167,26 @@ export default function EssayReviewList({ mode }: Props) {
           ) : (
           <div className="border rounded-lg overflow-hidden">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-page">
                 <tr>
-                  <th className="text-left p-3 text-sm font-semibold text-grey">Estudante</th>
-                  <th className="text-left p-3 text-sm font-semibold text-grey">Email</th>
-                  <th className="text-left p-3 text-sm font-semibold text-grey">Tema</th>
-                  <th className="text-left p-3 text-sm font-semibold text-grey">Data envio</th>
-                  <th className="text-left p-3 text-sm font-semibold text-grey">Status</th>
-                  <th className="text-left p-3 text-sm font-semibold text-grey">Reviews</th>
-                  <th className="text-left p-3 text-sm font-semibold text-grey">Ações</th>
+                  <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Estudante</th>
+                  <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Email</th>
+                  <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Tema</th>
+                  <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Data envio</th>
+                  <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Status</th>
+                  <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Reviews</th>
+                  <th className="text-left p-3 text-sm font-semibold text-muted-foreground">Ações</th>
                 </tr>
               </thead>
               <tbody>
                 {essays.map((e) => (
-                  <tr key={e.id} className="border-t hover:bg-gray-50">
+                  <tr key={e.id} className="border-t hover:bg-page">
                     <td className="p-3 text-sm">
                       {e.user.firstName} {e.user.lastName}
                     </td>
-                    <td className="p-3 text-sm text-grey">{e.user.email}</td>
+                    <td className="p-3 text-sm text-muted-foreground">{e.user.email}</td>
                     <td className="p-3 text-sm">{e.theme.title}</td>
-                    <td className="p-3 text-sm text-grey">
+                    <td className="p-3 text-sm text-muted-foreground">
                       {e.submittedAt
                         ? new Date(e.submittedAt).toLocaleDateString("pt-BR")
                         : "-"}
@@ -194,7 +194,7 @@ export default function EssayReviewList({ mode }: Props) {
                     <td className="p-3 text-sm">
                       {STATUS_LABELS[e.status] ?? e.status}
                     </td>
-                    <td className="p-3 text-sm font-bold text-marine">
+                    <td className="p-3 text-sm font-bold text-foreground">
                       {e.reviews?.length ?? 0}
                     </td>
                     <td className="p-3">

@@ -23,7 +23,7 @@ export const GeoSearchCard = forwardRef<HTMLElement, Props>(
         ref={ref}
         data-geo-id={geo.id}
         className={`relative h-full rounded-2xl border bg-white p-3 shadow-sm transition ${
-          ativo ? "border-orange ring-2 ring-orange/40" : "border-slate-200"
+          ativo ? "border-cta ring-2 ring-primary" : "border-border"
         }`}
       >
         <button
@@ -40,21 +40,21 @@ export const GeoSearchCard = forwardRef<HTMLElement, Props>(
             ficam com a mesma altura, e a grade não fica desencontrada.
           */}
           <h3
-            className="line-clamp-2 min-h-12 font-bold text-marine"
+            className="line-clamp-2 min-h-12 font-bold text-foreground"
             title={geo.name}
           >
             {geo.name}
           </h3>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-2 text-sm text-slate-600">
-            <dt className="text-slate-400">Estado</dt>
+          <dl className="grid grid-cols-[auto_1fr] gap-x-2 text-sm text-muted-foreground">
+            <dt className="text-muted-foreground">Estado</dt>
             <dd>{geo.state}</dd>
-            <dt className="text-slate-400">Cidade</dt>
+            <dt className="text-muted-foreground">Cidade</dt>
             <dd>{geo.city}</dd>
-            <dt className="text-slate-400">Cadastro</dt>
+            <dt className="text-muted-foreground">Cadastro</dt>
             <dd>{formatarData(geo.createdAt)}</dd>
             {geo.infoUpdatedAt && (
               <>
-                <dt className="text-slate-400">Atualizado</dt>
+                <dt className="text-muted-foreground">Atualizado</dt>
                 <dd>{formatarData(atualizadoEm(geo))}</dd>
               </>
             )}

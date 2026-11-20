@@ -143,7 +143,7 @@ export function InitiateConversationDialog({
                   }}
                   className="flex items-center gap-3 rounded-md p-2 hover:bg-muted text-left"
                 >
-                  <span className="h-8 w-8 rounded-full bg-marine text-white text-sm flex items-center justify-center">
+                  <span className="h-8 w-8 rounded-full bg-primary text-white text-sm flex items-center justify-center">
                     {initialsOf(u.name)}
                   </span>
                   <span className="flex flex-col">

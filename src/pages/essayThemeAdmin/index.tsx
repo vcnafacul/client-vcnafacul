@@ -31,28 +31,28 @@ function getThemeStatus(theme: EssayTheme): {
   if (!theme.active) {
     return {
       label: "Inativo",
-      color: "text-gray-500",
-      bgColor: "bg-gray-100 text-gray-500",
+      color: "text-muted-foreground",
+      bgColor: "bg-muted text-muted-foreground",
     };
   }
   if (now < start) {
     return {
       label: "Agendado",
-      color: "text-blue-600",
-      bgColor: "bg-blue-50 text-blue-600",
+      color: "text-info",
+      bgColor: "bg-info-muted text-info",
     };
   }
   if (now > end) {
     return {
       label: "Encerrado",
-      color: "text-orange-600",
-      bgColor: "bg-orange-50 text-orange-600",
+      color: "text-warning",
+      bgColor: "bg-warning-muted text-warning",
     };
   }
   return {
     label: "Ativo",
-    color: "text-green-600",
-    bgColor: "bg-green-50 text-green-600",
+    color: "text-success",
+    bgColor: "bg-success-muted text-success",
   };
 }
 
@@ -144,10 +144,10 @@ export default function EssayThemeAdmin() {
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto">
       <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
-        <h1 className="text-2xl font-bold text-marine">Temas de Redação</h1>
+        <h1 className="text-2xl font-bold text-foreground">Temas de Redação</h1>
         <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-foreground">
               Correção por IA
             </span>
             <Toggle
@@ -157,14 +157,14 @@ export default function EssayThemeAdmin() {
               disabled={aiToggleLoading}
             />
             <span
-              className={`text-xs font-semibold ${aiEnabled ? "text-green-600" : "text-gray-400"}`}
+              className={`text-xs font-semibold ${aiEnabled ? "text-success" : "text-muted-foreground"}`}
             >
               {aiEnabled ? "Ativo" : "Inativo"}
             </span>
           </div>
           <button
             onClick={() => setEditing(null)}
-            className="px-4 py-2 bg-marine text-white rounded-lg hover:bg-marine/90"
+            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
           >
             Novo Tema
           </button>
@@ -189,7 +189,7 @@ export default function EssayThemeAdmin() {
                     {status.label}
                   </span>
                 </div>
-                <p className="text-sm text-grey mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   {formatDate(String(theme.weekStart))} —{" "}
                   {formatDate(String(theme.weekEnd))}
                 </p>
@@ -197,15 +197,15 @@ export default function EssayThemeAdmin() {
               <div className="flex items-center gap-1 ml-2 sm:ml-4">
                 <button
                   onClick={() => setEditing(theme)}
-                  className="p-2 rounded-lg hover:bg-gray-100 text-marine transition-colors"
+                  className="p-2 rounded-lg hover:bg-muted text-foreground transition-colors"
                   title="Editar"
                 >
                   <FiEdit2 size={18} />
                 </button>
                 <button
                   onClick={() => setConfirmToggle(theme)}
-                  className={`p-2 rounded-lg hover:bg-gray-100 transition-colors ${
-                    theme.active ? "text-green-600" : "text-gray-400"
+                  className={`p-2 rounded-lg hover:bg-muted transition-colors ${
+                    theme.active ? "text-success" : "text-muted-foreground"
                   }`}
                   title={theme.active ? "Desativar tema" : "Ativar tema"}
                 >
@@ -220,7 +220,7 @@ export default function EssayThemeAdmin() {
           );
         })}
         {themes.length === 0 && (
-          <p className="text-center text-grey py-8">
+          <p className="text-center text-muted-foreground py-8">
             Nenhum tema cadastrado.
           </p>
         )}
@@ -235,10 +235,10 @@ export default function EssayThemeAdmin() {
       {confirmToggle && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md mx-4 space-y-4">
-            <h2 className="text-lg font-bold text-marine">
+            <h2 className="text-lg font-bold text-foreground">
               {confirmToggle.active ? "Desativar tema" : "Ativar tema"}
             </h2>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-foreground">
               {confirmToggle.active
                 ? `Deseja desativar o tema "${confirmToggle.title}"? Ele não aparecerá mais para os alunos.`
                 : `Deseja ativar o tema "${confirmToggle.title}"? Se estiver dentro do período, ele ficará disponível para os alunos.`}
@@ -246,13 +246,13 @@ export default function EssayThemeAdmin() {
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setConfirmToggle(null)}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-4 py-2 border border-border rounded-lg hover:bg-page"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleToggleActive}
-                className="px-4 py-2 text-white rounded-lg bg-marine hover:bg-marine/90"
+                className="px-4 py-2 text-white rounded-lg bg-primary hover:bg-primary/90"
               >
                 {confirmToggle.active ? "Desativar" : "Ativar"}
               </button>

@@ -322,7 +322,7 @@ export default function GlobalFormPage() {
           py: { xs: 1, sm: 0 },
         }}
       >
-        <Typography variant="h4" fontWeight="bold" className="text-marine">
+        <Typography variant="h4" fontWeight="bold" className="text-foreground">
           Formulário Global
         </Typography>
         {!loading && entities.length > 0 && (

@@ -58,10 +58,11 @@ function ModalReportProblem({
   const IsQuestionProblem = () => {
     return questionProblem ? (
       <div>
-        <Text size="tertiary" className="text-start text-grey">
+        <Text size="tertiary" className="text-start text-muted-foreground">
           Foi um problema com a questão,{" "}
           <span
-            style={{ fontSize: "16px", color: "#000", fontWeight: "bolder" }}
+            className="text-foreground"
+            style={{ fontSize: "16px", fontWeight: "bolder" }}
           >
             [ {numberQuestion} ]
           </span>{" "}
@@ -84,7 +85,7 @@ function ModalReportProblem({
       </div>
     ) : (
       <div>
-        <Text size="tertiary" className="text-start text-grey m-0">
+        <Text size="tertiary" className="text-start text-muted-foreground m-0">
           Foi um bug recorrente ou um bug que ocorreu de maneira esporádica?*
         </Text>
         <div className="flex flex-wrap gap-4">
@@ -115,7 +116,7 @@ function ModalReportProblem({
         <Text size="secondary" className="text-start">
           Ocorreu algum problema?
         </Text>
-        <Text size="tertiary" className="text-start text-grey">
+        <Text size="tertiary" className="text-start text-muted-foreground">
           Nos desculpe pelo transtorno, por favor, nos informe mais sobre o
           problema para a melhoria contínua da plataforma.
         </Text>

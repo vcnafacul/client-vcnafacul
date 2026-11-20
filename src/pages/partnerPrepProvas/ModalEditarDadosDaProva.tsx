@@ -126,7 +126,7 @@ export function ModalEditarDadosDaProva({
       className="w-full max-w-lg rounded-lg bg-white shadow-xl p-2"
     >
       <form onSubmit={salvar} className="p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-marine">
+        <h2 className="text-lg font-semibold text-foreground">
           Editar dados da prova
         </h2>
         <div>
@@ -224,7 +224,7 @@ export function ModalEditarDadosDaProva({
               </option>
             ))}
           </select>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             {travada ? TEXTO_CATEGORIA_TRAVADA : TEXTO_AVISO_CATEGORIA}
           </p>
         </div>
@@ -239,7 +239,7 @@ export function ModalEditarDadosDaProva({
           <button
             type="submit"
             disabled={salvando}
-            className="px-4 py-2 bg-marine text-white rounded-lg disabled:opacity-60"
+            className="px-4 py-2 bg-primary text-white rounded-lg disabled:opacity-60"
           >
             {salvando ? "Salvando..." : "Salvar"}
           </button>

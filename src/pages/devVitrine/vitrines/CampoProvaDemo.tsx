@@ -19,7 +19,7 @@ export function CampoProvaDemo({ podeAnular, anulacoes }: { podeAnular: boolean;
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <label className="text-sm font-semibold text-gray-600">Prova *</label>
+            <label className="text-sm font-semibold text-muted-foreground">Prova *</label>
             <AnulacaoDaProva
               questaoId="q"
               provaId="p1"
@@ -33,8 +33,8 @@ export function CampoProvaDemo({ podeAnular, anulacoes }: { podeAnular: boolean;
           <div className="h-9 rounded-md border px-3 py-2 text-sm">{NOMES.p1}</div>
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-600">Número da Questão</label>
-          <div className="p-3 bg-gray-50 rounded-md border border-gray-200 text-gray-400">45</div>
+          <label className="text-sm font-semibold text-muted-foreground">Número da Questão</label>
+          <div className="p-3 bg-page rounded-md border border-border text-muted-foreground">45</div>
         </div>
       </div>
     </div>

@@ -19,14 +19,14 @@ interface EssayEditorToolbarProps {
 
 export default function EssayEditorToolbar({ editor }: EssayEditorToolbarProps) {
   const btnClass = (active: boolean) =>
-    `p-1.5 rounded hover:bg-gray-200 transition-colors ${
-      active ? "bg-gray-200 text-blue-600" : "text-gray-600"
+    `p-1.5 rounded hover:bg-muted transition-colors ${
+      active ? "bg-muted text-primary" : "text-muted-foreground"
     }`;
 
   const iconSize = 16;
 
   return (
-    <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+    <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-border bg-page rounded-t-lg">
       {/* Text formatting */}
       <button
         type="button"
@@ -45,7 +45,7 @@ export default function EssayEditorToolbar({ editor }: EssayEditorToolbarProps) 
         <Italic size={iconSize} />
       </button>
 
-      <div className="w-px h-5 bg-gray-300 mx-1" />
+      <div className="w-px h-5 bg-border mx-1" />
 
       {/* Headings */}
       <button
@@ -69,7 +69,7 @@ export default function EssayEditorToolbar({ editor }: EssayEditorToolbarProps) 
         <Heading2 size={iconSize} />
       </button>
 
-      <div className="w-px h-5 bg-gray-300 mx-1" />
+      <div className="w-px h-5 bg-border mx-1" />
 
       {/* Lists & Blockquote */}
       <button
@@ -97,7 +97,7 @@ export default function EssayEditorToolbar({ editor }: EssayEditorToolbarProps) 
         <Quote size={iconSize} />
       </button>
 
-      <div className="w-px h-5 bg-gray-300 mx-1" />
+      <div className="w-px h-5 bg-border mx-1" />
 
       {/* Alignment */}
       <button

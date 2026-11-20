@@ -27,17 +27,17 @@ export default function CompetencyDetail({
         <h3 className="font-semibold text-sm">
           Competência {number} — {COMPETENCY_LABELS[number - 1]}
         </h3>
-        <span className="text-lg font-bold text-marine">{score}</span>
+        <span className="text-lg font-bold text-foreground">{score}</span>
       </div>
-      <div className="h-2 bg-gray-200 rounded-full mb-3">
+      <div className="h-2 bg-muted rounded-full mb-3">
         <div
-          className="h-2 bg-marine rounded-full transition-all"
+          className="h-2 bg-primary rounded-full transition-all"
           style={{ width: `${pct}%` }}
         />
       </div>
-      <p className="text-sm text-gray-700 mb-2">{feedback}</p>
+      <p className="text-sm text-foreground mb-2">{feedback}</p>
       {suggestion && (
-        <p className="text-sm text-grey italic">
+        <p className="text-sm text-muted-foreground italic">
           <strong>Sugestão:</strong> {suggestion}
         </p>
       )}

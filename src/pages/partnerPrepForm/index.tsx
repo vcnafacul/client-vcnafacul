@@ -449,7 +449,7 @@ export default function PartnerPrepForm() {
       <>
         <AppBar position="static" color="transparent" elevation={0}>
           <Toolbar sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 1 }}>
-            <Typography variant="h4" fontWeight="bold" className="text-marine">
+            <Typography variant="h4" fontWeight="bold" className="text-foreground">
               Formulários de Preparação
             </Typography>
           </Toolbar>
@@ -474,7 +474,7 @@ export default function PartnerPrepForm() {
       <>
         <AppBar position="static" color="transparent" elevation={0}>
           <Toolbar sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 1 }}>
-            <Typography variant="h4" fontWeight="bold" className="text-marine">
+            <Typography variant="h4" fontWeight="bold" className="text-foreground">
               Formulários de Preparação
             </Typography>
           </Toolbar>
@@ -522,7 +522,7 @@ export default function PartnerPrepForm() {
             py: { xs: 1, sm: 0 },
           }}
         >
-          <Typography variant="h4" fontWeight="bold" className="text-marine">
+          <Typography variant="h4" fontWeight="bold" className="text-foreground">
             Formulários de Preparação
           </Typography>
           <Button

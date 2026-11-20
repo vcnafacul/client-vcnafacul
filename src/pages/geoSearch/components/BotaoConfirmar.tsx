@@ -34,8 +34,8 @@ export function BotaoConfirmar({
       }}
       className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-sm transition disabled:opacity-60 ${
         confirmado
-          ? "bg-green-100 text-green-700"
-          : "text-slate-500 hover:bg-slate-100"
+          ? "bg-success-muted text-success"
+          : "text-muted-foreground hover:bg-muted"
       }`}
     >
       <ThumbsUp

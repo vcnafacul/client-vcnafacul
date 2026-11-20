@@ -95,7 +95,7 @@ function Register() {
           </p>
         )}
         {avisoDoConvite && (
-          <p data-aviso-convite className="mx-auto mt-6 max-w-[500px] px-4 text-center text-red-700">
+          <p data-aviso-convite className="mx-auto mt-6 max-w-[500px] px-4 text-center text-destructive">
             {avisoDoConvite}
           </p>
         )}

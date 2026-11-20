@@ -77,7 +77,7 @@ export default function ThemeForm({ initial, onSave, onCancel }: ThemeFormProps)
         onSubmit={handleSubmit}
         className="bg-white rounded-lg p-4 sm:p-6 max-w-2xl w-full max-h-[90vh] supports-[height:100dvh]:max-h-[90dvh] overflow-y-auto space-y-4"
       >
-        <h2 className="text-xl font-bold text-marine">
+        <h2 className="text-xl font-bold text-foreground">
           {initial ? "Editar Tema" : "Novo Tema"}
         </h2>
         <div>
@@ -107,7 +107,7 @@ export default function ThemeForm({ initial, onSave, onCancel }: ThemeFormProps)
             placeholder="Digite os textos motivadores..."
             minHeight="200px"
           />
-          <p className="text-xs text-grey mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Para inserir imagens, use o botão de imagem da barra (JPG, PNG, WEBP ou GIF, até 5MB cada).
           </p>
         </div>
@@ -152,14 +152,14 @@ export default function ThemeForm({ initial, onSave, onCancel }: ThemeFormProps)
           <button
             type="button"
             onClick={onCancel}
-            className="px-6 py-2 border border-grey text-grey rounded-lg"
+            className="px-6 py-2 border border-input text-muted-foreground rounded-lg"
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={salvando}
-            className="px-6 py-2 bg-marine text-white rounded-lg hover:bg-marine/90 disabled:opacity-60"
+            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-60"
           >
             {salvando ? "Salvando..." : "Salvar"}
           </button>

@@ -39,21 +39,21 @@ export function MenuDoPerfil({
             ? "rounded-full px-3 py-1.5"
             : "w-full rounded-md py-2 pl-4 pr-3 text-left",
           ativo
-            ? "bg-marine/[0.06] font-semibold text-marine"
-            : "text-slate-600 hover:bg-slate-100 hover:text-marine",
+            ? "bg-primary/[0.06] font-semibold text-foreground"
+            : "text-muted-foreground hover:bg-muted hover:text-foreground",
         )}
       >
         {!celular && ativo && (
           <span
             aria-hidden
-            className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-full bg-orange"
+            className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-full bg-cta"
           />
         )}
         {ROTULO_DA_SECAO[s]}
         {s === "dados" && dadosSujos && (
           <span
             aria-label="alterações não salvas"
-            className="h-2 w-2 rounded-full bg-orange"
+            className="h-2 w-2 rounded-full bg-cta"
           />
         )}
       </button>
@@ -63,7 +63,7 @@ export function MenuDoPerfil({
   return (
     <>
       {/* celular: identidade numa linha + abas roláveis grudadas */}
-      <div className="sticky top-0 z-10 -mx-4 border-b border-slate-200 bg-white px-4 pb-2 pt-3 sm:hidden">
+      <div className="sticky top-0 z-10 -mx-4 border-b border-border bg-white px-4 pb-2 pt-3 sm:hidden">
         {identidade}
         <div
           role="tablist"

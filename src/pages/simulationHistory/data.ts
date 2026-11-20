@@ -2,12 +2,12 @@ import { Alternatives } from "../../types/question/alternative";
 
 export const simulateMetricData = {
      legends: [
-        { label: "Questão atual", className: "bg-orange border border-orange"},
-        { label: "Questão respondida", className: "bg-white border border-marine"},
-        { label: "Questão certas", className: "border border-marine bg-right-gradient rotate-45"},
-        { label: "Questão não visualizada", className: "bg-lightGray border border-grey"},
+        { label: "Questão atual", className: "bg-cta border border-cta"},
+        { label: "Questão respondida", className: "bg-white border border-primary"},
+        { label: "Questão certas", className: "border border-primary bg-success rotate-45"},
+        { label: "Questão não visualizada", className: "bg-muted border border-input"},
         // tickets/042
-        { label: "Questão anulada", className: "bg-white border border-rose-400"},
+        { label: "Questão anulada", className: "bg-white border border-destructive"},
      ],
      alternativasData: Alternatives,
 }

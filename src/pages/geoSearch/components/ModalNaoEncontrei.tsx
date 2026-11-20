@@ -50,7 +50,7 @@ export function ModalNaoEncontrei({ aberto, onFechar, termo }: Props) {
           </DialogDescription>
         </DialogHeader>
         {t && (
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-muted-foreground">
             Você buscou por: <strong>"{t}"</strong>
           </p>
         )}
@@ -65,7 +65,7 @@ export function ModalNaoEncontrei({ aberto, onFechar, termo }: Props) {
             Voltar e buscar de novo
           </Button>
           <Button
-            className="bg-orange text-white hover:bg-orange/90"
+            className="bg-cta text-white hover:bg-cta/90"
             onClick={() =>
               navigate(
                 GEOLOCATION_REGISTER,

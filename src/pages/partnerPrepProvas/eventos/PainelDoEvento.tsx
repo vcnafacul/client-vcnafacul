@@ -56,18 +56,18 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
 
   return (
     <div className="space-y-4">
-      <button type="button" onClick={onVoltar} className="text-sm text-marine hover:underline">
+      <button type="button" onClick={onVoltar} className="text-sm text-foreground hover:underline">
         ← Voltar para os eventos
       </button>
-      <h3 className="text-lg font-semibold text-marine">{evento.nome}</h3>
-      {erro && <p className="text-red-600 text-sm">{erro}</p>}
+      <h3 className="text-lg font-semibold text-foreground">{evento.nome}</h3>
+      {erro && <p className="text-destructive text-sm">{erro}</p>}
       {!dados && !erro && <p className="text-sm">Carregando...</p>}
       {dados && (
         <>
           <div className="overflow-x-auto">
             <table className="w-full text-sm" aria-label="Números por prova">
               <thead>
-                <tr className="text-left text-grey">
+                <tr className="text-left text-muted-foreground">
                   <th className="py-1 pr-2">Prova</th>
                   <th className="py-1 pr-2">Inscritos (imprimir)</th>
                   <th className="py-1 pr-2">Fizeram</th>
@@ -107,12 +107,12 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
                     <tr
                       key={`${p.provaId}-total`}
                       data-slot="total-da-prova"
-                      className="border-t bg-gray-50"
+                      className="border-t bg-page"
                     >
                       <td className="py-1 pr-2 font-medium">
                         Total — {p.nome}
                         {!!p.semSimulado && (
-                          <span className="block text-xs font-normal text-grey">
+                          <span className="block text-xs font-normal text-muted-foreground">
                             inclui {p.semSimulado} sem língua escolhida
                           </span>
                         )}
@@ -131,24 +131,24 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
               pode passar dos inscritos. É o número que serve para a conta de
               cadernos do próximo evento.
             */}
-            <p className="text-xs text-grey mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               "Fizeram" conta na prova que o aluno fez, mesmo inscrito em outra.
               {temQuebra &&
                 " Na prova com Inglês e Espanhol, trocar de língua também conta como troca."}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <div className="bg-gray-50 rounded-lg px-4 py-2">
-              <p className="text-xs text-grey">Engajamento</p>
-              <p className="text-xl font-bold text-marine">
+            <div className="bg-page rounded-lg px-4 py-2">
+              <p className="text-xs text-muted-foreground">Engajamento</p>
+              <p className="text-xl font-bold text-foreground">
                 {dados.engajamento === null
                   ? "—"
                   : `${Math.round(dados.engajamento * 100)}%`}
               </p>
             </div>
-            <div className="bg-gray-50 rounded-lg px-4 py-2">
-              <p className="text-xs text-grey">Fizeram sem se inscrever</p>
-              <p className="text-xl font-bold text-marine">
+            <div className="bg-page rounded-lg px-4 py-2">
+              <p className="text-xs text-muted-foreground">Fizeram sem se inscrever</p>
+              <p className="text-xl font-bold text-foreground">
                 {dados.fizeramSemInscricao.length}
               </p>
             </div>
@@ -183,15 +183,15 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
                     className="flex flex-col sm:flex-row sm:justify-between gap-x-2 py-1"
                   >
                     <span className="min-w-0 break-words">{i.nome}</span>
-                    <span className="text-grey sm:shrink-0 sm:text-right break-words">
+                    <span className="text-muted-foreground sm:shrink-0 sm:text-right break-words">
                       {nomeDaOpcao(i.provaId, i.simuladoId)} ·{" "}
                       {trocouDeProva(i) ? (
-                        <span className="font-medium text-amber-700">
+                        <span className="font-medium text-warning">
                           fez outra prova (
                           {nomeDaOpcao(i.provaQueFez!, i.simuladoQueFez)})
                         </span>
                       ) : trocouDeLingua(i) ? (
-                        <span className="font-medium text-amber-700">
+                        <span className="font-medium text-warning">
                           fez outro simulado (
                           {nomeDaOpcao(i.provaId, i.simuladoQueFez)})
                         </span>
@@ -205,7 +205,7 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-grey">
+              <p className="text-sm text-muted-foreground">
                 {filtro === "todas"
                   ? "Ninguém inscrito ainda."
                   : "Ninguém inscrito nesta prova."}
@@ -222,7 +222,7 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
                     className="flex flex-col sm:flex-row sm:justify-between gap-x-2 py-1"
                   >
                     <span className="min-w-0 break-words">{i.nome}</span>
-                    <span className="text-grey sm:shrink-0 sm:text-right break-words">
+                    <span className="text-muted-foreground sm:shrink-0 sm:text-right break-words">
                       {nomeDaOpcao(i.provaId, i.simuladoId)}
                     </span>
                   </li>

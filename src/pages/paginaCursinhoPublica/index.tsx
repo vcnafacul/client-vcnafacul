@@ -49,7 +49,7 @@ function ListaDeLinksPublica({
 }) {
   return (
     <section aria-label={titulo} className="max-w-5xl mx-auto px-6 py-10">
-      <h2 className="flex items-center gap-2 text-2xl font-extrabold text-marine mb-4">
+      <h2 className="flex items-center gap-2 text-2xl font-extrabold text-foreground mb-4">
         {icone}
         {titulo}
       </h2>
@@ -60,7 +60,7 @@ function ListaDeLinksPublica({
               href={l.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between gap-3 bg-white border rounded-xl px-4 py-3 text-marine hover:border-marine transition-colors"
+              className="flex items-center justify-between gap-3 bg-white border rounded-xl px-4 py-3 text-foreground hover:border-primary transition-colors"
             >
               <span className="font-semibold break-words min-w-0">{l.titulo}</span>
               <FiExternalLink className="shrink-0" aria-hidden />
@@ -98,7 +98,7 @@ export default function PaginaCursinhoPublica() {
   if (pagina === undefined) {
     return (
       <BaseTemplate solid position="relative">
-        <div className="p-16 text-center text-marine">Carregando...</div>
+        <div className="p-16 text-center text-foreground">Carregando...</div>
       </BaseTemplate>
     );
   }
@@ -107,10 +107,10 @@ export default function PaginaCursinhoPublica() {
     return (
       <BaseTemplate solid position="relative">
         <div className="max-w-xl mx-auto px-6 py-24 text-center">
-          <h1 className="text-3xl font-extrabold text-marine mb-3">
+          <h1 className="text-3xl font-extrabold text-foreground mb-3">
             Página não encontrada
           </h1>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Este endereço não existe ou a página do cursinho não está ativa.
           </p>
         </div>
@@ -130,11 +130,11 @@ export default function PaginaCursinhoPublica() {
     <BaseTemplate solid position="relative">
       <header className="bg-white">
         <div className="max-w-5xl mx-auto px-6 pt-16 pb-6">
-          <h1 className="text-3xl md:text-5xl font-extrabold text-marine leading-tight break-words">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-foreground leading-tight break-words">
             {pagina.nome}
           </h1>
           {pagina.localizacao && (
-            <p className="flex items-center gap-1 text-gray-600 mt-2">
+            <p className="flex items-center gap-1 text-muted-foreground mt-2">
               <FiMapPin aria-hidden /> {pagina.localizacao}
             </p>
           )}
@@ -151,7 +151,7 @@ export default function PaginaCursinhoPublica() {
                       rel="noopener noreferrer"
                       aria-label={nome}
                       title={nome}
-                      className="flex items-center justify-center w-8 h-8 rounded-full bg-marine text-white hover:bg-marine/90"
+                      className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white hover:bg-primary/90"
                     >
                       <Icone size={15} aria-hidden />
                     </a>
@@ -165,12 +165,12 @@ export default function PaginaCursinhoPublica() {
 
       <section aria-label="Quem somos" className="bg-white">
         <div className="max-w-5xl mx-auto px-6 pb-12">
-          <h2 className="text-2xl font-extrabold text-marine mb-3">Quem somos</h2>
+          <h2 className="text-2xl font-extrabold text-foreground mb-3">Quem somos</h2>
           <div className="prose max-w-none">
             <RichTextRenderer
               content={pagina.quemSomos}
               contentFormat="markdown"
-              className="text-marine text-base"
+              className="text-foreground text-base"
             />
           </div>
         </div>
@@ -192,9 +192,9 @@ export default function PaginaCursinhoPublica() {
         </Section>
       )}
 
-      <section aria-label="Impacto" className="bg-gray-50 py-16">
+      <section aria-label="Impacto" className="bg-page py-16">
         <div className="max-w-5xl mx-auto px-6">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-marine text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-foreground text-center mb-8">
             Nosso impacto
           </h2>
           <div className="flex flex-wrap justify-center gap-4">

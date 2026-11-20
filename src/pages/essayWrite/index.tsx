@@ -173,16 +173,16 @@ export default function EssayWrite() {
       {voltar && (
         <button
           onClick={voltar.onClick}
-          className="text-marine hover:underline text-sm"
+          className="text-foreground hover:underline text-sm"
         >
           &larr; {voltar.label}
         </button>
       )}
       <div className="flex flex-col items-start gap-1 xl:flex-row xl:justify-between xl:items-center xl:gap-4">
-        <h1 className="text-2xl font-bold text-marine">{titulo}</h1>
+        <h1 className="text-2xl font-bold text-foreground">{titulo}</h1>
         <Link
           to={`/dashboard/${ESSAY_HISTORY}`}
-          className="text-marine hover:underline text-sm"
+          className="text-foreground hover:underline text-sm"
         >
           Ver histórico
         </Link>
@@ -216,19 +216,19 @@ export default function EssayWrite() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <button
             onClick={() => setMode('type')}
-            className="border-2 border-marine rounded-lg p-6 text-center hover:bg-marine/5 transition-colors"
+            className="border-2 border-primary rounded-lg p-6 text-center hover:bg-primary/5 transition-colors"
           >
             <div className="text-3xl mb-2">✍️</div>
-            <div className="font-bold text-marine">Escrever no editor</div>
-            <p className="text-sm text-grey mt-1">Digite sua redação diretamente no editor de texto</p>
+            <div className="font-bold text-foreground">Escrever no editor</div>
+            <p className="text-sm text-muted-foreground mt-1">Digite sua redação diretamente no editor de texto</p>
           </button>
           <button
             onClick={() => setMode('upload')}
-            className="border-2 border-marine rounded-lg p-6 text-center hover:bg-marine/5 transition-colors"
+            className="border-2 border-primary rounded-lg p-6 text-center hover:bg-primary/5 transition-colors"
           >
             <div className="text-3xl mb-2">📷</div>
-            <div className="font-bold text-marine">Enviar foto/PDF</div>
-            <p className="text-sm text-grey mt-1">Envie uma foto ou PDF da sua redação manuscrita</p>
+            <div className="font-bold text-foreground">Enviar foto/PDF</div>
+            <p className="text-sm text-muted-foreground mt-1">Envie uma foto ou PDF da sua redação manuscrita</p>
           </button>
         </div>
       </div>
@@ -247,14 +247,14 @@ export default function EssayWrite() {
           },
         })}
         <ThemeDisplay theme={selectedTheme} />
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+        <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
           {!selectedFile ? (
             <label className="cursor-pointer">
-              <div className="text-4xl mb-3 text-grey">📁</div>
-              <p className="text-sm text-grey mb-2">
+              <div className="text-4xl mb-3 text-muted-foreground">📁</div>
+              <p className="text-sm text-muted-foreground mb-2">
                 Clique para selecionar um arquivo
               </p>
-              <p className="text-xs text-grey">JPG, PNG ou PDF — máximo 5MB</p>
+              <p className="text-xs text-muted-foreground">JPG, PNG ou PDF — máximo 5MB</p>
               <input
                 type="file"
                 accept="image/jpeg,image/png,application/pdf"
@@ -264,11 +264,11 @@ export default function EssayWrite() {
             </label>
           ) : (
             <div className="space-y-2">
-              <p className="font-semibold text-marine">{selectedFile.name}</p>
-              <p className="text-sm text-grey">{formatFileSize(selectedFile.size)}</p>
+              <p className="font-semibold text-foreground">{selectedFile.name}</p>
+              <p className="text-sm text-muted-foreground">{formatFileSize(selectedFile.size)}</p>
               <button
                 onClick={() => setSelectedFile(null)}
-                className="text-sm text-red-500 hover:underline"
+                className="text-sm text-destructive hover:underline"
               >
                 Remover arquivo
               </button>
@@ -279,7 +279,7 @@ export default function EssayWrite() {
           <button
             onClick={() => setShowConfirmModal(true)}
             disabled={submitting || !selectedFile}
-            className="w-full sm:w-auto px-6 py-2 bg-marine text-white rounded-lg hover:bg-marine/90 disabled:opacity-50"
+            className="w-full sm:w-auto px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50"
           >
             {submitting ? "Enviando..." : "Enviar redação"}
           </button>
@@ -287,15 +287,15 @@ export default function EssayWrite() {
         {showConfirmModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-6 max-w-md mx-4 space-y-4">
-              <h2 className="text-lg font-bold text-marine">Confirmar envio</h2>
-              <p className="text-sm text-gray-700">
+              <h2 className="text-lg font-bold text-foreground">Confirmar envio</h2>
+              <p className="text-sm text-foreground">
                 Atenção: a submissão é única. Uma vez enviada, não será possível
                 realizar uma nova redação para este tema. Deseja continuar?
               </p>
               <div className="flex gap-3 justify-end">
                 <button
                   onClick={() => setShowConfirmModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="px-4 py-2 border border-border rounded-lg hover:bg-page"
                 >
                   Cancelar
                 </button>
@@ -304,7 +304,7 @@ export default function EssayWrite() {
                     setShowConfirmModal(false);
                     handleSubmitImage();
                   }}
-                  className="px-4 py-2 bg-marine text-white rounded-lg hover:bg-marine/90"
+                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
                 >
                   Confirmar envio
                 </button>
@@ -334,7 +334,7 @@ export default function EssayWrite() {
               setDraft(selectedTheme.id, e.target.value, text, draftId ?? undefined);
           }}
           placeholder="Titulo da sua redacao"
-          className="w-full border rounded-lg p-3 text-lg font-semibold mb-4 focus:ring-2 focus:ring-marine focus:outline-none"
+          className="w-full border rounded-lg p-3 text-lg font-semibold mb-4 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:outline-none"
           maxLength={200}
         />
         <EssayEditor
@@ -354,14 +354,14 @@ export default function EssayWrite() {
       <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 sm:justify-end">
         <button
           onClick={handleSaveDraft}
-          className="w-full sm:w-auto px-6 py-2 border border-marine text-marine rounded-lg hover:bg-gray-50"
+          className="w-full sm:w-auto px-6 py-2 border border-primary text-foreground rounded-lg hover:bg-page"
         >
           Salvar rascunho
         </button>
         <button
           onClick={() => setShowConfirmModal(true)}
           disabled={submitting || !title.trim() || !text.trim()}
-          className="w-full sm:w-auto px-6 py-2 bg-marine text-white rounded-lg hover:bg-marine/90 disabled:opacity-50"
+          className="w-full sm:w-auto px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50"
         >
           {submitting ? "Enviando..." : "Enviar redacao"}
         </button>
@@ -369,15 +369,15 @@ export default function EssayWrite() {
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md mx-4 space-y-4">
-            <h2 className="text-lg font-bold text-marine">Confirmar envio</h2>
-            <p className="text-sm text-gray-700">
+            <h2 className="text-lg font-bold text-foreground">Confirmar envio</h2>
+            <p className="text-sm text-foreground">
               Atenção: a submissão é única. Uma vez enviada, não será possível
               realizar uma nova redação para este tema. Deseja continuar?
             </p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setShowConfirmModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-4 py-2 border border-border rounded-lg hover:bg-page"
               >
                 Cancelar
               </button>
@@ -386,7 +386,7 @@ export default function EssayWrite() {
                   setShowConfirmModal(false);
                   handleSubmit();
                 }}
-                className="px-4 py-2 bg-marine text-white rounded-lg hover:bg-marine/90"
+                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
               >
                 Confirmar envio
               </button>

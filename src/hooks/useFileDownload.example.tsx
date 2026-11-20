@@ -61,11 +61,11 @@ export function AdvancedExample() {
       <button
         onClick={() => handleDownloadWithCustomName("photo-123", "João Silva")}
         disabled={isDownloading}
-        className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400"
+        className="px-4 py-2 bg-primary text-primary-foreground rounded disabled:opacity-50"
       >
         {isDownloading ? "Baixando..." : "Download Foto"}
       </button>
-      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+      {error && <p className="text-destructive text-sm mt-2">{error}</p>}
     </div>
   );
 }
@@ -122,7 +122,7 @@ export function WithSpinnerExample() {
         })
       }
       disabled={isDownloading}
-      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded"
+      className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded"
     >
       {isDownloading && (
         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
@@ -160,7 +160,7 @@ export function TableIntegrationExample({ documents }: { documents: Array<{ key:
                   })
                 }
                 disabled={isDownloading}
-                className="text-blue-600 hover:underline disabled:text-gray-400"
+                className="text-primary hover:underline disabled:opacity-50"
               >
                 Download
               </button>

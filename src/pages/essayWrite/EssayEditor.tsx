@@ -33,7 +33,7 @@ export default function EssayEditor({
       <EssayEditorToolbar editor={editor} />
       <EditorContent
         editor={editor}
-        className="min-h-[400px] p-4 prose prose-sm max-w-none focus-within:ring-2 focus-within:ring-marine rounded-b-lg"
+        className="min-h-[400px] p-4 prose prose-sm max-w-none focus-within:ring-2 focus-within:ring-ring rounded-b-lg"
       />
     </div>
   );

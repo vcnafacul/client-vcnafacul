@@ -50,15 +50,15 @@ function Subject() {
   }, [id, token]);
 
   return (
-    <div className="min-h-screen bg-gray-10 py-6 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-page py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6 flex-wrap gap-2">
-          <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-2xl font-bold text-foreground">
             {contents[0]?.subject.name}
           </h1>
           <button
-            className="text-gray-600 hover:text-black flex items-center gap-2 px-2 py-1"
+            className="text-muted-foreground hover:text-foreground flex items-center gap-2 px-2 py-1"
             onClick={() => navigate(-1)}
           >
             <ArrowLeft size={18} />
@@ -70,7 +70,7 @@ function Subject() {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Menu lateral */}
           <aside className="bg-white shadow-md rounded-lg p-4 w-full lg:w-80 flex-shrink-0">
-            <h2 className="text-lg font-semibold text-gray-700 mb-3">
+            <h2 className="text-lg font-semibold text-foreground mb-3">
               Conteúdos
             </h2>
             <nav className="space-y-2">
@@ -81,8 +81,8 @@ function Subject() {
                   className={`cursor-pointer px-4 py-2 rounded transition-all ${
                     (content.id ?? (content as { _id?: string })._id) ===
                     (contentSelected?.id ?? (contentSelected as { _id?: string } | undefined)?._id)
-                      ? "bg-gray-200 font-semibold"
-                      : "hover:bg-gray-50"
+                      ? "bg-muted font-semibold"
+                      : "hover:bg-page"
                   }`}
                 >
                   {content.file?.tipo === "video" && (
@@ -109,7 +109,7 @@ function Subject() {
             ) : contentSelected && arrayBuffer ? (
               <DocxPreview arrayBuffer={arrayBuffer} />
             ) : (
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Selecione um conteúdo para visualizar.
               </p>
             )}

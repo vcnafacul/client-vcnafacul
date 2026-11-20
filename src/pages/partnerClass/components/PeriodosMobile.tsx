@@ -59,24 +59,24 @@ function PeriodoCard({
     useAcoesDaTurma(onDeleteClass);
 
   return (
-    <li className="bg-white border border-gray-200 border-l-4 border-l-marine rounded-lg p-3 flex flex-col gap-2">
+    <li className="bg-white border border-border border-l-4 border-l-primary rounded-lg p-3 flex flex-col gap-2">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="font-bold text-gray-900 break-words">{periodo.name}</p>
-          <p className="text-xs text-gray-600">
+          <p className="font-bold text-foreground break-words">{periodo.name}</p>
+          <p className="text-xs text-muted-foreground">
             {periodo.year} · {data(periodo.startDate)} a {data(periodo.endDate)}
           </p>
         </div>
         <StatusBadge active={new Date(periodo.endDate) >= new Date()} />
       </div>
 
-      <div className="flex items-center justify-between gap-2 border-t border-gray-100 pt-2">
+      <div className="flex items-center justify-between gap-2 border-t border-border pt-2">
         {turmas.length > 0 ? (
           <button
             type="button"
             onClick={() => setAberto(!aberto)}
             aria-expanded={aberto}
-            className="flex items-center gap-1 h-10 text-sm font-medium text-marine"
+            className="flex items-center gap-1 h-10 text-sm font-medium text-foreground"
           >
             <FiChevronDown
               className={`w-5 h-5 transition-transform ${aberto ? "rotate-180" : ""}`}
@@ -84,7 +84,7 @@ function PeriodoCard({
             {turmas.length} {turmas.length === 1 ? "turma" : "turmas"}
           </button>
         ) : (
-          <span className="text-sm text-gray-500">Sem turmas</span>
+          <span className="text-sm text-muted-foreground">Sem turmas</span>
         )}
         <div className="shrink-0">
           <ActionMenu
@@ -108,18 +108,18 @@ function PeriodoCard({
           {turmas.map((turma) => (
             <li
               key={turma.id}
-              className="bg-gray-50 rounded-md p-2 flex items-center justify-between gap-2"
+              className="bg-page rounded-md p-2 flex items-center justify-between gap-2"
             >
               <div className="min-w-0">
                 <p className="text-sm font-semibold break-words">
                   {turma.name}
                 </p>
                 {turma.description && (
-                  <p className="text-xs text-gray-500 line-clamp-2 break-words">
+                  <p className="text-xs text-muted-foreground line-clamp-2 break-words">
                     {turma.description}
                   </p>
                 )}
-                <p className="text-xs text-marine font-medium">
+                <p className="text-xs text-foreground font-medium">
                   {turma.number_students} inscritos
                 </p>
               </div>

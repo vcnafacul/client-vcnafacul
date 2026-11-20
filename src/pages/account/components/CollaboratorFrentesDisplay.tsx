@@ -29,7 +29,7 @@ export function CollaboratorFrentesDisplay({
 
   if (afinidades.length === 0) {
     return (
-      <div className="text-sm text-gray-500 italic">
+      <div className="text-sm text-muted-foreground italic">
         Nenhuma frente selecionada ainda.
       </div>
     );
@@ -40,7 +40,7 @@ export function CollaboratorFrentesDisplay({
       {/* Grupo de Frentes */}
       {allFrentes.length > 0 && (
         <div>
-          <h4 className="text-xs font-semibold text-gray-600 mb-2">
+          <h4 className="text-xs font-semibold text-muted-foreground mb-2">
             Frentes ({allFrentes.length})
           </h4>
           <div className="flex flex-wrap gap-2">
@@ -64,7 +64,7 @@ export function CollaboratorFrentesDisplay({
       {/* Grupo de Matérias */}
       {allMaterias.length > 0 && (
         <div>
-          <h4 className="text-xs font-semibold text-gray-600 mb-2">
+          <h4 className="text-xs font-semibold text-muted-foreground mb-2">
             Matérias ({allMaterias.length})
           </h4>
           <div className="flex flex-wrap gap-2">

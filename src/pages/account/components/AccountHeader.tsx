@@ -35,14 +35,14 @@ export function AccountHeader({
       
       {/* Nome (mobile) */}
       <div className="flex flex-col px-8 pt-4 md:hidden justify-center">
-        <span className="text-marine text-2xl font-extrabold leading-tight">
+        <span className="text-foreground text-2xl font-extrabold leading-tight">
           {displayName}
         </span>
-        <span className="text-marine text-lg font-medium">
+        <span className="text-foreground text-lg font-medium">
           {userAccount?.lastName}
         </span>
         {userAccount?.collaborator && (
-          <span className="text-marine text-sm font-semibold mt-1 opacity-80">
+          <span className="text-foreground text-sm font-semibold mt-1 opacity-80">
             {userAccount?.collaboratorDescription}
           </span>
         )}

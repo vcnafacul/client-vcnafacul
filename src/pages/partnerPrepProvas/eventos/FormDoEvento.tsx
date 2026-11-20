@@ -102,7 +102,7 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
 
   return (
     <form onSubmit={salvar} className="space-y-4">
-      <h3 className="text-lg font-semibold text-marine">
+      <h3 className="text-lg font-semibold text-foreground">
         {evento ? "Editar evento" : "Novo evento"}
       </h3>
       <div>
@@ -134,7 +134,7 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
       </div>
       <fieldset>
         <legend className="block text-sm font-semibold mb-1">Janela de inscrição</legend>
-        <p className="text-xs text-grey mb-2">
+        <p className="text-xs text-muted-foreground mb-2">
           Fora deste período os alunos não veem o evento. Quando a janela abre, os
           alunos matriculados recebem uma notificação.
         </p>
@@ -161,7 +161,7 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
           </label>
         </div>
         {janelaInvertida && (
-          <p role="alert" className="text-xs text-red-600 mt-1">
+          <p role="alert" className="text-xs text-destructive mt-1">
             O fim das inscrições tem de ser depois do início.
           </p>
         )}
@@ -178,14 +178,14 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
               return (
                 <li
                   key={id}
-                  className="flex items-center gap-1 rounded-full bg-marine/10 text-marine pl-3 pr-1 py-1 text-sm"
+                  className="flex items-center gap-1 rounded-full bg-primary/10 text-foreground pl-3 pr-1 py-1 text-sm"
                 >
                   <span className="break-words">{p ? comAno(p) : id}</span>
                   <button
                     type="button"
                     onClick={() => remover(id)}
                     aria-label={`Tirar ${p?.nome ?? "prova"}`}
-                    className="rounded-full p-1 hover:bg-marine/20"
+                    className="rounded-full p-1 hover:bg-primary/20"
                   >
                     <FiX aria-hidden />
                   </button>
@@ -196,7 +196,7 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
         )}
 
         {noLimite ? (
-          <p role="status" className="text-sm text-grey">
+          <p role="status" className="text-sm text-muted-foreground">
             {TEXTO_MAXIMO_DE_PROVAS} Tire uma para escolher outra.
           </p>
         ) : (
@@ -204,7 +204,7 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
         <div className="relative">
           <FiSearch
             aria-hidden
-            className="absolute left-2 top-1/2 -translate-y-1/2 text-grey"
+            className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground"
           />
           <input
             type="search"
@@ -215,14 +215,14 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
             className="w-full border rounded-lg p-2 pl-8"
           />
         </div>
-        <p className="text-xs text-grey mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           Só aparecem provas completas (todas as questões validadas).
         </p>
 
         {provas.length === 0 ? (
-          <p className="text-sm text-grey mt-2">Carregando provas...</p>
+          <p className="text-sm text-muted-foreground mt-2">Carregando provas...</p>
         ) : resultados.length === 0 ? (
-          <p className="text-sm text-grey mt-2">
+          <p className="text-sm text-muted-foreground mt-2">
             {busca.trim() ? "Nenhuma prova completa com esse nome." : "Nenhuma prova completa disponível."}
           </p>
         ) : (
@@ -232,17 +232,17 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
                 <button
                   type="button"
                   onClick={() => adicionar(p.id)}
-                  className="w-full flex justify-between gap-2 text-left px-3 py-2 text-sm hover:bg-gray-50"
+                  className="w-full flex justify-between gap-2 text-left px-3 py-2 text-sm hover:bg-page"
                 >
                   <span className="min-w-0 break-words">{p.nome}</span>
-                  <span className="shrink-0 text-grey">{p.ano ?? ""}</span>
+                  <span className="shrink-0 text-muted-foreground">{p.ano ?? ""}</span>
                 </button>
               </li>
             ))}
           </ul>
         )}
         {resultados.length > RESULTADOS_MAX && (
-          <p className="text-xs text-grey mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Mostrando {RESULTADOS_MAX} de {resultados.length}. Refine a busca.
           </p>
         )}
@@ -256,7 +256,7 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
         <button
           type="submit"
           disabled={salvando || janelaInvertida}
-          className="px-4 py-2 bg-marine text-white rounded-lg disabled:opacity-60"
+          className="px-4 py-2 bg-primary text-white rounded-lg disabled:opacity-60"
         >
           {salvando ? "Salvando..." : "Salvar"}
         </button>

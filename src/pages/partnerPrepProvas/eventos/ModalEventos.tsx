@@ -17,9 +17,9 @@ import { PainelDoEvento } from "./PainelDoEvento";
 import { textoDaExclusao } from "./textoDaExclusao";
 
 const ROTULO: Record<StatusDoEvento, { texto: string; cor: string }> = {
-  agendado: { texto: "Agendado", cor: "bg-blue-100 text-blue-800" },
-  aberto: { texto: "Inscrições abertas", cor: "bg-green-100 text-green-800" },
-  encerrado: { texto: "Encerrado", cor: "bg-gray-200 text-gray-700" },
+  agendado: { texto: "Agendado", cor: "bg-info-muted text-info" },
+  aberto: { texto: "Inscrições abertas", cor: "bg-success-muted text-success" },
+  encerrado: { texto: "Encerrado", cor: "bg-muted text-foreground" },
 };
 
 type Tela =
@@ -118,24 +118,24 @@ export function ModalEventos({ isOpen, handleClose, token, podeEditar }: Props) 
         {tela.tipo === "lista" && (
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-lg font-semibold text-marine">Eventos de simulado</h2>
+              <h2 className="text-lg font-semibold text-foreground">Eventos de simulado</h2>
               {podeEditar && (
                 <button
                   type="button"
                   onClick={() => setTela({ tipo: "form", evento: null })}
-                  className="px-4 py-2 bg-marine text-white rounded-lg text-sm"
+                  className="px-4 py-2 bg-primary text-white rounded-lg text-sm"
                 >
                   Novo evento
                 </button>
               )}
             </div>
-            <p className="text-xs text-grey">
+            <p className="text-xs text-muted-foreground">
               Os alunos matriculados se inscrevem escolhendo a prova. Use o número de
               inscritos de cada prova para saber quanto imprimir.
             </p>
             {eventos === null && <p className="text-sm">Carregando...</p>}
             {eventos?.length === 0 && (
-              <p className="text-sm text-grey">Nenhum evento ainda.</p>
+              <p className="text-sm text-muted-foreground">Nenhum evento ainda.</p>
             )}
             <ul className="space-y-2">
               {eventos?.map((e) => (
@@ -146,7 +146,7 @@ export function ModalEventos({ isOpen, handleClose, token, podeEditar }: Props) 
                       {ROTULO[e.status].texto}
                     </span>
                   </div>
-                  <p className="text-xs text-grey mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     Inscrições: {formatarDataHora(e.inscricoesDe)} até{" "}
                     {formatarDataHora(e.inscricoesAte)}
                   </p>
@@ -158,7 +158,7 @@ export function ModalEventos({ isOpen, handleClose, token, podeEditar }: Props) 
                     <button
                       type="button"
                       onClick={() => setTela({ tipo: "painel", evento: e })}
-                      className="text-marine hover:underline"
+                      className="text-foreground hover:underline"
                     >
                       Ver inscritos e engajamento
                     </button>
@@ -167,14 +167,14 @@ export function ModalEventos({ isOpen, handleClose, token, podeEditar }: Props) 
                         <button
                           type="button"
                           onClick={() => setTela({ tipo: "form", evento: e })}
-                          className="text-marine hover:underline"
+                          className="text-foreground hover:underline"
                         >
                           Editar
                         </button>
                         <button
                           type="button"
                           onClick={() => excluir(e)}
-                          className="text-red-600 hover:underline"
+                          className="text-destructive hover:underline"
                         >
                           Excluir
                         </button>

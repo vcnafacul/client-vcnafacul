@@ -35,7 +35,7 @@ function GoogleRetorno() {
   }, [location.search, navigate, doAuth]);
 
   return (
-    <p className="mt-20 text-center text-grey" role="status">
+    <p className="mt-20 text-center text-muted-foreground" role="status">
       Entrando…
     </p>
   );

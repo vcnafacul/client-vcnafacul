@@ -49,8 +49,8 @@ export function ModalDuplicarProva({
       className="w-full max-w-lg rounded-lg bg-white shadow-xl p-2"
     >
       <form onSubmit={duplicar} className="p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-marine">Duplicar prova</h2>
-        <p className="text-sm text-gray-600">
+        <h2 className="text-lg font-semibold text-foreground">Duplicar prova</h2>
+        <p className="text-sm text-muted-foreground">
           Nova prova a partir de <strong>{prova.nome}</strong>.
         </p>
         <div>
@@ -65,7 +65,7 @@ export function ModalDuplicarProva({
             className="w-full border rounded-lg p-2"
           />
         </div>
-        <div role="note" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900 space-y-1">
+        <div role="note" className="rounded-lg bg-warning-muted p-3 text-sm text-foreground space-y-1">
           <p>
             As questões serão <strong>as mesmas</strong> da prova original — corrigir
             uma questão vale para as duas.
@@ -79,7 +79,7 @@ export function ModalDuplicarProva({
           <button
             type="submit"
             disabled={duplicando}
-            className="px-4 py-2 bg-marine text-white rounded-lg disabled:opacity-60"
+            className="px-4 py-2 bg-primary text-white rounded-lg disabled:opacity-60"
           >
             {duplicando ? "Duplicando..." : "Duplicar"}
           </button>

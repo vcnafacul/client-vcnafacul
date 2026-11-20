@@ -30,19 +30,19 @@ export default function EssayResult() {
 
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-marine">
+      <h1 className="text-2xl font-bold text-foreground">
         {essay.title || "Minha Redação"}
       </h1>
-      <p className="text-sm text-grey">
+      <p className="text-sm text-muted-foreground">
         Tema: {essay.theme.title}
       </p>
 
       {isWaiting && (
-        <div className="border rounded-lg p-6 bg-yellow-50 text-center">
-          <p className="text-yellow-700 font-semibold">
+        <div className="border rounded-lg p-6 bg-warning-muted text-center">
+          <p className="text-warning font-semibold">
             Aguardando revisão
           </p>
-          <p className="text-sm text-yellow-600 mt-1">
+          <p className="text-sm text-warning mt-1">
             Sua redação foi recebida e será revisada em breve.
           </p>
         </div>
@@ -77,7 +77,7 @@ function ReviewSection({
     <div className="space-y-4">
       <div>
         <h2 className="text-lg font-bold">{title}</h2>
-        {subtitle && <p className="text-sm text-grey">{subtitle}</p>}
+        {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
       </div>
       <ScoreOverview review={review} />
       <div className="space-y-4">
@@ -94,7 +94,7 @@ function ReviewSection({
       </div>
       <div className="border rounded-lg p-4 bg-white">
         <h3 className="font-bold mb-2">Comentário Geral</h3>
-        <p className="text-sm text-gray-700">{review.generalComment}</p>
+        <p className="text-sm text-foreground">{review.generalComment}</p>
       </div>
       {review.highlightedExcerpts?.length > 0 && (
         <div className="border rounded-lg p-4 bg-white">
@@ -105,12 +105,12 @@ function ReviewSection({
                 key={i}
                 className={`p-3 rounded-lg border-l-4 ${
                   excerpt.tipo === "positivo"
-                    ? "border-green-500 bg-green-50"
-                    : "border-red-500 bg-red-50"
+                    ? "border-success bg-success-muted"
+                    : "border-destructive bg-destructive-muted"
                 }`}
               >
                 <p className="text-sm italic mb-1">"{excerpt.trecho}"</p>
-                <p className="text-sm text-gray-700">{excerpt.comentario}</p>
+                <p className="text-sm text-foreground">{excerpt.comentario}</p>
               </div>
             ))}
           </div>

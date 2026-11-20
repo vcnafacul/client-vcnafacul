@@ -33,7 +33,7 @@ export default function ReviewSingle() {
     <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="text-marine">
+        <div className="text-foreground">
           {review.reviewType === "AI" ? (
             <FiCpu className="h-6 w-6" />
           ) : (
@@ -41,12 +41,12 @@ export default function ReviewSingle() {
           )}
         </div>
         <div>
-          <h1 className="text-xl font-bold text-marine">
+          <h1 className="text-xl font-bold text-foreground">
             {review.reviewType === "AI"
               ? "Correção por IA"
               : `Revisão de ${review.reviewer?.firstName ?? ""} ${review.reviewer?.lastName ?? ""}`}
           </h1>
-          <p className="text-sm text-grey">
+          <p className="text-sm text-muted-foreground">
             {review.reviewType === "AI" ? "Inteligência Artificial" : "Revisão Humana"}
             {" · "}
             {new Date(review.createdAt).toLocaleDateString("pt-BR")}
@@ -72,7 +72,7 @@ export default function ReviewSingle() {
       {review.generalComment && (
         <div className="border rounded-lg p-4 bg-white">
           <h3 className="font-bold mb-2">Comentário Geral</h3>
-          <p className="text-sm text-gray-700">{review.generalComment}</p>
+          <p className="text-sm text-foreground">{review.generalComment}</p>
         </div>
       )}
 
@@ -85,12 +85,12 @@ export default function ReviewSingle() {
                 key={i}
                 className={`p-3 rounded-lg border-l-4 ${
                   excerpt.tipo === "positivo"
-                    ? "border-green-500 bg-green-50"
-                    : "border-red-500 bg-red-50"
+                    ? "border-success bg-success-muted"
+                    : "border-destructive bg-destructive-muted"
                 }`}
               >
                 <p className="text-sm italic mb-1">"{excerpt.trecho}"</p>
-                <p className="text-sm text-gray-700">{excerpt.comentario}</p>
+                <p className="text-sm text-foreground">{excerpt.comentario}</p>
               </div>
             ))}
           </div>
@@ -100,7 +100,7 @@ export default function ReviewSingle() {
       <div>
         <button
           onClick={() => navigate(-1)}
-          className="px-4 py-2 border rounded-lg text-sm hover:bg-gray-50"
+          className="px-4 py-2 border rounded-lg text-sm hover:bg-page"
         >
           Voltar
         </button>

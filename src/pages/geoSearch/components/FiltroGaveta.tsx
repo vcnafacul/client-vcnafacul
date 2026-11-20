@@ -114,8 +114,8 @@ export function FiltroGaveta({
         style={{ width: LARGURA_DA_GAVETA_PX }}
         className="
           rounded-r-2xl border border-l-0 border-white/40 bg-white/70 p-3
-          text-marine shadow-lg backdrop-blur-xl backdrop-saturate-150
-          [&_label]:!text-[#0b2747]
+          text-foreground shadow-lg backdrop-blur-xl backdrop-saturate-150
+          [&_label]:!text-foreground
         "
       >
         <MapFilterOptions filterMarkers={filterMarkers} onToggle={onToggle} />
@@ -132,9 +132,9 @@ export function FiltroGaveta({
         }}
         className="
           relative mt-3 flex h-12 w-8 touch-none items-center justify-center
-          rounded-r-xl border border-l-0 border-white/40 bg-white/80 text-marine
+          rounded-r-xl border border-l-0 border-white/40 bg-white/80 text-foreground
           shadow-lg backdrop-blur-xl
-          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marine
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
         "
       >
         <ListFilter aria-hidden className="h-5 w-5" />
@@ -142,7 +142,7 @@ export function FiltroGaveta({
           // Algum tipo desligado: o ponto avisa que o mapa está filtrado.
           <span
             data-slot="filtrando"
-            className="absolute right-1 top-1 h-2 w-2 rounded-full bg-orange"
+            className="absolute right-1 top-1 h-2 w-2 rounded-full bg-cta"
           />
         )}
       </button>

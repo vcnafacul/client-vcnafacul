@@ -43,7 +43,7 @@ const rotasDoCursinho = (simuladosFora = false): RotaFalsa[] => [
 ];
 
 const secoes = () => (
-  <div className="bg-gray-50">
+  <div className="bg-page">
     <AnalyticsUsers period={Period.month} cursinhoId="c1" cursinhoNome="Cursinho Alfa" />
     <AnalyticsSimulado period={Period.month} cursinhoId="c1" cursinhoNome="Cursinho Alfa" />
     <AnalyticsPrepCourse period={Period.month} cursinhoId="c1" cursinhoNome="Cursinho Alfa" />

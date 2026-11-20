@@ -118,7 +118,7 @@ export const vitrineAnulacaoNaProva: Vitrine = {
       render: () => (
         <table className="w-full max-w-md text-sm">
           <thead>
-            <tr className="text-left text-gray-500">
+            <tr className="text-left text-muted-foreground">
               <th className="py-1">Prova</th>
               <th className="py-1 text-center">Anuladas</th>
             </tr>

@@ -236,7 +236,8 @@ describe("Localiza Cursinho — mapa e lista (card 05)", () => {
     const card = screen
       .getByRole("heading", { name: "Cursinho a" })
       .closest("article")!;
-    expect(card.className).toContain("border-orange");
+    expect(card.className).toContain("border-cta");
+    expect(card.className).toContain("ring-primary");
     expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
   });
 

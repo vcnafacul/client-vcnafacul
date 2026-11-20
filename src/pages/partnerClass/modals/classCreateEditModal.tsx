@@ -106,7 +106,7 @@ export function ClassCreateEditModal({
       className="bg-white p-4 rounded-md shadow-md"
     >
       <div className="w-[85vw] sm:w-[600px] flex flex-col gap-4">
-        <h1 className="text-left text-marine text-3xl font-black">Turmas</h1>
+        <h1 className="text-left text-foreground text-3xl font-black">Turmas</h1>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(resolver)}>
           {/* Linha 1: Nome e Data */}
           <InputFactory

@@ -52,14 +52,14 @@ export function ConversationListItem({
       onClick={onClick}
       className={cn(
         "w-full text-left p-3 border-b transition-colors relative",
-        "hover:bg-marine/5 animate-in fade-in-0 duration-150",
-        selected && "bg-marine/5",
-        !selected && unread && "bg-lightYellow/40",
+        "hover:bg-primary/5 animate-in fade-in-0 duration-150",
+        selected && "bg-primary/5",
+        !selected && unread && "bg-warning-muted/40",
       )}
     >
       {selected && (
         <span
-          className="absolute left-0 top-0 bottom-0 w-1 bg-orange"
+          className="absolute left-0 top-0 bottom-0 w-1 bg-cta"
           aria-hidden
         />
       )}
@@ -79,14 +79,14 @@ export function ConversationListItem({
               <span
                 className={cn(
                   "text-sm truncate",
-                  unread ? "font-bold text-marine" : "font-medium text-darkGrey",
+                  unread ? "font-bold text-foreground" : "font-medium text-muted-foreground",
                 )}
               >
                 {conv.userName}
               </span>
               {conv.initiatedBy === "support" && (
                 <span
-                  className="text-[9px] uppercase tracking-wide font-semibold px-1.5 py-0.5 rounded bg-marine/10 text-marine shrink-0"
+                  className="text-[9px] uppercase tracking-wide font-semibold px-1.5 py-0.5 rounded bg-primary/10 text-foreground shrink-0"
                   aria-label="Conversa iniciada pelo suporte"
                 >
                   iniciada
@@ -95,13 +95,13 @@ export function ConversationListItem({
             </div>
             <div className="flex items-center gap-1.5 shrink-0">
               {time && (
-                <span className="text-[10px] text-grey whitespace-nowrap">
+                <span className="text-[10px] text-muted-foreground whitespace-nowrap">
                   {time}
                 </span>
               )}
               {unread && (
                 <span
-                  className="h-2 w-2 rounded-full bg-orange animate-pulse"
+                  className="h-2 w-2 rounded-full bg-cta animate-pulse"
                   aria-hidden
                 />
               )}
@@ -111,24 +111,24 @@ export function ConversationListItem({
           {showCursinho &&
             (conv.cursinhoName ? (
               <span
-                className="text-xs block truncate font-medium text-marine mt-0.5"
+                className="text-xs block truncate font-medium text-foreground mt-0.5"
                 title={conv.cursinhoName}
               >
                 {conv.cursinhoName}
               </span>
             ) : (
-              <span className="text-xs block truncate italic text-grey mt-0.5">
+              <span className="text-xs block truncate italic text-muted-foreground mt-0.5">
                 {SEM_CURSINHO}
               </span>
             ))}
           {showCursinho
             ? conv.originLabel && (
-                <span className="text-[10px] block truncate text-marine/60 mt-0.5">
+                <span className="text-[10px] block truncate text-foreground/60 mt-0.5">
                   {conv.originLabel}
                 </span>
               )
             : (conv.originLabel || conv.cursinhoName) && (
-                <span className="text-[10px] block truncate text-marine/60 mt-0.5">
+                <span className="text-[10px] block truncate text-foreground/60 mt-0.5">
                   {[conv.originLabel, conv.cursinhoName]
                     .filter(Boolean)
                     .join(" · ")}
@@ -138,7 +138,7 @@ export function ConversationListItem({
             <span
               className={cn(
                 "text-xs block truncate mt-0.5",
-                unread ? "text-darkGrey" : "text-grey",
+                unread ? "text-muted-foreground" : "text-muted-foreground",
               )}
             >
               {preview}
