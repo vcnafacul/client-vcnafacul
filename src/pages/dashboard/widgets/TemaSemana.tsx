@@ -16,22 +16,22 @@ export function TemaSemana() {
   if (error || (!isLoading && !theme)) return null;
 
   return (
-    <section data-theme="marine" className="flex flex-col rounded-2xl bg-background p-5 text-foreground sm:p-6">
-      <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-highlight">
+    <section className="flex flex-col rounded-2xl bg-primary p-5 text-primary-foreground sm:p-6">
+      <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-primary-foreground/80">
         <PenTool className="h-4 w-4" aria-hidden />
         Tema da semana
       </div>
       {isLoading || !theme ? (
         <div className="mt-3 space-y-2">
-          <Skeleton className="h-5 w-full bg-white/10" />
-          <Skeleton className="h-5 w-2/3 bg-white/10" />
+          <Skeleton className="h-5 w-full bg-primary-foreground/10" />
+          <Skeleton className="h-5 w-2/3 bg-primary-foreground/10" />
         </div>
       ) : (
         <>
           <h2 className="mt-3 text-lg font-semibold leading-snug">
             {theme.title}
           </h2>
-          <p className="mb-5 mt-1 text-xs text-muted-foreground">
+          <p className="mb-5 mt-1 text-xs text-primary-foreground/80">
             Até {formatDate(theme.weekEnd)}
           </p>
           <Link

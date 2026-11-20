@@ -251,7 +251,7 @@ export const adminMenuItems: DashCardMenu[] = [
   },
   {
     id: 5,
-    bg: "bg-success",
+    bg: "bg-primary",
     title: "Admin",
     image: AdminImg,
     alt: "Admin",
@@ -311,7 +311,7 @@ export const adminMenuItems: DashCardMenu[] = [
 
 export const studentMenuItem: DashCardMenu = {
   id: 7,
-  bg: "bg-warning",
+  bg: "bg-primary",
   title: "Meus Estudos",
   image: IoSchool,
   alt: "Meus Estudos",
@@ -357,13 +357,13 @@ const areaConfig: Record<
   },
   "Ciências da Natureza": {
     id: 2,
-    bg: "bg-info",
+    bg: "bg-primary",
     image: NaturezaImg,
     title: "Natureza",
   },
   "Ciências Humanas": {
     id: 3,
-    bg: "bg-success",
+    bg: "bg-primary",
     image: HumanasImg,
     title: "Humanas",
   },
@@ -455,7 +455,7 @@ export const fallbackAcademicMenuItems: DashCardMenu[] = [
   },
   {
     id: 2,
-    bg: "bg-info",
+    bg: "bg-primary",
     title: "Natureza",
     image: NaturezaImg,
     alt: "Natureza",
@@ -482,7 +482,7 @@ export const fallbackAcademicMenuItems: DashCardMenu[] = [
   },
   {
     id: 3,
-    bg: "bg-success",
+    bg: "bg-primary",
     title: "Humanas",
     image: HumanasImg,
     alt: "Humanas",

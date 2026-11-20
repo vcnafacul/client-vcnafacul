@@ -1,26 +1,20 @@
 /**
- * Paleta fechada de pares fundo/texto com contraste AA (texto branco sobre o token
- * sólido). Só tokens semânticos: a paleta antiga de 16 matizes saiu com o design
- * system, então as cores repetem mais (8 em vez de 16).
+ * Cor de identidade por nome (tickets/059 R26): acento categórico `chart-1…6`
+ * (borda à esquerda) sobre superfície neutra, com texto `text-foreground`. Nunca
+ * usa token de status, porque a cor aqui não quer dizer situação nenhuma.
  */
 const palette: { bg: string; text: string; shadow: string }[] = [
-  { bg: 'bg-primary', text: 'text-primary-foreground', shadow: 'shadow-primary/50' },
-  { bg: 'bg-destructive', text: 'text-destructive-foreground', shadow: 'shadow-destructive/50' },
-  { bg: 'bg-success', text: 'text-success-foreground', shadow: 'shadow-success/50' },
-  { bg: 'bg-warning', text: 'text-warning-foreground', shadow: 'shadow-warning/50' },
-  { bg: 'bg-info', text: 'text-info-foreground', shadow: 'shadow-info/50' },
-  { bg: 'bg-cta', text: 'text-cta-foreground', shadow: 'shadow-cta/50' },
-  { bg: 'bg-muted-foreground', text: 'text-background', shadow: 'shadow-muted-foreground/50' },
-  { bg: 'bg-foreground', text: 'text-background', shadow: 'shadow-foreground/50' },
+  { bg: 'bg-muted border-l-4 border-chart-1', text: 'text-foreground', shadow: 'shadow-chart-1/50' },
+  { bg: 'bg-muted border-l-4 border-chart-2', text: 'text-foreground', shadow: 'shadow-chart-2/50' },
+  { bg: 'bg-muted border-l-4 border-chart-3', text: 'text-foreground', shadow: 'shadow-chart-3/50' },
+  { bg: 'bg-muted border-l-4 border-chart-4', text: 'text-foreground', shadow: 'shadow-chart-4/50' },
+  { bg: 'bg-muted border-l-4 border-chart-5', text: 'text-foreground', shadow: 'shadow-chart-5/50' },
+  { bg: 'bg-muted border-l-4 border-chart-6', text: 'text-foreground', shadow: 'shadow-chart-6/50' },
 ];
 
 const getIndex = (name: string) => {
-    const hashCode = name.split('').reduce((acc, char) => {
-        const code = char.charCodeAt(0);
-        return acc + code;
-    }, 0);
-
-    return (hashCode) % palette.length;
+    const hash = name.split('').reduce((acc, char) => (acc * 31 + char.charCodeAt(0)) >>> 0, 7);
+    return hash % palette.length;
 }
 
 export const getColorFromName = (name: string) => {
