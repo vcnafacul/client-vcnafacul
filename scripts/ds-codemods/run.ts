@@ -90,30 +90,45 @@ export function formatar(rel: Relatorio, dryRun: boolean, top: number): string {
   return linhas.join("\n");
 }
 
-function main(argv: string[]) {
-  const dryRun = argv.includes("--dry-run");
-  const json = argv.includes("--json");
-  const nomes: string[] = [];
-  const caminhos: string[] = [];
-  let top = 15;
+export type Args = { dryRun: boolean; json: boolean; nomes: string[]; top: number; caminhos: string[] };
+
+/** Lê os argumentos; flag desconhecida é erro (um "--dryrun" digitado errado não pode virar escrita). */
+export function lerArgs(argv: string[]): Args {
+  const args: Args = { dryRun: false, json: false, nomes: [], top: 15, caminhos: [] };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
-    if (a === "--sweep") nomes.push(...(argv[++i] ?? "").split(",").filter(Boolean));
-    else if (a === "--top") top = Number(argv[++i]);
-    else if (!a.startsWith("--")) caminhos.push(a);
+    if (a === "--dry-run") args.dryRun = true;
+    else if (a === "--json") args.json = true;
+    else if (a === "--sweep") {
+      const v = argv[++i];
+      if (!v || v.startsWith("--")) throw new Error("--sweep pede um nome");
+      args.nomes.push(...v.split(",").filter(Boolean));
+    } else if (a === "--top") {
+      const n = Number(argv[++i]);
+      if (!Number.isInteger(n) || n < 0) throw new Error("--top pede um número");
+      args.top = n;
+    } else if (a.startsWith("--")) throw new Error(`flag desconhecida: ${a}`);
+    else args.caminhos.push(a);
   }
-  if (!nomes.length || nomes.includes("all")) {
-    if (!dryRun) {
-      console.error("Escrita pede --sweep <nome> explícito. Varreduras: " + Object.keys(VARREDURAS).join(", "));
-      process.exit(2);
-    }
-    nomes.splice(0, nomes.length, ...Object.keys(VARREDURAS));
+  const lista = Object.keys(VARREDURAS).join(", ");
+  if (!args.nomes.length || args.nomes.includes("all")) {
+    if (!args.dryRun) throw new Error(`Escrita pede --sweep <nome> explícito. Varreduras: ${lista}`);
+    args.nomes = Object.keys(VARREDURAS);
   }
-  const desconhecidas = nomes.filter((n) => !VARREDURAS[n]);
-  if (desconhecidas.length) {
-    console.error(`varredura desconhecida: ${desconhecidas.join(", ")}. Varreduras: ${Object.keys(VARREDURAS).join(", ")}`);
+  const desconhecidas = args.nomes.filter((n) => !VARREDURAS[n]);
+  if (desconhecidas.length) throw new Error(`varredura desconhecida: ${desconhecidas.join(", ")}. Varreduras: ${lista}`);
+  return args;
+}
+
+function main(argv: string[]) {
+  let args: Args;
+  try {
+    args = lerArgs(argv);
+  } catch (e) {
+    console.error((e as Error).message);
     process.exit(2);
   }
+  const { dryRun, json, nomes, top, caminhos } = args;
   const arquivos = alvos(arquivosVarridos(), caminhos);
   const io: Io = {
     escrever: !dryRun,

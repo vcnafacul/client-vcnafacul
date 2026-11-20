@@ -62,9 +62,29 @@ export function processarTamanhos(lista: Lista, { file, placar }: Contexto) {
     if (d) destinos.set(t, d);
   }
   const base = ativos.find((t) => t.variantes.length === 0 && destinos.has(t) && "para" in destinos.get(t)!);
+  const responsivos = [...destinos.keys()].filter((t) => t !== base && t.variantes.length > 0 && t.soResponsivo);
+  // par com tamanho responsivo em revisão: o par inteiro fica para decisão humana (nada some em silêncio)
+  if (base && responsivos.some((t) => "motivo" in destinos.get(t)!)) {
+    const d = destinos.get(base) as { para: string };
+    base.revisa(
+      `par responsivo com tamanho em revisão: escolha um passo para o par (${base.util} sozinho → ${d.para})`,
+      "tamanho-par-revisao",
+      placar,
+    );
+    for (const t of responsivos) {
+      const dt = destinos.get(t)!;
+      if ("motivo" in dt) t.revisa(dt.motivo, "tamanho-revisao", placar);
+    }
+    for (const [t, dt] of destinos) {
+      if (t === base || responsivos.includes(t)) continue;
+      if ("para" in dt) t.troca(dt.para, "tamanho", placar);
+      else t.revisa(dt.motivo, "tamanho-revisao", placar);
+    }
+    return;
+  }
   for (const [t, d] of destinos) {
     // par responsivo: a base vira o passo e o tamanho com breakpoint sai (os passos já são responsivos)
-    if (base && t !== base && t.variantes.length > 0 && t.soResponsivo) t.remove("tamanho-par-responsivo", placar);
+    if (base && responsivos.includes(t)) t.remove("tamanho-par-responsivo", placar);
     else if ("para" in d) t.troca(d.para, "tamanho", placar);
     else t.revisa(d.motivo, "tamanho-revisao", placar);
   }

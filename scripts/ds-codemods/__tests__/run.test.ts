@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { VARREDURAS, alvos, formatar, varrer } from "../run";
+import { VARREDURAS, alvos, formatar, lerArgs, varrer } from "../run";
 
 describe("run", () => {
   it("varre o que o guard varre, menos components/ui e a palette", () => {
@@ -16,6 +16,22 @@ describe("run", () => {
       ]),
     ).toEqual(["src/pages/a/index.tsx", "src/lib/utils.ts"]);
     expect(alvos(["src/pages/a/x.tsx", "src/pages/b/y.tsx"], ["./src/pages/b"])).toEqual(["src/pages/b/y.tsx"]);
+  });
+
+  it("lê os argumentos e recusa flag desconhecida (um --dryrun não pode virar escrita)", () => {
+    expect(lerArgs(["--dry-run", "--sweep", "colors,sizes", "--top", "5", "src/pages"])).toEqual({
+      dryRun: true,
+      json: false,
+      nomes: ["colors", "sizes"],
+      top: 5,
+      caminhos: ["src/pages"],
+    });
+    expect(() => lerArgs(["--dryrun", "--sweep", "colors"])).toThrow(/flag desconhecida: --dryrun/);
+    expect(() => lerArgs(["--sweep"])).toThrow(/--sweep pede um nome/);
+    expect(() => lerArgs(["--sweep", "cores"])).toThrow(/varredura desconhecida: cores/);
+    expect(() => lerArgs(["--sweep", "colors", "--top", "x"])).toThrow(/--top pede um número/);
+    expect(() => lerArgs([])).toThrow(/Escrita pede --sweep/);
+    expect(lerArgs(["--dry-run"]).nomes).toEqual(Object.keys(VARREDURAS));
   });
 
   it("tem as seis varreduras", () =>
