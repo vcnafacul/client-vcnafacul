@@ -85,7 +85,7 @@ function SortableRow({
     <tr
       ref={setNodeRef}
       style={style}
-      className={`even:bg-gray-200 ${isDragging ? "bg-blue-50" : ""}`}
+      className={`even:bg-muted ${isDragging ? "bg-info-muted" : ""}`}
       {...attributes}
       {...listeners}
     >
@@ -202,7 +202,7 @@ function OrderEditContent(props: Props) {
           onDragEnd={handleDragEnd}
         >
           <div className="max-h-[40vh] overflow-y-auto scrollbar-hide rounded-md">
-            <table className="min-w-full divide-y divide-gray-300">
+            <table className="min-w-full divide-y divide-border">
               <thead className="sticky top-0 bg-white z-10">
                 <tr>
                   <th className="p-2">Posição</th>

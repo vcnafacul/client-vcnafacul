@@ -129,16 +129,16 @@ export default function UploadCartaoModal({
             */}
             {termo.trim().length > 0 &&
               termo.trim().length < MINIMO_PARA_BUSCAR && (
-                <p className="text-sm text-gray-500">{TEXTO_DIGITE_MAIS}</p>
+                <p className="text-sm text-muted-foreground">{TEXTO_DIGITE_MAIS}</p>
               )}
             {estado === "buscando" && (
-              <p className="text-sm text-gray-500">{TEXTO_BUSCANDO}</p>
+              <p className="text-sm text-muted-foreground">{TEXTO_BUSCANDO}</p>
             )}
             {estado === "erro" && (
-              <p className="text-sm text-red-600">{TEXTO_ERRO_BUSCA}</p>
+              <p className="text-sm text-destructive">{TEXTO_ERRO_BUSCA}</p>
             )}
             {estado === "pronto" && estudantes.length === 0 && (
-              <p className="text-sm text-gray-500">{TEXTO_NADA_ENCONTRADO}</p>
+              <p className="text-sm text-muted-foreground">{TEXTO_NADA_ENCONTRADO}</p>
             )}
 
             {estudantes.length > 0 && (
@@ -151,7 +151,7 @@ export default function UploadCartaoModal({
                     <button
                       type="button"
                       onClick={() => setEscolhido(e)}
-                      className="w-full px-3 py-2 text-left hover:bg-gray-50"
+                      className="w-full px-3 py-2 text-left hover:bg-page"
                     >
                       <span className="block font-medium">{e.nome}</span>
                       {/*
@@ -159,7 +159,7 @@ export default function UploadCartaoModal({
                         mesmo nome são caso real, e sem isso não há como saber
                         para qual dos dois o cartão vai.
                       */}
-                      <span className="block text-xs text-gray-500">
+                      <span className="block text-xs text-muted-foreground">
                         {e.matricula} · {e.turma ?? TEXTO_SEM_TURMA}
                       </span>
                     </button>
@@ -175,7 +175,7 @@ export default function UploadCartaoModal({
             <div className="flex items-start justify-between gap-3 rounded border p-3">
               <div>
                 <p className="font-medium">{escolhido.nome}</p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                   {escolhido.matricula} · {escolhido.turma ?? TEXTO_SEM_TURMA}
                 </p>
               </div>
@@ -211,7 +211,7 @@ export default function UploadCartaoModal({
               <AlertDialogTrigger asChild>
                 <button
                   disabled={!file || enviando}
-                  className="w-full px-4 py-2 bg-green2 text-white rounded disabled:opacity-50"
+                  className="w-full px-4 py-2 bg-success text-white rounded disabled:opacity-50"
                 >
                   {enviando ? "Enviando..." : "Enviar cartão"}
                 </button>

@@ -38,8 +38,8 @@ export function Greeting({ view, views, onViewChange }: GreetingProps) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <p className="text-sm text-slate-500 first-letter:uppercase">{today}</p>
-        <h1 className="mt-0.5 text-2xl font-bold text-marine">
+        <p className="text-sm text-muted-foreground first-letter:uppercase">{today}</p>
+        <h1 className="mt-0.5 text-2xl font-bold text-foreground">
           {greeting(now.getHours())}, {name}
         </h1>
       </div>
@@ -50,7 +50,7 @@ export function Greeting({ view, views, onViewChange }: GreetingProps) {
             {isStudent && (
               <Link
                 to={`${DASH}/${ESSAY_WRITE}`}
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-marine transition-colors hover:border-marine/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marine/40"
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <PenTool className="h-4 w-4" aria-hidden />
                 Escrever redação
@@ -58,7 +58,7 @@ export function Greeting({ view, views, onViewChange }: GreetingProps) {
             )}
             <Link
               to={`${DASH}/${SIMULADO}`}
-              className="inline-flex items-center gap-2 rounded-lg bg-marine px-3.5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marine/40 focus-visible:ring-offset-2"
+              className="inline-flex items-center gap-2 rounded-lg bg-primary px-3.5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <ClipboardList className="h-4 w-4" aria-hidden />
               Fazer simulado
@@ -76,10 +76,10 @@ export function Greeting({ view, views, onViewChange }: GreetingProps) {
             className={cn(
               'flex items-center gap-2 max-sm:order-first',
               // Separa "Ver como" dos botões, senão lê como parte deles.
-              view === 'estudo' && 'sm:ml-1 sm:border-l sm:border-slate-200 sm:pl-3',
+              view === 'estudo' && 'sm:ml-1 sm:border-l sm:border-border sm:pl-3',
             )}
           >
-            <span className="text-xs text-slate-500" aria-hidden>
+            <span className="text-xs text-muted-foreground" aria-hidden>
               Ver como
             </span>
             <Segmented

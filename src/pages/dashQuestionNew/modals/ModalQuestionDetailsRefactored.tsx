@@ -169,10 +169,10 @@ export function ModalQuestionDetailsRefactored({
             children: (
               <div className="flex flex-col items-center justify-center p-12 text-center h-full">
                 <div className="text-6xl mb-4">⚠️</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                <h3 className="text-xl font-bold text-foreground mb-2">
                   Erro ao carregar questão
                 </h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-muted-foreground mb-6">
                   {error || "Não foi possível carregar os dados da questão"}
                 </p>
                 <button
@@ -298,9 +298,9 @@ function ModalContent({
       const bloco = document.getElementById(ancoraDoCampo(pendencia.campo));
       if (!bloco) return;
       bloco.scrollIntoView({ behavior: "smooth", block: "center" });
-      bloco.classList.add("ring-2", "ring-rose-400", "rounded-md");
+      bloco.classList.add("ring-2", "ring-destructive", "rounded-md");
       setTimeout(
-        () => bloco.classList.remove("ring-2", "ring-rose-400", "rounded-md"),
+        () => bloco.classList.remove("ring-2", "ring-destructive", "rounded-md"),
         2000,
       );
       bloco
@@ -470,7 +470,7 @@ function ModalContent({
           acao();
         }}
       >
-        <p className="text-sm text-gray-700">
+        <p className="text-sm text-foreground">
           Você está editando esta questão. Sair agora descarta o que não foi
           salvo.
         </p>

@@ -13,9 +13,9 @@ const statusLabel: Record<ProposalStatus, string> = {
 };
 
 const statusColor: Record<ProposalStatus, string> = {
-  [ProposalStatus.Pending]: "bg-amber-100 text-amber-800",
-  [ProposalStatus.Approved]: "bg-emerald-100 text-emerald-800",
-  [ProposalStatus.Rejected]: "bg-rose-100 text-rose-800",
+  [ProposalStatus.Pending]: "bg-warning-muted text-warning",
+  [ProposalStatus.Approved]: "bg-success-muted text-success",
+  [ProposalStatus.Rejected]: "bg-destructive-muted text-destructive",
 };
 
 interface Props {
@@ -40,7 +40,7 @@ export function AbaPropostas({
   return (
     <div className="flex flex-col gap-6">
       <section>
-        <h3 className="text-base font-bold text-marine mb-3">
+        <h3 className="text-base font-bold text-foreground mb-3">
           Propostas de ajuste
         </h3>
         {proposals.length === 0 ? (
@@ -101,7 +101,7 @@ export function AbaPropostas({
                       <>
                         <Button
                           size="sm"
-                          className="bg-green2 hover:bg-green2/80"
+                          className="bg-success hover:bg-success/80"
                           onClick={() => onAprovar(proposal)}
                         >
                           Aprovar

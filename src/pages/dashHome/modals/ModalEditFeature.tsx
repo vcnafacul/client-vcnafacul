@@ -156,7 +156,7 @@ export default function ModalEditFeature({
             />
           )}
           {file && (
-            <span className="text-xs text-green-700">
+            <span className="text-xs text-success">
               Imagem recortada pronta para upload.
             </span>
           )}
@@ -171,7 +171,7 @@ export default function ModalEditFeature({
               }
             }}
           />
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-muted-foreground">
             Proporção: 16:9. Salvo como PNG — fundo transparente é preservado.
           </span>
         </div>

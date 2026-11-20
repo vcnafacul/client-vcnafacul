@@ -51,30 +51,30 @@ export function MeuCursinho() {
               </RadialBarChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-bold tabular-nums lining-nums text-marine">
+              <span className="text-3xl font-bold tabular-nums lining-nums text-foreground">
                 {latest.frequencia.percentual}%
               </span>
-              <span className="text-xs text-slate-500">de frequência</span>
+              <span className="text-xs text-muted-foreground">de frequência</span>
             </div>
           </div>
 
           <dl className="mt-4 grid grid-cols-2 gap-3 text-center">
-            <div className="rounded-xl bg-slate-50 py-2.5">
-              <dt className="text-xs text-slate-500">Presenças</dt>
-              <dd className="text-lg font-bold tabular-nums lining-nums text-[#0d7a63]">
+            <div className="rounded-xl bg-page py-2.5">
+              <dt className="text-xs text-muted-foreground">Presenças</dt>
+              <dd className="text-lg font-bold tabular-nums lining-nums text-success">
                 {latest.frequencia.presencas}
               </dd>
             </div>
-            <div className="rounded-xl bg-slate-50 py-2.5">
-              <dt className="text-xs text-slate-500">Faltas</dt>
-              <dd className="text-lg font-bold tabular-nums lining-nums text-red">
+            <div className="rounded-xl bg-page py-2.5">
+              <dt className="text-xs text-muted-foreground">Faltas</dt>
+              <dd className="text-lg font-bold tabular-nums lining-nums text-destructive">
                 {latest.frequencia.faltas}
               </dd>
             </div>
           </dl>
 
           {(latest.matricula || latest.turma || latest.periodo) && (
-            <p className="mt-4 text-center text-xs text-slate-500">
+            <p className="mt-4 text-center text-xs text-muted-foreground">
               {[
                 latest.matricula && `Matrícula ${latest.matricula}`,
                 latest.turma,

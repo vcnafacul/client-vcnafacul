@@ -114,12 +114,12 @@ export function PanelMateria({
               <div className="flex gap-2 justify-center">
                 <Tooltip title="Editar matéria">
                   <IconButton onClick={() => editar(params.row as MateriaDto)}>
-                    <MdModeEdit className="fill-gray-500 hover:fill-black" />
+                    <MdModeEdit className="fill-muted-foreground hover:fill-black" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Excluir matéria">
                   <IconButton onClick={() => excluir(params.row as MateriaDto)}>
-                    <MdDeleteForever className="fill-redError opacity-50 hover:opacity-100" />
+                    <MdDeleteForever className="fill-destructive opacity-50 hover:opacity-100" />
                   </IconButton>
                 </Tooltip>
               </div>
@@ -147,7 +147,7 @@ export function PanelMateria({
     // No celular sem altura fixa: rolagem dentro de rolagem, e a lista em cards.
     <div className="flex flex-col sm:h-[500px] sm:overflow-y-scroll scrollbar-hide select-none">
       <div className="flex flex-wrap justify-between items-center gap-2 mb-2">
-        <h3 className="text-lg font-semibold text-gray-700">Matérias</h3>
+        <h3 className="text-lg font-semibold text-foreground">Matérias</h3>
         {manager && (
           <Button
             onClick={() => {
@@ -173,7 +173,7 @@ export function PanelMateria({
                   {Icone && <Icone className="w-6 h-6 shrink-0" />}
                   <div className="min-w-0">
                     <p className="font-semibold break-words">{materia.nome}</p>
-                    <p className="text-xs text-gray-500">{materia.enemArea}</p>
+                    <p className="text-xs text-muted-foreground">{materia.enemArea}</p>
                   </div>
                 </div>
                 {manager && (
@@ -188,7 +188,7 @@ export function PanelMateria({
                     <button
                       type="button"
                       onClick={() => excluir(materia)}
-                      className="flex-1 h-10 border border-redError text-redError rounded-md text-sm"
+                      className="flex-1 h-10 border border-destructive text-destructive rounded-md text-sm"
                     >
                       Excluir
                     </button>
@@ -240,9 +240,9 @@ export function PanelMateria({
           confirmDisabled={!canDelete}
         >
           {blockReason ? (
-            <p className="text-gray-600">{blockReason}</p>
+            <p className="text-muted-foreground">{blockReason}</p>
           ) : (
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               Tem certeza que deseja excluir a matéria &quot;{selected.nome}
               &quot;?
             </p>

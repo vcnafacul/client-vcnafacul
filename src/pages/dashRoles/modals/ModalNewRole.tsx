@@ -155,10 +155,10 @@ function ModalNewRole({
       <div className="w-full flex flex-col gap-5 max-h-[80vh]">
         {/* Header */}
         <div>
-          <Text size="secondary" className="font-bold text-marine">
+          <Text size="secondary" className="font-bold text-foreground">
             Novo Perfil
           </Text>
-          <p className="text-sm text-gray-400 mt-0.5">
+          <p className="text-sm text-muted-foreground mt-0.5">
             Defina o nome e as permissões do novo perfil.
           </p>
         </div>
@@ -166,18 +166,18 @@ function ModalNewRole({
         {/* Name + base toggle */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-7">
           <label className="flex flex-col gap-1 flex-1">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
               Nome do perfil
             </span>
             <Filter
               placeholder="Digite o nome do novo perfil"
               filtrar={handleInputChange}
               search={false}
-              className="bg-gray-100 rounded-lg"
+              className="bg-muted rounded-lg"
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
               Perfil Base
             </span>
             <div className="flex items-center gap-3 h-full py-2">
@@ -186,7 +186,7 @@ function ModalNewRole({
                 checked={newRole.base}
                 handleCheck={handleBaseToggle}
               />
-              <span className="text-sm font-medium text-marine">
+              <span className="text-sm font-medium text-foreground">
                 {newRole.base ? "Ativo" : "Inativo"}
               </span>
             </div>
@@ -194,7 +194,7 @@ function ModalNewRole({
         </div>
 
         {newRole.base && (
-          <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+          <p className="text-xs text-warning bg-warning-muted border border-warning/30 rounded-lg px-3 py-2">
             Perfis base só podem ter permissões do projeto. Permissões do
             cursinho e "Alterar Permissão" são desativadas automaticamente.
           </p>
@@ -213,7 +213,7 @@ function ModalNewRole({
         </div>
 
         {/* Actions */}
-        <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
+        <div className="flex justify-end gap-3 pt-2 border-t border-border">
           <Button typeStyle="primary" onClick={handleClose}>
             Cancelar
           </Button>

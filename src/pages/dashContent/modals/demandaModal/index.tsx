@@ -321,7 +321,7 @@ export default function DemandaModal({
         <footer className="shrink-0 border-t px-4 sm:px-6 py-3 grid grid-cols-3 gap-2">
           <Button
             variant="default"
-            className="bg-green2 hover:bg-green2/80"
+            className="bg-success hover:bg-success/80"
             onClick={() => handleUpdateStatus(StatusEnum.Approved)}
             disabled={!canReview || demand.status === StatusEnum.Approved}
           >

@@ -10,10 +10,10 @@ export type BarListItem = {
 };
 
 const barTone = {
-  marine: 'bg-marine',
-  green: 'bg-green',
-  orange: 'bg-orange',
-  red: 'bg-red',
+  marine: 'bg-primary',
+  green: 'bg-success',
+  orange: 'bg-cta',
+  red: 'bg-destructive',
 };
 
 /**
@@ -27,12 +27,12 @@ export function BarList({ items, max }: { items: BarListItem[]; max?: number }) 
       {items.map((item) => (
         <li key={item.id}>
           <div className="mb-1 flex items-baseline justify-between gap-3 text-sm">
-            <span className="truncate text-slate-600">{item.label}</span>
-            <span className="shrink-0 font-semibold tabular-nums lining-nums text-marine">
+            <span className="truncate text-muted-foreground">{item.label}</span>
+            <span className="shrink-0 font-semibold tabular-nums lining-nums text-foreground">
               {item.display ?? item.value}
             </span>
           </div>
-          <div className="h-2 rounded-full bg-slate-100">
+          <div className="h-2 rounded-full bg-muted">
             <div
               className={cn('h-2 rounded-full', barTone[item.tone ?? 'marine'])}
               style={{ width: `${Math.max((item.value / top) * 100, 2)}%` }}

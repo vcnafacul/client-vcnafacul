@@ -80,7 +80,7 @@ export default function AboutSection() {
             className="max-w-xs rounded"
           />
         ) : (
-          <span className="text-sm text-gray-500">Sem thumbnail</span>
+          <span className="text-sm text-muted-foreground">Sem thumbnail</span>
         )}
         <input
           type="file"
@@ -93,7 +93,7 @@ export default function AboutSection() {
             }
           }}
         />
-        <span className="text-xs text-gray-500">
+        <span className="text-xs text-muted-foreground">
           Proporção: 4:3 (a imagem será recortada e redimensionada para caber no
           tablet).
         </span>

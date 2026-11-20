@@ -55,7 +55,7 @@ export default function Dashboard() {
   }, [visible, view]);
 
   return (
-    <div className="min-h-full bg-slate-50 lining-nums">
+    <div className="min-h-full bg-page lining-nums">
       <div className="mx-auto max-w-[1440px] space-y-6 px-4 py-6 sm:px-6 md:px-10 md:py-8">
         <Greeting view={view} views={views} onViewChange={setView} />
 

@@ -19,13 +19,13 @@ export function NavegacaoDaLista({
         aria-label="Questão anterior"
         onClick={anterior}
         disabled={!anterior}
-        className="flex items-center rounded-md border border-gray-200 px-2 py-1 hover:bg-gray-50 disabled:opacity-40"
+        className="flex items-center rounded-md border border-border px-2 py-1 hover:bg-page disabled:opacity-40"
       >
         <ChevronLeft className="h-4 w-4" />
         Anterior
       </button>
       {posicao != null && total != null && (
-        <span className="text-gray-500 tabular-nums">
+        <span className="text-muted-foreground tabular-nums">
           {posicao} de {total}
         </span>
       )}
@@ -34,7 +34,7 @@ export function NavegacaoDaLista({
         aria-label="Próxima questão"
         onClick={proxima}
         disabled={!proxima}
-        className="flex items-center rounded-md border border-gray-200 px-2 py-1 hover:bg-gray-50 disabled:opacity-40"
+        className="flex items-center rounded-md border border-border px-2 py-1 hover:bg-page disabled:opacity-40"
       >
         Próxima
         <ChevronRight className="h-4 w-4" />

@@ -398,7 +398,7 @@ function SimuladosView({
 
         {!loading && error && (
           <div className="py-8 text-center">
-            <p className="mb-3 text-sm text-red">
+            <p className="mb-3 text-sm text-destructive">
               Não foi possível carregar os simulados.
             </p>
             <Button variant="outlined" size="small" onClick={onRetry}>
@@ -426,7 +426,7 @@ function SimuladosView({
               {simulados.map((simulado) => (
                 <li
                   key={simulado._id}
-                  className="rounded-lg border border-lightGray p-3 flex flex-col gap-2"
+                  className="rounded-lg border border-border p-3 flex flex-col gap-2"
                 >
                   <div className="flex items-start gap-2">
                     <SimuladoStatusIcon simulado={simulado} />
@@ -445,7 +445,7 @@ function SimuladosView({
                     </div>
                   </div>
                   <QuestoesCell simulado={simulado} />
-                  <div className="border-t border-lightGray pt-2 [&>div]:justify-start [&>div]:flex-wrap">
+                  <div className="border-t border-border pt-2 [&>div]:justify-start [&>div]:flex-wrap">
                     {acoesDoSimulado(simulado)}
                   </div>
                 </li>
@@ -464,7 +464,7 @@ function SimuladosView({
                   className={cn(
                     "text-xs uppercase",
                     dashV2.text.muted,
-                    "bg-backgroundGrey",
+                    "bg-page",
                   )}
                 >
                   <tr>
@@ -487,7 +487,7 @@ function SimuladosView({
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-lightGray">
+                <tbody className="divide-y divide-border">
                   {simulados.map((simulado) => (
                     <tr key={simulado._id} className={dashV2.row.hover}>
                       <td className="px-2 py-2 align-middle">

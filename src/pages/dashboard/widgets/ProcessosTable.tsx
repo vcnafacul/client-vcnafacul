@@ -42,7 +42,7 @@ export function ProcessosTable() {
       ) : (
         <div className="-mx-5 max-h-[340px] overflow-y-auto sm:-mx-6">
           <table className="w-full text-sm">
-            <thead className="sticky top-0 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+            <thead className="sticky top-0 bg-page text-left text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th className="px-5 py-2.5 font-medium sm:px-6">Cursinho</th>
                 <th className="hidden px-3 py-2.5 font-medium md:table-cell">
@@ -54,17 +54,17 @@ export function ProcessosTable() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-border">
               {rows.map((item) => {
                 const left = daysLeft(item.endDate);
                 const urgent = left <= 3;
                 const status = item.studentStatus ?? null;
                 return (
-                  <tr key={item.id} className="group hover:bg-slate-50">
+                  <tr key={item.id} className="group hover:bg-page">
                     <td className="px-5 py-3 sm:px-6">
                       <Link
                         to={linkTo(item.id, status)}
-                        className="flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marine/40"
+                        className="flex items-center gap-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       >
                         {item.cursinho.logo ? (
                           <img
@@ -73,41 +73,41 @@ export function ProcessosTable() {
                             className="h-9 w-9 shrink-0 rounded-full object-cover"
                           />
                         ) : (
-                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-marine/[0.07] text-xs font-bold text-marine">
+                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/[0.07] text-xs font-bold text-foreground">
                             {item.cursinho.name.charAt(0)}
                           </span>
                         )}
                         <span className="min-w-0">
-                          <span className="block truncate font-medium text-marine group-hover:underline">
+                          <span className="block truncate font-medium text-foreground group-hover:underline">
                             {item.cursinho.name}
                           </span>
-                          <span className="block truncate text-xs text-slate-500 md:hidden">
+                          <span className="block truncate text-xs text-muted-foreground md:hidden">
                             {item.name}
                           </span>
                         </span>
                       </Link>
                     </td>
-                    <td className="hidden max-w-[220px] truncate px-3 py-3 text-slate-600 md:table-cell">
+                    <td className="hidden max-w-[220px] truncate px-3 py-3 text-muted-foreground md:table-cell">
                       {item.name}
                     </td>
                     <td className="px-3 py-3">
                       {status === null ? (
-                        <span className="text-slate-400">-</span>
+                        <span className="text-muted-foreground">-</span>
                       ) : (
-                        <span className="inline-block whitespace-nowrap rounded-full bg-marine/[0.07] px-2 py-0.5 text-xs font-medium text-marine">
+                        <span className="inline-block whitespace-nowrap rounded-full bg-primary/[0.07] px-2 py-0.5 text-xs font-medium text-foreground">
                           {statusLabel(status)}
                         </span>
                       )}
                     </td>
                     <td className="whitespace-nowrap px-5 py-3 text-right sm:px-6">
-                      <span className="block tabular-nums lining-nums text-slate-700">
+                      <span className="block tabular-nums lining-nums text-foreground">
                         {new Date(item.endDate).toLocaleDateString('pt-BR')}
                       </span>
                       <span
                         className={
                           urgent
-                            ? 'text-xs font-semibold text-[#b35300]'
-                            : 'text-xs text-slate-400'
+                            ? 'text-xs font-semibold text-warning'
+                            : 'text-xs text-muted-foreground'
                         }
                       >
                         {left <= 0

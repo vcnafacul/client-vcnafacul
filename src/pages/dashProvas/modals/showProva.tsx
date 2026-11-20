@@ -31,6 +31,7 @@ import {
   indicadorDeVersoes,
   OpcaoNovasVersoes,
 } from "../components/OpcaoNovasVersoes";
+import { palette } from "@/lib/palette";
 
 const TEXTO_SEM_PDF = "Sem PDF da prova";
 
@@ -151,9 +152,9 @@ function ShowProva({
   } = useAuthStore();
 
   const getProgressColor = (percent: number) => {
-    if (percent >= 80) return "bg-green-500";
-    if (percent >= 60) return "bg-yellow-500";
-    return "bg-red-500";
+    if (percent >= 80) return "bg-success";
+    if (percent >= 60) return "bg-warning";
+    return "bg-destructive";
   };
 
   // tickets/027: "Duplicada de <nome>" — o nome vem da própria origem.
@@ -328,16 +329,16 @@ const downloadFile = async (filename: string, fileType: string) => {
         {/* Header */}
         <div className="mb-6">
           <div className="flex flex-wrap items-center gap-3 mb-2">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <DocumentTextIcon className="h-6 w-6 text-blue-600" />
+            <div className="p-2 bg-info-muted rounded-lg">
+              <DocumentTextIcon className="h-6 w-6 text-info" />
             </div>
             <div className="min-w-0 flex-1">
-              <h2 className="text-xl font-semibold text-gray-900 break-words">
+              <h2 className="text-xl font-semibold text-foreground break-words">
                 {prova.nome}
               </h2>
-              <p className="text-sm text-gray-500">Detalhes da Prova</p>
+              <p className="text-sm text-muted-foreground">Detalhes da Prova</p>
               {origemId && nomeDaOrigem !== null && (
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-muted-foreground mt-0.5">
                   Duplicada de {nomeDaOrigem ? <strong>{nomeDaOrigem}</strong> : "outra prova"}
                 </p>
               )}
@@ -348,7 +349,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                 onClick={duplicar.aoClicar}
                 disabled={!duplicar.permitido}
                 title={duplicar.permitido ? undefined : duplicar.motivo}
-                className="ml-auto px-3 py-1.5 text-sm border border-marine text-marine rounded-lg hover:bg-marine/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="ml-auto px-3 py-1.5 text-sm border border-primary text-foreground rounded-lg hover:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Duplicar prova
               </button>
@@ -360,7 +361,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                   onClick={gestao.aoEditar}
                   disabled={!gestao.permitido}
                   title={gestao.permitido ? undefined : gestao.motivo}
-                  className="px-3 py-1.5 text-sm border border-marine text-marine rounded-lg hover:bg-marine/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 text-sm border border-primary text-foreground rounded-lg hover:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Editar dados
                 </button>
@@ -379,7 +380,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                       type="button"
                       disabled={!gestao.permitido}
                       title={gestao.permitido ? undefined : gestao.motivo}
-                      className="px-3 py-1.5 text-sm border border-red-300 text-red-700 rounded-lg hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-3 py-1.5 text-sm border border-destructive text-destructive rounded-lg hover:bg-destructive-muted disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Excluir
                     </button>
@@ -397,33 +398,33 @@ const downloadFile = async (filename: string, fileType: string) => {
               <div className="min-w-0">
                 {/* Informações Básicas */}
                 <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
+                  <h3 className="text-sm font-medium text-foreground mb-4 flex items-center gap-2">
                     <AcademicCapIcon className="h-4 w-4" />
                     Informações Gerais
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-xs text-gray-500 mb-1">Edição</p>
-                      <p className="text-sm font-medium text-gray-900">{prova.edicao}</p>
+                    <div className="bg-page p-3 rounded-lg">
+                      <p className="text-xs text-muted-foreground mb-1">Edição</p>
+                      <p className="text-sm font-medium text-foreground">{prova.edicao}</p>
                     </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-xs text-gray-500 mb-1">Ano</p>
-                      <p className="text-sm font-medium text-gray-900">{prova.ano}</p>
+                    <div className="bg-page p-3 rounded-lg">
+                      <p className="text-xs text-muted-foreground mb-1">Ano</p>
+                      <p className="text-sm font-medium text-foreground">{prova.ano}</p>
                     </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-xs text-gray-500 mb-1">Aplicação</p>
-                      <p className="text-sm font-medium text-gray-900">{prova.aplicacao}</p>
+                    <div className="bg-page p-3 rounded-lg">
+                      <p className="text-xs text-muted-foreground mb-1">Aplicação</p>
+                      <p className="text-sm font-medium text-foreground">{prova.aplicacao}</p>
                     </div>
-                    <div className="bg-gray-50 p-3 rounded-lg">
-                      <p className="text-xs text-gray-500 mb-1">Categoria</p>
+                    <div className="bg-page p-3 rounded-lg">
+                      <p className="text-xs text-muted-foreground mb-1">Categoria</p>
                       {/*
                         ⚠️ `categoria` e `exame` são strings — o ms achata as duas no
                         DTO da lista. Antes isto lia `.nome` de uma string e o modal
                         mostrava "—" com o exame nunca aparecendo.
                       */}
-                      <p className="text-sm font-medium text-gray-900">{prova.categoria || '—'}</p>
+                      <p className="text-sm font-medium text-foreground">{prova.categoria || '—'}</p>
                       {prova.exame && (
-                        <p className="text-xs text-gray-500 mt-0.5">{prova.exame}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{prova.exame}</p>
                       )}
                     </div>
                   </div>
@@ -431,7 +432,7 @@ const downloadFile = async (filename: string, fileType: string) => {
 
                 {/* tickets/023, card 09: novas versões das questões. */}
                 <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-4">
+                  <h3 className="text-sm font-medium text-foreground mb-4">
                     Novas versões das questões
                   </h3>
                   {fullProva?.podeComporProva ? (
@@ -443,7 +444,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                   ) : (
                     <p
                       data-testid="indicador-versoes"
-                      className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg"
+                      className="text-sm text-foreground bg-page p-3 rounded-lg"
                     >
                       {indicadorDeVersoes(
                         fullProva?.receberNovasVersoes ?? prova.receberNovasVersoes,
@@ -454,7 +455,7 @@ const downloadFile = async (filename: string, fileType: string) => {
 
                 {/* tickets/023, card 15: versões mais novas das questões. */}
                 <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-4">
+                  <h3 className="text-sm font-medium text-foreground mb-4">
                     Atualizações das questões
                   </h3>
                   <BuscarAtualizacoes provaId={prova._id} token={token} />
@@ -465,42 +466,42 @@ const downloadFile = async (filename: string, fileType: string) => {
                 <AnuladasDaProva questoes={fullProva?.questoes} />
                 {/* Métricas de Progresso */}
                 <div className="mb-6">
-                  <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
+                  <h3 className="text-sm font-medium text-foreground mb-4 flex items-center gap-2">
                     <ChartBarIcon className="h-4 w-4" />
                     Progresso das Questões
                   </h3>
 
                   <div className="space-y-4">
                     {/* Questões Esperadas */}
-                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <div className="bg-info-muted p-4 rounded-lg border border-info/30">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-blue-900">
+                        <span className="text-sm font-medium text-info">
                           Questões Esperadas
                         </span>
-                        <span className="text-lg font-bold text-blue-900">
+                        <span className="text-lg font-bold text-info">
                           {livre ? "Livre (sem alvo)" : prova.totalQuestao}
                         </span>
                       </div>
-                      <div className="w-full bg-blue-200 rounded-full h-2">
+                      <div className="w-full bg-info/20 rounded-full h-2">
                         <div
-                          className="bg-blue-500 h-2 rounded-full"
+                          className="bg-info h-2 rounded-full"
                           style={{ width: "100%" }}
                         ></div>
                       </div>
                     </div>
 
                     {/* Questões Cadastradas */}
-                    <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                    <div className="bg-warning-muted p-4 rounded-lg border border-warning/30">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-yellow-900">
+                        <span className="text-sm font-medium text-warning">
                           Questões Cadastradas
                         </span>
-                        <span className="text-lg font-bold text-yellow-900">
+                        <span className="text-lg font-bold text-warning">
                           {prova.totalQuestaoCadastradas}
                           {!livre && ` (${percentCadastradas.toFixed(1)}%)`}
                         </span>
                       </div>
-                      <div className="w-full bg-yellow-200 rounded-full h-2">
+                      <div className="w-full bg-warning/20 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full ${getProgressColor(
                             percentCadastradas
@@ -511,18 +512,18 @@ const downloadFile = async (filename: string, fileType: string) => {
                     </div>
 
                     {/* Questões Aprovadas */}
-                    <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <div className="bg-success-muted p-4 rounded-lg border border-success">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-green-900">
+                        <span className="text-sm font-medium text-success">
                           Questões Aprovadas
                         </span>
-                        <span className="text-lg font-bold text-green-900">
+                        <span className="text-lg font-bold text-success">
                           {prova.totalQuestaoValidadas} (
                           {isNaN(percentValidadas) ? "0" : percentValidadas.toFixed(1)}
                           %)
                         </span>
                       </div>
-                      <div className="w-full bg-green-200 rounded-full h-2">
+                      <div className="w-full bg-success/20 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full ${getProgressColor(
                             isNaN(percentValidadas) ? 0 : percentValidadas
@@ -547,7 +548,7 @@ const downloadFile = async (filename: string, fileType: string) => {
               eles passavam de ~500px e, alinhados à direita, vazavam pela
               esquerda — "Ver simulados" ficava inalcançável.
             */}
-            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-end gap-3 pt-4 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-end gap-3 pt-4 border-t border-border">
               {!isEditingFiles ? (
                 <>
                   <Button
@@ -601,9 +602,9 @@ const downloadFile = async (filename: string, fileType: string) => {
                       variant="contained"
                       className="w-full sm:w-auto"
                       sx={{
-                        backgroundColor: "#6b7280",
+                        backgroundColor: palette.neutral[600],
                         "&:hover": {
-                          backgroundColor: "#4b5563",
+                          backgroundColor: palette.neutral[700],
                         },
                         display: "flex",
                         alignItems: "center",
@@ -632,7 +633,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                       Download da Prova
                     </Button>
                   ) : (
-                    <span className="self-center text-sm text-gray-500">
+                    <span className="self-center text-sm text-muted-foreground">
                       {edicao && !edicao.permitido
                         ? TEXTO_SEM_PDF
                         : `${TEXTO_SEM_PDF} — adicione em Editar arquivos`}

@@ -35,7 +35,7 @@ export default function SortableFeatureRow({
     >
       <button
         type="button"
-        className="cursor-grab active:cursor-grabbing touch-none px-2 py-2 text-gray-500"
+        className="cursor-grab active:cursor-grabbing touch-none px-2 py-2 text-muted-foreground"
         aria-label="Arrastar para reordenar"
         {...attributes}
         {...listeners}
@@ -49,7 +49,7 @@ export default function SortableFeatureRow({
           className="w-12 h-12 object-cover rounded"
         />
       ) : (
-        <div className="w-12 h-12 rounded bg-gray-200" />
+        <div className="w-12 h-12 rounded bg-muted" />
       )}
       <span className="flex-1 min-w-0 break-words font-medium">
         {feature.title}
@@ -57,14 +57,14 @@ export default function SortableFeatureRow({
       <div className="flex gap-3">
         <button
           type="button"
-          className="text-sm text-blue-600 hover:underline"
+          className="text-sm text-primary hover:underline"
           onClick={() => onEdit(feature)}
         >
           Editar
         </button>
         <button
           type="button"
-          className="text-sm text-red-600 hover:underline"
+          className="text-sm text-destructive hover:underline"
           onClick={() => onDelete(feature)}
         >
           Excluir

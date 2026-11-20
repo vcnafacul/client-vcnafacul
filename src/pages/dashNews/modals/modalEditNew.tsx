@@ -15,7 +15,7 @@ import ModalTemplate from "../../../components/templates/modalTemplate";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 
 const inputBaseClass =
-  "w-full border border-gray-300 rounded-md px-3 py-2 text-grey focus:outline-none focus:ring-2 focus:ring-green2/30 focus:border-green2";
+  "w-full border border-border rounded-md px-3 py-2 text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-success";
 
 /** Formato YYYY-MM-DD para input date; '' = sem expiração */
 function toDateInputValue(d: string | Date | null | undefined): string {
@@ -172,7 +172,7 @@ function ModalEditNew({
       {/* Área rolável: header + formulário + preview */}
       <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
         {/* Header */}
-        <div className="px-4 sm:px-6 pt-6 pb-4 border-b border-gray-100 shrink-0">
+        <div className="px-4 sm:px-6 pt-6 pb-4 border-b border-border shrink-0">
           <Text size="secondary">
             {isEditing ? "Detalhes da Novidade" : "Criar Novidade"}
           </Text>
@@ -182,13 +182,13 @@ function ModalEditNew({
         <div className="px-4 sm:px-6 py-4 shrink-0">
           {/* Tab switcher: only visible in create mode */}
           {!isEditing && (
-            <div className="mb-4 flex gap-2 border-b border-gray-200">
+            <div className="mb-4 flex gap-2 border-b border-border">
               <button
                 type="button"
                 className={`px-3 py-2 text-sm font-medium border-b-2 ${
                   contentType === 'file'
-                    ? 'border-green2 text-green2'
-                    : 'border-transparent text-gray-500'
+                    ? 'border-success text-success'
+                    : 'border-transparent text-muted-foreground'
                 }`}
                 onClick={() => setContentType('file')}
               >
@@ -198,8 +198,8 @@ function ModalEditNew({
                 type="button"
                 className={`px-3 py-2 text-sm font-medium border-b-2 ${
                   contentType === 'text'
-                    ? 'border-green2 text-green2'
-                    : 'border-transparent text-gray-500'
+                    ? 'border-success text-success'
+                    : 'border-transparent text-muted-foreground'
                 }`}
                 onClick={() => setContentType('text')}
               >
@@ -208,14 +208,14 @@ function ModalEditNew({
             </div>
           )}
           {isEditing && (
-            <div className="mb-4 text-sm text-gray-500">
+            <div className="mb-4 text-sm text-muted-foreground">
               Tipo: <strong>{contentType === 'text' ? 'Texto (markdown)' : 'Arquivo (.docx)'}</strong>
             </div>
           )}
 
           <div className="flex gap-4 flex-wrap">
             <div className="flex-1 min-w-[200px] flex flex-col gap-1">
-              <label htmlFor="destaque" className="text-sm text-gray-600">
+              <label htmlFor="destaque" className="text-sm text-muted-foreground">
                 Destaque
               </label>
               <label className="inline-flex items-center gap-2 mt-2">
@@ -228,12 +228,12 @@ function ModalEditNew({
                 />
                 <span className="text-sm">Marcar como novidade em destaque</span>
               </label>
-              <span className="text-xs text-gray-500 min-h-[1rem]">
+              <span className="text-xs text-muted-foreground min-h-[1rem]">
                 Apenas uma novidade pode estar em destaque por vez.
               </span>
             </div>
             <div className="flex-1 min-w-[200px] flex flex-col gap-1">
-              <label htmlFor="title" className="text-sm text-gray-600">
+              <label htmlFor="title" className="text-sm text-muted-foreground">
                 Título
               </label>
               <input
@@ -244,12 +244,12 @@ function ModalEditNew({
                 placeholder="Título"
                 className={inputBaseClass}
               />
-              <span className="text-xs text-gray-500 min-h-[1rem]">
+              <span className="text-xs text-muted-foreground min-h-[1rem]">
                 {" "}
               </span>
             </div>
             <div className="flex-1 min-w-[200px] flex flex-col gap-1">
-              <label htmlFor="expire-at" className="text-sm text-gray-600">
+              <label htmlFor="expire-at" className="text-sm text-muted-foreground">
                 Data de expiração
               </label>
               <input
@@ -261,7 +261,7 @@ function ModalEditNew({
                 disabled={false}
                 className={inputBaseClass}
               />
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-muted-foreground">
                 Obrigatório. Não pode ser anterior a hoje.
               </span>
             </div>
@@ -270,7 +270,7 @@ function ModalEditNew({
 
         {/* Description textarea */}
         <div className="px-4 sm:px-6 pb-2 shrink-0">
-          <label htmlFor="description" className="text-sm text-gray-600">
+          <label htmlFor="description" className="text-sm text-muted-foreground">
             Descrição (opcional, máx 280 caracteres)
           </label>
           <textarea
@@ -282,7 +282,7 @@ function ModalEditNew({
             placeholder="Aparece no card destaque, abaixo do título"
             className={inputBaseClass + " resize-none"}
           />
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-muted-foreground">
             {description.length}/280
           </span>
         </div>
@@ -300,8 +300,8 @@ function ModalEditNew({
             )}
             {hasPreview && (
               <div className="px-4 sm:px-6 py-4 shrink-0">
-                <p className="text-sm text-gray-500 mb-2 font-medium">Preview</p>
-                <div className="min-h-[200px] max-h-[45vh] overflow-y-auto border rounded-lg shadow-inner p-4 bg-gray-50">
+                <p className="text-sm text-muted-foreground mb-2 font-medium">Preview</p>
+                <div className="min-h-[200px] max-h-[45vh] overflow-y-auto border rounded-lg shadow-inner p-4 bg-page">
                   {news?.fileName ? (
                     <NewContent fileKey={news.fileName} />
                   ) : (
@@ -313,7 +313,7 @@ function ModalEditNew({
           </>
         ) : (
           <div className="px-4 sm:px-6 py-4 shrink-0">
-            <p className="text-sm text-gray-500 mb-2 font-medium">Conteúdo</p>
+            <p className="text-sm text-muted-foreground mb-2 font-medium">Conteúdo</p>
             <RichTextEditor
               content={body}
               onChange={setBody}
@@ -331,18 +331,18 @@ function ModalEditNew({
       </div>
 
       {/* Rodapé fixo: botões sempre visíveis */}
-      <div className="px-4 sm:px-6 py-4 border-t border-gray-100 flex gap-4 shrink-0 bg-white">
+      <div className="px-4 sm:px-6 py-4 border-t border-border flex gap-4 shrink-0 bg-white">
         {isEditing ? (
           <>
             <Button
-              className="bg-green2 border-green2"
+              className="bg-success border-success"
               hover
               onClick={handleSave}
             >
               Salvar
             </Button>
             <Button
-              className="bg-red border-red"
+              className="bg-destructive border-destructive"
               onClick={() => setConfirmarExclusao(true)}
             >
               Deletar
@@ -350,7 +350,7 @@ function ModalEditNew({
           </>
         ) : (
           <Button
-            className="bg-green2 border-green2"
+            className="bg-success border-success"
             hover
             onClick={handleSave}
           >
@@ -364,7 +364,7 @@ function ModalEditNew({
         handleConfirm={deleteNew}
         text={`Excluir a novidade "${news?.title ?? ""}"?`}
       >
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted-foreground">
           Ela deixa de aparecer no site.
         </p>
       </ModalConfirmCancel>

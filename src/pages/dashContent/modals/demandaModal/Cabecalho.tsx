@@ -21,7 +21,7 @@ export function Cabecalho({ demand, papelDoCriador = "Criada por" }: Props) {
   return (
     <header className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2">
-        <h2 className="text-xl font-bold text-marine break-words">
+        <h2 className="text-xl font-bold text-foreground break-words">
           {demand.title}
         </h2>
         {temMaterial && (

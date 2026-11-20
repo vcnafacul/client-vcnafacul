@@ -6,10 +6,10 @@ import { cn } from '@/lib/utils';
 export type KpiTone = 'marine' | 'green' | 'orange' | 'red';
 
 const toneClass: Record<KpiTone, string> = {
-  marine: 'bg-marine/[0.07] text-marine',
-  green: 'bg-green/[0.15] text-[#0d7a63]',
-  orange: 'bg-orange/[0.12] text-[#b35300]',
-  red: 'bg-red/[0.10] text-red',
+  marine: 'bg-primary/[0.07] text-foreground',
+  green: 'bg-success-muted text-success',
+  orange: 'bg-warning-muted text-warning',
+  red: 'bg-destructive/[0.10] text-destructive',
 };
 
 interface KpiCardProps {
@@ -66,13 +66,13 @@ export function KpiCard({
         </div>
       ) : error ? (
         <div className="mt-4">
-          <p className="text-sm font-medium text-slate-600">{label}</p>
-          <p className="mt-0.5 text-xs text-slate-400">
+          <p className="text-sm font-medium text-muted-foreground">{label}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
             Não foi possível carregar.{' '}
             {retry && (
               <button
                 onClick={retry}
-                className="font-medium text-marine underline-offset-2 hover:underline"
+                className="font-medium text-foreground underline-offset-2 hover:underline"
               >
                 Tentar novamente
               </button>
@@ -81,34 +81,34 @@ export function KpiCard({
         </div>
       ) : (
         <div className="mt-3 sm:mt-4">
-          <p className="text-2xl font-bold sm:text-[28px] leading-none tabular-nums lining-nums text-marine">
+          <p className="text-2xl font-bold sm:text-[28px] leading-none tabular-nums lining-nums text-foreground">
             {value}
           </p>
           {info ? (
-            <p className="mt-2 text-sm font-medium text-slate-600">
+            <p className="mt-2 text-sm font-medium text-muted-foreground">
               {label}{' '}
               <span className="relative z-10 inline-flex align-middle">
                 {info}
               </span>
             </p>
           ) : (
-            <p className="mt-2 text-sm font-medium text-slate-600">{label}</p>
+            <p className="mt-2 text-sm font-medium text-muted-foreground">{label}</p>
           )}
-          {hint && <p className="mt-0.5 text-xs text-slate-400">{hint}</p>}
+          {hint && <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>}
         </div>
       )}
     </>
   );
 
   const className =
-    'block rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-[0_1px_2px_rgba(11,39,71,0.04)]';
+    'block rounded-2xl border border-border bg-white p-4 sm:p-5 shadow-[0_1px_2px_rgba(11,39,71,0.04)]';
 
   if (to && info && !isLoading && !error)
     return (
       <div
         className={cn(
           className,
-          'relative transition-colors hover:border-marine/30 focus-within:ring-2 focus-within:ring-marine/40',
+          'relative transition-colors hover:border-primary/30 focus-within:ring-2 focus-within:ring-ring',
         )}
       >
         <Link
@@ -125,7 +125,7 @@ export function KpiCard({
       to={to}
       className={cn(
         className,
-        'transition-colors hover:border-marine/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marine/40',
+        'transition-colors hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
       )}
     >
       {body}
@@ -142,7 +142,7 @@ function Delta({ value, suffix }: { value: number; suffix: string }) {
     <span
       className={cn(
         'inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums lining-nums',
-        up ? 'bg-green/[0.15] text-[#0d7a63]' : 'bg-red/[0.10] text-red',
+        up ? 'bg-success-muted text-success' : 'bg-destructive/[0.10] text-destructive',
       )}
       title="Comparado ao simulado anterior"
     >

@@ -89,7 +89,7 @@ export function ExcluirQuestao({
         type="button"
         data-excluir
         onClick={() => setConfirmando(true)}
-        className="rounded-md border border-red-300 px-2 py-1 text-red-700"
+        className="rounded-md border border-destructive px-2 py-1 text-destructive"
       >
         {TEXTO_EXCLUIR}
       </button>
@@ -103,14 +103,14 @@ export function ExcluirQuestao({
         text={TITULO_CONFIRMAR_EXCLUSAO}
       >
         {recusa === null ? (
-          <p className="text-sm text-gray-700">{TEXTO_CONFIRMAR_EXCLUSAO}</p>
+          <p className="text-sm text-foreground">{TEXTO_CONFIRMAR_EXCLUSAO}</p>
         ) : (
           /*
             ⚠️ **Todos os motivos, e não "não é possível excluir"** — que
             mandaria a pessoa adivinhar. Chega aqui quando a questão mudou
             depois de o botão aparecer.
           */
-          <div data-recusa className="text-sm text-gray-700">
+          <div data-recusa className="text-sm text-foreground">
             <p className="font-semibold">
               Esta questão não pode mais ser excluída:
             </p>
@@ -121,7 +121,7 @@ export function ExcluirQuestao({
             </ul>
           </div>
         )}
-        {erro && <p className="text-sm text-red-700">{erro}</p>}
+        {erro && <p className="text-sm text-destructive">{erro}</p>}
       </ModalConfirmCancel>
     </>
   );

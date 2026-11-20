@@ -295,7 +295,7 @@ function DashRoles() {
   */
   const aviso =
     totalNoServidor > usersRole.length ? (
-      <p data-aviso-limite className="px-4 py-2 text-xs text-gray-600">
+      <p data-aviso-limite className="px-4 py-2 text-xs text-muted-foreground">
         Mostrando {usersRole.length} de {totalNoServidor} — refine a busca para
         ver os demais.
       </p>

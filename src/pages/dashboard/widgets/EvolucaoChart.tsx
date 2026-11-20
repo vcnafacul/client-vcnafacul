@@ -55,7 +55,7 @@ export function EvolucaoChart() {
           action={
             <Link
               to={`${DASH}/${SIMULADO}`}
-              className="text-sm font-medium text-marine underline-offset-2 hover:underline"
+              className="text-sm font-medium text-foreground underline-offset-2 hover:underline"
             >
               Fazer um simulado →
             </Link>
@@ -117,7 +117,7 @@ export function EvolucaoChart() {
                 stroke={chartColors.primary}
                 strokeWidth={2}
                 fill="url(#evolucao-fill)"
-                dot={{ r: 3, fill: '#fff', strokeWidth: 2 }}
+                dot={{ r: 3, fill: 'white', strokeWidth: 2 }}
                 activeDot={{ r: 5 }}
               />
             </AreaChart>

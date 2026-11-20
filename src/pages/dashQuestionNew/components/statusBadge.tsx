@@ -19,32 +19,32 @@ const getStatusConfig = (status: StatusEnum) => {
       return {
         label: "Aprovada",
         icon: CheckCircle2Icon,
-        className: "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0 shadow-lg shadow-green-500/30",
-        pulseColor: "bg-green-400",
+        className: "bg-success text-success-foreground border-0 shadow-lg shadow-success/30",
+        pulseColor: "bg-success/60",
         emoji: "✅"
       };
     case StatusEnum.Pending:
       return {
         label: "Pendente",
         icon: ClockIcon,
-        className: "bg-gradient-to-r from-amber-500 to-yellow-600 text-white border-0 shadow-lg shadow-amber-500/30",
-        pulseColor: "bg-amber-400",
+        className: "bg-warning text-warning-foreground border-0 shadow-lg shadow-warning/30",
+        pulseColor: "bg-warning/60",
         emoji: "⏳"
       };
     case StatusEnum.Rejected:
       return {
         label: "Rejeitada",
         icon: XCircleIcon,
-        className: "bg-gradient-to-r from-red-500 to-rose-600 text-white border-0 shadow-lg shadow-red-500/30",
-        pulseColor: "bg-red-400",
+        className: "bg-destructive text-destructive-foreground border-0 shadow-lg shadow-destructive/30",
+        pulseColor: "bg-destructive/60",
         emoji: "❌"
       };
     default:
       return {
         label: "Desconhecido",
         icon: HelpCircleIcon,
-        className: "bg-gradient-to-r from-gray-500 to-slate-600 text-white border-0 shadow-lg shadow-gray-500/30",
-        pulseColor: "bg-gray-400",
+        className: "bg-muted-foreground text-background border-0 shadow-lg shadow-muted-foreground/30",
+        pulseColor: "bg-muted-foreground/60",
         emoji: "❓"
       };
   }

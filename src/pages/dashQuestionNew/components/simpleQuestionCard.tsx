@@ -21,13 +21,13 @@ interface SimpleQuestionCardProps {
 // Função para escolher cor baseada na área
 const getAreaColor = (area: string): string => {
   const colors: Record<string, string> = {
-    Linguagens: "from-purple-500/10 to-pink-500/10",
-    Matemática: "from-blue-500/10 to-cyan-500/10",
-    "Ciências da Natureza": "from-green-500/10 to-emerald-500/10",
-    "Ciências Humanas": "from-amber-500/10 to-orange-500/10",
+    Linguagens: "from-primary/10 to-cta/10",
+    Matemática: "from-info/10 to-primary/10",
+    "Ciências da Natureza": "from-success/10 to-info/10",
+    "Ciências Humanas": "from-warning/10 to-cta/10",
   };
 
-  return colors[area] || "from-gray-500/10 to-slate-500/10";
+  return colors[area] || "from-muted-foreground/10 to-primary/10";
 };
 
 // Função para ícone da área
@@ -135,7 +135,7 @@ export function SimpleQuestionCard({
         {!!question.qtdAnulacoes && (
           <span
             data-testid="selo-anulada"
-            className="inline-flex items-center gap-1 rounded-full border border-rose-300 bg-rose-50 px-2 py-0.5 text-xs font-semibold text-rose-800"
+            className="inline-flex items-center gap-1 rounded-full border border-destructive/40 bg-destructive-muted px-2 py-0.5 text-xs font-semibold text-destructive"
           >
             <XCircle className="h-3.5 w-3.5" aria-hidden />
             {seloDoBanco(question.qtdAnulacoes)}
@@ -165,8 +165,8 @@ export function SimpleQuestionCard({
             className="flex items-center gap-2 p-2 rounded-lg bg-white/50 backdrop-blur-sm
             group-hover:bg-white/70 transition-all duration-300"
           >
-            <div className="p-1.5 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/10">
-              <BookOpenIcon className="h-4 w-4 text-blue-600" />
+            <div className="p-1.5 rounded-full bg-gradient-to-br from-info/20 to-info/10">
+              <BookOpenIcon className="h-4 w-4 text-info" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs text-muted-foreground font-medium">Matéria</p>

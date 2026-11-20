@@ -73,7 +73,7 @@ export function ModalEscolhaAoSalvar({
           ⚠️ **O diff vem primeiro.** A pergunta abstrata vira concreta quando
           ela chega com o que mudou — e é o que sustenta o default proposto.
         */}
-        <p data-campos-alterados className="text-sm text-gray-600">
+        <p data-campos-alterados className="text-sm text-muted-foreground">
           Você alterou: <strong>{campos.join(" · ")}</strong>
         </p>
 
@@ -125,7 +125,7 @@ export function ModalEscolhaAoSalvar({
             type="button"
             data-cancelar
             onClick={onClose}
-            className="text-sm text-gray-600 underline underline-offset-2"
+            className="text-sm text-muted-foreground underline underline-offset-2"
           >
             Cancelar
           </button>
@@ -133,7 +133,7 @@ export function ModalEscolhaAoSalvar({
             type="button"
             data-confirmar
             onClick={() => onConfirmar(escolha)}
-            className="rounded-md bg-orange px-4 py-2 text-sm text-white"
+            className="rounded-md bg-cta px-4 py-2 text-sm text-white"
           >
             Salvar
           </button>
@@ -148,7 +148,7 @@ function ProvasDosDoisGrupos({ provas }: { provas: ProvaDaQuestao[] }) {
   const { recebem, mantem } = separarProvas(provas);
   if (recebem.length + mantem.length === 0) return null;
   return (
-    <details data-provas-da-versao className="mt-2 text-xs text-gray-600">
+    <details data-provas-da-versao className="mt-2 text-xs text-muted-foreground">
       <summary className="cursor-pointer">Ver as provas</summary>
       {recebem.length > 0 && (
         <p className="mt-1">

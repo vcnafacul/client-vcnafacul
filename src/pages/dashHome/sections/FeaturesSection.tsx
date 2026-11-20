@@ -156,7 +156,7 @@ export default function FeaturesSection() {
         </div>
       </div>
       <div className="flex justify-between items-center">
-        <span className="text-sm text-gray-600">
+        <span className="text-sm text-muted-foreground">
           {features.length} item(s)
         </span>
         <Button typeStyle="primary" size="small" onClick={openCreate}>

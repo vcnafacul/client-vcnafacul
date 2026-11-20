@@ -98,7 +98,7 @@ function ManagerFrente({
         <div className="flex justify-end">
           <Button
             variant="default"
-            className="bg-orange hover:bg-orange/80"
+            className="bg-cta hover:bg-cta/80"
             type="submit"
           >
             {frente ? "Salvar" : "Criar"}

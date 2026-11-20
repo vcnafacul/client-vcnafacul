@@ -30,7 +30,7 @@ export function PessoasDaDemanda({ pessoas }: { pessoas: PessoaDaDemanda[] }) {
           <li key={p.papel} className="flex items-center gap-2 min-w-0">
             <span
               aria-hidden
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-marine/10 text-[11px] font-bold text-marine"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-bold text-foreground"
             >
               {iniciais(p.nome || p.id)}
             </span>

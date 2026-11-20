@@ -34,11 +34,11 @@ const ICONE: Record<TipoDeEvento, ComponentType<{ className?: string }>> = {
 };
 
 const COR: Partial<Record<TipoDeEvento, string>> = {
-  aprovada: "bg-emerald-100 text-emerald-800",
-  proposta_aprovada: "bg-emerald-100 text-emerald-800",
-  rejeitada: "bg-rose-100 text-rose-800",
-  proposta_recusada: "bg-rose-100 text-rose-800",
-  resetada: "bg-amber-100 text-amber-800",
+  aprovada: "bg-success-muted text-success",
+  proposta_aprovada: "bg-success-muted text-success",
+  rejeitada: "bg-destructive-muted text-destructive",
+  proposta_recusada: "bg-destructive-muted text-destructive",
+  resetada: "bg-warning-muted text-warning",
 };
 
 interface Props {
@@ -111,7 +111,7 @@ export function AbaHistorico({
             )}
             <span
               aria-hidden
-              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${COR[e.tipo] ?? "bg-marine/10 text-marine"}`}
+              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${COR[e.tipo] ?? "bg-primary/10 text-foreground"}`}
             >
               <Icone className="h-4 w-4" />
             </span>

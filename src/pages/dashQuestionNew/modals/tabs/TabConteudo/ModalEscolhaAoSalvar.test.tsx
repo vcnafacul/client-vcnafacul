@@ -119,7 +119,7 @@ describe("ModalEscolhaAoSalvar (card 27)", () => {
     const { container } = montar();
 
     const cancelar = container.querySelector("[data-cancelar]")!;
-    expect(cancelar.className).not.toContain("bg-orange");
+    expect(cancelar.className).not.toContain("bg-cta");
     expect(cancelar.tagName).toBe("BUTTON");
   });
 

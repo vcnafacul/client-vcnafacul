@@ -486,12 +486,12 @@ function DashProva() {
   ];
 
   const GabaritoCheckbox = (
-    <label className="flex items-center gap-2 text-sm font-medium text-marine cursor-pointer select-none">
+    <label className="flex items-center gap-2 text-sm font-medium text-foreground cursor-pointer select-none">
       <input
         type="checkbox"
         checked={gabaritoOnly}
         onChange={(e) => setGabaritoOnly(e.target.checked)}
-        className="w-4 h-4 accent-marine cursor-pointer"
+        className="w-4 h-4 accent-primary cursor-pointer"
       />
       Só com gabarito
     </label>

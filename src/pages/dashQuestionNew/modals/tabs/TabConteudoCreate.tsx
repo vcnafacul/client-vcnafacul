@@ -34,12 +34,12 @@ export function TabConteudoCreate({
         <CardContent className="space-y-4">
           {/* Texto da Questão — editor grande */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-600">
+            <label className="text-sm font-semibold text-muted-foreground">
               Texto da Questão *
             </label>
             <Suspense
               fallback={
-                <div className="h-[300px] bg-gray-100 animate-pulse rounded-md" />
+                <div className="h-[300px] bg-muted animate-pulse rounded-md" />
               }
             >
               <RichTextEditor
@@ -54,7 +54,7 @@ export function TabConteudoCreate({
               />
             </Suspense>
             {errors.textoQuestao && (
-              <p className="text-sm text-red-600 flex items-center gap-1">
+              <p className="text-sm text-destructive flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
                 {errors.textoQuestao}
               </p>
@@ -63,12 +63,12 @@ export function TabConteudoCreate({
 
           {/* Pergunta */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-600">
+            <label className="text-sm font-semibold text-muted-foreground">
               Pergunta (opcional)
             </label>
             <Suspense
               fallback={
-                <div className="h-[60px] bg-gray-100 animate-pulse rounded-md" />
+                <div className="h-[60px] bg-muted animate-pulse rounded-md" />
               }
             >
               <RichTextEditor
@@ -81,7 +81,7 @@ export function TabConteudoCreate({
                 token={token}
               />
             </Suspense>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               Caso a questão tenha uma pergunta específica após o enunciado
             </p>
           </div>
@@ -89,8 +89,8 @@ export function TabConteudoCreate({
       </Card>
 
       {/* Dica */}
-      <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <p className="text-sm text-blue-800">
+      <div className="p-4 bg-info-muted border border-info/30 rounded-lg">
+        <p className="text-sm text-info">
           <span className="font-semibold">Dica:</span> Use a barra de
           ferramentas para formatar texto, inserir fórmulas LaTeX e imagens.
         </p>

@@ -214,7 +214,7 @@ function ModalEditDashGeo({
           alt="novo"
           icon={leaflet.divIcon({
             className: "w-8 h-8",
-            html: renderToStaticMarkup(<PointIcon className="fill-red h-8" />),
+            html: renderToStaticMarkup(<PointIcon className="fill-destructive h-8" />),
             iconAnchor: [16, 32], // <-- Aqui está o ajuste
           })}
         ></Marker>
@@ -364,7 +364,7 @@ function ModalEditDashGeo({
         <div className="w-full flex flex-col gap-4">
           <Text size="secondary">Endereço do Cursinho</Text>
           <MapBox
-            className="h-80 sm:h-[100vh] sm:max-h-[530px] w-full border border-gray-300 z-0"
+            className="h-80 sm:h-[100vh] sm:max-h-[530px] w-full border border-border z-0"
             zoom={14}
             center={[selectedPosition[0], selectedPosition[1]]}
             markers={[]}
@@ -381,7 +381,7 @@ function ModalEditDashGeo({
             </div>
             <button
               type="submit"
-              className="mt-2 self-end px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+              className="mt-2 self-end px-6 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition"
             >
               Salvar
             </button>

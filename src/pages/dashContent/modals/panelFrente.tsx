@@ -102,7 +102,7 @@ export function PanelFrente({
     // No celular sem altura fixa: rolagem dentro de rolagem, e a lista em cards.
     <div className="flex flex-col sm:h-[500px] sm:overflow-y-scroll scrollbar-hide select-none">
       <div className="flex flex-wrap justify-between items-center gap-2 mb-2">
-        <h3 className="text-lg font-semibold text-gray-700">Frentes</h3>
+        <h3 className="text-lg font-semibold text-foreground">Frentes</h3>
         {manager && (
           <Button
             onClick={() => {
@@ -117,7 +117,7 @@ export function PanelFrente({
 
       {!acimaDeSm ? (
         frentes.length === 0 ? (
-          <p className="py-6 text-center text-sm text-gray-500">
+          <p className="py-6 text-center text-sm text-muted-foreground">
             Nenhuma frente cadastrada para esta matéria
           </p>
         ) : (
@@ -239,7 +239,7 @@ export function PanelFrente({
           }}
           className="bg-white p-8 rounded-md"
         >
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Tem certeza que deseja excluir a frente &quot;{frenteSelected.nome}
             &quot;?
           </p>

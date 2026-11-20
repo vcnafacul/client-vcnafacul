@@ -369,14 +369,14 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
     >
       <div className="flex flex-col gap-6">
         {/* Tabs */}
-        <div className="flex border-b border-gray-200">
+        <div className="flex border-b border-border">
           <button
             type="button"
             onClick={() => setActiveTab("materias")}
             className={`px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === "materias"
-                ? "border-b-2 border-orange text-orange"
-                : "text-gray-500 hover:text-gray-700"
+                ? "border-b-2 border-cta text-foreground font-semibold"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Matérias
@@ -386,8 +386,8 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
             onClick={() => setActiveTab("frentes")}
             className={`px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === "frentes"
-                ? "border-b-2 border-orange text-orange"
-                : "text-gray-500 hover:text-gray-700"
+                ? "border-b-2 border-cta text-foreground font-semibold"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             Frentes
@@ -395,7 +395,7 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
         </div>
 
         {loading ? (
-          <span className="text-gray-500">Carregando matérias...</span>
+          <span className="text-muted-foreground">Carregando matérias...</span>
         ) : activeTab === "frentes" ? (
           <>
             <InputFactory

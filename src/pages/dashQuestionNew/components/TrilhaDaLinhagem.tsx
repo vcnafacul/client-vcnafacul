@@ -22,7 +22,7 @@ export function TrilhaDaLinhagem({
     <nav
       data-trilha
       aria-label="Trilha da linhagem"
-      className="flex flex-wrap items-center gap-1 text-xs text-gray-600"
+      className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground"
     >
       {trilha.map((id, i) => {
         const ultima = i === trilha.length - 1;
@@ -30,7 +30,7 @@ export function TrilhaDaLinhagem({
           <span key={id} className="flex items-center gap-1">
             {i > 0 && <span aria-hidden>›</span>}
             {ultima ? (
-              <span aria-current="page" className="font-semibold text-gray-900">
+              <span aria-current="page" className="font-semibold text-foreground">
                 Questão {id.slice(-6)}
               </span>
             ) : (

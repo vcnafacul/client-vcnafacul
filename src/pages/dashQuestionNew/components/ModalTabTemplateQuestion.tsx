@@ -146,7 +146,7 @@ function ModalContent({
               type="button"
               aria-label="Fechar"
               onClick={onClose}
-              className="shrink-0 rounded text-gray-500 hover:text-gray-700 transition"
+              className="shrink-0 rounded text-muted-foreground hover:text-foreground transition"
             >
               <IoMdClose className="w-6 h-6" />
             </button>

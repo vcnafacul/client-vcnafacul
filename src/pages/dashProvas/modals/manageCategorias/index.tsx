@@ -146,10 +146,10 @@ function ManageCategorias({
       {view === "lista" && (
         <div className="flex min-h-0 flex-1 flex-col p-6">
           <div className="mb-6 flex shrink-0 items-center gap-3">
-            <div className="rounded-lg bg-blue-100 p-2">
-              <Cog6ToothIcon className="h-6 w-6 text-blue-600" />
+            <div className="rounded-lg bg-info-muted p-2">
+              <Cog6ToothIcon className="h-6 w-6 text-info" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold text-foreground">
               Gerenciar Categorias
             </h2>
           </div>
@@ -167,7 +167,7 @@ function ManageCategorias({
               value={busca}
               placeholder="Buscar por nome"
               onChange={(e) => setBusca(e.target.value)}
-              className="w-full sm:w-64 rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full sm:w-64 rounded-md border border-border px-3 py-2 text-sm"
             />
           </div>
 
@@ -176,7 +176,7 @@ function ManageCategorias({
             className="-mr-2 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-2"
           >
             {categoriasFiltradas.length === 0 && (
-              <p className="py-8 text-center text-sm text-gray-500">
+              <p className="py-8 text-center text-sm text-muted-foreground">
                 Nenhuma categoria encontrada.
               </p>
             )}
@@ -201,23 +201,23 @@ function ManageCategorias({
               return (
                 <div
                   key={c._id}
-                  className="flex items-start justify-between gap-3 rounded-lg border border-gray-200 p-4"
+                  className="flex items-start justify-between gap-3 rounded-lg border border-border p-4"
                 >
                   <div className="flex flex-col gap-1">
-                    <span className="font-semibold text-gray-900">
+                    <span className="font-semibold text-foreground">
                       {c.nome}
                     </span>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-muted-foreground">
                       Exame: {c.exame?.nome ?? "—"} · {qtd} · {c.duracao} min ·{" "}
                       {c.selecionavel ? "Selecionável" : "Uso interno"}
                     </span>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-muted-foreground">
                       {emUso
                         ? `${c.simuladosCount} simulados · ${c.provasCount} provas em uso`
                         : "Sem simulados/provas em uso"}
                     </span>
                     {protegida && (
-                      <span className="text-xs font-medium text-amber-600">
+                      <span className="text-xs font-medium text-warning">
                         {compartilhada
                           ? `🔒 ${TEXTO_COMPARTILHADA}`
                           : "🔒 Categoria seedada"}
@@ -229,7 +229,7 @@ function ManageCategorias({
                     disabled={desabilitada}
                     title={tooltip}
                     onClick={() => abrirExcluir(c)}
-                    className="text-gray-400 enabled:hover:text-red disabled:cursor-not-allowed disabled:opacity-40"
+                    className="text-muted-foreground enabled:hover:text-destructive disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     <TrashIcon className="h-5 w-5" />
                   </button>

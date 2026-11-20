@@ -16,8 +16,8 @@ export function TemaSemana() {
   if (error || (!isLoading && !theme)) return null;
 
   return (
-    <section className="flex flex-col rounded-2xl bg-marine p-5 text-white sm:p-6">
-      <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-green">
+    <section data-theme="marine" className="flex flex-col rounded-2xl bg-background p-5 text-foreground sm:p-6">
+      <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-highlight">
         <PenTool className="h-4 w-4" aria-hidden />
         Tema da semana
       </div>
@@ -31,12 +31,12 @@ export function TemaSemana() {
           <h2 className="mt-3 text-lg font-semibold leading-snug">
             {theme.title}
           </h2>
-          <p className="mb-5 mt-1 text-xs text-white/60">
+          <p className="mb-5 mt-1 text-xs text-muted-foreground">
             Até {formatDate(theme.weekEnd)}
           </p>
           <Link
             to={`${DASH}/${ESSAY_WRITE}`}
-            className="mt-auto inline-flex items-center self-start rounded-lg bg-green px-4 py-2 text-sm font-semibold text-marine transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+            className="mt-auto inline-flex items-center self-start rounded-lg bg-cta px-4 py-2 text-sm font-semibold text-cta-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             Escrever redação
           </Link>

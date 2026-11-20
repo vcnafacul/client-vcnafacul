@@ -26,7 +26,7 @@ export function OpcaoNovasVersoes({
   disabled?: boolean;
 }) {
   return (
-    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+    <div className="bg-page p-4 rounded-lg border border-border">
       <label className="flex items-start gap-3 cursor-pointer">
         <input
           type="checkbox"
@@ -36,21 +36,21 @@ export function OpcaoNovasVersoes({
           onChange={(e) => onChange(e.target.checked)}
         />
         <span>
-          <span className="text-sm font-semibold text-gray-900">
+          <span className="text-sm font-semibold text-foreground">
             {TEXTO_DA_OPCAO}
           </span>
           <span
             role="img"
             aria-label="Exemplo"
             title={EXEMPLO_DA_OPCAO}
-            className="ml-1 cursor-help text-gray-500"
+            className="ml-1 cursor-help text-muted-foreground"
           >
             ⓘ
           </span>
-          <span className="block text-xs text-gray-600 mt-1">
+          <span className="block text-xs text-muted-foreground mt-1">
             {EXPLICACAO_DA_OPCAO}
           </span>
-          <span className="block text-xs text-gray-600 mt-1">
+          <span className="block text-xs text-muted-foreground mt-1">
             {RECOMENDACAO_DA_OPCAO}
           </span>
         </span>

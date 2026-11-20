@@ -9,7 +9,7 @@ import { NovaNotificacao } from "./components/NovaNotificacao";
 export default function DashPush() {
   return (
     <div className="mx-auto max-w-5xl space-y-4 px-4 py-6 sm:px-6">
-      <h1 className="text-2xl font-bold text-marine">Notificações</h1>
+      <h1 className="text-2xl font-bold text-foreground">Notificações</h1>
       <Tabs defaultValue="nova">
         <TabsList>
           <TabsTrigger value="nova">Nova notificação</TabsTrigger>

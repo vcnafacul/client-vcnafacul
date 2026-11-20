@@ -39,7 +39,7 @@ export default function SortableSupporterRow({
     >
       <button
         type="button"
-        className="cursor-grab active:cursor-grabbing touch-none px-2 py-2 text-gray-500"
+        className="cursor-grab active:cursor-grabbing touch-none px-2 py-2 text-muted-foreground"
         aria-label="Arrastar para reordenar"
         {...attributes}
         {...listeners}
@@ -53,13 +53,13 @@ export default function SortableSupporterRow({
           className="w-12 h-12 object-contain rounded bg-white"
         />
       ) : (
-        <div className="w-12 h-12 rounded bg-gray-200" />
+        <div className="w-12 h-12 rounded bg-muted" />
       )}
       <div className="flex-1 min-w-0 flex flex-col">
         <div className="flex items-center gap-2">
           <span className="font-medium truncate">{supporter.name}</span>
           {!supporter.active && (
-            <span className="text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded">
+            <span className="text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded">
               inativo
             </span>
           )}
@@ -68,7 +68,7 @@ export default function SortableSupporterRow({
           href={supporter.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-gray-500 truncate hover:underline"
+          className="text-xs text-muted-foreground truncate hover:underline"
           title={supporter.link}
         >
           {supporter.link}
@@ -77,21 +77,21 @@ export default function SortableSupporterRow({
       <div className="flex w-full justify-end gap-4 sm:w-auto sm:gap-3">
         <button
           type="button"
-          className="text-sm text-blue-600 hover:underline"
+          className="text-sm text-primary hover:underline"
           onClick={() => onEdit(supporter)}
         >
           Editar
         </button>
         <button
           type="button"
-          className={`text-sm hover:underline ${supporter.active ? "text-yellow-600" : "text-green-600"}`}
+          className={`text-sm hover:underline ${supporter.active ? "text-warning" : "text-success"}`}
           onClick={() => onToggleActive(supporter)}
         >
           {supporter.active ? "Inativar" : "Ativar"}
         </button>
         <button
           type="button"
-          className="text-sm text-red-600 hover:underline"
+          className="text-sm text-destructive hover:underline"
           onClick={() => onDelete(supporter)}
         >
           Excluir

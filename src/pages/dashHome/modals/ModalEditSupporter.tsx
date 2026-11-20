@@ -196,13 +196,13 @@ export default function ModalEditSupporter({
           <span
             className={`text-xs ${
               description.length >= DESCRIPTION_MAX
-                ? "text-red-600"
-                : "text-gray-500"
+                ? "text-destructive"
+                : "text-muted-foreground"
             }`}
           >
             {description.length}/{DESCRIPTION_MAX}
           </span>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-muted-foreground">
             Se vazio, clique no logo abre o site direto.
           </span>
         </label>
@@ -218,7 +218,7 @@ export default function ModalEditSupporter({
             />
           )}
           {file && (
-            <span className="text-xs text-green-700">
+            <span className="text-xs text-success">
               Logo recortado pronto para upload.
             </span>
           )}
@@ -233,7 +233,7 @@ export default function ModalEditSupporter({
               }
             }}
           />
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-muted-foreground">
             Escolha a proporção desejada no editor (ou "Original" para manter a forma da imagem). Salvo como PNG — fundo transparente é preservado.
           </span>
         </div>

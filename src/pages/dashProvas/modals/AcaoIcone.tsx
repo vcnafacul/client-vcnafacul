@@ -77,7 +77,7 @@ export function AcaoIcone({
                 )
               : cn(
                   dashV2.text.secondary,
-                  "hover:bg-backgroundGrey hover:text-marine",
+                  "hover:bg-page hover:text-foreground",
                 ),
           )}
         >

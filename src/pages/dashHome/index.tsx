@@ -8,7 +8,7 @@ function DashHome() {
     <div className="p-6 max-w-4xl mx-auto flex flex-col gap-6">
       <h1 className="text-2xl font-bold">Conteúdo da Home</h1>
       <Tabs defaultValue="about" className="w-full">
-        <TabsList className="w-full justify-start h-auto flex-wrap bg-gray-100 p-1">
+        <TabsList className="w-full justify-start h-auto flex-wrap bg-muted p-1">
           <TabsTrigger value="about">Quem Somos</TabsTrigger>
           <TabsTrigger value="features">Futuro do Cursinho Popular</TabsTrigger>
           <TabsTrigger value="supporters">Apoiadores</TabsTrigger>

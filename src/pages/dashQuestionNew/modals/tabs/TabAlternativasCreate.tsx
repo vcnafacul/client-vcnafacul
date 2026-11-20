@@ -49,13 +49,13 @@ export function TabAlternativasCreate({
                 key={alt.letra}
                 className={`p-4 rounded-lg border-2 transition-all ${
                   isCorreta
-                    ? "bg-green-50 border-green-400 shadow-sm"
-                    : "bg-gray-50 border-gray-200"
+                    ? "bg-success-muted border-success shadow-sm"
+                    : "bg-page border-border"
                 }`}
               >
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-lg text-gray-700 min-w-[24px]">
+                    <span className="font-bold text-lg text-foreground min-w-[24px]">
                       {alt.letra})
                     </span>
                     <div className="flex items-center gap-2">
@@ -67,11 +67,11 @@ export function TabAlternativasCreate({
                         onChange={(e) =>
                           onChange("alternativa", e.target.value)
                         }
-                        className="w-4 h-4 text-primary focus:ring-primary cursor-pointer"
+                        className="w-4 h-4 text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer"
                       />
                       <Label
                         htmlFor={`radio-create-${alt.letra}`}
-                        className="text-sm text-gray-600 cursor-pointer"
+                        className="text-sm text-muted-foreground cursor-pointer"
                       >
                         Correta
                       </Label>
@@ -79,7 +79,7 @@ export function TabAlternativasCreate({
                   </div>
                   <Suspense
                     fallback={
-                      <div className="h-[60px] bg-gray-100 animate-pulse rounded-md" />
+                      <div className="h-[60px] bg-muted animate-pulse rounded-md" />
                     }
                   >
                     <RichTextEditor
@@ -94,7 +94,7 @@ export function TabAlternativasCreate({
                     />
                   </Suspense>
                   {errors[alt.campo] && (
-                    <p className="text-sm text-red-600 flex items-center gap-1">
+                    <p className="text-sm text-destructive flex items-center gap-1">
                       <AlertCircle className="h-3 w-3" />
                       {errors[alt.campo]}
                     </p>
@@ -105,8 +105,8 @@ export function TabAlternativasCreate({
           })}
 
           {errors.alternativa && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm text-red-600 flex items-center gap-2">
+            <div className="p-3 bg-destructive-muted border border-destructive rounded-md">
+              <p className="text-sm text-destructive flex items-center gap-2">
                 <AlertCircle className="h-4 w-4" />
                 {errors.alternativa}
               </p>
@@ -117,22 +117,22 @@ export function TabAlternativasCreate({
 
       {/* Resposta Correta Preview */}
       {formData.alternativa && (
-        <Card className="bg-green-50 border-green-200">
+        <Card className="bg-success-muted border-success">
           <CardHeader>
-            <CardTitle className="text-lg text-green-800">
+            <CardTitle className="text-lg text-success">
               Resposta Correta Selecionada
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-green-600 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-success flex items-center justify-center">
                 <span className="text-white text-2xl font-bold">
                   {formData.alternativa}
                 </span>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Alternativa correta</p>
-                <p className="text-lg font-semibold text-green-800">
+                <p className="text-sm text-muted-foreground">Alternativa correta</p>
+                <p className="text-lg font-semibold text-success">
                   Opção {formData.alternativa}
                 </p>
               </div>

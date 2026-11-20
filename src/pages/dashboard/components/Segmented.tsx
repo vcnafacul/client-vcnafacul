@@ -18,7 +18,7 @@ export function Segmented<T extends string>({
     <div
       role="group"
       aria-label={label}
-      className="inline-flex rounded-lg bg-slate-100 p-0.5"
+      className="inline-flex rounded-lg bg-muted p-0.5"
     >
       {options.map((o) => (
         <button
@@ -27,10 +27,10 @@ export function Segmented<T extends string>({
           aria-pressed={value === o.value}
           onClick={() => onChange(o.value)}
           className={cn(
-            'rounded-md px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marine/40',
+            'rounded-md px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
             value === o.value
-              ? 'bg-white text-marine shadow-sm'
-              : 'text-slate-500 hover:text-marine',
+              ? 'bg-white text-foreground shadow-sm'
+              : 'text-muted-foreground hover:text-foreground',
           )}
         >
           {o.label}

@@ -29,12 +29,12 @@ const TIPOS: { valor: TipoDePublico; rotulo: string }[] = [
 ];
 
 const campo =
-  "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-marine/40";
+  "w-full rounded-lg border border-border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
 function Contador({ atual, limite }: { atual: number; limite: number }) {
   return (
     <span
-      className={atual > limite ? "text-red-600" : "text-slate-400"}
+      className={atual > limite ? "text-destructive" : "text-muted-foreground"}
       aria-live="polite"
     >
       {atual}/{limite}
@@ -72,7 +72,7 @@ export function NovaNotificacao() {
   };
   const mostrarErro = (k: keyof Rascunho) =>
     tentouEnviar && erros[k] ? (
-      <p className="text-xs text-red-600">{erros[k]}</p>
+      <p className="text-xs text-destructive">{erros[k]}</p>
     ) : null;
 
   const conferir = async () => {
@@ -215,7 +215,7 @@ export function NovaNotificacao() {
             <div
               role="group"
               aria-label="Funções"
-              className="max-h-48 space-y-1 overflow-y-auto rounded-lg border border-slate-200 p-3"
+              className="max-h-48 space-y-1 overflow-y-auto rounded-lg border border-border p-3"
             >
               {funcoes.map((f) => (
                 <label key={f.id} className="flex items-center gap-2 text-sm">
@@ -246,7 +246,7 @@ export function NovaNotificacao() {
         </fieldset>
 
         {alcance && (
-          <p role="status" className="text-sm text-marine">
+          <p role="status" className="text-sm text-foreground">
             Vai chegar em{" "}
             <strong>{alcance.pessoas ?? alcance.targetUsers} pessoas</strong> na
             central do app; {alcance.targetUsers} delas com push (
@@ -254,7 +254,7 @@ export function NovaNotificacao() {
           </p>
         )}
         {erroDaApi && (
-          <p role="alert" className="text-sm text-red-600">
+          <p role="alert" className="text-sm text-destructive">
             {erroDaApi}
           </p>
         )}
@@ -272,7 +272,7 @@ export function NovaNotificacao() {
           <div
             role="region"
             aria-label="Confirmar envio"
-            className="space-y-3 rounded-xl border border-orange/40 bg-orange/5 p-4"
+            className="space-y-3 rounded-xl border border-cta/40 bg-cta/5 p-4"
           >
             <p className="text-sm">
               Enviar "<strong>{r.title.trim()}</strong>" para{" "}
@@ -308,7 +308,7 @@ export function NovaNotificacao() {
       </div>
 
       <aside className="space-y-2">
-        <p className="text-sm font-medium text-slate-600">Pré-visualização</p>
+        <p className="text-sm font-medium text-muted-foreground">Pré-visualização</p>
         <PreviewDaNotificacao title={r.title.trim()} body={r.body.trim()} />
       </aside>
     </div>

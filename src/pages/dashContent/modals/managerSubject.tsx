@@ -113,7 +113,7 @@ function ManagerSubject({
         <div className="flex justify-end gap-4">
           <Button
             variant="default"
-            className="bg-orange hover:bg-orange/80"
+            className="bg-cta hover:bg-cta/80"
             type="submit"
           >
             {subject ? "Salvar" : "Criar"}

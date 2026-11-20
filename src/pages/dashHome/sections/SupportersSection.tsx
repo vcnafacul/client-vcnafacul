@@ -115,7 +115,7 @@ export default function SupportersSection() {
     <section className="flex flex-col gap-4 p-4 border rounded-lg bg-white">
       <h2 className="text-xl font-semibold">Apoiadores</h2>
       <div className="flex justify-between items-center">
-        <span className="text-sm text-gray-600">
+        <span className="text-sm text-muted-foreground">
           {supporters.filter((s) => s.active).length} ativo(s)
           {supporters.some((s) => !s.active) &&
             ` · ${supporters.filter((s) => !s.active).length} inativo(s)`}

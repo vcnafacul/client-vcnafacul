@@ -61,7 +61,7 @@ export function QuestionCard({ question, onClick }: QuestionCardProps) {
             question.alternativeClassfication ||
             question.reported) && (
             <div className="pt-2 border-t mt-2">
-              <p className="text-xs text-amber-600 font-medium">
+              <p className="text-xs text-warning font-medium">
                 ⚠️ Requer revisão
               </p>
             </div>

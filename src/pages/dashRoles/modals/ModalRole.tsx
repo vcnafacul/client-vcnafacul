@@ -10,6 +10,7 @@ import { PermissionType } from "@/dtos/roles/permissionHierarchy";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { PermissionGroupResponse } from "@/dtos/roles/permission";
+import { palette } from "@/lib/palette";
 
 interface ModalRoleProps {
   roles: Role[];
@@ -26,7 +27,7 @@ function PermissionReadonlyList({
 }) {
   if (!groups || groups.length === 0) {
     return (
-      <p className="text-sm text-gray-400 text-center py-4">
+      <p className="text-sm text-muted-foreground text-center py-4">
         Nenhuma permissão encontrada.
       </p>
     );
@@ -37,9 +38,9 @@ function PermissionReadonlyList({
       {groups.map((group) => (
         <div
           key={group.key}
-          className="rounded-xl border border-gray-200 bg-gray-50/50 p-4 flex flex-col gap-3"
+          className="rounded-xl border border-border bg-page/50 p-4 flex flex-col gap-3"
         >
-          <span className="text-sm font-semibold text-gray-700">
+          <span className="text-sm font-semibold text-foreground">
             {group.label}
           </span>
           <div className="flex flex-wrap gap-2">
@@ -131,17 +132,17 @@ function ModalRole({
       <div className="w-full flex flex-col gap-5 max-h-[80vh]">
         {/* Header */}
         <div>
-          <Text size="secondary" className="font-bold text-marine">
+          <Text size="secondary" className="font-bold text-foreground">
             Permissões do Usuário
           </Text>
-          <p className="text-sm text-gray-400 mt-0.5">
+          <p className="text-sm text-muted-foreground mt-0.5">
             Visualize ou altere o perfil atribuído a este usuário.
           </p>
         </div>
 
         {/* Role selector */}
         <label className="flex flex-col gap-1">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
             Perfil
           </span>
 
@@ -152,30 +153,30 @@ function ModalRole({
               setState={setNewRole}
             />
           ) : (
-            <div className="text-sm font-semibold text-marine px-3 py-2 rounded-lg border border-gray-200 bg-gray-50">
+            <div className="text-sm font-semibold text-foreground px-3 py-2 rounded-lg border border-border bg-page">
               {selectedRoleName}
             </div>
           )}
         </label>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center gap-4 text-xs text-gray-400">
+        <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <span
               className="w-3 h-3 rounded-full inline-block"
-              style={{ background: "#f97316" }}
+              style={{ background: palette.orange[600] }}
             />
             Cursinho habilitado
           </span>
           <span className="flex items-center gap-1.5">
             <span
               className="w-3 h-3 rounded-full inline-block"
-              style={{ background: "#3b82f6" }}
+              style={{ background: palette.blue[500] }}
             />
             Projeto habilitado
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full border border-gray-300 inline-block" />
+            <span className="w-3 h-3 rounded-full border border-border inline-block" />
             Desabilitado
           </span>
         </div>
@@ -185,14 +186,14 @@ function ModalRole({
           {roleInfo ? (
             <PermissionReadonlyList groups={roleInfo} />
           ) : (
-            <p className="text-sm text-gray-400 text-center py-4">
+            <p className="text-sm text-muted-foreground text-center py-4">
               Carregando...
             </p>
           )}
         </div>
 
         {/* Actions */}
-        <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
+        <div className="flex justify-end gap-3 pt-2 border-t border-border">
           {isEditing ? (
             <>
               <Button typeStyle="primary" onClick={cancelEdit}>

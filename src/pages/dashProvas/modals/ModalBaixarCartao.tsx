@@ -35,7 +35,7 @@ export function ModalBaixarCartao({
     <AlertDialog open={aberto} onOpenChange={(v) => !v && onFechar()}>
       <AlertDialogContent className="w-[calc(100%-2rem)] max-w-lg rounded-lg">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-marine">
+          <AlertDialogTitle className="text-foreground">
             Cartão de resposta
           </AlertDialogTitle>
           <AlertDialogDescription>
@@ -44,11 +44,11 @@ export function ModalBaixarCartao({
         </AlertDialogHeader>
         <OrientacoesDoCartao />
         <AlertDialogFooter className="gap-2 sm:gap-0">
-          <AlertDialogCancel className="border border-orange text-orange hover:bg-orange hover:border-orange/20 hover:text-white">
+          <AlertDialogCancel className="border border-cta text-foreground hover:bg-cta hover:border-cta/20 hover:text-cta-foreground">
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction
-            className="bg-orange text-white hover:bg-orange/80"
+            className="bg-cta text-white hover:bg-cta/80"
             onClick={onBaixar}
           >
             {TEXTO_BAIXAR_CARTAO}

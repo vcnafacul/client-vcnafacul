@@ -63,12 +63,12 @@ export function TabConteudo({
           <div className="flex flex-wrap items-center gap-3">
             <CardTitle className="text-lg">Enunciado da Questão</CardTitle>
             {isEditing && (
-              <span className="text-sm font-normal text-blue-600 bg-blue-50 px-2 py-1 rounded">
+              <span className="text-sm font-normal text-info bg-info-muted px-2 py-1 rounded">
                 Modo Edição
               </span>
             )}
             {isDirty && !isEditing && (
-              <span className="text-sm font-normal text-amber-600 bg-amber-50 px-2 py-1 rounded">
+              <span className="text-sm font-normal text-warning bg-warning-muted px-2 py-1 rounded">
                 Alterações não salvas
               </span>
             )}
@@ -85,11 +85,11 @@ export function TabConteudo({
         <CardContent className="space-y-4">
           {/* Texto da Questão — editor grande */}
           <div id={ancoraDoCampo("textoQuestao")} className="space-y-2 scroll-mt-28">
-            <label className="text-sm font-semibold text-gray-600">
+            <label className="text-sm font-semibold text-muted-foreground">
               Texto da Questão *
             </label>
             {!isEditing ? (
-              <div className="p-4 bg-gray-50 rounded-md border border-gray-200 min-h-[200px]">
+              <div className="p-4 bg-page rounded-md border border-border min-h-[200px]">
                 <RichTextRenderer
                   content={textoQuestao || ""}
                   contentFormat={contentFormat}
@@ -99,7 +99,7 @@ export function TabConteudo({
             ) : (
               <Suspense
                 fallback={
-                  <div className="h-[300px] bg-gray-100 animate-pulse rounded-md" />
+                  <div className="h-[300px] bg-muted animate-pulse rounded-md" />
                 }
               >
                 <Controller
@@ -121,7 +121,7 @@ export function TabConteudo({
               </Suspense>
             )}
             {errors.textoQuestao && (
-              <p className="text-sm text-rose-700 flex items-center gap-1">
+              <p className="text-sm text-destructive flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
                 {errors.textoQuestao.message}
               </p>
@@ -130,12 +130,12 @@ export function TabConteudo({
 
           {/* Pergunta (opcional) */}
           <div id={ancoraDoCampo("pergunta")} className="space-y-2 scroll-mt-28">
-            <label className="text-sm font-semibold text-gray-600">
+            <label className="text-sm font-semibold text-muted-foreground">
               Pergunta (opcional)
             </label>
             {!isEditing ? (
               pergunta ? (
-                <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
+                <div className="p-3 bg-page rounded-md border border-border">
                   <RichTextRenderer
                     content={pergunta}
                     contentFormat={contentFormat}
@@ -143,14 +143,14 @@ export function TabConteudo({
                   />
                 </div>
               ) : (
-                <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
-                  <p className="text-base text-gray-400">Não definida</p>
+                <div className="p-3 bg-page rounded-md border border-border">
+                  <p className="text-base text-muted-foreground">Não definida</p>
                 </div>
               )
             ) : (
               <Suspense
                 fallback={
-                  <div className="h-[60px] bg-gray-100 animate-pulse rounded-md" />
+                  <div className="h-[60px] bg-muted animate-pulse rounded-md" />
                 }
               >
                 <Controller
@@ -172,7 +172,7 @@ export function TabConteudo({
               </Suspense>
             )}
             {errors.pergunta && (
-              <p className="text-sm text-rose-700 flex items-center gap-1">
+              <p className="text-sm text-destructive flex items-center gap-1">
                 <AlertCircle className="h-3 w-3" />
                 {errors.pergunta.message}
               </p>
@@ -188,7 +188,7 @@ export function TabConteudo({
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-md">
+            <div className="flex items-center gap-3 p-3 bg-page rounded-md">
               <Controller
                 name="textClassification"
                 control={control}
@@ -203,7 +203,7 @@ export function TabConteudo({
               <span className="text-sm">Texto da Questão/Alternativas</span>
             </div>
 
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-md">
+            <div className="flex items-center gap-3 p-3 bg-page rounded-md">
               <Controller
                 name="alternativeClassfication"
                 control={control}
@@ -223,12 +223,12 @@ export function TabConteudo({
 
       {/* Barra de Ações */}
       {isEditing && (
-        <Card className="bg-blue-50 border-blue-200">
+        <Card className="bg-info-muted border-info/30">
           <CardContent className="p-4">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex-1 min-w-[12rem]">
                 {isDirty && (
-                  <p className="text-sm text-amber-600 font-medium flex items-center gap-2">
+                  <p className="text-sm text-warning font-medium flex items-center gap-2">
                     <AlertCircle className="h-4 w-4" />
                     Você tem alterações não salvas
                   </p>

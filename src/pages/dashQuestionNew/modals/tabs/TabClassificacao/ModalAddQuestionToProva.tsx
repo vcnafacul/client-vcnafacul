@@ -78,7 +78,7 @@ export function ModalAddQuestionToProva({
         <h3 className="text-lg font-bold">Adicionar em uma prova</h3>
 
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-600">Prova</label>
+          <label className="text-sm font-semibold text-muted-foreground">Prova</label>
           <input
             type="text"
             value={busca}
@@ -107,8 +107,8 @@ export function ModalAddQuestionToProva({
                     recusa ? `Esta prova não aceita questão de ${enemArea}` : undefined
                   }
                   onClick={() => setProvaId(p._id)}
-                  className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400 disabled:hover:bg-transparent ${
-                    provaId === p._id ? "bg-blue-50 font-medium" : ""
+                  className={`w-full text-left px-3 py-2 text-sm hover:bg-muted disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:bg-transparent ${
+                    provaId === p._id ? "bg-info-muted font-medium" : ""
                   }`}
                 >
                   {p.nome}
@@ -119,7 +119,7 @@ export function ModalAddQuestionToProva({
               );
             })}
             {provasDisponiveis.length === 0 && (
-              <p className="px-3 py-2 text-sm text-gray-400">
+              <p className="px-3 py-2 text-sm text-muted-foreground">
                 Nenhuma prova disponível
               </p>
             )}
@@ -128,9 +128,9 @@ export function ModalAddQuestionToProva({
 
         {provaId && (
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-600">Número</label>
+            <label className="text-sm font-semibold text-muted-foreground">Número</label>
             {loadingNumeros ? (
-              <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" /> Carregando números...
               </div>
             ) : (

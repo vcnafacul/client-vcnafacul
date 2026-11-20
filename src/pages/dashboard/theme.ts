@@ -1,14 +1,16 @@
+import { palette } from '@/lib/palette';
+
 /**
- * Cores dos gráficos, tiradas da paleta do `tailwind.config.js` (marine,
- * green, orange). Recharts pinta SVG com atributo, então precisa do valor e
- * não da classe Tailwind.
+ * Cores dos gráficos, tiradas da paleta (`src/lib/palette.ts`). Recharts pinta
+ * SVG com atributo, então precisa do valor e não da classe Tailwind. Todas
+ * passam de 3:1 sobre branco (o eixo, que é texto, passa de 4,5:1).
  */
 export const chartColors = {
-  primary: '#0B2747',
-  accent: '#37D6B5',
-  warn: '#FF7600',
-  danger: '#F43535',
-  grid: '#E2E8F0',
-  axis: '#94A3B8',
-  track: '#EEF2F6',
+  primary: palette.marine[900],
+  accent: palette.mint[600],
+  warn: palette.orange[600],
+  danger: palette.red[600],
+  grid: palette.neutral[200],
+  axis: palette.neutral[500],
+  track: palette.neutral[100],
 };

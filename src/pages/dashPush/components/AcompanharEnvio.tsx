@@ -37,20 +37,20 @@ export function AcompanharEnvio({ id }: { id: string }) {
 
   if (erro)
     return (
-      <p role="alert" className="text-sm text-red-600">
+      <p role="alert" className="text-sm text-destructive">
         {erro}
       </p>
     );
   if (!envio || envio.status === "sending") {
     return (
-      <p role="status" className="text-sm text-slate-600">
+      <p role="status" className="text-sm text-muted-foreground">
         Enviando…
       </p>
     );
   }
   if (envio.status === "failed") {
     return (
-      <p role="alert" className="text-sm text-red-600">
+      <p role="alert" className="text-sm text-destructive">
         O envio falhou. Tente de novo em alguns minutos.
       </p>
     );
@@ -60,7 +60,7 @@ export function AcompanharEnvio({ id }: { id: string }) {
   return (
     <div role="status" className="space-y-1 text-sm">
       <p
-        className={`font-semibold ${ninguem ? "text-orange" : "text-green-700"}`}
+        className={`font-semibold ${ninguem ? "text-warning" : "text-success"}`}
       >
         {ninguem ? "⚠️" : "✅"} {envio.successCount} entregues ao FCM ·{" "}
         {envio.failureCount} falharam
@@ -75,12 +75,12 @@ export function AcompanharEnvio({ id }: { id: string }) {
         </ul>
       )}
       {envio.pessoas !== undefined && envio.pessoas > 0 && (
-        <p className="text-sm text-marine">
+        <p className="text-sm text-foreground">
           👀 {envio.leram ?? 0} de {envio.pessoas} leram na central do app.
         </p>
       )}
       {/* ⚠️ Texto visível, não tooltip: não é taxa de abertura. */}
-      <p className="text-xs text-slate-500">
+      <p className="text-xs text-muted-foreground">
         "Entregue ao FCM" quer dizer que o Google aceitou o envio — não que a
         pessoa viu ou abriu a notificação.
       </p>

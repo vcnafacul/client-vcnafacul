@@ -25,10 +25,10 @@ interface ModalDoUsuarioProps {
 function Campo({ nome, valor }: { nome: string; valor: React.ReactNode }) {
   return (
     <div className="flex flex-col">
-      <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+      <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         {nome}
       </span>
-      <span className="text-sm text-marine break-words">{valor || "—"}</span>
+      <span className="text-sm text-foreground break-words">{valor || "—"}</span>
     </div>
   );
 }
@@ -45,16 +45,16 @@ function Secao({
   return (
     <section
       data-secao={id}
-      className="flex flex-col gap-3 rounded-xl border border-gray-200 p-4"
+      className="flex flex-col gap-3 rounded-xl border border-border p-4"
     >
-      <h3 className="text-sm font-bold text-marine">{titulo}</h3>
+      <h3 className="text-sm font-bold text-foreground">{titulo}</h3>
       {children}
     </section>
   );
 }
 
 const Vazio = ({ texto }: { texto: string }) => (
-  <p className="text-sm text-gray-400">{texto}</p>
+  <p className="text-sm text-muted-foreground">{texto}</p>
 );
 
 function ListaDeInscricoes({
@@ -69,7 +69,7 @@ function ListaDeInscricoes({
       {inscricoes.map((i, n) => (
         <li
           key={`${i.processo?.id ?? "sem-processo"}-${n}`}
-          className="grid grid-cols-1 gap-2 rounded-lg bg-gray-50 p-3 sm:grid-cols-2"
+          className="grid grid-cols-1 gap-2 rounded-lg bg-page p-3 sm:grid-cols-2"
         >
           <Campo nome="Cursinho" valor={i.cursinho?.nome} />
           <Campo nome="Processo" valor={i.processo?.nome} />
@@ -156,7 +156,7 @@ function ModalDoUsuario({
 
         <Secao titulo="Função" id="funcao">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <span className="text-sm font-semibold text-marine">
+            <span className="text-sm font-semibold text-foreground">
               {funcao || "—"}
             </span>
             <Button typeStyle="secondary" onClick={openUpdateRole}>
@@ -206,7 +206,7 @@ function ModalDoUsuario({
       className="bg-white rounded-xl p-4 sm:p-5 shadow-lg w-full max-w-[50.5rem]"
     >
       <div className="flex w-full flex-col gap-4">
-        <Text size="secondary" className="font-bold text-marine">
+        <Text size="secondary" className="font-bold text-foreground">
           Usuário
         </Text>
         {conteudo()}

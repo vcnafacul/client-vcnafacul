@@ -131,17 +131,17 @@ export function TabHistoricoRefactored({
 
   const getChangeTypeColor = (key: string): string => {
     const colorMap: Record<string, string> = {
-      status: "bg-blue-100 text-blue-800 border-blue-300",
-      prova: "bg-purple-100 text-purple-800 border-purple-300",
-      materia: "bg-green-100 text-green-800 border-green-300",
-      frente1: "bg-orange-100 text-orange-800 border-orange-300",
-      frente2: "bg-orange-100 text-orange-800 border-orange-300",
-      frente3: "bg-orange-100 text-orange-800 border-orange-300",
-      enemArea: "bg-teal-100 text-teal-800 border-teal-300",
-      textoQuestao: "bg-amber-100 text-amber-800 border-amber-300",
-      alternativa: "bg-red-100 text-red-800 border-red-300",
+      status: "bg-info-muted text-info border-info/40",
+      prova: "bg-primary/10 text-primary border-primary/30",
+      materia: "bg-success-muted text-success border-success",
+      frente1: "bg-cta/10 text-foreground border-cta/40",
+      frente2: "bg-cta/10 text-foreground border-cta/40",
+      frente3: "bg-cta/10 text-foreground border-cta/40",
+      enemArea: "bg-secondary text-secondary-foreground border-border",
+      textoQuestao: "bg-warning-muted text-warning border-warning/40",
+      alternativa: "bg-destructive-muted text-destructive border-destructive",
     };
-    return colorMap[key] || "bg-gray-100 text-gray-800 border-gray-300";
+    return colorMap[key] || "bg-muted text-foreground border-border";
   };
 
   const translateFieldName = (fieldName: string): string => {
@@ -187,11 +187,11 @@ export function TabHistoricoRefactored({
     return (
       <Card className="m-6">
         <CardContent className="flex flex-col items-center justify-center p-12">
-          <History className="h-16 w-16 text-gray-400 mb-4" />
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">
+          <History className="h-16 w-16 text-muted-foreground mb-4" />
+          <h3 className="text-xl font-semibold text-foreground mb-2">
             Nenhum histórico encontrado
           </h3>
-          <p className="text-gray-500">
+          <p className="text-muted-foreground">
             Esta questão ainda não possui registros de alterações
           </p>
         </CardContent>

@@ -206,7 +206,7 @@ function ModalEditDashGeo({
         update(StatusEnum.Approved);
       },
       status: StatusEnum.Approved,
-      className: "bg-green2",
+      className: "bg-success",
       editing: false,
     },
     {
@@ -216,7 +216,7 @@ function ModalEditDashGeo({
         setRefuse(true);
       },
       status: StatusEnum.Rejected,
-      className: "bg-red",
+      className: "bg-destructive",
       editing: false,
     },
     {
@@ -337,7 +337,7 @@ function ModalEditDashGeo({
             className: "w-8 h-8",
             html: renderToStaticMarkup(
               <div className="relative">
-                <PointIcon className="fill-sky-600 absolute  h-8" />
+                <PointIcon className="fill-info absolute  h-8" />
               </div>
             ),
             iconAnchor: [16, 32], // <-- Aqui está o ajuste
@@ -522,13 +522,13 @@ function ModalEditDashGeo({
               longitude: selectedPosition[1],
             }}
           />
-          <div className="bg-red"></div>
+          <div className="bg-destructive"></div>
         </div>
         {/* 30vw só lado a lado (md+): empilhado, dava ~112px no celular. */}
         <div className="w-full md:max-w-[30vw]">
           <Text size="secondary">Endereço do Cursinho</Text>
           <MapBox
-            className="h-80 border border-gray-300 z-0"
+            className="h-80 border border-border z-0"
             zoom={16}
             center={[selectedPosition[0], selectedPosition[1]]}
             markers={[

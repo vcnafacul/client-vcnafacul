@@ -53,7 +53,7 @@ export function DuplicarQuestao({
       data-duplicar
       disabled={duplicando}
       onClick={duplicar}
-      className="rounded-md border px-2 py-1 text-xs text-gray-600 disabled:opacity-50"
+      className="rounded-md border px-2 py-1 text-xs text-muted-foreground disabled:opacity-50"
       title={TITULO_DUPLICAR}
     >
       {duplicando ? "Duplicando…" : TEXTO_DUPLICAR}

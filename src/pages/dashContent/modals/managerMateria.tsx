@@ -57,12 +57,12 @@ function PresetGrid({
           onClick={() => onSelect(key)}
           className={`flex flex-col items-center p-2 rounded-md border-2 transition-all cursor-pointer ${
             selected === key
-              ? "border-orange bg-orange/10"
-              : "border-gray-200 hover:border-gray-400"
+              ? "border-cta bg-cta/10"
+              : "border-border hover:border-input"
           }`}
         >
           <Svg className={size} />
-          <span className="text-[10px] text-gray-500 mt-1 truncate max-w-full">
+          <span className="text-[10px] text-muted-foreground mt-1 truncate max-w-full">
             {key}
           </span>
         </button>
@@ -117,7 +117,7 @@ function ManagerMateria({ handleClose, materia, onSubmit, isOpen }: Props) {
       handleClose={handleClose!}
       className="bg-white w-full max-w-2xl p-6 rounded-md max-h-[90vh] overflow-y-auto"
     >
-      <h2 className="text-lg font-semibold text-gray-700 mb-4">
+      <h2 className="text-lg font-semibold text-foreground mb-4">
         {materia ? "Editar Matéria" : "Criar Nova Matéria"}
       </h2>
       <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-4">
@@ -142,7 +142,7 @@ function ManagerMateria({ handleClose, materia, onSubmit, isOpen }: Props) {
         />
 
         <div>
-          <label className="text-sm font-medium text-gray-700 mb-2 block">
+          <label className="text-sm font-medium text-foreground mb-2 block">
             Ícone do Menu
           </label>
           <PresetGrid
@@ -153,7 +153,7 @@ function ManagerMateria({ handleClose, materia, onSubmit, isOpen }: Props) {
         </div>
 
         <div>
-          <label className="text-sm font-medium text-gray-700 mb-2 block">
+          <label className="text-sm font-medium text-foreground mb-2 block">
             Imagem da Página
           </label>
           <PresetGrid
@@ -167,7 +167,7 @@ function ManagerMateria({ handleClose, materia, onSubmit, isOpen }: Props) {
         <div className="flex justify-end">
           <Button
             variant="default"
-            className="bg-orange hover:bg-orange/80"
+            className="bg-cta hover:bg-cta/80"
             type="submit"
           >
             {materia ? "Salvar" : "Criar"}

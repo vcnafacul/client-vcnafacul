@@ -91,7 +91,7 @@ export function AnulacaoDaProva({
         <Button
           size="sm"
           variant="outline"
-          className={`${pequeno} text-rose-700 border-rose-300 hover:bg-rose-50 hover:text-rose-800`}
+          className={`${pequeno} text-destructive border-destructive/40 hover:bg-destructive-muted hover:text-destructive`}
           disabled={ocupado}
           onClick={() => setAberto(true)}
         >

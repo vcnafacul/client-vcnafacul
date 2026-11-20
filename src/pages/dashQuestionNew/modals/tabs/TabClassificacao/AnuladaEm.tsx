@@ -26,9 +26,9 @@ export function AnuladaEm({
   const varias = anulacoes.length > 1;
   const mostrarJustificativa = !varias || aberto;
   return (
-    <section data-testid="anulada-em" className="rounded-md border border-rose-200 bg-rose-50 p-3">
+    <section data-testid="anulada-em" className="rounded-md border border-destructive/30 bg-destructive-muted p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="flex items-center gap-1 text-sm font-semibold text-rose-800">
+        <h3 className="flex items-center gap-1 text-sm font-semibold text-destructive">
           <XCircle className="h-4 w-4" aria-hidden />
           {varias ? `Anulada em ${anulacoes.length} provas` : "Anulada em"}
         </h3>
@@ -37,7 +37,7 @@ export function AnuladaEm({
             type="button"
             aria-expanded={aberto}
             onClick={() => setAberto((v) => !v)}
-            className="flex items-center gap-1 text-xs font-medium text-rose-700 hover:text-rose-900 hover:underline"
+            className="flex items-center gap-1 text-xs font-medium text-destructive hover:text-destructive hover:underline"
           >
             {aberto ? "Ocultar justificativas" : "Ver justificativas"}
             {aberto ? <ChevronUp className="h-3 w-3" aria-hidden /> : <ChevronDown className="h-3 w-3" aria-hidden />}
@@ -46,13 +46,13 @@ export function AnuladaEm({
       </div>
       <ul className="mt-2 flex flex-col gap-2 text-sm">
         {anulacoes.map((a) => (
-          <li key={a.provaId} className="text-rose-900">
+          <li key={a.provaId} className="text-destructive">
             <p>
               <span className="font-semibold">{nomeDaProva(a.provaId) ?? "Prova"}</span>
               {a.numero != null && `, Q${a.numero}`} · {rotuloDoMotivo(a.motivo)} ·{" "}
               {new Date(a.em).toLocaleDateString("pt-BR")}
               {a.provaId === provaEmFoco && (
-                <span className="ml-2 rounded bg-rose-200 px-1.5 py-0.5 text-[11px] font-semibold text-rose-800">
+                <span className="ml-2 rounded bg-card px-1.5 py-0.5 text-[11px] font-semibold text-destructive">
                   nesta prova
                 </span>
               )}
@@ -62,7 +62,7 @@ export function AnuladaEm({
         ))}
       </ul>
       {!varias && (
-        <p className="mt-1 text-xs text-rose-700">Fora da análise: não conta na nota nem nos relatórios.</p>
+        <p className="mt-1 text-xs text-destructive">Fora da análise: não conta na nota nem nos relatórios.</p>
       )}
     </section>
   );

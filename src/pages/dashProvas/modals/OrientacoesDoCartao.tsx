@@ -49,16 +49,16 @@ export function OrientacoesDoCartao({ resumo }: { resumo?: string }) {
     <section
       aria-labelledby="titulo-orientacoes-cartao"
       data-testid="orientacoes-do-cartao"
-      className="space-y-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-gray-800"
+      className="space-y-2 rounded-md border border-info/30 bg-info-muted p-3 text-sm text-foreground"
     >
-      <h3 id="titulo-orientacoes-cartao" className="font-semibold text-marine">
+      <h3 id="titulo-orientacoes-cartao" className="font-semibold text-foreground">
         {TITULO_ORIENTACOES}
       </h3>
-      {resumo && <p className="text-gray-700">{resumo}</p>}
+      {resumo && <p className="text-foreground">{resumo}</p>}
       <ul className="space-y-1.5">
         {ORIENTACOES.map((o) => (
           <li key={o.titulo} className="flex gap-2">
-            <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-marine" />
+            <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
             <span>
               <strong>{o.titulo}.</strong> {o.texto}
             </span>
@@ -69,7 +69,7 @@ export function OrientacoesDoCartao({ resumo }: { resumo?: string }) {
         href={LINK_SABER_MAIS_LEITURA}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1 font-medium text-marine underline underline-offset-2"
+        className="inline-flex items-center gap-1 font-medium text-foreground underline underline-offset-2"
       >
         Saber mais
         <ArrowTopRightOnSquareIcon className="h-4 w-4" aria-hidden />

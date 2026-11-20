@@ -12,20 +12,20 @@ export function ListaDePendencias({
 }) {
   return (
     <div className="space-y-1" role="alert">
-      <p className="text-sm text-rose-700 font-medium flex items-center gap-1">
+      <p className="text-sm text-destructive font-medium flex items-center gap-1">
         <AlertCircle className="h-4 w-4 shrink-0" />
         {pendencias.length === 1
           ? "1 problema impede salvar:"
           : `${pendencias.length} problemas impedem salvar:`}
       </p>
       {/* Altura máxima: a faixa fica fixa no topo e não pode cobrir a tela. */}
-      <ul className="text-sm text-rose-700 space-y-1 max-h-32 overflow-y-auto sm:max-h-none">
+      <ul className="text-sm text-destructive space-y-1 max-h-32 overflow-y-auto sm:max-h-none">
         {pendencias.map((p) => (
           <li key={p.campo} className="flex flex-wrap items-center gap-x-2">
             {/* A mensagem já diz o campo ("A alternativa A é obrigatória"). */}
             <span>
               {p.mensagem}
-              <span className="text-rose-600">
+              <span className="text-destructive">
                 {" "}
                 · aba {ROTULO_DA_ABA[p.aba]}
               </span>
@@ -33,7 +33,7 @@ export function ListaDePendencias({
             <button
               type="button"
               onClick={() => onIrPara(p)}
-              className="text-xs font-semibold text-marine underline underline-offset-2 hover:text-orange"
+              className="text-xs font-semibold text-foreground underline underline-offset-2 hover:text-primary"
             >
               Ir até o campo
             </button>
@@ -70,15 +70,15 @@ export function FaixaDoConteudo({
     <div
       className={`rounded-md border p-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between ${
         pendencias.length
-          ? "border-rose-200 bg-rose-50"
-          : "border-amber-200 bg-amber-50"
+          ? "border-destructive/30 bg-destructive-muted"
+          : "border-warning/30 bg-warning-muted"
       }`}
     >
       <div className="min-w-0 flex-1">
         {pendencias.length ? (
           <ListaDePendencias pendencias={pendencias} onIrPara={onIrPara} />
         ) : (
-          <p className="text-sm text-amber-700 font-medium flex items-center gap-2">
+          <p className="text-sm text-warning font-medium flex items-center gap-2">
             <AlertCircle className="h-4 w-4 shrink-0" />O enunciado ou as
             alternativas têm alterações não salvas
           </p>

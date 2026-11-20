@@ -20,24 +20,24 @@ export function iniciais(nome?: string): string {
 const STATUS: Record<number, { rotulo: string; classe: string }> = {
   [StatusContent.Pending_Upload]: {
     rotulo: "Aguardando envio",
-    classe: "bg-gray-100 text-gray-700",
+    classe: "bg-muted text-foreground",
   },
   [StatusEnum.Pending]: {
     rotulo: "Pendente de validação",
-    classe: "bg-amber-100 text-amber-800",
+    classe: "bg-warning-muted text-warning",
   },
   [StatusEnum.Approved]: {
     rotulo: "Aprovada",
-    classe: "bg-emerald-100 text-emerald-800",
+    classe: "bg-success-muted text-success",
   },
   [StatusEnum.Rejected]: {
     rotulo: "Rejeitada",
-    classe: "bg-rose-100 text-rose-800",
+    classe: "bg-destructive-muted text-destructive",
   },
 };
 
 export function statusDaDemanda(status: number) {
-  return STATUS[status] ?? { rotulo: "—", classe: "bg-gray-100 text-gray-700" };
+  return STATUS[status] ?? { rotulo: "—", classe: "bg-muted text-foreground" };
 }
 
 /** As pessoas do cabeçalho, na ordem em que entram na vida da demanda. */

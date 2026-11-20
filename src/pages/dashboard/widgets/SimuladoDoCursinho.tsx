@@ -98,15 +98,15 @@ function CardDoEvento({
     <Panel title="Simulado do cursinho" subtitle={evento.cursinho}>
       <div className="space-y-3 text-sm">
         <div>
-          <p className="text-base font-semibold text-marine break-words">{evento.nome}</p>
+          <p className="text-base font-semibold text-foreground break-words">{evento.nome}</p>
           {evento.descricao && (
-            <p className="text-slate-600 whitespace-pre-line break-words">{evento.descricao}</p>
+            <p className="text-muted-foreground whitespace-pre-line break-words">{evento.descricao}</p>
           )}
-          <p className="text-xs text-slate-500 mt-1">Inscrições até {ate(evento.inscricoesAte)}</p>
+          <p className="text-xs text-muted-foreground mt-1">Inscrições até {ate(evento.inscricoesAte)}</p>
         </div>
 
         {inscrito && (
-          <p role="status" className="rounded-lg bg-green-50 px-3 py-2 text-green-800">
+          <p role="status" className="rounded-lg bg-success-muted px-3 py-2 text-success">
             Você está inscrito em <strong>{nomeDa(minha)}</strong>.
           </p>
         )}
@@ -126,7 +126,7 @@ function CardDoEvento({
                       name={`opcao-${evento.id}`}
                       checked={escolhida === k}
                       onChange={() => setEscolhida(k)}
-                      className="accent-marine"
+                      className="accent-primary"
                     />
                     {o.nome}
                   </label>
@@ -142,7 +142,7 @@ function CardDoEvento({
               type="button"
               onClick={inscrever}
               disabled={ocupado}
-              className="rounded-lg bg-marine px-4 py-2 text-white disabled:opacity-60"
+              className="rounded-lg bg-primary px-4 py-2 text-white disabled:opacity-60"
             >
               Quero fazer
             </button>
@@ -152,7 +152,7 @@ function CardDoEvento({
               type="button"
               onClick={inscrever}
               disabled={ocupado}
-              className="rounded-lg bg-marine px-4 py-2 text-white disabled:opacity-60"
+              className="rounded-lg bg-primary px-4 py-2 text-white disabled:opacity-60"
             >
               Trocar para {nomeDa(escolhida)}
             </button>
@@ -162,7 +162,7 @@ function CardDoEvento({
               type="button"
               onClick={desistir}
               disabled={ocupado}
-              className="rounded-lg border px-4 py-2 text-slate-700 disabled:opacity-60"
+              className="rounded-lg border px-4 py-2 text-foreground disabled:opacity-60"
             >
               Desistir
             </button>

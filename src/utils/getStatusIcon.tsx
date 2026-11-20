@@ -9,7 +9,7 @@ export const getStatusIcon = (status: CombinedEnum) => {
     if (status == StatusEnum.Pending) return <StatusPending />;
     if (status == StatusEnum.Approved) return <StatusApproved />;
     if (status == StatusEnum.Rejected) return <StatusRejected />;
-    if (status == StatusContent.Pending_Upload) return <Upload className="fill-orange w-9 h-9" />;
+    if (status == StatusContent.Pending_Upload) return <Upload className="fill-cta w-9 h-9" />;
 };
 
 export const getStatusBool = (actived: boolean) => {

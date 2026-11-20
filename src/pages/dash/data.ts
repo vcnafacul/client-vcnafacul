@@ -101,7 +101,7 @@ export const headerDash: HeaderData = {
 export const adminMenuItems: DashCardMenu[] = [
   {
     id: 6,
-    bg: "bg-logoCursinho",
+    bg: "bg-cta",
     title: "Cursinho",
     image: AdminImg,
     alt: "Cursinho",
@@ -187,7 +187,7 @@ export const adminMenuItems: DashCardMenu[] = [
   },
   {
     id: 8,
-    bg: "bg-logoProjeto",
+    bg: "bg-primary",
     title: "Projeto",
     image: AdminImg,
     alt: "Projeto",
@@ -251,7 +251,7 @@ export const adminMenuItems: DashCardMenu[] = [
   },
   {
     id: 5,
-    bg: "bg-logoAdmin",
+    bg: "bg-success",
     title: "Admin",
     image: AdminImg,
     alt: "Admin",
@@ -311,7 +311,7 @@ export const adminMenuItems: DashCardMenu[] = [
 
 export const studentMenuItem: DashCardMenu = {
   id: 7,
-  bg: "bg-logoEstudos",
+  bg: "bg-warning",
   title: "Meus Estudos",
   image: IoSchool,
   alt: "Meus Estudos",
@@ -351,25 +351,25 @@ const areaConfig: Record<
 > = {
   Linguagens: {
     id: 1,
-    bg: "bg-logoLinguagens",
+    bg: "bg-primary",
     image: LinguagensImg,
     title: "Linguagens",
   },
   "Ciências da Natureza": {
     id: 2,
-    bg: "bg-logoNatureza",
+    bg: "bg-info",
     image: NaturezaImg,
     title: "Natureza",
   },
   "Ciências Humanas": {
     id: 3,
-    bg: "bg-logoHumanas",
+    bg: "bg-success",
     image: HumanasImg,
     title: "Humanas",
   },
   Matemática: {
     id: 4,
-    bg: "bg-logoMatematica",
+    bg: "bg-cta",
     image: MatematicaImg,
     title: "Matemática",
   },
@@ -433,7 +433,7 @@ export function buildAcademicMenuItems(
 export const fallbackAcademicMenuItems: DashCardMenu[] = [
   {
     id: 1,
-    bg: "bg-marine",
+    bg: "bg-primary",
     title: "Linguagens",
     image: LinguagensImg,
     alt: "Linguagens",
@@ -455,7 +455,7 @@ export const fallbackAcademicMenuItems: DashCardMenu[] = [
   },
   {
     id: 2,
-    bg: "bg-pink",
+    bg: "bg-info",
     title: "Natureza",
     image: NaturezaImg,
     alt: "Natureza",
@@ -482,7 +482,7 @@ export const fallbackAcademicMenuItems: DashCardMenu[] = [
   },
   {
     id: 3,
-    bg: "bg-lightGreen",
+    bg: "bg-success",
     title: "Humanas",
     image: HumanasImg,
     alt: "Humanas",
@@ -521,7 +521,7 @@ export const fallbackAcademicMenuItems: DashCardMenu[] = [
   },
   {
     id: 4,
-    bg: "bg-orange",
+    bg: "bg-cta",
     title: "Matemática",
     image: MatematicaImg,
     alt: "Matemática",

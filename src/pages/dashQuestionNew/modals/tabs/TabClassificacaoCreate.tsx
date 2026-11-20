@@ -193,8 +193,8 @@ export function TabClassificacaoCreate({
                   Classificação. O select do Radix não tem item vazio — por
                   isso o botão para desfazer a escolha.
                 */}
-                <label className="text-sm font-semibold text-gray-600">
-                  Prova <span className="font-normal text-gray-400">(opcional)</span>
+                <label className="text-sm font-semibold text-muted-foreground">
+                  Prova <span className="font-normal text-muted-foreground">(opcional)</span>
                 </label>
                 {formData.prova && (
                   <Button
@@ -210,7 +210,7 @@ export function TabClassificacaoCreate({
                 )}
               </div>
               <Select value={formData.prova} onValueChange={handleProvaChange}>
-                <SelectTrigger className={errors.prova ? "border-red-500" : ""}>
+                <SelectTrigger className={errors.prova ? "border-destructive" : ""}>
                   <SelectValue placeholder="Selecione a prova" />
                 </SelectTrigger>
                 <SelectContent>
@@ -222,7 +222,7 @@ export function TabClassificacaoCreate({
                 </SelectContent>
               </Select>
               {errors.prova && (
-                <p className="text-sm text-red-600 flex items-center gap-1">
+                <p className="text-sm text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {errors.prova}
                 </p>
@@ -232,7 +232,7 @@ export function TabClassificacaoCreate({
             {/* Número */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-gray-600">
+                <label className="text-sm font-semibold text-muted-foreground">
                   Número da Questão
                 </label>
                 {formData.numero != null && (
@@ -241,28 +241,28 @@ export function TabClassificacaoCreate({
                     variant="outline"
                     size="sm"
                     onClick={() => onChange("numero", null)}
-                    className="h-6 px-2 text-xs text-red-600 border-red-300 hover:text-red-700 hover:bg-red-50"
+                    className="h-6 px-2 text-xs text-destructive border-destructive hover:text-destructive hover:bg-destructive-muted"
                   >
                     Remover número
                   </Button>
                 )}
               </div>
               {loadingNumeros ? (
-                <div className="flex items-center justify-center p-3 border border-gray-200 rounded-md bg-gray-50">
+                <div className="flex items-center justify-center p-3 border border-border rounded-md bg-page">
                   <Loader2 className="h-4 w-4 animate-spin text-primary mr-2" />
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-muted-foreground">
                     Carregando números disponíveis...
                   </span>
                 </div>
               ) : numerosDisponiveis.length === 0 && formData.prova ? (
-                <div className="p-3 bg-amber-50 border border-amber-200 rounded-md">
+                <div className="p-3 bg-warning-muted border border-warning/30 rounded-md">
                   <div className="flex items-start gap-2">
-                    <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-semibold text-amber-800">
+                      <p className="text-sm font-semibold text-warning">
                         Impossível cadastrar nova questão
                       </p>
-                      <p className="text-xs text-amber-700 mt-1">
+                      <p className="text-xs text-warning mt-1">
                         Não há números disponíveis para esta prova. Todas as
                         questões já foram cadastradas.
                       </p>
@@ -276,7 +276,7 @@ export function TabClassificacaoCreate({
                   disabled={!formData.prova || numerosDisponiveis.length === 0}
                 >
                   <SelectTrigger
-                    className={errors.numero ? "border-red-500" : ""}
+                    className={errors.numero ? "border-destructive" : ""}
                   >
                     <SelectValue
                       placeholder={
@@ -296,7 +296,7 @@ export function TabClassificacaoCreate({
                 </Select>
               )}
               {errors.numero && (
-                <p className="text-sm text-red-600 flex items-center gap-1">
+                <p className="text-sm text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {errors.numero}
                 </p>
@@ -305,7 +305,7 @@ export function TabClassificacaoCreate({
 
             {/* Área ENEM */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-600">
+              <label className="text-sm font-semibold text-muted-foreground">
                 Área do Conhecimento ENEM *
               </label>
               <Select
@@ -313,7 +313,7 @@ export function TabClassificacaoCreate({
                 onValueChange={handleEnemAreaChange}
               >
                 <SelectTrigger
-                  className={errors.enemArea ? "border-red-500" : ""}
+                  className={errors.enemArea ? "border-destructive" : ""}
                 >
                   <SelectValue placeholder="Selecione a área" />
                 </SelectTrigger>
@@ -326,7 +326,7 @@ export function TabClassificacaoCreate({
                 </SelectContent>
               </Select>
               {errors.enemArea && (
-                <p className="text-sm text-red-600 flex items-center gap-1">
+                <p className="text-sm text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {errors.enemArea}
                 </p>
@@ -335,7 +335,7 @@ export function TabClassificacaoCreate({
 
             {/* Disciplina */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-600">
+              <label className="text-sm font-semibold text-muted-foreground">
                 Disciplina *
               </label>
               <Select
@@ -346,7 +346,7 @@ export function TabClassificacaoCreate({
                 }
               >
                 <SelectTrigger
-                  className={errors.materia ? "border-red-500" : ""}
+                  className={errors.materia ? "border-destructive" : ""}
                 >
                   <SelectValue
                     placeholder={
@@ -365,7 +365,7 @@ export function TabClassificacaoCreate({
                 </SelectContent>
               </Select>
               {errors.materia && (
-                <p className="text-sm text-red-600 flex items-center gap-1">
+                <p className="text-sm text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {errors.materia}
                 </p>
@@ -374,7 +374,7 @@ export function TabClassificacaoCreate({
 
             {/* Frente Principal */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-600">
+              <label className="text-sm font-semibold text-muted-foreground">
                 Frente Principal *
               </label>
               <Select
@@ -383,7 +383,7 @@ export function TabClassificacaoCreate({
                 disabled={!formData.materia || frentesDisponiveis.length === 0}
               >
                 <SelectTrigger
-                  className={errors.frente1 ? "border-red-500" : ""}
+                  className={errors.frente1 ? "border-destructive" : ""}
                 >
                   <SelectValue
                     placeholder={
@@ -402,7 +402,7 @@ export function TabClassificacaoCreate({
                 </SelectContent>
               </Select>
               {errors.frente1 && (
-                <p className="text-sm text-red-600 flex items-center gap-1">
+                <p className="text-sm text-destructive flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
                   {errors.frente1}
                 </p>
@@ -413,7 +413,7 @@ export function TabClassificacaoCreate({
             {showFrente2 ? (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-semibold text-gray-600">
+                  <label className="text-sm font-semibold text-muted-foreground">
                     Frente Secundária
                   </label>
                   <Button
@@ -421,7 +421,7 @@ export function TabClassificacaoCreate({
                     variant="ghost"
                     size="sm"
                     onClick={handleRemoveFrente2}
-                    className="h-6 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="h-6 px-2 text-destructive hover:text-destructive hover:bg-destructive-muted"
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -447,7 +447,7 @@ export function TabClassificacaoCreate({
               </div>
             ) : (
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-600">
+                <label className="text-sm font-semibold text-muted-foreground">
                   Frente Secundária
                 </label>
                 <Button
@@ -469,7 +469,7 @@ export function TabClassificacaoCreate({
             {showFrente3 ? (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-semibold text-gray-600">
+                  <label className="text-sm font-semibold text-muted-foreground">
                     Frente Terciária
                   </label>
                   <Button
@@ -477,7 +477,7 @@ export function TabClassificacaoCreate({
                     variant="ghost"
                     size="sm"
                     onClick={handleRemoveFrente3}
-                    className="h-6 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="h-6 px-2 text-destructive hover:text-destructive hover:bg-destructive-muted"
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -503,7 +503,7 @@ export function TabClassificacaoCreate({
               </div>
             ) : showFrente2 ? (
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-600">
+                <label className="text-sm font-semibold text-muted-foreground">
                   Frente Terciária
                 </label>
                 <Button

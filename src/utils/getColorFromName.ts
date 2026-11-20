@@ -1,21 +1,17 @@
-/** Paleta fechada de cores com contraste garantido para badges/labels. */
+/**
+ * Paleta fechada de pares fundo/texto com contraste AA (texto branco sobre o token
+ * sólido). Só tokens semânticos: a paleta antiga de 16 matizes saiu com o design
+ * system, então as cores repetem mais (8 em vez de 16).
+ */
 const palette: { bg: string; text: string; shadow: string }[] = [
-  { bg: 'bg-red-700',     text: 'text-white', shadow: 'shadow-red-700/50' },
-  { bg: 'bg-orange-700',  text: 'text-white', shadow: 'shadow-orange-700/50' },
-  { bg: 'bg-amber-800',   text: 'text-white', shadow: 'shadow-amber-800/50' },
-  { bg: 'bg-emerald-700', text: 'text-white', shadow: 'shadow-emerald-700/50' },
-  { bg: 'bg-teal-700',    text: 'text-white', shadow: 'shadow-teal-700/50' },
-  { bg: 'bg-cyan-800',    text: 'text-white', shadow: 'shadow-cyan-800/50' },
-  { bg: 'bg-sky-700',     text: 'text-white', shadow: 'shadow-sky-700/50' },
-  { bg: 'bg-indigo-700',  text: 'text-white', shadow: 'shadow-indigo-700/50' },
-  { bg: 'bg-violet-700',  text: 'text-white', shadow: 'shadow-violet-700/50' },
-  { bg: 'bg-purple-700',  text: 'text-white', shadow: 'shadow-purple-700/50' },
-  { bg: 'bg-fuchsia-700', text: 'text-white', shadow: 'shadow-fuchsia-700/50' },
-  { bg: 'bg-pink-700',    text: 'text-white', shadow: 'shadow-pink-700/50' },
-  { bg: 'bg-rose-700',    text: 'text-white', shadow: 'shadow-rose-700/50' },
-  { bg: 'bg-lime-800',    text: 'text-white', shadow: 'shadow-lime-800/50' },
-  { bg: 'bg-blue-700',    text: 'text-white', shadow: 'shadow-blue-700/50' },
-  { bg: 'bg-slate-700',   text: 'text-white', shadow: 'shadow-slate-700/50' },
+  { bg: 'bg-primary', text: 'text-primary-foreground', shadow: 'shadow-primary/50' },
+  { bg: 'bg-destructive', text: 'text-destructive-foreground', shadow: 'shadow-destructive/50' },
+  { bg: 'bg-success', text: 'text-success-foreground', shadow: 'shadow-success/50' },
+  { bg: 'bg-warning', text: 'text-warning-foreground', shadow: 'shadow-warning/50' },
+  { bg: 'bg-info', text: 'text-info-foreground', shadow: 'shadow-info/50' },
+  { bg: 'bg-cta', text: 'text-cta-foreground', shadow: 'shadow-cta/50' },
+  { bg: 'bg-muted-foreground', text: 'text-background', shadow: 'shadow-muted-foreground/50' },
+  { bg: 'bg-foreground', text: 'text-background', shadow: 'shadow-foreground/50' },
 ];
 
 const getIndex = (name: string) => {

@@ -32,12 +32,12 @@ export function AbaConteudo({
       {demand.status === StatusEnum.Rejected && demand.rejectionReason && (
         <div
           role="note"
-          className="rounded-lg border border-rose-200 bg-rose-50 p-3"
+          className="rounded-lg border border-destructive/30 bg-destructive-muted p-3"
         >
-          <p className="text-sm font-black text-rose-800">
+          <p className="text-sm font-black text-destructive">
             Motivo da rejeição:
           </p>
-          <p className="text-sm text-rose-900 whitespace-pre-wrap break-words">
+          <p className="text-sm text-destructive whitespace-pre-wrap break-words">
             {demand.rejectionReason}
           </p>
         </div>
@@ -55,7 +55,7 @@ export function AbaConteudo({
                 Download
               </Button>
               <Button
-                className="bg-marine hover:bg-marine/80"
+                className="bg-primary hover:bg-primary/80"
                 onClick={onVisualizar}
               >
                 Visualizar

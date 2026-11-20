@@ -152,7 +152,7 @@ export function FrenteCard({
   const [open, setOpen] = useState(false);
   const total = temas.length;
   return (
-    <li className="border border-l-4 border-l-marine rounded-lg p-3 flex flex-col gap-2">
+    <li className="border border-l-4 border-l-primary rounded-lg p-3 flex flex-col gap-2">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="font-bold break-words min-w-0">{frente.nome}</p>
         <FrentesActionMenu
@@ -169,7 +169,7 @@ export function FrenteCard({
           type="button"
           onClick={() => setOpen(!open)}
           aria-expanded={open}
-          className="flex items-center gap-1 h-10 text-sm font-medium text-marine self-start"
+          className="flex items-center gap-1 h-10 text-sm font-medium text-foreground self-start"
         >
           <FiChevronDown
             className={`w-5 h-5 transition-transform ${open ? "rotate-180" : ""}`}
@@ -177,7 +177,7 @@ export function FrenteCard({
           {total} {total === 1 ? "tema" : "temas"}
         </button>
       ) : (
-        <span className="text-sm text-gray-500">Sem temas</span>
+        <span className="text-sm text-muted-foreground">Sem temas</span>
       )}
       {open && (
         <RenderTemasTable

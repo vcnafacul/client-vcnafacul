@@ -90,7 +90,7 @@ function ContactField({
           onClick={copy}
           aria-label={`Copiar ${label}`}
           title={`Copiar ${label}`}
-          className="absolute right-2 top-4 p-2 rounded-md text-grey hover:text-orange hover:bg-gray-100"
+          className="absolute right-2 top-4 p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
         >
           <FaRegCopy className="w-4 h-4" />
         </button>

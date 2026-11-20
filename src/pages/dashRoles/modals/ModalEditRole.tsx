@@ -135,10 +135,10 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
       <div className="w-full flex flex-col gap-5 max-h-[80vh]">
         {/* Header */}
         <div>
-          <Text size="secondary" className="font-bold text-marine">
+          <Text size="secondary" className="font-bold text-foreground">
             Editar Perfil
           </Text>
-          <p className="text-sm text-gray-400 mt-0.5">
+          <p className="text-sm text-muted-foreground mt-0.5">
             Selecione um perfil e ajuste suas permissões.
           </p>
         </div>
@@ -146,7 +146,7 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
         {/* Role selector + base toggle */}
         <div className="flex flex-col sm:flex-row gap-3">
           <label className="flex flex-col gap-1 flex-1">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
               Perfil
             </span>
             <Select
@@ -165,7 +165,7 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
             />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
               Perfil Base
             </span>
             <div className="flex items-center gap-3 h-full py-2">
@@ -174,14 +174,14 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
                 checked={roleSelected?.base ?? false}
                 handleCheck={handleBaseToggle}
               />
-              <span className="text-sm font-medium text-marine">
+              <span className="text-sm font-medium text-foreground">
                 {roleSelected?.base ? "Ativo" : "Inativo"}
               </span>
             </div>
           </label>
         </div>
 
-        <div className="flex flex-col gap-1 rounded-lg border border-gray-100 px-3 py-2">
+        <div className="flex flex-col gap-1 rounded-lg border border-border px-3 py-2">
           <div className="flex items-center gap-3">
             <Toggle
               name="isRecommended"
@@ -189,18 +189,18 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
               handleCheck={handleRecommendedToggle}
               disabled={!roleSelected || !!motivoSemRecomendacao(roleSelected)}
             />
-            <span className="text-sm font-medium text-marine">
+            <span className="text-sm font-medium text-foreground">
               Recomendado para ex-colaboradores
             </span>
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground">
             {(roleSelected && motivoSemRecomendacao(roleSelected)) ??
               "Coordenadores poderão indicar este perfil ao excluir um colaborador do cursinho."}
           </p>
         </div>
 
         {roleSelected?.base && (
-          <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+          <p className="text-xs text-warning bg-warning-muted border border-warning/30 rounded-lg px-3 py-2">
             Perfis base só podem ter permissões do projeto. Permissões do
             cursinho e "Alterar Permissão" são desativadas automaticamente.
           </p>
@@ -221,7 +221,7 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
         </div>
 
         {/* Actions */}
-        <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
+        <div className="flex justify-end gap-3 pt-2 border-t border-border">
           <Button typeStyle="primary" onClick={handleClose}>
             Cancelar
           </Button>

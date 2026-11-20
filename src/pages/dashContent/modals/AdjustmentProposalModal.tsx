@@ -103,7 +103,7 @@ export default function AdjustmentProposalModal({
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="w-[calc(100%-2rem)] max-w-5xl max-h-[90dvh] overflow-y-auto p-3 sm:p-6">
-        <DialogTitle className="text-xl font-bold text-marine">
+        <DialogTitle className="text-xl font-bold text-foreground">
           Propor Ajuste de Conteúdo
         </DialogTitle>
 
@@ -172,7 +172,7 @@ export default function AdjustmentProposalModal({
               Cancelar
             </Button>
             <Button
-              className="bg-marine hover:bg-marine/80"
+              className="bg-primary hover:bg-primary/80"
               onClick={handleSubmit}
               disabled={tipo === "video" ? !videoId : !uploadFile}
             >

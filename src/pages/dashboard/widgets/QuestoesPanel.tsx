@@ -21,7 +21,7 @@ export function QuestoesPanel() {
       action={
         <Link
           to={`${DASH}/${DASH_QUESTION}`}
-          className="text-sm font-medium text-marine underline-offset-2 hover:underline"
+          className="text-sm font-medium text-foreground underline-offset-2 hover:underline"
         >
           Validar →
         </Link>
