@@ -1,0 +1,73 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Fundamentos/Espaçamento e layout" />
+
+# Espaçamento, raio, sombras, z-index, layout e breakpoints
+
+## Espaçamento
+
+A escala de 4px do Tailwind.
+
+- **Espaçamento de componente:** `0.5 1 1.5 2 3 4 6 8`.
+- **Espaçamento de layout:** `10 12 16 20 24`.
+- **`p`, `m`, `gap` e `space-[…]` arbitrários são proibidos** (guard).
+
+## Raio
+
+| Classe | Tamanho | Usado em |
+|---|---|---|
+| `rounded-sm` | 4px | checkbox, chips pequenos, elementos internos |
+| `rounded-md` | 6px | botões, inputs, selects, itens de menu |
+| `rounded-lg` | 8px | cards, popovers, menus, toasts, alertas |
+| `rounded-xl` | 12px | dialogs, sheets |
+| `rounded-full` | — | pílulas, selos, avatares, pontos |
+
+`rounded-2xl`, `rounded-3xl` e cantos de um lado só são permitidos **apenas** em `src/pages/homeV2` e
+`src/pages/quemSomos` (guard).
+
+## Sombras
+
+- Superfícies dentro da página (cards, tabelas, painéis) têm `border` e **nenhuma sombra**.
+- Elementos flutuantes: `shadow-sm` em barras fixas, `shadow-md` em popovers, menus, toasts e tooltips,
+  `shadow-lg` em dialogs e sheets.
+- `shadow-xl`, `shadow-2xl` e `shadow-inner` são barradas.
+
+## Largura da borda
+
+1px. 2px só no anel de foco e nos estados selecionados.
+
+## z-index
+
+| Classe | Valor |
+|---|---|
+| `z-base` | 0 |
+| `z-raised` | 10 |
+| `z-sticky` | 20 |
+| `z-header` | 30 |
+| `z-overlay` | 40 |
+| `z-popover` | 50 (acima dos dialogs, para selects e menus funcionarem dentro deles) |
+| `z-toast` | 60 |
+
+`z-[…]` arbitrário é proibido (guard).
+
+## Layout
+
+- `container` com padding de 16, 24 e 32.
+- `max-w-prose-content` 720px, `max-w-form` 560px, `max-w-page` 1200px.
+- As telas de admin ocupam a largura toda dentro do shell do dash.
+- A altura do cabeçalho é `--header-h` (`h-header`). Use `min-h-[calc(100vh-theme(spacing.header))]` no lugar
+  de `calc(100vh-76px)` ou `calc(100vh-88px)`, e `scroll-margin-top: var(--header-h)` para âncoras.
+
+## Breakpoints
+
+| Nome | Largura | Papel |
+|---|---|---|
+| `sm` | 768px | a divisão celular/desktop; os passos de tipografia trocam aqui |
+| `md` | 1200px | desktop completo |
+| `lg` | 1400px | só telas largas |
+| `xl` | 1565px | só telas largas |
+
+> **Nosso `sm` = o `md` padrão do Tailwind: traduza os exemplos do shadcn.** Um exemplo do shadcn com `md:`
+> vira `sm:` aqui; um com `lg:` vira `md:`.
+
+As barras de ferramentas do Storybook têm os viewports 390, 768 e 1200 para conferir cada ponto.

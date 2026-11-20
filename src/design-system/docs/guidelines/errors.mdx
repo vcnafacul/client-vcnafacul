@@ -1,0 +1,26 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guias/Erros" />
+
+# Erros
+
+- **O que aconteceu + o que fazer.** Exemplo: "Não foi possível salvar a prova. Verifique sua conexão e tente
+  de novo." Sem culpar a pessoa e sem "Erro ao".
+- **Erro de campo fica embaixo do campo**, nunca num toast, e diz a regra: "Ano deve ter 4 dígitos."
+- **Toast só para o que não tem lugar na tela.**
+- **Erro que bloqueia a tela** é um `Alert` em linha mais o botão "Tentar de novo".
+
+A regra vale para código novo e para telas tocadas. O PR da migração mantém os textos existentes.
+
+## Formulário dividido em abas ou etapas: `ErrorSummary` (D19)
+
+O erro continua embaixo do campo. O `ErrorSummary` **soma**, não substitui, e só aparece quando o campo com
+erro pode estar fora da vista (outra aba, outra etapa).
+
+- Ele é feito sobre o `Alert` `destructive` e lista o que impede de salvar.
+- Cada item traz a mensagem, onde o campo está ("aba Alternativas") e um link "Ir até o campo", que troca de
+  aba ou de etapa e põe o foco no campo.
+- Num `Dialog`, vai no `banner`, fixo sob o cabeçalho em todas as abas.
+- Alterações não salvas, sem erro, usam `Alert` `warning` no mesmo lugar. O botão de salvar diz o que salva.
+
+Não use toast com a lista de erros: ele some, e erro de campo não vai em toast.

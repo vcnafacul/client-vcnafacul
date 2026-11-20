@@ -1,0 +1,34 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guias/Voz e escrita" />
+
+# Voz e escrita
+
+- **Amigável e direto, com "você".**
+- **Sentence case** em todo lugar: só a primeira palavra e os nomes próprios em maiúscula.
+- **Botão começa com verbo e nomeia o objeto:** "Excluir prova", "Salvar matrícula". Nunca "OK", "Sim" ou
+  "Confirmar" sozinhos.
+- **"!" só para comemoração de verdade.**
+- **Sem códigos nem jargão** na tela.
+- **MAIÚSCULAS só pelo `text-overline`**, nunca digitadas no texto.
+
+## Formatos pt-BR
+
+Use `Intl` e `date-fns-tz`, com o fuso `America/Sao_Paulo`.
+
+| Onde | Formato |
+|---|---|
+| Datas em tabelas e formulários | `12/11/2026` |
+| Datas em texto corrido | `12 de novembro de 2026` |
+| Tempo relativo | "há 3 dias" |
+| Milhares | `1.284` |
+| Decimais | `7,5` |
+| Abreviações como "1.2k" | **não use** no admin |
+
+## Estado vazio
+
+Um estado vazio diz três coisas:
+
+1. **O que está faltando.**
+2. **Por quê**, quando der: há filtros ativos?
+3. **Uma ação** para sair dele.

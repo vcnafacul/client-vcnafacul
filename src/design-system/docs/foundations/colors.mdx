@@ -1,0 +1,137 @@
+import { Meta, ColorPalette, ColorItem } from "@storybook/addon-docs/blocks";
+import { palette, chartSeries } from "../../../lib/palette";
+
+<Meta title="Fundamentos/Cores" />
+
+# Cores
+
+Há duas camadas:
+
+- **Primitivos:** `--<matiz>-<passo>`, em canais HSL, definidos em `src/styles/tokens.css`. **Nunca viram
+  utilitário do Tailwind.**
+- **Tokens semânticos:** o vocabulário do shadcn, estendido. Componentes e telas usam **só** estes. Os nomes
+  são em inglês e nunca citam um matiz.
+
+O espelho em TypeScript dos primitivos é `src/lib/palette.ts` (`palette` e `chartSeries`), para código que não
+usa classes: bibliotecas de gráfico (nivo, recharts, chart.js, x-charts) e pins do Leaflet. O `contrast.test.ts`
+confere que o `palette.ts` e o `tokens.css` concordam.
+
+## Primitivos
+
+<ColorPalette>
+  {Object.entries(palette).map(([matiz, passos]) => (
+    <ColorItem
+      key={matiz}
+      title={matiz}
+      subtitle={`--${matiz}-<passo>`}
+      colors={Object.fromEntries(Object.entries(passos).map(([passo, hex]) => [passo, hex]))}
+    />
+  ))}
+</ColorPalette>
+
+## Sequência de gráficos
+
+`chartSeries`, na ordem. No CSS, são `chart-1` a `chart-6`.
+
+<ColorPalette>
+  <ColorItem
+    title="chartSeries"
+    subtitle="palette.ts"
+    colors={Object.fromEntries(chartSeries.map((hex, i) => [`chart-${i + 1}`, hex]))}
+  />
+</ColorPalette>
+
+## Tokens semânticos
+
+<ColorPalette>
+  <ColorItem
+    title="Superfícies"
+    subtitle="background, page, card, popover, muted, accent"
+    colors={{
+      background: "hsl(var(--background))",
+      page: "hsl(var(--page))",
+      card: "hsl(var(--card))",
+      popover: "hsl(var(--popover))",
+      muted: "hsl(var(--muted))",
+      accent: "hsl(var(--accent))",
+    }}
+  />
+  <ColorItem
+    title="Texto"
+    subtitle="muted-foreground é a única cor de texto secundário"
+    colors={{
+      foreground: "hsl(var(--foreground))",
+      "muted-foreground": "hsl(var(--muted-foreground))",
+    }}
+  />
+  <ColorItem
+    title="Marca e ação"
+    subtitle="no máximo um cta por tela"
+    colors={{
+      primary: "hsl(var(--primary))",
+      secondary: "hsl(var(--secondary))",
+      cta: "hsl(var(--cta))",
+      highlight: "hsl(var(--highlight))",
+    }}
+  />
+  <ColorItem
+    title="Status"
+    subtitle="cada um tem foreground e muted"
+    colors={{
+      destructive: "hsl(var(--destructive))",
+      "destructive-muted": "hsl(var(--destructive-muted))",
+      success: "hsl(var(--success))",
+      "success-muted": "hsl(var(--success-muted))",
+      warning: "hsl(var(--warning))",
+      "warning-muted": "hsl(var(--warning-muted))",
+      info: "hsl(var(--info))",
+      "info-muted": "hsl(var(--info-muted))",
+    }}
+  />
+  <ColorItem
+    title="Bordas e foco"
+    subtitle="border é decorativa; input tem 3:1; ring é o anel sólido de 2px"
+    colors={{
+      border: "hsl(var(--border))",
+      input: "hsl(var(--input))",
+      ring: "hsl(var(--ring))",
+    }}
+  />
+  <ColorItem
+    title="Gráficos"
+    subtitle="chart-1 a chart-6"
+    colors={Object.fromEntries(
+      [1, 2, 3, 4, 5, 6].map((i) => [`chart-${i}`, `hsl(var(--chart-${i}))`]),
+    )}
+  />
+</ColorPalette>
+
+## Contraste
+
+O `src/design-system/contrast.test.ts` lê o `tokens.css` (`:root` e cada `[data-theme]`), resolve as cadeias
+de `var()` até o hex e confere o contraste WCAG 2.x:
+
+| Par | Mínimo |
+|---|---|
+| Texto: `X-foreground` sobre `X`; `foreground`, `muted-foreground`, `destructive`, `success`, `warning`, `info` e `highlight` sobre `background`, `page`, `card`, `muted` e sobre o próprio `*-muted` | 4,5:1 |
+| `input` e `ring` sobre `background` | 3:1 |
+| Cada `chart-*` sobre `background` | 3:1 |
+
+## Temas por seção: `[data-theme]`
+
+Os temas da home e das seções públicas **só reapontam tokens semânticos**. O `.dark` virá depois.
+
+| Tema | O que muda |
+|---|---|
+| `neutral` | Nada: são os tokens globais. `highlight` continua `orange-700`. |
+| `marine` | `background` = `marine-900`; `foreground` e `primary` brancos; `primary-foreground` = `marine-900`; `card` e `muted` = `marine-800`; `muted-foreground` = `marine-200`; `border` = `marine-700`; `cta` = `orange-500` com `cta-foreground` = `marine-900` (5,62:1); `highlight` = `mint-400`; `ring` = `orange-500`. |
+| `yellow` | `background` = `yellow-50`; `border` = `yellow-100`; `highlight` = `yellow-700`. |
+
+Use o seletor de tema da barra de ferramentas do Storybook para ver qualquer componente em cada tema.
+
+<div data-theme="marine" className="rounded-lg border bg-background p-4 text-foreground">
+  Exemplo: <span className="text-highlight">destaque</span> no tema <code>marine</code>.
+</div>
+<div data-theme="yellow" className="mt-2 rounded-lg border bg-background p-4 text-foreground">
+  Exemplo: <span className="text-highlight">destaque</span> no tema <code>yellow</code>.
+</div>

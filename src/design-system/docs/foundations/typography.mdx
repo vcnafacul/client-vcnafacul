@@ -1,0 +1,85 @@
+import { Meta, Typeset } from "@storybook/addon-docs/blocks";
+
+<Meta title="Fundamentos/Tipografia" />
+
+# Tipografia
+
+Uma classe por passo, em `tailwind/type-scale.js`. Os valores de celular valem por padrão, e os de desktop
+valem a partir de `768px` (o `text-hero` tem três tamanhos). As classes vão em elementos semânticos
+(`<h2 className="text-h2">`): **não existe** componente `Text` nem `Heading`. O `CardTitle` é `text-h4`, e o
+`DialogTitle`, o `SheetTitle` e o `AlertDialogTitle` são `text-h3`.
+
+O **peso** sai em `:where(.text-<passo>)` (especificidade zero), então `font-semibold`, `font-bold` etc.
+sempre vencem, na ordem que for.
+
+## Os passos
+
+| Passo | < 768 | ≥ 768 | ≥ 1200 | ≥ 1565 | Linha | Peso | Extra |
+|---|---|---|---|---|---|---|---|
+| `text-hero` | 48 | 48 | 72 | 96 | 1,05 | 800 | `letter-spacing: -.01em`, `text-wrap: balance`. **Só no hero da home** (guard) |
+| `text-display` | 30 | 48 | | | 1,1 | 800 | `letter-spacing: -.01em`. Títulos de seção da home e do marketing |
+| `text-h1` | 24 | 30 | | | 1,2 | 700 | |
+| `text-h2` | 20 | 24 | | | 1,25 | 700 | |
+| `text-h3` | 16 | 18 | | | 1,3 | 600 | |
+| `text-h4` | 14 | 16 | | | 1,4 | 600 | |
+| `text-prose` | 16 | 17 | | | 1,7 | 400 | leitura longa |
+| `text-body` | 14 | 14 | | | 1,5 | 400 | texto padrão de interface |
+| `text-body-sm` | 13 | 13 | | | 1,45 | 400 | metadados |
+| `text-caption` | 12 | 12 | | | 1,4 | 500 | **tamanho mínimo** |
+| `text-label` | 13 | 13 | | | 1,3 | 600 | rótulos de formulário |
+| `text-button` | 14 | 14 | | | 1 | 600 | |
+| `text-overline` | 12 | 12 | | | 1,3 | 700 | `text-transform: uppercase`, `letter-spacing: .16em` |
+| `text-numeric` | 24 | 28 | | | 1,1 | 700 | `font-variant-numeric: tabular-nums` |
+
+## Cada passo nos dois tamanhos
+
+Cada exemplo mostra o tamanho de celular e, em seguida, o de desktop.
+
+{[
+  ["text-hero", ["48px", "72px", "96px"], 800],
+  ["text-display", ["30px", "48px"], 800],
+  ["text-h1", ["24px", "30px"], 700],
+  ["text-h2", ["20px", "24px"], 700],
+  ["text-h3", ["16px", "18px"], 600],
+  ["text-h4", ["14px", "16px"], 600],
+  ["text-prose", ["16px", "17px"], 400],
+  ["text-body", ["14px"], 400],
+  ["text-body-sm", ["13px"], 400],
+  ["text-caption", ["12px"], 500],
+  ["text-label", ["13px"], 600],
+  ["text-button", ["14px"], 600],
+  ["text-overline", ["12px"], 700],
+  ["text-numeric", ["24px", "28px"], 700],
+].map(([nome, tamanhos, peso]) => (
+  <div key={nome} className="mb-6">
+    <code>{nome}</code>
+    <Typeset
+      fontFamily="Raleway, sans-serif"
+      fontSizes={tamanhos}
+      fontWeight={peso}
+      sampleText="Estude de graça para o vestibular"
+    />
+  </div>
+))}
+
+## `prose` ou `body`
+
+- **`prose`** é para ler: 16px no celular e 17px no desktop, com linha de 1,7. O texto rico (tiptap, markdown,
+  enunciados de questões, materiais) renderiza dentro de `className="prose max-w-prose-content"`. Dentro do
+  `prose`, o corpo é o passo `prose`, os títulos são os passos `h2` a `h4`, os links são `primary` com
+  sublinhado e as cores são `foreground`, `muted-foreground` e `border`.
+- **`body`** é para a interface: 14px, linha de 1,5.
+
+## O mínimo de 12px
+
+Nenhum texto fica abaixo de 12px: o menor passo é o `text-caption`. Os tamanhos padrão do Tailwind
+(`text-xs` a `text-9xl`) e os arbitrários (`text-[…]`) são barrados pelo guard.
+
+## Pesos carregados
+
+O `index.html` carrega a Raleway com `ital,wght@0,400;0,500;0,600;0,700;0,800;1,400`, ou seja, **seis
+arquivos**: 400, 500, 600, 700 e 800 em romano, e 400 em itálico.
+
+- O peso 300 e os outros itálicos **não** são carregados: `font-light` e `font-thin` viram `font-normal`, e
+  `font-black` vira `font-extrabold`.
+- Monoespaçada (`font-mono`) usa a pilha do sistema.

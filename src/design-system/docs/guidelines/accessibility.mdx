@@ -1,0 +1,32 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guias/Acessibilidade" />
+
+# Acessibilidade
+
+## Regras decididas
+
+- Contraste AA (4,5:1 para texto; 3:1 para `input`, `ring` e gráficos).
+- Texto de no mínimo 12px.
+- Anel de foco sólido, de 2px.
+- Campos com borda de 3:1.
+- Alvos de toque de 44px no celular.
+- O foco é gerenciado pelo Radix (dialogs, menus, popovers).
+- Marcação obrigatória: campo obrigatório é marcado também para leitor de tela, não só pelo asterisco vermelho.
+
+## Mais regras
+
+- **Um `h1` por página**, sem pular níveis de título.
+- **Todo controle fica dentro de um `Field`.**
+- **Botão só com ícone precisa de `aria-label`** (o TypeScript exige).
+- **A cor nunca é o único sinal.**
+- **`alt` com sentido** ou `alt=""` em imagem decorativa.
+- **Nada de `div` ou `span` clicável:** use `button` ou `a`.
+- **Foco sempre visível.**
+- **`prefers-reduced-motion`** desliga as animações de página e de seção do GSAP e do Motion. Spinners e o
+  pulso do skeleton continuam.
+- **`lang="pt-BR"`** no documento.
+
+## Como é conferido
+
+O painel do axe (addon a11y do Storybook) e o `eslint-plugin-jsx-a11y`.

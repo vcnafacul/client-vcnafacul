@@ -1,0 +1,33 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guias/Regras de uso" />
+
+# Regras de uso
+
+- **No máximo um `cta` por tela.**
+- **Borda para superfícies dentro da página; sombra só para elementos flutuantes.**
+- **`StatusBadge`:** o ponto em tabelas e listas, a versão tingida nos outros lugares.
+- **`prose` para leitura, `body` para a interface.**
+- **`muted-foreground` é a única cor de texto secundário.**
+- **Asterisco vermelho** marca campo obrigatório.
+- **Toasts** de erro e de aviso ficam até serem fechados; os de sucesso e de informação fecham sozinhos em 5s.
+- **Só abas sublinhadas.**
+- **12px é o mínimo** de texto.
+- **`text-hero` só na home; `text-display` para os títulos de seção da home e do marketing.**
+- **Abas trocam o conteúdo; o `SegmentedControl` escolhe um valor** (D17).
+- **Filtros de lista ficam na página** e, abaixo de 768, atrás de "Mais filtros (N)" (D22).
+
+## `SegmentedControl` (D17)
+
+Escolhe **um** valor entre 2 e 5 opções curtas, ali mesmo, sem trocar o conteúdo da tela.
+
+- Abas trocam o conteúdo; o segmentado escolhe um valor.
+- Liga/desliga isolado é `Switch`.
+- Seleção múltipla é `Checkbox`.
+
+## Filtros (D22)
+
+- Grade na página, acima da lista, em todas as larguras.
+- A busca por texto espera 400ms depois da última tecla.
+- Os filtros aplicam na hora: não existe botão "Aplicar".
+- O comportamento vale para o `DashFilterBar`.

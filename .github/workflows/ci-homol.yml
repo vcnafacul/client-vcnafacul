@@ -62,6 +62,40 @@ jobs:
         run: yarn build
 
   # ---------------------------------------------------------------------------
+  # CI: catálogo do design system (tickets/059 §5.1). Só roda se o PR toca
+  # componentes ui, docs do design system, tokens, tailwind ou o .storybook.
+  # ---------------------------------------------------------------------------
+  BUILD_STORYBOOK:
+    if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize' || github.event.action == 'reopened')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check changed paths
+        id: paths
+        run: |
+          if git diff --name-only "origin/${{ github.base_ref }}...HEAD" \
+            | grep -qE '^(src/components/ui/|src/design-system/|src/styles/tokens\.css$|tailwind|\.storybook/)'; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-node@v4
+        if: steps.paths.outputs.changed == 'true'
+        with:
+          node-version: "24"
+          cache: "yarn"
+      - name: Install depends
+        if: steps.paths.outputs.changed == 'true'
+        run: yarn install --frozen-lockfile
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "1"
+      - name: Build Storybook
+        if: steps.paths.outputs.changed == 'true'
+        run: yarn build-storybook
+
+  # ---------------------------------------------------------------------------
   # Deploy: Homologation (após aprovação do PR)
   # ---------------------------------------------------------------------------
   DEPLOY:

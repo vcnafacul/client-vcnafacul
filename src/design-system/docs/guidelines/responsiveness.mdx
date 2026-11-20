@@ -1,0 +1,30 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guias/Responsividade" />
+
+# Responsividade
+
+O ponto de corte é 768px (`sm`). Abaixo dele, a tela é de celular.
+
+- **Tabelas viram cards.**
+- **Dialogs ocupam a tela inteira.**
+- **Alvos de toque de 44px.**
+- **Nada depende só de hover.**
+
+## Navegação
+
+Abaixo de 768, o menu público e a sidebar do dash abrem num **`Sheet` à esquerda**, a partir de um hambúrguer
+no cabeçalho (no lugar do `organisms/menuMobile`). Fecham com Esc, com toque fora e ao navegar.
+
+## Formulários
+
+- Uma coluna, rótulos acima dos campos.
+- Ações em largura total no fim, com a ação principal no topo.
+- Barra de ações fixa em formulários longos (as etapas da inscrição).
+- `type`, `inputMode` e `autoComplete` corretos em cada campo.
+
+## Filtros de lista (D22)
+
+Os filtros ficam numa grade na própria página, acima da lista, em todas as larguras. Abaixo de 768, só a busca
+fica visível; os outros ficam atrás do botão "Mais filtros (N)", com N filtros ativos, que expande a grade no
+lugar. O `Sheet` da direita fica só para detalhes.
