@@ -1,5 +1,5 @@
 import Text from "@/components/atoms/text";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { ChangeOrderDTO } from "@/dtos/content/changeOrder";
 import { StatusContent } from "@/enums/content/statusContent";
@@ -238,10 +238,10 @@ function OrderEditContent(props: Props) {
         </DndContext>
 
         <div className="flex w-full justify-center gap-4 p-4 flex-wrap">
-          <Button size="small" className="w-32" onClick={fechar}>
+          <Button variant="primary" size="sm" className="w-32" onClick={fechar}>
             Cancelar
           </Button>
-          <Button size="small" className="w-32" onClick={handleSave}>
+          <Button variant="primary" size="sm" className="w-32" onClick={handleSave}>
             Salvar
           </Button>
         </div>

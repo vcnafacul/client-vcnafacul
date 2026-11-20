@@ -4,7 +4,7 @@ import { Geolocation } from "@/types/geolocation/geolocation";
 import { useEffect, useState } from "react";
 
 import Text from "@/components/atoms/text";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import MapBox from "@/components/molecules/mapBox";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import { ModalMotivoRejeicao } from "../modalMotivoRejeicao";
@@ -20,6 +20,7 @@ import { useAuthStore } from "@/store/auth";
 import { BtnProps } from "@/types/generic/btnProps";
 import { ValidationGeolocation } from "@/types/geolocation/validationGeolocation";
 import { TypeMarker } from "@/types/map/marker";
+import { cn } from "@/lib/utils";
 import { getStatusIcon } from "@/utils/getStatusIcon";
 import leaflet, { LatLngTuple } from "leaflet";
 import { useForm } from "react-hook-form";
@@ -206,7 +207,7 @@ function ModalEditDashGeo({
         update(StatusEnum.Approved);
       },
       status: StatusEnum.Approved,
-      className: "bg-success",
+      variant: "cta",
       editing: false,
     },
     {
@@ -216,7 +217,7 @@ function ModalEditDashGeo({
         setRefuse(true);
       },
       status: StatusEnum.Rejected,
-      className: "bg-destructive",
+      variant: "destructive",
       editing: false,
     },
     {
@@ -233,7 +234,7 @@ function ModalEditDashGeo({
       onClick: handleClose,
       editing: false,
     },
-    { children: "Salvar", type: "submit", editing: true },
+    { children: "Salvar", type: "submit", variant: "cta", editing: true },
     {
       children: "Voltar",
       type: "button",
@@ -570,10 +571,10 @@ function ModalEditDashGeo({
             {btns.map((btn, index) => {
               if (editing === btn.editing) {
                 return (
-                  <Button
+                  <Button variant={btn.variant ?? "primary"} size="lg"
                     disabled={btn.status ? geo.status === btn.status : false}
                     key={index}
-                    className={`${btn.className} w-full border-none`}
+                    className={cn(btn.className, "w-full")}
                     onClick={btn.onClick}
                     type={btn.type}
                   >

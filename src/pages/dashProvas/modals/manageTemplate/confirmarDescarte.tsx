@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Button from "../../../../components/molecules/button";
+import { Button } from "@/components/ui/button";
 import { useToastAsync } from "../../../../hooks/useToastAsync";
 import { descartarRascunho } from "../../../../services/caderno/template/descartarRascunho";
 
@@ -48,12 +48,10 @@ function ConfirmarDescarte({
       </p>
 
       <div className="mt-6 flex justify-end gap-3">
-        <Button typeStyle="refused" size="small" onClick={onCancel}>
+        <Button variant="destructive" size="sm" onClick={onCancel}>
           Cancelar
         </Button>
-        <Button
-          typeStyle="primary"
-          size="small"
+        <Button variant="primary" size="sm"
           disabled={descartando}
           onClick={handleDescartar}
         >

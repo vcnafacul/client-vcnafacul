@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FileText } from "lucide-react";
-import Button from "../../../../components/molecules/button";
+import { Button } from "@/components/ui/button";
 import ModalTemplate from "../../../../components/templates/modalTemplate";
 import { useToastAsync } from "../../../../hooks/useToastAsync";
 import { baixarModelo } from "../../../../services/caderno/template/baixarModelo";
@@ -268,9 +268,7 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
               Template do caderno
             </h2>
             <div className="ml-auto">
-              <Button
-                typeStyle="quaternary"
-                size="small"
+              <Button variant="outline" size="sm"
                 onClick={() => setView("historico")}
               >
                 Histórico de versões
@@ -291,9 +289,7 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
                 sempre dele — não comece um projeto do zero.
               </p>
               <div className="mt-3">
-                <Button
-                  typeStyle="quaternary"
-                  size="small"
+                <Button variant="outline" size="sm"
                   disabled={baixando}
                   onClick={handleBaixarModelo}
                 >
@@ -363,9 +359,7 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
                   className="w-full rounded-md border border-border px-3 py-2 text-body"
                 />
                 <div>
-                  <Button
-                    typeStyle="secondary"
-                    size="small"
+                  <Button variant="outline" size="sm"
                     disabled={!arquivo || enviando}
                     onClick={handleEnviar}
                   >
@@ -394,17 +388,13 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
                   lista do que corrigir aparece aqui e nada é publicado.
                 </p>
                 <div className="mt-4 flex justify-end gap-3">
-                  <Button
-                    typeStyle="refused"
-                    size="small"
+                  <Button variant="destructive" size="sm"
                     disabled={!estado.podeDescartar}
                     onClick={() => setView("descartar")}
                   >
                     Descartar rascunho
                   </Button>
-                  <Button
-                    typeStyle="primary"
-                    size="small"
+                  <Button variant="primary" size="sm"
                     disabled={!estado.podePublicar || publicando}
                     onClick={handlePublicar}
                   >
@@ -484,17 +474,13 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
               )}
 
               <div className="mt-4 flex justify-end gap-3">
-                <Button
-                  typeStyle="refused"
-                  size="small"
+                <Button variant="destructive" size="sm"
                   disabled={!estado.podeDescartar}
                   onClick={() => setView("descartar")}
                 >
                   Descartar rascunho
                 </Button>
-                <Button
-                  typeStyle="primary"
-                  size="small"
+                <Button variant="primary" size="sm"
                   disabled={!estado.podePublicar || publicando}
                   onClick={handlePublicar}
                 >

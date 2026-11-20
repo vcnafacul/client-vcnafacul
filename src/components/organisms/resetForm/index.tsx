@@ -13,7 +13,7 @@ import { LOGIN_PATH } from "../../../routes/path";
 import { ResetPassword } from "../../../services/auth/resetPassword";
 import SpanValidate from "../../atoms/spanValidate";
 import Text from "../../atoms/text";
-import Button from "../../molecules/button";
+import { Button } from "@/components/ui/button";
 import FormField, { FormFieldInput } from "../../molecules/formField";
 
 export interface ResetFormProps {
@@ -147,7 +147,7 @@ export function ResetForm({
             type={formData[0].type}
             error={errors["password_confirmation"]}
           />
-          <Button disabled={disabled} type="submit">
+          <Button className="w-full" variant="cta" size="lg" disabled={disabled} type="submit">
             Continuar
           </Button>
         </form>

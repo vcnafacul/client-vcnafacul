@@ -14,7 +14,7 @@ import * as yup from "yup";
 import { StepProps } from "..";
 import { Gender } from "../../../../store/auth";
 import { UserRegister } from "../../../../types/user/userRegister";
-import Button from "../../../molecules/button";
+import { Button } from "@/components/ui/button";
 import { InputFactory } from "../../inputFactory";
 
 interface UseRegisterStep2 {
@@ -263,11 +263,11 @@ function Step2({
       </div>
       <div className="flex gap-4">
         {back && (
-          <Button type="button" onClick={back}>
+          <Button className="w-full" variant="primary" size="lg" type="button" onClick={back}>
             Voltar
           </Button>
         )}
-        <Button type="submit">Cadastrar</Button>
+        <Button className="w-full" variant="cta" size="lg" type="submit">Cadastrar</Button>
       </div>
     </form>
   );

@@ -1,8 +1,7 @@
 import { ReactComponent as TrashIcon } from "@/assets/icons/trash.svg";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import ModalTemplate from "@/components/templates/modalTemplate";
-import * as ShadcnButton from "@/components/ui/button";
 import { extendInscription } from "@/services/prepCourse/inscription/extend";
 import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
 import { useAuthStore } from "@/store/auth";
@@ -318,13 +317,15 @@ export function InscriptionInfoModal({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <div className="order-2 sm:order-1">
             <ShadcnTooltip content="Download Lista de Alunos">
-              <ShadcnButton.Button
-                className="bg-cta hover:bg-cta/60 h-10 sm:h-8 w-full sm:w-auto"
+              <Button
+                variant="cta"
+                aria-label="Baixar lista de alunos"
+                className="h-10 sm:h-8 w-full sm:w-auto"
                 onClick={() => exportToExcel()}
               >
                 <Download className="w-6 h-6" />
                 <span className="sm:hidden">Baixar lista de alunos</span>
-              </ShadcnButton.Button>
+              </Button>
             </ShadcnTooltip>
           </div>
           <div className="order-1 sm:order-2 w-full sm:w-36">
@@ -338,8 +339,8 @@ export function InscriptionInfoModal({
             </BLink>
           </div>
           <div className="order-3 flex flex-col-reverse gap-3 sm:flex-row sm:flex-1 sm:justify-end sm:gap-4">
-            <Button
-              className="w-full sm:w-24 h-10 sm:h-8 bg-destructive border-none hover:bg-destructive/60"
+            <Button variant="destructive" size="lg"
+              className="w-full sm:w-24 h-10 sm:h-8"
               disabled={inscriptionSelected!.subscribersCount > 0}
               onClick={() => setOpenModalDelete(true)}
             >
@@ -350,16 +351,14 @@ export function InscriptionInfoModal({
             </Button>
 
             {canExtend === true ? (
-              <Button
-                typeStyle="secondary"
+              <Button variant="outline" size="lg"
                 className="w-full sm:w-32 h-10 sm:h-8"
                 onClick={() => setOpenModalExtend(true)}
               >
                 Prorrogar
               </Button>
             ) : (
-              <Button
-                typeStyle="secondary"
+              <Button variant="outline" size="lg"
                 className="w-full sm:w-24 h-10 sm:h-8"
                 onClick={() => setOpenModalEdit(true)}
               >

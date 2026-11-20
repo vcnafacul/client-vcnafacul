@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { useAuthStore } from "../../../store/auth";
 import { HomeFeature } from "../../../dtos/homeContent/homeFeature";
@@ -190,17 +190,14 @@ export default function ModalEditFeature({
           />
         )}
         <div className="flex justify-end gap-2 pt-2">
-          <Button
-            size="small"
+          <Button variant="primary" size="sm"
             className="w-32"
             onClick={handleClose}
             disabled={saving}
           >
             Cancelar
           </Button>
-          <Button
-            typeStyle="primary"
-            size="small"
+          <Button variant="primary" size="sm"
             className="w-32"
             onClick={onSubmit}
             disabled={saving}

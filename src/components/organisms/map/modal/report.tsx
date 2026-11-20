@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import RadioButton from "@/components/atoms/radioButton";
 import Text from "@/components/atoms/text";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import ModalTemplate, {
   ModalProps,
 } from "@/components/templates/modalTemplate";
@@ -152,10 +152,10 @@ function ReportLC({
           onChange={(event: any) => setMessage(`${event.target.value}`)}
         />
         <div className="max-w-3xl flex mx-auto gap-4 mt-4">
-          <Button typeStyle="secondary" onClick={handleClose}>
+          <Button className="w-full" variant="outline" size="lg" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button disabled={message.length <= 0} onClick={sendReport}>
+          <Button className="w-full" variant="primary" size="lg" disabled={message.length <= 0} onClick={sendReport}>
             Enviar
           </Button>
         </div>

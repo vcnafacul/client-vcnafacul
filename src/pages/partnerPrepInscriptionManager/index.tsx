@@ -5,7 +5,7 @@ import {
   type DashAction,
 } from "@/components/dashV2";
 import { FilterProps } from "@/components/atoms/filter";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import { CardDash } from "@/components/molecules/cardDash";
 import { DashCardContext } from "@/context/dashCardContext";
 import { StatusEnum } from "@/enums/generic/statusEnum";
@@ -314,15 +314,13 @@ export function PartnerPrepInscriptionManager() {
             </span>
           </label>
           <div className="flex justify-end gap-4 sm:col-span-2 mt-2">
-            <Button
-              typeStyle="secondary"
+            <Button variant="outline" size="lg"
               className="w-24 h-9"
               onClick={cancelTestCreation}
             >
               Cancelar
             </Button>
-            <Button
-              typeStyle="primary"
+            <Button variant="primary" size="lg"
               className="w-24 h-9"
               onClick={confirmTestCreation}
               disabled={!testConfirmed}

@@ -5,7 +5,7 @@ import * as yup from "yup"
 import { EachStepProps } from ".."
 import { CreateGeolocation } from "../../../../types/geolocation/geolocation"
 import Text from "../../../atoms/text"
-import Button from "../../../molecules/button"
+import { Button } from "@/components/ui/button";
 import Form from "../../form"
 
 function Step2Geo({ title, subtitle, form, updateData, dataGeo
@@ -36,7 +36,7 @@ function Step2Geo({ title, subtitle, form, updateData, dataGeo
           f.defaultValue = dataGeo![f.id as keyof CreateGeolocation]  || ''
           return f
         })} register={register} errors={errors} />
-        <Button type="submit">Continuar</Button>
+        <Button className="w-full" variant="primary" size="lg" type="submit">Continuar</Button>
       </form>
     </div>
   )

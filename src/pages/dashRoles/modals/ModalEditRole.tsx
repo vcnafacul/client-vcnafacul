@@ -12,7 +12,7 @@ import { setRoleRecommended } from "@/services/roles/setRoleRecommended";
 import { motivoSemRecomendacao, passosDoSalvar } from "./recomendacao";
 import { getPermissionsHierarchy } from "@/services/roles/getPermissionsHierarchy";
 import { useEffect, useState } from "react";
-import Button from "../../../components/molecules/button";
+import { Button } from "@/components/ui/button";
 import ModalTemplate, {
   ModalProps,
 } from "../../../components/templates/modalTemplate";
@@ -222,11 +222,10 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
 
         {/* Actions */}
         <div className="flex justify-end gap-3 pt-2 border-t border-border">
-          <Button typeStyle="primary" onClick={handleClose}>
+          <Button className="w-full" variant="primary" size="lg" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button
-            typeStyle="secondary"
+          <Button className="w-full" variant="outline" size="lg"
             disabled={!roleSelected?.name.trim()}
             onClick={editRole}
           >

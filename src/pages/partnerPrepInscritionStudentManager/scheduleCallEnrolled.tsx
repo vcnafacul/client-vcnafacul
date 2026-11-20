@@ -1,5 +1,5 @@
 import Text from "@/components/atoms/text";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import ModalTemplate from "@/components/templates/modalTemplate";
 
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -79,16 +79,14 @@ export function ScheduleCallEnrolle(props: Props) {
             )}
           </div>
           <div className="flex gap-4 mt-6">
-            <Button
-              size="small"
-              typeStyle="secondary"
+            <Button variant="outline" size="sm"
               className="w-full"
               type="button"
               onClick={props.handleClose}
             >
               Cancelar
             </Button>
-            <Button size="small" className="w-full">
+            <Button variant="primary" size="sm" className="w-full">
               Confirma
             </Button>
           </div>

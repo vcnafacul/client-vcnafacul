@@ -12,7 +12,7 @@ import {
 import { validNewEmail } from "../../../../services/auth/validNewEmail";
 import { UserRegister } from "../../../../types/user/userRegister";
 import SpanValidate from "../../../atoms/spanValidate";
-import Button from "../../../molecules/button";
+import { Button } from "@/components/ui/button";
 import { InputFactory } from "../../inputFactory";
 
 interface UseRegisterStep1 {
@@ -166,7 +166,7 @@ function Step1({ updateData, dataUser, emailTravado }: Step1Props) {
           </div>
         </div>
       </div>
-      <Button type="submit">Continuar</Button>
+      <Button className="w-full" variant="primary" size="lg" type="submit">Continuar</Button>
     </form>
   );
 }

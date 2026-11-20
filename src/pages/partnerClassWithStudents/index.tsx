@@ -1,5 +1,5 @@
 import logo from "@/assets/images/logo_carteirinha.png";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Roles } from "@/enums/roles/roles";
 import { useModals } from "@/hooks/useModal";
@@ -529,11 +529,8 @@ export function PartnerClassWithStudents() {
         <TabsContent value="alunos">
           <div className="p-4 flex flex-wrap items-center gap-2 bg-page w-full">
             {permissao[Roles.gerenciarTurmas] && (
-              <Button
-                typeStyle="accepted"
-                size="small"
+              <Button variant="primary" size="sm"
                 onClick={() => modals.modalAttendanceHistory.open()}
-                className="border-none"
               >
                 <div className="flex items-center justify-center gap-2">
                   <ListChecks size="1em" />
@@ -544,11 +541,8 @@ export function PartnerClassWithStudents() {
             {/* o PDF exporta a lista de ativos; some na outra visao para nao
                 sugerir que exportaria os cancelados */}
             {!showCancelled && (
-              <Button
-                typeStyle="primary"
-                size="small"
+              <Button variant="primary" size="sm"
                 onClick={downloadPDFClass}
-                className="border-none"
               >
                 <div className="flex items-center justify-center gap-2">
                   <Download className="h-5 w-5 text-white" />

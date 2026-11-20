@@ -7,7 +7,7 @@ import {
 } from "../../../components/atoms/selectOption";
 import Text from "../../../components/atoms/text";
 import Ul from "../../../components/atoms/ul";
-import Button from "../../../components/molecules/button";
+import { Button } from "@/components/ui/button";
 import ModalTemplate, {
   ModalProps,
 } from "../../../components/templates/modalTemplate";
@@ -134,12 +134,11 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
         <div className="flex justify-end">
           {/* No celular empilhados, com o principal em cima. */}
           <div className="flex flex-col-reverse sm:flex-row max-w-[500px] w-full gap-3 sm:gap-4">
-            <Button typeStyle="secondary" onClick={handleClose}>
+            <Button className="w-full" variant="outline" size="lg" onClick={handleClose}>
               Então volto mais tarde!
             </Button>
-            <Button
+            <Button className="w-full" variant="cta" size="lg"
               disabled={availables.length === 0}
-              hover
               onClick={getSimulate}
             >
               Ok, vamos lá!

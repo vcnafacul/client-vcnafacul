@@ -1,6 +1,6 @@
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { useEffect, useState } from "react";
-import Button from "../../../components/molecules/button";
+import { Button } from "@/components/ui/button";
 import Text from "../../../components/atoms/text";
 import {
   getResumoDoUsuario,
@@ -159,7 +159,7 @@ function ModalDoUsuario({
             <span className="text-body font-semibold text-foreground">
               {funcao || "—"}
             </span>
-            <Button typeStyle="secondary" onClick={openUpdateRole}>
+            <Button className="w-full" variant="outline" size="lg" onClick={openUpdateRole}>
               Alterar função
             </Button>
           </div>

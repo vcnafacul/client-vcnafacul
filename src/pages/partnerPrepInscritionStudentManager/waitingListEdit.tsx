@@ -1,5 +1,5 @@
 import Text from "@/components/atoms/text";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { useState } from "react";
 import {
@@ -126,11 +126,10 @@ function WaitingListEdit(props: Props) {
           </table>
         </DndContext>
         <div className="flex w-full justify-center gap-4 p-4 flex-wrap">
-          <Button size="small" className="w-32" onClick={props.handleClose}>
+          <Button variant="primary" size="sm" className="w-32" onClick={props.handleClose}>
             Cancelar
           </Button>
-          <Button
-            size="small"
+          <Button variant="primary" size="sm"
             className="w-32"
             onClick={() => props.updateOder(data.map((s) => s.id))}
           >

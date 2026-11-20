@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
@@ -189,14 +189,13 @@ export function InscriptionInfoCreateEditModal({
           )}
 
           <div className="flex justify-end gap-4 sm:col-span-2 mt-2">
-            <Button
-              typeStyle="secondary"
+            <Button variant="outline" size="lg"
               className="w-24 h-9"
               onClick={handleClose}
             >
               Cancelar
             </Button>
-            <Button typeStyle="primary" className="w-24 h-9" type="submit">
+            <Button variant="primary" size="lg" className="w-24 h-9" type="submit">
               {isEdit ? "Salvar" : "Criar"}
             </Button>
           </div>

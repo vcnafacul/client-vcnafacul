@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SelectProps } from "@/components/atoms/select";
-import type { ButtonProps } from "@/components/molecules/button";
+import type { BotaoLegadoProps } from "@/lib/botaoLegado";
 import type { CardDash } from "@/components/molecules/cardDash";
 import {
   DashCardContext,
@@ -611,7 +611,7 @@ describe("DashListTemplate — drop-in sobre o contexto do V1", () => {
 
   it("sem actions, os buttons do contexto viram a barra de ações", () => {
     const sincronizar = vi.fn();
-    const buttons: ButtonProps[] = [
+    const buttons: BotaoLegadoProps[] = [
       { children: "Relatorio Sync", typeStyle: "secondary", onClick: vi.fn() },
       { children: "Sincronizar", typeStyle: "primary", onClick: sincronizar },
       { children: "Limpar filtros", typeStyle: "refused", onClick: vi.fn() },
@@ -633,7 +633,7 @@ describe("DashListTemplate — drop-in sobre o contexto do V1", () => {
   });
 
   it("actions explícitas desligam o fallback por inteiro", () => {
-    const buttons: ButtonProps[] = [
+    const buttons: BotaoLegadoProps[] = [
       { children: "Do contexto", typeStyle: "primary", onClick: vi.fn() },
     ];
     montar(criarContexto({ entities: provas(3), buttons }), {

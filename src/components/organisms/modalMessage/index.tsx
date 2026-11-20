@@ -1,6 +1,6 @@
 import React from "react";
 import Text from "../../atoms/text";
-import Button from "../../molecules/button";
+import { Button } from "@/components/ui/button";
 import ModalTemplate, { ModalProps } from "../../templates/modalTemplate";
 
 export interface ModalMessageProps extends ModalProps {
@@ -23,10 +23,7 @@ function ModalMessage({
         </Text>
         {children}
         <div className="flex gap-2 justify-end">
-          <Button
-            size="small"
-            typeStyle="primary"
-            hover
+          <Button variant="primary" size="sm"
             onClick={() => {
               handleClose!();
             }}

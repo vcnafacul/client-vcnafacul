@@ -1,6 +1,6 @@
 import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
 import Text from "@/components/atoms/text";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { getWaitingListInfo } from "@/services/prepCourse/inscription/getWaitingList";
 import { sendEmailWaitingList } from "@/services/prepCourse/inscription/sendEmailWaitingList";
@@ -164,16 +164,12 @@ export function WaitingList(props: Props) {
             </tbody>
           </table>
           <div className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-4">
-            <Button
-              size="small"
-              typeStyle="refused"
+            <Button variant="destructive" size="sm"
               onClick={() => downloadPDF()}
             >
               <FileText className="h-6 w-10" />
             </Button>
-            <Button
-              size="small"
-              typeStyle="primary"
+            <Button variant="primary" size="sm"
               onClick={() => modals.modalEditWailtingList.open()}
             >
               <div className="flex items-center">
@@ -187,10 +183,8 @@ export function WaitingList(props: Props) {
               onConfirm={() => handleEmailWaitingList()}
             >
               <AlertDialogTrigger>
-                <Button
-                  size="small"
-                  typeStyle="accepted"
-                  className="w-full border-border"
+                <Button variant="primary" size="sm"
+                  className="w-full"
                 >
                   <div className="flex justify-center items-center">
                     <Mail className="h-6 w-10" />

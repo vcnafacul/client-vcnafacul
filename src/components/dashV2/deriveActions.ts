@@ -1,4 +1,4 @@
-import type { ButtonProps } from "@/components/molecules/button";
+import type { BotaoLegadoProps } from "@/lib/botaoLegado";
 import type { DashAction } from "./types";
 
 /**
@@ -32,7 +32,7 @@ export function rotuloDoBotao(children: React.ReactNode, indice: number): string
     : `Ação ${indice + 1}`;
 }
 
-function paraAcao(botao: ButtonProps, indice: number): DashAction {
+function paraAcao(botao: BotaoLegadoProps, indice: number): DashAction {
   return {
     // ⚠️ Índice na `key`, e não o rótulo: dois botões podem se chamar igual, e
     // a ordem do array é o que a tela controla.
@@ -41,7 +41,7 @@ function paraAcao(botao: ButtonProps, indice: number): DashAction {
     disabled: botao.disabled,
     destructive: botao.typeStyle === "refused",
     /**
-     * ⚠️ O evento sintético é descartado. `ButtonProps.onClick` é um
+     * ⚠️ O evento sintético é descartado. `BotaoLegadoProps.onClick` é um
      * `MouseEventHandler` e `DashAction.onClick` é `() => void`; nenhum dos
      * `buttons` das nove telas lê o evento. Uma tela que precise dele deve
      * passar `actions` à mão em vez de depender do fallback.
@@ -58,7 +58,7 @@ function paraAcao(botao: ButtonProps, indice: number): DashAction {
  * regra do `tokens.ts`, e o tipo do `DashToolbar` já a torna impossível de
  * burlar. A segunda desce para secundária.
  */
-export function deriveActions(buttons?: readonly ButtonProps[]): AcoesDerivadas {
+export function deriveActions(buttons?: readonly BotaoLegadoProps[]): AcoesDerivadas {
   if (!buttons?.length) return { secondary: [] };
 
   const indicePrimaria = buttons.findIndex((b) => b.typeStyle === "primary");

@@ -1,4 +1,4 @@
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import { DataInscription } from "@/dtos/student/studentInscriptionDTO";
 import { getTermOfUse } from "@/services/prepCourse/termOfUse";
 import { useAuthStore } from "@/store/auth";
@@ -91,7 +91,7 @@ export function PartnerPrepInscriptionStep0({
         </label>
       </div>
 
-      <Button className="mt-4" onClick={start} disabled={!accepted}>
+      <Button variant="primary" size="lg" className="w-full mt-4" onClick={start} disabled={!accepted}>
         Iniciar
       </Button>
     </div>

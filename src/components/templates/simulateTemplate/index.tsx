@@ -4,7 +4,7 @@ import { ChevronDown } from "lucide-react";
 import { getIconByTitle } from "../../../pages/mainSimulate/data";
 import IconArea from "../../atoms/iconArea";
 import Text from "../../atoms/text";
-import Button from "../../molecules/button";
+import { Button } from "@/components/ui/button";
 import Legends, { Legend } from "../../molecules/legends";
 import QuestionList, { QuestionProps } from "../../molecules/questionList";
 
@@ -149,7 +149,7 @@ function SimulateTemplate({
             {questionSelected.enemArea}
           </Text>
           {setReportProblem ? (
-            <Button onClick={setReportProblem} typeStyle="none">
+            <Button className="w-full" onClick={setReportProblem} variant="ghost" size="lg">
               <Report className="w-12 h-12" />
             </Button>
           ) : (

@@ -9,7 +9,7 @@ import { News } from "@/dtos/news/news";
 import { PendingImageStore } from "@/utils/pendingImageStore";
 import { useEffect, useRef, useState } from "react";
 import Text from "../../../components/atoms/text";
-import Button from "../../../components/molecules/button";
+import { Button } from "@/components/ui/button";
 import UploadButton from "../../../components/molecules/uploadButton";
 import ModalTemplate from "../../../components/templates/modalTemplate";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
@@ -334,24 +334,22 @@ function ModalEditNew({
       <div className="px-4 sm:px-6 py-4 border-t border-border flex gap-4 shrink-0 bg-white">
         {isEditing ? (
           <>
-            <Button
-              className="bg-success border-success"
-              hover
+            <Button variant="cta" size="lg"
+              className="w-full"
               onClick={handleSave}
             >
               Salvar
             </Button>
-            <Button
-              className="bg-destructive border-destructive"
+            <Button variant="destructive" size="lg"
+              className="w-full"
               onClick={() => setConfirmarExclusao(true)}
             >
               Deletar
             </Button>
           </>
         ) : (
-          <Button
-            className="bg-success border-success"
-            hover
+          <Button variant="cta" size="lg"
+            className="w-full"
             onClick={handleSave}
           >
             Salvar

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { Settings, Trash } from "lucide-react";
-import Button from "../../../../components/molecules/button";
+import { Button } from "@/components/ui/button";
 import ModalTemplate from "../../../../components/templates/modalTemplate";
 import {
   ICategoria,
@@ -155,9 +155,7 @@ function ManageCategorias({
           </div>
 
           <div className="mb-4 flex shrink-0 flex-wrap items-center justify-between gap-3">
-            <Button
-              typeStyle="quaternary"
-              size="small"
+            <Button variant="outline" size="sm"
               onClick={() => setView("criar")}
             >
               + Nova Categoria

@@ -1,5 +1,5 @@
 import Text from "@/components/atoms/text";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { acoesDeMatricula } from "./acoesDoEstudante";
@@ -773,10 +773,8 @@ export function StudentsEnrolled() {
             exige mais que ver a tela — o endpoint tambem checa */}
         {permissao[Roles.gerenciarEstudantes] && (
           <Button
-            onClick={() => modals.modalExportColumns.open()}
-            size="small"
-            typeStyle="primary"
-            className="border-none flex gap-2 items-center w-full h-10 sm:w-fit sm:h-fit"
+            onClick={() => modals.modalExportColumns.open()} variant="primary" size="sm"
+            className="flex gap-2 items-center w-full h-10 sm:w-fit sm:h-fit"
             // durante a geracao, e o que evita o clique repetido antes de a
             // requisicao voltar; com a lista vazia, nao ha o que exportar
             disabled={exportando || totalItems === 0}
@@ -789,9 +787,8 @@ export function StudentsEnrolled() {
         )}
         {permissao[Roles.gerenciarEstudantes] && (
           <Button
-            onClick={() => modals.modalStudentCards.open()}
-            size="small"
-            className="bg-destructive border-none flex gap-2 items-center hover:bg-destructive w-full h-10 sm:w-fit sm:h-fit"
+            onClick={() => modals.modalStudentCards.open()} variant="primary" size="sm"
+            className="flex gap-2 items-center w-full h-10 sm:w-fit sm:h-fit"
             disabled={selectedRows.length === 0}
           >
             <div className="flex gap-2 items-center justify-center">

@@ -1,4 +1,4 @@
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { Label } from "@/components/ui/label";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -83,14 +83,13 @@ export function ExtendInscriptionModal({
           </div>
 
           <div className="flex justify-end gap-4">
-            <Button
-              typeStyle="secondary"
+            <Button variant="outline" size="lg"
               className="w-24 h-9"
               onClick={handleClose}
             >
               Cancelar
             </Button>
-            <Button typeStyle="primary" className="w-24 h-9" type="submit">
+            <Button variant="primary" size="lg" className="w-24 h-9" type="submit">
               Confirmar
             </Button>
           </div>

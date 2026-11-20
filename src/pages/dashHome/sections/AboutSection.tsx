@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { RichTextEditor } from "@/components/molecules/richTextEditor/RichTextEditor";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import { useAuthStore } from "../../../store/auth";
 import { getHomeAbout } from "../../../services/home/getHomeAbout";
 import { updateHomeAbout } from "../../../services/home/updateHomeAbout";
@@ -120,9 +120,7 @@ export default function AboutSection() {
         />
       </div>
       <div>
-        <Button
-          typeStyle="primary"
-          size="small"
+        <Button variant="primary" size="sm"
           onClick={onSave}
           disabled={saving}
         >

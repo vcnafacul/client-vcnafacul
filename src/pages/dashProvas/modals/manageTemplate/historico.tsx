@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import Button from "../../../../components/molecules/button";
+import { Button } from "@/components/ui/button";
 import { useToastAsync } from "../../../../hooks/useToastAsync";
 import { baixarModelo } from "../../../../services/caderno/template/baixarModelo";
 import { listarVersoes } from "../../../../services/caderno/template/listarVersoes";
@@ -134,17 +134,13 @@ function Historico({
         </p>
 
         <div className="mt-6 flex justify-end gap-3">
-          <Button
-            typeStyle="refused"
-            size="small"
+          <Button variant="destructive" size="sm"
             disabled={restaurando}
             onClick={() => setARestaurar(null)}
           >
             Cancelar
           </Button>
-          <Button
-            typeStyle="primary"
-            size="small"
+          <Button variant="primary" size="sm"
             disabled={restaurando}
             onClick={() => handleRestaurar(aRestaurar.versao)}
           >
@@ -161,7 +157,7 @@ function Historico({
         <h2 className="text-h2 font-semibold text-foreground">
           Histórico de versões
         </h2>
-        <Button typeStyle="quaternary" size="small" onClick={onVoltar}>
+        <Button variant="outline" size="sm" onClick={onVoltar}>
           Voltar
         </Button>
       </div>
@@ -203,17 +199,13 @@ function Historico({
               </div>
 
               <div className="flex shrink-0 gap-3">
-                <Button
-                  typeStyle="quaternary"
-                  size="small"
+                <Button variant="outline" size="sm"
                   disabled={baixandoVersao !== null}
                   onClick={() => handleBaixar(versao.versao)}
                 >
                   Baixar
                 </Button>
-                <Button
-                  typeStyle="secondary"
-                  size="small"
+                <Button variant="outline" size="sm"
                   onClick={() => setARestaurar(versao)}
                 >
                   Restaurar

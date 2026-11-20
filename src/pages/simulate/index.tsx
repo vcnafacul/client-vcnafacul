@@ -2,7 +2,7 @@ import HeaderSimulate from "../../components/molecules/headerSimulate";
 import { QuestionBoxStatus } from "../../enums/simulado/questionBoxStatus";
 
 import Text from "../../components/atoms/text";
-import Button from "../../components/molecules/button";
+import { Button } from "@/components/ui/button";
 
 import { useModals } from "@/hooks/useModal";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -316,19 +316,18 @@ function Simulate() {
             // No celular: Confirmar em cima, largura toda; Voltar | Pular embaixo.
             <div className="grid w-full grid-cols-2 gap-3 sm:flex sm:w-auto sm:items-center sm:justify-center sm:gap-4">
               <Button
-                onClick={priorQuestion}
-                typeStyle="secondary"
+                onClick={priorQuestion} variant="outline" size="lg"
                 className="w-full sm:w-44"
               >
                 Voltar
               </Button>
-              <Button onClick={nextQuestion} className="w-full sm:w-44">
+              <Button variant="primary" size="lg" onClick={nextQuestion} className="w-full sm:w-44">
                 Pular
               </Button>
-              <Button
+              <Button variant="cta" size="lg"
                 onClick={confirmQuestion}
                 disabled={questionSelected.answered === undefined}
-                className="col-span-2 order-first sm:order-none transition-all duration-300 bg-success border-success text-success-foreground w-full sm:w-44 hover:border-success hover:bg-success/90"
+                className="col-span-2 order-first sm:order-none transition-all duration-300 w-full sm:w-44"
               >
                 Confirmar
               </Button>

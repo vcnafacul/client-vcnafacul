@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import type { ButtonProps } from "@/components/molecules/button";
+import type { BotaoLegadoProps } from "@/lib/botaoLegado";
 import { deriveActions, rotuloDoBotao } from "./deriveActions";
 
-const botao = (children: string, extra: Partial<ButtonProps> = {}): ButtonProps => ({
+const botao = (children: string, extra: Partial<BotaoLegadoProps> = {}): BotaoLegadoProps => ({
   children,
   onClick: vi.fn(),
   ...extra,

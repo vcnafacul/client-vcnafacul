@@ -1,4 +1,4 @@
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import { urlEntrarComGoogle } from "@/services/auth/google";
 
 interface Props {
@@ -29,9 +29,8 @@ function LogoGoogle() {
  */
 function GoogleAuthButton({ label, voltar, convite }: Props) {
   return (
-    <Button
-      type="button"
-      typeStyle="quaternary"
+    <Button className="w-full"
+      type="button" variant="outline" size="lg"
       onClick={() => window.location.assign(urlEntrarComGoogle(voltar, convite))}
     >
       <span className="flex items-center justify-center gap-3">

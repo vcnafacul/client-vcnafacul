@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Text from "@/components/atoms/text";
-// import Button from "@/components/molecules/button";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { StudentInscriptionDTO } from "@/dtos/student/studentInscriptionDTO";
 import {
@@ -355,7 +354,7 @@ export function PartnerPrepInscriptionStep1({
          
         onChange={(e: any) => handleCPFChange(e.target.value)}
       />
-      <Button type="submit">Continuar</Button>
+      <Button className="w-full" variant="primary" size="lg" type="submit">Continuar</Button>
     </form>
   );
 }

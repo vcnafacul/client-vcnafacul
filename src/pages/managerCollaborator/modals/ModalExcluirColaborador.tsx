@@ -1,5 +1,5 @@
 import Select from "@/components/atoms/select";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import {
   getRecommendedRoles,
@@ -83,10 +83,10 @@ export function ModalExcluirColaborador({
           </span>
         </label>
         <div className="flex justify-end gap-3 pt-2 border-t border-border">
-          <Button typeStyle="primary" onClick={handleClose}>
+          <Button className="w-full" variant="primary" size="lg" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button typeStyle="refused" onClick={confirmar} disabled={excluindo}>
+          <Button className="w-full" variant="destructive" size="lg" onClick={confirmar} disabled={excluindo}>
             {excluindo ? "Excluindo..." : "Excluir"}
           </Button>
         </div>

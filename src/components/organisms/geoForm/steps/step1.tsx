@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { EachStepProps } from "..";
 import { CreateGeolocation } from "../../../../types/geolocation/geolocation";
 import Text from "../../../atoms/text";
-import Button from "../../../molecules/button";
+import { Button } from "@/components/ui/button";
 import Form from "../../form";
 import { regex } from "../data";
 
@@ -63,10 +63,10 @@ function Step1Geo({
           errors={errors}
         />
         <div className="flex gap-4">
-          <Button type="button" onClick={() => handleBack!(getValues())}>
+          <Button className="w-full" variant="primary" size="lg" type="button" onClick={() => handleBack!(getValues())}>
             Voltar
           </Button>
-          <Button type="submit">Enviar Cadastro</Button>
+          <Button className="w-full" variant="cta" size="lg" type="submit">Enviar Cadastro</Button>
         </div>
       </form>
     </div>

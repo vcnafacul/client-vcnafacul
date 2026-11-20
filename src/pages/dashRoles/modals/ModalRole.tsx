@@ -2,7 +2,7 @@ import ModalTemplate from "@/components/templates/modalTemplate";
 import PermissionToggle from "@/components/atoms/permissionToggle/PermissionToggle";
 import Select from "../../../components/atoms/select";
 import Text from "../../../components/atoms/text";
-import Button from "../../../components/molecules/button";
+import { Button } from "@/components/ui/button";
 import { getRoleNew } from "../../../services/roles/getRole";
 import { useAuthStore } from "../../../store/auth";
 import { Role } from "../../../types/roles/role";
@@ -196,11 +196,10 @@ function ModalRole({
         <div className="flex justify-end gap-3 pt-2 border-t border-border">
           {isEditing ? (
             <>
-              <Button typeStyle="primary" onClick={cancelEdit}>
+              <Button className="w-full" variant="primary" size="lg" onClick={cancelEdit}>
                 Cancelar
               </Button>
-              <Button
-                typeStyle="secondary"
+              <Button className="w-full" variant="outline" size="lg"
                 onClick={updateRole}
                 disabled={newRole === role.id}
               >
@@ -208,8 +207,7 @@ function ModalRole({
               </Button>
             </>
           ) : (
-            <Button
-              typeStyle="secondary"
+            <Button className="w-full" variant="outline" size="lg"
               onClick={() => setIsEditing(true)}
               disabled={roles.length === 0}
             >

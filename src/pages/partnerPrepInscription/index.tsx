@@ -1,6 +1,6 @@
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
 import Text from "@/components/atoms/text";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import {
   DataInscription,
   LegalGuardianDTO,
@@ -329,7 +329,7 @@ export function PartnerPrepInscription() {
       case StepsInscriptionStudent.Success:
         return <PartnerPrepInscriptionStepSucess />;
       default:
-        return <Button onClick={() => backStep()}>Voltar</Button>;
+        return <Button className="w-full" variant="primary" size="lg" onClick={() => backStep()}>Voltar</Button>;
     }
   };
 

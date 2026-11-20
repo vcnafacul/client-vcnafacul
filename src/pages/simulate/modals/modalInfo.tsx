@@ -1,5 +1,6 @@
 import Text from "../../../components/atoms/text";
-import Button from "../../../components/molecules/button";
+import { Button } from "@/components/ui/button";
+import { variantDoTypeStyle } from "@/lib/botaoLegado";
 import { ModalType } from "../../../types/simulado/modalType";
 
 interface ModalInfoProps {
@@ -21,9 +22,9 @@ function ModalInfo({ modal }: ModalInfoProps) {
               {modal.buttons.map((btn, index) => (
                 <Button
                   key={index}
-                  size="small"
+                  size="sm"
                   className="w-fit min-w-[150px]"
-                  typeStyle={btn.type}
+                  variant={variantDoTypeStyle(btn.type)}
                   onClick={btn.onClick}
                 >
                   {btn.children}

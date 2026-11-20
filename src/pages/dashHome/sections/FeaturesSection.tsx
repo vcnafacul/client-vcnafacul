@@ -15,7 +15,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import { useAuthStore } from "../../../store/auth";
 import { HomeFeature } from "../../../dtos/homeContent/homeFeature";
 import { getHomeFeatures } from "../../../services/home/getHomeFeatures";
@@ -145,9 +145,7 @@ export default function FeaturesSection() {
           />
         </label>
         <div className="flex justify-end">
-          <Button
-            typeStyle="primary"
-            size="small"
+          <Button variant="primary" size="sm"
             onClick={saveSection}
             disabled={savingSection}
           >
@@ -159,7 +157,7 @@ export default function FeaturesSection() {
         <span className="text-body text-muted-foreground">
           {features.length} item(s)
         </span>
-        <Button typeStyle="primary" size="small" onClick={openCreate}>
+        <Button variant="primary" size="sm" onClick={openCreate}>
           Adicionar item
         </Button>
       </div>

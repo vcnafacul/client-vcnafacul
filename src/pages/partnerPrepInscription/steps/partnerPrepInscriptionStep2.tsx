@@ -1,6 +1,5 @@
 import Text from "@/components/atoms/text";
-// import Button from "@/components/molecules/button";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { StudentInscriptionDTO } from "@/dtos/student/studentInscriptionDTO";
 import { stateOptions } from "@/pages/register/data";
@@ -251,10 +250,10 @@ export function PartnerPrepInscriptionStep2({
       />
 
       <div className="flex flex-col-reverse sm:flex-row gap-4">
-        <Button type="button" onClick={handleBackForm}>
+        <Button className="w-full" variant="primary" size="lg" type="button" onClick={handleBackForm}>
           Voltar
         </Button>
-        <Button type="submit">Continuar</Button>
+        <Button className="w-full" variant="primary" size="lg" type="submit">Continuar</Button>
       </div>
     </form>
   );

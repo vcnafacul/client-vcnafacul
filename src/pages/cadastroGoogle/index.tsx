@@ -1,6 +1,6 @@
 import GoogleAuthButton from "@/components/atoms/googleAuthButton";
 import Text from "@/components/atoms/text";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import Step2 from "@/components/organisms/registerForm/setps/step2";
 import BaseTemplate from "@/components/templates/baseTemplate";
 import { CONVITE_COLABORADOR, DASH } from "@/routes/path";
@@ -137,9 +137,8 @@ function CadastroGoogle() {
                 convite={modo.token}
                 voltar={`/${CONVITE_COLABORADOR}?token=${encodeURIComponent(modo.token)}`}
               />
-              <Button
-                type="button"
-                typeStyle="secondary"
+              <Button className="w-full"
+                type="button" variant="outline" size="lg"
                 onClick={() => setModo({ tipo: "semConvite" })}
               >
                 Criar conta sem o convite

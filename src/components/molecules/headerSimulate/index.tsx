@@ -2,7 +2,7 @@
 import { Timer } from "lucide-react";
 import Text from "../../atoms/text";
 import CountdownTimer from "../../atoms/countDownTimer";
-import Button from "../button";
+import { Button } from "@/components/ui/button";
 
 interface HeaderSimulateProps {
     simulateName: string;
@@ -18,7 +18,7 @@ function HeaderSimulate({ simulateName, onClick } : HeaderSimulateProps){
             <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 w-full sm:w-auto">
                 <Timer className="w-8 h-8 sm:w-20 sm:h-10 text-white" />
                 <CountdownTimer className="text-h1 font-extrabold" />
-                <Button onClick={onClick} className="w-full sm:w-auto">Concluir Simulado</Button>
+                <Button variant="primary" size="lg" onClick={onClick} className="w-full sm:w-auto">Concluir Simulado</Button>
             </div>
         </div>
     )

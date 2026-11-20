@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import Button from "../../molecules/button";
+import { Button } from "@/components/ui/button";
 
 const hiddenCookieBar = () => {
   const cookieBarStatus = window.localStorage.getItem("lgpd_status");
@@ -48,7 +48,7 @@ export function CookieBar() {
         </div>
         <div className="flex items-center justify-end gap-4 mx-4">
           <div className="w-32 md:w-60">
-            <Button
+            <Button className="w-full" variant="primary" size="lg"
               onClick={() => {
                 setLgpdStatus("rejected");
               }}
@@ -57,7 +57,7 @@ export function CookieBar() {
             </Button>
           </div>
           <div className="w-32 md:w-60">
-            <Button
+            <Button className="w-full" variant="primary" size="lg"
               onClick={() => {
                 setLgpdStatus("accepted");
               }}

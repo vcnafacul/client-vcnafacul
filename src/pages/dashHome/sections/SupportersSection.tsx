@@ -15,7 +15,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import { useAuthStore } from "../../../store/auth";
 import { HomeSupporter } from "../../../dtos/homeContent/homeSupporter";
 import { getAdminHomeSupporters } from "../../../services/home/getAdminHomeSupporters";
@@ -120,7 +120,7 @@ export default function SupportersSection() {
           {supporters.some((s) => !s.active) &&
             ` · ${supporters.filter((s) => !s.active).length} inativo(s)`}
         </span>
-        <Button typeStyle="primary" size="small" onClick={openCreate}>
+        <Button variant="primary" size="sm" onClick={openCreate}>
           Adicionar apoiador
         </Button>
       </div>

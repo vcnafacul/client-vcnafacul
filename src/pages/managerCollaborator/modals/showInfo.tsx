@@ -1,5 +1,5 @@
 import Toggle from "@/components/atoms/toggle";
-import Button from "@/components/molecules/button";
+import { Button } from "@/components/ui/button";
 import ImageProfile from "@/components/molecules/imageProfile";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 import PropValue from "@/components/molecules/PropValue";
@@ -275,14 +275,14 @@ export function ShowInfo({
                 setDescription(e.target.value)
               }
             />
-            <Button
+            <Button variant="primary" size="lg"
               onClick={() => {
                 setLoading("Atualizando...");
                 handleDescription(collaborator.id, description)
                   .catch((e) => toast.error(e.message))
                   .finally(() => setLoading("Atualizar"));
               }}
-              className="sm:w-64 font-normal"
+              className="w-full sm:w-64 font-normal"
               disabled={loading === "Atualizando..."}
             >
               {loading}
@@ -296,13 +296,12 @@ export function ShowInfo({
           </div>
         </div>
         <div className="flex gap-4 py-2">
-          <Button onClick={openUpdateRole} typeStyle="refused">
+          <Button className="w-full" onClick={openUpdateRole} variant="destructive" size="lg">
             Editar Função
           </Button>
           {handleExcluir && (
-            <Button
-              onClick={() => setConfirmarExclusao(true)}
-              typeStyle="quaternary"
+            <Button className="w-full"
+              onClick={() => setConfirmarExclusao(true)} variant="outline" size="lg"
             >
               Excluir do cursinho
             </Button>
