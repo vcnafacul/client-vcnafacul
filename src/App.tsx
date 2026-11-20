@@ -1,6 +1,5 @@
 import { BrowserRouter } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "./components/ui/toast";
 import { CookieBar } from "./components/organisms/cookieBar";
 import { ErrorBoundary } from "./components/organisms/errorBoundary";
 import { PlatformRoutes } from "./routes/PlatformRoutes";
@@ -16,21 +15,7 @@ function App() {
   return (
     <ErrorBoundary>
       <GoogleMapsProvider>
-        <ToastContainer
-          // ⚠️ Toast é aviso de tela, nunca conteúdo: sem isto ele pode
-          // congelar numa folha impressa.
-          className="print:hidden"
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="colored"
-          />
+        <Toaster />
         <BrowserRouter>
           <ChatProvider>
             <div className="w-screen h-screen">

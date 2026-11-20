@@ -1,8 +1,9 @@
 import * as React from "react"
-import { AlertCircle, Inbox, type LucideIcon } from "lucide-react"
+import { Inbox, type LucideIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+import { Alert } from "./alert"
 import { Button } from "./button"
 
 // Estados vazio e de erro compartilhados por DataTable, List e Timeline (tickets/059 §3, D20).
@@ -45,7 +46,7 @@ export interface ErrorStateProps {
 
 /**
  * Erro que bloqueia a lista: alerta inline + "Tentar de novo" (§6, Errors).
- * Mesmo visual do `Alert` `destructive`.
+ * É o `Alert` `destructive` com a ação.
  */
 function ErrorState({
   title = ERROR_TITLE,
@@ -55,22 +56,20 @@ function ErrorState({
 }: ErrorStateProps) {
   return (
     <div className={cn("p-4", className)}>
-      <div
-        role="alert"
+      <Alert
         data-slot="error-state"
-        className="flex items-start gap-3 rounded-lg bg-destructive-muted px-4 py-3"
+        variant="destructive"
+        title={title}
+        action={
+          onRetry ? (
+            <Button type="button" variant="outline" size="sm" onClick={onRetry}>
+              {RETRY_LABEL}
+            </Button>
+          ) : null
+        }
       >
-        <AlertCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-destructive" />
-        <div className="min-w-0 flex-1 space-y-1">
-          <p className="text-body font-semibold text-destructive">{title}</p>
-          {message ? <p className="text-body-sm text-foreground">{message}</p> : null}
-        </div>
-        {onRetry ? (
-          <Button type="button" variant="outline" size="sm" onClick={onRetry}>
-            {RETRY_LABEL}
-          </Button>
-        ) : null}
-      </div>
+        {message}
+      </Alert>
     </div>
   )
 }

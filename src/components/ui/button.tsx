@@ -1,9 +1,10 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+
+import { Spinner } from "./spinner"
 
 // tickets/059 §3: densidade adaptativa, h-11 abaixo de 768 e h-9 a partir dele.
 const buttonVariants = cva(
@@ -73,7 +74,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ) : (
           <>
             {loading ? (
-              <Loader2 className="animate-spin" aria-label="Carregando" />
+              <Spinner size="button" decorative />
             ) : null}
             {children}
           </>

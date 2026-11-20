@@ -1,0 +1,58 @@
+/* Toast: cartão branco, borda, sombra md, ícone de status (tickets/059 §3). Só tokens. */
+:root {
+  --toastify-color-light: hsl(var(--card));
+  --toastify-color-info: hsl(var(--info));
+  --toastify-color-success: hsl(var(--success));
+  --toastify-color-warning: hsl(var(--warning));
+  --toastify-color-error: hsl(var(--destructive));
+  --toastify-icon-color-info: hsl(var(--info));
+  --toastify-icon-color-success: hsl(var(--success));
+  --toastify-icon-color-warning: hsl(var(--warning));
+  --toastify-icon-color-error: hsl(var(--destructive));
+  --toastify-text-color-light: hsl(var(--foreground));
+  --toastify-toast-background: hsl(var(--card));
+  --toastify-toast-width: 360px;
+  --toastify-toast-offset: 16px;
+  --toastify-toast-top: calc(var(--header-h) + 8px);
+  --toastify-toast-bd-radius: 0.5rem;
+  --toastify-toast-shadow: none;
+  --toastify-font-family: inherit;
+  --toastify-z-index: 60; /* z-toast */
+}
+
+.Toastify__toast {
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 4px 12px hsl(var(--foreground) / 0.12); /* shadow-md */
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: hsl(var(--foreground));
+}
+
+.Toastify__close-button {
+  color: hsl(var(--muted-foreground));
+  opacity: 1;
+}
+
+.Toastify__close-button:hover {
+  color: hsl(var(--foreground));
+}
+
+.Toastify__close-button:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* No celular: no topo, largura toda. */
+@media (max-width: 767px) {
+  .Toastify__toast-container {
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 0 8px;
+    top: calc(var(--header-h) + 8px);
+  }
+  .Toastify__toast {
+    margin-bottom: 8px;
+    width: 100%;
+  }
+}

@@ -21,7 +21,8 @@ describe("Button", () => {
     const botao = screen.getByRole("button", { name: /Salvar/ });
     expect(botao).toBeDisabled();
     expect(botao).toHaveAttribute("aria-busy", "true");
-    expect(screen.getByLabelText("Carregando")).toBeTruthy();
+    // O spinner é decorativo: o nome acessível continua o do botão.
+    expect(botao.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true");
   });
 
   it("sem loading não mostra spinner", () => {
