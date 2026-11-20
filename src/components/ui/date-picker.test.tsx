@@ -1,10 +1,11 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-// Popover + calendário custam segundos de CPU no jsdom.
-vi.setConfig({ testTimeout: 30000 });
 import { DatePicker } from "./date-picker";
 import { DateRangePicker } from "./date-range-picker";
+
+// Popover + calendário custam segundos de CPU no jsdom: só quem abre o calendário ganha prazo maior.
+const PRAZO_COM_CALENDARIO = 30000;
 
 // Meio-dia em São Paulo: o dia é o mesmo em qualquer fuso do runner.
 const doze = new Date("2026-11-12T15:00:00Z");
@@ -25,14 +26,14 @@ describe("DatePicker", () => {
     expect(onChange).toHaveBeenCalledTimes(1);
     expect((onChange.mock.calls[0][0] as Date).toISOString()).toBe("2026-11-15T03:00:00.000Z");
     expect(screen.queryByRole("grid")).toBeNull();
-  });
+  }, PRAZO_COM_CALENDARIO);
 
   it("o calendário abre em pt-BR", () => {
     render(<DatePicker value={doze} onChange={vi.fn()} aria-label="Data" />);
     fireEvent.click(screen.getByRole("button", { name: "Data" }));
     expect(screen.getByText("novembro 2026")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Próximo mês" })).toBeTruthy();
-  });
+  }, PRAZO_COM_CALENDARIO);
 });
 
 describe("DateRangePicker", () => {
