@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import { dashV2, type StatusV2 } from "./tokens";
+import { StatusBadge as UiStatusBadge, type StatusVariant } from "@/components/ui/status-badge";
+import type { StatusV2 } from "./tokens";
 
 export interface StatusBadgeProps {
   tone: StatusV2;
@@ -12,33 +12,35 @@ export interface StatusBadgeProps {
   className?: string;
 }
 
+/** Os tons da Dash V2 nas variantes do design system (tickets/059 §3). */
+export const VARIANTE_POR_TONE: Record<StatusV2, StatusVariant> = {
+  done: "success",
+  running: "warning",
+  missing: "destructive",
+  info: "info",
+  neutral: "neutral",
+};
+
 /**
- * Marcador colorido + texto.
+ * Adaptador do `components/ui/status-badge`, com a API de sempre (`tone` +
+ * `label`) até a Task 11 (tickets/059). O `data-tone` continua: as telas testam
+ * por ele.
  *
- * ⚠️ Burro de propósito: `tone` é `done | running | missing | neutral`, e não
- * um enum de domínio. Quem traduz `StatusEnum` → `tone` + rótulo é a tela.
- * Assim o badge serve prova, conteúdo, notícia e o que vier sem ganhar um `if`.
- *
- * ⚠️ A cor vai no ponto; o texto fica em `marine`. Nenhuma cor de acento da
- * paleta carrega texto pequeno sobre branco (ver medições no `tokens.ts`).
+ * ⚠️ Burro de propósito: quem traduz `StatusEnum` → `tone` + rótulo é a tela.
  */
-export function StatusBadge({ tone, label, className }: StatusBadgeProps) {
-  const { chip, dot } = dashV2.status[tone];
+function StatusBadgeDash({ tone, label, className }: StatusBadgeProps) {
   return (
-    <span
+    <UiStatusBadge
       data-tone={tone}
-      className={cn(
-        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium",
-        chip,
-        dashV2.text.primary,
-        className,
-      )}
+      variant={VARIANTE_POR_TONE[tone]}
+      look="dot"
+      className={className}
     >
-      {/* Pista rápida, não o portador do significado — o rótulo é que informa. */}
-      <span aria-hidden="true" className={cn("h-1.5 w-1.5 shrink-0 rounded-full", dot)} />
       {label}
-    </span>
+    </UiStatusBadge>
   );
 }
+
+export const StatusBadge = Object.assign(StatusBadgeDash, { mobileRole: "status" as const });
 
 export default StatusBadge;

@@ -1,5 +1,5 @@
 import { Inbox } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { TABLE_SKELETON_ROWS, TableSkeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { dashV2 } from "./tokens";
 
@@ -17,7 +17,7 @@ export const TEXTO_VAZIO = "Nenhum registro encontrado";
 export const DICA_VAZIO = "Tente limpar os filtros ou buscar por outro termo.";
 
 /** 8 linhas: o suficiente para ocupar a dobra sem virar uma parede pulsando. */
-export const LINHAS_SKELETON = 8;
+export const LINHAS_SKELETON = TABLE_SKELETON_ROWS;
 
 /**
  * ⚠️ Faixa, e não modal nem toast: o erro pertence à lista que falhou, e o
@@ -72,9 +72,8 @@ export function DashTableVazio() {
 /**
  * Linhas de skeleton com **as mesmas colunas** da tabela.
  *
- * ⚠️ Não é um spinner centralizado de propósito: a largura das colunas é fixada
- * pelo `<th>`, então o skeleton já ocupa exatamente o lugar dos dados e nada
- * salta quando eles chegam.
+ * ⚠️ Moraram aqui; agora são o `TableSkeleton` do `components/ui/skeleton`
+ * (tickets/059 §3). Os nomes ficam até a Task 11.
  */
 export function LinhasSkeleton({
   colunas,
@@ -89,34 +88,16 @@ export function LinhasSkeleton({
   linhas?: number;
 }) {
   return (
-    <>
-      {Array.from({ length: linhas }, (_, i) => (
-        <tr key={i} data-testid="dash-table-skeleton-row" className={alturaLinha}>
-          {colunas.map((visibilidade, j) => (
-            <td key={j} className={cn(classeDeCelula, visibilidade)}>
-              <Skeleton className="h-3.5 w-full" />
-            </td>
-          ))}
-        </tr>
-      ))}
-    </>
+    <TableSkeleton
+      columns={colunas}
+      rows={linhas}
+      rowClassName={alturaLinha}
+      cellClassName={classeDeCelula}
+    />
   );
 }
 
 /** Skeleton da lista empilhada — sem tabela, então sem `<tr>`. */
 export function BlocosSkeleton({ blocos = LINHAS_SKELETON }: { blocos?: number }) {
-  return (
-    <>
-      {Array.from({ length: blocos }, (_, i) => (
-        <div
-          key={i}
-          data-testid="dash-table-skeleton-row"
-          className={cn("space-y-2 border-b px-4 py-3", dashV2.border)}
-        >
-          <Skeleton className="h-4 w-1/2" />
-          <Skeleton className="h-3 w-3/4" />
-        </div>
-      ))}
-    </>
-  );
+  return <TableSkeleton layout="cards" rows={blocos} />;
 }

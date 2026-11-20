@@ -1,7 +1,18 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { StatusBadge } from "./StatusBadge";
-import { dashV2 } from "./tokens";
+import { StatusBadge, VARIANTE_POR_TONE } from "./StatusBadge";
+
+/**
+ * tickets/059: o badge agora é o `StatusBadge` do design system em `look="dot"`
+ * — pílula `bg-muted`, ponto na cor do status, texto `foreground`.
+ */
+const PONTO = {
+  success: "bg-success",
+  warning: "bg-warning",
+  destructive: "bg-destructive",
+  info: "bg-info",
+  neutral: "bg-muted-foreground",
+} as const;
 
 describe("StatusBadge", () => {
   it.each([
@@ -24,26 +35,38 @@ describe("StatusBadge", () => {
     expect(badge.querySelectorAll("[aria-hidden='true']")).toHaveLength(1);
   });
 
-  it("a cor vai no ponto e o texto fica em marine", () => {
+  it("a cor vai no ponto e o texto fica em foreground", () => {
     const { container } = render(<StatusBadge tone="missing" label="Faltando" />);
     const badge = container.querySelector("[data-tone='missing']") as HTMLElement;
     const ponto = badge.querySelector("[aria-hidden='true']") as HTMLElement;
 
-    expect(ponto.className).toContain(dashV2.status.missing.dot);
-    expect(badge.className).toContain(dashV2.status.missing.chip);
-    expect(badge.className).toContain(dashV2.text.primary);
+    expect(ponto.className).toContain(PONTO.destructive);
+    expect(badge.className).toContain("bg-muted");
+    expect(badge.className).toContain("text-foreground");
   });
 
-  it("cada tone usa o chip e o ponto do seu próprio token", () => {
-    for (const tone of ["done", "running", "missing", "neutral"] as const) {
+  it("cada tone usa o chip e o ponto da sua variante", () => {
+    for (const tone of ["done", "running", "missing", "info", "neutral"] as const) {
       const { container, unmount } = render(<StatusBadge tone={tone} label="x" />);
       const badge = container.querySelector("[data-tone]") as HTMLElement;
-      expect(badge.className, tone).toContain(dashV2.status[tone].chip);
+      const variante = VARIANTE_POR_TONE[tone];
+      expect(badge.getAttribute("data-variant"), tone).toBe(variante);
+      expect(badge.className, tone).toContain("bg-muted");
       expect(
         (badge.querySelector("[aria-hidden='true']") as HTMLElement).className,
         tone,
-      ).toContain(dashV2.status[tone].dot);
+      ).toContain(PONTO[variante]);
       unmount();
     }
+  });
+
+  it("os tons viram as variantes do design system", () => {
+    expect(VARIANTE_POR_TONE).toEqual({
+      done: "success",
+      running: "warning",
+      missing: "destructive",
+      info: "info",
+      neutral: "neutral",
+    });
   });
 });

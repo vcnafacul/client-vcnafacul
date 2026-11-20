@@ -305,7 +305,8 @@ describe("DashTable — cabeçalho fixo", () => {
     for (const th of container.querySelectorAll("th")) {
       expect(th.className).toContain("sticky");
       expect(th.className).toContain("top-0");
-      expect(th.className).toContain(dashV2.surface);
+      // tickets/059: o fundo opaco é o `bg-card` do design system.
+      expect(th.className).toContain("bg-card");
     }
   });
 
@@ -335,7 +336,7 @@ describe("DashTable — estados", () => {
   it("loading mostra skeleton com o mesmo número de colunas, e o cabeçalho fica", () => {
     const { container } = montar({ state: "loading" });
 
-    const linhas = screen.getAllByTestId("dash-table-skeleton-row");
+    const linhas = screen.getAllByTestId("table-skeleton-row");
     expect(linhas).toHaveLength(LINHAS_SKELETON);
     for (const l of linhas) expect(l.querySelectorAll("td")).toHaveLength(COLUNAS.length);
 
@@ -428,7 +429,7 @@ describe("DashTable — abaixo de 768px", () => {
 
   it("os estados continuam valendo na lista", () => {
     const { rerender } = montar({ state: "loading" });
-    expect(screen.getAllByTestId("dash-table-skeleton-row")).toHaveLength(LINHAS_SKELETON);
+    expect(screen.getAllByTestId("table-skeleton-row")).toHaveLength(LINHAS_SKELETON);
 
     const onRetry = vi.fn();
     rerender(
@@ -449,13 +450,13 @@ describe("DashTable — abaixo de 768px", () => {
 });
 
 describe("DashTable — acessibilidade e paleta", () => {
-  it("todo focável usa o anel laranja e nenhum anel azul sobra", () => {
+  it("todo focável usa o anel do design system e nenhum anel azul sobra", () => {
     const { container } = montar({ onRowClick: vi.fn(), onSortChange: vi.fn() });
 
     const focaveis = [...container.querySelectorAll("button, [tabindex='0']")];
     expect(focaveis.length).toBeGreaterThan(0);
     for (const el of focaveis) {
-      expect(el.className, el.textContent ?? "").toContain("focus-visible:ring-orange/40");
+      expect(el.className, el.textContent ?? "").toContain("focus-visible:ring-ring");
       expect(el.className).not.toMatch(/ring-blue|focus:ring-blue|outline-blue/);
     }
   });

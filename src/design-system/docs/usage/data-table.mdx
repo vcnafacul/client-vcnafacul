@@ -1,0 +1,86 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Uso/DataTable" />
+
+# DataTable, Table e List
+
+Três jeitos de mostrar uma coleção. Escolha pelo que a pessoa faz com ela, não pela quantidade de itens.
+
+## Qual usar
+
+| Componente | Use quando | Exemplo |
+|---|---|---|
+| `DataTable` | Os itens têm **colunas** que se comparam, e a pessoa **ordena, seleciona, pagina** ou age sobre cada linha. | Lista de provas, inscrições, colaboradores |
+| `Table` | Uma tabela **estática e pequena**, sem ordenação, seleção nem paginação. São as peças de baixo nível que a própria DataTable usa. | Acertos por área num relatório |
+| `List` | Os itens **não têm colunas**: um título, informações secundárias, selos e ações no fim (D20). | Histórico de chamadas, alunos de uma chamada num Dialog |
+| `Timeline` | Uma **sequência de eventos**, com quem fez, o quê e quando (D18). | Histórico de uma questão |
+
+- Não monte uma `DataTable` só para mostrar uma lista: colunas que ninguém compara são peso.
+- Não use um `Card` por linha: borda e espaço demais numa lista de 40 itens.
+- Os estados de **carregando, vazio e erro** são os mesmos nos três: skeleton no lugar dos dados; vazio
+  com o que falta, por quê e uma ação ("Limpar filtros"); erro num alerta com "Tentar de novo".
+
+## Colunas
+
+```tsx
+const colunas: DataTableColumn<Prova>[] = [
+  { id: "nome", header: "Prova", cell: (p) => p.nome, sortable: true },
+  { id: "ano", header: "Ano", cell: (p) => p.ano, align: "right", sortable: true },
+  { id: "questoes", header: "Questões", cell: (p) => `${p.cadastradas}/${p.total}`, align: "right" },
+  { id: "status", header: "Status", cell: (p) => <StatusBadge variant="success">Concluída</StatusBadge> },
+];
+
+<DataTable
+  columns={colunas}
+  rows={provas}
+  getRowId={(p) => p.id}
+  onRowClick={abrirProva}
+  sort={sort}
+  onSortChange={setSort}
+  rowActions={(p) => [{ id: "excluir", label: "Excluir prova", variant: "destructive", onSelect: () => excluir(p) }]}
+/>
+```
+
+- **Números à direita** (`align: "right"`): a tabela alinha os dígitos.
+- **Status** é sempre `StatusBadge` com `look="dot"` (o padrão).
+- **A DataTable não ordena as linhas.** Clicar no cabeçalho só chama `onSortChange`; a tela ordena em
+  memória ou pede ordenado ao servidor.
+- `getRowId` é a identidade da linha, nunca o índice sozinho: com o índice a lista pisca ao reordenar e a
+  seleção troca de linha.
+- Com `onRowClick`, a coluna de título vira um botão: é ele que dá teclado e leitor de tela à linha.
+
+## No celular (abaixo de 768px)
+
+A tabela vira **cartões**, sem rolagem horizontal. Cada coluna tem um papel no cartão, em `mobile`:
+
+| Papel | Onde aparece | Padrão (sem `mobile`) |
+|---|---|---|
+| `title` | No alto, em destaque. | A primeira coluna |
+| `meta` | Abaixo do título, unidas por " · ". | As duas colunas seguintes |
+| `status` | Na última linha do cartão. | A coluna cuja célula é um `StatusBadge` |
+| `hidden` | Não aparece. | O resto |
+
+- A seleção (caixa à esquerda) e o menu `⋯` aparecem sempre no cartão.
+- Para um cartão que os papéis não dão conta, use `renderMobileCard`.
+- A troca é feita em JS, e não com classes `hidden`: assim o leitor de tela não lê a tabela e os cartões.
+- Para só esconder uma coluna numa tela média, use `className: "hidden md:table-cell"` na coluna.
+
+## Paginação
+
+```tsx
+pagination={{ page, pageSize, total, onPageChange: setPage, pageSizeOptions: [10, 25, 50], onPageSizeChange }}
+```
+
+- **No cliente:** passe **todas** as linhas em `rows` e `total = rows.length`. A tabela mostra só a página.
+- **No servidor:** passe em `rows` **só as linhas da página** (no máximo `pageSize`) e em `total` o total do
+  servidor. Peça a página nova em `onPageChange`.
+- O rodapé mostra "Mostrando 11–20 de 45" e a paginação, e some enquanto carrega, no erro e no vazio.
+- Se o `total` cair e a página atual deixar de existir (por exemplo, na página 3 um filtro deixa 5
+  resultados), a tabela chama `onPageChange(1)`.
+- Ao mudar a ordenação ou um filtro, volte para a página 1 na tela.
+
+## Seleção e ações em lote
+
+Com `selection` e `onSelectionChange`, a tabela ganha a coluna de caixas e, quando há linhas selecionadas,
+a barra com a contagem ("2 itens selecionados"), as `bulkActions` e "Limpar seleção". A caixa do cabeçalho
+seleciona as linhas da página.

@@ -571,7 +571,7 @@ describe("DashListTemplate — estados", () => {
   it("loading mostra skeleton, não tela em branco nem rodapé do estado anterior", () => {
     montar(criarContexto({ entities: [] }), { state: "loading" });
 
-    expect(screen.getAllByTestId("dash-table-skeleton-row")).toHaveLength(
+    expect(screen.getAllByTestId("table-skeleton-row")).toHaveLength(
       LINHAS_SKELETON,
     );
     expect(screen.queryByTestId("dash-list-vazio")).toBeNull();
