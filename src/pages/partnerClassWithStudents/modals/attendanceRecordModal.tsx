@@ -231,6 +231,8 @@ export function AttendanceRecordModal({
         <DialogBody className="flex flex-col overflow-hidden">
           <Paper sx={{ flex: 1, minHeight: 0, width: "100%" }}>
             <DataGrid
+              disableColumnMenu
+              pageSizeOptions={[paginationModel.pageSize]}
               rows={students}
               columns={columns}
               rowCount={students.length}

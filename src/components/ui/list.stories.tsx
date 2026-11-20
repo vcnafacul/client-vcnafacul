@@ -35,6 +35,18 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {}
+export const TituloQuebrado: Story = {
+  render: () => (
+    <List className="max-w-[360px] rounded-lg border">
+      <ListItem
+        wrapTitle
+        title="Maria Aparecida da Conceição Santos de Oliveira Pereira"
+        meta={["Matrícula 1234"]}
+        trailing={<Button variant="outline" size="sm">Ver</Button>}
+      />
+    </List>
+  ),
+}
 export const Loading: Story = { args: { state: "loading" } }
 export const Empty: Story = {
   args: {

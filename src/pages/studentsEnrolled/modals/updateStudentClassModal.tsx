@@ -436,7 +436,6 @@ export function UpdateStudentClassModal({
                   className="w-full p-3 border-2 rounded-md focus:border-primary focus:outline-none cursor-pointer text-body"
                   value={selectedClassId}
                   onChange={(e) => setSelectedClassId(e.target.value)}
-                  autoFocus={!classId}
                   size={Math.min(filteredClassesByPeriod.length * 2 + 2, 8)}
                 >
                   <option value="" className="text-muted-foreground">

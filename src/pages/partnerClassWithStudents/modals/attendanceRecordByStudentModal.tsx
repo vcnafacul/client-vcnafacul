@@ -299,6 +299,8 @@ export function AttendanceRecordByStudentModal({
             }}
           >
             <DataGrid
+              disableColumnMenu
+              pageSizeOptions={[paginationModel.pageSize]}
               rows={attendances}
               columns={columns}
               rowCount={totalItems}

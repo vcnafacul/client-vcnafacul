@@ -298,15 +298,16 @@ export const ModalCreatePrepCourse = ({
               {showGeoDropdown && geoSearchResults.length > 0 && (
                 <div className="absolute z-raised w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
                   {geoSearchResults.map((geo) => (
-                    <div
+                    <button
+                      type="button"
                       key={geo.id}
-                      className="px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
+                      className="block w-full text-left px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
                       onClick={() => selectGeo(geo)}
                     >
-                      <div className="font-medium text-body text-foreground">
+                      <span className="block font-medium text-body text-foreground">
                         {geo.name}
-                      </div>
-                    </div>
+                      </span>
+                    </button>
                   ))}
                 </div>
               )}
@@ -345,18 +346,19 @@ export const ModalCreatePrepCourse = ({
               {showDropdown && searchResults.length > 0 && (
                 <div className="absolute z-raised w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
                   {searchResults.map((user) => (
-                    <div
+                    <button
+                      type="button"
                       key={user.id}
-                      className="px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
+                      className="block w-full text-left px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
                       onClick={() => selectUser(user)}
                     >
-                      <div className="font-medium text-body text-foreground">
+                      <span className="block font-medium text-body text-foreground">
                         {user.name}
-                      </div>
-                      <div className="text-caption text-muted-foreground">
+                      </span>
+                      <span className="block text-caption text-muted-foreground">
                         {user.email} • {user.phone}
-                      </div>
-                    </div>
+                      </span>
+                    </button>
                   ))}
                 </div>
               )}

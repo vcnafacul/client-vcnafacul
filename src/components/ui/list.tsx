@@ -56,10 +56,12 @@ export interface ListItemProps extends Omit<React.HTMLAttributes<HTMLLIElement>,
   badges?: React.ReactNode
   /** Ações, ou um `SegmentedControl size="sm"`. */
   trailing?: React.ReactNode
+  /** Quebra o título em várias linhas em vez de cortá-lo com reticências (nomes longos no celular). */
+  wrapTitle?: boolean
 }
 
 const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
-  ({ title, meta, badges, trailing, className, ...props }, ref) => {
+  ({ title, meta, badges, trailing, wrapTitle, className, ...props }, ref) => {
     const metas = (meta ?? []).filter((m) => m !== null && m !== undefined && m !== false && m !== "")
     return (
       <li
@@ -69,7 +71,14 @@ const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
       >
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="min-w-0 truncate text-body font-medium text-foreground">{title}</span>
+            <span
+              className={cn(
+                "min-w-0 text-body font-medium text-foreground",
+                wrapTitle ? "break-words" : "truncate"
+              )}
+            >
+              {title}
+            </span>
             {badges}
           </div>
           {metas.length > 0 ? (

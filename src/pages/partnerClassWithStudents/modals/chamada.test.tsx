@@ -69,6 +69,7 @@ vi.mock("@/services/prepCourse/attendanceRecord/deleteAttendanceRecord", () => (
   deleteAttendanceRecord: svc.excluir,
 }));
 
+import { formatarData } from "@/lib/datasBr";
 import { AttendanceHistoryModal } from "./attendanceHistoryModal";
 import { NewAttendanceRecordModal } from "./newAttendanceRecordModal";
 
@@ -137,6 +138,10 @@ describe("Novo Registro (tickets-documentacao, 11)", () => {
 
     await waitFor(() => expect(svc.criar).toHaveBeenCalled());
     expect(svc.criar.mock.calls[0][4]).toEqual(["s1"]);
+    // A data enviada é o dia de São Paulo de hoje.
+    expect(formatarData(svc.criar.mock.calls[0][2], "yyyy-MM-dd")).toBe(
+      formatarData(new Date(), "yyyy-MM-dd"),
+    );
   });
 
   it("Todos presentes marca a turma inteira e vira Desmarcar todos", async () => {
@@ -181,9 +186,8 @@ describe("Novo Registro (tickets-documentacao, 11)", () => {
   });
 
   describe("risco de evasão (tickets/054, card 04)", () => {
-    const hoje = new Date();
-    const p = (n: number) => String(n).padStart(2, "0");
-    const dataDeHoje = `${hoje.getFullYear()}-${p(hoje.getMonth() + 1)}-${p(hoje.getDate())}`;
+    // O dia da chamada é o de São Paulo, como no componente (não o do fuso da máquina).
+    const dataDeHoje = formatarData(new Date(), "yyyy-MM-dd");
 
     const turma = (alertaEvasao: object | null) =>
       svc.alunos.mockResolvedValue({

@@ -189,7 +189,8 @@ export function NewAttendanceRecordModal({
     <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
       <DialogContent
         size="lg"
-        aria-describedby={undefined}
+        // Clique fora não fecha: perderia as marcas. Esc e o X continuam fechando.
+        onInteractOutside={(e) => e.preventDefault()}
         className="sm:h-[min(760px,calc(100dvh-4rem))]"
         banner={
           emRisco > 0 ? (
@@ -219,15 +220,15 @@ export function NewAttendanceRecordModal({
             Marque quem veio. Quem não for marcado fica como ausente.
           </DialogDescription>
 
-          <div className="mt-2 flex items-center gap-2">
+          <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
             <div className="flex shrink-0 items-center gap-2 text-body text-muted-foreground">
               <span className="sr-only font-semibold sm:not-sr-only">Data</span>
               <DatePicker
-                aria-label="Data da chamada"
+                aria-label={`Data da chamada, ${formatarData(date)}`}
                 value={date}
                 max={new Date()}
                 onChange={(d) => d && setDate(d)}
-                className="w-[9.5rem]"
+                className="w-full sm:w-[9.5rem]"
               />
             </div>
             <SegmentedControl
@@ -289,13 +290,14 @@ export function NewAttendanceRecordModal({
                 <ListItem
                   key={s.id}
                   title={s.name}
+                  wrapTitle
                   meta={[s.cod_enrolled]}
                   badges={
                     <>
                       {risco.emRisco && (
                         <StatusBadge
                           variant="warning"
-                          look="tint"
+                          look="dot"
                           icon={TriangleAlert}
                           value={`${Math.round(risco.percentual)}%`}
                           aria-label={`risco de evasão, ${Math.round(risco.percentual)}% de faltas`}

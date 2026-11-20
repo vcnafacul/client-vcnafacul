@@ -214,7 +214,7 @@ export function PrinterStudentCards({
 
           {pdfUrl ? (
             <div className="mt-4">
-              <iframe src={pdfUrl} className="w-full h-[calc(100vh-200px)]" />
+              <iframe title="Carteirinhas em PDF" src={pdfUrl} className="w-full h-[calc(100vh-200px)]" />
               <Button
                 type="button"
                 className="mt-4"

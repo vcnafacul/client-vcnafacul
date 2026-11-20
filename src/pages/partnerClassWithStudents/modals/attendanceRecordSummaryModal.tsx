@@ -186,9 +186,9 @@ export default function AttendanceRecordSummaryModal({
           className="w-full space-y-6"
         >
           <div className="space-y-2">
-            <label className="block text-body font-medium text-foreground">
+            <span className="block text-body font-medium text-foreground">
               Selecione o tipo de relatório
-            </label>
+            </span>
 
             <div className="flex flex-col space-y-2">
               <label className="flex items-center space-x-2">
@@ -227,10 +227,14 @@ export default function AttendanceRecordSummaryModal({
 
             {watchReportType === "excel" && (
               <div className="mt-2">
-                <label className="block text-body font-medium mb-1">
+                <label
+                  htmlFor="maxAbsencePercent"
+                  className="block text-body font-medium mb-1"
+                >
                   Percentual máximo de faltas injustificadas (%)
                 </label>
                 <input
+                  id="maxAbsencePercent"
                   type="number"
                   {...register("maxAbsencePercent")}
                   min={0}
@@ -259,7 +263,10 @@ export default function AttendanceRecordSummaryModal({
             )}
           </div>
           <div className="space-y-2">
-            <label className="block text-body font-medium text-foreground">
+            <label
+              htmlFor="range"
+              className="block text-body font-medium text-foreground"
+            >
               Selecione o intervalo
             </label>
 
