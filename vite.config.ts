@@ -71,7 +71,8 @@ export default defineConfig({
     // testes verdes. Fork único e em série tira a contenção. É contorno.
     pool: "forks",
     teardownTimeout: 30000,
-    include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    // scripts/**: testes dos codemods do design system; saem com os scripts na limpeza (tickets/059)
+    include: ["src/**/*.{test,spec}.{ts,tsx}", "scripts/**/*.test.ts"],
   },
   build: {
     rollupOptions: {
