@@ -296,12 +296,12 @@ export function ShowInfo({
           </div>
         </div>
         <div className="flex gap-4 py-2">
-          <Button className="w-full" onClick={openUpdateRole} variant="destructive" size="lg">
+          <Button className="w-full" onClick={openUpdateRole} variant="outline" size="lg">
             Editar Função
           </Button>
           {handleExcluir && (
             <Button className="w-full"
-              onClick={() => setConfirmarExclusao(true)} variant="outline" size="lg"
+              onClick={() => setConfirmarExclusao(true)} variant="destructive" size="lg"
             >
               Excluir do cursinho
             </Button>

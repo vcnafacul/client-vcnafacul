@@ -112,7 +112,7 @@ function Simulate() {
         buttons: [
           {
             onClick: () => setTryFinish(false),
-            type: "secondary",
+            variant: "outline",
             children: "Nao",
           },
           {
@@ -133,7 +133,7 @@ function Simulate() {
           },
           {
             onClick: () => setReportModal(true),
-            type: "secondary",
+            variant: "outline",
             children: (
               <div className="flex items-center gap-2">
                 <span>Reportar problema</span>
@@ -151,7 +151,7 @@ function Simulate() {
         buttons: [
           {
             onClick: () => setTryFinish(false),
-            type: "secondary",
+            variant: "outline",
             children: (
               <div className="flex items-center gap-2 justify-center">
                 <span>Reportar problema</span>
@@ -164,7 +164,7 @@ function Simulate() {
               setQuestionProblem(false);
               modals.modalReportProblem.open();
             },
-            type: "secondary",
+            variant: "outline",
             children: (
               <div className="flex items-center gap-2 justify-center">
                 <span>Reportar questão</span>

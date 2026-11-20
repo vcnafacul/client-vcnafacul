@@ -714,7 +714,7 @@ export function PartnerPrepInscritionStudentManager() {
           <TableInfo students={students} />
           <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center md:gap-1 md:items-end md:justify-end md:flex-1">
             <Button
-              className="w-full h-10 sm:w-fit sm:h-fit" variant="destructive" size="sm"
+              className="w-full h-10 sm:w-fit sm:h-fit" variant="outline" size="sm"
               onClick={modals.statistic.open}
             >
               <p className="text-body">Estatisticas</p>

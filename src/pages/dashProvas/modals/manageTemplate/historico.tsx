@@ -134,7 +134,7 @@ function Historico({
         </p>
 
         <div className="mt-6 flex justify-end gap-3">
-          <Button variant="destructive" size="sm"
+          <Button variant="outline" size="sm"
             disabled={restaurando}
             onClick={() => setARestaurar(null)}
           >

@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SelectProps } from "@/components/atoms/select";
-import type { BotaoLegadoProps } from "@/lib/botaoLegado";
+import type { ButtonProps } from "@/components/ui/button";
 import type { CardDash } from "@/components/molecules/cardDash";
 import {
   DashCardContext,
@@ -611,10 +611,10 @@ describe("DashListTemplate — drop-in sobre o contexto do V1", () => {
 
   it("sem actions, os buttons do contexto viram a barra de ações", () => {
     const sincronizar = vi.fn();
-    const buttons: BotaoLegadoProps[] = [
-      { children: "Relatorio Sync", typeStyle: "secondary", onClick: vi.fn() },
-      { children: "Sincronizar", typeStyle: "primary", onClick: sincronizar },
-      { children: "Limpar filtros", typeStyle: "refused", onClick: vi.fn() },
+    const buttons: ButtonProps[] = [
+      { children: "Relatorio Sync", variant: "outline", onClick: vi.fn() },
+      { children: "Sincronizar", variant: "primary", onClick: sincronizar },
+      { children: "Excluir selecionadas", variant: "destructive", onClick: vi.fn() },
     ];
     montar(criarContexto({ entities: provas(3), buttons }));
 
@@ -624,17 +624,15 @@ describe("DashListTemplate — drop-in sobre o contexto do V1", () => {
     fireEvent.click(primaria);
     expect(sincronizar).toHaveBeenCalledTimes(1);
 
-    // ⚠️ "Limpar filtros" como ação destrutiva é o retrato fiel do V1 — o
-    // fallback traduz o `typeStyle`, ele não conserta a classificação. É o
-    // ticket `06` que reclassifica à mão.
+    // O fallback traduz o `variant` do botão: `destructive` vira ação destrutiva.
     expect(
-      within(barra).getByRole("button", { name: "Limpar filtros" }).className,
+      within(barra).getByRole("button", { name: "Excluir selecionadas" }).className,
     ).toContain(dashV2.action.destructive);
   });
 
   it("actions explícitas desligam o fallback por inteiro", () => {
-    const buttons: BotaoLegadoProps[] = [
-      { children: "Do contexto", typeStyle: "primary", onClick: vi.fn() },
+    const buttons: ButtonProps[] = [
+      { children: "Do contexto", variant: "primary", onClick: vi.fn() },
     ];
     montar(criarContexto({ entities: provas(3), buttons }), {
       actions: { primary: { id: "nova", label: "Nova prova", onClick: vi.fn() } },

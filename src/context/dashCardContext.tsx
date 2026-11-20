@@ -4,7 +4,7 @@ import { FilterProps } from "../components/atoms/filter";
 import { SelectProps } from "../components/atoms/select";
 import { CardDash } from "../components/molecules/cardDash";
 import { Paginate } from "../utils/paginate";
-import type { BotaoLegadoProps } from "@/lib/botaoLegado";
+import type { ButtonProps } from "@/components/ui/button";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface DashCardContextProps<T = any> {
@@ -28,7 +28,7 @@ export interface DashCardContextProps<T = any> {
   limitCards: number,
   filterProps?: FilterProps,
   selectFiltes?: SelectProps[];
-  buttons?: BotaoLegadoProps[]
+  buttons?: ButtonProps[]
   totalItems?: number
 }
 

@@ -4,8 +4,6 @@ import { useDashCardContext } from "../../../context/dashCardContext";
 import Filter from "../../atoms/filter";
 import Select from "../../atoms/select";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { propsDeTamanho, variantDoTypeStyle } from "@/lib/botaoLegado";
 import { CardDashComponent } from "../../molecules/cardDash";
 
 interface Props {
@@ -129,18 +127,9 @@ function DashCardTemplate({
 
         <div className="flex flex-wrap items-center justify-between gap-4 px-4">
           <div className="flex flex-wrap gap-3">
-            {buttons?.map(({ typeStyle, size, className, ...button }, index) => {
-              const tamanho = propsDeTamanho(size);
-              return (
-                <Button
-                  key={index}
-                  {...button}
-                  variant={variantDoTypeStyle(typeStyle)}
-                  size={tamanho.size}
-                  className={cn(tamanho.widthClass, className)}
-                />
-              );
-            })}
+            {buttons?.map((button, index) => (
+              <Button key={index} {...button} />
+            ))}
             {customFilter?.map((filter, index) => (
               <div key={index}>{filter}</div>
             ))}

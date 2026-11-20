@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import type { BotaoLegadoProps } from "@/lib/botaoLegado";
+import type { ButtonProps } from "@/components/ui/button";
 import { deriveActions, rotuloDoBotao } from "./deriveActions";
 
-const botao = (children: string, extra: Partial<BotaoLegadoProps> = {}): BotaoLegadoProps => ({
+const botao = (children: string, extra: Partial<Omit<ButtonProps, "size">> = {}): ButtonProps => ({
   children,
   onClick: vi.fn(),
   ...extra,
@@ -14,11 +14,11 @@ describe("deriveActions", () => {
     expect(deriveActions([])).toEqual({ secondary: [] });
   });
 
-  it("o primeiro typeStyle primary vira a principal; o resto fica secundário na ordem", () => {
+  it("o primeiro variant primary vira a principal; o resto fica secundário na ordem", () => {
     const { primary, secondary } = deriveActions([
-      botao("Relatório", { typeStyle: "secondary" }),
-      botao("Sincronizar", { typeStyle: "primary" }),
-      botao("Nova Prova", { typeStyle: "quaternary" }),
+      botao("Relatório", { variant: "outline" }),
+      botao("Sincronizar", { variant: "primary" }),
+      botao("Nova Prova", { variant: "outline" }),
     ]);
 
     expect(primary?.label).toBe("Sincronizar");
@@ -27,8 +27,8 @@ describe("deriveActions", () => {
 
   it("a segunda primary desce para secundária — no máximo uma principal", () => {
     const { primary, secondary } = deriveActions([
-      botao("A", { typeStyle: "primary" }),
-      botao("B", { typeStyle: "primary" }),
+      botao("A", { variant: "primary" }),
+      botao("B", { variant: "primary" }),
     ]);
     expect(primary?.label).toBe("A");
     expect(secondary.map((a) => a.label)).toEqual(["B"]);
@@ -36,17 +36,17 @@ describe("deriveActions", () => {
 
   it("sem nenhum primary, tudo vira secundário e não há principal", () => {
     const { primary, secondary } = deriveActions([
-      botao("A", { typeStyle: "secondary" }),
+      botao("A", { variant: "outline" }),
       botao("B"),
     ]);
     expect(primary).toBeUndefined();
     expect(secondary).toHaveLength(2);
   });
 
-  it("refused vira destructive; o resto não", () => {
+  it("destructive vira destructive; o resto não", () => {
     const { secondary } = deriveActions([
-      botao("Limpar filtros", { typeStyle: "refused" }),
-      botao("Relatório", { typeStyle: "secondary" }),
+      botao("Excluir selecionadas", { variant: "destructive" }),
+      botao("Relatório", { variant: "outline" }),
     ]);
     expect(secondary[0].destructive).toBe(true);
     expect(secondary[1].destructive).toBe(false);
@@ -77,7 +77,7 @@ describe("deriveActions", () => {
   it("os ids continuam distintos quando um dos botões virou a principal", () => {
     const { primary, secondary } = deriveActions([
       botao("A"),
-      botao("B", { typeStyle: "primary" }),
+      botao("B", { variant: "primary" }),
       botao("C"),
     ]);
     expect(primary?.id).toBe("acao-1");

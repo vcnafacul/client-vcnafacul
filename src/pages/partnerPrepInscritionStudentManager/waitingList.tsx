@@ -164,7 +164,8 @@ export function WaitingList(props: Props) {
             </tbody>
           </table>
           <div className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-4">
-            <Button variant="destructive" size="sm"
+            <Button variant="outline" size="sm"
+              aria-label="Baixar lista de espera em PDF"
               onClick={() => downloadPDF()}
             >
               <FileText className="h-6 w-10" />

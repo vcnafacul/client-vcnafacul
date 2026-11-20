@@ -197,11 +197,11 @@ function ModalUpdateRoleUser({
         <div className="flex justify-end gap-3 pt-2 border-t border-border">
           {isEditing ? (
             <>
-              <Button className="w-full" variant="primary" size="lg" onClick={cancelEdit}>
+              <Button className="w-full" variant="outline" size="lg" onClick={cancelEdit}>
                 Cancelar
               </Button>
 
-              <Button className="w-full" variant="outline" size="lg"
+              <Button className="w-full" variant="primary" size="lg"
                 onClick={updateRole}
                 disabled={newRole === role.id}
               >

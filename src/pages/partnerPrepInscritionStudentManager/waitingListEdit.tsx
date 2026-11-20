@@ -126,7 +126,7 @@ function WaitingListEdit(props: Props) {
           </table>
         </DndContext>
         <div className="flex w-full justify-center gap-4 p-4 flex-wrap">
-          <Button variant="primary" size="sm" className="w-32" onClick={props.handleClose}>
+          <Button variant="outline" size="sm" className="w-32" onClick={props.handleClose}>
             Cancelar
           </Button>
           <Button variant="primary" size="sm"

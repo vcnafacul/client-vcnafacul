@@ -1,3 +1,5 @@
+import type { ButtonProps } from "@/components/ui/button";
+
 export interface ModalType {
     show: boolean;
     title: string;
@@ -7,6 +9,6 @@ export interface ModalType {
 
 interface ButtonModal {
     onClick: () => void;
-    type?: "primary" | "secondary" | "tertiary" | "quaternary" | "none";
+    variant?: ButtonProps["variant"];
     children: React.ReactNode;
 }

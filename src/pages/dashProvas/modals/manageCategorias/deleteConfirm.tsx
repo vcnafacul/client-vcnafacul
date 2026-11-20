@@ -50,10 +50,10 @@ function DeleteConfirm({
       </p>
 
       <div className="mt-6 flex justify-end gap-3">
-        <Button variant="destructive" size="sm" onClick={onCancel}>
+        <Button variant="outline" size="sm" onClick={onCancel}>
           Cancelar
         </Button>
-        <Button variant="primary" size="sm"
+        <Button variant="destructive" size="sm"
           disabled={excluindo}
           onClick={handleExcluir}
         >

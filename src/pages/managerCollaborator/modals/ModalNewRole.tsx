@@ -199,10 +199,10 @@ function ModalNewRole({
 
         {/* Actions */}
         <div className="flex justify-end gap-3 pt-2 border-t border-border">
-          <Button className="w-full" variant="primary" size="lg" onClick={handleClose}>
+          <Button className="w-full" variant="outline" size="lg" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button className="w-full" variant="outline" size="lg"
+          <Button className="w-full" variant="primary" size="lg"
             disabled={!newRole.name.trim()}
             onClick={saveNewRole}
           >

@@ -251,7 +251,7 @@ export default function ModalEditSupporter({
           />
         )}
         <div className="flex justify-end gap-2 pt-2">
-          <Button variant="primary" size="sm"
+          <Button variant="outline" size="sm"
             className="w-32"
             onClick={handleClose}
             disabled={saving}
