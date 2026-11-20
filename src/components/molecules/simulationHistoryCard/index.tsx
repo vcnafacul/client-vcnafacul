@@ -6,7 +6,12 @@ import { SIMULATE_METRICS } from "../../../routes/path";
 import { getFormatingTime } from "../../../utils/getFormatingTime";
 import { getStatusIcon } from "../../../utils/getStatusIcon";
 import SimulationHistoryField from "../../atoms/simulationHistoryField";
-import { ToolTip } from "../../atoms/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { categoriaDoHistorico } from "../../../utils/categoriaDoHistorico";
 import { foiPorCartao } from "../../../utils/foiPorCartao";
 
@@ -23,52 +28,65 @@ const statusLabel: Record<string, string> = {
 function SimulationHistoryCard({ historico }: SimulationHistoryCardProps) {
   const isPending = !historico.aproveitamento;
   const aproveitamentoValue = isPending
-    ? statusLabel[historico.status ?? "pending"] ?? "Pendente"
+    ? (statusLabel[historico.status ?? "pending"] ?? "Pendente")
     : `${(historico.aproveitamento!.geral * 100).toFixed(2)}%`;
 
   const { nome: nomeCategoria, totalQuestoes } =
     categoriaDoHistorico(historico);
 
+  const completo =
+    totalQuestoes !== null && historico.questoesRespondidas === totalQuestoes;
+  const textoDoStatus = completo ? "Simulado Completo" : "Simulado Incompleto";
+
   return (
-    <Link
-      className="flex flex-wrap gap-4 bg-white border border-border border-t-0 rounded-sm p-4 pb-6 pr-12 m-2.5 shadow-md justify-between relative"
-      to={`${SIMULATE_METRICS}${historico._id}`}
-    >
-      <SimulationHistoryField
-        field="Caderno:"
-        value={nomeCategoria}
-        className="md:min-w-[250px]"
-      />
-      {!foiPorCartao(historico) && (
+    // O botão do status fica fora do link: botão dentro de link não é permitido.
+    <div className="relative m-2.5">
+      <Link
+        className="flex flex-wrap gap-4 bg-white border border-border border-t-0 rounded-sm p-4 pb-6 pr-12 shadow-md justify-between relative"
+        to={`${SIMULATE_METRICS}${historico._id}`}
+      >
         <SimulationHistoryField
-          field="Tempo:"
-          value={getFormatingTime(historico.tempoRealizado)}
-          className="md:min-w-[160px]"
+          field="Caderno:"
+          value={nomeCategoria}
+          className="md:min-w-[250px]"
         />
-      )}
-      <SimulationHistoryField
-        field="Aproveitamento:"
-        value={aproveitamentoValue}
-        className="md:min-w-[200px]"
-      />
-      <div className="group absolute right-4 bottom-6">
-        {getStatusIcon(
-          totalQuestoes !== null && historico.questoesRespondidas === totalQuestoes
-            ? StatusEnum.Approved
-            : StatusEnum.Rejected
+        {!foiPorCartao(historico) && (
+          <SimulationHistoryField
+            field="Tempo:"
+            value={getFormatingTime(historico.tempoRealizado)}
+            className="md:min-w-[160px]"
+          />
         )}
-        <ToolTip>
-          {totalQuestoes !== null && historico.questoesRespondidas === totalQuestoes
-            ? "Simulado Completo"
-            : "Simulado Incompleto"}
-        </ToolTip>
+        <SimulationHistoryField
+          field="Aproveitamento:"
+          value={aproveitamentoValue}
+          className="md:min-w-[200px]"
+        />
+        <h1 className="font-bold text-foreground text-body sm:absolute bottom-0.5 left-4">
+          {DateTime.fromISO(historico.createdAt.toString()).toLocaleString(
+            DateTime.DATE_MED,
+          )}
+        </h1>
+      </Link>
+      <div className="absolute right-4 bottom-6">
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                aria-label={textoDoStatus}
+                className="rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                {getStatusIcon(
+                  completo ? StatusEnum.Approved : StatusEnum.Rejected,
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>{textoDoStatus}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
-      <h1 className="font-bold text-foreground text-body sm:absolute bottom-0.5 left-4">
-        {DateTime.fromISO(historico.createdAt.toString()).toLocaleString(
-          DateTime.DATE_MED
-        )}
-      </h1>
-    </Link>
+    </div>
   );
 }
 

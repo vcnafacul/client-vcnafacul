@@ -1,4 +1,4 @@
-import { FormControlLabel, Switch } from "@mui/material";
+import { Switch } from "@/components/ui/switch";
 
 interface Props {
   ocultar: boolean;
@@ -8,18 +8,12 @@ interface Props {
 
 export function ToggleDadosSensiveis({ ocultar, onChange, className }: Props) {
   return (
-    <FormControlLabel
-      className={`mr-0 ${className ?? ""}`}
-      control={
-        <Switch
-          checked={ocultar}
-          onChange={(event) => onChange(event.target.checked)}
-          size="small"
-        />
-      }
-      label={
-        <span className="text-body text-foreground">Ocultar dados sensíveis</span>
-      }
-    />
+    <div className={className}>
+      <Switch
+        checked={ocultar}
+        onCheckedChange={onChange}
+        label="Ocultar dados sensíveis"
+      />
+    </div>
   );
 }

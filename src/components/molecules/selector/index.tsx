@@ -1,6 +1,6 @@
 import { VariantProps, tv } from "tailwind-variants";
 import HighlightSelector from "../../atoms/highlightSelector"
-import HighlightSelectorMobile from "../../atoms/highlightSelectorMobile"
+import { OptionsSelect } from "@/components/ui/options-select"
 import './styles.css'
 
 const selector = tv({
@@ -27,7 +27,14 @@ function Selector({tabItems, changeItem, align, className, activeTab} : Selector
     return (
         <>
             <HighlightSelector className={selector({ align, className })} items={tabItems}  changeItem={changeItem} activeTab={activeTab}/>
-            <HighlightSelectorMobile className="actionAreasMobileDropdown" items={tabItems} changeItem={changeItem} activeTab={activeTab} />
+            <div className="mobile">
+                <OptionsSelect<string>
+                    aria-label="Seção"
+                    options={tabItems.map((item, index) => ({ value: String(index), label: item }))}
+                    value={String(activeTab)}
+                    onValueChange={(index) => changeItem(Number(index))}
+                />
+            </div>
         </>
     )
 }

@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { SelectProps } from "@/components/atoms/select";
+import type { FiltroSelectProps } from "@/components/dashV2/FiltroSelect";
+import { escolherOpcao } from "@/test/radix";
 import type { ButtonProps } from "@/components/ui/button";
 import type { CardDash } from "@/components/molecules/cardDash";
 import {
@@ -418,7 +419,7 @@ describe("DashListTemplate — trocar filtro volta para a página 1", () => {
 
   it("⚠️ mudar um select reposiciona na página 1 e repassa o valor à tela", () => {
     const setState = vi.fn();
-    const selectFiltes: SelectProps[] = [
+    const selectFiltes: FiltroSelectProps[] = [
       {
         options: [
           { id: "", name: "Todos os anos" },
@@ -431,9 +432,7 @@ describe("DashListTemplate — trocar filtro volta para a página 1", () => {
     montar(criarContexto({ entities: provas(40), selectFiltes }), { pageSize: 10 });
 
     irPara("4");
-    fireEvent.change(screen.getByLabelText("Todos os anos"), {
-      target: { value: "2019" },
-    });
+    escolherOpcao(screen.getByRole("combobox", { name: "Todos os anos" }), "2019");
 
     expect(setState).toHaveBeenCalledWith("2019");
     expect(intervalo()).toBe("Mostrando 1–10 de 40");
@@ -492,7 +491,7 @@ describe("DashListTemplate — limpar filtros", () => {
     });
     const { remontar } = montar(contexto);
 
-    expect(screen.getByLabelText("Todos os anos")).toHaveValue("2019");
+    expect(screen.getByRole("combobox", { name: "Todos os anos" })).toHaveTextContent("2019");
 
     remontar(
       criarContexto({
@@ -501,7 +500,7 @@ describe("DashListTemplate — limpar filtros", () => {
       }),
     );
 
-    expect(screen.getByLabelText("Todos os anos")).toHaveValue("");
+    expect(screen.getByRole("combobox", { name: "Todos os anos" })).toHaveTextContent("Todos os anos");
   });
 });
 

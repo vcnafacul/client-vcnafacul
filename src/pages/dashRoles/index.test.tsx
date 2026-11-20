@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import DashRoles from ".";
 import { DEBOUNCE_BUSCA_MS } from "@/components/dashV2";
+import { escolherOpcao } from "@/test/radix";
 
 const getUsersRole = vi.hoisted(() => vi.fn());
 vi.mock("../../services/roles/getUsersRole", () => ({ getUsersRole }));
@@ -172,11 +173,12 @@ describe("DashRoles no DashListTemplate (usuários 03)", () => {
 
   describe("filtro por cursinho (usuários 06)", () => {
     const selectCursinho = async () =>
-      (await screen.findByRole("combobox", { name: "Cursinho" })) as HTMLSelectElement;
+      await screen.findByRole("combobox", { name: "Cursinho" });
 
     it("lista os cursinhos em ordem, com 'todos' primeiro", async () => {
       render(<DashRoles />);
-      const opcoes = [...(await selectCursinho()).options].map((o) => o.text);
+      fireEvent.keyDown(await selectCursinho(), { key: "Enter" });
+      const opcoes = screen.getAllByRole("option").map((o) => o.textContent);
 
       expect(opcoes).toEqual(["Todos os cursinhos", "Alfa Cursinho", "Zeta Cursinho"]);
     });
@@ -191,7 +193,7 @@ describe("DashRoles no DashListTemplate (usuários 03)", () => {
       });
       render(<DashRoles />);
 
-      fireEvent.change(await selectCursinho(), { target: { value: "c1" } });
+      escolherOpcao(await selectCursinho(), "Alfa Cursinho");
 
       await waitFor(() =>
         expect(getUsersRole).toHaveBeenCalledWith("tok", 1, 1000, "", "", "c1"),
@@ -207,10 +209,9 @@ describe("DashRoles no DashListTemplate (usuários 03)", () => {
       fireEvent.change(campo(), { target: { value: "Maria" } });
       // O campo do V2 entrega o texto depois do debounce.
       await new Promise((r) => setTimeout(r, DEBOUNCE_BUSCA_MS + 50));
-      const funcao = (await screen.findByRole("combobox", { name: "aluno" })) as HTMLSelectElement;
-      fireEvent.change(funcao, { target: { value: "r2" } });
+      escolherOpcao(await screen.findByRole("combobox", { name: "Perfil" }), "professor");
 
-      fireEvent.change(await selectCursinho(), { target: { value: "c2" } });
+      escolherOpcao(await selectCursinho(), "Zeta Cursinho");
 
       await waitFor(() =>
         expect(getUsersRole).toHaveBeenLastCalledWith("tok", 1, 1000, "Maria", "r2", "c2"),
@@ -228,7 +229,7 @@ describe("DashRoles no DashListTemplate (usuários 03)", () => {
     it("voltar para 'todos' antes de ter buscado não traz nada", async () => {
       render(<DashRoles />);
 
-      fireEvent.change(await selectCursinho(), { target: { value: "0" } });
+      escolherOpcao(await selectCursinho(), "Todos os cursinhos");
 
       expect(getUsersRole).not.toHaveBeenCalled();
     });

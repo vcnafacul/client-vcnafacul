@@ -2,6 +2,7 @@ import {
   TEXTO_ERRO,
   TEXTO_TENTAR_DE_NOVO,
 } from "@/components/dashV2";
+import { escolherOpcao } from "@/test/radix";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
@@ -115,16 +116,12 @@ describe("Processos Seletivos na Dash V2 (tickets/021 card 04)", () => {
     montar();
     await screen.findByText("Atual 2026");
 
-    fireEvent.change(screen.getByRole("combobox", { name: "Status" }), {
-      target: { value: String(StatusEnum.Rejected) },
-    });
+    escolherOpcao(screen.getByRole("combobox", { name: "Status" }), "Encerrado");
     expect(nomesNaTabela()).toEqual(["Meio 2025", "Antigo 2024"]);
 
     fireEvent.click(screen.getByRole("button", { name: /Limpar filtros/ }));
     expect(nomesNaTabela()).toHaveLength(3);
-    expect(
-      (screen.getByRole("combobox", { name: "Status" }) as HTMLSelectElement).value,
-    ).toBe(String(StatusEnum.All));
+    expect(screen.getByRole("combobox", { name: "Status" })).toHaveTextContent("Todos");
   });
 
   it("⚠️ erro de busca: estado de erro com 'tentar de novo' — não o spinner eterno", async () => {
@@ -204,9 +201,7 @@ describe("Processos Seletivos na Dash V2 (tickets/021 card 04)", () => {
       buscar("2026");
       data("Inicia em — de", "2026-01-01");
       data("Criado em — de", "2026-01-01");
-      fireEvent.change(screen.getByRole("combobox", { name: "Status" }), {
-        target: { value: String(StatusEnum.Approved) },
-      });
+      escolherOpcao(screen.getByRole("combobox", { name: "Status" }), "Ativo");
 
       fireEvent.click(await screen.findByRole("button", { name: "Limpar filtros (4)" }));
 

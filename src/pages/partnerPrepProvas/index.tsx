@@ -4,8 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FilterProps } from "../../components/atoms/filter";
-import { SelectProps } from "../../components/atoms/select";
-import { OptionProps } from "../../components/atoms/selectOption";
+import type {
+  FiltroSelectProps,
+  OpcaoDoFiltro,
+} from "@/components/dashV2/FiltroSelect";
 import { CardDash } from "../../components/molecules/cardDash";
 import { DashCardContext } from "../../context/dashCardContext";
 import { ICategoria } from "../../dtos/categoria/categoria";
@@ -480,7 +482,7 @@ function PartnerPrepProvas() {
       });
   };
 
-  const edicaoOptions: OptionProps[] = useMemo(() => {
+  const edicaoOptions: OpcaoDoFiltro[] = useMemo(() => {
     const set = new Set<string>();
     provas.forEach((p) => {
       if (p.edicao) set.add(p.edicao);
@@ -493,7 +495,7 @@ function PartnerPrepProvas() {
     ];
   }, [provas]);
 
-  const aplicacaoOptions: OptionProps[] = useMemo(() => {
+  const aplicacaoOptions: OpcaoDoFiltro[] = useMemo(() => {
     const set = new Set<number>();
     provas.forEach((p) => {
       if (p.aplicacao !== undefined && p.aplicacao !== null)
@@ -507,7 +509,7 @@ function PartnerPrepProvas() {
     ];
   }, [provas]);
 
-  const anoOptions: OptionProps[] = useMemo(() => {
+  const anoOptions: OpcaoDoFiltro[] = useMemo(() => {
     const set = new Set<number>();
     provas.forEach((p) => {
       if (p.ano !== undefined && p.ano !== null) set.add(p.ano);
@@ -547,7 +549,7 @@ function PartnerPrepProvas() {
     defaultValue: nameFilter,
   };
 
-  const selectFiltes: SelectProps[] = [
+  const selectFiltes: FiltroSelectProps[] = [
     {
       options: edicaoOptions,
       defaultValue: edicaoFilter,

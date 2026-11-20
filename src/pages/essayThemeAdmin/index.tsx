@@ -11,7 +11,7 @@ import {
   getEssaySettings,
   updateEssaySettings,
 } from "@/services/essay";
-import Toggle from "@/components/atoms/toggle";
+import { Switch } from "@/components/ui/switch";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -157,13 +157,10 @@ export default function EssayThemeAdmin() {
         <h1 className="text-h1 font-bold text-foreground">Temas de Redação</h1>
         <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-body font-medium text-foreground">
-              Correção por IA
-            </span>
-            <Toggle
-              name="aiEnabled"
+            <Switch
+              label="Correção por IA"
               checked={aiEnabled}
-              handleCheck={handleAiToggle}
+              onCheckedChange={(checked) => handleAiToggle("aiEnabled", checked)}
               disabled={aiToggleLoading}
             />
             <span

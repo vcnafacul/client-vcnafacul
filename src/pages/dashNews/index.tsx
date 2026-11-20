@@ -4,7 +4,7 @@ import { DashListTemplate, type DashAction } from "@/components/dashV2";
 import { FilterProps } from "@/components/atoms/filter";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { SelectProps } from "../../components/atoms/select";
+import type { FiltroSelectProps } from "@/components/dashV2/FiltroSelect";
 import { CardDash } from "../../components/molecules/cardDash";
 import { DashCardContext } from "../../context/dashCardContext";
 import { News } from "../../dtos/news/news";
@@ -206,7 +206,7 @@ function DashNews() {
     );
   };
 
-  const selectFiltes: SelectProps[] = [
+  const selectFiltes: FiltroSelectProps[] = [
     {
       "aria-label": "Status",
       options: dashNews.options,

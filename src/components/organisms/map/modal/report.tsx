@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import RadioButton from "@/components/atoms/radioButton";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Dialog,
   DialogBody,
@@ -16,7 +17,6 @@ import {
   ReportMapHome,
 } from "@/services/geolocation/reportMapHome";
 import { useAuthStore } from "@/store/auth";
-import { Checkbox } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -78,65 +78,52 @@ function ReportLC({
   const IsQuestionProblem = () => {
     return (
       <div>
-        <span>
+        <span id="report-pergunta">
           {`Foi um problema com as informações ${
             type === TypeProblem.COLLEGE ? "da universidade" : "do cursinho"
           }, ${entityName}?`}
         </span>
-        <div className="flex gap-4">
-          <RadioButton
-            onChange={() => setSelectedOption(0)}
-            checked={selectedOption === 0}
-          >
-            Sim
-          </RadioButton>
-          <RadioButton
-            onChange={() => {
-              setSelectedOption(1);
+        <RadioGroup
+          aria-labelledby="report-pergunta"
+          className="flex gap-4"
+          value={String(selectedOption)}
+          onValueChange={(valor) => {
+            setSelectedOption(Number(valor));
+            if (valor === "1") {
               setAddressProblem(false);
               setContactProblem(false);
               setOtherProblem(false);
-            }}
-            checked={selectedOption === 1}
-          >
-            Não, foi um problema na plataforma
-          </RadioButton>
-        </div>
+            }
+          }}
+        >
+          <RadioGroupItem value="0" label="Sim" />
+          <RadioGroupItem value="1" label="Não, foi um problema na plataforma" />
+        </RadioGroup>
         <div
+          role="group"
+          aria-label="Tipo de problema"
           className={`flex flex-col gap-0 ${
             selectedOption === 0 ? "" : "hidden"
           }`}
         >
-          <div className="select-none">
-            <Checkbox
-              name="address"
-              id="address"
-              onChange={(event) => setAddressProblem(event.target.checked)}
-              checked={addressProblem}
-              color="primary"
-            />
-            <label htmlFor="address">Endereço</label>
-          </div>
-          <div className="select-none">
-            <Checkbox
-              name="contact"
-              id="contact"
-              onChange={(event) => setContactProblem(event.target.checked)}
-              checked={contactProblem}
-              color="primary"
-            />
-            <label htmlFor="contact">Redes Sociais e Contato</label>
-          </div>
-          <div className="select-none">
-            <Checkbox
-              name="other"
-              id="other"
-              onChange={(event) => setOtherProblem(event.target.checked)}
-              checked={otherProblem}
-              color="primary"
-            />
-            <label htmlFor="other">Outro</label>
-          </div>
+          <Checkbox
+            name="address"
+            label="Endereço"
+            checked={addressProblem}
+            onCheckedChange={(marcado) => setAddressProblem(marcado === true)}
+          />
+          <Checkbox
+            name="contact"
+            label="Redes Sociais e Contato"
+            checked={contactProblem}
+            onCheckedChange={(marcado) => setContactProblem(marcado === true)}
+          />
+          <Checkbox
+            name="other"
+            label="Outro"
+            checked={otherProblem}
+            onCheckedChange={(marcado) => setOtherProblem(marcado === true)}
+          />
         </div>
       </div>
     );

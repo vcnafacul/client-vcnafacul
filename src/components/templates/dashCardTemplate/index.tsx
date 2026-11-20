@@ -2,7 +2,7 @@ import React, { JSX, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { useDashCardContext } from "../../../context/dashCardContext";
 import Filter from "../../atoms/filter";
-import Select from "../../atoms/select";
+import { FiltroSelect } from "@/components/dashV2/FiltroSelect";
 import { Button } from "@/components/ui/button";
 import { CardDashComponent } from "../../molecules/cardDash";
 
@@ -137,7 +137,7 @@ function DashCardTemplate({
 
           <div className="flex flex-wrap gap-2">
             {selectFiltes?.map((select, index) => (
-              <Select
+              <FiltroSelect
                 key={index}
                 {...select}
                 className="min-w-[140px]"

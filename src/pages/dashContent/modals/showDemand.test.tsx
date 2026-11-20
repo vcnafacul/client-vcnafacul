@@ -64,8 +64,8 @@ beforeEach(() => {
 describe("ShowDemand — Documento ou Vídeo (049/04)", () => {
   it("abre em Documento, com a área de upload e sem campo de link", () => {
     montar();
-    expect(screen.getByRole("button", { name: /Documento/ })).toHaveAttribute(
-      "aria-pressed",
+    expect(screen.getByRole("radio", { name: /Documento/ })).toHaveAttribute(
+      "aria-checked",
       "true",
     );
     expect(screen.getByText(/Clique para fazer upload/)).toBeInTheDocument();
@@ -77,7 +77,7 @@ describe("ShowDemand — Documento ou Vídeo (049/04)", () => {
 
   it("Vídeo: link inválido desabilita Salvar e mostra o erro; válido habilita e mostra o preview", () => {
     montar();
-    fireEvent.click(screen.getByRole("button", { name: /Vídeo/ }));
+    fireEvent.click(screen.getByRole("radio", { name: /Vídeo/ }));
     const salvar = screen.getByRole("button", { name: /Salvar/ });
     expect(screen.queryByText(/Clique para fazer upload/)).toBeNull();
 
@@ -97,7 +97,7 @@ describe("ShowDemand — Documento ou Vídeo (049/04)", () => {
 
   it("Salvar em Vídeo chama sendVideoDemand com a URL e fecha", async () => {
     const { handleClose, updateStatusDemand } = montar();
-    fireEvent.click(screen.getByRole("button", { name: /Vídeo/ }));
+    fireEvent.click(screen.getByRole("radio", { name: /Vídeo/ }));
     fireEvent.change(link(), {
       target: { value: " https://youtu.be/dQw4w9WgXcQ " },
     });
@@ -117,13 +117,13 @@ describe("ShowDemand — Documento ou Vídeo (049/04)", () => {
 
   it("voltar para Documento limpa o link", () => {
     montar();
-    fireEvent.click(screen.getByRole("button", { name: /Vídeo/ }));
+    fireEvent.click(screen.getByRole("radio", { name: /Vídeo/ }));
     fireEvent.change(link(), {
       target: { value: "https://youtu.be/dQw4w9WgXcQ" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Documento/ }));
+    fireEvent.click(screen.getByRole("radio", { name: /Documento/ }));
     expect(screen.getByRole("button", { name: /Salvar/ })).toBeDisabled();
-    fireEvent.click(screen.getByRole("button", { name: /Vídeo/ }));
+    fireEvent.click(screen.getByRole("radio", { name: /Vídeo/ }));
     expect(link()).toHaveValue("");
   });
 });

@@ -1,4 +1,4 @@
-import { CheckMapFilter } from "@/components/atoms/checkMapFilter";
+import { FiltroDoMapa } from "@/components/mapa/FiltroDoMapa";
 import { checkMapFilter } from "@/pages/homeLegacy/data";
 import { TypeMarker } from "@/types/map/marker";
 
@@ -48,12 +48,12 @@ export function MapFilterOptions({
       </p>
       <div className="flex flex-col gap-2">
         {checkMapFilter.map((f) => (
-          <CheckMapFilter
+          <FiltroDoMapa
             key={f.id}
             label={f.name}
             type={f.type}
             checked={filterMarkers.includes(f.type)}
-            onClick={() => onToggle(f.type)}
+            onChange={() => onToggle(f.type)}
           />
         ))}
       </div>

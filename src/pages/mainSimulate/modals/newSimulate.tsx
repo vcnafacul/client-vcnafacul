@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import {
-  OptionProps,
-  SelectOption,
-} from "../../../components/atoms/selectOption";
+import { OptionsSelect } from "@/components/ui/options-select";
 import Ul from "../../../components/atoms/ul";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +20,11 @@ import { useSimuladoStore } from "../../../store/simulado";
 import { dataModalNew } from "./data";
 import data from "./data.json";
 
+interface SimuladoDisponivel {
+  id: string;
+  name: string;
+}
+
 interface ModalProps {
   handleClose?: () => void;
 }
@@ -33,9 +35,9 @@ interface NewSimulateProps extends ModalProps {
 }
 
 function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
-  const [availables, setAvailables] = useState<OptionProps[]>([]);
-  const [availableSelected, setAvailableSelected] = useState<OptionProps>(
-    {} as OptionProps
+  const [availables, setAvailables] = useState<SimuladoDisponivel[]>([]);
+  const [availableSelected, setAvailableSelected] = useState<SimuladoDisponivel>(
+    {} as SimuladoDisponivel
   );
   // Só depois da resposta dá para dizer que não há simulado disponível.
   const [carregado, setCarregado] = useState(false);
@@ -51,7 +53,7 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
   } = useAuthStore();
 
   const getSimulate = () => {
-    getSimuladoById(availableSelected.id as string, token)
+    getSimuladoById(availableSelected.id, token)
       .then((res) => {
         simuladoBegin(res);
         navigate(SIMULADO_RESPONDER);
@@ -95,9 +97,19 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
             <DialogTitle className="pr-0">Simulado {title}</DialogTitle>
             {availables.length > 0 && (
               <div className="w-full sm:w-auto min-w-0">
-                <SelectOption
-                  options={availables}
-                  setState={setAvailableSelected}
+                <OptionsSelect<string>
+                  aria-label="Simulado disponível"
+                  className="sm:min-w-64"
+                  options={availables.map((a) => ({
+                    value: a.id,
+                    label: a.name,
+                  }))}
+                  value={availableSelected.id}
+                  onValueChange={(id) =>
+                    setAvailableSelected(
+                      availables.find((a) => a.id === id) ?? availableSelected
+                    )
+                  }
                 />
               </div>
             )}

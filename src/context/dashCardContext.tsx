@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Dispatch, SetStateAction, createContext, useContext } from "react";
 import { FilterProps } from "../components/atoms/filter";
-import { SelectProps } from "../components/atoms/select";
+import type { FiltroSelectProps } from "@/components/dashV2/FiltroSelect";
 import { CardDash } from "../components/molecules/cardDash";
 import { Paginate } from "../utils/paginate";
 import type { ButtonProps } from "@/components/ui/button";
@@ -27,7 +27,7 @@ export interface DashCardContextProps<T = any> {
   cardTransformation: (entity: T) => CardDash,
   limitCards: number,
   filterProps?: FilterProps,
-  selectFiltes?: SelectProps[];
+  selectFiltes?: FiltroSelectProps[];
   buttons?: ButtonProps[]
   totalItems?: number
 }

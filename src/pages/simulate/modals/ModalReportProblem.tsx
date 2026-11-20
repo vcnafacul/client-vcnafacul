@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import RadioButton from "../../../components/atoms/radioButton";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -68,7 +68,7 @@ function ModalReportProblem({
   const IsQuestionProblem = () => {
     return questionProblem ? (
       <div>
-        <p className="text-body mb-6 text-start text-muted-foreground">
+        <p id="pergunta-questao" className="text-body mb-6 text-start text-muted-foreground">
           Foi um problema com a questão,{" "}
           <span
             className="text-foreground"
@@ -78,40 +78,30 @@ function ModalReportProblem({
           </span>{" "}
           ?
         </p>
-        <div className="flex flex-wrap gap-4">
-          <RadioButton
-            onChange={() => setSelectedOption(0)}
-            checked={selectedOption === 0}
-          >
-            {radios.question.first}
-          </RadioButton>
-          <RadioButton
-            onChange={() => setSelectedOption(1)}
-            checked={selectedOption === 1}
-          >
-            {radios.question.second}
-          </RadioButton>
-        </div>
+        <RadioGroup
+          aria-labelledby="pergunta-questao"
+          className="flex flex-wrap gap-4"
+          value={String(selectedOption)}
+          onValueChange={(valor) => setSelectedOption(Number(valor))}
+        >
+          <RadioGroupItem value="0" label={radios.question.first} />
+          <RadioGroupItem value="1" label={radios.question.second} />
+        </RadioGroup>
       </div>
     ) : (
       <div>
-        <p className="text-body text-start text-muted-foreground m-0">
+        <p id="pergunta-plataforma" className="text-body text-start text-muted-foreground m-0">
           Foi um bug recorrente ou um bug que ocorreu de maneira esporádica?*
         </p>
-        <div className="flex flex-wrap gap-4">
-          <RadioButton
-            onChange={() => setSelectedOption(0)}
-            checked={selectedOption === 0}
-          >
-            {radios.platform.first}
-          </RadioButton>
-          <RadioButton
-            onChange={() => setSelectedOption(1)}
-            checked={selectedOption === 1}
-          >
-            {radios.platform.second}
-          </RadioButton>
-        </div>
+        <RadioGroup
+          aria-labelledby="pergunta-plataforma"
+          className="flex flex-wrap gap-4"
+          value={String(selectedOption)}
+          onValueChange={(valor) => setSelectedOption(Number(valor))}
+        >
+          <RadioGroupItem value="0" label={radios.platform.first} />
+          <RadioGroupItem value="1" label={radios.platform.second} />
+        </RadioGroup>
       </div>
     );
   };

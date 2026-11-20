@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Roles } from "@/enums/roles/roles";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import DashContent, { MATERIA_TODAS, STATUS_PADRAO } from ".";
+import { escolherOpcao } from "@/test/radix";
 
 const getTodoConteudo = vi.hoisted(() => vi.fn());
 vi.mock("@/services/content/getContent", () => ({ getTodoConteudo }));
@@ -52,7 +53,7 @@ const demanda = (id: string, title: string, over: object = {}) => ({
 });
 
 const select = (nome: string) =>
-  screen.findByRole("combobox", { name: nome }) as Promise<HTMLSelectElement>;
+  screen.findByRole("combobox", { name: nome });
 
 beforeEach(() => {
   getTodoConteudo.mockReset().mockResolvedValue([
@@ -119,14 +120,12 @@ describe("DashContent (dashV2)", () => {
     render(<DashContent />);
     await screen.findByText("Aula de funções");
 
-    fireEvent.change(await select("Matéria"), { target: { value: "m1" } });
+    escolherOpcao(await select("Matéria"), "Matemática");
     await waitFor(() =>
       expect(getTodoConteudo).toHaveBeenLastCalledWith("tok", STATUS_PADRAO, "m1"),
     );
 
-    fireEvent.change(await select("Status"), {
-      target: { value: String(StatusEnum.Approved) },
-    });
+    escolherOpcao(await select("Status"), "Aprovado");
     await waitFor(() =>
       expect(getTodoConteudo).toHaveBeenLastCalledWith(
         "tok",
@@ -143,8 +142,8 @@ describe("DashContent (dashV2)", () => {
         MATERIA_TODAS,
       ),
     );
-    expect((await select("Matéria")).value).toBe(MATERIA_TODAS);
-    expect((await select("Status")).value).toBe(String(STATUS_PADRAO));
+    expect(await select("Matéria")).toHaveTextContent("Todas as matérias");
+    expect(await select("Status")).toHaveTextContent("Pendente Upload");
   });
 
   it("clicar na demanda abre o detalhe dela", async () => {

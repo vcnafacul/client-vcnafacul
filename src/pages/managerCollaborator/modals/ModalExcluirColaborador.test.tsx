@@ -32,7 +32,7 @@ describe("ModalExcluirColaborador", () => {
   it("sem escolher perfil, exclui como aluno e fecha", async () => {
     const { handleExcluir, handleClose } = montar();
     // A opção padrão continua sendo o perfil aluno, com o rótulo novo.
-    expect(screen.getByRole("combobox")).toHaveDisplayValue(
+    expect(screen.getByRole("combobox")).toHaveTextContent(
       "Não recomendo permissões",
     );
     fireEvent.click(screen.getByRole("button", { name: "Excluir" }));
@@ -43,8 +43,8 @@ describe("ModalExcluirColaborador", () => {
   it("com perfil recomendado, manda o roleId", async () => {
     const { handleExcluir } = montar();
     const select = await screen.findByRole("combobox");
-    await screen.findByRole("option", { name: "Revisor" });
-    fireEvent.change(select, { target: { value: "r-rev" } });
+    fireEvent.keyDown(select, { key: "Enter" });
+    fireEvent.click(await screen.findByRole("option", { name: "Revisor" }));
     fireEvent.click(screen.getByRole("button", { name: "Excluir" }));
     await waitFor(() => expect(handleExcluir).toHaveBeenCalledWith("r-rev"));
   });

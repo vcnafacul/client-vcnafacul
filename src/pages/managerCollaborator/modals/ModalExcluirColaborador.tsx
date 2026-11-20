@@ -1,4 +1,5 @@
-import Select from "@/components/atoms/select";
+import { Field } from "@/components/ui/field";
+import { OptionsSelect } from "@/components/ui/options-select";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,6 +18,8 @@ import { useEffect, useState } from "react";
 
 /** Valor do seletor que quer dizer "sem perfil: só aluno". */
 export const SO_ALUNO = "";
+// O Radix não aceita item de valor vazio: a opção "só aluno" usa este valor por dentro.
+const VALOR_SO_ALUNO = "__so_aluno__";
 
 interface Props {
   isOpen: boolean;
@@ -74,24 +77,20 @@ export function ModalExcluirColaborador({
             <li>Perde o acesso ao cursinho e sai das turmas que administra.</li>
             <li>Diferente de inativar: só volta com um convite novo.</li>
           </ul>
-          <label htmlFor="perfil-depois-da-saida" className="flex flex-col gap-1">
-            <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
-              Perfil depois da saída
-            </span>
-            <Select
+          <Field
+            label="Perfil depois da saída"
+            hint="Os perfis da lista são recomendados pelo projeto para quem continua ajudando em outras frentes."
+          >
+            <OptionsSelect<string>
               id="perfil-depois-da-saida"
               options={[
-                { id: SO_ALUNO, name: "Não recomendo permissões" },
-                ...perfis.map((p) => ({ id: p.id, name: p.name })),
+                { value: VALOR_SO_ALUNO, label: "Não recomendo permissões" },
+                ...perfis.map((p) => ({ value: String(p.id), label: p.name })),
               ]}
-              value={perfil}
-              setState={(v) => setPerfil(String(v))}
+              value={perfil || VALOR_SO_ALUNO}
+              onValueChange={(v) => setPerfil(v === VALOR_SO_ALUNO ? SO_ALUNO : v)}
             />
-            <span className="text-caption text-muted-foreground">
-              Os perfis da lista são recomendados pelo projeto para quem
-              continua ajudando em outras frentes.
-            </span>
-          </label>
+          </Field>
         </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={handleClose}>

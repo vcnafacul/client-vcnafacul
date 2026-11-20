@@ -1,4 +1,4 @@
-import Toggle from "@/components/atoms/toggle";
+import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import ImageProfile from "@/components/molecules/imageProfile";
 import {
@@ -277,11 +277,11 @@ export function ShowInfo({
               <PropValue
                 prop="Ativar"
                 value={
-                  <Toggle
-                    name="ativo"
+                  <Switch
+                    aria-label="Ativar"
                     checked={false}
                     disabled={salvandoAtivo}
-                    handleCheck={ativar}
+                    onCheckedChange={ativar}
                   />
                 }
               />

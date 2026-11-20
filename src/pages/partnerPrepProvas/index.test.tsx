@@ -1,4 +1,5 @@
 import { DEBOUNCE_BUSCA_MS } from "@/components/dashV2";
+import { escolherOpcao } from "@/test/radix";
 import {
   act,
   fireEvent,
@@ -650,11 +651,10 @@ describe("ida para o relatório — o que vai no state", () => {
         setTimeout(resolve, DEBOUNCE_BUSCA_MS + 20),
       );
     });
-    await act(async () => {
-      fireEvent.change(screen.getByLabelText("Todas edições"), {
-        target: { value: Edicao.Digital },
-      });
-    });
+    escolherOpcao(
+      screen.getByRole("combobox", { name: "Todas edições" }),
+      Edicao.Digital,
+    );
     await act(async () => {
       fireEvent.click(screen.getByRole("checkbox"));
     });
@@ -705,9 +705,9 @@ describe("volta do relatório — o que o state restaura", () => {
     );
 
     expect(screen.getByPlaceholderText("Buscar por nome")).toHaveValue("2023");
-    expect(screen.getByLabelText("Todas edições")).toHaveValue(Edicao.Digital);
-    expect(screen.getByLabelText("Todas aplicações")).toHaveValue("1");
-    expect(screen.getByLabelText("Todos os anos")).toHaveValue("2023");
+    expect(screen.getByRole("combobox", { name: "Todas edições" })).toHaveTextContent(Edicao.Digital);
+    expect(screen.getByRole("combobox", { name: "Todas aplicações" })).toHaveTextContent("1");
+    expect(screen.getByRole("combobox", { name: "Todos os anos" })).toHaveTextContent("2023");
     expect(screen.getByRole("checkbox")).toBeChecked();
     expect(screen.getByText(/Limpar filtros \(5\)/)).toBeInTheDocument();
     expect(chavesDasLinhas()).toEqual(["b"]);
@@ -783,9 +783,9 @@ describe("volta do relatório — o que o state restaura", () => {
       await montarComState({ de: { caminho: CAMINHO_DA_TELA, ...parcial } });
 
       expect(screen.getByPlaceholderText("Buscar por nome")).toHaveValue("");
-      expect(screen.getByLabelText("Todas edições")).toHaveValue("");
-      expect(screen.getByLabelText("Todas aplicações")).toHaveValue("");
-      expect(screen.getByLabelText("Todos os anos")).toHaveValue("");
+      expect(screen.getByRole("combobox", { name: "Todas edições" })).toHaveTextContent("Todas edições");
+      expect(screen.getByRole("combobox", { name: "Todas aplicações" })).toHaveTextContent("Todas aplicações");
+      expect(screen.getByRole("combobox", { name: "Todos os anos" })).toHaveTextContent("Todos os anos");
       expect(screen.getByRole("checkbox")).not.toBeChecked();
       expect(screen.queryByText(/Limpar filtros/)).toBeNull();
       expect(screen.queryByTestId("show-prova")).toBeNull();

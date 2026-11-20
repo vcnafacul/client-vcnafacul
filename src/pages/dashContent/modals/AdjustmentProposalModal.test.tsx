@@ -19,7 +19,7 @@ describe("AdjustmentProposalModal — proposta em vídeo (049/04)", () => {
   it("Vídeo com link válido envia FormData com url e comment, sem file", async () => {
     const onSuccess = vi.fn();
     render(<AdjustmentProposalModal contentId="c1" isOpen handleClose={vi.fn()} onSuccess={onSuccess} />);
-    fireEvent.click(screen.getByRole("button", { name: /Vídeo/ }));
+    fireEvent.click(screen.getByRole("radio", { name: /Vídeo/ }));
     const enviar = screen.getByRole("button", { name: "Enviar Proposta" });
     expect(enviar).toBeDisabled();
 

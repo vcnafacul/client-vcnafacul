@@ -1,5 +1,4 @@
 import PermissionHierarchyPanel from "@/components/organisms/permissionHierarchyPanel/PermissionHierarchyPanel";
-import Toggle from "@/components/atoms/toggle";
 import { EditRoleDto } from "@/dtos/roles/editRole";
 import {
   PermissionGroup,
@@ -24,7 +23,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useAuthStore } from "../../../store/auth";
-import Select from "@/components/atoms/select";
+import { Field } from "@/components/ui/field";
+import { OptionsSelect } from "@/components/ui/options-select";
+import { Switch } from "@/components/ui/switch";
 
 interface ModalEditRoleProps extends ModalProps {
   isOpen: boolean;
@@ -153,61 +154,49 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
         <DialogBody className="flex flex-col gap-5">
           {/* Role selector + base toggle */}
           <div className="flex flex-col sm:flex-row gap-3">
-            {/* O controle está dentro do label (componente próprio): a associação é por aninhamento. */}
-            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-            <label className="flex flex-col gap-1 flex-1">
-              <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
-                Perfil
-              </span>
-              <Select
+            <Field label="Perfil" className="flex-1">
+              <OptionsSelect<string>
                 options={roles.map((role) => ({
-                  id: role.id,
-                  name: role.isRecommended
+                  value: String(role.id),
+                  label: role.isRecommended
                     ? `${role.name} · recomendado`
                     : role.name,
                 }))}
-                value={roleSelected?.id}
-                setState={(value) =>
+                value={roleSelected ? String(roleSelected.id) : undefined}
+                onValueChange={(value) =>
                   setRoleSelected(
-                    roles.find((r) => String(r.id) === String(value))!,
+                    roles.find((r) => String(r.id) === value) ?? null,
                   )
                 }
               />
-            </label>
-            {/* O controle está dentro do label (componente próprio): a associação é por aninhamento. */}
-            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-            <label className="flex flex-col gap-1">
-              <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
+            </Field>
+            <div className="flex flex-col gap-1.5">
+              <span
+                id="perfil-base-rotulo"
+                className="text-label font-medium text-foreground"
+              >
                 Perfil Base
               </span>
-              <div className="flex items-center gap-3 h-full py-2">
-                <Toggle
-                  name="base"
-                  checked={roleSelected?.base ?? false}
-                  handleCheck={handleBaseToggle}
-                />
-                <span className="text-body font-medium text-foreground">
-                  {roleSelected?.base ? "Ativo" : "Inativo"}
-                </span>
-              </div>
-            </label>
+              <Switch
+                aria-labelledby="perfil-base-rotulo"
+                label={roleSelected?.base ? "Ativo" : "Inativo"}
+                checked={roleSelected?.base ?? false}
+                onCheckedChange={(checked) => handleBaseToggle("base", checked)}
+              />
+            </div>
           </div>
 
           <div className="flex flex-col gap-1 rounded-lg border border-border px-3 py-2">
-            <div className="flex items-center gap-3">
-              <Toggle
-                name="isRecommended"
-                checked={roleSelected?.isRecommended ?? false}
-                handleCheck={handleRecommendedToggle}
-                disabled={
-                  !roleSelected || !!motivoSemRecomendacao(roleSelected)
-                }
-              />
-              <span className="text-body font-medium text-foreground">
-                Recomendado para ex-colaboradores
-              </span>
-            </div>
-            <p className="text-caption text-muted-foreground">
+            <Switch
+              aria-describedby="recomendado-ajuda"
+              label="Recomendado para ex-colaboradores"
+              checked={roleSelected?.isRecommended ?? false}
+              onCheckedChange={(checked) =>
+                handleRecommendedToggle("isRecommended", checked)
+              }
+              disabled={!roleSelected || !!motivoSemRecomendacao(roleSelected)}
+            />
+            <p id="recomendado-ajuda" className="text-caption text-muted-foreground">
               {(roleSelected && motivoSemRecomendacao(roleSelected)) ??
                 "Coordenadores poderão indicar este perfil ao excluir um colaborador do cursinho."}
             </p>

@@ -21,7 +21,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useAuthStore } from "../../../store/auth";
-import Select from "@/components/atoms/select";
+import { Field } from "@/components/ui/field";
+import { OptionsSelect } from "@/components/ui/options-select";
 
 interface ModalProps {
   handleClose?: () => void;
@@ -88,25 +89,19 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
         </DialogHeader>
         <DialogBody className="flex flex-col gap-5">
         {/* Role selector */}
-        <label htmlFor="editar-perfil" className="flex flex-col gap-1">
-          <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
-            Perfil
-          </span>
-
-          <Select
+        <Field label="Perfil">
+          <OptionsSelect<string>
             id="editar-perfil"
             options={roles.map((role) => ({
-              id: role.id,
-              name: role.name,
+              value: String(role.id),
+              label: role.name,
             }))}
-            defaultValue={roleSelected?.id}
-            setState={(value) =>
-              setRoleSelected(
-                roles.find((r) => String(r.id) === String(value))!,
-              )
+            value={roleSelected ? String(roleSelected.id) : undefined}
+            onValueChange={(value) =>
+              setRoleSelected(roles.find((r) => String(r.id) === value) ?? null)
             }
           />
-        </label>
+        </Field>
 
         {/* Permissions */}
         <div className="pr-1">

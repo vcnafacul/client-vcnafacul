@@ -1,4 +1,4 @@
-import PermissionToggle from "@/components/atoms/permissionToggle/PermissionToggle";
+import PermissaoSwitch from "@/components/permissoes/PermissaoSwitch";
 import {
   PermissionGroup,
   PermissionType,
@@ -46,13 +46,12 @@ function PermissionGroupCard({
 
           return (
             <div key={node.key} className="flex">
-              <PermissionToggle
+              <PermissaoSwitch
                 label={node.label}
                 checked={isChecked || isFromBase}
                 implied={isImplied || isFromBase}
                 onChange={(val) => onToggle(camelKey, val)}
                 disabled={isDisabled}
-                type={node.type}
               />
             </div>
           );

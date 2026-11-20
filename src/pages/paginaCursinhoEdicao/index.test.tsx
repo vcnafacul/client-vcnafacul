@@ -70,7 +70,7 @@ describe("Página do cursinho — edição (025 · 06)", () => {
 
   it("ativar sem Quem somos: avisa e não salva", async () => {
     const form = await montar();
-    fireEvent.click(screen.getByRole("checkbox"));
+    fireEvent.click(screen.getByRole("switch"));
     expect(screen.getByRole("alert")).toHaveTextContent("preencha o Quem somos");
     fireEvent.submit(form);
     expect(svc.salvarMinhaPagina).not.toHaveBeenCalled();
@@ -89,7 +89,7 @@ describe("Página do cursinho — edição (025 · 06)", () => {
     fireEvent.change(screen.getByLabelText("Quem somos"), {
       target: { value: "Somos um cursinho popular." },
     });
-    fireEvent.click(screen.getByRole("checkbox"));
+    fireEvent.click(screen.getByRole("switch"));
     fireEvent.click(screen.getAllByRole("button", { name: /Adicionar link/ })[0]);
     fireEvent.change(screen.getByLabelText("Links úteis: título do link 1"), {
       target: { value: "Site" },

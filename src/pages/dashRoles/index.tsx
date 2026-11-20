@@ -1,5 +1,5 @@
 import { FilterProps } from "@/components/atoms/filter";
-import { SelectProps } from "@/components/atoms/select";
+import type { FiltroSelectProps } from "@/components/dashV2/FiltroSelect";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { CardDash } from "../../components/molecules/cardDash";
@@ -221,11 +221,16 @@ function DashRoles() {
     );
   };
 
-  const selectFiltes: SelectProps[] = roles.length
+  const selectFiltes: FiltroSelectProps[] = roles.length
     ? [
         {
-          options: roles.map((r) => ({ id: r.id, name: r.name })),
-          defaultValue: roleFilter,
+          "aria-label": "Perfil",
+          // "0" é o estado inicial do filtro: declarado como opção, sem depender da primeira função da lista.
+          options: [
+            { id: "0", name: "Todos os perfis" },
+            ...roles.map((r) => ({ id: r.id, name: r.name })),
+          ],
+          value: roleFilter,
           setState: setRoleFilter,
         },
       ]

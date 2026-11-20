@@ -1,4 +1,5 @@
-import Toggle from "@/components/atoms/toggle";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Field, FormLegend } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -69,11 +70,13 @@ export function EditStudentRecordModal({
         </DialogHeader>
 
         <div className="flex items-center justify-between">
-          <span className="text-foreground">Presente:</span>
-          <Toggle
-            name="attendance"
+          <Label htmlFor="presente-na-aula" className="text-body text-foreground">
+            Presente:
+          </Label>
+          <Switch
+            id="presente-na-aula"
             checked={present}
-            handleCheck={() => setPresent((prev) => !prev)}
+            onCheckedChange={setPresent}
           />
         </div>
 

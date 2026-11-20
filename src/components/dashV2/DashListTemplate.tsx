@@ -1,6 +1,6 @@
 import { Inbox } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
-import type { SelectProps } from "@/components/atoms/select";
+import { FiltroSelect } from "@/components/dashV2/FiltroSelect";
 import {
   useDashCardContext,
   type DashCardContextProps,
@@ -102,54 +102,6 @@ export interface DashListTemplateProps<T> {
    * cursinho só tem três.
    */
   totalSemFiltro?: number;
-}
-
-/**
- * ⚠️ **Select próprio, e não o `atoms/select` do V1.** O do V1 tem 48px de
- * altura (numa faixa de controles de 36px), sombra, e anel de foco azul — o
- * `blue-500` que o `tokens.ts` existe para substituir. São 15 linhas para não
- * arrastar isso para dentro do V2.
- *
- * ⚠️ **Controlado**, mesmo quando a tela passa `defaultValue`. É isto que faz o
- * `clearFilters` funcionar sem `key={resetKey}`: um select não controlado
- * ignora a mudança de estado da tela e continua mostrando a opção antiga
- * enquanto a lista já foi refiltrada — a interface mentindo sobre o filtro
- * ativo.
- */
-function FiltroSelect({
-  select,
-  onChange,
-}: {
-  select: SelectProps;
-  onChange: (valor: string) => void;
-}) {
-  const valor = select.value ?? select.defaultValue ?? "";
-  return (
-    <select
-      // ⚠️ `SelectProps` não tem rótulo. A primeira opção de todos os selects
-      // das telas é a opção "todos" ("Todas edições", "Todos os anos"), que
-      // descreve o filtro melhor do que qualquer texto genérico.
-      aria-label={
-        select["aria-label"] ?? String(select.options[0]?.name ?? "Filtro")
-      }
-      disabled={select.disabled}
-      value={String(valor)}
-      onChange={(e) => onChange(e.target.value)}
-      className={cn(
-        "h-9 max-w-[12rem] rounded-md border px-2 text-body",
-        dashV2.border,
-        dashV2.surface,
-        dashV2.text.primary,
-        dashV2.focus,
-      )}
-    >
-      {select.options.map((opcao) => (
-        <option key={String(opcao.id)} value={String(opcao.id)}>
-          {opcao.name}
-        </option>
-      ))}
-    </select>
-  );
 }
 
 /**
@@ -419,8 +371,9 @@ export function DashListTemplate<T>({
               {selectFiltes?.map((select, indice) => (
                 <FiltroSelect
                   key={indice}
-                  select={select}
-                  onChange={(valor) => {
+                  {...select}
+                  className="max-w-[12rem]"
+                  setState={(valor) => {
                     voltarParaPrimeiraPagina();
                     select.setState(valor);
                   }}

@@ -57,7 +57,7 @@ describe("Indicadores — visão do admin (045)", () => {
     expect(screen.getByRole("status")).toHaveTextContent(
       "Você está vendo os indicadores de Cursinho Alfa como o cursinho vê. Telefones dos alunos não aparecem.",
     );
-    expect(screen.getByRole("button", { name: "Ver os indicadores de" })).toHaveTextContent(
+    expect(screen.getByRole("combobox", { name: "Ver os indicadores de" })).toHaveTextContent(
       "Cursinho Alfa",
     );
   });
@@ -66,7 +66,7 @@ describe("Indicadores — visão do admin (045)", () => {
     svc.getPeriodosDosIndicadores.mockRejectedValue(new SemCursinho());
     tela("/indicadores");
     expect(await screen.findByText("Escolha um cursinho")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Ver os indicadores de" })).toHaveTextContent(
+    expect(screen.getByRole("combobox", { name: "Ver os indicadores de" })).toHaveTextContent(
       "Meu cursinho",
     );
   });
@@ -77,6 +77,6 @@ describe("Indicadores — visão do admin (045)", () => {
       expect(svc.getIndicadores).toHaveBeenCalledWith("tk", null, undefined),
     );
     expect(svc.getPartnerPrepCourseLogos).not.toHaveBeenCalled();
-    expect(screen.queryByRole("button", { name: "Ver os indicadores de" })).toBeNull();
+    expect(screen.queryByRole("combobox", { name: "Ver os indicadores de" })).toBeNull();
   });
 });

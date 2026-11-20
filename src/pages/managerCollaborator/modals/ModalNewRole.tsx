@@ -23,7 +23,8 @@ import {
 } from "@/components/ui/dialog";
 import { CreateRoleDto } from "../../../dtos/roles/createRole";
 import { useAuthStore } from "../../../store/auth";
-import Select from "@/components/atoms/select";
+import { Field } from "@/components/ui/field";
+import { OptionsSelect } from "@/components/ui/options-select";
 
 interface ModalProps {
   handleClose?: () => void;
@@ -169,26 +170,21 @@ function ModalNewRole({
               className="bg-muted rounded-lg"
             />
           </label>
-          <label htmlFor="novo-perfil-base" className="flex flex-col gap-1 flex-1">
-            <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
-              Perfil base
-            </span>
-            <div className="my-2">
-              <Select
-                id="novo-perfil-base"
-                options={baseRoles.map((role) => ({
-                  id: role.id,
-                  name: role.name,
-                }))}
-                value={baseRoleSelected?.id}
-                setState={(value) =>
-                  setBaseRoleSelected(
-                    baseRoles.find((r) => String(r.id) === String(value))!,
-                  )
-                }
-              />
-            </div>
-          </label>
+          <Field label="Perfil base" className="flex-1">
+            <OptionsSelect<string>
+              id="novo-perfil-base"
+              options={baseRoles.map((role) => ({
+                value: String(role.id),
+                label: role.name,
+              }))}
+              value={baseRoleSelected ? String(baseRoleSelected.id) : undefined}
+              onValueChange={(value) =>
+                setBaseRoleSelected(
+                  baseRoles.find((r) => String(r.id) === value) ?? null,
+                )
+              }
+            />
+          </Field>
         </div>
 
         {/* Permissions */}

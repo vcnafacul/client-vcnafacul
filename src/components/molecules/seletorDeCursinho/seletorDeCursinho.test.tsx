@@ -33,23 +33,43 @@ const cursinhos = [
 ];
 
 describe("SeletorDeCursinho (044/06)", () => {
-  it("mostra o escolhido, busca e devolve o id; 'Todos' devolve null", () => {
+  it("mostra o escolhido, busca sem acento e devolve o id; 'Todos' devolve null", () => {
     const onChange = vi.fn();
     render(<SeletorDeCursinho cursinhos={cursinhos} valor="a" onChange={onChange} />);
-    const gatilho = screen.getByRole("button", { name: "Cursinho do monitoramento" });
+    const gatilho = screen.getByRole("combobox", { name: "Cursinho do monitoramento" });
     expect(gatilho).toHaveTextContent("Cursinho Alfa");
 
     fireEvent.click(gatilho);
     fireEvent.change(screen.getByPlaceholderText("Buscar cursinho"), {
       target: { value: "sao jose" },
     });
-    expect(screen.queryByText("Cursinho Alfa", { selector: "li span" })).toBeNull();
-    expect(screen.queryByText("Todos os cursinhos", { selector: "li span" })).toBeNull();
-    fireEvent.click(screen.getByText("Pré-Vestibular São José"));
+    expect(screen.queryByRole("option", { name: "Cursinho Alfa" })).toBeNull();
+    expect(screen.queryByRole("option", { name: "Todos os cursinhos" })).toBeNull();
+    fireEvent.click(screen.getByRole("option", { name: "Pré-Vestibular São José" }));
     expect(onChange).toHaveBeenLastCalledWith("b");
 
     fireEvent.click(gatilho);
-    fireEvent.click(screen.getByText("Todos os cursinhos", { selector: "li span" }));
+    fireEvent.click(screen.getByRole("option", { name: "Todos os cursinhos" }));
     expect(onChange).toHaveBeenLastCalledWith(null);
+  });
+
+  it("sem valor, mostra o rótulo do vazio e lista os cursinhos em ordem", () => {
+    render(
+      <SeletorDeCursinho
+        cursinhos={[...cursinhos].reverse()}
+        valor={null}
+        onChange={vi.fn()}
+        rotuloDoVazio="Meu cursinho"
+        rotulo="Ver os indicadores de"
+      />,
+    );
+    const gatilho = screen.getByRole("combobox", { name: "Ver os indicadores de" });
+    expect(gatilho).toHaveTextContent("Meu cursinho");
+    fireEvent.click(gatilho);
+    expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual([
+      "Meu cursinho",
+      "Cursinho Alfa",
+      "Pré-Vestibular São José",
+    ]);
   });
 });

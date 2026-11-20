@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { FilterProps } from "../../components/atoms/filter";
-import { SelectProps } from "../../components/atoms/select";
-import { OptionProps } from "../../components/atoms/selectOption";
+import type {
+  FiltroSelectProps,
+  OpcaoDoFiltro,
+} from "@/components/dashV2/FiltroSelect";
 import { CardDash } from "../../components/molecules/cardDash";
 import { DashListTemplate, type DashAction } from "@/components/dashV2";
 import { DashCardContext } from "../../context/dashCardContext";
@@ -251,7 +253,7 @@ function DashProva() {
       });
   };
 
-  const edicaoOptions: OptionProps[] = useMemo(() => {
+  const edicaoOptions: OpcaoDoFiltro[] = useMemo(() => {
     const set = new Set<string>();
     provas.forEach((p) => {
       if (p.edicao) set.add(p.edicao);
@@ -264,7 +266,7 @@ function DashProva() {
     ];
   }, [provas]);
 
-  const aplicacaoOptions: OptionProps[] = useMemo(() => {
+  const aplicacaoOptions: OpcaoDoFiltro[] = useMemo(() => {
     const set = new Set<number>();
     provas.forEach((p) => {
       if (p.aplicacao !== undefined && p.aplicacao !== null)
@@ -278,7 +280,7 @@ function DashProva() {
     ];
   }, [provas]);
 
-  const anoOptions: OptionProps[] = useMemo(() => {
+  const anoOptions: OpcaoDoFiltro[] = useMemo(() => {
     const set = new Set<number>();
     provas.forEach((p) => {
       if (p.ano !== undefined && p.ano !== null) set.add(p.ano);
@@ -318,7 +320,7 @@ function DashProva() {
     defaultValue: nameFilter,
   };
 
-  const selectFiltes: SelectProps[] = [
+  const selectFiltes: FiltroSelectProps[] = [
     {
       options: edicaoOptions,
       defaultValue: edicaoFilter,

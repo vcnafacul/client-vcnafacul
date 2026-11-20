@@ -52,24 +52,24 @@ describe("ShowInfo — só ativar", () => {
 
   it("colaborador ativo: não há chave (não dá para inativar)", () => {
     abrir(true);
-    expect(screen.queryByRole("checkbox")).toBeNull();
+    expect(screen.queryByRole("switch")).toBeNull();
     expect(screen.queryByText(/^Inativar /)).toBeNull();
   });
 
   it("inativo: a chave ativa direto e some depois", async () => {
     const { handleActive } = abrir(false, vi.fn().mockResolvedValue(true));
-    fireEvent.click(screen.getByRole("checkbox"));
+    fireEvent.click(screen.getByRole("switch"));
     await waitFor(() => expect(handleActive).toHaveBeenCalledWith("c-1", true));
-    await waitFor(() => expect(screen.queryByRole("checkbox")).toBeNull());
+    await waitFor(() => expect(screen.queryByRole("switch")).toBeNull());
   });
 
   it("falhou: a chave continua, desligada e habilitada", async () => {
     const { handleActive } = abrir(false, vi.fn().mockResolvedValue(false));
-    const chave = screen.getByRole("checkbox") as HTMLInputElement;
+    const chave = screen.getByRole("switch") as HTMLButtonElement;
     fireEvent.click(chave);
     await waitFor(() => expect(handleActive).toHaveBeenCalled());
     await waitFor(() => expect(chave.disabled).toBe(false));
-    expect(chave.checked).toBe(false);
+    expect(chave).toHaveAttribute("aria-checked", "false");
   });
 
   it("a chave fica desabilitada enquanto a requisição anda", async () => {
@@ -78,7 +78,7 @@ describe("ShowInfo — só ativar", () => {
       false,
       vi.fn(() => new Promise<boolean>((r) => (terminar = r))),
     );
-    const chave = screen.getByRole("checkbox") as HTMLInputElement;
+    const chave = screen.getByRole("switch") as HTMLButtonElement;
     fireEvent.click(chave);
     await waitFor(() => expect(chave.disabled).toBe(true));
     terminar(false);

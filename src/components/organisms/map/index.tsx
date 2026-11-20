@@ -4,7 +4,7 @@ import { GEOLOCATION_SEARCH } from "../../../routes/path";
 import getGeolocation from "../../../services/geolocation/getGeolocation";
 import { useHomeStore } from "../../../store/home";
 import { TypeMarker } from "../../../types/map/marker";
-import { CheckMapFilter } from "@/components/atoms/checkMapFilter";
+import { FiltroDoMapa } from "@/components/mapa/FiltroDoMapa";
 import { TypeProblem } from "@/enums/audit/typeProblem";
 import { checkMapFilter } from "@/pages/homeLegacy/data";
 import { ReactComponent as Report } from "../../../assets/icons/warning.svg";
@@ -128,12 +128,13 @@ function Map() {
       />
       <div className={FILTER_PANEL_CLASS}>
         {checkMapFilter.map((filter) => (
-          <CheckMapFilter
+          <FiltroDoMapa
             key={filter.id}
             label={filter.name}
             type={filter.type}
             checked={filterMarkers.includes(filter.type)}
-            onClick={() => handleFilterMarkers(filter.type)}
+            onChange={() => handleFilterMarkers(filter.type)}
+            className="text-white font-extrabold"
           />
         ))}
       </div>

@@ -1,5 +1,7 @@
-import { SelectProps } from "@/components/atoms/select";
-import { OptionProps } from "@/components/atoms/selectOption";
+import type {
+  FiltroSelectProps,
+  OpcaoDoFiltro,
+} from "@/components/dashV2/FiltroSelect";
 import { DashListTemplate, type DashAction } from "@/components/dashV2";
 import { DashCardContext } from "@/context/dashCardContext";
 import { ContentDtoInput } from "@/dtos/content/contentDtoInput";
@@ -48,7 +50,7 @@ function DashContent() {
   const [demandSelected, setDemandSelected] = useState<ContentDtoInput | null>(
     null,
   );
-  const [materias, setMaterias] = useState<OptionProps[]>([
+  const [materias, setMaterias] = useState<OpcaoDoFiltro[]>([
     { id: MATERIA_TODAS, name: "Todas as matérias" },
   ]);
   const [materiaSelected, setMateriaSelected] =
@@ -200,7 +202,7 @@ function DashContent() {
     ⚠️ Selects CONTROLADOS (`value`): limpar filtro volta os dois sem remontar
     o template — remontar descartaria a ordenação e a página.
   */
-  const selectFiltes: SelectProps[] = [
+  const selectFiltes: FiltroSelectProps[] = [
     {
       "aria-label": "Matéria",
       options: materias,

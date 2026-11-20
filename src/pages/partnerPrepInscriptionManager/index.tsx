@@ -1,4 +1,4 @@
-import { SelectProps } from "@/components/atoms/select";
+import type { FiltroSelectProps } from "@/components/dashV2/FiltroSelect";
 import {
   DashDateRangeFilter,
   DashListTemplate,
@@ -137,7 +137,7 @@ export function PartnerPrepInscriptionManager() {
     defaultValue: filtros.nome,
   };
 
-  const selectFiltes: SelectProps[] = [
+  const selectFiltes: FiltroSelectProps[] = [
     {
       "aria-label": "Status",
       options: dataInscription.statusOptions,

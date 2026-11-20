@@ -21,7 +21,7 @@ describe("useDadosSensiveis", () => {
   it("com permissão: abre oculto, com o toggle ligado", () => {
     render(<Tela podeVerCompleto />);
     expect(
-      screen.getByRole("checkbox", { name: /Ocultar dados sensíveis/ }),
+      screen.getByRole("switch", { name: /Ocultar dados sensíveis/ }),
     ).toBeChecked();
     expect(screen.getByText("***.***.789-01")).toBeInTheDocument();
     expect(screen.getByText("f******o@gmail.com")).toBeInTheDocument();
@@ -29,7 +29,7 @@ describe("useDadosSensiveis", () => {
 
   it("desligar o toggle mostra o dado completo, e ligar oculta de novo", () => {
     render(<Tela podeVerCompleto />);
-    const toggle = screen.getByRole("checkbox", {
+    const toggle = screen.getByRole("switch", {
       name: /Ocultar dados sensíveis/,
     });
     fireEvent.click(toggle);
@@ -41,13 +41,13 @@ describe("useDadosSensiveis", () => {
 
   it("sem permissão: sem toggle e nada aparece completo", () => {
     render(<Tela podeVerCompleto={false} />);
-    expect(screen.queryByRole("checkbox")).toBeNull();
+    expect(screen.queryByRole("switch")).toBeNull();
     expect(screen.getByText("***.***.789-01")).toBeInTheDocument();
   });
 
   it("⚠️ não guarda a escolha: montar de novo volta oculto", () => {
     const { unmount } = render(<Tela podeVerCompleto />);
-    fireEvent.click(screen.getByRole("checkbox"));
+    fireEvent.click(screen.getByRole("switch"));
     unmount();
     render(<Tela podeVerCompleto />);
     expect(screen.getByText("***.***.789-01")).toBeInTheDocument();

@@ -31,13 +31,13 @@ import { TypeMarker } from "@/types/map/marker";
 import { cn } from "@/lib/utils";
 import { getStatusIcon } from "@/utils/getStatusIcon";
 import leaflet, { LatLngTuple } from "leaflet";
-import { useForm } from "react-hook-form";
+import { Control, useController, useForm } from "react-hook-form";
 import { Marker, useMap, useMapEvents } from "react-leaflet";
 import { toast } from "react-toastify";
 import { prepCourseInfo } from "../../data";
 import { PrepCourseInfo } from "./Fields/prepCourseInfo";
 
-import { Checkbox, CheckboxProps } from "@/components/atoms/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import { stateOptions } from "@/pages/register/data";
 import { fetchAddressByCep } from "@/services/geolocation/fetchAddressByCep";
 import {
@@ -55,6 +55,34 @@ interface ModalEditDashGeoProps extends ModalProps {
   updateStatus: (cardId: string) => void;
   updateGeo: (geo: Geolocation) => void;
   isOpen: boolean;
+}
+
+type NomeDaRevisao = "reportAddress" | "reportContact" | "reportOther";
+
+/** Checkbox do Radix ligado ao form pelo `useController`: valor, onChange e ref (foco) seguem o form. */
+function CaixaDeRevisao({
+  control,
+  name,
+  label,
+  disabled,
+}: {
+  control: Control<any>;
+  name: NomeDaRevisao;
+  label: string;
+  disabled: boolean;
+}) {
+  const { field } = useController({ control, name });
+  return (
+    <Checkbox
+      ref={field.ref}
+      name={field.name}
+      label={label}
+      checked={!!field.value}
+      onCheckedChange={(marcado) => field.onChange(marcado === true)}
+      onBlur={field.onBlur}
+      disabled={disabled}
+    />
+  );
 }
 
 function ModalEditDashGeo({
@@ -145,13 +173,11 @@ function ModalEditDashGeo({
     watch,
     reset,
     setValue,
+    control,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
-  const reportAddress = watch("reportAddress");
-  const reportContact = watch("reportContact");
-  const reportOther = watch("reportOther");
   const cep = watch("cep");
 
   const {
@@ -253,25 +279,10 @@ function ModalEditDashGeo({
     },
   ];
 
-  const checkboxData: CheckboxProps[] = [
-    {
-      name: "reportAddress",
-      title: "Endereço",
-      checked: reportAddress,
-      disabled: !geo ? false : !editing,
-    },
-    {
-      name: "reportContact",
-      title: "Redes Sociais e Contatos",
-      checked: reportContact,
-      disabled: !geo ? false : !editing,
-    },
-    {
-      name: "reportOther",
-      title: "Outros",
-      checked: reportOther,
-      disabled: !geo ? false : !editing,
-    },
+  const revisoes: { name: NomeDaRevisao; title: string }[] = [
+    { name: "reportAddress", title: "Endereço" },
+    { name: "reportContact", title: "Redes Sociais e Contatos" },
+    { name: "reportOther", title: "Outros" },
   ];
 
   const setAddressFromMap = (data: AddressResponse) => {
@@ -474,9 +485,6 @@ function ModalEditDashGeo({
     register("youtube");
     register("linkedin");
     register("twitter");
-    register("reportAddress");
-    register("reportContact");
-    register("reportOther");
     register("campus");
   }, []);
 
@@ -565,13 +573,12 @@ function ModalEditDashGeo({
           />
           <div className="flex flex-wrap justify-between gap-2">
             <div className="flex items-center justify-start gap-4">
-              <input
-                type="checkbox"
+              <Checkbox
+                label="Definir localização manualmente"
                 checked={useCep}
-                onChange={(e) => setUseCep(e.target.checked)}
+                onCheckedChange={(marcado) => setUseCep(marcado === true)}
                 disabled={!editing}
               />
-              <label>Definir localização manualmente</label>
             </div>
             <div className="flex flex-col">
               <span>lat: {selectedPosition[0]}</span>
@@ -579,12 +586,20 @@ function ModalEditDashGeo({
             </div>
           </div>
 
-          <h3 className="text-body text-foreground mb-6 text-center flex w-full justify-center gap-4 items-center">
+          <h3 id="revisoes-necessarias" className="text-body text-foreground mb-6 text-center flex w-full justify-center gap-4 items-center">
             Revisões necessárias
           </h3>
-          {checkboxData.map((check) => (
-            <Checkbox key={check.name} {...check} setValue={setValue} />
-          ))}
+          <div role="group" aria-labelledby="revisoes-necessarias" className="flex flex-col">
+            {revisoes.map((check) => (
+              <CaixaDeRevisao
+                key={check.name}
+                control={control}
+                name={check.name}
+                label={check.title}
+                disabled={!geo ? false : !editing}
+              />
+            ))}
+          </div>
           <div className="flex flex-col gap-2 my-4">
             {btns.map((btn, index) => {
               if (editing === btn.editing) {

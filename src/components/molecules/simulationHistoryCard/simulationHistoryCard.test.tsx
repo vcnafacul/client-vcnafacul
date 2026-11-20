@@ -35,7 +35,7 @@ describe("SimulationHistoryCard", () => {
     );
 
     expect(screen.getByText("ENEM Dia 1")).toBeInTheDocument();
-    expect(screen.getByText("Simulado Completo")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Simulado Completo" })).toBeInTheDocument();
   });
 
   it("⚠️ sem categoria (como o ms-simulado devolvia a lista) não quebra: usa o nome do simulado", () => {
@@ -43,7 +43,7 @@ describe("SimulationHistoryCard", () => {
 
     expect(screen.getByText("Simulado ENEM 1")).toBeInTheDocument();
     // Sem total não dá para afirmar que está completo.
-    expect(screen.getByText("Simulado Incompleto")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Simulado Incompleto" })).toBeInTheDocument();
   });
 
   it("digital mostra o tempo; corrigido por cartão-resposta não", () => {

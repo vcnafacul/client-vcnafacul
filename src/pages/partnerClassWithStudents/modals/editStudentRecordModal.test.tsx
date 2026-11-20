@@ -24,7 +24,7 @@ const abrir = (currentPresent: boolean, currentJustification?: string) => {
     fireEvent.change(campo(id)!, { target: { value: valor } });
   const confirmar = () =>
     fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
-  const alternar = () => fireEvent.click(screen.getByRole("checkbox"));
+  const alternar = () => fireEvent.click(screen.getByRole("switch"));
   return { handleConfirm, handleClose, campo, digitar, confirmar, alternar };
 };
 

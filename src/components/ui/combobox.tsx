@@ -27,6 +27,10 @@ export interface ComboboxProps
   defaultOpen?: boolean
 }
 
+// A busca ignora acento e caixa ("sao jose" acha "São José"): o texto sem acento vai como palavra-chave.
+const semAcento = (s: string) =>
+  s.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+
 // Substitui o `Autocomplete` do MUI: busca no meio de uma lista longa (tickets/059 §3).
 const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
   (
@@ -91,7 +95,7 @@ const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
                 <Command.Item
                   key={o.value}
                   value={o.value}
-                  keywords={[o.label]}
+                  keywords={[o.label, semAcento(o.label)]}
                   disabled={o.disabled}
                   onSelect={() => {
                     onValueChange(o.value)

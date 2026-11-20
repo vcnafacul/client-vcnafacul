@@ -19,7 +19,7 @@ import { format } from "date-fns";
 import { turmaEncerrada } from "./turmaEncerrada";
 import heic2any from "heic2any";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
-import { FormControlLabel, Switch } from "@mui/material";
+import { Switch } from "@/components/ui/switch";
 import { useDadosSensiveis } from "@/hooks/useDadosSensiveis";
 import { ToggleDadosSensiveis } from "@/components/molecules/toggleDadosSensiveis";
 import { getCancelledStudentsByClassId } from "@/services/prepCourse/class/getCancelledStudentsByClassId";
@@ -557,21 +557,13 @@ export function PartnerClassWithStudents() {
                 onChange={setOcultar}
               />
             )}
-            <FormControlLabel
-              className={`${mostrarToggle ? "" : "ml-auto "}mr-0`}
-              control={
-                <Switch
-                  checked={showCancelled}
-                  onChange={(event) => setShowCancelled(event.target.checked)}
-                  size="small"
-                />
-              }
-              label={
-                <span className="text-body text-foreground">
-                  Matrículas canceladas
-                </span>
-              }
-            />
+            <div className={mostrarToggle ? "" : "ml-auto"}>
+              <Switch
+                checked={showCancelled}
+                onCheckedChange={setShowCancelled}
+                label="Matrículas canceladas"
+              />
+            </div>
           </div>
           {!acimaDeSm ? (
             showCancelled ? (

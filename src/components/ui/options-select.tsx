@@ -27,6 +27,8 @@ export interface OptionsSelectProps<T extends string | number> {
   id?: string
   className?: string
   "aria-describedby"?: string
+  "aria-label"?: string
+  "aria-labelledby"?: string
   "aria-invalid"?: boolean
   "aria-required"?: boolean
   /** Injetado pelo `Field`; o gatilho é um `button`, então só `aria-required` vale. */

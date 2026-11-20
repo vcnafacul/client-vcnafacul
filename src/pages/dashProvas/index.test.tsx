@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import { escolherOpcao } from "@/test/radix";
 import { useEffect } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -380,9 +381,10 @@ describe("filtros", () => {
   it("vazio por filtro e vazio de verdade são mensagens diferentes", async () => {
     await montar();
     // ⚠️ Combinação sem resultado: a reaplicação é a única prova sem gabarito.
-    fireEvent.change(screen.getByLabelText("Todas edições"), {
-      target: { value: Edicao.Reaplicacao },
-    });
+    escolherOpcao(
+      screen.getByRole("combobox", { name: "Todas edições" }),
+      Edicao.Reaplicacao,
+    );
     fireEvent.click(screen.getByLabelText("Só com gabarito"));
     expect(chavesDasLinhas()).toEqual([]);
     expect(screen.getByText(TEXTO_VAZIO_COM_FILTRO)).toBeInTheDocument();

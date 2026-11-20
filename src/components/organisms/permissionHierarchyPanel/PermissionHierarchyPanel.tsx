@@ -8,7 +8,6 @@ import {
 } from "@/dtos/roles/permissionHierarchy";
 import { toCamelPermission } from "@/utils/permissionKey";
 import { useMemo, useState } from "react";
-import { palette } from "@/lib/palette";
 
 interface PermissionHierarchyPanelProps {
   hierarchy: PermissionGroup[];
@@ -60,35 +59,6 @@ function PermissionHierarchyPanel({
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Legend */}
-      <div className="flex flex-wrap items-center gap-4 text-caption text-muted-foreground">
-        <span className="flex items-center gap-1.5">
-          <span
-            className="w-3 h-3 rounded-full inline-block"
-            style={{ background: palette.orange[500] }}
-          />
-          Cursinho habilitado
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span
-            className="w-3 h-3 rounded-full inline-block"
-            style={{ background: palette.orange[400] }}
-          />
-          Cursinho automático
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span
-            className="w-3 h-3 rounded-full inline-block"
-            style={{ background: palette.blue[500] }}
-          />
-          Projeto habilitado
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-full border border-border inline-block" />
-          Desabilitado
-        </span>
-      </div>
-
       {/* Tabs */}
       <div className="flex gap-1 bg-muted rounded-lg p-1 self-start">
         {TABS.map((tab) => (

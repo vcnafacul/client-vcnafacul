@@ -1,5 +1,5 @@
 import PermissionHierarchyPanel from "@/components/organisms/permissionHierarchyPanel/PermissionHierarchyPanel";
-import Toggle from "@/components/atoms/toggle";
+import { Switch } from "@/components/ui/switch";
 import {
   PermissionGroup,
   PermissionType,
@@ -177,23 +177,20 @@ function ModalNewRole({
                 className="bg-muted rounded-lg"
               />
             </label>
-            {/* O controle está dentro do label (componente próprio): a associação é por aninhamento. */}
-            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-            <label className="flex flex-col gap-1">
-              <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
+            <div className="flex flex-col gap-1.5">
+              <span
+                id="perfil-base-rotulo"
+                className="text-label font-medium text-foreground"
+              >
                 Perfil Base
               </span>
-              <div className="flex items-center gap-3 h-full py-2">
-                <Toggle
-                  name="base"
-                  checked={newRole.base}
-                  handleCheck={handleBaseToggle}
-                />
-                <span className="text-body font-medium text-foreground">
-                  {newRole.base ? "Ativo" : "Inativo"}
-                </span>
-              </div>
-            </label>
+              <Switch
+                aria-labelledby="perfil-base-rotulo"
+                label={newRole.base ? "Ativo" : "Inativo"}
+                checked={newRole.base}
+                onCheckedChange={(checked) => handleBaseToggle("base", checked)}
+              />
+            </div>
           </div>
 
           {newRole.base && (

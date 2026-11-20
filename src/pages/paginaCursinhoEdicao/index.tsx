@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ExternalLink } from "lucide-react";
-import Toggle from "@/components/atoms/toggle";
+import { Switch } from "@/components/ui/switch";
 import { RichTextEditor } from "@/components/molecules/richTextEditor/RichTextEditor";
 import { PARTNER_PREP } from "@/routes/path";
 import {
@@ -108,13 +108,13 @@ export default function PaginaCursinhoEdicao() {
       </div>
 
       <div className="flex items-center gap-3 bg-white border rounded-lg p-4">
-        <Toggle
-          name="active"
+        <Switch
+          aria-labelledby="pagina-ativa-rotulo"
           checked={active}
-          handleCheck={(_nome, marcado) => setActive(marcado)}
+          onCheckedChange={setActive}
         />
         <div>
-          <p className="font-semibold text-body">
+          <p id="pagina-ativa-rotulo" className="font-semibold text-body">
             Página {active ? "ativa" : "desativada"}
           </p>
           <p className="text-caption text-muted-foreground">

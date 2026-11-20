@@ -24,3 +24,14 @@ if (typeof Element !== "undefined") {
     return matchesOriginal.call(this, seletor);
   };
 }
+
+// Radix (Select, Combobox) e floating-ui pedem APIs que o jsdom não tem.
+if (typeof Element !== "undefined") {
+  globalThis.ResizeObserver ??= class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+  Element.prototype.hasPointerCapture ??= () => false;
+  Element.prototype.scrollIntoView ??= () => {};
+}
