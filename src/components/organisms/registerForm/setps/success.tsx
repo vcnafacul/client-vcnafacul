@@ -1,5 +1,5 @@
 import { textContact } from "@/pages/register/data";
-import { FaCheckDouble } from "react-icons/fa";
+import { CheckCheck } from "lucide-react";
 import Text from "../../../atoms/text";
 
 interface Props {
@@ -13,7 +13,7 @@ function Success({ email }: Props) {
   ];
   return (
     <div className="w-full flex flex-col items-center">
-      <FaCheckDouble size={150} className="fill-success border-2 border-success p-4 rounded-full" />
+      <CheckCheck size={150} className="text-success border-2 border-success p-4 rounded-full" />
       <Text size="secondary" className="mt-10">
         Acesse seu email, {email}, para confirmar o seu cadastro
       </Text>

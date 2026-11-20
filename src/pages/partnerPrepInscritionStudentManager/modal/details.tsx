@@ -8,7 +8,7 @@ import { getProfilePhoto } from "@/services/prepCourse/student/getProfilePhoto";
 import { useAuthStore } from "@/store/auth";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { format } from "date-fns";
-import { IoMdClose } from "react-icons/io";
+import { X } from "lucide-react";
 
 interface Props {
   handleClose: () => void;
@@ -218,7 +218,7 @@ function ModalContent({
     <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded-sm pb-2 px-2 flex flex-col gap-4 relative border-8 border-white">
       {/* Botão de fechar fixado no topo */}
       <div className="sticky top-0 bg-white z-sticky flex items-center justify-end p-2">
-        <IoMdClose
+        <X
           className="w-5 h-5 cursor-pointer text-muted-foreground hover:text-foreground transition"
           onClick={onClose}
         />

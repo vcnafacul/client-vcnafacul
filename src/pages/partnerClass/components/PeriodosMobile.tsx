@@ -1,7 +1,7 @@
 import { CoursePeriodEntity } from "@/services/prepCourse/coursePeriod/createCoursePeriod";
 import { formatDate } from "@/utils/date";
 import { useState } from "react";
-import { FiChevronDown } from "react-icons/fi";
+import { ChevronDown } from "lucide-react";
 import { ActionMenu } from "./actionMenu";
 import { useAcoesDaTurma } from "./renderClassesTable";
 import { StatusBadge } from "./statusBadge";
@@ -78,7 +78,7 @@ function PeriodoCard({
             aria-expanded={aberto}
             className="flex items-center gap-1 h-10 text-body font-medium text-foreground"
           >
-            <FiChevronDown
+            <ChevronDown
               className={`w-5 h-5 transition-transform ${aberto ? "rotate-180" : ""}`}
             />
             {turmas.length} {turmas.length === 1 ? "turma" : "turmas"}

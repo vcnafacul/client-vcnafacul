@@ -7,7 +7,7 @@ import heic2any from "heic2any";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useEffect, useState } from "react";
-import { FaFilePdf } from "react-icons/fa6";
+import { FileText } from "lucide-react";
 import { Id, toast } from "react-toastify";
 
 interface PrinterStudentCardsProps {
@@ -202,7 +202,7 @@ export function PrinterStudentCards({
         }`}
         disabled={isLoading || isGeneratingPDF}
       >
-        <FaFilePdf className="h-6 w-6" />
+        <FileText className="h-6 w-6" />
       </button>
 
       {pdfUrl ? (

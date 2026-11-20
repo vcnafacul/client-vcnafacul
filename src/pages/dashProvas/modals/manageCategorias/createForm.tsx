@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowLeft } from "lucide-react";
 import Button from "../../../../components/molecules/button";
 import { ICategoria } from "../../../../dtos/categoria/categoria";
 import { useToastAsync } from "../../../../hooks/useToastAsync";
@@ -122,7 +122,7 @@ function CreateForm({
           onClick={onCancel}
           className="flex items-center gap-1 text-body text-muted-foreground hover:text-foreground"
         >
-          <ArrowLeftIcon className="h-4 w-4" /> Voltar
+          <ArrowLeft className="h-4 w-4" /> Voltar
         </button>
         <h2 className="text-h2 font-semibold text-foreground">
           Nova Categoria personalizada

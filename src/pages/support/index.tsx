@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { LuHeadset } from "react-icons/lu";
+import { Headset } from "lucide-react";
 import { toast } from "react-toastify";
 import { ChatLayout } from "@/components/chat/ChatLayout";
 import { ConfirmOpenDialog } from "@/components/chat/ConfirmOpenDialog";
@@ -94,7 +94,7 @@ export default function SupportPage() {
         />
       ) : closedBySupport ? (
         <div className="flex flex-col items-center justify-center h-full gap-4 text-center px-8">
-          <LuHeadset className="h-12 w-12 text-foreground/30" />
+          <Headset className="h-12 w-12 text-foreground/30" />
           <span className="font-raleway font-semibold text-foreground">
             Conversa encerrada
           </span>

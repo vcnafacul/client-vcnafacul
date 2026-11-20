@@ -2,7 +2,7 @@
 import { cursos } from "@/utils/listOfCourses";
 import { Autocomplete, Checkbox, TextField } from "@mui/material";
 import { useState } from "react";
-import { IoCloseSharp } from "react-icons/io5";
+import { X } from "lucide-react";
 import { toast } from "react-toastify";
 import { areas } from "../area";
 import { palette } from "@/lib/palette";
@@ -133,7 +133,7 @@ export default function SendQuest({
                     className="flex items-center justify-between p-1 bg-page shadow-md rounded-sm"
                   >
                     <span className="text-foreground">{curso}</span>
-                    <IoCloseSharp
+                    <X
                       className="text-destructive w-6 h-6 cursor-pointer hover:text-destructive/80 transition-colors"
                       onClick={() => handleRemoveCurso(curso)}
                     />

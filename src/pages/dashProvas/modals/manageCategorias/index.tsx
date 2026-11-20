@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { Cog6ToothIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Settings, Trash } from "lucide-react";
 import Button from "../../../../components/molecules/button";
 import ModalTemplate from "../../../../components/templates/modalTemplate";
 import {
@@ -147,7 +147,7 @@ function ManageCategorias({
         <div className="flex min-h-0 flex-1 flex-col p-6">
           <div className="mb-6 flex shrink-0 items-center gap-3">
             <div className="rounded-lg bg-info-muted p-2">
-              <Cog6ToothIcon className="h-6 w-6 text-info" />
+              <Settings className="h-6 w-6 text-info" />
             </div>
             <h2 className="text-h2 font-semibold text-foreground">
               Gerenciar Categorias
@@ -231,7 +231,7 @@ function ManageCategorias({
                     onClick={() => abrirExcluir(c)}
                     className="text-muted-foreground enabled:hover:text-destructive disabled:cursor-not-allowed disabled:opacity-40"
                   >
-                    <TrashIcon className="h-5 w-5" />
+                    <Trash className="h-5 w-5" />
                   </button>
                 </div>
               );

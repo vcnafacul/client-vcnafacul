@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { IoMdClose } from "react-icons/io";
+import { X } from "lucide-react";
 
 export interface TabModal {
   id: string;
@@ -148,7 +148,7 @@ function ModalContent({
               onClick={onClose}
               className="shrink-0 rounded-sm text-muted-foreground hover:text-foreground transition"
             >
-              <IoMdClose className="w-6 h-6" />
+              <X className="w-6 h-6" />
             </button>
           </div>
           {aviso && <div className="px-2 pb-2">{aviso}</div>}

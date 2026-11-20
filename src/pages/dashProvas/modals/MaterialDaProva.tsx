@@ -4,10 +4,7 @@ import { baixarCadernoDaProva } from "@/services/caderno/baixarCadernoDaProva";
 import { ErroCadernoComAnuladas } from "@/services/caderno/baixarCaderno";
 import { ModalCadernoComAnuladas } from "@/components/molecules/anulacao/ModalCadernoComAnuladas";
 import { baixarCartaoDaProva } from "@/services/cartaoResposta/baixarCartaoDaProva";
-import {
-  BookOpenIcon,
-  ClipboardDocumentCheckIcon,
-} from "@heroicons/react/24/outline";
+import { BookOpen, ClipboardCheck } from "lucide-react";
 import { Button } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -147,7 +144,7 @@ export function MaterialDaProva({
           data-testid="cartao-da-prova"
           sx={{ display: "flex", alignItems: "center", gap: "8px" }}
         >
-          <ClipboardDocumentCheckIcon className="h-4 w-4" />
+          <ClipboardCheck className="h-4 w-4" />
           {TEXTO_CARTAO_DA_PROVA}
         </Button>
       </span>
@@ -161,7 +158,7 @@ export function MaterialDaProva({
           data-testid="caderno-da-prova"
           sx={{ display: "flex", alignItems: "center", gap: "8px" }}
         >
-          <BookOpenIcon className="h-4 w-4" />
+          <BookOpen className="h-4 w-4" />
           {TEXTO_CADERNO_DA_PROVA}
         </Button>
       </span>

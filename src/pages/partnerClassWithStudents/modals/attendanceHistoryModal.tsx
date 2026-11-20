@@ -10,15 +10,7 @@ import { useAuthStore } from "@/store/auth";
 import { AttendancePeriod, attendancePeriodLabel } from "@/types/partnerPrepCourse/attendancePeriod";
 import { SimpleAttendanceRecordHistory } from "@/types/partnerPrepCourse/attendanceRecordHistory";
 import { useEffect, useState } from "react";
-import { FaRegListAlt } from "react-icons/fa";
-import {
-  IoChevronBack,
-  IoChevronForward,
-  IoClose,
-  IoEyeOutline,
-  IoTrashOutline,
-} from "react-icons/io5";
-import { MdPlaylistAddCircle } from "react-icons/md";
+import { ChevronLeft, ChevronRight, Eye, ListPlus, ListTodo, Trash2, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { AttendanceRecordModal } from "./attendanceRecordModal";
 import AttendanceRecordSummaryModal from "./attendanceRecordSummaryModal";
@@ -212,7 +204,7 @@ export function AttendanceHistoryModal({
             aria-label="Fechar"
             className="shrink-0 -mr-2 -mt-1 p-2 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
           >
-            <IoClose className="w-6 h-6" />
+            <X className="w-6 h-6" />
           </button>
         </div>
         <div className="mt-3 grid grid-cols-1 [@media(min-width:420px)]:flex gap-2">
@@ -221,7 +213,7 @@ export function AttendanceHistoryModal({
             onClick={novaChamada}
             className="h-10 px-4 rounded-lg bg-primary text-primary-foreground font-bold hover:opacity-90 flex items-center justify-center gap-2"
           >
-            <MdPlaylistAddCircle className="w-5 h-5" />
+            <ListPlus className="w-5 h-5" />
             Nova chamada
           </button>
           {permissao[Roles.gerenciarTurmas] && (
@@ -230,7 +222,7 @@ export function AttendanceHistoryModal({
               onClick={() => modals.modalAttendanceRecordSummary.open()}
               className="h-10 px-4 rounded-lg border border-primary/30 text-foreground font-bold hover:bg-primary/5 flex items-center justify-center gap-2"
             >
-              <FaRegListAlt />
+              <ListTodo size="1em" />
               Relatório
             </button>
           )}
@@ -302,7 +294,7 @@ export function AttendanceHistoryModal({
                 }}
                 className="h-9 px-3 rounded-lg text-body font-semibold text-foreground hover:bg-primary/5 flex items-center gap-1.5"
               >
-                <IoEyeOutline className="w-4 h-4" />
+                <Eye className="w-4 h-4" />
                 Ver
               </button>
               <button
@@ -312,7 +304,7 @@ export function AttendanceHistoryModal({
                 onClick={() => handleActionDeleteRecord(r)}
                 className="h-9 w-9 rounded-lg text-muted-foreground hover:bg-destructive-muted hover:text-destructive flex items-center justify-center"
               >
-                <IoTrashOutline className="w-4 h-4" />
+                <Trash2 className="w-4 h-4" />
               </button>
             </div>
           </li>
@@ -328,7 +320,7 @@ export function AttendanceHistoryModal({
             onClick={() => getAttendanceHistory(page - 1, limit)}
             className="h-9 w-9 rounded-lg flex items-center justify-center hover:bg-muted disabled:opacity-30"
           >
-            <IoChevronBack />
+            <ChevronLeft size="1em" />
           </button>
           <span>
             {primeiro}–{ultimo} de {totalItems}
@@ -340,7 +332,7 @@ export function AttendanceHistoryModal({
             onClick={() => getAttendanceHistory(page + 1, limit)}
             className="h-9 w-9 rounded-lg flex items-center justify-center hover:bg-muted disabled:opacity-30"
           >
-            <IoChevronForward />
+            <ChevronRight size="1em" />
           </button>
         </div>
       )}

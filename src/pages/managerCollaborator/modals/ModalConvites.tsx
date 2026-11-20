@@ -12,12 +12,7 @@ import { useAuthStore } from "@/store/auth";
 import { IconButton } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import { useCallback, useEffect, useState } from "react";
-import {
-  IoArrowUndoOutline,
-  IoCheckmarkSharp,
-  IoCloseCircleOutline,
-  IoPaperPlaneOutline,
-} from "react-icons/io5";
+import { Check, CircleX, Send, Undo2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { AVISO_REENVIAR, dataCurta, textoDaSituacao } from "./textosDosConvites";
 
@@ -240,7 +235,7 @@ export function ModalConvites({
                                   );
                                 }}
                               >
-                                <IoCheckmarkSharp />
+                                <Check size="1em" />
                               </IconButton>
                             </Tooltip>
                             <Tooltip title="Manter convite">
@@ -248,7 +243,7 @@ export function ModalConvites({
                                 size="small"
                                 onClick={() => setConfirmarCancelar(null)}
                               >
-                                <IoArrowUndoOutline />
+                                <Undo2 size="1em" />
                               </IconButton>
                             </Tooltip>
                           </>
@@ -265,7 +260,7 @@ export function ModalConvites({
                                   )
                                 }
                               >
-                                <IoPaperPlaneOutline />
+                                <Send size="1em" />
                               </IconButton>
                             </Tooltip>
                             <Tooltip title="Cancelar convite">
@@ -274,7 +269,7 @@ export function ModalConvites({
                                 data-cancelar={c.id}
                                 onClick={() => setConfirmarCancelar(c.id)}
                               >
-                                <IoCloseCircleOutline />
+                                <CircleX size="1em" />
                               </IconButton>
                             </Tooltip>
                           </>

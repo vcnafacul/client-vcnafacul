@@ -7,7 +7,7 @@ import { prepCourseInfoType } from "@/pages/dashGeo/data";
 import { Geolocation } from "@/types/geolocation/geolocation";
 import { TypeMarker } from "@/types/map/marker";
 import { useState } from "react";
-import { FaRegCopy } from "react-icons/fa";
+import { Copy } from "lucide-react";
 import { FieldErrors, UseFormSetValue } from "react-hook-form";
 import { toast } from "react-toastify";
 
@@ -92,7 +92,7 @@ function ContactField({
           title={`Copiar ${label}`}
           className="absolute right-2 top-4 p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
         >
-          <FaRegCopy className="w-4 h-4" />
+          <Copy className="w-4 h-4" />
         </button>
       )}
     </div>

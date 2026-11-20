@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { HiCheck } from "react-icons/hi";
+import { Check } from "lucide-react";
 import { TypeMarker } from "../../../types/map/marker";
 import { MarkerPin } from "../../molecules/mapBox";
 
@@ -22,7 +22,7 @@ export function CheckMapFilter({
     >
       <div className="bg-white bg-opacity-70 h-5 w-5 relative rounded-sm shrink-0">
         {checked && (
-          <HiCheck className="absolute h-8 w-8 -left-1 -bottom-1 fill-success" />
+          <Check className="absolute h-8 w-8 -left-1 -bottom-1 text-success" />
         )}
       </div>
       <label className="text-white font-extrabold flex-1 cursor-pointer">

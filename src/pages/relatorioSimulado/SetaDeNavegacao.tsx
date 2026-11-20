@@ -1,6 +1,6 @@
 import { dashV2 } from "@/components/dashV2";
 import { cn } from "@/lib/utils";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const ROTULO = {
   anterior: "Estudante anterior",
@@ -26,7 +26,7 @@ export function SetaDeNavegacao({
   /** `null` = ponta da lista. */
   aoClicar: (() => void) | null;
 }) {
-  const Icone = direcao === "anterior" ? ChevronLeftIcon : ChevronRightIcon;
+  const Icone = direcao === "anterior" ? ChevronLeft : ChevronRight;
 
   return (
     <button

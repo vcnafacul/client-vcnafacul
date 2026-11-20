@@ -8,9 +8,7 @@ import { useAuthStore } from "@/store/auth";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { CgReorder } from "react-icons/cg";
-import { FaFilePdf } from "react-icons/fa6";
-import { MdEmail } from "react-icons/md";
+import { FileText, ListOrdered, Mail } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { useModals } from "@/hooks/useModal";
@@ -171,7 +169,7 @@ export function WaitingList(props: Props) {
               typeStyle="refused"
               onClick={() => downloadPDF()}
             >
-              <FaFilePdf className="h-6 w-10" />
+              <FileText className="h-6 w-10" />
             </Button>
             <Button
               size="small"
@@ -179,7 +177,7 @@ export function WaitingList(props: Props) {
               onClick={() => modals.modalEditWailtingList.open()}
             >
               <div className="flex items-center">
-                <CgReorder className="h-6 w-10" />
+                <ListOrdered className="h-6 w-10" />
                 <p className="text-body">Editar Ordem</p>
               </div>
             </Button>
@@ -195,7 +193,7 @@ export function WaitingList(props: Props) {
                   className="w-full border-border"
                 >
                   <div className="flex justify-center items-center">
-                    <MdEmail className="h-6 w-10" />
+                    <Mail className="h-6 w-10" />
                     <p className="text-body">
                       Enviar Lista de Espera Atualizada
                     </p>

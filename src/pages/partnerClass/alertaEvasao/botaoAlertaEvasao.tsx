@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 import { useState } from "react";
-import { MdWarningAmber } from "react-icons/md";
+import { TriangleAlert } from "lucide-react";
 import { AlertaEvasaoModal } from "./alertaEvasaoModal";
 
 /** Botão + modal do alerta de risco de evasão (tickets/054, card 03). */
@@ -11,7 +11,7 @@ export function BotaoAlertaEvasao({ fullWidth }: { fullWidth?: boolean }) {
       <Button
         variant="outlined"
         color="primary"
-        startIcon={<MdWarningAmber />}
+        startIcon={<TriangleAlert size="1em" />}
         onClick={() => setAberto(true)}
         fullWidth={fullWidth}
       >

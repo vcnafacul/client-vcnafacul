@@ -18,7 +18,7 @@ import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
-import { MdModeEditOutline } from "react-icons/md";
+import { Pencil } from "lucide-react";
 import { toast } from "react-toastify";
 import { EditStudentRecordModal } from "./editStudentRecordModal";
 import { useModals } from "@/hooks/useModal";
@@ -117,7 +117,7 @@ export function AttendanceRecordModal({
         <div>
           <Tooltip title="Editar Presença">
             <IconButton onClick={() => handleActionUpdate(params.row)}>
-              <MdModeEditOutline className="h-6 w-6 fill-primary opacity-70 hover:opacity-100" />
+              <Pencil className="h-6 w-6 text-primary opacity-70 hover:opacity-100" />
             </IconButton>
           </Tooltip>
         </div>

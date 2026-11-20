@@ -1,4 +1,4 @@
-import { LuHeadset } from "react-icons/lu";
+import { Headset } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,7 +27,7 @@ export function ConfirmOpenDialog({
       <DialogContent>
         <DialogHeader>
           <div className="mx-auto h-12 w-12 rounded-full bg-primary flex items-center justify-center mb-2">
-            <LuHeadset className="h-6 w-6 text-primary" />
+            <Headset className="h-6 w-6 text-primary" />
           </div>
           <DialogTitle className="text-center text-foreground font-raleway">
             Falar com o suporte

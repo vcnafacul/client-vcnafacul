@@ -37,9 +37,7 @@ import {
 import heic2any from "heic2any";
 import debounce from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FaAddressCard, FaCheck, FaDownload } from "react-icons/fa";
-import { IoClose, IoEyeSharp } from "react-icons/io5";
-import { MdClass, MdOutlineFileDownload } from "react-icons/md";
+import { Check, Download, Eye, IdCard, Presentation, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { exportStudentsEnrolled } from "@/services/prepCourse/student/exportStudentsEnrolled";
 import ExportColumnsModal from "./modals/exportColumnsModal";
@@ -435,7 +433,7 @@ export function StudentsEnrolled() {
     <div className="flex gap-2 justify-center">
       <Tooltip title="Visualizar">
         <IconButton onClick={() => handleModalDetaild(estudante.id)}>
-          <IoEyeSharp className="h-6 w-6 fill-muted-foreground opacity-60 hover:opacity-100" />
+          <Eye className="h-6 w-6 text-muted-foreground opacity-60 hover:opacity-100" />
         </IconButton>
       </Tooltip>
       {permissao[Roles.gerenciarEstudantes] &&
@@ -447,7 +445,7 @@ export function StudentsEnrolled() {
                 handleDownloadEnrollmentCertificate(estudante.id)
               }
             >
-              <FaDownload className="h-6 w-6 fill-primary opacity-60 hover:opacity-100" />
+              <Download className="h-6 w-6 text-primary opacity-60 hover:opacity-100" />
             </IconButton>
           </Tooltip>
         )}
@@ -467,7 +465,7 @@ export function StudentsEnrolled() {
                 }
               }}
             >
-              <IoClose className="h-6 w-6 fill-destructive opacity-60 hover:opacity-100" />
+              <X className="h-6 w-6 text-destructive opacity-60 hover:opacity-100" />
             </IconButton>
           </Tooltip>
         )}
@@ -487,7 +485,7 @@ export function StudentsEnrolled() {
                 }
               }}
             >
-              <FaCheck className="h-6 w-6 fill-success opacity-60 hover:opacity-100" />
+              <Check className="h-6 w-6 text-success opacity-60 hover:opacity-100" />
             </IconButton>
           </Tooltip>
         )}
@@ -507,7 +505,7 @@ export function StudentsEnrolled() {
               }
             }}
           >
-            <MdClass className="h-6 w-6 fill-primary opacity-60 hover:opacity-100" />
+            <Presentation className="h-6 w-6 text-primary opacity-60 hover:opacity-100" />
           </IconButton>
         </Tooltip>
       )}
@@ -784,7 +782,7 @@ export function StudentsEnrolled() {
             disabled={exportando || totalItems === 0}
           >
             <div className="flex gap-2 items-center justify-center">
-              <MdOutlineFileDownload className="w-5 h-5" />
+              <Download className="w-5 h-5" />
               {exportando ? "Gerando..." : "Baixar lista"}
             </div>
           </Button>
@@ -797,7 +795,7 @@ export function StudentsEnrolled() {
             disabled={selectedRows.length === 0}
           >
             <div className="flex gap-2 items-center justify-center">
-              <FaAddressCard className="w-5 h-5" /> Carteirinhas
+              <IdCard className="w-5 h-5" /> Carteirinhas
             </div>
           </Button>
         )}

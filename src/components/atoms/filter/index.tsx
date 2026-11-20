@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CiSearch } from "react-icons/ci";
+import { Search } from "lucide-react";
 
 export interface FilterProps {
     placeholder: string;
@@ -24,7 +24,7 @@ function Filter ({ filtrar, placeholder, className, search = true, defaultValue,
                     if(e.key === 'Enter' && keyDown) keyDown()
                 }}
                 />
-            {search ? <CiSearch className="absolute right-3 top-2 w-6 h-6 fill-muted-foreground opacity-75"/> : <></>}
+            {search ? <Search className="absolute right-3 top-2 w-6 h-6 text-muted-foreground opacity-75"/> : <></>}
         </div>
     )
 }

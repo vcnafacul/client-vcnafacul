@@ -1,15 +1,7 @@
 import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
 import { Box, IconButton, Tooltip } from "@mui/material";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
-import { FaPlus } from "react-icons/fa";
-import {
-  FiEdit3,
-  FiEye,
-  FiToggleLeft,
-  FiToggleRight,
-  FiTrash2,
-  FiCopy,
-} from "react-icons/fi";
+import { Copy, Edit3, Eye, Plus, ToggleLeft, ToggleRight, Trash2 } from "lucide-react";
 
 export function ActionMenu({
   onView,
@@ -43,7 +35,7 @@ export function ActionMenu({
             onClick={onAdd}
             sx={{ color: "primary.main" }}
           >
-            <FaPlus className="h-4 w-4" />
+            <Plus className="h-4 w-4" />
           </IconButton>
         </Tooltip>
       )}
@@ -60,9 +52,9 @@ export function ActionMenu({
             }}
           >
             {isActive ? (
-              <FiToggleRight className="h-4 w-4" />
+              <ToggleRight className="h-4 w-4" />
             ) : (
-              <FiToggleLeft className="h-4 w-4" />
+              <ToggleLeft className="h-4 w-4" />
             )}
           </IconButton>
         </Tooltip>
@@ -74,7 +66,7 @@ export function ActionMenu({
             onClick={onView}
             sx={{ color: "primary.main" }}
           >
-            <FiEye className="h-4 w-4" />
+            <Eye className="h-4 w-4" />
           </IconButton>
         </Tooltip>
       )}
@@ -85,7 +77,7 @@ export function ActionMenu({
             onClick={onEdit}
             sx={{ color: "warning.main" }}
           >
-            <FiEdit3 className="h-4 w-4" />
+            <Edit3 className="h-4 w-4" />
           </IconButton>
         </Tooltip>
       )}
@@ -96,7 +88,7 @@ export function ActionMenu({
             onClick={onDuplicate}
             sx={{ color: "info.main" }}
           >
-            <FiCopy className="h-4 w-4" />
+            <Copy className="h-4 w-4" />
           </IconButton>
         </Tooltip>
       )}
@@ -114,7 +106,7 @@ export function ActionMenu({
                   aria-label="Excluir"
                   sx={{ color: "error.main" }}
                 >
-                  <FiTrash2 className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4" />
                 </IconButton>
               </AlertDialogTrigger>
             </AlertDialogUI>

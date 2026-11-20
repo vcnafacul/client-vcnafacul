@@ -12,8 +12,7 @@ import { sendBulkEmail } from "@/services/auth/sendBulkEmail";
 import { useAuthStore } from "@/store/auth";
 import Button from "@mui/material/Button";
 import { useEffect, useRef, useState } from "react";
-import { IoCloseCircle, IoSearch } from "react-icons/io5";
-import { MdEmail } from "react-icons/md";
+import { CircleX, Mail, Search } from "lucide-react";
 import { toast } from "react-toastify";
 
 interface ModalSendEmailProps extends ModalProps {
@@ -174,7 +173,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
       <div className="w-full">
         {/* Título */}
         <div className="flex items-center gap-3 mb-6">
-          <MdEmail className="w-8 h-8 text-foreground" />
+          <Mail className="w-8 h-8 text-foreground" />
           <h2 className="text-h1 font-bold text-foreground">
             Enviar Email em Massa
           </h2>
@@ -245,7 +244,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
                   Buscar Usuários
                 </Label>
                 <div className="relative">
-                  <IoSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
                   <Input
                     id="search"
                     placeholder="Digite o nome do usuário..."
@@ -313,7 +312,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
                           disabled={isSending}
                           type="button"
                         >
-                          <IoCloseCircle className="w-4 h-4" />
+                          <CircleX className="w-4 h-4" />
                         </button>
                       </div>
                     ))}

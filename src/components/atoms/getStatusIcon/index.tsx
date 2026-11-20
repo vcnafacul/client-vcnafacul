@@ -1,22 +1,10 @@
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
-import {
-  AlertCircle,
-  Ban,
-  CheckCircle2,
-  Clock,
-  FileText,
-  Lock,
-  MailCheck,
-  UserCheck,
-  UserX,
-  XCircle,
-} from "lucide-react";
-import { RiLoader2Fill } from "react-icons/ri";
+import { AlertCircle, Ban, CheckCircle2, Clock, FileText, LoaderCircle, Lock, MailCheck, UserCheck, UserX, XCircle } from "lucide-react";
 
 export function getStatusIcon(status: StatusApplication) {
   switch (status) {
     case StatusApplication.UnderReview:
-      return <RiLoader2Fill className="text-warning w-6 h-6 animate-rotate30" />;
+      return <LoaderCircle className="text-warning w-6 h-6 animate-rotate30" />;
 
     case StatusApplication.Rejected:
       return <XCircle className="text-destructive" />;

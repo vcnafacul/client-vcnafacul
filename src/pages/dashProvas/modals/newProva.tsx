@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  AcademicCapIcon,
-  CloudArrowUpIcon,
-  DocumentTextIcon,
-} from "@heroicons/react/24/outline";
+import { GraduationCap, CloudUpload, FileText } from "lucide-react";
 import { Button } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -266,7 +262,7 @@ function NewProva({
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-info-muted rounded-lg">
-              <DocumentTextIcon className="h-6 w-6 text-info" />
+              <FileText className="h-6 w-6 text-info" />
             </div>
             <div>
               <h2 className="text-h2 font-semibold text-foreground">
@@ -305,7 +301,7 @@ function NewProva({
           >
             <div>
               <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
-                <AcademicCapIcon className="h-4 w-4" />
+                <GraduationCap className="h-4 w-4" />
                 Informações Gerais
               </h3>
               <div className="bg-page p-4 rounded-lg">
@@ -333,7 +329,7 @@ function NewProva({
 
             <div>
               <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
-                <CloudArrowUpIcon className="h-4 w-4" />
+                <CloudUpload className="h-4 w-4" />
                 Arquivos da Prova
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

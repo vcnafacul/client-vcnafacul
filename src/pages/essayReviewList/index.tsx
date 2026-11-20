@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Box, IconButton, Tooltip } from "@mui/material";
-import { FiEye, FiEdit3 } from "react-icons/fi";
+import { Eye, Edit3 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { EssayListItem, EssayTheme } from "@/dtos/essay";
 import { getAllEssays, getMyCursinhoEssays, getThemes } from "@/services/essay";
@@ -205,7 +205,7 @@ export default function EssayReviewList({ mode }: Props) {
                             onClick={() => navigate(`${detailBasePath}/${e.id}/ver`)}
                             sx={{ color: "primary.main" }}
                           >
-                            <FiEye className="h-4 w-4" />
+                            <Eye className="h-4 w-4" />
                           </IconButton>
                         </Tooltip>
                         {podeRevisar(e) && (
@@ -215,7 +215,7 @@ export default function EssayReviewList({ mode }: Props) {
                               onClick={() => navigate(`${detailBasePath}/${e.id}`)}
                               sx={{ color: "warning.main" }}
                             >
-                              <FiEdit3 className="h-4 w-4" />
+                              <Edit3 className="h-4 w-4" />
                             </IconButton>
                           </Tooltip>
                         )}

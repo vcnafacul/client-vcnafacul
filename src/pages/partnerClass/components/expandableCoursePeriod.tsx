@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { FiChevronDown } from "react-icons/fi";
+import { ChevronDown } from "lucide-react";
 
 import { ActionMenu } from "./actionMenu";
 import { RenderClassesTable } from "./renderClassesTable";
@@ -78,7 +78,7 @@ export function ExpandableCoursePeriod({
                   transform: open ? "rotate(180deg)" : "rotate(0deg)",
                 }}
               >
-                <FiChevronDown className="w-5 h-5" />
+                <ChevronDown className="w-5 h-5" />
               </IconButton>
             </Tooltip>
           )}

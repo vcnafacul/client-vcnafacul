@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { FiChevronDown } from "react-icons/fi";
+import { ChevronDown } from "lucide-react";
 import { FrentesActionMenu } from "./frentesActionMenu";
 import { RenderTemasTable } from "./renderTemasTable";
 
@@ -62,7 +62,7 @@ export function ExpandableFrente({
                   transform: open ? "rotate(180deg)" : "rotate(0deg)",
                 }}
               >
-                <FiChevronDown className="w-5 h-5" />
+                <ChevronDown className="w-5 h-5" />
               </IconButton>
             </Tooltip>
           )}
@@ -171,7 +171,7 @@ export function FrenteCard({
           aria-expanded={open}
           className="flex items-center gap-1 h-10 text-body font-medium text-foreground self-start"
         >
-          <FiChevronDown
+          <ChevronDown
             className={`w-5 h-5 transition-transform ${open ? "rotate-180" : ""}`}
           />
           {total} {total === 1 ? "tema" : "temas"}

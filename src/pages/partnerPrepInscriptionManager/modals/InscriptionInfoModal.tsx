@@ -9,10 +9,8 @@ import { useAuthStore } from "@/store/auth";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { formatDate } from "@/utils/date";
-import { FileText, FileX, FlaskConical } from "lucide-react";
 import { useEffect, useState } from "react";
-import { FaRegCopy } from "react-icons/fa6";
-import { MdOutlineFileDownload } from "react-icons/md";
+import { Copy, Download, FileText, FileX, FlaskConical } from "lucide-react";
 import { dataInscription } from "../data";
 import { ExtendInscriptionModal } from "./ExtendInscriptionModal";
 import {
@@ -311,7 +309,7 @@ export function InscriptionInfoModal({
           onClick={clipboard}
         >
           <p className="font-medium">Link de inscrição</p>
-          <FaRegCopy />
+          <Copy size="1em" />
         </div>
         {/*
           Celular: um botão por linha, na ordem de uso (lista, baixar, editar)
@@ -324,7 +322,7 @@ export function InscriptionInfoModal({
                 className="bg-cta hover:bg-cta/60 h-10 sm:h-8 w-full sm:w-auto"
                 onClick={() => exportToExcel()}
               >
-                <MdOutlineFileDownload className="w-6 h-6" />
+                <Download className="w-6 h-6" />
                 <span className="sm:hidden">Baixar lista de alunos</span>
               </ShadcnButton.Button>
             </ShadcnTooltip>

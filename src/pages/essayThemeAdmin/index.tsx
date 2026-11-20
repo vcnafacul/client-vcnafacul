@@ -1,7 +1,7 @@
 import { dataLocal, formatDate } from "@/utils/date";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { FiEdit2, FiToggleLeft, FiToggleRight } from "react-icons/fi";
+import { Edit2, ToggleLeft, ToggleRight } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { EssayTheme } from "@/dtos/essay";
 import {
@@ -200,7 +200,7 @@ export default function EssayThemeAdmin() {
                   className="p-2 rounded-lg hover:bg-muted text-foreground transition-colors"
                   title="Editar"
                 >
-                  <FiEdit2 size={18} />
+                  <Edit2 size={18} />
                 </button>
                 <button
                   onClick={() => setConfirmToggle(theme)}
@@ -210,9 +210,9 @@ export default function EssayThemeAdmin() {
                   title={theme.active ? "Desativar tema" : "Ativar tema"}
                 >
                   {theme.active ? (
-                    <FiToggleRight size={22} />
+                    <ToggleRight size={22} />
                   ) : (
-                    <FiToggleLeft size={22} />
+                    <ToggleLeft size={22} />
                   )}
                 </button>
               </div>

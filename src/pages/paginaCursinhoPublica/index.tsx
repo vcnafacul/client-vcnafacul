@@ -1,16 +1,12 @@
+import { ReactComponent as SocialFacebook } from "@/assets/icons/social-facebook.svg";
+import { ReactComponent as SocialInstagram } from "@/assets/icons/social-instagram.svg";
+import { ReactComponent as SocialLinkedin } from "@/assets/icons/social-linkedin.svg";
+import { ReactComponent as SocialTiktok } from "@/assets/icons/social-tiktok.svg";
+import { ReactComponent as SocialX } from "@/assets/icons/social-x.svg";
+import { ReactComponent as SocialYoutube } from "@/assets/icons/social-youtube.svg";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { BookOpen, ClipboardList, GraduationCap, Users } from "lucide-react";
-import {
-  FaFacebook,
-  FaGlobe,
-  FaInstagram,
-  FaLinkedin,
-  FaTiktok,
-  FaXTwitter,
-  FaYoutube,
-} from "react-icons/fa6";
-import { FiExternalLink, FiLock, FiMapPin } from "react-icons/fi";
+import { BookOpen, ClipboardList, ExternalLink, Globe, GraduationCap, Lock, MapPin, Users } from "lucide-react";
 import BaseTemplate from "@/components/templates/baseTemplate";
 import RichTextRenderer from "@/components/atoms/richTextRenderer/RichTextRenderer";
 import { ImpactCard } from "@/components/molecules/impactCard";
@@ -26,13 +22,13 @@ import {
 import { useAuthStore } from "@/store/auth";
 
 const REDES: Record<RedeSocial, { nome: string; Icone: React.ElementType }> = {
-  site: { nome: "Site", Icone: FaGlobe },
-  instagram: { nome: "Instagram", Icone: FaInstagram },
-  facebook: { nome: "Facebook", Icone: FaFacebook },
-  linkedin: { nome: "LinkedIn", Icone: FaLinkedin },
-  youtube: { nome: "YouTube", Icone: FaYoutube },
-  twitter: { nome: "X (Twitter)", Icone: FaXTwitter },
-  tiktok: { nome: "TikTok", Icone: FaTiktok },
+  site: { nome: "Site", Icone: Globe },
+  instagram: { nome: "Instagram", Icone: SocialInstagram },
+  facebook: { nome: "Facebook", Icone: SocialFacebook },
+  linkedin: { nome: "LinkedIn", Icone: SocialLinkedin },
+  youtube: { nome: "YouTube", Icone: SocialYoutube },
+  twitter: { nome: "X (Twitter)", Icone: SocialX },
+  tiktok: { nome: "TikTok", Icone: SocialTiktok },
 };
 
 /** Link de rede social cadastrado sem protocolo (`instagram.com/x`) ganha `https://`. */
@@ -63,7 +59,7 @@ function ListaDeLinksPublica({
               className="flex items-center justify-between gap-3 bg-white border rounded-xl px-4 py-3 text-foreground hover:border-primary transition-colors"
             >
               <span className="font-semibold break-words min-w-0">{l.titulo}</span>
-              <FiExternalLink className="shrink-0" aria-hidden />
+              <ExternalLink size="1em" className="shrink-0" aria-hidden />
             </a>
           </li>
         ))}
@@ -135,7 +131,7 @@ export default function PaginaCursinhoPublica() {
           </h1>
           {pagina.localizacao && (
             <p className="flex items-center gap-1 text-muted-foreground mt-2">
-              <FiMapPin aria-hidden /> {pagina.localizacao}
+              <MapPin size="1em" aria-hidden /> {pagina.localizacao}
             </p>
           )}
           {/* Redes sociais: parte do cabeçalho, sem título, ícones pequenos. */}
@@ -153,7 +149,7 @@ export default function PaginaCursinhoPublica() {
                       title={nome}
                       className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
                     >
-                      <Icone size={15} aria-hidden />
+                      <Icone className="h-4 w-4" aria-hidden />
                     </a>
                   </li>
                 );
@@ -213,7 +209,7 @@ export default function PaginaCursinhoPublica() {
         <ListaDeLinksPublica
           titulo="Links internos"
           links={internos}
-          icone={<FiLock aria-hidden className="text-h2" />}
+          icone={<Lock size="1em" aria-hidden className="text-h2" />}
         />
       )}
 

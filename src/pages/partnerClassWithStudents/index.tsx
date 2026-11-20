@@ -25,9 +25,7 @@ import { ToggleDadosSensiveis } from "@/components/molecules/toggleDadosSensivei
 import { getCancelledStudentsByClassId } from "@/services/prepCourse/class/getCancelledStudentsByClassId";
 import { CancelledStudent } from "@/types/partnerPrepCourse/cancelledStudent";
 import { useEffect, useRef, useState } from "react";
-import { FaListCheck } from "react-icons/fa6";
-import { IoEyeSharp, IoWarningOutline } from "react-icons/io5";
-import { MdOutlineFileDownload } from "react-icons/md";
+import { Download, Eye, ListChecks, TriangleAlert } from "lucide-react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { AttendanceHistoryModal } from "./modals/attendanceHistoryModal";
 import { AttendanceRecordByStudentModal } from "./modals/attendanceRecordByStudentModal";
@@ -208,7 +206,7 @@ export function PartnerClassWithStudents() {
             modals.modalStudentCard.open();
           }}
         >
-          <IoEyeSharp className="h-6 w-6 fill-muted-foreground hover:fill-primary opacity-60 hover:opacity-100" />
+          <Eye className="h-6 w-6 text-muted-foreground hover:text-primary opacity-60 hover:opacity-100" />
         </IconButton>
       </Tooltip>
       <Tooltip title="Registro de presença">
@@ -218,7 +216,7 @@ export function PartnerClassWithStudents() {
             modals.modalAttendanceRecordByStudent.open();
           }}
         >
-          <FaListCheck className="h-5 w-5 fill-muted-foreground hover:fill-primary opacity-60 hover:opacity-100" />
+          <ListChecks className="h-5 w-5 text-muted-foreground hover:text-primary opacity-60 hover:opacity-100" />
         </IconButton>
       </Tooltip>
     </div>
@@ -493,7 +491,7 @@ export function PartnerClassWithStudents() {
             role="status"
             className="mx-auto mt-3 flex max-w-2xl items-start gap-2 rounded-lg border border-warning bg-warning-muted px-4 py-2 text-body text-foreground"
           >
-            <IoWarningOutline aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
+            <TriangleAlert aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
             <span>
               <strong>Turma encerrada.</strong> O período letivo terminou em{" "}
               {format(new Date(classEntity!.coursePeriod.endDate), "dd/MM/yyyy")}
@@ -538,7 +536,7 @@ export function PartnerClassWithStudents() {
                 className="border-none"
               >
                 <div className="flex items-center justify-center gap-2">
-                  <FaListCheck />
+                  <ListChecks size="1em" />
                   Registros de Frequência
                 </div>
               </Button>
@@ -553,7 +551,7 @@ export function PartnerClassWithStudents() {
                 className="border-none"
               >
                 <div className="flex items-center justify-center gap-2">
-                  <MdOutlineFileDownload className="h-5 w-5 fill-white" />
+                  <Download className="h-5 w-5 text-white" />
                   Lista de alunos
                 </div>
               </Button>

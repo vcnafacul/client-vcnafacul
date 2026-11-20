@@ -3,7 +3,7 @@ import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
 import { formatDate } from "@/utils/date";
 import { Chip } from "@mui/material";
 import { useState } from "react";
-import { FiChevronDown } from "react-icons/fi";
+import { ChevronDown } from "lucide-react";
 import { StatusBadge } from "..";
 import { ActionMenu } from "./actionMenu";
 import {
@@ -94,7 +94,7 @@ function SecaoCard({
             aria-expanded={aberto}
             className="flex items-center gap-1 h-10 text-body font-medium text-foreground"
           >
-            <FiChevronDown
+            <ChevronDown
               className={`w-5 h-5 transition-transform ${aberto ? "rotate-180" : ""}`}
             />
             Ver questões

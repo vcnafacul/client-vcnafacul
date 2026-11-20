@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FiCpu, FiUser } from "react-icons/fi";
+import { Cpu, User } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { EssayReview } from "@/dtos/essay";
 import { getEssayReviews } from "@/services/essay";
@@ -35,9 +35,9 @@ export default function ReviewSingle() {
       <div className="flex items-center gap-3">
         <div className="text-foreground">
           {review.reviewType === "AI" ? (
-            <FiCpu className="h-6 w-6" />
+            <Cpu className="h-6 w-6" />
           ) : (
-            <FiUser className="h-6 w-6" />
+            <User className="h-6 w-6" />
           )}
         </div>
         <div>

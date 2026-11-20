@@ -5,7 +5,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { RefreshCw } from "lucide-react";
 import type { ComponentType } from "react";
 import { toast } from "react-toastify";
 
@@ -82,7 +82,7 @@ export function AcaoIcone({
           )}
         >
           {carregando ? (
-            <ArrowPathIcon className="h-5 w-5 animate-spin" />
+            <RefreshCw className="h-5 w-5 animate-spin" />
           ) : (
             <Icone className="h-5 w-5" />
           )}

@@ -1,14 +1,7 @@
 /* eslint-disable use-isnan */
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { useAuthStore } from "@/store/auth";
-import {
-  AcademicCapIcon,
-  ArrowDownTrayIcon,
-  ChartBarIcon,
-  DocumentTextIcon,
-  PencilSquareIcon,
-  TableCellsIcon,
-} from "@heroicons/react/24/outline";
+import { GraduationCap, Download, ChartColumn, FileText, SquarePen, Table } from "lucide-react";
 import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { Button } from "@mui/material";
@@ -330,7 +323,7 @@ const downloadFile = async (filename: string, fileType: string) => {
         <div className="mb-6">
           <div className="flex flex-wrap items-center gap-3 mb-2">
             <div className="p-2 bg-info-muted rounded-lg">
-              <DocumentTextIcon className="h-6 w-6 text-info" />
+              <FileText className="h-6 w-6 text-info" />
             </div>
             <div className="min-w-0 flex-1">
               <h2 className="text-h2 font-semibold text-foreground break-words">
@@ -399,7 +392,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                 {/* Informações Básicas */}
                 <div className="mb-6">
                   <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
-                    <AcademicCapIcon className="h-4 w-4" />
+                    <GraduationCap className="h-4 w-4" />
                     Informações Gerais
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
@@ -467,7 +460,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                 {/* Métricas de Progresso */}
                 <div className="mb-6">
                   <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
-                    <ChartBarIcon className="h-4 w-4" />
+                    <ChartColumn className="h-4 w-4" />
                     Progresso das Questões
                   </h3>
 
@@ -558,7 +551,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                     className="w-full sm:w-auto"
                     sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                   >
-                    <TableCellsIcon className="h-4 w-4" />
+                    <Table className="h-4 w-4" />
                     Ver simulados
                   </Button>
 
@@ -581,7 +574,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                         data-testid="relatorio-da-prova"
                         sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                       >
-                        <ChartBarIcon className="h-4 w-4" />
+                        <ChartColumn className="h-4 w-4" />
                         Relatório da prova
                       </Button>
                     </span>
@@ -611,7 +604,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                         gap: "8px",
                       }}
                     >
-                      <ArrowDownTrayIcon className="h-4 w-4" />
+                      <Download className="h-4 w-4" />
                       Download do Gabarito
                     </Button>
                   )}
@@ -629,7 +622,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                         gap: "8px",
                       }}
                     >
-                      <ArrowDownTrayIcon className="h-4 w-4" />
+                      <Download className="h-4 w-4" />
                       Download da Prova
                     </Button>
                   ) : (
@@ -650,7 +643,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                       edicao && !edicao.permitido ? edicao.motivo : undefined
                     }
                   >
-                    <PencilSquareIcon className="size-8" />
+                    <SquarePen className="size-8" />
                     <span className="sm:hidden ml-2">Editar arquivos</span>
                   </Button>
                 </>

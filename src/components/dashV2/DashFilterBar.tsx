@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { CiSearch } from "react-icons/ci";
+import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { dashV2 } from "./tokens";
 import type { DashFilterBarProps } from "./types";
@@ -60,7 +60,7 @@ export function DashFilterBar({
         // No celular a busca ocupa a linha inteira e os filtros descem; a
         // partir de 768px (o `sm` do projeto) volta a dividir a linha.
         <div className="relative min-w-0 flex-1 basis-full sm:basis-auto sm:max-w-xs">
-          <CiSearch
+          <Search
             aria-hidden="true"
             className={cn("pointer-events-none absolute left-2 top-2 h-5 w-5", dashV2.text.muted)}
           />

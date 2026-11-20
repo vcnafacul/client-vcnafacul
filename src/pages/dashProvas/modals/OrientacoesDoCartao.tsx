@@ -1,4 +1,4 @@
-import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
+import { ExternalLink } from "lucide-react";
 
 /**
  * O relatório do teste de leitura do cartão (docs, Equipe do projeto), de onde saem estas
@@ -72,7 +72,7 @@ export function OrientacoesDoCartao({ resumo }: { resumo?: string }) {
         className="inline-flex items-center gap-1 font-medium text-foreground underline underline-offset-2"
       >
         Saber mais
-        <ArrowTopRightOnSquareIcon className="h-4 w-4" aria-hidden />
+        <ExternalLink className="h-4 w-4" aria-hidden />
         <span className="sr-only">(abre em nova aba)</span>
       </a>
     </section>

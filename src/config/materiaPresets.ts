@@ -28,7 +28,7 @@ import { ReactComponent as Science } from "@/assets/icons/materias/Science.svg";
 import { ReactComponent as TakingEarth } from "@/assets/icons/materias/TakingEarth.svg";
 import { ReactComponent as Thoughts } from "@/assets/icons/materias/Thoughts.svg";
 
-import { FaBook } from "react-icons/fa";
+import { Book } from "lucide-react";
 
 type SvgComponent = React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
 
@@ -70,7 +70,7 @@ export const imagePresets: Record<string, SvgComponent> = {
 
 export function getIconPreset(key?: string): SvgComponent {
   if (key && iconPresets[key]) return iconPresets[key];
-  return FaBook as unknown as SvgComponent;
+  return Book as unknown as SvgComponent;
 }
 
 export function getImagePreset(

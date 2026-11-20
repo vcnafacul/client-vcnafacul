@@ -8,7 +8,7 @@ import {
 import { useAuthStore } from "@/store/auth";
 import { mensagemDeErro } from "@/utils/mensagemDeErro";
 import { useCallback, useEffect, useState } from "react";
-import { IoClose } from "react-icons/io5";
+import { X } from "lucide-react";
 import { toast } from "react-toastify";
 import { validarAlerta } from "./validarAlerta";
 
@@ -111,7 +111,7 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
           aria-label="Fechar"
           className="shrink-0 -mr-2 -mt-1 p-2 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
         >
-          <IoClose className="w-6 h-6" />
+          <X className="w-6 h-6" />
         </button>
       </div>
 

@@ -1,4 +1,4 @@
-import { FiPlus, FiTrash2 } from "react-icons/fi";
+import { Plus, Trash2 } from "lucide-react";
 import { LinkDaPagina } from "@/services/paginaCursinho";
 import { LINKS_MAX } from "@/utils/regrasDaPagina";
 
@@ -44,7 +44,7 @@ export function ListaDeLinks({ titulo, ajuda, links, onChange }: Props) {
             title="Remover link"
             aria-label={`${titulo}: remover link ${i + 1}`}
           >
-            <FiTrash2 />
+            <Trash2 size="1em" />
           </button>
         </div>
       ))}
@@ -54,7 +54,7 @@ export function ListaDeLinks({ titulo, ajuda, links, onChange }: Props) {
           onClick={() => onChange([...links, { titulo: "", url: "" }])}
           className="flex items-center gap-1 text-body text-foreground hover:underline"
         >
-          <FiPlus /> Adicionar link
+          <Plus size="1em" /> Adicionar link
         </button>
       )}
     </fieldset>

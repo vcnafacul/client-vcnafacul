@@ -1,8 +1,4 @@
-import {
-  CloudArrowUpIcon,
-  DocumentIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { CloudUpload, FileIcon, X } from "lucide-react";
 import { ComponentProps, useRef, useState } from "react";
 import "./style.css";
 
@@ -145,7 +141,7 @@ function UploadButton({
         {selectedFile ? (
           <div className={`file-selected ${variant}`}>
             <div className="file-info">
-              <DocumentIcon className="file-icon" />
+              <FileIcon className="file-icon" />
               <div className="file-details">
                 <span className="file-name">{selectedFile.name}</span>
                 {variant === "default" && (
@@ -161,12 +157,12 @@ function UploadButton({
               onClick={handleRemove}
               aria-label="Remover arquivo"
             >
-              <XMarkIcon className="remove-icon" />
+              <X className="remove-icon" />
             </button>
           </div>
         ) : (
           <div className={`upload-content ${variant}`}>
-            <CloudArrowUpIcon className="upload-icon" />
+            <CloudUpload className="upload-icon" />
             <div className="upload-text">
               <span className="upload-label">{placeholder}</span>
               {variant === "default" && (

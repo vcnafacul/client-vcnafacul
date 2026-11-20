@@ -1,14 +1,7 @@
 import PropValue from "@/components/molecules/PropValue";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
-import { BsPersonVcard } from "react-icons/bs";
-import { FaCheck } from "react-icons/fa";
-import {
-  MdOutlineMoneyOffCsred,
-  MdOutlinePendingActions,
-} from "react-icons/md";
-import { PiListChecksFill } from "react-icons/pi";
-import { RiFileListFill } from "react-icons/ri";
+import { Check, CircleDollarSign, ClipboardClock, FileText, IdCard, ListChecks } from "lucide-react";
 
 interface Props {
   students: XLSXStudentCourseFull[];
@@ -18,7 +11,7 @@ export function TableInfo({ students }: Props) {
   return (
     <div className="flex flex-col sm:h-28 gap-2 flex-wrap justify-start w-fit gap-x-4 ">
       <div className="flex gap-1">
-        <MdOutlinePendingActions className="h-6 w-6 fill-warning" />
+        <ClipboardClock className="h-6 w-6 text-warning" />
         <PropValue
           className="text-body"
           prop="Em Análise"
@@ -29,7 +22,7 @@ export function TableInfo({ students }: Props) {
         />
       </div>
       <div className="flex gap-1">
-        <PiListChecksFill className="h-6 w-6 fill-success" />
+        <ListChecks className="h-6 w-6 text-success" />
         <PropValue
           className="text-body"
           prop="A Convocar"
@@ -40,7 +33,7 @@ export function TableInfo({ students }: Props) {
         />
       </div>
       <div className="flex gap-1">
-        <RiFileListFill className="h-6 w-6 fill-primary" />
+        <FileText className="h-6 w-6 text-primary" />
         <PropValue
           className="text-body"
           prop="Lista de Espera"
@@ -51,7 +44,7 @@ export function TableInfo({ students }: Props) {
         />
       </div>
       <div className="flex gap-1">
-        <FaCheck className="h-6 w-6 fill-success" />
+        <Check className="h-6 w-6 text-success" />
         <PropValue
           className="text-body"
           prop="Declarou Interesse"
@@ -63,7 +56,7 @@ export function TableInfo({ students }: Props) {
         />
       </div>
       <div className="flex gap-1">
-        <MdOutlineMoneyOffCsred className="h-6 w-6 fill-success" />
+        <CircleDollarSign className="h-6 w-6 text-success" />
         <PropValue
           className="text-body"
           prop="Isentos Matriculados"
@@ -78,7 +71,7 @@ export function TableInfo({ students }: Props) {
         />
       </div>
       <div className="flex gap-1">
-        <BsPersonVcard className="h-6 w-6 fill-chart-4" />
+        <IdCard className="h-6 w-6 text-chart-4" />
         <PropValue
           className="text-body"
           prop="Matriculados"

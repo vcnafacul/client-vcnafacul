@@ -28,11 +28,7 @@ import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BsEnvelopeArrowDownFill, BsEnvelopeArrowUpFill } from "react-icons/bs";
-import { FaCheck, FaSyncAlt } from "react-icons/fa";
-import { IoClose, IoEyeSharp } from "react-icons/io5";
-import { MdEmail, MdTimerOff } from "react-icons/md";
-import { PiTimerFill } from "react-icons/pi";
+import { Check, Eye, Mail, MailMinus, MailPlus, RefreshCw, Timer, TimerOff, X } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { ReactComponent as IsentoIcon } from "../../assets/icons/partnerPrepCourse/pagante_add_dk.svg";
 import { ReactComponent as PaganteIcon } from "../../assets/icons/partnerPrepCourse/pagante_remover_dk.svg";
@@ -365,7 +361,7 @@ export function PartnerPrepInscritionStudentManager() {
     <div className="flex justify-center items-center gap-2 h-8 flex-wrap">
       <Tooltip title="Visualizar">
         <IconButton onClick={() => handleModalDetaild(row.id)}>
-          <IoEyeSharp className="h-6 w-6 fill-muted-foreground opacity-60 hover:opacity-100" />
+          <Eye className="h-6 w-6 text-muted-foreground opacity-60 hover:opacity-100" />
         </IconButton>
       </Tooltip>
       {row.isento === "Sim" &&
@@ -415,9 +411,9 @@ export function PartnerPrepInscritionStudentManager() {
           } da lista de convocação`}
         >
           {row.convocar === Bool.No ? (
-            <BsEnvelopeArrowUpFill className="h-6 w-6 fill-success opacity-60 hover:opacity-100" />
+            <MailPlus className="h-6 w-6 text-success opacity-60 hover:opacity-100" />
           ) : (
-            <BsEnvelopeArrowDownFill className="h-6 w-6 fill-destructive opacity-60 hover:opacity-100" />
+            <MailMinus className="h-6 w-6 text-destructive opacity-60 hover:opacity-100" />
           )}
         </ActionButton>
       )}
@@ -447,9 +443,9 @@ export function PartnerPrepInscritionStudentManager() {
           } da lista de espera`}
         >
           {row.lista_de_espera === Bool.No ? (
-            <PiTimerFill className="h-6 w-6 fill-primary opacity-60 hover:opacity-100" />
+            <Timer className="h-6 w-6 text-primary opacity-60 hover:opacity-100" />
           ) : (
-            <MdTimerOff className="h-6 w-6 fill-warning opacity-60 hover:opacity-100" />
+            <TimerOff className="h-6 w-6 text-warning opacity-60 hover:opacity-100" />
           )}
         </ActionButton>
       )}
@@ -458,7 +454,7 @@ export function PartnerPrepInscritionStudentManager() {
           <IconButton
             onClick={() => handleOpenSelectClassModal(row.id)}
           >
-            <FaCheck className="h-6 w-6 fill-success opacity-60 hover:opacity-100" />
+            <Check className="h-6 w-6 text-success opacity-60 hover:opacity-100" />
           </IconButton>
         </Tooltip>
       )}
@@ -467,14 +463,14 @@ export function PartnerPrepInscritionStudentManager() {
         row.status === StatusApplication.UnderReview) && (
         <Tooltip title="Indeferir">
           <IconButton>
-            <IoClose
+            <X
               onClick={() => {
                 setStudentSelected(
                   students.find((student) => student.id === row.id)!,
                 );
                 modals.reject.open();
               }}
-              className="h-6 w-6 fill-destructive/60 hover:fill-destructive cursor-pointer"
+              className="h-6 w-6 text-destructive/60 hover:text-destructive cursor-pointer"
             />
           </IconButton>
         </Tooltip>
@@ -504,7 +500,7 @@ export function PartnerPrepInscritionStudentManager() {
             }}
             tooltipTitle="Reenviar email de convocação"
           >
-            <MdEmail className="h-6 w-6 fill-info opacity-60 hover:opacity-100" />
+            <Mail className="h-6 w-6 text-info opacity-60 hover:opacity-100" />
           </ActionButton>
         )}
     </div>
@@ -753,7 +749,7 @@ export function PartnerPrepInscritionStudentManager() {
               onClick={() => subscribers()}
               className="col-span-2 flex items-center justify-center gap-2 h-10 border border-border rounded-md text-body text-muted-foreground sm:h-auto sm:border-0 sm:col-span-1"
             >
-              <FaSyncAlt className="h-7 w-7 p-0.5 fill-muted-foreground hover:fill-primary hover:animate-rotate5" />
+              <RefreshCw className="h-7 w-7 p-0.5 text-muted-foreground hover:text-primary hover:animate-rotate5" />
               {!acimaDeSm && "Atualizar lista"}
             </button>
           </div>

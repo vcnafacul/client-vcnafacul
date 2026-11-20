@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { IoMdClose } from "react-icons/io";
+import { X } from "lucide-react";
 import { ModalProps } from "../modalTemplate";
 
 export interface TabModal extends ModalProps {
@@ -55,7 +55,7 @@ function ModalContent({
       {/* Botão de fechar fixado no topo */}
       {onClose && (
         <div className="sticky top-0 bg-white z-sticky flex items-center justify-end">
-          <IoMdClose
+          <X
             className="w-5 h-5 cursor-pointer text-muted-foreground hover:text-foreground transition"
             onClick={onClose}
           />

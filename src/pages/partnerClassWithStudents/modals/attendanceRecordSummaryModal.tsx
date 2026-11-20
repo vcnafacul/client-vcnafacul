@@ -9,7 +9,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Calendar } from "primereact/calendar";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { FiCalendar } from "react-icons/fi";
+import { CalendarIcon } from "lucide-react";
 import * as yup from "yup";
 import { summaryByDate } from "../summary/summaryByDate";
 import { summaryByStudent } from "../summary/summaryByStudent";
@@ -254,7 +254,7 @@ export default function AttendanceRecordSummaryModal({
           </label>
 
           <div className="relative">
-            <FiCalendar className="absolute top-1.5 left-3 text-muted-foreground pointer-events-none" />
+            <CalendarIcon size="1em" className="absolute top-1.5 left-3 text-muted-foreground pointer-events-none" />
             <Controller
               name="range"
               control={control}

@@ -38,8 +38,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { FiDownload, FiPlus, FiTrash2 } from "react-icons/fi";
-import { MdPlayArrow } from "react-icons/md";
+import { Download, Play, Plus, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { ModalCreateRule } from "./modalCreateRule";
 import { palette } from "@/lib/palette";
@@ -371,7 +370,7 @@ export function ModalRules({
       <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}>
         <Button
           variant="contained"
-          startIcon={<FiPlus />}
+          startIcon={<Plus size="1em" />}
           onClick={() => modals.createRule.open()}
           size="small"
         >
@@ -385,7 +384,7 @@ export function ModalRules({
               rankingLoading ? (
                 <CircularProgress size={16} color="inherit" />
               ) : (
-                <MdPlayArrow />
+                <Play size="1em" />
               )
             }
             onClick={handleRunRanking}
@@ -487,7 +486,7 @@ export function ModalRules({
                         color="error"
                         onClick={() => handleDeleteRule(rule._id)}
                       >
-                        <FiTrash2 />
+                        <Trash2 size="1em" />
                       </IconButton>
                     </Tooltip>
                   </TableCell>
@@ -522,7 +521,7 @@ export function ModalRules({
               <Button
                 variant="outlined"
                 size="small"
-                startIcon={<FiDownload />}
+                startIcon={<Download size="1em" />}
                 onClick={handleDownloadCSV}
               >
                 CSV
@@ -530,7 +529,7 @@ export function ModalRules({
               <Button
                 variant="outlined"
                 size="small"
-                startIcon={<FiDownload />}
+                startIcon={<Download size="1em" />}
                 onClick={handleDownloadPDF}
               >
                 PDF

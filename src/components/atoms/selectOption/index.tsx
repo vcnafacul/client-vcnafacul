@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { TiArrowSortedDown } from "react-icons/ti";
+import { ChevronDown } from "lucide-react";
 import "./styles.css";
 
 export interface OptionProps {
@@ -23,7 +23,7 @@ export function SelectOption({
   return (
     <>
       <div className="relative group">
-        <TiArrowSortedDown className="absolute select-none right-1 top-0 w-10 h-10 fill-primary" />
+        <ChevronDown className="absolute select-none right-1 top-0 w-10 h-10 text-primary" />
         <select
           className="remove-arrow w-full h-full text-h3 font-extrabold text-foreground pl-4 pr-10 py-1 rounded-xl shadow-md z-popover"
           disabled={disabled ?? false}

@@ -2,14 +2,7 @@ import { dashV2 } from "@/components/dashV2";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { buscarSimuladosComCartao } from "@/services/relatorioSimulado/buscarSimuladosComCartao";
-import {
-  ArrowLeftIcon,
-  BookOpenIcon,
-  CalendarDaysIcon,
-  ChartBarIcon,
-  ClipboardDocumentCheckIcon,
-  DocumentTextIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowLeft, BookOpen, CalendarDays, ChartColumn, ClipboardCheck, FileText } from "lucide-react";
 import { Button } from "@mui/material";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useEffect, useState } from "react";
@@ -275,7 +268,7 @@ function SimuladosView({
   const acoesDoSimulado = (simulado: SimuladoResumo) => (
     <div className="flex items-center justify-end gap-1">
       <AcaoIcone
-        icone={ClipboardDocumentCheckIcon}
+        icone={ClipboardCheck}
         rotulo="Baixar cartão de resposta"
         onClick={() => setCartaoPedido(simulado)}
         desabilitado={simulado.bloqueado}
@@ -284,7 +277,7 @@ function SimuladosView({
 
       {!simulado.bloqueado && (
         <AcaoIcone
-          icone={BookOpenIcon}
+          icone={BookOpen}
           rotulo="Baixar caderno de questões (pacote .zip para abrir no Overleaf)"
           onClick={() => handleDownloadCaderno(simulado)}
           carregando={baixandoCaderno === simulado._id}
@@ -299,7 +292,7 @@ function SimuladosView({
       */}
       {simulado.bloqueado && rascunhoHabilitado && (
         <AcaoIcone
-          icone={DocumentTextIcon}
+          icone={FileText}
           rotulo="Baixar rascunho do caderno (sai com marca d'água e a lista de pendências)"
           onClick={() => handleDownloadCaderno(simulado, true)}
           carregando={baixandoCaderno === simulado._id}
@@ -308,7 +301,7 @@ function SimuladosView({
 
       {simulado.bloqueado && !rascunhoHabilitado && (
         <AcaoIcone
-          icone={BookOpenIcon}
+          icone={BookOpen}
           rotulo="Baixar caderno de questões"
           desabilitado
           motivoDesabilitado={`Caderno indisponível. ${MOTIVO_BLOQUEADO}`}
@@ -316,7 +309,7 @@ function SimuladosView({
       )}
 
       <AcaoIcone
-        icone={CalendarDaysIcon}
+        icone={CalendarDays}
         rotulo="Editar janela de disponibilidade"
         onClick={() => setEditing(simulado)}
         desabilitado={edicao ? !edicao.permitido : false}
@@ -335,7 +328,7 @@ function SimuladosView({
       */}
       {relatorio && (
         <AcaoIcone
-          icone={ChartBarIcon}
+          icone={ChartColumn}
           rotulo="Ver relatório do cartão-resposta"
           onClick={() => relatorio.aoAbrir(simulado)}
           desabilitado={
@@ -374,7 +367,7 @@ function SimuladosView({
             dashV2.focus,
           )}
         >
-          <ArrowLeftIcon className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4" />
           Voltar aos detalhes
         </button>
 

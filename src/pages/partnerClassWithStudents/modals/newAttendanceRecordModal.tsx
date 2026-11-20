@@ -11,7 +11,7 @@ import {
 import { SimpleAttendanceRecordHistory } from "@/types/partnerPrepCourse/attendanceRecordHistory";
 import { StudentToAttendanceRecord } from "@/types/partnerPrepCourse/classToAttendanceRecord";
 import { useEffect, useMemo, useState } from "react";
-import { IoClose, IoSearch, IoWarning } from "react-icons/io5";
+import { Search, TriangleAlert, X } from "lucide-react";
 import { toast } from "react-toastify";
 import {
   AlertaEvasaoDaTurma,
@@ -198,7 +198,7 @@ export function NewAttendanceRecordModal({
             aria-label="Fechar"
             className="shrink-0 -mr-2 -mt-1 p-2 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
           >
-            <IoClose className="w-6 h-6" />
+            <X className="w-6 h-6" />
           </button>
         </div>
 
@@ -252,7 +252,7 @@ export function NewAttendanceRecordModal({
         <>
           <div className="shrink-0 px-4 sm:px-6 py-2 flex items-center gap-2">
             <div className="relative flex-1 min-w-0">
-              <IoSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <input
                 type="search"
                 value={busca}
@@ -310,7 +310,7 @@ export function NewAttendanceRecordModal({
                           aria-label={`risco de evasão, ${Math.round(risco.percentual)}% de faltas`}
                           className="inline-flex items-center gap-0.5 px-1.5 rounded-full bg-warning-muted text-foreground font-bold"
                         >
-                          <IoWarning aria-hidden className="w-3 h-3 text-warning" />
+                          <TriangleAlert aria-hidden className="w-3 h-3 text-warning" />
                           {Math.round(risco.percentual)}%
                         </span>
                       )}
@@ -364,7 +364,7 @@ export function NewAttendanceRecordModal({
           aria-live="polite"
           className="shrink-0 mx-4 sm:mx-6 mt-2 px-3 py-1.5 sm:py-2 rounded-lg bg-warning-muted border-l-4 border-warning text-body text-foreground flex items-center gap-2"
         >
-          <IoWarning aria-hidden className="w-4 h-4 text-warning shrink-0" />
+          <TriangleAlert aria-hidden className="w-4 h-4 text-warning shrink-0" />
           <span>
             <strong>{emRisco}</strong>{" "}
             {emRisco === 1 ? "aluno em risco" : "alunos em risco"} de evasão

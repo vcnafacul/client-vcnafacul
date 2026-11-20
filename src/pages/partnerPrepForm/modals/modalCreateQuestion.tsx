@@ -36,7 +36,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { FiPlus, FiSettings, FiTrash2 } from "react-icons/fi";
+import { Plus, Settings, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { ModalConditions } from "./modalConditions";
 
@@ -313,7 +313,7 @@ export function ModalCreateQuestion({
             >
               <FormLabel component="legend">Opções de Resposta *</FormLabel>
               <Button
-                startIcon={<FiPlus />}
+                startIcon={<Plus size="1em" />}
                 onClick={addOption}
                 size="small"
                 variant="outlined"
@@ -348,7 +348,7 @@ export function ModalCreateQuestion({
                       color="error"
                       size="small"
                     >
-                      <FiTrash2 />
+                      <Trash2 size="1em" />
                     </IconButton>
                   )}
                 </Box>
@@ -371,7 +371,7 @@ export function ModalCreateQuestion({
           >
             <Typography variant="h6">Condições</Typography>
             <Button
-              startIcon={<FiSettings />}
+              startIcon={<Settings size="1em" />}
               onClick={() => modals.modalConditions.open()}
               variant="outlined"
               size="small"

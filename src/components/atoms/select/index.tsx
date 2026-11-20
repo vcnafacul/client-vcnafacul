@@ -1,5 +1,5 @@
 import { ComponentProps } from "react";
-import { TiArrowSortedDown } from "react-icons/ti";
+import { ChevronDown } from "lucide-react";
 import { OptionProps } from "../selectOption";
 
 export type SelectProps = ComponentProps<"select"> & {
@@ -44,7 +44,7 @@ function Select({ options, disabled, value, setState }: SelectProps) {
         ))}
       </select>
 
-      <TiArrowSortedDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+      <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
     </div>
   );
 }

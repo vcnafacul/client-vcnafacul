@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FiCpu, FiUser } from "react-icons/fi";
+import { Cpu, User } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { Essay, EssayReview } from "@/dtos/essay";
 import { getEssayById, getEssayReviews, downloadEssayImage } from "@/services/essay";
@@ -94,9 +94,9 @@ export default function EssayViewDetail() {
               >
                 <div className="flex-shrink-0 text-foreground">
                   {review.reviewType === "AI" ? (
-                    <FiCpu className="h-6 w-6" />
+                    <Cpu className="h-6 w-6" />
                   ) : (
-                    <FiUser className="h-6 w-6" />
+                    <User className="h-6 w-6" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">

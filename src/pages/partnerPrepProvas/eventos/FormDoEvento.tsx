@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { FiSearch, FiX } from "react-icons/fi";
+import { Search, X } from "lucide-react";
 import { toast } from "react-toastify";
 import {
   EventoDoCursinho,
@@ -187,7 +187,7 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
                     aria-label={`Tirar ${p?.nome ?? "prova"}`}
                     className="rounded-full p-1 hover:bg-primary/20"
                   >
-                    <FiX aria-hidden />
+                    <X size="1em" aria-hidden />
                   </button>
                 </li>
               );
@@ -202,7 +202,7 @@ export function FormDoEvento({ token, evento, provas, onSalvo, onCancelar }: Pro
         ) : (
           <>
         <div className="relative">
-          <FiSearch
+          <Search size="1em"
             aria-hidden
             className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground"
           />

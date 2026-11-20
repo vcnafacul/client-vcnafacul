@@ -3,9 +3,7 @@ import { Roles } from "@/enums/roles/roles";
 import { useAuthStore } from "@/store/auth";
 import { Box, IconButton, Tooltip } from "@mui/material";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
-import { CgArrowsExchangeAltV } from "react-icons/cg";
-import { FaPlus } from "react-icons/fa";
-import { FiEdit3, FiTrash2 } from "react-icons/fi";
+import { ArrowUpDown, Edit3, Plus, Trash2 } from "lucide-react";
 
 interface Props {
   onAdd?: () => void;
@@ -50,7 +48,7 @@ export function FrentesActionMenu({
             onClick={onAdd}
             sx={{ color: "primary.main" }}
           >
-            <FaPlus className="h-4 w-4" />
+            <Plus className="h-4 w-4" />
           </IconButton>
         </Tooltip>
       )}
@@ -61,7 +59,7 @@ export function FrentesActionMenu({
             onClick={onEdit}
             sx={{ color: "warning.main" }}
           >
-            <FiEdit3 className="h-4 w-4" />
+            <Edit3 className="h-4 w-4" />
           </IconButton>
         </Tooltip>
       )}
@@ -72,7 +70,7 @@ export function FrentesActionMenu({
             onClick={onReorder}
             sx={{ color: "text.secondary" }}
           >
-            <CgArrowsExchangeAltV className="h-5 w-5" />
+            <ArrowUpDown className="h-5 w-5" />
           </IconButton>
         </Tooltip>
       )}
@@ -83,7 +81,7 @@ export function FrentesActionMenu({
             onClick={onDelete}
             sx={{ color: "error.main" }}
           >
-            <FiTrash2 className="h-4 w-4" />
+            <Trash2 className="h-4 w-4" />
           </IconButton>
         </Tooltip>
       )}
@@ -101,7 +99,7 @@ export function FrentesActionMenu({
                   aria-label="Excluir"
                   sx={{ color: "error.main" }}
                 >
-                  <FiTrash2 className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4" />
                 </IconButton>
               </AlertDialogTrigger>
             </AlertDialogUI>

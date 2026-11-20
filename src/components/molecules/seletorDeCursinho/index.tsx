@@ -6,7 +6,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useMemo, useState } from "react";
-import { FiCheck, FiChevronDown } from "react-icons/fi";
+import { Check, ChevronDown } from "lucide-react";
 import { CursinhoDoFiltro, filtrarCursinhos } from "./filtrar";
 
 type Props = {
@@ -58,7 +58,7 @@ export function SeletorDeCursinho({
           <span className="truncate">
             {escolhido?.name ?? rotuloDoVazio}
           </span>
-          <FiChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-60" />
+          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-60" />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-[min(20rem,calc(100vw-2rem))] p-2">
@@ -116,7 +116,7 @@ function Opcao({
         onClick={onClick}
         className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-body hover:bg-muted/50"
       >
-        <FiCheck
+        <Check
           className={`h-4 w-4 shrink-0 ${selecionada ? "opacity-100" : "opacity-0"}`}
         />
         <span className="truncate">{texto}</span>

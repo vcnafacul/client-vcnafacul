@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
-import { LuMessageSquareDashed, LuHeadset, LuSearch } from "react-icons/lu";
+import { MessageSquareDashed, Headset, Search } from "lucide-react";
 import { ChatLayout } from "@/components/chat/ChatLayout";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -62,7 +62,7 @@ export function SupportInboxView({
     <div className="flex flex-col h-[calc(100vh-theme(spacing.header))] supports-[height:100dvh]:h-[calc(100dvh-theme(spacing.header))]">
       <header className="bg-primary text-primary-foreground px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 shadow-sm">
         <div className="flex items-center gap-2">
-          <LuHeadset className="h-5 w-5 text-primary" />
+          <Headset className="h-5 w-5 text-primary" />
           <h1 className="font-raleway font-bold text-h3">
             {title}
           </h1>
@@ -113,7 +113,7 @@ export function SupportInboxView({
             </button>
           </div>
           <div className="flex items-center gap-2 px-3 h-11 border-b bg-white shrink-0">
-            <LuSearch className="h-4 w-4 text-muted-foreground shrink-0" />
+            <Search className="h-4 w-4 text-muted-foreground shrink-0" />
             <Input
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
@@ -133,7 +133,7 @@ export function SupportInboxView({
             ))}
             {sorted.length === 0 && (
               <div className="flex flex-col items-center justify-center text-center px-6 py-16 gap-3">
-                <LuMessageSquareDashed className="h-12 w-12 text-foreground/30" />
+                <MessageSquareDashed className="h-12 w-12 text-foreground/30" />
                 <span className="font-medium text-foreground">
                   {convs.length === 0
                     ? isArchived
@@ -185,7 +185,7 @@ export function SupportInboxView({
             />
           ) : (
             <div className="flex flex-col items-center justify-center h-full gap-3 text-center px-8">
-              <LuHeadset className="h-14 w-14 text-foreground/20" />
+              <Headset className="h-14 w-14 text-foreground/20" />
               <span className="font-raleway font-semibold text-foreground">
                 Selecione uma conversa
               </span>

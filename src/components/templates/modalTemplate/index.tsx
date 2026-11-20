@@ -1,5 +1,5 @@
 import React, { ComponentProps } from "react";
-import { IoMdClose } from "react-icons/io";
+import { X } from "lucide-react";
 
 export interface ModalProps {
   handleClose?: () => void;
@@ -37,7 +37,7 @@ function ModalTemplate({
         <div className={`my-auto ${className}`}>
           <div className="flex justify-end shrink-0">
             {closer && (
-              <IoMdClose
+              <X
                 onClick={handleClose}
                 className="self-end md:mt-0 cursor-pointer w-6 h-6"
               />

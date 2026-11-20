@@ -1,6 +1,6 @@
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { lazy, ReactNode, Suspense, useState } from "react";
-import { FiChevronDown } from "react-icons/fi";
+import { ChevronDown } from "lucide-react";
 import { getIconByTitle } from "../../../pages/mainSimulate/data";
 import IconArea from "../../atoms/iconArea";
 import Text from "../../atoms/text";
@@ -117,7 +117,7 @@ function SimulateTemplate({
               {respondidas !== undefined &&
                 ` · ${respondidas}/${totalConsiderado ?? questions.length} respondidas`}
             </span>
-            <FiChevronDown
+            <ChevronDown
               className={`h-5 w-5 transition-transform ${gradeAberta ? "rotate-180" : ""}`}
             />
           </button>

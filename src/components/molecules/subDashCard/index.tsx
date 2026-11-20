@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { IoAddCircle } from "react-icons/io5";
+import { CirclePlus } from "lucide-react";
 import { Roles } from "../../../enums/roles/roles";
 import { useSidebar } from "@/components/ui/sidebar";
 
@@ -49,7 +49,7 @@ function SubDashCard({ subCardInfo, blank }: SubDashCardPros){
                         <Icon className={`w-6 h-6 ${isActive && !blank ? "fill-primary" : "fill-muted-foreground"}`}/>
                         {subCardInfo.text}
                     </div>
-                    <IoAddCircle size={16} color="green" />
+                    <CirclePlus className="h-4 w-4" color="green" />
                 </>
             )}
         </NavLink>

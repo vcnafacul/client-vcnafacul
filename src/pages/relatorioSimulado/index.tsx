@@ -4,7 +4,7 @@ import { DASH, PARTNER_CLASS, PARTNER_PROVAS } from "@/routes/path";
 import { Roles } from "@/enums/roles/roles";
 import { caminhoDaTurma } from "../partnerClassWithStudents/abaDaTurma";
 import { useAuthStore } from "@/store/auth";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowLeft } from "lucide-react";
 import { useEffect } from "react";
 import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { RelatorioDoSimuladoConteudo } from "./RelatorioDoSimuladoConteudo";
@@ -127,7 +127,7 @@ function RelatorioSimulado({
               dashV2.focus,
             )}
           >
-            <ArrowLeftIcon className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4" />
             Voltar
           </button>
 

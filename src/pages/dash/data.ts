@@ -46,27 +46,14 @@ import { ReactComponent as Fisica } from "../../assets/icons/home-subjects-fisic
 import { ReactComponent as Matematica } from "../../assets/icons/home-subjects-matematica.svg";
 import { ReactComponent as Quimica } from "../../assets/icons/home-subjects-quimica.svg";
 
-import { GoGraph } from "react-icons/go";
-import { IoSchool } from "react-icons/io5";
-import {
-  LuBell,
-  LuChartColumnIncreasing,
-  LuGlobe,
-  LuHouse,
-  LuMessageSquare,
-} from "react-icons/lu";
+import { Bell, Book, ChartColumnIncreasing, ChartLine, ClipboardList, ClipboardPen, Globe, GraduationCap, House, MessageSquare, School, Users, UsersRound } from "lucide-react";
 import { ReactComponent as Atualidades } from "../../assets/icons/home-subjects-atualidades.svg";
 import { ReactComponent as Filosofia } from "../../assets/icons/home-subjects-filosofia.svg";
 import { ReactComponent as Geografia } from "../../assets/icons/home-subjects-geografia.svg";
 import { ReactComponent as Historia } from "../../assets/icons/home-subjects-historia.svg";
 import { ReactComponent as Sociologia } from "../../assets/icons/home-subjects-sociologia.svg";
 
-import { BiSolidSchool } from "react-icons/bi";
-import { FaPeopleGroup } from "react-icons/fa6";
-import { PiStudentFill, PiUsersFourBold } from "react-icons/pi";
 
-import { FaBook, FaClipboardList } from "react-icons/fa";
-import { FaWpforms } from "react-icons/fa6";
 import { getIconPreset } from "../../config/materiaPresets";
 import { DashCardMenu } from "../../components/molecules/dashCard";
 import { SubDashCardInfo } from "../../components/molecules/subDashCard";
@@ -107,14 +94,14 @@ export const adminMenuItems: DashCardMenu[] = [
     alt: "Cursinho",
     subMenuList: [
       {
-        icon: PiStudentFill,
+        icon: GraduationCap,
         alt: "processos seletivos",
         text: "Processos Seletivos",
         link: `/dashboard/${PARTNER_PREP_INSCRIPTION}`,
         permissions: [Roles.gerenciarProcessoSeletivo],
       },
       {
-        icon: LuGlobe,
+        icon: Globe,
         alt: "página do cursinho",
         text: "Página do cursinho",
         link: `/dashboard/${PARTNER_PAGINA}`,
@@ -122,28 +109,28 @@ export const adminMenuItems: DashCardMenu[] = [
         permissions: [Roles.gerenciarPermissoesCursinho, Roles.gerenciarEstudantes],
       },
       {
-        icon: FaPeopleGroup,
+        icon: Users,
         alt: "colaboradores",
         text: "Colaboradores",
         link: `/dashboard/${MANAGER_COLLABORATOR}`,
         permissions: [Roles.gerenciarColaboradores],
       },
       {
-        icon: BiSolidSchool,
+        icon: School,
         alt: "turmas",
         text: "Turmas",
         link: `/dashboard/${PARTNER_CLASS}`,
         permissions: [Roles.visualizarTurmas],
       },
       {
-        icon: PiUsersFourBold,
+        icon: UsersRound,
         alt: "matriculados",
         text: "Estudantes",
         link: `/dashboard/${PARTNER_CLASS_STUDENTS}`,
         permissions: [Roles.visualizarEstudantes],
       },
       {
-        icon: LuChartColumnIncreasing,
+        icon: ChartColumnIncreasing,
         alt: "indicadores",
         text: "Indicadores",
         link: `/dashboard/${PARTNER_INDICADORES}`,
@@ -156,7 +143,7 @@ export const adminMenuItems: DashCardMenu[] = [
         ],
       },
       {
-        icon: FaWpforms,
+        icon: ClipboardPen,
         alt: "formulário",
         text: "Formulário",
         link: `/dashboard/${PARTNER_CLASS_FORM}`,
@@ -170,14 +157,14 @@ export const adminMenuItems: DashCardMenu[] = [
         permissions: [Roles.visualizarProvasCursinho],
       },
       {
-        icon: FaBook,
+        icon: Book,
         alt: "revisao redacoes",
         text: "Revisão de Redações",
         link: `/dashboard/${ESSAY_REVIEW_CURSINHO}`,
         permissions: [Roles.revisarRedacoes],
       },
       {
-        icon: LuMessageSquare,
+        icon: MessageSquare,
         alt: "suporte cursinho",
         text: "Suporte / Chat",
         link: `/dashboard/${DASH_PARTNER_SUPPORT}`,
@@ -227,14 +214,14 @@ export const adminMenuItems: DashCardMenu[] = [
         permissions: [Roles.visualizarProvas],
       },
       {
-        icon: FaBook,
+        icon: Book,
         alt: "redacao",
         text: "Redação",
         link: `/dashboard/${ESSAY_THEME_ADMIN}`,
         permissions: [Roles.gerenciarTemas],
       },
       {
-        icon: FaClipboardList,
+        icon: ClipboardList,
         alt: "revisao redacoes",
         text: "Revisão de Redações",
         link: `/dashboard/${ESSAY_REVIEW_LIST}`,
@@ -257,42 +244,42 @@ export const adminMenuItems: DashCardMenu[] = [
     alt: "Admin",
     subMenuList: [
       {
-        icon: FaWpforms,
+        icon: ClipboardPen,
         alt: "formulario_global",
         text: "Formulário Global",
         link: `/dashboard/${DASH_GLOBAL_FORM}`,
         permissions: [Roles.gerenciarFormularioGlobal],
       },
       {
-        icon: IoSchool,
+        icon: GraduationCap,
         alt: "gerenciamento_cursinho",
         text: "Gerenciamento de Cursinho",
         link: `/dashboard/${PARTNER_PREP_MANAGER}`,
         permissions: [Roles.alterarPermissao],
       },
       {
-        icon: LuBell,
+        icon: Bell,
         alt: "notificacoes_push",
         text: "Notificações",
         link: `/dashboard/${DASH_PUSH}`,
         permissions: [Roles.enviarNotificacao],
       },
       {
-        icon: LuHouse,
+        icon: House,
         alt: "dash_home",
         text: "Home",
         link: `/dashboard/${DASH_HOME}`,
         permissions: [Roles.alterarPermissao],
       },
       {
-        icon: GoGraph,
+        icon: ChartLine,
         alt: "dash_analytics",
         text: "Monitoramento",
         link: `/dashboard/${DASH_ANALYTICS}`,
         permissions: [Roles.criarQuestao],
       },
       {
-        icon: LuMessageSquare,
+        icon: MessageSquare,
         alt: "suporte",
         text: "Suporte",
         link: `/dashboard/${DASH_SUPPORT}`,
@@ -313,25 +300,25 @@ export const studentMenuItem: DashCardMenu = {
   id: 7,
   bg: "bg-primary",
   title: "Meus Estudos",
-  image: IoSchool,
+  image: GraduationCap,
   alt: "Meus Estudos",
   subMenuList: [
     {
-      icon: FaClipboardList,
+      icon: ClipboardList,
       alt: "processos seletivos",
       text: "Inscrições",
       link: `/dashboard/${REGISTRATION_MONITOR}`,
       permissions: [Roles.visualizarMinhasInscricoes],
     },
     {
-      icon: FaBook,
+      icon: Book,
       alt: "redacoes",
       text: "Redações",
       link: `/dashboard/${ESSAY_WRITE}`,
       permissions: [Roles.visualizarMinhasInscricoes],
     },
     {
-      icon: GoGraph,
+      icon: ChartLine,
       alt: "simulados",
       text: "Simulados",
       link: `${DASH}/${SIMULADO}`,
@@ -408,7 +395,7 @@ export function buildAcademicMenuItems(
       const subMenuList: SubDashCardInfo[] = area.materias.map((materia) => {
         const icon = materia.icon
           ? getIconPreset(materia.icon)
-          : (materiaConfig[materia.nome]?.icon ?? FaBook);
+          : (materiaConfig[materia.nome]?.icon ?? Book);
         return {
           icon,
           alt: materia.nome.toLowerCase(),

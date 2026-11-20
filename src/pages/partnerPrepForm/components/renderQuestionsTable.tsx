@@ -20,7 +20,7 @@ import {
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { IconButton, Tooltip } from "@mui/material";
 import { useState } from "react";
-import { FiArrowDown, FiArrowUp } from "react-icons/fi";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import {
   AnswerTypeBadge,
   CollectionBadge,
@@ -232,7 +232,7 @@ export function RenderQuestionsTable({
                             disabled={indice === 0}
                             onClick={() => mover(indice, indice - 1)}
                           >
-                            <FiArrowUp className="h-4 w-4" />
+                            <ArrowUp className="h-4 w-4" />
                           </IconButton>
                         </span>
                       </Tooltip>
@@ -243,7 +243,7 @@ export function RenderQuestionsTable({
                             disabled={indice === questions.length - 1}
                             onClick={() => mover(indice, indice + 1)}
                           >
-                            <FiArrowDown className="h-4 w-4" />
+                            <ArrowDown className="h-4 w-4" />
                           </IconButton>
                         </span>
                       </Tooltip>

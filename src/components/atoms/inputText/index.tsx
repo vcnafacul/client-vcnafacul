@@ -1,20 +1,19 @@
 import { Input, InputProps } from "@/components/ui/input";
 import { useState } from "react";
-import { AiFillEyeInvisible } from "react-icons/ai";
-import { IoMdEye } from "react-icons/io";
+import { Eye, EyeOff } from "lucide-react";
 
 export function InputText({ ...props }: InputProps) {
   const [visible, setVisible] = useState<boolean>(false);
   function backgroundImageToggleVisibility(visible: boolean) {
     return visible ? (
-      <AiFillEyeInvisible
+      <EyeOff
         onClick={() => setVisible(!visible)}
-        className="absolute p-0 bg-transparent w-6 h-6 right-3 top-4 cursor-pointer fill-muted-foreground"
+        className="absolute p-0 bg-transparent w-6 h-6 right-3 top-4 cursor-pointer text-muted-foreground"
       />
     ) : (
-      <IoMdEye
+      <Eye
         onClick={() => setVisible(!visible)}
-        className="absolute p-0 bg-transparent w-6 h-6 right-3 top-4 cursor-pointer fill-muted-foreground"
+        className="absolute p-0 bg-transparent w-6 h-6 right-3 top-4 cursor-pointer text-muted-foreground"
       />
     );
   }

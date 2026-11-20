@@ -29,7 +29,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { FiInfo, FiPlus, FiTrash2 } from "react-icons/fi";
+import { Info, Plus, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 
 interface ModalCreateRuleProps extends ModalProps {
@@ -506,7 +506,7 @@ export function ModalCreateRule({
                   <Box>
                     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1, mb: 1 }}>
                       <FormLabel>Faixas Numéricas *</FormLabel>
-                      <Button startIcon={<FiPlus />} onClick={addRange} size="small" variant="outlined">
+                      <Button startIcon={<Plus size="1em" />} onClick={addRange} size="small" variant="outlined">
                         Adicionar Faixa
                       </Button>
                     </Box>
@@ -549,7 +549,7 @@ export function ModalCreateRule({
                           />
                           {formData.ranges.length > 1 && (
                             <IconButton onClick={() => removeRange(index)} color="error" size="small">
-                              <FiTrash2 />
+                              <Trash2 size="1em" />
                             </IconButton>
                           )}
                         </Box>
@@ -580,7 +580,7 @@ export function ModalCreateRule({
                         }}
                       >
                         <IconButton size="small" sx={{ color: "info.main" }}>
-                          <FiInfo size={16} />
+                          <Info className="h-4 w-4" />
                         </IconButton>
                       </Tooltip>
                     </Box>
@@ -641,7 +641,7 @@ export function ModalCreateRule({
                   }}
                 >
                   <IconButton size="small" sx={{ color: "info.main" }}>
-                    <FiInfo size={16} />
+                    <Info className="h-4 w-4" />
                   </IconButton>
                 </Tooltip>
               </Box>
@@ -672,7 +672,7 @@ export function ModalCreateRule({
                         color="error"
                         onClick={() => removeComputedQuestion(index)}
                       >
-                        <FiTrash2 size={14} />
+                        <Trash2 className="h-3.5 w-3.5" />
                       </IconButton>
                     </Box>
                   );

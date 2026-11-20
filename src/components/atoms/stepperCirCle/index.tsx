@@ -4,7 +4,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CheckIcon } from "@heroicons/react/20/solid";
+import { Check } from "lucide-react";
 
 export interface StepCicle {
   name: string;
@@ -43,7 +43,7 @@ export default function StepperCircle({ steps }: StepsProps) {
                         <div className="h-0.5 w-full bg-cta" />
                       </div>
                       <div className="relative flex h-5 w-5 items-center justify-center rounded-full bg-cta ">
-                        <CheckIcon
+                        <Check
                           aria-hidden="true"
                           className="h-4 w-4 text-white"
                         />

@@ -5,20 +5,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import {
-  CheckCircleIcon,
-  ClockIcon,
-  LockClosedIcon,
-  XCircleIcon,
-} from "@heroicons/react/24/outline";
+import { CircleCheck, Clock, Lock, CircleX } from "lucide-react";
 import { SimuladoResumo } from "../../../dtos/prova/prova";
 import { statusVisual, type FormaDoIcone } from "./simuladoStatus";
 
-const ICONES: Record<FormaDoIcone, typeof CheckCircleIcon> = {
-  cadeado: LockClosedIcon,
-  relogio: ClockIcon,
-  expirado: XCircleIcon,
-  check: CheckCircleIcon,
+const ICONES: Record<FormaDoIcone, typeof CircleCheck> = {
+  cadeado: Lock,
+  relogio: Clock,
+  expirado: CircleX,
+  check: CircleCheck,
 };
 
 /**

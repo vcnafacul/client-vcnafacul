@@ -9,7 +9,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useEffect, useState } from "react";
-import { MdDeleteForever, MdModeEdit } from "react-icons/md";
+import { Pencil, Trash2 } from "lucide-react";
 import ManagerMateria from "./managerMateria";
 import { Roles } from "@/enums/roles/roles";
 import { useAuthStore } from "@/store/auth";
@@ -114,12 +114,12 @@ export function PanelMateria({
               <div className="flex gap-2 justify-center">
                 <Tooltip title="Editar matéria">
                   <IconButton onClick={() => editar(params.row as MateriaDto)}>
-                    <MdModeEdit className="fill-muted-foreground hover:fill-black" />
+                    <Pencil size="1em" className="text-muted-foreground hover:text-black" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Excluir matéria">
                   <IconButton onClick={() => excluir(params.row as MateriaDto)}>
-                    <MdDeleteForever className="fill-destructive opacity-50 hover:opacity-100" />
+                    <Trash2 size="1em" className="text-destructive opacity-50 hover:opacity-100" />
                   </IconButton>
                 </Tooltip>
               </div>

@@ -3,7 +3,7 @@ import { formatDate } from "@/utils/date";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { IconButton, TableCell, TableRow, Typography } from "@mui/material";
-import { MdDragIndicator } from "react-icons/md";
+import { GripVertical } from "lucide-react";
 import {
   AnswerTypeBadge,
   CollectionBadge,
@@ -74,7 +74,7 @@ export function SortableQuestionRow({
             },
           }}
         >
-          <MdDragIndicator size={20} />
+          <GripVertical className="h-5 w-5" />
         </IconButton>
       </TableCell>
 

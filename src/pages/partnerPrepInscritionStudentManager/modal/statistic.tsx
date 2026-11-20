@@ -1,7 +1,7 @@
 import RenderCharts from "@/components/organisms/renderCharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
-import { IoMdClose } from "react-icons/io";
+import { X } from "lucide-react";
 
 interface StudentsInfo {
   forms: SocioeconomicAnswer[][];
@@ -51,7 +51,7 @@ function ModalContent({
   return (
     <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded-sm pb-2 px-2 flex flex-col gap-4 relative border-8 border-white">
       <div className="sticky top-0 bg-white z-sticky flex items-center justify-end p-2">
-        <IoMdClose
+        <X
           className="w-5 h-5 cursor-pointer text-muted-foreground hover:text-foreground transition"
           onClick={onClose}
         />

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactComponent as PreviewIcon } from '../../../assets/icons/Icon-preview.svg';
 import { ReactComponent as EditIcon } from '../../../assets/icons/edit.svg'
-import { IoTrash } from "react-icons/io5";
+import { Trash2 } from "lucide-react";
 
 interface DropdwonMenuProps {
     src: string;
@@ -19,7 +19,7 @@ function ImageProfile({src, onChange, deleteImage} : DropdwonMenuProps){
                     <PreviewIcon className='w-20 h-20' /></div>}
             </div>
             {src ? <div className={`absolute bottom-3 right-1 bg-muted border-input py-2 px-2 select-none rounded-full border`} onClick={deleteImage}>
-                <IoTrash className='w-4 h-4 fill-foreground' />
+                <Trash2 className='w-4 h-4 text-foreground' />
             </div> : <></>}
             <div className={`absolute bottom-3 left-0 bg-muted border-input py-2 px-2 select-none rounded-full border`}>
                 <EditIcon className='w-4 h-4 fill-foreground' />

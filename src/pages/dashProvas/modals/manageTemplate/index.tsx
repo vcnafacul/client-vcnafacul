@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { DocumentTextIcon } from "@heroicons/react/24/outline";
+import { FileText } from "lucide-react";
 import Button from "../../../../components/molecules/button";
 import ModalTemplate from "../../../../components/templates/modalTemplate";
 import { useToastAsync } from "../../../../hooks/useToastAsync";
@@ -262,7 +262,7 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
         <div className="p-6">
           <div className="mb-2 flex items-center gap-3">
             <div className="rounded-lg bg-info-muted p-2">
-              <DocumentTextIcon className="h-6 w-6 text-info" />
+              <FileText className="h-6 w-6 text-info" />
             </div>
             <h2 className="text-h2 font-semibold text-foreground">
               Template do caderno

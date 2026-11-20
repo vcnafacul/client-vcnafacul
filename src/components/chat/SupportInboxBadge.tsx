@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { LuMessageSquare } from "react-icons/lu";
+import { MessageSquare } from "lucide-react";
 import { UnreadBadge } from "@/components/chat/UnreadBadge";
 import { listenSupportInbox } from "@/services/firebase/conversations";
 import { DASH, DASH_SUPPORT } from "@/routes/path";
@@ -31,7 +31,7 @@ export function SupportInboxBadge() {
       className="flex items-center gap-2 px-2 py-1 text-body hover:bg-muted rounded-md transition"
       aria-label="Abrir inbox de suporte"
     >
-      <LuMessageSquare className="h-4 w-4" />
+      <MessageSquare className="h-4 w-4" />
       <span>Suporte</span>
       <UnreadBadge count={count} />
     </Link>

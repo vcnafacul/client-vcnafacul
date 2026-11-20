@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactNode, useState } from "react";
-import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
@@ -57,9 +57,9 @@ function ExpandableTableRow<T, K>({
             onClick={() => setOpen(!open)}
           >
             {open ? (
-              <FiChevronUp className="w-5 h-5" />
+              <ChevronUp className="w-5 h-5" />
             ) : (
-              <FiChevronDown className="w-5 h-5" />
+              <ChevronDown className="w-5 h-5" />
             )}
           </IconButton>
         </TableCell>

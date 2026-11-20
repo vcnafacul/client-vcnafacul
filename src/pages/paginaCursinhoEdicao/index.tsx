@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { FiExternalLink } from "react-icons/fi";
+import { ExternalLink } from "lucide-react";
 import Toggle from "@/components/atoms/toggle";
 import { RichTextEditor } from "@/components/molecules/richTextEditor/RichTextEditor";
 import { PARTNER_PREP } from "@/routes/path";
@@ -102,7 +102,7 @@ export default function PaginaCursinhoEdicao() {
             rel="noreferrer"
             className="flex items-center gap-1 text-body text-foreground hover:underline"
           >
-            Ver página pública <FiExternalLink />
+            Ver página pública <ExternalLink size="1em" />
           </a>
         )}
       </div>

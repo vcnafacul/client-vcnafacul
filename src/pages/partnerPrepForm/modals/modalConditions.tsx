@@ -27,7 +27,7 @@ import {
 } from "@mui/material";
 import { memo, useState } from "react";
 import { resumo, ROTULO_DO_TIPO } from "../textosDeCondicao";
-import { FiPlus, FiTrash2 } from "react-icons/fi";
+import { Plus, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 
 interface ModalConditionsProps extends ModalProps {
@@ -396,7 +396,7 @@ export function ModalConditions({
           >
             <Typography variant="h6">Condições</Typography>
             <Button
-              startIcon={<FiPlus />}
+              startIcon={<Plus size="1em" />}
               onClick={addCondition}
               size="small"
               variant="outlined"
@@ -442,7 +442,7 @@ export function ModalConditions({
                         color="error"
                         size="small"
                       >
-                        <FiTrash2 />
+                        <Trash2 size="1em" />
                       </IconButton>
                     )}
                   </Box>

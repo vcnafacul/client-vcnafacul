@@ -32,14 +32,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import {
-  FiEdit3,
-  FiPlus,
-  FiSave,
-  FiSettings,
-  FiTrash2,
-  FiX,
-} from "react-icons/fi";
+import { Edit3, Plus, Save, Settings, Trash2, X } from "lucide-react";
 import { ModalConditions } from "./modalConditions";
 import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
 
@@ -273,7 +266,7 @@ export function ModalShowQuestion({
           <Box sx={{ display: "flex", gap: 1 }}>
             {!isEditMode && !readOnly && (
               <Button
-                startIcon={<FiEdit3 />}
+                startIcon={<Edit3 size="1em" />}
                 onClick={handleEditMode}
                 variant="outlined"
                 size="small"
@@ -381,7 +374,7 @@ export function ModalShowQuestion({
               <FormLabel component="legend">Opções de Resposta</FormLabel>
               {isEditMode && (
                 <Button
-                  startIcon={<FiPlus />}
+                  startIcon={<Plus size="1em" />}
                   onClick={addOption}
                   size="small"
                   variant="outlined"
@@ -423,7 +416,7 @@ export function ModalShowQuestion({
                       color="error"
                       size="small"
                     >
-                      <FiTrash2 />
+                      <Trash2 size="1em" />
                     </IconButton>
                   )}
                 </Box>
@@ -449,7 +442,7 @@ export function ModalShowQuestion({
               <Box sx={{ display: "flex", gap: 1 }}>
                 {editableData.conditions && (
                   <Button
-                    startIcon={<FiTrash2 />}
+                    startIcon={<Trash2 size="1em" />}
                     onClick={() => setConfirmarRemocao(true)}
                     variant="outlined"
                     color="error"
@@ -459,7 +452,7 @@ export function ModalShowQuestion({
                   </Button>
                 )}
                 <Button
-                  startIcon={<FiSettings />}
+                  startIcon={<Settings size="1em" />}
                   onClick={() => setIsOpenConditions(true)}
                   variant="outlined"
                   size="small"
@@ -526,7 +519,7 @@ export function ModalShowQuestion({
               onClick={handleCancelEdit}
               variant="outlined"
               disabled={loading}
-              startIcon={<FiX />}
+              startIcon={<X size="1em" />}
             >
               Cancelar
             </Button>
@@ -534,7 +527,7 @@ export function ModalShowQuestion({
               onClick={handleSave}
               variant="contained"
               disabled={loading}
-              startIcon={loading ? <CircularProgress size={20} /> : <FiSave />}
+              startIcon={loading ? <CircularProgress size={20} /> : <Save size="1em" />}
             >
               {loading ? "Salvando..." : "Salvar"}
             </Button>

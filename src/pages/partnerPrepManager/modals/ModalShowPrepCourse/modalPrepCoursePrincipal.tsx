@@ -21,12 +21,7 @@ import { updateRepresentative } from "@/services/prepCourse/prepCourse/updateRep
 import { useAuthStore } from "@/store/auth";
 import { PartnerPrepCourse } from "@/types/partnerPrepCourse/partnerPrepCourse";
 import { useEffect, useRef, useState } from "react";
-import {
-  IoMdClose,
-  IoMdCloudOutline,
-  IoMdCreate,
-  IoMdDownload,
-} from "react-icons/io";
+import { Cloud, Download, Pencil, X } from "lucide-react";
 import { toast } from "react-toastify";
 
 export interface ModalPrincipalProps extends ModalProps {
@@ -426,13 +421,13 @@ export const ModalPrepCoursePrincipal = ({
             onClick={toggleEdit}
             className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-border transition-colors"
           >
-            <IoMdCreate className="w-4 h-4 text-muted-foreground" />
+            <Pencil className="w-4 h-4 text-muted-foreground" />
           </button>
           <button
             onClick={handleClose}
             className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-border transition-colors"
           >
-            <IoMdClose className="w-4 h-4 text-muted-foreground" />
+            <X className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
       </div>
@@ -594,11 +589,11 @@ export const ModalPrepCoursePrincipal = ({
               >
                 {agreementFileName}
                 {prepCourse.agreement && !selectedAgreement && (
-                  <IoMdDownload className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Download className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                 )}
               </span>
               {selectedAgreement && (
-                <IoMdClose
+                <X
                   className="w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground"
                   onClick={removeSelectedAgreement}
                 />
@@ -611,7 +606,7 @@ export const ModalPrepCoursePrincipal = ({
                 onClick={openAgreementFileSelector}
                 className="bg-page w-fit border-border text-muted-foreground hover:bg-muted flex items-center gap-2"
               >
-                <IoMdCloudOutline className="w-4 h-4" />
+                <Cloud className="w-4 h-4" />
                 Selecionar arquivo
               </Button>
               {selectedAgreement && (

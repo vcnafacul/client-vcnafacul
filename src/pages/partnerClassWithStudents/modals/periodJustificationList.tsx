@@ -7,7 +7,7 @@ import { useAuthStore } from "@/store/auth";
 import { mensagemDeErro } from "@/utils/mensagemDeErro";
 import { PeriodJustification } from "@/types/partnerPrepCourse/periodJustification";
 import { useEffect, useState } from "react";
-import { IoChevronDown, IoChevronUp, IoClose } from "react-icons/io5";
+import { ChevronDown, ChevronUp, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { textoDaExclusaoDePeriodo } from "./textoDaExclusaoDePeriodo";
 
@@ -127,9 +127,9 @@ export function PeriodJustificationList({
       >
         <span>Justificativas de Período ({totalItems})</span>
         {expanded ? (
-          <IoChevronUp className="w-4 h-4" />
+          <ChevronUp className="w-4 h-4" />
         ) : (
-          <IoChevronDown className="w-4 h-4" />
+          <ChevronDown className="w-4 h-4" />
         )}
       </button>
 
@@ -173,7 +173,7 @@ export function PeriodJustificationList({
                     className="text-muted-foreground hover:text-destructive flex-shrink-0 mt-0.5"
                     title="Excluir justificativa"
                   >
-                    <IoClose className="w-5 h-5" />
+                    <X className="w-5 h-5" />
                   </button>
                 )}
               </div>

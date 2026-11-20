@@ -1,5 +1,5 @@
 import { ComponentProps, useMemo } from "react";
-import { IoChevronUpCircleSharp } from "react-icons/io5";
+import { CircleChevronUp } from "lucide-react";
 import { VariantProps, tv } from "tailwind-variants";
 import SubMenuDash from "../../organisms/subMenuDash";
 import { SubDashCardInfo } from "../subDashCard";
@@ -61,16 +61,15 @@ function DashCard({ card, size, opened, ...props }: DasCardProps) {
           className={`${dashCard({ size })} ${card.bg} ${size !== "small" && !opened ? "mt-4 rounded-md" : "mt-0"} cursor-pointer`}
         >
           <Icon
-            className={`select-none fill-white ${size !== "small" ? "w-16 h-16" : "w-7 h-7"} ${transition}`}
+            className={`select-none fill-white text-white ${size !== "small" ? "w-16 h-16" : "w-7 h-7"} ${transition}`}
           />
           <div
             className={`select-none ${size !== "small" ? "flex justify-center w-full" : "my-4"}`}
           >
             {card.title}
           </div>
-          <IoChevronUpCircleSharp
-            size={20}
-            className={`${size !== "small" ? "absolute right-4 bottom-4" : ""} ${opened ? "rotate-180" : ""} ${transition}`}
+          <CircleChevronUp
+            className={`h-5 w-5 ${size !== "small" ? "absolute right-4 bottom-4" : ""} ${opened ? "rotate-180" : ""} ${transition}`}
           />
         </div>
         {/*
