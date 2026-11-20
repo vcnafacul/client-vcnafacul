@@ -1,7 +1,12 @@
 import RenderCharts, {
   StudentsInfo,
 } from "@/components/organisms/renderCharts";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface StatisticModalProps {
   isOpen: boolean;
@@ -15,13 +20,13 @@ export function StatisticModal({
   data,
 }: StatisticModalProps) {
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white p-4 rounded-md h-[90vh] min-h-[600px] w-[95vw] overflow-y-auto scrollbar-hide"
-    >
-      <RenderCharts data={data} />
-      <></>
-    </ModalTemplate>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent size="full" aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Estatísticas</DialogTitle>
+        </DialogHeader>
+        <RenderCharts data={data} />
+      </DialogContent>
+    </Dialog>
   );
 }

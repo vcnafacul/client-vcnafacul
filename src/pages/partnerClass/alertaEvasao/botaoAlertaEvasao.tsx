@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { TriangleAlert } from "lucide-react";
 import { AlertaEvasaoModal } from "./alertaEvasaoModal";
@@ -9,12 +9,12 @@ export function BotaoAlertaEvasao({ fullWidth }: { fullWidth?: boolean }) {
   return (
     <>
       <Button
-        variant="outlined"
-        color="primary"
-        startIcon={<TriangleAlert size="1em" />}
+        type="button"
+        variant="outline"
         onClick={() => setAberto(true)}
-        fullWidth={fullWidth}
+        className={fullWidth ? "w-full" : undefined}
       >
+        <TriangleAlert aria-hidden="true" />
         Alerta de evasão
       </Button>
       {aberto && (

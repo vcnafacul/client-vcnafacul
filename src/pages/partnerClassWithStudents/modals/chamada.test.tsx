@@ -30,11 +30,6 @@ vi.mock("@/store/auth", () => ({
     },
   }),
 }));
-vi.mock("@/components/templates/modalTemplate", () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-}));
 // O DataGrid não roda no jsdom: o dublê desenha só as células com ação.
 vi.mock("@mui/x-data-grid", () => ({
   DataGrid: ({
@@ -132,12 +127,12 @@ describe("Novo Registro (tickets-documentacao, 11)", () => {
     });
     svc.criar.mockResolvedValue({ id: "r1" });
     abrir();
-    const joao = await screen.findByRole("group", { name: "João" });
+    const joao = await screen.findByRole("radiogroup", { name: "João" });
     expect(
-      within(joao).getByRole("button", { name: "Ausente" }),
-    ).toHaveAttribute("aria-pressed", "true");
+      within(joao).getByRole("radio", { name: "Ausente" }),
+    ).toBeChecked();
 
-    fireEvent.click(within(joao).getByRole("button", { name: "Presente" }));
+    fireEvent.click(within(joao).getByRole("radio", { name: "Presente" }));
     fireEvent.click(screen.getByRole("button", { name: "Registrar chamada" }));
 
     await waitFor(() => expect(svc.criar).toHaveBeenCalled());
@@ -157,16 +152,16 @@ describe("Novo Registro (tickets-documentacao, 11)", () => {
     );
     for (const nome of ["João", "Ana"])
       expect(
-        within(screen.getByRole("group", { name: nome })).getByRole("button", {
+        within(screen.getByRole("radiogroup", { name: nome })).getByRole("radio", {
           name: "Presente",
         }),
-      ).toHaveAttribute("aria-pressed", "true");
+      ).toBeChecked();
     fireEvent.click(screen.getByRole("button", { name: "Desmarcar todos" }));
     expect(
-      within(screen.getByRole("group", { name: "Ana" })).getByRole("button", {
+      within(screen.getByRole("radiogroup", { name: "Ana" })).getByRole("radio", {
         name: "Ausente",
       }),
-    ).toHaveAttribute("aria-pressed", "true");
+    ).toBeChecked();
   });
 
   it("busca sem acento acha o nome com acento", async () => {
@@ -177,12 +172,12 @@ describe("Novo Registro (tickets-documentacao, 11)", () => {
       ],
     });
     abrir();
-    await screen.findByRole("group", { name: "Ana" });
+    await screen.findByRole("radiogroup", { name: "Ana" });
     fireEvent.change(screen.getByRole("searchbox", { name: "Buscar aluno" }), {
       target: { value: "joao" },
     });
-    expect(screen.getByRole("group", { name: "João" })).toBeInTheDocument();
-    expect(screen.queryByRole("group", { name: "Ana" })).toBeNull();
+    expect(screen.getByRole("radiogroup", { name: "João" })).toBeInTheDocument();
+    expect(screen.queryByRole("radiogroup", { name: "Ana" })).toBeNull();
   });
 
   describe("risco de evasão (tickets/054, card 04)", () => {
@@ -219,7 +214,7 @@ describe("Novo Registro (tickets-documentacao, 11)", () => {
       expect(screen.getByText(/aluno em risco de evasão/)).toBeInTheDocument();
 
       fireEvent.click(
-        within(screen.getByRole("group", { name: "Joana" })).getByRole("button", {
+        within(screen.getByRole("radiogroup", { name: "Joana" })).getByRole("radio", {
           name: "Presente",
         }),
       );
@@ -232,7 +227,7 @@ describe("Novo Registro (tickets-documentacao, 11)", () => {
     it("justificado na data: etiqueta e sem selo", async () => {
       turma({ percentual: 15, minimoDeAulas: 10 });
       abrir();
-      const cesar = await screen.findByRole("group", { name: "César" });
+      const cesar = await screen.findByRole("radiogroup", { name: "César" });
       const linha = cesar.closest("li")!;
       expect(within(linha).getByText("justificado")).toBeInTheDocument();
       expect(within(linha).queryByLabelText(/risco de evasão/)).toBeNull();
@@ -241,7 +236,7 @@ describe("Novo Registro (tickets-documentacao, 11)", () => {
     it("alerta desligado: nada de selo nem resumo", async () => {
       turma(null);
       abrir();
-      await screen.findByRole("group", { name: "Joana" });
+      await screen.findByRole("radiogroup", { name: "Joana" });
       expect(screen.queryByLabelText(/risco de evasão/)).toBeNull();
       expect(screen.queryByText(/em risco de evasão/)).toBeNull();
     });

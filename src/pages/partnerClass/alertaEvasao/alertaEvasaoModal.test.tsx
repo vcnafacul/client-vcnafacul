@@ -17,9 +17,6 @@ vi.mock("react-toastify", () => ({
 vi.mock("@/store/auth", () => ({
   useAuthStore: () => ({ data: { token: "tok" } }),
 }));
-vi.mock("@/components/templates/modalTemplate", () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}));
 
 import { AlertaEvasaoModal } from "./alertaEvasaoModal";
 import { validarAlerta } from "./validarAlerta";
@@ -50,8 +47,8 @@ describe("AlertaEvasaoModal (tickets/054, card 03)", () => {
   beforeEach(() => vi.clearAllMocks());
 
   const percentual = () =>
-    screen.getByRole("textbox", { name: "Percentual de faltas" });
-  const minimo = () => screen.getByRole("textbox", { name: "Mínimo de aulas" });
+    screen.getByRole("textbox", { name: "Avisar a partir de" });
+  const minimo = () => screen.getByRole("textbox", { name: "Começar a avisar depois de" });
 
   it("abre com o que está salvo e mostra o exemplo", async () => {
     svc.get.mockResolvedValue({ percentual: 15, minimoDeAulas: 10 });

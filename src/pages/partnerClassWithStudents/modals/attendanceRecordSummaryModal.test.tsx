@@ -8,9 +8,6 @@ vi.mock("@/services/prepCourse/alertaEvasao", () => ({
 vi.mock("@/store/auth", () => ({
   useAuthStore: () => ({ data: { token: "tok" } }),
 }));
-vi.mock("@/components/templates/modalTemplate", () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}));
 
 import AttendanceRecordSummaryModal from "./attendanceRecordSummaryModal";
 

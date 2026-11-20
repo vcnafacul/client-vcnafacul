@@ -1,5 +1,11 @@
 import { InputFactory } from "@/components/organisms/inputFactory";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   CoursePeriodEntity,
   CoursePeriodOutput,
@@ -121,17 +127,17 @@ export function CoursePeriodCreateEditModal({
   }, [register, reset, isOpen, entity]);
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white p-4 rounded-md shadow-md"
-    >
-      <div className="w-[85vw] sm:w-[600px] flex flex-col gap-4">
-        <h1 className="text-left text-foreground text-h1 font-extrabold">
-          {isEdit ? "Editar Período Letivo" : "Novo Período Letivo"}
-        </h1>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>{isEdit ? "Editar Período Letivo" : "Novo Período Letivo"}</DialogTitle>
+        </DialogHeader>
 
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+        <form
+          id="form-periodo-letivo"
+          className="flex flex-col gap-4"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           {/* Nome do Período */}
           <InputFactory
             id="name"
@@ -160,6 +166,7 @@ export function CoursePeriodCreateEditModal({
                 control={control}
                 render={({ field }) => (
                   <Calendar
+                    appendTo="self"
                     id="startDate"
                     dateFormat="dd/mm/yy"
                     value={field.value}
@@ -190,6 +197,7 @@ export function CoursePeriodCreateEditModal({
                 control={control}
                 render={({ field }) => (
                   <Calendar
+                    appendTo="self"
                     id="endDate"
                     dateFormat="dd/mm/yy"
                     value={field.value}
@@ -207,28 +215,22 @@ export function CoursePeriodCreateEditModal({
               )}
             </div>
           </div>
-
-          {/* Botões */}
-          <div className="flex flex-col-reverse items-center gap-4 sm:flex-row sm:justify-end">
-            <Button
-              type="button"
-              onClick={handleClose}
-              variant="outlined"
-              className="w-full"
-            >
-              Cancelar
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              className="w-full"
-            >
-              {isEdit ? "Salvar Alterações" : "Criar Período Letivo"}
-            </Button>
-          </div>
         </form>
-      </div>
-    </ModalTemplate>
+
+        <DialogFooter>
+          <Button type="button" onClick={handleClose} variant="outlined">
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            form="form-periodo-letivo"
+            variant="contained"
+            color="primary"
+          >
+            {isEdit ? "Salvar Alterações" : "Criar Período Letivo"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

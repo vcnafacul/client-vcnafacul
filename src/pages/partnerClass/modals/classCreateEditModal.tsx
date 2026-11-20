@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { InputFactory } from "@/components/organisms/inputFactory";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ClassEntityOutput } from "@/dtos/classes/classOutput";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { createClass } from "@/services/prepCourse/class/createClass";
@@ -100,14 +106,17 @@ export function ClassCreateEditModal({
   }, []);
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white p-4 rounded-md shadow-md"
-    >
-      <div className="w-[85vw] sm:w-[600px] flex flex-col gap-4">
-        <h1 className="text-left text-foreground text-h1 font-extrabold">Turmas</h1>
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit(resolver)}>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Turmas</DialogTitle>
+        </DialogHeader>
+
+        <form
+          id="form-turma"
+          className="flex flex-col gap-4"
+          onSubmit={handleSubmit(resolver)}
+        >
           {/* Linha 1: Nome e Data */}
           <InputFactory
             id="name"
@@ -130,17 +139,17 @@ export function ClassCreateEditModal({
             }
             rows={5}
           />
-          {/* Botões */}
-          <div className="flex justify-end gap-4">
-            <Button variant="outlined" onClick={handleClose}>
-              Cancelar
-            </Button>
-            <Button variant="contained" type="submit">
-              Salvar
-            </Button>
-          </div>
         </form>
-      </div>
-    </ModalTemplate>
+
+        <DialogFooter>
+          <Button variant="outlined" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button variant="contained" type="submit" form="form-turma">
+            Salvar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,6 +1,3 @@
-import ModalTemplate, {
-  ModalProps,
-} from "@/components/templates/modalTemplate";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,6 +9,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getUserByName, SearchUser } from "@/services/auth/getUserByName";
@@ -20,11 +24,11 @@ import { createPrepCourse } from "@/services/prepCourse/prepCourse/createPrepCou
 import { useAuthStore } from "@/store/auth";
 import { CreatePrepCoursePage } from "@/types/partnerPrepCourse/manager/createPrepCouse";
 import { PartnerPrepCourse } from "@/types/partnerPrepCourse/partnerPrepCourse";
-import { Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
-export interface ModalCreateProps extends ModalProps {
+export interface ModalCreateProps {
+  handleClose?: () => void;
   isOpen: boolean;
   onSuccess: (prep: PartnerPrepCourse) => void;
 }
@@ -49,7 +53,7 @@ export const ModalCreatePrepCourse = ({
 
   // Estados para busca de usuário (coordenador)
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(
-    null
+    null,
   );
   const [searchResults, setSearchResults] = useState<SearchUser[]>([]);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
@@ -262,159 +266,150 @@ export const ModalCreatePrepCourse = ({
   }, [searchTimeout, geoSearchTimeout]);
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      className="space-y-6 bg-white p-4 rounded-md w-[90vw] h-[90vh] supports-[height:100dvh]:h-[90dvh] overflow-y-auto sm:w-[800px] sm:h-fit"
-    >
-      <Typography variant="h4" className="font-bold text-foreground">
-        Cadastro de Cursinho
-      </Typography>
-      {/* Campos de formulário em duas colunas */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Coluna esquerda */}
-        <div className="space-y-4">
-          {/* Campo Geolocalização com busca */}
-          <div className="relative">
-            <label
-              className="absolute p-0 top-1.5 left-2 text-caption text-muted-foreground font-semibold"
-              htmlFor="geo"
-            >
-              Geolocalização
-            </label>
-            <input
-              ref={geoInputRef}
-              id="geo"
-              type="text"
-              autoComplete="off"
-              value={geoName}
-              onChange={handleGeoChange}
-              className="h-16 pt-4 w-full px-3 py-1 text-body border border-border rounded-md bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
-              placeholder="Digite o nome da geolocalização..."
-            />
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose?.()}>
+      <DialogContent size="lg" aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Cadastro de Cursinho</DialogTitle>
+        </DialogHeader>
+        {/* Campos de formulário em duas colunas */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Coluna esquerda */}
+          <div className="space-y-4">
+            {/* Campo Geolocalização com busca */}
+            <div className="relative">
+              <label
+                className="absolute p-0 top-1.5 left-2 text-caption text-muted-foreground font-semibold"
+                htmlFor="geo"
+              >
+                Geolocalização
+              </label>
+              <input
+                ref={geoInputRef}
+                id="geo"
+                type="text"
+                autoComplete="off"
+                value={geoName}
+                onChange={handleGeoChange}
+                className="h-16 pt-4 w-full px-3 py-1 text-body border border-border rounded-md bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
+                placeholder="Digite o nome da geolocalização..."
+              />
 
-            {/* Dropdown de resultados */}
-            {showGeoDropdown && geoSearchResults.length > 0 && (
-              <div className="absolute z-raised w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
-                {geoSearchResults.map((geo) => (
-                  <div
-                    key={geo.id}
-                    className="px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
-                    onClick={() => selectGeo(geo)}
-                  >
-                    <div className="font-medium text-body text-foreground">
-                      {geo.name}
+              {/* Dropdown de resultados */}
+              {showGeoDropdown && geoSearchResults.length > 0 && (
+                <div className="absolute z-raised w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
+                  {geoSearchResults.map((geo) => (
+                    <div
+                      key={geo.id}
+                      className="px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
+                      onClick={() => selectGeo(geo)}
+                    >
+                      <div className="font-medium text-body text-foreground">
+                        {geo.name}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
 
-            {/* Loading indicator */}
-            {isGeoSearching && (
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <div className="w-4 h-4 border-2 border-border border-t-cta rounded-full animate-spin"></div>
-              </div>
-            )}
+              {/* Loading indicator */}
+              {isGeoSearching && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="w-4 h-4 border-2 border-border border-t-cta rounded-full animate-spin"></div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Coluna direita */}
+          <div className="space-y-4">
+            {/* Campo Coordenador com busca */}
+            <div className="relative">
+              <label
+                className="absolute p-0 top-1.5 left-2 text-caption text-muted-foreground font-semibold"
+                htmlFor="coordinator"
+              >
+                Coordenador
+              </label>
+              <input
+                ref={coordinatorInputRef}
+                id="coordinator"
+                type="text"
+                autoComplete="off"
+                value={formData.coordinator}
+                onChange={handleCoordinatorChange}
+                className="h-16 pt-4 w-full px-3 py-1 text-body border border-border rounded-md bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
+                placeholder="Digite o nome do coordenador..."
+              />
+
+              {/* Dropdown de resultados */}
+              {showDropdown && searchResults.length > 0 && (
+                <div className="absolute z-raised w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
+                  {searchResults.map((user) => (
+                    <div
+                      key={user.id}
+                      className="px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
+                      onClick={() => selectUser(user)}
+                    >
+                      <div className="font-medium text-body text-foreground">
+                        {user.name}
+                      </div>
+                      <div className="text-caption text-muted-foreground">
+                        {user.email} • {user.phone}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Loading indicator */}
+              {isSearching && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="w-4 h-4 border-2 border-border border-t-cta rounded-full animate-spin"></div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Coluna direita */}
-        <div className="space-y-4">
-          {/* Campo Coordenador com busca */}
-          <div className="relative">
-            <label
-              className="absolute p-0 top-1.5 left-2 text-caption text-muted-foreground font-semibold"
-              htmlFor="coordinator"
-            >
-              Coordenador
-            </label>
-            <input
-              ref={coordinatorInputRef}
-              id="coordinator"
-              type="text"
-              autoComplete="off"
-              value={formData.coordinator}
-              onChange={handleCoordinatorChange}
-              className="h-16 pt-4 w-full px-3 py-1 text-body border border-border rounded-md bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
-              placeholder="Digite o nome do coordenador..."
-            />
+        <DialogFooter>
+          <Button onClick={handleCreatePrepCourse}>Confirmar Cadastro</Button>
+        </DialogFooter>
 
-            {/* Dropdown de resultados */}
-            {showDropdown && searchResults.length > 0 && (
-              <div className="absolute z-raised w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
-                {searchResults.map((user) => (
-                  <div
-                    key={user.id}
-                    className="px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
-                    onClick={() => selectUser(user)}
-                  >
-                    <div className="font-medium text-body text-foreground">
-                      {user.name}
-                    </div>
-                    <div className="text-caption text-muted-foreground">
-                      {user.email} • {user.phone}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Loading indicator */}
-            {isSearching && (
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <div className="w-4 h-4 border-2 border-border border-t-cta rounded-full animate-spin"></div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Botão de atualizar */}
-      <div className="flex justify-end">
-        <Button
-          variant="outline"
-          onClick={handleCreatePrepCourse}
-          className="bg-muted border-border text-muted-foreground hover:bg-muted px-8"
+        {/* Modal de confirmação para forçar criação */}
+        <AlertDialog
+          open={modals.modalForceCreate.isOpen}
+          onOpenChange={() => modals.modalForceCreate.close()}
         >
-          Confirmar Cadastro
-        </Button>
-      </div>
-
-      {/* Modal de confirmação para forçar criação */}
-      <AlertDialog
-        open={modals.modalForceCreate.isOpen}
-        onOpenChange={() => modals.modalForceCreate.close()}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-foreground">
-              Representante já é colaborador
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              Este usuário já está cadastrado como colaborador. Deseja forçar a
-              criação do curso de preparação com este representante?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel
-              className="border border-cta text-foreground hover:bg-cta hover:border-cta/20 hover:text-cta-foreground"
-              onClick={() => {
-                modals.modalForceCreate.close();
-                setPendingData(null);
-              }}
-            >
-              Cancelar
-            </AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-cta text-cta-foreground hover:bg-cta/80"
-              onClick={handleForceCreate}
-            >
-              Forçar Criação
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </ModalTemplate>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-foreground">
+                Representante já é colaborador
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Este usuário já está cadastrado como colaborador. Deseja forçar
+                a criação do curso de preparação com este representante?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel
+                className="border border-cta text-foreground hover:bg-cta hover:border-cta/20 hover:text-cta-foreground"
+                onClick={() => {
+                  modals.modalForceCreate.close();
+                  setPendingData(null);
+                }}
+              >
+                Cancelar
+              </AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-cta text-cta-foreground hover:bg-cta/80"
+                onClick={handleForceCreate}
+              >
+                Forçar Criação
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </DialogContent>
+    </Dialog>
   );
 };

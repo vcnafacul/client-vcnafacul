@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ModalTemplate from "@/components/templates/modalTemplate";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -17,7 +17,10 @@ import { getAttendanceRecordByStudentId } from "@/services/prepCourse/attendance
 import { Roles } from "@/enums/roles/roles";
 import { useAuthStore } from "@/store/auth";
 import { mensagemDeErro } from "@/utils/mensagemDeErro";
-import { AttendancePeriod, attendancePeriodLabel } from "@/types/partnerPrepCourse/attendancePeriod";
+import {
+  AttendancePeriod,
+  attendancePeriodLabel,
+} from "@/types/partnerPrepCourse/attendancePeriod";
 import { AttendanceRecordByStudent } from "@/types/partnerPrepCourse/attendanceRecord";
 import Paper from "@mui/material/Paper";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -89,7 +92,7 @@ export function AttendanceRecordByStudentModal({
   coursePeriodEnd,
 }: AttendanceRecordProps) {
   const [attendances, setAttendances] = useState<AttendanceRecordByStudent[]>(
-    []
+    [],
   );
   const [totalItems, setTotalItems] = useState<number>(0);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -131,7 +134,9 @@ export function AttendanceRecordByStudentModal({
       filterable: false,
       sortable: false,
       renderCell: (params) =>
-        params.row.period ? attendancePeriodLabel[params.row.period as AttendancePeriod] : "-",
+        params.row.period
+          ? attendancePeriodLabel[params.row.period as AttendancePeriod]
+          : "-",
     },
     {
       field: "className",
@@ -197,12 +202,12 @@ export function AttendanceRecordByStudentModal({
 
         // Filtra os que estavam na página atual e foram desmarcados
         const removed = prevSelection.filter(
-          (id) => !newSelection.includes(id) && currentPageIds.includes(id)
+          (id) => !newSelection.includes(id) && currentPageIds.includes(id),
         );
 
         // Adiciona os novos selecionados
         const added = newSelection.filter(
-          (id: string) => !prevSelection.includes(id)
+          (id: string) => !prevSelection.includes(id),
         );
 
         return [
@@ -211,7 +216,7 @@ export function AttendanceRecordByStudentModal({
         ];
       });
     },
-    [attendances]
+    [attendances],
   );
 
   const handleApplyJustification = async (justification?: string) => {
@@ -230,7 +235,11 @@ export function AttendanceRecordByStudentModal({
       loadingMessage: "Aplicando justificativa...",
       successMessage: "Justificativa aplicada com sucesso!",
       errorMessage: (e: unknown) =>
-        mensagemDeErro(e, "aplicar justificativa", "Erro ao aplicar justificativa"),
+        mensagemDeErro(
+          e,
+          "aplicar justificativa",
+          "Erro ao aplicar justificativa",
+        ),
       onSuccess: () => {
         handleClose!();
       },
@@ -248,86 +257,84 @@ export function AttendanceRecordByStudentModal({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white p-4 rounded-md w-[90vw] max-w-5xl sm:h-[621px] flex flex-col min-h-0 sm:overflow-hidden shadow-lg"
-    >
-      <div className="flex flex-1 flex-col min-h-0 gap-3">
-        <div className="flex flex-wrap items-center justify-between gap-2 p-2 shrink-0">
-          <h1 className="text-h1 font-bold">Registro de Presença</h1>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent size="full" aria-describedby={undefined}>
+        <DialogHeader className="flex-row flex-wrap items-center justify-between gap-2 space-y-0">
+          <DialogTitle>Registro de Presença</DialogTitle>
           {podeGerenciar && (
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 pr-10">
               <Button
+                variant="outline"
                 onClick={() => modals.modalApplyJustification.open()}
                 disabled={selectedRows.length === 0}
-                className="bg-cta/70 hover:bg-cta font-extrabold"
               >
                 Aplicar Justificativa
               </Button>
-              <Button
-                onClick={() => setShowPeriodModal(true)}
-                className="bg-cta/70 hover:bg-cta font-extrabold"
-              >
+              <Button onClick={() => setShowPeriodModal(true)}>
                 Justificar Período
               </Button>
             </div>
           )}
-        </div>
-        <div className="shrink-0">
-          <PeriodJustificationList
-            studentCourseId={studentId}
-            refreshTrigger={periodRefreshTrigger}
-          />
-        </div>
-        {/*
+        </DialogHeader>
+        <DialogBody className="flex flex-col gap-3">
+          <div className="shrink-0">
+            <PeriodJustificationList
+              studentCourseId={studentId}
+              refreshTrigger={periodRefreshTrigger}
+            />
+          </div>
+          {/*
           No celular a caixa cresce e rola junto com a página: com altura
           fixa, as justificativas abertas espremiam a grade até sumir.
         */}
-        <Paper
-          sx={{
-            flex: { xs: "none", sm: 1 },
-            height: { xs: 420, sm: "auto" },
-            minHeight: 0,
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-          }}
-        >
-          <DataGrid
-            rows={attendances}
-            columns={columns}
-            rowCount={totalItems}
-            paginationMode="server"
-            initialState={{ pagination: { paginationModel } }}
-            rowHeight={40}
-            rowSelection={podeGerenciar}
-            checkboxSelection={podeGerenciar}
-            rowSelectionModel={selectedRows}
-            onRowSelectionModelChange={handleSelectionChange}
+          <Paper
             sx={{
-              border: 0,
-              flex: 1,
+              flex: { xs: "none", sm: 1 },
+              height: { xs: 420, sm: "auto" },
               minHeight: 0,
-              height: "100%",
-              "& .MuiDataGrid-main": { overflow: "auto" },
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
             }}
-            onPaginationModelChange={(newPageSize) => {
-              handleGetAttendances(newPageSize.page + 1, newPageSize.pageSize);
-            }}
+          >
+            <DataGrid
+              rows={attendances}
+              columns={columns}
+              rowCount={totalItems}
+              paginationMode="server"
+              initialState={{ pagination: { paginationModel } }}
+              rowHeight={40}
+              rowSelection={podeGerenciar}
+              checkboxSelection={podeGerenciar}
+              rowSelectionModel={selectedRows}
+              onRowSelectionModelChange={handleSelectionChange}
+              sx={{
+                border: 0,
+                flex: 1,
+                minHeight: 0,
+                height: "100%",
+                "& .MuiDataGrid-main": { overflow: "auto" },
+              }}
+              onPaginationModelChange={(newPageSize) => {
+                handleGetAttendances(
+                  newPageSize.page + 1,
+                  newPageSize.pageSize,
+                );
+              }}
+            />
+          </Paper>
+          {ModalApplyJustification()}
+          <PeriodJustificationModal
+            isOpen={showPeriodModal}
+            handleClose={() => setShowPeriodModal(false)}
+            studentCourseId={studentId}
+            onSuccess={() => setPeriodRefreshTrigger((prev) => prev + 1)}
+            coursePeriodStart={coursePeriodStart}
+            coursePeriodEnd={coursePeriodEnd}
           />
-        </Paper>
-      </div>
-      {ModalApplyJustification()}
-      <PeriodJustificationModal
-        isOpen={showPeriodModal}
-        handleClose={() => setShowPeriodModal(false)}
-        studentCourseId={studentId}
-        onSuccess={() => setPeriodRefreshTrigger((prev) => prev + 1)}
-        coursePeriodStart={coursePeriodStart}
-        coursePeriodEnd={coursePeriodEnd}
-      />
-    </ModalTemplate>
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   );
 }

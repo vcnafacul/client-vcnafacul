@@ -1,5 +1,4 @@
 import { InputFactory } from "@/components/organisms/inputFactory";
-import { ModalProps } from "@/components/templates/modalTemplate";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,7 +23,8 @@ import { useEffect, useRef, useState } from "react";
 import { Cloud, Download, Pencil, X } from "lucide-react";
 import { toast } from "react-toastify";
 
-export interface ModalPrincipalProps extends ModalProps {
+export interface ModalPrincipalProps {
+  handleClose?: () => void;
   prepCourse: PartnerPrepCourse;
 }
 

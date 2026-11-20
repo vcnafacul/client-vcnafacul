@@ -7,7 +7,18 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { List, ListItem } from "@/components/ui/list";
+import { PaginationControls } from "@/components/ui/pagination";
 import { Roles } from "@/enums/roles/roles";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
@@ -15,10 +26,13 @@ import { mensagemDeErro } from "@/utils/mensagemDeErro";
 import { deleteAttendanceRecord } from "@/services/prepCourse/attendanceRecord/deleteAttendanceRecord";
 import { getAttendanceRecord } from "@/services/prepCourse/attendanceRecord/getAttendanceRecord";
 import { useAuthStore } from "@/store/auth";
-import { AttendancePeriod, attendancePeriodLabel } from "@/types/partnerPrepCourse/attendancePeriod";
+import {
+  AttendancePeriod,
+  attendancePeriodLabel,
+} from "@/types/partnerPrepCourse/attendancePeriod";
 import { SimpleAttendanceRecordHistory } from "@/types/partnerPrepCourse/attendanceRecordHistory";
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, Eye, ListPlus, ListTodo, Trash2, X } from "lucide-react";
+import { Eye, ListPlus, ListTodo, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { AttendanceRecordModal } from "./attendanceRecordModal";
 import AttendanceRecordSummaryModal from "./attendanceRecordSummaryModal";
@@ -49,9 +63,10 @@ function dataDaChamada(d: Date | string): string {
       .formatToParts(data)
       .map((p) => [p.type, p.value]),
   );
-  const diaDaSemana = DIAS[
-    new Date(`${partes.year}-${partes.month}-${partes.day}T12:00:00`).getDay()
-  ];
+  const diaDaSemana =
+    DIAS[
+      new Date(`${partes.year}-${partes.month}-${partes.day}T12:00:00`).getDay()
+    ];
   const ano =
     Number(partes.year) === new Date().getFullYear() ? "" : `/${partes.year}`;
   return `${diaDaSemana}, ${partes.day}/${partes.month}${ano}`;
@@ -130,7 +145,9 @@ export function AttendanceHistoryModal({
       >
         <AlertDialogContent aria-describedby={undefined}>
           <AlertDialogHeader>
-            <AlertDialogTitle>Tem certeza que deseja excluir esse registro?</AlertDialogTitle>
+            <AlertDialogTitle>
+              Tem certeza que deseja excluir esse registro?
+            </AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
@@ -195,7 +212,11 @@ export function AttendanceHistoryModal({
       .catch((err) => {
         setErro(true);
         toast.error(
-          mensagemDeErro(err, "ver as chamadas", "Erro ao carregar as chamadas"),
+          mensagemDeErro(
+            err,
+            "ver as chamadas",
+            "Erro ao carregar as chamadas",
+          ),
         );
       });
   };
@@ -210,160 +231,125 @@ export function AttendanceHistoryModal({
 
   const novaChamada = () => modals.modalNewAttendanceRecord.open();
 
+  const estadoDaLista = erro
+    ? "error"
+    : !carregou
+      ? "loading"
+      : attendanceHistory.length === 0
+        ? "empty"
+        : "ready";
+
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      closer={false}
-      className="bg-white rounded-xl shadow-lg w-[calc(100vw-1rem)] sm:w-[600px] h-[min(640px,calc(100dvh-2rem))] flex flex-col overflow-hidden"
-    >
-      <div className="shrink-0 px-4 pt-4 pb-3 sm:px-6 sm:pt-6 border-b border-border">
-        <div className="flex items-start justify-between gap-3">
-          <h2 className="min-w-0 text-h2 font-extrabold text-foreground">
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent
+        size="md"
+        aria-describedby={undefined}
+        className="sm:h-[min(640px,calc(100dvh-2rem))]"
+      >
+        <DialogHeader>
+          <DialogTitle>
             Frequência{turmaNome ? ` · ${turmaNome}` : ""}
-          </h2>
-          <button
-            type="button"
-            onClick={handleClose}
-            aria-label="Fechar"
-            className="shrink-0 -mr-2 -mt-1 p-2 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-        <div className="mt-3 grid grid-cols-1 [@media(min-width:420px)]:flex gap-2">
-          <button
-            type="button"
-            onClick={novaChamada}
-            className="h-10 px-4 rounded-lg bg-primary text-primary-foreground font-bold hover:opacity-90 flex items-center justify-center gap-2"
-          >
-            <ListPlus className="w-5 h-5" />
-            Nova chamada
-          </button>
-          {permissao[Roles.gerenciarTurmas] && (
-            <button
-              type="button"
-              onClick={() => modals.modalAttendanceRecordSummary.open()}
-              className="h-10 px-4 rounded-lg border border-primary/30 text-foreground font-bold hover:bg-primary/5 flex items-center justify-center gap-2"
-            >
-              <ListTodo size="1em" />
-              Relatório
-            </button>
-          )}
-        </div>
-      </div>
-
-      <ul aria-label="Chamadas" className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6">
-        {erro && (
-          <li className="py-10 flex flex-col items-center gap-3 text-center">
-            <p className="text-body text-muted-foreground">
-              Não foi possível carregar as chamadas.
-            </p>
-            <button
-              type="button"
-              onClick={() => getAttendanceHistory(page, limit)}
-              className="h-10 px-4 rounded-lg border border-primary/30 text-foreground font-bold hover:bg-primary/5"
-            >
-              Tentar de novo
-            </button>
-          </li>
-        )}
-        {!carregou &&
-          !erro &&
-          Array.from({ length: 5 }, (_, i) => (
-            <li key={i} className="py-3 border-b border-border animate-pulse">
-              <div className="h-4 w-32 rounded-sm bg-muted" />
-              <div className="mt-2 h-3 w-48 rounded-sm bg-muted" />
-            </li>
-          ))}
-        {carregou && !erro && attendanceHistory.length === 0 && (
-          <li className="h-full flex flex-col items-center justify-center gap-3 text-center py-10">
-            <p className="text-foreground font-bold">Nenhuma chamada ainda.</p>
-            <p className="text-body text-muted-foreground max-w-xs">
-              As chamadas registradas desta turma aparecem aqui.
-            </p>
-            <button
-              type="button"
-              onClick={novaChamada}
-              className="mt-1 h-10 px-4 rounded-lg bg-primary text-primary-foreground font-bold hover:opacity-90"
-            >
-              Fazer a primeira chamada
-            </button>
-          </li>
-        )}
-        {attendanceHistory.map((r) => (
-          <li
-            key={r.id}
-            className="py-3 border-b border-border last:border-0 flex flex-wrap items-center gap-x-3 gap-y-1"
-          >
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <span className="text-foreground font-bold">
-                  {dataDaChamada(r.registeredAt)}
-                </span>
-                {r.period && (
-                  <span className="px-2 py-0.5 rounded-full bg-primary/10 text-foreground text-caption font-semibold">
-                    {attendancePeriodLabel[r.period as AttendancePeriod]}
-                  </span>
-                )}
-              </div>
-              <p className="text-body text-muted-foreground truncate">por {r.registeredBy}</p>
-            </div>
-            <div className="shrink-0 flex gap-1">
-              <button
+          </DialogTitle>
+          <div className="mt-2 grid grid-cols-1 gap-2 [@media(min-width:420px)]:flex">
+            <Button type="button" onClick={novaChamada}>
+              <ListPlus aria-hidden="true" />
+              Nova chamada
+            </Button>
+            {permissao[Roles.gerenciarTurmas] && (
+              <Button
                 type="button"
-                onClick={() => {
-                  setAttendanceHistorySelected(r);
-                  modals.modalAttendanceRecord.open();
-                }}
-                className="h-9 px-3 rounded-lg text-body font-semibold text-foreground hover:bg-primary/5 flex items-center gap-1.5"
+                variant="outline"
+                onClick={() => modals.modalAttendanceRecordSummary.open()}
               >
-                <Eye className="w-4 h-4" />
-                Ver
-              </button>
-              <button
-                type="button"
-                aria-label="Excluir"
-                title="Excluir"
-                onClick={() => handleActionDeleteRecord(r)}
-                className="h-9 w-9 rounded-lg text-muted-foreground hover:bg-destructive-muted hover:text-destructive flex items-center justify-center"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+                <ListTodo aria-hidden="true" />
+                Relatório
+              </Button>
+            )}
+          </div>
+        </DialogHeader>
 
-      {totalItems > limit && (
-        <div className="shrink-0 px-4 py-2 sm:px-6 border-t border-border flex items-center justify-center gap-3 text-body text-muted-foreground">
-          <button
-            type="button"
-            aria-label="Página anterior"
-            disabled={page <= 1}
-            onClick={() => getAttendanceHistory(page - 1, limit)}
-            className="h-9 w-9 rounded-lg flex items-center justify-center hover:bg-muted disabled:opacity-30"
+        <DialogBody>
+          <List
+            aria-label="Chamadas"
+            state={estadoDaLista}
+            loadingRows={5}
+            onRetry={() => getAttendanceHistory(page, limit)}
+            error={{
+              title: "Não foi possível carregar as chamadas.",
+              message: "",
+            }}
+            empty={{
+              title: "Nenhuma chamada ainda.",
+              hint: "As chamadas registradas desta turma aparecem aqui.",
+              action: (
+                <Button type="button" onClick={novaChamada}>
+                  Fazer a primeira chamada
+                </Button>
+              ),
+            }}
           >
-            <ChevronLeft size="1em" />
-          </button>
-          <span>
-            {primeiro}–{ultimo} de {totalItems}
-          </span>
-          <button
-            type="button"
-            aria-label="Próxima página"
-            disabled={page >= ultimaPagina}
-            onClick={() => getAttendanceHistory(page + 1, limit)}
-            className="h-9 w-9 rounded-lg flex items-center justify-center hover:bg-muted disabled:opacity-30"
+            {attendanceHistory.map((r) => (
+              <ListItem
+                key={r.id}
+                title={dataDaChamada(r.registeredAt)}
+                meta={[`por ${r.registeredBy}`]}
+                badges={
+                  r.period ? (
+                    <Badge variant="secondary">
+                      {attendancePeriodLabel[r.period as AttendancePeriod]}
+                    </Badge>
+                  ) : undefined
+                }
+                trailing={
+                  <>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => {
+                        setAttendanceHistorySelected(r);
+                        modals.modalAttendanceRecord.open();
+                      }}
+                    >
+                      <Eye aria-hidden="true" />
+                      Ver
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      aria-label="Excluir"
+                      title="Excluir"
+                      onClick={() => handleActionDeleteRecord(r)}
+                    >
+                      <Trash2 />
+                    </Button>
+                  </>
+                }
+              />
+            ))}
+          </List>
+          {ModalAttendanceRecord()}
+          {ModalNewAttendanceRecord()}
+          {ModalConfirmDelete()}
+          {ModalAttendanceRecordSummary()}
+        </DialogBody>
+
+        {totalItems > limit && (
+          <DialogFooter
+            status={
+              <>
+                {primeiro}–{ultimo} de {totalItems}
+              </>
+            }
           >
-            <ChevronRight size="1em" />
-          </button>
-        </div>
-      )}
-      {ModalAttendanceRecord()}
-      {ModalNewAttendanceRecord()}
-      {ModalConfirmDelete()}
-      {ModalAttendanceRecordSummary()}
-    </ModalTemplate>
+            <PaginationControls
+              page={page}
+              totalPages={ultimaPagina}
+              onPageChange={(p) => getAttendanceHistory(p, limit)}
+            />
+          </DialogFooter>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }

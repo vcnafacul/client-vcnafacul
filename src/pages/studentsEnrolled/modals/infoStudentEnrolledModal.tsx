@@ -1,6 +1,11 @@
 import PhotoEditor from "@/components/atoms/photoEditor";
 import { StudentCard } from "@/components/molecules/studentCard";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getProfilePhoto } from "@/services/prepCourse/student/getProfilePhoto";
 import { uploadProfileImage } from "@/services/prepCourse/student/uploadProfileImage";
@@ -37,15 +42,15 @@ export function InfoStudentEnrolledModal({
   const podeVerFoto =
     !!permissao[Roles.visualizarEstudantes] ||
     !!permissao[Roles.gerenciarProcessoSeletivo];
-  
+
   const executeAsync = useToastAsync();
-  
+
   useEffect(() => {
     const fetchImage = async () => {
       try {
         const blob = await getProfilePhoto(entity.photo, token);
         const fileType = blob.type; // Tipo MIME do arquivo
-        
+
         if (fileType === "image/heic" || fileType === "image/heif") {
           // Se for HEIC, converte para JPEG
           const convertedBlob = await heic2any({ blob, toType: "image/jpeg" });
@@ -60,11 +65,11 @@ export function InfoStudentEnrolledModal({
         console.error("Erro ao carregar a imagem:", error);
       }
     };
-    
+
     if (entity.photo && podeVerFoto) {
       fetchImage();
     }
-    
+
     // Cleanup para evitar vazamento de memória
     return () => {
       if (imageSrc) {
@@ -102,29 +107,30 @@ export function InfoStudentEnrolledModal({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white rounded-md p-1"
-    >
-      <div className="pt-1 pb-2 sm:px-2 md:p-6 md:pt-1">
-        <StudentCard
-          larguraClassName="w-[calc(100vw-4rem)] sm:w-[min(733px,calc(100vw-4rem))]"
-          entity={entity}
-          imageSrc={imageSrc}
-          partnerLogo={partnerLogo}
-          avisoDaFoto={
-            podeVerFoto
-              ? undefined
-              : "Foto disponível só para quem visualiza estudantes"
-          }
-          onChangePhoto={(file: File) => {
-            setPhoto(file);
-            setPhotoEditorOpen(true);
-          }}
-        />
-      </div>
-      {ModalPhotoEditor()}
-    </ModalTemplate>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent size="lg" aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Carteirinha do estudante</DialogTitle>
+        </DialogHeader>
+        <div className="flex justify-center">
+          <StudentCard
+            larguraClassName="w-full sm:w-[min(733px,100%)]"
+            entity={entity}
+            imageSrc={imageSrc}
+            partnerLogo={partnerLogo}
+            avisoDaFoto={
+              podeVerFoto
+                ? undefined
+                : "Foto disponível só para quem visualiza estudantes"
+            }
+            onChangePhoto={(file: File) => {
+              setPhoto(file);
+              setPhotoEditorOpen(true);
+            }}
+          />
+        </div>
+        {ModalPhotoEditor()}
+      </DialogContent>
+    </Dialog>
   );
 }

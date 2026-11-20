@@ -1,5 +1,12 @@
 import { StudentCard } from "@/components/molecules/studentCard";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { getProfilePhoto } from "@/services/prepCourse/student/getProfilePhoto";
 import { useAuthStore } from "@/store/auth";
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
@@ -60,7 +67,7 @@ export function PrinterStudentCards({
         chunk.map(async (card) => {
           const canvas = await html2canvas(card as HTMLElement, { scale: 2 });
           return canvas.toDataURL("image/png");
-        })
+        }),
       );
       images.push(...chunkImages);
     }
@@ -188,51 +195,54 @@ export function PrinterStudentCards({
   }, [entities, token]);
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="w-screen h-screen bg-white p-4 overflow-y-auto scrollbar-hide"
-    >
-      <button
-        onClick={handleGeneratePDF}
-        className={`px-4 py-2 rounded-lg transition ${
-          isLoading || isGeneratingPDF
-            ? "bg-muted text-muted-foreground cursor-not-allowed"
-            : "bg-destructive text-destructive-foreground hover:bg-destructive"
-        }`}
-        disabled={isLoading || isGeneratingPDF}
-      >
-        <FileText className="h-6 w-6" />
-      </button>
-
-      {pdfUrl ? (
-        <div className="mt-4">
-          <iframe src={pdfUrl} className="w-full h-[calc(100vh-200px)]" />
-          <button
-            onClick={() => {
-              const link = document.createElement("a");
-              link.href = pdfUrl;
-              link.download = "carteirinhas.pdf";
-              link.click();
-            }}
-            className="mt-4 px-4 py-2 bg-success text-success-foreground rounded-lg hover:bg-success/90"
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent size="full" aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Carteirinhas</DialogTitle>
+        </DialogHeader>
+        <DialogBody>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label="Gerar PDF"
+            onClick={handleGeneratePDF}
+            disabled={isLoading || isGeneratingPDF}
           >
-            Baixar PDF
-          </button>
-        </div>
-      ) : (
-        <div className="flex justify-center flex-wrap gap-4">
-          {entities.map((entity) => (
-            <div className="bg-white p-2 shadow-lg" key={entity.id}>
-              <StudentCard
-                entity={entity}
-                imageSrc={photos.get(entity.photo) || null}
-                partnerLogo={partnerLogo}
-              />
+            <FileText />
+          </Button>
+
+          {pdfUrl ? (
+            <div className="mt-4">
+              <iframe src={pdfUrl} className="w-full h-[calc(100vh-200px)]" />
+              <Button
+                type="button"
+                className="mt-4"
+                onClick={() => {
+                  const link = document.createElement("a");
+                  link.href = pdfUrl;
+                  link.download = "carteirinhas.pdf";
+                  link.click();
+                }}
+              >
+                Baixar PDF
+              </Button>
             </div>
-          ))}
-        </div>
-      )}
-    </ModalTemplate>
+          ) : (
+            <div className="flex justify-center flex-wrap gap-4">
+              {entities.map((entity) => (
+                <div className="bg-white p-2 shadow-lg" key={entity.id}>
+                  <StudentCard
+                    entity={entity}
+                    imageSrc={photos.get(entity.photo) || null}
+                    partnerLogo={partnerLogo}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   );
 }

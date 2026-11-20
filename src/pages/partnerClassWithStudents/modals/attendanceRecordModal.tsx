@@ -1,4 +1,10 @@
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Roles } from "@/enums/roles/roles";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getAttendanceRecordById } from "@/services/prepCourse/attendanceRecord/getAttendanceRecordbyId";
@@ -197,41 +203,46 @@ export function AttendanceRecordModal({
   }, []);
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white p-4 rounded-md w-[90vw] h-[90vh] sm:h-[600px] flex flex-col"
-    >
-      {(recordInfo.registeredAt || recordInfo.period) && (
-        <div className="mb-2 text-body text-foreground shrink-0">
-          {recordInfo.registeredAt && (
-            <span className="font-semibold">
-              {new Date(recordInfo.registeredAt).toLocaleDateString("pt-BR")}
-            </span>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent size="full" aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Registro de chamada</DialogTitle>
+          {(recordInfo.registeredAt || recordInfo.period) && (
+            <div className="text-body text-foreground">
+              {recordInfo.registeredAt && (
+                <span className="font-semibold">
+                  {new Date(recordInfo.registeredAt).toLocaleDateString(
+                    "pt-BR",
+                  )}
+                </span>
+              )}
+              {recordInfo.period && (
+                <span className="ml-2">
+                  — Período:{" "}
+                  <span className="font-semibold">
+                    {attendancePeriodLabel[recordInfo.period]}
+                  </span>
+                </span>
+              )}
+            </div>
           )}
-          {recordInfo.period && (
-            <span className="ml-2">
-              — Período:{" "}
-              <span className="font-semibold">
-                {attendancePeriodLabel[recordInfo.period]}
-              </span>
-            </span>
-          )}
-        </div>
-      )}
-      {/* flex-1 em vez de 95%: somado à linha da data passava da caixa. */}
-      <Paper sx={{ flex: 1, minHeight: 0, width: "100%" }}>
-        <DataGrid
-          rows={students}
-          columns={columns}
-          rowCount={students.length}
-          initialState={{ pagination: { paginationModel } }}
-          rowHeight={43}
-          disableRowSelectionOnClick
-          sx={{ border: 0 }}
-        />
-      </Paper>
-      {ModalEditRegister()}
-    </ModalTemplate>
+        </DialogHeader>
+        {/* flex-1 em vez de 95%: somado à linha da data passava da caixa. */}
+        <DialogBody className="flex flex-col overflow-hidden">
+          <Paper sx={{ flex: 1, minHeight: 0, width: "100%" }}>
+            <DataGrid
+              rows={students}
+              columns={columns}
+              rowCount={students.length}
+              initialState={{ pagination: { paginationModel } }}
+              rowHeight={43}
+              disableRowSelectionOnClick
+              sx={{ border: 0 }}
+            />
+          </Paper>
+          {ModalEditRegister()}
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   );
 }

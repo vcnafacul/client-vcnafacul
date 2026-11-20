@@ -1,4 +1,11 @@
-import ModalTemplate from "@/components/templates/modalTemplate";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { exportAttendanceRecord } from "@/services/prepCourse/attendanceRecord/exportAttendanceRecord";
 import { getSummaryByDate } from "@/services/prepCourse/attendanceRecord/getSummaryByDate";
@@ -60,11 +67,7 @@ export default function AttendanceRecordSummaryModal({
       maxAbsencePercent: yup.number().when("reportType", {
         is: "excel",
         then: (schema) =>
-          schema
-            .required("Informe o percentual")
-            .min(0)
-            .max(100)
-            .integer(),
+          schema.required("Informe o percentual").min(0).max(100).integer(),
         otherwise: (schema) => schema.notRequired(),
       }),
     })
@@ -95,7 +98,13 @@ export default function AttendanceRecordSummaryModal({
       setIsLoading(true);
       await executeAsync({
         action: () =>
-          exportAttendanceRecord(token, classId, start, end, data.maxAbsencePercent),
+          exportAttendanceRecord(
+            token,
+            classId,
+            start,
+            end,
+            data.maxAbsencePercent,
+          ),
         loadingMessage: "Processando relatório ...",
         successMessage: "Relatório Excel baixado com sucesso!",
         errorMessage: (error: Error) => error.message,
@@ -112,7 +121,7 @@ export default function AttendanceRecordSummaryModal({
             classId,
             data.range[0] as Date,
             data.range[1] as Date,
-            token
+            token,
           ),
         loadingMessage: "Gerando relatório ... ",
         successMessage: "Relatório gerado com sucesso!",
@@ -128,7 +137,7 @@ export default function AttendanceRecordSummaryModal({
             classId,
             data.range[0] as Date,
             data.range[1] as Date,
-            token
+            token,
           ),
         loadingMessage: "Gerando relatório ... ",
         successMessage: "Relatório gerado com sucesso!",
@@ -166,137 +175,149 @@ export default function AttendanceRecordSummaryModal({
   }, [watchReportType, padraoDoCursinho, token, getValues, setValue]);
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white p-4 rounded-md shadow-md"
-    >
-      <form
-        onSubmit={handleSubmit(handleSummary)}
-        className="w-full max-w-md mx-auto space-y-6"
-      >
-        <div className="space-y-2">
-          <label className="block text-body font-medium text-foreground">
-            Selecione o tipo de relatório
-          </label>
-
-          <div className="flex flex-col space-y-2">
-            <label className="flex items-center space-x-2">
-              <input
-                type="radio"
-                value="date"
-                {...register("reportType")}
-                checked={watchReportType === "date"}
-                className="form-radio"
-              />
-              <span>Relatório por Data</span>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Relatório de frequência</DialogTitle>
+        </DialogHeader>
+        <form
+          id="form-relatorio-frequencia"
+          onSubmit={handleSubmit(handleSummary)}
+          className="w-full space-y-6"
+        >
+          <div className="space-y-2">
+            <label className="block text-body font-medium text-foreground">
+              Selecione o tipo de relatório
             </label>
 
-            <label className="flex items-center space-x-2">
-              <input
-                type="radio"
-                value="student"
-                {...register("reportType")}
-                checked={watchReportType === "student"}
-                className="form-radio"
-              />
-              <span>Relatório por Estudante</span>
-            </label>
-
-            <label className="flex items-center space-x-2">
-              <input
-                type="radio"
-                value="excel"
-                {...register("reportType")}
-                checked={watchReportType === "excel"}
-                className="form-radio"
-              />
-              <span>Relatório Excel (Detalhado)</span>
-            </label>
-          </div>
-
-          {watchReportType === "excel" && (
-            <div className="mt-2">
-              <label className="block text-body font-medium mb-1">
-                Percentual máximo de faltas injustificadas (%)
-              </label>
-              <input
-                type="number"
-                {...register("maxAbsencePercent")}
-                min={0}
-                max={100}
-                className="border rounded-sm px-3 py-2 w-24"
-                placeholder="25"
-              />
-              {padraoDoCursinho != null && (
-                <p className="text-caption text-muted-foreground mt-1">
-                  Padrão do cursinho: {padraoDoCursinho}% (alerta de risco de
-                  evasão)
-                </p>
-              )}
-              {errors.maxAbsencePercent && (
-                <p className="text-destructive text-body mt-1">
-                  {errors.maxAbsencePercent.message}
-                </p>
-              )}
-            </div>
-          )}
-
-          {errors.reportType && (
-            <p className="text-caption text-destructive font-medium text-wrap max-w-60">
-              {errors.reportType.message}
-            </p>
-          )}
-        </div>
-        <div className="space-y-2">
-          <label className="block text-body font-medium text-foreground">
-            Selecione o intervalo
-          </label>
-
-          <div className="relative">
-            <CalendarIcon size="1em" className="absolute top-1.5 left-3 text-muted-foreground pointer-events-none" />
-            <Controller
-              name="range"
-              control={control}
-              defaultValue={[start, end]}
-              render={({ field }) => (
-                <Calendar
-                  id="range"
-                  dateFormat="dd/mm/yy"
-                  value={field.value}
-                  onChange={(e) => field.onChange(e.value)}
-                  selectionMode="range"
-                  readOnlyInput
-                  hideOnRangeSelection
-                  viewDate={new Date()}
-                  className="w-full pl-10 rounded-md border border-border focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  minDate={coursePeriodStart ? new Date(coursePeriodStart) : undefined}
-                  maxDate={(() => {
-                    const today = new Date();
-                    const periodEnd = coursePeriodEnd ? new Date(coursePeriodEnd) : today;
-                    return periodEnd < today ? periodEnd : today;
-                  })()}
+            <div className="flex flex-col space-y-2">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  value="date"
+                  {...register("reportType")}
+                  checked={watchReportType === "date"}
+                  className="form-radio"
                 />
-              )}
-            />
-          </div>
-          {errors.range && (
-            <p className="text-caption text-destructive font-medium text-wrap max-w-60">
-              {errors.range.message}
-            </p>
-          )}
-        </div>
+                <span>Relatório por Data</span>
+              </label>
 
-        <div className="flex justify-end">
-          <button
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  value="student"
+                  {...register("reportType")}
+                  checked={watchReportType === "student"}
+                  className="form-radio"
+                />
+                <span>Relatório por Estudante</span>
+              </label>
+
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  value="excel"
+                  {...register("reportType")}
+                  checked={watchReportType === "excel"}
+                  className="form-radio"
+                />
+                <span>Relatório Excel (Detalhado)</span>
+              </label>
+            </div>
+
+            {watchReportType === "excel" && (
+              <div className="mt-2">
+                <label className="block text-body font-medium mb-1">
+                  Percentual máximo de faltas injustificadas (%)
+                </label>
+                <input
+                  type="number"
+                  {...register("maxAbsencePercent")}
+                  min={0}
+                  max={100}
+                  className="border rounded-sm px-3 py-2 w-24"
+                  placeholder="25"
+                />
+                {padraoDoCursinho != null && (
+                  <p className="text-caption text-muted-foreground mt-1">
+                    Padrão do cursinho: {padraoDoCursinho}% (alerta de risco de
+                    evasão)
+                  </p>
+                )}
+                {errors.maxAbsencePercent && (
+                  <p className="text-destructive text-body mt-1">
+                    {errors.maxAbsencePercent.message}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {errors.reportType && (
+              <p className="text-caption text-destructive font-medium text-wrap max-w-60">
+                {errors.reportType.message}
+              </p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <label className="block text-body font-medium text-foreground">
+              Selecione o intervalo
+            </label>
+
+            <div className="relative">
+              <CalendarIcon
+                size="1em"
+                className="absolute top-1.5 left-3 text-muted-foreground pointer-events-none"
+              />
+              <Controller
+                name="range"
+                control={control}
+                defaultValue={[start, end]}
+                render={({ field }) => (
+                  <Calendar
+                    appendTo="self"
+                    inputId="range"
+                    dateFormat="dd/mm/yy"
+                    value={field.value}
+                    onChange={(e) => field.onChange(e.value)}
+                    selectionMode="range"
+                    readOnlyInput
+                    hideOnRangeSelection
+                    viewDate={new Date()}
+                    className="w-full pl-10 rounded-md border border-border focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    minDate={
+                      coursePeriodStart
+                        ? new Date(coursePeriodStart)
+                        : undefined
+                    }
+                    maxDate={(() => {
+                      const today = new Date();
+                      const periodEnd = coursePeriodEnd
+                        ? new Date(coursePeriodEnd)
+                        : today;
+                      return periodEnd < today ? periodEnd : today;
+                    })()}
+                  />
+                )}
+              />
+            </div>
+            {errors.range && (
+              <p className="text-caption text-destructive font-medium text-wrap max-w-60">
+                {errors.range.message}
+              </p>
+            )}
+          </div>
+        </form>
+
+        <DialogFooter>
+          <Button
             type="submit"
+            form="form-relatorio-frequencia"
             disabled={isLoading}
-            className="bg-primary opacity-90 hover:opacity-100 text-primary-foreground font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Processando..." : "Gerar Relatório"}
-          </button>
-        </div>
-      </form>
-    </ModalTemplate>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

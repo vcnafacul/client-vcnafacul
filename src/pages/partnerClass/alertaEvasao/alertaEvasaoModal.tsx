@@ -1,4 +1,14 @@
-import ModalTemplate from "@/components/templates/modalTemplate";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import {
   AlertaEvasao,
@@ -8,7 +18,6 @@ import {
 import { useAuthStore } from "@/store/auth";
 import { mensagemDeErro } from "@/utils/mensagemDeErro";
 import { useCallback, useEffect, useState } from "react";
-import { X } from "lucide-react";
 import { toast } from "react-toastify";
 import { validarAlerta } from "./validarAlerta";
 
@@ -91,136 +100,79 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
     )}%) aparece em risco na chamada.`;
   })();
 
-  const campo =
-    "h-11 w-24 px-3 rounded-lg border text-foreground text-h3 font-bold text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
-
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      closer={false}
-      className="bg-white rounded-xl shadow-lg w-[calc(100vw-1rem)] sm:w-[520px] max-h-[calc(100dvh-2rem)] flex flex-col overflow-hidden"
-    >
-      <div className="shrink-0 px-4 pt-4 sm:px-6 sm:pt-6 flex items-start justify-between gap-3">
-        <h2 className="text-h2 font-extrabold text-foreground">
-          Alerta de risco de evasão
-        </h2>
-        <button
-          type="button"
-          onClick={handleClose}
-          aria-label="Fechar"
-          className="shrink-0 -mr-2 -mt-1 p-2 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
-        >
-          <X className="w-6 h-6" />
-        </button>
-      </div>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent size="sm" aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Alerta de risco de evasão</DialogTitle>
+        </DialogHeader>
 
-      <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-3 flex flex-col gap-4">
         <p className="text-body text-muted-foreground">
           Na chamada, o aluno aparece em risco quando as faltas{" "}
           <strong>sem justificativa</strong> passam do percentual abaixo,
           contando só as aulas dele.
         </p>
 
-        <label className="flex flex-col gap-1">
-          <span className="text-body font-semibold text-foreground">
-            Avisar a partir de
-          </span>
-          <span className="flex items-center gap-2">
-            <input
-              inputMode="numeric"
-              aria-label="Percentual de faltas"
-              value={percentual}
-              disabled={!carregou}
-              onChange={(e) => setPercentual(e.target.value)}
-              placeholder="—"
-              className={`${campo} ${
-                tentouSalvar && erros.percentual ? "border-cta" : "border-border"
-              }`}
-            />
-            <span className="text-foreground">% de faltas</span>
-          </span>
-          <span
-            className={`text-caption ${
-              tentouSalvar && erros.percentual ? "text-destructive" : "text-muted-foreground"
-            }`}
-          >
-            {tentouSalvar && erros.percentual
-              ? erros.percentual
-              : "Deixe vazio para não avisar."}
-          </span>
-        </label>
+        <Field
+          label="Avisar a partir de"
+          hint="Deixe vazio para não avisar."
+          error={tentouSalvar ? erros.percentual : undefined}
+        >
+          <Input
+            inputMode="numeric"
+            value={percentual}
+            disabled={!carregou}
+            onChange={(e) => setPercentual(e.target.value)}
+            placeholder="—"
+            suffix="% de faltas"
+          />
+        </Field>
 
-        <label className="flex flex-col gap-1">
-          <span className="text-body font-semibold text-foreground">
-            Começar a avisar depois de
-          </span>
-          <span className="flex items-center gap-2">
-            <input
-              inputMode="numeric"
-              aria-label="Mínimo de aulas"
-              value={minimo}
-              disabled={!carregou}
-              onChange={(e) => setMinimo(e.target.value)}
-              className={`${campo} ${
-                tentouSalvar && erros.minimo ? "border-cta" : "border-border"
-              }`}
-            />
-            <span className="text-foreground">aulas do aluno</span>
-          </span>
-          <span
-            className={`text-caption ${
-              tentouSalvar && erros.minimo ? "text-destructive" : "text-muted-foreground"
-            }`}
-          >
-            {tentouSalvar && erros.minimo
-              ? erros.minimo
-              : "Nas primeiras aulas uma falta pesa muito; antes disso ninguém aparece em risco."}
-          </span>
-        </label>
+        <Field
+          label="Começar a avisar depois de"
+          hint="Nas primeiras aulas uma falta pesa muito; antes disso ninguém aparece em risco."
+          error={tentouSalvar ? erros.minimo : undefined}
+        >
+          <Input
+            inputMode="numeric"
+            value={minimo}
+            disabled={!carregou}
+            onChange={(e) => setMinimo(e.target.value)}
+            suffix="aulas do aluno"
+          />
+        </Field>
 
         {erro && (
-          <div className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2">
-            <p className="text-body text-muted-foreground">
-              Não foi possível carregar o alerta.
-            </p>
-            <button
-              type="button"
-              onClick={carregar}
-              className="shrink-0 h-9 px-3 rounded-lg border border-primary/30 text-foreground text-body font-bold hover:bg-primary/5"
-            >
-              Tentar de novo
-            </button>
-          </div>
+          <Alert
+            variant="destructive"
+            title="Não foi possível carregar o alerta."
+            action={
+              <Button type="button" variant="outline" size="sm" onClick={carregar}>
+                Tentar de novo
+              </Button>
+            }
+          />
         )}
 
-        <p
-          aria-live="polite"
-          className="text-body rounded-lg bg-cta/5 border-l-4 border-cta px-3 py-2 text-foreground min-h-[2.5rem]"
-        >
+        <Alert variant="info" title="Exemplo" role="status" aria-live="polite">
           {desligado
             ? "Alerta desligado: a chamada não mostra risco de evasão."
             : exemplo ?? "Confira os valores acima."}
-        </p>
-      </div>
+        </Alert>
 
-      <div className="shrink-0 px-4 py-3 sm:px-6 sm:py-4 border-t border-border flex gap-2 justify-end">
-        <button
-          type="button"
-          onClick={handleClose}
-          className="h-11 px-5 rounded-lg border border-primary/30 text-foreground font-bold hover:bg-primary/5"
-        >
-          Cancelar
-        </button>
-        <button
-          type="button"
-          onClick={salvar}
-          disabled={!carregou || salvando}
-          className="h-11 px-6 rounded-lg bg-primary text-primary-foreground font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Salvar
-        </button>
-      </div>
-    </ModalTemplate>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button
+            type="button"
+            onClick={salvar}
+            disabled={!carregou || salvando}
+          >
+            Salvar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

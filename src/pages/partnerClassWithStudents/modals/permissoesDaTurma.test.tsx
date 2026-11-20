@@ -11,11 +11,6 @@ vi.mock("@/store/auth", () => ({
 vi.mock("react-toastify", () => ({
   toast: { error: vi.fn(), warn: vi.fn(), success: vi.fn(), loading: vi.fn() },
 }));
-vi.mock("@/components/templates/modalTemplate", () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-}));
 // O DataGrid não roda no jsdom (ver `index.test.tsx`): o dublê expõe o que
 // importa aqui — se a tabela tem caixas de seleção.
 vi.mock("@mui/x-data-grid", () => ({

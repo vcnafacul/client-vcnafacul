@@ -3,11 +3,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const toastMock = vi.hoisted(() => ({ warning: vi.fn() }));
 vi.mock("react-toastify", () => ({ toast: toastMock }));
-vi.mock("@/components/templates/modalTemplate", () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-}));
 
 import { EditStudentRecordModal } from "./editStudentRecordModal";
 
