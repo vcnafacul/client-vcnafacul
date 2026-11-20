@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ModalTemplate from "../../../../components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToastAsync } from "../../../../hooks/useToastAsync";
 import { baixarModelo } from "../../../../services/caderno/template/baixarModelo";
 import { ErroDeLint } from "../../../../services/caderno/template/erros";
@@ -239,259 +245,289 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
     );
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="w-full max-w-3xl rounded-lg bg-white shadow-lg p-2"
-    >
-      {view === "descartar" ? (
-        <ConfirmarDescarte
-          token={token}
-          versaoNoAr={estado.versaoNoAr}
-          onDescartado={handleDescartado}
-          onCancel={() => setView("principal")}
-        />
-      ) : view === "historico" ? (
-        <Historico
-          token={token}
-          versaoNoAr={estado.versaoNoAr}
-          onRestaurado={handleRestaurado}
-          onVoltar={() => setView("principal")}
-        />
-      ) : (
-        <div className="p-6">
-          <div className="mb-2 flex items-center gap-3">
-            <div className="rounded-lg bg-info-muted p-2">
-              <FileText className="h-6 w-6 text-info" />
-            </div>
-            <h2 className="text-h2 font-semibold text-foreground">
-              Template do caderno
-            </h2>
-            <div className="ml-auto">
-              <Button variant="outline" size="sm"
-                onClick={() => setView("historico")}
-              >
-                Histórico de versões
-              </Button>
-            </div>
-          </div>
-          <div className="mb-6">{versaoNoAr}</div>
-
-          {/* ⚠️ Os três passos ficam NA TELA, não em tooltip: quem usa isto
-              abre a tela uma vez por trimestre e não lembra da ordem. */}
-          <ol className="flex flex-col gap-5">
-            <li className="rounded-lg border border-border p-4">
-              <p className="font-semibold text-foreground">
-                1. Baixe o zip do modelo
-              </p>
-              <p className="mt-1 text-body text-muted-foreground">
-                É o template que está no ar hoje, do jeito que ele sai. Parta
-                sempre dele — não comece um projeto do zero.
-              </p>
-              <div className="mt-3">
-                <Button variant="outline" size="sm"
-                  disabled={baixando}
-                  onClick={handleBaixarModelo}
-                >
-                  Baixar zip do modelo
-                </Button>
-              </div>
-            </li>
-
-            <li className="rounded-lg border border-border p-4">
-              <p className="font-semibold text-foreground">
-                2. Edite no Overleaf e confira o PDF
-              </p>
-              <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-body text-muted-foreground">
-                <li>
-                  Entre no <span className="font-medium">overleaf.com</span> e
-                  crie um projeto novo em{" "}
-                  <span className="font-medium">
-                    &quot;New Project &gt; Upload Project&quot;
-                  </span>
-                  , enviando esse zip inteiro.
-                </li>
-                <li>
-                  Altere <span className="font-mono">main.tex</span> e{" "}
-                  <span className="font-mono">preambulo.tex</span> — são eles
-                  que definem a capa e as fontes.
-                </li>
-                <li>
-                  Clique em{" "}
-                  <span className="font-medium">&quot;Recompile&quot;</span> e{" "}
-                  <span className="font-semibold">confira o PDF</span> antes de
-                  trazer de volta. O que não compila lá não publica aqui.
-                </li>
-                <li>
-                  Terminado, baixe o{" "}
-                  <span className="font-semibold">projeto inteiro</span> pelo{" "}
-                  <span className="font-medium">&quot;Download&quot;</span> do
-                  Overleaf.
-                </li>
-                <li>
-                  Não separe arquivo nenhum nem monte um zip à mão: a plataforma
-                  abre o zip e pega os dois de dentro.
-                </li>
-              </ul>
-            </li>
-
-            <li className="rounded-lg border border-border p-4">
-              <p className="font-semibold text-foreground">
-                3. Envie o zip do Overleaf aqui
-              </p>
-              <p className="mt-1 text-body text-muted-foreground">
-                A plataforma confere o zip e guarda como rascunho. Publicar é o
-                passo seguinte — até lá, nada muda para as provas.
-              </p>
-
-              <div className="mt-3 flex flex-col gap-3">
-                <input
-                  type="file"
-                  accept=".zip,application/zip"
-                  onChange={(e) => setArquivo(e.target.files?.[0] ?? null)}
-                  className="text-body"
-                />
-                <input
-                  type="text"
-                  value={notas}
-                  placeholder="Notas da versão (opcional) — ex.: nova logo da capa"
-                  onChange={(e) => setNotas(e.target.value)}
-                  className="w-full rounded-md border border-border px-3 py-2 text-body"
-                />
-                <div>
-                  <Button variant="outline" size="sm"
-                    disabled={!arquivo || enviando}
-                    onClick={handleEnviar}
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent
+        size="lg"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle className="sr-only">
+            {view === "descartar"
+              ? "Descartar rascunho"
+              : view === "historico"
+                ? "Histórico de versões"
+                : "Template do caderno"}
+          </DialogTitle>
+        </DialogHeader>
+        <DialogBody>
+          {view === "descartar" ? (
+            <ConfirmarDescarte
+              token={token}
+              versaoNoAr={estado.versaoNoAr}
+              onDescartado={handleDescartado}
+              onCancel={() => setView("principal")}
+            />
+          ) : view === "historico" ? (
+            <Historico
+              token={token}
+              versaoNoAr={estado.versaoNoAr}
+              onRestaurado={handleRestaurado}
+              onVoltar={() => setView("principal")}
+            />
+          ) : (
+            <div>
+              <div className="mb-2 flex items-center gap-3">
+                <div className="rounded-lg bg-info-muted p-2">
+                  <FileText className="h-6 w-6 text-info" />
+                </div>
+                <p className="text-h2 font-semibold text-foreground">
+                  Template do caderno
+                </p>
+                <div className="ml-auto">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setView("historico")}
                   >
-                    Enviar zip
+                    Histórico de versões
                   </Button>
                 </div>
               </div>
-            </li>
-          </ol>
+              <div className="mb-6">{versaoNoAr}</div>
 
-          {/* ⚠️ Não é um aviso de impedimento, é uma explicação: rascunho
+              {/* ⚠️ Os três passos ficam NA TELA, não em tooltip: quem usa isto
+              abre a tela uma vez por trimestre e não lembra da ordem. */}
+              <ol className="flex flex-col gap-5">
+                <li className="rounded-lg border border-border p-4">
+                  <p className="font-semibold text-foreground">
+                    1. Baixe o zip do modelo
+                  </p>
+                  <p className="mt-1 text-body text-muted-foreground">
+                    É o template que está no ar hoje, do jeito que ele sai.
+                    Parta sempre dele — não comece um projeto do zero.
+                  </p>
+                  <div className="mt-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={baixando}
+                      onClick={handleBaixarModelo}
+                    >
+                      Baixar zip do modelo
+                    </Button>
+                  </div>
+                </li>
+
+                <li className="rounded-lg border border-border p-4">
+                  <p className="font-semibold text-foreground">
+                    2. Edite no Overleaf e confira o PDF
+                  </p>
+                  <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-body text-muted-foreground">
+                    <li>
+                      Entre no <span className="font-medium">overleaf.com</span>{" "}
+                      e crie um projeto novo em{" "}
+                      <span className="font-medium">
+                        &quot;New Project &gt; Upload Project&quot;
+                      </span>
+                      , enviando esse zip inteiro.
+                    </li>
+                    <li>
+                      Altere <span className="font-mono">main.tex</span> e{" "}
+                      <span className="font-mono">preambulo.tex</span> — são
+                      eles que definem a capa e as fontes.
+                    </li>
+                    <li>
+                      Clique em{" "}
+                      <span className="font-medium">&quot;Recompile&quot;</span>{" "}
+                      e <span className="font-semibold">confira o PDF</span>{" "}
+                      antes de trazer de volta. O que não compila lá não publica
+                      aqui.
+                    </li>
+                    <li>
+                      Terminado, baixe o{" "}
+                      <span className="font-semibold">projeto inteiro</span>{" "}
+                      pelo{" "}
+                      <span className="font-medium">&quot;Download&quot;</span>{" "}
+                      do Overleaf.
+                    </li>
+                    <li>
+                      Não separe arquivo nenhum nem monte um zip à mão: a
+                      plataforma abre o zip e pega os dois de dentro.
+                    </li>
+                  </ul>
+                </li>
+
+                <li className="rounded-lg border border-border p-4">
+                  <p className="font-semibold text-foreground">
+                    3. Envie o zip do Overleaf aqui
+                  </p>
+                  <p className="mt-1 text-body text-muted-foreground">
+                    A plataforma confere o zip e guarda como rascunho. Publicar
+                    é o passo seguinte — até lá, nada muda para as provas.
+                  </p>
+
+                  <div className="mt-3 flex flex-col gap-3">
+                    <input
+                      type="file"
+                      accept=".zip,application/zip"
+                      onChange={(e) => setArquivo(e.target.files?.[0] ?? null)}
+                      className="text-body"
+                    />
+                    <input
+                      type="text"
+                      value={notas}
+                      placeholder="Notas da versão (opcional) — ex.: nova logo da capa"
+                      onChange={(e) => setNotas(e.target.value)}
+                      className="w-full rounded-md border border-border px-3 py-2 text-body"
+                    />
+                    <div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={!arquivo || enviando}
+                        onClick={handleEnviar}
+                      >
+                        Enviar zip
+                      </Button>
+                    </div>
+                  </div>
+                </li>
+              </ol>
+
+              {/* ⚠️ Não é um aviso de impedimento, é uma explicação: rascunho
               salvo PUBLICA. O lint roda de novo no publicar (card 10) — o
               veredito sai no clique, e um 409 devolve a lista, que cai em
               `relatorio.erros` e desliga o botão pela máquina. Este é o estado
               normal depois de restaurar uma versão. Os gates continuam sendo
               `estado.podePublicar` / `estado.podeDescartar`. */}
-          {estado.tipo === "rascunho-sem-relatorio" &&
-            rascunhoSalvo !== null && (
-              <div className="mt-6 rounded-lg border border-border p-4">
-                <p className="text-body font-semibold text-foreground">
-                  Há um rascunho salvo (v{rascunhoSalvo.versao})
-                  {rascunhoSalvo.notas ? ` — ${rascunhoSalvo.notas}` : ""}.
-                </p>
-                <p className="mt-1 text-body text-muted-foreground">
-                  A conferência dele acontece ao publicar: se algo não passar, a
-                  lista do que corrigir aparece aqui e nada é publicado.
-                </p>
-                <div className="mt-4 flex justify-end gap-3">
-                  <Button variant="destructive" size="sm"
-                    disabled={!estado.podeDescartar}
-                    onClick={() => setView("descartar")}
-                  >
-                    Descartar rascunho
-                  </Button>
-                  <Button variant="primary" size="sm"
-                    disabled={!estado.podePublicar || publicando}
-                    onClick={handlePublicar}
-                  >
-                    Publicar
-                  </Button>
-                </div>
-              </div>
-            )}
+              {estado.tipo === "rascunho-sem-relatorio" &&
+                rascunhoSalvo !== null && (
+                  <div className="mt-6 rounded-lg border border-border p-4">
+                    <p className="text-body font-semibold text-foreground">
+                      Há um rascunho salvo (v{rascunhoSalvo.versao})
+                      {rascunhoSalvo.notas ? ` — ${rascunhoSalvo.notas}` : ""}.
+                    </p>
+                    <p className="mt-1 text-body text-muted-foreground">
+                      A conferência dele acontece ao publicar: se algo não
+                      passar, a lista do que corrigir aparece aqui e nada é
+                      publicado.
+                    </p>
+                    <div className="mt-4 flex justify-end gap-3">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        disabled={!estado.podeDescartar}
+                        onClick={() => setView("descartar")}
+                      >
+                        Descartar rascunho
+                      </Button>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        disabled={!estado.podePublicar || publicando}
+                        onClick={handlePublicar}
+                      >
+                        Publicar
+                      </Button>
+                    </div>
+                  </div>
+                )}
 
-          {(estado.tipo === "rascunho-com-erro" ||
-            estado.tipo === "rascunho-limpo") && (
-            <div className="mt-6 rounded-lg border border-border p-4">
-              <p className="mb-3 font-semibold text-foreground">
-                Conferência do rascunho
-              </p>
-
-              {relatorio && relatorio.aceitos.length > 0 && (
-                <div className="mb-3">
-                  <p className="text-body font-medium text-foreground">
-                    Arquivos usados
+              {(estado.tipo === "rascunho-com-erro" ||
+                estado.tipo === "rascunho-limpo") && (
+                <div className="mt-6 rounded-lg border border-border p-4">
+                  <p className="mb-3 font-semibold text-foreground">
+                    Conferência do rascunho
                   </p>
-                  <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-body text-muted-foreground">
-                    {relatorio.aceitos.map((nome) => (
-                      <li key={nome} className="font-mono">
-                        {nome}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
 
-              {/* ⚠️ Os ignorados aparecem sempre que existirem: o zip do
+                  {relatorio && relatorio.aceitos.length > 0 && (
+                    <div className="mb-3">
+                      <p className="text-body font-medium text-foreground">
+                        Arquivos usados
+                      </p>
+                      <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-body text-muted-foreground">
+                        {relatorio.aceitos.map((nome) => (
+                          <li key={nome} className="font-mono">
+                            {nome}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* ⚠️ Os ignorados aparecem sempre que existirem: o zip do
                   Overleaf traz o projeto inteiro e a plataforma pega dois
                   arquivos. Sem esta lista ele acha que subiu mais do que
                   subiu — e um dia jura que trocou a logo pela tela. */}
-              {estado.mostrarIgnorados && (
-                <div className="mb-3">
-                  <p className="text-body font-medium text-foreground">
-                    Arquivos ignorados — vieram no zip e{" "}
-                    <span className="font-semibold">não</span> foram usados
-                  </p>
-                  <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-body text-muted-foreground">
-                    {estado.ignorados.map((nome) => (
-                      <li key={nome} className="font-mono">
-                        {nome}
-                      </li>
-                    ))}
-                  </ul>
+                  {estado.mostrarIgnorados && (
+                    <div className="mb-3">
+                      <p className="text-body font-medium text-foreground">
+                        Arquivos ignorados — vieram no zip e{" "}
+                        <span className="font-semibold">não</span> foram usados
+                      </p>
+                      <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-body text-muted-foreground">
+                        {estado.ignorados.map((nome) => (
+                          <li key={nome} className="font-mono">
+                            {nome}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {estado.erros.length > 0 && (
+                    <div className="mb-3 rounded-md border border-destructive bg-destructive-muted p-3">
+                      <p className="text-body font-semibold text-destructive">
+                        Corrija no Overleaf e envie de novo — sem isto não dá
+                        para publicar:
+                      </p>
+                      <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-body text-destructive">
+                        {estado.erros.map((erro, i) => (
+                          <li key={`${i}-${erro}`}>{erro}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {estado.avisos.length > 0 && (
+                    <div className="mb-3 rounded-md border border-warning/40 bg-warning-muted p-3">
+                      <p className="text-body font-semibold text-warning">
+                        Vale conferir — não impede publicar:
+                      </p>
+                      <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-body text-warning">
+                        {estado.avisos.map((aviso, i) => (
+                          <li key={`${i}-${aviso}`}>{aviso}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div className="mt-4 flex justify-end gap-3">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      disabled={!estado.podeDescartar}
+                      onClick={() => setView("descartar")}
+                    >
+                      Descartar rascunho
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      disabled={!estado.podePublicar || publicando}
+                      onClick={handlePublicar}
+                    >
+                      Publicar
+                    </Button>
+                  </div>
                 </div>
               )}
-
-              {estado.erros.length > 0 && (
-                <div className="mb-3 rounded-md border border-destructive bg-destructive-muted p-3">
-                  <p className="text-body font-semibold text-destructive">
-                    Corrija no Overleaf e envie de novo — sem isto não dá para
-                    publicar:
-                  </p>
-                  <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-body text-destructive">
-                    {estado.erros.map((erro, i) => (
-                      <li key={`${i}-${erro}`}>{erro}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {estado.avisos.length > 0 && (
-                <div className="mb-3 rounded-md border border-warning/40 bg-warning-muted p-3">
-                  <p className="text-body font-semibold text-warning">
-                    Vale conferir — não impede publicar:
-                  </p>
-                  <ul className="mt-1 flex list-disc flex-col gap-0.5 pl-5 text-body text-warning">
-                    {estado.avisos.map((aviso, i) => (
-                      <li key={`${i}-${aviso}`}>{aviso}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              <div className="mt-4 flex justify-end gap-3">
-                <Button variant="destructive" size="sm"
-                  disabled={!estado.podeDescartar}
-                  onClick={() => setView("descartar")}
-                >
-                  Descartar rascunho
-                </Button>
-                <Button variant="primary" size="sm"
-                  disabled={!estado.podePublicar || publicando}
-                  onClick={handlePublicar}
-                >
-                  Publicar
-                </Button>
-              </div>
             </div>
           )}
-        </div>
-      )}
-    </ModalTemplate>
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   );
 }
 

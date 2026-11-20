@@ -115,7 +115,7 @@ function CreateForm({
   };
 
   return (
-    <div className="p-6">
+    <div>
       <div className="mb-6 flex items-center gap-2">
         <button
           type="button"
@@ -124,9 +124,6 @@ function CreateForm({
         >
           <ArrowLeft className="h-4 w-4" /> Voltar
         </button>
-        <h2 className="text-h2 font-semibold text-foreground">
-          Nova Categoria personalizada
-        </h2>
       </div>
 
       <div className="flex flex-col gap-4">
@@ -223,7 +220,9 @@ function CreateForm({
         <Button variant="outline" size="sm" onClick={onCancel}>
           Cancelar
         </Button>
-        <Button variant="primary" size="sm"
+        <Button
+          variant="primary"
+          size="sm"
           disabled={!valido || salvando}
           onClick={handleSalvar}
         >

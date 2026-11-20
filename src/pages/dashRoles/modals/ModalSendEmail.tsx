@@ -8,9 +8,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import ModalTemplate, {
-  ModalProps,
-} from "@/components/templates/modalTemplate";
+import { ModalProps } from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -63,7 +69,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
         const results = await getUserByName(token, searchTerm);
         // Filtra usuários já selecionados
         const filteredResults = results.filter(
-          (user) => !selectedUsers.some((selected) => selected.id === user.id)
+          (user) => !selectedUsers.some((selected) => selected.id === user.id),
         );
         setSearchResults(filteredResults);
       } catch (error) {
@@ -110,7 +116,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
             userIds: sendToAll ? undefined : selectedUsers.map((u) => u.id),
             sendToAll,
           },
-          token
+          token,
         );
       },
       loadingMessage: "Enviando email...",
@@ -144,7 +150,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
 
     if (!sendToAll && selectedUsers.length === 0) {
       toast.warning(
-        "Por favor, selecione pelo menos um usuário ou marque 'Enviar para todos'"
+        "Por favor, selecione pelo menos um usuário ou marque 'Enviar para todos'",
       );
       return;
     }
@@ -174,215 +180,216 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
 
   return (
     <>
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleCloseModal}
-      className="bg-white rounded-lg p-4 sm:p-6 shadow-lg w-full max-w-[51rem]"
-    >
-      <div className="w-full">
-        {/* Título */}
-        <div className="flex items-center gap-3 mb-6">
-          <Mail className="w-8 h-8 text-foreground" />
-          <h2 className="text-h1 font-bold text-foreground">
-            Enviar Email em Massa
-          </h2>
-        </div>
+      <Dialog open={isOpen} onOpenChange={(o) => !o && handleCloseModal()}>
+        <DialogContent
+          size="lg"
+          aria-describedby={undefined}
+          onInteractOutside={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <Mail className="w-8 h-8 text-foreground" />
+              <DialogTitle>Enviar Email em Massa</DialogTitle>
+            </div>
+          </DialogHeader>
 
-        <div className="space-y-6 max-h-[70vh] overflow-y-auto scrollbar-hide pr-2">
-          {/* Assunto */}
-          <div className="space-y-2 px-0.5">
-            <Label
-              htmlFor="subject"
-              className="text-body font-semibold text-foreground"
-            >
-              Assunto *
-            </Label>
-            <Input
-              id="subject"
-              placeholder="Digite o assunto do email"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              className="text-body"
-              disabled={isSending}
-            />
-          </div>
+          <DialogBody className="-mx-1 space-y-6 px-1 pt-2">
+            {/* Assunto */}
+            <div className="space-y-2 px-0.5">
+              <Label
+                htmlFor="subject"
+                className="text-body font-semibold text-foreground"
+              >
+                Assunto *
+              </Label>
+              <Input
+                id="subject"
+                placeholder="Digite o assunto do email"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                className="text-body"
+                disabled={isSending}
+              />
+            </div>
 
-          {/* Mensagem */}
-          <div className="space-y-2 px-0.5">
-            <Label
-              htmlFor="message"
-              className="text-body font-semibold text-foreground"
-            >
-              Mensagem *
-            </Label>
-            <Textarea
-              id="message"
-              placeholder="Digite a mensagem do email..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="min-h-[150px] text-body resize-none"
-              disabled={isSending}
-            />
-            <p className="text-caption text-muted-foreground">{message.length} caracteres</p>
-          </div>
+            {/* Mensagem */}
+            <div className="space-y-2 px-0.5">
+              <Label
+                htmlFor="message"
+                className="text-body font-semibold text-foreground"
+              >
+                Mensagem *
+              </Label>
+              <Textarea
+                id="message"
+                placeholder="Digite a mensagem do email..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="min-h-[150px] text-body resize-none"
+                disabled={isSending}
+              />
+              <p className="text-caption text-muted-foreground">
+                {message.length} caracteres
+              </p>
+            </div>
 
-          {/* Checkbox Enviar para Todos */}
-          <div className="flex items-center space-x-3 p-4 bg-info-muted rounded-lg border border-info/30">
-            <Checkbox
-              id="sendToAll"
-              checked={sendToAll}
-              onCheckedChange={(checked) => setSendToAll(checked as boolean)}
-              disabled={isSending}
-            />
-            <Label
-              htmlFor="sendToAll"
-              className="text-body font-medium text-foreground cursor-pointer"
-            >
-              Enviar para todos os usuários
-            </Label>
-          </div>
+            {/* Checkbox Enviar para Todos */}
+            <div className="flex items-center space-x-3 p-4 bg-info-muted rounded-lg border border-info/30">
+              <Checkbox
+                id="sendToAll"
+                checked={sendToAll}
+                onCheckedChange={(checked) => setSendToAll(checked as boolean)}
+                disabled={isSending}
+              />
+              <Label
+                htmlFor="sendToAll"
+                className="text-body font-medium text-foreground cursor-pointer"
+              >
+                Enviar para todos os usuários
+              </Label>
+            </div>
 
-          {/* Busca de Usuários */}
-          {!sendToAll && (
-            <>
-              <div className="space-y-2 p-0.5">
-                <Label
-                  htmlFor="search"
-                  className="text-body font-semibold text-foreground"
-                >
-                  Buscar Usuários
-                </Label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-                  <Input
-                    id="search"
-                    placeholder="Digite o nome do usuário..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 text-body"
-                    disabled={isSending}
-                  />
-                </div>
-
-                {/* Resultados da busca */}
-                {isSearching && (
-                  <div className="text-body text-muted-foreground p-2">Buscando...</div>
-                )}
-
-                {searchResults.length > 0 && (
-                  <div className="border border-border rounded-md max-h-48 overflow-y-auto">
-                    {searchResults.map((user) => (
-                      <div
-                        key={user.id}
-                        onClick={() => handleSelectUser(user)}
-                        className="p-3 hover:bg-muted cursor-pointer transition-colors border-b border-border last:border-b-0"
-                      >
-                        <div className="font-medium text-foreground">
-                          {user.name}
-                        </div>
-                        <div className="text-body text-muted-foreground">
-                          {user.email}
-                        </div>
-                        {user.phone && (
-                          <div className="text-caption text-muted-foreground">
-                            {user.phone}
-                          </div>
-                        )}
-                      </div>
-                    ))}
+            {/* Busca de Usuários */}
+            {!sendToAll && (
+              <>
+                <div className="space-y-2 p-0.5">
+                  <Label
+                    htmlFor="search"
+                    className="text-body font-semibold text-foreground"
+                  >
+                    Buscar Usuários
+                  </Label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                    <Input
+                      id="search"
+                      placeholder="Digite o nome do usuário..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10 text-body"
+                      disabled={isSending}
+                    />
                   </div>
-                )}
 
-                {searchTerm.trim().length >= 2 &&
-                  !isSearching &&
-                  searchResults.length === 0 && (
+                  {/* Resultados da busca */}
+                  {isSearching && (
                     <div className="text-body text-muted-foreground p-2">
-                      Nenhum usuário encontrado
+                      Buscando...
                     </div>
                   )}
-              </div>
 
-              {/* Usuários Selecionados */}
-              {selectedUsers.length > 0 && (
-                <div className="space-y-2">
-                  <Label className="text-body font-semibold text-foreground">
-                    Usuários Selecionados ({selectedUsers.length})
-                  </Label>
-                  <div className="flex flex-wrap gap-2 p-3 bg-page rounded-md border border-border max-h-40 overflow-y-auto">
-                    {selectedUsers.map((user) => (
-                      <div
-                        key={user.id}
-                        className="flex items-center gap-2 bg-primary text-primary-foreground px-3 py-2 rounded-full text-body font-medium shadow-sm hover:bg-primary/90 transition-colors"
-                      >
-                        <span>{user.name}</span>
+                  {searchResults.length > 0 && (
+                    <div className="border border-border rounded-md max-h-48 overflow-y-auto">
+                      {searchResults.map((user) => (
                         <button
-                          onClick={() => handleRemoveUser(user.id)}
-                          className="hover:bg-white/20 rounded-full p-0.5 transition-colors"
-                          disabled={isSending}
                           type="button"
+                          key={user.id}
+                          onClick={() => handleSelectUser(user)}
+                          className="block w-full p-3 text-left hover:bg-muted cursor-pointer transition-colors border-b border-border last:border-b-0"
                         >
-                          <CircleX className="w-4 h-4" />
+                          <div className="font-medium text-foreground">
+                            {user.name}
+                          </div>
+                          <div className="text-body text-muted-foreground">
+                            {user.email}
+                          </div>
+                          {user.phone && (
+                            <div className="text-caption text-muted-foreground">
+                              {user.phone}
+                            </div>
+                          )}
                         </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {searchTerm.trim().length >= 2 &&
+                    !isSearching &&
+                    searchResults.length === 0 && (
+                      <div className="text-body text-muted-foreground p-2">
+                        Nenhum usuário encontrado
                       </div>
-                    ))}
-                  </div>
+                    )}
                 </div>
-              )}
-            </>
-          )}
-        </div>
 
-        {/* Botões de Ação */}
-        <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6 pt-4 border-t border-border">
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={handleCloseModal}
-            disabled={isSending}
-            className="order-2 sm:order-1 w-full"
-          >
-            Cancelar
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSendEmail}
-            disabled={isSending}
-            className="order-1 sm:order-2 w-full"
-          >
-            {isSending ? "Enviando..." : "Enviar Email"}
-          </Button>
-        </div>
-      </div>
-    </ModalTemplate>
+                {/* Usuários Selecionados */}
+                {selectedUsers.length > 0 && (
+                  <div className="space-y-2">
+                    <Label className="text-body font-semibold text-foreground">
+                      Usuários Selecionados ({selectedUsers.length})
+                    </Label>
+                    <div className="flex flex-wrap gap-2 p-3 bg-page rounded-md border border-border max-h-40 overflow-y-auto">
+                      {selectedUsers.map((user) => (
+                        <div
+                          key={user.id}
+                          className="flex items-center gap-2 bg-primary text-primary-foreground px-3 py-2 rounded-full text-body font-medium shadow-sm hover:bg-primary/90 transition-colors"
+                        >
+                          <span>{user.name}</span>
+                          <button
+                            onClick={() => handleRemoveUser(user.id)}
+                            className="hover:bg-white/20 rounded-full p-0.5 transition-colors"
+                            disabled={isSending}
+                            type="button"
+                          >
+                            <CircleX className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </DialogBody>
 
-    <AlertDialog
-      open={showConfirmAll}
-      onOpenChange={(aberto) => {
-        if (!aberto) {
-          setShowConfirmAll(false);
-        }
-      }}
-    >
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Enviar email para todos os usuários</AlertDialogTitle>
-          <AlertDialogDescription>
-            Você está prestes a enviar o email <strong>para todos os usuários da plataforma</strong>.
-            Esta ação não pode ser desfeita. Tem certeza que deseja continuar?
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction
-            variant="primary"
-            onClick={handleConfirmSendAll}
-          >
-            Enviar para todos
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+          <DialogFooter>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={handleCloseModal}
+              disabled={isSending}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSendEmail}
+              disabled={isSending}
+            >
+              {isSending ? "Enviando..." : "Enviar Email"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog
+        open={showConfirmAll}
+        onOpenChange={(aberto) => {
+          if (!aberto) {
+            setShowConfirmAll(false);
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Enviar email para todos os usuários
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Você está prestes a enviar o email{" "}
+              <strong>para todos os usuários da plataforma</strong>. Esta ação
+              não pode ser desfeita. Tem certeza que deseja continuar?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction variant="primary" onClick={handleConfirmSendAll}>
+              Enviar para todos
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

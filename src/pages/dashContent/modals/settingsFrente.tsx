@@ -32,7 +32,14 @@ import { getSubjects } from "@/services/content/getSubjects";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import ModalTemplate from "../../../components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuthStore } from "../../../store/auth";
 import { PanelFrente } from "./panelFrente";
 import { PanelMateria } from "./panelMateria";
@@ -172,9 +179,7 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
       successMessage: "Tema criado com sucesso",
       errorMessage: (error: Error) => error.message,
       onSuccess: (res) => {
-        const parentFrente = frentes.find(
-          (f) => (f._id || f.id) === frenteId,
-        );
+        const parentFrente = frentes.find((f) => (f._id || f.id) === frenteId);
         if (!parentFrente) return;
         const newTema: SubjectDto = {
           id: res.id,
@@ -190,10 +195,7 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
     });
   };
 
-  const handleUpdateTema = async (
-    body: UpdateSubjectDto,
-    frenteId: string,
-  ) => {
+  const handleUpdateTema = async (body: UpdateSubjectDto, frenteId: string) => {
     await executeAsync({
       action: () => updateSubject(body, token),
       loadingMessage: "Editando tema...",
@@ -360,82 +362,75 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
   }));
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      // Sem max-h: sem overflow, o conteúdo (~730px) vazava do fundo branco.
-      // Quem rola é o overlay do ModalTemplate.
-      className="bg-white w-[90vw] p-3 sm:p-6 rounded-md"
-    >
-      <div className="flex flex-col gap-6">
-        {/* Tabs */}
-        <div className="flex border-b border-border">
-          <button
-            type="button"
-            onClick={() => setActiveTab("materias")}
-            className={`px-4 py-2 text-body font-medium transition-colors ${
-              activeTab === "materias"
-                ? "border-b-2 border-cta text-foreground font-semibold"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent size="full" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Matérias e frentes</DialogTitle>
+        </DialogHeader>
+        <DialogBody className="-mx-1 px-1 pt-2">
+          <Tabs
+            value={activeTab}
+            onValueChange={(v) => setActiveTab(v as Tab)}
+            className="flex flex-col gap-6"
           >
-            Matérias
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("frentes")}
-            className={`px-4 py-2 text-body font-medium transition-colors ${
-              activeTab === "frentes"
-                ? "border-b-2 border-cta text-foreground font-semibold"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Frentes
-          </button>
-        </div>
+            <TabsList>
+              <TabsTrigger value="materias">Matérias</TabsTrigger>
+              <TabsTrigger value="frentes">Frentes</TabsTrigger>
+            </TabsList>
 
-        {loading ? (
-          <span className="text-muted-foreground">Carregando matérias...</span>
-        ) : activeTab === "frentes" ? (
-          <>
-            <InputFactory
-              id="materia"
-              type="select"
-              label="Matéria"
-              options={materiasOptions}
-              value={materiaSelected}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onChange={(e: any) => setMateriaSelected(e.target.value)}
-            />
-            <div className="h-full">
-              <PanelFrente
-                frentes={frentes}
-                materia={materiaSelected}
-                materiaLabel={
-                  materiasList.find((m) => m._id === materiaSelected)?.nome ??
-                  ""
-                }
-                onCreate={handleCreateFrente}
-                onUpdate={handleUpdateFrente}
-                onDelete={handleDeleteFrente}
-                onCreateTema={handleCreateTema}
-                onUpdateTema={handleUpdateTema}
-                onDeleteTema={handleDeleteTema}
-                onReorderTemas={handleReorderTemas}
-              />
-            </div>
-          </>
-        ) : (
-          <PanelMateria
-            materias={materiasList}
-            onCreate={handleCreateMateria}
-            onUpdate={handleUpdateMateria}
-            onDelete={handleDeleteMateria}
-            checkCanDelete={(id) => getMateriaCanDelete(id, token)}
-          />
-        )}
-      </div>
-    </ModalTemplate>
+            {loading ? (
+              <span className="text-muted-foreground">
+                Carregando matérias...
+              </span>
+            ) : (
+              <>
+                <TabsContent
+                  value="frentes"
+                  className="mt-0 flex flex-col gap-6"
+                >
+                  <InputFactory
+                    id="materia"
+                    type="select"
+                    appendTo="self"
+                    label="Matéria"
+                    options={materiasOptions}
+                    value={materiaSelected}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    onChange={(e: any) => setMateriaSelected(e.target.value)}
+                  />
+                  <div className="h-full">
+                    <PanelFrente
+                      frentes={frentes}
+                      materia={materiaSelected}
+                      materiaLabel={
+                        materiasList.find((m) => m._id === materiaSelected)
+                          ?.nome ?? ""
+                      }
+                      onCreate={handleCreateFrente}
+                      onUpdate={handleUpdateFrente}
+                      onDelete={handleDeleteFrente}
+                      onCreateTema={handleCreateTema}
+                      onUpdateTema={handleUpdateTema}
+                      onDeleteTema={handleDeleteTema}
+                      onReorderTemas={handleReorderTemas}
+                    />
+                  </div>
+                </TabsContent>
+                <TabsContent value="materias" className="mt-0">
+                  <PanelMateria
+                    materias={materiasList}
+                    onCreate={handleCreateMateria}
+                    onUpdate={handleUpdateMateria}
+                    onDelete={handleDeleteMateria}
+                    checkCanDelete={(id) => getMateriaCanDelete(id, token)}
+                  />
+                </TabsContent>
+              </>
+            )}
+          </Tabs>
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   );
 }
 

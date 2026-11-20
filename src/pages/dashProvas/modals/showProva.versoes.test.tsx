@@ -16,9 +16,6 @@ vi.mock("@/store/auth", () => ({
   useAuthStore: () => ({ data: { token: "tok" } }),
 }));
 vi.mock("react-toastify", () => ({ toast: svc.toast }));
-vi.mock("@/components/templates/modalTemplate", () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}));
 vi.mock("./simuladosView", () => ({ default: () => null }));
 
 import ShowProva from "./showProva";

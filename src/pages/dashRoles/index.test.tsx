@@ -165,7 +165,7 @@ describe("DashRoles no DashListTemplate (usuários 03)", () => {
     );
     expect(updateUserRole).toHaveBeenCalledWith("u1", "r2", "tok");
     expect(
-      container.querySelector("[data-secao='funcao']")?.textContent,
+      document.querySelector("[data-secao='funcao']")?.textContent,
     ).toMatch(/professor/);
     expect(screen.getByText("resumo@x.com")).toBeTruthy();
   });

@@ -28,7 +28,8 @@ const montar = (over: Record<string, unknown> = {}) => {
       {...over}
     />,
   );
-  return { ...r, onConfirmar, onClose };
+  // O Dialog vai num portal no body: as consultas olham o documento todo.
+  return { ...r, container: document.body, onConfirmar, onClose };
 };
 
 describe("ModalEscolhaAoSalvar (card 27)", () => {

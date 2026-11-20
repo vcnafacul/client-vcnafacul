@@ -10,9 +10,15 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import ModalTemplate, {
-  ModalProps,
-} from "../../../components/templates/modalTemplate";
+import { ModalProps } from "../../../components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   ContentDtoInput,
   FrenteDto,
@@ -131,79 +137,89 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
   }));
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      className="bg-white w-full max-w-[90vw] p-3 sm:p-6 rounded-xl shadow-lg"
-    >
-      {/* Padding dobrado deixava ~241px úteis no celular. */}
-      <div className="bg-white p-1 sm:p-6 rounded-lg">
-        <form onSubmit={handleSubmit(create)} className="flex flex-col gap-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <InputFactory
-              id="materia"
-              type="select"
-              label="Matéria"
-              error={errors.materia}
-              options={materiasOptions}
-              defaultValue={materia}
-              onChange={(e: any) => setValue("materia", e.target.value)}
-            />
-            <InputFactory
-              id="frente"
-              type="select"
-              label="Frente"
-              error={errors.frente}
-              value={frente}
-              options={frentes.map((f) => ({ label: f.nome, value: f._id }))}
-              onChange={(e: any) => setValue("frente", e.target.value)}
-            />
-            <InputFactory
-              id="subjectId"
-              type="select"
-              label="Tema"
-              error={errors.subjectId}
-              value={watch("subjectId")}
-              options={subjects.map((s) => ({ label: s.name, value: s._id }))}
-              onChange={(e: any) => setValue("subjectId", e.target.value)}
-            />
-          </div>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose?.()}>
+      <DialogContent size="full" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Criar demanda</DialogTitle>
+        </DialogHeader>
+        <DialogBody className="-mx-1 px-1 pt-2">
+          <form
+            id="form-new-demand"
+            onSubmit={handleSubmit(create)}
+            className="flex flex-col gap-6"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <InputFactory
+                id="materia"
+                type="select"
+                appendTo="self"
+                label="Matéria"
+                error={errors.materia}
+                options={materiasOptions}
+                defaultValue={materia}
+                onChange={(e: any) => setValue("materia", e.target.value)}
+              />
+              <InputFactory
+                id="frente"
+                type="select"
+                appendTo="self"
+                label="Frente"
+                error={errors.frente}
+                value={frente}
+                options={frentes.map((f) => ({ label: f.nome, value: f._id }))}
+                onChange={(e: any) => setValue("frente", e.target.value)}
+              />
+              <InputFactory
+                id="subjectId"
+                type="select"
+                appendTo="self"
+                label="Tema"
+                error={errors.subjectId}
+                value={watch("subjectId")}
+                options={subjects.map((s) => ({ label: s.name, value: s._id }))}
+                onChange={(e: any) => setValue("subjectId", e.target.value)}
+              />
+            </div>
 
-          <div className="grid grid-cols-1 gap-4">
-            <InputFactory
-              id="title"
-              type="text"
-              label="Título*"
-              placeholder="Digite um Título"
-              error={errors.title}
-              onChange={(e: any) => setValue("title", e.target.value)}
-            />
-            <InputFactory
-              id="description"
-              type="textarea"
-              label="Descrição*"
-              placeholder="Digite uma descrição"
-              error={errors.description}
-              onChange={(e: any) => setValue("description", e.target.value)}
-            />
-          </div>
-
-          <div className="flex justify-end gap-4 mt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              className="flex items-center gap-2"
-            >
-              <X size={18} /> Fechar
-            </Button>
-            <Button type="submit" className="flex items-center gap-2">
-              <Save size={18} /> Salvar
-            </Button>
-          </div>
-        </form>
-      </div>
-    </ModalTemplate>
+            <div className="grid grid-cols-1 gap-4">
+              <InputFactory
+                id="title"
+                type="text"
+                label="Título*"
+                placeholder="Digite um Título"
+                error={errors.title}
+                onChange={(e: any) => setValue("title", e.target.value)}
+              />
+              <InputFactory
+                id="description"
+                type="textarea"
+                label="Descrição*"
+                placeholder="Digite uma descrição"
+                error={errors.description}
+                onChange={(e: any) => setValue("description", e.target.value)}
+              />
+            </div>
+          </form>
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleClose}
+            className="flex items-center gap-2"
+          >
+            <X size={18} /> Fechar
+          </Button>
+          <Button
+            type="submit"
+            form="form-new-demand"
+            className="flex items-center gap-2"
+          >
+            <Save size={18} /> Salvar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

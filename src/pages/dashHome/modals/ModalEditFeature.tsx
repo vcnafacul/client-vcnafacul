@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useAuthStore } from "../../../store/auth";
 import { HomeFeature } from "../../../dtos/homeContent/homeFeature";
 import { createHomeFeature } from "../../../services/home/createHomeFeature";
@@ -61,7 +68,9 @@ export default function ModalEditFeature({
           created = await createHomeFeature(
             {
               title: trimmed,
-              ...(trimmedDescription ? { description: trimmedDescription } : {}),
+              ...(trimmedDescription
+                ? { description: trimmedDescription }
+                : {}),
             },
             token,
           );
@@ -116,96 +125,112 @@ export default function ModalEditFeature({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white p-6 rounded-md w-[90vw] max-w-[500px]"
-    >
-      <div className="flex flex-col gap-4">
-        <h3 className="text-h3 font-semibold">
-          {isCreateMode ? "Adicionar item" : "Editar item"}
-        </h3>
-        <label className="flex flex-col gap-1">
-          <span className="text-body font-semibold">Título</span>
-          <input
-            className="border rounded-sm px-2 py-1"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Título do item"
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-body font-semibold">Descrição (opcional)</span>
-          <textarea
-            className="border rounded-sm px-2 py-1"
-            rows={3}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Texto descritivo exibido abaixo da imagem"
-          />
-        </label>
-        <div className="flex flex-col gap-1">
-          <span className="text-body font-semibold">
-            Imagem {isCreateMode ? "(opcional)" : "(opcional — substitui atual)"}
-          </span>
-          {!isCreateMode && feature?.imageUrl && !file && (
-            <img
-              src={homeContentFile(feature.imageUrl)}
-              alt={feature.title}
-              className="w-24 h-24 object-cover rounded-sm"
-            />
-          )}
-          {file && (
-            <span className="text-caption text-success">
-              Imagem recortada pronta para upload.
-            </span>
-          )}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const picked = e.target.files?.[0];
-              if (picked) {
-                setPendingCrop(picked);
-                e.target.value = "";
-              }
-            }}
-          />
-          <span className="text-caption text-muted-foreground">
-            Proporção: 16:9. Salvo como PNG — fundo transparente é preservado.
-          </span>
-        </div>
-        {pendingCrop && (
-          <PhotoEditor
-            isOpen
-            photo={pendingCrop}
-            aspect={HOME_IMAGE_ASPECT.feature}
-            targetSize={HOME_IMAGE_SIZE.feature}
-            outputFormat="image/png"
-            handleClose={() => setPendingCrop(null)}
-            onConfirm={(cropped) => {
-              setFile(cropped);
-              setPendingCrop(null);
-            }}
-          />
-        )}
-        <div className="flex justify-end gap-2 pt-2">
-          <Button variant="outline" size="sm"
-            className="w-32"
-            onClick={handleClose}
-            disabled={saving}
-          >
-            Cancelar
-          </Button>
-          <Button variant="primary" size="sm"
-            className="w-32"
-            onClick={onSubmit}
-            disabled={saving}
-          >
-            {saving ? "Salvando..." : "Salvar"}
-          </Button>
-        </div>
-      </div>
-    </ModalTemplate>
+    <>
+      <Dialog
+        open={isOpen && !pendingCrop}
+        onOpenChange={(o) => !o && handleClose()}
+      >
+        <DialogContent
+          size="md"
+          aria-describedby={undefined}
+          onInteractOutside={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle>
+              {isCreateMode ? "Adicionar item" : "Editar item"}
+            </DialogTitle>
+          </DialogHeader>
+          <DialogBody className="-mx-1 px-1 pt-2">
+            <form
+              id="form-edit-feature"
+              className="flex flex-col gap-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                onSubmit();
+              }}
+            >
+              <label className="flex flex-col gap-1">
+                <span className="text-body font-semibold">Título</span>
+                <input
+                  className="border rounded-sm px-2 py-1"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Título do item"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="text-body font-semibold">
+                  Descrição (opcional)
+                </span>
+                <textarea
+                  className="border rounded-sm px-2 py-1"
+                  rows={3}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Texto descritivo exibido abaixo da imagem"
+                />
+              </label>
+              <div className="flex flex-col gap-1">
+                <span className="text-body font-semibold">
+                  Imagem{" "}
+                  {isCreateMode ? "(opcional)" : "(opcional — substitui atual)"}
+                </span>
+                {!isCreateMode && feature?.imageUrl && !file && (
+                  <img
+                    src={homeContentFile(feature.imageUrl)}
+                    alt={feature.title}
+                    className="w-24 h-24 object-cover rounded-sm"
+                  />
+                )}
+                {file && (
+                  <span className="text-caption text-success">
+                    Imagem recortada pronta para upload.
+                  </span>
+                )}
+                <input
+                  type="file"
+                  aria-label="Imagem"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const picked = e.target.files?.[0];
+                    if (picked) {
+                      setPendingCrop(picked);
+                      e.target.value = "";
+                    }
+                  }}
+                />
+                <span className="text-caption text-muted-foreground">
+                  Proporção: 16:9. Salvo como PNG — fundo transparente é
+                  preservado.
+                </span>
+              </div>
+            </form>
+          </DialogBody>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleClose} disabled={saving}>
+              Cancelar
+            </Button>
+            <Button type="submit" form="form-edit-feature" disabled={saving}>
+              {saving ? "Salvando..." : "Salvar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* Fora do Dialog: o editor de foto é um modal V1 e o Radix deixa o body sem clique (059/01, portal). */}
+      {pendingCrop && (
+        <PhotoEditor
+          isOpen
+          photo={pendingCrop}
+          aspect={HOME_IMAGE_ASPECT.feature}
+          targetSize={HOME_IMAGE_SIZE.feature}
+          outputFormat="image/png"
+          handleClose={() => setPendingCrop(null)}
+          onConfirm={(cropped) => {
+            setFile(cropped);
+            setPendingCrop(null);
+          }}
+        />
+      )}
+    </>
   );
 }

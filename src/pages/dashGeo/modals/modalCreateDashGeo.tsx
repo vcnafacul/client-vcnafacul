@@ -1,13 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
- 
+
 import { Geolocation } from "@/types/geolocation/geolocation";
 import { useEffect, useState } from "react";
 
 import Text from "@/components/atoms/text";
 import MapBox from "@/components/molecules/mapBox";
-import ModalTemplate, {
-  ModalProps,
-} from "@/components/templates/modalTemplate";
+import { ModalProps } from "@/components/templates/modalTemplate";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useAuthStore } from "@/store/auth";
 import { TypeMarker } from "@/types/map/marker";
 import { getStatusIcon } from "@/utils/getStatusIcon";
@@ -153,7 +160,7 @@ function ModalEditDashGeo({
     const street = data.address.road || "";
     const neighborhood = data.address.suburb || "";
     const state = stateOptions.find((opt) =>
-      opt.label.includes(data.address.state)
+      opt.label.includes(data.address.state),
     )?.value as string;
 
     setValue("cep", cep);
@@ -185,7 +192,7 @@ function ModalEditDashGeo({
             })
             .catch((error) => {
               toast.error(
-                `Não foi possível buscar as informações do ponto selecionado. ${error.message}`
+                `Não foi possível buscar as informações do ponto selecionado. ${error.message}`,
               );
             });
         }
@@ -214,7 +221,9 @@ function ModalEditDashGeo({
           alt="novo"
           icon={leaflet.divIcon({
             className: "w-8 h-8",
-            html: renderToStaticMarkup(<PointIcon className="fill-destructive h-8" />),
+            html: renderToStaticMarkup(
+              <PointIcon className="fill-destructive h-8" />,
+            ),
             iconAnchor: [16, 32], // <-- Aqui está o ajuste
           })}
         ></Marker>
@@ -275,7 +284,7 @@ function ModalEditDashGeo({
   };
 
   const handleSelectSearchPlace = async (placeId: string) => {
-    const toastId = toast.loading('Buscando dados do local no Google…');
+    const toastId = toast.loading("Buscando dados do local no Google…");
 
     try {
       const placeDetails = (await getPlaceInformationByPlaceId(
@@ -286,22 +295,22 @@ function ModalEditDashGeo({
       const patch: Partial<Record<string, any>> = {};
 
       const put = (field: string, value: any) => {
-        if (value !== undefined && value !== null && value !== '') {
+        if (value !== undefined && value !== null && value !== "") {
           patch[field] = value;
           setValue(field as any, value);
         }
       };
 
-      put('name', placeDetails.name);
-      put('cep', placeDetails.cep);
-      put('street', placeDetails.street);
-      put('number', placeDetails.number);
-      put('complement', placeDetails.complement);
-      put('neighborhood', placeDetails.neighborhood);
-      put('city', placeDetails.city);
-      put('state', placeDetails.state);
-      put('phone', placeDetails.phone);
-      put('site', placeDetails.site);
+      put("name", placeDetails.name);
+      put("cep", placeDetails.cep);
+      put("street", placeDetails.street);
+      put("number", placeDetails.number);
+      put("complement", placeDetails.complement);
+      put("neighborhood", placeDetails.neighborhood);
+      put("city", placeDetails.city);
+      put("state", placeDetails.state);
+      put("phone", placeDetails.phone);
+      put("site", placeDetails.site);
 
       setGeo((prev) => ({ ...prev, ...patch }));
 
@@ -312,12 +321,15 @@ function ModalEditDashGeo({
           longitude: placeDetails.lng ?? prev.longitude,
         }));
 
-        setSelectedPosition([placeDetails.lat ?? geo.latitude, placeDetails.lng ?? geo.longitude]);
+        setSelectedPosition([
+          placeDetails.lat ?? geo.latitude,
+          placeDetails.lng ?? geo.longitude,
+        ]);
       }
 
       toast.update(toastId, {
-        render: 'Dados do cursinho preenchidos com sucesso.',
-        type: 'success',
+        render: "Dados do cursinho preenchidos com sucesso.",
+        type: "success",
         isLoading: false,
         autoClose: 3000,
         closeOnClick: true,
@@ -325,8 +337,8 @@ function ModalEditDashGeo({
     } catch (err) {
       toast.update(toastId, {
         render:
-          'Não foi possível preencher os dados automaticamente. Tente novamente.',
-        type: 'error',
+          "Não foi possível preencher os dados automaticamente. Tente novamente.",
+        type: "error",
         isLoading: false,
         autoClose: 4000,
         closeOnClick: true,
@@ -335,60 +347,66 @@ function ModalEditDashGeo({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      className="p-3 sm:p-8 rounded-md relative w-[90vw] h-fit max-h-[95vh] supports-[height:100dvh]:max-h-[95dvh] overflow-y-auto scrollbar-hide bg-white"
-    >
-      <form
-        className="flex flex-col md:flex-row gap-4 mb-10"
-        onSubmit={handleSubmit(handleCreate)}
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose?.()}>
+      <DialogContent
+        size="full"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
       >
-        <div className="w-full">
-          <Text
-            className="flex w-full justify-center gap-4 items-center"
-            size="secondary"
-          >
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-4">
             Informação do Cursinho {getStatusIcon(geo.status)}
-          </Text>
-          <LocationAutocomplete onPlaceLoaded={(placeId) => handleSelectSearchPlace(placeId)}/>
-          <PrepCourseInfo
-            form={prepCourseInfo}
-            setValue={mySetValue}
-            errors={errors}
-            edit={true}
-            geo={geo}
-          />
-        </div>
-
-        <div className="w-full flex flex-col gap-4">
-          <Text size="secondary">Endereço do Cursinho</Text>
-          <MapBox
-            className="h-80 sm:h-[100vh] sm:max-h-[530px] w-full border border-border z-0"
-            zoom={14}
-            center={[selectedPosition[0], selectedPosition[1]]}
-            markers={[]}
-            mapEvent={Event()}
-          />
-          <div className="flex flex-wrap justify-between gap-2">
-            <div className="flex items-center justify-start gap-4">
-              <input
-                type="checkbox"
-                checked={useCep}
-                onChange={(e) => setUseCep(e.target.checked)}
+          </DialogTitle>
+        </DialogHeader>
+        <DialogBody className="-mx-1 px-1 pt-2">
+          <form
+            id="form-create-geo"
+            className="flex flex-col md:flex-row gap-4"
+            onSubmit={handleSubmit(handleCreate)}
+          >
+            <div className="w-full">
+              <LocationAutocomplete
+                onPlaceLoaded={(placeId) => handleSelectSearchPlace(placeId)}
               />
-              <label>Definir localização manualmente</label>
+              <PrepCourseInfo
+                form={prepCourseInfo}
+                setValue={mySetValue}
+                errors={errors}
+                edit={true}
+                geo={geo}
+              />
             </div>
-            <button
-              type="submit"
-              className="mt-2 self-end px-6 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition"
-            >
-              Salvar
-            </button>
-          </div>
-        </div>
-      </form>
-    </ModalTemplate>
+
+            <div className="w-full flex flex-col gap-4">
+              <Text size="secondary">Endereço do Cursinho</Text>
+              <MapBox
+                className="h-80 sm:h-[100vh] sm:max-h-[530px] w-full border border-border z-0"
+                zoom={14}
+                center={[selectedPosition[0], selectedPosition[1]]}
+                markers={[]}
+                mapEvent={Event()}
+              />
+              <div className="flex items-center justify-start gap-4">
+                <input
+                  id="usar-cep-create"
+                  type="checkbox"
+                  checked={useCep}
+                  onChange={(e) => setUseCep(e.target.checked)}
+                />
+                <label htmlFor="usar-cep-create">
+                  Definir localização manualmente
+                </label>
+              </div>
+            </div>
+          </form>
+        </DialogBody>
+        <DialogFooter>
+          <Button type="submit" form="form-create-geo">
+            Salvar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 export default ModalEditDashGeo;

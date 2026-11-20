@@ -6,9 +6,15 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import PropValue from "../../../components/molecules/PropValue";
-import ModalTemplate, {
-  ModalProps,
-} from "../../../components/templates/modalTemplate";
+import { ModalProps } from "../../../components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   CreateSubjectDtoInput,
   UpdateSubjectDto,
@@ -53,7 +59,6 @@ function ManagerSubject({
     register("description");
   }, []);
 
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const create = (data: any) => {
     const body: CreateSubjectDtoInput = {
@@ -82,45 +87,45 @@ function ManagerSubject({
   }, [setValue, subject]);
 
   return (
-    <ModalTemplate
-      className="bg-white p-4 rounded-md max-w-4xl w-full"
-      handleClose={handleClose!}
-      isOpen={isOpen}
-    >
-      <PropValue prop="Frente" value={frente.nome} />
-      <form
-        onSubmit={handleSubmit(subject ? edit : create)}
-        className="flex flex-col py-4"
-      >
-        <InputFactory
-          id="name"
-          type="text"
-          label="Nome*"
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("name", e.target.value)}
-          error={errors.name}
-          className="col-span-2"
-        />
-        <InputFactory
-          id="description"
-          type="textarea"
-          label="Descrição*"
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("description", e.target.value)}
-          error={errors.description}
-          className="col-span-2 w-full outline-none pt-4"
-        />
-        <div className="flex justify-end gap-4">
-          <Button
-            variant="default"
-            className="bg-cta hover:bg-cta/80"
-            type="submit"
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose?.()}>
+      <DialogContent size="full" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>{subject ? "Editar tema" : "Criar tema"}</DialogTitle>
+        </DialogHeader>
+        <DialogBody className="-mx-1 px-1 pt-2">
+          <PropValue prop="Frente" value={frente.nome} />
+          <form
+            id="form-manager-subject"
+            onSubmit={handleSubmit(subject ? edit : create)}
+            className="flex flex-col py-4"
           >
+            <InputFactory
+              id="name"
+              type="text"
+              label="Nome*"
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onChange={(e: any) => setValue("name", e.target.value)}
+              error={errors.name}
+              className="col-span-2"
+            />
+            <InputFactory
+              id="description"
+              type="textarea"
+              label="Descrição*"
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onChange={(e: any) => setValue("description", e.target.value)}
+              error={errors.description}
+              className="col-span-2 w-full outline-none pt-4"
+            />
+          </form>
+        </DialogBody>
+        <DialogFooter>
+          <Button type="submit" form="form-manager-subject">
             {subject ? "Salvar" : "Criar"}
           </Button>
-        </div>
-      </form>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

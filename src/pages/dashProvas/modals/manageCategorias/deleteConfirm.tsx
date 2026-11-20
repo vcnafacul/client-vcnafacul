@@ -37,10 +37,7 @@ function DeleteConfirm({
   };
 
   return (
-    <div className="p-6">
-      <h2 className="mb-4 text-h2 font-semibold text-foreground">
-        Excluir Categoria
-      </h2>
+    <div>
       <p className="text-body text-foreground">
         Excluir a categoria{" "}
         <span className="font-semibold">&quot;{categoria.nome}&quot;</span>?
@@ -53,7 +50,9 @@ function DeleteConfirm({
         <Button variant="outline" size="sm" onClick={onCancel}>
           Cancelar
         </Button>
-        <Button variant="destructive" size="sm"
+        <Button
+          variant="destructive"
+          size="sm"
           disabled={excluindo}
           onClick={handleExcluir}
         >

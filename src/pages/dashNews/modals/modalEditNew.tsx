@@ -8,10 +8,17 @@ import { useAuthStore } from "@/store/auth";
 import { News } from "@/dtos/news/news";
 import { PendingImageStore } from "@/utils/pendingImageStore";
 import { useEffect, useRef, useState } from "react";
-import Text from "../../../components/atoms/text";
 import { Button } from "@/components/ui/button";
 import UploadButton from "../../../components/molecules/uploadButton";
-import ModalTemplate from "../../../components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -45,10 +52,10 @@ interface ModalEditNewProps {
       description?: string;
       destaque: boolean;
       expireAt?: string;
-      contentType: 'file' | 'text';
+      contentType: "file" | "text";
       body?: string;
       file?: File | null;
-    }
+    },
   ) => void;
   update?: (
     id: string,
@@ -58,7 +65,7 @@ interface ModalEditNewProps {
       destaque: boolean;
       expireAt?: string;
       body?: string;
-    }
+    },
   ) => void;
   deleteFunc: (id: string) => void;
   isOpen: boolean;
@@ -76,16 +83,22 @@ function ModalEditNew({
   const [arrayBuffer, setArrayBufer] = useState<ArrayBuffer>();
   const [upload, setUpload] = useState<boolean>(news ? true : false);
   const [destaque, setDestaque] = useState<boolean>(news?.destaque ?? false);
-  const [description, setDescription] = useState<string>(news?.description ?? "");
+  const [description, setDescription] = useState<string>(
+    news?.description ?? "",
+  );
   const [title, setTitle] = useState<string>(news ? news.title : "");
   const [expireAt, setExpireAt] = useState<string>(
-    toDateInputValue(news?.expireAt ?? "")
+    toDateInputValue(news?.expireAt ?? ""),
   );
   const [uploadFile, setUploadFile] = useState(null);
-  const [contentType, setContentType] = useState<'file' | 'text'>(news?.contentType ?? 'file');
+  const [contentType, setContentType] = useState<"file" | "text">(
+    news?.contentType ?? "file",
+  );
   const [body, setBody] = useState<string>(news?.body ?? "");
   const pendingStoreRef = useRef<PendingImageStore>(new PendingImageStore());
-  const { data: { token } } = useAuthStore();
+  const {
+    data: { token },
+  } = useAuthStore();
 
   const isEditing = !!news;
   const minDate = todayDateString();
@@ -95,9 +108,17 @@ function ModalEditNew({
     setDescription(news?.description ?? "");
     setTitle(news ? news.title : "");
     setExpireAt(toDateInputValue(news?.expireAt ?? ""));
-    setContentType(news?.contentType ?? 'file');
+    setContentType(news?.contentType ?? "file");
     setBody(news?.body ?? "");
-  }, [news?.id, news?.title, news?.destaque, news?.description, news?.expireAt, news?.contentType, news?.body]);
+  }, [
+    news?.id,
+    news?.title,
+    news?.destaque,
+    news?.description,
+    news?.expireAt,
+    news?.contentType,
+    news?.body,
+  ]);
 
   useEffect(() => {
     const store = pendingStoreRef.current;
@@ -125,7 +146,7 @@ function ModalEditNew({
   async function flushPendingImages(rawBody: string): Promise<string> {
     pendingStoreRef.current.pruneUnused(rawBody);
     const replacements = await pendingStoreRef.current.uploadAll((file) =>
-      uploadNewsAsset(file, token)
+      uploadNewsAsset(file, token),
     );
     return PendingImageStore.replaceInMarkdown(rawBody, replacements);
   }
@@ -133,7 +154,7 @@ function ModalEditNew({
   const handleSave = async () => {
     if (isEditing && update) {
       let finalBody: string | undefined;
-      if (contentType === 'text') {
+      if (contentType === "text") {
         finalBody = await flushPendingImages(body);
       }
       update(news.id, {
@@ -143,21 +164,21 @@ function ModalEditNew({
         expireAt: expireAt || undefined,
         body: finalBody,
       });
-    } else if (contentType === 'file' && upload && !!title) {
+    } else if (contentType === "file" && upload && !!title) {
       create(title, {
         description: description.trim() || undefined,
         destaque,
         expireAt: expireAt || undefined,
-        contentType: 'file',
+        contentType: "file",
         file: uploadFile,
       });
-    } else if (contentType === 'text' && body.trim() && !!title) {
+    } else if (contentType === "text" && body.trim() && !!title) {
       const finalBody = await flushPendingImages(body);
       create(title, {
         description: description.trim() || undefined,
         destaque,
         expireAt: expireAt || undefined,
-        contentType: 'text',
+        contentType: "text",
         body: finalBody,
       });
     }
@@ -173,225 +194,223 @@ function ModalEditNew({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="w-full max-w-4xl max-h-[90vh] supports-[height:100dvh]:max-h-[90dvh] bg-white rounded-lg overflow-hidden flex flex-col"
-    >
-      {/* Área rolável: header + formulário + preview */}
-      <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
-        {/* Header */}
-        <div className="px-4 sm:px-6 pt-6 pb-4 border-b border-border shrink-0">
-          <Text size="secondary">
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent
+        size="full"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>
             {isEditing ? "Detalhes da Novidade" : "Criar Novidade"}
-          </Text>
-        </div>
-
-        {/* Form fields: mesmo layout (label em cima, input, texto embaixo) para alinhar */}
-        <div className="px-4 sm:px-6 py-4 shrink-0">
-          {/* Tab switcher: only visible in create mode */}
-          {!isEditing && (
-            <div className="mb-4 flex gap-2 border-b border-border">
-              <button
-                type="button"
-                className={`px-3 py-2 text-body font-medium border-b-2 ${
-                  contentType === 'file'
-                    ? 'border-success text-success'
-                    : 'border-transparent text-muted-foreground'
-                }`}
-                onClick={() => setContentType('file')}
-              >
-                Upload de arquivo
-              </button>
-              <button
-                type="button"
-                className={`px-3 py-2 text-body font-medium border-b-2 ${
-                  contentType === 'text'
-                    ? 'border-success text-success'
-                    : 'border-transparent text-muted-foreground'
-                }`}
-                onClick={() => setContentType('text')}
-              >
-                Escrever texto
-              </button>
-            </div>
-          )}
-          {isEditing && (
-            <div className="mb-4 text-body text-muted-foreground">
-              Tipo: <strong>{contentType === 'text' ? 'Texto (markdown)' : 'Arquivo (.docx)'}</strong>
-            </div>
-          )}
-
-          <div className="flex gap-4 flex-wrap">
-            <div className="flex-1 min-w-[200px] flex flex-col gap-1">
-              <label htmlFor="destaque" className="text-body text-muted-foreground">
-                Destaque
-              </label>
-              <label className="inline-flex items-center gap-2 mt-2">
-                <input
-                  id="destaque"
-                  type="checkbox"
-                  checked={destaque}
-                  onChange={(e) => setDestaque(e.target.checked)}
-                  className="h-4 w-4"
-                />
-                <span className="text-body">Marcar como novidade em destaque</span>
-              </label>
-              <span className="text-caption text-muted-foreground min-h-[1rem]">
-                Apenas uma novidade pode estar em destaque por vez.
-              </span>
-            </div>
-            <div className="flex-1 min-w-[200px] flex flex-col gap-1">
-              <label htmlFor="title" className="text-body text-muted-foreground">
-                Título
-              </label>
-              <input
-                id="title"
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Título"
-                className={inputBaseClass}
-              />
-              <span className="text-caption text-muted-foreground min-h-[1rem]">
-                {" "}
-              </span>
-            </div>
-            <div className="flex-1 min-w-[200px] flex flex-col gap-1">
-              <label htmlFor="expire-at" className="text-body text-muted-foreground">
-                Data de expiração
-              </label>
-              <input
-                id="expire-at"
-                type="date"
-                min={minDate}
-                value={expireAt}
-                onChange={(e) => setExpireAt(e.target.value)}
-                disabled={false}
-                className={inputBaseClass}
-              />
-              <span className="text-caption text-muted-foreground">
-                Obrigatório. Não pode ser anterior a hoje.
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Description textarea */}
-        <div className="px-4 sm:px-6 pb-2 shrink-0">
-          <label htmlFor="description" className="text-body text-muted-foreground">
-            Descrição (opcional, máx 280 caracteres)
-          </label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value.slice(0, 280))}
-            maxLength={280}
-            rows={3}
-            placeholder="Aparece no card destaque, abaixo do título"
-            className={inputBaseClass + " resize-none"}
-          />
-          <span className="text-caption text-muted-foreground">
-            {description.length}/280
-          </span>
-        </div>
-
-        {/* Content section: file upload/preview OR rich text editor */}
-        {contentType === 'file' ? (
-          <>
+          </DialogTitle>
+        </DialogHeader>
+        <DialogBody>
+          {/* Form fields: mesmo layout (label em cima, input, texto embaixo) para alinhar */}
+          <div className="py-4">
+            {/* Tab switcher: only visible in create mode */}
             {!isEditing && (
-              <div className="px-4 sm:px-6 pb-2 shrink-0">
-                <UploadButton
-                  placeholder="Upload Novidades"
-                  onChange={handleFileUpload}
-                />
+              <Tabs
+                value={contentType}
+                onValueChange={(v) => setContentType(v as "file" | "text")}
+                className="mb-4"
+              >
+                <TabsList>
+                  <TabsTrigger value="file">Upload de arquivo</TabsTrigger>
+                  <TabsTrigger value="text">Escrever texto</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            )}
+            {isEditing && (
+              <div className="mb-4 text-body text-muted-foreground">
+                Tipo:{" "}
+                <strong>
+                  {contentType === "text"
+                    ? "Texto (markdown)"
+                    : "Arquivo (.docx)"}
+                </strong>
               </div>
             )}
-            {hasPreview && (
-              <div className="px-4 sm:px-6 py-4 shrink-0">
-                <p className="text-body text-muted-foreground mb-2 font-medium">Preview</p>
-                <div className="min-h-[200px] max-h-[45vh] overflow-y-auto border rounded-lg p-4 bg-page">
-                  {news?.fileName ? (
-                    <NewContent fileKey={news.fileName} />
-                  ) : (
-                    <DocxPreview arrayBuffer={arrayBuffer!} />
-                  )}
-                </div>
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="px-4 sm:px-6 py-4 shrink-0">
-            <p className="text-body text-muted-foreground mb-2 font-medium">Conteúdo</p>
-            <RichTextEditor
-              content={body}
-              onChange={setBody}
-              onImageUpload={async (file: File) => {
-                return pendingStoreRef.current.add(file);
-              }}
-              pendingStore={pendingStoreRef.current}
-              token={token}
-              fetchAsset={getNewsAssetImage}
-              minHeight="240px"
-              placeholder="Escreva a novidade aqui. Suporta markdown, fórmulas LaTeX ($x^2$) e imagens inline."
-            />
-          </div>
-        )}
-      </div>
 
-      {/* Rodapé fixo: botões sempre visíveis */}
-      <div className="px-4 sm:px-6 py-4 border-t border-border flex gap-4 shrink-0 bg-white">
-        {isEditing ? (
-          <>
-            <Button variant="cta" size="lg"
-              className="w-full"
-              onClick={handleSave}
+            <div className="flex gap-4 flex-wrap">
+              <div className="flex-1 min-w-[200px] flex flex-col gap-1">
+                <label
+                  htmlFor="destaque"
+                  className="text-body text-muted-foreground"
+                >
+                  Destaque
+                </label>
+                <label className="inline-flex items-center gap-2 mt-2">
+                  <input
+                    id="destaque"
+                    type="checkbox"
+                    checked={destaque}
+                    onChange={(e) => setDestaque(e.target.checked)}
+                    className="h-4 w-4"
+                  />
+                  <span className="text-body">
+                    Marcar como novidade em destaque
+                  </span>
+                </label>
+                <span className="text-caption text-muted-foreground min-h-[1rem]">
+                  Apenas uma novidade pode estar em destaque por vez.
+                </span>
+              </div>
+              <div className="flex-1 min-w-[200px] flex flex-col gap-1">
+                <label
+                  htmlFor="title"
+                  className="text-body text-muted-foreground"
+                >
+                  Título
+                </label>
+                <input
+                  id="title"
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Título"
+                  className={inputBaseClass}
+                />
+                <span className="text-caption text-muted-foreground min-h-[1rem]">
+                  {" "}
+                </span>
+              </div>
+              <div className="flex-1 min-w-[200px] flex flex-col gap-1">
+                <label
+                  htmlFor="expire-at"
+                  className="text-body text-muted-foreground"
+                >
+                  Data de expiração
+                </label>
+                <input
+                  id="expire-at"
+                  type="date"
+                  min={minDate}
+                  value={expireAt}
+                  onChange={(e) => setExpireAt(e.target.value)}
+                  disabled={false}
+                  className={inputBaseClass}
+                />
+                <span className="text-caption text-muted-foreground">
+                  Obrigatório. Não pode ser anterior a hoje.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Description textarea */}
+          <div className="pb-2">
+            <label
+              htmlFor="description"
+              className="text-body text-muted-foreground"
             >
+              Descrição (opcional, máx 280 caracteres)
+            </label>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value.slice(0, 280))}
+              maxLength={280}
+              rows={3}
+              placeholder="Aparece no card destaque, abaixo do título"
+              className={inputBaseClass + " resize-none"}
+            />
+            <span className="text-caption text-muted-foreground">
+              {description.length}/280
+            </span>
+          </div>
+
+          {/* Content section: file upload/preview OR rich text editor */}
+          {contentType === "file" ? (
+            <>
+              {!isEditing && (
+                <div className="pb-2">
+                  <UploadButton
+                    placeholder="Upload Novidades"
+                    onChange={handleFileUpload}
+                  />
+                </div>
+              )}
+              {hasPreview && (
+                <div className="py-4">
+                  <p className="text-body text-muted-foreground mb-2 font-medium">
+                    Preview
+                  </p>
+                  <div className="min-h-[200px] max-h-[45vh] overflow-y-auto border rounded-lg p-4 bg-page">
+                    {news?.fileName ? (
+                      <NewContent fileKey={news.fileName} />
+                    ) : (
+                      <DocxPreview arrayBuffer={arrayBuffer!} />
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="py-4">
+              <p className="text-body text-muted-foreground mb-2 font-medium">
+                Conteúdo
+              </p>
+              <RichTextEditor
+                content={body}
+                onChange={setBody}
+                onImageUpload={async (file: File) => {
+                  return pendingStoreRef.current.add(file);
+                }}
+                pendingStore={pendingStoreRef.current}
+                token={token}
+                fetchAsset={getNewsAssetImage}
+                minHeight="240px"
+                placeholder="Escreva a novidade aqui. Suporta markdown, fórmulas LaTeX ($x^2$) e imagens inline."
+              />
+            </div>
+          )}
+
+          <AlertDialog
+            open={confirmarExclusao}
+            onOpenChange={(aberto) => {
+              if (!aberto) {
+                setConfirmarExclusao(false);
+              }
+            }}
+          >
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{`Excluir a novidade "${news?.title ?? ""}"?`}</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Ela deixa de aparecer no site.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction variant="destructive" onClick={deleteNew}>
+                  Excluir novidade
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </DialogBody>
+        <DialogFooter>
+          {isEditing ? (
+            <>
+              <Button
+                variant="destructive"
+                onClick={() => setConfirmarExclusao(true)}
+              >
+                Deletar
+              </Button>
+              <Button variant="cta" onClick={handleSave}>
+                Salvar
+              </Button>
+            </>
+          ) : (
+            <Button variant="cta" onClick={handleSave}>
               Salvar
             </Button>
-            <Button variant="destructive" size="lg"
-              className="w-full"
-              onClick={() => setConfirmarExclusao(true)}
-            >
-              Deletar
-            </Button>
-          </>
-        ) : (
-          <Button variant="cta" size="lg"
-            className="w-full"
-            onClick={handleSave}
-          >
-            Salvar
-          </Button>
-        )}
-      </div>
-      <AlertDialog
-        open={confirmarExclusao}
-        onOpenChange={(aberto) => {
-          if (!aberto) {
-            setConfirmarExclusao(false);
-          }
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{`Excluir a novidade "${news?.title ?? ""}"?`}</AlertDialogTitle>
-            <AlertDialogDescription>
-              Ela deixa de aparecer no site.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              variant="destructive"
-              onClick={deleteNew}
-            >
-              Excluir novidade
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </ModalTemplate>
+          )}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

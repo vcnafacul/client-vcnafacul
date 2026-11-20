@@ -6,9 +6,15 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import ModalTemplate, {
-  ModalProps,
-} from "../../../components/templates/modalTemplate";
+import { ModalProps } from "../../../components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const enemAreaOptions = [
   { value: "Linguagens", label: "Linguagens" },
@@ -43,7 +49,10 @@ function PresetGrid({
   onSelect,
   size = "w-12 h-12",
 }: {
-  presets: Record<string, React.FunctionComponent<React.SVGProps<SVGSVGElement>>>;
+  presets: Record<
+    string,
+    React.FunctionComponent<React.SVGProps<SVGSVGElement>>
+  >;
   selected: string;
   onSelect: (key: string) => void;
   size?: string;
@@ -112,69 +121,72 @@ function ManagerMateria({ handleClose, materia, onSubmit, isOpen }: Props) {
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      className="bg-white w-full max-w-2xl p-6 rounded-md max-h-[90vh] overflow-y-auto"
-    >
-      <h2 className="text-h3 font-semibold text-foreground mb-4">
-        {materia ? "Editar Matéria" : "Criar Nova Matéria"}
-      </h2>
-      <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-4">
-        <InputFactory
-          id="nome"
-          type="text"
-          label="Nome"
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("nome", e.target.value)}
-          error={errors.nome}
-          defaultValue={materia?.nome}
-        />
-
-        <InputFactory
-          id="enemArea"
-          type="select"
-          label="Área ENEM"
-          options={enemAreaOptions}
-          defaultValue={materia?.enemArea ?? "Linguagens"}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("enemArea", e.target.value ?? e.value)}
-        />
-
-        <div>
-          <label className="text-body font-medium text-foreground mb-2 block">
-            Ícone do Menu
-          </label>
-          <PresetGrid
-            presets={iconPresets}
-            selected={selectedIcon}
-            onSelect={(key) => setValue("icon", key)}
-          />
-        </div>
-
-        <div>
-          <label className="text-body font-medium text-foreground mb-2 block">
-            Imagem da Página
-          </label>
-          <PresetGrid
-            presets={imagePresets}
-            selected={selectedImage}
-            onSelect={(key) => setValue("image", key)}
-            size="w-16 h-16"
-          />
-        </div>
-
-        <div className="flex justify-end">
-          <Button
-            variant="default"
-            className="bg-cta hover:bg-cta/80"
-            type="submit"
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose?.()}>
+      <DialogContent size="lg" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>
+            {materia ? "Editar Matéria" : "Criar Nova Matéria"}
+          </DialogTitle>
+        </DialogHeader>
+        <DialogBody className="-mx-1 px-1 pt-2">
+          <form
+            id="form-manager-materia"
+            onSubmit={handleSubmit(submit)}
+            className="flex flex-col gap-4"
           >
+            <InputFactory
+              id="nome"
+              type="text"
+              label="Nome"
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onChange={(e: any) => setValue("nome", e.target.value)}
+              error={errors.nome}
+              defaultValue={materia?.nome}
+            />
+
+            <InputFactory
+              id="enemArea"
+              type="select"
+              label="Área ENEM"
+              options={enemAreaOptions}
+              defaultValue={materia?.enemArea ?? "Linguagens"}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onChange={(e: any) =>
+                setValue("enemArea", e.target.value ?? e.value)
+              }
+            />
+
+            <div>
+              <p className="text-body font-medium text-foreground mb-2 block">
+                Ícone do Menu
+              </p>
+              <PresetGrid
+                presets={iconPresets}
+                selected={selectedIcon}
+                onSelect={(key) => setValue("icon", key)}
+              />
+            </div>
+
+            <div>
+              <p className="text-body font-medium text-foreground mb-2 block">
+                Imagem da Página
+              </p>
+              <PresetGrid
+                presets={imagePresets}
+                selected={selectedImage}
+                onSelect={(key) => setValue("image", key)}
+                size="w-16 h-16"
+              />
+            </div>
+          </form>
+        </DialogBody>
+        <DialogFooter>
+          <Button type="submit" form="form-manager-materia">
             {materia ? "Salvar" : "Criar"}
           </Button>
-        </div>
-      </form>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

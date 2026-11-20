@@ -2,7 +2,13 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { Settings, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ModalTemplate from "../../../../components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   ICategoria,
   isCompartilhada,
@@ -136,136 +142,146 @@ function ManageCategorias({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      // No máximo 90% da altura da tela: com muitas categorias o modal crescia
-      // para baixo sem fim. Coluna flex — o cabeçalho fica, só a lista rola.
-      className="flex max-h-[90dvh] w-full max-w-3xl flex-col overflow-hidden rounded-lg bg-white p-2 shadow-lg"
-    >
-      {view === "lista" && (
-        <div className="flex min-h-0 flex-1 flex-col p-6">
-          <div className="mb-6 flex shrink-0 items-center gap-3">
-            <div className="rounded-lg bg-info-muted p-2">
-              <Settings className="h-6 w-6 text-info" />
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent
+        size="lg"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          {view === "lista" ? (
+            <div className="flex items-center gap-3">
+              <div className="rounded-lg bg-info-muted p-2">
+                <Settings className="h-6 w-6 text-info" />
+              </div>
+              <DialogTitle>Gerenciar Categorias</DialogTitle>
             </div>
-            <h2 className="text-h2 font-semibold text-foreground">
-              Gerenciar Categorias
-            </h2>
-          </div>
+          ) : (
+            <DialogTitle>
+              {view === "criar"
+                ? "Nova Categoria personalizada"
+                : "Excluir Categoria"}
+            </DialogTitle>
+          )}
+          {view === "lista" && (
+            <div className="pt-2 flex flex-wrap items-center justify-between gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setView("criar")}
+              >
+                + Nova Categoria
+              </Button>
+              <input
+                type="text"
+                aria-label="Buscar categoria"
+                value={busca}
+                placeholder="Buscar por nome"
+                onChange={(e) => setBusca(e.target.value)}
+                className="w-full sm:w-64 rounded-md border border-border px-3 py-2 text-body"
+              />
+            </div>
+          )}
+        </DialogHeader>
+        <DialogBody>
+          {view === "lista" && (
+            <>
+              <div
+                data-slot="lista-de-categorias"
+                className="flex flex-col gap-2"
+              >
+                {categoriasFiltradas.length === 0 && (
+                  <p className="py-8 text-center text-body text-muted-foreground">
+                    Nenhuma categoria encontrada.
+                  </p>
+                )}
+                {categoriasFiltradas.map((c) => {
+                  // tickets/038: a compartilhada é da plataforma — nunca se exclui.
+                  const compartilhada = isCompartilhada(c);
+                  const protegida =
+                    compartilhada || (protegerSeedadas && isProtegida(c.nome));
+                  const qtd =
+                    c.quantidadeTotalQuestao == null
+                      ? "livre"
+                      : `${c.quantidadeTotalQuestao} questões`;
+                  const emUso = c.simuladosCount > 0 || c.provasCount > 0;
+                  const desabilitada = protegida || emUso;
+                  const tooltip = compartilhada
+                    ? TEXTO_COMPARTILHADA
+                    : protegida
+                      ? "Categoria seedada — não pode ser excluída"
+                      : emUso
+                        ? `Em uso por ${c.simuladosCount} simulado(s) e ${c.provasCount} prova(s)`
+                        : "Excluir categoria";
+                  return (
+                    <div
+                      key={c._id}
+                      className="flex items-start justify-between gap-3 rounded-lg border border-border p-4"
+                    >
+                      <div className="flex flex-col gap-1">
+                        <span className="font-semibold text-foreground">
+                          {c.nome}
+                        </span>
+                        <span className="text-body text-muted-foreground">
+                          Exame: {c.exame?.nome ?? "—"} · {qtd} · {c.duracao}{" "}
+                          min ·{" "}
+                          {c.selecionavel ? "Selecionável" : "Uso interno"}
+                        </span>
+                        <span className="text-caption text-muted-foreground">
+                          {emUso
+                            ? `${c.simuladosCount} simulados · ${c.provasCount} provas em uso`
+                            : "Sem simulados/provas em uso"}
+                        </span>
+                        {protegida && (
+                          <span className="text-caption font-medium text-warning">
+                            {compartilhada
+                              ? `🔒 ${TEXTO_COMPARTILHADA}`
+                              : "🔒 Categoria seedada"}
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        disabled={desabilitada}
+                        title={tooltip}
+                        onClick={() => abrirExcluir(c)}
+                        className="text-muted-foreground enabled:hover:text-destructive disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        <Trash className="h-5 w-5" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
 
-          <div className="mb-4 flex shrink-0 flex-wrap items-center justify-between gap-3">
-            <Button variant="outline" size="sm"
-              onClick={() => setView("criar")}
-            >
-              + Nova Categoria
-            </Button>
-            <input
-              type="text"
-              value={busca}
-              placeholder="Buscar por nome"
-              onChange={(e) => setBusca(e.target.value)}
-              className="w-full sm:w-64 rounded-md border border-border px-3 py-2 text-body"
+          {view === "criar" && (
+            <CreateForm
+              exameOptions={exameOptions}
+              token={token}
+              criarService={criar}
+              nomeLivre={nomeLivre}
+              onCreated={handleCreated}
+              onCancel={() => setView("lista")}
             />
-          </div>
+          )}
 
-          <div
-            data-slot="lista-de-categorias"
-            className="-mr-2 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-2"
-          >
-            {categoriasFiltradas.length === 0 && (
-              <p className="py-8 text-center text-body text-muted-foreground">
-                Nenhuma categoria encontrada.
-              </p>
-            )}
-            {categoriasFiltradas.map((c) => {
-              // tickets/038: a compartilhada é da plataforma — nunca se exclui.
-              const compartilhada = isCompartilhada(c);
-              const protegida =
-                compartilhada || (protegerSeedadas && isProtegida(c.nome));
-              const qtd =
-                c.quantidadeTotalQuestao == null
-                  ? "livre"
-                  : `${c.quantidadeTotalQuestao} questões`;
-              const emUso = c.simuladosCount > 0 || c.provasCount > 0;
-              const desabilitada = protegida || emUso;
-              const tooltip = compartilhada
-                ? TEXTO_COMPARTILHADA
-                : protegida
-                  ? "Categoria seedada — não pode ser excluída"
-                  : emUso
-                    ? `Em uso por ${c.simuladosCount} simulado(s) e ${c.provasCount} prova(s)`
-                    : "Excluir categoria";
-              return (
-                <div
-                  key={c._id}
-                  className="flex items-start justify-between gap-3 rounded-lg border border-border p-4"
-                >
-                  <div className="flex flex-col gap-1">
-                    <span className="font-semibold text-foreground">
-                      {c.nome}
-                    </span>
-                    <span className="text-body text-muted-foreground">
-                      Exame: {c.exame?.nome ?? "—"} · {qtd} · {c.duracao} min ·{" "}
-                      {c.selecionavel ? "Selecionável" : "Uso interno"}
-                    </span>
-                    <span className="text-caption text-muted-foreground">
-                      {emUso
-                        ? `${c.simuladosCount} simulados · ${c.provasCount} provas em uso`
-                        : "Sem simulados/provas em uso"}
-                    </span>
-                    {protegida && (
-                      <span className="text-caption font-medium text-warning">
-                        {compartilhada
-                          ? `🔒 ${TEXTO_COMPARTILHADA}`
-                          : "🔒 Categoria seedada"}
-                      </span>
-                    )}
-                  </div>
-                  <button
-                    type="button"
-                    disabled={desabilitada}
-                    title={tooltip}
-                    onClick={() => abrirExcluir(c)}
-                    className="text-muted-foreground enabled:hover:text-destructive disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    <Trash className="h-5 w-5" />
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {view === "criar" && (
-        <div className="min-h-0 overflow-y-auto">
-          <CreateForm
-            exameOptions={exameOptions}
-            token={token}
-            criarService={criar}
-            nomeLivre={nomeLivre}
-            onCreated={handleCreated}
-            onCancel={() => setView("lista")}
-          />
-        </div>
-      )}
-
-      {view === "excluir" && categoriaParaExcluir && (
-        <div className="min-h-0 overflow-y-auto">
-          <DeleteConfirm
-            categoria={categoriaParaExcluir}
-            token={token}
-            excluirService={excluir}
-            onDeleted={handleDeleted}
-            onCancel={() => {
-              setCategoriaParaExcluir(null);
-              setView("lista");
-            }}
-          />
-        </div>
-      )}
-    </ModalTemplate>
+          {view === "excluir" && categoriaParaExcluir && (
+            <DeleteConfirm
+              categoria={categoriaParaExcluir}
+              token={token}
+              excluirService={excluir}
+              onDeleted={handleDeleted}
+              onCancel={() => {
+                setCategoriaParaExcluir(null);
+                setView("lista");
+              }}
+            />
+          )}
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   );
 }
 

@@ -9,9 +9,16 @@ import {
 } from "../../../components/molecules/formField";
 import UploadButton from "../../../components/molecules/uploadButton";
 import Form from "../../../components/organisms/form";
-import ModalTemplate, {
-  ModalProps,
-} from "../../../components/templates/modalTemplate";
+import { ModalProps } from "../../../components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { CreateProva, Prova } from "../../../dtos/prova/prova";
 import { ICategoria, isCompartilhada } from "../../../dtos/categoria/categoria";
 import { Edicao, edicaoArray } from "../../../enums/prova/edicao";
@@ -253,149 +260,147 @@ function NewProva({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      className="w-full max-w-3xl rounded-lg bg-white shadow-lg p-2"
-    >
-      <div className="p-3 sm:p-6">
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose?.()}>
+      <DialogContent size="lg" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <div className="flex items-center gap-3">
             <div className="p-2 bg-info-muted rounded-lg">
               <FileText className="h-6 w-6 text-info" />
             </div>
             <div>
-              <h2 className="text-h2 font-semibold text-foreground">
-                Cadastro de Prova
-              </h2>
-              <p className="text-body text-muted-foreground">
+              <DialogTitle>Cadastro de Prova</DialogTitle>
+              <DialogDescription>
                 Preencha os dados da nova prova
-              </p>
+              </DialogDescription>
             </div>
           </div>
-        </div>
+        </DialogHeader>
+        <DialogBody className="-mx-1 px-1 pt-2">
+          {!categorias && (
+            <div className="flex flex-col items-start gap-2 py-4">
+              <p className="text-body text-muted-foreground">
+                {erroCategorias
+                  ? TEXTO_ERRO_CATEGORIAS
+                  : TEXTO_CARREGANDO_CATEGORIAS}
+              </p>
+              {erroCategorias && onTentarDeNovo && (
+                <button
+                  type="button"
+                  onClick={onTentarDeNovo}
+                  className="text-body font-medium text-primary underline-offset-2 hover:underline"
+                >
+                  Tentar de novo
+                </button>
+              )}
+            </div>
+          )}
 
-        {!categorias && (
-          <div className="flex flex-col items-start gap-2 py-4">
-            <p className="text-body text-muted-foreground">
-              {erroCategorias
-                ? TEXTO_ERRO_CATEGORIAS
-                : TEXTO_CARREGANDO_CATEGORIAS}
-            </p>
-            {erroCategorias && onTentarDeNovo && (
-              <button
-                type="button"
-                onClick={onTentarDeNovo}
-                className="text-body font-medium text-primary underline-offset-2 hover:underline"
-              >
-                Tentar de novo
-              </button>
-            )}
-          </div>
-        )}
+          {categorias && (
+            <form
+              id="form-new-prova"
+              className="flex flex-col w-full gap-6"
+              onSubmit={handleSubmit(create)}
+            >
+              <div>
+                <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
+                  <GraduationCap className="h-4 w-4" />
+                  Informações Gerais
+                </h3>
+                <div className="bg-page p-4 rounded-lg">
+                  <Form
+                    formFields={listFieldProva}
+                    register={register}
+                    size={acimaDeSm ? "base" : "small"}
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"
+                  />
+                </div>
+              </div>
 
+              {isCustom && (
+                <p className="text-caption text-info -mt-2">
+                  {compartilhada
+                    ? textoDaCompartilhada(categoriaEscolhida!.nome)
+                    : "Prova personalizada — nome livre, PDF opcional."}
+                </p>
+              )}
+
+              <OpcaoNovasVersoes
+                checked={receberNovasVersoes}
+                onChange={setReceberNovasVersoes}
+              />
+
+              <div>
+                <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
+                  <CloudUpload className="h-4 w-4" />
+                  Arquivos da Prova
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-info-muted p-4 rounded-lg border border-info/30">
+                    <h4 className="text-body font-medium text-info mb-2">
+                      Prova (PDF)
+                    </h4>
+                    <UploadButton
+                      onChange={handleFileUpload}
+                      placeholder="Upload da Prova"
+                      className="w-full"
+                      accept=".pdf"
+                      variant="compact"
+                      onRemove={handleRemoveFile}
+                    />
+                    {uploadFile && (
+                      <p className="text-caption text-info mt-2 break-all">
+                        ✓ Arquivo selecionado: {(uploadFile as File).name}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="bg-success-muted p-4 rounded-lg border border-success">
+                    <h4 className="text-body font-medium text-success mb-2">
+                      Gabarito (PDF) - Opcional
+                    </h4>
+                    <UploadButton
+                      onChange={handleGabaritoUpload}
+                      placeholder="Upload do Gabarito"
+                      className="w-full"
+                      accept=".pdf"
+                      variant="compact"
+                      onRemove={handleRemoveGabarito}
+                    />
+                    {uploadGabarito && (
+                      <p className="text-caption text-success mt-2 break-all">
+                        ✓ Arquivo selecionado: {(uploadGabarito as File).name}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </form>
+          )}
+        </DialogBody>
         {categorias && (
-          <form
-            className="flex flex-col w-full gap-6"
-            onSubmit={handleSubmit(create)}
-          >
-            <div>
-              <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
-                <GraduationCap className="h-4 w-4" />
-                Informações Gerais
-              </h3>
-              <div className="bg-page p-4 rounded-lg">
-                <Form
-                  formFields={listFieldProva}
-                  register={register}
-                  size={acimaDeSm ? "base" : "small"}
-                  className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"
-                />
-              </div>
-            </div>
-
-            {isCustom && (
-              <p className="text-caption text-info -mt-2">
-                {compartilhada
-                  ? textoDaCompartilhada(categoriaEscolhida!.nome)
-                  : "Prova personalizada — nome livre, PDF opcional."}
-              </p>
-            )}
-
-            <OpcaoNovasVersoes
-              checked={receberNovasVersoes}
-              onChange={setReceberNovasVersoes}
-            />
-
-            <div>
-              <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
-                <CloudUpload className="h-4 w-4" />
-                Arquivos da Prova
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-info-muted p-4 rounded-lg border border-info/30">
-                  <h4 className="text-body font-medium text-info mb-2">
-                    Prova (PDF)
-                  </h4>
-                  <UploadButton
-                    onChange={handleFileUpload}
-                    placeholder="Upload da Prova"
-                    className="w-full"
-                    accept=".pdf"
-                    variant="compact"
-                    onRemove={handleRemoveFile}
-                  />
-                  {uploadFile && (
-                    <p className="text-caption text-info mt-2 break-all">
-                      ✓ Arquivo selecionado: {(uploadFile as File).name}
-                    </p>
-                  )}
-                </div>
-
-                <div className="bg-success-muted p-4 rounded-lg border border-success">
-                  <h4 className="text-body font-medium text-success mb-2">
-                    Gabarito (PDF) - Opcional
-                  </h4>
-                  <UploadButton
-                    onChange={handleGabaritoUpload}
-                    placeholder="Upload do Gabarito"
-                    className="w-full"
-                    accept=".pdf"
-                    variant="compact"
-                    onRemove={handleRemoveGabarito}
-                  />
-                  {uploadGabarito && (
-                    <p className="text-caption text-success mt-2 break-all">
-                      ✓ Arquivo selecionado: {(uploadGabarito as File).name}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end pt-4 border-t border-border">
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={!categoria || (!isCustom && !uploadFile)}
-                sx={{
-                  backgroundColor: palette.marine[700],
-                  "&:hover": {
-                    backgroundColor: palette.marine[800],
-                  },
-                  "&:disabled": {
-                    backgroundColor: palette.neutral[400],
-                  },
-                  fontWeight: 600,
-                }}
-              >
-                Criar Prova
-              </Button>
-            </div>
-          </form>
+          <DialogFooter>
+            <Button
+              type="submit"
+              form="form-new-prova"
+              variant="contained"
+              disabled={!categoria || (!isCustom && !uploadFile)}
+              sx={{
+                backgroundColor: palette.marine[700],
+                "&:hover": {
+                  backgroundColor: palette.marine[800],
+                },
+                "&:disabled": {
+                  backgroundColor: palette.neutral[400],
+                },
+                fontWeight: 600,
+              }}
+            >
+              Criar Prova
+            </Button>
+          </DialogFooter>
         )}
-      </div>
-    </ModalTemplate>
+      </DialogContent>
+    </Dialog>
   );
 }
 

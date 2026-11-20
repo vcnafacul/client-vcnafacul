@@ -1,7 +1,12 @@
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import Text from "../../../components/atoms/text";
 import {
   getResumoDoUsuario,
   type InscricaoDoResumo,
@@ -28,7 +33,9 @@ function Campo({ nome, valor }: { nome: string; valor: React.ReactNode }) {
       <span className="text-caption font-semibold uppercase tracking-wide text-muted-foreground">
         {nome}
       </span>
-      <span className="text-body text-foreground break-words">{valor || "—"}</span>
+      <span className="text-body text-foreground break-words">
+        {valor || "—"}
+      </span>
     </div>
   );
 }
@@ -129,7 +136,9 @@ function ModalDoUsuario({
             <Campo nome="Nome" valor={conta.nome} />
             {conta.nomeSocial && (
               <Campo
-                nome={conta.usaNomeSocial ? "Nome social (em uso)" : "Nome social"}
+                nome={
+                  conta.usaNomeSocial ? "Nome social (em uso)" : "Nome social"
+                }
                 valor={conta.nomeSocial}
               />
             )}
@@ -142,7 +151,9 @@ function ModalDoUsuario({
             <Campo nome="Cadastrado em" valor={dataBR(conta.cadastradoEm)} />
             <Campo
               nome="Último acesso"
-              valor={conta.ultimoAcesso ? dataBR(conta.ultimoAcesso, true) : "Nunca"}
+              valor={
+                conta.ultimoAcesso ? dataBR(conta.ultimoAcesso, true) : "Nunca"
+              }
             />
             <Campo
               nome="Email confirmado"
@@ -159,7 +170,12 @@ function ModalDoUsuario({
             <span className="text-body font-semibold text-foreground">
               {funcao || "—"}
             </span>
-            <Button className="w-full" variant="outline" size="lg" onClick={openUpdateRole}>
+            <Button
+              className="w-full"
+              variant="outline"
+              size="lg"
+              onClick={openUpdateRole}
+            >
               Alterar função
             </Button>
           </div>
@@ -200,18 +216,16 @@ function ModalDoUsuario({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white rounded-xl p-4 sm:p-5 shadow-lg w-full max-w-[50.5rem]"
-    >
-      <div className="flex w-full flex-col gap-4">
-        <Text size="secondary" className="font-bold text-foreground">
-          Usuário
-        </Text>
-        {conteudo()}
-      </div>
-    </ModalTemplate>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent size="lg" aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Usuário</DialogTitle>
+        </DialogHeader>
+        <DialogBody>
+          <div className="flex w-full flex-col gap-4">{conteudo()}</div>
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   );
 }
 

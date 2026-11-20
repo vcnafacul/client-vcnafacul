@@ -7,9 +7,15 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import PropValue from "../../../components/molecules/PropValue";
 import { FormFieldOption } from "../../../components/molecules/formField";
-import ModalTemplate, {
-  ModalProps,
-} from "../../../components/templates/modalTemplate";
+import { ModalProps } from "../../../components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   CreateFrenteDtoInput,
   UpdateFrenteDto,
@@ -76,36 +82,36 @@ function ManagerFrente({
   }, [frente, setValue]);
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      className="bg-white w-full max-w-xl p-4 rounded-md"
-    >
-      <form
-        onSubmit={handleSubmit(frente ? edit : create)}
-        className="flex flex-col gap-4"
-      >
-        <PropValue prop="Materia" value={materia.label} />
-        <InputFactory
-          id="name"
-          type="text"
-          label="Nome"
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("name", e.target.value)}
-          error={errors.name}
-          defaultValue={frente?.nome}
-        />
-        <div className="flex justify-end">
-          <Button
-            variant="default"
-            className="bg-cta hover:bg-cta/80"
-            type="submit"
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose?.()}>
+      <DialogContent size="md" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>{frente ? "Editar frente" : "Criar frente"}</DialogTitle>
+        </DialogHeader>
+        <DialogBody className="-mx-1 px-1 pt-2">
+          <form
+            id="form-manager-frente"
+            onSubmit={handleSubmit(frente ? edit : create)}
+            className="flex flex-col gap-4"
           >
+            <PropValue prop="Materia" value={materia.label} />
+            <InputFactory
+              id="name"
+              type="text"
+              label="Nome"
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onChange={(e: any) => setValue("name", e.target.value)}
+              error={errors.name}
+              defaultValue={frente?.nome}
+            />
+          </form>
+        </DialogBody>
+        <DialogFooter>
+          <Button type="submit" form="form-manager-frente">
             {frente ? "Salvar" : "Criar"}
           </Button>
-        </div>
-      </form>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

@@ -6,7 +6,14 @@ import {
 import { VideoLinkField } from "@/components/molecules/videoLinkField";
 import { sendVideoDemand } from "@/services/content/sendVideoDemand";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { Save, Trash2, UploadCloud, X } from "lucide-react";
 import { useRef, useState } from "react";
@@ -20,9 +27,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import ModalTemplate, {
-  ModalProps,
-} from "../../../components/templates/modalTemplate";
+import { ModalProps } from "../../../components/templates/modalTemplate";
 import { ContentDtoInput } from "../../../dtos/content/contentDtoInput";
 import { deleteDemand } from "../../../services/content/deleteDemand";
 import { uploadFileDemand } from "../../../services/content/uploadFileDemand";
@@ -91,15 +96,19 @@ function ShowDemand({
 
   const ModalDocxPreview = () => {
     return !modals.docxPreview.isOpen ? null : (
-      <ModalTemplate
-        isOpen={modals.docxPreview.isOpen}
-        handleClose={() => modals.docxPreview.close()}
-        title="Pré-visualização do documento"
-        // Sem altura mínima: 600px passava de 90vh em tela baixa. Uma rolagem só (a do overlay).
-        className="bg-white p-3 sm:p-4 rounded-md w-full max-w-6xl"
+      <Dialog
+        open={modals.docxPreview.isOpen}
+        onOpenChange={(o) => !o && modals.docxPreview.close()}
       >
-        <DocxPreview arrayBuffer={arrayBuffer!} />
-      </ModalTemplate>
+        <DialogContent size="full" aria-describedby={undefined}>
+          <DialogHeader>
+            <DialogTitle>Pré-visualização do documento</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <DocxPreview arrayBuffer={arrayBuffer!} />
+          </DialogBody>
+        </DialogContent>
+      </Dialog>
     );
   };
 
@@ -183,13 +192,16 @@ function ShowDemand({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      className="bg-white w-full max-w-6xl p-4 rounded-md"
-    >
-      <Card className="border-none shadow-none">
-        <CardContent className="space-y-4 p-0 sm:p-2">
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose?.()}>
+      <DialogContent
+        size="full"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>Enviar material da demanda</DialogTitle>
+        </DialogHeader>
+        <DialogBody className="space-y-4">
           {/* O mesmo cabeçalho da validação: quem pediu, tema, status (050). */}
           <Cabecalho demand={demand} papelDoCriador="Pedida por" />
           <p className="text-body whitespace-pre-wrap break-words">
@@ -212,7 +224,8 @@ function ShowDemand({
           )}
 
           {tipo === "documento" && (
-            <div
+            <button
+              type="button"
               className="border-2 border-dashed border-muted rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/50 transition"
               onClick={handleUploadClick}
             >
@@ -229,15 +242,16 @@ function ShowDemand({
                   </p>
                 </>
               )}
-              <input
-                type="file"
-                accept=".docx"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                className="hidden"
-              />
-            </div>
+            </button>
           )}
+          <input
+            type="file"
+            accept=".docx"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="hidden"
+            aria-label="Documento da demanda"
+          />
           {tipo === "documento" &&
             uploadFile &&
             uploadFile.type ===
@@ -250,37 +264,36 @@ function ShowDemand({
                 Pré-visualizar documento
               </Button>
             )}
-          {/*
-            Excluir à esquerda, longe de Salvar: é destrutivo e não é o fluxo
-            normal. No celular, Salvar por último (mais perto do polegar).
-          */}
-          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-2 pt-4 border-t">
-            <Button
-              variant="ghost"
-              className="text-destructive hover:text-destructive sm:w-auto"
-              onClick={() => modals.tryDelete.open()}
-            >
-              <Trash2 className="mr-2 h-4 w-4" /> Excluir demanda
+          {/* Como função: <Componente /> declarado no render remontava a cada render. */}
+          {ModalDocxPreview()}
+          {ModalTryDelete()}
+        </DialogBody>
+        {/*
+          Excluir à esquerda, longe de Salvar: é destrutivo e não é o fluxo
+          normal. No celular, Salvar por último (mais perto do polegar).
+        */}
+        <DialogFooter>
+          <Button
+            variant="ghost"
+            className="text-destructive hover:text-destructive sm:mr-auto"
+            onClick={() => modals.tryDelete.open()}
+          >
+            <Trash2 className="mr-2 h-4 w-4" /> Excluir demanda
+          </Button>
+          <div className="flex flex-col-reverse gap-2 sm:flex-row max-sm:[&>button]:w-full">
+            <Button variant="outline" onClick={handleClose}>
+              <X className="mr-2 h-4 w-4" /> Fechar
             </Button>
-            <div className="flex flex-col-reverse sm:flex-row gap-2">
-              <Button variant="outline" onClick={handleClose}>
-                <X className="mr-2 h-4 w-4" /> Fechar
-              </Button>
-              <Button
-                variant="default"
-                onClick={tipo === "video" ? handleSendVideo : handleUploadFile}
-                disabled={tipo === "video" ? !videoId : !uploadFile}
-              >
-                <Save className="mr-2 h-4 w-4" /> Salvar
-              </Button>
-            </div>
+            <Button
+              onClick={tipo === "video" ? handleSendVideo : handleUploadFile}
+              disabled={tipo === "video" ? !videoId : !uploadFile}
+            >
+              <Save className="mr-2 h-4 w-4" /> Salvar
+            </Button>
           </div>
-        </CardContent>
-      </Card>
-      {/* Como função: <Componente /> declarado no render remontava a cada render. */}
-      {ModalDocxPreview()}
-      {ModalTryDelete()}
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

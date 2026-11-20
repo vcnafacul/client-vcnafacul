@@ -12,7 +12,15 @@ import {
 import type { EstudanteEncontrado } from "@/dtos/cartaoResposta/buscaEstudante";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import ModalTemplate from "../../../components/templates/modalTemplate";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { OrientacoesDoCartao } from "./OrientacoesDoCartao";
 import { uploadCartao } from "../../../services/cartaoResposta/uploadCartao";
 import {
@@ -99,127 +107,135 @@ export default function UploadCartaoModal({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={fechar}
-      className="w-full max-w-lg rounded-lg bg-white shadow-lg p-2"
-    >
-      <div className="p-6 space-y-4">
-        <h2 className="text-h3 font-semibold">Enviar cartão de resposta</h2>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && fechar()}>
+      <DialogContent
+        size="md"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>Enviar cartão de resposta</DialogTitle>
+        </DialogHeader>
+        <DialogBody className="space-y-4">
+          {/*
+      As mesmas orientações do download do cartão: aqui é a hora da FOTO — e ainda dá
+      para conferir a marcação antes de enviar.
+    */}
+          <OrientacoesDoCartao />
 
-        {/*
-          As mesmas orientações do download do cartão: aqui é a hora da FOTO — e ainda dá
-          para conferir a marcação antes de enviar.
-        */}
-        <OrientacoesDoCartao />
+          {/*
+      ⚠️ Sem botão "Buscar": a consulta sai sozinha 500ms depois da última
+      tecla. O botão obrigava um clique a mais para cada tentativa, e numa
+      busca por nome quase sempre são várias tentativas.
+    */}
+          {!escolhido && (
+            <div className="space-y-2">
+              <input
+                type="text"
+                value={termo}
+                onChange={(e) => setTermo(e.target.value)}
+                placeholder={TEXTO_PLACEHOLDER}
+                data-testid="busca-estudante"
+                aria-label={TEXTO_PLACEHOLDER}
+                className="w-full border rounded-sm px-3 py-2"
+              />
 
-        {/*
-          ⚠️ Sem botão "Buscar": a consulta sai sozinha 500ms depois da última
-          tecla. O botão obrigava um clique a mais para cada tentativa, e numa
-          busca por nome quase sempre são várias tentativas.
-        */}
-        {!escolhido && (
-          <div className="space-y-2">
-            <input
-              type="text"
-              autoFocus
-              value={termo}
-              onChange={(e) => setTermo(e.target.value)}
-              placeholder={TEXTO_PLACEHOLDER}
-              data-testid="busca-estudante"
-              aria-label={TEXTO_PLACEHOLDER}
-              className="w-full border rounded-sm px-3 py-2"
-            />
-
-            {/*
-              ⚠️ Cada estado diz o que está acontecendo. Uma lista vazia sem
-              texto nenhum é indistinguível de "ainda não busquei", e é o que
-              faz a pessoa ficar digitando à espera de algo que já terminou.
-            */}
-            {termo.trim().length > 0 &&
-              termo.trim().length < MINIMO_PARA_BUSCAR && (
-                <p className="text-body text-muted-foreground">{TEXTO_DIGITE_MAIS}</p>
-              )}
-            {estado === "buscando" && (
-              <p className="text-body text-muted-foreground">{TEXTO_BUSCANDO}</p>
-            )}
-            {estado === "erro" && (
-              <p className="text-body text-destructive">{TEXTO_ERRO_BUSCA}</p>
-            )}
-            {estado === "pronto" && estudantes.length === 0 && (
-              <p className="text-body text-muted-foreground">{TEXTO_NADA_ENCONTRADO}</p>
-            )}
-
-            {estudantes.length > 0 && (
-              <ul
-                data-testid="sugestoes-estudante"
-                className="max-h-64 overflow-auto divide-y rounded-sm border"
-              >
-                {estudantes.map((e) => (
-                  <li key={e.userId}>
-                    <button
-                      type="button"
-                      onClick={() => setEscolhido(e)}
-                      className="w-full px-3 py-2 text-left hover:bg-page"
-                    >
-                      <span className="block font-medium">{e.nome}</span>
-                      {/*
-                        ⚠️ Matrícula E turma embaixo: dois estudantes com o
-                        mesmo nome são caso real, e sem isso não há como saber
-                        para qual dos dois o cartão vai.
-                      */}
-                      <span className="block text-caption text-muted-foreground">
-                        {e.matricula} · {e.turma ?? TEXTO_SEM_TURMA}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
-
-        {escolhido && (
-          <div className="space-y-3">
-            <div className="flex items-start justify-between gap-3 rounded-sm border p-3">
-              <div>
-                <p className="font-medium">{escolhido.nome}</p>
-                <p className="text-body text-muted-foreground">
-                  {escolhido.matricula} · {escolhido.turma ?? TEXTO_SEM_TURMA}
-                </p>
-              </div>
               {/*
-                ⚠️ "Trocar" devolve a busca. Sem ele, corrigir uma escolha
-                errada exigiria fechar o modal e recomeçar — e desfazer o envio
-                depois exige excluí-lo no relatório (card 36).
-              */}
-              <button
-                type="button"
-                onClick={() => {
-                  setEscolhido(null);
-                  setTermo("");
-                }}
-                className="shrink-0 text-body underline"
-              >
-                {TEXTO_TROCAR}
-              </button>
+          ⚠️ Cada estado diz o que está acontecendo. Uma lista vazia sem
+          texto nenhum é indistinguível de "ainda não busquei", e é o que
+          faz a pessoa ficar digitando à espera de algo que já terminou.
+        */}
+              {termo.trim().length > 0 &&
+                termo.trim().length < MINIMO_PARA_BUSCAR && (
+                  <p className="text-body text-muted-foreground">
+                    {TEXTO_DIGITE_MAIS}
+                  </p>
+                )}
+              {estado === "buscando" && (
+                <p className="text-body text-muted-foreground">
+                  {TEXTO_BUSCANDO}
+                </p>
+              )}
+              {estado === "erro" && (
+                <p className="text-body text-destructive">{TEXTO_ERRO_BUSCA}</p>
+              )}
+              {estado === "pronto" && estudantes.length === 0 && (
+                <p className="text-body text-muted-foreground">
+                  {TEXTO_NADA_ENCONTRADO}
+                </p>
+              )}
+
+              {estudantes.length > 0 && (
+                <ul
+                  data-testid="sugestoes-estudante"
+                  className="max-h-64 overflow-auto divide-y rounded-sm border"
+                >
+                  {estudantes.map((e) => (
+                    <li key={e.userId}>
+                      <button
+                        type="button"
+                        onClick={() => setEscolhido(e)}
+                        className="w-full px-3 py-2 text-left hover:bg-page"
+                      >
+                        <span className="block font-medium">{e.nome}</span>
+                        {/*
+                    ⚠️ Matrícula E turma embaixo: dois estudantes com o
+                    mesmo nome são caso real, e sem isso não há como saber
+                    para qual dos dois o cartão vai.
+                  */}
+                        <span className="block text-caption text-muted-foreground">
+                          {e.matricula} · {e.turma ?? TEXTO_SEM_TURMA}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
+          )}
 
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            />
+          {escolhido && (
+            <div className="space-y-3">
+              <div className="flex items-start justify-between gap-3 rounded-sm border p-3">
+                <div>
+                  <p className="font-medium">{escolhido.nome}</p>
+                  <p className="text-body text-muted-foreground">
+                    {escolhido.matricula} · {escolhido.turma ?? TEXTO_SEM_TURMA}
+                  </p>
+                </div>
+                {/*
+            ⚠️ "Trocar" devolve a busca. Sem ele, corrigir uma escolha
+            errada exigiria fechar o modal e recomeçar — e desfazer o envio
+            depois exige excluí-lo no relatório (card 36).
+          */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEscolhido(null);
+                    setTermo("");
+                  }}
+                  className="shrink-0 text-body underline"
+                >
+                  {TEXTO_TROCAR}
+                </button>
+              </div>
 
-            {/* Confirma de quem é o cartão: corrigir depois exige excluir o envio. */}
+              <input
+                type="file"
+                aria-label="Foto do cartão de resposta"
+                accept="image/*"
+                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              />
+            </div>
+          )}
+        </DialogBody>
+        {escolhido && (
+          <DialogFooter>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <button
-                  disabled={!file || enviando}
-                  className="w-full px-4 py-2 bg-success text-success-foreground rounded-sm disabled:opacity-50"
-                >
+                <Button disabled={!file || enviando}>
                   {enviando ? "Enviando..." : "Enviar cartão"}
-                </button>
+                </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
@@ -230,18 +246,15 @@ export default function UploadCartaoModal({
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction
-                    variant="primary"
-                    onClick={handleEnviar}
-                  >
+                  <AlertDialogAction variant="primary" onClick={handleEnviar}>
                     Enviar cartão
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-          </div>
+          </DialogFooter>
         )}
-      </div>
-    </ModalTemplate>
+      </DialogContent>
+    </Dialog>
   );
 }

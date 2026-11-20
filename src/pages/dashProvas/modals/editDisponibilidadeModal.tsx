@@ -1,4 +1,12 @@
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { Button } from "@mui/material";
 import { useState } from "react";
@@ -58,78 +66,83 @@ function EditDisponibilidadeModal({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={onClose}
-      className="w-full max-w-md rounded-lg bg-white shadow-lg p-6"
-      style={{ zIndex: 60 }}
-    >
-      <h3 className="text-h3 font-semibold text-foreground mb-1">
-        Editar janela
-      </h3>
-      <p className="text-body text-muted-foreground mb-4">{simulado.nome}</p>
-
-      <div className="space-y-4">
-        <div>
-          <label className="block text-body text-foreground mb-1">
-            Disponível de
-          </label>
-          <div className="flex items-center gap-2">
-            <input
-              type="datetime-local"
-              value={de}
-              onChange={(e) => setDe(e.target.value)}
-              className="border border-border rounded-sm px-2 py-1 text-body w-full"
-            />
-            {de && (
-              <button
-                type="button"
-                onClick={() => setDe("")}
-                className="text-muted-foreground hover:text-foreground text-h3"
-                aria-label="Limpar disponível de"
+    <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent size="md" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Editar janela</DialogTitle>
+          <DialogDescription>{simulado.nome}</DialogDescription>
+        </DialogHeader>
+        <DialogBody className="-mx-1 px-1 pt-2">
+          <div className="space-y-4">
+            <div>
+              <label
+                htmlFor="disponivel-de"
+                className="block text-body text-foreground mb-1"
               >
-                ×
-              </button>
-            )}
-          </div>
-        </div>
+                Disponível de
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  id="disponivel-de"
+                  type="datetime-local"
+                  value={de}
+                  onChange={(e) => setDe(e.target.value)}
+                  className="border border-border rounded-sm px-2 py-1 text-body w-full"
+                />
+                {de && (
+                  <button
+                    type="button"
+                    onClick={() => setDe("")}
+                    className="text-muted-foreground hover:text-foreground text-h3"
+                    aria-label="Limpar disponível de"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            </div>
 
-        <div>
-          <label className="block text-body text-foreground mb-1">
-            Disponível até
-          </label>
-          <div className="flex items-center gap-2">
-            <input
-              type="datetime-local"
-              value={ate}
-              onChange={(e) => setAte(e.target.value)}
-              className="border border-border rounded-sm px-2 py-1 text-body w-full"
-            />
-            {ate && (
-              <button
-                type="button"
-                onClick={() => setAte("")}
-                className="text-muted-foreground hover:text-foreground text-h3"
-                aria-label="Limpar disponível até"
+            <div>
+              <label
+                htmlFor="disponivel-ate"
+                className="block text-body text-foreground mb-1"
               >
-                ×
-              </button>
-            )}
+                Disponível até
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  id="disponivel-ate"
+                  type="datetime-local"
+                  value={ate}
+                  onChange={(e) => setAte(e.target.value)}
+                  className="border border-border rounded-sm px-2 py-1 text-body w-full"
+                />
+                {ate && (
+                  <button
+                    type="button"
+                    onClick={() => setAte("")}
+                    className="text-muted-foreground hover:text-foreground text-h3"
+                    aria-label="Limpar disponível até"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {erro && <p className="text-body text-destructive">{erro}</p>}
           </div>
-        </div>
-
-        {erro && <p className="text-body text-destructive">{erro}</p>}
-      </div>
-
-      <div className="flex justify-end gap-3 mt-6">
-        <Button variant="outlined" onClick={onClose}>
-          Cancelar
-        </Button>
-        <Button variant="contained" onClick={handleSalvar}>
-          Salvar
-        </Button>
-      </div>
-    </ModalTemplate>
+        </DialogBody>
+        <DialogFooter>
+          <Button variant="outlined" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button variant="contained" onClick={handleSalvar}>
+            Salvar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

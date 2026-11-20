@@ -1,4 +1,12 @@
-import ModalTemplate from "@/components/templates/modalTemplate";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useState } from "react";
 import {
   escolhaSugerida,
@@ -61,85 +69,86 @@ export function ModalEscolhaAoSalvar({
   );
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={onClose}
-      className="w-full max-w-lg rounded-lg bg-white p-4 shadow-lg"
-    >
-      <div data-escolha-ao-salvar className="flex flex-col gap-4">
-        <h2 className="text-h3 font-semibold">{TITULO}</h2>
-
-        {/*
+    <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent
+        size="md"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>{TITULO}</DialogTitle>
+        </DialogHeader>
+        <DialogBody>
+          <div data-escolha-ao-salvar className="flex flex-col gap-4">
+            {/*
           ⚠️ **O diff vem primeiro.** A pergunta abstrata vira concreta quando
           ela chega com o que mudou — e é o que sustenta o default proposto.
         */}
-        <p data-campos-alterados className="text-body text-muted-foreground">
-          Você alterou: <strong>{campos.join(" · ")}</strong>
-        </p>
+            <p
+              data-campos-alterados
+              className="text-body text-muted-foreground"
+            >
+              Você alterou: <strong>{campos.join(" · ")}</strong>
+            </p>
 
-        <label className="flex cursor-pointer items-start gap-2 rounded-md border p-3">
-          <input
-            type="radio"
-            name="escolha"
-            data-opcao="correcao"
-            className="mt-1"
-            checked={escolha === "correcao"}
-            onChange={() => setEscolha("correcao")}
-          />
-          <span className="text-body">
-            <strong className="block">Correção</strong>
-            {textoDaCorrecao(respostas)}
-          </span>
-        </label>
+            <label className="flex cursor-pointer items-start gap-2 rounded-md border p-3">
+              <input
+                type="radio"
+                name="escolha"
+                data-opcao="correcao"
+                className="mt-1"
+                checked={escolha === "correcao"}
+                onChange={() => setEscolha("correcao")}
+              />
+              <span className="text-body">
+                <strong className="block">Correção</strong>
+                {textoDaCorrecao(respostas)}
+              </span>
+            </label>
 
-        <label className="flex cursor-pointer items-start gap-2 rounded-md border p-3">
-          <input
-            type="radio"
-            name="escolha"
-            data-opcao="novaVersao"
-            className="mt-1"
-            checked={escolha === "novaVersao"}
-            disabled={!permiteNovaVersao}
-            onChange={() => setEscolha("novaVersao")}
-          />
-          <span className="text-body">
-            <strong className="block">Nova versão</strong>
-            {permiteNovaVersao ? (
-              <>
-                {textoDaNovaVersao(provas)}
-                <ProvasDosDoisGrupos provas={provas} />
-              </>
-            ) : (
-              TEXTO_SEM_NOVA_VERSAO
-            )}
-          </span>
-        </label>
-
-        <div className="flex items-center justify-end gap-3">
+            <label className="flex cursor-pointer items-start gap-2 rounded-md border p-3">
+              <input
+                type="radio"
+                name="escolha"
+                data-opcao="novaVersao"
+                className="mt-1"
+                checked={escolha === "novaVersao"}
+                disabled={!permiteNovaVersao}
+                onChange={() => setEscolha("novaVersao")}
+              />
+              <span className="text-body">
+                <strong className="block">Nova versão</strong>
+                {permiteNovaVersao ? (
+                  <>
+                    {textoDaNovaVersao(provas)}
+                    <ProvasDosDoisGrupos provas={provas} />
+                  </>
+                ) : (
+                  TEXTO_SEM_NOVA_VERSAO
+                )}
+              </span>
+            </label>
+          </div>
+        </DialogBody>
+        <DialogFooter>
           {/*
-            ⚠️ **"Cancelar" não é uma terceira opção visualmente igual às outras
-            duas.** Sair sem salvar é outra categoria de ação, e dar a ele o
-            mesmo peso faria a pessoa escolher entre três coisas quando são duas.
-          */}
-          <button
-            type="button"
-            data-cancelar
-            onClick={onClose}
-            className="text-body text-muted-foreground underline underline-offset-2"
-          >
+          ⚠️ **"Cancelar" não é uma terceira opção visualmente igual às outras
+          duas.** Sair sem salvar é outra categoria de ação, e dar a ele o
+          mesmo peso faria a pessoa escolher entre três coisas quando são duas.
+        */}
+          <Button type="button" variant="ghost" data-cancelar onClick={onClose}>
             Cancelar
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             data-confirmar
             onClick={() => onConfirmar(escolha)}
-            className="rounded-md bg-cta px-4 py-2 text-body text-cta-foreground"
           >
             Salvar
-          </button>
-        </div>
-      </div>
-    </ModalTemplate>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -148,7 +157,10 @@ function ProvasDosDoisGrupos({ provas }: { provas: ProvaDaQuestao[] }) {
   const { recebem, mantem } = separarProvas(provas);
   if (recebem.length + mantem.length === 0) return null;
   return (
-    <details data-provas-da-versao className="mt-2 text-caption text-muted-foreground">
+    <details
+      data-provas-da-versao
+      className="mt-2 text-caption text-muted-foreground"
+    >
       <summary className="cursor-pointer">Ver as provas</summary>
       {recebem.length > 0 && (
         <p className="mt-1">

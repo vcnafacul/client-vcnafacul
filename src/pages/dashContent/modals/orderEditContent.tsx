@@ -1,6 +1,12 @@
-import Text from "@/components/atoms/text";
 import { Button } from "@/components/ui/button";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ChangeOrderDTO } from "@/dtos/content/changeOrder";
 import { StatusContent } from "@/enums/content/statusContent";
 import { StatusEnum } from "@/enums/generic/statusEnum";
@@ -141,7 +147,7 @@ function OrderEditContent(props: Props) {
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -173,7 +179,10 @@ function OrderEditContent(props: Props) {
     executeToast({
       action: async () => {
         const result = props.updateOrder(dto) as void | Promise<unknown>;
-        if (result != null && typeof (result as Promise<unknown>).then === "function") {
+        if (
+          result != null &&
+          typeof (result as Promise<unknown>).then === "function"
+        ) {
           await (result as Promise<unknown>);
         }
       },
@@ -188,65 +197,65 @@ function OrderEditContent(props: Props) {
   };
 
   return (
-    <ModalTemplate
-      isOpen={props.isOpen}
-      handleClose={fechar}
-      className="bg-white p-4 rounded-md w-[90vw] max-w-[600px]"
-    >
-      <div className="w-full flex flex-col gap-4">
-        <Text size="secondary">Ordem dos Conteúdos</Text>
-
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <div className="max-h-[40vh] overflow-y-auto scrollbar-hide rounded-md">
-            <table className="min-w-full divide-y divide-border">
-              <thead className="sticky top-0 bg-white z-raised">
-                <tr>
-                  <th className="p-2">Posição</th>
-                  <th className="p-2">Título</th>
-                  <th className="p-2">Status</th>
-                  <th className="p-2">
-                    <span className="sr-only">Mover</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <SortableContext
-                  items={data.map((item) => item.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  {data.map((row, index) => (
-                    <SortableRow
-                      key={row.id}
-                      row={row}
-                      position={index + 1}
-                      onSubir={index > 0 ? () => mover(index, index - 1) : undefined}
-                      onDescer={
-                        index < data.length - 1
-                          ? () => mover(index, index + 1)
-                          : undefined
-                      }
-                    />
-                  ))}
-                </SortableContext>
-              </tbody>
-            </table>
-          </div>
-        </DndContext>
-
-        <div className="flex w-full justify-center gap-4 p-4 flex-wrap">
-          <Button variant="outline" size="sm" className="w-32" onClick={fechar}>
+    <Dialog open={props.isOpen} onOpenChange={(o) => !o && fechar()}>
+      <DialogContent size="md" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Ordem dos Conteúdos</DialogTitle>
+        </DialogHeader>
+        <DialogBody>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <div className="max-h-[40vh] overflow-y-auto scrollbar-hide rounded-md">
+              <table className="min-w-full divide-y divide-border">
+                <thead className="sticky top-0 bg-background z-raised">
+                  <tr>
+                    <th className="p-2">Posição</th>
+                    <th className="p-2">Título</th>
+                    <th className="p-2">Status</th>
+                    <th className="p-2">
+                      <span className="sr-only">Mover</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <SortableContext
+                    items={data.map((item) => item.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {data.map((row, index) => (
+                      <SortableRow
+                        key={row.id}
+                        row={row}
+                        position={index + 1}
+                        onSubir={
+                          index > 0 ? () => mover(index, index - 1) : undefined
+                        }
+                        onDescer={
+                          index < data.length - 1
+                            ? () => mover(index, index + 1)
+                            : undefined
+                        }
+                      />
+                    ))}
+                  </SortableContext>
+                </tbody>
+              </table>
+            </div>
+          </DndContext>
+        </DialogBody>
+        <DialogFooter>
+          <Button variant="outline" onClick={fechar}>
             Cancelar
           </Button>
-          <Button variant="primary" size="sm" className="w-32" onClick={handleSave}>
+          <Button variant="primary" onClick={handleSave}>
             Salvar
           </Button>
-        </div>
-      </div>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useAuthStore } from "../../../store/auth";
 import { HomeSupporter } from "../../../dtos/homeContent/homeSupporter";
 import { createHomeSupporter } from "../../../services/home/createHomeSupporter";
@@ -81,7 +88,9 @@ export default function ModalEditSupporter({
       return;
     }
     if (!isValidUrl(trimmedLink)) {
-      toast.error("Link inválido. Use uma URL válida (ex: https://exemplo.com)");
+      toast.error(
+        "Link inválido. Use uma URL válida (ex: https://exemplo.com)",
+      );
       return;
     }
     setSaving(true);
@@ -156,117 +165,136 @@ export default function ModalEditSupporter({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white p-6 rounded-md w-[90vw] max-w-[500px]"
-    >
-      <div className="flex flex-col gap-4">
-        <h3 className="text-h3 font-semibold">
-          {isCreateMode ? "Adicionar apoiador" : "Editar apoiador"}
-        </h3>
-        <label className="flex flex-col gap-1">
-          <span className="text-body font-semibold">Nome</span>
-          <input
-            className="border rounded-sm px-2 py-1"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Nome do apoiador"
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-body font-semibold">Link</span>
-          <input
-            className="border rounded-sm px-2 py-1"
-            value={link}
-            onChange={(e) => setLink(e.target.value)}
-            placeholder="https://exemplo.com"
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="text-body font-semibold">Descrição (opcional)</span>
-          <textarea
-            className="border rounded-sm px-2 py-1 resize-none"
-            value={description}
-            onChange={(e) => setDescription(e.target.value.slice(0, DESCRIPTION_MAX))}
-            maxLength={DESCRIPTION_MAX}
-            rows={3}
-            placeholder="Breve texto sobre o apoiador (máx. 280 caracteres)"
-          />
-          <span
-            className={`text-caption ${
-              description.length >= DESCRIPTION_MAX
-                ? "text-destructive"
-                : "text-muted-foreground"
-            }`}
-          >
-            {description.length}/{DESCRIPTION_MAX}
-          </span>
-          <span className="text-caption text-muted-foreground">
-            Se vazio, clique no logo abre o site direto.
-          </span>
-        </label>
-        <div className="flex flex-col gap-1">
-          <span className="text-body font-semibold">
-            Logo {isCreateMode ? "(opcional)" : "(opcional — substitui atual)"}
-          </span>
-          {!isCreateMode && supporter?.logoUrl && !file && (
-            <img
-              src={homeContentFile(supporter.logoUrl)}
-              alt={supporter.name}
-              className="w-24 h-24 object-contain rounded-sm bg-white"
-            />
-          )}
-          {file && (
-            <span className="text-caption text-success">
-              Logo recortado pronto para upload.
-            </span>
-          )}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const picked = e.target.files?.[0];
-              if (picked) {
-                setPendingCrop(picked);
-                e.target.value = "";
-              }
-            }}
-          />
-          <span className="text-caption text-muted-foreground">
-            Escolha a proporção desejada no editor (ou "Original" para manter a forma da imagem). Salvo como PNG — fundo transparente é preservado.
-          </span>
-        </div>
-        {pendingCrop && (
-          <PhotoEditor
-            isOpen
-            photo={pendingCrop}
-            aspectPresets={SUPPORTER_ASPECT_PRESETS}
-            outputFormat="image/png"
-            handleClose={() => setPendingCrop(null)}
-            onConfirm={(cropped) => {
-              setFile(cropped);
-              setPendingCrop(null);
-            }}
-          />
-        )}
-        <div className="flex justify-end gap-2 pt-2">
-          <Button variant="outline" size="sm"
-            className="w-32"
-            onClick={handleClose}
-            disabled={saving}
-          >
-            Cancelar
-          </Button>
-          <Button variant="primary" size="sm"
-            className="w-32"
-            onClick={onSubmit}
-            disabled={saving}
-          >
-            {saving ? "Salvando..." : "Salvar"}
-          </Button>
-        </div>
-      </div>
-    </ModalTemplate>
+    <>
+      <Dialog
+        open={isOpen && !pendingCrop}
+        onOpenChange={(o) => !o && handleClose()}
+      >
+        <DialogContent
+          size="md"
+          aria-describedby={undefined}
+          onInteractOutside={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle>
+              {isCreateMode ? "Adicionar apoiador" : "Editar apoiador"}
+            </DialogTitle>
+          </DialogHeader>
+          <DialogBody className="-mx-1 px-1 pt-2">
+            <form
+              id="form-edit-supporter"
+              className="flex flex-col gap-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                onSubmit();
+              }}
+            >
+              <label className="flex flex-col gap-1">
+                <span className="text-body font-semibold">Nome</span>
+                <input
+                  className="border rounded-sm px-2 py-1"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Nome do apoiador"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="text-body font-semibold">Link</span>
+                <input
+                  className="border rounded-sm px-2 py-1"
+                  value={link}
+                  onChange={(e) => setLink(e.target.value)}
+                  placeholder="https://exemplo.com"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="text-body font-semibold">
+                  Descrição (opcional)
+                </span>
+                <textarea
+                  className="border rounded-sm px-2 py-1 resize-none"
+                  value={description}
+                  onChange={(e) =>
+                    setDescription(e.target.value.slice(0, DESCRIPTION_MAX))
+                  }
+                  maxLength={DESCRIPTION_MAX}
+                  rows={3}
+                  placeholder="Breve texto sobre o apoiador (máx. 280 caracteres)"
+                />
+                <span
+                  className={`text-caption ${
+                    description.length >= DESCRIPTION_MAX
+                      ? "text-destructive"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {description.length}/{DESCRIPTION_MAX}
+                </span>
+                <span className="text-caption text-muted-foreground">
+                  Se vazio, clique no logo abre o site direto.
+                </span>
+              </label>
+              <div className="flex flex-col gap-1">
+                <span className="text-body font-semibold">
+                  Logo{" "}
+                  {isCreateMode ? "(opcional)" : "(opcional — substitui atual)"}
+                </span>
+                {!isCreateMode && supporter?.logoUrl && !file && (
+                  <img
+                    src={homeContentFile(supporter.logoUrl)}
+                    alt={supporter.name}
+                    className="w-24 h-24 object-contain rounded-sm bg-white"
+                  />
+                )}
+                {file && (
+                  <span className="text-caption text-success">
+                    Logo recortado pronto para upload.
+                  </span>
+                )}
+                <input
+                  type="file"
+                  aria-label="Logo"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const picked = e.target.files?.[0];
+                    if (picked) {
+                      setPendingCrop(picked);
+                      e.target.value = "";
+                    }
+                  }}
+                />
+                <span className="text-caption text-muted-foreground">
+                  Escolha a proporção desejada no editor (ou "Original" para
+                  manter a forma da imagem). Salvo como PNG — fundo transparente
+                  é preservado.
+                </span>
+              </div>
+            </form>
+          </DialogBody>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleClose} disabled={saving}>
+              Cancelar
+            </Button>
+            <Button type="submit" form="form-edit-supporter" disabled={saving}>
+              {saving ? "Salvando..." : "Salvar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* Fora do Dialog: o editor de foto é um modal V1 e o Radix deixa o body sem clique (059/01, portal). */}
+      {pendingCrop && (
+        <PhotoEditor
+          isOpen
+          photo={pendingCrop}
+          aspectPresets={SUPPORTER_ASPECT_PRESETS}
+          outputFormat="image/png"
+          handleClose={() => setPendingCrop(null)}
+          onConfirm={(cropped) => {
+            setFile(cropped);
+            setPendingCrop(null);
+          }}
+        />
+      )}
+    </>
   );
 }

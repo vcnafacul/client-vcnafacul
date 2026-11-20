@@ -1,7 +1,14 @@
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import PermissionToggle from "@/components/atoms/permissionToggle/PermissionToggle";
 import Select from "../../../components/atoms/select";
-import Text from "../../../components/atoms/text";
 import { Button } from "@/components/ui/button";
 import { getRoleNew } from "../../../services/roles/getRole";
 import { useAuthStore } from "../../../store/auth";
@@ -124,82 +131,75 @@ function ModalRole({
     roles.find((r) => r.id === newRole)?.name ?? role.name;
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white rounded-xl p-4 sm:p-5 shadow-lg w-full max-w-[44.5rem]"
-    >
-      <div className="w-full flex flex-col gap-5 max-h-[80vh]">
-        {/* Header */}
-        <div>
-          <Text size="secondary" className="font-bold text-foreground">
-            Permissões do Usuário
-          </Text>
-          <p className="text-body text-muted-foreground mt-0.5">
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent size="lg" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Permissões do Usuário</DialogTitle>
+          <DialogDescription>
             Visualize ou altere o perfil atribuído a este usuário.
-          </p>
-        </div>
+          </DialogDescription>
+        </DialogHeader>
+        <DialogBody className="flex flex-col gap-5">
+          {/* Role selector */}
+          <label className="flex flex-col gap-1">
+            <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
+              Perfil
+            </span>
 
-        {/* Role selector */}
-        <label className="flex flex-col gap-1">
-          <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
-            Perfil
-          </span>
+            {isEditing ? (
+              <Select
+                options={roles}
+                defaultValue={newRole}
+                setState={setNewRole}
+              />
+            ) : (
+              <div className="text-body font-semibold text-foreground px-3 py-2 rounded-lg border border-border bg-page">
+                {selectedRoleName}
+              </div>
+            )}
+          </label>
 
-          {isEditing ? (
-            <Select
-              options={roles}
-              defaultValue={newRole}
-              setState={setNewRole}
-            />
-          ) : (
-            <div className="text-body font-semibold text-foreground px-3 py-2 rounded-lg border border-border bg-page">
-              {selectedRoleName}
-            </div>
-          )}
-        </label>
+          {/* Legend */}
+          <div className="flex flex-wrap items-center gap-4 text-caption text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <span
+                className="w-3 h-3 rounded-full inline-block"
+                style={{ background: palette.orange[600] }}
+              />
+              Cursinho habilitado
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span
+                className="w-3 h-3 rounded-full inline-block"
+                style={{ background: palette.blue[500] }}
+              />
+              Projeto habilitado
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full border border-border inline-block" />
+              Desabilitado
+            </span>
+          </div>
 
-        {/* Legend */}
-        <div className="flex flex-wrap items-center gap-4 text-caption text-muted-foreground">
-          <span className="flex items-center gap-1.5">
-            <span
-              className="w-3 h-3 rounded-full inline-block"
-              style={{ background: palette.orange[600] }}
-            />
-            Cursinho habilitado
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span
-              className="w-3 h-3 rounded-full inline-block"
-              style={{ background: palette.blue[500] }}
-            />
-            Projeto habilitado
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full border border-border inline-block" />
-            Desabilitado
-          </span>
-        </div>
-
-        {/* Permissions */}
-        <div className="overflow-y-auto scrollbar-hide pr-1">
-          {roleInfo ? (
-            <PermissionReadonlyList groups={roleInfo} />
-          ) : (
-            <p className="text-body text-muted-foreground text-center py-4">
-              Carregando...
-            </p>
-          )}
-        </div>
-
-        {/* Actions */}
-        <div className="flex justify-end gap-3 pt-2 border-t border-border">
+          {/* Permissions */}
+          <div>
+            {roleInfo ? (
+              <PermissionReadonlyList groups={roleInfo} />
+            ) : (
+              <p className="text-body text-muted-foreground text-center py-4">
+                Carregando...
+              </p>
+            )}
+          </div>
+        </DialogBody>
+        <DialogFooter>
           {isEditing ? (
             <>
-              <Button className="w-full" variant="outline" size="lg" onClick={cancelEdit}>
+              <Button variant="outline" onClick={cancelEdit}>
                 Cancelar
               </Button>
-              <Button className="w-full" variant="primary" size="lg"
+              <Button
+                variant="primary"
                 onClick={updateRole}
                 disabled={newRole === role.id}
               >
@@ -207,16 +207,17 @@ function ModalRole({
               </Button>
             </>
           ) : (
-            <Button className="w-full" variant="outline" size="lg"
+            <Button
+              variant="outline"
               onClick={() => setIsEditing(true)}
               disabled={roles.length === 0}
             >
               Editar
             </Button>
           )}
-        </div>
-      </div>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

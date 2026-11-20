@@ -13,11 +13,17 @@ import { motivoSemRecomendacao, passosDoSalvar } from "./recomendacao";
 import { getPermissionsHierarchy } from "@/services/roles/getPermissionsHierarchy";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import ModalTemplate, {
-  ModalProps,
-} from "../../../components/templates/modalTemplate";
+import { ModalProps } from "../../../components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useAuthStore } from "../../../store/auth";
-import Text from "../../../components/atoms/text";
 import Select from "@/components/atoms/select";
 
 interface ModalEditRoleProps extends ModalProps {
@@ -63,19 +69,28 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
       if (!prev) return prev;
       const next = { ...prev, [key]: val };
       // Perfil recomendado não pode ter "Alterar Permissão" (ver recomendacao.ts).
-      return motivoSemRecomendacao(next) ? { ...next, isRecommended: false } : next;
+      return motivoSemRecomendacao(next)
+        ? { ...next, isRecommended: false }
+        : next;
     });
   };
 
   const handleRecommendedToggle = (_: string, checked: boolean) => {
-    setRoleSelected((prev) => (prev ? { ...prev, isRecommended: checked } : prev));
+    setRoleSelected((prev) =>
+      prev ? { ...prev, isRecommended: checked } : prev,
+    );
   };
 
   const handleBaseToggle = (_: string, checked: boolean) => {
     setRoleSelected((prev) => {
       if (!prev) return prev;
-      const next = applyBaseRoleConstraints({ ...prev, base: checked }, hierarchy);
-      return motivoSemRecomendacao(next) ? { ...next, isRecommended: false } : next;
+      const next = applyBaseRoleConstraints(
+        { ...prev, base: checked },
+        hierarchy,
+      );
+      return motivoSemRecomendacao(next)
+        ? { ...next, isRecommended: false }
+        : next;
     });
   };
 
@@ -127,113 +142,112 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
     : hierarchy;
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      className="bg-white rounded-xl p-4 sm:p-5 w-full max-w-[44.5rem]"
-    >
-      <div className="w-full flex flex-col gap-5 max-h-[80vh]">
-        {/* Header */}
-        <div>
-          <Text size="secondary" className="font-bold text-foreground">
-            Editar Perfil
-          </Text>
-          <p className="text-body text-muted-foreground mt-0.5">
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose?.()}>
+      <DialogContent size="lg" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Editar Perfil</DialogTitle>
+          <DialogDescription>
             Selecione um perfil e ajuste suas permissões.
-          </p>
-        </div>
+          </DialogDescription>
+        </DialogHeader>
+        <DialogBody className="flex flex-col gap-5">
+          {/* Role selector + base toggle */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            {/* O controle está dentro do label (componente próprio): a associação é por aninhamento. */}
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label className="flex flex-col gap-1 flex-1">
+              <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
+                Perfil
+              </span>
+              <Select
+                options={roles.map((role) => ({
+                  id: role.id,
+                  name: role.isRecommended
+                    ? `${role.name} · recomendado`
+                    : role.name,
+                }))}
+                value={roleSelected?.id}
+                setState={(value) =>
+                  setRoleSelected(
+                    roles.find((r) => String(r.id) === String(value))!,
+                  )
+                }
+              />
+            </label>
+            {/* O controle está dentro do label (componente próprio): a associação é por aninhamento. */}
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label className="flex flex-col gap-1">
+              <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
+                Perfil Base
+              </span>
+              <div className="flex items-center gap-3 h-full py-2">
+                <Toggle
+                  name="base"
+                  checked={roleSelected?.base ?? false}
+                  handleCheck={handleBaseToggle}
+                />
+                <span className="text-body font-medium text-foreground">
+                  {roleSelected?.base ? "Ativo" : "Inativo"}
+                </span>
+              </div>
+            </label>
+          </div>
 
-        {/* Role selector + base toggle */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <label className="flex flex-col gap-1 flex-1">
-            <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
-              Perfil
-            </span>
-            <Select
-              options={roles.map((role) => ({
-                id: role.id,
-                name: role.isRecommended
-                  ? `${role.name} · recomendado`
-                  : role.name,
-              }))}
-              value={roleSelected?.id}
-              setState={(value) =>
-                setRoleSelected(
-                  roles.find((r) => String(r.id) === String(value))!,
-                )
-              }
-            />
-          </label>
-          <label className="flex flex-col gap-1">
-            <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
-              Perfil Base
-            </span>
-            <div className="flex items-center gap-3 h-full py-2">
+          <div className="flex flex-col gap-1 rounded-lg border border-border px-3 py-2">
+            <div className="flex items-center gap-3">
               <Toggle
-                name="base"
-                checked={roleSelected?.base ?? false}
-                handleCheck={handleBaseToggle}
+                name="isRecommended"
+                checked={roleSelected?.isRecommended ?? false}
+                handleCheck={handleRecommendedToggle}
+                disabled={
+                  !roleSelected || !!motivoSemRecomendacao(roleSelected)
+                }
               />
               <span className="text-body font-medium text-foreground">
-                {roleSelected?.base ? "Ativo" : "Inativo"}
+                Recomendado para ex-colaboradores
               </span>
             </div>
-          </label>
-        </div>
-
-        <div className="flex flex-col gap-1 rounded-lg border border-border px-3 py-2">
-          <div className="flex items-center gap-3">
-            <Toggle
-              name="isRecommended"
-              checked={roleSelected?.isRecommended ?? false}
-              handleCheck={handleRecommendedToggle}
-              disabled={!roleSelected || !!motivoSemRecomendacao(roleSelected)}
-            />
-            <span className="text-body font-medium text-foreground">
-              Recomendado para ex-colaboradores
-            </span>
+            <p className="text-caption text-muted-foreground">
+              {(roleSelected && motivoSemRecomendacao(roleSelected)) ??
+                "Coordenadores poderão indicar este perfil ao excluir um colaborador do cursinho."}
+            </p>
           </div>
-          <p className="text-caption text-muted-foreground">
-            {(roleSelected && motivoSemRecomendacao(roleSelected)) ??
-              "Coordenadores poderão indicar este perfil ao excluir um colaborador do cursinho."}
-          </p>
-        </div>
 
-        {roleSelected?.base && (
-          <p className="text-caption text-warning bg-warning-muted border border-warning/30 rounded-lg px-3 py-2">
-            Perfis base só podem ter permissões do projeto. Permissões do
-            cursinho e "Alterar Permissão" são desativadas automaticamente.
-          </p>
-        )}
+          {roleSelected?.base && (
+            <p className="text-caption text-warning bg-warning-muted border border-warning/30 rounded-lg px-3 py-2">
+              Perfis base só podem ter permissões do projeto. Permissões do
+              cursinho e "Alterar Permissão" são desativadas automaticamente.
+            </p>
+          )}
 
-        {/* Permissions */}
-        <div className="overflow-y-auto scrollbar-hide pr-1">
-          <PermissionHierarchyPanel
-            hierarchy={visibleHierarchy}
-            permissions={roleSelected ?? ({} as EditRoleDto)}
-            onToggle={handleToggle}
-            defaultTab={
-              roleSelected?.base
-                ? PermissionType.project
-                : PermissionType.prepCourse
-            }
-          />
-        </div>
-
-        {/* Actions */}
-        <div className="flex justify-end gap-3 pt-2 border-t border-border">
-          <Button className="w-full" variant="outline" size="lg" onClick={handleClose}>
+          {/* Permissions */}
+          <div>
+            <PermissionHierarchyPanel
+              hierarchy={visibleHierarchy}
+              permissions={roleSelected ?? ({} as EditRoleDto)}
+              onToggle={handleToggle}
+              defaultTab={
+                roleSelected?.base
+                  ? PermissionType.project
+                  : PermissionType.prepCourse
+              }
+            />
+          </div>
+        </DialogBody>
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button className="w-full" variant="primary" size="lg"
+          <Button
+            variant="primary"
             disabled={!roleSelected?.name.trim()}
             onClick={editRole}
           >
             Salvar
           </Button>
-        </div>
-      </div>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

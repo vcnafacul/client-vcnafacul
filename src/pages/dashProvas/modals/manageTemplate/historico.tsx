@@ -121,7 +121,7 @@ function Historico({
 
   if (aRestaurar !== null) {
     return (
-      <div className="p-6">
+      <div>
         <h2 className="mb-4 text-h2 font-semibold text-foreground">
           Restaurar a v{aRestaurar.versao}
         </h2>
@@ -134,13 +134,17 @@ function Historico({
         </p>
 
         <div className="mt-6 flex justify-end gap-3">
-          <Button variant="outline" size="sm"
+          <Button
+            variant="outline"
+            size="sm"
             disabled={restaurando}
             onClick={() => setARestaurar(null)}
           >
             Cancelar
           </Button>
-          <Button variant="primary" size="sm"
+          <Button
+            variant="primary"
+            size="sm"
             disabled={restaurando}
             onClick={() => handleRestaurar(aRestaurar.versao)}
           >
@@ -152,7 +156,7 @@ function Historico({
   }
 
   return (
-    <div className="p-6">
+    <div>
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="text-h2 font-semibold text-foreground">
           Histórico de versões
@@ -199,13 +203,17 @@ function Historico({
               </div>
 
               <div className="flex shrink-0 gap-3">
-                <Button variant="outline" size="sm"
+                <Button
+                  variant="outline"
+                  size="sm"
                   disabled={baixandoVersao !== null}
                   onClick={() => handleBaixar(versao.versao)}
                 >
                   Baixar
                 </Button>
-                <Button variant="outline" size="sm"
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => setARestaurar(versao)}
                 >
                   Restaurar

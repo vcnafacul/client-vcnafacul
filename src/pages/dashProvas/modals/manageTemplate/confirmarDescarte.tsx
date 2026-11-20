@@ -33,7 +33,7 @@ function ConfirmarDescarte({
   };
 
   return (
-    <div className="p-6">
+    <div>
       <h2 className="mb-4 text-h2 font-semibold text-foreground">
         Descartar rascunho
       </h2>
@@ -51,7 +51,9 @@ function ConfirmarDescarte({
         <Button variant="outline" size="sm" onClick={onCancel}>
           Cancelar
         </Button>
-        <Button variant="destructive" size="sm"
+        <Button
+          variant="destructive"
+          size="sm"
           disabled={descartando}
           onClick={handleDescartar}
         >

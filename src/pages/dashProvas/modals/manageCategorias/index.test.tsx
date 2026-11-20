@@ -201,9 +201,9 @@ describe("ManageCategorias — depois de criar, a tela recebe a lista do servido
 });
 
 /**
- * O jsdom não mede altura: o que dá para trancar aqui é a estrutura — o modal
- * tem teto de 90% da tela, a lista é quem rola, e o cabeçalho (título, Nova
- * Categoria e busca) fica fora dela.
+ * O jsdom não mede altura: o que dá para trancar aqui é a estrutura — o Dialog
+ * tem teto de altura, o corpo é quem rola, e o cabeçalho (título, Nova
+ * Categoria e busca) fica fora dele.
  */
 describe("ManageCategorias — altura limitada, só a lista rola", () => {
   it("lista rolável, com o cabeçalho fora dela", async () => {
@@ -211,17 +211,20 @@ describe("ManageCategorias — altura limitada, só a lista rola", () => {
     await screen.findByText("Enem 90q 180min");
 
     const lista = document.querySelector('[data-slot="lista-de-categorias"]')!;
-    expect(lista.className).toContain("overflow-y-auto");
-    expect(lista).toContainElement(screen.getByText("Enem 90q 180min"));
-    expect(lista).not.toContainElement(
+    const corpo = lista.closest('[data-slot="dialog-body"]')!;
+    expect(corpo.className).toContain("overflow-y-auto");
+    expect(corpo).toContainElement(screen.getByText("Enem 90q 180min"));
+    expect(corpo).not.toContainElement(
       screen.getByRole("heading", { name: "Gerenciar Categorias" }),
     );
-    expect(lista).not.toContainElement(
+    expect(corpo).not.toContainElement(
       screen.getByRole("button", { name: /Nova Categoria/ }),
     );
-    expect(lista).not.toContainElement(
+    expect(corpo).not.toContainElement(
       screen.getByPlaceholderText("Buscar por nome"),
     );
-    expect(lista.closest(".max-h-\\[90dvh\\]")).not.toBeNull();
+    expect(lista.closest('[role="dialog"]')!.className).toContain(
+      "sm:max-h-[calc(100dvh-2rem)]",
+    );
   });
 });

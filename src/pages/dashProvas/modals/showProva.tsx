@@ -1,7 +1,21 @@
 /* eslint-disable use-isnan */
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useAuthStore } from "@/store/auth";
-import { GraduationCap, Download, ChartColumn, FileText, SquarePen, Table } from "lucide-react";
+import {
+  GraduationCap,
+  Download,
+  ChartColumn,
+  FileText,
+  SquarePen,
+  Table,
+} from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -98,8 +112,8 @@ function ShowProva({
   const [newFile, setNewFile] = useState<File | null>(null);
   const [newGabarito, setNewGabarito] = useState<File | null>(null);
 
-  type ShowProvaView = 'details' | 'simulados';
-  const [view, setView] = useState<ShowProvaView>('details');
+  type ShowProvaView = "details" | "simulados";
+  const [view, setView] = useState<ShowProvaView>("details");
   const [fullProva, setFullProva] = useState<ProvaDetalhada | null>(null);
   const [loadingSimulados, setLoadingSimulados] = useState(false);
   const [errorSimulados, setErrorSimulados] = useState<string | null>(null);
@@ -179,14 +193,22 @@ function ShowProva({
     setLoadingSimulados(true);
     setErrorSimulados(null);
     getProvaById(prova._id, token)
-      .then(data => { if (!cancelled) setFullProva(data); })
-      .catch(err => { if (!cancelled) setErrorSimulados(err.message); })
-      .finally(() => { if (!cancelled) setLoadingSimulados(false); });
-    return () => { cancelled = true; };
+      .then((data) => {
+        if (!cancelled) setFullProva(data);
+      })
+      .catch((err) => {
+        if (!cancelled) setErrorSimulados(err.message);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingSimulados(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [isOpen, prova._id, token, retryCount]);
 
   useEffect(() => {
-    if (!isOpen) setView('details');
+    if (!isOpen) setView("details");
   }, [isOpen]);
 
   /**
@@ -226,39 +248,39 @@ function ShowProva({
       ? "Nenhum cartão-resposta enviado para os simulados desta prova"
       : undefined;
 
-const downloadFile = async (filename: string, fileType: string) => {
-  const id = toast.loading(`Baixando ${fileType}...`);
+  const downloadFile = async (filename: string, fileType: string) => {
+    const id = toast.loading(`Baixando ${fileType}...`);
 
-  try {
-    const blob = await getProvaFile(filename, token);
+    try {
+      const blob = await getProvaFile(filename, token);
 
-    // Criar URL do blob e fazer download
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${prova.nome}_${fileType}.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+      // Criar URL do blob e fazer download
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${prova.nome}_${fileType}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
 
-    toast.update(id, {
-      render: `Download d${fileType == "prova" ? "a" : "o"} ${fileType} concluído com sucesso!`,
-      type: "success",
-      isLoading: false,
-      autoClose: 3000,
-      closeOnClick: true,
-    });
-  } catch (error) {
-    toast.update(id, {
-      render: `Erro ao baixar ${fileType == "prova" ? "a" : "o"} ${fileType}`,
-      type: "error",
-      isLoading: false,
-      autoClose: 5000,
-      closeOnClick: true,
-    });
-  }
-};
+      toast.update(id, {
+        render: `Download d${fileType == "prova" ? "a" : "o"} ${fileType} concluído com sucesso!`,
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+        closeOnClick: true,
+      });
+    } catch (error) {
+      toast.update(id, {
+        render: `Erro ao baixar ${fileType == "prova" ? "a" : "o"} ${fileType}`,
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+        closeOnClick: true,
+      });
+    }
+  };
 
   const handleDownloadProva = () => {
     downloadFile(prova.filename, "prova");
@@ -315,459 +337,497 @@ const downloadFile = async (filename: string, fileType: string) => {
     });
   };
 
-
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      /*
-        Largura por tela: abaixo de notebook (<1024px) fica como sempre foi;
-        no notebook alarga e os detalhes viram duas colunas (menos altura);
-        em Full HD (≥1920px) alarga mais.
-      */
-      className="w-full max-w-2xl lg:max-w-5xl min-[1920px]:max-w-7xl rounded-lg bg-white shadow-lg p-2"
-    >
-      <div className="p-3 sm:p-6">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="flex flex-wrap items-center gap-3 mb-2">
-            <div className="p-2 bg-info-muted rounded-lg">
-              <FileText className="h-6 w-6 text-info" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <h2 className="text-h2 font-semibold text-foreground break-words">
-                {prova.nome}
-              </h2>
-              <p className="text-body text-muted-foreground">Detalhes da Prova</p>
-              {origemId && nomeDaOrigem !== null && (
-                <p className="text-caption text-muted-foreground mt-0.5">
-                  Duplicada de {nomeDaOrigem ? <strong>{nomeDaOrigem}</strong> : "outra prova"}
-                </p>
-              )}
-            </div>
-            {duplicar && (
-              <button
-                type="button"
-                onClick={duplicar.aoClicar}
-                disabled={!duplicar.permitido}
-                title={duplicar.permitido ? undefined : duplicar.motivo}
-                className="ml-auto px-3 py-1.5 text-body border border-primary text-foreground rounded-lg hover:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Duplicar prova
-              </button>
-            )}
-            {gestao && (
-              <>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent
+        /*
+          Largura por tela: abaixo de notebook (<1024px) fica como sempre foi;
+          no notebook alarga e os detalhes viram duas colunas (menos altura);
+          em Full HD (≥1920px) alarga mais.
+        */
+        size="full"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          {/* Header */}
+          <div>
+            <div className="flex flex-wrap items-center gap-3 mb-2 sm:pr-10">
+              <div className="p-2 bg-info-muted rounded-lg">
+                <FileText className="h-6 w-6 text-info" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <DialogTitle className="break-words">{prova.nome}</DialogTitle>
+                <DialogDescription>Detalhes da Prova</DialogDescription>
+                {origemId && nomeDaOrigem !== null && (
+                  <p className="text-caption text-muted-foreground mt-0.5">
+                    Duplicada de{" "}
+                    {nomeDaOrigem ? (
+                      <strong>{nomeDaOrigem}</strong>
+                    ) : (
+                      "outra prova"
+                    )}
+                  </p>
+                )}
+              </div>
+              {duplicar && (
                 <button
                   type="button"
-                  onClick={gestao.aoEditar}
-                  disabled={!gestao.permitido}
-                  title={gestao.permitido ? undefined : gestao.motivo}
-                  className="px-3 py-1.5 text-body border border-primary text-foreground rounded-lg hover:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={duplicar.aoClicar}
+                  disabled={!duplicar.permitido}
+                  title={duplicar.permitido ? undefined : duplicar.motivo}
+                  className="ml-auto px-3 py-1.5 text-body border border-primary text-foreground rounded-lg hover:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Editar dados
+                  Duplicar prova
                 </button>
-                {/*
+              )}
+              {gestao && (
+                <>
+                  <button
+                    type="button"
+                    onClick={gestao.aoEditar}
+                    disabled={!gestao.permitido}
+                    title={gestao.permitido ? undefined : gestao.motivo}
+                    className="px-3 py-1.5 text-body border border-primary text-foreground rounded-lg hover:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Editar dados
+                  </button>
+                  {/*
                   ⚠️ Card 41: a confirmação diz o que a api recusa, para a
                   pessoa não estranhar o 409 — prova com cartão enviado ou
                   oferecida num evento de simulado não sai.
                 */}
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <button
-                      type="button"
-                      disabled={!gestao.permitido}
-                      title={gestao.permitido ? undefined : gestao.motivo}
-                      className="px-3 py-1.5 text-body border border-destructive text-destructive rounded-lg hover:bg-destructive-muted disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Excluir
-                    </button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Excluir esta prova?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        {`A prova "${prova.nome}" sai da lista do cursinho e da escolha de provas dos eventos. As questões continuam no banco. Só dá para excluir prova sem cartão enviado e fora de eventos de simulado.`}
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction
-                        variant="destructive"
-                        onClick={gestao.aoExcluir}
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button
+                        type="button"
+                        disabled={!gestao.permitido}
+                        title={gestao.permitido ? undefined : gestao.motivo}
+                        className="px-3 py-1.5 text-body border border-destructive text-destructive rounded-lg hover:bg-destructive-muted disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Excluir prova
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </>
-            )}
+                        Excluir
+                      </button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Excluir esta prova?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {`A prova "${prova.nome}" sai da lista do cursinho e da escolha de provas dos eventos. As questões continuam no banco. Só dá para excluir prova sem cartão enviado e fora de eventos de simulado.`}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                          variant="destructive"
+                          onClick={gestao.aoExcluir}
+                        >
+                          Excluir prova
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </>
+              )}
+            </div>
           </div>
-        </div>
-
-        {view === 'details' ? (
-          <>
-            {/* A partir de notebook: dados à esquerda, progresso à direita. */}
-            <div className="lg:grid lg:grid-cols-2 lg:gap-8">
-              <div className="min-w-0">
-                {/* Informações Básicas */}
-                <div className="mb-6">
-                  <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
-                    <GraduationCap className="h-4 w-4" />
-                    Informações Gerais
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-page p-3 rounded-lg">
-                      <p className="text-caption text-muted-foreground mb-1">Edição</p>
-                      <p className="text-body font-medium text-foreground">{prova.edicao}</p>
-                    </div>
-                    <div className="bg-page p-3 rounded-lg">
-                      <p className="text-caption text-muted-foreground mb-1">Ano</p>
-                      <p className="text-body font-medium text-foreground">{prova.ano}</p>
-                    </div>
-                    <div className="bg-page p-3 rounded-lg">
-                      <p className="text-caption text-muted-foreground mb-1">Aplicação</p>
-                      <p className="text-body font-medium text-foreground">{prova.aplicacao}</p>
-                    </div>
-                    <div className="bg-page p-3 rounded-lg">
-                      <p className="text-caption text-muted-foreground mb-1">Categoria</p>
-                      {/*
+        </DialogHeader>
+        <DialogBody>
+          {view === "details" ? (
+            <>
+              {/* A partir de notebook: dados à esquerda, progresso à direita. */}
+              <div className="lg:grid lg:grid-cols-2 lg:gap-8">
+                <div className="min-w-0">
+                  {/* Informações Básicas */}
+                  <div className="mb-6">
+                    <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
+                      <GraduationCap className="h-4 w-4" />
+                      Informações Gerais
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-page p-3 rounded-lg">
+                        <p className="text-caption text-muted-foreground mb-1">
+                          Edição
+                        </p>
+                        <p className="text-body font-medium text-foreground">
+                          {prova.edicao}
+                        </p>
+                      </div>
+                      <div className="bg-page p-3 rounded-lg">
+                        <p className="text-caption text-muted-foreground mb-1">
+                          Ano
+                        </p>
+                        <p className="text-body font-medium text-foreground">
+                          {prova.ano}
+                        </p>
+                      </div>
+                      <div className="bg-page p-3 rounded-lg">
+                        <p className="text-caption text-muted-foreground mb-1">
+                          Aplicação
+                        </p>
+                        <p className="text-body font-medium text-foreground">
+                          {prova.aplicacao}
+                        </p>
+                      </div>
+                      <div className="bg-page p-3 rounded-lg">
+                        <p className="text-caption text-muted-foreground mb-1">
+                          Categoria
+                        </p>
+                        {/*
                         ⚠️ `categoria` e `exame` são strings — o ms achata as duas no
                         DTO da lista. Antes isto lia `.nome` de uma string e o modal
                         mostrava "—" com o exame nunca aparecendo.
                       */}
-                      <p className="text-body font-medium text-foreground">{prova.categoria || '—'}</p>
-                      {prova.exame && (
-                        <p className="text-caption text-muted-foreground mt-0.5">{prova.exame}</p>
-                      )}
+                        <p className="text-body font-medium text-foreground">
+                          {prova.categoria || "—"}
+                        </p>
+                        {prova.exame && (
+                          <p className="text-caption text-muted-foreground mt-0.5">
+                            {prova.exame}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
+
+                  {/* tickets/023, card 09: novas versões das questões. */}
+                  <div className="mb-6">
+                    <h3 className="text-body font-medium text-foreground mb-4">
+                      Novas versões das questões
+                    </h3>
+                    {fullProva?.podeComporProva ? (
+                      <OpcaoNovasVersoes
+                        checked={!!fullProva.receberNovasVersoes}
+                        onChange={alterarNovasVersoes}
+                        disabled={salvandoVersoes}
+                      />
+                    ) : (
+                      <p
+                        data-testid="indicador-versoes"
+                        className="text-body text-foreground bg-page p-3 rounded-lg"
+                      >
+                        {indicadorDeVersoes(
+                          fullProva?.receberNovasVersoes ??
+                            prova.receberNovasVersoes,
+                        )}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* tickets/023, card 15: versões mais novas das questões. */}
+                  <div className="mb-6">
+                    <h3 className="text-body font-medium text-foreground mb-4">
+                      Atualizações das questões
+                    </h3>
+                    <BuscarAtualizacoes provaId={prova._id} token={token} />
+                  </div>
                 </div>
+                <div className="min-w-0">
+                  {/* tickets/042, card 07: as anuladas, com motivo e justificativa. */}
+                  <AnuladasDaProva questoes={fullProva?.questoes} />
+                  {/* Métricas de Progresso */}
+                  <div className="mb-6">
+                    <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
+                      <ChartColumn className="h-4 w-4" />
+                      Progresso das Questões
+                    </h3>
 
-                {/* tickets/023, card 09: novas versões das questões. */}
-                <div className="mb-6">
-                  <h3 className="text-body font-medium text-foreground mb-4">
-                    Novas versões das questões
-                  </h3>
-                  {fullProva?.podeComporProva ? (
-                    <OpcaoNovasVersoes
-                      checked={!!fullProva.receberNovasVersoes}
-                      onChange={alterarNovasVersoes}
-                      disabled={salvandoVersoes}
-                    />
-                  ) : (
-                    <p
-                      data-testid="indicador-versoes"
-                      className="text-body text-foreground bg-page p-3 rounded-lg"
-                    >
-                      {indicadorDeVersoes(
-                        fullProva?.receberNovasVersoes ?? prova.receberNovasVersoes,
-                      )}
-                    </p>
-                  )}
-                </div>
+                    <div className="space-y-4">
+                      {/* Questões Esperadas */}
+                      <div className="bg-info-muted p-4 rounded-lg border border-info/30">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-body font-medium text-info">
+                            Questões Esperadas
+                          </span>
+                          <span className="text-h3 font-bold text-info">
+                            {livre ? "Livre (sem alvo)" : prova.totalQuestao}
+                          </span>
+                        </div>
+                        <div className="w-full bg-info/20 rounded-full h-2">
+                          <div
+                            className="bg-info h-2 rounded-full"
+                            style={{ width: "100%" }}
+                          ></div>
+                        </div>
+                      </div>
 
-                {/* tickets/023, card 15: versões mais novas das questões. */}
-                <div className="mb-6">
-                  <h3 className="text-body font-medium text-foreground mb-4">
-                    Atualizações das questões
-                  </h3>
-                  <BuscarAtualizacoes provaId={prova._id} token={token} />
-                </div>
-              </div>
-              <div className="min-w-0">
-                {/* tickets/042, card 07: as anuladas, com motivo e justificativa. */}
-                <AnuladasDaProva questoes={fullProva?.questoes} />
-                {/* Métricas de Progresso */}
-                <div className="mb-6">
-                  <h3 className="text-body font-medium text-foreground mb-4 flex items-center gap-2">
-                    <ChartColumn className="h-4 w-4" />
-                    Progresso das Questões
-                  </h3>
+                      {/* Questões Cadastradas */}
+                      <div className="bg-warning-muted p-4 rounded-lg border border-warning/30">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-body font-medium text-warning">
+                            Questões Cadastradas
+                          </span>
+                          <span className="text-h3 font-bold text-warning">
+                            {prova.totalQuestaoCadastradas}
+                            {!livre && ` (${percentCadastradas.toFixed(1)}%)`}
+                          </span>
+                        </div>
+                        <div className="w-full bg-warning/20 rounded-full h-2">
+                          <div
+                            className={`h-2 rounded-full ${getProgressColor(
+                              percentCadastradas,
+                            )}`}
+                            style={{
+                              width: `${Math.min(percentCadastradas, 100)}%`,
+                            }}
+                          ></div>
+                        </div>
+                      </div>
 
-                  <div className="space-y-4">
-                    {/* Questões Esperadas */}
-                    <div className="bg-info-muted p-4 rounded-lg border border-info/30">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-body font-medium text-info">
-                          Questões Esperadas
-                        </span>
-                        <span className="text-h3 font-bold text-info">
-                          {livre ? "Livre (sem alvo)" : prova.totalQuestao}
-                        </span>
-                      </div>
-                      <div className="w-full bg-info/20 rounded-full h-2">
-                        <div
-                          className="bg-info h-2 rounded-full"
-                          style={{ width: "100%" }}
-                        ></div>
-                      </div>
-                    </div>
-
-                    {/* Questões Cadastradas */}
-                    <div className="bg-warning-muted p-4 rounded-lg border border-warning/30">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-body font-medium text-warning">
-                          Questões Cadastradas
-                        </span>
-                        <span className="text-h3 font-bold text-warning">
-                          {prova.totalQuestaoCadastradas}
-                          {!livre && ` (${percentCadastradas.toFixed(1)}%)`}
-                        </span>
-                      </div>
-                      <div className="w-full bg-warning/20 rounded-full h-2">
-                        <div
-                          className={`h-2 rounded-full ${getProgressColor(
-                            percentCadastradas
-                          )}`}
-                          style={{ width: `${Math.min(percentCadastradas, 100)}%` }}
-                        ></div>
-                      </div>
-                    </div>
-
-                    {/* Questões Aprovadas */}
-                    <div className="bg-success-muted p-4 rounded-lg border border-success">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-body font-medium text-success">
-                          Questões Aprovadas
-                        </span>
-                        <span className="text-h3 font-bold text-success">
-                          {prova.totalQuestaoValidadas} (
-                          {isNaN(percentValidadas) ? "0" : percentValidadas.toFixed(1)}
-                          %)
-                        </span>
-                      </div>
-                      <div className="w-full bg-success/20 rounded-full h-2">
-                        <div
-                          className={`h-2 rounded-full ${getProgressColor(
-                            isNaN(percentValidadas) ? 0 : percentValidadas
-                          )}`}
-                          style={{
-                            width: `${Math.min(
+                      {/* Questões Aprovadas */}
+                      <div className="bg-success-muted p-4 rounded-lg border border-success">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-body font-medium text-success">
+                            Questões Aprovadas
+                          </span>
+                          <span className="text-h3 font-bold text-success">
+                            {prova.totalQuestaoValidadas} (
+                            {isNaN(percentValidadas)
+                              ? "0"
+                              : percentValidadas.toFixed(1)}
+                            %)
+                          </span>
+                        </div>
+                        <div className="w-full bg-success/20 rounded-full h-2">
+                          <div
+                            className={`h-2 rounded-full ${getProgressColor(
                               isNaN(percentValidadas) ? 0 : percentValidadas,
-                              100
-                            )}%`,
-                          }}
-                        ></div>
+                            )}`}
+                            style={{
+                              width: `${Math.min(
+                                isNaN(percentValidadas) ? 0 : percentValidadas,
+                                100,
+                              )}%`,
+                            }}
+                          ></div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Botões de Download */}
-            {/*
+              {/* Botões de Download */}
+              {/*
               No celular um botão por linha, em largura total: numa linha só
               eles passavam de ~500px e, alinhados à direita, vazavam pela
               esquerda — "Ver simulados" ficava inalcançável.
             */}
-            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-end gap-3 pt-4 border-t border-border">
-              {!isEditingFiles ? (
-                <>
-                  <Button
-                    onClick={() => setView('simulados')}
-                    variant="outlined"
-                    color="primary"
-                    className="w-full sm:w-auto"
-                    sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-                  >
-                    <Table className="h-4 w-4" />
-                    Ver simulados
-                  </Button>
+              <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-end gap-3 pt-4 border-t border-border">
+                {!isEditingFiles ? (
+                  <>
+                    <Button
+                      onClick={() => setView("simulados")}
+                      variant="outlined"
+                      color="primary"
+                      className="w-full sm:w-auto"
+                      sx={{ display: "flex", alignItems: "center", gap: "8px" }}
+                    >
+                      <Table className="h-4 w-4" />
+                      Ver simulados
+                    </Button>
 
-                  {/*
+                    {/*
                     tickets/034. ⚠️ O `span` carrega o motivo: botão
                     desabilitado não dispara evento de ponteiro, e o `title`
                     nele nunca apareceria.
                   */}
-                  {relatorioDaProva && (
-                    <span
-                      title={motivoRelatorioDaProva}
-                      className="w-full sm:w-auto"
-                    >
+                    {relatorioDaProva && (
+                      <span
+                        title={motivoRelatorioDaProva}
+                        className="w-full sm:w-auto"
+                      >
+                        <Button
+                          onClick={relatorioDaProva.aoAbrir}
+                          disabled={motivoRelatorioDaProva !== undefined}
+                          variant="outlined"
+                          color="primary"
+                          className="w-full sm:w-auto"
+                          data-testid="relatorio-da-prova"
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <ChartColumn className="h-4 w-4" />
+                          Relatório da prova
+                        </Button>
+                      </span>
+                    )}
+
+                    {materialDaProva && (
+                      <MaterialDaProva
+                        prova={prova}
+                        categoria={fullProva?.categoria}
+                        simulados={fullProva?.simulados}
+                        token={token}
+                      />
+                    )}
+
+                    {prova.gabarito && (
                       <Button
-                        onClick={relatorioDaProva.aoAbrir}
-                        disabled={motivoRelatorioDaProva !== undefined}
-                        variant="outlined"
+                        onClick={handleDownloadGabarito}
+                        variant="contained"
+                        className="w-full sm:w-auto"
+                        sx={{
+                          backgroundColor: palette.neutral[600],
+                          "&:hover": {
+                            backgroundColor: palette.neutral[700],
+                          },
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                        }}
+                      >
+                        <Download className="h-4 w-4" />
+                        Download do Gabarito
+                      </Button>
+                    )}
+
+                    {/* Card 37: prova sem PDF não mostra um botão que só falha. */}
+                    {prova.filename ? (
+                      <Button
+                        onClick={handleDownloadProva}
+                        variant="contained"
                         color="primary"
                         className="w-full sm:w-auto"
-                        data-testid="relatorio-da-prova"
-                        sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                        }}
                       >
-                        <ChartColumn className="h-4 w-4" />
-                        Relatório da prova
+                        <Download className="h-4 w-4" />
+                        Download da Prova
                       </Button>
-                    </span>
-                  )}
+                    ) : (
+                      <span className="self-center text-body text-muted-foreground">
+                        {edicao && !edicao.permitido
+                          ? TEXTO_SEM_PDF
+                          : `${TEXTO_SEM_PDF} — adicione em Editar arquivos`}
+                      </span>
+                    )}
 
-                  {materialDaProva && (
-                    <MaterialDaProva
-                      prova={prova}
-                      categoria={fullProva?.categoria}
-                      simulados={fullProva?.simulados}
-                      token={token}
-                    />
-                  )}
-
-                  {prova.gabarito && (
                     <Button
-                      onClick={handleDownloadGabarito}
-                      variant="contained"
+                      onClick={() => setIsEditingFiles(true)}
+                      size="small"
+                      aria-label="Editar arquivos"
                       className="w-full sm:w-auto"
-                      sx={{
-                        backgroundColor: palette.neutral[600],
-                        "&:hover": {
-                          backgroundColor: palette.neutral[700],
-                        },
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
+                      disabled={edicao ? !edicao.permitido : false}
+                      title={
+                        edicao && !edicao.permitido ? edicao.motivo : undefined
+                      }
                     >
-                      <Download className="h-4 w-4" />
-                      Download do Gabarito
+                      <SquarePen className="size-8" />
+                      <span className="sm:hidden ml-2">Editar arquivos</span>
                     </Button>
-                  )}
+                  </>
+                ) : (
+                  <div className="w-full">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <UploadButton
+                        onChange={handleFileUpload}
+                        placeholder="Substituir Prova"
+                        accept=".pdf"
+                        variant="compact"
+                        onRemove={handleFileRemove}
+                      />
 
-                  {/* Card 37: prova sem PDF não mostra um botão que só falha. */}
-                  {prova.filename ? (
-                    <Button
-                      onClick={handleDownloadProva}
-                      variant="contained"
-                      color="primary"
-                      className="w-full sm:w-auto"
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <Download className="h-4 w-4" />
-                      Download da Prova
-                    </Button>
-                  ) : (
-                    <span className="self-center text-body text-muted-foreground">
-                      {edicao && !edicao.permitido
-                        ? TEXTO_SEM_PDF
-                        : `${TEXTO_SEM_PDF} — adicione em Editar arquivos`}
-                    </span>
-                  )}
+                      <UploadButton
+                        onChange={handleGabaritoUpload}
+                        placeholder={
+                          prova.gabarito
+                            ? "Substituir Gabarito"
+                            : "Adicionar Gabarito"
+                        }
+                        accept=".pdf"
+                        variant="compact"
+                        onRemove={handleGabaritoRemove}
+                      />
+                    </div>
 
-                  <Button
-                    onClick={() => setIsEditingFiles(true)}
-                    size="small"
-                    aria-label="Editar arquivos"
-                    className="w-full sm:w-auto"
-                    disabled={edicao ? !edicao.permitido : false}
-                    title={
-                      edicao && !edicao.permitido ? edicao.motivo : undefined
-                    }
-                  >
-                    <SquarePen className="size-8" />
-                    <span className="sm:hidden ml-2">Editar arquivos</span>
-                  </Button>
-                </>
-              ) : (
-                <div className="w-full">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <UploadButton
-                      onChange={handleFileUpload}
-                      placeholder="Substituir Prova"
-                      accept=".pdf"
-                      variant="compact"
-                      onRemove={handleFileRemove}
-                    />
+                    <div className="flex flex-wrap justify-end mt-4 gap-3">
+                      <Button
+                        onClick={() => {
+                          setIsEditingFiles(false);
+                          setNewFile(null);
+                          setNewGabarito(null);
+                        }}
+                        variant="outlined"
+                      >
+                        Cancelar
+                      </Button>
 
-                    <UploadButton
-                      onChange={handleGabaritoUpload}
-                      placeholder={prova.gabarito ? "Substituir Gabarito" : "Adicionar Gabarito"}
-                      accept=".pdf"
-                      variant="compact"
-                      onRemove={handleGabaritoRemove}
-                    />
-                  </div>
-
-                  <div className="flex flex-wrap justify-end mt-4 gap-3">
-                    <Button
-                      onClick={() => {
-                        setIsEditingFiles(false);
-                        setNewFile(null);
-                        setNewGabarito(null);
-                      }}
-                      variant="outlined"
-                    >
-                      Cancelar
-                    </Button>
-
-                    {/* Substitui o PDF que está no ar: confirma antes. */}
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          disabled={!newFile && !newGabarito}
-                          variant="contained"
-                        >
-                          Salvar Alterações
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Substituir os arquivos da prova?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            {[
-                              newFile && "O PDF atual da prova será substituído.",
-                              newGabarito &&
-                                (prova.gabarito
-                                  ? "O gabarito atual será substituído."
-                                  : "O gabarito será adicionado."),
-                            ]
-                              .filter(Boolean)
-                              .join(" ")}
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction
-                            variant="primary"
-                            onClick={handleUpdateFiles}
+                      {/* Substitui o PDF que está no ar: confirma antes. */}
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            disabled={!newFile && !newGabarito}
+                            variant="contained"
                           >
-                            Substituir arquivos
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                            Salvar Alterações
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Substituir os arquivos da prova?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              {[
+                                newFile &&
+                                  "O PDF atual da prova será substituído.",
+                                newGabarito &&
+                                  (prova.gabarito
+                                    ? "O gabarito atual será substituído."
+                                    : "O gabarito será adicionado."),
+                              ]
+                                .filter(Boolean)
+                                .join(" ")}
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                            <AlertDialogAction
+                              variant="primary"
+                              onClick={handleUpdateFiles}
+                            >
+                              Substituir arquivos
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
-          <SimuladosView
-            simulados={fullProva?.simulados}
-            loading={loadingSimulados}
-            error={errorSimulados}
-            token={token}
-            onVoltar={() => setView('details')}
-            onRetry={() => setRetryCount(c => c + 1)}
-            relatorio={relatorio}
-            edicao={edicao}
-            onSimuladoUpdated={(updated) =>
-              setFullProva((prev) =>
-                prev
-                  ? {
-                      ...prev,
-                      simulados: prev.simulados?.map((s) =>
-                        s._id === updated._id ? updated : s,
-                      ),
-                    }
-                  : prev,
-              )
-            }
-          />
-        )}
-        </div>
-    </ModalTemplate>
+                )}
+              </div>
+            </>
+          ) : (
+            <SimuladosView
+              simulados={fullProva?.simulados}
+              loading={loadingSimulados}
+              error={errorSimulados}
+              token={token}
+              onVoltar={() => setView("details")}
+              onRetry={() => setRetryCount((c) => c + 1)}
+              relatorio={relatorio}
+              edicao={edicao}
+              onSimuladoUpdated={(updated) =>
+                setFullProva((prev) =>
+                  prev
+                    ? {
+                        ...prev,
+                        simulados: prev.simulados?.map((s) =>
+                          s._id === updated._id ? updated : s,
+                        ),
+                      }
+                    : prev,
+                )
+              }
+            />
+          )}
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   );
 }
 

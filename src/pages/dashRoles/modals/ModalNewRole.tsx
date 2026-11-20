@@ -10,11 +10,17 @@ import { Role } from "@/types/roles/role";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Filter from "../../../components/atoms/filter";
-import Text from "../../../components/atoms/text";
 import { Button } from "@/components/ui/button";
-import ModalTemplate, {
-  ModalProps,
-} from "../../../components/templates/modalTemplate";
+import { ModalProps } from "../../../components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { CreateRoleDto } from "../../../dtos/roles/createRole";
 import { useAuthStore } from "../../../store/auth";
 
@@ -147,85 +153,84 @@ function ModalNewRole({
     : hierarchy;
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      className="bg-white rounded-xl p-4 sm:p-5 w-full max-w-[44.5rem]"
-    >
-      <div className="w-full flex flex-col gap-5 max-h-[80vh]">
-        {/* Header */}
-        <div>
-          <Text size="secondary" className="font-bold text-foreground">
-            Novo Perfil
-          </Text>
-          <p className="text-body text-muted-foreground mt-0.5">
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose?.()}>
+      <DialogContent size="lg" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Novo Perfil</DialogTitle>
+          <DialogDescription>
             Defina o nome e as permissões do novo perfil.
-          </p>
-        </div>
-
-        {/* Name + base toggle */}
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-7">
-          <label className="flex flex-col gap-1 flex-1">
-            <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
-              Nome do perfil
-            </span>
-            <Filter
-              placeholder="Digite o nome do novo perfil"
-              filtrar={handleInputChange}
-              search={false}
-              className="bg-muted rounded-lg"
-            />
-          </label>
-          <label className="flex flex-col gap-1">
-            <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
-              Perfil Base
-            </span>
-            <div className="flex items-center gap-3 h-full py-2">
-              <Toggle
-                name="base"
-                checked={newRole.base}
-                handleCheck={handleBaseToggle}
-              />
-              <span className="text-body font-medium text-foreground">
-                {newRole.base ? "Ativo" : "Inativo"}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogBody className="flex flex-col gap-5">
+          {/* Name + base toggle */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-7">
+            {/* O controle está dentro do label (componente próprio): a associação é por aninhamento. */}
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label className="flex flex-col gap-1 flex-1">
+              <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
+                Nome do perfil
               </span>
-            </div>
-          </label>
-        </div>
+              <Filter
+                placeholder="Digite o nome do novo perfil"
+                filtrar={handleInputChange}
+                search={false}
+                className="bg-muted rounded-lg"
+              />
+            </label>
+            {/* O controle está dentro do label (componente próprio): a associação é por aninhamento. */}
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label className="flex flex-col gap-1">
+              <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
+                Perfil Base
+              </span>
+              <div className="flex items-center gap-3 h-full py-2">
+                <Toggle
+                  name="base"
+                  checked={newRole.base}
+                  handleCheck={handleBaseToggle}
+                />
+                <span className="text-body font-medium text-foreground">
+                  {newRole.base ? "Ativo" : "Inativo"}
+                </span>
+              </div>
+            </label>
+          </div>
 
-        {newRole.base && (
-          <p className="text-caption text-warning bg-warning-muted border border-warning/30 rounded-lg px-3 py-2">
-            Perfis base só podem ter permissões do projeto. Permissões do
-            cursinho e "Alterar Permissão" são desativadas automaticamente.
-          </p>
-        )}
+          {newRole.base && (
+            <p className="text-caption text-warning bg-warning-muted border border-warning/30 rounded-lg px-3 py-2">
+              Perfis base só podem ter permissões do projeto. Permissões do
+              cursinho e "Alterar Permissão" são desativadas automaticamente.
+            </p>
+          )}
 
-        {/* Permissions */}
-        <div className="overflow-y-auto scrollbar-hide pr-1">
-          <PermissionHierarchyPanel
-            hierarchy={visibleHierarchy}
-            permissions={newRole}
-            onToggle={handleToggle}
-            defaultTab={
-              newRole.base ? PermissionType.project : PermissionType.prepCourse
-            }
-          />
-        </div>
-
-        {/* Actions */}
-        <div className="flex justify-end gap-3 pt-2 border-t border-border">
-          <Button className="w-full" variant="outline" size="lg" onClick={handleClose}>
+          {/* Permissions */}
+          <div>
+            <PermissionHierarchyPanel
+              hierarchy={visibleHierarchy}
+              permissions={newRole}
+              onToggle={handleToggle}
+              defaultTab={
+                newRole.base
+                  ? PermissionType.project
+                  : PermissionType.prepCourse
+              }
+            />
+          </div>
+        </DialogBody>
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button className="w-full" variant="primary" size="lg"
+          <Button
+            variant="primary"
             disabled={!newRole.name.trim()}
             onClick={saveNewRole}
           >
             Salvar
           </Button>
-        </div>
-      </div>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
