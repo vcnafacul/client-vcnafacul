@@ -418,9 +418,9 @@ export function PartnerPrepInscriptionStepForm({
         onSubmit={handleSubmit}
         className="w-full flex flex-col gap-4 md:gap-2 mt-8 mb-16 animate-in fade-in duration-300"
       >
-        <h1 className="text-h1 text-foreground mb-6 text-start px-4">
+        <h2 className="text-h1 text-foreground mb-6 text-start px-4">
           {section.name}
-        </h1>
+        </h2>
         {section.description && (
           <p className="text-muted-foreground/90 mb-2">{section.description}</p>
         )}

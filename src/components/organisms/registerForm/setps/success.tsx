@@ -13,7 +13,7 @@ function Success({ email }: Props) {
   return (
     <div className="w-full flex flex-col items-center">
       <CheckCheck size={150} className="text-success border-2 border-success p-4 rounded-full" />
-      <p className="text-h1 text-foreground mb-6 text-center mt-10">
+      <p className="text-prose text-foreground mb-6 text-center mt-10">
         Acesse seu email, {email}, para confirmar o seu cadastro
       </p>
       {texts.map((text) => (

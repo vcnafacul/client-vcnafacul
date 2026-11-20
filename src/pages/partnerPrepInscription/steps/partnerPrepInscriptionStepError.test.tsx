@@ -28,3 +28,13 @@ describe("PartnerPrepInscriptionStepError", () => {
     ).toBeInTheDocument();
   });
 });
+
+describe("PartnerPrepInscriptionStepError: outline", () => {
+  it("o passo não cria h1 (o h1 é o da página); o título é h2", () => {
+    renderStep();
+    expect(screen.queryAllByRole("heading", { level: 1 })).toHaveLength(0);
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Atenção" }),
+    ).toBeInTheDocument();
+  });
+});

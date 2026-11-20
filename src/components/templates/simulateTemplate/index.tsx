@@ -140,7 +140,7 @@ function SimulateTemplate({
             }
             className={`${getColorEnemArea(questionSelected.enemArea)}`}
           />
-          <p className={`text-h1 font-bold ${getTextColorEnemArea(
+          <p className={`text-body font-bold ${getTextColorEnemArea(
               questionSelected.enemArea
             )} mx-4 mb-0 sm:whitespace-nowrap w-fit`}>
             {questionSelected.enemArea}
