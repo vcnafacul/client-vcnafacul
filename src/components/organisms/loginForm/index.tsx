@@ -4,7 +4,6 @@ import { useToastAsync } from "../../../hooks/useToastAsync";
 import { DASH } from "../../../routes/path";
 import Login from "../../../services/auth/login";
 import { useAuthStore } from "../../../store/auth";
-import Text from "../../atoms/text";
 import { FormFieldInput } from "../../molecules/formField";
 import FormSubmit from "../formSubmit";
 
@@ -44,10 +43,10 @@ function LoginForm({
   return (
     <div className="w-full flex justify-start items-center flex-col mx-auto">
       <div className="mt-20 max-w-[500px] flex flex-col items-center">
-        <Text size="secondary">{title}</Text>
-        <Text size="quaternary" className="text-foreground my-5">
+        <h1 className="text-h1 text-foreground mb-6 text-center">{title}</h1>
+        <p className="text-body text-foreground text-center my-5">
           {subtitle}
-        </Text>
+        </p>
         <FormSubmit
           className="w-full my-4 flex flex-col gap-4"
           formFields={formData}

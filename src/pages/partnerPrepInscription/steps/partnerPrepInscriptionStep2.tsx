@@ -1,4 +1,3 @@
-import Text from "@/components/atoms/text";
 import { Button } from "@/components/ui/button";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { StudentInscriptionDTO } from "@/dtos/student/studentInscriptionDTO";
@@ -156,7 +155,7 @@ export function PartnerPrepInscriptionStep2({
       onSubmit={handleSubmit(handleForm)}
       className="w-full flex flex-col gap-4 md:gap-2 mt-4 md:mt-8 mb-8 md:mb-16"
     >
-      <Text size="tertiary">{description}</Text>
+      <p className="text-body text-foreground mb-6 text-center">{description}</p>
       <InputFactory
         id="postalCode"
         label="CEP*"

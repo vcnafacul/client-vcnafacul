@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigation, Pagination } from "swiper/modules";
 import { useHomeContext } from "../../../context/homeContext";
-import Text from "../../atoms/text";
 import Carousel from "../../molecules/carousel";
 import Selector from "../../molecules/selector";
 import ActionAreasSkeleton from "../actionAreasSkeleton";
@@ -103,8 +102,8 @@ function Action() {
     <div className="bg-white px-2">
       <div className="container relative flex flex-col justify-start px-0 mx-auto py-14">
         <div className="flex flex-col items-center justify-center md:w-full">
-          <Text size="secondary">{actionAreas!.title}</Text>
-          <Text size="tertiary">{actionAreas!.subtitle}</Text>
+          <h2 className="text-h1 text-foreground mb-6 text-center">{actionAreas!.title}</h2>
+          <p className="text-body text-foreground mb-6 text-center">{actionAreas!.subtitle}</p>
         </div>
         <Selector
           tabItems={actionAreas!.areas.map(

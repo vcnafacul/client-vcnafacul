@@ -1,5 +1,4 @@
 import { PublicGeolocation } from "../../../types/geolocation/publicGeolocation";
-import Text from "../../atoms/text";
 
 import { Compass, Mail, MapPin } from "lucide-react";
 import { ReactComponent as SocialFacebook } from "@/assets/icons/social-facebook.svg";
@@ -32,31 +31,31 @@ const tem = (v: string | null | undefined): v is string => !!v?.trim();
 function MapBoxInfoGeo({ geo, ctaLink, label, markerType }: MapBoxInfoProps) {
   return (
     <>
-      <Text className="flex items-center justify-center gap-2">
+      <h2 className="text-h1 text-foreground mb-6 text-center flex items-center justify-center gap-2">
         {markerType != null ? (
           <MarkerPin type={markerType} size={30} />
         ) : (
           <MapPin color="red" size={30} />
         )}
         {label ?? "Localiza Cursinho"}
-      </Text>
-      <Text size="quaternary" className="m-0">
+      </h2>
+      <p className="text-body text-foreground text-center m-0">
         {geo?.name}
-      </Text>
-      <Text size="quaternary" className="m-0">
+      </p>
+      <p className="text-body text-foreground text-center m-0">
         {geo?.street} - {geo?.number}, {geo?.complement}
-      </Text>
-      <Text size="quaternary" className="m-0">
+      </p>
+      <p className="text-body text-foreground text-center m-0">
         {" "}
         {geo?.neighborhood}, {geo?.cep}{" "}
-      </Text>
-      <Text size="quaternary" className="m-0">
+      </p>
+      <p className="text-body text-foreground text-center m-0">
         {" "}
         {geo?.city} - {geo?.state}{" "}
-      </Text>
-      <Text size="quaternary" className="m-0">
+      </p>
+      <p className="text-body text-foreground text-center m-0">
         {geo?.phone}
-      </Text>
+      </p>
       <div className="flex justify-around mx-auto w-96">
         {tem(geo?.whatsapp) && (
           <a aria-label="WhatsApp do cursinho"
@@ -109,9 +108,9 @@ function MapBoxInfoGeo({ geo, ctaLink, label, markerType }: MapBoxInfoProps) {
       </div>
       {ctaLink && (
         <>
-          <Text size="tertiary" className="m-0 mt-5">
+          <p className="text-body text-foreground text-center m-0 mt-5">
             Conhece um cursinho popular?
-          </Text>
+          </p>
           <div>
             <BLink className="min-w-[300px]" to={ctaLink}>
               Cadastrar um Cursinho

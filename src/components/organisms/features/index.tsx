@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useHomeContext } from "../../../context/homeContext";
-import Text from "../../atoms/text";
 import Selector from "../../molecules/selector";
 import FeatureSkeleton from "../featuresSkeleton";
 import "./styles.css";
@@ -40,9 +39,9 @@ function Features() {
     features.items[activeTab]?.Home_Features_Item_id;
   return (
     <div className=" text-center  overflow-hidden flex items-center flex-col">
-      <Text size="secondary" className="mt-2">
+      <h2 className="text-h1 text-foreground mb-6 text-center mt-2">
         {features!.title}
-      </Text>
+      </h2>
       {features.description && (
         <p className="text-foreground mb-6 text-center text-prose leading-6 md:leading-9">
           {features.description}

@@ -1,7 +1,6 @@
 import GoogleAuthButton from "@/components/atoms/googleAuthButton";
 import { useState } from "react";
 import { UserRegister } from "../../../types/user/userRegister";
-import Text from "../../atoms/text";
 import Step1 from "./setps/step1";
 import Step2 from "./setps/step2";
 import Success from "./setps/success";
@@ -85,9 +84,9 @@ function RegisterForm({
     <div className="flex flex-col items-center justify-start w-full min-h-[calc(100vh-theme(spacing.header))] mb-3 px-4 mx-auto py-10">
       <div className="mt-10 max-w-[500px] flex flex-col items-center w-full gap-y-4">
         {step < 3 ? (
-          <Text size="secondary">{title}</Text>
+          <h1 className="text-h1 text-foreground mb-6 text-center">{title}</h1>
         ) : (
-          <Text>{titleSuccess}</Text>
+          <h1 className="text-h1 text-foreground mb-6 text-center">{titleSuccess}</h1>
         )}
         {google && step === FormStep.STEP_EMAIL_PASSWORD && (
           <div data-google-no-topo className="flex w-full flex-col gap-4">

@@ -1,5 +1,4 @@
 import { ShadcnTable } from "@/components/atoms/shadcnTable";
-import Text from "@/components/atoms/text";
 import {
   Dialog,
   DialogContent,
@@ -210,9 +209,9 @@ function Section({
 }) {
   return (
     <div className="mb-4">
-      <Text className="text-start px-4" size="secondary">
+      <h2 className="text-h1 text-foreground mb-6 text-start px-4">
         {title}
-      </Text>
+      </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {fields.map((field) => (
           <Field key={field.label} label={field.label} value={field.value} />

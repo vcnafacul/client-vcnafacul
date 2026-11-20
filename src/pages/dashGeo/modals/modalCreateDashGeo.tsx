@@ -3,7 +3,6 @@
 import { Geolocation } from "@/types/geolocation/geolocation";
 import { useEffect, useState } from "react";
 
-import Text from "@/components/atoms/text";
 import MapBox from "@/components/molecules/mapBox";
 import { ModalProps } from "@/types/modal";
 import { Button } from "@/components/ui/button";
@@ -378,7 +377,7 @@ function ModalEditDashGeo({
             </div>
 
             <div className="w-full flex flex-col gap-4">
-              <Text size="secondary">Endereço do Cursinho</Text>
+              <h2 className="text-h1 text-foreground mb-6 text-center">Endereço do Cursinho</h2>
               <MapBox
                 className="h-80 sm:h-[100vh] sm:max-h-[530px] w-full border border-border z-0"
                 zoom={14}

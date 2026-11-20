@@ -7,7 +7,6 @@ import { ResetForm } from "../../components/organisms/resetForm";
 import { resetForm } from "./data";
 import { useLocation } from "react-router-dom";
 import queryString from "query-string";
-import Text from "../../components/atoms/text";
 
 export function Reset(){
 
@@ -21,7 +20,7 @@ export function Reset(){
                 <TriangleYellow className="graphism triangle-yellow"/>
                 {getToken ? <ResetForm {...resetForm} token={getToken} /> : 
                 <div className=" h-[calc(100vh-theme(spacing.header))] flex justify-center items-center">
-                    <Text size="secondary">Ocorreu um erro ao tentar redefinir a senha.</Text></div>}
+                    <h1 className="text-h1 text-foreground mb-6 text-center">Ocorreu um erro ao tentar redefinir a senha.</h1></div>}
             </div>
         </BaseTemplate>
     )

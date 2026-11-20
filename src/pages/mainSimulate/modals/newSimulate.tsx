@@ -5,7 +5,6 @@ import {
   OptionProps,
   SelectOption,
 } from "../../../components/atoms/selectOption";
-import Text from "../../../components/atoms/text";
 import Ul from "../../../components/atoms/ul";
 import { Button } from "@/components/ui/button";
 import {
@@ -110,14 +109,14 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
             Nenhum simulado disponível no momento.
           </p>
         )}
-        <Text className="text-left" size="quaternary">
+        <p className="text-body text-foreground mb-3 text-left">
           Olá! Este é o simulado {info.nome}. Neste modelo, você terá {horas}{" "}
           horas
           {minutos > 0 ? ` e ${minutos} minutos` : ""} para responder a{" "}
           {info.questoes} questões objetivas{" "}
           {info.redacao ? "e escrever uma redação." : ""}
           As áreas de conhecimento abordadas são:
-        </Text>
+        </p>
         <Ul
           className="my-4"
           childrens={info.areas.map((area, index) => (
@@ -127,17 +126,17 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
             </div>
           ))}
         />
-        <Text size="quaternary" className="text-start">
+        <p className="text-body text-foreground mb-3 text-start">
           Certifique-se de estar preparado para as disciplinas acima. Lembre-se
           de que você não poderá parar o tempo do simulado sem finalizá-lo.
-        </Text>
-        <Text className="text-start m-0" size="quaternary">
+        </p>
+        <p className="text-body text-foreground text-start m-0">
           Aqui vão algumas dicas para ajudá-lo:
-        </Text>
+        </p>
         <Ul className="ml-4 mb-4" childrens={dataModalNew} />
-        <Text size="quaternary" className="font-extrabold text-muted-foreground text-start">
+        <p className="text-body mb-3 font-extrabold text-muted-foreground text-start">
           Bons estudos!
-        </Text>
+        </p>
         </DialogBody>
         <DialogFooter>
           <Button variant="outline" onClick={handleClose}>

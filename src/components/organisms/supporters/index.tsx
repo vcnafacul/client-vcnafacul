@@ -3,7 +3,6 @@ import { Navigation, Pagination } from "swiper/modules";
 import { useHomeContext } from "../../../context/homeContext";
 import { getPhotoCollaborator } from "../../../services/prepCourse/collaborator/get-photo";
 import { getPartnerPrepCourseLogos } from "../../../services/prepCourse/partnerLogos";
-import Text from "../../atoms/text";
 import Carousel from "../../molecules/carousel";
 import Selector from "../../molecules/selector";
 import SupportersSkeleton from "../supportersSkeleton";
@@ -282,8 +281,8 @@ function Supporters() {
       <div className="relative h-10 bg-white" id="supporters" />
       <div className="py-12 px-0 md:py-14">
         <div className="mb-8">
-          <Text size="secondary">{supporters!.title}</Text>
-          <Text size="tertiary">{supporters!.subtitle}</Text>
+          <h2 className="text-h1 text-foreground mb-6 text-center">{supporters!.title}</h2>
+          <p className="text-body text-foreground mb-6 text-center">{supporters!.subtitle}</p>
         </div>
         <Selector tabItems={tabItems} changeItem={changeTab} activeTab={tab} />
         {tab === TabItems.Empresas ? (

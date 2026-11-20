@@ -6,7 +6,6 @@ import { ReactComponent as TabletImage } from "../../../assets/icons/tablet.svg"
 import { ReactComponent as TriangleGreyBorder } from "../../../assets/icons/triangle-grey-border.svg";
 import { ReactComponent as TriangleYellow } from "../../../assets/icons/triangle-yellow.svg";
 
-import Text from "../../atoms/text";
 import RichTextRenderer from "../../atoms/richTextRenderer/RichTextRenderer";
 import './styles.css';
 import { useHomeContext } from "../../../context/homeContext";
@@ -73,7 +72,7 @@ function AboutUs(){
                     </div>
                 </div>
                 <div>
-                    <Text size="secondary" className="text-start">{aboutUs!.title}</Text>
+                    <h2 className="text-h1 text-foreground mb-6 text-start">{aboutUs!.title}</h2>
                     <div className="text-start">
                       <RichTextRenderer content={aboutUs!.description} contentFormat="markdown" />
                     </div>

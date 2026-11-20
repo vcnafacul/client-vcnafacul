@@ -2,7 +2,6 @@
 import "react-loading-skeleton/dist/skeleton.css";
 import { Navigation, Pagination } from "swiper/modules";
 import { useHeroContext } from "../../../context/heroContext";
-import Text from "../../atoms/text";
 import BLink from "../../molecules/bLink";
 import Carousel from "../../molecules/carousel";
 import { HeroSkeleton } from "../heroSkeleton";
@@ -55,15 +54,12 @@ function Hero({ className }: HeroProps) {
             >
               <div className="justify-start text-white sm:self-start md:w-full md:mb-28 md:self-center">
                 <div className="md:transition duration-300 ease-out hover:translate-x-2.5 mx-10 md:mx-0">
-                  <Text
-                    size="primary"
-                    className="mb-6 text-white md:text-left text-start"
-                  >
+                  <h1 className="text-display mb-6 text-white md:text-left text-start">
                     {slide.title}
-                  </Text>
-                  <Text size="tertiary" className="text-white text-start">
+                  </h1>
+                  <p className="text-body mb-6 text-white text-start">
                     {slide.subtitle}
-                  </Text>
+                  </p>
                 </div>
                 <div className="flex gap-4 px-2 min-w-80 max-w-lg">
                   {slide.links.map((link: any) => (

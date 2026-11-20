@@ -12,7 +12,6 @@ import {
 import { LOGIN_PATH } from "../../../routes/path";
 import { ResetPassword } from "../../../services/auth/resetPassword";
 import SpanValidate from "../../atoms/spanValidate";
-import Text from "../../atoms/text";
 import { Button } from "@/components/ui/button";
 import FormField, { FormFieldInput } from "../../molecules/formField";
 
@@ -92,10 +91,10 @@ export function ResetForm({
   return (
     <div className="w-full h-[calc(100vh-theme(spacing.header))] flex justify-start items-center flex-col mx-auto">
       <div className="mt-20 max-w-[500px] flex flex-col items-center">
-        <Text size="secondary">{title}</Text>
-        <Text size="quaternary" className="text-foreground my-5">
+        <h1 className="text-h1 text-foreground mb-6 text-center">{title}</h1>
+        <p className="text-body text-foreground text-center my-5">
           {subtitle}
-        </Text>
+        </p>
         <form onSubmit={handleSubmit(reset)} className="flex flex-col gap-4">
           <FormField
             register={register}

@@ -1,5 +1,4 @@
 import React from "react";
-import Text from "../../atoms/text";
 import { Button } from "@/components/ui/button";
 import ModalTemplate, { ModalProps } from "../../templates/modalTemplate";
 
@@ -18,9 +17,9 @@ function ModalMessage({
   return (
     <ModalTemplate isOpen={isOpen} handleClose={handleClose!} className="bg-white p-4 rounded-md">
       <div className="px-4 md:max-w-[700px] rounded-xl flex flex-col gap-4">
-        <Text size="secondary" className="font-extrabold m-0 text-start">
+        <h2 className="text-h1 text-foreground font-extrabold m-0 text-start">
           {text}
-        </Text>
+        </h2>
         {children}
         <div className="flex gap-2 justify-end">
           <Button variant="primary" size="sm"

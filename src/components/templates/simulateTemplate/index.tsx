@@ -3,7 +3,6 @@ import { lazy, ReactNode, Suspense, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { getIconByTitle } from "../../../pages/mainSimulate/data";
 import IconArea from "../../atoms/iconArea";
-import Text from "../../atoms/text";
 import { Button } from "@/components/ui/button";
 import Legends, { Legend } from "../../molecules/legends";
 import QuestionList, { QuestionProps } from "../../molecules/questionList";
@@ -141,13 +140,11 @@ function SimulateTemplate({
             }
             className={`${getColorEnemArea(questionSelected.enemArea)}`}
           />
-          <Text
-            className={`${getTextColorEnemArea(
+          <p className={`text-h1 font-bold ${getTextColorEnemArea(
               questionSelected.enemArea
-            )} mx-4 mb-0 sm:whitespace-nowrap w-fit`}
-          >
+            )} mx-4 mb-0 sm:whitespace-nowrap w-fit`}>
             {questionSelected.enemArea}
-          </Text>
+          </p>
           {setReportProblem ? (
             <Button className="w-full" onClick={setReportProblem} variant="ghost" size="lg">
               <Report className="w-12 h-12" />
@@ -157,10 +154,10 @@ function SimulateTemplate({
           )}
         </div>
         <div className="flex w-full py-4 items-center justify-between">
-          <Text size="secondary" className="m-0 text-foreground">
+          <h2 className="text-h1 text-foreground m-0 text-center">
             Questao{" "}
             {questions.find((q) => q.id === questionSelected._id)!.number + 1}
-          </Text>
+          </h2>
           {hasTextContent && (
             <button
               onClick={() =>

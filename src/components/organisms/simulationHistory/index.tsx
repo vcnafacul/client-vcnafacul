@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { HistoricoDTO } from "../../../dtos/historico/historicoDTO";
-import Text from "../../atoms/text";
 import SimulationHistoryCard from "../../molecules/simulationHistoryCard";
 import { DASH, SIMULADO_HISTORIES } from "../../../routes/path";
 
@@ -11,13 +10,13 @@ interface SimulationHistoryProps {
 function SimulationHistory({ historical }: SimulationHistoryProps) {
   return (
     <div className="w-full px-4 my-10">
-      <Text size="primary" className="text-start">
+      <h2 className="text-h1 text-foreground mb-6 text-start">
         Histórico de Simulados
-      </Text>
-      <Text size="tertiary" className="text-start text-muted-foreground">
+      </h2>
+      <p className="text-body mb-6 text-start text-muted-foreground">
         Veja aqui todos os simulados que você já realizou.
         Para mais detalhes, <Link className="text-success font-extrabold" to={`${DASH}/${SIMULADO_HISTORIES}`}>clique aqui.</Link>
-      </Text>
+      </p>
       <div className="relative ">
         <div className="w-40 h-40 bg-success absolute right-0 -top-20 -z-10 rotate-45" />
         <div className="border border-success bg-white">

@@ -1,7 +1,6 @@
 import HeaderSimulate from "../../components/molecules/headerSimulate";
 import { QuestionBoxStatus } from "../../enums/simulado/questionBoxStatus";
 
-import Text from "../../components/atoms/text";
 import { Button } from "@/components/ui/button";
 
 import { useModals } from "@/hooks/useModal";
@@ -293,12 +292,9 @@ function Simulate() {
           expandedPhoto={() => modals.modalImage.open()}
           alternative={
             <div className="flex flex-wrap items-center justify-center gap-4">
-              <Text
-                size="secondary"
-                className="m-0 text-foreground font-semibold w-60 text-start"
-              >
+              <p className="text-h1 text-foreground font-semibold w-60 text-start m-0">
                 {simulateData.alternativeText}
-              </Text>
+              </p>
               <div className="flex gap-4">
                 {Alternatives.map((alt, index) => (
                   <Alternative

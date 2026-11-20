@@ -1,5 +1,4 @@
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
-import Text from "@/components/atoms/text";
 import { Button } from "@/components/ui/button";
 import {
   DataInscription,
@@ -417,10 +416,7 @@ export function PartnerPrepInscription() {
         ) : (
           <div className="flex flex-col justify-center items-center py-8 gap-8">
             <StepperCircle steps={steps} />
-            <Text
-              className="text-center"
-              size="secondary"
-            >{`Formulário de Inscrição ${prepCourse}`}</Text>
+            <h1 className="text-h1 text-foreground mb-6 text-center">{`Formulário de Inscrição ${prepCourse}`}</h1>
             {dataInscription?.isTest && (
               <div className="w-11/12 max-w-6xl p-3 md:p-4 bg-warning-muted border-l-4 border-warning rounded-md">
                 <div className="flex items-start gap-3">

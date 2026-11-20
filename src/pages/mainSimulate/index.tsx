@@ -1,7 +1,6 @@
 import { useModals } from "@/hooks/useModal";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import Text from "../../components/atoms/text";
 import Ul from "../../components/atoms/ul";
 import CardSimulate from "../../components/molecules/cardSimulate";
 import CarouselRef from "../../components/organisms/carouselRef";
@@ -90,12 +89,12 @@ function MainSimulate() {
       <div className="relative pb-1">
         <div className="relative sm:mx-10">
           <div className="flex flex-col items-start pt-6 mb-10 sm:pt-10 sm:mb-20 mx-4 sm:mx-0">
-            <Text size="primary" className="mb-1">
+            <h1 className="text-h1 text-foreground mb-1 text-center">
               {simulateData.titleBook}
-            </Text>
-            <Text size="tertiary" className="text-h2">
+            </h1>
+            <p className="text-h2 text-foreground mb-6 text-center">
               {simulateData.subTitleBook}
-            </Text>
+            </p>
             <CarouselRef
               className="w-full"
               childrens={cardsBook}
@@ -104,10 +103,10 @@ function MainSimulate() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-10 gap-2 sm:gap-8 mx-4">
             <div className="flex flex-col items-start sm:col-span-1 md:col-span-3">
-              <Text size="primary">{simulateData.titleDay}</Text>
-              <Text size="tertiary" className="text-start text-h2 mt-2 sm:mt-8">
+              <h2 className="text-h1 text-foreground mb-6 text-center">{simulateData.titleDay}</h2>
+              <p className="text-h2 text-foreground mt-2 sm:mt-8 mb-6 text-start">
                 {simulateData.subTitleDay}
-              </Text>
+              </p>
             </div>
             <div className="sm:col-span-2 md:col-span-7 flex justify-center">
               <CarouselRef

@@ -22,7 +22,6 @@ import {
 } from "@/types/partnerPrepForm/questionForm";
 import { useCallback, useEffect, useState } from "react";
 import ConfirmSubscription from "../modals/confirmSubscription";
-import Text from "@/components/atoms/text";
 
 interface PartnerPrepInscriptionStepFormProps {
   section: SectionForm;
@@ -419,9 +418,9 @@ export function PartnerPrepInscriptionStepForm({
         onSubmit={handleSubmit}
         className="w-full flex flex-col gap-4 md:gap-2 mt-8 mb-16 animate-in fade-in duration-300"
       >
-        <Text className="text-start px-4" size="secondary">
+        <h1 className="text-h1 text-foreground mb-6 text-start px-4">
           {section.name}
-        </Text>
+        </h1>
         {section.description && (
           <p className="text-muted-foreground/90 mb-2">{section.description}</p>
         )}

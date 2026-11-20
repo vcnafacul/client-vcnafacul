@@ -1,6 +1,5 @@
 import React from "react";
 import IconArea from "../../atoms/iconArea";
-import Text from "../../atoms/text";
 import { Button } from "@/components/ui/button";
 
 interface CardSimulateProps {
@@ -21,7 +20,7 @@ function CardSimulate({className, color, icon, title, children, onClick, disable
                 <IconArea icon={icon} className={`${color} fill-white`} />
             </div>
             <div className="mt-8 mx-5 sm:mx-10 text-caption flex flex-col items-start">
-                <Text size="secondary" className="font-bold text-h3 mb-6">{title}</Text>
+                <h3 className="text-h3 text-foreground font-bold mb-6 text-center">{title}</h3>
                 <div className="text-foreground text-body text-start">{children}</div>
                 <Button variant="primary" size="lg" className={`rounded-sm ${color} w-36 h-8 mt-5 hover:opacity-75 text-white`} onClick={onClick} disabled={disabled}>Iniciar</Button>
             </div>

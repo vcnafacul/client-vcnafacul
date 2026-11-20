@@ -16,7 +16,6 @@ import {
   getCepByLatAndLon,
 } from "../../../../services/geolocation/getCepByLatAndLon";
 import { CreateGeolocation } from "../../../../types/geolocation/geolocation";
-import Text from "../../../atoms/text";
 import { Button } from "@/components/ui/button";
 import MapBox from "../../../molecules/mapBox";
 import Form from "../../form";
@@ -199,10 +198,10 @@ function Step3Geo({
 
   return (
     <div className="my-10 z-sticky">
-      <Text size="secondary">{title}</Text>
-      <Text className="text-wrap mx-10" size="tertiary">
+      <h1 className="text-h1 text-foreground mb-6 text-center">{title}</h1>
+      <p className="text-body text-foreground mb-6 text-center text-wrap mx-10">
         {subtitle}
-      </Text>
+      </p>
       <form
         className="w-full max-w-lg mx-auto"
         onSubmit={handleSubmit(handleForm)}

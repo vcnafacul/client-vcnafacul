@@ -1,6 +1,5 @@
 
 import { Timer } from "lucide-react";
-import Text from "../../atoms/text";
 import CountdownTimer from "../../atoms/countDownTimer";
 import { Button } from "@/components/ui/button";
 
@@ -14,7 +13,7 @@ function HeaderSimulate({ simulateName, onClick } : HeaderSimulateProps){
     return (
         // No celular quebra linha: ícone de 80px + cronômetro text-5xl + botão (~450px) passavam da tela.
         <div className="container flex justify-between items-center flex-col md:flex-row gap-3 mx-auto py-4 px-4">
-            <Text size="secondary" className="text-white m-0 text-center break-words">Simulado {simulateName}</Text>
+            <h1 className="text-h1 text-white m-0 text-center break-words">Simulado {simulateName}</h1>
             <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 w-full sm:w-auto">
                 <Timer className="w-8 h-8 sm:w-20 sm:h-10 text-white" />
                 <CountdownTimer className="text-h1 font-extrabold" />

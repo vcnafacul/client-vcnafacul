@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import RadioButton from "../../../components/atoms/radioButton";
-import Text from "../../../components/atoms/text";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -69,7 +68,7 @@ function ModalReportProblem({
   const IsQuestionProblem = () => {
     return questionProblem ? (
       <div>
-        <Text size="tertiary" className="text-start text-muted-foreground">
+        <p className="text-body mb-6 text-start text-muted-foreground">
           Foi um problema com a questão,{" "}
           <span
             className="text-foreground"
@@ -78,7 +77,7 @@ function ModalReportProblem({
             [ {numberQuestion} ]
           </span>{" "}
           ?
-        </Text>
+        </p>
         <div className="flex flex-wrap gap-4">
           <RadioButton
             onChange={() => setSelectedOption(0)}
@@ -96,9 +95,9 @@ function ModalReportProblem({
       </div>
     ) : (
       <div>
-        <Text size="tertiary" className="text-start text-muted-foreground m-0">
+        <p className="text-body text-start text-muted-foreground m-0">
           Foi um bug recorrente ou um bug que ocorreu de maneira esporádica?*
-        </Text>
+        </p>
         <div className="flex flex-wrap gap-4">
           <RadioButton
             onChange={() => setSelectedOption(0)}

@@ -1,5 +1,4 @@
 import GoogleAuthButton from "@/components/atoms/googleAuthButton";
-import Text from "@/components/atoms/text";
 import { Button } from "@/components/ui/button";
 import Step2 from "@/components/organisms/registerForm/setps/step2";
 import BaseTemplate from "@/components/templates/baseTemplate";
@@ -113,7 +112,7 @@ function CadastroGoogle() {
     >
       <div className="flex flex-col items-center w-full px-4 py-10">
         <div className="mt-10 max-w-[500px] flex flex-col items-center w-full gap-y-4">
-          <Text size="secondary">Complete seu cadastro</Text>
+          <h1 className="text-h1 text-foreground mb-6 text-center">Complete seu cadastro</h1>
           {erro && (
             <div data-erro className="flex w-full flex-col gap-4 text-center">
               <p className="text-destructive">{erro}</p>

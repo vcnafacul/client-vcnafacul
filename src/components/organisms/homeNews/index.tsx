@@ -6,7 +6,6 @@ import { NEWS } from "../../../routes/path";
 import { getNews } from "../../../services/news/getNews";
 import { useHomeStore } from "../../../store/home";
 import { DiffTime } from "../../../utils/diffTime";
-import Text from "../../atoms/text";
 import NewsCarousel from "../newsCarousel";
 
 function HomeNews() {
@@ -47,10 +46,10 @@ function HomeNews() {
       <TriangleGreen className="absolute w-80 sm:w-[500px] rotate-[135deg] -bottom-5 sm:-bottom-10 -right-[162px]" />
       <div className="container grid grid-cols-4 gap-4 mx-auto">
         <div className="col-span-4 md:col-span-2">
-          <Text size="secondary">Não perca nossas novidades!</Text>
-          <Text size="tertiary">
+          <h2 className="text-h1 text-foreground mb-6 text-center">Não perca nossas novidades!</h2>
+          <p className="text-body text-foreground mb-6 text-center">
             Fique ligado nas ultimas noticias e nossas novas funcionalidades
-          </Text>
+          </p>
         </div>
         <div className="col-span-4 mx-4 md:col-span-2">
           <NewsCarousel

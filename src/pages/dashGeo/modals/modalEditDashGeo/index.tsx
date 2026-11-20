@@ -3,7 +3,6 @@
 import { Geolocation } from "@/types/geolocation/geolocation";
 import { useEffect, useState } from "react";
 
-import Text from "@/components/atoms/text";
 import { Button } from "@/components/ui/button";
 import MapBox from "@/components/molecules/mapBox";
 import {
@@ -531,13 +530,9 @@ function ModalEditDashGeo({
       >
         <div className="w-full">
           <input {...register("id")} className="hidden" />
-          <Text
-            className="flex w-full justify-center gap-4 
-            items-center"
-            size="secondary"
-          >
+          <h2 className="text-h1 text-foreground mb-6 text-center flex w-full justify-center gap-4 items-center">
             Informação do Cursinho {getStatusIcon(geo.status)}
-          </Text>
+          </h2>
           <PrepCourseInfo
             form={prepCourseInfo}
             setValue={setValue}
@@ -553,7 +548,7 @@ function ModalEditDashGeo({
         </div>
         {/* 30vw só lado a lado (md+): empilhado, dava ~112px no celular. */}
         <div className="w-full md:max-w-[30vw]">
-          <Text size="secondary">Endereço do Cursinho</Text>
+          <h2 className="text-h1 text-foreground mb-6 text-center">Endereço do Cursinho</h2>
           <MapBox
             className="h-80 border border-border z-0"
             zoom={16}
@@ -584,12 +579,9 @@ function ModalEditDashGeo({
             </div>
           </div>
 
-          <Text
-            className="flex w-full justify-center gap-4 items-center"
-            size="tertiary"
-          >
+          <h3 className="text-body text-foreground mb-6 text-center flex w-full justify-center gap-4 items-center">
             Revisões necessárias
-          </Text>
+          </h3>
           {checkboxData.map((check) => (
             <Checkbox key={check.name} {...check} setValue={setValue} />
           ))}
