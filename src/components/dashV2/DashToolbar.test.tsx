@@ -408,25 +408,15 @@ describe("DashToolbar — acessibilidade", () => {
 });
 
 /**
- * ⚠️ **Este arquivo é lento, e a causa NÃO foi identificada.**
+ * **Lentidão resolvida (tickets/059, Task 8c).** A causa era o floating-ui (Radix Popper/Tooltip)
+ * chamando `el.matches(":popover-open")` e `el.matches(":modal")`: o nwsapi do jsdom leva ~250 ms
+ * por chamada. O `vitest.setup.ts` agora responde `false` para essas duas consultas (fiel ao
+ * navegador, onde o Radix faz portal para uma div comum) e delega o resto ao original.
  *
- * Medido: 22 testes, ~51 s, e o custo está espalhado por todos eles — inclusive
- * por um que só faz `expect(MAX_SECUNDARIAS_NA_BARRA).toBe(3)` e leva 1,6 s.
- * Ou seja, é overhead **entre** testes, não conteúdo de teste: algo montado
- * antes segue rodando e o tempo é cobrado do seguinte.
+ * **Medido:** o arquivo foi de 83,7 s (testes mais lentos: 7,3 s, 6,5 s, 5,4 s) para 0,85 s
+ * (mais lento: 50 ms). Suíte inteira (`yarn test`): 336 arquivos, 3082 testes, 0 erros, ~112 s.
  *
- * **Hipóteses descartadas por medição** (não repita estas):
- * - o `@floating-ui/react-dom` do Radix Popper — substituído por stub via
- *   `vi.mock` hoisted no topo do arquivo: **51 s, sem diferença**;
- * - o `TooltipProvider` — 1 ms num probe isolado;
- * - o render do `DashToolbar` em si — 1 a 16 ms;
- * - `vi.useFakeTimers()` — contribui (~14 s dos 51), mas não explica o resto.
- *
- * **O que isso quebrava:** o worker fica bloqueado, o RPC do vitest estoura e
- * a pipeline falha com `Timeout calling "onTaskUpdate"` **e todos os testes
- * verdes** (`Tests 307 passed`, `Errors 1 error`). Contornado no
- * `vite.config.ts` com `pool: "forks"` e `teardownTimeout`.
- *
- * ⚠️ É contorno, não conserto. Enquanto a causa não for achada, mantenha os
- * testes que abrem o `⋯` poucos, cada um verificando tudo de uma abertura só.
+ * **Cabe no CI:** pelos números, sim; o `test:ci` e o comentário em `vite.config.ts` ainda o
+ * excluem e voltar com ele é decisão humana. Os contornos `pool: "forks"` e `teardownTimeout`
+ * também podem ser reavaliados.
  */

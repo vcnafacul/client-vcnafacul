@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "./alert-dialog";
 import {
@@ -14,16 +14,7 @@ import {
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "./sheet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
 
-// O floating-ui (usado pelo Radix) pergunta `el.matches(":popover-open")` e `":modal"`. O nwsapi
-// do jsdom não conhece esses pseudo-classes e cai numa recursão que leva ~250 ms por chamada
-// (~9 s para abrir um Tooltip). O jsdom nunca tem top layer, então a resposta é sempre `false`.
-const matchesOriginal = Element.prototype.matches;
-
 beforeAll(() => {
-  Element.prototype.matches = function (this: Element, seletor: string) {
-    if (seletor === ":popover-open" || seletor === ":modal") return false;
-    return matchesOriginal.call(this, seletor);
-  };
   // O jsdom não tem PointerEvent; sem ele o `pointerType` do toque se perde.
   if (!("PointerEvent" in window)) {
     class PointerEventShim extends MouseEvent {
@@ -42,10 +33,6 @@ beforeAll(() => {
   };
   Element.prototype.hasPointerCapture ??= () => false;
   Element.prototype.scrollIntoView ??= () => {};
-});
-
-afterAll(() => {
-  Element.prototype.matches = matchesOriginal;
 });
 
 describe("Tooltip", () => {
