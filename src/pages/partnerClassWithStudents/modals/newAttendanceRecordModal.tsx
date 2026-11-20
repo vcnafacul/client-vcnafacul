@@ -332,7 +332,7 @@ export function NewAttendanceRecordModal({
                       onClick={() => marcar(s.id, true)}
                       className={`h-9 px-2.5 sm:px-4 rounded-full text-[13px] sm:text-sm font-bold border transition-colors ${
                         presente
-                          ? "bg-primary border-primary text-white"
+                          ? "bg-primary border-primary text-primary-foreground"
                           : "bg-white border-border text-muted-foreground hover:border-primary hover:text-foreground"
                       }`}
                     >
@@ -387,7 +387,7 @@ export function NewAttendanceRecordModal({
         <button
           type="button"
           onClick={handleCreateAttendancerecord}
-          className="h-11 px-6 rounded-lg bg-primary text-white font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="h-11 px-6 rounded-lg bg-primary text-primary-foreground font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={registring || !carregou || students.length === 0}
         >
           Registrar chamada

@@ -77,8 +77,8 @@ export default function MenuMobile({
     <span
       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors ${
         eAtivo
-          ? "bg-cta text-white"
-          : "bg-muted text-foreground group-hover:bg-cta group-hover:text-white"
+          ? "bg-cta text-cta-foreground"
+          : "bg-muted text-foreground group-hover:bg-cta group-hover:text-cta-foreground"
       }`}
     >
       <ChevronRight className="h-5 w-5" />
@@ -207,14 +207,14 @@ export default function MenuMobile({
               <Link
                 to={entrar.Home_Menu_Item_id.link}
                 onClick={onClose}
-                className="flex h-12 items-center justify-center rounded-full border-2 border-primary text-base font-bold text-foreground transition-colors hover:bg-primary hover:text-white"
+                className="flex h-12 items-center justify-center rounded-full border-2 border-primary text-base font-bold text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
               >
                 Entrar
               </Link>
               <Link
                 to={cadastrar.Home_Menu_Item_id.link}
                 onClick={onClose}
-                className="flex h-12 items-center justify-center gap-1 rounded-full bg-cta text-base font-bold text-white transition-opacity hover:opacity-90"
+                className="flex h-12 items-center justify-center gap-1 rounded-full bg-cta text-base font-bold text-cta-foreground transition-opacity hover:opacity-90"
               >
                 Cadastrar
                 <ArrowUpRight className="h-4 w-4" />

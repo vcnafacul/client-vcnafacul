@@ -304,7 +304,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
                     {selectedUsers.map((user) => (
                       <div
                         key={user.id}
-                        className="flex items-center gap-2 bg-primary text-white px-3 py-2 rounded-full text-sm font-medium shadow-sm hover:bg-primary/90 transition-colors"
+                        className="flex items-center gap-2 bg-primary text-primary-foreground px-3 py-2 rounded-full text-sm font-medium shadow-sm hover:bg-primary/90 transition-colors"
                       >
                         <span>{user.name}</span>
                         <button

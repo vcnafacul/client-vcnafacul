@@ -155,7 +155,7 @@ export default function EssayReviewList({ mode }: Props) {
                     {podeRevisar(e) && (
                       <button
                         onClick={() => navigate(`${detailBasePath}/${e.id}`)}
-                        className="flex-1 h-10 bg-primary text-white rounded-lg text-sm font-medium"
+                        className="flex-1 h-10 bg-primary text-primary-foreground rounded-lg text-sm font-medium"
                       >
                         Revisar
                       </button>

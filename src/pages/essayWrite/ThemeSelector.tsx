@@ -60,7 +60,7 @@ export default function ThemeSelector({ themes, onSelect }: ThemeSelectorProps) 
             )}
             <button
               onClick={() => onSelect(theme)}
-              className="w-full mt-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm font-medium"
+              className="w-full mt-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 text-sm font-medium"
             >
               Escrever
             </button>

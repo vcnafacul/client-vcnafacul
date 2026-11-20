@@ -48,7 +48,7 @@ export function ModalBaixarCartao({
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction
-            className="bg-cta text-white hover:bg-cta/80"
+            className="bg-cta text-cta-foreground hover:bg-cta/80"
             onClick={onBaixar}
           >
             {TEXTO_BAIXAR_CARTAO}

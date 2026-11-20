@@ -216,7 +216,7 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
           type="button"
           onClick={salvar}
           disabled={!carregou || salvando}
-          className="h-11 px-6 rounded-lg bg-primary text-white font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="h-11 px-6 rounded-lg bg-primary text-primary-foreground font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Salvar
         </button>

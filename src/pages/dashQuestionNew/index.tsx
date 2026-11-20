@@ -336,7 +336,7 @@ function DashQuestionNew() {
           {podeEditarQuestao(permissao) && (
             <Button
               onClick={() => modals.modalCreateQuestion.open()}
-              className="bg-primary hover:bg-primary/90 text-white shadow-lg w-full sm:w-auto"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg w-full sm:w-auto"
               size="lg"
             >
               <Plus className="h-5 w-5 mr-2" />

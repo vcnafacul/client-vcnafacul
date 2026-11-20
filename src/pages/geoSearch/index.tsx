@@ -328,7 +328,7 @@ function GeoSearch() {
               <button
                 type="button"
                 onClick={() => setConfirmandoCadastro(true)}
-                className="inline-flex shrink-0 rounded-full bg-cta px-6 py-3 font-bold text-white hover:opacity-90 md:py-2.5"
+                className="inline-flex shrink-0 rounded-full bg-cta px-6 py-3 font-bold text-cta-foreground hover:opacity-90 md:py-2.5"
               >
                 Cadastre um novo cursinho
               </button>

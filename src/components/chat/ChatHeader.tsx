@@ -73,7 +73,7 @@ export function ChatHeader({
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3 border-b bg-primary text-white px-3 py-2">
+      <div className="flex items-center justify-between gap-3 border-b bg-primary text-primary-foreground px-3 py-2">
         <div className="flex items-center gap-3 min-w-0">
           {onBack && (
             <button
@@ -177,7 +177,7 @@ export function ChatHeader({
             variant="destructive"
             size="sm"
             onClick={() => setConfirmOpen(true)}
-            className="bg-primary hover:bg-primary/90 text-white shrink-0"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground shrink-0"
           >
             Encerrar
           </Button>
@@ -203,7 +203,7 @@ export function ChatHeader({
             <Button
               onClick={handleEnd}
               disabled={loading}
-              className="bg-primary hover:bg-primary/90 text-white"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               {loading ? "Encerrando..." : "Sim, encerrar"}
             </Button>

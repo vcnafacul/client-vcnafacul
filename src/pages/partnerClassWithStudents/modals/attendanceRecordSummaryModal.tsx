@@ -291,7 +291,7 @@ export default function AttendanceRecordSummaryModal({
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-primary opacity-90 hover:opacity-100 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-primary opacity-90 hover:opacity-100 text-primary-foreground font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Processando..." : "Gerar Relatório"}
           </button>

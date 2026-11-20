@@ -123,7 +123,7 @@ export function ModalEventos({ isOpen, handleClose, token, podeEditar }: Props) 
                 <button
                   type="button"
                   onClick={() => setTela({ tipo: "form", evento: null })}
-                  className="px-4 py-2 bg-primary text-white rounded-lg text-sm"
+                  className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm"
                 >
                   Novo evento
                 </button>

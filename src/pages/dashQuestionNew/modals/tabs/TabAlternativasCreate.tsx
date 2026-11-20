@@ -126,7 +126,7 @@ export function TabAlternativasCreate({
           <CardContent>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-success flex items-center justify-center">
-                <span className="text-white text-2xl font-bold">
+                <span className="text-success-foreground text-2xl font-bold">
                   {formData.alternativa}
                 </span>
               </div>

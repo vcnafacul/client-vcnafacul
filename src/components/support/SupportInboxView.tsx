@@ -60,7 +60,7 @@ export function SupportInboxView({
   return (
     // `dvh` desconta a barra do navegador no celular; sem suporte, cai no vh.
     <div className="flex flex-col h-[calc(100vh-76px)] supports-[height:100dvh]:h-[calc(100dvh-76px)]">
-      <header className="bg-primary text-white px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 shadow-sm">
+      <header className="bg-primary text-primary-foreground px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 shadow-sm">
         <div className="flex items-center gap-2">
           <LuHeadset className="h-5 w-5 text-primary" />
           <h1 className="font-raleway font-bold text-lg tracking-tight">
@@ -72,7 +72,7 @@ export function SupportInboxView({
           <span className="opacity-80">
             {isArchived ? "Arquivadas" : "Conversas abertas"}
           </span>
-          <span className="bg-cta text-white font-bold rounded-full min-w-[24px] h-6 inline-flex items-center justify-center px-2">
+          <span className="bg-cta text-cta-foreground font-bold rounded-full min-w-[24px] h-6 inline-flex items-center justify-center px-2">
             {convs.length}
           </span>
         </div>

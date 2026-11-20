@@ -57,7 +57,7 @@ function NewsSelector({ news, selectedIndex, onSelect }: NewsSelectorProps) {
                   flex items-center gap-3
                   ${
                     isSelected
-                      ? "bg-success text-white shadow-lg scale-100"
+                      ? "bg-success text-success-foreground shadow-lg scale-100"
                       : "bg-muted-foreground bg-opacity-30 text-muted-foreground hover:bg-opacity-50"
                   }
                   ${isEdge ? "opacity-50 scale-95" : "opacity-100"}

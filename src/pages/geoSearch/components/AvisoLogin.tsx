@@ -38,7 +38,7 @@ export function AvisoLogin({
             Agora não
           </Button>
           <Button
-            className="bg-cta text-white hover:bg-cta/90"
+            className="bg-cta text-cta-foreground hover:bg-cta/90"
             onClick={() => navigate(LOGIN_PATH)}
           >
             Entrar

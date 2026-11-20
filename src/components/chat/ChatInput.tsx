@@ -93,7 +93,7 @@ export function ChatInput({ conversationId, status }: Props) {
       <Button
         onClick={handleSend}
         disabled={sending || !value.trim()}
-        className="bg-cta hover:bg-cta text-white gap-1.5 rounded-full px-4 disabled:opacity-50"
+        className="bg-cta hover:bg-cta text-cta-foreground gap-1.5 rounded-full px-4 disabled:opacity-50"
       >
         <Send className="h-4 w-4" />
         <span className="hidden sm:inline">Enviar</span>

@@ -65,7 +65,7 @@ export function ModalNaoEncontrei({ aberto, onFechar, termo }: Props) {
             Voltar e buscar de novo
           </Button>
           <Button
-            className="bg-cta text-white hover:bg-cta/90"
+            className="bg-cta text-cta-foreground hover:bg-cta/90"
             onClick={() =>
               navigate(
                 GEOLOCATION_REGISTER,

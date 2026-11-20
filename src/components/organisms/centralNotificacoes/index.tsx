@@ -251,7 +251,7 @@ export function SinoDaCentral({ solid = true }: { solid?: boolean }) {
       {rotulo && (
         <span
           aria-hidden
-          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-cta px-1 text-[10px] font-bold leading-none text-white"
+          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-cta px-1 text-[10px] font-bold leading-none text-cta-foreground"
         >
           {rotulo}
         </span>

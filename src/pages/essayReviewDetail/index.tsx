@@ -137,7 +137,7 @@ export default function EssayReviewDetail() {
             </p>
             <button
               onClick={() => downloadEssayImage(token, essay.id).catch(() => toast.error("Erro ao baixar arquivo"))}
-              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 text-sm"
             >
               Baixar arquivo
             </button>
@@ -218,7 +218,7 @@ export default function EssayReviewDetail() {
             <button
               onClick={() => formularioCompleto() && setConfirmarEnvio(true)}
               disabled={submitting}
-              className="w-full sm:w-auto px-6 py-2 h-10 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50"
+              className="w-full sm:w-auto px-6 py-2 h-10 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50"
             >
               {submitting ? "Enviando..." : "Enviar revisão"}
             </button>

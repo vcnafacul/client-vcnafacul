@@ -219,7 +219,7 @@ export function AttendanceHistoryModal({
           <button
             type="button"
             onClick={novaChamada}
-            className="h-10 px-4 rounded-lg bg-primary text-white font-bold hover:opacity-90 flex items-center justify-center gap-2"
+            className="h-10 px-4 rounded-lg bg-primary text-primary-foreground font-bold hover:opacity-90 flex items-center justify-center gap-2"
           >
             <MdPlaylistAddCircle className="w-5 h-5" />
             Nova chamada
@@ -269,7 +269,7 @@ export function AttendanceHistoryModal({
             <button
               type="button"
               onClick={novaChamada}
-              className="mt-1 h-10 px-4 rounded-lg bg-primary text-white font-bold hover:opacity-90"
+              className="mt-1 h-10 px-4 rounded-lg bg-primary text-primary-foreground font-bold hover:opacity-90"
             >
               Fazer a primeira chamada
             </button>

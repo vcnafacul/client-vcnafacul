@@ -47,7 +47,7 @@ export function ConfirmOpenDialog({
           <Button
             onClick={onConfirm}
             disabled={loading}
-            className="bg-cta hover:bg-cta text-white"
+            className="bg-cta hover:bg-cta text-cta-foreground"
           >
             {loading ? "Abrindo..." : "Sim, abrir conversa"}
           </Button>

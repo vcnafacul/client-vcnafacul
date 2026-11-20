@@ -132,7 +132,7 @@ return (
       {isDownloading && <Spinner />}
       {isDownloading ? "Baixando..." : "📥 Download"}
     </button>
-    {error && <p className="text-red-500">{error}</p>}
+    {error && <p className="text-destructive">{error}</p>}
   </div>
 );
 ```

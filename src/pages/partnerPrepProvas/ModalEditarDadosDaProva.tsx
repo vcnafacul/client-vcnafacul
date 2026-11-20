@@ -239,7 +239,7 @@ export function ModalEditarDadosDaProva({
           <button
             type="submit"
             disabled={salvando}
-            className="px-4 py-2 bg-primary text-white rounded-lg disabled:opacity-60"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg disabled:opacity-60"
           >
             {salvando ? "Salvando..." : "Salvar"}
           </button>

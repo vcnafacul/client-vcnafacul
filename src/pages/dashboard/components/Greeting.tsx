@@ -58,7 +58,7 @@ export function Greeting({ view, views, onViewChange }: GreetingProps) {
             )}
             <Link
               to={`${DASH}/${SIMULADO}`}
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-3.5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="inline-flex items-center gap-2 rounded-lg bg-primary px-3.5 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <ClipboardList className="h-4 w-4" aria-hidden />
               Fazer simulado

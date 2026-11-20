@@ -142,7 +142,7 @@ function CardDoEvento({
               type="button"
               onClick={inscrever}
               disabled={ocupado}
-              className="rounded-lg bg-primary px-4 py-2 text-white disabled:opacity-60"
+              className="rounded-lg bg-primary px-4 py-2 text-primary-foreground disabled:opacity-60"
             >
               Quero fazer
             </button>
@@ -152,7 +152,7 @@ function CardDoEvento({
               type="button"
               onClick={inscrever}
               disabled={ocupado}
-              className="rounded-lg bg-primary px-4 py-2 text-white disabled:opacity-60"
+              className="rounded-lg bg-primary px-4 py-2 text-primary-foreground disabled:opacity-60"
             >
               Trocar para {nomeDa(escolhida)}
             </button>

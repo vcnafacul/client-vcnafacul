@@ -39,7 +39,7 @@ export default function DevVitrine() {
           <Link
             key={e.slug}
             to={`${DEV_VITRINE}/${vitrine.slug}/${e.slug}`}
-            className={`rounded px-2 py-1 ${e.slug === atual.slug ? "bg-primary text-white" : "bg-muted"}`}
+            className={`rounded px-2 py-1 ${e.slug === atual.slug ? "bg-primary text-primary-foreground" : "bg-muted"}`}
           >
             {e.titulo}
           </Link>

@@ -62,7 +62,7 @@ export default function EssayViewDetail() {
             </p>
             <button
               onClick={() => downloadEssayImage(token, essay.id).catch(() => toast.error("Erro ao baixar arquivo"))}
-              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 text-sm"
             >
               Baixar arquivo
             </button>

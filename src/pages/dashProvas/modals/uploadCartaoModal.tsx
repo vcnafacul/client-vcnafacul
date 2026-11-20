@@ -211,7 +211,7 @@ export default function UploadCartaoModal({
               <AlertDialogTrigger asChild>
                 <button
                   disabled={!file || enviando}
-                  className="w-full px-4 py-2 bg-success text-white rounded disabled:opacity-50"
+                  className="w-full px-4 py-2 bg-success text-success-foreground rounded disabled:opacity-50"
                 >
                   {enviando ? "Enviando..." : "Enviar cartão"}
                 </button>

@@ -33,8 +33,8 @@ export const AlertDialogUI = ({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="gap-2 sm:gap-0">
-          <AlertDialogCancel className="border border-cta text-foreground hover:bg-cta hover:border-cta/20 hover:text-white">Cancelar</AlertDialogCancel>
-          <AlertDialogAction className="bg-cta text-white hover:bg-cta/80" onClick={onConfirm}>Confirmar</AlertDialogAction>
+          <AlertDialogCancel className="border border-cta text-foreground hover:bg-cta hover:border-cta/20 hover:text-cta-foreground">Cancelar</AlertDialogCancel>
+          <AlertDialogAction className="bg-cta text-cta-foreground hover:bg-cta/80" onClick={onConfirm}>Confirmar</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

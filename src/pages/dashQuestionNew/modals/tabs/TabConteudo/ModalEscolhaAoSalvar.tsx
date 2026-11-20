@@ -133,7 +133,7 @@ export function ModalEscolhaAoSalvar({
             type="button"
             data-confirmar
             onClick={() => onConfirmar(escolha)}
-            className="rounded-md bg-cta px-4 py-2 text-sm text-white"
+            className="rounded-md bg-cta px-4 py-2 text-sm text-cta-foreground"
           >
             Salvar
           </button>

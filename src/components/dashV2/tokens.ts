@@ -57,7 +57,7 @@ export const dashV2 = {
     primary: "bg-cta text-cta-foreground",
     secondary: "bg-white border border-border text-foreground",
     ghost: "text-foreground",
-    destructive: "bg-destructive text-white",
+    destructive: "bg-destructive text-destructive-foreground",
 
     /**
      * Item de menu (o `⋯` da toolbar): `ghost` mais o realce de linha.

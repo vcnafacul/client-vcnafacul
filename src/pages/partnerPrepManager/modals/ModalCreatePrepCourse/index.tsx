@@ -407,7 +407,7 @@ export const ModalCreatePrepCourse = ({
               Cancelar
             </AlertDialogCancel>
             <AlertDialogAction
-              className="bg-cta text-white hover:bg-cta/80"
+              className="bg-cta text-cta-foreground hover:bg-cta/80"
               onClick={handleForceCreate}
             >
               Forçar Criação

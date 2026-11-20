@@ -279,7 +279,7 @@ export default function EssayWrite() {
           <button
             onClick={() => setShowConfirmModal(true)}
             disabled={submitting || !selectedFile}
-            className="w-full sm:w-auto px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50"
+            className="w-full sm:w-auto px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50"
           >
             {submitting ? "Enviando..." : "Enviar redação"}
           </button>
@@ -304,7 +304,7 @@ export default function EssayWrite() {
                     setShowConfirmModal(false);
                     handleSubmitImage();
                   }}
-                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+                  className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
                 >
                   Confirmar envio
                 </button>
@@ -361,7 +361,7 @@ export default function EssayWrite() {
         <button
           onClick={() => setShowConfirmModal(true)}
           disabled={submitting || !title.trim() || !text.trim()}
-          className="w-full sm:w-auto px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50"
+          className="w-full sm:w-auto px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50"
         >
           {submitting ? "Enviando..." : "Enviar redacao"}
         </button>
@@ -386,7 +386,7 @@ export default function EssayWrite() {
                   setShowConfirmModal(false);
                   handleSubmit();
                 }}
-                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
               >
                 Confirmar envio
               </button>

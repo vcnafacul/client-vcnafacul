@@ -45,8 +45,8 @@ function getThemeStatus(theme: EssayTheme): {
   if (now > end) {
     return {
       label: "Encerrado",
-      color: "text-warning",
-      bgColor: "bg-warning-muted text-warning",
+      color: "text-muted-foreground",
+      bgColor: "bg-muted text-muted-foreground",
     };
   }
   return {
@@ -164,7 +164,7 @@ export default function EssayThemeAdmin() {
           </div>
           <button
             onClick={() => setEditing(null)}
-            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
           >
             Novo Tema
           </button>
@@ -252,7 +252,7 @@ export default function EssayThemeAdmin() {
               </button>
               <button
                 onClick={handleToggleActive}
-                className="px-4 py-2 text-white rounded-lg bg-primary hover:bg-primary/90"
+                className="px-4 py-2 text-primary-foreground rounded-lg bg-primary hover:bg-primary/90"
               >
                 {confirmToggle.active ? "Desativar" : "Ativar"}
               </button>

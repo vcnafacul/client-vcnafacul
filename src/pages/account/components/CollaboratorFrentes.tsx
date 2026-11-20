@@ -153,7 +153,7 @@ export function CollaboratorFrentes({
               <Badge
                 key={frente.id}
                 variant="secondary"
-                className="inline-flex items-center gap-2 px-3 py-1 bg-info-muted text-info hover:bg-info-muted/70 transition-colors"
+                className="inline-flex items-center gap-2 px-3 py-1 bg-muted text-foreground hover:bg-accent transition-colors"
               >
                 <span className="text-sm">{frente.nome ?? "—"}</span>
                 <button

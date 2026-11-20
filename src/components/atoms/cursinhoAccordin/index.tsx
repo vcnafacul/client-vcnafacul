@@ -164,7 +164,7 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
                 onClick={handleDownloadEnrollmentCertificate}
                 disabled={isDownloading}
                 className="flex items-center justify-center gap-2 sm:min-w-[160px] px-4 py-2.5 
-                           bg-primary text-white text-sm font-medium rounded-lg 
+                           bg-primary text-primary-foreground text-sm font-medium rounded-lg 
                            hover:bg-primary/90 active:bg-primary/80 
                            disabled:bg-muted-foreground disabled:cursor-not-allowed 
                            transition-colors shadow-sm"
@@ -192,7 +192,7 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
                 to={`/${DECLARED_INTEREST}/${monitoring.inscriptionId}`}
                 onClick={(e) => e.stopPropagation()}
                 className="flex items-center justify-center gap-2 sm:min-w-[160px] px-4 py-2.5 
-                           bg-success/80 text-white text-sm font-medium rounded-lg 
+                           bg-success/80 text-success-foreground text-sm font-medium rounded-lg 
                            hover:bg-success 
                            transition-colors shadow-sm"
               >

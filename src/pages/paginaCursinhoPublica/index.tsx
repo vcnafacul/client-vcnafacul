@@ -151,7 +151,7 @@ export default function PaginaCursinhoPublica() {
                       rel="noopener noreferrer"
                       aria-label={nome}
                       title={nome}
-                      className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white hover:bg-primary/90"
+                      className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
                     >
                       <Icone size={15} aria-hidden />
                     </a>

@@ -234,7 +234,7 @@ export function ChatWidget() {
 
   // ⚠️ `print:hidden`: o botão é chrome flutuante, e numa folha impressa vira
   // um retângulo azul por cima do conteúdo.
-  const buttonClassName = `fixed bottom-6 right-6 rounded-full h-12 px-5 shadow-lg z-50 gap-2 bg-primary hover:bg-primary/90 text-white ring-1 ring-white/10 transition-transform hover:scale-105 print:hidden${
+  const buttonClassName = `fixed bottom-6 right-6 rounded-full h-12 px-5 shadow-lg z-50 gap-2 bg-primary hover:bg-primary/90 text-primary-foreground ring-1 ring-white/10 transition-transform hover:scale-105 print:hidden${
     hasPending ? " animate-attention-ring" : ""
   }`;
 
