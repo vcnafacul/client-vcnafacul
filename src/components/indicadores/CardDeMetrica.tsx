@@ -8,7 +8,7 @@ export type TomDaMetrica = "marine" | "green" | "orange" | "red";
 const tons: Record<TomDaMetrica, string> = {
   marine: "bg-primary/[0.07] text-foreground",
   green: "bg-success-muted text-success",
-  orange: "bg-cta/[0.12] text-warning",
+  orange: "bg-warning-muted text-warning",
   red: "bg-destructive/[0.10] text-destructive",
 };
 

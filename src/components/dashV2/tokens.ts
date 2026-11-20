@@ -18,8 +18,7 @@
  *   marine / branco ........ 15.05:1  ✅ texto
  *   darkGrey / branco ....... 7.57:1  ✅ texto
  *   grey / branco ........... 4.95:1  ✅ texto
- *   marine / orange ......... 5.62:1  ✅ texto  ← o botão principal
- *   branco / orange ......... 2.68:1  ❌ reprovado, e é o que o V1 faz hoje
+ *   cta-foreground / cta .... branco sobre orange-700, par do token (tickets/059 D8)  ← o botão principal
  */
 export const dashV2 = {
   /** Superfície de conteúdo: tabela, toolbar, modal. */

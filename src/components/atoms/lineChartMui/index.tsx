@@ -1,17 +1,12 @@
 import { Box, Typography } from "@mui/material";
 import { LineChart } from "@mui/x-charts";
-import { palette } from "@/lib/palette";
+import { chartSeries, palette } from "@/lib/palette";
 
 const DEFAULT_COLORS = [
-  palette.mint[500],
-  palette.blue[500],
-  palette.pink[600],
-  palette.marine[700],
-  palette.blue[600],
-  palette.blue[800],
-  palette.red[500],
-  palette.orange[500],
-  palette.mint[700],
+  ...chartSeries,
+  palette.red[600],
+  palette.neutral[500],
+  palette.yellow[700],
 ];
 
 interface LineSeries {

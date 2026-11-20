@@ -75,12 +75,11 @@ describe("tokens do dashV2", () => {
     },
   );
 
-  it("o texto do botão principal é marine, não branco", () => {
-    // ⚠️ Branco sobre #FF7600 dá 2.68:1 e reprova; marine dá 5.62:1. É a
-    // decisão que separa o V2 do V1 aqui, e ela é fácil de "consertar" de volta
-    // por achar que botão laranja tem texto branco.
+  it("o botão principal usa o par CTA (bg-cta + text-cta-foreground)", () => {
+    // ⚠️ O texto do CTA é o `cta-foreground` (branco sobre orange-700, D8), e não
+    // um branco avulso: o par garante o contraste. Ver tickets/059 D8.
+    expect(dashV2.action.primary).toContain("bg-cta");
     expect(dashV2.action.primary).toContain("text-cta-foreground");
-    expect(dashV2.action.primary).not.toContain("text-white");
   });
 
   it("o amarelo não é usado em status", () => {

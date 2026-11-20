@@ -15,7 +15,7 @@ function FollowUs({ className, solid = false } : FollowUsProps) {
     const { header } = useBaseTemplateContext()
     return (
         <div className={className}>
-            <div className="text-highlight font-bold text-base text-center">
+            <div className="text-primary-foreground font-bold text-base text-center">
                 Siga nossas redes sociais
             </div>
             <div className="flex w-full justify-around py-8">
