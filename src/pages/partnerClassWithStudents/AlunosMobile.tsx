@@ -46,9 +46,9 @@ export function AlunosMobile(props: Props) {
         }}
         placeholder="Buscar por nome, email ou matrícula"
         aria-label="Buscar aluno"
-        className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm"
+        className="w-full h-10 px-3 border border-border rounded-md text-sm"
       />
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-muted-foreground">
         {filtrados.length} de {props.alunos.length}{" "}
         {props.tipo === "ativos" ? "alunos" : "matrículas canceladas"}
       </p>
@@ -57,41 +57,41 @@ export function AlunosMobile(props: Props) {
         {filtrados.slice(0, visiveis).map((aluno) => (
           <li
             key={aluno.id}
-            className="bg-white border border-gray-200 rounded-lg p-3 flex flex-col gap-1"
+            className="bg-white border border-border rounded-lg p-3 flex flex-col gap-1"
           >
-            <p className="font-semibold text-gray-900 break-words">
+            <p className="font-semibold text-foreground break-words">
               {aluno.name}
             </p>
-            <p className="text-xs text-gray-500 break-all">
+            <p className="text-xs text-muted-foreground break-all">
               {props.mascarar.email(aluno.email)}
             </p>
-            <p className="text-xs text-gray-600">
+            <p className="text-xs text-muted-foreground">
               Matrícula {aluno.cod_enrolled}
             </p>
 
             {props.tipo === "ativos" ? (
               <>
-                <p className="text-xs text-gray-700">
+                <p className="text-xs text-foreground">
                   Presença {pct((aluno as ClassStudent).presencePercentage)} ·
                   Faltas {pct((aluno as ClassStudent).absencePercentage)} ·
                   Just.{" "}
                   {pct((aluno as ClassStudent).justifiedAbsencePercentage)}
                 </p>
-                <div className="border-t border-gray-100 mt-1 pt-1 flex justify-end">
+                <div className="border-t border-border mt-1 pt-1 flex justify-end">
                   {props.renderAcoes(aluno as ClassStudent)}
                 </div>
               </>
             ) : (
               <>
                 {(aluno as CancelledStudent).cancelledAt && (
-                  <p className="text-xs text-gray-700">
+                  <p className="text-xs text-foreground">
                     Cancelado em{" "}
                     {new Date(
                       (aluno as CancelledStudent).cancelledAt!,
                     ).toLocaleDateString("pt-BR")}
                   </p>
                 )}
-                <p className="text-xs text-gray-600 break-words">
+                <p className="text-xs text-muted-foreground break-words">
                   {(aluno as CancelledStudent).justification ?? "—"}
                 </p>
               </>
@@ -101,7 +101,7 @@ export function AlunosMobile(props: Props) {
       </ul>
 
       {filtrados.length === 0 && (
-        <p className="text-center text-sm text-gray-500 py-6">
+        <p className="text-center text-sm text-muted-foreground py-6">
           {props.tipo === "ativos"
             ? "Nenhum aluno encontrado"
             : "Nenhuma matrícula cancelada nesta turma"}
@@ -112,7 +112,7 @@ export function AlunosMobile(props: Props) {
         <button
           type="button"
           onClick={() => setVisiveis((v) => v + TAMANHO_DA_PAGINA)}
-          className="h-10 w-full border border-marine text-marine rounded-md text-sm font-medium"
+          className="h-10 w-full border border-primary text-foreground rounded-md text-sm font-medium"
         >
           Mostrar mais ({filtrados.length - visiveis} restantes)
         </button>

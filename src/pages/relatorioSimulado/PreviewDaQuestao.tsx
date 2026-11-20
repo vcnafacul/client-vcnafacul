@@ -153,7 +153,7 @@ export function PreviewDaQuestao({
         {estado === "loading" && (
           <div
             data-testid="preview-carregando"
-            className="h-40 animate-pulse rounded-md bg-gray-100"
+            className="h-40 animate-pulse rounded-md bg-muted"
           />
         )}
 
@@ -204,14 +204,14 @@ export function PreviewDaQuestao({
                       className={cn(
                         "flex items-start gap-3 rounded-md border px-3 py-2",
                         correta
-                          ? "border-green-500 bg-green-50"
+                          ? "border-success bg-success-muted"
                           : cn(dashV2.border, dashV2.surface),
                       )}
                     >
                       <span
                         className={cn(
                           "font-semibold",
-                          correta ? "text-green-700" : dashV2.text.primary,
+                          correta ? "text-success" : dashV2.text.primary,
                         )}
                       >
                         {letra}
@@ -248,7 +248,7 @@ export function PreviewDaQuestao({
             {divergeOGabarito && (
               <p
                 data-testid="preview-gabarito-divergente"
-                className="rounded-md border border-amber-400 bg-amber-50 px-3 py-2 text-sm text-amber-900"
+                className="rounded-md border border-warning bg-warning-muted px-3 py-2 text-sm text-foreground"
               >
                 O gabarito desta questão no banco hoje é {gabaritoDoBanco}, e os
                 cartões deste simulado foram corrigidos por{" "}

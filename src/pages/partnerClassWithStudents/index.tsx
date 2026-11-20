@@ -208,7 +208,7 @@ export function PartnerClassWithStudents() {
             modals.modalStudentCard.open();
           }}
         >
-          <IoEyeSharp className="h-6 w-6 fill-gray-500 hover:fill-marine opacity-60 hover:opacity-100" />
+          <IoEyeSharp className="h-6 w-6 fill-muted-foreground hover:fill-primary opacity-60 hover:opacity-100" />
         </IconButton>
       </Tooltip>
       <Tooltip title="Registro de presença">
@@ -218,7 +218,7 @@ export function PartnerClassWithStudents() {
             modals.modalAttendanceRecordByStudent.open();
           }}
         >
-          <FaListCheck className="h-5 w-5 fill-gray-500 hover:fill-marine opacity-60 hover:opacity-100" />
+          <FaListCheck className="h-5 w-5 fill-muted-foreground hover:fill-primary opacity-60 hover:opacity-100" />
         </IconButton>
       </Tooltip>
     </div>
@@ -455,11 +455,11 @@ export function PartnerClassWithStudents() {
   return (
     <div className="flex flex-col justify-center items-center pt-4">
       <div className="w-full px-4">
-        <h1 className="text-3xl font-bold text-center text-marine">
+        <h1 className="text-3xl font-bold text-center text-foreground">
           {classEntity?.name}
         </h1>
         {classEntity?.coursePeriod && (
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 mt-2 text-sm text-gray-600">
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 mt-2 text-sm text-muted-foreground">
             <span>
               <strong>Período:</strong> {classEntity.coursePeriod.name} ({classEntity.coursePeriod.year})
             </span>
@@ -491,7 +491,7 @@ export function PartnerClassWithStudents() {
         {turmaEncerrada(classEntity?.coursePeriod?.endDate) && (
           <div
             role="status"
-            className="mx-auto mt-3 flex max-w-2xl items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900"
+            className="mx-auto mt-3 flex max-w-2xl items-start gap-2 rounded-lg border border-warning bg-warning-muted px-4 py-2 text-sm text-foreground"
           >
             <IoWarningOutline aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
             <span>
@@ -529,7 +529,7 @@ export function PartnerClassWithStudents() {
         </div>
 
         <TabsContent value="alunos">
-          <div className="p-4 flex flex-wrap items-center gap-2 bg-gray-50 w-full">
+          <div className="p-4 flex flex-wrap items-center gap-2 bg-page w-full">
             {permissao[Roles.gerenciarTurmas] && (
               <Button
                 typeStyle="accepted"
@@ -575,7 +575,7 @@ export function PartnerClassWithStudents() {
                 />
               }
               label={
-                <span className="text-sm text-gray-700">
+                <span className="text-sm text-foreground">
                   Matrículas canceladas
                 </span>
               }

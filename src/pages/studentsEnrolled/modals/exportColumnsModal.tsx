@@ -106,7 +106,7 @@ export default function ExportColumnsModal({
       className="bg-white p-4 rounded-md w-[640px] max-w-[95vw]"
     >
       {carregando ? (
-        <p className="py-6 text-center text-sm text-gray-500">
+        <p className="py-6 text-center text-sm text-muted-foreground">
           Carregando colunas...
         </p>
       ) : (
@@ -154,7 +154,7 @@ export default function ExportColumnsModal({
                     />
                     <label
                       htmlFor={`grupo-${grupo}`}
-                      className="cursor-pointer text-sm font-semibold text-marine"
+                      className="cursor-pointer text-sm font-semibold text-foreground"
                     >
                       {grupo}
                     </label>
@@ -182,7 +182,7 @@ export default function ExportColumnsModal({
                             <button
                               type="button"
                               aria-label={`${column.label} virá mascarado`}
-                              className="text-gray-400 hover:text-gray-600 focus-visible:text-gray-600"
+                              className="text-muted-foreground hover:text-muted-foreground focus-visible:text-muted-foreground"
                             >
                               <EyeOff className="h-4 w-4" />
                             </button>
@@ -196,7 +196,7 @@ export default function ExportColumnsModal({
             })}
           </div>
 
-          <p className="pt-2 text-xs text-gray-500">
+          <p className="pt-2 text-xs text-muted-foreground">
             {selected.size} coluna{selected.size === 1 ? "" : "s"} selecionada
             {selected.size === 1 ? "" : "s"}
           </p>
@@ -217,7 +217,7 @@ function PresetButton({
     <button
       type="button"
       onClick={onClick}
-      className="rounded-full border border-gray-300 px-3 py-1 text-xs text-gray-700 hover:border-marine hover:text-marine"
+      className="rounded-full border border-border px-3 py-1 text-xs text-foreground hover:border-primary hover:text-foreground"
     >
       {label}
     </button>

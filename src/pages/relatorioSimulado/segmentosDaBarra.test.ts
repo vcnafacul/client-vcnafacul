@@ -96,15 +96,7 @@ describe("CORES_DA_BARRA", () => {
     // que ela só enxerga o `tokens.ts` — "uma classe de cor num .tsx passa
     // despercebida". Esta barra vive em `pages/` de propósito (o card 19 pede),
     // então ela traz a própria catraca.
-    const paleta = new Set([
-      "green3",
-      "gray2",
-      "lightGray",
-      "marine",
-      "white",
-      "grey",
-      "darkGrey",
-    ]);
+    const paleta = new Set(["success", "muted", "primary", "foreground"]);
 
     for (const classe of Object.values(CORES_DA_BARRA)) {
       for (const cor of classe.match(/(?:bg|text|ring)-([a-zA-Z0-9]+)/g) ?? []) {

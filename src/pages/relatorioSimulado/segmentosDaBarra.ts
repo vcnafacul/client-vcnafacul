@@ -28,11 +28,11 @@ export const SEM_LEITURA = "·";
  */
 export const CORES_DA_BARRA = {
   /** O gabarito. */
-  gabarito: "bg-green3",
+  gabarito: "bg-success",
   /** Qualquer distrator. */
-  distrator: "bg-gray2",
+  distrator: "bg-muted-foreground",
   /** Quem não foi lido — mais claro, porque não é uma escolha de ninguém. */
-  semLeitura: "bg-lightGray",
+  semLeitura: "bg-muted",
 } as const;
 
 export interface SegmentoDaBarra {

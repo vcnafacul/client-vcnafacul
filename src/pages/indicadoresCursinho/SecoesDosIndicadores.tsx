@@ -258,11 +258,11 @@ export function SecoesDosIndicadores({ dados }: Props) {
             }}
             rodape={
               (daVisao.temEncerradasEscondidas || mostrarEncerrados) && (
-                <div className="mt-3 border-t border-slate-100 pt-3 text-center">
+                <div className="mt-3 border-t border-border pt-3 text-center">
                   <button
                     type="button"
                     onClick={() => setMostrarEncerrados((v) => !v)}
-                    className="text-sm font-medium text-marine underline-offset-2 hover:underline"
+                    className="text-sm font-medium text-foreground underline-offset-2 hover:underline"
                   >
                     {mostrarEncerrados
                       ? "Esconder turmas de períodos encerrados"
@@ -294,7 +294,7 @@ export function Area({
 }) {
   return (
     <section className="space-y-3">
-      <h2 className="text-base font-semibold text-marine">{titulo}</h2>
+      <h2 className="text-base font-semibold text-foreground">{titulo}</h2>
       {children}
     </section>
   );

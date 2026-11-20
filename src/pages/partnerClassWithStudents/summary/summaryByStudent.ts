@@ -5,6 +5,7 @@ import { getBase64FromImageUrl } from "@/utils/getBase64FromImageUrl";
 import { phoneMask } from "@/utils/phoneMask";
 import { format } from "date-fns";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
+import { palette } from "@/lib/palette";
 
 type AlunoDoRelatorio = AttendanceRecordSummaryByStudent["report"][number];
 
@@ -95,7 +96,7 @@ export const summaryByStudent = async (summary: AttendanceRecordSummaryByStudent
       },
       tableHeader: {
         bold: true,
-        fillColor: "#eeeeee",
+        fillColor: palette.neutral[100],
         alignment: "center",
       },
       tableCell: {

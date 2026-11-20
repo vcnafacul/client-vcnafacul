@@ -111,11 +111,11 @@ export default function SendDocuments({
     <div className="max-w-5xl w-full mx-auto p-6 space-y-8 bg-white shadow-md rounded-lg flex flex-col">
       <div>
         {/* Dicas para o envio de documentos */}
-        <div className="w-full max-w-5xl p-4 bg-fuchsia-50 border-l-4 border-fuchsia-500 rounded-md my-4">
-          <h3 className="text-md font-semibold text-fuchsia-800">
+        <div className="w-full max-w-5xl p-4 bg-info-muted border-l-4 border-info rounded-md my-4">
+          <h3 className="text-md font-semibold text-foreground">
             Informações sobre o envio de documentos:
           </h3>
-          <ul className="mt-2 list-disc list-inside text-fuchsia-700 text-sm flex flex-col gap-1">
+          <ul className="mt-2 list-disc list-inside text-foreground text-sm flex flex-col gap-1">
             <li className={`${isFree ? "" : "hidden"}`}>
               Fazer o upload de todos os documentos necessários para comprovação
               da renda informada no formulário de inscrição.
@@ -160,18 +160,18 @@ export default function SendDocuments({
         <div
           {...getRootProps()}
           className={`p-4 border-2 border-dashed rounded-md text-center ${
-            isDragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"
+            isDragActive ? "border-primary bg-info-muted" : "border-border"
           }`}
         >
           <input {...getInputProps()} />
           {isDragActive ? (
-            <p className="text-blue-500">Solte os arquivos aqui...</p>
+            <p className="text-primary">Solte os arquivos aqui...</p>
           ) : (
-            <p className="text-gray-500 flex gap-1 justify-center flex-col">
+            <p className="text-muted-foreground flex gap-1 justify-center flex-col">
               <span>
                 Arraste e solte os arquivos aqui, ou clique para selecionar.
               </span>
-              <span className="text-blue-500">
+              <span className="text-primary">
                 Limite: {uploadedFiles.length}/{MAX_FILES}
               </span>
             </p>
@@ -183,12 +183,12 @@ export default function SendDocuments({
           {uploadedFiles.map((file: any, index: number) => (
             <li
               key={index}
-              className="flex justify-between items-center text-gray-600 text-sm border p-2 rounded-md"
+              className="flex justify-between items-center text-muted-foreground text-sm border p-2 rounded-md"
             >
               <span>{file.name}</span>
               <button
                 onClick={() => handleRemoveFile(index)}
-                className="text-red-500 hover:text-red-700"
+                className="text-destructive hover:text-destructive"
               >
                 Remover
               </button>
@@ -197,7 +197,7 @@ export default function SendDocuments({
         </ul>
       </div>
       <button
-        className="mt-8 px-6 py-3 text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60 self-end"
+        className="mt-8 px-6 py-3 text-primary-foreground rounded font-medium disabled:bg-muted disabled:text-muted-foreground bg-primary w-60 self-end"
         onClick={handleSubmit}
         disabled={processing}
       >
@@ -209,7 +209,7 @@ export default function SendDocuments({
         handleClose={() => setShowRequiredDocsModal(false)}
         text="Documentos obrigatórios"
       >
-        <p className="text-gray-600 mt-2">
+        <p className="text-muted-foreground mt-2">
           O envio dos documentos é obrigatório para continuar. Por favor, envie
           pelo menos um documento antes de prosseguir.
         </p>

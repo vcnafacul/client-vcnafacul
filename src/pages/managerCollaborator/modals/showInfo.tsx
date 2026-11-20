@@ -184,7 +184,7 @@ export function ShowInfo({
           ) : (
             collaborator.photo && (
               <img
-                className="rounded-full object-cover shadow-md shadow-stone-500 w-40 h-40 shrink-0"
+                className="rounded-full object-cover shadow-md w-40 h-40 shrink-0"
                 src={fotoSrc}
                 alt={collaborator.name}
               />
@@ -192,7 +192,7 @@ export function ShowInfo({
           )}
           <div className="flex flex-col gap-2 w-full">
             {frentesLoading ? (
-              <div className="text-sm text-gray-500 italic">Carregando...</div>
+              <div className="text-sm text-muted-foreground italic">Carregando...</div>
             ) : (materiasUnicas.length > 0 || frentesUnicas.length > 0) ? (
               <div className="flex flex-col gap-2">
                 {materiasUnicas.length > 0 && (
@@ -223,7 +223,7 @@ export function ShowInfo({
                 )}
               </div>
             ) : null}
-            <div className="bg-zinc-800 p-2 rounded shadow-black shadow-md">
+            <div className="bg-primary p-2 rounded shadow-md">
               <PropValue
                 prop="Função"
                 value={collaborator.role.name}
@@ -288,7 +288,7 @@ export function ShowInfo({
               {loading}
             </Button>
           </div>
-          <div className="col-span-1 sm:col-span-2 bg-zinc-200 p-2 rounded shadow-md shadow-zinc-300">
+          <div className="col-span-1 sm:col-span-2 bg-muted p-2 rounded shadow-md">
             <PropValue
               prop="Último Acesso"
               value={formatDate(collaborator.lastAccess?.toString(), "dd/MM/yyyy HH:mm")}
@@ -324,7 +324,7 @@ export function ShowInfo({
         text="Remover a foto do colaborador?"
         className="bg-white p-4 rounded-md w-[calc(100%-2rem)]"
       >
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted-foreground">
           A foto também sai da página pública do cursinho.
         </p>
       </ModalConfirmCancel>

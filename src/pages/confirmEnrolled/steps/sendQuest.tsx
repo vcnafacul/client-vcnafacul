@@ -5,6 +5,7 @@ import { useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { areas } from "../area";
+import { palette } from "@/lib/palette";
 
 interface Props {
   onSubmit: (areas: string[], cursos: string[]) => Promise<void>;
@@ -53,10 +54,10 @@ export default function SendQuest({
     <div className="max-w-5xl w-full mx-auto p-6 space-y-8 bg-white shadow-md rounded-lg">
       {/* Áreas com mais dificuldades */}
       <section className="space-y-4">
-        <h3 className="text-lg font-semibold text-emerald-600 border-l-4 border-emerald-500 pl-4">
+        <h3 className="text-lg font-semibold text-success border-l-4 border-success pl-4">
           Áreas com mais dificuldades
         </h3>
-        <p className="text-gray-600 text-sm">
+        <p className="text-muted-foreground text-sm">
           Nos ajude a entender melhor suas expectativas. Assinale abaixo as
           áreas onde acredita ter mais dificuldades.
         </p>
@@ -64,7 +65,7 @@ export default function SendQuest({
           {areas.map((area, index) => (
             <label
               key={index}
-              className="flex items-center space-x-2 bg-gray-50 px-4 rounded-md shadow-sm"
+              className="flex items-center space-x-2 bg-page px-4 rounded-md shadow-sm"
             >
               <Checkbox
                 checked={areaInterest.includes(area)}
@@ -79,7 +80,7 @@ export default function SendQuest({
                 }}
                 color="primary"
               />
-              <span className="text-gray-800">{area}</span>
+              <span className="text-foreground">{area}</span>
             </label>
           ))}
         </div>
@@ -87,7 +88,7 @@ export default function SendQuest({
 
       {/* Cursos de Interesse */}
       <section className="space-y-4">
-        <h3 className="text-lg font-semibold text-sky-600 border-l-4 border-sky-500 pl-4">
+        <h3 className="text-lg font-semibold text-foreground border-l-4 border-info pl-4">
           Cursos de Interesse
         </h3>
         <div className="flex flex-col md:flex-row items-start gap-4">
@@ -112,13 +113,13 @@ export default function SendQuest({
             sx={{
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
-                  borderColor: '#d1d5db',
+                  borderColor: palette.neutral[300],
                 },
                 '&:hover fieldset': {
-                  borderColor: '#0ea5e9',
+                  borderColor: palette.blue[500],
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: '#0ea5e9',
+                  borderColor: palette.blue[500],
                 },
               },
             }}
@@ -129,18 +130,18 @@ export default function SendQuest({
                 {selectedCursos.map((curso, index) => (
                   <li
                     key={index}
-                    className="flex items-center justify-between p-1 bg-gray-50 shadow-md rounded"
+                    className="flex items-center justify-between p-1 bg-page shadow-md rounded"
                   >
-                    <span className="text-gray-700">{curso}</span>
+                    <span className="text-foreground">{curso}</span>
                     <IoCloseSharp
-                      className="text-red-600 w-6 h-6 cursor-pointer hover:text-red-800 transition-colors"
+                      className="text-destructive w-6 h-6 cursor-pointer hover:text-destructive/80 transition-colors"
                       onClick={() => handleRemoveCurso(curso)}
                     />
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-500 text-sm">Nenhum curso selecionado.</p>
+              <p className="text-muted-foreground text-sm">Nenhum curso selecionado.</p>
             )}
           </div>
         </div>
@@ -150,7 +151,7 @@ export default function SendQuest({
       <div className="w-full flex justify-end gap-4">
         {!photoDone && (
           <button
-            className="mt-8 px-6 py-3 text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
+            className="mt-8 px-6 py-3 text-primary-foreground rounded font-medium disabled:bg-muted disabled:text-muted-foreground bg-primary w-60"
             onClick={handleBack}
             disabled={processing}
           >
@@ -158,7 +159,7 @@ export default function SendQuest({
           </button>
         )}
         <button
-          className="mt-8 px-6 py-3  text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
+          className="mt-8 px-6 py-3  text-primary-foreground rounded font-medium disabled:bg-muted disabled:text-muted-foreground bg-primary w-60"
           onClick={handleSubmit}
           disabled={processing}
         >

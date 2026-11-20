@@ -365,7 +365,7 @@ export function PartnerPrepInscritionStudentManager() {
     <div className="flex justify-center items-center gap-2 h-8 flex-wrap">
       <Tooltip title="Visualizar">
         <IconButton onClick={() => handleModalDetaild(row.id)}>
-          <IoEyeSharp className="h-6 w-6 fill-gray-500 opacity-60 hover:opacity-100" />
+          <IoEyeSharp className="h-6 w-6 fill-muted-foreground opacity-60 hover:opacity-100" />
         </IconButton>
       </Tooltip>
       {row.isento === "Sim" &&
@@ -378,7 +378,7 @@ export function PartnerPrepInscritionStudentManager() {
             onConfirm={() => handleIsFreeInfo(row.id, false)}
             tooltipTitle="Tornar Pagante"
           >
-            <IsentoIcon className="h-6 w-6 fill-darkGreen opacity-60 hover:opacity-100" />
+            <IsentoIcon className="h-6 w-6 fill-success opacity-60 hover:opacity-100" />
           </ActionButton>
         )}
       {row.isento === "Não" &&
@@ -391,7 +391,7 @@ export function PartnerPrepInscritionStudentManager() {
             onConfirm={() => handleIsFreeInfo(row.id, true)}
             tooltipTitle="Dar Isenção"
           >
-            <PaganteIcon className="h-6 w-6 fill-redError opacity-60 hover:opacity-100" />
+            <PaganteIcon className="h-6 w-6 fill-destructive opacity-60 hover:opacity-100" />
           </ActionButton>
         )}
       {shouldProcessApplication(
@@ -415,9 +415,9 @@ export function PartnerPrepInscritionStudentManager() {
           } da lista de convocação`}
         >
           {row.convocar === Bool.No ? (
-            <BsEnvelopeArrowUpFill className="h-6 w-6 fill-lime-600 opacity-60 hover:opacity-100" />
+            <BsEnvelopeArrowUpFill className="h-6 w-6 fill-success opacity-60 hover:opacity-100" />
           ) : (
-            <BsEnvelopeArrowDownFill className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
+            <BsEnvelopeArrowDownFill className="h-6 w-6 fill-destructive opacity-60 hover:opacity-100" />
           )}
         </ActionButton>
       )}
@@ -447,9 +447,9 @@ export function PartnerPrepInscritionStudentManager() {
           } da lista de espera`}
         >
           {row.lista_de_espera === Bool.No ? (
-            <PiTimerFill className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
+            <PiTimerFill className="h-6 w-6 fill-primary opacity-60 hover:opacity-100" />
           ) : (
-            <MdTimerOff className="h-6 w-6 fill-orange opacity-60 hover:opacity-100" />
+            <MdTimerOff className="h-6 w-6 fill-warning opacity-60 hover:opacity-100" />
           )}
         </ActionButton>
       )}
@@ -458,7 +458,7 @@ export function PartnerPrepInscritionStudentManager() {
           <IconButton
             onClick={() => handleOpenSelectClassModal(row.id)}
           >
-            <FaCheck className="h-6 w-6 fill-green3 opacity-60 hover:opacity-100" />
+            <FaCheck className="h-6 w-6 fill-success opacity-60 hover:opacity-100" />
           </IconButton>
         </Tooltip>
       )}
@@ -474,7 +474,7 @@ export function PartnerPrepInscritionStudentManager() {
                 );
                 modals.reject.open();
               }}
-              className="h-6 w-6 fill-redError/60 hover:fill-redError cursor-pointer"
+              className="h-6 w-6 fill-destructive/60 hover:fill-destructive cursor-pointer"
             />
           </IconButton>
         </Tooltip>
@@ -489,7 +489,7 @@ export function PartnerPrepInscritionStudentManager() {
           onConfirm={() => handleResetStudent(row.id)}
           tooltipTitle="Resetar"
         >
-          <Reset className="h-6 w-6 fill-red/70 hover:fill-red" />
+          <Reset className="h-6 w-6 fill-destructive/70 hover:fill-destructive" />
         </ActionButton>
       )}
       {row.status === StatusApplication.CalledForEnrollment &&
@@ -504,7 +504,7 @@ export function PartnerPrepInscritionStudentManager() {
             }}
             tooltipTitle="Reenviar email de convocação"
           >
-            <MdEmail className="h-6 w-6 fill-sky-500 opacity-60 hover:opacity-100" />
+            <MdEmail className="h-6 w-6 fill-info opacity-60 hover:opacity-100" />
           </ActionButton>
         )}
     </div>
@@ -696,16 +696,16 @@ export function PartnerPrepInscritionStudentManager() {
     <div className="flex flex-col justify-center items-center pt-4">
       <div className="w-full px-4">
         <div className="mb-2">
-          <h1 className="text-3xl font-bold text-center text-marine break-words">
+          <h1 className="text-3xl font-bold text-center text-foreground break-words">
             {inscriptionInfo?.name || "Gerenciamento de Inscritos"}
           </h1>
           {inscriptionInfo?.description && (
-            <p className="text-sm text-gray-500 text-center mt-1 break-words">
+            <p className="text-sm text-muted-foreground text-center mt-1 break-words">
               {inscriptionInfo.description}
             </p>
           )}
           {inscriptionInfo && (
-            <p className="text-xs text-gray-400 text-center mt-1">
+            <p className="text-xs text-muted-foreground text-center mt-1">
               Período:{" "}
               {new Date(inscriptionInfo.startDate).toLocaleDateString("pt-BR")}{" "}
               — {new Date(inscriptionInfo.endDate).toLocaleDateString("pt-BR")}{" "}
@@ -751,9 +751,9 @@ export function PartnerPrepInscritionStudentManager() {
               type="button"
               aria-label="Atualizar lista"
               onClick={() => subscribers()}
-              className="col-span-2 flex items-center justify-center gap-2 h-10 border border-gray-300 rounded-md text-sm text-gray-600 sm:h-auto sm:border-0 sm:col-span-1"
+              className="col-span-2 flex items-center justify-center gap-2 h-10 border border-border rounded-md text-sm text-muted-foreground sm:h-auto sm:border-0 sm:col-span-1"
             >
-              <FaSyncAlt className="h-7 w-7 p-0.5 fill-gray-500 hover:fill-marine hover:animate-rotate5" />
+              <FaSyncAlt className="h-7 w-7 p-0.5 fill-muted-foreground hover:fill-primary hover:animate-rotate5" />
               {!acimaDeSm && "Atualizar lista"}
             </button>
           </div>

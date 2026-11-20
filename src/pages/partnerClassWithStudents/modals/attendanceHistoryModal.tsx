@@ -201,16 +201,16 @@ export function AttendanceHistoryModal({
       closer={false}
       className="bg-white rounded-xl shadow-xl w-[calc(100vw-1rem)] sm:w-[600px] h-[min(640px,calc(100dvh-2rem))] flex flex-col overflow-hidden"
     >
-      <div className="shrink-0 px-4 pt-4 pb-3 sm:px-6 sm:pt-6 border-b border-lightGray">
+      <div className="shrink-0 px-4 pt-4 pb-3 sm:px-6 sm:pt-6 border-b border-border">
         <div className="flex items-start justify-between gap-3">
-          <h2 className="min-w-0 text-xl sm:text-2xl font-black text-marine leading-tight">
+          <h2 className="min-w-0 text-xl sm:text-2xl font-black text-foreground leading-tight">
             Frequência{turmaNome ? ` · ${turmaNome}` : ""}
           </h2>
           <button
             type="button"
             onClick={handleClose}
             aria-label="Fechar"
-            className="shrink-0 -mr-2 -mt-1 p-2 rounded-full text-grey hover:bg-gray-100 hover:text-marine"
+            className="shrink-0 -mr-2 -mt-1 p-2 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
           >
             <IoClose className="w-6 h-6" />
           </button>
@@ -219,7 +219,7 @@ export function AttendanceHistoryModal({
           <button
             type="button"
             onClick={novaChamada}
-            className="h-10 px-4 rounded-lg bg-marine text-white font-bold hover:opacity-90 flex items-center justify-center gap-2"
+            className="h-10 px-4 rounded-lg bg-primary text-white font-bold hover:opacity-90 flex items-center justify-center gap-2"
           >
             <MdPlaylistAddCircle className="w-5 h-5" />
             Nova chamada
@@ -228,7 +228,7 @@ export function AttendanceHistoryModal({
             <button
               type="button"
               onClick={() => modals.modalAttendanceRecordSummary.open()}
-              className="h-10 px-4 rounded-lg border border-marine/30 text-marine font-bold hover:bg-marine/5 flex items-center justify-center gap-2"
+              className="h-10 px-4 rounded-lg border border-primary/30 text-foreground font-bold hover:bg-primary/5 flex items-center justify-center gap-2"
             >
               <FaRegListAlt />
               Relatório
@@ -240,13 +240,13 @@ export function AttendanceHistoryModal({
       <ul aria-label="Chamadas" className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6">
         {erro && (
           <li className="py-10 flex flex-col items-center gap-3 text-center">
-            <p className="text-sm text-grey">
+            <p className="text-sm text-muted-foreground">
               Não foi possível carregar as chamadas.
             </p>
             <button
               type="button"
               onClick={() => getAttendanceHistory(page, limit)}
-              className="h-10 px-4 rounded-lg border border-marine/30 text-marine font-bold hover:bg-marine/5"
+              className="h-10 px-4 rounded-lg border border-primary/30 text-foreground font-bold hover:bg-primary/5"
             >
               Tentar de novo
             </button>
@@ -255,21 +255,21 @@ export function AttendanceHistoryModal({
         {!carregou &&
           !erro &&
           Array.from({ length: 5 }, (_, i) => (
-            <li key={i} className="py-3 border-b border-gray-100 animate-pulse">
-              <div className="h-4 w-32 rounded bg-gray-100" />
-              <div className="mt-2 h-3 w-48 rounded bg-gray-100" />
+            <li key={i} className="py-3 border-b border-border animate-pulse">
+              <div className="h-4 w-32 rounded bg-muted" />
+              <div className="mt-2 h-3 w-48 rounded bg-muted" />
             </li>
           ))}
         {carregou && !erro && attendanceHistory.length === 0 && (
           <li className="h-full flex flex-col items-center justify-center gap-3 text-center py-10">
-            <p className="text-marine font-bold">Nenhuma chamada ainda.</p>
-            <p className="text-sm text-grey max-w-xs">
+            <p className="text-foreground font-bold">Nenhuma chamada ainda.</p>
+            <p className="text-sm text-muted-foreground max-w-xs">
               As chamadas registradas desta turma aparecem aqui.
             </p>
             <button
               type="button"
               onClick={novaChamada}
-              className="mt-1 h-10 px-4 rounded-lg bg-marine text-white font-bold hover:opacity-90"
+              className="mt-1 h-10 px-4 rounded-lg bg-primary text-white font-bold hover:opacity-90"
             >
               Fazer a primeira chamada
             </button>
@@ -278,20 +278,20 @@ export function AttendanceHistoryModal({
         {attendanceHistory.map((r) => (
           <li
             key={r.id}
-            className="py-3 border-b border-gray-100 last:border-0 flex flex-wrap items-center gap-x-3 gap-y-1"
+            className="py-3 border-b border-border last:border-0 flex flex-wrap items-center gap-x-3 gap-y-1"
           >
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <span className="text-marine font-bold">
+                <span className="text-foreground font-bold">
                   {dataDaChamada(r.registeredAt)}
                 </span>
                 {r.period && (
-                  <span className="px-2 py-0.5 rounded-full bg-marine/10 text-marine text-xs font-semibold">
+                  <span className="px-2 py-0.5 rounded-full bg-primary/10 text-foreground text-xs font-semibold">
                     {attendancePeriodLabel[r.period as AttendancePeriod]}
                   </span>
                 )}
               </div>
-              <p className="text-sm text-grey truncate">por {r.registeredBy}</p>
+              <p className="text-sm text-muted-foreground truncate">por {r.registeredBy}</p>
             </div>
             <div className="shrink-0 flex gap-1">
               <button
@@ -300,7 +300,7 @@ export function AttendanceHistoryModal({
                   setAttendanceHistorySelected(r);
                   modals.modalAttendanceRecord.open();
                 }}
-                className="h-9 px-3 rounded-lg text-sm font-semibold text-marine hover:bg-marine/5 flex items-center gap-1.5"
+                className="h-9 px-3 rounded-lg text-sm font-semibold text-foreground hover:bg-primary/5 flex items-center gap-1.5"
               >
                 <IoEyeOutline className="w-4 h-4" />
                 Ver
@@ -310,7 +310,7 @@ export function AttendanceHistoryModal({
                 aria-label="Excluir"
                 title="Excluir"
                 onClick={() => handleActionDeleteRecord(r)}
-                className="h-9 w-9 rounded-lg text-grey hover:bg-orange/10 hover:text-orange flex items-center justify-center"
+                className="h-9 w-9 rounded-lg text-muted-foreground hover:bg-destructive-muted hover:text-destructive flex items-center justify-center"
               >
                 <IoTrashOutline className="w-4 h-4" />
               </button>
@@ -320,13 +320,13 @@ export function AttendanceHistoryModal({
       </ul>
 
       {totalItems > limit && (
-        <div className="shrink-0 px-4 py-2 sm:px-6 border-t border-lightGray flex items-center justify-center gap-3 text-sm text-grey">
+        <div className="shrink-0 px-4 py-2 sm:px-6 border-t border-border flex items-center justify-center gap-3 text-sm text-muted-foreground">
           <button
             type="button"
             aria-label="Página anterior"
             disabled={page <= 1}
             onClick={() => getAttendanceHistory(page - 1, limit)}
-            className="h-9 w-9 rounded-lg flex items-center justify-center hover:bg-gray-100 disabled:opacity-30"
+            className="h-9 w-9 rounded-lg flex items-center justify-center hover:bg-muted disabled:opacity-30"
           >
             <IoChevronBack />
           </button>
@@ -338,7 +338,7 @@ export function AttendanceHistoryModal({
             aria-label="Próxima página"
             disabled={page >= ultimaPagina}
             onClick={() => getAttendanceHistory(page + 1, limit)}
-            className="h-9 w-9 rounded-lg flex items-center justify-center hover:bg-gray-100 disabled:opacity-30"
+            className="h-9 w-9 rounded-lg flex items-center justify-center hover:bg-muted disabled:opacity-30"
           >
             <IoChevronForward />
           </button>

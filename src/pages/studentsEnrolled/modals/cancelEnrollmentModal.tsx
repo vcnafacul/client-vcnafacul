@@ -70,7 +70,7 @@ export default function CancelEnrollmentModal({
                 value={label}
                 checked={selected === label}
                 onChange={() => setSelected(label)}
-                className="h-4 w-4 cursor-pointer accent-orange"
+                className="h-4 w-4 cursor-pointer accent-primary"
               />
               <span className="text-sm">{label}</span>
             </label>
@@ -81,7 +81,7 @@ export default function CancelEnrollmentModal({
                 <button
                   type="button"
                   aria-label={`O que se enquadra em "${label}"`}
-                  className="text-gray-400 hover:text-gray-600 focus-visible:text-gray-600"
+                  className="text-muted-foreground hover:text-muted-foreground focus-visible:text-muted-foreground"
                 >
                   <Info className="h-4 w-4" />
                 </button>
@@ -97,7 +97,7 @@ export default function CancelEnrollmentModal({
           value={otherReason}
           onChange={(event) => setOtherReason(event.target.value)}
           placeholder="Descreva o motivo do cancelamento."
-          className="h-full min-h-[100px] w-full resize-none rounded border border-gray-400 p-2"
+          className="h-full min-h-[100px] w-full resize-none rounded border border-input p-2"
         />
       )}
     </ModalConfirmCancel>

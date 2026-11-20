@@ -109,7 +109,7 @@ export function EvolucaoDoPeriodo({ serie, curvas }: Props) {
                 dataKey="valor"
                 stroke={chartColors.primary}
                 strokeWidth={2}
-                dot={{ r: 3, fill: "#fff", strokeWidth: 2 }}
+                dot={{ r: 3, fill: "hsl(var(--background))", strokeWidth: 2 }}
                 activeDot={{ r: 5 }}
                 isAnimationActive={false}
               />

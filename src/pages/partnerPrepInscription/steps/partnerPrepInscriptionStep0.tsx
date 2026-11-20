@@ -34,12 +34,12 @@ export function PartnerPrepInscriptionStep0({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="w-full p-3 md:p-4 bg-fuchsia-50 border-l-4 border-fuchsia-500 rounded-md my-4">
+      <div className="w-full p-3 md:p-4 bg-info-muted border-l-4 border-info rounded-md my-4">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
-          <h3 className="font-semibold text-fuchsia-800 text-base md:text-lg">
+          <h3 className="font-semibold text-foreground text-base md:text-lg">
             {inscription.name}
           </h3>
-          <div className="flex flex-wrap items-center gap-1 md:gap-2 text-fuchsia-700 text-xs md:text-sm font-medium bg-fuchsia-100 p-2 rounded-md w-fit">
+          <div className="flex flex-wrap items-center gap-1 md:gap-2 text-foreground text-xs md:text-sm font-medium bg-muted p-2 rounded-md w-fit">
             <span>📅 Inscrições:</span>
             <span className="font-semibold whitespace-nowrap">
               {format(inscription.startDate, "dd/MM/yyyy")}
@@ -51,7 +51,7 @@ export function PartnerPrepInscriptionStep0({
           </div>
         </div>
 
-        <p className="mt-2 text-fuchsia-700 text-xs md:text-sm font-medium">
+        <p className="mt-2 text-foreground text-xs md:text-sm font-medium">
           {inscription.description}
         </p>
       </div>
@@ -70,12 +70,12 @@ export function PartnerPrepInscriptionStep0({
           onChange={(e) => setAccepted(e.target.checked)}
           className="mt-1"
         />
-        <label htmlFor="accept" className="text-sm text-gray-700">
+        <label htmlFor="accept" className="text-sm text-foreground">
           Li e aceito o{" "}
           <button
             type="button"
             onClick={handleOpenTerm}
-            className="text-fuchsia-700 underline hover:text-fuchsia-900"
+            className="text-primary underline hover:text-primary/80"
           >
             Termo de Uso
           </button>{" "}
@@ -84,7 +84,7 @@ export function PartnerPrepInscriptionStep0({
             href="https://vcnafacul.com.br/docs/Política_de_Privacidade.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-fuchsia-700 underline hover:text-fuchsia-900"
+            className="text-primary underline hover:text-primary/80"
           >
             Política de Privacidade
           </a>

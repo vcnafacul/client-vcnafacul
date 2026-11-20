@@ -51,17 +51,17 @@ export function ListaDeExMembros() {
 
   if (erro) {
     return (
-      <p className="px-4 text-sm text-red-600">
+      <p className="px-4 text-sm text-destructive">
         Não foi possível carregar os ex-membros.
       </p>
     );
   }
   if (!resultado) {
-    return <p className="px-4 text-sm text-gray-500">Carregando...</p>;
+    return <p className="px-4 text-sm text-muted-foreground">Carregando...</p>;
   }
   if (resultado.totalItems === 0) {
     return (
-      <p className="px-4 py-8 text-center text-sm text-gray-500">
+      <p className="px-4 py-8 text-center text-sm text-muted-foreground">
         Nenhum ex-membro. Quem for excluído da lista de colaboradores aparece
         aqui.
       </p>
@@ -71,7 +71,7 @@ export function ListaDeExMembros() {
   const paginas = Math.max(1, Math.ceil(resultado.totalItems / POR_PAGINA));
   return (
     <div className="flex flex-col gap-3 px-4">
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-muted-foreground">
         {resultado.totalItems} ex-membro{resultado.totalItems === 1 ? "" : "s"}
       </p>
       <ul className="flex flex-col gap-2">
@@ -92,18 +92,18 @@ export function ListaDeExMembros() {
             type="button"
             disabled={pagina === 1}
             onClick={() => setPagina((p) => p - 1)}
-            className="rounded-md px-3 py-1 text-marine disabled:text-gray-300"
+            className="rounded-md px-3 py-1 text-foreground disabled:opacity-50"
           >
             Anterior
           </button>
-          <span className="tabular-nums text-gray-600">
+          <span className="tabular-nums text-muted-foreground">
             {pagina} de {paginas}
           </span>
           <button
             type="button"
             disabled={pagina === paginas}
             onClick={() => setPagina((p) => p + 1)}
-            className="rounded-md px-3 py-1 text-marine disabled:text-gray-300"
+            className="rounded-md px-3 py-1 text-foreground disabled:opacity-50"
           >
             Próxima
           </button>
@@ -115,7 +115,7 @@ export function ListaDeExMembros() {
 
 function ItemDeExMembro({ membro, foto }: { membro: ExMembro; foto?: string }) {
   return (
-    <li className="flex gap-3 rounded-xl border border-slate-200 bg-white p-3">
+    <li className="flex gap-3 rounded-xl border border-border bg-white p-3">
       {foto ? (
         <img
           src={foto}
@@ -123,17 +123,17 @@ function ItemDeExMembro({ membro, foto }: { membro: ExMembro; foto?: string }) {
           className="h-10 w-10 shrink-0 rounded-full object-cover"
         />
       ) : (
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-marine">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-bold text-foreground">
           {membro.nome.charAt(0)}
         </span>
       )}
       <div className="min-w-0 flex-1">
-        <p className="truncate font-medium text-marine">{membro.nome}</p>
-        <p className="text-xs text-gray-500">
+        <p className="truncate font-medium text-foreground">{membro.nome}</p>
+        <p className="text-xs text-muted-foreground">
           {data(membro.entrada)} → {data(membro.saida)}
           {membro.excluidoPor && ` · excluído por ${membro.excluidoPor}`}
         </p>
-        <dl className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-gray-600">
+        <dl className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
           <div className="flex gap-1">
             <dt>Função que tinha:</dt>
             <dd className="font-medium">{membro.funcaoQueTinha ?? "—"}</dd>

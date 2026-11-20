@@ -54,24 +54,24 @@ export function TabelaDeTurmas({
     <span className="flex flex-col gap-0.5">
       <span className="flex flex-wrap items-center gap-2">
         {deOutroCursinho ? (
-          <span className="font-medium text-marine">{t.nome}</span>
+          <span className="font-medium text-foreground">{t.nome}</span>
         ) : (
           <Link
             to={linkDa(t.id)}
-            className="font-medium text-marine underline-offset-2 hover:underline"
+            className="font-medium text-foreground underline-offset-2 hover:underline"
           >
             {t.nome}
           </Link>
         )}
         {t.id === destaqueId && (
-          <span className="rounded-full bg-red/[0.10] px-2 py-0.5 text-xs font-semibold text-red">
+          <span className="rounded-full bg-destructive/[0.10] px-2 py-0.5 text-xs font-semibold text-destructive">
             Maior evasão
           </span>
         )}
       </span>
       {/* tickets/046 — na visão de todos, de qual período é a turma */}
       {rotuloDoPeriodo(t) && (
-        <span className="text-xs text-slate-500">{rotuloDoPeriodo(t)}</span>
+        <span className="text-xs text-muted-foreground">{rotuloDoPeriodo(t)}</span>
       )}
     </span>
   );
@@ -90,14 +90,14 @@ export function TabelaDeTurmas({
       subtitle={subtitulo}
     >
       {ordenadas.length === 0 ? (
-        <p className="py-6 text-center text-sm text-slate-500">
+        <p className="py-6 text-center text-sm text-muted-foreground">
           Nenhuma turma {noRecorte}.
         </p>
       ) : acimaDeSm ? (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-400">
+              <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
                 <th className="py-2 pr-4 font-medium">Turma</th>
                 {colunas.map((c) => (
                   <th
@@ -113,13 +113,13 @@ export function TabelaDeTurmas({
               {ordenadas.map((t) => (
                 <tr
                   key={t.id}
-                  className="border-b border-slate-100 last:border-0"
+                  className="border-b border-border last:border-0"
                 >
                   <td className="py-3 pr-4">{nome(t)}</td>
                   {colunas.map((c) => (
                     <td
                       key={c.titulo}
-                      className="px-3 py-3 text-right tabular-nums lining-nums text-slate-700"
+                      className="px-3 py-3 text-right tabular-nums lining-nums text-foreground"
                     >
                       {c.valor(t)}
                     </td>
@@ -130,15 +130,15 @@ export function TabelaDeTurmas({
           </table>
         </div>
       ) : (
-        <ul className="divide-y divide-slate-100">
+        <ul className="divide-y divide-border">
           {ordenadas.map((t) => (
             <li key={t.id} className="py-3">
               {nome(t)}
               <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
                 {colunas.map((c) => (
                   <div key={c.titulo} className="flex justify-between gap-2">
-                    <dt className="text-slate-500">{c.titulo}</dt>
-                    <dd className="tabular-nums lining-nums text-slate-700">
+                    <dt className="text-muted-foreground">{c.titulo}</dt>
+                    <dd className="tabular-nums lining-nums text-foreground">
                       {c.valor(t)}
                     </dd>
                   </div>

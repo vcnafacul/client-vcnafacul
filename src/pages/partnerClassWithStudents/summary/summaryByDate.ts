@@ -5,6 +5,7 @@ import { downloadPDF } from "@/utils/get-pdf";
 import { getBase64FromImageUrl } from "@/utils/getBase64FromImageUrl";
 import { format, parseISO } from "date-fns";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
+import { palette } from "@/lib/palette";
 
 export const summaryByDate = async (summary: AttendanceRecordSummaryByDate) => {
     const logoBase64 = await getBase64FromImageUrl(logo);
@@ -155,7 +156,7 @@ export const summaryByDate = async (summary: AttendanceRecordSummaryByDate) => {
         },
         tableHeader: {
           bold: true,
-          fillColor: "#eeeeee",
+          fillColor: palette.neutral[100],
           alignment: "center",
         },
         tableCell: {

@@ -120,14 +120,14 @@ export function EvolucaoDoEstudante({ pontos }: { pontos: PontoDaSerie[] }) {
           fill="none"
           strokeWidth={2}
           strokeDasharray="4 3"
-          className="stroke-gray-400"
+          className="stroke-muted-foreground"
         />
         <path
           data-linha-aluno
           d={dAluno}
           fill="none"
           strokeWidth={2}
-          className="stroke-orange"
+          className="stroke-chart-2"
         />
         {desenhados.map((p) => {
           const { cx, cy } = coordenada(p.x, p.yAluno);
@@ -138,7 +138,7 @@ export function EvolucaoDoEstudante({ pontos }: { pontos: PontoDaSerie[] }) {
               cx={cx}
               cy={cy}
               r={3}
-              className="fill-orange"
+              className="fill-chart-2"
             >
               {/*
                 ⚠️ `<title>` dentro do `<circle>` é o tooltip nativo do SVG — e

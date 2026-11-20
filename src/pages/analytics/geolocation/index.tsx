@@ -108,7 +108,7 @@ function AnalyticsGeolocation() {
       }
     >
       {/* Cursinhos */}
-      <h3 className="text-lg font-bold text-marine mb-3">Cursinhos</h3>
+      <h3 className="text-lg font-bold text-foreground mb-3">Cursinhos</h3>
       <Grid container spacing={2}>
         <Grid size={{ xs: 6, sm: 4, md: 2.4 }}>
           <StatCard
@@ -156,7 +156,7 @@ function AnalyticsGeolocation() {
       </Grid>
 
       {/* Universidades */}
-      <h3 className="text-lg font-bold text-marine mt-6 mb-3">
+      <h3 className="text-lg font-bold text-foreground mt-6 mb-3">
         Universidades
       </h3>
       <Grid container spacing={2}>

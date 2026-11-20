@@ -146,8 +146,8 @@ export function TabelaDeComparacao({
               data-acima={acima === null ? undefined : String(acima)}
               className={cn(
                 "font-medium",
-                acima === true && "text-green-700",
-                acima === false && "text-red-700",
+                acima === true && "text-success",
+                acima === false && "text-destructive",
               )}
             >
               {formatarDelta(l.delta)}

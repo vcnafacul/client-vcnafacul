@@ -109,11 +109,11 @@ export function AvisoDeRecalculo({
   if (fase.tipo === "concluido") {
     const falhas = textoDasFalhas(fase.job.falhas);
     return (
-      <div role="status" data-testid="recalculo-concluido" className="flex items-start gap-2 rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+      <div role="status" data-testid="recalculo-concluido" className="flex items-start gap-2 rounded-md border border-success bg-success-muted px-3 py-2 text-sm text-foreground">
         <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5" aria-hidden />
         <p>
           Resultados recalculados{fase.job.regravados ? ` (${fase.job.regravados})` : ""}.
-          {falhas && <span className="block text-amber-800">{falhas}</span>}
+          {falhas && <span className="block text-foreground">{falhas}</span>}
         </p>
       </div>
     );
@@ -123,13 +123,13 @@ export function AvisoDeRecalculo({
     const { processados, total } = fase.job;
     const pct = total ? Math.round((Math.min(processados, total) / total) * 100) : 0;
     return (
-      <div role="status" data-testid="recalculo-rodando" className="flex flex-col gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+      <div role="status" data-testid="recalculo-rodando" className="flex flex-col gap-2 rounded-md border border-warning bg-warning-muted px-3 py-2 text-sm text-foreground">
         <p className="flex items-center gap-2">
           <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden />
           {textoDoProgresso(processados, total)}
         </p>
-        <div className="h-1.5 w-full rounded bg-amber-200" aria-hidden>
-          <div className="h-1.5 rounded bg-amber-600 transition-all" style={{ width: `${pct}%` }} />
+        <div className="h-1.5 w-full rounded bg-warning-muted" aria-hidden>
+          <div className="h-1.5 rounded bg-warning transition-all" style={{ width: `${pct}%` }} />
         </div>
       </div>
     );
@@ -138,12 +138,12 @@ export function AvisoDeRecalculo({
   if (divergentes <= 0 && fase.tipo !== "erro") return null;
 
   return (
-    <div role="note" data-testid="aviso-divergencia" className="flex flex-col gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900 sm:flex-row sm:items-center sm:justify-between">
+    <div role="note" data-testid="aviso-divergencia" className="flex flex-col gap-2 rounded-md border border-warning bg-warning-muted px-3 py-2 text-sm text-foreground sm:flex-row sm:items-center sm:justify-between">
       <p className="flex items-start gap-2">
         <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" aria-hidden />
         <span>
           <strong>Relatório desatualizado.</strong> {textoDaDivergencia(anuladas, divergentes, desanuladas)}
-          {fase.tipo === "erro" && <span className="block text-rose-700">{fase.mensagem}</span>}
+          {fase.tipo === "erro" && <span className="block text-destructive">{fase.mensagem}</span>}
         </span>
       </p>
       <Button size="sm" className="shrink-0 print:hidden" disabled={pedindo} onClick={recalcular}>

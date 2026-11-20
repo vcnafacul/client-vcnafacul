@@ -76,17 +76,17 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
       <div className="w-full flex flex-col gap-5 max-h-[80vh]">
         {/* Header */}
         <div>
-          <Text size="secondary" className="font-bold text-marine">
+          <Text size="secondary" className="font-bold text-foreground">
             Editar Perfil
           </Text>
-          <p className="text-sm text-gray-400 mt-0.5">
+          <p className="text-sm text-muted-foreground mt-0.5">
             Selecione um perfil e ajuste suas permissões.
           </p>
         </div>
 
         {/* Role selector */}
         <label className="flex flex-col gap-1">
-          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
             Perfil
           </span>
 
@@ -115,7 +115,7 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
         </div>
 
         {/* Actions */}
-        <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
+        <div className="flex justify-end gap-3 pt-2 border-t border-border">
           <Button typeStyle="primary" onClick={handleClose}>
             Cancelar
           </Button>

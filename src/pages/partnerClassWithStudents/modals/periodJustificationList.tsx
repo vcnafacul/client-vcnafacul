@@ -123,7 +123,7 @@ export function PeriodJustificationList({
       <button
         type="button"
         onClick={handleToggle}
-        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 text-sm font-semibold text-gray-700"
+        className="w-full flex items-center justify-between px-4 py-3 bg-page hover:bg-muted text-sm font-semibold text-foreground"
       >
         <span>Justificativas de Período ({totalItems})</span>
         {expanded ? (
@@ -137,13 +137,13 @@ export function PeriodJustificationList({
       {expanded && (
         <div className="flex flex-col gap-2 p-4">
           {loading && (
-            <p className="text-sm text-gray-400 text-center py-2">
+            <p className="text-sm text-muted-foreground text-center py-2">
               Carregando...
             </p>
           )}
 
           {!loading && items.length === 0 && (
-            <p className="text-sm text-gray-400 text-center py-2">
+            <p className="text-sm text-muted-foreground text-center py-2">
               Nenhuma justificativa encontrada.
             </p>
           )}
@@ -155,13 +155,13 @@ export function PeriodJustificationList({
                 className="flex items-start justify-between border rounded-md p-3 gap-2 bg-white"
               >
                 <div className="flex flex-col gap-1 flex-1 min-w-0">
-                  <span className="text-xs font-semibold text-marine">
+                  <span className="text-xs font-semibold text-foreground">
                     {formatDate(item.startDate)} — {formatDate(item.endDate)}
                   </span>
-                  <p className="text-sm text-gray-700 break-words">
+                  <p className="text-sm text-foreground break-words">
                     {item.justification}
                   </p>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-muted-foreground">
                     Criado por: {item.createdBy?.name ?? "—"} em{" "}
                     {formatDate(item.createdAt)}
                   </span>
@@ -170,7 +170,7 @@ export function PeriodJustificationList({
                   <button
                     type="button"
                     onClick={() => openDeleteModal(item.id)}
-                    className="text-gray-400 hover:text-red-500 flex-shrink-0 mt-0.5"
+                    className="text-muted-foreground hover:text-destructive flex-shrink-0 mt-0.5"
                     title="Excluir justificativa"
                   >
                     <IoClose className="w-5 h-5" />
@@ -186,18 +186,18 @@ export function PeriodJustificationList({
                 type="button"
                 onClick={() => fetchPage(page - 1)}
                 disabled={page <= 1 || loading}
-                className="px-3 py-1 text-xs rounded border disabled:opacity-40 hover:bg-gray-100"
+                className="px-3 py-1 text-xs rounded border disabled:opacity-40 hover:bg-muted"
               >
                 Anterior
               </button>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-muted-foreground">
                 {page} / {totalPages}
               </span>
               <button
                 type="button"
                 onClick={() => fetchPage(page + 1)}
                 disabled={page >= totalPages || loading}
-                className="px-3 py-1 text-xs rounded border disabled:opacity-40 hover:bg-gray-100"
+                className="px-3 py-1 text-xs rounded border disabled:opacity-40 hover:bg-muted"
               >
                 Próxima
               </button>
@@ -217,7 +217,7 @@ export function PeriodJustificationList({
           handleConfirm={handleDelete}
           text="Tem certeza que deseja excluir esta justificativa de período?"
         >
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             {textoDaExclusaoDePeriodo(
               items.find((i) => i.id === selectedId)?.faltasJustificadas,
             )}

@@ -68,7 +68,7 @@ export function AreaDesempenho({
             action={
               <Link
                 to={`${DASH}/${PARTNER_PROVAS}`}
-                className="text-sm font-medium text-marine underline-offset-2 hover:underline"
+                className="text-sm font-medium text-foreground underline-offset-2 hover:underline"
               >
                 Ir para Provas →
               </Link>
@@ -127,7 +127,7 @@ export function AreaDesempenho({
                   dataKey="media"
                   stroke={chartColors.primary}
                   strokeWidth={2}
-                  dot={{ r: 3, fill: "#fff", strokeWidth: 2 }}
+                  dot={{ r: 3, fill: "hsl(var(--background))", strokeWidth: 2 }}
                   activeDot={{ r: 5 }}
                   isAnimationActive={false}
                 />
@@ -159,7 +159,7 @@ export function AreaDesempenho({
         ) : (
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-400">
+              <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
                 <th className="py-2 pr-2 font-medium">Mês</th>
                 <th className="px-2 py-2 text-right font-medium">Simulados</th>
                 <th className="py-2 pl-2 text-right font-medium">Redação</th>
@@ -167,16 +167,16 @@ export function AreaDesempenho({
             </thead>
             <tbody>
               {dados.porMes.map((m) => (
-                <tr key={m.mes} className="border-b border-slate-100 last:border-0">
-                  <td className="py-2 pr-2 font-medium text-slate-700">
+                <tr key={m.mes} className="border-b border-border last:border-0">
+                  <td className="py-2 pr-2 font-medium text-foreground">
                     {rotuloDoMes(m.mes)}
                   </td>
-                  <td className="px-2 py-2 text-right tabular-nums lining-nums text-slate-600">
+                  <td className="px-2 py-2 text-right tabular-nums lining-nums text-muted-foreground">
                     {m.simulados.participantes
                       ? `${m.simulados.participantes} alunos · ${porcentagem(m.simulados.media)}`
                       : "—"}
                   </td>
-                  <td className="py-2 pl-2 text-right tabular-nums lining-nums text-slate-600">
+                  <td className="py-2 pl-2 text-right tabular-nums lining-nums text-muted-foreground">
                     {m.redacao.corrigidas
                       ? `${m.redacao.corrigidas} corrigidas · nota ${m.redacao.media}`
                       : "—"}

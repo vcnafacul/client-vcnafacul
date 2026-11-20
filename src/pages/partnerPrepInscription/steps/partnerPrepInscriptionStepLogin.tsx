@@ -23,13 +23,13 @@ export function PartnerPrepInscriptionStepLogin({ setStepCurrently }: Props) {
       <div className="flex mx-auto px-4 justify-between max-w-[500px] w-full">
         <Link
           to={FORGOT_PASSWORD_PATH}
-          className="text-orange w-fit underline font-bold"
+          className="text-primary w-fit underline font-bold"
         >
           Esqueci minha senha
         </Link>
         <div
           onClick={setStepCurrently}
-          className="text-orange w-fit underline font-bold cursor-pointer"
+          className="text-primary w-fit underline font-bold cursor-pointer"
         >
           Não possuo cadastro
         </div>

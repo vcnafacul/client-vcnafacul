@@ -197,8 +197,8 @@ export function PrinterStudentCards({
         onClick={handleGeneratePDF}
         className={`px-4 py-2 rounded-lg transition ${
           isLoading || isGeneratingPDF
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-redError text-white hover:bg-red"
+            ? "bg-muted text-muted-foreground cursor-not-allowed"
+            : "bg-destructive text-white hover:bg-destructive"
         }`}
         disabled={isLoading || isGeneratingPDF}
       >
@@ -215,7 +215,7 @@ export function PrinterStudentCards({
               link.download = "carteirinhas.pdf";
               link.click();
             }}
-            className="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-700"
+            className="mt-4 px-4 py-2 bg-success text-success-foreground rounded-lg hover:bg-success/90"
           >
             Baixar PDF
           </button>

@@ -435,7 +435,7 @@ export function StudentsEnrolled() {
     <div className="flex gap-2 justify-center">
       <Tooltip title="Visualizar">
         <IconButton onClick={() => handleModalDetaild(estudante.id)}>
-          <IoEyeSharp className="h-6 w-6 fill-gray-500 opacity-60 hover:opacity-100" />
+          <IoEyeSharp className="h-6 w-6 fill-muted-foreground opacity-60 hover:opacity-100" />
         </IconButton>
       </Tooltip>
       {permissao[Roles.gerenciarEstudantes] &&
@@ -447,7 +447,7 @@ export function StudentsEnrolled() {
                 handleDownloadEnrollmentCertificate(estudante.id)
               }
             >
-              <FaDownload className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
+              <FaDownload className="h-6 w-6 fill-primary opacity-60 hover:opacity-100" />
             </IconButton>
           </Tooltip>
         )}
@@ -467,7 +467,7 @@ export function StudentsEnrolled() {
                 }
               }}
             >
-              <IoClose className="h-6 w-6 fill-red opacity-60 hover:opacity-100" />
+              <IoClose className="h-6 w-6 fill-destructive opacity-60 hover:opacity-100" />
             </IconButton>
           </Tooltip>
         )}
@@ -487,7 +487,7 @@ export function StudentsEnrolled() {
                 }
               }}
             >
-              <FaCheck className="h-6 w-6 fill-green2 opacity-60 hover:opacity-100" />
+              <FaCheck className="h-6 w-6 fill-success opacity-60 hover:opacity-100" />
             </IconButton>
           </Tooltip>
         )}
@@ -507,7 +507,7 @@ export function StudentsEnrolled() {
               }
             }}
           >
-            <MdClass className="h-6 w-6 fill-marine opacity-60 hover:opacity-100" />
+            <MdClass className="h-6 w-6 fill-primary opacity-60 hover:opacity-100" />
           </IconButton>
         </Tooltip>
       )}
@@ -682,7 +682,7 @@ export function StudentsEnrolled() {
   return (
     <div className="flex flex-col justify-center items-center pt-4 gap-4">
       <div className="w-full px-4">
-        <h1 className="text-3xl font-bold text-center text-marine">{name}</h1>
+        <h1 className="text-3xl font-bold text-center text-foreground">{name}</h1>
       </div>
       {/*
         No celular os filtros ficam compactos (size small) e em grade de 2:
@@ -793,7 +793,7 @@ export function StudentsEnrolled() {
           <Button
             onClick={() => modals.modalStudentCards.open()}
             size="small"
-            className="bg-red border-none flex gap-2 items-center hover:bg-red w-full h-10 sm:w-fit sm:h-fit"
+            className="bg-destructive border-none flex gap-2 items-center hover:bg-destructive w-full h-10 sm:w-fit sm:h-fit"
             disabled={selectedRows.length === 0}
           >
             <div className="flex gap-2 items-center justify-center">

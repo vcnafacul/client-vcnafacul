@@ -18,7 +18,7 @@ export function TableInfo({ students }: Props) {
   return (
     <div className="flex flex-col sm:h-28 gap-2 flex-wrap justify-start w-fit gap-x-4 ">
       <div className="flex gap-1">
-        <MdOutlinePendingActions className="h-6 w-6 fill-orange" />
+        <MdOutlinePendingActions className="h-6 w-6 fill-warning" />
         <PropValue
           className="md:text-base"
           prop="Em Análise"
@@ -29,7 +29,7 @@ export function TableInfo({ students }: Props) {
         />
       </div>
       <div className="flex gap-1">
-        <PiListChecksFill className="h-6 w-6 fill-lime-600" />
+        <PiListChecksFill className="h-6 w-6 fill-success" />
         <PropValue
           className="md:text-base"
           prop="A Convocar"
@@ -40,7 +40,7 @@ export function TableInfo({ students }: Props) {
         />
       </div>
       <div className="flex gap-1">
-        <RiFileListFill className="h-6 w-6 fill-marine" />
+        <RiFileListFill className="h-6 w-6 fill-primary" />
         <PropValue
           className="md:text-base"
           prop="Lista de Espera"
@@ -51,7 +51,7 @@ export function TableInfo({ students }: Props) {
         />
       </div>
       <div className="flex gap-1">
-        <FaCheck className="h-6 w-6 fill-green3" />
+        <FaCheck className="h-6 w-6 fill-success" />
         <PropValue
           className="md:text-base"
           prop="Declarou Interesse"
@@ -63,7 +63,7 @@ export function TableInfo({ students }: Props) {
         />
       </div>
       <div className="flex gap-1">
-        <MdOutlineMoneyOffCsred className="h-6 w-6 fill-green2" />
+        <MdOutlineMoneyOffCsred className="h-6 w-6 fill-success" />
         <PropValue
           className="md:text-base"
           prop="Isentos Matriculados"
@@ -78,7 +78,7 @@ export function TableInfo({ students }: Props) {
         />
       </div>
       <div className="flex gap-1">
-        <BsPersonVcard className="h-6 w-6 fill-pink" />
+        <BsPersonVcard className="h-6 w-6 fill-chart-4" />
         <PropValue
           className="md:text-base"
           prop="Matriculados"

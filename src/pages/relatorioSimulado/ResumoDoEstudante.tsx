@@ -115,7 +115,7 @@ function LinhaDeMateria({
         </span>
 
         {/* ⚠️ `div` com `width: %`, como a barra do card 19 — não um gráfico. */}
-        <span className="h-2 flex-1 overflow-hidden rounded-sm bg-lightGray">
+        <span className="h-2 flex-1 overflow-hidden rounded-sm bg-muted">
           <span
             className={cn("block h-full rounded-sm", dashV2.progress.done)}
             style={{ width: `${Math.round(nota * 100)}%` }}

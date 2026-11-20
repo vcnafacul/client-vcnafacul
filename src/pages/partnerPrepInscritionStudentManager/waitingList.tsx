@@ -147,7 +147,7 @@ export function WaitingList(props: Props) {
       <ModalTemplate {...props} className="bg-white p-4 rounded-md">
         <div className="w-full overflow-y-auto scrollbar-hide flex flex-col gap-4">
           <Text size="secondary">Lista de Espera</Text>
-          <table className="min-w-full divide-y divide-gray-300">
+          <table className="min-w-full divide-y divide-border">
             <thead>
               <tr>
                 <th>Posição</th>
@@ -156,7 +156,7 @@ export function WaitingList(props: Props) {
             </thead>
             <tbody className="bg-white">
               {students.map((stu) => (
-                <tr key={stu.id} className="even:bg-gray-200">
+                <tr key={stu.id} className="even:bg-muted">
                   <td className="text-center">{stu.position}</td>
                   <td className="sm:whitespace-nowrap break-words text-sm font-medium p-2 text-center">
                     {stu.name}
@@ -192,7 +192,7 @@ export function WaitingList(props: Props) {
                 <Button
                   size="small"
                   typeStyle="accepted"
-                  className="w-full border-zinc-200"
+                  className="w-full border-border"
                 >
                   <div className="flex justify-center items-center">
                     <MdEmail className="h-6 w-10" />

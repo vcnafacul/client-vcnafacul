@@ -74,12 +74,12 @@ export function PeriodJustificationModal({
       handleClose={handleClose}
       className="bg-white p-6 rounded-md w-[90vw] sm:w-[520px] h-auto flex flex-col gap-4"
     >
-      <h2 className="text-lg font-semibold text-gray-800">
+      <h2 className="text-lg font-semibold text-foreground">
         Nova Justificativa de Período
       </h2>
 
       <div className="flex flex-col gap-1">
-        <label className="text-xs text-grey font-semibold">
+        <label className="text-xs text-muted-foreground font-semibold">
           Período (início — fim)
         </label>
         <div className="flex flex-col justify-content-center border rounded-md px-3 py-2">
@@ -89,7 +89,7 @@ export function PeriodJustificationModal({
             value={dateRange as Date[]}
             onChange={(e) => setDateRange(e.value as (Date | null)[])}
             selectionMode="range"
-            className="focus-visible:ring-orange rounded-md w-full"
+            className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md w-full"
             readOnlyInput
             numberOfMonths={1}
             minDate={coursePeriodStart ? new Date(coursePeriodStart) : undefined}
@@ -101,7 +101,7 @@ export function PeriodJustificationModal({
 
       <div className="flex flex-col gap-1">
         <label
-          className="text-xs text-grey font-semibold"
+          className="text-xs text-muted-foreground font-semibold"
           htmlFor="justification-input"
         >
           Justificativa *
@@ -112,10 +112,10 @@ export function PeriodJustificationModal({
           onChange={(e) => setJustification(e.target.value)}
           maxLength={255}
           rows={3}
-          className="border rounded-md px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-marine"
+          className="border rounded-md px-3 py-2 text-sm resize-none focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           placeholder="Descreva a justificativa..."
         />
-        <span className="text-xs text-gray-400 text-right">
+        <span className="text-xs text-muted-foreground text-right">
           {justification.length}/255
         </span>
       </div>
@@ -123,7 +123,7 @@ export function PeriodJustificationModal({
       <div className="flex justify-end gap-2">
         <button
           onClick={handleClose}
-          className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+          className="px-4 py-2 text-foreground bg-muted rounded-md hover:bg-accent"
           disabled={submitting}
         >
           Cancelar
@@ -137,7 +137,7 @@ export function PeriodJustificationModal({
             !dateRange[1] ||
             !justification.trim()
           }
-          className="bg-marine hover:opacity-90 text-white font-bold py-2 px-4 rounded
+          className="bg-primary hover:opacity-90 text-white font-bold py-2 px-4 rounded
             disabled:bg-opacity-75 disabled:cursor-not-allowed"
         >
           Confirmar

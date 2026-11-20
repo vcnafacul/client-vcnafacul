@@ -22,8 +22,8 @@ function Marca({ ativo, children }: { ativo: boolean; children: ReactNode }) {
     <span
       className={`text-xs px-2 py-0.5 rounded-full border ${
         ativo
-          ? "bg-marine/10 border-marine/30 text-marine font-semibold"
-          : "border-gray-200 text-gray-400"
+          ? "bg-primary/10 border-primary/30 text-foreground font-semibold"
+          : "border-border text-muted-foreground"
       }`}
     >
       {children}
@@ -66,9 +66,9 @@ export function ListaDeInscritosMobile({
         }}
         placeholder="Buscar por nome, email ou CPF"
         aria-label="Buscar inscrito"
-        className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm"
+        className="w-full h-10 px-3 border border-border rounded-md text-sm"
       />
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-muted-foreground">
         {filtrados.length} de {inscritos.length} inscritos
       </p>
 
@@ -80,26 +80,26 @@ export function ListaDeInscritosMobile({
           return (
             <li
               key={inscrito.id}
-              className="bg-white border border-gray-200 rounded-lg p-3 flex flex-col gap-2"
+              className="bg-white border border-border rounded-lg p-3 flex flex-col gap-2"
             >
               <div className="flex items-start gap-2">
                 {posicao != null && (
-                  <span className="text-sm font-bold text-marine shrink-0">
+                  <span className="text-sm font-bold text-foreground shrink-0">
                     {posicao}º
                   </span>
                 )}
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-gray-900 break-words">
+                  <p className="font-semibold text-foreground break-words">
                     {capitalizeWords(`${inscrito.nome} ${inscrito.sobrenome}`)}
                   </p>
-                  <p className="text-xs text-gray-500 break-all">
+                  <p className="text-xs text-muted-foreground break-all">
                     {mascarar.email(inscrito.email)}
                   </p>
                 </div>
               </div>
 
               <p className="text-sm">
-                <span className="text-gray-500">Status: </span>
+                <span className="text-muted-foreground">Status: </span>
                 <span className="font-medium">{inscrito.status}</span>
               </p>
 
@@ -114,14 +114,14 @@ export function ListaDeInscritosMobile({
               </div>
 
               {(convocacao || prazo) && (
-                <p className="text-xs text-gray-600">
+                <p className="text-xs text-muted-foreground">
                   {convocacao && <>Convocado em {convocacao}</>}
                   {convocacao && prazo && " · "}
                   {prazo && <>Prazo {prazo}</>}
                 </p>
               )}
 
-              <div className="border-t border-gray-100 pt-2 [&>div]:h-auto [&>div]:justify-start">
+              <div className="border-t border-border pt-2 [&>div]:h-auto [&>div]:justify-start">
                 {renderAcoes(inscrito)}
               </div>
             </li>
@@ -130,7 +130,7 @@ export function ListaDeInscritosMobile({
       </ul>
 
       {filtrados.length === 0 && (
-        <p className="text-center text-sm text-gray-500 py-6">
+        <p className="text-center text-sm text-muted-foreground py-6">
           Nenhum inscrito encontrado
         </p>
       )}
@@ -139,7 +139,7 @@ export function ListaDeInscritosMobile({
         <button
           type="button"
           onClick={() => setVisiveis((v) => v + TAMANHO_DA_PAGINA)}
-          className="h-10 w-full border border-marine text-marine rounded-md text-sm font-medium"
+          className="h-10 w-full border border-primary text-foreground rounded-md text-sm font-medium"
         >
           Mostrar mais ({filtrados.length - visiveis} restantes)
         </button>

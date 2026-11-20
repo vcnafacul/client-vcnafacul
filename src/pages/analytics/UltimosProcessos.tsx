@@ -14,9 +14,9 @@ import {
 import { periodoDoProcesso } from "./periodoDoProcesso";
 
 const SITUACAO: Record<SituacaoDoProcesso, { texto: string; classe: string }> = {
-  aberto: { texto: "Aberto", classe: "bg-green/10 text-darkGreen border-darkGreen/40" },
-  encerrado: { texto: "Encerrado", classe: "bg-backgroundGrey text-darkGrey border-lightGray" },
-  futuro: { texto: "Futuro", classe: "bg-marine/10 text-marine border-marine/30" },
+  aberto: { texto: "Aberto", classe: "bg-success-muted text-success border-success/40" },
+  encerrado: { texto: "Encerrado", classe: "bg-page text-muted-foreground border-border" },
+  futuro: { texto: "Futuro", classe: "bg-primary/10 text-foreground border-primary/30" },
 };
 
 
@@ -41,8 +41,8 @@ type Props = {
 /** Os últimos processos seletivos, sem testes (tickets/044, card 08, D7). */
 export function UltimosProcessos({ processos, carregando, mostrarCursinho }: Props) {
   return (
-    <div className="shadow-md bg-white shadow-slate-200 p-3 rounded">
-      <h3 className="font-semibold text-marine mb-2">
+    <div className="shadow-md bg-white p-3 rounded">
+      <h3 className="font-semibold text-foreground mb-2">
         Últimos processos seletivos
       </h3>
       {carregando ? (
@@ -52,7 +52,7 @@ export function UltimosProcessos({ processos, carregando, mostrarCursinho }: Pro
           ))}
         </div>
       ) : processos.length === 0 ? (
-        <p className="py-6 text-center text-sm text-grey">
+        <p className="py-6 text-center text-sm text-muted-foreground">
           Nenhum processo seletivo ainda.
         </p>
       ) : (
@@ -60,15 +60,15 @@ export function UltimosProcessos({ processos, carregando, mostrarCursinho }: Pro
           {/* Celular (abaixo de sm = 768px): um card por processo, sem scroll lateral. */}
           <ul className="space-y-2 sm:hidden">
             {processos.map((p) => (
-              <li key={p.id} className="rounded border border-lightGray p-3">
+              <li key={p.id} className="rounded border border-border p-3">
                 <div className="flex items-start justify-between gap-2">
                   <p className="font-medium break-words min-w-0">{p.nome}</p>
                   <Situacao situacao={p.situacao} />
                 </div>
                 {mostrarCursinho && (
-                  <p className="text-sm text-grey break-words">{p.cursinho.nome}</p>
+                  <p className="text-sm text-muted-foreground break-words">{p.cursinho.nome}</p>
                 )}
-                <p className="text-xs text-grey mt-1">{periodoDoProcesso(p)}</p>
+                <p className="text-xs text-muted-foreground mt-1">{periodoDoProcesso(p)}</p>
                 <p className="text-sm mt-1">
                   <strong>{p.inscricoes}</strong> inscrições ·{" "}
                   <strong>{p.matriculas}</strong> matrículas
@@ -118,7 +118,7 @@ export function UltimosProcessos({ processos, carregando, mostrarCursinho }: Pro
           </div>
         </>
       )}
-      <p className="text-xs text-grey mt-2">
+      <p className="text-xs text-muted-foreground mt-2">
         Sem processos de teste. Os 10 mais recentes.
       </p>
     </div>

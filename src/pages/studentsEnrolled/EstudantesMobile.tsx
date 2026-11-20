@@ -48,7 +48,7 @@ export function EstudantesMobile({
 
   return (
     <div className="w-full px-4 flex flex-col gap-3 pb-4">
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-muted-foreground">
         {total} estudantes
         {selecao && selecao.selecionados.length > 0 && (
           <> · {selecao.selecionados.length} selecionados para carteirinha</>
@@ -61,7 +61,7 @@ export function EstudantesMobile({
           return (
             <li
               key={e.id}
-              className="bg-white border border-gray-200 rounded-lg p-3 flex flex-col gap-1"
+              className="bg-white border border-border rounded-lg p-3 flex flex-col gap-1"
             >
               <div className="flex items-start gap-2">
                 {podeSelecionar && (
@@ -70,27 +70,27 @@ export function EstudantesMobile({
                     aria-label={`Selecionar ${e.name} para carteirinha`}
                     checked={selecao!.selecionados.includes(e.id)}
                     onChange={() => alternar(e.id)}
-                    className="mt-1 h-5 w-5 accent-marine shrink-0"
+                    className="mt-1 h-5 w-5 accent-primary shrink-0"
                   />
                 )}
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-gray-900 break-words">
+                  <p className="font-semibold text-foreground break-words">
                     {e.name}
                   </p>
-                  <p className="text-xs text-gray-500 break-all">
+                  <p className="text-xs text-muted-foreground break-all">
                     {mascarar.email(e.email)}
                   </p>
                 </div>
               </div>
-              <p className="text-xs text-gray-700">
+              <p className="text-xs text-foreground">
                 Matrícula {e.cod_enrolled} · {e.class?.name ?? "Sem turma"}
                 {e.whatsapp && <> · {mascarar.telefone(e.whatsapp)}</>}
               </p>
               <p className="text-sm">
-                <span className="text-gray-500">Status: </span>
+                <span className="text-muted-foreground">Status: </span>
                 <span className="font-medium">{e.applicationStatus}</span>
               </p>
-              <div className="border-t border-gray-100 mt-1 pt-1 flex justify-end">
+              <div className="border-t border-border mt-1 pt-1 flex justify-end">
                 {renderAcoes(e)}
               </div>
             </li>
@@ -99,7 +99,7 @@ export function EstudantesMobile({
       </ul>
 
       {estudantes.length === 0 && (
-        <p className="text-center text-sm text-gray-500 py-6">
+        <p className="text-center text-sm text-muted-foreground py-6">
           Nenhum estudante encontrado para os filtros selecionados
         </p>
       )}
@@ -113,18 +113,18 @@ export function EstudantesMobile({
             type="button"
             onClick={() => onPagina(pagina - 1)}
             disabled={pagina === 0}
-            className="h-10 px-4 border border-marine text-marine rounded-md text-sm font-medium disabled:opacity-40"
+            className="h-10 px-4 border border-primary text-foreground rounded-md text-sm font-medium disabled:opacity-40"
           >
             Anterior
           </button>
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-muted-foreground">
             {pagina + 1} de {totalDePaginas}
           </span>
           <button
             type="button"
             onClick={() => onPagina(pagina + 1)}
             disabled={pagina + 1 >= totalDePaginas}
-            className="h-10 px-4 border border-marine text-marine rounded-md text-sm font-medium disabled:opacity-40"
+            className="h-10 px-4 border border-primary text-foreground rounded-md text-sm font-medium disabled:opacity-40"
           >
             Próxima
           </button>

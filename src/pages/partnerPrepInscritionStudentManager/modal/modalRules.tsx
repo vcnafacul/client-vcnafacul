@@ -42,6 +42,7 @@ import { FiDownload, FiPlus, FiTrash2 } from "react-icons/fi";
 import { MdPlayArrow } from "react-icons/md";
 import { toast } from "react-toastify";
 import { ModalCreateRule } from "./modalCreateRule";
+import { palette } from "@/lib/palette";
 
 interface ModalRulesProps extends ModalProps {
   isOpen: boolean;
@@ -257,7 +258,7 @@ export function ModalRules({
         ],
         styles: {
           header: { fontSize: 16, bold: true },
-          subheader: { fontSize: 10, color: "#666" },
+          subheader: { fontSize: 10, color: palette.neutral[600] },
         },
       },
       "ranking"

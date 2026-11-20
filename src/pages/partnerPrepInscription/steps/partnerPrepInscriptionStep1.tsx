@@ -225,19 +225,19 @@ export function PartnerPrepInscriptionStep1({
             }}
           />
         </div>
-        <div className="text-sm text-gray-500">
-          <span className="text-sm font-extrabold pb-2 text-gray-500"></span>
+        <div className="text-sm text-muted-foreground">
+          <span className="text-sm font-extrabold pb-2 text-muted-foreground"></span>
           {socialNameCheckbox}{" "}
           <a
             href={linkSocialName}
             target="_blank"
-            className="text-blue-600 underline hover:text-blue-800 focus:outline focus:ring-2 focus:ring-blue-500"
+            className="text-primary underline hover:text-primary/80 focus:outline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             Saiba mais aqui.
           </a>
         </div>
       </div>
-      <span className="text-xs text-grey font-semibold mb-4">
+      <span className="text-xs text-muted-foreground font-semibold mb-4">
         Esta é uma pré-visualização do nome que será utilizado na plataforma:{" "}
         {getDisplayName()}
       </span>
@@ -249,7 +249,7 @@ export function PartnerPrepInscriptionStep1({
         value={currentData?.email}
          
         onChange={(e: any) => setValue("email", e.target.value)}
-        className="bg-gray-200 tracking-wider"
+        className="bg-muted tracking-wider"
         maxLength={100}
       />
       <InputFactory
@@ -278,9 +278,9 @@ export function PartnerPrepInscriptionStep1({
           setValue("urgencyPhone", value);
         }}
       />
-      <div className="card flex justify-content-center h-16 border hover:border-orange pt-4 pl-4 rounded-md relative mb-4 row-start-3 col-start-1 z-10">
+      <div className="card flex justify-content-center h-16 border hover:border-cta pt-4 pl-4 rounded-md relative mb-4 row-start-3 col-start-1 z-10">
         <label
-          className="absolute top-1 left-3 text-xs text-grey font-semibold"
+          className="absolute top-1 left-3 text-xs text-muted-foreground font-semibold"
           htmlFor="date"
         >
           Data de Nascimento*
@@ -303,7 +303,7 @@ export function PartnerPrepInscriptionStep1({
           )}
         />
         {errors.birthday && (
-          <p className="absolute text-red text-xs mt-1 -bottom-5 left-0">
+          <p className="absolute text-destructive text-xs mt-1 -bottom-5 left-0">
             {errors.birthday.message}
           </p>
         )}

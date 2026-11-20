@@ -169,8 +169,8 @@ export function TelaDosIndicadores({
       <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 sm:px-6">
         <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-marine">Indicadores</h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <h1 className="text-2xl font-bold text-foreground">Indicadores</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
               {outro
                 ? `Como estão os alunos de ${outro.name} ${recorte}.`
                 : semCursinho
@@ -212,7 +212,7 @@ export function TelaDosIndicadores({
                   </SelectContent>
                 </Select>
                 {periodo && dados && !carregando && (
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-muted-foreground">
                     {rotuloDaAtualizacao(periodo, dados.atualizadoEm)}
                   </span>
                 )}
@@ -224,7 +224,7 @@ export function TelaDosIndicadores({
         {outro && (
           <p
             role="status"
-            className="rounded-xl border border-marine/20 bg-marine/[0.04] px-4 py-3 text-sm text-slate-600"
+            className="rounded-xl border border-primary/20 bg-primary/[0.04] px-4 py-3 text-sm text-muted-foreground"
           >
             Você está vendo os indicadores de <strong>{outro.name}</strong> como
             o cursinho vê. Telefones dos alunos não aparecem.
@@ -232,7 +232,7 @@ export function TelaDosIndicadores({
         )}
 
         {!!periodos?.turmasSemPeriodo && (
-          <p className="rounded-xl border border-orange/30 bg-orange/[0.06] px-4 py-3 text-sm text-slate-600">
+          <p className="rounded-xl border border-cta/30 bg-cta/[0.06] px-4 py-3 text-sm text-muted-foreground">
             {periodos.turmasSemPeriodo === 1
               ? "1 turma sem período letivo não entra nestes números. "
               : `${periodos.turmasSemPeriodo} turmas sem período letivo não entram nestes números. `}
@@ -240,7 +240,7 @@ export function TelaDosIndicadores({
             {!outro && (
               <Link
                 to={`${DASH}/${PARTNER_CLASS}`}
-                className="font-medium text-marine underline-offset-2 hover:underline"
+                className="font-medium text-foreground underline-offset-2 hover:underline"
               >
                 Ver turmas
               </Link>
@@ -273,9 +273,9 @@ export function TelaDosIndicadores({
 /** Admin sem cursinho próprio (tickets/045). */
 function EscolhaUmCursinho() {
   return (
-    <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
-      <p className="font-medium text-marine">Escolha um cursinho</p>
-      <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">
+    <div className="rounded-2xl border border-dashed border-border bg-white px-6 py-10 text-center">
+      <p className="font-medium text-foreground">Escolha um cursinho</p>
+      <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
         Você não faz parte de um cursinho. Escolha um no topo para ver os
         indicadores como aquele cursinho vê.
       </p>
@@ -285,17 +285,17 @@ function EscolhaUmCursinho() {
 
 function SemPeriodo() {
   return (
-    <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
-      <p className="font-medium text-marine">
+    <div className="rounded-2xl border border-dashed border-border bg-white px-6 py-10 text-center">
+      <p className="font-medium text-foreground">
         Nenhum período letivo cadastrado
       </p>
-      <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">
+      <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
         Os indicadores são calculados por período letivo. Cadastre o período e
         ligue as turmas a ele para ver os números aqui.
       </p>
       <Link
         to={`${DASH}/${PARTNER_CLASS}`}
-        className="mt-4 inline-block text-sm font-medium text-marine underline-offset-2 hover:underline"
+        className="mt-4 inline-block text-sm font-medium text-foreground underline-offset-2 hover:underline"
       >
         Ir para Turmas
       </Link>

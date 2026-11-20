@@ -1,3 +1,4 @@
+import { palette } from "@/lib/palette";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { AproveitamentoHitoriesDTO } from "../../../dtos/historico/getPerformanceDTO";
@@ -58,10 +59,10 @@ describe("PerformanceChart", () => {
     render(<PerformanceChart aproveitamento={aproveitamento(4)} />);
 
     expect(screen.getByText("Pior Desempenho").nextSibling).toHaveStyle({
-      color: "#f87171",
+      color: palette.red[400],
     });
     expect(screen.getByText("Melhor Desempenho").nextSibling).toHaveStyle({
-      color: "#4ade80",
+      color: palette.mint[400],
     });
   });
 });

@@ -107,7 +107,7 @@ export function BarraDeDistribuicao({
                   : CORES_DA_BARRA.distrator,
               // ⚠️ A borda é o que marca o gabarito sem depender de cor —
               // `green3` mede 3.77:1 e não passa sozinho.
-              s.gabarito && "ring-1 ring-inset ring-marine",
+              s.gabarito && "ring-1 ring-inset ring-primary",
             )}
           />
         ))}

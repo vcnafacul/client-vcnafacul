@@ -85,7 +85,7 @@ const colunasDoDetalhe = (
     // tickets/042: a anulada com o X (fora da nota, ou anulada agora).
     cell: (r) =>
       r.anulada || r.anulacao ? (
-        <span data-anulada className="inline-flex items-center gap-1 text-rose-700">
+        <span data-anulada className="inline-flex items-center gap-1 text-destructive">
           <XCircle className="h-4 w-4" aria-hidden />
           {r.numero ?? VAZIO}
         </span>
@@ -133,7 +133,7 @@ const colunasDoDetalhe = (
         <>
           <StatusBadge tone={tone} label={texto} />
           {r.anulacao && (
-            <span className="block text-xs text-amber-700" title={r.anulacao.justificativa}>
+            <span className="block text-xs text-warning" title={r.anulacao.justificativa}>
               anulada depois: recalcule
             </span>
           )}

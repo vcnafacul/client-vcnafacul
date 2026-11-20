@@ -176,7 +176,7 @@ export default function AttendanceRecordSummaryModal({
         className="w-full max-w-md mx-auto space-y-6"
       >
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-foreground">
             Selecione o tipo de relatório
           </label>
 
@@ -229,13 +229,13 @@ export default function AttendanceRecordSummaryModal({
                 placeholder="25"
               />
               {padraoDoCursinho != null && (
-                <p className="text-xs text-grey mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Padrão do cursinho: {padraoDoCursinho}% (alerta de risco de
                   evasão)
                 </p>
               )}
               {errors.maxAbsencePercent && (
-                <p className="text-red text-sm mt-1">
+                <p className="text-destructive text-sm mt-1">
                   {errors.maxAbsencePercent.message}
                 </p>
               )}
@@ -243,18 +243,18 @@ export default function AttendanceRecordSummaryModal({
           )}
 
           {errors.reportType && (
-            <p className="text-xs text-red font-medium text-wrap max-w-60">
+            <p className="text-xs text-destructive font-medium text-wrap max-w-60">
               {errors.reportType.message}
             </p>
           )}
         </div>
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-foreground">
             Selecione o intervalo
           </label>
 
           <div className="relative">
-            <FiCalendar className="absolute top-1.5 left-3 text-gray-500 pointer-events-none" />
+            <FiCalendar className="absolute top-1.5 left-3 text-muted-foreground pointer-events-none" />
             <Controller
               name="range"
               control={control}
@@ -269,7 +269,7 @@ export default function AttendanceRecordSummaryModal({
                   readOnlyInput
                   hideOnRangeSelection
                   viewDate={new Date()}
-                  className="w-full pl-10 rounded-md border border-gray-300 focus:ring-2 focus:ring-orange-400"
+                  className="w-full pl-10 rounded-md border border-border focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   minDate={coursePeriodStart ? new Date(coursePeriodStart) : undefined}
                   maxDate={(() => {
                     const today = new Date();
@@ -281,7 +281,7 @@ export default function AttendanceRecordSummaryModal({
             />
           </div>
           {errors.range && (
-            <p className="text-xs text-red font-medium text-wrap max-w-60">
+            <p className="text-xs text-destructive font-medium text-wrap max-w-60">
               {errors.range.message}
             </p>
           )}
@@ -291,7 +291,7 @@ export default function AttendanceRecordSummaryModal({
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-marine opacity-90 hover:opacity-100 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-primary opacity-90 hover:opacity-100 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "Processando..." : "Gerar Relatório"}
           </button>

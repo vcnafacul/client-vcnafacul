@@ -18,16 +18,16 @@ interface SimpleHistoryCardProps {
 }
 
 const getPerformanceColor = (performance: number): string => {
-  if (performance >= 0.7) return "from-green-500/10 to-emerald-500/10";
-  if (performance >= 0.5) return "from-yellow-500/10 to-orange-500/10";
-  return "from-red-500/10 to-pink-500/10";
+  if (performance >= 0.7) return "from-success-muted to-success-muted/40";
+  if (performance >= 0.5) return "from-warning-muted to-warning-muted/40";
+  return "from-destructive-muted to-destructive-muted/40";
 };
 
 const getStatusIcon = (isComplete: boolean) => {
   return isComplete ? (
-    <CheckCircle2Icon className="h-5 w-5 text-green-600" />
+    <CheckCircle2Icon className="h-5 w-5 text-success" />
   ) : (
-    <XCircleIcon className="h-5 w-5 text-orange-500" />
+    <XCircleIcon className="h-5 w-5 text-warning" />
   );
 };
 
@@ -44,7 +44,7 @@ export function SimpleHistoryCard({
   const geral = historico.aproveitamento?.geral;
   const performanceColor = geral != null
     ? getPerformanceColor(geral)
-    : "from-gray-100 to-gray-200";
+    : "from-muted to-muted/60";
 
   const performancePercentage = geral != null
     ? `${(geral * 100).toFixed(2)}%`
@@ -74,8 +74,8 @@ export function SimpleHistoryCard({
           variant={isComplete ? "default" : "outline"}
           className={`text-sm font-bold px-3 py-1 shadow-lg ${
             isComplete
-              ? "bg-gradient-to-r from-green-600 to-green-500"
-              : "bg-gradient-to-r from-orange-500 to-orange-400"
+              ? "bg-success-muted text-foreground border-success"
+              : "bg-warning-muted text-foreground border-warning"
           }`}
         >
           {isComplete ? "Completo" : "Incompleto"}
@@ -128,8 +128,8 @@ export function SimpleHistoryCard({
             className="flex items-center gap-2 p-2 rounded-lg bg-white/50 backdrop-blur-sm
             group-hover:bg-white/70 transition-all duration-300"
           >
-            <div className="p-1.5 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/10">
-              <ClockIcon className="h-4 w-4 text-blue-600" />
+            <div className="p-1.5 rounded-full bg-muted">
+              <ClockIcon className="h-4 w-4 text-muted-foreground" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs text-muted-foreground font-medium">

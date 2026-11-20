@@ -192,10 +192,10 @@ export default function DeclareInterest({
   return (
     <div className="flex flex-col items-center p-6 w-full gap-8">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-800">
+        <h1 className="text-2xl font-bold text-foreground">
           Pré-Matrícula: Declaração de Interesse
         </h1>
-        <p className="text-gray-600 mt-2 text-lg">
+        <p className="text-muted-foreground mt-2 text-lg">
           {step != Steps.Sucess &&
             (isFree ? (
               <>
@@ -252,7 +252,7 @@ export default function DeclareInterest({
         handleConfirm={handleConfirm}
         text="Atenção"
       >
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Uma vez confirmado, não será possível voltar atrás nesta etapa.
           Deseja continuar?
         </p>

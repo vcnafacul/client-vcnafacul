@@ -138,25 +138,25 @@ export default function EnrollmentConfirmation() {
   const getPeriodStatusColor = (status?: EnrollmentPeriodStatus) => {
     switch (status) {
       case EnrollmentPeriodStatus.NOT_STARTED:
-        return "bg-yellow-50 border-yellow-500 text-yellow-800";
+        return "bg-warning-muted border-warning text-foreground";
       case EnrollmentPeriodStatus.IN_PROGRESS:
-        return "bg-green-50 border-green-500 text-green-800";
+        return "bg-success-muted border-success text-foreground";
       case EnrollmentPeriodStatus.FINISHED:
-        return "bg-gray-50 border-gray-500 text-gray-800";
+        return "bg-page border-input text-foreground";
       default:
-        return "bg-blue-50 border-blue-500 text-blue-800";
+        return "bg-info-muted border-info text-foreground";
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-fuchsia-50 via-white to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-page flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-fuchsia-100 rounded-full mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-muted rounded-full mb-4">
               <svg
-                className="w-8 h-8 text-fuchsia-600"
+                className="w-8 h-8 text-primary"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -169,16 +169,16 @@ export default function EnrollmentConfirmation() {
                 />
               </svg>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
               Confirmação de Matrícula
             </h1>
-            <p className="text-gray-600 text-sm md:text-base">
+            <p className="text-muted-foreground text-sm md:text-base">
               Verifique o status da sua matrícula informando seus dados abaixo
             </p>
 
             {/* Indicador de verificação automática */}
             {loading && autoVerified && (
-              <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium">
+              <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-info-muted text-foreground rounded-lg text-sm font-medium">
                 <svg
                   className="animate-spin h-4 w-4"
                   xmlns="http://www.w3.org/2000/svg"
@@ -210,7 +210,7 @@ export default function EnrollmentConfirmation() {
             <div>
               <label
                 htmlFor="cpf"
-                className="block text-sm font-semibold text-gray-700 mb-2"
+                className="block text-sm font-semibold text-foreground mb-2"
               >
                 CPF
               </label>
@@ -221,7 +221,7 @@ export default function EnrollmentConfirmation() {
                 onChange={handleCpfChange}
                 placeholder="000.000.000-00"
                 maxLength={14}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-fuchsia-500 focus:ring-2 focus:ring-fuchsia-200 outline-none transition-all text-base"
+                className="w-full px-4 py-3 border-2 border-border rounded-lg focus:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 outline-none transition-all text-base"
                 disabled={loading}
                 required
               />
@@ -231,7 +231,7 @@ export default function EnrollmentConfirmation() {
             <div>
               <label
                 htmlFor="enrollmentCode"
-                className="block text-sm font-semibold text-gray-700 mb-2"
+                className="block text-sm font-semibold text-foreground mb-2"
               >
                 Código de Matrícula
               </label>
@@ -241,7 +241,7 @@ export default function EnrollmentConfirmation() {
                 value={enrollmentCode}
                 onChange={handleEnrollmentCodeChange}
                 placeholder="Digite o código de matrícula"
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-fuchsia-500 focus:ring-2 focus:ring-fuchsia-200 outline-none transition-all text-base uppercase"
+                className="w-full px-4 py-3 border-2 border-border rounded-lg focus:border-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 outline-none transition-all text-base uppercase"
                 disabled={loading}
                 required
               />
@@ -290,15 +290,15 @@ export default function EnrollmentConfirmation() {
               <div
                 className={`p-6 border-l-4 rounded-lg ${
                   result.isEnrolled
-                    ? "bg-green-50 border-green-500"
-                    : "bg-red-50 border-red-500"
+                    ? "bg-success-muted border-success"
+                    : "bg-destructive-muted border-destructive"
                 }`}
               >
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0">
                     {result.isEnrolled ? (
                       <svg
-                        className="w-6 h-6 text-green-600"
+                        className="w-6 h-6 text-success"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -312,7 +312,7 @@ export default function EnrollmentConfirmation() {
                       </svg>
                     ) : (
                       <svg
-                        className="w-6 h-6 text-red-600"
+                        className="w-6 h-6 text-destructive"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -329,7 +329,7 @@ export default function EnrollmentConfirmation() {
                   <div className="flex-1">
                     <h3
                       className={`font-bold text-lg mb-2 ${
-                        result.isEnrolled ? "text-green-800" : "text-red-800"
+                        result.isEnrolled ? "text-success" : "text-destructive"
                       }`}
                     >
                       {result.isEnrolled
@@ -338,7 +338,7 @@ export default function EnrollmentConfirmation() {
                     </h3>
                     <p
                       className={`text-sm mb-4 ${
-                        result.isEnrolled ? "text-green-700" : "text-red-700"
+                        result.isEnrolled ? "text-success" : "text-destructive"
                       }`}
                     >
                       {result.message}
@@ -357,14 +357,14 @@ export default function EnrollmentConfirmation() {
 
                     {/* Course Info */}
                     {result.courseInfo && (
-                      <div className="mt-4 p-4 bg-white rounded-lg border border-gray-200">
-                        <h4 className="font-semibold text-gray-800 mb-3">
+                      <div className="mt-4 p-4 bg-white rounded-lg border border-border">
+                        <h4 className="font-semibold text-foreground mb-3">
                           Informações do Curso
                         </h4>
                         <div className="space-y-2 text-sm">
                           <div className="flex items-center gap-2">
                             <svg
-                              className="w-4 h-4 text-gray-500"
+                              className="w-4 h-4 text-muted-foreground"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -376,13 +376,13 @@ export default function EnrollmentConfirmation() {
                                 d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
                               />
                             </svg>
-                            <span className="text-gray-700">
+                            <span className="text-foreground">
                               <strong>Curso:</strong> {result.courseInfo.name}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
                             <svg
-                              className="w-4 h-4 text-gray-500"
+                              className="w-4 h-4 text-muted-foreground"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -394,7 +394,7 @@ export default function EnrollmentConfirmation() {
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                               />
                             </svg>
-                            <span className="text-gray-700">
+                            <span className="text-foreground">
                               <strong>Início:</strong>{" "}
                               {format(
                                 new Date(result.courseInfo.startDate),
@@ -404,7 +404,7 @@ export default function EnrollmentConfirmation() {
                           </div>
                           <div className="flex items-center gap-2">
                             <svg
-                              className="w-4 h-4 text-gray-500"
+                              className="w-4 h-4 text-muted-foreground"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -416,7 +416,7 @@ export default function EnrollmentConfirmation() {
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                               />
                             </svg>
-                            <span className="text-gray-700">
+                            <span className="text-foreground">
                               <strong>Término:</strong>{" "}
                               {format(
                                 new Date(result.courseInfo.endDate),
@@ -435,14 +435,14 @@ export default function EnrollmentConfirmation() {
         </div>
 
         {/* Footer Info */}
-        <div className="text-center mt-6 text-sm text-gray-600">
+        <div className="text-center mt-6 text-sm text-muted-foreground">
           <p>
             Precisa de ajuda?{" "}
             <a
               href="https://vcnafacul.com.br"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-fuchsia-600 hover:text-fuchsia-700 font-semibold underline"
+              className="text-primary hover:text-primary/80 font-semibold underline"
             >
               Entre em contato
             </a>

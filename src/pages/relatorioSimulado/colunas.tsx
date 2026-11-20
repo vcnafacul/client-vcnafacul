@@ -323,7 +323,7 @@ export function colunasDoRelatorio({
         const linhaDeAviso = (
           <>
             {aviso !== null && (
-              <span data-nao-lidas className="block text-xs text-yellow-700">
+              <span data-nao-lidas className="block text-xs text-warning">
                 {aviso}
               </span>
             )}
@@ -331,7 +331,7 @@ export function colunasDoRelatorio({
               <span
                 data-divergente
                 title={TEXTO_LINHA_DIVERGENTE}
-                className="block text-xs text-amber-700"
+                className="block text-xs text-warning"
               >
                 desatualizada
               </span>

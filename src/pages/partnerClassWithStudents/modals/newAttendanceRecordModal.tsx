@@ -182,13 +182,13 @@ export function NewAttendanceRecordModal({
       className="bg-white rounded-xl shadow-xl w-[calc(100vw-1rem)] sm:w-[640px] h-[calc(100dvh-2rem)] sm:h-[min(760px,calc(100dvh-4rem))] flex flex-col overflow-hidden"
     >
       {/* Cabeçalho: título, data e período */}
-      <div className="shrink-0 px-4 pt-4 pb-3 sm:px-6 sm:pt-6 border-b border-lightGray">
+      <div className="shrink-0 px-4 pt-4 pb-3 sm:px-6 sm:pt-6 border-b border-border">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="text-xl sm:text-2xl font-black text-marine leading-tight">
+            <h2 className="text-xl sm:text-2xl font-black text-foreground leading-tight">
               Chamada{turmaNome ? ` · ${turmaNome}` : ""}
             </h2>
-            <p className="text-sm text-grey mt-0.5 [@media(max-height:700px)]:hidden">
+            <p className="text-sm text-muted-foreground mt-0.5 [@media(max-height:700px)]:hidden">
               Marque quem veio. Quem não for marcado fica como ausente.
             </p>
           </div>
@@ -196,14 +196,14 @@ export function NewAttendanceRecordModal({
             type="button"
             onClick={handleClose}
             aria-label="Fechar"
-            className="shrink-0 -mr-2 -mt-1 p-2 rounded-full text-grey hover:bg-gray-100 hover:text-marine"
+            className="shrink-0 -mr-2 -mt-1 p-2 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
           >
             <IoClose className="w-6 h-6" />
           </button>
         </div>
 
         <div className="mt-3 flex items-center gap-2">
-          <label className="shrink-0 flex items-center gap-2 text-sm text-grey">
+          <label className="shrink-0 flex items-center gap-2 text-sm text-muted-foreground">
             <span className="font-semibold sr-only sm:not-sr-only">Data</span>
             <input
               type="date"
@@ -211,13 +211,13 @@ export function NewAttendanceRecordModal({
               value={paraInput(date)}
               max={paraInput(new Date())}
               onChange={(e) => e.target.value && setDate(doInput(e.target.value))}
-              className="h-10 w-[9.5rem] px-2 sm:px-3 rounded-lg border border-lightGray text-marine bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-orange"
+              className="h-10 w-[9.5rem] px-2 sm:px-3 rounded-lg border border-border text-foreground bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             />
           </label>
           <div
             role="radiogroup"
             aria-label="Período"
-            className="flex flex-1 min-w-0 rounded-lg bg-gray-100 p-1"
+            className="flex flex-1 min-w-0 rounded-lg bg-muted p-1"
           >
             {Object.values(AttendancePeriod).map((p) => (
               <button
@@ -228,8 +228,8 @@ export function NewAttendanceRecordModal({
                 onClick={() => setPeriod(p)}
                 className={`flex-1 min-w-0 h-8 rounded-md text-sm font-semibold transition-colors ${
                   period === p
-                    ? "bg-white text-marine shadow-sm"
-                    : "text-grey hover:text-marine"
+                    ? "bg-white text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {attendancePeriodLabel[p]}
@@ -245,28 +245,28 @@ export function NewAttendanceRecordModal({
           Turma sem matriculados (antes das matrículas ou no fim do período): a
           api recusa a chamada, então a tela avisa e não deixa confirmar (card 11).
         */
-        <div className="flex-1 min-h-0 flex items-center justify-center text-center text-grey px-6">
+        <div className="flex-1 min-h-0 flex items-center justify-center text-center text-muted-foreground px-6">
           Esta turma não tem alunos matriculados.
         </div>
       ) : (
         <>
           <div className="shrink-0 px-4 sm:px-6 py-2 flex items-center gap-2">
             <div className="relative flex-1 min-w-0">
-              <IoSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-grey w-4 h-4" />
+              <IoSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <input
                 type="search"
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
                 placeholder="Buscar aluno"
                 aria-label="Buscar aluno"
-                className="w-full h-10 pl-9 pr-3 rounded-lg border border-lightGray text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-orange"
+                className="w-full h-10 pl-9 pr-3 rounded-lg border border-border text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               />
             </div>
             <button
               type="button"
               onClick={alternarTodos}
               disabled={!carregou}
-              className="shrink-0 h-10 px-3 rounded-lg text-sm font-semibold text-marine border border-marine/30 hover:bg-marine/5 disabled:opacity-50"
+              className="shrink-0 h-10 px-3 rounded-lg text-sm font-semibold text-foreground border border-primary/30 hover:bg-primary/5 disabled:opacity-50"
             >
               {todosPresentes ? "Desmarcar todos" : "Todos presentes"}
             </button>
@@ -280,14 +280,14 @@ export function NewAttendanceRecordModal({
               Array.from({ length: 6 }, (_, i) => (
                 <li
                   key={i}
-                  className="py-3 border-b border-gray-100 flex items-center gap-3 animate-pulse"
+                  className="py-3 border-b border-border flex items-center gap-3 animate-pulse"
                 >
-                  <div className="h-4 flex-1 rounded bg-gray-100" />
-                  <div className="h-9 w-40 rounded-full bg-gray-100" />
+                  <div className="h-4 flex-1 rounded bg-muted" />
+                  <div className="h-9 w-40 rounded-full bg-muted" />
                 </li>
               ))}
             {carregou && visiveis.length === 0 && (
-              <li className="py-8 text-center text-sm text-grey">
+              <li className="py-8 text-center text-sm text-muted-foreground">
                 Nenhum aluno encontrado para “{busca}”.
               </li>
             )}
@@ -297,25 +297,25 @@ export function NewAttendanceRecordModal({
               return (
                 <li
                   key={s.id}
-                  className="py-2.5 border-b border-gray-100 last:border-0 flex items-center gap-3"
+                  className="py-2.5 border-b border-border last:border-0 flex items-center gap-3"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-marine font-medium leading-snug break-words">
+                    <p className="text-foreground font-medium leading-snug break-words">
                       {s.name}
                     </p>
-                    <p className="text-xs text-grey flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                    <p className="text-xs text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5">
                       <span>{s.cod_enrolled}</span>
                       {risco.emRisco && (
                         <span
                           aria-label={`risco de evasão, ${Math.round(risco.percentual)}% de faltas`}
-                          className="inline-flex items-center gap-0.5 px-1.5 rounded-full bg-orange/10 text-orange font-bold"
+                          className="inline-flex items-center gap-0.5 px-1.5 rounded-full bg-warning-muted text-foreground font-bold"
                         >
-                          <IoWarning aria-hidden className="w-3 h-3" />
+                          <IoWarning aria-hidden className="w-3 h-3 text-warning" />
                           {Math.round(risco.percentual)}%
                         </span>
                       )}
                       {!presente && justificados.has(s.id) && (
-                        <span className="px-1.5 rounded-full bg-gray-100 text-grey font-semibold">
+                        <span className="px-1.5 rounded-full bg-muted text-muted-foreground font-semibold">
                           justificado
                         </span>
                       )}
@@ -332,8 +332,8 @@ export function NewAttendanceRecordModal({
                       onClick={() => marcar(s.id, true)}
                       className={`h-9 px-2.5 sm:px-4 rounded-full text-[13px] sm:text-sm font-bold border transition-colors ${
                         presente
-                          ? "bg-marine border-marine text-white"
-                          : "bg-white border-lightGray text-grey hover:border-marine hover:text-marine"
+                          ? "bg-primary border-primary text-white"
+                          : "bg-white border-border text-muted-foreground hover:border-primary hover:text-foreground"
                       }`}
                     >
                       Presente
@@ -344,8 +344,8 @@ export function NewAttendanceRecordModal({
                       onClick={() => marcar(s.id, false)}
                       className={`h-9 px-2.5 sm:px-4 rounded-full text-[13px] sm:text-sm font-bold border transition-colors ${
                         !presente
-                          ? "bg-orange/5 border-orange text-orange"
-                          : "bg-white border-lightGray text-grey hover:border-orange hover:text-orange"
+                          ? "bg-muted border-primary text-foreground"
+                          : "bg-white border-border text-muted-foreground hover:border-primary hover:text-foreground"
                       }`}
                     >
                       Ausente
@@ -362,9 +362,9 @@ export function NewAttendanceRecordModal({
       {emRisco > 0 && (
         <p
           aria-live="polite"
-          className="shrink-0 mx-4 sm:mx-6 mt-2 px-3 py-1.5 sm:py-2 rounded-lg bg-orange/5 border-l-4 border-orange text-sm text-marine flex items-center gap-2"
+          className="shrink-0 mx-4 sm:mx-6 mt-2 px-3 py-1.5 sm:py-2 rounded-lg bg-warning-muted border-l-4 border-warning text-sm text-foreground flex items-center gap-2"
         >
-          <IoWarning aria-hidden className="w-4 h-4 text-orange shrink-0" />
+          <IoWarning aria-hidden className="w-4 h-4 text-warning shrink-0" />
           <span>
             <strong>{emRisco}</strong>{" "}
             {emRisco === 1 ? "aluno em risco" : "alunos em risco"} de evasão
@@ -373,13 +373,13 @@ export function NewAttendanceRecordModal({
           </span>
         </p>
       )}
-      <div className="shrink-0 px-4 py-3 sm:px-6 sm:py-4 border-t border-lightGray flex flex-col gap-2 [@media(min-width:420px)]:flex-row [@media(min-width:420px)]:items-center">
-        <p className="text-sm text-grey flex-1" aria-live="polite">
+      <div className="shrink-0 px-4 py-3 sm:px-6 sm:py-4 border-t border-border flex flex-col gap-2 [@media(min-width:420px)]:flex-row [@media(min-width:420px)]:items-center">
+        <p className="text-sm text-muted-foreground flex-1" aria-live="polite">
           {carregou && students.length > 0 && (
             <>
-              <strong className="text-marine">{presentes.size}</strong>{" "}
+              <strong className="text-foreground">{presentes.size}</strong>{" "}
               {presentes.size === 1 ? "presente" : "presentes"} ·{" "}
-              <strong className="text-orange">{ausentes}</strong>{" "}
+              <strong className="text-foreground">{ausentes}</strong>{" "}
               {ausentes === 1 ? "ausente" : "ausentes"}
             </>
           )}
@@ -387,7 +387,7 @@ export function NewAttendanceRecordModal({
         <button
           type="button"
           onClick={handleCreateAttendancerecord}
-          className="h-11 px-6 rounded-lg bg-marine text-white font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="h-11 px-6 rounded-lg bg-primary text-white font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={registring || !carregou || students.length === 0}
         >
           Registrar chamada

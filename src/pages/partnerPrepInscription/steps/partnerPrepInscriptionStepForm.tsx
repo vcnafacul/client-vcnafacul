@@ -52,41 +52,41 @@ const FormSkeleton = ({ section }: { section: SectionForm }) => {
           return (
             <div key={index} className="flex flex-col gap-2">
               {/* Label skeleton */}
-              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              <div className="h-4 bg-muted rounded w-3/4"></div>
 
               {/* Input skeleton baseado no tipo */}
               {skeletonType === 0 && (
                 // Text input
-                <div className="h-16 bg-gray-200 rounded"></div>
+                <div className="h-16 bg-muted rounded"></div>
               )}
               {skeletonType === 1 && (
                 // Select input
-                <div className="h-16 bg-gray-200 rounded flex items-center px-3">
-                  <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-                  <div className="ml-auto h-4 w-4 bg-gray-300 rounded"></div>
+                <div className="h-16 bg-muted rounded flex items-center px-3">
+                  <div className="h-4 bg-muted rounded w-1/2"></div>
+                  <div className="ml-auto h-4 w-4 bg-muted rounded"></div>
                 </div>
               )}
               {skeletonType === 2 && (
                 // Checkbox input
                 <div className="flex gap-2 items-center">
-                  <div className="h-4 w-4 bg-gray-200 rounded"></div>
-                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                  <div className="h-4 w-4 bg-muted rounded"></div>
+                  <div className="h-4 bg-muted rounded w-2/3"></div>
                 </div>
               )}
               {skeletonType === 3 && (
                 // Number input
-                <div className="h-16 bg-gray-200 rounded"></div>
+                <div className="h-16 bg-muted rounded"></div>
               )}
               {skeletonType === 4 && (
                 // Multiple checkbox input
                 <div className="space-y-2">
                   <div className="flex gap-2 items-center">
-                    <div className="h-4 w-4 bg-gray-200 rounded"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-4 w-4 bg-muted rounded"></div>
+                    <div className="h-4 bg-muted rounded w-1/2"></div>
                   </div>
                   <div className="flex gap-2 items-center">
-                    <div className="h-4 w-4 bg-gray-200 rounded"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                    <div className="h-4 w-4 bg-muted rounded"></div>
+                    <div className="h-4 bg-muted rounded w-1/3"></div>
                   </div>
                 </div>
               )}
@@ -97,8 +97,8 @@ const FormSkeleton = ({ section }: { section: SectionForm }) => {
 
       {/* Botões skeleton */}
       <div className="flex flex-col sm:flex-row gap-4 mt-8">
-        <div className="h-12 bg-gray-200 rounded-md flex-1"></div>
-        <div className="h-12 bg-gray-200 rounded-md flex-1"></div>
+        <div className="h-12 bg-muted rounded-md flex-1"></div>
+        <div className="h-12 bg-muted rounded-md flex-1"></div>
       </div>
     </div>
   );
@@ -414,7 +414,7 @@ export function PartnerPrepInscriptionStepForm({
           {section.name}
         </Text>
         {section.description && (
-          <p className="text-gray-600/90 mb-2">{section.description}</p>
+          <p className="text-muted-foreground/90 mb-2">{section.description}</p>
         )}
         {section.questions.map((question) => (
           <div key={question._id}>
@@ -466,7 +466,7 @@ export function PartnerPrepInscriptionStepForm({
           </div>
         ))}
         {Object.keys(errors).length > 0 && (
-          <p className="text-sm text-redError font-semibold text-end">
+          <p className="text-sm text-destructive font-semibold text-end">
             Por favor, preencha todos os campos obrigatórios
           </p>
         )}
@@ -478,7 +478,7 @@ export function PartnerPrepInscriptionStepForm({
               onConfirm={onBack}
             >
               <AlertDialogTrigger className="w-full">
-                <div className="bg-orange w-full h-12 flex justify-center items-center text-white font-bold rounded-md hover:bg-orange/90 transition-colors duration-200 cursor-pointer">
+                <div className="bg-cta w-full h-12 flex justify-center items-center text-white font-bold rounded-md hover:bg-cta/90 transition-colors duration-200 cursor-pointer">
                   Voltar
                 </div>
               </AlertDialogTrigger>
@@ -487,7 +487,7 @@ export function PartnerPrepInscriptionStepForm({
             <button
               type="button"
               onClick={onBack}
-              className="w-full h-12 bg-orange text-white font-bold rounded-md hover:bg-orange/90 transition-colors duration-200 cursor-pointer"
+              className="w-full h-12 bg-cta text-white font-bold rounded-md hover:bg-cta/90 transition-colors duration-200 cursor-pointer"
             >
               Voltar
             </button>
@@ -495,7 +495,7 @@ export function PartnerPrepInscriptionStepForm({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full h-12 bg-green2 text-white font-bold rounded-md hover:bg-green2/90 transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            className="w-full h-12 bg-success text-white font-bold rounded-md hover:bg-success/90 transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
             {isSubmitting ? (
               <div className="flex items-center gap-2">

@@ -97,7 +97,7 @@ export function InscriptionInfoCreateEditModal({
       className="bg-white p-6 rounded-md"
     >
       <div className="sm:min-w-[640px] flex flex-col gap-6">
-        <h1 className="text-marine text-2xl font-bold">Processo Seletivo</h1>
+        <h1 className="text-foreground text-2xl font-bold">Processo Seletivo</h1>
 
         <form
           className="grid grid-cols-1 sm:grid-cols-2 gap-6"
@@ -136,7 +136,7 @@ export function InscriptionInfoCreateEditModal({
           <div className="sm:col-span-2">
             <Label
               htmlFor="range"
-              className="text-sm text-gray-700 font-semibold block mb-1"
+              className="text-sm text-foreground font-semibold block mb-1"
             >
               Período de Inscrição
             </Label>
@@ -157,7 +157,7 @@ export function InscriptionInfoCreateEditModal({
               )}
             />
             {errors.range && (
-              <p className="text-red text-xs mt-1">{errors.range.message}</p>
+              <p className="text-destructive text-xs mt-1">{errors.range.message}</p>
             )}
           </div>
 
@@ -169,7 +169,7 @@ export function InscriptionInfoCreateEditModal({
                 setValue("requestDocuments", !!checked)
               }
             />
-            <Label htmlFor="requestDocuments" className="text-sm text-gray-700">
+            <Label htmlFor="requestDocuments" className="text-sm text-foreground">
               Este processo seletivo exigirá envio de documentos dos candidatos
             </Label>
           </div>
@@ -181,7 +181,7 @@ export function InscriptionInfoCreateEditModal({
                 checked={watch("isTest")}
                 onCheckedChange={(checked) => setValue("isTest", !!checked)}
               />
-              <Label htmlFor="isTest" className="text-sm text-gray-700">
+              <Label htmlFor="isTest" className="text-sm text-foreground">
                 Este é um processo seletivo de teste e não deve ser considerado
                 válido
               </Label>

@@ -252,7 +252,7 @@ export function UpdateStudentClassModal({
         <p
           className={`${
             isMobile ? "text-sm mb-3" : "text-lg mb-4"
-          } text-center text-gray-600`}
+          } text-center text-muted-foreground`}
         >
           Selecione uma nova turma para o estudante
         </p>
@@ -269,13 +269,13 @@ export function UpdateStudentClassModal({
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={`w-full ${
                   isMobile ? "p-2.5 text-sm" : "p-3 text-base"
-                } border-2 border-gray-300 rounded-md focus:border-blue-500 focus:outline-none transition-colors`}
+                } border-2 border-border rounded-md focus:border-primary focus:outline-none transition-colors`}
                 aria-label="Buscar turmas"
               />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 active:text-gray-800 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground active:text-foreground transition-colors"
                   aria-label="Limpar busca"
                 >
                   ✕
@@ -283,7 +283,7 @@ export function UpdateStudentClassModal({
               )}
             </div>
             {searchTerm && (
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 {filteredClassesByPeriod.reduce(
                   (acc, period) => acc + period.classes.length,
                   0
@@ -297,18 +297,18 @@ export function UpdateStudentClassModal({
         {/* Estado de Loading */}
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-            <p className="text-gray-600 text-center">Carregando turmas...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+            <p className="text-muted-foreground text-center">Carregando turmas...</p>
           </div>
         )}
 
         {/* Estado de Erro */}
         {error && !isLoading && (
-          <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 text-center">
-            <p className="text-red-600 font-semibold mb-3">❌ {error}</p>
+          <div className="bg-destructive-muted border-2 border-destructive rounded-lg p-4 text-center">
+            <p className="text-destructive font-semibold mb-3">❌ {error}</p>
             <button
               onClick={loadClasses}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 active:bg-blue-800 transition-colors text-sm font-medium"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 active:bg-primary/80 transition-colors text-sm font-medium"
             >
               🔄 Tentar Novamente
             </button>
@@ -319,7 +319,7 @@ export function UpdateStudentClassModal({
         {!isLoading && !error && isMobile ? (
           <div className="space-y-2">
             {filteredClassesByPeriod.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 <p className="text-lg mb-2">🔍</p>
                 <p>Nenhuma turma encontrada</p>
               </div>
@@ -327,12 +327,12 @@ export function UpdateStudentClassModal({
               filteredClassesByPeriod.map((period) => (
                 <div
                   key={period.periodId}
-                  className="border-2 border-gray-200 rounded-lg overflow-hidden"
+                  className="border-2 border-border rounded-lg overflow-hidden"
                 >
                   {/* Header do Período */}
                   <button
                     onClick={() => togglePeriod(period.periodId)}
-                    className="w-full p-3 bg-gradient-to-r from-blue-50 to-blue-100 flex justify-between items-center active:bg-blue-200 transition-all duration-200"
+                    className="w-full p-3 bg-info-muted flex justify-between items-center active:bg-accent transition-all duration-200"
                     aria-expanded={expandedPeriods.has(period.periodId)}
                     aria-label={`${
                       expandedPeriods.has(period.periodId)
@@ -343,10 +343,10 @@ export function UpdateStudentClassModal({
                     <div className="flex items-center gap-2">
                       <span className="text-xl">📚</span>
                       <div className="text-left">
-                        <p className="font-bold text-gray-900 text-sm">
+                        <p className="font-bold text-foreground text-sm">
                           {period.periodName}
                         </p>
-                        <p className="text-xs text-gray-600">
+                        <p className="text-xs text-muted-foreground">
                           {period.year} • {period.classes.length}{" "}
                           {period.classes.length === 1 ? "turma" : "turmas"}
                         </p>
@@ -363,15 +363,15 @@ export function UpdateStudentClassModal({
 
                   {/* Lista de Turmas */}
                   {expandedPeriods.has(period.periodId) && (
-                    <div className="divide-y divide-gray-200 animate-in fade-in duration-200">
+                    <div className="divide-y divide-border animate-in fade-in duration-200">
                       {period.classes.map((classItem) => (
                         <button
                           key={classItem.id}
                           onClick={() => setSelectedClassId(classItem.id)}
-                          className={`w-full p-3 text-left transition-colors active:bg-blue-100 ${
+                          className={`w-full p-3 text-left transition-colors active:bg-info-muted ${
                             selectedClassId === classItem.id
-                              ? "bg-blue-500 text-white"
-                              : "bg-white hover:bg-gray-50"
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-white hover:bg-page"
                           }`}
                           role="radio"
                           aria-checked={selectedClassId === classItem.id}
@@ -387,14 +387,14 @@ export function UpdateStudentClassModal({
                                 <p
                                   className={`font-semibold text-sm ${
                                     selectedClassId === classItem.id
-                                      ? "text-white"
-                                      : "text-gray-900"
+                                      ? "text-primary-foreground"
+                                      : "text-foreground"
                                   }`}
                                 >
                                   {classItem.name}
                                 </p>
                                 {classId === classItem.id && (
-                                  <span className="bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+                                  <span className="bg-cta text-cta-foreground text-xs px-2 py-0.5 rounded-full font-bold">
                                     Atual
                                   </span>
                                 )}
@@ -402,8 +402,8 @@ export function UpdateStudentClassModal({
                               <p
                                 className={`text-xs ${
                                   selectedClassId === classItem.id
-                                    ? "text-blue-100"
-                                    : "text-gray-500"
+                                    ? "text-primary-foreground/80"
+                                    : "text-muted-foreground"
                                 }`}
                               >
                                 {classItem.number_students}{" "}
@@ -435,20 +435,20 @@ export function UpdateStudentClassModal({
               <select
                 ref={selectRef}
                 id="classSelect"
-                className="w-full p-3 border-2 rounded-md focus:border-blue-500 focus:outline-none cursor-pointer text-base"
+                className="w-full p-3 border-2 rounded-md focus:border-primary focus:outline-none cursor-pointer text-base"
                 value={selectedClassId}
                 onChange={(e) => setSelectedClassId(e.target.value)}
                 autoFocus={!classId}
                 size={Math.min(filteredClassesByPeriod.length * 2 + 2, 8)}
               >
-                <option value="" className="text-gray-400">
+                <option value="" className="text-muted-foreground">
                   -- Selecione uma turma --
                 </option>
                 {filteredClassesByPeriod.map((period) => (
                   <optgroup
                     key={period.periodId}
                     label={`📚 ${period.periodName} (${period.year})`}
-                    className="font-bold text-blue-600 bg-gray-50"
+                    className="font-bold text-primary bg-page"
                   >
                     {period.classes.map((classItem) => (
                       <option
@@ -463,7 +463,7 @@ export function UpdateStudentClassModal({
                   </optgroup>
                 ))}
               </select>
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 {filteredClassesByPeriod.length > 0
                   ? `${filteredClassesByPeriod.length} período(s) letivo(s) disponível(is)`
                   : "Nenhuma turma disponível"}
@@ -476,12 +476,12 @@ export function UpdateStudentClassModal({
           <div
             className={`${
               isMobile ? "mt-3 mb-4 p-3" : "mb-4 p-4"
-            } border-2 border-blue-200 rounded-lg bg-blue-50 shadow-sm`}
+            } border-2 border-info rounded-lg bg-info-muted shadow-sm`}
           >
             <p
               className={`font-bold ${
                 isMobile ? "text-base mb-2" : "text-lg mb-3"
-              } text-blue-900 flex items-center gap-2`}
+              } text-foreground flex items-center gap-2`}
             >
               <span>📋</span>{" "}
               {isMobile ? "Detalhes" : "Detalhes da Turma Selecionada"}
@@ -490,48 +490,48 @@ export function UpdateStudentClassModal({
               className={isMobile ? "space-y-1.5 text-xs" : "space-y-2 text-sm"}
             >
               <div className="flex justify-between gap-2">
-                <span className="font-semibold text-gray-700">Nome:</span>
-                <span className="text-gray-900 text-right">
+                <span className="font-semibold text-foreground">Nome:</span>
+                <span className="text-foreground text-right">
                   {selectedClass.name}
                 </span>
               </div>
               <div className="flex justify-between gap-2">
-                <span className="font-semibold text-gray-700">Período:</span>
-                <span className="text-gray-900 text-right">
+                <span className="font-semibold text-foreground">Período:</span>
+                <span className="text-foreground text-right">
                   {selectedClass.coursePeriod.name}
                 </span>
               </div>
               <div className="flex justify-between gap-2">
-                <span className="font-semibold text-gray-700">Ano:</span>
-                <span className="text-gray-900 text-right">
+                <span className="font-semibold text-foreground">Ano:</span>
+                <span className="text-foreground text-right">
                   {selectedClass.coursePeriod.year}
                 </span>
               </div>
               <div className="flex justify-between gap-2">
-                <span className="font-semibold text-gray-700">Início:</span>
-                <span className="text-gray-900 text-right">
+                <span className="font-semibold text-foreground">Início:</span>
+                <span className="text-foreground text-right">
                   {formatDate(selectedClass.coursePeriod.startDate?.toString())}
                 </span>
               </div>
               <div className="flex justify-between gap-2">
-                <span className="font-semibold text-gray-700">Término:</span>
-                <span className="text-gray-900 text-right">
+                <span className="font-semibold text-foreground">Término:</span>
+                <span className="text-foreground text-right">
                   {formatDate(selectedClass.coursePeriod.endDate?.toString())}
                 </span>
               </div>
               <div className="flex justify-between gap-2">
-                <span className="font-semibold text-gray-700">Estudantes:</span>
-                <span className="text-gray-900 font-bold text-right">
+                <span className="font-semibold text-foreground">Estudantes:</span>
+                <span className="text-foreground font-bold text-right">
                   {selectedClass.number_students}
                 </span>
               </div>
               {selectedClass.description && (
-                <div className="pt-2 border-t border-blue-200">
-                  <span className="font-semibold text-gray-700 block mb-1">
+                <div className="pt-2 border-t border-info">
+                  <span className="font-semibold text-foreground block mb-1">
                     Descrição:
                   </span>
                   <p
-                    className={`text-gray-600 ${
+                    className={`text-muted-foreground ${
                       isMobile ? "text-xs" : "text-xs"
                     } leading-relaxed`}
                   >
@@ -549,8 +549,8 @@ export function UpdateStudentClassModal({
 
         {/* Mensagem quando a turma atual é selecionada */}
         {selectedClassId && selectedClassId === classId && (
-          <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-3 text-center mb-4">
-            <p className="text-yellow-800 text-sm font-medium">
+          <div className="bg-warning-muted border-2 border-warning rounded-lg p-3 text-center mb-4">
+            <p className="text-foreground text-sm font-medium">
               ⚠️ Esta já é a turma atual do estudante. Selecione uma turma
               diferente.
             </p>
@@ -562,14 +562,14 @@ export function UpdateStudentClassModal({
       <div
         className={`${
           isMobile
-            ? "fixed bottom-0 left-0 right-0 p-3 bg-white border-t-2 border-gray-200 flex gap-2"
+            ? "fixed bottom-0 left-0 right-0 p-3 bg-white border-t-2 border-border flex gap-2"
             : "flex justify-end gap-4 mt-6"
         }`}
       >
         <button
           className={`${
             isMobile ? "flex-1 py-3 text-sm" : "px-6 py-2"
-          } bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 active:bg-gray-500 transition-colors font-medium`}
+          } bg-muted text-foreground rounded-md hover:bg-muted-foreground active:bg-muted-foreground transition-colors font-medium`}
           onClick={handleClose}
         >
           Cancelar
@@ -577,7 +577,7 @@ export function UpdateStudentClassModal({
         <button
           className={`${
             isMobile ? "flex-1 py-3 text-sm" : "px-6 py-2"
-          } bg-blue-600 text-white rounded-md hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium shadow-sm`}
+          } bg-primary text-primary-foreground rounded-md hover:bg-primary/90 active:bg-primary/80 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors font-medium shadow-sm`}
           onClick={handleConfirmClass}
           disabled={!selectedClassId || selectedClassId === classId}
           title={

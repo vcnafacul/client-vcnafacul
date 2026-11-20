@@ -617,7 +617,7 @@ export function RelatorioDoSimuladoConteudo({
               role="note"
               data-testid="aviso-composicoes-diferentes"
               className={cn(
-                "rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900",
+                "rounded-md border border-warning bg-warning-muted px-3 py-2 text-sm text-foreground",
               )}
             >
               {TEXTO_COMPOSICOES_DIFERENTES}
@@ -647,7 +647,7 @@ export function RelatorioDoSimuladoConteudo({
             <p
               role="note"
               data-testid="aviso-sem-discriminacao"
-              className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900"
+              className="rounded-md border border-warning bg-warning-muted px-3 py-2 text-sm text-foreground"
             >
               {TEXTO_SEM_DISCRIMINACAO_DIVERGENTE}
             </p>

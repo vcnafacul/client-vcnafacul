@@ -51,7 +51,7 @@ export function ScheduleCallEnrolle(props: Props) {
         <form onSubmit={handleSubmit(scheduleEnrolled)}>
           <div className="card flex justify-content-center h-16 border pt-4 pl-4 rounded-md relative mb-4  row-start-3 col-start-1">
             <label
-              className="absolute top-1 left-3 text-xs text-grey font-semibold"
+              className="absolute top-1 left-3 text-xs text-muted-foreground font-semibold"
               htmlFor="date"
             >
               Inicio - Fim
@@ -66,14 +66,14 @@ export function ScheduleCallEnrolle(props: Props) {
                   value={field.value}
                   onChange={(e) => field.onChange(e.value)}
                   selectionMode="range"
-                  className="focus-visible:ring-orange w-full"
+                  className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 w-full"
                   readOnlyInput
                   hideOnRangeSelection
                 />
               )}
             />
             {errors.range && (
-              <p className="absolute text-red text-xs mt-1 -bottom-5 left-0">
+              <p className="absolute text-destructive text-xs mt-1 -bottom-5 left-0">
                 {errors.range.message}
               </p>
             )}

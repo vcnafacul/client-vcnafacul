@@ -14,9 +14,9 @@ export function PartnerPrepInscriptionStepError({
 }: Props) {
   return (
     <div className="flex flex-col items-center justify-center text-center p-6 gap-6">
-      <AlertCircle className="w-12 h-12 text-orange-500" />
-      <h1 className="text-3xl font-semibold text-gray-800">Atenção</h1>
-      <p className="text-lg text-gray-600 max-w-md">{message}</p>
+      <AlertCircle className="w-12 h-12 text-warning" />
+      <h1 className="text-3xl font-semibold text-foreground">Atenção</h1>
+      <p className="text-lg text-muted-foreground max-w-md">{message}</p>
       {alreadyInscribed ? (
         <BLink
           to={`${DASH}/${REGISTRATION_MONITOR}`}

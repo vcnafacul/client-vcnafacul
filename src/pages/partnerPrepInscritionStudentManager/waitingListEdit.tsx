@@ -54,7 +54,7 @@ function SortableRow({ row, position }: { row: Student; position: number }) {
     <tr
       ref={setNodeRef}
       style={style}
-      className={`even:bg-gray-200 ${isDragging ? "bg-blue-50" : ""}`}
+      className={`even:bg-muted ${isDragging ? "bg-info-muted" : ""}`}
       {...attributes}
       {...listeners}
     >
@@ -102,7 +102,7 @@ function WaitingListEdit(props: Props) {
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          <table className="min-w-full divide-y divide-gray-300">
+          <table className="min-w-full divide-y divide-border">
             <thead>
               <tr>
                 <th>Posição</th>

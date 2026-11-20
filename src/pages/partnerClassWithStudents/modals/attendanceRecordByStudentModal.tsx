@@ -208,13 +208,13 @@ export function AttendanceRecordByStudentModal({
               <Button
                 onClick={() => modals.modalApplyJustification.open()}
                 disabled={selectedRows.length === 0}
-                className="bg-orange/70 hover:bg-orange font-black"
+                className="bg-cta/70 hover:bg-cta font-black"
               >
                 Aplicar Justificativa
               </Button>
               <Button
                 onClick={() => setShowPeriodModal(true)}
-                className="bg-orange/70 hover:bg-orange font-black"
+                className="bg-cta/70 hover:bg-cta font-black"
               >
                 Justificar Período
               </Button>

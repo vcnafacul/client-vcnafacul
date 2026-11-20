@@ -59,10 +59,10 @@ export function EditStudentRecordModal({
       handleClose={handleClose}
       className="bg-white p-6 rounded-md w-[90vw] sm:w-[500px] h-auto flex flex-col gap-4"
     >
-      <h2 className="text-lg font-semibold text-gray-800">Editar Presença</h2>
+      <h2 className="text-lg font-semibold text-foreground">Editar Presença</h2>
 
       <div className="flex items-center justify-between">
-        <span className="text-gray-700">Presente:</span>
+        <span className="text-foreground">Presente:</span>
         <Toggle
           name="attendance"
           checked={present}
@@ -80,7 +80,7 @@ export function EditStudentRecordModal({
           onChange={(e: any) => setObservation(e.target.value)}
           maxLength={255}
         />
-        <p className="text-xs text-gray-500">Descreva o motivo da alteração.</p>
+        <p className="text-xs text-muted-foreground">Descreva o motivo da alteração.</p>
       </div>
 
       {!present && (
@@ -94,7 +94,7 @@ export function EditStudentRecordModal({
             onChange={(e: any) => setJustification(e.target.value)}
             maxLength={255}
           />
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground">
             Opcional. Preencha se o aluno justificou a falta (ex.: atestado).
             Deixe em branco para falta sem justificativa.
           </p>
@@ -104,13 +104,13 @@ export function EditStudentRecordModal({
       <div className="flex justify-end gap-2">
         <button
           onClick={handleClose}
-          className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+          className="px-4 py-2 text-foreground bg-muted rounded-md hover:bg-accent"
         >
           Cancelar
         </button>
         <button
           onClick={handleSubmit}
-          className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+          className="px-4 py-2 text-primary-foreground bg-primary rounded-md hover:bg-primary/90"
         >
           Confirmar
         </button>

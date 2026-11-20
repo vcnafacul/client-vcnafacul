@@ -140,7 +140,7 @@ function AnalyticsUsers({
     >
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <div className="shadow-md bg-white shadow-slate-200 p-2 rounded">
+          <div className="shadow-md bg-white p-2 rounded">
             <div className="flex items-center gap-4 px-2 pb-2">
               <FormControlLabel
                 control={
@@ -166,7 +166,7 @@ function AnalyticsUsers({
         <Grid size={{ xs: 12, md: 6 }}>
           <Grid container direction="column" spacing={2}>
             <Grid>
-              <div className="shadow-md bg-white shadow-slate-200 p-2 rounded">
+              <div className="shadow-md bg-white p-2 rounded">
                 {loading ? (
                   <Skeleton className="h-[320px] w-full" />
                 ) : (
@@ -181,7 +181,7 @@ function AnalyticsUsers({
             {/* Agrupa pela criação da conta: não diz nada sobre o cursinho (D4). */}
             {!cursinhoId && (
               <Grid>
-                <div className="shadow-md bg-white shadow-slate-200 p-2 rounded">
+                <div className="shadow-md bg-white p-2 rounded">
                   {loading ? (
                     <Skeleton className="h-[320px] w-full" />
                   ) : (

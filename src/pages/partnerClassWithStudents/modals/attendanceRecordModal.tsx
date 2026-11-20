@@ -117,7 +117,7 @@ export function AttendanceRecordModal({
         <div>
           <Tooltip title="Editar Presença">
             <IconButton onClick={() => handleActionUpdate(params.row)}>
-              <MdModeEditOutline className="h-6 w-6 fill-marine opacity-70 hover:opacity-100" />
+              <MdModeEditOutline className="h-6 w-6 fill-primary opacity-70 hover:opacity-100" />
             </IconButton>
           </Tooltip>
         </div>
@@ -203,7 +203,7 @@ export function AttendanceRecordModal({
       className="bg-white p-4 rounded-md w-[90vw] h-[90vh] sm:h-[600px] flex flex-col"
     >
       {(recordInfo.registeredAt || recordInfo.period) && (
-        <div className="mb-2 text-sm text-gray-700 shrink-0">
+        <div className="mb-2 text-sm text-foreground shrink-0">
           {recordInfo.registeredAt && (
             <span className="font-semibold">
               {new Date(recordInfo.registeredAt).toLocaleDateString("pt-BR")}

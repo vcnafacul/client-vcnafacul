@@ -1,6 +1,7 @@
 import { RadarChart } from "@/components/atoms/radarChart";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { EssayStatsTimelineEntry, EssayStatsReview } from "@/dtos/essay";
+import { palette } from "@/lib/palette";
 
 const COMPETENCY_LABELS = [
   "Domínio da norma culta",
@@ -23,7 +24,7 @@ function average(values: number[]): number {
   return Math.round(values.reduce((a, b) => a + b, 0) / values.length);
 }
 
-const CORES: Record<string, string> = { IA: "#2E96FF", Humana: "#0F9B2C" };
+const CORES: Record<string, string> = { IA: palette.blue[500], Humana: palette.mint[600] };
 
 export default function CompetencyRadarChart({ timeline }: Props) {
   // Abaixo de 768px os rótulos do radar saíam cortados: vira barras.
@@ -69,7 +70,7 @@ export default function CompetencyRadarChart({ timeline }: Props) {
             indexBy="competencia"
             maxValue={200}
             scheme="paired"
-            fill="#333"
+            fill={palette.neutral[800]}
           />
         </div>
       ) : (
@@ -81,8 +82,8 @@ export default function CompetencyRadarChart({ timeline }: Props) {
                 const valor = Number(d[k]);
                 return (
                   <div key={k} className="flex items-center gap-2">
-                    <span className="w-14 text-xs text-grey">{k}</span>
-                    <div className="flex-1 h-2 bg-gray-200 rounded-full">
+                    <span className="w-14 text-xs text-muted-foreground">{k}</span>
+                    <div className="flex-1 h-2 bg-muted rounded-full">
                       <div
                         className="h-2 rounded-full"
                         style={{

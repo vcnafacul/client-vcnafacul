@@ -139,7 +139,7 @@ function colunasDeQuestoes(
       return (
         <span
           data-anulada
-          className="inline-flex items-center gap-1 text-rose-700"
+          className="inline-flex items-center gap-1 text-destructive"
           aria-label={`Questão ${q.numero}, anulada`}
         >
           <XCircle className="h-4 w-4 shrink-0" aria-hidden />
@@ -308,14 +308,14 @@ function colunasDeQuestoes(
         <span
           data-anulada-motivo
           title={q.justificativaAnulacao}
-          className="block text-xs text-rose-800"
+          className="block text-xs text-destructive"
         >
           <span className="font-semibold">
             Anulada: {rotuloDoMotivo(q.motivoAnulacao)}
           </span>{" "}
           · fora da análise
           {q.justificativaAnulacao && (
-            <span className="block line-clamp-2 text-rose-900">
+            <span className="block line-clamp-2 text-destructive">
               {q.justificativaAnulacao}
             </span>
           )}

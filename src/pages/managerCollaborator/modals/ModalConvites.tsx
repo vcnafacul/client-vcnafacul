@@ -22,10 +22,10 @@ import { toast } from "react-toastify";
 import { AVISO_REENVIAR, dataCurta, textoDaSituacao } from "./textosDosConvites";
 
 const COR_DA_SITUACAO: Record<ConviteDoCursinho["situacao"], string> = {
-  pendente: "bg-amber-100 text-amber-800",
-  aceito: "bg-green-100 text-green-800",
-  expirado: "bg-gray-100 text-gray-600",
-  cancelado: "bg-red-100 text-red-700",
+  pendente: "bg-warning-muted text-foreground",
+  aceito: "bg-success-muted text-foreground",
+  expirado: "bg-muted text-muted-foreground",
+  cancelado: "bg-destructive-muted text-destructive",
 };
 
 interface Funcao {
@@ -114,8 +114,8 @@ export function ModalConvites({
     >
       <div data-modal-convites className="flex w-full flex-col gap-5">
         <header className="text-center">
-          <h2 className="text-lg font-bold text-marine">Convites de colaborador</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="text-lg font-bold text-foreground">Convites de colaborador</h2>
+          <p className="text-sm text-muted-foreground">
             Convide por email já escolhendo a função. O convite vale 7 dias.
           </p>
         </header>
@@ -123,9 +123,9 @@ export function ModalConvites({
         <form
           data-novo-convite
           onSubmit={convidar}
-          className="grid gap-3 rounded-md border bg-gray-50 p-4 sm:grid-cols-[1fr_14rem_auto] sm:items-end"
+          className="grid gap-3 rounded-md border bg-page p-4 sm:grid-cols-[1fr_14rem_auto] sm:items-end"
         >
-          <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
+          <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
             Email
             <input
               data-email
@@ -137,7 +137,7 @@ export function ModalConvites({
               className="h-10 rounded-md border bg-white px-3 text-sm"
             />
           </label>
-          <label className="flex flex-col gap-1 text-xs font-medium text-gray-600">
+          <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
             Função
             <select
               data-funcao
@@ -164,15 +164,15 @@ export function ModalConvites({
         </form>
 
         {carregando ? (
-          <p className="text-sm text-gray-500">Carregando…</p>
+          <p className="text-sm text-muted-foreground">Carregando…</p>
         ) : convites.length === 0 ? (
-          <p data-sem-convites className="py-6 text-center text-sm text-gray-600">
+          <p data-sem-convites className="py-6 text-center text-sm text-muted-foreground">
             Nenhum convite enviado ainda.
           </p>
         ) : (
           <div className="max-h-[50vh] overflow-auto">
             <table data-lista-convites className="w-full text-left text-sm">
-              <thead className="sticky top-0 bg-white text-xs uppercase tracking-wide text-gray-500">
+              <thead className="sticky top-0 bg-white text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
                   <th className="px-3 py-2 font-semibold">Convidado</th>
                   <th className="px-3 py-2 font-semibold">Função</th>
@@ -184,10 +184,10 @@ export function ModalConvites({
                 {convites.map((c) => (
                   <tr key={c.id} data-convite={c.id} className="border-t align-middle">
                     <td className="max-w-[18rem] px-3 py-3">
-                      <p className="truncate font-medium text-gray-900" title={c.email}>
+                      <p className="truncate font-medium text-foreground" title={c.email}>
                         {c.email}
                       </p>
-                      <p className="truncate text-xs text-gray-500">
+                      <p className="truncate text-xs text-muted-foreground">
                         por {c.convidadoPor} · em {dataCurta(c.createdAt)}
                       </p>
                     </td>

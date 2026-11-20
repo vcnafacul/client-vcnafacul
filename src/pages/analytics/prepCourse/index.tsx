@@ -202,13 +202,13 @@ function AnalyticsPrepCourse({
             />
           </Grid>
         </Grid>
-        <p className="text-xs text-grey mt-2">
+        <p className="text-xs text-muted-foreground mt-2">
           Totais sem processos seletivos de teste. Entre parênteses, o total
           incluindo testes.
         </p>
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
-        <div className="shadow-md bg-white shadow-slate-200 p-2 rounded">
+        <div className="shadow-md bg-white p-2 rounded">
           {loading ? (
             <Skeleton className="h-[320px] w-full" />
           ) : (

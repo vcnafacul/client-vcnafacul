@@ -82,11 +82,11 @@ export default function SendPhoto({
   return (
     <div className="max-w-5xl w-full mx-auto p-6 space-y-8 bg-white shadow-md rounded-lg">
       <div>
-        <div className="p-4 w-full max-w-5xl bg-blue-50 border-l-4 border-blue-500 rounded-md my-4">
-          <h3 className="text-md font-semibold text-blue-800">
+        <div className="p-4 w-full max-w-5xl bg-info-muted border-l-4 border-primary rounded-md my-4">
+          <h3 className="text-md font-semibold text-foreground">
             Dicas para uma boa foto:
           </h3>
-          <ul className="mt-2 list-disc list-inside text-blue-700 text-sm">
+          <ul className="mt-2 list-disc list-inside text-foreground text-sm">
             <li>Certifique-se de que a foto esteja nítida e bem iluminada.</li>
             <li>Use um fundo neutro, como branco ou cinza claro.</li>
             <li>Evite acessórios como óculos de sol ou chapéus.</li>
@@ -95,7 +95,7 @@ export default function SendPhoto({
         </div>
 
         <div className="flex flex-col items-center w-full">
-          <h2 className="text-lg font-medium text-gray-800 mb-2">
+          <h2 className="text-lg font-medium text-foreground mb-2">
             Envie sua foto para a carteirinha (proporção 3x4)
           </h2>
           <label className="w-full cursor-pointer block relative">
@@ -107,7 +107,7 @@ export default function SendPhoto({
               aria-label="Selecionar foto para carteirinha"
               disabled={processing}
             />
-            <span className="flex items-center justify-center text-center py-4 px-4 rounded-lg border-2 border-dashed border-blue-300 bg-blue-50/50 text-blue-700 font-medium min-h-[48px] touch-manipulation active:bg-blue-100">
+            <span className="flex items-center justify-center text-center py-4 px-4 rounded-lg border-2 border-dashed border-info bg-info-muted/50 text-foreground font-medium min-h-[48px] touch-manipulation active:bg-info-muted">
               Toque para escolher ou tirar foto
             </span>
           </label>
@@ -121,14 +121,14 @@ export default function SendPhoto({
             </div>
           )}
           {photoError && (
-            <p className="text-red font-semibold text-sm mt-2">{photoError}</p>
+            <p className="text-destructive font-semibold text-sm mt-2">{photoError}</p>
           )}
         </div>
       </div>
 
       <div className="w-full flex justify-end gap-4">
         <button
-          className="mt-8 px-6 py-3  text-white rounded font-medium disabled:bg-gray-400 bg-blue-600 w-60"
+          className="mt-8 px-6 py-3  text-primary-foreground rounded font-medium disabled:bg-muted disabled:text-muted-foreground bg-primary w-60"
           onClick={handleSubmit}
           disabled={processing}
         >

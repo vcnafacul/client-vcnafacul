@@ -52,7 +52,7 @@ function ModalContent({
     <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded pb-2 px-2 flex flex-col gap-4 relative border-8 border-white">
       <div className="sticky top-0 bg-white z-20 flex items-center justify-end p-2">
         <IoMdClose
-          className="w-5 h-5 cursor-pointer text-gray-500 hover:text-gray-700 transition"
+          className="w-5 h-5 cursor-pointer text-muted-foreground hover:text-foreground transition"
           onClick={onClose}
         />
       </div>

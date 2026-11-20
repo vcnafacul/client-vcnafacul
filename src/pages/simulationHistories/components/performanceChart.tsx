@@ -4,6 +4,7 @@ import { Box, Chip, Paper, Typography } from "@mui/material";
 import { LineChart } from "@mui/x-charts";
 import { Activity, TrendingDown, TrendingUp } from "lucide-react";
 import { AproveitamentoHitoriesDTO } from "../../../dtos/historico/getPerformanceDTO";
+import { palette } from "@/lib/palette";
 
 interface PerformanceChartProps {
   aproveitamento: AproveitamentoHitoriesDTO;
@@ -59,7 +60,7 @@ export function PerformanceChart({
       sx={{
         p: acimaDeSm ? 3 : 2,
         mb: 3,
-        background: "linear-gradient(135deg, #052e16 0%, #09090b 100%)",
+        background: `linear-gradient(135deg, ${palette.marine[900]} 0%, ${palette.neutral[950]} 100%)`,
         color: "white",
         borderRadius: 2,
       }}
@@ -106,7 +107,7 @@ export function PerformanceChart({
             <Typography
               variant={acimaDeSm ? "h4" : "h5"}
               fontWeight="bold"
-              color="#f87171"
+              color={palette.red[400]}
             >
               {piorDesempenho.toFixed(1)}%
             </Typography>
@@ -128,7 +129,7 @@ export function PerformanceChart({
             <Typography
               variant={acimaDeSm ? "h4" : "h5"}
               fontWeight="bold"
-              color="#4ade80"
+              color={palette.mint[400]}
             >
               {melhorDesempenho.toFixed(1)}%
             </Typography>
@@ -189,22 +190,22 @@ export function PerformanceChart({
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               {tendencia === "crescente" ? (
                 <>
-                  <TrendingUp className="h-6 w-6" color="#4ade80" />
-                  <Typography variant="body1" fontWeight="bold" color="#4ade80">
+                  <TrendingUp className="h-6 w-6" color={palette.mint[400]} />
+                  <Typography variant="body1" fontWeight="bold" color={palette.mint[400]}>
                     Crescente
                   </Typography>
                 </>
               ) : tendencia === "decrescente" ? (
                 <>
-                  <TrendingDown className="h-6 w-6" color="#f87171" />
-                  <Typography variant="body1" fontWeight="bold" color="#f87171">
+                  <TrendingDown className="h-6 w-6" color={palette.red[400]} />
+                  <Typography variant="body1" fontWeight="bold" color={palette.red[400]}>
                     Decrescente
                   </Typography>
                 </>
               ) : (
                 <>
-                  <Activity className="h-6 w-6" color="#fbbf24" />
-                  <Typography variant="body1" fontWeight="bold" color="#fbbf24">
+                  <Activity className="h-6 w-6" color={palette.yellow[400]} />
+                  <Typography variant="body1" fontWeight="bold" color={palette.yellow[400]}>
                     Estável
                   </Typography>
                 </>
@@ -236,7 +237,7 @@ export function PerformanceChart({
                   : value,
               label: acimaDeSm ? "Data do Simulado" : undefined,
               labelStyle: {
-                fill: "#64748b",
+                fill: palette.neutral[600],
                 fontSize: 12,
                 fontWeight: "bold",
               },
@@ -244,7 +245,7 @@ export function PerformanceChart({
                 angle: -15,
                 textAnchor: "end",
                 fontSize: 11,
-                fill: "#64748b",
+                fill: palette.neutral[600],
               },
             },
           ]}
@@ -254,13 +255,13 @@ export function PerformanceChart({
               min: 0,
               max: 100,
               labelStyle: {
-                fill: "#64748b",
+                fill: palette.neutral[600],
                 fontSize: 12,
                 fontWeight: "bold",
               },
               tickLabelStyle: {
                 fontSize: 11,
-                fill: "#64748b",
+                fill: palette.neutral[600],
               },
             },
           ]}
@@ -268,7 +269,7 @@ export function PerformanceChart({
             {
               data: performanceData,
               label: "Desempenho",
-              color: "#667eea",
+              color: palette.marine[700],
               curve: "monotoneX",
               showMark: true,
               area: true,
@@ -290,7 +291,7 @@ export function PerformanceChart({
               padding: 0,
               labelStyle: {
                 fontSize: 12,
-                fill: "#64748b",
+                fill: palette.neutral[600],
                 fontWeight: "bold",
               },
             },

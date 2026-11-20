@@ -239,16 +239,16 @@ export function InscriptionInfoModal({
       className="bg-white p-4 rounded-md w-full max-w-2xl"
     >
       <div className="w-full sm:min-w-[550px] flex flex-col gap-4">
-        <h1 className="text-left text-marine text-3xl font-black">
+        <h1 className="text-left text-foreground text-3xl font-black">
           {dataInscription.inscription}
         </h1>
-        <h3 className="font-black text-xl text-marine break-words">
+        <h3 className="font-black text-xl text-foreground break-words">
           {inscriptionSelected?.name}
         </h3>
         <p className="break-words whitespace-pre-line max-h-40 overflow-y-auto pr-1">
           {inscriptionSelected?.description}
         </p>
-        <h3 className="font-black text-xl text-marine">Data</h3>
+        <h3 className="font-black text-xl text-foreground">Data</h3>
         <div className="flex gap-4">
           <p>
             <strong>Início:</strong>
@@ -263,7 +263,7 @@ export function InscriptionInfoModal({
               : ""}
           </p>
         </div>
-        <h3 className="font-black text-xl text-marine">
+        <h3 className="font-black text-xl text-foreground">
           {dataInscription.openingText}
         </h3>
         <div className="flex flex-col gap-4">
@@ -275,20 +275,20 @@ export function InscriptionInfoModal({
               <strong>Vagas:</strong> {inscriptionSelected?.openingsCount}
             </p>
           </div>
-          <div className="sm:col-span-2 flex flex-col gap-3 py-2 px-3 rounded-md bg-gray-50">
+          <div className="sm:col-span-2 flex flex-col gap-3 py-2 px-3 rounded-md bg-page">
             <div className="flex items-start gap-2">
               {inscriptionSelected?.requestDocuments ? (
                 <>
-                  <FileText className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
-                  <span className="text-sm text-gray-800">
+                  <FileText className="w-5 h-5 text-success shrink-0 mt-0.5" />
+                  <span className="text-sm text-foreground">
                     Este processo seletivo <strong>exigirá</strong> envio de
                     documentos dos candidatos.
                   </span>
                 </>
               ) : (
                 <>
-                  <FileX className="w-5 h-5 text-gray-500 shrink-0 mt-0.5" />
-                  <span className="text-sm text-gray-800">
+                  <FileX className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
+                  <span className="text-sm text-foreground">
                     Este processo seletivo <strong>não exigirá</strong> envio de
                     documentos dos candidatos.
                   </span>
@@ -297,8 +297,8 @@ export function InscriptionInfoModal({
             </div>
             {inscriptionSelected?.isTest && (
               <div className="flex items-start gap-2">
-                <FlaskConical className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-                <span className="text-sm text-gray-800">
+                <FlaskConical className="w-5 h-5 text-warning shrink-0 mt-0.5" />
+                <span className="text-sm text-foreground">
                   Este processo está marcado como <strong>teste</strong> e não
                   deve ser considerado válido para uso real.
                 </span>
@@ -321,7 +321,7 @@ export function InscriptionInfoModal({
           <div className="order-2 sm:order-1">
             <ShadcnTooltip content="Download Lista de Alunos">
               <ShadcnButton.Button
-                className="bg-orange hover:bg-orange/60 h-10 sm:h-8 w-full sm:w-auto"
+                className="bg-cta hover:bg-cta/60 h-10 sm:h-8 w-full sm:w-auto"
                 onClick={() => exportToExcel()}
               >
                 <MdOutlineFileDownload className="w-6 h-6" />
@@ -331,7 +331,7 @@ export function InscriptionInfoModal({
           </div>
           <div className="order-1 sm:order-2 w-full sm:w-36">
             <BLink
-              className="h-10 sm:h-8 w-full bg-green2 border-none hover:bg-green2/60"
+              className="h-10 sm:h-8 w-full bg-success border-none hover:bg-success/60"
               to={`${DASH}/${PARTNER_PREP_INSCRIPTION}/${inscriptionSelected?.id}`}
             >
               <div className="flex justify-center gap-1.5">
@@ -341,7 +341,7 @@ export function InscriptionInfoModal({
           </div>
           <div className="order-3 flex flex-col-reverse gap-3 sm:flex-row sm:flex-1 sm:justify-end sm:gap-4">
             <Button
-              className="w-full sm:w-24 h-10 sm:h-8 bg-red border-none hover:bg-red/60"
+              className="w-full sm:w-24 h-10 sm:h-8 bg-destructive border-none hover:bg-destructive/60"
               disabled={inscriptionSelected!.subscribersCount > 0}
               onClick={() => setOpenModalDelete(true)}
             >

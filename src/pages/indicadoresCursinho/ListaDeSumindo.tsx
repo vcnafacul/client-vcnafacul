@@ -70,17 +70,17 @@ export function ListaDeSumindo({
             <Skeleton className="h-12 w-full" />
           </div>
         ) : alunos.length === 0 ? (
-          <p className="py-6 text-center text-sm text-slate-500">
+          <p className="py-6 text-center text-sm text-muted-foreground">
             Ninguém sumindo agora.
           </p>
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-border">
             {alunos.map((a) => (
               <li key={a.alunoId} className="py-3 text-sm">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-medium text-marine">{a.nome}</p>
-                    <p className="text-slate-500">
+                    <p className="font-medium text-foreground">{a.nome}</p>
+                    <p className="text-muted-foreground">
                       {a.periodo ? `${a.periodo} · ` : ""}
                       {a.turma} ·{" "}
                       {a.ultimaPresenca
@@ -88,7 +88,7 @@ export function ListaDeSumindo({
                         : "não veio a nenhuma aula"}
                     </p>
                   </div>
-                  <span className="shrink-0 rounded-full bg-orange/[0.12] px-2 py-0.5 text-xs font-semibold text-[#b35300]">
+                  <span className="shrink-0 rounded-full bg-warning-muted px-2 py-0.5 text-xs font-semibold text-foreground">
                     {a.faltasSeguidas} faltas seguidas
                   </span>
                 </div>
@@ -97,7 +97,7 @@ export function ListaDeSumindo({
                     href={linkDoWhatsapp(a.telefone)}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-1 inline-block text-xs font-medium text-marine underline-offset-2 hover:underline"
+                    className="mt-1 inline-block text-xs font-medium text-foreground underline-offset-2 hover:underline"
                   >
                     Chamar no WhatsApp ({a.telefone})
                   </a>
