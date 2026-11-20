@@ -29,12 +29,12 @@ export const AlertDialogUI = ({
       {/* Sem isto o card encosta nas bordas da tela no celular. */}
       <AlertDialogContent className="w-[calc(100%-2rem)] rounded-lg">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-marine">{title}</AlertDialogTitle>
+          <AlertDialogTitle className="text-foreground">{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="gap-2 sm:gap-0">
-          <AlertDialogCancel className="border border-orange text-orange hover:bg-orange hover:border-orange/20 hover:text-white">Cancelar</AlertDialogCancel>
-          <AlertDialogAction className="bg-orange text-white hover:bg-orange/80" onClick={onConfirm}>Confirmar</AlertDialogAction>
+          <AlertDialogCancel className="border border-cta text-foreground hover:bg-cta hover:border-cta/20 hover:text-white">Cancelar</AlertDialogCancel>
+          <AlertDialogAction className="bg-cta text-white hover:bg-cta/80" onClick={onConfirm}>Confirmar</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

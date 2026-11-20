@@ -14,7 +14,7 @@ function Sign({ solid, className, userNavigation }: SingProps) {
     return (
         <div className={`flex ${className}`}>
             <BLink to={userNavigation[0].Home_Menu_Item_id.link} type="tertiary" size="small"
-                className={`border-none ${solid ? 'text-marine' : 'text-white'}`}>
+                className={`border-none ${solid ? 'text-foreground' : 'text-white'}`}>
                 {userNavigation[0].Home_Menu_Item_id.name}
             </BLink>
             <BLink to={userNavigation[1].Home_Menu_Item_id.link} type="primary" size="small"

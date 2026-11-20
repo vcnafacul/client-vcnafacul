@@ -16,8 +16,8 @@ export function AvisoDoResultado(props: Parameters<typeof avisoDoResultado>[0]) 
       data-tipo={aviso.tipo}
       className={`flex items-start gap-2 rounded-md border px-3 py-2 text-sm ${
         pendente
-          ? "border-amber-300 bg-amber-50 text-amber-900"
-          : "border-sky-200 bg-sky-50 text-sky-900"
+          ? "border-warning bg-warning-muted text-foreground"
+          : "border-info bg-info-muted text-foreground"
       }`}
     >
       {pendente ? (

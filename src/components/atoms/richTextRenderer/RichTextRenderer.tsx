@@ -49,7 +49,7 @@ export function RichTextRenderer({
   maxImageWidth,
 }: RichTextRendererProps) {
   if (!content) {
-    return <span className="text-gray-400">Sem texto</span>;
+    return <span className="text-muted-foreground">Sem texto</span>;
   }
 
   if (contentFormat === "plain") {

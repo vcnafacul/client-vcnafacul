@@ -1,5 +1,6 @@
 import { LineChart } from "@mui/x-charts/LineChart";
 import type { ClassEssayMonthsList } from "@/types/classAnalytics/classEssayAnalytics";
+import { palette } from "@/lib/palette";
 
 interface Props {
   months: ClassEssayMonthsList["months"];
@@ -50,7 +51,7 @@ function MiniLine({
           style={{ backgroundColor: color }}
           aria-hidden
         />
-        <h4 className="text-sm font-medium text-gray-800">{label}</h4>
+        <h4 className="text-sm font-medium text-foreground">{label}</h4>
       </div>
       <LineChart
         height={height}
@@ -81,7 +82,7 @@ function MiniLine({
             ? {
                 "& .MuiChartsGrid-line": {
                   strokeDasharray: "3 3",
-                  stroke: "#d1d5db",
+                  stroke: palette.neutral[200],
                 },
               }
             : undefined
@@ -115,7 +116,7 @@ export function EssayEvolutionChart({
     {
       id: "geral",
       label: "Geral",
-      color: "#02B2AF",
+      color: palette.mint[500],
       max: 1000,
       tickInterval: [0, 200, 400, 600, 800, 1000],
       values: ordered.map((m) => m.geral),
@@ -123,7 +124,7 @@ export function EssayEvolutionChart({
     {
       id: "c1",
       label: "C1 — Norma",
-      color: "#2E96FF",
+      color: palette.blue[500],
       max: 200,
       tickInterval: [0, 40, 80, 120, 160, 200],
       values: ordered.map((m) => m.competencias.c1),
@@ -131,7 +132,7 @@ export function EssayEvolutionChart({
     {
       id: "c2",
       label: "C2 — Tema",
-      color: "#B800D8",
+      color: palette.pink[600],
       max: 200,
       tickInterval: [0, 40, 80, 120, 160, 200],
       values: ordered.map((m) => m.competencias.c2),
@@ -139,7 +140,7 @@ export function EssayEvolutionChart({
     {
       id: "c3",
       label: "C3 — Argumentação",
-      color: "#60009B",
+      color: palette.marine[700],
       max: 200,
       tickInterval: [0, 40, 80, 120, 160, 200],
       values: ordered.map((m) => m.competencias.c3),
@@ -147,7 +148,7 @@ export function EssayEvolutionChart({
     {
       id: "c4",
       label: "C4 — Coesão",
-      color: "#2731C8",
+      color: palette.blue[600],
       max: 200,
       tickInterval: [0, 40, 80, 120, 160, 200],
       values: ordered.map((m) => m.competencias.c4),
@@ -155,7 +156,7 @@ export function EssayEvolutionChart({
     {
       id: "c5",
       label: "C5 — Proposta",
-      color: "#03008D",
+      color: palette.blue[800],
       max: 200,
       tickInterval: [0, 40, 80, 120, 160, 200],
       values: ordered.map((m) => m.competencias.c5),
@@ -187,10 +188,10 @@ export function EssayEvolutionChart({
         ))}
       </div>
       {selectedIndex >= 0 && (
-        <p className="text-sm text-gray-500 mt-3">
+        <p className="text-sm text-muted-foreground mt-3">
           Mês selecionado: {labels[selectedIndex]}
           {ordered[selectedIndex].studentsSubmittedTotal !== null && (
-            <span className="text-gray-400">
+            <span className="text-muted-foreground">
               {" "}
               · n={ordered[selectedIndex].studentsSubmittedTotal} aluno
               {ordered[selectedIndex].studentsSubmittedTotal === 1 ? "" : "s"}

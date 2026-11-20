@@ -11,7 +11,7 @@ export interface RadioButtonProps{
 
 function RadioButton({ onChange, checked, children } : RadioButtonProps) {
    return (
-    <label className="flex items-center text-grey text-sm font-medium my-2 gap-2">
+    <label className="flex items-center text-muted-foreground text-sm font-medium my-2 gap-2">
             <input type="radio" onChange={onChange} checked={checked} />
             <span>{children}</span>
     </label>

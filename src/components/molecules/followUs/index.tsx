@@ -15,7 +15,7 @@ function FollowUs({ className, solid = false } : FollowUsProps) {
     const { header } = useBaseTemplateContext()
     return (
         <div className={className}>
-            <div className="text-green font-bold text-base text-center">
+            <div className="text-highlight font-bold text-base text-center">
                 Siga nossas redes sociais
             </div>
             <div className="flex w-full justify-around py-8">
@@ -23,7 +23,7 @@ function FollowUs({ className, solid = false } : FollowUsProps) {
                     const Icon = social.image;
                     return (
                         <Link key={social.Home_Menu_Item_id.id} to={social.Home_Menu_Item_id.link || "#"}>
-                            <Icon className={`${solid ? 'fill-marine': 'fill-white'}`}/>
+                            <Icon className={`${solid ? 'fill-primary': 'fill-white'}`}/>
                         </Link>
                     )
                 })}

@@ -18,12 +18,12 @@ export const buttonTemplate = tv({
   base: "flex justify-center items-center border-2 font-bold transition-all duration-250 ease-in-out text-sm md:text-base rounded-md group gap-1 cursor-pointer",
   variants: {
     typeStyle: {
-      accepted: "bg-green3 text-white hover:bg-green3/80",
-      refused: "bg-red text-white hover:bg-red/80",
-      primary: "text-white border-orange bg-orange hover:bg-orange/80",
-      secondary: "text-orange border-orange bg-white hover:bg-orange/90 hover:text-white",
-      tertiary: "text-white border-white hover:bg-white hover:text-marine",
-      quaternary: "bg-white border-marine text-marine border-opacity-50 hover:bg-marine/90 hover:text-white",
+      accepted: "bg-success text-white hover:bg-success/80",
+      refused: "bg-destructive text-white hover:bg-destructive/80",
+      primary: "text-white border-cta bg-cta hover:bg-cta/80",
+      secondary: "text-foreground border-cta bg-white hover:bg-cta/90 hover:text-white",
+      tertiary: "text-white border-white hover:bg-white hover:text-foreground",
+      quaternary: "bg-white border-primary text-foreground border-opacity-50 hover:bg-primary/90 hover:text-white",
       none: "bg-transparent border-0",
     },
     size: {

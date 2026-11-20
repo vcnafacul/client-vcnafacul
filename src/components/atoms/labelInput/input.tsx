@@ -6,7 +6,7 @@ interface LabelInputProps{
 
 function LabelInput({ label, compacto = false }: LabelInputProps){
     return (
-        <div className={`absolute text-grey ${compacto ? "top-1 text-[11px]" : "top-2 text-xs"} left-[21px] font-bold bg-white`}>
+        <div className={`absolute text-muted-foreground ${compacto ? "top-1 text-[11px]" : "top-2 text-xs"} left-[21px] font-bold bg-white`}>
             {label}
         </div>
     )

@@ -1,9 +1,10 @@
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { palette } from "@/lib/palette";
 
 export function HeroSkeleton() {
     return ( 
-        <SkeletonTheme baseColor="#64646426" highlightColor="#222">
-            <div className='min-h-[750px] sm:min-h-[480px] md:min-h-[600px] w-screen flex justify-center bg-marine'>
+        <SkeletonTheme baseColor={`${palette.neutral[600]}26`} highlightColor={palette.neutral[900]}>
+            <div className='min-h-[750px] sm:min-h-[480px] md:min-h-[600px] w-screen flex justify-center bg-primary'>
                 <div className='container flex flex-col justify-start pt-24 min-h-screen box-border
                         sm:pt-20 sm:min-h-[430px] sm:flex-row sm:items-start sm:justify-between
                         md:min-h-[600px] md:self-center'>

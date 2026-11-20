@@ -28,13 +28,13 @@ export function SunBurstChart({ data }: Props) {
       }}
       enableArcLabels={true}
       arcLabelsSkipAngle={10}
-      arcLabelsTextColor="#fff"
+      arcLabelsTextColor={"white"}
       theme={{
         axis: {
           ticks: {
             text: {
               fontSize: 12,
-              fill: "#fff",
+              fill: "white",
             },
           },
         },

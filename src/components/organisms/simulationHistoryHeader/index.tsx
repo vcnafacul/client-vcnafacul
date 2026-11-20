@@ -29,6 +29,7 @@ import { getFormatingTime } from "../../../utils/getFormatingTime";
 import { RadarChart } from "../../atoms/radarChart";
 import { useAcimaDeSm } from "../../dashV2/useAcimaDeSm";
 import { AvisoDoResultado } from "../../molecules/anulacao/AvisoDoResultado";
+import { palette } from "@/lib/palette";
 
 // O rótulo do Chip não quebra linha: no celular o nome da frente saía com "…".
 const chipQuebraLinha = {
@@ -64,7 +65,7 @@ export function SimulationHistoryHeader({
     return (
       // ⚠️ Aqui o cabeçalho é desenhado fora do `SimulateTemplate`, que é quem
       // dá o fundo marinho: sem ele o título branco sumia no fundo claro.
-      <Box className="bg-marine" sx={{ p: pad, minHeight: "100vh" }}>
+      <Box className="bg-primary" sx={{ p: pad, minHeight: "100vh" }}>
         <Box
           sx={{
             display: "flex",
@@ -91,7 +92,7 @@ export function SimulationHistoryHeader({
           <Button
             onClick={() => navigate(`${DASH}/${SIMULADO_HISTORIES}`)}
             variant="outline"
-            className="bg-white hover:bg-gray-100"
+            className="bg-white hover:bg-muted"
           >
             Voltar
           </Button>
@@ -108,9 +109,9 @@ export function SimulationHistoryHeader({
           }}
         >
           {isFailed ? (
-            <XCircle className="h-16 w-16 text-red-500" />
+            <XCircle className="h-16 w-16 text-destructive" />
           ) : (
-            <Loader2 className="h-16 w-16 text-blue-500 animate-spin" />
+            <Loader2 className="h-16 w-16 text-primary animate-spin" />
           )}
           <Typography
             variant="h5"
@@ -177,13 +178,13 @@ export function SimulationHistoryHeader({
   ).length;
 
   const pieData = [
-    { id: 0, value: acertos, label: "Acertos", color: "#22c55e" },
-    { id: 1, value: erros, label: "Erros", color: "#ef4444" },
+    { id: 0, value: acertos, label: "Acertos", color: palette.mint[500] },
+    { id: 1, value: erros, label: "Erros", color: palette.red[500] },
     {
       id: 2,
       value: naoRespondidas,
       label: "Não Respondidas",
-      color: "#f59e0b",
+      color: palette.orange[500],
     },
   ];
 
@@ -306,7 +307,7 @@ export function SimulationHistoryHeader({
         <Button
           onClick={() => navigate(`${DASH}/${SIMULADO_HISTORIES}`)}
           variant="outline"
-          className="bg-white hover:bg-gray-100"
+          className="bg-white hover:bg-muted"
         >
           Voltar
         </Button>
@@ -318,7 +319,7 @@ export function SimulationHistoryHeader({
         sx={{
           p: pad,
           mb: 3,
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          background: `linear-gradient(135deg, ${palette.blue[500]} 0%, ${palette.marine[500]} 100%)`,
           color: "white",
           borderRadius: 2,
         }}
@@ -397,7 +398,7 @@ export function SimulationHistoryHeader({
             elevation={2}
             sx={{
               p: 2,
-              background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)",
+              background: `linear-gradient(135deg, ${palette.mint[500]} 0%, ${palette.mint[600]} 100%)`,
               color: "white",
               borderRadius: 2,
               height: "100%",
@@ -431,7 +432,7 @@ export function SimulationHistoryHeader({
             elevation={2}
             sx={{
               p: 2,
-              background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+              background: `linear-gradient(135deg, ${palette.red[500]} 0%, ${palette.red[600]} 100%)`,
               color: "white",
               borderRadius: 2,
               height: "100%",
@@ -457,7 +458,7 @@ export function SimulationHistoryHeader({
             elevation={2}
             sx={{
               p: 2,
-              background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+              background: `linear-gradient(135deg, ${palette.orange[500]} 0%, ${palette.orange[600]} 100%)`,
               color: "white",
               borderRadius: 2,
               height: "100%",
@@ -484,7 +485,7 @@ export function SimulationHistoryHeader({
               elevation={2}
               sx={{
                 p: 2,
-                background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
+                background: `linear-gradient(135deg, ${palette.blue[500]} 0%, ${palette.blue[700]} 100%)`,
                 color: "white",
                 borderRadius: 2,
                 height: "100%",
@@ -574,7 +575,7 @@ export function SimulationHistoryHeader({
                     <RadarChart
                       data={radarData}
                       scheme="category10"
-                      fill="#374151"
+                      fill={palette.neutral[700]}
                       dotSize={12}
                       dotBorderWidth={4}
                     />

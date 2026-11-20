@@ -70,15 +70,15 @@ export default function MenuMobile({
 
   const classeItem = (eAtivo: boolean) =>
     `group flex items-center justify-between gap-4 py-4 text-2xl font-bold tracking-tight transition-colors ${
-      eAtivo ? "text-orange" : "text-marine hover:text-orange"
+      eAtivo ? "text-primary" : "text-foreground hover:text-primary"
     }`;
 
   const seta = (eAtivo: boolean) => (
     <span
       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors ${
         eAtivo
-          ? "bg-orange text-white"
-          : "bg-gray-100 text-marine group-hover:bg-orange group-hover:text-white"
+          ? "bg-cta text-white"
+          : "bg-muted text-foreground group-hover:bg-cta group-hover:text-white"
       }`}
     >
       <ChevronRight className="h-5 w-5" />
@@ -97,7 +97,7 @@ export default function MenuMobile({
         <Link
           to={HOME_PATH}
           onClick={onClose}
-          className="flex items-center gap-2.5 text-lg text-marine"
+          className="flex items-center gap-2.5 text-lg text-foreground"
         >
           <LogoIcon />
           <span>
@@ -108,7 +108,7 @@ export default function MenuMobile({
           type="button"
           onClick={onClose}
           aria-label="Fechar menu"
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-marine transition-colors hover:bg-gray-200"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-muted text-foreground transition-colors hover:bg-muted"
         >
           <X className="h-5 w-5" />
         </button>
@@ -116,13 +116,13 @@ export default function MenuMobile({
 
       <div className="flex flex-1 flex-col px-6 pb-8 pt-4">
         {nome && (
-          <p className="mb-2 text-sm font-medium text-gray-500">
-            Olá, <span className="text-marine">{nome}</span> 👋
+          <p className="mb-2 text-sm font-medium text-muted-foreground">
+            Olá, <span className="text-foreground">{nome}</span> 👋
           </p>
         )}
 
         <nav aria-label="Menu principal">
-          <ul className="divide-y divide-gray-100">
+          <ul className="divide-y divide-border">
             {itens.map((item, i) => {
               const { id, name, link, target } = item.Home_Menu_Item_id;
               const eAtivo = ativo(link, pathname, hash);
@@ -166,7 +166,7 @@ export default function MenuMobile({
           className="mt-8 animate-in fade-in fill-mode-both duration-300"
           style={{ animationDelay: `${120 + itens.length * 50}ms` }}
         >
-          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             Ajude a melhorar
           </p>
           <div className="grid grid-cols-2 gap-3">
@@ -175,9 +175,9 @@ export default function MenuMobile({
               target="_blank"
               rel="noopener noreferrer"
               onClick={onClose}
-              className="flex flex-col gap-3 rounded-2xl bg-gray-50 p-4 text-sm font-semibold text-marine transition-colors hover:bg-gray-100"
+              className="flex flex-col gap-3 rounded-2xl bg-page p-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-orange shadow-sm">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-primary shadow-sm">
                 <Bug className="h-4 w-4" />
               </span>
               Relatar um problema
@@ -187,9 +187,9 @@ export default function MenuMobile({
               target="_blank"
               rel="noopener noreferrer"
               onClick={onClose}
-              className="flex flex-col gap-3 rounded-2xl bg-gray-50 p-4 text-sm font-semibold text-marine transition-colors hover:bg-gray-100"
+              className="flex flex-col gap-3 rounded-2xl bg-page p-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-green2 shadow-sm">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-success shadow-sm">
                 <Lightbulb className="h-4 w-4" />
               </span>
               Propor uma ideia
@@ -207,14 +207,14 @@ export default function MenuMobile({
               <Link
                 to={entrar.Home_Menu_Item_id.link}
                 onClick={onClose}
-                className="flex h-12 items-center justify-center rounded-full border-2 border-marine text-base font-bold text-marine transition-colors hover:bg-marine hover:text-white"
+                className="flex h-12 items-center justify-center rounded-full border-2 border-primary text-base font-bold text-foreground transition-colors hover:bg-primary hover:text-white"
               >
                 Entrar
               </Link>
               <Link
                 to={cadastrar.Home_Menu_Item_id.link}
                 onClick={onClose}
-                className="flex h-12 items-center justify-center gap-1 rounded-full bg-orange text-base font-bold text-white transition-opacity hover:opacity-90"
+                className="flex h-12 items-center justify-center gap-1 rounded-full bg-cta text-base font-bold text-white transition-opacity hover:opacity-90"
               >
                 Cadastrar
                 <ArrowUpRight className="h-4 w-4" />
@@ -224,7 +224,7 @@ export default function MenuMobile({
 
           {redes.length > 0 && (
             <div className="flex items-center justify-between gap-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
+              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                 Siga a gente
               </p>
               <div className="flex gap-2">
@@ -237,12 +237,12 @@ export default function MenuMobile({
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={rede.Home_Menu_Item_id.name}
-                      className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 transition-colors hover:bg-gray-200 [&_svg]:h-5 [&_svg]:w-5"
+                      className="flex h-11 w-11 items-center justify-center rounded-full bg-muted transition-colors hover:bg-muted [&_svg]:h-5 [&_svg]:w-5"
                     >
                       {typeof Icone === "string" ? (
                         <img src={Icone} alt="" className="h-5 w-5" />
                       ) : (
-                        <Icone className="fill-marine" />
+                        <Icone className="fill-primary" />
                       )}
                     </a>
                   );

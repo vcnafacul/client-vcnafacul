@@ -33,25 +33,25 @@ describe("SubDashCard — página atual", () => {
     renderizar("/dashboard/turmas", "/dashboard/turmas");
 
     expect(item()).toHaveAttribute("aria-current", "page");
-    expect(item()).toHaveClass("text-marine");
+    expect(item()).toHaveClass("text-foreground");
   });
 
   it("subpágina (detalhe) também acende o item", () => {
     renderizar("/dashboard/turmas/abc123", "/dashboard/turmas");
 
-    expect(item()).toHaveClass("text-marine");
+    expect(item()).toHaveClass("text-foreground");
   });
 
   it("outra página não destaca", () => {
     renderizar("/dashboard/colaboradores", "/dashboard/turmas");
 
     expect(item()).not.toHaveAttribute("aria-current");
-    expect(item()).not.toHaveClass("text-marine");
+    expect(item()).not.toHaveClass("text-foreground");
   });
 
   it("⚠️ prefixo de texto não conta: suporte-cursinho não acende suporte", () => {
     renderizar("/dashboard/suporte-cursinho", "/dashboard/suporte");
 
-    expect(item()).not.toHaveClass("text-marine");
+    expect(item()).not.toHaveClass("text-foreground");
   });
 });

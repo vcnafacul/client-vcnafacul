@@ -3,6 +3,7 @@ import {
   buildFrontendErrorPayload,
   sendFrontendError,
 } from "@/utils/sendFrontendError";
+import { palette } from "@/lib/palette";
 
 interface Props {
   children: ReactNode;
@@ -48,7 +49,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <h1 style={{ fontSize: "1.5rem", margin: 0 }}>
             Algo deu errado
           </h1>
-          <p style={{ color: "#666", margin: 0 }}>
+          <p style={{ color: palette.neutral[600], margin: 0 }}>
             Ocorreu um erro inesperado. Tente recarregar a página.
           </p>
           <button
@@ -58,8 +59,8 @@ export class ErrorBoundary extends Component<Props, State> {
               fontSize: "1rem",
               borderRadius: "0.5rem",
               border: "none",
-              backgroundColor: "#1a73e8",
-              color: "#fff",
+              backgroundColor: palette.blue[500],
+              color: "white",
               cursor: "pointer",
             }}
           >

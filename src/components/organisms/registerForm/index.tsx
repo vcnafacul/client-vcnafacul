@@ -97,9 +97,9 @@ function RegisterForm({
               convite={google.convite}
             />
             <div className="flex items-center gap-4" aria-hidden="true">
-              <hr className="flex-1 border-grey/30" />
-              <span className="text-sm text-grey">ou com email e senha</span>
-              <hr className="flex-1 border-grey/30" />
+              <hr className="flex-1 border-input/30" />
+              <span className="text-sm text-muted-foreground">ou com email e senha</span>
+              <hr className="flex-1 border-input/30" />
             </div>
           </div>
         )}

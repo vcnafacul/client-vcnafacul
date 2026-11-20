@@ -31,9 +31,9 @@ function ControlCalendar({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (error?.message as any)?.message || error?.message || undefined;
   return (
-    <div className="card flex justify-content-center h-16 border hover:border-orange pt-4 pl-4 rounded-md relative mb-4  row-start-3 col-start-1 w-full">
+    <div className="card flex justify-content-center h-16 border hover:border-cta pt-4 pl-4 rounded-md relative mb-4  row-start-3 col-start-1 w-full">
       <label
-        className="absolute top-1 left-3 text-xs text-grey font-semibold"
+        className="absolute top-1 left-3 text-xs text-muted-foreground font-semibold"
         htmlFor="date"
       >
         {label}
@@ -49,7 +49,7 @@ function ControlCalendar({
             value={field.value}
             onChange={(e) => field.onChange(e.value)}
             selectionMode="single"
-            className="focus-visible:ring-orange w-full"
+            className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 w-full"
             readOnlyInput
             hideOnRangeSelection
             locale="pt-br"
@@ -57,7 +57,7 @@ function ControlCalendar({
         )}
       />
       {error && (
-        <span className="absolute left-0 -bottom-4 text-xs text-red">{errorMessage}</span>
+        <span className="absolute left-0 -bottom-4 text-xs text-destructive">{errorMessage}</span>
       )}
     </div>
   );

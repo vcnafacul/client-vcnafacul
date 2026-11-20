@@ -8,6 +8,7 @@ import {
 } from "@/dtos/roles/permissionHierarchy";
 import { toCamelPermission } from "@/utils/permissionKey";
 import { useMemo, useState } from "react";
+import { palette } from "@/lib/palette";
 
 interface PermissionHierarchyPanelProps {
   hierarchy: PermissionGroup[];
@@ -60,36 +61,36 @@ function PermissionHierarchyPanel({
   return (
     <div className="flex flex-col gap-3">
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-4 text-xs text-gray-400">
+      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
         <span className="flex items-center gap-1.5">
           <span
             className="w-3 h-3 rounded-full inline-block"
-            style={{ background: "#f97316" }}
+            style={{ background: palette.orange[500] }}
           />
           Cursinho habilitado
         </span>
         <span className="flex items-center gap-1.5">
           <span
             className="w-3 h-3 rounded-full inline-block"
-            style={{ background: "#fdba74" }}
+            style={{ background: palette.orange[400] }}
           />
           Cursinho automático
         </span>
         <span className="flex items-center gap-1.5">
           <span
             className="w-3 h-3 rounded-full inline-block"
-            style={{ background: "#3b82f6" }}
+            style={{ background: palette.blue[500] }}
           />
           Projeto habilitado
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-full border border-gray-300 inline-block" />
+          <span className="w-3 h-3 rounded-full border border-border inline-block" />
           Desabilitado
         </span>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-lg p-1 self-start">
+      <div className="flex gap-1 bg-muted rounded-lg p-1 self-start">
         {TABS.map((tab) => (
           <button
             key={tab.key}
@@ -98,8 +99,8 @@ function PermissionHierarchyPanel({
             className={[
               "px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-150",
               activeTab === tab.key
-                ? "bg-white text-marine shadow-sm"
-                : "text-gray-500 hover:text-gray-700",
+                ? "bg-white text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground",
             ].join(" ")}
           >
             {tab.label}

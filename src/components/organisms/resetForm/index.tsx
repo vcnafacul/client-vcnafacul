@@ -93,7 +93,7 @@ export function ResetForm({
     <div className="w-full h-[calc(100vh-88px)] flex justify-start items-center flex-col mx-auto">
       <div className="mt-20 max-w-[500px] flex flex-col items-center">
         <Text size="secondary">{title}</Text>
-        <Text size="quaternary" className="text-orange my-5">
+        <Text size="quaternary" className="text-foreground my-5">
           {subtitle}
         </Text>
         <form onSubmit={handleSubmit(reset)} className="flex flex-col gap-4">

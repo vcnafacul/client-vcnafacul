@@ -142,7 +142,7 @@ function ReportLC({
         <Text size="secondary" className="text-start">
           Encontrou algum problema no Localiza Cursinho?
         </Text>
-        <Text size="tertiary" className="text-start text-grey">
+        <Text size="tertiary" className="text-start text-muted-foreground">
           Nos desculpe pelo transtorno, nos informe mais sobre o problema para a
           melhoria contínua da plataforma.
         </Text>

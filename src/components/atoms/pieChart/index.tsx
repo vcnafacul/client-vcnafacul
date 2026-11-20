@@ -9,7 +9,7 @@ interface Props {
 
 export function PieChart({
   data,
-  textColor = "#fff",
+  textColor = "white",
   enableLinkLabels = true,
 }: Props) {
   return (

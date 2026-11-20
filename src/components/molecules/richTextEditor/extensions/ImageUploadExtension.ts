@@ -1,6 +1,7 @@
 import Image from "@tiptap/extension-image";
 import { ResizableNodeView } from "@tiptap/core";
 import { RICH_TEXT_IMAGE_MAX_WIDTH } from "@/utils/richTextImage";
+import { palette } from "@/lib/palette";
 
 export interface ImageUploadOptions {
   onUpload: (file: File) => Promise<string>;
@@ -35,8 +36,8 @@ function marcarAssetIndisponivel(img: HTMLImageElement, motivo: string) {
   img.title = motivo;
   img.style.minWidth = "180px";
   img.style.minHeight = "32px";
-  img.style.outline = "1px dashed #dc2626";
-  img.style.color = "#dc2626";
+  img.style.outline = `1px dashed ${palette.red[600]}`;
+  img.style.color = palette.red[600];
   img.style.fontSize = "12px";
 }
 

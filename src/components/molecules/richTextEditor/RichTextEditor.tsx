@@ -86,11 +86,11 @@ export function RichTextEditor({
   return (
     <div
       className={`border rounded-md overflow-hidden ${
-        error ? "border-red-500" : "border-gray-300"
-      } focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 ${className}`}
+        error ? "border-destructive" : "border-border"
+      } focus-within:ring-2 focus-within:ring-ring focus-within:border-ring ${className}`}
     >
       {/* Mode toggle + toolbar */}
-      <div className="flex items-center border-b border-gray-200 bg-gray-50">
+      <div className="flex items-center border-b border-border bg-page">
         {mode === "visual" && (
           <div className="flex-1">
             <EditorToolbar
@@ -102,16 +102,16 @@ export function RichTextEditor({
         )}
         {mode === "markdown" && (
           <div className="flex-1 px-2 py-1.5">
-            <span className="text-xs font-medium text-gray-500">
+            <span className="text-xs font-medium text-muted-foreground">
               Modo Markdown
             </span>
           </div>
         )}
-        <div className="flex items-center gap-0.5 px-2 border-l border-gray-200">
+        <div className="flex items-center gap-0.5 px-2 border-l border-border">
           <button
             type="button"
             onClick={mode === "visual" ? switchToMarkdown : switchToVisual}
-            className={`p-1.5 rounded hover:bg-gray-200 transition-colors text-gray-600`}
+            className={`p-1.5 rounded hover:bg-muted transition-colors text-muted-foreground`}
             title={
               mode === "visual"
                 ? "Editar Markdown"

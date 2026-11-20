@@ -67,8 +67,8 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
     <>
       <div
         onClick={handleOpenDetailsModal}
-        className="group relative w-full bg-white border border-gray-200 rounded-2xl p-5 
-                   shadow-sm hover:shadow-lg hover:border-blue-200 
+        className="group relative w-full bg-white border border-border rounded-2xl p-5 
+                   shadow-sm hover:shadow-lg hover:border-info 
                    transition-all duration-300 cursor-pointer overflow-hidden"
       >
         {/* Barra lateral colorida baseada no status */}
@@ -76,52 +76,52 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
           className={`absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl transition-all duration-300
             ${
               monitoring.status === StatusApplication.Enrolled
-                ? "bg-green-500"
+                ? "bg-success"
                 : ""
             }
             ${
               monitoring.status === StatusApplication.UnderReview
-                ? "bg-orange-400"
+                ? "bg-warning"
                 : ""
             }
             ${
               monitoring.status === StatusApplication.Rejected
-                ? "bg-red-500"
+                ? "bg-destructive"
                 : ""
             }
             ${
               monitoring.status === StatusApplication.DeclaredInterest
-                ? "bg-blue-500"
+                ? "bg-info"
                 : ""
             }
             ${
               monitoring.status === StatusApplication.CalledForEnrollment
-                ? "bg-emerald-500"
+                ? "bg-success"
                 : ""
             }
             ${
               monitoring.status === StatusApplication.MissedDeadline
-                ? "bg-gray-400"
+                ? "bg-muted-foreground"
                 : ""
             }
             ${
               monitoring.status === StatusApplication.EnrollmentNotConfirmed
-                ? "bg-amber-500"
+                ? "bg-warning"
                 : ""
             }
             ${
               monitoring.status === StatusApplication.EnrollmentCancelled
-                ? "bg-red-600"
+                ? "bg-destructive"
                 : ""
             }
             ${
               monitoring.status === StatusApplication.SendedDocument
-                ? "bg-blue-400"
+                ? "bg-info"
                 : ""
             }
             ${
               monitoring.status === StatusApplication.EnrollmentClosed
-                ? "bg-indigo-600"
+                ? "bg-primary"
                 : ""
             }
           `}
@@ -130,25 +130,25 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           {/* Informações principais */}
           <div className="flex-1 min-w-0 pl-2">
-            <h3 className="font-semibold text-gray-900 text-lg truncate group-hover:text-blue-600 transition-colors">
+            <h3 className="font-semibold text-foreground text-lg truncate group-hover:text-primary transition-colors">
               {monitoring.partnerCourseName}
             </h3>
-            <p className="text-gray-500 text-sm mt-0.5 truncate">
+            <p className="text-muted-foreground text-sm mt-0.5 truncate">
               {monitoring.inscriptionName}
             </p>
 
             {/* Data e Status */}
             <div className="flex flex-wrap items-center gap-4 mt-3">
-              <div className="flex items-center gap-1.5 text-gray-500 text-sm">
+              <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
                 <Calendar className="w-4 h-4" />
                 <span>
                   {formatDate(monitoring.createdAt.toString(), "dd/MM/yyyy")}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-full">
+              <div className="flex items-center gap-2 px-3 py-1 bg-page rounded-full">
                 {getStatusIcon(monitoring.status)}
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-foreground">
                   {monitoring.status}
                 </span>
               </div>
@@ -164,9 +164,9 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
                 onClick={handleDownloadEnrollmentCertificate}
                 disabled={isDownloading}
                 className="flex items-center justify-center gap-2 sm:min-w-[160px] px-4 py-2.5 
-                           bg-blue-600 text-white text-sm font-medium rounded-lg 
-                           hover:bg-blue-700 active:bg-blue-800 
-                           disabled:bg-gray-400 disabled:cursor-not-allowed 
+                           bg-primary text-white text-sm font-medium rounded-lg 
+                           hover:bg-primary/90 active:bg-primary/80 
+                           disabled:bg-muted-foreground disabled:cursor-not-allowed 
                            transition-colors shadow-sm"
               >
                 <Download className="w-4 h-4 flex-shrink-0" />
@@ -180,8 +180,8 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
                 handleOpenDetailsModal();
               }}
               className="flex items-center justify-center gap-2 sm:min-w-[160px] px-4 py-2.5 
-                         border border-gray-300 text-gray-700 text-sm font-medium rounded-lg 
-                         hover:bg-gray-50 hover:border-gray-400 
+                         border border-border text-foreground text-sm font-medium rounded-lg 
+                         hover:bg-page hover:border-input 
                          transition-colors"
             >
               <FileText className="w-4 h-4 flex-shrink-0" />
@@ -192,8 +192,8 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
                 to={`/${DECLARED_INTEREST}/${monitoring.inscriptionId}`}
                 onClick={(e) => e.stopPropagation()}
                 className="flex items-center justify-center gap-2 sm:min-w-[160px] px-4 py-2.5 
-                           bg-green2/80 text-white text-sm font-medium rounded-lg 
-                           hover:bg-green2 
+                           bg-success/80 text-white text-sm font-medium rounded-lg 
+                           hover:bg-success 
                            transition-colors shadow-sm"
               >
                 Declarar interesse

@@ -6,7 +6,7 @@ const simpleCardColor = tv({
     base: 'bg-white flex transition-all duration-300 rounded-lg select-none',
     variants: {
         disable: {
-            true: 'opacity-40 bg-gray-400',
+            true: 'opacity-40 bg-muted-foreground',
             false: 'bg-opacity-100 cursor-pointer'
         }
     },
@@ -31,10 +31,10 @@ function SimpleCardColor({ selected, name, disable, ...props }: SimpleCardColorP
     const selectedText = getTextColorFromName(name);
 
     return (
-        <div className={`${simpleCardColor({ disable })} ${selected ? `shadow-md shadow-gray-400` : 'shadow-gray-300 shadow'}`}
+        <div className={`${simpleCardColor({ disable })} ${selected ? `shadow-md shadow-muted-foreground` : 'shadow-border shadow'}`}
             style={{ transform: `${ selected ? 'translateY(-2px) translateX(-2px)' : 'none' }`}} {...props}>
                 <div className={`${!disable ? selectedColor : ''} ${!disable ? selectedText : 'text-white'} w-14 h-14 flex justify-center items-center font-black text-xl tracking-widest rounded-l-lg`}>{obterSigla(name)}</div>
-                <div className={`${disable ? 'text-white' : 'text-black'} first-line:border-l h-14 px-4 font-semibold flex items-center justify-center text-xl`}>{name}</div>
+                <div className={`${disable ? 'text-white' : 'text-foreground'} first-line:border-l h-14 px-4 font-semibold flex items-center justify-center text-xl`}>{name}</div>
         </div>
     )
 }

@@ -6,14 +6,14 @@ const questionBox = tv({
     base: 'w-8 h-8 rounded m-1 cursor-pointer flex justify-center items-center pb-1 text-base border relative',
     variants: {
         status: {
-            unsolved : 'bg-lightYellow border-marine',
-            solved : 'bg-white border-marine',
-            active : 'bg-orange border-orange text-white font-black',
-            unread : 'bg-lightGray border-grey opacity-50',
-            isRight: 'bg-white border-marine',
+            unsolved : 'bg-warning-muted border-primary',
+            solved : 'bg-white border-primary',
+            active : 'bg-cta border-cta text-white font-black',
+            unread : 'bg-muted border-input opacity-50',
+            isRight: 'bg-white border-primary',
             // tickets/042 (D5). ⚠️ `rose`, não `red`: o tailwind.config troca
             // `red` por uma cor só, e `red-500` não gera CSS.
-            anulada: 'bg-white border-rose-400 text-rose-700 cursor-not-allowed opacity-80'
+            anulada: 'bg-white border-destructive text-destructive cursor-not-allowed opacity-80'
         }
     },
     defaultVariants: {
@@ -60,21 +60,21 @@ function QuestionBox({ number, status, onClick, abreQuandoAnulada = false, ...pr
         >
             {number}
             {anulada && (
-                <svg aria-hidden className="absolute inset-0 h-full w-full text-rose-600 opacity-60" viewBox="0 0 32 32">
+                <svg aria-hidden className="absolute inset-0 h-full w-full text-destructive opacity-60" viewBox="0 0 32 32">
                     <path d="M5 5 L27 27 M27 5 L5 27" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
                 </svg>
             )}
             {anulada && dica && (
                 <span
                     role="tooltip"
-                    className={`absolute bottom-full z-20 mb-1 w-max max-w-[12rem] rounded bg-gray-900 px-2 py-1 text-xs font-normal text-white ${
+                    className={`absolute bottom-full z-20 mb-1 w-max max-w-[12rem] rounded bg-foreground px-2 py-1 text-xs font-normal text-white ${
                         dica === "esquerda" ? "left-0" : dica === "direita" ? "right-0" : "left-1/2 -translate-x-1/2"
                     }`}
                 >
                     {DICA_ANULADA}
                 </span>
             )}
-            {status === QuestionBoxStatus.isRight && <div className="absolute -right-2 -bottom-2 w-0 h-0 border-transparent border-t-green2 border-8 -rotate-45" />}
+            {status === QuestionBoxStatus.isRight && <div className="absolute -right-2 -bottom-2 w-0 h-0 border-transparent border-t-success border-8 -rotate-45" />}
         </div>
     ) 
 }

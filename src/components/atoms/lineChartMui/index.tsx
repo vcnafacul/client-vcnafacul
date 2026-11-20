@@ -1,16 +1,17 @@
 import { Box, Typography } from "@mui/material";
 import { LineChart } from "@mui/x-charts";
+import { palette } from "@/lib/palette";
 
 const DEFAULT_COLORS = [
-  "#02B2AF",
-  "#2E96FF",
-  "#B800D8",
-  "#60009B",
-  "#2731C8",
-  "#03008D",
-  "#F43535",
-  "#FF7600",
-  "#0F9B2C",
+  palette.mint[500],
+  palette.blue[500],
+  palette.pink[600],
+  palette.marine[700],
+  palette.blue[600],
+  palette.blue[800],
+  palette.red[500],
+  palette.orange[500],
+  palette.mint[700],
 ];
 
 interface LineSeries {
@@ -100,7 +101,7 @@ export default function LineChartMui({
                     s.color || DEFAULT_COLORS[i % DEFAULT_COLORS.length],
                 }}
               />
-              <span className="text-xs text-grey">{s.label}</span>
+              <span className="text-xs text-muted-foreground">{s.label}</span>
             </div>
           ))}
         </div>

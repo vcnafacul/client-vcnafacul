@@ -202,9 +202,9 @@ export function AccountForm({
           error={errors.gender}
           onChange={(e: any) => setValue("gender", e.target.value)}
         />
-        <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200 h-16">
+        <div className="flex items-center gap-3 p-4 bg-page rounded-lg border border-border h-16">
           <Checkbox
-            className="h-5 w-5 border-grey border-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-white data-[state=checked]:text-green2"
+            className="h-5 w-5 border-input border-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-white data-[state=checked]:text-success"
             checked={isCheckboxChecked}
             id="useSocialName"
             onCheckedChange={(ischeck) => {
@@ -213,7 +213,7 @@ export function AccountForm({
           />
           <label
             htmlFor="useSocialName"
-            className="text-sm font-medium text-gray-700 cursor-pointer select-none"
+            className="text-sm font-medium text-foreground cursor-pointer select-none"
           >
             Desejo usar um nome social
           </label>

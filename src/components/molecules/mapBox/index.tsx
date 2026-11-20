@@ -18,12 +18,13 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import { MarkerPoint, TypeMarker } from "../../../types/map/marker";
 import { clusterType } from "./clusterType";
+import { palette } from "@/lib/palette";
 
 const FALLBACK_POSITION: [number, number] = [-21.4638407, -47.0065925];
 
 const PIN_COLORS: Record<TypeMarker, string> = {
-  [TypeMarker.geo]: "#2563EB",
-  [TypeMarker.univPublic]: "#B91C1C",
+  [TypeMarker.geo]: palette.blue[500],
+  [TypeMarker.univPublic]: palette.red[600],
 };
 
 const PIN_ICONS: Record<TypeMarker, LucideIcon> = {
@@ -92,7 +93,7 @@ function buildClusterIcon(count: number, type: TypeMarker): leaflet.DivIcon {
   return leaflet.divIcon({
     html: `<div data-cluster-type="${type}" style="
       width:40px;height:40px;border-radius:50%;
-      background:${CLUSTER_COLORS[type]};color:#fff;
+      background:${CLUSTER_COLORS[type]};color:white;
       display:flex;align-items:center;justify-content:center;
       font-weight:700;font-size:14px;
       border:3px solid rgba(255,255,255,0.9);

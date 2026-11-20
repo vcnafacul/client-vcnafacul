@@ -49,7 +49,7 @@ function Action() {
         <div
           key={cardItem.Home_Action_Area_Item_id.id}
           className="my-0 mx-auto overflow-hidden w-[230px] h-[230px]
-                text-grey border border-grey flex flex-col items-center justify-center"
+                text-muted-foreground border border-input flex flex-col items-center justify-center"
         >
           <div className="flex justify-center w-28 h-28">
             {
@@ -58,7 +58,7 @@ function Action() {
               <cardItem.Home_Action_Area_Item_id.image />
             }
           </div>
-          <h3 className="z-10 px-4 py-0 text-2xl text-center text-marine">
+          <h3 className="z-10 px-4 py-0 text-2xl text-center text-foreground">
             {cardItem.Home_Action_Area_Item_id.title}
           </h3>
         </div>

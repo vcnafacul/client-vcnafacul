@@ -21,7 +21,7 @@ export function PermissionsList({
   if (roles.length === 0) return null;
   return (
     <div className="flex flex-col gap-4">
-      <Text size="tertiary" className="font-bold text-marine">
+      <Text size="tertiary" className="font-bold text-foreground">
         {title}
       </Text>
       <div className="flex justify-between flex-wrap gap-x-6 gap-y-2">
@@ -33,7 +33,7 @@ export function PermissionsList({
               handleCheck={handleToggleChange}
               disabled={disabled}
             />
-            <span className="text-base font-medium text-marine">
+            <span className="text-base font-medium text-foreground">
               {role.label}
             </span>
           </div>

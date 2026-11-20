@@ -38,7 +38,7 @@ function SubDashCard({ subCardInfo, blank }: SubDashCardPros){
             className={({ isActive }) =>
                 `flex justify-between items-center w-full h-14 px-4 border transition-colors ${
                     isActive && !blank
-                        ? "bg-marine/5 text-marine font-semibold shadow-[inset_3px_0_0_theme(colors.marine)]"
+                        ? "bg-primary/5 text-foreground font-semibold shadow-[inset_3px_0_0_theme(colors.marine)]"
                         : ""
                 }`
             }
@@ -46,7 +46,7 @@ function SubDashCard({ subCardInfo, blank }: SubDashCardPros){
             {({ isActive }) => (
                 <>
                     <div className="flex gap-2 justify-center items-center">
-                        <Icon className={`w-6 h-6 ${isActive && !blank ? "fill-marine" : "fill-grey"}`}/>
+                        <Icon className={`w-6 h-6 ${isActive && !blank ? "fill-primary" : "fill-muted-foreground"}`}/>
                         {subCardInfo.text}
                     </div>
                     <IoAddCircle size={16} color="green" />

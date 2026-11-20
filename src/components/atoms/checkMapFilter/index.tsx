@@ -22,7 +22,7 @@ export function CheckMapFilter({
     >
       <div className="bg-white bg-opacity-70 h-5 w-5 relative rounded-sm shrink-0">
         {checked && (
-          <HiCheck className="absolute h-8 w-8 -left-1 -bottom-1 fill-green3" />
+          <HiCheck className="absolute h-8 w-8 -left-1 -bottom-1 fill-success" />
         )}
       </div>
       <label className="text-white font-black flex-1 cursor-pointer">

@@ -45,7 +45,7 @@ function LoginForm({
     <div className="w-full flex justify-start items-center flex-col mx-auto">
       <div className="mt-20 max-w-[500px] flex flex-col items-center">
         <Text size="secondary">{title}</Text>
-        <Text size="quaternary" className="text-orange my-5">
+        <Text size="quaternary" className="text-foreground my-5">
           {subtitle}
         </Text>
         <FormSubmit

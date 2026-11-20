@@ -48,7 +48,7 @@ function DashTemplate({ className, hasMenu }: DashTemplateProps) {
   const headerAction = hasMenu ? (
     <SidebarTrigger
       aria-label="Abrir menu"
-      className="xl:hidden ml-1 text-marine hover:bg-marine/10 hover:text-marine print:hidden"
+      className="xl:hidden ml-1 text-foreground hover:bg-primary/10 hover:text-foreground print:hidden"
     />
   ) : null;
 

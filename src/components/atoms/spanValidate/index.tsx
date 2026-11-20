@@ -5,7 +5,7 @@ interface SpanValidateProps {
 
 function SpanValidate({ children, valid } : SpanValidateProps){ 
     return(
-        <div className={`font-black ${valid ? 'text-green' : 'text-grey'}`}>
+        <div className={`font-black ${valid ? 'text-success' : 'text-muted-foreground'}`}>
             {children}
         </div>
     )

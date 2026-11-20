@@ -60,27 +60,27 @@ function Item({
       <button
         type="button"
         onClick={() => onAbrir(n)}
-        className={`flex w-full gap-3 px-4 py-3 text-left hover:bg-slate-50 ${
+        className={`flex w-full gap-3 px-4 py-3 text-left hover:bg-page ${
           lida ? "opacity-60" : ""
         }`}
       >
         <span
           aria-hidden
           className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
-            lida ? "bg-transparent" : "bg-orange"
+            lida ? "bg-transparent" : "bg-cta"
           }`}
         />
         <span className="min-w-0 flex-1">
           <span
-            className={`block text-sm text-marine ${lida ? "" : "font-semibold"}`}
+            className={`block text-sm text-foreground ${lida ? "" : "font-semibold"}`}
           >
             {n.titulo}
             {!lida && <span className="sr-only"> (não lida)</span>}
           </span>
-          <span className="line-clamp-2 block text-sm text-slate-600">
+          <span className="line-clamp-2 block text-sm text-muted-foreground">
             {n.corpo}
           </span>
-          <span className="block text-xs text-slate-400">
+          <span className="block text-xs text-muted-foreground">
             {haQuanto(n.createdAt)}
           </span>
         </span>
@@ -101,30 +101,30 @@ function ItemDeConversa({
       <button
         type="button"
         onClick={() => onAbrir(c.id)}
-        className="flex w-full gap-3 px-4 py-3 text-left hover:bg-slate-50"
+        className="flex w-full gap-3 px-4 py-3 text-left hover:bg-page"
       >
         <MessageCircle
           aria-hidden
-          className="mt-0.5 h-4 w-4 shrink-0 text-orange"
+          className="mt-0.5 h-4 w-4 shrink-0 text-primary"
         />
         <span className="min-w-0 flex-1">
-          <span className="block text-sm font-semibold text-marine">
+          <span className="block text-sm font-semibold text-foreground">
             {c.titulo}
             {c.subtitulo && (
-              <span className="font-normal text-slate-500">
+              <span className="font-normal text-muted-foreground">
                 {" "}
                 · {c.subtitulo}
               </span>
             )}
           </span>
-          <span className="block text-sm text-slate-600">
+          <span className="block text-sm text-muted-foreground">
             {c.naoLidas === 1
               ? "1 mensagem nova"
               : `${c.naoLidas} mensagens novas`}
-            {c.trecho && <span className="text-slate-500"> — {c.trecho}</span>}
+            {c.trecho && <span className="text-muted-foreground"> — {c.trecho}</span>}
           </span>
           {c.quando && (
-            <span className="block text-xs text-slate-400">
+            <span className="block text-xs text-muted-foreground">
               {haQuanto(new Date(c.quando).toISOString())}
             </span>
           )}
@@ -155,8 +155,8 @@ export function ListaDaCentral({ onFechar }: { onFechar: () => void }) {
 
   return (
     <div className="flex max-h-[70vh] flex-col">
-      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-        <h2 className="font-semibold text-marine">Notificações</h2>
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+        <h2 className="font-semibold text-foreground">Notificações</h2>
         {naoLidas > 0 && (
           <Button
             variant="ghost"
@@ -172,11 +172,11 @@ export function ListaDaCentral({ onFechar }: { onFechar: () => void }) {
           <section aria-labelledby="sino-conversas">
             <h3
               id="sino-conversas"
-              className="bg-slate-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500"
+              className="bg-page px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
             >
               Conversas
             </h3>
-            <ul aria-label="Conversas" className="divide-y divide-slate-100">
+            <ul aria-label="Conversas" className="divide-y divide-border">
               {conversas.map((c) => (
                 <ItemDeConversa
                   key={c.id}
@@ -192,12 +192,12 @@ export function ListaDaCentral({ onFechar }: { onFechar: () => void }) {
         )}
         {itens.length === 0 ? (
           conversas.length === 0 && (
-            <p className="px-4 py-8 text-center text-sm text-slate-500">
+            <p className="px-4 py-8 text-center text-sm text-muted-foreground">
               Nenhuma notificação por aqui.
             </p>
           )
         ) : (
-          <ul aria-label="Notificações" className="divide-y divide-slate-100">
+          <ul aria-label="Notificações" className="divide-y divide-border">
             {itens.map((n) => (
               <Item key={n.id} n={n} onAbrir={abrir} />
             ))}
@@ -243,7 +243,7 @@ export function SinoDaCentral({ solid = true }: { solid?: boolean }) {
       onClick={mobile ? () => setAberto(true) : undefined}
       className={`relative rounded-full p-2 ${
         solid
-          ? "text-marine hover:bg-slate-100"
+          ? "text-foreground hover:bg-muted"
           : "text-white hover:bg-white/10"
       }`}
     >
@@ -251,7 +251,7 @@ export function SinoDaCentral({ solid = true }: { solid?: boolean }) {
       {rotulo && (
         <span
           aria-hidden
-          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-orange px-1 text-[10px] font-bold leading-none text-white"
+          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-cta px-1 text-[10px] font-bold leading-none text-white"
         >
           {rotulo}
         </span>

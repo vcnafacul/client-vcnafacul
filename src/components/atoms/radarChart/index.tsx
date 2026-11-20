@@ -1,4 +1,5 @@
 import { ResponsiveRadar } from "@nivo/radar";
+import { palette } from "@/lib/palette";
 
 interface Props {
   data: Record<string, string | number>[];
@@ -32,7 +33,7 @@ export function RadarChart({
     : scheme
       ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ({ scheme: scheme as any } as any)
-      : ["#a78bfa"];
+      : [palette.blue[300]];
   return (
     <ResponsiveRadar
       data={data}
@@ -56,7 +57,7 @@ export function RadarChart({
           ticks: {
             text: {
               fontSize: 10,
-              fill: fill || "#fff",
+              fill: fill || "white",
             },
           },
         },

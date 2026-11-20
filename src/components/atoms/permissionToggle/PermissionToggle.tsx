@@ -1,4 +1,5 @@
 import { PermissionType } from "@/dtos/roles/permissionHierarchy";
+import { palette } from "@/lib/palette";
 
 interface PermissionToggleProps {
   label: string;
@@ -21,18 +22,18 @@ const COLOR_MAP: Record<
   }
 > = {
   [PermissionType.prepCourse]: {
-    solid: "#f97316",
-    solidLight: "#ffedd5",
-    solidBorder: "#fdba74",
-    solidText: "#fb923c",
-    dot: "#fdba74",
+    solid: palette.orange[500],
+    solidLight: palette.orange[200],
+    solidBorder: palette.orange[400],
+    solidText: palette.orange[400],
+    dot: palette.orange[400],
   },
   [PermissionType.project]: {
-    solid: "#3b82f6",
-    solidLight: "#dbeafe",
-    solidBorder: "#93c5fd",
-    solidText: "#60a5fa",
-    dot: "#93c5fd",
+    solid: palette.blue[500],
+    solidLight: palette.blue[200],
+    solidBorder: palette.blue[300],
+    solidText: palette.blue[400],
+    dot: palette.blue[300],
   },
 };
 
@@ -60,34 +61,34 @@ function PermissionToggle({
       : {
           background: COLOR.solid,
           borderColor: COLOR.solid,
-          color: "#ffffff",
+          color: "white",
           cursor: readonly ? "default" : isReadonly ? "not-allowed" : "pointer",
         }
     : disabled
       ? {
-          background: "#f3f4f6",
-          borderColor: "#e5e7eb",
-          color: "#d1d5db",
+          background: palette.neutral[100],
+          borderColor: palette.neutral[200],
+          color: palette.neutral[200],
           cursor: "not-allowed",
         }
       : readonly
         ? {
-            background: "#f9fafb",
-            borderColor: "#e5e7eb",
-            color: "#9ca3af",
+            background: palette.marine[50],
+            borderColor: palette.neutral[200],
+            color: palette.marine[400],
             cursor: "default",
           }
         : {
-            background: "#ffffff",
-            borderColor: "#e5e7eb",
-            color: "#6b7280",
+            background: "white",
+            borderColor: palette.neutral[200],
+            color: palette.neutral[500],
             cursor: "pointer",
           };
 
   const dotStyle: React.CSSProperties = isOn
     ? implied
       ? { background: COLOR.dot, borderColor: COLOR.dot }
-      : { background: "#ffffff", borderColor: "#ffffff" }
+      : { background: "white", borderColor: "white" }
     : { background: "transparent", borderColor: "currentColor", opacity: 0.4 };
 
   return (

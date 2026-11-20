@@ -40,7 +40,7 @@ describe("ModalAnularQuestao (042/07)", () => {
     expect(anular().disabled).toBe(true);
     fireEvent.change(screen.getByLabelText("Justificativa"), { target: { value: "curta" } });
     expect(anular().disabled).toBe(true);
-    expect(screen.getByText(/5\/500/).className).toContain("text-rose-600");
+    expect(screen.getByText(/5\/500/).className).toContain("text-destructive");
   });
 
   it("motivo + 10 caracteres → confirma com a justificativa aparada", () => {

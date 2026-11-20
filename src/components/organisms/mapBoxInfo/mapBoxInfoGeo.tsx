@@ -16,6 +16,7 @@ import { MdOutlineTravelExplore } from "react-icons/md";
 import BLink from "../../molecules/bLink";
 import { TypeMarker } from "../../../types/map/marker";
 import { MarkerPin } from "../../molecules/mapBox";
+import { palette } from "@/lib/palette";
 
 interface MapBoxInfoProps {
   geo?: PublicGeolocation;
@@ -66,47 +67,47 @@ function MapBoxInfoGeo({ geo, ctaLink, label, markerType }: MapBoxInfoProps) {
             href={`https://api.whatsapp.com/send?phone=55${geo.whatsapp}`}
             target="_blank"
           >
-            <FaWhatsappSquare color={"#707070"} size={40} />
+            <FaWhatsappSquare color={palette.neutral[500]} size={40} />
           </a>
         )}
         {tem(geo?.email) && (
           <a href={`mailto:${geo.email}`}>
-            <FaEnvelopeSquare color={"#707070"} size={40} />
+            <FaEnvelopeSquare color={palette.neutral[500]} size={40} />
           </a>
         )}
         {tem(geo?.site) && (
           <a href={geo.site} target="_blank" rel="noreferrer">
-            <MdOutlineTravelExplore color={"#707070"} size={40} />
+            <MdOutlineTravelExplore color={palette.neutral[500]} size={40} />
           </a>
         )}
         {tem(geo?.linkedin) && (
           <a href={geo.linkedin} target="_blank" rel="noreferrer">
-            <FaLinkedin color={"#707070"} size={40} />
+            <FaLinkedin color={palette.neutral[500]} size={40} />
           </a>
         )}
         {tem(geo?.youtube) && (
           <a href={geo.youtube} target="_blank" rel="noreferrer">
-            <FaYoutubeSquare color={"#707070"} size={40} />
+            <FaYoutubeSquare color={palette.neutral[500]} size={40} />
           </a>
         )}
         {tem(geo?.facebook) && (
           <a href={geo.facebook} target="_blank" rel="noreferrer">
-            <FaFacebookSquare color={"#707070"} size={40} />
+            <FaFacebookSquare color={palette.neutral[500]} size={40} />
           </a>
         )}
         {tem(geo?.instagram) && (
           <a href={geo.instagram} target="_blank" rel="noreferrer">
-            <FaInstagramSquare color={"#707070"} size={40} />
+            <FaInstagramSquare color={palette.neutral[500]} size={40} />
           </a>
         )}
         {tem(geo?.twitter) && (
           <a href={geo.twitter} target="_blank" rel="noreferrer">
-            <FaTwitterSquare color={"#707070"} size={40} />
+            <FaTwitterSquare color={palette.neutral[500]} size={40} />
           </a>
         )}
         {tem(geo?.tiktok) && (
           <a href={geo.tiktok} target="_blank" rel="noreferrer">
-            <FaTiktok color={"#707070"} size={30} />
+            <FaTiktok color={palette.neutral[500]} size={30} />
           </a>
         )}
       </div>

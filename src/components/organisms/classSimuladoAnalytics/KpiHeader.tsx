@@ -63,7 +63,7 @@ export function KpiHeader({
               </Button>
             )}
             {(refreshing || lastUpdatedAt) && (
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-muted-foreground">
                 {refreshing
                   ? "Processando em segundo plano..."
                   : `Atualizado em ${lastUpdatedAt}`}
@@ -72,33 +72,33 @@ export function KpiHeader({
           </div>
         )}
       </div>
-      <p className="text-sm text-gray-500">Período letivo: {start} – {end}</p>
+      <p className="text-sm text-muted-foreground">Período letivo: {start} – {end}</p>
       {monthData && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Card>
             <CardContent className="pt-4">
-              <p className="text-xs text-gray-500">Aproveitamento geral</p>
+              <p className="text-xs text-muted-foreground">Aproveitamento geral</p>
               <p className="text-2xl font-bold">{formatPercent(monthData.geral)}%</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-4">
-              <p className="text-xs text-gray-500">Engajados</p>
+              <p className="text-xs text-muted-foreground">Engajados</p>
               <p className="text-2xl font-bold">
                 {monthData.studentsWithAtLeastOneCompletedAttempt}
-                <span className="text-sm font-normal text-gray-400">/{list.totalStudents}</span>
+                <span className="text-sm font-normal text-muted-foreground">/{list.totalStudents}</span>
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-4">
-              <p className="text-xs text-gray-500">Tentativas completas</p>
+              <p className="text-xs text-muted-foreground">Tentativas completas</p>
               <p className="text-2xl font-bold">{monthData.totalAttemptsCompleted}</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="pt-4">
-              <p className="text-xs text-gray-500">Total tentativas</p>
+              <p className="text-xs text-muted-foreground">Total tentativas</p>
               <p className="text-2xl font-bold">{monthData.totalAttempts}</p>
             </CardContent>
           </Card>

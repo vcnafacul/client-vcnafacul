@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { palette } from "@/lib/palette";
 
 interface Props {
   onPlaceLoaded: (placeId: string) => void;
@@ -68,10 +69,10 @@ export function LocationAutocomplete({ onPlaceLoaded }: Props) {
     setPredictions([]);
   };
   return (
-    <div className="py-2 px-1 w-full focus-within:border-orange rounded-md">
+    <div className="py-2 px-1 w-full focus-within:border-cta rounded-md">
       <input
         type="text"
-        className="fflex w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 h-16 pt-4 focus-visible:ring-orange"
+        className="fflex w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 h-16 pt-4"
         value={inputValue}
         onChange={(e) => handleChange(e.target.value)}
         placeholder="Buscar localização"
@@ -83,11 +84,11 @@ export function LocationAutocomplete({ onPlaceLoaded }: Props) {
           style={{
             position: "absolute",
             width: "100%",
-            background: "#fff",
+            background: "white",
             listStyle: "none",
             padding: 0,
             margin: 0,
-            border: "1px solid #ccc",
+            border: `1px solid ${palette.neutral[300]}`,
             zIndex: 10,
           }}
         >

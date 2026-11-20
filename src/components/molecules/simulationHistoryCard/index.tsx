@@ -31,7 +31,7 @@ function SimulationHistoryCard({ historico }: SimulationHistoryCardProps) {
 
   return (
     <Link
-      className="flex flex-wrap gap-4 bg-white border border-gray-100 border-t-0 rounded p-4 pb-6 pr-12 m-2.5 shadow-md justify-between relative"
+      className="flex flex-wrap gap-4 bg-white border border-border border-t-0 rounded p-4 pb-6 pr-12 m-2.5 shadow-md justify-between relative"
       to={`${SIMULATE_METRICS}${historico._id}`}
     >
       <SimulationHistoryField
@@ -63,7 +63,7 @@ function SimulationHistoryCard({ historico }: SimulationHistoryCardProps) {
             : "Simulado Incompleto"}
         </ToolTip>
       </div>
-      <h1 className="font-bold text-gray-700 text-base sm:absolute bottom-0.5 left-4">
+      <h1 className="font-bold text-foreground text-base sm:absolute bottom-0.5 left-4">
         {DateTime.fromISO(historico.createdAt.toString()).toLocaleString(
           DateTime.DATE_MED
         )}

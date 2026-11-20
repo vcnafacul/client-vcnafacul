@@ -24,7 +24,7 @@ function Filter ({ filtrar, placeholder, className, search = true, defaultValue,
                     if(e.key === 'Enter' && keyDown) keyDown()
                 }}
                 />
-            {search ? <CiSearch className="absolute right-3 top-2 w-6 h-6 fill-grey opacity-75"/> : <></>}
+            {search ? <CiSearch className="absolute right-3 top-2 w-6 h-6 fill-muted-foreground opacity-75"/> : <></>}
         </div>
     )
 }

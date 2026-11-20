@@ -179,7 +179,7 @@ export function ClassEssayAnalytics({
 
   if (loading) {
     return (
-      <p className="py-8 text-center text-sm text-gray-400">
+      <p className="py-8 text-center text-sm text-muted-foreground">
         Carregando dados de redação da turma...
       </p>
     );
@@ -187,7 +187,7 @@ export function ClassEssayAnalytics({
 
   if (!list) {
     return (
-      <p className="py-8 text-center text-sm text-red-400">
+      <p className="py-8 text-center text-sm text-destructive">
         Erro ao carregar dados de redação.
       </p>
     );
@@ -236,7 +236,7 @@ export function ClassEssayAnalytics({
         />
 
         {showSampleBanner && (
-          <div className="flex items-center gap-2 rounded-md border border-yellow-200 bg-yellow-50 px-3 py-2 text-sm text-yellow-800">
+          <div className="flex items-center gap-2 rounded-md border border-warning bg-warning-muted px-3 py-2 text-sm text-foreground">
             <AlertTriangle className="h-4 w-4 shrink-0" />
             <span>
               Amostra pequena: apenas{" "}
@@ -254,7 +254,7 @@ export function ClassEssayAnalytics({
         />
 
         {monthLoading && (
-          <p className="py-6 text-center text-sm text-gray-400">
+          <p className="py-6 text-center text-sm text-muted-foreground">
             Carregando mês...
           </p>
         )}

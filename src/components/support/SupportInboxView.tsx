@@ -60,9 +60,9 @@ export function SupportInboxView({
   return (
     // `dvh` desconta a barra do navegador no celular; sem suporte, cai no vh.
     <div className="flex flex-col h-[calc(100vh-76px)] supports-[height:100dvh]:h-[calc(100dvh-76px)]">
-      <header className="bg-marine text-white px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 shadow-sm">
+      <header className="bg-primary text-white px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 shadow-sm">
         <div className="flex items-center gap-2">
-          <LuHeadset className="h-5 w-5 text-orange" />
+          <LuHeadset className="h-5 w-5 text-primary" />
           <h1 className="font-raleway font-bold text-lg tracking-tight">
             {title}
           </h1>
@@ -72,15 +72,15 @@ export function SupportInboxView({
           <span className="opacity-80">
             {isArchived ? "Arquivadas" : "Conversas abertas"}
           </span>
-          <span className="bg-orange text-white font-bold rounded-full min-w-[24px] h-6 inline-flex items-center justify-center px-2">
+          <span className="bg-cta text-white font-bold rounded-full min-w-[24px] h-6 inline-flex items-center justify-center px-2">
             {convs.length}
           </span>
         </div>
       </header>
-      <div className="h-[3px] bg-custom-gradient" aria-hidden />
+      <div className="h-[3px] bg-brand-stripe" aria-hidden />
       <div className="flex flex-1 min-h-0">
         {mostrarLista && (
-        <aside className="w-full sm:w-auto sm:max-w-96 border-r flex flex-col bg-backgroundGrey">
+        <aside className="w-full sm:w-auto sm:max-w-96 border-r flex flex-col bg-page">
           <div className="flex border-b bg-white shrink-0">
             <button
               type="button"
@@ -88,8 +88,8 @@ export function SupportInboxView({
               className={cn(
                 "flex-1 py-2.5 text-xs font-semibold transition-colors border-b-2",
                 !isArchived
-                  ? "border-orange text-marine"
-                  : "border-transparent text-grey hover:text-marine",
+                  ? "border-cta text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground",
               )}
             >
               Ativas
@@ -100,25 +100,25 @@ export function SupportInboxView({
               className={cn(
                 "flex-1 py-2.5 text-xs font-semibold transition-colors border-b-2 flex items-center justify-center gap-1.5",
                 isArchived
-                  ? "border-orange text-marine"
-                  : "border-transparent text-grey hover:text-marine",
+                  ? "border-cta text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground",
               )}
             >
               Arquivadas
               {archivedCount > 0 && (
-                <span className="bg-grey/20 text-grey rounded-full min-w-[18px] h-[18px] inline-flex items-center justify-center px-1 text-[10px] font-bold">
+                <span className="bg-muted-foreground/20 text-muted-foreground rounded-full min-w-[18px] h-[18px] inline-flex items-center justify-center px-1 text-[10px] font-bold">
                   {archivedCount}
                 </span>
               )}
             </button>
           </div>
           <div className="flex items-center gap-2 px-3 h-11 border-b bg-white shrink-0">
-            <LuSearch className="h-4 w-4 text-grey shrink-0" />
+            <LuSearch className="h-4 w-4 text-muted-foreground shrink-0" />
             <Input
               value={search}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Buscar por nome..."
-              className="flex-1 border-none shadow-none bg-transparent px-0 h-full text-sm focus-visible:ring-0 placeholder:text-grey"
+              className="flex-1 border-none shadow-none bg-transparent px-0 h-full text-sm focus-visible:ring-0 placeholder:text-muted-foreground"
             />
           </div>
           <ScrollArea className="flex-1">
@@ -133,15 +133,15 @@ export function SupportInboxView({
             ))}
             {sorted.length === 0 && (
               <div className="flex flex-col items-center justify-center text-center px-6 py-16 gap-3">
-                <LuMessageSquareDashed className="h-12 w-12 text-marine/30" />
-                <span className="font-medium text-marine">
+                <LuMessageSquareDashed className="h-12 w-12 text-foreground/30" />
+                <span className="font-medium text-foreground">
                   {convs.length === 0
                     ? isArchived
                       ? "Nenhuma conversa arquivada"
                       : "Nenhuma conversa aberta"
                     : "Nenhum resultado"}
                 </span>
-                <span className="text-xs text-grey">
+                <span className="text-xs text-muted-foreground">
                   {convs.length === 0
                     ? isArchived
                       ? "As conversas encerradas aparecerão aqui."
@@ -185,11 +185,11 @@ export function SupportInboxView({
             />
           ) : (
             <div className="flex flex-col items-center justify-center h-full gap-3 text-center px-8">
-              <LuHeadset className="h-14 w-14 text-marine/20" />
-              <span className="font-raleway font-semibold text-marine">
+              <LuHeadset className="h-14 w-14 text-foreground/20" />
+              <span className="font-raleway font-semibold text-foreground">
                 Selecione uma conversa
               </span>
-              <span className="text-sm text-grey max-w-xs">
+              <span className="text-sm text-muted-foreground max-w-xs">
                 {isArchived
                   ? "Escolha uma conversa arquivada para visualizar o histórico."
                   : "Escolha uma conversa na lista ao lado para começar a atender."}

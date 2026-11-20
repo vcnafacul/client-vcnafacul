@@ -119,7 +119,7 @@ describe("DashFilterBar — foco e composição", () => {
       screen.getByLabelText("Buscar"),
       screen.getByRole("button", { name: "Limpar filtros (1)" }),
     ]) {
-      expect(el.className).toContain("focus-visible:ring-orange/40");
+      expect(el.className).toContain("focus-visible:ring-ring");
       expect(el.className).not.toMatch(/ring-blue|focus:ring-blue|outline-blue/);
     }
   });

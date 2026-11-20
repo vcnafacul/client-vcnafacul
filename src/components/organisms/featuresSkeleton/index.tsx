@@ -1,8 +1,9 @@
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { palette } from "@/lib/palette";
 
 function FeatureSkeleton() {
     return ( 
-        <SkeletonTheme baseColor="#64646426" highlightColor="#222">
+        <SkeletonTheme baseColor={`${palette.neutral[600]}26`} highlightColor={palette.neutral[900]}>
             <div className="container mx-auto flex justify-center flex-col items-center gap-4 my-10">
                 <Skeleton className="w-96 h-10" />
                 <Skeleton className="w-96 h-4" />

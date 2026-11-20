@@ -157,7 +157,7 @@ function Step3Geo({
             icon={leaflet.divIcon({
               className: "w-8 h-8",
               html: renderToStaticMarkup(
-                <PointIcon className="fill-red h-7" />
+                <PointIcon className="fill-destructive h-7" />
               ),
               iconAnchor: [16, 32], // <-- Aqui está o ajuste
             })}
@@ -188,7 +188,7 @@ function Step3Geo({
           alt="novo"
           icon={leaflet.divIcon({
             className: "w-8 h-8",
-            html: renderToStaticMarkup(<PointIcon className="fill-red h-8" />),
+            html: renderToStaticMarkup(<PointIcon className="fill-destructive h-8" />),
             iconAnchor: [16, 32], // <-- Aqui está o ajuste
           })}
         ></Marker>
@@ -208,7 +208,7 @@ function Step3Geo({
         onSubmit={handleSubmit(handleForm)}
       >
         <MapBox
-          className="h-80 border border-gray-300 z-0"
+          className="h-80 border border-border z-0"
           zoom={15}
           markers={[]}
           mapEvent={Event()}

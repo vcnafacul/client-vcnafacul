@@ -13,7 +13,7 @@ function Success({ email }: Props) {
   ];
   return (
     <div className="w-full flex flex-col items-center">
-      <FaCheckDouble className="fill-green text-[150px] border-2 border-green p-4 rounded-full" />
+      <FaCheckDouble className="fill-success text-[150px] border-2 border-success p-4 rounded-full" />
       <Text size="secondary" className="mt-10">
         Acesse seu email, {email}, para confirmar o seu cadastro
       </Text>
@@ -24,7 +24,7 @@ function Success({ email }: Props) {
       ))}
       <Text
         size="quaternary"
-        className="mt-3 md:mt-3 text-sm md:text-base text-zinc-600 leading-7 md:leading-7"
+        className="mt-3 md:mt-3 text-sm md:text-base text-muted-foreground leading-7 md:leading-7"
       >
         <div>{textContact.text}</div>
         <span>{textContact.email}</span>

@@ -111,7 +111,7 @@ const PhotoEditor = ({
     >
       {/* Chips de aspect ratio */}
       {aspectPresets && aspectPresets.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-2 sm:p-3 bg-gray-900 rounded-t-lg sm:rounded-t-xl">
+        <div className="flex flex-wrap gap-2 p-2 sm:p-3 bg-foreground rounded-t-lg sm:rounded-t-xl">
           {aspectPresets.map((p, i) => (
             <button
               key={`${p.label}-${i}`}
@@ -120,8 +120,8 @@ const PhotoEditor = ({
               className={[
                 "px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors",
                 i === activePresetIndex
-                  ? "bg-white text-gray-900"
-                  : "bg-gray-700 text-gray-200 hover:bg-gray-600",
+                  ? "bg-white text-foreground"
+                  : "bg-foreground/80 text-primary-foreground hover:bg-foreground/60",
               ].join(" ")}
             >
               {p.label}
@@ -132,7 +132,7 @@ const PhotoEditor = ({
       {/* Área do crop: ocupa boa parte da tela no mobile e desktop */}
       <div
         className={[
-          "relative w-full flex-1 flex min-h-0 overflow-hidden bg-gray-900",
+          "relative w-full flex-1 flex min-h-0 overflow-hidden bg-foreground",
           aspectPresets && aspectPresets.length > 0
             ? ""
             : "rounded-t-lg sm:rounded-t-xl",
@@ -160,13 +160,13 @@ const PhotoEditor = ({
       </div>
       {/* Barra de ações: sempre visível, com safe area no mobile */}
       <div
-        className="flex gap-3 justify-end items-center p-3 sm:p-4 bg-gray-900 rounded-b-lg sm:rounded-b-xl shrink-0"
+        className="flex gap-3 justify-end items-center p-3 sm:p-4 bg-foreground rounded-b-lg sm:rounded-b-xl shrink-0"
         style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
       >
         <button
           type="button"
           onClick={handleClose}
-          className="bg-red-500 p-3 rounded-full hover:bg-red-700 touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
+          className="bg-destructive p-3 rounded-full hover:bg-destructive/90 touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
           aria-label="Cancelar"
         >
           <X className="text-white w-6 h-6" />
@@ -174,7 +174,7 @@ const PhotoEditor = ({
         <button
           type="button"
           onClick={handleConfirm}
-          className="bg-green-500 p-3 rounded-full hover:bg-green-700 touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
+          className="bg-success p-3 rounded-full hover:bg-success/90 touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
           aria-label="Aprovar foto"
         >
           <Check className="text-white w-6 h-6" />

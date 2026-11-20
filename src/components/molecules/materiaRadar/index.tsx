@@ -11,7 +11,7 @@ interface Props {
 export function MateriaRadar({ materias, onSelectMateria, selectedMateriaId }: Props) {
   if (materias.length === 0) {
     return (
-      <p className="py-4 text-sm text-center text-gray-400">
+      <p className="py-4 text-sm text-center text-muted-foreground">
         Nenhuma matéria com dados para este mês.
       </p>
     );
@@ -28,10 +28,10 @@ export function MateriaRadar({ materias, onSelectMateria, selectedMateriaId }: P
         <RadarChart data={radarData} indexBy="materia" keys={["aproveitamento"]} />
       </div>
       <div className="w-full sm:w-64">
-        <p className="mb-1 text-xs font-medium text-gray-500 uppercase">Matérias</p>
+        <p className="mb-1 text-xs font-medium text-muted-foreground uppercase">Matérias</p>
         <table className="w-full text-sm" role="table" aria-label="Tabela de matérias">
           <thead>
-            <tr className="text-left text-xs text-gray-400">
+            <tr className="text-left text-xs text-muted-foreground">
               <th className="pb-1 font-normal">Matéria</th>
               <th className="pb-1 font-normal text-right">Aproveito.</th>
               <th className="pb-1 font-normal text-right">Alunos</th>
@@ -42,8 +42,8 @@ export function MateriaRadar({ materias, onSelectMateria, selectedMateriaId }: P
               <tr
                 key={m.id}
                 onClick={() => onSelectMateria(selectedMateriaId === m.id ? undefined : m.id)}
-                className={`cursor-pointer rounded transition-colors hover:bg-gray-50 ${
-                  selectedMateriaId === m.id ? "bg-blue-50 font-medium" : ""
+                className={`cursor-pointer rounded transition-colors hover:bg-page ${
+                  selectedMateriaId === m.id ? "bg-info-muted font-medium" : ""
                 }`}
                 tabIndex={0}
                 onKeyDown={(e) => {
@@ -56,7 +56,7 @@ export function MateriaRadar({ materias, onSelectMateria, selectedMateriaId }: P
               >
                 <td className="py-1 pr-2">{m.nome}</td>
                 <td className="py-1 text-right">{formatPercent(m.aproveitamento)}%</td>
-                <td className="py-1 text-right text-gray-400">n={m.studentsContributing}</td>
+                <td className="py-1 text-right text-muted-foreground">n={m.studentsContributing}</td>
               </tr>
             ))}
           </tbody>

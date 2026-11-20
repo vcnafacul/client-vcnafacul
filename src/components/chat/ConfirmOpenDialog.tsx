@@ -26,10 +26,10 @@ export function ConfirmOpenDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <div className="mx-auto h-12 w-12 rounded-full bg-marine flex items-center justify-center mb-2">
-            <LuHeadset className="h-6 w-6 text-orange" />
+          <div className="mx-auto h-12 w-12 rounded-full bg-primary flex items-center justify-center mb-2">
+            <LuHeadset className="h-6 w-6 text-primary" />
           </div>
-          <DialogTitle className="text-center text-marine font-raleway">
+          <DialogTitle className="text-center text-foreground font-raleway">
             Falar com o suporte
           </DialogTitle>
           <DialogDescription className="text-center">
@@ -47,7 +47,7 @@ export function ConfirmOpenDialog({
           <Button
             onClick={onConfirm}
             disabled={loading}
-            className="bg-orange hover:bg-darkOrange text-white"
+            className="bg-cta hover:bg-cta text-white"
           >
             {loading ? "Abrindo..." : "Sim, abrir conversa"}
           </Button>

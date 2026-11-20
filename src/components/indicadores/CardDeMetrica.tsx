@@ -6,10 +6,10 @@ import { ExplicacaoDaMetrica, InfoDaMetrica } from "./InfoDaMetrica";
 export type TomDaMetrica = "marine" | "green" | "orange" | "red";
 
 const tons: Record<TomDaMetrica, string> = {
-  marine: "bg-marine/[0.07] text-marine",
-  green: "bg-green/[0.15] text-[#0d7a63]",
-  orange: "bg-orange/[0.12] text-[#b35300]",
-  red: "bg-red/[0.10] text-red",
+  marine: "bg-primary/[0.07] text-foreground",
+  green: "bg-success-muted text-success",
+  orange: "bg-cta/[0.12] text-warning",
+  red: "bg-destructive/[0.10] text-destructive",
 };
 
 interface Props {
@@ -48,8 +48,8 @@ export function CardDeMetrica({
   return (
     <div
       className={cn(
-        "min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(11,39,71,0.04)] sm:p-5",
-        onClick && "transition-colors hover:border-marine/30",
+        "min-w-0 rounded-2xl border border-border bg-white p-4 shadow-[0_1px_2px_rgba(11,39,71,0.04)] sm:p-5",
+        onClick && "transition-colors hover:border-primary/30",
         className,
       )}
     >
@@ -72,26 +72,26 @@ export function CardDeMetrica({
             <button
               type="button"
               onClick={onClick}
-              className="text-left text-2xl font-bold leading-none text-marine tabular-nums lining-nums underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marine/40 sm:text-[28px]"
+              className="text-left text-2xl font-bold leading-none text-foreground tabular-nums lining-nums underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:text-[28px]"
             >
               {valor ?? "—"}
             </button>
           ) : (
-            <p className="text-2xl font-bold leading-none text-marine tabular-nums lining-nums sm:text-[28px]">
+            <p className="text-2xl font-bold leading-none text-foreground tabular-nums lining-nums sm:text-[28px]">
               {valor ?? "—"}
             </p>
           )}
           {/* o (i) anda com o texto: se o rótulo quebra linha, ele não fica solto */}
-          <p className="mt-2 text-sm font-medium text-slate-600">
+          <p className="mt-2 text-sm font-medium text-muted-foreground">
             {rotulo}{" "}
             <span className="inline-flex align-middle">
               <InfoDaMetrica metrica={rotulo} explicacao={explicacao} />
             </span>
           </p>
           {valor === null ? (
-            <p className="mt-0.5 text-xs text-slate-400">{semDado}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{semDado}</p>
           ) : (
-            detalhe && <p className="mt-0.5 text-xs text-slate-400">{detalhe}</p>
+            detalhe && <p className="mt-0.5 text-xs text-muted-foreground">{detalhe}</p>
           )}
         </div>
       )}

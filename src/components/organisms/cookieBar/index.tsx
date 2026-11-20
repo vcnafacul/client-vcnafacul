@@ -30,7 +30,7 @@ export function CookieBar() {
 
   return (
     <div className={`mx-4 sm:mx-0 sm:max-w-5xl right-0 bottom-4 z-50 print:hidden ${isInvisible ? "hidden" : "fixed"}`}>
-      <div className="flex flex-col gap-4 py-2 bg-gray-100 rounded shadow-md sm:p-4 sm:mx-10 ">
+      <div className="flex flex-col gap-4 py-2 bg-muted rounded shadow-md sm:p-4 sm:mx-10 ">
         <div className="flex">
           <span className="mx-4 italic sm:text-base sm:mx-10 ">
             "Nós utilizamos cookies e outras tecnologias semelhantes para
@@ -39,7 +39,7 @@ export function CookieBar() {
             nossos serviços, você aceita a política de monitoramento de cookies.
             Para mais informações, consulte nossa
             <Link className="w-60" to={"/Pol%C3%ADtica%20de%20Privacidade.pdf"}>
-              <span className="pl-1 font-black text-marine">
+              <span className="pl-1 font-black text-foreground">
                 Politica de Privacidade
               </span>
             </Link>

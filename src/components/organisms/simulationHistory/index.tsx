@@ -14,13 +14,13 @@ function SimulationHistory({ historical }: SimulationHistoryProps) {
       <Text size="primary" className="text-start">
         Histórico de Simulados
       </Text>
-      <Text size="tertiary" className="text-start text-gray-500">
+      <Text size="tertiary" className="text-start text-muted-foreground">
         Veja aqui todos os simulados que você já realizou.
-        Para mais detalhes, <Link className="text-lightGreen font-black" to={`${DASH}/${SIMULADO_HISTORIES}`}>clique aqui.</Link>
+        Para mais detalhes, <Link className="text-success font-black" to={`${DASH}/${SIMULADO_HISTORIES}`}>clique aqui.</Link>
       </Text>
       <div className="relative ">
-        <div className="w-40 h-40 bg-lightGreen absolute right-0 -top-20 -z-10 rotate-45" />
-        <div className="border border-lightGreen bg-white">
+        <div className="w-40 h-40 bg-success absolute right-0 -top-20 -z-10 rotate-45" />
+        <div className="border border-success bg-white">
           {historical.map((historico) => (
             <SimulationHistoryCard historico={historico} key={historico._id} />
           ))}

@@ -28,7 +28,7 @@ export function VideoLinkField({ value, onChange }: Props) {
         aria-invalid={invalido}
       />
       {invalido && (
-        <p role="alert" className="text-sm text-red-700">
+        <p role="alert" className="text-sm text-destructive">
           {MENSAGEM_LINK_INVALIDO}
         </p>
       )}

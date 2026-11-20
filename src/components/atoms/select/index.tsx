@@ -24,18 +24,17 @@ function Select({ options, disabled, value, setState }: SelectProps) {
           pr-12
           rounded-md
           border
-          border-slate-200
+          border-border
           bg-white
-          text-slate-700
+          text-foreground
           font-medium
           shadow-sm
           transition-all
-          hover:border-slate-300
+          hover:border-border
           hover:shadow-md
           focus:outline-none
-          focus:ring-2
-          focus:ring-blue-500/30
-          focus:border-blue-500
+          focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+          focus:border-ring
         "
       >
         {options.map((opt) => (
@@ -45,7 +44,7 @@ function Select({ options, disabled, value, setState }: SelectProps) {
         ))}
       </select>
 
-      <TiArrowSortedDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
+      <TiArrowSortedDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
     </div>
   );
 }

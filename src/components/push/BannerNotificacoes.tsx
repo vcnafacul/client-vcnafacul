@@ -45,13 +45,13 @@ export function BannerNotificacoes() {
       <div
         role="region"
         aria-label="Notificações bloqueadas"
-        className="flex flex-col gap-3 rounded-2xl border border-orange/30 bg-orange/5 p-4 sm:flex-row sm:items-center"
+        className="flex flex-col gap-3 rounded-2xl border border-cta/30 bg-cta/5 p-4 sm:flex-row sm:items-center"
       >
         <BellOff
           aria-hidden
-          className="hidden h-5 w-5 shrink-0 text-orange sm:block"
+          className="hidden h-5 w-5 shrink-0 text-primary sm:block"
         />
-        <p className="flex-1 text-sm text-marine">
+        <p className="flex-1 text-sm text-foreground">
           <strong>As notificações ficaram bloqueadas.</strong> O navegador não
           deixa o site perguntar de novo. Para receber os avisos, libere em:{" "}
           <strong>{CAMINHO_DAS_CONFIGURACOES[ondeConfigurar()]}</strong>.
@@ -91,13 +91,13 @@ export function BannerNotificacoes() {
     <div
       role="region"
       aria-label="Ativar notificações"
-      className="flex flex-col gap-3 rounded-2xl border border-orange/30 bg-orange/5 p-4 sm:flex-row sm:items-center"
+      className="flex flex-col gap-3 rounded-2xl border border-cta/30 bg-cta/5 p-4 sm:flex-row sm:items-center"
     >
       <Bell
         aria-hidden
-        className="hidden h-5 w-5 shrink-0 text-orange sm:block"
+        className="hidden h-5 w-5 shrink-0 text-primary sm:block"
       />
-      <p className="flex-1 text-sm text-marine">
+      <p className="flex-1 text-sm text-foreground">
         {status === "ios-needs-install"
           ? "Quer receber avisos do Você na Facul no iPhone? Primeiro adicione o site à Tela de Início."
           : "Quer receber avisos do Você na Facul no celular, mesmo com o site fechado?"}

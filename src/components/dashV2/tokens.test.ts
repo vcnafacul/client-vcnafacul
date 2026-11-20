@@ -21,7 +21,7 @@ function coresDaPaleta(): Set<string> {
   );
   const bloco = config.slice(config.indexOf("colors: {"));
   const nomes = new Set<string>();
-  for (const m of bloco.matchAll(/^\s{6,8}([a-zA-Z][a-zA-Z0-9]*):\s*["{]/gm)) {
+  for (const m of bloco.matchAll(/^\s{6,8}([a-zA-Z][a-zA-Z0-9]*):\s*(?:["{]|c\(|pair\()/gm)) {
     nomes.add(m[1]);
   }
   return nomes;
@@ -79,7 +79,7 @@ describe("tokens do dashV2", () => {
     // ⚠️ Branco sobre #FF7600 dá 2.68:1 e reprova; marine dá 5.62:1. É a
     // decisão que separa o V2 do V1 aqui, e ela é fácil de "consertar" de volta
     // por achar que botão laranja tem texto branco.
-    expect(dashV2.action.primary).toContain("text-marine");
+    expect(dashV2.action.primary).toContain("text-cta-foreground");
     expect(dashV2.action.primary).not.toContain("text-white");
   });
 
@@ -115,7 +115,7 @@ describe("tokens do dashV2", () => {
      * 2.45:1, `orange` 2.68:1). "Consertar" esta linha para acompanhar o `dot`
      * produz um ícone que parte das pessoas não enxerga.
      */
-    expect(dashV2.status.running.dot).toContain("darkOrange");
+    expect(dashV2.status.running.dot).toContain("bg-cta");
     expect(dashV2.status.running.icon).not.toContain("range");
   });
 });

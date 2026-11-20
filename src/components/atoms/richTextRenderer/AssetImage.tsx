@@ -47,12 +47,12 @@ export function AssetImage({
 
   if (loading) {
     return (
-      <span className="inline-block w-32 h-20 bg-gray-200 animate-pulse rounded" />
+      <span className="inline-block w-32 h-20 bg-muted animate-pulse rounded" />
     );
   }
 
   if (!src) {
-    return <span className="text-red-500 text-sm">[Imagem indisponível]</span>;
+    return <span className="text-destructive text-sm">[Imagem indisponível]</span>;
   }
 
   return <img src={src} alt={alt} className={className} style={style} />;

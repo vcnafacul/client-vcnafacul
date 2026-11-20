@@ -21,8 +21,8 @@ export function MapFilterCard({
       className={`
         absolute z-30 ${className} max-w-[260px]
         bg-white/70 backdrop-blur-xl backdrop-saturate-150 border border-white/40
-        rounded-2xl shadow-lg p-3 md:p-4 text-marine
-        [&_label]:!text-[#0b2747]
+        rounded-2xl shadow-lg p-3 md:p-4 text-foreground
+        [&_label]:!text-foreground
       `}
     >
       <MapFilterOptions filterMarkers={filterMarkers} onToggle={onToggle} />

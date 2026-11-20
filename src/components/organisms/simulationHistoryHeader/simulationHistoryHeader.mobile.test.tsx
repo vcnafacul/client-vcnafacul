@@ -70,7 +70,7 @@ describe("SimulationHistoryHeader no celular", () => {
     );
 
     expect(screen.getByText("Processando resultados...")).toBeInTheDocument();
-    expect(container.firstElementChild).toHaveClass("bg-marine");
+    expect(container.firstElementChild).toHaveClass("bg-primary");
   });
 });
 

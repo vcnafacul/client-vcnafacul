@@ -3,11 +3,11 @@ import { VariantProps, tv } from "tailwind-variants";
 import { Alternativa } from "../../../types/question/alternative";
 
 const alternative = tv({
-    base: 'flex justify-center items-center text-xl text-marine font-bold border-none rounded w-12 h-12 cursor-pointer disabled:cursor-not-allowed',
+    base: 'flex justify-center items-center text-xl text-foreground font-bold border-none rounded w-12 h-12 cursor-pointer disabled:cursor-not-allowed',
     variants: {
         select: {
-            true: 'bg-yellow',
-            false: 'bg-lightGray'
+            true: 'bg-warning-muted',
+            false: 'bg-muted'
         },
     },
     defaultVariants: {

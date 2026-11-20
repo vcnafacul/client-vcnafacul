@@ -52,7 +52,7 @@ export function MapInfoCard({
         absolute z-30
         ${className}
         bg-white/90 backdrop-blur-xl backdrop-saturate-150 border border-white/40
-        rounded-2xl shadow-xl text-marine overflow-y-auto
+        rounded-2xl shadow-xl text-foreground overflow-y-auto
       `}
     >
       <div className="absolute top-2 right-2 flex gap-1 z-10">

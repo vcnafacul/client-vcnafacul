@@ -3,22 +3,23 @@ import { Chip, Typography } from "@mui/material";
 import { BarChart } from "@mui/x-charts";
 import { useEffect, useMemo, useState } from "react";
 import { BarChartMuiProps } from "../barChartMui";
+import { palette } from "@/lib/palette";
 
 export interface BarChartWithFilterProps extends BarChartMuiProps {
   title?: string;
 }
 
 const COLORS = [
-  "#0B2747",
-  "#0F9B2C",
-  "#FF7600",
-  "#F43535",
-  "#DA005A",
-  "#5DADE2",
-  "#8A2BE2",
-  "#48C9B0",
-  "#F7DC6F",
-  "#EB984E",
+  palette.marine[900],
+  palette.mint[700],
+  palette.orange[500],
+  palette.red[500],
+  palette.pink[600],
+  palette.blue[400],
+  palette.marine[500],
+  palette.mint[400],
+  palette.yellow[300],
+  palette.orange[400],
 ];
 
 const TOP_N = 8;
@@ -86,7 +87,7 @@ export default function BarChartWithFilter({
               sx={{
                 flexShrink: 0,
                 backgroundColor: isHidden ? "transparent" : chipColor,
-                color: isHidden ? chipColor : "#fff",
+                color: isHidden ? chipColor : "white",
                 border: `1.5px solid ${chipColor}`,
                 fontWeight: 600,
                 fontSize: "0.7rem",
@@ -134,7 +135,7 @@ export default function BarChartWithFilter({
       {hasMore && (
         <button
           type="button"
-          className="text-xs text-marine underline mt-1 hover:text-orange"
+          className="text-xs text-foreground underline mt-1 hover:text-primary"
           onClick={() => setShowAll((v) => !v)}
         >
           {showAll

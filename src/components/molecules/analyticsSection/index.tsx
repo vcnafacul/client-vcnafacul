@@ -15,13 +15,13 @@ export default function AnalyticsSection({
 }: AnalyticsSectionProps) {
   return (
     <section className="mt-6">
-      <div className="flex flex-wrap items-center justify-between gap-2 px-4 pb-2 border-b border-lightGray">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-4 pb-2 border-b border-border">
         <div className="flex items-center gap-2">
-          <div className="w-1 h-6 bg-marine rounded" />
+          <div className="w-1 h-6 bg-primary rounded" />
           <div>
-            <h2 className="text-xl font-bold text-marine">{title}</h2>
+            <h2 className="text-xl font-bold text-foreground">{title}</h2>
             {subtitle && (
-              <p className="text-sm text-grey">{subtitle}</p>
+              <p className="text-sm text-muted-foreground">{subtitle}</p>
             )}
           </div>
         </div>

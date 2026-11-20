@@ -234,7 +234,7 @@ export function ChatWidget() {
 
   // ⚠️ `print:hidden`: o botão é chrome flutuante, e numa folha impressa vira
   // um retângulo azul por cima do conteúdo.
-  const buttonClassName = `fixed bottom-6 right-6 rounded-full h-12 px-5 shadow-lg z-50 gap-2 bg-marine hover:bg-marine/90 text-white ring-1 ring-white/10 transition-transform hover:scale-105 print:hidden${
+  const buttonClassName = `fixed bottom-6 right-6 rounded-full h-12 px-5 shadow-lg z-50 gap-2 bg-primary hover:bg-primary/90 text-white ring-1 ring-white/10 transition-transform hover:scale-105 print:hidden${
     hasPending ? " animate-attention-ring" : ""
   }`;
 
@@ -246,9 +246,9 @@ export function ChatWidget() {
       aria-label={hasPending ? "Mensagem do suporte pendente" : "Precisa de ajuda?"}
     >
       {hasPending ? (
-        <MessageCircle className="h-5 w-5 text-orange" />
+        <MessageCircle className="h-5 w-5 text-primary" />
       ) : (
-        <TriangleAlert className="h-5 w-5 text-orange" />
+        <TriangleAlert className="h-5 w-5 text-primary" />
       )}
       <span className="font-medium">
         {hasPending ? "Mensagem do Suporte" : "Precisa de ajuda?"}
@@ -300,7 +300,7 @@ export function ChatWidget() {
         </p>
         {remainingSeconds > 0 ? (
           <div className="flex flex-col items-center gap-1">
-            <span className="text-2xl font-bold font-mono text-marine">
+            <span className="text-2xl font-bold font-mono text-foreground">
               {formatCountdown(remainingSeconds)}
             </span>
             <span className="text-xs text-muted-foreground">

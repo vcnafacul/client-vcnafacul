@@ -55,7 +55,7 @@ function CountdownTimer({ className }: CountdownTimerProps) {
   };
 
   const styleColorTime = () => {
-    return remainingTime < 0 ? "text-red" : "text-white";
+    return remainingTime < 0 ? "text-destructive" : "text-white";
   };
 
   return (

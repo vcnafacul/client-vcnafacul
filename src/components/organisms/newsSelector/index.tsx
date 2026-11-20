@@ -36,7 +36,7 @@ function NewsSelector({ news, selectedIndex, onSelect }: NewsSelectorProps) {
         }`}
         aria-label="Anterior"
       >
-        <Arrow className="w-6 h-6 -rotate-90 fill-grey" />
+        <Arrow className="w-6 h-6 -rotate-90 fill-muted-foreground" />
       </button>
 
       {/* Items */}
@@ -57,15 +57,15 @@ function NewsSelector({ news, selectedIndex, onSelect }: NewsSelectorProps) {
                   flex items-center gap-3
                   ${
                     isSelected
-                      ? "bg-green2 text-white shadow-lg scale-100"
-                      : "bg-grey bg-opacity-30 text-grey hover:bg-opacity-50"
+                      ? "bg-success text-white shadow-lg scale-100"
+                      : "bg-muted-foreground bg-opacity-30 text-muted-foreground hover:bg-opacity-50"
                   }
                   ${isEdge ? "opacity-50 scale-95" : "opacity-100"}
                 `}
               >
                 <span
                   className={`text-xs font-mono shrink-0 ${
-                    isSelected ? "text-white/70" : "text-grey/50"
+                    isSelected ? "text-white/70" : "text-muted-foreground/50"
                   }`}
                 >
                   {String(index + 1).padStart(2, "0")}
@@ -92,7 +92,7 @@ function NewsSelector({ news, selectedIndex, onSelect }: NewsSelectorProps) {
         }`}
         aria-label="Próximo"
       >
-        <Arrow className="w-6 h-6 rotate-90 fill-grey" />
+        <Arrow className="w-6 h-6 rotate-90 fill-muted-foreground" />
       </button>
     </div>
   );

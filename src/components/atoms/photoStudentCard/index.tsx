@@ -39,7 +39,7 @@ const PhotoStudentCard = ({
   return (
     <div className="w-48 h-72 rounded-lg overflow-hidden relative">
       {aviso ? (
-        <div className="w-full h-full bg-gray-100 flex items-center justify-center p-4 text-center text-sm text-gray-500">
+        <div className="w-full h-full bg-muted flex items-center justify-center p-4 text-center text-sm text-muted-foreground">
           {aviso}
         </div>
       ) : (

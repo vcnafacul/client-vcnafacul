@@ -73,7 +73,7 @@ function Header({ solid, className }: HeaderProps) {
               className="md:hidden -ml-2 p-2"
             >
               <MenuIcon
-                className={`${!solid ? "fill-white" : "fill-marine"}`}
+                className={`${!solid ? "fill-white" : "fill-primary"}`}
               />
             </button>
           )}
@@ -109,7 +109,7 @@ function Header({ solid, className }: HeaderProps) {
               <Logged
                 userNavigation={menuDoUsuario}
                 userName={nome!}
-                className={solid ? "text-marine" : "text-white"}
+                className={solid ? "text-foreground" : "text-white"}
               />
             </div>
           )}

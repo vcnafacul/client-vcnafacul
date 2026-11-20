@@ -9,12 +9,12 @@ export function InputText({ ...props }: InputProps) {
     return visible ? (
       <AiFillEyeInvisible
         onClick={() => setVisible(!visible)}
-        className="absolute p-0 bg-transparent w-6 h-6 right-3 top-4 cursor-pointer fill-grey"
+        className="absolute p-0 bg-transparent w-6 h-6 right-3 top-4 cursor-pointer fill-muted-foreground"
       />
     ) : (
       <IoMdEye
         onClick={() => setVisible(!visible)}
-        className="absolute p-0 bg-transparent w-6 h-6 right-3 top-4 cursor-pointer fill-grey"
+        className="absolute p-0 bg-transparent w-6 h-6 right-3 top-4 cursor-pointer fill-muted-foreground"
       />
     );
   }
@@ -23,7 +23,7 @@ export function InputText({ ...props }: InputProps) {
     <div>
       <Input
         {...props}
-        className={`h-16 pt-4 focus-visible:ring-orange ${props.className}`}
+        className={`h-16 pt-4 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${props.className}`}
         id={props.id}
         autoComplete="on"
         type={

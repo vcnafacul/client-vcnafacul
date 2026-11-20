@@ -184,9 +184,9 @@ function chavesDasLinhas(): string[] {
  * ⚠️ `getAttribute("class")`, e não `el.className`: em `<svg>` o `className` é
  * um `SVGAnimatedString` e não tem `split` — e a tabela tem ícones de ordenação.
  *
- * ⚠️ Comparação por token exato: `bg-orange/10` (o chip do `StatusBadge`) e
- * `bg-darkOrange/40` (a faixa do progresso) **não** são o laranja de ação, e um
- * `includes("bg-orange")` os contaria.
+ * ⚠️ Comparação por token exato: `bg-cta/10` (o chip do `StatusBadge`) e
+ * `bg-cta/40` (a faixa do progresso) **não** são o laranja de ação, e um
+ * `includes("bg-cta")` os contaria.
  */
 function temClasse(el: Element, classe: string): boolean {
   return (el.getAttribute("class") ?? "").split(/\s+/).includes(classe);
@@ -295,7 +295,7 @@ describe("hierarquia das ações", () => {
   it("exatamente um botão laranja preenchido, e é Nova Prova", async () => {
     await montar();
     const laranjas = [...document.querySelectorAll("*")].filter((el) =>
-      temClasse(el, "bg-orange"),
+      temClasse(el, "bg-cta"),
     );
     expect(laranjas).toHaveLength(1);
     expect(laranjas[0]).toHaveAttribute("data-action-id", "nova-prova");
@@ -428,7 +428,7 @@ describe("o menu ⋯", () => {
       menu
         .querySelector('[data-action-id="sincronizar"]')!
         .getAttribute("class"),
-    ).not.toContain("bg-orange");
+    ).not.toContain("bg-cta");
 
     /*
       ⚠️ Desmontar **aqui**, ainda com o timer falso. O `cleanup()` do

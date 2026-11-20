@@ -512,7 +512,7 @@ describe("as ações que ficam", () => {
     await montar();
     const laranjas = [...document.querySelectorAll("[data-action-id]")].filter(
       (el) =>
-        (el.getAttribute("class") ?? "").split(/\s+/).includes("bg-orange"),
+        (el.getAttribute("class") ?? "").split(/\s+/).includes("bg-cta"),
     );
     expect(laranjas).toHaveLength(1);
     expect(laranjas[0]).toHaveAttribute("data-action-id", "nova-prova");

@@ -3,6 +3,7 @@ import { PieChartMui } from "@/components/atoms/pieChartMui";
 import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
 import { ChevronDown, ChevronRight, Settings } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { palette } from "@/lib/palette";
 
 export interface StudentsInfo {
   forms: SocioeconomicAnswer[][];
@@ -195,33 +196,33 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
   ];
 
   return (
-    <div className="text-gray-700 flex flex-col gap-8 w-full">
+    <div className="text-foreground flex flex-col gap-8 w-full">
       {/* Controles Colapsáveis */}
-      <div className="bg-gray-50 rounded-lg border border-gray-200">
+      <div className="bg-page rounded-lg border border-border">
         {/* Header do Accordion */}
         <button
           onClick={() => setIsConfigOpen(!isConfigOpen)}
-          className="w-full flex items-center justify-between p-4 hover:bg-gray-100 transition-colors duration-200"
+          className="w-full flex items-center justify-between p-4 hover:bg-muted transition-colors duration-200"
         >
           <div className="flex items-center gap-3">
-            <Settings className="w-5 h-5 text-gray-600" />
-            <span className="font-medium text-gray-800">
+            <Settings className="w-5 h-5 text-muted-foreground" />
+            <span className="font-medium text-foreground">
               Configurações dos Gráficos
             </span>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-muted-foreground">
               ({selectedQuestions.length} perguntas selecionadas)
             </span>
           </div>
           {isConfigOpen ? (
-            <ChevronDown className="w-5 h-5 text-gray-600" />
+            <ChevronDown className="w-5 h-5 text-muted-foreground" />
           ) : (
-            <ChevronRight className="w-5 h-5 text-gray-600" />
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
           )}
         </button>
 
         {/* Conteúdo Colapsável */}
         {isConfigOpen && (
-          <div className="px-4 pb-4 border-t border-gray-200">
+          <div className="px-4 pb-4 border-t border-border">
             <div className="flex flex-col gap-4 pt-4">
               <div className="flex items-center gap-4">
                 <label className="flex items-center gap-2">
@@ -243,7 +244,7 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
               {!showAllQuestions && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="text-sm font-medium text-gray-700">
+                    <div className="text-sm font-medium text-foreground">
                       Selecionar perguntas específicas:
                     </div>
                     <div className="flex gap-2">
@@ -255,7 +256,7 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
                             .map((q) => q.questionId);
                           setSelectedQuestions(allQuestionIds);
                         }}
-                        className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
+                        className="text-xs px-2 py-1 bg-info-muted text-info rounded hover:bg-info-muted transition-colors"
                       >
                         Selecionar Todas
                       </button>
@@ -264,7 +265,7 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
                           setHasUserInteracted(true);
                           setSelectedQuestions([]);
                         }}
-                        className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                        className="text-xs px-2 py-1 bg-muted text-foreground rounded hover:bg-muted transition-colors"
                       >
                         Limpar
                       </button>
@@ -276,7 +277,7 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
                       .map((question) => (
                         <label
                           key={question.questionId}
-                          className="flex items-start gap-3 p-2 hover:bg-gray-100 rounded cursor-pointer"
+                          className="flex items-start gap-3 p-2 hover:bg-muted rounded cursor-pointer"
                         >
                           <input
                             type="checkbox"
@@ -301,10 +302,10 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
                             className="rounded mt-0.5"
                           />
                           <div className="flex-1">
-                            <span className="text-sm text-gray-800">
+                            <span className="text-sm text-foreground">
                               {question.question}
                             </span>
-                            <div className="text-xs text-gray-500 mt-1">
+                            <div className="text-xs text-muted-foreground mt-1">
                               {question.totalResponses} respostas •{" "}
                               {question.uniqueAnswers.length} opções
                             </div>
@@ -341,7 +342,7 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
                   ? question.question.substring(0, 60) + "..."
                   : question.question}
               </span>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-muted-foreground">
                 {question.totalResponses} respostas •{" "}
                 {question.uniqueAnswers.length} opções
               </span>
@@ -365,27 +366,27 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
       </div>
 
       {/* Estatísticas gerais */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-blue-50 rounded-lg">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-info-muted rounded-lg">
         <div className="text-center">
-          <div className="text-2xl font-bold text-blue-600">
+          <div className="text-2xl font-bold text-info">
             {data.forms.length}
           </div>
-          <div className="text-sm text-gray-600">Total de Estudantes</div>
+          <div className="text-sm text-muted-foreground">Total de Estudantes</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-green-600">
+          <div className="text-2xl font-bold text-success">
             {processedQuestions.filter((q) => q.totalResponses > 0).length}
           </div>
-          <div className="text-sm text-gray-600">Perguntas Respondidas</div>
+          <div className="text-sm text-muted-foreground">Perguntas Respondidas</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-purple-600">
+          <div className="text-2xl font-bold text-foreground">
             {Math.round(
               processedQuestions.reduce((sum, q) => sum + q.totalResponses, 0) /
                 processedQuestions.length || 0
             )}
           </div>
-          <div className="text-sm text-gray-600">Média de Respostas</div>
+          <div className="text-sm text-muted-foreground">Média de Respostas</div>
         </div>
       </div>
     </div>
@@ -395,16 +396,16 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
 // Função para gerar cores consistentes baseadas no ID
 function getRandomColor(seed: string): string {
   const colors = [
-    "#F43535",
-    "#48C9B0",
-    "#5DADE2",
-    "#F7DC6F",
-    "#EB984E",
-    "#A9DFBF",
-    "#F9E79F",
-    "#D35400",
-    "#BA4A00",
-    "#52BE80",
+    palette.red[500],
+    palette.mint[400],
+    palette.blue[400],
+    palette.yellow[300],
+    palette.orange[400],
+    palette.neutral[300],
+    palette.yellow[200],
+    palette.orange[600],
+    palette.orange[700],
+    palette.mint[400],
   ];
 
   let hash = 0;

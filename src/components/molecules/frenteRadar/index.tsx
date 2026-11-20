@@ -28,7 +28,7 @@ export function FrenteRadar({ materias, title }: Props) {
 
   if (flat.length === 0) {
     return (
-      <p className="py-2 text-sm text-center text-gray-400">
+      <p className="py-2 text-sm text-center text-muted-foreground">
         Nenhuma frente com dados.
       </p>
     );
@@ -52,10 +52,10 @@ export function FrenteRadar({ materias, title }: Props) {
         />
       </div>
       <div className="w-full sm:w-64">
-        <p className="mb-1 text-xs font-medium text-gray-500 uppercase">{heading}</p>
+        <p className="mb-1 text-xs font-medium text-muted-foreground uppercase">{heading}</p>
         <table className="w-full text-sm" aria-label="Tabela de frentes">
           <thead>
-            <tr className="text-left text-xs text-gray-400">
+            <tr className="text-left text-xs text-muted-foreground">
               <th className="pb-1 font-normal">Frente</th>
               {multipleMaterias && <th className="pb-1 font-normal">Matéria</th>}
               <th className="pb-1 font-normal text-right">Aproveito.</th>
@@ -64,11 +64,11 @@ export function FrenteRadar({ materias, title }: Props) {
           </thead>
           <tbody>
             {flat.map((f) => (
-              <tr key={f.key} className="hover:bg-gray-50">
+              <tr key={f.key} className="hover:bg-page">
                 <td className="py-1 pr-2">{f.nome}</td>
-                {multipleMaterias && <td className="py-1 pr-2 text-gray-500">{f.materiaNome}</td>}
+                {multipleMaterias && <td className="py-1 pr-2 text-muted-foreground">{f.materiaNome}</td>}
                 <td className="py-1 text-right">{formatPercent(f.aproveitamento)}%</td>
-                <td className="py-1 text-right text-gray-400">n={f.studentsContributing}</td>
+                <td className="py-1 text-right text-muted-foreground">n={f.studentsContributing}</td>
               </tr>
             ))}
           </tbody>

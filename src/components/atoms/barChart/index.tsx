@@ -9,6 +9,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
+import { palette } from "@/lib/palette";
 
 ChartJS.register(
   CategoryScale,
@@ -37,14 +38,14 @@ export function BarChart({ dataBar }: Props) {
         labelColor: "rgba(255, 99, 132, 1)",
         data: dataBar.map((d) => Object.values(d)[0]),
         backgroundColor: [
-          "#37D6B5",
-          "#0F9B2C",
-          "#FFE53C",
-          "#FF7600",
-          "#DA005A",
-          "#E0E0E0",
-          "#8cc408",
-          "#fff4af",
+          palette.mint[400],
+          palette.mint[700],
+          palette.yellow[300],
+          palette.orange[500],
+          palette.pink[600],
+          palette.neutral[200],
+          palette.yellow[500],
+          palette.yellow[200],
         ],
       },
     ],

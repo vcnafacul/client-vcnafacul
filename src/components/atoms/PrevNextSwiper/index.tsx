@@ -8,7 +8,7 @@ interface PrevNextSwiperProps {
 
 function PrevNextSwiper({ className, fill } : PrevNextSwiperProps) {
     const swiper = useSwiper()
-    const arrowFill = fill === undefined ? 'fill-grey' : 'fill-white'
+    const arrowFill = fill === undefined ? 'fill-muted-foreground' : 'fill-white'
     const classNameArrow = `w-10 cursor-pointer ${arrowFill}`
     return (
         <div className={`w-full flex justify-between pr-8 z-10 ${className}`}>

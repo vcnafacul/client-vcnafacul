@@ -15,7 +15,7 @@ function Logo({ solid, name, text }: LogoProps){
             <Link to={HOME_PATH}>
                 <div className="flex items-center justify-center md:justify-start">
                     <LogoIcon />
-                    { name ? <div className={`ml-2.5 text-lg md:text-xl ${solid ? 'text-marine' : 'text-white'}`}>
+                    { name ? <div className={`ml-2.5 text-lg md:text-xl ${solid ? 'text-foreground' : 'text-white'}`}>
                         você na <strong>facul</strong>
                     </div> : <></>}
                 </div>

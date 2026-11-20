@@ -14,27 +14,27 @@ interface StatCardProps {
 }
 
 const borderColorMap: Record<StatCardColor, string> = {
-  marine: "border-l-marine",
-  green: "border-l-green2",
-  orange: "border-l-orange",
-  red: "border-l-red",
-  pink: "border-l-pink",
+  marine: "border-l-primary",
+  green: "border-l-success",
+  orange: "border-l-cta",
+  red: "border-l-destructive",
+  pink: "border-l-muted-foreground",
 };
 
 const textColorMap: Record<StatCardColor, string> = {
-  marine: "text-marine",
-  green: "text-green2",
-  orange: "text-orange",
-  red: "text-red",
-  pink: "text-pink",
+  marine: "text-foreground",
+  green: "text-success",
+  orange: "text-warning",
+  red: "text-destructive",
+  pink: "text-foreground",
 };
 
 const secondaryTextColorMap: Record<StatCardColor, string> = {
-  marine: "text-marine/40",
-  green: "text-green2/40",
-  orange: "text-orange/40",
-  red: "text-red/40",
-  pink: "text-pink/40",
+  marine: "text-foreground/40",
+  green: "text-success/40",
+  orange: "text-warning/40",
+  red: "text-destructive/40",
+  pink: "text-foreground/40",
 };
 
 export default function StatCard({
@@ -70,7 +70,7 @@ export default function StatCard({
                 </span>
               )}
             </p>
-            <p className="text-sm text-grey truncate">{label}</p>
+            <p className="text-sm text-muted-foreground truncate">{label}</p>
           </>
         )}
       </div>

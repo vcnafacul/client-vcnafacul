@@ -61,12 +61,12 @@ function FormField<T extends FieldValues>({
     return visible ? (
       <AiFillEyeInvisible
         onClick={() => setVisible(!visible)}
-        className="absolute p-0 bg-transparent w-6 h-6 right-3 top-4 cursor-pointer fill-grey"
+        className="absolute p-0 bg-transparent w-6 h-6 right-3 top-4 cursor-pointer fill-muted-foreground"
       />
     ) : (
       <IoMdEye
         onClick={() => setVisible(!visible)}
-        className="absolute p-0 bg-transparent w-6 h-6 right-3 top-4 cursor-pointer fill-grey"
+        className="absolute p-0 bg-transparent w-6 h-6 right-3 top-4 cursor-pointer fill-muted-foreground"
       />
     );
   }
@@ -93,7 +93,7 @@ function FormField<T extends FieldValues>({
       <LabelInput label={label} compacto={size === "small"} />
       {type !== "password" ? <></> : backgroundImageToggleVisibility(visible)}
       {error && (
-        <span className="w-full mt-1 text-red" role="alert">
+        <span className="w-full mt-1 text-destructive" role="alert">
           {error.message}
         </span>
       )}

@@ -64,7 +64,7 @@ export function InputFactory({
       break;
     case "textarea":
       inputElement = (
-        <div className="border p-2 w-full focus-within:border-orange rounded-md">
+        <div className="border p-2 w-full focus-within:border-cta rounded-md">
           <textarea
             className={`mt-4 w-full outline-none rounded-md overflow-y-auto
     scrollbar-hide resize-none ${(props as any).className}`}

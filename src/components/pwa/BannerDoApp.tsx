@@ -72,10 +72,10 @@ export function InstrucaoDoIphone({ onAdiar }: { onAdiar: () => void }) {
     <div
       role="region"
       aria-label="Instalar o app"
-      className="flex flex-col gap-3 rounded-2xl border border-marine/20 bg-marine/5 p-4 sm:flex-row sm:items-center"
+      className="flex flex-col gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-4 sm:flex-row sm:items-center"
     >
-      <Smartphone aria-hidden className="hidden h-5 w-5 shrink-0 text-marine sm:block" />
-      <p className="flex-1 text-sm text-marine">
+      <Smartphone aria-hidden className="hidden h-5 w-5 shrink-0 text-foreground sm:block" />
+      <p className="flex-1 text-sm text-foreground">
         <strong>O Você na Facul agora tem app!</strong> No iPhone, toque em{" "}
         <strong className="inline-flex items-center gap-1 whitespace-nowrap">
           Compartilhar <Share aria-hidden className="h-4 w-4" />
@@ -115,10 +115,10 @@ export function BannerDoApp({ onAdiar }: { onAdiar: () => void }) {
     <div
       role="region"
       aria-label="Instalar o app"
-      className="flex flex-col gap-3 rounded-2xl border border-marine/20 bg-marine/5 p-4 sm:flex-row sm:items-center"
+      className="flex flex-col gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-4 sm:flex-row sm:items-center"
     >
-      <Smartphone aria-hidden className="hidden h-5 w-5 shrink-0 text-marine sm:block" />
-      <p className="flex-1 text-sm text-marine">
+      <Smartphone aria-hidden className="hidden h-5 w-5 shrink-0 text-foreground sm:block" />
+      <p className="flex-1 text-sm text-foreground">
         <strong>O Você na Facul agora tem app!</strong> Instale para abrir direto da tela do
         celular e receber avisos.
       </p>

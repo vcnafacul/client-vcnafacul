@@ -205,11 +205,11 @@ export function ClassSimuladoAnalytics({
   }, [classId, refreshing, requesting, token]);
 
   if (loading) {
-    return <p className="py-8 text-center text-sm text-gray-400">Carregando dados da turma...</p>;
+    return <p className="py-8 text-center text-sm text-muted-foreground">Carregando dados da turma...</p>;
   }
 
   if (!list) {
-    return <p className="py-8 text-center text-sm text-red-400">Erro ao carregar dados.</p>;
+    return <p className="py-8 text-center text-sm text-destructive">Erro ao carregar dados.</p>;
   }
 
   const selectedMateria = monthData?.materias.find((m) => m.id === selectedMateriaId);
@@ -249,7 +249,7 @@ export function ClassSimuladoAnalytics({
           />
 
           {monthLoading && (
-            <p className="py-6 text-center text-sm text-gray-400">Carregando mês...</p>
+            <p className="py-6 text-center text-sm text-muted-foreground">Carregando mês...</p>
           )}
 
           {!monthLoading && !monthData && <EmptyState variant="month-empty" />}
@@ -276,8 +276,8 @@ export function ClassSimuladoAnalytics({
                     }}
                     className={`rounded-l border px-3 py-1 ${
                       view === "materia"
-                        ? "bg-blue-50 border-blue-300 text-blue-700"
-                        : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50"
+                        ? "bg-info-muted border-info text-info"
+                        : "bg-white border-border text-muted-foreground hover:bg-page"
                     }`}
                     aria-pressed={view === "materia"}
                   >
@@ -291,8 +291,8 @@ export function ClassSimuladoAnalytics({
                     }}
                     className={`-ml-px rounded-r border px-3 py-1 ${
                       view === "frente"
-                        ? "bg-blue-50 border-blue-300 text-blue-700"
-                        : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50"
+                        ? "bg-info-muted border-info text-info"
+                        : "bg-white border-border text-muted-foreground hover:bg-page"
                     }`}
                     aria-pressed={view === "frente"}
                   >

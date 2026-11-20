@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
  */
 function NasConfiguracoes() {
   return (
-    <p className="text-sm text-slate-600">
+    <p className="text-sm text-muted-foreground">
       As notificações são controladas pelo seu aparelho. Para ativar ou
       desativar: <strong>{CAMINHO_DAS_CONFIGURACOES[ondeConfigurar()]}</strong>.
     </p>
@@ -33,12 +33,12 @@ function NasConfiguracoes() {
  */
 function ComoLiberar() {
   return (
-    <div className="space-y-1 rounded-lg bg-orange/5 p-3 text-sm text-slate-700">
+    <div className="space-y-1 rounded-lg bg-cta/5 p-3 text-sm text-foreground">
       <p>
         Onde liberar:{" "}
         <strong>{CAMINHO_DAS_CONFIGURACOES[ondeConfigurar()]}</strong>.
       </p>
-      <p className="text-slate-500">
+      <p className="text-muted-foreground">
         Depois, volte para cá — esta tela se atualiza sozinha.
       </p>
     </div>
@@ -47,7 +47,7 @@ function ComoLiberar() {
 
 function PassosInstalarNoIPhone() {
   return (
-    <ol className="list-decimal space-y-1 pl-5 text-sm text-slate-600">
+    <ol className="list-decimal space-y-1 pl-5 text-sm text-muted-foreground">
       <li>
         No Safari, toque em Compartilhar{" "}
         <Share aria-hidden className="inline h-4 w-4 align-text-bottom" />.
@@ -116,34 +116,34 @@ export function NotificacoesDoAparelho() {
   return (
     <section
       aria-labelledby="notificacoes-titulo"
-      className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+      className="rounded-2xl border border-border bg-white p-5 shadow-sm"
     >
       <div className="flex items-start gap-3">
-        <Bell aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-marine" />
+        <Bell aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-foreground" />
         <div className="min-w-0 flex-1 space-y-2">
-          <h3 id="notificacoes-titulo" className="font-semibold text-marine">
+          <h3 id="notificacoes-titulo" className="font-semibold text-foreground">
             {titulo}
           </h3>
-          <p className="text-sm text-slate-600">{texto}</p>
+          <p className="text-sm text-muted-foreground">{texto}</p>
           {status === "active" && <NasConfiguracoes />}
           {status === "denied" && <ComoLiberar />}
           {status === "ios-needs-install" && <PassosInstalarNoIPhone />}
           {ativo && !semRegistroNaApi && aparelhos.length > 0 && (
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-muted-foreground">
               {aparelhos.length === 1
                 ? "Registrado no servidor neste aparelho."
                 : `Registrado no servidor em ${aparelhos.length} aparelhos.`}
             </p>
           )}
           {semRegistroNaApi && (
-            <p role="alert" className="text-sm text-orange">
+            <p role="alert" className="text-sm text-warning">
               Este aparelho ainda não está registrado no servidor, então os
               avisos não chegam. Toque em Registrar de novo.
             </p>
           )}
 
           {ativo && !semRegistroNaApi && podeTestar && (
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-muted-foreground">
               Para conferir, envie uma notificação de teste: se chegar, está
               funcionando.
             </p>

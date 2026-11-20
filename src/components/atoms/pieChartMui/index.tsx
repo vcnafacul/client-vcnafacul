@@ -1,5 +1,6 @@
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { pieArcLabelClasses, PieChart } from "@mui/x-charts";
+import { palette } from "@/lib/palette";
 
 interface Props {
   data: {
@@ -28,20 +29,20 @@ export function PieChartMui({ data, width = 400 }: Props) {
         legenda: linhasDaLegenda * 24 + 12,
       };
   const colors = [
-    "#5DADE2", // Azul Claro
-    "#48C9B0", // Verde Água
-    "#45B39D", // Verde Turquesa
-    "#52BE80", // Verde Pastel
-    "#58D68D", // Verde Menta
-    "#A9DFBF", // Verde Suave
-    "#F9E79F", // Amarelo Pastel
-    "#F7DC6F", // Amarelo Claro
-    "#F8C471", // Laranja Claro
-    "#F5B041", // Laranja Amarelado
-    "#EB984E", // Laranja Pastel
-    "#D35400", // Laranja Profundo
-    "#BA4A00", // Laranja Escuro
-    "#F43535", // Vermelho Claro
+    palette.blue[400], // Azul Claro
+    palette.mint[400], // Verde Água
+    palette.mint[400], // Verde Turquesa
+    palette.mint[400], // Verde Pastel
+    palette.mint[400], // Verde Menta
+    palette.neutral[300], // Verde Suave
+    palette.yellow[200], // Amarelo Pastel
+    palette.yellow[300], // Amarelo Claro
+    palette.orange[400], // Laranja Claro
+    palette.orange[400], // Laranja Amarelado
+    palette.orange[400], // Laranja Pastel
+    palette.orange[600], // Laranja Profundo
+    palette.orange[700], // Laranja Escuro
+    palette.red[500], // Vermelho Claro
   ];
   return (
     <PieChart

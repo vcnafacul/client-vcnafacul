@@ -2,7 +2,7 @@ import React from "react"
 import { VariantProps, tv } from "tailwind-variants"
 
 const text = tv({
-    base: "text-marine mb-6 text-center",
+    base: "text-foreground mb-6 text-center",
     variants: {
         size: {
             primary: "text-4xl md:text-5xl leading-10 font-bold ",

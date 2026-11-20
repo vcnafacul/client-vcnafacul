@@ -168,13 +168,13 @@ function Step2({
             }}
           />
         </div>
-        <div className="text-sm text-gray-500">
-          <span className="text-sm font-extrabold pb-2 text-gray-500"></span>
+        <div className="text-sm text-muted-foreground">
+          <span className="text-sm font-extrabold pb-2 text-muted-foreground"></span>
           {socialNameCheckbox}{" "}
           <a
             href={linkSocialName}
             target="_blank"
-            className="text-blue-600 underline hover:text-blue-800 focus:outline focus:ring-2 focus:ring-blue-500"
+            className="text-primary underline hover:text-primary focus:outline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             Saiba mais aqui.
           </a>
@@ -196,7 +196,7 @@ function Step2({
         error={errors.lastName}
         onChange={(e: any) => setValue("lastName", e.target.value)}
       />
-      <span className="text-xs text-grey font-semibold mb-4">
+      <span className="text-xs text-muted-foreground font-semibold mb-4">
         Esta é uma pré-visualização do nome que será utilizado na plataforma:{" "}
         {getDisplayName()}
       </span>
@@ -240,7 +240,7 @@ function Step2({
         <span>
           Eu li e aceito os{" "}
           <a
-            className="font-black text-grey"
+            className="font-black text-muted-foreground"
             onClick={(e) => e.stopPropagation()}
             href="/docs/Termos%20de%20Uso.pdf"
             target="_blank"
@@ -249,7 +249,7 @@ function Step2({
           </a>{" "}
           e{" "}
           <a
-            className="font-black text-grey"
+            className="font-black text-muted-foreground"
             onClick={(e) => e.stopPropagation()}
             href="/docs/Pol%C3%ADtica%20de%20Privacidade.pdf"
             target="_blank"
@@ -258,7 +258,7 @@ function Step2({
           </a>
         </span>
       </div>
-      <div className="text-red w-full text-center">
+      <div className="text-destructive w-full text-center">
         {errors["lgpd"]?.message}
       </div>
       <div className="flex gap-4">

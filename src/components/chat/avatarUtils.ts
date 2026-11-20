@@ -1,10 +1,10 @@
 const AVATAR_COLORS = [
-  "bg-marine",
-  "bg-orange",
-  "bg-green",
-  "bg-pink",
-  "bg-darkOrange",
-  "bg-purple",
+  "bg-primary",
+  "bg-cta",
+  "bg-success",
+  "bg-destructive",
+  "bg-cta",
+  "bg-info",
 ];
 
 export function initialsOf(name: string): string {

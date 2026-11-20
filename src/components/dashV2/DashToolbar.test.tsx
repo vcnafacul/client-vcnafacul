@@ -109,11 +109,11 @@ describe("DashToolbar — hierarquia", () => {
     );
 
     const laranjas = [...container.querySelectorAll("button")].filter((b) =>
-      b.className.split(/\s+/).includes("bg-orange"),
+      b.className.split(/\s+/).includes("bg-cta"),
     );
     expect(laranjas).toHaveLength(1);
     expect(laranjas[0].textContent).toBe("Nova prova");
-    expect(laranjas[0].className).toContain("text-marine");
+    expect(laranjas[0].className).toContain("text-cta-foreground");
   });
 
   it("título e subtítulo, com o subtítulo em darkGrey", () => {
@@ -344,7 +344,7 @@ describe("DashToolbar — comportamento dos botões", () => {
     const botao = screen.getByRole("button", { name: "Excluir" });
 
     expect(botao.className).toContain(dashV2.action.destructive);
-    expect(botao.className.split(/\s+/)).not.toContain("bg-orange");
+    expect(botao.className.split(/\s+/)).not.toContain("bg-cta");
   });
 
   it("o ícone é opcional e, quando vem, é decorativo", () => {
@@ -382,7 +382,7 @@ describe("DashToolbar — acessibilidade", () => {
     expect(focaveis.length).toBeGreaterThan(0);
     for (const el of focaveis) {
       expect(el.className, el.textContent ?? "").toContain(
-        "focus-visible:ring-orange/40",
+        "focus-visible:ring-ring",
       );
       expect(el.className).not.toMatch(
         /ring-blue|focus:ring-blue|outline-blue/,

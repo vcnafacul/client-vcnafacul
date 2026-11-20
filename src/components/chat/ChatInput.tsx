@@ -54,7 +54,7 @@ export function ChatInput({ conversationId, status }: Props) {
 
   if (status === "closed") {
     return (
-      <div className="border-t bg-backgroundGrey/50 px-4 py-3 text-center text-xs text-grey">
+      <div className="border-t bg-page/50 px-4 py-3 text-center text-xs text-muted-foreground">
         Conversa encerrada
       </div>
     );
@@ -79,12 +79,12 @@ export function ChatInput({ conversationId, status }: Props) {
           }}
           disabled={sending}
           rows={1}
-          className="chat-scrollbar w-full resize-none overflow-y-auto rounded-md border border-lightGray bg-backgroundGrey/50 px-3 py-2 text-sm text-darkGrey placeholder:text-grey focus:outline-none focus:ring-2 focus:ring-marine/40 focus:border-marine disabled:opacity-60 transition"
+          className="chat-scrollbar w-full resize-none overflow-y-auto rounded-md border border-border bg-page/50 px-3 py-2 text-sm text-muted-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-primary disabled:opacity-60 transition"
         />
         <span
           className={cn(
             "text-[10px] block text-right mt-0.5",
-            nearLimit ? "text-pink font-semibold" : "text-grey",
+            nearLimit ? "text-warning font-semibold" : "text-muted-foreground",
           )}
         >
           {value.length}/{MAX}
@@ -93,7 +93,7 @@ export function ChatInput({ conversationId, status }: Props) {
       <Button
         onClick={handleSend}
         disabled={sending || !value.trim()}
-        className="bg-orange hover:bg-darkOrange text-white gap-1.5 rounded-full px-4 disabled:opacity-50"
+        className="bg-cta hover:bg-cta text-white gap-1.5 rounded-full px-4 disabled:opacity-50"
       >
         <Send className="h-4 w-4" />
         <span className="hidden sm:inline">Enviar</span>

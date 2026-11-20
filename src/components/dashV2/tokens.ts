@@ -25,15 +25,15 @@ export const dashV2 = {
   /** Superfície de conteúdo: tabela, toolbar, modal. */
   surface: "bg-white",
   /** Fundo da área da dash, atrás da superfície. */
-  page: "bg-backgroundGrey",
+  page: "bg-page",
   /** Divisória. Em listagem, borda de 1px vale mais que sombra — sombra por linha vira ruído. */
-  border: "border-lightGray",
+  border: "border-border",
 
   /** Texto. `marine` cumpre o papel do preto sem a dureza do #000000. */
   text: {
-    primary: "text-marine",
-    secondary: "text-darkGrey",
-    muted: "text-grey",
+    primary: "text-foreground",
+    secondary: "text-muted-foreground",
+    muted: "text-muted-foreground",
   },
 
   /**
@@ -43,7 +43,7 @@ export const dashV2 = {
    * `text.secondary`: `red` sobre branco dá 3.88:1 e reprova no AA de texto
    * pequeno — a mensagem carrega o significado, e o vermelho é reforço.
    */
-  invalid: "border-red",
+  invalid: "border-destructive",
 
   /**
    * Ação. ⚠️ **No máximo um `primary` por tela** — a que cria o registro dali.
@@ -55,10 +55,10 @@ export const dashV2 = {
    * usa. O `typeStyle="primary"` do V1 continua com texto branco e não é tocado.
    */
   action: {
-    primary: "bg-orange text-marine",
-    secondary: "bg-white border border-lightGray text-marine",
-    ghost: "text-marine",
-    destructive: "bg-red text-white",
+    primary: "bg-cta text-cta-foreground",
+    secondary: "bg-white border border-border text-foreground",
+    ghost: "text-foreground",
+    destructive: "bg-destructive text-white",
 
     /**
      * Item de menu (o `⋯` da toolbar): `ghost` mais o realce de linha.
@@ -66,7 +66,7 @@ export const dashV2 = {
      * branca do popover ele marca a linha sob o cursor sem virar um segundo
      * botão.
      */
-    menuItem: "text-marine hover:bg-backgroundGrey",
+    menuItem: "text-foreground hover:bg-page",
 
     /**
      * Destrutivo em superfície clara — linha de menu, e não botão.
@@ -83,12 +83,12 @@ export const dashV2 = {
      * pequeno. Por isso o rótulo do item nunca é só a cor — quem lê "Excluir"
      * tem a informação inteira, e o vermelho é reforço.
      */
-    destructiveGhost: "text-red hover:bg-red/10",
+    destructiveGhost: "text-destructive hover:bg-destructive/10",
   },
 
   /** Foco de teclado, em TUDO que recebe foco. Substitui o `blue-500` do `Select`. */
   focus:
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange/40 focus-visible:ring-offset-1",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
 
   /**
    * Densidade. 40px alinha com o `rowHeight={40}` do MUI DataGrid em
@@ -99,7 +99,7 @@ export const dashV2 = {
    * status nem com a coluna-chave. Fica aqui, e não escrito à mão no
    * `DashTable`, porque a catraca de paleta só enxerga este arquivo.
    */
-  row: { base: "h-10", compact: "h-8", hover: "hover:bg-backgroundGrey" },
+  row: { base: "h-10", compact: "h-8", hover: "hover:bg-page" },
   header: "h-9",
   cell: "px-3 text-sm",
 
@@ -121,11 +121,11 @@ export const dashV2 = {
    */
   progress: {
     /** O que falta cadastrar. */
-    track: "bg-lightGray",
+    track: "bg-muted",
     /** Validadas. */
-    done: "bg-green3",
+    done: "bg-success",
     /** Cadastradas e ainda não validadas. */
-    pending: "bg-darkOrange/40",
+    pending: "bg-cta/40",
   },
 
   /**
@@ -168,15 +168,15 @@ export const dashV2 = {
    * nem com um check. A cor é reforço.
    */
   status: {
-    done: { chip: "bg-green3/10", dot: "bg-green3", icon: "text-green3" },
+    done: { chip: "bg-success/10", dot: "bg-success", icon: "text-success" },
     // ⚠️ `icon` **não** acompanha o `dot` aqui, e é de propósito. Ver o bloco
     // sobre `icon` logo acima do `status`.
     running: {
-      chip: "bg-orange/10",
-      dot: "bg-darkOrange",
-      icon: "text-darkGrey",
+      chip: "bg-cta/10",
+      dot: "bg-cta",
+      icon: "text-muted-foreground",
     },
-    missing: { chip: "bg-red/10", dot: "bg-red", icon: "text-red" },
+    missing: { chip: "bg-destructive/10", dot: "bg-destructive", icon: "text-destructive" },
     /**
      * "Começou, mas ainda está longe" — o estágio antes do `running`.
      *
@@ -189,10 +189,10 @@ export const dashV2 = {
      * Medido: 3.54:1 sobre branco, ponto contra o próprio chip **3.18:1** (o
      * melhor de todos os tons daqui) e `marine` sobre o chip 13.52:1.
      */
-    info: { chip: "bg-blueGeo/10", dot: "bg-blueGeo", icon: "text-blueGeo" },
+    info: { chip: "bg-info/10", dot: "bg-info", icon: "text-info" },
     // `grey`, e não `gray2`: sobre `bg-lightGray/40` o gray2 dá 2.19:1 e o grey
     // dá 4.46:1, sem sair da paleta nem mudar a família de cor.
-    neutral: { chip: "bg-lightGray/40", dot: "bg-grey", icon: "text-grey" },
+    neutral: { chip: "bg-muted/40", dot: "bg-muted-foreground", icon: "text-muted-foreground" },
   },
 } as const;
 

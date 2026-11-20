@@ -16,13 +16,13 @@ interface CardSimulateProps {
 
 function CardSimulate({className, color, icon, title, children, onClick, disabled} : CardSimulateProps ){
     return (
-        <div className={`mt-8 relative max-w-[400px] sm:w-80 md:w-96 pb-4 border-2 rounded-md ${className} text-marine mb-10 select-none`}>
+        <div className={`mt-8 relative max-w-[400px] sm:w-80 md:w-96 pb-4 border-2 rounded-md ${className} text-foreground mb-10 select-none`}>
             <div className="absolute -top-8 left-8 ">
                 <IconArea icon={icon} className={`${color} fill-white`} />
             </div>
             <div className="mt-8 mx-5 sm:mx-10 text-xs flex flex-col items-start">
                 <Text size="secondary" className="font-bold text-lg mb-6">{title}</Text>
-                <div className="text-marine text-base text-start">{children}</div>
+                <div className="text-foreground text-base text-start">{children}</div>
                 <Button className={`rounded-sm ${color} border-none w-36 h-8 mt-5 hover:opacity-75 text-white`} onClick={onClick} disabled={disabled}>Iniciar</Button>
             </div>
         </div>

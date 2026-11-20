@@ -9,7 +9,7 @@ const menuItem = tv({
             vertical: 'flex-col mb-2'
         },
         solid: {
-            true: 'text-marine',
+            true: 'text-foreground',
             false: 'text-white'
         }
     },

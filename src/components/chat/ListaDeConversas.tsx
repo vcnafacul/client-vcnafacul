@@ -27,7 +27,7 @@ export function ListaDeConversas({
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between gap-2 border-b px-4 py-3">
-        <h2 className="font-semibold text-marine">Suas conversas</h2>
+        <h2 className="font-semibold text-foreground">Suas conversas</h2>
         <Button
           size="sm"
           variant="outline"
@@ -48,28 +48,28 @@ export function ListaDeConversas({
               <button
                 type="button"
                 onClick={() => onAbrir(c.id)}
-                className="flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50"
+                className="flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-page"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="truncate font-medium text-marine">
+                    <span className="truncate font-medium text-foreground">
                       {nomeDoDestino(c)}
                     </span>
                     {encerrada && (
-                      <span className="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-[11px] text-gray-500">
+                      <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
                         Encerrada
                       </span>
                     )}
                   </div>
                   {c.lastMessageText && (
-                    <p className="truncate text-sm text-gray-500">
+                    <p className="truncate text-sm text-muted-foreground">
                       {c.lastMessageText}
                     </p>
                   )}
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   {quando ? (
-                    <span className="text-[11px] text-gray-400">
+                    <span className="text-[11px] text-muted-foreground">
                       {formatMessageTimestamp(new Date(quando))}
                     </span>
                   ) : null}

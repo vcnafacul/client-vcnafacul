@@ -101,7 +101,7 @@ function SimulateTemplate({
 
   return (
     <div className="flex flex-col pb-20">
-      <div className="my-8 bg-marine">
+      <div className="my-8 bg-primary">
         <div className="container mx-auto">{header}</div>
       </div>
       <div className="container flex flex-col items-center max-w-6xl mx-auto px-4">
@@ -110,7 +110,7 @@ function SimulateTemplate({
             type="button"
             onClick={() => setGradeAberta(!gradeAberta)}
             aria-expanded={gradeAberta}
-            className="flex w-full items-center justify-between rounded-md border border-gray-300 bg-white px-3 h-11 text-sm font-medium text-marine"
+            className="flex w-full items-center justify-between rounded-md border border-border bg-white px-3 h-11 text-sm font-medium text-foreground"
           >
             <span>
               Questões
@@ -157,7 +157,7 @@ function SimulateTemplate({
           )}
         </div>
         <div className="flex w-full py-4 items-center justify-between">
-          <Text size="secondary" className="m-0 text-orange">
+          <Text size="secondary" className="m-0 text-foreground">
             Questao{" "}
             {questions.find((q) => q.id === questionSelected._id)!.number + 1}
           </Text>
@@ -166,7 +166,7 @@ function SimulateTemplate({
               onClick={() =>
                 setDisplayMode(modo === "image" ? "text" : "image")
               }
-              className="text-sm px-3 py-1 rounded border border-gray-300 hover:bg-gray-100 transition-colors"
+              className="text-sm px-3 py-1 rounded border border-border hover:bg-muted transition-colors"
             >
               {modo === "image" ? "Ver texto" : "Ver imagem"}
             </button>
@@ -185,9 +185,9 @@ function SimulateTemplate({
             />
           </div>
         ) : (
-          <div className="w-full p-3 sm:p-6 my-4 bg-white rounded-lg border border-gray-200">
+          <div className="w-full p-3 sm:p-6 my-4 bg-white rounded-lg border border-border">
             <Suspense
-              fallback={<div className="h-20 bg-gray-100 animate-pulse rounded" />}
+              fallback={<div className="h-20 bg-muted animate-pulse rounded" />}
             >
               <RichTextRenderer
                 content={questionSelected.textoQuestao || ""}

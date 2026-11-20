@@ -64,14 +64,14 @@ export function EditorToolbar({
   }, [editor]);
 
   const btnClass = (active: boolean) =>
-    `p-1.5 rounded hover:bg-gray-200 transition-colors ${
-      active ? "bg-gray-200 text-blue-600" : "text-gray-600"
+    `p-1.5 rounded hover:bg-muted transition-colors ${
+      active ? "bg-muted text-primary" : "text-muted-foreground"
     }`;
 
   const iconSize = compact ? 14 : 16;
 
   return (
-    <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-gray-200 bg-gray-50">
+    <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-border bg-page">
       {/* Text formatting */}
       <button
         type="button"
@@ -108,7 +108,7 @@ export function EditorToolbar({
 
       {!compact && (
         <>
-          <div className="w-px h-5 bg-gray-300 mx-1" />
+          <div className="w-px h-5 bg-border mx-1" />
 
           {/* Headings */}
           <button
@@ -142,7 +142,7 @@ export function EditorToolbar({
             <Heading3 size={iconSize} />
           </button>
 
-          <div className="w-px h-5 bg-gray-300 mx-1" />
+          <div className="w-px h-5 bg-border mx-1" />
 
           {/* Lists */}
           <button
@@ -170,7 +170,7 @@ export function EditorToolbar({
             <Quote size={iconSize} />
           </button>
 
-          <div className="w-px h-5 bg-gray-300 mx-1" />
+          <div className="w-px h-5 bg-border mx-1" />
 
           {/* Alignment */}
           <button
@@ -206,7 +206,7 @@ export function EditorToolbar({
             <AlignJustify size={iconSize} />
           </button>
 
-          <div className="w-px h-5 bg-gray-300 mx-1" />
+          <div className="w-px h-5 bg-border mx-1" />
 
           {/* Table */}
           <button
@@ -226,7 +226,7 @@ export function EditorToolbar({
         </>
       )}
 
-      <div className="w-px h-5 bg-gray-300 mx-1" />
+      <div className="w-px h-5 bg-border mx-1" />
 
       {/* LaTeX */}
       <button

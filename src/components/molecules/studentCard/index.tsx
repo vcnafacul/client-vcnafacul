@@ -28,7 +28,7 @@ export function StudentCard({
 }: StudentCardProps) {
   return (
     <>
-      <div className="bg-white pt-2 pr-2 rounded-md border-2 border-marine student-card">
+      <div className="bg-white pt-2 pr-2 rounded-md border-2 border-primary student-card">
         <div
           className={`flex flex-col sm:flex-wrap ${larguraClassName}
     h-[calc(100vh-100px)] sm:h-[462px] gap-4 relative px-4 

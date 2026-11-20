@@ -1,4 +1,5 @@
 import { BarChart } from "@mui/x-charts/BarChart";
+import { palette } from "@/lib/palette";
 
 export interface BarChartMuiProps {
   data: {
@@ -11,7 +12,7 @@ export interface BarChartMuiProps {
 
 export default function BarChartMui({
   data,
-  color = "#F43535",
+  color = palette.red[500],
 }: BarChartMuiProps) {
   return (
     <BarChart

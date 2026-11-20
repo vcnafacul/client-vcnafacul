@@ -29,9 +29,9 @@ function formatGeneratedAt(generatedAt: string | null | undefined): string | nul
 }
 
 function getNotaColor(geral: number): string {
-  if (geral <= 400) return "text-red-600";
-  if (geral <= 700) return "text-amber-500";
-  return "text-green-600";
+  if (geral <= 400) return "text-destructive";
+  if (geral <= 700) return "text-warning";
+  return "text-success";
 }
 
 export function KpiHeader({
@@ -47,7 +47,7 @@ export function KpiHeader({
   const lastUpdatedAt = formatGeneratedAt(monthData?.generatedAt);
 
   const geral = monthData ? Math.round(monthData.geral) : null;
-  const notaColor = geral !== null ? getNotaColor(geral) : "text-gray-400";
+  const notaColor = geral !== null ? getNotaColor(geral) : "text-muted-foreground";
 
   const studentsWithReview = monthData?.studentsWithAtLeastOneHumanReview ?? null;
   const studentsSubmitted =
@@ -83,7 +83,7 @@ export function KpiHeader({
               </Button>
             )}
             {(refreshing || lastUpdatedAt) && (
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-muted-foreground">
                 {refreshing
                   ? "Processando em segundo plano..."
                   : `Atualizado em ${lastUpdatedAt}`}
@@ -92,53 +92,53 @@ export function KpiHeader({
           </div>
         )}
       </div>
-      <p className="text-sm text-gray-500">Período letivo: {start} – {end}</p>
+      <p className="text-sm text-muted-foreground">Período letivo: {start} – {end}</p>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <Card>
           <CardContent className="pt-4">
-            <p className="text-xs text-gray-500">Nota geral</p>
+            <p className="text-xs text-muted-foreground">Nota geral</p>
             <p className={`text-2xl font-bold ${notaColor}`}>
               {geral !== null ? `${geral}` : "—"}
-              <span className="text-sm font-normal text-gray-400"> / 1000</span>
+              <span className="text-sm font-normal text-muted-foreground"> / 1000</span>
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <p className="text-xs text-gray-500">Participantes</p>
+            <p className="text-xs text-muted-foreground">Participantes</p>
             <p className="text-2xl font-bold">
               {studentsSubmitted !== null ? studentsSubmitted : "—"}
-              <span className="text-sm font-normal text-gray-400">
+              <span className="text-sm font-normal text-muted-foreground">
                 /{list.totalStudents}
               </span>
             </p>
-            <p className="text-xs text-gray-400 mt-1">Entregaram redação</p>
+            <p className="text-xs text-muted-foreground mt-1">Entregaram redação</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <p className="text-xs text-gray-500">Alunos engajados</p>
+            <p className="text-xs text-muted-foreground">Alunos engajados</p>
             <p className="text-2xl font-bold">
               {studentsWithReview !== null ? studentsWithReview : "—"}
-              <span className="text-sm font-normal text-gray-400">/{list.totalStudents}</span>
+              <span className="text-sm font-normal text-muted-foreground">/{list.totalStudents}</span>
             </p>
-            <p className="text-xs text-gray-400 mt-1">Receberam revisão humana</p>
+            <p className="text-xs text-muted-foreground mt-1">Receberam revisão humana</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <p className="text-xs text-gray-500">Redações revisadas</p>
+            <p className="text-xs text-muted-foreground">Redações revisadas</p>
             <p className="text-2xl font-bold">{essaysReviewed}</p>
-            <p className="text-xs text-gray-400 mt-1">Total entregues: {essaysSubmitted}</p>
+            <p className="text-xs text-muted-foreground mt-1">Total entregues: {essaysSubmitted}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <p className="text-xs text-gray-500">Cobertura humana</p>
+            <p className="text-xs text-muted-foreground">Cobertura humana</p>
             <div className="flex items-center gap-2 mt-1">
               <p className="text-2xl font-bold">{coveragePct}%</p>
               {coverageLow && (
-                <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100 border-orange-200">
+                <Badge className="bg-warning-muted text-warning hover:bg-warning-muted border-warning">
                   Cobertura baixa
                 </Badge>
               )}

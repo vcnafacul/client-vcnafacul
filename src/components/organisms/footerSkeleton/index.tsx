@@ -1,9 +1,10 @@
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { palette } from "@/lib/palette";
 
 function FooterSkeleton() {
     return ( 
-        <SkeletonTheme baseColor="#64646426" highlightColor="#222">
-            <footer className="bg-marine py-12 px-0 text-center text-base md:text-left md:pt-14 md:pb-9">
+        <SkeletonTheme baseColor={`${palette.neutral[600]}26`} highlightColor={palette.neutral[900]}>
+            <footer className="bg-primary py-12 px-0 text-center text-base md:text-left md:pt-14 md:pb-9">
                 <div className="container mx-auto flex flex-wrap my-4">
                     <div className="flex w-full justify-between">
                         <div className="flex flex-col items-start gap-4">
