@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  SelectOpcoes,
-  type OpcaoDoCampo,
-} from "@/components/formulario/select-opcoes";
+  OptionsSelect,
+  type SelectOption,
+} from "@/components/ui/options-select";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -54,7 +54,7 @@ interface CampoProps {
   error: FieldErrors[string];
   edit: boolean;
   defaultValue?: string;
-  options?: OpcaoDoCampo[];
+  options?: SelectOption[];
 }
 
 /** Um campo do cursinho: texto, ou lista quando o tipo é `select`. */
@@ -74,7 +74,7 @@ function Campo({
   if (type === "select") {
     return (
       <Field label={label} error={mensagem}>
-        <SelectOpcoes
+        <OptionsSelect
           id={label}
           disabled={!edit}
           options={options ?? []}
@@ -178,7 +178,7 @@ export function PrepCourseInfo({ form, setValue, errors, edit, geo }: Props) {
       error={errors[chave]}
       edit={edit}
       defaultValue={valorInicial}
-      options={(form[chave] as { options?: OpcaoDoCampo[] }).options}
+      options={(form[chave] as { options?: SelectOption[] }).options}
     />
   );
   return (

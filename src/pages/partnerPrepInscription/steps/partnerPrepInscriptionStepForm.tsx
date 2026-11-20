@@ -9,8 +9,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { GrupoDeCheckbox } from "@/components/formulario/grupo-de-checkbox";
-import { SelectOpcoes } from "@/components/formulario/select-opcoes";
+import { GrupoDeCheckbox } from "../grupoDeCheckbox";
+import { OptionsSelect } from "@/components/ui/options-select";
 import { Field, FormLegend } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useModals } from "@/hooks/useModal";
@@ -141,7 +141,7 @@ const QuestionBoolean = ({
 
   return (
     <Field label={question.text} required error={error}>
-      <SelectOpcoes
+      <OptionsSelect
         id={question._id}
         options={[
           { label: "Sim", value: "Sim" },
@@ -168,7 +168,7 @@ const QuestionOptions = ({
 }) => {
   return (
     <Field label={question.text} required error={error}>
-      <SelectOpcoes
+      <OptionsSelect
         id={question._id}
         options={(question.options ?? []).map((option) => ({
           label: option,
@@ -191,15 +191,14 @@ const QuestionOptionsMultiple = ({
   error?: string;
 }) => {
   return (
-    <Field label={question.text} required error={error}>
-      <GrupoDeCheckbox
-        id={question._id}
-        aria-label={question.text}
-        opcoes={question.options || []}
-        excludentes
-        onValueChange={(valores) => handleChange(question._id, valores)}
-      />
-    </Field>
+    <GrupoDeCheckbox
+      legenda={question.text}
+      required
+      error={error}
+      opcoes={question.options || []}
+      excludentes
+      onValueChange={(valores) => handleChange(question._id, valores)}
+    />
   );
 };
 

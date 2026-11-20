@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import PropValue from "../../../components/molecules/PropValue";
-import type { FormFieldOption } from "@/components/formulario/tipos";
+import type { SelectOption } from "@/components/ui/options-select";
 import { ModalProps } from "@/types/modal";
 import {
   Dialog,
@@ -23,7 +23,7 @@ import {
 } from "../../../dtos/content/frenteDto";
 
 interface Props extends ModalProps {
-  materia: FormFieldOption;
+  materia: SelectOption;
   frente?: FrenteDto | null;
   newFrente: (frente: CreateFrenteDtoInput) => Promise<void>;
   editFrente: (frente: UpdateFrenteDto) => Promise<void>;

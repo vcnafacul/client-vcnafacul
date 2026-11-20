@@ -1,4 +1,4 @@
-import { SelectOpcoes } from "@/components/formulario/select-opcoes";
+import { OptionsSelect } from "@/components/ui/options-select";
 import { Field, FormLegend } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -149,7 +149,7 @@ function ManagerMateria({ handleClose, materia, onSubmit, isOpen }: Props) {
             </Field>
 
             <Field label="Área ENEM" required error={errors.enemArea?.message}>
-              <SelectOpcoes
+              <OptionsSelect
                 id="enemArea"
                 options={enemAreaOptions}
                 value={enemArea}

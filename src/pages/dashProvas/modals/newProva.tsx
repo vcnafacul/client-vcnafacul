@@ -3,10 +3,8 @@ import { GraduationCap, CloudUpload, FileText } from "lucide-react";
 import { Button } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import type {
-  FormFieldInput,
-  FormFieldOption,
-} from "@/components/formulario/tipos";
+import type { FormFieldInput } from "@/components/formulario/tipos";
+import type { SelectOption } from "@/components/ui/options-select";
 import UploadButton from "../../../components/molecules/uploadButton";
 import Form from "../../../components/organisms/form";
 import { ModalProps } from "@/types/modal";
@@ -36,7 +34,7 @@ export const TEXTO_ERRO_CATEGORIAS =
   "Não foi possível carregar as categorias. Tente de novo.";
 
 /** Card 40: aplicação é um campo próprio, independente da edição. */
-const aplicacaoOptions: FormFieldOption[] = [1, 2, 3].map((n) => ({
+const aplicacaoOptions: SelectOption[] = [1, 2, 3].map((n) => ({
   label: `${n}ª aplicação`,
   value: String(n),
 }));
@@ -65,7 +63,7 @@ function NewProva({
   erroCategorias = false,
   onTentarDeNovo,
 }: NewProvaProps) {
-  const { register, handleSubmit, watch, setValue } = useForm();
+  const { control, handleSubmit, watch, setValue } = useForm();
   const [receberNovasVersoes, setReceberNovasVersoes] = useState(false);
   const {
     data: { token },
@@ -81,7 +79,7 @@ function NewProva({
   const selecionaveis = (categorias ?? []).filter((c) => c.selecionavel);
   const exame = watch("exame");
   const examesOptions = opcoesDeExame(selecionaveis);
-  const categoriasOptions: FormFieldOption[] = [
+  const categoriasOptions: SelectOption[] = [
     { label: "", value: "" },
     ...categoriasDoExame(selecionaveis, exame).map((c) => ({
       label: c.nome,
@@ -99,7 +97,7 @@ function NewProva({
     e sempre virava edição Regular — Digital ou PPL na 2ª aplicação eram
     impossíveis de cadastrar.
   */
-  const edicaoOption: FormFieldOption[] = edicaoArray.map((f) => {
+  const edicaoOption: SelectOption[] = edicaoArray.map((f) => {
     if (f === Edicao.Reaplicacao) {
       return { label: f, value: "Replicacao" };
     }
@@ -142,7 +140,7 @@ function NewProva({
   const listFieldProva: FormFieldInput[] = [
     {
       id: "exame",
-      type: "option",
+      type: "select",
       options: examesOptions,
       value: "",
       label: "Exame",
@@ -150,7 +148,7 @@ function NewProva({
     },
     {
       id: "categoria",
-      type: "option",
+      type: "select",
       options: categoriasOptions,
       value: "",
       label: "Categoria",
@@ -169,14 +167,14 @@ function NewProva({
       : []),
     {
       id: "edicao",
-      type: "option",
+      type: "select",
       options: edicaoOption,
       label: "Edição",
       disabled: false,
     },
     {
       id: "aplicacao",
-      type: "option",
+      type: "select",
       options: aplicacaoOptions,
       label: "Aplicação",
       disabled: false,
@@ -184,6 +182,7 @@ function NewProva({
     {
       id: "ano",
       type: "number",
+      inputMode: "numeric",
       label: "Ano de Realização",
       // Card 40: era 2023 fixo, e o ano não se corrige depois.
       defaultValue: new Date().getFullYear(),
@@ -306,7 +305,7 @@ function NewProva({
                 <div className="bg-page p-4 rounded-lg">
                   <Form
                     formFields={listFieldProva}
-                    register={register}
+                    control={control}
                     className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"
                   />
                 </div>

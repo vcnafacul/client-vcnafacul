@@ -1,8 +1,8 @@
-import type { OpcaoDoCampo } from "@/components/formulario/select-opcoes";
+import type { SelectOption } from "@/components/ui/options-select";
 import { RegisterFormProps } from "../../components/organisms/registerForm";
 import { Gender } from "../../store/auth";
 
-export const stateOptions: OpcaoDoCampo<string>[] = [
+export const stateOptions: SelectOption<string>[] = [
   { value: "AC", label: "Acre" },
   { value: "AL", label: "Alagoas" },
   { value: "AP", label: "Amapá" },
@@ -32,7 +32,7 @@ export const stateOptions: OpcaoDoCampo<string>[] = [
   { value: "TO", label: "Tocantins" },
 ];
 
-export const optionsGender: OpcaoDoCampo<Gender>[] = [
+export const optionsGender: SelectOption<Gender>[] = [
   { value: Gender.Male, label: "Masculino" },
   { value: Gender.Female, label: "Feminino" },
   { value: Gender.Other, label: "Outro" },

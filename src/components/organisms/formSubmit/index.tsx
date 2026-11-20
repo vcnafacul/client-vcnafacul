@@ -16,12 +16,12 @@ export type FormSubmitProps = {
 }
 
 function FormSubmit({ formFields, labelSubmit, variant = "primary", size = "lg", className, onSubmit, disabled, ...props } : FormSubmitProps){
-    const { register, handleSubmit } = useForm();
+    const { control, handleSubmit } = useForm();
     return (
-    <form onSubmit={handleSubmit(onSubmit)} className={`${className}`} {...props}>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className={`${className}`} {...props}>
         {formFields.some((f) => f.required) && <FormLegend />}
         {formFields.map((f) =>
-            <CampoDoFormulario register={register} id={f.id} key={f.id} label={f.label} type={f.type} visibility={f.visibility} required={f.required} />)}
+            <CampoDoFormulario key={f.id} {...f} control={control} />)}
         <Button disabled={disabled} className="w-full" variant={variant} size={size} type="submit" >{labelSubmit}</Button>
     </form>
    )

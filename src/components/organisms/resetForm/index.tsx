@@ -64,9 +64,8 @@ export function ResetForm({
     .required();
 
   const {
-    register,
+    control,
     handleSubmit,
-    formState: { errors },
     watch,
   } = useForm({
     resolver: yupResolver(schema),
@@ -98,12 +97,9 @@ export function ResetForm({
         </p>
         <form onSubmit={handleSubmit(reset)} className="flex flex-col gap-4">
           <CampoDoFormulario
-            register={register}
-            id={formData[0].id}
             key={formData[0].id}
-            label={formData[0].label}
-            type={formData[0].type}
-            visibility={formData[0].visibility}
+            {...formData[0]}
+            control={control}
           />
           <div className="flex gap-4 w-full text-body">
             <div className="font-normal text-caption"> Sua senha deve conter:</div>
@@ -140,12 +136,9 @@ export function ResetForm({
             </div>
           </div>
           <CampoDoFormulario
-            register={register}
-            id={formData[1].id}
             key={formData[1].id}
-            label={formData[1].label}
-            type={formData[0].type}
-            error={errors["password_confirmation"]}
+            {...formData[1]}
+            control={control}
           />
           <Button className="w-full" variant="cta" size="lg" disabled={disabled} type="submit">
             Continuar

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { SelectOpcoes } from "@/components/formulario/select-opcoes";
+import { OptionsSelect } from "@/components/ui/options-select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FormLegend } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -232,7 +232,7 @@ export function PartnerPrepInscriptionStep1({
         Esta é uma pré-visualização do nome que será utilizado na plataforma:{" "}
         {getDisplayName()}
       </span>
-      <Field label="Email" required maxLength={100}>
+      <Field label="Email">
         <Input
           id="email"
           type="email"
@@ -318,7 +318,7 @@ export function PartnerPrepInscriptionStep1({
         </div>
         <div className="w-24">
           <Field label="UF" error={errors.uf?.message}>
-            <SelectOpcoes
+            <OptionsSelect
               id="uf"
               options={stateOptions.map((state) => ({
                 label: state.value as string,

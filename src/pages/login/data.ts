@@ -6,8 +6,8 @@ export const loginForm: LoginFormProps = {
   subtitle: "Entre com seu e-mail e senha para acessar a plataforma",
   labelSubmit: "Entrar",
   formData: [
-    { id: "email", label: "E-mail" },
-    { id: "password", label: "Senha", type: "password" },
+    { id: "email", label: "E-mail", type: "email", inputMode: "email", autoComplete: "username" },
+    { id: "password", label: "Senha", type: "password", autoComplete: "current-password" },
   ],
 };
 

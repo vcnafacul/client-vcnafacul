@@ -1,28 +1,25 @@
-import type { OpcaoDoCampo } from "./select-opcoes";
+import type { SelectOption } from "@/components/ui/options-select";
 
-export type { OpcaoDoCampo };
-/** Nome antigo da opção, dos formulários guiados por dados (`formData`). */
-export type FormFieldOption = OpcaoDoCampo;
-
-/** Descrição de um campo dos formulários guiados por dados (login, geo, nova prova…). */
+/**
+ * Um campo dos formulários guiados por dados (login, esqueci a senha, cadastro
+ * de cursinho, nova prova). O dado declara tudo: `type`, `inputMode` e
+ * `autoComplete` não são deduzidos do `id`.
+ */
 export interface FormFieldInput {
   id: string;
   label: string;
-  type?:
-    | "text"
-    | "password"
-    | "number"
-    | "option"
-    | "textarea"
-    | "date"
-    | "email"
-    | "select";
+  type?: "text" | "password" | "number" | "textarea" | "date" | "email" | "select";
+  /** Teclado do celular (CEP e telefone numéricos, e-mail). */
+  inputMode?: "text" | "numeric" | "tel" | "email" | "url" | "decimal";
+  /** Token do HTML (`email`, `tel`, `postal-code`, `new-password`…). */
+  autoComplete?: string;
+  /** Senha: começa à mostra. */
   visibility?: boolean;
   disabled?: boolean;
   /** `*` vermelho no rótulo e `required` no campo. */
   required?: boolean;
   value?: string | number | readonly string[] | undefined;
   defaultValue?: string | number | readonly string[] | undefined;
-  options?: OpcaoDoCampo[];
+  options?: SelectOption[];
   className?: string;
 }

@@ -53,13 +53,12 @@ function Step3Geo({
   type Address = InferType<typeof schema>;
 
   const {
-    register,
+    control,
     handleSubmit,
     setValue,
     getValues,
     watch,
     reset,
-    formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -228,8 +227,7 @@ function Step3Geo({
             f.defaultValue = dataGeo![f.id as keyof CreateGeolocation] || "";
             return f;
           })}
-          register={register}
-          errors={errors}
+          control={control}
         />
         <div className="flex gap-4">
           <Button className="w-full" variant="primary" size="lg"

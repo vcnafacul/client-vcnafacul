@@ -11,10 +11,10 @@ const plano =
   "flex h-11 w-full rounded-md border border-input bg-background px-3 py-1 text-body transition-colors file:border-0 file:bg-transparent file:text-body file:font-semibold file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60 aria-[invalid=true]:border-destructive sm:h-9"
 
 const casca =
-  "flex h-11 w-full items-center gap-2 rounded-md border border-input bg-background px-3 text-body transition-colors has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-ring has-[input:focus-visible]:ring-offset-2 has-[input:focus-visible]:ring-offset-background has-[:disabled]:cursor-not-allowed has-[:disabled]:bg-muted has-[:disabled]:opacity-60 has-[[aria-invalid=true]]:border-destructive sm:h-9"
+  "flex h-11 w-full items-center gap-2 rounded-md border border-input bg-background px-3 text-body transition-colors has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-ring has-[input:focus-visible]:ring-offset-2 has-[input:focus-visible]:ring-offset-background has-[input:disabled]:cursor-not-allowed has-[input:disabled]:bg-muted has-[[aria-invalid=true]]:border-destructive sm:h-9"
 
 const interno =
-  "h-full min-w-0 flex-1 bg-transparent text-body outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed"
+  "h-full min-w-0 flex-1 bg-transparent text-body outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60"
 
 const encaixe = "flex shrink-0 items-center text-muted-foreground [&_svg]:size-4"
 

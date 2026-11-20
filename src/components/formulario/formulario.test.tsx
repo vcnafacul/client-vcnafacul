@@ -1,12 +1,8 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { useForm } from "react-hook-form";
+import { useForm, type FieldValues, type Resolver } from "react-hook-form";
 
 import { CampoDoFormulario } from "./campo-do-formulario";
-import { GrupoDeCheckbox } from "./grupo-de-checkbox";
-import { SelectOpcoes } from "./select-opcoes";
-import { SenhaInput } from "./senha-input";
-import { Field } from "../ui/field";
 
 beforeAll(() => {
   globalThis.ResizeObserver ??= class {
@@ -18,187 +14,128 @@ beforeAll(() => {
   Element.prototype.scrollIntoView ??= () => {};
 });
 
-const abrir = (rotulo: string) =>
-  fireEvent.keyDown(screen.getByRole("combobox", { name: rotulo }), {
-    key: "Enter",
-  });
+const gatilho = () => screen.getByRole("combobox", { name: "Estado" });
+const abrir = () => fireEvent.keyDown(gatilho(), { key: "Enter" });
 
-describe("SelectOpcoes", () => {
-  const opcoes = [
-    { value: 1, label: "Um" },
-    { value: 2, label: "Dois" },
-  ];
+type Api = {
+  setValue: (n: string, v: string) => void;
+  reset: (v?: FieldValues) => void;
+};
 
-  it("devolve o valor com o tipo original (número continua número)", () => {
-    const onValueChange = vi.fn();
-    render(
-      <Field label="Número">
-        <SelectOpcoes options={opcoes} onValueChange={onValueChange} />
-      </Field>,
-    );
-    abrir("Número");
-    fireEvent.click(screen.getByRole("option", { name: "Dois" }));
-    expect(onValueChange).toHaveBeenCalledWith(2);
-  });
+function Formulario({
+  aoEnviar,
+  api,
+  resolver,
+}: {
+  aoEnviar: (d: unknown) => void;
+  api?: Api;
+  resolver?: Resolver;
+}) {
+  const { control, handleSubmit, setValue, reset } = useForm({ resolver });
+  if (api) {
+    api.setValue = setValue as never;
+    api.reset = reset;
+  }
+  return (
+    <form onSubmit={handleSubmit(aoEnviar)} noValidate>
+      <CampoDoFormulario
+        control={control}
+        id="nome"
+        label="Nome"
+        required
+        autoComplete="name"
+      />
+      <CampoDoFormulario
+        control={control}
+        id="state"
+        label="Estado"
+        type="select"
+        options={[
+          { value: "SP", label: "São Paulo" },
+          { value: "RJ", label: "Rio de Janeiro" },
+        ]}
+      />
+      <CampoDoFormulario
+        control={control}
+        id="phone"
+        label="Telefone"
+        inputMode="tel"
+        autoComplete="tel"
+      />
+      <button type="submit">enviar</button>
+    </form>
+  );
+}
 
-  it("mostra a opção escolhida e o placeholder sem valor", () => {
-    const { rerender } = render(
-      <Field label="Número">
-        <SelectOpcoes options={opcoes} onValueChange={vi.fn()} />
-      </Field>,
-    );
-    expect(screen.getByRole("combobox", { name: "Número" })).toHaveTextContent(
-      "Selecione",
-    );
-    rerender(
-      <Field label="Número">
-        <SelectOpcoes options={opcoes} value={1} onValueChange={vi.fn()} />
-      </Field>,
-    );
-    expect(screen.getByRole("combobox", { name: "Número" })).toHaveTextContent(
-      "Um",
-    );
-  });
-
-  it("lista longa vira Combobox com busca", () => {
-    const longa = Array.from({ length: 12 }, (_, i) => ({
-      value: `v${i}`,
-      label: `Opção ${i}`,
-    }));
-    const onValueChange = vi.fn();
-    render(
-      <Field label="Estado">
-        <SelectOpcoes options={longa} onValueChange={onValueChange} />
-      </Field>,
-    );
-    fireEvent.click(screen.getByRole("combobox", { name: "Estado" }));
-    expect(screen.getByPlaceholderText("Buscar…")).toBeInTheDocument();
-    fireEvent.click(screen.getByText("Opção 3"));
-    expect(onValueChange).toHaveBeenCalledWith("v3");
-  });
-});
-
-describe("GrupoDeCheckbox", () => {
-  it("marca e desmarca devolvendo a lista", () => {
-    const onValueChange = vi.fn();
-    render(<GrupoDeCheckbox opcoes={["A", "B"]} onValueChange={onValueChange} />);
-    fireEvent.click(screen.getByRole("checkbox", { name: "A" }));
-    fireEvent.click(screen.getByRole("checkbox", { name: "B" }));
-    expect(onValueChange).toHaveBeenLastCalledWith(["A", "B"]);
-    fireEvent.click(screen.getByRole("checkbox", { name: "A" }));
-    expect(onValueChange).toHaveBeenLastCalledWith(["B"]);
-  });
-
-  it("opção 'Não possuo' é excludente: limpa as outras e trava", () => {
-    const onValueChange = vi.fn();
-    render(
-      <GrupoDeCheckbox
-        opcoes={["Bolsa", "Não possuo bolsa"]}
-        excludentes
-        defaultValue={["Bolsa"]}
-        onValueChange={onValueChange}
-      />,
-    );
-    fireEvent.click(screen.getByRole("checkbox", { name: "Não possuo bolsa" }));
-    expect(onValueChange).toHaveBeenLastCalledWith(["Não possuo bolsa"]);
-    expect(screen.getByRole("checkbox", { name: "Bolsa" })).toBeDisabled();
-    expect(screen.getByRole("checkbox", { name: "Bolsa" })).not.toBeChecked();
-  });
-});
-
-describe("SenhaInput", () => {
-  it("mostra e oculta a senha por um botão com nome acessível", () => {
-    render(
-      <Field label="Senha">
-        <SenhaInput />
-      </Field>,
-    );
-    const campo = screen.getByLabelText("Senha");
-    expect(campo).toHaveAttribute("type", "password");
-    fireEvent.click(screen.getByRole("button", { name: "Mostrar senha" }));
-    expect(campo).toHaveAttribute("type", "text");
-    expect(
-      screen.getByRole("button", { name: "Ocultar senha" }),
-    ).toBeInTheDocument();
-  });
-});
+const enviar = async (aoEnviar: ReturnType<typeof vi.fn>, n: number) => {
+  fireEvent.click(screen.getByText("enviar"));
+  await waitFor(() => expect(aoEnviar).toHaveBeenCalledTimes(n));
+  return aoEnviar.mock.calls[n - 1][0];
+};
 
 describe("CampoDoFormulario com react-hook-form", () => {
-  function Formulario({
-    aoEnviar,
-    aoMontar,
-  }: {
-    aoEnviar: (d: unknown) => void;
-    aoMontar?: (setValue: (n: string, v: string) => void) => void;
-  }) {
-    const { register, handleSubmit, setValue } = useForm();
-    aoMontar?.(setValue as never);
-    return (
-      <form onSubmit={handleSubmit(aoEnviar)} noValidate>
-        <CampoDoFormulario
-          register={register}
-          id="nome"
-          label="Nome"
-          required
-          error={{ type: "required", message: "Informe o nome" }}
-        />
-        <CampoDoFormulario
-          register={register}
-          id="estado"
-          label="Estado"
-          type="option"
-          options={[
-            { value: "SP", label: "São Paulo" },
-            { value: "RJ", label: "Rio de Janeiro" },
-          ]}
-        />
-        <CampoDoFormulario
-          register={register}
-          id="phone"
-          label="Telefone"
-        />
-        <button type="submit">enviar</button>
-      </form>
-    );
-  }
-
-  it("rótulo ligado ao campo, obrigatório, erro embaixo e teclado certo", () => {
+  it("rótulo ligado ao campo, obrigatório e atributos declarados no dado", () => {
     render(<Formulario aoEnviar={vi.fn()} />);
     const nome = screen.getByRole("textbox", { name: "Nome" });
     expect(nome).toBeRequired();
-    expect(nome).toHaveAttribute("aria-invalid", "true");
-    expect(screen.getByText("Informe o nome")).toBeInTheDocument();
-    expect(screen.getByLabelText("Telefone")).toHaveAttribute("inputmode", "tel");
+    expect(nome).toHaveAttribute("autocomplete", "name");
+    const tel = screen.getByLabelText("Telefone");
+    expect(tel).toHaveAttribute("inputmode", "tel");
+    expect(tel).toHaveAttribute("autocomplete", "tel");
   });
 
-  it("envia texto digitado e a escolha do Select (a primeira opção por padrão)", async () => {
+  it("não deduz atributos do id: sem declarar, não há inputmode", () => {
+    render(<Formulario aoEnviar={vi.fn()} />);
+    expect(screen.getByRole("textbox", { name: "Nome" })).not.toHaveAttribute("inputmode");
+  });
+
+  it("envia o texto digitado e a escolha do Select (a primeira opção por padrão)", async () => {
     const aoEnviar = vi.fn();
     render(<Formulario aoEnviar={aoEnviar} />);
-    fireEvent.change(screen.getByRole("textbox", { name: "Nome" }), { target: { value: "Ana" } });
-    fireEvent.click(screen.getByText("enviar"));
-    await waitFor(() => expect(aoEnviar).toHaveBeenCalled());
-    expect(aoEnviar.mock.calls[0][0]).toMatchObject({ nome: "Ana", estado: "SP" });
+    fireEvent.change(screen.getByRole("textbox", { name: "Nome" }), {
+      target: { value: "Ana" },
+    });
+    expect(await enviar(aoEnviar, 1)).toMatchObject({ nome: "Ana", state: "SP" });
 
-    abrir("Estado");
+    abrir();
     fireEvent.click(screen.getByRole("option", { name: "Rio de Janeiro" }));
-    fireEvent.click(screen.getByText("enviar"));
-    await waitFor(() => expect(aoEnviar).toHaveBeenCalledTimes(2));
-    expect(aoEnviar.mock.calls[1][0]).toMatchObject({ estado: "RJ" });
+    expect(await enviar(aoEnviar, 2)).toMatchObject({ state: "RJ" });
   });
 
-  it("setValue de fora muda o que o Select mostra", async () => {
-    let setValue!: (n: string, v: string) => void;
-    render(
-      <Formulario aoEnviar={vi.fn()} aoMontar={(fn) => (setValue = fn)} />,
-    );
-    expect(screen.getByRole("combobox", { name: "Estado" })).toHaveTextContent(
-      "São Paulo",
-    );
-    setValue("estado", "RJ");
-    await waitFor(() =>
-      expect(screen.getByRole("combobox", { name: "Estado" })).toHaveTextContent(
-        "Rio de Janeiro",
-      ),
-    );
+  it("depois de reset({ state: 'SP' }), o Select mostra São Paulo e o envio leva SP", async () => {
+    const aoEnviar = vi.fn();
+    const api = {} as Api;
+    render(<Formulario aoEnviar={aoEnviar} api={api} />);
+    abrir();
+    fireEvent.click(screen.getByRole("option", { name: "Rio de Janeiro" }));
+    expect(gatilho()).toHaveTextContent("Rio de Janeiro");
+
+    act(() => api.reset({ nome: "", state: "SP", phone: "" }));
+    await waitFor(() => expect(gatilho()).toHaveTextContent("São Paulo"));
+    expect(await enviar(aoEnviar, 1)).toMatchObject({ state: "SP" });
+  });
+
+  it("depois do reset, setValue('state','RJ') muda a tela e o envio bate com ela", async () => {
+    const aoEnviar = vi.fn();
+    const api = {} as Api;
+    render(<Formulario aoEnviar={aoEnviar} api={api} />);
+    act(() => api.reset({ nome: "", state: "SP", phone: "" }));
+    act(() => api.setValue("state", "RJ"));
+    await waitFor(() => expect(gatilho()).toHaveTextContent("Rio de Janeiro"));
+    expect(await enviar(aoEnviar, 1)).toMatchObject({ state: "RJ" });
+  });
+
+  it("erro de validação no Select leva o foco ao gatilho", async () => {
+    const resolver: Resolver = async () => ({
+      values: {},
+      errors: {
+        state: { type: "validate", message: "Escolha o estado", ref: undefined },
+      } as never,
+    });
+    render(<Formulario aoEnviar={vi.fn()} resolver={resolver} />);
+    fireEvent.click(screen.getByText("enviar"));
+    await waitFor(() => expect(gatilho()).toHaveFocus());
+    expect(screen.getByText("Escolha o estado")).toBeInTheDocument();
+    expect(gatilho()).toHaveAttribute("aria-invalid", "true");
   });
 });

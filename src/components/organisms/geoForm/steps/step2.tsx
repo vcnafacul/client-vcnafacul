@@ -18,7 +18,7 @@ function Step2Geo({ title, subtitle, form, updateData, dataGeo
   })
   .required()
 
-  const {register, handleSubmit, formState: { errors } } = useForm({
+  const {control, handleSubmit } = useForm({
     resolver: yupResolver(schema),
   });
 
@@ -34,7 +34,7 @@ function Step2Geo({ title, subtitle, form, updateData, dataGeo
         <Form className="flex flex-col gap-4 my-4 w-full" formFields={form.map(f => {
           f.defaultValue = dataGeo![f.id as keyof CreateGeolocation]  || ''
           return f
-        })} register={register} errors={errors} />
+        })} control={control} />
         <Button className="w-full" variant="primary" size="lg" type="submit">Continuar</Button>
       </form>
     </div>

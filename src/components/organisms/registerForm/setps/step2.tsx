@@ -14,7 +14,7 @@ import { StepProps } from "..";
 import { Gender } from "../../../../store/auth";
 import { UserRegister } from "../../../../types/user/userRegister";
 import { Button } from "@/components/ui/button";
-import { SelectOpcoes } from "@/components/formulario/select-opcoes";
+import { OptionsSelect } from "@/components/ui/options-select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FormLegend } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -204,7 +204,7 @@ function Step2({
         {getDisplayName()}
       </span>
       <Field label="Gênero" required error={errors.gender?.message}>
-        <SelectOpcoes
+        <OptionsSelect
           id="gender"
           options={optionsGender}
           value={watch("gender")}
@@ -234,7 +234,7 @@ function Step2({
         />
       </Field>
       <Field label="Estado" required error={errors.state?.message}>
-        <SelectOpcoes
+        <OptionsSelect
           id="state"
           options={stateOptions}
           value={watch("state")}

@@ -13,7 +13,7 @@ import { validNewEmail } from "../../../../services/auth/validNewEmail";
 import { UserRegister } from "../../../../types/user/userRegister";
 import SpanValidate from "../../../atoms/spanValidate";
 import { Button } from "@/components/ui/button";
-import { SenhaInput } from "@/components/formulario/senha-input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Field, FormLegend } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
@@ -122,7 +122,7 @@ function Step1({ updateData, dataUser, emailTravado }: Step1Props) {
         </Field>
       )}
       <Field label="Senha" required error={errors.password?.message}>
-        <SenhaInput
+        <PasswordInput
           id="password"
           autoComplete="new-password"
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -134,7 +134,7 @@ function Step1({ updateData, dataUser, emailTravado }: Step1Props) {
         required
         error={errors.password_confirmation?.message}
       >
-        <SenhaInput
+        <PasswordInput
           id="password_confirmation"
           autoComplete="new-password"
           // eslint-disable-next-line @typescript-eslint/no-explicit-any

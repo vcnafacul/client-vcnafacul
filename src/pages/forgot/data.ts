@@ -5,6 +5,6 @@ export const forgotForm : ForgotFormProps = {
     subtitle: "Digite seu e-mail e enviaremos instruções para redefinir sua senha.",
     labelSubmit: "Enviar",
     formData: [
-        { id: 'email', label: 'E-mail'},
+        { id: 'email', label: 'E-mail', type: 'email', inputMode: 'email', autoComplete: 'email'},
     ]
 }

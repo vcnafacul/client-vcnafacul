@@ -1,4 +1,4 @@
-import { SelectOpcoes } from "@/components/formulario/select-opcoes";
+import { OptionsSelect } from "@/components/ui/options-select";
 import { Field } from "@/components/ui/field";
 import { FrenteDto, SubjectDto } from "@/dtos/content/contentDtoInput";
 import {
@@ -390,7 +390,7 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
                   className="mt-0 flex flex-col gap-6"
                 >
                   <Field label="Matéria">
-                    <SelectOpcoes
+                    <OptionsSelect
                       id="materia"
                       options={materiasOptions}
                       value={materiaSelected}

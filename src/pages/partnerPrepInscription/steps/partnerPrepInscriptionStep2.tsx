@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { SelectOpcoes } from "@/components/formulario/select-opcoes";
+import { OptionsSelect } from "@/components/ui/options-select";
 import { Field, FormLegend } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { StudentInscriptionDTO } from "@/dtos/student/studentInscriptionDTO";
@@ -220,7 +220,7 @@ export function PartnerPrepInscriptionStep2({
         />
       </Field>
       <Field label="Estado" required error={errors.state?.message}>
-        <SelectOpcoes
+        <OptionsSelect
           id="state"
           options={stateOptions as { value: string; label: string }[]}
           value={state}

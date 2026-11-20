@@ -5,7 +5,7 @@ export const resetForm : ResetFormProps = {
     subtitle: "Informe sua nova senha",
     labelSubmit: "Enviar",
     formData: [
-      { id: 'password', label: 'Senha', type: 'password'},
-      { id: 'password_confirmation', label: 'Confirmar Senha', type: 'password'},
+      { id: 'password', label: 'Senha', type: 'password', autoComplete: 'new-password'},
+      { id: 'password_confirmation', label: 'Confirmar Senha', type: 'password', autoComplete: 'new-password'},
     ]
 }

@@ -73,7 +73,7 @@ const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
         </PopoverTrigger>
         <PopoverContent
           align="start"
-          className="z-popover w-[var(--radix-popover-trigger-width)] rounded-lg p-0 shadow-md"
+          className="z-popover w-[var(--radix-popover-trigger-width)] min-w-[12rem] rounded-lg p-0 shadow-md"
         >
           <Command>
             <div className="flex items-center gap-2 border-b px-3">

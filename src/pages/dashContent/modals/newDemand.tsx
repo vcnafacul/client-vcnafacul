@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SelectOpcoes } from "@/components/formulario/select-opcoes";
+import { OptionsSelect } from "@/components/ui/options-select";
 import { Field, FormLegend } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -155,7 +155,7 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
             <FormLegend />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Field label="Matéria" required error={errors.materia?.message}>
-                <SelectOpcoes
+                <OptionsSelect
                   id="materia"
                   options={materiasOptions}
                   value={materia}
@@ -163,7 +163,7 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
                 />
               </Field>
               <Field label="Frente" required error={errors.frente?.message}>
-                <SelectOpcoes
+                <OptionsSelect
                   id="frente"
                   options={frentes.map((f) => ({ label: f.nome, value: f._id || f.id }))}
                   value={frente}
@@ -171,7 +171,7 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
                 />
               </Field>
               <Field label="Tema" required error={errors.subjectId?.message}>
-                <SelectOpcoes
+                <OptionsSelect
                   id="subjectId"
                   options={subjects.map((s) => ({ label: s.name, value: s._id || s.id }))}
                   value={watch("subjectId")}

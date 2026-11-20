@@ -30,10 +30,9 @@ function Step1Geo({
     .required();
 
   const {
-    register,
+    control,
     handleSubmit,
     getValues,
-    formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -59,8 +58,7 @@ function Step1Geo({
             f.defaultValue = dataGeo![f.id as keyof CreateGeolocation] || "";
             return f;
           })}
-          register={register}
-          errors={errors}
+          control={control}
         />
         <div className="flex gap-4">
           <Button className="w-full" variant="primary" size="lg" type="button" onClick={() => handleBack!(getValues())}>
