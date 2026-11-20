@@ -695,18 +695,14 @@ describe("TabelaDeQuestoes — preview da questão (card 11)", () => {
   });
 
   it("fechar o preview volta a tabela ao estado anterior", async () => {
-    const { container } = render(
+    render(
       <TabelaDeQuestoes questoes={[questao()]} estado="idle" token="tok" />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: "5" }));
     await screen.findByText("Enunciado da cinco");
 
-    // O `ModalTemplate` põe o X como primeiro controle do overlay.
-    const fechar = container.ownerDocument.querySelector(
-      "[data-testid='preview-da-questao']",
-    )!.parentElement!.parentElement!.querySelector("svg")!;
-    fireEvent.click(fechar);
+    fireEvent.click(screen.getByRole("button", { name: "Fechar" }));
 
     expect(screen.queryByTestId("preview-da-questao")).toBeNull();
   });

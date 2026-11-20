@@ -8,9 +8,14 @@ import {
 import Text from "../../../components/atoms/text";
 import Ul from "../../../components/atoms/ul";
 import { Button } from "@/components/ui/button";
-import ModalTemplate, {
-  ModalProps,
-} from "../../../components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { SIMULADO_RESPONDER } from "../../../routes/path";
 import { getAvailable } from "../../../services/simulado/getAvailable";
 import { getSimuladoById } from "../../../services/simulado/getSimuladoById";
@@ -18,6 +23,10 @@ import { useAuthStore } from "../../../store/auth";
 import { useSimuladoStore } from "../../../store/simulado";
 import { dataModalNew } from "./data";
 import data from "./data.json";
+
+interface ModalProps {
+  handleClose?: () => void;
+}
 
 interface NewSimulateProps extends ModalProps {
   title: string;
@@ -78,26 +87,24 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
   }, [getAvailables]);
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      className="bg-white p-2 rounded-md"
-    >
-      <div className="bg-white p-2 rounded-sm max-h-[90vh] overflow-y-auto scrollbar-hide">
-        {/* No celular o seletor ocupa a largura: nomes longos passavam da borda. */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-          <Text className="text-left m-0" size="secondary">
-            Simulado {title}
-          </Text>
-          {availables.length > 0 && (
-            <div className="w-full sm:w-auto min-w-0">
-              <SelectOption
-                options={availables}
-                setState={setAvailableSelected}
-              />
-            </div>
-          )}
-        </div>
+    <Dialog open={isOpen} onOpenChange={(aberto) => !aberto && handleClose!()}>
+      {/* tickets/059 D21: sem largura própria (texto corrido até a borda da tela), então `lg`. Sem formulário: clicar fora fecha. */}
+      <DialogContent size="lg" aria-describedby={undefined}>
+        <DialogHeader>
+          {/* No celular o seletor ocupa a largura: nomes longos passavam da borda. */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pr-10">
+            <DialogTitle className="pr-0">Simulado {title}</DialogTitle>
+            {availables.length > 0 && (
+              <div className="w-full sm:w-auto min-w-0">
+                <SelectOption
+                  options={availables}
+                  setState={setAvailableSelected}
+                />
+              </div>
+            )}
+          </div>
+        </DialogHeader>
+        <DialogBody className="flex flex-col gap-2">
         {carregado && availables.length === 0 && (
           <p className="mb-4 rounded-md bg-muted p-3 text-body text-foreground text-start">
             Nenhum simulado disponível no momento.
@@ -131,22 +138,21 @@ function NewSimulate({ handleClose, title, isOpen }: NewSimulateProps) {
         <Text size="quaternary" className="font-extrabold text-muted-foreground text-start">
           Bons estudos!
         </Text>
-        <div className="flex justify-end">
-          {/* No celular empilhados, com o principal em cima. */}
-          <div className="flex flex-col-reverse sm:flex-row max-w-[500px] w-full gap-3 sm:gap-4">
-            <Button className="w-full" variant="outline" size="lg" onClick={handleClose}>
-              Então volto mais tarde!
-            </Button>
-            <Button className="w-full" variant="cta" size="lg"
-              disabled={availables.length === 0}
-              onClick={getSimulate}
-            >
-              Ok, vamos lá!
-            </Button>
-          </div>
-        </div>
-      </div>
-    </ModalTemplate>
+        </DialogBody>
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose}>
+            Então volto mais tarde!
+          </Button>
+          <Button
+            variant="cta"
+            disabled={availables.length === 0}
+            onClick={getSimulate}
+          >
+            Ok, vamos lá!
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

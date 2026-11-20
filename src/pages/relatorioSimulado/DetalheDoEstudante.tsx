@@ -4,7 +4,13 @@ import {
   StatusBadge,
   type DashColumn,
 } from "@/components/dashV2";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type {
   DetalheDoEstudante as Detalhe,
   LinhaDoRelatorio,
@@ -358,7 +364,7 @@ export function DetalheDoEstudante({
   }, [isOpen, token, estudante.usuario, turmaId]);
 
   /*
-    ⚠️ **`←`/`→` e nada mais.** O `Esc` já fecha pelo `ModalTemplate`, e atalho
+    ⚠️ **`←`/`→` e nada mais.** O `Esc` já fecha pelo `Dialog`, e atalho
     novo além desses dois seria convenção inventada que ninguém descobre.
 
     ⚠️ Ignora quando o foco está num campo de texto: a tela não tem nenhum
@@ -388,13 +394,11 @@ export function DetalheDoEstudante({
     detalhe !== null && !STATUS_CONHECIDOS.includes(detalhe.status);
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={onClose}
-      className="w-full max-w-3xl rounded-lg bg-white p-4 shadow-lg"
-    >
-      <div className="flex flex-col gap-4">
-        <header className="flex items-start justify-between gap-3">
+    <Dialog open={isOpen} onOpenChange={(aberto) => !aberto && onClose()}>
+      {/* tickets/059 D21: era max-w-3xl (768px), então `lg`. Só leitura e ações com confirmação própria: clicar fora fecha. */}
+      <DialogContent size="lg" aria-describedby={undefined}>
+        <DialogHeader className="pr-10">
+        <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
             {/*
               ⚠️ **Desabilitadas nas pontas, nunca escondidas.** Uma seta que
@@ -408,14 +412,14 @@ export function DetalheDoEstudante({
               />
             )}
             <div className="min-w-0">
-              <h2
+              <DialogTitle
                 className={cn(
-                  "truncate text-h3 font-semibold",
+                  "truncate pr-0 text-h3 font-semibold",
                   dashV2.text.primary,
                 )}
               >
                 {estudante.nome}
-              </h2>
+              </DialogTitle>
               <p className={cn("text-caption", dashV2.text.muted)}>
                 {estudante.matricula}
               </p>
@@ -471,7 +475,9 @@ export function DetalheDoEstudante({
               onExcluido={onEnvioExcluido}
             />
           )}
-        </header>
+        </div>
+        </DialogHeader>
+        <DialogBody className="flex flex-col gap-4">
 
         {estado === "error" && (
           <div className="flex flex-col items-start gap-2">
@@ -625,8 +631,9 @@ export function DetalheDoEstudante({
             emptyState={<VazioDeRespostas />}
           />
         )}
-      </div>
-    </ModalTemplate>
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   );
 }
 

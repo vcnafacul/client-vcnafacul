@@ -1,4 +1,10 @@
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { dashV2 } from "@/components/dashV2";
 import type { LinhaDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
@@ -33,40 +39,39 @@ export function CartaoSemSimulado({
 }) {
   const falhou = linha.status === "failed";
   return (
-    <ModalTemplate
-      isOpen
-      handleClose={onClose}
-      className="w-full max-w-lg rounded-lg bg-white p-4 shadow-lg"
-    >
-      <div className="flex flex-col gap-4">
-        <header className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h2
-              className={cn(
-                "truncate text-h3 font-semibold",
-                dashV2.text.primary,
-              )}
-            >
-              {linha.nome}
-            </h2>
-            <p className={cn("text-caption", dashV2.text.muted)}>
-              {linha.matricula}
-            </p>
+    <Dialog open onOpenChange={(aberto) => !aberto && onClose()}>
+      {/* tickets/059 D21: era max-w-lg (512px), então `md`. Sem formulário: clicar fora fecha. */}
+      <DialogContent size="md" aria-describedby={undefined}>
+        <DialogHeader>
+          <div className="flex items-start justify-between gap-3 pr-10">
+            <div className="min-w-0">
+              <DialogTitle
+                className={cn(
+                  "truncate pr-0 text-h3 font-semibold",
+                  dashV2.text.primary,
+                )}
+              >
+                {linha.nome}
+              </DialogTitle>
+              <p className={cn("text-caption", dashV2.text.muted)}>
+                {linha.matricula}
+              </p>
+            </div>
+            <BaixarFotoDoCartao
+              token={token}
+              historicoId={linha.historicoId}
+              matricula={linha.matricula}
+            />
+            <ExcluirEnvioDoCartao
+              token={token}
+              historicoId={linha.historicoId}
+              nome={linha.nome}
+              matricula={linha.matricula}
+              onExcluido={onMudou}
+            />
           </div>
-          <BaixarFotoDoCartao
-            token={token}
-            historicoId={linha.historicoId}
-            matricula={linha.matricula}
-          />
-          <ExcluirEnvioDoCartao
-            token={token}
-            historicoId={linha.historicoId}
-            nome={linha.nome}
-            matricula={linha.matricula}
-            onExcluido={onMudou}
-          />
-        </header>
-
+        </DialogHeader>
+        <DialogBody className="flex flex-col gap-4">
         <p
           className={cn("text-body", dashV2.text.secondary)}
           data-testid="cartao-sem-simulado"
@@ -84,7 +89,8 @@ export function CartaoSemSimulado({
             onReenviado={onMudou}
           />
         )}
-      </div>
-    </ModalTemplate>
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   );
 }

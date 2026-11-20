@@ -13,7 +13,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import PropValue from "@/components/molecules/PropValue";
 import { InputFactory } from "@/components/organisms/inputFactory";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Roles } from "@/enums/roles/roles";
 import { useToastAsync } from "@/hooks/useToastAsync";
@@ -171,12 +178,18 @@ export function ShowInfo({
   );
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white p-4 rounded-md w-full max-w-[750px]"
-    >
-      <div className="p-4 rounded-md overflow-y-auto scrollbar-hide h-4/5 sm:h-fit">
+    <>
+    <Dialog open={isOpen} onOpenChange={(aberto) => !aberto && handleClose()}>
+      {/* tickets/059 D21: era max-w-[750px], então `lg`. R32: a descrição é digitada, clicar fora não fecha. */}
+      <DialogContent
+        size="lg"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle className="sr-only">Informações do colaborador</DialogTitle>
+        </DialogHeader>
+        <DialogBody>
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
           {/*
             Mesmo componente da foto do perfil: círculo com editar e, havendo
@@ -236,7 +249,7 @@ export function ShowInfo({
               <PropValue
                 prop="Função"
                 value={collaborator.role.name}
-                className="text-white"
+                className="text-primary-foreground"
               />
             </div>
             <PropValue
@@ -304,19 +317,22 @@ export function ShowInfo({
             />
           </div>
         </div>
-        <div className="flex gap-4 py-2">
-          <Button className="w-full" onClick={openUpdateRole} variant="outline" size="lg">
+        </DialogBody>
+        <DialogFooter>
+          <Button onClick={openUpdateRole} variant="outline">
             Editar Função
           </Button>
           {handleExcluir && (
-            <Button className="w-full"
-              onClick={() => setConfirmarExclusao(true)} variant="destructive" size="lg"
+            <Button
+              onClick={() => setConfirmarExclusao(true)}
+              variant="destructive"
             >
               Excluir do cursinho
             </Button>
           )}
-        </div>
-      </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
       {handleExcluir && confirmarExclusao && (
         <ModalExcluirColaborador
           isOpen={confirmarExclusao}
@@ -351,6 +367,6 @@ export function ShowInfo({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </ModalTemplate>
+    </>
   );
 }

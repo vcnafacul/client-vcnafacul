@@ -166,10 +166,7 @@ export default function ModalEditSupporter({
 
   return (
     <>
-      <Dialog
-        open={isOpen && !pendingCrop}
-        onOpenChange={(o) => !o && handleClose()}
-      >
+      <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
         <DialogContent
           size="md"
           aria-describedby={undefined}
@@ -281,7 +278,7 @@ export default function ModalEditSupporter({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      {/* Fora do Dialog: o editor de foto é um modal V1 e o Radix deixa o body sem clique (059/01, portal). */}
+      {/* tickets/059 D21: o recorte é um Dialog empilhado sobre este, que continua aberto com o formulário. */}
       {pendingCrop && (
         <PhotoEditor
           isOpen

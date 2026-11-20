@@ -1,6 +1,12 @@
 import { dashV2 } from "@/components/dashV2";
 import { RichTextRenderer } from "@/components/atoms/richTextRenderer/RichTextRenderer";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { Question } from "@/dtos/question/questionDTO";
 import type { QuestaoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
@@ -133,23 +139,23 @@ export function PreviewDaQuestao({
     gabaritoDoBanco !== questao.alternativaCorreta;
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={onClose}
-      className="w-full max-w-3xl rounded-lg bg-white p-4 shadow-lg"
-    >
-      <div className="flex flex-col gap-4" data-testid="preview-da-questao">
-        <header className="flex flex-col gap-1">
-          <h2 className={cn("text-h3 font-semibold", dashV2.text.primary)}>
+    <Dialog open={isOpen} onOpenChange={(aberto) => !aberto && onClose()}>
+      {/* tickets/059 D21: era max-w-3xl (768px), então `lg`. Só leitura: clicar fora fecha. */}
+      <DialogContent size="lg" aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle className={cn("font-semibold", dashV2.text.primary)}>
             {questao.numero === null
               ? "Questão sem número"
               : `Questão ${questao.numero}`}
-          </h2>
+          </DialogTitle>
           <p className={cn("text-caption", dashV2.text.secondary)}>
             {questao.respondentes} respondente(s) neste recorte
           </p>
-        </header>
-
+        </DialogHeader>
+        <DialogBody
+          className="flex flex-col gap-4"
+          data-testid="preview-da-questao"
+        >
         {estado === "loading" && (
           <div
             data-testid="preview-carregando"
@@ -274,8 +280,9 @@ export function PreviewDaQuestao({
             </div>
           </>
         )}
-      </div>
-    </ModalTemplate>
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   );
 }
 

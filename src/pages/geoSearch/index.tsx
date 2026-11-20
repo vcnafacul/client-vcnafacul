@@ -408,7 +408,7 @@ function GeoSearch() {
           />
         </section>
       </div>
-      {/* Fora da coluna do mapa (que é `isolate`): o modal não usa portal. */}
+      {/* Fora da coluna do mapa (que é `isolate`); o Dialog também vai para um portal no body, acima do mapa. */}
       {reportando && escolhido && (
         <ReportLC
           entityId={escolhido.id}

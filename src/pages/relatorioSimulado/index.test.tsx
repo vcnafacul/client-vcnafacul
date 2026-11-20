@@ -82,8 +82,9 @@ const RESPOSTA = {
  * no `onMouseDown` — um `fireEvent.click` não dispara mousedown e a aba não
  * muda, o que faria o teste passar por não ter acontecido nada.
  */
+// `hidden: true`: com o detalhe aberto (um Dialog), o Radix esconde a página atrás dele da árvore de acessibilidade.
 const abrirAba = (nome: RegExp) =>
-  fireEvent.mouseDown(screen.getByRole("tab", { name: nome }));
+  fireEvent.mouseDown(screen.getByRole("tab", { name: nome, hidden: true }));
 
 type Entrada = string | { pathname: string; search?: string; state?: unknown };
 
@@ -377,12 +378,13 @@ describe("RelatorioSimulado", () => {
       },
       respostas: [],
     });
-    const { container } = montar();
+    montar();
 
     fireEvent.click(await screen.findByText("Ana Silva"));
 
     await screen.findByText(/não foi possível localizar o cartão/i);
-    expect(container.querySelector('input[type="file"]')).toBeTruthy();
+    // O detalhe é um Dialog em portal: a busca parte do document, não do container.
+    expect(document.querySelector('input[type="file"]')).toBeTruthy();
   });
 
   it("⚠️ clicar numa linha de quem NÃO enviou não abre nada", async () => {
@@ -641,13 +643,13 @@ describe("RelatorioSimulado — acertos da turma no detalhe", () => {
   it("mostra o percentual COM a base", async () => {
     buscarQuestoes.mockResolvedValue(QUESTOES);
     buscarDetalheDoEstudante.mockResolvedValue(RESPOSTAS);
-    const { container } = montar();
+    montar();
 
     fireEvent.click(await screen.findByText("Ana Silva"));
 
     await waitFor(() =>
       expect(
-        container.querySelector('[data-column-id="dificuldade"]')?.textContent,
+        document.querySelector('[role="dialog"] [data-column-id="dificuldade"]')?.textContent,
       ).toBe("90% de 20"),
     );
   });
@@ -695,26 +697,26 @@ describe("RelatorioSimulado — acertos da turma no detalhe", () => {
     // e travar essa leitura por causa de um número de contexto seria pior.
     buscarQuestoes.mockRejectedValue(new Error("caiu"));
     buscarDetalheDoEstudante.mockResolvedValue(RESPOSTAS);
-    const { container } = montar();
+    montar();
 
     fireEvent.click(await screen.findByText("Ana Silva"));
 
     await waitFor(() => expect(screen.getByText("Marcou")).toBeInTheDocument());
     expect(
-      container.querySelector('[data-column-id="dificuldade"]')?.textContent,
+      document.querySelector('[role="dialog"] [data-column-id="dificuldade"]')?.textContent,
     ).toBe("—");
   });
 
   it("⚠️ questão fora do agregado vira travessão, e não 0%", async () => {
     buscarQuestoes.mockResolvedValue({ questoes: [] });
     buscarDetalheDoEstudante.mockResolvedValue(RESPOSTAS);
-    const { container } = montar();
+    montar();
 
     fireEvent.click(await screen.findByText("Ana Silva"));
 
     await waitFor(() => expect(screen.getByText("Marcou")).toBeInTheDocument());
     expect(
-      container.querySelector('[data-column-id="dificuldade"]')?.textContent,
+      document.querySelector('[role="dialog"] [data-column-id="dificuldade"]')?.textContent,
     ).toBe("—");
   });
 });
@@ -1393,7 +1395,7 @@ describe("RelatorioSimulado — navegação entre alunos (card 20)", () => {
         },
       ],
     });
-    const { container } = montar();
+    montar();
     fireEvent.click(await screen.findByText("Ana"));
     await screen.findByTestId("chips-do-detalhe");
 
@@ -1407,13 +1409,13 @@ describe("RelatorioSimulado — navegação entre alunos (card 20)", () => {
         .getByTestId("chips-do-detalhe")
         .parentElement!.querySelectorAll("tbody tr");
 
-    fireEvent.click(container.querySelector('[data-chip="errou"]')!);
+    fireEvent.click(document.querySelector('[data-chip="errou"]')!);
     expect(linhasDoModal()).toHaveLength(1);
 
     fireEvent.click(screen.getByRole("button", { name: "Próximo estudante" }));
     await screen.findByRole("heading", { name: "Bruno" });
 
-    expect(container.querySelector('[data-chip="tudo"]')).toHaveAttribute(
+    expect(document.querySelector('[data-chip="tudo"]')).toHaveAttribute(
       "aria-pressed",
       "true",
     );

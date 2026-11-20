@@ -32,8 +32,11 @@ const convite = (over = {}) => ({
   ...over,
 });
 
-const montar = () =>
-  render(<ModalConvites isOpen handleClose={vi.fn()} funcoes={FUNCOES} />);
+// O Dialog vai para um portal no body: as buscas por atributo partem do document.body.
+const montar = () => ({
+  ...render(<ModalConvites isOpen handleClose={vi.fn()} funcoes={FUNCOES} />),
+  container: document.body,
+});
 
 describe("ModalConvites (convite 06)", () => {
   beforeEach(() => {

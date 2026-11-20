@@ -1,5 +1,12 @@
-import ModalTemplate from "@/components/templates/modalTemplate";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   cancelarConvite,
   criarConvite,
@@ -102,19 +109,16 @@ export function ModalConvites({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white p-4 sm:p-6 rounded-md w-full max-w-[59rem]"
-    >
-      <div data-modal-convites className="flex w-full flex-col gap-5">
-        <header className="text-center">
-          <h2 className="text-h3 font-bold text-foreground">Convites de colaborador</h2>
-          <p className="text-body text-muted-foreground">
+    <Dialog open={isOpen} onOpenChange={(aberto) => !aberto && handleClose()}>
+      {/* tickets/059 D21: era max-w-[59rem] (944px), então `full`. R32: tem formulário, clicar fora não fecha. */}
+      <DialogContent size="full" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Convites de colaborador</DialogTitle>
+          <DialogDescription>
             Convide por email já escolhendo a função. O convite vale 7 dias.
-          </p>
-        </header>
-
+          </DialogDescription>
+        </DialogHeader>
+        <DialogBody data-modal-convites className="flex flex-col gap-5">
         <form
           data-novo-convite
           onSubmit={convidar}
@@ -281,7 +285,8 @@ export function ModalConvites({
             </table>
           </div>
         )}
-      </div>
-    </ModalTemplate>
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   );
 }

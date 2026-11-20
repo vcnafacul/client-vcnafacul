@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import RadioButton from "@/components/atoms/radioButton";
-import Text from "@/components/atoms/text";
 import { Button } from "@/components/ui/button";
-import ModalTemplate, {
-  ModalProps,
-} from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { TypeProblem } from "@/enums/audit/typeProblem";
 import {
   reportMapHome,
@@ -14,6 +19,10 @@ import { useAuthStore } from "@/store/auth";
 import { Checkbox } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
+
+interface ModalProps {
+  handleClose?: () => void;
+}
 
 interface ModalReportProblemProps extends ModalProps {
   isOpen: boolean;
@@ -41,7 +50,8 @@ function ReportLC({
     },
   } = useAuthStore();
 
-  const sendReport = () => {
+  const sendReport = (evento: React.FormEvent) => {
+    evento.preventDefault();
     if (message.length > 0) {
       // setError(false)
       const body: ReportMapHome = {
@@ -133,34 +143,44 @@ function ReportLC({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      className="bg-white p-4 rounded-md"
-    >
-      <div className="bg-white max-w-5xl p-10 rounded-sm">
-        <Text size="secondary" className="text-start">
-          Encontrou algum problema no Localiza Cursinho?
-        </Text>
-        <Text size="tertiary" className="text-start text-muted-foreground">
-          Nos desculpe pelo transtorno, nos informe mais sobre o problema para a
-          melhoria contínua da plataforma.
-        </Text>
-        {IsQuestionProblem()}
-        <textarea
-          className="w-full border h-20 py-2 px-4"
-          onChange={(event: any) => setMessage(`${event.target.value}`)}
-        />
-        <div className="max-w-3xl flex mx-auto gap-4 mt-4">
-          <Button className="w-full" variant="outline" size="lg" onClick={handleClose}>
+    <Dialog open={isOpen} onOpenChange={(aberto) => !aberto && handleClose!()}>
+      {/*
+        tickets/059 D21: era max-w-5xl (1024px) só no papel — o conteúdo é um texto e uma caixa —, então `lg`.
+        O Dialog vai para um portal no body, acima do mapa (`isolate`). R32: texto digitado, clicar fora não fecha.
+      */}
+      <DialogContent size="lg" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Encontrou algum problema no Localiza Cursinho?</DialogTitle>
+          <DialogDescription>
+            Nos desculpe pelo transtorno, nos informe mais sobre o problema para
+            a melhoria contínua da plataforma.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogBody>
+          <form id="form-report-mapa" onSubmit={sendReport}>
+            {IsQuestionProblem()}
+            <textarea
+              aria-label="Descreva o problema"
+              className="w-full border h-20 py-2 px-4"
+              onChange={(event: any) => setMessage(`${event.target.value}`)}
+            />
+          </form>
+        </DialogBody>
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button className="w-full" variant="primary" size="lg" disabled={message.length <= 0} onClick={sendReport}>
+          <Button
+            type="submit"
+            form="form-report-mapa"
+            variant="primary"
+            disabled={message.length <= 0}
+          >
             Enviar
           </Button>
-        </div>
-      </div>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

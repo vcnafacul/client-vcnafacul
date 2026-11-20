@@ -12,11 +12,6 @@ vi.mock("@/store/auth", () => ({
 vi.mock("react-toastify", () => ({
   toast: { success: vi.fn(), error: vi.fn(), loading: vi.fn() },
 }));
-vi.mock("@/components/templates/modalTemplate", () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-}));
 
 import { CollaboratorColumns } from "..";
 import { ShowInfo } from "./showInfo";

@@ -48,8 +48,9 @@ const resposta = (over = {}) => ({
   ...over,
 });
 
-const montar = (props = {}) =>
-  render(
+// O Dialog vai para um portal no body: as buscas por seletor partem do document.body.
+const montar = (props = {}) => ({
+  ...render(
     <DetalheDoEstudante
       token="tok"
       simuladoId="sim-1"
@@ -58,7 +59,9 @@ const montar = (props = {}) =>
       onClose={vi.fn()}
       {...props}
     />,
-  );
+  ),
+  container: document.body,
+});
 
 describe("DetalheDoEstudante", () => {
   beforeEach(() => {

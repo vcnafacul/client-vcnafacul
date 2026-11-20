@@ -6,11 +6,6 @@ vi.mock("@/services/roles/getRecommended", () => ({ getRecommendedRoles }));
 vi.mock("@/store/auth", () => ({
   useAuthStore: () => ({ data: { token: "tok" } }),
 }));
-vi.mock("@/components/templates/modalTemplate", () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-}));
 
 import { ModalExcluirColaborador } from "./ModalExcluirColaborador";
 

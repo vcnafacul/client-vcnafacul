@@ -11,12 +11,21 @@ import { getPermissionsHierarchy } from "@/services/roles/getPermissionsHierarch
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
-import ModalTemplate, {
-  ModalProps,
-} from "../../../components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useAuthStore } from "../../../store/auth";
-import Text from "../../../components/atoms/text";
 import Select from "@/components/atoms/select";
+
+interface ModalProps {
+  handleClose?: () => void;
+}
 
 interface ModalEditRoleProps extends ModalProps {
   isOpen: boolean;
@@ -68,29 +77,24 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
   }, []);
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      className="bg-white rounded-xl p-4 sm:p-5 w-full max-w-[44.5rem]"
-    >
-      <div className="w-full flex flex-col gap-5 max-h-[80vh]">
-        {/* Header */}
-        <div>
-          <Text size="secondary" className="font-bold text-foreground">
-            Editar Perfil
-          </Text>
-          <p className="text-body text-muted-foreground mt-0.5">
+    <Dialog open={isOpen} onOpenChange={(aberto) => !aberto && handleClose!()}>
+      {/* tickets/059 D21: era max-w-[44.5rem] (712px), então `lg`. R32: perfil em edição, clicar fora não fecha. */}
+      <DialogContent size="lg" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Editar Perfil</DialogTitle>
+          <DialogDescription>
             Selecione um perfil e ajuste suas permissões.
-          </p>
-        </div>
-
+          </DialogDescription>
+        </DialogHeader>
+        <DialogBody className="flex flex-col gap-5">
         {/* Role selector */}
-        <label className="flex flex-col gap-1">
+        <label htmlFor="editar-perfil" className="flex flex-col gap-1">
           <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
             Perfil
           </span>
 
           <Select
+            id="editar-perfil"
             options={roles.map((role) => ({
               id: role.id,
               name: role.name,
@@ -105,7 +109,7 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
         </label>
 
         {/* Permissions */}
-        <div className="overflow-y-auto scrollbar-hide pr-1">
+        <div className="pr-1">
           <PermissionHierarchyPanel
             hierarchy={hierarchy}
             permissions={roleSelected ?? ({} as EditRoleDto)}
@@ -114,20 +118,21 @@ function ModalEditRole({ handleClose, isOpen }: ModalEditRoleProps) {
           />
         </div>
 
-        {/* Actions */}
-        <div className="flex justify-end gap-3 pt-2 border-t border-border">
-          <Button className="w-full" variant="outline" size="lg" onClick={handleClose}>
+        </DialogBody>
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button className="w-full" variant="primary" size="lg"
+          <Button
+            variant="primary"
             disabled={!roleSelected?.name.trim()}
             onClick={editRole}
           >
             Salvar
           </Button>
-        </div>
-      </div>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

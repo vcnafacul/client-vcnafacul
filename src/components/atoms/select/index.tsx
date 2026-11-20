@@ -9,10 +9,11 @@ export type SelectProps = ComponentProps<"select"> & {
   setState: (value: any) => void;
 };
 
-function Select({ options, disabled, value, setState }: SelectProps) {
+function Select({ id, options, disabled, value, setState }: SelectProps) {
   return (
     <div className="relative w-full">
       <select
+        id={id}
         disabled={disabled}
         value={value}
         onChange={(e) => setState(e.target.value)}

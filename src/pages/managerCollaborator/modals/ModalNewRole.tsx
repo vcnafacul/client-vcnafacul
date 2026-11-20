@@ -11,14 +11,23 @@ import { Role } from "@/types/roles/role";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import Filter from "../../../components/atoms/filter";
-import Text from "../../../components/atoms/text";
 import { Button } from "@/components/ui/button";
-import ModalTemplate, {
-  ModalProps,
-} from "../../../components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { CreateRoleDto } from "../../../dtos/roles/createRole";
 import { useAuthStore } from "../../../store/auth";
 import Select from "@/components/atoms/select";
+
+interface ModalProps {
+  handleClose?: () => void;
+}
 
 interface ModalNewRoleProps extends ModalProps {
   isOpen: boolean;
@@ -136,41 +145,37 @@ function ModalNewRole({
   }, []);
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      className="bg-white rounded-xl p-4 sm:p-5 w-full max-w-[44.5rem]"
-    >
-      <div className="w-full flex flex-col gap-5 max-h-[80vh]">
-        {/* Header */}
-        <div>
-          <Text size="secondary" className="font-bold text-foreground">
-            Novo Perfil
-          </Text>
-          <p className="text-body text-muted-foreground mt-0.5">
+    <Dialog open={isOpen} onOpenChange={(aberto) => !aberto && handleClose!()}>
+      {/* tickets/059 D21: era max-w-[44.5rem] (712px), então `lg`. R32: perfil digitado, clicar fora não fecha. */}
+      <DialogContent size="lg" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Novo Perfil</DialogTitle>
+          <DialogDescription>
             Defina o nome, perfil base e as permissões do novo perfil.
-          </p>
-        </div>
-
+          </DialogDescription>
+        </DialogHeader>
+        <DialogBody className="flex flex-col gap-5">
         {/* Name + base role */}
         <div className="flex flex-col sm:flex-row gap-3">
-          <label className="flex flex-col gap-1 flex-1">
+          <label htmlFor="novo-perfil-nome" className="flex flex-col gap-1 flex-1">
             <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
               Nome do perfil
             </span>
             <Filter
+              id="novo-perfil-nome"
               placeholder="Ex: coordenador"
               filtrar={handleInputChange}
               search={false}
               className="bg-muted rounded-lg"
             />
           </label>
-          <label className="flex flex-col gap-1 flex-1">
+          <label htmlFor="novo-perfil-base" className="flex flex-col gap-1 flex-1">
             <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
               Perfil base
             </span>
             <div className="my-2">
               <Select
+                id="novo-perfil-base"
                 options={baseRoles.map((role) => ({
                   id: role.id,
                   name: role.name,
@@ -187,7 +192,7 @@ function ModalNewRole({
         </div>
 
         {/* Permissions */}
-        <div className="overflow-y-auto scrollbar-hide pr-1">
+        <div className="pr-1">
           <PermissionHierarchyPanel
             hierarchy={hierarchy}
             permissions={newRole}
@@ -197,20 +202,21 @@ function ModalNewRole({
           />
         </div>
 
-        {/* Actions */}
-        <div className="flex justify-end gap-3 pt-2 border-t border-border">
-          <Button className="w-full" variant="outline" size="lg" onClick={handleClose}>
+        </DialogBody>
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button className="w-full" variant="primary" size="lg"
+          <Button
+            variant="primary"
             disabled={!newRole.name.trim()}
             onClick={saveNewRole}
           >
             Salvar
           </Button>
-        </div>
-      </div>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

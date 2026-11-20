@@ -1,7 +1,14 @@
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import PermissionToggle from "@/components/atoms/permissionToggle/PermissionToggle";
 import Select from "../../../components/atoms/select";
-import Text from "../../../components/atoms/text";
 import { Button } from "@/components/ui/button";
 import { getRoleNew } from "../../../services/roles/getRole";
 import { useAuthStore } from "../../../store/auth";
@@ -125,22 +132,16 @@ function ModalUpdateRoleUser({
     roles.find((r) => r.id === newRole)?.name ?? role.name;
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white rounded-xl p-4 sm:p-5 shadow-lg w-full max-w-[44.5rem]"
-    >
-      <div className="w-full flex flex-col gap-5 max-h-[80vh]">
-        {/* Header */}
-        <div>
-          <Text size="secondary" className="font-bold text-foreground">
-            Permissões do Usuário
-          </Text>
-          <p className="text-body text-muted-foreground mt-0.5">
+    <Dialog open={isOpen} onOpenChange={(aberto) => !aberto && handleClose()}>
+      {/* tickets/059 D21: era max-w-[44.5rem] (712px), então `lg`. R32: perfil em edição, clicar fora não fecha. */}
+      <DialogContent size="lg" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Permissões do Usuário</DialogTitle>
+          <DialogDescription>
             Visualize ou altere o perfil atribuído a este usuário.
-          </p>
-        </div>
-
+          </DialogDescription>
+        </DialogHeader>
+        <DialogBody className="flex flex-col gap-5">
         {/* Role selector */}
         <label className="flex flex-col gap-1">
           <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wide">
@@ -183,7 +184,7 @@ function ModalUpdateRoleUser({
         </div>
 
         {/* Permissions */}
-        <div className="overflow-y-auto scrollbar-hide pr-1">
+        <div className="pr-1">
           {roleInfo ? (
             <PermissionReadonlyList groups={roleInfo} />
           ) : (
@@ -193,15 +194,15 @@ function ModalUpdateRoleUser({
           )}
         </div>
 
-        {/* Actions */}
-        <div className="flex justify-end gap-3 pt-2 border-t border-border">
+        </DialogBody>
+        <DialogFooter>
           {isEditing ? (
             <>
-              <Button className="w-full" variant="outline" size="lg" onClick={cancelEdit}>
+              <Button variant="outline" onClick={cancelEdit}>
                 Cancelar
               </Button>
-
-              <Button className="w-full" variant="primary" size="lg"
+              <Button
+                variant="primary"
                 onClick={updateRole}
                 disabled={newRole === role.id}
               >
@@ -209,16 +210,17 @@ function ModalUpdateRoleUser({
               </Button>
             </>
           ) : (
-            <Button className="w-full" variant="outline" size="lg"
+            <Button
+              variant="outline"
               onClick={() => setIsEditing(true)}
               disabled={roles.length === 0}
             >
               Editar
             </Button>
           )}
-        </div>
-      </div>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

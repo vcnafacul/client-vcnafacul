@@ -6,15 +6,17 @@ export interface FilterProps {
     filtrar: React.ChangeEventHandler<HTMLInputElement>;
     className?: string;
     search?: boolean;
+    id?: string;
     defaultValue?: any;
     disabled?: boolean;
     keyDown?: () => void;
 }
 
-function Filter ({ filtrar, placeholder, className, search = true, defaultValue, disabled, keyDown } : FilterProps) {
+function Filter ({ filtrar, placeholder, className, search = true, defaultValue, disabled, keyDown, id } : FilterProps) {
     return (
         <div className={`${className} relative  m-4`}>
             <input 
+                id={id}
                 disabled={disabled} 
                 className="w-full h-10 px-4 rounded-md outline-none shadow-md" 
                 placeholder={placeholder} 

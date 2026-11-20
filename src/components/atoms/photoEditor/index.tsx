@@ -1,7 +1,14 @@
-import ModalTemplate from "@/components/templates/modalTemplate";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import getCroppedImg from "@/utils/cropImage";
-import { Check, X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Cropper, { Area } from "react-easy-crop";
 
 export interface AspectPreset {
@@ -53,6 +60,15 @@ const PhotoEditor = ({
   const [naturalAspect, setNaturalAspect] = useState<number | null>(null);
   const [activePresetIndex, setActivePresetIndex] = useState(0);
 
+  /*
+    O Radix devolve o foco ao `Trigger`, e este Dialog é aberto por estado, sem Trigger: o foco cairia no
+    `body`. Guardamos quem tinha o foco quando o editor abriu (o campo de arquivo, o botão) e devolvemos a ele.
+  */
+  const abridor = useRef<HTMLElement | null>(null);
+  useLayoutEffect(() => {
+    if (isOpen) abridor.current = document.activeElement as HTMLElement | null;
+  }, [isOpen]);
+
   // Criar e revogar a URL dentro do editor evita revogação precoce no parent (ex.: React Strict Mode)
   useEffect(() => {
     if (!photo) return;
@@ -102,85 +118,80 @@ const PhotoEditor = ({
     onConfirm(croppedImage);
   };
 
+  const temPresets = !!aspectPresets && aspectPresets.length > 0;
+
+  /*
+    tickets/059 D21: o editor é um Dialog em portal com título próprio. Aberto de dentro de outro
+    Dialog (ModalEditFeature, ModalEditSupporter), o Radix empilha: o de baixo continua aberto, com o
+    estado do formulário, e o foco volta para quem abriu (o campo de arquivo) ao fechar o recorte.
+    R32: dados em edição, então clicar fora não fecha.
+  */
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-black/80 rounded-lg sm:rounded-xl p-2 sm:p-4 max-h-[100dvh] flex flex-col overflow-hidden shadow-lg w-[95vw] sm:w-[min(720px,92vw)] max-w-none"
-      closer={false}
-    >
-      {/* Chips de aspect ratio */}
-      {aspectPresets && aspectPresets.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-2 sm:p-3 bg-foreground rounded-t-lg sm:rounded-t-xl">
-          {aspectPresets.map((p, i) => (
-            <button
-              key={`${p.label}-${i}`}
-              type="button"
-              onClick={() => setActivePresetIndex(i)}
-              className={[
-                "px-3 py-1.5 rounded-full text-caption font-semibold transition-colors",
-                i === activePresetIndex
-                  ? "bg-white text-foreground"
-                  : "bg-foreground/80 text-primary-foreground hover:bg-foreground/60",
-              ].join(" ")}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-      )}
-      {/* Área do crop: ocupa boa parte da tela no mobile e desktop */}
-      <div
-        className={[
-          "relative w-full flex-1 flex min-h-0 overflow-hidden bg-foreground",
-          aspectPresets && aspectPresets.length > 0
-            ? ""
-            : "rounded-t-lg sm:rounded-t-xl",
-        ].join(" ")}
-        style={{
-          // Mobile: ~60vh; desktop: até ~75dvh, sempre pelo menos 320px para o Cropper renderizar
-          minHeight: "clamp(320px, 60vh, 75dvh)",
-          maxHeight: "calc(100dvh - 100px)",
+    <Dialog open={isOpen} onOpenChange={(aberto) => !aberto && handleClose()}>
+      <DialogContent
+        size="lg"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
+        onCloseAutoFocus={(e) => {
+          const alvo = abridor.current;
+          if (alvo && alvo !== document.body && alvo.isConnected) {
+            e.preventDefault();
+            alvo.focus();
+          }
         }}
       >
-        {photoUrl && (
-          <Cropper
-            image={photoUrl}
-            crop={crop}
-            zoom={zoom}
-            aspect={effectiveAspect}
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-            onCropComplete={onCropComplete}
-            onMediaLoaded={(size) =>
-              setNaturalAspect(size.naturalWidth / size.naturalHeight)
-            }
-          />
-        )}
-      </div>
-      {/* Barra de ações: sempre visível, com safe area no mobile */}
-      <div
-        className="flex gap-3 justify-end items-center p-3 sm:p-4 bg-foreground rounded-b-lg sm:rounded-b-xl shrink-0"
-        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
-      >
-        <button
-          type="button"
-          onClick={handleClose}
-          className="bg-destructive p-3 rounded-full hover:bg-destructive/90 touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
-          aria-label="Cancelar"
-        >
-          <X className="text-white w-6 h-6" />
-        </button>
-        <button
-          type="button"
-          onClick={handleConfirm}
-          className="bg-success p-3 rounded-full hover:bg-success/90 touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
-          aria-label="Aprovar foto"
-        >
-          <Check className="text-white w-6 h-6" />
-        </button>
-      </div>
-    </ModalTemplate>
+        <DialogHeader>
+          <DialogTitle>Recortar imagem</DialogTitle>
+        </DialogHeader>
+        <DialogBody className="flex flex-col gap-3 overflow-hidden">
+          {temPresets && (
+            <div className="flex flex-wrap gap-2">
+              {aspectPresets.map((p, i) => (
+                <button
+                  key={`${p.label}-${i}`}
+                  type="button"
+                  aria-pressed={i === activePresetIndex}
+                  onClick={() => setActivePresetIndex(i)}
+                  className={[
+                    "rounded-full px-3 py-1.5 text-caption font-semibold transition-colors",
+                    i === activePresetIndex
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-foreground hover:bg-muted/70",
+                  ].join(" ")}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          )}
+          {/* Área do crop: ocupa o que sobra da tela, com pelo menos 320px para o Cropper renderizar */}
+          <div className="relative min-h-[320px] flex-1 overflow-hidden rounded-md bg-foreground sm:min-h-[50vh]">
+            {photoUrl && (
+              <Cropper
+                image={photoUrl}
+                crop={crop}
+                zoom={zoom}
+                aspect={effectiveAspect}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                onMediaLoaded={(size) =>
+                  setNaturalAspect(size.naturalWidth / size.naturalHeight)
+                }
+              />
+            )}
+          </div>
+        </DialogBody>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button type="button" onClick={handleConfirm}>
+            Aprovar foto
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 export default PhotoEditor;

@@ -1,9 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("@/components/templates/modalTemplate", () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}));
 vi.mock("./AcaoDeReenvio", () => ({
   AcaoDeReenvio: ({ historicoId }: { historicoId: string }) => (
     <button>reenviar-{historicoId}</button>
