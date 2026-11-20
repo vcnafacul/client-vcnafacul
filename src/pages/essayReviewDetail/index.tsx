@@ -1,4 +1,13 @@
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -226,20 +235,36 @@ export default function EssayReviewDetail() {
         </div>
       )}
       {/* Cada revisor envia uma única revisão por redação: confirma. */}
-      <ModalConfirmCancel
-        isOpen={confirmarEnvio}
-        handleClose={() => setConfirmarEnvio(false)}
-        handleConfirm={() => {
-          setConfirmarEnvio(false);
-          handleSubmitReview();
+      <AlertDialog
+        open={confirmarEnvio}
+        onOpenChange={(aberto) => {
+          if (!aberto) {
+            setConfirmarEnvio(false);
+          }
         }}
-        text={`Enviar revisão com nota ${totalScore}/1000?`}
       >
-        <p className="text-body text-muted-foreground">
-          Cada revisor envia uma única revisão por redação. Não será possível
-          editar depois.
-        </p>
-      </ModalConfirmCancel>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{`Enviar revisão com nota ${totalScore}/1000?`}</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cada revisor envia uma única revisão por redação. Não será possível
+              editar depois.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant="primary"
+              onClick={() => {
+                setConfirmarEnvio(false);
+                handleSubmitReview();
+              }}
+            >
+              Enviar revisão
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -69,7 +69,7 @@ describe("EssayReviewDetail — enviar revisão", () => {
     ).toBeInTheDocument();
     expect(createHumanReview).not.toHaveBeenCalled();
 
-    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enviar revisão" }));
     await vi.waitFor(() => expect(createHumanReview).toHaveBeenCalled());
   });
 });

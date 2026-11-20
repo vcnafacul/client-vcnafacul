@@ -146,7 +146,7 @@ describe("UploadCartaoModal — escolha", () => {
     const input = document.querySelector('input[type="file"]')!;
     fireEvent.change(input, { target: { files: [arquivo] } });
     fireEvent.click(screen.getByRole("button", { name: /enviar cartão/i }));
-    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enviar cartão" }));
 
     await waitFor(() =>
       expect(uploadCartao).toHaveBeenCalledWith(arquivo, "u1", "tok"),
@@ -204,7 +204,7 @@ describe("UploadCartaoModal — o toast do envio", () => {
       target: { files: [new File(["x"], "c.jpg", { type: "image/jpeg" })] },
     });
     fireEvent.click(screen.getByRole("button", { name: /enviar cartão/i }));
-    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Enviar cartão" }));
 
     await waitFor(() => expect(toastUpdate).toHaveBeenCalled());
     const texto = toastUpdate.mock.calls[0][1].render as string;

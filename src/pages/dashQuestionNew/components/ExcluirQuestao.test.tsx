@@ -73,7 +73,7 @@ describe("ExcluirQuestao (card 33)", () => {
     expect(await screen.findByText(TITULO_CONFIRMAR_EXCLUSAO)).toBeTruthy();
     expect(excluirQuestao).not.toHaveBeenCalled();
 
-    fireEvent.click(screen.getByText("Confirmar"));
+    fireEvent.click(screen.getByRole("button", { name: "Excluir questão" }));
 
     await waitFor(() => expect(aoExcluir).toHaveBeenCalled());
     expect(excluirQuestao).toHaveBeenCalledWith("tok", "q1");
@@ -95,7 +95,7 @@ describe("ExcluirQuestao (card 33)", () => {
     const { aoExcluir } = montar();
 
     fireEvent.click(await screen.findByText(TEXTO_EXCLUIR));
-    fireEvent.click(await screen.findByText("Confirmar"));
+    fireEvent.click(await screen.findByRole("button", { name: "Excluir questão" }));
 
     expect(
       await screen.findByText("A questão está em uma prova."),
@@ -103,7 +103,7 @@ describe("ExcluirQuestao (card 33)", () => {
     expect(screen.getByText("A questão já foi respondida.")).toBeTruthy();
     expect(aoExcluir).not.toHaveBeenCalled();
     // Confirmar de novo daria a mesma recusa.
-    expect((screen.getByText("Confirmar") as HTMLButtonElement).disabled).toBe(
+    expect((screen.getByRole("button", { name: "Excluir questão" }) as HTMLButtonElement).disabled).toBe(
       true,
     );
   });

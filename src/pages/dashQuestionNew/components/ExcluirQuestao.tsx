@@ -1,4 +1,13 @@
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Roles } from "@/enums/roles/roles";
 import {
   excluirQuestao,
@@ -94,35 +103,57 @@ export function ExcluirQuestao({
         {TEXTO_EXCLUIR}
       </button>
 
-      <ModalConfirmCancel
-        isOpen={confirmando}
-        handleClose={fechar}
-        handleConfirm={confirmar}
-        /* ⚠️ Recusada, confirmar de novo daria a mesma recusa. */
-        confirmDisabled={excluindo || recusa !== null}
-        text={TITULO_CONFIRMAR_EXCLUSAO}
+      <AlertDialog
+        open={confirmando}
+        onOpenChange={(aberto) => {
+          if (!aberto) fechar();
+        }}
       >
-        {recusa === null ? (
-          <p className="text-body text-foreground">{TEXTO_CONFIRMAR_EXCLUSAO}</p>
-        ) : (
-          /*
-            ⚠️ **Todos os motivos, e não "não é possível excluir"** — que
-            mandaria a pessoa adivinhar. Chega aqui quando a questão mudou
-            depois de o botão aparecer.
-          */
-          <div data-recusa className="text-body text-foreground">
-            <p className="font-semibold">
-              Esta questão não pode mais ser excluída:
-            </p>
-            <ul className="list-disc pl-5">
-              {recusa.map((m) => (
-                <li key={m.codigo}>{m.texto}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {erro && <p className="text-body text-destructive">{erro}</p>}
-      </ModalConfirmCancel>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{TITULO_CONFIRMAR_EXCLUSAO}</AlertDialogTitle>
+            {recusa === null ? (
+              <AlertDialogDescription>
+                {TEXTO_CONFIRMAR_EXCLUSAO}
+              </AlertDialogDescription>
+            ) : (
+              /*
+                ⚠️ **Todos os motivos, e não "não é possível excluir"** — que
+                mandaria a pessoa adivinhar. Chega aqui quando a questão mudou
+                depois de o botão aparecer.
+              */
+              <AlertDialogDescription asChild>
+                <div data-recusa className="text-body text-foreground">
+                  <p className="font-semibold">
+                    Esta questão não pode mais ser excluída:
+                  </p>
+                  <ul className="list-disc pl-5">
+                    {recusa.map((m) => (
+                      <li key={m.codigo}>{m.texto}</li>
+                    ))}
+                  </ul>
+                </div>
+              </AlertDialogDescription>
+            )}
+          </AlertDialogHeader>
+          {erro && <p className="text-body text-destructive">{erro}</p>}
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              /* ⚠️ Recusada, confirmar de novo daria a mesma recusa. */
+              disabled={excluindo || recusa !== null}
+              onClick={(e) => {
+                // A recusa e o erro aparecem aqui dentro: o diálogo não pode fechar sozinho.
+                e.preventDefault();
+                confirmar();
+              }}
+            >
+              Excluir questão
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

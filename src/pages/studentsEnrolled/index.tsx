@@ -1,6 +1,14 @@
-import Text from "@/components/atoms/text";
 import { Button } from "@/components/ui/button";
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { acoesDeMatricula } from "./acoesDoEstudante";
 import { Roles } from "@/enums/roles/roles";
@@ -375,31 +383,41 @@ export function StudentsEnrolled() {
         text={`Por favor, informe o motivo do cancelamento de matrícula de ${capitalizeWords(
           studentSelected?.name,
         )}.`}
-        className="bg-white p-4 rounded-md w-[calc(100%-2rem)] max-w-[512px]"
       />
     );
   };
 
   const ModalConfirm = () => {
     return modals.modalConfirm.isOpen ? (
-      <ModalConfirmCancel
-        isOpen={modals.modalConfirm.isOpen}
-        handleClose={() => modals.modalConfirm.close()}
-        handleConfirm={() => {
-          modals.modalConfirm.close();
-          handleReactivateEnrollment();
+      <AlertDialog
+        open={modals.modalConfirm.isOpen}
+        onOpenChange={(aberto) => {
+          if (!aberto) {
+            modals.modalConfirm.close();
+          }
         }}
-        className="bg-white p-4 rounded-md w-[calc(100%-2rem)] max-w-[512px]"
       >
-        <div className="flex flex-col gap-2">
-          <Text size="secondary" className="font-semibold m-0 text-start">
-            Confirmação de Matrícula
-          </Text>
-          <Text size="quaternary" className="m-0 text-start">
-            de {studentSelected?.name}
-          </Text>
-        </div>
-      </ModalConfirmCancel>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Reativar matrícula</AlertDialogTitle>
+            <AlertDialogDescription>
+              Confirmação de matrícula de {studentSelected?.name}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant="primary"
+              onClick={() => {
+                modals.modalConfirm.close();
+                handleReactivateEnrollment();
+              }}
+            >
+              Reativar matrícula
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     ) : null;
   };
 

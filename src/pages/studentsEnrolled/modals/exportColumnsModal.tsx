@@ -1,5 +1,12 @@
 import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   ExportColumn,
@@ -97,112 +104,127 @@ export default function ExportColumnsModal({
   };
 
   return (
-    <ModalConfirmCancel
-      isOpen={isOpen}
-      handleClose={handleClose}
-      handleConfirm={confirmar}
-      text="Quais colunas você quer na planilha?"
-      confirmDisabled={carregando || selected.size === 0}
-      className="bg-white p-4 rounded-md w-[640px] max-w-[95vw]"
+    <Dialog
+      open={isOpen}
+      onOpenChange={(aberto) => {
+        if (!aberto) handleClose();
+      }}
     >
-      {carregando ? (
-        <p className="py-6 text-center text-body text-muted-foreground">
-          Carregando colunas...
-        </p>
-      ) : (
-        <>
-          <div className="flex flex-wrap gap-2 border-b pb-3">
-            <PresetButton
-              label="Padrão"
-              onClick={() =>
-                aplicarPreset(
-                  columns.filter((c) => c.default).map((c) => c.key)
-                )
-              }
-            />
-            <PresetButton
-              label="Contato"
-              onClick={() =>
-                aplicarPreset(
-                  columns
-                    .filter(
-                      (c) =>
-                        c.group === "Identificação" || c.group === "Contato"
-                    )
-                    .map((c) => c.key)
-                )
-              }
-            />
-            <PresetButton
-              label="Tudo o que posso ver"
-              onClick={() => aplicarPreset(columns.map((c) => c.key))}
-            />
-          </div>
-
-          <div className="max-h-[45vh] overflow-y-auto pr-1">
-            {grupos.map(([grupo, doGrupo]) => {
-              const todasMarcadas = doGrupo.every((c) => selected.has(c.key));
-              return (
-                <div key={grupo} className="border-b py-3 last:border-b-0">
-                  <div className="mb-2 flex items-center gap-2">
-                    <Checkbox
-                      id={`grupo-${grupo}`}
-                      checked={todasMarcadas}
-                      onCheckedChange={() =>
-                        alternarGrupo(doGrupo, !todasMarcadas)
-                      }
-                    />
-                    <label
-                      htmlFor={`grupo-${grupo}`}
-                      className="cursor-pointer text-body font-semibold text-foreground"
-                    >
-                      {grupo}
-                    </label>
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-x-4 gap-y-1 pl-6 sm:grid-cols-2">
-                    {doGrupo.map((column) => (
-                      <div key={column.key} className="flex items-center gap-2">
-                        <Checkbox
-                          id={column.key}
-                          checked={selected.has(column.key)}
-                          onCheckedChange={() => alternar(column.key)}
-                        />
-                        <label
-                          htmlFor={column.key}
-                          className="cursor-pointer text-body"
-                        >
-                          {column.label}
-                        </label>
-                        {column.masked && (
-                          <ShadcnTooltip
-                            content="Seu perfil não vê este campo em claro: virá mascarado na planilha."
-                            delayDuration={TOOLTIP_DELAY_MS}
-                          >
-                            <button
-                              type="button"
-                              aria-label={`${column.label} virá mascarado`}
-                              className="text-muted-foreground hover:text-muted-foreground focus-visible:text-muted-foreground"
-                            >
-                              <EyeOff className="h-4 w-4" />
-                            </button>
-                          </ShadcnTooltip>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <p className="pt-2 text-caption text-muted-foreground">
-            {selected.size} coluna{selected.size === 1 ? "" : "s"} selecionada
-            {selected.size === 1 ? "" : "s"}
+      <DialogContent aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Quais colunas você quer na planilha?</DialogTitle>
+        </DialogHeader>
+        {carregando ? (
+          <p className="py-6 text-center text-body text-muted-foreground">
+            Carregando colunas...
           </p>
-        </>
-      )}
-    </ModalConfirmCancel>
+        ) : (
+          <>
+            <div className="flex flex-wrap gap-2 border-b pb-3">
+              <PresetButton
+                label="Padrão"
+                onClick={() =>
+                  aplicarPreset(
+                    columns.filter((c) => c.default).map((c) => c.key)
+                  )
+                }
+              />
+              <PresetButton
+                label="Contato"
+                onClick={() =>
+                  aplicarPreset(
+                    columns
+                      .filter(
+                        (c) =>
+                          c.group === "Identificação" || c.group === "Contato"
+                      )
+                      .map((c) => c.key)
+                  )
+                }
+              />
+              <PresetButton
+                label="Tudo o que posso ver"
+                onClick={() => aplicarPreset(columns.map((c) => c.key))}
+              />
+            </div>
+
+            <div className="max-h-[45vh] overflow-y-auto pr-1">
+              {grupos.map(([grupo, doGrupo]) => {
+                const todasMarcadas = doGrupo.every((c) => selected.has(c.key));
+                return (
+                  <div key={grupo} className="border-b py-3 last:border-b-0">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Checkbox
+                        id={`grupo-${grupo}`}
+                        checked={todasMarcadas}
+                        onCheckedChange={() =>
+                          alternarGrupo(doGrupo, !todasMarcadas)
+                        }
+                      />
+                      <label
+                        htmlFor={`grupo-${grupo}`}
+                        className="cursor-pointer text-body font-semibold text-foreground"
+                      >
+                        {grupo}
+                      </label>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-x-4 gap-y-1 pl-6 sm:grid-cols-2">
+                      {doGrupo.map((column) => (
+                        <div key={column.key} className="flex items-center gap-2">
+                          <Checkbox
+                            id={column.key}
+                            checked={selected.has(column.key)}
+                            onCheckedChange={() => alternar(column.key)}
+                          />
+                          <label
+                            htmlFor={column.key}
+                            className="cursor-pointer text-body"
+                          >
+                            {column.label}
+                          </label>
+                          {column.masked && (
+                            <ShadcnTooltip
+                              content="Seu perfil não vê este campo em claro: virá mascarado na planilha."
+                              delayDuration={TOOLTIP_DELAY_MS}
+                            >
+                              <button
+                                type="button"
+                                aria-label={`${column.label} virá mascarado`}
+                                className="text-muted-foreground hover:text-muted-foreground focus-visible:text-muted-foreground"
+                              >
+                                <EyeOff className="h-4 w-4" />
+                              </button>
+                            </ShadcnTooltip>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <p className="pt-2 text-caption text-muted-foreground">
+              {selected.size} coluna{selected.size === 1 ? "" : "s"} selecionada
+              {selected.size === 1 ? "" : "s"}
+            </p>
+          </>
+        )}
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button
+            variant="primary"
+            disabled={carregando || selected.size === 0}
+            onClick={confirmar}
+          >
+            Exportar planilha
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

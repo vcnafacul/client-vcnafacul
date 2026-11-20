@@ -1,4 +1,13 @@
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Question } from "@/dtos/question/questionDTO";
@@ -337,20 +346,36 @@ export function TabImagens({
         </CardContent>
       </Card>
 
-      <ModalConfirmCancel
-        isOpen={!!arquivoPendente}
-        handleClose={() => setArquivoPendente(null)}
-        handleConfirm={() => {
-          const arquivo = arquivoPendente;
-          setArquivoPendente(null);
-          if (arquivo) handleUpload(arquivo);
+      <AlertDialog
+        open={!!arquivoPendente}
+        onOpenChange={(aberto) => {
+          if (!aberto) {
+            setArquivoPendente(null);
+          }
         }}
-        text="Substituir a imagem da questão?"
       >
-        <p className="text-body text-muted-foreground">
-          A imagem atual será trocada por {arquivoPendente?.name}.
-        </p>
-      </ModalConfirmCancel>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Substituir a imagem da questão?</AlertDialogTitle>
+            <AlertDialogDescription>
+              A imagem atual será trocada por {arquivoPendente?.name}.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant="primary"
+              onClick={() => {
+                const arquivo = arquivoPendente;
+                setArquivoPendente(null);
+                if (arquivo) handleUpload(arquivo);
+              }}
+            >
+              Substituir imagem
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

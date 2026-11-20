@@ -1,6 +1,15 @@
-import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Box, IconButton, Tooltip } from "@mui/material";
-import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { Copy, Edit3, Eye, Plus, ToggleLeft, ToggleRight, Trash2 } from "lucide-react";
 
 export function ActionMenu({
@@ -95,11 +104,7 @@ export function ActionMenu({
       {onDelete && (
         <Tooltip title="Excluir" arrow>
           <span>
-            <AlertDialogUI
-              title={mensagemExclusao}
-              description="Esta ação não pode ser desfeita."
-              onConfirm={onDelete}
-            >
+            <AlertDialog>
               <AlertDialogTrigger asChild>
                 <IconButton
                   size={tamanho}
@@ -109,7 +114,24 @@ export function ActionMenu({
                   <Trash2 className="h-4 w-4" />
                 </IconButton>
               </AlertDialogTrigger>
-            </AlertDialogUI>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{mensagemExclusao}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta ação não pode ser desfeita.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    variant="destructive"
+                    onClick={onDelete}
+                  >
+                    Excluir
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </span>
         </Tooltip>
       )}

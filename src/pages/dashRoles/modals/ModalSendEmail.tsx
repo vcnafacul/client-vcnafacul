@@ -1,4 +1,13 @@
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import ModalTemplate, {
   ModalProps,
 } from "@/components/templates/modalTemplate";
@@ -347,21 +356,33 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
       </div>
     </ModalTemplate>
 
-    <ModalConfirmCancel
-      isOpen={showConfirmAll}
-      handleClose={() => setShowConfirmAll(false)}
-      handleConfirm={handleConfirmSendAll}
-      text="⚠️ Atenção"
+    <AlertDialog
+      open={showConfirmAll}
+      onOpenChange={(aberto) => {
+        if (!aberto) {
+          setShowConfirmAll(false);
+        }
+      }}
     >
-      <p className="text-body text-foreground">
-        Você está prestes a enviar o email{" "}
-        <strong>para todos os usuários da plataforma</strong>. Esta ação não
-        pode ser desfeita.
-      </p>
-      <p className="text-body text-foreground mt-2">
-        Tem certeza que deseja continuar?
-      </p>
-    </ModalConfirmCancel>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Enviar email para todos os usuários</AlertDialogTitle>
+          <AlertDialogDescription>
+            Você está prestes a enviar o email <strong>para todos os usuários da plataforma</strong>.
+            Esta ação não pode ser desfeita. Tem certeza que deseja continuar?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction
+            variant="primary"
+            onClick={handleConfirmSendAll}
+          >
+            Enviar para todos
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
     </>
   );
 }

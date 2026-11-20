@@ -262,7 +262,7 @@ describe("excluir chamada (tickets-documentacao, 11)", () => {
       <AttendanceHistoryModal isOpen handleClose={vi.fn()} classId="c1" />,
     );
     fireEvent.click(await screen.findByRole("button", { name: "Excluir" }));
-    fireEvent.click(await screen.findByRole("button", { name: "Confirmar" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Excluir registro" }));
   };
 
   it("sucesso: avisa e tira da lista", async () => {

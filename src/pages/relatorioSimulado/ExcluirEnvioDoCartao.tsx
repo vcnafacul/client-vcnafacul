@@ -1,8 +1,17 @@
-import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { dashV2 } from "@/components/dashV2";
 import { cn } from "@/lib/utils";
 import { excluirEnvioDoCartao } from "@/services/cartaoResposta/excluirEnvioDoCartao";
-import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -48,11 +57,7 @@ export function ExcluirEnvioDoCartao({
   };
 
   return (
-    <AlertDialogUI
-      title="Excluir este envio?"
-      description={`O cartão de ${nome}${matricula ? ` (${matricula})` : ""} sai do relatório, com a nota e a foto, e o aluno volta a "Não enviou". Não dá para desfazer.`}
-      onConfirm={excluir}
-    >
+    <AlertDialog>
       <AlertDialogTrigger asChild>
         <button
           type="button"
@@ -66,6 +71,23 @@ export function ExcluirEnvioDoCartao({
           {excluindo ? "Excluindo…" : TEXTO_EXCLUIR_ENVIO}
         </button>
       </AlertDialogTrigger>
-    </AlertDialogUI>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Excluir este envio?</AlertDialogTitle>
+          <AlertDialogDescription>
+            {`O cartão de ${nome}${matricula ? ` (${matricula})` : ""} sai do relatório, com a nota e a foto, e o aluno volta a "Não enviou". Não dá para desfazer.`}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction
+            variant="destructive"
+            onClick={excluir}
+          >
+            Excluir envio
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

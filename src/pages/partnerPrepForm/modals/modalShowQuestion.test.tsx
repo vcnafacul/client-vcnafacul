@@ -91,7 +91,7 @@ describe("ModalShowQuestion — apagar ajuda e remover condições (tickets-docu
       target: { value: "" },
     });
     fireEvent.click(screen.getByRole("button", { name: /Remover condições/ }));
-    fireEvent.click(await screen.findByRole("button", { name: "Confirmar" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Remover condições" }));
     expect(screen.getByText("Nenhuma condição definida")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: /Salvar/ }));

@@ -1,7 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Field } from "@/components/ui/field";
+import { Textarea } from "@/components/ui/textarea";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { applyJustication } from "@/services/prepCourse/attendanceRecord/applyJustication";
@@ -17,6 +25,53 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { PeriodJustificationList } from "./periodJustificationList";
 import { PeriodJustificationModal } from "./periodJustificationModal";
+
+/** Pede o texto antes de agir: tem campo, então é Dialog (tickets/059 D21). */
+function ModalJustificativa({
+  titulo,
+  onConfirm,
+  onClose,
+}: {
+  titulo: string;
+  onConfirm: (texto: string) => void;
+  onClose: () => void;
+}) {
+  const [texto, setTexto] = useState("");
+  return (
+    <Dialog
+      open
+      onOpenChange={(aberto) => {
+        if (!aberto) onClose();
+      }}
+      size="sm"
+    >
+      <DialogContent aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>{titulo}</DialogTitle>
+        </DialogHeader>
+        <Field label="Justificativa" required>
+          <Textarea
+            value={texto}
+            onChange={(event) => setTexto(event.target.value)}
+            className="resize-none"
+          />
+        </Field>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button
+            variant="primary"
+            disabled={!texto}
+            onClick={() => onConfirm(texto)}
+          >
+            Aplicar justificativa
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 interface AttendanceRecordProps {
   isOpen: boolean;
@@ -184,12 +239,10 @@ export function AttendanceRecordByStudentModal({
 
   const ModalApplyJustification = () => {
     return !modals.modalApplyJustification.isOpen ? null : (
-      <ModalConfirmCancelMessage
-        isOpen={modals.modalApplyJustification.isOpen}
-        handleClose={() => modals.modalApplyJustification.close()}
-        handleConfirm={handleApplyJustification}
-        className="bg-white p-4 sm:p-8 rounded-md w-full max-w-[512px]"
-        text="Descreva a justificativa:"
+      <ModalJustificativa
+        titulo="Descreva a justificativa:"
+        onClose={() => modals.modalApplyJustification.close()}
+        onConfirm={handleApplyJustification}
       />
     );
   };

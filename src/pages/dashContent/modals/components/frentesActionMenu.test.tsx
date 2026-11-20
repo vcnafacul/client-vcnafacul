@@ -35,7 +35,7 @@ describe("FrentesActionMenu", () => {
     fireEvent.click(screen.getByRole("button", { name: "Excluir" }));
     expect(onDelete).not.toHaveBeenCalled();
     expect(screen.getByText("Excluir o tema Funções?")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Excluir" }));
     expect(onDelete).toHaveBeenCalled();
   });
 });

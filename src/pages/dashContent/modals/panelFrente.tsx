@@ -1,4 +1,13 @@
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { FrenteDto, SubjectDto } from "@/dtos/content/contentDtoInput";
 import {
   CreateFrenteDtoInput,
@@ -222,28 +231,42 @@ export function PanelFrente({
       )}
 
       {modals.confirmDelete.isOpen && frenteSelected && onDelete && (
-        <ModalConfirmCancel
-          isOpen={modals.confirmDelete.isOpen}
-          handleClose={() => {
-            modals.confirmDelete.close();
-            setFrenteSelected(null);
+        <AlertDialog
+          open={modals.confirmDelete.isOpen}
+          onOpenChange={(aberto) => {
+            if (!aberto) {
+              modals.confirmDelete.close();
+              setFrenteSelected(null);
+            }
           }}
-          handleConfirm={() => {
-            const id = frenteSelected._id || frenteSelected.id;
-            onDelete(id)
-              .then(() => {
-                modals.confirmDelete.close();
-                setFrenteSelected(null);
-              })
-              .catch(() => {});
-          }}
-          className="bg-white p-8 rounded-md"
         >
-          <p className="text-muted-foreground">
-            Tem certeza que deseja excluir a frente &quot;{frenteSelected.nome}
-            &quot;?
-          </p>
-        </ModalConfirmCancel>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir frente</AlertDialogTitle>
+              <AlertDialogDescription>
+                Tem certeza que deseja excluir a frente &quot;{frenteSelected.nome}&quot;?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                variant="destructive"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const id = frenteSelected._id || frenteSelected.id;
+                  onDelete(id)
+                    .then(() => {
+                      modals.confirmDelete.close();
+                      setFrenteSelected(null);
+                    })
+                    .catch(() => {});
+                }}
+              >
+                Excluir frente
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
 
       {modals.newTema.isOpen && frenteForNewTema && (

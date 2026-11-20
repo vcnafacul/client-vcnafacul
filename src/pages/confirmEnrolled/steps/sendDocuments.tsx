@@ -3,7 +3,15 @@ import { useState } from "react";
 import { useDropzone, type FileRejection } from "react-dropzone";
 import { toast } from "react-toastify";
 
-import ModalMessage from "@/components/organisms/modalMessage";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const MAX_FILES = 10;
 const LIMIT_MESSAGE =
@@ -204,16 +212,31 @@ export default function SendDocuments({
         {processing ? "Enviando..." : "Continuar"}
       </button>
 
-      <ModalMessage
-        isOpen={showRequiredDocsModal}
-        handleClose={() => setShowRequiredDocsModal(false)}
-        text="Documentos obrigatórios"
+      <Dialog
+        open={showRequiredDocsModal}
+        onOpenChange={(aberto) => {
+          if (!aberto) setShowRequiredDocsModal(false);
+        }}
+        size="sm"
       >
-        <p className="text-muted-foreground mt-2">
-          O envio dos documentos é obrigatório para continuar. Por favor, envie
-          pelo menos um documento antes de prosseguir.
-        </p>
-      </ModalMessage>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Documentos obrigatórios</DialogTitle>
+            <DialogDescription>
+              O envio dos documentos é obrigatório para continuar. Por favor,
+              envie pelo menos um documento antes de prosseguir.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="primary"
+              onClick={() => setShowRequiredDocsModal(false)}
+            >
+              Entendi
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -1,12 +1,25 @@
-import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { IconButton } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
-import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { ReactNode } from "react";
 
 interface ActionButtonProps {
   titleAlert: string;
   descriptionAlert?: string;
+  /** Verbo e objeto da ação, como "Resetar aluno": o botão nomeia o que faz. */
+  actionLabel: string;
+  /** `destructive` para o que remove, reseta ou descarta; o resto é `primary`. */
+  variant?: "primary" | "destructive";
   onConfirm: () => void;
   children: ReactNode;
   tooltipTitle: string;
@@ -14,16 +27,29 @@ interface ActionButtonProps {
 
 export function ActionButton(props: ActionButtonProps) {
   return (
-    <AlertDialogUI
-      title={props.titleAlert}
-      description={props.descriptionAlert || ""}
-      onConfirm={props.onConfirm}
-    >
+    <AlertDialog>
       <AlertDialogTrigger>
         <Tooltip title={props.tooltipTitle}>
           <IconButton>{props.children}</IconButton>
         </Tooltip>
       </AlertDialogTrigger>
-    </AlertDialogUI>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{props.titleAlert}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {props.descriptionAlert || ""}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction
+            variant={props.variant ?? "primary"}
+            onClick={props.onConfirm}
+          >
+            {props.actionLabel}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

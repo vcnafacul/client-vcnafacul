@@ -6,7 +6,16 @@ import { useEffect, useState } from "react";
 import Text from "@/components/atoms/text";
 import { Button } from "@/components/ui/button";
 import MapBox from "@/components/molecules/mapBox";
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { ModalMotivoRejeicao } from "../modalMotivoRejeicao";
 import { MotivoRejeicaoGeo } from "../modalMotivoRejeicao/motivos";
 import { ModalProps } from "@/components/templates/modalTemplate";
@@ -398,22 +407,39 @@ function ModalEditDashGeo({
 
   const ModalComeBack = () => {
     return (
-      <ModalConfirmCancel
-        className=" w-full max-w-[500px] bg-white p-4 rounded-md"
-        isOpen={comeBack && modified}
-        text="Suas alterações ainda não foram salvas. Se você sair agora, perderá todas as alterações. Deseja continuar?"
-        handleClose={() => {
-          setComeback(false);
+      <AlertDialog
+        open={comeBack && modified}
+        onOpenChange={(aberto) => {
+          if (!aberto) {
+            setComeback(false);
+          }
         }}
-        handleConfirm={() => {
-          reset();
-          setComeback(false);
-          setModified(false);
-          setEditing(false);
-          setSelectedPosition([rawGeo.latitude, rawGeo.longitude]);
-          setGeo(rawGeo);
-        }}
-      />
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Descartar alterações</AlertDialogTitle>
+            <AlertDialogDescription>
+              Suas alterações ainda não foram salvas. Se você sair agora, perderá todas as alterações. Deseja continuar?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => {
+                reset();
+                setComeback(false);
+                setModified(false);
+                setEditing(false);
+                setSelectedPosition([rawGeo.latitude, rawGeo.longitude]);
+                setGeo(rawGeo);
+              }}
+            >
+              Descartar alterações
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     );
   };
 

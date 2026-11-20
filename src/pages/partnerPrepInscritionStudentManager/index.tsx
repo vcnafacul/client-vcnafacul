@@ -1,5 +1,13 @@
 import { Button } from "@/components/ui/button";
-import ModalConfirmCancelMessage from "@/components/organisms/modalConfirmCancelMessage";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Field } from "@/components/ui/field";
+import { Textarea } from "@/components/ui/textarea";
 import { Bool } from "@/enums/bool";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { useModals } from "@/hooks/useModal";
@@ -43,6 +51,53 @@ import { ScheduleCallEnrolle } from "./scheduleCallEnrolled";
 import { TableInfo } from "./tableInfo";
 import { ModalRules } from "./modal/modalRules";
 import { WaitingList } from "./waitingList";
+
+/** Pede o texto antes de agir: tem campo, então é Dialog (tickets/059 D21). */
+function ModalMotivoIndeferimento({
+  titulo,
+  onConfirm,
+  onClose,
+}: {
+  titulo: string;
+  onConfirm: (texto: string) => void;
+  onClose: () => void;
+}) {
+  const [texto, setTexto] = useState("");
+  return (
+    <Dialog
+      open
+      onOpenChange={(aberto) => {
+        if (!aberto) onClose();
+      }}
+      size="sm"
+    >
+      <DialogContent aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>{titulo}</DialogTitle>
+        </DialogHeader>
+        <Field label="Motivo do indeferimento" required>
+          <Textarea
+            value={texto}
+            onChange={(event) => setTexto(event.target.value)}
+            className="resize-none"
+          />
+        </Field>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button
+            variant="destructive"
+            disabled={!texto}
+            onClick={() => onConfirm(texto)}
+          >
+            Indeferir matrícula
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export function PartnerPrepInscritionStudentManager() {
   const { inscriptionId } = useParams();
@@ -324,16 +379,12 @@ export function PartnerPrepInscritionStudentManager() {
 
   const ModalReject = () => {
     return !modals.reject.isOpen ? null : (
-      <ModalConfirmCancelMessage
-        isOpen={modals.reject.isOpen}
-        handleClose={modals.reject.close}
-        handleConfirm={(message) =>
-          handleIndeferir(studentSelected!.id, message!)
-        }
-        text={`Por favor, informe o motivo do indeferimento da matrícula de ${capitalizeWords(
+      <ModalMotivoIndeferimento
+        titulo={`Por favor, informe o motivo do indeferimento da matrícula de ${capitalizeWords(
           studentSelected?.nome + " " + studentSelected?.sobrenome,
         )}.`}
-        className="bg-white p-4 rounded-md w-full max-w-[512px]"
+        onClose={modals.reject.close}
+        onConfirm={(motivo) => handleIndeferir(studentSelected!.id, motivo)}
       />
     );
   };
@@ -371,6 +422,7 @@ export function PartnerPrepInscritionStudentManager() {
         ) && (
           <ActionButton
             titleAlert="Tem certeza que deseja torna esse aluno pagante?"
+            actionLabel="Tornar pagante"
             onConfirm={() => handleIsFreeInfo(row.id, false)}
             tooltipTitle="Tornar Pagante"
           >
@@ -384,6 +436,7 @@ export function PartnerPrepInscritionStudentManager() {
         ) && (
           <ActionButton
             titleAlert="Tem certeza que deseja torna esse aluno isento?"
+            actionLabel="Dar isenção"
             onConfirm={() => handleIsFreeInfo(row.id, true)}
             tooltipTitle="Dar Isenção"
           >
@@ -400,6 +453,12 @@ export function PartnerPrepInscritionStudentManager() {
           } de ${row.nome} ${
             row.sobrenome
           } da lista de convocação`}
+          actionLabel={
+            row.convocar === Bool.No
+              ? "Adicionar à convocação"
+              : "Remover da convocação"
+          }
+          variant={row.convocar === Bool.No ? "primary" : "destructive"}
           onConfirm={() =>
             handleSelectEnrolledInfo(
               row.id,
@@ -432,6 +491,14 @@ export function PartnerPrepInscritionStudentManager() {
           } de ${row.nome} ${
             row.sobrenome
           } da lista de espera`}
+          actionLabel={
+            row.lista_de_espera === Bool.No
+              ? "Adicionar à lista de espera"
+              : "Remover da lista de espera"
+          }
+          variant={
+            row.lista_de_espera === Bool.No ? "primary" : "destructive"
+          }
           onConfirm={() =>
             handleWaitingList(
               row.id,
@@ -482,6 +549,8 @@ export function PartnerPrepInscritionStudentManager() {
       ) && (
         <ActionButton
           titleAlert="Deseja resetar as informações do aluno?"
+          actionLabel="Resetar aluno"
+          variant="destructive"
           onConfirm={() => handleResetStudent(row.id)}
           tooltipTitle="Resetar"
         >
@@ -495,6 +564,7 @@ export function PartnerPrepInscritionStudentManager() {
           <ActionButton
             titleAlert={`Confirmação de Matrícula ${row.nome} ${row.sobrenome}`}
             descriptionAlert={`Realizar a  confirmação de matrícula de  ${row.nome} ${row.sobrenome}`}
+            actionLabel="Reenviar email"
             onConfirm={() => {
               handleSendEmailDeclaredInterest(row.id);
             }}

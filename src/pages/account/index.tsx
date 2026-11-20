@@ -10,7 +10,15 @@ import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ReactComponent as LogoIcon } from "../../assets/images/home/logo.svg";
 import ImageProfile from "../../components/molecules/imageProfile";
-import ModalConfirmCancel from "../../components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { changeImageProfileCollaborator } from "../../services/auth/changeImageProfileCollaborator";
 import { me } from "../../services/auth/me";
 import { removeImageProfileCollaborator } from "../../services/auth/removeImageProfileCollaborator";
@@ -213,12 +221,29 @@ function Account() {
 
   const ModalDelete = () => {
     return (
-      <ModalConfirmCancel
-        isOpen={modals.deleteImage.isOpen}
-        handleClose={modals.deleteImage.close}
-        handleConfirm={deleteImage}
-        text="Tem certeza que deseja deletar sua imagem?"
-      />
+      <AlertDialog
+        open={modals.deleteImage.isOpen}
+        onOpenChange={(aberto) => {
+          if (!aberto) {
+            modals.deleteImage.close();
+          }
+        }}
+      >
+        <AlertDialogContent aria-describedby={undefined}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Tem certeza que deseja deletar sua imagem?</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={deleteImage}
+            >
+              Excluir imagem
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     );
   };
 

@@ -13,7 +13,7 @@ describe("ActionMenu — excluir", () => {
     expect(onDelete).not.toHaveBeenCalled();
     expect(screen.getByText("Excluir a turma A?")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Excluir" }));
     expect(onDelete).toHaveBeenCalledTimes(1);
   });
 

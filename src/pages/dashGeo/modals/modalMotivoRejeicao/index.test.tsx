@@ -8,7 +8,7 @@ const montar = () => {
   render(
     <ModalMotivoRejeicao isOpen handleClose={vi.fn()} onConfirm={onConfirm} />,
   );
-  const confirmar = () => screen.getByRole("button", { name: "Confirmar" });
+  const confirmar = () => screen.getByRole("button", { name: "Rejeitar cadastro" });
   return { onConfirm, confirmar };
 };
 

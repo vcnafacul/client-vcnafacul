@@ -1,6 +1,15 @@
 import { ReactComponent as TrashIcon } from "@/assets/icons/trash.svg";
 import { Button } from "@/components/ui/button";
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { extendInscription } from "@/services/prepCourse/inscription/extend";
 import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
@@ -71,22 +80,38 @@ export function InscriptionInfoModal({
 
   const ModalDelete = () => {
     return (
-      <ModalConfirmCancel
-        isOpen={openModalDelete}
-        handleClose={() => {
-          setOpenModalDelete(false);
-        }}
-        text={dataInscription.warningDeleteTitle}
-        handleConfirm={() => {
-          handleDelete().then(() => {
+      <AlertDialog
+        open={openModalDelete}
+        onOpenChange={(aberto) => {
+          if (!aberto) {
             setOpenModalDelete(false);
-            handleClose();
-          });
+          }
         }}
-        className="bg-white p-2 rounded-md"
       >
-        <p>{dataInscription.warningDelete}</p>
-      </ModalConfirmCancel>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{dataInscription.warningDeleteTitle}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {dataInscription.warningDelete}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={(e) => {
+                e.preventDefault();
+                handleDelete().then(() => {
+                  setOpenModalDelete(false);
+                  handleClose();
+                });
+              }}
+            >
+              Excluir processo seletivo
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     );
   };
 

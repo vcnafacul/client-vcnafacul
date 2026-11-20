@@ -2,8 +2,17 @@
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { useAuthStore } from "@/store/auth";
 import { GraduationCap, Download, ChartColumn, FileText, SquarePen, Table } from "lucide-react";
-import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
-import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
 import { Prova, ProvaDetalhada } from "../../../dtos/prova/prova";
@@ -363,11 +372,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                   pessoa não estranhar o 409 — prova com cartão enviado ou
                   oferecida num evento de simulado não sai.
                 */}
-                <AlertDialogUI
-                  title="Excluir esta prova?"
-                  description={`A prova "${prova.nome}" sai da lista do cursinho e da escolha de provas dos eventos. As questões continuam no banco. Só dá para excluir prova sem cartão enviado e fora de eventos de simulado.`}
-                  onConfirm={gestao.aoExcluir}
-                >
+                <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <button
                       type="button"
@@ -378,7 +383,24 @@ const downloadFile = async (filename: string, fileType: string) => {
                       Excluir
                     </button>
                   </AlertDialogTrigger>
-                </AlertDialogUI>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Excluir esta prova?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {`A prova "${prova.nome}" sai da lista do cursinho e da escolha de provas dos eventos. As questões continuam no banco. Só dá para excluir prova sem cartão enviado e fora de eventos de simulado.`}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        variant="destructive"
+                        onClick={gestao.aoExcluir}
+                      >
+                        Excluir prova
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </>
             )}
           </div>
@@ -680,19 +702,7 @@ const downloadFile = async (filename: string, fileType: string) => {
                     </Button>
 
                     {/* Substitui o PDF que está no ar: confirma antes. */}
-                    <AlertDialogUI
-                      title="Substituir os arquivos da prova?"
-                      description={[
-                        newFile && "O PDF atual da prova será substituído.",
-                        newGabarito &&
-                          (prova.gabarito
-                            ? "O gabarito atual será substituído."
-                            : "O gabarito será adicionado."),
-                      ]
-                        .filter(Boolean)
-                        .join(" ")}
-                      onConfirm={handleUpdateFiles}
-                    >
+                    <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
                           disabled={!newFile && !newGabarito}
@@ -701,7 +711,32 @@ const downloadFile = async (filename: string, fileType: string) => {
                           Salvar Alterações
                         </Button>
                       </AlertDialogTrigger>
-                    </AlertDialogUI>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Substituir os arquivos da prova?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {[
+                              newFile && "O PDF atual da prova será substituído.",
+                              newGabarito &&
+                                (prova.gabarito
+                                  ? "O gabarito atual será substituído."
+                                  : "O gabarito será adicionado."),
+                            ]
+                              .filter(Boolean)
+                              .join(" ")}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction
+                            variant="primary"
+                            onClick={handleUpdateFiles}
+                          >
+                            Substituir arquivos
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               )}

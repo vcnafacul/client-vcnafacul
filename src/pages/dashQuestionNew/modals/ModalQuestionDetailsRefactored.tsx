@@ -13,7 +13,16 @@ import { AcoesDaQuestao } from "../components/AcoesDaQuestao";
 import { AbaLinhagem } from "../components/AbaLinhagem";
 import { NavegacaoDaLista } from "../components/NavegacaoDaLista";
 import { TrilhaDaLinhagem } from "../components/TrilhaDaLinhagem";
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { TabClassificacao } from "./tabs/TabClassificacao";
 import { TabConteudo } from "./tabs/TabConteudo";
 import { TabAlternativas } from "./tabs/TabAlternativas";
@@ -460,21 +469,37 @@ function ModalContent({
       em "Classificação" sem ter decidido.
     */}
     {navegacaoPendente && (
-      <ModalConfirmCancel
-        isOpen
-        text="Descartar as alterações?"
-        handleClose={() => setNavegacaoPendente(null)}
-        handleConfirm={() => {
-          const acao = navegacaoPendente;
-          setNavegacaoPendente(null);
-          acao();
+      <AlertDialog
+        open={true}
+        onOpenChange={(aberto) => {
+          if (!aberto) {
+            setNavegacaoPendente(null);
+          }
         }}
       >
-        <p className="text-body text-foreground">
-          Você está editando esta questão. Sair agora descarta o que não foi
-          salvo.
-        </p>
-      </ModalConfirmCancel>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Descartar as alterações?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Você está editando esta questão. Sair agora descarta o que não foi
+              salvo.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => {
+                const acao = navegacaoPendente;
+                setNavegacaoPendente(null);
+                acao();
+              }}
+            >
+              Descartar alterações
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     )}
 
     {conteudoForm.escolhaPendente && (

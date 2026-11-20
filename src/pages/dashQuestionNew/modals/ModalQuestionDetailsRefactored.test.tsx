@@ -193,7 +193,7 @@ describe("ModalQuestionDetailsRefactored — edição não salva da Classificaç
     expect(onClose).not.toHaveBeenCalled();
 
     fireEvent.click(screen.getAllByRole("button", { name: "Fechar" })[0]);
-    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Descartar alterações" }));
     expect(onClose).toHaveBeenCalled();
   });
 

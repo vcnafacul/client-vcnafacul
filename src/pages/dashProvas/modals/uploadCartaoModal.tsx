@@ -1,5 +1,14 @@
-import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
-import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import type { EstudanteEncontrado } from "@/dtos/cartaoResposta/buscaEstudante";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -203,11 +212,7 @@ export default function UploadCartaoModal({
             />
 
             {/* Confirma de quem é o cartão: corrigir depois exige excluir o envio. */}
-            <AlertDialogUI
-              title="Enviar este cartão?"
-              description={`O cartão será registrado para ${escolhido.nome} (${escolhido.matricula}). Se o aluno estiver errado, será preciso excluir o envio no relatório da prova.`}
-              onConfirm={handleEnviar}
-            >
+            <AlertDialog>
               <AlertDialogTrigger asChild>
                 <button
                   disabled={!file || enviando}
@@ -216,7 +221,24 @@ export default function UploadCartaoModal({
                   {enviando ? "Enviando..." : "Enviar cartão"}
                 </button>
               </AlertDialogTrigger>
-            </AlertDialogUI>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Enviar este cartão?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {`O cartão será registrado para ${escolhido.nome} (${escolhido.matricula}). Se o aluno estiver errado, será preciso excluir o envio no relatório da prova.`}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    variant="primary"
+                    onClick={handleEnviar}
+                  >
+                    Enviar cartão
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         )}
       </div>

@@ -1,4 +1,14 @@
-import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import { useModals } from "@/hooks/useModal";
 import { ComplexCondition } from "@/types/partnerPrepForm/condition";
@@ -10,7 +20,6 @@ import {
   AnswerType,
   QuestionForm,
 } from "@/types/partnerPrepForm/questionForm";
-import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { useCallback, useEffect, useState } from "react";
 import ConfirmSubscription from "../modals/confirmSubscription";
 import Text from "@/components/atoms/text";
@@ -472,17 +481,30 @@ export function PartnerPrepInscriptionStepForm({
         )}
         <div className="flex flex-col-reverse sm:flex-row gap-4">
           {isFirstSection ? (
-            <AlertDialogUI
-              title="Tem certeza que deseja voltar?"
-              description="Se você deixar o formulário, perderá todas as informações já preenchidas"
-              onConfirm={onBack}
-            >
+            <AlertDialog>
               <AlertDialogTrigger className="w-full">
                 <div className="bg-cta w-full h-12 flex justify-center items-center text-cta-foreground font-bold rounded-md hover:bg-cta/90 transition-colors duration-200 cursor-pointer">
                   Voltar
                 </div>
               </AlertDialogTrigger>
-            </AlertDialogUI>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Tem certeza que deseja voltar?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Se você deixar o formulário, perderá todas as informações já preenchidas
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    variant="destructive"
+                    onClick={onBack}
+                  >
+                    Sair do formulário
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           ) : (
             <button
               type="button"

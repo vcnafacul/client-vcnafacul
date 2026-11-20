@@ -82,7 +82,7 @@ const montar = (over: Partial<ContentDtoInput> = {}) => {
 const abrirRejeitar = () => {
   fireEvent.click(screen.getByRole("button", { name: "Rejeitar" }));
   return {
-    confirmar: screen.getByRole("button", { name: "Confirmar" }),
+    confirmar: screen.getByRole("button", { name: "Rejeitar demanda" }),
     motivo: screen.getByRole("textbox", { name: "Motivo da rejeição" }),
   };
 };

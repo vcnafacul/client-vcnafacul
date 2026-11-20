@@ -1,5 +1,14 @@
 import StepperCircle, { StepCicle } from "@/components/atoms/stepperCirCle";
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { confirmDeclaration } from "@/services/prepCourse/student/confirmDeclaration";
 import { submitDocuments } from "@/services/prepCourse/student/submitDocuments";
@@ -246,17 +255,33 @@ export default function DeclareInterest({
         />
       )}
       {step === Steps.Sucess && <SuccessStep />}
-      <ModalConfirmCancel
-        isOpen={confirmOpen}
-        handleClose={handleCancelConfirm}
-        handleConfirm={handleConfirm}
-        text="Atenção"
+      <AlertDialog
+        open={confirmOpen}
+        onOpenChange={(aberto) => {
+          if (!aberto) {
+            handleCancelConfirm();
+          }
+        }}
       >
-        <p className="text-muted-foreground">
-          Uma vez confirmado, não será possível voltar atrás nesta etapa.
-          Deseja continuar?
-        </p>
-      </ModalConfirmCancel>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Concluir esta etapa</AlertDialogTitle>
+            <AlertDialogDescription>
+              Uma vez confirmado, não será possível voltar atrás nesta etapa.
+              Deseja continuar?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant="primary"
+              onClick={handleConfirm}
+            >
+              Concluir etapa
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

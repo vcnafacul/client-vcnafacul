@@ -1,11 +1,20 @@
-import { AlertDialogUI } from "@/components/atoms/alertDialogUI";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import Text from "@/components/atoms/text";
 import { Button } from "@/components/ui/button";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { getWaitingListInfo } from "@/services/prepCourse/inscription/getWaitingList";
 import { sendEmailWaitingList } from "@/services/prepCourse/inscription/sendEmailWaitingList";
 import { useAuthStore } from "@/store/auth";
-import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { FileText, ListOrdered, Mail } from "lucide-react";
@@ -178,11 +187,7 @@ export function WaitingList(props: Props) {
                 <p className="text-body">Editar Ordem</p>
               </div>
             </Button>
-            <AlertDialogUI
-              title="Lista de Espera Atualizada"
-              description="Enviar email com lista de espera atualizada para os estudantes"
-              onConfirm={() => handleEmailWaitingList()}
-            >
+            <AlertDialog>
               <AlertDialogTrigger>
                 <Button variant="primary" size="sm"
                   className="w-full"
@@ -195,7 +200,24 @@ export function WaitingList(props: Props) {
                   </div>
                 </Button>
               </AlertDialogTrigger>
-            </AlertDialogUI>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Lista de Espera Atualizada</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Enviar email com lista de espera atualizada para os estudantes
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    variant="primary"
+                    onClick={() => handleEmailWaitingList()}
+                  >
+                    Enviar lista de espera
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </ModalTemplate>

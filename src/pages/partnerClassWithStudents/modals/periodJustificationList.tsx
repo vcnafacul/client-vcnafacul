@@ -1,4 +1,13 @@
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useModals } from "@/hooks/useModal";
 import { deletePeriodJustification } from "@/services/prepCourse/periodJustification/deletePeriodJustification";
 import { getPeriodJustifications } from "@/services/prepCourse/periodJustification/getPeriodJustifications";
@@ -208,21 +217,38 @@ export function PeriodJustificationList({
 
       {/* Delete confirmation dialog */}
       {modals.modalConfirmDelete.isOpen && (
-        <ModalConfirmCancel
-          isOpen={modals.modalConfirmDelete.isOpen}
-          handleClose={() => {
-            modals.modalConfirmDelete.close();
-            setSelectedId(null);
+        <AlertDialog
+          open={modals.modalConfirmDelete.isOpen}
+          onOpenChange={(aberto) => {
+            if (!aberto) {
+              modals.modalConfirmDelete.close();
+              setSelectedId(null);
+            }
           }}
-          handleConfirm={handleDelete}
-          text="Tem certeza que deseja excluir esta justificativa de período?"
         >
-          <p className="text-body text-muted-foreground">
-            {textoDaExclusaoDePeriodo(
-              items.find((i) => i.id === selectedId)?.faltasJustificadas,
-            )}
-          </p>
-        </ModalConfirmCancel>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Tem certeza que deseja excluir esta justificativa de período?</AlertDialogTitle>
+              <AlertDialogDescription>
+                {textoDaExclusaoDePeriodo(
+                  items.find((i) => i.id === selectedId)?.faltasJustificadas,
+                )}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                variant="destructive"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleDelete();
+                }}
+              >
+                Excluir justificativa
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </div>
   );

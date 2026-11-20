@@ -34,7 +34,16 @@ import {
 import { useState } from "react";
 import { Edit3, Plus, Save, Settings, Trash2, X } from "lucide-react";
 import { ModalConditions } from "./modalConditions";
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface ModalShowQuestionProps extends ModalProps {
   isOpen: boolean;
@@ -547,20 +556,36 @@ export function ModalShowQuestion({
           setIsOpenConditions(false);
         }}
       />
-      <ModalConfirmCancel
-        isOpen={confirmarRemocao}
-        handleClose={() => setConfirmarRemocao(false)}
-        handleConfirm={() => {
-          setEditableData((prev) => ({ ...prev, conditions: undefined }));
-          setCondicoesRemovidas(true);
-          setConfirmarRemocao(false);
+      <AlertDialog
+        open={confirmarRemocao}
+        onOpenChange={(aberto) => {
+          if (!aberto) {
+            setConfirmarRemocao(false);
+          }
         }}
-        text="Remover as condições desta questão?"
       >
-        <p className="text-body text-muted-foreground">
-          Ela passa a aparecer para todos. A remoção vale quando você salvar.
-        </p>
-      </ModalConfirmCancel>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remover as condições desta questão?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Ela passa a aparecer para todos. A remoção vale quando você salvar.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => {
+                setEditableData((prev) => ({ ...prev, conditions: undefined }));
+                setCondicoesRemovidas(true);
+                setConfirmarRemocao(false);
+              }}
+            >
+              Remover condições
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </ModalTemplate>
   );
 }

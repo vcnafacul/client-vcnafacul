@@ -1,8 +1,25 @@
 import DocxPreview from "@/components/atoms/docxPreview";
 import { YoutubePlayer } from "@/components/atoms/youtubePlayer";
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Field } from "@/components/ui/field";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -162,10 +179,24 @@ export default function DemandaModal({
     titulo: string;
     texto: string;
     pedeMotivo?: boolean;
+    /** Verbo e objeto do botão: ele nomeia o que faz. */
+    rotulo: string;
+    destrutiva?: boolean;
     acao: (motivo?: string) => void;
   } | null>(null);
   const [motivo, setMotivo] = useState("");
   const motivoFalta = !!confirmacao?.pedeMotivo && motivo.trim() === "";
+  const fecharConfirmacao = () => {
+    setConfirmacao(null);
+    setMotivo("");
+  };
+  const confirmarAcao = () => {
+    if (motivoFalta) return;
+    const acao = confirmacao?.acao;
+    const motivoEnviado = motivo.trim();
+    fecharConfirmacao();
+    acao?.(motivoEnviado || undefined);
+  };
 
   const handleUpdateStatus = async (
     status: StatusEnum | StatusContent,
@@ -278,6 +309,7 @@ export default function DemandaModal({
                 onAprovar={(proposal) =>
                   setConfirmacao({
                     titulo: "Aprovar esta proposta?",
+                    rotulo: "Aprovar proposta",
                     texto:
                       "O material da demanda será trocado pelo da proposta.",
                     acao: () =>
@@ -290,6 +322,8 @@ export default function DemandaModal({
                 onRecusar={(proposal) =>
                   setConfirmacao({
                     titulo: "Rejeitar esta proposta?",
+                    rotulo: "Rejeitar proposta",
+                    destrutiva: true,
                     texto: "O material atual da demanda continua.",
                     acao: () =>
                       handleReviewProposal(
@@ -332,6 +366,8 @@ export default function DemandaModal({
             onClick={() =>
               setConfirmacao({
                 titulo: "Rejeitar esta demanda?",
+                rotulo: "Rejeitar demanda",
+                destrutiva: true,
                 // ⚠️ Ela NÃO volta para a fila de envio: fica rejeitada, com o
                 // motivo visível para quem enviou. Devolver à fila é o Resetar.
                 texto:
@@ -349,6 +385,8 @@ export default function DemandaModal({
             onClick={() =>
               setConfirmacao({
                 titulo: "Resetar esta demanda?",
+                rotulo: "Resetar demanda",
+                destrutiva: true,
                 texto:
                   "O arquivo atual sai da demanda (fica no histórico) e ela volta a aguardar envio.",
                 acao: handleReset,
@@ -404,36 +442,64 @@ export default function DemandaModal({
         onSuccess={recarregar}
       />
 
-      <ModalConfirmCancel
-        isOpen={!!confirmacao}
-        handleClose={() => {
-          setConfirmacao(null);
-          setMotivo("");
+      {/* Rejeitar pede o motivo: tem campo, então é Dialog; o resto é só confirmação. */}
+      <AlertDialog
+        open={!!confirmacao && !confirmacao.pedeMotivo}
+        onOpenChange={(aberto) => {
+          if (!aberto) fecharConfirmacao();
         }}
-        confirmDisabled={motivoFalta}
-        handleConfirm={() => {
-          if (motivoFalta) return;
-          const acao = confirmacao?.acao;
-          const motivoEnviado = motivo.trim();
-          setConfirmacao(null);
-          setMotivo("");
-          acao?.(motivoEnviado || undefined);
-        }}
-        text={confirmacao?.titulo}
       >
-        <p className="text-body text-muted-foreground">{confirmacao?.texto}</p>
-        {confirmacao?.pedeMotivo && (
-          <Textarea
-            aria-label="Motivo da rejeição"
-            placeholder="O que precisa ser corrigido?"
-            value={motivo}
-            onChange={(e) => setMotivo(e.target.value)}
-            maxLength={1000}
-            className="resize-none h-28"
-            autoFocus
-          />
-        )}
-      </ModalConfirmCancel>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{confirmacao?.titulo}</AlertDialogTitle>
+            <AlertDialogDescription>{confirmacao?.texto}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant={confirmacao?.destrutiva ? "destructive" : "primary"}
+              onClick={confirmarAcao}
+            >
+              {confirmacao?.rotulo}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Dialog
+        open={!!confirmacao?.pedeMotivo}
+        onOpenChange={(aberto) => {
+          if (!aberto) fecharConfirmacao();
+        }}
+        size="sm"
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{confirmacao?.titulo}</DialogTitle>
+            <DialogDescription>{confirmacao?.texto}</DialogDescription>
+          </DialogHeader>
+          <Field label="Motivo da rejeição" maxLength={1000}>
+            <Textarea
+              placeholder="O que precisa ser corrigido?"
+              value={motivo}
+              onChange={(e) => setMotivo(e.target.value)}
+              className="resize-none h-28"
+            />
+          </Field>
+          <DialogFooter>
+            <Button variant="outline" onClick={fecharConfirmacao}>
+              Cancelar
+            </Button>
+            <Button
+              variant={confirmacao?.destrutiva ? "destructive" : "primary"}
+              disabled={motivoFalta}
+              onClick={confirmarAcao}
+            >
+              {confirmacao?.rotulo}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }

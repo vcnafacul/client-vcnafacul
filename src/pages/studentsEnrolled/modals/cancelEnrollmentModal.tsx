@@ -1,5 +1,14 @@
 import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Field } from "@/components/ui/field";
+import { Textarea } from "@/components/ui/textarea";
 import {
   ENROLLMENT_CANCELLATION_REASONS,
   OTHER_CANCELLATION_REASON_LABEL,
@@ -21,22 +30,19 @@ interface CancelEnrollmentModalProps {
   handleClose: () => void;
   handleConfirm: (reason: string) => void;
   text?: string;
-  className?: string;
 }
 
 /**
  * Modal de cancelamento de matricula com justificativas pre-definidas.
  *
- * Nao reaproveita o `ModalConfirmCancelMessage` de proposito: aquele
- * componente e compartilhado por outras 3 telas, e mexer nele para atender so
- * esta quebraria as demais.
+ * Tem campos (motivos e texto livre), por isso e um `Dialog`, e nao um
+ * `AlertDialog` (tickets/059 D21).
  */
 export default function CancelEnrollmentModal({
   isOpen,
   handleClose,
   handleConfirm,
   text,
-  className,
 }: CancelEnrollmentModalProps) {
   // Nenhuma opcao vem pre-selecionada, para nao cancelar com o motivo errado
   // por descuido.
@@ -52,54 +58,73 @@ export default function CancelEnrollmentModal({
       : selected;
 
   return (
-    <ModalConfirmCancel
-      isOpen={isOpen}
-      handleClose={handleClose}
-      handleConfirm={() => handleConfirm(buildReason())}
-      text={text}
-      confirmDisabled={confirmDisabled}
-      className={className}
+    <Dialog
+      open={isOpen}
+      onOpenChange={(aberto) => {
+        if (!aberto) handleClose();
+      }}
+      size="sm"
     >
-      <div className="flex flex-col gap-1">
-        {ENROLLMENT_CANCELLATION_REASONS.map(({ label, note }) => (
-          <div key={label} className="flex items-center gap-2">
-            <label className="flex flex-1 cursor-pointer items-center gap-2 py-1">
-              <input
-                type="radio"
-                name="enrollment-cancellation-reason"
-                value={label}
-                checked={selected === label}
-                onChange={() => setSelected(label)}
-                className="h-4 w-4 cursor-pointer accent-primary"
-              />
-              <span className="text-body">{label}</span>
-            </label>
-            {note && (
-              <ShadcnTooltip content={note} delayDuration={NOTE_TOOLTIP_DELAY_MS}>
-                {/* Botao (e nao um icone solto) para que a nota tambem seja
-                    alcancavel pelo foco do teclado, e nao so pelo mouse. */}
-                <button
-                  type="button"
-                  aria-label={`O que se enquadra em "${label}"`}
-                  className="text-muted-foreground hover:text-muted-foreground focus-visible:text-muted-foreground"
-                >
-                  <Info className="h-4 w-4" />
-                </button>
-              </ShadcnTooltip>
-            )}
-          </div>
-        ))}
-      </div>
+      <DialogContent aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>{text}</DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col gap-1">
+          {ENROLLMENT_CANCELLATION_REASONS.map(({ label, note }) => (
+            <div key={label} className="flex items-center gap-2">
+              <label className="flex flex-1 cursor-pointer items-center gap-2 py-1">
+                <input
+                  type="radio"
+                  name="enrollment-cancellation-reason"
+                  value={label}
+                  checked={selected === label}
+                  onChange={() => setSelected(label)}
+                  className="h-4 w-4 cursor-pointer accent-primary"
+                />
+                <span className="text-body">{label}</span>
+              </label>
+              {note && (
+                <ShadcnTooltip content={note} delayDuration={NOTE_TOOLTIP_DELAY_MS}>
+                  {/* Botao (e nao um icone solto) para que a nota tambem seja
+                      alcancavel pelo foco do teclado, e nao so pelo mouse. */}
+                  <button
+                    type="button"
+                    aria-label={`O que se enquadra em "${label}"`}
+                    className="text-muted-foreground hover:text-muted-foreground focus-visible:text-muted-foreground"
+                  >
+                    <Info className="h-4 w-4" />
+                  </button>
+                </ShadcnTooltip>
+              )}
+            </div>
+          ))}
+        </div>
 
-      {isOther && (
-        <textarea
-          autoFocus
-          value={otherReason}
-          onChange={(event) => setOtherReason(event.target.value)}
-          placeholder="Descreva o motivo do cancelamento."
-          className="h-full min-h-[100px] w-full resize-none rounded-sm border border-input p-2"
-        />
-      )}
-    </ModalConfirmCancel>
+        {isOther && (
+          <Field label="Descreva o motivo">
+            <Textarea
+              // O campo aparece ao escolher "Outro": leva o foco junto.
+            ref={(campo) => campo?.focus()}
+              value={otherReason}
+              onChange={(event) => setOtherReason(event.target.value)}
+              placeholder="Descreva o motivo do cancelamento."
+              className="resize-none"
+            />
+          </Field>
+        )}
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button
+            variant="destructive"
+            disabled={confirmDisabled}
+            onClick={() => handleConfirm(buildReason())}
+          >
+            Cancelar matrícula
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

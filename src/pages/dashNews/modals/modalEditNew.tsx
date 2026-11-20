@@ -12,7 +12,16 @@ import Text from "../../../components/atoms/text";
 import { Button } from "@/components/ui/button";
 import UploadButton from "../../../components/molecules/uploadButton";
 import ModalTemplate from "../../../components/templates/modalTemplate";
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const inputBaseClass =
   "w-full border border-border rounded-md px-3 py-2 text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus:border-success";
@@ -356,16 +365,32 @@ function ModalEditNew({
           </Button>
         )}
       </div>
-      <ModalConfirmCancel
-        isOpen={confirmarExclusao}
-        handleClose={() => setConfirmarExclusao(false)}
-        handleConfirm={deleteNew}
-        text={`Excluir a novidade "${news?.title ?? ""}"?`}
+      <AlertDialog
+        open={confirmarExclusao}
+        onOpenChange={(aberto) => {
+          if (!aberto) {
+            setConfirmarExclusao(false);
+          }
+        }}
       >
-        <p className="text-body text-muted-foreground">
-          Ela deixa de aparecer no site.
-        </p>
-      </ModalConfirmCancel>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{`Excluir a novidade "${news?.title ?? ""}"?`}</AlertDialogTitle>
+            <AlertDialogDescription>
+              Ela deixa de aparecer no site.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={deleteNew}
+            >
+              Excluir novidade
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </ModalTemplate>
   );
 }

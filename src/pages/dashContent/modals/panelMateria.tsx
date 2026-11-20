@@ -1,4 +1,13 @@
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { iconPresets } from "@/config/materiaPresets";
 import { useModals } from "@/hooks/useModal";
 import { MateriaCanDeleteResult } from "@/services/content/getMateriaCanDelete";
@@ -229,25 +238,38 @@ export function PanelMateria({
       )}
 
       {modals.confirmDelete.isOpen && selected && (
-        <ModalConfirmCancel
-          isOpen={modals.confirmDelete.isOpen}
-          handleClose={() => {
-            modals.confirmDelete.close();
-            setSelected(null);
+        <AlertDialog
+          open={modals.confirmDelete.isOpen}
+          onOpenChange={(aberto) => {
+            if (!aberto) {
+              modals.confirmDelete.close();
+              setSelected(null);
+            }
           }}
-          handleConfirm={handleConfirmDelete}
-          className="bg-white p-8 rounded-md"
-          confirmDisabled={!canDelete}
         >
-          {blockReason ? (
-            <p className="text-muted-foreground">{blockReason}</p>
-          ) : (
-            <p className="text-muted-foreground">
-              Tem certeza que deseja excluir a matéria &quot;{selected.nome}
-              &quot;?
-            </p>
-          )}
-        </ModalConfirmCancel>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir matéria</AlertDialogTitle>
+              <AlertDialogDescription>
+                {blockReason ||
+                  `Tem certeza que deseja excluir a matéria "${selected.nome}"?`}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                variant="destructive"
+                disabled={!canDelete}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleConfirmDelete();
+                }}
+              >
+                Excluir matéria
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </div>
   );

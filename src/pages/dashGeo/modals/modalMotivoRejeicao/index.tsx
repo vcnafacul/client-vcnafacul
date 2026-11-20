@@ -1,4 +1,14 @@
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { MOTIVOS_DE_REJEICAO, MotivoRejeicaoGeo } from "./motivos";
 
@@ -22,46 +32,54 @@ export function ModalMotivoRejeicao({ isOpen, handleClose, onConfirm }: Props) {
   const valido = !!motivo && (!ehOutro || !!complemento.trim());
 
   return (
-    <ModalConfirmCancel
-      isOpen={isOpen}
-      handleClose={handleClose}
-      handleConfirm={() => onConfirm(motivo!, complemento.trim() || undefined)}
-      text="Por que este cadastro está sendo rejeitado?"
-      confirmDisabled={!valido}
-      className="max-w-[500px] bg-white p-4"
+    <Dialog
+      open={isOpen}
+      onOpenChange={(aberto) => {
+        if (!aberto) handleClose();
+      }}
+      size="sm"
     >
-      <fieldset className="flex flex-col gap-2 w-full text-left">
-        <legend className="sr-only">Motivo da rejeição</legend>
-        {MOTIVOS_DE_REJEICAO.map((m) => (
-          <label key={m.valor} className="flex items-center gap-2 text-body">
-            <input
-              type="radio"
-              name="motivo-rejeicao"
-              value={m.valor}
-              checked={motivo === m.valor}
-              onChange={() => setMotivo(m.valor)}
-            />
-            {m.rotulo}
-          </label>
-        ))}
-      </fieldset>
-      <label className="flex flex-col gap-1 w-full text-left text-body">
-        {ehOutro ? "Descreva o motivo" : "Complemento (opcional)"}
-        <textarea
-          value={complemento}
+      <DialogContent aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Por que este cadastro está sendo rejeitado?</DialogTitle>
+        </DialogHeader>
+        <RadioGroup
+          aria-label="Motivo da rejeição"
+          value={motivo ?? ""}
+          onValueChange={(valor) => setMotivo(valor as MotivoRejeicaoGeo)}
+        >
+          {MOTIVOS_DE_REJEICAO.map((m) => (
+            <RadioGroupItem key={m.valor} value={m.valor} label={m.rotulo} />
+          ))}
+        </RadioGroup>
+        <Field
+          label={ehOutro ? "Descreva o motivo" : "Complemento (opcional)"}
           maxLength={MAXIMO}
-          onChange={(e) => setComplemento(e.target.value)}
-          placeholder={
-            ehOutro
-              ? "Obrigatório para “Outro”"
-              : "Ex.: igual ao cadastro do Cursinho X"
-          }
-          className="p-2 w-full border border-input rounded-sm min-h-[80px] resize-none"
-        />
-        <span className="self-end text-caption text-muted-foreground">
-          {complemento.length}/{MAXIMO}
-        </span>
-      </label>
-    </ModalConfirmCancel>
+        >
+          <Textarea
+            value={complemento}
+            onChange={(e) => setComplemento(e.target.value)}
+            placeholder={
+              ehOutro
+                ? "Obrigatório para “Outro”"
+                : "Ex.: igual ao cadastro do Cursinho X"
+            }
+            className="resize-none"
+          />
+        </Field>
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button
+            variant="destructive"
+            disabled={!valido}
+            onClick={() => onConfirm(motivo!, complemento.trim() || undefined)}
+          >
+            Rejeitar cadastro
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

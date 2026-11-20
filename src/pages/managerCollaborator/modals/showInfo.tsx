@@ -1,7 +1,16 @@
 import Toggle from "@/components/atoms/toggle";
 import { Button } from "@/components/ui/button";
 import ImageProfile from "@/components/molecules/imageProfile";
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import PropValue from "@/components/molecules/PropValue";
 import { InputFactory } from "@/components/organisms/inputFactory";
 import ModalTemplate from "@/components/templates/modalTemplate";
@@ -316,17 +325,32 @@ export function ShowInfo({
           handleExcluir={(roleId) => handleExcluir(collaborator.id, roleId)}
         />
       )}
-      <ModalConfirmCancel
-        isOpen={confirmarRemocao}
-        handleClose={() => setConfirmarRemocao(false)}
-        handleConfirm={handleRemovePhoto}
-        text="Remover a foto do colaborador?"
-        className="bg-white p-4 rounded-md w-[calc(100%-2rem)]"
+      <AlertDialog
+        open={confirmarRemocao}
+        onOpenChange={(aberto) => {
+          if (!aberto) {
+            setConfirmarRemocao(false);
+          }
+        }}
       >
-        <p className="text-body text-muted-foreground">
-          A foto também sai da página pública do cursinho.
-        </p>
-      </ModalConfirmCancel>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remover a foto do colaborador?</AlertDialogTitle>
+            <AlertDialogDescription>
+              A foto também sai da página pública do cursinho.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={handleRemovePhoto}
+            >
+              Remover foto
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </ModalTemplate>
   );
 }

@@ -57,7 +57,7 @@ describe("RenderQuestionsTable no celular", () => {
     fireEvent.click(screen.getAllByRole("button", { name: "Excluir" })[0]);
     expect(deleteFn).not.toHaveBeenCalled();
     expect(screen.getByText("Excluir esta questão?")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Excluir" }));
     expect(deleteFn).toHaveBeenCalledWith(expect.anything(), "q-1");
   });
 

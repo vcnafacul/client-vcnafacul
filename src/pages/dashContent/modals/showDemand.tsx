@@ -10,8 +10,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { Save, Trash2, UploadCloud, X } from "lucide-react";
 import { useRef, useState } from "react";
-import Text from "../../../components/atoms/text";
-import ModalConfirmCancel from "../../../components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import ModalTemplate, {
   ModalProps,
 } from "../../../components/templates/modalTemplate";
@@ -142,18 +150,35 @@ function ShowDemand({
 
   const ModalTryDelete = () => {
     return (
-      <ModalConfirmCancel
-        isOpen={modals.tryDelete.isOpen}
-        handleClose={() => modals.tryDelete.close()}
-        handleConfirm={removeDemand}
-        className="bg-white p-8 rounded-md"
+      <AlertDialog
+        open={modals.tryDelete.isOpen}
+        onOpenChange={(aberto) => {
+          if (!aberto) {
+            modals.tryDelete.close();
+          }
+        }}
       >
-        <div>
-          <Text size="secondary">
-            Tem certeza que deseja excluir essa demanda ?
-          </Text>
-        </div>
-      </ModalConfirmCancel>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir demanda</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir essa demanda ?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={(e) => {
+                e.preventDefault();
+                removeDemand();
+              }}
+            >
+              Excluir demanda
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     );
   };
 

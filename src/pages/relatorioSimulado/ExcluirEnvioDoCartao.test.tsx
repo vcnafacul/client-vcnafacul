@@ -37,7 +37,7 @@ describe("ExcluirEnvioDoCartao (card 36)", () => {
     expect(excluirEnvioDoCartao).not.toHaveBeenCalled();
     expect(screen.getByText(/Ana Souza \(2025001\)/)).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText("Confirmar"));
+    fireEvent.click(screen.getByRole("button", { name: "Excluir envio" }));
 
     await waitFor(() => expect(onExcluido).toHaveBeenCalled());
     expect(excluirEnvioDoCartao).toHaveBeenCalledWith("tok", "h1");
@@ -51,7 +51,7 @@ describe("ExcluirEnvioDoCartao (card 36)", () => {
     const onExcluido = montar();
 
     fireEvent.click(screen.getByText(TEXTO_EXCLUIR_ENVIO));
-    fireEvent.click(screen.getByText("Confirmar"));
+    fireEvent.click(screen.getByRole("button", { name: "Excluir envio" }));
 
     await waitFor(() =>
       expect(toast.error).toHaveBeenCalledWith(

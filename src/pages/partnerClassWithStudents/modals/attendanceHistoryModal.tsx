@@ -1,4 +1,12 @@
-import ModalConfirmCancel from "@/components/organisms/modalConfirmCancel";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import ModalTemplate from "@/components/templates/modalTemplate";
 import { Roles } from "@/enums/roles/roles";
 import { useModals } from "@/hooks/useModal";
@@ -112,13 +120,29 @@ export function AttendanceHistoryModal({
 
   const ModalConfirmDelete = () => {
     return !modals.modalConfirmDelete.isOpen ? null : (
-      <ModalConfirmCancel
-        isOpen={modals.modalConfirmDelete.isOpen}
-        handleClose={() => modals.modalConfirmDelete.close()}
-        handleConfirm={handleDeleteRecord}
-        text="Tem certeza que deseja excluir esse registro?"
-        className="bg-white p-4 rounded-md w-[calc(100%-2rem)] max-w-[512px]"
-      />
+      <AlertDialog
+        open={modals.modalConfirmDelete.isOpen}
+        onOpenChange={(aberto) => {
+          if (!aberto) {
+            modals.modalConfirmDelete.close();
+          }
+        }}
+      >
+        <AlertDialogContent aria-describedby={undefined}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Tem certeza que deseja excluir esse registro?</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={handleDeleteRecord}
+            >
+              Excluir registro
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     );
   };
 

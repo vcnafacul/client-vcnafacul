@@ -113,7 +113,7 @@ describe("ShowProva — editar dados e excluir (card 41)", () => {
     fireEvent.click(screen.getByRole("button", { name: "Excluir" }));
     expect(aoExcluir).not.toHaveBeenCalled();
     expect(screen.getByText(/fora de eventos de simulado/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Excluir prova" }));
     expect(aoExcluir).toHaveBeenCalled();
   });
 
