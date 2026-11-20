@@ -77,7 +77,7 @@ export function ConfirmEnrolledPage() {
     } else {
       // convocated = true && declared = false && !expired
       componentToRender = (
-        <div className="flex flex-col items-center min-h-[calc(100vh-76px)] w-full">
+        <div className="flex flex-col items-center min-h-[calc(100vh-theme(spacing.header))] w-full">
           <DeclareInterest
             isFree={isFree}
             studentId={studentId}

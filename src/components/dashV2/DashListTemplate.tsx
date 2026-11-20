@@ -384,7 +384,7 @@ export function DashListTemplate<T>({
   const totalDeRegistros = entities.length;
 
   return (
-    <div className={cn("min-h-[calc(100vh-76px)]", dashV2.page)}>
+    <div className={cn("min-h-[calc(100vh-theme(spacing.header))]", dashV2.page)}>
       <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-6">
         {/*
           ⚠️ Toolbar e filtros num bloco só. As duas peças trazem `border-b`

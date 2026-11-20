@@ -90,7 +90,7 @@ export function ResetForm({
     });
   };
   return (
-    <div className="w-full h-[calc(100vh-88px)] flex justify-start items-center flex-col mx-auto">
+    <div className="w-full h-[calc(100vh-theme(spacing.header))] flex justify-start items-center flex-col mx-auto">
       <div className="mt-20 max-w-[500px] flex flex-col items-center">
         <Text size="secondary">{title}</Text>
         <Text size="quaternary" className="text-foreground my-5">

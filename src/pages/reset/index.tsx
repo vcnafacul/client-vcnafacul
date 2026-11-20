@@ -20,7 +20,7 @@ export function Reset(){
                 <TriangleGreen className="graphism triangle-green"/>
                 <TriangleYellow className="graphism triangle-yellow"/>
                 {getToken ? <ResetForm {...resetForm} token={getToken} /> : 
-                <div className=" h-[calc(100vh-88px)] flex justify-center items-center">
+                <div className=" h-[calc(100vh-theme(spacing.header))] flex justify-center items-center">
                     <Text size="secondary">Ocorreu um erro ao tentar redefinir a senha.</Text></div>}
             </div>
         </BaseTemplate>

@@ -29,13 +29,13 @@ const getInputClassByTextLength = (textLength: number): string => {
   if (textLength <= 50) {
     return ""; // Altura padrão
   } else if (textLength <= 80) {
-    return "h-20 pt-[48px]"; // Texto médio
+    return "h-20 pt-12"; // Texto médio
   } else if (textLength <= 120) {
-    return "h-24 pt-[52px]"; // Texto longo
+    return "h-24 pt-14"; // Texto longo
   } else if (textLength <= 160) {
-    return "h-28 pt-[56px]"; // Texto muito longo
+    return "h-28 pt-14"; // Texto muito longo
   } else {
-    return "h-[130px] pt-[96px]"; // Texto extra longo
+    return "h-[130px] pt-24"; // Texto extra longo
   }
 };
 

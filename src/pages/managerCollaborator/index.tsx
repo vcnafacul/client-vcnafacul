@@ -523,7 +523,7 @@ export default function ManagerCollaborator() {
   // Ex-membros: a mesma moldura do Dash V2, sem a tabela de colaboradores.
   if (aba === "ex-membros") {
     return (
-      <div className={cn("min-h-[calc(100vh-76px)]", dashV2.page)}>
+      <div className={cn("min-h-[calc(100vh-theme(spacing.header))]", dashV2.page)}>
         <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-6">
           <div
             className={cn(

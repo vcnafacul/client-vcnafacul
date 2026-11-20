@@ -21,11 +21,11 @@ function DashTemplateContent({ hasMenu }: { hasMenu?: boolean }) {
     // ⚠️ Não unificar o 76px num token agora: ele se repete em `baseTemplate`,
     // `dashTemplate` e `DashListTemplate`, e isso é refactor de outro
     // assunto — mexer nos três aqui esconderia a mudança real na revisão.
-    <div className="relative top-[76px] h-[calc(100vh-76px)] w-full flex flex-row print:top-0 print:h-auto print:block">
+    <div className="relative top-[76px] h-[calc(100vh-theme(spacing.header))] w-full flex flex-row print:top-0 print:h-auto print:block">
       <div className="xl:mr-0 w-full overflow-y-scroll scrollbar-hide flex-1 min-w-0">
         <Outlet />
       </div>
-      <div className="z-20 h-[calc(100vh-76px)] absolute xl:relative xl:right-0 print:hidden">
+      <div className="z-20 h-[calc(100vh-theme(spacing.header))] absolute xl:relative xl:right-0 print:hidden">
         {hasMenu && <SidebarDash />}
       </div>
     </div>

@@ -23,7 +23,7 @@ export function PartnerPrepInscriptionStepRegister({ inscriptionId }: Props) {
   const onRegister = (data: UserRegister) =>
     registerUserFlowStudent(data, inscriptionId as string);
   return (
-    <div className="relative min-h-[calc(100vh-88px)] overflow-y-auto scrollbar-hide">
+    <div className="relative min-h-[calc(100vh-theme(spacing.header))] overflow-y-auto scrollbar-hide">
       <TriangleGreen className="graphism triangle-green" />
       <TriangleYellow className="absolute right-0 bottom-0 w-[63px] h-[63px] md:w-[135px] md:h-[135px] rotate-180 z-0 pointer-events-none" />
       <RegisterForm

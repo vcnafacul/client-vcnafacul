@@ -139,7 +139,7 @@ function GeoForm({ formData, nomeInicial }: GeoFormProps) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start w-full min-h-[calc(100vh-88px)] mb-3 px-4 mx-auto">
+    <div className="flex flex-col items-center justify-start w-full min-h-[calc(100vh-theme(spacing.header))] mb-3 px-4 mx-auto">
       <StepCurrently step={stepCurrently} />
     </div>
   );

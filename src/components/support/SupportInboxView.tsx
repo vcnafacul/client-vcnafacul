@@ -59,7 +59,7 @@ export function SupportInboxView({
 
   return (
     // `dvh` desconta a barra do navegador no celular; sem suporte, cai no vh.
-    <div className="flex flex-col h-[calc(100vh-76px)] supports-[height:100dvh]:h-[calc(100dvh-76px)]">
+    <div className="flex flex-col h-[calc(100vh-theme(spacing.header))] supports-[height:100dvh]:h-[calc(100dvh-theme(spacing.header))]">
       <header className="bg-primary text-primary-foreground px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 shadow-sm">
         <div className="flex items-center gap-2">
           <LuHeadset className="h-5 w-5 text-primary" />

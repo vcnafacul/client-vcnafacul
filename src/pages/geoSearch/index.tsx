@@ -263,7 +263,7 @@ function GeoSearch() {
 
   return (
     <BaseTemplate solid hideFooter className="bg-white">
-      <div className="grid grid-cols-1 md:h-[calc(100vh-76px)] md:grid-cols-2">
+      <div className="grid grid-cols-1 md:h-[calc(100vh-theme(spacing.header))] md:grid-cols-2">
         <section
           aria-labelledby="localiza-titulo"
           className="relative order-2 overflow-hidden md:order-1 md:overflow-y-auto"
