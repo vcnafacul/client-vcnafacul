@@ -1,12 +1,12 @@
 {
   "legacy-color": 3203,
-  "legacy-size": 1825,
+  "legacy-size": 1818,
   "arbitrary-spacing": 15,
   "flagged-elevation": 71,
   "hero-outside-home": 0,
-  "banned-import": 992,
+  "banned-import": 990,
   "frozen-folder": 0,
-  "missing-stories": 16,
+  "missing-stories": 11,
   "ds-review-marker": 0,
   "ui-semantic-only": 0,
   "frozenFolderAllowList": [

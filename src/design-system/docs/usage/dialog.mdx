@@ -1,0 +1,71 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Uso/Dialog" />
+
+# Dialog, AlertDialog e Sheet
+
+Três sobreposições com papéis diferentes. A escolha errada é o erro mais comum: decida pelo que a pessoa
+faz dentro dela.
+
+## Qual usar
+
+| Componente | Use para | Exemplo |
+|---|---|---|
+| `Dialog` | Uma tarefa curta que prende a atenção: **formulário com campos**, escolha, leitura que exige decisão. | "Editar prova", "Registrar frequência" |
+| `AlertDialog` | **Só confirmar** uma ação. Sem campos. O foco inicial vai para o cancelar. | "Excluir prova" |
+| `Sheet` à direita | **Detalhes** de um item de uma lista, sem sair dela. | Detalhes da inscrição |
+| `Sheet` à esquerda | O menu de navegação no celular. | Menu do painel |
+
+- **Diálogo com campos de formulário é sempre `Dialog`, nunca `AlertDialog`** (D21).
+- **Filtros de lista não vão num `Sheet`:** ficam numa grade na própria página (D22).
+- No `AlertDialog`, o título e o botão **nomeiam a ação** ("Excluir prova", não "Tem certeza?" e "Sim"), e
+  ação destrutiva usa `<AlertDialogAction variant="destructive">`.
+
+## Estrutura do Dialog
+
+```tsx
+<Dialog size="md">
+  <DialogTrigger asChild><Button>Editar</Button></DialogTrigger>
+  <DialogContent banner={<ErrorSummary … />}>
+    <DialogHeader>
+      <DialogTitle>Editar prova</DialogTitle>
+      <DialogDescription>…</DialogDescription>
+    </DialogHeader>
+    {/* o corpo: o que não for DialogHeader nem DialogFooter */}
+    <Field …>…</Field>
+    <DialogFooter status="12 presentes · 3 ausentes">
+      <Button variant="outline">Cancelar</Button>
+      <Button>Salvar</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
+
+- **Cabeçalho e rodapé ficam fixos; só o corpo rola.** O `DialogContent` separa os filhos: `DialogHeader` e
+  `DialogFooter` ficam fora do contêiner que rola (`data-slot="dialog-body"`, `overflow-y-auto`), e todo o
+  resto entra nele. Para controlar o corpo (espaçamento, classes), use `DialogBody` explícito.
+- **`banner`:** fica fixo logo abaixo do cabeçalho. É o lugar do `ErrorSummary` e dos avisos.
+- **`status` do `DialogFooter`:** texto à esquerda, dentro de um `aria-live="polite"`, que o leitor de tela
+  anuncia ("12 presentes · 3 ausentes").
+- **Rodapé:** `outline` para cancelar e `primary` (ou `cta`) para a ação principal, que é o **último** botão.
+- **Fechar:** botão de ícone com `aria-label="Fechar"`. `Esc` também fecha, e o foco fica preso dentro.
+
+## Tamanhos
+
+| `size` | Largura | Quando |
+|---|---|---|
+| `sm` | 400px | Poucos campos ou uma pergunta |
+| `md` (padrão) | 560px | Formulário comum |
+| `lg` | 800px | Conteúdo largo, como uma lista dentro do corpo |
+| `full` | Quase a tela inteira | Fluxos longos |
+
+O `size` pode ir no `Dialog` ou no `DialogContent` (o do conteúdo vence). O `AlertDialog` é sempre `sm`.
+A altura máxima é `calc(100dvh - 2rem)` a partir de 768px.
+
+## No celular (abaixo de 768px)
+
+- O `Dialog` ocupa a **tela inteira**, sem cantos arredondados.
+- Os botões do rodapé **empilham em largura total**, com a **ação principal em cima**.
+- O corpo rola; o cabeçalho e o rodapé continuam à vista.
+- O `Sheet` à direita usa 3/4 da largura; os `Select` e menus abertos dentro do diálogo aparecem por cima
+  (`z-popover`).
