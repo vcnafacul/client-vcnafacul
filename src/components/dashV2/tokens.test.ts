@@ -21,7 +21,7 @@ function coresDaPaleta(): Set<string> {
   );
   const bloco = config.slice(config.indexOf("colors: {"));
   const nomes = new Set<string>();
-  for (const m of bloco.matchAll(/^\s{6,8}([a-zA-Z][a-zA-Z0-9]*):\s*"/gm)) {
+  for (const m of bloco.matchAll(/^\s{6,8}([a-zA-Z][a-zA-Z0-9]*):\s*["{]/gm)) {
     nomes.add(m[1]);
   }
   return nomes;

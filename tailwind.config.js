@@ -3,6 +3,7 @@
 
 import TailwindScrollbarHide from "tailwind-scrollbar-hide";
 import TailwindTypography from "@tailwindcss/typography";
+import colors from "tailwindcss/colors";
 
 export default {
   darkMode: ["class"],
@@ -20,21 +21,21 @@ export default {
         darkGrey: "#545454",
         black: "#000000",
         redError: "#ff0000",
-        red: "#F43535",
-        orange: "#FF7600",
+        red: { ...colors.red, DEFAULT: "#F43535" },
+        orange: { ...colors.orange, DEFAULT: "#FF7600" },
         darkOrange: "#FC8621",
-        yellow: "#FFE53C",
+        yellow: { ...colors.yellow, DEFAULT: "#FFE53C" },
         lightYellow: "#fff4af",
         backgroundMarine: "#001228",
         marine: "#0B2747",
-        pink: "#DA005A",
-        green: "#37D6B5",
+        pink: { ...colors.pink, DEFAULT: "#DA005A" },
+        green: { ...colors.green, DEFAULT: "#37D6B5" },
         lightGreen: "#8cc408",
         darkGreen: "#0f9b2c",
         green2: "#0F9B2C",
         green3: "#19982B",
         gray2: "#A6A6A6",
-        purple: "#8A2BE2",
+        purple: { ...colors.purple, DEFAULT: "#8A2BE2" },
         blueGeo: "#4D8CCB",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -117,6 +118,14 @@ export default {
             height: "0",
           },
         },
+        rotate: {
+          from: {
+            transform: "rotate(0deg)",
+          },
+          to: {
+            transform: "rotate(360deg)",
+          },
+        },
         "attention-ring": {
           "0%": { boxShadow: "0 0 0 0 rgba(255,118,0,0.7)" },
           "70%": { boxShadow: "0 0 0 12px rgba(255,118,0,0)" },
@@ -127,6 +136,16 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "attention-ring": "attention-ring 2s infinite",
+        rotate: "rotate 60s linear infinite",
+        rotate30: "rotate 30s linear infinite",
+        rotate15: "rotate 15s linear infinite",
+        rotate5: "rotate 5s linear infinite",
+      },
+      backgroundImage: {
+        "custom-gradient":
+          "linear-gradient(to right, #37D6B5, #8cc408, #8CC408, #FFE53C, #FF7600, #DA005A)",
+        "right-gradient":
+          "linear-gradient(to right, #FFFFFF, #FFFFFF, #0F9B2C, #0F9B2C)",
       },
     },
     screens: {
@@ -134,28 +153,6 @@ export default {
       md: "1200px",
       lg: "1400px",
       xl: "1565px",
-    },
-    keyframes: {
-      rotate: {
-        from: {
-          transform: "rotate(0deg)",
-        },
-        to: {
-          transform: "rotate(360deg)",
-        },
-      },
-    },
-    animation: {
-      rotate: "rotate 60s linear infinite",
-      rotate30: "rotate 30s linear infinite",
-      rotate15: "rotate 15s linear infinite",
-      rotate5: "rotate 5s linear infinite",
-    },
-    backgroundImage: {
-      "custom-gradient":
-        "linear-gradient(to right, #37D6B5, #8cc408, #8CC408, #FFE53C, #FF7600, #DA005A)",
-      "right-gradient":
-        "linear-gradient(to right, #FFFFFF, #FFFFFF, #0F9B2C, #0F9B2C)",
     },
   },
   plugins: [
