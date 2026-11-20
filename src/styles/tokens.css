@@ -1,0 +1,181 @@
+:root {
+  /* ---------- primitives (never used directly by components) ---------- */
+  --marine-50: 218 100% 98%;        /* #F7FAFF */
+  --marine-100: 213 92% 95%;        /* #E8F2FE */
+  --marine-200: 214 56% 89%;        /* #D5E2F3 */
+  --marine-300: 214 32% 77%;        /* #B2C2D7 */
+  --marine-400: 213 21% 61%;        /* #8699B0 */
+  --marine-500: 213 19% 50%;        /* #677C96 */
+  --marine-600: 213 25% 40%;        /* #4D6480 */
+  --marine-700: 213 33% 32%;        /* #364E6C */
+  --marine-800: 213 47% 24%;        /* #203A59 */
+  --marine-900: 212 73% 16%;        /* #0B2747 */
+  --marine-950: 213 77% 7%;         /* #04101F */
+
+  --orange-50: 24 100% 98%;         /* #FFF9F5 */
+  --orange-100: 22 100% 96%;        /* #FFF1E9 */
+  --orange-200: 21 100% 92%;        /* #FFE3D4 */
+  --orange-300: 20 100% 83%;        /* #FFC5A7 */
+  --orange-400: 21 100% 69%;        /* #FF9A62 */
+  --orange-500: 28 100% 50%;        /* #FF7600 */
+  --orange-600: 27 100% 39%;        /* #C55A00 */
+  --orange-700: 28 100% 35%;        /* #B35300 */
+  --orange-800: 25 100% 20%;        /* #662B00 */
+  --orange-900: 22 100% 12%;        /* #3E1700 */
+  --orange-950: 15 100% 6%;         /* #1F0800 */
+
+  --pink-50: 351 100% 99%;          /* #FFF8F9 */
+  --pink-100: 353 100% 96%;         /* #FFEDEF */
+  --pink-200: 352 100% 93%;         /* #FFDADF */
+  --pink-300: 351 100% 85%;         /* #FFB0BC */
+  --pink-400: 347 99% 71%;          /* #FE6E8E */
+  --pink-500: 344 82% 60%;          /* #ED4472 */
+  --pink-600: 335 100% 43%;         /* #DA005A */
+  --pink-700: 336 100% 32%;         /* #A50042 */
+  --pink-800: 337 100% 23%;         /* #73002C */
+  --pink-900: 340 100% 14%;         /* #480018 */
+  --pink-950: 346 100% 7%;          /* #260009 */
+
+  --mint-50: 160 100% 96%;          /* #EDFFF9 */
+  --mint-100: 161 100% 92%;         /* #D5FFF2 */
+  --mint-200: 164 98% 83%;          /* #AAFEE7 */
+  --mint-300: 165 77% 70%;          /* #79EED1 */
+  --mint-400: 168 66% 53%;          /* #37D6B5 */
+  --mint-500: 170 100% 34%;         /* #00AB8E */
+  --mint-600: 170 100% 26%;         /* #00846E */
+  --mint-700: 170 100% 19%;         /* #006352 */
+  --mint-800: 169 100% 13%;         /* #004438 */
+  --mint-900: 168 100% 8%;          /* #002921 */
+  --mint-950: 165 100% 4%;          /* #00140F */
+
+  --yellow-50: 51 100% 95%;         /* #FFFBE3 */
+  --yellow-100: 52 100% 90%;        /* #FFF8CC */
+  --yellow-200: 51 100% 83%;        /* #FFF2A6 */
+  --yellow-300: 52 100% 62%;        /* #FFE53C */
+  --yellow-400: 51 100% 40%;        /* #CCAC00 */
+  --yellow-500: 48 100% 33%;        /* #A78600 */
+  --yellow-600: 46 100% 26%;        /* #856500 */
+  --yellow-700: 43 100% 20%;        /* #674A00 */
+  --yellow-800: 41 100% 15%;        /* #4A3200 */
+  --yellow-900: 35 100% 9%;         /* #301C00 */
+  --yellow-950: 28 100% 5%;         /* #1A0C00 */
+
+  --red-50: 7 100% 98%;             /* #FFF8F7 */
+  --red-100: 6 100% 96%;            /* #FFEDEB */
+  --red-200: 7 100% 92%;            /* #FFDAD5 */
+  --red-300: 6 100% 83%;            /* #FFB0A7 */
+  --red-400: 4 100% 70%;            /* #FF6E64 */
+  --red-500: 0 90% 58%;             /* #F43535 */
+  --red-600: 357 82% 42%;           /* #C5131D */
+  --red-700: 354 100% 30%;          /* #99000F */
+  --red-800: 356 100% 21%;          /* #6D0007 */
+  --red-900: 357 100% 14%;          /* #460003 */
+  --red-950: 358 100% 8%;           /* #270001 */
+
+  --blue-50: 207 100% 98%;          /* #F6FBFF */
+  --blue-100: 211 100% 95%;         /* #E8F3FF */
+  --blue-200: 211 100% 91%;         /* #D0E7FF */
+  --blue-300: 210 94% 80%;          /* #9DCCFC */
+  --blue-400: 211 64% 65%;          /* #6FA6DF */
+  --blue-500: 210 55% 55%;          /* #4D8CCB */
+  --blue-600: 210 52% 42%;          /* #346CA3 */
+  --blue-700: 210 60% 32%;          /* #205181 */
+  --blue-800: 208 79% 21%;          /* #0B3860 */
+  --blue-900: 210 100% 13%;         /* #002141 */
+  --blue-950: 213 100% 7%;          /* #001024 */
+
+  --neutral-50: 218 100% 98%;       /* #F7FAFF */
+  --neutral-100: 212 48% 95%;       /* #EBF1F8 */
+  --neutral-200: 214 23% 88%;       /* #DAE0E8 */
+  --neutral-300: 214 12% 75%;       /* #B7BEC7 */
+  --neutral-400: 213 8% 58%;        /* #8B939D */
+  --neutral-500: 213 8% 46%;        /* #6D757F */
+  --neutral-600: 216 8% 36%;        /* #555B64 */
+  --neutral-700: 212 9% 28%;        /* #40464D */
+  --neutral-800: 213 11% 19%;       /* #2C3137 */
+  --neutral-900: 216 16% 12%;       /* #1A1E24 */
+  --neutral-950: 210 25% 6%;        /* #0C1014 */
+
+  /* ---------- semantic (light) ---------- */
+  --background: 0 0% 100%;            /* white */
+  --foreground: var(--marine-900);
+  --card: 0 0% 100%;
+  --card-foreground: var(--marine-900);
+  --popover: 0 0% 100%;
+  --popover-foreground: var(--marine-900);
+  --page: var(--neutral-50);          /* app background behind surfaces */
+
+  --primary: var(--marine-900);
+  --primary-foreground: 0 0% 100%;
+  --secondary: var(--neutral-100);
+  --secondary-foreground: var(--marine-900);
+  --muted: var(--neutral-100);
+  --muted-foreground: var(--neutral-600);   /* the ONLY secondary text color */
+  --accent: var(--marine-100);              /* hover/highlight background in menus, rows */
+  --accent-foreground: var(--marine-900);
+
+  --cta: var(--orange-700);                 /* #B35300 — at most one per screen */
+  --cta-foreground: 0 0% 100%;
+  --highlight: var(--orange-700);           /* eyebrows + highlighted words (home) */
+
+  --destructive: var(--red-600);
+  --destructive-foreground: 0 0% 100%;
+  --destructive-muted: var(--red-50);
+  --success: var(--mint-700);
+  --success-foreground: 0 0% 100%;
+  --success-muted: var(--mint-50);
+  --warning: var(--yellow-600);
+  --warning-foreground: 0 0% 100%;
+  --warning-muted: var(--yellow-100);
+  --info: var(--blue-600);
+  --info-foreground: 0 0% 100%;
+  --info-muted: var(--blue-50);
+
+  --border: var(--neutral-200);             /* decorative: cards, dividers, rows */
+  --input: var(--neutral-400);              /* field boundaries, 3.1:1 */
+  --ring: var(--orange-600);                /* solid 2px focus ring + 2px white offset */
+
+  --chart-1: var(--marine-700);
+  --chart-2: var(--orange-600);
+  --chart-3: var(--mint-600);
+  --chart-4: var(--pink-600);
+  --chart-5: var(--yellow-500);
+  --chart-6: var(--blue-500);
+
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: var(--marine-900);
+  --sidebar-primary: var(--marine-900);
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: var(--marine-100);
+  --sidebar-accent-foreground: var(--marine-900);
+  --sidebar-border: var(--neutral-200);
+  --sidebar-ring: var(--orange-600);
+
+  /* ---------- non-color variables ---------- */
+  --radius: 0.5rem;
+  --header-h: 76px;
+}
+@media (min-width: 768px) { :root { --header-h: 88px; } }
+
+/* ---------- home / public section themes (re-point semantic tokens only) ---------- */
+[data-theme="marine"] {
+  --background: var(--marine-900);
+  --foreground: 0 0% 100%;
+  --card: var(--marine-800);
+  --card-foreground: 0 0% 100%;
+  --muted: var(--marine-800);
+  --muted-foreground: var(--marine-200);
+  --border: var(--marine-700);
+  --primary: 0 0% 100%;
+  --primary-foreground: var(--marine-900);
+  --cta: var(--orange-500);                 /* bright #FF7600 on navy */
+  --cta-foreground: var(--marine-900);      /* 5.62:1 */
+  --highlight: var(--mint-400);
+  --ring: var(--orange-500);
+}
+[data-theme="neutral"] { /* global tokens; --highlight stays orange-700 */ }
+[data-theme="yellow"] {
+  --background: var(--yellow-50);
+  --border: var(--yellow-100);
+  --highlight: var(--yellow-700);
+}

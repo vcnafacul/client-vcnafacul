@@ -32,4 +32,17 @@ describe("tailwind.config.js", () => {
   it("mantém bg-gradient-*", () => {
     expect(theme.backgroundImage["gradient-to-r"]).toBeDefined();
   });
+
+  it("expõe os tokens semânticos", () => {
+    expect(theme.colors.cta.DEFAULT).toBe("hsl(var(--cta) / <alpha-value>)");
+    expect(theme.colors.muted.foreground).toBe(
+      "hsl(var(--muted-foreground) / <alpha-value>)",
+    );
+    expect(theme.colors.success.muted).toBe(
+      "hsl(var(--success-muted) / <alpha-value>)",
+    );
+    expect(theme.zIndex.popover).toBe("50");
+    expect(theme.maxWidth.form).toBe("560px");
+    expect(theme.borderRadius.lg).toBe("var(--radius)");
+  });
 });

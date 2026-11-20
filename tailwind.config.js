@@ -4,16 +4,52 @@
 import TailwindScrollbarHide from "tailwind-scrollbar-hide";
 import TailwindTypography from "@tailwindcss/typography";
 import colors from "tailwindcss/colors";
+import typeScale from "./tailwind/type-scale.js";
+
+const c = (v) => `hsl(var(--${v}) / <alpha-value>)`;
+const pair = (n) => ({ DEFAULT: c(n), foreground: c(`${n}-foreground`) });
 
 export default {
   darkMode: ["class"],
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  content: ["./src/**/*.{js,jsx,ts,tsx,mdx}", "./.storybook/**/*.{ts,tsx}"],
   theme: {
     extend: {
       fontFamily: {
         raleway: ["Raleway", "sans-serif"],
+        sans: ["Raleway", "sans-serif"],
       },
       colors: {
+        // ---- semânticas (design system) ----
+        background: c("background"),
+        foreground: c("foreground"),
+        page: c("page"),
+        card: pair("card"),
+        popover: pair("popover"),
+        primary: pair("primary"),
+        secondary: pair("secondary"),
+        muted: pair("muted"),
+        accent: pair("accent"),
+        cta: pair("cta"),
+        highlight: c("highlight"),
+        destructive: { ...pair("destructive"), muted: c("destructive-muted") },
+        success: { ...pair("success"), muted: c("success-muted") },
+        warning: { ...pair("warning"), muted: c("warning-muted") },
+        info: { ...pair("info"), muted: c("info-muted") },
+        border: c("border"),
+        input: c("input"),
+        ring: c("ring"),
+        chart: Object.fromEntries([1, 2, 3, 4, 5, 6].map((i) => [i, c(`chart-${i}`)])),
+        sidebar: {
+          DEFAULT: c("sidebar-background"),
+          foreground: c("sidebar-foreground"),
+          primary: c("sidebar-primary"),
+          "primary-foreground": c("sidebar-primary-foreground"),
+          accent: c("sidebar-accent"),
+          "accent-foreground": c("sidebar-accent-foreground"),
+          border: c("sidebar-border"),
+          ring: c("sidebar-ring"),
+        },
+        // ---- legado: sai no commit de limpeza (059/01); componentes novos não usam ----
         white: "#FFFFFF",
         backgroundGrey: "#F8F8F8",
         lightGray: "#E0E0E0",
@@ -37,56 +73,6 @@ export default {
         gray2: "#A6A6A6",
         purple: { ...colors.purple, DEFAULT: "#8A2BE2" },
         blueGeo: "#4D8CCB",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        chart: {
-          1: "hsl(var(--chart-1))",
-          2: "hsl(var(--chart-2))",
-          3: "hsl(var(--chart-3))",
-          4: "hsl(var(--chart-4))",
-          5: "hsl(var(--chart-5))",
-        },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
-        },
         logoCursinho: "#E05C1A", // orange
         logoProjeto: "#5B3F9E", // purple
         logoAdmin: "#00A69C", // teal
@@ -100,6 +86,56 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xl: "calc(var(--radius) + 4px)",
+      },
+      boxShadow: {
+        sm: "0 1px 2px rgba(11,39,71,.08)",
+        md: "0 4px 12px rgba(11,39,71,.10), 0 1px 3px rgba(11,39,71,.06)",
+        lg: "0 16px 40px rgba(11,39,71,.18), 0 2px 8px rgba(11,39,71,.08)",
+        DEFAULT: "0 1px 2px rgba(11,39,71,.08)",
+      },
+      zIndex: {
+        base: "0",
+        raised: "10",
+        sticky: "20",
+        header: "30",
+        overlay: "40",
+        popover: "50",
+        toast: "60",
+      },
+      maxWidth: { "prose-content": "720px", form: "560px", page: "1200px" },
+      height: { header: "var(--header-h)" },
+      spacing: { header: "var(--header-h)" },
+      container: {
+        center: true,
+        padding: { DEFAULT: "16px", sm: "24px", md: "32px" },
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            "--tw-prose-body": "hsl(var(--foreground))",
+            "--tw-prose-headings": "hsl(var(--foreground))",
+            "--tw-prose-lead": "hsl(var(--muted-foreground))",
+            "--tw-prose-links": "hsl(var(--primary))",
+            "--tw-prose-bold": "hsl(var(--foreground))",
+            "--tw-prose-counters": "hsl(var(--muted-foreground))",
+            "--tw-prose-bullets": "hsl(var(--muted-foreground))",
+            "--tw-prose-hr": "hsl(var(--border))",
+            "--tw-prose-quotes": "hsl(var(--foreground))",
+            "--tw-prose-quote-borders": "hsl(var(--border))",
+            "--tw-prose-captions": "hsl(var(--muted-foreground))",
+            "--tw-prose-code": "hsl(var(--foreground))",
+            "--tw-prose-th-borders": "hsl(var(--border))",
+            "--tw-prose-td-borders": "hsl(var(--border))",
+            maxWidth: "none",
+            fontSize: "16px",
+            lineHeight: "1.7",
+            a: { textDecoration: "underline" },
+            h2: { fontSize: "20px", lineHeight: "1.25" },
+            h3: { fontSize: "16px", lineHeight: "1.3" },
+            h4: { fontSize: "14px", lineHeight: "1.4" },
+          },
+        },
       },
       keyframes: {
         "accordion-down": {
@@ -142,6 +178,8 @@ export default {
         rotate5: "rotate 5s linear infinite",
       },
       backgroundImage: {
+        "brand-stripe":
+          "linear-gradient(to right, hsl(var(--mint-400)), #8CC408, hsl(var(--yellow-300)), hsl(var(--orange-500)), hsl(var(--pink-600)))",
         "custom-gradient":
           "linear-gradient(to right, #37D6B5, #8cc408, #8CC408, #FFE53C, #FF7600, #DA005A)",
         "right-gradient":
@@ -158,6 +196,10 @@ export default {
   plugins: [
     TailwindScrollbarHide,
     TailwindTypography,
+    typeScale,
+    // prose: 16px no mobile, 17px a partir de 768px (o plugin de typography não aceita @media aqui)
+    ({ addComponents }) =>
+      addComponents({ "@media (min-width: 768px)": { ".prose": { fontSize: "17px" } } }),
     // eslint-disable-next-line no-undef
     require("tailwindcss-animate"),
   ],
