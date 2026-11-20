@@ -114,7 +114,7 @@ function Opcao({
       <button
         type="button"
         onClick={onClick}
-        className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-body hover:bg-muted/50"
+        className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-body hover:bg-muted/50"
       >
         <FiCheck
           className={`h-4 w-4 shrink-0 ${selecionada ? "opacity-100" : "opacity-0"}`}

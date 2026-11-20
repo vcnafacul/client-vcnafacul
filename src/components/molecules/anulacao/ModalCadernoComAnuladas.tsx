@@ -20,9 +20,9 @@ export function ModalCadernoComAnuladas({
       role="dialog"
       aria-modal="true"
       aria-label={TITULO_CADERNO_ANULADAS}
-      className="fixed inset-0 z-[1400] flex items-center justify-center bg-black/40 p-4 h-dvh"
+      className="fixed inset-0 z-overlay flex items-center justify-center bg-black/40 p-4 h-dvh"
     >
-      <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] rounded-lg bg-white shadow-xl flex flex-col">
+      <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] rounded-lg bg-white shadow-lg flex flex-col">
         <div className="flex-1 min-h-0 overflow-y-auto p-4 flex gap-2">
           <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" aria-hidden />
           <div className="flex flex-col gap-2 text-body text-foreground">

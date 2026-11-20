@@ -39,7 +39,7 @@ export default function DevVitrine() {
           <Link
             key={e.slug}
             to={`${DEV_VITRINE}/${vitrine.slug}/${e.slug}`}
-            className={`rounded px-2 py-1 ${e.slug === atual.slug ? "bg-primary text-primary-foreground" : "bg-muted"}`}
+            className={`rounded-sm px-2 py-1 ${e.slug === atual.slug ? "bg-primary text-primary-foreground" : "bg-muted"}`}
           >
             {e.titulo}
           </Link>
@@ -91,7 +91,7 @@ function Indice() {
                 <Link
                   key={e.slug}
                   to={`${DEV_VITRINE}/${v.slug}/${e.slug}`}
-                  className="rounded bg-muted px-2 py-1 hover:bg-muted"
+                  className="rounded-sm bg-muted px-2 py-1 hover:bg-muted"
                 >
                   {e.titulo}
                 </Link>

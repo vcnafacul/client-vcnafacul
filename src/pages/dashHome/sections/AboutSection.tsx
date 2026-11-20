@@ -65,7 +65,7 @@ export default function AboutSection() {
       <label className="flex flex-col gap-1">
         <span className="text-body font-semibold">ID do vídeo YouTube</span>
         <input
-          className="border rounded px-2 py-1"
+          className="border rounded-sm px-2 py-1"
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
           placeholder="Ex.: LiNm9JxvNOM"
@@ -77,7 +77,7 @@ export default function AboutSection() {
           <img
             src={homeContentFile(thumbnailUrl)}
             alt="thumbnail atual"
-            className="max-w-xs rounded"
+            className="max-w-xs rounded-sm"
           />
         ) : (
           <span className="text-body text-muted-foreground">Sem thumbnail</span>

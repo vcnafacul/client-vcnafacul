@@ -122,7 +122,7 @@ export default function AdjustmentProposalModal({
 
           {tipo === "documento" && (
             <div
-              className="border-2 border-dashed border-muted rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/50 transition"
+              className="border-2 border-dashed border-muted rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/50 transition"
               onClick={handleUploadClick}
             >
               {uploadFile ? (

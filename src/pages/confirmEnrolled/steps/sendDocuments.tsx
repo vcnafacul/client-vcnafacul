@@ -197,7 +197,7 @@ export default function SendDocuments({
         </ul>
       </div>
       <button
-        className="mt-8 px-6 py-3 text-primary-foreground rounded font-medium disabled:bg-muted disabled:text-muted-foreground bg-primary w-60 self-end"
+        className="mt-8 px-6 py-3 text-primary-foreground rounded-sm font-medium disabled:bg-muted disabled:text-muted-foreground bg-primary w-60 self-end"
         onClick={handleSubmit}
         disabled={processing}
       >

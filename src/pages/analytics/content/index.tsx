@@ -193,7 +193,7 @@ export function AnalyticsContent() {
     >
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <div className="shadow-md bg-white p-2 rounded">
+          <div className="shadow-md bg-white p-2 rounded-sm">
             {loading ? (
               <Skeleton className="h-[400px] w-full" />
             ) : (
@@ -209,7 +209,7 @@ export function AnalyticsContent() {
           </div>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
-          <div className="shadow-md bg-white p-2 rounded">
+          <div className="shadow-md bg-white p-2 rounded-sm">
             {loading ? (
               <Skeleton className="h-[400px] w-full" />
             ) : (

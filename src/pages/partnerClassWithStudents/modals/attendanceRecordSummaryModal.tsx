@@ -225,7 +225,7 @@ export default function AttendanceRecordSummaryModal({
                 {...register("maxAbsencePercent")}
                 min={0}
                 max={100}
-                className="border rounded px-3 py-2 w-24"
+                className="border rounded-sm px-3 py-2 w-24"
                 placeholder="25"
               />
               {padraoDoCursinho != null && (

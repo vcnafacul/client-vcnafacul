@@ -31,7 +31,7 @@ function SimulationHistoryCard({ historico }: SimulationHistoryCardProps) {
 
   return (
     <Link
-      className="flex flex-wrap gap-4 bg-white border border-border border-t-0 rounded p-4 pb-6 pr-12 m-2.5 shadow-md justify-between relative"
+      className="flex flex-wrap gap-4 bg-white border border-border border-t-0 rounded-sm p-4 pb-6 pr-12 m-2.5 shadow-md justify-between relative"
       to={`${SIMULATE_METRICS}${historico._id}`}
     >
       <SimulationHistoryField

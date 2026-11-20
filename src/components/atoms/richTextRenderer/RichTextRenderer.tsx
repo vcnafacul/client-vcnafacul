@@ -92,7 +92,7 @@ export function RichTextRenderer({
           <AssetImage
             assetId={assetId}
             alt={alt || ""}
-            className="max-w-full rounded"
+            className="max-w-full rounded-sm"
             style={sizeStyle}
             fetchAsset={fetchAsset}
           />
@@ -103,7 +103,7 @@ export function RichTextRenderer({
           src={src}
           alt={alt}
           title={title}
-          className="max-w-full rounded"
+          className="max-w-full rounded-sm"
           style={sizeStyle}
         />
       );

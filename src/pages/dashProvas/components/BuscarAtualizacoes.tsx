@@ -212,7 +212,7 @@ function LinhaDeAtualizacao({
           {comparando && (
             <div className="mt-2 grid grid-cols-1 gap-3 md:grid-cols-2" data-comparacao>
               {comparando.map((q, i) => (
-                <div key={q._id} className="rounded border border-border p-2">
+                <div key={q._id} className="rounded-sm border border-border p-2">
                   <p className="mb-1 text-caption font-semibold text-muted-foreground">
                     {i === 0 ? "Atual" : "Nova"}
                   </p>

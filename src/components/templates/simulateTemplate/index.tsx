@@ -166,7 +166,7 @@ function SimulateTemplate({
               onClick={() =>
                 setDisplayMode(modo === "image" ? "text" : "image")
               }
-              className="text-body px-3 py-1 rounded border border-border hover:bg-muted transition-colors"
+              className="text-body px-3 py-1 rounded-sm border border-border hover:bg-muted transition-colors"
             >
               {modo === "image" ? "Ver texto" : "Ver imagem"}
             </button>
@@ -187,7 +187,7 @@ function SimulateTemplate({
         ) : (
           <div className="w-full p-3 sm:p-6 my-4 bg-white rounded-lg border border-border">
             <Suspense
-              fallback={<div className="h-20 bg-muted animate-pulse rounded" />}
+              fallback={<div className="h-20 bg-muted animate-pulse rounded-sm" />}
             >
               <RichTextRenderer
                 content={questionSelected.textoQuestao || ""}

@@ -199,7 +199,7 @@ export function AttendanceHistoryModal({
       isOpen={isOpen}
       handleClose={handleClose}
       closer={false}
-      className="bg-white rounded-xl shadow-xl w-[calc(100vw-1rem)] sm:w-[600px] h-[min(640px,calc(100dvh-2rem))] flex flex-col overflow-hidden"
+      className="bg-white rounded-xl shadow-lg w-[calc(100vw-1rem)] sm:w-[600px] h-[min(640px,calc(100dvh-2rem))] flex flex-col overflow-hidden"
     >
       <div className="shrink-0 px-4 pt-4 pb-3 sm:px-6 sm:pt-6 border-b border-border">
         <div className="flex items-start justify-between gap-3">
@@ -256,8 +256,8 @@ export function AttendanceHistoryModal({
           !erro &&
           Array.from({ length: 5 }, (_, i) => (
             <li key={i} className="py-3 border-b border-border animate-pulse">
-              <div className="h-4 w-32 rounded bg-muted" />
-              <div className="mt-2 h-3 w-48 rounded bg-muted" />
+              <div className="h-4 w-32 rounded-sm bg-muted" />
+              <div className="mt-2 h-3 w-48 rounded-sm bg-muted" />
             </li>
           ))}
         {carregou && !erro && attendanceHistory.length === 0 && (

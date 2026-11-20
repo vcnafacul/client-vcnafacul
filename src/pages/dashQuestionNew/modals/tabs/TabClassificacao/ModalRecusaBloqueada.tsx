@@ -55,9 +55,9 @@ export function ModalRecusaBloqueada({
     <div
       role="dialog"
       aria-label={TITULO_RECUSA_BLOQUEADA}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      className="fixed inset-0 z-overlay flex items-center justify-center bg-black/40 p-4"
     >
-      <div className="w-full max-w-lg max-h-full overflow-y-auto rounded-lg bg-white p-4 shadow-xl flex flex-col gap-3">
+      <div className="w-full max-w-lg max-h-full overflow-y-auto rounded-lg bg-white p-4 shadow-lg flex flex-col gap-3">
         <h2 className="text-h3 font-semibold">{TITULO_RECUSA_BLOQUEADA}</h2>
         <p className="text-body text-muted-foreground">{TEXTO_RECUSA_BLOQUEADA}</p>
         <ul className="text-body list-disc pl-5" data-provas-da-recusa>

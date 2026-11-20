@@ -16,7 +16,7 @@ interface Props {
 
 export function Statistic({ geral, enrolleds, handleClose }: Props) {
   return (
-    <div className="fixed inset-0 bg-black/60 z-50 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black/60 z-overlay flex justify-center items-center">
       <div className="w-full h-full flex justify-center items-center md:py-4">
         <Tabs defaultValue="details" className="w-full max-w-[90vw] h-[80vh]">
           <TabsList className="grid w-full grid-cols-2">
@@ -49,8 +49,8 @@ function ModalContent({
   onClose: () => void;
 }) {
   return (
-    <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded pb-2 px-2 flex flex-col gap-4 relative border-8 border-white">
-      <div className="sticky top-0 bg-white z-20 flex items-center justify-end p-2">
+    <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded-sm pb-2 px-2 flex flex-col gap-4 relative border-8 border-white">
+      <div className="sticky top-0 bg-white z-sticky flex items-center justify-end p-2">
         <IoMdClose
           className="w-5 h-5 cursor-pointer text-muted-foreground hover:text-foreground transition"
           onClick={onClose}

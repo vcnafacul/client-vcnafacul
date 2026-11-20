@@ -112,7 +112,7 @@ export function ModalEventos({ isOpen, handleClose, token, podeEditar }: Props) 
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="w-full max-w-2xl rounded-lg bg-white shadow-xl p-2"
+      className="w-full max-w-2xl rounded-lg bg-white shadow-lg p-2"
     >
       <div className="p-4 sm:p-6 max-h-[85vh] overflow-y-auto">
         {tela.tipo === "lista" && (

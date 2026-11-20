@@ -259,7 +259,7 @@ export function TelaDosIndicadores({
         ) : carregando || !dados ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
             {[0, 1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-32 rounded-2xl" />
+              <Skeleton key={i} className="h-32 rounded-xl" />
             ))}
           </div>
         ) : (
@@ -273,7 +273,7 @@ export function TelaDosIndicadores({
 /** Admin sem cursinho próprio (tickets/045). */
 function EscolhaUmCursinho() {
   return (
-    <div className="rounded-2xl border border-dashed border-border bg-white px-6 py-10 text-center">
+    <div className="rounded-xl border border-dashed border-border bg-white px-6 py-10 text-center">
       <p className="font-medium text-foreground">Escolha um cursinho</p>
       <p className="mx-auto mt-1 max-w-md text-body text-muted-foreground">
         Você não faz parte de um cursinho. Escolha um no topo para ver os
@@ -285,7 +285,7 @@ function EscolhaUmCursinho() {
 
 function SemPeriodo() {
   return (
-    <div className="rounded-2xl border border-dashed border-border bg-white px-6 py-10 text-center">
+    <div className="rounded-xl border border-dashed border-border bg-white px-6 py-10 text-center">
       <p className="font-medium text-foreground">
         Nenhum período letivo cadastrado
       </p>

@@ -137,7 +137,7 @@ export function PeriodJustificationModal({
             !dateRange[1] ||
             !justification.trim()
           }
-          className="bg-primary hover:opacity-90 text-primary-foreground font-bold py-2 px-4 rounded
+          className="bg-primary hover:opacity-90 text-primary-foreground font-bold py-2 px-4 rounded-sm
             disabled:bg-opacity-75 disabled:cursor-not-allowed"
         >
           Confirmar

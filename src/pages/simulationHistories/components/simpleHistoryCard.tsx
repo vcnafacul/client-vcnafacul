@@ -58,7 +58,7 @@ export function SimpleHistoryCard({
     <Card
       className={`group relative cursor-pointer transition-all duration-300 border-0
         bg-gradient-to-br ${performanceColor}
-        shadow-md hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 hover:scale-[1.02]
+        shadow-md hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-2 hover:scale-[1.02]
         overflow-hidden w-full sm:w-[350px]`}
       onClick={() => onClick?.(historico._id)}
     >
@@ -69,7 +69,7 @@ export function SimpleHistoryCard({
         style={{ transition: "transform 0.8s ease-in-out" }}
       />
 
-      <div className="absolute -top-2 -right-2 rotate-12 group-hover:rotate-0 transition-transform duration-300 z-10">
+      <div className="absolute -top-2 -right-2 rotate-12 group-hover:rotate-0 transition-transform duration-300 z-raised">
         <Badge
           variant={isComplete ? "default" : "outline"}
           className={`text-body font-bold px-3 py-1 shadow-lg ${

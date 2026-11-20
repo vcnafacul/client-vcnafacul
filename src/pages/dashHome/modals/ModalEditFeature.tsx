@@ -128,7 +128,7 @@ export default function ModalEditFeature({
         <label className="flex flex-col gap-1">
           <span className="text-body font-semibold">Título</span>
           <input
-            className="border rounded px-2 py-1"
+            className="border rounded-sm px-2 py-1"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Título do item"
@@ -137,7 +137,7 @@ export default function ModalEditFeature({
         <label className="flex flex-col gap-1">
           <span className="text-body font-semibold">Descrição (opcional)</span>
           <textarea
-            className="border rounded px-2 py-1"
+            className="border rounded-sm px-2 py-1"
             rows={3}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -152,7 +152,7 @@ export default function ModalEditFeature({
             <img
               src={homeContentFile(feature.imageUrl)}
               alt={feature.title}
-              className="w-24 h-24 object-cover rounded"
+              className="w-24 h-24 object-cover rounded-sm"
             />
           )}
           {file && (

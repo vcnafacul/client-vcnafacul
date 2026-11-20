@@ -42,7 +42,7 @@ export function MateriaRadar({ materias, onSelectMateria, selectedMateriaId }: P
               <tr
                 key={m.id}
                 onClick={() => onSelectMateria(selectedMateriaId === m.id ? undefined : m.id)}
-                className={`cursor-pointer rounded transition-colors hover:bg-page ${
+                className={`cursor-pointer rounded-sm transition-colors hover:bg-page ${
                   selectedMateriaId === m.id ? "bg-info-muted font-medium" : ""
                 }`}
                 tabIndex={0}

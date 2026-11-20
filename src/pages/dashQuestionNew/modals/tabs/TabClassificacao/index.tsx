@@ -496,12 +496,12 @@ export function TabClassificacao({
           <div className="flex flex-wrap items-center gap-3">
             <CardTitle className="text-h3">📋 Informações da Prova</CardTitle>
             {isEditing && (
-              <span className="text-body font-normal text-info bg-info-muted px-2 py-1 rounded">
+              <span className="text-body font-normal text-info bg-info-muted px-2 py-1 rounded-sm">
                 Modo Edição
               </span>
             )}
             {isDirty && !isEditing && (
-              <span className="text-body font-normal text-warning bg-warning-muted px-2 py-1 rounded">
+              <span className="text-body font-normal text-warning bg-warning-muted px-2 py-1 rounded-sm">
                 • Alterações não salvas
               </span>
             )}
@@ -611,7 +611,7 @@ export function TabClassificacao({
                 <p
                   data-testid="selo-da-prova"
                   title={TEXTO_DO_SELO}
-                  className="text-caption text-muted-foreground bg-muted border border-border rounded px-2 py-1 w-fit cursor-help"
+                  className="text-caption text-muted-foreground bg-muted border border-border rounded-sm px-2 py-1 w-fit cursor-help"
                 >
                   {seloDaProva(provaSel)!.texto}
                 </p>
@@ -721,7 +721,7 @@ export function TabClassificacao({
             {isEditing && travaAreaFrente && (
               <p
                 data-testid="trava-area-frente"
-                className="sm:col-span-2 text-caption text-warning bg-warning-muted border border-warning/30 rounded px-3 py-2"
+                className="sm:col-span-2 text-caption text-warning bg-warning-muted border border-warning/30 rounded-sm px-3 py-2"
               >
                 🔒 {textoDaTrava}
               </p>

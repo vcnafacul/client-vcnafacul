@@ -128,8 +128,8 @@ export function AvisoDeRecalculo({
           <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden />
           {textoDoProgresso(processados, total)}
         </p>
-        <div className="h-1.5 w-full rounded bg-warning-muted" aria-hidden>
-          <div className="h-1.5 rounded bg-warning transition-all" style={{ width: `${pct}%` }} />
+        <div className="h-1.5 w-full rounded-sm bg-warning-muted" aria-hidden>
+          <div className="h-1.5 rounded-sm bg-warning transition-all" style={{ width: `${pct}%` }} />
         </div>
       </div>
     );

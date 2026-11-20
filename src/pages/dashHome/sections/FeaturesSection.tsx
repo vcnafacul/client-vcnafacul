@@ -129,7 +129,7 @@ export default function FeaturesSection() {
         <label className="flex flex-col gap-1">
           <span className="text-body font-semibold">Título da seção</span>
           <input
-            className="border rounded px-2 py-1"
+            className="border rounded-sm px-2 py-1"
             value={sectionTitle}
             onChange={(e) => setSectionTitle(e.target.value)}
           />
@@ -137,7 +137,7 @@ export default function FeaturesSection() {
         <label className="flex flex-col gap-1">
           <span className="text-body font-semibold">Descrição da seção</span>
           <textarea
-            className="border rounded px-2 py-1"
+            className="border rounded-sm px-2 py-1"
             rows={2}
             value={sectionDescription}
             onChange={(e) => setSectionDescription(e.target.value)}

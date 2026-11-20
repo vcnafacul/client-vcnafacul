@@ -233,7 +233,7 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
                       setHasUserInteracted(true);
                       setShowAllQuestions(e.target.checked);
                     }}
-                    className="rounded"
+                    className="rounded-sm"
                   />
                   <span className="font-medium">
                     Mostrar todas as perguntas
@@ -256,7 +256,7 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
                             .map((q) => q.questionId);
                           setSelectedQuestions(allQuestionIds);
                         }}
-                        className="text-caption px-2 py-1 bg-info-muted text-info rounded hover:bg-info-muted transition-colors"
+                        className="text-caption px-2 py-1 bg-info-muted text-info rounded-sm hover:bg-info-muted transition-colors"
                       >
                         Selecionar Todas
                       </button>
@@ -265,7 +265,7 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
                           setHasUserInteracted(true);
                           setSelectedQuestions([]);
                         }}
-                        className="text-caption px-2 py-1 bg-muted text-foreground rounded hover:bg-muted transition-colors"
+                        className="text-caption px-2 py-1 bg-muted text-foreground rounded-sm hover:bg-muted transition-colors"
                       >
                         Limpar
                       </button>
@@ -277,7 +277,7 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
                       .map((question) => (
                         <label
                           key={question.questionId}
-                          className="flex items-start gap-3 p-2 hover:bg-muted rounded cursor-pointer"
+                          className="flex items-start gap-3 p-2 hover:bg-muted rounded-sm cursor-pointer"
                         >
                           <input
                             type="checkbox"
@@ -299,7 +299,7 @@ export default function RenderCharts({ data }: { data: StudentsInfo }) {
                                 );
                               }
                             }}
-                            className="rounded mt-0.5"
+                            className="rounded-sm mt-0.5"
                           />
                           <div className="flex-1">
                             <span className="text-body text-foreground">

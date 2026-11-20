@@ -61,7 +61,7 @@ function EditDisponibilidadeModal({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={onClose}
-      className="w-full max-w-md rounded-lg bg-white shadow-xl p-6"
+      className="w-full max-w-md rounded-lg bg-white shadow-lg p-6"
       style={{ zIndex: 60 }}
     >
       <h3 className="text-h3 font-semibold text-foreground mb-1">
@@ -79,7 +79,7 @@ function EditDisponibilidadeModal({
               type="datetime-local"
               value={de}
               onChange={(e) => setDe(e.target.value)}
-              className="border border-border rounded px-2 py-1 text-body w-full"
+              className="border border-border rounded-sm px-2 py-1 text-body w-full"
             />
             {de && (
               <button
@@ -103,7 +103,7 @@ function EditDisponibilidadeModal({
               type="datetime-local"
               value={ate}
               onChange={(e) => setAte(e.target.value)}
-              className="border border-border rounded px-2 py-1 text-body w-full"
+              className="border border-border rounded-sm px-2 py-1 text-body w-full"
             />
             {ate && (
               <button

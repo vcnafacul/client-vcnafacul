@@ -20,7 +20,7 @@ export function AccountHeader({
     : userAccount?.firstName;
 
   return (
-    <div className="flex px-6 py-4 w-full md:w-[300px] rounded-bl-3xl shadow-sm">
+    <div className="flex px-6 py-4 w-full md:w-[300px] rounded-bl-xl shadow-sm">
       <div className="flex flex-row md:flex-col gap-4">
         {userAccount?.collaborator ? (
           <ImageProfile

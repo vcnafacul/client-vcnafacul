@@ -79,7 +79,7 @@ export function FiltroGaveta({
       ref={raiz}
       data-slot="filtro-gaveta"
       data-aberta={aberta || undefined}
-      className={`absolute left-0 z-30 flex items-start ${className}`}
+      className={`absolute left-0 z-header flex items-start ${className}`}
       initial={{ x: -LARGURA_DA_GAVETA_PX }}
       animate={controles}
       drag="x"
@@ -113,7 +113,7 @@ export function FiltroGaveta({
         inert={!aberta}
         style={{ width: LARGURA_DA_GAVETA_PX }}
         className="
-          rounded-r-2xl border border-l-0 border-white/40 bg-white/70 p-3
+          rounded-r-xl border border-l-0 border-white/40 bg-white/70 p-3
           text-foreground shadow-lg backdrop-blur-xl backdrop-saturate-150
           [&_label]:!text-foreground
         "

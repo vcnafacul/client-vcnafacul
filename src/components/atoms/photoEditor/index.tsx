@@ -106,7 +106,7 @@ const PhotoEditor = ({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="bg-black/80 rounded-lg sm:rounded-xl p-2 sm:p-4 max-h-[100dvh] flex flex-col overflow-hidden shadow-2xl w-[95vw] sm:w-[min(720px,92vw)] max-w-none"
+      className="bg-black/80 rounded-lg sm:rounded-xl p-2 sm:p-4 max-h-[100dvh] flex flex-col overflow-hidden shadow-lg w-[95vw] sm:w-[min(720px,92vw)] max-w-none"
       closer={false}
     >
       {/* Chips de aspect ratio */}

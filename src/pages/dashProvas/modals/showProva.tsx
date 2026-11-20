@@ -323,7 +323,7 @@ const downloadFile = async (filename: string, fileType: string) => {
         no notebook alarga e os detalhes viram duas colunas (menos altura);
         em Full HD (≥1920px) alarga mais.
       */
-      className="w-full max-w-2xl lg:max-w-5xl min-[1920px]:max-w-7xl rounded-lg bg-white shadow-xl p-2"
+      className="w-full max-w-2xl lg:max-w-5xl min-[1920px]:max-w-7xl rounded-lg bg-white shadow-lg p-2"
     >
       <div className="p-3 sm:p-6">
         {/* Header */}

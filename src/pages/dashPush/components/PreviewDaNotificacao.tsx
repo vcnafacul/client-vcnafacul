@@ -11,7 +11,7 @@ export function PreviewDaNotificacao({
   return (
     <div
       aria-label="Pré-visualização da notificação"
-      className="flex gap-3 rounded-2xl bg-primary p-3 text-primary-foreground shadow-lg"
+      className="flex gap-3 rounded-xl bg-primary p-3 text-primary-foreground shadow-lg"
     >
       <Logo
         aria-hidden

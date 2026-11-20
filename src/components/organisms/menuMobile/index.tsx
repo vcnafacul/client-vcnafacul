@@ -90,7 +90,7 @@ export default function MenuMobile({
       role="dialog"
       aria-modal="true"
       aria-label="Menu"
-      className="fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-white animate-in fade-in duration-200 md:hidden print:hidden"
+      className="fixed inset-0 z-overlay flex flex-col overflow-y-auto bg-white animate-in fade-in duration-200 md:hidden print:hidden"
     >
       {/* Mesma altura do header: abrir e fechar não "pula" o logo. */}
       <div className="flex h-[76px] shrink-0 items-center justify-between px-4">
@@ -175,7 +175,7 @@ export default function MenuMobile({
               target="_blank"
               rel="noopener noreferrer"
               onClick={onClose}
-              className="flex flex-col gap-3 rounded-2xl bg-page p-4 text-body font-semibold text-foreground transition-colors hover:bg-muted"
+              className="flex flex-col gap-3 rounded-xl bg-page p-4 text-body font-semibold text-foreground transition-colors hover:bg-muted"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-primary shadow-sm">
                 <Bug className="h-4 w-4" />
@@ -187,7 +187,7 @@ export default function MenuMobile({
               target="_blank"
               rel="noopener noreferrer"
               onClick={onClose}
-              className="flex flex-col gap-3 rounded-2xl bg-page p-4 text-body font-semibold text-foreground transition-colors hover:bg-muted"
+              className="flex flex-col gap-3 rounded-xl bg-page p-4 text-body font-semibold text-foreground transition-colors hover:bg-muted"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-success shadow-sm">
                 <Lightbulb className="h-4 w-4" />

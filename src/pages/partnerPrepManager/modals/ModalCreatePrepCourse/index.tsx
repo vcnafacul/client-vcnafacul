@@ -295,7 +295,7 @@ export const ModalCreatePrepCourse = ({
 
             {/* Dropdown de resultados */}
             {showGeoDropdown && geoSearchResults.length > 0 && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
+              <div className="absolute z-raised w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
                 {geoSearchResults.map((geo) => (
                   <div
                     key={geo.id}
@@ -342,7 +342,7 @@ export const ModalCreatePrepCourse = ({
 
             {/* Dropdown de resultados */}
             {showDropdown && searchResults.length > 0 && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
+              <div className="absolute z-raised w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
                 {searchResults.map((user) => (
                   <div
                     key={user.id}

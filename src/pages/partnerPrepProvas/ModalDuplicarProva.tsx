@@ -46,7 +46,7 @@ export function ModalDuplicarProva({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose}
-      className="w-full max-w-lg rounded-lg bg-white shadow-xl p-2"
+      className="w-full max-w-lg rounded-lg bg-white shadow-lg p-2"
     >
       <form onSubmit={duplicar} className="p-6 space-y-4">
         <h2 className="text-h3 font-semibold text-foreground">Duplicar prova</h2>

@@ -56,7 +56,7 @@ function ModalTabTemplateQuestion({
         : undefined;
 
   return (
-    <div className="fixed top-0 left-0 z-50 bg-black/50 w-screen h-screen flex justify-center items-center overflow-y-auto scrollbar-hide">
+    <div className="fixed top-0 left-0 z-overlay bg-black/50 w-screen h-screen flex justify-center items-center overflow-y-auto scrollbar-hide">
       <div className="w-full h-full flex justify-center items-center p-2 sm:p-4">
         {/* Key força re-montagem quando as tabs mudam (ex: de loading para tabs reais) */}
         <Tabs
@@ -135,10 +135,10 @@ function ModalContent({
   aviso?: React.ReactNode;
 }) {
   return (
-    <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded flex flex-col relative">
+    <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded-sm flex flex-col relative">
       {/* Botão de fechar fixado no topo */}
       {onClose && (
-        <div className="sticky top-0 bg-white z-20">
+        <div className="sticky top-0 bg-white z-sticky">
           <div className="flex items-center justify-end gap-2 p-2">
             {/* ⚠️ `mr-auto`: a trilha à esquerda, o fechar no canto de sempre. */}
             {cabecalho && <div className="mr-auto min-w-0">{cabecalho}</div>}
@@ -146,7 +146,7 @@ function ModalContent({
               type="button"
               aria-label="Fechar"
               onClick={onClose}
-              className="shrink-0 rounded text-muted-foreground hover:text-foreground transition"
+              className="shrink-0 rounded-sm text-muted-foreground hover:text-foreground transition"
             >
               <IoMdClose className="w-6 h-6" />
             </button>
@@ -160,7 +160,7 @@ function ModalContent({
 
       {/* Footer fixado no final */}
       {footer && (
-        <div className="sticky bottom-0 bg-white z-20 border-t">
+        <div className="sticky bottom-0 bg-white z-sticky border-t">
           {footer}
         </div>
       )}

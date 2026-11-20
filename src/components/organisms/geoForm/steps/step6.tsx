@@ -8,7 +8,7 @@ interface Step6GeoProps extends StepProps {
 
 function Step6Geo({ title, subtitle, reset }: Step6GeoProps){
   return (
-    <div className="my-10 z-20 flex flex-col h-screen max-w-xl">
+    <div className="my-10 z-sticky flex flex-col h-screen max-w-xl">
       <Text size="secondary">{title}</Text>
       <Text className="text-wrap mx-10" size="tertiary">{subtitle}</Text>
       <Button onClick={reset} >Cadastre um novo cursinho</Button>

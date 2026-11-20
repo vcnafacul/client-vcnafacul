@@ -137,8 +137,8 @@ export function Details({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex justify-center items-center">
-        <div className="w-full h-full bg-black/60 z-50 flex justify-center items-center md:py-4">
+      <div className="fixed inset-0 z-overlay flex justify-center items-center">
+        <div className="w-full h-full bg-black/60 z-overlay flex justify-center items-center md:py-4">
           <Tabs defaultValue="details" className="w-11/12 h-[80vh]">
             <TabsList
               className={`grid w-full grid-cols-${cols}`}
@@ -215,9 +215,9 @@ function ModalContent({
   onClose: () => void;
 }) {
   return (
-    <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded pb-2 px-2 flex flex-col gap-4 relative border-8 border-white">
+    <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded-sm pb-2 px-2 flex flex-col gap-4 relative border-8 border-white">
       {/* Botão de fechar fixado no topo */}
-      <div className="sticky top-0 bg-white z-20 flex items-center justify-end p-2">
+      <div className="sticky top-0 bg-white z-sticky flex items-center justify-end p-2">
         <IoMdClose
           className="w-5 h-5 cursor-pointer text-muted-foreground hover:text-foreground transition"
           onClick={onClose}
@@ -256,7 +256,7 @@ function Field({ label, value }: { label: string; value: string }) {
     <div className="flex flex-col gap-1 px-4">
       <span className="text-caption font-bold text-foreground">{label}</span>
       <div
-        className={`text-body font-medium text-foreground bg-muted rounded px-3 py-2 ${
+        className={`text-body font-medium text-foreground bg-muted rounded-sm px-3 py-2 ${
           value ? "" : "text-muted-foreground italic"
         }`}
       >

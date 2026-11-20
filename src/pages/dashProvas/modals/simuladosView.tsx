@@ -388,7 +388,7 @@ function SimuladosView({
               <div
                 key={i}
                 className={cn(
-                  "h-10 animate-pulse rounded",
+                  "h-10 animate-pulse rounded-sm",
                   dashV2.progress.track,
                 )}
               />

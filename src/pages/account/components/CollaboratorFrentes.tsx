@@ -71,8 +71,8 @@ export function CollaboratorFrentes({
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <div className="h-4 bg-muted rounded animate-pulse"></div>
-        <div className="h-20 bg-muted rounded animate-pulse"></div>
+        <div className="h-4 bg-muted rounded-sm animate-pulse"></div>
+        <div className="h-20 bg-muted rounded-sm animate-pulse"></div>
       </div>
     );
   }
@@ -105,10 +105,10 @@ export function CollaboratorFrentes({
           {showDropdown && filteredFrentes.length > 0 && (
             <>
               <div
-                className="fixed inset-0 z-10"
+                className="fixed inset-0 z-raised"
                 onClick={() => setShowDropdown(false)}
               />
-              <div className="absolute z-20 w-full mt-1 bg-white border border-border rounded-lg shadow-lg max-h-80 overflow-y-auto overflow-x-hidden">
+              <div className="absolute z-sticky w-full mt-1 bg-white border border-border rounded-lg shadow-lg max-h-80 overflow-y-auto overflow-x-hidden">
                 {filteredFrentes.map((frente) => (
                   <button
                     key={frente.id}
@@ -129,10 +129,10 @@ export function CollaboratorFrentes({
           {showDropdown && searchTerm && filteredFrentes.length === 0 && (
             <>
               <div
-                className="fixed inset-0 z-10"
+                className="fixed inset-0 z-raised"
                 onClick={() => setShowDropdown(false)}
               />
-              <div className="absolute z-20 w-full mt-1 bg-white border border-border rounded-lg shadow-lg p-4">
+              <div className="absolute z-sticky w-full mt-1 bg-white border border-border rounded-lg shadow-lg p-4">
                 <p className="text-body text-muted-foreground">
                   Nenhuma frente encontrada com "{searchTerm}"
                 </p>
@@ -159,7 +159,7 @@ export function CollaboratorFrentes({
                 <button
                   type="button"
                   onClick={() => handleRemove(frente.id)}
-                  className="ml-1 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded"
+                  className="ml-1 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
                   aria-label={`Remover ${frente.nome}`}
                 >
                   <X className="h-3 w-3" />

@@ -278,7 +278,7 @@ function GeoSearch() {
             aria-hidden
             className="pointer-events-none absolute -left-10 -top-6 h-24 w-24 rotate-180"
           />
-          <div className="relative z-10 flex flex-col gap-6 px-4 pb-8 pt-14 sm:px-8 md:min-h-full md:gap-4 md:px-12 md:pb-6">
+          <div className="relative z-raised flex flex-col gap-6 px-4 pb-8 pt-14 sm:px-8 md:min-h-full md:gap-4 md:px-12 md:pb-6">
             <header className="space-y-2">
               <h1
                 id="localiza-titulo"
@@ -317,7 +317,7 @@ function GeoSearch() {
               data-destaque={semResultado || undefined}
               className={`space-y-2 border-t pt-6 transition md:flex md:items-center md:justify-between md:gap-4 md:space-y-0 md:pt-4 ${
                 semResultado
-                  ? "-mx-4 rounded-2xl border-t-0 bg-cta/10 p-4 ring-2 ring-primary"
+                  ? "-mx-4 rounded-xl border-t-0 bg-cta/10 p-4 ring-2 ring-primary"
                   : ""
               }`}
             >
@@ -346,7 +346,7 @@ function GeoSearch() {
           {/* 07: card do cursinho */}
           <div
             data-slot="busca"
-            className="absolute left-14 right-3 top-3 z-[500] md:left-1/2 md:right-auto md:top-6 md:w-[min(28rem,80%)] md:-translate-x-1/2"
+            className="absolute left-14 right-3 top-3 z-raised md:left-1/2 md:right-auto md:top-6 md:w-[min(28rem,80%)] md:-translate-x-1/2"
           >
             <BuscaCursinhos valor={texto} onMudar={setTexto} />
           </div>
@@ -388,7 +388,7 @@ function GeoSearch() {
               // link levaria para esta mesma página.
               // Altura relativa ao mapa (no celular ele tem só 45vh), sem
               // cobrir a busca no topo.
-              className="left-3 right-3 bottom-3 z-[600] max-h-[calc(100%-5.5rem)] md:left-auto md:right-6 md:bottom-6 md:w-[420px] md:max-h-[calc(100%-8rem)]"
+              className="left-3 right-3 bottom-3 z-raised max-h-[calc(100%-5.5rem)] md:left-auto md:right-6 md:bottom-6 md:w-[420px] md:max-h-[calc(100%-8rem)]"
               acoes={
                 <div data-slot="confirmacao-mapa" className="flex items-center">
                   {escolhido?.type === TypeMarker.geo &&

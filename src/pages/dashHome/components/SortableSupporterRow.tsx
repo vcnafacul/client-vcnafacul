@@ -35,7 +35,7 @@ export default function SortableSupporterRow({
       style={style}
       // flex-wrap: no celular as ações descem para a linha de baixo (as três
       // em texto, ao lado do logo, deixavam o nome sem espaço).
-      className={`flex flex-wrap items-center gap-3 p-3 border rounded bg-white${!supporter.active ? " opacity-50" : ""}`}
+      className={`flex flex-wrap items-center gap-3 p-3 border rounded-sm bg-white${!supporter.active ? " opacity-50" : ""}`}
     >
       <button
         type="button"
@@ -50,16 +50,16 @@ export default function SortableSupporterRow({
         <img
           src={homeContentFile(supporter.logoUrl)}
           alt={supporter.name}
-          className="w-12 h-12 object-contain rounded bg-white"
+          className="w-12 h-12 object-contain rounded-sm bg-white"
         />
       ) : (
-        <div className="w-12 h-12 rounded bg-muted" />
+        <div className="w-12 h-12 rounded-sm bg-muted" />
       )}
       <div className="flex-1 min-w-0 flex flex-col">
         <div className="flex items-center gap-2">
           <span className="font-medium truncate">{supporter.name}</span>
           {!supporter.active && (
-            <span className="text-caption bg-muted text-muted-foreground px-1.5 py-0.5 rounded">
+            <span className="text-caption bg-muted text-muted-foreground px-1.5 py-0.5 rounded-sm">
               inativo
             </span>
           )}

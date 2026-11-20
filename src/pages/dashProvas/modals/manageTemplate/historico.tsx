@@ -183,7 +183,7 @@ function Historico({
                 <p className="font-semibold text-foreground">
                   v{versao.versao}
                   {versao.versao === versaoNoAr && (
-                    <span className="ml-2 rounded bg-success-muted px-2 py-0.5 text-caption font-medium text-success">
+                    <span className="ml-2 rounded-sm bg-success-muted px-2 py-0.5 text-caption font-medium text-success">
                       no ar
                     </span>
                   )}

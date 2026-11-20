@@ -16,7 +16,7 @@ export function TemaSemana() {
   if (error || (!isLoading && !theme)) return null;
 
   return (
-    <section className="flex flex-col rounded-2xl bg-primary p-5 text-primary-foreground sm:p-6">
+    <section className="flex flex-col rounded-xl bg-primary p-5 text-primary-foreground sm:p-6">
       <div className="flex items-center gap-2 text-caption font-medium uppercase tracking-wide text-primary-foreground/80">
         <PenTool className="h-4 w-4" aria-hidden />
         Tema da semana

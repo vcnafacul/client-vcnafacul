@@ -47,7 +47,7 @@ export function AssetImage({
 
   if (loading) {
     return (
-      <span className="inline-block w-32 h-20 bg-muted animate-pulse rounded" />
+      <span className="inline-block w-32 h-20 bg-muted animate-pulse rounded-sm" />
     );
   }
 

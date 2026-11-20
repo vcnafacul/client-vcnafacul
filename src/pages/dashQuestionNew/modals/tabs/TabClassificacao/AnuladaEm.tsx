@@ -52,7 +52,7 @@ export function AnuladaEm({
               {a.numero != null && `, Q${a.numero}`} · {rotuloDoMotivo(a.motivo)} ·{" "}
               {new Date(a.em).toLocaleDateString("pt-BR")}
               {a.provaId === provaEmFoco && (
-                <span className="ml-2 rounded bg-card px-1.5 py-0.5 text-caption font-semibold text-destructive">
+                <span className="ml-2 rounded-sm bg-card px-1.5 py-0.5 text-caption font-semibold text-destructive">
                   nesta prova
                 </span>
               )}

@@ -186,7 +186,7 @@ export function PeriodJustificationList({
                 type="button"
                 onClick={() => fetchPage(page - 1)}
                 disabled={page <= 1 || loading}
-                className="px-3 py-1 text-caption rounded border disabled:opacity-40 hover:bg-muted"
+                className="px-3 py-1 text-caption rounded-sm border disabled:opacity-40 hover:bg-muted"
               >
                 Anterior
               </button>
@@ -197,7 +197,7 @@ export function PeriodJustificationList({
                 type="button"
                 onClick={() => fetchPage(page + 1)}
                 disabled={page >= totalPages || loading}
-                className="px-3 py-1 text-caption rounded border disabled:opacity-40 hover:bg-muted"
+                className="px-3 py-1 text-caption rounded-sm border disabled:opacity-40 hover:bg-muted"
               >
                 Próxima
               </button>

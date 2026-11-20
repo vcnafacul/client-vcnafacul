@@ -81,9 +81,9 @@ export function ModalAvisoAnulada({
       role="dialog"
       aria-modal="true"
       aria-label={TITULO_AVISO_ANULADA}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 h-dvh"
+      className="fixed inset-0 z-overlay flex items-center justify-center bg-black/40 p-4 h-dvh"
     >
-      <div className="w-full max-w-lg max-h-[calc(100dvh-2rem)] rounded-lg bg-white shadow-xl flex flex-col">
+      <div className="w-full max-w-lg max-h-[calc(100dvh-2rem)] rounded-lg bg-white shadow-lg flex flex-col">
         <div className="shrink-0 px-4 pt-4 flex items-start gap-2">
           <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" aria-hidden />
           <h2 className="text-h3 font-semibold">{tituloDoAviso(anulacoes.length)}</h2>

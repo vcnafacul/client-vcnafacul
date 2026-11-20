@@ -136,7 +136,7 @@ export function PreviewDaQuestao({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={onClose}
-      className="w-full max-w-3xl rounded-lg bg-white p-4 shadow-xl"
+      className="w-full max-w-3xl rounded-lg bg-white p-4 shadow-lg"
     >
       <div className="flex flex-col gap-4" data-testid="preview-da-questao">
         <header className="flex flex-col gap-1">

@@ -83,7 +83,7 @@ function renderDashboard() {
 }
 
 function kpi(label: string) {
-  return screen.getByText(label).closest('a, div.rounded-2xl') as HTMLElement;
+  return screen.getByText(label).closest('a, div.rounded-xl') as HTMLElement;
 }
 
 beforeEach(() => {

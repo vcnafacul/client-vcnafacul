@@ -54,8 +54,8 @@ function NewsPage() {
         <div className="relative pt-6 sm:pt-8 pb-12 sm:pb-16 min-h-[500px] flex items-center justify-center">
           <div className="container mx-auto px-3 sm:px-4 text-center">
             <div className="bg-white rounded-lg shadow-sm border border-border p-8 sm:p-12 max-w-lg mx-auto animate-pulse">
-              <div className="h-6 bg-muted rounded w-3/4 mx-auto mb-4" />
-              <div className="h-4 bg-muted rounded w-full" />
+              <div className="h-6 bg-muted rounded-sm w-3/4 mx-auto mb-4" />
+              <div className="h-4 bg-muted rounded-sm w-full" />
             </div>
           </div>
         </div>

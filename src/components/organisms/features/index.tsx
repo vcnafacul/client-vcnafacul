@@ -58,7 +58,7 @@ function Features() {
           activeTab={activeTab}
         />
         <img
-          className="object-cover object-center w-full max-w-[653px] aspect-video rounded
+          className="object-cover object-center w-full max-w-[653px] aspect-video rounded-sm
           md:text-center md:my-0 mx-10 transition duration-500 ease-linear"
           src={feature?.image as string}
         />

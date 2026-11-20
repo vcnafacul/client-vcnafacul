@@ -41,7 +41,7 @@ export function GeoCardList({
         className="grid gap-3 sm:grid-cols-2"
       >
         {Array.from({ length: 4 }, (_, i) => (
-          <Skeleton key={i} className="h-28 rounded-2xl" />
+          <Skeleton key={i} className="h-28 rounded-xl" />
         ))}
       </div>
     );

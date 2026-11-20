@@ -41,7 +41,7 @@ type Props = {
 /** Os últimos processos seletivos, sem testes (tickets/044, card 08, D7). */
 export function UltimosProcessos({ processos, carregando, mostrarCursinho }: Props) {
   return (
-    <div className="shadow-md bg-white p-3 rounded">
+    <div className="shadow-md bg-white p-3 rounded-sm">
       <h3 className="font-semibold text-foreground mb-2">
         Últimos processos seletivos
       </h3>
@@ -60,7 +60,7 @@ export function UltimosProcessos({ processos, carregando, mostrarCursinho }: Pro
           {/* Celular (abaixo de sm = 768px): um card por processo, sem scroll lateral. */}
           <ul className="space-y-2 sm:hidden">
             {processos.map((p) => (
-              <li key={p.id} className="rounded border border-border p-3">
+              <li key={p.id} className="rounded-sm border border-border p-3">
                 <div className="flex items-start justify-between gap-2">
                   <p className="font-medium break-words min-w-0">{p.nome}</p>
                   <Situacao situacao={p.situacao} />

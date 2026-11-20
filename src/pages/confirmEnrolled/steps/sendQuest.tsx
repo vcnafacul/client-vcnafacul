@@ -130,7 +130,7 @@ export default function SendQuest({
                 {selectedCursos.map((curso, index) => (
                   <li
                     key={index}
-                    className="flex items-center justify-between p-1 bg-page shadow-md rounded"
+                    className="flex items-center justify-between p-1 bg-page shadow-md rounded-sm"
                   >
                     <span className="text-foreground">{curso}</span>
                     <IoCloseSharp
@@ -151,7 +151,7 @@ export default function SendQuest({
       <div className="w-full flex justify-end gap-4">
         {!photoDone && (
           <button
-            className="mt-8 px-6 py-3 text-primary-foreground rounded font-medium disabled:bg-muted disabled:text-muted-foreground bg-primary w-60"
+            className="mt-8 px-6 py-3 text-primary-foreground rounded-sm font-medium disabled:bg-muted disabled:text-muted-foreground bg-primary w-60"
             onClick={handleBack}
             disabled={processing}
           >
@@ -159,7 +159,7 @@ export default function SendQuest({
           </button>
         )}
         <button
-          className="mt-8 px-6 py-3  text-primary-foreground rounded font-medium disabled:bg-muted disabled:text-muted-foreground bg-primary w-60"
+          className="mt-8 px-6 py-3  text-primary-foreground rounded-sm font-medium disabled:bg-muted disabled:text-muted-foreground bg-primary w-60"
           onClick={handleSubmit}
           disabled={processing}
         >

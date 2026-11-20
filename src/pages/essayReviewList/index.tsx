@@ -234,7 +234,7 @@ export default function EssayReviewList({ mode }: Props) {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-3 py-1 h-10 sm:h-auto border rounded disabled:opacity-50"
+                className="px-3 py-1 h-10 sm:h-auto border rounded-sm disabled:opacity-50"
               >
                 Anterior
               </button>
@@ -244,7 +244,7 @@ export default function EssayReviewList({ mode }: Props) {
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1 h-10 sm:h-auto border rounded disabled:opacity-50"
+                className="px-3 py-1 h-10 sm:h-auto border rounded-sm disabled:opacity-50"
               >
                 Próximo
               </button>

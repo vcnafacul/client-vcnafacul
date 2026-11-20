@@ -260,7 +260,7 @@ function NewProva({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose!}
-      className="w-full max-w-3xl rounded-lg bg-white shadow-xl p-2"
+      className="w-full max-w-3xl rounded-lg bg-white shadow-lg p-2"
     >
       <div className="p-3 sm:p-6">
         <div className="mb-6">

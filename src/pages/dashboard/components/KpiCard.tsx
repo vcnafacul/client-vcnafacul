@@ -87,7 +87,7 @@ export function KpiCard({
           {info ? (
             <p className="mt-2 text-body font-medium text-muted-foreground">
               {label}{' '}
-              <span className="relative z-10 inline-flex align-middle">
+              <span className="relative z-raised inline-flex align-middle">
                 {info}
               </span>
             </p>
@@ -101,7 +101,7 @@ export function KpiCard({
   );
 
   const className =
-    'block rounded-2xl border border-border bg-white p-4 sm:p-5 shadow-[0_1px_2px_rgba(11,39,71,0.04)]';
+    'block rounded-xl border border-border bg-white p-4 sm:p-5';
 
   if (to && info && !isLoading && !error)
     return (
@@ -114,7 +114,7 @@ export function KpiCard({
         <Link
           to={to}
           aria-label={label}
-          className="absolute inset-0 rounded-2xl focus-visible:outline-none"
+          className="absolute inset-0 rounded-xl focus-visible:outline-none"
         />
         {body}
       </div>

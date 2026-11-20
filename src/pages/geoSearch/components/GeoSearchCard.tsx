@@ -22,7 +22,7 @@ export const GeoSearchCard = forwardRef<HTMLElement, Props>(
       <article
         ref={ref}
         data-geo-id={geo.id}
-        className={`relative h-full rounded-2xl border bg-white p-3 shadow-sm transition ${
+        className={`relative h-full rounded-xl border bg-white p-3 shadow-sm transition ${
           ativo ? "border-cta ring-2 ring-primary" : "border-border"
         }`}
       >

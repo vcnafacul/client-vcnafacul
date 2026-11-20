@@ -72,7 +72,7 @@ export default function ThemeForm({ initial, onSave, onCancel }: ThemeFormProps)
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-overlay p-4">
       <form
         onSubmit={handleSubmit}
         className="bg-white rounded-lg p-4 sm:p-6 max-w-2xl w-full max-h-[90vh] supports-[height:100dvh]:max-h-[90dvh] overflow-y-auto space-y-4"

@@ -63,7 +63,7 @@ export function MenuDoPerfil({
   return (
     <>
       {/* celular: identidade numa linha + abas roláveis grudadas */}
-      <div className="sticky top-0 z-10 -mx-4 border-b border-border bg-white px-4 pb-2 pt-3 sm:hidden">
+      <div className="sticky top-0 z-raised -mx-4 border-b border-border bg-white px-4 pb-2 pt-3 sm:hidden">
         {identidade}
         <div
           role="tablist"

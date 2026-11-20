@@ -179,7 +179,7 @@ export function NewAttendanceRecordModal({
         Edge 70, Oppo A58) o Confirmar ficava para fora da caixa. Só a lista
         rola; cabeçalho e rodapé ficam sempre visíveis.
       */
-      className="bg-white rounded-xl shadow-xl w-[calc(100vw-1rem)] sm:w-[640px] h-[calc(100dvh-2rem)] sm:h-[min(760px,calc(100dvh-4rem))] flex flex-col overflow-hidden"
+      className="bg-white rounded-xl shadow-lg w-[calc(100vw-1rem)] sm:w-[640px] h-[calc(100dvh-2rem)] sm:h-[min(760px,calc(100dvh-4rem))] flex flex-col overflow-hidden"
     >
       {/* Cabeçalho: título, data e período */}
       <div className="shrink-0 px-4 pt-4 pb-3 sm:px-6 sm:pt-6 border-b border-border">
@@ -282,7 +282,7 @@ export function NewAttendanceRecordModal({
                   key={i}
                   className="py-3 border-b border-border flex items-center gap-3 animate-pulse"
                 >
-                  <div className="h-4 flex-1 rounded bg-muted" />
+                  <div className="h-4 flex-1 rounded-sm bg-muted" />
                   <div className="h-9 w-40 rounded-full bg-muted" />
                 </li>
               ))}

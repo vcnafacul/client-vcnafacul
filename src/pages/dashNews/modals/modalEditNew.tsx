@@ -301,7 +301,7 @@ function ModalEditNew({
             {hasPreview && (
               <div className="px-4 sm:px-6 py-4 shrink-0">
                 <p className="text-body text-muted-foreground mb-2 font-medium">Preview</p>
-                <div className="min-h-[200px] max-h-[45vh] overflow-y-auto border rounded-lg shadow-inner p-4 bg-page">
+                <div className="min-h-[200px] max-h-[45vh] overflow-y-auto border rounded-lg p-4 bg-page">
                   {news?.fileName ? (
                     <NewContent fileKey={news.fileName} />
                   ) : (

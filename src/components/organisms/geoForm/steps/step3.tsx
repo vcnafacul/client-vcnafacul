@@ -198,7 +198,7 @@ function Step3Geo({
   };
 
   return (
-    <div className="my-10 z-20">
+    <div className="my-10 z-sticky">
       <Text size="secondary">{title}</Text>
       <Text className="text-wrap mx-10" size="tertiary">
         {subtitle}

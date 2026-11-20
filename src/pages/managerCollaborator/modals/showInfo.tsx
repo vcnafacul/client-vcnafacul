@@ -223,7 +223,7 @@ export function ShowInfo({
                 )}
               </div>
             ) : null}
-            <div className="bg-primary p-2 rounded shadow-md">
+            <div className="bg-primary p-2 rounded-sm shadow-md">
               <PropValue
                 prop="Função"
                 value={collaborator.role.name}
@@ -288,7 +288,7 @@ export function ShowInfo({
               {loading}
             </Button>
           </div>
-          <div className="col-span-1 sm:col-span-2 bg-muted p-2 rounded shadow-md">
+          <div className="col-span-1 sm:col-span-2 bg-muted p-2 rounded-sm shadow-md">
             <PropValue
               prop="Último Acesso"
               value={formatDate(collaborator.lastAccess?.toString(), "dd/MM/yyyy HH:mm")}

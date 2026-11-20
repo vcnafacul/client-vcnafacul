@@ -127,7 +127,7 @@ export function deriveColumns<T>(
             <img
               src={card.logo}
               alt=""
-              className="h-6 w-6 shrink-0 rounded object-contain"
+              className="h-6 w-6 shrink-0 rounded-sm object-contain"
             />
             <span className="truncate">{card.title}</span>
           </span>

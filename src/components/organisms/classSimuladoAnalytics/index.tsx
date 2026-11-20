@@ -274,7 +274,7 @@ export function ClassSimuladoAnalytics({
                       setView("materia");
                       setViewTouched(true);
                     }}
-                    className={`rounded-l border px-3 py-1 ${
+                    className={`rounded-l-sm border px-3 py-1 ${
                       view === "materia"
                         ? "bg-info-muted border-info text-info"
                         : "bg-white border-border text-muted-foreground hover:bg-page"
@@ -289,7 +289,7 @@ export function ClassSimuladoAnalytics({
                       setView("frente");
                       setViewTouched(true);
                     }}
-                    className={`-ml-px rounded-r border px-3 py-1 ${
+                    className={`-ml-px rounded-r-sm border px-3 py-1 ${
                       view === "frente"
                         ? "bg-info-muted border-info text-info"
                         : "bg-white border-border text-muted-foreground hover:bg-page"

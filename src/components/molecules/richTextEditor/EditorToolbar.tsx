@@ -64,7 +64,7 @@ export function EditorToolbar({
   }, [editor]);
 
   const btnClass = (active: boolean) =>
-    `p-1.5 rounded hover:bg-muted transition-colors ${
+    `p-1.5 rounded-sm hover:bg-muted transition-colors ${
       active ? "bg-muted text-primary" : "text-muted-foreground"
     }`;
 

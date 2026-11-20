@@ -55,7 +55,7 @@ export function CabecalhoDoMonitoramento({
       {cursinho && (
         <div
           role="status"
-          className="mt-3 flex flex-col gap-2 rounded border border-border bg-white px-3 py-2 text-body sm:flex-row sm:items-center sm:justify-between"
+          className="mt-3 flex flex-col gap-2 rounded-sm border border-border bg-white px-3 py-2 text-body sm:flex-row sm:items-center sm:justify-between"
         >
           <p>
             Mostrando só <strong>{cursinho.name}</strong>. Fora do recorte:{" "}

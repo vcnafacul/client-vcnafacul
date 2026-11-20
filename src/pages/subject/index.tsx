@@ -78,7 +78,7 @@ function Subject() {
                 <div
                   key={index}
                   onClick={() => setContentSelected(content)}
-                  className={`cursor-pointer px-4 py-2 rounded transition-all ${
+                  className={`cursor-pointer px-4 py-2 rounded-sm transition-all ${
                     (content.id ?? (content as { _id?: string })._id) ===
                     (contentSelected?.id ?? (contentSelected as { _id?: string } | undefined)?._id)
                       ? "bg-muted font-semibold"

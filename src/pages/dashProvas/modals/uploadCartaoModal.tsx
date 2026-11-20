@@ -93,7 +93,7 @@ export default function UploadCartaoModal({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={fechar}
-      className="w-full max-w-lg rounded-lg bg-white shadow-xl p-2"
+      className="w-full max-w-lg rounded-lg bg-white shadow-lg p-2"
     >
       <div className="p-6 space-y-4">
         <h2 className="text-h3 font-semibold">Enviar cartão de resposta</h2>
@@ -119,7 +119,7 @@ export default function UploadCartaoModal({
               placeholder={TEXTO_PLACEHOLDER}
               data-testid="busca-estudante"
               aria-label={TEXTO_PLACEHOLDER}
-              className="w-full border rounded px-3 py-2"
+              className="w-full border rounded-sm px-3 py-2"
             />
 
             {/*
@@ -144,7 +144,7 @@ export default function UploadCartaoModal({
             {estudantes.length > 0 && (
               <ul
                 data-testid="sugestoes-estudante"
-                className="max-h-64 overflow-auto divide-y rounded border"
+                className="max-h-64 overflow-auto divide-y rounded-sm border"
               >
                 {estudantes.map((e) => (
                   <li key={e.userId}>
@@ -172,7 +172,7 @@ export default function UploadCartaoModal({
 
         {escolhido && (
           <div className="space-y-3">
-            <div className="flex items-start justify-between gap-3 rounded border p-3">
+            <div className="flex items-start justify-between gap-3 rounded-sm border p-3">
               <div>
                 <p className="font-medium">{escolhido.nome}</p>
                 <p className="text-body text-muted-foreground">
@@ -211,7 +211,7 @@ export default function UploadCartaoModal({
               <AlertDialogTrigger asChild>
                 <button
                   disabled={!file || enviando}
-                  className="w-full px-4 py-2 bg-success text-success-foreground rounded disabled:opacity-50"
+                  className="w-full px-4 py-2 bg-success text-success-foreground rounded-sm disabled:opacity-50"
                 >
                   {enviando ? "Enviando..." : "Enviar cartão"}
                 </button>

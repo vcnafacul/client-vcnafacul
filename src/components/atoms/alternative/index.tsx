@@ -3,7 +3,7 @@ import { VariantProps, tv } from "tailwind-variants";
 import { Alternativa } from "../../../types/question/alternative";
 
 const alternative = tv({
-    base: 'flex justify-center items-center text-h2 text-foreground font-bold border-none rounded w-12 h-12 cursor-pointer disabled:cursor-not-allowed',
+    base: 'flex justify-center items-center text-h2 text-foreground font-bold border-none rounded-sm w-12 h-12 cursor-pointer disabled:cursor-not-allowed',
     variants: {
         select: {
             true: 'bg-warning-muted',

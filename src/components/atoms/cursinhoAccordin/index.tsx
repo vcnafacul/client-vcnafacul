@@ -67,13 +67,13 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
     <>
       <div
         onClick={handleOpenDetailsModal}
-        className="group relative w-full bg-white border border-border rounded-2xl p-5 
+        className="group relative w-full bg-white border border-border rounded-xl p-5 
                    shadow-sm hover:shadow-lg hover:border-info 
                    transition-all duration-300 cursor-pointer overflow-hidden"
       >
         {/* Barra lateral colorida baseada no status */}
         <div
-          className={`absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl transition-all duration-300
+          className={`absolute left-0 top-0 bottom-0 w-1.5 rounded-l-xl transition-all duration-300
             ${
               monitoring.status === StatusApplication.Enrolled
                 ? "bg-success"

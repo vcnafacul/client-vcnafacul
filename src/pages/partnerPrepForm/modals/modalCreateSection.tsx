@@ -100,7 +100,7 @@ export function ModalCreateSection({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleCloseModal}
-      className="bg-white p-4 sm:p-6 rounded-lg shadow-xl max-w-md w-full"
+      className="bg-white p-4 sm:p-6 rounded-lg shadow-lg max-w-md w-full"
     >
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom>

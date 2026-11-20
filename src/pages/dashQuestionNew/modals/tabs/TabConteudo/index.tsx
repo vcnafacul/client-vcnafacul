@@ -63,12 +63,12 @@ export function TabConteudo({
           <div className="flex flex-wrap items-center gap-3">
             <CardTitle className="text-h3">Enunciado da Questão</CardTitle>
             {isEditing && (
-              <span className="text-body font-normal text-info bg-info-muted px-2 py-1 rounded">
+              <span className="text-body font-normal text-info bg-info-muted px-2 py-1 rounded-sm">
                 Modo Edição
               </span>
             )}
             {isDirty && !isEditing && (
-              <span className="text-body font-normal text-warning bg-warning-muted px-2 py-1 rounded">
+              <span className="text-body font-normal text-warning bg-warning-muted px-2 py-1 rounded-sm">
                 Alterações não salvas
               </span>
             )}

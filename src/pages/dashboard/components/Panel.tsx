@@ -27,7 +27,7 @@ export function Panel({
   return (
     <section
       className={cn(
-        'flex flex-col rounded-2xl border border-border bg-white p-5 shadow-[0_1px_2px_rgba(11,39,71,0.04)] sm:p-6',
+        'flex flex-col rounded-xl border border-border bg-white p-5 sm:p-6',
         className,
       )}
     >

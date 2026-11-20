@@ -97,7 +97,7 @@ export default function CancelEnrollmentModal({
           value={otherReason}
           onChange={(event) => setOtherReason(event.target.value)}
           placeholder="Descreva o motivo do cancelamento."
-          className="h-full min-h-[100px] w-full resize-none rounded border border-input p-2"
+          className="h-full min-h-[100px] w-full resize-none rounded-sm border border-input p-2"
         />
       )}
     </ModalConfirmCancel>

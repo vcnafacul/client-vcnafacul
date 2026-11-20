@@ -45,7 +45,7 @@ export function BannerNotificacoes() {
       <div
         role="region"
         aria-label="Notificações bloqueadas"
-        className="flex flex-col gap-3 rounded-2xl border border-cta/30 bg-cta/5 p-4 sm:flex-row sm:items-center"
+        className="flex flex-col gap-3 rounded-xl border border-cta/30 bg-cta/5 p-4 sm:flex-row sm:items-center"
       >
         <BellOff
           aria-hidden
@@ -91,7 +91,7 @@ export function BannerNotificacoes() {
     <div
       role="region"
       aria-label="Ativar notificações"
-      className="flex flex-col gap-3 rounded-2xl border border-cta/30 bg-cta/5 p-4 sm:flex-row sm:items-center"
+      className="flex flex-col gap-3 rounded-xl border border-cta/30 bg-cta/5 p-4 sm:flex-row sm:items-center"
     >
       <Bell
         aria-hidden

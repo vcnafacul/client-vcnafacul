@@ -30,7 +30,7 @@ export const CardDashComponent = forwardRef<HTMLDivElement, CardDashProps>(
       <div
         ref={ref}
         onClick={() => onClickCard(card.id)}
-        className={`relative w-72 truncate bg-white drop-shadow-xl shadow-xl p-2 cursor-pointer
+        className={`relative w-72 truncate bg-white drop-shadow-xl shadow-lg p-2 cursor-pointer
         border border-border border-t-0
         flex flex-col rounded-md hover:-translate-y-1 duration-300 ${card.className}`}
         {...props}

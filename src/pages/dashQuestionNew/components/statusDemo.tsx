@@ -100,7 +100,7 @@ export function StatusDemo() {
                 key={item.status}
                 className="relative overflow-hidden border-2 hover:shadow-lg transition-all"
               >
-                <div className="absolute -top-2 -right-2 z-10">
+                <div className="absolute -top-2 -right-2 z-raised">
                   <StatusBadge status={item.status} />
                 </div>
                 <CardHeader className="pt-6">

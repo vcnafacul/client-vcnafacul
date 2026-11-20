@@ -29,7 +29,7 @@ function ModalTemplate({
       — o botão Confirmar da chamada aparecia cortado (Oppo A58, Moto Edge 70).
     */
     <div
-      className="fixed inset-0 z-50 bg-black/65 h-screen supports-[height:100dvh]:h-dvh overflow-y-auto 
+      className="fixed inset-0 z-overlay bg-black/65 h-screen supports-[height:100dvh]:h-dvh overflow-y-auto 
         scrollbar-hide"
       {...props}
     >

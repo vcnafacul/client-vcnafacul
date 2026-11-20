@@ -26,7 +26,7 @@ export default function ModalConfirmCancel({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       {/* Sem a largura calculada o card encosta nas bordas no celular. */}
       <DialogContent
-        className={cn("w-[calc(100%-2rem)] max-w-xl rounded-2xl", className)}
+        className={cn("w-[calc(100%-2rem)] max-w-xl rounded-xl", className)}
       >
         {text && <h2 className="text-h3 font-bold">{text}</h2>}
 

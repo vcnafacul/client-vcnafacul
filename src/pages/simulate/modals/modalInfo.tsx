@@ -8,11 +8,11 @@ interface ModalInfoProps {
 
 function ModalInfo({ modal }: ModalInfoProps) {
   return (
-    // z-50 e margem: sem z-index o overlay podia ficar atrás do conteúdo, e a
+    // z-overlay e margem: sem z-index o overlay podia ficar atrás do conteúdo, e a
     // caixa encostava nas bordas do celular.
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-30 p-4">
+    <div className="fixed inset-0 z-overlay bg-black bg-opacity-30 p-4">
         <div className="flex justify-center items-center h-full">
-          <div className="bg-white p-5 sm:p-10 w-full max-w-[700px] rounded max-h-full overflow-y-auto">
+          <div className="bg-white p-5 sm:p-10 w-full max-w-[700px] rounded-sm max-h-full overflow-y-auto">
             <Text className="text-start">{modal.title}</Text>
             <Text size="tertiary" className="text-start">
               {modal.subTitle}

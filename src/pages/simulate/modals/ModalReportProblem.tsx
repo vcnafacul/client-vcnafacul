@@ -112,7 +112,7 @@ function ModalReportProblem({
       handleClose={handleClose!}
       className="bg-white p-4 rounded-md"
     >
-      <div className="bg-white max-w-5xl p-1 sm:p-10 rounded">
+      <div className="bg-white max-w-5xl p-1 sm:p-10 rounded-sm">
         <Text size="secondary" className="text-start">
           Ocorreu algum problema?
         </Text>

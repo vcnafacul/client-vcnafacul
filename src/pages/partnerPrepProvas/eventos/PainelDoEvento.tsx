@@ -160,7 +160,7 @@ export function PainelDoEvento({ token, evento, onVoltar }: Props) {
                 aria-label="Filtrar por prova"
                 value={filtro}
                 onChange={(e) => setFiltro(e.target.value)}
-                className="border rounded p-1 text-body w-full sm:w-auto max-w-full"
+                className="border rounded-sm p-1 text-body w-full sm:w-auto max-w-full"
               >
                 <option value="todas">Todas as provas</option>
                 {evento.provas.flatMap((p) => [

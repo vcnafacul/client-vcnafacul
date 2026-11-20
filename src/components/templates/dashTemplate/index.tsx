@@ -25,7 +25,7 @@ function DashTemplateContent({ hasMenu }: { hasMenu?: boolean }) {
       <div className="xl:mr-0 w-full overflow-y-scroll scrollbar-hide flex-1 min-w-0">
         <Outlet />
       </div>
-      <div className="z-20 h-[calc(100vh-theme(spacing.header))] absolute xl:relative xl:right-0 print:hidden">
+      <div className="z-sticky h-[calc(100vh-theme(spacing.header))] absolute xl:relative xl:right-0 print:hidden">
         {hasMenu && <SidebarDash />}
       </div>
     </div>

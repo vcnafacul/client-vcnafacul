@@ -11,7 +11,7 @@ function PrevNextSwiper({ className, fill } : PrevNextSwiperProps) {
     const arrowFill = fill === undefined ? 'fill-muted-foreground' : 'fill-white'
     const classNameArrow = `w-10 cursor-pointer ${arrowFill}`
     return (
-        <div className={`w-full flex justify-between pr-8 z-10 ${className}`}>
+        <div className={`w-full flex justify-between pr-8 z-raised ${className}`}>
             <Arrow onClick={() => { swiper.slidePrev() }} className={`rotate-180 ${classNameArrow}`} />
             <Arrow onClick={() => { swiper.slideNext() }} className={classNameArrow}/>
         </div>

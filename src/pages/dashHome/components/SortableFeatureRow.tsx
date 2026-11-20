@@ -31,7 +31,7 @@ export default function SortableFeatureRow({
     <div
       ref={setNodeRef}
       style={style}
-      className="flex flex-wrap items-center gap-3 p-3 border rounded bg-white"
+      className="flex flex-wrap items-center gap-3 p-3 border rounded-sm bg-white"
     >
       <button
         type="button"
@@ -46,10 +46,10 @@ export default function SortableFeatureRow({
         <img
           src={homeContentFile(feature.imageUrl)}
           alt={feature.title}
-          className="w-12 h-12 object-cover rounded"
+          className="w-12 h-12 object-cover rounded-sm"
         />
       ) : (
-        <div className="w-12 h-12 rounded bg-muted" />
+        <div className="w-12 h-12 rounded-sm bg-muted" />
       )}
       <span className="flex-1 min-w-0 break-words font-medium">
         {feature.title}

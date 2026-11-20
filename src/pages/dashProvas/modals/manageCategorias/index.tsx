@@ -141,7 +141,7 @@ function ManageCategorias({
       handleClose={handleClose}
       // No máximo 90% da altura da tela: com muitas categorias o modal crescia
       // para baixo sem fim. Coluna flex — o cabeçalho fica, só a lista rola.
-      className="flex max-h-[90dvh] w-full max-w-3xl flex-col overflow-hidden rounded-lg bg-white p-2 shadow-xl"
+      className="flex max-h-[90dvh] w-full max-w-3xl flex-col overflow-hidden rounded-lg bg-white p-2 shadow-lg"
     >
       {view === "lista" && (
         <div className="flex min-h-0 flex-1 flex-col p-6">

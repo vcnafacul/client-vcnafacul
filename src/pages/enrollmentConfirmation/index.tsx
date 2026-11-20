@@ -151,7 +151,7 @@ export default function EnrollmentConfirmation() {
   return (
     <div className="min-h-screen bg-page flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
-        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+        <div className="bg-white rounded-xl shadow-lg p-8 md:p-12">
           {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-muted rounded-full mb-4">

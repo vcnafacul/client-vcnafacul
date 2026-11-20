@@ -28,7 +28,7 @@ function Step2Geo({ title, subtitle, form, updateData, dataGeo
   }
 
   return (
-    <div className="my-10 z-20">
+    <div className="my-10 z-sticky">
       <Text size="secondary">{title}</Text>
       <Text className="text-wrap mx-10" size="tertiary">{subtitle}</Text>
       <form className="w-full max-w-lg mx-auto" onSubmit={handleSubmit(handleForm)}>

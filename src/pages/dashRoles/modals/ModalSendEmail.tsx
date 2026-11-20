@@ -169,7 +169,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleCloseModal}
-      className="bg-white rounded-lg p-4 sm:p-6 shadow-2xl w-full max-w-[51rem]"
+      className="bg-white rounded-lg p-4 sm:p-6 shadow-lg w-full max-w-[51rem]"
     >
       <div className="w-full">
         {/* Título */}

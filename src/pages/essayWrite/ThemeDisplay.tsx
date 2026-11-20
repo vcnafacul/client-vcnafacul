@@ -36,7 +36,7 @@ export default function ThemeDisplay({ theme }: ThemeDisplayProps) {
             </div>
           </div>
           {theme.instruction && (
-            <div className="bg-page p-3 rounded text-body">
+            <div className="bg-page p-3 rounded-sm text-body">
               <strong>Instrucao:</strong> {theme.instruction}
             </div>
           )}

@@ -49,13 +49,13 @@ export function MapInfoCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       className={`
-        absolute z-30
+        absolute z-header
         ${className}
         bg-white/90 backdrop-blur-xl backdrop-saturate-150 border border-white/40
-        rounded-2xl shadow-xl text-foreground overflow-y-auto
+        rounded-xl shadow-lg text-foreground overflow-y-auto
       `}
     >
-      <div className="absolute top-2 right-2 flex gap-1 z-10">
+      <div className="absolute top-2 right-2 flex gap-1 z-raised">
         {acoes}
         <button
           type="button"

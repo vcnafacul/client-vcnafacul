@@ -36,7 +36,7 @@ export function CartaoSemSimulado({
     <ModalTemplate
       isOpen
       handleClose={onClose}
-      className="w-full max-w-lg rounded-lg bg-white p-4 shadow-xl"
+      className="w-full max-w-lg rounded-lg bg-white p-4 shadow-lg"
     >
       <div className="flex flex-col gap-4">
         <header className="flex items-start justify-between gap-3">

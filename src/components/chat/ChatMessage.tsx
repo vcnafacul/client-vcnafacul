@@ -23,7 +23,7 @@ export function ChatMessage({ message, isOwn }: Props) {
       </span>
       <div
         className={cn(
-          "rounded-2xl px-3 py-2 text-body whitespace-pre-wrap break-words shadow-sm",
+          "rounded-xl px-3 py-2 text-body whitespace-pre-wrap break-words shadow-sm",
           isOwn
             ? "bg-primary text-primary-foreground rounded-br-sm"
             : "bg-page text-muted-foreground border border-border rounded-bl-sm",

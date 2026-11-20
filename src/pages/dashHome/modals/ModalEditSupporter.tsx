@@ -168,7 +168,7 @@ export default function ModalEditSupporter({
         <label className="flex flex-col gap-1">
           <span className="text-body font-semibold">Nome</span>
           <input
-            className="border rounded px-2 py-1"
+            className="border rounded-sm px-2 py-1"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Nome do apoiador"
@@ -177,7 +177,7 @@ export default function ModalEditSupporter({
         <label className="flex flex-col gap-1">
           <span className="text-body font-semibold">Link</span>
           <input
-            className="border rounded px-2 py-1"
+            className="border rounded-sm px-2 py-1"
             value={link}
             onChange={(e) => setLink(e.target.value)}
             placeholder="https://exemplo.com"
@@ -186,7 +186,7 @@ export default function ModalEditSupporter({
         <label className="flex flex-col gap-1">
           <span className="text-body font-semibold">Descrição (opcional)</span>
           <textarea
-            className="border rounded px-2 py-1 resize-none"
+            className="border rounded-sm px-2 py-1 resize-none"
             value={description}
             onChange={(e) => setDescription(e.target.value.slice(0, DESCRIPTION_MAX))}
             maxLength={DESCRIPTION_MAX}
@@ -214,7 +214,7 @@ export default function ModalEditSupporter({
             <img
               src={homeContentFile(supporter.logoUrl)}
               alt={supporter.name}
-              className="w-24 h-24 object-contain rounded bg-white"
+              className="w-24 h-24 object-contain rounded-sm bg-white"
             />
           )}
           {file && (

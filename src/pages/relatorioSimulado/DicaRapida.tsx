@@ -132,7 +132,7 @@ export function DicaRapida({
               // ⚠️ `fixed`: o portal o tira da tabela, e as coordenadas são de
               // viewport — é o que faz `overflow: hidden` de ancestral parar de
               // importar.
-              "pointer-events-none fixed z-50",
+              "pointer-events-none fixed z-popover",
               "rounded-md border px-3 py-2 text-caption font-normal shadow-lg",
               "print:hidden",
               dashV2.surface,

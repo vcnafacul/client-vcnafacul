@@ -14,7 +14,7 @@ export function ImpactCard({
   const formatted = value === null ? "—" : value.toLocaleString("pt-BR");
 
   return (
-    <div className="flex flex-col items-center gap-2 bg-white rounded-2xl shadow-md px-6 py-8 min-w-[160px] flex-1">
+    <div className="flex flex-col items-center gap-2 bg-white rounded-xl shadow-md px-6 py-8 min-w-[160px] flex-1">
       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-foreground mb-1">
         {icon}
       </div>

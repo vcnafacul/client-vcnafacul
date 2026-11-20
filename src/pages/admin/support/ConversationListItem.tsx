@@ -86,7 +86,7 @@ export function ConversationListItem({
               </span>
               {conv.initiatedBy === "support" && (
                 <span
-                  className="text-caption uppercase tracking-wide font-semibold px-1.5 py-0.5 rounded bg-primary/10 text-foreground shrink-0"
+                  className="text-caption uppercase tracking-wide font-semibold px-1.5 py-0.5 rounded-sm bg-primary/10 text-foreground shrink-0"
                   aria-label="Conversa iniciada pelo suporte"
                 >
                   iniciada

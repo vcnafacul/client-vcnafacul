@@ -16,7 +16,7 @@ interface ModalTabTemplateProps {
 
 function ModalTabTemplate({ tabs, isOpen, className }: ModalTabTemplateProps) {
   return !isOpen ? null : (
-    <div className="fixed top-0 left-0 z-50 bg-black/50 w-screen h-screen flex justify-center items-center overflow-y-auto scrollbar-hide">
+    <div className="fixed top-0 left-0 z-overlay bg-black/50 w-screen h-screen flex justify-center items-center overflow-y-auto scrollbar-hide">
       <div className="w-full h-full flex justify-center items-center ">
         <Tabs defaultValue={tabs[0].id}>
           <TabsList className="grid w-full grid-cols-2">
@@ -51,10 +51,10 @@ function ModalContent({
   onClose?: () => void;
 }) {
   return (
-    <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded flex flex-col relative border-white">
+    <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded-sm flex flex-col relative border-white">
       {/* Botão de fechar fixado no topo */}
       {onClose && (
-        <div className="sticky top-0 bg-white z-20 flex items-center justify-end">
+        <div className="sticky top-0 bg-white z-sticky flex items-center justify-end">
           <IoMdClose
             className="w-5 h-5 cursor-pointer text-muted-foreground hover:text-foreground transition"
             onClick={onClose}

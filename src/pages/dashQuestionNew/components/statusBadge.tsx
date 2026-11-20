@@ -66,7 +66,7 @@ export function StatusBadge({ status, className = "" }: StatusBadgeProps) {
       {/* Badge principal */}
       <Badge 
         className={`relative flex items-center gap-2 px-3 py-1.5 text-body font-bold
-          transition-all duration-300 hover:scale-110 hover:shadow-xl
+          transition-all duration-300 hover:scale-110 hover:shadow-lg
           ${config.className}`}
       >
         {/* Ícone */}

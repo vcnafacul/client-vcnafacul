@@ -4,7 +4,7 @@ import Footer from "../../organisms/footer";
 import Header from "../../organisms/header";
 
 const baseTemplate = tv({
-    base: "w-full z-50  text-white h-[76px]",
+    base: "w-full z-header  text-white h-[76px]",
     variants: {
         position: {
             fixed: 'fixed top-0 left-0',

@@ -317,7 +317,7 @@ export function ModalRules({
       <ModalTemplate
         isOpen={isOpen}
         handleClose={handleClose!}
-        className="bg-white p-4 md:p-6 rounded-lg shadow-xl max-w-4xl w-full"
+        className="bg-white p-4 md:p-6 rounded-lg shadow-lg max-w-4xl w-full"
       >
         <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
           <CircularProgress />
@@ -330,7 +330,7 @@ export function ModalRules({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={handleClose!}
-      className="bg-white p-4 md:p-6 rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto"
+      className="bg-white p-4 md:p-6 rounded-lg shadow-lg max-w-5xl w-full max-h-[90vh] overflow-y-auto"
     >
       <Box sx={{ mb: 3 }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom>

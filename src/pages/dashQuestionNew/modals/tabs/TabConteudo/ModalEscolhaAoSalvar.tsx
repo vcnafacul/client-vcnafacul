@@ -64,7 +64,7 @@ export function ModalEscolhaAoSalvar({
     <ModalTemplate
       isOpen={isOpen}
       handleClose={onClose}
-      className="w-full max-w-lg rounded-lg bg-white p-4 shadow-xl"
+      className="w-full max-w-lg rounded-lg bg-white p-4 shadow-lg"
     >
       <div data-escolha-ao-salvar className="flex flex-col gap-4">
         <h2 className="text-h3 font-semibold">{TITULO}</h2>

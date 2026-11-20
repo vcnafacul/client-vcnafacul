@@ -48,7 +48,7 @@ export function CardDeMetrica({
   return (
     <div
       className={cn(
-        "min-w-0 rounded-2xl border border-border bg-white p-4 shadow-[0_1px_2px_rgba(11,39,71,0.04)] sm:p-5",
+        "min-w-0 rounded-xl border border-border bg-white p-4 sm:p-5",
         onClick && "transition-colors hover:border-primary/30",
         className,
       )}

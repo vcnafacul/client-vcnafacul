@@ -21,7 +21,7 @@ function Step5Geo({ title, subtitle, form, updateData, handleBack, dataGeo }: Ea
   }
 
   return (
-    <div className="z-20 my-10">
+    <div className="z-sticky my-10">
       <Text size="secondary">{title}</Text>
       <Text className="mx-10 text-wrap" size="tertiary">{subtitle}</Text>
       <form className="w-full max-w-lg mx-auto" onSubmit={handleSubmit(handleForm)}>

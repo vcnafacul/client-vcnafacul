@@ -61,7 +61,7 @@ export function AdvancedExample() {
       <button
         onClick={() => handleDownloadWithCustomName("photo-123", "João Silva")}
         disabled={isDownloading}
-        className="px-4 py-2 bg-primary text-primary-foreground rounded disabled:opacity-50"
+        className="px-4 py-2 bg-primary text-primary-foreground rounded-sm disabled:opacity-50"
       >
         {isDownloading ? "Baixando..." : "Download Foto"}
       </button>
@@ -122,7 +122,7 @@ export function WithSpinnerExample() {
         })
       }
       disabled={isDownloading}
-      className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded"
+      className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-sm"
     >
       {isDownloading && (
         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>

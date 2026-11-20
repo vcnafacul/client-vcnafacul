@@ -66,9 +66,9 @@ export function ModalAnularQuestao({
       role="dialog"
       aria-modal="true"
       aria-label={titulo}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 h-dvh"
+      className="fixed inset-0 z-overlay flex items-center justify-center bg-black/40 p-4 h-dvh"
     >
-      <div className="w-full max-w-lg max-h-[calc(100dvh-2rem)] rounded-lg bg-white shadow-xl flex flex-col">
+      <div className="w-full max-w-lg max-h-[calc(100dvh-2rem)] rounded-lg bg-white shadow-lg flex flex-col">
         <div className="shrink-0 px-4 pt-4">
           <h2 className="text-h3 font-semibold">{titulo}</h2>
           {provaNome && (
@@ -92,7 +92,7 @@ export function ModalAnularQuestao({
               <SelectTrigger aria-labelledby="motivo-anulacao">
                 <SelectValue placeholder="Selecione o motivo" />
               </SelectTrigger>
-              <SelectContent className="z-[60]">
+              <SelectContent className="z-popover">
                 {Object.values(MotivoAnulacao).map((m) => (
                   <SelectItem key={m} value={m}>
                     {ROTULO_DO_MOTIVO[m]}
@@ -126,11 +126,11 @@ export function ModalAnularQuestao({
               {tamanho}/{JUSTIFICATIVA_MAX} (mínimo {JUSTIFICATIVA_MIN})
             </p>
           </div>
-          <p className="text-body text-foreground bg-warning-muted border border-warning rounded p-2">
+          <p className="text-body text-foreground bg-warning-muted border border-warning rounded-sm p-2">
             {textoDoEfeito(numero)}
           </p>
           {erro && (
-            <p role="alert" className="text-body text-destructive bg-destructive-muted border border-destructive rounded p-2">
+            <p role="alert" className="text-body text-destructive bg-destructive-muted border border-destructive rounded-sm p-2">
               {erro}
             </p>
           )}

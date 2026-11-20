@@ -111,7 +111,7 @@ export function RichTextEditor({
           <button
             type="button"
             onClick={mode === "visual" ? switchToMarkdown : switchToVisual}
-            className={`p-1.5 rounded hover:bg-muted transition-colors text-muted-foreground`}
+            className={`p-1.5 rounded-sm hover:bg-muted transition-colors text-muted-foreground`}
             title={
               mode === "visual"
                 ? "Editar Markdown"

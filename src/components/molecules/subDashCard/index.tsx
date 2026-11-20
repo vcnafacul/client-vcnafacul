@@ -38,7 +38,7 @@ function SubDashCard({ subCardInfo, blank }: SubDashCardPros){
             className={({ isActive }) =>
                 `flex justify-between items-center w-full h-14 px-4 border transition-colors ${
                     isActive && !blank
-                        ? "bg-primary/5 text-foreground font-semibold shadow-[inset_3px_0_0_theme(colors.marine)]"
+                        ? "bg-primary/5 text-foreground font-semibold border-l-4 border-l-primary"
                         : ""
                 }`
             }

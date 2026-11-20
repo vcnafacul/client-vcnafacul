@@ -17,7 +17,7 @@ export default function AnalyticsSection({
     <section className="mt-6">
       <div className="flex flex-wrap items-center justify-between gap-2 px-4 pb-2 border-b border-border">
         <div className="flex items-center gap-2">
-          <div className="w-1 h-6 bg-primary rounded" />
+          <div className="w-1 h-6 bg-primary rounded-sm" />
           <div>
             <h2 className="text-h2 font-bold text-foreground">{title}</h2>
             {subtitle && (

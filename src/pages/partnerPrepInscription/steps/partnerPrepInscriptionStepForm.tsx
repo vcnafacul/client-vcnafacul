@@ -52,41 +52,41 @@ const FormSkeleton = ({ section }: { section: SectionForm }) => {
           return (
             <div key={index} className="flex flex-col gap-2">
               {/* Label skeleton */}
-              <div className="h-4 bg-muted rounded w-3/4"></div>
+              <div className="h-4 bg-muted rounded-sm w-3/4"></div>
 
               {/* Input skeleton baseado no tipo */}
               {skeletonType === 0 && (
                 // Text input
-                <div className="h-16 bg-muted rounded"></div>
+                <div className="h-16 bg-muted rounded-sm"></div>
               )}
               {skeletonType === 1 && (
                 // Select input
-                <div className="h-16 bg-muted rounded flex items-center px-3">
-                  <div className="h-4 bg-muted rounded w-1/2"></div>
-                  <div className="ml-auto h-4 w-4 bg-muted rounded"></div>
+                <div className="h-16 bg-muted rounded-sm flex items-center px-3">
+                  <div className="h-4 bg-muted rounded-sm w-1/2"></div>
+                  <div className="ml-auto h-4 w-4 bg-muted rounded-sm"></div>
                 </div>
               )}
               {skeletonType === 2 && (
                 // Checkbox input
                 <div className="flex gap-2 items-center">
-                  <div className="h-4 w-4 bg-muted rounded"></div>
-                  <div className="h-4 bg-muted rounded w-2/3"></div>
+                  <div className="h-4 w-4 bg-muted rounded-sm"></div>
+                  <div className="h-4 bg-muted rounded-sm w-2/3"></div>
                 </div>
               )}
               {skeletonType === 3 && (
                 // Number input
-                <div className="h-16 bg-muted rounded"></div>
+                <div className="h-16 bg-muted rounded-sm"></div>
               )}
               {skeletonType === 4 && (
                 // Multiple checkbox input
                 <div className="space-y-2">
                   <div className="flex gap-2 items-center">
-                    <div className="h-4 w-4 bg-muted rounded"></div>
-                    <div className="h-4 bg-muted rounded w-1/2"></div>
+                    <div className="h-4 w-4 bg-muted rounded-sm"></div>
+                    <div className="h-4 bg-muted rounded-sm w-1/2"></div>
                   </div>
                   <div className="flex gap-2 items-center">
-                    <div className="h-4 w-4 bg-muted rounded"></div>
-                    <div className="h-4 bg-muted rounded w-1/3"></div>
+                    <div className="h-4 w-4 bg-muted rounded-sm"></div>
+                    <div className="h-4 bg-muted rounded-sm w-1/3"></div>
                   </div>
                 </div>
               )}

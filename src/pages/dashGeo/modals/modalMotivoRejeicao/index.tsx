@@ -56,7 +56,7 @@ export function ModalMotivoRejeicao({ isOpen, handleClose, onConfirm }: Props) {
               ? "Obrigatório para “Outro”"
               : "Ex.: igual ao cadastro do Cursinho X"
           }
-          className="p-2 w-full border border-input rounded min-h-[80px] resize-none"
+          className="p-2 w-full border border-input rounded-sm min-h-[80px] resize-none"
         />
         <span className="self-end text-caption text-muted-foreground">
           {complemento.length}/{MAXIMO}

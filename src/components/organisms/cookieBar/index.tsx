@@ -29,8 +29,8 @@ export function CookieBar() {
   };
 
   return (
-    <div className={`mx-4 sm:mx-0 sm:max-w-5xl right-0 bottom-4 z-50 print:hidden ${isInvisible ? "hidden" : "fixed"}`}>
-      <div className="flex flex-col gap-4 py-2 bg-muted rounded shadow-md sm:p-4 sm:mx-10 ">
+    <div className={`mx-4 sm:mx-0 sm:max-w-5xl right-0 bottom-4 z-header print:hidden ${isInvisible ? "hidden" : "fixed"}`}>
+      <div className="flex flex-col gap-4 py-2 bg-muted rounded-sm shadow-md sm:p-4 sm:mx-10 ">
         <div className="flex">
           <span className="mx-4 italic text-body sm:mx-10 ">
             "Nós utilizamos cookies e outras tecnologias semelhantes para

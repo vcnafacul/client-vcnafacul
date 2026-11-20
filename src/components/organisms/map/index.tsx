@@ -16,10 +16,10 @@ import ReportLC from "./modal/report";
 const DEFAULT_FILTERS: TypeMarker[] = [TypeMarker.geo, TypeMarker.univPublic];
 
 const INFO_BOX_CLASS =
-  "relative mx-auto mb-10 h-fit w-full md:absolute md:right-10 md:top-1/2 md:mb-0 md:h-[490px] md:w-[600px] md:-translate-y-1/2 md:overflow-y-auto z-40 bg-white opacity-75 rounded-md p-5 flex items-center justify-between flex-col";
+  "relative mx-auto mb-10 h-fit w-full md:absolute md:right-10 md:top-1/2 md:mb-0 md:h-[490px] md:w-[600px] md:-translate-y-1/2 md:overflow-y-auto z-overlay bg-white opacity-75 rounded-md p-5 flex items-center justify-between flex-col";
 
 const FILTER_PANEL_CLASS =
-  "absolute top-4 right-4 sm:left-14 sm:right-auto z-40 bg-muted-foreground bg-opacity-70 w-72 rounded-md p-4 flex flex-col gap-3";
+  "absolute top-4 right-4 sm:left-14 sm:right-auto z-overlay bg-muted-foreground bg-opacity-70 w-72 rounded-md p-4 flex flex-col gap-3";
 
 const REPORT_BUTTON_CLASS =
   "w-10 h-10 absolute top-2 right-4 md:bottom-4 md:top-auto cursor-pointer bg-transparent border-0 p-0";
@@ -98,9 +98,9 @@ function Map() {
   }, []);
 
   return (
-    <div id="map" className="relative w-full">
+    <div id="map" className="relative isolate w-full">
       <MapBox
-        className="z-30 h-[630px] lg:h-[750px]"
+        className="z-header h-[630px] lg:h-[750px]"
         zoom={7}
         markers={filteredMarkers}
         handleClickMarker={handleClickMarker}

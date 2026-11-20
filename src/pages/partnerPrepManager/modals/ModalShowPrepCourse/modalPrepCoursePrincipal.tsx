@@ -494,7 +494,7 @@ export const ModalPrepCoursePrincipal = ({
 
             {/* Dropdown de resultados */}
             {showDropdown && searchResults.length > 0 && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
+              <div className="absolute z-raised w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
                 {searchResults.map((user) => (
                   <div
                     key={user.id}
@@ -574,7 +574,7 @@ export const ModalPrepCoursePrincipal = ({
           </label>
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2 px-3 py-2 bg-muted border border-border rounded-md group">
-              <div className="w-4 h-4 bg-muted-foreground rounded"></div>
+              <div className="w-4 h-4 bg-muted-foreground rounded-sm"></div>
               <span
                 className={`text-body text-muted-foreground flex items-center gap-1 ${
                   prepCourse.agreement && !selectedAgreement

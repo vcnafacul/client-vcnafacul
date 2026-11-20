@@ -116,7 +116,7 @@ export function NotificacoesDoAparelho() {
   return (
     <section
       aria-labelledby="notificacoes-titulo"
-      className="rounded-2xl border border-border bg-white p-5 shadow-sm"
+      className="rounded-xl border border-border bg-white p-5 shadow-sm"
     >
       <div className="flex items-start gap-3">
         <Bell aria-hidden className="mt-0.5 h-5 w-5 shrink-0 text-foreground" />

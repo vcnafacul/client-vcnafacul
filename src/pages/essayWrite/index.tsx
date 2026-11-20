@@ -285,7 +285,7 @@ export default function EssayWrite() {
           </button>
         </div>
         {showConfirmModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-overlay">
             <div className="bg-white rounded-lg p-6 max-w-md mx-4 space-y-4">
               <h2 className="text-h3 font-bold text-foreground">Confirmar envio</h2>
               <p className="text-body text-foreground">
@@ -367,7 +367,7 @@ export default function EssayWrite() {
         </button>
       </div>
       {showConfirmModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-overlay">
           <div className="bg-white rounded-lg p-6 max-w-md mx-4 space-y-4">
             <h2 className="text-h3 font-bold text-foreground">Confirmar envio</h2>
             <p className="text-body text-foreground">

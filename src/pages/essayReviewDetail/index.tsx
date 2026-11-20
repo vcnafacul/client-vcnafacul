@@ -183,7 +183,7 @@ export default function EssayReviewDetail() {
                   onChange={(e) =>
                     updateComp(i, "score", Math.min(200, Math.max(0, +e.target.value)))
                   }
-                  className="border rounded px-2 py-1 w-24 text-body"
+                  className="border rounded-sm px-2 py-1 w-24 text-body"
                 />
               </div>
               <textarea

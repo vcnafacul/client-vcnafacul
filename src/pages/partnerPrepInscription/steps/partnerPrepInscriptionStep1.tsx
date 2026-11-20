@@ -278,7 +278,7 @@ export function PartnerPrepInscriptionStep1({
           setValue("urgencyPhone", value);
         }}
       />
-      <div className="card flex justify-content-center h-16 border hover:border-cta pt-4 pl-4 rounded-md relative mb-4 row-start-3 col-start-1 z-10">
+      <div className="card flex justify-content-center h-16 border hover:border-cta pt-4 pl-4 rounded-md relative mb-4 row-start-3 col-start-1 z-raised">
         <label
           className="absolute top-1 left-3 text-caption text-muted-foreground font-semibold"
           htmlFor="date"
