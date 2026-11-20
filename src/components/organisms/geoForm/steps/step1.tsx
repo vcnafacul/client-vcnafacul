@@ -26,6 +26,9 @@ function Step1Geo({
         .matches(regex, { message: "Email Inválido" })
         .required("Email Obrigatório"),
       userPhone: yup.string().required("Por favor, insira um telefone válido"),
+      userConnection: yup
+        .string()
+        .required("Por favor, informe sua relação com o cursinho"),
     })
     .required();
 

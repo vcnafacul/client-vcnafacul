@@ -14,8 +14,11 @@ describe("GrupoDeCheckbox", () => {
         onValueChange={vi.fn()}
       />,
     );
-    const grupo = screen.getByRole("group", { name: "Você recebe algum auxílio?" });
-    expect(grupo).toHaveAttribute("aria-required", "true");
+    // `aria-required` não vale em `group`: o obrigatório vai no texto da legenda.
+    const grupo = screen.getByRole("group", {
+      name: "Você recebe algum auxílio? (obrigatório)",
+    });
+    expect(grupo).not.toHaveAttribute("aria-required");
     expect(grupo).toHaveAccessibleDescription("Selecione pelo menos uma opção");
   });
 

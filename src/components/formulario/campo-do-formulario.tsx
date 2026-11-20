@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   useController,
   type Control,
@@ -17,17 +16,6 @@ import type { FormFieldInput } from "./tipos";
 export interface CampoDoFormularioProps<T extends FieldValues>
   extends FormFieldInput {
   control: Control<T>;
-}
-
-/**
- * Como o `<select>` nativo: um valor que não está entre as opções cai na opção
- * vazia, se houver, ou na primeira. Assim o valor que vai no envio é o que a
- * tela mostra.
- */
-function valorValidoDaEscolha(candidato: string, opcoes: FormFieldInput["options"]) {
-  const valores = (opcoes ?? []).map((o) => String(o.value));
-  if (valores.includes(candidato)) return candidato;
-  return valores.includes("") ? "" : (valores[0] ?? "");
 }
 
 /**
@@ -59,13 +47,12 @@ export function CampoDoFormulario<T extends FieldValues>({
   });
   const atual = String(field.value ?? "");
 
-  // Mesmo depois de `reset`, o valor que vai no envio é o que a tela mostra.
   const eEscolha = type === "select";
-  const valido = eEscolha ? valorValidoDaEscolha(atual, options) : atual;
-  const { onChange } = field;
-  React.useEffect(() => {
-    if (eEscolha && valido !== atual) onChange(valido);
-  }, [eEscolha, valido, atual, onChange]);
+  // Valor vazio ou fora das opções mostra o placeholder: a tela sempre bate com o
+  // valor do formulário (nada de primeira opção escolhida sem o usuário escolher).
+  const escolhido = (options ?? []).some((o) => String(o.value) === atual)
+    ? atual
+    : "";
 
   const comum = {
     id,
@@ -87,7 +74,7 @@ export function CampoDoFormulario<T extends FieldValues>({
           id={id}
           disabled={disabled}
           options={options ?? []}
-          value={valido}
+          value={escolhido}
           onValueChange={(novo) => field.onChange(String(novo))}
         />
       ) : type === "textarea" ? (

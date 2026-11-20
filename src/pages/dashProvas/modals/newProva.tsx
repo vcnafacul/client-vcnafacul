@@ -169,6 +169,8 @@ function NewProva({
       id: "edicao",
       type: "select",
       options: edicaoOption,
+      // Sem escolha implícita da primeira opção: o padrão é declarado aqui.
+      defaultValue: Edicao.Regular,
       label: "Edição",
       disabled: false,
     },
@@ -176,6 +178,7 @@ function NewProva({
       id: "aplicacao",
       type: "select",
       options: aplicacaoOptions,
+      defaultValue: "1",
       label: "Aplicação",
       disabled: false,
     },

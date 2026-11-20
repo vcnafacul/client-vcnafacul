@@ -58,7 +58,6 @@ export function GrupoDeCheckbox({
     <fieldset
       className="grid gap-1.5"
       aria-describedby={error ? idErro : undefined}
-      aria-required={required || undefined}
       aria-invalid={error ? true : undefined}
     >
       <legend className="mb-1.5 text-label">
@@ -68,6 +67,7 @@ export function GrupoDeCheckbox({
             *
           </span>
         ) : null}
+        {required ? <span className="sr-only"> (obrigatório)</span> : null}
       </legend>
       <div className="flex flex-col">
         {opcoes.map((valor) => (

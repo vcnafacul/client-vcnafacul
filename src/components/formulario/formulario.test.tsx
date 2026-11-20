@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { useForm, type FieldValues, type Resolver } from "react-hook-form";
@@ -26,16 +27,21 @@ function Formulario({
   aoEnviar,
   api,
   resolver,
+  resetNaMontagem,
 }: {
   aoEnviar: (d: unknown) => void;
   api?: Api;
   resolver?: Resolver;
+  resetNaMontagem?: boolean;
 }) {
   const { control, handleSubmit, setValue, reset } = useForm({ resolver });
   if (api) {
     api.setValue = setValue as never;
     api.reset = reset;
   }
+  useEffect(() => {
+    if (resetNaMontagem) reset({ nome: "", state: undefined, phone: "" });
+  }, [resetNaMontagem, reset]);
   return (
     <form onSubmit={handleSubmit(aoEnviar)} noValidate>
       <CampoDoFormulario
@@ -89,17 +95,39 @@ describe("CampoDoFormulario com react-hook-form", () => {
     expect(screen.getByRole("textbox", { name: "Nome" })).not.toHaveAttribute("inputmode");
   });
 
-  it("envia o texto digitado e a escolha do Select (a primeira opção por padrão)", async () => {
+  it("sem escolha, o Select mostra o placeholder e não envia a primeira opção", async () => {
     const aoEnviar = vi.fn();
     render(<Formulario aoEnviar={aoEnviar} />);
+    expect(gatilho()).toHaveTextContent("Selecione");
     fireEvent.change(screen.getByRole("textbox", { name: "Nome" }), {
       target: { value: "Ana" },
     });
-    expect(await enviar(aoEnviar, 1)).toMatchObject({ nome: "Ana", state: "SP" });
+    const dados = (await enviar(aoEnviar, 1)) as Record<string, unknown>;
+    expect(dados.nome).toBe("Ana");
+    expect(dados.state).toBe("");
 
     abrir();
     fireEvent.click(screen.getByRole("option", { name: "Rio de Janeiro" }));
     expect(await enviar(aoEnviar, 2)).toMatchObject({ state: "RJ" });
+  });
+
+  it("reset(state: undefined) na montagem do pai: placeholder e o envio é barrado sob o campo", async () => {
+    const aoEnviar = vi.fn();
+    const resolver: Resolver = async (values) =>
+      values.state
+        ? { values, errors: {} }
+        : {
+            values: {},
+            errors: {
+              state: { type: "required", message: "Campo Obrigatório" },
+            } as never,
+          };
+    render(<Formulario aoEnviar={aoEnviar} resetNaMontagem resolver={resolver} />);
+    await waitFor(() => expect(gatilho()).toHaveTextContent("Selecione"));
+    fireEvent.click(screen.getByText("enviar"));
+    expect(await screen.findByText("Campo Obrigatório")).toBeInTheDocument();
+    expect(aoEnviar).not.toHaveBeenCalled();
+    expect(gatilho()).toHaveTextContent("Selecione");
   });
 
   it("depois de reset({ state: 'SP' }), o Select mostra São Paulo e o envio leva SP", async () => {
