@@ -55,7 +55,7 @@ describe("ThemeForm — imagens do texto motivador", () => {
   });
 
   const montar = (onSave = vi.fn()) => {
-    const { container } = render(
+    render(
       <ThemeForm
         initial={
           {
@@ -70,7 +70,7 @@ describe("ThemeForm — imagens do texto motivador", () => {
         onCancel={vi.fn()}
       />,
     );
-    return { onSave, form: container.querySelector("form")! };
+    return { onSave, form: document.body.querySelector("form")! };
   };
 
   it("liga o editor às imagens do tema", () => {

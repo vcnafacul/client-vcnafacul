@@ -1,4 +1,14 @@
 import { useEffect, useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuthStore } from "@/store/auth";
@@ -285,32 +295,31 @@ export default function EssayWrite() {
           </button>
         </div>
         {showConfirmModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-overlay">
-            <div className="bg-white rounded-lg p-6 max-w-md mx-4 space-y-4">
-              <h2 className="text-h3 font-bold text-foreground">Confirmar envio</h2>
-              <p className="text-body text-foreground">
-                Atenção: a submissão é única. Uma vez enviada, não será possível
-                realizar uma nova redação para este tema. Deseja continuar?
-              </p>
-              <div className="flex gap-3 justify-end">
-                <button
-                  onClick={() => setShowConfirmModal(false)}
-                  className="px-4 py-2 border border-border rounded-lg hover:bg-page"
-                >
-                  Cancelar
-                </button>
-                <button
+          <AlertDialog
+            open
+            onOpenChange={(aberto) => !aberto && setShowConfirmModal(false)}
+          >
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Confirmar envio</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Atenção: a submissão é única. Uma vez enviada, não será possível
+                  realizar uma nova redação para este tema. Deseja continuar?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
                   onClick={() => {
                     setShowConfirmModal(false);
                     handleSubmitImage();
                   }}
-                  className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
                 >
                   Confirmar envio
-                </button>
-              </div>
-            </div>
-          </div>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
       </div>
     );
@@ -367,32 +376,31 @@ export default function EssayWrite() {
         </button>
       </div>
       {showConfirmModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-overlay">
-          <div className="bg-white rounded-lg p-6 max-w-md mx-4 space-y-4">
-            <h2 className="text-h3 font-bold text-foreground">Confirmar envio</h2>
-            <p className="text-body text-foreground">
-              Atenção: a submissão é única. Uma vez enviada, não será possível
-              realizar uma nova redação para este tema. Deseja continuar?
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => setShowConfirmModal(false)}
-                className="px-4 py-2 border border-border rounded-lg hover:bg-page"
-              >
-                Cancelar
-              </button>
-              <button
+        <AlertDialog
+          open
+          onOpenChange={(aberto) => !aberto && setShowConfirmModal(false)}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirmar envio</AlertDialogTitle>
+              <AlertDialogDescription>
+                Atenção: a submissão é única. Uma vez enviada, não será possível
+                realizar uma nova redação para este tema. Deseja continuar?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
                 onClick={() => {
                   setShowConfirmModal(false);
                   handleSubmit();
                 }}
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
               >
                 Confirmar envio
-              </button>
-            </div>
-          </div>
-        </div>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </div>
   );

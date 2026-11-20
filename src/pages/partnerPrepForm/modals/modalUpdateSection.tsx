@@ -1,5 +1,5 @@
 import { motivoDoErro } from "../motivoDoErro";
-import { ModalProps } from "@/components/templates/modalTemplate";
+import { ModalProps } from "@/types/modal";
 import {
   Dialog,
   DialogBody,

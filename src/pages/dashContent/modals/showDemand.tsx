@@ -27,7 +27,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ModalProps } from "../../../components/templates/modalTemplate";
+import { ModalProps } from "@/types/modal";
 import { ContentDtoInput } from "../../../dtos/content/contentDtoInput";
 import { deleteDemand } from "../../../services/content/deleteDemand";
 import { uploadFileDemand } from "../../../services/content/uploadFileDemand";

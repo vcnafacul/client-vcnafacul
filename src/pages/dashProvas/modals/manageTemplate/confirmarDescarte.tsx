@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { DialogTitle } from "@/components/ui/dialog";
 import { useToastAsync } from "../../../../hooks/useToastAsync";
 import { descartarRascunho } from "../../../../services/caderno/template/descartarRascunho";
 
@@ -34,9 +35,11 @@ function ConfirmarDescarte({
 
   return (
     <div>
-      <h2 className="mb-4 text-h2 font-semibold text-foreground">
-        Descartar rascunho
-      </h2>
+      <DialogTitle asChild>
+        <h2 className="pr-0 mb-4 text-h2 font-semibold text-foreground">
+          Descartar rascunho
+        </h2>
+      </DialogTitle>
       <p className="text-body text-foreground">
         O zip enviado se perde e não dá para trazer de volta — só subindo o
         projeto do Overleaf outra vez.

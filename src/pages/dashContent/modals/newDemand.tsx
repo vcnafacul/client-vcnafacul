@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { ModalProps } from "../../../components/templates/modalTemplate";
+import { ModalProps } from "@/types/modal";
 import {
   Dialog,
   DialogBody,
@@ -138,7 +138,7 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose?.()}>
-      <DialogContent size="full" onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent size="lg" onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Criar demanda</DialogTitle>
         </DialogHeader>

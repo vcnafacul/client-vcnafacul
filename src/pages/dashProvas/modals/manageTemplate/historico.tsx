@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
+import { DialogTitle } from "@/components/ui/dialog";
 import { useToastAsync } from "../../../../hooks/useToastAsync";
 import { baixarModelo } from "../../../../services/caderno/template/baixarModelo";
 import { listarVersoes } from "../../../../services/caderno/template/listarVersoes";
@@ -122,9 +123,11 @@ function Historico({
   if (aRestaurar !== null) {
     return (
       <div>
-        <h2 className="mb-4 text-h2 font-semibold text-foreground">
-          Restaurar a v{aRestaurar.versao}
-        </h2>
+        <DialogTitle asChild>
+          <h2 className="pr-0 mb-4 text-h2 font-semibold text-foreground">
+            Restaurar a v{aRestaurar.versao}
+          </h2>
+        </DialogTitle>
         <p className="text-body font-medium text-foreground">
           {fraseDaConfirmacao(aRestaurar.versao, versaoNoAr)}
         </p>
@@ -158,9 +161,11 @@ function Historico({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="text-h2 font-semibold text-foreground">
-          Histórico de versões
-        </h2>
+        <DialogTitle asChild>
+          <h2 className="pr-0 text-h2 font-semibold text-foreground">
+            Histórico de versões
+          </h2>
+        </DialogTitle>
         <Button variant="outline" size="sm" onClick={onVoltar}>
           Voltar
         </Button>

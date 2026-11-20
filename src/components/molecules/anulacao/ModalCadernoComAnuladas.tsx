@@ -1,4 +1,11 @@
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { AlertTriangle } from "lucide-react";
 import { textoDoCaderno, TITULO_CADERNO_ANULADAS } from "./textos";
 
@@ -15,32 +22,31 @@ export function ModalCadernoComAnuladas({
   onConfirmar: () => void;
   onCancelar: () => void;
 }) {
+  const paragrafos = textoDoCaderno(numeros);
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label={TITULO_CADERNO_ANULADAS}
-      className="fixed inset-0 z-overlay flex items-center justify-center bg-black/40 p-4 h-dvh"
-    >
-      <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] rounded-lg bg-white shadow-lg flex flex-col">
-        <div className="flex-1 min-h-0 overflow-y-auto p-4 flex gap-2">
-          <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" aria-hidden />
-          <div className="flex flex-col gap-2 text-body text-foreground">
-            <h2 className="text-h3 font-semibold">{TITULO_CADERNO_ANULADAS}</h2>
-            {textoDoCaderno(numeros).map((p) => (
-              <p key={p}>{p}</p>
-            ))}
-          </div>
+    <Dialog open onOpenChange={(o) => !o && onCancelar()}>
+      <DialogContent size="md" aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle className="flex items-start gap-2">
+            <AlertTriangle
+              className="mt-0.5 h-5 w-5 shrink-0 text-warning"
+              aria-hidden
+            />
+            {TITULO_CADERNO_ANULADAS}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col gap-2 text-body text-foreground">
+          {paragrafos.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
         </div>
-        <div className="shrink-0 flex flex-wrap justify-end gap-2 border-t px-4 py-3">
-          <Button variant="ghost" size="sm" onClick={onCancelar}>
+        <DialogFooter>
+          <Button variant="ghost" onClick={onCancelar}>
             Cancelar
           </Button>
-          <Button size="sm" onClick={onConfirmar}>
-            Gerar mesmo assim
-          </Button>
-        </div>
-      </div>
-    </div>
+          <Button onClick={onConfirmar}>Gerar mesmo assim</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

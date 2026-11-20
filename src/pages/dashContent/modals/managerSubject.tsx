@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import PropValue from "../../../components/molecules/PropValue";
-import { ModalProps } from "../../../components/templates/modalTemplate";
+import { ModalProps } from "@/types/modal";
 import {
   Dialog,
   DialogBody,
@@ -88,7 +88,7 @@ function ManagerSubject({
 
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose?.()}>
-      <DialogContent size="full" onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent size="lg" onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>{subject ? "Editar tema" : "Criar tema"}</DialogTitle>
         </DialogHeader>

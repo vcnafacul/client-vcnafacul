@@ -6,7 +6,6 @@ import {
   Dialog,
   DialogBody,
   DialogContent,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToastAsync } from "../../../../hooks/useToastAsync";
@@ -251,16 +250,7 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
         aria-describedby={undefined}
         onInteractOutside={(e) => e.preventDefault()}
       >
-        <DialogHeader>
-          <DialogTitle className="sr-only">
-            {view === "descartar"
-              ? "Descartar rascunho"
-              : view === "historico"
-                ? "Histórico de versões"
-                : "Template do caderno"}
-          </DialogTitle>
-        </DialogHeader>
-        <DialogBody>
+        <DialogBody className="pt-8">
           {view === "descartar" ? (
             <ConfirmarDescarte
               token={token}
@@ -281,9 +271,11 @@ function ManageTemplate({ isOpen, handleClose }: ManageTemplateProps) {
                 <div className="rounded-lg bg-info-muted p-2">
                   <FileText className="h-6 w-6 text-info" />
                 </div>
-                <p className="text-h2 font-semibold text-foreground">
-                  Template do caderno
-                </p>
+                <DialogTitle asChild>
+                  <h2 className="pr-0 text-h2 font-semibold text-foreground">
+                    Template do caderno
+                  </h2>
+                </DialogTitle>
                 <div className="ml-auto">
                   <Button
                     variant="outline"

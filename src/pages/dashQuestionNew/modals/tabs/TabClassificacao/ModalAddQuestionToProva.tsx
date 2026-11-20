@@ -1,14 +1,21 @@
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { getMissingNumber } from "@/services/prova/getMissingNumber";
 import { useAuthStore } from "@/store/auth";
-import { Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { ProvaOption } from "./types";
 import { mantemArea } from "../areasPermitidas";
@@ -73,13 +80,25 @@ export function ModalAddQuestionToProva({
   };
 
   return (
-    <div className="fixed inset-0 z-overlay flex items-center justify-center bg-black/40 p-4">
-      <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-md max-h-full overflow-y-auto space-y-4">
-        <h3 className="text-h3 font-bold">Adicionar em uma prova</h3>
+    <Dialog open onOpenChange={(o) => !o && !saving && onClose()}>
+      <DialogContent
+        size="md"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>Adicionar em uma prova</DialogTitle>
+        </DialogHeader>
 
         <div className="space-y-2">
-          <label className="text-body font-semibold text-muted-foreground">Prova</label>
+          <label
+            htmlFor="busca-prova"
+            className="text-body font-semibold text-muted-foreground"
+          >
+            Prova
+          </label>
           <input
+            id="busca-prova"
             type="text"
             value={busca}
             onChange={(e) => {
@@ -128,17 +147,22 @@ export function ModalAddQuestionToProva({
 
         {provaId && (
           <div className="space-y-2">
-            <label className="text-body font-semibold text-muted-foreground">Número</label>
+            <span
+              id="numero-da-questao"
+              className="text-body font-semibold text-muted-foreground"
+            >
+              Número
+            </span>
             {loadingNumeros ? (
               <div className="flex items-center gap-2 text-body text-muted-foreground">
-                <Loader2 className="h-4 w-4 animate-spin" /> Carregando números...
+                <Spinner size="inline" decorative /> Carregando números...
               </div>
             ) : (
               <Select
                 value={numero != null ? String(numero) : undefined}
                 onValueChange={(v) => setNumero(parseInt(v, 10))}
               >
-                <SelectTrigger>
+                <SelectTrigger aria-labelledby="numero-da-questao">
                   <SelectValue placeholder="Selecione o número" />
                 </SelectTrigger>
                 <SelectContent>
@@ -153,19 +177,18 @@ export function ModalAddQuestionToProva({
           </div>
         )}
 
-        <div className="flex justify-end gap-2 pt-2">
+        <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={saving}>
             Cancelar
           </Button>
           <Button
             onClick={handleConfirm}
             disabled={!provaId || numero == null || saving}
-            className="bg-primary"
           >
-            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Adicionar"}
+            {saving ? <Spinner size="button" /> : "Adicionar"}
           </Button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

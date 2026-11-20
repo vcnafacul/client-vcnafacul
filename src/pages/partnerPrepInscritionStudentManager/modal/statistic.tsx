@@ -1,7 +1,12 @@
 import RenderCharts from "@/components/organisms/renderCharts";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
-import { X } from "lucide-react";
 
 interface StudentsInfo {
   forms: SocioeconomicAnswer[][];
@@ -16,47 +21,24 @@ interface Props {
 
 export function Statistic({ geral, enrolleds, handleClose }: Props) {
   return (
-    <div className="fixed inset-0 bg-black/60 z-overlay flex justify-center items-center">
-      <div className="w-full h-full flex justify-center items-center md:py-4">
-        <Tabs defaultValue="details" className="w-full max-w-[90vw] h-[80vh]">
-          <TabsList className="grid w-full grid-cols-2">
+    <Dialog open onOpenChange={(aberto) => !aberto && handleClose()}>
+      <DialogContent size="full" aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Estatísticas</DialogTitle>
+        </DialogHeader>
+        <Tabs defaultValue="details">
+          <TabsList className="w-full overflow-x-auto">
             <TabsTrigger value="details">Todos os Alunos</TabsTrigger>
             <TabsTrigger value="enrolled">Matriculados</TabsTrigger>
           </TabsList>
-          <TabsContent value="details" className="h-full">
-            <ModalContent onClose={handleClose}>
-              <></>
-              <RenderCharts data={geral} />
-            </ModalContent>
+          <TabsContent value="details">
+            <RenderCharts data={geral} />
           </TabsContent>
-          <TabsContent value="enrolled" className="h-full">
-            <ModalContent onClose={handleClose}>
-              <></>
-              <RenderCharts data={enrolleds} />
-            </ModalContent>
+          <TabsContent value="enrolled">
+            <RenderCharts data={enrolleds} />
           </TabsContent>
         </Tabs>
-      </div>
-    </div>
-  );
-}
-
-function ModalContent({
-  children,
-  onClose,
-}: {
-  children: React.ReactNode;
-  onClose: () => void;
-}) {
-  return (
-    <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded-sm pb-2 px-2 flex flex-col gap-4 relative border-8 border-white">
-      <div className="sticky top-0 bg-white z-sticky flex items-center justify-end p-2">
-        <X
-          className="w-5 h-5 cursor-pointer text-muted-foreground hover:text-foreground transition"
-          onClick={onClose}
-        />
-      </div>
-      <div className="flex flex-col gap-4">{children}</div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

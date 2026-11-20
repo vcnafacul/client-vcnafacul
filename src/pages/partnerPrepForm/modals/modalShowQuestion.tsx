@@ -1,7 +1,7 @@
 import { rotuloDaLogica } from "../textosDeCondicao";
 import { opcoesLimpas, opcoesRepetidas } from "../opcoes";
 import { motivoDoErro } from "../motivoDoErro";
-import { ModalProps } from "@/components/templates/modalTemplate";
+import { ModalProps } from "@/types/modal";
 import {
   Dialog,
   DialogBody,

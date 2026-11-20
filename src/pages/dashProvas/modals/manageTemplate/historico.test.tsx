@@ -6,6 +6,7 @@ import {
   within,
 } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Historico from "./historico";
 import { VersaoTemplate } from "../../../../services/caderno/template/tipos";
 
@@ -65,14 +66,19 @@ const HISTORICO = [
 function renderHistorico(props: Partial<Parameters<typeof Historico>[0]> = {}) {
   const onRestaurado = vi.fn();
   const onVoltar = vi.fn();
+  // O título da tela é o DialogTitle: sem Dialog em volta o Radix recusa.
   render(
-    <Historico
-      token="tok"
-      versaoNoAr={4}
-      onRestaurado={onRestaurado}
-      onVoltar={onVoltar}
-      {...props}
-    />,
+    <Dialog open>
+      <DialogContent aria-describedby={undefined}>
+        <Historico
+          token="tok"
+          versaoNoAr={4}
+          onRestaurado={onRestaurado}
+          onVoltar={onVoltar}
+          {...props}
+        />
+      </DialogContent>
+    </Dialog>,
   );
   return { onRestaurado, onVoltar };
 }

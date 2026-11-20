@@ -34,8 +34,9 @@ const montar = (enemArea?: string) =>
     />,
   );
 
-const botao = (c: HTMLElement, id: string) =>
-  c.querySelector(`[data-prova="${id}"]`) as HTMLButtonElement;
+// O Dialog renderiza num portal no body: a busca sai do container do render.
+const botao = (_c: HTMLElement, id: string) =>
+  document.body.querySelector(`[data-prova="${id}"]`) as HTMLButtonElement;
 
 describe("ModalAddQuestionToProva — área × prova (area-enem 02)", () => {
   it("⚠️ a prova ENEM que não aceita a área aparece desabilitada, com o motivo", () => {

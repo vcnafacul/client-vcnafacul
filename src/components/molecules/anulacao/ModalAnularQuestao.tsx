@@ -1,11 +1,20 @@
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import {
   AnulacaoInput,
@@ -15,7 +24,6 @@ import {
   MotivoAnulacao,
   ROTULO_DO_MOTIVO,
 } from "@/dtos/question/anulacao";
-import { Loader2 } from "lucide-react";
 import { ReactNode, useState } from "react";
 import { textoDoEfeito, TITULO_ANULAR } from "./textos";
 
@@ -24,8 +32,8 @@ import { textoDoEfeito, TITULO_ANULAR } from "./textos";
  * Motivo + justificativa obrigatória (tickets/042, D3). Usado para anular,
  * editar a justificativa e "adicionar como anulada" (card 08).
  *
- * ⚠️ Altura: `max-h-[calc(100dvh-2rem)]`, só o meio rola e o rodapé é
- * `shrink-0` — com o teclado aberto na justificativa, o botão continua na tela
+ * ⚠️ Altura: o Dialog limita a altura, só o corpo rola e o rodapé fica fixo —
+ * com o teclado aberto na justificativa, o botão continua na tela
  * (regra do vcnafacul-3/CLAUDE.md, client #919).
  */
 export function ModalAnularQuestao({
@@ -62,27 +70,39 @@ export function ModalAnularQuestao({
   const ok = !!motivo && justificativaValida(justificativa);
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label={titulo}
-      className="fixed inset-0 z-overlay flex items-center justify-center bg-black/40 p-4 h-dvh"
-    >
-      <div className="w-full max-w-lg max-h-[calc(100dvh-2rem)] rounded-lg bg-white shadow-lg flex flex-col">
-        <div className="shrink-0 px-4 pt-4">
-          <h2 className="text-h3 font-semibold">{titulo}</h2>
+    <Dialog open onOpenChange={(o) => !o && !ocupado && onCancelar()}>
+      <DialogContent
+        size="md"
+        {...(provaNome ? {} : { "aria-describedby": undefined })}
+        onInteractOutside={(e) => e.preventDefault()}
+        banner={
+          erro ? (
+            <p
+              role="alert"
+              className="rounded-sm border border-destructive bg-destructive-muted p-2 text-body text-destructive"
+            >
+              {erro}
+            </p>
+          ) : undefined
+        }
+      >
+        <DialogHeader>
+          <DialogTitle>{titulo}</DialogTitle>
           {provaNome && (
-            <p className="text-body text-muted-foreground">
+            <DialogDescription>
               {provaNome}
               {numero != null && ` · questão ${numero}`}
-            </p>
+            </DialogDescription>
           )}
-        </div>
+        </DialogHeader>
 
-        <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 flex flex-col gap-3">
+        <div className="flex flex-col gap-3">
           {acima}
           <div className="flex flex-col gap-1">
-            <label className="text-body font-semibold text-foreground" id="motivo-anulacao">
+            <label
+              className="text-body font-semibold text-foreground"
+              id="motivo-anulacao"
+            >
               Motivo
             </label>
             <Select
@@ -92,7 +112,7 @@ export function ModalAnularQuestao({
               <SelectTrigger aria-labelledby="motivo-anulacao">
                 <SelectValue placeholder="Selecione o motivo" />
               </SelectTrigger>
-              <SelectContent className="z-popover">
+              <SelectContent>
                 {Object.values(MotivoAnulacao).map((m) => (
                   <SelectItem key={m} value={m}>
                     {ROTULO_DO_MOTIVO[m]}
@@ -126,22 +146,16 @@ export function ModalAnularQuestao({
               {tamanho}/{JUSTIFICATIVA_MAX} (mínimo {JUSTIFICATIVA_MIN})
             </p>
           </div>
-          <p className="text-body text-foreground bg-warning-muted border border-warning rounded-sm p-2">
+          <p className="rounded-sm border border-warning bg-warning-muted p-2 text-body text-foreground">
             {textoDoEfeito(numero)}
           </p>
-          {erro && (
-            <p role="alert" className="text-body text-destructive bg-destructive-muted border border-destructive rounded-sm p-2">
-              {erro}
-            </p>
-          )}
         </div>
 
-        <div className="shrink-0 flex flex-wrap justify-end gap-2 border-t px-4 py-3">
-          <Button variant="ghost" size="sm" onClick={onCancelar} disabled={ocupado}>
+        <DialogFooter>
+          <Button variant="ghost" onClick={onCancelar} disabled={ocupado}>
             Cancelar
           </Button>
           <Button
-            size="sm"
             variant="destructive"
             disabled={!ok || ocupado}
             onClick={() =>
@@ -152,11 +166,11 @@ export function ModalAnularQuestao({
               })
             }
           >
-            {ocupado && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+            {ocupado && <Spinner size="button" decorative />}
             {textoDoBotao}
           </Button>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

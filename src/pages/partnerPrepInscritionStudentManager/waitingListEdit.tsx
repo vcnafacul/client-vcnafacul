@@ -100,7 +100,11 @@ function WaitingListEdit(props: Props) {
 
   return (
     <Dialog open={props.isOpen} onOpenChange={(o) => !o && props.handleClose()}>
-      <DialogContent size="md" aria-describedby={undefined}>
+      <DialogContent
+        size="md"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Lista de Espera</DialogTitle>
         </DialogHeader>

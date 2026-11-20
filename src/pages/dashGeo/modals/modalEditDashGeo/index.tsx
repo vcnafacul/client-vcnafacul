@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ModalMotivoRejeicao } from "../modalMotivoRejeicao";
 import { MotivoRejeicaoGeo } from "../modalMotivoRejeicao/motivos";
-import { ModalProps } from "@/components/templates/modalTemplate";
+import { ModalProps } from "@/types/modal";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import {

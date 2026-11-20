@@ -1,4 +1,11 @@
-import Text from "../../../components/atoms/text";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ModalType } from "../../../types/simulado/modalType";
 
@@ -6,33 +13,25 @@ interface ModalInfoProps {
   modal: ModalType;
 }
 
+// Pergunta que só se resolve por um dos botões: Esc e clique fora não fecham,
+// porque o estado de quem abriu (finalizar, reportar) é decidido pelo botão.
 function ModalInfo({ modal }: ModalInfoProps) {
   return (
-    // z-overlay e margem: sem z-index o overlay podia ficar atrás do conteúdo, e a
-    // caixa encostava nas bordas do celular.
-    <div className="fixed inset-0 z-overlay bg-black bg-opacity-30 p-4">
-        <div className="flex justify-center items-center h-full">
-          <div className="bg-white p-5 sm:p-10 w-full max-w-[700px] rounded-sm max-h-full overflow-y-auto">
-            <Text className="text-start">{modal.title}</Text>
-            <Text size="tertiary" className="text-start">
-              {modal.subTitle}
-            </Text>
-            <div className="flex flex-wrap justify-between gap-4">
-              {modal.buttons.map((btn, index) => (
-                <Button
-                  key={index}
-                  size="sm"
-                  className="w-fit min-w-[150px]"
-                  variant={btn.variant}
-                  onClick={btn.onClick}
-                >
-                  {btn.children}
-                </Button>
-              ))}
-            </div>
-        </div>
-      </div>
-    </div>
+    <AlertDialog open>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{modal.title}</AlertDialogTitle>
+          <AlertDialogDescription>{modal.subTitle}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          {modal.buttons.map((btn, index) => (
+            <Button key={index} variant={btn.variant} onClick={btn.onClick}>
+              {btn.children}
+            </Button>
+          ))}
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
 

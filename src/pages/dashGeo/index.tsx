@@ -1,6 +1,12 @@
 import { ShadcnTable } from "@/components/atoms/shadcnTable";
 import { DashListTemplate, type DashAction } from "@/components/dashV2";
-import ModalTabTemplate from "@/components/templates/modalTabTemplate";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { createGeolocation } from "@/services/geolocation/createGeolocation";
 import { TypeMarker } from "@/types/map/marker";
@@ -116,14 +122,22 @@ function DashGeo() {
 
   const ModalEdit = () => {
     return !modals.modalEdit.isOpen ? null : (
-      <ModalTabTemplate
-        isOpen={modals.modalEdit.isOpen}
-        className="px-3 sm:px-8 py-4 rounded-md relative h-[90vh] supports-[height:100dvh]:h-[90dvh] w-[90vw] overflow-y-auto scrollbar-hide"
-        tabs={[
-          {
-            label: "Detalhes",
-            id: "detalhes",
-            children: (
+      <Dialog open onOpenChange={(o) => !o && handleCloseModalEdit()}>
+        {/* R32: a aba Detalhes é um formulário; um clique fora não pode perder a edição. */}
+        <DialogContent
+          size="full"
+          aria-describedby={undefined}
+          onInteractOutside={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle>{geoSelect!.name}</DialogTitle>
+          </DialogHeader>
+          <Tabs defaultValue="detalhes">
+            <TabsList>
+              <TabsTrigger value="detalhes">Detalhes</TabsTrigger>
+              <TabsTrigger value="historico">Historico</TabsTrigger>
+            </TabsList>
+            <TabsContent value="detalhes">
               <ModalEditDashGeo
                 rawGeo={geoSelect!}
                 updateStatus={updateStatus}
@@ -131,32 +145,24 @@ function DashGeo() {
                 isOpen={modals.modalEdit.isOpen}
                 handleClose={handleCloseModalEdit}
               />
-            ),
-            handleClose: handleCloseModalEdit,
-          },
-          {
-            label: "Historico",
-            id: "historico",
-            children: (
-              <div>
-                <ShadcnTable
-                  headers={["Data", "Status", "Descrição", "Usuario", "Email"]}
-                  cells={
-                    geoSelect!.logs?.map((log) => [
-                      formatDate(log?.createdAt?.toString()),
-                      log?.status,
-                      log?.description,
-                      log?.user?.firstName + " " + log?.user?.lastName,
-                      log?.user?.email,
-                    ]) || []
-                  }
-                />
-              </div>
-            ),
-            handleClose: handleCloseModalEdit,
-          },
-        ]}
-      />
+            </TabsContent>
+            <TabsContent value="historico">
+              <ShadcnTable
+                headers={["Data", "Status", "Descrição", "Usuario", "Email"]}
+                cells={
+                  geoSelect!.logs?.map((log) => [
+                    formatDate(log?.createdAt?.toString()),
+                    log?.status,
+                    log?.description,
+                    log?.user?.firstName + " " + log?.user?.lastName,
+                    log?.user?.email,
+                  ]) || []
+                }
+              />
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
     );
   };
 

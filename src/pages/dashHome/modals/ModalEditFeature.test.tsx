@@ -102,4 +102,20 @@ describe("ModalEditFeature com o recorte da imagem", () => {
     expect(screen.getByRole("dialog", { name: "Adicionar item" })).toBeInTheDocument();
     await waitFor(() => expect(document.activeElement).toBe(campo));
   });
+
+  it("Esc com o recorte aberto fecha só o recorte; o formulário continua aberto", async () => {
+    montar();
+    escolherImagem();
+    expect(screen.getByRole("dialog", { name: "Recortar imagem" })).toBeInTheDocument();
+
+    fireEvent.keyDown(screen.getByRole("dialog", { name: "Recortar imagem" }), {
+      key: "Escape",
+      code: "Escape",
+    });
+
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog", { name: "Recortar imagem" })).toBeNull(),
+    );
+    expect(screen.getByRole("dialog", { name: "Adicionar item" })).toBeInTheDocument();
+  });
 });

@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import PropValue from "../../../components/molecules/PropValue";
 import { FormFieldOption } from "../../../components/molecules/formField";
-import { ModalProps } from "../../../components/templates/modalTemplate";
+import { ModalProps } from "@/types/modal";
 import {
   Dialog,
   DialogBody,

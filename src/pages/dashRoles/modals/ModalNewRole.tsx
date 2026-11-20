@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Filter from "../../../components/atoms/filter";
 import { Button } from "@/components/ui/button";
-import { ModalProps } from "../../../components/templates/modalTemplate";
+import { ModalProps } from "@/types/modal";
 import {
   Dialog,
   DialogBody,

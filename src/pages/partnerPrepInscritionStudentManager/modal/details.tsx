@@ -1,5 +1,11 @@
 import { ShadcnTable } from "@/components/atoms/shadcnTable";
 import Text from "@/components/atoms/text";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Mascaras, SEM_MASCARA } from "@/hooks/useDadosSensiveis";
 import { useFileDownload } from "@/hooks/useFileDownload";
@@ -8,7 +14,6 @@ import { getProfilePhoto } from "@/services/prepCourse/student/getProfilePhoto";
 import { useAuthStore } from "@/store/auth";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { format } from "date-fns";
-import { X } from "lucide-react";
 
 interface Props {
   handleClose: () => void;
@@ -133,100 +138,66 @@ export function Details({
     return [...documents, photo];
   };
 
-  const cols = 2 + (disableDocuments ? 0 : 1) + (disableLogs ? 0 : 1);
-
   return (
-    <>
-      <div className="fixed inset-0 z-overlay flex justify-center items-center">
-        <div className="w-full h-full bg-black/60 z-overlay flex justify-center items-center md:py-4">
-          <Tabs defaultValue="details" className="w-11/12 h-[80vh]">
-            <TabsList
-              className={`grid w-full grid-cols-${cols}`}
-            >
-              <TabsTrigger value="details">Detalhes</TabsTrigger>
-              <TabsTrigger value="form">Formulário</TabsTrigger>
-              {!disableDocuments && (
-                <TabsTrigger value="documents">Documentos</TabsTrigger>
-              )}
-              {!disableLogs && <TabsTrigger value="logs">Logs</TabsTrigger>}
-            </TabsList>
-            <TabsContent value="details" className="h-full">
-              <ModalContent onClose={handleClose}>
-                <Section title="Informações pessoais" fields={personalInfo} />
-                <Section title="Endereço" fields={addressInfo} />
-                <Section title="Guardião Legal" fields={guardianInfo} />
-              </ModalContent>
-            </TabsContent>
-            <TabsContent value="form" className="h-full">
-              <ModalContent onClose={handleClose}>
-                {student.socioeconomic.map((question) => (
-                  <Field
-                    key={question.question}
-                    label={question.question}
-                    value={formatAnswer(question.answer)}
-                  />
-                ))}
-              </ModalContent>
-            </TabsContent>
+    <Dialog open onOpenChange={(aberto) => !aberto && handleClose()}>
+      <DialogContent size="full" aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Detalhes do estudante</DialogTitle>
+        </DialogHeader>
+        <Tabs defaultValue="details">
+          <TabsList className="w-full overflow-x-auto">
+            <TabsTrigger value="details">Detalhes</TabsTrigger>
+            <TabsTrigger value="form">Formulário</TabsTrigger>
             {!disableDocuments && (
-              <TabsContent value="documents" className="h-full">
-                <ModalContent onClose={handleClose}>
-                  <ShadcnTable
-                    headers={["File", "Enviado em", "Expiração", "Ação"]}
-                    cells={cellDocuments()}
-                  />
-                </ModalContent>
-              </TabsContent>
+              <TabsTrigger value="documents">Documentos</TabsTrigger>
             )}
-            {!disableLogs && (
-              <TabsContent value="logs" className="h-full">
-              <ModalContent onClose={handleClose}>
-                <ShadcnTable
-                  headers={["Data", "Status", "Descrição"]}
-                  cells={
-                    [...(student.logs ?? [])]
-                      .sort(
-                        (a, b) =>
-                          new Date(b.createdAt).getTime() -
-                          new Date(a.createdAt).getTime()
-                      )
-                      ?.map((log) => [
-                        format(log.createdAt, "dd/MM/yyyy HH:mm:ss"),
-                        log.applicationStatus,
-                        log.description,
-                      ]) || []
-                  }
-                />
-                </ModalContent>
-              </TabsContent>
-            )}
-          </Tabs>
-        </div>
-      </div>
-    </>
-  );
-}
-
-function ModalContent({
-  children,
-  onClose,
-}: {
-  children: React.ReactNode;
-  onClose: () => void;
-}) {
-  return (
-    <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded-sm pb-2 px-2 flex flex-col gap-4 relative border-8 border-white">
-      {/* Botão de fechar fixado no topo */}
-      <div className="sticky top-0 bg-white z-sticky flex items-center justify-end p-2">
-        <X
-          className="w-5 h-5 cursor-pointer text-muted-foreground hover:text-foreground transition"
-          onClick={onClose}
-        />
-      </div>
-
-      {/* Conteúdo principal */}
-      <div className="flex flex-col gap-4">{children}</div>
-    </div>
+            {!disableLogs && <TabsTrigger value="logs">Logs</TabsTrigger>}
+          </TabsList>
+          <TabsContent value="details" className="flex flex-col gap-4">
+            <Section title="Informações pessoais" fields={personalInfo} />
+            <Section title="Endereço" fields={addressInfo} />
+            <Section title="Guardião Legal" fields={guardianInfo} />
+          </TabsContent>
+          <TabsContent value="form" className="flex flex-col gap-4">
+            {student.socioeconomic.map((question) => (
+              <Field
+                key={question.question}
+                label={question.question}
+                value={formatAnswer(question.answer)}
+              />
+            ))}
+          </TabsContent>
+          {!disableDocuments && (
+            <TabsContent value="documents">
+              <ShadcnTable
+                headers={["File", "Enviado em", "Expiração", "Ação"]}
+                cells={cellDocuments()}
+              />
+            </TabsContent>
+          )}
+          {!disableLogs && (
+            <TabsContent value="logs">
+              <ShadcnTable
+                headers={["Data", "Status", "Descrição"]}
+                cells={
+                  [...(student.logs ?? [])]
+                    .sort(
+                      (a, b) =>
+                        new Date(b.createdAt).getTime() -
+                        new Date(a.createdAt).getTime()
+                    )
+                    ?.map((log) => [
+                      format(log.createdAt, "dd/MM/yyyy HH:mm:ss"),
+                      log.applicationStatus,
+                      log.description,
+                    ]) || []
+                }
+              />
+            </TabsContent>
+          )}
+        </Tabs>
+      </DialogContent>
+    </Dialog>
   );
 }
 

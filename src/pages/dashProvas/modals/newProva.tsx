@@ -9,7 +9,7 @@ import {
 } from "../../../components/molecules/formField";
 import UploadButton from "../../../components/molecules/uploadButton";
 import Form from "../../../components/organisms/form";
-import { ModalProps } from "../../../components/templates/modalTemplate";
+import { ModalProps } from "@/types/modal";
 import {
   Dialog,
   DialogBody,

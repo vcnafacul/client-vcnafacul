@@ -13,7 +13,7 @@ import { motivoSemRecomendacao, passosDoSalvar } from "./recomendacao";
 import { getPermissionsHierarchy } from "@/services/roles/getPermissionsHierarchy";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ModalProps } from "../../../components/templates/modalTemplate";
+import { ModalProps } from "@/types/modal";
 import {
   Dialog,
   DialogBody,

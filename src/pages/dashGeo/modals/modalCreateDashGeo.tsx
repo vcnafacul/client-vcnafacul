@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import Text from "@/components/atoms/text";
 import MapBox from "@/components/molecules/mapBox";
-import { ModalProps } from "@/components/templates/modalTemplate";
+import { ModalProps } from "@/types/modal";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

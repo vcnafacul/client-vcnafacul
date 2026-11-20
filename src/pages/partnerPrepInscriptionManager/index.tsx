@@ -5,7 +5,16 @@ import {
   type DashAction,
 } from "@/components/dashV2";
 import { FilterProps } from "@/components/atoms/filter";
-import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { CardDash } from "@/components/molecules/cardDash";
 import { DashCardContext } from "@/context/dashCardContext";
 import { StatusEnum } from "@/enums/generic/statusEnum";
@@ -284,17 +293,19 @@ export function PartnerPrepInscriptionManager() {
 
   const ModalConfirmTest = () => {
     return modals.modalConfirmTest.isOpen ? (
-      <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-overlay p-4">
-        <div className="bg-white p-6 rounded-xl w-full max-w-[400px]">
-          <h2 className="text-h1 font-bold mb-4 text-warning">
-            Atenção
-          </h2>
-
-          <p className="mb-6 text-body">
-            Você está criando um <strong>Processo Seletivo de Teste</strong>.
-            Leia com atenção antes de confirmar:
-          </p>
-          <ul className="mb-6 text-body list-disc list-inside space-y-2">
+      <AlertDialog
+        open
+        onOpenChange={(aberto) => !aberto && cancelTestCreation()}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Atenção</AlertDialogTitle>
+            <AlertDialogDescription>
+              Você está criando um <strong>Processo Seletivo de Teste</strong>.
+              Leia com atenção antes de confirmar:
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <ul className="list-disc list-inside space-y-2 text-body">
             <li>
               Uma vez criado como teste, <strong>não é possível alterar para um Processo Seletivo normal</strong>.
             </li>
@@ -302,7 +313,7 @@ export function PartnerPrepInscriptionManager() {
               <strong>Nenhum estudante</strong> inscrito neste processo poderá ser matriculado.
             </li>
           </ul>
-          <label className="flex items-center gap-3 mb-6 cursor-pointer select-none">
+          <label className="flex items-center gap-3 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={testConfirmed}
@@ -313,23 +324,21 @@ export function PartnerPrepInscriptionManager() {
               Entendi e quero continuar
             </span>
           </label>
-          <div className="flex justify-end gap-4 sm:col-span-2 mt-2">
-            <Button variant="outline" size="lg"
-              className="w-24 h-9"
-              onClick={cancelTestCreation}
-            >
-              Cancelar
-            </Button>
-            <Button variant="primary" size="lg"
-              className="w-24 h-9"
-              onClick={confirmTestCreation}
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            {/* Não fecha sozinho: a criação é assíncrona e fecha o modal ao terminar. */}
+            <AlertDialogAction
               disabled={!testConfirmed}
+              onClick={(e) => {
+                e.preventDefault();
+                confirmTestCreation();
+              }}
             >
               Salvar
-            </Button>
-          </div>
-        </div>
-      </div>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     ) : null;
   };
 

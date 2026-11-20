@@ -12,6 +12,16 @@ import {
   updateEssaySettings,
 } from "@/services/essay";
 import Toggle from "@/components/atoms/toggle";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import ThemeForm from "./ThemeForm";
 
 function getThemeStatus(theme: EssayTheme): {
@@ -233,32 +243,29 @@ export default function EssayThemeAdmin() {
         />
       )}
       {confirmToggle && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-overlay">
-          <div className="bg-white rounded-lg p-6 max-w-md mx-4 space-y-4">
-            <h2 className="text-h3 font-bold text-foreground">
-              {confirmToggle.active ? "Desativar tema" : "Ativar tema"}
-            </h2>
-            <p className="text-body text-foreground">
-              {confirmToggle.active
-                ? `Deseja desativar o tema "${confirmToggle.title}"? Ele não aparecerá mais para os alunos.`
-                : `Deseja ativar o tema "${confirmToggle.title}"? Se estiver dentro do período, ele ficará disponível para os alunos.`}
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => setConfirmToggle(null)}
-                className="px-4 py-2 border border-border rounded-lg hover:bg-page"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleToggleActive}
-                className="px-4 py-2 text-primary-foreground rounded-lg bg-primary hover:bg-primary/90"
-              >
+        <AlertDialog
+          open
+          onOpenChange={(aberto) => !aberto && setConfirmToggle(null)}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {confirmToggle.active ? "Desativar tema" : "Ativar tema"}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {confirmToggle.active
+                  ? `Deseja desativar o tema "${confirmToggle.title}"? Ele não aparecerá mais para os alunos.`
+                  : `Deseja ativar o tema "${confirmToggle.title}"? Se estiver dentro do período, ele ficará disponível para os alunos.`}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={handleToggleActive}>
                 {confirmToggle.active ? "Desativar" : "Ativar"}
-              </button>
-            </div>
-          </div>
-        </div>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </div>
   );

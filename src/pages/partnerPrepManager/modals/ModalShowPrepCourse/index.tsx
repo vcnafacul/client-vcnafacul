@@ -1,4 +1,5 @@
-import ModalTabTemplate from "@/components/templates/modalTabTemplate";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ModalPrepCoursePrincipal,
   ModalPrincipalProps,
@@ -14,21 +15,22 @@ export const ModalShowPrepCourse = ({
   prepCourse,
 }: ModalShowPrepCourseProps) => {
   return (
-    <ModalTabTemplate
-      isOpen={isOpen}
-      className="p-4 sm:p-8 rounded-md relative h-[90vh] supports-[height:100dvh]:h-[90dvh] w-[90vw] md:w-[800px] md:h-fit overflow-y-auto scrollbar-hide"
-      tabs={[
-        {
-          label: "Principal",
-          id: "principal",
-          children: (
-            <ModalPrepCoursePrincipal
-              prepCourse={prepCourse}
-              handleClose={handleClose}
-            />
-          ),
-        },
-      ]}
-    />
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose?.()}>
+      {/* R32: o formulário de edição perde o digitado num clique fora. */}
+      <DialogContent
+        size="lg"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <Tabs defaultValue="principal">
+          <TabsList>
+            <TabsTrigger value="principal">Principal</TabsTrigger>
+          </TabsList>
+          <TabsContent value="principal">
+            <ModalPrepCoursePrincipal prepCourse={prepCourse} />
+          </TabsContent>
+        </Tabs>
+      </DialogContent>
+    </Dialog>
   );
 };

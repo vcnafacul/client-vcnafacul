@@ -10,6 +10,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { DialogTitle } from "@/components/ui/dialog";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getUserByName, SearchUser } from "@/services/auth/getUserByName";
@@ -30,7 +31,6 @@ export interface ModalPrincipalProps {
 
 export const ModalPrepCoursePrincipal = ({
   prepCourse,
-  handleClose,
 }: ModalPrincipalProps) => {
   const [editable, setEditable] = useState<boolean>(false);
   const [currentThumbnail, setCurrentThumbnail] = useState<string | null>(
@@ -409,26 +409,25 @@ export const ModalPrepCoursePrincipal = ({
   return (
     <div className="space-y-6 px-0.5">
       {/* Header com título e botões */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 pr-10">
         <div>
-          <h1 className="text-h1 font-bold text-foreground">
-            Informações Básicas
-          </h1>
-          <div className="w-16 h-1 bg-success mt-2"></div>
+          <DialogTitle asChild>
+            <h2 className="pr-0 text-h1 font-bold text-foreground">
+              Informações Básicas
+            </h2>
+          </DialogTitle>
+          <div className="w-16 h-1 bg-primary mt-2"></div>
         </div>
         <div className="flex gap-2">
-          <button
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label="Editar informações"
             onClick={toggleEdit}
-            className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-border transition-colors"
           >
             <Pencil className="w-4 h-4 text-muted-foreground" />
-          </button>
-          <button
-            onClick={handleClose}
-            className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-border transition-colors"
-          >
-            <X className="w-4 h-4 text-muted-foreground" />
-          </button>
+          </Button>
         </div>
       </div>
 

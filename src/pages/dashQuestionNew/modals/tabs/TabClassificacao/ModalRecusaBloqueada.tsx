@@ -1,4 +1,12 @@
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { DonoDaProva } from "@/dtos/prova/donoDaProva";
 import type { ProvaQueImpede } from "@/services/question/updateStatus";
@@ -52,15 +60,13 @@ export function ModalRecusaBloqueada({
     motivo.trim().length >= MOTIVO_MIN && motivo.trim().length <= MOTIVO_MAX;
 
   return (
-    <div
-      role="dialog"
-      aria-label={TITULO_RECUSA_BLOQUEADA}
-      className="fixed inset-0 z-overlay flex items-center justify-center bg-black/40 p-4"
-    >
-      <div className="w-full max-w-lg max-h-full overflow-y-auto rounded-lg bg-white p-4 shadow-lg flex flex-col gap-3">
-        <h2 className="text-h3 font-semibold">{TITULO_RECUSA_BLOQUEADA}</h2>
-        <p className="text-body text-muted-foreground">{TEXTO_RECUSA_BLOQUEADA}</p>
-        <ul className="text-body list-disc pl-5" data-provas-da-recusa>
+    <Dialog open onOpenChange={(o) => !o && onCancelar()}>
+      <DialogContent size="md" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>{TITULO_RECUSA_BLOQUEADA}</DialogTitle>
+          <DialogDescription>{TEXTO_RECUSA_BLOQUEADA}</DialogDescription>
+        </DialogHeader>
+        <ul className="list-disc pl-5 text-body" data-provas-da-recusa>
           {provas.map((p) => (
             <li key={p.provaId}>
               {p.provaNome} — <em>{deQuemE(p)}</em>
@@ -68,12 +74,16 @@ export function ModalRecusaBloqueada({
           ))}
         </ul>
 
-        {sinalizando ? (
+        {sinalizando && (
           <div className="flex flex-col gap-2">
-            <label className="text-body font-semibold text-muted-foreground">
+            <label
+              htmlFor="motivo-da-revisao"
+              className="text-body font-semibold text-muted-foreground"
+            >
               Por que esta questão precisa de revisão?
             </label>
             <Textarea
+              id="motivo-da-revisao"
               aria-label="Motivo da revisão"
               value={motivo}
               maxLength={MOTIVO_MAX}
@@ -83,52 +93,48 @@ export function ModalRecusaBloqueada({
             <p className="text-caption text-muted-foreground">
               {motivo.trim().length}/{MOTIVO_MAX} (mínimo {MOTIVO_MIN})
             </p>
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSinalizando(false)}
-              >
-                Voltar
-              </Button>
-              <Button
-                size="sm"
-                disabled={!motivoOk || ocupado}
-                onClick={() => onSinalizar(motivo.trim())}
-              >
-                Enviar para revisão
-              </Button>
-            </div>
           </div>
+        )}
+        {/* O `title` do botão não aparece no toque: o motivo fica à vista. */}
+        {!sinalizando && !onTirarDasMinhas && (
+          <p className="text-caption text-muted-foreground">{TEXTO_SEM_EDITAR}</p>
+        )}
+
+        {sinalizando ? (
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setSinalizando(false)}>
+              Voltar
+            </Button>
+            <Button
+              disabled={!motivoOk || ocupado}
+              onClick={() => onSinalizar(motivo.trim())}
+            >
+              Enviar para revisão
+            </Button>
+          </DialogFooter>
         ) : (
-          <div className="flex flex-wrap justify-end gap-2">
-            <Button variant="ghost" size="sm" onClick={onCancelar}>
+          <DialogFooter>
+            <Button variant="ghost" onClick={onCancelar}>
               Cancelar
             </Button>
-            <span title={onTirarDasMinhas ? undefined : TEXTO_SEM_EDITAR}>
+            <span
+              title={onTirarDasMinhas ? undefined : TEXTO_SEM_EDITAR}
+              className="max-sm:contents"
+            >
               <Button
                 variant="outline"
-                size="sm"
                 disabled={!onTirarDasMinhas || ocupado}
                 onClick={onTirarDasMinhas}
               >
                 Tirar das minhas provas
               </Button>
             </span>
-            <Button
-              size="sm"
-              disabled={ocupado}
-              onClick={() => setSinalizando(true)}
-            >
+            <Button disabled={ocupado} onClick={() => setSinalizando(true)}>
               Sinalizar para revisão
             </Button>
-          </div>
+          </DialogFooter>
         )}
-        {/* O `title` do botão não aparece no toque: o motivo fica à vista. */}
-        {!sinalizando && !onTirarDasMinhas && (
-          <p className="text-right text-caption text-muted-foreground">{TEXTO_SEM_EDITAR}</p>
-        )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
